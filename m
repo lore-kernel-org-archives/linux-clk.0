@@ -1,63 +1,73 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4BF2E62B;
-	Wed,  1 Jan 2025 08:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A13A29415;
+	Wed,  1 Jan 2025 09:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735721547; cv=none; b=tN6gxyk4yqDWmlN0NJTEpbHCrHh2yYTG2b47oW5wJgLLYKKxLo/kC7dyLUbkznlxzXRuNGLNLPFsUOhVl+80Jr+QiIval39QJOm+cFUsXsvggvrBEPby05Is9VfC5nzAv15NxxwYPvSg+ecLzo8hC9737tlWigJ/hfYGLCVRTZE=
+	t=1735722210; cv=none; b=U/m0JS4qEed6gP1sKX4omP7bP9DEsUmm4XZoBGW354fhtRHfIyg2paizFKJlFY3OyMQmvDmk2lI1/88KCQlVxEAUXEzIDR/tJqr5kF5t9n5um0y5D4pfBlg29tLcBwuYQz6AyrYZ/opIUvJ/1eAe1V3Yq+sW8JYZDHeKWb19uyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735721547; c=relaxed/simple;
-	bh=KNs/VmlZrBNy+SxjTAeclhV0yPPmJLGdpnQz8sDLqU8=;
+	s=arc-20240116; t=1735722210; c=relaxed/simple;
+	bh=Nz9aDcQrTUetxC6iaoCKUJgnBxM+z4ES6m8B+iYezLY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O3p7PolMWaL9ViV/QJ1yNNEjh6TECqAfOPc9bHZh3XimyxDZ3Vxq2tzN43BppNsrKNLH3rr600558wGmQ90Gu3K40xRhaU8RSpcc/kk2CyPVTG6MpsEr8N7T7Rp6hR0wfPnKA7RaoVC6mqrj4EjhFpsX/beBDqEVkmU2ZQkJ1tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LZ0bUilD; arc=none smtp.client-ip=198.175.65.12
+	 Content-Type:Content-Disposition:In-Reply-To; b=eMQA+oRJbt6TP5L/ocB13CrKgfq7hovKJc5VV7mSYxMtAA8E23mckAusV+Tyol2Cq3h857lMgyMSwyJpqCt+O1XWo2Ck20KUXrP8WvEh2iZMVr04PTNNHI/h8/XHRb9owiZylcWGgDWtRk+0zQIhoyy8miT/koLKYRknDlwDpUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nRQNJJjH; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LZ0bUilD"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nRQNJJjH"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1735721544; x=1767257544;
+  t=1735722208; x=1767258208;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=KNs/VmlZrBNy+SxjTAeclhV0yPPmJLGdpnQz8sDLqU8=;
-  b=LZ0bUilDF9gOr7/2wdiIufKprOwZlpCkQsFbyv+Den/EgD8Nmn0qhlaH
-   yiBSSCt9de/FdpaV9OoDMZxRc3Z5EoP2QRXvBaI/0XkWOMLSwAZG0MOGv
-   xmpG4HJ2CjHoWPKzFNGGEBhO8bXw7WWPbxnRLYr3Pv5UTR0FOHKP1J/kj
-   c3yezKqCmH4178O5cUOOvftQBZXIVL1TzzocNUVD2y6S6UKeVSVs0HXHR
-   VrfDt8v2y/HaQC3Si+J/2h+GWFT2oMYrFGa/VDusuA9HNUvmepBvl3c7R
-   NiI/ZQ4qTEcxES1EfSZ65VmYABhADVNtPIV5WfVGV/jMhQ53hsa5hzouJ
-   g==;
-X-CSE-ConnectionGUID: ly7Q7VpuTtmzB1r9XjC3LA==
-X-CSE-MsgGUID: 09kbM6AWT6e8zmsIXrFAoQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11302"; a="47339210"
+  bh=Nz9aDcQrTUetxC6iaoCKUJgnBxM+z4ES6m8B+iYezLY=;
+  b=nRQNJJjH0PRrUCbRsf4AbQ9GWpgXipBbEt6ZKH9lgy4Z9/vQCVeULmTe
+   Lqnp39CwFdmcPgpsvPABxIXdOFrN4Mjhr4lvl9jb45HVWc+R3dTsK5TWG
+   ic2yvANpEf9HqmE3kc5/PMhLmK/xslSKnZhnysf4QkIIA+DCOp8sZ+JcN
+   vPRE5Ji9dQ8NKBT6Xwk7fcC1Ut6Sf+pzqqnJ6kLuqDuJgVNGrVk1Wf0xU
+   LmbPAvZ0t8AORh9Zevc2RTfZGBrVpfOjwwo1TTK9G18LEz00wMjP5fGGt
+   +QB9D/K1VGl96uhQHlJwBoeQegzAGCl1pH/duHAaXN8MkFaOURqaZ9JN4
+   w==;
+X-CSE-ConnectionGUID: OiVpOgobT32Pe3ahaS6eoQ==
+X-CSE-MsgGUID: RnvwmKALQHyuuwnVgV0O/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11302"; a="46972199"
 X-IronPort-AV: E=Sophos;i="6.12,281,1728975600"; 
-   d="scan'208";a="47339210"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jan 2025 00:52:24 -0800
-X-CSE-ConnectionGUID: dMs57LHbTDO6IbH/IFjm6A==
-X-CSE-MsgGUID: eHyBvkm6RgOxvJrve0dvcg==
+   d="scan'208";a="46972199"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jan 2025 01:03:26 -0800
+X-CSE-ConnectionGUID: XuUNBDnHRJ6foHwmfMM9/A==
+X-CSE-MsgGUID: IBcWmbpJQUmPS6sZZkwOAw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="124497082"
+   d="scan'208";a="101051676"
 Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 01 Jan 2025 00:52:21 -0800
+  by orviesa010.jf.intel.com with ESMTP; 01 Jan 2025 01:03:22 -0800
 Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tSuSh-0007jH-1o;
-	Wed, 01 Jan 2025 08:52:19 +0000
-Date: Wed, 1 Jan 2025 16:51:49 +0800
+	id 1tSudM-0007jb-19;
+	Wed, 01 Jan 2025 09:03:20 +0000
+Date: Wed, 1 Jan 2025 17:02:58 +0800
 From: kernel test robot <lkp@intel.com>
-To: Paul Handrigan <paulha@opensource.cirrus.com>,
-	linux-clk@vger.kernel.org, sboyd@kernel.org,
-	mturquette@baylibre.com, devicetree@vger.kernel.org,
-	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, patches@opensource.cirrus.com,
-	Paul Handrigan <paulha@opensource.cirrus.com>
-Subject: Re: [PATCH v4 2/2] clk: cs2600: Add Fractional-N clock driver
-Message-ID: <202501011656.Td8LworZ-lkp@intel.com>
-References: <20241230221246.3927158-3-paulha@opensource.cirrus.com>
+To: Jian Hu <jian.hu@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>,
+	Chuan Liu <chuan.liu@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+	robh+dt <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jian Hu <jian.hu@amlogic.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-amlogic <linux-amlogic@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 4/5] clk: meson: t7: add support for the T7 SoC PLL clock
+Message-ID: <202501011623.EZwn2GFV-lkp@intel.com>
+References: <20241231060047.2298871-5-jian.hu@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -66,65 +76,40 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241230221246.3927158-3-paulha@opensource.cirrus.com>
+In-Reply-To: <20241231060047.2298871-5-jian.hu@amlogic.com>
 
-Hi Paul,
+Hi Jian,
 
 kernel test robot noticed the following build warnings:
 
 [auto build test WARNING on clk/clk-next]
-[also build test WARNING on linus/master v6.13-rc5 next-20241220]
+[also build test WARNING on linus/master v6.13-rc5]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Paul-Handrigan/dt-binding-clock-cs2600-Add-support-for-the-CS2600/20241231-061424
+url:    https://github.com/intel-lab-lkp/linux/commits/Jian-Hu/dt-bindings-clock-add-Amlogic-T7-PLL-clock-controller/20241231-141835
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20241230221246.3927158-3-paulha%40opensource.cirrus.com
-patch subject: [PATCH v4 2/2] clk: cs2600: Add Fractional-N clock driver
-config: um-randconfig-r061-20250101 (https://download.01.org/0day-ci/archive/20250101/202501011656.Td8LworZ-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+patch link:    https://lore.kernel.org/r/20241231060047.2298871-5-jian.hu%40amlogic.com
+patch subject: [PATCH 4/5] clk: meson: t7: add support for the T7 SoC PLL clock
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250101/202501011623.EZwn2GFV-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250101/202501011623.EZwn2GFV-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202501011656.Td8LworZ-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202501011623.EZwn2GFV-lkp@intel.com/
 
-cocci warnings: (new ones prefixed by >>)
->> drivers/clk/clk-cs2600.c:300:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
-   drivers/clk/clk-cs2600.c:272:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
 
-vim +300 drivers/clk/clk-cs2600.c
-
-   277	
-   278	static int cs2600_set_multi_ratio(struct cs2600 *cs2600, unsigned long rate,
-   279					  unsigned long parent_rate,
-   280					  unsigned int *ratio)
-   281	{
-   282		struct regmap *regmap = cs2600->regmap;
-   283		u64 product = (u64)rate;
-   284	
-   285		if ((rate / parent_rate) > CS2600_PLL_MULTIPLY_MAX) {
-   286			dev_err(cs2600->dev, "Ratio is too large %lu\n",
-   287				rate / parent_rate);
-   288			return -EINVAL;
-   289		}
-   290	
-   291		if ((rate / parent_rate) > CS2600_HI_RES_MAX) {
-   292			regmap_clear_bits(regmap, CS2600_PLL_CFG3, CS2600_RATIO_CFG);
-   293			product <<= CS2600_20_12_SHIFT;
-   294	
-   295		} else {
-   296			regmap_set_bits(regmap, CS2600_PLL_CFG3, CS2600_RATIO_CFG);
-   297			product <<= CS2600_12_20_SHIFT;
-   298		}
-   299	
- > 300		do_div(product, parent_rate);
-   301		*ratio = product;
-   302	
-   303		return 0;
-   304	}
-   305	
+>> WARNING: modpost: module t7-pll uses symbol meson_clk_hw_get from namespace CLK_MESON, but does not import it.
+>> WARNING: modpost: module t7-pll uses symbol meson_clk_pll_ops from namespace CLK_MESON, but does not import it.
+>> WARNING: modpost: module t7-pll uses symbol clk_regmap_divider_ops from namespace CLK_MESON, but does not import it.
+>> WARNING: modpost: module t7-pll uses symbol meson_clk_pcie_pll_ops from namespace CLK_MESON, but does not import it.
+>> WARNING: modpost: module t7-pll uses symbol meson_clk_mpll_ops from namespace CLK_MESON, but does not import it.
+>> WARNING: modpost: module t7-pll uses symbol clk_regmap_gate_ops from namespace CLK_MESON, but does not import it.
+>> WARNING: modpost: module t7-pll uses symbol clk_regmap_mux_ops from namespace CLK_MESON, but does not import it.
 
 -- 
 0-DAY CI Kernel Test Service
