@@ -1,78 +1,151 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C22184E;
-	Wed,  1 Jan 2025 21:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2245829A2;
+	Thu,  2 Jan 2025 03:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735765681; cv=none; b=BdKUpgTwZ4aLy0wFLTg5dL/657iDauYgHtUeWkdAkYb3Gnpjbwu/Fx+N5DsJkTcxbBwKexxtHye2MtDKNnn/HpjI1Jw7rDwdDDOr3tXuM5WJawheRfFHNWjKGQb49ZnGv69UbcD6lDA8UaXJSGMduRsPqzi5cZFPZx0OHEYrHYk=
+	t=1735789669; cv=none; b=QM85WPTaqqH73vWpf8pVFWBCFoAd7FN/sD/SZ+gDJft90Lz4VrF+MKUcpOugJ2ux70lDYmBg7dnV72mahG9ejzlSX7RRByPO5OfL8eqqO0qZoXkO3sg6+Xr72YFknBKzmqP5IIp3y70540S+RuhDL+qzpFwcxS4nw6TxPa15G9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735765681; c=relaxed/simple;
-	bh=jzHrAHy6I5KDM9d48qwxcbGGt7X1mMWgDmz9hwn0BbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gxsM/b2UA1RD54nfjZwyP6HVlE9TeSIG0QnVGvMVliEoBIW47DQjRfsj/XwdpJVx44/6gWS+6e0+uXFqVB+PNcG0nSj7UxONnqhWm2ls2RSY0wFEeyRCGns6K513U1jZnzqxmRO4WTluLf33aLGFdl9fE5XQnQHRIgoSlK/6sCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=jODNKxlN; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1735789669; c=relaxed/simple;
+	bh=sLf8j2BMmF4UUVCBkvM/1IY57fmBXcXNfrrqbGpKZJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S4tKkCJFugqong/P8SbhHxgQw7BLUivDTB4kKidZDykSdbpa+MLDOxu3FVzUm13FRiIsHqrmpinJta0PhXqOti6PGuqfwnXCtxK3o7KvB23wp1HvniNW9wuY4di2u0qBaWvbUr/Oc3Xzq2esAOlLHuAbXrgOb2u9MCpA1FzHU4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OPDGKpIw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="jODNKxlN"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=2aLXwIrwXk3rDeiybbx85SXg95I+A8k7SjwQL0wiFUM=; b=jODNKxlNjL+B2duTuTyFWB70SP
-	Rh/XrUoMAl8tvo0lBDef9OwdwK//vm0mDKSglvbjgn+TCy225UMTVifl+/gjXsBYPWOFf0uYVX2Pu
-	+rl6qlm/ptCGapa6/JQ4xZiVfIhtpE9YjoUrOrbRXd794Z9OLzUZ/ULAq1x4F2fjfraC4VdyEWDHZ
-	UVS/4M5BsxmLVhjw8NSVt5iPvwOKzV9XxrcIR/i6R0HQDzeCM4fVnt/Q48ruzVl3Y/WKugNLC4/6v
-	E6cOK5vGCb1VxrcWRwdB+E9GDXmJtDE1i5+iu6rstvB9Hram+BX9rIlvGg11UmwDuaUxK+hopx8Th
-	ZAYDTkqw==;
-Date: Wed, 1 Jan 2025 22:07:45 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob
- Herring <robh@kernel.org>, Tero Kristo <kristo@kernel.org>, Tony Lindgren
- <tony@atomide.com>, akemnade@kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-omap@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clock: ti: Convert gate.txt to
- json-schema
-Message-ID: <20250101220745.25151fef@akair>
-In-Reply-To: <bd1f8992ac2cc60b3192ea93402ed186.sboyd@kernel.org>
-References: <20241229135351.5014-1-akemnade@kernel.org>
-	<20241229135351.5014-2-akemnade@kernel.org>
-	<bd1f8992ac2cc60b3192ea93402ed186.sboyd@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OPDGKpIw"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5020UUit032704;
+	Thu, 2 Jan 2025 03:47:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BpzJlVMdQkgBcfV01TbLRTzhwoTfOg6XzmsI6mOmtJo=; b=OPDGKpIwRJrfF1Kf
+	FPMJlVn80au5royPobLBnr+GMZROhE69TeTLm3SarF7E/unWA82pNezECVezdl7C
+	UyOxqvzakrNIHig7EeHi2IDL2xtZtEQsdkEebKQ5VrllinxjV0xjw2fFfehX95a1
+	1XrGXwy3NoD31VVMZizxoyoNxJwdhEDJnkofFtyv1othRSKG4VLygHdEk6G50NA/
+	18/Ki80+EutkG/qWb21UKIZ/WSedxJVoN9t4TCRxZ2nFlKvONk58m9AkgB+Znhen
+	h8S2hLtHbWPUWQdrT/9ll0CbTeziLiL08OM6gix65X99tfyJNoHzudaM0shpbXY5
+	TirfNQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43wfy40a63-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Jan 2025 03:47:29 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5023lSFR031125
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 2 Jan 2025 03:47:28 GMT
+Received: from [10.231.216.103] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 1 Jan 2025
+ 19:47:25 -0800
+Message-ID: <4d3a2d5a-3791-4bc8-a43d-6087e8c35619@quicinc.com>
+Date: Thu, 2 Jan 2025 11:47:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] venus: pm_helpers: Use dev_pm_genpd_set_hwmode to
+ switch GDSC mode on V4
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>
+References: <20241223-switch_gdsc_mode-v2-0-eb5c96aee662@quicinc.com>
+ <20241223-switch_gdsc_mode-v2-2-eb5c96aee662@quicinc.com>
+ <5dexy2uc34b3kv532r45p6oaqn7v6bjohfdpwy42folvsdv6nd@skj7o35dflj2>
+Content-Language: en-US
+From: Renjiang Han <quic_renjiang@quicinc.com>
+In-Reply-To: <5dexy2uc34b3kv532r45p6oaqn7v6bjohfdpwy42folvsdv6nd@skj7o35dflj2>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _y4CcuylOPzfqCAqpZDvPR9_Ns7DCkVl
+X-Proofpoint-ORIG-GUID: _y4CcuylOPzfqCAqpZDvPR9_Ns7DCkVl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ mlxlogscore=526 bulkscore=0 lowpriorityscore=0 mlxscore=0 spamscore=0
+ impostorscore=0 phishscore=0 adultscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2501020029
 
-Am Mon, 30 Dec 2024 16:26:57 -0800
-schrieb Stephen Boyd <sboyd@kernel.org>:
 
-> Quoting akemnade@kernel.org (2024-12-29 05:53:50)
-> > From: Andreas Kemnade <andreas@kemnade.info>
-> > 
-> > Convert the OMAP gate clock device tree binding to json-schema.
-> > Specify the creator of the original binding as a maintainer.
-> > Choose GPL-only license because original binding was also GPL.
-> > Clean up the examples during conversion to meet modern standards and
-> > remove examples with no additional value.
-> > Due to usage in code and existing devicetree binding, add the
-> > ti,set-rate-parent property.  
-> 
-> Can we somehow mark these bindings as "undesirable"? We don't want new
-> bindings to be written that use one node per clock. At the least we
-> should put that into the description.
-> 
+On 12/23/2024 7:41 PM, Dmitry Baryshkov wrote:
+>> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
+>> index 33a5a659c0ada0ca97eebb5522c5f349f95c49c7..a2062b366d4aedba3eb5e4be456a005847eaec0b 100644
+>> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
+>> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
+>> @@ -412,7 +412,7 @@ static int vcodec_control_v4(struct venus_core *core, u32 coreid, bool enable)
+>>   	u32 val;
+>>   	int ret;
+>>   
+>> -	if (IS_V6(core))
+>> +	if (IS_V6(core) || IS_V4(core))
+>>   		return dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid], !enable);
+> It is being called only for v4 and v6 targets. Drop the rest of the
+> function and inline the result. I'd suggest keeping it as two patches
+> though: this one which adds IS_V4() all over the place and the next one
+> which performs cleanup of the dead code.
+  Thanks for your comment. poweron_coreid(), poweroff_coreid() and
+  vcodec_control_v4() are called only for v4 and v6. I will clean up
+  the dead code with another patch.
+>
+>>   	else if (coreid == VIDC_CORE_ID_1) {
+>>   		ctrl = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL;
+>> @@ -450,7 +450,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
+>>   
+>>   		vcodec_clks_disable(core, core->vcodec0_clks);
+>>   
+>> -		if (!IS_V6(core)) {
+>> +		if (!IS_V6(core) && !IS_V4(core)) {
+>>   			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
+>>   			if (ret)
+>>   				return ret;
+>> @@ -468,7 +468,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
+>>   
+>>   		vcodec_clks_disable(core, core->vcodec1_clks);
+>>   
+>> -		if (!IS_V6(core)) {
+>> +		if (!IS_V6(core) && !IS_V4(core)) {
+>>   			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
+> The poweron_coreid() and poweroff_coreid() functions are called only for
+> v4 and v6. The v6 case was masked out earlier. Now you've removed the v4
+> case too. Can we drop such vcodec_control_v4() calls completely?
 
-yes, good idea. I think a good keyword would be: depcrecated design
-pattern.
+  I cleaned up the code, and finally vcodec_control_v4() looks like this.
 
-Regards,
-Andreas
+static int vcodec_control_v4(struct venus_core *core, u32 coreid, bool 
+enable)
+{
+     return dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid], 
+!enable);
+
+}
+
+  Functionally, we can drop vcodec_control_v4(), but architecturally, I
+  don’t recommend removing this function, because I think it’s easier to
+  read the code with this function.
+
+-- 
+Best Regards,
+Renjiang
+
