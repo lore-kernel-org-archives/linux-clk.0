@@ -1,289 +1,121 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504821ACEAC
-	for <linux-clk@vger.kernel.org>; Thu,  2 Jan 2025 17:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334D029408;
+	Thu,  2 Jan 2025 18:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735840685; cv=none; b=aRutW7vwLZkhcTYcFN/0oziiT2eRwux9AOHmxlekhlrBRcQdE4/W/P9llJS4GwabyjOJ+EfLfHqWfM56RNfmC3NqRb8Emq/qM6uxcYiZcR6uME10bPwdcT3yHO21K0dhy2vTxHiuN0r3mFp6rYXMV3TD8wI2rmlmJJMZXCPfucM=
+	t=1735841930; cv=none; b=AVR0WFilI8gB7hC6gXJtNR1HAEMJ/PV9pe+4LN+etwhClQl9s8r7CsLBDIhM5FAgZN4h7XO6LzxgS/sx7krP79NxZONTaFX5dWErVhdg9qKiRDHUgjiZBeAaCzG6x/3llCDpnZD4IHGyLq8RA14hLmc2f42mUeb3gIiuZpj/X38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735840685; c=relaxed/simple;
-	bh=70wPxSyGoP1AIDAlE5kyW2D9wBgD5qtMuvxi7M6K9L0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZuzzqBDoPck3VV9ebQTXgyoI9H05BfeD+g4M3DAZ+KcdRKEfXtWr3w+tbfYzCnnu0iTxfaC4PwcyKAytrRaUh0oq4mdH04kidyHftUmuisa+AasUEJ9CLMBejrsRMirXYOgCrjiXCuSDXuPt35aImK/6n23SyTGhdGStfEzLSIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BomG9JDS; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1735841930; c=relaxed/simple;
+	bh=zyCvXv7UQzRU2ElWQEdmObP4kPdcR8UNQrR3GTSIPkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NXtHayy0WAVq/VSsr8ATvNjgj01bBQEtSlv2tLZGTvhXUJ7FMbNsCRsxBTJv4E/Hdk6xzpNPdKgdDKCmaiRtNokhe/2yfYbkFhwLk2kegCV+buSpydyFKvwvicODcPUlhxX/3igYAUPjjnXiFueQ1s1ALZaRP3hxQR/C+BHMZX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IwDQpEnL; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BomG9JDS"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43616c12d72so18874085e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2025 09:58:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwDQpEnL"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-388cae9eb9fso6416210f8f.3;
+        Thu, 02 Jan 2025 10:18:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735840680; x=1736445480; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tCngGj3ERzx+kGRd3Llf5o6LEqqH/9Whmo07Um1JaOU=;
-        b=BomG9JDSyu52J9S4FiPl+ABC3au+K3EEbW8Vx2OlEK8uuZcYz8ReZPWflc40FWB7PJ
-         Q+x5wH1dG00mt7Trpm53yh63usv4ixlqXUdS9yere4yBnKnJ1pa/OxnXqu4AcmDQfunC
-         NQs3zYbVq9QaY1ir3IB6F6bcPU9DznZUJe3terIkhmwyT3OuvZpYnUD0pjlBZ05daHEe
-         2qshQkv8ECDE/zV3U5ctC5u33aukrq36113HiQC7/NRQyV6sw46ViVWzsfbtXKzMwdNl
-         1x8m+zHQSrOUP3zwS35EqvBCmgrr15lUmgBYP0FvZITFzAgTcxOeh/FPmOtGHvDI+Jec
-         pt0A==
+        d=gmail.com; s=20230601; t=1735841927; x=1736446727; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OIztyH9Dr24aPiHFCVLKhP46DvR/fBzHNn044g4DYKs=;
+        b=IwDQpEnL5m+CP2gJ8AMjw3Xr1VMAF6JErvWLX/nYT66zzpjEq2Bu7Oy7d5r013ufOg
+         /NTBzOeq6Lies6y26ncrviSYKepnlUbiTUXSF+yAFX/cxk3Na4u0BVTfOF0AeEi4Wrtp
+         66+vg29+Fe3vbkxr0ne+qN2SNwlhjWsTZcfcb+i1670pol0MY79lLctGcOy9jNvrhbZz
+         gE6J0EcPJlXXi7fXgxk0qEMKdLyrHt9nCpexXBubRbqGtoKqywlClDqlKEEl4/T2QUrA
+         cEWl3PJYDBO9ajs/D6ffz0M1FCsoF7Wuo/Tl9/ilQJfX+cG+Muxvkb5zZ6JegW62Ye4U
+         yweQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735840680; x=1736445480;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tCngGj3ERzx+kGRd3Llf5o6LEqqH/9Whmo07Um1JaOU=;
-        b=UTqIzxYag6S7SCeqVIfG18g7J6fwU3ZahzD3Ul16dWwByd8eyQ8TxyS9JAuk5Ouwko
-         FJPl6YZ1coUFJG+G6CUq6P19q92fFN5O2fndlabjrwoMpBIELpU8vBBcT0KuU2myotJm
-         SL3khqEoyDGOj+72kv91JlddNj4Itz87hBFc5cm8uGBKrEcWpK2Q25xmjeqqVAQrVBsy
-         3gy9yViJxrgAqRloqgcm60WE5lZM/XB+9/hsFTsSuKEgZTexBwNt75V1vW98xxqGon9C
-         0cFVFwlz2DMrTWB8aC53WVt6BWWSZTWjsqyE6rsH4H07lNb/Srb0vU88OeIllyLaT15H
-         ay8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWiypMquClEqTrS/x1KJlyF18rljvAlfxD48fIyCk3qkB31TXLt638/to3H5HOu9MyXMOqASdVeVhg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbWOaE4CJwxhjL0xi/JKzioepw6v2VDIR1Utc2HOI7itG8oV3G
-	sx98G2zhUw2N3f2ONY1Hhb/b4cj7pvatNONc704WWDXMEkNZ3pNjnCQPhTB8Gk8=
-X-Gm-Gg: ASbGncuDvFsZu2VqSTOLlbIQX18erXHG/PKqSFrsK6ZXX9K4hhtQksqHqDXHSCttk8F
-	7D/PNLx9VZq3UyJ/FMS76rkbcmrYsc8RpqMP6TPei5GGtHSP0u+Ca83FZVgDgOhApvQFYLo8FSo
-	malffkQYjZrp+Vi6aytTweo9TmRF6AbEMPKyjj+xTBrryHyfWkdKIvJSv2CVw/HB0SqXTMEoWkx
-	gHR1iq0JcOQdHArQhfFnm72V5cIQUW3LFkoR1gCnMysy6kU1t0lhwGEOvvWmx5kZHbgV8Xe
-X-Google-Smtp-Source: AGHT+IFgkYrJOCTXgJymqCv1qh1ladO5Vd6MkMz8g2qcOcczFLlXadnGD88iWWbyvyZwZM17zNXKOA==
-X-Received: by 2002:a05:600c:4e41:b0:436:1902:23b5 with SMTP id 5b1f17b1804b1-43668b5e060mr158353075e9.4.1735840680579;
-        Thu, 02 Jan 2025 09:58:00 -0800 (PST)
-Received: from [172.16.0.204] ([79.164.49.199])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43661289995sm456989895e9.36.2025.01.02.09.57.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jan 2025 09:58:00 -0800 (PST)
-Message-ID: <a017543d-a27e-466e-bf51-9eb7e70ab215@linaro.org>
-Date: Thu, 2 Jan 2025 19:57:56 +0200
+        d=1e100.net; s=20230601; t=1735841927; x=1736446727;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OIztyH9Dr24aPiHFCVLKhP46DvR/fBzHNn044g4DYKs=;
+        b=sVmV/HEfOeazW/N6i1kayb3d+nddBGUzF/L+JltZNTn4ho8pzQtkUN1wJ3GHsJVrOn
+         kP2ZBBH18Qznu8N6fh1l9y2N2MzV886Yo3iy3W6CK96Dwg2hf+vwfWIagZ0X86u05Xmg
+         RYbYh7eS6ClkSmxJovS7N+2YcOgj3hnarPHBpa+Wjr1wc+TOKMIYurVx+U111qflP3dF
+         /FL8+CyDf+F3JKRruCC4M83k3amqeCjZfibpi7keOid0fwQ3kfSSKni56e5iYfGLZiAb
+         U9bUyDhRA9Est3lYWcPJ6EjKyX6J/6EKPykOlXKLjRVhXHIu6fWlmdSgiOSddyo4R/uu
+         IQFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaW3bM+6K26gJ3YfDZ7ONBQiw372M0Yn2J2t0/wdX7AcgqR0gRMvHkpgxX/XokFLfx0MlFNjFStTUk8X+l@vger.kernel.org, AJvYcCVfv2zR+BdG7MFbLOxyNKudQe9vrIKRtpjo9O8AMzrovQaOs+nybruDW+YclhJgCPCNnj+xLn3/OB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXywQSPbjleVS6csYUi0+gUsAYNHo278Ec08XGMW5e5jW+a2an
+	3afDx0Tip4UBDLqjSsB7adloy92lKj+C1IzLIthXYtwcnGg/ge2t
+X-Gm-Gg: ASbGncvaZ1Zpum697ZW4temXZSgRy1Hkvb1vdeqox60keYC019mkgyy/VSeyyeVnWHq
+	jbugRwD2HEkm6mlrwV5btLIoTz983/oSxfWlAXGt9NPeACoO0UHJ2s1lRKy3QG7gwIo2/+Hcd0Q
+	XEVbF98sUPHdArHSkLzAtEjx2iUu2pogKkBl8Kq0BvxSzVNUkYR5cK4QCdmIh/TUzHEKOH55/+n
+	+9px7elRrS3nBFFZIG4Jad/4DgRzWk/TMZUa9tdVpJFn2WXLD+We/Lkmbby+peIFBKs0pBHTacG
+	JTYGev+fpg==
+X-Google-Smtp-Source: AGHT+IEqp7Sx+3H6YWmkJsPUbJ5h0QqZlzSaUZ9aoBzKkRtY1pPety1O3v6fQonJAo64trYKHMHahQ==
+X-Received: by 2002:a5d:6da1:0:b0:386:4a0c:fe17 with SMTP id ffacd0b85a97d-38a2220039fmr38423366f8f.27.1735841927271;
+        Thu, 02 Jan 2025 10:18:47 -0800 (PST)
+Received: from prasmi.Home ([2a06:5906:61b:2d00:84e9:7adb:b646:c9c0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656af6cbbsm493291925e9.3.2025.01.02.10.18.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jan 2025 10:18:46 -0800 (PST)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 0/6] Fix MSTOP handling and add SYS/GIC clock entries for RZ/V2H(P) SoC
+Date: Thu,  2 Jan 2025 18:18:33 +0000
+Message-ID: <20250102181839.352599-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/6] arm64: dts: qcom: x1e80100: Add CCI definitions
-Content-Language: ru-RU
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org>
- <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-5-cb66d55d20cc@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-5-cb66d55d20cc@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Bryan.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 1/2/25 18:32, Bryan O'Donoghue wrote:
-> Add in 2 CCI busses. One bus has two CCI bus master pinouts:
-> cci_i2c_scl0 = gpio101
-> cci_i2c_sda0 = gpio102
-> cci_i2c_scl1 = gpio103
-> cci_i2c_sda1 = gpio104
-> 
-> A second bus has a single CCI bus master pinout:
-> cci_i2c_scl2 = gpio105
-> cci_i2c_sda2 = gpio106
+Hi All,
 
-I notice that the change assigns "aon_cci" function to gpio235 and gpio236
-pins, and they do serve as cci1_i2c1 sda/scl pins, thus here is the second
-CCI bus master.
+This patch series fixes MSTOP handling in the RZ/V2H CPG family driver
+and add support for clock and reset entries for GIC and SYS, along with
+some cleanup.
 
-So, I assume the commit message is not correct...
+v2->v3
+- Included RB tag from Geert
+- Dropped unnecessary parentheses
+- Fixed review comments from Geert for patch 4/6
 
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 150 +++++++++++++++++++++++++++++++++
->   1 file changed, 150 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 5c7b0c048d41a4ba3d74bbf77216ad09b652ed30..97ebf5596dfc3caa920ef85722ca8afd49cd3c24 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -4648,6 +4648,84 @@ usb_1_ss1_dwc3_ss: endpoint {
->   			};
->   		};
->   
-> +		cci0: cci@ac15000 {
-> +			compatible = "qcom,x1e80100-cci", "qcom,msm8996-cci";
-> +			reg = <0 0x0ac15000 0 0x1000>;
-> +
-> +			interrupts = <GIC_SPI 460 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			clocks = <&camcc CAM_CC_CAMNOC_AXI_RT_CLK>,
-> +				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-> +				 <&camcc CAM_CC_CCI_0_CLK>;
-> +			clock-names = "camnoc_axi",
-> +				      "cpas_ahb",
-> +				      "cci";
-> +
-> +			power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
-> +
-> +			pinctrl-0 = <&cci0_default>;
-> +			pinctrl-1 = <&cci0_sleep>;
-> +			pinctrl-names = "default", "sleep";
-> +
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			status = "disabled";
-> +
-> +			cci0_i2c0: i2c-bus@0 {
-> +				reg = <0>;
-> +				clock-frequency = <1000000>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +			};
-> +
-> +			cci0_i2c1: i2c-bus@1 {
-> +				reg = <1>;
-> +				clock-frequency = <1000000>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +			};
-> +		};
-> +
-> +		cci1: cci@ac16000 {
-> +			compatible = "qcom,x1e80100-cci", "qcom,msm8996-cci";
-> +			reg = <0 0x0ac16000 0 0x1000>;
-> +
-> +			interrupts = <GIC_SPI 271 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			clocks = <&camcc CAM_CC_CAMNOC_AXI_RT_CLK>,
-> +				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-> +				 <&camcc CAM_CC_CCI_1_CLK>;
-> +			clock-names = "camnoc_axi",
-> +				      "cpas_ahb",
-> +				      "cci";
-> +
-> +			power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
-> +
-> +			pinctrl-0 = <&cci1_default>;
-> +			pinctrl-1 = <&cci1_sleep>;
-> +			pinctrl-names = "default", "sleep";
-> +
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			status = "disabled";
-> +
-> +			cci1_i2c0: i2c-bus@0 {
-> +				reg = <0>;
-> +				clock-frequency = <1000000>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +			};
-> +
-> +			cci1_i2c1: i2c-bus@1 {
-> +				reg = <1>;
-> +				clock-frequency = <1000000>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +			};
-> +		};
-> +
->   		camcc: clock-controller@ade0000 {
->   			compatible = "qcom,x1e80100-camcc";
->   			reg = <0 0x0ade0000 0 0x20000>;
-> @@ -5271,6 +5349,78 @@ tlmm: pinctrl@f100000 {
->   			gpio-ranges = <&tlmm 0 0 239>;
->   			wakeup-parent = <&pdc>;
->   
-> +			cci0_default: cci0-default-state {
-> +				cci0_i2c0_default: cci0-i2c0-default-pins {
-> +					/* cci_i2c_sda0, cci_i2c_scl0 */
-> +					pins = "gpio101", "gpio102";
-> +					function = "cci_i2c";
-> +					drive-strength = <2>;
-> +					bias-pull-up;
-> +				};
-> +
-> +				cci0_i2c1_default: cci0-i2c1-default-pins {
-> +					/* cci_i2c_sda1, cci_i2c_scl1 */
-> +					pins = "gpio103", "gpio104";
-> +					function = "cci_i2c";
-> +					drive-strength = <2>;
-> +					bias-pull-up;
-> +				};
-> +			};
-> +
-> +			cci0_sleep: cci0-sleep-state {
-> +				cci0_i2c0_sleep: cci0-i2c0-sleep-pins {
-> +					/* cci_i2c_sda0, cci_i2c_scl0 */
-> +					pins = "gpio101", "gpio102";
-> +					function = "cci_i2c";
-> +					drive-strength = <2>;
-> +					bias-pull-down;
-> +				};
-> +
-> +				cci0_i2c1_sleep: cci0-i2c1-sleep-pins {
-> +					/* cci_i2c_sda1, cci_i2c_scl1 */
-> +					pins = "gpio103", "gpio104";
-> +					function = "cci_i2c";
-> +					drive-strength = <2>;
-> +					bias-pull-down;
-> +				};
-> +			};
-> +
-> +			cci1_default: cci1-default-state {
-> +				cci1_i2c0_default: cci1-i2c0-default-pins {
-> +					/* cci_i2c_sda2, cci_i2c_scl2 */
-> +					pins = "gpio105","gpio106";
-> +					function = "cci_i2c";
-> +					drive-strength = <2>;
-> +					bias-pull-up;
-> +				};
-> +
-> +				cci1_i2c1_default: cci1-i2c1-default-pins {
-> +					/* aon_cci_i2c_sda3, aon_cci_i2c_scl3 */
-> +					pins = "gpio235","gpio236";
-> +					function = "aon_cci";
-> +					drive-strength = <2>;
-> +					bias-pull-up;
-> +				};
-> +			};
-> +
-> +			cci1_sleep: cci1-sleep-state {
-> +				cci1_i2c0_sleep: cci1-i2c0-sleep-pins {
-> +					/* cci_i2c_sda2, cci_i2c_scl2 */
-> +					pins = "gpio105","gpio106";
-> +					function = "cci_i2c";
-> +					drive-strength = <2>;
-> +					bias-pull-down;
-> +				};
-> +
-> +				cci1_i2c1_sleep: cci1-i2c1-sleep-pins {
-> +					/* aon_cci_i2c_sda3, aon_cci_i2c_scl3 */
-> +					pins = "gpio235","gpio236";
-> +					function = "aon_cci";
-> +					drive-strength = <2>;
-> +					bias-pull-down;
-> +				};
-> +			};
-> +
->   			qup_i2c0_data_clk: qup-i2c0-data-clk-state {
->   				/* SDA, SCL */
->   				pins = "gpio0", "gpio1";
-> 
+v1->v2
+- Updated commit description in patch 1/6
+- Updated fixes tag commit header in patch 1/6
+- Introduced new patch to support mstop configuration per-bit
+  instead of group based
 
---
-Best wishes,
-Vladimir
+Cheers,
+Prabhakar
+
+Lad Prabhakar (6):
+  clk: renesas: rzv2h: Fix use-after-free in MSTOP refcount handling
+  clk: renesas: rzv2h: Relocate MSTOP-related macros to the family
+    driver
+  clk: renesas: rzv2h: Simplify BUS_MSTOP macros and field extraction
+  clk: renesas: rzv2h: Switch MSTOP configuration to per-bit basis
+  clk: renesas: r9a09g057: Add reset entry for SYS
+  clk: renesas: r9a09g057: Add clock and reset entries for GIC
+
+ drivers/clk/renesas/r9a09g047-cpg.c |   2 +
+ drivers/clk/renesas/r9a09g057-cpg.c |   7 ++
+ drivers/clk/renesas/rzv2h-cpg.c     | 185 +++++++++++++++-------------
+ drivers/clk/renesas/rzv2h-cpg.h     |  13 +-
+ 4 files changed, 116 insertions(+), 91 deletions(-)
+
+-- 
+2.43.0
+
