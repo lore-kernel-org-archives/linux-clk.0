@@ -1,110 +1,171 @@
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40411B0431;
-	Thu,  2 Jan 2025 13:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109657DA95
+	for <linux-clk@vger.kernel.org>; Thu,  2 Jan 2025 16:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735825729; cv=none; b=MwN5AuoOsdWlJKHkS8h3ON/xORn52pEGKNt3T3adQeqGDuDfWfGS7oCt6ANabGSdBtFU9VWVXrdYE4NbTbLGJHfACZfKXzlaXjH815d3kcprXFB/7NqgN187xse1PYe7k7JNXA0iP9bWB0mpbQmPsqWm0rIecayd/L361XhcSkU=
+	t=1735835652; cv=none; b=UTMWMv6hd7DZ+pQdi3OoQCVal3Npq3TVYW+oFFf5MJVzGpyy35liwZKK4s0917cAau6xNLzK8Y65mowyvuTxuuqSQvr6/RFPaQ8GI5sYrgWF3RbU0eiEzOdqj1TtQsP7P2oNuU50bttrhauaYQ6y+o8es6HfnT80PDQYDEqyiTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735825729; c=relaxed/simple;
-	bh=YtSzit6LoCB7tcSX2rplRffugEkLd1fkOc5/zoIy6sM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L4qMIpWRo8mjParXZAWZlZO5DjPnnrB7FTTe/Le5uGjoRiiLG+6VFjSgm0Uj5BgUBIMnkUhwaKOyPZW7kcWKgBqmDjJeCAN+f2iyIUTJFo2UFbs061eJcZylVpiP6ZBArsXC3IA9J5v0iMlb3Hl98WWNcnT8/PuDVJnIle+Xq24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=elAiaQiB; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+	s=arc-20240116; t=1735835652; c=relaxed/simple;
+	bh=wHTBdBmiu42htNicZa0OxfE7W0v/WQ//2woGL/Qi/lA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cOBbvuejwy8glv+TyQ5+UAlQlIyrXkKSvHmPDr93H4Siowh/hWXNfSWRgZ2F72cmn+kaPKwa3cWs/kVq0SkeQPdmB07UdtFQd3PF/epKVjC3hwyLCahanUAQaNtAC8mbUrCJdO4OLsCSmm9vlq55QSFWKWoj+0+PdMfu9pmTv2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L5QZGzPj; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="elAiaQiB"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ED0DA10408F8C;
-	Thu,  2 Jan 2025 14:48:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1735825724;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=15t9ZhyD2EL60IMfJo8zc3aw4cpOSTR9eeiviG1C6FM=;
-	b=elAiaQiBbNVs1rHp3/n7UySU9eOa3ejxvBMQi9aK5SOranx5nJwBM00HYZjkihIXBpt9LS
-	wpWHaG6x/8ZS7nB+h17UOGZE72i3QtZbPOK89WBQAs/55hEnx2b2/90jM0SKs2o9xX3s+3
-	fE3epddAp1qHUobmLdZK8oBC018joYaT/RhwwkTlFd7lr2Jf8S2LObB3vqqLEnStD3do22
-	bcoug9PjG1X1MIRIORPskenKAhjd1JNDZzkajNknQtMxOPLR75vb0ZvqjcJJMwR4+pUQU1
-	/NenP4oI3pe7UVgB8cKxsS4D5vx0UIjQOMC4y6MBhV/1XcR/z/nNsj1KwQd8Lw==
-Message-ID: <72d4c42a-7ebf-484f-839b-631d61ac950f@denx.de>
-Date: Thu, 2 Jan 2025 14:34:29 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L5QZGzPj"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4361fe642ddso121750495e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2025 08:34:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1735835648; x=1736440448; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/iPfVF3oCxMg1L1jShb3koLb6DQG0P/sNBtbIVIH9sg=;
+        b=L5QZGzPjy7JWfS2IeiXiUX6SuWW2vNq3OP5gSZW9P4fAyDkyGR14MvPNvSA3efObVw
+         z3U7mlHO9xauUxfaw9aw32gmrxo//ec1hO+qxtHCoCTNjqPgnzYV4drjNHafBYEAU4gX
+         KPlMlQ/24zdgQ9NTjInQJ3K4qtwcfVn7osh7FwO9J1Pxyuruh+ljZok76Bx+hJpNKkSC
+         Ca+9ThbyJ8sGWuCeiCQSlOP/oWfV8hmiypOgbPhTdq3Nko8aekJC6dQ8OCQthKGVE2qj
+         i+V+YDCrkT5DiUxfpX+CaPhlcuvKApwG/9Xg0yGryMxW5IznXBduBHxDacDilK32JBvm
+         Dcdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735835648; x=1736440448;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/iPfVF3oCxMg1L1jShb3koLb6DQG0P/sNBtbIVIH9sg=;
+        b=NNib2/ASegvIAZp0aOcDdJvbb3T1hO6BdrKo3a/b9s/MX803u/cnmmcGXh+dqLuZcW
+         CHLYy7Unx5QP4SAUXSQQkej9xJinQnlLlRlI6NIA9t684HcFVOeJs3h/KEKWLUpXTbsi
+         USqURVjaOjPhAs8Zy4QnrkIIJLSpGXT6ihaL5cbdMb+mWDRjT6wg3SrxOnouhqPkrQWc
+         zbG/EYYNHtHFmh0cJBO8h3KhMO2vXdz/DT++6JJKeGlxFfy7mG9vHrPzb03igZX5JFmA
+         EB+yDJGqLNx8+xPcs65YqEVIjOj1lPmtIJfGvZv/pjdfLGaxYAhdv/FYs5C/YTwbuZO+
+         Uuuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwtc972JAK/WYsFKmN8xbhzvSLwt1TwWS7fvo11LUZGRRcg0VpUDqJusSSMouzzUKH/wRaV5dheco=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBEe7k0hhZmFQKLS2FfQRLHFhu99yB8sFCtgiwQkJyiKoxxe5k
+	9vyUZtEr2F38k99PFeBebKijD+rtLIf1xWN06XDWmkW9a2lVL+H7Ls3TJQ2YSwE=
+X-Gm-Gg: ASbGncuxZA2r1E0IEHi5N63Pt/hMH6Q78G+r03vkRA3cAa3Vx3wD//TuhOvg16qjnQx
+	6TRwlqUzlSoamUByjEQh2Hh/fCn1kSPBNBwv1D8tw2Vf8UsQK3ndBvm1CSyoRyoVjXjtPvYf+FZ
+	IkguXliGC5dSX82Wrih2sMM14c0JR12MaAKV2tRBgG+JDit0Y6yuPAn11CdnALF/ylCNKHuJxWQ
+	qdYkX4/t0wLt52A27KVAXMznvG8UEihbW9K7AxYDL25ZJZW0jC7F+dz0UUPhlLoww==
+X-Google-Smtp-Source: AGHT+IFY3T9wM6oTHZCvFUtFoVeaSUwJTlMZcbumnlzMQ8N2h0yJKFnw67TkGRF6GQ0TRXEGc4+jxQ==
+X-Received: by 2002:a05:600c:468f:b0:434:a30b:5455 with SMTP id 5b1f17b1804b1-43668b78728mr372555415e9.27.1735835648137;
+        Thu, 02 Jan 2025 08:34:08 -0800 (PST)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b3b295sm499265665e9.33.2025.01.02.08.34.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jan 2025 08:34:07 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v3 0/6] Add dt-bindings and dtsi changes for CAMSS on
+ x1e80100 silicon
+Date: Thu, 02 Jan 2025 16:32:05 +0000
+Message-Id: <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] clk: fsl-sai: Add MCLK generation support
-To: Michael Walle <michael@walle.cc>, linux-clk@vger.kernel.org
-Cc: Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Nicolin Chen <nicoleotsuka@gmail.com>, Rob Herring <robh@kernel.org>,
- Shengjiu Wang <shengjiu.wang@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
- Takashi Iwai <tiwai@suse.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
- devicetree@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20241226162234.40141-1-marex@denx.de>
- <20241226162234.40141-4-marex@denx.de> <D6OVE2W07NDX.2Q4AFF46TWCWJ@walle.cc>
- <36665ab9-16de-4f77-a55f-b7942dc0c1bf@denx.de>
- <D6RHZ8B051X5.3NA8EAPRI62XS@walle.cc>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <D6RHZ8B051X5.3NA8EAPRI62XS@walle.cc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-B4-Tracking: v=1; b=H4sIAIW/dmcC/52Nyw6CMBBFf8V07ZjO0Ae68j+Mi0ILNFEwLTYYw
+ r9b2BiXujw3uefMLLrgXWSn3cyCSz76oc9Q7Hes7kzfOvA2MyNOAhGPUAm4+f45Qe+mEUgAImA
+ JdoweJnQlR86hNvcYoSSjCl0oyzWxLHwE1/hpi12umTsfxyG8tnbCdf0rkxA4SMG1tFo2Sopzf
+ powHIbQsrWT6OMm0j+5Kbu5aqyVRltZVV/uZVne20ualkEBAAA=
+X-Change-ID: 20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-82a63736d072
+To: Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Jagadeesh Kona <quic_jkona@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-1b0d6
 
-On 1/2/25 10:58 AM, Michael Walle wrote:
-> Hi,
+v3:
+- Fixes ordering of headers in dtsi - Vlad
+- Changes camcc to always on - Vlad
+- Applies RB as indicated - Krzysztof, Konrad
+- Link to v2: https://lore.kernel.org/r/20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org
 
-Hi,
+v2:
 
->>> ..Which is the
->>> normal use case for this pin. This driver was created because the
->>> LS1028A doesn't have a MCLK pin, so we've "misused" the BCLK pin,
->>> with the restriction that only integer dividers are possible.
->>
->> I have a system that is wired a bit unfortunately, I need to source
->> codec clock, where the codec is the clock consumer and needs to be able
->> to control the clock (SGTL5000). SAI MCLK is the only way I can get them
->> out of the pin I need, hence this patch.
-> 
-> Which is also the default case, no?
+I've gone through each comment and implemented each suggestion since IMO
+they were all good/correct comments.
 
-Not quite, there is a difference.
+Detail:
 
-If SAI (audio driver) is used to control the MCLK enablement, then MCLK 
-clock is not always enabled, and it is not necessarily enabled when the 
-codec may need the clock to be enabled. There is also no way for the 
-codec node to specify phandle to clock provider in DT, because the SAI 
-(audio driver) is not clock provider.
+- Moves x1e80100 camcc to its own yaml - Krzysztof
+- csid_wrapper comes first because it is the most relevant
+  register set - configuring all CSID blocks subordinate to it - bod, Krzysztof
+- Fixes missing commit log - Krz
+- Updates to latest format established @ sc7280 - bod
+- Includes CSID lite which I forgot to add @ v1 - Konrad, bod
+- Replaces static ICC parameters with defines - Konrad
+- Drops newlines between x and x-name - Konrad
+- Drops redundant iommu extents - Konrad
+- Leaves CAMERA_AHB_CLK as-is - Kronrad, Dmitry
+  Link: https://lore.kernel.org/r/3f1a960f-062e-4c29-ae7d-126192f35a8b@oss.qualcomm.com
+- Interrupt EDGE_RISING - Vladimir
+- Implements suggested regulator names pending refactor to PHY API - Vladimir
+- Drop slow_ahb_src clock - Vladimir
 
-If SAI (clock driver) is used to control the MCLK enablement, then MCLK 
-clock is enabled when the codec needs the clock enabled, because the 
-codec is the clock consumer and the SAI (clock driver) is the clock 
-provider, and the codec driver can request the clock to be enabled when 
-needed. There is also the usual phandle to clock provider in DT, because 
-the SAI (clock driver) is clock provider.
+Link to v1:
+https://lore.kernel.org/r/20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org
 
->>> Also I'd expect that the imx
->>> SoCs already supports the MCLK for audio applications. Isn't that
->>> the case?
->>
->> That does not work if the MCLK has to be enabled/disabled by the MCLK
->> clock consumer .
-> 
-> Why's that?
-> 
-> Don't get me wrong. I don't have anything against this patch, I'm
-> just confused, why that isn't already working with the current MCLK
-> driver as this seems to be the usual requirements.
-Which current MCLK driver, the SAI in audio driver role ?
+Working tree:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/arm-laptop/wip/x1e80100-6.13-rc3
 
-Does the paragraph in the middle of this email possibly answer this 
-question ?
+v1:
+
+This series adds dt-bindings and dtsi for CAMSS on x1e80100.
+
+The primary difference between x1e80100 and other platforms is a new VFE
+and CSID pair at version 680.
+
+Some minor driver churn will be required to support outside of the new VFE
+and CSID blocks but nothing too major.
+
+The CAMCC in this silicon requires two, not one power-domain requiring
+either this fix I've proposed here or something similar:
+
+https://lore.kernel.org/linux-arm-msm/bad60452-41b3-42fb-acba-5b7226226d2d@linaro.org/T/#t
+
+That doesn't gate adoption of the binding description though.
+
+A working tree in progress can be found here:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.12-rc7+camss?ref_type=heads
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (6):
+      dt-bindings: i2c: qcom-cci: Document x1e80100 compatible
+      dt-bindings: clock: move qcom,x1e80100-camcc to its own file
+      dt-bindings: media: Add qcom,x1e80100-camss
+      arm64: dts: qcom: x1e80100: Add CAMCC block definition
+      arm64: dts: qcom: x1e80100: Add CCI definitions
+      arm64: dts: qcom: x1e80100: Add CAMSS block definition
+
+ .../bindings/clock/qcom,sm8450-camcc.yaml          |   2 -
+ .../bindings/clock/qcom,x1e80100-camcc.yaml        |  74 +++++
+ .../devicetree/bindings/i2c/qcom,i2c-cci.yaml      |   2 +
+ .../bindings/media/qcom,x1e80100-camss.yaml        | 367 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 351 ++++++++++++++++++++
+ 5 files changed, 794 insertions(+), 2 deletions(-)
+---
+base-commit: e25c8d66f6786300b680866c0e0139981273feba
+change-id: 20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-82a63736d072
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
