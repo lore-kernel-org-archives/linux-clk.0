@@ -1,175 +1,112 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A4B16C687;
-	Thu,  2 Jan 2025 09:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360D11990D3;
+	Thu,  2 Jan 2025 09:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735811941; cv=none; b=Ffve/cqsXljJQmQkxXz8rXNm2VLj7TjAIG1t7OAc86iCmp4/OnAIU7XjUFtZ6YaMehw2Yg2JecOGGupR8tQmBsDict0i16VSIevPf1o0KRb6amksoRkJaQXygp6Booqwfy8LOkwJxxAGa4l+PzxkrGxUg5aYCkS+jefueAuPlA0=
+	t=1735811952; cv=none; b=V9EF6LWR6cRpBuR9BF+Ar54fEOqiCBKnaNt9xFvIoxaReOO1DsN44IEUPH2S+temFtZpSw3hd4v/bdoBP8cqnqU4U5acW40w3wAkNjW7ooPRgfVWU+MLsqk2iRHFIIf44W1zfRZqilGCv78wn9FK+dxDFSYCaRWZ8demrKVw2Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735811941; c=relaxed/simple;
-	bh=f7aHM4DBWfV0TXPyQzINcTvKkEF4UiDfFvReL9gfbQc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EU1+HX40a8+45ebzL/nfcFtYRj7vEZPcZDKCHBY4+r2SSgwRqbj9rl0YW5amgbQJODvyLIB1yLoQt6bArEbpfzrRCyfYD/ZqQWIf4GBdDh7n/FtyjljlKTU15cT0a1kTwuTi43ZWQPg8EQk7vpOWY5jO1zpY9Rvi9IHqMD51KyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-51ba75ee2f3so2559806e0c.2;
-        Thu, 02 Jan 2025 01:58:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735811938; x=1736416738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OvCmEDFsLCS686ApolvvcDeZQP817WRSTP0JOnjQ3eQ=;
-        b=wIrY+SE4Bwvsb8+e6iWm4IudFiHPyFHImSnLVpsEQIk6v28DTRI/xidvB1TLx8Wq+B
-         alV1ZdpidOmYNKGjPlWdsQ5yiykaGws/UI2X6WRGS//ifr2E8XrboR2xrMCQJP/XcwJe
-         2OFN28NlWuZveUcaRn0CAOEvj/tswHmWZrMgeF7kubsDfLmpcbrR3l0SK4WEMm7dVX4O
-         pGFa0f3VKzggouj+rMm02MdNGeYv0kf6kLsJgYzPRnISOLZrJ4jB26sEboejeN8DiXke
-         apaa57AJPVpXWcM4RWFR+1GskMSgkCzH6bNdiBNcFoetTbev/tg8alOMKfYB1X9an1ia
-         VVhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7FBiSYzOg3du11/Jh2bIMtCW71fI41HG0cT7ixOBFgp7b2gQucM8VHZk6r2q/j3YqljdE+lUWJ+o=@vger.kernel.org, AJvYcCWENVZAAkLS7K+G0SyMitbIwPB+r1LGP6ZMse6PS0hxSBRHIdutKTRkYtcrDlyI6AVn7vgVGg1XHllQEFNP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+rrw387L8/+qF5sO9LhJjS/kuJWUw5vWKY6mT0ZfG9J6c7Egq
-	G82mDmSuHxNJ22JKEh68HKTMEOIgpa9X1UUgu03Op7qg0gG73JCOqYKJkWgh
-X-Gm-Gg: ASbGncv4zuG3iqvwJD2Hg758JcT+5ykzsgJyRRFkpeCxkZSMckcP5YhCRGcJ511BnOi
-	Tkfms5ULeCRQnk3Fa7u4dXm2oxbmHQ1w5GhSDXv+9SmSGwH/VG6+6j707kxpSVv8brPzRpuE5N7
-	CGZs4WdUXomEotGrVqInD3EesYhADARh9cPVphP6b8NByYgsKcx/0nBtH1hw9/8Ju/ky1W34Ua0
-	x4iJbjuPZbHJWz/LyvhkW5aG5T/AZFP1/cuKyYc0knguT7f5KHEIzE+b5+FQOUc8P5g4DGO++cD
-	8ORUk9DOl2rJChJAAg4=
-X-Google-Smtp-Source: AGHT+IE2KtwRObF/CDEhO+IiEcJdZ0lFbQX9awzVJXfBn7q28q440LP4iwFR/KSFqxz4W4Qhm52n4Q==
-X-Received: by 2002:a05:6122:8c8:b0:514:eeba:517 with SMTP id 71dfb90a1353d-51b75d6d218mr31430737e0c.10.1735811937692;
-        Thu, 02 Jan 2025 01:58:57 -0800 (PST)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51b68bbc759sm2977540e0c.21.2025.01.02.01.58.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jan 2025 01:58:57 -0800 (PST)
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4b10dd44c8bso3132961137.3;
-        Thu, 02 Jan 2025 01:58:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVAruibyetQGiLEgWOEOgL3DMWa9SXUTHu/rozgG0AGXn6thyjYOz9fRqm5FaUnd+wg9kwbu1PAy3g=@vger.kernel.org, AJvYcCVhkdsiv3CK8DcFkOShgt1vtYL3ZQc4+HrrSJjZVL86MGb+eGIpszGa4WwpYRC1uDlVj13EpKnbdeS/z77r@vger.kernel.org
-X-Received: by 2002:a05:6102:809a:b0:4af:f1fb:1c36 with SMTP id
- ada2fe7eead31-4b2cc358579mr37457483137.8.1735811937194; Thu, 02 Jan 2025
- 01:58:57 -0800 (PST)
+	s=arc-20240116; t=1735811952; c=relaxed/simple;
+	bh=IivYDPdicfaKRVo7J3ZVJwfULyTbH2RX6seTNNOcqrM=;
+	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
+	 In-Reply-To; b=mn4isgC3FdQhvF2J7o40/5HxucARo94Z/VLe7TkHQv8FqzmBTOW0ApOXn6k+jHi1SGNZ6GKdFUr7Tk037W43/NC6I/qQ7e+pVAzzedZcHdxcPt+c2MmxRE5UP9a/KKrqLhRvrhBWNJ3EonqB1alDUGh1aKJOZBirEgYNVPuEEK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=c9lHpwrL; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="c9lHpwrL"
+Received: from localhost (unknown [213.135.10.150])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id 712973E6;
+	Thu,  2 Jan 2025 10:59:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
+	t=1735811941;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
+	 references:references; bh=IivYDPdicfaKRVo7J3ZVJwfULyTbH2RX6seTNNOcqrM=;
+	b=c9lHpwrLGUSMvMi5tJpjhp0zB0aQvZp1Vrkjdxu1yi9FeA+j1OLqPipUg1E3l4i6E1uW6P
+	uD/w/i8eD8pTJ0EamlyLplk0G9Lbv3Fzw25hZlMeCMKMscli/CA1dznkIIg8rlxn6LAgUA
+	f1R36jLloAs/jejZHYwz12EOvgUrURjfK1AcZR9zOEA6fQDpfMKI55UcV2qfkIuglbMq/G
+	yLtuoHLrd3qZMrW6GpwrbbOZ1Kn8JtR9x2q0QcDnFJz5hyBpFWceWEyS75zntfhtBpQaZT
+	9pMGmhddqRmzUr6vywl2UH5lyaMrQ1y4iA430YRfskOEP5kyJaQ7Pib2M7tn6g==
+Content-Type: multipart/signed;
+ boundary=f82733b877a73b53aabc89efe3ab17e9dfaae230434847c070ab5a5a9016;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Thu, 02 Jan 2025 10:58:59 +0100
+Message-Id: <D6RHZ8B051X5.3NA8EAPRI62XS@walle.cc>
+To: "Marek Vasut" <marex@denx.de>, <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 4/4] clk: fsl-sai: Add MCLK generation support
+Cc: "Conor Dooley" <conor+dt@kernel.org>, "Fabio Estevam"
+ <festevam@gmail.com>, "Jaroslav Kysela" <perex@perex.cz>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
+ "Mark Brown" <broonie@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Nicolin Chen" <nicoleotsuka@gmail.com>, "Rob
+ Herring" <robh@kernel.org>, "Shengjiu Wang" <shengjiu.wang@gmail.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Takashi Iwai" <tiwai@suse.com>, "Xiubo
+ Li" <Xiubo.Lee@gmail.com>, <devicetree@vger.kernel.org>,
+ <linux-sound@vger.kernel.org>
+From: "Michael Walle" <michael@walle.cc>
+X-Mailer: aerc 0.16.0
+References: <20241226162234.40141-1-marex@denx.de>
+ <20241226162234.40141-4-marex@denx.de>
+ <D6OVE2W07NDX.2Q4AFF46TWCWJ@walle.cc>
+ <36665ab9-16de-4f77-a55f-b7942dc0c1bf@denx.de>
+In-Reply-To: <36665ab9-16de-4f77-a55f-b7942dc0c1bf@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241226122023.3439559-1-rohit.visavalia@amd.com>
- <20241226122023.3439559-2-rohit.visavalia@amd.com> <5227cdd506bcb0239657216bd36de12f.sboyd@kernel.org>
- <CH2PR12MB48751A8B003E9E30A9A4CDE8E50A2@CH2PR12MB4875.namprd12.prod.outlook.com>
- <CAMuHMdX57SvuVsRhisF1RDtP+TgQsa2i+hBg334yQUxTMsqDPw@mail.gmail.com> <CH2PR12MB487534FB01A540F33ECF96E4E5142@CH2PR12MB4875.namprd12.prod.outlook.com>
-In-Reply-To: <CH2PR12MB487534FB01A540F33ECF96E4E5142@CH2PR12MB4875.namprd12.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 2 Jan 2025 10:58:45 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWZn0FLGXdGhQ-YYksewm8sJK8J5N=_-DQnE1a_xz41yw@mail.gmail.com>
-Message-ID: <CAMuHMdWZn0FLGXdGhQ-YYksewm8sJK8J5N=_-DQnE1a_xz41yw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: xilinx: vcu: Update vcu init/reset sequence
-To: "Visavalia, Rohit" <rohit.visavalia@amd.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, "Simek, Michal" <michal.simek@amd.com>, 
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "Sagar, Vishal" <vishal.sagar@amd.com>, 
-	"javier.carrasco.cruz@gmail.com" <javier.carrasco.cruz@gmail.com>, 
-	"geert+renesas@glider.be" <geert+renesas@glider.be>, 
-	"u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+
+--f82733b877a73b53aabc89efe3ab17e9dfaae230434847c070ab5a5a9016
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Hi Rohit,
+Hi,
 
-On Thu, Jan 2, 2025 at 8:01=E2=80=AFAM Visavalia, Rohit <rohit.visavalia@am=
-d.com> wrote:
-> >From: Geert Uytterhoeven <geert@linux-m68k.org>
-> >On Tue, Dec 31, 2024 at 3:16=E2=80=AFPM Visavalia, Rohit <rohit.visavali=
-a@amd.com>
-> >wrote:
-> >> >Subject: Re: [PATCH 1/3] clk: xilinx: vcu: Update vcu init/reset
-> >> >sequence Quoting Rohit Visavalia (2024-12-26 04:20:21)
-> >> >> diff --git a/drivers/clk/xilinx/xlnx_vcu.c
-> >> >> b/drivers/clk/xilinx/xlnx_vcu.c index 81501b48412e..f294a2398cb4
-> >> >> 100644
-> >> >> --- a/drivers/clk/xilinx/xlnx_vcu.c
-> >> >> +++ b/drivers/clk/xilinx/xlnx_vcu.c
-> >> >> @@ -676,6 +679,24 @@ static int xvcu_probe(struct platform_device *=
-pdev)
-> >> >>          * Bit 0 : Gasket isolation
-> >> >>          * Bit 1 : put VCU out of reset
-> >> >>          */
-> >> >> +       xvcu->reset_gpio =3D devm_gpiod_get_optional(&pdev->dev, "r=
-eset",
-> >> >> +                                                  GPIOD_OUT_LOW);
-> >> >> +       if (IS_ERR(xvcu->reset_gpio)) {
-> >> >> +               ret =3D PTR_ERR(xvcu->reset_gpio);
-> >> >> +               dev_err(&pdev->dev, "failed to get reset gpio for
-> >> >> + vcu.\n");
-> >> >
-> >> >Use dev_err_probe() and friends.
-> >> I will take care in v2 patch series.
-> >>
-> >> >
-> >> >> +               goto error_get_gpio;
-> >> >> +       }
-> >> >> +
-> >> >> +       if (xvcu->reset_gpio) {
-> >> >> +               gpiod_set_value(xvcu->reset_gpio, 0);
-> >> >> +               /* min 2 clock cycle of vcu pll_ref, slowest freq i=
-s 33.33KHz */
-> >> >> +               usleep_range(60, 120);
-> >> >> +               gpiod_set_value(xvcu->reset_gpio, 1);
-> >> >> +               usleep_range(60, 120);
-> >> >> +       } else {
-> >> >> +               dev_warn(&pdev->dev, "No reset gpio info from dts
-> >> >> + for vcu. This may lead to incorrect functionality if VCU
-> >> >> + isolation is removed post initialization.\n");
-> >> >
-> >> >Is it 'vcu' or 'VCU'? Pick one please. Also, this is going to be an
-> >> >unfixable warning message if the reset isn't there. Why have this war=
-ning at all?
-> >>
-> >> I will use 'VCU' in next(v2) patch series.
-> >>
-> >> Added warning just to inform user that if design has the reset gpio an=
-d it is
-> >
-> >missing in dt node then it could lead to issue.
-> >
-> >If it could lead to issues, shouldn't the reset GPIO be required instead=
- of optional?
+> > ..Which is the
+> > normal use case for this pin. This driver was created because the
+> > LS1028A doesn't have a MCLK pin, so we've "misused" the BCLK pin,
+> > with the restriction that only integer dividers are possible.
 >
-> It is marked as optional as few of the Zynqmp designs are having vcu_rese=
-t(reset pin of VCU IP) is driven by proc_sys_reset. proc_sys_reset is anoth=
-er PL IP driven by the PS pl_reset.  So here the VCU reset is not driven by=
- axi_gpio or PS gpio so there will be no gpio entry.
+> I have a system that is wired a bit unfortunately, I need to source=20
+> codec clock, where the codec is the clock consumer and needs to be able=
+=20
+> to control the clock (SGTL5000). SAI MCLK is the only way I can get them=
+=20
+> out of the pin I need, hence this patch.
 
-OK, then optional is fine.
+Which is also the default case, no?
 
-> >Regardless, the reset GPIO should be documented in the DT bindings.
+> > Also I'd expect that the imx
+> > SoCs already supports the MCLK for audio applications. Isn't that
+> > the case?
 >
-> Yes, I will be sending patch for the same.
->
-> >And perhaps marked required, so "make dtbs_check" will flag it when it's=
- missing?
-> I believe rephrasing the warning to "No reset gpio info found in dts for =
-VCU. This may result in incorrect functionality if VCU isolation is removed=
- after initialization in designs where the VCU reset is driven by gpio." wo=
-uld make it clearer. Let me know your thoughts.
+> That does not work if the MCLK has to be enabled/disabled by the MCLK=20
+> clock consumer .
 
-If the reset is optional on some systems and required on other systems,
-there should not be a warning, IMHO, unless the driver can detect by
-some other means when the reset is actually required.
+Why's that?
 
-Gr{oetje,eeting}s,
+Don't get me wrong. I don't have anything against this patch, I'm
+just confused, why that isn't already working with the current MCLK
+driver as this seems to be the usual requirements.
 
-                        Geert
+-michael
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+--f82733b877a73b53aabc89efe3ab17e9dfaae230434847c070ab5a5a9016
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZ3ZjYxEcbWljaGFlbEB3
+YWxsZS5jYwAKCRASJzzuPgIf+IJzAX0cVtRiMI9KcfO1uBCHahaFh/HBju/eiM9m
+9UkD3sdSoBW4Ym0Vv1tEqq7LtR90D0gBf0719K8fLM6/DKMC2U391dhtHS/F/VWw
+A0hG9LTODgliw1Z/nIATJDQru9ope4B5ow==
+=DErg
+-----END PGP SIGNATURE-----
+
+--f82733b877a73b53aabc89efe3ab17e9dfaae230434847c070ab5a5a9016--
