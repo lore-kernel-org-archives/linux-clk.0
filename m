@@ -1,108 +1,161 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C410A125D6
-	for <linux-clk@vger.kernel.org>; Thu,  2 Jan 2025 10:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DC2194096;
+	Thu,  2 Jan 2025 11:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735815142; cv=none; b=QregTafMlZd1lgq0t5SQlcb4dRucYweJ5ZjN6ZmoyMTf63l7SFk0pjdIQOtLyWp4GsYzko5VdZeYtbl/H22qYHDPcrFVEg+hf2pN0bdmC3TtvB56xm6mbJgrI70lSbY4lJXGTIZ+hoxGJhpXn+i1BlN01nlqOnuUjg5ZaVWzbsE=
+	t=1735816891; cv=none; b=XsJDb4ooWSOvMVRy5TxLoOTYGtzC8VPTboCy2EDYMrKh1p9ergdYm8hOF3OHYwxxOT5yNFkr8ikkLGCUSUZWSF0GLIEm+HDlUMX6u6wf6YU1ssh3kQJAbyBj2v50OyvZ30XEqeBAc/jDd/NJpClO1NaolGxNSM0pWPmUli6DDEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735815142; c=relaxed/simple;
-	bh=mMF/3PAWbT4cwYrfbRt7SNtYsxbQwYPfM12nGDJoqPQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EVPgrXJ4jhVo7BByNo9jAPI+LpxgjMuDJ67+gIDLl1wJJKT1VHlEbi6mVN4D5Y4Ca1MLkEAODTQXBHZKWE6PNcN2daSTnProMA7UvAK+fE+rpCAzLNqlz+VbyWFDMqgRjN8jJFYdVEUb1pchLXsAO+0LCz1d//mVzO/js8fJypA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=X1hbv+CW; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1735816891; c=relaxed/simple;
+	bh=W65URpuT66zpoom/bKkmJ99ASzFyUtgK5KkXVL/Tpws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OKce0fcsDna+lGqLHJBkhFe69XxxuknwAKN3TxNE+y+iYg9j7dAvP31sfSgsYo7JUbVxLCJTBfjmQmkBuM5zgxpZ5OQwCVPArdZk8lDcQYLevAWIYM3hexWxDoSruIUqJPOuBJ9CCHSYmaaqO9s9GchBdK8I5/JFwBqo67SPoJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyF0xLqA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="X1hbv+CW"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4361e89b6daso76448305e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2025 02:52:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1735815139; x=1736419939; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ze9LqpjCGSWa0yPDrI54f/7UaaRjSHcJ6CR6aCivtOE=;
-        b=X1hbv+CW1mIXR5inMbIRSMeXu/iV+kika7xeuUAOOc8Pkj93e35QOzK2BTqlo9rkB2
-         RzdHFjnLfrc+iu2Fnh95De/rfhyxa+S2od0M4ya4jmKc+3yOnguowXtB7ze/BfM7isYa
-         1Pea5NJgMQSJfZs/yE/VahCSiqq1qRkPGZmaoaaEM3go+p0yh9aamPbIQDfpHJ2VN6lx
-         3qeHQowwLBkOlN/2rmEVHPOtblNIoI3zN3Y0obd8TjBN5F8adYUPZoxLBJGjbzkOlXRH
-         5eHJ6o8lkPYKCuK2NXcoXSm1ajMVv2XlO8+FxA7Hhd7eZKr+jGxO6f1drnVJWpW9+RKu
-         73eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735815139; x=1736419939;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ze9LqpjCGSWa0yPDrI54f/7UaaRjSHcJ6CR6aCivtOE=;
-        b=WjTQvW4iA7PU3aliZq96xlT+SoEjvQiKAMiMkPqNZuNVsoMBgO0rE6B6Ti0NyCiImf
-         yv8ASQJVb0sgwhLbIWi43VX2IZyo5f67eLWdCZzrqs5rPrUgJmns2DemgGMYXHMrYLIj
-         yCSGOTnpZ6LRNdhRod8nTxtCTLFCYiii3xI94CPcCRZFkTBA1SoZmxzsV5TDzqbpTrNs
-         MfOjHhJEo7bWZHbemoo5DH2egQ3VqLb5+/iHVOXk2zKv8dqRcNff90Nah42Bo+8qi4Qp
-         /Uhz38hO16hOdTUpk3Uvf0GaxF8DywMYpDXkb7UcCI08pGKVjl9qRg2PmSxyIyEjzr/4
-         SnjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWofwk+SlwBeDVwPnt3OvT1yHMx7kxFBxwlJ9zXFQQqJyL/O8js5gTtW9MRZMD7NH3rF5O4JtjunZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWNlTUQAs3yZY4jsYTx7MLI8FmTNaErJJc38GXx9g7uRLhrMlK
-	AEISk4KgSGSEJi6LvRSa+wgHdxUBdpMifG3aMTz5o27C2v19UVWKow6txJWBxdU=
-X-Gm-Gg: ASbGncsPWc4f/XRZa31AglIWQdSH64GDvoDcge5RO2UpXkYjBaNGSRaEB1SgAdX9INe
-	V70GfuGIT4BdqL5QYULwGIgNZlfx86En8zUtxgMaXCBN3BocaQvSoJjUZlOA+sMTv5SJHLUoZlD
-	7l8AQ2wSi+8opoWS/1v0ajq3CA8TxdJLhxbS1nnPgIliTRbj1q2wCH05JlQvsyH7J70LOpMGJG8
-	Fckr+Tt8PKpDVEwp+1h6YYpc10G0qZ3d0fqYJqL4nrW1JAvQq38w8KVBPoT9LHLsQ==
-X-Google-Smtp-Source: AGHT+IEAXmh4Jm/fooPniPUd+cP6NsbK2SR6lviu3UydjCwVbdG5V5GA3GQCHI+v0JTIHRvlmZHUzQ==
-X-Received: by 2002:adf:ab0a:0:b0:38a:50fa:d582 with SMTP id ffacd0b85a97d-38a50faf3cemr11500112f8f.59.1735815139109;
-        Thu, 02 Jan 2025 02:52:19 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.102])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b3b295sm490098515e9.33.2025.01.02.02.52.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jan 2025 02:52:18 -0800 (PST)
-Message-ID: <70aab1bc-1427-44ed-b516-843429d0bdfa@tuxon.dev>
-Date: Thu, 2 Jan 2025 12:52:16 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyF0xLqA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D572C4CEDC;
+	Thu,  2 Jan 2025 11:21:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735816891;
+	bh=W65URpuT66zpoom/bKkmJ99ASzFyUtgK5KkXVL/Tpws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lyF0xLqAH9UBeqQHJKzMr9dUKJT9Yy+Rfxt9CgZ/VrhfDqUXJuM7O0Eegw6kJi2dQ
+	 132j5jGXlln0l+MZMGwwJh6OR1Z462jmAeXhCE3t2VQTJi0ug5ae3fgJ7zgnfx8qem
+	 tsQbMnEC+ZaJGbYm8LZcC/pg2Ab7+sWtt9p3XR8D9ZTySwXgPZHdJaivFpFiY9Rdp7
+	 pTP8fA8FqBQtbCs7NKlmV/6ZHIZuhXc9HtpoO18bZbPhXKfGySl5OnQaIsz7HOEyUQ
+	 WeXwdo0Sg5FV5pp7JOn67Vr5Sh/DpAhNw+pdJsfUz8ZQsCYfrbg6t0b1Af6pMlZ7mb
+	 2qIXSImj7uGxA==
+Date: Thu, 2 Jan 2025 12:21:28 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Ryder Lee <ryder.lee@mediatek.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-pci@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 1/6] PCI: mediatek-gen3: Add missing
+ reset_control_deassert() for mac_rst in mtk_pcie_en7581_power_up()
+Message-ID: <Z3Z2uOCUGX7uAaae@lore-desk>
+References: <20241130-pcie-en7581-fixes-v5-1-dbffe41566b3@kernel.org>
+ <20241230175754.GA3958277@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/13] ARM: dts: microchip: add sama7d65 SoC DT
-To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, mturquette@baylibre.com, sboyd@kernel.org,
- arnd@arndb.de
-Cc: dharma.b@microchip.com, mihai.sain@microchip.com,
- romain.sioen@microchip.com, varshini.rajendran@microchip.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
-References: <cover.1734723585.git.Ryan.Wanner@microchip.com>
- <3f63aebc4b31da1b631ce7e6d76aa0046deeda6a.1734723585.git.Ryan.Wanner@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <3f63aebc4b31da1b631ce7e6d76aa0046deeda6a.1734723585.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KseZ4mXYs1K8AxEo"
+Content-Disposition: inline
+In-Reply-To: <20241230175754.GA3958277@bhelgaas>
 
-Hi, Ryan,
 
-On 20.12.2024 23:07, Ryan.Wanner@microchip.com wrote:
-> +		pioa: pinctrl@e0014000 {
-> +			compatible = "microchip,sama7d65-pinctrl", "microchip,sama7g5-pinctrl";
+--KseZ4mXYs1K8AxEo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please also update the documentation with the fallback.
+> On Sat, Nov 30, 2024 at 12:20:10AM +0100, Lorenzo Bianconi wrote:
+> > Even if this is not a real issue since Airoha EN7581 SoC does not requi=
+re
+> > the mac reset line, add missing reset_control_deassert() for mac reset
+> > line in mtk_pcie_en7581_power_up() callback.
 
-> +			reg = <0xe0014000 0x800>;
-> +			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&pmc PMC_TYPE_PERIPHERAL 10>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <2>;
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +		};
-> +
+Hi Bjorn,
 
+since this patch is already in Krzysztof's controller/mediatek branch, do y=
+ou
+want to repost the full series or just incremental changes?
+
+>=20
+> s/mac/MAC/ in English text since "mac" is an acronym, not a real word
+
+ack, I will fix it.
+
+>=20
+> This doesn't really say why we need this patch.
+>=20
+> This adds both assert and deassert, so it doesn't really look like
+> adding a *missing* deassert.
+>=20
+> On EN7581, is mac_reset optional or always absent?
+
+AFAIK mac_reset is never used on EN7581. We added it since we were discussi=
+ng in
+[0] to move the reset asssert/deassert callbacks in the same routine (in the
+original codeabse we have reset_control_assert(pcie->mac_reset) in mtk_pcie=
+_setup()
+and reset_control_deassert(pcie->mac_reset) in mtk_pcie_power_up()).
+I think we can remove mac_reset support at all for EN7581.  What do you pre=
+fer?
+
+Regards,
+Lorenzo
+
+[0] https://lore.kernel.org/linux-pci/20241106233123.GA1580663@bhelgaas/
+
+>=20
+> If mac_reset is always absent for EN7581, why add this patch at all?
+> If it's optional, say so.
+>=20
+> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> > ---
+> >  drivers/pci/controller/pcie-mediatek-gen3.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >=20
+> > diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/=
+controller/pcie-mediatek-gen3.c
+> > index 64ef8ff71b0357b9bf9ad8484095b7aa60c22271..4d1c797a32c236faf79428e=
+b8a83708e9c4f21d8 100644
+> > --- a/drivers/pci/controller/pcie-mediatek-gen3.c
+> > +++ b/drivers/pci/controller/pcie-mediatek-gen3.c
+> > @@ -942,6 +942,9 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3=
+_pcie *pcie)
+> >  	 */
+> >  	mdelay(PCIE_EN7581_RESET_TIME_MS);
+> > =20
+> > +	/* MAC power on and enable transaction layer clocks */
+> > +	reset_control_deassert(pcie->mac_reset);
+> > +
+> >  	pm_runtime_enable(dev);
+> >  	pm_runtime_get_sync(dev);
+> > =20
+> > @@ -976,6 +979,7 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3=
+_pcie *pcie)
+> >  err_clk_prepare:
+> >  	pm_runtime_put_sync(dev);
+> >  	pm_runtime_disable(dev);
+> > +	reset_control_assert(pcie->mac_reset);
+> >  	reset_control_bulk_assert(pcie->soc->phy_resets.num_resets, pcie->phy=
+_resets);
+> >  err_phy_deassert:
+> >  	phy_power_off(pcie->phy);
+> >=20
+> > --=20
+> > 2.47.0
+> >=20
+
+--KseZ4mXYs1K8AxEo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZ3Z2uAAKCRA6cBh0uS2t
+rNLuAP9aIvgBoSTUsdbM74sz/9xj2EI/jesibuEXgdwRznaErwD+OH6Lbxg9oaqN
+0C1Pv2EwtriUpAMpokB0n1IJ9tcZhQw=
+=9erM
+-----END PGP SIGNATURE-----
+
+--KseZ4mXYs1K8AxEo--
