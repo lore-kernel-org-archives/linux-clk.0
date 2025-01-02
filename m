@@ -1,163 +1,145 @@
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2080.outbound.protection.outlook.com [40.107.101.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9BE187325;
-	Thu,  2 Jan 2025 17:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735837463; cv=fail; b=ism5J9UPNWc/V75xpvBQ+tVH5s0HTiOh/ydfWw76NgWxZQCufp0IBIvGT+aDGr61FCvQ+VSissqSshVt7rPvFlvsILYlDSiFL8SZaxzotUUXYMUoCL8rC1mNx+csYWNNbr7kH9jr2i+W8gGOd5gOZBKvhooGeq0E8euHhEeuNp8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735837463; c=relaxed/simple;
-	bh=+TyBsuiE1AILqRgIj34bwVmPOZxyLri9wW9hmy+wUxA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aXapGsEMIpjqOWV5La/Lb72jpZd5RMY8XDKeO1FmGYaSt49MLpKNCxfXSYkbdDEqhy+KHpabO1nvFmC8lD+WZJVnCpKHTDbEQZ6l93qhsa07TMC2/e3Tl6glNkbfu5SW+z4YRC1QtA29FlM1z/Q9Oehdbcb1p17XA2XBibcqmE4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=F8yyiwLN; arc=fail smtp.client-ip=40.107.101.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609BA8F66
+	for <linux-clk@vger.kernel.org>; Thu,  2 Jan 2025 17:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1735840166; cv=none; b=ecPq5GB9IYhcYoqUBMAhDvEYxxtArigEOh+QaL/1scvra27sLO5OfX2mzarP1pNS8alF2ezBAlgDTxsiXx6pcOjefSqQv08fZT/lMn9hYiRI1vWQ26iAVJL9j0XQqNGXIk001lEIlA4chTZrBmmS768G9lgmqxdmIICIzUunBcM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1735840166; c=relaxed/simple;
+	bh=Z/tG/88HIGz5gjPu4kyJ/DOR5P0Ck6oNEbyOlAxiXDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XINXNLX8Le9XLNHt/PHBucchNHnT4a12ufhsRcODliC/+c2vCDLaec1opFAnFaiZlJk5y+OHk86f7AJUU+qc+EvmhUgPE0/bkGxqR1lsEWKp/jODzgwFD75KQwkWy5+x73SBDLk4p0H34H2CCz5qWRWjCEcXW/u7LhvtUJuBLFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a+YGCiwR; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="F8yyiwLN"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A7Bti8BEPgy9mxWb/ZLIpFUFVqry4oZZFQ7FeDTQI164T4sM6U5mieF9wdhQEq/3XXTPJ85nMN3QA1BvC2SonWSHhWwLQi+AxOPCrA0Srf3IybNtrBfU32P3r9Sz674KnVGj64Y0Up91DEmcPSJwSKVtiIw7nOYxdoBw/HghK6AlC9iJZkVep0Ybb7kG/0LW6H5pSKAMRukP5fCDrkGMVOlFNUsIqNpRmw94sFcVUfl5xSpUJ5uv9rIAAk88NaSbCRKBMR7XE7+qKifBJMy5YjZi4LJBsr2D9PqiN7q2KLkJq3uQDeFp2MT2FF7ugJ7WRT3k5G8vVVnTQTErvDEMwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z22F15rGZHFba0Gpf/PxN4PXeDcKdofUUQQVfwRVmYk=;
- b=sThoNNtVqpaJlac54pUxn2xDC8IjwLIhPJ04ryRqjd2X6dDISuml/SypWccdacI2Z9QBQY7/x29gEpOchclq1oS7WYpMBUyEEk6Lx5aLl1Jy+B/jxBQQp2pkGsODdZOs1CQPtxiwj76Y+igNwBd7pMTWQ8qpkB8maqg2zJUq9eJmtIVVf62pYKEUahNd/HIRuTvXzuRSNyEwdJCpt3VLmX5GqRW8ny1VLyHtSMAFDCkI/Spzs2374c30MfuVA4FTw6U0d24kvMXekkuSrNfPb9MH4HsMOqRdJhE7YNCMblnU5wYs5cVmo+hrZjhiv6Q6znGI2AiUIIyjy64hJsfHmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=baylibre.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z22F15rGZHFba0Gpf/PxN4PXeDcKdofUUQQVfwRVmYk=;
- b=F8yyiwLNf9WEWSNzmL78msAni58m9TWldcUQvI/K7ln/JTU9oNikMwey0fYCM1z5+i1LuTtjPPykpSNjgCUUrQvdZGbvdDhLBMgw85dcgFV2VjVyFYNogUAAs2HlqlSSzZ/h8nqj3DIRDhFadQNX1YenB0v03EfsuWrzEcxc5Tk=
-Received: from BYAPR05CA0019.namprd05.prod.outlook.com (2603:10b6:a03:c0::32)
- by DM4PR12MB8451.namprd12.prod.outlook.com (2603:10b6:8:182::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8293.15; Thu, 2 Jan
- 2025 17:04:11 +0000
-Received: from MWH0EPF000989E8.namprd02.prod.outlook.com
- (2603:10b6:a03:c0:cafe::b3) by BYAPR05CA0019.outlook.office365.com
- (2603:10b6:a03:c0::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8293.14 via Frontend Transport; Thu,
- 2 Jan 2025 17:04:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- MWH0EPF000989E8.mail.protection.outlook.com (10.167.241.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8314.11 via Frontend Transport; Thu, 2 Jan 2025 17:04:10 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 2 Jan
- 2025 11:04:10 -0600
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 2 Jan
- 2025 11:04:09 -0600
-Received: from xsjssw-mmedia4.xilinx.com (10.180.168.240) by
- SATLEXMB03.amd.com (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39
- via Frontend Transport; Thu, 2 Jan 2025 11:04:09 -0600
-From: Rohit Visavalia <rohit.visavalia@amd.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <michal.simek@amd.com>,
-	<vishal.sagar@amd.com>
-CC: <javier.carrasco.cruz@gmail.com>, <geert+renesas@glider.be>,
-	<u.kleine-koenig@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Rohit
- Visavalia <rohit.visavalia@amd.com>
-Subject: [PATCH v2 2/3] clk: xilinx: vcu: don't set pll_ref as parent of VCU(enc/dec) clocks
-Date: Thu, 2 Jan 2025 09:03:58 -0800
-Message-ID: <20250102170359.761670-3-rohit.visavalia@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250102170359.761670-1-rohit.visavalia@amd.com>
-References: <20250102170359.761670-1-rohit.visavalia@amd.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a+YGCiwR"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-385e44a1a2dso1364924f8f.3
+        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2025 09:49:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1735840162; x=1736444962; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BQzXpHKZ38XKWlPQGVkN7bjW5ZJ+69jWQ4BQJv2lDvg=;
+        b=a+YGCiwRbn5iHIsV8dhkahpMTxOIgmh9nOd9j2wKcC5KW+eaKMaP9G4Ka1NmJ/xQiB
+         /Hs6W34lcgZIBiE5rNd51k8Nk8kM3wq9sSo5/clWiCWPBj/Fdmn9lOLTrUX2+sI5FKRq
+         0Jn7iZlTpmrcMR5agmYd0BTzQEj0pw8XU1hv3PCSVWdHOCUtFj4F97gviWygCOY5az3M
+         ka0O1xc5b+ORXo4S8TaLdgkXHfS+PU2ejAGiw8Rrc1dU74ETTNaFmB7FT1dCi8lCNKIH
+         QVHLLak2X4GYXxKT2ZuBDGVUyKuXApB+EQZM5ggq0zJrNnG7uXECnXi4HCpBtLIm45mJ
+         G4bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735840162; x=1736444962;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BQzXpHKZ38XKWlPQGVkN7bjW5ZJ+69jWQ4BQJv2lDvg=;
+        b=TG3e8O1KPheF7xEDnAofuH4GhrMLywiQm7ZuEKi16LcxVfHes4zWALUIGdn4Kl8v9q
+         8jTtO+DqPqKTH4hhI7ycjd3E7LAutHU+qO64H+lKcLBPc6qs1OCg6mDOtfO7CTGqgi2Z
+         qHAiTDLs19PsOZz/XI52q8bv5wQQ7yRr4Qx4qNAgOU3R6fbL8XFD3DAIfztbUizrRCCR
+         4GhxlYXE2gTi2gUyOTBV1jTznoxHBLAB2vFZm4PbmZQq/OJcnYMW9/fw50IyzLyQ2qz0
+         vzNcSNm613aByqLD7ZZ9vvQ4uPibIgFlkb9tfOT4wQZ85OfdsGcgqHIsmvG6p8mCaHl7
+         c/yA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqjzgHgQkc+yHygZh177PWyVCZOo9FDQRla393dgFHQniYC1lzNT28pyg50xv1dD6yHhsMw0UWELc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9+Tjm4y9bw38ENHyp9S2tdv2ec5cj8syYMIvbGXM+4pcZ/zWj
+	9/CtAdv1S9+ZhzvVwiZGb9ZFUcXssOilUkuvveqV4MqZUuqoOgIyfx+7NzKjxi0=
+X-Gm-Gg: ASbGncuoXayrw5+JrVXGCdWzIVA+zusjnLEyhSUe/A9inPrm+WzqC8Nu3YBfMcY3gGB
+	M651i+NwyqPROhKO81+edhNXuPJmKJkOVf69mKAGFNNBAaVFsZf9eObRTaoDmHxLeDs2QI1RW1A
+	fVoRzu9fJUfLohTFUWS2+xPk7TO9xxZ0/UsKnxUTjKkV+Sn28BIRB557JEoN/y7s8bp5HnAxYeq
+	MrWSRb6pMLUMs7OUsAg25DW1E0Rh592WmD8/wvwBs0PuIn/HNvxtcRxPfzysbEnrKEYbsoI
+X-Google-Smtp-Source: AGHT+IEMAMwuukkLzGiPQ39+VlqPA5uci/lVeQvAMvSYKotrXDL7vVyhPBdae/AizKHwtC9ADf4SVA==
+X-Received: by 2002:adf:9d84:0:b0:385:ed78:e17d with SMTP id ffacd0b85a97d-38a2213dfc3mr11989392f8f.0.1735840161715;
+        Thu, 02 Jan 2025 09:49:21 -0800 (PST)
+Received: from [172.16.0.204] ([79.164.49.199])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c8474b6sm38703730f8f.51.2025.01.02.09.49.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Jan 2025 09:49:21 -0800 (PST)
+Message-ID: <28db1605-e9b9-4b44-8af3-9b7abf0e83a2@linaro.org>
+Date: Thu, 2 Jan 2025 19:49:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E8:EE_|DM4PR12MB8451:EE_
-X-MS-Office365-Filtering-Correlation-Id: 123e6475-e369-4ecd-5388-08dd2b4f7a46
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Z9MMT7Ke5f3dzCGaZNxWt8dcmILMC4Zta4A3YOiAhgJQQM7nA4EFJRubt+HF?=
- =?us-ascii?Q?iTD4FS//D30cQZCUVmLW/845r/8VnrylwVvVX9CtR4z40wHeF79ZotO3PBpP?=
- =?us-ascii?Q?Oz/0piO/OYiuMY1yFnS7AxoTozHgWO3Ix/RDPwFnNV9+CoUDqKwm3MDj8ZIp?=
- =?us-ascii?Q?cEzTNer5Q0qMyLVQx89jG8Ye4piPKyi76jz5vAPQSaVma7gCjxXrLyMW5ADL?=
- =?us-ascii?Q?wovINLcM91EEyWKbR8OB4h68Onrg1gzJl/wxlcceDWVk8oVLcIO9OaU5hMRd?=
- =?us-ascii?Q?lD9lL2mZOqYzY8W0CUu8W8oIT9yo7tdu3gLe/Kn/0r0mUG7mCoZW2LJ7j8F6?=
- =?us-ascii?Q?E8uTZHzheE8OMMh3NkybSS9D8+I7uGqSWla1wuj8imI3MBipBtbGSZ+tl+bu?=
- =?us-ascii?Q?ZluS50wKQu0p37X7hkA/P+/+PA4ExAYibWOJn5yBmbQFIGdT+vZp9fRlyhFc?=
- =?us-ascii?Q?qi95KSmtP2l4xv/OHt2IyYAHPqH/RuCZGyGEwz40e52Ifs3P1XPFU3Qf1jYB?=
- =?us-ascii?Q?0EdgghgWuvkVR8M0LKMuwa/HM/ETaV+36XxdEruegwCx+38rGOUlV3jMSDZD?=
- =?us-ascii?Q?Z/b6Nh4dZf8AmDZI9tx7upeeu7lwfkwA1ZDh93uYL8D4xG+G5aI0hoDdePjy?=
- =?us-ascii?Q?ePwd+qz0MkD3ax4IZAf8CVZTzEp3M13dNeARknJf0BW7cyUYsDsaHXiuFLVr?=
- =?us-ascii?Q?GDabWj6CWPbCm5v8WFPOaJu3+As1Zis9pdyUDch3MlNtpyj14mAimd2x3ty/?=
- =?us-ascii?Q?Q7lVx+5UDq9oRHjNV10jvwqbrw4aUeapT8dsWUR4blMNdQUOMvL3wghV4Rhu?=
- =?us-ascii?Q?fqAmwBqMQnSRfd+Pd062UpU+OI0ANmJNHGIVQoX4ojasnKwcOxOCNf66da7a?=
- =?us-ascii?Q?ZcgEPVyR8khe5e82cFhNAea89xBdSnqpiDH4XD8/ppBSE7FnEe+stP2Y74kY?=
- =?us-ascii?Q?boGfUUOH2KDDPxTS+AEtbD8ENA239IUbaJORXFlgVuBucC2NRIVEnxdZ2TJ/?=
- =?us-ascii?Q?lsfulDLTvP1X/H8aDfIVykN7t/cjZr3dXy/cUqhcw47Mk2Y05yZIAIHxAa9O?=
- =?us-ascii?Q?eQcqMMlOdTkvdfW8cbjU10pUNn9s7XeVOF+pfPYdsaU8eUA9SJkvHAlw2JyA?=
- =?us-ascii?Q?XIpxx7yYY8kWwXKXgUitIPlCJ7ylA0L56KfrBRAQGS0UALcIcSU1tPgdHOPT?=
- =?us-ascii?Q?m/NWV+Z5lWiuJDj3ICY00V6DvJxeKEl/2MLRSlSIHyjpXIyDL8OJVSk5e7d8?=
- =?us-ascii?Q?+G00zksCW2yKJLwRsQL0x5VZnTjqPEjiscHLYHNCFiFU6PTT7GFuCKB2MOpw?=
- =?us-ascii?Q?SZdHHdls55nDI6Ias5bf3PaSjgI0qgrm/yJwMQv0VPCbPM3ezfn7OIK5dk8N?=
- =?us-ascii?Q?wPhXDdzisWy96vMh9vfJYbfAEIEwuSH+wNdHC7zAPhy0FluAakwczscLbDas?=
- =?us-ascii?Q?UpW0dwa2EPAL+7F7UAO1YyaVDbrPVavdGCIPORoE0IjhkmN/KYM8b3LRshZc?=
- =?us-ascii?Q?bc8JTq3FELj2Abc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jan 2025 17:04:10.8755
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 123e6475-e369-4ecd-5388-08dd2b4f7a46
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E8.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8451
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/6] arm64: dts: qcom: x1e80100: Add CAMCC block
+ definition
+Content-Language: ru-RU
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org>
+ <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-4-cb66d55d20cc@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-4-cb66d55d20cc@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-CCF will try to adjust parent clock to set desire clock frequency of
-child clock. So if pll_ref is not a fixed-clock then while setting rate
-of enc/dec clocks pll_ref may get change, which may make VCU malfunction.
+Hi Bryan.
 
-Signed-off-by: Rohit Visavalia <rohit.visavalia@amd.com>
----
-Changes in v2:
-  - none
-  - Link to v1: https://lore.kernel.org/linux-clk/20241226122023.3439559-3-rohit.visavalia@amd.com
----
- drivers/clk/xilinx/xlnx_vcu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 1/2/25 18:32, Bryan O'Donoghue wrote:
+> Add the CAMCC block for x1e80100. The x1e80100 CAMCC block is an iteration
+> of previous CAMCC blocks with the exception of having two required
+> power-domains not just one.
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 16 ++++++++++++++++
+>   1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index c18b99765c25c901b3d0a3fbaddc320c0a8c1716..5c7b0c048d41a4ba3d74bbf77216ad09b652ed30 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -5,6 +5,7 @@
+>   
+>   #include <dt-bindings/clock/qcom,rpmh.h>
+>   #include <dt-bindings/clock/qcom,sc8280xp-lpasscc.h>
+> +#include <dt-bindings/clock/qcom,x1e80100-camcc.h>
+>   #include <dt-bindings/clock/qcom,x1e80100-dispcc.h>
+>   #include <dt-bindings/clock/qcom,x1e80100-gcc.h>
+>   #include <dt-bindings/clock/qcom,x1e80100-gpucc.h>
+> @@ -4647,6 +4648,21 @@ usb_1_ss1_dwc3_ss: endpoint {
+>   			};
+>   		};
+>   
+> +		camcc: clock-controller@ade0000 {
+> +			compatible = "qcom,x1e80100-camcc";
+> +			reg = <0 0x0ade0000 0 0x20000>;
+> +			clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+> +				 <&bi_tcxo_div2>,
+> +				 <&bi_tcxo_ao_div2>,
+> +				 <&sleep_clk>;
+> +			power-domains = <&rpmhpd RPMHPD_MXC>,
+> +					<&rpmhpd RPMHPD_MMCX>;
+> +			required-opps = <&rpmhpd_opp_low_svs>;
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +		};
+> +
+>   		mdss: display-subsystem@ae00000 {
+>   			compatible = "qcom,x1e80100-mdss";
+>   			reg = <0 0x0ae00000 0 0x1000>;
+> 
 
-diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
-index 88b3fd8250c2..c520ae1ba65e 100644
---- a/drivers/clk/xilinx/xlnx_vcu.c
-+++ b/drivers/clk/xilinx/xlnx_vcu.c
-@@ -547,7 +547,7 @@ static int xvcu_register_clock_provider(struct xvcu_device *xvcu)
- 		return PTR_ERR(hw);
- 	xvcu->pll_post = hw;
- 
--	parent_data[0].fw_name = "pll_ref";
-+	parent_data[0].fw_name = "dummy_name";
- 	parent_data[1].hw = xvcu->pll_post;
- 
- 	hws[CLK_XVCU_ENC_CORE] =
--- 
-2.25.1
+Looks good, thank you.
 
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+
+--
+Best wishes,
+Vladimir
