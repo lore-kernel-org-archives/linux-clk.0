@@ -1,309 +1,123 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3EC17B506
-	for <linux-clk@vger.kernel.org>; Thu,  2 Jan 2025 18:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A3417DE2D;
+	Thu,  2 Jan 2025 19:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735843888; cv=none; b=eA6MKvaHpGLKJJJ8dgquAFS5nmcueHflwPli5s5PL3IexWcrNIWWOItTKT2sZeyOWnrpTeSAeUnXQwnRY8Sl6CIzFEhNXXv+fS6jwdxm3zrNgNFCu5C8yHHvw9/UMu2Ghe1TUPu/nLcCPpgpQ1xsaKlx9j4uxb0W2XO7KnJ/mTU=
+	t=1735846107; cv=none; b=oYebII3qGEMx02aZclJJJLSfGWyt1LTyDJuYQjg122no2HFCdOg4QsOhnaydvBI4eJAQge3k5sT8g3YzwEtOlwh4aVSG+oKKBglMRO9gbqks+ZlwvMdR/9ZjmmqDHvTdw9iSWtV6EWAbDAWlFWYgzN4B0BfeqwgcJ122+zZhHlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735843888; c=relaxed/simple;
-	bh=3vtZEneD4YmI3fBVj12hcS/+xalvyFqzM1PYABWyW6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UiF14EzIImK6XfSI41SohsV/xvmv5sFJpOuL8lmJiY6DXkhfXOKKIJrUj5mpqCJa5bFNVk2PTHYbBix6x7JLOGyk2UH4sLkpcgKHaLzSEqLglqHrTpqJkvYKLheBa5Xb9qykCJSZl22UguZUXPE8qRXdDR9WSn4mSsrsko6uIWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bhKBxDqs; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bhKBxDqs"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385e44a1a2dso1372041f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2025 10:51:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735843884; x=1736448684; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6T3WBl7QnFzkgV2IQFMi/3j+j3esVt8efB4fRofS+jo=;
-        b=bhKBxDqsF88gPOIboc1H4uZVnQokUo5m7EWU62HJtODdz3Q/FprYVIcooI99XjsKj9
-         RqtGw0ZDogL/exVyNNLYHs9C1Yu1SiPsPdxKh2z7cl4jxYQyitQYdXrbtRXomrX4ly7q
-         C5fA0Ly/4VPsoLA+lTIl8yevPTZWFEUajmQv8DxKyFWVZC9y3uSnq1/vcgMLg8PdaRfM
-         cgWQumFfKcyGnULwwA5e7rKK2C2khJtXfBLgOqEyCtszSzAtT/rbtQ/89TdjMYIsH+jy
-         r9vjzZt8I2NA4fRBq5IrK+45J/qCOqWQ5WirHUSxo1u2NslhqNZ9xt/LM4aqb3IcpyNI
-         STzg==
+	s=arc-20240116; t=1735846107; c=relaxed/simple;
+	bh=6XcJHhfjfFG+ukoUJ0GTW/PXR2rh3vuGVHczWzTXsb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lz6sHRRF08Mc+nOJB3sYF5edqxRRIyYiv0gtVwx1Zy6DOzm0RoWU2fC60D663E39eKoV4tFOhD65w9YfPHI2uZBIWGhz+s8FYfHAP4EwCp6JC5Hdd84xfJeWGao5yzUUlPCjmPmA7yzoLYyJwPtxtkZVv2LbSosp6pdJlYQrUGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-85c559ed230so1988086241.0;
+        Thu, 02 Jan 2025 11:28:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735843884; x=1736448684;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6T3WBl7QnFzkgV2IQFMi/3j+j3esVt8efB4fRofS+jo=;
-        b=f8nWa5HkJy7UH3JXOfqa42RWFUPo7ILd+X9ibhjJ74e6RIkpvuTN5iPYjja8cR7HAL
-         6wP189i3Zh4A3JCXR1WvJ/qyxex32Xuq8iSSsqPgKbLTnCdEZ5C9kz7iYXn7Qrw8v6BX
-         XxR1nZlBf7L6t2vUcpK0WnxbUEQL5fXbJtTkGcM657ON0XIR85Aq4lUdfJ1arXnrSe6Q
-         75dbBb+9djygVfidUlbL1UWDqIOExDc5Mcds4txtNNVSLtvDMqfqTTDw/tDqKixq2oAr
-         G8Dq2E7qCPjGVdetzTxQLT2aNAcPV3z+uxNHdlx/r2OlfTjVWfR3p+1Tbwg9P/gK26cX
-         7Q+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXelFwP1U4E5VDO9fO67nkidVDEEB/XwM5cqcKYHJq9LbPvpozgq4GUmWzFLMYtTVQm3f4aNpeC9SI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwhPF7ELoKST7dxwXwjPr1RCMB1xEOgeBdGnAygMQUVlrqmTXr
-	QvDrNELVEOVqM4kfp7SiGBG9xZQOrozXInYiRf1ECnRzhQTXOalZxw+mNjOi6aQ=
-X-Gm-Gg: ASbGncshS6/7Oq9r0w2Zlz8vyypEWOirmU4MC511B469CYeRBguvPXtGjqMs1RP6JJO
-	HMKZ8cULQ7oVtK3RHnXfvewHeyxDq0p20dwzOkEfar2MMHs0N5F6tfDeH+RuhAq2gXV9ue3o/N+
-	qH7RP6K+o0vkkYKlaCBuQXahlXLOwIQ3a5nDCJXn8ZeLWDUK37QV81YvtqLF9YESK/pIoBN9Vsp
-	k1ehdcnNnos/Izxb7OXxXY91RdlEnKhw4l2lVEq5oxyAlm09TSiMIdgnBqLLnm8ScjsvmxA
-X-Google-Smtp-Source: AGHT+IFK5jTcY5BkHImuhFxNLmANSOh3LEZ9dsamKhwRZOkF6y2DSkxcL/ZYV+0+5WBmBXgCUwP1nw==
-X-Received: by 2002:a5d:584c:0:b0:385:f909:eb33 with SMTP id ffacd0b85a97d-38a223f745fmr16467016f8f.10.1735843884117;
-        Thu, 02 Jan 2025 10:51:24 -0800 (PST)
-Received: from [172.16.0.204] ([79.164.49.199])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c828cc8sm38715916f8f.17.2025.01.02.10.51.22
+        d=1e100.net; s=20230601; t=1735846102; x=1736450902;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+ifrsZS6VTC65RgZqrSr3SMUWgTLKO2G/Lh7qiZeZxM=;
+        b=QRTvQP0oAvzZ9+wyDq2AY00QDX4u66E34Fut7v9fKfOa37E+QmX+aPke31ncFDVqgl
+         RkScfMTkmdWUhbtiFFJL/h1UtMIxurls81zppOrwq0W7i8Zo3ZebjK1HLjGfk7E+o7OE
+         oi3OlUqyE9KFC4/vlTSNGotwUh63otuC2TQVGBWWQhP0YkFR5v9NBa7kWkdGswjjNwys
+         WwEukuWXftDZhZ24HSSob4Lc9i5iyF9N2k8jEsWue0SCVcNOgulvTYlNEU4XZkNhKQDI
+         eeTB2kyn0lo29UVNcqcjYUn8qqEEIHBxsL6y2BCP4jpnbzAdL9pI/85MhKy45k+9cR0i
+         euog==
+X-Forwarded-Encrypted: i=1; AJvYcCWNqbpRBwncNhvp0O+p4b8WqEHYkqDQ6SSLw/gjgyQwtjwoR7jPOCmXIS8SbKqPJDb757LRh2t/rLk=@vger.kernel.org, AJvYcCXGAlYQJCPLB0zLDWHBq+KUo6DvF8p/jop7aTP9zi3vCRvl/lny4JEKamZ2LJX2+j5hDx3LV7QChDhDUHyl@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrYnKPQ9TtDNylKiEwcZLRejkEMpTL1wztypA//E+KfT5Qw3mx
+	zQEJqViuAMaYGtfn9Wsd+ANCDn3BaYojk9+g5Aphuwh1hrARr4MXvyy7C+0U
+X-Gm-Gg: ASbGncv11BHEzVK+SAv03cgkAwrAbfI/boySS/6Ucvs+HBXZ+A0B5dtswtJAoxtUtSD
+	PPihDipHKF/aq/F6Zrgss3x2NjcIR8usOvoJBlHQz8ubekQhrh4L131gDeAeMLaJwo0StA7dtjr
+	4bOXXy3ruiqxJePApXMHShF18e42jgNHQp+XQiMWX1oGLEqQ/pwEcet74xK4GcNQL4S8ykH2OQR
+	dPey/u7sP6RSu3/SpZ6jQVqZsKaxRqUaYXH+0/gb7nJukX5/U7mJj8CSrZ15XmqYQuy5PoBE78+
+	n82dWyDq89nV56UOBHS/Y7c=
+X-Google-Smtp-Source: AGHT+IHHgE/g2cAn01qIfaegqwLBAsz7Xnzj5L9ASu+uIxudiY8HlTg8SASp0SFpdY94ylIPKHay8w==
+X-Received: by 2002:a05:6102:1623:b0:4b2:4b79:414 with SMTP id ada2fe7eead31-4b2cc35f0eamr37374971137.8.1735846102320;
+        Thu, 02 Jan 2025 11:28:22 -0800 (PST)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b2bfad385dsm4979101137.28.2025.01.02.11.28.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jan 2025 10:51:23 -0800 (PST)
-Message-ID: <67e923f5-83e9-403a-9c13-3cef9d032304@linaro.org>
-Date: Thu, 2 Jan 2025 20:51:20 +0200
+        Thu, 02 Jan 2025 11:28:21 -0800 (PST)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-51bc2363fd7so2110870e0c.2;
+        Thu, 02 Jan 2025 11:28:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWcc9z1Gd8TT44WtfV0GqLTaLWPRGpijEedmG/nPHfG5PJM1rMulh4ezmwQhVVc4lLafeDUf+WdWVE=@vger.kernel.org, AJvYcCXJ4KSUcyg9JIcY6tgv1lEx3DCvzFF4K1tkUwPQE5xxqcg+N0j9Ef6Tgrbjtfb+1HLL1BFAC62CH6QckaJ8@vger.kernel.org
+X-Received: by 2002:a05:6102:549f:b0:4b2:7996:6ba4 with SMTP id
+ ada2fe7eead31-4b2cc48a41cmr36642516137.25.1735846101400; Thu, 02 Jan 2025
+ 11:28:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/6] arm64: dts: qcom: x1e80100: Add CAMSS block
- definition
-Content-Language: ru-RU
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org>
- <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-6-cb66d55d20cc@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-6-cb66d55d20cc@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250102170359.761670-1-rohit.visavalia@amd.com> <20250102170359.761670-3-rohit.visavalia@amd.com>
+In-Reply-To: <20250102170359.761670-3-rohit.visavalia@amd.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 2 Jan 2025 20:28:09 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV9iZK3FOXhSmvvxK=HqBe3hUnNcZZ2aL1G--XHFgN07A@mail.gmail.com>
+Message-ID: <CAMuHMdV9iZK3FOXhSmvvxK=HqBe3hUnNcZZ2aL1G--XHFgN07A@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] clk: xilinx: vcu: don't set pll_ref as parent of
+ VCU(enc/dec) clocks
+To: Rohit Visavalia <rohit.visavalia@amd.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, michal.simek@amd.com, 
+	vishal.sagar@amd.com, javier.carrasco.cruz@gmail.com, geert+renesas@glider.be, 
+	u.kleine-koenig@baylibre.com, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 1/2/25 18:32, Bryan O'Donoghue wrote:
-> Add dtsi to describe the xe180100 CAMSS block
-> 
-> 4 x CSIPHY
-> 2 x CSID
-> 2 x CSID Lite
-> 2 x IFE
-> 2 x IFE Lite
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Hi Rohit,
+
+On Thu, Jan 2, 2025 at 6:04=E2=80=AFPM Rohit Visavalia <rohit.visavalia@amd=
+.com> wrote:
+> CCF will try to adjust parent clock to set desire clock frequency of
+> child clock. So if pll_ref is not a fixed-clock then while setting rate
+> of enc/dec clocks pll_ref may get change, which may make VCU malfunction.
+>
+> Signed-off-by: Rohit Visavalia <rohit.visavalia@amd.com>
 > ---
->   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 185 +++++++++++++++++++++++++++++++++
->   1 file changed, 185 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 97ebf5596dfc3caa920ef85722ca8afd49cd3c24..0b5b48d2c59e0b18816ea131e0f687b8bf84e1da 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -4726,6 +4726,191 @@ cci1_i2c1: i2c-bus@1 {
->   			};
->   		};
->   
-> +		camss: isp@acb6000 {
-> +			compatible = "qcom,x1e80100-camss";
-> +
-> +			reg = <0 0x0acb6000 0 0x1000>,
-> +			      <0 0x0acb7000 0 0x2000>,
-> +			      <0 0x0acb9000 0 0x2000>,
-> +			      <0 0x0acbb000 0 0x2000>,
-> +			      <0 0x0acc6000 0 0x1000>,
-> +			      <0 0x0acca000 0 0x1000>,
-> +			      <0 0x0ace4000 0 0x2000>,
-> +			      <0 0x0ace6000 0 0x2000>,
-> +			      <0 0x0ace8000 0 0x2000>,
-> +			      <0 0x0acec000 0 0x2000>,
-> +			      <0 0x0acf6000 0 0x1000>,
-> +			      <0 0x0acf7000 0 0x1000>,
-> +			      <0 0x0acf8000 0 0x1000>,
-> +			      <0 0x0acc7000 0 0x2000>,
-> +			      <0 0x0accb000 0 0x2000>,
-> +			      <0 0x0ac62000 0 0x4000>,
-> +			      <0 0x0ac71000 0 0x4000>;
-> +			reg-names = "csid_wrapper",
-> +				    "csid0",
-> +				    "csid1",
-> +				    "csid2",
-> +				    "csid_lite0",
-> +				    "csid_lite1",
-> +				    "csiphy0",
-> +				    "csiphy1",
-> +				    "csiphy2",
-> +				    "csiphy4",
-> +				    "csitpg0",
-> +				    "csitpg1",
-> +				    "csitpg2",
-> +				    "vfe_lite0",
-> +				    "vfe_lite1",
-> +				    "vfe0",
-> +				    "vfe1";
-> +
-> +			clocks = <&camcc CAM_CC_CAMNOC_AXI_RT_CLK>,
-> +				 <&camcc CAM_CC_CAMNOC_AXI_NRT_CLK>,
-> +				 <&camcc CAM_CC_CORE_AHB_CLK>,
-> +				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-> +				 <&camcc CAM_CC_CPAS_FAST_AHB_CLK>,
-> +				 <&camcc CAM_CC_CPAS_IFE_0_CLK>,
-> +				 <&camcc CAM_CC_CPAS_IFE_1_CLK>,
-> +				 <&camcc CAM_CC_CPAS_IFE_LITE_CLK>,
-> +				 <&camcc CAM_CC_CPHY_RX_CLK_SRC>,
-> +				 <&camcc CAM_CC_CSID_CLK>,
-> +				 <&camcc CAM_CC_CSID_CSIPHY_RX_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY0_CLK>,
-> +				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY1_CLK>,
-> +				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY2_CLK>,
-> +				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-> +				 <&camcc CAM_CC_CSIPHY4_CLK>,
-> +				 <&camcc CAM_CC_CSI4PHYTIMER_CLK>,
-> +				 <&gcc GCC_CAMERA_HF_AXI_CLK>,
-> +				 <&gcc GCC_CAMERA_SF_AXI_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_CLK>,
-> +				 <&camcc CAM_CC_IFE_0_FAST_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_CLK>,
-> +				 <&camcc CAM_CC_IFE_1_FAST_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
-> +				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>;
-> +			clock-names = "camnoc_rt_axi",
-> +				      "camnoc_nrt_axi",
-> +				      "core_ahb",
-> +				      "cpas_ahb",
-> +				      "cpas_fast_ahb",
-> +				      "cpas_vfe0",
-> +				      "cpas_vfe1",
-> +				      "cpas_vfe_lite",
-> +				      "cphy_rx_clk_src",
-> +				      "csid",
-> +				      "csid_csiphy_rx",
-> +				      "csiphy0",
-> +				      "csiphy0_timer",
-> +				      "csiphy1",
-> +				      "csiphy1_timer",
-> +				      "csiphy2",
-> +				      "csiphy2_timer",
-> +				      "csiphy4",
-> +				      "csiphy4_timer",
-> +				      "gcc_axi_hf",
-> +				      "gcc_axi_sf",
-> +				      "vfe0",
-> +				      "vfe0_fast_ahb",
-> +				      "vfe1",
-> +				      "vfe1_fast_ahb",
-> +				      "vfe_lite",
-> +				      "vfe_lite_ahb",
-> +				      "vfe_lite_cphy_rx",
-> +				      "vfe_lite_csid";
-> +
-> +			interrupts = <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 431 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names = "csid0",
-> +					  "csid1",
-> +					  "csid2",
-> +					  "csid_lite0",
-> +					  "csid_lite1",
-> +					  "csiphy0",
-> +					  "csiphy1",
-> +					  "csiphy2",
-> +					  "csiphy4",
-> +					  "vfe0",
-> +					  "vfe1",
-> +					  "vfe_lite0",
-> +					  "vfe_lite1";
-> +
-> +			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +					 &config_noc SLAVE_CAMERA_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
-> +					<&mmss_noc MASTER_CAMNOC_HF QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&mmss_noc MASTER_CAMNOC_SF QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> +					<&mmss_noc MASTER_CAMNOC_ICP QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "cam_ahb",
-> +					     "cam_hf_mnoc",
-> +					     "cam_sf_mnoc",
-> +					     "cam_sf_icp_mnoc";
-> +
-> +			iommus = <&apps_smmu 0x800 0x60>,
-> +				 <&apps_smmu 0x860 0x60>,
-> +				 <&apps_smmu 0x1800 0x60>,
-> +				 <&apps_smmu 0x1860 0x60>,
-> +				 <&apps_smmu 0x18e0 0x00>,
-> +				 <&apps_smmu 0x1900 0x00>,
-> +				 <&apps_smmu 0x1980 0x20>,
-> +				 <&apps_smmu 0x19a0 0x20>;
-> +
-> +			power-domains = <&camcc CAM_CC_IFE_0_GDSC>,
-> +					<&camcc CAM_CC_IFE_1_GDSC>,
-> +					<&camcc CAM_CC_TITAN_TOP_GDSC>;
-> +			power-domain-names = "ife0",
-> +					     "ife1",
-> +					     "top";
-> +
-> +			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +				};
-> +
-> +				port@2 {
-> +					reg = <2>;
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +				};
-> +
-> +				port@3 {
-> +					reg = <3>;
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +				};
-> +			};
-> +		};
-> +
->   		camcc: clock-controller@ade0000 {
->   			compatible = "qcom,x1e80100-camcc";
->   			reg = <0 0x0ade0000 0 0x20000>;
-> 
+> Changes in v2:
+>   - none
+>   - Link to v1: https://lore.kernel.org/linux-clk/20241226122023.3439559-=
+3-rohit.visavalia@amd.com
+> ---
+>  drivers/clk/xilinx/xlnx_vcu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.=
+c
+> index 88b3fd8250c2..c520ae1ba65e 100644
+> --- a/drivers/clk/xilinx/xlnx_vcu.c
+> +++ b/drivers/clk/xilinx/xlnx_vcu.c
+> @@ -547,7 +547,7 @@ static int xvcu_register_clock_provider(struct xvcu_d=
+evice *xvcu)
+>                 return PTR_ERR(hw);
+>         xvcu->pll_post =3D hw;
+>
+> -       parent_data[0].fw_name =3D "pll_ref";
+> +       parent_data[0].fw_name =3D "dummy_name";
+>         parent_data[1].hw =3D xvcu->pll_post;
+>
+>         hws[CLK_XVCU_ENC_CORE] =3D
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+You completely ignored Stephen's comment, which suggests to not pas
+CLK_SET_RATE_PARENT instead (see xvcu_clk_hw_register_leaf()).
 
---
-Best wishes,
-Vladimir
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
