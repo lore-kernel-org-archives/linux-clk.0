@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3200D8F66;
-	Thu,  2 Jan 2025 18:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7981C1925A3;
+	Thu,  2 Jan 2025 18:30:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735842584; cv=none; b=V9iBB4UprYtws1X8zkgueDpgCHGGBFOVvCW1VoICai8NOOGc7s+rxfkfiuD6gEv4P/tAKV0DBZUSvfo535LbcrCLsqFQ+lPd2bEamB0c4aWLomME8nERThXAm6ekAXXMRoRGW1ocwi2DueEtNH8ESFFp94s8UuNp0NKCsaJUH2c=
+	t=1735842646; cv=none; b=MgDawCVmlsXsMIyhvfqu7Vex4OIesiGe3wCEXtcSBEf3qWYS6plVB7UfFFYSnevz3HAlfq6ZLngNmPtI66cj+sHlSVAHByvBSeRpbgTKzrRbuAJZ8k1s07qXpxdWp0HF8twMCtpXDEV5zyRaduBuhuCgMRNWrzDUTrUJtvNzakg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735842584; c=relaxed/simple;
-	bh=GPD9FWmRI37nv2a7wzx/lQa+UlyPkzsqDMwzppQGxbk=;
+	s=arc-20240116; t=1735842646; c=relaxed/simple;
+	bh=cp3PMTUYnzBdv7C8hL10E14bsJGknT0WwKJZRkzHLn4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UGrhOKp9Jy7wzpRoBDFte/EERxk+pg4bY6JTnieDOKHsX4NWcb027LvDih+S9WtUkHuEX5jNJCpEVxlyYsDQK1ip0hltncgCOe2x0OMUwuPD1L0n0qQS3NNglL33DsEXtMcATe67AisRlMKrZrReHbo64WFsvzBamxRf+tv8DFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A1FOwkdY; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Li8F0qFhYF87P089GC/UbNm12HkLYI4+SkpNpAIu1Mlf2Rw2t0/EBWQT3/eci+gfXCZQrMGrQg1ZUj/kR3UaHbDVpGCJfs2F5GenVZwf7b8KlEmaj8SlG1F5boCIHvW5oJnIRy9uZu2VTZNVgavhwg63zfetU14BGJhnAFkYOkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kO3jR5Kl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A1FOwkdY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65904C4CED0;
-	Thu,  2 Jan 2025 18:29:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kO3jR5Kl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7717AC4CED0;
+	Thu,  2 Jan 2025 18:30:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735842583;
-	bh=GPD9FWmRI37nv2a7wzx/lQa+UlyPkzsqDMwzppQGxbk=;
+	s=k20201202; t=1735842645;
+	bh=cp3PMTUYnzBdv7C8hL10E14bsJGknT0WwKJZRkzHLn4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=A1FOwkdYM+RD/ZWn9cUQfLhVddPNleH8kulhphKLtkwBR/XGX3801H/xaic5hh3/v
-	 x9+ZAP4DXggjiPgJrH+n5/QK0RyUcmCjJiopEpkpHXmGm2FhbJP3w9vSXvHx1SHmY3
-	 snGXFonMTg6hlRjHWtqjKKCW3I6sV1E5cM8W/wX4wsVqNtQAOtlaANDVzzx0zPJAP1
-	 2jcUQIs54zF5H8E1RO8aq1y2d9aMZpWX+1goOUpAlnIvKgq8v+4NqWnEsLLFPDKf6g
-	 n5ROAJ3N7q0y+GTyaKb4/7EzqLt7v7JcMS9AqGiOQPk6CVQ4I3NBPAgHwjV3w3710X
-	 ExEFkxAqCCApg==
-Message-ID: <35351b4f-daee-46f9-8d0e-f3de12869794@kernel.org>
-Date: Thu, 2 Jan 2025 19:29:37 +0100
+	b=kO3jR5Kl7SSki7hVUcvBCDX7JVm2VHbXM+g29Q7HmP44TZ2NqRGmVxb4UYx8PfMTJ
+	 G+iZEzFGtJvcZdYucrcZMvRNVHLxLvZuinZYpuDemMj3nYfvgJf4qs1rerdkJ4hURy
+	 F21Gl6jZZ3eelTFHT4BSWGtS+N6RpQuFQ1/R2PjEn2GSDq7FOAGsYYBLG0ZAANujpb
+	 D4CZeObiIkB4HQ9O3IzGB/HacQ0zgVHvmROpcnWy7eWpT8ymd7lOevMjtcPzcL9cRK
+	 oLyKPTw5fHziUT79R2G/fvpKjVhA//ot5P2ar+JJfNMq8kz9sZEbpkShomDGo0khpI
+	 snHVwU9Eq6biA==
+Message-ID: <933eee94-d79e-4437-8874-d34988b97961@kernel.org>
+Date: Thu, 2 Jan 2025 19:30:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,14 +35,14 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: clock: xilinx: Update VCU bindings for
- reset GPIO
+Subject: Re: [PATCH 1/3] dt-bindings: clock: xilinx: move xlnx_vcu dt-binding
+ to clock from soc
 To: Rohit Visavalia <rohit.visavalia@amd.com>, mturquette@baylibre.com,
  sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ linux-kernel@vger.kernel.org, Rohit Visavalia <rohit.visavalia@xilinx.com>
 References: <20250102163700.759712-1-rohit.visavalia@amd.com>
- <20250102163700.759712-4-rohit.visavalia@amd.com>
+ <20250102163700.759712-2-rohit.visavalia@amd.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -88,69 +88,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250102163700.759712-4-rohit.visavalia@amd.com>
+In-Reply-To: <20250102163700.759712-2-rohit.visavalia@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/01/2025 17:37, Rohit Visavalia wrote:
-> Updated VCU binding for reset GPIO pin as optional property.
-
-Subject and here: everything is an update. Be specific and drop all
-redundant things making this unnecessary long: add reset GPIO
-
-> It is marked as optional as some of the ZynqMP designs are having vcu_reset
-> (reset pin of VCU IP) is driven by proc_sys_reset, proc_sys_reset is another
-
-"are having is" looks like two verbs.
-
-I don't get here mainly why SoC has something driven by its own GPIO.
-That's unusual pattern.
-
-
-> PL IP driven by the PS pl_reset. So, here the VCU reset is not driven by
-> axi_gpio or PS GPIO so there will be no GPIO entry.
-
-Anyway, this has to be constrained per SoC.
-
+On 02/01/2025 17:36, Rohit Visavalia wrote:
+> From: Rohit Visavalia <rohit.visavalia@xilinx.com>
 > 
-> Signed-off-by: Rohit Visavalia <rohit.visavalia@amd.com>
-> ---
->  Documentation/devicetree/bindings/clock/xlnx,vcu.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+> As per commit a2fe7baa27a4 ("clk: xilinx: move xlnx_vcu clock
+> driver from soc"), xlnx_vcu driver code is moved to clock from soc,
+> so moving the dt-binding.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/xlnx,vcu.yaml b/Documentation/devicetree/bindings/clock/xlnx,vcu.yaml
-> index bdb14594c40b..b3061309f8dd 100644
-> --- a/Documentation/devicetree/bindings/clock/xlnx,vcu.yaml
-> +++ b/Documentation/devicetree/bindings/clock/xlnx,vcu.yaml
-> @@ -36,6 +36,11 @@ properties:
->        - const: pll_ref
->        - const: aclk
->  
-> +  reset-gpios:
-> +    description: Optional GPIO used to reset the VCU, if available. Need use this
-
-Drop redundant parts. Not being part of required defines "optional"
-already. Don't repeat the schema but say something which we cannot
-deduce from this.
-
-> +      reset gpio when in design 'vcu_resetn' is driven by gpio.
-> +    maxItems: 1
-> +
->  required:
->    - reg
->    - clocks
-> @@ -52,6 +57,7 @@ examples:
->          xlnx_vcu: vcu@a0040000 {
->              compatible = "xlnx,vcu-logicoreip-1.0";
->              reg = <0x0 0xa0040000 0x0 0x1000>;
-> +            reset-gpios = <&gpio 0x4e GPIO_ACTIVE_HIGH>;
-
-GPIO numbers are not hex... unless this is not GPIO :/
-
->              clocks = <&si570_1>, <&clkc 71>;
->              clock-names = "pll_ref", "aclk";
->          };
-
+Drop commit, does not make sense. Just move the file during conversion.
 
 Best regards,
 Krzysztof
