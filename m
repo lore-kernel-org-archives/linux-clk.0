@@ -1,63 +1,63 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCBC19E819
-	for <linux-clk@vger.kernel.org>; Thu,  2 Jan 2025 10:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C410A125D6
+	for <linux-clk@vger.kernel.org>; Thu,  2 Jan 2025 10:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735814912; cv=none; b=NkNuFwtR7IrMOWF/5kpsDiHnTrcJQrhGti5G18egbp39IJZBcsFBS07gG7UYFMgwpacIz0oHykFLBSKLdMzRifWBvvBpp4uJiqdnzmhSWjtuXTIgPpc+5Lo3A+Rt4bOuEuWTBcivdetTZfUbl/CWDfoWTKQWmqbcMShr7lqaN/c=
+	t=1735815142; cv=none; b=QregTafMlZd1lgq0t5SQlcb4dRucYweJ5ZjN6ZmoyMTf63l7SFk0pjdIQOtLyWp4GsYzko5VdZeYtbl/H22qYHDPcrFVEg+hf2pN0bdmC3TtvB56xm6mbJgrI70lSbY4lJXGTIZ+hoxGJhpXn+i1BlN01nlqOnuUjg5ZaVWzbsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735814912; c=relaxed/simple;
-	bh=y6DMHxOijDlusyoIi9vYkliRXs2zYFrnr7b+Plgl+yg=;
+	s=arc-20240116; t=1735815142; c=relaxed/simple;
+	bh=mMF/3PAWbT4cwYrfbRt7SNtYsxbQwYPfM12nGDJoqPQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SYeKMuEgpKQQ8d4v4nz9GdYLQ147tInO4/piDnMVObamSJIN3uW7rWGb3BQ/L3F5G/Tb4yw/NRnPCfGx/Zi/PKpAhaqYtAun0bozDVIe35jxP6L8NNurU6N0u02SxhF9fZ8LROWH1TtVSE1PPpXKp7HG348I7yzgoKclPwtpL64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=MsWnFG/w; arc=none smtp.client-ip=209.85.221.54
+	 In-Reply-To:Content-Type; b=EVPgrXJ4jhVo7BByNo9jAPI+LpxgjMuDJ67+gIDLl1wJJKT1VHlEbi6mVN4D5Y4Ca1MLkEAODTQXBHZKWE6PNcN2daSTnProMA7UvAK+fE+rpCAzLNqlz+VbyWFDMqgRjN8jJFYdVEUb1pchLXsAO+0LCz1d//mVzO/js8fJypA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=X1hbv+CW; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MsWnFG/w"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385f07cd1a4so7335549f8f.1
-        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2025 02:48:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="X1hbv+CW"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4361e89b6daso76448305e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2025 02:52:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1735814908; x=1736419708; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1735815139; x=1736419939; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GFIpwGB23LANAByW/n2mcZ10YJezzuFXcnQMI/Wk7QU=;
-        b=MsWnFG/wxs89buC/0w56O97Z43uMiqdJ2nZ7Il9HLRr/0TKX3dY3yJQyjiljX/YbAl
-         UypWI7TwvJITo9n8vhMH5cZXq1IVH++uS4kDwGH6HMLUvlUUTwosiRl9p52opu2FCahD
-         dFZ7to11qUrv6oOB4GzCy3yn3bWsvrEIUjZKI0vgHGzvRpXMJT7qgUiy2aI4YrPx2h1D
-         PMm0BU7EDAOmjNvn0aRNYmJtcmpda6rsjPpeSgHiUoocIsCM0oOVzfQKuElm0lsM9djT
-         bXWYFL0XUgrlRxs/0bbcU5bbiokFqW+BKRsHY06wlKdwJMQVvJX6nBYc4kJ1IQZP1V/h
-         7Avw==
+        bh=ze9LqpjCGSWa0yPDrI54f/7UaaRjSHcJ6CR6aCivtOE=;
+        b=X1hbv+CW1mIXR5inMbIRSMeXu/iV+kika7xeuUAOOc8Pkj93e35QOzK2BTqlo9rkB2
+         RzdHFjnLfrc+iu2Fnh95De/rfhyxa+S2od0M4ya4jmKc+3yOnguowXtB7ze/BfM7isYa
+         1Pea5NJgMQSJfZs/yE/VahCSiqq1qRkPGZmaoaaEM3go+p0yh9aamPbIQDfpHJ2VN6lx
+         3qeHQowwLBkOlN/2rmEVHPOtblNIoI3zN3Y0obd8TjBN5F8adYUPZoxLBJGjbzkOlXRH
+         5eHJ6o8lkPYKCuK2NXcoXSm1ajMVv2XlO8+FxA7Hhd7eZKr+jGxO6f1drnVJWpW9+RKu
+         73eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735814908; x=1736419708;
+        d=1e100.net; s=20230601; t=1735815139; x=1736419939;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GFIpwGB23LANAByW/n2mcZ10YJezzuFXcnQMI/Wk7QU=;
-        b=AT6MNUVsyV1fyem75KSpZ8rqxocTltFkf1ppV8k6Kuq16yJdtHr1KMJ7YaLw4cQ3hR
-         L5AtdWcf0/JKM+gFjmUwRza5AxYg94vjV5gmJAC/s7Lu2i9vJa8c7nPSdKIJC/i6gjzf
-         Gn82vDpUV7+N9A2WBJdynbHlIQMmh6A/jRtQ+rbekvyB4vHcUZlIHvXnFPVQXsgNa0/D
-         GwQ66jlh1juWBJ3ZroOefldB4OFUeMEypGNyEk3qlZVsguDG5IKiS4YJ72kBQ6wZG+s9
-         IQNhXR2XHiHrWDeTDi5xM5Suer2ooFsksPHA2ZZOAq2OztgX5gIHXJiHGMiVrf39Mm+2
-         VphA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9OPLInelmqBXl+DK0F/hNf8dTtJX6Ew8MB/9N58XP/9xFFvDyWgDy9r8A4CH+a1OF6K7UZwTReyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNw25H7fi3HMJAJ5UokwKkn3cItmFtsBwxcS7tTaNjsEVY2P8R
-	8yMlXIUnn2MHWRZ2QrnY3v84w3cY+0Flf/okDTn8MAaljv+fexElHp3BstQfMqM=
-X-Gm-Gg: ASbGncv6wXYLEc35oDArCof/B3uZEaYCzEZWFlqsixAnxRz8AlTKy8QCB9LkHI6xL2x
-	9Zu4fmg3FgoJJ0XvbWJax5rsGz8qczxGY9gwkbtcrfyDA0S+ABk1e+w+Hm1T8fqEsXIrPS3z5Cq
-	FeTKWb43zOfT7pGSLHPUjPFtxVj09j/QU2j5S9ZjAHn7glNVlKMUV4u3muej9TrLZn7XxXd83dB
-	dB4/ylDqw5zExUJ7LAUWmEi2zC+bNj3k2hw9hrUtzhADDFjBozEaAhnZF8yUKnT6A==
-X-Google-Smtp-Source: AGHT+IENVLtDm//0s4zoP3FVOCZty2tw9Mx4m7bERvCUo2OJSxiEnc/IIpjbgKoYlXyGt/2cKq0SdQ==
-X-Received: by 2002:adf:9b8a:0:b0:38a:4de1:ac6 with SMTP id ffacd0b85a97d-38a4de10f03mr11955498f8f.6.1735814907658;
-        Thu, 02 Jan 2025 02:48:27 -0800 (PST)
+        bh=ze9LqpjCGSWa0yPDrI54f/7UaaRjSHcJ6CR6aCivtOE=;
+        b=WjTQvW4iA7PU3aliZq96xlT+SoEjvQiKAMiMkPqNZuNVsoMBgO0rE6B6Ti0NyCiImf
+         yv8ASQJVb0sgwhLbIWi43VX2IZyo5f67eLWdCZzrqs5rPrUgJmns2DemgGMYXHMrYLIj
+         yCSGOTnpZ6LRNdhRod8nTxtCTLFCYiii3xI94CPcCRZFkTBA1SoZmxzsV5TDzqbpTrNs
+         MfOjHhJEo7bWZHbemoo5DH2egQ3VqLb5+/iHVOXk2zKv8dqRcNff90Nah42Bo+8qi4Qp
+         /Uhz38hO16hOdTUpk3Uvf0GaxF8DywMYpDXkb7UcCI08pGKVjl9qRg2PmSxyIyEjzr/4
+         SnjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWofwk+SlwBeDVwPnt3OvT1yHMx7kxFBxwlJ9zXFQQqJyL/O8js5gTtW9MRZMD7NH3rF5O4JtjunZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWNlTUQAs3yZY4jsYTx7MLI8FmTNaErJJc38GXx9g7uRLhrMlK
+	AEISk4KgSGSEJi6LvRSa+wgHdxUBdpMifG3aMTz5o27C2v19UVWKow6txJWBxdU=
+X-Gm-Gg: ASbGncsPWc4f/XRZa31AglIWQdSH64GDvoDcge5RO2UpXkYjBaNGSRaEB1SgAdX9INe
+	V70GfuGIT4BdqL5QYULwGIgNZlfx86En8zUtxgMaXCBN3BocaQvSoJjUZlOA+sMTv5SJHLUoZlD
+	7l8AQ2wSi+8opoWS/1v0ajq3CA8TxdJLhxbS1nnPgIliTRbj1q2wCH05JlQvsyH7J70LOpMGJG8
+	Fckr+Tt8PKpDVEwp+1h6YYpc10G0qZ3d0fqYJqL4nrW1JAvQq38w8KVBPoT9LHLsQ==
+X-Google-Smtp-Source: AGHT+IEAXmh4Jm/fooPniPUd+cP6NsbK2SR6lviu3UydjCwVbdG5V5GA3GQCHI+v0JTIHRvlmZHUzQ==
+X-Received: by 2002:adf:ab0a:0:b0:38a:50fa:d582 with SMTP id ffacd0b85a97d-38a50faf3cemr11500112f8f.59.1735815139109;
+        Thu, 02 Jan 2025 02:52:19 -0800 (PST)
 Received: from [192.168.50.4] ([82.78.167.102])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c89e140sm38648430f8f.79.2025.01.02.02.48.25
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b3b295sm490098515e9.33.2025.01.02.02.52.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jan 2025 02:48:27 -0800 (PST)
-Message-ID: <8361a42d-0c70-4a8c-b0a0-7056ba21b508@tuxon.dev>
-Date: Thu, 2 Jan 2025 12:48:25 +0200
+        Thu, 02 Jan 2025 02:52:18 -0800 (PST)
+Message-ID: <70aab1bc-1427-44ed-b516-843429d0bdfa@tuxon.dev>
+Date: Thu, 2 Jan 2025 12:52:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,7 +65,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/13] clk: at91: sama7d65: add sama7d65 pmc driver
+Subject: Re: [PATCH v4 09/13] ARM: dts: microchip: add sama7d65 SoC DT
 To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
  conor+dt@kernel.org, nicolas.ferre@microchip.com,
  alexandre.belloni@bootlin.com, mturquette@baylibre.com, sboyd@kernel.org,
@@ -77,211 +77,32 @@ Cc: dharma.b@microchip.com, mihai.sain@microchip.com,
  linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
  linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
 References: <cover.1734723585.git.Ryan.Wanner@microchip.com>
- <549fa8590fe9b4380e413f8eed87392f28754395.1734723585.git.Ryan.Wanner@microchip.com>
+ <3f63aebc4b31da1b631ce7e6d76aa0046deeda6a.1734723585.git.Ryan.Wanner@microchip.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-In-Reply-To: <549fa8590fe9b4380e413f8eed87392f28754395.1734723585.git.Ryan.Wanner@microchip.com>
+In-Reply-To: <3f63aebc4b31da1b631ce7e6d76aa0046deeda6a.1734723585.git.Ryan.Wanner@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi, Ryan,
 
 On 20.12.2024 23:07, Ryan.Wanner@microchip.com wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
-> 
-> Add clock support for SAMA7D65 SoC.
-> 
-> Increase maximum number of valid master clocks. The PMC for the SAMA7D65
-> requires 9 master clocks.
-> 
-> Increase maximum amount of PLLs to 9 to support SAMA7D65 SoC PLL
-> requirements.
-> 
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> ---
->  drivers/clk/at91/Makefile          |    1 +
->  drivers/clk/at91/clk-master.c      |    2 +-
->  drivers/clk/at91/clk-sam9x60-pll.c |    2 +-
->  drivers/clk/at91/pmc.c             |    1 +
->  drivers/clk/at91/sama7d65.c        | 1375 ++++++++++++++++++++++++++++
->  5 files changed, 1379 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/clk/at91/sama7d65.c
-> 
+> +		pioa: pinctrl@e0014000 {
+> +			compatible = "microchip,sama7d65-pinctrl", "microchip,sama7g5-pinctrl";
 
-[ ... ]
+Please also update the documentation with the fallback.
 
+> +			reg = <0xe0014000 0x800>;
+> +			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&pmc PMC_TYPE_PERIPHERAL 10>;
+> +			interrupt-controller;
+> +			#interrupt-cells = <2>;
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +		};
 > +
-> +	parent_hws[0] = md_slck_hw;
-> +	parent_hws[1] = td_slck_hw;
-> +	parent_hws[2] = sama7d65_pmc->chws[PMC_MAIN];
-> +	for (i = PCK_PARENT_HW_MCK1; i < ARRAY_SIZE(sama7d65_mckx); i++) {
-> +		u8 num_parents = 3 + sama7d65_mckx[i].ep_count;
-> +		struct clk_hw *tmp_parent_hws[8];
-> +		u32 *mux_table;
-> +
-> +		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
-> +					  GFP_KERNEL);
-> +		if (!mux_table)
-> +			goto err_free;
-> +
-> +		PMC_INIT_TABLE(mux_table, 3);
-> +		PMC_FILL_TABLE(&mux_table[3], sama7d65_mckx[i].ep_mux_table,
-> +			       sama7d65_mckx[i].ep_count);
-> +		for (j = 0; j < sama7d65_mckx[i].ep_count; j++) {
-> +			u8 pll_id = sama7d65_mckx[i].ep[j].pll_id;
-> +			u8 pll_compid = sama7d65_mckx[i].ep[j].pll_compid;
-> +
-> +			tmp_parent_hws[j] = sama7d65_plls[pll_id][pll_compid].hw;
-> +		}
-> +		PMC_FILL_TABLE(&parent_hws[3], tmp_parent_hws,
-> +			       sama7d65_mckx[i].ep_count);
-> +
-> +		hw = at91_clk_sama7g5_register_master(regmap, sama7d65_mckx[i].n,
-> +						      num_parents, NULL, parent_hws,
-> +						      mux_table, &pmc_mckX_lock,
-> +						      sama7d65_mckx[i].id,
-> +						      sama7d65_mckx[i].c,
-> +						      sama7d65_mckx[i].ep_chg_id);
-> +		alloc_mem[alloc_mem_size++] = mux_table;
-> +
-> +		if (IS_ERR(hw)) {
-> +			kfree(mux_table);
-
-Now mux_table is freed twice, once here, once in err_free section. Having
-mux_table added to alloc_mem[] is enough. I'll do the propoer adjustment
-while applying.
-
-> +			goto err_free;
-> +		}
-> +
-> +		sama7d65_mckx[i].hw = hw;
-> +		if (sama7d65_mckx[i].eid)
-> +			sama7d65_pmc->chws[sama7d65_mckx[i].eid] = hw;
-> +	}
-> +
-> +	parent_names[0] = "syspll_divpmcck";
-> +	parent_names[1] = "usbpll_divpmcck";
-> +	parent_names[2] = "main_osc";
-> +	hw = sam9x60_clk_register_usb(regmap, "usbck", parent_names, 3);
-> +	if (IS_ERR(hw))
-> +		goto err_free;
-> +
-> +	parent_hws[0] = md_slck_hw;
-> +	parent_hws[1] = td_slck_hw;
-> +	parent_hws[2] = sama7d65_pmc->chws[PMC_MAIN];
-> +	parent_hws[3] = sama7d65_plls[PLL_ID_SYS][PLL_COMPID_DIV0].hw;
-> +	parent_hws[4] = sama7d65_plls[PLL_ID_DDR][PLL_COMPID_DIV0].hw;
-> +	parent_hws[5] = sama7d65_plls[PLL_ID_GPU][PLL_COMPID_DIV0].hw;
-> +	parent_hws[6] = sama7d65_plls[PLL_ID_BAUD][PLL_COMPID_DIV0].hw;
-> +	parent_hws[7] = sama7d65_plls[PLL_ID_AUDIO][PLL_COMPID_DIV0].hw;
-> +	parent_hws[8] = sama7d65_plls[PLL_ID_ETH][PLL_COMPID_DIV0].hw;
-> +
-> +	for (i = 0; i < 8; i++) {
-> +		char name[6];
-> +
-> +		snprintf(name, sizeof(name), "prog%d", i);
-> +
-> +		hw = at91_clk_register_programmable(regmap, name, NULL, parent_hws,
-> +						    9, i,
-> +						    &programmable_layout,
-> +						    sama7d65_prog_mux_table);
-> +		if (IS_ERR(hw))
-> +			goto err_free;
-> +
-> +		sama7d65_pmc->pchws[i] = hw;
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(sama7d65_systemck); i++) {
-> +		hw = at91_clk_register_system(regmap, sama7d65_systemck[i].n,
-> +					      sama7d65_systemck[i].p, NULL,
-> +					      sama7d65_systemck[i].id, 0);
-> +		if (IS_ERR(hw))
-> +			goto err_free;
-> +
-> +		sama7d65_pmc->shws[sama7d65_systemck[i].id] = hw;
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(sama7d65_periphck); i++) {
-> +		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
-> +							 &sama7d65_pcr_layout,
-> +							 sama7d65_periphck[i].n,
-> +							 NULL,
-> +							 sama7d65_mckx[sama7d65_periphck[i].p].hw,
-> +							 sama7d65_periphck[i].id,
-> +							 &sama7d65_periphck[i].r,
-> +							 sama7d65_periphck[i].chgp ? 0 :
-> +							 INT_MIN, 0);
-> +		if (IS_ERR(hw))
-> +			goto err_free;
-> +
-> +		sama7d65_pmc->phws[sama7d65_periphck[i].id] = hw;
-> +	}
-> +
-> +	parent_hws[0] = md_slck_hw;
-> +	parent_hws[1] = td_slck_hw;
-> +	parent_hws[2] = sama7d65_pmc->chws[PMC_MAIN];
-> +	parent_hws[3] = sama7d65_pmc->chws[PMC_MCK1];
-> +	for (i = 0; i < ARRAY_SIZE(sama7d65_gck); i++) {
-> +		u8 num_parents = 4 + sama7d65_gck[i].pp_count;
-> +		struct clk_hw *tmp_parent_hws[8];
-> +		u32 *mux_table;
-> +
-> +		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
-> +					  GFP_KERNEL);
-> +		if (!mux_table)
-> +			goto err_free;
-> +
-> +		PMC_INIT_TABLE(mux_table, 4);
-> +		PMC_FILL_TABLE(&mux_table[4], sama7d65_gck[i].pp_mux_table,
-> +			       sama7d65_gck[i].pp_count);
-> +		for (j = 0; j < sama7d65_gck[i].pp_count; j++) {
-> +			u8 pll_id = sama7d65_gck[i].pp[j].pll_id;
-> +			u8 pll_compid = sama7d65_gck[i].pp[j].pll_compid;
-> +
-> +			tmp_parent_hws[j] = sama7d65_plls[pll_id][pll_compid].hw;
-> +		}
-> +		PMC_FILL_TABLE(&parent_hws[4], tmp_parent_hws,
-> +			       sama7d65_gck[i].pp_count);
-> +
-> +		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
-> +						 &sama7d65_pcr_layout,
-> +						 sama7d65_gck[i].n, NULL,
-> +						 parent_hws, mux_table,
-> +						 num_parents,
-> +						 sama7d65_gck[i].id,
-> +						 &sama7d65_gck[i].r,
-> +						 sama7d65_gck[i].pp_chg_id);
-> +		if (IS_ERR(hw))
-> +			goto err_free;
-> +
-> +		sama7d65_pmc->ghws[sama7d65_gck[i].id] = hw;
-> +		alloc_mem[alloc_mem_size++] = mux_table;
-
-This should have been added just after:
-
-		if (!mux_table)
-			goto err_free;
-
-I'll adjust it while applying.
-
-> +	}
-> +
-> +	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama7d65_pmc);
-> +	kfree(alloc_mem);
-> +
-> +	return;
-> +
-> +err_free:
-> +	if (alloc_mem) {
-> +		for (i = 0; i < alloc_mem_size; i++)
-> +			kfree(alloc_mem[i]);
-> +		kfree(alloc_mem);
-> +	}
-> +
-> +	kfree(sama7d65_pmc);
-> +}
-> +
-> +/* Some clks are used for a clocksource */
-> +CLK_OF_DECLARE(sama7d65_pmc, "microchip,sama7d65-pmc", sama7d65_pmc_setup);
 
