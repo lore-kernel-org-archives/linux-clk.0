@@ -1,48 +1,48 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACF613C9B8;
-	Thu,  2 Jan 2025 04:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084CC18BBB0;
+	Thu,  2 Jan 2025 06:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735790787; cv=none; b=JbLduQYCEBZGeIpY8jKYkMLdav4I7iRkIpdA2PrZQwM4xYMxr8cc6NkSMlgTQVI/BXI0EFPqk5Dhp7sVLOx1bRVi11d+EUQ3pBv4jKE/o8SItre6pA0SC39A+Vw8hPY5QEbn4iYclkxFPRdYT/jf7Zyg+JAOYMQaI/2g8ShFnA8=
+	t=1735797650; cv=none; b=bjT95iG/CX0OmgAFHyf27XIA817lEYVVT5yvHTa3qeRinEbclKuH3WRE0vzI0C/PsFlTyXcElw6QgodckxUD7QYicveVInBDS+yrrTmkdLeNWUBPOnkfN+kEuv/KRNTjo5UVNqOGwujuKhcWXJ4Y7YKnvYnJPhK92+kXloeKENQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735790787; c=relaxed/simple;
-	bh=6pZwTbcRg3swdCbZo7qFi7R+MD2xATsXf+FGW2fh/R8=;
+	s=arc-20240116; t=1735797650; c=relaxed/simple;
+	bh=1j+nQVCRBb0ZXcBR5aiDWLhAShxV+R8AkpGmpbArYFE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P+mXcb4sF6jjLqOzErXzBy98MIYLKvaowRsd7Lfrhf8rA3bcVRMfIRj4iQnH3RyNZ11tl1lnU5pCfsK8fLIghCA2peFN8ybXld48HH8ISJMhzOACQs7kI0vv4dyJEQU3leAT9fKouKto6bb0s/BNopA+UUrBROx/b4ZSCh6cb9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gylwqm7X; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=TkbshyvjwPGU/VC9eu97S7kHu58i5uqy/Lyi54/CcO7QIsJaDBDp5Lv3DpQVkRDPA4ckSQg7ZSz+njZF0UeyFy+fkG00/aLs5o4JLp/ghD+fGyVCEde/lN9vPgx37bYr+uxXDJ+pfI/lNCA8YCsA83NYOviH3COXB1xjALdFfB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LwGnUVsJ; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gylwqm7X"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 501Nqf46028363;
-	Thu, 2 Jan 2025 04:06:20 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LwGnUVsJ"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 501NUAca024114;
+	Thu, 2 Jan 2025 06:00:38 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DyqTskAtcg9jUYySn6MKxX0RIGCtMAOnwj+KHtjz+3Y=; b=Gylwqm7XTiMAKFYf
-	9jmVlwC6A1Ke73B4cNEcAF4grWZHT54X2PViH6yIt/WjjqsNWwNPwG64awIBEbQn
-	3NcmnWFdxNGKeorZux++nkXeFppSy9ZQQlG8o8uIHlE5u2Z9xa5y4qrCbJeB4Gf6
-	ap3bG/1bdxNDDBFPVQgYcXWEHXd9LklL8W0vWDxNUOJFAOm6LZRGerF4kqc7KseR
-	RyBeRSt/fIuSeiYVu38FZmtZhecpXwdinZboj2xz2vBRLq+SWP3Mz3ttEU1fWbWC
-	r3aaeQ1gFvZSHEwcSZ7bCSBvT7HLqQ+C1BFefpElHT82d40NIvG9nR+wyh6fMTWs
-	FDkpXQ==
+	TLlTj0pJpdNKsYrqYblAC2KBuxwDhA53hXofnmX3pis=; b=LwGnUVsJCx0B+rmt
+	M+LGma0Jl1hv6oKd17jqgsgesLLdu7WCc/E+phFtYlSkL5kScRligi1Ya4aZID5X
+	Fr0gF3ZzAg67aL6pyg9YqBrWP2ZfNd3q/VwF3LzfDhJPwNuqo3FHW68tYE0/7XDi
+	qyU/ORH+GHIpSUa+DLPbqnJUlvHWY8SAalthDPI5Ac0Yas2W6sd4PoGRmzykp17r
+	hTF2pLjx2FD5kSjkbqikioWUghxVg/AmEnr35OjqnI1yHBDd1cWjUPZZPH+eM+Cx
+	mp/v3joJUWgbzt9c/jU18SCYV0vDig6bwdqyDk5yiEDJbw/EoD5SqQXikj+2RaR/
+	74yF9Q==
 Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43w6xagwgf-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43w1wyhfgc-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 Jan 2025 04:06:20 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 50246JZG002507
+	Thu, 02 Jan 2025 06:00:37 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 50260axn006540
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 2 Jan 2025 04:06:19 GMT
-Received: from [10.231.216.103] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 2 Jan 2025 06:00:36 GMT
+Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 1 Jan 2025
- 20:06:16 -0800
-Message-ID: <7556a703-db1a-48f1-8546-e9acf91ca0c6@quicinc.com>
-Date: Thu, 2 Jan 2025 12:06:14 +0800
+ 22:00:31 -0800
+Message-ID: <dc0b0eef-dcdf-4ed2-a835-d9ca9c5b2c9d@quicinc.com>
+Date: Thu, 2 Jan 2025 11:30:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,63 +50,88 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
- video GDSC's
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        "Vikash Garodia" <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>
-References: <20241223-switch_gdsc_mode-v2-0-eb5c96aee662@quicinc.com>
- <20241223-switch_gdsc_mode-v2-1-eb5c96aee662@quicinc.com>
- <szj4urqpxoek3y65ov6bavxqjsgs5nnu5o32e73z47mudelq4v@6fjbmm2h7pen>
+Subject: Re: [PATCH v3 0/6] Add SPI4 support for IPQ5424
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Kathiravan Thirumoorthy
+	<quic_kathirav@quicinc.com>,
+        <andersson@kernel.org>, <linus.walleij@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <konradybcio@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+References: <20241227072446.2545148-1-quic_mmanikan@quicinc.com>
+ <e673dbdf-9b16-4c64-a3e0-cf5bb31e2b82@quicinc.com>
+ <d4875732-ec24-4e35-9a7b-af05c6ee7d4b@oss.qualcomm.com>
+ <fbf019aa-e8f9-4169-9543-f85d2a17ce7f@oss.qualcomm.com>
+ <52fa8219-0485-4fc6-8f3f-5759649057cf@quicinc.com>
+ <34ab59a1-b735-44d1-918a-1b82954a4423@oss.qualcomm.com>
 Content-Language: en-US
-From: Renjiang Han <quic_renjiang@quicinc.com>
-In-Reply-To: <szj4urqpxoek3y65ov6bavxqjsgs5nnu5o32e73z47mudelq4v@6fjbmm2h7pen>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <34ab59a1-b735-44d1-918a-1b82954a4423@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HVktSHTdi00R2-Vl8coqx9ht1PTJyEh6
-X-Proofpoint-ORIG-GUID: HVktSHTdi00R2-Vl8coqx9ht1PTJyEh6
+X-Proofpoint-GUID: surYKO7nS5ValIXdjJ76uyfZQuzd3pLy
+X-Proofpoint-ORIG-GUID: surYKO7nS5ValIXdjJ76uyfZQuzd3pLy
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- impostorscore=0 mlxlogscore=996 mlxscore=0 spamscore=0 phishscore=0
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2501020032
+ priorityscore=1501 mlxlogscore=999 lowpriorityscore=0 bulkscore=0
+ spamscore=0 impostorscore=0 malwarescore=0 phishscore=0 mlxscore=0
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2501020051
 
 
-On 12/26/2024 11:54 AM, Bjorn Andersson wrote:
->> The video driver will be using the newly introduced
->> dev_pm_genpd_set_hwmode() API to switch the video GDSC to HW and SW
->> control modes at runtime.
-> "Will be using", does that imply then that if this patch is merged
-> before (or without the venus patch) something unexpected will happen?
->
-> Please clarify how you expect this to be merged, or clarify in the
-> commit message that ordering is not of any concern.
->
-> Regards,
-> Bjorn
-  Thanks for your comment. This patch series is to make the video driver
-  to use dev_pm_genpd_set_hwmode() to switch GDSC mode. This patch and
-  the venus driver patch need to be merged at the same time. Otherwise,
-  the video will not work properly on these platforms.
 
--- 
-Best Regards,
-Renjiang
+On 12/30/2024 9:06 PM, Konrad Dybcio wrote:
+> On 30.12.2024 4:34 PM, Kathiravan Thirumoorthy wrote:
+>>
+>>
+>> On 12/30/2024 7:28 PM, Konrad Dybcio wrote:
+>>> On 30.12.2024 2:54 PM, Konrad Dybcio wrote:
+>>>> On 30.12.2024 7:51 AM, Kathiravan Thirumoorthy wrote:
+>>>>>
+>>>>>
+>>>>> On 12/27/2024 12:54 PM, Manikanta Mylavarapu wrote:
+>>>>>> Add SPI4 node to the IPQ5424 device tree and update the relevant
+>>>>>> bindings, GPIO pin mappings accordingly.
+>>>>>>
+>>>>>> Changes in V3:
+>>>>>>      - Rename SPI0 to SPI4 because SPI protocol runs on serial engine 4
+>>>>>
+>>>>> Do we really need to do this? If so, it will not align with the HW documentation and will lead to the confusion down the line. IMHO, we should stick with the convention followed in the HW documentation.
+>>>>
+>>>> +1, the clocks are called SPI0/SPI1 internally
+>>>
+>>> Ok, I looked at a bit more documentation and it looks like
+>>> somebody just had fun naming things..
+>>>
+>>> SPI0 is on SE4 and SPI1 is on something else, with no more
+>>> clock provisions for that protocol.. Which is not usually the
+>>> case.
+>>
+>>
+>> IPQ5424 has one QUPV3 instance with 6 SEs. SE0-SE4 are Mini core and SE5 is FW core.
+>>
+>> SE0 and SE1 are for 4-wire UART and 2-wire UART respectively. SE2 and SE3 are for I2C protocol. SE4 is for SPI.
+>>
+>> Since SE5 is FW based (some RDPs use this SE for I2C). In GCC block, clocks for this instance is named after SPI as SPI1.
+> 
+> Thanks for the explanation.
+> 
+> Manikanta, please refer to this in the commit message as well
+> 
 
+
+Thank you, Konrad and Kathiravan, for your valuable insights.
+I will incorporate the aforementioned information into the commit message, revert the 'renaming spi0 to spi4',
+and include both spi0 and spi1 in the next version.
+
+Thanks & Regards,
+Manikanta.
