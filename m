@@ -1,646 +1,238 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B10028E8;
-	Fri,  3 Jan 2025 02:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104A12F22;
+	Fri,  3 Jan 2025 04:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735870916; cv=none; b=GzK3Xojz9+u8Tto8e+zW4VCBKVnhRKo8TC5j2K5SD/aBmNi7H/D2got9Bd5cKLzfBSmvgEj9bw5bJ+ZgCZwUlTWs+AUmyvQH5ayzWoFog3UDMSEeEgvPEkhfh9RMt4tAF03aRj/3EfQi0kDsEnT4Ex2x7j+/1M4eQ+TtGymj3Sw=
+	t=1735878114; cv=none; b=QEj3jFfm63A8xnr/T3S4h2j7PqIOBZn5bZWBJVPH3l5WLiwLIZZwZTeT7KKP1G+EOeb+n07odHD3+DuLTLOTkKCnprJRgc0wMcmg5J7h4tmvGPufUN38sPBKgN4xRbkxj2j+cDq0bXX0qx8rSMZ+mUMULPwPUMGz2E59W6us4l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735870916; c=relaxed/simple;
-	bh=bocTFWs0FIUVM8V7HwKMqKBsVEoTEnYuAJAgzbMct1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LDRmEZorTr8MU3KaTVfuMgVoxAWWCBJYTlxkdoTQ5HWvsQQiu7I+FfC68SdXffvI+oAzLcNUX2lxIQzpdOQB7CbkRHzDJFcXBk66gPmzxoX88mN9lrPCLSRcPViK8BhLfQuNO7qJoktHsbxzRJZGqAExpNDF+uO/Aw9d2iyIaHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kzyl2sku; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1735878114; c=relaxed/simple;
+	bh=rUh+Jms2/cvZlBuLCtwSku5gU2f6s93rcjhzOGf1Nvg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cdqltCnNhlTKT53YBvv0U+4aqWfnDaJgn7Zbrg0O/F80QrFRA+xWsCVvFm3bDV/pX031+IUmpObCLhAEj5pcJ9XpPBQCbIe0X4mnEPIxWMfFjdvOoDSc+bexplVhOPbts2z6hU35YiPo5E2H7KYmKSxvJONBA5HDrXc8m3uq8hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dRc857Z9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kzyl2sku"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1735870914; x=1767406914;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bocTFWs0FIUVM8V7HwKMqKBsVEoTEnYuAJAgzbMct1U=;
-  b=kzyl2skuWzCtBo+uuXIAsDmiHlntq0/nxmyCGJ4brSuyI10Bxu0tOEfo
-   SM+Psl7AHg9xki/8wsiFRaRUK/hBZDC2VDPdsf134bo4FgXLcnd/xBp1v
-   Y5PFSBoFTAc4rA4y31GopUg7udzs9ch+mzfVByTRoCvHnLx4ukprwuC0V
-   jxswcsU9SbSTL4qySlqsl3i6jnvy0WBL7cuAN5s60II4J8ITDcoyRoxNx
-   +RaLUmxOI/kB8gNCMTEGokHZ2yXX+CEo2HEDTydspKBZJoQc0NIeHEHsR
-   z5AXlOp8X/6PUfkecN5j6pYVD3QHukDEyNYKzZrMduEyohNTUD58enJzE
-   Q==;
-X-CSE-ConnectionGUID: K5u1MXJfQbSxCxYrvhNIbA==
-X-CSE-MsgGUID: yeQM6bV5Rd6MPKcQwJNZtA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11303"; a="53662787"
-X-IronPort-AV: E=Sophos;i="6.12,286,1728975600"; 
-   d="scan'208";a="53662787"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jan 2025 18:21:53 -0800
-X-CSE-ConnectionGUID: arU3oN7DTdKWnclAMX3w7A==
-X-CSE-MsgGUID: blOfOOg9QOuB29RTSUkx9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="106298554"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 02 Jan 2025 18:21:50 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tTXJr-00095D-26;
-	Fri, 03 Jan 2025 02:21:47 +0000
-Date: Fri, 3 Jan 2025 10:21:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v3 3/6] clk: renesas: rzv2h: Simplify BUS_MSTOP macros
- and field extraction
-Message-ID: <202501030941.vDjx439p-lkp@intel.com>
-References: <20250102181839.352599-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dRc857Z9"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5030t2Gj008637;
+	Fri, 3 Jan 2025 04:21:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	84y03jD3GZcQ7y+IdGpRQBmYmLIJsFO/lG++Ku79PMc=; b=dRc857Z90bSO/YR6
+	Qw7epzEyKm0ZG5zkOSd1DsVflGDFoXyp+Y3/qoII2zdD7ZfdtWeNpd22hH5fZciC
+	LNOsRzeJoLm8xhopnNWiRVCo7bn5hdQhdyoY9NICzHjGIqgpi3yYlQI3U7SykjdE
+	6icn7D45xZp1r7bsZEH1IzXIGVB/F7rXLcwNg0D4TUOTIWtvRjCV2Ywo8PwReOaK
+	VrNo5YXRSNJF1hhuKfD/vmDweYhZblqnYUX/QgxMc3WpcvalzhK1s+Y69RkPKvqe
+	AEmPA1p9o8vtX8jQZQfiy2Tl2jLdZkGLCoPPolZ3XoB+6w67RxncHDihdiiOdkSR
+	ztwZtQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43x5s0rbn9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 03 Jan 2025 04:21:35 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5034LZfH029417
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 3 Jan 2025 04:21:35 GMT
+Received: from [10.218.33.29] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 2 Jan 2025
+ 20:21:30 -0800
+Message-ID: <acdf1267-ce56-4ec1-8407-a5f3212a8bfe@quicinc.com>
+Date: Fri, 3 Jan 2025 09:51:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250102181839.352599-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Hi Prabhakar,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on geert-renesas-drivers/renesas-clk]
-[also build test ERROR on next-20241220]
-[cannot apply to linus/master v6.13-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Prabhakar/clk-renesas-rzv2h-Fix-use-after-free-in-MSTOP-refcount-handling/20250103-022238
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
-patch link:    https://lore.kernel.org/r/20250102181839.352599-4-prabhakar.mahadev-lad.rj%40bp.renesas.com
-patch subject: [PATCH v3 3/6] clk: renesas: rzv2h: Simplify BUS_MSTOP macros and field extraction
-config: sparc-randconfig-002-20250103 (https://download.01.org/0day-ci/archive/20250103/202501030941.vDjx439p-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250103/202501030941.vDjx439p-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202501030941.vDjx439p-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/clk/renesas/r9a09g057-cpg.c:15:
->> drivers/clk/renesas/rzv2h-cpg.h:51:34: error: implicit declaration of function 'FIELD_PREP_CONST' [-Wimplicit-function-declaration]
-      51 | #define BUS_MSTOP(idx, mask)    (FIELD_PREP_CONST(BUS_MSTOP_IDX_MASK, (idx)) | \
-         |                                  ^~~~~~~~~~~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:32: note: in definition of macro 'DEF_MOD_BASE'
-     137 |                 .mstop_data = (_mstop), \
-         |                                ^~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:120:9: note: in expansion of macro 'DEF_MOD'
-     120 |         DEF_MOD("gtm_0_pclk",                   CLK_PLLCM33_DIV16, 4, 3, 2, 3,
-         |         ^~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:121:49: note: in expansion of macro 'BUS_MSTOP'
-     121 |                                                 BUS_MSTOP(5, BIT(10))),
-         |                                                 ^~~~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:120:9: note: in expansion of macro 'DEF_MOD'
-     120 |         DEF_MOD("gtm_0_pclk",                   CLK_PLLCM33_DIV16, 4, 3, 2, 3,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[1].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:120:9: note: in expansion of macro 'DEF_MOD'
-     120 |         DEF_MOD("gtm_0_pclk",                   CLK_PLLCM33_DIV16, 4, 3, 2, 3,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:122:9: note: in expansion of macro 'DEF_MOD'
-     122 |         DEF_MOD("gtm_1_pclk",                   CLK_PLLCM33_DIV16, 4, 4, 2, 4,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[2].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:122:9: note: in expansion of macro 'DEF_MOD'
-     122 |         DEF_MOD("gtm_1_pclk",                   CLK_PLLCM33_DIV16, 4, 4, 2, 4,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:124:9: note: in expansion of macro 'DEF_MOD'
-     124 |         DEF_MOD("gtm_2_pclk",                   CLK_PLLCLN_DIV16, 4, 5, 2, 5,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[3].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:124:9: note: in expansion of macro 'DEF_MOD'
-     124 |         DEF_MOD("gtm_2_pclk",                   CLK_PLLCLN_DIV16, 4, 5, 2, 5,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:126:9: note: in expansion of macro 'DEF_MOD'
-     126 |         DEF_MOD("gtm_3_pclk",                   CLK_PLLCLN_DIV16, 4, 6, 2, 6,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[4].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:126:9: note: in expansion of macro 'DEF_MOD'
-     126 |         DEF_MOD("gtm_3_pclk",                   CLK_PLLCLN_DIV16, 4, 6, 2, 6,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:128:9: note: in expansion of macro 'DEF_MOD'
-     128 |         DEF_MOD("gtm_4_pclk",                   CLK_PLLCLN_DIV16, 4, 7, 2, 7,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[5].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:128:9: note: in expansion of macro 'DEF_MOD'
-     128 |         DEF_MOD("gtm_4_pclk",                   CLK_PLLCLN_DIV16, 4, 7, 2, 7,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:130:9: note: in expansion of macro 'DEF_MOD'
-     130 |         DEF_MOD("gtm_5_pclk",                   CLK_PLLCLN_DIV16, 4, 8, 2, 8,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[6].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:130:9: note: in expansion of macro 'DEF_MOD'
-     130 |         DEF_MOD("gtm_5_pclk",                   CLK_PLLCLN_DIV16, 4, 8, 2, 8,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:132:9: note: in expansion of macro 'DEF_MOD'
-     132 |         DEF_MOD("gtm_6_pclk",                   CLK_PLLCLN_DIV16, 4, 9, 2, 9,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[7].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:132:9: note: in expansion of macro 'DEF_MOD'
-     132 |         DEF_MOD("gtm_6_pclk",                   CLK_PLLCLN_DIV16, 4, 9, 2, 9,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:134:9: note: in expansion of macro 'DEF_MOD'
-     134 |         DEF_MOD("gtm_7_pclk",                   CLK_PLLCLN_DIV16, 4, 10, 2, 10,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[8].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:134:9: note: in expansion of macro 'DEF_MOD'
-     134 |         DEF_MOD("gtm_7_pclk",                   CLK_PLLCLN_DIV16, 4, 10, 2, 10,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:136:9: note: in expansion of macro 'DEF_MOD'
-     136 |         DEF_MOD("wdt_0_clkp",                   CLK_PLLCM33_DIV16, 4, 11, 2, 11,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[9].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:136:9: note: in expansion of macro 'DEF_MOD'
-     136 |         DEF_MOD("wdt_0_clkp",                   CLK_PLLCM33_DIV16, 4, 11, 2, 11,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:138:9: note: in expansion of macro 'DEF_MOD'
-     138 |         DEF_MOD("wdt_0_clk_loco",               CLK_QEXTAL, 4, 12, 2, 12,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[10].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:138:9: note: in expansion of macro 'DEF_MOD'
-     138 |         DEF_MOD("wdt_0_clk_loco",               CLK_QEXTAL, 4, 12, 2, 12,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:140:9: note: in expansion of macro 'DEF_MOD'
-     140 |         DEF_MOD("wdt_1_clkp",                   CLK_PLLCLN_DIV16, 4, 13, 2, 13,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[11].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:140:9: note: in expansion of macro 'DEF_MOD'
-     140 |         DEF_MOD("wdt_1_clkp",                   CLK_PLLCLN_DIV16, 4, 13, 2, 13,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:142:9: note: in expansion of macro 'DEF_MOD'
-     142 |         DEF_MOD("wdt_1_clk_loco",               CLK_QEXTAL, 4, 14, 2, 14,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[12].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:142:9: note: in expansion of macro 'DEF_MOD'
-     142 |         DEF_MOD("wdt_1_clk_loco",               CLK_QEXTAL, 4, 14, 2, 14,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:144:9: note: in expansion of macro 'DEF_MOD'
-     144 |         DEF_MOD("wdt_2_clkp",                   CLK_PLLCLN_DIV16, 4, 15, 2, 15,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[13].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:144:9: note: in expansion of macro 'DEF_MOD'
-     144 |         DEF_MOD("wdt_2_clkp",                   CLK_PLLCLN_DIV16, 4, 15, 2, 15,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:146:9: note: in expansion of macro 'DEF_MOD'
-     146 |         DEF_MOD("wdt_2_clk_loco",               CLK_QEXTAL, 5, 0, 2, 16,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[14].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:146:9: note: in expansion of macro 'DEF_MOD'
-     146 |         DEF_MOD("wdt_2_clk_loco",               CLK_QEXTAL, 5, 0, 2, 16,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:148:9: note: in expansion of macro 'DEF_MOD'
-     148 |         DEF_MOD("wdt_3_clkp",                   CLK_PLLCLN_DIV16, 5, 1, 2, 17,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[15].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:148:9: note: in expansion of macro 'DEF_MOD'
-     148 |         DEF_MOD("wdt_3_clkp",                   CLK_PLLCLN_DIV16, 5, 1, 2, 17,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:150:9: note: in expansion of macro 'DEF_MOD'
-     150 |         DEF_MOD("wdt_3_clk_loco",               CLK_QEXTAL, 5, 2, 2, 18,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[16].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:150:9: note: in expansion of macro 'DEF_MOD'
-     150 |         DEF_MOD("wdt_3_clk_loco",               CLK_QEXTAL, 5, 2, 2, 18,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:152:9: note: in expansion of macro 'DEF_MOD'
-     152 |         DEF_MOD("scif_0_clk_pck",               CLK_PLLCM33_DIV16, 8, 15, 4, 15,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[17].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:152:9: note: in expansion of macro 'DEF_MOD'
-     152 |         DEF_MOD("scif_0_clk_pck",               CLK_PLLCM33_DIV16, 8, 15, 4, 15,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:154:9: note: in expansion of macro 'DEF_MOD'
-     154 |         DEF_MOD("riic_8_ckm",                   CLK_PLLCM33_DIV16, 9, 3, 4, 19,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[18].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:154:9: note: in expansion of macro 'DEF_MOD'
-     154 |         DEF_MOD("riic_8_ckm",                   CLK_PLLCM33_DIV16, 9, 3, 4, 19,
-         |         ^~~~~~~
->> drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:156:9: note: in expansion of macro 'DEF_MOD'
-     156 |         DEF_MOD("riic_0_ckm",                   CLK_PLLCLN_DIV16, 9, 4, 4, 20,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[19].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:156:9: note: in expansion of macro 'DEF_MOD'
-     156 |         DEF_MOD("riic_0_ckm",                   CLK_PLLCLN_DIV16, 9, 4, 4, 20,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:158:9: note: in expansion of macro 'DEF_MOD'
-     158 |         DEF_MOD("riic_1_ckm",                   CLK_PLLCLN_DIV16, 9, 5, 4, 21,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[20].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:158:9: note: in expansion of macro 'DEF_MOD'
-     158 |         DEF_MOD("riic_1_ckm",                   CLK_PLLCLN_DIV16, 9, 5, 4, 21,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:160:9: note: in expansion of macro 'DEF_MOD'
-     160 |         DEF_MOD("riic_2_ckm",                   CLK_PLLCLN_DIV16, 9, 6, 4, 22,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[21].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:160:9: note: in expansion of macro 'DEF_MOD'
-     160 |         DEF_MOD("riic_2_ckm",                   CLK_PLLCLN_DIV16, 9, 6, 4, 22,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:162:9: note: in expansion of macro 'DEF_MOD'
-     162 |         DEF_MOD("riic_3_ckm",                   CLK_PLLCLN_DIV16, 9, 7, 4, 23,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[22].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:162:9: note: in expansion of macro 'DEF_MOD'
-     162 |         DEF_MOD("riic_3_ckm",                   CLK_PLLCLN_DIV16, 9, 7, 4, 23,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:164:9: note: in expansion of macro 'DEF_MOD'
-     164 |         DEF_MOD("riic_4_ckm",                   CLK_PLLCLN_DIV16, 9, 8, 4, 24,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[23].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:164:9: note: in expansion of macro 'DEF_MOD'
-     164 |         DEF_MOD("riic_4_ckm",                   CLK_PLLCLN_DIV16, 9, 8, 4, 24,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: error: initializer element is not constant
-     137 |                 .mstop_data = (_mstop), \
-         |                               ^
-   drivers/clk/renesas/rzv2h-cpg.h:148:9: note: in expansion of macro 'DEF_MOD_BASE'
-     148 |         DEF_MOD_BASE(_name, _mstop, _parent, false, false, _onindex, _onbit, _monindex, _monbit)
-         |         ^~~~~~~~~~~~
-   drivers/clk/renesas/r9a09g057-cpg.c:166:9: note: in expansion of macro 'DEF_MOD'
-     166 |         DEF_MOD("riic_5_ckm",                   CLK_PLLCLN_DIV16, 9, 9, 4, 25,
-         |         ^~~~~~~
-   drivers/clk/renesas/rzv2h-cpg.h:137:31: note: (near initialization for 'r9a09g057_mod_clks[24].mstop_data')
-     137 |                 .mstop_data = (_mstop), \
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/6] clk: qcom: Add support for GPU Clock Controller on
+ QCS8300
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona
+	<quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+References: <20241106-qcs8300-mm-patches-v3-0-f611a8f87f15@quicinc.com>
+ <20241106-qcs8300-mm-patches-v3-2-f611a8f87f15@quicinc.com>
+ <xc7iiuwlbihb7dguq77el5ipt2w5324klyvojkyf2eh3lit6eh@zgj567elzljm>
+Content-Language: en-US
+From: Imran Shaik <quic_imrashai@quicinc.com>
+In-Reply-To: <xc7iiuwlbihb7dguq77el5ipt2w5324klyvojkyf2eh3lit6eh@zgj567elzljm>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Zh-LRNeAYkheVge3yxWIrwpXVZrFIbgL
+X-Proofpoint-GUID: Zh-LRNeAYkheVge3yxWIrwpXVZrFIbgL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 spamscore=0 malwarescore=0
+ clxscore=1015 suspectscore=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2501030035
 
 
-vim +/FIELD_PREP_CONST +51 drivers/clk/renesas/rzv2h-cpg.h
 
-    48	
-    49	#define BUS_MSTOP_IDX_MASK	GENMASK(31, 16)
-    50	#define BUS_MSTOP_BITS_MASK	GENMASK(15, 0)
-  > 51	#define BUS_MSTOP(idx, mask)	(FIELD_PREP_CONST(BUS_MSTOP_IDX_MASK, (idx)) | \
-    52					 FIELD_PREP_CONST(BUS_MSTOP_BITS_MASK, (mask)))
-    53	#define BUS_MSTOP_NONE		GENMASK(31, 0)
-    54	
-    55	/**
-    56	 * Definitions of CPG Core Clocks
-    57	 *
-    58	 * These include:
-    59	 *   - Clock outputs exported to DT
-    60	 *   - External input clocks
-    61	 *   - Internal CPG clocks
-    62	 */
-    63	struct cpg_core_clk {
-    64		const char *name;
-    65		unsigned int id;
-    66		unsigned int parent;
-    67		unsigned int div;
-    68		unsigned int mult;
-    69		unsigned int type;
-    70		union {
-    71			unsigned int conf;
-    72			struct ddiv ddiv;
-    73		} cfg;
-    74		const struct clk_div_table *dtable;
-    75		u32 flag;
-    76	};
-    77	
-    78	enum clk_types {
-    79		/* Generic */
-    80		CLK_TYPE_IN,		/* External Clock Input */
-    81		CLK_TYPE_FF,		/* Fixed Factor Clock */
-    82		CLK_TYPE_PLL,
-    83		CLK_TYPE_DDIV,		/* Dynamic Switching Divider */
-    84	};
-    85	
-    86	/* BIT(31) indicates if CLK1/2 are accessible or not */
-    87	#define PLL_CONF(n)		(BIT(31) | ((n) & ~GENMASK(31, 16)))
-    88	#define PLL_CLK_ACCESS(n)	((n) & BIT(31) ? 1 : 0)
-    89	#define PLL_CLK1_OFFSET(n)	((n) & ~GENMASK(31, 16))
-    90	#define PLL_CLK2_OFFSET(n)	(((n) & ~GENMASK(31, 16)) + (0x4))
-    91	
-    92	#define DEF_TYPE(_name, _id, _type...) \
-    93		{ .name = _name, .id = _id, .type = _type }
-    94	#define DEF_BASE(_name, _id, _type, _parent...) \
-    95		DEF_TYPE(_name, _id, _type, .parent = _parent)
-    96	#define DEF_PLL(_name, _id, _parent, _conf) \
-    97		DEF_TYPE(_name, _id, CLK_TYPE_PLL, .parent = _parent, .cfg.conf = _conf)
-    98	#define DEF_INPUT(_name, _id) \
-    99		DEF_TYPE(_name, _id, CLK_TYPE_IN)
-   100	#define DEF_FIXED(_name, _id, _parent, _mult, _div) \
-   101		DEF_BASE(_name, _id, CLK_TYPE_FF, _parent, .div = _div, .mult = _mult)
-   102	#define DEF_DDIV(_name, _id, _parent, _ddiv_packed, _dtable) \
-   103		DEF_TYPE(_name, _id, CLK_TYPE_DDIV, \
-   104			.cfg.ddiv = _ddiv_packed, \
-   105			.parent = _parent, \
-   106			.dtable = _dtable, \
-   107			.flag = CLK_DIVIDER_HIWORD_MASK)
-   108	
-   109	/**
-   110	 * struct rzv2h_mod_clk - Module Clocks definitions
-   111	 *
-   112	 * @name: handle between common and hardware-specific interfaces
-   113	 * @mstop_data: packed data mstop register offset and mask
-   114	 * @parent: id of parent clock
-   115	 * @critical: flag to indicate the clock is critical
-   116	 * @no_pm: flag to indicate PM is not supported
-   117	 * @on_index: control register index
-   118	 * @on_bit: ON bit
-   119	 * @mon_index: monitor register index
-   120	 * @mon_bit: monitor bit
-   121	 */
-   122	struct rzv2h_mod_clk {
-   123		const char *name;
-   124		u32 mstop_data;
-   125		u16 parent;
-   126		bool critical;
-   127		bool no_pm;
-   128		u8 on_index;
-   129		u8 on_bit;
-   130		s8 mon_index;
-   131		u8 mon_bit;
-   132	};
-   133	
-   134	#define DEF_MOD_BASE(_name, _mstop, _parent, _critical, _no_pm, _onindex, _onbit, _monindex, _monbit) \
-   135		{ \
-   136			.name = (_name), \
- > 137			.mstop_data = (_mstop), \
-   138			.parent = (_parent), \
-   139			.critical = (_critical), \
-   140			.no_pm = (_no_pm), \
-   141			.on_index = (_onindex), \
-   142			.on_bit = (_onbit), \
-   143			.mon_index = (_monindex), \
-   144			.mon_bit = (_monbit), \
-   145		}
-   146	
+On 12/27/2024 9:54 AM, Bjorn Andersson wrote:
+> On Wed, Nov 06, 2024 at 03:21:57PM +0530, Imran Shaik wrote:
+>> Add support to the QCS8300 GPU clock controller by extending
+>> the SA8775P GPU clock controller, which is mostly identical
+>> but QCS8300 has few additional clocks and minor differences.
+>>
+> 
+> What does "mostly identical" mean?
+> 
+> Is QCS8300 a derivative of SA8775P? Or is it just by accident that these
+> two SoCs happens to have almost the same set of clocks?
+> 
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Yes, QCS8300 is a derivative of SA8775P.
+
+> 
+> Also, commit messages should follow the flow described in
+> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes.
+> 
+
+Sure, I will update the commit text with above details and post next series.
+
+Thanks,
+Imran
+
+> Regards,
+> Bjorn
+> 
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+>> ---
+>>  drivers/clk/qcom/gpucc-sa8775p.c | 49 +++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 48 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-sa8775p.c
+>> index f8a8ac343d70..78cad622cb5a 100644
+>> --- a/drivers/clk/qcom/gpucc-sa8775p.c
+>> +++ b/drivers/clk/qcom/gpucc-sa8775p.c
+>> @@ -12,7 +12,7 @@
+>>  #include <linux/platform_device.h>
+>>  #include <linux/regmap.h>
+>>  
+>> -#include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
+>> +#include <dt-bindings/clock/qcom,qcs8300-gpucc.h>
+>>  
+>>  #include "clk-alpha-pll.h"
+>>  #include "clk-branch.h"
+>> @@ -317,6 +317,24 @@ static struct clk_branch gpu_cc_crc_ahb_clk = {
+>>  	},
+>>  };
+>>  
+>> +static struct clk_branch gpu_cc_cx_accu_shift_clk = {
+>> +	.halt_reg = 0x95e8,
+>> +	.halt_check = BRANCH_HALT,
+>> +	.clkr = {
+>> +		.enable_reg = 0x95e8,
+>> +		.enable_mask = BIT(0),
+>> +		.hw.init = &(const struct clk_init_data){
+>> +			.name = "gpu_cc_cx_accu_shift_clk",
+>> +			.parent_hws = (const struct clk_hw*[]){
+>> +				&gpu_cc_xo_clk_src.clkr.hw,
+>> +			},
+>> +			.num_parents = 1,
+>> +			.flags = CLK_SET_RATE_PARENT,
+>> +			.ops = &clk_branch2_ops,
+>> +		},
+>> +	},
+>> +};
+>> +
+>>  static struct clk_branch gpu_cc_cx_ff_clk = {
+>>  	.halt_reg = 0x914c,
+>>  	.halt_check = BRANCH_HALT,
+>> @@ -420,6 +438,24 @@ static struct clk_branch gpu_cc_demet_clk = {
+>>  	},
+>>  };
+>>  
+>> +static struct clk_branch gpu_cc_gx_accu_shift_clk = {
+>> +	.halt_reg = 0x95e4,
+>> +	.halt_check = BRANCH_HALT,
+>> +	.clkr = {
+>> +		.enable_reg = 0x95e4,
+>> +		.enable_mask = BIT(0),
+>> +		.hw.init = &(const struct clk_init_data){
+>> +			.name = "gpu_cc_gx_accu_shift_clk",
+>> +			.parent_hws = (const struct clk_hw*[]){
+>> +				&gpu_cc_xo_clk_src.clkr.hw,
+>> +			},
+>> +			.num_parents = 1,
+>> +			.flags = CLK_SET_RATE_PARENT,
+>> +			.ops = &clk_branch2_ops,
+>> +		},
+>> +	},
+>> +};
+>> +
+>>  static struct clk_branch gpu_cc_hlos1_vote_gpu_smmu_clk = {
+>>  	.halt_reg = 0x7000,
+>>  	.halt_check = BRANCH_HALT_VOTED,
+>> @@ -499,6 +535,7 @@ static struct clk_regmap *gpu_cc_sa8775p_clocks[] = {
+>>  	[GPU_CC_AHB_CLK] = &gpu_cc_ahb_clk.clkr,
+>>  	[GPU_CC_CB_CLK] = &gpu_cc_cb_clk.clkr,
+>>  	[GPU_CC_CRC_AHB_CLK] = &gpu_cc_crc_ahb_clk.clkr,
+>> +	[GPU_CC_CX_ACCU_SHIFT_CLK] = NULL,
+>>  	[GPU_CC_CX_FF_CLK] = &gpu_cc_cx_ff_clk.clkr,
+>>  	[GPU_CC_CX_GMU_CLK] = &gpu_cc_cx_gmu_clk.clkr,
+>>  	[GPU_CC_CX_SNOC_DVM_CLK] = &gpu_cc_cx_snoc_dvm_clk.clkr,
+>> @@ -508,6 +545,7 @@ static struct clk_regmap *gpu_cc_sa8775p_clocks[] = {
+>>  	[GPU_CC_DEMET_DIV_CLK_SRC] = &gpu_cc_demet_div_clk_src.clkr,
+>>  	[GPU_CC_FF_CLK_SRC] = &gpu_cc_ff_clk_src.clkr,
+>>  	[GPU_CC_GMU_CLK_SRC] = &gpu_cc_gmu_clk_src.clkr,
+>> +	[GPU_CC_GX_ACCU_SHIFT_CLK] = NULL,
+>>  	[GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK] = &gpu_cc_hlos1_vote_gpu_smmu_clk.clkr,
+>>  	[GPU_CC_HUB_AHB_DIV_CLK_SRC] = &gpu_cc_hub_ahb_div_clk_src.clkr,
+>>  	[GPU_CC_HUB_AON_CLK] = &gpu_cc_hub_aon_clk.clkr,
+>> @@ -583,6 +621,7 @@ static const struct qcom_cc_desc gpu_cc_sa8775p_desc = {
+>>  };
+>>  
+>>  static const struct of_device_id gpu_cc_sa8775p_match_table[] = {
+>> +	{ .compatible = "qcom,qcs8300-gpucc" },
+>>  	{ .compatible = "qcom,sa8775p-gpucc" },
+>>  	{ }
+>>  };
+>> @@ -596,6 +635,14 @@ static int gpu_cc_sa8775p_probe(struct platform_device *pdev)
+>>  	if (IS_ERR(regmap))
+>>  		return PTR_ERR(regmap);
+>>  
+>> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-gpucc")) {
+>> +		gpu_cc_pll0_config.l = 0x31;
+>> +		gpu_cc_pll0_config.alpha = 0xe555;
+>> +
+>> +		gpu_cc_sa8775p_clocks[GPU_CC_CX_ACCU_SHIFT_CLK] = &gpu_cc_cx_accu_shift_clk.clkr;
+>> +		gpu_cc_sa8775p_clocks[GPU_CC_GX_ACCU_SHIFT_CLK] = &gpu_cc_gx_accu_shift_clk.clkr;
+>> +	}
+>> +
+>>  	clk_lucid_evo_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
+>>  	clk_lucid_evo_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
+>>  
+>>
+>> -- 
+>> 2.25.1
+>>
+
