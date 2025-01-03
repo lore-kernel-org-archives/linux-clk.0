@@ -1,149 +1,125 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4BF1CACF6;
-	Fri,  3 Jan 2025 07:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84301186A;
+	Fri,  3 Jan 2025 10:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735889548; cv=none; b=iZp1EmFgkPAtogE60DamweY1VsBDXJqwbgnmegDujlGy6YtJ78Rfre3LLXj1+5/xTuWu9AR9IZd//xm3RU6Z5ccveYWiDhrPECXatgHi8MeJ0LfvTdaSVna8QeUPQzr+lBwoib54vD/ksyiXRqF7vlBPcDNJtx+3UBU8W60uJ9w=
+	t=1735898621; cv=none; b=GSmlgbDXcBpu+YPFGjJuSZ2Vcd+1tu5dh2jyNfyRoQZXfj/g78RqHqo062UbUkskzc6Qb+4J6neN9kzE/ZJnByMvT3HHYS+PYn9YHe75+1Chlfivsmwng47Td6e4obDYBG19uEpTO0xKFpe2sIz9kWKjPVaVTHEu6AWRC/A3gfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735889548; c=relaxed/simple;
-	bh=VyC3W8O7pEMyWv06ZRGk03/Ezl+Iu9sbnPsh4K208us=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=LfmCAYC31Ub5OBuMMpM8eAPuwqnVINEEOlk9C7HVwD5qapIwdyAr4ZJNvJdHm42CdrZNQcP4imWV291xWfZvFlp641zPpoaafTl/pouAA+ZU7UKfd9IUcXkkPainIQxay4nrHXxIvZEfFvrhzOx5qniSOuqnZHUVQ5//EKgxtIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QMnBo3ab; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1735898621; c=relaxed/simple;
+	bh=9p+fuJyh+8lDrTelnrBVizZrTlsqzwcanUzp/k+KzjU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D+hr2mFJsMgY9jLvgM2xsBj3syeqxUc3ckw5h5vs24SOYo/trPvdGTy7+XTVZiOOJI1XEX8nwz7RrWPRhZFtipFTOWQRsazgv/rMaR0S0b/mFLESXezhWP26pVPPaSHDNJT4LDQgA31T+KFMI7psuk7+QT7YnV4eVSqjMw9AzKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsO0/pJU; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QMnBo3ab"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5033qS86015576;
-	Fri, 3 Jan 2025 07:32:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8aydGhIo9XxOke5I+yIVto0Os8osvsq6hM83XEMMBBE=; b=QMnBo3abPCSdpVvG
-	rxuN287v34HcbpUJY3r7RrzyHzrHSTOyuoW9WPifbsuYZCVm0vaf0iNHoXMh5zJR
-	ZX5SvBOjQb2+8l0Ued9Qfcexms01yMMN9eN3+7KKMr89Jn9xF41hievXn2BC0ouh
-	upO+UriYPoRYJwpA+a06iQ9U3N5yAzHSDth8eZRi2q35USdWwmy9mSpfXfCLgYhd
-	Wmk0KpX2MsjtX5R3V7GL1XEB0fL8JRUGIE7mADManpj7vVW6nLE4Fv/sr01CtIuF
-	bSp379AJyoakxmMn5/aQzFGcngSpWfdC39u1UQH0LMzIsFMmxCipc05tf0eeBCs6
-	9fYnEA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43x8c0ge24-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 03 Jan 2025 07:32:11 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5037WAi8018491
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 3 Jan 2025 07:32:10 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 2 Jan 2025 23:32:05 -0800
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Fri, 3 Jan 2025 15:31:38 +0800
-Subject: [PATCH v8 5/5] arm64: dts: qcom: Update IPQ9574 xo_board_clk to
- use fixed factor clock
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsO0/pJU"
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4afecb2731dso3227636137.3;
+        Fri, 03 Jan 2025 02:03:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1735898618; x=1736503418; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/w4OZBRhdq1N8KRhLU+J7Hu5Wj+bKlBjyl4XzSkh3ys=;
+        b=SsO0/pJU6IcuUb2GlpLX330fN8yJfH+l2JYi9be6XIPOGeVPb+gtyZJJ79o+lMc8T4
+         pUToBnVEvyR5TjBwKzipYXvWjIOQQcAHiNh/ilHDv3FjleCZ4IRpa8UpRkbcqcLphfky
+         dLgXt8qRyWqICR+utMQ9DzcrNN3Sl8cOoXoVz2KehrsddmlA25JFm9iPLoRYjCUld5sW
+         vFHOe0t5bnoxJJL5k8EpmLPjuIbusNxS2BxorG0TtQOPMySlM4Fo9djKQzkJqi9H79oe
+         JAajvev4uEF6llrSXt76lI+sKr5nyVoA4pTfAaAzLDvLCjuv27e6nFaSUo92GSAApqxR
+         +cfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735898618; x=1736503418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/w4OZBRhdq1N8KRhLU+J7Hu5Wj+bKlBjyl4XzSkh3ys=;
+        b=MLNtwNHL19yNDlkMOjRIfmoYln4IZ9iYxeziwsvq+zFRyJhy3Yrk/hboNDhCXbHbER
+         Da3f4CXsYf3d7nqj43yjv4zB0wc5xy2owZuyh7AfSj6vHsbvdPhf22P3z9NldkcQ+H/y
+         Qo10GPUTXav1OIy4oz8pDVlOVoBWlEbjfk2CjZmH/A8z1ENdD0QwEsVm5K/zTebcUs7r
+         UdQyGyWGcnbx0nKFQiG00dON7JUnTafQYEUEhMNJguYpebQRccuOSQa25hwrBV6FT2Ar
+         YlNTtinAUbVK/gHFHtIR1xpF9HUUlbRDsC6XTSaI7XC9Dl6g2Q6krA734YiCdtsVsBRo
+         AkCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFL+HGubZx3H5aV06+uRkQtLzijQ+dGtNloczFgaReqF7w259s3m6ETfCvpwafUcnZjfhap4vDiflRkmBa@vger.kernel.org, AJvYcCWXoW1zNzpaeUHEYPLzvyZFB6hg28A18NGSKIiD3dRHNeo8dOGRL3vLZIvAdkxqO24TiA8QrdEv1yU=@vger.kernel.org, AJvYcCWkuFDRPRMjV3FMLeDL3neQE00rYbMUH3BLBAiZHJWosUeGQ/96yf0my2lzykD762Q+TtBh7/BTTMSszqsrA/JHDmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzm2papZBIENKgTDpPoeOeiP2Ouf3sm9dmGoXHwNBtY/CWFgVy
+	rOOL0840kjRouftpIWaJdYnt/BrNo8synhUWxWgXlRylBRnkgRSMuC5lrBF7D1/fF8iavnekq4n
+	YUAdK07oece9BStHOK2eog04qnXI=
+X-Gm-Gg: ASbGncuAE+/q2d1yS7z9+PG/SHnI9RJUmDpUgDOdIE3+gLg3APj2OE5fM9IVeTgfdzu
+	WZcBayVGOFIOHnNrkKeoMgNXwtJu74rPlmHsrc38=
+X-Google-Smtp-Source: AGHT+IH+uMdf97Vf46rUu8PPWG67SCW1TsMA6VcnAG0M1CAf12xBs18o3gTQf+xHGipuxiesIPSEOLp4gEMTtLrK9Zw=
+X-Received: by 2002:a05:6102:50a1:b0:4af:d487:45f3 with SMTP id
+ ada2fe7eead31-4b2cc49a842mr37692670137.23.1735898618410; Fri, 03 Jan 2025
+ 02:03:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250103-qcom_ipq_cmnpll-v8-5-c89fb4d4849d@quicinc.com>
-References: <20250103-qcom_ipq_cmnpll-v8-0-c89fb4d4849d@quicinc.com>
-In-Reply-To: <20250103-qcom_ipq_cmnpll-v8-0-c89fb4d4849d@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
-        Luo Jie
-	<quic_luoj@quicinc.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1735889498; l=1501;
- i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
- bh=VyC3W8O7pEMyWv06ZRGk03/Ezl+Iu9sbnPsh4K208us=;
- b=hObJL1Fhjy9dndqFaZisgc37tkYCYXa6Vu3HbWc9oM1eOwi8k4n/fB42US5yVu5vkcw2pEV2p
- kCB4r1TO4tyCdsEEsoKFXUsFdA8mrDaqQLlDTcDmMQE49vcfg0OUBlF
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 27loeI9p-u2DVvq4xVnY3CrjjuD737pN
-X-Proofpoint-ORIG-GUID: 27loeI9p-u2DVvq4xVnY3CrjjuD737pN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 clxscore=1015 phishscore=0 impostorscore=0
- adultscore=0 mlxlogscore=999 priorityscore=1501 mlxscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2501030064
+References: <20250102181839.352599-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <202501030941.vDjx439p-lkp@intel.com>
+In-Reply-To: <202501030941.vDjx439p-lkp@intel.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 3 Jan 2025 10:03:12 +0000
+Message-ID: <CA+V-a8sHgCKbTHEJzvZuRQbuZCtpMkrtRSWxWzVcC3BeeZM-2A@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] clk: renesas: rzv2h: Simplify BUS_MSTOP macros and
+ field extraction
+To: kernel test robot <lkp@intel.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, oe-kbuild-all@lists.linux.dev, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-xo_board_clk is fixed to 24 MHZ, which is routed from WiFi output clock
-48 MHZ (also being the reference clock of CMN PLL) divided 2 by analog
-block routing channel.
+Hi,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi | 7 ++++++-
- arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 3 ++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+On Fri, Jan 3, 2025 at 2:21=E2=80=AFAM kernel test robot <lkp@intel.com> wr=
+ote:
+>
+> Hi Prabhakar,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on geert-renesas-drivers/renesas-clk]
+> [also build test ERROR on next-20241220]
+> [cannot apply to linus/master v6.13-rc5]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Prabhakar/clk-rene=
+sas-rzv2h-Fix-use-after-free-in-MSTOP-refcount-handling/20250103-022238
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-dri=
+vers.git renesas-clk
+> patch link:    https://lore.kernel.org/r/20250102181839.352599-4-prabhaka=
+r.mahadev-lad.rj%40bp.renesas.com
+> patch subject: [PATCH v3 3/6] clk: renesas: rzv2h: Simplify BUS_MSTOP mac=
+ros and field extraction
+> config: sparc-randconfig-002-20250103 (https://download.01.org/0day-ci/ar=
+chive/20250103/202501030941.vDjx439p-lkp@intel.com/config)
+> compiler: sparc-linux-gcc (GCC) 14.2.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20250103/202501030941.vDjx439p-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202501030941.vDjx439p-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    In file included from drivers/clk/renesas/r9a09g057-cpg.c:15:
+> >> drivers/clk/renesas/rzv2h-cpg.h:51:34: error: implicit declaration of =
+function 'FIELD_PREP_CONST' [-Wimplicit-function-declaration]
+>
+Thank you for the report, I'll include the required header `#include
+<linux/bitfield.h>` to fix this issue and send a new version.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-index bb1ff79360d3..ae12f069f26f 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-@@ -175,8 +175,13 @@ &ref_48mhz_clk {
- 	clock-mult = <1>;
- };
- 
-+/*
-+ * The frequency of xo_board_clk is fixed to 24 MHZ, which is routed
-+ * from WiFi output clock 48 MHZ divided by 2.
-+ */
- &xo_board_clk {
--	clock-frequency = <24000000>;
-+	clock-div = <2>;
-+	clock-mult = <1>;
- };
- 
- &xo_clk {
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 475868a241cc..b5c8d2ab2ab5 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -32,7 +32,8 @@ sleep_clk: sleep-clk {
- 		};
- 
- 		xo_board_clk: xo-board-clk {
--			compatible = "fixed-clock";
-+			compatible = "fixed-factor-clock";
-+			clocks = <&ref_48mhz_clk>;
- 			#clock-cells = <0>;
- 		};
- 
-
--- 
-2.34.1
-
+Cheers,
+Prabhakar
