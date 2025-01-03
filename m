@@ -1,101 +1,149 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9688B1FA8F8;
-	Fri,  3 Jan 2025 15:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAF61FBEA5
+	for <linux-clk@vger.kernel.org>; Fri,  3 Jan 2025 16:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735919904; cv=none; b=LasLG3P9kO0F+lpspKtNpuND6u2uDP8a+xuDlsttOLJLxKZOXZvOvuQp8sFMd1jXbLEzpIVERVgQTIeLa/7uShyRctr4ZcVN4Vd1R/WB0OHrH9cIqjrdYWsh4SgKQO19L88+Hi1M+vRKCN/3pf+BV9cE21CTMwbgGnpMpBe0JXc=
+	t=1735922312; cv=none; b=uY10rSfhzNmRQnt5Z5rpvziURS+Pu6iTEK9KfUzEsZNSvFIsJ1McIfakPfQy39igDK3NRObxUG/N2FP9h9Eg6YHoi4TeVG+3x7Vx9h2uGefARn2V6ZagWXUsjr1FtYXAnX7hjWlFhOn2yBFtZRuDw9h9amSL/DMcKGifKKGR/RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735919904; c=relaxed/simple;
-	bh=jdXeVsVtaUmBQYW9bAekcctmKK5igt+j6FBYowJtZAw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qI6mUDiC816GFLfdfOrfkgXP1An3iYZi4Yc9HYQKWhSY8pPa6B8fg2JNJZLjEwJYteQPQ5Hoj6MjyyVOCF7+f/HMcbNfX2SH/hM4+w5htxcImCdsNxBfnvazutTKMWTMMUcvg3WnPDVvjdwBSYpnNxTUTTo9dLa+qRO90FYU8F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-51bb020339fso2366056e0c.0;
-        Fri, 03 Jan 2025 07:58:22 -0800 (PST)
+	s=arc-20240116; t=1735922312; c=relaxed/simple;
+	bh=yivWCk87L5Kn1vLLCLSBD23i/m0z9LXbY0astKk0t14=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y+ZLwaAzGmZxvddngjpCrv+5AmgYZqt/JvQLax+nUOkQ27SLUOR2EBdF+fiQQl7JwyviTFlzKsjMkhLGF4FpoEsvQXVAH5sX3H05AwAtvjeraj8p/Q3Ulz9dhpbsYgVKQEo2b4VffRgjyNcKSQgRHTIAzYQK+A4NY2kn1obct/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZtVRxumZ; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZtVRxumZ"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aae81f4fdc4so1966672266b.0
+        for <linux-clk@vger.kernel.org>; Fri, 03 Jan 2025 08:38:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1735922308; x=1736527108; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z12n6pwBuO+Lp/RU6Y/RGTOaXGSjqsnsbDrc/bXr6NI=;
+        b=ZtVRxumZi6oAhVXSSG6Z9GCRYi7LXtt+pArtl/iylPnSZQtPviVxWoDbiUNgXEHAWj
+         BesXaS3E2LRXKY7r/lp+9inSCoN4ZdJi1IJb25/dUWYY9LJHEf6pYoumM3kplxK8zPQ7
+         98ccXllrKaXDCpelj8IRmDNg2cr9XcAE36Jn+mB0+7BVJa0BE+7GHo7fpedpx0mU9plh
+         j2nilDpNY/hOTaJh0d7G82Jmaf6T5FdOEw/NhmzvwJP9/vYXK8YIsGY/zLh5Y6+q8bql
+         YkQl8J+Y7zaBfna2NkQL5+2oVjoZFf+HlAKHDiqwMK2Xzw7bwYKrh4/Ks6VloIHwNwtn
+         2peQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735919901; x=1736524701;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ySq/PC6gZ6864uNR0ikTXWC0NYCsXPRgFg2wxFBjgBk=;
-        b=WPlup9pW4PVkcTGpyTfGZaSuB/Iw4uI3HsNod4XnTZOdSibEstxNbrXME4CKpQTwez
-         dtouEWy66vzE9MoqLkZcy/zcljUUN1O6AyxnW2KBDqXBthePbO3kHrJthaaqBdffNfLU
-         yk8XdP/l+99v2jNv75Srlacn3oXBzWpMFL1oSfScc54jQFYWzZq7mtFbvMQk4od7XiWj
-         OqBRkeLfXUox9Dqmw0sXd98fEMNF5xNHNXDm6Dykm0XhnctOjKuV74+aqURBXh9WOqpQ
-         PtjIRmbu+Q/jgxUXdQPocGqez8eyU8RhJ0+f7mq6qO7J2TdsX5GXTktMAZc5MSHKWkRv
-         eNwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVH5a7AAgr86+HEkcpMnmEUJDIl+IsqEkoYUNJs2aWVO8HGex60paRz0eKW4tZvKcIrn3/3b7mnHHM=@vger.kernel.org, AJvYcCVn/EPspFdNYN9oWbgEB5T+hj39l2wAmqkaUcRCevhEM/FGz8Mf8oybvnNE+dttf5M+rRiSLMEpQiuIS2QhIPzLLNE=@vger.kernel.org, AJvYcCVrNm34MSfbd7iWYWuOdwA1jbDWkNZDYEtBk0OIE64JcoCBpwmrVo2LTbJkJv9JEcY2ry2zRmzG/GlC7DqS@vger.kernel.org
-X-Gm-Message-State: AOJu0YySFcvDm+zrpC+wQJ3dOMnWhKY8knnDMq2ABgllZi/NSXfEsn7r
-	lDGyFRFHDXDQOtm6jUFHJZY8T7Em2za8haVkhvIyx465bpKOdFANr8liRKfUV/w=
-X-Gm-Gg: ASbGnctKhHv1Qa8DWsCHoNMnJ9RvxpwqYMAT1aWoTfn6WbitrHXM5j5yZ5Bj4rFMgM/
-	BybKrVn2zas9vF5uj3Flo4a4wthESJLSxmL+tfxMmBDVDZUo2U1ZD7aunWCuarcYeqsnzAi9LTr
-	JMYR0mLj+vVBr0eNPGZGYwm8WhaBFVNB1/W8cEzMu3YpQGSTCcELX6llXgmaivMCR3WuMgwvFtd
-	ewCJ7VI6DVC6Zceqqqyi06h+UZXMZM2cZPR6BxxBJxLCCyx1xH6kiHwIicezKoMKKlp6SAgYt2q
-	bRqbFzMuQfHV6w/ZD88=
-X-Google-Smtp-Source: AGHT+IEDtzL+3tqfRSAUpaA6dkjNHNL3zMwzFOmMO5RYGfBKHIQ460LKazcdMXKPcccoRcp3e1YEdg==
-X-Received: by 2002:a05:6122:4302:b0:518:a0ee:e8e7 with SMTP id 71dfb90a1353d-51b75abac1bmr34571554e0c.0.1735919900850;
-        Fri, 03 Jan 2025 07:58:20 -0800 (PST)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51b68cd94fbsm3366072e0c.41.2025.01.03.07.58.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jan 2025 07:58:20 -0800 (PST)
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4b24d969db1so3017789137.0;
-        Fri, 03 Jan 2025 07:58:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUkzX7yWIvimmXMt28fxoH9+XatnWDpbaMYJX6iGN7ZCvk0SKy+hFV0S5PFkJQuy2CXD9EWo6fuM7zSio+i@vger.kernel.org, AJvYcCVq36HQIA+HYvTiSrg1LKcEiiqEME2cLCdVKN31SD01hnZisOKWY2b8Dv5gJBLBQpF3sh4fgBh+0bg=@vger.kernel.org, AJvYcCW0BM4e0qnb9haGxQsQDYrLEgeDOaJ9EmvAELhEUm+OLu5OkOu8IaLDHPBkjBwvFqjGXDDKv5IL6FPrtJkwKoAsy80=@vger.kernel.org
-X-Received: by 2002:a05:6102:6e88:b0:4b2:cc92:169d with SMTP id
- ada2fe7eead31-4b2cc921785mr29810148137.4.1735919900428; Fri, 03 Jan 2025
- 07:58:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1735922308; x=1736527108;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z12n6pwBuO+Lp/RU6Y/RGTOaXGSjqsnsbDrc/bXr6NI=;
+        b=nfwNBEdxyFfcM7VtVyJB4KNmE1x2B+tSNtVE3chTqZqdxbhk18aeWBkwZjZo5yuWhU
+         gbdIC4ZpsYcoSUA5DfOi5Ci1cvi4Vdbat6To1JJuRe/BzMSV4t4kKfIeyGZBJU7bPDrW
+         jIdgcYgPojDi9aJFECXX1fvabYgiyny2juBxJak3EDLKHG3ioVOR2hso/jeBLqc3RqG1
+         MDMOYRjliv9hYWBfn/gQuXcHtE4Pp6N35GjuiE/sZs2F9x1Q/pXu1+3T35qVM0Z+WWNj
+         sewmGmtDmb2Jq2KUOqRkBM38yAkRuFAn9vwVJmz6z3zCuzPmUMdYePfjxBpc9mVR6wSe
+         1yXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsFDL/rylQNoQbu4zy8k9+C1Z30buJSpS1mKoyHZaAfkghueztHEr6KE+7nAa3T0EFFOvDDk+hR3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw35nbzMzrsgbheNiAPVZuGaJcFKoOBkleFhLybIbTPAmeJ++Jc
+	FnKdm9VTcqgi8cL7JXGypOA9X96EuvDPyk5G6xFq3UBAQAcphgzMndz5FgLMTxo=
+X-Gm-Gg: ASbGncsITQkwE1TBqOwtdOaYV5CoWjbrtsgsN4M6eEi9au58EGcQzuuMudX41X9Gjxp
+	EsIyBdzoL3xqt+JPCaLho5JXW26J2B+K1o8K3Drei3jo1BxffDbmyri30YNBrX8zWUS0eB/l5V1
+	CVi0uKD+hH/Cd+cvabPAwhQppr2LqFjGTJ/C56E5Eewp6hjZJIRj6SnaEgyTGq1fK4vHq204pMc
+	VkcNWe7+0o/p8W/AQE/UVppfWbfzarU75YjTYxMgyjAAOZ+JNGhrf8NVNT3b9SV+mLGVF35k0qq
+	2ialuOnKJyA=
+X-Google-Smtp-Source: AGHT+IHvB3jSYSwVEdM8kpizh++WgojhHChTKlXDXhzjvg/G2jGnSPtOR2X4YibeMuE1jT2+Wk3xTg==
+X-Received: by 2002:a17:907:7dab:b0:aa6:98c9:aadc with SMTP id a640c23a62f3a-aac2d45fb01mr4593376466b.31.1735922308221;
+        Fri, 03 Jan 2025 08:38:28 -0800 (PST)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.102])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0e8953b6sm1932984066b.65.2025.01.03.08.38.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jan 2025 08:38:27 -0800 (PST)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de,
+	ulf.hansson@linaro.org
+Cc: claudiu.beznea@tuxon.dev,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 0/6] thermal: renesas: Add support for RZ/G3S
+Date: Fri,  3 Jan 2025 18:37:59 +0200
+Message-ID: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250102181839.352599-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250102181839.352599-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250102181839.352599-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 3 Jan 2025 16:58:08 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWo7GLKXk8H0jhnJaQ0xa7+q7mAqvmaSzdqJmhrMr-8hQ@mail.gmail.com>
-Message-ID: <CAMuHMdWo7GLKXk8H0jhnJaQ0xa7+q7mAqvmaSzdqJmhrMr-8hQ@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] clk: renesas: r9a09g057: Add clock and reset
- entries for GIC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 2, 2025 at 7:18=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add clock and reset entries for GIC.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2->v3
-> - Included RB tag from Geert
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Thanks, will queue in renesas-clk for v6.14.
+Hi,
 
-Gr{oetje,eeting}s,
+This series adds thermal support for the Renesas RZ/G3S SoC.
 
-                        Geert
+Series is organized as follows:
+- patch 1/6:		adds clock, resets and power domain support for
+			the thermal sensor unit (TSU)
+- patch 2/6:		adds support for non-devres thermal zone
+			register/unregister 
+- patches 3-4/6:	add thermal support for RZ/G3S
+- patches 5-6/6:	add device tree support
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Merge strategy, if any:
+- patch 1/6 can go through the Renesas tree
+- patches 2-4/6 can go through the thermal tree
+- patches 5-6/6 can go through the Renesas tree
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Ulf,
+
+I've added you to this thread as well due to patch 2/6 that has a similar
+root cause as [1].
+
+Thank you,
+Claudiu Beznea
+
+[1] https://lore.kernel.org/all/20250103140042.1619703-2-claudiu.beznea.uj@bp.renesas.com/
+
+Claudiu Beznea (6):
+  clk: renesas: r9a08g045: Add clocks, resets and power domain support
+    for the TSU IP
+  thermal: of: Export non-devres helper to register/unregister thermal
+    zone
+  dt-bindings: thermal: r9a08g045-tsu: Document the TSU unit
+  thermal: renesas: rzg3s: Add thermal driver for the Renesas RZ/G3S SoC
+  arm64: dts: renesas: r9a08g045: Add TSU node
+  arm64: defconfig: Enable RZ/G3S thermal
+
+ .../thermal/renesas,r9a08g045-tsu.yaml        |  93 ++++++
+ MAINTAINERS                                   |   7 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  43 ++-
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |   4 -
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   4 +
+ drivers/thermal/renesas/Kconfig               |   8 +
+ drivers/thermal/renesas/Makefile              |   1 +
+ drivers/thermal/renesas/rzg3s_thermal.c       | 301 ++++++++++++++++++
+ drivers/thermal/thermal_of.c                  |   8 +-
+ include/linux/thermal.h                       |  14 +
+ 11 files changed, 476 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/thermal/renesas,r9a08g045-tsu.yaml
+ create mode 100644 drivers/thermal/renesas/rzg3s_thermal.c
+
+-- 
+2.43.0
+
