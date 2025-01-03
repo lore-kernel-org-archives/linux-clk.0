@@ -1,238 +1,128 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104A12F22;
-	Fri,  3 Jan 2025 04:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A0A19F115;
+	Fri,  3 Jan 2025 05:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735878114; cv=none; b=QEj3jFfm63A8xnr/T3S4h2j7PqIOBZn5bZWBJVPH3l5WLiwLIZZwZTeT7KKP1G+EOeb+n07odHD3+DuLTLOTkKCnprJRgc0wMcmg5J7h4tmvGPufUN38sPBKgN4xRbkxj2j+cDq0bXX0qx8rSMZ+mUMULPwPUMGz2E59W6us4l0=
+	t=1735882605; cv=none; b=l3M44i5DGyXbLRAbJNAIwGX2RGD7ltwMe4lNY/mLuJODKTmRXlvx15v19iXK2SboI4KzbixbU3QILMUiiLTngqKTRiWOuUWSrCtSvVU2L27L+iQiaLqPjVTEYEQFgRYovqCj4W8Sh4jnZfBbRcJrjPhp+KR8CXgk3TXbWY9BVlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735878114; c=relaxed/simple;
-	bh=rUh+Jms2/cvZlBuLCtwSku5gU2f6s93rcjhzOGf1Nvg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cdqltCnNhlTKT53YBvv0U+4aqWfnDaJgn7Zbrg0O/F80QrFRA+xWsCVvFm3bDV/pX031+IUmpObCLhAEj5pcJ9XpPBQCbIe0X4mnEPIxWMfFjdvOoDSc+bexplVhOPbts2z6hU35YiPo5E2H7KYmKSxvJONBA5HDrXc8m3uq8hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dRc857Z9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1735882605; c=relaxed/simple;
+	bh=ZptAS+5MfVYHwRbyK5bmvm62nwegy8I9wdDDR18v5n4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iH83a8Qnlz/GkDKTbAsfbkirAJ/N+MMLBKSsrNiJ1wxhO5Mc+pbtx6TstvsvBznlneN7aOxLWy72ponYFt0c5hy3YYfgSKgj6K+Aa0mhE6Em37E1b3vmzke/dOy/e1ohYlJrraMiAanhpAqB93zKgtj1n9LB7PpVZ95UNhCgBxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZyIuBdn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dRc857Z9"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5030t2Gj008637;
-	Fri, 3 Jan 2025 04:21:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	84y03jD3GZcQ7y+IdGpRQBmYmLIJsFO/lG++Ku79PMc=; b=dRc857Z90bSO/YR6
-	Qw7epzEyKm0ZG5zkOSd1DsVflGDFoXyp+Y3/qoII2zdD7ZfdtWeNpd22hH5fZciC
-	LNOsRzeJoLm8xhopnNWiRVCo7bn5hdQhdyoY9NICzHjGIqgpi3yYlQI3U7SykjdE
-	6icn7D45xZp1r7bsZEH1IzXIGVB/F7rXLcwNg0D4TUOTIWtvRjCV2Ywo8PwReOaK
-	VrNo5YXRSNJF1hhuKfD/vmDweYhZblqnYUX/QgxMc3WpcvalzhK1s+Y69RkPKvqe
-	AEmPA1p9o8vtX8jQZQfiy2Tl2jLdZkGLCoPPolZ3XoB+6w67RxncHDihdiiOdkSR
-	ztwZtQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43x5s0rbn9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 03 Jan 2025 04:21:35 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5034LZfH029417
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 3 Jan 2025 04:21:35 GMT
-Received: from [10.218.33.29] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 2 Jan 2025
- 20:21:30 -0800
-Message-ID: <acdf1267-ce56-4ec1-8407-a5f3212a8bfe@quicinc.com>
-Date: Fri, 3 Jan 2025 09:51:23 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZyIuBdn"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 39D86C4CECE;
+	Fri,  3 Jan 2025 05:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735882605;
+	bh=ZptAS+5MfVYHwRbyK5bmvm62nwegy8I9wdDDR18v5n4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=LZyIuBdn/I5Te8li0s6qloz09dvUiA5Bq3l28vhNbhP4xdZtx4vbjPj4CjZGeW1Rz
+	 sJ4VJrpHovIpXYo7MueKpf02BZiG+ESLhLdUQdTqP4Gh7iYBbCdFw8MHm/AI9E4JE+
+	 ofwuxnI1Lt20hJDFDC3/uvukKqq+fraZ8pmeh3k+uFzlnJZyIYZI+uReVV3n7LLXN0
+	 C1mZmQlbnr4iSAuW2zfsHP2G6DO3XHYmyWmbj0y1COyqdw2WP66B5Dq7lCKrHmlJZ2
+	 MaE0ve/iMNDsykExAc50SL1KHtPmxShsfmIjUGS5zus2ksYf5TaZUaHQ0kc+pOumfi
+	 rs+MDt5AAObMw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26D85E77188;
+	Fri,  3 Jan 2025 05:36:45 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Subject: [PATCH v3 0/5] Add A5 SoC PLLs and Peripheral clock
+Date: Fri, 03 Jan 2025 13:36:40 +0800
+Message-Id: <20250103-a5-clk-v3-0-a207ce83b9e9@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] clk: qcom: Add support for GPU Clock Controller on
- QCS8300
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona
-	<quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-References: <20241106-qcs8300-mm-patches-v3-0-f611a8f87f15@quicinc.com>
- <20241106-qcs8300-mm-patches-v3-2-f611a8f87f15@quicinc.com>
- <xc7iiuwlbihb7dguq77el5ipt2w5324klyvojkyf2eh3lit6eh@zgj567elzljm>
-Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <xc7iiuwlbihb7dguq77el5ipt2w5324klyvojkyf2eh3lit6eh@zgj567elzljm>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Zh-LRNeAYkheVge3yxWIrwpXVZrFIbgL
-X-Proofpoint-GUID: Zh-LRNeAYkheVge3yxWIrwpXVZrFIbgL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 adultscore=0 spamscore=0 malwarescore=0
- clxscore=1015 suspectscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2501030035
+X-B4-Tracking: v=1; b=H4sIAGl3d2cC/1WMQQqDMBBFryJZNyUTo2hXvUfpIo5THaqmJCW0i
+ HdvFBS6fJ//3iwCeaYgLtksPEUO7KYE+SkT2NupI8ltYqGVNqoGkLaQODxlXqCpLTa5IRDp/PL
+ 04M8Wut0T9xzezn+3boR13RNmT0SQShZEGs0DGlXh1Y6D6xjP6EaxRqI+RACtDlEnMXFVaqC6h
+ PZfXJblB2doYz3XAAAA
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1735882602; l=2678;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=ZptAS+5MfVYHwRbyK5bmvm62nwegy8I9wdDDR18v5n4=;
+ b=zL9UkYY6YjfifjhPWGcgbd6WLqUytsG2stmsDAanVcuNKVg1DnIXfNZT0t6duvz7/uQ9UPdP0
+ y4UhupkQEgzB7VlGR/wfDoDm2CAkZuS9j8AKyGqYL1PGz+TLOvwUWW6
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
+The patchset adds support for the peripheral and PLL clock controller
+found on the Amlogic A5 SoC family, such as A113X2.
 
+Some clocks are provided by security zones. These clock accessed
+througth SCMI driver in linux, inlcuding OSC, SYS_CLK, AXI_CLK,
+CPU_CLK, DSU_CLK, GP1_PLL, FIXED_PLL_DCO, FIXED_PLL, SYS_PLL_DIV16,
+ACLKM, CPU_CLK_DIV16, FCLK_50M_PREDIV, FCLK_50M_DIV, FCLK_50M, 
+FCLK_DIV2_DIV, FCLK_DIV2, FCLK_DIV2P5_DIV, FCLK_DIV2P5, FCLK_DIV3_DIV,
+FCLK_DIV3, FCLK_DIV4_DIV, FCLK_DIV4, FCLK_DIV5_DIV, FCLK_DIV5,
+FCLK_DIV7_DIV, FCLK_DIV7, CLKID_SYS_MMC_PCLK, CLKID_SYS_CPU_CTRL,
+CLKID_SYS_IRQ_CTRL, CLKID_SYS_GIC, CLKID_SYS_BIG_NIC, CLKID_AXI_SYS_NIC,
+and CLKID_AXI_CPU_DMC.
 
-On 12/27/2024 9:54 AM, Bjorn Andersson wrote:
-> On Wed, Nov 06, 2024 at 03:21:57PM +0530, Imran Shaik wrote:
->> Add support to the QCS8300 GPU clock controller by extending
->> the SA8775P GPU clock controller, which is mostly identical
->> but QCS8300 has few additional clocks and minor differences.
->>
-> 
-> What does "mostly identical" mean?
-> 
-> Is QCS8300 a derivative of SA8775P? Or is it just by accident that these
-> two SoCs happens to have almost the same set of clocks?
-> 
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+Changes in v3:
+- Rename xtal_24m to xtal, and modify some description of Kconfig.
+- Drop some comment of PLL source code.
+- Move definition of A5_CLK_GATE_FW frome common code into A5 peripheral source code.
+- Use hw instead of name to describe parent_data.
+- Making SCMI binding the first to submit. 
+- Link to v2: https://lore.kernel.org/r/20241120-a5-clk-v2-0-1208621e961d@amlogic.com
 
-Yes, QCS8300 is a derivative of SA8775P.
+Changes in v2:
+- Move some sys clock and axi clock from peripheral to scmi impletement.
+- Remove  ARM_SCMI_PROTOCOL in Kconfig and correct name A5 but not A4.
+- Add two optional clock inputs for the peripheral(ddr pll and clk-measure)
+- Make some changes and adjustments according to suggestions.
+- Link to v1: https://lore.kernel.org/r/20240914-a5-clk-v1-0-5ee2c4f1b08c@amlogic.com
 
-> 
-> Also, commit messages should follow the flow described in
-> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes.
-> 
+---
+Chuan Liu (5):
+      dt-bindings: clock: add Amlogic A5 SCMI clock controller support
+      dt-bindings: clock: add Amlogic A5 PLL clock controller
+      dt-bindings: clock: add Amlogic A5 peripherals clock controller
+      clk: meson: add support for the A5 SoC PLL clock
+      clk: meson: add A5 clock peripherals controller driver
 
-Sure, I will update the commit text with above details and post next series.
+ .../clock/amlogic,a5-peripherals-clkc.yaml         |  132 ++
+ .../bindings/clock/amlogic,a5-pll-clkc.yaml        |   63 +
+ drivers/clk/meson/Kconfig                          |   27 +
+ drivers/clk/meson/Makefile                         |    2 +
+ drivers/clk/meson/a5-peripherals.c                 | 1408 ++++++++++++++++++++
+ drivers/clk/meson/a5-pll.c                         |  532 ++++++++
+ .../clock/amlogic,a5-peripherals-clkc.h            |  132 ++
+ include/dt-bindings/clock/amlogic,a5-pll-clkc.h    |   24 +
+ include/dt-bindings/clock/amlogic,a5-scmi-clkc.h   |   44 +
+ 9 files changed, 2364 insertions(+)
+---
+base-commit: 961101258aa2da34b032ea21f32599a895448996
+change-id: 20240911-a5-clk-35c49acb34e1
 
-Thanks,
-Imran
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-> Regards,
-> Bjorn
-> 
->> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
->> ---
->>  drivers/clk/qcom/gpucc-sa8775p.c | 49 +++++++++++++++++++++++++++++++++++++++-
->>  1 file changed, 48 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-sa8775p.c
->> index f8a8ac343d70..78cad622cb5a 100644
->> --- a/drivers/clk/qcom/gpucc-sa8775p.c
->> +++ b/drivers/clk/qcom/gpucc-sa8775p.c
->> @@ -12,7 +12,7 @@
->>  #include <linux/platform_device.h>
->>  #include <linux/regmap.h>
->>  
->> -#include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
->> +#include <dt-bindings/clock/qcom,qcs8300-gpucc.h>
->>  
->>  #include "clk-alpha-pll.h"
->>  #include "clk-branch.h"
->> @@ -317,6 +317,24 @@ static struct clk_branch gpu_cc_crc_ahb_clk = {
->>  	},
->>  };
->>  
->> +static struct clk_branch gpu_cc_cx_accu_shift_clk = {
->> +	.halt_reg = 0x95e8,
->> +	.halt_check = BRANCH_HALT,
->> +	.clkr = {
->> +		.enable_reg = 0x95e8,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(const struct clk_init_data){
->> +			.name = "gpu_cc_cx_accu_shift_clk",
->> +			.parent_hws = (const struct clk_hw*[]){
->> +				&gpu_cc_xo_clk_src.clkr.hw,
->> +			},
->> +			.num_parents = 1,
->> +			.flags = CLK_SET_RATE_PARENT,
->> +			.ops = &clk_branch2_ops,
->> +		},
->> +	},
->> +};
->> +
->>  static struct clk_branch gpu_cc_cx_ff_clk = {
->>  	.halt_reg = 0x914c,
->>  	.halt_check = BRANCH_HALT,
->> @@ -420,6 +438,24 @@ static struct clk_branch gpu_cc_demet_clk = {
->>  	},
->>  };
->>  
->> +static struct clk_branch gpu_cc_gx_accu_shift_clk = {
->> +	.halt_reg = 0x95e4,
->> +	.halt_check = BRANCH_HALT,
->> +	.clkr = {
->> +		.enable_reg = 0x95e4,
->> +		.enable_mask = BIT(0),
->> +		.hw.init = &(const struct clk_init_data){
->> +			.name = "gpu_cc_gx_accu_shift_clk",
->> +			.parent_hws = (const struct clk_hw*[]){
->> +				&gpu_cc_xo_clk_src.clkr.hw,
->> +			},
->> +			.num_parents = 1,
->> +			.flags = CLK_SET_RATE_PARENT,
->> +			.ops = &clk_branch2_ops,
->> +		},
->> +	},
->> +};
->> +
->>  static struct clk_branch gpu_cc_hlos1_vote_gpu_smmu_clk = {
->>  	.halt_reg = 0x7000,
->>  	.halt_check = BRANCH_HALT_VOTED,
->> @@ -499,6 +535,7 @@ static struct clk_regmap *gpu_cc_sa8775p_clocks[] = {
->>  	[GPU_CC_AHB_CLK] = &gpu_cc_ahb_clk.clkr,
->>  	[GPU_CC_CB_CLK] = &gpu_cc_cb_clk.clkr,
->>  	[GPU_CC_CRC_AHB_CLK] = &gpu_cc_crc_ahb_clk.clkr,
->> +	[GPU_CC_CX_ACCU_SHIFT_CLK] = NULL,
->>  	[GPU_CC_CX_FF_CLK] = &gpu_cc_cx_ff_clk.clkr,
->>  	[GPU_CC_CX_GMU_CLK] = &gpu_cc_cx_gmu_clk.clkr,
->>  	[GPU_CC_CX_SNOC_DVM_CLK] = &gpu_cc_cx_snoc_dvm_clk.clkr,
->> @@ -508,6 +545,7 @@ static struct clk_regmap *gpu_cc_sa8775p_clocks[] = {
->>  	[GPU_CC_DEMET_DIV_CLK_SRC] = &gpu_cc_demet_div_clk_src.clkr,
->>  	[GPU_CC_FF_CLK_SRC] = &gpu_cc_ff_clk_src.clkr,
->>  	[GPU_CC_GMU_CLK_SRC] = &gpu_cc_gmu_clk_src.clkr,
->> +	[GPU_CC_GX_ACCU_SHIFT_CLK] = NULL,
->>  	[GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK] = &gpu_cc_hlos1_vote_gpu_smmu_clk.clkr,
->>  	[GPU_CC_HUB_AHB_DIV_CLK_SRC] = &gpu_cc_hub_ahb_div_clk_src.clkr,
->>  	[GPU_CC_HUB_AON_CLK] = &gpu_cc_hub_aon_clk.clkr,
->> @@ -583,6 +621,7 @@ static const struct qcom_cc_desc gpu_cc_sa8775p_desc = {
->>  };
->>  
->>  static const struct of_device_id gpu_cc_sa8775p_match_table[] = {
->> +	{ .compatible = "qcom,qcs8300-gpucc" },
->>  	{ .compatible = "qcom,sa8775p-gpucc" },
->>  	{ }
->>  };
->> @@ -596,6 +635,14 @@ static int gpu_cc_sa8775p_probe(struct platform_device *pdev)
->>  	if (IS_ERR(regmap))
->>  		return PTR_ERR(regmap);
->>  
->> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-gpucc")) {
->> +		gpu_cc_pll0_config.l = 0x31;
->> +		gpu_cc_pll0_config.alpha = 0xe555;
->> +
->> +		gpu_cc_sa8775p_clocks[GPU_CC_CX_ACCU_SHIFT_CLK] = &gpu_cc_cx_accu_shift_clk.clkr;
->> +		gpu_cc_sa8775p_clocks[GPU_CC_GX_ACCU_SHIFT_CLK] = &gpu_cc_gx_accu_shift_clk.clkr;
->> +	}
->> +
->>  	clk_lucid_evo_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
->>  	clk_lucid_evo_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
->>  
->>
->> -- 
->> 2.25.1
->>
 
