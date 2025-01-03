@@ -1,62 +1,62 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E781FBEAB
-	for <linux-clk@vger.kernel.org>; Fri,  3 Jan 2025 16:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB3B1FC0E9
+	for <linux-clk@vger.kernel.org>; Fri,  3 Jan 2025 16:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735922313; cv=none; b=Bc9nP8xeYZPWOcvNNArw02SLclwyf3y1Mcv7Ag88+KJKXxx1J/FVmUT8ONeE/syKE+rECsGHuxj0cW7ajs/46rHDN8B/5O3ybMw8dYLV38FmVISJXoy3mumMcppD6W955N/f15ABS+naMsV4aSXNrchQ2k5cha7fJdqYVAbkq4Q=
+	t=1735922315; cv=none; b=s9iRQUFrwAHhRji+v1TBlw57jsrRfIFtBAHdSBVcHwJf43qiXqv+B3Q2GdlRovavPN80Ia1gV9nbWryoU7OEA0d9Zi/gLWNj6anh5bQXoiE/XOnPCrXcGzf1i7zxDlFJ/7L3IaBE+6QoTaafQDkW1qlpp6ZVa0tTjoNsw33sulA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735922313; c=relaxed/simple;
-	bh=rKeDJdkJUvYXPSfCRoD0lCN7VYkcnSZTWQUumgyTv/g=;
+	s=arc-20240116; t=1735922315; c=relaxed/simple;
+	bh=vpTcFyTpxAUWxXlbXnvHItbsODwPD9kf9XkrqqjjlH0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=F9ZfsiBsz7OYD3td7CWeg/wbE3RITtP8CXAg9POp/rhzFO6gMi5cYRBOR7VXG9KM7XT3Tb2BlVq9+6tkyr5QAILfOy3BaUAvEfKoaJowCVvqe26qVatrS/kUifcr+py1O3e/Hs0YJKSEdCvWKcoh6I1DRav8OlmBZrclFjaAvv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=k/gZQEJt; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version; b=J0+icr/wnS1nuGTUtl1qU5VlSEdBB7+tF94fulocrqwzO/zS5MgM0j8GY1PCdWnZAfox798A3OiV9a9T23qwz0T4hu5xoaMlGQ8hOVpaiv3mw4BwTvo4bV1pylW16oD5Gh0RuNapHW66FzpcGiWyhqTSWMlfqBlQQDmw+/5iHMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qRB7LCsf; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="k/gZQEJt"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa689a37dd4so1954128866b.3
-        for <linux-clk@vger.kernel.org>; Fri, 03 Jan 2025 08:38:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qRB7LCsf"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa679ad4265so2424868366b.0
+        for <linux-clk@vger.kernel.org>; Fri, 03 Jan 2025 08:38:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1735922310; x=1736527110; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1735922312; x=1736527112; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uRfd2J8GP5C8knwZHf/66JpMVkPptrjLbcLPhoT3Dxw=;
-        b=k/gZQEJtA+7erqO0VL71gsC9OEB1TUiEe3Dx7ue0FuvNGsZOnEH0+ZryT0kxWczm8M
-         XELKmsV1Yjn1bbdjBx/x9anoTcTS8VfmLBMr6+h9Iexrh8iUkih3EwGEZjC8cf0q7BsN
-         BpyyqxWZtwlFPs34r//r+6q/y8nNQ3qyV75hW4OrFjzkNmhivEXyasDqwtLkkhPgyilC
-         +T0ZbO/EKcuZ2ee41u6udGg2IPQWKmzYgOoLC6OUPBiYKO/wRo0LB/wWudPdtxHZQV03
-         YSCKCdEKHXpmPhuVE8gPUMatpoQrgMjZv19Cna20WSqBMOw9zcsrWvqNHgX7bZXJq8Mx
-         n/4A==
+        bh=MKO092aqGvuaWEK1ec47bOLS5kCK+a7HRvUCASG+XdU=;
+        b=qRB7LCsfEUXtUCJCCYE1O+T7QP6Q/nbrT7YYV7oRxfNPItosEmNCItcK7PZsE086JI
+         H2lUPBlxf1xm3NdU9otdAXG58Dqe8YO5KkyxdBSsh6pLw5xtffBYN6q7vnYp/XceGSkb
+         O1YmJnNSMm79TsDD89qy1OdImNWIWqSvO0ADY3zGTddttxG9WKXQhPYzaOaALI1+YxGc
+         j1AuZAiyt3HMdCuHaLHYdM33tPDCRtQ6vYkCElHbsjmHAD5vP4wgZLpOrqurrp3zN8tS
+         c9BCIzmdTikuRiF6WbaOD67HszImnYJI6j+ch1byDrBivBGz7lbnl8Zx9oqWf2EyPLgf
+         9TIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735922310; x=1736527110;
+        d=1e100.net; s=20230601; t=1735922312; x=1736527112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uRfd2J8GP5C8knwZHf/66JpMVkPptrjLbcLPhoT3Dxw=;
-        b=w/SW6VmR7Eegksr/9fKY6SEDqxEWfLiqXb11Fuicb8TJ2R3f0a/9ZIzfdjt/2Xtsf6
-         NQu5VdH14gV3zQGybJk53p4n0b7TJgEf9Tonbu3f2netLRs90flw+LYviECSfQ80Fi03
-         8lRoSJ+UX9mueOzmuGyvYiWRSm1WRntDtPYDCIA52ln6t/qwvzONRSKrszBcuGev+vg6
-         X0v8XTXK9URg6/o59WbeQ8DK9s9FRxOzXHfyV6YBjjF4ue7b2FS66UTErgOcTS5kNq3y
-         qsc5+4GiyAU+pB/WnGalW5QQEJMrik56k/hhh8ZOqM1nIW/WdZ9kv8Lntoh1PIqf5sYQ
-         2Slw==
-X-Forwarded-Encrypted: i=1; AJvYcCXD4vq5vMeSPnyVVIWNzz0DgfDFlOjBjjibtDN24+LYAiZkzIChZkcvfzQYf7qMPegLD5Tx05onuHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz5X0a06xCrzLll+ADO5kyBtn3lrSJRlP7BgPSj9I4rOKhq6xj
-	moodeDTCindFG/z7SSVYhnNN8rfyeXLx3SVUXFb6ZaF7jtfUdbDKBbeBvKr2/sI=
-X-Gm-Gg: ASbGnctC8a3/HCuVxwTpOwXOB7kXQAnxY1+6hwI7/Joq0TgHYQELEYNl0zGcrBqYMu7
-	CzK17aOT/wPFD7DhIbWtttgIJ3ZZaL8nhg7m1s3APIw1qecjpP+ahWF+C3Bb9TxZM5lIXUYc8kn
-	r1mo5uy2nlXun7s4NzBKdLty63l7C7L2wzZawTPobbmYL5iTlr2tOIdKgP2ZhCEYkjrk2lGecIN
-	iIcUwbRZqsTENK8iH9ijSdjJbZYpApW0XaNjj8B6H/OwX9Fa0cfO/+OW0N3SYymaUUtd34+d1m7
-	Qn/xxpg664g=
-X-Google-Smtp-Source: AGHT+IEDncREyuqiaeFdEZrch8doNfoioGsr8GniNw17HEMgfl8Mb5jP1IALi9TIgf4Be+b+F0vcRQ==
-X-Received: by 2002:a17:907:944f:b0:aac:439:10ce with SMTP id a640c23a62f3a-aac2ba3c11amr5503329166b.27.1735922310189;
-        Fri, 03 Jan 2025 08:38:30 -0800 (PST)
+        bh=MKO092aqGvuaWEK1ec47bOLS5kCK+a7HRvUCASG+XdU=;
+        b=OosW5rlto1Oj+x+6jZvEqBVyCrNG2rOHkCrE5qiR1p7jghKTi0xOw8V4qHprWkorOy
+         WAtAEuZiHbmGgENHvyJjHlXPdWMYVuCj0NCNr24x2X06S5WtomxcY3yb5ZJc8r284+kj
+         HvxfHRUHXcPHZgjiLD2DAoqTMSk+gT+2YwF3HXsszS1oAagK2mgDuoy4V62nSbAwclRv
+         TzDzrM5WXQBu9TLEyHrBY+IGxmWPqGZAQlg9wpRtnsdp5Wx42SY3Bj1UqoOPVAkulY8+
+         Op8jfBIB8B8WG+za/Wke1Usatl0fs0qvs9dIA/U80t1OSFxYoJf08EGHhzn8f2AcVcTh
+         QTiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWf/BtBofrReqaLWZw0lHvwr6VEUYpI182d/0gp/iLbIBYgz8oWFrAyqGmrCr+szkMtowbynzhNpCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYuB6z1WMqvxoeT4ULKJb9vxGykBcaydzBPj4w2ALuIfUZKl7g
+	FW+7slsyHhImDfnrjughrtWbs+jvd7jv9T/XADMqSTuNCxmpTYO2Y8+tLVaaLCo=
+X-Gm-Gg: ASbGncvJozDr/e88XY2nhCHmJvv87pUqa6qckBv5jsZ2KBACeBIPrcc8wfLQoZaDU4k
+	3pCmpbv90Ma+NpXmjz/N0iZ2clHYta8xOmMN+gTdMrJwE64nsCds2jztRKhoygZVjyeagF2cvWE
+	c2Cubw1mRcXVV25pHVsbb1piOJjk8Z48nk9ETLS87XGW3vP4WM6h3mqkLDK8O5FzBJZPGrJ5WTw
+	MGy3VUBaHDa7pW9Hf5TH4kqee7UQomB6UXalFpMBU0GvynfjEabc5rCoHXMKA3MSrjgG46NBVCO
+	KVXc0TKTMUE=
+X-Google-Smtp-Source: AGHT+IHotX0t/tDNEmrDmtZY7hNyawr8SL8uDODoko36MDXxVpeudAHOQDSv7TvNphEb+Zb8F3tSTg==
+X-Received: by 2002:a17:906:4fcb:b0:aa6:7ff9:d248 with SMTP id a640c23a62f3a-aac0812631emr4709225166b.8.1735922312040;
+        Fri, 03 Jan 2025 08:38:32 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.102])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0e8953b6sm1932984066b.65.2025.01.03.08.38.28
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0e8953b6sm1932984066b.65.2025.01.03.08.38.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2025 08:38:29 -0800 (PST)
+        Fri, 03 Jan 2025 08:38:31 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: rafael@kernel.org,
@@ -80,9 +80,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 1/6] clk: renesas: r9a08g045: Add clocks, resets and power domain support for the TSU IP
-Date: Fri,  3 Jan 2025 18:38:00 +0200
-Message-ID: <20250103163805.1775705-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 2/6] thermal: of: Export non-devres helper to register/unregister thermal zone
+Date: Fri,  3 Jan 2025 18:38:01 +0200
+Message-ID: <20250103163805.1775705-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
@@ -96,43 +96,138 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add clocks, resets and power domains for the TSU IP available on the
-Renesas RZ/G3S SoC.
+On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
+clocks are managed through PM domains. These PM domains, registered on
+behalf of the clock controller driver, are configured with
+GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
+clocks are enabled/disabled using runtime PM APIs.
+
+During probe, devices are attached to the PM domain controlling their
+clocks. Similarly, during removal, devices are detached from the PM domain.
+
+The detachment call stack is as follows:
+
+device_driver_detach() ->
+  device_release_driver_internal() ->
+    __device_release_driver() ->
+      device_remove() ->
+        platform_remove() ->
+	  dev_pm_domain_detach()
+
+In the upcoming Renesas RZ/G3S thermal driver, the
+struct thermal_zone_device_ops::change_mode API is implemented to
+start/stop the thermal sensor unit. Register settings are updated within
+the change_mode API.
+
+In case devres helpers are used for thermal zone register/unregister the
+struct thermal_zone_device_ops::change_mode API is invoked when the
+driver is unbound. The identified call stack is as follows:
+
+device_driver_detach() ->
+  device_release_driver_internal() ->
+    device_unbind_cleanup() ->
+      devres_release_all() ->
+        devm_thermal_of_zone_release() ->
+	  thermal_zone_device_disable() ->
+	    thermal_zone_device_set_mode() ->
+	      rzg3s_thermal_change_mode()
+
+The device_unbind_cleanup() function is called after the thermal device is
+detached from the PM domain (via dev_pm_domain_detach()).
+
+The rzg3s_thermal_change_mode() implementation calls
+pm_runtime_resume_and_get()/pm_runtime_put_autosuspend() before/after
+accessing the registers. However, during the unbind scenario, the
+devm_thermal_of_zone_release() is invoked after dev_pm_domain_detach().
+Consequently, the clocks are not enabled, as the device is removed from
+the PM domain at this time, leading to an Asynchronous SError Interrupt.
+The system cannot be used after this.
+
+Add thermal_of_zone_register()/thermal_of_zone_unregister(). These will
+be used in the upcomming RZ/G3S thermal driver.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/thermal/thermal_of.c |  8 +++++---
+ include/linux/thermal.h      | 14 ++++++++++++++
+ 2 files changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index 0e7e3bf05b52..bc44e08e7eb9 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -241,6 +241,7 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 	DEF_MOD("gpio_hclk",		R9A08G045_GPIO_HCLK, R9A08G045_OSCCLK, 0x598, 0),
- 	DEF_MOD("adc_adclk",		R9A08G045_ADC_ADCLK, R9A08G045_CLK_TSU, 0x5a8, 0),
- 	DEF_MOD("adc_pclk",		R9A08G045_ADC_PCLK, R9A08G045_CLK_TSU, 0x5a8, 1),
-+	DEF_MOD("tsu_pclk",		R9A08G045_TSU_PCLK, R9A08G045_CLK_TSU, 0x5ac, 0),
- 	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0),
- };
+diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+index fab11b98ca49..8fc35d20db60 100644
+--- a/drivers/thermal/thermal_of.c
++++ b/drivers/thermal/thermal_of.c
+@@ -329,11 +329,12 @@ static bool thermal_of_should_bind(struct thermal_zone_device *tz,
+  *
+  * @tz: a pointer to the thermal zone structure
+  */
+-static void thermal_of_zone_unregister(struct thermal_zone_device *tz)
++void thermal_of_zone_unregister(struct thermal_zone_device *tz)
+ {
+ 	thermal_zone_device_disable(tz);
+ 	thermal_zone_device_unregister(tz);
+ }
++EXPORT_SYMBOL_GPL(thermal_of_zone_unregister);
  
-@@ -279,6 +280,7 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
- 	DEF_RST(R9A08G045_GPIO_SPARE_RESETN, 0x898, 2),
- 	DEF_RST(R9A08G045_ADC_PRESETN, 0x8a8, 0),
- 	DEF_RST(R9A08G045_ADC_ADRST_N, 0x8a8, 1),
-+	DEF_RST(R9A08G045_TSU_PRESETN, 0x8ac, 0),
- 	DEF_RST(R9A08G045_VBAT_BRESETN, 0x914, 0),
- };
+ /**
+  * thermal_of_zone_register - Register a thermal zone with device node
+@@ -355,8 +356,8 @@ static void thermal_of_zone_unregister(struct thermal_zone_device *tz)
+  *	- ENOMEM: if one structure can not be allocated
+  *	- Other negative errors are returned by the underlying called functions
+  */
+-static struct thermal_zone_device *thermal_of_zone_register(struct device_node *sensor, int id, void *data,
+-							    const struct thermal_zone_device_ops *ops)
++struct thermal_zone_device *thermal_of_zone_register(struct device_node *sensor, int id, void *data,
++						     const struct thermal_zone_device_ops *ops)
+ {
+ 	struct thermal_zone_device_ops of_ops = *ops;
+ 	struct thermal_zone_device *tz;
+@@ -429,6 +430,7 @@ static struct thermal_zone_device *thermal_of_zone_register(struct device_node *
  
-@@ -353,6 +355,8 @@ static const struct rzg2l_cpg_pm_domain_init_data r9a08g045_pm_domains[] = {
- 				DEF_REG_CONF(CPG_BUS_MCPU3_MSTOP, BIT(4)), 0),
- 	DEF_PD("adc",		R9A08G045_PD_ADC,
- 				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(14)), 0),
-+	DEF_PD("tsu",		R9A08G045_PD_TSU,
-+				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(15)), 0),
- 	DEF_PD("vbat",		R9A08G045_PD_VBAT,
- 				DEF_REG_CONF(CPG_BUS_MCPU3_MSTOP, BIT(8)),
- 				GENPD_FLAG_ALWAYS_ON),
+ 	return ERR_PTR(ret);
+ }
++EXPORT_SYMBOL_GPL(thermal_of_zone_register);
+ 
+ static void devm_thermal_of_zone_release(struct device *dev, void *res)
+ {
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index 69f9bedd0ee8..adbb4092a064 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -195,13 +195,23 @@ struct thermal_zone_params {
+ 
+ /* Function declarations */
+ #ifdef CONFIG_THERMAL_OF
++struct thermal_zone_device *thermal_of_zone_register(struct device_node *sensor, int id, void *data,
++						     const struct thermal_zone_device_ops *ops);
+ struct thermal_zone_device *devm_thermal_of_zone_register(struct device *dev, int id, void *data,
+ 							  const struct thermal_zone_device_ops *ops);
+ 
++void thermal_of_zone_unregister(struct thermal_zone_device *tz);
+ void devm_thermal_of_zone_unregister(struct device *dev, struct thermal_zone_device *tz);
+ 
+ #else
+ 
++static inline
++struct thermal_zone_device *thermal_of_zone_register(struct device_node *sensor, int id, void *data,
++						     const struct thermal_zone_device_ops *ops)
++{
++	return ERR_PTR(-ENOTSUPP);
++}
++
+ static inline
+ struct thermal_zone_device *devm_thermal_of_zone_register(struct device *dev, int id, void *data,
+ 							  const struct thermal_zone_device_ops *ops)
+@@ -209,6 +219,10 @@ struct thermal_zone_device *devm_thermal_of_zone_register(struct device *dev, in
+ 	return ERR_PTR(-ENOTSUPP);
+ }
+ 
++static inline void thermal_of_zone_unregister(struct thermal_zone_device *tz)
++{
++}
++
+ static inline void devm_thermal_of_zone_unregister(struct device *dev,
+ 						   struct thermal_zone_device *tz)
+ {
 -- 
 2.43.0
 
