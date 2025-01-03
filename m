@@ -1,91 +1,74 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C991FBC92
-	for <linux-clk@vger.kernel.org>; Fri,  3 Jan 2025 16:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554B71FAC25
+	for <linux-clk@vger.kernel.org>; Fri,  3 Jan 2025 16:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735922324; cv=none; b=eISCFbOQCOQaupLpdPcjSmVQZW9BFmGHlw85xvlZdFOmgF/99B3gKLiVhbHCnM6ohiXqsXhoD7yDGEECk6OQnUYIyXpU/Q6qyoGloXludM/kLNTDVEfOSt4hnyjUg+KMOqnala4uTDxvZTb8saUltEJmmkjwvieA6WCsT3n5kJw=
+	t=1735922964; cv=none; b=ics3NNq70Yq/+GLLEQysDZ/jxetL2JhfeP1UPZKgARwwCHuW0r1o/cmp9KYImp7SriZmZbyJX/RQoBQjGwOvbf4DtdBx47taY3SaORbo6/JcYH53w06FTZbQCgjSaLvXsx0nOcoMXcmzTV5TUq8PUuBSQqXmfONjR0IOqooQMIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735922324; c=relaxed/simple;
-	bh=uA7zSCyT+GU3Zteq7U0sWo2VeqLEzQfO9yMYYfppUds=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cp/z6hRa8/BEJMvglXgj3+QnTwSv8HFQX6tTBebq+ApNjPenmnZhvgizdUQ1kUD6pKs+zQtVbxUUPv2U7s8wsXnYHBBOZ1+4GliK7+UFWhLsHYXycc9bPjoDzehQpVXj70lrBIxdiJ2MWF1Z5n+A3zhLop6XmQM1Bv5PqQDhbGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=nPddEcXr; arc=none smtp.client-ip=209.85.218.43
+	s=arc-20240116; t=1735922964; c=relaxed/simple;
+	bh=uVe044tSzn+iBY3oWxbYQnnkPgvXI2BHBiYgjVWZHnk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VANiybmlA9le0wnQTB67ek878D03rr8FKfYXjryQXa53aegeSzk+UHoCkxuT94Qtmfa6oe3Y6HT/fSAkI249j8wvtFda0tgEq/aoTocQCFT/o8iH1KGJD2wIX1yPf/vG4AI1VyA47KEgxHmimFZVdd5r0sG0j2zUV6rFBS51c4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=WbgHWyey; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="nPddEcXr"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaecf50578eso1665479066b.2
-        for <linux-clk@vger.kernel.org>; Fri, 03 Jan 2025 08:38:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="WbgHWyey"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa68b513abcso2309745966b.0
+        for <linux-clk@vger.kernel.org>; Fri, 03 Jan 2025 08:49:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1735922320; x=1736527120; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WzIPlmgQYvqaNwex1YHnIy7YRZOsyuGpSTntBCm6GNw=;
-        b=nPddEcXr+DKBPwBGhd68CXns0WzpisDTshyQrivcZSVjxfTiIra7TAB2AKTecjIaT/
-         6C0u/ZswMffft1jQBrbcT62GmMd6C+tBzUyna7T79zHud+v4luSKSWr/A5LCZAPcOUsP
-         t5uc789kXPQHF24N+dKy8z6+slml5N1LK6Z1QcO1cICKW+tNfjwtI400GSOPk+aSBZuy
-         cRtAz1UOyCX7wDmVqiOpv9IDpw42xxrmE0pllDNkwyIVO5tzw+6Mjrrd1fprFDRRFEGf
-         5iNMtN1w22O+Vl60PjrcOhNb0SXHjOOW8aSXvIFxf6OKruy8YNvdV+EmRisHUm6QXx5y
-         GzBA==
+        d=tuxon.dev; s=google; t=1735922961; x=1736527761; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f+fdv+kWy/ao4qfObA3tHqnlkpS/1mTWNa+BlMy47LU=;
+        b=WbgHWyeyT9v5N8AtFrN7XhXaO1Ls48XxM8I78PDcS13oziMeEBXZRDR/3NpfTfPl0T
+         dqoFRcBFvG10Mf7291A4pw9Wux0sUz1vZBEJxf8j3QlI3/OG96RdWCF/e7WgPymk0ej8
+         7G/LEO5mCubNEWeAeuau4LlLCbmT/RpjiPE19WGKbF4GDUgTrX5ZfSAEf+pN30Gnt8FR
+         cg4tsgaoGjO3gpq2ik2a5WayrZTLZ3aJmsmQAiBAQnOHbAEnsZ3wV+vBCZqz2lvkeRnw
+         MwhTd3jeY94Yn6CG8TsSm+tS2x/kVx+4NolZMzFIcKvL8bsjcW7KBlHwt5knleMaSEPR
+         cZfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735922320; x=1736527120;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WzIPlmgQYvqaNwex1YHnIy7YRZOsyuGpSTntBCm6GNw=;
-        b=mqR9AJVi1wqG1qdXxo5hdGIrF/YZPG3jCHHsRu9gF3lhzWbecfLg5H9ekHM4g+nPRL
-         KBIBmPHEbSmtoCH29FUfTC0KO2tVDohmvljgGfe8kVysOXb14QWOxT8BerVTLI2pU7YC
-         KG5AamXM1rZDk6xzIjOdgtzLw4LEimnNlYh8r9ksQcxeLgo5BdTjDVUNLYS9Wf20s1rk
-         pv2U2Gwi5RBPD/Qzv1QcKMV4o1OiC9+qjox9lRAKoADgiHwGJwo7YqoeyZ0/A55zgMiX
-         pcnqA3KACexyYX6lV2wWHktTdtEKPNwyo+ZLxrt9av2T7AY+FPxgwY/QLc7ISggunKbd
-         ASew==
-X-Forwarded-Encrypted: i=1; AJvYcCVAeutLCPQNTY9TE55qLEso04pg+pENJok1uNBCb90HrNwhuNiIlkRUaTdcrU2LoUsAPY6xWMmZiZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKB+LuHPxBVzXRYF+mBmfPptaVtTJoNw3sNmkNypgMzs9RMjot
-	tPV76vd6La7JfiDqkU7gPVnFgrvyu0rlZ2G1evxrS3n0dwx7qw0wDtindq8Cpmw=
-X-Gm-Gg: ASbGncuV9XB+QwagGQ5iZkR8R63Vc7NW+gj78dPmzN+GsFvy2b+4jsq9OViXqlzQPhC
-	wfmlsOahI/Gx5coMEpcW0AVaoJEFPi11R0cEn2k+3acMT82YDgBP8/qissa6qc3n5UILF7ViL1q
-	ILvF6bfwY2yEcuhW/9kEAkO82YjpKX19FIi8yeYyzPns4/lFuQCtd257oR520IoN/lClPyR5rOX
-	y+kvIuSqHbZ2wjyeYlbWSz4gHY5/SGUHhcoXKbYU1uw8H3Io1rBZmGwLp9JyYiuoTkomOYL9keQ
-	TGhUV650A/Y=
-X-Google-Smtp-Source: AGHT+IE84xLk/WtOOKb4Wwm+4qdlu+SqcMhw+gwQquj/QrYYaTzEDXr5cpwvEJHSOv4z3jx+xnmhFA==
-X-Received: by 2002:a17:907:724b:b0:aa6:7737:1991 with SMTP id a640c23a62f3a-aac2702ae51mr5003000966b.2.1735922318403;
-        Fri, 03 Jan 2025 08:38:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1735922961; x=1736527761;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f+fdv+kWy/ao4qfObA3tHqnlkpS/1mTWNa+BlMy47LU=;
+        b=iFRrd5a1D5ucw8Yyc1uqwhKdSsXdi9y1rSy6BupH++5ZIhfBpe1Fmyr+hOHmxLHnhK
+         aRmEkBsYs0yqnJHjjNAz4/5HvMJxWE+EMaxCBc+WjywgonWBOpVWfvxYh2c7827GmM55
+         Rs3EsN8T91HILWaqrbRILl5uZxOGYPFU5iEfu+ashld9sSKxo8PzcI0O1g5ifPf1hb0Z
+         GWRtqFrI9KnIJS9ymSk3COTfMY6lXb5zbqkOjqUoeSRH0vGdb2BiWEiyl846tSsxEUEO
+         3MVtRq9/YJKDUcbq+AmPi6P+mzN2FT3CWM3cWgnJQrQepF1ngVXbnrWeCXKxykMe+m6n
+         I++w==
+X-Forwarded-Encrypted: i=1; AJvYcCWt628X6jtI8CrWVXBc6XEQXQKOtDHecerwpIISKS25nNTz8nJaphciz138r1JHsrA847p2tXU6TuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjRQ4PWjcisCIbfyR70FpxNET9cy9+KRSQtyat6fL/KWSiQrbc
+	kaDM4KKibp7pqL5SKbIpSqD9pJDEyFrwkuT7NSJ90byZcVnd5a76EawqQMhQgq8=
+X-Gm-Gg: ASbGnct3Kr+qi4kW8CnuDyBSfrucWQhv2uvFl7D6Ydo/EKhs3pAifgAiwgMDhcTsPs6
+	lTTmqjoWrV59Bl7WNhmBMSyVsTyq0mqKgVpbX/HD6fO9lIFL8aqbf1FcmJahWEL4Qn8zWK1Y1Js
+	1hgUS3IZyqnYYS9Dchl7K03FTTWy4KGtySSXWvVRbTG65vLuRTPukCCf+dQD66r/vchD6N5wflL
+	Ehf1YaYRRHALhpPkGbK8hnkOIZh9x08JRzA5kFFTlB8pJ2uvj1AcWWLWmv3TnwZ6CwfZdGg1ZgE
+	j/+pZPfpIj4=
+X-Google-Smtp-Source: AGHT+IFg0hLfHcpxcKd+nJuxWf8zDpM3DGdyBuqGxtSTywmzbjqc02ILv+2l6LzMZ0B0UQkQZ3JVww==
+X-Received: by 2002:a17:906:4fd5:b0:aa6:b473:ea4c with SMTP id a640c23a62f3a-aac28748b3dmr4872244066b.10.1735922960625;
+        Fri, 03 Jan 2025 08:49:20 -0800 (PST)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.102])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0e8953b6sm1932984066b.65.2025.01.03.08.38.36
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0efe4971sm1937601466b.107.2025.01.03.08.49.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2025 08:38:37 -0800 (PST)
+        Fri, 03 Jan 2025 08:49:20 -0800 (PST)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
+To: geert+renesas@glider.be,
 	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	ulf.hansson@linaro.org
+	sboyd@kernel.org
 Cc: claudiu.beznea@tuxon.dev,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 5/6] arm64: dts: renesas: r9a08g045: Add TSU node
-Date: Fri,  3 Jan 2025 18:38:04 +0200
-Message-ID: <20250103163805.1775705-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: r8a08g045: Check the source of the CPU PLL settings
+Date: Fri,  3 Jan 2025 18:48:34 +0200
+Message-ID: <20250103164834.1778090-1-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -96,99 +79,120 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add TSU node along with thermal zones and keep it enabled in the SoC DTSI.
-The temperature reported by the TSU can only be read through channel 8 of
-the ADC. Therefore, enable the ADC by default.
+On the RZ/G3S SoC, the CPU PLL settings can be set and retrieved through
+the CPG_PLL1_CLK1 and CPG_PLL1_CLK2 registers. However, these settings are
+applied only when CPG_PLL1_SETTING.SEL_PLL1 is set to 0. Otherwise, the
+CPU PLL operates at the default frequency of 1.1 GHz. This patch adds
+support to the PLL driver to return the 1.1 GHz frequency when the CPU PLL
+is configured with the default frequency.
 
+Fixes: 01eabef547e6 ("clk: renesas: rzg2l: Add support for RZ/G3S PLL")
+Fixes: de60a3ebe410 ("clk: renesas: Add minimal boot support for RZ/G3S SoC")
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 43 ++++++++++++++++++-
- .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |  4 --
- 2 files changed, 42 insertions(+), 5 deletions(-)
+ drivers/clk/renesas/r9a08g045-cpg.c |  5 +++--
+ drivers/clk/renesas/rzg2l-cpg.c     |  8 ++++++++
+ drivers/clk/renesas/rzg2l-cpg.h     | 10 +++++++---
+ 3 files changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index a9b98db9ef95..fd74138198a8 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -205,7 +205,6 @@ adc: adc@10058000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			#io-channel-cells = <1>;
--			status = "disabled";
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index 0e7e3bf05b52..df962d88c66e 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -51,7 +51,7 @@
+ #define G3S_SEL_SDHI2		SEL_PLL_PACK(G3S_CPG_SDHI_DSEL, 8, 2)
  
- 			channel@0 {
- 				reg = <0>;
-@@ -244,6 +243,17 @@ channel@8 {
- 			};
- 		};
+ /* PLL 1/4/6 configuration registers macro. */
+-#define G3S_PLL146_CONF(clk1, clk2)	((clk1) << 22 | (clk2) << 12)
++#define G3S_PLL146_CONF(clk1, clk2, settings)	((clk1) << 22 | (clk2) << 12 | (settings))
  
-+		tsu: thermal@10059000 {
-+			compatible = "renesas,r9a08g045-tsu";
-+			reg = <0 0x10059000 0 0x1000>;
-+			clocks = <&cpg CPG_MOD R9A08G045_TSU_PCLK>;
-+			resets = <&cpg R9A08G045_TSU_PRESETN>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+			io-channels = <&adc 8>;
-+			io-channel-names = "tsu";
-+		};
-+
- 		vbattb: clock-controller@1005c000 {
- 			compatible = "renesas,r9a08g045-vbattb";
- 			reg = <0 0x1005c000 0 0x1000>;
-@@ -690,6 +700,37 @@ timer {
- 				  "hyp-virt";
- 	};
+ #define DEF_G3S_MUX(_name, _id, _conf, _parent_names, _mux_flags, _clk_flags) \
+ 	DEF_TYPE(_name, _id, CLK_TYPE_MUX, .conf = (_conf), \
+@@ -134,7 +134,8 @@ static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
  
-+	thermal-zones {
-+		cpu_thermal: cpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+			thermal-sensors = <&tsu>;
-+			sustainable-power = <423>;
+ 	/* Internal Core Clocks */
+ 	DEF_FIXED(".osc_div1000", CLK_OSC_DIV1000, CLK_EXTAL, 1, 1000),
+-	DEF_G3S_PLL(".pll1", CLK_PLL1, CLK_EXTAL, G3S_PLL146_CONF(0x4, 0x8)),
++	DEF_G3S_PLL(".pll1", CLK_PLL1, CLK_EXTAL, G3S_PLL146_CONF(0x4, 0x8, 0x100),
++		    1100000000UL),
+ 	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
+ 	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
+ 	DEF_FIXED(".pll4", CLK_PLL4, CLK_EXTAL, 100, 3),
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index ddf722ca79eb..b52a93973b11 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -51,6 +51,7 @@
+ #define RZG3S_DIV_M		GENMASK(25, 22)
+ #define RZG3S_DIV_NI		GENMASK(21, 13)
+ #define RZG3S_DIV_NF		GENMASK(12, 1)
++#define RZG3S_SEL_PLL		BIT(0)
+ 
+ #define CLK_ON_R(reg)		(reg)
+ #define CLK_MON_R(reg)		(0x180 + (reg))
+@@ -60,6 +61,7 @@
+ #define GET_REG_OFFSET(val)		((val >> 20) & 0xfff)
+ #define GET_REG_SAMPLL_CLK1(val)	((val >> 22) & 0xfff)
+ #define GET_REG_SAMPLL_CLK2(val)	((val >> 12) & 0xfff)
++#define GET_REG_SAMPLL_SETTINGS(val)	((val) & 0xfff)
+ 
+ #define CPG_WEN_BIT		BIT(16)
+ 
+@@ -943,6 +945,7 @@ rzg2l_cpg_sipll5_register(const struct cpg_core_clk *core,
+ 
+ struct pll_clk {
+ 	struct clk_hw hw;
++	unsigned long default_rate;
+ 	unsigned int conf;
+ 	unsigned int type;
+ 	void __iomem *base;
+@@ -986,6 +989,10 @@ static unsigned long rzg3s_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
+ 	if (pll_clk->type != CLK_TYPE_G3S_PLL)
+ 		return parent_rate;
+ 
++	val = readl(priv->base + GET_REG_SAMPLL_SETTINGS(pll_clk->conf));
++	if (val & RZG3S_SEL_PLL)
++		return pll_clk->default_rate;
 +
-+			cooling-maps {
-+				map0 {
-+					trip = <&target>;
-+					cooling-device = <&cpu0 0 2>;
-+					contribution = <1024>;
-+				};
-+			};
-+
-+			trips {
-+				sensor_crit: sensor-crit {
-+					temperature = <125000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+
-+				target: trip-point {
-+					temperature = <100000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+			};
-+		};
+ 	val = readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
+ 
+ 	pr = 1 << FIELD_GET(RZG3S_DIV_P, val);
+@@ -1038,6 +1045,7 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_clk *core,
+ 	pll_clk->base = priv->base;
+ 	pll_clk->priv = priv;
+ 	pll_clk->type = core->type;
++	pll_clk->default_rate = core->default_rate;
+ 
+ 	ret = devm_clk_hw_register(dev, &pll_clk->hw);
+ 	if (ret)
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index 881a89b5a710..b74c94a16986 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -102,7 +102,10 @@ struct cpg_core_clk {
+ 	const struct clk_div_table *dtable;
+ 	const u32 *mtable;
+ 	const unsigned long invalid_rate;
+-	const unsigned long max_rate;
++	union {
++		const unsigned long max_rate;
++		const unsigned long default_rate;
 +	};
-+
- 	vbattb_xtal: vbattb-xtal {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index ef12c1c462a7..041d256d7b79 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -102,10 +102,6 @@ x3_clk: x3-clock {
- 	};
- };
- 
--&adc {
--	status = "okay";
--};
--
- #if SW_CONFIG3 == SW_ON
- &eth0 {
- 	pinctrl-0 = <&eth0_pins>;
+ 	const char * const *parent_names;
+ 	notifier_fn_t notifier;
+ 	u32 flag;
+@@ -144,8 +147,9 @@ enum clk_types {
+ 	DEF_TYPE(_name, _id, _type, .parent = _parent)
+ #define DEF_SAMPLL(_name, _id, _parent, _conf) \
+ 	DEF_TYPE(_name, _id, CLK_TYPE_SAM_PLL, .parent = _parent, .conf = _conf)
+-#define DEF_G3S_PLL(_name, _id, _parent, _conf) \
+-	DEF_TYPE(_name, _id, CLK_TYPE_G3S_PLL, .parent = _parent, .conf = _conf)
++#define DEF_G3S_PLL(_name, _id, _parent, _conf, _default_rate) \
++	DEF_TYPE(_name, _id, CLK_TYPE_G3S_PLL, .parent = _parent, .conf = _conf, \
++		 .default_rate = _default_rate)
+ #define DEF_INPUT(_name, _id) \
+ 	DEF_TYPE(_name, _id, CLK_TYPE_IN)
+ #define DEF_FIXED(_name, _id, _parent, _mult, _div) \
 -- 
 2.43.0
 
