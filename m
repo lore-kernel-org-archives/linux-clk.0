@@ -1,144 +1,201 @@
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAA91482E1
-	for <linux-clk@vger.kernel.org>; Fri,  3 Jan 2025 05:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F3E1C9B97;
+	Fri,  3 Jan 2025 07:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735883626; cv=none; b=Qvl7OQQXeNEIw3IMqSH8durFidHhS5caGX1UbcoWDwnxVpQkyHtbI1XrjR/0d3VaLe85cTyB8ttbmmIglSkfk28BjZdw1oD5hkmfHUQSLfGLSg/Mmx7vk6sYJ/t15zHaLLhYUdKiVNKyi1zIeNw2CwIkUK5fcB39x2BUg5cJJAY=
+	t=1735889523; cv=none; b=T2hGC3moPqULlA6xYKTAF5KvYqinF0z6eHBSt7VAj1x45bw9YcAQuReuNIHeQ9ktokIVKoKW5IdxOk7XIecgMkv+i8UsY0wPdqBr7YlJ9kC4tIo+EiqAHOtbybsdN++Pdx4HDm3yakMDMliczJtRj28bhnGh3N+1MBwob36ABg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735883626; c=relaxed/simple;
-	bh=9t2As+jtUq0IPZelx4vsIQTfC86ba7b6Xn4wrXrpTmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OTdbzwVZP6bkZypRhYGAEIklMFtW1V+5pRvv4Z/qAjm8yAug/OR8BahcJrn7o0rfx7Ne8OCrUlUbrwPmQwZSKZe9OOhW2FMkpWJuYCPWMkHi/YAX0iUE8aJlwJ2tFcnDbKLj5MSoBiKy476fLqcc0OteolT5c72THmV8w3BInKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b7OXM25s; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1735889523; c=relaxed/simple;
+	bh=DQM0t+vzMJ5j6bK+pWEwHeL2X0Sa0djN/8nuybecroI=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=ad+cDNTXGIHKAau5ccis/yDAbL5YUs2xjZwYNDamlZiREdJz7N4594D9nrCGTRPXlRuRbs/9+st+4G8ONV1zvLUMHuWc2q852HRXrD7awEnPd5tXcWM24CuAZ76lRhPYb9EmqGXw9EldyGwBAtMAnhRskajHnnhtfV5qEWeRUqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pTC90Zlu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7OXM25s"
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3002c324e7eso138662441fa.3
-        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2025 21:53:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1735883621; x=1736488421; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=qkNJoCoRxwm8ZQeZPnRrEVk8C3xCcSASIfrl093JjTY=;
-        b=b7OXM25s53waMPAb85ni1Q5xt14kDxb8qrXbPm9/k3oOfkHE4MOiUH1mjobftWQdJ3
-         BwzGbHiBppQrC411ngVZysm2cZH6Djg8dYM+9GhwLGOPcfTpqBIdeCgu1B7vCQSaNgf5
-         yTjEQtRb4NtAj9kdIeUVdAWyrR0hJtEQB6ysPs3TumvGdzR04PHD13CJXOMZZ62MR14J
-         jwGxSYiYmMB3AsW8JsIYbF/ush02rvIuLT1c+l0WP0qvNdQ63bxufgz8DYBId7btMpG/
-         GudBBykGdExp5VxltilE18N3DpBtuHOfzqafmm/KIMZ8I5lz3jci9md2XuwJeEjKfbhc
-         wOLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735883621; x=1736488421;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qkNJoCoRxwm8ZQeZPnRrEVk8C3xCcSASIfrl093JjTY=;
-        b=CM7GOZmL/7Af8QBp1qK86ihEM24NJn0wjVkP+41zy97+Hhzu5kZCDck7WCqGztUJHj
-         GYtN65mB8skVQJVQI9DW3FJt25PbS7OXUpx6TF/KPPOA5rmnGUNOJJFp8Is2GszvgmKK
-         9lRrs5RRoi1T+GswsFu42Ph0zmgIOyUr+/BUDqwe8WhXa1qcIgQVlxy3CJlJ/UsJB4rk
-         xV6n9Cb1e2gPEs9PJ5n0UX3o8b+RgkfZbbWku8K3dwcJTvBcv8a78gZhrdFr8nN47LG5
-         3n8BbAg9CtqmQOzbuvKKzNCN5FLkHtSqs8OU6UBuxc7ECybOrW8/wijUGnmI0tWceu9h
-         kO/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXWrxA/kb2aULp2HK4C/spb1MEzDoaSorLMYkto/w1OzC3B/aDGxMz641ZLCzJMimsCROPZmSvlGco=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAR3J5UapNxxQgAUN4H/AJCbssqEUwn84h52kF8sKWLT6+Zu5b
-	ORvRKVcj+FO6cWmnKJeb1cxuzOr0Mhm7XR00g6MBZi2iKR02enRghQVC4wAiuPo=
-X-Gm-Gg: ASbGncs/8IRswdNfxp2zwkPvMSchRn9FZ4LYqC8GfXNfzE8pyI4HY6A4IGkxHjkRjUc
-	oWQtdabZOQ8i5aFJfFXRet2jAZbunx/Sj7ZCxqLxhvn6wGxdpmAdB6nNpXsq+cz0fgddgsqmKXW
-	/8GCtyljfHy98TzMzCwFa4atfDAhkosAamJE2+BI8eySrID18LitH+AbUga9DvxfSdqbvW/P1B4
-	aDE9PvLPq0w62SOiCBdQBH3Lhk3IqYCBO4SOxMnGpbY+VYXCE5MYgprM1gfAQPcJtY9LzHcHWFE
-	qStGG4u+Sbceyn94o1vHsNx4QZs0QlHS66vW
-X-Google-Smtp-Source: AGHT+IG9b0alQREkaEiHqtBXd0kh8iROWWQMPrCvlmWxXFXPKbF6MPDMv5RJZi4ZRl74MddqmbgBpA==
-X-Received: by 2002:a05:6512:159d:b0:540:3594:aa3a with SMTP id 2adb3069b0e04-5422952553dmr12674147e87.5.1735883621351;
-        Thu, 02 Jan 2025 21:53:41 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54223832a45sm4131895e87.255.2025.01.02.21.53.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2025 21:53:40 -0800 (PST)
-Date: Fri, 3 Jan 2025 07:53:37 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Renjiang Han <quic_renjiang@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] venus: pm_helpers: Use dev_pm_genpd_set_hwmode to
- switch GDSC mode on V4
-Message-ID: <y62rarxwakcyd7vhrjvr4ufcp2idq6yec7ot3s3o2nbjflzlji@w7u5lvlcv2qh>
-References: <20241223-switch_gdsc_mode-v2-0-eb5c96aee662@quicinc.com>
- <20241223-switch_gdsc_mode-v2-2-eb5c96aee662@quicinc.com>
- <5dexy2uc34b3kv532r45p6oaqn7v6bjohfdpwy42folvsdv6nd@skj7o35dflj2>
- <4d3a2d5a-3791-4bc8-a43d-6087e8c35619@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pTC90Zlu"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 502GvglJ006584;
+	Fri, 3 Jan 2025 07:31:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=HQp6l6SbStegfvGnmp96j2
+	Bflld3pCunRDiRUrj+V54=; b=pTC90Zlu8t+Qtn6yCeRgnjAn8OtsCHE4TV97Rb
+	DL8GY5i7XaxzrXKqHqA1qUDvJH0e4glGJtaF76blVlFj0GD7Mi1dUR/iL7+ZGDeu
+	+i998vTV2ZK7tB8Mvt8wyEv5O7j+O4bpw5b1uM+s7K8YtPLxkhJnTjv6aeQraS3i
+	nE1klx4l+RVFcc0GKWIr5TBVr2Sp4wQj00Ovru0fhAZVpGLOM5mSfCXyhAY14phA
+	JjUDv/S1jgT+cdWkWHspWXAp7DfVqgImWEzryip8hDviuUT5BUSDwq30WS/s1ecG
+	9e2a/Io1kYgPsnVG1FHW2H5z78pkfYPeMDi5tlK0CG1ssGag==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43wxse9jdm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 03 Jan 2025 07:31:45 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5037Vivq031651
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 3 Jan 2025 07:31:44 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 2 Jan 2025 23:31:38 -0800
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: [PATCH v8 0/5] Add CMN PLL clock controller driver for IPQ9574
+Date: Fri, 3 Jan 2025 15:31:33 +0800
+Message-ID: <20250103-qcom_ipq_cmnpll-v8-0-c89fb4d4849d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4d3a2d5a-3791-4bc8-a43d-6087e8c35619@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFWSd2cC/2WOzQ6CMBCEX4X07JpSSul68j2MIXQpsgnyq0RDe
+ HcLnozHb5L5ZhYx+ZH9JE7RIkY/88RdG8AeIkF10d48cBlYKKl0rGIDA3X3nPshp3vbNw1UKVm
+ dKV06LEVo9aOv+LUbL9fANU+PbnzvA7PZUqFSEyNKBJSkQMvCAnqNYJPCKeMMVRmehycTt3QMc
+ 2LzzNm3u/9Q8u/HnIEEndgidik5tP7XsK7rBzlPxnfsAAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
+        Luo Jie
+	<quic_luoj@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1735889498; l=4523;
+ i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
+ bh=DQM0t+vzMJ5j6bK+pWEwHeL2X0Sa0djN/8nuybecroI=;
+ b=2lguyrqtZ22u++Oq+ko+e4TMg3YboVMs4dPW9yBzxCom2mRuuMBPtOoZtwOQ9PLqel09gMOTN
+ gOjwdmJHWmbAOwCTmwmsrO3ZmaPajlEMLOaE/dCN4ach3ueuyBqDqt1
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GJf1h38eGKRdQMdbqpqi9a8efm4ezd6-
+X-Proofpoint-GUID: GJf1h38eGKRdQMdbqpqi9a8efm4ezd6-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ lowpriorityscore=0 mlxscore=0 adultscore=0 malwarescore=0 spamscore=0
+ bulkscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2501030063
 
-On Thu, Jan 02, 2025 at 11:47:22AM +0800, Renjiang Han wrote:
-> 
-> On 12/23/2024 7:41 PM, Dmitry Baryshkov wrote:
-> > > diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-> > > index 33a5a659c0ada0ca97eebb5522c5f349f95c49c7..a2062b366d4aedba3eb5e4be456a005847eaec0b 100644
-> > > --- a/drivers/media/platform/qcom/venus/pm_helpers.c
-> > > +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-> > > @@ -412,7 +412,7 @@ static int vcodec_control_v4(struct venus_core *core, u32 coreid, bool enable)
-> > >   	u32 val;
-> > >   	int ret;
-> > > -	if (IS_V6(core))
-> > > +	if (IS_V6(core) || IS_V4(core))
-> > >   		return dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid], !enable);
-> > It is being called only for v4 and v6 targets. Drop the rest of the
-> > function and inline the result. I'd suggest keeping it as two patches
-> > though: this one which adds IS_V4() all over the place and the next one
-> > which performs cleanup of the dead code.
->  Thanks for your comment. poweron_coreid(), poweroff_coreid() and
->  vcodec_control_v4() are called only for v4 and v6. I will clean up
->  the dead code with another patch.
-> > 
-> > >   	else if (coreid == VIDC_CORE_ID_1) {
-> > >   		ctrl = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL;
-> > > @@ -450,7 +450,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
-> > >   		vcodec_clks_disable(core, core->vcodec0_clks);
-> > > -		if (!IS_V6(core)) {
-> > > +		if (!IS_V6(core) && !IS_V4(core)) {
-> > >   			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
-> > >   			if (ret)
-> > >   				return ret;
-> > > @@ -468,7 +468,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
-> > >   		vcodec_clks_disable(core, core->vcodec1_clks);
-> > > -		if (!IS_V6(core)) {
-> > > +		if (!IS_V6(core) && !IS_V4(core)) {
-> > >   			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
-> > The poweron_coreid() and poweroff_coreid() functions are called only for
-> > v4 and v6. The v6 case was masked out earlier. Now you've removed the v4
-> > case too. Can we drop such vcodec_control_v4() calls completely?
-> 
->  I cleaned up the code, and finally vcodec_control_v4() looks like this.
-> 
-> static int vcodec_control_v4(struct venus_core *core, u32 coreid, bool
-> enable)
-> {
->     return dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid],
-> !enable);
-> 
-> }
-> 
->  Functionally, we can drop vcodec_control_v4(), but architecturally, I
->  don’t recommend removing this function, because I think it’s easier to
->  read the code with this function.
+The CMN PLL clock controller in Qualcomm IPQ chipsets provides
+the clocks to the networking hardware blocks that are internal
+or external to the SoC, and to the GCC. This driver configures
+the CMN PLL clock controller to enable the output clocks. The
+networking blocks include the internal blocks such as PPE
+(Packet Process Engine) and PCS blocks, and external hardware
+such as Ethernet PHY or switch. The CMN PLL block also outputs
+fixed rate clocks to GCC, such as 24 MHZ as XO clock and 32 KHZ
+as sleep clock supplied to GCC.
 
-One-line wrappers don't make the code easier to read. Please inline it.
+The controller expects the input reference clock from the internal
+Wi-Fi block acting as the clock source. The output clocks supplied
+by the controller are fixed rate clocks.
 
+The CMN PLL hardware block does not include any other function
+other than enabling the clocks to the networking hardware blocks
+and GCC.
+
+The driver is being enabled to support IPQ9574 SoC initially, and
+will be extended for other SoCs.
+
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+---
+Changes in v8:
+- Remove assigned-clocks and assigned-clock-rates-u64 from dtbinding file.
+- Remove the reviewed-by tag from dtbinding file.
+- Link to v7: https://lore.kernel.org/r/20241220-qcom_ipq_cmnpll-v7-0-438a1b5cb98e@quicinc.com
+
+Changes in v7:
+- Update to use API regmap_set and clear_bits.
+- Update comment of CMN PLL reference clock to mention .xo could be
+  48 MHZ or 96 MHZ on different IPQ9574 RDP board.
+- Link to v6: https://lore.kernel.org/r/20241107-qcom_ipq_cmnpll-v6-0-a5cfe09de485@quicinc.com
+
+Changes in v6:
+- Rename the reference clock of CMN PLL to ref_48mhz_clk.
+- Add the patch to update xo_board_clk to use fixed factor clock.
+- Link to v5: https://lore.kernel.org/r/20241028-qcom_ipq_cmnpll-v5-0-339994b0388d@quicinc.com
+
+Changes in v5:
+- Move the hardware configurations into set_rate() from determine_rate().
+- Remove the dependency on IPQ_GCC_9574.
+- Correct the header files included.
+- Update reference clock of CMN PLL to use fixed factor clock.
+- Link to v4: https://lore.kernel.org/r/20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com
+
+Changes in v4:
+- Rename driver file to ipq-cmn-pll.c
+- Register CMN PLL as a 12 GHZ clock.
+- Configure CMN PLL input ref clock using clk_ops::determine_rate().
+  Add the additional output clocks to GCC and PCS.
+- Update the same information in dtbindings.
+- Use PM clock APIs for input clock enablement.
+- Link to v3: https://lore.kernel.org/r/20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com
+
+Changes in v3:
+- Update description of dt-binding to explain scope of 'CMN' in CMN PLL.
+- Collect Reviewed-by tags for dtbindings and defconfig patches.
+- Enable PLL_LOCKED check for the stability of output clocks.
+- Link to v2: https://lore.kernel.org/r/20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com
+
+Changes in v2:
+- Rename the dt-binding file with the compatible.
+- Remove property 'clock-output-names' from dt-bindings and define
+  names in the driver. Add qcom,ipq-cmn-pll.h to export the output
+  clock specifier.
+- Alphanumeric ordering of 'cmn_pll_ref_clk' node in DTS.
+- Fix allmodconfig error reported by test robot.
+- Replace usage of "common" to "CMN" to match the name with the
+  hardware specification.
+- Clarify in commit message on scope of CMN PLL function.
+- Link to v1: https://lore.kernel.org/r/20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com
+
+---
+Luo Jie (5):
+      dt-bindings: clock: qcom: Add CMN PLL clock controller for IPQ SoC
+      clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
+      arm64: defconfig: Enable Qualcomm IPQ CMN PLL clock controller
+      arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+      arm64: dts: qcom: Update IPQ9574 xo_board_clk to use fixed factor clock
+
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  77 ++++
+ arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi   |  24 +-
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  27 +-
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/ipq-cmn-pll.c                     | 435 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq-cmn-pll.h       |  22 ++
+ 8 files changed, 593 insertions(+), 3 deletions(-)
+---
+base-commit: e25c8d66f6786300b680866c0e0139981273feba
+change-id: 20241216-qcom_ipq_cmnpll-f5c84724db9d
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Luo Jie <quic_luoj@quicinc.com>
+
