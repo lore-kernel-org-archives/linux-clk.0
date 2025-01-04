@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE90C15B543;
-	Sat,  4 Jan 2025 10:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE9C13DBB6;
+	Sat,  4 Jan 2025 10:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735986812; cv=none; b=X4r0YEZ0RINencSaC/pHfdYTjQ+KQkH3gIxph0KRZQkIWFcZWf3jTJ2LTfQ77Jsn/V7rASb9YTgXbHrAZU/QsiK4UfUwOLdfbhrJM7k84STGQtbYrP/1qtLxflZGv2MBfz+1THdbMgRDpRFAhz0KOLhIAI6xIBe4AsnHRQhe4qk=
+	t=1735987239; cv=none; b=XpA0hHS0fSG2DddSxxsVk5imOwxmm3m3byw7DyK+RoipaNbvUhtluwQONDeYKJn4jbs273MeDDL4Ibcnuhk+YunVGQjJMNd2VnFPn8A03GvGy72q21KYEf6AdbIWENhti454ADaDryhtcVMKcNthIeLqKsFOzbsM62bLTfJD6+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735986812; c=relaxed/simple;
-	bh=EeeUc8JY5rw4GCXEMrTKwh+2jxEK2DZWl0XVNh0AGBQ=;
+	s=arc-20240116; t=1735987239; c=relaxed/simple;
+	bh=rJCDnChyzIajUi/vfRibykdeWobpL0pE0FaiKMSKOzE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sxipBD43kv5Tp+hKc+pPPoRy11lqF7UFciHl49kl1cPE4nMDRpQn55I9goBteXvpKohYniFnYY98JzFNueA/2mmDE/+cjD0QSbhhL+NWMWxgmo2mpl/sqM7BdYrHRv6u91GKKtHcUYq4GLs9lUj/poUhm9/zFCx8JEU71/xip8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UTbNQA/M; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=M6bhJ01tWdnXLOTZvX/QEfF67bn+W/m2iKWXZ85zbHxW1ZRHPjbygvwN5xRzDIeJfgo8c51PZUsWKVV2owTrwdwn38aMFtbXWneeeuWfyVWRRC/vu48PBn7cHuaq3VL14HM6pflOdiWUYQuDSG3dx0uICLk/qmirbOK5Zywj9W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSG+deyt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UTbNQA/M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 255E3C4CED1;
-	Sat,  4 Jan 2025 10:33:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSG+deyt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13A2AC4CED1;
+	Sat,  4 Jan 2025 10:40:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735986812;
-	bh=EeeUc8JY5rw4GCXEMrTKwh+2jxEK2DZWl0XVNh0AGBQ=;
+	s=k20201202; t=1735987238;
+	bh=rJCDnChyzIajUi/vfRibykdeWobpL0pE0FaiKMSKOzE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UTbNQA/MVgto5rA0fXMcodzAGa1vh3ZH+nI48VSa7eBTfxxdjhwPfoJyWfsuRPk6L
-	 LSYPOtmMMAWLRRdHaoaLwe0Qy4Ry89mkqTdkgJ179XBOoAp898VHqwaEFrMlpF//Aj
-	 /JcboBfi3+n8KwqKzKypUsJOkYG6itYZYXCsZAZnVtJDGdJZILsKMTMfFNE75Cuv4a
-	 G8PWU6M64ZlWkGXzP5zCXiJSov3l1K+H6MGntYscZth6UnnmSXCO3/QVQtLTyil8b+
-	 DdajjEsQ47R0Q193gDWmJ9bzs+or/4s1Ig9fZ+Q2DR5KjVGWy3swGBLbXNE1d3xKsk
-	 IRyESYogacFjg==
-Message-ID: <ca0cad16-7c39-4635-8f09-f9f3c95c9fef@kernel.org>
-Date: Sat, 4 Jan 2025 11:33:23 +0100
+	b=KSG+deytS6JpXB+RL7OYm6ObAxolg9IF/3fwI39+su4VZV73qKWtF7Ni3tNXI7ffJ
+	 YX+lfdzxktRllL9YXBn9OjbKlrhMTML65d1SkrPc3rngOLJX6Q0IVtZI0Gq8j/kLKl
+	 WtkHtf8jAp3V/7YPzpQ76GHzM23jtjOlSPHcAQmlVA7E+bZyoUtT4JiB+yxDhFkZFF
+	 mMqX2n954tDQfptoQccZvppY24/k6u4mdFwAUmlY+K8Ujq+t54rDnw4l1dv3F1F+54
+	 hQ4OsyqkA3P2h6qs7cD5iaKjKU5HafdrqEhO2H2IjPqk/ilfJ0Erw1KxGvNwz+FqRI
+	 wonwsTqA5NoLQ==
+Message-ID: <a097980a-c2b7-440c-8eff-b540acfd4027@kernel.org>
+Date: Sat, 4 Jan 2025 11:40:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,22 +35,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and
- PLL_MIPI
-To: wens@csie.org, Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Maxime Ripard <mripard@kernel.org>,
- Roman Beranek <me@crly.cz>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Dragan Simic <dsimic@manjaro.org>, Frank Oltmanns <frank@oltmanns.dev>,
- Stuart Gathman <stuart@gathman.org>
-References: <20250104074035.1611136-1-anarsoul@gmail.com>
- <20250104074035.1611136-2-anarsoul@gmail.com>
- <CAGb2v66W9q-uQkepYgrD9QKnOwmpUdDakRoKjmsT_4=Adyj09Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: Add bindings for Canaan K230
+ clock controller
+To: Xukai Wang <kingxukai@zohomail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Troy Mitchell <TroyMitchell988@gmail.com>
+References: <20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com>
+ <20241229-b4-k230-clk-v1-1-221a917e80ed@zohomail.com>
+ <zfjj33otyxiamsc7u2uwnvygcuhe7u2tfgiz6txp62emnddbw5@5iozmjg4eugn>
+ <39e6bf64-2ce6-45bb-b622-4b413efc185f@zohomail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,53 +95,63 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CAGb2v66W9q-uQkepYgrD9QKnOwmpUdDakRoKjmsT_4=Adyj09Q@mail.gmail.com>
+In-Reply-To: <39e6bf64-2ce6-45bb-b622-4b413efc185f@zohomail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 04/01/2025 11:23, Chen-Yu Tsai wrote:
-> On Sat, Jan 4, 2025 at 3:40 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
->>
->> Export PLL_VIDEO_2X and PLL_MIPI, these will be used to explicitly
->> select TCON0 clock parent in dts
->>
->> Fixes: ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in TCON0 mux")
->> Reviewed-by: Dragan Simic <dsimic@manjaro.org>
->> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
->> Tested-by: Frank Oltmanns <frank@oltmanns.dev> # on PinePhone
->> Tested-by: Stuart Gathman <stuart@gathman.org> # on OG Pinebook
->> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
->> ---
->>  include/dt-bindings/clock/sun50i-a64-ccu.h | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/include/dt-bindings/clock/sun50i-a64-ccu.h b/include/dt-bindings/clock/sun50i-a64-ccu.h
->> index 175892189e9d..4f220ea7a23c 100644
->> --- a/include/dt-bindings/clock/sun50i-a64-ccu.h
->> +++ b/include/dt-bindings/clock/sun50i-a64-ccu.h
->> @@ -44,7 +44,9 @@
->>  #define _DT_BINDINGS_CLK_SUN50I_A64_H_
->>
->>  #define CLK_PLL_VIDEO0         7
->> +#define CLK_PLL_VIDEO0_2X      8
->>  #define CLK_PLL_PERIPH0                11
->> +#define CLK_PLL_MIPI           17
+On 04/01/2025 10:23, Xukai Wang wrote:
 > 
-> You can't really split code movement into two patches.
+> Here's the update version:
 > 
-> With this patch applied the clk driver will fail to build because
-> the macros are now redefined in both header files.
+> reg:
+>   description: |
+>     The `reg` property specifies the base address and size of the
+> device's registers.
+>     - The first address corresponds to the base address of the PLL
+> control registers.
+>     - The second address corresponds to the base address of the sysclk
+> control registers.
 
-Are you sure? The values seem the same to me... I don't see how this
-could fail.
+No, drop all these. You duplicate schema.
+
+>   minItems: 1
+
+Why?
+
+>   items:
+>     - description: Base address and size of the PLL control registers.
+>     - description: Base address and size of the sysclk control registers.
+
+Drop redundant "Base address and size of the". This cannot be anything
+else in this context.
 
 > 
-> Barring recombining the patches, please add a patch before this
-> adding #ifndef's around the two macros that are moved.
+> Does this content look appropriate?
 > 
+>>> +
+>>> +  '#clock-cells':
+>>> +    const: 1
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - clocks
+>>> +  - '#clock-cells'
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    clock-controller@91102000 {
+>>> +        compatible = "canaan,k230-clk";
+>>> +        reg = <0x91102000 0x1000>, <0x91100000 0x1000>;
+>>> +        #clock-cells = <1>;
+>>> +        clocks = <&osc24m>;
+>>> +    };
+>>> diff --git a/include/dt-bindings/clock/k230-clk.h b/include/dt-bindings/clock/k230-clk.h
 
-No, not necessary, just churn,
-
+I missed one thing - filename is supposed to be the same as binding
+filename.
 
 Best regards,
 Krzysztof
