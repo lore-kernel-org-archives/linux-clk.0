@@ -1,45 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01ACF4683;
-	Sat,  4 Jan 2025 10:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815C4199938;
+	Sat,  4 Jan 2025 10:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735985282; cv=none; b=jp5/KrsAa2a4GI/q/e0GiS10WkauJa5bLZDB66KdMankTjjBU2Qdi9gNRV1I8DXhh1MfcNH2rbLjIDeWFAkek7ArtXKmkheqPsUNG4oabk7l6F0na2whJFANal1irXrFwTfQLTuCwisyHUBAQGAbr5OTM2oKtbDZujhxCc0+rKc=
+	t=1735985805; cv=none; b=QuE1en8+cWLb6jZNGs8PMJ6cekyB70cDU9EbEHd/X0Y9qSYGZPUijaHlFMBs6Dbo9yPe9BVeez7guSL0em5PpsCppXwXmZwX/ov0bc/xJyUG7D9tiSqPIv82yVR91L/c491tFArneCtHdS+0u1AYjn+RTL0mcCV6ws6MjfNpci8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735985282; c=relaxed/simple;
-	bh=bdlCv3xMXychMOB2F4laWYG2SD5KM7Q3azOB1+sT4xs=;
+	s=arc-20240116; t=1735985805; c=relaxed/simple;
+	bh=2T3ciO6m0fCtPynwh9nbyV7VVGdi6rid7fRO8GjcpBM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iCDmrD5kE759lo16rKBuhh+YUR3WhafkVQh8zz8xlaZy/mB5O4PQtH16nYns/nZCp+hoxy6gLDxTgObe+xCvvHKuHb6Y1eXW/ui1V3PJ2zsin6UhtXXEWRKWw0DUTWc6x+R7QNP0OSgjzaLlvlaqjBpMGBPOQb0CY8FocS5VeaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OUOfghYB; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=EAGmQAbefbd037N9kcJHs+Qxf6vS6qVWlCRxz5TRyOMjEPKFMxmdCGt++HlDqFppkdYyuwH3cHNdpcti2REXnt2ZgMKFiGPNAaiWyOJctLo2yAjX3DSdJkijI9OUJVVHtQP1cB5lRtYRfEHtc13ymppgWrqEQHzhdzRSD/+sJlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lowWq/CE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OUOfghYB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD11BC4CED1;
-	Sat,  4 Jan 2025 10:08:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lowWq/CE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 551F2C4CED1;
+	Sat,  4 Jan 2025 10:16:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735985281;
-	bh=bdlCv3xMXychMOB2F4laWYG2SD5KM7Q3azOB1+sT4xs=;
+	s=k20201202; t=1735985805;
+	bh=2T3ciO6m0fCtPynwh9nbyV7VVGdi6rid7fRO8GjcpBM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OUOfghYBu2ue548isEp6fx1XbxNXtMR11lecjaYlQA2g441w6qql6rtIXNgLi+OSM
-	 nszu5SU6TgEbd0BMIgOHpCPzoYbuqgjiU/kSnyzSO0uo0Dm8svI0jgvx/oamjgscDw
-	 s2uV7M67UBDisEan3IrcV5KE6POpiUcv4Ql2q8DZJz8t12kRMsJss+L2Vm4Ow8mK7B
-	 fhDTBwf3zt96FvN+d0P/ZMXh9Y2srQinR3pTat9MhTSjuJUzdshQuVOqwgTgnMqnuY
-	 9z6jSycUN3s0vXO7Z1I89qA2HWlpH6+ghhliZRMpHe2Cbh3FJ9OYMXHrCbQo5eTisO
-	 B9bL+i6smjUJA==
-Date: Sat, 4 Jan 2025 11:07:58 +0100
+	b=lowWq/CE7cZBlIwEINO9y5sbUhfF1EDr8EmDShKB3l5+8YdWIwMFM0tliVJO5Kw5R
+	 ShhUSiOKMHWO99aY8bE6Y3KQhrMgZALSmmNiGtj2vtIK5+o37tczA3QqxZyYRZpKQs
+	 laJiCm7XlP2bB6L8I8Hmkc9YD2TIvcwWAlJXEXXYtspOjEhTg/etPocPmrj/R34Isq
+	 3Kj1E1iaiKhOYz42+VrGyo4DfByznGMx7ZBoUSmOsnL2PYJRfSxoKGRtaJs/6yaO1V
+	 nQrDA2PkYdWKaECuKcaVaD/n7q0EKPEBdQYBuXNIArYDgzVThDZmcB0zVgwYXdphZ5
+	 VjnYbfjQ5cZ2Q==
+Date: Sat, 4 Jan 2025 11:16:41 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Haylen Chu <heylenay@4d2.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>, 
-	Jisheng Zhang <jszhang@kernel.org>, Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-Message-ID: <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
-References: <20250103215636.19967-2-heylenay@4d2.org>
- <20250103215636.19967-4-heylenay@4d2.org>
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Roman Beranek <me@crly.cz>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Dragan Simic <dsimic@manjaro.org>, 
+	Frank Oltmanns <frank@oltmanns.dev>, Stuart Gathman <stuart@gathman.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: sunxi: Export PLL_VIDEO_2X
+ and PLL_MIPI
+Message-ID: <pc7en2jjvce6et6s22sdfooixxxos4u5bitcfhylt7ms65o7wt@bxdvnyeus7b3>
+References: <20250104074035.1611136-1-anarsoul@gmail.com>
+ <20250104074035.1611136-2-anarsoul@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,77 +50,22 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250103215636.19967-4-heylenay@4d2.org>
+In-Reply-To: <20250104074035.1611136-2-anarsoul@gmail.com>
 
-On Fri, Jan 03, 2025 at 09:56:35PM +0000, Haylen Chu wrote:
-> Add documentation to describe Spacemit K1 system controller registers.
+On Fri, Jan 03, 2025 at 11:36:57PM -0800, Vasily Khoruzhick wrote:
+> Export PLL_VIDEO_2X and PLL_MIPI, these will be used to explicitly
+> select TCON0 clock parent in dts
 > 
-> Signed-off-by: Haylen Chu <heylenay@4d2.org>
-> ---
->  .../soc/spacemit/spacemit,k1-syscon.yaml      | 52 +++++++++++++++++++
->  1 file changed, 52 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> new file mode 100644
-> index 000000000000..79c4a74ff30e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> @@ -0,0 +1,52 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/soc/spacemit/spacemit,k1-syscon.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Spacemit K1 SoC System Controller
-> +
-> +maintainers:
-> +  - Haylen Chu <heylenay@4d2.org>
-> +
-> +description:
-> +  The Spacemit K1 SoC system controller provides access to shared register files
-> +  for related SoC modules, such as clock controller and reset controller.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - spacemit,k1-apbc-syscon
-> +          - spacemit,k1-apbs-syscon
-> +          - spacemit,k1-apmu-syscon
-> +          - spacemit,k1-mpmu-syscon
-> +      - const: syscon
-> +      - const: simple-mfd
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clock-controller:
-> +    $ref: /schemas/clock/spacemit,k1-ccu.yaml#
-> +    type: object
+> Fixes: ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in TCON0 mux")
+> Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
-So now we see the full picture and it leads to questions.
+Where did this happen?
 
-1. Why spacemit,k1-apbc-syscon with spacemit,k1-ccu-apmu child is a
-correct combination?
+> Tested-by: Frank Oltmanns <frank@oltmanns.dev> # on PinePhone
+> Tested-by: Stuart Gathman <stuart@gathman.org> # on OG Pinebook
 
-2. Why having this split in the first place? Please confirm that clock
-controller is really, really a separate device and its child in
-datasheet. IOW, fake child for your Linux is a no-go. Fake child while
-devices are independent is another no-go.
-
-Actual answer for 1+2 above would be to fold the child into parent,
-assuming clock controller split is fake in terms of datasheet.
-
-If it is real device, then allOf:if:then: narrowing the compatibles of
-child might not be worth the complexity.
-
-3. Why using different naming, look:
-
-spacemit,k1-XXXX-syscon
-spacemit,k1-ccu-XXXX
-
+And these? I cannot find traces on the list.
 
 Best regards,
 Krzysztof
