@@ -1,61 +1,61 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6A8152787;
-	Sat,  4 Jan 2025 07:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A8B158DAC;
+	Sat,  4 Jan 2025 07:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735976447; cv=none; b=QpzylGlHa2IX/4tPCwWZTrqEO3knOD/r2KlopKfrIBfEzstwNDTX37D/Gg8ASVKPFi/u1T3e0QwyMBJ77xzc4S2jSnAKcnn6UYdzrLrb80AebS7fmonFAmqM2OVKlZTolFdjOC0WQczpi0n7b8+LB+qXIGOQJq49+GeRy71PStg=
+	t=1735976448; cv=none; b=jaOtlngnOCLZBxCAo/XSLvPAsBBQS7kS7U2teaktUwkryr7Wx17r9A5GjxHfO28z4NNxcYnSuY0tJSib9EtioEVi7nmczdnftet/T3mxKsTxFeGOf8K3s40Bw5BFIcu2eyHJo7Q8Hs/OGC85PN4nk7k2AaHjWqTMldqSlebap8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735976447; c=relaxed/simple;
-	bh=TbcHVKRkFJB98fhajLRM7Bw4MBvD1k0xqRdfdhNbxgE=;
+	s=arc-20240116; t=1735976448; c=relaxed/simple;
+	bh=YjINOz4Xv+YahkPpQKBJM0qt92m4mTvbJuNABy6+7Tg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lv2sFUWGVjWqnHs4JW+X0jo+UCco/+MlOSaGUn24/BvvZzHGyA17Qktq8QZ+GLU7VBrp14czGOq+OUj7tMxljhpCYCiCT2Skh2r4hiwmVId243R+YosJPPFaI1S6Q0Esrk5GOZ4ZngZVVLwe+c0W/TMy4YMi4ZLgvWE2qAKDG6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJvidv+9; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=dFVhWEn2U67d1GqWYQBb7h/XSjjXeZB0/lZOgDdVS2dbqjhDDMimKTaGZkfjb23aAS07aedxIzUObGyLS44BhXwJxh1yKDnQr1eKSzQbtT9BcNMWEJDdac/cIljoAk9Ns9C5v+eAZdtuFt0o3mYV+WtpQvx54S7EIQ/WCYN8fro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKU9sNx7; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJvidv+9"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21675fd60feso238879725ad.2;
-        Fri, 03 Jan 2025 23:40:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKU9sNx7"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-216395e151bso131873295ad.0;
+        Fri, 03 Jan 2025 23:40:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1735976445; x=1736581245; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1735976446; x=1736581246; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gI4bkaQLizbo3HOuEzTTJL5LyowGuTN5RlRxoRNNOp8=;
-        b=JJvidv+97EO30+raYoo0BTcPOZd1dLMkJr5Dg8MVqgM6avHsqAlS8hHKdQT68pcsVA
-         bCEy9wRo5SlZTmr/cqslFkHB2qZUXjY/yEUeqTXpKBo7B80m34tVC+Kw1b0Q6SzVNtZP
-         E36sdXmnz0bMCX2Lj3beyKXRbRlfNrbKQrvLxzEVIQEeQVqp+CQdMKHYCnF3Js3IkYQy
-         6PODgVr4bgPfraiW4Yyj92sNKqWZ1eFP17aNmOfdIHOT/R2GOFkq94ELvuJ17C9n2GHT
-         MhRqGXLs5eHkah/SCKl9uRHAbmkd7di7D83TzqMT9pWIqgc2ACH3tkkL6/N2DgYCwS6D
-         6a9w==
+        bh=RemTwaYzBS1si26CVDrNGu9vkTiHrmOVmvsRlAFTpyQ=;
+        b=dKU9sNx7FdSX7YaLeACqt2s9UpL72UP7fnVtIQ3eZPwgWDaer4oY55JozWyXS5s5IM
+         3TnxKVFafbO+w5+tWFSc/tOTcjpbbjBsNnfUFYTi2n7hfyaRmdpPVr4ZK+EUr3OJ8oWT
+         HhHDmkg2+othLQcAZtovkzmkNICe2q/FvAbAioFZ8aqARMzVQY2s83vx/IkucgAY4yho
+         zFzGcHoJMUruyDcNcO9jc+h5CpeWZfzZdbY8AD3UOMBHHC3Vtny8zz7qKN/9MQURAlHt
+         ioxHMFlY0SNykZwIBEmvj6sM6jdrKQlFRVKSSGBzPjZH8Gu8eGQlsVDN7QuJyTBwPxBj
+         DiKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735976445; x=1736581245;
+        d=1e100.net; s=20230601; t=1735976446; x=1736581246;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gI4bkaQLizbo3HOuEzTTJL5LyowGuTN5RlRxoRNNOp8=;
-        b=wk5sbYamaGD7Zws/aJJQXjt9mKqiuK6wAPOFZiiRdFh5KblCXy9hlpLUrQG5m+hXMw
-         odFPw1Ms3y0ZBi1fOjNQ7kb26V5sdAvesw2aqnps5zVr9U1KUwbrLB2BlAGMUkW+uijt
-         7v2/L+i82vVW6RvUd2rYaZ4YsQoN3TS8TvNR1WH+7T3v+Mi/aQRmgGwYiHjan/QajI9c
-         D8w1rxwxxUDIif/K2fVekWf5paZgIuYesWY/5TPQQz2AUP5+7d2ruEVKz87t57y76bOs
-         MIA5wJyD5ruF1qvRLdPG9+KiKxQ3kMbjBj9ee5bLPDKo65t6ie6ZwvDvDeM3CK4zMUcy
-         3LJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFbfNmYjcVeH4dpWaIZ5+vPVFsze7XSLsT9xjvzViNGykBvJHjLKf4uwXv4zJTUXFwizSzgTFfAZ1x@vger.kernel.org, AJvYcCVTT8V3cnYg5qEsIzV1aPIvdQVNc7xlUn6FOp3WfGbcZjhwFBBDN2M9eiHYmcsJu4BJg9nLtosDg3zr@vger.kernel.org, AJvYcCW+0o5iN17yn0FOxbtwucIdn5dYfhleGybpO18dOVYCeWEFDqej42ZYhZnmSm51QDxJU2YsAc/0oyWQhFte@vger.kernel.org
-X-Gm-Message-State: AOJu0YzosbWp1NvzgxmdYzSCGihajlOfkVNg2zm3KIZRjo0VX/vpq/bM
-	h8+cZVb6/n+KrFfjdkLuj5xYRH8K9J/5HXhsayZSUwugkpvCQZI5
-X-Gm-Gg: ASbGncu/iQHGL5HAkNhty0RpYkKO5KhIVD3bauW+BQtiKw09yvCqhZ7Zv7gpoI2jpMc
-	scq5nQ6DqD50uRv98eQUdpf+4NSNh50akhek9wUNDDizraLqvRqjw9RHMvX2gxN4ANoZIyPzChW
-	owVAWl8cUHK616k6zzOrUt2HJmFlzldFICfC1fp4nscitvkdr00EeUkEjrwoJwTLEJRVrtRJ5Xh
-	6Iuz0jT/ZM3rnET3+R7ClQouANlioqAziDQPtFSWpx8C7BFnw==
-X-Google-Smtp-Source: AGHT+IG0CS21q53dEVGA2oPLK2te0e5w/JAMFEKzZxo/+YczSEWdTkdKuJD2Fisbi6FzS2oAnAex1Q==
-X-Received: by 2002:a17:903:32d0:b0:216:6c77:7bbb with SMTP id d9443c01a7336-219e6e9fb45mr689469915ad.17.1735976444999;
-        Fri, 03 Jan 2025 23:40:44 -0800 (PST)
+        bh=RemTwaYzBS1si26CVDrNGu9vkTiHrmOVmvsRlAFTpyQ=;
+        b=p/asM5QB85d6/ZAeD7s9E99MbJLAD5fYDTNlyVkeXiNqoqrYyZbmDxMTKL+h3cjjWY
+         75okBNoIr0nOyMDQ6+/3fnfO4agO+l2qRgzfFxyfRZSXHMeZjpVF9HcuxRz8rcsTeqGJ
+         xSWxKyWVqVMM2wEZjat1tiyyLbjQ3hrNARhcqZhqhp3vM+AQw4V67ce0wvib7hRUnUqi
+         JwL1VKaBtUhdY+oa4tPmlElygxjzhq0W1sjne4wz3W/p1snDpPj4/jZs2B3nkWsV0uQF
+         DGPKKj7CJ2wGC0fy7i3fBEc+dow0GdzCKl+mFCGig28A5ZmtPZRxwbFr5HZaihAMmKwu
+         K1KA==
+X-Forwarded-Encrypted: i=1; AJvYcCVINzgGvOLW1GiuWHOqwUd6wpRfUmmXe5COJUw1A3FOJyZNhpN6NC6pCabonBWTZKXCaLQLcdy8dhbPzwwl@vger.kernel.org, AJvYcCXLMcaTMfR4f6rKdxFhMWMvOebOoM4uLWEbZ8lOOC//WIztmIZGniz8is9CEfknjxBtvpMB0CgyscW6@vger.kernel.org, AJvYcCXkXNjb9s2yXosTO7zpZsHG6PdCEckwet4kMtYT6E93rOBcdlui3NPnViM3FBvZIT1jDacjvRzPuOWh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbOAR72D0qQkyz1AqU/mxFxo1PuBSShmWM7OC0GO3cQDvYQTw2
+	ZzGhy103So5vb7UFEBSuDmz4EHzkeqAV0qT/if/l9D8XulStQQD9
+X-Gm-Gg: ASbGncvJmoQxOUwvw2issET0G9QBjaDNtOoV8n3WE3wyMwJNwlb3zsFnwuRtLiuz/0b
+	YmkoyshOqGDuDz7Kg/B1qkpzssc8spD9OHaFA68PA4TcZhZ4DGV2TBX/YM8M9X24e3r9jXkE1lY
+	z32C4WP0TXnhsH0lQmm4LejBmFoFGgPm+4LrHFlAjiSBDHuy7G8d7vYG6KDJwPdRhbze9+BR7BW
+	NhQBxMGyTlJ4t3li/iquOCHRI2w5s/UplN5gHzs7JsWKkRKKA==
+X-Google-Smtp-Source: AGHT+IFzAL/sWxagDkVX/+NamzAgakEA8UUO4OYdQZ4vgwAgnJ6fLVP3LLXGLkf1UZM4Gkgyz98S+A==
+X-Received: by 2002:a17:902:e746:b0:215:a303:24e9 with SMTP id d9443c01a7336-219e6ca6c2fmr758900565ad.3.1735976446069;
+        Fri, 03 Jan 2025 23:40:46 -0800 (PST)
 Received: from anarsoul-xps15.lan ([2604:3d08:7780:1ca9::398])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dca02b34sm256562565ad.252.2025.01.03.23.40.44
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dca02b34sm256562565ad.252.2025.01.03.23.40.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jan 2025 23:40:44 -0800 (PST)
+        Fri, 03 Jan 2025 23:40:45 -0800 (PST)
 From: Vasily Khoruzhick <anarsoul@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -76,9 +76,9 @@ Cc: Vasily Khoruzhick <anarsoul@gmail.com>,
 	Dragan Simic <dsimic@manjaro.org>,
 	Frank Oltmanns <frank@oltmanns.dev>,
 	Stuart Gathman <stuart@gathman.org>
-Subject: [PATCH v2 2/4] clk: sunxi-ng: a64: drop redundant CLK_PLL_VIDEO0_2X and CLK_PLL_MIPI
-Date: Fri,  3 Jan 2025 23:36:58 -0800
-Message-ID: <20250104074035.1611136-3-anarsoul@gmail.com>
+Subject: [PATCH v2 3/4] arm64: dts: allwinner: a64: explicitly assign clock parent for TCON0
+Date: Fri,  3 Jan 2025 23:36:59 -0800
+Message-ID: <20250104074035.1611136-4-anarsoul@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250104074035.1611136-1-anarsoul@gmail.com>
 References: <20250104074035.1611136-1-anarsoul@gmail.com>
@@ -90,39 +90,67 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Drop redundant CLK_PLL_VIDEO0_2X and CLK_PLL.MIPI. These are now
-defined in dt-bindings/clock/sun50i-a64-ccu.h
+TCON0 seems to need a different clock parent depending on output type.
+For RGB it has to be PLL-VIDEO0-2X, while for DSI it has to be PLL-MIPI,
+so select it explicitly.
+
+Video output doesn't work if incorrect clock is assigned.
+
+On my Pinebook I manually configured PLL-VIDEO0-2X and PLL-MIPI to the same
+rate, and while video output works fine with PLL-VIDEO0-2X, it doesn't
+work at all (as in no picture) with PLL-MIPI.
 
 Fixes: ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in TCON0 mux")
 Reviewed-by: Dragan Simic <dsimic@manjaro.org>
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Tested-by: Frank Oltmanns <frank@oltmanns.dev> # on pinephone
-Tested-by: Stuart Gathman <stuart@gathman.org> # on OG pinebook
+Tested-by: Frank Oltmanns <frank@oltmanns.dev> # on PinePhone
+Tested-by: Stuart Gathman <stuart@gathman.org> # on OG Pinebook
 Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-a64.h | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts | 2 ++
+ arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts  | 2 ++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi         | 2 ++
+ 3 files changed, 6 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.h b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
-index a8c11c0b4e06..dfba88a5ad0f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.h
-@@ -21,7 +21,6 @@
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+index 379c2c8466f5..86d44349e095 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-pinebook.dts
+@@ -390,6 +390,8 @@ &sound {
+ &tcon0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&lcd_rgb666_pins>;
++	assigned-clocks = <&ccu CLK_TCON0>;
++	assigned-clock-parents = <&ccu CLK_PLL_VIDEO0_2X>;
  
- /* PLL_VIDEO0 exported for HDMI PHY */
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+index b407e1dd08a7..ec055510af8b 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
+@@ -369,6 +369,8 @@ &sound {
+ &tcon0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&lcd_rgb666_pins>;
++	assigned-clocks = <&ccu CLK_TCON0>;
++	assigned-clock-parents = <&ccu CLK_PLL_VIDEO0_2X>;
  
--#define CLK_PLL_VIDEO0_2X		8
- #define CLK_PLL_VE			9
- #define CLK_PLL_DDR0			10
+ 	status = "okay";
+ };
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+index a5c3920e0f04..0fecf0abb204 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+@@ -445,6 +445,8 @@ tcon0: lcd-controller@1c0c000 {
+ 			clock-names = "ahb", "tcon-ch0";
+ 			clock-output-names = "tcon-data-clock";
+ 			#clock-cells = <0>;
++			assigned-clocks = <&ccu CLK_TCON0>;
++			assigned-clock-parents = <&ccu CLK_PLL_MIPI>;
+ 			resets = <&ccu RST_BUS_TCON0>, <&ccu RST_BUS_LVDS>;
+ 			reset-names = "lcd", "lvds";
  
-@@ -32,7 +31,6 @@
- #define CLK_PLL_PERIPH1_2X		14
- #define CLK_PLL_VIDEO1			15
- #define CLK_PLL_GPU			16
--#define CLK_PLL_MIPI			17
- #define CLK_PLL_HSIC			18
- #define CLK_PLL_DE			19
- #define CLK_PLL_DDR1			20
 -- 
 2.47.1
 
