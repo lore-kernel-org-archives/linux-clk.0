@@ -1,125 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A6D1C01;
-	Sat,  4 Jan 2025 12:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214EC4C9F;
+	Sat,  4 Jan 2025 12:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735994041; cv=none; b=cnIK2E6OT1ZbfLKPNeeFy478X80ElwAXtwbQHaOvrf1KCFQp3MjQaqMQ6c9sqKtylgRYE93ILaKZ2gWMEFK90WWVrawxPV36AcML1PuWHZY6AeJG1RWSNyaT7jS0ebsDVHBxsWBcFcCnaxVerPuDJ2XAFJoohc0ZzY4V/+cuGcM=
+	t=1735994938; cv=none; b=p8M9C0wRrCHsYXNA29d/TAL7ZLrG4RXucchP4/UA+NSyx9yOzYUq0x7u37jjsrUvkiDFlAySOPjRNflDPifbnW371EP6bxTZGMIi4ggZcoMmbrs/75uImIjfNwf6uGtxn/aDQ788foqGan5WHCcqC9zAHhDQegPWp9/9hXflXE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735994041; c=relaxed/simple;
-	bh=olMPNy4+lzOMsVZgsB6du4RYLJvBTUgStsbjsnCyciM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XSKJ8qtVRjAe1AGKwCU2+saPBjtDlhatzTtVPckoRLGWEUt8Q8x34EsTj3v0n3Lh4eedOAQPJXTb3BRjhtq10+Fy3RrUYlSiYa025/PLOX9Mwj1ptu/DWWMDP4fDIkroq44aQ4nQ3T8mrocydVw3MtmLhW2EFbLLNDpRFpeCQ/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXjO01IP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735994938; c=relaxed/simple;
+	bh=1h5pbeadn8aNEdeABkIevR/nrEaWCQQQ5wJXUYEJLR0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=tu6yAPEUHIy1ROwdvZ0Q2Nv4LtZjXSzqLKYZ3Gy5kwTpxz0Iv5ZSMKnokzOU8jXaw5hyYvo92EPHV6IamlcsL9zd/EP0+fD14atoDgk62SWZrE8F+gRUaDWudBio1lYsJ1LbIB3XtBfzDgiGLMGNg3UnZsg71KMn25KKVPzGPIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=vjBvlbG1; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXjO01IP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7406BC4CED1;
-	Sat,  4 Jan 2025 12:33:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735994040;
-	bh=olMPNy4+lzOMsVZgsB6du4RYLJvBTUgStsbjsnCyciM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JXjO01IP5TYGY0RsckB6T+9dvw0mNs8Sq0N9g+4I3qXtIdHuWSegqiNlRj7ryyg4p
-	 MMGUjI6pc15QyDmI3PWdJhUFPe9Ic6GX66JK5H82Dpo+RxCz8tkx5JIIlcU7kXz+vo
-	 SuAcD0BPmV4ZbXESziNqpKSH0Znx60KKM/ufqVm6fORSW7NiONHNG00gv4W3zUXI0n
-	 ViX7kAlCXkQueGCnRsIG+y0p5JzMFZUVDnSXZVxsAwg33KU+T6DWSrYbqFL236sD4+
-	 /iBegrwE91BpKs3qAW8+jnLwK6A/tRf2vw7zIszowmEM7POcBY1VxYO3mPfoU5fss1
-	 leJ1rH7FxLRdg==
-Message-ID: <5f112a20-f1ce-45d1-a554-5f86846bcc25@kernel.org>
-Date: Sat, 4 Jan 2025 13:33:54 +0100
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="vjBvlbG1"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: clock: Add bindings for Canaan K230
- clock controller
-To: Xukai Wang <kingxukai@zohomail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Troy Mitchell <TroyMitchell988@gmail.com>
-References: <20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com>
- <20241229-b4-k230-clk-v1-1-221a917e80ed@zohomail.com>
- <zfjj33otyxiamsc7u2uwnvygcuhe7u2tfgiz6txp62emnddbw5@5iozmjg4eugn>
- <39e6bf64-2ce6-45bb-b622-4b413efc185f@zohomail.com>
- <a097980a-c2b7-440c-8eff-b540acfd4027@kernel.org>
- <68de77d0-b289-4137-85f3-050a1a10eb63@zohomail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <68de77d0-b289-4137-85f3-050a1a10eb63@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1735994475;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KG4fUCDLB9B6n/kj3zL/Wg8Xo2rnAPFIoEj566OdWMY=;
+	b=vjBvlbG1nD7E0M5p3USHuQaGE4mr5D+BJMikzEwLmgmQILIYNR0L2Pmx4Xqp6rQmssdLsU
+	zgNQ/IdjjjYC++qt95Pawo20CyW6NaidWdbMhq18BoMDTmJ1LvJV++155Xgcj2y3sI8HWB
+	nieDGmvF1vPkRzeKm9c+fFfcCAM0JBJ+Mc87ry99r1g+PjleCWHopRsNYfe13MKc1z5zuf
+	mX73/Q/uQ8uNyhsWYmOyExgA63zt8OGVYWv5txpJoJsn3n4XhKsVH0ZPBov1afhyMSoruz
+	lhzpIu7aZW5h55GkSJ7Wz35BXOe/ka02NOim4B5mK7xLJB5YmofoCdG917YbEw==
+Date: Sat, 04 Jan 2025 13:41:12 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, wens@csie.org, Vasily Khoruzhick
+ <anarsoul@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Maxime
+ Ripard <mripard@kernel.org>, Roman Beranek <me@crly.cz>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, Frank Oltmanns <frank@oltmanns.dev>, Stuart
+ Gathman <stuart@gathman.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: sunxi: Export PLL_VIDEO_2X and
+ PLL_MIPI
+In-Reply-To: <20250104120256.65511a28@minigeek.lan>
+References: <20250104074035.1611136-1-anarsoul@gmail.com>
+ <20250104074035.1611136-2-anarsoul@gmail.com>
+ <CAGb2v66W9q-uQkepYgrD9QKnOwmpUdDakRoKjmsT_4=Adyj09Q@mail.gmail.com>
+ <ca0cad16-7c39-4635-8f09-f9f3c95c9fef@kernel.org>
+ <20250104120256.65511a28@minigeek.lan>
+Message-ID: <65dfd7fd87fd2cd0a03f59fa23999830@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 04/01/2025 13:09, Xukai Wang wrote:
->> Why?
->>
->>>   items:
->>>     - description: Base address and size of the PLL control registers.
->>>     - description: Base address and size of the sysclk control registers.
->> Drop redundant "Base address and size of the". This cannot be anything
->> else in this context.
-> 
-> Thank you for point these out, I’ve removed the redundant descriptions,
-> and here's the updated version:
-> 
-> reg:
->   items:
->     - description: PLL control registers.
->     - description: Sysclk control registers.
-> 
-> Does this content look appropriate?
-Yes, thank you.
+Hello all,
 
-Best regards,
-Krzysztof
+On 2025-01-04 13:02, Andre Przywara wrote:
+> On Sat, 4 Jan 2025 11:33:23 +0100 Krzysztof Kozlowski <krzk@kernel.org> 
+> wrote:
+>> On 04/01/2025 11:23, Chen-Yu Tsai wrote:
+>> > On Sat, Jan 4, 2025 at 3:40 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+>> >>
+>> >> Export PLL_VIDEO_2X and PLL_MIPI, these will be used to explicitly
+>> >> select TCON0 clock parent in dts
+>> >>
+>> >> Fixes: ca1170b69968 ("clk: sunxi-ng: a64: force select PLL_MIPI in TCON0 mux")
+>> >> Reviewed-by: Dragan Simic <dsimic@manjaro.org>
+>> >> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+>> >> Tested-by: Frank Oltmanns <frank@oltmanns.dev> # on PinePhone
+>> >> Tested-by: Stuart Gathman <stuart@gathman.org> # on OG Pinebook
+>> >> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+>> >> ---
+>> >>  include/dt-bindings/clock/sun50i-a64-ccu.h | 2 ++
+>> >>  1 file changed, 2 insertions(+)
+>> >>
+>> >> diff --git a/include/dt-bindings/clock/sun50i-a64-ccu.h b/include/dt-bindings/clock/sun50i-a64-ccu.h
+>> >> index 175892189e9d..4f220ea7a23c 100644
+>> >> --- a/include/dt-bindings/clock/sun50i-a64-ccu.h
+>> >> +++ b/include/dt-bindings/clock/sun50i-a64-ccu.h
+>> >> @@ -44,7 +44,9 @@
+>> >>  #define _DT_BINDINGS_CLK_SUN50I_A64_H_
+>> >>
+>> >>  #define CLK_PLL_VIDEO0         7
+>> >> +#define CLK_PLL_VIDEO0_2X      8
+>> >>  #define CLK_PLL_PERIPH0                11
+>> >> +#define CLK_PLL_MIPI           17
+>> >
+>> > You can't really split code movement into two patches.
+>> >
+>> > With this patch applied the clk driver will fail to build because
+>> > the macros are now redefined in both header files.
+>> 
+>> Are you sure? The values seem the same to me... I don't see how this
+>> could fail.
+> 
+> Yes, IIRC the C standard allows repeated definitions with the same
+> value. And I definitely tested this before (and hence recommended this
+> approach to Vasily) and it compiled without any warnings here.
+
+FWIW, I also tested that approach when it was recommended, to make
+sure that the C compiler(s) are fine with that.  And it worked. :)
+
+>> > Barring recombining the patches, please add a patch before this
+>> > adding #ifndef's around the two macros that are moved.
+>> 
+>> No, not necessary, just churn,
