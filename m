@@ -1,316 +1,134 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B37614D44D;
-	Sun,  5 Jan 2025 17:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855371CCB4A;
+	Sun,  5 Jan 2025 18:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736096949; cv=none; b=qe+FHlk9SXHZd6zTy6j1T7wEnTFmz+kbcLaWUaQ+YZEPU8J3fVdlN/1X8QpEo+vYsXibLgREf+l34UZKobVHGSKy5d9q59sNL7VOM7mdsXpzNqhUur2OCxbig+SeT6/qztnlMlh4aUrmIvN/HTfT5pasSj1oXeVh32SEbIGXoeg=
+	t=1736100073; cv=none; b=IJLU3LpzYKm6VHorNvc25il5wMbxatYB+GG6sXjwcKxwYJMYgcOQ1kwJ1jqtFMSNK48pmkqC1H8nPfkMWp/p+t/anta39xrHqXx3z0VxXixi2fhONCNgyJAoh0mGdi7fHJ5bGNQFno2g2QoRhrMPjecyrUrDEbn4oREMmeb3bmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736096949; c=relaxed/simple;
-	bh=FFVRSI9xYD3g9SweNGZa964KQWVtX9yAVrCRElRuWlw=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=frXejgvypYlFvocEgAh0F1twvs/EtX32KmLsYPd0u7sYaATQ1jET3pVO1svDIPpZkX8SXNbiaZwxa90pEVVUIJStZbvfEJ/gQ/uQJeY/+FziG08/S0AMOqvfTNi+SpioVrdFtgeyqEpjyelV67wf07AYrHmjJdsEaV5bg/w5LiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=kygtfAaR; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1736100073; c=relaxed/simple;
+	bh=cspNj5F8aDJyAAQ4b/34Sfk3+U9AtmMxeKqzn6Bn/sg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NxSRV02AvYJ9cPbtBvDkMM8NMKPVRG5Qmv0W8XkJ2zPZLE7hLB+w6RMPiEyCUiEEjltTsu3aA84EYqkNRhQhQ046stHnZOwZaO1SNTcSBX6ckxN/TQLU67Qug07n7gFhEqi3Bvd+x97MUVXwj1afd/2uBaK77WDvlyA5wvwwy8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VgCwKr+4; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="kygtfAaR"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:From:Sender:Reply-To:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=Z9oVUYKGT1xg9Xl7f1QIQquhd2zA3tfKAmTmGuRCsvA=; b=kygtfAaRQUf1OLgoZSxtTO1Pih
-	Ou+TdGzZ5A0RB7d9eTNZDSa4SiJDBFZD24wD8/54l3T3gnuefafSFF09Jmb0ZqIko8h2Flg3ewggf
-	l58IzrJW21RzLMZ2e1dt6IvgJdsNNcng8ybkpIXukaz2KcSsuCcPDP8fxVLO+yBIIS7PTrkG0lQCg
-	0w9IAKrW15V9Tfs9F1vzitbWo3BR+rkeZJQIZs5rq0psn8UlYP51SWLhYBHmf2EqNIAuyfzXZB2C2
-	Td5tACtIVvB5v+r5v1zcGfqZWjSjwIImR4CrT2zdMgOFw6od0UpvGNo1YTlyR4xSEo+RyTZaS2M/w
-	h+pc4i0w==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Tony Lindgren <tony@atomide.com>,
-	Tero Kristo <kristo@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VgCwKr+4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1736100072; x=1767636072;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cspNj5F8aDJyAAQ4b/34Sfk3+U9AtmMxeKqzn6Bn/sg=;
+  b=VgCwKr+4Q4rBCGv/GCWqNCITUjCUdarSIcPpsDOr3w1WCoxQK5XyVD/l
+   mksc2Wmj56NQvIL2CQUCdKwq2PA6oIKB1HnfvkWf8dbIctKSeqFcM9G9n
+   +T/vtXJwmRmbR8vylmJj2GpZA/Z6QXvz3mS+BozA/YDfbHnZA5qqMq2Hj
+   ILcSc3mbdVnQ9XIlUPFQQTDsKhTqrnmvJMGldhdbDu16BPfaFy8DwiLrw
+   0rp3M9+s9U00cWiKNrplKiDqwMTLWFUUZIOnj0aKsidMDkinm5buwYdJI
+   X1IDwbk6dwQHsPK6Xossu260tMx+BVCNfu7v1NYIAY8+l8oNDeyFAF6nv
+   Q==;
+X-CSE-ConnectionGUID: TRVYYtwpQY+gUq8QNOLmwA==
+X-CSE-MsgGUID: PKETaqDXTNGvmYFecfdF0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11306"; a="36414376"
+X-IronPort-AV: E=Sophos;i="6.12,291,1728975600"; 
+   d="scan'208";a="36414376"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jan 2025 10:01:11 -0800
+X-CSE-ConnectionGUID: GDMyISq1QWqYzeHEk2plfQ==
+X-CSE-MsgGUID: 3KYqPRWERYqSP0EY+2XogA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,291,1728975600"; 
+   d="scan'208";a="133085080"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 05 Jan 2025 10:01:07 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tUUvw-000Btv-2D;
+	Sun, 05 Jan 2025 18:01:04 +0000
+Date: Mon, 6 Jan 2025 02:00:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jian Hu <jian.hu@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>,
+	Chuan Liu <chuan.liu@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-omap@vger.kernel.org,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 1/2] dt-bindings: clock: ti: Convert gate.txt to json-schema
-Date: Sun,  5 Jan 2025 18:08:53 +0100
-Message-Id: <20250105170854.408875-2-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250105170854.408875-1-andreas@kemnade.info>
-References: <20250105170854.408875-1-andreas@kemnade.info>
+	Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+	robh+dt <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Jian Hu <jian.hu@amlogic.com>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-amlogic <linux-amlogic@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 5/5] clk: meson: t7: add t7 clock peripherals controller
+ driver
+Message-ID: <202501060104.R3FJGgmC-lkp@intel.com>
+References: <20241231060047.2298871-6-jian.hu@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241231060047.2298871-6-jian.hu@amlogic.com>
 
-Convert the OMAP gate clock device tree binding to json-schema.
-Specify the creator of the original binding as a maintainer.
-Choose GPL-only license because original binding was also GPL.
-Clean up the examples during conversion to meet modern standards and
-remove examples with no additional value.
-Due to usage in code and existing devicetree binding, add the
-ti,set-rate-parent property.
+Hi Jian,
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- .../devicetree/bindings/clock/ti/gate.txt     | 105 ---------------
- .../bindings/clock/ti/ti,gate-clock.yaml      | 125 ++++++++++++++++++
- 2 files changed, 125 insertions(+), 105 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/ti/gate.txt
- create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml
+kernel test robot noticed the following build warnings:
 
-diff --git a/Documentation/devicetree/bindings/clock/ti/gate.txt b/Documentation/devicetree/bindings/clock/ti/gate.txt
-deleted file mode 100644
-index a8e0335b006a..000000000000
---- a/Documentation/devicetree/bindings/clock/ti/gate.txt
-+++ /dev/null
-@@ -1,105 +0,0 @@
--Binding for Texas Instruments gate clock.
--
--This binding uses the common clock binding[1]. This clock is
--quite much similar to the basic gate-clock [2], however,
--it supports a number of additional features. If no register
--is provided for this clock, the code assumes that a clockdomain
--will be controlled instead and the corresponding hw-ops for
--that is used.
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--[2] Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
--[3] Documentation/devicetree/bindings/clock/ti/clockdomain.txt
--
--Required properties:
--- compatible : shall be one of:
--  "ti,gate-clock" - basic gate clock
--  "ti,wait-gate-clock" - gate clock which waits until clock is active before
--			 returning from clk_enable()
--  "ti,dss-gate-clock" - gate clock with DSS specific hardware handling
--  "ti,am35xx-gate-clock" - gate clock with AM35xx specific hardware handling
--  "ti,clkdm-gate-clock" - clockdomain gate clock, which derives its functional
--			  clock directly from a clockdomain, see [3] how
--			  to map clockdomains properly
--  "ti,hsdiv-gate-clock" - gate clock with OMAP36xx specific hardware handling,
--			  required for a hardware errata
--  "ti,composite-gate-clock" - composite gate clock, to be part of composite
--			      clock
--  "ti,composite-no-wait-gate-clock" - composite gate clock that does not wait
--				      for clock to be active before returning
--				      from clk_enable()
--- #clock-cells : from common clock binding; shall be set to 0
--- clocks : link to phandle of parent clock
--- reg : offset for register controlling adjustable gate, not needed for
--	ti,clkdm-gate-clock type
--
--Optional properties:
--- clock-output-names : from common clock binding.
--- ti,bit-shift : bit shift for programming the clock gate, invalid for
--		 ti,clkdm-gate-clock type
--- ti,set-bit-to-disable : inverts default gate programming. Setting the bit
--  gates the clock and clearing the bit ungates the clock.
--
--Examples:
--	mmchs2_fck: mmchs2_fck@48004a00 {
--		#clock-cells = <0>;
--		compatible = "ti,gate-clock";
--		clocks = <&core_96m_fck>;
--		reg = <0x0a00>;
--		ti,bit-shift = <25>;
--	};
--
--	uart4_fck_am35xx: uart4_fck_am35xx {
--		#clock-cells = <0>;
--		compatible = "ti,wait-gate-clock";
--		clocks = <&core_48m_fck>;
--		reg = <0x0a00>;
--		ti,bit-shift = <23>;
--	};
--
--	dss1_alwon_fck_3430es2: dss1_alwon_fck_3430es2@48004e00 {
--		#clock-cells = <0>;
--		compatible = "ti,dss-gate-clock";
--		clocks = <&dpll4_m4x2_ck>;
--		reg = <0x0e00>;
--		ti,bit-shift = <0>;
--	};
--
--	emac_ick: emac_ick@4800259c {
--		#clock-cells = <0>;
--		compatible = "ti,am35xx-gate-clock";
--		clocks = <&ipss_ick>;
--		reg = <0x059c>;
--		ti,bit-shift = <1>;
--	};
--
--	emu_src_ck: emu_src_ck {
--		#clock-cells = <0>;
--		compatible = "ti,clkdm-gate-clock";
--		clocks = <&emu_src_mux_ck>;
--	};
--
--	dpll4_m2x2_ck: dpll4_m2x2_ck@48004d00 {
--		#clock-cells = <0>;
--		compatible = "ti,hsdiv-gate-clock";
--		clocks = <&dpll4_m2x2_mul_ck>;
--		ti,bit-shift = <0x1b>;
--		reg = <0x0d00>;
--		ti,set-bit-to-disable;
--	};
--
--	vlynq_gate_fck: vlynq_gate_fck {
--		#clock-cells = <0>;
--		compatible = "ti,composite-gate-clock";
--		clocks = <&core_ck>;
--		ti,bit-shift = <3>;
--		reg = <0x0200>;
--	};
--
--	sys_clkout2_src_gate: sys_clkout2_src_gate {
--		#clock-cells = <0>;
--		compatible = "ti,composite-no-wait-gate-clock";
--		clocks = <&core_ck>;
--		ti,bit-shift = <15>;
--		reg = <0x0070>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml
-new file mode 100644
-index 000000000000..2eb1d1929c39
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml
-@@ -0,0 +1,125 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti/ti,gate-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments gate clock
-+
-+maintainers:
-+  - Tero Kristo <kristo@kernel.org>
-+
-+description: |
-+  *Depcrecated design pattern: one node per clock*
-+
-+  This clock is quite much similar to the basic gate-clock [1], however,
-+  it supports a number of additional features. If no register
-+  is provided for this clock, the code assumes that a clockdomain
-+  will be controlled instead and the corresponding hw-ops for
-+  that is used.
-+
-+  [1] Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
-+  [2] Documentation/devicetree/bindings/clock/ti/clockdomain.txt
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,gate-clock           # basic gate clock
-+      - ti,wait-gate-clock      # gate clock which waits until clock is
-+                                # active before returning from clk_enable()
-+      - ti,dss-gate-clock       # gate clock with DSS specific hardware
-+                                # handling
-+      - ti,am35xx-gate-clock    # gate clock with AM35xx specific hardware
-+                                # handling
-+      - ti,clkdm-gate-clock     # clockdomain gate clock, which derives its
-+                                # functional clock directly from a
-+                                # clockdomain, see [2] how to map
-+                                # clockdomains properly
-+      - ti,hsdiv-gate-clock     # gate clock with OMAP36xx specific hardware
-+                                # handling, required for a hardware errata
-+      - ti,composite-gate-clock # composite gate clock, to be part of
-+                                # composite clock
-+      - ti,composite-no-wait-gate-clock # composite gate clock that does not
-+                                        # wait for clock to be active before
-+                                        # returning from clk_enable()
-+  "#clock-cells":
-+    const: 0
-+
-+  clocks: true
-+
-+  clock-output-names:
-+    maxItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  ti,bit-shift:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Number of bits to shift the bit-mask
-+    maximum: 31
-+    default: 0
-+
-+  ti,set-bit-to-disable:
-+    type: boolean
-+    description:
-+      Inverts default gate programming. Setting the bit
-+      gates the clock and clearing the bit ungates the clock.
-+
-+  ti,set-rate-parent:
-+    type: boolean
-+    description:
-+      clk_set_rate is propagated to parent clock,
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        const: ti,clkdm-gate-clock
-+then:
-+  properties:
-+    reg: false
-+  required:
-+    - compatible
-+    - "#clock-cells"
-+    - clocks
-+else:
-+  required:
-+    - compatible
-+    - "#clock-cells"
-+    - clocks
-+    - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    bus {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      clock-controller@a00 {
-+        #clock-cells = <0>;
-+        compatible = "ti,gate-clock";
-+        clocks = <&core_96m_fck>;
-+        reg = <0x0a00>;
-+        ti,bit-shift = <25>;
-+      };
-+
-+      clock-controller@d00 {
-+        compatible = "ti,hsdiv-gate-clock";
-+        reg = <0x0d00>;
-+        #clock-cells = <0>;
-+        clocks = <&dpll4_m2x2_mul_ck>;
-+        ti,bit-shift = <0x1b>;
-+        ti,set-bit-to-disable;
-+      };
-+    };
-+
-+  - |
-+    clock-controller {
-+      #clock-cells = <0>;
-+      compatible = "ti,clkdm-gate-clock";
-+      clocks = <&emu_src_mux_ck>;
-+    };
-+
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.13-rc5 next-20241220]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jian-Hu/dt-bindings-clock-add-Amlogic-T7-PLL-clock-controller/20241231-141835
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20241231060047.2298871-6-jian.hu%40amlogic.com
+patch subject: [PATCH 5/5] clk: meson: t7: add t7 clock peripherals controller driver
+config: arm64-randconfig-r112-20250105 (https://download.01.org/0day-ci/archive/20250106/202501060104.R3FJGgmC-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce: (https://download.01.org/0day-ci/archive/20250106/202501060104.R3FJGgmC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202501060104.R3FJGgmC-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/clk/meson/t7-peripherals.c:1276:26: sparse: sparse: Initializer entry defined twice
+   drivers/clk/meson/t7-peripherals.c:1277:26: sparse:   also defined here
+
+vim +1276 drivers/clk/meson/t7-peripherals.c
+
+  1262	
+  1263	 static u32 eth_rmii_table[] = { 0, 7 };
+  1264	
+  1265	static struct clk_regmap eth_rmii_sel = {
+  1266		.data = &(struct clk_regmap_mux_data) {
+  1267			.offset = CLKCTRL_ETH_CLK_CTRL,
+  1268			.mask = 0x3,
+  1269			.shift = 9,
+  1270			.table = eth_rmii_table
+  1271		},
+  1272		.hw.init = &(struct clk_init_data){
+  1273			.name = "eth_rmii_sel",
+  1274			.ops = &clk_regmap_mux_ops,
+  1275			.parent_data = &(const struct clk_parent_data) {
+> 1276				.fw_name = "fdiv2",
+  1277				.fw_name = "rmii_pad"
+  1278			},
+  1279			.num_parents = 2
+  1280		},
+  1281	};
+  1282	
+
 -- 
-2.39.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
