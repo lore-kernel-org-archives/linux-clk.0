@@ -1,79 +1,48 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E3715625A;
-	Sun,  5 Jan 2025 14:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BC514B955;
+	Sun,  5 Jan 2025 17:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736088177; cv=none; b=fHgItpz/mEgGAp89HWwpLq1xGP8ep9GeS1zk0aabFx242ddIeCIAb0FKwedjchmT7AEEVY7pCM8zVE2uzEQccr7vvFFAIpLEk4+bWkz1ObAy6xGnHKCu2j0k6wBwJGWVnW2BwehSCWxlMMI2HTJs0OY44i9mVU8A/6Q8E11H1+s=
+	t=1736096948; cv=none; b=orV74xZ4/35vR4ZdaN0pckC+HCTtPfZ1yAUGYPDZiP83OJwjFarOqyDCYJKpX9ATnKMAGBkK8t35KcVmQMassxxR72LcRRxhnqVlm7aVW896L6mK3pVE05TPeXgmK8/iZO0iLJi42NgFfW7URBzNx50uDmG1bRHmZHid6y+uMpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736088177; c=relaxed/simple;
-	bh=aXYHEyhcGDnwQtSXky3nGDQSSqSNdvxMLGJcZmOBs/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pTmymDgpjv98S6UtQxysuUOkY66LvCOjbtLDpg+P8NwjigA8nyAQhGHK51M3T+E4xh+hYQ2/mX8KOoserem+6gGlDadn8/Mb4UCrlws7UnAhLJdFAZ7OfPygm7U8mgqUO2NrgNdxr5iSMehMBbHJM+ZHIb/bEtmFtbgnmxsWPx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q6luk0g1; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1736096948; c=relaxed/simple;
+	bh=NIKllt68xjnihHqTzhRz0Lr78zysa0CIQZSH7xr4Vro=;
+	h=From:To:Subject:Date:Message-Id:Content-Type:MIME-Version; b=q9zpoNjOGRcoH7MA15llTjdm7EANV/O4xB625pj4H0+F98GmywTNVjwunhDYiJclaoC0hB6XGjW6BPeANE8cumDCV28TH3b6u82GGjLy9AHGLaQZOO1rwK95havdJgGuEHBBR95MPZMOKx81lC+zQl+AY88RplbvJXTJLYIgSIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=n26Dy9sG; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6luk0g1"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4361e89b6daso92795515e9.3;
-        Sun, 05 Jan 2025 06:42:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736088173; x=1736692973; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jd0ivsCOxo6eepP3Mt6WIBgGEYTd25op3kx8K4XoTrc=;
-        b=Q6luk0g1ByDhDMAULCi1aYYiptJHs0kAcXAoLbwFxIYYOXR1vYmwDtRwkMoS9QYftc
-         r+UjUort9CVwyQxenocnOvuj1rs2vPMh3TvYYbb2ONl4Y8JG+/YYEdbAeUcYtMdjOLjl
-         2WYp8fMGJ2Bapv6BWxlmu32MNsaI9RV7RL+VyJV49eDLvD418lpoPuYT/0sYkBuWc2eT
-         Gyc5xoy8sTX115DFk5ojzmhmC3k8K+4GbQ1VRTcBRNrd8IR6I2HPxrxXQ/lfUK/IVpid
-         YZt9dZz7RuoVajemJ/foEvk2DJ+0g1UhMKM+dWX2i7NF46Zw0/z0Axpys+Mk1W2LSaaf
-         ptjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736088173; x=1736692973;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jd0ivsCOxo6eepP3Mt6WIBgGEYTd25op3kx8K4XoTrc=;
-        b=PA9GA8mwUa2m4KmOcPwofjNopxE5LJxr2yN1jDLZ7SikDiazCISNiT/L4ZrxWkKGLm
-         XHkKCYVjqzcChPg7yRGLLG4K5ulBWQ1XJqjUiDef5+xOAsfBsMZoyZALA5yc2oClekjr
-         6GFuJ8K0A8k9mB1laWZKh5f+DYSUqlX+xahyRIdd8YeEdr6hEuiSXA0zND51nulsCQuc
-         R5Q8qxrLJ6/G9ysfrf3+JM/7r2Wp+icBl4J3IhPMwrFIA47A+hHOr2a4QqYFSBg0tJ9s
-         E3mR7TU/Q71OxgNkMwzKcDEU4hLWBfbfcupxXmyllIFhK4BNI/qxK/z0Zi0Tly3ll7By
-         7Kyg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGuZ8d8d9xEXo/uK+U6BjCf+wr6Dg/QT47XhpzWIgLT7Tp05c007hW8RgktXh5e4pmOO3j1Yf/uyOhLnIE@vger.kernel.org, AJvYcCWbXzDJVcnrdtcZ3ZBSU4jO0v8tXO2qCEGROIdsLtb6xuXlrXb/BkKw9jnaUi7LzEx2zTiiyR30g3pB@vger.kernel.org, AJvYcCXbednUfRREAkHCNlmbWA9phgbCVcJiOVRaoZBcqqWia67ohnv2u2bWjnlv0Z18QcWoRIRiSHpZ4+vK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhPGHJCzGpfGRcCaElplMHsluvQ2H93gWZh/7I2nmmImD75s19
-	edYNfRz3KQdvuThKfqvV0D8YrfgQcPsL5d2GiyTvMR92z4buSAzi
-X-Gm-Gg: ASbGncvLdBStq+pWQk0//8EiUMBo86JegHtTwB3y6nYvBm1aaBSXNbuziW6MDrWQ1lB
-	f05Uf9WCreBS4nJBvHx0r83SO+DoqE5M8VdgXzq3JCvFhEjfJvp5v+WnZNIXArD+HuzJKV8eo53
-	U+vf1H5uTl/BkNxYoFI3sIxlWsDxTGtEkO3CcB6a1puMLF92aAMFyd/FajCabzXwjU3XgIt4sJH
-	1OkcVenaOg64P44szGSu/jQo5Q8rdSgvx9IzXBY0pdJ2CyYmVWhtAHgu/gYeW861T2WMst/jq6z
-	I9qpj2P4d/RJeX6ezNZlXvf16wRCa1cLqd/eVqxtMA==
-X-Google-Smtp-Source: AGHT+IGG/tO2Lt1RR3RwIADrDoxZJHJyg2667n9OATP8E6fkLp+FqDm6xbKIJUkTGitScnbjrZs9tg==
-X-Received: by 2002:adf:a342:0:b0:38a:624b:e37b with SMTP id ffacd0b85a97d-38a624be4e4mr11369844f8f.53.1736088173542;
-        Sun, 05 Jan 2025 06:42:53 -0800 (PST)
-Received: from localhost.localdomain (host-95-246-253-26.retail.telecomitalia.it. [95.246.253.26])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-436611fc161sm537419415e9.10.2025.01.05.06.42.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jan 2025 06:42:53 -0800 (PST)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="n26Dy9sG"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=From:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=J6Fv4Vv6fK6uR3quq9YmN7vL6K1RuS5zWkg1sJW1LqU=; b=n26Dy9sG8R/9EB3Hi08BlSxYvJ
+	PPytCFP4ewy1deHElKfI+HNYmOpJtAeP9ZgPC0ggaIUVT200dyRzFiZWsiprHMk2Z/qwiJxVJ7iTU
+	foXfPKoveWOGLyVrpqsL3u9Qjjy8idgQ80T4zqDnyBsIsWfFiGQNPYd4e8nNG+D+8vb/0tTuKjmKt
+	xDGolKRCHa4H55DL8UjqyiL3H1cpTyEWHaCVrtmNQK+vHx9oIOyhJm1rNEUi2lmcKhm+90wHIjbft
+	a1aJNSSWjWiGcEL+FAFXHHNvOMTzZRppp+gPjoH1Leas/p77XKVKHmozXeU2nCimWt1547GSnFF+2
+	/AY0omuw==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Stephen Boyd <sboyd@kernel.org>,
 	linux-clk@vger.kernel.org,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Tony Lindgren <tony@atomide.com>,
+	Tero Kristo <kristo@kernel.org>,
 	linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
 	devicetree@vger.kernel.org,
-	upstream@airoha.com
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v4 4/4] clk: en7523: Add clock for eMMC for EN7581
-Date: Sun,  5 Jan 2025 15:42:01 +0100
-Message-ID: <20250105144219.22663-4-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250105144219.22663-1-ansuelsmth@gmail.com>
-References: <20250105144219.22663-1-ansuelsmth@gmail.com>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-omap@vger.kernel.org,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH v2 0/2] dt-bindings: clocks: ti: Next round of conversion
+Date: Sun,  5 Jan 2025 18:08:52 +0100
+Message-Id: <20250105170854.408875-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,47 +51,27 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add clock for eMMC for EN7581. This is used to give info of the current
-eMMC source clock and to switch it from 200MHz or 150MHz.
+Convert more TI clock bindings to json-schema.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
-Changes v4:
-- Move to patch 4
-Changes v2:
-- Rename emmc_base to emmc7581_base to make it more clear
+Changes in v2:
+- comment about design pattern
+- fix example to use an existing compatible
+- some formatting
 
- drivers/clk/clk-en7523.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Andreas Kemnade (2):
+  dt-bindings: clock: ti: Convert gate.txt to json-schema
+  dt-bindings: clock: ti: Convert composite.txt to json-schema
 
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 596847446b14..b36445359b5a 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -91,6 +91,7 @@ static const u32 emi7581_base[] = { 540000000, 480000000, 400000000, 300000000 }
- static const u32 bus7581_base[] = { 600000000, 540000000 };
- static const u32 npu7581_base[] = { 800000000, 750000000, 720000000, 600000000 };
- static const u32 crypto_base[] = { 540000000, 480000000 };
-+static const u32 emmc7581_base[] = { 200000000, 150000000 };
- 
- static const struct en_clk_desc en7523_base_clks[] = {
- 	{
-@@ -281,6 +282,15 @@ static const struct en_clk_desc en7581_base_clks[] = {
- 		.base_shift = 0,
- 		.base_values = crypto_base,
- 		.n_base_values = ARRAY_SIZE(crypto_base),
-+	}, {
-+		.id = EN7581_CLK_EMMC,
-+		.name = "emmc",
-+
-+		.base_reg = REG_CRYPTO_CLKSRC2,
-+		.base_bits = 1,
-+		.base_shift = 12,
-+		.base_values = emmc7581_base,
-+		.n_base_values = ARRAY_SIZE(emmc7581_base),
- 	}
- };
- 
+ .../bindings/clock/ti/composite.txt           |  55 --------
+ .../devicetree/bindings/clock/ti/gate.txt     | 105 ---------------
+ .../bindings/clock/ti/ti,composite-clock.yaml |  82 ++++++++++++
+ .../bindings/clock/ti/ti,gate-clock.yaml      | 125 ++++++++++++++++++
+ 4 files changed, 207 insertions(+), 160 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/composite.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/gate.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,composite-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml
+
 -- 
-2.45.2
+2.39.5
 
