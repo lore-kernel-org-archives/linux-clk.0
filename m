@@ -1,238 +1,341 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023A7B676
-	for <linux-clk@vger.kernel.org>; Mon,  6 Jan 2025 10:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC081DD0DC
+	for <linux-clk@vger.kernel.org>; Mon,  6 Jan 2025 11:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736158343; cv=none; b=lgyZ5f0TaGD/kqKk3MEIQQDzCOG2WIzzAhed4ha2EKAt3y/ISL9g2rTVreAFrH/dnq9UW8pw1GG17SjTRh9Ua+VOZPNKghSCgofUnrZ2c69+we20sbOIvaoSGEXvJF2WV+258MGblzyk3QlEgxjrqg50/gogw5Ekr+3LYdCu9/g=
+	t=1736161603; cv=none; b=DR7/m9D0zI/hfQRe8Du3uZumveLJfh6t1Jf8HZvjwXSW7N3TxyCteTTj4XFx0mBbwIgLJfNtczGq47ASvLIHX+BGMBocQeBUuLhegrqRndaNOLxnxSDp4SKp2FJsoTHYno1P0Rifkpi5vgp5PdrBYMNdzI7Ayh1XfpbBHojm24k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736158343; c=relaxed/simple;
-	bh=Qnz/sjpRzsRFTkJRZGCysGGpGU/hAxw6QkBY1CZ9MCM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Lh4MLCTtkOBWbOBRfdQqzwsJGknLOHfUGhrPK2wkmZT5C0E4cu7ww7fY5WqXS9qmJzFCUN7fHCZrBljGRrHrQ0DlKlrnR73Mx5boANFGKLSe+Y+YjKlUwHCpQ/vUd1W6bxpsKyfoWBe8Myp48Dgz0XGoF1VibTiq9w//FkI8bC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iWt3gZlB; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1736161603; c=relaxed/simple;
+	bh=A6JobZoPrq69BuqxXh3qmnmCjaegCYBZNWC2wJ3H0Mw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=MyxXeIHXiQmhQkJmhiDyArUNMnBP1/NWLMlfMDa/+eolQNwW0K0CwjROIJX5QxIAe8F/iLWs4vD+t8kN6lWhHDmuRYm78p9WE2xg3k20Cdfe6t3On8gI9NCkzpMAOZpLzvBQZ2/Be4lHGW5PnzW7BPQlatoEaN68zmuua+3BGbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AIfrpsNC; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iWt3gZlB"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38632b8ae71so9971613f8f.0
-        for <linux-clk@vger.kernel.org>; Mon, 06 Jan 2025 02:12:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AIfrpsNC"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-436a03197b2so49471735e9.2
+        for <linux-clk@vger.kernel.org>; Mon, 06 Jan 2025 03:06:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1736158338; x=1736763138; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rrz0lFCuK82Hp07LVC+cIDO78ZFHfxHGrWZYexDodT4=;
-        b=iWt3gZlBY3xt0AHQHNFhg8h2thgY6oB0MMepwJfjJILwICWeQ14iw+OOrTaha3WX0x
-         ZrVKzgYgQfLYVGo+VrzwqgXlRLr0vChINhcElJpMG/rX/9SALzPnH0HTDnMsE73fhAop
-         k1MjyaOlBrF0TSa4mp8cZodjIzI3ece7mZxPaGzPhz4UBTP/TxbHRbHGZ7eA4Qiu9jG1
-         eynCSiVUVlH9WLziuMQZ/d21kUR8eaADxUVtyKGdeoYb9j8uoFRaNNwQA8iMGU06gLM5
-         OZCWu6H6UAIWSub29T8fkuTljXh/9deAvKQkb500WS7TMN0zm080dMQsGKCTUpjYqo6f
-         hqpQ==
+        d=linaro.org; s=google; t=1736161598; x=1736766398; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SV0FBVRxpsuCLb/nRDIZe8jsu0IEUwlF/EBuP03LhIc=;
+        b=AIfrpsNC02vPkTNXQpYaZ7UAXd7rBuwJ8flvMn1A6TdNec5zIfAbrNmqcyKJHqcpew
+         MnZcpGB+vSQNUHylUMQoeVmO/fBzFQV8LlmvEdcQQhJNoMQvd9kS1WHMPX4dm3hUetXU
+         LrcIJcyf1c+WGdbCLrTbYAGc/slX8C+8AdDr9XKxyWLaaRU3X2ggRNVpRPyFsCSDApJs
+         fhJKcyL6sWeVb7W610foBmaGWDGq7FzvHhg1JgjPgSqZKIWG74BpmeDPwaMiiZuPmDSg
+         W5H92xrPdVINrXtUfWmU5zwvP8flqp5f71qlZ6vaKxsGLsvI6jRpYaxM8lLNlB5ggCJb
+         WsGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736158338; x=1736763138;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rrz0lFCuK82Hp07LVC+cIDO78ZFHfxHGrWZYexDodT4=;
-        b=V6CJBmXUuS5KwC/AhdjPRNsazbOhTvs2z2wAaTGw/p1/mOs1TDxPPVNlIXmZBoCLny
-         gWl6pzl6rLmpJvveA2X69tC2ReYoqzarztgb90Q1vEYNIACx5p20XiwBQj23r/9hdJbz
-         sRxNR4zl+B5erad2dsAr8Fb8PQwfJyKC5Gu81sbGb3WN9AvLY/LWjxZNLaebPHMRla1S
-         rbmDdRRtNDjHk4yp9qSCRUOZNSkMtCK0rupp8ECkIM+9RoId4HpnvLuJv16sIGMVh3XV
-         DhWOCgDnhvBWwUUltAJPzIs8uYJmShwkS1FR00L6O7dVmgcN/HuWSfz5T5oJxsC9F/qq
-         APzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEmgFMPvvkcB8sleCrYWscz21UbZPmEfYxbTyFgRi+bSjEoY0fNCwLr/t05SK3O82zCuTJeIBP6Ns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylFGhVIOxraWHLAd/xMOwEHmT54rH9dbpZ3l6d8xl0zJRegziN
-	aVVBJvpR7LFUceYyHJ6nkJ6TZEikLe8xVARUxT5UlYuGt8pj3emEAnsXVNj+Z0o=
-X-Gm-Gg: ASbGnctnNvpcajtbv5cDWmjtGtVr4sgDaeIXCxYNXPD0nbCwirU/OxrvL8wwlUkH6HQ
-	Hm9cnvKdrI1lMef2mKRi1gVNzpFFjblGmwQgfBid5tB01heUwR6cxS/CFeieHpKOBFpMctOAwif
-	kglh5EF9bZKtb7V/vgZjecKzHmaQBj8OpI9pCI9tjTGRASBEJpP+VkOz+nEEVG5Rd5ovBr+QK4y
-	L6NNKzvkAekAuiyd/ymlgtu93fCpzdm8PygzwIbYLQnj0HBRW/ncR/Y
-X-Google-Smtp-Source: AGHT+IFaxGixHUun2XH8nipy7jJnc/zpryL28gv0v5yxv4oK1sYJlkwuVGxq58OL8DC4FuqLVbEAMg==
-X-Received: by 2002:a05:6000:1f81:b0:386:1cd3:8a07 with SMTP id ffacd0b85a97d-38a221e2d29mr54182442f8f.7.1736158337707;
-        Mon, 06 Jan 2025 02:12:17 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:2a4a:e041:e2ff:6b41])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c89e375sm48306220f8f.73.2025.01.06.02.12.17
+        d=1e100.net; s=20230601; t=1736161598; x=1736766398;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SV0FBVRxpsuCLb/nRDIZe8jsu0IEUwlF/EBuP03LhIc=;
+        b=YQNf4a4eYEwC8anQkyK7DYvMPuwnAvV0oLBKyicJjCGNBj4vUXQ06Q2/N0Bzg8F4Av
+         RYK9y0GR4HWs6B07/2Y1X9X2Tr1SNCKbFX0xz7Nt8S/68ALp5SEd086Mq1RujCiUlreq
+         LXEo90cdfbPCBhxEXhG8883zZK97WNXbi+PlK0faxCZEQzfaDvooWd27iUYz2EdQec+Q
+         OgXGfShKTE/sqvEYNogtyTsnz6ojQ2fp6xYc3Ej0DaZo8OOubcxLiB0zZDJT5KjwqTwR
+         OtRflHRJfZYx00RnXqVCIrp929KSD86lCreEKGIF5KMIrDFjUkpNYIPTSzGFqHdaTU7U
+         TvMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZh73NFf3JWdUUgbLpGgl8TXelScJYZw2WR8VkcBHckLYIUV1/RGNIaEd7XvxBtktUxESOZHBRFtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY4EYvpj8YGohFHZrY7S4gFxkrd8TM1ss4gwh4Kbt+DVQl52rl
+	ZkHfry3ZNGjUcCagRjDwjh8Ql1m9F7UnVhGYZCW3kSpPW6bCm4LYkf+EAnFDbhOmqMrxBDifHJr
+	k
+X-Gm-Gg: ASbGncuL6C2cpPuI58rPDd9mrWQy3BC//meVrao2quQPNJk/zBNxqrhrkCgRxgPPQ7s
+	GJtJDFCXRpr5JBAm788uKcE3oOBmuj0G5Fhk2mTCQyjfJ2OXbDrT3vRbbuUOl+hEmTBPwGCt346
+	YXCzJTBtXNeWWv0OyotQHSFGrZCdqJThUmxThHdVb+/3P8S78wOibCJNKPe2mf4VimkdmZcK6xh
+	Qyg+mviwVrazkc8m2j73jMc7yKkNh5WITjNHjHeiIGqW6D8NnyF2L5RFWCTBg==
+X-Google-Smtp-Source: AGHT+IGYhdHyJQz2T6sQnktrmfPOEHIa+NxQvfHmqaXAv8NSDYeXhh8uDw3YLAg6DXD0ySC+Pw0+TA==
+X-Received: by 2002:a05:600c:1d0c:b0:431:54d9:da57 with SMTP id 5b1f17b1804b1-43668b78e66mr508486965e9.30.1736161598070;
+        Mon, 06 Jan 2025 03:06:38 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4364b0532a6sm577668545e9.1.2025.01.06.03.06.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jan 2025 02:12:17 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/3] clk: amlogic: drop clk_regmap tables
-In-Reply-To: <88fe909ab182d1f17f6ef18161c7f064.sboyd@kernel.org> (Stephen
-	Boyd's message of "Mon, 30 Dec 2024 17:08:26 -0800")
-References: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com>
-	<20241220-amlogic-clk-drop-clk-regmap-tables-v1-2-96dd657cbfbd@baylibre.com>
-	<9f1d69ebe1ddce5dfc170e986c9213f2.sboyd@kernel.org>
-	<1ja5cp8f87.fsf@starbuckisacylon.baylibre.com>
-	<88fe909ab182d1f17f6ef18161c7f064.sboyd@kernel.org>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 06 Jan 2025 11:12:16 +0100
-Message-ID: <1jfrlwb69r.fsf@starbuckisacylon.baylibre.com>
+        Mon, 06 Jan 2025 03:06:37 -0800 (PST)
+Date: Mon, 6 Jan 2025 14:06:34 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	linux-kernel@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v8 11/18] clk: imx: add support for i.MX8MN anatop clock
+ driver
+Message-ID: <a495faf8-6cfb-4d24-b7b5-cd94e1a8b3ca@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241229145027.3984542-12-dario.binacchi@amarulasolutions.com>
 
-On Mon 30 Dec 2024 at 17:08, Stephen Boyd <sboyd@kernel.org> wrote:
+Hi Dario,
 
-> Quoting Jerome Brunet (2024-12-21 03:09:28)
->> On Fri 20 Dec 2024 at 16:12, Stephen Boyd <sboyd@kernel.org> wrote:
->> 
->> > Quoting Jerome Brunet (2024-12-20 09:17:43)
->> >> Remove the big clk_regmap tables that are used to populate the regmap
->> >> field of clk_regmap clocks at runtime. Instead of using tables, use devres
->> >> to allow the clocks to get the necessary regmap.
->> >> 
->> >> A simpler solution would have been to use dev_get_regmap() but this would
->> >> not work with syscon based controllers.
->> >
->> > Why not have two init functions, one that uses the syscon approach from
->> > the parent device?
->> 
->> That would duplicate all the ops and would not scale if anything else
->> comes along. It would also tie the controller quirks with
->> clock ops. I would like to keep to clock ops and controllers decoupled as
->> much as possible
->
-> Hmm... Maybe the init function should be moved out of the clk_ops and
-> into the clk_init_data structure. It isn't used beyond registration time
-> anyway, so it may make sense to do that and decouple the clk_ops from
-> the controllers completely. Or we can have two init routines, one for
-> the software side and one for the hardware side, but that's probably
-> confusing. If anything, a clk hardware init function can be exported and
-> called from the clk software init function if needed.
+kernel test robot noticed the following build warnings:
 
-The .init() is really for the clock itself, so it makes sense for it to
-in the ops. Removing the init from the ops would just be another layer of
-controller init, something we can deal with in the probe() function.
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-What I'm trying to do here is properly decouple what belongs in each.
+url:    https://github.com/intel-lab-lkp/linux/commits/Dario-Binacchi/dt-bindings-clock-imx8mm-add-VIDEO_PLL-clocks/20241229-225716
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241229145027.3984542-12-dario.binacchi%40amarulasolutions.com
+patch subject: [PATCH v8 11/18] clk: imx: add support for i.MX8MN anatop clock driver
+config: arm-randconfig-r071-20241231 (https://download.01.org/0day-ci/archive/20241231/202412311031.781qvq8q-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
 
->
->> 
->> > Is the typical path to not use a syscon anyway?
->> >
->> 
->> I sure hope there will be no new syscon based controller but, ATM, around
->> 50% are syscon based in drivers/clk/meson. Those are here to stay and I
->> doubt we can do anything about it.
->
-> Ok.
->
->> 
->> >> 
->> >> This rework save a bit memory and the result is less of a maintenance
->> >> burden.
->> >> 
->> >> Unfortunately meson8b is left out for now since it is an early clock
->> >> driver that does not have proper device support for now.
->> >
->> > We should add a clk_hw_get_of_node() function that returns
->> > hw->core->of_node. Then there can be a similar function that looks at
->> > the of_node of a clk registered with of_clk_hw_register() and tries to
->> > find the regmap either with
->> > syscon_node_to_regmap(clk_hw_get_of_node(hw)) or on the parent of the
->> > node for the clk.
->> 
->> That's the thing. It means encoding the controller quirk of how to get
->> regmap in the clock ops. I would be prefer to avoid that.
->
-> So if we moved the init function out of struct clk_ops it would work?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202412311031.781qvq8q-lkp@intel.com/
 
-That's already what I'm doing actually. I have the controller part which
-position regmap so the clock part may get it regardless of where it
-comes from (syscon, io or something else)
+smatch warnings:
+drivers/clk/imx/clk-imx8mn-anatop.c:244 imx8mn_anatop_clocks_probe() error: buffer overflow 'hws' 62 <= 62
 
-> We could have helpers for the common paths, i.e. the device has the
-> regmap, or the syscon has the regmap, etc.
+vim +/hws +244 drivers/clk/imx/clk-imx8mn-anatop.c
 
-I think this is what I'm doing actually.
+87df58feb5834e Dario Binacchi 2024-12-29   40  static int imx8mn_anatop_clocks_probe(struct platform_device *pdev)
+87df58feb5834e Dario Binacchi 2024-12-29   41  {
+87df58feb5834e Dario Binacchi 2024-12-29   42  	struct device *dev = &pdev->dev;
+87df58feb5834e Dario Binacchi 2024-12-29   43  	struct device_node *np = dev->of_node;
+87df58feb5834e Dario Binacchi 2024-12-29   44  	void __iomem *base;
+87df58feb5834e Dario Binacchi 2024-12-29   45  	int ret;
+87df58feb5834e Dario Binacchi 2024-12-29   46  
+87df58feb5834e Dario Binacchi 2024-12-29   47  	base = devm_platform_ioremap_resource(pdev, 0);
+87df58feb5834e Dario Binacchi 2024-12-29   48  	if (IS_ERR(base)) {
+87df58feb5834e Dario Binacchi 2024-12-29   49  		dev_err(dev, "failed to get base address\n");
+87df58feb5834e Dario Binacchi 2024-12-29   50  		return PTR_ERR(base);
+87df58feb5834e Dario Binacchi 2024-12-29   51  	}
+87df58feb5834e Dario Binacchi 2024-12-29   52  
+87df58feb5834e Dario Binacchi 2024-12-29   53  	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
+87df58feb5834e Dario Binacchi 2024-12-29   54  						    IMX8MN_ANATOP_CLK_END),
 
->
->> 
->> With what you are suggesting I could make an ops that
->> * Try dev_get_regmap() first
->> * Try the syscon/of_node way next
->> 
->> I can make this "trial an error" approach work but I think it is pretty
->> nasty and encode controller stuff inside the clock driver.
->
-> I get it. The difference in driver design while sharing the same clk
-> hardware and clk_ops causes this tension.
->
->> 
->> >
->> > TL;DR: Don't use devres.
->> 
->> Using it makes thing nice and tidy. clk_regmap does not care were regmap
->> comes from. It just picks it up where it has been prepared
->
-> It doesn't work for early clocks that don't have a device.
+IMX8MN_ANATOP_CLK_END is IMX8MN_ANATOP_CLK_CLKOUT2
 
-This is why I left the possibility for regmap to be "pre-populated" so it
-continues to work the way it previously did.
+87df58feb5834e Dario Binacchi 2024-12-29   55  				   GFP_KERNEL);
+87df58feb5834e Dario Binacchi 2024-12-29   56  	if (WARN_ON(!clk_hw_data))
+87df58feb5834e Dario Binacchi 2024-12-29   57  		return -ENOMEM;
+87df58feb5834e Dario Binacchi 2024-12-29   58  
+87df58feb5834e Dario Binacchi 2024-12-29   59  	clk_hw_data->num = IMX8MN_ANATOP_CLK_END;
+87df58feb5834e Dario Binacchi 2024-12-29   60  	hws = clk_hw_data->hws;
+87df58feb5834e Dario Binacchi 2024-12-29   61  
+87df58feb5834e Dario Binacchi 2024-12-29   62  	hws[IMX8MN_ANATOP_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0);
+87df58feb5834e Dario Binacchi 2024-12-29   63  	hws[IMX8MN_ANATOP_CLK_32K] = imx_get_clk_hw_by_name(np, "osc_32k");
+87df58feb5834e Dario Binacchi 2024-12-29   64  	hws[IMX8MN_ANATOP_CLK_24M] = imx_get_clk_hw_by_name(np, "osc_24m");
+87df58feb5834e Dario Binacchi 2024-12-29   65  
+87df58feb5834e Dario Binacchi 2024-12-29   66  	hws[IMX8MN_ANATOP_AUDIO_PLL1_REF_SEL] =
+87df58feb5834e Dario Binacchi 2024-12-29   67  		imx_clk_hw_mux("audio_pll1_ref_sel", base + 0x0, 0, 2,
+87df58feb5834e Dario Binacchi 2024-12-29   68  			       pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+87df58feb5834e Dario Binacchi 2024-12-29   69  	hws[IMX8MN_ANATOP_AUDIO_PLL2_REF_SEL] =
+87df58feb5834e Dario Binacchi 2024-12-29   70  		imx_clk_hw_mux("audio_pll2_ref_sel", base + 0x14, 0, 2,
+87df58feb5834e Dario Binacchi 2024-12-29   71  			       pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+87df58feb5834e Dario Binacchi 2024-12-29   72  	hws[IMX8MN_ANATOP_VIDEO_PLL_REF_SEL] =
+87df58feb5834e Dario Binacchi 2024-12-29   73  		imx_clk_hw_mux("video_pll_ref_sel", base + 0x28, 0, 2,
+87df58feb5834e Dario Binacchi 2024-12-29   74  			       pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+87df58feb5834e Dario Binacchi 2024-12-29   75  	hws[IMX8MN_ANATOP_DRAM_PLL_REF_SEL] =
+87df58feb5834e Dario Binacchi 2024-12-29   76  		imx_clk_hw_mux("dram_pll_ref_sel", base + 0x50, 0, 2,
+87df58feb5834e Dario Binacchi 2024-12-29   77  			       pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+87df58feb5834e Dario Binacchi 2024-12-29   78  	hws[IMX8MN_ANATOP_GPU_PLL_REF_SEL] =
+87df58feb5834e Dario Binacchi 2024-12-29   79  		imx_clk_hw_mux("gpu_pll_ref_sel", base + 0x64, 0, 2,
+87df58feb5834e Dario Binacchi 2024-12-29   80  			       pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+87df58feb5834e Dario Binacchi 2024-12-29   81  	hws[IMX8MN_ANATOP_M7_ALT_PLL_REF_SEL] =
+87df58feb5834e Dario Binacchi 2024-12-29   82  		imx_clk_hw_mux("m7_alt_pll_ref_sel", base + 0x74, 0, 2,
+87df58feb5834e Dario Binacchi 2024-12-29   83  			       pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+87df58feb5834e Dario Binacchi 2024-12-29   84  	hws[IMX8MN_ANATOP_ARM_PLL_REF_SEL] =
+87df58feb5834e Dario Binacchi 2024-12-29   85  		imx_clk_hw_mux("arm_pll_ref_sel", base + 0x84, 0, 2,
+87df58feb5834e Dario Binacchi 2024-12-29   86  			       pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+87df58feb5834e Dario Binacchi 2024-12-29   87  	hws[IMX8MN_ANATOP_SYS_PLL3_REF_SEL] =
+87df58feb5834e Dario Binacchi 2024-12-29   88  		imx_clk_hw_mux("sys_pll3_ref_sel", base + 0x114, 0, 2,
+87df58feb5834e Dario Binacchi 2024-12-29   89  			       pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
+87df58feb5834e Dario Binacchi 2024-12-29   90  
+87df58feb5834e Dario Binacchi 2024-12-29   91  	hws[IMX8MN_ANATOP_AUDIO_PLL1] =
+87df58feb5834e Dario Binacchi 2024-12-29   92  		imx_clk_hw_pll14xx("audio_pll1", "audio_pll1_ref_sel",
+87df58feb5834e Dario Binacchi 2024-12-29   93  				   base, &imx_1443x_pll);
+87df58feb5834e Dario Binacchi 2024-12-29   94  	hws[IMX8MN_ANATOP_AUDIO_PLL2] =
+87df58feb5834e Dario Binacchi 2024-12-29   95  		imx_clk_hw_pll14xx("audio_pll2", "audio_pll2_ref_sel",
+87df58feb5834e Dario Binacchi 2024-12-29   96  				   base + 0x14, &imx_1443x_pll);
+87df58feb5834e Dario Binacchi 2024-12-29   97  	hws[IMX8MN_ANATOP_VIDEO_PLL] =
+87df58feb5834e Dario Binacchi 2024-12-29   98  		imx_clk_hw_pll14xx("video_pll", "video_pll_ref_sel",
+87df58feb5834e Dario Binacchi 2024-12-29   99  				   base + 0x28, &imx_1443x_pll);
+87df58feb5834e Dario Binacchi 2024-12-29  100  	hws[IMX8MN_ANATOP_DRAM_PLL] =
+87df58feb5834e Dario Binacchi 2024-12-29  101  		imx_clk_hw_pll14xx("dram_pll", "dram_pll_ref_sel", base + 0x50,
+87df58feb5834e Dario Binacchi 2024-12-29  102  				   &imx_1443x_dram_pll);
+87df58feb5834e Dario Binacchi 2024-12-29  103  	hws[IMX8MN_ANATOP_GPU_PLL] =
+87df58feb5834e Dario Binacchi 2024-12-29  104  		imx_clk_hw_pll14xx("gpu_pll", "gpu_pll_ref_sel", base + 0x64,
+87df58feb5834e Dario Binacchi 2024-12-29  105  				   &imx_1416x_pll);
+87df58feb5834e Dario Binacchi 2024-12-29  106  	hws[IMX8MN_ANATOP_M7_ALT_PLL] =
+87df58feb5834e Dario Binacchi 2024-12-29  107  		imx_clk_hw_pll14xx("m7_alt_pll", "m7_alt_pll_ref_sel",
+87df58feb5834e Dario Binacchi 2024-12-29  108  				   base + 0x74, &imx_1416x_pll);
+87df58feb5834e Dario Binacchi 2024-12-29  109  	hws[IMX8MN_ANATOP_ARM_PLL] =
+87df58feb5834e Dario Binacchi 2024-12-29  110  		imx_clk_hw_pll14xx("arm_pll", "arm_pll_ref_sel", base + 0x84,
+87df58feb5834e Dario Binacchi 2024-12-29  111  				   &imx_1416x_pll);
+87df58feb5834e Dario Binacchi 2024-12-29  112  	hws[IMX8MN_ANATOP_SYS_PLL1] = imx_clk_hw_fixed("sys_pll1", 800000000);
+87df58feb5834e Dario Binacchi 2024-12-29  113  	hws[IMX8MN_ANATOP_SYS_PLL2] = imx_clk_hw_fixed("sys_pll2", 1000000000);
+87df58feb5834e Dario Binacchi 2024-12-29  114  	hws[IMX8MN_ANATOP_SYS_PLL3] =
+87df58feb5834e Dario Binacchi 2024-12-29  115  		imx_clk_hw_pll14xx("sys_pll3", "sys_pll3_ref_sel", base + 0x114,
+87df58feb5834e Dario Binacchi 2024-12-29  116  				   &imx_1416x_pll);
+87df58feb5834e Dario Binacchi 2024-12-29  117  
+87df58feb5834e Dario Binacchi 2024-12-29  118  	/* PLL bypass out */
+87df58feb5834e Dario Binacchi 2024-12-29  119  	hws[IMX8MN_ANATOP_AUDIO_PLL1_BYPASS] =
+87df58feb5834e Dario Binacchi 2024-12-29  120  		imx_clk_hw_mux_flags("audio_pll1_bypass", base, 16, 1,
+87df58feb5834e Dario Binacchi 2024-12-29  121  				     audio_pll1_bypass_sels,
+87df58feb5834e Dario Binacchi 2024-12-29  122  				     ARRAY_SIZE(audio_pll1_bypass_sels),
+87df58feb5834e Dario Binacchi 2024-12-29  123  				     CLK_SET_RATE_PARENT);
+87df58feb5834e Dario Binacchi 2024-12-29  124  	hws[IMX8MN_ANATOP_AUDIO_PLL2_BYPASS] =
+87df58feb5834e Dario Binacchi 2024-12-29  125  		imx_clk_hw_mux_flags("audio_pll2_bypass", base + 0x14, 16, 1,
+87df58feb5834e Dario Binacchi 2024-12-29  126  				     audio_pll2_bypass_sels,
+87df58feb5834e Dario Binacchi 2024-12-29  127  				     ARRAY_SIZE(audio_pll2_bypass_sels),
+87df58feb5834e Dario Binacchi 2024-12-29  128  				     CLK_SET_RATE_PARENT);
+87df58feb5834e Dario Binacchi 2024-12-29  129  	hws[IMX8MN_ANATOP_VIDEO_PLL_BYPASS] =
+87df58feb5834e Dario Binacchi 2024-12-29  130  		imx_clk_hw_mux_flags("video_pll_bypass", base + 0x28, 16, 1,
+87df58feb5834e Dario Binacchi 2024-12-29  131  				     video_pll_bypass_sels,
+87df58feb5834e Dario Binacchi 2024-12-29  132  				     ARRAY_SIZE(video_pll_bypass_sels),
+87df58feb5834e Dario Binacchi 2024-12-29  133  				     CLK_SET_RATE_PARENT);
+87df58feb5834e Dario Binacchi 2024-12-29  134  	hws[IMX8MN_ANATOP_DRAM_PLL_BYPASS] =
+87df58feb5834e Dario Binacchi 2024-12-29  135  		imx_clk_hw_mux_flags("dram_pll_bypass", base + 0x50, 16, 1,
+87df58feb5834e Dario Binacchi 2024-12-29  136  				     dram_pll_bypass_sels,
+87df58feb5834e Dario Binacchi 2024-12-29  137  				     ARRAY_SIZE(dram_pll_bypass_sels),
+87df58feb5834e Dario Binacchi 2024-12-29  138  				     CLK_SET_RATE_PARENT);
+87df58feb5834e Dario Binacchi 2024-12-29  139  	hws[IMX8MN_ANATOP_GPU_PLL_BYPASS] =
+87df58feb5834e Dario Binacchi 2024-12-29  140  		imx_clk_hw_mux_flags("gpu_pll_bypass", base + 0x64, 28, 1,
+87df58feb5834e Dario Binacchi 2024-12-29  141  				     gpu_pll_bypass_sels,
+87df58feb5834e Dario Binacchi 2024-12-29  142  				     ARRAY_SIZE(gpu_pll_bypass_sels),
+87df58feb5834e Dario Binacchi 2024-12-29  143  				     CLK_SET_RATE_PARENT);
+87df58feb5834e Dario Binacchi 2024-12-29  144  	hws[IMX8MN_ANATOP_M7_ALT_PLL_BYPASS] =
+87df58feb5834e Dario Binacchi 2024-12-29  145  		imx_clk_hw_mux_flags("m7_alt_pll_bypass", base + 0x74, 28, 1,
+87df58feb5834e Dario Binacchi 2024-12-29  146  				     m7_alt_pll_bypass_sels,
+87df58feb5834e Dario Binacchi 2024-12-29  147  				     ARRAY_SIZE(m7_alt_pll_bypass_sels),
+87df58feb5834e Dario Binacchi 2024-12-29  148  				     CLK_SET_RATE_PARENT);
+87df58feb5834e Dario Binacchi 2024-12-29  149  	hws[IMX8MN_ANATOP_ARM_PLL_BYPASS] =
+87df58feb5834e Dario Binacchi 2024-12-29  150  		imx_clk_hw_mux_flags("arm_pll_bypass", base + 0x84, 28, 1,
+87df58feb5834e Dario Binacchi 2024-12-29  151  				     arm_pll_bypass_sels,
+87df58feb5834e Dario Binacchi 2024-12-29  152  				     ARRAY_SIZE(arm_pll_bypass_sels),
+87df58feb5834e Dario Binacchi 2024-12-29  153  				     CLK_SET_RATE_PARENT);
+87df58feb5834e Dario Binacchi 2024-12-29  154  	hws[IMX8MN_ANATOP_SYS_PLL3_BYPASS] =
+87df58feb5834e Dario Binacchi 2024-12-29  155  		imx_clk_hw_mux_flags("sys_pll3_bypass", base + 0x114, 28, 1,
+87df58feb5834e Dario Binacchi 2024-12-29  156  				     sys_pll3_bypass_sels,
+87df58feb5834e Dario Binacchi 2024-12-29  157  				     ARRAY_SIZE(sys_pll3_bypass_sels),
+87df58feb5834e Dario Binacchi 2024-12-29  158  				     CLK_SET_RATE_PARENT);
+87df58feb5834e Dario Binacchi 2024-12-29  159  
+87df58feb5834e Dario Binacchi 2024-12-29  160  	/* PLL out gate */
+87df58feb5834e Dario Binacchi 2024-12-29  161  	hws[IMX8MN_ANATOP_AUDIO_PLL1_OUT] =
+87df58feb5834e Dario Binacchi 2024-12-29  162  		imx_clk_hw_gate("audio_pll1_out", "audio_pll1_bypass",
+87df58feb5834e Dario Binacchi 2024-12-29  163  				base, 13);
+87df58feb5834e Dario Binacchi 2024-12-29  164  	hws[IMX8MN_ANATOP_AUDIO_PLL2_OUT] =
+87df58feb5834e Dario Binacchi 2024-12-29  165  		imx_clk_hw_gate("audio_pll2_out", "audio_pll2_bypass",
+87df58feb5834e Dario Binacchi 2024-12-29  166  				base + 0x14, 13);
+87df58feb5834e Dario Binacchi 2024-12-29  167  	hws[IMX8MN_ANATOP_VIDEO_PLL_OUT] =
+87df58feb5834e Dario Binacchi 2024-12-29  168  		imx_clk_hw_gate("video_pll_out", "video_pll_bypass",
+87df58feb5834e Dario Binacchi 2024-12-29  169  				base + 0x28, 13);
+87df58feb5834e Dario Binacchi 2024-12-29  170  	hws[IMX8MN_ANATOP_DRAM_PLL_OUT] =
+87df58feb5834e Dario Binacchi 2024-12-29  171  		imx_clk_hw_gate("dram_pll_out", "dram_pll_bypass",
+87df58feb5834e Dario Binacchi 2024-12-29  172  				base + 0x50, 13);
+87df58feb5834e Dario Binacchi 2024-12-29  173  	hws[IMX8MN_ANATOP_GPU_PLL_OUT] =
+87df58feb5834e Dario Binacchi 2024-12-29  174  		imx_clk_hw_gate("gpu_pll_out", "gpu_pll_bypass",
+87df58feb5834e Dario Binacchi 2024-12-29  175  				base + 0x64, 11);
+87df58feb5834e Dario Binacchi 2024-12-29  176  	hws[IMX8MN_ANATOP_M7_ALT_PLL_OUT] =
+87df58feb5834e Dario Binacchi 2024-12-29  177  		imx_clk_hw_gate("m7_alt_pll_out", "m7_alt_pll_bypass",
+87df58feb5834e Dario Binacchi 2024-12-29  178  				base + 0x74, 11);
+87df58feb5834e Dario Binacchi 2024-12-29  179  	hws[IMX8MN_ANATOP_ARM_PLL_OUT] =
+87df58feb5834e Dario Binacchi 2024-12-29  180  		imx_clk_hw_gate("arm_pll_out", "arm_pll_bypass",
+87df58feb5834e Dario Binacchi 2024-12-29  181  				base + 0x84, 11);
+87df58feb5834e Dario Binacchi 2024-12-29  182  	hws[IMX8MN_ANATOP_SYS_PLL3_OUT] =
+87df58feb5834e Dario Binacchi 2024-12-29  183  		imx_clk_hw_gate("sys_pll3_out", "sys_pll3_bypass",
+87df58feb5834e Dario Binacchi 2024-12-29  184  				base + 0x114, 11);
+87df58feb5834e Dario Binacchi 2024-12-29  185  
+87df58feb5834e Dario Binacchi 2024-12-29  186  	/* SYS PLL1 fixed output */
+87df58feb5834e Dario Binacchi 2024-12-29  187  	hws[IMX8MN_ANATOP_SYS_PLL1_OUT] =
+87df58feb5834e Dario Binacchi 2024-12-29  188  		imx_clk_hw_gate("sys_pll1_out", "sys_pll1", base + 0x94, 11);
+87df58feb5834e Dario Binacchi 2024-12-29  189  	hws[IMX8MN_ANATOP_SYS_PLL1_40M] =
+87df58feb5834e Dario Binacchi 2024-12-29  190  		imx_clk_hw_fixed_factor("sys_pll1_40m", "sys_pll1_out", 1, 20);
+87df58feb5834e Dario Binacchi 2024-12-29  191  	hws[IMX8MN_ANATOP_SYS_PLL1_80M] =
+87df58feb5834e Dario Binacchi 2024-12-29  192  		imx_clk_hw_fixed_factor("sys_pll1_80m", "sys_pll1_out", 1, 10);
+87df58feb5834e Dario Binacchi 2024-12-29  193  	hws[IMX8MN_ANATOP_SYS_PLL1_100M] =
+87df58feb5834e Dario Binacchi 2024-12-29  194  		imx_clk_hw_fixed_factor("sys_pll1_100m", "sys_pll1_out", 1, 8);
+87df58feb5834e Dario Binacchi 2024-12-29  195  	hws[IMX8MN_ANATOP_SYS_PLL1_133M] =
+87df58feb5834e Dario Binacchi 2024-12-29  196  		imx_clk_hw_fixed_factor("sys_pll1_133m", "sys_pll1_out", 1, 6);
+87df58feb5834e Dario Binacchi 2024-12-29  197  	hws[IMX8MN_ANATOP_SYS_PLL1_160M] =
+87df58feb5834e Dario Binacchi 2024-12-29  198  		imx_clk_hw_fixed_factor("sys_pll1_160m", "sys_pll1_out", 1, 5);
+87df58feb5834e Dario Binacchi 2024-12-29  199  	hws[IMX8MN_ANATOP_SYS_PLL1_200M] =
+87df58feb5834e Dario Binacchi 2024-12-29  200  		imx_clk_hw_fixed_factor("sys_pll1_200m", "sys_pll1_out", 1, 4);
+87df58feb5834e Dario Binacchi 2024-12-29  201  	hws[IMX8MN_ANATOP_SYS_PLL1_266M] =
+87df58feb5834e Dario Binacchi 2024-12-29  202  		imx_clk_hw_fixed_factor("sys_pll1_266m", "sys_pll1_out", 1, 3);
+87df58feb5834e Dario Binacchi 2024-12-29  203  	hws[IMX8MN_ANATOP_SYS_PLL1_400M] =
+87df58feb5834e Dario Binacchi 2024-12-29  204  		imx_clk_hw_fixed_factor("sys_pll1_400m", "sys_pll1_out", 1, 2);
+87df58feb5834e Dario Binacchi 2024-12-29  205  	hws[IMX8MN_ANATOP_SYS_PLL1_800M] =
+87df58feb5834e Dario Binacchi 2024-12-29  206  		imx_clk_hw_fixed_factor("sys_pll1_800m", "sys_pll1_out", 1, 1);
+87df58feb5834e Dario Binacchi 2024-12-29  207  
+87df58feb5834e Dario Binacchi 2024-12-29  208  	/* SYS PLL2 fixed output */
+87df58feb5834e Dario Binacchi 2024-12-29  209  	hws[IMX8MN_ANATOP_SYS_PLL2_OUT] =
+87df58feb5834e Dario Binacchi 2024-12-29  210  		imx_clk_hw_gate("sys_pll2_out", "sys_pll2", base + 0x104, 11);
+87df58feb5834e Dario Binacchi 2024-12-29  211  	hws[IMX8MN_ANATOP_SYS_PLL2_50M] =
+87df58feb5834e Dario Binacchi 2024-12-29  212  		imx_clk_hw_fixed_factor("sys_pll2_50m", "sys_pll2_out", 1, 20);
+87df58feb5834e Dario Binacchi 2024-12-29  213  	hws[IMX8MN_ANATOP_SYS_PLL2_100M] =
+87df58feb5834e Dario Binacchi 2024-12-29  214  		imx_clk_hw_fixed_factor("sys_pll2_100m", "sys_pll2_out", 1, 10);
+87df58feb5834e Dario Binacchi 2024-12-29  215  	hws[IMX8MN_ANATOP_SYS_PLL2_125M] =
+87df58feb5834e Dario Binacchi 2024-12-29  216  		imx_clk_hw_fixed_factor("sys_pll2_125m", "sys_pll2_out", 1, 8);
+87df58feb5834e Dario Binacchi 2024-12-29  217  	hws[IMX8MN_ANATOP_SYS_PLL2_166M] =
+87df58feb5834e Dario Binacchi 2024-12-29  218  		imx_clk_hw_fixed_factor("sys_pll2_166m", "sys_pll2_out", 1, 6);
+87df58feb5834e Dario Binacchi 2024-12-29  219  	hws[IMX8MN_ANATOP_SYS_PLL2_200M] =
+87df58feb5834e Dario Binacchi 2024-12-29  220  		imx_clk_hw_fixed_factor("sys_pll2_200m", "sys_pll2_out", 1, 5);
+87df58feb5834e Dario Binacchi 2024-12-29  221  	hws[IMX8MN_ANATOP_SYS_PLL2_250M] =
+87df58feb5834e Dario Binacchi 2024-12-29  222  		imx_clk_hw_fixed_factor("sys_pll2_250m", "sys_pll2_out", 1, 4);
+87df58feb5834e Dario Binacchi 2024-12-29  223  	hws[IMX8MN_ANATOP_SYS_PLL2_333M] =
+87df58feb5834e Dario Binacchi 2024-12-29  224  		imx_clk_hw_fixed_factor("sys_pll2_333m", "sys_pll2_out", 1, 3);
+87df58feb5834e Dario Binacchi 2024-12-29  225  	hws[IMX8MN_ANATOP_SYS_PLL2_500M] =
+87df58feb5834e Dario Binacchi 2024-12-29  226  		imx_clk_hw_fixed_factor("sys_pll2_500m", "sys_pll2_out", 1, 2);
+87df58feb5834e Dario Binacchi 2024-12-29  227  	hws[IMX8MN_ANATOP_SYS_PLL2_1000M] =
+87df58feb5834e Dario Binacchi 2024-12-29  228  		imx_clk_hw_fixed_factor("sys_pll2_1000m", "sys_pll2_out", 1, 1);
+87df58feb5834e Dario Binacchi 2024-12-29  229  
+87df58feb5834e Dario Binacchi 2024-12-29  230  	hws[IMX8MN_ANATOP_CLK_CLKOUT1_SEL] =
+87df58feb5834e Dario Binacchi 2024-12-29  231  		imx_clk_hw_mux2("clkout1_sel", base + 0x128, 4, 4,
+87df58feb5834e Dario Binacchi 2024-12-29  232  				clkout_sels, ARRAY_SIZE(clkout_sels));
+87df58feb5834e Dario Binacchi 2024-12-29  233  	hws[IMX8MN_ANATOP_CLK_CLKOUT1_DIV] =
+87df58feb5834e Dario Binacchi 2024-12-29  234  		imx_clk_hw_divider("clkout1_div", "clkout1_sel", base + 0x128,
+87df58feb5834e Dario Binacchi 2024-12-29  235  				   0, 4);
+87df58feb5834e Dario Binacchi 2024-12-29  236  	hws[IMX8MN_ANATOP_CLK_CLKOUT1] =
+87df58feb5834e Dario Binacchi 2024-12-29  237  		imx_clk_hw_gate("clkout1", "clkout1_div", base + 0x128, 8);
+87df58feb5834e Dario Binacchi 2024-12-29  238  	hws[IMX8MN_ANATOP_CLK_CLKOUT2_SEL] =
+87df58feb5834e Dario Binacchi 2024-12-29  239  		imx_clk_hw_mux2("clkout2_sel", base + 0x128, 20, 4,
+87df58feb5834e Dario Binacchi 2024-12-29  240  				clkout_sels, ARRAY_SIZE(clkout_sels));
+87df58feb5834e Dario Binacchi 2024-12-29  241  	hws[IMX8MN_ANATOP_CLK_CLKOUT2_DIV] =
+87df58feb5834e Dario Binacchi 2024-12-29  242  		imx_clk_hw_divider("clkout2_div", "clkout2_sel", base + 0x128,
+87df58feb5834e Dario Binacchi 2024-12-29  243  				   16, 4);
+87df58feb5834e Dario Binacchi 2024-12-29 @244  	hws[IMX8MN_ANATOP_CLK_CLKOUT2] =
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Corruption.
 
-I admit early clocks is a low priority for me since I only have one
-controller like this and I do not expect more.
-
-If cleaning up this particular case is important, then I could add
-another level of init:
-* A callback passed along the init data of the clock to get the regmap.
-  That callback would be called by the .init() ops, if set.
-  That can encode any quirks without polluting the ops.
-* It will grow the init data so the change won't save memory anymore.
-  This was more a bonus so I don't really mind. Maintainability is more
-  important.
-* If the callback is not set, then it goes through the default, as
-  proposed here. This would avoid patching all the clk_regmap clock of
-  every controller.
-
->
->> 
->> That approach could be extended to support controller with multiple
->> regmaps, with a name that does not depend on regmap_config and is local
->> to the clock controller. This will be useful when the name if defined
->> somewhere else (syscon, auxiliary device, etc ...)
->> 
->
-> I think you're saying that clk_ops can be common things that aren't
-> device/clk controller specific, while the regmap config is usually
-> device/clk controller specific.
-
-Agreed
-
-> Furthermore, the name of the regmap is
-> also usually device/clk controller specific.
-
-The name registered in regmap_config itself is device specific, not
-controller specific, since it can come from something else in the
-platform (syscon or even aux devs), that why I think an independent
-namespace is desirable -- Same goes the generic solution Conor is
-working on I think.
-
-> The regmap assignment
-> doesn't really fit with the clk_ops because it's not operating on the
-> clk hardware like the other clk_ops all do.
-
-I see what you mean and I agree. It does not operate on the hardware but
-it does collect the resources it needs to operate the HW, and ideally
-it should do just that - without controller quirks popping up there.
-
-Anyway a callback passed in init data takes care of 'io vs syscon'
-controller too, same as devres. I can go that route if this is what you
-prefer. I thought devres was a more elegant solution but it is indeed
-restricted to 'device enabled' controllers. 
-
-The change will be a bit ugly in the syscon ones but I don't mind.
-Is that fine for v2 ?
+87df58feb5834e Dario Binacchi 2024-12-29  245  		imx_clk_hw_gate("clkout2", "clkout2_div", base + 0x128, 24);
+87df58feb5834e Dario Binacchi 2024-12-29  246  
+87df58feb5834e Dario Binacchi 2024-12-29  247  	imx_check_clk_hws(hws, IMX8MN_ANATOP_CLK_END);
+87df58feb5834e Dario Binacchi 2024-12-29  248  
+87df58feb5834e Dario Binacchi 2024-12-29  249  	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+87df58feb5834e Dario Binacchi 2024-12-29  250  	if (ret < 0) {
+87df58feb5834e Dario Binacchi 2024-12-29  251  		imx_unregister_hw_clocks(hws, IMX8MN_ANATOP_CLK_END);
+87df58feb5834e Dario Binacchi 2024-12-29  252  		return dev_err_probe(dev, ret,
+87df58feb5834e Dario Binacchi 2024-12-29  253  				     "failed to register anatop clock provider\n");
+87df58feb5834e Dario Binacchi 2024-12-29  254  	}
+87df58feb5834e Dario Binacchi 2024-12-29  255  
+87df58feb5834e Dario Binacchi 2024-12-29  256  	dev_info(dev, "NXP i.MX8MN anatop clock driver probed\n");
+87df58feb5834e Dario Binacchi 2024-12-29  257  	return 0;
+87df58feb5834e Dario Binacchi 2024-12-29  258  }
 
 -- 
-Jerome
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
