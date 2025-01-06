@@ -1,63 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8861C5F16;
-	Sun,  5 Jan 2025 20:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1574478F2F;
+	Mon,  6 Jan 2025 03:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736107422; cv=none; b=rUR+OT+HKQsNPh3VaRli7c/mkMAy0GmrBfwWW6q2bv603WBxqUQA7AHHvfdvGzYexSrnjmlvWHPpCsRtyQZ9uhzhyqFsXBrqORDJzLAyqhsAUJm8TM2XK91SJ5KWGdzCvXkOaue//gygfesA3nhhbHNpJCX0hzGXXtw5VY557Hs=
+	t=1736133062; cv=none; b=lT894Ko1h3rUO8BCTnufhW31Aqz/JC4xYnFLx/1JVvBaQL5zeGJa6Fb0xzAc5IZ67r1UisIHku3YOGKr41JQV3sMGBkvnpoCHmwb4AwE0PBGsGHXbpml6Aaki06hnkqUkhdjOhN5HpK+6nLbGtj3fNqdzpS5Zj6Sd1ZV6aYUyAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736107422; c=relaxed/simple;
-	bh=2QiVVvEdyfEV4KKA76024dZMQPxMJ4sgx97ZvsCV5is=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mOmWGUw2ExQtMMwjCxaFNPnXqXcSR9szxHtMq3Wjfjhs47+XAQZRjFljcHI9i16VKoTslFVXCYbqeWc9veldHi44Yj1Cz2AWgMp34TC5NrHPX+kZt+Ry/mJVyWG/ZJgVzNncMQjPUGEU8h7yGQ0TrFUNoy85aR9QKs0rAEipoSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pnhl1/YI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736133062; c=relaxed/simple;
+	bh=BGHJPAGUmaDxq3GKXC+GLKFqJprVvTr3ybxTHqO3EEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wma/FTOIljgHOtcdsWaDiBMUfb0RpIN9OjbXn4XB8G9+rsCHqXU1M30kiNc27pjnz0I7uwCKlqR/ecne0jgShMXR6pNwJIje5SHGX1eSnjqrvOv//sUqnljtnVzClh728eS6yZygkPEbptN121UQ+Oc1i/FKumpt7m2FP3l9e8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cx8lkfNt; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pnhl1/YI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 445CCC4CED0;
-	Sun,  5 Jan 2025 20:03:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736107422;
-	bh=2QiVVvEdyfEV4KKA76024dZMQPxMJ4sgx97ZvsCV5is=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=pnhl1/YIz2a/Czv/h6Ejb1ABu/9lZExBeiVPC+LP27577Wc3orsfve+J9YTpFuJKa
-	 sMwA8rsPluUIMC/GDPS8sNLbplIdsJfnFa97rB8H87SL5C81/8GYgEoEXYc70wLhlS
-	 REbadKkFyh68rH0yKT1LEgFpXAvx/ZMZJYD04DGcsUGjhttQd5+Q1U4B6UUYGg1VUC
-	 atZcIL199adBVh888Q4Mx9O53xRdWIyNsEAeghszANMTeSUW6bM8a4YX6uRWjemtwn
-	 gkeAbFFgFBZLtc4m1QAIhsxHecTzp2BEI91q/WtSCvJaltcaWnN4Jke0pqehprpafS
-	 l63ZD3ANZTx1Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 72215380A976;
-	Sun,  5 Jan 2025 20:04:04 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v6.13-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250104205557.116554-1-sboyd@kernel.org>
-References: <20250104205557.116554-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250104205557.116554-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: c384481006476ac65478fa3584c7245782e52f34
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7a5b6fc8bd70cbb22b1e9eacd7edaf5626e9fc74
-Message-Id: <173610744315.2663043.159221947203607777.pr-tracker-bot@kernel.org>
-Date: Sun, 05 Jan 2025 20:04:03 +0000
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cx8lkfNt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1736133061; x=1767669061;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BGHJPAGUmaDxq3GKXC+GLKFqJprVvTr3ybxTHqO3EEk=;
+  b=cx8lkfNtlO5HA0V+cc3gPA1zBPS/ygt7kjeQ4Cr7FFlqGw/gDDBEEH0S
+   wL79aAxSH66vKzhbB3ZGKyH6ghZTdtt2dgDe3I3sCJnY6w0OdKe/u0DWd
+   371NBalBKoH4I9GYXGF922L1h+nYlqQt7LMjhgS0X60Ez9iE2xI8xa2R+
+   GnFBAoboWbScDzEe+rkweM9NrFwYUqVuD2nbHh8mnmWrpC7vIQjvlcoWF
+   fZOzb+sT9QR49GuV9dUcDBPagXtSlzgDYPa9MISmAFxBOCqc/HxGSN7wX
+   +xOL9pcc0pCM/V8kWctM7D8l71sgQ3HZX01+GjCfYkWX3gr2HPSLul30/
+   w==;
+X-CSE-ConnectionGUID: S3h8CLjqTA+xPHlKf4NLmw==
+X-CSE-MsgGUID: DgEJ3C8RQ0mLcpwmbLHf7g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11306"; a="40045773"
+X-IronPort-AV: E=Sophos;i="6.12,292,1728975600"; 
+   d="scan'208";a="40045773"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jan 2025 19:11:00 -0800
+X-CSE-ConnectionGUID: RaTZywhFRLaPo7RRqvOO+w==
+X-CSE-MsgGUID: +IbA2OdQQFqI6jJhZzw2Ug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,292,1728975600"; 
+   d="scan'208";a="102846774"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 05 Jan 2025 19:10:38 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tUdVf-000CCN-24;
+	Mon, 06 Jan 2025 03:10:31 +0000
+Date: Mon, 6 Jan 2025 11:10:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH] clk: renesas: r9a07g044: Add clock and reset entry for
+ DRP-AI
+Message-ID: <202501061001.6iClUTxN-lkp@intel.com>
+References: <20250104175346.656352-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250104175346.656352-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The pull request you sent on Sat,  4 Jan 2025 12:55:56 -0800:
+Hi Prabhakar,
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+kernel test robot noticed the following build warnings:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7a5b6fc8bd70cbb22b1e9eacd7edaf5626e9fc74
+[auto build test WARNING on geert-renesas-drivers/renesas-clk]
+[also build test WARNING on clk/clk-next linus/master v6.13-rc6 next-20241220]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thank you!
+url:    https://github.com/intel-lab-lkp/linux/commits/Prabhakar/clk-renesas-r9a07g044-Add-clock-and-reset-entry-for-DRP-AI/20250105-015708
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
+patch link:    https://lore.kernel.org/r/20250104175346.656352-1-prabhakar.mahadev-lad.rj%40bp.renesas.com
+patch subject: [PATCH] clk: renesas: r9a07g044: Add clock and reset entry for DRP-AI
+config: nios2-randconfig-r052-20250106 (https://download.01.org/0day-ci/archive/20250106/202501061001.6iClUTxN-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250106/202501061001.6iClUTxN-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202501061001.6iClUTxN-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/clk/renesas/r9a07g044-cpg.c:97:35: warning: 'dtable_4_32' defined but not used [-Wunused-const-variable=]
+      97 | static const struct clk_div_table dtable_4_32[] = {
+         |                                   ^~~~~~~~~~~
+
+
+vim +/dtable_4_32 +97 drivers/clk/renesas/r9a07g044-cpg.c
+
+    96	
+  > 97	static const struct clk_div_table dtable_4_32[] = {
+    98		{3, 4},
+    99		{4, 5},
+   100		{5, 6},
+   101		{6, 7},
+   102		{7, 8},
+   103		{8, 9},
+   104		{9, 10},
+   105		{10, 11},
+   106		{11, 12},
+   107		{12, 13},
+   108		{13, 14},
+   109		{14, 15},
+   110		{15, 16},
+   111		{16, 17},
+   112		{17, 18},
+   113		{18, 19},
+   114		{19, 20},
+   115		{20, 21},
+   116		{21, 22},
+   117		{22, 23},
+   118		{23, 24},
+   119		{24, 25},
+   120		{25, 26},
+   121		{26, 27},
+   122		{27, 28},
+   123		{28, 29},
+   124		{29, 30},
+   125		{30, 31},
+   126		{31, 32},
+   127		{0, 0},
+   128	};
+   129	
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
