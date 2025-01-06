@@ -1,80 +1,140 @@
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AEF156238;
-	Mon,  6 Jan 2025 11:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736163208; cv=none; b=MIXkzAQqA7I4JT6U0rJ3MlGTT09QlR+9BV5rVv6ISm23MMtoZD5Q2o+lg4BjQhHKAY+q8/8AbTUqxmqI+tCar6Hwu4OMv3uySsfINrL/i8i8wzmyKGlf43ADvhhJAbedg3fSXVh+9V3S2SoqRnjIqsXrDVJ0xjEoFFZR8FpRtgE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736163208; c=relaxed/simple;
-	bh=A2VbHCh2nvdE8f5DyLA9vLSAC91A3zhxUCopF+zUwsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/OqJe2zIrcNQjZdGuscRVvk9myfGEf+7/XbNP003sTsqquZh0HND6deEHXku6A3zRCNQkL0kbl+uOhUd3IgcLzcAet3ML3xDQ/WbITjI7ViL6I5sjUbLgQ8uzLfSF4x59/QvJH4OyUWQuA6tU0/Ftkcxp+J4ayC91tWI5JO1jQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=s8EREmB2; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="s8EREmB2"
-Received: from 8bytes.org (p54921e31.dip0.t-ipconnect.de [84.146.30.49])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 46E6B2E0016;
-	Mon,  6 Jan 2025 12:24:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1736162687;
-	bh=A2VbHCh2nvdE8f5DyLA9vLSAC91A3zhxUCopF+zUwsk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s8EREmB2Oljv3DrxUsRvmMVdnIZeXQOKGmreXPF1w/R8bB/8ImGDiR6Ra4TYb+cLr
-	 ZEUmRouXeJ8L3ZVWIQhFm0wXAIR9WG1jGXNVFhaii1V3Rt0p+0TJHnCg2yw6Td/2sM
-	 1ilO4a1IQbNvExxFWnpVZo4xinTJsj/RXfMKH0qK5f2EzMZb7ZrQ9kKw9FNOansmuy
-	 6pAJsXGw9ssTZu2UaHL/9gyItieOHF4hebKU775HU97zaC7/Fo9PvlpFOrEvP6N6Ny
-	 eApdlDbnkayhisHkOXTbq7RQyOuwyzrxS3MjSog5MFJFxC+AQ+PVld/RqnRQydX7ci
-	 pndIhk04I4JbA==
-Date: Mon, 6 Jan 2025 12:24:46 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Parthiban Nallathambi <parthiban@linumiz.com>
-Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org
-Subject: Re: [PATCH 09/22] iommu: sun50i: make reset control optional
-Message-ID: <Z3u9fuZ2n1y3Or_-@8bytes.org>
-References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com>
- <20241227-a133-display-support-v1-9-13b52f71fb14@linumiz.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8DC1DE3AB
+	for <linux-clk@vger.kernel.org>; Mon,  6 Jan 2025 13:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736171084; cv=none; b=YT98HmPY3mNPUbDJNss/zh0NA0Cl4YANKXq/mPCwzQJ3NOczaUGIj4C7DI2XrUSIoQxQsIF1STb3/ahkLdXxjm/2NKUmiS1GW1ivnlQ01FAAeHAEWGAEYX8ghj/9vAU96OLmaYkXYvsq5QCCwQQzj/I2Nv1i53Do3ZFLpXV36m8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736171084; c=relaxed/simple;
+	bh=IzLjyqiZQYj0HolvNDwEGq9bzWMpH1csfdZOubbN4CY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SYwByEyD/fpY8yWzAtxvW1pAFRYjHURwN/knAWjcJmMmdEq8DmV7TSD3vc+GEgRkcqkPARL4zMR38IqomrQQomaWz5BAHzOild7iF9yR/gCY9zaWihiCKKYkq3VVdfwNtRjN+473/XUytM7Lkwb94Vk/LVS97oV2UDtbciSnryY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nLEsiTv0; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nLEsiTv0"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4361f09be37so22444395e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 06 Jan 2025 05:44:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736171081; x=1736775881; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EMnwIoklKmOQ9k3BBN3w1reDAPPc+Np1bkPck8HODv8=;
+        b=nLEsiTv0iLxLdXZwuRW/PRC2sIJ0D8DCgYgsAMD+C8bRVf94qhP9Z8iMduflxdGO5r
+         fP+jJYSmkhNgexV5pR4yQcYsYPdNmTcv9O8HIuRCmOzyp5LtBFunUR3ii+7Stusgzbi0
+         YMfluSbz1wYKtOh+GW/jbw/O11ZJwD4/oxtkya9jIQe+83YCkTCJNxdnifzoIXQAZVLd
+         S2XiDAvD0o7R+GbosTbNhNx3CG6TLQ9txIfI5AgYr0O7fQmwP9dVWa2/3ulmaE2oMGrq
+         GAwhk25nQjnfpThPV+8I8IhplYALs+G1hC3qrg46uam0f7y4C4CVJOVhtViHtXjRsSTC
+         gIzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736171081; x=1736775881;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EMnwIoklKmOQ9k3BBN3w1reDAPPc+Np1bkPck8HODv8=;
+        b=K5p3vSMe3/DAhWL0Cye9qLepmrLVfzy+c+EVWj47rza/NNfu5RKJpSX0d6ZVPoFgig
+         V5vBUmaSET0k0nHTgkGsMDXfQVHAD3AiXja2T/GibV9Ubw1cxaL1e6i+plIe/j2ozOjF
+         cSjpFU005VPqlsEQygs+6jieMlQI5zKk1CMCbBkLXUYjP0qvFEEwJrtfpiN+EvuUspLQ
+         DtdnP2XfqXsCVeer6IqK07DX2Jhm3ax1BLSzJmeq+l43m/hMOT891IZUdm27B+FuhSWZ
+         Co0fYdwT7z3//LZasf8iGHbJT3/2SG/8dAOTUTn+NaY3Lc2EEGus9gircCUrrcHCW3GS
+         cF6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWkeRoF9uob2wJo8bMgsHJGkPaTlRa916FwxCTQ2KOExsMh6R2whap5whDF0xrjhT5tn+Zgki/PukM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYhF9bicWmMO4E5Mv4/p7ZfEQ/nkSqMivetRwEYw3V448cnRB0
+	Bm9Y18cBUYEUrLpCDmOeJfNL0DZj2gA071MY6eiBbBPRJ800bqk2c61o6GYYYzc=
+X-Gm-Gg: ASbGncvR2HODR0xt9rjGpDkdtAgk9SDBr9HTceEIoXAa5d90XwGFMrO1ytTTd5j379n
+	4vdzSmm6Xsc2dw7fIdODSV0MEWzKoQSaoNwZ1Uar9pjQZwHySi4ErdpEZeTFVGzdDqdRA6uFpya
+	xWxMoUV5P7pSseaMgxy0CY6iZCwIO8w5awqmsaz5Y34iCpF6S7CzmCyhvjrdOoskKoK25rRXLW4
+	rQehFwFb7ZkqUXU68UfKR/tkZtpqMamtv8+70Fvm89rtvFShhvPLpdZYo8HYph9V/HaVRsP
+X-Google-Smtp-Source: AGHT+IEXQzyXvJh87C4qYu7Ax5vz3+jmqOb6lMmmEshKHmHAav4FLPK3omE//aDu+k4UsNcOasv61g==
+X-Received: by 2002:adf:9b83:0:b0:38a:4184:1239 with SMTP id ffacd0b85a97d-38a418412d5mr11223749f8f.10.1736171081048;
+        Mon, 06 Jan 2025 05:44:41 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c8acc02sm47383151f8f.104.2025.01.06.05.44.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2025 05:44:40 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v2 0/3] clk: qcom: sm8750: Add sm8750-dispcc clock
+ controller
+Date: Mon, 06 Jan 2025 14:44:28 +0100
+Message-Id: <20250106-sm8750-dispcc-v2-0-6f42beda6317@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241227-a133-display-support-v1-9-13b52f71fb14@linumiz.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADzee2cC/13MzQoCIRSG4VsZzjrjKJpDq+4jZmH+zBwoHTSkG
+ Lz3bKBNy/eD79mg+Ey+wHnYIPtKhVLsIQ4D2MXE2TNyvUGgkJwLxcpj1AqZo7JaywIGo28nGYx
+ 10D9r9oFeu3edei9Unim/d77y7/qTxj+pcoaMC9SojESu7OVO0eR0THmGqbX2ARN568KrAAAA
+X-Change-ID: 20241125-sm8750-dispcc-f0fa7b64facd
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1462;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=IzLjyqiZQYj0HolvNDwEGq9bzWMpH1csfdZOubbN4CY=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBne95BbwhkZoUPTZwRDH6P8tjnEWzo4z7vS6O7r
+ +AIEX/2BTiJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ3veQQAKCRDBN2bmhouD
+ 1xd8D/98vuMER27s5/cr0rdd39XTxPqh2YSlg9Ybvb8cXrFN+jeQV/TvgF4ve0t52SKauCaT5Sc
+ 51gjdcMyNtcT5XPnfY9krIgClBvPl3BAXJuHwM2txKngbPe6L3Kz0A7s3ETUNwUIGvPlMbXUDnQ
+ jnyYwRuxEUz6GAQ+aubhgWmJRotodmPzoGdGd9PPyc65CyPWdYpDkBv4e8RAMbM82rdiz0YfIR5
+ tuudFNp//IgliJUaNSdm1e1CJEbXSyeVHH9rfRdnyK7p3sK+QPSAU/k1v7aMmypZqOlMhDjM6Es
+ FdEh0p98uLW5GUZmNxITGloM6DAbY4GnIUrTM0Nj5rGhx2cGdJwUvJkDjkWEuAme83Qd+q0fV+q
+ yZPXvDjMJ/cDvkALAF13UJRxWtGUB5qKYGPHyzCnQGXxt8jEj2eQ16L4w0VYwcEFN7HXaKAtDwa
+ QHn2K6i2SORte35KSBhTfctNd8kU7jYgQqBh3LN1xOC/+Kch6UUFVoxA2Cm1pQJZzfT2QPknKnI
+ HHcqSi4QQWopKNdJQetO+iySKhSBoD48FIXqz0RPQtAZdn8Bb9zqHTog8+jpt37twzXtgjwC673
+ r3VSrA8McuCy9DkM3bBVc5NxBaTQx3DEF6cHlI+WnyAy3J1hIs+HU2VW/MSyOm5I8Kjmu9e3Zpy
+ sMDhtoLYFZjo/fQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On Fri, Dec 27, 2024 at 04:37:56PM +0530, Parthiban Nallathambi wrote:
-> A133/A100 SoC doesn't have reset control from the CCU. Get reset
-> control line optionally.
-> 
-> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
-> ---
->  drivers/iommu/sun50i-iommu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Add Display clock controller for SM8750.
 
-Acked-by: Joerg Roedel <jroedel@suse.de>
+Changes in v2:
+- Implement feedback from Stephen - see individual patches changelog.
+- Few cleanups found during testing/review - see individual patches changelog.
+- Use clk_rcg2_shared_ops, where applicable.
+- Link to v1: https://lore.kernel.org/r/20241128-sm8750-dispcc-v1-0-120705a4015c@linaro.org
+
+Dependency:
+1. Taycan PLL and rest of clocks: "clks: qcom: Introduce clks for
+   SM8750"
+   https://lore.kernel.org/r/20241112002807.2804021-4-quic_molvera@quicinc.com
+
+Best regards,
+Krzysztof
+
+---
+Krzysztof Kozlowski (3):
+      dt-bindings: clock: qcom,sm8550-dispcc: Add SM8750 DISPCC
+      clk: qcom: clk-alpha-pll: Add Pongo PLL
+      clk: qcom: dispcc-sm8750: Add SM8750 Display clock controller
+
+ .../bindings/clock/qcom,sm8550-dispcc.yaml         |    4 +-
+ drivers/clk/qcom/Kconfig                           |   11 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |  165 +-
+ drivers/clk/qcom/clk-alpha-pll.h                   |    6 +
+ drivers/clk/qcom/dispcc-sm8750.c                   | 1963 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,sm8750-dispcc.h     |  112 ++
+ 7 files changed, 2260 insertions(+), 2 deletions(-)
+---
+base-commit: 3dc591aad724ed3578548c211cc3c368f6dc5947
+change-id: 20241125-sm8750-dispcc-f0fa7b64facd
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
