@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9B41DA60B
-	for <linux-clk@vger.kernel.org>; Mon,  6 Jan 2025 14:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADFD1DF256
+	for <linux-clk@vger.kernel.org>; Mon,  6 Jan 2025 14:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736173322; cv=none; b=pH5LVQtXQq/peydwRtJxXOMPmtzm9EEusEMvEbOyJdvyRz6OUZigtEQn/UAg4Vc61L9ouPJcmAaxJc3Z4xykORdL6bPpvgLSDmbG40//4nvm7houaHNYvn9nml0DwSS3qRkmXf2whggZS81tFJgfwbGkdQgXFnqZyOY2hCp2fIU=
+	t=1736173323; cv=none; b=ZfXz6iHgM/o59LoXuGf6Uqq/jwUta98EaU0SIhsAL/l6C6WY9IEPyQVdvd3sCNo0fenGuUgtCM+xXp8sO8+toR4J7wvws6+R0/NU0sUXKy7IUMOvTJ9cwPdv2n/mybGFFxBFir1YbNqd+eTdE6S9VLB05Mra2bI2M9cXI7W8kSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736173322; c=relaxed/simple;
-	bh=aZizG9wVc2BYNv87OCFTho53UtqStXXRjOOm4tYUmqQ=;
+	s=arc-20240116; t=1736173323; c=relaxed/simple;
+	bh=xsMNSiLsehQAQ6W+aIzNgv4jCYm8TLEXlYSXaxkaEpI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=m61uQ6ZRe6Ojc6XEK9KYHF9rpI0AhU6QK5t0EQa4dRJu1JTe4fYLmudstQ8ci0M3TkBD+VNiVvkJGwBdEPs6DICjFuTIJR+DohIim94WZPrhfUjfynPEZ+zKmoTHhAQKvoXuNpwD1ifeEk7CBwIbVvn81VBUcY7ysOd0rq+X25w=
+	 In-Reply-To:To:Cc; b=LDoT4TVO+72iDSrii2lk1ZSGEN8RxwXLn6r0B+0eb6RZnCcl1QtqrDAHgwAByUJWHdh+lBbMeAIPjbz1VUlaOu2V3TrRFLz4ads822lo+V1XHFZIRluw+PgFgDa3RYtnzGdbckODX4CcHubFDgZxkd+fUR61AiMvO9gQO/63dmU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,22 +18,22 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tUnzF-0003vT-CM; Mon, 06 Jan 2025 15:21:45 +0100
+	id 1tUnzF-0003vP-E4; Mon, 06 Jan 2025 15:21:45 +0100
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tUnzE-007BR3-0U;
+	id 1tUnzE-007BR0-0G;
 	Mon, 06 Jan 2025 15:21:44 +0100
 Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
 	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tUnzE-008rLw-2Z;
+	id 1tUnzE-008rLw-2W;
 	Mon, 06 Jan 2025 15:21:44 +0100
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Mon, 06 Jan 2025 15:21:45 +0100
-Subject: [PATCH v2 4/6] arm64: dts: freescale: imx8mp-skov: fix LDB clock
- rate configuration
+Date: Mon, 06 Jan 2025 15:21:42 +0100
+Subject: [PATCH v2 1/6] dt-bindings: clock: imx8m: document
+ nominal/overdrive properties
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,7 +42,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250106-imx8m-clk-v2-4-6aaeadac65fe@pengutronix.de>
+Message-Id: <20250106-imx8m-clk-v2-1-6aaeadac65fe@pengutronix.de>
 References: <20250106-imx8m-clk-v2-0-6aaeadac65fe@pengutronix.de>
 In-Reply-To: <20250106-imx8m-clk-v2-0-6aaeadac65fe@pengutronix.de>
 To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
@@ -56,76 +56,77 @@ To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
  Marek Vasut <marex@denx.de>
 Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Ahmad Fatoum <a.fatoum@pengutronix.de>
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+ Ahmad Fatoum <a.fatoum@pengutronix.de>
 X-Mailer: b4 0.14.2
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
 X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-When the imx8mp-skov-revb-mi1010ait-1cp1 device tree was first added, it
-configured the minimum clock rate supported by the panel instead of
-the typical clock rate:
+The imx8m-clock.yaml binding covers the clock controller inside all
+of the i.MX8M Q/M/N/P SoCs. All of them have in common that they
+support two operating modes: nominal and overdrive mode.
 
-  fsl-ldb 32ec0000.blk-ctrl:bridge@5c: Configured LDB clock
-  (482300000 Hz) does not match requested LVDS clock: 490000000 Hz
+While the overdrive mode allows for higher frequencies for many IPs,
+the nominal mode needs a lower SoC voltage, thereby reducing
+heat generation and power usage.
 
-Besides the warning, the display functioned normally though
-This broke with commit ff06ea04e4cf ("clk: imx: clk-imx8mp: Allow
-media_disp pixel clock reconfigure parent rate") as the reconfiguration
-of the parent clocks removed setting the IMX8MP_VIDEO_PLL1 to 7 times
-the display clock rate:
+As increasing clock rates beyond the maximum permitted by the supplied
+SoC voltage can lead to difficult to debug issues, device tree consumers
+would benefit from knowing what mode is active to enforce the clock rate
+limits that come with it.
 
-  fsl-ldb 32ec0000.blk-ctrl:bridge@5c: Configured LDB clock
-  (70000000 Hz) does not match requested LVDS clock: 490000000 Hz
+To facilitate this, extend the clock controller bindings with two mutually
+exclusive optional properties. Allowing for absence of both properties is
+needed, because there is no default suitable for all boards:
 
-Fix this by configuring the typical rate instead and benefit from
-the new commit by dropping the now unneeded assigned-clock-rates
-in &media_blk_ctrl.
+For i.MX8M Mini and Nano, the kernel SoC DTSIs has assigned-clock-rates
+that are all achievable in nominal mode. For i.MX8MP, there are some
+rates only validated for overdrive mode.
 
-Fixes: ff06ea04e4cf ("clk: imx: clk-imx8mp: Allow media_disp pixel clock reconfigure parent rate")
+But even for the i.MX8M Mini/Nano boards, we don't know what rates they
+may configure at runtime, so it has not been possible so far to infer from
+just the device tree what the mode is.
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
- .../dts/freescale/imx8mp-skov-revb-mi1010ait-1cp1.dts | 19 +++++--------------
- 1 file changed, 5 insertions(+), 14 deletions(-)
+ Documentation/devicetree/bindings/clock/imx8m-clock.yaml | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-skov-revb-mi1010ait-1cp1.dts b/arch/arm64/boot/dts/freescale/imx8mp-skov-revb-mi1010ait-1cp1.dts
-index 30962922b361c9d05887722769c7585eb85b44a0..a13f6d76a495936575ead53e4ea69ed39f80d61c 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-skov-revb-mi1010ait-1cp1.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-skov-revb-mi1010ait-1cp1.dts
-@@ -51,8 +51,11 @@ &lcdif2 {
- };
+diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+index c643d4a814786a1fc7e559140fe58911990f71bb..a6ae5257ef531f3fa8506d515d202f5b7842c4fa 100644
+--- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+@@ -43,6 +43,14 @@ properties:
+       ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8m-clock.h
+       for the full list of i.MX8M clock IDs.
  
- &lvds_bridge {
--	/* IMX8MP_CLK_MEDIA_LDB = IMX8MP_CLK_MEDIA_DISP2_PIX * 7 */
--	assigned-clock-rates = <482300000>;
-+	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_LDB>,
-+				 <&clk IMX8MP_VIDEO_PLL1>;
-+	assigned-clock-parents = <&clk IMX8MP_VIDEO_PLL1_OUT>;
-+	/* IMX8MP_VIDEO_PLL1 = IMX8MP_CLK_MEDIA_DISP2_PIX * 2 * 7 */
-+	assigned-clock-rates = <0>, <980000000>;
- 	status = "okay";
++  fsl,nominal-mode:
++    description: Set if SoC is operated in nominal mode
++    $ref: /schemas/types.yaml#/definitions/flag
++
++  fsl,overdrive-mode:
++    description: Set if SoC is operated in overdrive mode
++    $ref: /schemas/types.yaml#/definitions/flag
++
+ required:
+   - compatible
+   - reg
+@@ -95,6 +103,12 @@ allOf:
+             - const: clk_ext2
+             - const: clk_ext3
+             - const: clk_ext4
++  - if:
++      required:
++        - fsl,overdrive-mode
++    then:
++      properties:
++        fsl,nominal-mode: false
  
- 	ports {
-@@ -64,18 +67,6 @@ ldb_lvds_ch0: endpoint {
- 	};
- };
+ additionalProperties: false
  
--&media_blk_ctrl {
--	/* currently it is not possible to let display clocks confugure
--	 * automatically, so we need to set them manually
--	 */
--	assigned-clock-rates = <500000000>, <200000000>, <0>,
--		/* IMX8MP_CLK_MEDIA_DISP2_PIX = pixelclk of lvds panel */
--		<68900000>,
--		<500000000>,
--		/* IMX8MP_VIDEO_PLL1 = IMX8MP_CLK_MEDIA_LDB * 2 */
--		<964600000>;
--};
--
- &pwm4 {
- 	status = "okay";
- };
 
 -- 
 2.39.5
