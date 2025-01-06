@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAF81E231E;
-	Mon,  6 Jan 2025 23:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3531DA634;
+	Mon,  6 Jan 2025 23:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736207170; cv=none; b=CgkZhduHtQJPkq/saGwaOx+zIqvbibRakC8M4PXZ7VmB6rmzwrDoMaJDbVXqQ64uMh9R1YoXdz2qSPEdcTUEGh4KyzS06wZKnPg5mlFnaKjPy5tA4zH3pM9AsESGW33L7MMU5/vGuJbIiea2ZD0Y5fXr8CBSlRkDs7xwNAkekPE=
+	t=1736207299; cv=none; b=BwsgGLfLC4jf3UfXQuBeSRMEJGxocYWd/Eua0FB74XopCO5NaRfdpqLOoQZiJJTZl0L+axsDQJYCEh/kRYZqgey+nX9qqgZl3NOFEgNlXzR3S+ox6WyU4UH77quezjPI5acVAIOMdTsHLMoz3jhjNysMCIQOjZfz/Dn8uj/DYfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736207170; c=relaxed/simple;
-	bh=XMPH7zELyFXyAhumv6d6RvmBiWQ8qNxaNzqtGHAS3sk=;
+	s=arc-20240116; t=1736207299; c=relaxed/simple;
+	bh=tk3HDO1RXmeaTn7h2NrgJSeAsieiLy4mYuakR1M3QUM=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=BriiaOyjbt725Rv9TemoY/ifkywh5SP8+buNxAHFocLIQiQOt6fav2qxNFbSegK2FIl2ilyK7mvKQYkF1s3vSubSUfceajHW+1udkMwgToh6qwoqEXDbD06wUlOSQoqhe62TfxFA/YUdA9IIJFY+ViOoK7McR1/hvzxaEZ8N9q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onIjeP/B; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=SI+B5mINPy8VdwJzRCAtIAdW9HhglIZoxacALxaHrDVnHBuZSdWcdM66IjZFqWU65ba/p8JrS417zxycWsv/MaNeevZlxcp7zKNiKwznVw6yq8GpOGltdeUuf6AQ7r+nUuAdUcwtjJTWl+/EDJIch2tTur/TULtiH6QQzf62dxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tW/AKC6r; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onIjeP/B"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 672A6C4CED2;
-	Mon,  6 Jan 2025 23:46:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tW/AKC6r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D870C4CED2;
+	Mon,  6 Jan 2025 23:48:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736207168;
-	bh=XMPH7zELyFXyAhumv6d6RvmBiWQ8qNxaNzqtGHAS3sk=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=onIjeP/B546SZS0/bGDmCH827xDNmtVVNDsl4mP6E0ePnlEa8JL+DCZZ3mt36CY4Y
-	 LXcur1LQO5Y0KecY9ayfB9UaxLNhhcFFK57gVLzmUCFfjcXgZqMYXv8FgDa1RpDRwV
-	 ONqByIEPChsTzNBUz0sY8xVe/HMcScxQ8NgCGtJg5WhTBLBLYp+abrtITn/vtCHJ3j
-	 WYvyGQhSqa/TbxU6gqcRtvFXk0JTZUUEDAXyg4PwrbgTZXd+9yd/ildBcMBt+YsCXd
-	 5PfXC40k3XNg3rDZwUVO036JuM5RRmmo5Z5X+Q0JbncgEP/AtxVT4WUpiIx8GsT+YU
-	 2p7yNEiSh7DtA==
-Message-ID: <35141e762058fab430d60b2f9f965c6a.sboyd@kernel.org>
+	s=k20201202; t=1736207299;
+	bh=tk3HDO1RXmeaTn7h2NrgJSeAsieiLy4mYuakR1M3QUM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=tW/AKC6rNfoqOpvbWeLnrdjUDMiKmSwl4o1aQoVgYauhNo+xou3nvavqPDWZkDa31
+	 511k/EZe95NFxJUXku6B0yMdmCeVEOIXh0qwoyiERB6kDx2e1JCB7TGpZghX/npBf1
+	 8hGUNVt/NvC15uni0XXfzmGIu9o2o5PerRJNlJ5ETOzvEJbVgeW0XzB0sUJ1i7vTFb
+	 MkXNG35uMqtH3krjS6gLEdfF1sYZT3JHF2weYHaQpoKR636ZElQqJE6DvmgvVsV8Ko
+	 MMz7fthSGcYAAxscWvzO18NA/vYKsj2Zt6EpOTKEZmlWjlvV6P2yw0gXNQwnBb+4xl
+	 +2obtLht1PDPw==
+Message-ID: <c35f062bd6a9310df7bd5b5e3ac4cd24.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,20 +35,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250105170854.408875-3-andreas@kemnade.info>
-References: <20250105170854.408875-1-andreas@kemnade.info> <20250105170854.408875-3-andreas@kemnade.info>
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: ti: Convert composite.txt to json-schema
+In-Reply-To: <20241231150144.4035938-2-dario.binacchi@amarulasolutions.com>
+References: <20241231150144.4035938-1-dario.binacchi@amarulasolutions.com> <20241231150144.4035938-2-dario.binacchi@amarulasolutions.com>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: st,stm32mp1-rcc: complete the reference path
 From: Stephen Boyd <sboyd@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Tero Kristo <kristo@kernel.org>, Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
-Date: Mon, 06 Jan 2025 15:46:06 -0800
+Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, Conor Dooley <conor+dt@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>, linux-kernel@vger.kernel.org
+Date: Mon, 06 Jan 2025 15:48:17 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Andreas Kemnade (2025-01-05 09:08:54)
-> Convert the OMAP gate clock device tree binding to json-schema.
-> Specify the creator of the original binding as a maintainer.
-> Choose GPL-only license because original binding was also GPL.
+Quoting Dario Binacchi (2024-12-31 07:01:41)
+> All other paths referenced in the file follow a scheme starting from the
+> Linux root. The patch adjusts the single file that deviated from this
+> scheme, making it consistent with the others.
 >=20
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 > ---
 
 Applied to clk-next
