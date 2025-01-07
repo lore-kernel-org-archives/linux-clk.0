@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA881F7550;
-	Tue,  7 Jan 2025 21:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2704C1DF98E;
+	Tue,  7 Jan 2025 21:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736285151; cv=none; b=dtBGMn3Lo+H+ztgAvcDK5SnSvxXOLhwRtZVtXrwaBStR5Jo8NRBSY5fy3ZPi2FX9C/9gFErSMFEDr4I6sXh1ExB5ssEyxh6UmIe0pQULuJuyDQeYk0SEX6LwBcTh4xt9wbB6zsVFmxB4J/rMJgs3Sf8bZOfUef86FiDGGxoBb/E=
+	t=1736285333; cv=none; b=TGo9xhLV+fzZRRFHDzQvhb56YxMD0o8S0OdgkPFQ2X4fUJVm2svFG+o4BX3SIPngenq8InuhxP0PQLNkM4m0/r8odC7UyRR80GyFLv4P3p2q/LA0Kmg/Nbl58TMZkZulFWWwHjgLtceIxtRp3wkJtLW8X+ekQO232oHvP1XubqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736285151; c=relaxed/simple;
-	bh=e81pooNpNJTl+Sg0K/oySV/OHUC8eHQd0dPPJ6IdfR0=;
+	s=arc-20240116; t=1736285333; c=relaxed/simple;
+	bh=9JTWtxmIKmotgWm0DEXNnjWv3paAnOY9Sh2u7jIshgg=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=m6HEVJ0gvos4Jes5M4xrb1RwTIoWDT7ILGz2soC62OjQ5Qzrlc/HSGPCW7ngz5Pc3Zh1NlO3GKBBF9620DiEONDh0ZqTVJJ8A/y7hMQgmr1U+fh3r2NCdMbGVbCONwW9hMAqNa5YgLCFkgA6ssM7yHvsIGdkRZJJhiUIlBhdOpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=asDT4T4z; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=gEHb57vrSMs4DSvfZ58rUoPEUNDX+mDjxEJUWL472rIuyMwOMvJT/npZdtHDyWLZRli7bbFAaS59tozrLWZh9edCSQcJBHharz0cGJXpHc5LomWhqfOaSeKRtNXEgqCe9RLv/UZA6tpOFVSfPLERXmWugN9R5SGlh0A7HFEUwSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lNOREiXx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="asDT4T4z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B37C4CED6;
-	Tue,  7 Jan 2025 21:25:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lNOREiXx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D23C4CED6;
+	Tue,  7 Jan 2025 21:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736285150;
-	bh=e81pooNpNJTl+Sg0K/oySV/OHUC8eHQd0dPPJ6IdfR0=;
+	s=k20201202; t=1736285332;
+	bh=9JTWtxmIKmotgWm0DEXNnjWv3paAnOY9Sh2u7jIshgg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=asDT4T4zzglUJJu/i24gbAfWoF2a+fjkqpB6jn38Wf3NE7EK1IYHJg4nXP/TshM/O
-	 DdRPaYPrLIt4mMLOYC1LM0o/8i2YQ/IVlB/cIkURoWNRPsgGjzXNd0BA89LJjal9to
-	 mr5wQfVAAnn+w36CJFbxpusNKTfCPe+gDTTstVV+ACYfSbOGjW2RCgO0mWHPAe3ytm
-	 +ExY26o9OBNesFCSFpIdq3vxBRoBT3gN2gUdwJTrOrl3srp7SjszJsoueQpkkQQ9l/
-	 uRaZ3JUvPYeu2JMQu7QEn+yC5JvX5GACypxPaIfS9xEUgtU8kPvxG0NK4N3M+uuZ+p
-	 QMwAcFM5moIyQ==
-Message-ID: <526d7ad1f0b299145ab676900f81ba1a.sboyd@kernel.org>
+	b=lNOREiXxKbHK4i+vCPPcnVixfcgh1t/e5X3+76pI1hEGUuHKnUv/Xino4G6LS7Gua
+	 ViW2rEigU8+WOYTgxqI9q6qGUHKQ1voneHucW1nn3vmqFVQ2BckxffK0sbdaD+1V1M
+	 1Kj19IsplJWa/LX8+HUGff6OemdkRypvZbRWC+TXY/D4mFRYcAfe/P1a4yOE4tdGFu
+	 NWURHNO9Cl6OLMgdfP/sGfWDaUBR5D/t7Uh6pBP5o3bn8RleMDmfx6j5z/r7egtA52
+	 KXsu6dEBSE7thmkN/ZPNvPQPvz6HeBleyV+YAagr8Qg6LvcYxTj/nKHyFyJxR59uK1
+	 5hl2Fc8y5p9tw==
+Message-ID: <697b634770d789ef8ff0e05cec9465f5.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,63 +35,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241225060600.3094154-1-zhoubinbin@loongson.cn>
-References: <20241225060600.3094154-1-zhoubinbin@loongson.cn>
-Subject: Re: [PATCH] clk: clk-loongson2: Fix the number count of clk provider
+In-Reply-To: <1jmsg2adgu.fsf@starbuckisacylon.baylibre.com>
+References: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com> <20241220-amlogic-clk-drop-clk-regmap-tables-v1-2-96dd657cbfbd@baylibre.com> <9f1d69ebe1ddce5dfc170e986c9213f2.sboyd@kernel.org> <1ja5cp8f87.fsf@starbuckisacylon.baylibre.com> <88fe909ab182d1f17f6ef18161c7f064.sboyd@kernel.org> <1jfrlwb69r.fsf@starbuckisacylon.baylibre.com> <ed20c67e7d1a91d7fd8b921f156f56fb.sboyd@kernel.org> <1jmsg2adgu.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH 2/3] clk: amlogic: drop clk_regmap tables
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, linux-clk@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, Binbin Zhou <zhoubinbin@loongson.cn>, stable@vger.kernel.org
-To: Binbin Zhou <zhoubb.aaron@gmail.com>, Binbin Zhou <zhoubinbin@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>, Michael Turquette <mturquette@baylibre.com>, Yinbo Zhu <zhuyinbo@loongson.cn>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Date: Tue, 07 Jan 2025 13:25:48 -0800
+Cc: Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 07 Jan 2025 13:28:50 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Binbin Zhou (2024-12-24 22:05:59)
-> Since commit 02fb4f008433 ("clk: clk-loongson2: Fix potential buffer
-> overflow in flexible-array member access"), the clk provider register is
-> failed.
+Quoting Jerome Brunet (2025-01-07 06:46:41)
 >=20
-> The count of `clks_num` is shown below:
+> So, if it's OK, I'll resend this series with a temporary solution to
+> remove tables. Removing the table simplify the other clean-up I have
+> already line-up and avoid some unnecessary diffs. I'll circle back to
+> reworking the init_data afterward.
 >=20
->         for (p =3D data; p->name; p++)
->                 clks_num++;
->=20
-> In fact, `clks_num` represents the number of SoC clocks and should be
-> expressed as the maximum value of the clock binding id in use (p->id + 1).
->=20
-> Now we fix it to avoid the following error when trying to register a clk
-> provider:
->=20
-> [ 13.409595] of_clk_hw_onecell_get: invalid index 17
->=20
-> Fixes: 02fb4f008433 ("clk: clk-loongson2: Fix potential buffer overflow i=
-n flexible-array member access")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
-> ---
 
-It's common practice to Cc the author of a patch in Fixes. Please do it
-next time.
-
->  drivers/clk/clk-loongson2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-> index 6bf51d5a49a1..b1b2038acd0b 100644
-> --- a/drivers/clk/clk-loongson2.c
-> +++ b/drivers/clk/clk-loongson2.c
-> @@ -294,7 +294,7 @@ static int loongson2_clk_probe(struct platform_device=
- *pdev)
->                 return -EINVAL;
-> =20
->         for (p =3D data; p->name; p++)
-> -               clks_num++;
-> +               clks_num =3D max(clks_num, p->id + 1);
-
-NULL is a valid clk. Either fill the onecell data with -ENOENT error
-pointers, or stop using it and implement a custom version of
-of_clk_hw_onecell_get() that doesn't allow invalid clks to be requested
-from this provider.
-
-> =20
->         clp =3D devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks_num=
-),
->                            GFP_KERNEL);
+Ok, sure. Let's see how it goes.
