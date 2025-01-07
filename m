@@ -1,233 +1,431 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010019.outbound.protection.outlook.com [52.101.229.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F601E515;
-	Tue,  7 Jan 2025 12:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736254320; cv=fail; b=F0k940eE7Gj9bs+y2zEKml0fRCN4WXK6bWcNc2fHFyHnUNj4psLm8Ek+oLShLBKqOEW9tQ/Xky7p8LynJXQzAqH8jhs+Nbv5wvTMm+uNOvhi0Zdo/RQ2VaNZFI33VBEytkOQCuqQGNz79Pf+rmzyXdqPFCDKv+sipys+PN9IhUY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736254320; c=relaxed/simple;
-	bh=R5izBSv8IrpJfRuSRDA0/zW876OaLtxQ3FRJCMt6bw4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sI7t1UVbCuAIlnvzK1zmEu8O9sc3NNxj9YV4oCKRfmWnz7Um3Zs9rN0os3dARjjQ7LTQlz9GifmQ49Kt6GrptvWsGPzVbcVBQs9snXwiXpAWA/URVB1nJfc/MFAalLMMJyJNmwXBxFuzZmqtF8Q28PajdSGN0mc0G1w/Mslym2o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=qRb0+Ro2; arc=fail smtp.client-ip=52.101.229.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EE71E9B28
+	for <linux-clk@vger.kernel.org>; Tue,  7 Jan 2025 13:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736257019; cv=none; b=SbBrEj/fLDrXnyWIvbg4saJXOJ6jhJj762Bn0flHVbDm1a5aw0P2tpF23dNIM6EEbFzAzS/yoAqKKX7Jhgzzc+oHWDVuF1IkgC1QiLpkHtYjq7bnfYWvuE2mHX4W0TmcqwBOJUkHD87vg6ePeQG4E+Stjqi6rOZhrFHO7StjQSY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736257019; c=relaxed/simple;
+	bh=M2ZuITtOefSaIQe7LmHH7doRVMS+ZCd81GRHwhohS3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ALByJfFdKLA4nJlisGIKFyKnRyHred99bwRp0tgsL0jkGQDXS61JQO+J4VBrvcWMmT0Dndz7r8x9+OTs9BUjEg3lKoxxG9QIjZfx7c2ylLuUsnIWnNqlpyY+bmFt3/D3vG6pOaC7MfQYi+i08E97RKWDPEAB2cM1siUfXQXLT3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MIDjtGac; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="qRb0+Ro2"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I66dvdc3Dg3pGUzLQf+y1eesO8VHvW8nN0r6kjjcG3D3hwwW55TLyY/JDnFg6VZdr9sK40vNvNr0H+g4n30nWOcsF9it3M3bmk/FD36NYC6THG3InPljNhi2+kpdi3jJ8Heuzr1prYothi001HLam7BjoP9bY1j7xvqD3hrpu+KML79sxzc8Vpkua6SyfmubHkvU7ynEdPdfQzIyr7/x3anD0/yaAwQhTs+oaGW/FEeGHetleMHeQ2xVAsfoJ2cqZH5web8RwctI7oXauaM9DkH4IWxitq7l5EHfqzeJPORKHwyF3L/VuLe48D6zDOXMC4oM3DV3SlyNIS6olMcP8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R5izBSv8IrpJfRuSRDA0/zW876OaLtxQ3FRJCMt6bw4=;
- b=P1O4WPdQz3HJ1K2wwsqjRlHE1b9OareptbMiOiKKJFppJXq1mG9DcpQ/3RCkdsug9v00xQPQD5ZRDg2M9oMbDJy9SXCSgvL1rjGOQC5R1WdAojPVJEqohpbEQ27OxsX9uhrz5I9OahKaszCToYhvplvJD0H7oLNygxWyeYKBQZ5GyDMx3QEs3UxgzYsuQc9fIkfyDcQbCL3a2hwcjUMcBV3T28ijaDhcGhcz8FNooPVCywOa/y74MZ7PDmmftp8lKzv376QumBKpv152JrfMy7U4jqUZJWmO5syDmDXY562DFd2z823EB1oGEsYmTwWYArp4LFsO8RdRPcMufH9XXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R5izBSv8IrpJfRuSRDA0/zW876OaLtxQ3FRJCMt6bw4=;
- b=qRb0+Ro2cZISESQu9KDKWwZr1Vy9TXfD3I2r6Fvcvr+27QLkfYDJ8aJvOs3/8BJS4x0WHTJRQLC78ksKZVHVEOKlk1aA1oPKb8LAK9ZphmPFh9l3Rh3xgGniIz3BALmZky6JpQnLP2FBMNBVAxycOo3/d0dpzMmIsAdUL4KegVo=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TY7PR01MB14909.jpnprd01.prod.outlook.com (2603:1096:405:252::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8314.18; Tue, 7 Jan
- 2025 12:51:54 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.8314.018; Tue, 7 Jan 2025
- 12:51:54 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fabrizio
- Castro <fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v3 4/6] clk: renesas: rzv2h: Switch MSTOP configuration to
- per-bit basis
-Thread-Topic: [PATCH v3 4/6] clk: renesas: rzv2h: Switch MSTOP configuration
- to per-bit basis
-Thread-Index:
- AQHbXULKeQyg6OXyX0+NSgiIE5q337MLMU7ggAAHlgCAAAnwoIAAAssAgAAA56CAAAQ9AIAAAGOQ
-Date: Tue, 7 Jan 2025 12:51:54 +0000
-Message-ID:
- <TY3PR01MB1134643EE2C9CC8599E0BCBAC86112@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250102181839.352599-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250102181839.352599-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <TY3PR01MB11346C123E18F61A009F6F0F586112@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CA+V-a8tO-d35+aPLYoCmC4xKW4cMoNyzM_Vmyw6CzOJjyjj=_g@mail.gmail.com>
- <TY3PR01MB11346C6E247A83F6835F0C7A686112@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CA+V-a8v3wdwEk9zu26MeQVmOnWKm=RdHJzdH6tLKrvRLeoQ2DA@mail.gmail.com>
- <TY3PR01MB11346E9B6CD4CDB6EF93B99C986112@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CAMuHMdXqF6SbU3ScXLUt7e5LGckouX6fQqg0sJ3+3cYeFtpN4A@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdXqF6SbU3ScXLUt7e5LGckouX6fQqg0sJ3+3cYeFtpN4A@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY7PR01MB14909:EE_
-x-ms-office365-filtering-correlation-id: 9c04d21a-2641-4982-374b-08dd2f1a1072
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?VThPSXhwQllqMHJ2VCtxNS9WNXhibUJ5ZTd6eXcramxjUk5EdGtwWDNKbWxw?=
- =?utf-8?B?dWxKY0luaUxqRHdDNzNIbmtyQ0swckZaZS91TGZEOWVvZzA3M1hrSFAvbzBR?=
- =?utf-8?B?eTVYOEJIVUhIcVNzRDg2Y3QxeHFBb0hlZmFHS2hKcXFaY1QrZDg2TVJOaFlL?=
- =?utf-8?B?eXA5eklySC9XSzFKajI1MC9WMW9hNERhTmx1c1JQS0V6ZzMrTEVqN2dDNEJz?=
- =?utf-8?B?OUcyU0pYUmplbzBSN1FyN0JnTkhnbG0rSUMxd0FKMUxjWXNZUlVPUFhMem9r?=
- =?utf-8?B?KzNrb291ZVdVNVQvZkNMelBZY2ordGxWV0pMWHBqTUI1LytoTmZqY3BZME1L?=
- =?utf-8?B?dU1uU1ZkOXdVNDZiS2k2SVhOM2liUGtCN0o3RjdabHgyb2FyVXhMZDVrc09Q?=
- =?utf-8?B?NTEzQVkzazhBeVdKK0d5SmJMZWlST1l1ekhNOTJRZUpnSEl5RWNxMHpyYWRl?=
- =?utf-8?B?ZVFEOE54N05HcjQ0eXRJbERuWkNDQy9OMVZtMUZzSEFyUVFEM3F3RkRLaS95?=
- =?utf-8?B?ZmtBa1F2TEV6TXhTUkJVTzFDMjk4N3M1Vjhtdk44eDNBNWRGRXM2OEVKTHFJ?=
- =?utf-8?B?UER1WHI4R1owSFJ5S2Y2NWpDbXJJd1NJNEVhYUwxeVFpTVNHRzNhdVdXV3BI?=
- =?utf-8?B?UWUwK3NId1plenJlN0xqUXN5cVRVR1FydG9OelZSeGo4U3FZbUtjNTdHTnVV?=
- =?utf-8?B?NktvNW92dE4xUHRPMU93SUJUejVScWthcElTcjRyT004YURFenYyZ0s4L0Zo?=
- =?utf-8?B?NnIyajZNa1NlNWpPeXk5eDU5d2puVWkvT1EvTndDYlNSYXZ3OVBjbDRjamVo?=
- =?utf-8?B?cXFzQjBhOEZ6alN1Z3VqM3JIZy9SUWRBcnY0dVc5WmRzd0gyMVZMQllBZjhU?=
- =?utf-8?B?WVQwQ2F0aHZkTlk3Qzgrck1WYjIzenVzNUNpTURtenE0M0FWYUxxcWNnRnpO?=
- =?utf-8?B?dXZ0THFweG5Dby9WNjFpZ1VDZjRpMC9ieWNTamZJSFplYktXdkpJMWRJWWdZ?=
- =?utf-8?B?alpYSWhOU2dXSzZqa1Y1Q2ZBYTZxWFNocjVrZVFBWmdNNit4ZjhOYkRjZGli?=
- =?utf-8?B?R2ZJY3ViQ0d6SDNCNUN6SU9Lb094UzAvSUJXWmJqck1MTUJhcnpxcEpFRnMy?=
- =?utf-8?B?V2YvRVRjMGUvQjd5TFUxeENlNEZZQW13QUhaL3VIdEhUSWRmbDNnQ3RlcFNW?=
- =?utf-8?B?L2FHMEpGNkQ5anJxTXp2aTJBQUkvdHlWKzV0eG50Q3dWVlhIajJ0VklQRUxZ?=
- =?utf-8?B?d2xoNkh1MDY4eUFacXczYVkxc0dveVY1ZVltZHlBTitEUXl1Q21TMEhGRXFh?=
- =?utf-8?B?VkpoQkUyVm94TkVTeklYdFlqZDUwNXAzNWl3ZmY1aEdiWm5RaDY0aWJEOGlv?=
- =?utf-8?B?UUxoWUszemFBOTV2R2Q4UWVxNnpRZ1RNSXVJMDBrcjZ1ci85N0s4UzRzOTgw?=
- =?utf-8?B?RG1RSVhWNWVsWUN2OWl4QUs2QStzM1VKd1BMLy8rMUdDc096VGdGQTB1UG9J?=
- =?utf-8?B?VWdJWlcwUUdCcmVuUDBjMEFjSDRtOTgyQUNSaGxIVm05azBkVFJKME12T3RI?=
- =?utf-8?B?ZU5MRGpwME9qSFdoZ21Oa0pjMytXK29LMFFoUzlBN0NLVWtGQnYxV0JWejZT?=
- =?utf-8?B?dEVKbDIzM004cXBWNmpPRHZ0a2REaGhqbWVzWkVVOFppUVpUUHlCakdNaGN4?=
- =?utf-8?B?TCt3VllPZ2thN00yV2pTUmxMdzFraWhMTXRPcGVqUFdzMVBDdXp6L3JTSFRp?=
- =?utf-8?B?QjB2RDQ2d3ljNDRVVTNyWjZBeFZaQ1J2aGZCMk96RHVacE5CK2QrS0U4N00r?=
- =?utf-8?B?TFl5RG43akhFS3h0YitWRDR1dThVUVpHbXRUYTZOaG9TRDVaNFZSU0NmK3Vo?=
- =?utf-8?B?K1RYcHpUUzVWM2pITzN1dHFLM2pwR0xocVRTOC82NjFnVTZEdkUxWEVId1Rq?=
- =?utf-8?Q?U4aKCpM5AHjjztzycYIzBUEFTMZEv2OE?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?bVJ1cjR2bTczQlE1NDkzaTFHbjNnVUt1N0R3c2RRYlpkV3dJRERYR1FmNEIr?=
- =?utf-8?B?VXFtbVFlekpmUGdPL3MzOEJXWUtQRU5mL0ZCZ0cxdC84MjBsQ3BqQkJxeGFs?=
- =?utf-8?B?VmF3YjVjdnZONlpVNFVhNDJpdHNuTnI5SnQySThKSk90aGpnd2tmL2tvc0Ft?=
- =?utf-8?B?aGZBdUlmZFQrQjYrSlozZXFSemNyVW5oalk4SDRSNjBBd2h4RzBBazFIVjEv?=
- =?utf-8?B?Nng1djZ5bkJENjdibUdsR0RMTnlLdlZqQzNKaklrSU14S0ZOY2w4SUpPWXlC?=
- =?utf-8?B?VHp1dVdCYzlUS3ArbTRxOE1ZVVBTbVhhK0JVR2d1MlhUOXgxZlFHaU5YT3Fa?=
- =?utf-8?B?d05zeUNsRXlVbGQxVTBmdTV6UFJxaCtEWmkrWHZQZjVYVnN3VzZHZWlCT3Bo?=
- =?utf-8?B?eFIyQnZzVGozVlVMLzkrTUhPYjVDSUZacUZUaXhxV1hhS1RTamNvYm9uQnVt?=
- =?utf-8?B?SWJlN2wzbmF1TmRsV25SUEdMUzY0VW5oR3pGYVorcXVnaDlFbDc1RGFCNHNU?=
- =?utf-8?B?RVJ1bThwNDQ5MmVXN0swVG03SGYyck93WTgwdDVudE8vM3l6ZkNUUm9EVlU1?=
- =?utf-8?B?WW84VXJOVnR0Q0UxT2hFNWF3NVhRSzlpTDA1VFVMU1VJYUxvMlR6VUNtaTNZ?=
- =?utf-8?B?aFN3OGtoa1pHZGdJZjJia2NlMmpYSkRPblZVekVTZ2JiUGFxK3JCcFlmbzIw?=
- =?utf-8?B?Z05aWFM3UkljV3NWa3E0c2pSUnJCZnBZTmU1UWVzdG9pV3RyQlVBZWp3N0R6?=
- =?utf-8?B?SWVRcFBQTHFuKzNCbXpIYy9zOFFhbjBmZG1XZ25wRkgzL0NsM2pRUHRIZnNq?=
- =?utf-8?B?NlZxQng4a3Q4amhWd09MVmg2S1UveTFmeTdsbVh4YndhcXppMS9iNXgzdnAr?=
- =?utf-8?B?Y3pqb0VOcU1aNmFjQ3ZuZENkRVZxZ0VUVzNJV3h2YTg3cWs4LzBvWWlodk5q?=
- =?utf-8?B?cnJ3QStsWHdkQ05tbjNLSTJrV1NpRW5zT2pVMGI4cDdTU2djMGFtcFpQZk1D?=
- =?utf-8?B?Y2w4RnRhSWpJNGJ5ZUVKVEpCL3BSNjRqZVhCR2Jidkx0cXNlWEVNWHZDZWt2?=
- =?utf-8?B?dGltcVU3cHdBVFd0S1ZrZG5jNThNaFlEWk4zSnJ0SURzWUtRZzZMcHczMnY0?=
- =?utf-8?B?T3UzQ1A5MzBJSVgwZDl1eDFraStYNzNwUWlscVBDcWhIRnZwc1AzeklqLzJ0?=
- =?utf-8?B?NjJHaXY0eXVlMDljWThMczIzWk5RTlVHSGliTnJsdVQ4YkN2L2xDalBHTXF5?=
- =?utf-8?B?Wkw0MHd6ejRVS29uU00zekFIdWFiMW1YdHRYQlVBNlR3aEV6eDlBYmYxYm1x?=
- =?utf-8?B?Q1BMZmJsaXg3VGxhZFZqVTZ0ZWtrMjZpbkJSL1VIYnF2TW9neWVkTHpOOU50?=
- =?utf-8?B?QVFQU3Z2Z1FPaWtIczlrblRaM1YwVHBiQkxSdEZsUnhUUXkxSkthLzhxQXYr?=
- =?utf-8?B?V0VBN3plc2RSbnZqZDdqUnc4TVlmamYxdXczOER0T1p2WlBpMDQvdWdSaHVW?=
- =?utf-8?B?K1QyazRvWWpOdU0xay94N2FxRHN0R2dnemduMm9qeDE5SVJoelFjTUtzSXp3?=
- =?utf-8?B?RzVFbm9NVnAySzkzVFZKYUpPZi9pdGZTMG9zWFRuRGRoSCtVaExNZklINEow?=
- =?utf-8?B?aVpQOXlYTzUycGlDTysrMktudzNIQXhkcE5rZFlTVDF0ZHJWSE5DQWxUdDRK?=
- =?utf-8?B?MEZqaWRkb3VncFBTK3BaUUI4bWxZSkZjeXhOVEI5YjJ3Z2VFRitZMUE3V3pl?=
- =?utf-8?B?eHZRY0UrckRZOHdEcTg0N21WcHNoakNSdngzRnpraFQ2Q0tWVXBuMGRCa3pl?=
- =?utf-8?B?Y1h1RWVIbnRSdzZZdjQ1QS9LMGVRdllOT2NnczVaajhCY2VmeUYvcW9oWElZ?=
- =?utf-8?B?ZVBVZVhVSW50UkhsZkp5TXZiT210aFdCQWNXSy9LMkRmSWo0ekdoUjhJd2Nk?=
- =?utf-8?B?bEt2ekRibmk2RVpESEYxRVdtUS95UFgwVWl1NHArajN1K1JpMTV2VFRFZkhu?=
- =?utf-8?B?Q2JoNFlsTWVFWGV6WTN6L29QT2xQd3BRYWtRUzQ3aWdaSnhRVnNndjRVb05s?=
- =?utf-8?B?Tm84eU9TWHJJWlJrRDQ2eHViYnhJeUk3eTduTUQ2OFEzK3U5blFZdCtLa2I1?=
- =?utf-8?B?bGFrSEJjRXhLMk9wNzlsdlNMb0JsNFN3OGhOMTBiV29JdlhWcnY0UXM4N0NE?=
- =?utf-8?B?dnc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MIDjtGac"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385e971a2a0so959525f8f.1
+        for <linux-clk@vger.kernel.org>; Tue, 07 Jan 2025 05:36:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736257014; x=1736861814; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ujt4qcG1/ccw7H7c9GX0E0Fkq2IdlGMXs7Lyd9HFgI=;
+        b=MIDjtGac39bkKpp5/25tT7FSYr/O9dGCicGjxppe8cySLyJEZ6Pn+30Qdunal6DrId
+         i1nFH8J3L3jkdZ502jrOOE3YBA9fKWdJzF3N+K1CoY7osejVhxjFDHezlx6o/fl/+z5f
+         qmC06WI5AremWiVW+zJu+0f0fX/luLXHm+LfZ3zcsqnA8HpUUSfl6C7yZbIuuid/uFeM
+         qlMYYuHlgl09edWZw82zErejMNQ+cIVNpM9qht+tGgSGy4zJpEcMzuHdEK0C9TSHqVwx
+         80MuCGrUCYDF21Y7EFcXl9TW3WSYPH/0esb4eKKrEQHZR0AFVjZwOsyqVjcPxxRP2Mo8
+         ivRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736257014; x=1736861814;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/ujt4qcG1/ccw7H7c9GX0E0Fkq2IdlGMXs7Lyd9HFgI=;
+        b=rhwcb5NH87BBAKHvLIckjJ1+oOnQxNRAv2DX98qY3/BzNUWNhZxnB5wuiCHKnMSxZ+
+         N7Ky1QpAHhWbR8br2Iv3LjnsHJ63iqOva7eV3XCi4m8E+tbUweysVyHLMUCu+VymJS0n
+         M4T2EZmWPSVJWxGGWqkb5BeTEUPC3wpQrnsx9jsYjFHSqzvUElsq8NPMqr17cgttdGjv
+         ++T5iFXPUmdaWM8FpQSX1UNQ46CQPQdzFfCywy3dsGLlR3VCy6duKQqc/zXnVnMa9co+
+         12dW32paky9157nOYxT4Kip6RJGlNkccoEutD1fCw58CD25PnZ0RF/Q/nvzQlTOvN4Gz
+         US1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUUtVsKefvKB6WBzHc9hZzR/swL/iBpSzb5IxOZEhas2xaZMwvjcZlXmI+alVX7KpLOaAp19SDnOdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9f34DkjiUn0CBCWmk23MTVa3OHzg/Eu+6UCPrDcfHiB4ib4X2
+	wENXFlOHEZRsG3qCXcw5Y9f18PtjEOxyGapzBACnnC7n0AJYEBdfqzM4l4I3Vy8=
+X-Gm-Gg: ASbGnctdF9ktqyUIv81DwRskfT6sYOzvcVwb6mIDUzDYI+5sXitNdd3Ej2NiYz3N5o2
+	WFq+UZPqMR+q8CX8g1l0hlyoG4jBNzyee3KlVhKOSxfvZWfPsk0UeZOn8KO2wRPkZ5haSbKNZYw
+	/9bNgYcGICXAxLycqY3yGpF0vfKzji1va66dUe+aZeMm/Bx/XJ4N5qI8JgerSHSmVfX5hIYxxBC
+	Wy4NOX4qPhuu9NvgPb6S9JwgF/IUtjBAufyEPWIWpSoQOoastZwO5S7X6TOempNesgPUn24wzvs
+X-Google-Smtp-Source: AGHT+IEwMxtX+Db1GkxFWIg0cQIT0IRXdi314I+VgEf9pBuedELep2vA5Hnr6iPKs2YhXCPkA6tY5Q==
+X-Received: by 2002:a05:6000:1f8c:b0:385:e10a:4d9f with SMTP id ffacd0b85a97d-38a2213e1f5mr20453347f8f.0.1736257014363;
+        Tue, 07 Jan 2025 05:36:54 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43656b11495sm629658325e9.19.2025.01.07.05.36.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jan 2025 05:36:53 -0800 (PST)
+Message-ID: <940a744c-ca5d-4edd-8a90-be2f8c7da7c0@linaro.org>
+Date: Tue, 7 Jan 2025 14:36:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c04d21a-2641-4982-374b-08dd2f1a1072
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jan 2025 12:51:54.8026
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: erL1IU7osx1nkynGPXrNEZ1g3f95xMUHhQ6sIsFfukwFgxIaY7inWTVr2RqDTE5j5OkT41H6GWyfXtbrVADB8Jmm2k0sZtuQWxVcMQePIuk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY7PR01MB14909
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] clk: qcom: clk-alpha-pll: Add Pongo PLL
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250106-sm8750-dispcc-v2-0-6f42beda6317@linaro.org>
+ <20250106-sm8750-dispcc-v2-2-6f42beda6317@linaro.org>
+ <nasilduqcbrdtfnx7ef5rzp4blyvbwhyypjpkzlmv4o6oohj4e@gz2a6kffkf7p>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <nasilduqcbrdtfnx7ef5rzp4blyvbwhyypjpkzlmv4o6oohj4e@gz2a6kffkf7p>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-SGkgR2VlcnQsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogR2VlcnQg
-VXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCj4gU2VudDogMDcgSmFudWFyeSAy
-MDI1IDEyOjUwDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjMgNC82XSBjbGs6IHJlbmVzYXM6IHJ6
-djJoOiBTd2l0Y2ggTVNUT1AgY29uZmlndXJhdGlvbiB0byBwZXItYml0IGJhc2lzDQo+IA0KPiBI
-aSBCaWp1LA0KPiANCj4gT24gVHVlLCBKYW4gNywgMjAyNSBhdCAxOjM44oCvUE0gQmlqdSBEYXMg
-PGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiA+IEZyb206IExhZCwgUHJh
-Ymhha2FyIDxwcmFiaGFrYXIuY3NlbmdnQGdtYWlsLmNvbT4gT24gVHVlLCBKYW4gNywNCj4gPiA+
-IDIwMjUgYXQgMTI6MjXigK9QTSBCaWp1IERhcyA8YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+
-IHdyb3RlOg0KPiA+ID4gPiA+IEZyb206IExhZCwgUHJhYmhha2FyIDxwcmFiaGFrYXIuY3Nlbmdn
-QGdtYWlsLmNvbT4gT24gVHVlLCBKYW4gNywNCj4gPiA+ID4gPiAyMDI1IGF0IDExOjI04oCvQU0g
-QmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiA+ID4gPiA+
-ID4gRnJvbTogTGFkIFByYWJoYWthcg0KPiA+ID4gPiA+ID4gPiA8cHJhYmhha2FyLm1haGFkZXYt
-bGFkLnJqQGJwLnJlbmVzYXMuY29tPg0KPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiBTd2l0
-Y2ggTVNUT1AgaGFuZGxpbmcgZnJvbSBncm91cC1iYXNlZCB0byBwZXItYml0DQo+ID4gPiA+ID4g
-PiA+IGNvbmZpZ3VyYXRpb24gdG8gYWRkcmVzcyBpc3N1ZXMgd2l0aCBzaGFyZWQgZGVwZW5kZW5j
-aWVzDQo+ID4gPiA+ID4gPiA+IGJldHdlZW4gbW9kdWxlIGNsb2Nrcy4gSW4gdGhlIGN1cnJlbnQg
-Z3JvdXAtYmFzZWQNCj4gPiA+ID4gPiA+ID4gY29uZmlndXJhdGlvbiwgbXVsdGlwbGUgbW9kdWxl
-IGNsb2NrcyBtYXkgcmVseSBvbiBhIHNpbmdsZQ0KPiA+ID4gPiA+ID4gPiBNU1RPUCBiaXQuIFdo
-ZW4gYm90aCBjbG9ja3MgYXJlIHR1cm5lZCBPTiBhbmQgb25lIGlzDQo+ID4gPiA+ID4gPiA+IHN1
-YnNlcXVlbnRseSB0dXJuZWQgT0ZGLCB0aGUgc2hhcmVkIE1TVE9QIGJpdCB3aWxsIHN0aWxsIGJl
-DQo+ID4gPiA+ID4gPiA+IHNldCwgd2hpY2ggaXMgaW5jb3JyZWN0IHNpbmNlIHRoZQ0KPiA+ID4g
-PiA+IG90aGVyIGRlcGVuZGVudCBtb2R1bGUgY2xvY2sgcmVtYWlucyBPTi4NCj4gPiA+ID4gPiA+
-DQo+ID4gPiA+ID4gPiBJIGd1ZXNzIHRoaXMgc3RhdGVtZW50IGlzIGluY29ycmVjdC4gU3RpbGwg
-aW4gZ3JvdXAtYmFzZWQsDQo+ID4gPiA+ID4gPiBtc3RvcCBiaXQgaXMgY29udHJvbGxlZCBieSB1
-c2FnZQ0KPiA+ID4gPiA+IGNvdW50KHJlZl9jbnQpLg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiBJ
-dCBpcyB2YWxpZCwgY29uc2lkZXIgYW4gZXhhbXBsZSBzYXkgSVAtQSByZXVpcXJlcyBNU1RPUCBi
-aXRzIDgNCj4gPiA+ID4gPiB8IDkNCj4gPiA+ID4gPiB8DQo+ID4gPiA+ID4gMTAgYW5kIGNvbnNp
-ZGVyIElQLUIgcmVxdWlyZXMgTVNUT1AgYml0cyAxMCB8IDExIHwgMTIgKG9mIHRoZQ0KPiA+ID4g
-PiA+IHNhbWUgTVNUT1AgcmVnaXN0ZXIgc2F5IE1TVE9QMSkuIE5vdyB0aGlzIHdpbGwgYmUgc2Vw
-ZXJhdGUNCj4gPiA+ID4gPiBncm91cHMgaGF2aW5nIHNlcGFyYXRlIGNvdW50KHJlZl9jbnQpLiBT
-YXkgeW91IHR1cm4gT04gSVAtQQ0KPiA+ID4gPiA+IG1vZHVsZSBjbG9jayBhbmQgY29ycmVzcG9u
-ZGluZ2x5IGNsZWFyIHRoZSBNU1RPUCBiaXRzIGFuZA0KPiA+ID4gPiA+IHNpbWlsYXJseSBub3cg
-bGV0cyB0dXJuIE9OIG1vZHVsZSBjbG9ja3MgZm9yIElQLUIgYW5kIGNsZWFyIHRoZQ0KPiA+ID4g
-PiA+IE1TVE9QIGJpdHMuIE5vdyBsZXQncyBzYXkgeW91IHdhbnQgdG8gdHVybiBPRkYgSVAtQSBz
-byB5b3UgdHVybg0KPiA+ID4gPiA+IE9GRiBtb2R1bGUgY2xvY2sgYW5kIHNldCB0aGUgTVNUT1Ag
-Yml0cyA4IHwgOSB8IDEwLiBJbiB0aGlzIGNhc2UNCj4gPiA+IHlvdSB3aWxsIG5vdyBzZWUgaXNz
-dWVzIHdpdGggSVAtQiBhcyBNU1RPUCBCSVQoMTApIGhhcyBiZWVuIHNldCB3aGVuDQo+ID4gPiB3
-ZSB0dXJuZWQgT0ZGIElQLUEgYmxvY2suICBUaGlzIGNhc2UgaXMgaGFuZGxlZCBieSBzd2l0Y2hp
-bmcgcmVmY291bnQgb24gcGVyIG1zdG9wIGJpdCBieSB0aGlzDQo+IHBhdGNoLg0KPiA+ID4gPg0K
-PiA+ID4gPiBJIGFncmVlLCBEbyB3ZSBoYXZlIHN1Y2ggdXNlIGNhc2U/DQo+ID4gPiA+DQo+ID4g
-PiBZZXMsIGZvciBVU0IyLjAgb24gUlovVjJILg0KPiA+DQo+ID4gT0ssIHRoZW4gaXQgbWFrZSBz
-ZW5zZSBmb3IgcGVyLWJpdCBjb25maWd1cmF0aW9uLg0KPiA+DQo+ID4gPiA+IENvbnNpZGVyIGFu
-b3RoZXIgdXNlIGNhc2UsIGluZGV4IDAsIGJpdCA4fCBpbmRleCAwLCBiaXQ5fCBpbmRleDAsDQo+
-ID4gPiA+IGJpdDEwIGFuZCBpbmRleCAwLCBiaXQ4IHwgaW5kZXgxLA0KPiA+ID4gYml0IDAgfCBp
-bmRleDEgMTAgaXMgYWRkcmVzc2VkIGluIGN1cnJlbnQgcGF0Y2ggc2VyaWVzPw0KPiA+ID4gPg0K
-PiA+ID4gQ2FuIHlvdSBwbGVhc2UgZWxhYm9yYXRlLCB0aGUgYWJvdmUgaXNuJ3QgY2xlYXIgdG8g
-bWUuDQo+ID4NCj4gPiBJIGp1c3QgcHJvdmlkZSBhIHJhbmRvbSBleGFtcGxlIGZvciBhIGZ1dHVy
-ZSBJUCwgd2hlcmUNCj4gPg0KPiA+IElQX0EgcmVxdWlyZXMgbXN0b3AxIHs4LDksMTB9DQo+ID4g
-QW5kDQo+ID4gSVBfQiByZXF1aXJlcyBtc3RvcDEgezh9IGFuZCBtc3RvcDIgezksIDEwfQ0KPiA+
-DQo+ID4gTm90ZTogSSBoYXZlbid0IHNlZW4gdGhpcyBzY2VuYXJpbyBpbiBoYXJkd2FyZSBtYW51
-YWwuDQo+IA0KPiBUaGF0IGNhc2UgaXMgaW5kZWVkIG5vdCBoYW5kbGVkLCBhbmQgSSBoYWQgYWxy
-ZWFkeSBjaGVja2VkIGJlZm9yZSBpdCBpcyBub3QgbmVlZGVkIGZvciB0aGUgY3VycmVudA0KPiBT
-b0NzICh1bnRpbCB3ZSBkaXNjb3ZlciBlLmcuIGEgZGVwZW5kZW5jeSBiZXR3ZWVuIGRpZmZlcmVu
-dCBHVE0gY2hhbm5lbHMgOy0pICBJZiBpdCBpcyBldmVyIG5lZWRlZCBmb3INCj4gZnV0dXJlIFNv
-Q3MsIHRoZSBzeXN0ZW0gaGFzIHRvIGJlIGFkYXB0ZWQuLi4NCg0KSSBhZ3JlZS4NCg0KQ2hlZXJz
-LA0KQmlqdQ0K
+On 07/01/2025 13:36, Dmitry Baryshkov wrote:
+> On Mon, Jan 06, 2025 at 02:44:30PM +0100, Krzysztof Kozlowski wrote:
+>> Add support for Pongo type of PLL clocks, used in Qualcomm SM8750 SoC.
+>> Notable difference comparing to other PLLs is the need for calibration
+>> for internally generated clock followed by wait_for_pll().  This is done
+>> in configure call and at this time clocks are not yet registered, thus
+>> wait_for_pll() cannot use clk_hw_get_name.
+> 
+> Is this still correct?
+
+No, it is not, I forgot to drop it after reworking code.
+
+Patches were merged, though.
+
+
+> 
+>> Locking during this
+>> calibration requires much more time, thus increase the timeout in
+>> wait_for_pll().
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> ---
+>>
+>> v2:
+>>  - EXPORT_SYMBOL_GPL
+>>  - Move the PLL calibration and wait_for_pll_enable_lock() call to
+>>    prepare callback.
+>> ---
+>>  drivers/clk/qcom/clk-alpha-pll.c | 165 ++++++++++++++++++++++++++++++++++++++-
+>>  drivers/clk/qcom/clk-alpha-pll.h |   6 ++
+>>  2 files changed, 170 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>> index 00d3659ea2124e26dd50c1b4e88ba71c1411442e..df609f7e394de2dc73e60df01b1ad71714c0719d 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -58,6 +58,7 @@
+>>  #define PLL_TEST_CTL_U(p)	((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U])
+>>  #define PLL_TEST_CTL_U1(p)     ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U1])
+>>  #define PLL_TEST_CTL_U2(p)     ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U2])
+>> +#define PLL_TEST_CTL_U3(p)     ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U3])
+>>  #define PLL_STATUS(p)		((p)->offset + (p)->regs[PLL_OFF_STATUS])
+>>  #define PLL_OPMODE(p)		((p)->offset + (p)->regs[PLL_OFF_OPMODE])
+>>  #define PLL_FRAC(p)		((p)->offset + (p)->regs[PLL_OFF_FRAC])
+>> @@ -197,6 +198,23 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+>>  		[PLL_OFF_TEST_CTL_U1] = 0x34,
+>>  		[PLL_OFF_TEST_CTL_U2] = 0x38,
+>>  	},
+>> +	[CLK_ALPHA_PLL_TYPE_PONGO_ELU] = {
+>> +		[PLL_OFF_OPMODE] = 0x04,
+>> +		[PLL_OFF_STATE] = 0x08,
+>> +		[PLL_OFF_STATUS] = 0x0c,
+>> +		[PLL_OFF_L_VAL] = 0x10,
+>> +		[PLL_OFF_USER_CTL] = 0x14,
+>> +		[PLL_OFF_USER_CTL_U] = 0x18,
+>> +		[PLL_OFF_CONFIG_CTL] = 0x1c,
+>> +		[PLL_OFF_CONFIG_CTL_U] = 0x20,
+>> +		[PLL_OFF_CONFIG_CTL_U1] = 0x24,
+>> +		[PLL_OFF_CONFIG_CTL_U2] = 0x28,
+>> +		[PLL_OFF_TEST_CTL] = 0x2c,
+>> +		[PLL_OFF_TEST_CTL_U] = 0x30,
+>> +		[PLL_OFF_TEST_CTL_U1] = 0x34,
+>> +		[PLL_OFF_TEST_CTL_U2] = 0x38,
+>> +		[PLL_OFF_TEST_CTL_U3] = 0x3c,
+>> +	},
+>>  	[CLK_ALPHA_PLL_TYPE_TAYCAN_ELU] = {
+>>  		[PLL_OFF_OPMODE] = 0x04,
+>>  		[PLL_OFF_STATE] = 0x08,
+>> @@ -337,6 +355,12 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+>>  #define LUCID_EVO_PLL_CAL_L_VAL_SHIFT	16
+>>  #define LUCID_OLE_PLL_RINGOSC_CAL_L_VAL_SHIFT	24
+>>  
+>> +/* PONGO ELU PLL specific setting and offsets */
+>> +#define PONGO_PLL_OUT_MASK		GENMASK(1, 0)
+>> +#define PONGO_PLL_L_VAL_MASK		GENMASK(11, 0)
+> 
+> Does it really support such a high L value, or are there any additional
+> flags / data entries? PLL2 uses 0x493, which should end up with 22 GHz
+> clock, if my calculations are correct.
+
+That's the bitfield also in datasheet (except downstream driver). Not
+exactly answer to "does it really support", but not sure what else we
+can do here.
+
+> 
+>> +#define PONGO_XO_PRESENT		BIT(10)
+>> +#define PONGO_CLOCK_SELECT		BIT(12)
+>> +
+>>  /* ZONDA PLL specific */
+>>  #define ZONDA_PLL_OUT_MASK	0xf
+>>  #define ZONDA_STAY_IN_CFA	BIT(16)
+>> @@ -366,7 +390,8 @@ static int wait_for_pll(struct clk_alpha_pll *pll, u32 mask, bool inverse,
+>>  	if (ret)
+>>  		return ret;
+>>  
+>> -	for (count = 200; count > 0; count--) {
+>> +	/* Pongo PLLs using a 32KHz reference can take upwards of 1500us to lock. */
+>> +	for (count = 1500; count > 0; count--) {
+>>  		ret = regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
+>>  		if (ret)
+>>  			return ret;
+>> @@ -2527,6 +2552,144 @@ const struct clk_ops clk_alpha_pll_reset_lucid_evo_ops = {
+>>  };
+>>  EXPORT_SYMBOL_GPL(clk_alpha_pll_reset_lucid_evo_ops);
+>>  
+>> +static int alpha_pll_pongo_elu_prepare(struct clk_hw *hw)
+>> +{
+>> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+>> +	struct regmap *regmap = pll->clkr.regmap;
+>> +	int ret;
+>> +
+>> +	/* Enable PLL intially to one-time calibrate against XO. */
+>> +	regmap_write(regmap, PLL_OPMODE(pll), PLL_RUN);
+>> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
+>> +	regmap_update_bits(regmap, PLL_MODE(pll), PONGO_XO_PRESENT, PONGO_XO_PRESENT);
+>> +
+>> +	/* Set regmap for wait_for_pll() */
+>> +	pll->clkr.regmap = regmap;
+>> +	ret = wait_for_pll_enable_lock(pll);
+>> +	if (ret) {
+>> +		/* Reverse calibration - disable PLL output */
+>> +		regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* Disable PLL after one-time calibration. */
+>> +	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
+>> +
+>> +	/* Select internally generated clock. */
+>> +	regmap_update_bits(regmap, PLL_MODE(pll), PONGO_CLOCK_SELECT,
+>> +			   PONGO_CLOCK_SELECT);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int alpha_pll_pongo_elu_enable(struct clk_hw *hw)
+>> +{
+>> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+>> +	struct regmap *regmap = pll->clkr.regmap;
+>> +	int ret;
+>> +
+>> +	/* Check if PLL is already enabled */
+>> +	if (trion_pll_is_enabled(pll, regmap))
+>> +		return 0;
+>> +
+>> +	ret = regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Set operation mode to RUN */
+>> +	regmap_write(regmap, PLL_OPMODE(pll), PLL_RUN);
+>> +
+>> +	ret = wait_for_pll_enable_lock(pll);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Enable the global PLL outputs */
+>> +	ret = regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, PLL_OUTCTRL);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Ensure that the write above goes through before returning. */
+>> +	mb();
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static void alpha_pll_pongo_elu_disable(struct clk_hw *hw)
+>> +{
+>> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+>> +	struct regmap *regmap = pll->clkr.regmap;
+>> +	int ret;
+>> +
+>> +	/* Disable the global PLL output */
+>> +	ret = regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
+>> +	if (ret)
+>> +		return;
+>> +
+>> +	/* Place the PLL mode in STANDBY */
+>> +	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
+>> +}
+>> +
+>> +static unsigned long alpha_pll_pongo_elu_recalc_rate(struct clk_hw *hw,
+>> +						     unsigned long parent_rate)
+>> +{
+>> +	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+>> +	struct regmap *regmap = pll->clkr.regmap;
+>> +	u32 l;
+>> +
+>> +	if (regmap_read(regmap, PLL_L_VAL(pll), &l))
+>> +		return 0;
+>> +
+>> +	l &= PONGO_PLL_L_VAL_MASK;
+>> +
+>> +	return alpha_pll_calc_rate(parent_rate, l, 0, pll_alpha_width(pll));
+>> +}
+>> +
+>> +const struct clk_ops clk_alpha_pll_pongo_elu_ops = {
+>> +	.prepare = alpha_pll_pongo_elu_prepare,
+>> +	.enable = alpha_pll_pongo_elu_enable,
+>> +	.disable = alpha_pll_pongo_elu_disable,
+>> +	.recalc_rate = alpha_pll_pongo_elu_recalc_rate,
+>> +};
+>> +EXPORT_SYMBOL_GPL(clk_alpha_pll_pongo_elu_ops);
+>> +
+>> +void clk_pongo_elu_pll_configure(struct clk_alpha_pll *pll,
+>> +				 struct regmap *regmap,
+>> +				 const struct alpha_pll_config *config)
+>> +{
+>> +	u32 val;
+>> +
+>> +	regmap_update_bits(regmap, PLL_USER_CTL(pll), PONGO_PLL_OUT_MASK,
+>> +			   PONGO_PLL_OUT_MASK);
+>> +
+>> +	if (trion_pll_is_enabled(pll, regmap))
+>> +		return;
+>> +
+>> +	if (regmap_read(regmap, PLL_L_VAL(pll), &val))
+>> +		return;
+>> +	val &= PONGO_PLL_L_VAL_MASK;
+>> +	if (val)
+>> +		return;
+>> +
+>> +	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l);
+>> +	clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), config->alpha);
+>> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL(pll), config->config_ctl_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U(pll), config->config_ctl_hi_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U1(pll), config->config_ctl_hi1_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U2(pll), config->config_ctl_hi2_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_USER_CTL(pll),
+>> +				   config->user_ctl_val | PONGO_PLL_OUT_MASK);
+>> +	clk_alpha_pll_write_config(regmap, PLL_USER_CTL_U(pll), config->user_ctl_hi_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll), config->test_ctl_hi1_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U2(pll), config->test_ctl_hi2_val);
+>> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U3(pll), config->test_ctl_hi3_val);
+>> +
+>> +	/* Disable PLL output */
+>> +	regmap_update_bits(regmap, PLL_MODE(pll), PLL_OUTCTRL, 0);
+>> +}
+>> +EXPORT_SYMBOL_GPL(clk_pongo_elu_pll_configure);
+>> +
+>>  void clk_rivian_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>  				  const struct alpha_pll_config *config)
+>>  {
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+>> index 87bd469d9c2c2ec4e0758c97231527b92fe6afe5..79aca8525262211ae5295245427d4540abf1e09a 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.h
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.h
+>> @@ -27,6 +27,7 @@ enum {
+>>  	CLK_ALPHA_PLL_TYPE_ZONDA_OLE,
+>>  	CLK_ALPHA_PLL_TYPE_LUCID_EVO,
+>>  	CLK_ALPHA_PLL_TYPE_LUCID_OLE,
+>> +	CLK_ALPHA_PLL_TYPE_PONGO_ELU,
+>>  	CLK_ALPHA_PLL_TYPE_TAYCAN_ELU,
+>>  	CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
+>>  	CLK_ALPHA_PLL_TYPE_DEFAULT_EVO,
+>> @@ -53,6 +54,7 @@ enum {
+>>  	PLL_OFF_TEST_CTL_U,
+>>  	PLL_OFF_TEST_CTL_U1,
+>>  	PLL_OFF_TEST_CTL_U2,
+>> +	PLL_OFF_TEST_CTL_U3,
+>>  	PLL_OFF_STATE,
+>>  	PLL_OFF_STATUS,
+>>  	PLL_OFF_OPMODE,
+>> @@ -138,6 +140,7 @@ struct alpha_pll_config {
+>>  	u32 test_ctl_hi_mask;
+>>  	u32 test_ctl_hi1_val;
+>>  	u32 test_ctl_hi2_val;
+>> +	u32 test_ctl_hi3_val;
+>>  	u32 main_output_mask;
+>>  	u32 aux_output_mask;
+>>  	u32 aux2_output_mask;
+>> @@ -196,6 +199,7 @@ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
+>>  #define clk_alpha_pll_postdiv_lucid_ole_ops clk_alpha_pll_postdiv_lucid_evo_ops
+>>  #define clk_alpha_pll_postdiv_taycan_elu_ops clk_alpha_pll_postdiv_lucid_evo_ops
+>>  
+>> +extern const struct clk_ops clk_alpha_pll_pongo_elu_ops;
+>>  extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
+>>  #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
+>>  
+>> @@ -222,6 +226,8 @@ void clk_lucid_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regma
+>>  				 const struct alpha_pll_config *config);
+>>  void clk_lucid_ole_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>>  				 const struct alpha_pll_config *config);
+>> +void clk_pongo_elu_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+>> +				 const struct alpha_pll_config *config);
+>>  #define clk_taycan_elu_pll_configure(pll, regmap, config) \
+>>  	clk_lucid_evo_pll_configure(pll, regmap, config)
+>>  
+>>
+>> -- 
+>> 2.43.0
+>>
+> 
+
+
+Best regards,
+Krzysztof
