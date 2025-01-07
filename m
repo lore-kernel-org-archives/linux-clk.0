@@ -1,148 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499DD1DED45;
-	Tue,  7 Jan 2025 08:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49731E9B3F
+	for <linux-clk@vger.kernel.org>; Tue,  7 Jan 2025 10:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736239984; cv=none; b=DmrReNwE98bwnsqpiuB1Sbjj1eh8c9RlpVgJa9Mxqq+/Z/ap2dWst/l82yhBdwu8cvvoRN0Ei4LYHUD8BRNMW+mv/m60O03E2Hyg3+a3X442w7cJi/zjd7yerAvHuvg1d2YBfC5MnHL8DSPC6MX5ZlTYvFyXG1IBmyWocfkx5E8=
+	t=1736246868; cv=none; b=Kh08jyEr7TprxCqb6AXVFxgkX2CxQoWzsK/vKb8ZIEJ6rivlghEo/S8PnhY1Zhi8+I/Mk2el6/C6TCsSDxivANp2nfnONYog94eOf82f1n22iZOOCfb5bZMsdpa0lnUgfGp2jl4ra6+6+5ixCB5MJNim2PcY4WFlU4aah7pVrDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736239984; c=relaxed/simple;
-	bh=01xTrWdA2Ra774BNmcbW6I0L7KA7rprIQ4jaPnbAI/A=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:From:To:References:
-	 In-Reply-To; b=KVbpdkhNdc8Cdj3PJy6lpj/tkviw8SNtKegQ2DWwx3Gdca4VYejHNkm8VajHSExJk3aEUjpmcZAX15B4lZDXQzgakW4BwZ+bo3uqrHTv1wy0qM0CFbEI3voiyYpGm7RH7z3zzZh2PeUKqkLxNvP9l/sYxFtGvkSqdrFHVm2WxBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6HguPPB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736246868; c=relaxed/simple;
+	bh=4DxIWS4UxbWb/GxgImQ2LJd+yXKvqJI5SXd4jfKZslM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KXsf0HECjX0Py0EbGWEuy4lI4xq6ijYSZlHzYpyImhRluS6TPUNmHAsaf8D6RJBzv9gjtG7re7ToUPNNZT0SR7pHFxIrWECsGv8uIEcnTypOAFlduaMnzil89c/Yn0CPXzS3HZ7NFyzerTwYB8fNN948aJXwmSiMNeGIxlyGoeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a3IlgDGP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6HguPPB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA39C4CEDD;
-	Tue,  7 Jan 2025 08:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736239983;
-	bh=01xTrWdA2Ra774BNmcbW6I0L7KA7rprIQ4jaPnbAI/A=;
-	h=Date:Subject:Cc:From:To:References:In-Reply-To:From;
-	b=k6HguPPBzt4nxG0k2sYivWVxQSuI5DBuP9LLof+Q5gEW0o0skCgV3ARsGwJ6GpS7k
-	 Wxc0Ta1itxg9nuEt60vOLFhUu+VZ2LxEAnxEduSGsshO7JhszNya82NgIrZU5G6I/t
-	 tuFCuaU9v0YjOAvSR21T4t/gm3fRJOijZ8pWG6PzcJu8YbewFi8vcejUNXlYbnFgfu
-	 N994EPkLjAMDOFSaJNLjgquvBHxYlXQ/idQTkllU5ufM/KcrOZGFhk3aSydXhCYFov
-	 FcPFNx9TSuTu9oXuzG/26nR9VeSqT0FRQAVZd+xzhGQ7rsC18SttT+/Wm2qzaDbMmv
-	 4E2M82ggIT8kA==
-Content-Type: multipart/signed;
- boundary=60e47edfe38543925c72c751d549eb1c55a15e2be67c797b85027bd80743;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Tue, 07 Jan 2025 09:52:59 +0100
-Message-Id: <D6VPPFGFM884.1OUPHTCOA7HG3@kernel.org>
-Subject: Re: [PATCH v2 4/4] clk: fsl-sai: Add MCLK generation support
-Cc: "Conor Dooley" <conor+dt@kernel.org>, "Fabio Estevam"
- <festevam@gmail.com>, "Jaroslav Kysela" <perex@perex.cz>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Mark Brown" <broonie@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Nicolin Chen" <nicoleotsuka@gmail.com>, "Rob
- Herring" <robh@kernel.org>, "Shengjiu Wang" <shengjiu.wang@gmail.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Takashi Iwai" <tiwai@suse.com>, "Xiubo
- Li" <Xiubo.Lee@gmail.com>, <devicetree@vger.kernel.org>,
- <linux-sound@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Marek Vasut" <marex@denx.de>, <linux-clk@vger.kernel.org>
-X-Mailer: aerc 0.16.0
-References: <20241226162234.40141-1-marex@denx.de>
- <20241226162234.40141-4-marex@denx.de>
- <D6OVE2W07NDX.2Q4AFF46TWCWJ@walle.cc>
- <36665ab9-16de-4f77-a55f-b7942dc0c1bf@denx.de>
- <D6RHZ8B051X5.3NA8EAPRI62XS@walle.cc>
- <72d4c42a-7ebf-484f-839b-631d61ac950f@denx.de>
-In-Reply-To: <72d4c42a-7ebf-484f-839b-631d61ac950f@denx.de>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a3IlgDGP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736246864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Xxf3smob+6l57OQXLoAdYMn9bpXPBaTQlMB2diZdpmc=;
+	b=a3IlgDGPwktYC7Bgs2PuilGSvMWjcvm7cjq6x0o7NCAQvGIWG5Q1dl2WXJtco87mpCc+gX
+	aF7N3T6BvVnIQ9ya+LpO8znKpHI/p6UPRBp3/90cnETUzF9LZYcAdCpVnlaCgh6pVSyFA3
+	7P1u9piuHtm5mWV/1DCgKJsSpXK//C0=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-196-_OnOpKnCOCa7XOHhKOdQfQ-1; Tue, 07 Jan 2025 05:47:43 -0500
+X-MC-Unique: _OnOpKnCOCa7XOHhKOdQfQ-1
+X-Mimecast-MFC-AGG-ID: _OnOpKnCOCa7XOHhKOdQfQ
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4679becb47eso93999031cf.3
+        for <linux-clk@vger.kernel.org>; Tue, 07 Jan 2025 02:47:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736246863; x=1736851663;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xxf3smob+6l57OQXLoAdYMn9bpXPBaTQlMB2diZdpmc=;
+        b=pIJkBbD+zaPj0mAycmo+tWhjLjr1G9e6NYo89i6N/vxHFdYiyx+VJgvsc2IWUpCxlX
+         YAyxz0KuNa8djY4eYV84MIhpAIgA9qPCLdF0RS40IrGaD+8s7FkWiQU7m+9tPj3m0SMP
+         y0ZoQGH2MLkgWmilxlgN22pVy3tBsjtbGNQVAi+ATukXVFHl8BDWx5BPQF5Bg7kSe17f
+         ru3utaXxMDkQ4gsaofZQQlLY0pCbF8OzMNN2lcIa95Z/kG15UCVf4melO8ZgZFRSdwY5
+         y/M3+43GhEc280TPgl6EGWKTNufKAKG2ZxMBQzvWRBpBeKL5DjoCZVXB8lfTMnoWW3zu
+         iFdA==
+X-Forwarded-Encrypted: i=1; AJvYcCUs3goayv934FHuSeryw53rJib3LXkL0lNPHIP3SGgl6B6Dh77ttn7SlZwOl+jw0R7gvrw6+nllaEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEMy62BW7umr1aViQrXWrFggPwesiHhdeUv4OojLiCS0IU0ECD
+	X2urT3sqxqhvicuFQFhZOJgOd4yob+Tm1dzqlQprKtTgHlwP8890FagZyDSf22SXugPLNCv8FRQ
+	o2z0DWoCBGqEvlcQCBtcUxvKiMXtmnvUEOV5Z+o7hmutsqhYpId85Fe/Qzw==
+X-Gm-Gg: ASbGncuKC5UMBsPEidnQWfNBi9dctj0LTu/qzffqabJKW/iUJcCmNE9K9qjYqsUTztc
+	3B/Ij6Uh9ZJdYhoxZvAJHCGMfbi3zQ20fPeeDdsw6Fs1wvn5/Pm4RTHcmm5NOD4UkbhmAnN7/K+
+	fjCUJOG98RFVEo3QUnuvaOAFQywBE1dKvcgCdaAVNbz6/jcD2TGl+NqPCTlAHLkQF4evMUrBMQu
+	sQDNO8OZxT5NszT363Cr4FP7gLqKiE+wn6poEeufvu55CrXMRZPwkp3uYS/Ysak7kGcQTpB0PM5
+	41B6TvpsUW0aqARkPAiX7+tQnHK6
+X-Received: by 2002:ac8:5fcc:0:b0:461:313e:8865 with SMTP id d75a77b69052e-46a4a8cca9dmr937479941cf.21.1736246862794;
+        Tue, 07 Jan 2025 02:47:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFCN1wrufu76U/PyJOp8iP1dgVNtmKaWBLmDGU07zHb7TNTTnchQao00F/SfyXcsqdNs1HzrA==
+X-Received: by 2002:ac8:5fcc:0:b0:461:313e:8865 with SMTP id d75a77b69052e-46a4a8cca9dmr937479761cf.21.1736246862555;
+        Tue, 07 Jan 2025 02:47:42 -0800 (PST)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46a3eb3403fsm184169821cf.88.2025.01.07.02.47.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2025 02:47:41 -0800 (PST)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] clk: qcom: Select CLK_X1E80100_GCC in config CLK_X1P42100_GPUCC
+Date: Tue,  7 Jan 2025 11:47:28 +0100
+Message-ID: <20250107104728.23098-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
---60e47edfe38543925c72c751d549eb1c55a15e2be67c797b85027bd80743
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-On Thu Jan 2, 2025 at 2:34 PM CET, Marek Vasut wrote:
-> On 1/2/25 10:58 AM, Michael Walle wrote:
-> > Hi,
->
-> Hi,
->
-> >>> ..Which is the
-> >>> normal use case for this pin. This driver was created because the
-> >>> LS1028A doesn't have a MCLK pin, so we've "misused" the BCLK pin,
-> >>> with the restriction that only integer dividers are possible.
-> >>
-> >> I have a system that is wired a bit unfortunately, I need to source
-> >> codec clock, where the codec is the clock consumer and needs to be abl=
-e
-> >> to control the clock (SGTL5000). SAI MCLK is the only way I can get th=
-em
-> >> out of the pin I need, hence this patch.
-> >=20
-> > Which is also the default case, no?
->
-> Not quite, there is a difference.
->
-> If SAI (audio driver) is used to control the MCLK enablement, then MCLK=
-=20
-> clock is not always enabled, and it is not necessarily enabled when the=
-=20
-> codec may need the clock to be enabled. There is also no way for the=20
-> codec node to specify phandle to clock provider in DT, because the SAI=20
-> (audio driver) is not clock provider.
->
-> If SAI (clock driver) is used to control the MCLK enablement, then MCLK=
-=20
-> clock is enabled when the codec needs the clock enabled, because the=20
-> codec is the clock consumer and the SAI (clock driver) is the clock=20
-> provider, and the codec driver can request the clock to be enabled when=
-=20
-> needed. There is also the usual phandle to clock provider in DT, because=
-=20
-> the SAI (clock driver) is clock provider.
->
-> >>> Also I'd expect that the imx
-> >>> SoCs already supports the MCLK for audio applications. Isn't that
-> >>> the case?
-> >>
-> >> That does not work if the MCLK has to be enabled/disabled by the MCLK
-> >> clock consumer .
-> >=20
-> > Why's that?
-> >=20
-> > Don't get me wrong. I don't have anything against this patch, I'm
-> > just confused, why that isn't already working with the current MCLK
-> > driver as this seems to be the usual requirements.
-> Which current MCLK driver, the SAI in audio driver role ?
+Commit 99c21c7ca642 ("clk: qcom: Add X1P42100 GPUCC driver") adds the
+config definition CLK_X1P42100_GPUCC. This config definition selects the
+non-existing config CLK_X1E8010_GCC. Note that the config for the X1E80100
+Global Clock Controller is CLK_X1E80100_GCC.
 
-Yes.
+Assuming this was just a minor typo in the number, i.e., 8010 instead of
+80100, change the definition to select the existing config
+CLK_X1E80100_GCC, similarly to the definitions for three configs
+CLK_X1E80100_{CAMCC,DISPCC,GPUCC}.
 
-> Does the paragraph in the middle of this email possibly answer this=20
-> question ?
+Fixes: 99c21c7ca642 ("clk: qcom: Add X1P42100 GPUCC driver")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ drivers/clk/qcom/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes thanks!
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 42c257e4c433..ecba763a1a59 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -67,7 +67,7 @@ config CLK_X1E80100_TCSRCC
+ config CLK_X1P42100_GPUCC
+ 	tristate "X1P42100 Graphics Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
+-	select CLK_X1E8010_GCC
++	select CLK_X1E80100_GCC
+ 	help
+ 	  Support for the graphics clock controller on X1P42100 devices.
+ 	  Say Y if you want to support graphics controller devices and
+-- 
+2.47.1
 
-For reference, IMHO the correct way to do it would be to add clock
-provider support to the original SAI, esp. because both drivers are
-mutually exclusive. But I'm fine to add MCLK support for this driver
-for hardware which has a spare SAI and to just use that as a MCLK
-source.
-
-Acked-by: Michael Walle <mwalle@kernel.org>
-
--michael
-
---60e47edfe38543925c72c751d549eb1c55a15e2be67c797b85027bd80743
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZ3zrbBIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/jGLwF/ZWmiJ2eGuY9CJRdtQ2c0YfLp47Jb92k9
-CLXIBvMSzZTWf1jTWoFprdUXFNI87QfbAYC7BgXfJeZcipGW+Gn8xnIhA9exkNMh
-eifER4VvKwpBdztoNKobUEO9e6Uya+wFtgg=
-=oTca
------END PGP SIGNATURE-----
-
---60e47edfe38543925c72c751d549eb1c55a15e2be67c797b85027bd80743--
