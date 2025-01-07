@@ -1,45 +1,46 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2041.outbound.protection.outlook.com [40.107.94.41])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7ADE2AD13;
-	Tue,  7 Jan 2025 04:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57611531C8;
+	Tue,  7 Jan 2025 04:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736224854; cv=fail; b=clBD98QzrpEpQyeWM86d+39buSEfTquh/XcvWUk4Hh17PjL08fQl7GohBsY7yDbCU+kCVZLaOCcne4eoDUcXsEFCMZVOxa8/pMQ4z7lPfh15gocg3zI2ikjqeFfOMPjYmizSk/Qqgu6poWqAXdWFWa/F+jYikpIVfmH+Xl7ZFAg=
+	t=1736224856; cv=fail; b=a8jEWdS3Tq+KT+XHwlS0Is5HMjBqaBvq1G0J4v92e8P1Vh9ABU3LH1Z6FHb69mwxbz/3P+SqUuGNkFD9tVVZY6NxUgSZ7ul1jHFTMYwbdk2oZQMGqxjGDBlaHl/+sOY9Qs1AUTG3A1Dkst6jzUs5NY7ql1PC9QbJIIcyl6ccPtI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736224854; c=relaxed/simple;
-	bh=CzZISi+xyOX4OZ/vuXuT8yoKtpP0aHYoHpq3Pv/AFA4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nrpi4/Q0SVzNLJ0YmKlTEYEN/COjyP8LovxtBHUmoVcfUtNmm2FMKM40yZG/GOvSvesUtZ7ATM8UM8TzzcQxvzS8aIw/2ndkDqtWrfIQhsY7gNdVnnrvyKsjZ1+QZ1NfXe38vCD90aSFdoyaT5jzuQYdEl4+gjve3JHPsB2wXXQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2qXO++HZ; arc=fail smtp.client-ip=40.107.94.41
+	s=arc-20240116; t=1736224856; c=relaxed/simple;
+	bh=WxZUjbUXVUwGsZIehidKhp2FWQGzydWQtGdO5XZkExY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DHiFUiyv8b6tuIkwaxEkeSrASC4mbg/6AJVuhJzT2LRvtRIS0GhzW3QBGwmCnw/P8J9syEwW0RH3DQAWrJhgsZqir/xdA1t7j6jUYVme4OJ8zQ8wqPanxRuo+gz1l4iCcpU+2XWQWgLfrTsuwMVgsMAu82FRhyzyJgwAMHaApAs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=l6XbM1RM; arc=fail smtp.client-ip=40.107.92.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2qXO++HZ"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="l6XbM1RM"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X6SWOhMxC457/+IhyGYw00YR/vYxqk/D+gAC9WA8uAltAeBI5MrkjriVXvTWNRLMp92E3b72aswtU6fEnT8jbs1xFLIVcnsEOrH3oYVHCLQU9SrlQMcizApGVPYtCIh281KuP7HDSl87cPrDezid8RHZ3bUbKW2O+kB9Vd1+VuYqIfN7JX1I4DDLKVyt1HeDZ1x9mGl6sYQryd3mIY27bGTJORuRI65y3/HkiuRYfbu6ZwQelVnuCFsQx6v2U9qBl/pqOSuCG6CNgSirtHytmID03SJnTfyD7NnHMURm8g/fi329AsvHrU7RcNQX+82VBNxF2zDzUpaQkCVayCD+PA==
+ b=rzpAPMTVDxIV+TjlOTLVgmmBL33tCcW3GaonbHmOJOwKg8tuvCfPTuSj0kLAWQW5A3tqyUJCZEaIcOBdAfELXfFBchBs1fco8ZK4JpysbSJB54XAPkSyH4U6fB/n6qby4RyZ3LY0V7TKzeqyVnJqm7nMHAedEfmyl4iidudnRkyMnm1sR7fp0G8RQx6kGfEaePp0iWrNP33AW2MzuibxxISHX0LjWyEQjxmN5yAsNFAkFMT8qu6xLoyy2u9ksE5NBrmH/di/YYPyQjqzrFL4jG1SJmJWCqPxh8zV1bnQoZ9xNetfRM68fvfAbU3RgUU4CBZ8kjSk/9lGn87gvuusuQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X8cU2gZ+8rBhCU6o0WmeqB717k3CttLY9/tYupwkgPc=;
- b=jaJHRU24VW1Pu0ALlX3JF5bAnlIj54sZd2TJ3E7uNsggsx3d5sBE8+LmDueRJKdegaCqpvIQw/gjjCrHU8cy6U7b5Mub6g669MnO4WkQa8CvlPhxBF2V6gfSyUl9Udh/aDpLh1lh1PcEa9s/gCZnNV2uP6qN/OlgqOAGO+/H5amPHpwinKjVNHaBsf9d7apSst2wd6Rl7CkUlr/yDR+sCb+LAz35ZF7WS6a69JagTA7BQKUerVKmNiG1HQ+I2AI4pCYZv8d8s5gM7w053mcol3CpbbqE/V7oADnP6q8kmOuL1nfLa6GANrMPDNKA9Tjx+BFVrG3xsM/w01rQmdUCAA==
+ bh=3jNb2+2Q4JO21YSPwFOQvb13LFZqcxpDBQ2734aEJ7s=;
+ b=bKo8LxjHkUYjuxenJRjW9A4MXcXH8hnWSUreBviuoXtcYo9M8S8yyG8y1T9tJxwTjnhXQKtZUusTs453KhyON6+5m7rgDj2mc4u3A6zdf2KMMLFRskyhKjfkMP/N5uSbvOud7XK5PtGraicDgcfqjsEOBj39S2M2YT48ykaWQ9qHCqDb3NrTinndidEsQA33fF47JhxxuijKvNFbeqdVz5/C+zms39vXS9AF1XrmLFK5Nbco98gyMelumPN7ZusqpgCVGZffD0FpWcKO/xgLoiCUl7xOLoj9lgC340lkUHnsYB3arAb4jol4TjiQROhbAeJRMrtsIrMk3ypMUKO7lw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=baylibre.com smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X8cU2gZ+8rBhCU6o0WmeqB717k3CttLY9/tYupwkgPc=;
- b=2qXO++HZbT5PHpOhaheMCCBKAdiDWNfK7gfCwjlC8j7lcZd1shetABY9kobotL2D6fFWMM0U/UheLJDhi/45Iriv1NNQ/18AyKX652whHKxGE82R1HdSo5UvN8AP2bkMNWpZfPuMcwjr/MEchPwRanfBj144FGWhnVJplCkZ06A=
-Received: from MW4PR03CA0296.namprd03.prod.outlook.com (2603:10b6:303:b5::31)
- by PH7PR12MB9204.namprd12.prod.outlook.com (2603:10b6:510:2e7::14) with
+ bh=3jNb2+2Q4JO21YSPwFOQvb13LFZqcxpDBQ2734aEJ7s=;
+ b=l6XbM1RMLW0UEhh6sQCnDXGZuVVkAtcnqGABLJ5r9C18BR/u1lVWleSIXbNzSxYAFKMoF+GS1/KTp8u2GQdoPfomnhiOmXJ7I6En0jpHepiEQeubI/88jPJ08/s84pl4TjqzJb+0rO9gcj+YNFGk5G3poZ0DRdkXV89j1Xtuu3U=
+Received: from MW4PR03CA0293.namprd03.prod.outlook.com (2603:10b6:303:b5::28)
+ by PH8PR12MB7375.namprd12.prod.outlook.com (2603:10b6:510:215::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8314.17; Tue, 7 Jan
- 2025 04:40:45 +0000
+ 2025 04:40:46 +0000
 Received: from MWH0EPF000971E5.namprd02.prod.outlook.com
- (2603:10b6:303:b5:cafe::88) by MW4PR03CA0296.outlook.office365.com
- (2603:10b6:303:b5::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8314.18 via Frontend Transport; Tue,
- 7 Jan 2025 04:40:45 +0000
+ (2603:10b6:303:b5:cafe::e8) by MW4PR03CA0293.outlook.office365.com
+ (2603:10b6:303:b5::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8314.16 via Frontend Transport; Tue,
+ 7 Jan 2025 04:40:46 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -53,20 +54,22 @@ Received: from SATLEXMB04.amd.com (165.204.84.17) by
 Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 6 Jan
- 2025 22:40:44 -0600
+ 2025 22:40:45 -0600
 Received: from xsjssw-mmedia4.xilinx.com (10.180.168.240) by
  SATLEXMB03.amd.com (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39
- via Frontend Transport; Mon, 6 Jan 2025 22:40:43 -0600
+ via Frontend Transport; Mon, 6 Jan 2025 22:40:44 -0600
 From: Rohit Visavalia <rohit.visavalia@amd.com>
 To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
 	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vishal.sagar@amd.com>,
 	<michal.simek@amd.com>
 CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Rohit Visavalia <rohit.visavalia@amd.com>
-Subject: [PATCH v2 0/2] dt-bindings: clock: xilinx: Update VCU bindings
-Date: Mon, 6 Jan 2025 20:40:36 -0800
-Message-ID: <20250107044038.100945-1-rohit.visavalia@amd.com>
+	<linux-kernel@vger.kernel.org>, Rohit Visavalia <rohit.visavalia@xilinx.com>
+Subject: [PATCH v2 1/2] dt-bindings: clock: xilinx: Convert VCU bindings to dtschema
+Date: Mon, 6 Jan 2025 20:40:37 -0800
+Message-ID: <20250107044038.100945-2-rohit.visavalia@amd.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250107044038.100945-1-rohit.visavalia@amd.com>
+References: <20250107044038.100945-1-rohit.visavalia@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -79,75 +82,168 @@ Received-SPF: None (SATLEXMB04.amd.com: rohit.visavalia@amd.com does not
  designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000971E5:EE_|PH7PR12MB9204:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1e4d6e0-d56a-45ac-79a5-08dd2ed57338
+X-MS-TrafficTypeDiagnostic: MWH0EPF000971E5:EE_|PH8PR12MB7375:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1a28b37-4e54-4d16-741d-08dd2ed573b4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VjHCPBz6kcWIN7tZjBo2Dij/qdkyAbQF9EK9WjVB7/MR8Fdllu7y20F8jdGm?=
- =?us-ascii?Q?5y8C/DKZGDCnR7fmwKZGsBAvjLEJkaU2LA5ByI1xDCBNAREb5mSV1hCCoy6f?=
- =?us-ascii?Q?YzyDFaeh1LEEN3YQ4uN2f2A2elwwCuxLkq4VsLhj/cJqlYC/mgWWfUTaqaSC?=
- =?us-ascii?Q?rh1luzcq3Mfhv61Gaw70629VMjOwkxv1b1zjjXl9Kq8COtkL2mZCjH21Y+sf?=
- =?us-ascii?Q?ENzGvLIiokroWBhnzcbZ1iMtUmaql7oROJd0feoekP3Mbcg+mJjK715qHYE9?=
- =?us-ascii?Q?Vy/OD55J2jHM5gsG1W6LawfS+0rcegIfk6Kv9Z0YWBsXM9yu18BTB/kfguhe?=
- =?us-ascii?Q?OYEr7Tc1+WGBt7LEo7w6XnPXA1jVRvU1vOZ8d4d3arG51bXZn2Hf29NX3+bM?=
- =?us-ascii?Q?O05sxnc64/zmuwleVO/QCBILuNb4EOPnLs2d5q7+walhzNwizko4Ri6l5/mm?=
- =?us-ascii?Q?2Am2um2FYvOjiEvvb3B/4YdtoKPvbEfuziIaq+o//QvNq7ynfSy7Zf+g3Vhb?=
- =?us-ascii?Q?1Zhy9/wJJZN0Hw8kIW4il6r+8GyDeXWJd86uktBc+0Sr5CPaNxelIQDrbkUf?=
- =?us-ascii?Q?ZxgSAA0MB9zdc7+0OmCC3i67gDgxMUOHW1FmfPM0bkaxpYrPAtMn2UZFbrqN?=
- =?us-ascii?Q?QS+yhLdgeUMI5oqmdtDS+wN+XOxPdEE0rqT6IzK5mKiESviFXJSmmCri3xI/?=
- =?us-ascii?Q?kCxoS7V9DAYms64Dk06HP/0jaMsxtOYg4HCKvM4ZOx4kmW1qeDINKFPCKQOO?=
- =?us-ascii?Q?qj2NNmLxK+6Qg+5zFFEydfbjcRE+kRA5O4NrvXCGhwE/mG68zZvXxCKiG5Ew?=
- =?us-ascii?Q?T6JPeVF1PnOuSjPB2d9Uv6VFkE5rB4UvKnGF2WjcFgd65xVfch43GYKv8Au8?=
- =?us-ascii?Q?sWfKPWBgTrH/lFZVuLaCXkhJN7Fm8cIYuQhSO/qP+SeD/xT3v5/OnrAcCEBU?=
- =?us-ascii?Q?fq0Z4ME5VIbvbbpFNBjaf6FC6SAFxIS3cKHSMFam4Daz9TX4Vv4FgWwZl81O?=
- =?us-ascii?Q?vg6urZZq8c2sdYrFrezi0nEqK17WwuTHw9nr95qhhvtWSk1w8zUP7cNwViac?=
- =?us-ascii?Q?LoMRAJ7tORutIue7rwHRdSEZWQUr4hEQ0GcfQYaVEFUGnAYB+N6sx/GNknM8?=
- =?us-ascii?Q?fXj2Rul2onRQL0h/7RmbKy9aWqVJwdtHyw5ATy3Idp5RGxX0siqJU8uVb1Fi?=
- =?us-ascii?Q?+7s70AaA/OUO4/oTcIBCKOATmjBvsFtVY5xaAPGZM71i3dwVvkgqgDj0DhWb?=
- =?us-ascii?Q?HrK3j3mlyXjgWrOA3T7v1kvzMQ83klv7ixtSaYsZKzrrEMjGBuaqZQGSoven?=
- =?us-ascii?Q?RFHAamzUxOuFQA6Pj8XJHf7VYkuc8s0UA/Gx+ZvALY1bIJ7oZXOxmbz5JOq/?=
- =?us-ascii?Q?/+xsw4xO5iM4uKSA+aa91pH8c4LVD72AVpyDdysFazr5eECXwkY+FrraEGGJ?=
- =?us-ascii?Q?Ahr1+1rhkbCds4lbecjTpW3+YAKF0re2xktKmrZyAxl2OElMXwq5KeXNPT+9?=
- =?us-ascii?Q?uuAkBoNa0pTx3f8=3D?=
+	=?us-ascii?Q?sYLrYbmxPi+zTANYy8mhlm2er6mbu84G+ZMQ+u0IIyG2ba3DnWHU7jp8h0n+?=
+ =?us-ascii?Q?IUlYy/HS0o+QJuRUG/FfMRI/zYNKYKnWGhGguc6+9PFAYSz4hhnsR5Hyyqdb?=
+ =?us-ascii?Q?YvUYVsR8pSIPStv6o2UTfoVQ9THpQxockPgqWfy2YDWfuDu/XwkaKoaYJj5a?=
+ =?us-ascii?Q?hzUynKYyWmNYyldXh5WXRVlNr6HBflSlDLvBi7mz4oZeaJKeW27MAxcjLnv9?=
+ =?us-ascii?Q?CHOdrLvp6KKTXiS6ubxhB9T2T2jkUxfOOYA1N2VWORaubCqUVuQAj0cSaTwV?=
+ =?us-ascii?Q?b6GvMqouh5IKrHPNTASrJYwhxaPVafY/44rHTJbAG1jmjsT/w/orOvla9V4x?=
+ =?us-ascii?Q?vwh0V+wV14acb6dWjvf3/Lpfrn1x7+BTJdos89f8J0ry6Ntq+Q8hfiB2Hmkw?=
+ =?us-ascii?Q?huSGrpy8dOP4cGI5E5yCo46h4FL5T/PT40hAcqCwKRWa2PzG5Z2GZX5ODL4f?=
+ =?us-ascii?Q?T4Ti5bXouXxDoDuvNcI0Zl0ctn1d8W8vIDHGKnNDf0nFnUrPdLeVKUPFBanu?=
+ =?us-ascii?Q?PwxRpRSJuPQKGrG+CAgt7eGTBYiUYKiaEd/2Crho4z9nhxI+2bk9QRLoTeuy?=
+ =?us-ascii?Q?yiOAZLAlFXRxX6e+sxJi6Pmn5+ma3su+gNRNPrLdSVUS52Y8Yi0irrBFU4Br?=
+ =?us-ascii?Q?9D4huX6Fh6tZEZPyle/TxxbSsph4YfBMlXOY1AQ4jClBAhuH8Qx7g+CJFWRz?=
+ =?us-ascii?Q?SlFBfOztC2UMACll8cqYwFffxrI7t4fsy2trYk19wn17zSNkhng09cq6yPWV?=
+ =?us-ascii?Q?Un8zOWHUn3261aPS1GHDCmPuoGBvmZ/zE0uUkM5T/n8JIt+P+/etRAhbuD3X?=
+ =?us-ascii?Q?O/K9yHMJ3Xp/C3i4ObmIpBZKzZwPzWWV7UEV9hjfekmSH/Tz1Ic1KrBrWVkt?=
+ =?us-ascii?Q?eElzGEdlKZgzTxQSzvdOvtqef3m1crMKeS0SoIm+X25caov/sxyh5Nf5oOGX?=
+ =?us-ascii?Q?Wp8ZGKyoZoM/8beDnONMKt2Wpz86FkqJGSBgP0yb4bDf9rArTY4n0KbREnlR?=
+ =?us-ascii?Q?Dnm41q+BymMa+s0OVzz2lmi/aFJNQsrjrN7WF3B0UmMH2FGE2z8s9V4DAu1U?=
+ =?us-ascii?Q?dQ10Xu19uaEt8rkRIuzCoYP+inrqH5ucUiqXRZ19Nec+L63cU2pSTacLDck1?=
+ =?us-ascii?Q?N2zmb1eUQKkXev1SraR8XrW2VOBY81GAQLk6ZCiF+Z5nWnTi0m3rSm4Qc37u?=
+ =?us-ascii?Q?72Rn+KcyXG/tbt/2S+JK83j1z5D28PpS4U9SmpbhETh4GznOiZxuXlAbEdUX?=
+ =?us-ascii?Q?6yJCjN7Xmveyv1IzhTVPIGC2gtaPP/3unY/xUj0U6ImmjM2PCesCxJEM72u0?=
+ =?us-ascii?Q?Iqyfzd7eaOySx2zusBuzpjKaH7OeKaTwkpHb5DT2nSpZ3bpp9jDgvIfWJdSW?=
+ =?us-ascii?Q?eT3VTVX3C94tDL+2QaNOH2VrI+wnaT4Ec8cY1xUJiLWDb0pm1NIAOuW3bmIu?=
+ =?us-ascii?Q?loVPDjWIWhqS5L2AI1TR1ZalTxsUZN4P?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2025 04:40:45.0752
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2025 04:40:45.9033
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1e4d6e0-d56a-45ac-79a5-08dd2ed57338
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1a28b37-4e54-4d16-741d-08dd2ed573b4
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	MWH0EPF000971E5.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9204
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7375
 
-This patch series converts dt-binding to dtschema and adds reset GPIO
-as optional property. 
+From: Rohit Visavalia <rohit.visavalia@xilinx.com>
+
+Convert AMD (Xilinx) VCU bindings to yaml format.
+Additional changes:
+   - move xlnx_vcu DT binding to clock from soc following commit
+     a2fe7baa27a4 ("clk: xilinx: move xlnx_vcu clock driver from soc")
+   - corrected clock sequence as per xilinx device-tree generator
+
+Signed-off-by: Rohit Visavalia <rohit.visavalia@xilinx.com>
 
 ---
 Changes in v2:
   - dropped patch 1 and move the file during conversion
   - dropped description in schema
   - updated commit msg for change in clock ordering
-  - used decimal number for GPIO
 
-Link to v1: https://lore.kernel.org/linux-clk/20250102163700.759712-1-rohit.visavalia@amd.com/
-
-Rohit Visavalia (2):
-  dt-bindings: clock: xilinx: Convert VCU bindings to dtschema
-  dt-bindings: clock: xilinx: Add reset GPIO for VCU
-
- .../devicetree/bindings/clock/xlnx,vcu.yaml   | 59 +++++++++++++++++++
- .../bindings/soc/xilinx/xlnx,vcu.txt          | 26 --------
- 2 files changed, 59 insertions(+), 26 deletions(-)
+---
+ .../devicetree/bindings/clock/xlnx,vcu.yaml   | 55 +++++++++++++++++++
+ .../bindings/soc/xilinx/xlnx,vcu.txt          | 26 ---------
+ 2 files changed, 55 insertions(+), 26 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,vcu.yaml
  delete mode 100644 Documentation/devicetree/bindings/soc/xilinx/xlnx,vcu.txt
 
+diff --git a/Documentation/devicetree/bindings/clock/xlnx,vcu.yaml b/Documentation/devicetree/bindings/clock/xlnx,vcu.yaml
+new file mode 100644
+index 000000000000..02d27d11a452
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/xlnx,vcu.yaml
+@@ -0,0 +1,55 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/xlnx,vcu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++title: LogicoreIP designed compatible with Xilinx ZYNQ family.
++
++maintainers:
++  - Rohit Visavalia <rohit.visavalia@amd.com>
++
++description:
++  LogicoreIP design to provide the isolation between processing system
++  and programmable logic. Also provides the list of register set to configure
++  the frequency.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - xlnx,vcu
++          - xlnx,vcu-logicoreip-1.0
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: pll ref clocksource
++      - description: aclk
++
++  clock-names:
++    items:
++      - const: pll_ref
++      - const: aclk
++
++required:
++  - reg
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    fpga {
++        #address-cells = <2>;
++        #size-cells = <2>;
++        xlnx_vcu: vcu@a0040000 {
++            compatible = "xlnx,vcu-logicoreip-1.0";
++            reg = <0x0 0xa0040000 0x0 0x1000>;
++            clocks = <&si570_1>, <&clkc 71>;
++            clock-names = "pll_ref", "aclk";
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/soc/xilinx/xlnx,vcu.txt b/Documentation/devicetree/bindings/soc/xilinx/xlnx,vcu.txt
+deleted file mode 100644
+index 2417b13ba468..000000000000
+--- a/Documentation/devicetree/bindings/soc/xilinx/xlnx,vcu.txt
++++ /dev/null
+@@ -1,26 +0,0 @@
+-LogicoreIP designed compatible with Xilinx ZYNQ family.
+--------------------------------------------------------
+-
+-General concept
+----------------
+-
+-LogicoreIP design to provide the isolation between processing system
+-and programmable logic. Also provides the list of register set to configure
+-the frequency.
+-
+-Required properties:
+-- compatible: shall be one of:
+-	"xlnx,vcu"
+-	"xlnx,vcu-logicoreip-1.0"
+-- reg : The base offset and size of the VCU_PL_SLCR register space.
+-- clocks: phandle for aclk and pll_ref clocksource
+-- clock-names: The identification string, "aclk", is always required for
+-   the axi clock. "pll_ref" is required for pll.
+-Example:
+-
+-	xlnx_vcu: vcu@a0040000 {
+-		compatible = "xlnx,vcu-logicoreip-1.0";
+-		reg = <0x0 0xa0040000 0x0 0x1000>;
+-		clocks = <&si570_1>, <&clkc 71>;
+-		clock-names = "pll_ref", "aclk";
+-	};
 -- 
 2.25.1
 
