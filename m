@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBB4198A06;
-	Wed,  8 Jan 2025 20:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD31202F96;
+	Wed,  8 Jan 2025 20:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736366489; cv=none; b=RXLX8zdz1txFWvxZzys2q4DAiG1BnuO/5Xp7ie2GMa+qTd8wjXCfzFikW0i1YGvNK4gRhSlC9oysKrPptNQWqTA/4o8dfJ9uQChnWTmO66xP2Xt5NxMHvLwyI+dJupD3K84gSqQhP3dHe3z5cdEv8s1rywge+JRYrnUFyMFeH84=
+	t=1736366663; cv=none; b=QninVBDEalQIy6uf+lezybBb60siKAzK4BkQLlU1Fs2TIWbSZOpe1yFXBKmcmPjwCWu/ZJh7wim1IAHF+/DcLQ7cscpTSL7SJy0Mb0FTNpZm8ogwz4rig3ILogDhUGkMIvpTpW1eXv7BxYjKwKvB6g0PL251tMa+fOOF5tdQffA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736366489; c=relaxed/simple;
-	bh=6ywCQppCWtOwtFwfArEz2OP+esU3BIUhDuQ7BW9UrcI=;
+	s=arc-20240116; t=1736366663; c=relaxed/simple;
+	bh=5TlP8hwegLbGDPYIjSjuygwuoJnKOwSEQHzeioJCfP8=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Etz63TnikduLNlHqzdYZvuCXd5tyu8RDF99veTQLoELDpfMtOCR9bfV8ZPf9zgnFKLB0/ss19HzLSCFug40P9Jr1gr4vnBaqGmWn0RP8wsXdmfqVNBxBSWLKiT+QLwqjSivAHtYasuvb0/GrZ6ZU0MGhdegjX6QoSqe7qhm0okM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDUIU8u0; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=LV2PPR4JrqaDzh9oYCJVfHvL2OeVJOJXIwjsMvMGtZvLsTOJC92EWXvHtzjpql5OZ01fDUbjN3tv1MDohOUdUsuu6dkafRtdKIuaM7gpt8Adz2q+JdvGP4wZni+yWGGgOGbBtr75aGq0hei2y8FR8eJVlhNilLBWrqlDZ8hb6ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXeoBHHC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDUIU8u0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 792C1C4CED3;
-	Wed,  8 Jan 2025 20:01:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXeoBHHC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0178EC4CEF2;
+	Wed,  8 Jan 2025 20:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736366486;
-	bh=6ywCQppCWtOwtFwfArEz2OP+esU3BIUhDuQ7BW9UrcI=;
+	s=k20201202; t=1736366663;
+	bh=5TlP8hwegLbGDPYIjSjuygwuoJnKOwSEQHzeioJCfP8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=NDUIU8u05SwENZ9i3amyDYGz0jHrYf6HFIm4izpxm8feSfXtbQmIcPmPlUqznHQJL
-	 PLoG6iIZ2gOoUhnNjjZydZO5kaxRQ+jx0UZEepMiGTO6iJXmxF6idD+nQtvnunIL9A
-	 +UvhA9pwkIAvK6UOb3grRHOgXSG3WvZhjLVzLP0zLQrJUvSVbFuGBRbVI6nJ6UFgLN
-	 VW6KIC5qOekVfLDjhiyvWOuxj+0jMCFZN3ultcIMy4A8Q2O0Zn+UO2DqWRtqnu0LAB
-	 WbRBMZdVSxVlAxcKGzNHIzRjCdKugBJq/uPZ4wfo5pg1h3GUAV0fqwaGXITOWOCvUp
-	 OGNz7MM2+kwiQ==
-Message-ID: <762c4c506463f368a0c5d64650d4fac7.sboyd@kernel.org>
+	b=sXeoBHHCfpOidbCX+MqGgYyy0VSMlOReuzt2HdXkUj6PO3gxkhHltscEFE+xgtv0e
+	 GNaJp3DXqocqM7zSx5lHrG0TF8+8VvnNtf7fxzwsC0F6wkoxCECOYlgu6807Y2pI7B
+	 m+heI4YuiUkpIjdGvMd36wFn3UTsoRow6e/qg11bqmtbOH4cpOZucLncDq6V2q/FnT
+	 V1h5n8XPjHry2+oR/Q8OqTxScndnjriAJNpuIJU+vTdYa7DrDSv2oRZ9SeZ6AdoF2a
+	 yySx296llYP5MTe7snvEntJyEq6a2TsUEjDS64xi+H4RJ8+1mNo6ZU3/IM9RfrcvYu
+	 LghwzeOeNXhIw==
+Message-ID: <fc8150ac954220cbbb25d018765c17f3.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,16 +35,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Z36iMwdeyq6DdKOw@wens.tw>
-References: <Z36iMwdeyq6DdKOw@wens.tw>
-Subject: Re: [GIT PULL] Allwinner clock changes for 6.14
+In-Reply-To: <20250108122431.3063396-1-abel.vesa@linaro.org>
+References: <20250108122431.3063396-1-abel.vesa@linaro.org>
+Subject: Re: [GIT PULL] clk: imx: Updates for v6.14
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org
-To: Chen-Yu Tsai <wens@kernel.org>
-Date: Wed, 08 Jan 2025 12:01:23 -0800
+Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette <mturquette@baylibre.com>
+Date: Wed, 08 Jan 2025 12:04:20 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Chen-Yu Tsai (2025-01-08 08:05:07)
+Quoting Abel Vesa (2025-01-08 04:24:31)
 > The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b=
 37:
 >=20
@@ -52,13 +52,12 @@ Quoting Chen-Yu Tsai (2025-01-08 08:05:07)
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-for-6.14
+>   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
+clk-imx-6.14
 >=20
-> for you to fetch changes up to 383ca7bee8a93be9ff5a072936981c2710d2856b:
+> for you to fetch changes up to 48806be086360846bb308c5ee21fcab8405a3da7:
 >=20
->   clk: sunxi-ng: a64: stop force-selecting PLL-MIPI as TCON0 parent (2025=
--01-04 20:17:11 +0800)
+>   clk: imx: Apply some clks only for i.MX93 (2024-12-26 16:46:03 +0200)
 >=20
 > ----------------------------------------------------------------
 
