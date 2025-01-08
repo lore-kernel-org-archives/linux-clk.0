@@ -1,94 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988901A2395;
-	Wed,  8 Jan 2025 09:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933A61F63E3;
+	Wed,  8 Jan 2025 09:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736329874; cv=none; b=OmXB46wcSEtnNKtzSYoHvm8RVtHuZGKPZ3v+16iVKJdbufj00n9Rn9v3puN+8F/ZeFC5ZPFszz7/gQGcj9rtRAxKvdm/vCDVAWhgEH1bMB+RIXC1LurJ5JR0DlrA/N209tZIq01wOWuAvR/L1yt8QGi2L7RlAkdGYgZfObC5TwE=
+	t=1736330140; cv=none; b=uf5bHnzD5pC6fzhb0keeZlJ+qKBuZfGzU5jmo9gRCQPOPjfT7Gpq6pfZKuMGeO47Fwb7L6y5dRuLs0Fw/FwBhbErUSvsiQLBZZIcwmmYpWP4wf/VV7omc9gAg2ekXrXEVzEVeyBi45UXgoeEah3w3S5OCRNSPAKrBPx6ekyuXh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736329874; c=relaxed/simple;
-	bh=hPN4D7FTStknqbjGuFANLoFGFT58qAH7862kTNVFYwA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JRGK2RPxznWf3fkVnnwtHVjblW1Qol/khlyTMtq3sFkflvf91gL0QDBo2Zj3oMGnj/7/CIdBYHAuHnH0V8E8C3UhfSpDj1SjSmGnTQV7nRjdp85/wCpr3CBlZ0fDzxnmAlh6MkUTVQMdV3OwahpR8SR9sT1BqTQaAlqQqU6UsSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itGVqydC; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itGVqydC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1328C4CEE0;
-	Wed,  8 Jan 2025 09:51:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736329874;
-	bh=hPN4D7FTStknqbjGuFANLoFGFT58qAH7862kTNVFYwA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=itGVqydCr2lYckymqpdNsd6/HKnE9ZZQ5cRpX4UWKzJExf7kJ3/FnMZcLeLcg2jtu
-	 j/QDKg8BsRqnEqa/DioRev+WvSQ9CrzButK5VYMEx68n1K2ETitduLva/aFxYHvSvq
-	 Kvdae98yeostOtMyFmIdk2DAUCyRKjEE5yxPNAzcCDeNX4rVuWYuEpQv26Q7yjs5lo
-	 uIPw/f6ZhNFnHmSwB0IEjqto4PVUYFiNtyPjok4Flu/sRsh9c+2pD409pmT6XLqbsW
-	 JqsjYEFgDiQglzmUwUrT6e/uYYWKa79moUak+9pJvKoHuiyr62dORkWBDr9nhPVb0k
-	 IeTBMmBgMgC6A==
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-Date: Wed, 08 Jan 2025 10:50:44 +0100
-Subject: [PATCH v6 5/5] PCI: mediatek-gen3: rely on msleep() in
- mtk_pcie_en7581_power_up()
+	s=arc-20240116; t=1736330140; c=relaxed/simple;
+	bh=5spmVVgRAeG3CJm5Rz+zOc5mQdu90lpzu3wLhl7iYuA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SSbyPy2a3JZxhv78BvIDfN7W7vfvtllATzTH2e4TrRVUFresrS3Pb0mijz9t/PZX0Y4c4dgtrU5ICJpE5z3+G/Pgm0VhRV9dmorgS2MxOeluhaheYEj1FgnotLkYZ+OOHzqhuTMvmCu0JPfxhm7miZeD1glwjg9U/LeY+/byDzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+Received: from rd03-sz.software.amlogic (10.28.11.121) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.39; Wed, 8 Jan 2025
+ 17:40:27 +0800
+From: Jian Hu <jian.hu@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, Xianwei Zhao
+	<xianwei.zhao@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	"Dmitry Rokosov" <ddrokosov@sberdevices.ru>, robh+dt <robh+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>
+CC: Jian Hu <jian.hu@amlogic.com>, devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-amlogic
+	<linux-amlogic@lists.infradead.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-arm-kernel
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2 0/5] add support for T7 family clock controller
+Date: Wed, 8 Jan 2025 17:40:20 +0800
+Message-ID: <20250108094025.2664201-1-jian.hu@amlogic.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250108-pcie-en7581-fixes-v6-5-21ac939a3b9b@kernel.org>
-References: <20250108-pcie-en7581-fixes-v6-0-21ac939a3b9b@kernel.org>
-In-Reply-To: <20250108-pcie-en7581-fixes-v6-0-21ac939a3b9b@kernel.org>
-To: Ryder Lee <ryder.lee@mediatek.com>, 
- Jianjun Wang <jianjun.wang@mediatek.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-pci@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- Lorenzo Bianconi <lorenzo@kernel.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Since mtk_pcie_en7581_power_up() runs in non-atomic context, rely on
-msleep() routine instead of mdelay().
+It introduces three clock controllers:
+- scmi clock controller, these clocks are managed by the SCP and handled through SCMI;
+- PLL clock controller;
+- peripheral clock controller.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
----
- drivers/pci/controller/pcie-mediatek-gen3.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes v2 since v1 at [1]:
+- add CLK_MESON import 
+- add const for clkc_regmao_config in pll driver
+- fix eth_rmii_sel parent
+- update T7 PLL YAML file
 
-diff --git a/drivers/pci/controller/pcie-mediatek-gen3.c b/drivers/pci/controller/pcie-mediatek-gen3.c
-index 01e0b53cc1f22fc4b9270a2eb6a55e8948ba2f8b..aa511965eb914f7e58e78194491ca7a23790b99d 100644
---- a/drivers/pci/controller/pcie-mediatek-gen3.c
-+++ b/drivers/pci/controller/pcie-mediatek-gen3.c
-@@ -923,7 +923,7 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
- 	reset_control_assert(pcie->mac_reset);
- 
- 	/* Wait for the time needed to complete the reset lines assert. */
--	mdelay(PCIE_EN7581_RESET_TIME_MS);
-+	msleep(PCIE_EN7581_RESET_TIME_MS);
- 
- 	/*
- 	 * Unlike the other MediaTek Gen3 controllers, the Airoha EN7581
-@@ -951,7 +951,7 @@ static int mtk_pcie_en7581_power_up(struct mtk_gen3_pcie *pcie)
- 	 * Wait for the time needed to complete the bulk de-assert above.
- 	 * This time is specific for EN7581 SoC.
- 	 */
--	mdelay(PCIE_EN7581_RESET_TIME_MS);
-+	msleep(PCIE_EN7581_RESET_TIME_MS);
- 
- 	pm_runtime_enable(dev);
- 	pm_runtime_get_sync(dev);
+[1]: https://lore.kernel.org/r/20241231060047.2298871-6-jian.hu%40amlogic.com
+
+Jian Hu (5):
+  dt-bindings: clock: add Amlogic T7 PLL clock controller
+  dt-bindings: clock: add Amlogic T7 SCMI clock controller
+  dt-bindings: clock: add Amlogic T7 peripherals clock controller
+  clk: meson: t7: add support for the T7 SoC PLL clock
+  clk: meson: t7: add t7 clock peripherals controller driver
+
+ .../clock/amlogic,t7-peripherals-clkc.yaml    |  111 +
+ .../bindings/clock/amlogic,t7-pll-clkc.yaml   |  103 +
+ drivers/clk/meson/Kconfig                     |   27 +
+ drivers/clk/meson/Makefile                    |    2 +
+ drivers/clk/meson/t7-peripherals.c            | 2323 +++++++++++++++++
+ drivers/clk/meson/t7-pll.c                    | 1193 +++++++++
+ .../clock/amlogic,t7-peripherals-clkc.h       |  231 ++
+ .../dt-bindings/clock/amlogic,t7-pll-clkc.h   |   57 +
+ include/dt-bindings/clock/amlogic,t7-scmi.h   |   48 +
+ 9 files changed, 4095 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,t7-peripherals-clkc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml
+ create mode 100644 drivers/clk/meson/t7-peripherals.c
+ create mode 100644 drivers/clk/meson/t7-pll.c
+ create mode 100644 include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,t7-pll-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,t7-scmi.h
 
 -- 
 2.47.1
