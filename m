@@ -1,16 +1,16 @@
 Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D38A1A0BED;
-	Wed,  8 Jan 2025 09:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB43E1F2C43;
+	Wed,  8 Jan 2025 09:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736329304; cv=none; b=eACMaP8+PPi2NjsqCgrvMzkXZ5/mp546GfWgXbOdYZYme3dd71yT5M01y8PuyNDccBpXegSyGrQnEbnI9WM8U6yCsPGU3eaeSWp1eNlIx6oLq0Cry+bFmqoxtbZgtKEIY9NGuKyAXdOa1rlw81Mrl90gOGkAaTDoFee3Rf8Dii4=
+	t=1736329307; cv=none; b=mBE01G49JY38YRc8EiqZd4mzqFyAGdLUFEYUNOH526J1+MGxC/1IozBdEAdIEF2LzUOTBa4Bj38EK+XoLJ3SESNXb1i8nviG4HTrcr2Q6GgKApBhs3VXilUfAd3kNiY6VUuAueNA0ZzmbDWMrpejRX98g0OlyO3I9np9kvstyFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736329304; c=relaxed/simple;
-	bh=OGS8qLWBtbvIGXvPhFr8psvpBn/AZro8C5G2CmElGOw=;
+	s=arc-20240116; t=1736329307; c=relaxed/simple;
+	bh=vHOX2swWvfSX6VNFwfKLCerUbK1dZ4wOJHuWW5/CYcg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YRcMAXC6IkEgmlk31PW22YPP7br4mnfRZl/DO4TozJMCBhfax0wT5U785tmcl1hTAd03mv9q58UcVqTFUBdd1p1rZlNRFlOtAFm+MjUWELqWsu1S5c8TQ2wMNSRZWXZt5sVI0K8b39Yw3V2aPaXSQi7fiRRzmArihMIB3kDKTbY=
+	 MIME-Version:Content-Type; b=drJ3dftO69CyXDZVIodDyiq77NRBbo3E4xzC/A7/sKSrVgtpygpleqJGQ6RFkLBYwWL2Y8wN1U8ZVYoDE5Wufr8WpuG9uUHO4zjXn8OPa95JUH+wR7yLZUBbzZwpf/4EPTlJSurK47iJOtdHJ6Fl0xCN7XpJEsp5McGbNR8k9t8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
@@ -29,9 +29,9 @@ CC: Jian Hu <jian.hu@amlogic.com>, devicetree <devicetree@vger.kernel.org>,
 	<linux-amlogic@lists.infradead.org>, linux-kernel
 	<linux-kernel@vger.kernel.org>, linux-arm-kernel
 	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 4/5] clk: meson: t7: add support for the T7 SoC PLL clock
-Date: Wed, 8 Jan 2025 17:40:24 +0800
-Message-ID: <20250108094025.2664201-5-jian.hu@amlogic.com>
+Subject: [PATCH v2 3/5] dt-bindings: clock: add Amlogic T7 peripherals clock controller
+Date: Wed, 8 Jan 2025 17:40:23 +0800
+Message-ID: <20250108094025.2664201-4-jian.hu@amlogic.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250108094025.2664201-1-jian.hu@amlogic.com>
 References: <20250108094025.2664201-1-jian.hu@amlogic.com>
@@ -44,1247 +44,372 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Add PLL clock controller driver for the Amlogic T7 SoC family.
+Add DT bindings for the peripheral clock controller of the Amlogic T7
+SoC family.
 
 Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/clk/meson/Kconfig  |   14 +
- drivers/clk/meson/Makefile |    1 +
- drivers/clk/meson/t7-pll.c | 1193 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 1208 insertions(+)
- create mode 100644 drivers/clk/meson/t7-pll.c
+ .../clock/amlogic,t7-peripherals-clkc.yaml    | 111 +++++++++
+ .../clock/amlogic,t7-peripherals-clkc.h       | 231 ++++++++++++++++++
+ 2 files changed, 342 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,t7-peripherals-clkc.yaml
+ create mode 100644 include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 78f648c9c97d..6878b035a7ac 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -201,4 +201,18 @@ config COMMON_CLK_S4_PERIPHERALS
- 	help
- 	  Support for the peripherals clock controller on Amlogic S805X2 and S905Y4
- 	  devices, AKA S4. Say Y if you want S4 peripherals clock controller to work.
-+
-+config COMMON_CLK_T7_PLL
-+	tristate "Amlogic T7 SoC PLL controller support"
-+	depends on ARM64
-+	default y
-+	select COMMON_CLK_MESON_REGMAP
-+	select COMMON_CLK_MESON_CLKC_UTILS
-+	select COMMON_CLK_MESON_PLL
-+	imply COMMON_CLK_SCMI
-+	help
-+	  Support for the PLL clock controller on Amlogic A311D2 based
-+	  device, AKA T7. PLLs are required by most peripheral to operate
-+	  Say Y if you are a T7 based device.
-+
- endmenu
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index bc56a47931c1..646257694c34 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -27,3 +27,4 @@ obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
- obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o meson8-ddr.o
- obj-$(CONFIG_COMMON_CLK_S4_PLL) += s4-pll.o
- obj-$(CONFIG_COMMON_CLK_S4_PERIPHERALS) += s4-peripherals.o
-+obj-$(CONFIG_COMMON_CLK_T7_PLL) += t7-pll.o
-diff --git a/drivers/clk/meson/t7-pll.c b/drivers/clk/meson/t7-pll.c
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,t7-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,t7-peripherals-clkc.yaml
 new file mode 100644
-index 000000000000..a6113b7dfe11
+index 000000000000..eba24937defd
 --- /dev/null
-+++ b/drivers/clk/meson/t7-pll.c
-@@ -0,0 +1,1193 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
++++ b/Documentation/devicetree/bindings/clock/amlogic,t7-peripherals-clkc.yaml
+@@ -0,0 +1,111 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/amlogic,t7-peripherals-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic T7 Peripherals Clock Controller
++
++maintainers:
++  - Neil Armstrong <neil.armstrong@linaro.org>
++  - Jerome Brunet <jbrunet@baylibre.com>
++  - Xianwei Zhao <xianwei.zhao@amlogic.com>
++  - Jian Hu <jian.hu@amlogic.com>
++
++properties:
++  compatible:
++    const: amlogic,t7-peripherals-clkc
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    minItems: 13
++    items:
++      - description: input oscillator
++      - description: input sys clk
++      - description: input fclk div 2
++      - description: input fclk div 2p5
++      - description: input fclk div 3
++      - description: input fclk div 4
++      - description: input fclk div 5
++      - description: input fclk div 7
++      - description: input hifi pll
++      - description: input gp0 pll
++      - description: input gp1 pll
++      - description: input mpll1
++      - description: input mpll2
++      - description: external input rmii oscillator (optional)
++      - description: input video pll0 (optional)
++      - description: external pad input for rtc (optional)
++
++  clock-names:
++    minItems: 13
++    items:
++      - const: xtal
++      - const: sys
++      - const: fdiv2
++      - const: fdiv2p5
++      - const: fdiv3
++      - const: fdiv4
++      - const: fdiv5
++      - const: fdiv7
++      - const: hifi
++      - const: gp0
++      - const: gp1
++      - const: mpll1
++      - const: mpll2
++      - const: ext_rmii
++      - const: vid_pll0
++      - const: ext_rtc
++
++required:
++  - compatible
++  - '#clock-cells'
++  - reg
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    apb {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        clkc_periphs:clock-controller@0 {
++            compatible = "amlogic,t7-peripherals-clkc";
++            reg = <0 0x0 0 0x1c8>;
++            #clock-cells = <1>;
++            clocks = <&xtal>,
++                     <&scmi_clk 13>,
++                     <&scmi_clk 18>,
++                     <&scmi_clk 20>,
++                     <&scmi_clk 22>,
++                     <&scmi_clk 24>,
++                     <&scmi_clk 26>,
++                     <&scmi_clk 28>,
++                     <&hifi 1>,
++                     <&gp0 1>,
++                     <&gp1 1>,
++                     <&mpll 4>,
++                     <&mpll 6>;
++            clock-names = "xtal",
++                          "sys",
++                          "fdiv2",
++                          "fdiv2p5",
++                          "fdiv3",
++                          "fdiv4",
++                          "fdiv5",
++                          "fdiv7",
++                          "hifi",
++                          "gp0",
++                          "gp1",
++                          "mpll1",
++                          "mpll2";
++        };
++    };
+diff --git a/include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h
+new file mode 100644
+index 000000000000..703d7bb6f2ca
+--- /dev/null
++++ b/include/dt-bindings/clock/amlogic,t7-peripherals-clkc.h
+@@ -0,0 +1,231 @@
++/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
 +/*
-+ * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
++ * Copyright (c) 2023 Amlogic, Inc. All rights reserved.
 + * Author: Jian Hu <jian.hu@amlogic.com>
 + */
 +
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+#include "clk-regmap.h"
-+#include "clk-pll.h"
-+#include "clk-mpll.h"
-+#include "meson-clkc-utils.h"
-+#include "meson-eeclk.h"
-+#include <dt-bindings/clock/amlogic,t7-pll-clkc.h>
-+
-+#define ANACTRL_GP0PLL_CTRL0		0x00
-+#define ANACTRL_GP0PLL_CTRL1		0x04
-+#define ANACTRL_GP0PLL_CTRL2		0x08
-+#define ANACTRL_GP0PLL_CTRL3		0x0c
-+#define ANACTRL_GP0PLL_CTRL4		0x10
-+#define ANACTRL_GP0PLL_CTRL5		0x14
-+#define ANACTRL_GP0PLL_CTRL6		0x18
-+#define ANACTRL_GP0PLL_STS		0x1c
-+
-+#define ANACTRL_GP1PLL_CTRL0		0x00
-+#define ANACTRL_GP1PLL_CTRL1		0x04
-+#define ANACTRL_GP1PLL_CTRL2		0x08
-+#define ANACTRL_GP1PLL_CTRL3		0x0c
-+#define ANACTRL_GP1PLL_STS		0x1c
-+
-+#define ANACTRL_HIFIPLL_CTRL0		0x00
-+#define ANACTRL_HIFIPLL_CTRL1		0x04
-+#define ANACTRL_HIFIPLL_CTRL2		0x08
-+#define ANACTRL_HIFIPLL_CTRL3		0x0c
-+#define ANACTRL_HIFIPLL_CTRL4		0x10
-+#define ANACTRL_HIFIPLL_CTRL5		0x14
-+#define ANACTRL_HIFIPLL_CTRL6		0x18
-+#define ANACTRL_HIFIPLL_STS		0x1c
-+
-+#define ANACTRL_PCIEPLL_CTRL0		0x00
-+#define ANACTRL_PCIEPLL_CTRL1		0x04
-+#define ANACTRL_PCIEPLL_CTRL2		0x08
-+#define ANACTRL_PCIEPLL_CTRL3		0x0c
-+#define ANACTRL_PCIEPLL_CTRL4		0x10
-+#define ANACTRL_PCIEPLL_CTRL5		0x14
-+#define ANACTRL_PCIEPLL_STS		0x18
-+
-+#define ANACTRL_MPLL_CTRL0		0x00
-+#define ANACTRL_MPLL_CTRL1		0x04
-+#define ANACTRL_MPLL_CTRL2		0x08
-+#define ANACTRL_MPLL_CTRL3		0x0c
-+#define ANACTRL_MPLL_CTRL4		0x10
-+#define ANACTRL_MPLL_CTRL5		0x14
-+#define ANACTRL_MPLL_CTRL6		0x18
-+#define ANACTRL_MPLL_CTRL7		0x1c
-+#define ANACTRL_MPLL_CTRL8		0x20
-+#define ANACTRL_MPLL_STS		0x24
-+
-+#define ANACTRL_HDMIPLL_CTRL0		0x00
-+#define ANACTRL_HDMIPLL_CTRL1		0x04
-+#define ANACTRL_HDMIPLL_CTRL2		0x08
-+#define ANACTRL_HDMIPLL_CTRL3		0x0c
-+#define ANACTRL_HDMIPLL_CTRL4		0x10
-+#define ANACTRL_HDMIPLL_CTRL5		0x14
-+#define ANACTRL_HDMIPLL_CTRL6		0x18
-+#define ANACTRL_HDMIPLL_STS		0x1c
-+
-+#define ANACTRL_MCLK_PLL_CNTL0		0x00
-+#define ANACTRL_MCLK_PLL_CNTL1		0x04
-+#define ANACTRL_MCLK_PLL_CNTL2		0x08
-+#define ANACTRL_MCLK_PLL_CNTL3		0x0c
-+#define ANACTRL_MCLK_PLL_CNTL4		0x10
-+#define ANACTRL_MCLK_PLL_STS		0x14
-+
-+static const struct pll_mult_range media_pll_mult_range = {
-+	.min = 125,
-+	.max = 250,
-+};
-+
-+static const struct reg_sequence gp0_init_regs[] = {
-+	{ .reg = ANACTRL_GP0PLL_CTRL1,  .def = 0x00000000 },
-+	{ .reg = ANACTRL_GP0PLL_CTRL2,  .def = 0x00000000 },
-+	{ .reg = ANACTRL_GP0PLL_CTRL3,  .def = 0x48681c00 },
-+	{ .reg = ANACTRL_GP0PLL_CTRL4,  .def = 0x88770290 },
-+	{ .reg = ANACTRL_GP0PLL_CTRL5,  .def = 0x3927200a },
-+	{ .reg = ANACTRL_GP0PLL_CTRL6,  .def = 0x56540000 },
-+};
-+
-+static struct clk_regmap gp0_pll_dco = {
-+	.data = &(struct meson_clk_pll_data){
-+		.en = {
-+			.reg_off = ANACTRL_GP0PLL_CTRL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.m = {
-+			.reg_off = ANACTRL_GP0PLL_CTRL0,
-+			.shift   = 0,
-+			.width   = 8,
-+		},
-+		.n = {
-+			.reg_off = ANACTRL_GP0PLL_CTRL0,
-+			.shift   = 10,
-+			.width   = 5,
-+		},
-+		.l = {
-+			.reg_off = ANACTRL_GP0PLL_STS,
-+			.shift   = 31,
-+			.width   = 1,
-+		},
-+		.rst = {
-+			.reg_off = ANACTRL_GP0PLL_CTRL0,
-+			.shift   = 29,
-+			.width   = 1,
-+		},
-+		.range = &media_pll_mult_range,
-+		.init_regs = gp0_init_regs,
-+		.init_count = ARRAY_SIZE(gp0_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "gp0_pll_dco",
-+		.ops = &meson_clk_pll_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "input",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap gp0_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = ANACTRL_GP0PLL_CTRL0,
-+		.shift = 16,
-+		.width = 3,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "gp0_pll",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&gp0_pll_dco.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+/*
-+ * The gp1 pll IP is different with gp0 pll, the PLL DCO range is
-+ * 1.6GHZ - 3.2GHZ, and the reg_sequence is short
-+ */
-+static const struct pll_mult_range gp1_pll_mult_range = {
-+	.min = 67,
-+	.max = 133,
-+};
-+
-+static const struct reg_sequence gp1_init_regs[] = {
-+	{ .reg = ANACTRL_GP1PLL_CTRL1,  .def = 0x1420500f },
-+	{ .reg = ANACTRL_GP1PLL_CTRL2,  .def = 0x00023001 },
-+	{ .reg = ANACTRL_GP1PLL_CTRL3,  .def = 0x00000000 },
-+};
-+
-+static struct clk_regmap gp1_pll_dco = {
-+	.data = &(struct meson_clk_pll_data){
-+		.en = {
-+			.reg_off = ANACTRL_GP1PLL_CTRL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.m = {
-+			.reg_off = ANACTRL_GP1PLL_CTRL0,
-+			.shift   = 0,
-+			.width   = 8,
-+		},
-+		.n = {
-+			.reg_off = ANACTRL_GP1PLL_CTRL0,
-+			.shift   = 16,
-+			.width   = 5,
-+		},
-+		.l = {
-+			.reg_off = ANACTRL_GP1PLL_STS,
-+			.shift   = 31,
-+			.width   = 1,
-+		},
-+		.rst = {
-+			.reg_off = ANACTRL_GP1PLL_CTRL0,
-+			.shift   = 29,
-+			.width   = 1,
-+		},
-+		.range = &gp1_pll_mult_range,
-+		.init_regs = gp1_init_regs,
-+		.init_count = ARRAY_SIZE(gp1_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "gp1_pll_dco",
-+		.ops = &meson_clk_pll_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "input",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap gp1_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = ANACTRL_GP1PLL_CTRL0,
-+		.shift = 12,
-+		.width = 3,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "gp1_pll",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&gp1_pll_dco.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct reg_sequence hifi_init_regs[] = {
-+	{ .reg = ANACTRL_HIFIPLL_CTRL1, .def = 0x00000000 },
-+	{ .reg = ANACTRL_HIFIPLL_CTRL2, .def = 0x00000000 },
-+	{ .reg = ANACTRL_HIFIPLL_CTRL3, .def = 0x6a285c00 },
-+	{ .reg = ANACTRL_HIFIPLL_CTRL4, .def = 0x65771290 },
-+	{ .reg = ANACTRL_HIFIPLL_CTRL5, .def = 0x3927200a },
-+	{ .reg = ANACTRL_HIFIPLL_CTRL6, .def = 0x56540000 }
-+};
-+
-+static struct clk_regmap hifi_pll_dco = {
-+	.data = &(struct meson_clk_pll_data){
-+		.en = {
-+			.reg_off = ANACTRL_HIFIPLL_CTRL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.m = {
-+			.reg_off = ANACTRL_HIFIPLL_CTRL0,
-+			.shift   = 0,
-+			.width   = 8,
-+		},
-+		.n = {
-+			.reg_off = ANACTRL_HIFIPLL_CTRL0,
-+			.shift   = 10,
-+			.width   = 5,
-+		},
-+		.l = {
-+			.reg_off = ANACTRL_HIFIPLL_STS,
-+			.shift   = 31,
-+			.width   = 1,
-+		},
-+		.rst = {
-+			.reg_off = ANACTRL_HIFIPLL_CTRL0,
-+			.shift   = 29,
-+			.width   = 1,
-+		},
-+		.range = &media_pll_mult_range,
-+		.init_regs = hifi_init_regs,
-+		.init_count = ARRAY_SIZE(hifi_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hifi_pll_dco",
-+		.ops = &meson_clk_pll_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "input",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap hifi_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = ANACTRL_HIFIPLL_CTRL0,
-+		.shift = 16,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "hifi_pll",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&hifi_pll_dco.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+/*
-+ * The T7 PCIE PLL is fined tuned to deliver a very precise
-+ * 100MHz reference clock for the PCIe Analog PHY, and thus requires
-+ * a strict register sequence to enable the PLL.
-+ */
-+static const struct reg_sequence pcie_pll_init_regs[] = {
-+	{ .reg = ANACTRL_PCIEPLL_CTRL0,	.def = 0x200c04c8 },
-+	{ .reg = ANACTRL_PCIEPLL_CTRL0,	.def = 0x300c04c8 },
-+	{ .reg = ANACTRL_PCIEPLL_CTRL1,	.def = 0x30000000 },
-+	{ .reg = ANACTRL_PCIEPLL_CTRL2,	.def = 0x00001100 },
-+	{ .reg = ANACTRL_PCIEPLL_CTRL3,	.def = 0x10058e00 },
-+	{ .reg = ANACTRL_PCIEPLL_CTRL4,	.def = 0x000100c0 },
-+	{ .reg = ANACTRL_PCIEPLL_CTRL5,	.def = 0x68000048 },
-+	{ .reg = ANACTRL_PCIEPLL_CTRL5,	.def = 0x68000068, .delay_us = 20 },
-+	{ .reg = ANACTRL_PCIEPLL_CTRL4,	.def = 0x008100c0, .delay_us = 20 },
-+	{ .reg = ANACTRL_PCIEPLL_CTRL0,	.def = 0x340c04c8 },
-+	{ .reg = ANACTRL_PCIEPLL_CTRL0,	.def = 0x140c04c8, .delay_us = 20 },
-+	{ .reg = ANACTRL_PCIEPLL_CTRL2,	.def = 0x00001000 }
-+};
-+
-+static struct clk_regmap pcie_pll_dco = {
-+	.data = &(struct meson_clk_pll_data){
-+		.en = {
-+			.reg_off = ANACTRL_PCIEPLL_CTRL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.m = {
-+			.reg_off = ANACTRL_PCIEPLL_CTRL0,
-+			.shift   = 0,
-+			.width   = 8,
-+		},
-+		.n = {
-+			.reg_off = ANACTRL_PCIEPLL_CTRL0,
-+			.shift   = 10,
-+			.width   = 5,
-+		},
-+		.l = {
-+			.reg_off = ANACTRL_PCIEPLL_CTRL0,
-+			.shift   = 31,
-+			.width   = 1,
-+		},
-+		.rst = {
-+			.reg_off = ANACTRL_PCIEPLL_CTRL0,
-+			.shift   = 29,
-+			.width   = 1,
-+		},
-+		.init_regs = pcie_pll_init_regs,
-+		.init_count = ARRAY_SIZE(pcie_pll_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pcie_pll_dco",
-+		.ops = &meson_clk_pcie_pll_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "input",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_fixed_factor pcie_pll_dco_div2 = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pcie_pll_dco_div2",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&pcie_pll_dco.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap pcie_pll_od = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = ANACTRL_PCIEPLL_CTRL0,
-+		.shift = 16,
-+		.width = 5,
-+		.flags = CLK_DIVIDER_ONE_BASED |
-+			 CLK_DIVIDER_ALLOW_ZERO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pcie_pll_od",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&pcie_pll_dco_div2.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_fixed_factor pcie_pll = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "pcie_pll",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&pcie_pll_od.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_fixed_factor mpll_prediv = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll_prediv",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "input",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static const struct reg_sequence mpll0_init_regs[] = {
-+	{ .reg = ANACTRL_MPLL_CTRL2, .def = 0x40000033 }
-+};
-+
-+static struct clk_regmap mpll0_div = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = ANACTRL_MPLL_CTRL1,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = ANACTRL_MPLL_CTRL1,
-+			.shift   = 30,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = ANACTRL_MPLL_CTRL1,
-+			.shift   = 20,
-+			.width   = 9,
-+		},
-+		.ssen = {
-+			.reg_off = ANACTRL_MPLL_CTRL1,
-+			.shift   = 29,
-+			.width	 = 1,
-+		},
-+		.init_regs = mpll0_init_regs,
-+		.init_count = ARRAY_SIZE(mpll0_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll0_div",
-+		.ops = &meson_clk_mpll_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&mpll_prediv.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap mpll0 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_MPLL_CTRL1,
-+		.bit_idx = 31,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll0",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) { &mpll0_div.hw },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct reg_sequence mpll1_init_regs[] = {
-+	{ .reg = ANACTRL_MPLL_CTRL4,	.def = 0x40000033 }
-+};
-+
-+static struct clk_regmap mpll1_div = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = ANACTRL_MPLL_CTRL3,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = ANACTRL_MPLL_CTRL3,
-+			.shift   = 30,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = ANACTRL_MPLL_CTRL3,
-+			.shift   = 20,
-+			.width   = 9,
-+		},
-+		.ssen = {
-+			.reg_off = ANACTRL_MPLL_CTRL3,
-+			.shift   = 29,
-+			.width	 = 1,
-+		},
-+		.init_regs = mpll1_init_regs,
-+		.init_count = ARRAY_SIZE(mpll1_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll1_div",
-+		.ops = &meson_clk_mpll_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&mpll_prediv.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap mpll1 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_MPLL_CTRL3,
-+		.bit_idx = 31,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll1",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) { &mpll1_div.hw },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct reg_sequence mpll2_init_regs[] = {
-+	{ .reg = ANACTRL_MPLL_CTRL6, .def = 0x40000033 }
-+};
-+
-+static struct clk_regmap mpll2_div = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = ANACTRL_MPLL_CTRL5,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = ANACTRL_MPLL_CTRL5,
-+			.shift   = 30,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = ANACTRL_MPLL_CTRL5,
-+			.shift   = 20,
-+			.width   = 9,
-+		},
-+		.ssen = {
-+			.reg_off = ANACTRL_MPLL_CTRL5,
-+			.shift   = 29,
-+			.width	 = 1,
-+		},
-+		.init_regs = mpll2_init_regs,
-+		.init_count = ARRAY_SIZE(mpll2_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll2_div",
-+		.ops = &meson_clk_mpll_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&mpll_prediv.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap mpll2 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_MPLL_CTRL5,
-+		.bit_idx = 31,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll2",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) { &mpll2_div.hw },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct reg_sequence mpll3_init_regs[] = {
-+	{ .reg = ANACTRL_MPLL_CTRL8, .def = 0x40000033 }
-+};
-+
-+static struct clk_regmap mpll3_div = {
-+	.data = &(struct meson_clk_mpll_data){
-+		.sdm = {
-+			.reg_off = ANACTRL_MPLL_CTRL7,
-+			.shift   = 0,
-+			.width   = 14,
-+		},
-+		.sdm_en = {
-+			.reg_off = ANACTRL_MPLL_CTRL7,
-+			.shift   = 30,
-+			.width	 = 1,
-+		},
-+		.n2 = {
-+			.reg_off = ANACTRL_MPLL_CTRL7,
-+			.shift   = 20,
-+			.width   = 9,
-+		},
-+		.ssen = {
-+			.reg_off = ANACTRL_MPLL_CTRL7,
-+			.shift   = 29,
-+			.width	 = 1,
-+		},
-+		.init_regs = mpll3_init_regs,
-+		.init_count = ARRAY_SIZE(mpll3_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll3_div",
-+		.ops = &meson_clk_mpll_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&mpll_prediv.hw
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap mpll3 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_MPLL_CTRL7,
-+		.bit_idx = 31,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mpll3",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) { &mpll3_div.hw },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct reg_sequence hdmi_init_regs[] = {
-+	{ .reg = ANACTRL_HDMIPLL_CTRL1, .def = 0x00000000 },
-+	{ .reg = ANACTRL_HDMIPLL_CTRL2, .def = 0x00000000 },
-+	{ .reg = ANACTRL_HDMIPLL_CTRL3, .def = 0x6a28dc00 },
-+	{ .reg = ANACTRL_HDMIPLL_CTRL4, .def = 0x65771290 },
-+	{ .reg = ANACTRL_HDMIPLL_CTRL5, .def = 0x39272000 },
-+	{ .reg = ANACTRL_HDMIPLL_CTRL6, .def = 0x56540000 }
-+};
-+
-+static struct clk_regmap hdmi_pll_dco = {
-+	.data = &(struct meson_clk_pll_data){
-+		.en = {
-+			.reg_off = ANACTRL_HDMIPLL_CTRL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.m = {
-+			.reg_off = ANACTRL_HDMIPLL_CTRL0,
-+			.shift   = 0,
-+			.width   = 9,
-+		},
-+		.n = {
-+			.reg_off = ANACTRL_HDMIPLL_CTRL0,
-+			.shift   = 10,
-+			.width   = 5,
-+		},
-+		.l = {
-+			.reg_off = ANACTRL_HDMIPLL_CTRL0,
-+			.shift   = 31,
-+			.width   = 1,
-+		},
-+		.rst = {
-+			.reg_off = ANACTRL_HDMIPLL_CTRL0,
-+			.shift   = 29,
-+			.width   = 1,
-+		},
-+		.range = &media_pll_mult_range,
-+		.init_regs = hdmi_init_regs,
-+		.init_count = ARRAY_SIZE(hdmi_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hdmi_pll_dco",
-+		.ops = &meson_clk_pll_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .fw_name = "input", }
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap hdmi_pll_od = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = ANACTRL_HDMIPLL_CTRL0,
-+		.shift = 16,
-+		.width = 4,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hdmi_pll_od",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&hdmi_pll_dco.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap hdmi_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = ANACTRL_HDMIPLL_CTRL0,
-+		.shift = 20,
-+		.width = 2,
-+		.flags = CLK_DIVIDER_POWER_OF_TWO,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "hdmi_pll",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&hdmi_pll_od.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static const struct pll_mult_range mclk_pll_mult_range = {
-+	.min = 67,
-+	.max = 133,
-+};
-+
-+static const struct reg_sequence mclk_init_regs[] = {
-+	{ .reg = ANACTRL_MCLK_PLL_CNTL1, .def = 0x1470500f },
-+	{ .reg = ANACTRL_MCLK_PLL_CNTL2, .def = 0x00023041 },
-+	{ .reg = ANACTRL_MCLK_PLL_CNTL3, .def = 0x18180000 },
-+	{ .reg = ANACTRL_MCLK_PLL_CNTL4, .def = 0x00180303 },
-+	{ .reg = ANACTRL_MCLK_PLL_CNTL2, .def = 0x00023001, .delay_us = 20 }
-+};
-+
-+static struct clk_regmap mclk_pll_dco = {
-+	.data = &(struct meson_clk_pll_data){
-+		.en = {
-+			.reg_off = ANACTRL_MCLK_PLL_CNTL0,
-+			.shift   = 28,
-+			.width   = 1,
-+		},
-+		.m = {
-+			.reg_off = ANACTRL_MCLK_PLL_CNTL0,
-+			.shift   = 0,
-+			.width   = 8,
-+		},
-+		.n = {
-+			.reg_off = ANACTRL_MCLK_PLL_CNTL0,
-+			.shift   = 16,
-+			.width   = 5,
-+		},
-+		.l = {
-+			.reg_off = ANACTRL_MCLK_PLL_CNTL0,
-+			.shift   = 31,
-+			.width   = 1,
-+		},
-+		.rst = {
-+			.reg_off = ANACTRL_MCLK_PLL_CNTL0,
-+			.shift   = 29,
-+			.width   = 1,
-+		},
-+		.range = &mclk_pll_mult_range,
-+		.init_regs = mclk_init_regs,
-+		.init_count = ARRAY_SIZE(mclk_init_regs),
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mclk_pll_dco",
-+		.ops = &meson_clk_pll_ops,
-+		.parent_data = &(const struct clk_parent_data) {
-+			.fw_name = "input",
-+		},
-+		.num_parents = 1,
-+	},
-+};
-+
-+/* max div is 16 */
-+static const struct clk_div_table mclk_div[] = {
-+	{ .val = 0, .div = 1 },
-+	{ .val = 1, .div = 2 },
-+	{ .val = 2, .div = 4 },
-+	{ .val = 3, .div = 8 },
-+	{ .val = 4, .div = 16 },
-+	{ /* sentinel */ }
-+};
-+
-+static struct clk_regmap mclk_pre_od = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = ANACTRL_MCLK_PLL_CNTL0,
-+		.shift = 12,
-+		.width = 3,
-+		.table = mclk_div,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mclk_pre_od",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&mclk_pll_dco.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap mclk_pll = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = ANACTRL_MCLK_PLL_CNTL4,
-+		.shift = 16,
-+		.width = 5,
-+		.flags = CLK_DIVIDER_ONE_BASED,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mclk_pll",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&mclk_pre_od.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap mclk_0_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = ANACTRL_MCLK_PLL_CNTL4,
-+		.mask = 0x3,
-+		.shift = 4,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mclk_0_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .hw = &mclk_pll.hw },
-+			{ .fw_name = "mclk_in0", },
-+			{ .fw_name = "mclk_in1", },
-+		},
-+		.num_parents = 3,
-+	},
-+};
-+
-+static struct clk_fixed_factor mclk_0_div2 = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mclk_0_div2",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_hws = (const struct clk_hw *[]) { &mclk_0_sel.hw },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap mclk_0_pre = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_MCLK_PLL_CNTL4,
-+		.bit_idx = 2,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "mclk_0_pre",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&mclk_0_div2.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap mclk_0 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_MCLK_PLL_CNTL4,
-+		.bit_idx = 0,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "mclk_0",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&mclk_0_pre.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap mclk_1_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = ANACTRL_MCLK_PLL_CNTL4,
-+		.mask = 0x3,
-+		.shift = 12,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mclk_1_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .hw = &mclk_pll.hw },
-+			{ .fw_name = "mclk_in0", },
-+			{ .fw_name = "mclk_in1", },
-+		},
-+		.num_parents = 3,
-+	},
-+};
-+
-+static struct clk_fixed_factor mclk_1_div2 = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "mclk_1_div2",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_hws = (const struct clk_hw *[]) { &mclk_1_sel.hw },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap mclk_1_pre = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_MCLK_PLL_CNTL4,
-+		.bit_idx = 10,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "mclk_1_pre",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&mclk_1_div2.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap mclk_1 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = ANACTRL_MCLK_PLL_CNTL4,
-+		.bit_idx = 8,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "mclk_1",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&mclk_1_pre.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_hw *t7_gp0_hw_clks[] = {
-+	[CLKID_GP0_PLL_DCO]		= &gp0_pll_dco.hw,
-+	[CLKID_GP0_PLL]			= &gp0_pll.hw,
-+};
-+
-+static struct clk_hw *t7_gp1_hw_clks[] = {
-+	[CLKID_GP1_PLL_DCO]		= &gp1_pll_dco.hw,
-+	[CLKID_GP0_PLL]			= &gp1_pll.hw,
-+};
-+
-+static struct clk_hw *t7_hifi_hw_clks[] = {
-+	[CLKID_HIFI_PLL_DCO]		= &hifi_pll_dco.hw,
-+	[CLKID_HIFI_PLL]		= &hifi_pll.hw,
-+};
-+
-+static struct clk_hw *t7_pcie_hw_clks[] = {
-+	[CLKID_PCIE_PLL_DCO]		= &pcie_pll_dco.hw,
-+	[CLKID_PCIE_PLL_DCO_DIV2]	= &pcie_pll_dco_div2.hw,
-+	[CLKID_PCIE_PLL_OD]		= &pcie_pll_od.hw,
-+	[CLKID_PCIE_PLL]		= &pcie_pll.hw,
-+};
-+
-+static struct clk_hw *t7_mpll_hw_clks[] = {
-+	[CLKID_MPLL_PREDIV]		= &mpll_prediv.hw,
-+	[CLKID_MPLL0_DIV]		= &mpll0_div.hw,
-+	[CLKID_MPLL0]			= &mpll0.hw,
-+	[CLKID_MPLL1_DIV]		= &mpll1_div.hw,
-+	[CLKID_MPLL1]			= &mpll1.hw,
-+	[CLKID_MPLL2_DIV]		= &mpll2_div.hw,
-+	[CLKID_MPLL2]			= &mpll2.hw,
-+	[CLKID_MPLL3_DIV]		= &mpll3_div.hw,
-+	[CLKID_MPLL3]			= &mpll3.hw,
-+};
-+
-+static struct clk_hw *t7_hdmi_hw_clks[] = {
-+	[CLKID_HDMI_PLL_DCO]		= &hdmi_pll_dco.hw,
-+	[CLKID_HDMI_PLL_OD]		= &hdmi_pll_od.hw,
-+	[CLKID_HDMI_PLL]		= &hdmi_pll.hw,
-+};
-+
-+static struct clk_hw *t7_mclk_hw_clks[] = {
-+	[CLKID_MCLK_PLL_DCO]		= &mclk_pll_dco.hw,
-+	[CLKID_MCLK_PRE]		= &mclk_pre_od.hw,
-+	[CLKID_MCLK_PLL]		= &mclk_pll.hw,
-+	[CLKID_MCLK_0_SEL]		= &mclk_0_sel.hw,
-+	[CLKID_MCLK_0_DIV2]		= &mclk_0_div2.hw,
-+	[CLKID_MCLK_0_PRE]		= &mclk_0_pre.hw,
-+	[CLKID_MCLK_0]			= &mclk_0.hw,
-+	[CLKID_MCLK_1_SEL]		= &mclk_1_sel.hw,
-+	[CLKID_MCLK_1_DIV2]		= &mclk_1_div2.hw,
-+	[CLKID_MCLK_1_PRE]		= &mclk_1_pre.hw,
-+	[CLKID_MCLK_1]			= &mclk_1.hw,
-+};
-+
-+static struct clk_regmap *const t7_gp0_regmaps[] = {
-+	&gp0_pll_dco,
-+	&gp0_pll,
-+};
-+
-+static struct clk_regmap *const t7_gp1_regmaps[] = {
-+	&gp1_pll_dco,
-+	&gp1_pll,
-+};
-+
-+static struct clk_regmap *const t7_hifi_regmaps[] = {
-+	&hifi_pll_dco,
-+	&hifi_pll,
-+};
-+
-+static struct clk_regmap *const t7_pcie_regmaps[] = {
-+	&pcie_pll_dco,
-+	&pcie_pll_od,
-+};
-+
-+static struct clk_regmap *const t7_mpll_regmaps[] = {
-+	&mpll0_div,
-+	&mpll0,
-+	&mpll1_div,
-+	&mpll1,
-+	&mpll2_div,
-+	&mpll2,
-+	&mpll3_div,
-+	&mpll3,
-+};
-+
-+static struct clk_regmap *const t7_hdmi_regmaps[] = {
-+	&hdmi_pll_dco,
-+	&hdmi_pll_od,
-+	&hdmi_pll,
-+};
-+
-+static struct clk_regmap *const t7_mclk_regmaps[] = {
-+	&mclk_pll_dco,
-+	&mclk_pre_od,
-+	&mclk_pll,
-+	&mclk_0_sel,
-+	&mclk_0_pre,
-+	&mclk_0,
-+	&mclk_1_sel,
-+	&mclk_1_pre,
-+	&mclk_1,
-+};
-+
-+static const struct regmap_config clkc_regmap_config = {
-+	.reg_bits       = 32,
-+	.val_bits       = 32,
-+	.reg_stride     = 4,
-+};
-+
-+static int amlogic_t7_pll_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct meson_eeclkc_data *data;
-+	void __iomem *base;
-+	struct regmap *map;
-+	int i, ret;
-+
-+	data = of_device_get_match_data(&pdev->dev);
-+	if (!data)
-+		return -EINVAL;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	map = devm_regmap_init_mmio(dev, base, &clkc_regmap_config);
-+	if (IS_ERR(map))
-+		return PTR_ERR(map);
-+
-+	/* Populate regmap for the regmap backed clocks */
-+	for (i = 0; i < data->regmap_clk_num; i++)
-+		data->regmap_clks[i]->map = map;
-+
-+	if (data->init_count)
-+		regmap_multi_reg_write(map, data->init_regs,
-+				       data->init_count);
-+
-+	/* Register clocks */
-+	for (i = 0; i < data->hw_clks.num; i++) {
-+		ret = devm_clk_hw_register(dev, data->hw_clks.hws[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
-+}
-+
-+static const struct meson_eeclkc_data t7_gp0_data = {
-+	.regmap_clks = t7_gp0_regmaps,
-+	.regmap_clk_num = ARRAY_SIZE(t7_gp0_regmaps),
-+	.hw_clks = {
-+		.hws = t7_gp0_hw_clks,
-+		.num = ARRAY_SIZE(t7_gp0_hw_clks),
-+	},
-+};
-+
-+static const struct meson_eeclkc_data t7_gp1_data = {
-+	.regmap_clks = t7_gp1_regmaps,
-+	.regmap_clk_num = ARRAY_SIZE(t7_gp1_regmaps),
-+	.hw_clks = {
-+		.hws = t7_gp1_hw_clks,
-+		.num = ARRAY_SIZE(t7_gp1_hw_clks),
-+	},
-+};
-+
-+static const struct meson_eeclkc_data t7_hifi_data = {
-+	.regmap_clks = t7_hifi_regmaps,
-+	.regmap_clk_num = ARRAY_SIZE(t7_hifi_regmaps),
-+	.hw_clks = {
-+		.hws = t7_hifi_hw_clks,
-+		.num = ARRAY_SIZE(t7_hifi_hw_clks),
-+	},
-+};
-+
-+static const struct meson_eeclkc_data t7_pcie_data = {
-+	.regmap_clks = t7_pcie_regmaps,
-+	.regmap_clk_num = ARRAY_SIZE(t7_pcie_regmaps),
-+	.hw_clks = {
-+		.hws = t7_pcie_hw_clks,
-+		.num = ARRAY_SIZE(t7_pcie_hw_clks),
-+	},
-+};
-+
-+static const struct reg_sequence mpll_init_regs[] = {
-+	{ .reg = ANACTRL_MPLL_CTRL0, .def = 0x00000543 }
-+};
-+
-+static const struct meson_eeclkc_data t7_mpll_data = {
-+	.regmap_clks = t7_mpll_regmaps,
-+	.regmap_clk_num = ARRAY_SIZE(t7_mpll_regmaps),
-+	.init_regs = mpll_init_regs,
-+	.init_count = ARRAY_SIZE(mpll_init_regs),
-+	.hw_clks = {
-+		.hws = t7_mpll_hw_clks,
-+		.num = ARRAY_SIZE(t7_mpll_hw_clks),
-+	},
-+};
-+
-+static const struct meson_eeclkc_data t7_hdmi_data = {
-+	.regmap_clks = t7_hdmi_regmaps,
-+	.regmap_clk_num = ARRAY_SIZE(t7_hdmi_regmaps),
-+	.hw_clks = {
-+		.hws = t7_hdmi_hw_clks,
-+		.num = ARRAY_SIZE(t7_hdmi_hw_clks),
-+	},
-+};
-+
-+static const struct meson_eeclkc_data t7_mclk_data = {
-+	.regmap_clks = t7_mclk_regmaps,
-+	.regmap_clk_num = ARRAY_SIZE(t7_mclk_regmaps),
-+	.hw_clks = {
-+		.hws = t7_mclk_hw_clks,
-+		.num = ARRAY_SIZE(t7_mclk_hw_clks),
-+	},
-+};
-+
-+static const struct of_device_id t7_pll_clkc_match_table[] = {
-+	{
-+		.compatible = "amlogic,t7-pll-gp0",
-+		.data = &t7_gp0_data,
-+	},
-+	{
-+		.compatible = "amlogic,t7-pll-gp1",
-+		.data = &t7_gp1_data,
-+	},
-+	{
-+		.compatible = "amlogic,t7-pll-hifi",
-+		.data = &t7_hifi_data,
-+	},
-+	{
-+		.compatible = "amlogic,t7-pll-pcie",
-+		.data = &t7_pcie_data,
-+	},
-+	{
-+		.compatible = "amlogic,t7-mpll",
-+		.data = &t7_mpll_data,
-+	},
-+	{
-+		.compatible = "amlogic,t7-pll-hdmi",
-+		.data = &t7_hdmi_data,
-+	},
-+	{
-+		.compatible = "amlogic,t7-pll-mclk",
-+		.data = &t7_mclk_data,
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, t7_pll_clkc_match_table);
-+
-+static struct platform_driver t7_pll_clkc_driver = {
-+	.probe = amlogic_t7_pll_probe,
-+	.driver = {
-+		.name = "t7-pll-clkc",
-+		.of_match_table = t7_pll_clkc_match_table,
-+	},
-+};
-+
-+MODULE_DESCRIPTION("Amlogic T7 PLL Clock Controller driver");
-+module_platform_driver(t7_pll_clkc_driver);
-+MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(CLK_MESON);
++#ifndef __T7_PERIPHERALS_CLKC_H
++#define __T7_PERIPHERALS_CLKC_H
++
++#define CLKID_RTC_32K_IN		0
++#define CLKID_RTC_32K_DIV		1
++#define CLKID_RTC_32K_FORCE_SEL		2
++#define CLKID_RTC_32K_OUT		3
++#define CLKID_RTC_32K_MUX0_0		4
++#define CLKID_RTC_32K_MUX0_1		5
++#define CLKID_RTC			6
++#define CLKID_CECB_32K_IN		7
++#define CLKID_CECB_32K_DIV		8
++#define CLKID_CECB_32K_SEL_PRE		9
++#define CLKID_CECB_32K_SEL		10
++#define CLKID_CECA_32K_IN		11
++#define CLKID_CECA_32K_DIV		12
++#define CLKID_CECA_32K_SEL_PRE		13
++#define CLKID_CECA_32K_SEL		14
++#define CLKID_CECA_32K			15
++#define CLKID_CECB_32K			16
++#define CLKID_SC_SEL			17
++#define CLKID_SC_DIV			18
++#define CLKID_SC			19
++#define CLKID_DSPA_A_SEL		20
++#define CLKID_DSPA_A_DIV		21
++#define CLKID_DSPA_A			22
++#define CLKID_DSPA_B_SEL		23
++#define CLKID_DSPA_B_DIV		24
++#define CLKID_DSPA_B			25
++#define CLKID_DSPA			26
++#define CLKID_DSPB_A_SEL		27
++#define CLKID_DSPB_A_DIV		28
++#define CLKID_DSPB_A			29
++#define CLKID_DSPB_B_SEL		30
++#define CLKID_DSPB_B_DIV		31
++#define CLKID_DSPB_B			32
++#define CLKID_DSPB			33
++#define CLKID_CLK_24M			34
++#define CLKID_CLK_24M_DIV2		35
++#define CLKID_CLK_12M			36
++#define CLKID_ANAKIN_0_SEL		37
++#define CLKID_ANAKIN_0_DIV		38
++#define CLKID_ANAKIN_0			39
++#define CLKID_ANAKIN_1_SEL		40
++#define CLKID_ANAKIN_1_DIV		41
++#define CLKID_ANAKIN_1			42
++#define CLKID_ANAKIN			43
++#define CLKID_ANAKIN_CLK		44
++#define CLKID_FCLK_DIV2_DIVN_PRE	45
++#define CLKID_FCLK_DIV2_DIVN		46
++#define CLKID_TS_DIV			47
++#define CLKID_TS			48
++#define CLKID_MIPI_CSI_PHY_0_SEL	49
++#define CLKID_MIPI_CSI_PHY_0_DIV	50
++#define CLKID_MIPI_CSI_PHY_0		51
++#define CLKID_MIPI_CSI_PHY_1_SEL	52
++#define CLKID_MIPI_CSI_PHY_1_DIV	53
++#define CLKID_MIPI_CSI_PHY_1		54
++#define CLKID_MIPI_CSI_PHY		55
++#define CLKID_MIPI_ISP_SEL		56
++#define CLKID_MIPI_ISP_DIV		57
++#define CLKID_MIPI_ISP			58
++#define CLKID_MALI_0_SEL		59
++#define CLKID_MALI_0_DIV		60
++#define CLKID_MALI_0			61
++#define CLKID_MALI_1_SEL		62
++#define CLKID_MALI_1_DIV		63
++#define CLKID_MALI_1			64
++#define CLKID_MALI			65
++#define CLKID_ETH_RMII_SEL		66
++#define CLKID_ETH_RMII_DIV		67
++#define CLKID_ETH_RMII			68
++#define CLKID_FCLK_DIV2_DIV8		69
++#define CLKID_ETH_125M			70
++#define CLKID_SD_EMMC_C_SEL		71
++#define CLKID_SD_EMMC_C_DIV		72
++#define CLKID_SD_EMMC_C			73
++#define CLKID_SD_EMMC_A_SEL		74
++#define CLKID_SD_EMMC_A_DIV		75
++#define CLKID_SD_EMMC_A			76
++#define CLKID_SD_EMMC_B_SEL		77
++#define CLKID_SD_EMMC_B_DIV		78
++#define CLKID_SD_EMMC_B			79
++#define CLKID_SPICC0_SEL		80
++#define CLKID_SPICC0_DIV		81
++#define CLKID_SPICC0			82
++#define CLKID_SPICC1_SEL		83
++#define CLKID_SPICC1_DIV		84
++#define CLKID_SPICC1			85
++#define CLKID_SPICC2_SEL		86
++#define CLKID_SPICC2_DIV		87
++#define CLKID_SPICC2			88
++#define CLKID_SPICC3_SEL		89
++#define CLKID_SPICC3_DIV		90
++#define CLKID_SPICC3			91
++#define CLKID_SPICC4_SEL		92
++#define CLKID_SPICC4_DIV		93
++#define CLKID_SPICC4			94
++#define CLKID_SPICC5_SEL		95
++#define CLKID_SPICC5_DIV		96
++#define CLKID_SPICC5			97
++#define CLKID_SARADC_SEL		98
++#define CLKID_SARADC_DIV		99
++#define CLKID_SARADC			100
++#define CLKID_PWM_A_SEL			101
++#define CLKID_PWM_A_DIV			102
++#define CLKID_PWM_A			103
++#define CLKID_PWM_B_SEL			104
++#define CLKID_PWM_B_DIV			105
++#define CLKID_PWM_B			106
++#define CLKID_PWM_C_SEL			107
++#define CLKID_PWM_C_DIV			108
++#define CLKID_PWM_C			109
++#define CLKID_PWM_D_SEL			110
++#define CLKID_PWM_D_DIV			111
++#define CLKID_PWM_D			112
++#define CLKID_PWM_E_SEL			113
++#define CLKID_PWM_E_DIV			114
++#define CLKID_PWM_E			115
++#define CLKID_PWM_F_SEL			116
++#define CLKID_PWM_F_DIV			117
++#define CLKID_PWM_F			118
++#define CLKID_PWM_AO_A_SEL		119
++#define CLKID_PWM_AO_A_DIV		120
++#define CLKID_PWM_AO_A			121
++#define CLKID_PWM_AO_B_SEL		122
++#define CLKID_PWM_AO_B_DIV		123
++#define CLKID_PWM_AO_B			124
++#define CLKID_PWM_AO_C_SEL		125
++#define CLKID_PWM_AO_C_DIV		126
++#define CLKID_PWM_AO_C			127
++#define CLKID_PWM_AO_D_SEL		128
++#define CLKID_PWM_AO_D_DIV		129
++#define CLKID_PWM_AO_D			130
++#define CLKID_PWM_AO_E_SEL		131
++#define CLKID_PWM_AO_E_DIV		132
++#define CLKID_PWM_AO_E			133
++#define CLKID_PWM_AO_F_SEL		134
++#define CLKID_PWM_AO_F_DIV		135
++#define CLKID_PWM_AO_F			136
++#define CLKID_PWM_AO_G_SEL		137
++#define CLKID_PWM_AO_G_DIV		138
++#define CLKID_PWM_AO_G			139
++#define CLKID_PWM_AO_H_SEL		140
++#define CLKID_PWM_AO_H_DIV		141
++#define CLKID_PWM_AO_H			142
++#define CLKID_SYS_DDR			143
++#define CLKID_SYS_DOS			144
++#define CLKID_SYS_MIPI_DSI_A		145
++#define CLKID_SYS_MIPI_DSI_B		146
++#define CLKID_SYS_ETHPHY		147
++#define CLKID_SYS_MALI			148
++#define CLKID_SYS_AOCPU			149
++#define CLKID_SYS_AUCPU			150
++#define CLKID_SYS_CEC			151
++#define CLKID_SYS_GDC			152
++#define CLKID_SYS_DESWARP		153
++#define CLKID_SYS_AMPIPE_NAND		154
++#define CLKID_SYS_AMPIPE_ETH		155
++#define CLKID_SYS_AM2AXI0		156
++#define CLKID_SYS_AM2AXI1		157
++#define CLKID_SYS_AM2AXI2		158
++#define CLKID_SYS_SD_EMMC_A		159
++#define CLKID_SYS_SD_EMMC_B		160
++#define CLKID_SYS_SD_EMMC_C		161
++#define CLKID_SYS_SMARTCARD		162
++#define CLKID_SYS_ACODEC		163
++#define CLKID_SYS_SPIFC			164
++#define CLKID_SYS_MSR_CLK		165
++#define CLKID_SYS_IR_CTRL		166
++#define CLKID_SYS_AUDIO			167
++#define CLKID_SYS_ETH			168
++#define CLKID_SYS_UART_A		169
++#define CLKID_SYS_UART_B		170
++#define CLKID_SYS_UART_C		171
++#define CLKID_SYS_UART_D		172
++#define CLKID_SYS_UART_E		173
++#define CLKID_SYS_UART_F		174
++#define CLKID_SYS_AIFIFO		175
++#define CLKID_SYS_SPICC2		176
++#define CLKID_SYS_SPICC3		177
++#define CLKID_SYS_SPICC4		178
++#define CLKID_SYS_TS_A73		179
++#define CLKID_SYS_TS_A53		180
++#define CLKID_SYS_SPICC5		181
++#define CLKID_SYS_G2D			182
++#define CLKID_SYS_SPICC0		183
++#define CLKID_SYS_SPICC1		184
++#define CLKID_SYS_PCIE			185
++#define CLKID_SYS_USB			186
++#define CLKID_SYS_PCIE_PHY		187
++#define CLKID_SYS_I2C_AO_A		188
++#define CLKID_SYS_I2C_AO_B		189
++#define CLKID_SYS_I2C_M_A		190
++#define CLKID_SYS_I2C_M_B		191
++#define CLKID_SYS_I2C_M_C		192
++#define CLKID_SYS_I2C_M_D		193
++#define CLKID_SYS_I2C_M_E		194
++#define CLKID_SYS_I2C_M_F		195
++#define CLKID_SYS_HDMITX_APB		196
++#define CLKID_SYS_I2C_S_A		197
++#define CLKID_SYS_HDMIRX_PCLK		198
++#define CLKID_SYS_MMC_APB		199
++#define CLKID_SYS_MIPI_ISP_PCLK		200
++#define CLKID_SYS_RSA			201
++#define CLKID_SYS_PCLK_SYS_APB		202
++#define CLKID_SYS_A73PCLK_APB		203
++#define CLKID_SYS_DSPA			204
++#define CLKID_SYS_DSPB			205
++#define CLKID_SYS_VPU_INTR		206
++#define CLKID_SYS_SAR_ADC		207
++#define CLKID_SYS_GIC			208
++#define CLKID_SYS_TS_GPU		209
++#define CLKID_SYS_TS_NNA		210
++#define CLKID_SYS_TS_VPU		211
++#define CLKID_SYS_TS_HEVC		212
++#define CLKID_SYS_PWM_AB		213
++#define CLKID_SYS_PWM_CD		214
++#define CLKID_SYS_PWM_EF		215
++#define CLKID_SYS_PWM_AO_AB		216
++#define CLKID_SYS_PWM_AO_CD		217
++#define CLKID_SYS_PWM_AO_EF		218
++#define CLKID_SYS_PWM_AO_GH		219
++
++#endif /* __T7_PERIPHERALS_CLKC_H */
 -- 
 2.47.1
 
