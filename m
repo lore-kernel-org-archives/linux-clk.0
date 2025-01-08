@@ -1,60 +1,61 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF101A073F;
-	Wed,  8 Jan 2025 04:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5778C1AA1EE;
+	Wed,  8 Jan 2025 04:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736311432; cv=none; b=jHYCvWU3ny3SYsWnFCPEHUqO/2RgVD6new0mdXbKtvk66TZPdYzB9ZYzDGusOIaOnXZ6QwPI3YLZ/nlj9uL2Jobfft3rzSYJ3thPYOKWwGLppyCGcqZkmjRleUbynQW35WdZ8VDcO7uErjFiSAD60+qtgVvfdFPQq47R1FtEeNg=
+	t=1736311439; cv=none; b=rMXBNAmPlMKJq9n5N8EiKRYMm9kSymeQC5DP9mwC7hjn4X/2toibs+9Xz7iJGXTsv1IM8A3ljGYUhlgo4icKEF0zT95BkVsZviIUpXVMsBw1qPIPw3389o7Co9LQ/D2f0niu12Wlm6Ed5KYywTDhUimX3aj8Sp6rUX6d/1+bE7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736311432; c=relaxed/simple;
-	bh=zrGJQoH0dvmgH6dxRLPUvDFMlfzgZDDrLwRLJDURHgg=;
+	s=arc-20240116; t=1736311439; c=relaxed/simple;
+	bh=36ms4CYMKb/pnrih3Z2etPkGz7WnBHowpU5ewuBqfYM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qd/QXFdkXNaC19yzSE7TFZmI4h6+nF+Z0wOXlKjejZRe0jISx5J+A1oSZUlb5+UZ4bcpjRIzn81t1GDOTUSRIXaannDN90mQ9p1HScPB/vuOge5pk3GRs2IlcccS9eleiTg22Yp1TUka+uszEINz2N0KWpi4vr/vgL6lv42jSFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ztf+TQ/N; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=P2SjkITr/TKdLrsGSiJ8xRQyMkriInhIQnzYKwuqBBUkBGPMrTd/G7CvLjE9Q34wvNcV9It2kQz/HSpf1pYAqkBnnS2CHZEcgJEVUSdbDy8vm1pdaP6E4CvwbUti4/S9/BagMMX3ysAzpOuaa7szQbeRzh1v03u6GKh063fh2/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4NG0S0g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ztf+TQ/N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13E25C4CEE1;
-	Wed,  8 Jan 2025 04:43:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4NG0S0g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88207C4CEE0;
+	Wed,  8 Jan 2025 04:43:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736311431;
-	bh=zrGJQoH0dvmgH6dxRLPUvDFMlfzgZDDrLwRLJDURHgg=;
+	s=k20201202; t=1736311439;
+	bh=36ms4CYMKb/pnrih3Z2etPkGz7WnBHowpU5ewuBqfYM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ztf+TQ/NSW3qERHePdqPJ+t7YSLT0uOMUCaTKLqSYHFwjkBKm9M5ZehtVOkMO5qQQ
-	 UGpSPwnXuGhgRUZQ9ipQXL1vblHnWxvIAlau731bo50jfjlF/+VP/+21Ze4KjwrwGM
-	 tpCb4OOvs7U6/OQFdvgsAaAx0lBLYTSD9nrcZOtUn6o3ZbpOFdIHni2o9sB8lVm+k2
-	 wf9hPIeq6ER5fehfve91cnXuYrD0UxRTJkVAmDp/18/2/YmwOQhbTMWF5bWLmHRNhO
-	 YLQPHOEddRncc1XgRpl9pMANd2p02EWW355N5s8wmOxLEUOO4j/Vu7/0ncNkFPfyWl
-	 RfoWU5gdEU/RQ==
+	b=I4NG0S0gX0VQVyZahsaoKb1VplzrZ2UelxGPw/VIgWu/VDdgFwcDMbPpxIvqkujT9
+	 l6QRlthj7vxiKx5FuzDX8w3IbaihM6ICxVpui0+LYhU1rqvd5bLrDj/adFlcMdvXgT
+	 66ASxLeAlLP+AywURD7sY4WtxuVBAykMTYMI1TZG8BAU5D4mPIA8lRnWCRmK4YlZiV
+	 7GMbbMoRWH3egw7YVlCJ0FvtcndRkP+ObQ3RU6U3NAPzQVAVE5Hds6iRAdwb049mue
+	 OYjxBBO6wuQMu9isSvlG9B2AUFJP52hv1ixoOGEbKaJtHnd45ZTQEVrt9MexHSC83S
+	 px+nO3eFMspeQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Loic Poulain <loic.poulain@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: linux-i2c@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
+	Luo Jie <quic_luoj@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	quic_kkumarcs@quicinc.com,
+	quic_suruchia@quicinc.com,
+	quic_pavir@quicinc.com,
+	quic_linchen@quicinc.com,
+	quic_leiwei@quicinc.com,
+	bartosz.golaszewski@linaro.org,
+	srinivas.kandagatla@linaro.org,
 	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v3 0/6] Add dt-bindings and dtsi changes for CAMSS on x1e80100 silicon
-Date: Tue,  7 Jan 2025 22:43:41 -0600
-Message-ID: <173631142076.110881.800526094135590633.b4-ty@kernel.org>
+Subject: Re: (subset) [PATCH v8 0/5] Add CMN PLL clock controller driver for IPQ9574
+Date: Tue,  7 Jan 2025 22:43:46 -0600
+Message-ID: <173631142079.110881.10241987285937979220.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org>
-References: <20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org>
+In-Reply-To: <20250103-qcom_ipq_cmnpll-v8-0-c89fb4d4849d@quicinc.com>
+References: <20250103-qcom_ipq_cmnpll-v8-0-c89fb4d4849d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,21 +66,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 02 Jan 2025 16:32:05 +0000, Bryan O'Donoghue wrote:
-> v3:
-> - Fixes ordering of headers in dtsi - Vlad
-> - Changes camcc to always on - Vlad
-> - Applies RB as indicated - Krzysztof, Konrad
-> - Link to v2: https://lore.kernel.org/r/20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org
-> 
-> v2:
+On Fri, 03 Jan 2025 15:31:33 +0800, Luo Jie wrote:
+> The CMN PLL clock controller in Qualcomm IPQ chipsets provides
+> the clocks to the networking hardware blocks that are internal
+> or external to the SoC, and to the GCC. This driver configures
+> the CMN PLL clock controller to enable the output clocks. The
+> networking blocks include the internal blocks such as PPE
+> (Packet Process Engine) and PCS blocks, and external hardware
+> such as Ethernet PHY or switch. The CMN PLL block also outputs
+> fixed rate clocks to GCC, such as 24 MHZ as XO clock and 32 KHZ
+> as sleep clock supplied to GCC.
 > 
 > [...]
 
 Applied, thanks!
 
-[2/6] dt-bindings: clock: move qcom,x1e80100-camcc to its own file
-      commit: 7ec95ff9abf499b4775148db92528feb4e8ff1ee
+[3/5] arm64: defconfig: Enable Qualcomm IPQ CMN PLL clock controller
+      commit: 1fe6c70fec8fd8c823afee66467f85f028b0d22c
 
 Best regards,
 -- 
