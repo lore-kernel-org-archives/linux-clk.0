@@ -1,37 +1,37 @@
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113471F76D0;
-	Wed,  8 Jan 2025 11:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D251FA8C1;
+	Wed,  8 Jan 2025 11:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736336845; cv=none; b=NGHOkYXi+gqktjBta0arKV8FVvUM1//PPidLC+HOXO897xd4fgG2UlNnxQPu0LMV4Sr0MoH2/PT4tyQNM4X7JJstyBtEGupI44cuSRrTnzwB9kko2gTa4iNDXc5lwIa/5gV2E0DFjbUBpiLLvcuFo8bEJFMmVmSCZ5ii7yoS6uo=
+	t=1736336855; cv=none; b=qQEB1tDr4VLc1vmS3B9NDdImFINbK9+iEfIIGTRj5fuxxPwtF4V82NJ4wxo9vBSEXukamxzm/O4NqHepIXRyA2Uxm1VeJHlyMKqQug38YxpoeS19qvtHhzuJplm4Ino58MHp+69OpaAkM3n/KE5HJCxeRrtSvdiKAY3+t/sVtfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736336845; c=relaxed/simple;
-	bh=WlbePJSOdtSKBylO7ZTuwqfgV0Oqy6nFFitKp0fQ8Fk=;
+	s=arc-20240116; t=1736336855; c=relaxed/simple;
+	bh=1pkpQsa+REF1tJCdkKoGqcXMk6p5YIj1+XA5lPxMgnc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dvnJ8KfiT06owQr7tQVCn53ViZjj4KQbe2UTAXHFMlieqOkhQAGova/P7KeaAhkeYDxDhgrdR8taKPNgd3gSSYmlpG5Y+kUfXMnyb8HWYCU0XmFFiwUk9AlfjKuRxxnvEAUSJCM2jinjiSh0m+8PBDeV/cSDSJ98it5mGPdrC8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=lz3Rx+ps; arc=none smtp.client-ip=178.21.23.139
+	 MIME-Version; b=ogSs5SsPoszakOPLFYbVHDd1o/qBl5IFuDhaov0w914t1fFM5AibK8ehT2AmqKdr7kW/Em7Hs5DWpjxL6a/EMYA9/5s+giL6749yJQbJSs33/QoEDIZ0bxcuNXHYc9K453voaaVLXAGvHtLpy3SGMoyk5zBTW+vsJa87xs8Kedk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=I3WRS7ez; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="lz3Rx+ps"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="I3WRS7ez"
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 937F925C32;
-	Wed,  8 Jan 2025 12:47:22 +0100 (CET)
+	by disroot.org (Postfix) with ESMTP id 4BEF325BCB;
+	Wed,  8 Jan 2025 12:47:32 +0100 (CET)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id A6UZ27iFO6rS; Wed,  8 Jan 2025 12:47:22 +0100 (CET)
+ id BtPQKoG2eIOz; Wed,  8 Jan 2025 12:47:28 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1736336842; bh=WlbePJSOdtSKBylO7ZTuwqfgV0Oqy6nFFitKp0fQ8Fk=;
+	t=1736336848; bh=1pkpQsa+REF1tJCdkKoGqcXMk6p5YIj1+XA5lPxMgnc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=lz3Rx+pswgnajbZGamFbEknDFyRZgihU8a/LzdcSpgkZfXLCETwRrzofgLx7xRBm/
-	 vN9IvGwACH88cB1qYXWC+MDY597j7rCL7x91GoWjac0QBIKsDAn8P8UICuXXovyLDE
-	 cSdq14x9GBq9VKOX/DqzRXbfBRfpxcjw/wPsKI5eNluPP552Qx3QwYd6zpeG872gY7
-	 Xg5vSixZLjEFRLtRhegq2iYcHFKFX1MOiqUxCozMw5RkijvbF4IMWT/uHfpmp6WQxh
-	 aPpqqzq8goNPl27c7+n4T8w7eZ3pmZul15/8Wn1ywq+MC1xIpmrDozwtALHGVGl/lH
-	 tu19kh925GGcQ==
+	b=I3WRS7ezJmFQ+xQ8t0So04riW667+GToWi2GIZFNUliGjBfBxGRNaJjwHoq+4Pq9w
+	 Q264UquhenbnJhG73fwVWn9UyDlt0DDiqkp1OPio8AT0yyd/UyNwKKzOZYGBauGQlr
+	 mn5v/ZgZKS3L0s0HvOdZ5YF5beXpEsmquYlyNYW0fRBQzBeDwrebJxLKlHyv7NS1E3
+	 Iu+PV23r/ZbXAEcDJ7hvvEooXUy/sRfYI6fsdrYfVYnKys7C7OTUiTZAeP5HA9F1Ju
+	 CN3MMjLrfLYzuoDR9hbXegQShRnqKtCRrbIuiMa1RepGMQT//+mYPUMj45sC01Sgld
+	 PCGbILDHQyAFA==
 From: Yao Zi <ziyao@disroot.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -46,9 +46,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v2 4/5] arm64: dts: rockchip: Add clock generators for RK3528 SoC
-Date: Wed,  8 Jan 2025 11:46:05 +0000
-Message-ID: <20250108114605.1960-6-ziyao@disroot.org>
+Subject: [PATCH v2 5/5] arm64: dts: rockchip: Add UART clocks for RK3528 SoC
+Date: Wed,  8 Jan 2025 11:46:06 +0000
+Message-ID: <20250108114605.1960-7-ziyao@disroot.org>
 In-Reply-To: <20250108114605.1960-2-ziyao@disroot.org>
 References: <20250108114605.1960-2-ziyao@disroot.org>
 Precedence: bulk
@@ -59,91 +59,90 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add dt node for RK3528 clock and reset unit. Clock "gmac0_clk" is
-generated by internal Ethernet phy, a fixed clock node is added as a
-placeholder to avoid orphans.
+Add missing clocks in UART nodes for RK3528 SoC.
 
 Signed-off-by: Yao Zi <ziyao@disroot.org>
 ---
- arch/arm64/boot/dts/rockchip/rk3528.dtsi | 51 ++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-index e58faa985aa4..37fd40377076 100644
+index 37fd40377076..5b334690356a 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
 +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-@@ -6,6 +6,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/clock/rockchip,rk3528-cru.h>
- 
- / {
- 	compatible = "rockchip,rk3528";
-@@ -95,6 +96,13 @@ xin24m: clock-xin24m {
- 		#clock-cells = <0>;
- 	};
- 
-+	gmac0_clk: clock-gmac50m {
-+		compatible = "fixed-clock";
-+		clock-frequency = <50000000>;
-+		clock-output-names = "gmac0";
-+		#clock-cells = <0>;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		ranges = <0x0 0xfe000000 0x0 0xfe000000 0x0 0x2000000>;
-@@ -114,6 +122,49 @@ gic: interrupt-controller@fed01000 {
- 			#interrupt-cells = <3>;
- 		};
- 
-+		cru: clock-controller@ff4a0000 {
-+			compatible = "rockchip,rk3528-cru";
-+			reg = <0x0 0xff4a0000 0x0 0x30000>;
-+			assigned-clocks =
-+				<&cru XIN_OSC0_DIV>, <&cru PLL_GPLL>,
-+				<&cru PLL_PPLL>, <&cru PLL_CPLL>,
-+				<&cru ARMCLK>, <&cru CLK_MATRIX_250M_SRC>,
-+				<&cru CLK_MATRIX_500M_SRC>,
-+				<&cru CLK_MATRIX_50M_SRC>,
-+				<&cru CLK_MATRIX_100M_SRC>,
-+				<&cru CLK_MATRIX_150M_SRC>,
-+				<&cru CLK_MATRIX_200M_SRC>,
-+				<&cru CLK_MATRIX_300M_SRC>,
-+				<&cru CLK_MATRIX_339M_SRC>,
-+				<&cru CLK_MATRIX_400M_SRC>,
-+				<&cru CLK_MATRIX_600M_SRC>,
-+				<&cru CLK_PPLL_50M_MATRIX>,
-+				<&cru CLK_PPLL_100M_MATRIX>,
-+				<&cru CLK_PPLL_125M_MATRIX>,
-+				<&cru ACLK_BUS_VOPGL_ROOT>;
-+			assigned-clock-rates =
-+				<32768>, <1188000000>,
-+				<1000000000>, <996000000>,
-+				<408000000>, <250000000>,
-+				<500000000>,
-+				<50000000>,
-+				<100000000>,
-+				<150000000>,
-+				<200000000>,
-+				<300000000>,
-+				<340000000>,
-+				<400000000>,
-+				<600000000>,
-+				<50000000>,
-+				<100000000>,
-+				<125000000>,
-+				<500000000>;
-+			clocks = <&xin24m>, <&gmac0_clk>;
-+			clock-names = "xin24m", "gmac0";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
+@@ -168,7 +168,8 @@ cru: clock-controller@ff4a0000 {
  		uart0: serial@ff9f0000 {
  			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
  			reg = <0x0 0xff9f0000 0x0 0x100>;
+-			clock-frequency = <24000000>;
++			clocks = <&cru SCLK_UART0>, <&cru PCLK_UART0>;
++			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+@@ -178,6 +179,8 @@ uart0: serial@ff9f0000 {
+ 		uart1: serial@ff9f8000 {
+ 			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+ 			reg = <0x0 0xff9f8000 0x0 0x100>;
++			clocks = <&cru SCLK_UART1>, <&cru PCLK_UART1>;
++			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+@@ -187,6 +190,8 @@ uart1: serial@ff9f8000 {
+ 		uart2: serial@ffa00000 {
+ 			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+ 			reg = <0x0 0xffa00000 0x0 0x100>;
++			clocks = <&cru SCLK_UART2>, <&cru PCLK_UART2>;
++			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+@@ -195,6 +200,8 @@ uart2: serial@ffa00000 {
+ 
+ 		uart3: serial@ffa08000 {
+ 			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
++			clocks = <&cru SCLK_UART3>, <&cru PCLK_UART3>;
++			clock-names = "baudclk", "apb_pclk";
+ 			reg = <0x0 0xffa08000 0x0 0x100>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+@@ -204,6 +211,8 @@ uart3: serial@ffa08000 {
+ 		uart4: serial@ffa10000 {
+ 			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+ 			reg = <0x0 0xffa10000 0x0 0x100>;
++			clocks = <&cru SCLK_UART4>, <&cru PCLK_UART4>;
++			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+@@ -213,6 +222,8 @@ uart4: serial@ffa10000 {
+ 		uart5: serial@ffa18000 {
+ 			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+ 			reg = <0x0 0xffa18000 0x0 0x100>;
++			clocks = <&cru SCLK_UART5>, <&cru PCLK_UART5>;
++			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+@@ -222,6 +233,8 @@ uart5: serial@ffa18000 {
+ 		uart6: serial@ffa20000 {
+ 			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+ 			reg = <0x0 0xffa20000 0x0 0x100>;
++			clocks = <&cru SCLK_UART6>, <&cru PCLK_UART6>;
++			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
+@@ -231,6 +244,8 @@ uart6: serial@ffa20000 {
+ 		uart7: serial@ffa28000 {
+ 			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+ 			reg = <0x0 0xffa28000 0x0 0x100>;
++			clocks = <&cru SCLK_UART7>, <&cru PCLK_UART7>;
++			clock-names = "baudclk", "apb_pclk";
+ 			interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
+ 			reg-io-width = <4>;
+ 			reg-shift = <2>;
 -- 
 2.47.1
 
