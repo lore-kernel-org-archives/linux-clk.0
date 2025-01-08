@@ -1,40 +1,56 @@
-Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E911F76D8;
-	Wed,  8 Jan 2025 09:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3776A1F76D0;
+	Wed,  8 Jan 2025 11:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736330144; cv=none; b=oXs/Tw/VkPHQWYFPeDYMGEkzNZhOwZqxkqE9cgo4u+extmrQ1jAt8zzXwIHfag+DUZ+ob+lOdmVw4bFU/ORzbOC8OIM6fuNXH76KfaKCwbgk9DpK4XWVPkY05M60AsQM4DKbENj7zptp57W4htODYU/XR2YmYFWA612FU1vD6MY=
+	t=1736336832; cv=none; b=JZlvOJjCTeaYBA5k/5PhqrvmfGfkEj5C07aKnbSGMnPFlT+qsWmjhnJ0Tv8f6xZtKPAsuxcYKbKhSYwSHBT0p1YVzPg4aNYavKfPpQpqvWKOLgQ4+irOZdHkOsOAKJZvvmhHu0X9Q/KdFcl+gLjNHMqVllpKY26zyYMKCCjco2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736330144; c=relaxed/simple;
-	bh=nyb6wvpdFddRDb2StfKA4STA68FADaIDs8reKsWCTzo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IS3nzT8Em4iWhKqNxa1qm1I1yEi7DbhbTsKZ6SuinyyFhG6tiruaTuP9X6XIzG4rHGpCkxdyc+0JSZsAStgSPMimHFKkZcUiHMV+Ifdms3BsZPIWmXrM9CdrEKM5s831kLJGetJVNz6CHg+UhyVRv59xQbsQ8SMv8zUwOey9728=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-Received: from rd03-sz.software.amlogic (10.28.11.121) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.39; Wed, 8 Jan 2025
- 17:40:29 +0800
-From: Jian Hu <jian.hu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>, Xianwei Zhao
-	<xianwei.zhao@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, "Stephen
- Boyd" <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	"Dmitry Rokosov" <ddrokosov@sberdevices.ru>, robh+dt <robh+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>
-CC: Jian Hu <jian.hu@amlogic.com>, devicetree <devicetree@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-amlogic
-	<linux-amlogic@lists.infradead.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v2 2/5] dt-bindings: clock: add Amlogic T7 SCMI clock controller
-Date: Wed, 8 Jan 2025 17:40:22 +0800
-Message-ID: <20250108094025.2664201-3-jian.hu@amlogic.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250108094025.2664201-1-jian.hu@amlogic.com>
-References: <20250108094025.2664201-1-jian.hu@amlogic.com>
+	s=arc-20240116; t=1736336832; c=relaxed/simple;
+	bh=9v/ISjCq33hp5ht7KRd8VRiloInl0ViWAHs3kELKneI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=V11r17fieuIFY3NrMqhMqgR/4D8rstcdv6KKMqPWE5fW841vtb6ZjhR2jXjp3TSUQCG77li7GxO1xR97fO/zAybPY9QvKp3cP9JwrOF+oZ9EerJcbkOyNCBowJh36eDaBr5TjP5ccp+YJH3ANV4EJGzUDGdfXPqKFss/F+iAmIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=bL2jhuTY; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="bL2jhuTY"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 236DF25C17;
+	Wed,  8 Jan 2025 12:47:08 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 3IACoKRnpENS; Wed,  8 Jan 2025 12:47:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1736336827; bh=9v/ISjCq33hp5ht7KRd8VRiloInl0ViWAHs3kELKneI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=bL2jhuTYpp/OI664vmwSZcAl3l3VMgUtx9AMgX9Hs8/RFqpWNW2VnNVWr2KGPe/Sf
+	 79dnIxCz9W4m80Z2HDK6eOfT4GMEToLyf8RXLq/cglFGbDuDrEm1qEQc68Dmy/gBha
+	 2OdQaEi4qKbSw01XZWv8C0SSa5p8Ydj7evCs4Fqk4ruh3C3tAUIOJtrv9Jh5vU6FU2
+	 BMV3Pn+F4pBKhuvgOlzLc3a8qHJO9XYrvn+Ir6NtBq0I2rIvjwRgC7Rmjgo2xClXN/
+	 dfCefKQxY4mxRuj99IEFKGO6O9tMMG1Gd30wOf9eVRwebJlZcrNq/+4TthLu9MMMDJ
+	 tAsRsoY5cZNpw==
+From: Yao Zi <ziyao@disroot.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v2 2/5] clk: rockchip: Add PLL flag ROCKCHIP_PLL_FIXED_MODE
+Date: Wed,  8 Jan 2025 11:46:03 +0000
+Message-ID: <20250108114605.1960-4-ziyao@disroot.org>
+In-Reply-To: <20250108114605.1960-2-ziyao@disroot.org>
+References: <20250108114605.1960-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,71 +58,58 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add DT bindings for the SCMI clock controller of the Amlogic T7 SoC family.
+RK3528 comes with a new PLL variant: its "PPLL", which mainly generates
+clocks for the PCIe controller, operates in normal mode only. Let's
+describe it with flag ROCKCHIP_PLL_FIXED_MODE and handle it in code.
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Yao Zi <ziyao@disroot.org>
 ---
- include/dt-bindings/clock/amlogic,t7-scmi.h | 48 +++++++++++++++++++++
- 1 file changed, 48 insertions(+)
- create mode 100644 include/dt-bindings/clock/amlogic,t7-scmi.h
+ drivers/clk/rockchip/clk-pll.c | 10 ++++++----
+ drivers/clk/rockchip/clk.h     |  2 ++
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/include/dt-bindings/clock/amlogic,t7-scmi.h b/include/dt-bindings/clock/amlogic,t7-scmi.h
-new file mode 100644
-index 000000000000..aa2431ea72ed
---- /dev/null
-+++ b/include/dt-bindings/clock/amlogic,t7-scmi.h
-@@ -0,0 +1,48 @@
-+/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-+/*
-+ * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
-+ * Author: Jian Hu <jian.hu@amlogic.com>
-+ */
-+
-+#ifndef __T7_SCMI_CLKC_H
-+#define __T7_SCMI_CLKC_H
-+
-+#define CLKID_DDR_PLL_OSC			0
-+#define CLKID_AUD_PLL_OSC			1
-+#define CLKID_TOP_PLL_OSC			2
-+#define CLKID_TCON_PLL_OSC			3
-+#define CLKID_USB_PLL0_OSC			4
-+#define CLKID_USB_PLL1_OSC			5
-+#define CLKID_MCLK_PLL_OSC			6
-+#define CLKID_PCIE_OSC				7
-+#define CLKID_ETH_PLL_OSC			8
-+#define CLKID_PCIE_REFCLK_PLL_OSC		9
-+#define CLKID_EARC_OSC				10
-+#define CLKID_SYS1_PLL_OSC			11
-+#define CLKID_HDMI_PLL_OSC			12
-+#define CLKID_SYS_CLK				13
-+#define CLKID_AXI_CLK				14
-+#define CLKID_FIXED_PLL_DCO			15
-+#define CLKID_FIXED_PLL				16
-+#define CLKID_FCLK_DIV2_DIV			17
-+#define CLKID_FCLK_DIV2				18
-+#define CLKID_FCLK_DIV2P5_DIV			19
-+#define CLKID_FCLK_DIV2P5			20
-+#define CLKID_FCLK_DIV3_DIV			21
-+#define CLKID_FCLK_DIV3				22
-+#define CLKID_FCLK_DIV4_DIV			23
-+#define CLKID_FCLK_DIV4				24
-+#define CLKID_FCLK_DIV5_DIV			25
-+#define CLKID_FCLK_DIV5				26
-+#define CLKID_FCLK_DIV7_DIV			27
-+#define CLKID_FCLK_DIV7				28
-+#define CLKID_FCLK_50M_DIV			29
-+#define CLKID_FCLK_50M				30
-+#define CLKID_CPU_CLK				31
-+#define CLKID_A73_CLK				32
-+#define CLKID_CPU_CLK_DIV16_DIV			33
-+#define CLKID_CPU_CLK_DIV16			34
-+#define CLKID_A73_CLK_DIV16_DIV			35
-+#define CLKID_A73_CLK_DIV16			36
-+
-+#endif /* __T7_SCMI_CLKC_H */
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index fe76756e592e..2c2abb3b4210 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -204,10 +204,12 @@ static int rockchip_rk3036_pll_set_params(struct rockchip_clk_pll *pll,
+ 	rockchip_rk3036_pll_get_params(pll, &cur);
+ 	cur.rate = 0;
+ 
+-	cur_parent = pll_mux_ops->get_parent(&pll_mux->hw);
+-	if (cur_parent == PLL_MODE_NORM) {
+-		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_SLOW);
+-		rate_change_remuxed = 1;
++	if (!(pll->flags & ROCKCHIP_PLL_FIXED_MODE)) {
++		cur_parent = pll_mux_ops->get_parent(&pll_mux->hw);
++		if (cur_parent == PLL_MODE_NORM) {
++			pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_SLOW);
++			rate_change_remuxed = 1;
++		}
+ 	}
+ 
+ 	/* update pll values */
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index f1957e1c1178..6efe0495dd37 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -444,6 +444,7 @@ struct rockchip_pll_rate_table {
+  * Flags:
+  * ROCKCHIP_PLL_SYNC_RATE - check rate parameters to match against the
+  *	rate_table parameters and ajust them if necessary.
++ * ROCKCHIP_PLL_FIXED_MODE - the pll operates in normal mode only
+  */
+ struct rockchip_pll_clock {
+ 	unsigned int		id;
+@@ -461,6 +462,7 @@ struct rockchip_pll_clock {
+ };
+ 
+ #define ROCKCHIP_PLL_SYNC_RATE		BIT(0)
++#define ROCKCHIP_PLL_FIXED_MODE		BIT(1)
+ 
+ #define PLL(_type, _id, _name, _pnames, _flags, _con, _mode, _mshift,	\
+ 		_lshift, _pflags, _rtable)				\
 -- 
 2.47.1
 
