@@ -1,146 +1,94 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [195.16.41.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43B5215789;
-	Thu,  9 Jan 2025 09:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482021FCFF4;
+	Thu,  9 Jan 2025 10:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.16.41.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736414191; cv=none; b=p7lahVao1XTh7Qp1bDnUFIgsXluJZeFXlCUCBVYeJRjmUAHln3Z53EUZqaapjscnHgiTaPNX31M85dUIXRfeeZ7SvafvWXc014oDZnuzJbut4JoeK4iKE4x1TlD9beycMNWvpMn7Kx0siyP9T/C+ojAivV8DLAdOpeXZeMm0zjU=
+	t=1736419957; cv=none; b=N6u+gGzH3uGILHsYdLYlOmbOIX9DVpSQizC0X1NtGDDiI0R7sYPBiI54S2ik3zR5GMVF/dH7QJ/3oow6oh6q9Wxx6p+hU9rRq4Fwx2gWEFQE3yWVMFG32BGXjF7Tr77Bc3tZktO56A2ukNMQqufhAs0OfI8k14QV1KdlTS2ZZI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736414191; c=relaxed/simple;
-	bh=0xssGUaTU/N9kw20xJoCUInNv2QQ7gksj+PFGnZRZQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aWCE0+pQMJb2qw0qaLQ/ZyuSJHkxXkZKmwyDAdcnzMj2mZh0pnFy1M2UowGuL4r5YtkCGRGvL2n6d1lr0yH2whI+UfG3T694yKqXkITtEj4VFxn2C5meu2/U8Nt12EY5bz5e708wGPSyNK/h9gC6VRbM3IHfHs/b7CnxyMsXt5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=S35kHxXn; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="S35kHxXn"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id A52F725B74;
-	Thu,  9 Jan 2025 10:16:25 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id drfea6D4_RPN; Thu,  9 Jan 2025 10:16:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1736414181; bh=0xssGUaTU/N9kw20xJoCUInNv2QQ7gksj+PFGnZRZQM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=S35kHxXn7ZtR1jTBLNzkbBHuUJlmcfM/5tc6JCxr6jxGws/4//S75oR1ea4UmP5jy
-	 p+grjNMpyscc9x0l292GmqIFCBu+I/9c+7iOrhPkjO9cLduPwaLrv8/Cs9mP6j3QRA
-	 iZYVVvGYw5yUEVMa9S08jVZv4AmE2HfNm622oBJxFHnRt3C/Fx98/Q5WtOMxuZe9Ck
-	 qp+0arF1FlKvR5Bkd2iNeU7S+ANO4tzABcIyRrKK+A1688UYSl7+5h7zsM3aLJvTx0
-	 7UlzM+80DltqU+Hy14nrXlcuQ/wkbtA/2r8wJiIRMI0/QCB0gyCCjduGhMfaLFfUvF
-	 5/N4VHDKyij3g==
-Date: Thu, 9 Jan 2025 09:16:12 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: clock: Document clock and reset unit
- of RK3528
-Message-ID: <Z3-T3JwcsW0xYKvk@pie>
-References: <20250108114605.1960-2-ziyao@disroot.org>
- <20250108114605.1960-3-ziyao@disroot.org>
- <tep74dy3oc6y2wwhp6bthv6brhkge7cojzrtj6x53lvtsws4g5@areqtyxhyayq>
+	s=arc-20240116; t=1736419957; c=relaxed/simple;
+	bh=RskAXAssKBeYzM3axDvBryE8IHmWlO3lawnWgggTabA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VtKHGkgwPqgbmIkhiEHwURzwaNJ0l+l2f8lgBAAw+NzKd75RiM3ZhfWyomtfz3od/ZcMWw94izsBIt5GT5k4GBMfgrAj7h5ZiwGHLHrGSebPQNiPbiEks+AISY1cRCRTJw8G+htdspcas/8syVGlQUnMDS4BZ9IuWM5JAIYzrDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=195.16.41.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+Received: from gca-msk-a-srv-ksmg02.astralinux.ru (localhost [127.0.0.1])
+	by mail-gw02.astralinux.ru (Postfix) with ESMTP id A0A911F9DD;
+	Thu,  9 Jan 2025 13:52:29 +0300 (MSK)
+Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail04.astralinux.ru [10.177.185.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
+	Thu,  9 Jan 2025 13:52:28 +0300 (MSK)
+Received: from localhost.localdomain (unknown [10.198.51.250])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4YTM7F3GWTzkWxT;
+	Thu,  9 Jan 2025 13:52:25 +0300 (MSK)
+From: Anastasia Belova <abelova@astralinux.ru>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Anastasia Belova <abelova@astralinux.ru>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	David Dai <daidavid1@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	stable@vger.kernel.org
+Subject: [PATCH] clk: qcom: clk-rpmh: add explicit casting in clk_rpmh_bcm_recalc_rate
+Date: Thu,  9 Jan 2025 13:52:08 +0300
+Message-ID: <20250109105211.29340-1-abelova@astralinux.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tep74dy3oc6y2wwhp6bthv6brhkge7cojzrtj6x53lvtsws4g5@areqtyxhyayq>
+Content-Transfer-Encoding: 8bit
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
+X-KSMG-AntiSpam-Info: LuaCore: 49 0.3.49 28b3b64a43732373258a371bd1554adb2caa23cb, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;new-mail.astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;astralinux.ru:7.1.1, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 190216 [Jan 09 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/01/09 08:30:00 #26962612
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 1
 
-On Thu, Jan 09, 2025 at 09:59:25AM +0100, Krzysztof Kozlowski wrote:
-> On Wed, Jan 08, 2025 at 11:46:02AM +0000, Yao Zi wrote:
-> > There are two types of clocks in RK3528 SoC, CRU-managed and
-> > SCMI-managed. Independent IDs are assigned to them.
-> > 
-> > For the reset part, differing from previous Rockchip SoCs and
-> > downstream bindings which embeds register offsets into the IDs, gapless
-> > numbers starting from zero are used.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  .../bindings/clock/rockchip,rk3528-cru.yaml   |  67 +++
-> >  .../dt-bindings/clock/rockchip,rk3528-cru.h   | 453 ++++++++++++++++++
-> >  .../dt-bindings/reset/rockchip,rk3528-cru.h   | 241 ++++++++++
-> >  3 files changed, 761 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
-> >  create mode 100644 include/dt-bindings/clock/rockchip,rk3528-cru.h
-> >  create mode 100644 include/dt-bindings/reset/rockchip,rk3528-cru.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
-> > new file mode 100644
-> > index 000000000000..19dbda858172
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
-> > @@ -0,0 +1,67 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/rockchip,rk3528-cru.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Rockchip RK3528 Clock and Reset Controller
-> > +
-> > +maintainers:
-> > +  - Yao Zi <ziyao@disroot.org>
-> > +
-> > +description: |
-> > +  The RK3528 clock controller generates the clock and also implements a reset
-> > +  controller for SoC peripherals. For example, it provides SCLK_UART0 and
-> > +  PCLK_UART0 as well as SRST_P_UART0 and SRST_S_UART0 for the first UART
-> > +  module.
-> > +  Each clock is assigned an identifier, consumer nodes can use it to specify
-> > +  the clock. All available clock and reset IDs are defined in dt-binding
-> > +  headers.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: rockchip,rk3528-cru
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  assigned-clocks: true
-> > +
-> > +  assigned-clock-rates: true
-> 
-> Drop both, totally redundant.
+The result of multiplication of aggr_state and unit fields (rate
+value) may not fit u32 type. Add explicit casting to a larger
+type to prevent overflow.
 
-Okay, will fix in next version.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: External 24MHz oscillator clock
-> > +      - description: 50MHz clock generated by PHY module
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: xin24m
-> > +      - const: gmac0
-> 
-> gmac
-> (unless you have gmac1 here as well but then please add it now)
+Fixes: 04053f4d23a4 ("clk: qcom: clk-rpmh: Add IPA clock support")
+Cc: stable@vger.kernel.org # v5.4+
+Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+---
+ drivers/clk/qcom/clk-rpmh.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-RK3528 comes with two onchip gmacs. This input clock is only used for
-the first one and I think keeping the number would give the reader an
-extra hint. What do you think about it?
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index eefc322ce367..e6c33010cfbf 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -329,7 +329,7 @@ static unsigned long clk_rpmh_bcm_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct clk_rpmh *c = to_clk_rpmh(hw);
+ 
+-	return c->aggr_state * c->unit;
++	return (unsigned long)c->aggr_state * c->unit;
+ }
+ 
+ static const struct clk_ops clk_rpmh_bcm_ops = {
+-- 
+2.43.0
 
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Thanks,
-Yao Zi
