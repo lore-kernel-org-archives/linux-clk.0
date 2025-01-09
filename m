@@ -1,78 +1,75 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32286204F6C
-	for <linux-clk@vger.kernel.org>; Thu,  9 Jan 2025 21:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E63203707
+	for <linux-clk@vger.kernel.org>; Thu,  9 Jan 2025 21:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736457563; cv=none; b=czIepR7naJnrUDBKh3YVcjLUxjgYHksVaR1234MndqMcFMfg/4RfVOsO/B4qIOog9I0ugG7awXteZGMbVEPKlL1y8TY5+0uK4g+gUQmLtBWg91sdc1XDYH2KJa6c6S5HzVa74mlDdxZePcVZny6s2HNRf5O+/TPZ5xzMH3LiwCY=
+	t=1736457563; cv=none; b=U2A+opNdqaVPi1HVdkQ/536mZp0ZYMRRMyflF5PmCnC2jUS0CfpKmIci1miU1hep4MjhmYTtjiuFILYPaXZcE1Ptudpb4SFtcTSn1LCw+ymy6KD8nQa3S7+dcUoc/IgU4YfuNSDLOmyafR5Hrj5Sk5ZWN1yBTVKl/u7jqXKjUks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1736457563; c=relaxed/simple;
-	bh=lm8eiZDlfcHQJ0MS0bnwvslqyw2imRABsvWe0la5PQI=;
+	bh=54AnFoYFZcZqYgavjCEUI5tS3rZv1k1LrPOchNuHl/w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cao9VnVmvyjKzx4NGr4NKUZLfRGxqD8AqnUmWICe89AdsB+3Eze7UPAMK/6aTzdE73fkJxKBAFGv0V/r+k6RorzARTmFFdbq/2SAuQmKDAwIgY3OheKi1ZPwIcIa2e9IUsex7SUQEEtK//KiFO4YVOnJwT7FW7UkmYRomOy6uCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=KIct9FBm; arc=none smtp.client-ip=209.85.208.50
+	 MIME-Version; b=B+6ifMt797AO1MFZh322BragiXEJR0iL61KAImuOMia2BezrUUa7rUAPczJfumlBIaeS3NrRGDlIqfzkQwev4XFb/GD0ZW4PumFUA0Lru+ljlbl687rDu2VlpJuUGjTC1OGfjAy6ElU1BnZKizerjX+PD1n/wzaAcoy1FSIcLbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=kx3vQzQe; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KIct9FBm"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d3e6274015so2108440a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 09 Jan 2025 13:19:20 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kx3vQzQe"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa6b4cc7270so218931666b.0
+        for <linux-clk@vger.kernel.org>; Thu, 09 Jan 2025 13:19:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1736457559; x=1737062359; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1736457560; x=1737062360; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=68CdHAZCqU/700PS8wNVBBVrBBOJwhpJC23uvX7+CAE=;
-        b=KIct9FBmT7L6NKGb2ue6Mhp5HghrUBoGW3ABvKpq+cOvw4F/65fG0Z3bMZANptW1FI
-         KdErekULAY/Ny7H6yQKPFIeJyofFUIz+Q3pu4rYML3fRJl2MPlywSmndMizvogzjd3hg
-         1+6EL+XcHJT8x2eI1B8TZctQ0TajEXeSAjIgI=
+        bh=4PuckIz6TtMrm6FhKB7AMqxRoyDL7dpmszhuAU6edRg=;
+        b=kx3vQzQekqacGs1PuiZ+nlGdz/CH/foFXOTLpYn6sJBC3cUq96I0djJ+2P3QXmaL3Z
+         mHtsfH1mxdAUUtoK/AVh+ShpvzhlygiZUBaCnqDE6N381M+BTIpxXrlc0R35j7u/6Vi7
+         BoAX8fiu5i1rgZWnzxK5pE+dz8Zk/ksrHNg/Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736457559; x=1737062359;
+        d=1e100.net; s=20230601; t=1736457560; x=1737062360;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=68CdHAZCqU/700PS8wNVBBVrBBOJwhpJC23uvX7+CAE=;
-        b=fh5ZFUhDqWStUtbH3AGjAjnW8vS826XJdRzGa1gdy0xlyFbwjvPsiEuEj85c3zJvqt
-         TtLRQsctfogcLgqfzRrk29RE2uKLcLQ7vJgqqJiTJkk8NaaPrL3xo7N9arlpgQ0OLP9w
-         33VTGwiqOOqgw9SIzji/edHvZkcq/YJBh867U4nHIgYndxBJ8AJeQeSOOFjAhXjVpTpF
-         jU6lc9aJ+hfdydROdxppoIo26LmpOs2b0+UgOHtvtdzE34vfqr44Mnkd+2sXeGyXyXdp
-         tMvrIpvHn6Hi1zbqOHWBLAcMgt5csrpuJPCsx7dUbhYPwfdAc6eAGGx5E99b8l/nZimE
-         nRTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmWzRDRFEON4BJs+CrFWACsWBKzixR+dQFyZrR/L7quoHfX6hCGsUDyZtXd1FhOV67NkyD6K4yOp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqZ1p17qQKMifhfGINneOXCgPs5YBjAi5cz/aXrbPDDxMZ/wQ8
-	+T4yeISPFMrbqAgicgf2/d7H/wFJPBErVmFiE4Qds8jkTNEJaLgSwddZkGt67GI=
-X-Gm-Gg: ASbGncv79tu/2lTBMDlGCibCUGanSRmNbY448Dyd4s5W3UbY5i0UiVfiQJM+25m5VVW
-	Fjv9qX0Cyu5ugnww+7g3UyAtDqTdGbPibIsBpsRCsAD1H8ueqs/tEFXPet7Wds1roDi6FYdvSws
-	QctvTkqJJ+ThBjjPxhnh2mdUlDufentH76hWklSiSgKl++Fy31VzTaCq6N0vODKosxM33mdWEif
-	+NmzKzZBzm9X9mLoD0L3fdKoJU4De80d8rpaeHy/lvxtv46R6jKkppDWHHODtVXNxodmxPpiX62
-	vDfMEH1r/k9VGhKBtb7AYRI979YNiqcK7Ejq2IJLeyWHF1EkMgsr8k+66C64Zsc+/yEbn0OicYL
-	zEOeqxK7asfvg3LN2ug==
-X-Google-Smtp-Source: AGHT+IFfiDSYYvGnEgMP2QwNnIkAkHlHP9l0zHJQ4yI1SUJQxTP9wEsEdwJ81wysyqIM0rn1EM70nA==
-X-Received: by 2002:a05:6402:4407:b0:5d3:d733:7ad4 with SMTP id 4fb4d7f45d1cf-5d972dfe6abmr8251883a12.3.1736457559390;
-        Thu, 09 Jan 2025 13:19:19 -0800 (PST)
+        bh=4PuckIz6TtMrm6FhKB7AMqxRoyDL7dpmszhuAU6edRg=;
+        b=H3L/0EWCmZlB+tcaR8v41doYodwlexoISU9esiWrpOQJBGhCAiThGSFw8a5bHYOzMa
+         vynWOMvLBO5V8FjC4r1iivDtEOFk2WQjcUc0JQU9bYUXYo4HLxEyVHptn0j74XiGDZVI
+         3T9Y41IVXkVH9kBDvSHB2Xu6cWTmw8A0LwC2sJVCJBOSSRP+qOLa8gILGUKJEhF+TrYK
+         +trjDadoTlqB0PBtqZ8WBOvfoGvinPJGbxaisVIM3oN1tSy6sf8L3x9H0IzQrE6KVT1O
+         rzbHNHHZBfuAxqIYOdLsvjGJ+a8bYmQm6wzYjRwdFzOSIqktsDAp23yv+T942gOBvjiL
+         qHKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnPNrnAx0TfRetz+gPr9mW97FRyDN9tkSnxMC+AuHYp9UWchY6ghclac+X2S10lqqG5TFr/0AXlwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeReXH9YXHkA9DwgNhiqZNF3xXdq29wjKHKLvmsCIjoajnZv19
+	BNBUES1TL5uNmyh0Z0vHdtitF9vEpFfVE5vCsDiJKFWrKGKgCZQReboWYtTUkGXyNUr/ThUGyAd
+	t
+X-Gm-Gg: ASbGncv+RD62cbHcyVUCBiY03oSV1xzmWw+lSuJ6rw71mJHjOpJzJzF6qyrlLSa4qgr
+	sllmmPfCIiJwditqSk+jVtImwUTIWf2fZx5qYA2AcnrD8Y+IGwB4VZEDiMIdCChYMHGe9r4pnZa
+	i0Y0l/iWZSU3hLu0VQw4njnq8acEP7IGyKohdurVq6+daBq9DsonJlPlJ7lIyNDhT37DcUM3Q6c
+	2/6oOpq9v2w4cbHNHPQsUA7J/n49aiqP3Q1S/GHNMauGhIeyP/s+Ktis+zqH0AF0+zcpCOJf9Y4
+	ZDRI5IHjmM4BKGNQ7NvFuWpiKV9+CEgSPmQhzD5AMZV9NrnXDXHhpw25stTHVeCVVvjVVosxHXG
+	ua0keIka774brSPf9Vg==
+X-Google-Smtp-Source: AGHT+IEJwiab5POVdxFq+KPMtd+AMk6FXjRfRzUyO6955YIp4KLeb/nmZtME/YvLjxsDXy27od+mJQ==
+X-Received: by 2002:a05:6402:400a:b0:5d2:7199:ac2 with SMTP id 4fb4d7f45d1cf-5d972e00032mr18870795a12.2.1736457560441;
+        Thu, 09 Jan 2025 13:19:20 -0800 (PST)
 Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-79-41-6-15.retail.telecomitalia.it. [79.41.6.15])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d9900c4b56sm925567a12.32.2025.01.09.13.19.16
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d9900c4b56sm925567a12.32.2025.01.09.13.19.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2025 13:19:18 -0800 (PST)
+        Thu, 09 Jan 2025 13:19:20 -0800 (PST)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
 	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v2 2/4] dt-bindings: clock: st,stm32-rcc: support spread spectrum clocking
-Date: Thu,  9 Jan 2025 22:18:29 +0100
-Message-ID: <20250109211908.1553072-3-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH v2 3/4] clk: stm32f4: use FIELD helpers to access the PLLCFGR fields
+Date: Thu,  9 Jan 2025 22:18:30 +0100
+Message-ID: <20250109211908.1553072-4-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250109211908.1553072-1-dario.binacchi@amarulasolutions.com>
 References: <20250109211908.1553072-1-dario.binacchi@amarulasolutions.com>
@@ -84,82 +81,64 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The addition of DT bindings for enabling and tuning spread spectrum
-clocking generation is available only for the main PLL of stm32f{4,7}
-platforms.
+Use GENMASK() along with FIELD_GET() and FIELD_PREP() helpers to access
+the PLLCFGR fields instead of manually masking and shifting.
 
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-
 ---
 
-Changes in v2:
-- Update the commit message
-- Change st,ssc-modmethod type from non-unique-string-array to string
+(no changes since v1)
 
- .../bindings/clock/st,stm32-rcc.yaml          | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
+ drivers/clk/clk-stm32f4.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/st,stm32-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32-rcc.yaml
-index 779e547700be..628bbbcf2875 100644
---- a/Documentation/devicetree/bindings/clock/st,stm32-rcc.yaml
-+++ b/Documentation/devicetree/bindings/clock/st,stm32-rcc.yaml
-@@ -56,6 +56,26 @@ properties:
-       Phandle to system configuration controller. It can be used to control the
-       power domain circuitry.
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 07c13ebe327d..db1c56c8d54f 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -5,6 +5,7 @@
+  * Inspired by clk-asm9260.c .
+  */
  
-+  st,ssc-modfreq-hz:
-+    description:
-+      The modulation frequency for main PLL (in Hz)
-+
-+  st,ssc-moddepth-permyriad:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      The modulation rate for main PLL (in permyriad, i.e. 0.01%)
-+    minimum: 25
-+    maximum: 200
-+
-+  st,ssc-modmethod:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description:
-+      The modulation techniques for main PLL.
-+    items:
-+      enum:
-+        - center-spread
-+        - down-spread
-+
- required:
-   - compatible
-   - reg
-@@ -81,6 +101,10 @@ allOf:
-             - description: high speed external (HSE) clock input
-             - description: low speed external (LSE) clock input
-             - description: Inter-IC sound (I2S) clock input
-+        st,ssc-modfreq-hz: false
-+        st,ssc-moddepth-permyriad: false
-+        st,ssc-modmethod: false
-+
-     else:
-       properties:
-         '#clock-cells':
-@@ -98,6 +122,18 @@ additionalProperties: false
++#include <linux/bitfield.h>
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+@@ -39,6 +40,8 @@
+ #define STM32F4_RCC_DCKCFGR		0x8c
+ #define STM32F7_RCC_DCKCFGR2		0x90
  
- examples:
-   # Reset and Clock Control Module node:
-+  - |
-+    clock-controller@40023800 {
-+        compatible = "st,stm32f42xx-rcc", "st,stm32-rcc";
-+        reg = <0x40023800 0x400>;
-+        #clock-cells = <2>;
-+        #reset-cells = <1>;
-+        clocks = <&clk_hse>, <&clk_i2s_ckin>;
-+        st,syscfg = <&pwrcfg>;
-+        st,ssc-modfreq-hz = <10000>;
-+        st,ssc-moddepth-permyriad = <200>;
-+        st,ssc-modmethod = "center-spread";
-+    };
-   - |
-     clock-controller@58024400 {
-         compatible = "st,stm32h743-rcc", "st,stm32-rcc";
++#define STM32F4_RCC_PLLCFGR_N_MASK	GENMASK(14, 6)
++
+ #define NONE -1
+ #define NO_IDX  NONE
+ #define NO_MUX  NONE
+@@ -632,9 +635,11 @@ static unsigned long stm32f4_pll_recalc(struct clk_hw *hw,
+ {
+ 	struct clk_gate *gate = to_clk_gate(hw);
+ 	struct stm32f4_pll *pll = to_stm32f4_pll(gate);
++	unsigned long val;
+ 	unsigned long n;
+ 
+-	n = (readl(base + pll->offset) >> 6) & 0x1ff;
++	val = readl(base + pll->offset);
++	n = FIELD_GET(STM32F4_RCC_PLLCFGR_N_MASK, val);
+ 
+ 	return parent_rate * n;
+ }
+@@ -673,9 +678,10 @@ static int stm32f4_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 
+ 	n = rate  / parent_rate;
+ 
+-	val = readl(base + pll->offset) & ~(0x1ff << 6);
++	val = readl(base + pll->offset) & ~STM32F4_RCC_PLLCFGR_N_MASK;
++	val |= FIELD_PREP(STM32F4_RCC_PLLCFGR_N_MASK, n);
+ 
+-	writel(val | ((n & 0x1ff) <<  6), base + pll->offset);
++	writel(val, base + pll->offset);
+ 
+ 	if (pll_state)
+ 		stm32f4_pll_enable(hw);
 -- 
 2.43.0
 
