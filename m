@@ -1,163 +1,153 @@
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3844F211279;
-	Fri, 10 Jan 2025 14:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E27212B28;
+	Fri, 10 Jan 2025 15:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736520902; cv=none; b=Ye3EeJVb/GVX4GeMS8fPF4qP4X5nEr16iQ6mvxfdqhhIeKq9HdT43ySe6kks6FRQY4Ieb+BxiMbnhEhqEROtRdWfgRvfLUzla6rIl4Ez+fcAzr0Ph5QKRujz8522U0tb9S41MihjBQDwJc0WTPOBwALGGPEtcPdZNztWC/nhbrw=
+	t=1736522775; cv=none; b=UtabbpJNan7BBrc7f4KqZMyXZ+VboKljwFXkDx+s1ilfofneyX8CEJrxMvox6Nd3MQtlxstACsEOi0r5W3AzliafKoMrpT4AshH3FKDMPpMSVbn6oY2pgweItqLKvVIfTK6HZzdEWkqCb0rPG9VLuFl6pqHCaB6rOPioAh6i/2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736520902; c=relaxed/simple;
-	bh=10Y4wG1ZKAjJP8ByWqGlMvFDwfuDBoerYerKYedbFr4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o9t23J0aXqO7Z76B42Nv9PHH6kjsSUbLK05NRJQ/o9wxmBXMTzxr5kJdcYcTbYB2pPBqjoEfsQiVx9unq5LTu86X9fyZU1cAe0SLNvLDH+1LjV4PWLI6S7uMPHFCMQUG0DYGvBgjnKa0Rt2+UUkZOfYVgLMinihjN3y3tYmedr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-51bb020339fso828497e0c.0;
-        Fri, 10 Jan 2025 06:54:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736520899; x=1737125699;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k/s1P0Pqg/3VfqqfM3ErTjLNZnNf2mIaTMc9cyRXFjY=;
-        b=EexTNUVfdSZP5KVkA3EeYaQFNc4vU7jenR29329DmB3mW3NrB2Crg9KT3/UZRFbqPG
-         C4hquTEtKdX103ooJJcP0I3uuPQoZ9Yg3CX8sJadFEYKVB/+gHqybhJwo5LNz/xJ/4nY
-         Nm6Amf1Dqil3n8IvfjFbHkZDdf/FuKoo0POX7hMs7btGpIAP+apOR6vMXyo0Ol44kWuU
-         InOyEyQuFOxwaQUXMFILHE88X8nR3w113vV/3buex1olgkof2XZusGvEEpT0fwURfiJR
-         etKvyF7mfcAho2faBzcm87Jm784mpqvRUWfe3XFP0oaGg5FY959ssXV8waUiRWMZtOSm
-         7d6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUjSF6DiFtpG6nheilL5XLSeoOphm1KgIADPJoArwYtJvdm6+5zDYzqydJYUBhcoVAZYx0v8YGvV8VseKlQXDIx7zg=@vger.kernel.org, AJvYcCWbtzBLAvu8MftvZXrarKc5l9mJWgW2p2Z8AVmNgDArfbY0iryGXMhY+zrjsvkISZzfL3/TU7FhcsM=@vger.kernel.org, AJvYcCWt/nHjVhe7N6jigkDHe8F8vWmaiED/CF7a/ld2szTnwoyMGUzzYtKcixdx0IfiALH1sJg6ZKgcZW08yoia@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTQUbySZjFzr4AXUcbV9w3jM2xEeH77eWknyFvgtH0+2mOXEQe
-	41U/W7tfJnKxSjw/PvG3lQfzUz6oOeaiOdF9zAEd+RoVMhkzTRx/kRn+S2ty
-X-Gm-Gg: ASbGncsA6rvvJgkRSHbj5q0UGvIuD8TFyk0smPkJmzbRDA5HOs5xzhAwMCg5nqtPYHX
-	4q6yOfCqD+L54oBGnZ2noQ7H3HvHqug1cAzUCGjBiFHwgLt6o6q0gMfbBH3VcgCLJHzUvW+WAPp
-	eiHPbyJrrSrDL0/DFRKFCRmDLj5Kx0aBJVbsJ19cR6F9QH41Y4t8rqfiUdZF7k1hyjGuOFW7yZ+
-	lz0OONvRSBLCktgxvfoCCybXL1IiNE71oAb0D+xcMvBFtsOm9o2JGLV4Y6DWeuYgFbUnT2LmX66
-	5jEpv1aIi/K9a7KnmGY=
-X-Google-Smtp-Source: AGHT+IFjlHcrb/6uphjm/aya4s8sVBlChLpJUakRInx2CTqQ+m28GLpLXCmUklTZQCJTTUZ3WlJ+Kw==
-X-Received: by 2002:a05:6122:4387:b0:518:a0ee:e8e7 with SMTP id 71dfb90a1353d-51c6c2b9391mr9375244e0c.0.1736520898694;
-        Fri, 10 Jan 2025 06:54:58 -0800 (PST)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51c7fd2dd88sm2205892e0c.47.2025.01.10.06.54.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jan 2025 06:54:58 -0800 (PST)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4affab62589so785272137.1;
-        Fri, 10 Jan 2025 06:54:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCURCgJBLkd6xwRgUQrZM8/bA+KfEPvmzN/yxEWfbE5/MANAT6Wg+J601UIGKqP8fM9ZAARHqS2bo4abmxHC@vger.kernel.org, AJvYcCV8TacJjwF9Yp9llSexCqormkMUvQyCm7rfKRIngoIES0O9MJ0UMAvgdh2MPXL3RbtdA56ngq7i1hy2tP9D58gJNjY=@vger.kernel.org, AJvYcCVd1hsAbqpH1kKNrQrwZu4mG7mtMCeIsw2OUGfEhOQxZe3K7gzIb+6L/CqZKpSVOl+qyCX6AuTV0GY=@vger.kernel.org
-X-Received: by 2002:a05:6102:2ac5:b0:4b5:b20d:5e16 with SMTP id
- ada2fe7eead31-4b5b20d95fcmr6464011137.21.1736520897984; Fri, 10 Jan 2025
- 06:54:57 -0800 (PST)
+	s=arc-20240116; t=1736522775; c=relaxed/simple;
+	bh=TzosbwHEdnIy/bEAra2YOoleYUa+ANh4p0cWMT0d+EE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bb1LFS3O296gkaSC3ul0v4YT7fc0jCF2xOtChvlzIQxpFDdH4Tz03usy63GvcYGyMUjcFty9tkbaaDQi175fgoyy4QIy626qmSElam/vNpZfvNduEIWzTCWwiZL9BoYAZF0U1sos/yLUSMOX5dovKaiE5GO4PcpRvOWVz4MFxsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=dY687/Ty; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="dY687/Ty"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1736522772; x=1768058772;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TzosbwHEdnIy/bEAra2YOoleYUa+ANh4p0cWMT0d+EE=;
+  b=dY687/Tya6nXuk/ZIGvos4i70qElBLnGNtPTrzMOksPDGjJsUXCn9/zn
+   vDt6t4eSgpRzPu7+Hfw+Qj8Z4YncW1bHcBar1RRl0Ct4FS127oZc34Nwn
+   /D5h085ECP3HsTS04nhxEcTWw8LJhrg2pB5MJaKTq09OOVCDHS9YOuBga
+   BgePB9rr30FsLu0SRvLRpJcq6264P5zJ4Hl7wf3H31XoLq6LRt4CdqEhy
+   H9vJSC1X4y1tjuOgfU823AO3vRpK3Kj5lZfj2WjVEi8eicfE627DMHEMr
+   MQJ0XD/CXqBe1hbIRU1CaVXxQcesMbJqcYgPtSkSA9uYEFVnUWpt0WHOQ
+   g==;
+X-CSE-ConnectionGUID: 5GPtyWRDTC6ZDj4SFqiVRA==
+X-CSE-MsgGUID: Q023PzxzSBSbN5Hp498PUg==
+X-IronPort-AV: E=Sophos;i="6.12,303,1728975600"; 
+   d="scan'208";a="203886120"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jan 2025 08:26:05 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 10 Jan 2025 08:25:52 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Fri, 10 Jan 2025 08:25:52 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<arnd@arndb.de>
+CC: <dharma.b@microchip.com>, <mihai.sain@microchip.com>,
+	<romain.sioen@microchip.com>, <varshini.rajendran@microchip.com>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+	<linux-spi@vger.kernel.org>, <linux-serial@vger.kernel.org>, Ryan Wanner
+	<Ryan.Wanner@microchip.com>
+Subject: [PATCH v6 0/3] Add support for SAMA7D65
+Date: Fri, 10 Jan 2025 08:25:39 -0700
+Message-ID: <cover.1736522006.git.Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250103164834.1778090-1-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250103164834.1778090-1-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 10 Jan 2025 15:54:46 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUHCBy+i+P=URcg1U=qHfgHAkAhPQgxWfJQ8AUiNQYqtA@mail.gmail.com>
-X-Gm-Features: AbW1kvaSBPPHhzxMFa91U4Ec70xPz_NlcZcIMFMgN_uZxZRyiRm9HmByRSzvMDY
-Message-ID: <CAMuHMdUHCBy+i+P=URcg1U=qHfgHAkAhPQgxWfJQ8AUiNQYqtA@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r8a08g045: Check the source of the CPU PLL settings
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Claudiu,
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-On Fri, Jan 3, 2025 at 5:49=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
-rote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> On the RZ/G3S SoC, the CPU PLL settings can be set and retrieved through
-> the CPG_PLL1_CLK1 and CPG_PLL1_CLK2 registers. However, these settings ar=
-e
-> applied only when CPG_PLL1_SETTING.SEL_PLL1 is set to 0. Otherwise, the
-> CPU PLL operates at the default frequency of 1.1 GHz. This patch adds
-> support to the PLL driver to return the 1.1 GHz frequency when the CPU PL=
-L
-> is configured with the default frequency.
->
-> Fixes: 01eabef547e6 ("clk: renesas: rzg2l: Add support for RZ/G3S PLL")
-> Fixes: de60a3ebe410 ("clk: renesas: Add minimal boot support for RZ/G3S S=
-oC")
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+This series adds support for the SAMA7D65 SoC.
 
-Thanks for your patch!
+V2 of this series [1].
+V3 of this series [2].
+V4 of this series [4].
+V5 of this series [6].
 
-> --- a/drivers/clk/renesas/r9a08g045-cpg.c
-> +++ b/drivers/clk/renesas/r9a08g045-cpg.c
-> @@ -51,7 +51,7 @@
->  #define G3S_SEL_SDHI2          SEL_PLL_PACK(G3S_CPG_SDHI_DSEL, 8, 2)
->
->  /* PLL 1/4/6 configuration registers macro. */
-> -#define G3S_PLL146_CONF(clk1, clk2)    ((clk1) << 22 | (clk2) << 12)
-> +#define G3S_PLL146_CONF(clk1, clk2, settings)  ((clk1) << 22 | (clk2) <<=
- 12 | (settings))
+For the pinctrl and pit64 timers those will have DTB warnings due to
+those bindings not being in the .yaml format.
 
-s/settings/setting/, to better match the actual register name.
+Changes v1->v2:
+- V1 set was sent incorrectly as multiple seprate patches v2 took all
+  those patches and put them in 1 thread.
 
->
->  #define DEF_G3S_MUX(_name, _id, _conf, _parent_names, _mux_flags, _clk_f=
-lags) \
->         DEF_TYPE(_name, _id, CLK_TYPE_MUX, .conf =3D (_conf), \
+Changes v2->v3:
+- Correct the patch order to follow correct practice.
+- Correct flexcom dt-binding commit messge to reflect the changes in the
+  coding style.
+- Add missing SoB tags to patches.
+- Moved export clocks to DT patch to be included with the clock binding
+  patch.
+- Separate Kconfig changes and defconfig changes into different patches
+  and removed unused Kconfig params.
+- Correct confusing SoB and Co-developed chain.
+- Removed unsued nodes in DTSI file and sorted includes
+  alphanumerically.
+- Fix incorrect dts formatting.
+- Separate dts and pinmux changes into two patches.
+- Combine PLL and MCK changes into core clock driver patch.
+- Correct formatting in main clock driver.
+- MMC dt-binding changes are applied for next so have been removed from
+  the set [3].
 
-> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+Changes v3->v4:
+- Collect all tags from maintainers.
+- Correct compile error on 11/13 and correct location of vendor specific
+  properties.
+- Add USB and UTMI selections to 12/13 to prevent compile errors due to
+  functions in the clock driver that use the USB clock system.
+- Add "microchip,sama7g5-pinctrl" compatible string as a fall back in
+  9/13.
+- Add missing kfree() to 8/13 to correctly handle error case.
+- Replace bad spacing with correct tab formatting on 7/13.
 
-> @@ -60,6 +61,7 @@
->  #define GET_REG_OFFSET(val)            ((val >> 20) & 0xfff)
->  #define GET_REG_SAMPLL_CLK1(val)       ((val >> 22) & 0xfff)
->  #define GET_REG_SAMPLL_CLK2(val)       ((val >> 12) & 0xfff)
-> +#define GET_REG_SAMPLL_SETTINGS(val)   ((val) & 0xfff)
+Changes from v4->v5:
+- Remove patches that have been applied [5].
+- Update pinctrl dt-binding to use fallback formatting.
 
-Likewise, s/SETTINGS/SETTING/
+Changes from v5->v6:
+- Remove patches that have been applied [6].
+- Correct incorrect spacing formatting on pinctrl dt-binding.
+- Reintroduce flexcom to the thread since it was removed due to an error
+  in collecting applied patches.
 
->
->  #define CPG_WEN_BIT            BIT(16)
->
+Note:
+- For the SDHCI DTB error that patch has been removed do to it being
+applied see [3].
+- There are DTB errors on microchip,sama7d65-pit64b and
+  microchip,sama7d65-pinctrl, this is due to those bindings being .txt
+  files.
 
-> @@ -986,6 +989,10 @@ static unsigned long rzg3s_cpg_pll_clk_recalc_rate(s=
-truct clk_hw *hw,
->         if (pll_clk->type !=3D CLK_TYPE_G3S_PLL)
->                 return parent_rate;
->
-> +       val =3D readl(priv->base + GET_REG_SAMPLL_SETTINGS(pll_clk->conf)=
-);
-> +       if (val & RZG3S_SEL_PLL)
-> +               return pll_clk->default_rate;
+1) https://lore.kernel.org/linux-arm-kernel/cover.1732030972.git.Ryan.Wanner@microchip.com/T/#m9691b4d58b62f36f6cbac1d06883c985766c2c0d
+2) https://lore.kernel.org/linux-arm-kernel/cover.1733505542.git.Ryan.Wanner@microchip.com/T/#m3b52978236907198f727424e69ef21c8898e95c8
+3) https://lore.kernel.org/linux-arm-kernel/cover.1732030972.git.Ryan.Wanner@microchip.com/T/#mccf6521c07e74e1c7dc61b09ae0ebdbbdde73a28
+4) https://lore.kernel.org/linux-arm-kernel/70d429086fd8e858d79ca2824ad8cc4a09e3fe5d.1734723585.git.Ryan.Wanner@microchip.com/T/#m918b8db23c8d30981263846a02dafc085e17de14
+5) https://lore.kernel.org/linux-arm-kernel/70d429086fd8e858d79ca2824ad8cc4a09e3fe5d.1734723585.git.Ryan.Wanner@microchip.com/T/#m69b8f11536e3b0ca3d69d125d0670c90412d4317
+6) https://lore.kernel.org/linux-arm-kernel/20250107160850.120537-1-Ryan.Wanner@microchip.com/T/#m54eaea3dc49c687865e3db33e286eeb29edd7cf0
 
-This code and the G3S_PLL146_CONF() macro are intended for PLL1,
-PLL4, and PLL6 (currently the driver instantiates only PLL1), but the
-SETTING register exists only for PLL1.  Hence you should check first
-if the register offset is valid, e.g. by checking for a non-zero value.
+Dharma Balasubiramani (3):
+  dt-bindings: serial: atmel,at91-usart: add microchip,sama7d65-usart
+  dt-bindings: pinctrl: at91-pio4: add microchip,sama7d65-pinctrl
+  dt-bindings: mfd: atmel,sama5d2-flexcom: add
+    microchip,sama7d65-flexcom
 
-According to the documentation for the CPG_PLL1_SETTING.SEL_PLL1 bit,
-the clock config also depends on the OTP_OTPPLL[0-2] pins.
+ .../devicetree/bindings/mfd/atmel,sama5d2-flexcom.yaml   | 9 ++++-----
+ .../bindings/pinctrl/atmel,at91-pio4-pinctrl.txt         | 1 +
+ .../devicetree/bindings/serial/atmel,at91-usart.yaml     | 1 +
+ 3 files changed, 6 insertions(+), 5 deletions(-)
 
-> +
->         val =3D readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
->
->         pr =3D 1 << FIELD_GET(RZG3S_DIV_P, val);
+-- 
+2.43.0
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
