@@ -1,132 +1,311 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14284400;
-	Fri, 10 Jan 2025 13:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03D920E714
+	for <linux-clk@vger.kernel.org>; Fri, 10 Jan 2025 13:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736517333; cv=none; b=XgAaOPKRL3jlC7bj8WD2SOQ4R25RcG2tmBA4NZyliKGuJ2s5/GkJc2irArlPMf/8oOEU4QU2d1in+4scLDBi4rjj7DDLy62fuDqTPLir8vFAAUi3LP5WF0j/NejWxsZIRnRjjwlIjICo0LqbUrWUurcfVqoyXmkdHVLful3kelA=
+	t=1736517359; cv=none; b=T7GVKoJQZIMrb2bF89GCZS+CuiZ8FErJZFzOu8no/k4rmCjrCnY8huUAwLAaamTx8htQqJWjlm1HJdBLinF6eFbtwpdMzaTKsys3ESJ8507c5RquCisDAsLz3Vo2AcCbeZaX4+LMxq6CqNVTzcwDH453sTbPq+53LxQQjU0HeiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736517333; c=relaxed/simple;
-	bh=7FhdF0E/wzZ/LjN0yMmNkDWkh1Ljtoxfv/kPShF+jeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iN6WKGWoImPdRJ1Ywza4zSO6k3RJuErmGg23VgL6A7GTJakpf9seMzglqwO3OKIQNmnVXEsVXSaSzvrh2o115w0mSAAfTXXp1RjHHVQ4yuJMMiqjk/XzhtXSoxGunIxgy/HKPN9vCIRGZmgWwSUS74v/7D/M+xRbcHmjYwn5KPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1qrLbpm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736517359; c=relaxed/simple;
+	bh=XKtfrZeHxc9+cyzKm0MPReg0K1uvvd5Lo0kIUMLSBnI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WmzvYm7EuhnpaX2+BQw2IN0fm984hKe1kP5eKGMctTTZFzhZ1etg0QLAlxqIWNJsQlXZqhDk4jpBHib6YuvW9e8qyjTvTQkUcd0SZSqXnAkGwq5BGmBAiZuQQS9hE7+R9KRulpgI7lEgtcoI1/7MdQhkCzeW/1+C7eoelkUk/CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=K/jg9uM+; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1qrLbpm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B5E3C4CED6;
-	Fri, 10 Jan 2025 13:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736517333;
-	bh=7FhdF0E/wzZ/LjN0yMmNkDWkh1Ljtoxfv/kPShF+jeQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n1qrLbpmYHNuXmpmmfgcZqeE9SKNpSLD+QRrpHqDL1r5p0y/s5K6pfI8xfrCqkmsf
-	 s73mWDEghOV7mk3dxbzcne12ZseS0n4PuWOGwG+ytrRKnVHq9vq6PzbrsH4J9q8PoJ
-	 iHxwjJ65zbKbLFje7JOnUkBJuHawvetMmK5OJg5UiF/LqYJb5za6xjpEAXUL1iV1tM
-	 rt+0AF6adCg3UcUh6zFcV656ck1kZP01SYIquNQA+zb9Se2guaP6DroZfSHqGKsiKK
-	 XmUxFGUDGxUWbxj5n+spiWELjrrBc6Qb1y+BWEKouX0FYGmLqqzAOXfPmyVzPyafoO
-	 2GIrGHad83vRA==
-Message-ID: <106ad964-3734-43ec-8563-50cb18c5189d@kernel.org>
-Date: Fri, 10 Jan 2025 14:55:22 +0100
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="K/jg9uM+"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so1122221f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jan 2025 05:55:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1736517355; x=1737122155; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ftbjBXQ4HXQ8pJsgEsmhz+TvwinUzZhPiZFB0jwt4RI=;
+        b=K/jg9uM+P6Hm+ztSlnN4FETxyw6S+faBsZc913NTera7r6sYJ+14T6Wmpb8d7u37o8
+         Kfl2sNFjhOxRZQQhVqODIbOhMapA2osh12oovYGqFzQ9SmIw1jbGanpjBbJeut7TxFYV
+         QtbV9AbXhS6+KMsa65OKN5ApFakilPy9I35RkeH+NHzJwG/Bj+H0kqMDNs5T3dVPpysp
+         bAtMNKnupyhY3RJqUbRgoyPB75OJylVAGInwQ8aDeXyShXWiyc9LCL+3KljBb3Tz8zC+
+         e8YdrGMX50QXlKDnzIBPQHlFwiukLlfwxpbSaVnci215nZrdJlqrywcxaKNYkI9uYX6J
+         dvrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736517355; x=1737122155;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ftbjBXQ4HXQ8pJsgEsmhz+TvwinUzZhPiZFB0jwt4RI=;
+        b=RO09QOhLbMwKem1utGrWvz4jkY8q90sQIrCRHU9IsEoNW36HdWcMKOAxCRTrjV4yU8
+         bTv9ytUkgJxa4iwkgFbnfTxZ7vE3B9hTC9926bK9VVlDygd482Khq62zzf+KIIMmzGNR
+         Hvr1lrAj/nS83aHtwt9exNUVGDn0N5htnGF4cKsQl2nE5WbL9MpEltnefW4EUB+XLsM3
+         7s80fw88t9cE6XYFbN0SHnHjfQIU2rOFo96IuOdICXH134I3bi/0b5Rhx5q0nJTSqvCz
+         VbY5me40Xs0PfmaBdNrnputvmIIDX4AFxEwEXjPtNYj60AmjIl9sWNR2l88jBkY+QBai
+         RFKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULKyxjtNnief3iZifDNlUl8PUwGlO1PqF3nbo0/WzfGPOPJYzaTlaX488TGfML+gZk3ioDaEDWuoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp29JaYFa1pHN4WynFMru5pIHPH17r71TCpVnao353+3gSkXQT
+	CUZxbdpicQ7B3CkLajKgZv3kJtGbG8d5DsQSy+PqiEPsm9EjocuK/0+dIROrxus=
+X-Gm-Gg: ASbGnctTy373aLeTobdh+FwKUAUJqCADcmK4xd3f54oAJCGI/l3K7mvvjLgezoSzICD
+	nTJ5xWaIdTWJCo6sSOA+x7A7YlfX/laXW39rztNRYWISytoTsXSyHm3AvvGdDTJczEmSATw8wUH
+	2fNijcyH1l4UtuVcsvjiNOuUrfaulCYtoBZIpFh19TrKXjIDgIDzEB67zNqDtDjG5ct4o7Az1ki
+	IcUM+O07bddncQxNFfSqoZRf8+WdRvu0rIfLg+ad0TbXu3HW2SBgO0=
+X-Google-Smtp-Source: AGHT+IE7F/hOS3FiocAfogciKCV+3xyyaiDnwQ7vSAvCcesLhCG99vmIp4Cuk/PUHH6FVgF+FANyPg==
+X-Received: by 2002:a05:6000:401e:b0:386:366d:5d03 with SMTP id ffacd0b85a97d-38a872da868mr10354026f8f.16.1736517355167;
+        Fri, 10 Jan 2025 05:55:55 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:f3f7:a818:65b5:3db])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e4b80besm4527997f8f.83.2025.01.10.05.55.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2025 05:55:54 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,  Stephen Boyd
+ <sboyd@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
+ Hilman <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  chuan.liu@amlogic.com,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] clk: amlogic: c3: Limit the rate boundaries of clk_hw
+In-Reply-To: <20250110-limit-rate-range-of-clk-v1-2-dd618adc4aa8@amlogic.com>
+	(Chuan Liu via's message of "Fri, 10 Jan 2025 19:47:11 +0800")
+References: <20250110-limit-rate-range-of-clk-v1-0-dd618adc4aa8@amlogic.com>
+	<20250110-limit-rate-range-of-clk-v1-2-dd618adc4aa8@amlogic.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Fri, 10 Jan 2025 14:55:54 +0100
+Message-ID: <1j34hqai39.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/12] dt-bindings: clock: sunxi-ng: add compatibles for
- V853
-To: Andras Szemzo <szemzo.andras@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20250110123923.270626-1-szemzo.andras@gmail.com>
- <20250110123923.270626-5-szemzo.andras@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250110123923.270626-5-szemzo.andras@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 10/01/2025 13:39, Andras Szemzo wrote:
-> V853 has 2 CCUs, add compatible strings for it.
-> 
-> Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
+On Fri 10 Jan 2025 at 19:47, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+
+> From: Chuan Liu <chuan.liu@amlogic.com>
+>
+> The PLL can only stably lock within a limited frequency range.
+>
+> Due to timing constraints, the maximum frequency of the peripheral clock
+> cannot exceed the design specifications.
+>
+> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 > ---
->  .../devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml      | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
-> index 1690b9d99c3d..bb1fa032e789 100644
-> --- a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
-> +++ b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
-> @@ -36,6 +36,8 @@ properties:
->        - allwinner,sun9i-a80-ccu
->        - allwinner,sun20i-d1-ccu
->        - allwinner,sun20i-d1-r-ccu
-> +      - allwinner,sun8i-v853-ccu
-> +      - allwinner,sun8i-v853-r-ccu
+>  drivers/clk/meson/c3-peripherals.c | 21 +++++++++++++++++++++
+>  drivers/clk/meson/c3-pll.c         |  4 ++++
+>  2 files changed, 25 insertions(+)
+>
+> diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+> index 7dcbf4ebee07..9f0a3990f0d6 100644
+> --- a/drivers/clk/meson/c3-peripherals.c
+> +++ b/drivers/clk/meson/c3-peripherals.c
+> @@ -568,6 +568,7 @@ static const struct clk_parent_data pwm_parent_data[] = {
+>  		.ops = &clk_regmap_gate_ops,			\
+>  		.parent_names = (const char *[]) { #_name "_div" },\
+>  		.num_parents = 1,				\
+> +		.max_rate = 200000000,				\
+>  		.flags = CLK_SET_RATE_PARENT,			\
+>  	},							\
+>  }
+> @@ -724,6 +725,7 @@ static struct clk_regmap spicc_a = {
+>  			&spicc_a_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 500000000,
 
-Where are the clock headers?
+I'm sorry but the whole thing is completly wrong.
 
-Best regards,
-Krzysztof
+All the clocks I'm seeing here are gates. This type of HW hardly cares
+what rates it handles. Same goes from mux, dividers, etc ...
+
+All you are doing here is trying enforce some made up "safety" / use-case
+defined limits that do not belong in the clock controller.
+
+The only piece of HW where limits could possibly make sense are PLL DCO,
+and even there, you've got multiplier range which is way better as an
+abstraction.
+
+So it's a nack on the series.
+
+If devices are have particular requirement on rate range, have the
+related driver set it.
+
+
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -771,6 +773,7 @@ static struct clk_regmap spicc_b = {
+>  			&spicc_b_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 500000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -829,6 +832,7 @@ static struct clk_regmap spifc = {
+>  			&spifc_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 167000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -887,6 +891,7 @@ static struct clk_regmap sd_emmc_a = {
+>  			&sd_emmc_a_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 250000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -934,6 +939,7 @@ static struct clk_regmap sd_emmc_b = {
+>  			&sd_emmc_b_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 250000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -981,6 +987,7 @@ static struct clk_regmap sd_emmc_c = {
+>  			&sd_emmc_c_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 1200000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1074,6 +1081,7 @@ static struct clk_regmap eth_rmii = {
+>  			&eth_rmii_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 50000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1132,6 +1140,7 @@ static struct clk_regmap mipi_dsi_meas = {
+>  			&mipi_dsi_meas_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 200000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1190,6 +1199,7 @@ static struct clk_regmap dsi_phy = {
+>  			&dsi_phy_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 1500000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1248,6 +1258,7 @@ static struct clk_regmap vout_mclk = {
+>  			&vout_mclk_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 334000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1306,6 +1317,7 @@ static struct clk_regmap vout_enc = {
+>  			&vout_enc_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 200000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1431,6 +1443,7 @@ static struct clk_regmap hcodec = {
+>  		.ops = &clk_regmap_mux_ops,
+>  		.parent_data = hcodec_parent_data,
+>  		.num_parents = ARRAY_SIZE(hcodec_parent_data),
+> +		.max_rate = 667000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1489,6 +1502,7 @@ static struct clk_regmap vc9000e_aclk = {
+>  			&vc9000e_aclk_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 667000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1536,6 +1550,7 @@ static struct clk_regmap vc9000e_core = {
+>  			&vc9000e_core_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 400000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1594,6 +1609,7 @@ static struct clk_regmap csi_phy0 = {
+>  			&csi_phy0_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 200000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1652,6 +1668,7 @@ static struct clk_regmap dewarpa = {
+>  			&dewarpa_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 800000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1710,6 +1727,7 @@ static struct clk_regmap isp0 = {
+>  			&isp0_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 400000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1768,6 +1786,7 @@ static struct clk_regmap nna_core = {
+>  			&nna_core_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 800000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1826,6 +1845,7 @@ static struct clk_regmap ge2d = {
+>  			&ge2d_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 667000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> @@ -1884,6 +1904,7 @@ static struct clk_regmap vapb = {
+>  			&vapb_div.hw
+>  		},
+>  		.num_parents = 1,
+> +		.max_rate = 400000000,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
+>  };
+> diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
+> index 35fda31a19e2..d80d6ee2409d 100644
+> --- a/drivers/clk/meson/c3-pll.c
+> +++ b/drivers/clk/meson/c3-pll.c
+> @@ -286,6 +286,8 @@ static struct clk_regmap gp0_pll_dco = {
+>  			.fw_name = "top",
+>  		},
+>  		.num_parents = 1,
+> +		.min_rate = 3000000000,
+> +		.max_rate = 6000000000,
+>  	},
+>  };
+>  
+> @@ -370,6 +372,8 @@ static struct clk_regmap hifi_pll_dco = {
+>  			.fw_name = "top",
+>  		},
+>  		.num_parents = 1,
+> +		.min_rate = 3000000000,
+> +		.max_rate = 6000000000,
+>  	},
+>  };
+
+-- 
+Jerome
