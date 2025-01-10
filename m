@@ -1,331 +1,561 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0C42054E0
-	for <linux-clk@vger.kernel.org>; Thu,  9 Jan 2025 21:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B15E1E507;
+	Fri, 10 Jan 2025 06:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736457565; cv=none; b=GvCZfNU/LTeZzv/6GQRHT06rn2MxBhuI1T3jPAofHDPSBveTcMpJfIsrUvIKF+60x8YCXLL5XpyVH2Namc5Dc+CJ+WmksOxs4NkzEw3rpKuZbdAIz9j4MLGROWWMrrikouEnC//jB51B7+nCS5U92a6Y9DmLWelcOKu+He5DGMI=
+	t=1736491571; cv=none; b=eW8p1vj3O8bsBOLJTA2J3BD3ERLmPfXX9VFV0r5S/N55RSVM6aynZvOBHLH3Qtadr/g4+Hfh7aK4BSHleEktzWIWd+W1i39ozid4dokdIeGui8J7P1R2QexRF9PwXPRQ0ifgVbTdKqnMK3SbfV2ZnuxzV/26jKtJa5Y4CHOtFIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736457565; c=relaxed/simple;
-	bh=EoKKi+Z60KmqjOEZJ9LNBHGoycV+Fglx9GgRLT+IXzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NPPrG1qkwCULYSNXnoIWMJmJFR7c8UjrdGjUtn4/hotNv9sBlCiT9js1KlPYDUOzyq+K1lQUu0gZ3d6nR3d01zC3YRH3diMkRiZkdiE8UHG8x+wtcUR/5mGpdxDW7QvgVd+pt5NPl2MGFcj++BCEL3W3m5pNat48yR4/LpE1EGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=d9znHasW; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	s=arc-20240116; t=1736491571; c=relaxed/simple;
+	bh=6dmzstW44IAUR04IDgAawau5VVF0AhG+00wYPVgGUIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h+7YaSSPYEoV1GEL76K6ZFXS9ILxHIhu63ZTzj3w4YkKNtz4UNMbAjHx7O1PBDvnUZsgCFeTaF4KCNCfrgUth+cH3POx7SQOr/q4hNbr91j4XOYle0IVNBN16sMm7tYpMzI4lXE+3wW+EefH97P9T9NTvtXsBh/w3a9vLzpsAzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ri+YNWK+; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="d9znHasW"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d41848901bso2560454a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 09 Jan 2025 13:19:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1736457562; x=1737062362; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iJ26hgnRMCLZPTXr7KLkVyqRMMqeBIF3e9Y1qTU0tFU=;
-        b=d9znHasWVC8PXqb6XKegRj8Hd/M8KprBB7+YbnFTB/xXvRaN/QCs57qFczQQ9PYj5v
-         t2cSALZ7oD7FVW9EqywxnSrRgHMLCr7aYpv6UWHaLavab254OSbex8XWe0OVUFZ1H9P6
-         D07Un31kP7NAy44HODflppFTFVm8m5LHknfWQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736457562; x=1737062362;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iJ26hgnRMCLZPTXr7KLkVyqRMMqeBIF3e9Y1qTU0tFU=;
-        b=MRomjddi6wpm2/3fyj73OrVFRI/OQn8A21wxbOUTSHGipauAG0vFVccQZPohwH9gsc
-         R/IpPwH7oyRQLP8LkwR887yrc4U4xf/LfIbbP40tBERn3iBtrmsvgv12G77GKFOIxkzs
-         IixhIjnFU7Flpr2t9kGnyXwW68l8YoFlHlvzFeQ8yg22zqbADdAfNCWETyxCsKXB91uz
-         LrJG/hiyVc7yWWW1U0HJe138X5eO8fm59kL2pTTCfWI4VVRrH4Ddxav7oqMBkmhVpxya
-         a0x2tW1EXT/zeOILt8dLVg071//FG/Kg0i1ywWijTtLdwhwaL9RdVa5iTEco316PNMpa
-         cBoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOr5qiyN7N1PJoGquJ9mbN66mwrHnI8qQRUoMfwoiO7f/qEuGS4ZU06etA4jpByRIuXJukl6ZcGnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVBsJFr2pogSevL2bet856nuglCuj+O3Gy8QbE4Cl25fR4c4nl
-	goyTbyN9HHHE2yxefW/AzjQENyVpSycDT1ZmElSJ4Inqk9TKTEUXdHDFdNE+qmPOQz/tlj3ZXws
-	U
-X-Gm-Gg: ASbGncsSg0Aj91r55EixedQ99pz2uWyWvv+NiEFv5/CzZ1tEPCY+Vui+XQs1RDPlWbt
-	ysLWNg1bZwhMpPLMdq5H0U+C3K3cNvq1FUkKZADXhKuyPj+FDJAZWWND2K0m+JwfMP7x8MhFuiF
-	ROE3sYmYY5V/BpdYQ0/xcjanSxYAsxMUEyGYhYiEItwVqDpSDLEyVszf4QjJEqptZJWrqBM9b4t
-	DE4tSSWk5dDk35rrNNBmZ1nYBqBvF9lRR9u75fpPQZ5bcbSEa7yBhc1iInc0JsnITiUbHZxlbbj
-	KA54JDW906gDDiJZnHWppwcaORgCR4Ki1KYkX9squHDbdqXXtQ1x3rHT47VvIc4951Lbdmcwl7G
-	TBYu+aMfVqN9w5PTc2w==
-X-Google-Smtp-Source: AGHT+IEZ3Pmwpnwcw8QBt1dN5e19AnUypwazIVJ9R+ER6Nu6NohOMhjMnT0yJVMOQm16EeoH5knA9A==
-X-Received: by 2002:a05:6402:40cc:b0:5d0:d328:3a43 with SMTP id 4fb4d7f45d1cf-5d98a24a72fmr3294628a12.6.1736457562307;
-        Thu, 09 Jan 2025 13:19:22 -0800 (PST)
-Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-79-41-6-15.retail.telecomitalia.it. [79.41.6.15])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d9900c4b56sm925567a12.32.2025.01.09.13.19.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2025 13:19:22 -0800 (PST)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v2 4/4] clk: stm32f4: support spread spectrum clock generation
-Date: Thu,  9 Jan 2025 22:18:31 +0100
-Message-ID: <20250109211908.1553072-5-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250109211908.1553072-1-dario.binacchi@amarulasolutions.com>
-References: <20250109211908.1553072-1-dario.binacchi@amarulasolutions.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ri+YNWK+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1736491569; x=1768027569;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6dmzstW44IAUR04IDgAawau5VVF0AhG+00wYPVgGUIY=;
+  b=Ri+YNWK+1cx8axpiw0kY7TA87GTi4diBWQzHzKmIoFfP42cp3YD52znv
+   58EKtU2xIxH+AcfXJD6rYsT7u940Yl4tK1Tsphv1M3DjK7q0pZQzmwvz2
+   U05dyrg3gLitkDCpEUUJCZwoxsRziPagblAfbEu0O3DQkG2PBdSwOBfaq
+   3zl96AAb8iX8qkr6JTgf3NnwqNp8h03oIglMXEOk7fmqiBBogGWwQ1pmC
+   R1LKCDCTSx+l708kwcBtpLIsxaGIIqKWxhZx1NI5cfbnmeMBN5YTaqm1w
+   0NRevWdca+V1R/rm81JNb74UYGQ45KAV17IpOWywu0sRPuvKInxRSbklO
+   A==;
+X-CSE-ConnectionGUID: sQlTAxfcQ9uSQXFH109gTA==
+X-CSE-MsgGUID: ORAOROFqRR+KDDfhlqU7kA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11310"; a="47770130"
+X-IronPort-AV: E=Sophos;i="6.12,303,1728975600"; 
+   d="scan'208";a="47770130"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jan 2025 22:46:08 -0800
+X-CSE-ConnectionGUID: pFvYg7W3Q0SHO+nUmoaOOw==
+X-CSE-MsgGUID: EndMgAunTj6HSuR1WUvR0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="103534561"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 09 Jan 2025 22:46:06 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tW8mR-000IfL-1X;
+	Fri, 10 Jan 2025 06:46:03 +0000
+Date: Fri, 10 Jan 2025 14:45:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH 4/4] clk: Make debugfs code into a loadable kernel module
+Message-ID: <202501101445.zIwSpQgC-lkp@intel.com>
+References: <20250108005854.2973184-5-sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250108005854.2973184-5-sboyd@kernel.org>
 
-Support spread spectrum clock generation for the main PLL, the only one
-for which this functionality is available.
+Hi Stephen,
 
-Tested on the STM32F469I-DISCO board.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+[auto build test ERROR on fac04efc5c793dccbd07e2d59af9f90b7fc0dca4]
 
----
+url:    https://github.com/intel-lab-lkp/linux/commits/Stephen-Boyd/clk-Prepare-clk_debug_create_one-to-be-split-off/20250108-085933
+base:   fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+patch link:    https://lore.kernel.org/r/20250108005854.2973184-5-sboyd%40kernel.org
+patch subject: [PATCH 4/4] clk: Make debugfs code into a loadable kernel module
+config: parisc-randconfig-001-20250110 (https://download.01.org/0day-ci/archive/20250110/202501101445.zIwSpQgC-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250110/202501101445.zIwSpQgC-lkp@intel.com/reproduce)
 
-Changes in v2:
-- Fixup patches:
-  2/6 dt-bindings: reset: st,stm32-rcc: update reference due to rename
-  3/6 dt-bindings: clock: stm32fx: update reference due to rename
-  to
-  1/6 dt-bindings: clock: convert stm32 rcc bindings to json-schema
-- Changes to dt-bindings: clock: convert stm32 rcc bindings to json-schema
-- Changes to dt-bindings: clock: st,stm32-rcc: support spread spectrum clocking
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202501101445.zIwSpQgC-lkp@intel.com/
 
- drivers/clk/clk-stm32f4.c | 143 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 140 insertions(+), 3 deletions(-)
+All errors (new ones prefixed by >>):
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index db1c56c8d54f..6c80c0dbb0a3 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -35,6 +35,7 @@
- #define STM32F4_RCC_APB2ENR		0x44
- #define STM32F4_RCC_BDCR		0x70
- #define STM32F4_RCC_CSR			0x74
-+#define STM32F4_RCC_SSCGR		0x80
- #define STM32F4_RCC_PLLI2SCFGR		0x84
- #define STM32F4_RCC_PLLSAICFGR		0x88
- #define STM32F4_RCC_DCKCFGR		0x8c
-@@ -42,6 +43,12 @@
- 
- #define STM32F4_RCC_PLLCFGR_N_MASK	GENMASK(14, 6)
- 
-+#define STM32F4_RCC_SSCGR_SSCGEN	BIT(31)
-+#define STM32F4_RCC_SSCGR_SPREADSEL	BIT(30)
-+#define STM32F4_RCC_SSCGR_RESERVED_MASK	GENMASK(29, 28)
-+#define STM32F4_RCC_SSCGR_INCSTEP_MASK	GENMASK(27, 13)
-+#define STM32F4_RCC_SSCGR_MODPER_MASK	GENMASK(12, 0)
-+
- #define NONE -1
- #define NO_IDX  NONE
- #define NO_MUX  NONE
-@@ -512,6 +519,17 @@ static const struct clk_div_table pll_divr_table[] = {
- 	{ 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 7, 7 }, { 0 }
- };
- 
-+enum stm32f4_pll_ssc_mod_type {
-+	STM32F4_PLL_SSC_CENTER_SPREAD,
-+	STM32F4_PLL_SSC_DOWN_SPREAD,
-+};
-+
-+struct stm32f4_pll_ssc {
-+	unsigned int mod_freq;
-+	unsigned int mod_depth;
-+	enum stm32f4_pll_ssc_mod_type mod_type;
-+};
-+
- struct stm32f4_pll {
- 	spinlock_t *lock;
- 	struct	clk_gate gate;
-@@ -519,6 +537,8 @@ struct stm32f4_pll {
- 	u8 bit_rdy_idx;
- 	u8 status;
- 	u8 n_start;
-+	bool ssc_enable;
-+	struct stm32f4_pll_ssc ssc_conf;
- };
- 
- #define to_stm32f4_pll(_gate) container_of(_gate, struct stm32f4_pll, gate)
-@@ -541,6 +561,7 @@ struct stm32f4_vco_data {
- 	u8 offset;
- 	u8 bit_idx;
- 	u8 bit_rdy_idx;
-+	bool sscg;
- };
- 
- static const struct stm32f4_vco_data  vco_data[] = {
-@@ -661,6 +682,34 @@ static long stm32f4_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return *prate * n;
- }
- 
-+static void stm32f4_pll_set_ssc(struct clk_hw *hw, unsigned long parent_rate,
-+				unsigned int ndiv)
-+{
-+	struct clk_gate *gate = to_clk_gate(hw);
-+	struct stm32f4_pll *pll = to_stm32f4_pll(gate);
-+	struct stm32f4_pll_ssc *ssc = &pll->ssc_conf;
-+	u32 modeper, incstep;
-+	u32 sscgr;
-+
-+	sscgr = readl(base + STM32F4_RCC_SSCGR);
-+	/* reserved field must be kept at reset value */
-+	sscgr &= STM32F4_RCC_SSCGR_RESERVED_MASK;
-+
-+	modeper = DIV_ROUND_CLOSEST(parent_rate, 4 * ssc->mod_freq);
-+	incstep = DIV_ROUND_CLOSEST(((1 << 15) - 1) * ssc->mod_depth * ndiv,
-+				    5 * 10000 * modeper);
-+	sscgr |= STM32F4_RCC_SSCGR_SSCGEN |
-+		FIELD_PREP(STM32F4_RCC_SSCGR_INCSTEP_MASK, incstep) |
-+		FIELD_PREP(STM32F4_RCC_SSCGR_MODPER_MASK, modeper);
-+
-+	if (ssc->mod_type)
-+		sscgr |= STM32F4_RCC_SSCGR_SPREADSEL;
-+
-+	pr_debug("%s: pll: %s: modeper: %d, incstep: %d, sscgr: 0x%08x\n",
-+		 __func__, clk_hw_get_name(hw), modeper, incstep, sscgr);
-+	writel(sscgr, base + STM32F4_RCC_SSCGR);
-+}
-+
- static int stm32f4_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long parent_rate)
- {
-@@ -683,6 +732,9 @@ static int stm32f4_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	writel(val, base + pll->offset);
- 
-+	if (pll->ssc_enable)
-+		stm32f4_pll_set_ssc(hw, parent_rate, n);
-+
- 	if (pll_state)
- 		stm32f4_pll_enable(hw);
- 
-@@ -788,6 +840,87 @@ static struct clk_hw *clk_register_pll_div(const char *name,
- 	return hw;
- }
- 
-+static int stm32f4_pll_init_ssc(struct clk_hw *hw, struct stm32f4_pll_ssc *conf)
-+{
-+	struct clk_gate *gate = to_clk_gate(hw);
-+	struct stm32f4_pll *pll = to_stm32f4_pll(gate);
-+	struct clk_hw *parent;
-+	unsigned long parent_rate;
-+	int pll_state;
-+	unsigned long n, val;
-+
-+	parent = clk_hw_get_parent(hw);
-+	if (!parent) {
-+		pr_err("%s: failed to get clock parent\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	parent_rate = clk_hw_get_rate(parent);
-+
-+	pll->ssc_enable = true;
-+	memcpy(&pll->ssc_conf, conf, sizeof(pll->ssc_conf));
-+
-+	pll_state = stm32f4_pll_is_enabled(hw);
-+
-+	if (pll_state)
-+		stm32f4_pll_disable(hw);
-+
-+	val = readl(base + pll->offset);
-+	n = FIELD_GET(STM32F4_RCC_PLLCFGR_N_MASK, val);
-+
-+	pr_debug("%s: pll: %s, parent: %s, parent-rate: %lu, n: %lu\n",
-+		 __func__, clk_hw_get_name(hw), clk_hw_get_name(parent),
-+		 parent_rate, n);
-+
-+	stm32f4_pll_set_ssc(hw, parent_rate, n);
-+
-+	if (pll_state)
-+		stm32f4_pll_enable(hw);
-+
-+	return 0;
-+}
-+
-+static int stm32f4_pll_ssc_parse_dt(struct device_node *np,
-+				    struct stm32f4_pll_ssc *conf)
-+{
-+	int ret;
-+	const char *s;
-+
-+	if (!conf)
-+		return -EINVAL;
-+
-+	ret = of_property_read_u32(np, "st,ssc-modfreq-hz", &conf->mod_freq);
-+	if (ret)
-+		return ret;
-+
-+	ret = of_property_read_u32(np, "st,ssc-moddepth-permyriad",
-+				   &conf->mod_depth);
-+	if (ret) {
-+		pr_err("%pOF: missing st,ssc-moddepth-permyriad\n", np);
-+		return ret;
-+	}
-+
-+	ret = of_property_read_string(np, "st,ssc-modmethod", &s);
-+	if (ret) {
-+		pr_err("%pOF: missing st,ssc-modmethod\n", np);
-+		return ret;
-+	}
-+
-+	if (!strcmp(s, "down-spread")) {
-+		conf->mod_type = STM32F4_PLL_SSC_DOWN_SPREAD;
-+	} else if (!strcmp(s, "center-spread")) {
-+		conf->mod_type = STM32F4_PLL_SSC_CENTER_SPREAD;
-+	} else {
-+		pr_err("%pOF: wrong value (%s) for fsl,ssc-modmethod\n", np, s);
-+		return -EINVAL;
-+	}
-+
-+	pr_debug("%pOF: SSCG settings: mod_freq: %d, mod_depth: %d mod_method: %s [%d]\n",
-+		 np, conf->mod_freq, conf->mod_depth, s, conf->mod_type);
-+
-+	return 0;
-+}
-+
- static struct clk_hw *stm32f4_rcc_register_pll(const char *pllsrc,
- 		const struct stm32f4_pll_data *data,  spinlock_t *lock)
- {
-@@ -1695,7 +1828,8 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	const struct of_device_id *match;
- 	const struct stm32f4_clk_data *data;
- 	unsigned long pllm;
--	struct clk_hw *pll_src_hw;
-+	struct clk_hw *pll_src_hw, *pll_vco_hw;
-+	struct stm32f4_pll_ssc ssc_conf;
- 
- 	base = of_iomap(np, 0);
- 	if (!base) {
-@@ -1754,8 +1888,8 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	clk_hw_register_fixed_factor(NULL, "vco_in", pll_src,
- 				     0, 1, pllm);
- 
--	stm32f4_rcc_register_pll("vco_in", &data->pll_data[0],
--			&stm32f4_clk_lock);
-+	pll_vco_hw = stm32f4_rcc_register_pll("vco_in", &data->pll_data[0],
-+					      &stm32f4_clk_lock);
- 
- 	clks[PLL_VCO_I2S] = stm32f4_rcc_register_pll("vco_in",
- 			&data->pll_data[1], &stm32f4_clk_lock);
-@@ -1900,6 +2034,9 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 
- 	of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
- 
-+	if (!stm32f4_pll_ssc_parse_dt(np, &ssc_conf))
-+		stm32f4_pll_init_ssc(pll_vco_hw, &ssc_conf);
-+
- 	return;
- fail:
- 	kfree(clks);
+   drivers/clk/clk.c: In function 'clk_core_debug_create_one':
+>> drivers/clk/clk.c:3513:13: error: 'struct clk_core' has no member named 'dentry'
+    3513 |         core->dentry = clk_hw_debug_create_one(hw);
+         |             ^~
+   drivers/clk/clk.c:3515:47: error: 'struct clk_core' has no member named 'dentry'
+    3515 |                 core->ops->debug_init(hw, core->dentry);
+         |                                               ^~
+   drivers/clk/clk.c: In function 'clk_debug_register':
+>> drivers/clk/clk.c:3529:29: error: 'struct clk_core' has no member named 'debug_node'
+    3529 |         hlist_add_head(&core->debug_node, &clk_debug_list);
+         |                             ^~
+   drivers/clk/clk.c: In function 'clk_core_debug_remove_one':
+   drivers/clk/clk.c:3536:29: error: 'struct clk_core' has no member named 'debug_node'
+    3536 |         hlist_del_init(&core->debug_node);
+         |                             ^~
+   drivers/clk/clk.c:3537:38: error: 'struct clk_core' has no member named 'dentry'
+    3537 |         debugfs_remove_recursive(core->dentry);
+         |                                      ^~
+   drivers/clk/clk.c:3538:13: error: 'struct clk_core' has no member named 'dentry'
+    3538 |         core->dentry = NULL;
+         |             ^~
+   In file included from include/linux/container_of.h:5,
+                    from include/linux/kernel.h:22,
+                    from include/linux/clk.h:13,
+                    from drivers/clk/clk.c:9:
+   drivers/clk/clk.c: In function 'clk_hw_debug_for_each_init':
+>> include/linux/container_of.h:20:54: error: 'struct clk_core' has no member named 'debug_node'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                                                      ^~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1155:20: note: in expansion of macro 'hlist_entry_safe'
+    1155 |         for (pos = hlist_entry_safe((head)->first, typeof(*(pos)), member);\
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3562:9: note: in expansion of macro 'hlist_for_each_entry'
+    3562 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/compiler_types.h:483:27: error: expression in static assertion is not an integer
+     483 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1155:20: note: in expansion of macro 'hlist_entry_safe'
+    1155 |         for (pos = hlist_entry_safe((head)->first, typeof(*(pos)), member);\
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3562:9: note: in expansion of macro 'hlist_for_each_entry'
+    3562 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   In file included from include/uapi/linux/posix_types.h:5,
+                    from include/uapi/linux/types.h:14,
+                    from include/linux/types.h:6,
+                    from include/linux/kasan-checks.h:5,
+                    from include/asm-generic/rwonce.h:26,
+                    from ./arch/parisc/include/generated/asm/rwonce.h:1,
+                    from include/linux/compiler.h:324,
+                    from include/linux/err.h:5,
+                    from include/linux/clk.h:12:
+>> include/linux/stddef.h:16:33: error: 'struct clk_core' has no member named 'debug_node'
+      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+         |                                 ^~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:23:28: note: in expansion of macro 'offsetof'
+      23 |         ((type *)(__mptr - offsetof(type, member))); })
+         |                            ^~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1155:20: note: in expansion of macro 'hlist_entry_safe'
+    1155 |         for (pos = hlist_entry_safe((head)->first, typeof(*(pos)), member);\
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3562:9: note: in expansion of macro 'hlist_for_each_entry'
+    3562 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   In file included from include/linux/mutex.h:15,
+                    from include/linux/notifier.h:14,
+                    from include/linux/clk.h:14:
+>> include/linux/list.h:1157:42: error: 'struct clk_core' has no member named 'debug_node'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                                          ^~
+   include/linux/list.h:1144:19: note: in definition of macro 'hlist_entry_safe'
+    1144 |         ({ typeof(ptr) ____ptr = (ptr); \
+         |                   ^~~
+   drivers/clk/clk.c:3562:9: note: in expansion of macro 'hlist_for_each_entry'
+    3562 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/list.h:1157:42: error: 'struct clk_core' has no member named 'debug_node'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                                          ^~
+   include/linux/list.h:1144:35: note: in definition of macro 'hlist_entry_safe'
+    1144 |         ({ typeof(ptr) ____ptr = (ptr); \
+         |                                   ^~~
+   drivers/clk/clk.c:3562:9: note: in expansion of macro 'hlist_for_each_entry'
+    3562 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:20:35: error: invalid type argument of unary '*' (have 'int')
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                                   ^~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1157:20: note: in expansion of macro 'hlist_entry_safe'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3562:9: note: in expansion of macro 'hlist_for_each_entry'
+    3562 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/container_of.h:20:54: error: 'struct clk_core' has no member named 'debug_node'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                                                      ^~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1157:20: note: in expansion of macro 'hlist_entry_safe'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3562:9: note: in expansion of macro 'hlist_for_each_entry'
+    3562 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:21:35: error: invalid type argument of unary '*' (have 'int')
+      21 |                       __same_type(*(ptr), void),                        \
+         |                                   ^~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:21:23: note: in expansion of macro '__same_type'
+      21 |                       __same_type(*(ptr), void),                        \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1157:20: note: in expansion of macro 'hlist_entry_safe'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3562:9: note: in expansion of macro 'hlist_for_each_entry'
+    3562 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/compiler_types.h:483:27: error: expression in static assertion is not an integer
+     483 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1157:20: note: in expansion of macro 'hlist_entry_safe'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3562:9: note: in expansion of macro 'hlist_for_each_entry'
+    3562 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/stddef.h:16:33: error: 'struct clk_core' has no member named 'debug_node'
+      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+         |                                 ^~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:23:28: note: in expansion of macro 'offsetof'
+      23 |         ((type *)(__mptr - offsetof(type, member))); })
+         |                            ^~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1157:20: note: in expansion of macro 'hlist_entry_safe'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3562:9: note: in expansion of macro 'hlist_for_each_entry'
+    3562 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   drivers/clk/clk.c: In function 'clk_hw_debug_exit':
+>> include/linux/container_of.h:20:54: error: 'struct clk_core' has no member named 'debug_node'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                                                      ^~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1155:20: note: in expansion of macro 'hlist_entry_safe'
+    1155 |         for (pos = hlist_entry_safe((head)->first, typeof(*(pos)), member);\
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3574:9: note: in expansion of macro 'hlist_for_each_entry'
+    3574 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/compiler_types.h:483:27: error: expression in static assertion is not an integer
+     483 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1155:20: note: in expansion of macro 'hlist_entry_safe'
+    1155 |         for (pos = hlist_entry_safe((head)->first, typeof(*(pos)), member);\
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3574:9: note: in expansion of macro 'hlist_for_each_entry'
+    3574 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/stddef.h:16:33: error: 'struct clk_core' has no member named 'debug_node'
+      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+         |                                 ^~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:23:28: note: in expansion of macro 'offsetof'
+      23 |         ((type *)(__mptr - offsetof(type, member))); })
+         |                            ^~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1155:20: note: in expansion of macro 'hlist_entry_safe'
+    1155 |         for (pos = hlist_entry_safe((head)->first, typeof(*(pos)), member);\
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3574:9: note: in expansion of macro 'hlist_for_each_entry'
+    3574 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/list.h:1157:42: error: 'struct clk_core' has no member named 'debug_node'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                                          ^~
+   include/linux/list.h:1144:19: note: in definition of macro 'hlist_entry_safe'
+    1144 |         ({ typeof(ptr) ____ptr = (ptr); \
+         |                   ^~~
+   drivers/clk/clk.c:3574:9: note: in expansion of macro 'hlist_for_each_entry'
+    3574 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/list.h:1157:42: error: 'struct clk_core' has no member named 'debug_node'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                                          ^~
+   include/linux/list.h:1144:35: note: in definition of macro 'hlist_entry_safe'
+    1144 |         ({ typeof(ptr) ____ptr = (ptr); \
+         |                                   ^~~
+   drivers/clk/clk.c:3574:9: note: in expansion of macro 'hlist_for_each_entry'
+    3574 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:20:35: error: invalid type argument of unary '*' (have 'int')
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                                   ^~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1157:20: note: in expansion of macro 'hlist_entry_safe'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3574:9: note: in expansion of macro 'hlist_for_each_entry'
+    3574 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/container_of.h:20:54: error: 'struct clk_core' has no member named 'debug_node'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                                                      ^~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1157:20: note: in expansion of macro 'hlist_entry_safe'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3574:9: note: in expansion of macro 'hlist_for_each_entry'
+    3574 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:21:35: error: invalid type argument of unary '*' (have 'int')
+      21 |                       __same_type(*(ptr), void),                        \
+         |                                   ^~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:21:23: note: in expansion of macro '__same_type'
+      21 |                       __same_type(*(ptr), void),                        \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1157:20: note: in expansion of macro 'hlist_entry_safe'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3574:9: note: in expansion of macro 'hlist_for_each_entry'
+    3574 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/compiler_types.h:483:27: error: expression in static assertion is not an integer
+     483 | #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/build_bug.h:78:56: note: in definition of macro '__static_assert'
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                                        ^~~~
+   include/linux/container_of.h:20:9: note: in expansion of macro 'static_assert'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |         ^~~~~~~~~~~~~
+   include/linux/container_of.h:20:23: note: in expansion of macro '__same_type'
+      20 |         static_assert(__same_type(*(ptr), ((type *)0)->member) ||       \
+         |                       ^~~~~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1157:20: note: in expansion of macro 'hlist_entry_safe'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3574:9: note: in expansion of macro 'hlist_for_each_entry'
+    3574 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+>> include/linux/stddef.h:16:33: error: 'struct clk_core' has no member named 'debug_node'
+      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
+         |                                 ^~~~~~~~~~~~~~~~~~
+   include/linux/container_of.h:23:28: note: in expansion of macro 'offsetof'
+      23 |         ((type *)(__mptr - offsetof(type, member))); })
+         |                            ^~~~~~~~
+   include/linux/list.h:1134:40: note: in expansion of macro 'container_of'
+    1134 | #define hlist_entry(ptr, type, member) container_of(ptr,type,member)
+         |                                        ^~~~~~~~~~~~
+   include/linux/list.h:1145:22: note: in expansion of macro 'hlist_entry'
+    1145 |            ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+         |                      ^~~~~~~~~~~
+   include/linux/list.h:1157:20: note: in expansion of macro 'hlist_entry_safe'
+    1157 |              pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+         |                    ^~~~~~~~~~~~~~~~
+   drivers/clk/clk.c:3574:9: note: in expansion of macro 'hlist_for_each_entry'
+    3574 |         hlist_for_each_entry(core, &clk_debug_list, debug_node)
+         |         ^~~~~~~~~~~~~~~~~~~~
+
+
+vim +3513 drivers/clk/clk.c
+
+06c1e876918854 Stephen Boyd       2025-01-07  3505  
+06c1e876918854 Stephen Boyd       2025-01-07  3506  static void clk_core_debug_create_one(struct clk_core *core)
+06c1e876918854 Stephen Boyd       2025-01-07  3507  {
+06c1e876918854 Stephen Boyd       2025-01-07  3508  	struct clk_hw *hw = core->hw;
+06c1e876918854 Stephen Boyd       2025-01-07  3509  
+22ece94fca2e92 Stephen Boyd       2025-01-07  3510  	if (!clk_hw_debug_create_one)
+06c1e876918854 Stephen Boyd       2025-01-07  3511  		return;
+06c1e876918854 Stephen Boyd       2025-01-07  3512  
+94dffe79bcc703 Stephen Boyd       2025-01-07 @3513  	core->dentry = clk_hw_debug_create_one(hw);
+8a26bbbb932021 Greg Kroah-Hartman 2018-05-29  3514  	if (core->ops->debug_init)
+06c1e876918854 Stephen Boyd       2025-01-07  3515  		core->ops->debug_init(hw, core->dentry);
+4dff95dc9477a3 Stephen Boyd       2015-04-30  3516  }
+b2476490ef1113 Mike Turquette     2012-03-15  3517  
+4dff95dc9477a3 Stephen Boyd       2015-04-30  3518  /**
+6e5ab41b1064ee Stephen Boyd       2015-04-30  3519   * clk_debug_register - add a clk node to the debugfs clk directory
+6e5ab41b1064ee Stephen Boyd       2015-04-30  3520   * @core: the clk being added to the debugfs clk directory
+4dff95dc9477a3 Stephen Boyd       2015-04-30  3521   *
+6e5ab41b1064ee Stephen Boyd       2015-04-30  3522   * Dynamically adds a clk to the debugfs clk directory if debugfs has been
+6e5ab41b1064ee Stephen Boyd       2015-04-30  3523   * initialized.  Otherwise it bails out early since the debugfs clk directory
+4dff95dc9477a3 Stephen Boyd       2015-04-30  3524   * will be created lazily by clk_debug_init as part of a late_initcall.
+4dff95dc9477a3 Stephen Boyd       2015-04-30  3525   */
+8a26bbbb932021 Greg Kroah-Hartman 2018-05-29  3526  static void clk_debug_register(struct clk_core *core)
+4dff95dc9477a3 Stephen Boyd       2015-04-30  3527  {
+4dff95dc9477a3 Stephen Boyd       2015-04-30  3528  	mutex_lock(&clk_debug_lock);
+4dff95dc9477a3 Stephen Boyd       2015-04-30 @3529  	hlist_add_head(&core->debug_node, &clk_debug_list);
+06c1e876918854 Stephen Boyd       2025-01-07  3530  	clk_core_debug_create_one(core);
+4dff95dc9477a3 Stephen Boyd       2015-04-30  3531  	mutex_unlock(&clk_debug_lock);
+b2476490ef1113 Mike Turquette     2012-03-15  3532  }
+035a61c314eb3d Tomeu Vizoso       2015-01-23  3533  
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
