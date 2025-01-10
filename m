@@ -1,139 +1,108 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1D6205E01;
-	Fri, 10 Jan 2025 08:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9DE2080CB;
+	Fri, 10 Jan 2025 10:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736497342; cv=none; b=rS+zX5dA6uCPecUsjJDcKc/37ary6YufB35GC6e3nmr2sJ1PfB8OouifM9BxEJCS0reKyPi56P4WfE59pcCZEJBanMFhJpPTX9WfTFKBtaHueZytrjb+nhg9czT00PhdMJ3KantCANewSsDQGckvk7WIoy+MaFlbunJsR0VePYY=
+	t=1736504724; cv=none; b=lawYaqkhGMm96W50c+wCISXnlQ/BONPPsDms9giqXHZyE+3WJprAopFF4ep9rSksjNIPW2HasQMEt2OUL95X4mQgfsSd8dHmTochz8YBVytt21+c1SFXvbk42KYY3baAwj2vb82VF3BWv2ahPtYJz9kJkgZcxuxrU0GJ2TNKRJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736497342; c=relaxed/simple;
-	bh=2QacisfZC77wH3nmwmgatCSXgiarASOgF95tC5xTLqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pYLX4G4vwdOPkhDlu63gwkDR4AoOMRgQ7SD5HLezhnqQGHUPBvt6500/MnlLzkD1+8PGqPlACVMMTHb70I3XE7br1gAK0+L5Lmr+hbRgrjmdj7d3CGuU4Hsewpea9Lc86GTncex8mc/9MrORSrxzhANa2QmBlG+OGEBIrlT9Njw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VrAL+4ST; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VrAL+4ST"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50A2i7No018187;
-	Fri, 10 Jan 2025 08:22:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0uPWMzQe26BjKrvpBxQ1DfCRGPTp4gTh6KZhjh7t+wk=; b=VrAL+4STtBHnU2Mi
-	sPjuLGPJ3ThTH7GOvETVuQBScS8Ohjt3tolp9PgRgQuiPn7oQvxSreCbSVjCUmtL
-	L3qCukhyY0E+zedayFj+UUugwrwYrrSuBz2K7oTb2dUab8f3e49MKYwBoizCRKX0
-	6Y3LEvdCxco85qU/QcZ4CMUPRUfTB8fayde8xQotahhYzFAaydoVz5Qnn0LOCVHZ
-	1Tlw0a7m7aBZqTfzTUdp6H8aOeCxyuyj3WBmaOYCefq1F/u7CV00ODqZnzkeGB3r
-	nHfRlJI7U/tyjoq9c4cqSjGTTWeE7Rl3ytz3GSgRRzlsWd++nSCULGPzdjS6K9Ip
-	/xiFtg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 442u14gqh1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Jan 2025 08:22:03 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 50A8M2Cv017952
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Jan 2025 08:22:02 GMT
-Received: from [10.231.216.103] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 10 Jan
- 2025 00:21:59 -0800
-Message-ID: <53082cad-a046-424a-ab05-67d34005131d@quicinc.com>
-Date: Fri, 10 Jan 2025 16:21:57 +0800
+	s=arc-20240116; t=1736504724; c=relaxed/simple;
+	bh=MAE90AgN96OG+OrVqThdc7SBmeXx4ufM0TFjeGoZOLk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fdJTSs2o/fI/IIYEO8v8WSAU+51Qb1YW3YyeIHGWtl/zh+j5bGK+c5ELAegbGO3cyDEeX8NWG3oxC9RYly39kz0bC0WwcVM/kZMg4HrClL75f4lxNEL+Re5lOPARpIZtclub8TBNF5f+tssx0KXNGnpA0Iodt/u42wS1THI3yvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4b1279ca1d2so613117137.3;
+        Fri, 10 Jan 2025 02:25:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736504721; x=1737109521;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bW5+BOvTWBCKEEz3k+9KBveEEoiP3G0OCuycj5JkLcA=;
+        b=iTieraRHM9ww2HWb6Ac2aiZN3nPWi1gSf8l0HFoB0eIMziTd6fbGfBuSdCXRmK/WEn
+         wQlHrVu5hMJhqxsgD0+f1vxPNlZWlcjnhyShRDjJBo5ZlVbNMtqUZq+z5MFQGwiY24by
+         8McIvhj2dv1Tmoy3S/DRAvj0GIx3MXOPXZ2V4GjgYxLyrSU1W7I8NF34Gz67UuTxFwHF
+         K5liet+xu5u97x7kxr1+KYVXyASP8pmvesbmZJ9ZHuTafZ07K5IRhkEEZRD17VNOovkJ
+         IitY3XyL7C4qpGWb4VIz2KJG3kH7cD1VE03P84rMS4gRrFpJKluNid8ud3vXMVuojGbN
+         2MHg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6gRW+GE2n9+bCZAz4khXOjTMJPeZeV51Tvlm31BDnqW6b9VlsadugRu7JXvCAYt6XCBNVJ66I74RtfhSW@vger.kernel.org, AJvYcCW4SczeMVQwqERpavftkgVCC+0os43W99fnKTmI9QnvenEoCM5iiFUaYhmolcSFF9fU+7ASszUWm3s=@vger.kernel.org, AJvYcCWQft3+r4H+zq8K5/rlVhNf9qrOn2xFjXrX1d4V5+V/KqL8nfTbaKRfDtd0gNfoQyUdmzxiIOxXz8VGJa3fvdu26QQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXNGxU7z9Z7BJC2fEgum0k08eDW2RW8xYXDra9Y/4VCeAIOxM8
+	gLQEefCcWH7SmMjXj3P9pZaWzZigWqbcGesWCNsR9QPmg7SvLxa2URY9mmEY
+X-Gm-Gg: ASbGncsJ6fW3HhoJE3ZzZpAzdgZ/xyZGDb3LPmsiTlQFX8uZErc2HJgV+Qe7ppg1hC7
+	oI69mWHMh38NFpeqcNXMja2I6L9GA6g0zEKoDyj3tA4O5MWZLlDcBd9jxpYceNTM0BWGziN8a71
+	K8yspl3jxObVsMwXP/AE3rwb3nFswkqiU2gs2Sig/XrJhvAiUuzbhSit6kWBTBxxaLm3yeZ6Br+
+	Axc0iUUwidE33XOjnZlD8aHqO8VRQqScoV0IScF/L6JqJveyjswYqpNay0WdIFBgM8Uu080U3hE
+	03YXgi8N/pBRfNaHgjRKnsQ=
+X-Google-Smtp-Source: AGHT+IGZoQhNBRL1XI5LWFy+FBVGupCkm0u2dOAFYh7MoLUHDSrisNcTqWqINtHzOtANhN7kgOSN+g==
+X-Received: by 2002:a05:6102:3ca0:b0:4b2:5c4b:5186 with SMTP id ada2fe7eead31-4b3d0fe692emr9847001137.23.1736504720697;
+        Fri, 10 Jan 2025 02:25:20 -0800 (PST)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b608f44f53sm2199682137.8.2025.01.10.02.25.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2025 02:25:20 -0800 (PST)
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5187aa2c97dso705995e0c.2;
+        Fri, 10 Jan 2025 02:25:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU1HPjDsh8eiiiBuvV6WlWyA9fASWRv0BccdU5xIdKKfuXec14ZypZAyMIemPJMy4j5TVk7sL1IHmwqla+oA2OD10E=@vger.kernel.org, AJvYcCWTrUwCL3hB9NLVuwOx5vLH3ebMjsFnWk1YnKYQAPrUD+LoNCVPagnvj/3rljqlPQ8g2MskgxdEXkI=@vger.kernel.org, AJvYcCXRGhNq6bnl8sM7qijNdayxxEJtcuXod0DpTkJwuXifKsm60wd3AK11dQ9Qhhm1tGMBZC3AEKKhU45/z08q@vger.kernel.org
+X-Received: by 2002:a05:6122:2a50:b0:51b:10a0:331c with SMTP id
+ 71dfb90a1353d-51c6c3a149cmr9253652e0c.5.1736504719358; Fri, 10 Jan 2025
+ 02:25:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for
- video GDSC's
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        "Vikash Garodia" <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>
-References: <20241223-switch_gdsc_mode-v2-0-eb5c96aee662@quicinc.com>
- <20241223-switch_gdsc_mode-v2-1-eb5c96aee662@quicinc.com>
- <szj4urqpxoek3y65ov6bavxqjsgs5nnu5o32e73z47mudelq4v@6fjbmm2h7pen>
- <7556a703-db1a-48f1-8546-e9acf91ca0c6@quicinc.com>
- <fmxvklw2fmt4akltrpw6v4wmmi6teu7rozz6tozr4hkos6io4s@4jp76l7xql3l>
-Content-Language: en-US
-From: Renjiang Han <quic_renjiang@quicinc.com>
-In-Reply-To: <fmxvklw2fmt4akltrpw6v4wmmi6teu7rozz6tozr4hkos6io4s@4jp76l7xql3l>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: u1YZhsLFgM6TekFWozEZzxsKMONeSsnK
-X-Proofpoint-GUID: u1YZhsLFgM6TekFWozEZzxsKMONeSsnK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- phishscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
- priorityscore=1501 clxscore=1015 mlxlogscore=999 bulkscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2501100068
+References: <20241216210201.239855-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241216210201.239855-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jan 2025 11:25:07 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW9=XTBoAaZhfL86wgyetUDkqfivM9TVspV6Bo_H0vkwQ@mail.gmail.com>
+X-Gm-Features: AbW1kvY-GoBm1gGafdYetNMAIPF74n1tWkOQCx-ig5oUc7MWXDCSiIyKdwcYGaU
+Message-ID: <CAMuHMdW9=XTBoAaZhfL86wgyetUDkqfivM9TVspV6Bo_H0vkwQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rzg2l-cpg: Refactor Runtime PM clock validation
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 1/8/2025 12:41 PM, Bjorn Andersson wrote:
-> On Thu, Jan 02, 2025 at 12:06:14PM +0800, Renjiang Han wrote:
->> On 12/26/2024 11:54 AM, Bjorn Andersson wrote:
->>>> The video driver will be using the newly introduced
->>>> dev_pm_genpd_set_hwmode() API to switch the video GDSC to HW and SW
->>>> control modes at runtime.
->>> "Will be using", does that imply then that if this patch is merged
->>> before (or without the venus patch) something unexpected will happen?
->>>
->>> Please clarify how you expect this to be merged, or clarify in the
->>> commit message that ordering is not of any concern.
->>>
->>> Regards,
->>> Bjorn
->>   Thanks for your comment. This patch series is to make the video driver
->>   to use dev_pm_genpd_set_hwmode() to switch GDSC mode. This patch and
->>   the venus driver patch need to be merged at the same time. Otherwise,
->>   the video will not work properly on these platforms.
->>
-> The two patches are handled by different maintainers, of different
-> subsystems and as such would not be expected to be merged together ever.
+On Mon, Dec 16, 2024 at 10:02=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> If you have such requirements, it need to be made very clear to the
-> maintainers that they will have to synchronize the effort.
+> Refactor rzg2l_cpg_attach_dev to delegate clock validation for Runtime PM
+> to the updated rzg2l_cpg_is_pm_clk function. Ensure validation of clocks
+> associated with the power domain while excluding external and core clocks=
+.
+> Prevent incorrect Runtime PM management for clocks outside the domain's
+> scope.
 >
+> Update rzg2l_cpg_is_pm_clk to operate on a per-power-domain basis. Verify
+> clkspec.np against the domain's device node, check argument validity, and
+> validate clock type (CPG_MOD). Use the no_pm_mod_clks array to exclude
+> specific clocks from PM management.
 >
-> You're expected to always keep the tree "bisectable", i.e. the tree
-> should function after each commit in the git history. Please clarify
-> the best possible order here, and if the changes truly need to be merged
-> in some specific order let's see if we can get Maruo's Acked-by and I
-> could merge the pair through the clock tree.
->
-> Regards,
-> Bjorn
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-  Thanks for your explanation. The use of dev_pm_genpd_set_hwmode() depends
-  on the HW_CTRL_TRIGGER flag, and the reading and writing of the
-  WRAPPER_VCODEC0_MMCC_POWER_CONTROL and WRAPPER_VCODEC0_MMCC_POWER_STATUS
-  registers depends on the HW_CTRL flag. Therefore, the clock patch and
-  the venus driver patch need to be merged at the same time. Otherwise,
-  the venus driver cannot work properly.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.15.
 
--- 
-Best Regards,
-Renjiang
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
