@@ -1,153 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4216E20FA9E;
-	Fri, 10 Jan 2025 13:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD8020E70F;
+	Fri, 10 Jan 2025 14:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736517544; cv=none; b=n/kZPan/KR9DqqfpRDUILgSVYP/MEMel/dgT0exgbZE028XYITSjUCf2UpcNiDhbbhQCzYeaGo5cfhxbPBbhKmsPpNDAiAsRP62/MrPlOgO5Id1oaTbcdSX+zYiqK/IrUr+3ymxSTT7b2rAPATDNKVQOm3/mJgDZ0fCszMnZ2ao=
+	t=1736518626; cv=none; b=ZKNlwk84js0E8X8oxwp28As7JS0DpKZ6WOYimFjRvkQylHU/nOVvaIg/bPYwSdXFtzPNOdfHQTXleG8aqPXmQVqD/ZKgK6mR0CHseCsJ75fK5g40cJSseAYSbhjmgnDI0KUSRS6bSqBv7iXfxxlX5hClOPF4SJqNd0+eI0xs+WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736517544; c=relaxed/simple;
-	bh=g7wxpqcSQJrcO2+CyoWI6wsntd8vQcmKdFcJ3jJ7Gto=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FETT9k3IsXUHt67RsqzYmLvg7giidLaUyjFRnWtPGimJIZ9DFhhiSWKFYaHkrtKwdg/HyCbd1539s8OinWSQ0AWdkvbd6sOq+cR2CYbHFpz1k06HNlyfMMOZHu9qO/y2yPssyROGeKF2vRJV60NHFU/ZqzndaT2ar2ppr52Kao8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtSc7DoK; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtSc7DoK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE7DC4CED6;
-	Fri, 10 Jan 2025 13:58:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736517543;
-	bh=g7wxpqcSQJrcO2+CyoWI6wsntd8vQcmKdFcJ3jJ7Gto=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qtSc7DoKJaJxVmUrLBQwq48v+ML5dD9Ga2+pU723ktjwlMZcKLgkHhlcyOXDZUuEe
-	 qK8ewFruiXPXBpCoEmKdqMgA2DXJ94pw8IEY8nGAznJ3xE0lQMsw/R7ANS4L2atzdU
-	 QQse0NzArfLlWtSoMphmG3sWlXakNCM31W84vEItXJA6h3rtEeQurmXhtzbEUvQk7v
-	 GZHD9+zNNPISrFQhdCNOMDaieDZnj+IIUv24yxWd/oY4hgBgoEXuIdrXyFCGKGpK2U
-	 LxadZwWtcr2cXnOIcHNp3dX4MBQhK9a72dgHjr2+kGwXScL6DLfF7Rl7pM1kPWEEjA
-	 my9wCAUEhljwA==
-Message-ID: <ff57cf8d-626e-4d35-a18f-1a89b4d9fa3e@kernel.org>
-Date: Fri, 10 Jan 2025 14:58:52 +0100
+	s=arc-20240116; t=1736518626; c=relaxed/simple;
+	bh=G8V2jhFGtgWlOHG4Qtq684e7x4Mx+F2Tmo67ZfatLO0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M96Y4aJuOad+E+NfAU6oLGXUiPHnSfCenSPmJyrSWI8wYl36Lk7GrZaPfeuMYFw2G9XtT5C4qJYpSp1oaE5QqwlnNxQgZCg1DaT6DV23ZpwU78QFpfYYASV95UQwxTxHhwlqCKawEOWqRUkTSg4Y0z1fz1TEL2B+QQQBsqp24yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b6e8fe401eso173287185a.2;
+        Fri, 10 Jan 2025 06:17:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736518621; x=1737123421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/NJ/3l/9PI4oWXepQOlqsgt9YAjfDzU4Qje7tYA2ecQ=;
+        b=LJGGfhdQg+PiH6gerAHVg+vUI4TnpZS+myULE177c+TMQ2JO1N1LJTffeyJg3nPyTE
+         PKFTkDjKRKN/Mtd7GBIAjnM8DUTE864GLVkXSiHZMgXhDs0mDxx1HWdLUHrFL9LNgT2n
+         YeSeQH/hmThMwXqCJo6NiUWoS+2w425+aVtIsd0QI+bzXkrxfl3NpIrdwY2ISuwZqJkK
+         x5hN8IXE/WfPq+T/qCUtB6bbRYrX9NZwSXgUdROexbdxNVVU5B6W9IRNhjj6NDspshPy
+         g5fL+R8HsmddauSH3hoBdUM7k5HmlcAcIc+aBZYoDSkLcomiuW73iN84maXZFm1uB422
+         SUmA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9uXbY9ZGybeMRxIbwSRRZBsYEiddDhaKhwb7k1AcAxLOxCPpmN4ZanrXOQppkx0oCe1+5EK9JGxqq@vger.kernel.org, AJvYcCVetb7W3jsQ+6Ds7BgddVxv0jBs46Q1gwY+xSdaza2XUOzmwPX894TbgLCMJFplpJvTdmYqpWxyGKA=@vger.kernel.org, AJvYcCWoix0ULFuPxnCzkhTX6n3zZRYq5+Op8lEXcDek6wKHiwPvRDoHtJPLQ5CnmhbpeETYUc5gwwS1DZMNIIF6@vger.kernel.org, AJvYcCWwEJuUbxnVeeNzIM/myLHPcg1VrYGQPT9cNAhxd5C7sBK1k/oeVHZzMRTAeCg6UMPQ1w1y+6XkQphckcFbK8i/W+A=@vger.kernel.org, AJvYcCXeu7WEr4C/jMS9PfmOoQVkdN1Ke6HKcutD2ViW6STASFt8iuIBdCMuvKkhL3qOmTfhgXG05k5V80em@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCDxTn+2LzISzSnJ+el1zlF/mK2P5+X3Y0KbZmBfaccokB/ok+
+	5INBkpRBRnKW8gSoytn1Pz+nToBbTaDUVCbLt7YRMKQWY/ZkB1EZOWe2uGat
+X-Gm-Gg: ASbGncsh3FmpzQJC/3ZXZ2z2XoLS7LknJdKzooyrV1BFuYknvSmpgX1RIQ3RjXIcotZ
+	XsKNiOFLvh2ch6YgH2moHIa/IygIaXs4eQ7V9XBxlycxOfkQQ8r/zC+/6eRkSb5jsVHlSkgOjlH
+	esO7qUbbjglLP6y0eYldZrdy1wKDfKX+RSFE1Yp8ebujdlx+Hsrmg3hdruiHDc3hzr7cnKHC40G
+	bx+D4D7k8EFZ/bmR5DdneW2d3HX24o4y99PA3kmdnL0g5Gfu0osXMFOIVlXQsVe5GuwdDHs48dc
+	tO2rh8sOGTNE+yoW3ESU8FA=
+X-Google-Smtp-Source: AGHT+IE5tNwrA25wnZ0jYbpj8xbYwxXFJ94FzLv+CS2Q+NK/ocjsTyOokiI6E0irfOtnsiOrnKXoMw==
+X-Received: by 2002:a05:620a:1903:b0:7b6:c6f8:1d25 with SMTP id af79cd13be357-7bcd97ce10emr1767249385a.55.1736518621170;
+        Fri, 10 Jan 2025 06:17:01 -0800 (PST)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com. [209.85.222.175])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7bce3503185sm175978785a.95.2025.01.10.06.16.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2025 06:17:00 -0800 (PST)
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b6f19a6c04so176124085a.0;
+        Fri, 10 Jan 2025 06:16:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVsG1B1D3oXkQbwcnU4kMo5FVthNQ8h3RAGrMFe6UpbcNjg8dTcc65LHOoGtmXySXUbHDfO5aOI8pY=@vger.kernel.org, AJvYcCWovhDXgMXmuREcSHqsTdqmfafqKnr45Z/v9syX4jH2+LYcRs12OI4OwBxcCgggfebcaTlG3KnRg+6Fgwoo@vger.kernel.org, AJvYcCWtYpVkRbeH98IluxRjzOkHjoiD1jKqdjxH3BdC/KCG93Q3xOypB/z34Yu8kLcaLfW3SluIxF/oJVyr@vger.kernel.org, AJvYcCWzCnTGjz726iQFoxViQ/3hfbXQj0M+mmqkdZb0qeqtb7bNmwrc5Ke828BV6oklfy1Cw9E0LAE6H+7n@vger.kernel.org, AJvYcCXn4cKnGIP4PHFvygK6ljQxaYUMoDiMeTJJ0qFWEs9lW5huo/z0sj58arXByQL4gnDQxdT3sTt1bPGoYsMy1e9Z8Gg=@vger.kernel.org
+X-Received: by 2002:a05:620a:2a08:b0:7b7:5d6:3976 with SMTP id
+ af79cd13be357-7bcd97d6489mr1484170685a.58.1736518619196; Fri, 10 Jan 2025
+ 06:16:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/12] ARM: dts: sun8i: add DTSI file for V853
-To: Andras Szemzo <szemzo.andras@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20250110123923.270626-1-szemzo.andras@gmail.com>
- <20250110123923.270626-13-szemzo.andras@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250110123923.270626-13-szemzo.andras@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com> <20250103163805.1775705-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250103163805.1775705-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 10 Jan 2025 15:16:47 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdX1y7szsqRqE3iCGOV2gWX2Vq37KheZZbk+cEkwXgV6+Q@mail.gmail.com>
+X-Gm-Features: AbW1kvbRaFn4g_AO_oKMfA_tFxNUhSMjIGVqHRYJogvxNkj5hs0eIT7UrCBBWSw
+Message-ID: <CAMuHMdX1y7szsqRqE3iCGOV2gWX2Vq37KheZZbk+cEkwXgV6+Q@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: renesas: r9a08g045: Add clocks, resets and power
+ domain support for the TSU IP
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	p.zabel@pengutronix.de, ulf.hansson@linaro.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/01/2025 13:39, Andras Szemzo wrote:
-> V853/V851 is a new SoC by Allwinner. Add a basic dtsi file for it.
-> 
-> Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
-> ---
->  arch/arm/boot/dts/allwinner/sun8i-v853.dtsi | 673 ++++++++++++++++++++
->  1 file changed, 673 insertions(+)
->  create mode 100644 arch/arm/boot/dts/allwinner/sun8i-v853.dtsi
-> 
-> diff --git a/arch/arm/boot/dts/allwinner/sun8i-v853.dtsi b/arch/arm/boot/dts/allwinner/sun8i-v853.dtsi
-> new file mode 100644
-> index 000000000000..4ecc97c7e7c0
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/allwinner/sun8i-v853.dtsi
+On Fri, Jan 3, 2025 at 5:38=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> w=
+rote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add clocks, resets and power domains for the TSU IP available on the
+> Renesas RZ/G3S SoC.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Impossible to build and test.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.15.
 
-Please submit complete work, so one which can be actually built (DTSI,
-DTS and bindings).
+Gr{oetje,eeting}s,
 
-> @@ -0,0 +1,673 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
+                        Geert
 
-Odd license, why would we ever want GPLv3 or even GPLv4?
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> +// Copyright (C) 2024 Andras Szemzo <szemzo.andras@gmail.com>
-> +
-> +#include <dt-bindings/clock/sun6i-rtc.h>
-> +#include <dt-bindings/clock/sun8i-v853-r-ccu.h>
-> +#include <dt-bindings/reset/sun8i-v853-r-ccu.h>
-> +#include <dt-bindings/clock/sun8i-v853-ccu.h>
-> +#include <dt-bindings/reset/sun8i-v853-ccu.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/power/allwinner,sun8i-v853-ppu.h>
-> +
-> +/ {
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-> +
-> +	osc24M: osc24M-clk {
-
-Only lowercase node names.
-
-Best regards,
-Krzysztof
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
