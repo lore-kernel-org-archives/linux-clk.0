@@ -1,97 +1,96 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E350211700;
-	Fri, 10 Jan 2025 15:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B0020E035;
+	Fri, 10 Jan 2025 15:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736522826; cv=none; b=qX2B7Vdtf+RhyQGIY5r1Wc91RvfEk0ftIuUnpIj/69jP+6iSgqGOxOZP76FMpsBTIXwNYU9SmIByHhfwBfo8Sa2rWQESD3zvToZeHPYorgZz4WqrSuDPSLP5zWMFgMPxDVOA5Bh+znnRsf/sSeWgdy7zd/PzvoREkI0zWY6TWJE=
+	t=1736523495; cv=none; b=ajPsCcRhOzeMDuCnoOKhB/cpASpVJKVtZE4MulQ1uALFaYxBVUciCaqA2r4oRUiPvV6wMCVX28ZYVZHKcUHQDs+b2yyibv7FOCgn5OdIqADkvUXH4yNiiOAx197/BokLFJsAyT/Ywn5a0tKNFPqGayzsz7VDCtsL/DFa+IOIYlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736522826; c=relaxed/simple;
-	bh=tkTOYHY7R/B78zoatm15ZoMCaySho/QN7uoUcwZA5m0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k0+0qvrP3pHly67RRQuA1bsukKTsM4x+o3WcQYNLToZTfaPWy2LghZCEtJa42haMxNniGQgt/KHfKSz17xYeFBAjTL2UU37hs6nkZUh8oqTmACipjkGWZwnnLtuEUaQqZf3lIqfbnHH/5TiaWr5M7oqYlSS2iBTqS9QZWohuMYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hRA0fMXK; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1736523495; c=relaxed/simple;
+	bh=g3zvNqD36Ly2VZ9tkKT3O7sEgisvEdurJQ6LVf2r8P8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TnoS7pY8rh0zRPsnq92HEU8jwvA304Sy0bvCf74ZRmSj83Gd/9+nkj25up9rOq537VQj4HciTnF8RIWU2iPm1oqMkZrDszNAy1llBujOt0Ihf3Qdj4noEM2rsKQmpz8VpQ/XEOKGfQJ1odHfCzCD3e+pQfRlQi4HbkefrZjZOQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=il0RCBZt; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hRA0fMXK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1736522824; x=1768058824;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=tkTOYHY7R/B78zoatm15ZoMCaySho/QN7uoUcwZA5m0=;
-  b=hRA0fMXKDUSdDep6+m1hhX29w7qO2H29bDUqQ59QXA2bEhii0sy7bypT
-   UkhSTbQmg33VjHkNtsif1QUt52q17kW6RvuxNVJZ6/3IggqpV/C/Ya39f
-   LeEA5U4JoT1VpRo7mIcZddikOTvv4jJ6LJUTIIhlPJPCW8ovZsqe1uEi0
-   6/Z+akRc0JO1DHFkeHCIJgFWwo8UAf3/813/Eax3ryB3QKSsgt0910haI
-   HTbYmYnxGIZZhbRQ0Q6uwrlE8mG3mIfHdlK6Ui6lojo8ds+utA+rCGJoc
-   rU73eWzqJ96Ed885/NjEyCeDO1U/8APQ/tF2pGLZmPET5qvnqlz3tM3Q4
-   w==;
-X-CSE-ConnectionGUID: EfVstCxrTPeDtavimu1NHw==
-X-CSE-MsgGUID: 52MgwlluTxOOs9zroo6fDg==
-X-IronPort-AV: E=Sophos;i="6.12,303,1728975600"; 
-   d="scan'208";a="203886132"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Jan 2025 08:27:03 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 10 Jan 2025 08:25:52 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 10 Jan 2025 08:25:52 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<arnd@arndb.de>
-CC: <dharma.b@microchip.com>, <mihai.sain@microchip.com>,
-	<romain.sioen@microchip.com>, <varshini.rajendran@microchip.com>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-spi@vger.kernel.org>, <linux-serial@vger.kernel.org>
-Subject: [PATCH v6 2/3] dt-bindings: pinctrl: at91-pio4: add microchip,sama7d65-pinctrl
-Date: Fri, 10 Jan 2025 08:25:41 -0700
-Message-ID: <821255840c09d8d9cebbb1f2daaedd8a7c138875.1736522006.git.Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1736522006.git.Ryan.Wanner@microchip.com>
-References: <cover.1736522006.git.Ryan.Wanner@microchip.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="il0RCBZt"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AF21660005;
+	Fri, 10 Jan 2025 15:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1736523491;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g3zvNqD36Ly2VZ9tkKT3O7sEgisvEdurJQ6LVf2r8P8=;
+	b=il0RCBZtzS8MM8CP4vxI7ia+4m8a8on3dAjyRA714QxWf1h7Cemz9TvNjcwrsEsXeM+0fo
+	2GlfKRiqgDw0g6LFkFFsene205lRx/b1e2AnEsNq8nmkc5vA7INqPqwhgo14eNUtnvnKc2
+	wBgsGEKC09Aymfm+L7iAn3Rj8OIMS6X7ImxVv4TMlEIK3DZoFbsGvAf+7ftNkoQ50zmUuJ
+	f7Syqi7PfIWaV5uT85CZja6zaC+3yMaGQdMyIPtpmBMJSKdHur+CpJI5L1KkOv95v0/U90
+	10O/L9AgIj/PgbDAGZSZQkr6o9KeWd2T0Nd14/0S/BMnDJHEn1AIZSuN+MTneQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Maxime Ripard <mripard@redhat.com>,  Abel Vesa <abelvesa@kernel.org>,
+  Peng Fan <peng.fan@nxp.com>,  Michael Turquette
+ <mturquette@baylibre.com>,  Shawn Guo <shawnguo@kernel.org>,  Sascha Hauer
+ <s.hauer@pengutronix.de>,  Pengutronix Kernel Team
+ <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,  Ying Liu
+ <victor.liu@nxp.com>,  Marek Vasut <marex@denx.de>,  Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>,  linux-clk@vger.kernel.org,
+  imx@lists.linux.dev,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  dri-devel@lists.freedesktop.org,  Abel
+ Vesa <abel.vesa@linaro.org>,  Herve Codina <herve.codina@bootlin.com>,
+  Luca Ceresoli <luca.ceresoli@bootlin.com>,  Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>,  Ian Ray <ian.ray@ge.com>
+Subject: Re: [PATCH 4/5] clk: Add flag to prevent frequency changes when
+ walking subtrees
+In-Reply-To: <c80a9fcd3fbe99c77c2cef1c241e8610.sboyd@kernel.org> (Stephen
+	Boyd's message of "Mon, 30 Dec 2024 17:22:56 -0800")
+References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
+	<20241121-ge-ian-debug-imx8-clk-tree-v1-4-0f1b722588fe@bootlin.com>
+	<20241217-brown-wapiti-of-promotion-e3bec6@houat>
+	<87bjx2tf3y.fsf@bootlin.com>
+	<c80a9fcd3fbe99c77c2cef1c241e8610.sboyd@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Fri, 10 Jan 2025 16:38:09 +0100
+Message-ID: <87msfy8yse.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-From: Dharma Balasubiramani <dharma.b@microchip.com>
+Hi Stephen,
 
-Add pinctrl bindings for microchip sama7d65 SoC.
+>> The idea is: if the flag is set, instead of accepting the new upstream
+>> rate and recalculate the downstream rate based on a previously set
+>> divider value, we change our divider value to match the same frequency
+>> as before. But if we cannot, then we just keep the old way.
+>>=20
+>
+> The exclusive rate code could support this if it doesn't already do so.
+> If you call clk_set_rate_exclusive(child, <constant rate>) followed by
+> clk_set_rate(parent, <new rate>) the core code should try to keep the
+> child at the constant rate, or fail the clk_set_rate() call on the
+> parent. It should be possible to confirm this with some KUnit tests for
+> clk_set_rate_exclusive(). Similarly, if another child, child_B, of the
+> parent changes the parent rate, we should speculate the new rate of the
+> child_A that's protected and fail if we can't maintain the rate. We need
+> to start generating a list of clks that we operate a rate change on to
+> support this though, because right now we rely on the stack to track the
+> clks that we change the rate of.
+>
+> Initially we thought that we could do this with clk notifiers. That may
+> work here, but I suspect it will be clunky to get working because clk
+> notifiers operate on struct clk.
 
-Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt      | 1 +
- 1 file changed, 1 insertion(+)
+I see, thanks a lot for the feedback, I'll have a look.
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-index 774c3c269c40..81a05a09f19f 100644
---- a/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/atmel,at91-pio4-pinctrl.txt
-@@ -6,6 +6,7 @@ configure it.
- Required properties:
- - compatible:
- 	"atmel,sama5d2-pinctrl"
-+	"microchip,sama7d65-pinctrl", "microchip,sama7g5-pinctrl"
- 	"microchip,sama7g5-pinctrl"
- - reg: base address and length of the PIO controller.
- - interrupts: interrupt outputs from the controller, one for each bank.
--- 
-2.43.0
-
+Thanks,
+Miqu=C3=A8l
