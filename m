@@ -1,104 +1,261 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7E9211499;
-	Fri, 10 Jan 2025 15:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A62B2066E5;
+	Fri, 10 Jan 2025 15:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736523636; cv=none; b=AX/4iiJq0+Ub/oWngrb8QVbogQjfi5ZmIZDLQt/FIYosJrphzDIZvTsQfYXBhxbpx+Z/s0cmhuQbH1xvfPFly233J5BGhFkdBjJ++aptpAb7xbaPFmMw6FaReI0vuczn3hs2Y3d1s3SZAJT6HiTf0DfKlCA9mnFDnCSHboHQuF4=
+	t=1736524446; cv=none; b=MxT1XFLZc2NOxO0xAuoCRyxzQDX0Kz1vGdSYkNVkDwMym1n5bEACXGVQHsr/uWmUY/ycztO6spD5ZBvlCzlzojkneTuyZ9CU8JUmLlRygEcBkrGOETAQMukJVuIy0NBHbfkVYTA8ZwPma7Ws8BwxqargY9P+o1PX4BjYhShbxNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736523636; c=relaxed/simple;
-	bh=FSpc6VQBDb8JoEfMgCNEhRDbGhq1uPR/LeYIvEpv6E8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=W4VT8q67JS92SYMvn4LLcPuIGRL/OEBwV36X1rsSsy7/AJLxJcQuWEvrpl5xF7cRCQ1Pff0LLJE3IIxgIc8jNeVrnusS2vm0dnrWv4QkhqzbLFPM/DzfhN5We6HQcEn0Xi2/wAT+hxyFagd8Owu7uHS0rVhPkeZE3AOlT/8JBzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XsaKQJa1; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1736524446; c=relaxed/simple;
+	bh=KtZ4c7jWTzK/1RwsYWEQ3b4sPV8HEvuExiQjmVNRQaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jh6Gdg4VmGgaY37q/4BFnwAE24sHZkRr+LFlak7841VfDUBqr7+BbkZEs5LL2wDnZpOXCxfNuqi8vWpvUH8Cg1rkokLOKg0D4HyaEqeVlBmeybrracgoI8Jocf8nMOpDc7h0TsXrB3cMB4l9Xnw2DdjKjY7OXfTOcKXkIctS2YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqo2nWRt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XsaKQJa1"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 68B7E40002;
-	Fri, 10 Jan 2025 15:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1736523627;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FSpc6VQBDb8JoEfMgCNEhRDbGhq1uPR/LeYIvEpv6E8=;
-	b=XsaKQJa1dm9gvKtfk04b/ubKT3ff/t4Kpn/YpVN3Nizo87LlyZp8WUD16Pv5orCRashuaC
-	XmSQuGhqCtqxKw+8YvamI8N09XCpRSzudCrhxJN6UsR32W3VgjEV2+1wWo0gwzrM0o1iOa
-	n2NdoPVAK8qSwcvzaJUU6fUwln6WHzd9w4b+ia51sFAz/Bsf8af9X152YfaOIr7myAw0kG
-	UI8pmzCw8yaMZ8vI32bJljU3RjNqG8vTfgJluENX2ReH5J4Qz70QQG+mjXA75Lk/XWWGdZ
-	8SA1PRjdshzzFuKbljgsUKGN20N0HorIpcCflnLDWmdxC2IL697yEjkMfnJMVA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Maxime Ripard <mripard@redhat.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,  Abel Vesa <abelvesa@kernel.org>,  Peng
- Fan <peng.fan@nxp.com>,  Michael Turquette <mturquette@baylibre.com>,
-  Shawn Guo <shawnguo@kernel.org>,  Sascha Hauer <s.hauer@pengutronix.de>,
-  Pengutronix Kernel Team <kernel@pengutronix.de>,  Fabio Estevam
- <festevam@gmail.com>,  Ying Liu <victor.liu@nxp.com>,  Marek Vasut
- <marex@denx.de>,  Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-  linux-clk@vger.kernel.org,  imx@lists.linux.dev,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  dri-devel@lists.freedesktop.org,  Abel Vesa <abel.vesa@linaro.org>,
-  Herve Codina <herve.codina@bootlin.com>,  Luca Ceresoli
- <luca.ceresoli@bootlin.com>,  Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>,  Ian Ray <ian.ray@ge.com>
-Subject: Re: [PATCH 4/5] clk: Add flag to prevent frequency changes when
- walking subtrees
-In-Reply-To: <20250106-fabulous-tapir-of-acceptance-c4e3e7@houat> (Maxime
-	Ripard's message of "Mon, 6 Jan 2025 15:36:33 +0100")
-References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
-	<20241121-ge-ian-debug-imx8-clk-tree-v1-4-0f1b722588fe@bootlin.com>
-	<20241217-brown-wapiti-of-promotion-e3bec6@houat>
-	<87bjx2tf3y.fsf@bootlin.com>
-	<c80a9fcd3fbe99c77c2cef1c241e8610.sboyd@kernel.org>
-	<20250106-fabulous-tapir-of-acceptance-c4e3e7@houat>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 10 Jan 2025 16:40:26 +0100
-Message-ID: <878qri8yol.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqo2nWRt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3500C4CED6;
+	Fri, 10 Jan 2025 15:54:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736524445;
+	bh=KtZ4c7jWTzK/1RwsYWEQ3b4sPV8HEvuExiQjmVNRQaQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qqo2nWRtkTXHYUIcAvGXBfFz9lRjc90pKSWJa3X5Rt1ujIb/Zfnhbs3zoTHzUnZKS
+	 reXKrHisV3jT85sYHUYGWu2GG2+M3aKs8lyIE0WUXx3dwmlBJtEanCJzsQ6oqekaCq
+	 2NYie+vO8run7Cf1nlJJsbiQsrip82LufKuN+HshH3W0GpZUAfOn5yvWT8NTov4Xez
+	 BX81epoL9777exAxcqECpJnGfTixE4bc4vv3AIdQoF4BNqfyPCDcJi10VzyzCL1tVA
+	 7zysNjo68cGIj9mxNi9/FLuUFdGFjJNFZ+GdPv/qtXylav7Ugpae9E899Nm3XG6TDx
+	 W/f9aIUS8o5ow==
+Date: Fri, 10 Jan 2025 09:54:04 -0600
+From: Rob Herring <robh@kernel.org>
+To: Jian Hu <jian.hu@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>,
+	Chuan Liu <chuan.liu@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-clk <linux-clk@vger.kernel.org>,
+	linux-amlogic <linux-amlogic@lists.infradead.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 1/5] dt-bindings: clock: add Amlogic T7 PLL clock
+ controller
+Message-ID: <20250110155404.GA2928945-robh@kernel.org>
+References: <20250108094025.2664201-1-jian.hu@amlogic.com>
+ <20250108094025.2664201-2-jian.hu@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250108094025.2664201-2-jian.hu@amlogic.com>
 
-Hi Maxime,
+On Wed, Jan 08, 2025 at 05:40:21PM +0800, Jian Hu wrote:
+> Add DT bindings for the PLL clock controller of the Amlogic T7 SoC family.
+> 
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,t7-pll-clkc.yaml   | 103 ++++++++++++++++++
+>  .../dt-bindings/clock/amlogic,t7-pll-clkc.h   |  57 ++++++++++
+>  2 files changed, 160 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml
+>  create mode 100644 include/dt-bindings/clock/amlogic,t7-pll-clkc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml
+> new file mode 100644
+> index 000000000000..fd0323678d37
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,t7-pll-clkc.yaml
+> @@ -0,0 +1,103 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +# Copyright (C) 2024 Amlogic, Inc. All rights reserved
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/amlogic,t7-pll-clkc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Amlogic T7 PLL Clock Control Controller
+> +
+> +maintainers:
+> +  - Neil Armstrong <neil.armstrong@linaro.org>
+> +  - Jerome Brunet <jbrunet@baylibre.com>
+> +  - Jian Hu <jian.hu@amlogic.com>
+> +  - Xianwei Zhao <xianwei.zhao@amlogic.com>
+> +
+> +if:
 
->> The exclusive rate code could support this if it doesn't already do so.
->> If you call clk_set_rate_exclusive(child, <constant rate>) followed by
->> clk_set_rate(parent, <new rate>) the core code should try to keep the
->> child at the constant rate, or fail the clk_set_rate() call on the
->> parent. It should be possible to confirm this with some KUnit tests for
->> clk_set_rate_exclusive(). Similarly, if another child, child_B, of the
->> parent changes the parent rate, we should speculate the new rate of the
->> child_A that's protected and fail if we can't maintain the rate. We need
->> to start generating a list of clks that we operate a rate change on to
->> support this though, because right now we rely on the stack to track the
->> clks that we change the rate of.
->>=20
->> Initially we thought that we could do this with clk notifiers. That may
->> work here, but I suspect it will be clunky to get working because clk
->> notifiers operate on struct clk.
->
-> I think notifiers are great for customers, but not really adequate for
-> the clock drivers tree. Indeed, you can only react to a (sub)tree
-> configuration using notifiers, but you can't affect it to try something
-> new that would be a better fit.
->
-> Like, if we have a PLL A, with two child clocks that are dividers. B is
-> initially (exclusively) set to freq X, and then you want to set C to 2X.
->
-> The best thing to do is to set A to 2X, and double B's divider. It's
-> simple enough, but we have no way to try to negociate that at the
-> moment.
+Move this after 'required' section.
 
-Indeed. Do you have something in mind to address this situation (eg. a
-new clk provider or core API)?
+Generally we put 'if' under 'allOf' because we're likely to have another 
+if/then schema on the next compatible added. If you don't think this 
+binding will ever get used on another chip, then it is fine as-is.
 
-Thanks,
-Miqu=C3=A8l
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        const: amlogic,t7-pll-mclk
+> +
+> +then:
+> +  properties:
+> +    clocks:
+> +      items:
+> +        - description: mclk pll input oscillator gate
+> +        - description: 24M oscillator input clock source for mclk_sel_0
+> +        - description: fix 50Mhz input clock source for mclk_sel_0
+> +
+> +    clock-names:
+> +      items:
+> +        - const: input
+> +        - const: mclk_in0
+> +        - const: mclk_in1
+
+Move these to top-level and then both of these are just 'minItems: 3'.
+
+> +
+> +else:
+> +  properties:
+> +    clocks:
+> +      items:
+> +        - description: pll input oscillator gate
+> +
+> +    clock-names:
+> +      items:
+> +        - const: input
+
+And 'maxItems: 1' here.
+
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - amlogic,t7-pll-gp0
+> +      - amlogic,t7-pll-gp1
+> +      - amlogic,t7-pll-hifi
+> +      - amlogic,t7-pll-pcie
+> +      - amlogic,t7-mpll
+> +      - amlogic,t7-pll-hdmi
+> +      - amlogic,t7-pll-mclk
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 3
+
+These are the 'top-level' definitions if that's not clear.
+
+> +
+> +required:
+> +  - compatible
+> +  - '#clock-cells'
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    apb {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        clock-controller@8080 {
+> +            compatible = "amlogic,t7-pll-gp0";
+> +            reg = <0 0x8080 0 0x20>;
+> +            clocks = <&scmi_clk 2>;
+> +            clock-names = "input";
+> +            #clock-cells = <1>;
+> +        };
+> +
+> +        clock-controller@8300 {
+> +            compatible = "amlogic,t7-pll-mclk";
+> +            reg = <0 0x8300 0 0x18>;
+> +            clocks = <&scmi_clk 2>,
+> +                     <&xtal>,
+> +                     <&scmi_clk 31>;
+> +            clock-names = "input", "mclk_in0", "mclk_in1";
+> +            #clock-cells = <1>;
+> +        };
+> +    };
+> diff --git a/include/dt-bindings/clock/amlogic,t7-pll-clkc.h b/include/dt-bindings/clock/amlogic,t7-pll-clkc.h
+> new file mode 100644
+> index 000000000000..e88c342028db
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,t7-pll-clkc.h
+> @@ -0,0 +1,57 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> +/*
+> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
+> + * Author: Jian Hu <jian.hu@amlogic.com>
+> + */
+> +
+> +#ifndef __T7_PLL_CLKC_H
+> +#define __T7_PLL_CLKC_H
+> +
+> +/* GP0 */
+> +#define CLKID_GP0_PLL_DCO	0
+> +#define CLKID_GP0_PLL		1
+> +
+> +/* GP1 */
+> +#define CLKID_GP1_PLL_DCO	0
+> +#define CLKID_GP1_PLL		1
+> +
+> +/* HIFI */
+> +#define CLKID_HIFI_PLL_DCO	0
+> +#define CLKID_HIFI_PLL		1
+> +
+> +/* PCIE */
+> +#define CLKID_PCIE_PLL_DCO	0
+> +#define CLKID_PCIE_PLL_DCO_DIV2	1
+> +#define CLKID_PCIE_PLL_OD	2
+> +#define CLKID_PCIE_PLL		3
+> +
+> +/* MPLL */
+> +#define CLKID_MPLL_PREDIV	0
+> +#define CLKID_MPLL0_DIV		1
+> +#define CLKID_MPLL0		2
+> +#define CLKID_MPLL1_DIV		3
+> +#define CLKID_MPLL1		4
+> +#define CLKID_MPLL2_DIV		5
+> +#define CLKID_MPLL2		6
+> +#define CLKID_MPLL3_DIV		7
+> +#define CLKID_MPLL3		8
+> +
+> +/* HDMI */
+> +#define CLKID_HDMI_PLL_DCO	0
+> +#define CLKID_HDMI_PLL_OD	1
+> +#define CLKID_HDMI_PLL		2
+> +
+> +/* MCLK */
+> +#define CLKID_MCLK_PLL_DCO	0
+> +#define CLKID_MCLK_PRE		1
+> +#define CLKID_MCLK_PLL		2
+> +#define CLKID_MCLK_0_SEL	3
+> +#define CLKID_MCLK_0_DIV2	4
+> +#define CLKID_MCLK_0_PRE	5
+> +#define CLKID_MCLK_0		6
+> +#define CLKID_MCLK_1_SEL	7
+> +#define CLKID_MCLK_1_DIV2	8
+> +#define CLKID_MCLK_1_PRE	9
+> +#define CLKID_MCLK_1		10
+> +
+> +#endif /* __T7_PLL_CLKC_H */
+> -- 
+> 2.47.1
+> 
