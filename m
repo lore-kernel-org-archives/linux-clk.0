@@ -1,109 +1,277 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D62205ABA;
-	Fri, 10 Jan 2025 11:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736508533; cv=pass; b=lqDo0JDLg3U8QW6ZfQc4PQCSwG4FjL1mClKOCaXj59Q+vFvYVjs0XzAiSBoyDDLxyL8DTEM3KXbi/lnvaUDiy5eBJrl/TvJerQLvemSPLd9Tgb7orJge2z5mDbfnhtuEjIPiEm5XSLkE5Ft+lSwZhQ7+yN2hRFzwWIg8Xc78S4o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736508533; c=relaxed/simple;
-	bh=tGMWP22lRZiF4apXgcb505FMdg6oFsqiueeDoZ6ayTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BxcDSMvfxVrBFdPSkZBHDsz2YIU7WW+19W0MxfzS3G16BJqZXUHLOfplKQ5NplfZ/hlLbUXtZhXcKp/jZ6GwUXpgWJq6R1LuDndZBgT7h/S+BcgPEoJOTZ4J5G/hPpBt39uGJNwAPG0quVB5YBhxEVpaPTaNiT86223BqVBiPKI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=JrDYpn1G; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1711ACEDF;
+	Fri, 10 Jan 2025 11:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736509669; cv=none; b=bRbn8lFlsrj+S+b/DrPhYnpSKV7DG2PBXBIYjzueEn1Wcqk/TYqjEanDreecKdF05A46yO6S7+OFJhlH5uies64Z2tLuXLevXxGK9bVJ+SYuhZqKJGwfOBsV38RLD+XffubPt0R9WP9Pjs8+PEsQL5WWfUjBGahb2Hzbv8QCI6k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736509669; c=relaxed/simple;
+	bh=+bBN7X5DoKL/XSHDmvrzqb3BA5dGzZ/fj7/IKqsTMjY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=GZEOphCqomLT5uxFj1crtyUCLWQdgTXm2JJhDbnKEFRhSfk3LksPNd97iGPJtmBQBMyGntnsFKQ4ZJRMevF29G/grPC9HrahkTztBvSwhiNbId7duy3wzdbZUNneDO6j+KMtbhjtk6pg8RI87FkqrnSGzwJYDmHN8J9XSiu+65Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqF/c125; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="JrDYpn1G"
-ARC-Seal: i=1; a=rsa-sha256; t=1736508520; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=HOsZMRubUSsrTtq3uc4mGcMRc+Gx2Why+/bdWNpqiEgMpsP2Ew0urbMMdTEqP52S1ZsQ2nLTDF+wwmD7PDc0zPNjoUEIdYvoN4yQDOctTBguelQItIrrfPnNEFLk/tV3wvLQlhgwSzamA7jlwZneOXLgSHcHqVW0kupcbjFYNPY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1736508520; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=XHW0skSs3z9DAkFAXG0k1p6sJGwaFKMr+xHEcjQkUDs=; 
-	b=d2Bm5Yn/FZgbUkTijCqIh5zyYFYoe+3pnRLwtsFO08fbrSJiVzNa2L3EecyBMZJC4sg7OhFCuSXRizB7cHFRQ0r02Rq5K6wqqRFUnFjpTOowIJCpNa6p+tTl7UtCbMlTPvPKuzOwx3RXrtok9vOETi9Yzrg6Dhdu44OlysbmsSM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1736508520;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=XHW0skSs3z9DAkFAXG0k1p6sJGwaFKMr+xHEcjQkUDs=;
-	b=JrDYpn1GZtOtp6yhVlp0v3+kEZdRX1Uhq7D4JEj4kMCnXCWulhoIi2ndiOp7qPsG
-	Jp2LHWZO/WNJNhJVnJVGrV/fLbdwPd6VqXCJGXOnKrfTjFdTEtjeJTzTc+oWCUyoykG
-	UdQ1342QT0A2P1H2hbTJB61o6D0lGnTTH9GLCynk=
-Received: by mx.zohomail.com with SMTPS id 1736508517025335.50238890288267;
-	Fri, 10 Jan 2025 03:28:37 -0800 (PST)
-Message-ID: <a5f8fd53-2519-441d-8931-31cb9aa2eba0@zohomail.com>
-Date: Fri, 10 Jan 2025 19:28:23 +0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqF/c125"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F2423C4CEDF;
+	Fri, 10 Jan 2025 11:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736509669;
+	bh=+bBN7X5DoKL/XSHDmvrzqb3BA5dGzZ/fj7/IKqsTMjY=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=iqF/c125JideKK2SjA3m8LpVhBYNBpUbZcmLoqSzRhNp3OKPBTuHX44dbcraWNB33
+	 3mT8/wj+Dwr7F14pWce9F2MkpnMbTeTTFa+pxjdYTdlrVOWsmSFDwx0FnNE/p+7t/H
+	 HBh4nNyVh43v9/NOsus5TEtBJ96NRsvZia4Vgb1c9W1QTg02xq5Vevg2Pv2Y8FY5ex
+	 G9gNHGmhbicV/bUXvQ/bnbQSNsF64rAL0fBW/Wa1RSx+c7fXsP9aCUWgVBVqOYpfLS
+	 VmNy6l0Q2hr8FugV3R7z6o5I+W2/4EAzRuaKO1xCg/NYZH1sMkb2C6bqdFsEHEbCSV
+	 vB75dyDy4WHKg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E442AE7719E;
+	Fri, 10 Jan 2025 11:47:48 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Fri, 10 Jan 2025 19:47:11 +0800
+Subject: [PATCH 2/2] clk: amlogic: c3: Limit the rate boundaries of clk_hw
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: Add bindings for Canaan K230
- clock controller
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Troy Mitchell <TroyMitchell988@gmail.com>
-References: <20250108-b4-k230-clk-v2-0-27b30a2ca52d@zohomail.com>
- <20250108-b4-k230-clk-v2-1-27b30a2ca52d@zohomail.com>
- <nvfvyy7vajbskfn542lxbvfkxuhasmnyni2uudy3cdybzlddiu@u46fcydzgxsw>
-Content-Language: en-US
-From: Xukai Wang <kingxukai@zohomail.com>
-In-Reply-To: <nvfvyy7vajbskfn542lxbvfkxuhasmnyni2uudy3cdybzlddiu@u46fcydzgxsw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Feedback-ID: rr0801122709f634376509b2493cc2e97200001096a1de42159b5406b81eaba735507eb9a8d3bb1521ea2f3c:zu08011227444e24f6f4ad2d26b942796c000060cbfad896ead820a72bac243b820dd7b4ea8ff2fada4817c6:rf0801122c7f5264423e9b8c4dfdda28080000ba302a89ede9433c226f7a94c3dcf4cc1662c260caa3fa6865a3335b41cb:ZohoMail
-X-ZohoMailClient: External
+Message-Id: <20250110-limit-rate-range-of-clk-v1-2-dd618adc4aa8@amlogic.com>
+References: <20250110-limit-rate-range-of-clk-v1-0-dd618adc4aa8@amlogic.com>
+In-Reply-To: <20250110-limit-rate-range-of-clk-v1-0-dd618adc4aa8@amlogic.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1736509666; l=5184;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=8XGEQBOCJSgFZ2f2fpSkVtYBK8fi63dUXKYPxwN2M48=;
+ b=1XANFRx0lswzvvpEbiIPFHJx220g4DleCItzkvN2v4pK958nuDuGFr6S5LbRx/TDf3QBtEYA9
+ dPCCRpv3EIxAvHymsuRLB4hc03O5pFj7q2xOLSPKf653xN1WxT4rHgr
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
+From: Chuan Liu <chuan.liu@amlogic.com>
 
+The PLL can only stably lock within a limited frequency range.
 
-On 2025/1/9 17:02, Krzysztof Kozlowski wrote:
-> On Wed, Jan 08, 2025 at 07:53:07PM +0800, Xukai Wang wrote:
->> +properties:
->> +  compatible:
->> +    const: canaan,k230-clk
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  reg:
->> +    items:
->> +      - description: PLL control registers.
->> +      - description: Sysclk control registers.
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
-> 
-> If there is going to be any new version, then keep the same order in
-> required: as in properties:
-> 
-> In any case:
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-Thank you for the review and your suggestions.
+Due to timing constraints, the maximum frequency of the peripheral clock
+cannot exceed the design specifications.
 
-I will ensure that the order of `required:` matches the order in 
-`properties:` in any future versions of the patch.
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+ drivers/clk/meson/c3-peripherals.c | 21 +++++++++++++++++++++
+ drivers/clk/meson/c3-pll.c         |  4 ++++
+ 2 files changed, 25 insertions(+)
 
-> Best regards,
-> Krzysztof
-> 
+diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
+index 7dcbf4ebee07..9f0a3990f0d6 100644
+--- a/drivers/clk/meson/c3-peripherals.c
++++ b/drivers/clk/meson/c3-peripherals.c
+@@ -568,6 +568,7 @@ static const struct clk_parent_data pwm_parent_data[] = {
+ 		.ops = &clk_regmap_gate_ops,			\
+ 		.parent_names = (const char *[]) { #_name "_div" },\
+ 		.num_parents = 1,				\
++		.max_rate = 200000000,				\
+ 		.flags = CLK_SET_RATE_PARENT,			\
+ 	},							\
+ }
+@@ -724,6 +725,7 @@ static struct clk_regmap spicc_a = {
+ 			&spicc_a_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 500000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -771,6 +773,7 @@ static struct clk_regmap spicc_b = {
+ 			&spicc_b_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 500000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -829,6 +832,7 @@ static struct clk_regmap spifc = {
+ 			&spifc_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 167000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -887,6 +891,7 @@ static struct clk_regmap sd_emmc_a = {
+ 			&sd_emmc_a_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 250000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -934,6 +939,7 @@ static struct clk_regmap sd_emmc_b = {
+ 			&sd_emmc_b_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 250000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -981,6 +987,7 @@ static struct clk_regmap sd_emmc_c = {
+ 			&sd_emmc_c_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 1200000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1074,6 +1081,7 @@ static struct clk_regmap eth_rmii = {
+ 			&eth_rmii_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 50000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1132,6 +1140,7 @@ static struct clk_regmap mipi_dsi_meas = {
+ 			&mipi_dsi_meas_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 200000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1190,6 +1199,7 @@ static struct clk_regmap dsi_phy = {
+ 			&dsi_phy_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 1500000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1248,6 +1258,7 @@ static struct clk_regmap vout_mclk = {
+ 			&vout_mclk_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 334000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1306,6 +1317,7 @@ static struct clk_regmap vout_enc = {
+ 			&vout_enc_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 200000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1431,6 +1443,7 @@ static struct clk_regmap hcodec = {
+ 		.ops = &clk_regmap_mux_ops,
+ 		.parent_data = hcodec_parent_data,
+ 		.num_parents = ARRAY_SIZE(hcodec_parent_data),
++		.max_rate = 667000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1489,6 +1502,7 @@ static struct clk_regmap vc9000e_aclk = {
+ 			&vc9000e_aclk_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 667000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1536,6 +1550,7 @@ static struct clk_regmap vc9000e_core = {
+ 			&vc9000e_core_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 400000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1594,6 +1609,7 @@ static struct clk_regmap csi_phy0 = {
+ 			&csi_phy0_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 200000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1652,6 +1668,7 @@ static struct clk_regmap dewarpa = {
+ 			&dewarpa_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 800000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1710,6 +1727,7 @@ static struct clk_regmap isp0 = {
+ 			&isp0_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 400000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1768,6 +1786,7 @@ static struct clk_regmap nna_core = {
+ 			&nna_core_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 800000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1826,6 +1845,7 @@ static struct clk_regmap ge2d = {
+ 			&ge2d_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 667000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+@@ -1884,6 +1904,7 @@ static struct clk_regmap vapb = {
+ 			&vapb_div.hw
+ 		},
+ 		.num_parents = 1,
++		.max_rate = 400000000,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
+index 35fda31a19e2..d80d6ee2409d 100644
+--- a/drivers/clk/meson/c3-pll.c
++++ b/drivers/clk/meson/c3-pll.c
+@@ -286,6 +286,8 @@ static struct clk_regmap gp0_pll_dco = {
+ 			.fw_name = "top",
+ 		},
+ 		.num_parents = 1,
++		.min_rate = 3000000000,
++		.max_rate = 6000000000,
+ 	},
+ };
+ 
+@@ -370,6 +372,8 @@ static struct clk_regmap hifi_pll_dco = {
+ 			.fw_name = "top",
+ 		},
+ 		.num_parents = 1,
++		.min_rate = 3000000000,
++		.max_rate = 6000000000,
+ 	},
+ };
+ 
+
+-- 
+2.42.0
+
 
