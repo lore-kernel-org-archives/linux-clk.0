@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9350114A0B3;
-	Sat, 11 Jan 2025 20:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A758F58;
+	Sun, 12 Jan 2025 02:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736628229; cv=none; b=toMFucm6b3ZwbwK9Ct/Lg50SgU7IBdb3YEKIHNA4zmiaSu8GU8uy3umbw5Go9qUR6oj2dJdB0Rr0rlgfV1cuuCDHTRdK9WwTJ9vW2RWQznvE5zUBVrDXnZ9gokxJiUaCy3sQfTeIrKCcK1Qgyzc0UJMHRSYHvGV410O6dFKSYMg=
+	t=1736647738; cv=none; b=ClSnTvQ1aNLZubM3mGQ07jjpH19VQN2QP/Rr7rDkGqbyGk1nK4MIyGzPVu5r1K+E+nqaBFEvEo/PNonLCmF56H2pa1gQMrd3xJk7KOqAzxrLbQMDZSI7YcliRLrdZPEY+URvQZlngwPJ42Sd1tp+HhbpaqeRoap233a+25+fj2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736628229; c=relaxed/simple;
-	bh=2grMNWnL4UO/kcHh8hOfSSDvbTSwytg068prNiChZ+g=;
+	s=arc-20240116; t=1736647738; c=relaxed/simple;
+	bh=0F2rvgq/BKFd5UaczbZcAh3F2vQ7HBPh4uTynCA4XKs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kZDEig4jr4CNLxkVt8Oomp7mfj8f/bQHm/hO//vF8z273ZVEFTvZdroiNke1Qcv7hvfDXIQOMs99uNu5FFUNvWQQlGcmTKQ3Jd6RMKcWM+F0xj2vX8hD10rhrsik9jo0tddtXt8j/COyx6T8wSHKRZGR4hG/JGiuAQmuBmzvwts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9rHLbgo; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=nLhKELWLqUJxZDDIgvGBSm0dcKHOa4JqGYR2oD5DFTczS/POGLUcDvdCChZdDvxtZrUktP0jO0e6aKS/LaNqPBjUNkEOlQl7SyxoMmYNmHxz+1CHptL1HVoX5ZNSwcfrGoCzIK9Z9l26Aeqn8CylNE1ZvX8XAP6Sqqw/3sBYjvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+UWA78p; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9rHLbgo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7189C4CED2;
-	Sat, 11 Jan 2025 20:43:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+UWA78p"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B8DCC4CED2;
+	Sun, 12 Jan 2025 02:08:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736628229;
-	bh=2grMNWnL4UO/kcHh8hOfSSDvbTSwytg068prNiChZ+g=;
+	s=k20201202; t=1736647737;
+	bh=0F2rvgq/BKFd5UaczbZcAh3F2vQ7HBPh4uTynCA4XKs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s9rHLbgozr9JZ+Fp8Zl5BFGMS8mVEbJV+RkUxNIhAId5HkOZOd71cxKwK2bH0pa6E
-	 uHXDr8TFBt741F9DI+PJckKcKIaATZ32nmWPLkvZVrAuS//DHe/pSfBTwYUt1WdHdZ
-	 Plcm7X+xn6PhjXISAz3if1mxNlZy8ze3QfoVJWidOO2/fQrZ7d2t+MeoGRR/+Zuw+y
-	 ICEymySOJEhvWS/SoikaLm+3IDHalYEiT3x4KKtnGmvgIZb5GsgkWDC46PZHP16tna
-	 5jYE9NX7AiCur4riYEds5n2PUytjWnoTCrO5GxUH81FLSIxXmJTzYGfViFab0/3Iqi
-	 1Y7mcD/AeoXGA==
+	b=T+UWA78pkOaSKpwlYYzOfZ6Ma0uYnsDy1rhPzU3bNqJii2NrT+chbdo74Z38NrUdJ
+	 a+Az68ZA1lNCrUI/u5CUiSvewkNgDzFuq9W5/BYjMxZE5t6IKPjgCOBZY2II0RUxX2
+	 cY1LvJ6epqrylvklu49URY8BzG/It7kq4M3I4BhJpO9RG9FvCC2q1AG5nBYl/myXjc
+	 w4e+CuC371sF0rGRYxoIfhBppNhLNo8FCAWUJaR+p/BxZXB03dpEQKroaToLcQgB12
+	 g1MmSreP7eB9IlQuC5ByuPYuyMNejp+bX+w1AH3e2UM85ttdx9PKbmajIlI5w8PP0q
+	 ta7mZiL8KsyCA==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -45,8 +45,8 @@ Cc: Marijn Suijten <marijn.suijten@somainline.org>,
 	Johan Hovold <johan+linaro@kernel.org>,
 	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 Subject: Re: (subset) [PATCH 0/2] Some X1 fixups for sleep
-Date: Sat, 11 Jan 2025 14:43:44 -0600
-Message-ID: <173662822230.416676.5788076941426106152.b4-ty@kernel.org>
+Date: Sat, 11 Jan 2025 20:08:51 -0600
+Message-ID: <173664772972.450688.14775128843894191949.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250111-topic-x1e_fixups-v1-0-77dc39237c12@oss.qualcomm.com>
 References: <20250111-topic-x1e_fixups-v1-0-77dc39237c12@oss.qualcomm.com>
@@ -72,8 +72,8 @@ On Sat, 11 Jan 2025 17:54:17 +0100, Konrad Dybcio wrote:
 
 Applied, thanks!
 
-[1/2] clk: qcom: gcc-x1e80100: Unregister GCC_GPU_CFG_AHB_CLK/GCC_DISP_XO_CLK
-      commit: 50d09211f99bec0cda785c7aaa1d985d236e1dc4
+[2/2] arm64: dts: qcom: x1e80100: Set CPU interconnect paths as ACTIVE_ONLY
+      commit: d11a787f391f76b6a64a070f2386f69f2c9c9010
 
 Best regards,
 -- 
