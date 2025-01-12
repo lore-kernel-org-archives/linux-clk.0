@@ -1,98 +1,103 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96A6322E;
-	Sun, 12 Jan 2025 17:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F3114B96E;
+	Sun, 12 Jan 2025 21:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736704136; cv=none; b=J5yJ3aiWRlRlcauqs4TNG5CUuCrc2XyrgxPfYJTiyPLLO95m+nr7q3Jd65ZhqR4k8KUsD1a/8YNEaZVrX6m75dHQA8BmwzkPJX4YKZNeP995m50Ls7bxCLyGaPPOiTkR4at8GkZ20X/kV1Qrnv1KPACpeVQLKM24+tUwwRRMh3Y=
+	t=1736717994; cv=none; b=cghPHcnNeuWsp5Xl087ujs7Ho+tVRMJdiHUa5Geb4o6px1BCN2bYpuYRlUHm/muxW1HJ9sd1oWlrDg43cSDVJMWFVQIN3g7ngV/owsIVeSuL+805xreboscBm1avsspa94PAB05Vs+CMoR1QVXWo4ccK4IYG/lT05e3XzhBBQWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736704136; c=relaxed/simple;
-	bh=r4kR21UGLDQuk4FtXxiZ74IIyOTc5qe1jrZhsj74Aw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Zw0XXoz30ORLYw3HcGe/ws/ISOLKBXfVpv+qipwO79UX95N4ix12N6cFkX515dSePUHIKoEwTtymV7K55pxW9dQNcjU4rkkTTxaSYMMjAkcehLhs0nNnE0QIP8Wne0YHb4Lj2JoNqonTYhqDfLBEf0cChUxncmCDyYvX7J1//TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C+JtWPgy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1736717994; c=relaxed/simple;
+	bh=mFdjjbWGUCKF/tomzarw1lYWzqiOvK428B3wtrYFo2E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W1QHygVwnnLzYxNYsJcdoCp8nGPyzGAuGQxqVbKJRlTWwabWX7w0z/8xN2zz2ARi2t8KiXzvtG0sIzQuKE9mBugOm0khjGr15It+7EpT0Dx8RPNWeJ3keDKXuF3osmTo1jeD/4zeZg5awXmXGsZIJ21+B/p2x2oBdpIH7N9La+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SZINzIox; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C+JtWPgy"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50C8pbZr019574;
-	Sun, 12 Jan 2025 17:48:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/lScFyZXIQYunYhaA/38nCBDBO+G4itV3Ti7Q4+S3ts=; b=C+JtWPgy4GDU/5B0
-	4SEjwHYzM5jEj7gKfVS6JRXBnCnyGDL1Qg/zow/FK/8wmRjcm5RVNBMs9z8rItNg
-	tdhocDDmyGE49hnJyJZaPTckKiyLe7YwAgBV1jaHgcwFujKX4j7fDk7lFsnMAUWQ
-	0YPyLoGbFCW/XKweVlSyXvcRqNqHGqi6nvNsw0ZEpL+iC8dBo2g+5vRhXIu9oRwN
-	mIkumqHyHxGC6+xy0XZHkM/pPbRieUXbIuKvlJVJhNvwwSbu4Scb/QTEVKaVzxmv
-	ERFsPmcqqcf1h62+uUrTWfyZXwKN9tZA5mzHlULB7jf4Nqt0UX3i3XuiwYjvPi6i
-	3bivVA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 443hm22cfm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 Jan 2025 17:48:38 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 50CHmae8006900
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 Jan 2025 17:48:36 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 12 Jan
- 2025 09:48:35 -0800
-Message-ID: <9bf72460-48d0-e83f-9ef5-bb6bbd95828e@quicinc.com>
-Date: Sun, 12 Jan 2025 10:48:35 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZINzIox"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38789e5b6a7so2009912f8f.1;
+        Sun, 12 Jan 2025 13:39:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736717991; x=1737322791; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1QLt9s+zP7rcQyhkyJBlf2MB81VnrFZkithnJlGG1X4=;
+        b=SZINzIoxSps2jjKO1tZP04zy/W52eBp3PfaOSrjap4LytRqrQCwVJveECV6QrTmv29
+         r3b+CFOtSJKNQ5yotbKOCdACOAYFc/3PQUT7Mu7k1sldZ5qrjFFceUcTRan+nFmH/7dp
+         uZNtw5kPELphgj0rOQldhZ0+7XR1Rtavfgc4mAtj/ffnWRvcXzEfvFGgJuD88DOFkGkr
+         Jqrk8wbNwK66PDfbKD3s67V/fJBkpbm8nlyro4Sz2+kPKnxb7tD3shpmdvubhZNaQoZy
+         eTAhATlt84nIQvS4kyIz8PgEcqDnmKD9L4nW4E1ZPSsWxCvCtD6r7moj4Vlm59i41042
+         IXUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736717991; x=1737322791;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1QLt9s+zP7rcQyhkyJBlf2MB81VnrFZkithnJlGG1X4=;
+        b=D+n9omEo/Np4xAjw//L1NaXqW1qkr01EQfomaDfGhAR1wg7PhheCk7P/YdEaDYvr1y
+         5Lu5jDDvtA5KuRtexhWUYx8xc6eKO5twAxzSDHsrIWADiZuA3C2Zi8PpTN3sPOZvaT3L
+         jrn3MIPPqx1MEwtIuUePQAIEU3Dz2UIAWLo3gk6o+fPhG6PsNVsq+mpEd/ao6Qygnl1T
+         k9WXNd6JK39onCQOXMKp6mWFB11hzNamGXunQXUyd+cYLEg6NauD7VofD8Pfvl8UsM1U
+         MvgTJeKiYu7U3H+aeXH87cubErw8WtJ90Tq6uOgv6BHBDw4oE4KokDfWoK8m7pSHHBEp
+         6zzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZIeHjLPUm8aLnFYlgnHuGRr981TWp/cz4OyuxJTPMfRtSlUK/+M15j4w6TwpUbzwK1fvL2E6g6sc=@vger.kernel.org, AJvYcCWFUhjXUUEQCgBIHGUW0Rnh4CkXH0PCAHxz46HmQaTY5jC6++dmtBjZuMf14D7q0sg6k9/MF4IiAcP/k6ah@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ4ErN2DNgtTuzDNGRB+wjZgiGiwJwO5vMvVZH0XbbxHL+by8p
+	WgMrCaMeY15kz6pwISj48kZUXslQhY/eAvW9gEHHjNBtFWSpi3c7
+X-Gm-Gg: ASbGncsyPSYDUkMqAEZ7F42YLUGxl0wQau3nOZXPxtzURrHSWVB523pvELgh3X47ooM
+	/5ddtGN8l34+CiFofDjuEdEPkDM0iPkCaMmf6cQfeTn44tZ6orbD99mck8iCNBByXQ55kjyrFYn
+	eHYd6/j72o517Coco8tplA0Lp9bx8Lq1LZWkCSPDC0UTy+1HNOoVUGp0Aa0cK7qFrlMfsX0iua6
+	MCusx7Qg0iCsHWcUlrJOJ/Nt9DUFWvfS8+ZMv6pBPcn71Kc/zrlKlkQWA==
+X-Google-Smtp-Source: AGHT+IEk1Eqa+9Dem5I1quDZ63cclXmtqObIW9f8dsm241vNqV4DMXLFl+xYgWu1iKRwCO9lDDQ2Wg==
+X-Received: by 2002:a05:6000:1a8c:b0:385:f677:8594 with SMTP id ffacd0b85a97d-38a87336b29mr17199600f8f.43.1736717990523;
+        Sun, 12 Jan 2025 13:39:50 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e4c1ce5sm10684180f8f.94.2025.01.12.13.39.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Jan 2025 13:39:50 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] clk: ep93xx: make const read-only arrays static
+Date: Sun, 12 Jan 2025 21:39:47 +0000
+Message-ID: <20250112213947.8524-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom,mmcc: support LVDS PLL input
- for apq8064
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>
-CC: Rob Clark <robdclark@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241224-apq8064-fix-mmcc-v1-0-c95d2e2bf143@linaro.org>
- <20241224-apq8064-fix-mmcc-v1-1-c95d2e2bf143@linaro.org>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20241224-apq8064-fix-mmcc-v1-1-c95d2e2bf143@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Qx_oX95oMr4HNlnOgdghm4IYzh4qMFC5
-X-Proofpoint-ORIG-GUID: Qx_oX95oMr4HNlnOgdghm4IYzh4qMFC5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- mlxlogscore=832 phishscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- spamscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2501120158
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 12/24/2024 3:12 AM, Dmitry Baryshkov wrote:
-> APQ8064 / MSM8960 have separate LVDS PLL driving the LVDS / LCDC clock.
-> Add corresponding input to clock controller bindings.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Don't populate the const read-only arrays on the stack at run time,
+instead make them static.
 
-Acked-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/clk/clk-ep93xx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
+index f888aed79b11..4bd8d6ecf6a2 100644
+--- a/drivers/clk/clk-ep93xx.c
++++ b/drivers/clk/clk-ep93xx.c
+@@ -586,9 +586,9 @@ static unsigned long calc_pll_rate(u64 rate, u32 config_word)
+ 
+ static int ep93xx_plls_init(struct ep93xx_clk_priv *priv)
+ {
+-	const char fclk_divisors[] = { 1, 2, 4, 8, 16, 1, 1, 1 };
+-	const char hclk_divisors[] = { 1, 2, 4, 5, 6, 8, 16, 32 };
+-	const char pclk_divisors[] = { 1, 2, 4, 8 };
++	static const char fclk_divisors[] = { 1, 2, 4, 8, 16, 1, 1, 1 };
++	static const char hclk_divisors[] = { 1, 2, 4, 5, 6, 8, 16, 32 };
++	static const char pclk_divisors[] = { 1, 2, 4, 8 };
+ 	struct clk_parent_data xtali = { .index = 0 };
+ 	unsigned int clk_f_div, clk_h_div, clk_p_div;
+ 	unsigned long clk_pll1_rate, clk_pll2_rate;
+-- 
+2.47.1
+
