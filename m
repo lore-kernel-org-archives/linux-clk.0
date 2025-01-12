@@ -1,61 +1,61 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C70A1B87E3;
-	Sun, 12 Jan 2025 13:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195771BBBFE;
+	Sun, 12 Jan 2025 13:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736689233; cv=none; b=gOLmiHOV6PEkG+13ARIrG3HHJ2UK8hH24f9vpcTViJgX3B31u7abaMTKzwjhk+NLHdPzTYqAtB62/F6NMT2ABAQg3dZbL2Cbc38IaVX0xW23gsFkXzNIs6zUB78Re8ylhqqRL95+k0y2JWYk3H0G76kxzL9xns3ffy3LIs9Z1LY=
+	t=1736689235; cv=none; b=ZyMdZjZW+TPF3zUNKQ97Hk3csTyrvtM0FA1cf9+coghEajEuI1SIMrnDiNtJ+LOqQWMQB7hZR3m/1dNxGN5muLKCml5qfIDxCb6rRwdnjjh58l3n+1YiSwEXszkFAmmLY33ifZhaVI5dFnH3tbU+pb28Hze09vs2S8Gm3xPyBxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736689233; c=relaxed/simple;
-	bh=7GIQqUjlMT5bgex6Ozz6WNE/20sFjJIoGKoZOcWPOlA=;
+	s=arc-20240116; t=1736689235; c=relaxed/simple;
+	bh=c03WokknUq9N5q+PemBa9FQe4GiJG6bh3QDTACDUWP8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QmFYx3lL2A2bBxlQFlRZGw+jm97lho7Truz0OcAdHC4S06KjEWBHUYD2yarATzbUya6ODxZLn5OA1vBg6BFUpkS8doAmw4mmMcBGI2WN0gSh4AiMdfCedPm3ikiV6j1bB8rmqslXYuQP2Fgl5d43KBRzE1ZY7CdRjTsZn0PKVjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JsfRoOOO; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version; b=nEN1WtuYSXvgM72HSMxOL6dnKgBeDwoEMd2lniiE7uE6CrPzU4SYH4LLwQv/MEy2lWCs6FMiCRYUXfpB3ZT8bG/GQIpIXan2NFK15UYEODMEDBZ6GKPBBINFiD7k9oOeodRtNvia2VwVtJaq9zPybCntSqlt7Mr6++ugVX9SNXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d9M4Dlzm; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JsfRoOOO"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aaf60d85238so653849266b.0;
-        Sun, 12 Jan 2025 05:40:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9M4Dlzm"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa6a92f863cso672587266b.1;
+        Sun, 12 Jan 2025 05:40:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736689230; x=1737294030; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1736689232; x=1737294032; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M2d8+jeTpX799XdIAphX2pC/RY7vgNu0VjS1hTZC2as=;
-        b=JsfRoOOOs+pQqX62aG9udgna2HUBbIvW/JfxkBOjOW9kzjtfdmUeurt5vxgMuEBJHi
-         Jvfeo4gstDE7UFNVrKOLcteBpKQealDyHv4m4OjC2yi+IJLH1EsYCv3kzv7W8QyoMEtg
-         44d11TdoRoMHD2qFwk1AEJYQ8tptabwFP+4ggaee+aFf+47kmCZpMO55384queihJyDS
-         3rP9FseqkwSltca1GOtk/OpoPQX63i5qmvLh7g+CBin8h+OWR7oKxd485cfp9kUMHvab
-         Zzl4OUrdLfn2O4RW/+DbAObSwreb7BASNFFi6BM08NcBwR6cIY4bXJ43tmYnFKdvCGA1
-         o4rg==
+        bh=3MsIaz2pAYFsvkh3Vy2uCEBJ6/wXDXMbjZ51UGtrJ78=;
+        b=d9M4DlzmJiF63jMz1RbcL7LWyhlmf4TA4wxzT/e1OquGN5rRoDAygY4K0pvy9nXW46
+         gwyBShRwLUH0oR7Sr+OQGyYlBXBftdCybYrZj7MxVlHJqDIQ6MARqsjlSRkDLbvw+RIv
+         k6svZ2YzOe9tr12/xbK3CdJ6UhH/z1VPTc3dKZF6D4c4jzosXDXBBDBG45QAxvNzmRYE
+         l0zdldUJFfMrghQyIVG99RkcL9Q2/6ryKs36LAbcfsB+SotPaNbKiJivtue9rRiqPL+s
+         j+C12vwXyN+uLoOrJXWf7DRdBm7iDTVU0j/cbZ+tQJAp6FFeMxQZrmpDts6VaLaoX009
+         13sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736689230; x=1737294030;
+        d=1e100.net; s=20230601; t=1736689232; x=1737294032;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=M2d8+jeTpX799XdIAphX2pC/RY7vgNu0VjS1hTZC2as=;
-        b=Gd2A5LV5FiphrGVI6/PYl+pz8Jvk9C2dBLtDUMo+Z9XSBMNGvuqivpSL60xaVMTNnM
-         lWDugtFd/TtStFmK+7jO6t8T4TuBmzK2HxSyG+z2/vOUXIhZ/IuSh+PAcwTOr7yPDLzV
-         nidxXBaJ9Uiil0fWoDg5QfLIzLYR4JyPPb0zha+UX3JM4hm1YkftD9gdo80NKu3cdqNp
-         d3wNzVvaZaqA4raXM5xYyZgNDb0Z2zajWNrm0Tao6rsHT3P2xRUkQBBKG4rZCGZrqFQS
-         +Ss5V+4vaatopBlWPBMUHrImZkZEYnsy5ZdvewxkBQz2xjRVKXb4aGwVDwWq/fHsVqcu
-         0LSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUEmpH43Qe2lxuSmv54e+X7Kj/rAkX/pha8quJOHgbCyhMtNFaTSEb2ubyE+wDC9yDnGqS1yggZibT9v3LK@vger.kernel.org, AJvYcCV9ts35MEbqFlqvULHdAib7k/GqQXFLO95SXnJaajkBA1L8dppf3tE1JyZIc/W6Kc0zzi0F0rbGQh77@vger.kernel.org, AJvYcCVb+v/HVtko9FDwT0J5gA/L254TsTN9taqK2PceLXFdqJPtIAUAuZdYZybJAOaGgYuT7tjM3r0GYwxD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4Ecih6UEUETySaM4xUp4o1IA2tWCp/BWWColAjmC2Hf1yEtf/
-	SrWvnJQlfswWR8VeVW/9ytG/mRDnGC5u2ixRpCr6uiJXcjkSMHfx
-X-Gm-Gg: ASbGnctoNTRYDpoWc2GFfppt4w8H7wQffSaR9UnisbcUswHX4Iog0roBUd30epnmi6b
-	ye5bhEa2K5YB7r6LQ0yhYsElj+sNzX91iLgPyXrixD/ja4HvIC+4wXbZ+p9W9p/7M90W8Wuy8wZ
-	De+SVQPQM/1GbToxE7gqtgzh3tgn+lvU1aa69UFOa/GLoeJ8mBZsNTl9J0D57U95EsAcWMGxXZd
-	nXU/FLp4qIZW0Ny4+iKZOI8Ymf1N7D9GTB4ZnPtCyECy1RK2Vj0RXAs2KKDC58WT6bzpT8=
-X-Google-Smtp-Source: AGHT+IHADvd8u6xRephvXlpuOc6xQBI4RHqlOGTeRCG7Rn9BxOz0NFUfKVQmvbFKUi6m+PXcLoy4nA==
-X-Received: by 2002:a17:906:f5a6:b0:aa6:8a1b:8b84 with SMTP id a640c23a62f3a-ab2abca0be8mr1636794066b.57.1736689229732;
-        Sun, 12 Jan 2025 05:40:29 -0800 (PST)
+        bh=3MsIaz2pAYFsvkh3Vy2uCEBJ6/wXDXMbjZ51UGtrJ78=;
+        b=e51qZrB29vK8R4vS0lLHoQDlxwRPBR5D9QqQ2WtH+ks56pbHr3lvFA4muvqCivPnP/
+         PGKqtwkRnW5eZJfWQ0SoZ1RW0qnrCpenk5fp1PXl7YC9lZ6o6PVbW4qydljmsLKVtWLy
+         TOhVW2kjvBM5mlJDfzJ5isRhuR/DYM4oWprh0mHPqAYAZfVtOBYep8we/HXv1H0S5k7F
+         Ae2SMEZ2US6JZN7a2WFLVG9J5VSVvlyMk0oWNMoRhFFbCdmbeVXmAIzw5CyY0symB7K9
+         /aH6tFgZokTNQluNwjhIIgVNczzRTZW4DrOAvLhATqeCA6oe3ncfmH5VOTgmtOzAxEQU
+         Xm2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVhq7hIh78OiubfzjVGt+uhGOYCIF7AHQWsKz//TVbbbwwLFYJAAskcLWfodsdzD917kodenOE/QwTm@vger.kernel.org, AJvYcCWVMwkmkrPz/Gfuf8JuCFVkksa33XnVRmJ5x4Z8Fr1W6jsBaXDAHOZ0SEOofDm7ZVVHXbJiU9EYBzA/@vger.kernel.org, AJvYcCWtmIQZd6m9atej5gRyleI2v5uUQ/efQpjuse+7mze7troMFe1olzOQ1uLoI736XsjEmqSwL0Wl5i0iUATu@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy1HMYBz+l49X1UaabC36oYonW9XVvDdb+caJFAWwN004Vwo0S
+	p5hXsy1efRNpnEiqi68/18awSyCkrnh2Myaml8Cg0m7ovRKGd891
+X-Gm-Gg: ASbGncsQ3XIS/28/Fgfg0JS+VFTtbo2iD9VAImejFDMm2UeS85IiD7G7i/KJD1fJxyw
+	FTYAg1zTeCQFkrdoeZrk+rC+15dCBi4ivKTcco4yfthJFml6O2PiaIYo4LfPrEBwaIJiJwlV/W6
+	BjBTiuQyORHeDpnRUn+3dDNx9GZ5HTnJp63t0os0WhmIf5fBUmlXhdUxQe+thlDoRaTn/6MWshr
+	VLuwUHLVQDVBdSmwKZej2Y42NpZHey/sg7oT0Mzie/jZ7VoKKXouDjVtjX5FmmTxNxnSBE=
+X-Google-Smtp-Source: AGHT+IGhRDdWMzNmO6jwI7oj/9fOIu8HnI8mDuXnPVaFjjbIlG3LyzW46cc9QsoyEZsHxvPDBVFgJw==
+X-Received: by 2002:a17:907:d88:b0:aa6:5910:49af with SMTP id a640c23a62f3a-ab2ab70a152mr1607944466b.24.1736689232140;
+        Sun, 12 Jan 2025 05:40:32 -0800 (PST)
 Received: from localhost.localdomain ([109.52.222.172])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-ab2c90d9a46sm379421266b.54.2025.01.12.05.40.27
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-ab2c90d9a46sm379421266b.54.2025.01.12.05.40.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jan 2025 05:40:29 -0800 (PST)
+        Sun, 12 Jan 2025 05:40:31 -0800 (PST)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -66,11 +66,10 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	upstream@airoha.com
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v5 3/4] dt-bindings: clock: add ID for eMMC for EN7581
-Date: Sun, 12 Jan 2025 14:39:39 +0100
-Message-ID: <20250112133953.10404-3-ansuelsmth@gmail.com>
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [PATCH v5 4/4] clk: en7523: Add clock for eMMC for EN7581
+Date: Sun, 12 Jan 2025 14:39:40 +0100
+Message-ID: <20250112133953.10404-4-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250112133953.10404-1-ansuelsmth@gmail.com>
 References: <20250112133953.10404-1-ansuelsmth@gmail.com>
@@ -82,33 +81,47 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add ID for eMMC for EN7581. This is to control clock selection of eMMC
-between 200MHz and 150MHz.
+Add clock for eMMC for EN7581. This is used to give info of the current
+eMMC source clock and to switch it from 200MHz or 150MHz.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
 Changes v4:
-- Move to patch 3
-Changes v3:
-- Add ack tag
+- Move to patch 4
 Changes v2:
-- Drop additional define for EN7581_NUM_CLOCKS
+- Rename emmc_base to emmc7581_base to make it more clear
 
- include/dt-bindings/clock/en7523-clk.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/clk-en7523.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
-index 28e56745ccff..edfa64045f52 100644
---- a/include/dt-bindings/clock/en7523-clk.h
-+++ b/include/dt-bindings/clock/en7523-clk.h
-@@ -12,4 +12,6 @@
- #define EN7523_CLK_CRYPTO	6
- #define EN7523_CLK_PCIE		7
+diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+index 3a4b7ed40af4..6a763bc9ac1a 100644
+--- a/drivers/clk/clk-en7523.c
++++ b/drivers/clk/clk-en7523.c
+@@ -91,6 +91,7 @@ static const u32 emi7581_base[] = { 540000000, 480000000, 400000000, 300000000 }
+ static const u32 bus7581_base[] = { 600000000, 540000000 };
+ static const u32 npu7581_base[] = { 800000000, 750000000, 720000000, 600000000 };
+ static const u32 crypto_base[] = { 540000000, 480000000 };
++static const u32 emmc7581_base[] = { 200000000, 150000000 };
  
-+#define EN7581_CLK_EMMC		8
+ static const struct en_clk_desc en7523_base_clks[] = {
+ 	{
+@@ -281,6 +282,15 @@ static const struct en_clk_desc en7581_base_clks[] = {
+ 		.base_shift = 0,
+ 		.base_values = crypto_base,
+ 		.n_base_values = ARRAY_SIZE(crypto_base),
++	}, {
++		.id = EN7581_CLK_EMMC,
++		.name = "emmc",
 +
- #endif /* _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_ */
++		.base_reg = REG_CRYPTO_CLKSRC2,
++		.base_bits = 1,
++		.base_shift = 12,
++		.base_values = emmc7581_base,
++		.n_base_values = ARRAY_SIZE(emmc7581_base),
+ 	}
+ };
+ 
 -- 
 2.45.2
 
