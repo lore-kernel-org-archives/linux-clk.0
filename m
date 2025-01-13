@@ -1,416 +1,241 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F3023A106
-	for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 14:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B76122DFB4
+	for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 14:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736779605; cv=none; b=FOs//itNwSYjz3w/x7dNpJf075DyYgVB1gMFPp/Xb4iS6b7kstlv7f1UuwmlnqP0iHo+rpDP3LU/QYDl5FBODE3SL01UrCIwv3k1UPk8QwHrd1uscxqPhoD6vFT/FzYix3NMp0Z9T1G9rn595M0kl4RGrUPIU9opiAJcnbvweV0=
+	t=1736780247; cv=none; b=o35E+1ttkNGaVFYCFBlJMM6hcJ/61f6YezhJuGbnuTIW9P6XukMu4i41k5ChR9VxdFPjLuvY9S6mOiOIts7r40f8IZU76l+ry2fk4OG6/a9RouuPwhFS/V3YWR2kO0EAT5LikcSusEtUN4u/qu1NtJd/aBiQ22XNMwElFy/LV/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736779605; c=relaxed/simple;
-	bh=SriqCVrEowAp6BXPDxIZ4IdpEUaMb7Erfom/ZP9KIjg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lC33hh7gmoM9378MljK18DRWnlo6t41EynkYBM58ZnN8LFPsogoK/m+oXulKnpv0GyYCEr6ibn8gKGmRep/lWKFto58FIIR7lSaXc2G1n7ZHoIkHkm2nC7TbUI4+aPdauyZU+HBOm5NuNiNETKsSe0YUG4VXOG3S8i7SvirsAVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hoo9TPwn; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1736780247; c=relaxed/simple;
+	bh=ZC8TFqmEccx1T/wjcHtffQmZC5UCagFKPztnEc0J07w=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=dCX4+nhOUKAJtjoGf6DG5ErjYVaCAQQSyLHGe+F+TSQC9mJLBRINYoX/aw2Ma8GkebZQY8cZhlKkEuu0xR4xwptWvPIJUYKYGiHEQ+2X0fMrrrdkMV1gYM0AE9wELnW0gQfTaekmjzaIO35u3JH7tCnO70nB9Vifj7uTUzq4mwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=W63xq+uU; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hoo9TPwn"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-436ce2ab251so31541685e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 06:46:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="W63xq+uU"
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-5d3d0205bd5so6682490a12.3
+        for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 06:57:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736779601; x=1737384401; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tE6hZ+Fd5mw5nOuuEkulLuKJpq+Pv/1H3hGSSWLum8w=;
-        b=hoo9TPwnkNgOAtHl7Zh+voKbKChQx+6RUi11d2PWcypxLGvpk4nNlYkZNCtj81K5AP
-         Sd+ec8QBSPcFW4ybnCJ7YDCv0VHs9PcCaDHuD1xnEfFMdy6zHb9i7lzJlF/gZXW5LspD
-         PD33oaqFJuwNeS6dK19PFvpYoqYLXwuQqWGQfQurnDieDvqnERwug6DpOLpHzYoXn8Em
-         OMzuBxleRh7vsEh4NPDLzVn+x3P4O+b1OQGUACy8A0w+gP1xFnHkMSeMV3Fk559EfsQy
-         NYN97YWrmd7/pUAawqTvLLsTIryt+8rDXicmtsRZaKYMgB+02N0r5Wu7T+tUxrIZuXGf
-         ozmw==
+        d=suse.com; s=google; t=1736780243; x=1737385043; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FwnS3vaGfU2joF6cYNFfsBCgKjyVEnMzRnIWwalUQU8=;
+        b=W63xq+uUluv93Q6rqgQolyyslqu5eu6i1ALH0BDGjyLzj83EvgeqyXJZhVTxaj6j6h
+         fiBO0rlahklJPg8nv0lEKSUDOqZ8I6Yt6uR25VqZ1jagfYumxbzzxrL/C//fI9+HyGZV
+         XPBhiuSW5RQRoeIddb26ZpZO5ColTTKLN20/vJAuaGqVF2evdFGbaJ9Xoe3nKcSNl9j3
+         8P0HsESCgIiq2vvvoBg+2QoESQqcPPMg6eim1dMmL0QMwdbRZ7qKuApMinHRxg4VSqQQ
+         ijzJ8yV3aS8iVlR24ZXjgu+JQNOZ/TzJAE/2HBK0mwf6IVBMlLETFmRSFL/2CXK85Me3
+         bPgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736779601; x=1737384401;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tE6hZ+Fd5mw5nOuuEkulLuKJpq+Pv/1H3hGSSWLum8w=;
-        b=G5obVPCtFFYNhQlBtQqVZtxYb8MPZXvj/TT5kVRilllf9umq5r4KeybwXOYxSFR4lb
-         5pbUmA3TM2r6yuiFjLI3yQjI2GKaSwCNNGG7KhUaDlCjrhv0yqQPQ+GDKvnGwg/1rHNB
-         QzQ/2kARzuNVzFQzCKV+yDuSGFiytvcR6jjIBg4hyzsNjE38p1lm1/eUPSTLzfhNGzmU
-         +WpHgfXZ2fe2mAOWrIvASPa0/YGmjaNSzebxjkYZo0UMZ9qT8upFWAbY5+rJ7wubK8lb
-         xvBrGxWWh7asM1uGOl6TUMw02BQ2f9GrUtLg9vKuVzcjqwDwcQsngqo4t0/rYqvzt8pL
-         0QTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBnVsQFcARI1rzx7fT8cFRduH015XG6Tpy5pgl/2vCPuH7pvsPF7gem/QuG/Hd68deHbwoCFFbpDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAJT7o2V2y5gw9aLgbztNIZZA5p/MkAINkxvSmBdeJpRkSaXXU
-	tqfpvLsIVCwgekne/TeDtOtzAiwrCEZw0McuH577E1ASzquI1JY5MDI3A2ya1U8=
-X-Gm-Gg: ASbGncszlsPD45gF0+8l+Y6JekD8qHBdxreHe62ZCnrHAfgJG+EQBHsazSPLxawNd7p
-	UChQMRjU5OYElfVZn1Zc/4J66vhhfZyKbqhmw5xsMbEcAEABi6PcZhtwgA/p6+vBdW8b4xhG7yy
-	wWnmuLf8p6r0fIqycwR4F6AGxcq5sBIHRKiBiK9q5Q2CsJirn5Ru7HfA5P7AC6762twQXg+FapB
-	pVbRg4Hc76/O+2RWbwL5No1vGkWIYiH2dBmhEPDNM3XPNewRAtncq1JRkRkFTslh2WO6pEP26BU
-	XLLuXMlLRZamNTBKTb1Cs8fbXGQ9wGx+kA==
-X-Google-Smtp-Source: AGHT+IGSgrLOXrRzTlVLniHLSwjw2ewxLMRWdGdwprfbH4ZVqnu/OhLOX7NBhsM0TFAi3c/YYUsydA==
-X-Received: by 2002:a05:600c:a09:b0:434:f1e9:afb3 with SMTP id 5b1f17b1804b1-436e267863emr180558495e9.3.1736779601413;
-        Mon, 13 Jan 2025 06:46:41 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:d7c2:9cac:29c7:268b? ([2a01:e0a:982:cbb0:d7c2:9cac:29c7:268b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9e37d7fsm144561755e9.32.2025.01.13.06.46.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jan 2025 06:46:40 -0800 (PST)
-Message-ID: <af501f2e-2dd6-4182-872d-76260edba973@linaro.org>
-Date: Mon, 13 Jan 2025 15:46:39 +0100
+        d=1e100.net; s=20230601; t=1736780243; x=1737385043;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FwnS3vaGfU2joF6cYNFfsBCgKjyVEnMzRnIWwalUQU8=;
+        b=AUFG7Do8TuQY/e0LMU/NOBZTl/QpXK5N4Fl+zUAQ6tPlwBYKNFPZMjL0Uk7LcPe7DY
+         mQ4usXIyp7SqHsGPpI6iohJXlISRE6bhErWR/dBYewHT9ehLCTScwhMhNUwfHmEAy6xo
+         MT5oX8XteNWDjJOUlX7rRinIjFl+QJE3XVF2vUSLBS8QDog+1Or2Q1skJ/EK58zRq3YM
+         MP+gSz5KCU3tYw9LcQzNUqXvTl5BlhVGDw0hwLruAeSZMIErZLQ5OAhYJltfXgQI6/qc
+         IGkXWWJdUNvji7y4Xxr+8t2Fk+0UdVEIF6S9AyL617P2KFJftEH/sqrZbXMcWTQoVjCP
+         4JXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGfO1c1bUcSM9GlLvTnPrnZ/XfwDPLjj0Oz6TrU3vtNxVDy41pLcDRfk4v5FuAB1zRTbkdsSbIyCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyutJgtnqslDsvQTSWb8J51PPs/HkL386KH1/LuxqEmAej6vJNT
+	2OCJ7x2RtDGWvUywRXVSke19JgRV/WQUiw50vbelRxSPCPWuMWQFjDBFsZxri7w=
+X-Gm-Gg: ASbGncuGLcy1lfm7G382iZQNiIfUsyuSZPYisFwPmzyFe1ByBoJdyMoY+5YAuI22OK2
+	FU5Bm9u5frkXMRtLX/Hq6GrKWMJz0IWkQxS+20W+pTwQuUG7T2XVUB+XX4JQReIcR2j3iQIxn6t
+	Z5jc3QWeviwEc2hfl0Z/TmmUIdJcMMrszU3oZ1ypqh3vw0Mc0StXm6JtOjFXvtJ9MIsesKVGj1V
+	idq0yk5oAY6SZFc/6qWy9/ZITrG7udh266ohTnX4Hqj/akFEniktDvfejbZYeg8HXJfCynssPGh
+	s37bSormhaWX5M2jpSTgE7JtuVw=
+X-Google-Smtp-Source: AGHT+IF+dQmIb1tSxF2qnawRLekJBTCQVTuDzMZWssaSx8RiWN62SO954NQh7GFSKEfS+l/Tll7rpQ==
+X-Received: by 2002:a17:906:ef0d:b0:aab:d7ef:d44 with SMTP id a640c23a62f3a-ab2ab6c1ad2mr2040825166b.24.1736780242877;
+        Mon, 13 Jan 2025 06:57:22 -0800 (PST)
+Received: from localhost (host-87-14-236-197.retail.telecomitalia.it. [87.14.236.197])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c90da2c8sm516494166b.62.2025.01.13.06.57.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2025 06:57:22 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using a DT overlay
+Date: Mon, 13 Jan 2025 15:57:59 +0100
+Message-ID: <cover.1736776658.git.andrea.porta@suse.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/2] clk: amlogic: c3: Limit the rate boundaries of clk_hw
-To: Jerome Brunet <jbrunet@baylibre.com>, Chuan Liu <chuan.liu@amlogic.com>
-Cc: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250110-limit-rate-range-of-clk-v1-0-dd618adc4aa8@amlogic.com>
- <20250110-limit-rate-range-of-clk-v1-2-dd618adc4aa8@amlogic.com>
- <1j34hqai39.fsf@starbuckisacylon.baylibre.com>
- <2578a79d-1e24-4336-9859-e384c8f69269@amlogic.com>
- <1jr05693nn.fsf@starbuckisacylon.baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <1jr05693nn.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 13/01/2025 15:42, Jerome Brunet wrote:
-> On Mon 13 Jan 2025 at 13:24, Chuan Liu <chuan.liu@amlogic.com> wrote:
-> 
->> hi Jerome,
->>
->> Thanks for your prompt reply.
->>
->>
->> On 1/10/2025 9:55 PM, Jerome Brunet wrote:
->>> [ EXTERNAL EMAIL ]
->>>
->>> On Fri 10 Jan 2025 at 19:47, Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org> wrote:
->>>
->>>> From: Chuan Liu <chuan.liu@amlogic.com>
->>>>
->>>> The PLL can only stably lock within a limited frequency range.
->>>>
->>>> Due to timing constraints, the maximum frequency of the peripheral clock
->>>> cannot exceed the design specifications.
->>>>
->>>> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
->>>> ---
->>>>    drivers/clk/meson/c3-peripherals.c | 21 +++++++++++++++++++++
->>>>    drivers/clk/meson/c3-pll.c         |  4 ++++
->>>>    2 files changed, 25 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
->>>> index 7dcbf4ebee07..9f0a3990f0d6 100644
->>>> --- a/drivers/clk/meson/c3-peripherals.c
->>>> +++ b/drivers/clk/meson/c3-peripherals.c
->>>> @@ -568,6 +568,7 @@ static const struct clk_parent_data pwm_parent_data[] = {
->>>>                 .ops = &clk_regmap_gate_ops,                    \
->>>>                 .parent_names = (const char *[]) { #_name "_div" },\
->>>>                 .num_parents = 1,                               \
->>>> +             .max_rate = 200000000,                          \
->>>>                 .flags = CLK_SET_RATE_PARENT,                   \
->>>>         },                                                      \
->>>>    }
->>>> @@ -724,6 +725,7 @@ static struct clk_regmap spicc_a = {
->>>>                         &spicc_a_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 500000000,
->>> I'm sorry but the whole thing is completly wrong.
->>>
->>> All the clocks I'm seeing here are gates. This type of HW hardly cares
->>> what rates it handles. Same goes from mux, dividers, etc ...
->>
->>
->> The purpose of the patch is to constrain the clock network between
->> "clk_hw" and "clk_sonsumers". The output source of this clock network
->> may come from gate, mux, divider, etc.
->>
->>
->>>
->>> All you are doing here is trying enforce some made up "safety" / use-case
->>> defined limits that do not belong in the clock controller.
->>
->>
->> Yes, the purpose is also to ensure "safety". From a strict perspective,
->> this constraint indeed does not belong to the clock controller. However,
->> the source of the potential hazard comes from the clock driver, and we
->> have already identified this hazard. Therefore, I think it is better to
->> avoid it in the clock driver?
->>
-> 
-> No. The clock provider driver describe the how the clock are _provided_,
-> not how they are meant to used.
-> 
->>
->>>
->>> The only piece of HW where limits could possibly make sense are PLL DCO,
->>> and even there, you've got multiplier range which is way better as an
->>> abstraction.
->>
->>
->>  From the perspective of HW, the timing constraints of the clock are for
->> the entire clock network with the same name. The output source of this
->> clock network may come from PLL, gate, mux, etc. The multiplier range
->> of the PLL can also achieve a similar effect. If this approach works,
->> we don't need to define the multiplier range for the PLL (PS: Our
->> current multiplier range is limited to the case where "n" is not divided).
->>
->>
->>>
->>> So it's a nack on the series.
->>>
->>> If devices are have particular requirement on rate range, have the
->>> related driver set it.
->>
->>
->> I think that the clock configuration exceeding the timing constraints
->> is a hidden danger that all chips have and face, but this hidden danger
->> is not easy to be exposed?
->>
->> For instance, if the routing of a clock network is close to the clock
->> or data bus of other modules, and this clock network is wrongly
->> configured to a frequency beyond the constraints, causing crosstalk
->> that affects the normal operation of other modules. If such a situation
->> occurs, it will be very difficult to troubleshoot. How should this
->> situation be handled more reasonably?
-> 
-> Fix your consumers drivers if you need to. Set range if you must.
-> 
-> Those are not clock provider constraints. Those are use-case ones. It
-> does belong here and CCF already provides the necessary infra to deal
-> with ranges.
+RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting
+a pletora of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM,
+etc.) whose registers are all reachable starting from an offset from the
+BAR address.  The main point here is that while the RP1 as an endpoint
+itself is discoverable via usual PCI enumeraiton, the devices it contains
+are not discoverable and must be declared e.g. via the devicetree.
 
-I kind of disagree here, if the vendor has the data and is willing to share
-the range for each clock path of the system, I think it should be welcome!
+This patchset is an attempt to provide a minimum infrastructure to allow
+the RP1 chipset to be discovered and perpherals it contains to be added
+from a devictree overlay loaded during RP1 PCI endpoint enumeration.
+Followup patches should add support for the several peripherals contained
+in RP1.
 
-Usually those ranges are not disclosed, so we don't set them, but CCF will
-certainly use all those range to make an even better decision on the lock
-routing.
+This work is based upon dowstream drivers code and the proposal from RH
+et al. (see [1] and [2]). A similar approach is also pursued in [3].
 
-Neil
+The patches are ordered as follows:
 
-> 
->>
->>
->>>
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -771,6 +773,7 @@ static struct clk_regmap spicc_b = {
->>>>                         &spicc_b_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 500000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -829,6 +832,7 @@ static struct clk_regmap spifc = {
->>>>                         &spifc_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 167000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -887,6 +891,7 @@ static struct clk_regmap sd_emmc_a = {
->>>>                         &sd_emmc_a_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 250000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -934,6 +939,7 @@ static struct clk_regmap sd_emmc_b = {
->>>>                         &sd_emmc_b_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 250000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -981,6 +987,7 @@ static struct clk_regmap sd_emmc_c = {
->>>>                         &sd_emmc_c_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 1200000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1074,6 +1081,7 @@ static struct clk_regmap eth_rmii = {
->>>>                         &eth_rmii_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 50000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1132,6 +1140,7 @@ static struct clk_regmap mipi_dsi_meas = {
->>>>                         &mipi_dsi_meas_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 200000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1190,6 +1199,7 @@ static struct clk_regmap dsi_phy = {
->>>>                         &dsi_phy_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 1500000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1248,6 +1258,7 @@ static struct clk_regmap vout_mclk = {
->>>>                         &vout_mclk_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 334000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1306,6 +1317,7 @@ static struct clk_regmap vout_enc = {
->>>>                         &vout_enc_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 200000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1431,6 +1443,7 @@ static struct clk_regmap hcodec = {
->>>>                 .ops = &clk_regmap_mux_ops,
->>>>                 .parent_data = hcodec_parent_data,
->>>>                 .num_parents = ARRAY_SIZE(hcodec_parent_data),
->>>> +             .max_rate = 667000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1489,6 +1502,7 @@ static struct clk_regmap vc9000e_aclk = {
->>>>                         &vc9000e_aclk_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 667000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1536,6 +1550,7 @@ static struct clk_regmap vc9000e_core = {
->>>>                         &vc9000e_core_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 400000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1594,6 +1609,7 @@ static struct clk_regmap csi_phy0 = {
->>>>                         &csi_phy0_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 200000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1652,6 +1668,7 @@ static struct clk_regmap dewarpa = {
->>>>                         &dewarpa_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 800000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1710,6 +1727,7 @@ static struct clk_regmap isp0 = {
->>>>                         &isp0_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 400000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1768,6 +1786,7 @@ static struct clk_regmap nna_core = {
->>>>                         &nna_core_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 800000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1826,6 +1845,7 @@ static struct clk_regmap ge2d = {
->>>>                         &ge2d_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 667000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> @@ -1884,6 +1904,7 @@ static struct clk_regmap vapb = {
->>>>                         &vapb_div.hw
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .max_rate = 400000000,
->>>>                 .flags = CLK_SET_RATE_PARENT,
->>>>         },
->>>>    };
->>>> diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
->>>> index 35fda31a19e2..d80d6ee2409d 100644
->>>> --- a/drivers/clk/meson/c3-pll.c
->>>> +++ b/drivers/clk/meson/c3-pll.c
->>>> @@ -286,6 +286,8 @@ static struct clk_regmap gp0_pll_dco = {
->>>>                         .fw_name = "top",
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .min_rate = 3000000000,
->>>> +             .max_rate = 6000000000,
->>>>         },
->>>>    };
->>>>
->>>> @@ -370,6 +372,8 @@ static struct clk_regmap hifi_pll_dco = {
->>>>                         .fw_name = "top",
->>>>                 },
->>>>                 .num_parents = 1,
->>>> +             .min_rate = 3000000000,
->>>> +             .max_rate = 6000000000,
->>>>         },
->>>>    };
->>> --
->>> Jerome
-> 
+-PATCHES 1 to 4: add binding schemas for clock, gpio and RP1 peripherals.
+ They are needed to support the other peripherals, e.g. the ethernet mac
+ depends on a clock generated by RP1 and the phy is reset though the
+ on-board gpio controller.
+
+-PATCH 5 and 6: add clock and gpio device drivers.
+
+-PATCH 7: the devicetree overlay describing the RP1 chipset. Please
+ note that this patch should be taken by the same maintainer that will
+ also take patch 11, since txeieh dtso is compiled in as binary blob and is
+ closely coupled to the driver.
+
+-PATCH 8: this is the main patch to support RP1 chipset and peripherals
+ enabling through dtb overlay. The dtso since is intimately coupled with
+ the driver and will be linked in as binary blob in the driver obj.
+ The real dtso is in devicetree folder while the dtso in driver folder is
+ just a placeholder to include the real dtso.
+ In this way it is possible to check the dtso against dt-bindings.
+ The reason why drivers/misc has been selected as containing folder
+ for this driver can be seen in [6], [7] and [8].
+
+-PATCH 9: add the external clock node (used by RP1) to the main dts.
+
+-PATCH 10: add the relevant kernel CONFIG_ options to defconfig.
+
+This patchset is also a first attempt to be more agnostic wrt hardware
+description standards such as OF devicetree and ACPI, where 'agnostic'
+means "using DT in coexistence with ACPI", as been already promoted
+by e.g. AL (see [4]). Although there's currently no evidence it will also
+run out of the box on purely ACPI system, it is a first step towards
+that direction.
+
+Please note that albeit this patchset has no prerequisites in order to
+be applied cleanly, it still depends on Stanimir's WIP patchset for BCM2712
+PCIe controller (see [5]) in order to work at runtime.
+
+Many thanks,
+Andrea della Porta
+
+Links:
+- [1]: https://lpc.events/event/17/contributions/1421/attachments/1337/2680/LPC2023%20Non-discoverable%20devices%20in%20PCI.pdf
+- [2]: https://lore.kernel.org/lkml/20230419231155.GA899497-robh@kernel.org/t/
+- [3]: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/#t
+- [4]: https://lore.kernel.org/all/73e05c77-6d53-4aae-95ac-415456ff0ae4@lunn.ch/
+- [5]: https://lore.kernel.org/all/20240626104544.14233-1-svarbanov@suse.de/
+- [6]: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
+- [7]: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
+- [8]: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
+
+CHANGES IN V6:
+
+PATCH RELATED -------------------------------------------------
+
+- patch 2: added: Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+- patch 3 and 4: added: 'Reviewed-by: Rob Herring (Arm) <robh@kernel.org>'
+- patch 8: removed a stale paragraph from git commit message regarding
+  gpio renaming through configfs
+
+
+RP1 MISC DRIVER -----------------------------------
+
+- interrupts definitions moved as documentation from rp1_pci.c to
+  pci1de4,1.yaml binding schema
+
+
+Andrea della Porta (10):
+  dt-bindings: clock: Add RaspberryPi RP1 clock bindings
+  dt-bindings: pinctrl: Add RaspberryPi RP1 gpio/pinctrl/pinmux bindings
+  dt-bindings: pci: Add common schema for devices accessible through PCI
+    BARs
+  dt-bindings: misc: Add device specific bindings for RaspberryPi RP1
+  clk: rp1: Add support for clocks provided by RP1
+  pinctrl: rp1: Implement RaspberryPi RP1 gpio support
+  arm64: dts: rp1: Add support for RaspberryPi's RP1 device
+  misc: rp1: RaspberryPi RP1 misc driver
+  arm64: dts: bcm2712: Add external clock for RP1 chipset on Rpi5
+  arm64: defconfig: Enable RP1 misc/clock/gpio drivers
+
+ .../clock/raspberrypi,rp1-clocks.yaml         |   58 +
+ .../devicetree/bindings/misc/pci1de4,1.yaml   |  135 ++
+ .../devicetree/bindings/pci/pci-ep-bus.yaml   |   58 +
+ .../pinctrl/raspberrypi,rp1-gpio.yaml         |  198 +++
+ MAINTAINERS                                   |   14 +
+ .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     |    7 +
+ arch/arm64/boot/dts/broadcom/rp1.dtso         |   58 +
+ arch/arm64/configs/defconfig                  |    3 +
+ drivers/clk/Kconfig                           |    9 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-rp1.c                         | 1527 +++++++++++++++++
+ drivers/misc/Kconfig                          |    1 +
+ drivers/misc/Makefile                         |    1 +
+ drivers/misc/rp1/Kconfig                      |   21 +
+ drivers/misc/rp1/Makefile                     |    3 +
+ drivers/misc/rp1/rp1-pci.dtso                 |    8 +
+ drivers/misc/rp1/rp1_pci.c                    |  305 ++++
+ drivers/misc/rp1/rp1_pci.h                    |   14 +
+ drivers/pci/quirks.c                          |    1 +
+ drivers/pinctrl/Kconfig                       |   11 +
+ drivers/pinctrl/Makefile                      |    1 +
+ drivers/pinctrl/pinctrl-rp1.c                 |  789 +++++++++
+ .../clock/raspberrypi,rp1-clocks.h            |   61 +
+ include/linux/pci_ids.h                       |    3 +
+ 24 files changed, 3287 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+ create mode 100644 Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+ create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
+ create mode 100644 drivers/clk/clk-rp1.c
+ create mode 100644 drivers/misc/rp1/Kconfig
+ create mode 100644 drivers/misc/rp1/Makefile
+ create mode 100644 drivers/misc/rp1/rp1-pci.dtso
+ create mode 100644 drivers/misc/rp1/rp1_pci.c
+ create mode 100644 drivers/misc/rp1/rp1_pci.h
+ create mode 100644 drivers/pinctrl/pinctrl-rp1.c
+ create mode 100644 include/dt-bindings/clock/raspberrypi,rp1-clocks.h
+
+-- 
+2.35.3
 
