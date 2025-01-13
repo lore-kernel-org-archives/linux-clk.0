@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9F01B87C6;
-	Mon, 13 Jan 2025 18:50:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF601C3F39;
+	Mon, 13 Jan 2025 19:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736794242; cv=none; b=mYg/pDTjdxBa+em2kz0ARROS7hS6YP/RotR4eIG1gParPtyo1FnGqauzkuc2MxaWoiXGbPjH6Or6Vr+LGOao2TzQJ+bvDFBkJSaR5A61b0+VpcQE9SE1cEXN3/JVM7C5Hr75REe+Js4FSJ8+w+7NY92Y/TUso2kZUSlnP8vdFoE=
+	t=1736794801; cv=none; b=IjzH847VUS5El5h4XKcF5rPnyXvPbnFrIurtLsGsDIV9+CG8ChXDZryxeczzeVVliKVyp69d9BUyjgFZ1V+9aLJ2qZc5zZ8ub3RHd/ZJ0yrnHAIUfNK5m8TZ7Oa+ukHDSQ9U3/pnp3ZrK3Z03ao+eQseY4ZCjAWiPk+4hClHZiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736794242; c=relaxed/simple;
-	bh=LrAZrlPGdxOhIfDptSprsMHoShMe70Xq8DW+GAgdJUQ=;
+	s=arc-20240116; t=1736794801; c=relaxed/simple;
+	bh=eOiMvmfxdFa1swvNRvZ6Br8LIBtMTwQKMjwv+dENlJI=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=rq+9bXyFSTFS9LyKUwPqouKcw2ZtOLn9L3yiT0IyQXWm3T/H6KnD2/IL9M3/BKSG+MLG2VP5Vw/Zh+wnZdrUP0lpbB3uQJqAU5jZFNTT1MFT5cwgieuYYwy+wOleZmJ1Dj68RA47FE76821LCr6W8pTKCwSTF+iVj8iFukJMLdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmufhQOl; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=EQeEmoBzPZN0Imj4b4h8sBhLeOq87HxDYvSA9F2rrsCp0/4D3hO+lFjfPvf87SjAvBZBKEKGbUmt9rRWS9u1QDgutufQSdvMsdYTjgYCmcBN/u+BFGl9lfj1aZbrmxUWf3z3eROoKQ5oAIx/8DB6R4p7re0tzk7UdqLx+9QbMis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvGeNAcg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmufhQOl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 900F1C4CED6;
-	Mon, 13 Jan 2025 18:50:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvGeNAcg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E2ECC4CED6;
+	Mon, 13 Jan 2025 19:00:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736794240;
-	bh=LrAZrlPGdxOhIfDptSprsMHoShMe70Xq8DW+GAgdJUQ=;
+	s=k20201202; t=1736794800;
+	bh=eOiMvmfxdFa1swvNRvZ6Br8LIBtMTwQKMjwv+dENlJI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=fmufhQOlz06hj3nwkWxe90yISJL1GHNmILa8Cuivr14oDoxVCyJOIRztZ/SRB6Xyg
-	 JphpTha5/V/myo4bxpLCR9aKeoHbiFic1EsCL/s5QH14N8gZh02If1aUHILNy0JYIA
-	 vjrEdqkLOhfiV9QUexRUld7uNzdGglPK0TDU5fQ74qLmYESTQK36J1p9htgvcF/ZP2
-	 wIOvGrmYidc4fNM3KR0UPvVlTETjMK/qvew6FK8O85HUwnYy172bZeptzNtp1u2PSy
-	 c7Q9yS4h6pfZGAjLVK0sUBz352Rh5vDj4C3jtVYXy3lVP6Rwymn6wcLn9NMH3BVAwu
-	 BwwKvQsj/ZZ6A==
-Message-ID: <ba25dfc40e9ae91205d61c838e368490.sboyd@kernel.org>
+	b=XvGeNAcgH7np8/z5yTrHK8BBnJJGoPogFQCVRRj9Whr3quitSmhOFlSkR+qBqXTV0
+	 QSHS7yafeXhNoY3yeL0iBUHgkKE1Zwf553TodFMqjHIJehC8u4glNlJh2Kx1O04bv+
+	 /1sDlADXXsl+GFVyLvR/Xmi27JlENJNolfsHhQoCEqk0wZmuceJIjpIDI+LeGw4xDp
+	 v9BFlRHS5GbfQPS7kJdOO8cPHP1A2xfaD1kFq8H3KRmxTuPs9Nuh3gLP1NH5in6LZZ
+	 A+R3w2qs0S0jR4uSVtvIGpCupKoICvj6AlytC5iZQsuDaIW9vA2xsjtLjHDWo/ozce
+	 7KwevoQDRf1uA==
+Message-ID: <ff960baf02e6aa6fb93fe9a4584689ad.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,44 +35,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250109113004.2473331-1-zhoubinbin@loongson.cn>
-References: <20250109113004.2473331-1-zhoubinbin@loongson.cn>
-Subject: Re: [PATCH v2] clk: clk-loongson2: Fix the number count of clk provider
+In-Reply-To: <20241025105620.1891596-1-andre.przywara@arm.com>
+References: <20241025105620.1891596-1-andre.przywara@arm.com>
+Subject: Re: [RFC PATCH] clk: sunxi-ng: h616: Reparent CPU clock during frequency changes
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, linux-clk@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, Binbin Zhou <zhoubinbin@loongson.cn>, stable@vger.kernel.org, Gustavo A . R . Silva <gustavoars@kernel.org>
-To: Binbin Zhou <zhoubb.aaron@gmail.com>, Binbin Zhou <zhoubinbin@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>, Michael Turquette <mturquette@baylibre.com>, Yinbo Zhu <zhuyinbo@loongson.cn>
-Date: Mon, 13 Jan 2025 10:50:38 -0800
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, Philippe Simons <simons.philippe@gmail.com>
+To: Andre Przywara <andre.przywara@arm.com>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Samuel Holland <samuel@sholland.org>
+Date: Mon, 13 Jan 2025 10:59:58 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Binbin Zhou (2025-01-09 03:30:04)
-> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-> index 6bf51d5a49a1..9c240a2308f5 100644
-> --- a/drivers/clk/clk-loongson2.c
-> +++ b/drivers/clk/clk-loongson2.c
-> @@ -294,7 +294,7 @@ static int loongson2_clk_probe(struct platform_device=
- *pdev)
->                 return -EINVAL;
-> =20
->         for (p =3D data; p->name; p++)
-> -               clks_num++;
-> +               clks_num =3D max(clks_num, p->id + 1);
-> =20
->         clp =3D devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks_num=
-),
->                            GFP_KERNEL);
-> @@ -309,6 +309,9 @@ static int loongson2_clk_probe(struct platform_device=
- *pdev)
->         clp->clk_data.num =3D clks_num;
->         clp->dev =3D dev;
-> =20
-> +       /* Avoid returning NULL for unused id */
-> +       memset_p((void **)&clp->clk_data.hws, ERR_PTR(-ENOENT), clks_num);
+Quoting Andre Przywara (2024-10-25 03:56:20)
+> The H616 user manual recommends to re-parent the CPU clock during
+> frequency changes of the PLL, and recommends PLL_PERI0(1X), which runs
+> at 600 MHz. Also it asks to disable and then re-enable the PLL lock bit,
+> after the factor changes have been applied.
+>=20
+> Add clock notifiers for the PLL and the CPU mux clock, using the existing
+> notifier callbacks, and tell them to use mux 4 (the PLL_PERI0(1X) source),
+> and bit 29 (the LOCK_ENABLE) bit. The existing code already follows the
+> correct algorithms.
+>=20
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
 
-This looks wrong. It's already an array of pointers, i.e. the type is
-'struct clk_hw *[]' or 'struct clk_hw **' so we shouldn't need to take
-the address of it. Should it be
-
-	memset_p((void **)clkp->clk_data.hws, ERR_PTR(-ENOENT), clks_num);
-
-? It's unfortunate that we have to cast here, but I guess this is the
-best way we can indicate that the type should be an array of pointers.
+Applied to clk-next
