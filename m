@@ -1,103 +1,78 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5301B87C6;
-	Mon, 13 Jan 2025 18:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9F01B87C6;
+	Mon, 13 Jan 2025 18:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736793971; cv=none; b=OGET2JT6/MZcjRpOSrWKh97H7n9R3jsODWKPdSuoiGDO36TVahP0hJg0n3XSsv1eRsCKiwj+dJcY7NNYDNdnKgGeNsqkMmUUt2tAHfOaQrfTKhVNkVCxPkoeFRK3F2oTd9yK/XZu7AZmqt1STFH/y2Nd66LlgqF0tQk/ECkBFs8=
+	t=1736794242; cv=none; b=mYg/pDTjdxBa+em2kz0ARROS7hS6YP/RotR4eIG1gParPtyo1FnGqauzkuc2MxaWoiXGbPjH6Or6Vr+LGOao2TzQJ+bvDFBkJSaR5A61b0+VpcQE9SE1cEXN3/JVM7C5Hr75REe+Js4FSJ8+w+7NY92Y/TUso2kZUSlnP8vdFoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736793971; c=relaxed/simple;
-	bh=BwQVGqVogjfAZiqdAXI325GZJjdhV19DLDNfba8RADk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=acQ/CkMNzyhhQpn8gAikAHLH8JHH9kwOob32xqChyr+du3u/RZMo72+YgoaK/bgkVyeYFqTzWpZ5lwFzZbAD9NkzoFwVnoyVu8FU/aAqt4BxWA2o+4islZxRdMAqgrm43QrY4jvgYyqP673+LEbkxDZPNXnGp+HmtaB/l2g7BbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3H4Qjag; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736794242; c=relaxed/simple;
+	bh=LrAZrlPGdxOhIfDptSprsMHoShMe70Xq8DW+GAgdJUQ=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=rq+9bXyFSTFS9LyKUwPqouKcw2ZtOLn9L3yiT0IyQXWm3T/H6KnD2/IL9M3/BKSG+MLG2VP5Vw/Zh+wnZdrUP0lpbB3uQJqAU5jZFNTT1MFT5cwgieuYYwy+wOleZmJ1Dj68RA47FE76821LCr6W8pTKCwSTF+iVj8iFukJMLdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmufhQOl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3H4Qjag"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A13A6C4CED6;
-	Mon, 13 Jan 2025 18:46:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmufhQOl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 900F1C4CED6;
+	Mon, 13 Jan 2025 18:50:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736793971;
-	bh=BwQVGqVogjfAZiqdAXI325GZJjdhV19DLDNfba8RADk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h3H4Qjagl7HEbtovfuNDa/Kb3n/x+d+iVwg41WQACsAP3uSUi/R9sKqFOecyFxr3d
-	 LxEsXsUL7Ysvv2B9s7+gTzUI5GHA4ODYDw/wXzd3koDGUIbbbdGVlgWjBdYMVQrlqZ
-	 xZncj8hlJgX4/PmTfMKCR+5g83ejDyu4WJIDg6RDp5mUcfOMAss0tzZryM/R1jKOPS
-	 vAxsAI/f3KgsLAdM3KIj1DyMRZHDtcDiAKZX9k4DopfzCG3+ah8VpPIaCY7E5ePyAA
-	 g3IAYm8XtwT7w0rH77+GhrYH1FJV0HLT9nnPJoWv9XaI7DWdcL/1w7n/EEsY0/sN/8
-	 ANh1BnjNOwZPQ==
-Date: Mon, 13 Jan 2025 18:46:07 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Paul Handrigan <paulha@opensource.cirrus.com>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-	devicetree@vger.kernel.org, krzk+dt@kernel.org, robh@kernel.org,
-	conor+dt@kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH v5 1/2] dt-bindings: clock: cs2600: Add support for the
- CS2600
-Message-ID: <20250113-periscope-dig-232ad4af47fd@spud>
-References: <20241231201742.3955733-1-paulha@opensource.cirrus.com>
- <20241231201742.3955733-2-paulha@opensource.cirrus.com>
+	s=k20201202; t=1736794240;
+	bh=LrAZrlPGdxOhIfDptSprsMHoShMe70Xq8DW+GAgdJUQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=fmufhQOlz06hj3nwkWxe90yISJL1GHNmILa8Cuivr14oDoxVCyJOIRztZ/SRB6Xyg
+	 JphpTha5/V/myo4bxpLCR9aKeoHbiFic1EsCL/s5QH14N8gZh02If1aUHILNy0JYIA
+	 vjrEdqkLOhfiV9QUexRUld7uNzdGglPK0TDU5fQ74qLmYESTQK36J1p9htgvcF/ZP2
+	 wIOvGrmYidc4fNM3KR0UPvVlTETjMK/qvew6FK8O85HUwnYy172bZeptzNtp1u2PSy
+	 c7Q9yS4h6pfZGAjLVK0sUBz352Rh5vDj4C3jtVYXy3lVP6Rwymn6wcLn9NMH3BVAwu
+	 BwwKvQsj/ZZ6A==
+Message-ID: <ba25dfc40e9ae91205d61c838e368490.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7gTCqxLCKyT5lVrF"
-Content-Disposition: inline
-In-Reply-To: <20241231201742.3955733-2-paulha@opensource.cirrus.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250109113004.2473331-1-zhoubinbin@loongson.cn>
+References: <20250109113004.2473331-1-zhoubinbin@loongson.cn>
+Subject: Re: [PATCH v2] clk: clk-loongson2: Fix the number count of clk provider
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>, linux-clk@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, Binbin Zhou <zhoubinbin@loongson.cn>, stable@vger.kernel.org, Gustavo A . R . Silva <gustavoars@kernel.org>
+To: Binbin Zhou <zhoubb.aaron@gmail.com>, Binbin Zhou <zhoubinbin@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>, Michael Turquette <mturquette@baylibre.com>, Yinbo Zhu <zhuyinbo@loongson.cn>
+Date: Mon, 13 Jan 2025 10:50:38 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
+Quoting Binbin Zhou (2025-01-09 03:30:04)
+> diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+> index 6bf51d5a49a1..9c240a2308f5 100644
+> --- a/drivers/clk/clk-loongson2.c
+> +++ b/drivers/clk/clk-loongson2.c
+> @@ -294,7 +294,7 @@ static int loongson2_clk_probe(struct platform_device=
+ *pdev)
+>                 return -EINVAL;
+> =20
+>         for (p =3D data; p->name; p++)
+> -               clks_num++;
+> +               clks_num =3D max(clks_num, p->id + 1);
+> =20
+>         clp =3D devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks_num=
+),
+>                            GFP_KERNEL);
+> @@ -309,6 +309,9 @@ static int loongson2_clk_probe(struct platform_device=
+ *pdev)
+>         clp->clk_data.num =3D clks_num;
+>         clp->dev =3D dev;
+> =20
+> +       /* Avoid returning NULL for unused id */
+> +       memset_p((void **)&clp->clk_data.hws, ERR_PTR(-ENOENT), clks_num);
 
---7gTCqxLCKyT5lVrF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This looks wrong. It's already an array of pointers, i.e. the type is
+'struct clk_hw *[]' or 'struct clk_hw **' so we shouldn't need to take
+the address of it. Should it be
 
-On Tue, Dec 31, 2024 at 02:17:41PM -0600, Paul Handrigan wrote:
+	memset_p((void **)clkp->clk_data.hws, ERR_PTR(-ENOENT), clks_num);
 
-> +  cirrus,aux-output-source:
-> +    description:
-> +      Specifies the function of the auxiliary output pin with "phase_unlock"
-> +      to indicate the input and output clocks are not in phase, "freq_unlock"
-> +      to indicate the PLL is unlocked, and "no_clkin" to indicate the clock on
-> +      the clk_in pin is not present.
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum:
-> +      - phase_unock
-> +      - freq_unlock
-> +      - no_clkin
-> +
-> +  cirrus,clock-mode:
-> +    description:
-> +      Sets the device into smart mode whith "smart_mode" and sets the device
-> +      into smart mode that only outputs a clock when clk_in starts with
-> +      "smart_clkin_only_mode".
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum:
-> +      - smart_mode
-> +      - smart_clkin_only_mode
-
-Both of these vendor properties are not required, so they need to have a
-default added to the binding.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-
-
---7gTCqxLCKyT5lVrF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ4VfbwAKCRB4tDGHoIJi
-0g26AQCGkWuuHO0+CqJndoE9cc1yi0dxP9LeyodyM81H2Z10XgEA4hOtOk7pJ4EG
-i6K8YTpdQsZkXxfcCyCV5rRez6HewAc=
-=U+xz
------END PGP SIGNATURE-----
-
---7gTCqxLCKyT5lVrF--
+? It's unfortunate that we have to cast here, but I guess this is the
+best way we can indicate that the type should be an array of pointers.
