@@ -1,172 +1,226 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEBB23236F;
-	Mon, 13 Jan 2025 08:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0DA11465AE;
+	Mon, 13 Jan 2025 08:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736756483; cv=none; b=eCL+4CmnvrzYv7bxvp7Vvfl28c+CUqJ6jtzUZYAyIT1SbxNgX1UagaSKV2PSIiKtGODHx2Bjiyvdyt1UTEahfE4LUacmfPwuH94JUG7huFMwacIs2PisXMQ6T4JCnVdQwZJpkgwI9BSqbgXLb+G1nop63muaIVw+VUqPGwwcS3s=
+	t=1736756905; cv=none; b=qSiQUgyiQpAPWyIsQIElkCpscaVEJT2AkkqWzj1viIpVr48FEQuEXzSxuzEnCqPx87wuxv8T9sW7H9E95pW8okZYU1tCKn/NXb6JAHSgALo3DXNSAhR8+3MiYERuXX4+lW0UM7JOAKbNdWcSuzn++OPvgjM4Kwr3DquOUkoy528=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736756483; c=relaxed/simple;
-	bh=IUwQT37Q5694N5OlGBsritmBKUoU/caZrqNKpv5TSTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=peeeIEPHeAHsygJcCUutVNDvL6rrGPOVymDnEf2SQK8fxkzlcH7XFJfhDCwiUpjMZV8G9l90PQ0G19KEDxReCui8V5p2u3KCG7Wq+TiykhfP32rHnQmufJMk4bcI/8ppzUIHO1kPnuV0ef2lLI4xKF5qXhRH5NbmbDQ0tpkGFHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rr6SUMaX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736756905; c=relaxed/simple;
+	bh=9GcZNGYXUOJJm7jWi0O4TxfNwGLaRA9xwYO7Xu40d4o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xy83KoC7D83EUQhOaLUeWfgsdRVhSBrN8oLnJsuXdE90knjnCS2NzMnbB2JAeAIuJwMsTecHeNS/WuwKZ1B3qWx3XQfm206AqoNoA4AysjlmUf+j8+faT7amTFOpXd3+Fl9Hh63ut2J6MkXBIem2OVfxdIXrYwHgbe7KszMkzOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T5/J6rgV; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rr6SUMaX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B38EC4CED6;
-	Mon, 13 Jan 2025 08:21:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736756483;
-	bh=IUwQT37Q5694N5OlGBsritmBKUoU/caZrqNKpv5TSTE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Rr6SUMaXT2aCGEE9bCvykrGWWIX1Y1VLQ5cWQyPPPQlVkJCI51myzrYxLfCO4vYl7
-	 17IndjbH51OpMRrtxus+AyAVkp5zjOHBMuIp6Ki9TxffSXeAImhpUM/KrBBD4hQWC1
-	 qcAsJyhWg+g034H97T+MwMM/CAbE7rMwXN9NK5JgpypNdN7dcwO4AJM31+eGw/Z2Zt
-	 lgLqsrmBMbp28T4a2/SgjNNLmf7ttjfcGVnkadVSOwqcMX0RlPl8BuN9aJMuY0y/JC
-	 PqyC/UrZWgyjeQ0NKoMtIRil+6utW+E+xtOsDrVFV2Aiiabhuhth2HeOahxqvdis/i
-	 rpkNgYHRx6PJQ==
-Message-ID: <fef71e03-489f-4503-9d1b-d61051d45dde@kernel.org>
-Date: Mon, 13 Jan 2025 09:21:10 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T5/J6rgV"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-436281c8a38so27787355e9.3;
+        Mon, 13 Jan 2025 00:28:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736756902; x=1737361702; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e1JLCqsSNK2ejYJ1H0MfwCzbM1HS2oy5ooeNyIokMGU=;
+        b=T5/J6rgVixdu9gS/iDmyn+r2BtSdDQ/Dh8K05mzGZ9P91oaGJ9F/RAqNMvobaNqqd/
+         QR37xewkVmPKlwJyNQYDi3Jm8ZmtSWaaFEuuayXHhPnNYcyh16w/SC+Kz70EMvGQL2TC
+         4vIVwwGxnIcNlA6IeqA7UKpf0/knpg7LetQygOVbcj336pAuVTRZIZGCvNqp3ugH/jU/
+         IHk4Qaz4gvfGkFYi5v/tdKb6ZXVRK/bUPgf7EN/ugAjsv7mS3S9gxdoUETCoQ+ZExA7i
+         8zzhWcQwMCfqGKVEwcxFwNzuj5+Meg4NzVTeCcxCsXoz5tXs5DIfVU8vcZdQKbdJMm6q
+         mPiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736756902; x=1737361702;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e1JLCqsSNK2ejYJ1H0MfwCzbM1HS2oy5ooeNyIokMGU=;
+        b=NpHyfw2gKnGbrw3r96e9tWY/dXUAO6cho9HlJgShb05nHORkoaTomt07AEjJTH9uKT
+         V0+yoavFmDu8lRH5CK1v6kwVDa4gu0yEhQxZL0iY+SOwNDxENgJu7g8A4x8VAF8U6NY2
+         KFWOneymn+Vcj+iKPXn7AcanI2NKJrA6HskeDDWr9v4DwlNPKybCgIKzkkkxMc1eBp6s
+         ve9ztlnMOTSc/Der5xD0Q0j9Viovtb4sKFH8kPGPaMSBH/yjGp94Amcq6RN+vzzjyt7C
+         Ia5vCjXBBg8HmYqb3jqLxF9SnUStKvmaD1lKUDP7IHLu6Fm6f4RkwhR8PH+8CZ1OrQBA
+         3xKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQOHUwwN9ynUf/o+TJO/AYESn+TfmsrKryex5Y3P77riS0yT2rlF3FN85p+JG3lBAWQjtk2VQdjfcXcuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcf/mcRkhk1zBdf6ZdUleOoAP5MMDaLO+iloDsB2LNje0l/o9D
+	yv6WolPtLjBusW+snwoTlMu3F+ZWryWDAniueDZUpeHlITisiVp1Q+micw==
+X-Gm-Gg: ASbGncu8OpuO/cQYNgm6KOKc4b8fNn21oRbI2qjRqL12IGhc01+V94tcHaPL4RJeHh3
+	u2P+/x1Hjj7Ykg2fFbu+rQHiqCTjjXBarG8x/RJ85TMWOBi/uhymPGxwiOHB+6FDt2XwaWbNjl4
+	F2nf3holXnyOmKk0EKH7HmHfDzAPndDpeaIEK/s7nilkc38YylGYiqh71jfbpq9MTD+S0d4kBAw
+	D3dyXWNhK+/OPy5SRm9HdcIxaX/rXsV3DDxe6/7yGUQRDBPx2ZGWNbBZ2TQajXeJaJ2yiXqK5SZ
+	i7ggqsQLqjdO13NlGds8i2m3mQ1DC2kkjJQTNY2Fki2l2Co=
+X-Google-Smtp-Source: AGHT+IF7Sr6ux956/fnvucH3mXwEdBgdEN18KwaoHCLRX2Yjc5lNehPQeeqsbBzEdXuOalHCnSOHDg==
+X-Received: by 2002:a05:600c:314e:b0:434:a5bc:70fc with SMTP id 5b1f17b1804b1-436e269aad7mr173787465e9.8.1736756901343;
+        Mon, 13 Jan 2025 00:28:21 -0800 (PST)
+Received: from localhost.localdomain (249.red-88-10-54.dynamicip.rima-tde.net. [88.10.54.249])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9e03f54sm135902315e9.21.2025.01.13.00.28.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2025 00:28:20 -0800 (PST)
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+To: linux-clk@vger.kernel.org
+Cc: sboyd@kernel.org,
+	mturquette@baylibre.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	yangshiji66@outlook.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: add clock definitions for Ralink SoCs
+Date: Mon, 13 Jan 2025 09:28:18 +0100
+Message-Id: <20250113082818.345939-1-sergio.paracuellos@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/12] dt-bindings: clk: sunxi-ng: add V853 CCU
- clock/reset
-To: wens@csie.org
-Cc: Andras Szemzo <szemzo.andras@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20250110123923.270626-1-szemzo.andras@gmail.com>
- <20250110123923.270626-7-szemzo.andras@gmail.com>
- <de280eed-bcc8-4802-9734-5e95ad1f6611@kernel.org>
- <CAGb2v65arvBMg+reReVqK-Y6dL+CSrSx4618msiRKcNf=Vk1=A@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAGb2v65arvBMg+reReVqK-Y6dL+CSrSx4618msiRKcNf=Vk1=A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 13/01/2025 09:06, Chen-Yu Tsai wrote:
-> On Fri, Jan 10, 2025 at 9:56 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 10/01/2025 13:39, Andras Szemzo wrote:
->>> As the device tree needs the clock/reset indices, add them to DT binding
->>> headers.
->>>
->>> Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
->>
->> That's never a separate commit from the binding.
->>
->>
->> ...
->>
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/sun8i-v853-r-ccu.h
->>> @@ -0,0 +1,16 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>> +/* Copyright(c) 2020 - 2023 Allwinner Technology Co.,Ltd. All rights reserved.
->>> + *
->>> + * Copyright (C) 2023 rengaomin@allwinnertech.com
->>> + */
->>> +#ifndef _DT_BINDINGS_CLK_SUN8I_V85X_R_CCU_H_
->>> +#define _DT_BINDINGS_CLK_SUN8I_V85X_R_CCU_H_
->>> +
->>> +#define CLK_R_TWD            0
->>> +#define CLK_R_PPU            1
->>> +#define CLK_R_RTC            2
->>> +#define CLK_R_CPUCFG         3
->>> +
->>> +#define CLK_R_MAX_NO         (CLK_R_CPUCFG + 1)
->>
->> Nope, drop. Not a binding.
->>
->>> +
->>> +#endif
->>> diff --git a/include/dt-bindings/reset/sun8i-v853-ccu.h b/include/dt-bindings/reset/sun8i-v853-ccu.h
->>> new file mode 100644
->>> index 000000000000..89d94fcbdb55
->>> --- /dev/null
->>> +++ b/include/dt-bindings/reset/sun8i-v853-ccu.h
->>> @@ -0,0 +1,62 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>
->> Odd license. Did you copy the file with such license from the downstream?
-> 
-> AFAIK all the existing sunxi clock / reset binding header files are
-> dual licensed. OOTH all the YAML files are GPL 2.0 only.
-> 
-> IIRC we started out GPL 2.0 only, but then figured that the header files
-> couldn't be shared with non-GPL projects, so we changed those to dual
-> license.
-> 
-> Hope that explains the current situation. Relicensing the whole lot
-> to just MIT or BSD is probably doable.
-That's not what the comment is about. Dual license, as expressed by
-submitting bindings/patches and enforced by checkpatch are expected. But
-not GPLv3, GPLv4 and GPLv10.
+Add clock missing definitions for RT2880, RT305X, RT3352, RT3383, RT5350,
+MT-7620 and MT-76X8 Ralink SoCs.
 
-Best regards,
-Krzysztof
+Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+---
+ include/dt-bindings/clock/mtmips-clk.h | 130 +++++++++++++++++++++++++
+ 1 file changed, 130 insertions(+)
+ create mode 100644 include/dt-bindings/clock/mtmips-clk.h
+
+diff --git a/include/dt-bindings/clock/mtmips-clk.h b/include/dt-bindings/clock/mtmips-clk.h
+new file mode 100644
+index 000000000000..a03335b0e077
+--- /dev/null
++++ b/include/dt-bindings/clock/mtmips-clk.h
+@@ -0,0 +1,130 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Author: Sergio Paracuellos <sergio.paracuellos@gmail.com>
++ */
++
++#ifndef _DT_BINDINGS_CLK_MTMIPS_H
++#define _DT_BINDINGS_CLK_MTMIPS_H
++
++/* Ralink RT-2880 clocks */
++
++#define RT2880_CLK_XTAL		0
++#define RT2880_CLK_CPU		1
++#define RT2880_CLK_BUS		2
++#define RT2880_CLK_TIMER	3
++#define RT2880_CLK_WATCHDOG	4
++#define RT2880_CLK_UART		5
++#define RT2880_CLK_I2C		6
++#define RT2880_CLK_UARTLITE	7
++#define RT2880_CLK_ETHERNET	8
++#define RT2880_CLK_WMAC		9
++
++/* Ralink RT-305X clocks */
++
++#define RT305X_CLK_XTAL		0
++#define RT305X_CLK_CPU		1
++#define RT305X_CLK_BUS		2
++#define RT305X_CLK_TIMER	3
++#define RT305X_CLK_WATCHDOG	4
++#define RT305X_CLK_UART		5
++#define RT305X_CLK_I2C		6
++#define RT305X_CLK_I2S		7
++#define RT305X_CLK_SPI1		8
++#define RT305X_CLK_SPI2		9
++#define RT305X_CLK_UARTLITE	10
++#define RT305X_CLK_ETHERNET	11
++#define RT305X_CLK_WMAC		12
++
++/* Ralink RT-3352 clocks */
++
++#define RT3352_CLK_XTAL		0
++#define RT3352_CLK_CPU		1
++#define RT3352_CLK_PERIPH	2
++#define RT3352_CLK_BUS		3
++#define RT3352_CLK_TIMER	4
++#define RT3352_CLK_WATCHDOG	5
++#define RT3352_CLK_UART		6
++#define RT3352_CLK_I2C		7
++#define RT3352_CLK_I2S		8
++#define RT3352_CLK_SPI1		9
++#define RT3352_CLK_SPI2		10
++#define RT3352_CLK_UARTLITE	11
++#define RT3352_CLK_ETHERNET	12
++#define RT3352_CLK_WMAC		13
++
++/* Ralink RT-3883 clocks */
++
++#define RT3883_CLK_XTAL		0
++#define RT3883_CLK_CPU		1
++#define RT3883_CLK_BUS		2
++#define RT3883_CLK_PERIPH	3
++#define RT3883_CLK_TIMER	4
++#define RT3883_CLK_WATCHDOG	5
++#define RT3883_CLK_UART		6
++#define RT3883_CLK_I2C		7
++#define RT3883_CLK_I2S		8
++#define RT3883_CLK_SPI1		9
++#define RT3883_CLK_SPI2		10
++#define RT3883_CLK_UARTLITE	11
++#define RT3883_CLK_ETHERNET	12
++#define RT3883_CLK_WMAC		13
++
++/* Ralink RT-5350 clocks */
++
++#define RT5350_CLK_XTAL		0
++#define RT5350_CLK_CPU		1
++#define RT5350_CLK_BUS		2
++#define RT5350_CLK_PERIPH	3
++#define RT5350_CLK_TIMER	4
++#define RT5350_CLK_WATCHDOG	5
++#define RT5350_CLK_UART		6
++#define RT5350_CLK_I2C		7
++#define RT5350_CLK_I2S		8
++#define RT5350_CLK_SPI1		9
++#define RT5350_CLK_SPI2		10
++#define RT5350_CLK_UARTLITE	11
++#define RT5350_CLK_ETHERNET	12
++#define RT5350_CLK_WMAC		13
++
++/* Ralink MT-7620 clocks */
++
++#define MT7620_CLK_XTAL		0
++#define MT7620_CLK_PLL		1
++#define MT7620_CLK_CPU		2
++#define MT7620_CLK_PERIPH	3
++#define MT7620_CLK_BUS		4
++#define MT7620_CLK_BBPPLL	5
++#define MT7620_CLK_SDHC		6
++#define MT7620_CLK_TIMER	7
++#define MT7620_CLK_WATCHDOG	8
++#define MT7620_CLK_UART		9
++#define MT7620_CLK_I2C		10
++#define MT7620_CLK_I2S		11
++#define MT7620_CLK_SPI1		12
++#define MT7620_CLK_SPI2		13
++#define MT7620_CLK_UARTLITE	14
++#define MT7620_CLK_MMC		15
++#define MT7620_CLK_WMAC		16
++
++/* Ralink MT-76X8 clocks */
++
++#define MT76X8_CLK_XTAL		0
++#define MT76X8_CLK_CPU		1
++#define MT76X8_CLK_BBPPLL	2
++#define MT76X8_CLK_PCMI2S	3
++#define MT76X8_CLK_PERIPH	4
++#define MT76X8_CLK_BUS		5
++#define MT76X8_CLK_SDHC		6
++#define MT76X8_CLK_TIMER	7
++#define MT76X8_CLK_WATCHDOG	8
++#define MT76X8_CLK_I2C		9
++#define MT76X8_CLK_I2S		10
++#define MT76X8_CLK_SPI1		11
++#define MT76X8_CLK_SPI2		12
++#define MT76X8_CLK_UART0	13
++#define MT76X8_CLK_UART1	14
++#define MT76X8_CLK_UART2	15
++#define MT76X8_CLK_MMC		16
++#define MT76X8_CLK_WMAC		17
++
++#endif /* _DT_BINDINGS_CLK_MTMIPS_H */
+-- 
+2.25.1
+
