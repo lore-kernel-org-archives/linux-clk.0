@@ -1,33 +1,43 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F2F1CAA9B;
-	Mon, 13 Jan 2025 12:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736770665; cv=none; b=arRTpGKU6f0yfjwxeW8G3GIq7F8CXG8P0/7ynh/+lnyDYb9Pkz+K9PemCll0lisIUmU70mU2OIA2yqgxg6MFNGd++oCOK5Pk/mTJT9l5LFQ3XMDFQqqncSU//Q7XdaX5uOBemwYfexivrZXgWgK/jxkzwjCtxO0Q63Ez8LZw4Bg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736770665; c=relaxed/simple;
-	bh=8UJKn6malhxkTLru3Gus7nVAeV8YWMTAVB0K9Oczylk=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B371BD9FF;
+	Mon, 13 Jan 2025 12:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736770796; cv=pass; b=VjiD0YK2xfDv5jTL2IVCgYRTvy+v+7ZejBeebt3Ji28F7DaciCgmsjUvXCafE9FspOtyLWFf3t7CYC9i11nTj4JXXqSKUTwNFeZesVt3fX3Z3uwrpMRsNJWd345ERq+JQrb6Zt6VHidt8A3wEiSJnXpcPNJixBmgvcJfe7Ojhio=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736770796; c=relaxed/simple;
+	bh=Xl74J1MalzuceQrzY2ktCKG1QU8F4qFiY3UBLZmJjFs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B7xe2nL8hW0p65GiTc0mTL8J6vf032gX/r9QSNHIGWrM191fxpRqIxzW90agsLSDVXqLAovB5nWQpwixizVt2amoPKsuz0FUrwqMh8QS/OuU9mVpsTxyTsvGjiGh3sdIMty4EpNzIeiyiB7+5WoQERv7+g0XYOnL/a07sJd9dJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJX3a+uI; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=iZh4y18snQS+/IcZCFLwMm3nTonVCsnBuCCZt1IcDXwpA0fB+tW5ro/DSQA0at9kVaLK1z40N172lzEVqHh7EACSZleiqO3rn00IBK/xfiLlKSdWC6aoIhXkv/sHkF0jXQCr3NYxjBhQYVd5WMiHiscG63SJyJWUBIb1uhFCZYM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=C/xhGw3G; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJX3a+uI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48B6BC4CEE2;
-	Mon, 13 Jan 2025 12:17:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736770665;
-	bh=8UJKn6malhxkTLru3Gus7nVAeV8YWMTAVB0K9Oczylk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SJX3a+uI6lolTiP+swEDGvzjdD/wuwHNPOSnBCYlzEnK3cTCbujljsK2wrsxJavJn
-	 RiQ5XOSYq+doadqpQ2jfAy9voXygq8PmraxmamK5I7GWKt3rfM3KW509K0TrxtLwbJ
-	 GZrXxkjOcVtcj/kLyLHfiPP7su8vaVWzgxt9MMIblSI8HV7vm4UQYbCcEXcYtYuyUr
-	 1QYFkEfmIKzKIf8Fw4gEoGYnn+NB7BeMm71X7WI6YRsWTGULkQLgPCxpjspmpYvOP6
-	 SKfrAKw9Qk2Ufzho08tCXWofBVNXL2A2OPSNtsDLpypGR5eCNTPze9++UScUNnioMw
-	 Fcprr5TpyrzZg==
-Message-ID: <ec255edc-adcd-4c18-8f9c-209298f2bbff@kernel.org>
-Date: Mon, 13 Jan 2025 13:17:41 +0100
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="C/xhGw3G"
+ARC-Seal: i=1; a=rsa-sha256; t=1736770782; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GlmJnh0wJyDrDeO54WDVZREmrXSWXpTgiT2QRaS1g0lgjA7PKBt67+60Ksj4Sb7clUHCXmqdOao8SkEmMdI1dbfl6VQQOa6QJFN6SXxi8XstHhfhmw3UgNbmkbQxhbQYeJXLeBOR2tvWqpHzE2y4US9jZgGVpTXdtJmlXWhPecs=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1736770782; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=yg980IXsItT1ob0TGMGNg+N1u7n0tXM7s7EHT8ZvaOE=; 
+	b=EvW23UyJyUUYf2T87/6FrFBZkDk4HrTsi8CGOaBdUFmf+egYHU2aub0buO7ovDMo5D0A03xn0nzfr96YBmGzHNrymi+xJnyfbsLMzX0VftGaQIgyJlf49uI7A1kfmFpkTA21Z9DKxpIrQ1WxTLMHLZQfGwQslTT4v5t9hl0rS54=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1736770782;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=yg980IXsItT1ob0TGMGNg+N1u7n0tXM7s7EHT8ZvaOE=;
+	b=C/xhGw3Gdf0JU2WhUT6ycBFraS0/yQWo9mYI9JUP1Ap7bRSjybjmxF3RKMpzdZpK
+	iKD0H6a25NJ4ACR6ouyx4gKMELMrnK4ax6Vf1jJup31GdQsIgKT+4A/Fq4NVQfC0RL2
+	kDRoyGMli7GY0OGIKKEXLBGr9qXbmMzNT60XJmFk=
+Received: by mx.zohomail.com with SMTPS id 173677077432099.51494040975774;
+	Mon, 13 Jan 2025 04:19:34 -0800 (PST)
+Message-ID: <a1386cfb-7698-43f6-acff-628d9626da47@zohomail.com>
+Date: Mon, 13 Jan 2025 20:19:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,120 +45,125 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: add clock definitions for Ralink SoCs
-To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- yangshiji66@outlook.com, linux-kernel@vger.kernel.org
-References: <20250113082818.345939-1-sergio.paracuellos@gmail.com>
- <ebb32bec-3fd4-4129-ab5d-d519b10c4405@kernel.org>
- <CAMhs-H9ysdJ9nUuStWJpRqTzm-09ZS5TMdhWgKMZx+JZdo6teQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 3/3] riscv: dts: canaan: Add clock initial support for
+ K230
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Troy Mitchell <TroyMitchell988@gmail.com>
+References: <20250108-b4-k230-clk-v2-0-27b30a2ca52d@zohomail.com>
+ <20250108-b4-k230-clk-v2-3-27b30a2ca52d@zohomail.com>
+ <ebj26gfkaypgtvi7o2ab3mfvcgc7yk4scdoxroftlp7lnx3xix@p3nnfiva3hdm>
+From: Xukai Wang <kingxukai@zohomail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAMhs-H9ysdJ9nUuStWJpRqTzm-09ZS5TMdhWgKMZx+JZdo6teQ@mail.gmail.com>
+In-Reply-To: <ebj26gfkaypgtvi7o2ab3mfvcgc7yk4scdoxroftlp7lnx3xix@p3nnfiva3hdm>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Feedback-ID: rr08011227102e394c4ece469786f9a63f0000268b6dc8886a4bdfe9cfcc1d7509dc8a729330385f8b10a251:zu08011227060641b058f7bd561e629be2000014ba64026e331fba48e2cc9e36c581def167ce43f42c3ee11c:rf0801122c06663dad68cb3878c535246800002ee0df51d8bf8a147c9dbba85400de34851e84c7c0c613b553fb57f1c3a7:ZohoMail
+X-ZohoMailClient: External
 
-On 13/01/2025 12:32, Sergio Paracuellos wrote:
-> Hi Krzysztof,
-> 
-> On Mon, Jan 13, 2025 at 12:18 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+
+On 2025/1/9 17:09, Krzysztof Kozlowski wrote:
+> On Wed, Jan 08, 2025 at 07:53:09PM +0800, Xukai Wang wrote:
+>> This patch provides basic support for the K230 clock, which does not
+>> cover all clocks.
 >>
->> On 13/01/2025 09:28, Sergio Paracuellos wrote:
->>> Add clock missing definitions for RT2880, RT305X, RT3352, RT3383, RT5350,
->>> MT-7620 and MT-76X8 Ralink SoCs.
->>>
->>> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+>> The clock tree of the K230 SoC consists of OSC24M,
+>> PLLs and sysclk.
 >>
->> 1. Please use get_maintainers.
-> 
-> I did but from my tree which is tag: v6.12.5, linux-stable/linux-6.12.y. Sorry.
-
-That's separate problem, but not one I was thinking about. Even on 6.12
-stable you would get dt list, which is missing here.
-
-This means no testing, although does not matter here, and it does not
-appear in Patchwork which means does not reach us, except my filter for
-nagging.
-
-> 
->> 2. What is the point of this? We do not add constants when there are no
->> users. Commit msg explains here nothing.
-> 
-> All of the old ralink SoCs' dts files which are in the tree are not
-> properly updated. I expect to have them updated somewhere in time
-> merging real base stuff from openwrt dts [0] files. Not having this
-> header with definitions makes very hard to update dts and then
-> checking the driver code becomes a need to see the indexes for the
-> clocks to properly setup a consumer node. Because of this, this file
-> is added here.
-
-Still there is no point without the users. I do not see any reason why
-this cannot be combined with fixing driver to use the header. Not
-combining is an indication this is not a binding in the first place.
-
-In any case there should be explanation in commit msg about such choice.
-
-> 
+>> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+>> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+>> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+>> ---
+>>  arch/riscv/boot/dts/canaan/k230.dtsi | 27 +++++++++++++++++++++++++++
+>>  1 file changed, 27 insertions(+)
 >>
->>> ---
->>>  include/dt-bindings/clock/mtmips-clk.h | 130 +++++++++++++++++++++++++
->>
->> Filename matching compatible.
-> 
-> There are multiple compatibles regarding this, since the driver covers
+>> diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/canaan/k230.dtsi
+>> index 95c1a3d8fb1192e30113d96d3e96329545bc6ae7..c407471af3daac154e0fbdd377d57ea3ff4698e1 100644
+>> --- a/arch/riscv/boot/dts/canaan/k230.dtsi
+>> +++ b/arch/riscv/boot/dts/canaan/k230.dtsi
+>> @@ -3,6 +3,7 @@
+>>   * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
+>>   */
+>>  
+>> +#include <dt-bindings/clock/k230-clk.h>
+>>  #include <dt-bindings/interrupt-controller/irq.h>
+>>  
+>>  /dts-v1/;
+>> @@ -65,6 +66,13 @@ apb_clk: apb-clk-clock {
+>>  		#clock-cells = <0>;
+>>  	};
+>>  
+>> +	osc24m: clock-24m {
+>> +		compatible = "fixed-clock";
+>> +		#clock-cells = <0>;
+>> +		clock-frequency = <24000000>;
+>> +		clock-output-names = "osc24m";
+>> +	};
+>> +
+>>  	soc {
+>>  		compatible = "simple-bus";
+>>  		interrupt-parent = <&plic>;
+>> @@ -138,5 +146,24 @@ uart4: serial@91404000 {
+>>  			reg-shift = <2>;
+>>  			status = "disabled";
+>>  		};
+>> +
+>> +		sysclk: clock-controller@91100000 {
+> Does not look like placed in correct order.
+>
+>> +			compatible = "canaan,k230-clk";
+>> +			reg = <0x0 0x91102000 0x0 0x1000>, <0x0 0x91100000 0x0 0x1000>;
+>> +			clocks = <&osc24m>;
+>> +			#clock-cells = <1>;
+>> +			clock-output-names =
+> Unnecessary blank line
+>
+>> +			"CPU0_ACLK", "CPU0_PLIC", "CPU0_NOC_DDRCP4", "CPU0_PCLK",
+> Messed indentation/alignment. See DTS coding style.
 
-Driver almost does not matter.
+I've reorder the properties and changed the indentation:
 
-> a lot of SoCs. So I preferred to put them all in a single header file.
-> See [1]. Should I add a different file for any single compatible
-> instead?
+osc24m: clock-24m {
+        compatible = "fixed-clock";
+        clock-frequency = <24000000>;
+        clock-output-names = "osc24m";
+        #clock-cells = <0>;
+};
 
-Well, are all in the same bindings file? If so, can stay but then:
-filename matching binding, because binding has proper naming scheme.
+sysclk: clock-controller@91102000 {
 
-Best regards,
-Krzysztof
+        compatible = "canaan,k230-clk";
+        reg = <0x0 0x91102000 0x0 0x1000>,
+              <0x0 0x91100000 0x0 0x1000>;
+        clocks = <&osc24m>;
+        clock-output-names = "CPU0_ACLK", "CPU0_PLIC", "CPU0_NOC_DDRCP4",
+                             "CPU0_PCLK", "PMU_PCLK", "HS_HCLK_HIGH_SRC",
+                             "HS_HCLK_HIGH_GATE", "HS_HCLK_SRC",
+                             "HS_SD0_HS_AHB_GAT", "HS_SD1_HS_AHB_GAT",
+                             "HS_SSI1_HS_AHB_GA", "HS_SSI2_HS_AHB_GA",
+                             "HS_USB0_HS_AHB_GA", "HS_USB1_HS_AHB_GA",
+                             "HS_SSI0_AXI", "HS_SSI1", "HS_SSI2",
+                             "HS_QSPI_AXI_SRC", "HS_SSI1_ACLK_GATE",
+                             "HS_SSI2_ACLK_GATE", "HS_SD_CARD_SRC",
+                             "HS_SD0_CARD_TX", "HS_SD1_CARD_TX",
+                             "HS_SD_AXI_SRC", "HS_SD0_AXI_GATE",
+                             "HS_SD1_AXI_GATE", "HS_SD0_BASE_GATE",
+                             "HS_SD1_BASE_GATE", "HS_OSPI_SRC",
+                             "HS_USB_REF_51M", "HS_SD_TIMER_SRC",
+                             "HS_SD0_TIMER_GATE", "HS_SD1_TIMER_GATE",
+                             "HS_USB0_REFERENCE", "HS_USB1_REFERENCE";
+        #clock-cells = <1>;
+};
+
+Does this updated version looks appropriate？
+
+>
+> Best regards,
+> Krzysztof
+>
