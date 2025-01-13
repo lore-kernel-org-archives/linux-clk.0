@@ -1,224 +1,123 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005192327BA;
-	Mon, 13 Jan 2025 08:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432D9235C15;
+	Mon, 13 Jan 2025 09:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736757931; cv=none; b=hGjsEF86eTKqgUWoSSxIY/n5trLvrB3gUBKFM4cv9m1WqMsiw7P3TcqqI1SWwV2rI3H0q6/IEytfz1JR1BH03fq9fmrrVbsxbEbomIgGjhvrG+uVR1ClMaliYldRSIrpG4BA/oXqA/gAaoHu9ZSb7vSoOvKMQMEU5WHrfShLz44=
+	t=1736761629; cv=none; b=Htb1rlWo7T92+BJc3uUHHw55VzopjHKJ2YmbXZGbMyxphiaBY2SssInoo/xjiUGO7IJDkfOM4Gz2dAOIJ/GRxUAt0swk7PJT3HBpoIgYfazfEp9wZEFPswiQEYDP7da6tJuQq+9zjFHY3t+712YQJ273rUofdbTwm2odXSg5VOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736757931; c=relaxed/simple;
-	bh=85JIzD3dBKg6S5CVubuGChnys/7Jgrel2vwRVe+85Ws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FILoECGA6HyNPAS69TYYyRUeGFLnt8BEJhtPfZ/FpjwDejbHvzbKhMUu+ECY6438+1mtpef4XG79bmJlzOCb5KX71BPRv0MrwnJLGfDDBbBJ491ew+6oOLtoUg7ISBaZpu4b99kNGsOH18NLAfrYWXIAu/d9eYN2iZ62CxJMz08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	s=arc-20240116; t=1736761629; c=relaxed/simple;
+	bh=9e3wcjDiQuT6RY4XnOjEYM/O28Bk5iZRTgZoKR14NAQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QqrA6C40i6OjHZ4sFg+IieABpqQN4OAsA2KC1kTHgB0+aJeB4GWGjH18/IlBthohsQqtRafg8mfKDuuPSrcJOQ5h0T+GEmFiXXKRTGLgOR3t1G/ixCwLRYSlpTpvggSw3Mku55JctmjLA+r/uH/h/5jUrb9VRpqjLwi7BH4IUoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aMPCtbjL; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-304d9a1f198so32967171fa.0;
-        Mon, 13 Jan 2025 00:45:27 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aMPCtbjL"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-436345cc17bso28744215e9.0;
+        Mon, 13 Jan 2025 01:47:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736761626; x=1737366426; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P/Vpk+fuONkvTQ0KzQxSovHrQHyHGceSyePSaTNOG1w=;
+        b=aMPCtbjL88uQcVEDOVkghZG0VHM0/5BeaXOT7qDzh5B2fTq3U1OiEge5VY64/HuXh+
+         5GvKipSGZFQF9r9SVxOFG/VwNYVrtM48evjK8q4a7B0XV9aOacSqNPzwbLrxNxGeliKW
+         3yhyIB4v4+dnVMwCTnwPd3qliIr70cIg3v+m0f5Ftydw/At9U4ZaHI3K3A6iR/87UcVW
+         7r1lfk9RoIZip0Kg5C+Yda6uyQV+p/MuPjAWVkEvtocwiuzjfzKcMPcg//n2IzUxMWX+
+         epzgrn6BVFDhuImiym1tv3ngdBan9hvGzf+4IzPK/kOG/8JDZJf1XgMnF1kaBo44zoWN
+         D0eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736757924; x=1737362724;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WASk+gE3NJv8dH2tIoBohA4wKX3eYlj864c+8gk1xzY=;
-        b=CneZYDvkHAnyAX4kTZDEfb5Ah9xUkCS9QW+XIoIT65uw7UWj04CRmgx8vkFNQqA/qI
-         CAiNfQrku8u1Rfe36VuTLbLemFK/9imwVxYfp6XolLEqhSBKDOdMzc9ALCmmJyRftMkv
-         e31ZpJoKB5rRStGnbI+klGpEe7XtgiTu+KjTWW181CJtG+S38v2Rl9JahAUg1fwfVB3z
-         0+Lr0QO3hMMFWixwM77d544Kf3a4hDxMblXbDy8CwlYXNyWd7ASyhT19jNoZLWXxZBFD
-         uU32O3zWaeQvPiT8qTBH9eeK7AGUSm5nlLfQ1PeTf1P3DbJpnILyizvxA3tBDNVZWHl1
-         mzyA==
-X-Forwarded-Encrypted: i=1; AJvYcCURfYDgXsLB8Q3ANFx1ZMVd+kDy52oU7ymSEckU3hWGhXd8n/kVHbb4sjnbT8JAfmAnWwIlnBfn/Dq6@vger.kernel.org, AJvYcCVgH3Go9AqqH+3ThxU1KZc1vhnUT4ez+GKJ9nxu7huukGQvh+afQyXLKO3CDeS6QEDuYSRLunrVO+3R@vger.kernel.org, AJvYcCVqexIH9FmqZnlGNDA2lk3g2NAhtkN+QptGpy9qzVYHc++HqoCjBDroNp+FE11aIRs4opd3xa6kqqQ=@vger.kernel.org, AJvYcCXOQfquBpt6+uj6CfsI3JotyrRpMZUkYojy2Vck7286SqhYh7L7N2oAqkEqdMa65oiw8Ic1HA3Jw1cWfQ==@vger.kernel.org, AJvYcCXwu5DxS21Fy8evN0JuHNiqQIPdH9Fpx2POqw+YdWOiiE2+3N8To9WOt9Ljx9CnEGLXT5QlNQeEWOIVvZnz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylc2gH6AAOfB+uPSlvFfDMVICgrypRd6saWBgQZNUMNMXz3X3j
-	CNwfFE3Wry9+fXrlH9OpFXvImunXdCqLAJFR5lwjYQfGGn3029IaFQavQcd0GmI=
-X-Gm-Gg: ASbGnct2Jl5PcugfQlRlv+I2TwxOZAdq454PthZZ6cjklcLgb0ocNn6eGm8Lg3KmFY+
-	tadlZMBbgVYlpZrt7/xAi96UGaqlg/Mh1qw5bTi2HUVj1rKZ+ofMpBJGLQuwoILaHmWspHzTurB
-	Rg3p7H/cgFxLO4RMk7TdwvDSGG3AfuNkpIUYWJdnv3JYxDWBY6VNKgKNYZZgtW/59MOX/MaJ5xn
-	GbsmZxszMpdUZpRV58CXYfyhRnwa8a9LcBh6LJdZlQLwgtrKuf0qJo04nQskYheRF2QRrPm3AyL
-	IQIr8aKYwzURnw==
-X-Google-Smtp-Source: AGHT+IGnbe1zdyBEZq6jXOWCz9p+/eYXnTe4yuUFEE54Hc3ZP05Px5scSWRCax4y/c9lh8KM/+g8nA==
-X-Received: by 2002:a05:651c:4cb:b0:302:1cdd:73c2 with SMTP id 38308e7fff4ca-305f45a73d2mr67856031fa.20.1736757924022;
-        Mon, 13 Jan 2025 00:45:24 -0800 (PST)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-305ff0cf0cfsm13730391fa.30.2025.01.13.00.45.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jan 2025 00:45:23 -0800 (PST)
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-304d9a1f198so32966701fa.0;
-        Mon, 13 Jan 2025 00:45:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUs/PtvQCk/DD0ER2Z0TcDv9P/F1XEtUufVYVmwdRVQzVevp2ypHSolKvPyGyrO2DK5TxRsUchWuKa6I7UW@vger.kernel.org, AJvYcCVcd/CYv6GFWNOgxDsqFgxQVtp+pw0mDLh96ev+s+F5RSgeswjFyPx4a4kHhpXIZ6aLH9eRd4L40yM=@vger.kernel.org, AJvYcCWTpHvd75e8YOhpE3DtyPT63IBGOSKbBMYcILCrT0PS52wuBdxxrwbxTrBvdhsDXArmu72aowMZqiyh@vger.kernel.org, AJvYcCXZkh1o3TSf9LtMmd3FZ1taQlxTSfwLIVo1m3ap2/uQJG6JML69FoUN0Cbe3sZtvv4WCd5O5upq/IeZ@vger.kernel.org, AJvYcCXcg5NeoMnjLpfeZNToCHi/MfZZhdPIeMeYsKMtEUIhqwihbRb+iOBM1mqFbMnYclNfc04b3XvbHs3ZHw==@vger.kernel.org
-X-Received: by 2002:a05:6512:e93:b0:541:1c48:8c17 with SMTP id
- 2adb3069b0e04-542845b0a66mr5904614e87.46.1736757923296; Mon, 13 Jan 2025
- 00:45:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1736761626; x=1737366426;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P/Vpk+fuONkvTQ0KzQxSovHrQHyHGceSyePSaTNOG1w=;
+        b=XNO2cBNAs0LUx0Oflt/OzDqNZ+gJIN2XRiKeIZTnBLgh9qzzB4C+lkpdAkbpg36Ede
+         Q+qkdUu6A3Io90t7X2gjInCNj3smtglFY7h0uNYBN8W5R6cE+O2c+NvisTTObA2xsaV2
+         cNiyr8317Y8a3g8qznt2l1anUf35wQlwrT+fNxtrDlnCkQ9vjHc2/q0VjMJh2Ac9hQ1s
+         jkPft9/7xS3cQ4F/GU0wg+3smTNTavI6Qsttvxc7djrqBGCgb/aCQiba53pttcjGEs9w
+         nAxThBRP2w7E/p0GOgXepHS1pk1FrdipXHggk/4KFEfb0tVOk9pIM+QUCypwByT6lyyD
+         4XRw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/dqd0TnwKVfPcFq5RhUQAM2yW9QaiBRenrPsa5CLMbEfbd/XUeEhRViJbXe1e/19X7rWCZUKU@vger.kernel.org, AJvYcCX0RJi9/SbQO1+FtaLdvYkWS5hzPha7lhQDcHdQ9mHwv4Nl47f8cq/ztQPNcEuu28mpZKS1dKpH2NrTft4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9TulXORxRVZ1vMd7PDWKJGeb7RthIHrvxy8PcDIQlEjRZG4lB
+	krL8WT4GhGXintfZ8rI04hzEyBmxHaWFe3NUqPs9TLgTrh/leCBw
+X-Gm-Gg: ASbGncvKq5A6GMDuCtcbmFnxXAXylBrs9uB8GDkAhqO8j6FkVeTl2krO1X9FIcXHTyD
+	y+KXrx6bTLPZ8w8tM9wav288x1EE8o0N8wBAv/KniktaoSx3iFswICJqLDu+pW/Vp5ujdeDWpZu
+	jh2peiXsTsOKK0sw1w8dVy+OamX7Wt3hucelKspNqTVwCvS3YgqNAN0ukhJsnwqP5puIJn6xD9R
+	JoosHRxpdUVlQsblDmPuM0SeA+FqYXHRsGs7HetvDQ9EjMVFd3aCb4Xxzu96MT3ttVKv+Zh
+X-Google-Smtp-Source: AGHT+IHP5Bm+4RrlbE63eSMQZv1afGLq2XBlbRHRzKAffDpxJbpr/cFucD7iCpIjpeVScKlPbLduCA==
+X-Received: by 2002:a05:6000:18ab:b0:385:f349:ffe7 with SMTP id ffacd0b85a97d-38a872f6d5fmr17550961f8f.2.1736761625584;
+        Mon, 13 Jan 2025 01:47:05 -0800 (PST)
+Received: from eichest-laptop.toradex.int ([2a02:168:af72:0:a5a1:302a:fcf7:c337])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e4b80besm11472257f8f.83.2025.01.13.01.47.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2025 01:47:05 -0800 (PST)
+From: Stefan Eichenberger <eichest@gmail.com>
+To: abelvesa@kernel.org,
+	peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	shengjiu.wang@nxp.com,
+	francesco.dolcini@toradex.com
+Cc: linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v1] clk: imx: imx8-acm: fix flags for acm clocks
+Date: Mon, 13 Jan 2025 10:46:08 +0100
+Message-ID: <20250113094654.12998-1-eichest@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250110123923.270626-1-szemzo.andras@gmail.com>
- <20250110123923.270626-7-szemzo.andras@gmail.com> <de280eed-bcc8-4802-9734-5e95ad1f6611@kernel.org>
- <CAGb2v65arvBMg+reReVqK-Y6dL+CSrSx4618msiRKcNf=Vk1=A@mail.gmail.com> <fef71e03-489f-4503-9d1b-d61051d45dde@kernel.org>
-In-Reply-To: <fef71e03-489f-4503-9d1b-d61051d45dde@kernel.org>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 13 Jan 2025 16:45:10 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67_yMB_4SCjFOR5S6nDxX9=zbX-mDM6YjjL_NRxrEMUFg@mail.gmail.com>
-X-Gm-Features: AbW1kvZtDHwSmVGYxqRRgoOst1sjetl-67if_VRPdIRHwhs3tGpanfWm11zl1N4
-Message-ID: <CAGb2v67_yMB_4SCjFOR5S6nDxX9=zbX-mDM6YjjL_NRxrEMUFg@mail.gmail.com>
-Subject: Re: [PATCH 06/12] dt-bindings: clk: sunxi-ng: add V853 CCU clock/reset
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andras Szemzo <szemzo.andras@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Maxime Ripard <mripard@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 13, 2025 at 4:21=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 13/01/2025 09:06, Chen-Yu Tsai wrote:
-> > On Fri, Jan 10, 2025 at 9:56=E2=80=AFPM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> >>
-> >> On 10/01/2025 13:39, Andras Szemzo wrote:
-> >>> As the device tree needs the clock/reset indices, add them to DT bind=
-ing
-> >>> headers.
-> >>>
-> >>> Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
-> >>
-> >> That's never a separate commit from the binding.
-> >>
-> >>
-> >> ...
-> >>
-> >>> --- /dev/null
-> >>> +++ b/include/dt-bindings/clock/sun8i-v853-r-ccu.h
-> >>> @@ -0,0 +1,16 @@
-> >>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> >>> +/* Copyright(c) 2020 - 2023 Allwinner Technology Co.,Ltd. All rights=
- reserved.
-> >>> + *
-> >>> + * Copyright (C) 2023 rengaomin@allwinnertech.com
-> >>> + */
-> >>> +#ifndef _DT_BINDINGS_CLK_SUN8I_V85X_R_CCU_H_
-> >>> +#define _DT_BINDINGS_CLK_SUN8I_V85X_R_CCU_H_
-> >>> +
-> >>> +#define CLK_R_TWD            0
-> >>> +#define CLK_R_PPU            1
-> >>> +#define CLK_R_RTC            2
-> >>> +#define CLK_R_CPUCFG         3
-> >>> +
-> >>> +#define CLK_R_MAX_NO         (CLK_R_CPUCFG + 1)
-> >>
-> >> Nope, drop. Not a binding.
-> >>
-> >>> +
-> >>> +#endif
-> >>> diff --git a/include/dt-bindings/reset/sun8i-v853-ccu.h b/include/dt-=
-bindings/reset/sun8i-v853-ccu.h
-> >>> new file mode 100644
-> >>> index 000000000000..89d94fcbdb55
-> >>> --- /dev/null
-> >>> +++ b/include/dt-bindings/reset/sun8i-v853-ccu.h
-> >>> @@ -0,0 +1,62 @@
-> >>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> >>
-> >> Odd license. Did you copy the file with such license from the downstre=
-am?
-> >
-> > AFAIK all the existing sunxi clock / reset binding header files are
-> > dual licensed. OOTH all the YAML files are GPL 2.0 only.
-> >
-> > IIRC we started out GPL 2.0 only, but then figured that the header file=
-s
-> > couldn't be shared with non-GPL projects, so we changed those to dual
-> > license.
-> >
-> > Hope that explains the current situation. Relicensing the whole lot
-> > to just MIT or BSD is probably doable.
-> That's not what the comment is about. Dual license, as expressed by
-> submitting bindings/patches and enforced by checkpatch are expected. But
-> not GPLv3, GPLv4 and GPLv10.
+From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 
-I take back my statement. It seems we have a lot of GPLv2 or later going on=
-.
+Currently, the flags for the ACM clocks are set to 0. This configuration
+causes the fsl-sai audio driver to fail when attempting to set the
+sysclk, returning an EINVAL error. The following error messages
+highlight the issue:
+fsl-sai 59090000.sai: ASoC: error at snd_soc_dai_set_sysclk on 59090000.sai: -22
+imx-hdmi sound-hdmi: failed to set cpu sysclk: -22
 
-include/dt-bindings/clock/sun20i-d1-ccu.h:/* SPDX-License-Identifier:
-(GPL-2.0+ OR MIT) */
-include/dt-bindings/clock/sun20i-d1-r-ccu.h:/*
-SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-include/dt-bindings/clock/sun50i-a100-ccu.h:/*
-SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-include/dt-bindings/clock/sun50i-a100-r-ccu.h:/*
-SPDX-License-Identifier: GPL-2.0 */
-include/dt-bindings/clock/sun50i-h6-ccu.h:/* SPDX-License-Identifier:
-(GPL-2.0+ OR MIT) */
-include/dt-bindings/clock/sun50i-h6-r-ccu.h:/*
-SPDX-License-Identifier: GPL-2.0 */
-include/dt-bindings/clock/sun50i-h616-ccu.h:/*
-SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-include/dt-bindings/clock/sun5i-ccu.h:/* SPDX-License-Identifier:
-GPL-2.0-or-later */
-include/dt-bindings/clock/sun6i-rtc.h:/* SPDX-License-Identifier:
-(GPL-2.0+ OR MIT) */
-include/dt-bindings/clock/sun8i-de2.h: * SPDX-License-Identifier:
-(GPL-2.0+ OR MIT)
-include/dt-bindings/clock/sun8i-tcon-top.h:/* SPDX-License-Identifier:
-(GPL-2.0+ OR MIT) */
-include/dt-bindings/clock/suniv-ccu-f1c100s.h:/*
-SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-include/dt-bindings/reset/sun20i-d1-ccu.h:/* SPDX-License-Identifier:
-(GPL-2.0+ OR MIT) */
-include/dt-bindings/reset/sun20i-d1-r-ccu.h:/*
-SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-include/dt-bindings/reset/sun50i-a100-ccu.h:/*
-SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-include/dt-bindings/reset/sun50i-a100-r-ccu.h:/*
-SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-include/dt-bindings/reset/sun50i-h6-ccu.h:/* SPDX-License-Identifier:
-(GPL-2.0+ OR MIT) */
-include/dt-bindings/reset/sun50i-h6-r-ccu.h:/*
-SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-include/dt-bindings/reset/sun50i-h616-ccu.h:/*
-SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-include/dt-bindings/reset/sun5i-ccu.h:/* SPDX-License-Identifier:
-GPL-2.0-or-later */
-include/dt-bindings/reset/sun8i-de2.h: * SPDX-License-Identifier:
-(GPL-2.0+ OR MIT)
-include/dt-bindings/reset/suniv-ccu-f1c100s.h:/*
-SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+By setting the flag CLK_SET_RATE_NO_REPARENT, we signal that the ACM
+driver does not support reparenting and instead relies on the clock tree
+as defined in the device tree. This change resolves the issue with the
+fsl-sai audio driver.
 
-Is there a requirement that new files have to be GPL 2.0 only, not
-GPL 2.0 or later?
+CC: stable@vger.kernel.org
+Fixes: d3a0946d7ac9 ("clk: imx: imx8: add audio clock mux driver")
+Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+---
+ drivers/clk/imx/clk-imx8-acm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Documentation/process/license-rules.rst says:
-The license described in the COPYING file applies to the kernel source
-as a whole, though individual source files can have a different license
-which is required to be compatible with the GPL-2.0::
+diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-acm.c
+index c169fe53a35f..f20832a17ea3 100644
+--- a/drivers/clk/imx/clk-imx8-acm.c
++++ b/drivers/clk/imx/clk-imx8-acm.c
+@@ -371,7 +371,8 @@ static int imx8_acm_clk_probe(struct platform_device *pdev)
+ 	for (i = 0; i < priv->soc_data->num_sels; i++) {
+ 		hws[sels[i].clkid] = devm_clk_hw_register_mux_parent_data_table(dev,
+ 										sels[i].name, sels[i].parents,
+-										sels[i].num_parents, 0,
++										sels[i].num_parents,
++										CLK_SET_RATE_NO_REPARENT,
+ 										base + sels[i].reg,
+ 										sels[i].shift, sels[i].width,
+ 										0, NULL, NULL);
+-- 
+2.45.2
 
-    GPL-1.0+  :  GNU General Public License v1.0 or later
-    GPL-2.0+  :  GNU General Public License v2.0 or later
-    ...
-
-Aside from that, individual files can be provided under a dual license,
-e.g. one of the compatible GPL variants and alternatively under a
-permissive license like BSD, MIT etc.
-
-
-ChenYu
-
-> Best regards,
-> Krzysztof
->
