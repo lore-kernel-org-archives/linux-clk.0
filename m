@@ -1,164 +1,129 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C81222CF12;
-	Mon, 13 Jan 2025 12:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36AD23312E
+	for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 13:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736773099; cv=none; b=fB1djkjP5kr5I6OxdTBV7o0RW4/qmMYfhkpuAxk1vmP+Sfs1k2KFtsuYCGR+ouy3ANzFoYm2xMP8tQ6qlOuqhyTsm1QIwf3+c0sPSFARCYJNMfE+EFG/1bA120E+NCoFK9XQegzAkE6u7QI09b3IFssfZcRKUh7hHsNKpRoHX7s=
+	t=1736775792; cv=none; b=sW2cEU0kqvn0W+XUeNVmttkf7/A+Wb1+lo5KYg2V+vnA1dm/dZg8I7F6a3x2Z63DOS+WrigTGMF0u/C7R+hOG56OwnBdKrvE4W1wgf6ofcrdHBNRiR1ZiddlwjH35bkiHnIPelLtYLnL10QyntFe3jpsF3LiZlJYuZ6bd1CH7W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736773099; c=relaxed/simple;
-	bh=tcumvyjiejZ/BdHDNnVeU0Z6orCqX6HbP/D+1e96bQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dxiZ8OmOkH4poSBWbzojcY1yFpn4Iy7XTfWYkkkcDGy0iXEemQGDTImJymMG5XxNYJNMxs/ah9uSsVDJKLiq4FbQyYqYbTq5gX85b8VjJvpF67wO6cRKdXK3Jpd99k42BKEiaY/mCagpVmkzUJM8zYoImNIcahBUrOFMiVQmhQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZOioZPJ; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZOioZPJ"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ee74291415so5588007a91.3;
-        Mon, 13 Jan 2025 04:58:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736773097; x=1737377897; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9QooocJRhLcAF0GXLTHuzDSLGBsFud6OPFDJ1oZ4p7I=;
-        b=IZOioZPJXtdUzrur4K0YBFU8nWFLh2+j+Pl5cbCk419pdNyipLPhfdRxqEtqhBamiV
-         AV3o30Hnn4b0JQIyWS1CGZJs5O2W2b5GyYSisPdq2rRZoXXkWmXvJvVDHSKU8Q7+8w/a
-         5XqrP++e/ajmYwdGFLOoGFE118QwRhUEU9r4Xu6wJ9U4PDb+KnKmjXiwWbs4ZURCVtyL
-         uIzfz+NVDinDguBSKrzvSfc131OS7miZ4XaHnA0odXHH0KEde1/ZDCj471Sfw1FFBpr3
-         EArVK595G2LeO423jah4TQiuGxa2BgnAZiTVd05A+55MYqe23ls/vYTDqTDCHIEEXKOA
-         jCeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736773097; x=1737377897;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9QooocJRhLcAF0GXLTHuzDSLGBsFud6OPFDJ1oZ4p7I=;
-        b=jDMQY2K+5qs8oRxvHjAGbi/wy1h+ZBTt/vzpgyATaT5E7QysIDI8k6u51r/F0SEHdV
-         oiB/zg1zCJStYYGrUNyBbow9T7BRcqFjwkHrlGwdUFT3UdF5589c3AhN3BgA/ok/8tUY
-         fkstlnXQZ/QiBk0iym/scI49DgPE6GRq6liKia9JsK1phsOAr4umpJapYNcZ9DbBZdh8
-         Zdi8I4KWe5IZ6ND7YWgDFZmpDJKvs9T7vc+1jqAug5HJdZvvpmzqfpQC+KXHI1XHLDxN
-         zS7hUf+xbYcKQNyOVwyb7SWNRr1sSl8tr/gKTYCK3kPbGChN+GT+USpFs1dKR+gJyaSM
-         wOrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbLqqqHEGuj3Ma6BQViK/SP9nfxBEWto7cqq6pEsuOS/l/r5YQEs7NgYqJWCH0s1PPCnhURo9KXr4uf38=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9ST0RrSs4PRkbnWuMakepQaICFrZL4FDQHSdD/JTUd5tnZXyd
-	q5mf8o3QmhkEXT4tlOTNrw8RZgPKjBtKu+kFdLLgEM4E+03ue8qGO8sVnWSkbV/41TJsESs7ggC
-	UFaP4QAZpodIin043MHGtlk10l9I=
-X-Gm-Gg: ASbGncuxtH9yNb0EfC14EylX0m2SfoYEU+zHeRVDgyAQYRcQlxVYdfCLrS5RmNMcMzj
-	BKu0dhpU9jeLQFWj359ZG72ZeVfdbu5bZu6Px
-X-Google-Smtp-Source: AGHT+IHNmEymTs/8QaQXL/HKKd/cAq3hMCuCB8IfB+cQvjzR1Z/cmVgLXqVpP6y7UCO8xhGtLxy0isHJo5PzxgZ9Qe4=
-X-Received: by 2002:a17:90b:520e:b0:2ee:9d65:65a7 with SMTP id
- 98e67ed59e1d1-2f548f447b8mr29690471a91.29.1736773096824; Mon, 13 Jan 2025
- 04:58:16 -0800 (PST)
+	s=arc-20240116; t=1736775792; c=relaxed/simple;
+	bh=Hm1YnTDxuiBgY40XOLmZ5t0EOlED59z7/rK9qLKJK/c=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=VFRN1MT35IafRf4GVrn3fXDATaq5NhdKxuSLUWFTpxbmnI/5ZR6o3F21GOCPcQYEP7RaDy4ang2eGtV1JnX8Gtgtw80J6QCRvpqBGDOSlq6jrU5nkRQoX34ZvnRcvzXqkhRGBbxWeR3CO19Tb0F/td7vT2zKzi6hB/0PUA09Wac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tXKib-0002p0-Dk; Mon, 13 Jan 2025 14:43:01 +0100
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tXKia-000Ghv-1Q;
+	Mon, 13 Jan 2025 14:43:00 +0100
+Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
+	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tXKib-00GZFh-1q;
+	Mon, 13 Jan 2025 14:43:00 +0100
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Date: Mon, 13 Jan 2025 14:42:51 +0100
+Subject: [PATCH v3 1/6] dt-bindings: clock: imx8m: document
+ nominal/overdrive properties
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250113082818.345939-1-sergio.paracuellos@gmail.com>
- <ebb32bec-3fd4-4129-ab5d-d519b10c4405@kernel.org> <CAMhs-H9ysdJ9nUuStWJpRqTzm-09ZS5TMdhWgKMZx+JZdo6teQ@mail.gmail.com>
- <ec255edc-adcd-4c18-8f9c-209298f2bbff@kernel.org> <CAMhs-H9Osx__jBoxqAW1zWO4Q+nMymVfiWe_-ZSzp92Jht+JTg@mail.gmail.com>
- <cf9732b1-fd09-454e-bfd7-bef55b234175@kernel.org>
-In-Reply-To: <cf9732b1-fd09-454e-bfd7-bef55b234175@kernel.org>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Mon, 13 Jan 2025 13:58:05 +0100
-X-Gm-Features: AbW1kvZItoAEzVBlkDRcpTJEXcH5M5uK9NlkZ_6e5W8kXSjRnSstzXdFaxYrbxk
-Message-ID: <CAMhs-H_6QTptfFsSEh7PKy8Fnoem1ph4j=mwT_23=J=adDDT8w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: add clock definitions for Ralink SoCs
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	yangshiji66@outlook.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250113-imx8m-clk-v3-1-0d6e9bdeaa4e@pengutronix.de>
+References: <20250113-imx8m-clk-v3-0-0d6e9bdeaa4e@pengutronix.de>
+In-Reply-To: <20250113-imx8m-clk-v3-0-0d6e9bdeaa4e@pengutronix.de>
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Abel Vesa <abel.vesa@linaro.org>, 
+ Marek Vasut <marex@denx.de>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Ahmad Fatoum <a.fatoum@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Mon, Jan 13, 2025 at 1:37=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 13/01/2025 13:29, Sergio Paracuellos wrote:
-> >>>
-> >>>> 2. What is the point of this? We do not add constants when there are=
- no
-> >>>> users. Commit msg explains here nothing.
-> >>>
-> >>> All of the old ralink SoCs' dts files which are in the tree are not
-> >>> properly updated. I expect to have them updated somewhere in time
-> >>> merging real base stuff from openwrt dts [0] files. Not having this
-> >>> header with definitions makes very hard to update dts and then
-> >>> checking the driver code becomes a need to see the indexes for the
-> >>> clocks to properly setup a consumer node. Because of this, this file
-> >>> is added here.
-> >>
-> >> Still there is no point without the users. I do not see any reason why
-> >> this cannot be combined with fixing driver to use the header. Not
-> >> combining is an indication this is not a binding in the first place.
-> >
-> > Driver uses a bunch of arrays for the clocks (base, fixed, factor and
-> > peripheral) and they are registered consecutively in order just using
-> > the ARRAY_SIZE macro for any of them. Thus, the direct application of
-> > these definitions would be for dts consumer nodes, not the driver
-> > itself.
->
-> So what do you constants here fix? Driver can still reorganize arrays
-> breaking everything. If defining headers for proper ABI, then use that
-> ABI to make everything build-time testable and visible. That's why this
-> is not supposed to be a separate patch from users.
+The imx8m-clock.yaml binding covers the clock controller inside all
+of the i.MX8M Q/M/N/P SoCs. All of them have in common that they
+support two operating modes: nominal and overdrive mode.
 
-I understand your point and agree that the driver can do that, but the
-idea as this driver maintainer is not to do that :).
-Is adding something like the following in the binding itself with the
-header addition a possible way to go?
+While the overdrive mode allows for higher frequencies for many IPs,
+the nominal mode needs a lower SoC voltage, thereby reducing
+heat generation and power usage.
 
---- a/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
-+++ b/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
-@@ -18,6 +18,12 @@ description: |
-   These SoCs have an XTAL from where the cpu clock is
-   provided as well as derived clocks for the bus and the peripherals.
+As increasing clock rates beyond the maximum permitted by the supplied
+SoC voltage can lead to difficult to debug issues, device tree consumers
+would benefit from knowing what mode is active to enforce the clock rate
+limits that come with it.
 
-+  Each clock is assigned an identifier and client nodes use this identifie=
-r
-+  to specify the clock which they consume.
+To facilitate this, extend the clock controller bindings with an
+optional fsl,operating-mode property. This intentionally allows the
+absence of the property, because there is no default suitable for all
+boards:
+
+For i.MX8M Mini and Nano, the kernel SoC DTSIs has assigned-clock-rates
+that are all achievable in nominal mode. For i.MX8MP, there are some
+rates only validated for overdrive mode.
+
+But even for the i.MX8M Mini/Nano boards, we don't know what rates they
+may configure at runtime, so it has not been possible so far to infer from
+just the device tree what the mode is.
+
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+ Documentation/devicetree/bindings/clock/imx8m-clock.yaml | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+index c643d4a814786a1fc7e559140fe58911990f71bb..b03672255cae9462013a8a4e7a2adaff440f1420 100644
+--- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+@@ -43,6 +43,16 @@ properties:
+       ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8m-clock.h
+       for the full list of i.MX8M clock IDs.
+ 
++  fsl,operating-mode:
++    $ref: /schemas/types.yaml#/definitions/string
++    description:
++      The operating mode of the SoC. This affects the maximum clock rates that
++      can safely be configured by the clock controller.
++    oneOf:
++      - enum:
++          - nominal
++          - overdrive
 +
-+  All these identifiers could be found in:
-+  [1]: <include/dt-bindings/clock/mediatek,mtmips-sysc.h>.
-+
- properties:
-   compatible:
-     items:
-@@ -38,7 +44,8 @@ properties:
-
-   '#clock-cells':
-     description:
--      The first cell indicates the clock number.
-+      The first cell indicates the clock number, see [1] for available
-+      clocks.
-     const: 1
-
-@@ -56,6 +63,8 @@ additionalProperties: false
-
- examples:
+ required:
+   - compatible
+   - reg
+@@ -109,6 +119,7 @@ examples:
+                  <&clk_ext3>, <&clk_ext4>;
+         clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
+                       "clk_ext3", "clk_ext4";
++        fsl,operating-mode = "nominal";
+     };
+ 
    - |
-+    #include <dt-bindings/clock/mediatek,mtmips-sysc.h>
-+
-     syscon@0 {
-       compatible =3D "ralink,rt5350-sysc", "syscon";
-       reg =3D <0x0 0x100>;
 
-I don't like the idea of changing the driver code for using these
-constants since I do believe that it would make code uglier and less
-maintainable. I just wanted to make things easier for the device tree
-consumer nodes. So if adding this header is not a possibility with the
-changes in the yaml file I will forget about this addition and this
-patch.
+-- 
+2.39.5
 
->
-> Best regards,
-> Krzysztof
-
-Thanks a lot for clarifications.
-
-Best regards,
-    Sergio Paracuellos
