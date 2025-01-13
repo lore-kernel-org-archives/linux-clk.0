@@ -1,62 +1,62 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B671F9F7C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319281FA14E;
 	Mon, 13 Jan 2025 23:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736809862; cv=none; b=t1nxZ7XbrX+kF5vw2zx3+DpRrnL+oPslSvXWVjUSpru6mCMKCVA+2Lzvg1sLsWs72azOlrHiQ0swPRGHYgcHAhHAEIumCx9fOSdExNprSr6f8Zr1vd3XNbZMXmBjIx4SqO3wudOaYgdp8u3j8R0ygIGLPralKrnFbbAkFGknVcg=
+	t=1736809862; cv=none; b=bc2kvV/NURIFD7MUqwMb0yEu4OSN0cy7al1J0IcbpwFTOfOyK2WJGEloFHtL8N1A1gqKMcwmj6qlSywS+e8R8tY65sa+OSdu50/5ZQpUOVvy/A6HcF3GKjyIOa97pcvSoyvH91CATrbHmnOf67vgpRMStwJziTLoPnPYY18/bXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1736809862; c=relaxed/simple;
-	bh=5KTdFPnxnpArGwMGVFkV/IIZnXBWhpWLM8+dm2ej1g4=;
+	bh=rCGIiKsy1r3ivp+WewAhNO1OJsuucBGyaa3Xrn9kjfs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BEZXyml/g5fEYRaGv1vfX+zFXM+Pgkj5uq+8224ojSeygo4Wy3QC+vebl7LtjOfZ6lnTqIG+DAW8u5HH/wTkZTOyV7IlymNOb6rzonuNmxMjmaSTQ0YkJmOHrMZs66ZUIaomilbGf9ECo7wIiZgXXS58rXsgouRF0UhHiFU68RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G8+T950q; arc=none smtp.client-ip=209.85.128.42
+	 MIME-Version; b=WLPd2GOL+3WPpuYXK2X+BbLsNrD1mcwWVO58/L6D1+uRT7nelmid8aGKtUxtKeHOZqeU7P4r7pKfscHK0+oCQM6Ycz6XEDEgmRKKAuK1L7QCxilMYuyvk9zL1WpxF+ESXUVkJRut6Kr7ZXtuWc0NfJNaxYip+ndQ1jDmE3OQ5HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JbiDlZhI; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8+T950q"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4361b6f9faeso30072405e9.1;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbiDlZhI"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-435f8f29f8aso34955115e9.2;
         Mon, 13 Jan 2025 15:11:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1736809859; x=1737414659; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Wx9FXy2Nmb839wfaKsC26EG/DxUwAaShFW6TlBHPqXg=;
-        b=G8+T950qa1XkngfIQZBsTk+wVC6kvJ1PnDZH2r7oFswLsyJV2LLBYsoQtoAE6vonpY
-         Tg0cGXz1wCg70U4HdHPNi/XUTMkNiDQzY9gITrnRBM9vBkq5cX8pDoTUFHhMLvmsUB5o
-         4u9dV4RJ9yC6RfZ0uM58QKEz+ic8fwaa4yKqeFWB2L9RIhYMvdvQzDh1TfKKlx+XnkO5
-         CaaaGNuXiqCaZnomGaeSkLFRzb6l2AWlvzPliBivJI36I12yAvJe+jt7MD4M2g0lHwHG
-         2kB8ZBR8tG3wYTWA/IIgqSxbpfnOvWX/Hg/1RerF6WSJ0LHsebbwfCHTRwwEhi0sCfnT
-         m7sw==
+        bh=qq2XB+lYJiceaZe/6zMR+qQBDoqtHMjBqrCS9umY4Vg=;
+        b=JbiDlZhIfTENB5qJG6gLcteoOdo1Eg7g+WjcTMbXDKlQ+pRCSNZset3ngogpfOvpYM
+         h1fqzhYWE7KIpbLHSGWqW+5VJfUMvS2hr+5qskyreq22/wOYd4Ics8G0wX/Za7j3ZMEa
+         aEM0rMVJyUhLZU+Ku5P6UKxDzDCKmB7gRmMcDIBXQA28QF9O2uQfK+Sujx2VeJWXV+Up
+         fvfJfdpYtyDZUyrOiYzmhh8kUcxMIEwSBdsTrimP+/dPDo2k91NDQv4meDVWDldc1Xhn
+         Qi+IV355O8kvpLwTbthiTVbxNyPLYAK0THT2UuaePdYP0gEZLeDzJAzf6UAyotNkJzK4
+         6VLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1736809859; x=1737414659;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Wx9FXy2Nmb839wfaKsC26EG/DxUwAaShFW6TlBHPqXg=;
-        b=Yn+KQW3PT+A5zaWxUks99+6UEszrlVJQAdxaRGFt0yL0pzMAdV2JR3AeeXgB3xrWZA
-         0YvD3McrVqVg0J3MzL1leiO7iAvXismvPNWJ2j85owLyjQoU+ot0qWPbqtmIl8tLOto0
-         ZroBn37lvDyF0c1zdGNCv5WJnQpou1xY8NVeSLTMYaQZlv4Y5Zl3wpFSQEYcTBiSae2t
-         VIlMeCfeiJuAedIMbp2cPfJwTlXYzcg8eRyp//yaeog2JJQjSTixUwP9nVL2iggDl2bQ
-         Y4TGEj4QnASPbTRTZJLz4+1BjZGAUXYhVbuL+VzKVV8J5Jip2w/LjCEhN2Wf9Dmwz2VT
-         qe7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUMZgZ1TcCVhw1PGxAP+0eM5fsNPelrkt0ajHXDMq8L6Ee5ZQ/PYcdAzxOupza4gM+GSj9vSGuC4/ZP@vger.kernel.org, AJvYcCVppmCdGtLWhzbfxa4blBxQWpPWdaKsLNtNLRekD73zdzjkDPddBOP5DCEzJJs8NcQUpKlw34nUJrom@vger.kernel.org, AJvYcCW/LqA1G/ObXPS1hoQJjG3M4H6SpQzSzA+E+Sc6eRavY87PGHwbSgz4SgZVoe7yMrVMMsLrVKZ3zFkscVeU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7+HOiL2bjomdY5OeQb5le3jowcBpXqQx6c9qKzG57qyh9TnL6
-	Br5G6vmVPYqART7CegTes0NH2irVAizMR6rJ0ZmtjBBKZzWJ/qs3
-X-Gm-Gg: ASbGncu1YD3wLQ5ZCeGsBtqHWQFIvCmgs+f6qZy64WnFnUh3feD4pD4ULPHxVWq5jxK
-	KLAPHaI2LTLaaR9AdP7pXKMBUBHNVmIWnbganlWRY20PuGBe+PQhlrjGdqVamlQCxiBk/rvlWEv
-	0g/UVbjYN86wLYDF2sZpP7udtDrWcUclbiRa0pUVK8ErjPe6/TVsiSJ9arbZM0yVmiI1q8Uir0K
-	p7XRaaobrZwrFKFeNbWgOqiKPRj7naOl5HkpCbAsZPfIcKI4yMBw1L457ITyVRCs8IlYjo4vPKo
-	a8mGHkBFHs5sSKk/1P+MfFDsag==
-X-Google-Smtp-Source: AGHT+IETw92tWWGO7BEG8/AEf0PiHR4ku5OIXaq1i7sihIV4ANtb+1QQ1DLhc23o4licvBWj6Y1LkA==
-X-Received: by 2002:a05:600c:4749:b0:434:f1bd:1e40 with SMTP id 5b1f17b1804b1-436e9d6ff7bmr132289195e9.6.1736809858349;
-        Mon, 13 Jan 2025 15:10:58 -0800 (PST)
+        bh=qq2XB+lYJiceaZe/6zMR+qQBDoqtHMjBqrCS9umY4Vg=;
+        b=nkyuXR7Y7fOf+jrMMDD2o9ARkEkYol0+iAjp1RFs9zHlcBqEpd4K26ElQC/7DJR4rr
+         qXcdvT8ZXLuQtwVbmSSaF6JrCuvLpfxtThCtHL2fProCNuRLXGvbzNPv5BjwWUrAAfni
+         csBHKwiEtCCreU2DUUGvApDBR7ynTqtgXIkzwk/UC3kehxqqSKS6EuT99+awesOgUzYy
+         Vi76KiYRadOENW32+MvzbKDJ/hnwG/G8/phf7IkIvOmnBEZJ50RoJ1bub0I40yvDcF0d
+         Lnv95TOjtIAEsy3iO4yZZx+qm2H0nx05cgtN1Y4DpzXie1CdLiT4DJTqKCshfPNP2vFf
+         PXvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWY61hjmH58GXDfKMig/vp4eodcPbZh3RFWZXvYvQlPk0I0l16oSo9T0h1wmqCz3hDHSMs6H4YRI0s7@vger.kernel.org, AJvYcCX2/OHJcLtqWmuMIeSxCPqHFL+udky9izi0QES0bYrc02QkS/nIhsURzDWZuCJjoTg0rnHAPrxVjoJI@vger.kernel.org, AJvYcCXH+EqTPIkg29rI+o5o1Yck8rr7qr2DfCvD1f78wFHROqCYigqRGWUdAMuFdBvcHnPRyQ1tV90dTYjHlgI6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqwF3s8FtOmbqHHUwfkDgoYBDgDwXhsNTZazAQzENTDOMOHh8X
+	jlSwDlGezK1ENq+jjHAGC06GK/pC2aiPoUTdzvY1KAH5AJLLEkHwyeLmgw==
+X-Gm-Gg: ASbGncun+f3Og6LKDmwOO/bBbRmQdnSfh1C8n2X0Cy8NPe+OTiM5o4TBkwpDRDPdd5S
+	X3TXQ3t8A2hsYRDx/P+n6tqAX6qvot55rHH3ScPHNbpwLB4lwD002I0pKdHIDsAVfou+bCob+3u
+	NRiZ+wPXyL832bw8rgzT3cTWU7KWrGo3L9h/sRfDK/IJUJoSlQ7zU5oSZnbfXhVO7QpLWzKkIjd
+	1YtciDlw7YBpQCEQx58COnqoDXh0HmZeVGBwlG8TbHay+tSJ4fYCjL9LWyxcOULy/SYMrkvxQcs
+	+m/vldqfgN1j2VtQz90FHuK2ZA==
+X-Google-Smtp-Source: AGHT+IFEciYLakBizjv0yFAXiHXnnAFrs+2Y7EjzxUeLrzWF2I0JNfNs96lDl0Znuo5JOoZVYLPKTg==
+X-Received: by 2002:a05:6000:1848:b0:38a:8b2c:53ab with SMTP id ffacd0b85a97d-38a8b2c563emr19452695f8f.44.1736809859401;
+        Mon, 13 Jan 2025 15:10:59 -0800 (PST)
 Received: from localhost.localdomain (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-436e9dd1de9sm156091075e9.15.2025.01.13.15.10.57
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-436e9dd1de9sm156091075e9.15.2025.01.13.15.10.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2025 15:10:57 -0800 (PST)
+        Mon, 13 Jan 2025 15:10:59 -0800 (PST)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -67,10 +67,11 @@ To: Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	upstream@airoha.com
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v6 1/4] clk: en7523: Rework clock handling for different clock numbers
-Date: Tue, 14 Jan 2025 00:10:02 +0100
-Message-ID: <20250113231030.6735-2-ansuelsmth@gmail.com>
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v6 2/4] dt-bindings: clock: drop NUM_CLOCKS define for EN7581
+Date: Tue, 14 Jan 2025 00:10:03 +0100
+Message-ID: <20250113231030.6735-3-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20250113231030.6735-1-ansuelsmth@gmail.com>
 References: <20250113231030.6735-1-ansuelsmth@gmail.com>
@@ -82,83 +83,27 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Airoha EN7581 SoC have additional clock compared to EN7523 but current
-driver permits to only support up to EN7523 clock numbers.
-
-To handle this, rework the clock handling and permit to declare the
-clocks number in match_data and alloca clk_data based on the compatible
-match_data.
+Drop NUM_CLOCKS define for EN7581 include. This is not a binding and
+should not be placed here. Value is derived internally in the user
+driver.
 
 Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/clk/clk-en7523.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ include/dt-bindings/clock/en7523-clk.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 495c0d607c7d..3a4b7ed40af4 100644
---- a/drivers/clk/clk-en7523.c
-+++ b/drivers/clk/clk-en7523.c
-@@ -75,6 +75,7 @@ struct en_rst_data {
- };
+diff --git a/include/dt-bindings/clock/en7523-clk.h b/include/dt-bindings/clock/en7523-clk.h
+index 717d23a5e5ae..28e56745ccff 100644
+--- a/include/dt-bindings/clock/en7523-clk.h
++++ b/include/dt-bindings/clock/en7523-clk.h
+@@ -12,6 +12,4 @@
+ #define EN7523_CLK_CRYPTO	6
+ #define EN7523_CLK_PCIE		7
  
- struct en_clk_soc_data {
-+	u32 num_clocks;
- 	const struct clk_ops pcie_ops;
- 	int (*hw_init)(struct platform_device *pdev,
- 		       struct clk_hw_onecell_data *clk_data);
-@@ -504,8 +505,6 @@ static void en7523_register_clocks(struct device *dev, struct clk_hw_onecell_dat
- 	u32 rate;
- 	int i;
- 
--	clk_data->num = EN7523_NUM_CLOCKS;
+-#define EN7523_NUM_CLOCKS	8
 -
- 	for (i = 0; i < ARRAY_SIZE(en7523_base_clks); i++) {
- 		const struct en_clk_desc *desc = &en7523_base_clks[i];
- 		u32 reg = desc->div_reg ? desc->div_reg : desc->base_reg;
-@@ -587,8 +586,6 @@ static void en7581_register_clocks(struct device *dev, struct clk_hw_onecell_dat
- 
- 	hw = en7523_register_pcie_clk(dev, base);
- 	clk_data->hws[EN7523_CLK_PCIE] = hw;
--
--	clk_data->num = EN7523_NUM_CLOCKS;
- }
- 
- static int en7523_reset_update(struct reset_controller_dev *rcdev,
-@@ -702,13 +699,15 @@ static int en7523_clk_probe(struct platform_device *pdev)
- 	struct clk_hw_onecell_data *clk_data;
- 	int r;
- 
-+	soc_data = device_get_match_data(&pdev->dev);
-+
- 	clk_data = devm_kzalloc(&pdev->dev,
--				struct_size(clk_data, hws, EN7523_NUM_CLOCKS),
-+				struct_size(clk_data, hws, soc_data->num_clocks),
- 				GFP_KERNEL);
- 	if (!clk_data)
- 		return -ENOMEM;
- 
--	soc_data = device_get_match_data(&pdev->dev);
-+	clk_data->num = soc_data->num_clocks;
- 	r = soc_data->hw_init(pdev, clk_data);
- 	if (r)
- 		return r;
-@@ -717,6 +716,7 @@ static int en7523_clk_probe(struct platform_device *pdev)
- }
- 
- static const struct en_clk_soc_data en7523_data = {
-+	.num_clocks = ARRAY_SIZE(en7523_base_clks) + 1,
- 	.pcie_ops = {
- 		.is_enabled = en7523_pci_is_enabled,
- 		.prepare = en7523_pci_prepare,
-@@ -726,6 +726,8 @@ static const struct en_clk_soc_data en7523_data = {
- };
- 
- static const struct en_clk_soc_data en7581_data = {
-+	/* We increment num_clocks by 1 to account for additional PCIe clock */
-+	.num_clocks = ARRAY_SIZE(en7581_base_clks) + 1,
- 	.pcie_ops = {
- 		.is_enabled = en7581_pci_is_enabled,
- 		.enable = en7581_pci_enable,
+ #endif /* _DT_BINDINGS_CLOCK_AIROHA_EN7523_H_ */
 -- 
 2.45.2
 
