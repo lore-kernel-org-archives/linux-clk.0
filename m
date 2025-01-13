@@ -1,15 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FAA23ED62
-	for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 13:43:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2057F23DE8E
+	for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 13:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736775794; cv=none; b=bb9d+suUPaR2cTdRTh9p4ITrHj2c2aFgjkdHY2nxtAfvV1uQa2RDAkvpqAdq4EcdA57CfCyMGoEdHX0+a3/Duda6gkVVk8RFAIUzqvbfizPUm+oNnU7AeYIuCtK2wga5zgsSnbj3uaMgVKFPDSUH2BSVxBPTIRK6VvDfLYNUXAI=
+	t=1736775796; cv=none; b=OKA1iObyvKsloN3CjyazSttmGlfn+OiTV6m9HR79CJrOtG8AZOBW7OzQU5Lvij1Dkd2b3sAodEdjpJ6HmqQF5uSYkFXelD77bMqFAELi90mmTMwjpeoYN8fpQ2mB6ERiME3W+n5d5u/p3Ms0XH/7IwYes3lPwedRJ7eCuPeQiW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736775794; c=relaxed/simple;
-	bh=dDgjCsArEUnKjcCMTMQscbgA5YD7IqjDgsb8HJ/MzLU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JTpVG3pfIPlALbTsDsMTKvta0PQ0DCCMV8RK1alwmAXjxi0PXnRuYna0DYSlrB5DCeRom/LXX5EaE0Qy4JJlO9KhzdqEfQk400fAfCEw93DBd+LsUHD4Iy5GQpLA6h1LW5OACQytFVSEWoKi40wfTje+hEA8RB2YJaIeB3aiwmA=
+	s=arc-20240116; t=1736775796; c=relaxed/simple;
+	bh=Juc2Akbil/KjIj7GVAhkfHO1s/KyIG4/hSAIW20NKvo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=MQ0lVV4nGASANaz58l+hZEANha+Ra+VY3njKuFzNh+wobtAMFXVPpbvhUdB5cPBKnD2O+fMZQCZuge+QVGau8WQ/+uEGPGXdzKBjWoaJAEv9Un/ACysShgZ/zr3+rXCmhh92RUD9l1vLr0wnWP/lQq8iQSX7BJWU6pLDTqIM39Y=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -17,23 +18,22 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXKib-0002oy-Dh; Mon, 13 Jan 2025 14:43:01 +0100
+	id 1tXKib-0002p1-Dg; Mon, 13 Jan 2025 14:43:01 +0100
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXKia-000Ghu-1M;
+	id 1tXKia-000Ghw-1S;
 	Mon, 13 Jan 2025 14:43:00 +0100
 Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
 	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXKib-00GZFh-1p;
+	id 1tXKib-00GZFh-1r;
 	Mon, 13 Jan 2025 14:43:00 +0100
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Subject: [PATCH v3 0/6] arm64: dts: freescale: imx8mp-skov: switch to
- nominal drive mode
-Date: Mon, 13 Jan 2025 14:42:50 +0100
-Message-Id: <20250113-imx8m-clk-v3-0-0d6e9bdeaa4e@pengutronix.de>
+Date: Mon, 13 Jan 2025 14:42:52 +0100
+Subject: [PATCH v3 2/6] arm64: dts: imx8mp: Add optional nominal drive mode
+ DTSI
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,11 +42,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFoYhWcC/2WMywqDMBQFf0WybkoSNdGu+h+li0tyo6H1QWKDR
- fz3RkEQupzDmVlIQO8wkFu2EI/RBTf0CfJLRnQLfYPUmcREMFFwwRV13Vx1VL9ftC6kUjI3Vpu
- KpP/o0bp5bz2eiVsXpsF/93Tk23pU6lMlcsqotmAtsEoZkPcR++Yz+aF389Ug2VJRHHrJOJNnX
- SRdAiAY0LK0+Kev6/oDL4II0uYAAAA=
-X-Change-ID: 20241217-imx8m-clk-9467763dfcd8
+Message-Id: <20250113-imx8m-clk-v3-2-0d6e9bdeaa4e@pengutronix.de>
+References: <20250113-imx8m-clk-v3-0-0d6e9bdeaa4e@pengutronix.de>
+In-Reply-To: <20250113-imx8m-clk-v3-0-0d6e9bdeaa4e@pengutronix.de>
 To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -65,64 +63,93 @@ X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-Unlike the i.MX8MM and i.MX8MN SoCs added earlier, the imx8mp.dtsi
-configures some clocks at frequencies that are only validated for
-overdrive mode, i.e., when VDD_SOC is 950 mV.
+Unlike the i.MX8MM and i.MX8MN SoCs added earlier, the device tree for
+the i.MX8MP configures some clocks at frequencies that are only validated
+for overdrive mode, i.e. when VDD_SOC is 950 mV.
 
-For the Skov i.MX8MP board, we want to run the SoC at the lower voltage of
-850 mV though to reduce heat generation and power usage. For this to work,
-clock rates need to adhere to the limits of the nominal drive mode.
+Boards may want to run their SoC at the lower voltage of 850 mV though
+to reduce heat generation and power usage. For this to work, clock rates
+need to adhere to the limits of the nominal drive mode.
 
-This is done by this series: A new imx8mp-nominal.dtsi reconfigures
-the imx8mp.dtsi clock tree to be compatible with nominal mode, an adaptation
-to the Linux clock driver makes it sanity check the actual clock rates against
-the SoC operating mode's constraints and finally the Skov DT makes use
-of it.
+Add an optional DTSI file which can be included by various boards to run
+in this mode.
 
-Actual configuration of the VDD_SOC rail continues to happen prior to Linux
-as well as PLL configuration that needs to happen earlier than the kernel
-running. See the corresponding barebox patch series[1] for details.
-Note that the barebox series didn't yet include VDD_SOC reconfiguration
-to 850mV, that would follow once the kernel changes have been merged.
-
-[1]: https://lore.kernel.org/barebox/20240503103717.1370636-1-a.fatoum@pengutronix.de/
-
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
-Changes in v3:
-- change boolean mode properties to string property, so it's possible to
-  override in overlays (Frank).
-- Dropped Conor's Ack again due to aforementioned binding change.
-- make struct imx8mp_clock_constraints::clkid unsigned (Stephen)
-- Remove comma after sentinel member (Stephen)
-- Link to v2: https://lore.kernel.org/r/20250106-imx8m-clk-v2-0-6aaeadac65fe@pengutronix.de
+ arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi | 63 +++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
 
-Changes in v2:
-- Explain in Patch 1/6 why two properties are added instead of one
-  (Conor)
-- Collect Conor's Acked-by
-- Collect Peng's Reviewed-by
-- Link to v1: https://lore.kernel.org/r/20241219-imx8m-clk-v1-0-cfaffa087da6@pengutronix.de
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..f9a82a663033a1dfb72163eebb62e4aee66cee2f
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
+@@ -0,0 +1,63 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (C) 2024 Pengutronix, Ahmad Fatoum <kernel@pengutronix.de>
++ */
++
++&clk {
++	assigned-clocks = <&clk IMX8MP_CLK_A53_SRC>,
++			  <&clk IMX8MP_CLK_A53_CORE>,
++			  <&clk IMX8MP_SYS_PLL3>,
++			  <&clk IMX8MP_CLK_NOC>,
++			  <&clk IMX8MP_CLK_NOC_IO>,
++			  <&clk IMX8MP_CLK_GIC>;
++	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
++				 <&clk IMX8MP_ARM_PLL_OUT>,
++				 <0>,
++				 <&clk IMX8MP_SYS_PLL1_800M>,
++				 <&clk IMX8MP_SYS_PLL3_OUT>,
++				 <&clk IMX8MP_SYS_PLL1_800M>;
++	assigned-clock-rates = <0>, <0>,
++			       <600000000>,
++			       <800000000>,
++			       <600000000>,
++			       <400000000>;
++};
++
++&pgc_hdmimix {
++	assigned-clocks = <&clk IMX8MP_CLK_HDMI_AXI>,
++			  <&clk IMX8MP_CLK_HDMI_APB>;
++	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
++				 <&clk IMX8MP_SYS_PLL1_133M>;
++	assigned-clock-rates = <400000000>, <133000000>;
++};
++
++&pgc_hsiomix {
++	assigned-clocks = <&clk IMX8MP_CLK_HSIO_AXI>;
++	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>;
++	assigned-clock-rates = <400000000>;
++};
++
++&pgc_gpumix {
++	assigned-clocks = <&clk IMX8MP_CLK_GPU_AXI>,
++			  <&clk IMX8MP_CLK_GPU_AHB>;
++	assigned-clock-parents = <&clk IMX8MP_SYS_PLL3_OUT>,
++				 <&clk IMX8MP_SYS_PLL3_OUT>;
++	assigned-clock-rates = <600000000>, <300000000>;
++};
++
++&media_blk_ctrl {
++	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_AXI>,
++			  <&clk IMX8MP_CLK_MEDIA_APB>,
++			  <&clk IMX8MP_CLK_MEDIA_DISP1_PIX>,
++			  <&clk IMX8MP_CLK_MEDIA_DISP2_PIX>,
++			  <&clk IMX8MP_CLK_MEDIA_ISP>,
++			  <&clk IMX8MP_VIDEO_PLL1>;
++	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
++				 <&clk IMX8MP_SYS_PLL1_800M>,
++				 <&clk IMX8MP_VIDEO_PLL1_OUT>,
++				 <&clk IMX8MP_VIDEO_PLL1_OUT>,
++				 <&clk IMX8MP_SYS_PLL1_800M>;
++	assigned-clock-rates = <400000000>, <200000000>,
++			       <0>, <0>, <400000000>,
++			       <1039500000>;
++};
 
----
-Ahmad Fatoum (6):
-      dt-bindings: clock: imx8m: document nominal/overdrive properties
-      arm64: dts: imx8mp: Add optional nominal drive mode DTSI
-      arm64: dts: imx8mp: add fsl,nominal-mode property into nominal.dtsi
-      arm64: dts: freescale: imx8mp-skov: fix LDB clock rate configuration
-      arm64: dts: freescale: imx8mp-skov: operate SoC in nominal mode
-      clk: imx8mp: inform CCF of maximum frequency of clocks
-
- .../devicetree/bindings/clock/imx8m-clock.yaml     |  11 ++
- arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi  |  64 +++++++++
- .../arm64/boot/dts/freescale/imx8mp-skov-reva.dtsi |   5 +-
- .../freescale/imx8mp-skov-revb-mi1010ait-1cp1.dts  |  19 +--
- drivers/clk/imx/clk-imx8mp.c                       | 151 +++++++++++++++++++++
- 5 files changed, 234 insertions(+), 16 deletions(-)
----
-base-commit: 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
-change-id: 20241217-imx8m-clk-9467763dfcd8
-
-Best regards,
 -- 
-Ahmad Fatoum <a.fatoum@pengutronix.de>
+2.39.5
 
