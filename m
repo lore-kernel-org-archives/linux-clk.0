@@ -1,127 +1,97 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62122125B2
-	for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 13:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5042D23ED61
+	for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 14:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736776387; cv=none; b=d0S+734AVZb+dfWrBpBnOKeSzlYd7DClDXe4ZW2pcSSs6bE6UcLrmWYZtnurNM8Ma+iDiPi4E5uaX6+oDWZ31cd8xaPF3Db9l1hzFGzxAZjkgg5WdJkMSYjwcnXqmRFGD2v8I7/iE6Cd4HcE07KZPqj+id1Va7vD2eNX1l4vBAM=
+	t=1736778639; cv=none; b=WdzjAJCw+IHRuxhGFl+UCGBa40ViOvwkmxvAHQgws3x1pBoVHA8FC6qjqazBl8vn4SCz4tATQI6jdQvQK1EfBKYMQojOcW1MAInvejWuvmB9kLx7chlJFLYqu/2OdJSTYghlSFWeX+XWNWe76905Kisb2/Gb1VH3iT0oMzyYqk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736776387; c=relaxed/simple;
-	bh=SrvlXCFDRluE091hs9aNekJrTWA9i7WiKf4HjdZ3Zmk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mtsEQCSFC1qK+wPpcSlfvEFbput8JLroPogu6z57nv714+oqu3a5lORRYDq4St2BeJoKIRa5OdFXno6qP2WbwUVflI3StSJVFLH/VuD3Ed4FCEMP3I18YRjOxxyQ5esDXRWZJFTJDdkjXO8GMtk0hBnHVp+GDweoQk/5y2bP+UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXKsA-0004SJ-SF; Mon, 13 Jan 2025 14:52:54 +0100
-Message-ID: <0ef15155-c124-423f-bd00-ccde0fb1a741@pengutronix.de>
-Date: Mon, 13 Jan 2025 14:52:53 +0100
+	s=arc-20240116; t=1736778639; c=relaxed/simple;
+	bh=yQiQxuwGR8sipxLnE2QpNqD0m337joQm8Mgec26elhM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M2cQ++gA2do7CsNerW3kC+TY0WCli7mk1+HnL5i1yyDs2Q/31wyD7Mw8YWyWI2I8nzZ+3MxW6o3Kb/OTQRXqtMGn5NaV/VfztbjEQqHrFJordgcOKmZYX5yidUNIBYpS/x/Fgs9xncLsXPm7ebA+GxTx3RznYa2vrbGcmDrV8BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vJRCP7JH; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vJRCP7JH"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30036310158so34222171fa.0
+        for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 06:30:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736778635; x=1737383435; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yQiQxuwGR8sipxLnE2QpNqD0m337joQm8Mgec26elhM=;
+        b=vJRCP7JHCmA8mWQDiSFlV8GUugVUxXlPe0hdhmeL5c+Lr95DLJaZC/5Ixm0y/pWHN0
+         IWQ3fAhfjVrd0ONx7JwHcDEDOqPQG9/OCoW+wQvciLMr7TvRVN5JnpZzc3mT4l5ja9pa
+         q6150s78X0PswQC5fO0jlNRiplthwybM93s5ujCagkVKufZhn1LqIlscLKmAn1Wf+2nm
+         dmKSq3vkwi6QJhteaq5PwSVrHk+qOWRyx9wNhwUJIpDyCSNPFy+zXYxv45JFRd+kqNVk
+         6aYhW0sRnGwIErO6HeJLadja6OJSpCjKxePDpIJOL6NPz9QTMxwjoyMgB2IrUbqKD5cf
+         7H6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736778635; x=1737383435;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yQiQxuwGR8sipxLnE2QpNqD0m337joQm8Mgec26elhM=;
+        b=aSRm1pZRF1C2pSONtcTApHuC6RF/V4+zkUgP/QwJZpti09OJdTRHB1TEt6s37VXh3I
+         ERR3SE2dwB7mKXUdszOF25fSmMDQtOY+NPBfuo2AMOsn086vx+El094M2QmH/gLzrQp9
+         nOqkBexKkLf4NYXUqPrVfllENxaEsPyJypIKDB5niRPjI6JXqfpITgjGZRI1Kadd1klX
+         1ZJATmd//ltKbjIkACFxVR3QOMEl1jJwQdKE+cNRvZlB1WqhB+qgsBBhvDtGxyrTkcuy
+         s0qYw4BAReUxPauwcVE7OSA5PlBuVe2rV1+gVm4ufqK+ZpYeW6/uTRIwOAscni/9oMCD
+         ETbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWV6VEjcAQ9m9Y64G8ZGMfMKNHesssWjCn2n7G7cS581kxqoGvuDbVSH+z9kjSEO/81T+T2hic8FO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4LNoOmD0wTVA0/Rn+Ax16xCRW24IiDEdQixPVFVcQK4MnaJk0
+	CvaXHglbsCAv5oOyqhoTwdbeLr4/cgOhWUTQVbQ7JAsv2Xlq0LSCGxIgoAzyTbC7R+KZk4z6jOu
+	ILyHeoPme/wNXtcq9aZt4sdELMFkPskhV+w/eJg==
+X-Gm-Gg: ASbGncvOT6J6e/vXjF9UM2DlwfbUD18KkkvMgiPyE8xmEKVkj1+od+yA/IbVmg7oOS7
+	rQPWQpkLabDoCkeabKmBmnhL3QhD3javFNjtp
+X-Google-Smtp-Source: AGHT+IGhfOPi0kkaR3fzIiz3zYVKzNITf7WqJXfvCEhBW44RAY34fqtT6fXLyl378DmtnGYFFnV3yeRTPKvHK9wdrxk=
+X-Received: by 2002:a05:651c:221f:b0:302:1c90:58e8 with SMTP id
+ 38308e7fff4ca-3060ce3d06emr30538601fa.33.1736778635404; Mon, 13 Jan 2025
+ 06:30:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: imx8m: document
- nominal/overdrive properties
-To: Frank Li <Frank.li@nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abel.vesa@linaro.org>,
- Marek Vasut <marex@denx.de>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-References: <20250106-imx8m-clk-v2-0-6aaeadac65fe@pengutronix.de>
- <20250106-imx8m-clk-v2-1-6aaeadac65fe@pengutronix.de>
- <Z3wHp6eLQuV9GGvh@lizhi-Precision-Tower-5810>
- <957ad153-17f3-4cb8-8878-73093a9a2724@pengutronix.de>
- <Z3wyG61QEzgCJFh+@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <Z3wyG61QEzgCJFh+@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20241227-a133-display-support-v1-0-13b52f71fb14@linumiz.com> <20241227-a133-display-support-v1-10-13b52f71fb14@linumiz.com>
+In-Reply-To: <20241227-a133-display-support-v1-10-13b52f71fb14@linumiz.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 13 Jan 2025 15:30:24 +0100
+X-Gm-Features: AbW1kvZgkONvTczIqxIzrr227mixg_kY6H8hXCa96ZE9JLa4yEIXQA2LwUItM1s
+Message-ID: <CACRpkdY29s6Cz3zvtksLO8sESwxhkVdmGUipVAqiEtix3E1=Vw@mail.gmail.com>
+Subject: Re: [PATCH 10/22] pinctrl: sunxi: add missed lvds pins for a100/a133
+To: Parthiban Nallathambi <parthiban@linumiz.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-phy@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Frank,
+On Fri, Dec 27, 2024 at 12:09=E2=80=AFPM Parthiban Nallathambi
+<parthiban@linumiz.com> wrote:
 
-On 06.01.25 20:42, Frank Li wrote:
-> On Mon, Jan 06, 2025 at 08:25:38PM +0100, Ahmad Fatoum wrote:
->> [1]: https://lore.kernel.org/all/4e2250b3-5170-4e88-aa0a-dd796b81e78b@pengutronix.de/
->>
-> 
-> But there are problem if use dts overlay because dts overlay can't support
-> delete property.
-> 
-> If one dts file use "fsl,overdrive-mode", dts overlay file can't delete
-> this property. "mutually exclusive optional properties" was not preferred.
-> 
-> mode = ["normal" | "overdrive"]
+> lvds, lcd, dsi all shares the same GPIO D bank and lvds0
+> data 3 lines and lvds1 pins are missed, add them.
+>
+> Signed-off-by: Parthiban Nallathambi <parthiban@linumiz.com>
 
-I just sent out v3[1] with your suggestion incorporated, but missed adding
-you to Cc.
+Nobody seems to have any objections about this patch and it seems
+technically correct so I just applied it to the pin control tree.
 
-[1]: https://lore.kernel.org/all/20250113-imx8m-clk-v3-0-0d6e9bdeaa4e@pengutronix.de/
-
-Thanks,
-Ahmad
-
-> 
-> Frank
-> 
->> Thanks,
->> Ahmad
->>
->>
->>>
->>> Frank
->>>
->>>>  required:
->>>>    - compatible
->>>>    - reg
->>>> @@ -95,6 +103,12 @@ allOf:
->>>>              - const: clk_ext2
->>>>              - const: clk_ext3
->>>>              - const: clk_ext4
->>>> +  - if:
->>>> +      required:
->>>> +        - fsl,overdrive-mode
->>>> +    then:
->>>> +      properties:
->>>> +        fsl,nominal-mode: false
->>>>
->>>>  additionalProperties: false
->>>>
->>>>
->>>> --
->>>> 2.39.5
->>>>
->>>
->>
->>
->> --
->> Pengutronix e.K.                           |                             |
->> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
->> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
->> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-> 
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Yours,
+Linus Walleij
