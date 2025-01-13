@@ -1,169 +1,169 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B371BD9FF;
-	Mon, 13 Jan 2025 12:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736770796; cv=pass; b=VjiD0YK2xfDv5jTL2IVCgYRTvy+v+7ZejBeebt3Ji28F7DaciCgmsjUvXCafE9FspOtyLWFf3t7CYC9i11nTj4JXXqSKUTwNFeZesVt3fX3Z3uwrpMRsNJWd345ERq+JQrb6Zt6VHidt8A3wEiSJnXpcPNJixBmgvcJfe7Ojhio=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736770796; c=relaxed/simple;
-	bh=Xl74J1MalzuceQrzY2ktCKG1QU8F4qFiY3UBLZmJjFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iZh4y18snQS+/IcZCFLwMm3nTonVCsnBuCCZt1IcDXwpA0fB+tW5ro/DSQA0at9kVaLK1z40N172lzEVqHh7EACSZleiqO3rn00IBK/xfiLlKSdWC6aoIhXkv/sHkF0jXQCr3NYxjBhQYVd5WMiHiscG63SJyJWUBIb1uhFCZYM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=C/xhGw3G; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43C322A4F1;
+	Mon, 13 Jan 2025 12:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736771404; cv=none; b=JC6mXRp+Sc5FPBWAnK8/BiIktRmJdd9jSPPUKs50sSgjm15kuVV59KRkOLkcTTh0iKprRIqhRpuyi1OWd0pJK+DmZfm07rUfNmJXenw+fekVSeyLek9f20Q8MMRnI95cmGizLgVVkgfx6EwgCLQK+yVIPzRkcUJPF8A8+FIxDKI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736771404; c=relaxed/simple;
+	bh=srKllMZW3R4jNVS3ob0zQq2Achx8hw3VrNniXfosw5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=itS4e+lQWkNJhc/kT89jfhkIzNMxpWV1M3lavFRtVmN1xyFk654K+atEUErzvc9FQuwyTjlWzWCSNx6hTM7a8iO5Yl6PlB7BtaSNcqAtfAE3YKQIJBgYvk9Z0pR2AmJvDK/OHx5nREczchP1q0I/FWINOP3yD2wEqBE1tVLVF8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dBm8wfQx; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="C/xhGw3G"
-ARC-Seal: i=1; a=rsa-sha256; t=1736770782; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GlmJnh0wJyDrDeO54WDVZREmrXSWXpTgiT2QRaS1g0lgjA7PKBt67+60Ksj4Sb7clUHCXmqdOao8SkEmMdI1dbfl6VQQOa6QJFN6SXxi8XstHhfhmw3UgNbmkbQxhbQYeJXLeBOR2tvWqpHzE2y4US9jZgGVpTXdtJmlXWhPecs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1736770782; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=yg980IXsItT1ob0TGMGNg+N1u7n0tXM7s7EHT8ZvaOE=; 
-	b=EvW23UyJyUUYf2T87/6FrFBZkDk4HrTsi8CGOaBdUFmf+egYHU2aub0buO7ovDMo5D0A03xn0nzfr96YBmGzHNrymi+xJnyfbsLMzX0VftGaQIgyJlf49uI7A1kfmFpkTA21Z9DKxpIrQ1WxTLMHLZQfGwQslTT4v5t9hl0rS54=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1736770782;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=yg980IXsItT1ob0TGMGNg+N1u7n0tXM7s7EHT8ZvaOE=;
-	b=C/xhGw3Gdf0JU2WhUT6ycBFraS0/yQWo9mYI9JUP1Ap7bRSjybjmxF3RKMpzdZpK
-	iKD0H6a25NJ4ACR6ouyx4gKMELMrnK4ax6Vf1jJup31GdQsIgKT+4A/Fq4NVQfC0RL2
-	kDRoyGMli7GY0OGIKKEXLBGr9qXbmMzNT60XJmFk=
-Received: by mx.zohomail.com with SMTPS id 173677077432099.51494040975774;
-	Mon, 13 Jan 2025 04:19:34 -0800 (PST)
-Message-ID: <a1386cfb-7698-43f6-acff-628d9626da47@zohomail.com>
-Date: Mon, 13 Jan 2025 20:19:19 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBm8wfQx"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-21619108a6bso70276525ad.3;
+        Mon, 13 Jan 2025 04:30:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736771402; x=1737376202; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5ro6/P7rgBdJH4WO28Cu0rkO/sr8eLGSRRDbWEerqoQ=;
+        b=dBm8wfQxlIIyRWHzrlOtoB2v01FhztEoq/R1bs+Hf+zs8Cv+0jIhYrmNGC0g/YgyGr
+         XckpNycfULTbufd5rKbxGQNp1AjNv7F6E9/4pXfzVLMPKKtsfvzQiE+VogB9oBEXQR8D
+         6b3WVzfhycAJLNSe7xxjVp596bFeGT0AL1vgnnBAyCDczr2Pn12xkScfgSMa5foSLjb2
+         gfovX1EMDdtDqh/JfLvImb9h/kl+7gGbHvTVuscTU3KoJZ1nARkt92tquW+BMdctgt1O
+         jB9fxPTnLr8Ib8xZh3KD6XT3Q6D9/NaimtV735DrvRqm23WL5gFCaL0PQ3YkD5yTAXrH
+         p+Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736771402; x=1737376202;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5ro6/P7rgBdJH4WO28Cu0rkO/sr8eLGSRRDbWEerqoQ=;
+        b=ef9tvnctCvCMs2g1xI/TP7K9G+b0/FGCu3VxaoCqBzOF6XoL4mqhUIe+E+XnqH4xNT
+         pmQCKaIhDMoNe4bpsPppdnwWfDfigrbim2GhQNCejt1ID8kNdPxDrXLnlNqYZEjyib5H
+         pPnrdJAW5G2FsgoLsPdtyigt1YhpSqs2+9EFromYwyfHEBEtdAbiqQpIWzqIIS+h3DQV
+         25cwhOaJucqao+Rf5e94lusUi8GlV9bjqFj5cm0XbJltXaqs48Zu8GuWrZMQQS6IpjLt
+         EXFKIIgcy2lvEGfjfClzauGxYFG4vebWKUOOyyzythaLXBPyIXCuFvygDD+50zieA9Lg
+         pqjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgcsXoogesSLZbfpyRIQODDhyaa2wT6kYL8f4VyBjfHHNj/UjKAGo4iw5U8eFjA1tbn9vPAl4N/suY1EE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynLYtmbNq638j2bv/CfjrprCIYoXINVtPHbddF8oY+igx9j3Rk
+	tD0DKvJgrjoYSUTqhNAGi6U7f81TwiYgz0sWCn7US/vLpuV+PgVDlAnhkdNx69Yz5I3ITZxUb8j
+	+Nw09007ccCdPioff6oTwPaOcW4Sbz3SC
+X-Gm-Gg: ASbGncteosYCWQb9ZfJ9/rqqEmJz4g5/6LckLAa5JiXn/ha0yQTwzvE32tiKJK3k5Ia
+	j7rCHZ0U5/6Xr80bUQb8m/6TeQVwsEz5NC3rD
+X-Google-Smtp-Source: AGHT+IFT573twRyKBUV5gbeW4QMKK9QyVoTrXDY7oEtS6Jy/EB3zG2UEszDBphnwXgd7qwsoKNIRDBbC41qKILCy2Ho=
+X-Received: by 2002:a17:902:e886:b0:212:68e2:6c81 with SMTP id
+ d9443c01a7336-21a83f62612mr353655205ad.24.1736771401865; Mon, 13 Jan 2025
+ 04:30:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] riscv: dts: canaan: Add clock initial support for
- K230
+References: <20250113082818.345939-1-sergio.paracuellos@gmail.com>
+ <ebb32bec-3fd4-4129-ab5d-d519b10c4405@kernel.org> <CAMhs-H9ysdJ9nUuStWJpRqTzm-09ZS5TMdhWgKMZx+JZdo6teQ@mail.gmail.com>
+ <ec255edc-adcd-4c18-8f9c-209298f2bbff@kernel.org>
+In-Reply-To: <ec255edc-adcd-4c18-8f9c-209298f2bbff@kernel.org>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Mon, 13 Jan 2025 13:29:50 +0100
+X-Gm-Features: AbW1kvbW9Sh6k8N4m_cBg5TS1QcbvimnSphpqlbdgpS1VsE18i7COJGdEk0ffpo
+Message-ID: <CAMhs-H9Osx__jBoxqAW1zWO4Q+nMymVfiWe_-ZSzp92Jht+JTg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: add clock definitions for Ralink SoCs
 To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Troy Mitchell <TroyMitchell988@gmail.com>
-References: <20250108-b4-k230-clk-v2-0-27b30a2ca52d@zohomail.com>
- <20250108-b4-k230-clk-v2-3-27b30a2ca52d@zohomail.com>
- <ebj26gfkaypgtvi7o2ab3mfvcgc7yk4scdoxroftlp7lnx3xix@p3nnfiva3hdm>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <ebj26gfkaypgtvi7o2ab3mfvcgc7yk4scdoxroftlp7lnx3xix@p3nnfiva3hdm>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227102e394c4ece469786f9a63f0000268b6dc8886a4bdfe9cfcc1d7509dc8a729330385f8b10a251:zu08011227060641b058f7bd561e629be2000014ba64026e331fba48e2cc9e36c581def167ce43f42c3ee11c:rf0801122c06663dad68cb3878c535246800002ee0df51d8bf8a147c9dbba85400de34851e84c7c0c613b553fb57f1c3a7:ZohoMail
-X-ZohoMailClient: External
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	yangshiji66@outlook.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 2025/1/9 17:09, Krzysztof Kozlowski wrote:
-> On Wed, Jan 08, 2025 at 07:53:09PM +0800, Xukai Wang wrote:
->> This patch provides basic support for the K230 clock, which does not
->> cover all clocks.
->>
->> The clock tree of the K230 SoC consists of OSC24M,
->> PLLs and sysclk.
->>
->> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
->> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
->> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
->> ---
->>  arch/riscv/boot/dts/canaan/k230.dtsi | 27 +++++++++++++++++++++++++++
->>  1 file changed, 27 insertions(+)
->>
->> diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/canaan/k230.dtsi
->> index 95c1a3d8fb1192e30113d96d3e96329545bc6ae7..c407471af3daac154e0fbdd377d57ea3ff4698e1 100644
->> --- a/arch/riscv/boot/dts/canaan/k230.dtsi
->> +++ b/arch/riscv/boot/dts/canaan/k230.dtsi
->> @@ -3,6 +3,7 @@
->>   * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
->>   */
->>  
->> +#include <dt-bindings/clock/k230-clk.h>
->>  #include <dt-bindings/interrupt-controller/irq.h>
->>  
->>  /dts-v1/;
->> @@ -65,6 +66,13 @@ apb_clk: apb-clk-clock {
->>  		#clock-cells = <0>;
->>  	};
->>  
->> +	osc24m: clock-24m {
->> +		compatible = "fixed-clock";
->> +		#clock-cells = <0>;
->> +		clock-frequency = <24000000>;
->> +		clock-output-names = "osc24m";
->> +	};
->> +
->>  	soc {
->>  		compatible = "simple-bus";
->>  		interrupt-parent = <&plic>;
->> @@ -138,5 +146,24 @@ uart4: serial@91404000 {
->>  			reg-shift = <2>;
->>  			status = "disabled";
->>  		};
->> +
->> +		sysclk: clock-controller@91100000 {
-> Does not look like placed in correct order.
+On Mon, Jan 13, 2025 at 1:17=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 >
->> +			compatible = "canaan,k230-clk";
->> +			reg = <0x0 0x91102000 0x0 0x1000>, <0x0 0x91100000 0x0 0x1000>;
->> +			clocks = <&osc24m>;
->> +			#clock-cells = <1>;
->> +			clock-output-names =
-> Unnecessary blank line
+> On 13/01/2025 12:32, Sergio Paracuellos wrote:
+> > Hi Krzysztof,
+> >
+> > On Mon, Jan 13, 2025 at 12:18=E2=80=AFPM Krzysztof Kozlowski <krzk@kern=
+el.org> wrote:
+> >>
+> >> On 13/01/2025 09:28, Sergio Paracuellos wrote:
+> >>> Add clock missing definitions for RT2880, RT305X, RT3352, RT3383, RT5=
+350,
+> >>> MT-7620 and MT-76X8 Ralink SoCs.
+> >>>
+> >>> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+> >>
+> >> 1. Please use get_maintainers.
+> >
+> > I did but from my tree which is tag: v6.12.5, linux-stable/linux-6.12.y=
+. Sorry.
 >
->> +			"CPU0_ACLK", "CPU0_PLIC", "CPU0_NOC_DDRCP4", "CPU0_PCLK",
-> Messed indentation/alignment. See DTS coding style.
+> That's separate problem, but not one I was thinking about. Even on 6.12
+> stable you would get dt list, which is missing here.
+>
+> This means no testing, although does not matter here, and it does not
+> appear in Patchwork which means does not reach us, except my filter for
+> nagging.
 
-I've reorder the properties and changed the indentation:
+True. You are right. I forgot to add the device tree list to the cc
+for this patch. Sorry.
 
-osc24m: clock-24m {
-        compatible = "fixed-clock";
-        clock-frequency = <24000000>;
-        clock-output-names = "osc24m";
-        #clock-cells = <0>;
-};
+>
+> >
+> >> 2. What is the point of this? We do not add constants when there are n=
+o
+> >> users. Commit msg explains here nothing.
+> >
+> > All of the old ralink SoCs' dts files which are in the tree are not
+> > properly updated. I expect to have them updated somewhere in time
+> > merging real base stuff from openwrt dts [0] files. Not having this
+> > header with definitions makes very hard to update dts and then
+> > checking the driver code becomes a need to see the indexes for the
+> > clocks to properly setup a consumer node. Because of this, this file
+> > is added here.
+>
+> Still there is no point without the users. I do not see any reason why
+> this cannot be combined with fixing driver to use the header. Not
+> combining is an indication this is not a binding in the first place.
 
-sysclk: clock-controller@91102000 {
+Driver uses a bunch of arrays for the clocks (base, fixed, factor and
+peripheral) and they are registered consecutively in order just using
+the ARRAY_SIZE macro for any of them. Thus, the direct application of
+these definitions would be for dts consumer nodes, not the driver
+itself.
 
-        compatible = "canaan,k230-clk";
-        reg = <0x0 0x91102000 0x0 0x1000>,
-              <0x0 0x91100000 0x0 0x1000>;
-        clocks = <&osc24m>;
-        clock-output-names = "CPU0_ACLK", "CPU0_PLIC", "CPU0_NOC_DDRCP4",
-                             "CPU0_PCLK", "PMU_PCLK", "HS_HCLK_HIGH_SRC",
-                             "HS_HCLK_HIGH_GATE", "HS_HCLK_SRC",
-                             "HS_SD0_HS_AHB_GAT", "HS_SD1_HS_AHB_GAT",
-                             "HS_SSI1_HS_AHB_GA", "HS_SSI2_HS_AHB_GA",
-                             "HS_USB0_HS_AHB_GA", "HS_USB1_HS_AHB_GA",
-                             "HS_SSI0_AXI", "HS_SSI1", "HS_SSI2",
-                             "HS_QSPI_AXI_SRC", "HS_SSI1_ACLK_GATE",
-                             "HS_SSI2_ACLK_GATE", "HS_SD_CARD_SRC",
-                             "HS_SD0_CARD_TX", "HS_SD1_CARD_TX",
-                             "HS_SD_AXI_SRC", "HS_SD0_AXI_GATE",
-                             "HS_SD1_AXI_GATE", "HS_SD0_BASE_GATE",
-                             "HS_SD1_BASE_GATE", "HS_OSPI_SRC",
-                             "HS_USB_REF_51M", "HS_SD_TIMER_SRC",
-                             "HS_SD0_TIMER_GATE", "HS_SD1_TIMER_GATE",
-                             "HS_USB0_REFERENCE", "HS_USB1_REFERENCE";
-        #clock-cells = <1>;
-};
+>
+> In any case there should be explanation in commit msg about such choice.
 
-Does this updated version looks appropriate？
+Sure, will do.
+
+>
+> >
+> >>
+> >>> ---
+> >>>  include/dt-bindings/clock/mtmips-clk.h | 130 +++++++++++++++++++++++=
+++
+> >>
+> >> Filename matching compatible.
+> >
+> > There are multiple compatibles regarding this, since the driver covers
+>
+> Driver almost does not matter.
+>
+> > a lot of SoCs. So I preferred to put them all in a single header file.
+> > See [1]. Should I add a different file for any single compatible
+> > instead?
+>
+> Well, are all in the same bindings file? If so, can stay but then:
+> filename matching binding, because binding has proper naming scheme.
+
+I see. Yes, they are in
+Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
+
+So I will rename this new header file to 'mediatek,mtmips-sysc.h' then.
 
 >
 > Best regards,
 > Krzysztof
->
+
+Thanks a lot!
+
+Best regards,
+    Sergio Paracuellos
