@@ -1,94 +1,89 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D64023DE93
-	for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 13:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FE622CF31
+	for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 13:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736775803; cv=none; b=aJ11jcr9LfR+IDukla9Z2pAulJ1gJoFQOl2ehTgTVGYvgYZE3FJ0sBn8KnhpZT1yB2/jHH6uL3gvvFJQzT431bwItpc2tgFabbQMwK4hO3665mSVlLlKwkOZicDiELhm/SxepQHgrLVh4z6Xp5eJJTmxJ43A9leL3bElZ2KGEaA=
+	t=1736776127; cv=none; b=OhZjkCsmk1fAQpehsfgEeoibEDPcdFiECZ61sZ/Yn7VeuCSu1grDd5nhidgoFy1QO/leZ07cjFV9CpWcW+0dYaX1SYCgJBaK4tcXuvK9P+hFGVxuMjinqb13Pf+DpXAk02/ASaXVfrxy7ARyKN05iWd4zCwGzHXBmnvHhEkKn6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736775803; c=relaxed/simple;
-	bh=UlvKvD0+oBjjm5RXL5FB/u9m/K/gaACp7MxXiDcd/Go=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IJnQO7aQMwkMv0DCLXN9mo854+mLRQ15fNy4Oj8B1L2rfGIViQV4LXVZ7ylkcTMx3Plb9crNP5pl+N7/KPm+Lw16sXjVObSbcVaNkR8YWUhxvnH6Y+6mhGlJ7rSgxYCjM62g4EJy6mQryzMuSJ9YSV5bQB5W09H5VnD4Vl4bSVk=
+	s=arc-20240116; t=1736776127; c=relaxed/simple;
+	bh=f1KUTv5GOu7bwyhcnGos55stJaX9VmTq9wlMzJFKcmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jDcSm5k/lPkDyBPxeIqfaEOYk3m6H/I5i9R9wmjMLS+NXqwGlKUVaMqIYms6TR1kY5afS0TQ+KcNGMMbNH2vAdsQqQjEGZwMERnFRRzaY8hpxnY0e9H+3jDwSTas4hgs5DIffhCB589bOaILJvuZYWlXsiaU3dihi3TifC8fxts=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXKib-0002p2-Dq; Mon, 13 Jan 2025 14:43:01 +0100
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXKia-000Ghx-1W;
-	Mon, 13 Jan 2025 14:43:00 +0100
-Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
-	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tXKib-00GZFh-1s;
-	Mon, 13 Jan 2025 14:43:00 +0100
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Mon, 13 Jan 2025 14:42:53 +0100
-Subject: [PATCH v3 3/6] arm64: dts: imx8mp: add fsl,nominal-mode property
- into nominal.dtsi
+	id 1tXKnz-0003hG-5W; Mon, 13 Jan 2025 14:48:35 +0100
+Message-ID: <e2b29bf2-1751-4cf3-b1c1-a5ae7122945d@pengutronix.de>
+Date: Mon, 13 Jan 2025 14:48:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] clk: imx8mp: inform CCF of maximum frequency of
+ clocks
+To: Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+ Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Marek Vasut <marex@denx.de>,
+ Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250106-imx8m-clk-v2-0-6aaeadac65fe@pengutronix.de>
+ <20250106-imx8m-clk-v2-6-6aaeadac65fe@pengutronix.de>
+ <104eed995f349b123e633862f68de966.sboyd@kernel.org>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <104eed995f349b123e633862f68de966.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250113-imx8m-clk-v3-3-0d6e9bdeaa4e@pengutronix.de>
-References: <20250113-imx8m-clk-v3-0-0d6e9bdeaa4e@pengutronix.de>
-In-Reply-To: <20250113-imx8m-clk-v3-0-0d6e9bdeaa4e@pengutronix.de>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abel.vesa@linaro.org>, 
- Marek Vasut <marex@denx.de>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Ahmad Fatoum <a.fatoum@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
 X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-The imx8mp-nominal.dtsi is meant to be included into boards that want to
-override the default overdrive clock settings with settings suitable for
-running in nominal drive mode at its lower required voltage.
+Hello Stephen,
 
-Specifying fsl,operating-mode = "nominal" informs drivers of this fact,
-so they can sanity check runtime clock reconfiguration to observe the
-limits imposed by nominal mode.
+On 07.01.25 00:42, Stephen Boyd wrote:
+> Quoting Ahmad Fatoum (2025-01-06 06:21:47)
+>> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+>> index 516dbd170c8a356f293621b371b9ef9b9bec90a4..3b06990b73adcb2e4807f91a8983ad35068572a7 100644
+>> --- a/drivers/clk/imx/clk-imx8mp.c
+>> +++ b/drivers/clk/imx/clk-imx8mp.c
+>> @@ -405,6 +406,145 @@ static const char * const imx8mp_clkout_sels[] = {"audio_pll1_out", "audio_pll2_
+>>  static struct clk_hw **hws;
+>>  static struct clk_hw_onecell_data *clk_hw_data;
+>>  
+>> +struct imx8mp_clock_constraints {
+>> +       int clkid;
+> 
+> Is it signed instead of unsigned because the terminal element of the
+> array has -1 as a clkid? And because clkid 0 is a valid one?
 
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
----
- arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+I did use -1 originally, but then switched to zero as applying
+constraints on IMX8MP_CLK_DUMMY doesn't make sense anyway.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
-index f9a82a663033a1dfb72163eebb62e4aee66cee2f..a1b75c9068b288a2fba73bbd96b1519a50df85a3 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
-@@ -21,6 +21,7 @@ &clk {
- 			       <800000000>,
- 			       <600000000>,
- 			       <400000000>;
-+	fsl,operating-mode = "nominal";
- };
- 
- &pgc_hdmimix {
+> Please remove the comma because nothing can come after this and if
+> someone were to add something after they would get a compilation error.
+
+Commas removed and clkid made unsigned in v3.
+
+Thanks,
+Ahmad
 
 -- 
-2.39.5
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
