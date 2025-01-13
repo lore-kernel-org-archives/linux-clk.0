@@ -1,65 +1,66 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D5418871F
-	for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 20:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81CE1CD1E4
+	for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 20:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736800294; cv=none; b=PKst9cESVnvySQQB6HXJMK2TQdk0nqRL+1r51lGn87VfXZYi9aYEMDRRdoaTMBxuzOxrlR7U8mhI41ZdJEEllchZJEIj5UfQ2IjOnY9A+wmnzZzu0PCU24M0GFvZ24niQ+Llqm9rdaSE5t3DPHqpYJfK4tDGfFxEveWmgVG5s8Y=
+	t=1736800295; cv=none; b=XIjlJBNVj3TZBqtxyvfNTQ+rNMYl6mp02BqGV0b4bDBtUQxsIcsZcYtLZLqH4nvwDYu31ApvWuxiqON3bWd+fXp78yyV7qO/j8ZSGjPxF2saLg3BW6EOwHOA/362KAk3E/Q1Ex7/5KPQKGDHtWD826R84gpjL+G499vXoTzOlaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736800294; c=relaxed/simple;
-	bh=x4+nb9/PGNUsK/89p1ygaH+gSdVhGarf3xtoVnn866Q=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Kw/ho5sK+cGILTIIZfoawcucoaiwf1w1Gt7F9e2QW88Ean4/PRUe+gLcUYpx8RkEAyOEKhsf7V072QVC9Ta5WGl6iBxvJ4vd/F+e/vZ96kdRndrBGGf78jtQVsctbcbC1KXypJXx2zG3CIpagZt1HmNwMlRqtwGx8ffTqv6Pbu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=AJz1q7x+; arc=none smtp.client-ip=209.85.214.180
+	s=arc-20240116; t=1736800295; c=relaxed/simple;
+	bh=8T8t7MGnpmXJLTx/FTaUwyAyBANw3bF2QBNIkm+LiUw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Y2WkE5rqbQ8oSNNP2kk4VWWtTNkQ5+zTr2lfJt69eNR0WgdlCr6t9/KKyd91QL8Ix8sGdOj6A6SqO1KRw84L/x5uU5dWGbx97x6yBVHvBr0hUlIj0HWcpxQaRAVCTLJbfFI3sMHHL12N7Wf5c2ASWNTdKzwC4ElzjabfcG8aUeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=MQttmlT4; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="AJz1q7x+"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2163b0c09afso86495435ad.0
-        for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 12:31:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="MQttmlT4"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2f441904a42so8301089a91.1
+        for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2025 12:31:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1736800291; x=1737405091; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HCZFWXIAcGGHQ2KfGyCUAdwCjbNuy+/7pP/Yd0hTD5A=;
-        b=AJz1q7x+KDxq9/EZtCfXNCxYAH2Ecaju4g10Z+qJOG9HhpTFhOvuNdaExBCqxnHlcj
-         2WyIBaeqbF+cyeDwrf490nWw2eefJVVSzBTWmvkt7JOXwAHirZUU28PLKPIXf5mLvkcq
-         E2blywkeszcnXRe+tpJuDFDnL334z7XrC6twfU9jG4sau3QaDtQtuD50J88JwfApR0mH
-         8xqd3+o97y6kPEZS3lnZgI7AaykpEyR1rhyahTwcgYAyOu7OdSvX5EudhHYHfISzs3EW
-         E/YUSBq+MOiVnGujMZhe9mQMBN/IdvUPkeNUk5upkcTynAa3Q3z0aepnjmrIguJUIc3t
-         b75g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736800291; x=1737405091;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=tenstorrent.com; s=google; t=1736800293; x=1737405093; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HCZFWXIAcGGHQ2KfGyCUAdwCjbNuy+/7pP/Yd0hTD5A=;
-        b=wy5afPo8HpIao1bAft7WxlaqikWRltIWgOwLuHKMP6O49MriH6lr45OPy36iRjjbco
-         LUQBZce0EHAimKyH01v7gxHUOICBGdwj0RkePUdqaCz0dcfT9ybaZbHBKkLShs4btZ7G
-         Ewn7A3H6hpF08YkZpyV5hJz3SbdAuZNUik17trwJQMH3kyscqKZSfQ6J+PFL3kF8cJB6
-         2co6L7ULbva3szaeNP9d4QQI3DoHVfPV+tpDrMpbEmu47UsLBrTiE2lROWMlaKkhrrLb
-         mheud4RGM/25SAjUjIp1fKferr7gKvBR05CaLlC5DIQI9+Ouq2Qczp+z2VUh4C+qfMQG
-         UMIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVa/RKavHbyCKTJtwOXzUEtzSJPtufwwX6VkY6at9/Q8N/CzHXF6zRomnI2Df1uxRCWuwj2ZGO5ulU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqDKdTaaQfN+jTQ3PpqEmo+J9+tvUoRXAdMlxMAgacgNs9jbFG
-	A3DJR0GIpK7u6eYkEUFVzQP2Eb7Jx8UGEI9QPUOxapko5CjD9iFlyhz9MkAX/WA=
-X-Gm-Gg: ASbGncsKhnS/JiCwnymGZWdoUucEUPMmM4j2BSrZ4GDfi1RZRBCEOiSL3MtPnUSi7tc
-	Y3pGaZ9Rcbqs6Tclh82Sp4bioHyzVEDJx1riX4zUrnhULEy2lmDHIhWaBDZujCy8069pJupDsGJ
-	HcZo0KKxt233uCtnqzEtUtsla0YiLJGxnJASWFV4d/iNEDH8hTcXB5ljJxPyR732WNhW594QvpR
-	7J5mRIfEd6BkpSGsLcUgJMDPCb1aC3HcK5L5M9ZzpE1V9VWKjeGiEBKUfyiQGWBvglDLoB4p05v
-	oez4T8zlFbqfcQm+
-X-Google-Smtp-Source: AGHT+IFQnzVNSYDK2Ipv9ojWat3P1YUOAsFZ5wRMmF2E5BfK38xPBdomxpf2eBseMH/qh/uRMcoZGQ==
-X-Received: by 2002:a17:90b:2b8b:b0:2ee:d824:b594 with SMTP id 98e67ed59e1d1-2f548f761d7mr28582443a91.31.1736800291267;
-        Mon, 13 Jan 2025 12:31:31 -0800 (PST)
+        bh=oUvVoDhVxDNuu/e3h1RthOZUTTkn0l7kTPxKU03cvts=;
+        b=MQttmlT4qc/xo2soqpRKeB1R3qRBUXDeHX4bd9BSdqGlaoNljfraolU2nBHqd0agLa
+         3QwuFgIQ3s2WqCQbcV5NlMRtzpJBhc6/W45MhrxDZb9mjb1K/WyIM9TMkADoKTWY+bRM
+         Tc3MAeEItclg24vnj+LFXTO9tXc8kDroHXBosdTlaw1IYSoHEP6/SXd0Ns2F93sM2OXB
+         uRN5TzsvxMBwaOEXjrGqrgGSFjCCI2G3CIcj3fimfBCJe8zi/VdfhfdcdAxIKuKY7SvK
+         DGVomaSdst/8RayEQZUeKTXy45LDUI4nygk9p9dXo0YP/QNFjUqLuI5VpjJ5+oNtQFnM
+         E/jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736800293; x=1737405093;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oUvVoDhVxDNuu/e3h1RthOZUTTkn0l7kTPxKU03cvts=;
+        b=Ad02LO7G6OTD+WFMAe0CpuvY33HTi4uZXsA9ExqBAKnIlBkdi4Pt4sJ+Wb2H19EUh7
+         mxrLTpVVO+1QgH8JNpkTajWKTzV7U/8Tfu4fMuaCCHUgHVoFWCTwtUrrGeVM+fkMdgNt
+         LPRbqHHcFE4K0IrLVEIgrrXKZvhznCBOwZicBwStSI4vcO05PGMFxQ4DeGyC3YqJpqfb
+         9cMzZ36iX0zLQ6l/esaCnMdCI5DhtNPS91YsCALcZnfXiIZ6E4iBTXUw5ulivM0qOkuL
+         OHPQqY3tSKSBnv5ehM+JvbgU/Fx70Bwsu/FfSY9tHUYSxsHJVI4xiePM760dYL/qJUpf
+         j1VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmfLMJ6wubQGwwExLvSX9+28rP4e0kHxFCGhHP7efRQeBdCsf91IkE4Zc4SpOF7FWd0woGLQnXKeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxKjVE17PbBwh8nJXp57/M0DaoUc4JXbkMI7wMsAcTDXsgHbTh
+	5zylWgTAE55iUZNTeIBEz7lGQmPtZZWvG0yjxLaugbKbRMz44Ns/E08floj1OKI=
+X-Gm-Gg: ASbGncvGZEMr6SDQZtgBxJe2IHmopm1huJFYAtYghNrwUV9k2/cS2XaXKuPUKdaKl5F
+	Gy2kvAQYk19+drvyqpZQSVitV/ozdRFCJbsuNKsfko2A/0+k2sRLnPGTh2RJgRMGYnQXMsaAEpc
+	vjs5OIFhnLUKPuqx8NXr0HrAmb2nexjpmI+pi0m7EDWUaGHI+ewF6wmHPzapwyu8kGZYR6wOSbp
+	q5DeG3lE+IceFdIM/zL50Co77MhhpUfJzwBsvuMpEg8327WjkndnSYRH2wy4WIGWby6opi5fYWv
+	xt8WUfWruQqEG20M
+X-Google-Smtp-Source: AGHT+IETyPk+dkPDvT+m7Nlwd8jsvTLbyizrVTdVzrO+oEChgBr7zxyycDxXOJNikGNq0OksD5a6ww==
+X-Received: by 2002:a17:90b:2f0b:b0:2ee:db1a:2e3c with SMTP id 98e67ed59e1d1-2f548f1738cmr29086701a91.1.1736800293053;
+        Mon, 13 Jan 2025 12:31:33 -0800 (PST)
 Received: from [127.0.1.1] (75-164-218-15.ptld.qwest.net. [75.164.218.15])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f54a2ad3b7sm10514811a91.31.2025.01.13.12.31.30
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f54a2ad3b7sm10514811a91.31.2025.01.13.12.31.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2025 12:31:30 -0800 (PST)
+        Mon, 13 Jan 2025 12:31:32 -0800 (PST)
 From: Drew Fustini <dfustini@tenstorrent.com>
-Subject: [PATCH RESEND 0/2] clk: thead: Fix TH1520 boot dependency on
- clk_ignore_unused
-Date: Mon, 13 Jan 2025 12:31:23 -0800
-Message-Id: <20250113-th1520-clk_ignore_unused-v1-0-0b08fb813438@tenstorrent.com>
+Date: Mon, 13 Jan 2025 12:31:25 -0800
+Subject: [PATCH RESEND 2/2] clk: thead: Add CLK_IGNORE_UNUSED to fix TH1520
+ boot
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,9 +69,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIABt4hWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDIyNz3ZIMQ1MjA93knOz4zPS8/KLU+NK80uLUFF1joySjFAOj1JRUYws
- loPaCotS0zAqw0dFKQa7Brn4uSrG1tQA/Fvx7cgAAAA==
+Message-Id: <20250113-th1520-clk_ignore_unused-v1-2-0b08fb813438@tenstorrent.com>
+References: <20250113-th1520-clk_ignore_unused-v1-0-0b08fb813438@tenstorrent.com>
+In-Reply-To: <20250113-th1520-clk_ignore_unused-v1-0-0b08fb813438@tenstorrent.com>
 To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
  Fu Wei <wefu@redhat.com>, Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, 
@@ -80,29 +81,48 @@ Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
 X-Mailer: b4 0.14.1
 
 Add the CLK_IGNORE_UNUSED flag to apb_pclk, cpu2peri_x2h_clk,
-perisys_apb2_hclk and perisys_apb3_hclk. Without this flag, the boot
-hangs after "clk: Disabling unused clocks" unless clk_ignore_unused
-is in the kernel cmdline.
+perisys_apb2_hclk and perisys_apb3_hclk.
 
-In order to allow individual clk gates to specify their own flags,
-the call to devm_clk_hw_register_gate_parent_data() is changeed to
-actually pass the clk flags instead of just 0.
+Without this flag, the boot hangs after "clk: Disabling unused clocks"
+unless clk_ignore_unused is in the kernel cmdline.
 
-This series is based on linux-next.
-
+Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
 Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
 ---
-Drew Fustini (2):
-      clk: thead: Fix clk gate registration to pass flags
-      clk: thead: Add CLK_IGNORE_UNUSED to fix TH1520 boot
+ drivers/clk/thead/clk-th1520-ap.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
- drivers/clk/thead/clk-th1520-ap.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
----
-base-commit: 8155b4ef3466f0e289e8fcc9e6e62f3f4dceeac2
-change-id: 20241227-th1520-clk_ignore_unused-32b2d02ede38
+diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
+index c95b6e26ca53..d02a18fed8a8 100644
+--- a/drivers/clk/thead/clk-th1520-ap.c
++++ b/drivers/clk/thead/clk-th1520-ap.c
+@@ -657,7 +657,7 @@ static struct ccu_div apb_pclk = {
+ 		.hw.init	= CLK_HW_INIT_PARENTS_DATA("apb-pclk",
+ 						      apb_parents,
+ 						      &ccu_div_ops,
+-						      0),
++						      CLK_IGNORE_UNUSED),
+ 	},
+ };
+ 
+@@ -794,13 +794,13 @@ static CCU_GATE(CLK_X2X_CPUSYS, x2x_cpusys_clk, "x2x-cpusys", axi4_cpusys2_aclk_
+ 		0x134, BIT(7), 0);
+ static CCU_GATE(CLK_CPU2AON_X2H, cpu2aon_x2h_clk, "cpu2aon-x2h", axi_aclk_pd, 0x138, BIT(8), 0);
+ static CCU_GATE(CLK_CPU2PERI_X2H, cpu2peri_x2h_clk, "cpu2peri-x2h", axi4_cpusys2_aclk_pd,
+-		0x140, BIT(9), 0);
++		0x140, BIT(9), CLK_IGNORE_UNUSED);
+ static CCU_GATE(CLK_PERISYS_APB1_HCLK, perisys_apb1_hclk, "perisys-apb1-hclk", perisys_ahb_hclk_pd,
+ 		0x150, BIT(9), 0);
+ static CCU_GATE(CLK_PERISYS_APB2_HCLK, perisys_apb2_hclk, "perisys-apb2-hclk", perisys_ahb_hclk_pd,
+-		0x150, BIT(10), 0);
++		0x150, BIT(10), CLK_IGNORE_UNUSED);
+ static CCU_GATE(CLK_PERISYS_APB3_HCLK, perisys_apb3_hclk, "perisys-apb3-hclk", perisys_ahb_hclk_pd,
+-		0x150, BIT(11), 0);
++		0x150, BIT(11), CLK_IGNORE_UNUSED);
+ static CCU_GATE(CLK_PERISYS_APB4_HCLK, perisys_apb4_hclk, "perisys-apb4-hclk", perisys_ahb_hclk_pd,
+ 		0x150, BIT(12), 0);
+ static CCU_GATE(CLK_NPU_AXI, npu_axi_clk, "npu-axi", axi_aclk_pd, 0x1c8, BIT(5), 0);
 
-Best regards,
 -- 
-Drew Fustini <dfustini@tenstorrent.com>
+2.34.1
 
