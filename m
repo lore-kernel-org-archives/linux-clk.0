@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAD6235C00;
-	Mon, 13 Jan 2025 11:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F7122AE47;
+	Mon, 13 Jan 2025 11:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736766942; cv=none; b=juicFxBQt3RhwYt6GIz/AdDekOFuKis1A0PqtAhCinTl2pPuQVCg/c4w99yXvATEGT0HMWC7tYSxutOSUcdiOsqaPK2Erllfzz3J+VtVZ8PJDMfw2ferN19ODT1SbUdEXLvTAcOB8QwrRw6SlGC8dRre970g4De8Em/x6TrjPXg=
+	t=1736767133; cv=none; b=cnP4lLM7cHUgnDBT5CY+DiMlX4VpVl8uSxnwbfI+khUwqs5FeCWmpioLEK+0LQNdKBfMink5d2rSHDbhBVgIxgRcG6ojKp/3ps1/0xM90mXqf+jcZtDkMLXsPLmWXE1CedfAUeCChRNBlLmfB2ED+53V3g1nOmXkh16PnvTcUZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736766942; c=relaxed/simple;
-	bh=kiAl0Orq62GNHYsnLzi0tHTsX57qkEmoeq2JoqLDODA=;
+	s=arc-20240116; t=1736767133; c=relaxed/simple;
+	bh=cjQyRP0k/eYwBxc5MrHSxD1BWf9yOSmaqCEjsVYo7Go=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TIKwigurNkCQWqRCZjgvfz78jqc+lp6AgCCuXeCJy8cRe7yjjFOTKso/dZygYXWEWOAFPkDkXIMPK8C9p3XTpCqMv2g5mZKpfuTGg8A0uZrGHZkbAZScOeyyR/rMVkp7csf2kORxFiwVCjmA4RPO1lPCRK3+px4yIbXKmLGuFMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CHLmBUpc; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=K36F4gTUs6RAgETVC96V9aTwL2aYAWDyD6WFyMnhuq150JqCFZrWBU7EoPwBh4KS9j/IhR40wTIAcV8IR43wfvXZ1vPtzA+CUiVx2zyzh3NENUB7hl7+Lb8XM6z92rUc7pMExwo4PmDQzWr1Ja8D9Qi//NmmE+S1//jfHj5ah8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyEK9uQV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CHLmBUpc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26A53C4CED6;
-	Mon, 13 Jan 2025 11:15:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyEK9uQV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25297C4CED6;
+	Mon, 13 Jan 2025 11:18:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736766941;
-	bh=kiAl0Orq62GNHYsnLzi0tHTsX57qkEmoeq2JoqLDODA=;
+	s=k20201202; t=1736767133;
+	bh=cjQyRP0k/eYwBxc5MrHSxD1BWf9yOSmaqCEjsVYo7Go=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CHLmBUpc9bFAia2rJKwJPFbR5eNafdTO1HJyQ5Rd7ruDrAMZ1omH3pUJBp8fanZ+x
-	 xHH3WDt1s55oczPRUQzqs+uqJqWN/MrUwRIBp6KcugDXdCkCNdffa2cqE5DsX5vhtO
-	 fADLe7cvT3lFu3P/txprfnrsGoCq9sxa8tL7rlCf4zAd7NiBn3b3vSUBLup932wd0I
-	 06dIv4mgPw9G+jTreFd5ZQajgJYzOe3c5C+USNj7LoWjopgGUA0Vg5rCyxLXeiYVT5
-	 xAa43H2ij5adFiVCvdIiY5bPiuK4dHXWm3dge9kLjqDSoWXk+vtJj7Y0KBxvGj4snM
-	 zxBiVXjDMymjg==
-Message-ID: <69b42fb4-75c7-478d-8c15-ba3eb287b136@kernel.org>
-Date: Mon, 13 Jan 2025 12:15:30 +0100
+	b=fyEK9uQVW57zfJKlGZz+qGzWH5FMmpffUK0LDrXUNyAXKnQfCkcTGPsLctZZCS7sz
+	 Lo+FD7ZUUgR5Bx9a/mfM7sZfA8AQdiXeh4ZYB4cnlwlvEGqfQnoctdCR14eVGp70c5
+	 oFStBhxgsieb3bYir2OdpWHoA8mt4eMDvfdcslDvhBsMmlSanb68wTpDW5OR8mBwnS
+	 6FHEXcJyw7vSoMhLa4zbK6Nyf+IufQcxI1h5GjRZYnOACsOSX5QQpTg/1UEClab2e6
+	 9+yoIzv/RrEDgmMeShfSXdk2ZvrpH219J2FB9M0fyxpNCPz+II3TGZlWgtr+pOt2L2
+	 3Wa+qHz/Yc+jQ==
+Message-ID: <ebb32bec-3fd4-4129-ab5d-d519b10c4405@kernel.org>
+Date: Mon, 13 Jan 2025 12:18:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,33 +35,13 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/12] dt-bindings: clk: sunxi-ng: add V853 CCU
- clock/reset
-To: wens@csie.org
-Cc: Andras Szemzo <szemzo.andras@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20250110123923.270626-1-szemzo.andras@gmail.com>
- <20250110123923.270626-7-szemzo.andras@gmail.com>
- <de280eed-bcc8-4802-9734-5e95ad1f6611@kernel.org>
- <CAGb2v65arvBMg+reReVqK-Y6dL+CSrSx4618msiRKcNf=Vk1=A@mail.gmail.com>
- <fef71e03-489f-4503-9d1b-d61051d45dde@kernel.org>
- <CAGb2v67_yMB_4SCjFOR5S6nDxX9=zbX-mDM6YjjL_NRxrEMUFg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: add clock definitions for Ralink SoCs
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+ linux-clk@vger.kernel.org
+Cc: sboyd@kernel.org, mturquette@baylibre.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, yangshiji66@outlook.com,
+ linux-kernel@vger.kernel.org
+References: <20250113082818.345939-1-sergio.paracuellos@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,129 +87,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CAGb2v67_yMB_4SCjFOR5S6nDxX9=zbX-mDM6YjjL_NRxrEMUFg@mail.gmail.com>
+In-Reply-To: <20250113082818.345939-1-sergio.paracuellos@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 13/01/2025 09:45, Chen-Yu Tsai wrote:
-> On Mon, Jan 13, 2025 at 4:21 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 13/01/2025 09:06, Chen-Yu Tsai wrote:
->>> On Fri, Jan 10, 2025 at 9:56 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>
->>>> On 10/01/2025 13:39, Andras Szemzo wrote:
->>>>> As the device tree needs the clock/reset indices, add them to DT binding
->>>>> headers.
->>>>>
->>>>> Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
->>>>
->>>> That's never a separate commit from the binding.
->>>>
->>>>
->>>> ...
->>>>
->>>>> --- /dev/null
->>>>> +++ b/include/dt-bindings/clock/sun8i-v853-r-ccu.h
->>>>> @@ -0,0 +1,16 @@
->>>>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>>>> +/* Copyright(c) 2020 - 2023 Allwinner Technology Co.,Ltd. All rights reserved.
->>>>> + *
->>>>> + * Copyright (C) 2023 rengaomin@allwinnertech.com
->>>>> + */
->>>>> +#ifndef _DT_BINDINGS_CLK_SUN8I_V85X_R_CCU_H_
->>>>> +#define _DT_BINDINGS_CLK_SUN8I_V85X_R_CCU_H_
->>>>> +
->>>>> +#define CLK_R_TWD            0
->>>>> +#define CLK_R_PPU            1
->>>>> +#define CLK_R_RTC            2
->>>>> +#define CLK_R_CPUCFG         3
->>>>> +
->>>>> +#define CLK_R_MAX_NO         (CLK_R_CPUCFG + 1)
->>>>
->>>> Nope, drop. Not a binding.
->>>>
->>>>> +
->>>>> +#endif
->>>>> diff --git a/include/dt-bindings/reset/sun8i-v853-ccu.h b/include/dt-bindings/reset/sun8i-v853-ccu.h
->>>>> new file mode 100644
->>>>> index 000000000000..89d94fcbdb55
->>>>> --- /dev/null
->>>>> +++ b/include/dt-bindings/reset/sun8i-v853-ccu.h
->>>>> @@ -0,0 +1,62 @@
->>>>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>>>
->>>> Odd license. Did you copy the file with such license from the downstream?
->>>
->>> AFAIK all the existing sunxi clock / reset binding header files are
->>> dual licensed. OOTH all the YAML files are GPL 2.0 only.
->>>
->>> IIRC we started out GPL 2.0 only, but then figured that the header files
->>> couldn't be shared with non-GPL projects, so we changed those to dual
->>> license.
->>>
->>> Hope that explains the current situation. Relicensing the whole lot
->>> to just MIT or BSD is probably doable.
->> That's not what the comment is about. Dual license, as expressed by
->> submitting bindings/patches and enforced by checkpatch are expected. But
->> not GPLv3, GPLv4 and GPLv10.
+On 13/01/2025 09:28, Sergio Paracuellos wrote:
+> Add clock missing definitions for RT2880, RT305X, RT3352, RT3383, RT5350,
+> MT-7620 and MT-76X8 Ralink SoCs.
 > 
-> I take back my statement. It seems we have a lot of GPLv2 or later going on.
+> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-There are a lot of bugs, so we can add them as well?
+1. Please use get_maintainers.
+2. What is the point of this? We do not add constants when there are no
+users. Commit msg explains here nothing.
 
-> 
-> include/dt-bindings/clock/sun20i-d1-ccu.h:/* SPDX-License-Identifier:
-> (GPL-2.0+ OR MIT) */
-> include/dt-bindings/clock/sun20i-d1-r-ccu.h:/*
-> SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> include/dt-bindings/clock/sun50i-a100-ccu.h:/*
-> SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> include/dt-bindings/clock/sun50i-a100-r-ccu.h:/*
-> SPDX-License-Identifier: GPL-2.0 */
-> include/dt-bindings/clock/sun50i-h6-ccu.h:/* SPDX-License-Identifier:
-> (GPL-2.0+ OR MIT) */
-> include/dt-bindings/clock/sun50i-h6-r-ccu.h:/*
-> SPDX-License-Identifier: GPL-2.0 */
-> include/dt-bindings/clock/sun50i-h616-ccu.h:/*
-> SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> include/dt-bindings/clock/sun5i-ccu.h:/* SPDX-License-Identifier:
-> GPL-2.0-or-later */
-> include/dt-bindings/clock/sun6i-rtc.h:/* SPDX-License-Identifier:
-> (GPL-2.0+ OR MIT) */
-> include/dt-bindings/clock/sun8i-de2.h: * SPDX-License-Identifier:
-> (GPL-2.0+ OR MIT)
-> include/dt-bindings/clock/sun8i-tcon-top.h:/* SPDX-License-Identifier:
-> (GPL-2.0+ OR MIT) */
-> include/dt-bindings/clock/suniv-ccu-f1c100s.h:/*
-> SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> include/dt-bindings/reset/sun20i-d1-ccu.h:/* SPDX-License-Identifier:
-> (GPL-2.0+ OR MIT) */
-> include/dt-bindings/reset/sun20i-d1-r-ccu.h:/*
-> SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> include/dt-bindings/reset/sun50i-a100-ccu.h:/*
-> SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> include/dt-bindings/reset/sun50i-a100-r-ccu.h:/*
-> SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> include/dt-bindings/reset/sun50i-h6-ccu.h:/* SPDX-License-Identifier:
-> (GPL-2.0+ OR MIT) */
-> include/dt-bindings/reset/sun50i-h6-r-ccu.h:/*
-> SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> include/dt-bindings/reset/sun50i-h616-ccu.h:/*
-> SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> include/dt-bindings/reset/sun5i-ccu.h:/* SPDX-License-Identifier:
-> GPL-2.0-or-later */
-> include/dt-bindings/reset/sun8i-de2.h: * SPDX-License-Identifier:
-> (GPL-2.0+ OR MIT)
-> include/dt-bindings/reset/suniv-ccu-f1c100s.h:/*
-> SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> 
-> Is there a requirement that new files have to be GPL 2.0 only, not
-> GPL 2.0 or later?
+> ---
+>  include/dt-bindings/clock/mtmips-clk.h | 130 +++++++++++++++++++++++++
 
-I think that's obvious preference and brought to the list multiple times
-already. And that's easy to justify reversing the question: why would
-GPLv4 be okay here? If you can find the reason, sure we can go with
-2.0+. If you cannot find the reason, well, it's obvious, right?
+Filename matching compatible.
 
 Best regards,
 Krzysztof
