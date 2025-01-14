@@ -1,232 +1,190 @@
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020073.outbound.protection.outlook.com [52.101.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9E22451FC;
-	Tue, 14 Jan 2025 07:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736838840; cv=fail; b=SQUoCL2dM8fxJlxHNr0LLc/p8Y1p16ajkrZFmNBFglGuTEDx0R5Wxu6Cnc4qZTCfjb/fUGLzASgY0RGSqI6rfN7QcG1iI76vr1bAvpjGjGQ62xpY2MMnr20ka+PQSdXWjn6n5TdyusKTNMWbpJK0IZWLzeeELPdMWIFB9r4boIY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736838840; c=relaxed/simple;
-	bh=1gi5niZ3O9MtgQ+u471zH+vJ48RDUBXUQA+9NX3J9Kg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=baW3YM5UZnIbWL+xmff+AuqeRTCw+ffJYvhsp74M4NxlLefVHmXyt0PSUEF9nbasmkPMPmjQtaHaekMoQeoYIwf3f5z0b3pWWMnymqwVghmABza51pM7/CYGRJe4CvdlU4BYyzujF7yl+QREHY895QSTJyITaaIXHqeia2gfodU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=yLH3qIxF; arc=fail smtp.client-ip=52.101.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7DC1C5F2A;
+	Tue, 14 Jan 2025 07:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736840649; cv=none; b=Vq9TiO98ZRjriy4lnYyFe71XYq0/PYRXvjj5pQm3lkCwkNQFOwxPC0eiMRHfhoBHtF/3RGMtH65TSYFr9JrxFcndYG1AwQOcq4ZEFLSIF8Xr7vmYmyKkbwkTFIAptHL7l7MmYYj3PAcTyw0+wQIQrKyBq6mcJwbmVXUZqPizEVk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736840649; c=relaxed/simple;
+	bh=mGnR3HJMZBqUhCDL7bgqtn34QevNjR2UgOCyWG3PL5I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S0EA6K5n/eKprg1IAW2RooRTcalUhXeSd2efMEHYRELTJ4EZ0GP1i3u06r/o6d/XqswvkLHnb5VuLNLMuU9bzR2flKBujj2WFEhWpV36isE46PX+iATW+RdCSwsj0I98zG9AHHoUJuamDsL23ENZ5/kPUZsCZpPQrOy1N2jVjTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEMWjmVc; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="yLH3qIxF"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jOI3BRq02JZqz3B6t10mMBJd3rF72n4j4zTN9eMSyixDrGd17ZN/TmlwvjtB4KlGdASYJ2CdgZIHOXl9FzhZ7fm+EDvfHNNJwzEdCIBryAZJj419pA/X6ftMO3FM7ie0woVHBy6qx5I78R057N7EwpywXVWrAOotD65tijm47OLwDgOJANMVkiMPJO9iSnYoTX8T/G0OSaFYqNx5M8ZjNYV9pK+UPdn5mBafPhB0wAUDRZfW9YV7wyqtQtynCJrADnEwNCRH/u33sqUwjjQPyhnd1Bl9rTKFfOOUplKn9E2hirXVaXW2pc1B8PCqmRoci83iSSE9l6zuaCCe07e0ow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1gi5niZ3O9MtgQ+u471zH+vJ48RDUBXUQA+9NX3J9Kg=;
- b=UreBVq3FB+wFfscxkdhK+gqS41/7iY7dEwYJXSWJcTqYUfNePIyDu51+yYsiPmBROOPu79XBMASYwUtAZTWmkZcC5MQRUlXsHfnZkWpsflGWVHtzWRRxcmvxFgZET5PGgyIvJI9qJWGtOm7AJo++3kk6fMo1pD6dpfS+RqfwPegKIxW9Y6gc3YleZIN6q4WPssxHHf7MaEIQBAUVlyS96ODQfxcdpil70vNmvHvlaKVRLOkhfK2+0krQxYQ/SKYVPnYVEF8DerWm4Hm/Tl+nPuepqxNXokuFc9YKybRH1dEsY3BNCaE+QOiMkIJbjRT+uTZsqSIfWBkLw1dqA01HDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1gi5niZ3O9MtgQ+u471zH+vJ48RDUBXUQA+9NX3J9Kg=;
- b=yLH3qIxFmNSZoi6ZrzI7M6/pcSG5mQDbXMH2JvHYKI6HZLQ8iFK6FZm0FjWKVgAxGNfZFwnipNFEBdH0PDOSaVARpEaLcNSiHcUMjUc2b/tTNNQtsUwsvaN8Jq8EIDOieHemeBCNeu46yJGyAxfFGZhS85qtvQkpU2Y35zq+6Dqs5pAtRld4Pm6JYWKstJ5s37nQlK51QOG4lXSxflmaYxCa7aqPEzBrhGDtuW1va2HSVpxiUo4l4dbT/vYfdutkmwdZO/I+NWs/8zqTt4qDg1x91s1bzKNy059LQVCiUOgFJSMXaZrRLPpINpGKuoy+YJ25+vZ9KYwe8+/cph78nw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by JH0PR03MB8351.apcprd03.prod.outlook.com (2603:1096:990:49::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8335.18; Tue, 14 Jan
- 2025 07:13:54 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca%7]) with mapi id 15.20.8335.017; Tue, 14 Jan 2025
- 07:13:54 +0000
-Message-ID: <aa5a47a0-8944-428b-907c-c88fa169f841@amlogic.com>
-Date: Tue, 14 Jan 2025 15:13:41 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: amlogic: c3: Limit the rate boundaries of clk_hw
-To: Jerome Brunet <jbrunet@baylibre.com>,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250110-limit-rate-range-of-clk-v1-0-dd618adc4aa8@amlogic.com>
- <20250110-limit-rate-range-of-clk-v1-2-dd618adc4aa8@amlogic.com>
- <1j34hqai39.fsf@starbuckisacylon.baylibre.com>
- <2578a79d-1e24-4336-9859-e384c8f69269@amlogic.com>
- <1jr05693nn.fsf@starbuckisacylon.baylibre.com>
- <af501f2e-2dd6-4182-872d-76260edba973@linaro.org>
- <1ja5bu90jb.fsf@starbuckisacylon.baylibre.com>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <1ja5bu90jb.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0036.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::20) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEMWjmVc"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ee50ffcf14so9442562a91.0;
+        Mon, 13 Jan 2025 23:44:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736840647; x=1737445447; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ljJsNB0F+mWDattrBQ5KtzYfFx2JFfuGtpPgrZXo3vA=;
+        b=hEMWjmVcoIQDuM/8f6xnGX9Q34DoSKK14aPwRnuP/WkBpVSyCinbyHatEudXc1H1HT
+         IUYipku/nmPGzv5WXV2E9kzwSUI7wBktIaER/3BEFIhNOZuBh/I0UZvX0ZB0KBokwxdr
+         14tgcjjrQvO+AGpkYTYvOzr8CeSgBxhDQIpviU8CH/PTdnFSXjjdhufMpCwzkpWKt0bt
+         x1afurl9d+X5QSYHHEQHYAzD7IKEnzChLKGb7kgwU6CVgh2fmz6k4xSXLDNpas+0mGIj
+         4x9RD5/79bWfy9sKhmbe3sDmq04WEv5hHi2aVBS//QGm3/ivS2a4RIKBbLLs1lLd04dL
+         Orog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736840647; x=1737445447;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ljJsNB0F+mWDattrBQ5KtzYfFx2JFfuGtpPgrZXo3vA=;
+        b=LRuIJA083xY/ORDQ+jgIL5TYIFQWGgUq9NzZQTBRflXq4O73zNjTv1GyHKSCU59Yck
+         SYTQtGoMP1f0Y51cG9EPbj/etEtmdbEMehQs66wmbzM0eC5AqawN6jzoZewsVmwjSJlD
+         fOIi4aPkWDIDep1pNbe4gBF8rS3BJ5aqNDiDsMgeaF969wt5u2SwX24Sf1fy3aGD45n4
+         Cb4zcwTxRedKUTXIbBdDprhw67V565p88/TcEsqHnJBTxnKgrug3jD5FaBHQBNEI+7AC
+         uDQrz6ACVpQQXlreMXQjbo0aWriuQLiJsvS/+/laLhj2PQOduYQq/f8/ac/+3slzezMK
+         ie9A==
+X-Forwarded-Encrypted: i=1; AJvYcCX/qoj/6kjpwrkdUwmxYMCxFQ+1H7ISwknpHCWaaUesDmviZ4F5OVXjgSJUC10fFD8IcIepZEZ/kbY5qCs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO1Eecpig7mPdg6V6/D+muaTpLtUUssEky6jOkHH1PvN4iZXzf
+	ZXeXdFJFz15xRtrSSFTF9OcT3iDEn7Sg4+mzjQZUJO+uwbcGiLX+srtBusdE313qZ03v2y+rtzb
+	7PcDar494kp6zGzC5cR+ny7SKD4Z3Mg==
+X-Gm-Gg: ASbGncuCOUf73hmRCQEXNdJxDFINRwWp5in8ZV1ZENAqT3F2ZtGeNUQwMTPjzDg20+k
+	ubAItw7Cgtngl+SEGR1zKkicYTuHmWKR8YFKp
+X-Google-Smtp-Source: AGHT+IGBfTifQPAnOqd5ijhI5AdljBFuutHA8ZLm0DNsZwWu+A2LFBxBnTuLo3HotkxIoMSbZSyuw1oqvronUkk73U4=
+X-Received: by 2002:a17:90b:4d10:b0:2ef:2980:4411 with SMTP id
+ 98e67ed59e1d1-2f55443a040mr27803752a91.9.1736840646901; Mon, 13 Jan 2025
+ 23:44:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|JH0PR03MB8351:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d260ccb-84bb-42cc-aad4-08dd346b0108
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YWlFMU5hcVdaeHFTZFhJd0Y2OUFhNmIxejloRVJSaVR5NHh2cVBxZ2ZPUzkv?=
- =?utf-8?B?Z3dDNjMrelg3dnZ2d0plRDNBNVJSQ0hPdTBYejYwdzhZb1BuMFhGK2ZJZm82?=
- =?utf-8?B?Y1cveHl3MkltbjNqYW43TDNhNTZvSUJhZlVTOUxHbDhMNVNWUU8zdStWMS9Y?=
- =?utf-8?B?M2I2M2o4QVNESU9JcHVmUzFNSC81R0MwNjdWTmlvbHBvZkJIOXhHQTlqZzJ3?=
- =?utf-8?B?dDdpN3h5aWJPQ0ZERmx2bmFiTHE4ZEp3Mk1MMDNzamVQc3FCbHdiSkdSVnRK?=
- =?utf-8?B?bWVIL2xZcERjelFCbXE4eStkSVlGODFSTE5NeDNhVTcxK09EYWpTL25iL0do?=
- =?utf-8?B?b3prcDNSV0ppUjBCcHhQU1RnMkt1SW5Ka3RmVUpxZHFUS2R4bDhCcCtnTXVL?=
- =?utf-8?B?K0RZRldpdHQxeGQrSmtINDcrazY4elQrWmVpSWdLdDd2K1lkQ0UrTjlKNSt6?=
- =?utf-8?B?V3daRitMaG9KVURZSk9BOTR0Y1ZDakZPN0xhWjB0bFZOaVRyUlBMQjA2L2c1?=
- =?utf-8?B?L1pxdENJK0dsVGE4cFh5bTQyYlEvN2VIZERVNFlxTlRmL0k4S3h3ZnVYZ2pX?=
- =?utf-8?B?ai9EVjdhMnhUTndMUS9LdGxIUUR0T3p1UXgrNTBBYzMvRlhlVXZtZUhqNEkx?=
- =?utf-8?B?TUxCUW9tbkZ0c2ZkOWZ1T3NMcU1qZng1Q1ZtLzlXbjRlOWp3eDhNem1KTGNN?=
- =?utf-8?B?S1FUdC9URHMwb0Jlam1XZ09iTHNVZ1FNRlJhNzdia3Y0cnU0dEdaRU9kWjZ3?=
- =?utf-8?B?UjFQdVRGSGlaamQwa0Q3aWFUNDRXUVZldHJuRmtkcUxyRnNQaHFaM2ZuUGJw?=
- =?utf-8?B?NU5YMzJVckJoVTZ2RFdmZm9iUDBNc3h6c2dnRmp4RmZhMFU2SXpUdjdMR3h1?=
- =?utf-8?B?R3hOazNrTmlRQ1pNQktPU282VHI3Z0VoYm10WE03MHVmeEl2RHdBdGRYNkNS?=
- =?utf-8?B?MnZ5NFNsbkhVS21DUEVCZENTSVdMU3kveGFabWhSOG9lSHkrd1J2eHNWekEy?=
- =?utf-8?B?YmEzRDdac003TVY5bFBFQUE4ZEFUQUJWdVlPMFpCLzVzbkZUZFdpeE8rWWNt?=
- =?utf-8?B?d2plQ09EQmhjZVdUYkZmdWUwZXhwQ0JWR0JMcWlzNG0vTXJDelhyQTg3RHRz?=
- =?utf-8?B?Y2Jmd3hmZUxiOVpuZ1VxenAwWGx0Vys0MXB1U0dxeU5ZNWxiRHBHcEpHVEwy?=
- =?utf-8?B?VGhxdkdGcjl5dEM3alRpZkZQS0E4VEsrWlBxMVBWTE43MUJaU2s5YW1SUjVp?=
- =?utf-8?B?bUdHOWp3YWdaQmVTSGRzLzAzZGpCaGRZMXgreG9mTnlVamFpVXo2KzczTnpF?=
- =?utf-8?B?SWZqZWVuVUg1M3pUQjBVbHpXYW1pOEJUeGRPUVNqNitpOENmU2VCd1p6dUVI?=
- =?utf-8?B?U2pmaHQ0NEh0aVNGMHYxUm9KWnFpczdWdW9Kc3NYT1dnRm5uNjVhTmNzcjNN?=
- =?utf-8?B?MHdtWDRtY0FFS3NIMUpjc056RGtZdmJMSTZNZTRzYS9OOXAzSHhDTXNlUTh4?=
- =?utf-8?B?em5tWjFZcHZqanM4U2o0VEZFcmc2dzUvcW96VkM2QVRBbi9ObDdsb0M2c0Nr?=
- =?utf-8?B?bWI3OElzd3pvTVQyMlB1ZVVwemlMdi92THF5bHpwSThCUjJSUERTd2huTXM3?=
- =?utf-8?B?KytTVXFmSDBDNndQUk1UOHpKMGZ5L1FJSnlZR0J2cWdveXE5bkhmTWZvYUxN?=
- =?utf-8?B?NzhzSTJXSitJNFg4cVhzaWtrZW92NDVvdXVLdkRnZVFsUGJaeEdQK0RDUzFT?=
- =?utf-8?B?UVNpZ0pta0lNdy9NTDRYWjlZQ2dnSThUZU05TVd0b2Z1V0w1dzJnODRHdWpn?=
- =?utf-8?B?QmFwdm9hWE5FdVFqd2VXdjRUbzJVcGVMV28xMlpHeHBEUWE4NmY3bG9UdS9n?=
- =?utf-8?Q?Plv+aE6T/+qhr?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M2MzWTlNUEMrRWtGOStFS1l2M2UwMTVXTGpJcU52WVg5UnVlQTFEZEV4M1A0?=
- =?utf-8?B?WU9USURORy9mYkhwWkJnbDltWUJuZVcya2tJT3YzTHZaK3ZpSlR3aWtaeDE3?=
- =?utf-8?B?cWhRTjVadTRiVzZiUzIvN0JwN25LYy9sQjBqREpMcWlxTjU5ZHFjWGJRa3d3?=
- =?utf-8?B?SDhjWUlyYmVnNHJRZENjd0xJRVR1aE9UNjJoNUp6ZXFmN012UGc1ZFhPcjdn?=
- =?utf-8?B?ZG0xTnVSb1ZFTFBCamd3SzNmRlE0RTYvcFpFaWtJU0FUaXJtRk1tdlRUWlp3?=
- =?utf-8?B?SjFBWlI4bkxGSTJwR1BzVmZwSW1qNW9zNEcxS1R2Z3NHbzd2VDd4alhNcnJH?=
- =?utf-8?B?MGJYUExNRXhJNWRTNTR4K0VPbm9KWCtPcG9IdGJ1d2NZUFk5YTdlN0poOG9k?=
- =?utf-8?B?YWdMK2dvL3ZFYTB6djdpYU1wWFVoYm9pc2pEd2JEV0ZldzArVHhoWUlEenNB?=
- =?utf-8?B?czdBWHFuY1doOEJNVVllejdwbFdtZFZmc0REd044ZW1PTXpuemFnRVNpcGhX?=
- =?utf-8?B?MmpNSHlQaEFBcXdOU3FZbFJUMkZzVVh6eU1ock5RVXJjRWRHMGc3OFJ0Yzdt?=
- =?utf-8?B?dGZIWnhQWmhwNlR3bGRqcXBxS3JGWnBGTjNWZk1aTmMyaURpZFJPb0grei9w?=
- =?utf-8?B?aHZPeUJxSWs2bDVRRjJLaG55WW51anJTL3czZGJpMlZpZW90TnovOHBQKzVK?=
- =?utf-8?B?aWhxbnBscVU1bU8zMG1XZUdrRnBQazdVQ3Rya2JCT1hNc29SODBUVVZ0TVFs?=
- =?utf-8?B?enI1L3JWRlo5dkVHRE9TMEZHWUxYSTBjdFliOXVyOFAxYndHQVllNkNQdHZD?=
- =?utf-8?B?MmwvOHlBdDBnUDgrMlVTR2pUS1FtaWJQdGRYS3ZyTnlBRzRFZFQzMGw1Rm1j?=
- =?utf-8?B?czBPMS9IMGJScGZ6Z0JwZjh6WU9JbUpQMWNpWEpndXN4K1RwdS9UdmZmaGxW?=
- =?utf-8?B?VW1LQ2N6WGhKRldoRHNhSlpYTmxReXV2aXF1RG51b0VFcjdNYjhpQ01BMmNI?=
- =?utf-8?B?VGZvdnQ4dG11SnNPQVdEVWFid1l4TEVRRWlIOTVrNmtmYUhuL3pUSE1UZHkx?=
- =?utf-8?B?eDVoYS83akVpMHVvdFFWTVlqV3IreHRwQXBzSVNoaVg5d0pzYjQ1YUF3d1pT?=
- =?utf-8?B?VTdSNmFNamEySGtTY0hJaVhya01URUU2ZEJGdFF1cVZNcXoxbENpZyszajJt?=
- =?utf-8?B?NVJWNTRsbDdjRFpRTXJwYWpVTE5kbTg3Nzc1bDBxU0RoVlZtNHdDUEZBS3FV?=
- =?utf-8?B?emZ1TFBiN0FjNi94YUF2dTYzY1U3a2VIY3lBZTFwamcrelVlYkdPd0c0QUZ0?=
- =?utf-8?B?TDBDQitoT3J5TDY1WTdZR0hVZTB6T21aMkRMV3F0ZUJFcG9mcEliUTZmamRE?=
- =?utf-8?B?WUFuMU1SRFJnTHgrTTlIK3FySkJnVlQ3Q0NRN3FCUk9HY0dRd2dSZHBxb1Y0?=
- =?utf-8?B?SlpJYysxZTgxb2t6Z29UWGZORjRLdkJUaWdSOG9ValRZVDM4c3FhaVRHbC8z?=
- =?utf-8?B?WVJyQ0hVdVEwc0VmYzZHZEJNcW5CWk0zY0JMSndDaTJDZDhaS0wxNC9ob2RN?=
- =?utf-8?B?NUxRMXB6RkpSNTBTWmFnazdzNlZPeHZYbDNmOGtZQ3l3ekVoYjAyU1NoSnhO?=
- =?utf-8?B?d3VqNW5GZCtTWXhSL1pONkYxQUEza0FQZStGcnZoYlJhZWErT244WnBVeUZM?=
- =?utf-8?B?eDB6ZWpjdlIyQzBWS1dJanBRTE1ISnpoclNhUG9NelFDVHExbGtaY1FMVzVJ?=
- =?utf-8?B?YWdONHdaTktiWkZ1VXVHUGhZRiswZkN1aFNpajliTEtQREtIZkk4ZDl5NUdq?=
- =?utf-8?B?b09Od0IxYThzNTd1UkhvSnUvT1pPMmVYV3RJcHRqVnhSbVV4MmZTZktZRDdJ?=
- =?utf-8?B?YmpuWVV6NWhzUGdsZjhnUWF0L2lJejBzNFNNVjZuQmVFSEpJRHhzTWNSRDBx?=
- =?utf-8?B?VldHMGpUQ3BPQy94UEV5U2YvN2s1dDRsVCsya3hNTEM1V1paaFVFWHF0VU54?=
- =?utf-8?B?dlpQbVpmSUE4QTBxNndOQzNZSVc1VzRmQ0EvR0pwOXdBTkdEZzl4T05hVTds?=
- =?utf-8?B?U0FMdnV2NlZtd3NKb2VNc2MyZjBYcjhhbmoxbm5KNVFkbVRsZTU2VUpmR0ow?=
- =?utf-8?Q?IBhFBHmEtv+QcknUAj0mqCwOH?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d260ccb-84bb-42cc-aad4-08dd346b0108
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jan 2025 07:13:54.1433
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QCm62dY1yZNwADasTwShlfgGIz7BW8FRvINsr67v3RMzQ8QjVMxLXjj7BhiuSdDa1snTT0MnyXZTQ5L80VpeJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB8351
+References: <20250113082818.345939-1-sergio.paracuellos@gmail.com>
+ <ebb32bec-3fd4-4129-ab5d-d519b10c4405@kernel.org> <CAMhs-H9ysdJ9nUuStWJpRqTzm-09ZS5TMdhWgKMZx+JZdo6teQ@mail.gmail.com>
+ <ec255edc-adcd-4c18-8f9c-209298f2bbff@kernel.org> <CAMhs-H9Osx__jBoxqAW1zWO4Q+nMymVfiWe_-ZSzp92Jht+JTg@mail.gmail.com>
+ <cf9732b1-fd09-454e-bfd7-bef55b234175@kernel.org> <CAMhs-H_6QTptfFsSEh7PKy8Fnoem1ph4j=mwT_23=J=adDDT8w@mail.gmail.com>
+ <a4796db2-e354-48e0-bd5f-da774f154473@kernel.org>
+In-Reply-To: <a4796db2-e354-48e0-bd5f-da774f154473@kernel.org>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Tue, 14 Jan 2025 08:43:55 +0100
+X-Gm-Features: AbW1kvaHSA2E7A6k96EgV43mBRC5AyoYl2qi9gGLrhlTyPhQ5aqpDx-KQDk54do
+Message-ID: <CAMhs-H9+hHnQQ3PSs2fCNvwdoJhrteARXQutFiziGN9+TFAgrw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: add clock definitions for Ralink SoCs
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	yangshiji66@outlook.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 1/13/2025 11:49 PM, Jerome Brunet wrote:
-> [ EXTERNAL EMAIL ]
+On Tue, Jan 14, 2025 at 8:09=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
 >
-> On Mon 13 Jan 2025 at 15:46, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+> On 13/01/2025 13:58, Sergio Paracuellos wrote:
+> > On Mon, Jan 13, 2025 at 1:37=E2=80=AFPM Krzysztof Kozlowski <krzk@kerne=
+l.org> wrote:
+> >>
+> >> On 13/01/2025 13:29, Sergio Paracuellos wrote:
+> >>>>>
+> >>>>>> 2. What is the point of this? We do not add constants when there a=
+re no
+> >>>>>> users. Commit msg explains here nothing.
+> >>>>>
+> >>>>> All of the old ralink SoCs' dts files which are in the tree are not
+> >>>>> properly updated. I expect to have them updated somewhere in time
+> >>>>> merging real base stuff from openwrt dts [0] files. Not having this
+> >>>>> header with definitions makes very hard to update dts and then
+> >>>>> checking the driver code becomes a need to see the indexes for the
+> >>>>> clocks to properly setup a consumer node. Because of this, this fil=
+e
+> >>>>> is added here.
+> >>>>
+> >>>> Still there is no point without the users. I do not see any reason w=
+hy
+> >>>> this cannot be combined with fixing driver to use the header. Not
+> >>>> combining is an indication this is not a binding in the first place.
+> >>>
+> >>> Driver uses a bunch of arrays for the clocks (base, fixed, factor and
+> >>> peripheral) and they are registered consecutively in order just using
+> >>> the ARRAY_SIZE macro for any of them. Thus, the direct application of
+> >>> these definitions would be for dts consumer nodes, not the driver
+> >>> itself.
+> >>
+> >> So what do you constants here fix? Driver can still reorganize arrays
+> >> breaking everything. If defining headers for proper ABI, then use that
+> >> ABI to make everything build-time testable and visible. That's why thi=
+s
+> >> is not supposed to be a separate patch from users.
+> >
+> > I understand your point and agree that the driver can do that, but the
+> > idea as this driver maintainer is not to do that :).
+> > Is adding something like the following in the binding itself with the
+> > header addition a possible way to go?
+> >
+> > --- a/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
+> > @@ -18,6 +18,12 @@ description: |
+> >    These SoCs have an XTAL from where the cpu clock is
+> >    provided as well as derived clocks for the bus and the peripherals.
+> >
+> > +  Each clock is assigned an identifier and client nodes use this ident=
+ifier
+> > +  to specify the clock which they consume.
+> > +
+> > +  All these identifiers could be found in:
+> > +  [1]: <include/dt-bindings/clock/mediatek,mtmips-sysc.h>.
+> > +
+> >  properties:
+> >    compatible:
+> >      items:
+> > @@ -38,7 +44,8 @@ properties:
+> >
+> >    '#clock-cells':
+> >      description:
+> > -      The first cell indicates the clock number.
+> > +      The first cell indicates the clock number, see [1] for available
+> > +      clocks.
+> >      const: 1
+> >
+> > @@ -56,6 +63,8 @@ additionalProperties: false
+> >
+> >  examples:
+> >    - |
+> > +    #include <dt-bindings/clock/mediatek,mtmips-sysc.h>
+> > +
+> >      syscon@0 {
+> >        compatible =3D "ralink,rt5350-sysc", "syscon";
+> >        reg =3D <0x0 0x100>;
 >
->>>> I think that the clock configuration exceeding the timing constraints
->>>> is a hidden danger that all chips have and face, but this hidden danger
->>>> is not easy to be exposed?
->>>>
->>>> For instance, if the routing of a clock network is close to the clock
->>>> or data bus of other modules, and this clock network is wrongly
->>>> configured to a frequency beyond the constraints, causing crosstalk
->>>> that affects the normal operation of other modules. If such a situation
->>>> occurs, it will be very difficult to troubleshoot. How should this
->>>> situation be handled more reasonably?
->>> Fix your consumers drivers if you need to. Set range if you must.
+> This changes nothing.
 
-
-I don't think it's reliable to have consumers drivers self-regulate.
-They are very likely to overlook this constraint. Moreover, when the
-clock configuration exceeds the constraint, if their own module can
-handle it but it affects other modules, this situation can easily
-mislead people to look for the problem in the wrong direction.
-
-Setting the range offers relatively higher fault tolerance, but it
-requires adding members to each "clk_regmap_**_data" and implementing
-callback functions *init() in the ops of each type of clock (*init()
-calls clk_hw_set_rate_range to set the range of the provider). This
-seems to complicate the originally simple logic.
-
-
->>> Those are not clock provider constraints. Those are use-case ones. It
->>> does belong here and CCF already provides the necessary infra to deal
->>> with ranges.
->> I kind of disagree here, if the vendor has the data and is willing to share
->> the range for each clock path of the system, I think it should be welcome!
->>
->> Usually those ranges are not disclosed, so we don't set them, but CCF will
->> certainly use all those range to make an even better decision on the lock
->> routing.
-> I did not say you should not use them, I say that a platform
-> use-case, which is what this is, should not be hard coded within the
-> clock provider driver.
->
-> This is no different than an assigned-rate, and like any other platform
-> description, it belong in DT.
->
-> We've already seen how these ranges may depend on what else you choose
-> to do on the system or even what package a particular SoC variant is
-> using.
-
-
-That makes sense. The information I have doesn't make a distinction,
-I'm not sure if other manufacturers do.
-
-
-I think it's more controllable to converge this clock constraint issue
-within our clock driver. Should we implement this constraint in
-Amlogic's clock driver?
-
+Understood. Thanks for making it clear.
 
 >
->> Neil
->>
+> >
+> > I don't like the idea of changing the driver code for using these
+> > constants since I do believe that it would make code uglier and less
+> > maintainable. I just wanted to make things easier for the device tree
+>
+> Then why having constants in the first place?
+
+Because I was expecting to have DTS as the only user and make things
+easier for it.
+
+>
+> > consumer nodes. So if adding this header is not a possibility with the
+> > changes in the yaml file I will forget about this addition and this
+> > patch.
+>
+> Header without user is pointless. Driver and the DTS are the expected use=
+rs.
+
+Understood. So having only DTSs as users is not a possible way to go.
+It is clear now. Forget about this patch then.
+
+>
+>
+> Best regards,
+> Krzysztof
+
+Thanks,
+    Sergio Paracuellos
