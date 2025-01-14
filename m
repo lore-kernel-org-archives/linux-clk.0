@@ -1,158 +1,121 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1D6284A73
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 09:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3731922DC44;
+	Tue, 14 Jan 2025 09:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736847432; cv=none; b=l7Jlet5+BjcBppx+lrsyAE2ty7TlDi8JGsiX2IGfBscm2Xv1HZ2nhu3mdEIHfetggqHW8LGW+owETYCa7K7A7SMqOvbh984n7+r6GYxZEt32rpOq1+wQGmXYTjIVyK13lS74XfXov7HldI4XLKFpu+SKtZF1IM2o4f/5+Qmbt0U=
+	t=1736848109; cv=none; b=H3bfFe/wEQuLvVHor6wIamOmfml7PNWAN7766eqVnxr7OrsQ3dLVu/3VuC7+EA6wkLaPoM8wiqu3i9g809xkBKq/DWyFBWYFjs5In5k+pwrzULeKMIz40juRioLH/LDo0dwEz6VsYVtZTzF1A7cE+asmyxwt3W6eB6Z+tWDxNY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736847432; c=relaxed/simple;
-	bh=fqMjmyNb3Uwk54SDpRDPOEd/CFydxcRIzz9wq6VjFl4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q9qBWoULx3P6SLTK5eIOxZqq3e6CqGckc7bBEp/BFCkXrKo/hK4TdLP9tFGiEc0MOMXvJffNT/5lu40df8PNS5tyNyDtat/vMZw9wLx20QszH6sFu1R2C3K5dhVfqj1xbI98SEUSLfn9KvUZX6DaSmWRM6JqBXoUn0rNtG9cZ4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=X3tPFBtp; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	s=arc-20240116; t=1736848109; c=relaxed/simple;
+	bh=TQ8w7u/bsH8D9M7txgUCjNloimmDG53pGG2+cWgaGmU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LLIDbSjFadkFjCAimPi6gDYOk8A4wzPA6xsVMLEsf2DvzqIUYV604zIgW7tWE0VxMh7LBIoSlbB5kbtDsEWdJl+rpluY5CI2SQBWsxePKxJGuyBkxMX0Ikfn042yhYoUhCBEpdP9GmEm1FUsTepFcCwNdRKi9/CqxYcdC4MS5XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2WGI3Xe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="X3tPFBtp"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e54bd61e793so9169304276.2
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 01:37:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1736847428; x=1737452228; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l89tcIhQpLFA95BmF/dtjUV+SmX9AcHiGhoZt2rDB4Y=;
-        b=X3tPFBtpUs1jSdIgaSrMP2IDWO/kFjfUtxDwgqIiHmqCmEfyOMkv1K21AO7seUvvb3
-         iNigqwjJwhx/xrZtrMqn67ZQS+a8M78gITJpJc7lskgeZHm0IgF0Jga79UT2ERmDgbiN
-         R+gHgM/mF8k9zAxcAx/1jZS7dBPlZRPlQRl/o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736847428; x=1737452228;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l89tcIhQpLFA95BmF/dtjUV+SmX9AcHiGhoZt2rDB4Y=;
-        b=mDLmUy9cHJ1JrC5LF4dvqZAdVn0gCP/6IjwvL8w+uphMSqauFQsPPDIAtd0TR+aULR
-         OygV/ETpYIlCTKS9P0Jd0fX5S2nWUMhp5Yp/tvWkw0gTbzeYxjJfOIay/+P8g8LIXqDV
-         Kj5GHMqCu+bS15un7VhOIIKm8MlgiEIvereox/HHeds/HtnBvFDww3Kq0QSjfYQ0MyGU
-         q4piJpO4miyWOUv8gbXeXZ8lFckN7hiNCz0OLw0sLJx3e9nCMxuHYaTl4AC8rm3GkHJx
-         G66W9Uik2iMNWX0vhtfPqzYngOWUGwu5IDq813/YmBi3YW1nDPKd4K7cZ3kJG+73xFn9
-         TSBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTJR0lTb456J1w/AUH4fa1hcrGX85RFO2qiRBx9GrkdTaVVEi037YqJ9OjTAPJN1QrxuORPhQdh94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsIzcBpw292mEW6pSmJjzVOh3ptNs26Pd29HH9QjTtkiIn9/yc
-	9zu7JfTsBJDA+9p+RCiqtWv50RTabsrJmq0ZHZyvzr/fJ0f4OJ1a2naWiWTzPVrHyTY3dZ2WswS
-	EMLVfmy/dlhN2rWKxlj4XNI13ZIRGRATzcaPtZw==
-X-Gm-Gg: ASbGncsZaKObARWIUnTYmCYxVNiDor+B9etCrZMGxRRXMDvViAuQNaZ6s03CFOCU2ch
-	+g9/dq4igPsREfDAd3O4GaykQ1DgrUFd+D5BA
-X-Google-Smtp-Source: AGHT+IF6e2gulZmmKMZM/9qfdCNmIYsXwgatFmybYBzO3L6nSNvtxPxQhBPTkQU3rmXIGx0U/IzVq/5dxO9CIKDtZus=
-X-Received: by 2002:a05:6902:12cd:b0:e57:2a07:a97b with SMTP id
- 3f1490d57ef6-e572a07ab0bmr10989327276.19.1736847428039; Tue, 14 Jan 2025
- 01:37:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2WGI3Xe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B3B6C4CEDD;
+	Tue, 14 Jan 2025 09:48:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736848108;
+	bh=TQ8w7u/bsH8D9M7txgUCjNloimmDG53pGG2+cWgaGmU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n2WGI3XeIpKnc5LppwNPNK7xSZi1YsCn4j6pqo7gqASEOaLXry7JlykjRPDuDG7Fl
+	 TrzIRwz2VulFY7DQIEwL1GAk2MVr7i/4rXuqldFTuHlHjyUiJTF5VX75mOVO6XmFPS
+	 0kPGYJeDYVWT56rZNMjIG9kWtaFlgxp7HoYbSiQwPsxSkROsAe5bJ2yR4R6vdpoXm0
+	 cSHU/LMcn1dzsOy2owpIgtuXc6QISYPTQOAkpzalXzpbNsbgtCJQl77uBdAp133IpL
+	 3CSKGkE0MZMtUAoC4+aoDLLu6H07ARQrFCGvHEkE741hIezV03thcXee1buQuOvGqk
+	 SWl+FpEYfmpow==
+Message-ID: <54b63cfc-7a51-4b69-8b32-eb7591b2169b@kernel.org>
+Date: Tue, 14 Jan 2025 10:48:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] dt-bindings: clock: convert stm32 rcc bindings to
+ json-schema
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
 References: <20250114091128.528757-1-dario.binacchi@amarulasolutions.com>
- <20250114091128.528757-2-dario.binacchi@amarulasolutions.com> <79a90c01-9e21-4e3f-a334-6ba9e1df4150@kernel.org>
-In-Reply-To: <79a90c01-9e21-4e3f-a334-6ba9e1df4150@kernel.org>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Tue, 14 Jan 2025 10:36:57 +0100
-X-Gm-Features: AbW1kvbHaMA7-gPSLKl8JCA0np6oyUkVl3x_8EI0Z9Yf3VmqaAgjofQDW5nCXfo
-Message-ID: <CABGWkvofUphcXTwBS5UBEoQ1GYpngP7gWi9Ax=WW28XKK0qoYA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: convert stm32 rcc bindings to json-schema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <20250114091128.528757-2-dario.binacchi@amarulasolutions.com>
+ <79a90c01-9e21-4e3f-a334-6ba9e1df4150@kernel.org>
+ <CABGWkvofUphcXTwBS5UBEoQ1GYpngP7gWi9Ax=WW28XKK0qoYA@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CABGWkvofUphcXTwBS5UBEoQ1GYpngP7gWi9Ax=WW28XKK0qoYA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jan 14, 2025 at 10:29=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 14/01/2025 10:11, Dario Binacchi wrote:
-> > The patch converts st,stm32-rcc.txt to the JSON schema, but it does mor=
-e
-> > than that. The old bindings, in fact, only covered the stm32f{4,7}
-> > platforms and not the stm32h7. Therefore, to avoid patch submission tes=
-ts
-> > failing, it was necessary to add the corresponding compatible (i. e.
-> > st,stm32h743-rcc) and specify that, in this case, 3 are the clocks inst=
-ead
-> > of the 2 required for the stm32f{4,7} platforms.
-> > Additionally, the old bindings made no mention of the st,syscfg propert=
-y,
-> > which is used by both the stm32f{4,7} and the stm32h7 platforms.
-> >
-> > The patch also fixes the files referencing to the old st,stm32-rcc.txt.
-> >
-> > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
->
-> Drop the tag. It was conditional.
->
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - items:
-> > +          - const: st,stm32f42xx-rcc
-> > +          - const: st,stm32-rcc
-> > +      - items:
-> > +          - enum:
-> > +              - st,stm32f469-rcc
-> > +          - const: st,stm32f42xx-rcc
-> > +          - const: st,stm32-rcc
-> > +      - items:
-> > +          - const: st,stm32f746-rcc
-> > +          - const: st,stm32-rcc
->
-> Nothing improved here.
+On 14/01/2025 10:36, Dario Binacchi wrote:
+>> Nothing improved here.
+> 
+> In my humble opinion, there is nothing to improve. Any modification
+> made causes the tests to fail.
+> 
+> $ git grep st,stm32f746-rcc arch/
+> arch/arm/boot/dts/st/stm32f746.dtsi:                    compatible =
+> "st,stm32f746-rcc", "st,stm32-rcc";
+> arch/arm/boot/dts/st/stm32f769-disco.dts:       compatible =
+> "st,stm32f769-rcc", "st,stm32f746-rcc", "st,stm32-rcc";
+> 
+> Or am I missing something?
 
-In my humble opinion, there is nothing to improve. Any modification
-made causes the tests to fail.
+How can I know what you are missing if you do not show the code?
 
-$ git grep st,stm32f746-rcc arch/
-arch/arm/boot/dts/st/stm32f746.dtsi:                    compatible =3D
-"st,stm32f746-rcc", "st,stm32-rcc";
-arch/arm/boot/dts/st/stm32f769-disco.dts:       compatible =3D
-"st,stm32f769-rcc", "st,stm32f746-rcc", "st,stm32-rcc";
-
-Or am I missing something?
-
-Thanks and regards,
-Dario
->
-> Best regards,
-> Krzysztof
-
-
-
---=20
-
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+Best regards,
+Krzysztof
