@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65A422DC21;
-	Tue, 14 Jan 2025 09:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F91C22DC21;
+	Tue, 14 Jan 2025 09:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736846910; cv=none; b=euM5DMg9KMd0losU0WtOTmUBIkfMzKbLA638i4Cs72qXVuM7z48YOkOdcNsH0JyfC8j5bVH7eJjvHUfhbY87ckDiTl5o4R6Fs+URd8X4nq5KqfQ6fwWum5k/pWhO44HrAaKyQMOYDZ2bgPW2g5tSGcBFeFjxDExfplF8zB51SXM=
+	t=1736846955; cv=none; b=QTCfg1G2S4QrAzTDfjf928alKzWJEGfDvvd3hwR9Ol9lSCERYctkd+Ko8dk2+KHUWZIFZbF5jTYWvZ5LZTuS2GCYLCn5cua6bKQ5jVPRrjaThDQijZmahpkQ5W8tAXnl5Z59jPgBqGKyicHaKnTgBs1ukauG4jRxZLar8zzeyjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736846910; c=relaxed/simple;
-	bh=OJWtwbRS0GQYnP2iRmQnG5KMhHxA7svt0XHwtX+wAlQ=;
+	s=arc-20240116; t=1736846955; c=relaxed/simple;
+	bh=T1sIry+8mI5T3ts4+Qf/PkZMMcr3MjrDvmE1fdOgRPs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l/jyfXRNVkNGN337GcqfTZ1kHC5ILjNxL53FbkaeBNfHOWAfMpmbBbaPC2D2paa3+XYBMC5uwKOigBs80wdGOl359NElAS08bEVRgDnQ3RPBnaDh74ELq0Vi5Oksc9757lCCYUvCb1XDwwgOLJPurXU+Qz2ds/hA/7iK8gooyGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcRvbyAD; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Y2DcA0kJSMm9IXfTZY9/bzKqBOD5zRTq/ajehvqJyNfV500Q0HGAPcQBXz4dd7mWWvF3n+/DBybTeinmTpHrCpgdoYJE0aLvaLyZC8i3pULWuBXZoVc2CRwCm5eTe+lwywc/ayKzLFRYA+c0RdNWGiNWZnxmu6x2iRFujW5uTFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JtA0yHfg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcRvbyAD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B31FC4CEDD;
-	Tue, 14 Jan 2025 09:28:22 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtA0yHfg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3400CC4CEDD;
+	Tue, 14 Jan 2025 09:29:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736846910;
-	bh=OJWtwbRS0GQYnP2iRmQnG5KMhHxA7svt0XHwtX+wAlQ=;
+	s=k20201202; t=1736846955;
+	bh=T1sIry+8mI5T3ts4+Qf/PkZMMcr3MjrDvmE1fdOgRPs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XcRvbyADGXCNuCGb751eenW4IeCS5w2PZMR+MDGpDES3t1vihwuObyxnVh4+FBgfs
-	 0Zc+pq+f2s9W4zzip8qVD1dptDvGnkl+Vx28MGiFHHNN46lUJKicHQ1A2EOhw2t2J5
-	 cMJxoVzgMVrNtq/ofu70qxsy4JwzZVkBTeae6w7Yd7jquayBVXOlHKjNjF4WrvBXP2
-	 BzkfFJSSdFclwuZJw+g60Uew5Mr4q/jUa02NIgPgtBqzxGQuq7Klo3F9FDt35clXyr
-	 zuc2wAFGnIMV/4q3CidjXnApB4n6GyOPEgyekXas1sAGFhwmnj2KAWJR1P1nmp3OJD
-	 QZxsG/72WyTSw==
-Message-ID: <679440a5-5ee2-47a3-9811-3be96cdcf2a2@kernel.org>
-Date: Tue, 14 Jan 2025 10:28:19 +0100
+	b=JtA0yHfgVGFQxZm46u0Yvaxe6YngCVxDpLWhr0IJ6ksDpjbHaSIX62blmV7+kn7Xr
+	 XsnorIIlVn4V0mfQmYuN349xfrktb3rnnN5FPkinwwbLDtB3grvxsIUjNSPdRNf8/j
+	 TwyEkNWcAAxEQfduPS4bg5DDKORcbMDRJ7UoJIdj8IjNF/X9lwDh3CMJL5a40wNCue
+	 6bjjLcKKB9CkwHkGzS/jxWJ1jUKhkbkUOEiGrPOX2PD0UAN/VSQMNPq3CjnG5YKX/5
+	 l2y5iBKyTRxv6sHOJSC1OZ4EAydD33Wq+3Qxxcc5BJJqfjRr5fTmwrEoNAstbLwXZY
+	 RLTFxYSwgNB9w==
+Message-ID: <79a90c01-9e21-4e3f-a334-6ba9e1df4150@kernel.org>
+Date: Tue, 14 Jan 2025 10:29:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,10 +35,12 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: convert stm32 rcc bindings to
+Subject: Re: [PATCH v3 1/4] dt-bindings: clock: convert stm32 rcc bindings to
  json-schema
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+ linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
  Alexandre Torgue <alexandre.torgue@foss.st.com>,
  Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
  <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
@@ -47,10 +49,8 @@ Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
  Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-stm32@st-md-mailman.stormreply.com
-References: <20250109211908.1553072-1-dario.binacchi@amarulasolutions.com>
- <20250109211908.1553072-2-dario.binacchi@amarulasolutions.com>
- <bfxyod5l2s6g3j47be7mjh6i7wgjapka2q5b6f2mleipiai6gm@hfvclvkzrtyd>
- <CABGWkvqu10dyW6y5S7qvY4G7uh0OaUgr6k-F7BA1AU0H9bA9GQ@mail.gmail.com>
+References: <20250114091128.528757-1-dario.binacchi@amarulasolutions.com>
+ <20250114091128.528757-2-dario.binacchi@amarulasolutions.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,43 +96,45 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CABGWkvqu10dyW6y5S7qvY4G7uh0OaUgr6k-F7BA1AU0H9bA9GQ@mail.gmail.com>
+In-Reply-To: <20250114091128.528757-2-dario.binacchi@amarulasolutions.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 14/01/2025 10:10, Dario Binacchi wrote:
-> On Sat, Jan 11, 2025 at 10:25 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On Thu, Jan 09, 2025 at 10:18:28PM +0100, Dario Binacchi wrote:
->>> +maintainers:
->>> +  - Dario Binacchi <dario.binacchi@amarulasolutions.com>
->>> +
->>> +description: |
->>> +  The RCC IP is both a reset and a clock controller.
->>> +  The reset phandle argument is the bit number within the RCC registers bank,
->>> +  starting from RCC base address.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    oneOf:
->>> +      - items:
->>> +          - const: st,stm32f42xx-rcc
->>> +          - const: st,stm32-rcc
->>> +      - items:
->>> +          - enum:
->>> +              - st,stm32f469-rcc
->>> +          - const: st,stm32f42xx-rcc
->>> +          - const: st,stm32-rcc
->>> +      - items:
->>> +          - const: st,stm32f746-rcc
->>
->> Why this isn't just part of enum with first group/list? Different
->> groups/lists are for different fallbacks and I am pretty sure fallback
->> is the same.
+On 14/01/2025 10:11, Dario Binacchi wrote:
+> The patch converts st,stm32-rcc.txt to the JSON schema, but it does more
+> than that. The old bindings, in fact, only covered the stm32f{4,7}
+> platforms and not the stm32h7. Therefore, to avoid patch submission tests
+> failing, it was necessary to add the corresponding compatible (i. e.
+> st,stm32h743-rcc) and specify that, in this case, 3 are the clocks instead
+> of the 2 required for the stm32f{4,7} platforms.
+> Additionally, the old bindings made no mention of the st,syscfg property,
+> which is used by both the stm32f{4,7} and the stm32h7 platforms.
 > 
-> I tried running tests after applying the changes you suggested, but
-> the tests are failing.
-And? Fix the code then?
+> The patch also fixes the files referencing to the old st,stm32-rcc.txt.
+> 
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Drop the tag. It was conditional.
+
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - const: st,stm32f42xx-rcc
+> +          - const: st,stm32-rcc
+> +      - items:
+> +          - enum:
+> +              - st,stm32f469-rcc
+> +          - const: st,stm32f42xx-rcc
+> +          - const: st,stm32-rcc
+> +      - items:
+> +          - const: st,stm32f746-rcc
+> +          - const: st,stm32-rcc
+
+Nothing improved here.
 
 Best regards,
 Krzysztof
