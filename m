@@ -1,119 +1,95 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91027236A85;
-	Tue, 14 Jan 2025 12:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F7322DC2C
+	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 13:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736859198; cv=none; b=UibDOVLgsPnJaZlv+RP7P28iZ9owptW3keoPQWRAXBLYI+XNBBi6osdYGjsn9medL4Re8QhTh/PmhFzCzLZxB5dv4klieOQctBuIykYhUauGqgq9bLrdxlWlZcYr1aHDUq926LLx64GhiK1I8syNNp3eX20gWv+dpqPvImRpDxA=
+	t=1736859651; cv=none; b=LPhVuNPbfwJzmHYjQVU3j2CwRejrPWtTPUurImNPaUnVQ9sVX2nxGhoefSKOw8COEc7K0460YM5aoij6/0JOnJ9KH7hTWVF+I7Xt+k/2rV1xXrOKymkJgYNcs7Gf4s0O/sRkUXq1qbFcdmluGo4rqndEKnNY526FxCkpUkO25nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736859198; c=relaxed/simple;
-	bh=c4/hILBrFjjcIwY2WJ+4Y19FRIoTpjKzIsfIQB+t6GA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JcjEoEBH4KHIp6t2Udge4cV4SdarCE62ualMGojc/1EPb19Mr5msItEzHAh4FwCa4nhuj1pAASqLB9nXjXuTfuUsAeQohAglpfyfHcIImlM1ISRTZ8n+PhshpGgAh0aU2P3iwW9mD69/q+swst0V0szF5NbnIIMNfr1ate8VSvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VRRCVYCC; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VRRCVYCC"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d0d32cd31aso7712864a12.0;
-        Tue, 14 Jan 2025 04:53:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736859195; x=1737463995; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=58YRhhAWOxecN/NnS0PaSbopKQHlTjf7bl863HnP150=;
-        b=VRRCVYCCe6E7qCBJ4TSTEl02T0tNYDcdLP9I6bebQfVg7tnaflrogL40c2XwZP1Jev
-         N5lelpwXHwTf8TeHpUlCIbh4V3J8Ay8yydm/w7bBmq/WldyAd7hwxbe/hmupRiKnUh1Y
-         ijiQaDTAnRttny+VFxhtqIwfDh3yRzeAVFznHL35jjVuEWmgbsFnZFpw25a1BVGSPon/
-         WI0eHGFI12LB9Xk0dP128SiIOOCNUQOi6yo1gDP4nYOMDbKF04QesCuqPlOr/f88h8+u
-         mwiXK2RAjV08UcFX7UadImof39R6Wz1YTjTdsIbJkiTbZgvcf6hoY0bi6Lti5BhDtHVW
-         S7vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736859195; x=1737463995;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=58YRhhAWOxecN/NnS0PaSbopKQHlTjf7bl863HnP150=;
-        b=ke/3mfi93yuKKfOp2tL3H74mQsBszOTamCMVKtfEV05vYZMIvMwVkpDexekFvw4FUH
-         VEGxgh6hv5yECcmfgcHXzap1QAZF8m+9MUmDMxidLZgrfPhPElR15zMl1HhQcopDOxJZ
-         LBcCT/ZiFiZGQaHIFIiZu3Dst3qO75KA8eG6iYCDP4AVzppU62wkQhQ1SSCiQ7QMFYGs
-         ghjBbbLTX7l3u4rhH3xzX2/ENz+HFozpbwTskBr9ojecG5zhqMle7KXVvERKnIbQbdw7
-         dRlDnnED2ooFwcyXjo89HiP+hwI27l4BSVtIzPbtNG5XFPyl5n95l9e+mbTMclL72QTu
-         bZFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZQVBGPIQU+EH6xjEW/Pp+BisMszx0K72eXGCqlMUjtfjniB/nwkxUzXrFaiFrLTowTjbvDFN42Uo=@vger.kernel.org, AJvYcCWNqX6t0EERtHYReKpU5ZfYE5gozSeCPPISH+bqgReBRTlWV98u+7ISBz06K9/UX//cON/rBrf/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyio0I83P+HF3eHeEDw+88kcR2w9tkk4FmQUYu7n0VaktkQGj+5
-	Dn+PKH2F3tCYVHr5oialdIa38zJux4QtFnEc90uNqA/X5LOsiiyKCBQG5zyRglnygvqVAUNoYVv
-	+4n/QQbrJuBhnArUi1UpAxx2nwxg=
-X-Gm-Gg: ASbGnctAADi0UpXxiQlsra5W46qamzrHKykO4UdM5UKLMYyOxKYYWq/VesoGdZfLFoD
-	QKzlJjQ4pXLTKsuo6opKGLuCSndWPIKgi4z2K
-X-Google-Smtp-Source: AGHT+IFAeT9rGs81+ma7oWrKwp7nETfmX0fYNUxmNBFROFMZRbXo6MVJ9ClUknjW12+94gVEobaY+33Njkg+dB2ZDoE=
-X-Received: by 2002:a05:6402:530f:b0:5d1:2377:5af3 with SMTP id
- 4fb4d7f45d1cf-5d972e00027mr56882740a12.5.1736859194633; Tue, 14 Jan 2025
- 04:53:14 -0800 (PST)
+	s=arc-20240116; t=1736859651; c=relaxed/simple;
+	bh=TZbcHTFnuugWaCI/UvMSIRSwvn8uWrQVBEjHxp9ZNDw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=J3BPWGMwE9CgLpWX+pP4vkNLgvOs6C19xt5m3dU/haVe7KVV/Da5AxaCbY2L3izglbT5RhJKaylE6PvZ2nv2yhN57Cqk3Jk3wT9E7JhbiPpxnMAj7+IhZGQs52feON3Hl7KNbdMuJb62Xa2EEcD5NF1qzT+1/s2drCJQpWyZBTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.63])
+	by gateway (Coremail) with SMTP id _____8DxG+L+X4ZnGDdjAA--.62844S3;
+	Tue, 14 Jan 2025 21:00:46 +0800 (CST)
+Received: from localhost.localdomain (unknown [223.64.68.63])
+	by front1 (Coremail) with SMTP id qMiowMAx7+X6X4ZnhBwiAA--.3371S3;
+	Tue, 14 Jan 2025 21:00:45 +0800 (CST)
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+To: Binbin Zhou <zhoubb.aaron@gmail.com>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	linux-clk@vger.kernel.org,
+	Xuerui Wang <kernel@xen0n.name>,
+	loongarch@lists.linux.dev,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Subject: [PATCH v3 1/2] clk: clk-loongson2: Switch to use devm_clk_hw_register_fixed_rate_parent_data()
+Date: Tue, 14 Jan 2025 21:00:28 +0800
+Message-ID: <8733a7485619bdb791de25201a3d7984d1849c9f.1736856470.git.zhoubinbin@loongson.cn>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <cover.1736856470.git.zhoubinbin@loongson.cn>
+References: <cover.1736856470.git.zhoubinbin@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250109113004.2473331-1-zhoubinbin@loongson.cn> <ba25dfc40e9ae91205d61c838e368490.sboyd@kernel.org>
-In-Reply-To: <ba25dfc40e9ae91205d61c838e368490.sboyd@kernel.org>
-From: Binbin Zhou <zhoubb.aaron@gmail.com>
-Date: Tue, 14 Jan 2025 20:53:02 +0800
-X-Gm-Features: AbW1kva3LJGk4s8ei_nQCIk6VVREFoQwacKX90JhAswxvfIX_CoApACaTyLPiaE
-Message-ID: <CAMpQs4JixuJOQyK1wXBX+Y_j27Cng0wBiX3NBpHmD_7byUtzmA@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: clk-loongson2: Fix the number count of clk provider
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>, 
-	Michael Turquette <mturquette@baylibre.com>, Yinbo Zhu <zhuyinbo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, linux-clk@vger.kernel.org, 
-	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, stable@vger.kernel.org, 
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAx7+X6X4ZnhBwiAA--.3371S3
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Jw1rtrWxKrWftw47Cr13Jrc_yoWkCFXE9a
+	yIvr18Gr1DAwna93Wjy3W7ZrWS9ws7ur1xZa4YgFs3J340vFn5GFZ7ZF4jkwnrAa1UWry3
+	G3WkWryfuw1kGosvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbVAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JF0_JFyl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
+	oVCq3wAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa02
+	0Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_Wryl
+	Yx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrw
+	CF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWU
+	AwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1V
+	AFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4
+	A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU
+	0xZFpf9x07jrPEfUUUUU=
 
-On Tue, Jan 14, 2025 at 2:50=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
-te:
->
-> Quoting Binbin Zhou (2025-01-09 03:30:04)
-> > diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-> > index 6bf51d5a49a1..9c240a2308f5 100644
-> > --- a/drivers/clk/clk-loongson2.c
-> > +++ b/drivers/clk/clk-loongson2.c
-> > @@ -294,7 +294,7 @@ static int loongson2_clk_probe(struct platform_devi=
-ce *pdev)
-> >                 return -EINVAL;
-> >
-> >         for (p =3D data; p->name; p++)
-> > -               clks_num++;
-> > +               clks_num =3D max(clks_num, p->id + 1);
-> >
-> >         clp =3D devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks_n=
-um),
-> >                            GFP_KERNEL);
-> > @@ -309,6 +309,9 @@ static int loongson2_clk_probe(struct platform_devi=
-ce *pdev)
-> >         clp->clk_data.num =3D clks_num;
-> >         clp->dev =3D dev;
-> >
-> > +       /* Avoid returning NULL for unused id */
-> > +       memset_p((void **)&clp->clk_data.hws, ERR_PTR(-ENOENT), clks_nu=
-m);
->
-> This looks wrong. It's already an array of pointers, i.e. the type is
-> 'struct clk_hw *[]' or 'struct clk_hw **' so we shouldn't need to take
-> the address of it. Should it be
->
->         memset_p((void **)clkp->clk_data.hws, ERR_PTR(-ENOENT), clks_num)=
-;
+Since commit 706ae6446494 ("clk: fixed-rate: add
+devm_clk_hw_register_fixed_rate_parent_data()"), we can use the
+devm_clk_hw_register_fixed_rate_parent_data() helper and from then on
+there is no need to manually unregister the fixed rate hw.
 
-I'm very sorry, it was a cheap clerical error and I'll fix it right away.
->
-> ? It's unfortunate that we have to cast here, but I guess this is the
-> best way we can indicate that the type should be an array of pointers.
+Since clk_hw_unregister_fixed_rate() was not called before, we also fix
+the memory leak that was present.
 
---=20
-Thanks.
-Binbin
+Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+---
+ drivers/clk/clk-loongson2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
+index 7082b4309c6f..6bf51d5a49a1 100644
+--- a/drivers/clk/clk-loongson2.c
++++ b/drivers/clk/clk-loongson2.c
+@@ -335,8 +335,8 @@ static int loongson2_clk_probe(struct platform_device *pdev)
+ 						       &clp->clk_lock);
+ 			break;
+ 		case CLK_TYPE_FIXED:
+-			hw = clk_hw_register_fixed_rate_parent_data(dev, p->name, pdata,
+-								    0, p->fixed_rate);
++			hw = devm_clk_hw_register_fixed_rate_parent_data(dev, p->name, pdata,
++									 0, p->fixed_rate);
+ 			break;
+ 		default:
+ 			return dev_err_probe(dev, -EINVAL, "Invalid clk type\n");
+-- 
+2.43.5
+
