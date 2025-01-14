@@ -1,345 +1,138 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AD73DAC06
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 09:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65A422DC21;
+	Tue, 14 Jan 2025 09:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736845902; cv=none; b=PbJDaz0yk6qgdTsLjKw+rT7Vk5z9IdZyvgb9+QvT1xs20x8qlDHc6T43H/E+byRxosC2skxC9dyhdWrzxqDRyugHo7cS7hraAYKfAK7oApvQVjJ9Iv3Eqfine2CtJh9aejspWWjUksMcdyxy3EQ1fuq86nLKt0ZETY7xRhavLL8=
+	t=1736846910; cv=none; b=euM5DMg9KMd0losU0WtOTmUBIkfMzKbLA638i4Cs72qXVuM7z48YOkOdcNsH0JyfC8j5bVH7eJjvHUfhbY87ckDiTl5o4R6Fs+URd8X4nq5KqfQ6fwWum5k/pWhO44HrAaKyQMOYDZ2bgPW2g5tSGcBFeFjxDExfplF8zB51SXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736845902; c=relaxed/simple;
-	bh=+nrB0Dh4R6DIF34ltIAyITi9VDcUFSBcdqj11umMvNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rU8bWWDaHZvLQbXD3b4+OQwH43wYsAyuvCa+K0pOwZRCDH+P+w9FkQeDZj3MIZXRZ+aaH5gW7R8RIsmnpUHbJ71OudKa8r4OLI3RMSLBeCEIkYrDPvZcqUTD+7pVuRPQ9mIRlX7s9662pNpN5HOnnUQt/ycm5AdveXvZzgLmkZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=D+i4TFPs; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	s=arc-20240116; t=1736846910; c=relaxed/simple;
+	bh=OJWtwbRS0GQYnP2iRmQnG5KMhHxA7svt0XHwtX+wAlQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l/jyfXRNVkNGN337GcqfTZ1kHC5ILjNxL53FbkaeBNfHOWAfMpmbBbaPC2D2paa3+XYBMC5uwKOigBs80wdGOl359NElAS08bEVRgDnQ3RPBnaDh74ELq0Vi5Oksc9757lCCYUvCb1XDwwgOLJPurXU+Qz2ds/hA/7iK8gooyGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcRvbyAD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="D+i4TFPs"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9e44654ae3so841654966b.1
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 01:11:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1736845898; x=1737450698; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CUkrlqyJMSue4T39ZMAvPFJocT8wJ7xje6FDMMbnAa0=;
-        b=D+i4TFPsmMJR8CdbRsUPqhXNkTJiZSk4UlPWmBM72Htu/2lTF2cs5GwfeBaw8sa0A1
-         2l4LufjneNdrP8JdqTGCrcnZ0Xvav5Xixg3RogWWHPG1WlxcHGy4l4xRGepJJtrrQ64v
-         4ObL1oD06wNtadh3eTLVdcPFlv/YwCHa4um+U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736845898; x=1737450698;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CUkrlqyJMSue4T39ZMAvPFJocT8wJ7xje6FDMMbnAa0=;
-        b=eQcB59HNYiPqAypC3LpeZDcwbuwA5bonIFpC4hteefG+YatfejK3qBJ+WTOjGJQkUl
-         s5ToMunSpxAejCka6vkVyIM+1IIg5JhT7inJiD6QYuX1bCOjkvfxsLgkcAEKskxHfenk
-         LvI2rNVO46tClbM9wloxEjyJMbGGVFse71mBnGUe9MwhKlXQr5PKqgfGf47IlzGotw09
-         +TJg2/QRwNxJZWMTXEGK5PHIb8Bb/pQoUyMEaP2Iq/zhKrFvh/ASBRUjV+9oUEU2avOt
-         8Ztwy4//Xprt10EhoAlNI/e5XZ8zO2CBux6gSRs6kl5j+uvDo7EUz/hQYoH1mzKeo9+D
-         9mAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURzqxf9yfooa5paxP4EalHJFJsraWAlzEgI3UFEsw5LRyV1E0vfX6raoPR8HenIUQ5XoY5JkAkyrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNTs9c7aqt/fKHy8vpYz5svTiOxfjkXG1gg/VEjXjVGJppwiG2
-	jI89POB0kQAtcbro3h0UQqH+N5nJuHJuOr7mHyQV/7JPLxRwvqG6Hs+f5vSoZsw=
-X-Gm-Gg: ASbGnctAyQmOEroRZjqXgpZ74UdH59m4/l9iR0qykoTdKjIpDkMQ6qzgzlifoDOh7z6
-	aJAAg3EzLDqGVo75bTygjbrAxZQjpEMOAiCVzWmnN/ObUxAT6xnU0fcKTMHSadm2yekjXEts2+a
-	G9jV8e6fKqm0ZBS3P3gDngdQH3UBJuQRs9pwONq7QcE4jLzmNksPMqHe92joAv2kYh5DNsFCfWg
-	u44SX72SnUuL58HZt4bibm0q9fa62Ox3tRdmWdl3G6Zn3o8e7DaPS6qrmaS1umPt/FzJ/CDBNAN
-	sl0j47UkiH70kqfMIXLz3A==
-X-Google-Smtp-Source: AGHT+IFMvcxOWGObd8ehOX4GwDaId2HovFmu8cG/IwwMFqO8YRpZxQ1daJcR9OcH/g7GFRV9lZ8KUg==
-X-Received: by 2002:a17:907:d8e:b0:aae:ea52:3a5 with SMTP id a640c23a62f3a-ab2abdc0bc4mr2261767166b.44.1736845898485;
-        Tue, 14 Jan 2025 01:11:38 -0800 (PST)
-Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.42.147])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c95b7317sm599640766b.154.2025.01.14.01.11.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 01:11:38 -0800 (PST)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v3 4/4] clk: stm32f4: support spread spectrum clock generation
-Date: Tue, 14 Jan 2025 10:11:16 +0100
-Message-ID: <20250114091128.528757-5-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250114091128.528757-1-dario.binacchi@amarulasolutions.com>
-References: <20250114091128.528757-1-dario.binacchi@amarulasolutions.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcRvbyAD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B31FC4CEDD;
+	Tue, 14 Jan 2025 09:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736846910;
+	bh=OJWtwbRS0GQYnP2iRmQnG5KMhHxA7svt0XHwtX+wAlQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XcRvbyADGXCNuCGb751eenW4IeCS5w2PZMR+MDGpDES3t1vihwuObyxnVh4+FBgfs
+	 0Zc+pq+f2s9W4zzip8qVD1dptDvGnkl+Vx28MGiFHHNN46lUJKicHQ1A2EOhw2t2J5
+	 cMJxoVzgMVrNtq/ofu70qxsy4JwzZVkBTeae6w7Yd7jquayBVXOlHKjNjF4WrvBXP2
+	 BzkfFJSSdFclwuZJw+g60Uew5Mr4q/jUa02NIgPgtBqzxGQuq7Klo3F9FDt35clXyr
+	 zuc2wAFGnIMV/4q3CidjXnApB4n6GyOPEgyekXas1sAGFhwmnj2KAWJR1P1nmp3OJD
+	 QZxsG/72WyTSw==
+Message-ID: <679440a5-5ee2-47a3-9811-3be96cdcf2a2@kernel.org>
+Date: Tue, 14 Jan 2025 10:28:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: convert stm32 rcc bindings to
+ json-schema
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250109211908.1553072-1-dario.binacchi@amarulasolutions.com>
+ <20250109211908.1553072-2-dario.binacchi@amarulasolutions.com>
+ <bfxyod5l2s6g3j47be7mjh6i7wgjapka2q5b6f2mleipiai6gm@hfvclvkzrtyd>
+ <CABGWkvqu10dyW6y5S7qvY4G7uh0OaUgr6k-F7BA1AU0H9bA9GQ@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CABGWkvqu10dyW6y5S7qvY4G7uh0OaUgr6k-F7BA1AU0H9bA9GQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Support spread spectrum clock generation for the main PLL, the only one
-for which this functionality is available.
+On 14/01/2025 10:10, Dario Binacchi wrote:
+> On Sat, Jan 11, 2025 at 10:25 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On Thu, Jan 09, 2025 at 10:18:28PM +0100, Dario Binacchi wrote:
+>>> +maintainers:
+>>> +  - Dario Binacchi <dario.binacchi@amarulasolutions.com>
+>>> +
+>>> +description: |
+>>> +  The RCC IP is both a reset and a clock controller.
+>>> +  The reset phandle argument is the bit number within the RCC registers bank,
+>>> +  starting from RCC base address.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    oneOf:
+>>> +      - items:
+>>> +          - const: st,stm32f42xx-rcc
+>>> +          - const: st,stm32-rcc
+>>> +      - items:
+>>> +          - enum:
+>>> +              - st,stm32f469-rcc
+>>> +          - const: st,stm32f42xx-rcc
+>>> +          - const: st,stm32-rcc
+>>> +      - items:
+>>> +          - const: st,stm32f746-rcc
+>>
+>> Why this isn't just part of enum with first group/list? Different
+>> groups/lists are for different fallbacks and I am pretty sure fallback
+>> is the same.
+> 
+> I tried running tests after applying the changes you suggested, but
+> the tests are failing.
+And? Fix the code then?
 
-Tested on the STM32F469I-DISCO board.
-
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-
----
-
-Changes in v3:
-- Changes to patch 4/4 "clk: stm32f4: support spread spectrum clock generation"
-  according to Stephen Boyd's suggestions.
-- Drop pr_debug() from stm32f4_pll_set_ssc()
-- Add __init to stm32f4_pll_init_ssc() and stm32f4_pll_ssc_parse_dt().
-- Add const to conf parameter of stm32f4_pll_init_ssc().
-- Use fwnode_property_match_property_string() to parse the
-  st,ssc-modmethod dts property.
-
-Changes in v2:
-- Fixup patches:
-  2/6 dt-bindings: reset: st,stm32-rcc: update reference due to rename
-  3/6 dt-bindings: clock: stm32fx: update reference due to rename
-  to
-  1/6 dt-bindings: clock: convert stm32 rcc bindings to json-schema
-- Changes to dt-bindings: clock: convert stm32 rcc bindings to json-schema
-- Changes to dt-bindings: clock: st,stm32-rcc: support spread spectrum clocking
-
- drivers/clk/clk-stm32f4.c | 143 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 140 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index db1c56c8d54f..f476883bc93b 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -35,6 +35,7 @@
- #define STM32F4_RCC_APB2ENR		0x44
- #define STM32F4_RCC_BDCR		0x70
- #define STM32F4_RCC_CSR			0x74
-+#define STM32F4_RCC_SSCGR		0x80
- #define STM32F4_RCC_PLLI2SCFGR		0x84
- #define STM32F4_RCC_PLLSAICFGR		0x88
- #define STM32F4_RCC_DCKCFGR		0x8c
-@@ -42,6 +43,12 @@
- 
- #define STM32F4_RCC_PLLCFGR_N_MASK	GENMASK(14, 6)
- 
-+#define STM32F4_RCC_SSCGR_SSCGEN	BIT(31)
-+#define STM32F4_RCC_SSCGR_SPREADSEL	BIT(30)
-+#define STM32F4_RCC_SSCGR_RESERVED_MASK	GENMASK(29, 28)
-+#define STM32F4_RCC_SSCGR_INCSTEP_MASK	GENMASK(27, 13)
-+#define STM32F4_RCC_SSCGR_MODPER_MASK	GENMASK(12, 0)
-+
- #define NONE -1
- #define NO_IDX  NONE
- #define NO_MUX  NONE
-@@ -367,6 +374,16 @@ static const struct stm32f4_gate_data stm32f769_gates[] __initconst = {
- 	{ STM32F4_RCC_APB2ENR, 30,	"mdio",		"apb2_div" },
- };
- 
-+enum stm32f4_pll_ssc_mod_type {
-+	STM32F4_PLL_SSC_CENTER_SPREAD,
-+	STM32F4_PLL_SSC_DOWN_SPREAD,
-+};
-+
-+static const char * const stm32f4_ssc_mod_methods[] __initconst = {
-+	[STM32F4_PLL_SSC_DOWN_SPREAD] = "down-spread",
-+	[STM32F4_PLL_SSC_CENTER_SPREAD] = "center-spread",
-+};
-+
- /*
-  * This bitmask tells us which bit offsets (0..192) on STM32F4[23]xxx
-  * have gate bits associated with them. Its combined hweight is 71.
-@@ -512,6 +529,12 @@ static const struct clk_div_table pll_divr_table[] = {
- 	{ 2, 2 }, { 3, 3 }, { 4, 4 }, { 5, 5 }, { 6, 6 }, { 7, 7 }, { 0 }
- };
- 
-+struct stm32f4_pll_ssc {
-+	unsigned int mod_freq;
-+	unsigned int mod_depth;
-+	enum stm32f4_pll_ssc_mod_type mod_type;
-+};
-+
- struct stm32f4_pll {
- 	spinlock_t *lock;
- 	struct	clk_gate gate;
-@@ -519,6 +542,8 @@ struct stm32f4_pll {
- 	u8 bit_rdy_idx;
- 	u8 status;
- 	u8 n_start;
-+	bool ssc_enable;
-+	struct stm32f4_pll_ssc ssc_conf;
- };
- 
- #define to_stm32f4_pll(_gate) container_of(_gate, struct stm32f4_pll, gate)
-@@ -541,6 +566,7 @@ struct stm32f4_vco_data {
- 	u8 offset;
- 	u8 bit_idx;
- 	u8 bit_rdy_idx;
-+	bool sscg;
- };
- 
- static const struct stm32f4_vco_data  vco_data[] = {
-@@ -661,6 +687,32 @@ static long stm32f4_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return *prate * n;
- }
- 
-+static void stm32f4_pll_set_ssc(struct clk_hw *hw, unsigned long parent_rate,
-+				unsigned int ndiv)
-+{
-+	struct clk_gate *gate = to_clk_gate(hw);
-+	struct stm32f4_pll *pll = to_stm32f4_pll(gate);
-+	struct stm32f4_pll_ssc *ssc = &pll->ssc_conf;
-+	u32 modeper, incstep;
-+	u32 sscgr;
-+
-+	sscgr = readl(base + STM32F4_RCC_SSCGR);
-+	/* reserved field must be kept at reset value */
-+	sscgr &= STM32F4_RCC_SSCGR_RESERVED_MASK;
-+
-+	modeper = DIV_ROUND_CLOSEST(parent_rate, 4 * ssc->mod_freq);
-+	incstep = DIV_ROUND_CLOSEST(((1 << 15) - 1) * ssc->mod_depth * ndiv,
-+				    5 * 10000 * modeper);
-+	sscgr |= STM32F4_RCC_SSCGR_SSCGEN |
-+		FIELD_PREP(STM32F4_RCC_SSCGR_INCSTEP_MASK, incstep) |
-+		FIELD_PREP(STM32F4_RCC_SSCGR_MODPER_MASK, modeper);
-+
-+	if (ssc->mod_type)
-+		sscgr |= STM32F4_RCC_SSCGR_SPREADSEL;
-+
-+	writel(sscgr, base + STM32F4_RCC_SSCGR);
-+}
-+
- static int stm32f4_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 				unsigned long parent_rate)
- {
-@@ -683,6 +735,9 @@ static int stm32f4_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	writel(val, base + pll->offset);
- 
-+	if (pll->ssc_enable)
-+		stm32f4_pll_set_ssc(hw, parent_rate, n);
-+
- 	if (pll_state)
- 		stm32f4_pll_enable(hw);
- 
-@@ -788,6 +843,84 @@ static struct clk_hw *clk_register_pll_div(const char *name,
- 	return hw;
- }
- 
-+static int __init stm32f4_pll_init_ssc(struct clk_hw *hw,
-+				       const struct stm32f4_pll_ssc *conf)
-+{
-+	struct clk_gate *gate = to_clk_gate(hw);
-+	struct stm32f4_pll *pll = to_stm32f4_pll(gate);
-+	struct clk_hw *parent;
-+	unsigned long parent_rate;
-+	int pll_state;
-+	unsigned long n, val;
-+
-+	parent = clk_hw_get_parent(hw);
-+	if (!parent) {
-+		pr_err("%s: failed to get clock parent\n", __func__);
-+		return -ENODEV;
-+	}
-+
-+	parent_rate = clk_hw_get_rate(parent);
-+
-+	pll->ssc_enable = true;
-+	memcpy(&pll->ssc_conf, conf, sizeof(pll->ssc_conf));
-+
-+	pll_state = stm32f4_pll_is_enabled(hw);
-+
-+	if (pll_state)
-+		stm32f4_pll_disable(hw);
-+
-+	val = readl(base + pll->offset);
-+	n = FIELD_GET(STM32F4_RCC_PLLCFGR_N_MASK, val);
-+
-+	pr_debug("%s: pll: %s, parent: %s, parent-rate: %lu, n: %lu\n",
-+		 __func__, clk_hw_get_name(hw), clk_hw_get_name(parent),
-+		 parent_rate, n);
-+
-+	stm32f4_pll_set_ssc(hw, parent_rate, n);
-+
-+	if (pll_state)
-+		stm32f4_pll_enable(hw);
-+
-+	return 0;
-+}
-+
-+static int __init stm32f4_pll_ssc_parse_dt(struct device_node *np,
-+					   struct stm32f4_pll_ssc *conf)
-+{
-+	int ret;
-+	const char *s;
-+
-+	if (!conf)
-+		return -EINVAL;
-+
-+	ret = of_property_read_u32(np, "st,ssc-modfreq-hz", &conf->mod_freq);
-+	if (ret)
-+		return ret;
-+
-+	ret = of_property_read_u32(np, "st,ssc-moddepth-permyriad",
-+				   &conf->mod_depth);
-+	if (ret) {
-+		pr_err("%pOF: missing st,ssc-moddepth-permyriad\n", np);
-+		return ret;
-+	}
-+
-+	ret = fwnode_property_match_property_string(of_fwnode_handle(np),
-+						    "st,ssc-modmethod",
-+						    stm32f4_ssc_mod_methods,
-+						    ARRAY_SIZE(stm32f4_ssc_mod_methods));
-+	if (ret < 0) {
-+		pr_err("%pOF: failed to get st,ssc-modmethod\n", np);
-+		return ret;
-+	}
-+
-+	conf->mod_type = ret;
-+
-+	pr_debug("%pOF: SSCG settings: mod_freq: %d, mod_depth: %d mod_method: %s [%d]\n",
-+		 np, conf->mod_freq, conf->mod_depth, s, conf->mod_type);
-+
-+	return 0;
-+}
-+
- static struct clk_hw *stm32f4_rcc_register_pll(const char *pllsrc,
- 		const struct stm32f4_pll_data *data,  spinlock_t *lock)
- {
-@@ -1695,7 +1828,8 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	const struct of_device_id *match;
- 	const struct stm32f4_clk_data *data;
- 	unsigned long pllm;
--	struct clk_hw *pll_src_hw;
-+	struct clk_hw *pll_src_hw, *pll_vco_hw;
-+	struct stm32f4_pll_ssc ssc_conf;
- 
- 	base = of_iomap(np, 0);
- 	if (!base) {
-@@ -1754,8 +1888,8 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 	clk_hw_register_fixed_factor(NULL, "vco_in", pll_src,
- 				     0, 1, pllm);
- 
--	stm32f4_rcc_register_pll("vco_in", &data->pll_data[0],
--			&stm32f4_clk_lock);
-+	pll_vco_hw = stm32f4_rcc_register_pll("vco_in", &data->pll_data[0],
-+					      &stm32f4_clk_lock);
- 
- 	clks[PLL_VCO_I2S] = stm32f4_rcc_register_pll("vco_in",
- 			&data->pll_data[1], &stm32f4_clk_lock);
-@@ -1900,6 +2034,9 @@ static void __init stm32f4_rcc_init(struct device_node *np)
- 
- 	of_clk_add_hw_provider(np, stm32f4_rcc_lookup_clk, NULL);
- 
-+	if (!stm32f4_pll_ssc_parse_dt(np, &ssc_conf))
-+		stm32f4_pll_init_ssc(pll_vco_hw, &ssc_conf);
-+
- 	return;
- fail:
- 	kfree(clks);
--- 
-2.43.0
-
+Best regards,
+Krzysztof
