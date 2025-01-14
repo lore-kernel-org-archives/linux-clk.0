@@ -1,83 +1,141 @@
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BF0234CFA
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 11:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83A02361C4;
+	Tue, 14 Jan 2025 11:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736854239; cv=none; b=bivpi6WqH0OUI+V5jhM759j2iXFKUtRCH8VcgRrhmnnVM/zrQgz6N5Z/LuBre9sjkN5BDnSYoXjLKGWSeB0FBg/LWK9zU/VCP8N1DdKn+ztWsendgJC9RXwO2B4VdaObronhHtcpNCt9dUuh2Z2P+0AqN7XIj5fd696JN5vhjMY=
+	t=1736855910; cv=none; b=LFC6sR6h5l1ZVlfLBgkxeRMyjuIDNtq2VgnM2iZFiYfLbFmNhGxqYKvxJqDgZfl0ZCyntvi124DZtLPJ+pepxFRYaziz1XhScXO/EkXQeFwGAHtH+bAXBDOAUSxyfWDy3r2//4304DOkvkd+kHdvyZuKT6peXT0o5hvax9qNXyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736854239; c=relaxed/simple;
-	bh=AX5Zl9IQ3U2RQBPj3tPw0ZNojcgw+upIN6foUglPjG4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hvYjTlLAmO/kl48GWBNsK9d0x8VIczpzIijGQeCUDVglYpExQpKn/EVtxRmULev8YnR9mW2QjH2AJp+821HtE9Xe3kklyMjHP0SgCYvTZdzVLY2yz8W+z+TQF4dIwuO+iO9/V1j+IYVA/zaZJuCkonOlXt104EY9NPYE0G+ZrSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=w7WYiVcu; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1736855910; c=relaxed/simple;
+	bh=cAoPGZ5WniJLhFe6ZhvWTcohnLZfgZFpQiLS6/wxIUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PdEo2DqJ8ScdNKRuSECyZOwt/b9hRCkMxiSRHtsSHTn97d0R+jk6gj+dAN7V8tXFqzn7ePtw1fYXUuwfVFJdPqRbXpCT9EM3LTtqJjmOhptGnwI7q4N/eVeuaRSb4YhHRodivgEZvYgiilldN/m1dQyO+AFsT1tAbcPtP52KFcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZzE/QVvv; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="w7WYiVcu"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1736854232;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2wlxqkYgrjGuOJhI33KiIh6ahY/6jcrOmURXvTeByvQ=;
-	b=w7WYiVcuRrsLeR0D/7lkk9AlsgSktZQ8ePCiaf0Q/+unhi3xNiZcJ/z9i3Hjt2bOYlefuY
-	ycZEvsqm2VnaWtil0+BBwfklDIxyc+uCLPftfYAv5mkT7guKUetFZQgc1TO6aHDuQ2veGG
-	LoxGhzUSGRoXZtS/IN2d+y13MUnhno0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Dinh Nguyen <dinguyen@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: socfpga: stratix10: Optimize local variables
-Date: Tue, 14 Jan 2025 12:29:43 +0100
-Message-ID: <20250114112943.617371-2-thorsten.blum@linux.dev>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZzE/QVvv"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d3ecae02beso6961488a12.0;
+        Tue, 14 Jan 2025 03:58:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736855907; x=1737460707; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=keaeHuBnA6yPk+ht4Eab1BXo8HSV7VPRSpTgBTborOU=;
+        b=ZzE/QVvvzjoFRdBK6nOG/vMsmEZseFTt0DwvzBXXsUr00aOYkWYBAPL8+DJKpbm2lF
+         8IiYEOVqkqL1eFaf5619uYvxHCS6OjDXJMoHMQ9N371X8FaA/X05+xFg6YbhkbQ/JYBW
+         ZnT3Oxg/r/Q1FXVFws1HE/xlGUpZv6bUzI1NRtKlIKfGleyC1ALxpf05b+TtGcPeacvR
+         AWiXjDnVZC9mvT/Gs4ni2/aMldeSTf81Rw397GrFy6wb7qIupdwq/vpD87Qr2p4dSz2B
+         0PtJTbxRcF9Yx7nQ11DgasaMcvivoDHPfgSQlXr3cZOBMQGBdlv+tFMgifCHzKjf4zk/
+         WnXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736855907; x=1737460707;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=keaeHuBnA6yPk+ht4Eab1BXo8HSV7VPRSpTgBTborOU=;
+        b=GPeNXl+qqlIUgZWD6pKF+obFC+mFBu9wOhVSWZux3x5G12s6WrDy0Ypcrbz/QP5zH3
+         fA+s7Zjb4BAl0IAuT8qqCWJ6OL9GxOJrUYBTXRhM90a9YgNcj1if4sUJUlLA1ER0DyzW
+         /47XeWM2OMGYq7XW5ei0HBWp5KEhYKUJdwvIeW+F0xm3bNXOLpPCtGvY0gYsFIiYO7CX
+         N34zZGZ/FUq4aZf35oiInFYUy08w24B7f8tX6MRolDuAm6dorxmfIhnCVy3VB48bC/lG
+         rl//dWkf4GLvkYAVmidFeajECQPmLl0uDUG3yT/vSbVDQx1ABNcs0lDkiHkEAMOFUeCZ
+         MfGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwCCYQgcp0hXLgTzvVqIrRjBm5bJqzHVLSJmudJabiNB7CYIiQlX0Y6ksT36RHJf/rv/vhZOiA12A=@vger.kernel.org, AJvYcCWcOGMEBHOAlYSENqVtbewbCThVcCDYxpNLhSPhHnlrSBV55go48Z7N633TBStBVsqvAjFPPGxl@vger.kernel.org, AJvYcCXqtZjxHx758zK5LzQl9zJenABPILXd8Qis23EthlFzXYyJsCEKPKFUykFWMkClGX0mLVMEpMQY9nBC8uM0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz87XU1guhpNNuoFphnX0QfF6z2MM22g8nZnPgo51LW7DIUYnlD
+	5IyWM6dLn/LGUcKeFZ9Qcsy2i5R79FvKMJsK0Ue6Hst9eiFq/J/U
+X-Gm-Gg: ASbGncuERMrmth+BjpzoAzfIN6pLsYCu9lpNM+OsLUncEwI2Vs+43L5bd7+OIREL9Sm
+	QvS2pY4fi3lBwJp/3CZuSH0wXisCIt2lKoKRnEwC5BeHNX93UOVMU/ut5PwzrsQX5fcaXzt+/NT
+	QMsYYwKgLFMrm0HRBkapEESpLw1Oz7RCIM+wc6VZy3EjSuBazuG0R4nqkiFWkk1DPtG3jMwiGPs
+	duJnvhOICd35FbIIiVACyBAzaMTxJbiamlVZtJi8GzdiSBfa9R7Fqpi
+X-Google-Smtp-Source: AGHT+IHTulWCj2YYnNBcefAEaJouVTvuufskMNNQK2TUTyQ/FQiVcwIMr5PX23StjL4mn4QQ41c9+g==
+X-Received: by 2002:a17:907:6d01:b0:aab:d8de:64ed with SMTP id a640c23a62f3a-ab2ab6fcf85mr2426598466b.25.1736855906651;
+        Tue, 14 Jan 2025 03:58:26 -0800 (PST)
+Received: from eichest-laptop ([77.109.188.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c90dacf1sm629151066b.63.2025.01.14.03.58.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2025 03:58:26 -0800 (PST)
+Date: Tue, 14 Jan 2025 12:58:24 +0100
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, shengjiu.wang@nxp.com,
+	francesco.dolcini@toradex.com, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v1] clk: imx: imx8-acm: fix flags for acm clocks
+Message-ID: <Z4ZRYMf_uJW4poW9@eichest-laptop>
+References: <20250113094654.12998-1-eichest@gmail.com>
+ <CAA+D8ANvKQKJhn6qKbPhQeXPD5kxUo3Hg-FBLkDMOaWLTA8vVg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <CAA+D8ANvKQKJhn6qKbPhQeXPD5kxUo3Hg-FBLkDMOaWLTA8vVg@mail.gmail.com>
 
-Since readl() returns a u32, the local variable reg can also have the
-data type u32. Furthermore, mdiv and refdiv are derived from reg and can
-also be a u32.
+Hi Shengjiu Wang,
 
-Since do_div() casts the divisor to u32 anyway, changing the data type
-of refdiv to u32 removes the following Coccinelle/coccicheck warning
-reported by do_div.cocci:
+On Tue, Jan 14, 2025 at 03:49:10PM +0800, Shengjiu Wang wrote:
+> On Mon, Jan 13, 2025 at 5:54 PM Stefan Eichenberger <eichest@gmail.com> wrote:
+> >
+> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> >
+> > Currently, the flags for the ACM clocks are set to 0. This configuration
+> > causes the fsl-sai audio driver to fail when attempting to set the
+> > sysclk, returning an EINVAL error. The following error messages
+> > highlight the issue:
+> > fsl-sai 59090000.sai: ASoC: error at snd_soc_dai_set_sysclk on 59090000.sai: -22
+> > imx-hdmi sound-hdmi: failed to set cpu sysclk: -22
+> 
+> The reason for this error is that the current clock parent can't
+> support the rate
+> you require (I think you want 11289600).
+> 
+> We can configure the dts to provide such source, for example:
+> 
+>  &sai5 {
+> +       assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
+> +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
+> +                       <&sai5_lpcg 0>;
+> +       assigned-clock-parents = <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg 0>;
+> +       assigned-clock-rates = <0>, <0>, <786432000>, <49152000>, <12288000>,
+> +                                <722534400>, <45158400>, <11289600>,
+> +                               <49152000>;
+>         status = "okay";
+>  };
+> 
+> Then your case should work.
+> 
+> >
+> > By setting the flag CLK_SET_RATE_NO_REPARENT, we signal that the ACM
+> 
+> I don't think CLK_SET_RATE_NO_REPARENT is a good choice. which will cause
+> the driver don't get an error from clk_set_rate().
 
-  WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead
+Thanks for the proposal, I will try it out tomorrow. Isn't this a
+problem if other SAIs use the same clock source but with different
+rates? 
 
-Compile-tested only.
+If we have to define fixed rates in the DTS or else the clock driver
+will return an error, isn't that a problem? Maybe I should change the
+sai driver so that it ignores the failure and just takes the rate
+configured? In the end audio works, even if it can't set the requested
+rate.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/clk/socfpga/clk-pll-s10.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-index 1d82737befd3..a88c212bda12 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -83,9 +83,9 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hwclk,
- 					 unsigned long parent_rate)
- {
- 	struct socfpga_pll *socfpgaclk = to_socfpga_clk(hwclk);
--	unsigned long mdiv;
--	unsigned long refdiv;
--	unsigned long reg;
-+	u32 mdiv;
-+	u32 refdiv;
-+	u32 reg;
- 	unsigned long long vco_freq;
- 
- 	/* read VCO1 reg for numerator and denominator */
--- 
-2.47.1
-
+Regards,
+Stefan
