@@ -1,190 +1,165 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7DC1C5F2A;
-	Tue, 14 Jan 2025 07:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEAE1C5D4B;
+	Tue, 14 Jan 2025 07:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736840649; cv=none; b=Vq9TiO98ZRjriy4lnYyFe71XYq0/PYRXvjj5pQm3lkCwkNQFOwxPC0eiMRHfhoBHtF/3RGMtH65TSYFr9JrxFcndYG1AwQOcq4ZEFLSIF8Xr7vmYmyKkbwkTFIAptHL7l7MmYYj3PAcTyw0+wQIQrKyBq6mcJwbmVXUZqPizEVk=
+	t=1736840966; cv=none; b=aoIfKWOi8/WMDL0OX26+JGGzMpy+XNMbQ4SvZdKhOTRyG/fXEkKML2eMWxiqFwHcOxUkPhs+P7fCiTYROV2X/RxXcNy/+u4FEEyvlM60L39d2dKMxGY4iZln3A4PfnjBJxQjraKMgd/8YC11LCkL2wiuogsbJfX7/tPwT1JY4lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736840649; c=relaxed/simple;
-	bh=mGnR3HJMZBqUhCDL7bgqtn34QevNjR2UgOCyWG3PL5I=;
+	s=arc-20240116; t=1736840966; c=relaxed/simple;
+	bh=mt/jtz+EAQtFXEfP5wBu6e4GCpLLB4qfjsGY2LHZyuY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S0EA6K5n/eKprg1IAW2RooRTcalUhXeSd2efMEHYRELTJ4EZ0GP1i3u06r/o6d/XqswvkLHnb5VuLNLMuU9bzR2flKBujj2WFEhWpV36isE46PX+iATW+RdCSwsj0I98zG9AHHoUJuamDsL23ENZ5/kPUZsCZpPQrOy1N2jVjTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hEMWjmVc; arc=none smtp.client-ip=209.85.216.42
+	 To:Cc:Content-Type; b=WULCWfD0qHRWjnlkrDa/NkacaI893E+oZSgloaS+CeIh6FTNVIuoS9G0Kfy3L3gTTgFCuvp/NcdcIqm4V46Lb+9glo07QPIVQ9h5pcy9W4GsoxL5P733OU37HBg1wWEd0JJThFr9xEnHjXBaG39lE8XmDMInBeu2oKOHi6KHdbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eaJCx6h0; arc=none smtp.client-ip=209.85.166.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEMWjmVc"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ee50ffcf14so9442562a91.0;
-        Mon, 13 Jan 2025 23:44:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaJCx6h0"
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a81324bbdcso36493535ab.1;
+        Mon, 13 Jan 2025 23:49:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736840647; x=1737445447; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1736840964; x=1737445764; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ljJsNB0F+mWDattrBQ5KtzYfFx2JFfuGtpPgrZXo3vA=;
-        b=hEMWjmVcoIQDuM/8f6xnGX9Q34DoSKK14aPwRnuP/WkBpVSyCinbyHatEudXc1H1HT
-         IUYipku/nmPGzv5WXV2E9kzwSUI7wBktIaER/3BEFIhNOZuBh/I0UZvX0ZB0KBokwxdr
-         14tgcjjrQvO+AGpkYTYvOzr8CeSgBxhDQIpviU8CH/PTdnFSXjjdhufMpCwzkpWKt0bt
-         x1afurl9d+X5QSYHHEQHYAzD7IKEnzChLKGb7kgwU6CVgh2fmz6k4xSXLDNpas+0mGIj
-         4x9RD5/79bWfy9sKhmbe3sDmq04WEv5hHi2aVBS//QGm3/ivS2a4RIKBbLLs1lLd04dL
-         Orog==
+        bh=LwcueBSt0v4igogFveia71oHZaRrr/fkeR5Mu41YZ2U=;
+        b=eaJCx6h0T/VztYmpHGNCq4QSvRhmXJZ0l+PsTAwF+93orAsO8CcYZznr6L513lt7Nn
+         wAQjMS21u4GFQ//aEDMnFyRASV/5gLg7n17U4iHdT/1bCKd0ZpkgrLzq3tyYD8v62sbN
+         2FmzSRKRPD8wjqu9wxYRUb00d0HhjZFK0QkWpYoOXKSwDJXjnEID/wYLWNRpwAnxwzE0
+         6FtvWtXeQGPBuAigBAJlu7ez+Bjdi4yvRaq/2wPte+1xOkMuHiGwfshB3Jv1YPqAnlCX
+         Z99PmVZJSf4P38Ivr9tzLeSQYqHkYDU4QUMtEvta0A6cNrrVrZgLQfotWGY4wcbY4Tzq
+         mKrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736840647; x=1737445447;
+        d=1e100.net; s=20230601; t=1736840964; x=1737445764;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ljJsNB0F+mWDattrBQ5KtzYfFx2JFfuGtpPgrZXo3vA=;
-        b=LRuIJA083xY/ORDQ+jgIL5TYIFQWGgUq9NzZQTBRflXq4O73zNjTv1GyHKSCU59Yck
-         SYTQtGoMP1f0Y51cG9EPbj/etEtmdbEMehQs66wmbzM0eC5AqawN6jzoZewsVmwjSJlD
-         fOIi4aPkWDIDep1pNbe4gBF8rS3BJ5aqNDiDsMgeaF969wt5u2SwX24Sf1fy3aGD45n4
-         Cb4zcwTxRedKUTXIbBdDprhw67V565p88/TcEsqHnJBTxnKgrug3jD5FaBHQBNEI+7AC
-         uDQrz6ACVpQQXlreMXQjbo0aWriuQLiJsvS/+/laLhj2PQOduYQq/f8/ac/+3slzezMK
-         ie9A==
-X-Forwarded-Encrypted: i=1; AJvYcCX/qoj/6kjpwrkdUwmxYMCxFQ+1H7ISwknpHCWaaUesDmviZ4F5OVXjgSJUC10fFD8IcIepZEZ/kbY5qCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO1Eecpig7mPdg6V6/D+muaTpLtUUssEky6jOkHH1PvN4iZXzf
-	ZXeXdFJFz15xRtrSSFTF9OcT3iDEn7Sg4+mzjQZUJO+uwbcGiLX+srtBusdE313qZ03v2y+rtzb
-	7PcDar494kp6zGzC5cR+ny7SKD4Z3Mg==
-X-Gm-Gg: ASbGncuCOUf73hmRCQEXNdJxDFINRwWp5in8ZV1ZENAqT3F2ZtGeNUQwMTPjzDg20+k
-	ubAItw7Cgtngl+SEGR1zKkicYTuHmWKR8YFKp
-X-Google-Smtp-Source: AGHT+IGBfTifQPAnOqd5ijhI5AdljBFuutHA8ZLm0DNsZwWu+A2LFBxBnTuLo3HotkxIoMSbZSyuw1oqvronUkk73U4=
-X-Received: by 2002:a17:90b:4d10:b0:2ef:2980:4411 with SMTP id
- 98e67ed59e1d1-2f55443a040mr27803752a91.9.1736840646901; Mon, 13 Jan 2025
- 23:44:06 -0800 (PST)
+        bh=LwcueBSt0v4igogFveia71oHZaRrr/fkeR5Mu41YZ2U=;
+        b=g3eRQ7toYHk3iUwkVWdBc3uBwZxySMh92tD65f8eNNkNWG4uyH0mMqvwTfXYkljsSW
+         e8ikqvQh0zxmm4DuMUsLpm+AbT7AT07GRsiiQvklZEijDjR3yiUHnGG34uBvN0hxZ6OL
+         9F1mxI5dB1Mgcmp1o9U/3kBfy+VxNoeGXNlAlbnJlQOtMi4QmmjbeMxNRCpjBIRIyJBC
+         e1Zyyvv5KbLG0EQJrzuvLd9bnsSQZ4WdYpKb3ei6zFAlKUSzCkkLqqRJ9xr7TBldhEK9
+         zW69lNpciyOJ5LyHRKNBOBFpnqORSMrM02MKichhQrclZU/rfPWF7/SlxYdLRptgcoCQ
+         z0jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHn3YJbsW1vBPuxW7Fr0SNnH50LFTx3oa9HI211wsRNXVfuCMH9PP9sJ4TvS1G0vM78BrjE7syqYDY1fBz@vger.kernel.org, AJvYcCUNKglVCSbnkfI8gz9uZoQtuiGT54uI8GHANKrePTyczkC/oSD52na/AvyTKqWYbgBF30Oz42rt@vger.kernel.org, AJvYcCUbFB95lu2C1aQHtu8viScZYwnAQkUsfrbGRKsosP7o+tFwKxOGT18Hx4BBRZNghC0HuzJcoWKynFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxcj3rS035RBvDEgi3WrovR8JVcJRk7rhGggcfKfh4HY2iTSZdm
+	q8z4JSNhOAx/nxT6N2u8tO8iOPCK+Bi1r3bO/7dRpUs48mPEmqh57yjJ7I/SfUIBOTTw3e/90B4
+	X8/ESPsYlVCIORYdrnxMEa3AbpPs=
+X-Gm-Gg: ASbGncuUeoanSegE9gt4zCSxLdQ/Dm+Ts+YeDIG7+srpCOTDAVvl1rAgWZ65irLyKiO
+	8WfRlGQOXTCEWtA6lGfm5wPq3KeIBiejR1Ci44w==
+X-Google-Smtp-Source: AGHT+IF7DFFzOVv5hJRx2rOQ0X2GpsPhVUS6ku7AHMnjUUetYSaLVkkreyXpeUdIHpQEeAiftxB1brVoyB+IZRWgj4Q=
+X-Received: by 2002:a05:6e02:164c:b0:3ce:64a4:4c52 with SMTP id
+ e9e14a558f8ab-3ce64a44d8amr82366785ab.13.1736840964392; Mon, 13 Jan 2025
+ 23:49:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250113082818.345939-1-sergio.paracuellos@gmail.com>
- <ebb32bec-3fd4-4129-ab5d-d519b10c4405@kernel.org> <CAMhs-H9ysdJ9nUuStWJpRqTzm-09ZS5TMdhWgKMZx+JZdo6teQ@mail.gmail.com>
- <ec255edc-adcd-4c18-8f9c-209298f2bbff@kernel.org> <CAMhs-H9Osx__jBoxqAW1zWO4Q+nMymVfiWe_-ZSzp92Jht+JTg@mail.gmail.com>
- <cf9732b1-fd09-454e-bfd7-bef55b234175@kernel.org> <CAMhs-H_6QTptfFsSEh7PKy8Fnoem1ph4j=mwT_23=J=adDDT8w@mail.gmail.com>
- <a4796db2-e354-48e0-bd5f-da774f154473@kernel.org>
-In-Reply-To: <a4796db2-e354-48e0-bd5f-da774f154473@kernel.org>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Tue, 14 Jan 2025 08:43:55 +0100
-X-Gm-Features: AbW1kvaHSA2E7A6k96EgV43mBRC5AyoYl2qi9gGLrhlTyPhQ5aqpDx-KQDk54do
-Message-ID: <CAMhs-H9+hHnQQ3PSs2fCNvwdoJhrteARXQutFiziGN9+TFAgrw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: add clock definitions for Ralink SoCs
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	yangshiji66@outlook.com, linux-kernel@vger.kernel.org
+References: <20250113094654.12998-1-eichest@gmail.com>
+In-Reply-To: <20250113094654.12998-1-eichest@gmail.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Tue, 14 Jan 2025 15:49:10 +0800
+X-Gm-Features: AbW1kvYSJoaJJYol0I1awhg4ecKmbyih-ivaEi2L6vs_lQ3XjVURqIPvv4zkPdQ
+Message-ID: <CAA+D8ANvKQKJhn6qKbPhQeXPD5kxUo3Hg-FBLkDMOaWLTA8vVg@mail.gmail.com>
+Subject: Re: [PATCH v1] clk: imx: imx8-acm: fix flags for acm clocks
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, shengjiu.wang@nxp.com, 
+	francesco.dolcini@toradex.com, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 14, 2025 at 8:09=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+On Mon, Jan 13, 2025 at 5:54=E2=80=AFPM Stefan Eichenberger <eichest@gmail.=
+com> wrote:
 >
-> On 13/01/2025 13:58, Sergio Paracuellos wrote:
-> > On Mon, Jan 13, 2025 at 1:37=E2=80=AFPM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> >>
-> >> On 13/01/2025 13:29, Sergio Paracuellos wrote:
-> >>>>>
-> >>>>>> 2. What is the point of this? We do not add constants when there a=
-re no
-> >>>>>> users. Commit msg explains here nothing.
-> >>>>>
-> >>>>> All of the old ralink SoCs' dts files which are in the tree are not
-> >>>>> properly updated. I expect to have them updated somewhere in time
-> >>>>> merging real base stuff from openwrt dts [0] files. Not having this
-> >>>>> header with definitions makes very hard to update dts and then
-> >>>>> checking the driver code becomes a need to see the indexes for the
-> >>>>> clocks to properly setup a consumer node. Because of this, this fil=
-e
-> >>>>> is added here.
-> >>>>
-> >>>> Still there is no point without the users. I do not see any reason w=
-hy
-> >>>> this cannot be combined with fixing driver to use the header. Not
-> >>>> combining is an indication this is not a binding in the first place.
-> >>>
-> >>> Driver uses a bunch of arrays for the clocks (base, fixed, factor and
-> >>> peripheral) and they are registered consecutively in order just using
-> >>> the ARRAY_SIZE macro for any of them. Thus, the direct application of
-> >>> these definitions would be for dts consumer nodes, not the driver
-> >>> itself.
-> >>
-> >> So what do you constants here fix? Driver can still reorganize arrays
-> >> breaking everything. If defining headers for proper ABI, then use that
-> >> ABI to make everything build-time testable and visible. That's why thi=
-s
-> >> is not supposed to be a separate patch from users.
-> >
-> > I understand your point and agree that the driver can do that, but the
-> > idea as this driver maintainer is not to do that :).
-> > Is adding something like the following in the binding itself with the
-> > header addition a possible way to go?
-> >
-> > --- a/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/mediatek,mtmips-sysc.yaml
-> > @@ -18,6 +18,12 @@ description: |
-> >    These SoCs have an XTAL from where the cpu clock is
-> >    provided as well as derived clocks for the bus and the peripherals.
-> >
-> > +  Each clock is assigned an identifier and client nodes use this ident=
-ifier
-> > +  to specify the clock which they consume.
-> > +
-> > +  All these identifiers could be found in:
-> > +  [1]: <include/dt-bindings/clock/mediatek,mtmips-sysc.h>.
-> > +
-> >  properties:
-> >    compatible:
-> >      items:
-> > @@ -38,7 +44,8 @@ properties:
-> >
-> >    '#clock-cells':
-> >      description:
-> > -      The first cell indicates the clock number.
-> > +      The first cell indicates the clock number, see [1] for available
-> > +      clocks.
-> >      const: 1
-> >
-> > @@ -56,6 +63,8 @@ additionalProperties: false
-> >
-> >  examples:
-> >    - |
-> > +    #include <dt-bindings/clock/mediatek,mtmips-sysc.h>
-> > +
-> >      syscon@0 {
-> >        compatible =3D "ralink,rt5350-sysc", "syscon";
-> >        reg =3D <0x0 0x100>;
+> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
 >
-> This changes nothing.
+> Currently, the flags for the ACM clocks are set to 0. This configuration
+> causes the fsl-sai audio driver to fail when attempting to set the
+> sysclk, returning an EINVAL error. The following error messages
+> highlight the issue:
+> fsl-sai 59090000.sai: ASoC: error at snd_soc_dai_set_sysclk on 59090000.s=
+ai: -22
+> imx-hdmi sound-hdmi: failed to set cpu sysclk: -22
 
-Understood. Thanks for making it clear.
+The reason for this error is that the current clock parent can't
+support the rate
+you require (I think you want 11289600).
+
+We can configure the dts to provide such source, for example:
+
+ &sai5 {
++       assigned-clocks =3D <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
++                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
++                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
++                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
++                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
++                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
++                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
++                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
++                       <&sai5_lpcg 0>;
++       assigned-clock-parents =3D <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg =
+0>;
++       assigned-clock-rates =3D <0>, <0>, <786432000>, <49152000>, <122880=
+00>,
++                                <722534400>, <45158400>, <11289600>,
++                               <49152000>;
+        status =3D "okay";
+ };
+
+Then your case should work.
 
 >
-> >
-> > I don't like the idea of changing the driver code for using these
-> > constants since I do believe that it would make code uglier and less
-> > maintainable. I just wanted to make things easier for the device tree
->
-> Then why having constants in the first place?
+> By setting the flag CLK_SET_RATE_NO_REPARENT, we signal that the ACM
 
-Because I was expecting to have DTS as the only user and make things
-easier for it.
+I don't think CLK_SET_RATE_NO_REPARENT is a good choice. which will cause
+the driver don't get an error from clk_set_rate().
 
->
-> > consumer nodes. So if adding this header is not a possibility with the
-> > changes in the yaml file I will forget about this addition and this
-> > patch.
->
-> Header without user is pointless. Driver and the DTS are the expected use=
-rs.
+Best regards
+Shengjiu Wang
 
-Understood. So having only DTSs as users is not a possible way to go.
-It is clear now. Forget about this patch then.
-
+> driver does not support reparenting and instead relies on the clock tree
+> as defined in the device tree. This change resolves the issue with the
+> fsl-sai audio driver.
+>
+> CC: stable@vger.kernel.org
+> Fixes: d3a0946d7ac9 ("clk: imx: imx8: add audio clock mux driver")
+> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> ---
+>  drivers/clk/imx/clk-imx8-acm.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-ac=
+m.c
+> index c169fe53a35f..f20832a17ea3 100644
+> --- a/drivers/clk/imx/clk-imx8-acm.c
+> +++ b/drivers/clk/imx/clk-imx8-acm.c
+> @@ -371,7 +371,8 @@ static int imx8_acm_clk_probe(struct platform_device =
+*pdev)
+>         for (i =3D 0; i < priv->soc_data->num_sels; i++) {
+>                 hws[sels[i].clkid] =3D devm_clk_hw_register_mux_parent_da=
+ta_table(dev,
+>                                                                          =
+       sels[i].name, sels[i].parents,
+> -                                                                        =
+       sels[i].num_parents, 0,
+> +                                                                        =
+       sels[i].num_parents,
+> +                                                                        =
+       CLK_SET_RATE_NO_REPARENT,
+>                                                                          =
+       base + sels[i].reg,
+>                                                                          =
+       sels[i].shift, sels[i].width,
+>                                                                          =
+       0, NULL, NULL);
+> --
+> 2.45.2
 >
 >
-> Best regards,
-> Krzysztof
-
-Thanks,
-    Sergio Paracuellos
