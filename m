@@ -1,63 +1,126 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230A320AF90;
-	Tue, 14 Jan 2025 20:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80668146590;
+	Tue, 14 Jan 2025 20:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736886396; cv=none; b=FpHmQDJYlHZmkGOIULP57+G8NPhEHddX9LeVeojVS9bckv1Y9s0cIvwdmWPwwJNFyeBn7u2eZds8YZXQpt0JTGgLEyidAoPzLv4WcRgpHSpTS6EQHr2RTd+Vtfb9+hSBgNRQtItK5/jRtt2iGmkioX7OljXcFwWMu/DxhJRap5M=
+	t=1736887223; cv=none; b=KWGKZg2JM2Sg/WPrx0NQOOqeBa5SUF5xS9fXBS5zGB5om5iHEgZj+rfgwttAS7jNV/pCciPodV3kxjMEcnX9J6R77GsdRGag4VbaUvJbujR7w1t9qyG3WWbCmLfralEUUp9wtykZginvKiDQw2f9EqPFTokQFKxEBENwAKT6ATE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736886396; c=relaxed/simple;
-	bh=qxvuHUk1mHtLWLs28HD1nKDM5BKLuz+o1A3YZgW8khI=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Hsc1Rc6NtjMsT8irKUYS1buDZmA5CPQlkqjKzwPg9t8OsptAj7YcbGuDms/jvcT0S5JvyVUqzSObFsX6XKPP2I5sPVBooe2W6uKOSG4uqQx8hwN32Qa0j/NjYthvuirE83sDYlDBYgXuVfhAzZ5Al4wiA3VjQd4d3nbhFJ41wnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pCqxZ/vZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736887223; c=relaxed/simple;
+	bh=gfRSX2GYBFaW3+bJZ4OY5mVTnljCuw1ZvJQxSJCMgWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QY+JDebHE2n78Ng7qyDRGvukYU2b/LIc2fZYo7LpfEt7YJMok0u3K1GxZrdud77S6d+4+M0prlRLr14dOjpi0tzuVCDW6teWMKdIY/kjPVY215E2zXGOPoPUhcX/ppY5h8i/WkcSceZ6b2FZ+QMo1ntFx+F4vpRtX6HjMj06WTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KRATKsoI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pCqxZ/vZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83098C4CEDD;
-	Tue, 14 Jan 2025 20:26:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KRATKsoI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2B64C4CEDD;
+	Tue, 14 Jan 2025 20:40:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736886395;
-	bh=qxvuHUk1mHtLWLs28HD1nKDM5BKLuz+o1A3YZgW8khI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=pCqxZ/vZEXunUa0i+v6xY/rnaGQKnxVMkcsmSc0MYN+pg4I17Zj6F5/VtTzHVBGre
-	 h0rHKiL2OEDoZHhY6M4tYAclJHt+DpOn2olpkW3GYkD/rmg1HZNT/bxe4nQM5xeaVU
-	 Gc8UYI9yX1OmC+wHaQXO7ljdqWZiP/pziL21a1o2l05XB35SlO/4jmk9SsF+AslbzC
-	 fpJ0Mx2PdU3fe4ad7g/qibycCSKY+BxiTP0kb2WFGuFKfWTD9v4b9myspQHpdv+7fT
-	 xbmHB5bC6bKrMi2UpoEU1rh09MVN+1YtND7R/QstL6ZskFnEQJtXRnepgKiw9nWX1G
-	 ijvY8tWLNEzfw==
-Message-ID: <05c9960be5d357e9b48e431d110797f2.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1736887223;
+	bh=gfRSX2GYBFaW3+bJZ4OY5mVTnljCuw1ZvJQxSJCMgWs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KRATKsoIY3LO2ovpqzgCudm88TPSEUQ8NKJV2//zqUhewA8om56zVReEyD7lmsTKX
+	 vrhhfJ4YBlhX1bmPy947jzhNSVLLNJeH+GOKqOAiWJo0Fw84mRSjCqFmjjl9SGwP3S
+	 Qf86rmgd8equripDjT+3cVAsCWcq1lEETE8xQ3lOa1np/MJErebfeKmwOpk1vCZhWw
+	 FCGiwSXENAXQDgVeqa10fmE861CM6xtBun4KfmjMyBxQbbx17Rn1wtoAXMfjv9GyJD
+	 K3jA91U/KePWtAMdd3hioeX7CxybbZB+lzEAeJCdw8E/Ink/nJfJK6PWlR0YKP8nJ8
+	 rySkbkgO0rNDQ==
+Date: Tue, 14 Jan 2025 14:40:21 -0600
+From: Rob Herring <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v3 4/6] dt-bindings: watchdog: renesas: Document
+ `renesas,syscon-cpg-error-rst` property
+Message-ID: <20250114204021.GA1676959-robh@kernel.org>
+References: <20250113112349.801875-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250113112349.801875-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250114190612.846696-1-krzysztof.kozlowski@linaro.org>
-References: <20250114190612.846696-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v2] clk: Use str_enable_disable-like helpers
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Florian Fainelli <florian.fainelli@broadcom.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 14 Jan 2025 12:26:32 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250113112349.801875-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Quoting Krzysztof Kozlowski (2025-01-14 11:06:12)
-> Replace ternary (condition ? "enable" : "disable") syntax with helpers
-> from string_choices.h because:
-> 1. Simple function call with one argument is easier to read.  Ternary
->    operator has three arguments and with wrapping might lead to quite
->    long code.
-> 2. Is slightly shorter thus also easier to read.
-> 3. It brings uniformity in the text - same string.
-> 4. Allows deduping by the linker, which results in a smaller binary
->    file.
->=20
-> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->=20
+On Mon, Jan 13, 2025 at 11:23:47AM +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> The RZ/V2H(P) CPG block includes Error Reset Registers (CPG_ERROR_RSTm).
+> A system reset is triggered in response to error interrupt factors, and
+> the corresponding bit is set in the CPG_ERROR_RSTm register. These
+> registers can be utilized by various IP blocks as needed.
+> 
+> In the event of a watchdog overflow or underflow, a system reset is issued,
+> and the CPG_ERROR_RST2[0/1/2/3] bits are set depending on the watchdog in
+> use: CM33 = 0, CA55 = 1, CR8_0 = 2, CR8_1 = 3. For the watchdog driver to
+> determine and report the current boot status, it needs to read the
+> CPG_ERROR_RST2[0/1/2/3]bits and provide this information to the user upon
+> request.
+> 
+> To facilitate this operation, add `renesas,syscon-cpg-error-rst`
+> property to the WDT node, which maps to the `syscon` CPG node, enabling
+> retrieval of the necessary information.
+> 
+> Additionally, the property is marked as required for the RZ/V2H(P) SoC to
+> ensure future compatibility (e.g., where the same IP block is present on
+> the RZ/G3E SoC) and explicitly disallowed for other SoCs.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
+> Note, this change doesnt break any ABI, as the subsequent driver patch handles
+> the case elegantly if the `syscon` node is missing to handle backward compatibility.
+> 
+> v2->v3
+> - No change
+> 
+> v1->v2
+> - Renamed `renesas,r9a09g057-syscon-wdt-errorrst` to `renesas,syscon-cpg-error-rst`
+> - Updated commit message
+> ---
+>  .../bindings/watchdog/renesas,wdt.yaml          | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+> index 29ada89fdcdc..ca62ae8b1b0c 100644
+> --- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+> @@ -112,6 +112,19 @@ properties:
+>  
+>    timeout-sec: true
+>  
+> +  renesas,syscon-cpg-error-rst:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description:
+> +      The first cell is a phandle to the SYSCON entry required to obtain
+> +      the current boot status. The second cell specifies the CPG_ERROR_RSTm
+> +      register offset within the SYSCON, and the third cell indicates the
+> +      bit within the CPG_ERROR_RSTm register.
+> +    items:
+> +      - items:
+> +          - description: Phandle to the CPG node
+> +          - description: The CPG_ERROR_RSTm register offset
+> +          - description: The bit within CPG_ERROR_RSTm register of interest
 
-Applied to clk-next
+Why does the watchdog node care about the reset reason? Why doesn't the 
+CPG handle that? Seems like this is the Linux watchdog subsystem handles 
+reset reasons, so let's stick a property in the watchdog node. Sounds 
+like OS design dictating bindings.
+
+Rob
