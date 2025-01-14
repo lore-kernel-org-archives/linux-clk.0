@@ -1,132 +1,126 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429EC1D47BB
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 17:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652CA18952C
+	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 18:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736876223; cv=none; b=lzvxH4AW4DtLNIvxW75Ny+0LvxA5R3I08qxa07IDuAaB+lA05ImxlE6L/gzoNDSAzT4W8mHWLxj57pR/izBpUucM8TEx30Mml4kGPBTH0d7DHB9IH7bFzsUwu2FI9VD7329vhkmARmW2sDsUz0M3IsLWTFchkHD8GDI+756vZt4=
+	t=1736878831; cv=none; b=EGiAHW7fAANzBGpIjpy99bLiZ4yHjQv2qLA3jfSJ+ADIMS2dwX052F/ZB3744J6H7e6WuuIFM+MvJk7qCWmfMWni5pWQB2jlC2LAo63Zau09W96Lsd7MGBbYKK8sHLOfZdz5u+WspgERyebiAaMXDI3dOEHShF1a40aQoVcCut8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736876223; c=relaxed/simple;
-	bh=HOGM+1VPtJmo9bMIxYQO0YkNCY77g9qlc0Z0fhwZYnc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VXZlfDfyKiTBRZwckPLlczr4BdpdxZxJm7LaG+7FdsPzh3BeLt4SevXDc1zkP2A5s6f+QvXEYQe9OC1cjxqBbdOsMAyZXLBdYtKnbChf87AuRXqRaYv9erTOq9aWtSvCaq+n54T+pQmXAUxNlVU4WfaE3k3qg8q4pfrqSsLGIio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=WU9QW6xK; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1736878831; c=relaxed/simple;
+	bh=nHbDn2Xi0lDjIGgu65xWMeXJXaW+Z3RJsXJY85rSNNU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Il9B5BJ0NH9191fJ/fSnJf5J2Pamzp2zu0k3SVCpu4hf57v2AFrKSKNXw7Q+1v2en2WXtJvryOQh2ERZDUYavcK+65E8Is8DS4cxZGaIfWvPXTOVOIXvrJxRKO6vqMnyhG/LAuQhqd5E2tQXRzEhmlC9ZShE9hf1bhA1rXrzYA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=oAg8XehW; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WU9QW6xK"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2167141dfa1so29805ad.1
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 09:37:02 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="oAg8XehW"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38632b8ae71so4264974f8f.0
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 10:20:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1736876221; x=1737481021; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=7rcl1SX/OvDfBPdSZc3LYo5TUWBN/Uceh2ueRnzxWfk=;
-        b=WU9QW6xKJ+N60QGhgNCths1sX/ARscFya9eJPOPFQI9EzfqejrjcYRNJcrzqXF1JNP
-         Ps4pvjIEsNm6m9MC1ub4aTWCI9WNhUu8pSBKszHgfAdoWSidm8jEsjL0U787Wv8z8QB/
-         JcTNIQev3EWUsG8gFSqC3Uz1WYqbuQDqSYl+U=
+        d=amarulasolutions.com; s=google; t=1736878825; x=1737483625; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GeNVBB/i2U4Nsgj/JNEuuNrVAFqI6yjOJA02Gh323ro=;
+        b=oAg8XehWwaGNm/8twERK9HTNtpytRY1TCkY1vZNZpmqUHn6l1rm8TebPf8LAm9/zZM
+         We/UHmoQ1gaCIBP0/Ahskx/jBoFrF6DdeCAFypFn3clsDlMvJ8I9Q05UprYDSyVABNKn
+         wgQmSGH73t0HZSuRF2WoqzuF/f1oU5DS8GGak=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736876221; x=1737481021;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1736878825; x=1737483625;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7rcl1SX/OvDfBPdSZc3LYo5TUWBN/Uceh2ueRnzxWfk=;
-        b=bc4n0hKY7mA6s4mTOLzW86JfNYeTXM3PupjrEZazCra1pc4aOtGOIbjRuHPgnstl+H
-         mfKrWFWvuBFLPHrj30rsjXYiJPiEoVYIJ3PJC9rX0z4xAB+0PTC0jov+P8mfuoKQkt5H
-         mjC3WxmSqAfwCT9ZY+e/WKDmhsnun4F8b4AUJRx8q2nRO8C2n3v5/JQl+kKqke0HGuh7
-         WCbj3metrNa8eZpqYGbM3f6AeYRPQPWGS7UB9fU4G9JnOzLdFuta7x1btSlg8qT7LEz4
-         CgsUB/Ep2eyr2ShNf8pV8T5C8yXubC1lSTjjdmU1mLJsPxP8Hp+ZdMZOsUtLCVY9KBhk
-         Zejg==
-X-Forwarded-Encrypted: i=1; AJvYcCVaa6ShACJb2e0nPZlh6Ccz+rqkz/P+TmpvOVgtd84aiF2NeKJm1Od7lbgSGoJ4NW4c12dujMDxnhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRCoLbjbZckeQuDeYziMmAT8+1Z8ITo/N6gnfhSK9p/q3zQNFa
-	5KfbB3Do374s/cngZY4k4M5Q6zjovvEJ/jWqGvkV+/WeXgq4II/oPIUumpzPcQ==
-X-Gm-Gg: ASbGncvXfxkC0TFnj1dFQcAjm3uYS3bxwGvaeZG8DkWU6D6gvHbL7oUIwM77jSe9hId
-	iFZOynGqk9Esm5VsTYZ2QVdxlzcJbo/rk4+KYNBVfH6d7T3m+w1sTsOsYQt1fIfoczceHo64aYL
-	GetaMZhqAw4ZoJS34mvYumAzWOvZTK2zsAeNlnPYudfFypCjaBuRJW+bVJC1S7PTiOxAEWHLcV4
-	ZrU93ut6oRAeTgGI3Br6NLWJBA0StAncY1DXC5qrLVKGkZhVNR+8d3p4Rmj9UBIWyv4kGnrk/y/
-	pPB+7tTUWV624jM8AoS4
-X-Google-Smtp-Source: AGHT+IEFzv5G0xmABBL+XZICiZP0VhjMpDV3vlDzoecWcnfA7PB2ZBZcrMRU1kwwvn6finYRTqr0/A==
-X-Received: by 2002:a17:902:ecc3:b0:216:14fb:d277 with SMTP id d9443c01a7336-21a8d6c7ab4mr318410025ad.22.1736876221535;
-        Tue, 14 Jan 2025 09:37:01 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9f10ddeasm70270415ad.48.2025.01.14.09.36.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jan 2025 09:37:00 -0800 (PST)
-Message-ID: <96dba1fb-53f3-40fb-8e20-887cd089961c@broadcom.com>
-Date: Tue, 14 Jan 2025 09:36:59 -0800
+        bh=GeNVBB/i2U4Nsgj/JNEuuNrVAFqI6yjOJA02Gh323ro=;
+        b=PZyItyEDNwShJKRonKiJErpaIlZ/jj2w+2PikZmURKfCcKd92RpL2utiqHZpFNbBKy
+         m7AAvSyLUWdcfkv0Wnpfjp1tgKbx1rydK9jL4JZfVTHPpop02u1B4Yt2k9uPF0oe5uQS
+         f7spLk0rt+9JcgQ4VzQfeKQcE6Wb4+I6a/tWBlSD7XjvBa8qemSbZDPSg0geMbV3y4Px
+         wAOcIgoG4BdzxCExhbzFbdwVHZ0eUOwX95y9yS4eleDL/EuSF8hh3rMSa/vahTt7hog/
+         iMZx4w4f7sScSuJt+Hrmfv+lmrh1/7qNgtpQFTZio5cSGfrKfGT7E0BH+NDybHsHISe7
+         ATeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVaOr5CMLTNTB9qXbp2Ayh+NGUr4LLwZwMQlxaHli0ClGZn6nnYvItl0jUTepCJmTSg9Ms4OHE3MY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy87VPXuMI5ZdyME7qMN5dnaIocLwy0a/LprT4G45E9185wbKnn
+	yX496Cte0iKKMzzNCKaaCa43Pjl1G1cr4/+8FJFwsxAOW+7iIUjYl215OP8bUnk=
+X-Gm-Gg: ASbGncu89p54gOaUGgzZ+m8kMKaVMXy7P/5GwnjTD5x+IooH0TRyhNkQKnOmEy9klYA
+	DIsqWqvO/nXgOEoELm3gLy1BNv6FrsOpoOEPyMNMkP/dXxYQdI8uC65HXh2W6v4Js87ndRqCirE
+	manqiGLnzj28cbffDts2vqKaRRNnzbKGCDIMeQKJ7j2z153GVKKO8uaHs8oTMJpMQgQSO/3jun/
+	Gcm4hRU3fSWgaJl9qwXB3AgsUnyOzFcqXYuPuAh/JUElqUA+7W5ubex2+SO08rrqe3kQ150EXRQ
+	lmUBS3g7wLWjuQ1eLdIylw==
+X-Google-Smtp-Source: AGHT+IF0OmB7x+n/pD4cD65liw1i2aC27PQyOn8ab2eaRaudsoa2gu0gSMltwYB/uF3S1FkWb2D2yA==
+X-Received: by 2002:a05:6000:2a2:b0:38a:8906:6b66 with SMTP id ffacd0b85a97d-38a89066f45mr26441005f8f.38.1736878825526;
+        Tue, 14 Jan 2025 10:20:25 -0800 (PST)
+Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.42.147])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38be66b01c7sm278970f8f.22.2025.01.14.10.20.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2025 10:20:25 -0800 (PST)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH v4 0/4] Support spread spectrum clocking for stm32f{4,7} platforms
+Date: Tue, 14 Jan 2025 19:19:45 +0100
+Message-ID: <20250114182021.670435-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: Use str_enable_disable-like helpers
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org
-References: <20250114105618.273302-1-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250114105618.273302-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 1/14/25 02:56, Krzysztof Kozlowski wrote:
-> Replace ternary (condition ? "enable" : "disable") syntax with helpers
-> from string_choices.h because:
-> 1. Simple function call with one argument is easier to read.  Ternary
->     operator has three arguments and with wrapping might lead to quite
->     long code.
-> 2. Is slightly shorter thus also easier to read.
-> 3. It brings uniformity in the text - same string.
-> 4. Allows deduping by the linker, which results in a smaller binary
->     file.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The series adds support for spread spectrum clocking for stm32f{4,7}
+main PLL.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+To achieve this, it was considered necessary to also apply patches to
+improve the documentation (conversion of `st,stm32-rcc.txt` according to
+the json-schema) and the code (use of FIELD helpers).
+
+The series has been tested on the STM32F469I-DISCO board.
+
+Changes in v4:
+- Improve the compatible property in patch 1/4 "dt-bindings: clock:
+  convert stm32 rcc bindings to json-schema"
+
+Changes in v3:
+- Changes to patch 4/4 "clk: stm32f4: support spread spectrum clock generation"
+  according to Stephen Boyd's suggestions.
+
+Changes in v2:
+- Fixup patches:
+  2/6 dt-bindings: reset: st,stm32-rcc: update reference due to rename
+  3/6 dt-bindings: clock: stm32fx: update reference due to rename
+  to
+  1/6 dt-bindings: clock: convert stm32 rcc bindings to json-schema
+- Changes to dt-bindings: clock: convert stm32 rcc bindings to json-schema
+- Changes to dt-bindings: clock: st,stm32-rcc: support spread spectrum clocking
+
+Dario Binacchi (4):
+  dt-bindings: clock: convert stm32 rcc bindings to json-schema
+  dt-bindings: clock: st,stm32-rcc: support spread spectrum clocking
+  clk: stm32f4: use FIELD helpers to access the PLLCFGR fields
+  clk: stm32f4: support spread spectrum clock generation
+
+ .../bindings/clock/st,stm32-rcc.txt           | 138 ----------------
+ .../bindings/clock/st,stm32-rcc.yaml          | 144 ++++++++++++++++
+ .../bindings/reset/st,stm32-rcc.txt           |   2 +-
+ drivers/clk/clk-stm32f4.c                     | 155 +++++++++++++++++-
+ include/dt-bindings/clock/stm32fx-clock.h     |   2 +-
+ 5 files changed, 295 insertions(+), 146 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/st,stm32-rcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/st,stm32-rcc.yaml
+
 -- 
-Florian
+2.43.0
+
