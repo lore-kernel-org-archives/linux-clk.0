@@ -1,117 +1,98 @@
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1C420330;
-	Tue, 14 Jan 2025 13:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1182232453
+	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 13:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736859651; cv=none; b=TjjMqnGBtbNlc/+bTqcM7SGb5pTuHCdaF/sgqjmpCULckT+lnDpt0m4OFaJxo1SPi5kqslASVIdcgyXcYEBZH+743H7IB1o64z/p8mjBzFQcDRSNRusFGN+AFHdl/eWuGw7QWw2w3XzMNgb/ydFEeldr/AlDvP8JkmNNBR9+2WY=
+	t=1736861447; cv=none; b=Qf0PA8NNz6J+w2q//t1TEiOw31MkfdUg/kC6He6pUNnf7NPK5kPUV3+W/srHWsnRFcuRVNoq8wfrs2SfFbmMxWY/CGI8KKeXh9tik3ASmrcJMiQDlJ0Z+USnfdrLDivbyGlpABhNH3RLUKa4ijeLLnZCkt/AAiKHBjm3siZeKsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736859651; c=relaxed/simple;
-	bh=5XQtxZtfh+GUMxrNIRh/5FPe+1/vNIZvE7kIluUM1cU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HMj163xMd+o3DsIvbU3P5p1UszfrMjyotroGBCdchICd/EyXX7XGnMV+OKhhbW124K0BYwtJRuA5RB6FDFtSmINo0NOTVlSphKKnYd4rU8r8JQxP9cMdgbD6kuU9+PTKL+xd+pU/TAXgW4vvNuxpg0wTOWyV0wCgFj8Q4uYmxhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.63])
-	by gateway (Coremail) with SMTP id _____8BxuuAAYIZnHzdjAA--.64977S3;
-	Tue, 14 Jan 2025 21:00:48 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.63])
-	by front1 (Coremail) with SMTP id qMiowMAx7+X6X4ZnhBwiAA--.3371S4;
-	Tue, 14 Jan 2025 21:00:47 +0800 (CST)
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-To: Binbin Zhou <zhoubb.aaron@gmail.com>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Yinbo Zhu <zhuyinbo@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	loongarch@lists.linux.dev,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	stable@vger.kernel.org,
-	"Gustavo A . R . Silva" <gustavoars@kernel.org>
-Subject: [PATCH v3 2/2] clk: clk-loongson2: Fix the number count of clk provider
-Date: Tue, 14 Jan 2025 21:00:29 +0800
-Message-ID: <82e43d89a9a6791129cf8ea14f4eeb666cd87be4.1736856470.git.zhoubinbin@loongson.cn>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1736856470.git.zhoubinbin@loongson.cn>
-References: <cover.1736856470.git.zhoubinbin@loongson.cn>
+	s=arc-20240116; t=1736861447; c=relaxed/simple;
+	bh=v+CYuZibBv3r8fvNtfDPDxH9UZrX1j1jONfkBdqEqlE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OhKh0nuR+2/wLll38/w/Cll8GNi/9dw8iOmvlTaIpRRXyJLcvkBuCkqGUG3fImtA9Ko0URz++PYb6MppZ8BT+Jt7nXIvFu5JbPcxm3sv500gcYvilCjCLpjDr7WZ0/w01kIkOKAbahIGE9+tD21xW1VXLYQ0EQ+EfwuoVyq4wEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ZxVsSuT8; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ZxVsSuT8"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=DsDqFsKNlq6k5bv26Wc6cezOu7WfsIt9U2WvPdD+fPo=; b=ZxVsSuT8Xs5o8SLdZaOxUY8byS
+	O8m3iIAPaCTgl2t9Qmq0bFUCKO9G5xIfg90xcvw0Ps4SOm9phB5k/2fZzRKMcMKOM5Tzn7H/Dg6Kl
+	ztrb0ZHGDNsDGe/I3IVrnEBqXqAb70NPBLx1fDw6M6gbCM+qAliy8oi1hOH7huKSgEr7S/ddz4sp8
+	nvVKu79sdIugOnd1kUmoqjaBgze1LFLXlvkd2h63/2tok/NbrbIS0LZ1gjjfVU8HxzFtkO3ZJ5voR
+	qDhJDBZHAEqXBHA5pwvY+mdSgdAmvwPy6+8aTvH1zWv4Hv/3CWMHxp6htcNUT/pRchiQZz48WRwti
+	pOdjrTGQ==;
+Received: from i53875b2c.versanet.de ([83.135.91.44] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tXh08-0002c1-EM; Tue, 14 Jan 2025 14:30:36 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock changes for 6.14 #1
+Date: Tue, 14 Jan 2025 14:30:35 +0100
+Message-ID: <2020465.PYKUYFuaPT@diego>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAx7+X6X4ZnhBwiAA--.3371S4
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW7AF13ZF43XryUZry5JryfXwc_yoW8Ww1fpF
-	W7A34jkrW8ta1rZ3WDJwn2gFyYy34FvFyrCFW7C3WkZrn8W34j9F1rAFy0qay3JF48uF1a
-	qFyqkrW8CFW09FXCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr4
-	1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUxhiSDUUUU
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Since commit 02fb4f008433 ("clk: clk-loongson2: Fix potential buffer
-overflow in flexible-array member access"), the clk provider register is
-failed.
+Hi Mike, Stephen,
 
-The count of `clks_num` is shown below:
+please find below a pull-request with Rockchip clock change for 6.14
 
-	for (p = data; p->name; p++)
-		clks_num++;
+Please pull.
 
-In fact, `clks_num` represents the number of SoC clocks and should be
-expressed as the maximum value of the clock binding id in use (p->id + 1).
+Thanks
+Heiko
 
-Now we fix it to avoid the following error when trying to register a clk
-provider:
 
-[ 13.409595] of_clk_hw_onecell_get: invalid index 17
+The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 
-Cc: stable@vger.kernel.org
-Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
-Fixes: 02fb4f008433 ("clk: clk-loongson2: Fix potential buffer overflow in flexible-array member access")
-Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
----
- drivers/clk/clk-loongson2.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
 
-diff --git a/drivers/clk/clk-loongson2.c b/drivers/clk/clk-loongson2.c
-index 6bf51d5a49a1..27e632edd484 100644
---- a/drivers/clk/clk-loongson2.c
-+++ b/drivers/clk/clk-loongson2.c
-@@ -294,7 +294,7 @@ static int loongson2_clk_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 
- 	for (p = data; p->name; p++)
--		clks_num++;
-+		clks_num = max(clks_num, p->id + 1);
- 
- 	clp = devm_kzalloc(dev, struct_size(clp, clk_data.hws, clks_num),
- 			   GFP_KERNEL);
-@@ -309,6 +309,9 @@ static int loongson2_clk_probe(struct platform_device *pdev)
- 	clp->clk_data.num = clks_num;
- 	clp->dev = dev;
- 
-+	/* Avoid returning NULL for unused id */
-+	memset_p((void **)clp->clk_data.hws, ERR_PTR(-ENOENT), clks_num);
-+
- 	for (i = 0; i < clks_num; i++) {
- 		p = &data[i];
- 		switch (p->type) {
--- 
-2.43.5
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v6.14-rockchip-clk1
+
+for you to fetch changes up to cd8b5366636bdff0449b789fb2d33abb20804255:
+
+  clk: rockchip: rk3588: make refclko25m_ethX critical (2025-01-09 16:23:32 +0100)
+
+----------------------------------------------------------------
+Real handling of the linked clocks (clocks of the interconnect port a
+peripheral is connected to) on rk3588 using pm-clocks, allowing us to
+stop marking them as critical and one more rk3588 critical clock, that
+the kernel cannot handle otherise right now.
+
+----------------------------------------------------------------
+Heiko Stuebner (1):
+      clk: rockchip: rk3588: make refclko25m_ethX critical
+
+Sebastian Reichel (5):
+      clk: rockchip: support clocks registered late
+      clk: rockchip: rk3588: register GATE_LINK later
+      clk: rockchip: expose rockchip_clk_set_lookup
+      clk: rockchip: implement linked gate clock support
+      clk: rockchip: rk3588: drop RK3588_LINKED_CLK
+
+ drivers/clk/rockchip/Makefile     |   1 +
+ drivers/clk/rockchip/clk-rk3588.c | 120 +++++++++++++++++++++++---------------
+ drivers/clk/rockchip/clk.c        | 102 +++++++++++++++++++++++++++-----
+ drivers/clk/rockchip/clk.h        |  40 +++++++++++++
+ drivers/clk/rockchip/gate-link.c  |  85 +++++++++++++++++++++++++++
+ 5 files changed, 288 insertions(+), 60 deletions(-)
+ create mode 100644 drivers/clk/rockchip/gate-link.c
+
+
 
