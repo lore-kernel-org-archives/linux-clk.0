@@ -1,168 +1,141 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B69A284A73
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 10:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC6120F960;
+	Tue, 14 Jan 2025 10:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736852184; cv=none; b=mzSs2D/Oxn8uhlVQGfAwy+y08NNN12pXxMOJw66D0EznM7chNIuj6Innb9Ma7N5u751Koh9QT1GGAZCegcQbyXB5c4uXUB7hhScl9HOk4KvK5FifuCsrANNEXPvEKz+6NzW2++wJYzdu74RIvdXLB/899kNWCtCio7bTyG5CAic=
+	t=1736852269; cv=none; b=a2ws4kAsA4W2wLE8rhAKhy+bR/1jKW6KQ8Z5aqD69cwk6yQbA7ydBlFClx3iao8Sz5HqJBz9VRJdFa8x9IeEv1DnpPaSpK80E8IJZCNZf3c2O/gxcWm+Y+KLCijdtVBuOyEQHC5NRKHPhy9bDjpTLXMWwPe6wwEU056OHhYwTnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736852184; c=relaxed/simple;
-	bh=1hmd0MyMkQMTbVa+ERj+P7pc6GuuTSoTkyZlJUbbMm4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d4uwA0y76Ah4qQunnMIZ1TjaxmwS0DiBFywYp84Q0dyXacFd3JcGMrqPkj3L80/kZza7t90f5XhUBTOveMB+9d2zdBkR8nwdfMeALqpm04Mtv1ki2ZTAFIlzR4v96pAiU5pxC0ooDTk5E3brTwkd+OXoI1kyom+SUWqq7ifPtFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f5FDdLXo; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1736852269; c=relaxed/simple;
+	bh=bxAHs9LEAY2usisCAODMbK8ZEBJ9bQYnYbegOqBBi2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GPaPnCSme9916KLJCj4bZWhiPWOTF7KBOPIh2pLRKZG+CgP+vX/DtjcxfMMb2omApOjvdlk2hIQcQujSbgn3dTIPJa3507KDIN3fGZhGPkUSaAjQn3FBxmm5sNVWt217B+K+PFNj1R+6E4IzmK/aRMxRIhT/Z65eKcm51KbGbSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RmQD2IGQ; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f5FDdLXo"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d44550adb7so898762a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 02:56:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RmQD2IGQ"
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-518a52c8b5aso1701452e0c.2;
+        Tue, 14 Jan 2025 02:57:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736852181; x=1737456981; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4rykRosxrDs/XntXu5KrgDY2INQy7eN85k18sGRgzP0=;
-        b=f5FDdLXonOBBHHvU0zNmU8Iym2H6Vtvd2uzzv/6zFLrctZHrD4eAeN8x8QX89tsEm6
-         eI3m+b4hdj70m48/PTE+U0UCXObdbCU/XkjrcZXBllXxroT3qnk6yqPrcHwPHCJAjEfW
-         AzHROU2FLa6R4Zns06G77F/m0x10eXB8FzH99KePn7F5DYlon+wcj0ly/9zhOFaYbvLF
-         XQMtJRX8KglW1S4wgozQN5bgB01wnhmWi4KrzpQYw4AXndz/sIlPhTgLTwkAX7pq4552
-         FEqxJnIClsstOh0Ti81gDXmvc71NH2tufJb/3FX9E60IEU8w4il1KLp3ZNA2sIs/r/tW
-         0Djw==
+        d=gmail.com; s=20230601; t=1736852267; x=1737457067; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yhLoTeZEg3O6/J3xmcZwI5/1WUYN2UyOx2hfQpSKVo4=;
+        b=RmQD2IGQjDNM1p/cIEP0+V4WXl1ojuMIOMJNav/UsZZ0KZ/XQQGSftoEPdLVLM6vFd
+         buqTuJlLNMnQyG+SKugUsQcsA8b3fapJHC95WoFPFbBESd+n9Lwxr10HrL7BJSzr4uV6
+         sPnoxA/wPSN39lqAtqV5qGZK0abj7oWDwHSXTIdPFoZ8YhKxTil8iW90aPnepr5u+THd
+         KQ9w5QPjMeD7OqJNbpFUJ8Vu8WEOxGGw3Rta37yD1zR1zhJlw4JXVY4OoK1S3gqp3BQC
+         TpjugDYd4Cq/eQ4z3N8gbmhLHpRm8c5ceoiPWmCtW3x0/avudvR1mmYVxHyNoe2pBc9d
+         B9ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736852181; x=1737456981;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4rykRosxrDs/XntXu5KrgDY2INQy7eN85k18sGRgzP0=;
-        b=c5LrYUQRFu/UIWok8oYLMrZ3IC3GvTLBON2GKJ9OXqO7/+DAGC4SHD3qJsv9sjJ0x4
-         88jJUpKjxpaOkVSpHpiAdT4OhDtF/V5TQ6TC5PaY0T6t/BkChKxgy+nmYGDc10Mao+nI
-         AYIqBHq1qALA40pwnJmhBUFVcMhGO+VeMt9SvkLoRVifdtVQ4w/fO8/8/hs4c3+4lUU4
-         kbV4mW23Sps58v0lt+eKj8MNJlZN7kMAThUG0ygVMAmDDnRI03PFJT84+LytJKRXylz5
-         S5F1XLbgNrzE6519vgEjzMWaAF2UYUxR5oPW93tu7JnjV+QRZprXBhMEgGw+6nY86Sg8
-         8h5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVkW9FE3wJ796LD3fwLbL/5mJTD+9icpv7qVbkTNP+7CK0Pz4JSPnHFsLPaSID2Nk9IxppMs0cRmlQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCLehIJvYOKLcp4QWzmdwpG/2Y7s11z39xF3qcFJkalnCBtw64
-	/4d78d+O2LpKaUjjsVqQcNdYXXbhZ4DKJHsNEcPO7vJ7FaCzQEQ5KYtrcocXYMY=
-X-Gm-Gg: ASbGncuBNNhaipDM8tGcaKBSOE+f3EpddoaIOOk65vAnAXwmAB8eZX5PcndtlV8zJ0r
-	mjuMj+xBSYmGNyIx64cbGFJ9a8JzXjOiFCWQNzqHGYSBOnUAnG3aOptV3h6vE8Xq17M2DFI4f3B
-	63H7mcT+uch2euBhpTz/3G+jx+IUdY08QUVar2yWh4il6pCvOcR5/HrRcF/wlfQwLDu4TVPuJX1
-	qLKyTmm7TtgcTsX4v/hdx1acnGAsAq77moCRoYMWbJ+FOVyvVKl/IpRL8Vz3tpJtHyBwec=
-X-Google-Smtp-Source: AGHT+IFVeBR38XvGrfM1ABZ8o3cSy39ubNwiQmJTMlI/28V9aP4xs9GINfaB9e0nRKdDsH7KYOVo0g==
-X-Received: by 2002:a05:6402:1f4c:b0:5d3:fdf5:4b28 with SMTP id 4fb4d7f45d1cf-5d972e88f88mr8233931a12.10.1736852181413;
-        Tue, 14 Jan 2025 02:56:21 -0800 (PST)
-Received: from krzk-bin.. ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d9904a40e8sm6118257a12.76.2025.01.14.02.56.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 02:56:20 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] clk: Use str_enable_disable-like helpers
-Date: Tue, 14 Jan 2025 11:56:18 +0100
-Message-ID: <20250114105618.273302-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1736852267; x=1737457067;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yhLoTeZEg3O6/J3xmcZwI5/1WUYN2UyOx2hfQpSKVo4=;
+        b=vW/TiUwM3gLdEBlkLfWwkoTLuIf4q9Xv+t5aW0+MEjXD7Rg7+ts7QFuVsyh8euxm0v
+         yD10ijiIfswj8feXPOkYVbHoMT2aF4q3/REd5dcwgsN6r6N/ieZswL+aDlNkaAPWtFzJ
+         slVtiGRCPjv3MsuCpzSJTZQEFUCKZCKtCiyAgFSQsJ4W66IWGEqu1Z9HgXr9Mt2h/zQ2
+         hr6OpRCp4fIazRZsFkxTM6tXjyWEhsCCtAcDZGPlHwqvSYSqe93ApuN7ISYe9Mbtkq8W
+         WsiZAz/B7llNmGL+VJp3HDu4aH0ywXlaLYvI8wcDzOZNjDIILenZDBXaejMoSAuSGCsa
+         xEfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH7o8LKuh6cMOlSCbJCqc7kDxSbEdb2Ob+nmefDIh6jyhyyj4kb+NBiYSJl72f9I4nHYW93gGntkqx@vger.kernel.org, AJvYcCUrzpnZiDMvXU8NEzpovaYid4DWKsjjjiyi4nyza6CCoObpI7oL7dEJRb/pNA4PSniGTbiJBfbosEDSJkfVELo=@vger.kernel.org, AJvYcCV55EDHRlN55Pb4psPDRS7+WltK8ttOZnzzj+MnjWxVx8erukpSD77X7unzqtPaOiVHAk4VawCAMOJ+@vger.kernel.org, AJvYcCVisf7XNCkEG8afliB2veLDe7cQP4TSgwG0mdloft1jemXHWC5hOY6L16H+MbdJHij5OZq/J87XmjqDmV0M@vger.kernel.org, AJvYcCVsotrE++ORxlutnssayQ3K9XVsuRD1tBt28zOeO8cen4gokHDMPuR8xyEjGk7RGFodRkGEQ1tTgV+1Sj2ERFpn05c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRtuDNsXpk8l7dInkGwzetqVJjcKhZWpY3CK+aBdB0mqYm4eE2
+	M134+FRJSUheLRRWD7/tBk1WBNGRTTGlIxgCgwhU8Tp86kIr14pDe2K94KVBiT/Orw7VKkjCqT5
+	19K7LEUsH3nuJacE+zH5PGOrzjRc=
+X-Gm-Gg: ASbGncv8RxjzupnUf+iLCjbRzfUTDHn8sbTsTKB1yM+ActMIOPmqMHuiqqXrVs17rTW
+	Ou0XeiPYtAmPGxsxdeBa/tczICB/jwFYPjZEC5xw=
+X-Google-Smtp-Source: AGHT+IEbPc3lPMcMjZAEH3DA1YlXXwtQLJAZLsiX6fyp+5PlE4CRwwDQOvoBWYK5DOBGgWonP/TxVQMxcdiTZ5omF5A=
+X-Received: by 2002:a05:6122:1d14:b0:50b:e9a5:cd7b with SMTP id
+ 71dfb90a1353d-51c6c50fa64mr19314886e0c.9.1736852266690; Tue, 14 Jan 2025
+ 02:57:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250113112349.801875-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250113112349.801875-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <TY3PR01MB11346890814785C2150BB484D86182@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB11346890814785C2150BB484D86182@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 14 Jan 2025 10:57:20 +0000
+X-Gm-Features: AbW1kva_YoFFjsmaXXXJnaiop5H1mz9PaYeI-HrK3aI3xD2vDW5geg1w68hePDc
+Message-ID: <CA+V-a8vrhb7Wt4RwQJ1wpDYfiy8-jiT0Dej7UYcRszyS9cKx4g@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] watchdog: rzv2h_wdt: Add support to retrieve the
+ bootstatus information
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Magnus Damm <magnus.damm@gmail.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Replace ternary (condition ? "enable" : "disable") syntax with helpers
-from string_choices.h because:
-1. Simple function call with one argument is easier to read.  Ternary
-   operator has three arguments and with wrapping might lead to quite
-   long code.
-2. Is slightly shorter thus also easier to read.
-3. It brings uniformity in the text - same string.
-4. Allows deduping by the linker, which results in a smaller binary
-   file.
+Hi Biju,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/bcm/clk-kona.c  | 3 ++-
- drivers/clk/clk-nomadik.c   | 5 +++--
- drivers/clk/qcom/clk-rpmh.c | 3 ++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
+On Tue, Jan 14, 2025 at 9:55=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.co=
+m> wrote:
+>
+> Hi Prabhakar,
+>
+> Thanks for the patch.
+>
+> > -----Original Message-----
+> > From: Prabhakar <prabhakar.csengg@gmail.com>
+> > Sent: 13 January 2025 11:24
+> > Subject: [PATCH v3 5/6] watchdog: rzv2h_wdt: Add support to retrieve th=
+e bootstatus information
+> >
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > On the RZ/V2H(P) SoC we can determine if the current boot is due to `Po=
+wer-on-Reset` or due to the
+> > `Watchdog`. The information used to determine this is present on the CP=
+G block.
+> >
+> > The CPG_ERROR_RSTm(m =3D 2 - 8) registers are set in response to an err=
+or interrupt causing an reset.
+> > CPG_ERROR_RST2[ERROR_RST0/1/2] is set if there was an underflow/overflo=
+w on WDT1 causing an error
+> > interrupt.
+> >
+> > To fetch this information from CPG block `syscon` is used and bootstatu=
+s field in the watchdog device
+> > is updated based on the CPG_ERROR_RST2[ERROR_RST0/1/2] bit. Upon consum=
+ig
+> > CPG_ERROR_RST2[ERROR_RST0/1/2] bit we clear it.
+>
+> As syscon-cpg is available, can we get rid of Linux assuming TF_A/U-boot =
+for configuring Error Reset
+> Select Registers(0x10420B04)for the watchdog to reset the system?
+>
+Agreed.
 
-diff --git a/drivers/clk/bcm/clk-kona.c b/drivers/clk/bcm/clk-kona.c
-index ec5749e301ba..2b0ea882f1e4 100644
---- a/drivers/clk/bcm/clk-kona.c
-+++ b/drivers/clk/bcm/clk-kona.c
-@@ -10,6 +10,7 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/clk-provider.h>
-+#include <linux/string_choices.h>
- 
- /*
-  * "Policies" affect the frequencies of bus clocks provided by a
-@@ -502,7 +503,7 @@ static int clk_gate(struct ccu_data *ccu, const char *name,
- 		return 0;
- 
- 	pr_err("%s: failed to %s gate for %s\n", __func__,
--		enable ? "enable" : "disable", name);
-+		str_enable_disable(enable), name);
- 
- 	return -EIO;
- }
-diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
-index 06245681dac7..f3a73ac5a1b9 100644
---- a/drivers/clk/clk-nomadik.c
-+++ b/drivers/clk/clk-nomadik.c
-@@ -17,6 +17,7 @@
- #include <linux/debugfs.h>
- #include <linux/seq_file.h>
- #include <linux/spinlock.h>
-+#include <linux/string_choices.h>
- #include <linux/reboot.h>
- 
- /*
-@@ -116,9 +117,9 @@ static void __init nomadik_src_init(void)
- 
- 	val = readl(src_base + SRC_XTALCR);
- 	pr_info("SXTALO is %s\n",
--		(val & SRC_XTALCR_SXTALDIS) ? "disabled" : "enabled");
-+		str_enabled_disabled(val & SRC_XTALCR_SXTALDIS));
- 	pr_info("MXTAL is %s\n",
--		(val & SRC_XTALCR_MXTALSTAT) ? "enabled" : "disabled");
-+		str_enabled_disabled(val & SRC_XTALCR_MXTALSTAT));
- 	if (of_property_read_bool(np, "disable-sxtalo")) {
- 		/* The machine uses an external oscillator circuit */
- 		val |= SRC_XTALCR_SXTALDIS;
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 18de31889525..c7675930fde1 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -9,6 +9,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/string_choices.h>
- #include <soc/qcom/cmd-db.h>
- #include <soc/qcom/rpmh.h>
- #include <soc/qcom/tcs.h>
-@@ -206,7 +207,7 @@ static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
- 		c->state = c->valid_state_mask;
- 
- 	WARN(1, "clk: %s failed to %s\n", c->res_name,
--	     enable ? "enable" : "disable");
-+	     str_enable_disable(enable));
- 	return ret;
- }
- 
--- 
-2.43.0
+> After this, each watchdog device node will have, selection{offset,bit} st=
+atus{ offset,bit}
+> renesas,syscon-cpg-error-rst-sel =3D <&cpg 0xb04 1>;
+> renesas,syscon-cpg-error-rst =3D <&cpg 0xb40 1>;
+>
+> Or
+>
+> renesas,syscon-cpg-error-rst =3D < &cpg 0xb04 1 0xb40 1>;
+>
+As we already have 0xb40 we can do 0xb40 - 0x3c to get `0xb04` in the
+WDT driver and the same bit numbers can be re-used for
+CPG_ERRORRST_SEL2,  so by this way we can avoid adding another
+property in DT. And I think this works for G3E too?
 
+Cheers,
+Prabhakar
