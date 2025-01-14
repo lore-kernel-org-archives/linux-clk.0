@@ -1,72 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFB51C1AAA;
-	Tue, 14 Jan 2025 19:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3E91FECC6;
+	Tue, 14 Jan 2025 19:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736882081; cv=none; b=pR1ZeQ3jXE1PK/0ZT7GW0iPXjD/9Auq2c6HXH/5nT6iZ4OYccEEBdSc7FhOFYf+7Ufini0bJ8gYaGgEBBSYCnUSPkYSy5AZ6Q7owPTOd7x7PrJMV2O7LPOTtwpodTiWZ8rVC44GceNPg0iYnlwtWEFzYCBZbWBm3nFmBNFs7btE=
+	t=1736884376; cv=none; b=nIA2QefL8za22E46Y6LWQq9Mjq/DQP6sbuTwTXcA3hbvYyEm2So/iKq3AWtZck4tP0TOdNJq6VWjvMsp92CBLTwlmQ21OJGHi5UOczSw759CzclCQIad8FrHmkwh1fyY0Sy1bgyxqRU62l2JfSPigKi/OJ490fjtF2PIBsYx0Rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736882081; c=relaxed/simple;
-	bh=fP/itInBSG8PSfcdMEyH6RRRAh64VeNM6nFr2iArTJQ=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=hqg78Nm7oC6tcbXHSe/BdeDDNGa8CUjIHxPmFD2cD4d4RXrt2SsvBK43Dm1QU/ZDr0AKdVjVwhmiEirq63YsPElzL+ujdyinT2Gfd/0/1QN1RY4J3UmD7WYBHItj/GGOJUvYn6T2Bk++B6/SWHY9PaRfiYkdEukfb/TYhEiAYss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gKFvN694; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736884376; c=relaxed/simple;
+	bh=tFzCEIztKEZ3kBKK0bFyC/nzjd+01xcbW/7eoFlG6DY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LjjHUdj7XihZDuRXGWsUByoZ8Mi/sTEsM/iwuZzC+GvG7zy/o7oOzW2zgrduCCH9ismNrU1/awqVG/G0lotWXMY4DBIBPjDABIE2L3vNXw51xssMARoyd4vmWaqw1wHUbChHSd0MBngKUXlvfxabE//MvDbGgZYnGEw8UsjE1To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AkcU8Cfp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gKFvN694"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F5AC4CEDD;
-	Tue, 14 Jan 2025 19:14:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AkcU8Cfp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64D23C4CEDD;
+	Tue, 14 Jan 2025 19:52:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736882081;
-	bh=fP/itInBSG8PSfcdMEyH6RRRAh64VeNM6nFr2iArTJQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=gKFvN6947mTMc7BQGVtT2n7JLSQl8x/liZ+rLXlS/wxlXjvtxIuA3MDupIi2oHDMu
-	 /nrmx8hJt2QO1DlsJPCxePLg8tIqBJYhF2B2WCJYgAvgEXufyIpJk0Z9phhzL7EiEi
-	 L6nggQrTSRl4gp21VArcMbgPEkmaLYIOB/I1LS0HljtbaCUZawhHMjlYitAQXN7TMU
-	 6RVfpJRyQg+95vSzSHq09rgt3I4Q/kk9sijyFxNhDvIHB/1Wug8SVWEKNqlOpT+0vg
-	 Mi664/1SNXsSiT5Ip83+vcP2q5zHiJ4j2rpN2cAYFXnNtgYAD27efJIzGMgW5TuHmh
-	 LhlfKkbbgEWrg==
-Message-ID: <3043dcc07181dea905f97db93a9eb2eb.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1736884375;
+	bh=tFzCEIztKEZ3kBKK0bFyC/nzjd+01xcbW/7eoFlG6DY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AkcU8CfpStzYxO1CHv2BL2eUQ9p0pg4vOUNoINSSBu9JtBLB8yu6XNT9Yndv2NYbX
+	 HkfswsOjGivQ3792WWlUN9ARVj21u91EVGmVaWk33zl6CJEUOqlblpKKfLotxmAFn0
+	 lD9TDtp8H39JrkR2RU/IJoXwzCshjPCxb0WFazxL3ogASL88nKodW4/n44mHgbOagk
+	 wlFcwm72u8Y02A9zJONQoBA3J8HJC6Nf47Rj/6uRRcUnGXqNU+CXB0I34gdbijS4fN
+	 Z5FtFaLfxG6yyPaZYueo4KWAzWC2WVMZV6dILP5avypfnpCK9M/bGlOyCNaGr/SMbN
+	 vOlo2ZPIp7z8Q==
+Date: Tue, 14 Jan 2025 13:52:54 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andras Szemzo <szemzo.andras@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-sunxi@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+	Maxime Ripard <mripard@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-phy@lists.infradead.org, Albert Ou <aou@eecs.berkeley.edu>,
+	linux-pm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+	linux-clk@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+	linux-kernel@vger.kernel.org,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 02/12] dt-bindings: pinctrl: sunxi: add compatible for
+ V853
+Message-ID: <173688437416.1619259.7363940656037127304.robh@kernel.org>
+References: <20250110123923.270626-1-szemzo.andras@gmail.com>
+ <20250110123923.270626-3-szemzo.andras@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <82e43d89a9a6791129cf8ea14f4eeb666cd87be4.1736856470.git.zhoubinbin@loongson.cn>
-References: <cover.1736856470.git.zhoubinbin@loongson.cn> <82e43d89a9a6791129cf8ea14f4eeb666cd87be4.1736856470.git.zhoubinbin@loongson.cn>
-Subject: Re: [PATCH v3 2/2] clk: clk-loongson2: Fix the number count of clk provider
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Huacai Chen <chenhuacai@kernel.org>, linux-clk@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev, Binbin Zhou <zhoubinbin@loongson.cn>, stable@vger.kernel.org, Gustavo A . R . Silva <gustavoars@kernel.org>
-To: Binbin Zhou <zhoubb.aaron@gmail.com>, Binbin Zhou <zhoubinbin@loongson.cn>, Huacai Chen <chenhuacai@loongson.cn>, Michael Turquette <mturquette@baylibre.com>, Yinbo Zhu <zhuyinbo@loongson.cn>
-Date: Tue, 14 Jan 2025 11:14:37 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250110123923.270626-3-szemzo.andras@gmail.com>
 
-Quoting Binbin Zhou (2025-01-14 05:00:29)
-> Since commit 02fb4f008433 ("clk: clk-loongson2: Fix potential buffer
-> overflow in flexible-array member access"), the clk provider register is
-> failed.
->=20
-> The count of `clks_num` is shown below:
->=20
->         for (p =3D data; p->name; p++)
->                 clks_num++;
->=20
-> In fact, `clks_num` represents the number of SoC clocks and should be
-> expressed as the maximum value of the clock binding id in use (p->id + 1).
->=20
-> Now we fix it to avoid the following error when trying to register a clk
-> provider:
->=20
-> [ 13.409595] of_clk_hw_onecell_get: invalid index 17
->=20
-> Cc: stable@vger.kernel.org
-> Cc: Gustavo A. R. Silva <gustavoars@kernel.org>
-> Fixes: 02fb4f008433 ("clk: clk-loongson2: Fix potential buffer overflow i=
-n flexible-array member access")
-> Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+
+On Fri, 10 Jan 2025 13:39:13 +0100, Andras Szemzo wrote:
+> Add compatible strings for V853 family pinctrl.
+> 
+> Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
 > ---
+>  .../pinctrl/allwinner,sun4i-a10-pinctrl.yaml        | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
 
-Applied to clk-fixes
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
