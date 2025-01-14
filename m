@@ -1,98 +1,102 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1182232453
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 13:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBAF13D600
+	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 14:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736861447; cv=none; b=Qf0PA8NNz6J+w2q//t1TEiOw31MkfdUg/kC6He6pUNnf7NPK5kPUV3+W/srHWsnRFcuRVNoq8wfrs2SfFbmMxWY/CGI8KKeXh9tik3ASmrcJMiQDlJ0Z+USnfdrLDivbyGlpABhNH3RLUKa4ijeLLnZCkt/AAiKHBjm3siZeKsA=
+	t=1736864069; cv=none; b=UXcbNKXdf/E4qgGWZCI9Wwm9gWbYZl2MvH+IHl+XkIrCAT/HNBXskKZuLmx5tQJGMWmD5yRgloEJ9p9UthAPtQpoznNESFrSm675mJOOFNbbIzmixwwdXrtzHcXbmN1gOhVd+B1mob3r82kU6GxAZTUzGJaIH2fyTiTkjJUSCqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736861447; c=relaxed/simple;
-	bh=v+CYuZibBv3r8fvNtfDPDxH9UZrX1j1jONfkBdqEqlE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OhKh0nuR+2/wLll38/w/Cll8GNi/9dw8iOmvlTaIpRRXyJLcvkBuCkqGUG3fImtA9Ko0URz++PYb6MppZ8BT+Jt7nXIvFu5JbPcxm3sv500gcYvilCjCLpjDr7WZ0/w01kIkOKAbahIGE9+tD21xW1VXLYQ0EQ+EfwuoVyq4wEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ZxVsSuT8; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1736864069; c=relaxed/simple;
+	bh=kb+N7KX0rT6TQGPdAoyZC4q4c2muk934hfkb7Zz1PYk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aTWOJKTSJ8mhyvDTyzayqjSd8qqBK1N1/qKwMdhSS5xQWixxYEbObMwal1Vmo7OmhT0BzXUV7tEpObtBV0P6WSEIloTj+BO08DIFwYXtwV7Q8soCr/DBvXVa6TIILzVA8/8QFp0UG1LSub03mljwNN8yzTj/1k1UbNxE/SL7Y34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HQwo7w4A; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ZxVsSuT8"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=DsDqFsKNlq6k5bv26Wc6cezOu7WfsIt9U2WvPdD+fPo=; b=ZxVsSuT8Xs5o8SLdZaOxUY8byS
-	O8m3iIAPaCTgl2t9Qmq0bFUCKO9G5xIfg90xcvw0Ps4SOm9phB5k/2fZzRKMcMKOM5Tzn7H/Dg6Kl
-	ztrb0ZHGDNsDGe/I3IVrnEBqXqAb70NPBLx1fDw6M6gbCM+qAliy8oi1hOH7huKSgEr7S/ddz4sp8
-	nvVKu79sdIugOnd1kUmoqjaBgze1LFLXlvkd2h63/2tok/NbrbIS0LZ1gjjfVU8HxzFtkO3ZJ5voR
-	qDhJDBZHAEqXBHA5pwvY+mdSgdAmvwPy6+8aTvH1zWv4Hv/3CWMHxp6htcNUT/pRchiQZz48WRwti
-	pOdjrTGQ==;
-Received: from i53875b2c.versanet.de ([83.135.91.44] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tXh08-0002c1-EM; Tue, 14 Jan 2025 14:30:36 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock changes for 6.14 #1
-Date: Tue, 14 Jan 2025 14:30:35 +0100
-Message-ID: <2020465.PYKUYFuaPT@diego>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HQwo7w4A"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5401d3ea5a1so5494088e87.3
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 06:14:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736864066; x=1737468866; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kb+N7KX0rT6TQGPdAoyZC4q4c2muk934hfkb7Zz1PYk=;
+        b=HQwo7w4Au6FKAwDGBLwwBdFLw/dJRQH4WnJvHHPxUHvpqpe3esDAhBJLm4oGkHav0K
+         b35V32MSFWokv2mc7zfbyIXx6vyal33Yms3txIxI7oyasTbRp0DvJMV22rQX6Dn0Jod9
+         S74LKAJ852hiIeWQA/rdMM+QIMyjs0H1W101J0dr1vOo6P6FgNrSHIJy3K53G8VFssT/
+         0CC2SfeOnVn7wRmm0dLwacNoInM0KzLPobUTsBdOk+aRKXBrB/mdxGH9CUV4Tirozm87
+         ZIWxTuPAatznJoe2hbJRSWS18U9JLutgn4hbEoZKFb5ZzKC+p7Yyq+AFsBQ3d5ZkKHbF
+         9ANw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736864066; x=1737468866;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kb+N7KX0rT6TQGPdAoyZC4q4c2muk934hfkb7Zz1PYk=;
+        b=G+AuSWPJVMJyuuGP1zXuc5BLgM339znm4nCGi+UrN5Iu7Dp3WyD2zRdnaa35+90/ea
+         3Z5izycf1kpGm5vRxLBpfwwDiR3x/QURvrbU9abMYmSfDuJqlp8uTrqoSYFqnnOyhtIs
+         r06swHxQG6a73xXo5HavMTMX7OPsMaHp5xjxVQ2drWKIB3dHeXoJImnoSJ1LXITgG7gs
+         /K725xXtsFjNPdVb+p7AfoUcRmSOKsTjA//ugIhcz6EXt7k9Ul7KWARYWDTKl59AIJWj
+         mcChHV8X1i4eIZU5RibjuMrAZ9aDaRigKt6Al2CVb4WIQGPs1KsrfjUNfu26Ij19+Sp3
+         ovDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhd9E8lpOKwqFaxxez18nmakq8sBAZtor5GHGHXCHV9XQTOZNTFyVBF3kMOdmHXMO0dEM8ujLXC5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVpunqDTG2KoIQEkBFsijyNHv+YaBDMI7bgucD3pBFtz3Lh/vx
+	RMq3bKqjs17Qk1nosqAS701Vr4vUNxFYThcdjDe8NqrocFQPgE7ArI4RgowZ6ZDhLMwvnoe+1Vq
+	bmvwxIc3t8EiiaqMhdb4D3pkNZ2vxMQuGLZyyMQ==
+X-Gm-Gg: ASbGncsKvLMrM3NCu6wHFRd15TvtW2yx95vyRij0m2O6gX2iPrEo/lDnpLO4ffDJcHX
+	9EoV/2dBi+TY1UsP3GMpQXCc4J3YrYSCe09NB
+X-Google-Smtp-Source: AGHT+IGQT/qQTanY0VeTmw14H4V1Aaz+aOnG3UKuUwYfMTsXxCW542oDFqS8vWTFAvYHrASeV6/2sAbC1dUoPYmd1+8=
+X-Received: by 2002:a05:6512:104b:b0:542:8d45:cb3e with SMTP id
+ 2adb3069b0e04-5428d45cce2mr7226522e87.18.1736864066034; Tue, 14 Jan 2025
+ 06:14:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20250110123923.270626-1-szemzo.andras@gmail.com> <20250110123923.270626-4-szemzo.andras@gmail.com>
+In-Reply-To: <20250110123923.270626-4-szemzo.andras@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 14 Jan 2025 15:14:14 +0100
+X-Gm-Features: AbW1kvZbpuLPblFhcOWb0pAf-vXkkjGwXrNgVmso7Oy8q5LSTsj10tRLuD4ySG4
+Message-ID: <CACRpkdaz7ABO2QQwv1NFaPm1dOF_maO-bxWQdPNoYAmUXDKCDw@mail.gmail.com>
+Subject: Re: [PATCH 03/12] pinctrl: sunxi: add driver for Allwinner V853.
+To: Andras Szemzo <szemzo.andras@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Maxime Ripard <mripard@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mike, Stephen,
+On Fri, Jan 10, 2025 at 1:39=E2=80=AFPM Andras Szemzo <szemzo.andras@gmail.=
+com> wrote:
 
-please find below a pull-request with Rockchip clock change for 6.14
+> The V853 family has multiple package variants, from BGA to QFN88.
+> The latter has co-packaged DRAM and fewer pins, and less features (pin mu=
+xes).
+> All family members can be supported by a single driver, as the available =
+pins
+> with allowed muxes is the same across the devices.
+>
+> Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
 
-Please pull.
+Looks good to me, waiting for a review of the bindings before applying,
+but I see no problem with the patch as it's just using the core sunxi
+infrastructure and any minor issues can be fixed in-tree.
 
-Thanks
-Heiko
-
-
-The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
-
-  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v6.14-rockchip-clk1
-
-for you to fetch changes up to cd8b5366636bdff0449b789fb2d33abb20804255:
-
-  clk: rockchip: rk3588: make refclko25m_ethX critical (2025-01-09 16:23:32 +0100)
-
-----------------------------------------------------------------
-Real handling of the linked clocks (clocks of the interconnect port a
-peripheral is connected to) on rk3588 using pm-clocks, allowing us to
-stop marking them as critical and one more rk3588 critical clock, that
-the kernel cannot handle otherise right now.
-
-----------------------------------------------------------------
-Heiko Stuebner (1):
-      clk: rockchip: rk3588: make refclko25m_ethX critical
-
-Sebastian Reichel (5):
-      clk: rockchip: support clocks registered late
-      clk: rockchip: rk3588: register GATE_LINK later
-      clk: rockchip: expose rockchip_clk_set_lookup
-      clk: rockchip: implement linked gate clock support
-      clk: rockchip: rk3588: drop RK3588_LINKED_CLK
-
- drivers/clk/rockchip/Makefile     |   1 +
- drivers/clk/rockchip/clk-rk3588.c | 120 +++++++++++++++++++++++---------------
- drivers/clk/rockchip/clk.c        | 102 +++++++++++++++++++++++++++-----
- drivers/clk/rockchip/clk.h        |  40 +++++++++++++
- drivers/clk/rockchip/gate-link.c  |  85 +++++++++++++++++++++++++++
- 5 files changed, 288 insertions(+), 60 deletions(-)
- create mode 100644 drivers/clk/rockchip/gate-link.c
-
-
-
+Yours,
+Linus Walleij
