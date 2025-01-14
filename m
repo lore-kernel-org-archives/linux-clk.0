@@ -1,172 +1,168 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC061CBE95
-	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 10:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B69A284A73
+	for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 10:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736849623; cv=none; b=qPXzASQIpN8ExVttr3f4Atl5JNd0m0AY6OY3g6XRXz5hYa8Wnkd+hub9ojdNpxinVnB9txSY9DYUA/hGF/RdxPEZS86vwTHu9E7n1aId7Ii0rWATf3Kn2GKw5GxD7lw7jjWTnv1zwlVHKLGzTLCfRMqHU5k1BQkTe1vUB0j8AYk=
+	t=1736852184; cv=none; b=mzSs2D/Oxn8uhlVQGfAwy+y08NNN12pXxMOJw66D0EznM7chNIuj6Innb9Ma7N5u751Koh9QT1GGAZCegcQbyXB5c4uXUB7hhScl9HOk4KvK5FifuCsrANNEXPvEKz+6NzW2++wJYzdu74RIvdXLB/899kNWCtCio7bTyG5CAic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736849623; c=relaxed/simple;
-	bh=hojoz5ADLQZcF7RdxfDDw+2MzJAaH5RmDGnu56q01cw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MuGuR+tel0TPcxnrWPpJLXfBjzGPeDm1dUt6t9BIO6Vb7YCEp11kdzBRmoCGOMKkhD2JOOSEuMLsAB1aShC8urnCGvcAaUdPa+NlXXc53s/tbaFIlSldmdBm5aconFPe/OLi1KweLi/a9PMQ4sb+5IhanOhyp265UHjbg3jBynY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LYLxlR76; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1736852184; c=relaxed/simple;
+	bh=1hmd0MyMkQMTbVa+ERj+P7pc6GuuTSoTkyZlJUbbMm4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d4uwA0y76Ah4qQunnMIZ1TjaxmwS0DiBFywYp84Q0dyXacFd3JcGMrqPkj3L80/kZza7t90f5XhUBTOveMB+9d2zdBkR8nwdfMeALqpm04Mtv1ki2ZTAFIlzR4v96pAiU5pxC0ooDTk5E3brTwkd+OXoI1kyom+SUWqq7ifPtFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f5FDdLXo; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LYLxlR76"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa6b7f3c6edso82192066b.1
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 02:13:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f5FDdLXo"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d44550adb7so898762a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2025 02:56:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736849620; x=1737454420; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=onDwLQJsnBJFPmm1fOiNWOV2V2/OfeEnsevme4QIeyY=;
-        b=LYLxlR76LGWu4mV5ZOBsJocAWkkEwPTtwLg3fghWrQirIjwvNzn14d7J4s3KMxct3T
-         yEZSOXXGAOcdcOICGX8EnfY/+r2TE0ZiSBnQd41AIYwTcm5Y+m/mdHwrGMhnOPLP9a8F
-         nSTLPG5qQNkb5sx3lVrI3twUd1UfGoAxFzAdUhJOfU/0XdozuCogm2lkju98eaxtjlV/
-         xwnMUdElFweW9R1rAXfEhBBa4nS5+5EiDFCamlkAMcsSB/ZW0vqwlEzFbv8PYTS+QoYn
-         NmnfHdc6ZqQYH54uC/n9dwh6mvfR9HkhzoXQOsuTNgIIG2+orrHniuaCX6oLGVWxh9oz
-         UZfw==
+        d=linaro.org; s=google; t=1736852181; x=1737456981; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4rykRosxrDs/XntXu5KrgDY2INQy7eN85k18sGRgzP0=;
+        b=f5FDdLXonOBBHHvU0zNmU8Iym2H6Vtvd2uzzv/6zFLrctZHrD4eAeN8x8QX89tsEm6
+         eI3m+b4hdj70m48/PTE+U0UCXObdbCU/XkjrcZXBllXxroT3qnk6yqPrcHwPHCJAjEfW
+         AzHROU2FLa6R4Zns06G77F/m0x10eXB8FzH99KePn7F5DYlon+wcj0ly/9zhOFaYbvLF
+         XQMtJRX8KglW1S4wgozQN5bgB01wnhmWi4KrzpQYw4AXndz/sIlPhTgLTwkAX7pq4552
+         FEqxJnIClsstOh0Ti81gDXmvc71NH2tufJb/3FX9E60IEU8w4il1KLp3ZNA2sIs/r/tW
+         0Djw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736849620; x=1737454420;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1736852181; x=1737456981;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=onDwLQJsnBJFPmm1fOiNWOV2V2/OfeEnsevme4QIeyY=;
-        b=oUzktVi79lSn2O915XIjUUEM6UusbjP8/3Rv+ERIoeYJBSP1d7b+BZap/398Un745s
-         a376hhu1zzegvcNxZHcqYCPjTymUqHJ6GsP+ovW3YBh1efii2GjTUV/uJUWoBqHAgSmr
-         BhTHhybGtytj/ltRZ1lXTKM2M3gAZ5vWXE8ARpJqvMkfHTk7l25PrA1QK8+qCOGFVqaL
-         ktGxX+h60JQoqwBs7G+ziOxBNFooqZAzWYPkRYCblvqIGghmTj1o2r1Eg/BEIrKZ+V3y
-         9nYuOSW0ksnrt4gknmQbG0EUKQ4bWWgfO/d19PS8HQQRQeSsuJq4zHtksyDjF7LoJlfY
-         G+0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVq3YAIZ2ROoDaHaClkZT0Fbg90ouyrqYdCXvL/k6G47bcR1jevHifaS658mIyj8O1+LRtR2ve/UmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdrRXPfh28MykQ41/iHL3AFJXPpvJmGKJTFR5AIWvOMGlUPtCn
-	17JDBouChtlWq74I+UCx1eVH1LXTOhlqcvZcEQxqEiHSTKRhj5x/i5a5djSz6t4=
-X-Gm-Gg: ASbGncsvDzfXZji6hSBq0Q2ZTyln3ZGgUGZBOLphK5KwYIcOisUhAWazOdyfRFcmoW9
-	RoL85ixH683co3m9Bh9LdaintcJgx2EgEmYIFSl4Vbn+cOrqEqdJGTYJwmMAospS3J4b+S6k0FP
-	b8RdeeQljV6lEBCaI8bAvRicK2NUBRmD+Kqv0kx9RA1Fpi3LHkq96a5//oZphXnFKndVoObkCBf
-	K5TsTZgPD4RDJcecc3c4YUMWY3nR5Lz5VmE+NvdAnhI1XnybrZtnljs2AqesmDxuZNLxjrak6+D
-X-Google-Smtp-Source: AGHT+IGgnkpVyamMUhyft+dfggczs/yHwby6IDz6TiynQnKUxT5g12HieH3ic3vi60H6gnSWHwhdkg==
-X-Received: by 2002:a17:907:9621:b0:a99:4a35:2400 with SMTP id a640c23a62f3a-ab2ab73bdccmr944668766b.7.1736849620286;
-        Tue, 14 Jan 2025 02:13:40 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c95647absm605929966b.118.2025.01.14.02.13.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jan 2025 02:13:39 -0800 (PST)
-Message-ID: <581275bf-11f3-4a8a-8e58-75b00c515c79@linaro.org>
-Date: Tue, 14 Jan 2025 11:13:38 +0100
+        bh=4rykRosxrDs/XntXu5KrgDY2INQy7eN85k18sGRgzP0=;
+        b=c5LrYUQRFu/UIWok8oYLMrZ3IC3GvTLBON2GKJ9OXqO7/+DAGC4SHD3qJsv9sjJ0x4
+         88jJUpKjxpaOkVSpHpiAdT4OhDtF/V5TQ6TC5PaY0T6t/BkChKxgy+nmYGDc10Mao+nI
+         AYIqBHq1qALA40pwnJmhBUFVcMhGO+VeMt9SvkLoRVifdtVQ4w/fO8/8/hs4c3+4lUU4
+         kbV4mW23Sps58v0lt+eKj8MNJlZN7kMAThUG0ygVMAmDDnRI03PFJT84+LytJKRXylz5
+         S5F1XLbgNrzE6519vgEjzMWaAF2UYUxR5oPW93tu7JnjV+QRZprXBhMEgGw+6nY86Sg8
+         8h5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVkW9FE3wJ796LD3fwLbL/5mJTD+9icpv7qVbkTNP+7CK0Pz4JSPnHFsLPaSID2Nk9IxppMs0cRmlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCLehIJvYOKLcp4QWzmdwpG/2Y7s11z39xF3qcFJkalnCBtw64
+	/4d78d+O2LpKaUjjsVqQcNdYXXbhZ4DKJHsNEcPO7vJ7FaCzQEQ5KYtrcocXYMY=
+X-Gm-Gg: ASbGncuBNNhaipDM8tGcaKBSOE+f3EpddoaIOOk65vAnAXwmAB8eZX5PcndtlV8zJ0r
+	mjuMj+xBSYmGNyIx64cbGFJ9a8JzXjOiFCWQNzqHGYSBOnUAnG3aOptV3h6vE8Xq17M2DFI4f3B
+	63H7mcT+uch2euBhpTz/3G+jx+IUdY08QUVar2yWh4il6pCvOcR5/HrRcF/wlfQwLDu4TVPuJX1
+	qLKyTmm7TtgcTsX4v/hdx1acnGAsAq77moCRoYMWbJ+FOVyvVKl/IpRL8Vz3tpJtHyBwec=
+X-Google-Smtp-Source: AGHT+IFVeBR38XvGrfM1ABZ8o3cSy39ubNwiQmJTMlI/28V9aP4xs9GINfaB9e0nRKdDsH7KYOVo0g==
+X-Received: by 2002:a05:6402:1f4c:b0:5d3:fdf5:4b28 with SMTP id 4fb4d7f45d1cf-5d972e88f88mr8233931a12.10.1736852181413;
+        Tue, 14 Jan 2025 02:56:21 -0800 (PST)
+Received: from krzk-bin.. ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d9904a40e8sm6118257a12.76.2025.01.14.02.56.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jan 2025 02:56:20 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] clk: Use str_enable_disable-like helpers
+Date: Tue, 14 Jan 2025 11:56:18 +0100
+Message-ID: <20250114105618.273302-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: convert stm32 rcc bindings to
- json-schema
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250114091128.528757-1-dario.binacchi@amarulasolutions.com>
- <20250114091128.528757-2-dario.binacchi@amarulasolutions.com>
- <79a90c01-9e21-4e3f-a334-6ba9e1df4150@kernel.org>
- <CABGWkvofUphcXTwBS5UBEoQ1GYpngP7gWi9Ax=WW28XKK0qoYA@mail.gmail.com>
- <54b63cfc-7a51-4b69-8b32-eb7591b2169b@kernel.org>
- <CABGWkvrYUU=HAh4uYNpZSpzeyanfp5a_xjK_178ftQyDKH=cTg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CABGWkvrYUU=HAh4uYNpZSpzeyanfp5a_xjK_178ftQyDKH=cTg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 14/01/2025 11:00, Dario Binacchi wrote:
-> On Tue, Jan 14, 2025 at 10:48 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 14/01/2025 10:36, Dario Binacchi wrote:
->>>> Nothing improved here.
->>>
->>> In my humble opinion, there is nothing to improve. Any modification
->>> made causes the tests to fail.
->>>
->>> $ git grep st,stm32f746-rcc arch/
->>> arch/arm/boot/dts/st/stm32f746.dtsi:                    compatible =
->>> "st,stm32f746-rcc", "st,stm32-rcc";
->>> arch/arm/boot/dts/st/stm32f769-disco.dts:       compatible =
->>> "st,stm32f769-rcc", "st,stm32f746-rcc", "st,stm32-rcc";
->>>
->>> Or am I missing something?
->>
->> How can I know what you are missing if you do not show the code?
-> 
-> Sorry, but I still can't understand. I run multiple tests, trying to
+Replace ternary (condition ? "enable" : "disable") syntax with helpers
+from string_choices.h because:
+1. Simple function call with one argument is easier to read.  Ternary
+   operator has three arguments and with wrapping might lead to quite
+   long code.
+2. Is slightly shorter thus also easier to read.
+3. It brings uniformity in the text - same string.
+4. Allows deduping by the linker, which results in a smaller binary
+   file.
 
-You don't understand that I cannot improve your code if I do not see the
-code? So let me rephrase: In order to tell what is wrong with some sort
-of code, I need to see it. I cannot tell what is wrong with code without
-seeing it.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/clk/bcm/clk-kona.c  | 3 ++-
+ drivers/clk/clk-nomadik.c   | 5 +++--
+ drivers/clk/qcom/clk-rpmh.c | 3 ++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
-> modify things
-> based on what I understood of your suggestions, but the tests failed
-> every time.
-> 
-> Could you kindly provide an example of what you'd like me to do?
-Any qcom binding? Any other SoC binding with multiple devices?
+diff --git a/drivers/clk/bcm/clk-kona.c b/drivers/clk/bcm/clk-kona.c
+index ec5749e301ba..2b0ea882f1e4 100644
+--- a/drivers/clk/bcm/clk-kona.c
++++ b/drivers/clk/bcm/clk-kona.c
+@@ -10,6 +10,7 @@
+ #include <linux/io.h>
+ #include <linux/kernel.h>
+ #include <linux/clk-provider.h>
++#include <linux/string_choices.h>
+ 
+ /*
+  * "Policies" affect the frequencies of bus clocks provided by a
+@@ -502,7 +503,7 @@ static int clk_gate(struct ccu_data *ccu, const char *name,
+ 		return 0;
+ 
+ 	pr_err("%s: failed to %s gate for %s\n", __func__,
+-		enable ? "enable" : "disable", name);
++		str_enable_disable(enable), name);
+ 
+ 	return -EIO;
+ }
+diff --git a/drivers/clk/clk-nomadik.c b/drivers/clk/clk-nomadik.c
+index 06245681dac7..f3a73ac5a1b9 100644
+--- a/drivers/clk/clk-nomadik.c
++++ b/drivers/clk/clk-nomadik.c
+@@ -17,6 +17,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/seq_file.h>
+ #include <linux/spinlock.h>
++#include <linux/string_choices.h>
+ #include <linux/reboot.h>
+ 
+ /*
+@@ -116,9 +117,9 @@ static void __init nomadik_src_init(void)
+ 
+ 	val = readl(src_base + SRC_XTALCR);
+ 	pr_info("SXTALO is %s\n",
+-		(val & SRC_XTALCR_SXTALDIS) ? "disabled" : "enabled");
++		str_enabled_disabled(val & SRC_XTALCR_SXTALDIS));
+ 	pr_info("MXTAL is %s\n",
+-		(val & SRC_XTALCR_MXTALSTAT) ? "enabled" : "disabled");
++		str_enabled_disabled(val & SRC_XTALCR_MXTALSTAT));
+ 	if (of_property_read_bool(np, "disable-sxtalo")) {
+ 		/* The machine uses an external oscillator circuit */
+ 		val |= SRC_XTALCR_SXTALDIS;
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 18de31889525..c7675930fde1 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -9,6 +9,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/string_choices.h>
+ #include <soc/qcom/cmd-db.h>
+ #include <soc/qcom/rpmh.h>
+ #include <soc/qcom/tcs.h>
+@@ -206,7 +207,7 @@ static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
+ 		c->state = c->valid_state_mask;
+ 
+ 	WARN(1, "clk: %s failed to %s\n", c->res_name,
+-	     enable ? "enable" : "disable");
++	     str_enable_disable(enable));
+ 	return ret;
+ }
+ 
+-- 
+2.43.0
 
-Best regards,
-Krzysztof
