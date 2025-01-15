@@ -1,161 +1,87 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E34234CEC
-	for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 10:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A784023F28F;
+	Wed, 15 Jan 2025 10:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736936646; cv=none; b=SEt8Qvob8xwFRVCnGkRekDTwLNiomc8WHX4jDIt2LioB2DP5P1M39tU8lXHRdoSOi0TJDWTDBayh6vrqrqPNmKSew30joeQ39qcOV0sK84/m1+U8Q+WWvfrY9HxthFLDkxCi/tRsMgauAYGzPzXbLJFmDzJtV7oC73HLVALuHvc=
+	t=1736937570; cv=none; b=QSD+8tle7/Ox2Y+5C+5fA19O+zrpBb76G5HOB29y7hgnUCjPL0RCxn7unqPv0oLMZbxp+0zs9VragUKWS9J3UT1vRiDuGTLQcZeK3tEhX2dCE6tYaSCwxdHYSxoIGcAsVp5ASxEJQKQXxBK50EE6N0Uvg9u3jLcqxOpn0KTcvt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736936646; c=relaxed/simple;
-	bh=Vts8aji0Ex50TPGXhf8sIPh7B0rC3S22agQ3oVPxtuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o+Gv4iu1OyF+TDxWIGasrJPGzlIBlAWS1bwPZsLChEjnS9kAtHRmz9aemq6X0rq/G0cntKW6oh9N9g2P6TxG0uIYXLdxSZup4ZLaAaP4bN5KZB5xhv88p6SmHz9Au2dKy5GsuRPXJgkkw5EWHUtvP0nQ2NBNp33IF2g9LHT+yeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kIda5TE8; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kIda5TE8"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3061f1e534bso29257331fa.1
-        for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 02:24:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736936642; x=1737541442; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AjuDDA/yi8Mfj7zbd5ybLmAd4yGE7SYSfzfs6+hwDoA=;
-        b=kIda5TE8wGtKn9sgO95fnAKGDuB7oSsKGCClGjpJHnUjlzKw6Q3iIkmJJlh2Mbb4HC
-         jfQcadZP0DYXnJg/WB2/FVDEumIeUFKUhVf7x81q4kUr/I3SMVcp5se0OpUUlpkQMLO7
-         P8sgNjgDuq9NHzX71EUZq6vMcNdwIdSAeQ4MBCoqSfIAqDfhFIl3DXhxC/OEki2LKx5y
-         BtBgNVr6EIIQs88h8iXmjzsArDmgw30He18Yr4w9UTfG6luyEA5woO7ZhgAt55fMXB4G
-         85k3auIfKdQmGMgfdpEy9OfylmnK2/cl0vNYKN+d03IHdqy8yPBhCSHWEIPolQypsJeD
-         7I3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736936642; x=1737541442;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AjuDDA/yi8Mfj7zbd5ybLmAd4yGE7SYSfzfs6+hwDoA=;
-        b=jPlKzHOfUEe49PisFvQlUZZvUF8Txcjx6rzYUk9xOJLJiVifZ8Xed8zrsLbh84eTGi
-         85eZ41Vi2MgJhKGBbDKLb27u1v4XYH7FvVlcGRY2/HsO+PaPMHqKg4fclYiTVOqruGDK
-         CuWQxanobS+3JQhxtLTXXuHgiMs8o7JwFJ8fkzIa+abZ3rQLcZjGMVQO1bEmgwB/wmWf
-         OX95YOmvwxMw4Wh9+XEt3doTKMGTq/k2Fh3iduvtZ2yrCjW7TnkZanvJUDJqrSqELC1y
-         KjJ21RUOlrtVFUnVUaKmPXVi2Ch9Y7GDbdiulD72fjsGaYzxyY5GUePY+DvICRF0JcKB
-         wRSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV86E1kwDunn5qnAFXYoVhGgZWM6hqGGHtrVueKfW2WIV2gy5jv1x0DaAhGy2NH6t0ClSgOXtdUWSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2sy7X+1etCB3mv1wKft8oerz/R1hOvbaqGA7KiWqe7kc9xwgF
-	jgylAmH9Tp8P0xLBcNM8O4nTBRbEniueylr8cAd8JRlLCalr6iemqlef6BiJjhA0HBKb8u+W5UW
-	J9QZDcNZmQF6tG7sguNahR4mH+IfncnMvqJ06pw==
-X-Gm-Gg: ASbGncsxzFxdyDzBD27ThdpFbeV9hsdaNGVVc8y7q5RXuJvyuc0fzZqO9sBOUQOKNum
-	0sctSRNWFKhEJzeiYCsNHTKgeS5oFTzFFafCPxg==
-X-Google-Smtp-Source: AGHT+IFa4MDYjg2TaeSyPhVd+uFI72e9/zbKAp/MLgh6iKYqJ4fsconYWJROEaljs/Hlt1y7e8hWcLbxXAs4QRl/Z8o=
-X-Received: by 2002:a05:651c:546:b0:300:3a15:8f22 with SMTP id
- 38308e7fff4ca-305f45a1d53mr103210261fa.21.1736936641947; Wed, 15 Jan 2025
- 02:24:01 -0800 (PST)
+	s=arc-20240116; t=1736937570; c=relaxed/simple;
+	bh=TEXTi0qJl7ziLfY2MaOotrCEUds7SJrmMeoeLYcqFSw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=naM7ewtuREHMwkLhd1W5913Onw8UtCHj0r6B+WezD+dnxUY4+T2jmWPtfxO1eEYcl9vMNGU9G2FHqx/4Vi4dFVHcYNE7utxPrrAzyB/bJMkqZO1vDAlwbPOjuAhqO4c+s6tbmj7W0JqqHez4MzlfUCu6rYR0/bm4MWgItG2qxl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: /X2sKBT9SYKwbr2I5+IsqQ==
+X-CSE-MsgGUID: WUNVXWcaQCaEt8nn06ekbg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 15 Jan 2025 19:39:22 +0900
+Received: from localhost.localdomain (unknown [10.226.93.251])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6C1CA422D9B1;
+	Wed, 15 Jan 2025 19:39:10 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH 2/5] clk: renesas: r9a09g047: Add WDT clocks/resets
+Date: Wed, 15 Jan 2025 10:38:51 +0000
+Message-ID: <20250115103858.104709-3-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250115103858.104709-1-biju.das.jz@bp.renesas.com>
+References: <20250115103858.104709-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250110123923.270626-1-szemzo.andras@gmail.com>
- <20250110123923.270626-4-szemzo.andras@gmail.com> <20250114141954.2785879a@donnerap.manchester.arm.com>
-In-Reply-To: <20250114141954.2785879a@donnerap.manchester.arm.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 15 Jan 2025 11:23:50 +0100
-X-Gm-Features: AbW1kvY9UIu_hIL2n2uWJ6IEfQySNpBxaxTILzVXzQ1Bv8Ht8eyLtJ6PcP46pwQ
-Message-ID: <CACRpkda0nx3SQtdjmXdCEbVJSWM10TM=p-6JbDjbiYcOSF5PxQ@mail.gmail.com>
-Subject: Re: [PATCH 03/12] pinctrl: sunxi: add driver for Allwinner V853.
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Andras Szemzo <szemzo.andras@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jan 14, 2025 at 3:20=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
-com> wrote:
-> Andras Szemzo <szemzo.andras@gmail.com> wrote:
+WDT0 reset is for CM33. Add WDT{1..3} clock and reset entries.
 
-> > The V853 family has multiple package variants, from BGA to QFN88.
-> > The latter has co-packaged DRAM and fewer pins, and less features (pin =
-muxes).
-> > All family members can be supported by a single driver, as the availabl=
-e pins
-> > with allowed muxes is the same across the devices.
->
-> It depends a bit on the outcome of the discussion on the A523 pinctrl
-> driver [1], but I think we should use the same approach here (and for
-> every "new" Allwinner SoC coming up, really): put the pinmux value in the
-> DT, and get rid of this entire table altogether:
-> [1]
->
-> The SoC specific pinctrl driver would then be very small ([2]), so this
-> pinctrl support patch here would actually become much smaller.
->
-> Just feel a bit sorry for you having created this table, in a tedious and
-> eye-straining exercise - been there, done that ;-)
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a09g047-cpg.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-It's pretty stressful for the pin control maintainer as well.
+diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
+index 536d922bed70..1886eab9ef9e 100644
+--- a/drivers/clk/renesas/r9a09g047-cpg.c
++++ b/drivers/clk/renesas/r9a09g047-cpg.c
+@@ -92,6 +92,18 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+ 	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
+ 						BUS_MSTOP(3, BIT(5))),
++	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13,
++						BUS_MSTOP(1, BIT(0))),
++	DEF_MOD("wdt_1_clk_loco",		CLK_QEXTAL, 4, 14, 2, 14,
++						BUS_MSTOP(1, BIT(0))),
++	DEF_MOD("wdt_2_clkp",			CLK_PLLCLN_DIV16, 4, 15, 2, 15,
++						BUS_MSTOP(5, BIT(12))),
++	DEF_MOD("wdt_2_clk_loco",		CLK_QEXTAL, 5, 0, 2, 16,
++						BUS_MSTOP(5, BIT(12))),
++	DEF_MOD("wdt_3_clkp",			CLK_PLLCLN_DIV16, 5, 1, 2, 17,
++						BUS_MSTOP(5, BIT(13))),
++	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
++						BUS_MSTOP(5, BIT(13))),
+ 	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15,
+ 						BUS_MSTOP(3, BIT(14))),
+ 	DEF_MOD("riic_8_ckm",			CLK_PLLCM33_DIV16, 9, 3, 4, 19,
+@@ -118,6 +130,9 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
+ 	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
+ 	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
+ 	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
++	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
++	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
++	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
+ 	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
+ 	DEF_RST(9, 8, 4, 9),		/* RIIC_0_MRST */
+ 	DEF_RST(9, 9, 4, 10),		/* RIIC_1_MRST */
+-- 
+2.43.0
 
-From the subsystems point of view, groups matches to functions by
-strings is the best. ("fun1") + ("group1", "group2"):
-
-pio: pinctrl@1c20800 {
-                        compatible =3D "allwinner,sun8i-r40-pinctrl";
-(...)
-                        i2c0_pins: i2c0-pins {
-                                pins =3D "PB0", "PB1";
-                                function =3D "i2c0";
-                        };
-
-abstract, strings, nice. The driver handles the particulars.
-
-That is like so because we are designing for users which are
-let's say customization engineers. If these engineers jump from
-project to project matching function strings to group strings will
-be a common way to set up pins, and easy to understand and
-grasp, and it makes the DTS very readable.
-
-Then there are the engineers creating the pin control drivers,
-and they want everything to be convinient for *them*, and they
-think an opaque hex digit in the DTS is perfect at times, thus
-pinmux =3D <0xdeadbeef>;
-
-Mediatek and STM32 made a compromise by using pinmux
-and adding some macros to define them so it looks more
-pleasant:
-
-      i2c0_pins_a: i2c0-default {
-                pins-i2c0 {
-                        pinmux =3D <MT7623_PIN_75_SDA0_FUNC_SDA0>,
-                                 <MT7623_PIN_76_SCL0_FUNC_SCL0>;
-                        bias-disable;
-                };
-        };
-
-At least the bias control is using strings, this is nice.
-
-So I'm mostly fine with that as well, but it can be pretty
-heavy on people coming from the outside, asking us questions
-like "on MT7689 how do you mux pin nnnn to function yyy"???
-Well I don't know? Some MT7689_PIN* macro I guess?
-
-If it was just strings I would know what the
-expected behaviour and looks would be at least, then the driver
-could be buggy or missing things but that's clearly cut. That's
-why I prefer the strings.
-
-Yours,
-Linus Walleij
