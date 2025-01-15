@@ -1,59 +1,61 @@
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054308493;
-	Wed, 15 Jan 2025 01:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79AD4F8A0;
+	Wed, 15 Jan 2025 01:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736904401; cv=none; b=BN60JayRT5mKsKkYVH/AWgVVxNUDNgHC0oPW1Dsf5JcikXdD7MeRoRva8U9izORk+SjE2OlIEp9X/Zih+Bm3tcjrty29MFktmTOq+JeCl9befOtggKUUgGuc0iUg9+d0npbgX4kMQXFbWU6zF5zOfrAXzBjtoqoWWq7QvrpegMc=
+	t=1736904404; cv=none; b=EX74QdACVrwvNPxQgJG4EHEY5aeqyuWKy0sKWDn1d47svyEl0tfPaPuuQsYsoVfAYw0Xchz0o9zQrm7YXI173RMVgmBClUbUHsplgimZOrw5eDnCfktILh+kaQnaEoQivpdH8JOvoyQ4Te2TKa8lcqImFZ4yVqZOHhqhuYpjDNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736904401; c=relaxed/simple;
-	bh=IFtlo0+ZAvHJKhbaxfhDoG298UPSqKuepFwWHNIbYUo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rqUZsX8zhDLl2pZDQKS2bDR+xFk2D5CRfZrlTECLH5GFBJTAdLUEIhTJwnIGh3j+Ra58BT0XLT/vCPNFcYP67QGu6+9fyx1s186Sv7OICVJnNL+MluSIZ06LY3b9nerKGkLWPsCXuiipHfKRhWuQkiIhkyFfMnsPBYxjDHBVe+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FkaxjCb2; arc=none smtp.client-ip=209.85.160.174
+	s=arc-20240116; t=1736904404; c=relaxed/simple;
+	bh=Kt3285kcFQ7xUZscpN/vr7QN13NC5mXLe1j/veh3/ug=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KwUu6j6USuTyamGrCrrkiGA8xDZA4j7va8nFZLpWuL65gqc/aT7TKMS+PJUus2e/QhfDhjV9WKCmPrSNZbO/HijpMiH8w9GyuxtF580s/Ia0jnpY90htK02lWICBCiI8fXtWme2G8WotOcgzJah8wLTKQJxaqXo3vex5BCf3rpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VVNMR9pc; arc=none smtp.client-ip=209.85.160.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkaxjCb2"
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-46788c32a69so76037631cf.2;
-        Tue, 14 Jan 2025 17:26:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VVNMR9pc"
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4678cce3d60so59701531cf.2;
+        Tue, 14 Jan 2025 17:26:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736904399; x=1737509199; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zxKAeTboBvObYWkDQ0AR6zNtcZLXj4I4J7ZDM4Fl16Q=;
-        b=FkaxjCb2wOlp8KPBYTCCXFGnkgYNyFrt3KveYB7KhP3UaUFFcdakPEeNqGb2XjT7c9
-         i4h6E29ctSUyezeCScC74ZOfi6tQzDKvuHj7eQ3FPf/LgpEJWFr0v/za3BM/ywlXatkQ
-         C06sn1TwBWOXBKxk9hVU79tMawW/0eCIsNann1QGIJUlzS+6SDJ2upxg1Csbe/PVJFf9
-         o0sK2jNC7CIeMPEObsuSbBLot2nVL/6W+JMWaGYHT5lwu7B2cl4sP8pADtIU+bL+PbNJ
-         WnBXYOKKUK2MZu2VvoM5GD6gZYzk5nHweNEdtBcAFBTAAjFuFwvxdyLtCtI5hKXiu8pw
-         6YfA==
+        d=gmail.com; s=20230601; t=1736904401; x=1737509201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TW/78u/K4Tk/9Y6Jt2yXAKfWS6TVs/Gwl1yC2tUVx0I=;
+        b=VVNMR9pcp2UoGARzLXfK6fdaUVCOWa8XkYHEIN0UkoO4iHx+9Q2o9Yv06yXzFi1c4q
+         e2yYGzcpIifsm4bSjHNYRnkTE/AWcMeiHcYx3kBW/FHpQsirxnCGVlh5p2L063XB3klg
+         UP81nF8n0sd3WTf9sP2X83eVDQvTFMKweH97rnD8e9gO9k0H4Bu2QQgSMVHwAnOYuND3
+         AiUUtipu4E4KmwsnMwxTGeAEaPLSIYEZRUc7inK3ThaWRv8EahgXgbfr93jCP49ec/ZS
+         Vkuj8doMdqYCBiNZhDux0IUGAct0By4CEVXbDc351LQ3VAeR4nmAF81n+UBSU2gIa8rQ
+         kJCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736904399; x=1737509199;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zxKAeTboBvObYWkDQ0AR6zNtcZLXj4I4J7ZDM4Fl16Q=;
-        b=hEsomBJAAfK12ouL9KkXbYwN6B2djqKsnbjqouA1dyx8tY1Ha1VTEm6CBFHMl4F9IZ
-         mErugMtQrZkADzBNxHn/Fn+DezoveV9hFRqblFjr1Rnumj4GrWhbiT48xjPOX8bMmmPr
-         sKqBdxcZftQjbplJSmVvb/VidWVP3Vuyqk/steqbaE45bLf9Taka2VmRPG4K6HAsrJy2
-         +umIPjKxEnhflW48NxPWqijfjKS8cmW8DhzmeZfTeIgQMlimxkhIxfzQpqZ3Yzve1wxb
-         DRwWzkcZbnPaPW14SL2LnUa2cA4ckToZCm25nVx67vQBwd0cWW03S0HgKSNqhxM7QoSH
-         8QWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxZWgv5Pkfuhr2jxMfwhS0iR/4geIlJo/0JMW4yGDHJ54Jq/sMDsTNNvqO3sfuPyxnVV4NVCXsGMGo@vger.kernel.org, AJvYcCWWOR8g4ND5wWutprp9l3LGfu+ZPt0IPL1qh1m4Iv2D1OyKURYvDGhgU33jSMITMxP6eNVl881raUp0@vger.kernel.org, AJvYcCWyqNmVay0cHu/buoTr0+8sBgptoA9al+bQjdx/vO0wawGzgn46UWhHEn7a8aTmKaVeV7PTspWuZh9xe/LX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQCZD+9EQCi6zPFJlLX9ClRRzZoclw30wkXqC9dt+kmKTHP1+o
-	c6zx5Ufgtq9BKjmZaEvCK5Nu42sYg2JJX6TOqkOJOJa7uETTooh7
-X-Gm-Gg: ASbGncs5kh5C7PD31ni2rj6iR6Z2RVBIh/myFi/Jz72zp3ZQ3c9q9CfNjclxCqZnfVu
-	21xzuxOBQeN6v2p7Kz1oJF3mHOTNVxRPJjkkIrCUslgVGowpvJCIVjT58pJ/Rvc4l6iU7nFE8Uq
-	0HyQycvYEN9DqSIPZvUbt+0ZIMlPKQmx+/Sg1twW/Bh3chR3bcKPZPQDhbEH8YCD4pot6jh9yrD
-	UKjVAnEyLuJqUzUnp9MYuN+1UjNo9/4kTWoYh/FOB3vUdTgUy19dnOCpl0mSuV5CbY9
-X-Google-Smtp-Source: AGHT+IHkjY+lSGkYzydQLdwGyg5cAMqfVAt8/A/Vokcc+X5oQZqhnf93yNQ9PAJuXC0Ab72Srz1tdA==
-X-Received: by 2002:a05:622a:34c:b0:466:8c53:7758 with SMTP id d75a77b69052e-46c70fd31b0mr421291791cf.5.1736904398819;
-        Tue, 14 Jan 2025 17:26:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1736904401; x=1737509201;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TW/78u/K4Tk/9Y6Jt2yXAKfWS6TVs/Gwl1yC2tUVx0I=;
+        b=j+fvHIRyZkKHVBLFxZtacGN/icbmjnDwS7BknJw3MieMQ4waojUHvzdrcZIgmwWDCx
+         zxA38npuB36Fdrpm5A24fayUYriabgqQwYP6K+GjaKqfaYmAt3mTK0yf6MWjIjCxbMeC
+         XPjV8om7dPLDIHVZCSQNwPb1v33DBUAEM1sa7qqY9T4nyw1BXyc2gPUrbb8EYys3wNIc
+         ynpsC+gv9wcbqaguoQUw9NY4efli3PQtpql+cUsKRV7e8mLTubrCdpnZnAtbF2ICdO9M
+         9vxsX9fpNEd5R01woXqcEd19Jh2Dea3ZHtyDAOArlEuX40wCahZAKF8DeNtrSodMwa2f
+         aA5w==
+X-Forwarded-Encrypted: i=1; AJvYcCVAsWSvVtgiq0b7F5fOcjb//9BnGn6UxJHklXPywnIU+S4i6xAq2gZuP2SB1bH4i07hdfmU9I0ayUdwIyHg@vger.kernel.org, AJvYcCXOb04FPGBowvGiUbYzYpz7qCpYJsmCG6ZQOQn/OWH/ykqibZIEByxNv6thKKfna3S7dLwlcyOZVXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIsGhqGddn7HcdnipT4ZyBUDUU0vHVEYwqlIEPNHcyRdLZmhXO
+	xNVxhQwirhOAn5+i0dkjZLKwiX50THWoiSWtgFwaSs6QbNm95Z9a
+X-Gm-Gg: ASbGnctMRF6TL6UaKDVBkc6oC65V4BjmZeie2TDKZapy2KNF+SsWoqEu9W1UzRw1G3b
+	J36DMP/LxK4h9S5QC1CaWgLWQCwP2vvE9ZE9YJjValYcRA5Gdzb3Vfqrfjrn0zdz2aKFt9FgzPU
+	h0kUs7yw4E1JFV1rYDfmqASNxi9J5JYa69jlUcYffL23fJZym9QcEOtpx14iCc2QIDmSlPvPska
+	OO8vDFTOiLq6SEJWEEp+T508NyuJxDBMDYojkN37epfWIblbNLSJAPbburv19hJOE6w
+X-Google-Smtp-Source: AGHT+IGzpUTf+PdyMGFAlYG5FILFZ7yZKz+uleYeo3HfOkexgjV2nVfuoZLKrOOmDZVssLq3Z0Vfhw==
+X-Received: by 2002:ac8:5746:0:b0:467:50d0:8869 with SMTP id d75a77b69052e-46c71004b3amr471379241cf.18.1736904400689;
+        Tue, 14 Jan 2025 17:26:40 -0800 (PST)
 Received: from master-x64.sparksnet ([204.111.227.95])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46c8733130dsm59933881cf.25.2025.01.14.17.26.35
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46c8733130dsm59933881cf.25.2025.01.14.17.26.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 17:26:37 -0800 (PST)
+        Tue, 14 Jan 2025 17:26:40 -0800 (PST)
 From: Peter Geis <pgwipeout@gmail.com>
 To: Heiko Stuebner <heiko@sntech.de>
 Cc: zyw@rock-chips.com,
@@ -63,36 +65,18 @@ Cc: zyw@rock-chips.com,
 	wulf@rock-chips.com,
 	linux-rockchip@lists.infradead.org,
 	Peter Geis <pgwipeout@gmail.com>,
-	Alex Bee <knaerzche@gmail.com>,
-	Algea Cao <algea.cao@rock-chips.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Diederik de Haas <didi.debian@cknow.org>,
-	Dragan Simic <dsimic@manjaro.org>,
 	Elaine Zhang <zhangqing@rock-chips.com>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	Johan Jonker <jbx6244@gmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Trevor Woerner <twoerner@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Zhang Yubing <yubing.zhang@rock-chips.com>,
-	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org
-Subject: [RFC PATCH v1 0/6] rockchip: add a functional usb3 phy driver for rk3328
-Date: Wed, 15 Jan 2025 01:26:21 +0000
-Message-Id: <20250115012628.1035928-1-pgwipeout@gmail.com>
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v1 1/6] clk: rockchip: fix wrong clk_ref_usb3otg parent for rk3328
+Date: Wed, 15 Jan 2025 01:26:22 +0000
+Message-Id: <20250115012628.1035928-2-pgwipeout@gmail.com>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250115012628.1035928-1-pgwipeout@gmail.com>
+References: <20250115012628.1035928-1-pgwipeout@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -101,61 +85,30 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+Correct the clk_ref_usb3otg parent to fix clock control for the usb3
+controller on rk3328. Verified against the rk3328 trm, the rk3228h trm,
+and the rk3328 usb3 phy clock map.
 
-This is my newly reworked phy driver for the rk3328 usb3 phy. It is
-based loosely on my original version, but as of now almost nothing of
-the original driver remains. The main fix here is the discovery of
-BIT(6) in the interrupt enable grf register fixes the usb3 disconnection
-detection (mostly). On occasion an unpopulated usb3 hub will take
-several seconds to disconnect. However this means all of the hack around
-work to reset the usb core manually is no longer required.
+Fixes: fe3511ad8a1c ("clk: rockchip: add clock controller for rk3328")
+Signed-off-by: Peter Geis <pgwipeout@gmail.com>
+---
 
-I did my best to document all registers I could find. A lot was taken
-from emails between myself and Rockchip's engineers, much thanks to
-William Wu <wulf@rock-chips.com> for their assistance here. The rest of
-the config bits were taken from the rk3328 and rk3228h TRMs and the
-downstream driver. Everything that I couldn't find a definition for is
-prefixed UNK_ or UNKNOWN_. There's a lot of obviously used configuration
-registers with the pipe interface that are also undocumented.
+ drivers/clk/rockchip/clk-rk3328.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The only major bug I have so far is my AX88179 usb3 gigabit ethernet
-adapter (Pluggable brand) crashes out when large amounts of data are
-transmitted. I suspect this is related to the RX and TX tuning, as
-leaving it at defaults makes things worse. As I am not a USB3 engineer
-and I do not have the specialized knowledge and hardware to determine
-what is going wrong, I am hoping the mailing list will have an answer
-here.
-
-Please test and review.
-
-Very Respectfully,
-Peter Geis
-
-
-
-Peter Geis (6):
-  clk: rockchip: fix wrong clk_ref_usb3otg parent for rk3328
-  dt-bindings: phy: rockchip: add rk3328 usb3 phy
-  phy: rockchip: add driver for rk3328 usb3 phy
-  arm64: dts: rockchip: add rk3328 usb3 phy node
-  arm64: dts: rockchip: enable the usb3 phy on rk3328-roc boards
-  arm64: dts: rockchip: enable the usb3 phy on remaining rk3328 boards
-
- .../bindings/phy/rockchip,inno-usb3phy.yaml   | 166 ++++
- .../boot/dts/rockchip/rk3328-nanopi-r2.dtsi   |  12 +
- .../dts/rockchip/rk3328-orangepi-r1-plus.dtsi |  12 +
- arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi  |  12 +
- .../boot/dts/rockchip/rk3328-rock-pi-e.dts    |  12 +
- .../arm64/boot/dts/rockchip/rk3328-rock64.dts |  12 +
- arch/arm64/boot/dts/rockchip/rk3328.dtsi      |  39 +
- drivers/clk/rockchip/clk-rk3328.c             |   2 +-
- drivers/phy/rockchip/Kconfig                  |  10 +
- drivers/phy/rockchip/Makefile                 |   1 +
- drivers/phy/rockchip/phy-rockchip-inno-usb3.c | 869 ++++++++++++++++++
- 11 files changed, 1146 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/phy/rockchip,inno-usb3phy.yaml
- create mode 100644 drivers/phy/rockchip/phy-rockchip-inno-usb3.c
-
+diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+index 3bb87b27b662..cf60fcf2fa5c 100644
+--- a/drivers/clk/rockchip/clk-rk3328.c
++++ b/drivers/clk/rockchip/clk-rk3328.c
+@@ -201,7 +201,7 @@ PNAME(mux_aclk_peri_pre_p)	= { "cpll_peri",
+ 				    "gpll_peri",
+ 				    "hdmiphy_peri" };
+ PNAME(mux_ref_usb3otg_src_p)	= { "xin24m",
+-				    "clk_usb3otg_ref" };
++				    "clk_ref_usb3otg_src" };
+ PNAME(mux_xin24m_32k_p)		= { "xin24m",
+ 				    "clk_rtc32k" };
+ PNAME(mux_mac2io_src_p)		= { "clk_mac2io_src",
 -- 
 2.39.5
 
