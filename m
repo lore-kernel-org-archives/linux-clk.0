@@ -1,92 +1,102 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0F61EEA37
-	for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 11:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E082475E3
+	for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 12:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736940549; cv=none; b=lNZN2HVeBVJG+c/3w83dVyDayG2MBitDlUPqu/w+RSv0b5fBo64eKWHbTj2uhFI90/n2aDvt5OnQxs4s4Cd4NX1SxHb69ZJ6Mksg6ALw2vxBBQn3poeGJss6+amKHHDCxWLNVlvAsIbBGVJ1d5uvMTakSHPIbTXEexfrZF119fA=
+	t=1736942556; cv=none; b=CWewteK+qVeM1ANmBg6bX/szVwT6RCMJEDsHPeDEBU/n5kdsPHM2MCJYoNrMCyeAxxyRCJZlrUUSx5HPDyB08bTtW7IOCE/v7k9p+3uu/ZJF1DCN9aEQWdN/jitRO/OWOGgQaEzkbWq6RhTCtfVVnut3Ff64FKXbt4zWE7zFA5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736940549; c=relaxed/simple;
-	bh=uTFP6ZpMn/k1zzIlbPVQLLkt/cLEj8+uvjfAYF6d4HQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XLCdBSQFDVNC3KN7woNn7A5ZgtBenFWU6LOzu4bKUjeiKXCpcvtg5gyHkCGeJE8dWNg9k3+Y9H1R1BbE2baVhStBQHUklmhanRXj+PxFhYFuB+deoyPa+99VWgCI2O7fpJk0fakeQThW8KKZESMRDUfJJJ6EvgWacPcOlfLSsX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VlRCjJP7; arc=none smtp.client-ip=209.85.208.177
+	s=arc-20240116; t=1736942556; c=relaxed/simple;
+	bh=GxiMUN5sqtriveaI/HLFwTpRRwlH2UsAEbUeMqe17Qw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a8eK984e9lK6LWs8BUCykVGutKOxOmW4gdMWm1UFI+NaNySugnHw5qB+bfEc/yv8LwyTh7TDPrtNaplX8EMNyrGXwVnXSLpKb/xvB65gHpdGXAmZx2q/2HW4giO4gH6o1erqIPQEdmO/KLk1EqmtS7n88i/Js7Wf61gGYL9jU/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Znz9P2lr; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VlRCjJP7"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30034ad2ca3so48539471fa.1
-        for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 03:29:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Znz9P2lr"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-385de59c1a0so3342972f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 04:02:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736940544; x=1737545344; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uTFP6ZpMn/k1zzIlbPVQLLkt/cLEj8+uvjfAYF6d4HQ=;
-        b=VlRCjJP7fUdJ1b1RHZIHJVQQ5sMGo2mHOqezrlA5olORew8MnpueNO2FsdKEzL0sL9
-         udx0HDelxHymBYR3bNaUTCjlw+pLxxEu+qpiqe7AA2xdSVsBGLAKqlO0z8b8Hfp8scf2
-         KS+TCmX8bUWN8cxkM5JRACZGvs/8C2IRJcqgRQVRXr4JK4M8kHCg5ynoEKZgB+lSFVC8
-         gu3kqbrJVCxhn3w9ZklF1wJVpKerR7xjnzxCn4LBld/Jtujmb5jU/OuJD773yYOpvZDV
-         IkYSFDtVaYyC3oBNJnKPt7CVYaG4Jw3LEdUl7AS90+Yl20+nuHPcl78gSwb7Kg5NP3U4
-         Y85Q==
+        d=linaro.org; s=google; t=1736942552; x=1737547352; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J09817AefuwhTALG6OGHGhgUnuZ4yA9WXWtiMWd3gZ4=;
+        b=Znz9P2lrJglPk3coNHRK0cjlTWtCC43MgS+5q2HzRml0qL9kN81Li9nCKchc4RWK6P
+         9YFjRWa7ppEjv8dyvqe0EQNL12SVVVOS+1JyO/Kkpqut0t1o2ckANKOidtCoTkuCh7R4
+         Ct0EQzixYjscKyG/ZpqMJbNYwU2wp7ajE+YgO/5Zz7qOVaFaCEF0VsfmPg9AL7OF35im
+         EABtqqArw/vHjh6xSTA7pmzkH3MVQXHiagNeoBqcHXfE11UpbykR0AFh4HR8kQkto7TF
+         XJ1ZVP1bgP6nN/CPkNZavBwu97BKKtHJGOG4jOX73PPJhhnVmvlPi4IdJEXOv1oBbkhl
+         P/CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736940544; x=1737545344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uTFP6ZpMn/k1zzIlbPVQLLkt/cLEj8+uvjfAYF6d4HQ=;
-        b=hgQ3Gn6TUtHw6Hd0F/oMA53a8kwd7hQnZhNRm+vebtSxFAGVnzdRLD8/f4AhmCyBBY
-         Nn7B+IF2NntJ0XIJOaRl+EfX4i9T/86tI70mYxy+g6b5SHBoyVjeui/Jfz10S1RaYdAq
-         Zxw8jB6k6NneN8X/cezkViVHY45hlHaqUNvRWXQz71w98cbSvaMb68RAvWBV4Edhni8C
-         NGdQgGlgIXBd/hV01s58SVM3o2OcGT2QoID125xzYt/SipHBihV+9xwFG0mA7cFOMMMH
-         i2Vaq1xyWO2QSjIQl15UnEhCA46zqSF42WzVit9SdgUkSo8eoAkgEq/SfVTZPgAmK7a4
-         eWNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQuo9aBn6Q/jzrtFjc21DAAlv97PjqViYTcFtppfMlIAPJS2XaX4Yw1Vl2iQNphQ31wtdrLLDMOSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAykwOdnVF19pgrndIxtIguO8G1M0f1OV0ReGxMKKTJnxPBDS5
-	0Yg7tAyC2mF73XrSGU6Wa5Dxdw+3beKyYfzpsjsC69JJPAOmrquSQUpY8Vdc7KxxEGoK9ZHVKBl
-	tMR/BoUCYqXgUmroR9qVAS6+yKtzmkymi4l0G9Q==
-X-Gm-Gg: ASbGncs5gv8iaV+xpbTf/SLLUqk4fyo5/yML/GSu7wpA+pBCFkPHLrgyBtHrGkwypPE
-	9Hu5M2TeTAN5jEa0vAQd4us+8O7jta9z0x0/JEA==
-X-Google-Smtp-Source: AGHT+IGozXlEMI3LBw/qY3E+yx+y/orU2yG5EeAWz02nrW7RaGJmBfZlWUTPktBH/YT5OusvKQ2aNuo9qsZVZYVAgKY=
-X-Received: by 2002:a05:651c:4cb:b0:2fb:8c9a:fe3f with SMTP id
- 38308e7fff4ca-305f459ab0amr99799851fa.22.1736940544130; Wed, 15 Jan 2025
- 03:29:04 -0800 (PST)
+        d=1e100.net; s=20230601; t=1736942552; x=1737547352;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J09817AefuwhTALG6OGHGhgUnuZ4yA9WXWtiMWd3gZ4=;
+        b=Bz45/PA0TGZb9KoUh3mZcOnLYAoU1U3/m+lnXvZF7/95Bi61kIT5XfGIb9ASRQ8gV8
+         GlG+LozqEQVr8ie0fs+v1wbhGBEN6GDDpCPPw7LkHZfb7B/G+NCpKjmCZS4z4d9zLxtb
+         DUgF15cmtKmO3B1pjAddl7xx0FMqkSGWwtI6yHbzV8S/o+TjDhFSxCv8G295jpLcKI4U
+         /5eOgL+sfRUZRKN22/l5E+wO6I4zSpFvqx1aDiDc3m2bfBMgmBuky1DNoA8NqVvqGau9
+         wJNkUUUufMyugCV0nRC7d8inEWg10R3bNPRmmaWg4NQd5/X4vWms7GLFKYLDZbV9zTC+
+         /kBA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5w1ctXsIjeseyTAGemT3sJEyKEdoZi5fh0v5P9EPwIMzFjkh4Nc4PIv1vj42EsgFEQce+DkelaQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoMgMlJ/d8fsLecJXTzPRVVsonrZb+ZGdF0mwn8QADcBRapTPV
+	xAjl7KRDPXXXiBbAK4KJjayCqruNKo528kqj1cRy8G+4GP9C2ecNA15KpVo81AY=
+X-Gm-Gg: ASbGnctFmWauZFOP6RmkBn7GEFkCwhkwReVGUb1SlZ4njnn/geuCnsd1RU3f2VfcZ84
+	2Y92wftr9AsVAXJVEtZ1Fy3UCjtNuxXrxjTbNBb3Hd7m8daNfJMRIGQgclql3klXUbgFfv5eXc0
+	3G3ugSFesq4zHQy9V05nBCVYT7PTShXH3xK/mmwG+2i+r6zrqIvtkRl1WzVVnuT+/8afOvGAxlY
+	oV1gjaTMHQHTABcQLuhJu/vCsRMzBzsKr5TfuQlyjP9/cnRTK5zLbjeV+Vq2/iOHw33rg==
+X-Google-Smtp-Source: AGHT+IFfKyGn52ipjdfPZD6RVd7v4EFf3NGE8QU70ELIZjBpZX1RbqBIB9xbQUWlnKSlaXcoGcGZmA==
+X-Received: by 2002:a5d:5847:0:b0:38b:e32a:10a6 with SMTP id ffacd0b85a97d-38be32a12d5mr6050542f8f.41.1736942552589;
+        Wed, 15 Jan 2025 04:02:32 -0800 (PST)
+Received: from [192.168.0.35] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e38c1d6sm17718135f8f.50.2025.01.15.04.02.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 15 Jan 2025 04:02:32 -0800 (PST)
+Message-ID: <8322416c-5762-4b64-80aa-7ef1b0b0287c@linaro.org>
+Date: Wed, 15 Jan 2025 12:02:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250115081914.12841-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250115081914.12841-1-krzysztof.kozlowski@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 15 Jan 2025 12:28:52 +0100
-X-Gm-Features: AbW1kvauKuAE65tppT9sI3Z5Re3aLNOVxZNOfHCRFI6_U39r95LgRscj7MPl27o
-Message-ID: <CACRpkdacgLmfusCtN=beYoL=pM7_f7VzHa6pzRbmAdYoYPA7hQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: nomadik: Correct str_enabled_disabled() SXTALO case
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Stanislav Jakubek <stano.jakubek@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] venus: pm_helpers: Use dev_pm_genpd_set_hwmode to
+ switch GDSC mode on V4
+To: Renjiang Han <quic_renjiang@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+References: <20250115-switch_gdsc_mode-v3-0-9a24d2fd724c@quicinc.com>
+ <20250115-switch_gdsc_mode-v3-2-9a24d2fd724c@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250115-switch_gdsc_mode-v3-2-9a24d2fd724c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jan 15, 2025 at 9:19=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On 15/01/2025 09:30, Renjiang Han wrote:
+> The POWER_CONTROL register addresses are not constant and can vary across
+> the variants. Also as per the HW recommendation, the GDSC mode switching
+> needs to be controlled from respective GDSC register and this is a uniform
+> approach across all the targets. Hence use dev_pm_genpd_set_hwmode() API
+> which controls GDSC mode switching using its respective GDSC register.
 
-> Commit 1cd1c8f400e9 ("clk: Use str_enable_disable-like helpers") should
-> use reversed check for SXTALO.
->
-> Reported-by: Stanislav Jakubek <stano.jakubek@gmail.com>
-> Closes: https://lore.kernel.org/all/Z4diEj__bbQl4ULS@standask-GA-A55M-S2H=
-P/
-> Fixes: 1cd1c8f400e9 ("clk: Use str_enable_disable-like helpers")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This paragraph is difficult to read and understand. Try something a bit 
+more like "Use dev_pm_genpd_set_hwmode() API to control GDSC mode 
+switching. Do that because of reason x, y z"
 
-Thanks a lot for fixing up this Krzysztof!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+"We are making this change because of reason a, b, c"
 
-Yours,
-Linus Walleij
+Basically just try to state the facts as clearly and concisely as possible.
+
+---
+bod
