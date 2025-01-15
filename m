@@ -1,214 +1,201 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC8624A7EB
-	for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 14:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC9B145B2E;
+	Wed, 15 Jan 2025 15:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736950867; cv=none; b=JNB4wv8qAtLSGg3iy4/62eBjZ5rFSJJAA+yBdNI3DImQ2xqkXt7lqcKBwyHlOXoxLcDuJGdZZ5xYjf71evEo8UB9VsIcKPzAhh3G8+zesATF7kTPabP+Z6ewmAmDa5FYo75SSaqKpf04+tW7MATFSFbaBTRwwSJH5z1GjWHGxBM=
+	t=1736954812; cv=none; b=pGNLCXTN7TOpICSKl4Wpjtfa/kAzYPVg/3q4LgQAG3/t8Z3IInSKFt/AFEFB1FbGxX0t7+pXWFkGTdYh82AjQWxQDJc7OZRyLBZTH0qPia6gXYnM9fz6yg6Oc109Hi1E2HF63CuGIXqIG9HmT09a+HfgDsTAEUYZl/iFgtpcc/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736950867; c=relaxed/simple;
-	bh=nj13N1ZTV7Kjt+TdLdInP3UcHYwEz1SDgFL4/oh3AEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WmyOILP/ZzfRuyPq+L79aZi44W9Nu4Y6sv/tCO/Hs25lVJQ9WYxmwOSow4XVimL+HZGtZsqvV8c7E4cyk7eIsDweYh90Huj8K/rK6d1oC1lutK3enf07l7bWalMgV6bjfjnin36Umwuombtjck3wl9PRg2Y9Ss0h8w+axngRSXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JTqgkK6Z; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JTqgkK6Z"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385eed29d17so3343311f8f.0
-        for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 06:21:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1736950863; x=1737555663; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQU0JRvu4k3QvD4IrdyBcGtc8xbP0jsq/0kMVNzSuZo=;
-        b=JTqgkK6ZvVbPZC2viq6xUfqRVYnY5rsABQmCQ6xUqqQbbU9uaxD7zBfeHFk8RZhG11
-         Z9ohK+6HBVVJa95/bN8rtCY09VhAIfV8+Pg0JNlHUdNegIopvH9vwj70Kyp0aGJ0icJ6
-         pos/HbvGBI+B5YbTBxjJuDb6EAMZbMlCdv3y+c6/+O7zLMVroY4p2LpcLcqygqipG6fv
-         hcpyiytD7HeZry7P4zP5ZYdGKmbkrW1Is6cMPHR5CoKqOSZnjPhSJhMQ/96U63QZopuJ
-         daoX6YaF1wNbhuUpAZV81EZqcNe6HIOsHDOkRceFZbkPeB+AQTGGBl+0Trl6VdJFBzeu
-         VcHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736950863; x=1737555663;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aQU0JRvu4k3QvD4IrdyBcGtc8xbP0jsq/0kMVNzSuZo=;
-        b=HXe1mE+32TR4mKOLM/rw/P5gKeD9fttdOlJs46/7qUWqfTGk0106vkadTX4ci5CtQE
-         YZJ78PcS7CLNstqqlaVdqtn1BxQUc64pGrXmEnHd3sgfLXyRTiFQSRDSI38q47ySs4rr
-         I6MQ16brA9/tLxJKOhFEn8CoArAABcWW7Etw5C5MxraaZS1Tv8koY42TxM70btdI07tf
-         EE+La3PljHFZOVanRgZk+hebK9i4IhmT2ncZ7y1O/1koVusNf3Dh4HcL+iRUdvrhmBWm
-         TzNMQLLRZogduOnIE5JFkgeuuvt88LAeX+pwMxIX6uDMfDFZb+glp26gNezjwN7pv7a3
-         QdWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXy7l7v48kc4TuIVSl/aN/6h3kHpv5EFQz6wnBcpgQRCUb8Bg2cXbqI6eHVPQIcyhPrfjvwgSKfa98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrT8EULz0sGBe5M8HH6AKdnH17KGzyVU2kDtTR28rENmlelHk9
-	Nc0UNB1SbELMxseWbcg1lQMbH/z/0amN0HBCfXyjjYXAfYiyIFU/+e/c4AhGAu0=
-X-Gm-Gg: ASbGncttVJ5aIKerGCusrGDGI7GuctxtqNl5sTVa4J6AQayKDautQ91RFVy58cEaI0j
-	dV896W3nFPHAj+Yz7CYYb4zWUbp/LbTWb2h91WTPNUyWqGidmkq8ctGxix5UwkGQhGueqItDZpV
-	bcAw7j+818yXxyiTYzgk1mR9rQsfz3WmizprJi1KbYVQggC5gqbGRsIT297JW9wWrA50PXpOZb1
-	WSwioxq+SXiuV2FE1oGOMSe8FXSyM0TI6Qeb9GndveL08QXZyVnoXY8I9haJu7bLsf9PT/5FDqD
-	6vZoNUXdYLk=
-X-Google-Smtp-Source: AGHT+IEVdJBFqh4ZjOUnNvr2cZGagk+FDm7RaDFrW+4PFULQiXAe33zQay9mkvsSK8Mr18aS19JxQQ==
-X-Received: by 2002:a5d:6d82:0:b0:385:fb59:8358 with SMTP id ffacd0b85a97d-38a87358c39mr25746447f8f.53.1736950861909;
-        Wed, 15 Jan 2025 06:21:01 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c74e63fasm24656745e9.36.2025.01.15.06.21.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2025 06:21:01 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2] clk: renesas: r8a08g045: Check the source of the CPU PLL settings
-Date: Wed, 15 Jan 2025 16:20:58 +0200
-Message-ID: <20250115142059.1833063-1-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1736954812; c=relaxed/simple;
+	bh=JBcCp53Gsobb/CU+JgBt3NsWKZtsmKsbDhO8bGTGg5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fpetO5zbJqroMhWZa8321nN6dui2SY81VEnYb+y2qrp/Yj4aLvFSYequOi4wA/Zkj7Pm8frkgbjqzfsnC1XleioOdzGuCS4kL7BtYunPoqD3dAbebjh7UmxLUIj/rWoH6geELyuuqA8sNTVUJj6Kswu7gDYzRZU9mSXPZ445O8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE6FF11FB;
+	Wed, 15 Jan 2025 07:27:11 -0800 (PST)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FF323F73F;
+	Wed, 15 Jan 2025 07:26:39 -0800 (PST)
+Date: Wed, 15 Jan 2025 15:26:35 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andras Szemzo <szemzo.andras@gmail.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>, Vinod
+ Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Ulf
+ Hansson <ulf.hansson@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 03/12] pinctrl: sunxi: add driver for Allwinner V853.
+Message-ID: <20250115152635.1b89e7f4@donnerap.manchester.arm.com>
+In-Reply-To: <CACRpkda0nx3SQtdjmXdCEbVJSWM10TM=p-6JbDjbiYcOSF5PxQ@mail.gmail.com>
+References: <20250110123923.270626-1-szemzo.andras@gmail.com>
+	<20250110123923.270626-4-szemzo.andras@gmail.com>
+	<20250114141954.2785879a@donnerap.manchester.arm.com>
+	<CACRpkda0nx3SQtdjmXdCEbVJSWM10TM=p-6JbDjbiYcOSF5PxQ@mail.gmail.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Wed, 15 Jan 2025 11:23:50 +0100
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-On the RZ/G3S SoC, the CPU PLL settings can be set and retrieved through
-the CPG_PLL1_CLK1 and CPG_PLL1_CLK2 registers. However, these settings are
-applied only when CPG_PLL1_SETTING.SEL_PLL1 is set to 0. Otherwise, the
-CPU PLL operates at the default frequency of 1.1 GHz. This patch adds
-support to the PLL driver to return the 1.1 GHz frequency when the CPU PLL
-is configured with the default frequency.
+Hi Linus,
 
-Fixes: 01eabef547e6 ("clk: renesas: rzg2l: Add support for RZ/G3S PLL")
-Fixes: de60a3ebe410 ("clk: renesas: Add minimal boot support for RZ/G3S SoC")
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+thanks for the reply, I was hoping to get some insight and discuss this!
 
-Changes in v2:
-- check the validity of the setting offset in
-  rzg3s_cpg_pll_clk_recalc_rate()
-- s/settings/setting/g
+> On Tue, Jan 14, 2025 at 3:20=E2=80=AFPM Andre Przywara <andre.przywara@ar=
+m.com> wrote:
+> > Andras Szemzo <szemzo.andras@gmail.com> wrote: =20
+>=20
+> > > The V853 family has multiple package variants, from BGA to QFN88.
+> > > The latter has co-packaged DRAM and fewer pins, and less features (pi=
+n muxes).
+> > > All family members can be supported by a single driver, as the availa=
+ble pins
+> > > with allowed muxes is the same across the devices. =20
+> >
+> > It depends a bit on the outcome of the discussion on the A523 pinctrl
+> > driver [1], but I think we should use the same approach here (and for
+> > every "new" Allwinner SoC coming up, really): put the pinmux value in t=
+he
+> > DT, and get rid of this entire table altogether:
+> > [1]
+> >
+> > The SoC specific pinctrl driver would then be very small ([2]), so this
+> > pinctrl support patch here would actually become much smaller.
+> >
+> > Just feel a bit sorry for you having created this table, in a tedious a=
+nd
+> > eye-straining exercise - been there, done that ;-) =20
+>=20
+> It's pretty stressful for the pin control maintainer as well.
+>=20
+> From the subsystems point of view, groups matches to functions by
+> strings is the best. ("fun1") + ("group1", "group2"):
+>=20
+> pio: pinctrl@1c20800 {
+>                         compatible =3D "allwinner,sun8i-r40-pinctrl";
+> (...)
+>                         i2c0_pins: i2c0-pins {
+>                                 pins =3D "PB0", "PB1";
+>                                 function =3D "i2c0";
+>                         };
+>=20
+> abstract, strings, nice. The driver handles the particulars.
 
- drivers/clk/renesas/r9a08g045-cpg.c |  5 +++--
- drivers/clk/renesas/rzg2l-cpg.c     | 13 ++++++++++++-
- drivers/clk/renesas/rzg2l-cpg.h     | 10 +++++++---
- 3 files changed, 22 insertions(+), 6 deletions(-)
+What bugs me about this it that this has quite some seemingly redundant
+information (Who would have thought that the i2c0 pins use function
+"i2c0"?), but misses out on the actual 4 bits(!) of information.
+So the A523 version [1] just *adds* this one property:
+		allwinner,pinmux =3D <2>;
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index 0e7e3bf05b52..cb63d397429f 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -51,7 +51,7 @@
- #define G3S_SEL_SDHI2		SEL_PLL_PACK(G3S_CPG_SDHI_DSEL, 8, 2)
- 
- /* PLL 1/4/6 configuration registers macro. */
--#define G3S_PLL146_CONF(clk1, clk2)	((clk1) << 22 | (clk2) << 12)
-+#define G3S_PLL146_CONF(clk1, clk2, setting)	((clk1) << 22 | (clk2) << 12 | (setting))
- 
- #define DEF_G3S_MUX(_name, _id, _conf, _parent_names, _mux_flags, _clk_flags) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_MUX, .conf = (_conf), \
-@@ -134,7 +134,8 @@ static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
- 
- 	/* Internal Core Clocks */
- 	DEF_FIXED(".osc_div1000", CLK_OSC_DIV1000, CLK_EXTAL, 1, 1000),
--	DEF_G3S_PLL(".pll1", CLK_PLL1, CLK_EXTAL, G3S_PLL146_CONF(0x4, 0x8)),
-+	DEF_G3S_PLL(".pll1", CLK_PLL1, CLK_EXTAL, G3S_PLL146_CONF(0x4, 0x8, 0x100),
-+		    1100000000UL),
- 	DEF_FIXED(".pll2", CLK_PLL2, CLK_EXTAL, 200, 3),
- 	DEF_FIXED(".pll3", CLK_PLL3, CLK_EXTAL, 200, 3),
- 	DEF_FIXED(".pll4", CLK_PLL4, CLK_EXTAL, 100, 3),
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index ddf722ca79eb..4bd8862dc82b 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -51,6 +51,7 @@
- #define RZG3S_DIV_M		GENMASK(25, 22)
- #define RZG3S_DIV_NI		GENMASK(21, 13)
- #define RZG3S_DIV_NF		GENMASK(12, 1)
-+#define RZG3S_SEL_PLL		BIT(0)
- 
- #define CLK_ON_R(reg)		(reg)
- #define CLK_MON_R(reg)		(0x180 + (reg))
-@@ -60,6 +61,7 @@
- #define GET_REG_OFFSET(val)		((val >> 20) & 0xfff)
- #define GET_REG_SAMPLL_CLK1(val)	((val >> 22) & 0xfff)
- #define GET_REG_SAMPLL_CLK2(val)	((val >> 12) & 0xfff)
-+#define GET_REG_SAMPLL_SETTING(val)	((val) & 0xfff)
- 
- #define CPG_WEN_BIT		BIT(16)
- 
-@@ -943,6 +945,7 @@ rzg2l_cpg_sipll5_register(const struct cpg_core_clk *core,
- 
- struct pll_clk {
- 	struct clk_hw hw;
-+	unsigned long default_rate;
- 	unsigned int conf;
- 	unsigned int type;
- 	void __iomem *base;
-@@ -980,12 +983,19 @@ static unsigned long rzg3s_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
- {
- 	struct pll_clk *pll_clk = to_pll(hw);
- 	struct rzg2l_cpg_priv *priv = pll_clk->priv;
--	u32 nir, nfr, mr, pr, val;
-+	u32 nir, nfr, mr, pr, val, setting;
- 	u64 rate;
- 
- 	if (pll_clk->type != CLK_TYPE_G3S_PLL)
- 		return parent_rate;
- 
-+	setting = GET_REG_SAMPLL_SETTING(pll_clk->conf);
-+	if (setting) {
-+		val = readl(priv->base + setting);
-+		if (val & RZG3S_SEL_PLL)
-+			return pll_clk->default_rate;
-+	}
-+
- 	val = readl(priv->base + GET_REG_SAMPLL_CLK1(pll_clk->conf));
- 
- 	pr = 1 << FIELD_GET(RZG3S_DIV_P, val);
-@@ -1038,6 +1048,7 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_clk *core,
- 	pll_clk->base = priv->base;
- 	pll_clk->priv = priv;
- 	pll_clk->type = core->type;
-+	pll_clk->default_rate = core->default_rate;
- 
- 	ret = devm_clk_hw_register(dev, &pll_clk->hw);
- 	if (ret)
-diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
-index 881a89b5a710..b74c94a16986 100644
---- a/drivers/clk/renesas/rzg2l-cpg.h
-+++ b/drivers/clk/renesas/rzg2l-cpg.h
-@@ -102,7 +102,10 @@ struct cpg_core_clk {
- 	const struct clk_div_table *dtable;
- 	const u32 *mtable;
- 	const unsigned long invalid_rate;
--	const unsigned long max_rate;
-+	union {
-+		const unsigned long max_rate;
-+		const unsigned long default_rate;
-+	};
- 	const char * const *parent_names;
- 	notifier_fn_t notifier;
- 	u32 flag;
-@@ -144,8 +147,9 @@ enum clk_types {
- 	DEF_TYPE(_name, _id, _type, .parent = _parent)
- #define DEF_SAMPLL(_name, _id, _parent, _conf) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_SAM_PLL, .parent = _parent, .conf = _conf)
--#define DEF_G3S_PLL(_name, _id, _parent, _conf) \
--	DEF_TYPE(_name, _id, CLK_TYPE_G3S_PLL, .parent = _parent, .conf = _conf)
-+#define DEF_G3S_PLL(_name, _id, _parent, _conf, _default_rate) \
-+	DEF_TYPE(_name, _id, CLK_TYPE_G3S_PLL, .parent = _parent, .conf = _conf, \
-+		 .default_rate = _default_rate)
- #define DEF_INPUT(_name, _id) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_IN)
- #define DEF_FIXED(_name, _id, _parent, _mult, _div) \
--- 
-2.43.0
+[1]https://lore.kernel.org/linux-sunxi/20241111005750.13071-5-andre.przywar=
+a@arm.com/
 
+And we keep all your beloved strings ;-)
+
+> That is like so because we are designing for users which are
+> let's say customization engineers. If these engineers jump from
+> project to project matching function strings to group strings will
+> be a common way to set up pins, and easy to understand and
+> grasp, and it makes the DTS very readable.
+
+That's an interesting view, and I see the point of it being easy to read,
+but this is partly because it doesn't convey too much actual information,
+does it, as it requires another lookup or two.
+And the pinctrl group nodes are actually in the .dtsi file, which are
+typically written once during the initial SoC enablement, and new board
+.dts files normally just reference the existing pingroup nodes. So anyone
+dealing with just a new board is not bothered by this.
+Also in my experience most people have no problems in understanding the
+concept of pinmuxing and that there is a selector number, also where to
+find this.
+
+> Then there are the engineers creating the pin control drivers,
+> and they want everything to be convinient for *them*, and they
+> think an opaque hex digit in the DTS is perfect at times, thus
+> pinmux =3D <0xdeadbeef>;
+>=20
+> Mediatek and STM32 made a compromise by using pinmux
+> and adding some macros to define them so it looks more
+> pleasant:
+>=20
+>       i2c0_pins_a: i2c0-default {
+>                 pins-i2c0 {
+>                         pinmux =3D <MT7623_PIN_75_SDA0_FUNC_SDA0>,
+>                                  <MT7623_PIN_76_SCL0_FUNC_SCL0>;
+
+Well, I don't really get why they don't use the (MTK_PIN_NO(75) | 1)
+definition directly, seems to be more telling to me?
+So the plan for sunxi would be: <SUNXI_PINMUX(PORTC, 23, MUX_1)>, ...
+And this would not be really "opaque", since it has a fixed known mapping:
+	(port << 16) | (pin << 8) | (mux << 0))
+I find this both technically elegant, because it combines all the
+information into just one compact cell, but also readable by outsiders,
+thanks to the macro.
+
+But please note that using the generic pinmux is just an idea at this
+point, last time I checked this would require significant rework in the
+sunxi pinctrl driver.
+Just adding the "allwinner,pinmux" property on the other hand is a
+comparably easy addition, hence my patch, as a compromise.
+
+>                         bias-disable;
+>                 };
+>         };
+>=20
+> At least the bias control is using strings, this is nice.
+>=20
+> So I'm mostly fine with that as well, but it can be pretty
+> heavy on people coming from the outside, asking us questions
+> like "on MT7689 how do you mux pin nnnn to function yyy"???
+> Well I don't know? Some MT7689_PIN* macro I guess?
+
+MTK_PIN_NO(nnn, yyy)?
+
+> If it was just strings I would know what the
+> expected behaviour and looks would be at least, then the driver
+> could be buggy or missing things but that's clearly cut. That's
+> why I prefer the strings.
+
+My main arguments against the current (string-based) approach:
+- They require the mapping table to be in every DT user, so not only the
+  Linux kernel, but also U-Boot, FreeBSD, you name it...
+https://source.denx.de/u-boot/u-boot/-/blob/master/drivers/pinctrl/sunxi/pi=
+nctrl-sunxi.c?ref_type=3Dheads#L236-768
+https://cgit.freebsd.org/src/tree/sys/arm/allwinner/h6/h6_padconf.c
+- The tables are getting quite large, and they pollute the single image
+  Linux kernel, with tons of very specific information for a number of very
+  pitiful Allwinner SoCs. At the moment the tally is at 145KB of code+data
+  for the existing arm64 SoCs, with the newer SoCs ever growing (H616 alone
+  is 27KB, A523 would be quite larger even, I guess 40K). The new A523
+  specific pinctrl support adds 872 Bytes.
+- Most of the mappings are untested at pinctrl driver commit time, since we
+  don't have the device drivers ready yet - by a margin. The new approach
+  would add the pinmux values when we need them and can test them.
+- The comments in the table give away that something is not quite right:
+                  SUNXI_FUNCTION(0x2, "i2c0")),         /* SDA */
+  This is just a comment, so has no relevance for the code, but it's not
+  meant for humans either. Yet we try to make this correct and maintain
+  it. Odd.
+
+Cheers,
+Andre
