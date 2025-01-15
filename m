@@ -1,116 +1,79 @@
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4971D5AB7;
-	Wed, 15 Jan 2025 17:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD06814B959;
+	Wed, 15 Jan 2025 20:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736963995; cv=none; b=a5qgdn6x2nx4lKlXan85EZeceDV1NXpwJ0KRnrAVkKWAFFLO603se19vUivYY8GgcxTqI/KtrKhbvum25eTSnUzlpR1GLHrbgeEsRX8sMXVyrEDLUjVovtfFaGAOOf+oRFWeSaVH3TX3JC+hocKl8/7R85yWVKHGfZ2pzfcLRxM=
+	t=1736972534; cv=none; b=qMvxS8DLL1ldkpKml+MSzkh1hLK9+pL+izvOz1hbSxtQmfpeC8o5DVkNmP0hj8FoA4mjGqpeVnT15ceFIh4EpZspAy+Vr5N5jRoBsP78gpMPoUxDUXExZKAZLGsQvhXeCMBI/smwmSQwL71DNg/dBSrj//mB1yC6I4qQE8RhJkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736963995; c=relaxed/simple;
-	bh=PDWjfSxvWW/wkcUxuLabQsKqUHXe4/SQ5zqO59i+awk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G1sbsLmlXMzZ/6PhMjKJlHh1+mcxx3H2+Vq1i0q3aAHM3hWslZ3wISNKL2v//wlLjOyhlX2xDZxg0UqM/b7L0TnPRqFAtDizBW6UZeIavPHipdVX+VrCz6dkJwm89rgtYDuExGxPLircmOEK00lZjN2YI+i12mcnNFtqIZ4NlKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=nQuUUCBi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CnmnWb0R; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1736972534; c=relaxed/simple;
+	bh=w9Wn64DoAN8/dBg3LlZDo5cAZRy6oHLkGiuq4h2HW1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K217oQHZTUZp7bP/EhwMjgCGw7HxmERZmKSwuKsWbivfaWqxqL76JI6gjCNKwZ0mVtKW8DEttLY1rNGVy5spj6INGkyL0vdxktnhfluOYb329cf/0BkhOeu7/9DnTpL6Mm9Sgclpy+js0544yp6b4tyzY0qnUqFjrsAnZtFPlqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zqcvd/BK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="nQuUUCBi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CnmnWb0R"
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 1880F114013B;
-	Wed, 15 Jan 2025 12:59:53 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 15 Jan 2025 12:59:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1736963993;
-	 x=1737050393; bh=uZDGMx0nT1BtEJJYhtGuDmr3s2QzCHBksTi5YAv7Nrg=; b=
-	nQuUUCBi4xQzqRe3g4VrkfPc2fAQBIlcv4fMf7ye4GgwKC6DBpxlcxwVmD3DJwTB
-	7322gb7lo4LnVk4wtno7nUYrfb864KK3P3io7mUjEO71qgoOho5hrtz3zhvMM4K8
-	kanUtKLZ/jT0NqNN6rau3VaonXFwl2MZR+FaUTQu/KBR8aD5nyiN6pusvJVlXASf
-	//pAyaiJ/QdFKkWc213TFgTlv44VNq/mv/m+Ys43u+62bkDmyOT+zAeOBBE7zLqY
-	jTaYE36pLjWfz56G5cHxSSNYpfdhrr75zlAq1wAHqSEns0oP82lfyOhP5+ee7oVj
-	S49N7/+6We4dUEQ6275fJg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1736963993; x=
-	1737050393; bh=uZDGMx0nT1BtEJJYhtGuDmr3s2QzCHBksTi5YAv7Nrg=; b=C
-	nmnWb0RztVlZG66CIYEGmQT1an6J2YlAtzi9MMrnWtjw1NyIzsXGZd8TGhkd6W3g
-	CZv+UEfJ1Xrgikt0d0F6k2rnJlGXh0SBoH22Iifgfnu3o5WUlUULbfVuDXq+P2QT
-	4JgtJSvrWg/no+a1ZQCVJgPXfRMgoHTK37Oo8zuaZq6Fmw2Vlp0s7ZjEsg+MJi3Y
-	iw3mQ2k+z+nxZriG1pOL9yxsxBGFBX6TKGd8+SLRA2kQz0IcqWwmpkkaXKalxGyy
-	++SWHzcMmJmYjhAmFja1hZfO5NpnGI/DRpAzV0K/ItpJSi4BlYpWlrhdo2olUU7r
-	Cd6FH+BGmCH+idKG0p6/Q==
-X-ME-Sender: <xms:mPeHZ6eOeyrzjVfP_hgsEgngv49gYcWRWVFvQeI9eUicYRyv6NUXGg>
-    <xme:mPeHZ0Pjr7T7EqcIppPgXQeXLnDxTldIAtZcY-1j0L08WXKDbar2slt6JJvBUz4ie
-    VQcfsaKdRGHar2tS9A>
-X-ME-Received: <xmr:mPeHZ7hNNojaIdU26bst8huxNJHBIeQupSu3Ye8liU7yWmAx6jH3qSmykQ6oIpqMsxz7yCWUPYG6Pt7Tx02OGSXtfw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudehledgkedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
-    ffkffojghfgggtgfesthekredtredtjeenucfhrhhomheppfhikhhlrghsucfunpguvghr
-    lhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrghssehrrghgnh
-    grthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepheeigfeuveeutdefhfehgeekvedt
-    leeuueekveefudehhffhjeffgfegffelfeegnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhgusehrrghg
-    nhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpd
-    hrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphht
-    thhopehlihhnuhigqdhrvghnvghsrghsqdhsohgtsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheplhhinhhugidqtghlkhesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrgh
-    hnrghtvggthhdrshgv
-X-ME-Proxy: <xmx:mPeHZ3_TdUOVQ-JPZ85yfo6i4nY0X-jxyZwnYblOnEWPuvJYjEYM5A>
-    <xmx:mPeHZ2vrhuzwfqyUZg5oDwCjpRmPE9kpzeeCR_Hk_aQ86qWNWfI36g>
-    <xmx:mPeHZ-H6fj6RnegeMjMygDJDFYgioeCmdnwFSF4deETo2nEFhb032g>
-    <xmx:mPeHZ1OJgIlrBckWh7s89Las5U26xKMRiwPMK5PpWynBDEGgXi10HQ>
-    <xmx:mfeHZ4LPzEkoHhlY2-qadDyz3MbJVwKq_BcPSwNa5_0P-eSdkNEE3TUj>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 15 Jan 2025 12:59:52 -0500 (EST)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] clk: renesas: r8a779h0: Add VSPX clock
-Date: Wed, 15 Jan 2025 18:59:27 +0100
-Message-ID: <20250115175927.3714357-3-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.48.0
-In-Reply-To: <20250115175927.3714357-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20250115175927.3714357-1-niklas.soderlund+renesas@ragnatech.se>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zqcvd/BK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BEADC4CED1;
+	Wed, 15 Jan 2025 20:22:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736972534;
+	bh=w9Wn64DoAN8/dBg3LlZDo5cAZRy6oHLkGiuq4h2HW1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zqcvd/BK7XJAcN9PlCqUnexoJ3SOBR1ea/wKgafVC8l2gQmEed+s1DMEF3JdySsph
+	 /0gG519X66Jb/OWsr4Tg0u60OqyOj4dBs8zCyNIRak1tUojpUHUDCa4ksxdDo5cLUn
+	 XNUoVigzp2g6KK97RjW1Qny2uFGEzD/HXCaBRlcIPKJg+BFO4Rq0Nm9IUDHa2oJKg3
+	 TuwZZTuKpN2ftvuKIlaItzdm3BoHLPPKtacgVF3gDLBot+MOHMOFdJA183z1mzD8HR
+	 L+4AQxTvGvoviNtU2d/0IdgIGUe8qMq1simbxx1aUL39wbRo3JwjjhXUOsK98FOrDJ
+	 1zaTexyTYRDjg==
+Date: Wed, 15 Jan 2025 14:22:11 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Renjiang Han <quic_renjiang@quicinc.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] venus: pm_helpers: Use dev_pm_genpd_set_hwmode to
+ switch GDSC mode on V4
+Message-ID: <hlre46s5jz7kro34w5ah3pvxvkdnplukoiubkptx6oeepdx2ox@mh6geaqspa6l>
+References: <20250115-switch_gdsc_mode-v3-0-9a24d2fd724c@quicinc.com>
+ <20250115-switch_gdsc_mode-v3-2-9a24d2fd724c@quicinc.com>
+ <8322416c-5762-4b64-80aa-7ef1b0b0287c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8322416c-5762-4b64-80aa-7ef1b0b0287c@linaro.org>
 
-Add the VSPX modules clock for Renesas R-Car V4M.
+On Wed, Jan 15, 2025 at 12:02:31PM +0000, Bryan O'Donoghue wrote:
+> On 15/01/2025 09:30, Renjiang Han wrote:
+> > The POWER_CONTROL register addresses are not constant and can vary across
+> > the variants. Also as per the HW recommendation, the GDSC mode switching
+> > needs to be controlled from respective GDSC register and this is a uniform
+> > approach across all the targets. Hence use dev_pm_genpd_set_hwmode() API
+> > which controls GDSC mode switching using its respective GDSC register.
+> 
+> This paragraph is difficult to read and understand. Try something a bit more
+> like "Use dev_pm_genpd_set_hwmode() API to control GDSC mode switching. Do
+> that because of reason x, y z"
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+No, follow https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
 
-diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-index b92990f5ec44..22b0af0dbb27 100644
---- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-@@ -239,6 +239,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] __initconst = {
- 	DEF_MOD("pfc1",		916,	R8A779H0_CLK_CP),
- 	DEF_MOD("pfc2",		917,	R8A779H0_CLK_CP),
- 	DEF_MOD("tsc2:tsc1",	919,	R8A779H0_CLK_CL16M),
-+	DEF_MOD("vspx0",	1028,	R8A779H0_CLK_S0D4_VIO),
- 	DEF_MOD("fcpvx0",	1100,	R8A779H0_CLK_S0D4_VIO),
- 	DEF_MOD("ssiu",		2926,	R8A779H0_CLK_S0D6_PER),
- 	DEF_MOD("ssi",		2927,	R8A779H0_CLK_S0D6_PER),
--- 
-2.48.0
+It says "describe your problem, then describe your solution". "Use "
+isn't a good start of any problem description that I can think of.
 
+Regards,
+Bjorn
+
+> 
+> "We are making this change because of reason a, b, c"
+> 
+> Basically just try to state the facts as clearly and concisely as possible.
+> 
+> ---
+> bod
