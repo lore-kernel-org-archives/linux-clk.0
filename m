@@ -1,233 +1,278 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C061991A8;
-	Wed, 15 Jan 2025 15:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F32115535B
+	for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 15:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736955035; cv=none; b=dfD/et06IJ/xT1s31XQXk3fCaaTTjwIMwmcLjlp46k121dC9cwz1lyvYmGyMLpnnUq9VHBYcT8oN2Hoe6fVX1NhcmEG4s4caWUn9Zdso2J0S13B6OzYhjU/n53n5dtwfVAiaOWqyhRmr3umCpv22DJRz2C+83mnl6ErxHRhbc9s=
+	t=1736955800; cv=none; b=DvF/6ITC3RZUv4V1WSG0GfmXynx9KuhXnJGNRsMNMtkW00YJ2FMENzHgdQpjbmUniMjoaEUnEviBX8bfWYCautXkVThZFG6catCuDCHocQCkfzvPPzQh393YeYJJgs+WsMknu8SwbiObCuUiEYJqT1gf7WiDYiL5a2xMuLf7568=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736955035; c=relaxed/simple;
-	bh=VJCMQ3LdytF99k+ZjaqHTO9vURJBmWDtrFvLagS9m6w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QV7LzxFwgoWsTG+1+Fp0etvbh4yOS1nbSAFLoJjpYozEE+qG7xUqnQmtmv2pdN6NGmwhbXV4k2piSYS9tH2b38dVQDZylkbOrp837Ta/GWVU+oM1RRcsKRrlMFM8L4KIlgloTxDsFzxzd9ADiL93qs8/Sm5wppfOfxqHS6Y3Dm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fnh2OOMr; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1736955800; c=relaxed/simple;
+	bh=dmMnEGcq21MgikMSqYyZzPg3t/SJw9VOAtnLYskAp30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j21HXBAQXb/utuimPluNpEQo6M5jRdk2n6mxbtxxWburRopgD7V9+0Le6HmZhHW6C8tewrgn1X/hb+88n8zWZPsWRGQ3+afXMtURxDA2CnwyVWKSAyQphkrdkx3v0XGs/c2j892UC79sSW761Y8lNRCWvaJ4PepwuoaeGpa2CKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ltKJl4E8; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fnh2OOMr"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4361f796586so72636215e9.3;
-        Wed, 15 Jan 2025 07:30:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ltKJl4E8"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaec111762bso1238474566b.2
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 07:43:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736955030; x=1737559830; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1736955795; x=1737560595; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yhsHMzC9Z/DuOqJyrMa8rNmS3dp3ki/KF11rGLRbkUc=;
-        b=Fnh2OOMrjC2OdIN6S5u45XSM0NH+6hS6gsXFQQZ5999WAed7sn7ERHzYlJJWWRxv0v
-         6cl2RYST0rb5kZpv69NiEVIZv94WIX6S/KCeuR+8vGzupsNzg97BH6WtPd5hvtLX8MNv
-         2px3r+CBcseT+mE7bxPeLCy0DdTcjJ1GPhSzQ02yzVnpJ4YwTcMGLEglUOrVrQBXO6E2
-         KokDLox2dj/TPHE8mMlP3CAZ/RNnPHt9QZ7VpMHI0zh+RbnJguq5dRWjO/sQrBlWQ6uW
-         maLYLlV8zTLIyRRhw+FyNkw4oF8CKxOC15r8sRQqdazaoVJW9KzqcUhx6gjVyeh105Pc
-         XgCw==
+        bh=J3f/BtUt4rfes1Yuu9lxrllgo0vGvTSgAee2lMYuIXM=;
+        b=ltKJl4E8e3dqQxZPpfGXPuESDtva26dY8Nfn6juD0Mj1XBARlBVNWg2lDnUhOiZDsu
+         dFDdVTgKJqHxBOHbSJHxzL0oFqv9fgRwJLRVGYsss0QsqBWrOTvoVKhbMN2zfEp6fpq9
+         ZF1p6+PePqGsVwAkddSgPNFWbtgJFsXX2tU60kF9ZN8QKfz7YNjUZAE7gHpdKc2vZ25O
+         sx9ylI4ZmuNFAJRYeVdjm2ulGMkcW6iJ7tz9b/EIXpIsJqQIMGmtVvjsoby1ER0wQ+e4
+         Lrfu0cFM2C0Wk8sWY14EznFolWOhBXs4p6RJ18us+gAkUBx7FMIhSDC5ZClXOBN9a/fV
+         uQEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736955030; x=1737559830;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1736955795; x=1737560595;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yhsHMzC9Z/DuOqJyrMa8rNmS3dp3ki/KF11rGLRbkUc=;
-        b=r9zC7SNRCsQ7vTDZA+vb+ZqyTjMCfebGJFaMxEd7Pnuooug3IDHYecK6Sob2zSNt37
-         dUuYXLLRiyQ4x4amXBIdIyDluqSsIl08+gbOGdVM7/gB24Y7BXH2CUfDR38CgVAzxWNJ
-         ELO3NLSpsRcBjOBSYlKa09dCihFXPMDY0nWxAb5OOC9FBH1xIYoDYS+7fqKhv1dpL2WO
-         AYmPvbWTRlnJp2YZYveKpFikKrZnhGE9ebxAFGQQnBIRoBJH+vq65hsZ0WMg2JLH/aV5
-         9+c5GrjeD9J1t7WiSk2+YMEy6mlVO4xYY8NkhkPWe3W4cLySMuiexYBo4qGam5sclxV3
-         hcvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKcKCHuBNxbY+HLWbh3NVXxcKe0Ppld0199KXyFr+tAL2QE6kjupiUiCeE0Yv2Nyzd/76F+NAbVQEzDayR@vger.kernel.org, AJvYcCVnH0MPQejQ6pE7F5zND6B4CIgl2Jji/L1M4qNz3JHAEKrWUYIFxzKu+ZuWcl5Qt7Fz5EtXQY+OP6ZK@vger.kernel.org, AJvYcCXBy86WqGa3Sn96Nj71Qq5uT/7xUuHPvheAhgUd9EGWU/cHyeotMLvvZIGEzPdE1RIHCnM6VHYPaYgSGA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YykGxvV28j7xa1BrMUAynB1GMjJlaDVCBGZNCehC1IhcwehaPve
-	awlUfVwo7lNYe0maNX9hcw19oYbGf7jT4HX+tcjUT7tCgB9NWjFX00DZ9g==
-X-Gm-Gg: ASbGncvUZ0De7r1RO85GFPzf8Mwjw2gJnWIOoNKtWLI4AkvI28gAz8667RV4vcoOerf
-	o1KitC4zIpGDm7og1omnyxLSnc2fjDMXh16S6SFoGDzPNOLr7XFpjCOQ/pgS9e/C/UpGeOrJumt
-	S/axqxNtBtzHvM8imD/FwCgMSX7iUDq9MGOGo8OVtQEpTHeIACs3E5R8mbD5dJmDBzwPc0UW7NZ
-	xz2Dp72GRmdCQMXD1D0J9VudE6C+t+8q2/D4ljeFSlImylbA4gz3LOxnUFwaePdkHsljK/ByF6f
-	z/552W6rAlxpBi+pVavbYWJr4jLxlMwtdK4AFarlysjAhSw=
-X-Google-Smtp-Source: AGHT+IE+vYikpEMKftBd4lyfoB4zEM1zy8GTjJ5yxzV6CkjC5Sb4r/djr0+8ZPKt/7Gwru0f7RctbQ==
-X-Received: by 2002:a05:600c:a0a:b0:434:a04d:1670 with SMTP id 5b1f17b1804b1-436e25548e3mr182538165e9.0.1736955029623;
-        Wed, 15 Jan 2025 07:30:29 -0800 (PST)
-Received: from localhost.localdomain (249.red-88-10-54.dynamicip.rima-tde.net. [88.10.54.249])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38bddbf50a2sm7440771f8f.43.2025.01.15.07.30.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2025 07:30:29 -0800 (PST)
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To: linux-clk@vger.kernel.org
-Cc: sboyd@kernel.org,
-	mturquette@baylibre.com,
-	tsbogend@alpha.franken.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	p.zabel@pengutronix.de,
-	linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	yangshiji66@outlook.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] mips: dts: ralink: mt7628a: update system controller node and its consumers
-Date: Wed, 15 Jan 2025 16:30:19 +0100
-Message-Id: <20250115153019.407646-7-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250115153019.407646-1-sergio.paracuellos@gmail.com>
-References: <20250115153019.407646-1-sergio.paracuellos@gmail.com>
+        bh=J3f/BtUt4rfes1Yuu9lxrllgo0vGvTSgAee2lMYuIXM=;
+        b=axXYP5wZICBLZesbghrbhGJhIS8g9m8/qP2Xg3dv90FgGDRFJX94fOpp4n2wKF4Ccj
+         cNg2LlgpR4jDyimDmm8STAceEAH2GCuI400WG9kqFKQ845qo8yB7tLQqvrcwR7AukOFD
+         mumVfzUAdTHMTQc4mD9PoEO8JK1lkV9I0/hUAQ4MXxhHOfh13QhWy5Mkrfq0fwE9ham+
+         yEC2H/wHLBmoutxR9KyVd3cWE9Zv/vthFtQwiL5HWjGRLDjZIsnPzQkWQo6D7wTCNcDo
+         8cIU+RCmoJCqqB8yQX6KC4ZUx0lkBe5N2PNM/wbxSa2+wbJdnvHhJqQ6AanJ2s0qgAJc
+         xV4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUBKVWtS5fc5yKwCht9Dh91TcL01kR46RXFENK+cDkeTFBYZT7R8MRc7j1doA/+rBAe8dcVHkxRXcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0HvTmxRCsq6LvQ/iYZZ9MR5tuzcgSujOYcA3Ks7+93995vZAC
+	c+jsHDWuf5hwHm2dDXORQ6jkfxnEJXUqbl3pdLVFl8nTCNdx5aq9qLxcyo9yOUFTloZXMi9k0XI
+	f9Nvk0LvbcVCM5Wiua7ErSpPuJ/VHmSKkLPz1kg==
+X-Gm-Gg: ASbGncuwNU7e5lIexc5EISAjyltS3cjfqwci8/frGAYDAT8ioE1D64Y9kFs/kB0WBdS
+	1veARsMILkiTrVNu2PKRA3p3KrF6TnTLUl+274ow=
+X-Google-Smtp-Source: AGHT+IHDoi+mGYLGebHeWkmmNu9kuOD8jns2z/VYjko7Tnbt+R1MkhbZJ+/4XcPAdBtCZQ/TdWXJyEXsB5J2CJpGKLI=
+X-Received: by 2002:a17:907:2cc5:b0:aaf:c326:f2d8 with SMTP id
+ a640c23a62f3a-ab2abdc0257mr3047455066b.57.1736955795506; Wed, 15 Jan 2025
+ 07:43:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250103163805.1775705-3-claudiu.beznea.uj@bp.renesas.com> <46c8e8ff-ea39-4dbd-a26c-67fcabf4b589@linaro.org>
+In-Reply-To: <46c8e8ff-ea39-4dbd-a26c-67fcabf4b589@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 15 Jan 2025 16:42:37 +0100
+X-Gm-Features: AbW1kvbeNqMmLKjkvJqDQCdSbnPp1um89aAtf_bRTZINBqlSnyOdq4a4Fmix_nI
+Message-ID: <CAPDyKFq40KB6jKapnm0mOkFGB9-7VEGiBhNrVn_2fzrcziq0=Q@mail.gmail.com>
+Subject: Re: [PATCH 2/6] thermal: of: Export non-devres helper to
+ register/unregister thermal zone
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>, rafael@kernel.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, p.zabel@pengutronix.de, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Current MT7628A device tree file is out of date and must be merged with real
-device tree file used in openWRT project [0]. As a first iteration for this
-changes, align the current file with the needed changes for system controller
-from '6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIPS SoCs")'.
+On Thu, 9 Jan 2025 at 18:34, Daniel Lezcano <daniel.lezcano@linaro.org> wro=
+te:
+>
+>
+> Ulf,
+>
+> can you have a look at this particular patch please ?
+>
+> Perhaps this scenario already happened in the past and there is an
+> alternative to fix it instead of this proposed change
 
-[0]: https://github.com/openwrt/openwrt/blob/main/target/linux/ramips/dts/mt7628an.dtsi
+I think the patch makes sense.
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
- arch/mips/boot/dts/ralink/mt7628a.dtsi | 43 ++++++++++++++++----------
- 1 file changed, 27 insertions(+), 16 deletions(-)
+If there is a PM domain that is attached to the device that is
+managing the clocks for the thermal zone, the detach procedure
+certainly needs to be well controlled/synchronized.
 
-diff --git a/arch/mips/boot/dts/ralink/mt7628a.dtsi b/arch/mips/boot/dts/ralink/mt7628a.dtsi
-index 45a15e005cc4..bc69866e2134 100644
---- a/arch/mips/boot/dts/ralink/mt7628a.dtsi
-+++ b/arch/mips/boot/dts/ralink/mt7628a.dtsi
-@@ -1,4 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <dt-bindings/clock/mediatek,mtmips-sysc.h>
-+#include <dt-bindings/reset/mediatek,mtmips-sysc.h>
- 
- / {
- 	#address-cells = <1>;
-@@ -16,11 +18,6 @@ cpu@0 {
- 		};
- 	};
- 
--	resetc: reset-controller {
--		compatible = "ralink,rt2880-reset";
--		#reset-cells = <1>;
--	};
--
- 	cpuintc: interrupt-controller {
- 		#address-cells = <0>;
- 		#interrupt-cells = <1>;
-@@ -36,9 +33,11 @@ palmbus@10000000 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 
--		sysc: system-controller@0 {
--			compatible = "ralink,mt7620a-sysc", "syscon";
-+		sysc: syscon@0 {
-+			compatible = "ralink,mt7628-sysc", "syscon";
- 			reg = <0x0 0x60>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		pinmux: pinmux@60 {
-@@ -138,7 +137,7 @@ watchdog: watchdog@100 {
- 			compatible = "mediatek,mt7621-wdt";
- 			reg = <0x100 0x30>;
- 
--			resets = <&resetc 8>;
-+			resets = <&sysc MT76X8_RST_TIMER>;
- 			reset-names = "wdt";
- 
- 			interrupt-parent = <&intc>;
-@@ -154,7 +153,7 @@ intc: interrupt-controller@200 {
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 
--			resets = <&resetc 9>;
-+			resets = <&sysc MT76X8_RST_INTC>;
- 			reset-names = "intc";
- 
- 			interrupt-parent = <&cpuintc>;
-@@ -190,7 +189,9 @@ spi: spi@b00 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pinmux_spi_spi>;
- 
--			resets = <&resetc 18>;
-+			clocks = <&sysc MT76X8_CLK_SPI1>;
-+
-+			resets = <&sysc MT76X8_RST_SPI>;
- 			reset-names = "spi";
- 
- 			#address-cells = <1>;
-@@ -206,7 +207,9 @@ i2c: i2c@900 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pinmux_i2c_i2c>;
- 
--			resets = <&resetc 16>;
-+			clocks = <&sysc MT76X8_CLK_I2C>;
-+
-+			resets = <&sysc MT76X8_RST_I2C>;
- 			reset-names = "i2c";
- 
- 			#address-cells = <1>;
-@@ -222,7 +225,9 @@ uart0: uartlite@c00 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pinmux_uart0_uart>;
- 
--			resets = <&resetc 12>;
-+			clocks = <&sysc MT76X8_CLK_UART0>;
-+
-+			resets = <&sysc MT76X8_RST_UART0>;
- 			reset-names = "uart0";
- 
- 			interrupt-parent = <&intc>;
-@@ -238,7 +243,9 @@ uart1: uart1@d00 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pinmux_uart1_uart>;
- 
--			resets = <&resetc 19>;
-+			clocks = <&sysc MT76X8_CLK_UART1>;
-+
-+			resets = <&sysc MT76X8_RST_UART1>;
- 			reset-names = "uart1";
- 
- 			interrupt-parent = <&intc>;
-@@ -254,7 +261,9 @@ uart2: uart2@e00 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pinmux_uart2_uart>;
- 
--			resets = <&resetc 20>;
-+			clocks = <&sysc MT76X8_CLK_UART2>;
-+
-+			resets = <&sysc MT76X8_RST_UART2>;
- 			reset-names = "uart2";
- 
- 			interrupt-parent = <&intc>;
-@@ -271,8 +280,8 @@ usb_phy: usb-phy@10120000 {
- 		#phy-cells = <0>;
- 
- 		ralink,sysctl = <&sysc>;
--		resets = <&resetc 22 &resetc 25>;
--		reset-names = "host", "device";
-+		resets = <&sysc MT76X8_RST_UHST>;
-+		reset-names = "host";
- 	};
- 
- 	usb@101c0000 {
-@@ -290,6 +299,8 @@ wmac: wmac@10300000 {
- 		compatible = "mediatek,mt7628-wmac";
- 		reg = <0x10300000 0x100000>;
- 
-+		clocks = <&sysc MT76X8_CLK_WMAC>;
-+
- 		interrupt-parent = <&cpuintc>;
- 		interrupts = <6>;
- 
--- 
-2.25.1
+>
+>
+> On 03/01/2025 17:38, Claudiu wrote:
+> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
+> > clocks are managed through PM domains. These PM domains, registered on
+> > behalf of the clock controller driver, are configured with
+> > GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
+> > clocks are enabled/disabled using runtime PM APIs.
+> >
+> > During probe, devices are attached to the PM domain controlling their
+> > clocks. Similarly, during removal, devices are detached from the PM dom=
+ain.
+> >
+> > The detachment call stack is as follows:
+> >
+> > device_driver_detach() ->
+> >    device_release_driver_internal() ->
+> >      __device_release_driver() ->
+> >        device_remove() ->
+> >          platform_remove() ->
+> >         dev_pm_domain_detach()
+> >
+> > In the upcoming Renesas RZ/G3S thermal driver, the
+> > struct thermal_zone_device_ops::change_mode API is implemented to
+> > start/stop the thermal sensor unit. Register settings are updated withi=
+n
+> > the change_mode API.
+> >
+> > In case devres helpers are used for thermal zone register/unregister th=
+e
+> > struct thermal_zone_device_ops::change_mode API is invoked when the
+> > driver is unbound. The identified call stack is as follows:
+> >
+> > device_driver_detach() ->
+> >    device_release_driver_internal() ->
+> >      device_unbind_cleanup() ->
+> >        devres_release_all() ->
+> >          devm_thermal_of_zone_release() ->
+> >         thermal_zone_device_disable() ->
+> >           thermal_zone_device_set_mode() ->
+> >             rzg3s_thermal_change_mode()
+> >
+> > The device_unbind_cleanup() function is called after the thermal device=
+ is
+> > detached from the PM domain (via dev_pm_domain_detach()).
+> >
+> > The rzg3s_thermal_change_mode() implementation calls
+> > pm_runtime_resume_and_get()/pm_runtime_put_autosuspend() before/after
+> > accessing the registers. However, during the unbind scenario, the
+> > devm_thermal_of_zone_release() is invoked after dev_pm_domain_detach().
+> > Consequently, the clocks are not enabled, as the device is removed from
+> > the PM domain at this time, leading to an Asynchronous SError Interrupt=
+.
+> > The system cannot be used after this.
+> >
+> > Add thermal_of_zone_register()/thermal_of_zone_unregister(). These will
+> > be used in the upcomming RZ/G3S thermal driver.
+> >
+> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+
+Kind regards
+Uffe
+
+> > ---
+> >   drivers/thermal/thermal_of.c |  8 +++++---
+> >   include/linux/thermal.h      | 14 ++++++++++++++
+> >   2 files changed, 19 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.=
+c
+> > index fab11b98ca49..8fc35d20db60 100644
+> > --- a/drivers/thermal/thermal_of.c
+> > +++ b/drivers/thermal/thermal_of.c
+> > @@ -329,11 +329,12 @@ static bool thermal_of_should_bind(struct thermal=
+_zone_device *tz,
+> >    *
+> >    * @tz: a pointer to the thermal zone structure
+> >    */
+> > -static void thermal_of_zone_unregister(struct thermal_zone_device *tz)
+> > +void thermal_of_zone_unregister(struct thermal_zone_device *tz)
+> >   {
+> >       thermal_zone_device_disable(tz);
+> >       thermal_zone_device_unregister(tz);
+> >   }
+> > +EXPORT_SYMBOL_GPL(thermal_of_zone_unregister);
+> >
+> >   /**
+> >    * thermal_of_zone_register - Register a thermal zone with device nod=
+e
+> > @@ -355,8 +356,8 @@ static void thermal_of_zone_unregister(struct therm=
+al_zone_device *tz)
+> >    *  - ENOMEM: if one structure can not be allocated
+> >    *  - Other negative errors are returned by the underlying called fun=
+ctions
+> >    */
+> > -static struct thermal_zone_device *thermal_of_zone_register(struct dev=
+ice_node *sensor, int id, void *data,
+> > -                                                         const struct =
+thermal_zone_device_ops *ops)
+> > +struct thermal_zone_device *thermal_of_zone_register(struct device_nod=
+e *sensor, int id, void *data,
+> > +                                                  const struct thermal=
+_zone_device_ops *ops)
+> >   {
+> >       struct thermal_zone_device_ops of_ops =3D *ops;
+> >       struct thermal_zone_device *tz;
+> > @@ -429,6 +430,7 @@ static struct thermal_zone_device *thermal_of_zone_=
+register(struct device_node *
+> >
+> >       return ERR_PTR(ret);
+> >   }
+> > +EXPORT_SYMBOL_GPL(thermal_of_zone_register);
+> >
+> >   static void devm_thermal_of_zone_release(struct device *dev, void *re=
+s)
+> >   {
+> > diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> > index 69f9bedd0ee8..adbb4092a064 100644
+> > --- a/include/linux/thermal.h
+> > +++ b/include/linux/thermal.h
+> > @@ -195,13 +195,23 @@ struct thermal_zone_params {
+> >
+> >   /* Function declarations */
+> >   #ifdef CONFIG_THERMAL_OF
+> > +struct thermal_zone_device *thermal_of_zone_register(struct device_nod=
+e *sensor, int id, void *data,
+> > +                                                  const struct thermal=
+_zone_device_ops *ops);
+> >   struct thermal_zone_device *devm_thermal_of_zone_register(struct devi=
+ce *dev, int id, void *data,
+> >                                                         const struct th=
+ermal_zone_device_ops *ops);
+> >
+> > +void thermal_of_zone_unregister(struct thermal_zone_device *tz);
+> >   void devm_thermal_of_zone_unregister(struct device *dev, struct therm=
+al_zone_device *tz);
+> >
+> >   #else
+> >
+> > +static inline
+> > +struct thermal_zone_device *thermal_of_zone_register(struct device_nod=
+e *sensor, int id, void *data,
+> > +                                                  const struct thermal=
+_zone_device_ops *ops)
+> > +{
+> > +     return ERR_PTR(-ENOTSUPP);
+> > +}
+> > +
+> >   static inline
+> >   struct thermal_zone_device *devm_thermal_of_zone_register(struct devi=
+ce *dev, int id, void *data,
+> >                                                         const struct th=
+ermal_zone_device_ops *ops)
+> > @@ -209,6 +219,10 @@ struct thermal_zone_device *devm_thermal_of_zone_r=
+egister(struct device *dev, in
+> >       return ERR_PTR(-ENOTSUPP);
+> >   }
+> >
+> > +static inline void thermal_of_zone_unregister(struct thermal_zone_devi=
+ce *tz)
+> > +{
+> > +}
+> > +
+> >   static inline void devm_thermal_of_zone_unregister(struct device *dev=
+,
+> >                                                  struct thermal_zone_de=
+vice *tz)
+> >   {
+>
+>
+> --
+> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
+M SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
