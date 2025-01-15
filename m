@@ -1,166 +1,109 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C59A23F286;
-	Wed, 15 Jan 2025 08:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83628246A03;
+	Wed, 15 Jan 2025 09:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736930018; cv=none; b=N6NdOS1h2RAE+F3zsEoYUwtkb6k5XtlhzO2aIPKmdqDKmuOVGD5+uaVLXjlFMPKjZAoBJHVfFg3ZQpEBEh42w5++oLzFIiY33WlWRdkWW2nhmxadUN0h/zKNc4SBEVctYv/azOm5imVUo+wOZyDfgt5mkG98UbHhroP4TV5jiMA=
+	t=1736931647; cv=none; b=UJpq0pxIoNhuEnfhE0Q6VsRno49XwJx0JwwRyChKnk7FMqiEuKWoNtbCxHK7nniDyKa8xAYyj5E0TKBFW59HcdRp7xX6eQDMvL5Ot/07fHIccGGTqmDQdp/gewYDa09+ZRl0vWnOib9kOb4s7nPaQn08emWf2+6VDaY4WmR5uAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736930018; c=relaxed/simple;
-	bh=rr5s78EC3w/9YyGhSVI4b1y7Fm81akbFuF8CSzmLsUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pINOfkbx8sj3sDVmNVAPC3CmNjPn/Mjy+mS9qMgqwZmqOniwBqqwTNHzYDQxpctenziS8uOj/b9Y/LL4cxGmm1upq0+njMXx2ftOiDlan631B1V1b4WRM7bbi0FKN7922elC0CJUR7pJcgacz0QbiyHZjULm4CfVG6qGAWLrNhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N6fqVA6o; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1736931647; c=relaxed/simple;
+	bh=PnUKQ3iA6mB2VAwUH8bOEGC5zfnQ7dSDpYstb//87+k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MED5f4V7Sdu6oFPbmv2ze0YYDq7YaCZr5JCrkDLve7hFi7WErHMPybx1i5LSW+aGYgBZH/uhjI+NsdVcckUOc7hz5Dmt8XkgTq4EAbclBLGRk3JuCU0BycAL3vzoRrQgHsBfKZHvYAoiJZOJjmpfoN/MThIeNGwUoOpmsz+bS2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpj7BtFh; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N6fqVA6o"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-436a39e4891so44243395e9.1;
-        Wed, 15 Jan 2025 00:33:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpj7BtFh"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2f4409fc8fdso965067a91.1;
+        Wed, 15 Jan 2025 01:00:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736930015; x=1737534815; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jRbGA5hfKNQNoBMn6E9hxMPXAsQYQxuMoAfdDX+Ku3E=;
-        b=N6fqVA6oNb6SWK4ZLNQflD8y9Mw0S0Sh/g9s+FkyHjEor3LKfacCFJQaLpknLLxZRU
-         al6VEQSpKSh5X6ESZY2RCoXym3SV1uL+CpFflAWtBnfT7hbGyGtt2Dw6KVXESBdeL+dV
-         LKZv1vLt1wzWukkN2A2Lb4XCRO6u5muTfcuSKaPbSQaq5x2OKZElKnV4QiF2dnm+eLN0
-         xuD4Ov/QTKAl8LB0ls+1FMxH/klXvTA0x8ugzu5eH36xe8O1gDIsIzyuO9PKOA69v74r
-         MLtOSv/xUlpvDzJYpHr6DzxLVXMOjzHbdC8ck6WICy+w06jD+OwlQNMTJqpgzpqJAPVB
-         i2vw==
+        d=gmail.com; s=20230601; t=1736931646; x=1737536446; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BIyMadRmUOzqS4PnMcTWJ7TwZ6bUWYSz4q38fWS+xug=;
+        b=bpj7BtFhoBHkjFXKnePCX+dS/f3vMPajuOs+O2sqOxscXY3aTlU5iBEZeFf+yUzAoU
+         mBbzvwUD+JqZfZcnNLGkmrSc/NKMk1emqC51u9skwmh1w1vNZ4TX+igAML4ZzQj+qc9y
+         y1zfYJ66KimEKWp5WwopTlYFTPqwB8JMpw/1kTUtjARkEOOr9o4/KZrwnIaSWn5HI69e
+         Bsa6VAhCjC43xlwFyBN1gqj48TUV/RCujemxKXyjVsgdzfd1Ie3JBOtS+1cySCk+Le7V
+         j114DJmxLEvULMv7Dg6V7NdhIoNS/vZtySlZXx8YEZgQmsS3f815at11dtXYWVnKVym+
+         P5MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736930015; x=1737534815;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jRbGA5hfKNQNoBMn6E9hxMPXAsQYQxuMoAfdDX+Ku3E=;
-        b=wSb0Bo1l2O+aeqlqNOtLqHw0TnrdkjDmyM3QHGlDQcAZXGaosTvzgD0AHyt3WjiJ9D
-         nDAa+qTqxH97eWhtlwUauk26GKQ3ez3NM9xWsaLsDSVSIotbjBDYxOv3b8jI6LM/DfOp
-         6+YB7uXlAInR//9Ew0sXMay4dvowpwZt8cKjDhsCGn0vYz3Tqx1ef9RMzKbNf0iwUvfz
-         L3YiTt8duCIkjnuNzjSZys+L5mwaeVPB/j1HKrV12+nLYyb4nlliZEMO6hKVgjUaIuRm
-         QKvqc488a085YnL+oFpZOebKGK6rgidej7Sgi8E6RxjYIieCQfGtPhBcJD9kHcazERSs
-         Qurg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9lpDQaC1DvM91IeOEO92/tTLt2234hcmw7EvUx0yNgmv0Z0MTjbYV0zDwBEnRvBEslX5yVk+DEyQ=@vger.kernel.org, AJvYcCVE+BmDGnZW6WPAalbF0tFXtCLbArSS+GMk+5mk1PkwPQvpr5xiLJPCl2AxBxVRhfxTLYyQjqhL9rSp9hcJ@vger.kernel.org, AJvYcCW8xrby+txV5vZtktr8BGLe068e5i+2fjzxzbSYaeYx80xZktsAmqvHWKGHsNhFFI/iSinTLIjD@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkt6SW5RsDpHPDm6mxLElRzEZPP62Z/7Z7pjd9io9H0BVcgd39
-	1f3JXkkcCfB5Efz+6k+sjStnCPoMEfEz3vSjZOpYNwuWMcTy+MxJBWKdEepD
-X-Gm-Gg: ASbGncuxcLfjqNjOzKfj5InIWhkKQhhn8b+2DOYPwPRQkJkh/JPC8xeMTvhrKtjKpfl
-	wZhuiqVmx1mXVphaNOxGNc0IZdpzJXZBsNPY0FjQPFWqUT3jJewZAFmjyQAM+Uxauoa7klAVj93
-	Ef4YHbHd5iEtHj39mJuSzpFbWPOYnBRo0LDWDY9IPlKxeihVWDEq03XTNyQB4ir9uV0GDquSnN3
-	fAiOfFPmRjB2TgJ4NujvlkuUlOFzoGaA406OqhnAb+8qs++BQs7WVPIyB4iOEE8YElW+DOp/HV6
-	mm00iDf6
-X-Google-Smtp-Source: AGHT+IF7Dra5d6ki8O3COk+SLqWcJq2xaGIUHP116tcbjhTFS3reuK1GgRmhqIcUq60sOxi9rfERQw==
-X-Received: by 2002:a05:600c:3b99:b0:434:f925:f5c9 with SMTP id 5b1f17b1804b1-436e266dfe9mr223940145e9.6.1736930014457;
-        Wed, 15 Jan 2025 00:33:34 -0800 (PST)
-Received: from eichest-laptop (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c749a127sm15360785e9.7.2025.01.15.00.33.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2025 00:33:34 -0800 (PST)
-Date: Wed, 15 Jan 2025 09:33:32 +0100
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, shengjiu.wang@nxp.com,
-	francesco.dolcini@toradex.com, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v1] clk: imx: imx8-acm: fix flags for acm clocks
-Message-ID: <Z4dy3LiEAQ_gkQGG@eichest-laptop>
-References: <20250113094654.12998-1-eichest@gmail.com>
- <CAA+D8ANvKQKJhn6qKbPhQeXPD5kxUo3Hg-FBLkDMOaWLTA8vVg@mail.gmail.com>
- <Z4ZRYMf_uJW4poW9@eichest-laptop>
+        d=1e100.net; s=20230601; t=1736931646; x=1737536446;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BIyMadRmUOzqS4PnMcTWJ7TwZ6bUWYSz4q38fWS+xug=;
+        b=BXcBuoFq1/2XktOxReqdAJitw2FITaGN9NTSVJCCtckqs3EkDkj61Y7iq7IslUiDzt
+         GoMCvRoXRGlwKhIUh2Qnbf0D/kYOlpTnlqdGEXcYjNoC7+A/r1CPErloKrHmuzybT1gL
+         au+A+WDHGRfPb1UduUlrsLYj1NuTcdzqrFrFDUMdBajAMYnemmqhoeqmQoG8v+l+QIB5
+         dMdW/ORgpk+lYZg/j/aLKr6bwfoEUCtH7XEcIJ+JiTNmdmf8pnTwStr1qcCNve+yd4yG
+         4aWD2FqzaQk2l9GFlbeoO/K4uVbhFJJot2sUfQ6GFEu8QxffCuCccX9pK0HZ/vXiovbG
+         Umpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsVU8lHRyG389VA/AGAkfIoPlf99rQ0eqfQD1IQ7k2WwgYiFRjxdqAUuYhPVuUQ+F4ADptku6kfBSxFkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw522JzZ7rUVoJafRAGZkqbpLm/uhqX3isi3GUNtohUiyju5Hq2
+	NOuOjHfiOJvYaUx3n6bH7wkOVvY7fudv3RrrQi7Pac2LcVp+MP+og/8m/gb1W4QmyCFvB6WwJ9W
+	5ooYwMWQxaJMZtW7JJwnhC7c5Y44=
+X-Gm-Gg: ASbGncthFE75l7DdnCuIM4SPBKm+NgsKhSbwEmvopZ+PRgM6UVWD2oB7Z/qPUs3Iz51
+	78ASk5aF9JERtOiOsQ/bvmp94H1uPU6KBwUep
+X-Google-Smtp-Source: AGHT+IENueaRrpzDTAMkqaBGUgXqdE+3nyTR2IVcMJ+he/svY9M2wMRHEMzQohpy8iws3frPwrl7iselBk3LthWhxPs=
+X-Received: by 2002:a17:90b:134e:b0:2f2:a974:1e45 with SMTP id
+ 98e67ed59e1d1-2f728e36688mr3307577a91.16.1736931645764; Wed, 15 Jan 2025
+ 01:00:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z4ZRYMf_uJW4poW9@eichest-laptop>
+References: <20250113082818.345939-1-sergio.paracuellos@gmail.com>
+ <ebb32bec-3fd4-4129-ab5d-d519b10c4405@kernel.org> <CAMhs-H9ysdJ9nUuStWJpRqTzm-09ZS5TMdhWgKMZx+JZdo6teQ@mail.gmail.com>
+ <ec255edc-adcd-4c18-8f9c-209298f2bbff@kernel.org> <CAMhs-H9Osx__jBoxqAW1zWO4Q+nMymVfiWe_-ZSzp92Jht+JTg@mail.gmail.com>
+ <cf9732b1-fd09-454e-bfd7-bef55b234175@kernel.org> <CAMhs-H_6QTptfFsSEh7PKy8Fnoem1ph4j=mwT_23=J=adDDT8w@mail.gmail.com>
+ <a4796db2-e354-48e0-bd5f-da774f154473@kernel.org> <CAMhs-H9+hHnQQ3PSs2fCNvwdoJhrteARXQutFiziGN9+TFAgrw@mail.gmail.com>
+ <10e21109-f4fa-42f5-a3fa-c6fa67fba783@kernel.org>
+In-Reply-To: <10e21109-f4fa-42f5-a3fa-c6fa67fba783@kernel.org>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Wed, 15 Jan 2025 10:00:34 +0100
+X-Gm-Features: AbW1kvYBYgYrW3T_QHVe8E5vGhPtExI9NydxT5VRrY6mZSITELXXfwJpyGCHbnI
+Message-ID: <CAMhs-H9yoZ-m1Mf147F9V1OVxNO3kvQTt_nP-YLD970f-Y-UOA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: add clock definitions for Ralink SoCs
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	yangshiji66@outlook.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Shengjiu Wang,
+On Wed, Jan 15, 2025 at 9:27=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 14/01/2025 08:43, Sergio Paracuellos wrote:
+> >>
+> >>> consumer nodes. So if adding this header is not a possibility with th=
+e
+> >>> changes in the yaml file I will forget about this addition and this
+> >>> patch.
+> >>
+> >> Header without user is pointless. Driver and the DTS are the expected =
+users.
+> >
+> > Understood. So having only DTSs as users is not a possible way to go.
+> > It is clear now. Forget about this patch then.
+>
+> Only DTS user, with a justification, would go. Then just resend this
+> patch when you have at least DTS user.
 
-On Tue, Jan 14, 2025 at 12:58:24PM +0100, Stefan Eichenberger wrote:
-> Hi Shengjiu Wang,
-> 
-> On Tue, Jan 14, 2025 at 03:49:10PM +0800, Shengjiu Wang wrote:
-> > On Mon, Jan 13, 2025 at 5:54 PM Stefan Eichenberger <eichest@gmail.com> wrote:
-> > >
-> > > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > >
-> > > Currently, the flags for the ACM clocks are set to 0. This configuration
-> > > causes the fsl-sai audio driver to fail when attempting to set the
-> > > sysclk, returning an EINVAL error. The following error messages
-> > > highlight the issue:
-> > > fsl-sai 59090000.sai: ASoC: error at snd_soc_dai_set_sysclk on 59090000.sai: -22
-> > > imx-hdmi sound-hdmi: failed to set cpu sysclk: -22
-> > 
-> > The reason for this error is that the current clock parent can't
-> > support the rate
-> > you require (I think you want 11289600).
-> > 
-> > We can configure the dts to provide such source, for example:
-> > 
-> >  &sai5 {
-> > +       assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
-> > +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
-> > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
-> > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
-> > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
-> > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
-> > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
-> > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
-> > +                       <&sai5_lpcg 0>;
-> > +       assigned-clock-parents = <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg 0>;
-> > +       assigned-clock-rates = <0>, <0>, <786432000>, <49152000>, <12288000>,
-> > +                                <722534400>, <45158400>, <11289600>,
-> > +                               <49152000>;
-> >         status = "okay";
-> >  };
-> > 
-> > Then your case should work.
-> > 
-> > >
-> > > By setting the flag CLK_SET_RATE_NO_REPARENT, we signal that the ACM
-> > 
-> > I don't think CLK_SET_RATE_NO_REPARENT is a good choice. which will cause
-> > the driver don't get an error from clk_set_rate().
-> 
-> Thanks for the proposal, I will try it out tomorrow. Isn't this a
-> problem if other SAIs use the same clock source but with different
-> rates? 
-> 
-> If we have to define fixed rates in the DTS or else the clock driver
-> will return an error, isn't that a problem? Maybe I should change the
-> sai driver so that it ignores the failure and just takes the rate
-> configured? In the end audio works, even if it can't set the requested
-> rate.
+Awesome, thanks for letting me know. I will update current
+arch/mips/boot/dts/ralink DTS files on-tree to reflect at least all of
+these clock changes before merging and properly update them with
+openwrt. I will resend with this patch then.
 
-The following clock tree change would allow the driver to work
-in our scenario:
-&sai5 {
-	assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
-			  <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>;
-	assigned-clock-parents = <&aud_pll_div1_lpcg 0>;
-	assigned-clock-rates = <0>, <11289600>;
-};
+>
+> Best regards,
+> Krzysztof
 
-However, this means we have to switch the parent clock to the audio pll
-1. For the simple setup with two SAIs, one for analog audio and one for
-HDMI this wouldn't be a problem. But I'm not sure if this is a good
-solution if a customer would add a third SAI which requires again a
-different parent clock rate.
-
-One potential solution could be that the SAI driver tries to first
-derive the clock from the current parent and only if this fails it tries
-to modify its parent clock. What do you think about this solution?
-
-Regards,
-Stefan
-
+Thanks,
+    Sergio Paracuellos
