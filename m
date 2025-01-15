@@ -1,109 +1,106 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83628246A03;
-	Wed, 15 Jan 2025 09:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D478D246A10;
+	Wed, 15 Jan 2025 09:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736931647; cv=none; b=UJpq0pxIoNhuEnfhE0Q6VsRno49XwJx0JwwRyChKnk7FMqiEuKWoNtbCxHK7nniDyKa8xAYyj5E0TKBFW59HcdRp7xX6eQDMvL5Ot/07fHIccGGTqmDQdp/gewYDa09+ZRl0vWnOib9kOb4s7nPaQn08emWf2+6VDaY4WmR5uAc=
+	t=1736932157; cv=none; b=SDciiV0AaMUkHFlI4zHdGLnCyjCuYsTpUBG9A3gcnyjOE/e5NA/FP2h1mS8zFLNoEn2guPyQ6CccSGPNzIbt+jC2HcqaL3Pjn1deTFCRpi2f2gyIhXnOS46468h8dxgQpf504W6jz2CYuAZOmKTTB+rBDBBXSRoIc92lvOs4+UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736931647; c=relaxed/simple;
-	bh=PnUKQ3iA6mB2VAwUH8bOEGC5zfnQ7dSDpYstb//87+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MED5f4V7Sdu6oFPbmv2ze0YYDq7YaCZr5JCrkDLve7hFi7WErHMPybx1i5LSW+aGYgBZH/uhjI+NsdVcckUOc7hz5Dmt8XkgTq4EAbclBLGRk3JuCU0BycAL3vzoRrQgHsBfKZHvYAoiJZOJjmpfoN/MThIeNGwUoOpmsz+bS2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpj7BtFh; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1736932157; c=relaxed/simple;
+	bh=jzVF8QKbSKlwNeLM5JaEErE+5Hfuig0I3TmeMB+qegc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cZ4mnvrKBjHrjKpzwJfN7Q4jAuzZHHgZ2LfpmfJokjsL3EAbFrm9/ZQ64+h9E1oHzdaSqfa6yyVrJhF+4waSbuBjP1NNfAw8vooNvxnw12Dhc6ZVSpXJq3RBWVX/OFSNuvnIdTl7AsC7ENOqYSHFXLMtCCKLNgwYjz01nJiGNKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=YwUsiqL+; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpj7BtFh"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2f4409fc8fdso965067a91.1;
-        Wed, 15 Jan 2025 01:00:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736931646; x=1737536446; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BIyMadRmUOzqS4PnMcTWJ7TwZ6bUWYSz4q38fWS+xug=;
-        b=bpj7BtFhoBHkjFXKnePCX+dS/f3vMPajuOs+O2sqOxscXY3aTlU5iBEZeFf+yUzAoU
-         mBbzvwUD+JqZfZcnNLGkmrSc/NKMk1emqC51u9skwmh1w1vNZ4TX+igAML4ZzQj+qc9y
-         y1zfYJ66KimEKWp5WwopTlYFTPqwB8JMpw/1kTUtjARkEOOr9o4/KZrwnIaSWn5HI69e
-         Bsa6VAhCjC43xlwFyBN1gqj48TUV/RCujemxKXyjVsgdzfd1Ie3JBOtS+1cySCk+Le7V
-         j114DJmxLEvULMv7Dg6V7NdhIoNS/vZtySlZXx8YEZgQmsS3f815at11dtXYWVnKVym+
-         P5MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736931646; x=1737536446;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BIyMadRmUOzqS4PnMcTWJ7TwZ6bUWYSz4q38fWS+xug=;
-        b=BXcBuoFq1/2XktOxReqdAJitw2FITaGN9NTSVJCCtckqs3EkDkj61Y7iq7IslUiDzt
-         GoMCvRoXRGlwKhIUh2Qnbf0D/kYOlpTnlqdGEXcYjNoC7+A/r1CPErloKrHmuzybT1gL
-         au+A+WDHGRfPb1UduUlrsLYj1NuTcdzqrFrFDUMdBajAMYnemmqhoeqmQoG8v+l+QIB5
-         dMdW/ORgpk+lYZg/j/aLKr6bwfoEUCtH7XEcIJ+JiTNmdmf8pnTwStr1qcCNve+yd4yG
-         4aWD2FqzaQk2l9GFlbeoO/K4uVbhFJJot2sUfQ6GFEu8QxffCuCccX9pK0HZ/vXiovbG
-         Umpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsVU8lHRyG389VA/AGAkfIoPlf99rQ0eqfQD1IQ7k2WwgYiFRjxdqAUuYhPVuUQ+F4ADptku6kfBSxFkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw522JzZ7rUVoJafRAGZkqbpLm/uhqX3isi3GUNtohUiyju5Hq2
-	NOuOjHfiOJvYaUx3n6bH7wkOVvY7fudv3RrrQi7Pac2LcVp+MP+og/8m/gb1W4QmyCFvB6WwJ9W
-	5ooYwMWQxaJMZtW7JJwnhC7c5Y44=
-X-Gm-Gg: ASbGncthFE75l7DdnCuIM4SPBKm+NgsKhSbwEmvopZ+PRgM6UVWD2oB7Z/qPUs3Iz51
-	78ASk5aF9JERtOiOsQ/bvmp94H1uPU6KBwUep
-X-Google-Smtp-Source: AGHT+IENueaRrpzDTAMkqaBGUgXqdE+3nyTR2IVcMJ+he/svY9M2wMRHEMzQohpy8iws3frPwrl7iselBk3LthWhxPs=
-X-Received: by 2002:a17:90b:134e:b0:2f2:a974:1e45 with SMTP id
- 98e67ed59e1d1-2f728e36688mr3307577a91.16.1736931645764; Wed, 15 Jan 2025
- 01:00:45 -0800 (PST)
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="YwUsiqL+"
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 4F1A8A0A27;
+	Wed, 15 Jan 2025 10:09:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=ssZI86T0A6XNN8hCXgMu
+	MZMsnzteKeFLGvw1TpMOAQU=; b=YwUsiqL+mnfGUW9j8eGYD/GWnYrYU4Lh23/R
+	Gk2lpKqoAoqRGyrHg00ogMYZOT6rBU2nNA0yllC476j3q3fUoYLJVNemN00UpP4s
+	RNSd3MN5utnVTVpVHhRiW7g18Rxvg6cg5Mbi0igsJ8aqMJi2LKMdPOWddsY+ja2X
+	HdVuwqmRkFUNTRYG+1vhShK2qKRzlVSPpPbLn1PZT3aeK6GviuuaHTod48xGpBct
+	xITp7DWK5gH6WgPA0466Hq4INt9RjJ3g9jWgF2DO4HcsvCXLUtYqm6VEJSF6skO4
+	QKwbsuC4d9czkpAnsIVGSJP89jgtxCsPE33/NZJaQbojtYFP5lBO/LYuskWxvMgF
+	L+IEVCzwQZ8fR5S7OdoyPZNYIudOpxHv82EgdF5wm/maN/qVoKiD6Jtr/4cSHgyp
+	A0d/IluO1KZddaESPZPCepvmVGSG8fa7b68lneLzG4o93UIraCbzM6rDLsfYHMtg
+	lpWj8ZVDnG6zZDLoLifMkms32GIpx/DhARP/Z8rZ3YYdqa0ClqgGgmZVhYHHRiLK
+	Xglikd9s9lg4opobT3B+ruWbtNC7nBY7dr1DfKu4PDOZqXWX80G3xcgPLCmXTtq1
+	pl4P9NrgOy1MtsywyJ4vVaQqbvy1t76OTxyKF32tbGpRU0vliKNBQ5DbgD/jZTwO
+	3/JuGtg=
+Message-ID: <81cbb273-a4b4-424c-9d25-f53ebc8ea82a@prolan.hu>
+Date: Wed, 15 Jan 2025 10:09:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250113082818.345939-1-sergio.paracuellos@gmail.com>
- <ebb32bec-3fd4-4129-ab5d-d519b10c4405@kernel.org> <CAMhs-H9ysdJ9nUuStWJpRqTzm-09ZS5TMdhWgKMZx+JZdo6teQ@mail.gmail.com>
- <ec255edc-adcd-4c18-8f9c-209298f2bbff@kernel.org> <CAMhs-H9Osx__jBoxqAW1zWO4Q+nMymVfiWe_-ZSzp92Jht+JTg@mail.gmail.com>
- <cf9732b1-fd09-454e-bfd7-bef55b234175@kernel.org> <CAMhs-H_6QTptfFsSEh7PKy8Fnoem1ph4j=mwT_23=J=adDDT8w@mail.gmail.com>
- <a4796db2-e354-48e0-bd5f-da774f154473@kernel.org> <CAMhs-H9+hHnQQ3PSs2fCNvwdoJhrteARXQutFiziGN9+TFAgrw@mail.gmail.com>
- <10e21109-f4fa-42f5-a3fa-c6fa67fba783@kernel.org>
-In-Reply-To: <10e21109-f4fa-42f5-a3fa-c6fa67fba783@kernel.org>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Wed, 15 Jan 2025 10:00:34 +0100
-X-Gm-Features: AbW1kvYBYgYrW3T_QHVe8E5vGhPtExI9NydxT5VRrY6mZSITELXXfwJpyGCHbnI
-Message-ID: <CAMhs-H9yoZ-m1Mf147F9V1OVxNO3kvQTt_nP-YLD970f-Y-UOA@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: add clock definitions for Ralink SoCs
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	yangshiji66@outlook.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/12] ARM: dts: sun8i: add DTSI file for V853
+To: Krzysztof Kozlowski <krzk@kernel.org>, Andras Szemzo
+	<szemzo.andras@gmail.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Chen-Yu
+ Tsai" <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, "Samuel
+ Holland" <samuel@sholland.org>, Linus Walleij <linus.walleij@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>
+CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@baylibre.com>, Florian Fainelli
+	<florian.fainelli@broadcom.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-phy@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-riscv@lists.infradead.org>
+References: <20250110123923.270626-1-szemzo.andras@gmail.com>
+ <20250110123923.270626-13-szemzo.andras@gmail.com>
+ <ff57cf8d-626e-4d35-a18f-1a89b4d9fa3e@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <ff57cf8d-626e-4d35-a18f-1a89b4d9fa3e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94852647063
 
-On Wed, Jan 15, 2025 at 9:27=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 14/01/2025 08:43, Sergio Paracuellos wrote:
-> >>
-> >>> consumer nodes. So if adding this header is not a possibility with th=
-e
-> >>> changes in the yaml file I will forget about this addition and this
-> >>> patch.
-> >>
-> >> Header without user is pointless. Driver and the DTS are the expected =
-users.
-> >
-> > Understood. So having only DTSs as users is not a possible way to go.
-> > It is clear now. Forget about this patch then.
->
-> Only DTS user, with a justification, would go. Then just resend this
-> patch when you have at least DTS user.
+Hi,
 
-Awesome, thanks for letting me know. I will update current
-arch/mips/boot/dts/ralink DTS files on-tree to reflect at least all of
-these clock changes before merging and properly update them with
-openwrt. I will resend with this patch then.
+On 2025. 01. 10. 14:58, Krzysztof Kozlowski wrote:
+> On 10/01/2025 13:39, Andras Szemzo wrote:
+>> +// Copyright (C) 2024 Andras Szemzo <szemzo.andras@gmail.com>
+>> +
+>> +#include <dt-bindings/clock/sun6i-rtc.h>
+>> +#include <dt-bindings/clock/sun8i-v853-r-ccu.h>
+>> +#include <dt-bindings/reset/sun8i-v853-r-ccu.h>
+>> +#include <dt-bindings/clock/sun8i-v853-ccu.h>
+>> +#include <dt-bindings/reset/sun8i-v853-ccu.h>
+>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +#include <dt-bindings/power/allwinner,sun8i-v853-ppu.h>
+>> +
+>> +/ {
+>> +	#address-cells = <1>;
+>> +	#size-cells = <1>;
+>> +
+>> +	osc24M: osc24M-clk {
+> 
+> Only lowercase node names.
 
->
-> Best regards,
-> Krzysztof
+I don't agree. It is customary to write oscillator names with casing in 
+line with the SI prefixes of their frequency, i.e. lowercase k, 
+uppercase M/G/etc. (even though a millihertz oscillator rarely makes 
+sense, it is best to stay consistent).
 
-Thanks,
-    Sergio Paracuellos
+Bence
+
