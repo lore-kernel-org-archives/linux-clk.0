@@ -1,266 +1,161 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4AD248182
-	for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 10:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E34234CEC
+	for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 10:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736935269; cv=none; b=V/4l2dP377IEW7b+H8if4a9Y/s6JdQa+3nyxbkFhAAKuDP/Rj6FEX5ThJa8L8GLgmsYEKpI/wc1bjFHLcwJtklegr5iMNSpRwbFrNxfiD8Z/XhQDneG3+iRUbQ/Jhp/CIamteQJj7+os0/fqWkUKDQKcE6k1GGPVFzASts+zxmk=
+	t=1736936646; cv=none; b=SEt8Qvob8xwFRVCnGkRekDTwLNiomc8WHX4jDIt2LioB2DP5P1M39tU8lXHRdoSOi0TJDWTDBayh6vrqrqPNmKSew30joeQ39qcOV0sK84/m1+U8Q+WWvfrY9HxthFLDkxCi/tRsMgauAYGzPzXbLJFmDzJtV7oC73HLVALuHvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736935269; c=relaxed/simple;
-	bh=Fg+37e6woVvUUebjXjbz5FU8XYpgwfQR33aFm0Qvgy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9GvVEXNlIESepNCeAm+G1NIFak8E6LHRnds0ZNOFtOMDIbLd2JgU/suQCZRa0mPSWXj9YAL/qoCWp7LG6eCU8WYs7az6jFGqoGVQdghYg2Zq2XrITGEoMlVna8r08C9frQh8A1PcMW4EK0dRUOngsWTszLYz508YgWyGu/QFiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nT/8QB1Y; arc=none smtp.client-ip=209.85.167.54
+	s=arc-20240116; t=1736936646; c=relaxed/simple;
+	bh=Vts8aji0Ex50TPGXhf8sIPh7B0rC3S22agQ3oVPxtuE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o+Gv4iu1OyF+TDxWIGasrJPGzlIBlAWS1bwPZsLChEjnS9kAtHRmz9aemq6X0rq/G0cntKW6oh9N9g2P6TxG0uIYXLdxSZup4ZLaAaP4bN5KZB5xhv88p6SmHz9Au2dKy5GsuRPXJgkkw5EWHUtvP0nQ2NBNp33IF2g9LHT+yeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kIda5TE8; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nT/8QB1Y"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5426fcb3c69so5482366e87.3
-        for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 02:01:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kIda5TE8"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3061f1e534bso29257331fa.1
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 02:24:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736935264; x=1737540064; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vZ5dt/qLr3VvJ8B5OacAL/6U7yodrgZD0IL2tTlPHPc=;
-        b=nT/8QB1Yti3IAvkc0mH9GvbZXOOeE5pJyYmv43/TXibNFrpLN88Jo2GDGu71JuWiuk
-         fqavWn3XJnOJw4G3uG7Fzswkkdswu+K39Ky9Upeq82W9rnlisdJb7YbuXQikICVG6Hw/
-         c3NrIngMpYW5jpDU7Mwrqlhezo9fzqkCoTT+4m+aa57JN3W6OjCJBwEFbXAMWk1pkpYl
-         6LatXlxoTn9Uz+8Om2uVVwH5sI3yEr9eFLfvIb3/blvnzjk/LKE8Rj5al5OmuOwwSLIr
-         97nZmHHqTc7T7HGVUjxAcK3s9zQDAcQ90XBzkHs5GE7H1Gm635Jh6JXYTAh2Zrd7eorB
-         10jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736935264; x=1737540064;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1736936642; x=1737541442; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vZ5dt/qLr3VvJ8B5OacAL/6U7yodrgZD0IL2tTlPHPc=;
-        b=wogiVCejej2gsIqHiUa6MFZfO7bi56VTDtlnsxG1RqgXHN/B2JB+2GqJlkUDnIcBFE
-         QRmInAqV2b+NtLwE/x+TPRVFuUTizhRlJUguHy10ELJZhS9l5jlPIQzto4w3yh5yl6qA
-         6BtZaXz8Q8dmyojtbtHWVmnRSq3RJxiLvAdQpyZ+z/W/bdW7CHwmkUf6qEb01675wt8D
-         U9qm0Toh8ORzXInGrKgF0pX9mlFxtXsnnbmY28hB2nT9rr3qMufTqrEQbQn0gFPjrJcj
-         LK3b6M7g3GSEruCPTyGcRYFoOdcyEfOlWKVwhWvu8HxPGtoX/IufcEAgAxlEv0Kghiw6
-         5sNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCLwKZK7qraoUdcJmBV6gCRf3ku2ut5794KTNZCxgPD9TARffTyjgRsy5lfc7/U68ylrt139SZwnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0qQaBjojGEvquSFvY+IJ3ZwdpL6CPi8i2LO+3Lo15meA+dnQa
-	ntr3icAS3qc10bu8GIdSX/2eV8PactFRUeIz6EMcqK3yqdnZVWY+txzFfMHR0cM=
-X-Gm-Gg: ASbGncvBV9IkimkXRcMHFl2hEG2wp3FxbmY3YqOpoorSgw2A8nge0ZnBC1jx2WIAmRO
-	805IgslbOc4QkzAepUngmU7RgU5kSjBr90AIcNrllA/W0qvctsSXmnhgwEdfJ1OSvUXORcnZFEe
-	uTyGyEYJy3Ry55tskWCZdPbcp1s0CKXp99uF+khhO5JUSp8nbr2+0PgUAwQncJxB4dTOUVso6Hs
-	77bH+lrHMMMgCMIyNyo/VtZAkD58PqrWc3M+ZGpk1914vlQlL/Miv9ajzmHgIdUV3WouQ+nqBU7
-	NaAglmDWaIEOnFVQzAAyt+/NvsXpvKc4rCPe
-X-Google-Smtp-Source: AGHT+IH1cl4tHzKbcYYDDe2QwnGPmD4imeSfkQtHhn289Ax/JxMouFvFg7I8mRg66j/rsW7P93KXow==
-X-Received: by 2002:a05:6512:2246:b0:540:1e7e:ca80 with SMTP id 2adb3069b0e04-542845d35d9mr8769193e87.30.1736935264443;
-        Wed, 15 Jan 2025 02:01:04 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5428bea6bddsm1960300e87.120.2025.01.15.02.01.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2025 02:01:04 -0800 (PST)
-Date: Wed, 15 Jan 2025 12:01:02 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Renjiang Han <quic_renjiang@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] venus: pm_helpers: Remove dead code and simplify
- power management
-Message-ID: <a6qhm6viuldidhtc32l7qajx24yh6wrntxi63jm4n4cvp7ktmu@sum7w5cwpbms>
-References: <20250115-switch_gdsc_mode-v3-0-9a24d2fd724c@quicinc.com>
- <20250115-switch_gdsc_mode-v3-3-9a24d2fd724c@quicinc.com>
+        bh=AjuDDA/yi8Mfj7zbd5ybLmAd4yGE7SYSfzfs6+hwDoA=;
+        b=kIda5TE8wGtKn9sgO95fnAKGDuB7oSsKGCClGjpJHnUjlzKw6Q3iIkmJJlh2Mbb4HC
+         jfQcadZP0DYXnJg/WB2/FVDEumIeUFKUhVf7x81q4kUr/I3SMVcp5se0OpUUlpkQMLO7
+         P8sgNjgDuq9NHzX71EUZq6vMcNdwIdSAeQ4MBCoqSfIAqDfhFIl3DXhxC/OEki2LKx5y
+         BtBgNVr6EIIQs88h8iXmjzsArDmgw30He18Yr4w9UTfG6luyEA5woO7ZhgAt55fMXB4G
+         85k3auIfKdQmGMgfdpEy9OfylmnK2/cl0vNYKN+d03IHdqy8yPBhCSHWEIPolQypsJeD
+         7I3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736936642; x=1737541442;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AjuDDA/yi8Mfj7zbd5ybLmAd4yGE7SYSfzfs6+hwDoA=;
+        b=jPlKzHOfUEe49PisFvQlUZZvUF8Txcjx6rzYUk9xOJLJiVifZ8Xed8zrsLbh84eTGi
+         85eZ41Vi2MgJhKGBbDKLb27u1v4XYH7FvVlcGRY2/HsO+PaPMHqKg4fclYiTVOqruGDK
+         CuWQxanobS+3JQhxtLTXXuHgiMs8o7JwFJ8fkzIa+abZ3rQLcZjGMVQO1bEmgwB/wmWf
+         OX95YOmvwxMw4Wh9+XEt3doTKMGTq/k2Fh3iduvtZ2yrCjW7TnkZanvJUDJqrSqELC1y
+         KjJ21RUOlrtVFUnVUaKmPXVi2Ch9Y7GDbdiulD72fjsGaYzxyY5GUePY+DvICRF0JcKB
+         wRSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV86E1kwDunn5qnAFXYoVhGgZWM6hqGGHtrVueKfW2WIV2gy5jv1x0DaAhGy2NH6t0ClSgOXtdUWSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2sy7X+1etCB3mv1wKft8oerz/R1hOvbaqGA7KiWqe7kc9xwgF
+	jgylAmH9Tp8P0xLBcNM8O4nTBRbEniueylr8cAd8JRlLCalr6iemqlef6BiJjhA0HBKb8u+W5UW
+	J9QZDcNZmQF6tG7sguNahR4mH+IfncnMvqJ06pw==
+X-Gm-Gg: ASbGncsxzFxdyDzBD27ThdpFbeV9hsdaNGVVc8y7q5RXuJvyuc0fzZqO9sBOUQOKNum
+	0sctSRNWFKhEJzeiYCsNHTKgeS5oFTzFFafCPxg==
+X-Google-Smtp-Source: AGHT+IFa4MDYjg2TaeSyPhVd+uFI72e9/zbKAp/MLgh6iKYqJ4fsconYWJROEaljs/Hlt1y7e8hWcLbxXAs4QRl/Z8o=
+X-Received: by 2002:a05:651c:546:b0:300:3a15:8f22 with SMTP id
+ 38308e7fff4ca-305f45a1d53mr103210261fa.21.1736936641947; Wed, 15 Jan 2025
+ 02:24:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250115-switch_gdsc_mode-v3-3-9a24d2fd724c@quicinc.com>
+References: <20250110123923.270626-1-szemzo.andras@gmail.com>
+ <20250110123923.270626-4-szemzo.andras@gmail.com> <20250114141954.2785879a@donnerap.manchester.arm.com>
+In-Reply-To: <20250114141954.2785879a@donnerap.manchester.arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 15 Jan 2025 11:23:50 +0100
+X-Gm-Features: AbW1kvY9UIu_hIL2n2uWJ6IEfQySNpBxaxTILzVXzQ1Bv8Ht8eyLtJ6PcP46pwQ
+Message-ID: <CACRpkda0nx3SQtdjmXdCEbVJSWM10TM=p-6JbDjbiYcOSF5PxQ@mail.gmail.com>
+Subject: Re: [PATCH 03/12] pinctrl: sunxi: add driver for Allwinner V853.
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Andras Szemzo <szemzo.andras@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 15, 2025 at 03:00:54PM +0530, Renjiang Han wrote:
-> The functions poweron_coreid(), poweroff_coreid() and vcodec_control_v4()
-> are only used for v4 and v6. Remove the dead code by:
-> - Removing vcodec_control_v4() function
-> - Removing the check for !IS_V6(core) && !IS_V4(core) in poweron_coreid()
-> and poweroff_coreid()
-> 
-> Directly call dev_pm_genpd_set_hwmode() without vcodec_control_v4().
-> 
-> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
-> ---
->  drivers/media/platform/qcom/venus/pm_helpers.c | 73 +++-----------------------
->  1 file changed, 8 insertions(+), 65 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
-> index a2062b366d4aedba3eb5e4be456a005847eaec0b..846aa765edbb33df0b0c39bb463dd68c16ce1b68 100644
-> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
-> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
-> @@ -406,74 +406,29 @@ static const struct venus_pm_ops pm_ops_v3 = {
->  	.load_scale = load_scale_v1,
->  };
->  
-> -static int vcodec_control_v4(struct venus_core *core, u32 coreid, bool enable)
-> -{
-> -	void __iomem *ctrl, *stat;
-> -	u32 val;
-> -	int ret;
-> -
-> -	if (IS_V6(core) || IS_V4(core))
-> -		return dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid], !enable);
-> -	else if (coreid == VIDC_CORE_ID_1) {
-> -		ctrl = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL;
-> -		stat = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_STATUS;
-> -	} else {
-> -		ctrl = core->wrapper_base + WRAPPER_VCODEC1_MMCC_POWER_CONTROL;
-> -		stat = core->wrapper_base + WRAPPER_VCODEC1_MMCC_POWER_STATUS;
-> -	}
-> -
-> -	if (enable) {
-> -		writel(0, ctrl);
-> -
-> -		ret = readl_poll_timeout(stat, val, val & BIT(1), 1, 100);
-> -		if (ret)
-> -			return ret;
-> -	} else {
-> -		writel(1, ctrl);
-> -
-> -		ret = readl_poll_timeout(stat, val, !(val & BIT(1)), 1, 100);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
-> -	return 0;
-> -}
-> -
->  static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
->  {
->  	int ret;
->  
->  	if (coreid_mask & VIDC_CORE_ID_1) {
-> -		ret = vcodec_control_v4(core, VIDC_CORE_ID_1, true);
-> +		ret = dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[VIDC_CORE_ID_1], false);
->  		if (ret)
->  			return ret;
->  
->  		vcodec_clks_disable(core, core->vcodec0_clks);
->  
-> -		if (!IS_V6(core) && !IS_V4(core)) {
-> -			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
-> -			if (ret)
-> -				return ret;
-> -		}
-> -
->  		ret = pm_runtime_put_sync(core->pmdomains->pd_devs[1]);
->  		if (ret < 0)
->  			return ret;
->  	}
->  
->  	if (coreid_mask & VIDC_CORE_ID_2) {
-> -		ret = vcodec_control_v4(core, VIDC_CORE_ID_2, true);
-> +		ret = dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[VIDC_CORE_ID_2], false);
->  		if (ret)
->  			return ret;
->  
->  		vcodec_clks_disable(core, core->vcodec1_clks);
->  
-> -		if (!IS_V6(core) && !IS_V4(core)) {
-> -			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
-> -			if (ret)
-> -				return ret;
-> -		}
-> -
->  		ret = pm_runtime_put_sync(core->pmdomains->pd_devs[2]);
->  		if (ret < 0)
->  			return ret;
-> @@ -491,17 +446,11 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
->  		if (ret < 0)
->  			return ret;
->  
-> -		if (!IS_V6(core) && !IS_V4(core)) {
-> -			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, true);
-> -			if (ret)
-> -				return ret;
-> -		}
-> -
->  		ret = vcodec_clks_enable(core, core->vcodec0_clks);
->  		if (ret)
->  			return ret;
->  
-> -		ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
-> +		ret = dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[VIDC_CORE_ID_1], true);
->  		if (ret < 0)
->  			return ret;
->  	}
-> @@ -511,17 +460,11 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
->  		if (ret < 0)
->  			return ret;
->  
-> -		if (!IS_V6(core) && !IS_V4(core)) {
-> -			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, true);
-> -			if (ret)
-> -				return ret;
-> -		}
-> -
->  		ret = vcodec_clks_enable(core, core->vcodec1_clks);
->  		if (ret)
->  			return ret;
->  
-> -		ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
-> +		ret = dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[VIDC_CORE_ID_2], true);
->  		if (ret < 0)
->  			return ret;
->  	}
-> @@ -802,7 +745,7 @@ static int vdec_power_v4(struct device *dev, int on)
->  	if (!legacy_binding)
->  		return 0;
->  
-> -	ret = vcodec_control_v4(core, VIDC_CORE_ID_1, true);
-> +	ret = dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[VIDC_CORE_ID_1], false);
->  	if (ret)
->  		return ret;
->  
-> @@ -811,7 +754,7 @@ static int vdec_power_v4(struct device *dev, int on)
->  	else
->  		vcodec_clks_disable(core, core->vcodec0_clks);
->  
-> -	vcodec_control_v4(core, VIDC_CORE_ID_1, false);
-> +	dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[VIDC_CORE_ID_1], true);
+On Tue, Jan 14, 2025 at 3:20=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
+com> wrote:
+> Andras Szemzo <szemzo.andras@gmail.com> wrote:
 
-Check for the error here.
+> > The V853 family has multiple package variants, from BGA to QFN88.
+> > The latter has co-packaged DRAM and fewer pins, and less features (pin =
+muxes).
+> > All family members can be supported by a single driver, as the availabl=
+e pins
+> > with allowed muxes is the same across the devices.
+>
+> It depends a bit on the outcome of the discussion on the A523 pinctrl
+> driver [1], but I think we should use the same approach here (and for
+> every "new" Allwinner SoC coming up, really): put the pinmux value in the
+> DT, and get rid of this entire table altogether:
+> [1]
+>
+> The SoC specific pinctrl driver would then be very small ([2]), so this
+> pinctrl support patch here would actually become much smaller.
+>
+> Just feel a bit sorry for you having created this table, in a tedious and
+> eye-straining exercise - been there, done that ;-)
 
->  
->  	return ret;
->  }
-> @@ -847,7 +790,7 @@ static int venc_power_v4(struct device *dev, int on)
->  	if (!legacy_binding)
->  		return 0;
->  
-> -	ret = vcodec_control_v4(core, VIDC_CORE_ID_2, true);
-> +	ret = dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[VIDC_CORE_ID_2], false);
->  	if (ret)
->  		return ret;
->  
-> @@ -856,7 +799,7 @@ static int venc_power_v4(struct device *dev, int on)
->  	else
->  		vcodec_clks_disable(core, core->vcodec1_clks);
->  
-> -	vcodec_control_v4(core, VIDC_CORE_ID_2, false);
-> +	dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[VIDC_CORE_ID_2], true);
+It's pretty stressful for the pin control maintainer as well.
 
+From the subsystems point of view, groups matches to functions by
+strings is the best. ("fun1") + ("group1", "group2"):
 
-Check for the error here.
+pio: pinctrl@1c20800 {
+                        compatible =3D "allwinner,sun8i-r40-pinctrl";
+(...)
+                        i2c0_pins: i2c0-pins {
+                                pins =3D "PB0", "PB1";
+                                function =3D "i2c0";
+                        };
 
->  
->  	return ret;
->  }
-> 
-> -- 
-> 2.34.1
-> 
+abstract, strings, nice. The driver handles the particulars.
 
--- 
-With best wishes
-Dmitry
+That is like so because we are designing for users which are
+let's say customization engineers. If these engineers jump from
+project to project matching function strings to group strings will
+be a common way to set up pins, and easy to understand and
+grasp, and it makes the DTS very readable.
+
+Then there are the engineers creating the pin control drivers,
+and they want everything to be convinient for *them*, and they
+think an opaque hex digit in the DTS is perfect at times, thus
+pinmux =3D <0xdeadbeef>;
+
+Mediatek and STM32 made a compromise by using pinmux
+and adding some macros to define them so it looks more
+pleasant:
+
+      i2c0_pins_a: i2c0-default {
+                pins-i2c0 {
+                        pinmux =3D <MT7623_PIN_75_SDA0_FUNC_SDA0>,
+                                 <MT7623_PIN_76_SCL0_FUNC_SCL0>;
+                        bias-disable;
+                };
+        };
+
+At least the bias control is using strings, this is nice.
+
+So I'm mostly fine with that as well, but it can be pretty
+heavy on people coming from the outside, asking us questions
+like "on MT7689 how do you mux pin nnnn to function yyy"???
+Well I don't know? Some MT7689_PIN* macro I guess?
+
+If it was just strings I would know what the
+expected behaviour and looks would be at least, then the driver
+could be buggy or missing things but that's clearly cut. That's
+why I prefer the strings.
+
+Yours,
+Linus Walleij
