@@ -1,87 +1,219 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A784023F28F;
-	Wed, 15 Jan 2025 10:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6B41E98FD;
+	Wed, 15 Jan 2025 10:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736937570; cv=none; b=QSD+8tle7/Ox2Y+5C+5fA19O+zrpBb76G5HOB29y7hgnUCjPL0RCxn7unqPv0oLMZbxp+0zs9VragUKWS9J3UT1vRiDuGTLQcZeK3tEhX2dCE6tYaSCwxdHYSxoIGcAsVp5ASxEJQKQXxBK50EE6N0Uvg9u3jLcqxOpn0KTcvt0=
+	t=1736937582; cv=none; b=nHdEdiyE2rrdhIBvAzLES9opIPpKiGh0JPli/lnaSRZolv4JGEva+12/ddM/m9LQoN2VIXhwGqdZIu4tUs4XW7KyNBtD/wPalwI4ej5p34gIeQN0mviHdI/rDscnHHGTxRcBcj9FfN43s1bq1T0H6YT6bSgm4igch1egUWQEUH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736937570; c=relaxed/simple;
-	bh=TEXTi0qJl7ziLfY2MaOotrCEUds7SJrmMeoeLYcqFSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=naM7ewtuREHMwkLhd1W5913Onw8UtCHj0r6B+WezD+dnxUY4+T2jmWPtfxO1eEYcl9vMNGU9G2FHqx/4Vi4dFVHcYNE7utxPrrAzyB/bJMkqZO1vDAlwbPOjuAhqO4c+s6tbmj7W0JqqHez4MzlfUCu6rYR0/bm4MWgItG2qxl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: /X2sKBT9SYKwbr2I5+IsqQ==
-X-CSE-MsgGUID: WUNVXWcaQCaEt8nn06ekbg==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 15 Jan 2025 19:39:22 +0900
-Received: from localhost.localdomain (unknown [10.226.93.251])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6C1CA422D9B1;
-	Wed, 15 Jan 2025 19:39:10 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 2/5] clk: renesas: r9a09g047: Add WDT clocks/resets
-Date: Wed, 15 Jan 2025 10:38:51 +0000
-Message-ID: <20250115103858.104709-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250115103858.104709-1-biju.das.jz@bp.renesas.com>
-References: <20250115103858.104709-1-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1736937582; c=relaxed/simple;
+	bh=X8Bzq4vbc2nIS7e60WCciDuogVSuL4jGVmJ+gTlQLBg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KFw5obYcWcEN0vlDhQxJ2J+gQI3G86TYBY9djAG+aP45bGYanFd5fY5WGuIGl28nnajdNi5YSpW0C54QZOHuQxc9/0CHsqX6/YUuciRJWd6Elvm6DBTE8flznnQUAMAWNSkpMPqbLQRWkVyycjjnhDMqlbEFWm3O8s07aexqkog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eOaAY4+V; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eOaAY4+V"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3863703258fso418113f8f.1;
+        Wed, 15 Jan 2025 02:39:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736937570; x=1737542370; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dMGwxkrNU4EuX7kCK3KWCsT3+R0q8TNNOAL9QCORoDs=;
+        b=eOaAY4+V9oCEW0A39dwDsuEfco3bWasH8kIUQb9IY2uL32AgISj5qpS1FnGZdlw26m
+         IKqIQp9Fxrjh6hZn5eDkRAjSF6btS7hNSSnJ0AEdmcisUdwvq16KztDzLhR5oIe0JZzz
+         YfqZy93RKDpEzdgcVehcwST7qj7erl/QrPHIwJgTr1P9TzNutOIWibuUqk1YYmvk2Kpb
+         rqAPhSSbyKB8x2nukoDJKrOootyVujP1USeXFNavO/d+yuZ385+cMo9MY6FZonJJsCmK
+         lTGbPOl5O1bHTX4H8V/7ujCJlaIQNYG+gaVeBI3FqluaBVEW/YIdDzZsH1lrXpcYC2jp
+         wjrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736937570; x=1737542370;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dMGwxkrNU4EuX7kCK3KWCsT3+R0q8TNNOAL9QCORoDs=;
+        b=BNg7pswaooEzhNaQT2O8Yq7gDQkkEzXbdgJdZ/WAHveQ+8pJCPhByzsXCo7kTLPNdP
+         gODl8s0reYrK+FKKjKBH4TTROHAQQ0iWvZhHQOgEWCNQACYRLPrvjK/Wqzp5BdiUfs0G
+         60azOvJUIVou27ZyPhxXlmQM66VgOuisOMEKZTACiFXbI0hV1TyFcaRU7Np1D/AEqXom
+         x/xYKPL3Q8kLgiYAlagHL6vI++SXJivm5TAisCEcQP1J75CYgRx7C4cha26nSizii/xb
+         ebR3ovDa42Vtl9419P859sLTc55H8z0IB4SzgjEayDSEis0qlHmM7cr06c9V0lI4ctiT
+         RrJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmIQanvxXLjkSaJ6T86O5iK5RvXJH+/QvGuTDsl8fvkP88GtzmmV9SkPbJ+nExNNORQzMsxSiDPxs=@vger.kernel.org, AJvYcCWGAa5oGOSXnsTu3YDzcGUQq9vmhX4+g7nwKlAwwWStYdQDyY9uuekLWQvKCkC9wo6iwUTD11agXSJVKTlb@vger.kernel.org, AJvYcCWSSVqXRP9935x8fDqHYjiQc0qWtTDtTE1VPSc3RA1TyYZ+bgkN3r6REsO0z/d7um6WOJW9n6jE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yws6tMZgCynsaDI4Pa6yGdTcXnyT17bAtIUE+MHi/lLhuKVhRwA
+	FCYZOMxjLBADllixjGY0AdNeHdT5NI09yGE52GyRCTG4WwvCvKcp
+X-Gm-Gg: ASbGncsLbyWzEDOjXC4p9tGq79cBYDJxOdLB4ZvcrBRJMNwSg4O9ThRZ3g0KxC/23SW
+	ZWUXWy+XCLDaLSKGba3icAjc5f0kEvt9T2KKdv9UizXD7TVMiqi25Zw4LpXzEcR21H9WI3JZ0cL
+	2SqVfhEZ6P2h/wNNaKEsMAxyScgymyLcAHZ2bNCJM+441HO4Q5a3cZ6VE5VHsKaAa/zFZZoGiN5
+	Vqval+IMyqaZFRxa8xuuCaZGkXDzBnGI/4OXrpd+GNXgT7c0qYMF9LY7nHIKUHhxZXIux2tqzSz
+	P/ni8zdt
+X-Google-Smtp-Source: AGHT+IHOFTU9f4+9ieGESD+g8VrC92IkwfrseF/N43WFilUY2QDiHeaeuJlBZap4xY1mATLjrY8KLg==
+X-Received: by 2002:a05:6000:2c1:b0:386:374b:e8bc with SMTP id ffacd0b85a97d-38a8b0d3425mr21291410f8f.15.1736937570162;
+        Wed, 15 Jan 2025 02:39:30 -0800 (PST)
+Received: from eichest-laptop (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c74e5e69sm18287335e9.37.2025.01.15.02.39.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2025 02:39:29 -0800 (PST)
+Date: Wed, 15 Jan 2025 11:39:27 +0100
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, shengjiu.wang@nxp.com,
+	francesco.dolcini@toradex.com, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v1] clk: imx: imx8-acm: fix flags for acm clocks
+Message-ID: <Z4eQX_VnBEVqxT_r@eichest-laptop>
+References: <20250113094654.12998-1-eichest@gmail.com>
+ <CAA+D8ANvKQKJhn6qKbPhQeXPD5kxUo3Hg-FBLkDMOaWLTA8vVg@mail.gmail.com>
+ <Z4ZRYMf_uJW4poW9@eichest-laptop>
+ <Z4dy3LiEAQ_gkQGG@eichest-laptop>
+ <CAA+D8AO75MLyP5AWDJoogw8ae4GRtZfSR-HT+S26bXoaVs8saQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA+D8AO75MLyP5AWDJoogw8ae4GRtZfSR-HT+S26bXoaVs8saQ@mail.gmail.com>
 
-WDT0 reset is for CM33. Add WDT{1..3} clock and reset entries.
+On Wed, Jan 15, 2025 at 05:14:09PM +0800, Shengjiu Wang wrote:
+> On Wed, Jan 15, 2025 at 4:33 PM Stefan Eichenberger <eichest@gmail.com> wrote:
+> >
+> > Hi Shengjiu Wang,
+> >
+> > On Tue, Jan 14, 2025 at 12:58:24PM +0100, Stefan Eichenberger wrote:
+> > > Hi Shengjiu Wang,
+> > >
+> > > On Tue, Jan 14, 2025 at 03:49:10PM +0800, Shengjiu Wang wrote:
+> > > > On Mon, Jan 13, 2025 at 5:54 PM Stefan Eichenberger <eichest@gmail.com> wrote:
+> > > > >
+> > > > > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> > > > >
+> > > > > Currently, the flags for the ACM clocks are set to 0. This configuration
+> > > > > causes the fsl-sai audio driver to fail when attempting to set the
+> > > > > sysclk, returning an EINVAL error. The following error messages
+> > > > > highlight the issue:
+> > > > > fsl-sai 59090000.sai: ASoC: error at snd_soc_dai_set_sysclk on 59090000.sai: -22
+> > > > > imx-hdmi sound-hdmi: failed to set cpu sysclk: -22
+> > > >
+> > > > The reason for this error is that the current clock parent can't
+> > > > support the rate
+> > > > you require (I think you want 11289600).
+> > > >
+> > > > We can configure the dts to provide such source, for example:
+> > > >
+> > > >  &sai5 {
+> > > > +       assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
+> > > > +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
+> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
+> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
+> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
+> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
+> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
+> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
+> > > > +                       <&sai5_lpcg 0>;
+> > > > +       assigned-clock-parents = <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg 0>;
+> > > > +       assigned-clock-rates = <0>, <0>, <786432000>, <49152000>, <12288000>,
+> > > > +                                <722534400>, <45158400>, <11289600>,
+> > > > +                               <49152000>;
+> > > >         status = "okay";
+> > > >  };
+> > > >
+> > > > Then your case should work.
+> > > >
+> > > > >
+> > > > > By setting the flag CLK_SET_RATE_NO_REPARENT, we signal that the ACM
+> > > >
+> > > > I don't think CLK_SET_RATE_NO_REPARENT is a good choice. which will cause
+> > > > the driver don't get an error from clk_set_rate().
+> > >
+> > > Thanks for the proposal, I will try it out tomorrow. Isn't this a
+> > > problem if other SAIs use the same clock source but with different
+> > > rates?
+> > >
+> > > If we have to define fixed rates in the DTS or else the clock driver
+> > > will return an error, isn't that a problem? Maybe I should change the
+> > > sai driver so that it ignores the failure and just takes the rate
+> > > configured? In the end audio works, even if it can't set the requested
+> > > rate.
+> >
+> > The following clock tree change would allow the driver to work
+> > in our scenario:
+> > &sai5 {
+> >         assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
+> >                           <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>;
+> >         assigned-clock-parents = <&aud_pll_div1_lpcg 0>;
+> >         assigned-clock-rates = <0>, <11289600>;
+> > };
+> 
+> In which we configure PLL_0 for 48KHz series (8kHz/16kHz/32kHz/48kHz),
+> PLL_1 for 44kHz series (11kHz/22kHz/44kHz),
+> which should fit for most audio requirements.
+> 
+> >
+> > However, this means we have to switch the parent clock to the audio pll
+> > 1. For the simple setup with two SAIs, one for analog audio and one for
+> > HDMI this wouldn't be a problem. But I'm not sure if this is a good
+> > solution if a customer would add a third SAI which requires again a
+> > different parent clock rate.
+> 
+> We won't change the PLL's rate in the driver,  so as PLL_0 for 48kHz,
+> PLL_1 for 44kHz,  even with a third SAI or more,  they should work.
+> 
+> >
+> > One potential solution could be that the SAI driver tries to first
+> > derive the clock from the current parent and only if this fails it tries
+> > to modify its parent clock. What do you think about this solution?
+> >
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/clk/renesas/r9a09g047-cpg.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+I did some more testing and I'm still not happy with the current
+solution. The problem is that if we change the SAI5 mclk clock parent it
+can either support the 44kHz series or the 48kHz series. However, in the
+case of HDMI we do not know in advance what the user wants.
 
-diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
-index 536d922bed70..1886eab9ef9e 100644
---- a/drivers/clk/renesas/r9a09g047-cpg.c
-+++ b/drivers/clk/renesas/r9a09g047-cpg.c
-@@ -92,6 +92,18 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
- static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
- 	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
- 						BUS_MSTOP(3, BIT(5))),
-+	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13,
-+						BUS_MSTOP(1, BIT(0))),
-+	DEF_MOD("wdt_1_clk_loco",		CLK_QEXTAL, 4, 14, 2, 14,
-+						BUS_MSTOP(1, BIT(0))),
-+	DEF_MOD("wdt_2_clkp",			CLK_PLLCLN_DIV16, 4, 15, 2, 15,
-+						BUS_MSTOP(5, BIT(12))),
-+	DEF_MOD("wdt_2_clk_loco",		CLK_QEXTAL, 5, 0, 2, 16,
-+						BUS_MSTOP(5, BIT(12))),
-+	DEF_MOD("wdt_3_clkp",			CLK_PLLCLN_DIV16, 5, 1, 2, 17,
-+						BUS_MSTOP(5, BIT(13))),
-+	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18,
-+						BUS_MSTOP(5, BIT(13))),
- 	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15,
- 						BUS_MSTOP(3, BIT(14))),
- 	DEF_MOD("riic_8_ckm",			CLK_PLLCM33_DIV16, 9, 3, 4, 19,
-@@ -118,6 +130,9 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
- 	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
- 	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
- 	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
-+	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
-+	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
-+	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
- 	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
- 	DEF_RST(9, 8, 4, 9),		/* RIIC_0_MRST */
- 	DEF_RST(9, 9, 4, 10),		/* RIIC_1_MRST */
--- 
-2.43.0
+This means when testing either this works:
+speaker-test -D hw:2,0 -r 48000 -c 2
+or this works:
+speaker-test -D hw:2,0 -r 44100 -c 2
+With:
+card 2: imxaudiohdmitx [imx-audio-hdmi-tx], device 0: i.MX HDMI i2s-hifi-0 [i.MX HDMI i2s-hifi-0]
+
+If I on the other hand avoid that fsl_sai_set_mclk_rate is called by
+patching imx-hdmi.c. I can make both rates work with the standard clock
+settings. So I wonder if calling snd_soc_dai_set_sysclk is really
+necessary for the i.MX8?
+diff --git a/sound/soc/fsl/imx-hdmi.c b/sound/soc/fsl/imx-hdmi.c
+index f9cec6f0aecd..7d8aa58645b7 100644
+--- a/sound/soc/fsl/imx-hdmi.c
++++ b/sound/soc/fsl/imx-hdmi.c
+@@ -92,15 +92,6 @@ static int imx_hdmi_hw_params(struct snd_pcm_substream *substream,
+        u32 slot_width = data->cpu_priv.slot_width;
+        int ret;
+
+-       /* MCLK always is (256 or 192) * rate. */
+-       ret = snd_soc_dai_set_sysclk(cpu_dai, data->cpu_priv.sysclk_id[tx],
+-                                    8 * slot_width * params_rate(params),
+-                                    tx ? SND_SOC_CLOCK_OUT : SND_SOC_CLOCK_IN);
+-       if (ret && ret != -ENOTSUPP) {
+-               dev_err(dev, "failed to set cpu sysclk: %d\n", ret);
+-               return ret;
+-       }
+-
+        ret = snd_soc_dai_set_tdm_slot(cpu_dai, 0, 0, 2, slot_width);
+        if (ret && ret != -ENOTSUPP) {
+                dev_err(dev, "failed to set cpu dai tdm slot: %d\n", ret);
+
+Regards,
+Stefan
+
 
