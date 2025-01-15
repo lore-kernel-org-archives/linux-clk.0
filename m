@@ -1,74 +1,59 @@
-Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB381DB15C;
-	Wed, 15 Jan 2025 07:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90419234CEA;
+	Wed, 15 Jan 2025 07:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736927411; cv=none; b=R+Nn8v8AlGnXyT4o6ABzunpMA9oHpUV/aCmxCueYQLSV6iiepCjQeJqj5UEBvwoyhT4LAF0htOcyiEzZk4NBfNECGFBfQGZKnWSPygHGB3TpixI2UfHeaaeOpn6TJVKjWvwGEjgDrPaotesW3PIjiGKd8igoMprfHQDlnqYuBF0=
+	t=1736927514; cv=none; b=FhWsXpaQtEgmnSe7INiHv7jAhi7oqr5xgMdh0q4haRqILBCcIonYEb0+GIDvhSaD5OjsBWcgF4OnmpGaNSEHq8rW6XjVGSTwPg4b0AL+SG9RASVU6rwyPQdp3UUAsxnsEjvjUTIZkvBEkiK6Ap6eplvedS8z1gWqc1IGi5VKoK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736927411; c=relaxed/simple;
-	bh=6nZ7MSfskgPOfJaGxHTVHLkypF/3zP7VLSUDpv6jkFY=;
+	s=arc-20240116; t=1736927514; c=relaxed/simple;
+	bh=S+Nj9hWyHRIvjq4/IofNhfaffIn9jAcgTDLhxg1rvvY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lVO2y5KrPaUjCs0Tp4JuzxgW/6ZSzIhi6Ef4m4WtERxBou5gnMhF0rf0FcrItc5n67rpV75i4JcC92CjHUqt5SNSCowJLJDcB7WTzHtEsIFhXZH0BAiMotDCoufGjPQG21mdQ8fVxx+DhejaCzwiqSx5kXR3/amcyVCD9oT06qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=jrqWg6vR; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=c0NMRBc5; arc=none smtp.client-ip=5.78.89.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=uvfv3MvOH+gPhzWGM/Qeexx0DdrrzK19AcsThyetIuKXSgSoY/oWbfZhHyb7d3aebPEb9wGb5CZuWH7ywhGewNXDqIDTeKHgJ1Ls4+qu7ZxNyr7HRrnRnKbVZARF0f2E6Tuv5c12lPBa57AixP4oV1Q+9BJRg2hdLAz9zO0v3ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uvx066fL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="jrqWg6vR";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="c0NMRBc5"
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id B8D06122FE26;
-	Tue, 14 Jan 2025 23:29:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1736926157; bh=6nZ7MSfskgPOfJaGxHTVHLkypF/3zP7VLSUDpv6jkFY=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uvx066fL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6238DC4CEE1;
+	Wed, 15 Jan 2025 07:51:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736927514;
+	bh=S+Nj9hWyHRIvjq4/IofNhfaffIn9jAcgTDLhxg1rvvY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jrqWg6vRcCsCxus4T8JQ7/eNQZkjzrtfZy84Nw0CZVTvUKmKv+d7mlYnMmAE0JaXF
-	 HdV4VdMBuOep40wnFqi6PtmJSclZk7s64Ngg0+sh9bfzcuDms87f0NofE4uqr/1lQ/
-	 iX7nIAmlr2ku57/79ltk+WuYIInmNUJBucrNoxCPFbP3slj8wwFKE6GY51QleULCXS
-	 3F5yQzdDpG1naRTm159aj6a1jMdM71cUw2r5Hn0gcv7f5xFgAzAYzprGD07+Vcrr4+
-	 zojEeuXfQVP26WeyzuSbSJLjjg2xHVqOLkHBo6bqWppIy3fGT/UMWvPx4bcW+AsPWf
-	 4Febtcv1IupYg==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id 8jdWJcIIIEqu; Tue, 14 Jan 2025 23:29:16 -0800 (PST)
-Received: from ketchup (unknown [183.217.83.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 4CE85122FE1A;
-	Tue, 14 Jan 2025 23:29:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1736926156; bh=6nZ7MSfskgPOfJaGxHTVHLkypF/3zP7VLSUDpv6jkFY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c0NMRBc5R6vRo1jNMVN18tfgamNJHbNzBtBK713yGo92DK4NIY+Si47vQS6LVXnMb
-	 83ntH91xItw2OjCTMGkzLG4L3Y5SppI7fX/np0GPuxQc+Qw6KTbKD2bdtZzb0dLg7n
-	 D2LVOJa+cVqvJ5ewscDV7EEJiN0vYp5Hd+5cQ+X9HpQKzxk4KIT6BdjaiRad+u3YNg
-	 oB0H6C9d40F06xMmhxIDVF9o0TowzRKEmBQpwEL4/s0YKMGyrl+J5wcRTQFPslltSF
-	 B2Xc6CiFcw+Maz6W4VRUYYzBsRGVabPLQ3/ZDROODVUjnbscAqlhNWA0gM7RelzAAU
-	 /TTFj87psIw4Q==
-Date: Wed, 15 Jan 2025 07:29:00 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
+	b=Uvx066fLqOkq2FDBqACzgccc8KScMXLxd3zQL2qcA9RJrLq4iZ/CHhD78v5CxM1Yk
+	 Djx0jQGp96X5lQlvUP/UMAnHU6y8YWZWhkQ0jiP83h6FUNw8+AGjQi08OFNboPk2Hs
+	 0AO8kCkJFJuAOQC0W49As/pvzkQ89cPY+6YkcOt6MHq9EegqjowGZfWmoGY1v4uHLY
+	 AmaiUoDl8d4P1UklxcvjU9PA2McMP6jve23VVlvkHcY3PJ9YU7EkpQXB3qUuPF9B2e
+	 ocVh3yQEiLF2ZYFdFtwfkeyqbU2AmmaF7GBaUKjISO7EjPfLW/kIUsqxgw2Hii+OH4
+	 s+dpNfCHXZOhQ==
+Date: Wed, 15 Jan 2025 07:51:50 +0000
+From: Vinod Koul <vkoul@kernel.org>
+To: Andras Szemzo <szemzo.andras@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: clock: spacemit: Add clock
- controllers of Spacemit K1 SoC
-Message-ID: <Z4djvOcKuFhYbfKv@ketchup>
-References: <20250103215636.19967-2-heylenay@4d2.org>
- <20250103215636.19967-3-heylenay@4d2.org>
- <coyp227rh643slvrrtlls6zc4r2fgvajrvsw63xpyxno7b73wy@cvsjtsghmnx4>
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Maxime Ripard <mripard@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 10/12] dt-bindings: phy: allwinner: add v853 usb phy
+Message-ID: <Z4dpFqffMJ31ml2y@vaman>
+References: <20250110123923.270626-1-szemzo.andras@gmail.com>
+ <20250110123923.270626-11-szemzo.andras@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -77,27 +62,45 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <coyp227rh643slvrrtlls6zc4r2fgvajrvsw63xpyxno7b73wy@cvsjtsghmnx4>
+In-Reply-To: <20250110123923.270626-11-szemzo.andras@gmail.com>
 
-On Sat, Jan 04, 2025 at 10:58:54AM +0100, Krzysztof Kozlowski wrote:
-> On Fri, Jan 03, 2025 at 09:56:34PM +0000, Haylen Chu wrote:
-> > +#define CLK_PLL3_80		32
-> > +#define CLK_PLL3_40		33
-> > +#define CLK_PLL3_20		34
-> > +#define CLK_APBS_NUM		35
+On 10-01-25, 13:39, Andras Szemzo wrote:
+> Document Allwinner v853 USB phy.
 > 
-> Binding looks fine, thanks for the changes, but now I noticed this
-> define.  Please drop. Number of clocks is rarely useful as a binding and
-> usually leading to ABI issues.
+> Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
+> ---
+>  .../phy/allwinner,sun8i-v853-usb-phy.yaml     | 89 +++++++++++++++++++
+>  1 file changed, 89 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/allwinner,sun8i-v853-usb-phy.yaml
 > 
-> Same for all other clock controllers below.
+> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun8i-v853-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun8i-v853-usb-phy.yaml
+> new file mode 100644
+> index 000000000000..773c3f476db8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun8i-v853-usb-phy.yaml
+> @@ -0,0 +1,89 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/allwinner,sun8i-v853-usb-phy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Allwinner V853 USB PHY
+> +
+> +maintainers:
+> +  - Chen-Yu Tsai <wens@csie.org>
+> +  - Maxime Ripard <mripard@kernel.org>
+> +
+> +properties:
+> +  "#phy-cells":
+> +    const: 1
+> +
+> +  compatible:
+> +    const:
+> +	- allwinner,sun8i-v853-usb-phy
 
-Okay, will drop it.
+Does this really need a new binding document, if so why... Cant this be
+added to one of the existing docs which driver uses?
 
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Thanks,
-Haylen Chu
+-- 
+~Vinod
