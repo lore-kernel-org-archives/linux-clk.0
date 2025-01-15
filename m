@@ -1,86 +1,97 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB4E20F999;
-	Wed, 15 Jan 2025 11:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DE81E990D
+	for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 11:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736939545; cv=none; b=DyxyrL1F7yMvN5OBwMUaS7oFciRe40m9fDXXr7twMTWG8CfVo23cCut6faZMcP8pkthMn2Zu1J1lxyGUnlKGbaO0eqGJ4Mm90KhsLyNs05tSutPcIaKaSM+0rLbaW8F3eqNAQdpBvbpSnShrDrN1wL9WOaTQcn427twvwmSRXgI=
+	t=1736940139; cv=none; b=SAk2XReKj1iEsUH2zx23p9Fz3F2zlC/UfWUw1c7XGtWppQaDTmO7J2IVLyrfjhFRrzBLx9PtMiEXJkUmRkIL6mh8ZJIncTaWw0tx/KXdXhMnOnEtUughJWahCvZTdMUhfPkgI0rlNcX8irOi0mZXcn9So9riU2BF3AUQVnLFtWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736939545; c=relaxed/simple;
-	bh=dMdJyo2ocCibz5X8C6KWjWTCyqIS+CPtK9iGS3MlpcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EZV0gp0s6MBAVdgGQBuHSdqGfJwTyisionUKSRGluWbhCGZBBwVYQ9FEhOW5nziE6tk7rLz32jgEZ6besK3tLoEK5WifSiVUIek6h0v2oDkA6dD5x+uZQOutRU64r/4SSilspLJO6qcmvD1ldASHoRE9Aff7frCQ8f2wOki8RDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21654fdd5daso111719995ad.1;
-        Wed, 15 Jan 2025 03:12:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736939543; x=1737544343;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1736940139; c=relaxed/simple;
+	bh=4mhub1WX6NRFjMXtQbcreIaC8K21PQR5uxWQxNvn/uQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lptLyllqSWxqHVW2fiF0a6nB/ze0iNOdOpV1jpP/Dv7WjdjwsVU4Sl3PioZaZuHbXZA1JQgwXyY1yBPNMyacHj7199nnWPyDq6kfpTeB3VJbd4K1gNfVc6iYMUTisRmbt7Gqe8VN1fSW0UEsSHHwkOolj1683/tuuzqJd3G+OZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tZxeOeTG; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tZxeOeTG"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-3003e203acaso49784821fa.1
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2025 03:22:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1736940135; x=1737544935; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YWwH1bDPMW4sIvL8kmJCxcSzCH8Ejrs1sg9Vv46J164=;
-        b=aZzKG5+7JIzXVh2dEw+m/Q6KwEhZP+oXr3tw2L/y+ghiPwHtrNQeoctZ7vd1ZR64LI
-         0hK7QrQLHMnzvVIjr5wC+Gd8IRM3q+Zw1fNshIv9s3kPDttmnUe8DGjI5smNyPdEmtsq
-         Caxwjtg0L5JoBt1s3qVJ0WHkiK8G91OiCnzkttQRzTovAvTjjtVwT895Z5+UcK7NeqB+
-         Me26f7MoWEHTMV/UkaVWH0+MLOBo5OYTR3/67daRCkaGj5YUo7bn+27SkwiQJY6DwJYD
-         lLFL6vivTWNkOHSZG7PRFGIUB74Zhf/GVTUjn2S5c8mN6o8M7Je6EnlUb9OPTBP9lb9V
-         gkEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpePSztA++PSzHOR4Vu9AMQtUeKzNnbUNFtJJ55XinT1O6CQeWaJTBP1YvdjZbOayw+cblH7vEBEo=@vger.kernel.org, AJvYcCVCsi/jT0mJiQdIG11RVfw0LtoVTghvvKkOY+Tr7HTlGzoDRI62934ohowfIjqVVQBt3ryOVpGXdxba@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+L7RB3IBrxi8Uq5Ag8spFwCY9lgU0nOhS1BGaES1/AGJOKiUc
-	2LA1VoJYX/9z4RJ4ytUeyI1Y5d3dYOpt7B2LgnEAm6apqeHd2gFm
-X-Gm-Gg: ASbGnctrwuUi8B7v8utV6caYtJa0hlh8bP/X20UXXoV38N8qpuzRZimDvZQSBNlOSD0
-	JcwZI0tYEihjqeNViDn2xIVcoXQzgOMQopmrm2VpKGraospVo/vZorkmR3ZOatNenRWuK619o91
-	L7l40Ia5sbz+G++zG+WbQbxIwrh/BshEveDtdY8zakzfREfTzI8+fnE2xcUA7B9WBfB8j6S/3MD
-	9VtRzFjsrtnjC/Qgrydc6pSXvab7bxA+AeGiM+cKUsz9+qqzrgMcyf3MbVKxe6yCkm9r0HflMzI
-	95fWtdAZ4M/7kB8=
-X-Google-Smtp-Source: AGHT+IHFoca7ZCISTDX0mGzInAWIQ58L8qkZmkBMA3Zf+oFefoTlL/1UC9F+En3y5YImzKRbiXnU4Q==
-X-Received: by 2002:a05:6a21:a4a:b0:1e1:c8f5:19ee with SMTP id adf61e73a8af0-1e88cfe2ce4mr44391726637.25.1736939543365;
-        Wed, 15 Jan 2025 03:12:23 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-a31902b137bsm9540020a12.35.2025.01.15.03.12.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2025 03:12:22 -0800 (PST)
-Date: Wed, 15 Jan 2025 20:12:20 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 0/5] PCI: mediatek-gen3: mtk_pcie_en7581_power_up()
- code
-Message-ID: <20250115111220.GA4176564@rocinante>
-References: <20250108-pcie-en7581-fixes-v6-0-21ac939a3b9b@kernel.org>
+        bh=4mhub1WX6NRFjMXtQbcreIaC8K21PQR5uxWQxNvn/uQ=;
+        b=tZxeOeTGo8LaRDudEsK7wQpZCrOFmTlYkh29lljUl9Da5grv7+ucWy3eRbSqykKIhI
+         QpkZSI0RxXRqnN3A4WsULlCD0IvqqXNeAtKUwrxViwg/nA/aj3c+6pddYGzmz9FHFANy
+         KkPEY/aSbQCqoT+cxkgsYQntc0Z6d85xGy6eHtwpmVOaEI4/zoGqBLb0DZGFGM54tE+F
+         4nUDwe8aKi3Va97vnlFpXhF7xQBwKGznbjYiqqbcpBiT9iTScppuGyNvnbwr+oHdXfkQ
+         lxDYD1U5dKfUKQwIIig5g9RCVimxXMpDx74rCf7YGg/aPyJNEVXk1B7io8mPibSm7SHe
+         e3OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736940135; x=1737544935;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4mhub1WX6NRFjMXtQbcreIaC8K21PQR5uxWQxNvn/uQ=;
+        b=BR4mZWydf32Re7qjwTVNO3eqPoYiUy1KJiMtK8nzs9s0eofR3m373Kv7TQDa24cGpl
+         38wLL595UrmENTXAvCi/JJ/55EJOtyFdyZ9ZdZkcghv5e/4y4iirWEaVEGNVW0wQKrYz
+         0qXMk+Fgubxdh7GKEIG3Nil90moJFYkABNyk2AXxAgGhwDD2/P6kFUeLaTIh1nIQNWIl
+         GZBa8U0CqhjvfQNMC0cEtUZTmR/GhytyzvHpsCq1AOIlu9zE+IdhStf8R2FkwCUn9Awy
+         CoEI2bKr5qBMQMEvITTSyAVqk2Zpvb1nJRrvxR8qL7BVoXgIZvsZDqfy+Fq1RkZ/x+eO
+         xROw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFbm0iIA+KpjlzQUwRM8GpHVMnotsEn7sJvf4aLrCS1w8GZd+sR9P9glPKsdwCSiSCCTFUG9Sa/oM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylxfzHugIJEdJZ6ywqxUtTftXU5vrsjM/ReeDTmNAn2yIU8m5w
+	FGpSb4dM4njhhnYdgIOv8dnP7/VHhuuA4srG4WLnhK1tyB86ksA5YiVqi+GJRCEMdGkMcfmy8xo
+	JtwFQm2L7nojNiXKxJr3Mw3aPjiC4xDAibyNI+A==
+X-Gm-Gg: ASbGncu9mjUf4pO43ltBCjncudhWSenXy6d9XYVf//sv+4NjVgnlFc1QQBaYjieSgDP
+	rQ9JN7Ntd2Fe/TP4Na5nlHPn+f22tMoiGX1evMw==
+X-Google-Smtp-Source: AGHT+IFi9OUFsDG/HwAOWZDy5wxB1IFMes6uWrSDrSs8fqZfUq6g94ydbqgtsgXawPRPPFqiHwnnVYJjpekX/j3mPrc=
+X-Received: by 2002:a05:651c:2124:b0:300:15f1:cd5c with SMTP id
+ 38308e7fff4ca-305f45cccbfmr89843831fa.17.1736940135230; Wed, 15 Jan 2025
+ 03:22:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250108-pcie-en7581-fixes-v6-0-21ac939a3b9b@kernel.org>
+References: <20241227-a133-display-support-v1-0-abad35b3579c@linumiz.com>
+ <20241227-a133-display-support-v1-10-abad35b3579c@linumiz.com> <20250114160045.2baacdaa@donnerap.manchester.arm.com>
+In-Reply-To: <20250114160045.2baacdaa@donnerap.manchester.arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 15 Jan 2025 12:22:03 +0100
+X-Gm-Features: AbW1kvZR9tBuaRtZ7bNclb8qOifwSWdiMNHG0XPYW6GVaemjAImZEkZB8O3eBOg
+Message-ID: <CACRpkdbZYFaTHoOAy7DYpaV77Tf31H4bF179OrperU6UGys2ew@mail.gmail.com>
+Subject: Re: [PATCH RESEND 10/22] pinctrl: sunxi: add missed lvds pins for a100/a133
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Parthiban Nallathambi <parthiban@linumiz.com>, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, iommu@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-phy@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Jan 14, 2025 at 5:00=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
+com> wrote:
 
-> Minor fixes and code refactoring in mtk_pcie_en7581_power_up() routine
-> 
-> Changes in v6:
-> - remove mac_rst support for EN7581 since it is not needed by the SoC
-> - fix typos
-> - Link to v5: https://lore.kernel.org/r/20241130-pcie-en7581-fixes-v5-0-dbffe41566b3@kernel.org
+> Linus, in contrast to what I originally thought, this patch *is* fine, so
+> feel free to keep it in your tree.
+> Sorry for the noise!
 
-Applied to controller/mediatek for v6.14, thank you!
+Phew thanks Andre, I would have pulled it out otherwise so it's no
+big deal, I'm just happy about active maintainers!
 
-	Krzysztof
+Yours,
+Linus Walleij
