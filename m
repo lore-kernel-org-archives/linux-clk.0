@@ -1,254 +1,129 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E7E24A7C6;
-	Thu, 16 Jan 2025 17:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4F514B094
+	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 17:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737048946; cv=none; b=fEDZ21z/jH/MwT6kbJnLcGzFexn9SSV3D987LMdj0wmEIAFpyB/xSWhne7319I6MyM5xU14ZEa17AsBmvR2J4tzXiSQXII2iCLL0ttWDK7uGHjDmg3GgsRhaVAiXxT7PK7bDI0mjMNGRzoEc2GfWn1xYaGol/Bf6U8ptr4tpYek=
+	t=1737049480; cv=none; b=c7+l0zBf0LbScvQIvR2dm7q7sg7BCEffse0QQov/zbAy2f7zJ1U9zUgXLDeRCFoHUyQ2M2T1bCrsm9RkxRCkdPBMORrauO98ti+UVNA+Z8tktKwfzYrofDnp29bJ0qJfKz1/M7o/QPfY5NFpaBbwHiNTQIBPLlMZLkXGIv7DiXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737048946; c=relaxed/simple;
-	bh=oRrQdjlMXee27y3404cKxsBGmmxH3reSt5HlrLAhTEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CM/hVrfNNg3yjcyLjP5fdDQEUQ97azmP0+m5VEjIX3JBpKPu9guUDiDGDbZ2TIl8g7XywRW/bh0qZRvFWB8sARn/oxpF1qlMYPKR8+BBHgfzGA8nf1m14FG2gFzk0aG5AhLjUfE+JLItTKwVtpeossmxlHttg3K7dB18H++gIwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=al8RwGmY; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737049480; c=relaxed/simple;
+	bh=DVDBBhsmhEGtLwlO+yxr5iUX2UjKHuW/SDvd7zv44sw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W+OEGmAHYd1GHNppKYmlXs2EgFV3TwGJedJNBRYr6nFtkoDWbIt9D0n6pWsYOxsRYplQDawa7zhncfDnLl2rzu3g5fEsBxF3BBh48GD1zb/d7g5N9x8OSOPu9ZefDOTsR97PVjvCKt3K2Gct9Z3cAJo7q7J5SHg+nole0g6gEBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=hANDeOAV; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="al8RwGmY"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so12915735e9.0;
-        Thu, 16 Jan 2025 09:35:44 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hANDeOAV"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-216634dd574so14780705ad.2
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 09:44:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737048943; x=1737653743; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OXBv7mU3IUmuhGazcfTF0fMhicUzdzlonYKZ/ftM1lc=;
-        b=al8RwGmYoPptwkvDdT8zDh5ewvhO99t6Qf8T2/LrMQu4dL49IvWm7q8lle8yoSnLQs
-         dsdWITJBbdG+r716BtqAwYyp4E28osQSnohwRXhvDV8LMWq6a5mwoQ24fbercyK1o6e4
-         uICPsVrYtxvZwIypvi8j4Nf/tmMOLlxu2LZO3oYDmeaPl8CjVDkTXANOMQ8s4N9+Qt+t
-         a6sHiBzF2Dx8ewCfsY9YY25uEUdJtE5Lz6LfBqw5yW0uOct9SlzBfBwo+UUUacipe6GO
-         TD7Z78sWIQNP7xIuiqw5OnkLSZcQIqjwKFTbhy5DXqFGch3mHU/eg566+zjFk4HB7nTI
-         lUCQ==
+        d=broadcom.com; s=google; t=1737049478; x=1737654278; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fbH0aNuhNBY+Qx/1k9JyF2WTMEKtKQ8nxA8sJGBpS7w=;
+        b=hANDeOAVadnED2e7bwcUhca0A3HUtBme4zgVDBmG7HHkB32a3r+Diveem/jXVc7G+m
+         +OXta6c/+udg/6EFU7UNjAa5ZSWl9tzc9/9+mI/JIpP63RLj9THebyuWjVFaLxPru3xV
+         prdoLzm11PuAryzjxTkBPHprPvzdHj7j51VuY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737048943; x=1737653743;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OXBv7mU3IUmuhGazcfTF0fMhicUzdzlonYKZ/ftM1lc=;
-        b=s+3EHWzn7ctEC6bSQwP5ZtfZtiCc3MYkaZNjNhwdMzTM95wVEWMIlJCiiyjmZfl7Ie
-         wjbJN6lp41CiuaVkeYL68Zqh6q9ncn8t/6hQeNl3c4BtaGw8HlEBc1IBIG3yGZ2VTpS4
-         icthApfdQE33xK4NDMvY2jIs9bE7hkTfGq3Ho/S1X7crBSFPSNLhF+MuzEGTEQBINF/M
-         TKCHQnChZh4Utx1PxPk5+JZn2/oGKzCBBu97q5sHrQMutLl3KSmku/LGS6ZqIY/b6K2G
-         aKP4H8kXZYarYr0KDOesCwqw1355fiFnzWAeoNs6ywWfBWCAv6A5fPaZvxf7RwYk/KFq
-         /jGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnbROGmqEdte2ZeOnIA5nuNMFVsDH4QZqsm0GvYgxal2ZhTCUFko2gPlRH92poq4QBlWr8hxeU5FTzD7uE@vger.kernel.org, AJvYcCVsahToN68L1jer9iuOvXagZAb1WXScAAYtNgRS5JkF8wKOdhQMD7a6zhkWo3BzFkgEKVzq3afm@vger.kernel.org, AJvYcCWfuPKdSLTe9u7ht3MSjmnVMXRkgeKtmgaFt7JEaS/pT8fsPMMOsBWheqncbHAVEWmWS0dcERzAWZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5kZe67C9SMEunUg6GFDAln2Eq106dgWwffv177HvJCfD9qyVL
-	MQRmRDMQbh2yqj6ZifdMVv0Z6oucznd0tOmJC1lBkjN5dLJCaEp13tvUDHoz
-X-Gm-Gg: ASbGncthjC7MP3zzK5eVwR93Qr2RZk+dTMIUKYmwcNwdvBWkV0kkkidDJuC/uhuHlni
-	JdINIIdFLYXQsykohoyLDGXN6xpq0Hu3Qt6OaTZZPelvO+zkJ4dT+QRST9gm7AVscb2GtpiC0a7
-	zTYkglFvKDqJtMV0FvPeLLxBFoRzav1dzFx3/RVjBjA8yIN7nlkcnISYsQibPY9rTTtMKpPmtxz
-	aH/xnSOOQgHPpVpC793MrtXKaWwlm5ehyWZFT3OHp69Tu8hWd0oXmj0
-X-Google-Smtp-Source: AGHT+IE4uFPItlsauRShxJdLB24OsNy/KVeIOXphx1Hzsl5WiEKLoA/vq8qTUH8Lxbx1pF338OyP/w==
-X-Received: by 2002:a05:6000:1849:b0:385:e5d8:3ec2 with SMTP id ffacd0b85a97d-38a8730b535mr32269071f8f.28.1737048942602;
-        Thu, 16 Jan 2025 09:35:42 -0800 (PST)
-Received: from eichest-laptop ([2a02:168:af72:0:6c4e:8d77:c1b7:309e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4389046b0f5sm5619075e9.39.2025.01.16.09.35.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2025 09:35:42 -0800 (PST)
-Date: Thu, 16 Jan 2025 18:35:40 +0100
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, shengjiu.wang@nxp.com,
-	francesco.dolcini@toradex.com, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v1] clk: imx: imx8-acm: fix flags for acm clocks
-Message-ID: <Z4lDbMqCYW2W7iyX@eichest-laptop>
-References: <20250113094654.12998-1-eichest@gmail.com>
- <CAA+D8ANvKQKJhn6qKbPhQeXPD5kxUo3Hg-FBLkDMOaWLTA8vVg@mail.gmail.com>
- <Z4ZRYMf_uJW4poW9@eichest-laptop>
- <Z4dy3LiEAQ_gkQGG@eichest-laptop>
- <CAA+D8AO75MLyP5AWDJoogw8ae4GRtZfSR-HT+S26bXoaVs8saQ@mail.gmail.com>
- <Z4eQX_VnBEVqxT_r@eichest-laptop>
- <CAA+D8APivJWD-AqwmQ-mtcr=ZHot5rfA8FRWF2+p-_mq5BGxHA@mail.gmail.com>
- <Z4i0G5Tw4q0v8DTL@eichest-laptop>
- <CAA+D8AOakQdnEe9ZrfTCrWcjHJRRU0kqFVsiu8+FMiHeMAVV_g@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1737049478; x=1737654278;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fbH0aNuhNBY+Qx/1k9JyF2WTMEKtKQ8nxA8sJGBpS7w=;
+        b=OAWZ1AxiFNXK7/MTzavN45cjSguS55LBGDs9vBx3u4rgk2O+iuBlSFm01y0VVd7LNx
+         8+4y9B0nEZxhcwsVLmkoQOMvCy8/Z2ZPlX2l/gz4nEqH7WQITtwNqvSFg/vq7jjKC14+
+         MpQK0LpR3p+kmMGGjahR/vZnuksW+HfbkltupHy/TYQLRZDP4ozQZvPxSefaps6IWK59
+         DJgzotnWPOpbb1W803jeaozjmqr2Wg4LXln+Uj3jL04nioayios4mtgrmsslQ35/0Yj9
+         w4yBWaGy5WZr3z73xpmZpwDM/i5BKW/kx/lev5zoud96awviZ+iLqxLE826Z+DPXBpTs
+         SuZw==
+X-Gm-Message-State: AOJu0Yw5shE+Q91/MmjI23K1aB+QOI6Nix3wSdIRxFDgPSG39O7uH4O/
+	PIK5uwYmtlxS+Q5OZ4mz58PHtbSPBWGw0PTWY6HiHee2MgmTDQfl9eQv5KL4KdIPdpWjr//3PYg
+	=
+X-Gm-Gg: ASbGnctuoTIQHmlmG4kPBbTH2YlKuO6ENlW2Vm5HuqDbPsGwo8MeYG8rCprmZdRAMco
+	x1KKlHXYaFs+1P9Pxw5uzK4SlHXsfiIDyR2pEoV8RBcDMl+afKihp49f5SjcKPbuYUWXanPUl/1
+	x3mG/cXH+nmOvED2TEcMPL2wiEuojZOB6w55bY+N/XAdSrYIpzfLDy5xDKEpn+6XM5kimgncmdV
+	P7NGYUp80R7uLxxTXKdiumXV205IdXuunzYdgLk//TIYnO7hw7R2McH1rOe5w/XaG/SODt4Y+cm
+	UY3uU5ae+2UXkguw7fgf
+X-Google-Smtp-Source: AGHT+IE0Nz5l+5zPCU039uTisaH3+lRWGSGUZOlt7zohpZP2X6Ochqj54Row1+OLzWAg1OjmZEweuA==
+X-Received: by 2002:a05:6a00:392a:b0:725:b347:c3cc with SMTP id d2e1a72fcca58-72d2200273bmr49375661b3a.23.1737049477674;
+        Thu, 16 Jan 2025 09:44:37 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72dab9c8f6dsm262871b3a.114.2025.01.16.09.44.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jan 2025 09:44:36 -0800 (PST)
+Message-ID: <b3078803-973c-44eb-98b1-b4d94cbc19e5@broadcom.com>
+Date: Thu, 16 Jan 2025 09:44:35 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA+D8AOakQdnEe9ZrfTCrWcjHJRRU0kqFVsiu8+FMiHeMAVV_g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] clk: bcm: rpi: Add ISP to exported clocks
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>
+Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Dom Cobley <popcornmix@gmail.com>
+References: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
+ <20250116-bcm2712-clk-updates-v1-1-10bc92ffbf41@raspberrypi.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250116-bcm2712-clk-updates-v1-1-10bc92ffbf41@raspberrypi.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Shengjiu Wang,
-
-On Thu, Jan 16, 2025 at 03:30:55PM +0800, Shengjiu Wang wrote:
-> On Thu, Jan 16, 2025 at 3:24 PM Stefan Eichenberger <eichest@gmail.com> wrote:
-> >
-> > Hi Shengjiu Wang,
-> >
-> > On Thu, Jan 16, 2025 at 12:01:13PM +0800, Shengjiu Wang wrote:
-> > > On Wed, Jan 15, 2025 at 6:39 PM Stefan Eichenberger <eichest@gmail.com> wrote:
-> > > >
-> > > > On Wed, Jan 15, 2025 at 05:14:09PM +0800, Shengjiu Wang wrote:
-> > > > > On Wed, Jan 15, 2025 at 4:33 PM Stefan Eichenberger <eichest@gmail.com> wrote:
-> > > > > >
-> > > > > > Hi Shengjiu Wang,
-> > > > > >
-> > > > > > On Tue, Jan 14, 2025 at 12:58:24PM +0100, Stefan Eichenberger wrote:
-> > > > > > > Hi Shengjiu Wang,
-> > > > > > >
-> > > > > > > On Tue, Jan 14, 2025 at 03:49:10PM +0800, Shengjiu Wang wrote:
-> > > > > > > > On Mon, Jan 13, 2025 at 5:54 PM Stefan Eichenberger <eichest@gmail.com> wrote:
-> > > > > > > > >
-> > > > > > > > > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > > > > > > > >
-> > > > > > > > > Currently, the flags for the ACM clocks are set to 0. This configuration
-> > > > > > > > > causes the fsl-sai audio driver to fail when attempting to set the
-> > > > > > > > > sysclk, returning an EINVAL error. The following error messages
-> > > > > > > > > highlight the issue:
-> > > > > > > > > fsl-sai 59090000.sai: ASoC: error at snd_soc_dai_set_sysclk on 59090000.sai: -22
-> > > > > > > > > imx-hdmi sound-hdmi: failed to set cpu sysclk: -22
-> > > > > > > >
-> > > > > > > > The reason for this error is that the current clock parent can't
-> > > > > > > > support the rate
-> > > > > > > > you require (I think you want 11289600).
-> > > > > > > >
-> > > > > > > > We can configure the dts to provide such source, for example:
-> > > > > > > >
-> > > > > > > >  &sai5 {
-> > > > > > > > +       assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
-> > > > > > > > +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
-> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
-> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
-> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
-> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
-> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
-> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
-> > > > > > > > +                       <&sai5_lpcg 0>;
-> > > > > > > > +       assigned-clock-parents = <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg 0>;
-> > > > > > > > +       assigned-clock-rates = <0>, <0>, <786432000>, <49152000>, <12288000>,
-> > > > > > > > +                                <722534400>, <45158400>, <11289600>,
-> > > > > > > > +                               <49152000>;
-> > > > > > > >         status = "okay";
-> > > > > > > >  };
-> > > > > > > >
-> > > > > > > > Then your case should work.
-> > > > > > > >
-> > > > > > > > >
-> > > > > > > > > By setting the flag CLK_SET_RATE_NO_REPARENT, we signal that the ACM
-> > > > > > > >
-> > > > > > > > I don't think CLK_SET_RATE_NO_REPARENT is a good choice. which will cause
-> > > > > > > > the driver don't get an error from clk_set_rate().
-> > > > > > >
-> > > > > > > Thanks for the proposal, I will try it out tomorrow. Isn't this a
-> > > > > > > problem if other SAIs use the same clock source but with different
-> > > > > > > rates?
-> > > > > > >
-> > > > > > > If we have to define fixed rates in the DTS or else the clock driver
-> > > > > > > will return an error, isn't that a problem? Maybe I should change the
-> > > > > > > sai driver so that it ignores the failure and just takes the rate
-> > > > > > > configured? In the end audio works, even if it can't set the requested
-> > > > > > > rate.
-> > > > > >
-> > > > > > The following clock tree change would allow the driver to work
-> > > > > > in our scenario:
-> > > > > > &sai5 {
-> > > > > >         assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
-> > > > > >                           <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>;
-> > > > > >         assigned-clock-parents = <&aud_pll_div1_lpcg 0>;
-> > > > > >         assigned-clock-rates = <0>, <11289600>;
-> > > > > > };
-> > > > >
-> > > > > In which we configure PLL_0 for 48KHz series (8kHz/16kHz/32kHz/48kHz),
-> > > > > PLL_1 for 44kHz series (11kHz/22kHz/44kHz),
-> > > > > which should fit for most audio requirements.
-> > > > >
-> > > > > >
-> > > > > > However, this means we have to switch the parent clock to the audio pll
-> > > > > > 1. For the simple setup with two SAIs, one for analog audio and one for
-> > > > > > HDMI this wouldn't be a problem. But I'm not sure if this is a good
-> > > > > > solution if a customer would add a third SAI which requires again a
-> > > > > > different parent clock rate.
-> > > > >
-> > > > > We won't change the PLL's rate in the driver,  so as PLL_0 for 48kHz,
-> > > > > PLL_1 for 44kHz,  even with a third SAI or more,  they should work.
-> > > > >
-> > > > > >
-> > > > > > One potential solution could be that the SAI driver tries to first
-> > > > > > derive the clock from the current parent and only if this fails it tries
-> > > > > > to modify its parent clock. What do you think about this solution?
-> > > > > >
-> > > >
-> > > > I did some more testing and I'm still not happy with the current
-> > > > solution. The problem is that if we change the SAI5 mclk clock parent it
-> > > > can either support the 44kHz series or the 48kHz series. However, in the
-> > > > case of HDMI we do not know in advance what the user wants.
-> > > >
-> > > > This means when testing either this works:
-> > > > speaker-test -D hw:2,0 -r 48000 -c 2
-> > > > or this works:
-> > > > speaker-test -D hw:2,0 -r 44100 -c 2
-> > > > With:
-> > > > card 2: imxaudiohdmitx [imx-audio-hdmi-tx], device 0: i.MX HDMI i2s-hifi-0 [i.MX HDMI i2s-hifi-0]
-> > >
-> > > Are you using the setting below?  then should not either,  should both works
-> > >  &sai5 {
-> > > +       assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
-> > > +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
-> > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
-> > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
-> > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
-> > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
-> > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
-> > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
-> > > +                       <&sai5_lpcg 0>;
-> > > +       assigned-clock-parents = <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg 0>;
-> > > +       assigned-clock-rates = <0>, <0>, <786432000>, <49152000>, <12288000>,
-> > > +                                <722534400>, <45158400>, <11289600>,
-> > > +                               <49152000>;
-> > >         status = "okay";
-> > >  };
-> >
-> > Sorry I didn't communicate that properly. Yes I was trying with these
-> > settings but they do not work. The problem does not seem to be that the
-> > driver can not adjust the rate for the audio (so e.g. 44kHz or 48kHz)
-> > but that snd_soc_dai_set_sysclk in imx-hdmi.c fails with EINVAL. This
-> > results in a call to fsl_sai_set_mclk_rate in fsl_sai.c with clk_id 1
-> > (mclk_clk[1]) and a freq of 11289600 which causes the fail.
-> > Interestingly, in fsl_sai_set_bclk we then only use clk_get_rate on
-> > mclk_clk[0] which is set to audio_ipg_clk (rate 175000000) and we do not
-> > use mclk_clk[1] anymore at all. This is why I'm not sure if this call to
-> > snd_soc_dai_set_syclk is really necessary?
-> >
+On 1/16/25 08:24, 'Dave Stevenson' via BCM-KERNEL-FEEDBACK-LIST,PDL wrote:
+> From: Dom Cobley <popcornmix@gmail.com>
 > 
-> Could you please check if you have the below commit in your test tree?
-> 35121e9def07 clk: imx: imx8: Use clk_hw pointer for self registered
-> clock in clk_parent_data
+> The ISP clock can be controlled by the driver, so register it
+> with the clock subsystem.
 > 
-> if not, please cherry-pick it.
-> 
-> The audio_ipg_clk can be selected if there is no other choice.
-> but the rate 175000000 is not accurate for 44kHz. what we got
-> is 44102Hz. This is the reason I don't like to use this source.
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Dom Cobley <popcornmix@gmail.com>
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 
-Thanks a lot for the hint, in my test setup I indeed have not applied
-this commit. I tested it now with cherry-picking the commit and with
-applying the change to the dts. This made it work. I will do some more
-testing tomrrow and if I can't find any addtional issue I will use this
-as a solution. 
-
-Should I add the change to our Apalis board dtsi file or directly to
-imx8qm-ss-audio.dtsi? I think it fixes kind of a general issue or not?
-
-Thanks for your support
-Stefan
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
