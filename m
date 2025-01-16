@@ -1,111 +1,153 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869EB1DD877;
-	Thu, 16 Jan 2025 11:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D533BBC5;
+	Thu, 16 Jan 2025 14:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737026254; cv=none; b=a4TnjLdZjoUHK2tnVW1nn2unX5QfUQGHH4OvoNkwZ98TETV6jSW2d9/1j++hDpCZFzjEEGvsDS42uBG12W6VlOZLei4Z9Ob6fqaH1zQWHo6P6/QCUeBYlmPiDZ5VGZbrzk8q6ZE1naQjzfKXfaMAwSgAWxuJMYA79bcSywWn7TI=
+	t=1737036191; cv=none; b=UrzZuY30DOsP2McaUmCMYHVOUYcZjEMczuyxzeXzyCrkeF03m4jSve2YdP6ZHxDj5QwaSh4sXlg22hvMdOxLRpqvskJUVfc0HqgX+X2obka9l1TIHQ+1blHr6V3AMfA0icYPcjI+d6sKJHyp2l+PFAGSpgopskq6d0piigeJlR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737026254; c=relaxed/simple;
-	bh=0SXZFzIFqs7M1RGuKlZiXFOMG1ALo2cKRVXwGankuGc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afD87FO9a6W2He5XqIkLFezbQb6lNXD/8X0a3+6YMn10u3mWcCxQUCCNP6wFUFpZs+zMoR9b7PvFwNFumrvXgQWzaG0oqiCvVJP1zxulRJUrqvQY7c5TRKTCwSXiIqz0a9u4ZQalMYrDaHkP0W9uw7qTDlinIGM2VsaB7GscOzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=rNDl0f3M; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+	s=arc-20240116; t=1737036191; c=relaxed/simple;
+	bh=jXH7ru4LdSjhMnJ/LbXjf50HqamAlIUd+3r1M9E9KAQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kZox6DFnR2LuyXbK+xnFh9gHYsvCZbB/F/vTio0sjf8t/2f+9YCgVjJ+oRzHHDmGearKF89rjqkncafM09F710SRzKaVCrlvJDn1d6ltgi9mY9YKyEDnxswACxT54Ml6VHBBtlSDrJzL3SeXKgRmzD6ZgBDUebB7RCxfoN+PEjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UUJT3pay; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="rNDl0f3M"
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id CE54C120006;
-	Thu, 16 Jan 2025 14:08:15 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru CE54C120006
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1737025695;
-	bh=BES/OhhMKjc97wzSQyQAF2VCFk2eOXC6N60v2GMAZjA=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=rNDl0f3M7oNxpb7NiNfBpthMK8j4KKFsrj+eaMvqUIox4qFQcu/xo3u2mjto8das1
-	 mqxZ5yzOh61woyAxHGOgL7WQjWVC46pbysSluHzht4kjg+dKJdypJfkyGDcFk1NWK5
-	 nrPzuuuT3W6L/W50wgOl+arZ1691QtiT3mkBsebVbskKrl8jqcFYivpqyYN5AKQGzi
-	 7Jr1vtJqC1+6F0ngZZa+I6+Grx9Z1fJC5G7wtNSM/73KI1/arZKEsgSCkhSgXuKuWs
-	 QUElbFKw19We8rILooyjKJO8JRIT9zQtSrQti6GBkg8pYuJzE1sv9p7XIytVbeAEGJ
-	 ZgIGi3yFq2FYw==
-Received: from smtp.sberdevices.ru (p-i-exch-a-m1.sberdevices.ru [172.24.196.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 16 Jan 2025 14:08:15 +0300 (MSK)
-Date: Thu, 16 Jan 2025 14:08:14 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Jian Hu <jian.hu@amlogic.com>
-CC: Jerome Brunet <jbrunet@baylibre.com>, Chuan Liu <chuan.liu@amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
-	<khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Dmitry Rokosov <ddrokosov@sberdevices.ru>,
-	linux-clk <linux-clk@vger.kernel.org>, linux-amlogic
-	<linux-amlogic@lists.infradead.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-arm-kernel
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: amlogic: a1: fix a typo
-Message-ID: <23bwutgliz77mczt3p7iq3kewta2bam5lxnxr2ippvu2ckh6xp@nidq4xejefwq>
-References: <20241231062552.2982266-1-jian.hu@amlogic.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UUJT3pay"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5d3bdccba49so1652722a12.1;
+        Thu, 16 Jan 2025 06:03:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737036188; x=1737640988; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ts0zOL1kfPYuS6zomJ9otxY90fzQ/wFMmbamI+iWdgk=;
+        b=UUJT3paykD694bXhZmUagEAqsRkSvYzRPAVsjpFguXMClLj6EOJX37pottWYnin345
+         cVXq6b2D/Nl/CQ58umWUf1LktgBL266joBfyd256v7lrWdpK21NHCIOna2HbBUU3Wlzv
+         p00FOqUHB2LiqoYMVXhh7QnEixFxRbVaHaWsPmH1PQzxILsp2NLi+NlWoLWUSd09j+SU
+         kQgo7IsHfG+1sfT3LKAnf+kt1RrhwW2bUxkR6eyVd/sH1Due54SOcwNnMyqB9GmS4hHa
+         mP+DPXldYer6hI1aCOpwiElbp/4wL+KhPFhDFsnjy1yvPQGlnALZ4ikPuCrX2CBSzumu
+         6Q6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737036188; x=1737640988;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ts0zOL1kfPYuS6zomJ9otxY90fzQ/wFMmbamI+iWdgk=;
+        b=dLSAgmSPUZhgBZqDNCu23mgEkhHQ0h31kYF+SvMGWuWNH5Jsv9Y89svnPa2so6NtQ6
+         +se9kp7Owhdh6tENrqLH3P+tOehGskQvBgomzkDvDuKXCr4aFbX+dOkhD8GCoXcAHel9
+         jcTQkyq1kVhnh2ELM3hgTBCz2+2io4WxxNaVQYHkyUe4h5grvew9AUYYbSPmZQHdSbbi
+         mamtoQ6RDLvVCs5ul0vpG69/Ela1x8bsXE+NJZd17oEijeggYN987XJfmKnNaDwmSd+s
+         Ing2E1ZxVPgmF4i2l1AT4Tk6FhYtP6p4mm4ClE6WbN1Sd+oJd04HT1ZQyi6bvE9IcwHt
+         dEUw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2mi98RvNiO1JlLbT8cy7kp5BxtboWEX1SBaYyU7VMQF0VUW32zgRDeYRHlT5QvfD1k0nF1vdNksKhuTSu@vger.kernel.org, AJvYcCV6Ol4465mjww8Vxx45/uFJNRHjNZa0PCCAa50rLHxuByMQAclY4PIxzl8XJTFUyvLK/KcwmIp1sxjl@vger.kernel.org, AJvYcCWCWtYS6yQ2HrEr5zEjlKh/rWiBmAWta+9y/KwdNBzLwYqNbMmk3sVDLr2zkZzvqJD6xhRki+ZKuqOD@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAwT5VacBaLnbFboGUM6aHUCg0+xtW4AB6fMhoD4rayjCjO5T4
+	twBbvoRIXxYhlgY5f/IynT8o07URI9jyVAZUcUIqUqbx4rl8oYHeGIrDcLMi5MBjxBTj4+qX2Mm
+	bLdjwQVwkULoKSnTwnSY6USY5cQ0=
+X-Gm-Gg: ASbGnctuvqHE9Y0xSHYptZkcWE8e8uruBF+gi6D7ttzEhplD5GASXfDeVFSqcAdjPXX
+	+VgaeE9g9kwKx4rJpEaUbYu5ylvBhxFEnfUhoeR8=
+X-Google-Smtp-Source: AGHT+IEFBH5rdDRzxNwKshRgTNAcDQcukVnz1qk9b2CQwOqVLB74sIBmizfzmVBpnEI/k3+EDMO9YL89iWmnCUbKvA4=
+X-Received: by 2002:a05:6402:3483:b0:5db:67a7:e742 with SMTP id
+ 4fb4d7f45d1cf-5db67a7ec89mr597372a12.8.1737036187661; Thu, 16 Jan 2025
+ 06:03:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241231062552.2982266-1-jian.hu@amlogic.com>
-User-Agent: NeoMutt/20241212
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 190369 [Jan 16 2025]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 49 0.3.49 28b3b64a43732373258a371bd1554adb2caa23cb, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2025/01/16 07:50:00 #27039546
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20250115012628.1035928-1-pgwipeout@gmail.com> <2EEA8028-8E4A-4588-A480-E5FF0F7BE82E@gmail.com>
+ <CAMdYzYo2W1hLgiH697AdRSUbhBU4rU2uB=N6EMWMD2-0R+VLBA@mail.gmail.com>
+ <B1C9DA16-F285-4AD0-AE4E-AF1A5CA20932@gmail.com> <CAMdYzYrxX=RsSZja-3+zLZUSpyLoRz8Zm0w0hTfL3RQ9cjqgOw@mail.gmail.com>
+ <3536B507-8658-4377-A1AC-2C5D9093BDEB@gmail.com>
+In-Reply-To: <3536B507-8658-4377-A1AC-2C5D9093BDEB@gmail.com>
+From: Peter Geis <pgwipeout@gmail.com>
+Date: Thu, 16 Jan 2025 09:02:54 -0500
+X-Gm-Features: AbW1kvZDgqM8jfgzDVevxYgT39_hbUcQ7lTpjdvs9pBBkN8iloIKzhGnQ2-7CDI
+Message-ID: <CAMdYzYoCj9FsyHdTQAOV4DFpD7OdMDaJ0R=BBxXG-SLguy512Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/6] rockchip: add a functional usb3 phy driver for rk3328
+To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>, 
+	Michael Turquette <mturquette@baylibre.com>, kever.yang@rock-chips.com, 
+	linux-phy@lists.infradead.org, wulf@rock-chips.com, zyw@rock-chips.com, 
+	Dragan Simic <dsimic@manjaro.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, linux-clk@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
+	Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Arnd Bergmann <arnd@arndb.de>, Jonas Karlman <jonas@kwiboo.se>, frank.wang@rock-chips.com, 
+	Elaine Zhang <zhangqing@rock-chips.com>, Alex Bee <knaerzche@gmail.com>, 
+	william.wu@rock-chips.com, Zhang Yubing <yubing.zhang@rock-chips.com>, 
+	Johan Jonker <jbx6244@gmail.com>, linux-arm-kernel@lists.infradead.org, 
+	Trevor Woerner <twoerner@gmail.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
+	Vinod Koul <vkoul@kernel.org>, FUKAUMI Naoki <naoki@radxa.com>, 
+	Diederik de Haas <didi.debian@cknow.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 31, 2024 at 02:25:52PM +0800, Jian Hu wrote:
-> Fix a typo in MODULE_DESCRIPTION for a1 PLL driver, S4 should be A1.
-> 
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+On Wed, Jan 15, 2025 at 8:25=E2=80=AFAM Piotr Oniszczuk
+<piotr.oniszczuk@gmail.com> wrote:
+>
+>
+>
+> > Wiadomo=C5=9B=C4=87 napisana przez Peter Geis <pgwipeout@gmail.com> w d=
+niu 15 sty 2025, o godz. 14:15:
+> >
+> >>
+> >>
+> >> pls find:
+> >>
+> >> dtsi: https://gist.github.com/warpme/6af9e2778fb06bfb47b64f98fe79d678
+> >> and dt: https://gist.github.com/warpme/79340c54c87b2b1e52f2a146461d8c9=
+f
+> >>
+> >>
+> >> and compiled .dtb
+> >
+> > It all looks good.
+> > Do you have any CRU errors in the boot log?
+> > Can you check for the presence of clk_ref_usb3otg in
+> > /sys/kernel/debug/clk/clk_summary?
+> >
+> >>
+>
+> cru errors in dmesg - seems no any.
+> here is my dmesg: https://gist.github.com/warpme/ecf38482cc88fb68471355d0=
+11ecf974
+>
+> For clk_ref_usb3otg i=E2=80=99m getting following:
+>
+> root@myth-frontend-e67a8de4c815:~ # cat /sys/kernel/debug/clk/clk_summary=
+ | grep usb3
+>     clk_usb3otg_suspend              0       0        0        30770     =
+  0          0     50000      N      deviceless                      no_con=
+nection_id
+>     clk_usb3otg_ref                  0       0        0        24000000  =
+  0          0     50000      N      deviceless                      no_con=
+nection_id
+>     clk_ref_usb3otg                  0       0        0        24000000  =
+  0          0     50000      Y      deviceless                      no_con=
+nection_id
+>                    pclk_usb3_grf     0       0        0        75000000  =
+  0          0     50000      Y                     deviceless             =
+         no_connection_id
+>                    pclk_usb3phy_pipe 0       0        0        75000000  =
+  0          0     50000      N                     deviceless             =
+         no_connection_id
+>                    pclk_usb3phy_otg  0       0        0        75000000  =
+  0          0     50000      N                     deviceless             =
+         no_connection_id
+>           clk_ref_usb3otg_src        0       0        0        37500000  =
+  0          0     50000      N            deviceless                      =
+no_connection_id
+>                    aclk_usb3otg      0       0        0        150000000 =
+  0          0     50000      N                     deviceless             =
+         no_connection_id
+>
 
-Reviewed-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+I'm at a loss here, I applied the patches to a clean 6.9 tree and even
+built it as a module (thank you for the sentinel). I have no issues.
+I'm wondering if it's your .config or something about your bootloader.
 
-> ---
->  drivers/clk/meson/a1-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
-> index 8e5a42d1afbb..d71109b9bbca 100644
-> --- a/drivers/clk/meson/a1-pll.c
-> +++ b/drivers/clk/meson/a1-pll.c
-> @@ -356,7 +356,7 @@ static struct platform_driver a1_pll_clkc_driver = {
->  };
->  module_platform_driver(a1_pll_clkc_driver);
->  
-> -MODULE_DESCRIPTION("Amlogic S4 PLL Clock Controller driver");
-> +MODULE_DESCRIPTION("Amlogic A1 PLL Clock Controller driver");
->  MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
->  MODULE_AUTHOR("Dmitry Rokosov <ddrokosov@sberdevices.ru>");
->  MODULE_LICENSE("GPL");
-> -- 
-> 2.47.1
-> 
-
--- 
-Thank you,
-Dmitry
+>
