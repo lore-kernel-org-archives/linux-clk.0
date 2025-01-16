@@ -1,62 +1,63 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2361D86F6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FA622B8BD
 	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 16:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737044657; cv=none; b=tXxkIaqTbFdXcZuVSKwuQ/fiDiBg586RT/h5KDLerJFVnuBdcna0di4KlFIxUpAzPlMoNMVPwzLdRThjqB3ogkW3ZLdL5MZZroQW7yavi3BZIHRS/k5Z1ww9uR5ZMoUy88d1mZkd3NBnq21z8TtgUR2pFR/j+22Ws6kc0Ijp0R0=
+	t=1737044657; cv=none; b=OKmuMtVB9o63inPl7WnxSDoIL1SxYhMK8RGf5WAf1CxePZ5WbCykyH5Y32r4J0yhqfljitg3JMKa2/twlYnw765te67MXxoGwvB01yylq/0mZj3HWXQhQj9omPd+cV+0IGhHSHs+HbbZuvlT6qUUEGfVbHDQx/d2CAnT28WFpD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1737044657; c=relaxed/simple;
-	bh=pbY4CeM7I6pcN98vHzgogkhz8niM8qOCmP45kpFIA3U=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QkzDoyUuzTByHBB5FjWHUnI2IilZY48gXAqmcDNyUXOq75IoA/g+212hDAODij7CeUmHiuCpBUTOMdai2kuEyd5edUraqxHqB+3/4NkBLcw8dW7nnxm9uwtA1jnEX+4MFiwd5N2qToexF4iJSNzo67ESI9hZS8KiznzooBz2RpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=n/rJZOov; arc=none smtp.client-ip=209.85.221.53
+	bh=nUWZF98ghIiDFehR/zBnh39AR18NiZdQyJkoLJFENPQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=VUqVX+jppVhSNS+qmD8Tcc4KJ5rPjL7XqsnAf7mxCwZgoclzMzCnkKgvsy62wwjXXHpNfDL1vg/elzcOJU/u+0JjtQCtv6DNj9SbHX/rKBMhUXe32Faj6uGykBPdaRBqcje1r7h/+ZuoeGHxpNAlxRLpqyCOXzFiOq38s9DTHxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=jJUSA4tz; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="n/rJZOov"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385de59c1a0so683984f8f.2
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="jJUSA4tz"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-436249df846so7453905e9.3
         for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 08:24:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1737044652; x=1737649452; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JkidhIxI0JJqKCLy7C7vNd6vALRZn2Ej+iOClGDcLcc=;
-        b=n/rJZOovohMQCGmGOd0E+Q9bqePTya2cK2pIl+EmghsI0jPI2K59SHEnsdifWFOvY/
-         rTH8UHUajK/2LPCq5uvAcLU8Nig9WbAJDcS3LqtmbB0nxeWjfgaLqJ50hSMeRQZbNUzi
-         YyRNuwr06NAcV0hani8DmcRf0UojBCljApdSGqDyMcRGsr1RoC/QeYV8M1xWTShzFix0
-         7fwXRhUpARJJxtuufXRUhOJQB4+5RaCBZ6ktj26fIqtpceY/nPVxtUqhiFgqqC0bfaA2
-         JxNk70W95y6Fv8GUmfowylT7nCMfWvqBjLn8z8B69/htBcGCBpPUGBtHxT01thGnRjVw
-         Ij6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737044652; x=1737649452;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=raspberrypi.com; s=google; t=1737044653; x=1737649453; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JkidhIxI0JJqKCLy7C7vNd6vALRZn2Ej+iOClGDcLcc=;
-        b=X9R/THX2v3I7J8CbL8p+DNQfkAZqsS1KvmhrMYRwRxyzd5Gd9c2fkkx0uaV6FXoor3
-         kAnYQuwIsBquMqAymu0/vl/fU6cfWo/nYSvBGyJk9wUfTI2QJTbSYJ8btCRUa+CXqL20
-         RpRzerei9q8JrsOWK5Vc2kdtKTVDD3joyWt41tHuyGl19lTCToQP0mqOe0oc5Rb+WCrq
-         AoKuwT92vNDpIp4C55w6pqpuit9baSHpE6BFaX9adJ1DIbCH8+xI1ieT+Y3sYVjqHbqj
-         RGgmYogzIqkxrIERh63wl9PWK08EV/i8taXOySNvC2NzHUJ2oPwm82RvnDaXotsige/4
-         xRQw==
-X-Gm-Message-State: AOJu0YwPZPUQpJqhlH4PviSqC9Y1Rkcu1lp3MKyqEd6r+0mlWSjxseNo
-	pXZ7phqrz5iuzyD77Qayhj0GL23dUg2rc4yEULgArOQVZIACNBuSTS3BCtUYh9U=
-X-Gm-Gg: ASbGnctwifeGWn4d54ivw2t761eeQszMyxA29RtVlsWaI3Wck1/HVml2JVazT+cOqq5
-	Fo6HLJbjcOAVTf3NMzRvXHqwfsVbpuyo7Xfp2xauicQkpPQZSLr5qNuLDpwbVuBQG8wXqNmXOVD
-	G86pY6QeuNll4Dmf7vkgDXQCWNQ0VCh1nwQrtnY2BbNkjULNcBIQUZaHQzNyuktTqta9yN2re4Y
-	vedp68oHNYf+fpNDYqFjsnLZ9FKo+BoHzQLBm5dpGvjAjEc
-X-Google-Smtp-Source: AGHT+IEK9Riy8ul/CXhkvjuSyP8TO4TugJgmWjoRSyKi2uOy9w+mQYDd/mxF5HQqa/Eb7X2t/US4rw==
-X-Received: by 2002:a5d:584f:0:b0:385:f638:c68a with SMTP id ffacd0b85a97d-38a8730b738mr30034471f8f.30.1737044652594;
-        Thu, 16 Jan 2025 08:24:12 -0800 (PST)
+        bh=OVz8bC00NcJv/IZ0bhV7772W619cZqGGdaBgIBaPg8g=;
+        b=jJUSA4tzymQb3m6boCKUduHg+PLTxl6bt7N55k7n1ZHrUY9byIxoQImfIl4ciwZcXN
+         /DRrbDf3wwwM8VFI8+jozA0SKt7hyuuD7fVf7/dbL9QkwMkAo839PXamPxgTChwXwF0S
+         ZKcHhlbS0dtqmeq2fM5LhCTeNT4/bR5voEKJ08lOEReQZ+c21KMsZC7/SoU0Fe2UGa+C
+         lvkFDZgV7SR/isGpXajNc7r4hfm6RiJoCO2AWOdlG02r0kQyarf8NajoQ5SCJBFB/2YL
+         kWG7/e2ZLHS0rAthLJNgqBKijicg9g31PQKKe+QHxS9jB31+X1Hwf+MHEWbwSLLZWF3z
+         FDXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737044653; x=1737649453;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OVz8bC00NcJv/IZ0bhV7772W619cZqGGdaBgIBaPg8g=;
+        b=ae75UmJSE4HeK5omooHaYatm11mDGTJ0Za5oLFfv6cTwAPyLIfEqMBDKfVdBd9uXn/
+         83251frpeuVCkq8gqmM2RhDFHosaX3W6xHtKA7fq05MmIer9NZW3tesOSAqcGIPL5d3w
+         a1pKWzW1PXLlPPyBb+plJKOBcCu9piIIzzWzPyQ1qlD3YaVH+O64DNU49xn/ee/suKCp
+         jtCYJ9/p7DIkgTBUKq11m/zM5kFI0j+rGBv/44o7WSV/LPElatZUF14Vhg82PpH6TnjE
+         3R27keeTIN8P7yJWwHiDUSd0Gkzrm9DLiwdTtzGILkSTvmzsChDG5K1nNPZ0o7Vwi0oM
+         cVIA==
+X-Gm-Message-State: AOJu0Yx9dP0pDR4UOveAYjOL1fmhfhBxS4ZflxA7Z+PIxMEUHhit1JCZ
+	Q1OEdEopJA4Hos+CoQbxCcEMxNeAKhdbmSWWqJCrunKutJPasqQ/DN4Co+E5x4E=
+X-Gm-Gg: ASbGncuRG5r8vVQAfogN2HGfUHknoPHqA4PkCCnwZpN7ZFbN4xRK+EeV+l45miIfbyn
+	nnbvJ2HxtnDj/ctD7VdwqrGkfgFBrDf76CBQMtF0tNTUfvpNHQmxDAlCncMGHSlgWt8LHI2ELM9
+	UtAMFIa50ctHF4tgIYj/Vk4DFGv3rWdeIW64gSGK3sBcvYjKL9JejA0SMvszWgWFwBLrGsf/ggs
+	XeUj+3H23ulv1CLWfy8StrirNHwikhf9v/udzhhSchKTCf6
+X-Google-Smtp-Source: AGHT+IFsOpMBJ93/MMR+dU+EaZC/TmrWLHZaiOoyuDyhD3Z2W0qeIr52x3Uzv4hcGCmCAktAv12ABA==
+X-Received: by 2002:a05:600c:468f:b0:431:52f5:f48d with SMTP id 5b1f17b1804b1-436e26ebe46mr326154805e9.31.1737044653375;
+        Thu, 16 Jan 2025 08:24:13 -0800 (PST)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43890469ba8sm3715955e9.37.2025.01.16.08.24.11
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43890469ba8sm3715955e9.37.2025.01.16.08.24.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 16 Jan 2025 08:24:12 -0800 (PST)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: [PATCH 0/5] clk: bcm: rpi: Add additional clocks for 2712.
-Date: Thu, 16 Jan 2025 16:24:07 +0000
-Message-Id: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
+Date: Thu, 16 Jan 2025 16:24:08 +0000
+Subject: [PATCH 1/5] clk: bcm: rpi: Add ISP to exported clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,9 +66,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKcyiWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDQ0NT3aTkXCNzQyPd5Jxs3dKClMSS1GJdS4tEE/M0YyNDQ7MUJaDOgqL
- UtMwKsKnRsbW1ACw4f2llAAAA
+Message-Id: <20250116-bcm2712-clk-updates-v1-1-10bc92ffbf41@raspberrypi.com>
+References: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
+In-Reply-To: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, 
  Florian Fainelli <florian.fainelli@broadcom.com>, 
@@ -76,44 +77,36 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Dom Cobley <popcornmix@gmail.com>, Maxime Ripard <mripard@kernel.org>
+ Dom Cobley <popcornmix@gmail.com>
 X-Mailer: b4 0.14.1
 
-These patches were Acked by Stephen as patches 30-34 of
-https://lore.kernel.org/all/20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com/
-with v2 at
-https://lore.kernel.org/all/20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com/
+From: Dom Cobley <popcornmix@gmail.com>
 
-I'm a newbie on kernel processes and where the patches should be merged.
+The ISP clock can be controlled by the driver, so register it
+with the clock subsystem.
 
-I'd asked Stephen on the v1 thread as to what needed to happen to get
-them merged, and he asked me to resend the clk patches for the next merge
-window.
-I must confess to it having slipped my mind, but resending them now to
-hopefully be merged in time.
-
-Thanks.
-  Dave
-
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Dom Cobley <popcornmix@gmail.com>
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
-Dom Cobley (3):
-      clk: bcm: rpi: Add ISP to exported clocks
-      clk: bcm: rpi: Allow cpufreq driver to also adjust gpu clocks
-      clk: bcm: rpi: Enable minimize for all firmware clocks
+ drivers/clk/bcm/clk-raspberrypi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Maxime Ripard (2):
-      clk: bcm: rpi: Create helper to retrieve private data
-      clk: bcm: rpi: Add disp clock
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+index a18a8768feb4..6d5ee1cddded 100644
+--- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -118,6 +118,9 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
+ 	[RPI_FIRMWARE_HEVC_CLK_ID] = {
+ 		.export = true,
+ 	},
++	[RPI_FIRMWARE_ISP_CLK_ID] = {
++		.export = true,
++	},
+ 	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID] = {
+ 		.export = true,
+ 	},
 
- drivers/clk/bcm/clk-raspberrypi.c          | 33 ++++++++++++++++++++++--------
- include/soc/bcm2835/raspberrypi-firmware.h |  1 +
- 2 files changed, 25 insertions(+), 9 deletions(-)
----
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-change-id: 20250115-bcm2712-clk-updates-98a47f32116d
-
-Best regards,
 -- 
-Dave Stevenson <dave.stevenson@raspberrypi.com>
+2.34.1
 
