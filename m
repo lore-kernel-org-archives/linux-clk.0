@@ -1,61 +1,61 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2400522BADC
-	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 17:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24B522CBF0
+	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 17:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737049546; cv=none; b=APA0p6FFG+1KLrsC4Z/CM8dL/oqD0NgP6B8+BmJ7hhZNH55VY1l97RePj6lhaCUE2WdmkfVFU/rO2U15r18LCo9I+hOwIVlB/Rbxqu6ywL7k5Jfnw3PjS3c/rZ0L3JjIaC36thkFc+FAtzEOBfQw+YZ/gIZaoaM9lYB74B/huak=
+	t=1737049555; cv=none; b=fxpFrdoixsr5ljoQwvozJS2HKmLw4FIViY7QLMFcnx+ZlVgCsWB2dELnzKIBMfWO0ebhJ69IDgQyimNt+AG5gLOkhAQY1Y7uRhsf8jf4UXabIOKTCfjqPf1G4uVU+ohVSbhDALkD5eKJ9NuliLjHOGkeQWQocNba8vsmNgCqqMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737049546; c=relaxed/simple;
-	bh=5egZvZsimR90ztWUfn/wDRiPFm0ueGajo/pGyixUWT8=;
+	s=arc-20240116; t=1737049555; c=relaxed/simple;
+	bh=ZikDhVpINxuW6cdDGTatvIcZqLrqw1yj2n9A1WNz2yg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IzWxS2V01oreY5ZrMpgLmm//i2p7DnUOLwmyMt4IwhVKtBuSO8VxLp8k7C4vGUzfMBithUF9orFD5Wq4638WQC1TLOUw7AnxrRe1E1xdl9kSwwqlQtxvIAhebwfpVOU2Kpx9XvpDF0HRPmM9y4LZQKPJmnktjk0YDN07jVpAeDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KOPUVwD3; arc=none smtp.client-ip=209.85.214.175
+	 In-Reply-To:Content-Type; b=HVcSXz/A01AlZVIWrvs40uu/Ja5BJxxzBioODrH8Tf/3T56gTiuTovj8a9VMR97mWcjZ4FvI25jfvW4f681/T97k2Qxc64Y+wEXB6yFn+Prf5mSihQISiQLCQvv/qV/Aay5c8UIWQb0+09vYdQYzS09TaKt16RGxsKADG7cVafY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ICPFNk6d; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KOPUVwD3"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-216401de828so21629695ad.3
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 09:45:44 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ICPFNk6d"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-216426b0865so21829425ad.0
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 09:45:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1737049544; x=1737654344; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1737049553; x=1737654353; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wXUWRfgVPfjqjzYqB9ylCsJuqBtySkaQuKmwFGwuG4s=;
-        b=KOPUVwD3lnkRsoXmDqOAuVgGZyvo5ZEk08sjqCfnnst1UVu8R58tNHPCoXFzp2mJsS
-         hvQ526log1w3gkmmmXCBvQKxcGLroPh4is9iYhG4Br+jDpFUgWP89wBQOPLp9or9B2jE
-         SCYYnQ2G35++FiqjVYzwiTp5R1g9xu1voyiTk=
+        bh=/Drh/AKRgmJ45wLb23S0mcSch3Lc8mZPLWiINbN0C9w=;
+        b=ICPFNk6d+SN/eMskWScKXivjOATn6qsy4hC1/aPtIhf1tkph15uQ4sF19MtDcRMFZF
+         loDzN0C0HytcPyOM68guKhwFmslZ+hFIHVn7HwNZ/z6JJADnm7loCVT/A18iQSEv0qOa
+         V9ctmXF6wUOlzNYIudrUt5M2jLjD1b4hYzLfE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737049544; x=1737654344;
+        d=1e100.net; s=20230601; t=1737049553; x=1737654353;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wXUWRfgVPfjqjzYqB9ylCsJuqBtySkaQuKmwFGwuG4s=;
-        b=PsbwKviF5vVH7sP5ofiAJk8liXWewxxpKKxCvzaPPOS5MBEomL6KkvepdskP9gq3nw
-         8V/JZfOkNP7ZcQ5MBelmmb4DwNhmjvV5+jqPyZ2+OHgX/kL6hDlnPdT+8Ar90d01CXGH
-         kZtU5C+Ejv7tNpFlELf7L3xo9ryQ2KI3cJtim8okee8q7jfVD6uRXRZq9rgnT5/Qfuvf
-         MG4+zYBr2KG8CgwGabTx8F4ayKZq0yoescRH5j2iGuekNCl4Whone34gUvI4omo7E0IG
-         qihIPzW2bgc+ANVIuSCIvcHfLq5gOCI0JBLKuea3Kta9og6R7aUTyD1byLqqe7cyZbuU
-         h0qw==
-X-Gm-Message-State: AOJu0YwIDRjMrSPoyx9Y9Ia5RR9RbkbX8Dg9QKlQXA21Xeml76hXkR98
-	UEO9Ht03UKdCwzasA0qPtlg+JZ/gjD5xqxcaXXU1bji1P+CfMNUodwm5OhGQQw==
-X-Gm-Gg: ASbGncu1HXO7K/0gPGk25r0HGDfimq8OLlXfrhdwO8xzNE9hx2cByWgTvjryuL0cp1/
-	kPIFwniPgHAK2TizF4fqvJMBtmpI4uoCD0VgWTtRsKv2NAfjqL2onyiLVuh1md99LLqCNEowGjb
-	0yt7dCtkD565ajNEhG2UFJrHUipGl3oqb7JMO7sPMWQbUkJxiiJONzAZozQ1CwHqaDw26oXe/xm
-	LfPTclPkY+OVw0OF41NsFMP2g+hiuFSlInV8E8mTyHyb73GG9j+HPIChY5PdT4OQQETDoiODFj/
-	RyWfaVl3dt5UrMjNMdVvtjH/PAD5u17vXA==
-X-Google-Smtp-Source: AGHT+IGoBD+SJJ/QxFGJUHj4pfv2HQPwrV6pTTrXBMpFdFvwdE9zjwq3erFQ6AqPAJfgHcS/8RJVag==
-X-Received: by 2002:a05:6a00:2406:b0:72d:8fa2:99ac with SMTP id d2e1a72fcca58-72d8fa2a067mr10388358b3a.13.1737049544402;
-        Thu, 16 Jan 2025 09:45:44 -0800 (PST)
+        bh=/Drh/AKRgmJ45wLb23S0mcSch3Lc8mZPLWiINbN0C9w=;
+        b=iJNvihWfZ4U6BgEF2sL1nqm/Mar96jbmSf3tH+dCMgtEzhaPLafgsKCAIVrRL/L3+q
+         /2RoKiUOs8ahuCFFeXQEBMWmbw9Px6rqP4swe0DAW3Yeel+4hG4uUFesBME5x5QBIYrQ
+         YunQuNyffZ0qtE4JN7Wf9Xl8RJlEpxnoONdvp4Hgs8BayUxuUNVoNn8TCeOgUAE+im/f
+         4NtbGz5Ukyl2HGHNuXLH+lcAd1qqmo37BAgheh8e58FJk6DVnT1IwYIYUIUKMmUJqRyO
+         0memuFjVEOQZwscfVZWUreE+b9ix3UXs60yDSpGLJc7Hwck35Ucedgts90Mntj1pcDEQ
+         S7MQ==
+X-Gm-Message-State: AOJu0Yz25FMGT/vx+bZpcLfnxPvottKVm+kMjVxJPS1DNfkIGLZzsGgk
+	nzwawDtcwadxoGIXG2L+CTzXJkVIdRcRBTINur3bo8WWKbHXNZgWuVarid3MOw==
+X-Gm-Gg: ASbGncuCe9yQin+1cCUGhbWXH+9yzLpHdWkWApFiRO+KyF+XYrkz75+FEJpqIt6ckBX
+	LryriU5+be3V36pmsKLdHrpdtEBMg0Y0ZJYx/mp/Zxex4VVO50re9qCIMjk1EMTm4sDI9T7oiOY
+	0a4KHG14fjCyyPNajNySOxZxTmolNbP84OPhMzPfBAi6eyPgvmn/pFzTTJfsqGBOGkJKqWCb1uV
+	qWU9hSs4N/Na78NBBixm/VYu7CHprZM7z8Q3r4fK3rucT0NmKyQ1eTsp+HSaUCEpYXUSdjHExdS
+	bciNSkdwn+zJKYkpoyYp
+X-Google-Smtp-Source: AGHT+IEskbseMrNOLzO4Ty9QgYY/5V8mUDrEI0MQIq5RBcUkt4Ka9C0lmr7fyEy1Y83gdeJwn6nPiA==
+X-Received: by 2002:a17:902:e5c2:b0:215:6f5d:b756 with SMTP id d9443c01a7336-21a83f36e79mr450089655ad.7.1737049552978;
+        Thu, 16 Jan 2025 09:45:52 -0800 (PST)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72dab9c8e65sm278973b3a.103.2025.01.16.09.45.42
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21c2ceb6fa4sm2986535ad.53.2025.01.16.09.45.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2025 09:45:43 -0800 (PST)
-Message-ID: <6645f9bb-7655-4d89-8aa1-220651e3c26a@broadcom.com>
-Date: Thu, 16 Jan 2025 09:45:42 -0800
+        Thu, 16 Jan 2025 09:45:52 -0800 (PST)
+Message-ID: <af83c932-3fce-4814-b20e-8445138a4532@broadcom.com>
+Date: Thu, 16 Jan 2025 09:45:51 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] clk: bcm: rpi: Add disp clock
+Subject: Re: [PATCH 4/5] clk: bcm: rpi: Create helper to retrieve private data
 To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>,
@@ -74,7 +74,7 @@ Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Maxime Ripard <mripard@kernel.org>
 References: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
- <20250116-bcm2712-clk-updates-v1-5-10bc92ffbf41@raspberrypi.com>
+ <20250116-bcm2712-clk-updates-v1-4-10bc92ffbf41@raspberrypi.com>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -109,16 +109,17 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250116-bcm2712-clk-updates-v1-5-10bc92ffbf41@raspberrypi.com>
+In-Reply-To: <20250116-bcm2712-clk-updates-v1-4-10bc92ffbf41@raspberrypi.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 1/16/25 08:24, Dave Stevenson wrote:
 > From: Maxime Ripard <mripard@kernel.org>
 > 
-> BCM2712 has an extra clock exposed by the firmware called DISP, and used
-> by (at least) the HVS. Let's add it to the list of clocks to register in
-> Linux.
+> The RaspberryPi firmware clocks driver uses in several instances a
+> container_of to retrieve the struct raspberrypi_clk_data from a pointer
+> to struct clk_hw. Let's create a small function to avoid duplicating it
+> all over the place.
 > 
 > Acked-by: Stephen Boyd <sboyd@kernel.org>
 > Signed-off-by: Maxime Ripard <mripard@kernel.org>
