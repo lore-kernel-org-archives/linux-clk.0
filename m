@@ -1,135 +1,254 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C77822D4E1
-	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 16:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E7E24A7C6;
+	Thu, 16 Jan 2025 17:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737044661; cv=none; b=FqKynztZ8YawasHDBV6/NffUeSr8t1IYYEEUwhnyap93XSK4dAxB42Rw/tOiE5Az+XJ2lYAmFtRxzZcxiGr0+ylNTnfW0rOxOyaGZ5kbl7BTgI2gonASwF5R2uTR4shOSIYV+l9f2H+ihCGCpas714XtrEYBzGUEhBfgo9ysj5w=
+	t=1737048946; cv=none; b=fEDZ21z/jH/MwT6kbJnLcGzFexn9SSV3D987LMdj0wmEIAFpyB/xSWhne7319I6MyM5xU14ZEa17AsBmvR2J4tzXiSQXII2iCLL0ttWDK7uGHjDmg3GgsRhaVAiXxT7PK7bDI0mjMNGRzoEc2GfWn1xYaGol/Bf6U8ptr4tpYek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737044661; c=relaxed/simple;
-	bh=5J6vqNubQjfIM+uOUpAsyUfwCnOhmTpN0y5UuqZeUV0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=d6BRq/IAKSyL6auCuhOQqYQoOLWNgM8FvyV1+k7KYbT7ZNi8LnImjrGUcj5ULVERiEq3VfmBfHLddDd6phYok0MSEQ7di2TW5LYwTlbGlRNJYSG5i0At9EpadEfBhl7Cm4+2+uouGIu+dqNPpwPj1bUXo/YK0peDX+CXSZjPesc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=AlRuOCkf; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+	s=arc-20240116; t=1737048946; c=relaxed/simple;
+	bh=oRrQdjlMXee27y3404cKxsBGmmxH3reSt5HlrLAhTEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CM/hVrfNNg3yjcyLjP5fdDQEUQ97azmP0+m5VEjIX3JBpKPu9guUDiDGDbZ2TIl8g7XywRW/bh0qZRvFWB8sARn/oxpF1qlMYPKR8+BBHgfzGA8nf1m14FG2gFzk0aG5AhLjUfE+JLItTKwVtpeossmxlHttg3K7dB18H++gIwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=al8RwGmY; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="AlRuOCkf"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38633b5dbcfso1264188f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 08:24:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="al8RwGmY"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-436202dd7f6so12915735e9.0;
+        Thu, 16 Jan 2025 09:35:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1737044658; x=1737649458; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZibngSwY8argeZ7qofhjDrNbekU97d1TCMP7QCVWYG0=;
-        b=AlRuOCkfVnhf1Dp+Ld6vF95aWaFa7RD/m0O7WU/7azQtx/QNM8fa2nfJ9KDhBFYAim
-         +Ni2jEOHBeWHkWuaRDcHd+SL8cKhV2cyEfzk9yaHpJOPA9BrDdjM8qlLxcYEhuT3wXgf
-         kjoTSakaiKAJc31XbPJIhCLgpZCjlZOo7BgfwwmoDGnRKavNHnfl0+Cb5lc5NhamAy4L
-         QAfvD8fv90lD65eZ0RFPg+No6ALOc+FBs+k3/9jsoKpAxTpXcdCdky5TPMvFDqY9X+aq
-         +jW6FsPiEORtbwXKT69qICiMQtwqjZWQeCqTlct8ZImPhXqmRFr2r8HCRfkHMb7CbujU
-         1eug==
+        d=gmail.com; s=20230601; t=1737048943; x=1737653743; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OXBv7mU3IUmuhGazcfTF0fMhicUzdzlonYKZ/ftM1lc=;
+        b=al8RwGmYoPptwkvDdT8zDh5ewvhO99t6Qf8T2/LrMQu4dL49IvWm7q8lle8yoSnLQs
+         dsdWITJBbdG+r716BtqAwYyp4E28osQSnohwRXhvDV8LMWq6a5mwoQ24fbercyK1o6e4
+         uICPsVrYtxvZwIypvi8j4Nf/tmMOLlxu2LZO3oYDmeaPl8CjVDkTXANOMQ8s4N9+Qt+t
+         a6sHiBzF2Dx8ewCfsY9YY25uEUdJtE5Lz6LfBqw5yW0uOct9SlzBfBwo+UUUacipe6GO
+         TD7Z78sWIQNP7xIuiqw5OnkLSZcQIqjwKFTbhy5DXqFGch3mHU/eg566+zjFk4HB7nTI
+         lUCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737044658; x=1737649458;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZibngSwY8argeZ7qofhjDrNbekU97d1TCMP7QCVWYG0=;
-        b=RAnjZPhd0fW74fiW9I/tUoa8/3L+VjhkBkXcgAxE2jVzNetUGeqqFLG55cTL2JfM9Y
-         05X0Hxc3y+q/A//7uNNVnS6DsHuDzFslbT1v4yyIV590Ilq4HJQHaDAzGyqoluK1fPvR
-         ZrRW2FinmO5ii36uI03DZeBLhscITH+RX7g8NJ2BmOaTlB7XeQJOF0clwGqauSWYxDAZ
-         lpNstSxNbc1D+En28khkVG2yfheIYKLe5cMPXEYvBI8BEZNiWt198y5t/GAZ3U1KLfe8
-         eCattsjn1OJvRADR20RIat6z0HeyMK3Pu1V8TLe8obwhZCGCLc5wNniZ0sqJj5sfMg0e
-         zSVg==
-X-Gm-Message-State: AOJu0YzmgW8sSqt9pYz56XdfNt6rpv4rCZ+LN7GHNHnbRH97J6dDm+t0
-	0M1xAWE+NOG61o3+j7N7/5vzZ7wmPS7LAgwpgG+Fkevwz0UtPnN85wGF1YK+yog=
-X-Gm-Gg: ASbGncv8hN4jTmYYbLX5v6Bgn7y0xyQ7w1ihJ9UnA9lnDN4AIqMeSdEmeSXnZaMhiOn
-	THMciFjIl5pRiVhYx6NoWirFrmtPmaVblVmCQRyQR+Vb8x/sNeAIs/U+COpShaxBgT3mMMXsfXi
-	iizRZfdlsPCaY+/Xttu/897/AyI7F+J+XbXXA5SA6rkyXe3VldCtNkRNlb37L0Jis0lnka2Huv0
-	/aVtRq51Bi8hZRq79JhlSzPIqihXz6B/XZHnxWOAc1SAGH0
-X-Google-Smtp-Source: AGHT+IFovdSUCLFl6t9Ci8wgrQdUI7v7DsdIkG9yNGdgleot+0dJp6sFALS6PaK+5Ttm99jIsf+Dng==
-X-Received: by 2002:a5d:584c:0:b0:385:f6f4:f8e with SMTP id ffacd0b85a97d-38a873573ccmr32438272f8f.50.1737044657836;
-        Thu, 16 Jan 2025 08:24:17 -0800 (PST)
-Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43890469ba8sm3715955e9.37.2025.01.16.08.24.17
+        d=1e100.net; s=20230601; t=1737048943; x=1737653743;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OXBv7mU3IUmuhGazcfTF0fMhicUzdzlonYKZ/ftM1lc=;
+        b=s+3EHWzn7ctEC6bSQwP5ZtfZtiCc3MYkaZNjNhwdMzTM95wVEWMIlJCiiyjmZfl7Ie
+         wjbJN6lp41CiuaVkeYL68Zqh6q9ncn8t/6hQeNl3c4BtaGw8HlEBc1IBIG3yGZ2VTpS4
+         icthApfdQE33xK4NDMvY2jIs9bE7hkTfGq3Ho/S1X7crBSFPSNLhF+MuzEGTEQBINF/M
+         TKCHQnChZh4Utx1PxPk5+JZn2/oGKzCBBu97q5sHrQMutLl3KSmku/LGS6ZqIY/b6K2G
+         aKP4H8kXZYarYr0KDOesCwqw1355fiFnzWAeoNs6ywWfBWCAv6A5fPaZvxf7RwYk/KFq
+         /jGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnbROGmqEdte2ZeOnIA5nuNMFVsDH4QZqsm0GvYgxal2ZhTCUFko2gPlRH92poq4QBlWr8hxeU5FTzD7uE@vger.kernel.org, AJvYcCVsahToN68L1jer9iuOvXagZAb1WXScAAYtNgRS5JkF8wKOdhQMD7a6zhkWo3BzFkgEKVzq3afm@vger.kernel.org, AJvYcCWfuPKdSLTe9u7ht3MSjmnVMXRkgeKtmgaFt7JEaS/pT8fsPMMOsBWheqncbHAVEWmWS0dcERzAWZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5kZe67C9SMEunUg6GFDAln2Eq106dgWwffv177HvJCfD9qyVL
+	MQRmRDMQbh2yqj6ZifdMVv0Z6oucznd0tOmJC1lBkjN5dLJCaEp13tvUDHoz
+X-Gm-Gg: ASbGncthjC7MP3zzK5eVwR93Qr2RZk+dTMIUKYmwcNwdvBWkV0kkkidDJuC/uhuHlni
+	JdINIIdFLYXQsykohoyLDGXN6xpq0Hu3Qt6OaTZZPelvO+zkJ4dT+QRST9gm7AVscb2GtpiC0a7
+	zTYkglFvKDqJtMV0FvPeLLxBFoRzav1dzFx3/RVjBjA8yIN7nlkcnISYsQibPY9rTTtMKpPmtxz
+	aH/xnSOOQgHPpVpC793MrtXKaWwlm5ehyWZFT3OHp69Tu8hWd0oXmj0
+X-Google-Smtp-Source: AGHT+IE4uFPItlsauRShxJdLB24OsNy/KVeIOXphx1Hzsl5WiEKLoA/vq8qTUH8Lxbx1pF338OyP/w==
+X-Received: by 2002:a05:6000:1849:b0:385:e5d8:3ec2 with SMTP id ffacd0b85a97d-38a8730b535mr32269071f8f.28.1737048942602;
+        Thu, 16 Jan 2025 09:35:42 -0800 (PST)
+Received: from eichest-laptop ([2a02:168:af72:0:6c4e:8d77:c1b7:309e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4389046b0f5sm5619075e9.39.2025.01.16.09.35.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2025 08:24:17 -0800 (PST)
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 16 Jan 2025 16:24:12 +0000
-Subject: [PATCH 5/5] clk: bcm: rpi: Add disp clock
+        Thu, 16 Jan 2025 09:35:42 -0800 (PST)
+Date: Thu, 16 Jan 2025 18:35:40 +0100
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, shengjiu.wang@nxp.com,
+	francesco.dolcini@toradex.com, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v1] clk: imx: imx8-acm: fix flags for acm clocks
+Message-ID: <Z4lDbMqCYW2W7iyX@eichest-laptop>
+References: <20250113094654.12998-1-eichest@gmail.com>
+ <CAA+D8ANvKQKJhn6qKbPhQeXPD5kxUo3Hg-FBLkDMOaWLTA8vVg@mail.gmail.com>
+ <Z4ZRYMf_uJW4poW9@eichest-laptop>
+ <Z4dy3LiEAQ_gkQGG@eichest-laptop>
+ <CAA+D8AO75MLyP5AWDJoogw8ae4GRtZfSR-HT+S26bXoaVs8saQ@mail.gmail.com>
+ <Z4eQX_VnBEVqxT_r@eichest-laptop>
+ <CAA+D8APivJWD-AqwmQ-mtcr=ZHot5rfA8FRWF2+p-_mq5BGxHA@mail.gmail.com>
+ <Z4i0G5Tw4q0v8DTL@eichest-laptop>
+ <CAA+D8AOakQdnEe9ZrfTCrWcjHJRRU0kqFVsiu8+FMiHeMAVV_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250116-bcm2712-clk-updates-v1-5-10bc92ffbf41@raspberrypi.com>
-References: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
-In-Reply-To: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Maxime Ripard <mripard@kernel.org>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA+D8AOakQdnEe9ZrfTCrWcjHJRRU0kqFVsiu8+FMiHeMAVV_g@mail.gmail.com>
 
-From: Maxime Ripard <mripard@kernel.org>
+Hi Shengjiu Wang,
 
-BCM2712 has an extra clock exposed by the firmware called DISP, and used
-by (at least) the HVS. Let's add it to the list of clocks to register in
-Linux.
+On Thu, Jan 16, 2025 at 03:30:55PM +0800, Shengjiu Wang wrote:
+> On Thu, Jan 16, 2025 at 3:24 PM Stefan Eichenberger <eichest@gmail.com> wrote:
+> >
+> > Hi Shengjiu Wang,
+> >
+> > On Thu, Jan 16, 2025 at 12:01:13PM +0800, Shengjiu Wang wrote:
+> > > On Wed, Jan 15, 2025 at 6:39 PM Stefan Eichenberger <eichest@gmail.com> wrote:
+> > > >
+> > > > On Wed, Jan 15, 2025 at 05:14:09PM +0800, Shengjiu Wang wrote:
+> > > > > On Wed, Jan 15, 2025 at 4:33 PM Stefan Eichenberger <eichest@gmail.com> wrote:
+> > > > > >
+> > > > > > Hi Shengjiu Wang,
+> > > > > >
+> > > > > > On Tue, Jan 14, 2025 at 12:58:24PM +0100, Stefan Eichenberger wrote:
+> > > > > > > Hi Shengjiu Wang,
+> > > > > > >
+> > > > > > > On Tue, Jan 14, 2025 at 03:49:10PM +0800, Shengjiu Wang wrote:
+> > > > > > > > On Mon, Jan 13, 2025 at 5:54 PM Stefan Eichenberger <eichest@gmail.com> wrote:
+> > > > > > > > >
+> > > > > > > > > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> > > > > > > > >
+> > > > > > > > > Currently, the flags for the ACM clocks are set to 0. This configuration
+> > > > > > > > > causes the fsl-sai audio driver to fail when attempting to set the
+> > > > > > > > > sysclk, returning an EINVAL error. The following error messages
+> > > > > > > > > highlight the issue:
+> > > > > > > > > fsl-sai 59090000.sai: ASoC: error at snd_soc_dai_set_sysclk on 59090000.sai: -22
+> > > > > > > > > imx-hdmi sound-hdmi: failed to set cpu sysclk: -22
+> > > > > > > >
+> > > > > > > > The reason for this error is that the current clock parent can't
+> > > > > > > > support the rate
+> > > > > > > > you require (I think you want 11289600).
+> > > > > > > >
+> > > > > > > > We can configure the dts to provide such source, for example:
+> > > > > > > >
+> > > > > > > >  &sai5 {
+> > > > > > > > +       assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
+> > > > > > > > +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
+> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
+> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
+> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
+> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
+> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
+> > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
+> > > > > > > > +                       <&sai5_lpcg 0>;
+> > > > > > > > +       assigned-clock-parents = <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg 0>;
+> > > > > > > > +       assigned-clock-rates = <0>, <0>, <786432000>, <49152000>, <12288000>,
+> > > > > > > > +                                <722534400>, <45158400>, <11289600>,
+> > > > > > > > +                               <49152000>;
+> > > > > > > >         status = "okay";
+> > > > > > > >  };
+> > > > > > > >
+> > > > > > > > Then your case should work.
+> > > > > > > >
+> > > > > > > > >
+> > > > > > > > > By setting the flag CLK_SET_RATE_NO_REPARENT, we signal that the ACM
+> > > > > > > >
+> > > > > > > > I don't think CLK_SET_RATE_NO_REPARENT is a good choice. which will cause
+> > > > > > > > the driver don't get an error from clk_set_rate().
+> > > > > > >
+> > > > > > > Thanks for the proposal, I will try it out tomorrow. Isn't this a
+> > > > > > > problem if other SAIs use the same clock source but with different
+> > > > > > > rates?
+> > > > > > >
+> > > > > > > If we have to define fixed rates in the DTS or else the clock driver
+> > > > > > > will return an error, isn't that a problem? Maybe I should change the
+> > > > > > > sai driver so that it ignores the failure and just takes the rate
+> > > > > > > configured? In the end audio works, even if it can't set the requested
+> > > > > > > rate.
+> > > > > >
+> > > > > > The following clock tree change would allow the driver to work
+> > > > > > in our scenario:
+> > > > > > &sai5 {
+> > > > > >         assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
+> > > > > >                           <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>;
+> > > > > >         assigned-clock-parents = <&aud_pll_div1_lpcg 0>;
+> > > > > >         assigned-clock-rates = <0>, <11289600>;
+> > > > > > };
+> > > > >
+> > > > > In which we configure PLL_0 for 48KHz series (8kHz/16kHz/32kHz/48kHz),
+> > > > > PLL_1 for 44kHz series (11kHz/22kHz/44kHz),
+> > > > > which should fit for most audio requirements.
+> > > > >
+> > > > > >
+> > > > > > However, this means we have to switch the parent clock to the audio pll
+> > > > > > 1. For the simple setup with two SAIs, one for analog audio and one for
+> > > > > > HDMI this wouldn't be a problem. But I'm not sure if this is a good
+> > > > > > solution if a customer would add a third SAI which requires again a
+> > > > > > different parent clock rate.
+> > > > >
+> > > > > We won't change the PLL's rate in the driver,  so as PLL_0 for 48kHz,
+> > > > > PLL_1 for 44kHz,  even with a third SAI or more,  they should work.
+> > > > >
+> > > > > >
+> > > > > > One potential solution could be that the SAI driver tries to first
+> > > > > > derive the clock from the current parent and only if this fails it tries
+> > > > > > to modify its parent clock. What do you think about this solution?
+> > > > > >
+> > > >
+> > > > I did some more testing and I'm still not happy with the current
+> > > > solution. The problem is that if we change the SAI5 mclk clock parent it
+> > > > can either support the 44kHz series or the 48kHz series. However, in the
+> > > > case of HDMI we do not know in advance what the user wants.
+> > > >
+> > > > This means when testing either this works:
+> > > > speaker-test -D hw:2,0 -r 48000 -c 2
+> > > > or this works:
+> > > > speaker-test -D hw:2,0 -r 44100 -c 2
+> > > > With:
+> > > > card 2: imxaudiohdmitx [imx-audio-hdmi-tx], device 0: i.MX HDMI i2s-hifi-0 [i.MX HDMI i2s-hifi-0]
+> > >
+> > > Are you using the setting below?  then should not either,  should both works
+> > >  &sai5 {
+> > > +       assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
+> > > +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
+> > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
+> > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
+> > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
+> > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
+> > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
+> > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
+> > > +                       <&sai5_lpcg 0>;
+> > > +       assigned-clock-parents = <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg 0>;
+> > > +       assigned-clock-rates = <0>, <0>, <786432000>, <49152000>, <12288000>,
+> > > +                                <722534400>, <45158400>, <11289600>,
+> > > +                               <49152000>;
+> > >         status = "okay";
+> > >  };
+> >
+> > Sorry I didn't communicate that properly. Yes I was trying with these
+> > settings but they do not work. The problem does not seem to be that the
+> > driver can not adjust the rate for the audio (so e.g. 44kHz or 48kHz)
+> > but that snd_soc_dai_set_sysclk in imx-hdmi.c fails with EINVAL. This
+> > results in a call to fsl_sai_set_mclk_rate in fsl_sai.c with clk_id 1
+> > (mclk_clk[1]) and a freq of 11289600 which causes the fail.
+> > Interestingly, in fsl_sai_set_bclk we then only use clk_get_rate on
+> > mclk_clk[0] which is set to audio_ipg_clk (rate 175000000) and we do not
+> > use mclk_clk[1] anymore at all. This is why I'm not sure if this call to
+> > snd_soc_dai_set_syclk is really necessary?
+> >
+> 
+> Could you please check if you have the below commit in your test tree?
+> 35121e9def07 clk: imx: imx8: Use clk_hw pointer for self registered
+> clock in clk_parent_data
+> 
+> if not, please cherry-pick it.
+> 
+> The audio_ipg_clk can be selected if there is no other choice.
+> but the rate 175000000 is not accurate for 44kHz. what we got
+> is 44102Hz. This is the reason I don't like to use this source.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
----
- drivers/clk/bcm/clk-raspberrypi.c          | 5 +++++
- include/soc/bcm2835/raspberrypi-firmware.h | 1 +
- 2 files changed, 6 insertions(+)
+Thanks a lot for the hint, in my test setup I indeed have not applied
+this commit. I tested it now with cherry-picking the commit and with
+applying the change to the dts. This made it work. I will do some more
+testing tomrrow and if I can't find any addtional issue I will use this
+as a solution. 
 
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index b12d86720207..0e1fe3759530 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -34,6 +34,7 @@ static char *rpi_firmware_clk_names[] = {
- 	[RPI_FIRMWARE_M2MC_CLK_ID]	= "m2mc",
- 	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID]	= "pixel-bvb",
- 	[RPI_FIRMWARE_VEC_CLK_ID]	= "vec",
-+	[RPI_FIRMWARE_DISP_CLK_ID]	= "disp",
- };
- 
- #define RPI_FIRMWARE_STATE_ENABLE_BIT	BIT(0)
-@@ -139,6 +140,10 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
- 		.export = true,
- 		.minimize = true,
- 	},
-+	[RPI_FIRMWARE_DISP_CLK_ID] = {
-+		.export = true,
-+		.minimize = true,
-+	},
- };
- 
- /*
-diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
-index 73cac8d0287e..e1f87fbfe554 100644
---- a/include/soc/bcm2835/raspberrypi-firmware.h
-+++ b/include/soc/bcm2835/raspberrypi-firmware.h
-@@ -152,6 +152,7 @@ enum rpi_firmware_clk_id {
- 	RPI_FIRMWARE_M2MC_CLK_ID,
- 	RPI_FIRMWARE_PIXEL_BVB_CLK_ID,
- 	RPI_FIRMWARE_VEC_CLK_ID,
-+	RPI_FIRMWARE_DISP_CLK_ID,
- 	RPI_FIRMWARE_NUM_CLK_ID,
- };
- 
+Should I add the change to our Apalis board dtsi file or directly to
+imx8qm-ss-audio.dtsi? I think it fixes kind of a general issue or not?
 
--- 
-2.34.1
-
+Thanks for your support
+Stefan
