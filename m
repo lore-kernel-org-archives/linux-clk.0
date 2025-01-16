@@ -1,171 +1,111 @@
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E4D19259A;
-	Thu, 16 Jan 2025 10:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869EB1DD877;
+	Thu, 16 Jan 2025 11:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737021650; cv=none; b=leAanNO5hvccmgTJjExMEox9aAj6ojPMrSPDqVN597F2IEfcl8KdPOJCDOMWLyOFNixrhUYMhMIpxwERCd/GkJDtmAs6zCAe8ThoAJl996vBtBYdXYT++tEAeSvACz7ZyU1G3V3zpq4DxDa8v+xgLAbY6sOOQqadfGFaEcS1m0I=
+	t=1737026254; cv=none; b=a4TnjLdZjoUHK2tnVW1nn2unX5QfUQGHH4OvoNkwZ98TETV6jSW2d9/1j++hDpCZFzjEEGvsDS42uBG12W6VlOZLei4Z9Ob6fqaH1zQWHo6P6/QCUeBYlmPiDZ5VGZbrzk8q6ZE1naQjzfKXfaMAwSgAWxuJMYA79bcSywWn7TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737021650; c=relaxed/simple;
-	bh=T1clT+tkQfHyxLqH7NR/oTJ5tD4DWz9XrXwkoWRewtA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VX+NVnnfZtIahaQ0vDAgpeHGHEkFz0p6zGvnrDGUSr1rOLUAMGohQqoKDqQ/0vPfU+ZhBCCvLTK4m/kwASFkGXkWQ0eEHNi3B5MgLGo74PG5Cc3HlAYW8WrI539eBRCTFgas+OCTP5I0TtY4l5QDfc+/1QsrgFbcoOyhs7ThaFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NS6mgmmh; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737026254; c=relaxed/simple;
+	bh=0SXZFzIFqs7M1RGuKlZiXFOMG1ALo2cKRVXwGankuGc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=afD87FO9a6W2He5XqIkLFezbQb6lNXD/8X0a3+6YMn10u3mWcCxQUCCNP6wFUFpZs+zMoR9b7PvFwNFumrvXgQWzaG0oqiCvVJP1zxulRJUrqvQY7c5TRKTCwSXiIqz0a9u4ZQalMYrDaHkP0W9uw7qTDlinIGM2VsaB7GscOzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=rNDl0f3M; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NS6mgmmh"
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2efe25558ddso1018015a91.2;
-        Thu, 16 Jan 2025 02:00:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737021648; x=1737626448; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xwjyG4g1AOZ0S1HGev8FASv1raVOMwcGZafYv3qAFLc=;
-        b=NS6mgmmhamrRuGuyui8HF7HOMa0rVg9hf2bEhzHy9IeIEYq/H+7mwrzWY6PDDL5dEE
-         HqF05VspyO+poFY/oHQSACYK8zemNiivnOSzgWCzZu1WB/EenhMWkdg7Kp/SZBggf+gq
-         2uyCDjDhGnMJ5/DIKDNnxpLTy7dWfPQwOY5jJh7+16b962JSGoj7Wnj6ki34GrGNU6Zw
-         876ejI5hV1zpyqRI5PtiGTJf8KxuifnN3TG4IpwuJ6fzcX+xSYuJQHuWbVsVuCtwyQtk
-         cVs/tDGo9YENhwJZcG+MuR7ObAq/j8rLl7C0eBWPjpXzdO5uuBjfbpjUnhdJyM+amCO3
-         cc1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737021648; x=1737626448;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xwjyG4g1AOZ0S1HGev8FASv1raVOMwcGZafYv3qAFLc=;
-        b=R3ogh69UDpiyAIFaJLSnQR5sCFj3QB+rva0LD4eLZDufQnTbQxGYbRD0jYa4wlXwsQ
-         ujVBCa48T3ORWTUP1c/7EmAjUfnxhA/qinpUxtAvSOmYtYPaiph982pEm1OQe3Yx3kAm
-         NUsqGaAYfICobwZVZ0q4ClFWIczmBDlHmDKVHpM1Q3WzBqulk1M3Ckbz23Z1Jdlx4omC
-         hR4DMFCsFT4n0x+ay9jNhYHp4ld/IYJwjwvqY/61xj6ctGYLdNAjRILWDZpYFioGQvmr
-         +sMLOa8OJhOpXP8Hha5JBvC+Nn0jeQ/4aUlUAvsvTf3V+4zBPA1LyD31HBvZ9cjOC87g
-         DbwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqI8vb0+BBrc/msVBgx3KNQ3S4FoNBGWXQbQdjWuR+BtfS6ohhBMxz0sLsone0HUlMRTZsae532sHMlg==@vger.kernel.org, AJvYcCXhCu56uSPRdrvAtZley4jWeJUYeTgwT1qZdp4QClHSWzmt8+yazJ4FH8Z6BO7o3cUMjslK1D0SkG8o@vger.kernel.org, AJvYcCXxH5hhIlPY2o5wQq8Hc1h1+RuYvOv/vUryeOQ59RZUW++K1nI+zqDDptq4HqKWtPZiPKf9DLcfM/LkS25n@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdlHGTQHxFW7INh3E8Z+k8cXHiHddupyoXOgCyk7D2CLjT+CDl
-	koLHLvlL7z6HiNYnoJWtlRAXo+vagBa/cE64Bn4AJ9OrY/xK5KHY2L0CX4CrFYA8QNh8/HzMF43
-	TM+UUDfGIBpXcigd4DakjdG59nPw=
-X-Gm-Gg: ASbGncv8CzY9XX6lahOXnMy2pbOVU0d2tWpu/JaIS7hsVR5gxGAROdSfn//ZA+pjVmJ
-	CvIalygKIYABcTKOgPOGoydhS4lg4aHSMCVWz
-X-Google-Smtp-Source: AGHT+IHwWQIZt9DV37UXV90sLCTc9eg+a3xkPOegZu1r6vJM4bmS6oPT4qfE36UWvz+69HnxKYV9L60Cr1cARLyu1wE=
-X-Received: by 2002:a17:90b:2b87:b0:2ee:8031:cdbc with SMTP id
- 98e67ed59e1d1-2f548f1ec3fmr39504561a91.23.1737021648560; Thu, 16 Jan 2025
- 02:00:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="rNDl0f3M"
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id CE54C120006;
+	Thu, 16 Jan 2025 14:08:15 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru CE54C120006
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1737025695;
+	bh=BES/OhhMKjc97wzSQyQAF2VCFk2eOXC6N60v2GMAZjA=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=rNDl0f3M7oNxpb7NiNfBpthMK8j4KKFsrj+eaMvqUIox4qFQcu/xo3u2mjto8das1
+	 mqxZ5yzOh61woyAxHGOgL7WQjWVC46pbysSluHzht4kjg+dKJdypJfkyGDcFk1NWK5
+	 nrPzuuuT3W6L/W50wgOl+arZ1691QtiT3mkBsebVbskKrl8jqcFYivpqyYN5AKQGzi
+	 7Jr1vtJqC1+6F0ngZZa+I6+Grx9Z1fJC5G7wtNSM/73KI1/arZKEsgSCkhSgXuKuWs
+	 QUElbFKw19We8rILooyjKJO8JRIT9zQtSrQti6GBkg8pYuJzE1sv9p7XIytVbeAEGJ
+	 ZgIGi3yFq2FYw==
+Received: from smtp.sberdevices.ru (p-i-exch-a-m1.sberdevices.ru [172.24.196.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Thu, 16 Jan 2025 14:08:15 +0300 (MSK)
+Date: Thu, 16 Jan 2025 14:08:14 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Jian Hu <jian.hu@amlogic.com>
+CC: Jerome Brunet <jbrunet@baylibre.com>, Chuan Liu <chuan.liu@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+	<khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Dmitry Rokosov <ddrokosov@sberdevices.ru>,
+	linux-clk <linux-clk@vger.kernel.org>, linux-amlogic
+	<linux-amlogic@lists.infradead.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-arm-kernel
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] clk: amlogic: a1: fix a typo
+Message-ID: <23bwutgliz77mczt3p7iq3kewta2bam5lxnxr2ippvu2ckh6xp@nidq4xejefwq>
+References: <20241231062552.2982266-1-jian.hu@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250115153019.407646-1-sergio.paracuellos@gmail.com>
- <20250115153019.407646-3-sergio.paracuellos@gmail.com> <1d6833ba-3bf5-44a6-a5e3-6bef76fd640b@kernel.org>
-In-Reply-To: <1d6833ba-3bf5-44a6-a5e3-6bef76fd640b@kernel.org>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Thu, 16 Jan 2025 11:00:36 +0100
-X-Gm-Features: AbW1kva7dPb1EwKXo0Y4F2rt0ZT_PFkgUwsonCGMglfpdISHF2V87Trw9vtgwjk
-Message-ID: <CAMhs-H9Kr8YFkSGJE-1E-wy=Fx5NAL=tLLCUaGT2AYZjUO0VEQ@mail.gmail.com>
-Subject: Re: [PATCH 2/6] mips: dts: ralink: rt2880: update system controller
- node and its consumers
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
-	tsbogend@alpha.franken.de, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de, 
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
-	yangshiji66@outlook.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241231062552.2982266-1-jian.hu@amlogic.com>
+User-Agent: NeoMutt/20241212
+X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 190369 [Jan 16 2025]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 49 0.3.49 28b3b64a43732373258a371bd1554adb2caa23cb, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2025/01/16 07:50:00 #27039546
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Thu, Jan 16, 2025 at 10:19=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
-rg> wrote:
->
-> On 15/01/2025 16:30, Sergio Paracuellos wrote:
-> > Current RT2880 device tree file is out of date and must be merged with =
-real
-> > device tree file used in openWRT project [0]. As a first iteration for =
-this
->
-> No, that's not the reason. Whatever forks have, is their problem. The
-> reason is that you are improving or adding here missing bits but each
-> bit must be justified. Again: whatever is in OpenWRT is not
-> justification. Justification is that device is like this, SoC is like
-> that or DTS is written not according to bindings.
+On Tue, Dec 31, 2024 at 02:25:52PM +0800, Jian Hu wrote:
+> Fix a typo in MODULE_DESCRIPTION for a1 PLL driver, S4 should be A1.
+> 
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 
-Ok, I will clarify that the DTs is not currently written according to bindi=
-ngs.
+Reviewed-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 
->
-> > changes, align the current file with the needed changes for system cont=
-roller
->
-> Please wrap commit message according to Linux coding style / submission
-> process (neither too early nor over the limit):
-> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/su=
-bmitting-patches.rst#L597
+> ---
+>  drivers/clk/meson/a1-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+> index 8e5a42d1afbb..d71109b9bbca 100644
+> --- a/drivers/clk/meson/a1-pll.c
+> +++ b/drivers/clk/meson/a1-pll.c
+> @@ -356,7 +356,7 @@ static struct platform_driver a1_pll_clkc_driver = {
+>  };
+>  module_platform_driver(a1_pll_clkc_driver);
+>  
+> -MODULE_DESCRIPTION("Amlogic S4 PLL Clock Controller driver");
+> +MODULE_DESCRIPTION("Amlogic A1 PLL Clock Controller driver");
+>  MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
+>  MODULE_AUTHOR("Dmitry Rokosov <ddrokosov@sberdevices.ru>");
+>  MODULE_LICENSE("GPL");
+> -- 
+> 2.47.1
+> 
 
-I did not want to cut the hash and commit message for the driver
-submission so this line become a bit longer than
-usual. But other times with warning messages or message lines like
-this I thought readability was preferred to match
-width for the message itself... Am I wrong?
-
->
-> > from '6f3b15586eef ("clk: ralink: add clock and reset driver for MTMIPS=
- SoCs")'.
->
-> Use proper commit syntax. '' are wrong, missing commit word.
-
-Checkpatch only complained if no start and end single quotes are
-present so I thought the 'commit' message word was not
-necessary. Will add it, thanks.
-
->
-> >
-> > [0]: https://github.com/openwrt/openwrt/blob/main/target/linux/ramips/d=
-ts/rt2880.dtsi
-> >
-> > Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-> > ---
-> >  arch/mips/boot/dts/ralink/rt2880.dtsi | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/mips/boot/dts/ralink/rt2880.dtsi b/arch/mips/boot/dts=
-/ralink/rt2880.dtsi
-> > index 8fc1987d9063..1f2ea3434324 100644
-> > --- a/arch/mips/boot/dts/ralink/rt2880.dtsi
-> > +++ b/arch/mips/boot/dts/ralink/rt2880.dtsi
-> > @@ -1,4 +1,6 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> > +#include <dt-bindings/clock/mediatek,mtmips-sysc.h>
-> > +
-> >  / {
-> >       #address-cells =3D <1>;
-> >       #size-cells =3D <1>;
-> > @@ -25,9 +27,11 @@ palmbus@300000 {
-> >               #address-cells =3D <1>;
-> >               #size-cells =3D <1>;
-> >
-> > -             sysc@0 {
-> > -                     compatible =3D "ralink,rt2880-sysc";
-> > +             sysc: syscon@0 {
-> > +                     compatible =3D "ralink,rt2880-sysc", "syscon";
-> >                       reg =3D <0x0 0x100>;
-> > +                     #clock-cells =3D <1>;
-> > +                     #reset-cells =3D <1>;
->
-> Nothing from here is explained in commit msg. Why this is suddenly clock
-> and reset controller?
-
-To match current binding, will add this too to the commit message.
-
->
-> >               };
-> >
->
->
-> Best regards,
-> Krzysztof
-
-Thanks,
-    Sergio Paracuellos
+-- 
+Thank you,
+Dmitry
