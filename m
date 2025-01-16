@@ -1,61 +1,41 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24B522CBF0
-	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 17:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5F91547E2;
+	Thu, 16 Jan 2025 19:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737049555; cv=none; b=fxpFrdoixsr5ljoQwvozJS2HKmLw4FIViY7QLMFcnx+ZlVgCsWB2dELnzKIBMfWO0ebhJ69IDgQyimNt+AG5gLOkhAQY1Y7uRhsf8jf4UXabIOKTCfjqPf1G4uVU+ohVSbhDALkD5eKJ9NuliLjHOGkeQWQocNba8vsmNgCqqMY=
+	t=1737054676; cv=none; b=bv9M+D4r7I5ZCgN2dI/Nw9r+OgNnZici2dsOwHKwLTdrwXa+59ol6eZ0wqAXISMGSHBrbMaBxsPPE0Da6lyv5Ppxo5+lleii/FRqKE9rz4br9waMTZK0YTNf3+293cLZrsaD+1zDRfuzE+PH5W9y2KPlm84wvOTtN7z6u7hTtvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737049555; c=relaxed/simple;
-	bh=ZikDhVpINxuW6cdDGTatvIcZqLrqw1yj2n9A1WNz2yg=;
+	s=arc-20240116; t=1737054676; c=relaxed/simple;
+	bh=BGBpDtTxkOFX0BvMPaO1br0yzWoC0fcGpvDHqw9ECt0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HVcSXz/A01AlZVIWrvs40uu/Ja5BJxxzBioODrH8Tf/3T56gTiuTovj8a9VMR97mWcjZ4FvI25jfvW4f681/T97k2Qxc64Y+wEXB6yFn+Prf5mSihQISiQLCQvv/qV/Aay5c8UIWQb0+09vYdQYzS09TaKt16RGxsKADG7cVafY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ICPFNk6d; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	 In-Reply-To:Content-Type; b=DA9me41lB4i19RFRYj1ycWbGgiDPzIK9n/x/32Hi0+VMc1rzqn1B+v2fQVszh6pYB0DUb8xtBfoUzCP0Wz2NP61aOJ3wbht0speX/2MYfuQm9zlnUa2ybzU+H8hMkF1Cc08aRGhLaPHD4BsR+8c0rXVu+113/kuGrJjRWfQL5Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=Jeq96ebh; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ICPFNk6d"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-216426b0865so21829425ad.0
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 09:45:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1737049553; x=1737654353; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Drh/AKRgmJ45wLb23S0mcSch3Lc8mZPLWiINbN0C9w=;
-        b=ICPFNk6d+SN/eMskWScKXivjOATn6qsy4hC1/aPtIhf1tkph15uQ4sF19MtDcRMFZF
-         loDzN0C0HytcPyOM68guKhwFmslZ+hFIHVn7HwNZ/z6JJADnm7loCVT/A18iQSEv0qOa
-         V9ctmXF6wUOlzNYIudrUt5M2jLjD1b4hYzLfE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737049553; x=1737654353;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Drh/AKRgmJ45wLb23S0mcSch3Lc8mZPLWiINbN0C9w=;
-        b=iJNvihWfZ4U6BgEF2sL1nqm/Mar96jbmSf3tH+dCMgtEzhaPLafgsKCAIVrRL/L3+q
-         /2RoKiUOs8ahuCFFeXQEBMWmbw9Px6rqP4swe0DAW3Yeel+4hG4uUFesBME5x5QBIYrQ
-         YunQuNyffZ0qtE4JN7Wf9Xl8RJlEpxnoONdvp4Hgs8BayUxuUNVoNn8TCeOgUAE+im/f
-         4NtbGz5Ukyl2HGHNuXLH+lcAd1qqmo37BAgheh8e58FJk6DVnT1IwYIYUIUKMmUJqRyO
-         0memuFjVEOQZwscfVZWUreE+b9ix3UXs60yDSpGLJc7Hwck35Ucedgts90Mntj1pcDEQ
-         S7MQ==
-X-Gm-Message-State: AOJu0Yz25FMGT/vx+bZpcLfnxPvottKVm+kMjVxJPS1DNfkIGLZzsGgk
-	nzwawDtcwadxoGIXG2L+CTzXJkVIdRcRBTINur3bo8WWKbHXNZgWuVarid3MOw==
-X-Gm-Gg: ASbGncuCe9yQin+1cCUGhbWXH+9yzLpHdWkWApFiRO+KyF+XYrkz75+FEJpqIt6ckBX
-	LryriU5+be3V36pmsKLdHrpdtEBMg0Y0ZJYx/mp/Zxex4VVO50re9qCIMjk1EMTm4sDI9T7oiOY
-	0a4KHG14fjCyyPNajNySOxZxTmolNbP84OPhMzPfBAi6eyPgvmn/pFzTTJfsqGBOGkJKqWCb1uV
-	qWU9hSs4N/Na78NBBixm/VYu7CHprZM7z8Q3r4fK3rucT0NmKyQ1eTsp+HSaUCEpYXUSdjHExdS
-	bciNSkdwn+zJKYkpoyYp
-X-Google-Smtp-Source: AGHT+IEskbseMrNOLzO4Ty9QgYY/5V8mUDrEI0MQIq5RBcUkt4Ka9C0lmr7fyEy1Y83gdeJwn6nPiA==
-X-Received: by 2002:a17:902:e5c2:b0:215:6f5d:b756 with SMTP id d9443c01a7336-21a83f36e79mr450089655ad.7.1737049552978;
-        Thu, 16 Jan 2025 09:45:52 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21c2ceb6fa4sm2986535ad.53.2025.01.16.09.45.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2025 09:45:52 -0800 (PST)
-Message-ID: <af83c932-3fce-4814-b20e-8445138a4532@broadcom.com>
-Date: Thu, 16 Jan 2025 09:45:51 -0800
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="Jeq96ebh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1737054664; x=1737659464; i=wahrenst@gmx.net;
+	bh=N1eC8jTgRa9jR/QCiz12cEtsU5ben9yxUiqKNuKHS+U=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Jeq96ebhhBQa6AppRKrzFBXG9YaqNn6U3w9SbnvkcADSA3H9BcDEiYKKF8ycrSqB
+	 xcEstPw/AQc1PBdfl320G5JDO/UrbSEw9722G/URyKhmk+W4pJABvEPgNcPg8XT2y
+	 Cu/ma9ZisuNwP6Jtr7cXDr9FoSwF/cpsUSJr4BafUcWSAwhNNDxSfmWvzDH5YHJRY
+	 8IfYUYkV37MvsYjIFimBroppNWtV6xCg4k25CduvzgbCn9bQLdFOxDKWLvt0YyeJ7
+	 kWFa7xEoybTMapOKybkJ5out1V+WqJozLGpCEW03avyG2RpcQIA8m9qYtbFXyQVhK
+	 kUN4vBcB4pjFwaidhw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.107] ([37.4.251.153]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1M7sDq-1tdRDm0KRu-009bzy; Thu, 16
+ Jan 2025 20:11:04 +0100
+Message-ID: <974a3030-0531-4c4d-9769-af752ae4898d@gmx.net>
+Date: Thu, 16 Jan 2025 20:11:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,68 +43,101 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] clk: bcm: rpi: Create helper to retrieve private data
+Subject: Re: [PATCH 0/5] clk: bcm: rpi: Add additional clocks for 2712.
 To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>,
+ <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
  Broadcom internal kernel review list
  <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
  Scott Branden <sbranden@broadcom.com>
 Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Maxime Ripard <mripard@kernel.org>
+ Dom Cobley <popcornmix@gmail.com>, Maxime Ripard <mripard@kernel.org>
 References: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
- <20250116-bcm2712-clk-updates-v1-4-10bc92ffbf41@raspberrypi.com>
 Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250116-bcm2712-clk-updates-v1-4-10bc92ffbf41@raspberrypi.com>
+From: Stefan Wahren <wahrenst@gmx.net>
+Autocrypt: addr=wahrenst@gmx.net; keydata=
+ xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
+ IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
+ NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
+ JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
+ TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
+ f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
+ V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
+ aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
+In-Reply-To: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6RNUf+eDtjlnJmhngNCkFCFn842o4kyJXXt/UlbzXTMKHtytULK
+ SbrEUOEztK26OwiXaLvT/d1AQCA/hINJjFYW+YpYSOQ8pMMpCEqbjmN36Y+c/77gK/BM0l6
+ JnIe4+0uEWYWPJ5fOP7+eXJdgRkwHv9rXOy3o+gUf5v+Ds57VWjnfC1SNou8WxGygc6c9zv
+ Bce7HwqguqFBDK+M15jTA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:BEwxxuq7ENc=;D4NT6+FtqKhNoCaYyeI0kTJraqq
+ m77/1KCRMueMtnoFDHaMlzz6klxdadKxicVxLkVK44zRMrMpG7XH49heS3P8igVufnqfHjABf
+ pe28M/3RANTNCS7IhzGu6QZmqAqex9sNtojRiKXUTpC+hrmsJ1xRrml6DgnDqwXsSN+ayDjl5
+ LehW6X7jwy3nt25T1xkNlrCsd8TKRwNqxKEZF+eJkDps2d0yWY3jyDcCokqcCSyLv54QR+nxZ
+ 7itLR3jJSAb3vDoel7umJDLxT9iF8r5sY+5BafKq2XsLz7ZAgfVry5TfTW0PW5/PfEhRjKPPj
+ EQiqlTYAmpedr6QFbcRy6Rt2PAFYDAmqV6VfSdXj845CCmXcxGYp+vKmhbjeBRGm18HQgY4Mw
+ kBlNuCQ+6WUQMpQLWvZzpWkKMUwlnxJKDzTqHntkXw/khiVHTU09vYenRhssmoO2QfS1CHfxk
+ tRZpeNYVfgwB3DJe5V5t7JYkN9obxNvYNan5xKUcAITUBpYY4kmBsXLPWa57CtCnkfLqcKiHR
+ TEjtl8AonjrfRrP3G/ZMlR0ql+i0pI8foJIgP/0vzYXwinCSLixo7T1PNWSQduIq8lNR90tsj
+ dA5PkwIhXLrWzHCrXeLxYPpkuRfJSPj3+LlYzhhEwo6/UgITx99ER+Z5x5DG5DRLVhKGwHLO8
+ ZIZajiIm3/NF3y4P7HiHjV1kP63I8CLhQV2kkOV8DdNBjqM9HSrotGmB/ZQfRGF/JFob9TiHQ
+ Xud19zZ88xEb0mD1LU56Sqc8zAcG8AlebrfZyu6JPEdaaxczterKYwF3Yy22FK+0zkjnEJgvD
+ pQpIekeSgcrBi97ob/99ppmTdDyIkmJfDnQ0uwn44WPGqi2r/mqMpphap8mctnuj2jaTWydz5
+ Mg08w2u/HKu3DP8vo5Gk+camOkaSCI1b9Xr9d60ulYFwdGVMxWF5kFhQerJJYejJwcLm1yI7J
+ pbeQtKXeB3FvUvbi4V5A/V8rl0WklHpm3uMkF9Bk0ZI7+5Xq0KE2tYYGs5j8pThVtD2d1Zgph
+ v7r/4+zHkxxjTUxYQ+X3N1L79KUjZng9VBv0xDd0rAsxEfvBMf9Cw8LYNL8vCyKuCL2EPYcqD
+ /YIismjvRcjmvuOYkpHUDQR6171au8oQ5ErXZ3ACiDS7U41xqYYKIr+QcCJ6lzOaBqXUC+FGU
+ 7CnbEp8dfAH+pamP1RJIoVQlUvrP7uLHkvKgKixbWlCKCo2HLBf9sPewrbz2Bu2A=
 
-On 1/16/25 08:24, Dave Stevenson wrote:
-> From: Maxime Ripard <mripard@kernel.org>
-> 
-> The RaspberryPi firmware clocks driver uses in several instances a
-> container_of to retrieve the struct raspberrypi_clk_data from a pointer
-> to struct clk_hw. Let's create a small function to avoid duplicating it
-> all over the place.
-> 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+Hi Dave,
+
+Am 16.01.25 um 17:24 schrieb Dave Stevenson:
+> These patches were Acked by Stephen as patches 30-34 of
+> https://lore.kernel.org/all/20241023-drm-vc4-2712-support-v1-0-1cc2d5594=
+907@raspberrypi.com/
+> with v2 at
+> https://lore.kernel.org/all/20241025-drm-vc4-2712-support-v2-0-35efa83c8=
+fc0@raspberrypi.com/
+>
+> I'm a newbie on kernel processes and where the patches should be merged.
+>
+> I'd asked Stephen on the v1 thread as to what needed to happen to get
+> them merged, and he asked me to resend the clk patches for the next merg=
+e
+> window.
+> I must confess to it having slipped my mind, but resending them now to
+> hopefully be merged in time.
+from my understanding, not all of these patches are specific to BCM2712
+(Raspberry Pi 5).
+
+Could you please clarify (no need to send a new version)?
+
+Best regards
+>
+> Thanks.
+>    Dave
+>
 > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> ---
+> Dom Cobley (3):
+>        clk: bcm: rpi: Add ISP to exported clocks
+>        clk: bcm: rpi: Allow cpufreq driver to also adjust gpu clocks
+>        clk: bcm: rpi: Enable minimize for all firmware clocks
+>
+> Maxime Ripard (2):
+>        clk: bcm: rpi: Create helper to retrieve private data
+>        clk: bcm: rpi: Add disp clock
+>
+>   drivers/clk/bcm/clk-raspberrypi.c          | 33 ++++++++++++++++++++++=
+=2D-------
+>   include/soc/bcm2835/raspberrypi-firmware.h |  1 +
+>   2 files changed, 25 insertions(+), 9 deletions(-)
+> ---
+> base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+> change-id: 20250115-bcm2712-clk-updates-98a47f32116d
+>
+> Best regards,
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
