@@ -1,95 +1,113 @@
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FAE4197A8B
-	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 09:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08037139566;
+	Thu, 16 Jan 2025 09:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737018547; cv=none; b=tlcAoOK8cwitjrCsG19P4bqsTTh88MSmC2aENeaiOV72gLiRe4UExTCAwIKda3l6Xcs7W9wSfKjh7wCXNhjNarn51dGrCKynI20Bxmc2IWV33AUjhjYAKz6qUQEOrRGJFI6sgPMvFO/YLoNr2A+RXp0ptBrqb3XOuiTr77jBK/Y=
+	t=1737018968; cv=none; b=tQ4VSXXZ/pJBlBZFXHXxCqib0l7DUy493kDUYbGtHE7FWb6ER0HZt/pNv3XLXy48j5sH41L7ouBkQjucNnYoaEH/idqYSfZWD7qDFm9JwDPfe8GjaUFlEK1U9To8fvnOrvmFjxMbVmFg+zD7sxBQdRLH+t4oE/TqvtLcb8Fd15o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737018547; c=relaxed/simple;
-	bh=6oElNuHGnh2SndiJKSmzP3b2+Y0n7fF/o6Bw/SCWA8s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ACHvZ/2cunKuRYXUpoDJeIYQtXOtAHe6CWgFwhBoJxw4Jc1dBSgE9bbCGAa9nPDOG1Atl0ZbrKf8RIb/aQOLRtc+yRDtXQe9KFLZl40e2Uyh0SUsMA+Mg6cHirvSCc51spoZWh5JDsB5TnKyMOz51k9tQRqKJxAVHOmVziCVHdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IQ4xu/k2; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1737018968; c=relaxed/simple;
+	bh=6uD4hemte7JNqodZhzLp3q7ItAzSf4JIf+Tuyq8lFTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QJFq0Eouz3M85TE8lI5cMVpL3XugKRTkLSSh7b00jocpCa6EDVfV378PysPTEFS5+g8OiGooQWNUC2teom3/t4pScOaj00DTkcXsu392+d1povqk1K8k9e6xDB7MDcpzdw/10jYxPQ9EI0AK1XiUw40IAJadFKZM0wJg1vDgcdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JV4TXkrj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IQ4xu/k2"
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3003e203acaso6644911fa.1
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 01:09:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737018543; x=1737623343; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6oElNuHGnh2SndiJKSmzP3b2+Y0n7fF/o6Bw/SCWA8s=;
-        b=IQ4xu/k27KRRWT8+BR952Rp6sKVE/VBK5DV2ZXczu1NXcUukvmSRhxYLL+0UXBIJ4c
-         3XLFDkgeNmHYnmaZ1Y+a9giINHrU31aBwZYdr2dnFxiFW1/qGxFPCUuOm9gPYsHh4oHG
-         0vzH+G0XYL84pZEwCnLOqSj66IjfcnuQlbsgN/qIvOrhWppNR7wGIUs1hexzLPxTpmyt
-         3hbCRYP/n4ekMfXpEKGouRTTopOyA6dAL2JuiYN7x087ZTdBG7STUK9luWQEInOjkGUe
-         hBgxFng++giL4qYxSLhDii9GH5/I3L8nHqsV4VGu8zTpo4mXnEuh6k3KbDxJ3Mg/WwBz
-         L5lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737018543; x=1737623343;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6oElNuHGnh2SndiJKSmzP3b2+Y0n7fF/o6Bw/SCWA8s=;
-        b=CWJNLl5mngWoC9o3/dDyWmb8waOMjvodYe5ulIoTKea1ktJ9hyEeuC/S7t1VlfJGPX
-         OwPLbZgorX47QVZo2ARrb8pdMKECX9aoz/wEuey0GPStU3WB9IiKiXwofQINI8NCnCDO
-         jan0EV9tLnK/rtXfXQwENy5pUlGYdw6s7yHM1yEMlvMPYT/hswmdtpuX7UfrRwU+jkyr
-         YdKVpXXbum1lnhzZEm/m4et5Nm0GcyHuoF02q4peZwivOLPCmH7qhTLOx969KUJ6i6Sr
-         PtpvyhBQePjTu4eOygzyQNKiNJyQ05cwgEaJaexVPtjaLdNFrfcX3TK0Gn8uGj+2k5LW
-         sUXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOEAhf+tDJFNippjq5VhWzf5x2ZscRQo6/2dx64zTaUha8+awL0nk5DnwvamkD5Y4JwXYlTrg0QV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMq/bg7zhOmyq+z1Ry6YKszbwOLlQJRL8dx69p5CHbJ1nSiaTJ
-	iFUx6bfVdKv/AqWddDtV0OMA/YlZioAR9uYEtz9Iokh8KOXB8VklAH0vP5sFgtPMMT0RdWFmJUV
-	+yWPMFgI9G79YpV2ox5ROgin4B58woJEspi2AWA==
-X-Gm-Gg: ASbGnctxsgc4ff8JKC+bCPiWUgzKI8GX4Tl7oJKhmxTzqXhmlm0LBMRZ+p6KH5Rjmcg
-	MLS1oE5J/1IZVkAFRjIuBwPbbHEXk7wZ0xXiK
-X-Google-Smtp-Source: AGHT+IGshDnah7yTVkge7frSzXP6u6YQ9EMlI5n0k71zbBXiVfkDniOTr0RXn5mT0CNZhOwwkIPYxH+G4Ml04S4rkI8=
-X-Received: by 2002:a05:651c:221a:b0:302:1e65:f2ab with SMTP id
- 38308e7fff4ca-305f45dcb78mr119399301fa.20.1737018543217; Thu, 16 Jan 2025
- 01:09:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JV4TXkrj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A216DC4CED6;
+	Thu, 16 Jan 2025 09:16:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737018967;
+	bh=6uD4hemte7JNqodZhzLp3q7ItAzSf4JIf+Tuyq8lFTY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JV4TXkrjBlGGn4yZq9kwBAIMDsgyGDeQsUJ99AphGcnG19jJSTfpa9rdTmjbkkaWZ
+	 R27KqtVM7ided1VJbOA1/VdB347Y4GlWVpgi4BFfKE0fb5XtHQhGc2BQeZDyKP9grP
+	 er6jZHfzL0C+LZkO/Q3trV1HJzGTWierdZP4x+rhD610vDSL/DE6+MX9YsVOgI6MXb
+	 sFSkLJ7R4EyxONWFyhVUA4zkCUlsZKDmbPjQdIy8yPes04GPjbMPZGrdpjAL0WjThD
+	 V4g3B2dRYZs/x5YSpiT5vskWDf0KML/LBrhW/3qCsybSX/HVkFJ/wVuPv/1S0xL+vF
+	 Bt7tepBqLDbOw==
+Message-ID: <228a0b1b-68ec-40d2-b379-e9894a34cb57@kernel.org>
+Date: Thu, 16 Jan 2025 10:15:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250110123923.270626-1-szemzo.andras@gmail.com> <20250110123923.270626-3-szemzo.andras@gmail.com>
-In-Reply-To: <20250110123923.270626-3-szemzo.andras@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 16 Jan 2025 10:08:52 +0100
-X-Gm-Features: AbW1kvZEtDtDDV1b-JCy06VodlCu92OcKCF4KhRqyAArlBqTeeutEPgAkUkNoec
-Message-ID: <CACRpkdZ6yNvtqjYHaWC6ynP4CdkGSdt5AH9ZrZDqYq=wTehu-g@mail.gmail.com>
-Subject: Re: [PATCH 02/12] dt-bindings: pinctrl: sunxi: add compatible for V853
-To: Andras Szemzo <szemzo.andras@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Maxime Ripard <mripard@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] dt-bindings: clock: add clock and reset definitions
+ for Ralink SoCs
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+ linux-clk@vger.kernel.org
+Cc: sboyd@kernel.org, mturquette@baylibre.com, tsbogend@alpha.franken.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ p.zabel@pengutronix.de, linux-mips@vger.kernel.org,
+ devicetree@vger.kernel.org, yangshiji66@outlook.com,
+ linux-kernel@vger.kernel.org
+References: <20250115153019.407646-1-sergio.paracuellos@gmail.com>
+ <20250115153019.407646-2-sergio.paracuellos@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250115153019.407646-2-sergio.paracuellos@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 10, 2025 at 1:39=E2=80=AFPM Andras Szemzo <szemzo.andras@gmail.=
-com> wrote:
+On 15/01/2025 16:30, Sergio Paracuellos wrote:
+> Add clock and reset missing definitions for RT2880, RT305X, RT3352, RT3383,
+> RT5350, MT7620 and MT76X8 Ralink SoCs. Update bindings to clarify clock and
+> reset cells depending on these new introduced constants so consumer nodes
+> can easily use the correct one in DTS files.
 
-> Add compatible strings for V853 family pinctrl.
->
-> Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
+I asked to explain why these should be in the bindings. Usage by DTS
+alone, if driver does not use them, is not the reason as I explained
+last time. The reason is that your driver actually depends on these
+specific numbers because how it is written.
 
-Patch applied because stand-alone, clear cut and reviewed.
+Or I understood it wrong and this is purely for DTS?
 
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
