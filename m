@@ -1,65 +1,63 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA51222C9EC
-	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 16:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF1922CBDE
+	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 16:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737044658; cv=none; b=BuF6M2zSrWV3ECrlauL8Md/+t8+HeM7WGyzDlZVPUaWJXPYQa0U+icpi68AqNdHHJVpxh28Nlc9uRmkGshjAIGRtgAaYZDUsxeA+AXlYSEa1kyyHMhaZXfZ918FGS/cApyu4BH6iWU9fbLwy9K3CLvJWxBTMealsX0ZX/GvjucQ=
+	t=1737044659; cv=none; b=sc6vF2X87OuKVSOWdFaYyciEPfnr8LO5BlOI7fBrkYy0q6hDKHqMNMpDvVI0nBxjvwZihzx0bH1vcu7ik0IaSa5XP20h47QM86mIsPJ3cMZHupa7Rzg8Xa7i9m/17yaCcvirz/rWDwICumLZgZka1jLv3wrnll/gsHBDgIMtzCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737044658; c=relaxed/simple;
-	bh=cu0Tef8mUoeUKgl1e3UIgb/hk6mt13knvsDs9HBuDd0=;
+	s=arc-20240116; t=1737044659; c=relaxed/simple;
+	bh=eygaNGscIeryqDrq3TZmyBc293J66iYG+/3+ndZSkvY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rJ5CjgjnKNdGzYfb5GDuVknXIoXXwJphP3j18W8kvyPTdw6jCUh6Fx6sVZw45x4g79hANweioD1ID4Z3G1M9dqxHZmU5JdLHx2BjuvJrG2+KGNfw5YtalI59fYj+YKh923VvmBFZJD77k/lGY8FiQwXZBH2T3/SHEuKyPCYjbjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=oDyNMtWl; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:To:Cc; b=Y3jIft0XJWJlLUrkRFy54WZAEOLQwnBuz96Mvuh5x+onKN89grU+0EwXhIobSsozlNtIwHS2fg3RAGVWY31iAszuW9AJQSOCuMfkmIP+NgJVO6uyRbXlUtPyTCdPSXZB7hH47lW6MlORZRZSWZbCoDs0gkSrryX3tSJcD4AwAEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=AXT3Lib9; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="oDyNMtWl"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43634b570c1so7670615e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 08:24:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="AXT3Lib9"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43675b1155bso11907495e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 08:24:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1737044655; x=1737649455; darn=vger.kernel.org;
+        d=raspberrypi.com; s=google; t=1737044656; x=1737649456; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MZrp7lu3ubP7SKqqGTTc2bgd5NE4OnqPzvBDDl400Q4=;
-        b=oDyNMtWlJbHP0O5bdUDzgCd3snBtc/nP2bjbQ77nkjwoZUgCjntyYcmztzscegS9e8
-         CL5PhS8hd0plYuKIgcVZtDQA83oNHnFqkMIR5LG4rzFzufxf8XpUTrkYqxzbpKH7u1eQ
-         BPEe+VQWfk6sFUsYWNUQEzxVKQUqgp6TKSy/Qd/thVz1DTGlMP1J39vJ+bcjhnTZwpBd
-         G/C77mLDf3SNoQpB/B7+5Iy4k3Y6Nyz46LKc3rRwiOOB4ZMec/DnujVGd1jqMZHAFMCr
-         Bm/fgS608fNHb9zLtB2dR9JW9wIeMDHTMGYWc4KDYXOQlf/GniLFQhrpntykBONdu02X
-         jnMQ==
+        bh=iqi4zrR14V9nobpcwSveNX0mOCCq13/co3EtArUhSLU=;
+        b=AXT3Lib9DIRjStR10WduLa/1E53O+XRCB9Cv/YrYmxgmes1XWTkGLXI03rJx/kWPCF
+         yb7m1I53FaEd0qncLnJv2xyIyBM6GoTG99/l4xcMVKN7VlzL4lBVwGaRJjwNG7H7yDxu
+         q+rjMdXZXbQQ/8QQIok4F6ZKqTbQXPDrmtd2dGz7IPFCkj+tZHhspAFzH0uG0Z78CMFv
+         LgUQyt7/5nb4i6GA10t11tMUcc/jyOQDby51UeB/k3UN7afg2JaCAWRU42yM0pH281vQ
+         7JTXlmpUp3HnyEXMUxR6Es0MSlTFi6h0CXNuV7koLWNh5DdXWmphLTaDeV5DRLvXMIsR
+         sDNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737044655; x=1737649455;
+        d=1e100.net; s=20230601; t=1737044656; x=1737649456;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MZrp7lu3ubP7SKqqGTTc2bgd5NE4OnqPzvBDDl400Q4=;
-        b=PTs76stlCdT9+jlZuS9107l+fhaI2gPwGml4/me92EhTxqNesodwChi1HKYmMVa5Aw
-         8vwBzNSHjOzq+FV/ZWKBvz8xVeRhWhDOF1yNkbMf/I751V11vzaGBJNXi8PGn31lIvaH
-         mAUZ6c4YViYbY/NT9Kd0jCkJxxHSWN+b2F5Lp7iLlF9/sScI0DSmsqTI7Dm3ePvTPNBW
-         xNXNs9RUI1KRZZQoIPDV6w0BxsA/aMX6ozlOTkeGOkEhRA7sHnrwa7Db309/qkskSrll
-         m1Ksm+QEYdNnVHRX1CFnPYXBRLdwNJ9o3y53HvcTK1wRTAav0YH8xADrUmXObXZYG8OT
-         d/Bg==
-X-Gm-Message-State: AOJu0Ywi1tdCpQVMoNtvE2VqIuUE5ZrQSXcY8D4LmJqWJ+OaFGC4cCl3
-	s1nO81uT4GoGCRrb5yILjqZAe6AdumpPWmHXCpMSRwdGIXZzgRO0BvzFkUHFCIi5/9YwNAjkHlH
-	x
-X-Gm-Gg: ASbGncueb5hJSEupv/73JQgJiRhBmvJF08bbxnb+EoMoeYi/RQ1vVWoOTEDUoPqjKOi
-	S5iEbkWzda2c2pNDka2tpwzp26XDELFKYyDzIDOxRUrxEDdveow2bfYUCiFApsQKB5diM2EBMWZ
-	9A8HL7qpPS98+FruZnE9EerfGCeHp2uw49b+LTi+RV9SW1FV/dgMmKKkFvKVzazcujA79LLyV1U
-	UuiaI+zPsZC54u35XYn1Hfv2+cutSScc+eabdGvA6RNJR6X
-X-Google-Smtp-Source: AGHT+IFiO4THDwrkWPkgQut59S8Z05jEzJwPXhwEqlw3rbldrlTNRXl4E+qRkkCpAywZLqr8fVkHTg==
-X-Received: by 2002:a05:600c:3584:b0:434:9dfe:20e6 with SMTP id 5b1f17b1804b1-436e26f47efmr243629215e9.23.1737044655043;
+        bh=iqi4zrR14V9nobpcwSveNX0mOCCq13/co3EtArUhSLU=;
+        b=H+ybiBo7DloHye51IWxyuirpiQKctO+PHiS7CF9oSNpbW8o5gCfz8XpZ9y8nZWs7oB
+         03sixuhQBsfpTtEZyhSdN7zV//w19Hs55ySDI/4jLBf25xlFzaez1LTWUvTR2yKer6Ha
+         qow8joaW8KjdKexzv6uzJTFO0mTghn3jMaIs1ZZARXxjzXRNUoHq9EjUsWrGMzIWyGWt
+         eYbzrKNFCAhw4yJ4cUqhFso2w0Z3+q7cqvUjV1br++Alzo7jOk/3oc6YrRqk5LE/skvF
+         Qo43aO5uAwAZUMmhMNwmTh6mT0Pka+ZDiEOvZ3Cnkm2pIttL2bTrapeDpsXzY6P1PuKz
+         c5Cw==
+X-Gm-Message-State: AOJu0Yw6Pmv+yq+zGtZC9MVIH2gLTS/A3QYNUwauH8LcpJEGIUwFrP0F
+	/0tybZ0RqJuw6DE0dakrdzv/5rJIMTONaHxw//kLQvlvptTfQQQ90JKDc7TBgHE=
+X-Gm-Gg: ASbGncsxbIypl+w4tzstAwE1DaO5MMlAuW1IVGfFgDZhNK+dZ+m3exK+mjKpNIgDaUZ
+	4CCrePYi2nbMg3oTFCfBm0D17wz+HHpcj/IfjcsQ4CkQtdIUkbyoTp3EIHo4ND9sefnFQYHAUcy
+	u/kMdH7H7KgoaoaSM56Q5foZmhrD7ST+9CzIpVz3QfWE66RBFwq0VZZnNokyRzfSs3IDZMrlFuz
+	Em9/kuCX+z2YBBJIHp793PyzikqT7DXuVbYvUXjiMNjr7R9
+X-Google-Smtp-Source: AGHT+IGYVMhTyECS8mk7dbNPcu0xv+jBr3muLUHN1CCOwv0ti8nhpLb9Y/RxEUO53LqAtFGOLogLig==
+X-Received: by 2002:a05:600c:138a:b0:434:a781:f5d5 with SMTP id 5b1f17b1804b1-436e271bcb3mr341342715e9.30.1737044655871;
         Thu, 16 Jan 2025 08:24:15 -0800 (PST)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43890469ba8sm3715955e9.37.2025.01.16.08.24.13
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43890469ba8sm3715955e9.37.2025.01.16.08.24.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jan 2025 08:24:14 -0800 (PST)
+        Thu, 16 Jan 2025 08:24:15 -0800 (PST)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 16 Jan 2025 16:24:09 +0000
-Subject: [PATCH 2/5] clk: bcm: rpi: Allow cpufreq driver to also adjust gpu
- clocks
+Date: Thu, 16 Jan 2025 16:24:10 +0000
+Subject: [PATCH 3/5] clk: bcm: rpi: Enable minimize for all firmware clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,7 +66,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250116-bcm2712-clk-updates-v1-2-10bc92ffbf41@raspberrypi.com>
+Message-Id: <20250116-bcm2712-clk-updates-v1-3-10bc92ffbf41@raspberrypi.com>
 References: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
 In-Reply-To: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -84,27 +82,47 @@ X-Mailer: b4 0.14.1
 
 From: Dom Cobley <popcornmix@gmail.com>
 
-For performance/power it is beneficial to adjust gpu clocks with arm clock.
-This is how the downstream cpufreq driver works
+There isn't a reason not to minimise the clocks, and it saves
+some power.
 
 Acked-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Dom Cobley <popcornmix@gmail.com>
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
- drivers/clk/bcm/clk-raspberrypi.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/clk/bcm/clk-raspberrypi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index 6d5ee1cddded..d374538e7108 100644
+index d374538e7108..9f716b2223ae 100644
 --- a/drivers/clk/bcm/clk-raspberrypi.c
 +++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -156,7 +156,6 @@ static int raspberrypi_clock_property(struct rpi_firmware *firmware,
- 	struct raspberrypi_firmware_prop msg = {
- 		.id = cpu_to_le32(data->id),
- 		.val = cpu_to_le32(*val),
--		.disable_turbo = cpu_to_le32(1),
- 	};
- 	int ret;
+@@ -111,21 +111,27 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
+ 	},
+ 	[RPI_FIRMWARE_V3D_CLK_ID] = {
+ 		.export = true,
++		.minimize = true,
+ 	},
+ 	[RPI_FIRMWARE_PIXEL_CLK_ID] = {
+ 		.export = true,
++		.minimize = true,
+ 	},
+ 	[RPI_FIRMWARE_HEVC_CLK_ID] = {
+ 		.export = true,
++		.minimize = true,
+ 	},
+ 	[RPI_FIRMWARE_ISP_CLK_ID] = {
+ 		.export = true,
++		.minimize = true,
+ 	},
+ 	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID] = {
+ 		.export = true,
++		.minimize = true,
+ 	},
+ 	[RPI_FIRMWARE_VEC_CLK_ID] = {
+ 		.export = true,
++		.minimize = true,
+ 	},
+ };
  
 
 -- 
