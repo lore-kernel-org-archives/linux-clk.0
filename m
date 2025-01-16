@@ -1,62 +1,61 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4F514B094
-	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 17:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9A614B094
+	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 17:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737049480; cv=none; b=c7+l0zBf0LbScvQIvR2dm7q7sg7BCEffse0QQov/zbAy2f7zJ1U9zUgXLDeRCFoHUyQ2M2T1bCrsm9RkxRCkdPBMORrauO98ti+UVNA+Z8tktKwfzYrofDnp29bJ0qJfKz1/M7o/QPfY5NFpaBbwHiNTQIBPLlMZLkXGIv7DiXI=
+	t=1737049491; cv=none; b=lamYrit+4A9OX/z5+pXkzaXTw5Bi+ZPBhQJX/X1gF0ZYoYt9Kr6B6DHuXyJMkcHTvqL4V24BWrdkz4PmYwj6NAyXq+eJlIi1xboFA5mWeIYm7WP7WEy5TO7zTjpLxAWV9LTHS8FyGmjt+74UH/JLgtnnct3Aw+u6RHkuSsshU+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737049480; c=relaxed/simple;
-	bh=DVDBBhsmhEGtLwlO+yxr5iUX2UjKHuW/SDvd7zv44sw=;
+	s=arc-20240116; t=1737049491; c=relaxed/simple;
+	bh=rZt53JzR6TFyAMjZHCYOShXd4eZJqoTtb4WcJG5wwio=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W+OEGmAHYd1GHNppKYmlXs2EgFV3TwGJedJNBRYr6nFtkoDWbIt9D0n6pWsYOxsRYplQDawa7zhncfDnLl2rzu3g5fEsBxF3BBh48GD1zb/d7g5N9x8OSOPu9ZefDOTsR97PVjvCKt3K2Gct9Z3cAJo7q7J5SHg+nole0g6gEBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=hANDeOAV; arc=none smtp.client-ip=209.85.214.169
+	 In-Reply-To:Content-Type; b=OKP+txJZ9OcLY2Q2b9SsaLMjIBJflg+Xy1YBolPg6jk6ihlpYtMtxIe1sdtoHiE4POK+IhH4T6Vws8kJ+P+yz5vJgW1NfdDSBMAgb6qND3DsJJwTBP8ZnZ4mh7RATlEVseW4SWX8tpsiRg5dwj7s4msaFKe/24Cc9lWG6eh2bjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=NN0LviDk; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hANDeOAV"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-216634dd574so14780705ad.2
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 09:44:38 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NN0LviDk"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f13acbe29bso3862264a91.1
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 09:44:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1737049478; x=1737654278; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1737049489; x=1737654289; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=fbH0aNuhNBY+Qx/1k9JyF2WTMEKtKQ8nxA8sJGBpS7w=;
-        b=hANDeOAVadnED2e7bwcUhca0A3HUtBme4zgVDBmG7HHkB32a3r+Diveem/jXVc7G+m
-         +OXta6c/+udg/6EFU7UNjAa5ZSWl9tzc9/9+mI/JIpP63RLj9THebyuWjVFaLxPru3xV
-         prdoLzm11PuAryzjxTkBPHprPvzdHj7j51VuY=
+        bh=KdSRLH407KyVo9i2OulrASDf2FZjUK5HxCuQksYb0AU=;
+        b=NN0LviDkfI9YXQI98rLviVU5DMgmcHsCO7/MoUxbCex+TuN6GqyvMVqOxRgkFKzMlR
+         XXXXKsJo99T/Tz4rKsy+RsYSlMk268lxSbKITrxnbIVNu5ssfVSVJep6ksX658f2De5c
+         4Hij3BQzquE8H5oFVW10AE8wtYApT6+mxWEc4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737049478; x=1737654278;
+        d=1e100.net; s=20230601; t=1737049489; x=1737654289;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fbH0aNuhNBY+Qx/1k9JyF2WTMEKtKQ8nxA8sJGBpS7w=;
-        b=OAWZ1AxiFNXK7/MTzavN45cjSguS55LBGDs9vBx3u4rgk2O+iuBlSFm01y0VVd7LNx
-         8+4y9B0nEZxhcwsVLmkoQOMvCy8/Z2ZPlX2l/gz4nEqH7WQITtwNqvSFg/vq7jjKC14+
-         MpQK0LpR3p+kmMGGjahR/vZnuksW+HfbkltupHy/TYQLRZDP4ozQZvPxSefaps6IWK59
-         DJgzotnWPOpbb1W803jeaozjmqr2Wg4LXln+Uj3jL04nioayios4mtgrmsslQ35/0Yj9
-         w4yBWaGy5WZr3z73xpmZpwDM/i5BKW/kx/lev5zoud96awviZ+iLqxLE826Z+DPXBpTs
-         SuZw==
-X-Gm-Message-State: AOJu0Yw5shE+Q91/MmjI23K1aB+QOI6Nix3wSdIRxFDgPSG39O7uH4O/
-	PIK5uwYmtlxS+Q5OZ4mz58PHtbSPBWGw0PTWY6HiHee2MgmTDQfl9eQv5KL4KdIPdpWjr//3PYg
-	=
-X-Gm-Gg: ASbGnctuoTIQHmlmG4kPBbTH2YlKuO6ENlW2Vm5HuqDbPsGwo8MeYG8rCprmZdRAMco
-	x1KKlHXYaFs+1P9Pxw5uzK4SlHXsfiIDyR2pEoV8RBcDMl+afKihp49f5SjcKPbuYUWXanPUl/1
-	x3mG/cXH+nmOvED2TEcMPL2wiEuojZOB6w55bY+N/XAdSrYIpzfLDy5xDKEpn+6XM5kimgncmdV
-	P7NGYUp80R7uLxxTXKdiumXV205IdXuunzYdgLk//TIYnO7hw7R2McH1rOe5w/XaG/SODt4Y+cm
-	UY3uU5ae+2UXkguw7fgf
-X-Google-Smtp-Source: AGHT+IE0Nz5l+5zPCU039uTisaH3+lRWGSGUZOlt7zohpZP2X6Ochqj54Row1+OLzWAg1OjmZEweuA==
-X-Received: by 2002:a05:6a00:392a:b0:725:b347:c3cc with SMTP id d2e1a72fcca58-72d2200273bmr49375661b3a.23.1737049477674;
-        Thu, 16 Jan 2025 09:44:37 -0800 (PST)
+        bh=KdSRLH407KyVo9i2OulrASDf2FZjUK5HxCuQksYb0AU=;
+        b=UhrD8nVqyxp1Fp2sLCJ39DJaPdQlNVFMfWa8TV4dC5W/ouQzujQdNolD9Jhi6ZqdP+
+         WY9rre/FiOpWRW8hPdtB3URPtv6jv69PsdTnhgYgeopQdLKnWdDO8bXJ4aOjZqZlgW0q
+         /MHDm2VLXbxwvDJ7cp0nwd3ptlY5IbDTLG/3RhwHbEK5ZLusW7uEsuPmMujyy/fL/JlA
+         PtD0wFbyVss4SLdav01YOntfsHHHnJCXuB3eJryG7D/ZnZZ+RlqZJ29hTegS9WFAY8Kv
+         HBiCLQl9yfnkyW1fzkY0SL2bUMM//BUbv07g2PPif2B9nYCapbREg1pfaFo2imAYHfVH
+         bp3A==
+X-Gm-Message-State: AOJu0Yy0cb+99ohxbROXZ7BtGrYFmzHko8ssTyK3nw4nA+uuqg89Yjap
+	qg12NkVWtRu28vssStXzg16846buf6YTn64cmvFf87us5Vaf0sMqGiNeA8LEvw==
+X-Gm-Gg: ASbGncvz6r/tAGyYeb0v9QK2wscg72Sa01S3jxmddJ+6z8/xKn12YvbD8jZjPJmYLO/
+	PekK9PLgkmi/G/pLnbSVK7vnYkzn0NsmYiWlzSiRJGXpYq2L9KKrkGbBLchNHvyOc5At2bk3SbG
+	TBt6ZG+EiNQ5iBxgQ3J3TXltA6Yu3r6/Gr7FmO1D2MkrxDglkIlxvAGLtkkAe6hMlYaPV3x3S5w
+	68hSp1cYK+N12TPmTeT1x+eqZSYr2IgxrDBhmwU8P+TyohHD+gP6rkevkgjEMI3NuHUnjiHd1i0
+	XEzeQnKz6psNI75nxwln
+X-Google-Smtp-Source: AGHT+IF+4R047Qzw4YHErXGtCBTYRApVnqgB0yLlDA9wlrkzE9bOj1bHitVqKoHAvbYcAqI9I/GHDQ==
+X-Received: by 2002:a17:90b:4d0b:b0:2ee:823e:39c4 with SMTP id 98e67ed59e1d1-2f728de6649mr11843030a91.7.1737049489060;
+        Thu, 16 Jan 2025 09:44:49 -0800 (PST)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72dab9c8f6dsm262871b3a.114.2025.01.16.09.44.36
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f77629bf96sm419605a91.36.2025.01.16.09.44.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jan 2025 09:44:36 -0800 (PST)
-Message-ID: <b3078803-973c-44eb-98b1-b4d94cbc19e5@broadcom.com>
-Date: Thu, 16 Jan 2025 09:44:35 -0800
+        Thu, 16 Jan 2025 09:44:48 -0800 (PST)
+Message-ID: <07602a85-8ac3-4538-b2a0-65d917de6ba5@broadcom.com>
+Date: Thu, 16 Jan 2025 09:44:46 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,7 +63,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] clk: bcm: rpi: Add ISP to exported clocks
+Subject: Re: [PATCH 2/5] clk: bcm: rpi: Allow cpufreq driver to also adjust
+ gpu clocks
 To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>,
@@ -75,7 +75,7 @@ Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Dom Cobley <popcornmix@gmail.com>
 References: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
- <20250116-bcm2712-clk-updates-v1-1-10bc92ffbf41@raspberrypi.com>
+ <20250116-bcm2712-clk-updates-v1-2-10bc92ffbf41@raspberrypi.com>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -110,15 +110,15 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250116-bcm2712-clk-updates-v1-1-10bc92ffbf41@raspberrypi.com>
+In-Reply-To: <20250116-bcm2712-clk-updates-v1-2-10bc92ffbf41@raspberrypi.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 1/16/25 08:24, 'Dave Stevenson' via BCM-KERNEL-FEEDBACK-LIST,PDL wrote:
+On 1/16/25 08:24, Dave Stevenson wrote:
 > From: Dom Cobley <popcornmix@gmail.com>
 > 
-> The ISP clock can be controlled by the driver, so register it
-> with the clock subsystem.
+> For performance/power it is beneficial to adjust gpu clocks with arm clock.
+> This is how the downstream cpufreq driver works
 > 
 > Acked-by: Stephen Boyd <sboyd@kernel.org>
 > Signed-off-by: Dom Cobley <popcornmix@gmail.com>
