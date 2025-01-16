@@ -1,109 +1,119 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0980422A7E6;
-	Thu, 16 Jan 2025 16:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2361D86F6
+	for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 16:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737043223; cv=none; b=mYe+LgYgqIqbLMAW89lFx1Khd+MWuF+WRYZ7cA97EQXfH7BGKk2AeYi5Q0vzKieaXrEkl7ljpbRKZbt3KZBQsYWLr6eSBdQEqv4puD2bwdVIH0KLT69zmKBVjPfy94Moz2OaMgbcyQBwJb3LDfryvFfZkXbMdqKPYfWma3gonEA=
+	t=1737044657; cv=none; b=tXxkIaqTbFdXcZuVSKwuQ/fiDiBg586RT/h5KDLerJFVnuBdcna0di4KlFIxUpAzPlMoNMVPwzLdRThjqB3ogkW3ZLdL5MZZroQW7yavi3BZIHRS/k5Z1ww9uR5ZMoUy88d1mZkd3NBnq21z8TtgUR2pFR/j+22Ws6kc0Ijp0R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737043223; c=relaxed/simple;
-	bh=03CNHJApFKuIItIyArXaqYORwbEMmfvmo2iXGsI2caQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pyqMAylH72EQdAbN758qEDfA7JK7YC/90V07e7WQdCkrkiPQkc6Ae2ydPWZPVcAVuuHMdUM9xplyPie5XUFNfDa0OzKChYWE6Sw5dXLw5/glMy/I2qinFGeKrlY5M/vzICwt5TPK3q1/H7mlh0Uhjqgapl9MsQ7uu3ft2JuOx4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aspxbGiO; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737044657; c=relaxed/simple;
+	bh=pbY4CeM7I6pcN98vHzgogkhz8niM8qOCmP45kpFIA3U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QkzDoyUuzTByHBB5FjWHUnI2IilZY48gXAqmcDNyUXOq75IoA/g+212hDAODij7CeUmHiuCpBUTOMdai2kuEyd5edUraqxHqB+3/4NkBLcw8dW7nnxm9uwtA1jnEX+4MFiwd5N2qToexF4iJSNzo67ESI9hZS8KiznzooBz2RpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=n/rJZOov; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aspxbGiO"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d9f0a6ad83so2264272a12.2;
-        Thu, 16 Jan 2025 08:00:21 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="n/rJZOov"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-385de59c1a0so683984f8f.2
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jan 2025 08:24:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737043220; x=1737648020; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=03CNHJApFKuIItIyArXaqYORwbEMmfvmo2iXGsI2caQ=;
-        b=aspxbGiOQrvVt8aMFMUsi9ATP4Hk2HkMHBA8qoWaKEUwYkpbKyR2F2VUVRcNvLe2Sz
-         WOnt96m+zDC/F3YiZMyNOz3ghZJdcRgPXzCBItHyEJhZBBe6MUyAeBpAJUgrIeeR5Ewq
-         RaRIiMCBfPQdWGjd49XaXazjD0dPFX3tuOQERAnC21/nSwgUgdVmxhFJo0dkh/8aoi3V
-         vVU4zvbw1MCDeVZ0FY5IjJ3SibT1E4kB0xCQmox+6ZXlvxUkTYEKAyU+v4s7ix+VQROT
-         CIS9YHTYBYyFhAMSwojK5QMfNXT9jm3608kfslfqZRRcIcm/aJHJRNQFu40fobwO5KF8
-         Ag+Q==
+        d=raspberrypi.com; s=google; t=1737044652; x=1737649452; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JkidhIxI0JJqKCLy7C7vNd6vALRZn2Ej+iOClGDcLcc=;
+        b=n/rJZOovohMQCGmGOd0E+Q9bqePTya2cK2pIl+EmghsI0jPI2K59SHEnsdifWFOvY/
+         rTH8UHUajK/2LPCq5uvAcLU8Nig9WbAJDcS3LqtmbB0nxeWjfgaLqJ50hSMeRQZbNUzi
+         YyRNuwr06NAcV0hani8DmcRf0UojBCljApdSGqDyMcRGsr1RoC/QeYV8M1xWTShzFix0
+         7fwXRhUpARJJxtuufXRUhOJQB4+5RaCBZ6ktj26fIqtpceY/nPVxtUqhiFgqqC0bfaA2
+         JxNk70W95y6Fv8GUmfowylT7nCMfWvqBjLn8z8B69/htBcGCBpPUGBtHxT01thGnRjVw
+         Ij6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737043220; x=1737648020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=03CNHJApFKuIItIyArXaqYORwbEMmfvmo2iXGsI2caQ=;
-        b=vzn8LSnOYa7186EAG4tov35iSP4QpLZz6pRnS/2QRR4qQpWH/4nq01C2mJM1KuybiT
-         7mYZ5X8gjJ2BsGJ8iYP739LPKWBTnEEx9enuKOwWOAbv4AX83HZkBUMy2qRJzctPET3L
-         LIHtCVN80ZQa+Wa2YkmjUruyAkM4CIxFeCwiDzWQo7eR6C9iYLG5QJ5R51BUlHkQ/Qaj
-         pCipOtrCPjBwkhTiOUtMaDGXX+ibgCwZTcef9pLFF9uBKgvBP/2c7f+OA3kg9Q+75GjY
-         hHBHIU6a6ghUKuyPw5CRZZQKTqkH3my4zpZoZnWLYQCB4eA+azWGBxIXQgcpbINiR1Ro
-         Fg6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVy8WRkpJGKhnnB36k50wzMKutUS6l/Y0tHzp2SiVTh3xnoRFrFfp92W3GLFLr3DReA8hZTUy2uU5bv@vger.kernel.org, AJvYcCXQ6dapQ3LRex7Mwsqn88gfUQJw6xKxZZn43BPVVSkKoJ2mB1DqhuY74hjwRXHjEexImY0mVVvLRSm8GthU@vger.kernel.org, AJvYcCXhAEjJvLup3FeZLuXwPldVAbfHDRaJYTNYAPTxMDYN+uA/hi6vycUdUS7aZXRKdLqzVl8/7J9N+w5z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze5boAKJg2zhk8j07cNkBydFrLYPFAk4N0rLb1w+oRfalCuXAp
-	7qlD+HfUgfgQ+fAJ2FKAaAFWkFrnpU4CK8rUt/fpwRumVIxazXFRw1LMNl06V7TMaS6XGYJpKyT
-	WydRKTOP57h+e9mX0vCPmelUbBXs=
-X-Gm-Gg: ASbGncuNjnAz36wBLx361QC0YO8paMtwlF+70E0AaJBYLqzS01vL7xX2L0m6T+Xeoop
-	ku5af1tZvsmA0TU/9e4aRY8yhdGEfMdPFF41NN3c=
-X-Google-Smtp-Source: AGHT+IHuxtD1JvcYemQsyiIws6tdFTgTs+4qivEFZoap/TFlX96ws2N0XRh4Mzzuy/ekqhM6BhFqBHePlBLhuYIk58Y=
-X-Received: by 2002:a05:6402:35c9:b0:5d9:f402:16a0 with SMTP id
- 4fb4d7f45d1cf-5d9f4021a86mr11833443a12.22.1737043220056; Thu, 16 Jan 2025
- 08:00:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737044652; x=1737649452;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JkidhIxI0JJqKCLy7C7vNd6vALRZn2Ej+iOClGDcLcc=;
+        b=X9R/THX2v3I7J8CbL8p+DNQfkAZqsS1KvmhrMYRwRxyzd5Gd9c2fkkx0uaV6FXoor3
+         kAnYQuwIsBquMqAymu0/vl/fU6cfWo/nYSvBGyJk9wUfTI2QJTbSYJ8btCRUa+CXqL20
+         RpRzerei9q8JrsOWK5Vc2kdtKTVDD3joyWt41tHuyGl19lTCToQP0mqOe0oc5Rb+WCrq
+         AoKuwT92vNDpIp4C55w6pqpuit9baSHpE6BFaX9adJ1DIbCH8+xI1ieT+Y3sYVjqHbqj
+         RGgmYogzIqkxrIERh63wl9PWK08EV/i8taXOySNvC2NzHUJ2oPwm82RvnDaXotsige/4
+         xRQw==
+X-Gm-Message-State: AOJu0YwPZPUQpJqhlH4PviSqC9Y1Rkcu1lp3MKyqEd6r+0mlWSjxseNo
+	pXZ7phqrz5iuzyD77Qayhj0GL23dUg2rc4yEULgArOQVZIACNBuSTS3BCtUYh9U=
+X-Gm-Gg: ASbGnctwifeGWn4d54ivw2t761eeQszMyxA29RtVlsWaI3Wck1/HVml2JVazT+cOqq5
+	Fo6HLJbjcOAVTf3NMzRvXHqwfsVbpuyo7Xfp2xauicQkpPQZSLr5qNuLDpwbVuBQG8wXqNmXOVD
+	G86pY6QeuNll4Dmf7vkgDXQCWNQ0VCh1nwQrtnY2BbNkjULNcBIQUZaHQzNyuktTqta9yN2re4Y
+	vedp68oHNYf+fpNDYqFjsnLZ9FKo+BoHzQLBm5dpGvjAjEc
+X-Google-Smtp-Source: AGHT+IEK9Riy8ul/CXhkvjuSyP8TO4TugJgmWjoRSyKi2uOy9w+mQYDd/mxF5HQqa/Eb7X2t/US4rw==
+X-Received: by 2002:a5d:584f:0:b0:385:f638:c68a with SMTP id ffacd0b85a97d-38a8730b738mr30034471f8f.30.1737044652594;
+        Thu, 16 Jan 2025 08:24:12 -0800 (PST)
+Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43890469ba8sm3715955e9.37.2025.01.16.08.24.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2025 08:24:12 -0800 (PST)
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: [PATCH 0/5] clk: bcm: rpi: Add additional clocks for 2712.
+Date: Thu, 16 Jan 2025 16:24:07 +0000
+Message-Id: <20250116-bcm2712-clk-updates-v1-0-10bc92ffbf41@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250115012628.1035928-1-pgwipeout@gmail.com> <2EEA8028-8E4A-4588-A480-E5FF0F7BE82E@gmail.com>
- <CAMdYzYo2W1hLgiH697AdRSUbhBU4rU2uB=N6EMWMD2-0R+VLBA@mail.gmail.com>
- <B1C9DA16-F285-4AD0-AE4E-AF1A5CA20932@gmail.com> <CAMdYzYrxX=RsSZja-3+zLZUSpyLoRz8Zm0w0hTfL3RQ9cjqgOw@mail.gmail.com>
- <3536B507-8658-4377-A1AC-2C5D9093BDEB@gmail.com> <CAMdYzYoCj9FsyHdTQAOV4DFpD7OdMDaJ0R=BBxXG-SLguy512Q@mail.gmail.com>
- <F69CE715-C0E4-4FCD-943C-89CC1D3E848D@gmail.com>
-In-Reply-To: <F69CE715-C0E4-4FCD-943C-89CC1D3E848D@gmail.com>
-From: Peter Geis <pgwipeout@gmail.com>
-Date: Thu, 16 Jan 2025 11:00:08 -0500
-X-Gm-Features: AbW1kva1Q_Tqsgtr00KCSe1Rmn_xPDMkxiMe43I-JtCUAF1Z05Q1Na6dcupVLX8
-Message-ID: <CAMdYzYo2gwJw_HvhS-gsqSMFof+n0dS1LUhVznL8bRZWYp_wHQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/6] rockchip: add a functional usb3 phy driver for rk3328
-To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>, 
-	Michael Turquette <mturquette@baylibre.com>, kever.yang@rock-chips.com, 
-	linux-phy@lists.infradead.org, wulf@rock-chips.com, zyw@rock-chips.com, 
-	Dragan Simic <dsimic@manjaro.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, linux-clk@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org, 
-	Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Arnd Bergmann <arnd@arndb.de>, Jonas Karlman <jonas@kwiboo.se>, frank.wang@rock-chips.com, 
-	Elaine Zhang <zhangqing@rock-chips.com>, Alex Bee <knaerzche@gmail.com>, 
-	william.wu@rock-chips.com, Zhang Yubing <yubing.zhang@rock-chips.com>, 
-	Johan Jonker <jbx6244@gmail.com>, linux-arm-kernel@lists.infradead.org, 
-	Trevor Woerner <twoerner@gmail.com>, Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
-	Vinod Koul <vkoul@kernel.org>, FUKAUMI Naoki <naoki@radxa.com>, 
-	Diederik de Haas <didi.debian@cknow.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKcyiWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDQ0NT3aTkXCNzQyPd5Jxs3dKClMSS1GJdS4tEE/M0YyNDQ7MUJaDOgqL
+ UtMwKsKnRsbW1ACw4f2llAAAA
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
+Cc: linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Dom Cobley <popcornmix@gmail.com>, Maxime Ripard <mripard@kernel.org>
+X-Mailer: b4 0.14.1
 
-On Thu, Jan 16, 2025 at 9:35=E2=80=AFAM Piotr Oniszczuk
-<piotr.oniszczuk@gmail.com> wrote:
->
->
->
-> > Wiadomo=C5=9B=C4=87 napisana przez Peter Geis <pgwipeout@gmail.com> w d=
-niu 16 sty 2025, o godz. 15:02:
-> >
-> >>
-> >
-> > I'm at a loss here, I applied the patches to a clean 6.9 tree and even
-> >>
->
-> oh maybe issue is in kernel age?
-> 6.9 seems a bit quite old.
-> i=E2=80=99m on 6.12.9=E2=80=A6.
+These patches were Acked by Stephen as patches 30-34 of
+https://lore.kernel.org/all/20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com/
+with v2 at
+https://lore.kernel.org/all/20241025-drm-vc4-2712-support-v2-0-35efa83c8fc0@raspberrypi.com/
 
-The patches were prepared and tested against 6.13-rc1, but nothing has
-changed significantly in the kernel in regards to rk3328 clock
-handling in several years. I jumped back to 6.9 due to dyslexia.
+I'm a newbie on kernel processes and where the patches should be merged.
+
+I'd asked Stephen on the v1 thread as to what needed to happen to get
+them merged, and he asked me to resend the clk patches for the next merge
+window.
+I must confess to it having slipped my mind, but resending them now to
+hopefully be merged in time.
+
+Thanks.
+  Dave
+
+Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+---
+Dom Cobley (3):
+      clk: bcm: rpi: Add ISP to exported clocks
+      clk: bcm: rpi: Allow cpufreq driver to also adjust gpu clocks
+      clk: bcm: rpi: Enable minimize for all firmware clocks
+
+Maxime Ripard (2):
+      clk: bcm: rpi: Create helper to retrieve private data
+      clk: bcm: rpi: Add disp clock
+
+ drivers/clk/bcm/clk-raspberrypi.c          | 33 ++++++++++++++++++++++--------
+ include/soc/bcm2835/raspberrypi-firmware.h |  1 +
+ 2 files changed, 25 insertions(+), 9 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20250115-bcm2712-clk-updates-98a47f32116d
+
+Best regards,
+-- 
+Dave Stevenson <dave.stevenson@raspberrypi.com>
+
