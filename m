@@ -1,239 +1,301 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555452010F6
-	for <linux-clk@vger.kernel.org>; Fri, 17 Jan 2025 13:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D2A18A6A7;
+	Fri, 17 Jan 2025 14:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737122058; cv=none; b=qoJkql4DqzFBYdN8v+6Xa3USKKK83kyGBzx5zn37X5MGjENOp6Dat295EzGCa3eL4x6VkJ2ny0zI2ADFl7FL2xbSw6uYzDzw3PCTsvW7+BJhuT5u0N1rbh20IUn9MdBMQpiILpRC9Fmqdu78+9q0aXTZykWPC/oHCgRb7zb2+JI=
+	t=1737125558; cv=none; b=m4Bncl/I0pTKofiTAu9E/lkiRKPQApsHtQMVbi7nhY4HcTOvTvGUsgc/hbEJ5YxT7kB637GPLXEYubAqbXXVt6E+cJvZMPKD0V7gQ191qpp4NzZp46oSQfdmRLktNC0OZ+h8AORG9FsuCdsS3AOMEmzegPW6gklCih0bwuzGFPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737122058; c=relaxed/simple;
-	bh=mMqiI/+I+zEagfKuHYtYK6UtY5ankGGl9IJrIWTvRH8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qOKji6Ug0sS08KgW2lCvH4IpIVHKXqub/6KuJfhRG5bUMybis1j82OSjJB+jvboSCkcPbjD8mWyre9IyyUJ7gClELBlajJvAXJ2lGz+aM35i9VXV1zZZcufdO52eg3lJQwvMynKvSb8Ino619c5e+CFPhvdFpZmCncr/MqtP2qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lCput38k; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lCput38k"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385dece873cso1187798f8f.0
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jan 2025 05:54:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737122055; x=1737726855; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rqLgiwkb25f50FFmindGDO9xj3DpwPWvWiLB7nut8us=;
-        b=lCput38k635S6xJaKgADG7xUt+QbFWWqQNWADURs8diRJC5hVTztDA+wRwA7Jz6mAf
-         1wee0ZUIme8cmiXXSaJBhJIaeGPX9S/Wb+mkzOsh4l4oxgk3ITiThU1WsEp1tDzP+a7s
-         jvnl4MALG8FxK9TsgZl0kaepPyZPFr6Pg1zO7MucsPqT2XrfzLFKSjIhTx34ay4wHqF/
-         JY0ngRSwMm3qjtkMW07sFu16RH6NRjNcAvAt5h/8wTFLYd19bHo5ALERaY2GQ7TtlFMr
-         /kLxiPhv7RZDygINgamsdDE3n7rXeqlSLMNdLYabbJBbxa/GRAIjDCBE63b5vguQK8UH
-         au7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737122055; x=1737726855;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rqLgiwkb25f50FFmindGDO9xj3DpwPWvWiLB7nut8us=;
-        b=nzIAqkTPDPCA0eT8uDSYgmmpBIoCOKll2xqe5DS8vik9b4J6jpaU2OGI3NY51DgFA5
-         pMHN19/LHbxzkehTGokQsIC+LDfYAgHO66ko4WwSKJ+FJ2OMGc+HTXwc626hjDc7aQbV
-         ZwK0nMyVG7ZjDEu86gpAr4ppeTQ4OFIJ1UTdBQZIJH7zQAfrzHdV9JbBNzbV2f/aciNq
-         vwEKmc7iKEIYWs76v6IOzMBgvzlXJgG8Q23ZEge9KtkLZeZblRpKsYS7dDHESz2sQ0gn
-         HHyc6cTO0U2zRFPzemyhp6EZGgn21asoOpt/Gpo89fX0Cv5SfSXK36k0tYxn2zOE8lcS
-         jIRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRq1oI2nVGk4vB8nF4FDznYND80czUtoKdPTQoMxM//97K084nmSsnIsqot26FoarWzLN9seR2P4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Hzfsiu+YuQV+TJMmgWqNjaJKFxkPztCD4G5+8eIa1rxKn3H9
-	59AXKfikGjTQRaJArQ1Bwt79lv2kZg2Q9dYasIaJcJk+rWydJ7J4x/vlmbjQsb+tHOoRqZnD1Dy
-	PbFA=
-X-Gm-Gg: ASbGnctCHSbq/ygQAh4duAH0XHcLo+4DRQ3c1OY+sYVSrSpyR3QRiLr6U0Ycj9bCc4y
-	jvM+CGutIKRaXD8xhSg7xp2yh7snuHvQIgoRTRrEtnlVkDSe9Ny23N2UPg/MyWUfCwm+7gfxEEO
-	/org8pSR6WDZVDApcZGiJW9XdD0L30VQfql4zKNfZE2DoNn7yXfoca/HiTUpBa9TXa4SUQ6p1A2
-	YP+JBKXrw/QTiz4qVpLNP7xSgjfDfpbkZ/yRK2M0jxtzeNmoBg93uGOgB1NvPp3lA==
-X-Google-Smtp-Source: AGHT+IGaJSeW2w7x6eBG4XpsNAmWHIvhG8jsJzu3RDMO/gYbJM75+0vPf6DPLMTpEA3hk3sTOsZFzg==
-X-Received: by 2002:a5d:4007:0:b0:38a:888c:7dec with SMTP id ffacd0b85a97d-38bf5675e61mr2124765f8f.28.1737122053112;
-        Fri, 17 Jan 2025 05:54:13 -0800 (PST)
-Received: from [127.0.1.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38bf3221bf0sm2545279f8f.28.2025.01.17.05.54.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2025 05:54:12 -0800 (PST)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Fri, 17 Jan 2025 13:54:10 +0000
-Subject: [PATCH v10 4/4] clk: qcom: Support attaching GDSCs to multiple
- parents
+	s=arc-20240116; t=1737125558; c=relaxed/simple;
+	bh=2gX7KHDcFevvJA4zKEAmuJ9SkdUhqyW4SCi1gpCPwQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WkMmoIu2MXIXHZ3VIjK/A1NLB7QiZPvOYw7Pv6l/HSKHzZ/l8+Ks+HwUeKRCWwjhbAUp60cXBgvEvfgoA3VDMfkF0wgRNgorGBq8R5Y9lpsIu0JpSCG7TjXfG/tZrFvKv2nyNhhA0MgNYDp5+5BKCO336hDFdHGTwgu2tcOlrsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A7931476;
+	Fri, 17 Jan 2025 06:53:03 -0800 (PST)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D21683F73F;
+	Fri, 17 Jan 2025 06:52:30 -0800 (PST)
+Date: Fri, 17 Jan 2025 14:52:28 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andras Szemzo <szemzo.andras@gmail.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Philipp
+ Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>, Vinod
+ Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Ulf
+ Hansson <ulf.hansson@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Uwe
+ =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 03/12] pinctrl: sunxi: add driver for Allwinner V853.
+Message-ID: <20250117145228.2fc8a64e@donnerap.manchester.arm.com>
+In-Reply-To: <CACRpkdYVTedEon0X-izvaDTGF6yRhD2s=Z6NEM=zBf4vD-T0Pg@mail.gmail.com>
+References: <20250110123923.270626-1-szemzo.andras@gmail.com>
+	<20250110123923.270626-4-szemzo.andras@gmail.com>
+	<20250114141954.2785879a@donnerap.manchester.arm.com>
+	<CACRpkda0nx3SQtdjmXdCEbVJSWM10TM=p-6JbDjbiYcOSF5PxQ@mail.gmail.com>
+	<20250115152635.1b89e7f4@donnerap.manchester.arm.com>
+	<CACRpkdYVTedEon0X-izvaDTGF6yRhD2s=Z6NEM=zBf4vD-T0Pg@mail.gmail.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250117-b4-linux-next-24-11-18-clock-multiple-power-domains-v10-4-13f2bb656dad@linaro.org>
-References: <20250117-b4-linux-next-24-11-18-clock-multiple-power-domains-v10-0-13f2bb656dad@linaro.org>
-In-Reply-To: <20250117-b4-linux-next-24-11-18-clock-multiple-power-domains-v10-0-13f2bb656dad@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-X-Mailer: b4 0.15-dev-1b0d6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-When a clock-controller lists multiple power-domains we need make each GDSC a
-subdomain of each of the clock-controller's listed power-domains.
+On Thu, 16 Jan 2025 10:34:26 +0100
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-GDSCs without an explicitly defined parent should be a subdomain of each of
-the clock-controller's listed power-domains.
+Hi Linus,
 
-GDSCs with an explicitly defined parent should attach only to the parent
-GDSC and not the listed power-domains. Any votes will trickle through the
-hierarchy up to the external power-domains.
+> some nice talk here, actually the following is just opinions, I will
+> be likely happy with whatever approach is taken eventually.
 
-========================================
-::  arch/arm64/boot/dts/example.dtsi  ::
-========================================
+it's indeed an intriguing discussion, made me think a bit ...
+And thanks for describing your maintainer's view, that's definitely
+helpful.
 
-clockcc: clock-controller@0 {
-        compat ="qcom,example-clockcc";
-        power-domains = <&pd_a, &pd_b>;
-}
+> On Wed, Jan 15, 2025 at 4:26=E2=80=AFPM Andre Przywara <andre.przywara@ar=
+m.com> wrote:
+>=20
+> > > pio: pinctrl@1c20800 {
+> > >                         compatible =3D "allwinner,sun8i-r40-pinctrl";
+> > > (...)
+> > >                         i2c0_pins: i2c0-pins {
+> > >                                 pins =3D "PB0", "PB1";
+> > >                                 function =3D "i2c0";
+> > >                         };
+> > >
+> > > abstract, strings, nice. The driver handles the particulars. =20
+> >
+> > What bugs me about this it that this has quite some seemingly redundant
+> > information (Who would have thought that the i2c0 pins use function
+> > "i2c0"?), but misses out on the actual 4 bits(!) of information. =20
+>=20
+> the pins in this example are called PB0 and PB1 though. The designation
+> on the package. And often pins actually named "i2c0_1" "i2c0_2" are
+> for that primary function, but muxable to a few other functions,
+> at least GPIO in most cases. So it's just some name for the pin
+> really.
 
-========================================
-:: drivers/clk/qcom/example-clockcc.c ::
-========================================
+Sure, there is information in the form that marks those two pins for
+being usable as I2C pins. But I feel like the function parameter is not
+living up to its promise (see below).
 
-static struct gdsc parent_gdsc = {
-        .pd = {
-                .name = "parent_gdsc",
-        },
-};
+> > > That is like so because we are designing for users which are
+> > > let's say customization engineers. If these engineers jump from
+> > > project to project matching function strings to group strings will
+> > > be a common way to set up pins, and easy to understand and
+> > > grasp, and it makes the DTS very readable. =20
+> >
+> > That's an interesting view, and I see the point of it being easy to rea=
+d,
+> > but this is partly because it doesn't convey too much actual informatio=
+n,
+> > does it, as it requires another lookup or two.
+> > And the pinctrl group nodes are actually in the .dtsi file, which are
+> > typically written once during the initial SoC enablement, and new board
+> > .dts files normally just reference the existing pingroup nodes. So anyo=
+ne
+> > dealing with just a new board is not bothered by this. =20
+>=20
+> You have a point, and when working with a system the application
+> engineer often finds bugs in the pin control driver, and has to go
+> and fix the actual driver and then all the information hiding and
+> simplification is moot.
+>=20
+> This can become an expensive lesson for the current attempts
+> to push pin control into firmware where the configuration is
+> mostly "dead simple" (and just using strings) - the bugs will be
+> in the firmware instead, and impossible or really hard to fix.
 
-static struct gdsc child0_gdsc = {
-        .pd = {
-                .name = "child0_gdsc",
-        },
-        .parent = &parent_gdsc.pd,
-};
+... in that old embedded world where firmware is an opaque closed source
+unfixable blob. Mainline Allwinner is all "organic": we have upstreamed
+U-Boot and TF-A support, actively maintained, plus an Open Source
+management firmware. Updating the firmware is a matter of "dd" or
+"flashcp" - at least in theory. And I'd rather think of the kernel being
+not easy to change - think Debian installer image, or getting it upstream
+first, then backported, then picked up by a distro.
+But I think this discussion slightly digresses here - at least following it
+would double the length of this email ;-)
 
-static struct gdsc child1_gdsc = {
-        .pd = {
-                .name = "child1_gdsc",
-        },
-        .parent = &parent_gdsc.pd,
-};
+> > Also in my experience most people have no problems in understanding the
+> > concept of pinmuxing and that there is a selector number, also where to
+> > find this. =20
+>=20
+> Yeah the ambition with the strings was to avoid forcing application
+> engineers to know all about that. If they do, they are then
+> developing the driver, not just using it.
 
-========================================
-::          power-subdomains          ::
-========================================
+I'd argue that an application engineer just has to choose the right
+pingroup DT node:
+	pinctrl-0 =3D <&i2c2_pb_pins>;
+In the worst case they go ahead and ask their hardware buddy, and create
+a new pingroup node. In my experience the typical Allwinner users are more
+on the hardware side, so are no strangers to looking up data sheets.
 
-pm-domain::pd_a
-└── pm-subdomain::clockcc::parent_gdsc
-    ├── pm-subdomain::clockcc::child0_gdsc
-    └── pm-subdomain::clockcc::child1_gdsc
+> > > Mediatek and STM32 made a compromise by using pinmux
+> > > and adding some macros to define them so it looks more
+> > > pleasant:
+> > >
+> > >       i2c0_pins_a: i2c0-default {
+> > >                 pins-i2c0 {
+> > >                         pinmux =3D <MT7623_PIN_75_SDA0_FUNC_SDA0>,
+> > >                                  <MT7623_PIN_76_SCL0_FUNC_SCL0>; =20
+> >
+> > Well, I don't really get why they don't use the (MTK_PIN_NO(75) | 1)
+> > definition directly, seems to be more telling to me? =20
+>=20
+> That's what STM32 does as well and it's usable.
+>=20
+> But of course it drives a truck through the initial ambition that pins
+> on all systems be configured the same way, with strings. So now
+> there are some families of drivers all "necessarily different" which
+> is not so nice for people jumping between different SoCs, but
+> very compelling for people focusing on just one SoC.
 
-pm-domain::pd_b
-└── pm-subdomain::clockcc::parent_gdsc
-    ├── pm-subdomain::clockcc::child1_gdsc
-    └── pm-subdomain::clockcc::child2_gdsc
+Ah, I think I get your point.
 
-The performance states will percolate through the pm-domain hierarchy to
-the domains that handle the relevant states.
+> Well, unless this way of doing things becomes so prevalent that
+> it's the new black.
 
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- drivers/clk/qcom/common.c |  1 +
- drivers/clk/qcom/gdsc.c   | 35 +++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/gdsc.h   |  1 +
- 3 files changed, 37 insertions(+)
+That is actually a good argument: At the moment I am happy with my
+proposal (the allwinner,pinmux =3D <number>; property), but that seems like
+standard #15 then.
+So would biting the bullet and adopting the Apple/STM32 way then be more
+sustainable?
+On the other hand: the allwinner,pinmux solution has the advantage of being
+already written and proven working, also it stays very close to the
+existing description/binding - so implementations like U-Boot could just
+keep on using the "function" string.
 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index b79e6a73b53a4113ca324d102d7be5504a9fe85e..9e3380fd718198c9fe63d7361615a91c3ecb3d60 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -323,6 +323,7 @@ int qcom_cc_really_probe(struct device *dev,
- 		scd->dev = dev;
- 		scd->scs = desc->gdscs;
- 		scd->num = desc->num_gdscs;
-+		scd->pd_list = cc->pd_list;
- 		ret = gdsc_register(scd, &reset->rcdev, regmap);
- 		if (ret)
- 			return ret;
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index fdedf6dfe7b90c074b200353fc0c2b897863c79f..7687661491f1fd5a3076c839c4f70f430783fc51 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -506,6 +506,36 @@ static int gdsc_init(struct gdsc *sc)
- 	return ret;
- }
- 
-+static int gdsc_add_subdomain_list(struct dev_pm_domain_list *pd_list,
-+				   struct generic_pm_domain *subdomain)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < pd_list->num_pds; i++) {
-+		struct device *dev = pd_list->pd_devs[i];
-+		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-+
-+		ret = pm_genpd_add_subdomain(genpd, subdomain);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void gdsc_remove_subdomain_list(struct dev_pm_domain_list *pd_list,
-+				       struct generic_pm_domain *subdomain)
-+{
-+	int i;
-+
-+	for (i = 0; i < pd_list->num_pds; i++) {
-+		struct device *dev = pd_list->pd_devs[i];
-+		struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
-+
-+		pm_genpd_remove_subdomain(genpd, subdomain);
-+	}
-+}
-+
- static void gdsc_pm_subdomain_remove(struct gdsc_desc *desc, size_t num)
- {
- 	struct device *dev = desc->dev;
-@@ -520,6 +550,8 @@ static void gdsc_pm_subdomain_remove(struct gdsc_desc *desc, size_t num)
- 			pm_genpd_remove_subdomain(scs[i]->parent, &scs[i]->pd);
- 		else if (!IS_ERR_OR_NULL(dev->pm_domain))
- 			pm_genpd_remove_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
-+		else if (desc->pd_list)
-+			gdsc_remove_subdomain_list(desc->pd_list, &scs[i]->pd);
- 	}
- }
- 
-@@ -575,6 +607,9 @@ int gdsc_register(struct gdsc_desc *desc,
- 			ret = pm_genpd_add_subdomain(scs[i]->parent, &scs[i]->pd);
- 		else if (!IS_ERR_OR_NULL(dev->pm_domain))
- 			ret = pm_genpd_add_subdomain(pd_to_genpd(dev->pm_domain), &scs[i]->pd);
-+		else if (desc->pd_list)
-+			ret = gdsc_add_subdomain_list(desc->pd_list, &scs[i]->pd);
-+
- 		if (ret)
- 			goto err_pm_subdomain_remove;
- 	}
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 1e2779b823d1c8ca077c9b4cd0a0dbdf5f9457ef..dd843e86c05b2f30e6d9e978681580016333839d 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -80,6 +80,7 @@ struct gdsc_desc {
- 	struct device *dev;
- 	struct gdsc **scs;
- 	size_t num;
-+	struct dev_pm_domain_list *pd_list;
- };
- 
- #ifdef CONFIG_QCOM_GDSC
+I am a bit torn here... I don't think I will find the solitude to
+implement this "Apple" approach in the next few weeks.
 
--- 
-2.47.1
+> > So the plan for sunxi would be: <SUNXI_PINMUX(PORTC, 23, MUX_1)>, ...
+> > And this would not be really "opaque", since it has a fixed known mappi=
+ng:
+> >         (port << 16) | (pin << 8) | (mux << 0))
+> > I find this both technically elegant, because it combines all the
+> > information into just one compact cell, but also readable by outsiders,
+> > thanks to the macro. =20
+>=20
+> And a new standard, to add to the other standards, so that
+> is my problem as maintainer. It makes sense on its own, and it
+> complicates the bigger picture.
 
+I see your point - xkcd 927.
+
+> > My main arguments against the current (string-based) approach:
+> > - They require the mapping table to be in every DT user, so not only the
+> >   Linux kernel, but also U-Boot, FreeBSD, you name it... =20
+>=20
+> That's true.
+>=20
+> This comes from the DT ambition to describe hardware and config,
+> but not *define* hardware, i.e. to stop device tree to turn into
+> Verilog or SystemC, which is what will happen if we take the
+> 1:1 reflection of hardware to device tree too far.
+>=20
+> I don't think anyone really knows where to cut the line.
+
+That's true, and I learned to step back from this ambition - it's
+tempting, but indeed out of scope.
+One thing to consider, though: the function names are effectively part of
+the binding, since they must match exactly between the driver and DT - it's
+not just a name. But they are documented nowhere. Names like "i2c0" or
+"uart2" seem obvious, but there are ambiguities like "twi" vs "i2c" (the
+former used in the vendor BSP), or "owa" vs "spdif" (same situation).
+Also, is it "emac" or "emac0"? For some SoCs we discover a second
+interface later: A523 just exposes one EMAC, but the A527 package (same
+die) provides the pins for the second MAC as well. So I am afraid strings
+are not as unique or straight-forward as we hope for.
+
+So for creating a new pingroup, an application engineer would need to
+check the Linux driver (or U-Boot? Or FreeBSD?) for the name to use - that
+sounds somewhat wrong to me.
+In the new model they just create a unique function name and enter the
+pinmux from the datasheet - I think that's not too much to ask?
+
+> > - The tables are getting quite large, and they pollute the single image
+> >   Linux kernel, with tons of very specific information for a number of =
+very
+> >   pitiful Allwinner SoCs. At the moment the tally is at 145KB of code+d=
+ata
+> >   for the existing arm64 SoCs, with the newer SoCs ever growing (H616 a=
+lone
+> >   is 27KB, A523 would be quite larger even, I guess 40K). The new A523
+> >   specific pinctrl support adds 872 Bytes. =20
+>=20
+> This is a generic problem though, look at GPU drivers.
+
+Yes, but for GPUs there is good rationale (because they are big
+complicated pieces of hardware), and they are easily put into modules.
+Pinctrl on the other hand is essential for *any* device to come up
+(UART!), so having them in the image makes things much easier. Also
+Allwinner pinctrl devices are not nearly as sexy as a Radeon or Geforce ;-)
+
+> The community (especially Android) seem set on fixing this by using
+> modules.
+>=20
+> > - Most of the mappings are untested at pinctrl driver commit time, sinc=
+e we
+> >   don't have the device drivers ready yet - by a margin. The new approa=
+ch
+> >   would add the pinmux values when we need them and can test them. =20
+>=20
+> I like this argument the best.
+>=20
+> However this also reads "upfront firmware to handle pin control is a
+> dead end" yet there are people dedicatedly working on exactly that.
+> (Not that its' the Allwinner developers' problem...)
+
+I see, but I feel it's an orthogonal problem, and relies on the a
+pessimistic firmware view (see above).
+Having those gory SoC specific details in firmware (which is by
+definition device specific) solves one big problem, though: there is a
+chance that existing kernels would already run on new SoCs/boards.
+But again: different discussion thread, I guess, and not what I ask for.
+
+> > - The comments in the table give away that something is not quite right:
+> >                   SUNXI_FUNCTION(0x2, "i2c0")),         /* SDA */
+> >   This is just a comment, so has no relevance for the code, but it's not
+> >   meant for humans either. Yet we try to make this correct and maintain
+> >   it. Odd. =20
+>=20
+> So i2c0 is SDA and i2c1 is SCL or something?
+
+No, sorry, I cut out too much, it looks like this:
+
+	SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 5),
+		  SUNXI_FUNCTION(0x5, "i2c0"),		/* SCK */
+		...
+        SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 6),
+		  SUNXI_FUNCTION(0x5, "i2c0"),		/* SDA */
+		...
+        SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 7),
+		  SUNXI_FUNCTION(0x5, "i2c1"),		/* SCK */
+		...
+        SUNXI_PIN(SUNXI_PINCTRL_PIN(I, 8),
+		  SUNXI_FUNCTION(0x5, "i2c1"),		/* SDA */
+
+So the function just selects the group, and the actual pin name is
+completely irrelevant to the software side - hence the comment.
+But this "put something not meant for the human reader into a comment"
+typically points to something not being quite right.
+
+Cheers,
+Andre
