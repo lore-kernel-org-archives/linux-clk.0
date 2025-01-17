@@ -1,275 +1,236 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90441FC7F7;
-	Fri, 17 Jan 2025 11:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6BA1FF61D
+	for <linux-clk@vger.kernel.org>; Fri, 17 Jan 2025 13:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737114450; cv=none; b=GPAr7qorjzVPpjOZSjbC+Eehi6rS/NtwBVvDwJ+SPA1Y9HTHmDT2v8PCPAlHfkfdJ0HarfSP0c1ebN1DGBTMrdwy6CIUffE+Yfi3mK6SNfSEbRLYtqDDDNNwmcnzq3QsrTGyPiVMCFYbBj7AN7RVrs/gD3Pa4T0pqsgMwAMufrg=
+	t=1737122052; cv=none; b=jSbBGu7i2ptmHav08OlBtIoSmHBPXOcZ/hZ+3+i7OCW6W/5zNpQCUuTOpMWQ4cqXRN0qVwT3rg/DJkMGrjllBer12Yxq3aqnJv+OMcR8yXnGWv4OHQa4CLTzJhZEJbA7qObzxtqOEMLi1Py5V1IXwJQql9/gVQl198pzivUdf98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737114450; c=relaxed/simple;
-	bh=A665CMcg3Zxh17VsKeClwr+Y6LhMtPvxA2CPxYHvMWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JLogk9D13W5oBP4TGZJ0GfrOqchFODI50+jB6+QKv0qa8NInK7H83THoeZXGVar1LaEKGX7uZvpsaCov8jcdbmVd+1PPVRgJBBoU85TN8RjZ+5fOHuhLA8KMEqJnire10Z/M6tj42FWy8v+rGN6JuYkZ2G12qE7Ci9VeUhwj/80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oaCefkbz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1737122052; c=relaxed/simple;
+	bh=A9aAMGGnsTEhFX1U+oiiKa/uAspmjBna60FbJ48QEPE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RgR2APouuy9Brq1Oq4fPXFRsbDM5arT9c/ft4tSGBV4NXToSkpSbLMtR9s3Np+32IFBjC5wv5jyP2XJzM/qgsPczSKqYR9DrszaCzu3YUDOlFAqaiaBS/g3RjW6dDqli3UcL9RhB7nW/mtN6cLnWqTHPurBlEMMuWW5tE1Q4ks4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hewSYLQb; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oaCefkbz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF024C4CEE2;
-	Fri, 17 Jan 2025 11:47:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1737114449;
-	bh=A665CMcg3Zxh17VsKeClwr+Y6LhMtPvxA2CPxYHvMWU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oaCefkbzwWPYhy7yuiXXOqs3Et2L01FYU55MA6RjbJ0OD2662lWmuNjGc6xlqXKbt
-	 5gezzHkaRy8u647C1bmJqIzwyR1xImhMLa3n56OA/sVfZ63jT0NVFFfpS0VBz0PNLS
-	 re6PrqCYdLLAfrAj1QQUbRKtAp33CRAFZmeYEtrE=
-Date: Fri, 17 Jan 2025 12:47:26 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v6 08/10] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <2025011722-motocross-finally-e664@gregkh>
-References: <cover.1736776658.git.andrea.porta@suse.com>
- <550590a5a0b80dd8a0c655921ec0aa41a67c8148.1736776658.git.andrea.porta@suse.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hewSYLQb"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43626213fffso19814055e9.1
+        for <linux-clk@vger.kernel.org>; Fri, 17 Jan 2025 05:54:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1737122049; x=1737726849; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G8dm039u0h/bE0Lku8VlFtIRyKFOkFgqiMCpqXYzbhk=;
+        b=hewSYLQbrZF282ncJCotaMM8z4V9AVqjVTVRs0P7oH509Gr+eyVtvztXz9c85p0YtR
+         X9k8F9sDtxGu6g8C1WV78dIlJjnY/BHIjetydXyroVYw9asjM725a4sq4Fv6R0ep0eJU
+         K4COPk+pBHoOmqhYIM3XQ2KUulBXU+U5Z/XLXBKQnYqkTtUY8w7aHFy/w0RD9UB5oPw/
+         d5lmq2yMR6oDGt2b8uWpl+p/FomycmeZI4xiVpGfftC+QnKl600qfnLQXOZZVVCzL9LC
+         snFvGdYEuWCJaPENUKF6jMHzcdg3IDb9PXACQqSZCdSz/KnFUiGYsHcn6XeRLrZHyEPZ
+         eDjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737122049; x=1737726849;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G8dm039u0h/bE0Lku8VlFtIRyKFOkFgqiMCpqXYzbhk=;
+        b=Frz1MGT74OL1aq1FfY6JWg6IubyT24gR0/78E5Ki9OGH9mxqiLVZItrdBSBpf6cI2c
+         cHn512c+0QRJej/34pehYIY7bc9imevWcxWcywf2gIxXyMcM7/yu5NN/8RZx4OfWI5Mw
+         yGbwv5Zn359dgf4w8vo+g7sTNs5x3OQvMBiL3FZsYxOxTHpy2JDEvlEMQt2fLGmtVWp0
+         l0qK+tajqWEGtWOG0HmJylrTz2icc56CvQ30zI3/mmf5FX550SVJMXrdoRQQf3ZP1P91
+         85hhbpHxjSNvRojm1TZHwl9nzuwOEPs/VN2Z9/D2taFw6nRjhq6n23Gt4K4fMet2QFoK
+         AIig==
+X-Forwarded-Encrypted: i=1; AJvYcCUyOXhPmLV2f0nApYBr1l/AqlOFhfbPDnVZQ9NQIAjYoH+X9POTbMm8Pk4beA7ZDl7c1hiwCByw4/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyab3fMPftgdy2k7A7XxZXTZKydsx5eCGeWGulcEl0m0smYpwCb
+	/yw7E9gGKXv4EahlMUKINNAbNbwHjHVqF92rCqEJOnv8Q1zej0yRjJJAtMLFwE8=
+X-Gm-Gg: ASbGnct/7DqjWh/BnD6o747ymcI5hXL973fpOWcJEnNEdemlzzpLyqBIWsFKh+20uBh
+	dsjSRTZpaxaNoUoFb+Uw3HH6HVU5DaHYcRwe4AtY2RbcB3JWFSVA0e6Q9ERVcVWwVUzku701i95
+	xW/jY+nRSw94osc9fRnRYMQh1fLf8Nf6597V8iAG9JMhdO54ydF7TCW6sVychiyqu9piiMgSgjd
+	CkXxswKJ7X3aWrKBZ8Y4xIu19keVpXEOuadEAAaX3IWWhPW1jWputJnzOs5rwZAmA==
+X-Google-Smtp-Source: AGHT+IGIKvWGLgyUIWVx/VXmZV84JzoLHCX1quTsEBQ4TrIU9xwoJZlGH1jpLDRZRCWPwilY6CwVFw==
+X-Received: by 2002:a7b:cc06:0:b0:437:c453:ff19 with SMTP id 5b1f17b1804b1-437c6b4707cmr100788035e9.14.1737122049058;
+        Fri, 17 Jan 2025 05:54:09 -0800 (PST)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38bf3221bf0sm2545279f8f.28.2025.01.17.05.54.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2025 05:54:08 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v10 0/4] clk: qcom: Add support for multiple power-domains
+ for a clock controller.
+Date: Fri, 17 Jan 2025 13:54:06 +0000
+Message-Id: <20250117-b4-linux-next-24-11-18-clock-multiple-power-domains-v10-0-13f2bb656dad@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <550590a5a0b80dd8a0c655921ec0aa41a67c8148.1736776658.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP5gimcC/63RTW7DIBAF4KtErEsFw/DXVe9RdYEBJ6iObdmJm
+ yrK3TvJpq68o13OW7xvYK5szlPJM3vZXdmUlzKXoadBiqcdi4fQ7zMviQIGAlBK6XiDvCv9+cL
+ 7fDlxQC4lpzh2Q/zgx3N3KmOX+Th85omn4RhKP/OgW+8xRdQQGDWPU27L5cG+vdN8KPNpmL4eW
+ yzynv7NWyQXvLEBmuSgCcq+UkWYhudh2rM7uMAKAV2HACFBZ6s1JptRbxC1RkwdoghxyqSQlNI
+ gwwbBNWLrECQEFbqEIjZGbV+i10jlTTQhMYADE9E4iRvErBFfhxhCANGZYIRrnNkg9gcBKqxCL
+ CE2KwFtEh6d2yDuHxBHiE5exdx6KcL2u/wKUaIO8YS0UrcNCp3b8Pvwt9vtG/NhD5QgBAAA
+X-Change-ID: 20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-a5f994dc452a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-1b0d6
 
-On Mon, Jan 13, 2025 at 03:58:07PM +0100, Andrea della Porta wrote:
-> The RaspberryPi RP1 is a PCI multi function device containing
-> peripherals ranging from Ethernet to USB controller, I2C, SPI
-> and others.
-> 
-> Implement a bare minimum driver to operate the RP1, leveraging
-> actual OF based driver implementations for the on-board peripherals
-> by loading a devicetree overlay during driver probe.
-> 
-> The peripherals are accessed by mapping MMIO registers starting
-> from PCI BAR1 region.
-> 
-> With the overlay approach we can achieve more generic and agnostic
-> approach to managing this chipset, being that it is a PCI endpoint
-> and could possibly be reused in other hw implementations. The
-> presented approach is also used by Bootlin's Microchip LAN966x
-> patchset (see link) as well, for a similar chipset.
-> 
-> For reasons why this driver is contained in drivers/misc, please
-> check the links.
+Changes in v10:
+- Updated the commit log of patch #1 to make the reasoning - that it makes
+  applying the subsequent patch cleaner/nicer clear - Bjorn
+- Substantially rewrites final patch commit to mostly reflect Bjorn's
+  summation of my long and rambling previous paragraphs.
+  Being a visual person, I've included some example pseudo-code which
+  hopefully makes the intent clearer plus some ASCII art >= Klimt.
+- Link to v9: https://lore.kernel.org/r/20241230-b4-linux-next-24-11-18-clock-multiple-power-domains-v9-0-f15fb405efa5@linaro.org
 
-Links aren't always around all the time, please document it here why
-this is needed, and then links can "add to" that summary.
+Changes in v9:
+- Added patch to unwind pm subdomains in reverse order.
+  It would also be possible to squash this patch into patch#2 but,
+  my own preference is for more granular patches like this instead of
+  "slipping in" functional changes in larger patches like #2. - bod
+- Unwinding pm subdomain on error in patch #2.
+  To facilitate this change patch #1 was created - Vlad
+- Drops Bjorn's RB on patch #2. There is a small churn in this patch
+  but enough that a reviewer might reasonably expect RB to be given again.
+- Amends commit log for patch #3 further.
+  v8 added a lot to the commit log to provide further information but, it
+  is clear from the comments I received on the commit log that the added
+  verbiage was occlusive not elucidative.
+  Reduce down the commit log of patch #3 - especially Q&A item #1.
+  Sometimes less is more.
+- Link to v8: https://lore.kernel.org/r/20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v8-0-5d93cef910a4@linaro.org
 
-> This driver is heavily based on downstream code from RaspberryPi
-> Foundation, and the original author is Phil Elwell.
-> 
-> Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> Link: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
-> Link: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
-> Link: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
-> Link: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
->  MAINTAINERS                   |   1 +
->  drivers/misc/Kconfig          |   1 +
->  drivers/misc/Makefile         |   1 +
->  drivers/misc/rp1/Kconfig      |  21 +++
->  drivers/misc/rp1/Makefile     |   3 +
->  drivers/misc/rp1/rp1-pci.dtso |   8 +
->  drivers/misc/rp1/rp1_pci.c    | 305 ++++++++++++++++++++++++++++++++++
->  drivers/misc/rp1/rp1_pci.h    |  14 ++
->  drivers/pci/quirks.c          |   1 +
->  include/linux/pci_ids.h       |   3 +
->  10 files changed, 358 insertions(+)
->  create mode 100644 drivers/misc/rp1/Kconfig
->  create mode 100644 drivers/misc/rp1/Makefile
->  create mode 100644 drivers/misc/rp1/rp1-pci.dtso
->  create mode 100644 drivers/misc/rp1/rp1_pci.c
->  create mode 100644 drivers/misc/rp1/rp1_pci.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fbdd8594aa7e..d67ba6d10aa8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19583,6 +19583,7 @@ F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
->  F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
->  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
->  F:	drivers/clk/clk-rp1.c
-> +F:	drivers/misc/rp1/
->  F:	drivers/pinctrl/pinctrl-rp1.c
->  F:	include/dt-bindings/clock/rp1.h
->  F:	include/dt-bindings/misc/rp1.h
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index 09cbe3f0ab1e..ffa4d8315c35 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -651,4 +651,5 @@ source "drivers/misc/uacce/Kconfig"
->  source "drivers/misc/pvpanic/Kconfig"
->  source "drivers/misc/mchp_pci1xxxx/Kconfig"
->  source "drivers/misc/keba/Kconfig"
-> +source "drivers/misc/rp1/Kconfig"
->  endmenu
-> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> index 40bf953185c7..3b6b07a23aac 100644
-> --- a/drivers/misc/Makefile
-> +++ b/drivers/misc/Makefile
-> @@ -74,3 +74,4 @@ lan966x-pci-objs		:= lan966x_pci.o
->  lan966x-pci-objs		+= lan966x_pci.dtbo.o
->  obj-$(CONFIG_MCHP_LAN966X_PCI)	+= lan966x-pci.o
->  obj-y				+= keba/
-> +obj-$(CONFIG_MISC_RP1)		+= rp1/
-> diff --git a/drivers/misc/rp1/Kconfig b/drivers/misc/rp1/Kconfig
-> new file mode 100644
-> index 000000000000..15c443e13389
-> --- /dev/null
-> +++ b/drivers/misc/rp1/Kconfig
-> @@ -0,0 +1,21 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +#
-> +# RaspberryPi RP1 misc device
-> +#
-> +
-> +config MISC_RP1
-> +	tristate "RaspberryPi RP1 PCIe support"
-> +	depends on OF_IRQ && PCI_MSI && PCI_QUIRKS
-> +	select OF_OVERLAY
-> +	select PCI_DYNAMIC_OF_NODES
-> +	help
-> +	  Support the RP1 peripheral chip found on Raspberry Pi 5 board.
-> +
-> +	  This device supports several sub-devices including e.g. Ethernet
-> +	  controller, USB controller, I2C, SPI and UART.
-> +
-> +	  The driver is responsible for enabling the DT node once the PCIe
-> +	  endpoint has been configured, and handling interrupts.
-> +
-> +	  This driver uses an overlay to load other drivers to support for
-> +	  RP1 internal sub-devices.
-> diff --git a/drivers/misc/rp1/Makefile b/drivers/misc/rp1/Makefile
-> new file mode 100644
-> index 000000000000..508b4cb05627
-> --- /dev/null
-> +++ b/drivers/misc/rp1/Makefile
-> @@ -0,0 +1,3 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_MISC_RP1)		+= rp1-pci.o
-> +rp1-pci-objs			:= rp1_pci.o rp1-pci.dtbo.o
-> diff --git a/drivers/misc/rp1/rp1-pci.dtso b/drivers/misc/rp1/rp1-pci.dtso
-> new file mode 100644
-> index 000000000000..0bf2f4bb18e6
-> --- /dev/null
-> +++ b/drivers/misc/rp1/rp1-pci.dtso
-> @@ -0,0 +1,8 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +
-> +/* the dts overlay is included from the dts directory so
-> + * it can be possible to check it with CHECK_DTBS while
-> + * also compile it from the driver source directory.
-> + */
-> +
-> +#include "arm64/broadcom/rp1.dtso"
-> diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
-> new file mode 100644
-> index 000000000000..3e8ba3fa7fd5
-> --- /dev/null
-> +++ b/drivers/misc/rp1/rp1_pci.c
-> @@ -0,0 +1,305 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018-24 Raspberry Pi Ltd.
-> + * All rights reserved.
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqchip/chained_irq.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/module.h>
-> +#include <linux/msi.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/pci.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "rp1_pci.h"
+Changes in v8:
+- Picks up change I agreed with Vlad but failed to cherry-pick into my b4
+  tree - Vlad/Bod
+- Rewords the commit log for patch #3. As I read it I decided I might
+  translate bits of it from thought-stream into English - Bod
+- Link to v7: https://lore.kernel.org/r/20241211-b4-linux-next-24-11-18-clock-multiple-power-domains-v7-0-7e302fd09488@linaro.org
 
-Why does a self-contained .c file need a .h file?  Please put it all in
-here.
+Changes in v7:
+- Expand commit log in patch #3
+  I've discussed with Bjorn on IRC and video what to put into the log here
+  and captured most of what we discussed.
 
-> +
-> +#define RP1_DRIVER_NAME		"rp1"
+  Mostly the point here is voting for voltages in the power-domain list
+  is up to the drivers to do with performance states/opp-tables not for the
+  GDSC code. - Bjorn/Bryan
+- Link to v6: https://lore.kernel.org/r/20241129-b4-linux-next-24-11-18-clock-multiple-power-domains-v6-0-24486a608b86@linaro.org
 
-KBUILD_MODNAME?
+Changes in v6:
+- Passes NULL to second parameter of devm_pm_domain_attach_list - Vlad
+- Link to v5: https://lore.kernel.org/r/20241128-b4-linux-next-24-11-18-clock-multiple-power-domains-v5-0-ca2826c46814@linaro.org
 
-> +
-> +#define RP1_HW_IRQ_MASK		GENMASK(5, 0)
-> +
-> +#define REG_SET			0x800
-> +#define REG_CLR			0xc00
-> +
-> +/* MSI-X CFG registers start at 0x8 */
-> +#define MSIX_CFG(x) (0x8 + (4 * (x)))
-> +
-> +#define MSIX_CFG_IACK_EN        BIT(3)
-> +#define MSIX_CFG_IACK           BIT(2)
-> +#define MSIX_CFG_ENABLE         BIT(0)
-> +
-> +/* Address map */
-> +#define RP1_PCIE_APBS_BASE	0x108000
-> +
-> +/* Interrupts */
-> +#define RP1_INT_END		61
+Changes in v5:
+- In-lines devm_pm_domain_attach_list() in probe() directly - Vlad
+- Link to v4: https://lore.kernel.org/r/20241127-b4-linux-next-24-11-18-clock-multiple-power-domains-v4-0-4348d40cb635@linaro.org
 
+v4:
+- Adds Bjorn's RB to first patch - Bjorn
+- Drops the 'd' in "and int" - Bjorn
+- Amends commit log of patch 3 to capture a number of open questions -
+  Bjorn
+- Link to v3: https://lore.kernel.org/r/20241126-b4-linux-next-24-11-18-clock-multiple-power-domains-v3-0-836dad33521a@linaro.org
 
+v3:
+- Fixes commit log "per which" - Bryan
+- Link to v2: https://lore.kernel.org/r/20241125-b4-linux-next-24-11-18-clock-multiple-power-domains-v2-0-a5e7554d7e45@linaro.org
 
-> +
-> +struct rp1_dev {
-> +	struct pci_dev *pdev;
-> +	struct irq_domain *domain;
-> +	struct irq_data *pcie_irqds[64];
-> +	void __iomem *bar1;
-> +	int ovcs_id;	/* overlay changeset id */
-> +	bool level_triggered_irq[RP1_INT_END];
-> +};
-> +
-> +static void msix_cfg_set(struct rp1_dev *rp1, unsigned int hwirq, u32 value)
-> +{
-> +	iowrite32(value, rp1->bar1 + RP1_PCIE_APBS_BASE + REG_SET + MSIX_CFG(hwirq));
+v2:
+The main change in this version is Bjorn's pointing out that pm_runtime_*
+inside of the gdsc_enable/gdsc_disable path would be recursive and cause a
+lockdep splat. Dmitry alluded to this too.
 
-Do your writes need a read to flush them properly?  Or can they handle
-this automatically?
+Bjorn pointed to stuff being done lower in the gdsc_register() routine that
+might be a starting point.
 
-thanks,
+I iterated around that idea and came up with patch #3. When a gdsc has no
+parent and the pd_list is non-NULL then attach that orphan GDSC to the
+clock controller power-domain list.
 
-greg k-h
+Existing subdomain code in gdsc_register() will connect the parent GDSCs in
+the clock-controller to the clock-controller subdomain, the new code here
+does that same job for a list of power-domains the clock controller depends
+on.
+
+To Dmitry's point about MMCX and MCX dependencies for the registers inside
+of the clock controller, I have switched off all references in a test dtsi
+and confirmed that accessing the clock-controller regs themselves isn't
+required.
+
+On the second point I also verified my test branch with lockdep on which
+was a concern with the pm_domain version of this solution but I wanted to
+cover it anyway with the new approach for completeness sake.
+
+Here's the item-by-item list of changes:
+
+- Adds a patch to capture pm_genpd_add_subdomain() result code - Bryan
+- Changes changelog of second patch to remove singleton and generally
+  to make the commit log easier to understand - Bjorn
+- Uses demv_pm_domain_attach_list - Vlad
+- Changes error check to if (ret < 0 && ret != -EEXIST) - Vlad
+- Retains passing &pd_data instead of NULL - because NULL doesn't do
+  the same thing - Bryan/Vlad
+- Retains standalone function qcom_cc_pds_attach() because the pd_data
+  enumeration looks neater in a standalone function - Bryan/Vlad
+- Drops pm_runtime in favour of gdsc_add_subdomain_list() for each
+  power-domain in the pd_list.
+  The pd_list will be whatever is pointed to by power-domains = <>
+  in the dtsi - Bjorn
+- Link to v1: https://lore.kernel.org/r/20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org
+
+v1:
+On x1e80100 and it's SKUs the Camera Clock Controller - CAMCC has
+multiple power-domains which power it. Usually with a single power-domain
+the core platform code will automatically switch on the singleton
+power-domain for you. If you have multiple power-domains for a device, in
+this case the clock controller, you need to switch those power-domains
+on/off yourself.
+
+The clock controllers can also contain Global Distributed
+Switch Controllers - GDSCs which themselves can be referenced from dtsi
+nodes ultimately triggering a gdsc_en() in drivers/clk/qcom/gdsc.c.
+
+As an example:
+
+cci0: cci@ac4a000 {
+	power-domains = <&camcc TITAN_TOP_GDSC>;
+};
+
+This series adds the support to attach a power-domain list to the
+clock-controllers and the GDSCs those controllers provide so that in the
+case of the above example gdsc_toggle_logic() will trigger the power-domain
+list with pm_runtime_resume_and_get() and pm_runtime_put_sync()
+respectively.
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (4):
+      clk: qcom: gdsc: Release pm subdomains in reverse add order
+      clk: qcom: gdsc: Capture pm_genpd_add_subdomain result code
+      clk: qcom: common: Add support for power-domain attachment
+      clk: qcom: Support attaching GDSCs to multiple parents
+
+ drivers/clk/qcom/common.c |  6 ++++
+ drivers/clk/qcom/gdsc.c   | 75 +++++++++++++++++++++++++++++++++++++++--------
+ drivers/clk/qcom/gdsc.h   |  1 +
+ 3 files changed, 69 insertions(+), 13 deletions(-)
+---
+base-commit: 0907e7fb35756464aa34c35d6abb02998418164b
+change-id: 20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-a5f994dc452a
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
