@@ -1,107 +1,275 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6225C1F91FF;
-	Fri, 17 Jan 2025 10:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90441FC7F7;
+	Fri, 17 Jan 2025 11:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737110395; cv=none; b=MvacyTsIV0BYd3riVdQft3YOkMZJKRqpnz4jZYRfuHnpJRTZ1cmI4H4gP+a3/IJGTxr7SJGPfu0/57XQhSQqcvrP5G40IYx7HfuUYVYQL56rNLmUM+D7hx8g/Dp5CAsZtwivWCV0pTboOcBJ8GO4TFfYbkP1Xsx47u/PqBHUPZE=
+	t=1737114450; cv=none; b=GPAr7qorjzVPpjOZSjbC+Eehi6rS/NtwBVvDwJ+SPA1Y9HTHmDT2v8PCPAlHfkfdJ0HarfSP0c1ebN1DGBTMrdwy6CIUffE+Yfi3mK6SNfSEbRLYtqDDDNNwmcnzq3QsrTGyPiVMCFYbBj7AN7RVrs/gD3Pa4T0pqsgMwAMufrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737110395; c=relaxed/simple;
-	bh=YXW+x9GgzgdecKu3CzDdV0DGCreYczj3I9qa8OAff9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TYhpkpqLJsIEr7ZGrOzHCr4Dcr2h6SacQJwRKgf3fyxKW6S6v94sLKGTf8dJeU+YmeADJ1yuS9bItA66hdLeBKgGmOUn203JHsd3RqnSImG20OhWcSWfHLr7UhET3imYKX8In90o+kcAGUE3/mpEGkMfj6JkuucL0KhkVeGDB0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3403D1476;
-	Fri, 17 Jan 2025 02:40:21 -0800 (PST)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D2753F7B4;
-	Fri, 17 Jan 2025 02:39:49 -0800 (PST)
-Date: Fri, 17 Jan 2025 10:39:41 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Andras Szemzo <szemzo.andras@gmail.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Linus
- Walleij <linus.walleij@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Maxime Ripard <mripard@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@baylibre.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 10/12] dt-bindings: phy: allwinner: add v853 usb phy
-Message-ID: <20250117103941.7f9bda7b@donnerap.manchester.arm.com>
-In-Reply-To: <Z4dpFqffMJ31ml2y@vaman>
-References: <20250110123923.270626-1-szemzo.andras@gmail.com>
-	<20250110123923.270626-11-szemzo.andras@gmail.com>
-	<Z4dpFqffMJ31ml2y@vaman>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1737114450; c=relaxed/simple;
+	bh=A665CMcg3Zxh17VsKeClwr+Y6LhMtPvxA2CPxYHvMWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JLogk9D13W5oBP4TGZJ0GfrOqchFODI50+jB6+QKv0qa8NInK7H83THoeZXGVar1LaEKGX7uZvpsaCov8jcdbmVd+1PPVRgJBBoU85TN8RjZ+5fOHuhLA8KMEqJnire10Z/M6tj42FWy8v+rGN6JuYkZ2G12qE7Ci9VeUhwj/80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oaCefkbz; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oaCefkbz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF024C4CEE2;
+	Fri, 17 Jan 2025 11:47:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1737114449;
+	bh=A665CMcg3Zxh17VsKeClwr+Y6LhMtPvxA2CPxYHvMWU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oaCefkbzwWPYhy7yuiXXOqs3Et2L01FYU55MA6RjbJ0OD2662lWmuNjGc6xlqXKbt
+	 5gezzHkaRy8u647C1bmJqIzwyR1xImhMLa3n56OA/sVfZ63jT0NVFFfpS0VBz0PNLS
+	 re6PrqCYdLLAfrAj1QQUbRKtAp33CRAFZmeYEtrE=
+Date: Fri, 17 Jan 2025 12:47:26 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v6 08/10] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <2025011722-motocross-finally-e664@gregkh>
+References: <cover.1736776658.git.andrea.porta@suse.com>
+ <550590a5a0b80dd8a0c655921ec0aa41a67c8148.1736776658.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <550590a5a0b80dd8a0c655921ec0aa41a67c8148.1736776658.git.andrea.porta@suse.com>
 
-On Wed, 15 Jan 2025 07:51:50 +0000
-Vinod Koul <vkoul@kernel.org> wrote:
-
-> On 10-01-25, 13:39, Andras Szemzo wrote:
-> > Document Allwinner v853 USB phy.
-> > 
-> > Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
-> > ---
-> >  .../phy/allwinner,sun8i-v853-usb-phy.yaml     | 89 +++++++++++++++++++
-> >  1 file changed, 89 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/allwinner,sun8i-v853-usb-phy.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun8i-v853-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun8i-v853-usb-phy.yaml
-> > new file mode 100644
-> > index 000000000000..773c3f476db8
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/phy/allwinner,sun8i-v853-usb-phy.yaml
-> > @@ -0,0 +1,89 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/phy/allwinner,sun8i-v853-usb-phy.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Allwinner V853 USB PHY
-> > +
-> > +maintainers:
-> > +  - Chen-Yu Tsai <wens@csie.org>
-> > +  - Maxime Ripard <mripard@kernel.org>
-> > +
-> > +properties:
-> > +  "#phy-cells":
-> > +    const: 1
-> > +
-> > +  compatible:
-> > +    const:
-> > +	- allwinner,sun8i-v853-usb-phy  
+On Mon, Jan 13, 2025 at 03:58:07PM +0100, Andrea della Porta wrote:
+> The RaspberryPi RP1 is a PCI multi function device containing
+> peripherals ranging from Ethernet to USB controller, I2C, SPI
+> and others.
 > 
-> Does this really need a new binding document, if so why... Cant this be
-> added to one of the existing docs which driver uses?
+> Implement a bare minimum driver to operate the RP1, leveraging
+> actual OF based driver implementations for the on-board peripherals
+> by loading a devicetree overlay during driver probe.
+> 
+> The peripherals are accessed by mapping MMIO registers starting
+> from PCI BAR1 region.
+> 
+> With the overlay approach we can achieve more generic and agnostic
+> approach to managing this chipset, being that it is a PCI endpoint
+> and could possibly be reused in other hw implementations. The
+> presented approach is also used by Bootlin's Microchip LAN966x
+> patchset (see link) as well, for a similar chipset.
+> 
+> For reasons why this driver is contained in drivers/misc, please
+> check the links.
 
-The USB-PHY bindings don't differ too much on a first glance, but still
-enough in nasty details (number of PHYs supported, number of clocks
-required, etc.) to make a joint binding basically unreadable (we tried
-that). That's why we opted to have separate bindings.
-Now I believe it's worth to look for the closest existing binding, and
-just put the compatible in there, in the hope we don't need much else, and
-that it still stays readable.
+Links aren't always around all the time, please document it here why
+this is needed, and then links can "add to" that summary.
 
-Cheers,
-Andre
+> This driver is heavily based on downstream code from RaspberryPi
+> Foundation, and the original author is Phil Elwell.
+> 
+> Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+> Link: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
+> Link: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
+> Link: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
+> Link: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  MAINTAINERS                   |   1 +
+>  drivers/misc/Kconfig          |   1 +
+>  drivers/misc/Makefile         |   1 +
+>  drivers/misc/rp1/Kconfig      |  21 +++
+>  drivers/misc/rp1/Makefile     |   3 +
+>  drivers/misc/rp1/rp1-pci.dtso |   8 +
+>  drivers/misc/rp1/rp1_pci.c    | 305 ++++++++++++++++++++++++++++++++++
+>  drivers/misc/rp1/rp1_pci.h    |  14 ++
+>  drivers/pci/quirks.c          |   1 +
+>  include/linux/pci_ids.h       |   3 +
+>  10 files changed, 358 insertions(+)
+>  create mode 100644 drivers/misc/rp1/Kconfig
+>  create mode 100644 drivers/misc/rp1/Makefile
+>  create mode 100644 drivers/misc/rp1/rp1-pci.dtso
+>  create mode 100644 drivers/misc/rp1/rp1_pci.c
+>  create mode 100644 drivers/misc/rp1/rp1_pci.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fbdd8594aa7e..d67ba6d10aa8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19583,6 +19583,7 @@ F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+>  F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+>  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+>  F:	drivers/clk/clk-rp1.c
+> +F:	drivers/misc/rp1/
+>  F:	drivers/pinctrl/pinctrl-rp1.c
+>  F:	include/dt-bindings/clock/rp1.h
+>  F:	include/dt-bindings/misc/rp1.h
+> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> index 09cbe3f0ab1e..ffa4d8315c35 100644
+> --- a/drivers/misc/Kconfig
+> +++ b/drivers/misc/Kconfig
+> @@ -651,4 +651,5 @@ source "drivers/misc/uacce/Kconfig"
+>  source "drivers/misc/pvpanic/Kconfig"
+>  source "drivers/misc/mchp_pci1xxxx/Kconfig"
+>  source "drivers/misc/keba/Kconfig"
+> +source "drivers/misc/rp1/Kconfig"
+>  endmenu
+> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+> index 40bf953185c7..3b6b07a23aac 100644
+> --- a/drivers/misc/Makefile
+> +++ b/drivers/misc/Makefile
+> @@ -74,3 +74,4 @@ lan966x-pci-objs		:= lan966x_pci.o
+>  lan966x-pci-objs		+= lan966x_pci.dtbo.o
+>  obj-$(CONFIG_MCHP_LAN966X_PCI)	+= lan966x-pci.o
+>  obj-y				+= keba/
+> +obj-$(CONFIG_MISC_RP1)		+= rp1/
+> diff --git a/drivers/misc/rp1/Kconfig b/drivers/misc/rp1/Kconfig
+> new file mode 100644
+> index 000000000000..15c443e13389
+> --- /dev/null
+> +++ b/drivers/misc/rp1/Kconfig
+> @@ -0,0 +1,21 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +#
+> +# RaspberryPi RP1 misc device
+> +#
+> +
+> +config MISC_RP1
+> +	tristate "RaspberryPi RP1 PCIe support"
+> +	depends on OF_IRQ && PCI_MSI && PCI_QUIRKS
+> +	select OF_OVERLAY
+> +	select PCI_DYNAMIC_OF_NODES
+> +	help
+> +	  Support the RP1 peripheral chip found on Raspberry Pi 5 board.
+> +
+> +	  This device supports several sub-devices including e.g. Ethernet
+> +	  controller, USB controller, I2C, SPI and UART.
+> +
+> +	  The driver is responsible for enabling the DT node once the PCIe
+> +	  endpoint has been configured, and handling interrupts.
+> +
+> +	  This driver uses an overlay to load other drivers to support for
+> +	  RP1 internal sub-devices.
+> diff --git a/drivers/misc/rp1/Makefile b/drivers/misc/rp1/Makefile
+> new file mode 100644
+> index 000000000000..508b4cb05627
+> --- /dev/null
+> +++ b/drivers/misc/rp1/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +obj-$(CONFIG_MISC_RP1)		+= rp1-pci.o
+> +rp1-pci-objs			:= rp1_pci.o rp1-pci.dtbo.o
+> diff --git a/drivers/misc/rp1/rp1-pci.dtso b/drivers/misc/rp1/rp1-pci.dtso
+> new file mode 100644
+> index 000000000000..0bf2f4bb18e6
+> --- /dev/null
+> +++ b/drivers/misc/rp1/rp1-pci.dtso
+> @@ -0,0 +1,8 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +
+> +/* the dts overlay is included from the dts directory so
+> + * it can be possible to check it with CHECK_DTBS while
+> + * also compile it from the driver source directory.
+> + */
+> +
+> +#include "arm64/broadcom/rp1.dtso"
+> diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
+> new file mode 100644
+> index 000000000000..3e8ba3fa7fd5
+> --- /dev/null
+> +++ b/drivers/misc/rp1/rp1_pci.c
+> @@ -0,0 +1,305 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018-24 Raspberry Pi Ltd.
+> + * All rights reserved.
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqchip/chained_irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/module.h>
+> +#include <linux/msi.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/pci.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "rp1_pci.h"
+
+Why does a self-contained .c file need a .h file?  Please put it all in
+here.
+
+> +
+> +#define RP1_DRIVER_NAME		"rp1"
+
+KBUILD_MODNAME?
+
+> +
+> +#define RP1_HW_IRQ_MASK		GENMASK(5, 0)
+> +
+> +#define REG_SET			0x800
+> +#define REG_CLR			0xc00
+> +
+> +/* MSI-X CFG registers start at 0x8 */
+> +#define MSIX_CFG(x) (0x8 + (4 * (x)))
+> +
+> +#define MSIX_CFG_IACK_EN        BIT(3)
+> +#define MSIX_CFG_IACK           BIT(2)
+> +#define MSIX_CFG_ENABLE         BIT(0)
+> +
+> +/* Address map */
+> +#define RP1_PCIE_APBS_BASE	0x108000
+> +
+> +/* Interrupts */
+> +#define RP1_INT_END		61
+
+
+
+> +
+> +struct rp1_dev {
+> +	struct pci_dev *pdev;
+> +	struct irq_domain *domain;
+> +	struct irq_data *pcie_irqds[64];
+> +	void __iomem *bar1;
+> +	int ovcs_id;	/* overlay changeset id */
+> +	bool level_triggered_irq[RP1_INT_END];
+> +};
+> +
+> +static void msix_cfg_set(struct rp1_dev *rp1, unsigned int hwirq, u32 value)
+> +{
+> +	iowrite32(value, rp1->bar1 + RP1_PCIE_APBS_BASE + REG_SET + MSIX_CFG(hwirq));
+
+Do your writes need a read to flush them properly?  Or can they handle
+this automatically?
+
+thanks,
+
+greg k-h
