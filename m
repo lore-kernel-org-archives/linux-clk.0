@@ -1,436 +1,305 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A8D18A6A7;
-	Fri, 17 Jan 2025 16:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2E9189B9D;
+	Fri, 17 Jan 2025 16:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737129978; cv=none; b=Dr1Rl8QkweatLlsVzYPs5UjOave/LbpeZnw2zjRwHwonnw+Dub7rd0w4qA2Ffw2Q6dX+DsqBt4QYwCpQQlK5nBvlbrqmas1Mjyi9BOAzbQetHJGYXThiWSSh5Z6gJX4qZ1UTHkIj1zxXebLVPsxP5TwRtVs0j5czfKJhfrNl51Q=
+	t=1737130625; cv=none; b=hUNFC5w0XuL0lRta7Wv3ipzelFBG2ZvSzM7rXfeZPJu4EAg66dmBsiMjtxmhGlPb3H5ecX4nNjRMs2SSnpfNCrdxMwMvfDcUg+KhemcE3VbQACAIly134yfIYK0yu1jhQ+V8DEGxxSKoJPvlsRHF+CRIoifI+9MJWUh9jEOjHPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737129978; c=relaxed/simple;
-	bh=DyQ+mwDm/HCyhYzaFSV8STpG5LVsNiT8WNZvA4ejKSQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=K244dTMNTZfaZFnt5tZB8wM4IMH703aLa9sevdOS7a42E4sFhTMzz1k7yODwUqRmKaU0/EkOb1c/y80cqTpYcQwktwGshf2BOVkxxanmFIT0Cjldok6J4TDO8e//CKxHkAyCUVoABenWM2ug/Uv1SSNbOxQDans8EszZFcPa3dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H2IQkPxf; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1737130625; c=relaxed/simple;
+	bh=JvQYmSLVx8xQw9ayQ82A6Fqgd6Lul6YYjp7oXACKtDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ukque3vyQTcbcyYlyqYYhNSrXOfttrL235NQQRuwpVXQpTTqAKIyE0QWCZR1XR5L1NE3gm9EKT7HiVnbVVzyowa4EqjkwknArYPI6ipYSQvyHdxh0f0LbiVG1aZ2RZDK/8yek7zVatX17q42AIroMi6UXNgk83XmDq3HnyNXfdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8BWhvvk; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H2IQkPxf"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa6c0d1833eso453465366b.1;
-        Fri, 17 Jan 2025 08:06:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8BWhvvk"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-435f8f29f8aso15820265e9.2;
+        Fri, 17 Jan 2025 08:17:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737129975; x=1737734775; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q1tWIOeqFhQsNAse8col4KN+L/njYkn0cnkMeGeZdV4=;
-        b=H2IQkPxfBil8M3kCOL/aIjK8p+oVXO0mDFGc+1M/mERTDUdT0zYifuqS2jUX4lnKwX
-         /sLXloymjuynN4M7Id8r3qsTOojiu8keGiit1vfK3bmRABy6PyQkpAQY9UPD4vBmV/Jx
-         ZuFzpXMOt0RQuWGXm9D4Qo+2hVomON3S4w+ovba1TRJFhi6bsQ96u93Sk8U3zfysQqGk
-         rle2tMEoE5mhdC9LBUGlPgAKDDOjrS1+Ly+3FcQjUaJRTqn1UObg2YcxacR/YT1FIEPO
-         zE4TSeLgu/uxILb+I19UNBYphib/s3685y0cCzA/RlrPEuYSCq2Dy2oDzKDqfxYQr29d
-         R/9w==
+        d=gmail.com; s=20230601; t=1737130621; x=1737735421; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RkK3YraUhv52e6kmGNd3i6W1acEs14yvrmEO/fbWB6U=;
+        b=J8BWhvvksSpk/B02lhtLhyQUvZCuvvZjSbPmey8q4HKC4ldbaDHIRyq73skallutoW
+         bFneEnkU+x7hM34msk3AwzKiCphas511/LIVJUw5491vMCBMdsqlyyLpxoDdUuI8bpJQ
+         54EyXXO7urnD6melD/k5yllwP/9k52GPOCVduzdwgPVo51CmY+1pIv/cDlaIm1frFndr
+         ZiyyI4S5vCM2VI25Sn3RQTcs4CVYC7SA2nN3P8T7jF6w6AyOjQAW5yNRzfMPPwft5BBs
+         r0MBrWk9aM8CTTS4p1GiRlhNVy4BlFuNBGPDvd9jRV/3VUU2e6HGl/IEa2hEIJQtGfUs
+         6VAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737129975; x=1737734775;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q1tWIOeqFhQsNAse8col4KN+L/njYkn0cnkMeGeZdV4=;
-        b=H5DerCRNWjRdx3aSZwYk8Y4qIPYqNIxNl5aU5qf+6sdYVNsiVPlrccsQn05B/JOo07
-         OpG+v2nyUENsuoUORGa1BfQJ9VCzivYD0rSk41EDCQzE3hNzeF8Q/6EsR51+1693jY8C
-         u47peQfA/9syQnvCpJs9/JiwImNx6AUoew8Eb9nljkmchgVM1p17HL6Twi/xjwvvToMI
-         L8hXX9njG14dhn+K3QWSkSAtoLro0U5UIy2a0LMbq+kr68j6x7qYhRwnggw0DVXMbVpK
-         pYMCHSNAPRlMJdUxt+ejM7enWwe2+hhM66yJbT40XutodB87m+A8TelcPkNMDbYpuXSt
-         CBeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFNnlZJEN2ikb6VNdtBovNwYmEUg7Gor8LaVMDZqwLqtIK8Mw+Javdeaujy/nROmMgU1KQW3SOO78=@vger.kernel.org, AJvYcCXCUkjvljDRsessTVwY94pHAzN9g4jqLwS9i8r0YdXUUmo1YT/kuNby2FF/MU7Y9cuq1E9OumnYEuTXrVd2@vger.kernel.org
-X-Gm-Message-State: AOJu0YylCPXsPb5/5jSTTVNBT59ss7J6hFoOV0RHNzxIzPOkSm83ASVG
-	FpygfmF55ofQWqiZsuyPhvtyuYsWlOCs7nAMJdEaiKkua7amfbTLi+ko/ZXR
-X-Gm-Gg: ASbGnctOmItW2FZ7C0xKqVRmfpstrj3vnYFp+fmh4T1qjuAWKGujNQpaJCSFLHz75uk
-	5ac6FTfU7M+PaiEwlE9+cW9uEZMLtJG0IPvdCP4W/omRbqdhXXpQrkBSM9+474HA2EtLj8KOFnj
-	NWKYm6ZM8vXNh162M1KwWInR6/ZcoWBaC0Uxc0cvnQCLBJAQVU5PGLcMrtvYvSKr1zNe8yfL80C
-	a/dGTN2159wJ8NR8o2pThz0iU40ERVtYNsXnKqcCr6R5WsGqsQW+JaD5WCQQ9xAuTU/JBvVxLMq
-	0fM=
-X-Google-Smtp-Source: AGHT+IHbt+Z/r3WUfQtHdL+9uAFCrwgVIV3/2Vuom9Jdp1KWpMp8IiZh03E8i55lSSQ96DOAx16s0g==
-X-Received: by 2002:a17:907:72c6:b0:aa6:9624:78f1 with SMTP id a640c23a62f3a-ab38b1e5800mr355722466b.9.1737129974550;
-        Fri, 17 Jan 2025 08:06:14 -0800 (PST)
-Received: from smtpclient.apple ([87.200.95.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab384fcd90csm188578866b.181.2025.01.17.08.06.12
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 17 Jan 2025 08:06:14 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1737130621; x=1737735421;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RkK3YraUhv52e6kmGNd3i6W1acEs14yvrmEO/fbWB6U=;
+        b=jNFE1NNPyCMU8QhLPPfvIxy7+ex4seXHorash4AvN2KGlbrem9296FBTpszALINz1E
+         xiKBYxbi9c5KsPt88YDp8+gDf+P6FR5RQ7f0xj8CxCSAFXHuyaCpiRuPYlyYui1QMXee
+         sKy21V45gugNZDo+I3FNvvs9OwncPI7BAlunyntioDhTqPfEsTcHRw9mG5QduG8lbKAL
+         Svbsqh01+u7a9kF9rRa2VZM8KSyhKlWMgamaGFp8NajGFjOE1SEh6/Is2n8bG2eYJouz
+         fMA5whPGMFOvUbD4puor1U0YFtnrEHzuTvlcU4hxcg9lQojds/v0csu2AW4dim2FgDj2
+         SvIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJaOIH14R34E1zuqb1+VSDLRoPhn1VCN7QUjCiuKUcI24fgi9gc0wsbpxlwNMWM6Ffi06li3rIDCk3zJE+@vger.kernel.org, AJvYcCXJ1dsHbIKajMaJtJp8fkuOv6lodbn41DIrACk2kTJ7YLcgic7+wi7caCQCDI4Zu+vHwNelYXIo@vger.kernel.org, AJvYcCXafx2UfWBVVgFiWTuRjQ5/HkT/zZxXc+/emAcwo7m9MWQ392+J5/tJZ4+2jfXywSrQ11Xye6sNALY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1ddhThKDFIzA3iRgQ5e0NXv9Uwg1d4GhQvYRXCAqxrmrKdfNG
+	XrBw3JHqB9mVx6Cwvje2beJ4KQvYqzO//D7b4WylpFbdFWpvM95/
+X-Gm-Gg: ASbGncuabZmvYzWF9Krg7gdQEw7ZuZ0FCyq7K0w036h8QFhzmwAKhnm6yzVxGiId1Io
+	WhJxWCRZTztvelK4T3bOZlKTVysouZ6SFPHmtE1sdc0v4CszCKoqX8SwrLYShkaeWpQKCZjWSL2
+	dFpYRVF10imyaO8bGnSLRwHZk8B9uko6j6fvWXsdFXhxdJgWaWTKP648mY6MG2g7biCDeYPnIbb
+	w828lwyaXf0zzUyPEUvjsjS559po7ZRjoPTD1t6pCKBNIW04qoOfOo7
+X-Google-Smtp-Source: AGHT+IGAWQaM6yNh33X77UBZupdUNHFVnCSSzWPAqwT1T2yvjJ/mCaKmTHNr57vHQHkL4BIH2iTTdg==
+X-Received: by 2002:a05:600c:4ed4:b0:434:fdbc:5cf7 with SMTP id 5b1f17b1804b1-438914373e4mr32114405e9.27.1737130621190;
+        Fri, 17 Jan 2025 08:17:01 -0800 (PST)
+Received: from eichest-laptop ([2a02:168:af72:0:a17a:6a28:e744:9a06])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c74ac5f9sm96021605e9.11.2025.01.17.08.17.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2025 08:17:00 -0800 (PST)
+Date: Fri, 17 Jan 2025 17:16:58 +0100
+From: Stefan Eichenberger <eichest@gmail.com>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, shengjiu.wang@nxp.com,
+	francesco.dolcini@toradex.com, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v1] clk: imx: imx8-acm: fix flags for acm clocks
+Message-ID: <Z4qCeo0H1kZxAuFE@eichest-laptop>
+References: <CAA+D8ANvKQKJhn6qKbPhQeXPD5kxUo3Hg-FBLkDMOaWLTA8vVg@mail.gmail.com>
+ <Z4ZRYMf_uJW4poW9@eichest-laptop>
+ <Z4dy3LiEAQ_gkQGG@eichest-laptop>
+ <CAA+D8AO75MLyP5AWDJoogw8ae4GRtZfSR-HT+S26bXoaVs8saQ@mail.gmail.com>
+ <Z4eQX_VnBEVqxT_r@eichest-laptop>
+ <CAA+D8APivJWD-AqwmQ-mtcr=ZHot5rfA8FRWF2+p-_mq5BGxHA@mail.gmail.com>
+ <Z4i0G5Tw4q0v8DTL@eichest-laptop>
+ <CAA+D8AOakQdnEe9ZrfTCrWcjHJRRU0kqFVsiu8+FMiHeMAVV_g@mail.gmail.com>
+ <Z4lDbMqCYW2W7iyX@eichest-laptop>
+ <CAA+D8AM9xwvyvU_0ODFwaq=YzzbP_R7hqMvHqx-Y1kHPpX_x_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v2 1/4] clk: add a clk_hw helpers to get the clock device
- or device_node
-From: Christian Hewitt <christianshewitt@gmail.com>
-In-Reply-To: <20250117-amlogic-clk-drop-clk-regmap-tables-v2-1-d1f77cb0773e@baylibre.com>
-Date: Fri, 17 Jan 2025 20:05:59 +0400
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <89059AAC-309E-4BD7-A6DE-63AEAFF3E045@gmail.com>
-References: <20250117-amlogic-clk-drop-clk-regmap-tables-v2-0-d1f77cb0773e@baylibre.com>
- <20250117-amlogic-clk-drop-clk-regmap-tables-v2-1-d1f77cb0773e@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: Apple Mail (2.3826.200.121)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA+D8AM9xwvyvU_0ODFwaq=YzzbP_R7hqMvHqx-Y1kHPpX_x_Q@mail.gmail.com>
 
-> On 17 Jan 2025, at 7:58=E2=80=AFpm, Jerome Brunet =
-<jbrunet@baylibre.com> wrote:
->=20
-> Add helpers to get the device or device_node associated with clk_hw.
->=20
-> This can be used by clock drivers to access various device related
-> functionality such as devres, dev_ prints, etc ...
->=20
-> Add test for these new helpers in clk-test.
->=20
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
-> drivers/clk/Makefile                    |   1 +
-> drivers/clk/clk.c                       |  33 +++++++++
-> drivers/clk/clk_test.c                  | 116 =
-+++++++++++++++++++++++++++-----
-> drivers/clk/kunit_clk_dummy_device.dtso |  10 +++
-> include/linux/clk-provider.h            |   2 +
-> 5 files changed, 145 insertions(+), 17 deletions(-)
->=20
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index =
-bf4bd45adc3a0ed8c9dc699c76f303dc91b524c4..b38ec888a449249340cd1ef147a77436=
-1558af3c 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -18,6 +18,7 @@ clk-test-y :=3D clk_test.o \
->   kunit_clk_assigned_rates_without_consumer.dtbo.o \
->   kunit_clk_assigned_rates_zero.dtbo.o \
->   kunit_clk_assigned_rates_zero_consumer.dtbo.o \
-> +   kunit_clk_dummy_device.dtbo.o \
->   kunit_clk_parent_data_test.dtbo.o
-> obj-$(CONFIG_COMMON_CLK) +=3D clk-divider.o
-> obj-$(CONFIG_COMMON_CLK) +=3D clk-fixed-factor.o
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index =
-9b45fa005030f56e1478b9742715ebcde898133f..726f63ecc3758538a75dc4e7b3783ccf=
-66029db1 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -365,6 +365,39 @@ const char *clk_hw_get_name(const struct clk_hw =
-*hw)
-> }
-> EXPORT_SYMBOL_GPL(clk_hw_get_name);
->=20
-> +/**
-> + * clk_hw_get_dev - get device from an hardware clock.
-> + * @hw: the clk_hw pointer to get the struct device from
-> + *
-> + * This is an helper to get the struct device associated with an =
-hardware
-> + * clock. Some clock, such as with early clock constroller, may not =
-be
-> + * associated with any struct device.
+On Fri, Jan 17, 2025 at 02:56:15PM +0800, Shengjiu Wang wrote:
+> On Fri, Jan 17, 2025 at 1:35 AM Stefan Eichenberger <eichest@gmail.com> wrote:
+> >
+> > Hi Shengjiu Wang,
+> >
+> > On Thu, Jan 16, 2025 at 03:30:55PM +0800, Shengjiu Wang wrote:
+> > > On Thu, Jan 16, 2025 at 3:24 PM Stefan Eichenberger <eichest@gmail.com> wrote:
+> > > >
+> > > > Hi Shengjiu Wang,
+> > > >
+> > > > On Thu, Jan 16, 2025 at 12:01:13PM +0800, Shengjiu Wang wrote:
+> > > > > On Wed, Jan 15, 2025 at 6:39 PM Stefan Eichenberger <eichest@gmail.com> wrote:
+> > > > > >
+> > > > > > On Wed, Jan 15, 2025 at 05:14:09PM +0800, Shengjiu Wang wrote:
+> > > > > > > On Wed, Jan 15, 2025 at 4:33 PM Stefan Eichenberger <eichest@gmail.com> wrote:
+> > > > > > > >
+> > > > > > > > Hi Shengjiu Wang,
+> > > > > > > >
+> > > > > > > > On Tue, Jan 14, 2025 at 12:58:24PM +0100, Stefan Eichenberger wrote:
+> > > > > > > > > Hi Shengjiu Wang,
+> > > > > > > > >
+> > > > > > > > > On Tue, Jan 14, 2025 at 03:49:10PM +0800, Shengjiu Wang wrote:
+> > > > > > > > > > On Mon, Jan 13, 2025 at 5:54 PM Stefan Eichenberger <eichest@gmail.com> wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> > > > > > > > > > >
+> > > > > > > > > > > Currently, the flags for the ACM clocks are set to 0. This configuration
+> > > > > > > > > > > causes the fsl-sai audio driver to fail when attempting to set the
+> > > > > > > > > > > sysclk, returning an EINVAL error. The following error messages
+> > > > > > > > > > > highlight the issue:
+> > > > > > > > > > > fsl-sai 59090000.sai: ASoC: error at snd_soc_dai_set_sysclk on 59090000.sai: -22
+> > > > > > > > > > > imx-hdmi sound-hdmi: failed to set cpu sysclk: -22
+> > > > > > > > > >
+> > > > > > > > > > The reason for this error is that the current clock parent can't
+> > > > > > > > > > support the rate
+> > > > > > > > > > you require (I think you want 11289600).
+> > > > > > > > > >
+> > > > > > > > > > We can configure the dts to provide such source, for example:
+> > > > > > > > > >
+> > > > > > > > > >  &sai5 {
+> > > > > > > > > > +       assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
+> > > > > > > > > > +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
+> > > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
+> > > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
+> > > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
+> > > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
+> > > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
+> > > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
+> > > > > > > > > > +                       <&sai5_lpcg 0>;
+> > > > > > > > > > +       assigned-clock-parents = <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg 0>;
+> > > > > > > > > > +       assigned-clock-rates = <0>, <0>, <786432000>, <49152000>, <12288000>,
+> > > > > > > > > > +                                <722534400>, <45158400>, <11289600>,
+> > > > > > > > > > +                               <49152000>;
+> > > > > > > > > >         status = "okay";
+> > > > > > > > > >  };
+> > > > > > > > > >
+> > > > > > > > > > Then your case should work.
+> > > > > > > > > >
+> > > > > > > > > > >
+> > > > > > > > > > > By setting the flag CLK_SET_RATE_NO_REPARENT, we signal that the ACM
+> > > > > > > > > >
+> > > > > > > > > > I don't think CLK_SET_RATE_NO_REPARENT is a good choice. which will cause
+> > > > > > > > > > the driver don't get an error from clk_set_rate().
+> > > > > > > > >
+> > > > > > > > > Thanks for the proposal, I will try it out tomorrow. Isn't this a
+> > > > > > > > > problem if other SAIs use the same clock source but with different
+> > > > > > > > > rates?
+> > > > > > > > >
+> > > > > > > > > If we have to define fixed rates in the DTS or else the clock driver
+> > > > > > > > > will return an error, isn't that a problem? Maybe I should change the
+> > > > > > > > > sai driver so that it ignores the failure and just takes the rate
+> > > > > > > > > configured? In the end audio works, even if it can't set the requested
+> > > > > > > > > rate.
+> > > > > > > >
+> > > > > > > > The following clock tree change would allow the driver to work
+> > > > > > > > in our scenario:
+> > > > > > > > &sai5 {
+> > > > > > > >         assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
+> > > > > > > >                           <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>;
+> > > > > > > >         assigned-clock-parents = <&aud_pll_div1_lpcg 0>;
+> > > > > > > >         assigned-clock-rates = <0>, <11289600>;
+> > > > > > > > };
+> > > > > > >
+> > > > > > > In which we configure PLL_0 for 48KHz series (8kHz/16kHz/32kHz/48kHz),
+> > > > > > > PLL_1 for 44kHz series (11kHz/22kHz/44kHz),
+> > > > > > > which should fit for most audio requirements.
+> > > > > > >
+> > > > > > > >
+> > > > > > > > However, this means we have to switch the parent clock to the audio pll
+> > > > > > > > 1. For the simple setup with two SAIs, one for analog audio and one for
+> > > > > > > > HDMI this wouldn't be a problem. But I'm not sure if this is a good
+> > > > > > > > solution if a customer would add a third SAI which requires again a
+> > > > > > > > different parent clock rate.
+> > > > > > >
+> > > > > > > We won't change the PLL's rate in the driver,  so as PLL_0 for 48kHz,
+> > > > > > > PLL_1 for 44kHz,  even with a third SAI or more,  they should work.
+> > > > > > >
+> > > > > > > >
+> > > > > > > > One potential solution could be that the SAI driver tries to first
+> > > > > > > > derive the clock from the current parent and only if this fails it tries
+> > > > > > > > to modify its parent clock. What do you think about this solution?
+> > > > > > > >
+> > > > > >
+> > > > > > I did some more testing and I'm still not happy with the current
+> > > > > > solution. The problem is that if we change the SAI5 mclk clock parent it
+> > > > > > can either support the 44kHz series or the 48kHz series. However, in the
+> > > > > > case of HDMI we do not know in advance what the user wants.
+> > > > > >
+> > > > > > This means when testing either this works:
+> > > > > > speaker-test -D hw:2,0 -r 48000 -c 2
+> > > > > > or this works:
+> > > > > > speaker-test -D hw:2,0 -r 44100 -c 2
+> > > > > > With:
+> > > > > > card 2: imxaudiohdmitx [imx-audio-hdmi-tx], device 0: i.MX HDMI i2s-hifi-0 [i.MX HDMI i2s-hifi-0]
+> > > > >
+> > > > > Are you using the setting below?  then should not either,  should both works
+> > > > >  &sai5 {
+> > > > > +       assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
+> > > > > +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
+> > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
+> > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
+> > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
+> > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
+> > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
+> > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
+> > > > > +                       <&sai5_lpcg 0>;
+> > > > > +       assigned-clock-parents = <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg 0>;
+> > > > > +       assigned-clock-rates = <0>, <0>, <786432000>, <49152000>, <12288000>,
+> > > > > +                                <722534400>, <45158400>, <11289600>,
+> > > > > +                               <49152000>;
+> > > > >         status = "okay";
+> > > > >  };
+> > > >
+> > > > Sorry I didn't communicate that properly. Yes I was trying with these
+> > > > settings but they do not work. The problem does not seem to be that the
+> > > > driver can not adjust the rate for the audio (so e.g. 44kHz or 48kHz)
+> > > > but that snd_soc_dai_set_sysclk in imx-hdmi.c fails with EINVAL. This
+> > > > results in a call to fsl_sai_set_mclk_rate in fsl_sai.c with clk_id 1
+> > > > (mclk_clk[1]) and a freq of 11289600 which causes the fail.
+> > > > Interestingly, in fsl_sai_set_bclk we then only use clk_get_rate on
+> > > > mclk_clk[0] which is set to audio_ipg_clk (rate 175000000) and we do not
+> > > > use mclk_clk[1] anymore at all. This is why I'm not sure if this call to
+> > > > snd_soc_dai_set_syclk is really necessary?
+> > > >
+> > >
+> > > Could you please check if you have the below commit in your test tree?
+> > > 35121e9def07 clk: imx: imx8: Use clk_hw pointer for self registered
+> > > clock in clk_parent_data
+> > >
+> > > if not, please cherry-pick it.
+> > >
+> > > The audio_ipg_clk can be selected if there is no other choice.
+> > > but the rate 175000000 is not accurate for 44kHz. what we got
+> > > is 44102Hz. This is the reason I don't like to use this source.
+> >
+> > Thanks a lot for the hint, in my test setup I indeed have not applied
+> > this commit. I tested it now with cherry-picking the commit and with
+> > applying the change to the dts. This made it work. I will do some more
+> > testing tomrrow and if I can't find any addtional issue I will use this
+> > as a solution.
+> >
+> I am thinking that your change may still be needed.
+> 
+> Your change plus the below change. then we can support more rate,
+> not only 48k/44kHz.  SAI driver will select the parent by itself before
+> the clk_set_rate().
 
-This is a helper to get the struct device associated with a hardware
-clock. Some clocks, such as with early clock controller, may not be
-associated with any struct device.
+When testing the only two frequency that are not working and seem to be
+supported by HDMI is first 88.2 kHz.
+fsl-sai 59090000.sai: failed to derive required Tx rate: 5644800
+fsl-sai 59090000.sai: ASoC: error at snd_soc_dai_hw_params on 59090000.sai: -22
 
-^ still not sure about =E2=80=98such as with early clock controller=E2=80=99=
- but some
-other typo=E2=80=99s corrected.
+and second 32kHz:
+fsl-sai 59090000.sai: failed to set clock rate (8192000): -22
+fsl-sai 59090000.sai: ASoC: error at snd_soc_dai_set_sysclk on 59090000.sai: -22
+imx-hdmi sound-hdmi: failed to set cpu sysclk: -22
+ i.MX HDMI: ASoC: error at snd_soc_link_hw_params on i.MX HDMI: -22
 
-> + *
-> + * Return: the struct device associated with the clock, or NULL if =
-there
-> + * is none.
-> + */
-> +struct device *clk_hw_get_dev(const struct clk_hw *hw)
-> +{
-> + return hw->core->dev;
-> +}
-> +EXPORT_SYMBOL_GPL(clk_hw_get_dev);
-> +
-> +/**
-> + * clk_hw_get_of_node - get device_node from an hardware clock.
-> + * @hw: the clk_hw pointer to get the struct device_node from
+For our use case this doesn't seem to be relevant at the moment. I will
+clarify this internally.
+> 
+> +       assigned-clocks = <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
+> +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
+> +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
+> +                       <&sai5_lpcg 0>;
+> +       assigned-clock-parents = <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg 0>;
+> +       assigned-clock-rates = <0>, <0>, <786432000>, <49152000>, <12288000>,
+> +                                <722534400>, <45158400>, <11289600>,
+> +                               <49152000>;
+> +       clocks = <&sai5_lpcg 1>,
+> +               <&clk_dummy>,
+> +               <&sai5_lpcg 0>,
+> +               <&clk_dummy>,
+> +               <&clk_dummy>,
+> +               <&aud_pll_div0_lpcg 0>,
+> +               <&aud_pll_div1_lpcg 0>;
+> +       clock-names = "bus", "mclk0", "mclk1", "mclk2", "mclk3",
+> "pll8k", "pll11k";
+> 
+> > Should I add the change to our Apalis board dtsi file or directly to
+> > imx8qm-ss-audio.dtsi? I think it fixes kind of a general issue or not?
+> 
+> It is still board related, so I think it is better to add to the board dts file.
 
-get device_node from a hardware clock.
+Okay, then I will add this change to the board dts and prepare a v2.
 
-> + *
-> + * This is an helper to get the struct device_node associated with an
-
-This is a helper
-
-> + * hardware clock.
-> + *
-> + * Return: the struct device associated with the clock, or NULL if =
-there
-> + * is none.
-> + */
-> +struct device_node *clk_hw_get_of_node(const struct clk_hw *hw)
-> +{
-> + return hw->core->of_node;
-> +}
-> +EXPORT_SYMBOL_GPL(clk_hw_get_of_node);
-> +
-> struct clk_hw *__clk_get_hw(struct clk *clk)
-> {
-> return !clk ? NULL : clk->core->hw;
-> diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-> index =
-f08feeaa3750bc86859294650de298762dea690a..4dcdde283598b7f940c653ebc0d5a5f4=
-c27637a2 100644
-> --- a/drivers/clk/clk_test.c
-> +++ b/drivers/clk/clk_test.c
-> @@ -2794,43 +2794,40 @@ static struct kunit_suite =
-clk_register_clk_parent_data_of_suite =3D {
-> };
->=20
-> /**
-> - * struct clk_register_clk_parent_data_device_ctx - Context for =
-clk_parent_data device tests
-> + * struct clk_register_device_ctx - Context for clock device tests
->  * @dev: device of clk under test
->  * @hw: clk_hw for clk under test
->  * @pdrv: driver to attach to find @dev
->  */
-> -struct clk_register_clk_parent_data_device_ctx {
-> +struct clk_register_device_ctx {
-> struct device *dev;
-> struct clk_hw hw;
-> struct platform_driver pdrv;
-> };
->=20
-> -static inline struct clk_register_clk_parent_data_device_ctx *
-> -clk_register_clk_parent_data_driver_to_test_context(struct =
-platform_device *pdev)
-> +static inline struct clk_register_device_ctx *
-> +clk_register_device_to_test_context(struct platform_device *pdev)
-> {
-> return container_of(to_platform_driver(pdev->dev.driver),
-> -    struct clk_register_clk_parent_data_device_ctx, pdrv);
-> +    struct clk_register_device_ctx, pdrv);
-> }
->=20
-> -static int clk_register_clk_parent_data_device_probe(struct =
-platform_device *pdev)
-> +static int clk_register_device_probe(struct platform_device *pdev)
-> {
-> - struct clk_register_clk_parent_data_device_ctx *ctx;
-> + struct clk_register_device_ctx *ctx;
->=20
-> - ctx =3D clk_register_clk_parent_data_driver_to_test_context(pdev);
-> + ctx =3D clk_register_device_to_test_context(pdev);
-> ctx->dev =3D &pdev->dev;
->=20
-> return 0;
-> }
->=20
-> -static void clk_register_clk_parent_data_device_driver(struct kunit =
-*test)
-> +static void clk_register_of_device_driver(struct kunit *test,
-> +  const struct of_device_id *match_table)
-> {
-> - struct clk_register_clk_parent_data_device_ctx *ctx =3D test->priv;
-> - static const struct of_device_id match_table[] =3D {
-> - { .compatible =3D "test,clk-parent-data" },
-> - { }
-> - };
-> + struct clk_register_device_ctx *ctx =3D test->priv;
->=20
-> - ctx->pdrv.probe =3D clk_register_clk_parent_data_device_probe;
-> + ctx->pdrv.probe =3D clk_register_device_probe;
-> ctx->pdrv.driver.of_match_table =3D match_table;
-> ctx->pdrv.driver.name =3D __func__;
-> ctx->pdrv.driver.owner =3D THIS_MODULE;
-> @@ -2839,6 +2836,16 @@ static void =
-clk_register_clk_parent_data_device_driver(struct kunit *test)
-> KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->dev);
-> }
->=20
-> +static void clk_register_clk_parent_data_device_driver(struct kunit =
-*test)
-> +{
-> + static const struct of_device_id match_table[] =3D {
-> + { .compatible =3D "test,clk-parent-data" },
-> + { }
-> + };
-> +
-> + clk_register_of_device_driver(test, match_table);
-> +}
-> +
-> static const struct clk_register_clk_parent_data_test_case
-> clk_register_clk_parent_data_device_cases[] =3D {
-> {
-> @@ -2909,7 +2916,7 @@ =
-KUNIT_ARRAY_PARAM(clk_register_clk_parent_data_device_test,
->  */
-> static void clk_register_clk_parent_data_device_test(struct kunit =
-*test)
-> {
-> - struct clk_register_clk_parent_data_device_ctx *ctx;
-> + struct clk_register_device_ctx *ctx;
-> const struct clk_register_clk_parent_data_test_case *test_param;
-> struct clk_hw *parent_hw;
-> struct clk_init_data init =3D { };
-> @@ -3016,7 +3023,7 @@ =
-KUNIT_ARRAY_PARAM(clk_register_clk_parent_data_device_hw_test,
->  */
-> static void clk_register_clk_parent_data_device_hw_test(struct kunit =
-*test)
-> {
-> - struct clk_register_clk_parent_data_device_ctx *ctx;
-> + struct clk_register_device_ctx *ctx;
-> const struct clk_register_clk_parent_data_test_case *test_param;
-> struct clk_dummy_context *parent;
-> struct clk_hw *parent_hw;
-> @@ -3077,6 +3084,80 @@ static struct kunit_suite =
-clk_register_clk_parent_data_device_suite =3D {
-> .test_cases =3D clk_register_clk_parent_data_device_test_cases,
-> };
->=20
-> +static void clk_register_dummy_device_driver(struct kunit *test)
-> +{
-> + static const struct of_device_id match_table[] =3D {
-> + { .compatible =3D "test,clk-dummy-device" },
-> + { }
-> + };
-> +
-> + clk_register_of_device_driver(test, match_table);
-> +}
-> +
-> +/*
-> + * Test that a clk registered with a struct device can provide back =
-the
-> + * struct device it was registered with.
-> + */
-> +static void clk_hw_get_dev_test(struct kunit *test)
-> +{
-> + struct clk_register_device_ctx *ctx;
-> +
-> + ctx =3D kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
-> + KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
-> + test->priv =3D ctx;
-> +
-> + clk_register_dummy_device_driver(test);
-> + ctx->hw.init =3D CLK_HW_INIT_NO_PARENT("test_get_dev",
-> +     &clk_dummy_rate_ops, 0);
-> +
-> + KUNIT_ASSERT_EQ(test, 0, clk_hw_register_kunit(test, ctx->dev, =
-&ctx->hw));
-> + KUNIT_EXPECT_PTR_EQ(test, ctx->dev, clk_hw_get_dev(&ctx->hw));
-> +}
-> +
-> +/*
-> + * Test that a clk registered with a struct device_node can provide =
-back the
-> + * struct device_node it was registered with.
-> + */
-> +static void clk_hw_get_of_node_test(struct kunit *test)
-> +{
-> + struct device_node *np;
-> + struct clk_hw *hw;
-> +
-> + hw =3D kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
-> + KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-> +
-> + np =3D of_find_compatible_node(NULL, NULL, "test,clk-dummy-device");
-> + hw->init =3D CLK_HW_INIT_NO_PARENT("test_get_of_node",
-> + &clk_dummy_rate_ops, 0);
-> + of_node_put_kunit(test, np);
-> +
-> + KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, np, hw));
-> + KUNIT_EXPECT_PTR_EQ(test, np, clk_hw_get_of_node(hw));
-> +}
-> +
-> +static struct kunit_case clk_hw_test_cases[] =3D {
-> + KUNIT_CASE(clk_hw_get_dev_test),
-> + KUNIT_CASE(clk_hw_get_of_node_test),
-> + {}
-> +};
-> +
-> +static int clk_hw_test_init(struct kunit *test)
-> +{
-> + KUNIT_ASSERT_EQ(test, 0,
-> + of_overlay_apply_kunit(test, kunit_clk_dummy_device));
-> +
-> + return 0;
-> +}
-> +
-> +/*
-> + * Test suite to verify the sanity clk_hw helper functions.
-> + */
-> +static struct kunit_suite clk_hw_test_suite =3D {
-> + .name =3D "clk_hw_test_suite",
-> + .init =3D clk_hw_test_init,
-> + .test_cases =3D clk_hw_test_cases,
-> +};
-> +
-> struct clk_assigned_rates_context {
-> struct clk_dummy_context clk0;
-> struct clk_dummy_context clk1;
-> @@ -3399,6 +3480,7 @@ kunit_test_suites(
-> &clk_assigned_rates_suite,
-> &clk_leaf_mux_set_rate_parent_test_suite,
-> &clk_test_suite,
-> + &clk_hw_test_suite,
-> &clk_multiple_parents_mux_test_suite,
-> &clk_mux_no_reparent_test_suite,
-> &clk_mux_notifier_test_suite,
-> diff --git a/drivers/clk/kunit_clk_dummy_device.dtso =
-b/drivers/clk/kunit_clk_dummy_device.dtso
-> new file mode 100644
-> index =
-0000000000000000000000000000000000000000..5cc89aa11264428b09e47fd29c5f9ecf=
-b8c32fdd
-> --- /dev/null
-> +++ b/drivers/clk/kunit_clk_dummy_device.dtso
-> @@ -0,0 +1,10 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +&{/} {
-> + kunit-clock-controller {
-> + compatible =3D "test,clk-dummy-device";
-> + #clock-cells =3D <0>;
-> + };
-> +};
-> diff --git a/include/linux/clk-provider.h =
-b/include/linux/clk-provider.h
-> index =
-2e6e603b749342931c0d0693c3e72b62c000791b..83852346a32beae919d223f30cb88baa=
-4b2fd62b 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -1360,6 +1360,8 @@ void clk_hw_unregister(struct clk_hw *hw);
-> /* helper functions */
-> const char *__clk_get_name(const struct clk *clk);
-> const char *clk_hw_get_name(const struct clk_hw *hw);
-> +struct device *clk_hw_get_dev(const struct clk_hw *hw);
-> +struct device_node *clk_hw_get_of_node(const struct clk_hw *hw);
-> #ifdef CONFIG_COMMON_CLK
-> struct clk_hw *__clk_get_hw(struct clk *clk);
-> #else
->=20
-> --=20
-> 2.45.2
->=20
->=20
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
-
-Christian
-
+Regards,
+Stefan
