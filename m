@@ -1,346 +1,281 @@
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D2D1F75A6;
-	Fri, 17 Jan 2025 06:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A13D1F78F3;
+	Fri, 17 Jan 2025 07:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737096992; cv=none; b=dAWGaKr57XhAOdOCbkgEfAmFE8JU6iZ8c4UFGWN1j/PEs8FwXXXiiBJSanP3WflVt2QnJkoRKgZg3m/YaedQdD5Psl1aVzMLJ6JFrDXuYYjwZQnZgG9wxIe/HD1jMbyb37A66V3R5DelOpXSTgMek7W96MJMHKM1uKWGVIurnkI=
+	t=1737098721; cv=none; b=miS7oR6CbxOuvZM81h9Oe08oG4e1eVBycQj4ysHsYWrY4Sj/yowISlQJKcS1tIWEwuw8hSJaaUbAlIZh4ErMLXKBdy/S0YfW8kyeUcrmsYbVSCpaiDUhZBTxlA58BQiZBCdXWK7fRI9RTLUyAa3Y/kKwD60d3cVYZzQOn/J3z5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737096992; c=relaxed/simple;
-	bh=6NJY+dMgU534blJWmgk2BR5CWDLguT8XUkGUOeqMuZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dmaPUHbEN+Wx1WvR8PwTnDo4/rcLpTuBTVWfYKxAizhsOzeOGVmx80RqiewdP9fWv1Bh6y1mEXIkN9dU4VveL5d8QdkObD5m2xiSIKjcuFKu0QhyZLGbKQSCRNICkaIHg+JS3QWN+oWfAmztfXjmC+EdJc/YjtJip7HSNI6n5n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LShdQKrw; arc=none smtp.client-ip=209.85.166.174
+	s=arc-20240116; t=1737098721; c=relaxed/simple;
+	bh=cGTuzvyXhhbVdzsVpQHI3NbFsG2cU0VrK5fyS3VgK5Q=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=gTGNMJKDBRvG9x/3HZMPw+dmRNiUc4D575XqctZaBrWB1qDc4vRuOiUYfhtr36sg9kLEBk2ico1ketdKKzm8MT4I9ilXxTIDTyBy7AAh0KLvXM+27fCdiOQU6QS5hhKmwoN091C2O/FqBAfQ5Q7dllDL7/PmoihbRqIoAC4KVCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RAokXgxQ; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LShdQKrw"
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3ce87d31480so6815585ab.2;
-        Thu, 16 Jan 2025 22:56:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RAokXgxQ"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaedd529ba1so245997866b.1;
+        Thu, 16 Jan 2025 23:25:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737096990; x=1737701790; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1737098717; x=1737703517; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=I3hRdY4ybGQZXWv8/ibzifjG0ONmXDf3+lS8nO2D8vQ=;
-        b=LShdQKrwSa8GnK1nV2cb+M/Dp7Y0KcaS3Tj3IQejchFXr+uzovtkL6DZ3BqXeC6HbX
-         aYq+3y6xbgZy8MMAon54Bzt12tFgxML/uIdP1+QuJjdOHa8i3ftbL67noDO64pRdEEeP
-         6ZyffEzYRqVtLCbLK6+p7JVYIEQRGeSEMox3P3XnwpdCR/m8rDCBXkapVCTHelOOWVcH
-         c208Vh5IKxS1hxWt6aZBhOg6LP6U0Ew7MqSqwI2pgXdit0koZc2UpZTQx/Xr2XWEQL74
-         s3HTbeQw18Qz7a161HBl6CCCZWBf2lUnPYuCPxarLFpcKFG7Y0CrJ6ihqB37Q7Jq/vig
-         GAHg==
+        bh=acBUeSMeLcUwdvAPh7XnIMxupIQjS7s3gcf5z1wzyRw=;
+        b=RAokXgxQWI8H4i8pqD939KXCLwyZgQ21n/rEWGvfexCOLdOLwUeX26gvnBLFnOavKV
+         dQaAg8AO9Br9t2WkyZxJzi27JUL4QtYJz4qt56ykcUqxMOEokNBHZS2o/LcMOzRzlubP
+         Q6AOLjSOj4A9a2eixrKSjeVAioHtVYBKnMpbMdxa7NhGBRRvTXXmsPl+hV+zk8mGJu8+
+         5sNkRsjnsudQAJLpgdWI+ph9t6ag/IjJlyS4NYBwXBXhnZj/rQU6/EvasnU4ozJ4H8W+
+         dHhY3MuT6xR2nnJPg4fA5wQ8yqK2X3Q0vxy+www1v2+mWHN0Aa7CWOCxn/DoW9zYfM/j
+         Itsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737096990; x=1737701790;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1737098717; x=1737703517;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I3hRdY4ybGQZXWv8/ibzifjG0ONmXDf3+lS8nO2D8vQ=;
-        b=j7GKldCSSaD1g/rQDaqdQF0IoW5gwN7XC4SXR2ty3nEQa106IfpeW5uxDCYLNejrIw
-         vgsSKfCqpCgzNVe7qeLmZ61qbA9sIfKDL8a3D1mOZU0DNiOYKfTah8gO1mhj00QExUng
-         CBQSDIFq61MKsMg/IAAfi8KSVJuafU8V1AW+uxhpVKmWJ/AzzzRQtEJqPGeUHJ2C6KGh
-         n+Ue3I/QtM7FaBvqxHZffhMJHu2n1zb3coZZWC+sDusO4raIj3vtYTiWWaKTckILOaR3
-         q3PRcpcIEDCcRPY9e9VhPFzUDogRjn1Nl4WtyYBo8JKHaANhrURLoAsOx1Yt9GIXHfMW
-         /anQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwj8Vi47m9iLVC2+PfhGvJ589Wvc0Tdo/+vT0nBs5HBdL6b3QVNK2TML3goPBgxfUPHggQv03brbj/PBgt@vger.kernel.org, AJvYcCX8MT2R/YNuZ7USUYHKpU0WsZRPQVq68z5L5Qj1q2Enbfc4TL6cZuOEW4C1+bin7o3i1YifA7klROc=@vger.kernel.org, AJvYcCXN8J7xOORvNatZecubAfMbq89m443L9ZSIIc9BrAaO38mCPaKYxzhloTeRgsTpiDScLOGLYp1s@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF3PnYB5/FxmEq/rrabUaFwAoKw8dulNPzR4T8oczVJa5t8K9e
-	JUjHowBYC/VL7mSLUssKPq/oLv5hs4KzUNJdbM+OjIm65I8vHKztTk+7pEu+iwDl1HmbMlkcV5d
-	oZrdFrwLJf7cKUJLAoOSmQJHKXww=
-X-Gm-Gg: ASbGncvR48bR+7Kiwht4Ue79vlGwH1M3405aczF/b5+izDg2zmxFcx8V5cgz1ThNWAN
-	TnfzL4ZrL3aV/VvbZ0aVwQF+O32NuE/55ZA9XVQ==
-X-Google-Smtp-Source: AGHT+IHcknrvKPRacXTQ4IOEOcVDoZlmeewl4EHr/jAukgg4Kg4r7OXIb6t6lnm52Zq3vEqrHYl9Godl41t3Q1WTwXA=
-X-Received: by 2002:a05:6e02:2607:b0:3ce:8e89:90db with SMTP id
- e9e14a558f8ab-3cf7447b9c6mr10583865ab.14.1737096989650; Thu, 16 Jan 2025
- 22:56:29 -0800 (PST)
+        bh=acBUeSMeLcUwdvAPh7XnIMxupIQjS7s3gcf5z1wzyRw=;
+        b=q+Li1ukWc3HEOTYY11r/jgydcXwVcuxbTTFMmcW8/mRUJBV7d5hTtChu7ZzGKRwQNy
+         UPa0Lf54XnUtrI3bdXM/soBkLnYZxvn4sFC1NP0a22jxt13B0y/t7+tGWtW+IKDqJ8lp
+         rViLLJ7dvzTShC4s4zxfIJZAzihu91NAP+9SxfiknIIlpLvoN8vs8WkD/WNSTjV9TleT
+         sOjc5bjO0vbilqlnp+9ABiTtaMCbxw5bZnDVBuvtWNDBKr49GS/C46vks4s8oeVegzDi
+         pmtwsdIj7e9AKEk3hVOhz2Z1TcmJ0q0R8k/WXSrNAYj8OdycxEjw2GXEWJ0ZwBHL6g3Z
+         Sn4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVKZetnTmanXhYR6p9+oSlWS2iyINsSMcPDdXxcdOorWHkHdWIgguc7pulmdxrbNP6EQt232sX7th3JhQ==@vger.kernel.org, AJvYcCVf1HBKeFE0Tn5Dc8Pw14SAwXBtiWWzQOXCwQNWB3G6iz5bMapCt+RuOF98mBeWry25dIhl83pdWy+F@vger.kernel.org, AJvYcCWYApwnWfriZQ3ivrzzjRnQq9U9g58/rMMD2gjHTAI5jClt1QkfzqLAN0nSycEdE2rZPVSrxg9kRb3ou48A@vger.kernel.org, AJvYcCXniZY09U1Zkix8ownnz8o1OwcplhxJulAUQgQP0Z7a0vAu+2CUQ029P4RIyG3gK0bJRAvxOm6yzLY=@vger.kernel.org, AJvYcCXoSQPtWcRyLFzhRqQFbcHjsVIAYqsScGSWfHkRHdDCM7SZFeJdhVLAobGYFPoADvAFCxWsgrcOYF+7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvaULFaq+JjgFt+04XxUPQ1NBRywOfDf8zYWl3xYbi8bccZRLJ
+	+O47hwd7cXJ/AXZXwTofhVPh1V4Tw0BZ0Mpzujf1xfLMu+FFzjsE
+X-Gm-Gg: ASbGncuOdz5P5kpBGXmJHfxG3XrPm0fBOhDe3cjesDmXEY52W6kLwRH1l829S9USSRw
+	JMCFs+VICDXkjIGBhclvjOHS1YH6haDF8bEaqpJ7LWW0DDWiaSth5ATggWQu+oFMN1vufuX0mMC
+	ljY2FEUjdfouMGBo4bpszrZIpjG1gejBsHBbh+saCmy4uXK4EUYSb7aVDgQvLDfiPGsQV4juJ29
+	K71hxkZtLvN/Tp4sEK2xNSLR+cROM5bQNPCmj+N8s5+tzXbo1E+7K5R1aWyafZsvo00ctuggd7n
+	dxkwDFVw4DRtX6jDclc=
+X-Google-Smtp-Source: AGHT+IGePGJHVWxw4XwLV4zxZAGfulFMMCFa6UxYk4nNAptBEBklprrxVwXwqCG4Gi/JEQo6iRnv6g==
+X-Received: by 2002:a05:6402:2745:b0:5d0:bf5e:eb8 with SMTP id 4fb4d7f45d1cf-5db7db07846mr3557485a12.23.1737098717190;
+        Thu, 16 Jan 2025 23:25:17 -0800 (PST)
+Received: from smtpclient.apple (185.174.17.62.zt.hu. [185.174.17.62])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab384ce1a49sm124381366b.46.2025.01.16.23.25.15
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 16 Jan 2025 23:25:16 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250113094654.12998-1-eichest@gmail.com> <CAA+D8ANvKQKJhn6qKbPhQeXPD5kxUo3Hg-FBLkDMOaWLTA8vVg@mail.gmail.com>
- <Z4ZRYMf_uJW4poW9@eichest-laptop> <Z4dy3LiEAQ_gkQGG@eichest-laptop>
- <CAA+D8AO75MLyP5AWDJoogw8ae4GRtZfSR-HT+S26bXoaVs8saQ@mail.gmail.com>
- <Z4eQX_VnBEVqxT_r@eichest-laptop> <CAA+D8APivJWD-AqwmQ-mtcr=ZHot5rfA8FRWF2+p-_mq5BGxHA@mail.gmail.com>
- <Z4i0G5Tw4q0v8DTL@eichest-laptop> <CAA+D8AOakQdnEe9ZrfTCrWcjHJRRU0kqFVsiu8+FMiHeMAVV_g@mail.gmail.com>
- <Z4lDbMqCYW2W7iyX@eichest-laptop>
-In-Reply-To: <Z4lDbMqCYW2W7iyX@eichest-laptop>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Fri, 17 Jan 2025 14:56:15 +0800
-X-Gm-Features: AbW1kvY8ZuJTUqrf1ZEzfzgYRxjyAcbIRbeiu-ak5g16dpFU5gdubE8mulJFk6c
-Message-ID: <CAA+D8AM9xwvyvU_0ODFwaq=YzzbP_R7hqMvHqx-Y1kHPpX_x_Q@mail.gmail.com>
-Subject: Re: [PATCH v1] clk: imx: imx8-acm: fix flags for acm clocks
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, 
-	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, shengjiu.wang@nxp.com, 
-	francesco.dolcini@toradex.com, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH 03/12] pinctrl: sunxi: add driver for Allwinner V853.
+From: =?utf-8?B?QW5kcsOhcyBTemVtesWR?= <szemzo.andras@gmail.com>
+In-Reply-To: <CACRpkdYVTedEon0X-izvaDTGF6yRhD2s=Z6NEM=zBf4vD-T0Pg@mail.gmail.com>
+Date: Fri, 17 Jan 2025 08:25:04 +0100
+Cc: Andre Przywara <andre.przywara@arm.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Maxime Ripard <mripard@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org,
+ linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org,
+ linux-riscv@lists.infradead.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <686A634E-147F-4D73-A909-29FC0C20472C@gmail.com>
+References: <20250110123923.270626-1-szemzo.andras@gmail.com>
+ <20250110123923.270626-4-szemzo.andras@gmail.com>
+ <20250114141954.2785879a@donnerap.manchester.arm.com>
+ <CACRpkda0nx3SQtdjmXdCEbVJSWM10TM=p-6JbDjbiYcOSF5PxQ@mail.gmail.com>
+ <20250115152635.1b89e7f4@donnerap.manchester.arm.com>
+ <CACRpkdYVTedEon0X-izvaDTGF6yRhD2s=Z6NEM=zBf4vD-T0Pg@mail.gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On Fri, Jan 17, 2025 at 1:35=E2=80=AFAM Stefan Eichenberger <eichest@gmail.=
-com> wrote:
->
-> Hi Shengjiu Wang,
->
-> On Thu, Jan 16, 2025 at 03:30:55PM +0800, Shengjiu Wang wrote:
-> > On Thu, Jan 16, 2025 at 3:24=E2=80=AFPM Stefan Eichenberger <eichest@gm=
-ail.com> wrote:
-> > >
-> > > Hi Shengjiu Wang,
-> > >
-> > > On Thu, Jan 16, 2025 at 12:01:13PM +0800, Shengjiu Wang wrote:
-> > > > On Wed, Jan 15, 2025 at 6:39=E2=80=AFPM Stefan Eichenberger <eiches=
-t@gmail.com> wrote:
-> > > > >
-> > > > > On Wed, Jan 15, 2025 at 05:14:09PM +0800, Shengjiu Wang wrote:
-> > > > > > On Wed, Jan 15, 2025 at 4:33=E2=80=AFPM Stefan Eichenberger <ei=
-chest@gmail.com> wrote:
-> > > > > > >
-> > > > > > > Hi Shengjiu Wang,
-> > > > > > >
-> > > > > > > On Tue, Jan 14, 2025 at 12:58:24PM +0100, Stefan Eichenberger=
- wrote:
-> > > > > > > > Hi Shengjiu Wang,
-> > > > > > > >
-> > > > > > > > On Tue, Jan 14, 2025 at 03:49:10PM +0800, Shengjiu Wang wro=
-te:
-> > > > > > > > > On Mon, Jan 13, 2025 at 5:54=E2=80=AFPM Stefan Eichenberg=
-er <eichest@gmail.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > From: Stefan Eichenberger <stefan.eichenberger@toradex.=
-com>
-> > > > > > > > > >
-> > > > > > > > > > Currently, the flags for the ACM clocks are set to 0. T=
-his configuration
-> > > > > > > > > > causes the fsl-sai audio driver to fail when attempting=
- to set the
-> > > > > > > > > > sysclk, returning an EINVAL error. The following error =
-messages
-> > > > > > > > > > highlight the issue:
-> > > > > > > > > > fsl-sai 59090000.sai: ASoC: error at snd_soc_dai_set_sy=
-sclk on 59090000.sai: -22
-> > > > > > > > > > imx-hdmi sound-hdmi: failed to set cpu sysclk: -22
-> > > > > > > > >
-> > > > > > > > > The reason for this error is that the current clock paren=
-t can't
-> > > > > > > > > support the rate
-> > > > > > > > > you require (I think you want 11289600).
-> > > > > > > > >
-> > > > > > > > > We can configure the dts to provide such source, for exam=
-ple:
-> > > > > > > > >
-> > > > > > > > >  &sai5 {
-> > > > > > > > > +       assigned-clocks =3D <&acm IMX_ADMA_ACM_SAI5_MCLK_=
-SEL>,
-> > > > > > > > > +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
-> > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC=
-_PM_CLK_PLL>,
-> > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC=
-_PM_CLK_SLV_BUS>,
-> > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC=
-_PM_CLK_MST_BUS>,
-> > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC=
-_PM_CLK_PLL>,
-> > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC=
-_PM_CLK_SLV_BUS>,
-> > > > > > > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC=
-_PM_CLK_MST_BUS>,
-> > > > > > > > > +                       <&sai5_lpcg 0>;
-> > > > > > > > > +       assigned-clock-parents =3D <&aud_pll_div0_lpcg 0>=
-, <&aud_rec1_lpcg 0>;
-> > > > > > > > > +       assigned-clock-rates =3D <0>, <0>, <786432000>, <=
-49152000>, <12288000>,
-> > > > > > > > > +                                <722534400>, <45158400>,=
- <11289600>,
-> > > > > > > > > +                               <49152000>;
-> > > > > > > > >         status =3D "okay";
-> > > > > > > > >  };
-> > > > > > > > >
-> > > > > > > > > Then your case should work.
-> > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > By setting the flag CLK_SET_RATE_NO_REPARENT, we signal=
- that the ACM
-> > > > > > > > >
-> > > > > > > > > I don't think CLK_SET_RATE_NO_REPARENT is a good choice. =
-which will cause
-> > > > > > > > > the driver don't get an error from clk_set_rate().
-> > > > > > > >
-> > > > > > > > Thanks for the proposal, I will try it out tomorrow. Isn't =
-this a
-> > > > > > > > problem if other SAIs use the same clock source but with di=
-fferent
-> > > > > > > > rates?
-> > > > > > > >
-> > > > > > > > If we have to define fixed rates in the DTS or else the clo=
-ck driver
-> > > > > > > > will return an error, isn't that a problem? Maybe I should =
-change the
-> > > > > > > > sai driver so that it ignores the failure and just takes th=
-e rate
-> > > > > > > > configured? In the end audio works, even if it can't set th=
-e requested
-> > > > > > > > rate.
-> > > > > > >
-> > > > > > > The following clock tree change would allow the driver to wor=
-k
-> > > > > > > in our scenario:
-> > > > > > > &sai5 {
-> > > > > > >         assigned-clocks =3D <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>=
-,
-> > > > > > >                           <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_P=
-M_CLK_PLL>;
-> > > > > > >         assigned-clock-parents =3D <&aud_pll_div1_lpcg 0>;
-> > > > > > >         assigned-clock-rates =3D <0>, <11289600>;
-> > > > > > > };
-> > > > > >
-> > > > > > In which we configure PLL_0 for 48KHz series (8kHz/16kHz/32kHz/=
-48kHz),
-> > > > > > PLL_1 for 44kHz series (11kHz/22kHz/44kHz),
-> > > > > > which should fit for most audio requirements.
-> > > > > >
-> > > > > > >
-> > > > > > > However, this means we have to switch the parent clock to the=
- audio pll
-> > > > > > > 1. For the simple setup with two SAIs, one for analog audio a=
-nd one for
-> > > > > > > HDMI this wouldn't be a problem. But I'm not sure if this is =
-a good
-> > > > > > > solution if a customer would add a third SAI which requires a=
-gain a
-> > > > > > > different parent clock rate.
-> > > > > >
-> > > > > > We won't change the PLL's rate in the driver,  so as PLL_0 for =
-48kHz,
-> > > > > > PLL_1 for 44kHz,  even with a third SAI or more,  they should w=
-ork.
-> > > > > >
-> > > > > > >
-> > > > > > > One potential solution could be that the SAI driver tries to =
-first
-> > > > > > > derive the clock from the current parent and only if this fai=
-ls it tries
-> > > > > > > to modify its parent clock. What do you think about this solu=
-tion?
-> > > > > > >
-> > > > >
-> > > > > I did some more testing and I'm still not happy with the current
-> > > > > solution. The problem is that if we change the SAI5 mclk clock pa=
-rent it
-> > > > > can either support the 44kHz series or the 48kHz series. However,=
- in the
-> > > > > case of HDMI we do not know in advance what the user wants.
-> > > > >
-> > > > > This means when testing either this works:
-> > > > > speaker-test -D hw:2,0 -r 48000 -c 2
-> > > > > or this works:
-> > > > > speaker-test -D hw:2,0 -r 44100 -c 2
-> > > > > With:
-> > > > > card 2: imxaudiohdmitx [imx-audio-hdmi-tx], device 0: i.MX HDMI i=
-2s-hifi-0 [i.MX HDMI i2s-hifi-0]
-> > > >
-> > > > Are you using the setting below?  then should not either,  should b=
-oth works
-> > > >  &sai5 {
-> > > > +       assigned-clocks =3D <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
-> > > > +                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
-> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PL=
-L>,
-> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SL=
-V_BUS>,
-> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MS=
-T_BUS>,
-> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PL=
-L>,
-> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SL=
-V_BUS>,
-> > > > +                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MS=
-T_BUS>,
-> > > > +                       <&sai5_lpcg 0>;
-> > > > +       assigned-clock-parents =3D <&aud_pll_div0_lpcg 0>, <&aud_re=
-c1_lpcg 0>;
-> > > > +       assigned-clock-rates =3D <0>, <0>, <786432000>, <49152000>,=
- <12288000>,
-> > > > +                                <722534400>, <45158400>, <11289600=
->,
-> > > > +                               <49152000>;
-> > > >         status =3D "okay";
-> > > >  };
-> > >
-> > > Sorry I didn't communicate that properly. Yes I was trying with these
-> > > settings but they do not work. The problem does not seem to be that t=
-he
-> > > driver can not adjust the rate for the audio (so e.g. 44kHz or 48kHz)
-> > > but that snd_soc_dai_set_sysclk in imx-hdmi.c fails with EINVAL. This
-> > > results in a call to fsl_sai_set_mclk_rate in fsl_sai.c with clk_id 1
-> > > (mclk_clk[1]) and a freq of 11289600 which causes the fail.
-> > > Interestingly, in fsl_sai_set_bclk we then only use clk_get_rate on
-> > > mclk_clk[0] which is set to audio_ipg_clk (rate 175000000) and we do =
+I=E2=80=99ve actually already converted the pinctrl driver to the new dt =
+based pinmux, as Andre
+suggested. It=E2=80=99s simple, get rid of those huge pinmux tables, and =
+easy to understand to
+add the mux settings to the dtsi.
+
+
+> On 16 Jan 2025, at 10:34, Linus Walleij <linus.walleij@linaro.org> =
+wrote:
+>=20
+> Hi Andre,
+>=20
+> some nice talk here, actually the following is just opinions, I will
+> be likely happy with whatever approach is taken eventually.
+>=20
+> On Wed, Jan 15, 2025 at 4:26=E2=80=AFPM Andre Przywara =
+<andre.przywara@arm.com> wrote:
+>=20
+>>> pio: pinctrl@1c20800 {
+>>>                        compatible =3D "allwinner,sun8i-r40-pinctrl";
+>>> (...)
+>>>                        i2c0_pins: i2c0-pins {
+>>>                                pins =3D "PB0", "PB1";
+>>>                                function =3D "i2c0";
+>>>                        };
+>>>=20
+>>> abstract, strings, nice. The driver handles the particulars.
+>>=20
+>> What bugs me about this it that this has quite some seemingly =
+redundant
+>> information (Who would have thought that the i2c0 pins use function
+>> "i2c0"?), but misses out on the actual 4 bits(!) of information.
+>=20
+> the pins in this example are called PB0 and PB1 though. The =
+designation
+> on the package. And often pins actually named "i2c0_1" "i2c0_2" are
+> for that primary function, but muxable to a few other functions,
+> at least GPIO in most cases. So it's just some name for the pin
+> really.
+>=20
+>>> That is like so because we are designing for users which are
+>>> let's say customization engineers. If these engineers jump from
+>>> project to project matching function strings to group strings will
+>>> be a common way to set up pins, and easy to understand and
+>>> grasp, and it makes the DTS very readable.
+>>=20
+>> That's an interesting view, and I see the point of it being easy to =
+read,
+>> but this is partly because it doesn't convey too much actual =
+information,
+>> does it, as it requires another lookup or two.
+>> And the pinctrl group nodes are actually in the .dtsi file, which are
+>> typically written once during the initial SoC enablement, and new =
+board
+>> .dts files normally just reference the existing pingroup nodes. So =
+anyone
+>> dealing with just a new board is not bothered by this.
+>=20
+> You have a point, and when working with a system the application
+> engineer often finds bugs in the pin control driver, and has to go
+> and fix the actual driver and then all the information hiding and
+> simplification is moot.
+>=20
+> This can become an expensive lesson for the current attempts
+> to push pin control into firmware where the configuration is
+> mostly "dead simple" (and just using strings) - the bugs will be
+> in the firmware instead, and impossible or really hard to fix.
+>=20
+>> Also in my experience most people have no problems in understanding =
+the
+>> concept of pinmuxing and that there is a selector number, also where =
+to
+>> find this.
+>=20
+> Yeah the ambition with the strings was to avoid forcing application
+> engineers to know all about that. If they do, they are then
+> developing the driver, not just using it.
+>=20
+>>> Mediatek and STM32 made a compromise by using pinmux
+>>> and adding some macros to define them so it looks more
+>>> pleasant:
+>>>=20
+>>>      i2c0_pins_a: i2c0-default {
+>>>                pins-i2c0 {
+>>>                        pinmux =3D <MT7623_PIN_75_SDA0_FUNC_SDA0>,
+>>>                                 <MT7623_PIN_76_SCL0_FUNC_SCL0>;
+>>=20
+>> Well, I don't really get why they don't use the (MTK_PIN_NO(75) | 1)
+>> definition directly, seems to be more telling to me?
+>=20
+> That's what STM32 does as well and it's usable.
+>=20
+> But of course it drives a truck through the initial ambition that pins
+> on all systems be configured the same way, with strings. So now
+> there are some families of drivers all "necessarily different" which
+> is not so nice for people jumping between different SoCs, but
+> very compelling for people focusing on just one SoC.
+>=20
+> Well, unless this way of doing things becomes so prevalent that
+> it's the new black.
+>=20
+>> So the plan for sunxi would be: <SUNXI_PINMUX(PORTC, 23, MUX_1)>, ...
+>> And this would not be really "opaque", since it has a fixed known =
+mapping:
+>>        (port << 16) | (pin << 8) | (mux << 0))
+>> I find this both technically elegant, because it combines all the
+>> information into just one compact cell, but also readable by =
+outsiders,
+>> thanks to the macro.
+>=20
+> And a new standard, to add to the other standards, so that
+> is my problem as maintainer. It makes sense on its own, and it
+> complicates the bigger picture.
+>=20
+>> My main arguments against the current (string-based) approach:
+>> - They require the mapping table to be in every DT user, so not only =
+the
+>>  Linux kernel, but also U-Boot, FreeBSD, you name it...
+>=20
+> That's true.
+>=20
+> This comes from the DT ambition to describe hardware and config,
+> but not *define* hardware, i.e. to stop device tree to turn into
+> Verilog or SystemC, which is what will happen if we take the
+> 1:1 reflection of hardware to device tree too far.
+>=20
+> I don't think anyone really knows where to cut the line.
+>=20
+>> - The tables are getting quite large, and they pollute the single =
+image
+>>  Linux kernel, with tons of very specific information for a number of =
+very
+>>  pitiful Allwinner SoCs. At the moment the tally is at 145KB of =
+code+data
+>>  for the existing arm64 SoCs, with the newer SoCs ever growing (H616 =
+alone
+>>  is 27KB, A523 would be quite larger even, I guess 40K). The new A523
+>>  specific pinctrl support adds 872 Bytes.
+>=20
+> This is a generic problem though, look at GPU drivers.
+>=20
+> The community (especially Android) seem set on fixing this by using
+> modules.
+>=20
+>> - Most of the mappings are untested at pinctrl driver commit time, =
+since we
+>>  don't have the device drivers ready yet - by a margin. The new =
+approach
+>>  would add the pinmux values when we need them and can test them.
+>=20
+> I like this argument the best.
+>=20
+> However this also reads "upfront firmware to handle pin control is a
+> dead end" yet there are people dedicatedly working on exactly that.
+> (Not that its' the Allwinner developers' problem...)
+>=20
+>> - The comments in the table give away that something is not quite =
+right:
+>>                  SUNXI_FUNCTION(0x2, "i2c0")),         /* SDA */
+>>  This is just a comment, so has no relevance for the code, but it's =
 not
-> > > use mclk_clk[1] anymore at all. This is why I'm not sure if this call=
- to
-> > > snd_soc_dai_set_syclk is really necessary?
-> > >
-> >
-> > Could you please check if you have the below commit in your test tree?
-> > 35121e9def07 clk: imx: imx8: Use clk_hw pointer for self registered
-> > clock in clk_parent_data
-> >
-> > if not, please cherry-pick it.
-> >
-> > The audio_ipg_clk can be selected if there is no other choice.
-> > but the rate 175000000 is not accurate for 44kHz. what we got
-> > is 44102Hz. This is the reason I don't like to use this source.
->
-> Thanks a lot for the hint, in my test setup I indeed have not applied
-> this commit. I tested it now with cherry-picking the commit and with
-> applying the change to the dts. This made it work. I will do some more
-> testing tomrrow and if I can't find any addtional issue I will use this
-> as a solution.
->
-I am thinking that your change may still be needed.
+>>  meant for humans either. Yet we try to make this correct and =
+maintain
+>>  it. Odd.
+>=20
+> So i2c0 is SDA and i2c1 is SCL or something?
+> It seems common, but yeah it can be confusing.
+>=20
+> Yours,
+> Linus Walleij
 
-Your change plus the below change. then we can support more rate,
-not only 48k/44kHz.  SAI driver will select the parent by itself before
-the clk_set_rate().
-
-+       assigned-clocks =3D <&acm IMX_ADMA_ACM_SAI5_MCLK_SEL>,
-+                       <&acm IMX_ADMA_ACM_AUD_CLK1_SEL>,
-+                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_PLL>,
-+                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_SLV_BUS>,
-+                       <&clk IMX_SC_R_AUDIO_PLL_0 IMX_SC_PM_CLK_MST_BUS>,
-+                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_PLL>,
-+                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_SLV_BUS>,
-+                       <&clk IMX_SC_R_AUDIO_PLL_1 IMX_SC_PM_CLK_MST_BUS>,
-+                       <&sai5_lpcg 0>;
-+       assigned-clock-parents =3D <&aud_pll_div0_lpcg 0>, <&aud_rec1_lpcg =
-0>;
-+       assigned-clock-rates =3D <0>, <0>, <786432000>, <49152000>, <122880=
-00>,
-+                                <722534400>, <45158400>, <11289600>,
-+                               <49152000>;
-+       clocks =3D <&sai5_lpcg 1>,
-+               <&clk_dummy>,
-+               <&sai5_lpcg 0>,
-+               <&clk_dummy>,
-+               <&clk_dummy>,
-+               <&aud_pll_div0_lpcg 0>,
-+               <&aud_pll_div1_lpcg 0>;
-+       clock-names =3D "bus", "mclk0", "mclk1", "mclk2", "mclk3",
-"pll8k", "pll11k";
-
-> Should I add the change to our Apalis board dtsi file or directly to
-> imx8qm-ss-audio.dtsi? I think it fixes kind of a general issue or not?
-
-It is still board related, so I think it is better to add to the board dts =
-file.
-
-Best regards
-Shengjiu Wang
-
->
-> Thanks for your support
-> Stefan
