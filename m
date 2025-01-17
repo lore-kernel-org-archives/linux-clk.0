@@ -1,62 +1,62 @@
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758A819DF66
-	for <linux-clk@vger.kernel.org>; Fri, 17 Jan 2025 16:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5370519FA93
+	for <linux-clk@vger.kernel.org>; Fri, 17 Jan 2025 16:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737132715; cv=none; b=u9FbeLYhP6lxFmej4Nz9xONSgn3h+xtHNeAd5TRR0g70hLD+XgcRh4b7SXZCIkJp3ZUJPHWIxvePHH7epQmFIB1Q4zifqRuSW+LsCKOfz2pqJkrDhsBVfhCBRVGsdB60RRVClCBSzxIOII1PZtwCnblTzX71TyMt7kyIQvqvOSg=
+	t=1737132748; cv=none; b=UzP5TviCCqBJK7D3VonOOZrUyjPEoWejK1BM88CzVbFDYWFDU24OAW7Gc/mdDaSFo7JFNqXBJNg/sFGlJB+nmbQhPUPND9qeD9HO1/dgdYx17y1L4elaltYeGx6mDB+aSrIklSMvgwlV6HqrbxGFVzrKc9O0YBVdqWVYRR3lLxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737132715; c=relaxed/simple;
-	bh=uui2Sb/nR98UE7vz5pY6pAcwpCHVX8jKfmCHOcOYoUg=;
+	s=arc-20240116; t=1737132748; c=relaxed/simple;
+	bh=GxqGfy7DCS0v9UvoUQoflUG7DqaWios1qCm/ssJ4Cws=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GIfcJG/opQ6Lu11GkqJODL42ZlHEfL0hoc9iCUWYTGrPaTf5Lc8sH8P+yJnkY/e55UbqBCJENW+HBkNYNwjqD4jqMGsOBvKJpK91tMRicbyVB9EUu+wW84/l76cNAr4jzhLQ4Rn89q/fGNw9RUrU2t776Kl7p1q/LlYnaCwjNMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=BlH8rQpI; arc=none smtp.client-ip=209.85.160.41
+	 In-Reply-To:Content-Type; b=ahlqaY4/ILTSGBzSJeKaDx5kPOQqlQRq+jbOnPwWmUHXqpyFfk5lnfHBorLoo/usVe9SOzjO3cye8VZ4F1H5etk/go8Ad0+ZJYEYigomdJNNaXvvM3tkRlt9VKE5bQXotAmxQ9nhaauG2NPQqQn0Dj7g2DyObC/4HBCiH9oqdac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=TB05YIK3; arc=none smtp.client-ip=209.85.210.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BlH8rQpI"
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2b199bb8af9so1427269fac.1
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jan 2025 08:51:52 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TB05YIK3"
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-71e157a79c8so689921a34.2
+        for <linux-clk@vger.kernel.org>; Fri, 17 Jan 2025 08:52:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1737132711; x=1737737511; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1737132744; x=1737737544; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=7TyQ9sWoiZbB8k64OE2Im+cDXMFp/ewsO6hps1JJeq0=;
-        b=BlH8rQpIna87mcNzBmrfUVk0lNuZCmYAg04PU6K/oPf6XvqLAcwJ8TvjRiOaRll703
-         asDA97/T+pQT/rTAaYYT3LPww0vEREFgeaOda8FTdwyk2eBL7GsVWaSUSUUJ6vrZEdy3
-         AmayeBYMjLEtTvUVHoCbDgJpW6Le0qbw21ArA=
+        bh=gbPn385nmxgkLr2JTs9xLHKsJGuOpLTuKBJgMVB8y7A=;
+        b=TB05YIK3fOSwj0FoijFUNpWv8xRxA2K/B9Xs/Yv0yxohn+TFlU3NVtFh0R1xw2IML0
+         WVLjlLD8Ph4sU8XJUdg0BMdrm09LWaL0xweWz/n+Sh2zFNUCQS7FqNs9NztF1xLwiXhe
+         63CJKPO+AVZuHlP+6a8Kojb6jZP4w5K8K6aD4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737132711; x=1737737511;
+        d=1e100.net; s=20230601; t=1737132744; x=1737737544;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7TyQ9sWoiZbB8k64OE2Im+cDXMFp/ewsO6hps1JJeq0=;
-        b=YDe30tXUBSfP43JBoXjyIA1ptX53F6oWMNjrfrTe98+acTl2P3bXC6uOVLBtujg3dL
-         q1UcPNw335Zb7Wje+wKGgT5Qf5Xv7pB6IUcAp0axTKpkugntTNMFfsmDgT8nCTMyFN3i
-         yfq05zIZUvaxsTqOBF+/JQeqW6kQ9yLZf8DUvs2p3DYrLuk41/PsNAAT2gE1GBIfXPFz
-         ac3ShVUYipkDIebuHboXNBk/bks+CJixUo/229RwvdLbsGeTjBIfE5Me7wH+LfwUtLOg
-         7y2odPp6TeI5xdaIigBtZ+t3JLEowz4H1bm1udrUJRE6zb15LrgEX/4p57ssP9Li1giB
-         4iCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDeoHO2yQDISshLs4b91Ls+1S3qzgQdXwxzDu8YKPEfJjna9gEDB7l4okRr0ZRa/qPQcI1O8Nk3hk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDoAhZB+s3X6p+xT3BtVgSPBmCo3T2oE2X0v0CY/nlGfhAr/yP
-	xRRJ5vmGv1tGc+YDlCS+2HtcriyIj6qxft0Muz2/tfSvd6u9azwlHMZuyZJrMA==
-X-Gm-Gg: ASbGncuY7DJLDRqXnXxAGR+KAeIc9IHW1uRgHtl4aFvQZeHCFcknkSeh2TbYZlh2QKs
-	syu5ieaaa3iOnAyhTvaOCUpOT2XMH+gZcZq59EP6TtIT9rXzSHCJv1+BJsxD0fcftjSk7f4r1lp
-	RlbQeM4zqRHdiQVwvg5Gg60kbK9lyUY4Fr6E49f01zBHTHKqtCPaLNxGvFKVichHVaRDw3s+oab
-	kMqpDF3EuzzkD6lOVLs6sl6kWIcW6qIDiOuE9ErNGMbDCKsGPCKbaej+YEMxdn4d0nPd9uj0zX8
-	jHLmFFFJRoP3CUys9ivZD1/aXWdDNkQ=
-X-Google-Smtp-Source: AGHT+IFEXRpIK2u0R3TQRER+gWkdA+fDKCiwAOfJZ25H/fck0A9Kyq2nWPEMtjRT7GQv/6CdT+xJYA==
-X-Received: by 2002:a05:6870:d146:b0:2a7:8b78:e902 with SMTP id 586e51a60fabf-2b1c26407e4mr1988157fac.7.1737132711553;
-        Fri, 17 Jan 2025 08:51:51 -0800 (PST)
+        bh=gbPn385nmxgkLr2JTs9xLHKsJGuOpLTuKBJgMVB8y7A=;
+        b=PaH6INi84sxTrU+cUGdMkqWIWSfZxexALPLQNe9/LgSZLJaFtxYXnhh6cA15sct6i4
+         YegZsViloaMsNTvHHrmTM4x5M0CbcIRhMJarfshVlTER7q33O1nzDTPAzGM09u0FP4o5
+         Y+tfLJrWEGHxpK/5VpZlgS+C2CiAF+QqPGpuJnoXXWU6RDglXtU+f9uTHk7sGRrg2J/7
+         b1r64wtdg+lqx4+Q9se1dVYTOTfjy3tu2LH31bGUpUZIsdv1d2rPH+vkDlMVLMN6cit+
+         M2KQx4hfP4uSwICPKaJrNMvVrqIDD0fM0rD9jj5SAe536MNa3QhhtzkyfuLe6yHh1B5X
+         jEuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7TnjXntUdxxXIw7u9rYslwPFUjNDsn4hEk6SrVVJfB1KkoqHRCZVpSGITJhZVlx6brf9FM4adolg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5j0BmavD11QgslmyQNW8vjtC1kPRX34g8eigNuMy0z92ozmtr
+	GyLxjzbdiv3ymDbL3TlFM53zqZI0VL9uAfi4U0NYDDutYIyZW9eBhA/lonG6DA==
+X-Gm-Gg: ASbGnct/sMUl1OHy0dgLw+DxAjeBnewytMNl7n7TadNPiWKPVRxTUhkol+Apgf9NWV0
+	MUTAV2cYFcKFpt1gScJdsQbk/R2/f+ev2eLjceZAfFWafIQN1OQUCQFuFmD99v6QfedAcBvx++L
+	c3xRYqYagVZVcwPUHqv1jHI0b/J+gp3Cu1SeJpqCCDuofLG6lozJMX3Cpp+Cdz8pnVJJ5UBIJXc
+	7d+nK4z1tW1hjxQG8T8PIEIELD+yOb0WY+hS8BKRzo4Z5ETih3M3sXR4F2LuO36H9gZPpZNtaKa
+	IWhNVMNxxLRx1bkwlqCct77ccu4GzsE=
+X-Google-Smtp-Source: AGHT+IEPQ2tZri6LlF68yq4mtGcTHaoltWas3irZkTK8fHqf2B06a/y/jkJBQakfa1Dd4rkmWpYZuw==
+X-Received: by 2002:a05:6870:4e0d:b0:29e:2f3a:761a with SMTP id 586e51a60fabf-2b1c0a349f5mr2131118fac.20.1737132744451;
+        Fri, 17 Jan 2025 08:52:24 -0800 (PST)
 Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7249b37c517sm978403a34.6.2025.01.17.08.51.47
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b1b8d4b3c9sm1131584fac.25.2025.01.17.08.52.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jan 2025 08:51:50 -0800 (PST)
-Message-ID: <5cf48ca6-56bb-4625-9914-b3b1cfeee9d7@broadcom.com>
-Date: Fri, 17 Jan 2025 08:51:47 -0800
+        Fri, 17 Jan 2025 08:52:23 -0800 (PST)
+Message-ID: <339e2337-850c-4201-83ea-eca59e297396@broadcom.com>
+Date: Fri, 17 Jan 2025 08:52:20 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,8 +64,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 07/10] arm64: dts: rp1: Add support for RaspberryPi's
- RP1 device
+Subject: Re: [PATCH v6 04/10] dt-bindings: misc: Add device specific bindings
+ for RaspberryPi RP1
 To: Andrea della Porta <andrea.porta@suse.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -91,7 +91,7 @@ To: Andrea della Porta <andrea.porta@suse.com>,
  Luca Ceresoli <luca.ceresoli@bootlin.com>,
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>
 References: <cover.1736776658.git.andrea.porta@suse.com>
- <528c8c136b31483e345d07803b5e8ae5d2cb1b68.1736776658.git.andrea.porta@suse.com>
+ <c22fa1e06926cf946ea3cb6647e9e27441f26398.1736776658.git.andrea.porta@suse.com>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -126,27 +126,21 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <528c8c136b31483e345d07803b5e8ae5d2cb1b68.1736776658.git.andrea.porta@suse.com>
+In-Reply-To: <c22fa1e06926cf946ea3cb6647e9e27441f26398.1736776658.git.andrea.porta@suse.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 1/13/2025 6:58 AM, Andrea della Porta wrote:
-> RaspberryPi RP1 is a multi function PCI endpoint device that
-> exposes several subperipherals via PCI BAR.
-> Add a dtb overlay that will be compiled into a binary blob
-> and linked in the RP1 driver.
-> This overlay offers just minimal support to represent the
-> RP1 device itself, the sub-peripherals will be added by
-> future patches.
+> The RP1 is a MFD that exposes its peripherals through PCI BARs. This
+> schema is intended as minimal support for the clock generator and
+> gpio controller peripherals which are accessible through BAR1.
 > 
 > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-
-Same comment as patch 9, I am happy if Greg takes this patch directly 
-through his tree.
 -- 
 Florian
 
