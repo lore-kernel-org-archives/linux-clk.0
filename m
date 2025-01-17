@@ -1,255 +1,386 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87331714D0;
-	Fri, 17 Jan 2025 15:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A67D19AA56
+	for <linux-clk@vger.kernel.org>; Fri, 17 Jan 2025 15:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737128604; cv=none; b=gRh0wq1FYYlxwmdjx998MYK2G+9DXs81xAYGfPBmQ/cxoCkAeIjk1hNcrT4o6G8/AbxJd99jKnjSVbzxCLkjJpj4NgMm5YvZwqJOL8c+j41UYNkjonIe5QrLUade4BkQib9BICLnfj4HyL+6ZNmqKU4y8vRNGGoUmT/Ik4qDGwE=
+	t=1737129539; cv=none; b=oJlyEVaKMKyQrYuhsn3r3LgeLrPVqW3sBkbV5o6sqtdZkmaMlIYblFfnQPVCHpemEW+hQTYwDvJN6u9FOGYAg+IRy+dsLDSbuskJGZp9kSweohLdN/ng9Xh8Dw5w+WCKh6uZ5blqzOWIaDlzcY5QGa3B9LqZjH/X+98RutsNqxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737128604; c=relaxed/simple;
-	bh=diVDJTYn1VVxEIzS+6ZugT9gK4hpBvjWk2xOKJug5a8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XH4S8YDZ4GQNabtPnimOJ8tyEI53Tz3FV+ksCqDjSyqOsDbXwrhhiV5Zk0ylc3IopOjAA/r510R+p+zAkioGTmjFBXsfpfUt2F9m5zixui3Ibih8lm9SpJZNM3CeKm9tsxWuysHi2aarVwBxVjmVkn8QFJjd8+YxODHtuXDs3o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53f757134cdso2272289e87.2;
-        Fri, 17 Jan 2025 07:43:21 -0800 (PST)
+	s=arc-20240116; t=1737129539; c=relaxed/simple;
+	bh=b1O2zWle8XhB/rVK9m1uUY0QJofv1CyYqAZcv/Y8Qok=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=CvVwgK2f/2izViQm5TMK1hYRplj2Bc5rxWMbOgb/3uara/jf9XgtyfGwUWlpa1FUzXFXNSIUYVbfIbQmltCz1cZcuIdwJ+ZSEZ0nezfLN1bpxD+e2F6STpX/pE3SvjkGhfEKyjt6YJ8oMdmZckDAHvSCXwC7xTbz4MAH1rHb+t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CbQP9ACZ; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CbQP9ACZ"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-435f8f29f8aso15636845e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 17 Jan 2025 07:58:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1737129535; x=1737734335; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+iaEPWMKySKJW9kDwczkfvhJPBLSobdLT8Wpyt/eu+s=;
+        b=CbQP9ACZCRjw4kowrGS/pu+hhFNXmHtSxFk+8pkRxa5CFYyKrPA52/AyIaCJu9i9Bm
+         Rvy9ZciEl0qk/toltKBub/em7CXfsFe8hpBBpdVH1xnDmwQFvMurMjkL6q/AGHYHqhMe
+         /8+OJBjLw8MAIS/BLn+E5/xSWRREjtz0Fzm3KoB3zi9Qk92Dgjo8QngObB66I2O7Y4Tn
+         fa5YzyISSRjGxXdkg3hMvixNFz6NEEOlFb6enxxHGJ8pVDYNK3GRDf76MAi+xIzd+0ll
+         SnhGn5gAYpyJw2N1MaOgNvhM3HbOkqbFuk7g1LRO7Kmijho/wUJWr65g+D3b3GlmsCbq
+         MNoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737128599; x=1737733399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H2N+AWy70jywn4CRmdsXKEKKnKrL7LoujnGhrXs380U=;
-        b=v4f7M/mHzG4CL5VP9F1F60A9+N9Deb0XthLSNhTL+bgZABS1weOVcuPhtkn+5yjXVW
-         3YEiBl+20PzAgMgngghZX8eYMtBQKry8QnmRQ6ybbJlDdOA2HyLzOb54Rf9RQpssJ0e+
-         fHteHraTi1sZ2TfNz4TSEy5zUa2In0nCQMDmHGi9TmFarU/mqIFhRgukxE+uNJIoZFOg
-         G4W2fpMA2ec23B/zL18Y8p2wrGvA57raUEvl5IJOE1+DHJ4WleAuKaLfxBCBhlUpj4xe
-         G3bzNpC0xJ4ShIU7bIxZmN80KgAPMoYOBp8hrpZ0xzb4MEKYfWZit8L6x9ZDhURX4D5k
-         DClA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtXIOhlhltqf1Oi6SN1VLDjd1Ob1N5rxqM1QCYF0zPLvdpxIVwWrU70Ipp4N7DJDlf8V+eVOquoJVy@vger.kernel.org, AJvYcCVbxvVysUzADL/Ok2UAR0HQK4lwqRgSuk0rqjjOeIhDBzp0KE/i2qWeKePnjgCCJ6zg1K8k0pUd0Mo=@vger.kernel.org, AJvYcCWHRaA5Ol/mttZwj+hzjRPEfbHWQ7P+vv79b+HzYhinwey1P6ek3eeJwsmQ7FUB1DWwjg1AUCv++a4xsg==@vger.kernel.org, AJvYcCWlAET/TQPvNfajHBoyEJXVUCnCk3SJAhJ+niSXYMa91mGe9df5EjXNfKTeyt1+WvPY0dNc4k1Q60SW@vger.kernel.org, AJvYcCXcO3Fx7uJbXquu7oIu8mM+QonZz6duzkwV3UW6yuNrnodz7y8wdeNKlqTL2qv+LDUXm77NIWjt47qXDKLR@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYVDDyP3IL64NnEUXhUGS3/IEJveh0NNfBbAmaS6AccZ+QtwdO
-	ilQZFk9sDALhzx22AwCi3qlVWHq3O+cw0cgBpJsE2br7qQlBALwFGhR8Pj7m
-X-Gm-Gg: ASbGnctgZTF6xOiXC0ks+Y/CuGtee2nZBu58QRLD7cMiAmE+KLitxP+maIQjKbmmlsS
-	OKFCosS/WpCQTxYk+VRiBUgXyJc30Dq+ywLKIAT9gy0SGLIO9pdByB/tjMylAr26HyFvymx7zfJ
-	bnzcSgOxcW1aSTKU0znYp6hWAMzBqPjB1Ywmp/2F3KnbrPkU+Pg78kwVasMDtZlRxeVMZMSunUH
-	lboo0IiYl4bLGlzOQB/Y0jh8RZMjEgjYENMugLoUU93NLkgsht1PV3zCkARJJj7FjY4bRiKAnNR
-	Qsd9RJZBXXAi4Q==
-X-Google-Smtp-Source: AGHT+IHvet8QBclfRRC43ZI8zq7VauYdw8ALXG5svVg9olwvAipZr0lc5joyvUZl02xfI9DqUu62xA==
-X-Received: by 2002:a05:6512:1084:b0:542:29b6:9c26 with SMTP id 2adb3069b0e04-5439c27d0c5mr1181858e87.47.1737128598796;
-        Fri, 17 Jan 2025 07:43:18 -0800 (PST)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5439af79d92sm398724e87.258.2025.01.17.07.43.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jan 2025 07:43:17 -0800 (PST)
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-3003d7ca01cso23032151fa.0;
-        Fri, 17 Jan 2025 07:43:17 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUuQw9mQ7S/lD+wl0SGVtK3JqkVvTOpnRGRv5WUx8svNdUPytYL9hc13rkS8xydVOjn9fDqU0OjS3zO@vger.kernel.org, AJvYcCV8gzDlr9dGd9qd5mojxz2Ts5D+ul9qqGA82yKkHxNVvU8hvKqqES84eJkIV9/bGJ/XF6Ap6Vl9tPedU4xV@vger.kernel.org, AJvYcCWwbnKKUBM8bfYeMo5Cw9gnSTXhEbWsF3bA5weivUTQljKL+1x4rmh9ujPCFxYgj5QR6BFp20QckD/v3A==@vger.kernel.org, AJvYcCXcMwrWdtQ5n9CC32KPj5OoVZZnFIXt6ddNjvIX80WqEoCKZ43pcTXa5gvX8co/WXz9tLUHUkbLG8mV@vger.kernel.org, AJvYcCXfMPe0Plk343NFrv6TyNieD25vsCx7FcCauc0wyzc9t+7mBka2d4y7jBBfepHDCQ40xIB/FJ88s0s=@vger.kernel.org
-X-Received: by 2002:a05:651c:2c7:b0:2fb:58b1:3731 with SMTP id
- 38308e7fff4ca-3072ca60bd0mr8406481fa.6.1737128597473; Fri, 17 Jan 2025
- 07:43:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737129535; x=1737734335;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+iaEPWMKySKJW9kDwczkfvhJPBLSobdLT8Wpyt/eu+s=;
+        b=n5tnhLjWPh+Ew09CT5BVFw3MpnHO7F5o2tORvn1bidULxCnMQCJUKwUsGxX4VHuG5B
+         q9jBbfTe5PmljysWTAhDHcOAERhCvVI1SUsk+NrMGcV/b1WXFuxrr3TvD67DTUKa5yrz
+         Mtrw5iNSy5zUEWbOGcAYetcNEmdowCEXUnKNLYcXEx0qcFvCp7SWoeA2qC9cok/Aof6u
+         iRHQaZyM0IyL/4F0l/PpYdSPtye91sBjOMfBxAGLuEohLZwieTJdp2lhPVVwaqROLtYR
+         sWjiayzW9f6V17/OhTYxFRQx53qwn5m4nQYWoheloajBIeTG5RmnNBGMTeD+sTSMOUJB
+         3sNw==
+X-Gm-Message-State: AOJu0YwvmlLfszt8a6RPh07fAzN195GYF3aXQ9iC7kF1QV8Hw77EAy5h
+	GAEXo92hmbrYlP/yTWjXmI7HsVNO58QIv++CAdgKTeiWJrK9HYh95VtJg+jl6+o=
+X-Gm-Gg: ASbGnctVnTgKgZ+jgXkyN0+uhvWhhs7w4iCuebFqLixPIEqy9qPACn8cAx3j8vHVv1e
+	tNMmb20bKd0f9kcoSOl5gFTpg90vB/xxSor4txnczON5Ka5qUJD4qYHIBD2ZAn3fKBox7PSCmH4
+	JkVn1n97VQYwlmQDbZdQvQmjPwxk8lxNmmqH8gtWi+5PVzznw2MExBioYL69czUIEoVCLi7j3F7
+	lvFenD4sPYHwLcoWGgvMVWHjZJ3Zpi8rQS6DdL8OZwg9aNLyZJ1njIcZlq4+RLRWBGQVH0=
+X-Google-Smtp-Source: AGHT+IGWfn2Yq8vv6CxpDXWXFAYXomXmGRAk312FTbV8uMFgrviMgEzZA2n2RwjkLe9DmwMhMJ2jwQ==
+X-Received: by 2002:a05:600c:4c24:b0:434:f3a1:b214 with SMTP id 5b1f17b1804b1-4389da1e6c7mr14988805e9.28.1737129534746;
+        Fri, 17 Jan 2025 07:58:54 -0800 (PST)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:b019:599d:2d51:f3c7])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-437c7528076sm99382195e9.25.2025.01.17.07.58.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2025 07:58:54 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Fri, 17 Jan 2025 16:58:30 +0100
+Subject: [PATCH v2 1/4] clk: add a clk_hw helpers to get the clock device
+ or device_node
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250110123923.270626-1-szemzo.andras@gmail.com>
- <20250110123923.270626-4-szemzo.andras@gmail.com> <20250114141954.2785879a@donnerap.manchester.arm.com>
- <CACRpkda0nx3SQtdjmXdCEbVJSWM10TM=p-6JbDjbiYcOSF5PxQ@mail.gmail.com>
- <20250115152635.1b89e7f4@donnerap.manchester.arm.com> <CACRpkdYVTedEon0X-izvaDTGF6yRhD2s=Z6NEM=zBf4vD-T0Pg@mail.gmail.com>
-In-Reply-To: <CACRpkdYVTedEon0X-izvaDTGF6yRhD2s=Z6NEM=zBf4vD-T0Pg@mail.gmail.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 17 Jan 2025 23:43:05 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64sNfytUPbyBFjiZCU+jLkXOH1r9iH=Z_E0PjwVxkMCWg@mail.gmail.com>
-X-Gm-Features: AbW1kvbzoziWjm4-jxBgu7nAEK51uWx6aYENBjR409HEBu5PP3az-MNoew5mtV4
-Message-ID: <CAGb2v64sNfytUPbyBFjiZCU+jLkXOH1r9iH=Z_E0PjwVxkMCWg@mail.gmail.com>
-Subject: Re: [PATCH 03/12] pinctrl: sunxi: add driver for Allwinner V853.
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Andre Przywara <andre.przywara@arm.com>, Andras Szemzo <szemzo.andras@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250117-amlogic-clk-drop-clk-regmap-tables-v2-1-d1f77cb0773e@baylibre.com>
+References: <20250117-amlogic-clk-drop-clk-regmap-tables-v2-0-d1f77cb0773e@baylibre.com>
+In-Reply-To: <20250117-amlogic-clk-drop-clk-regmap-tables-v2-0-d1f77cb0773e@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10126; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=b1O2zWle8XhB/rVK9m1uUY0QJofv1CyYqAZcv/Y8Qok=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnin45A176rtxslHDs+QCelzmmxY1RX+XGUvhoo
+ 9jwh5/Os9uJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ4p+OQAKCRDm/A8cN/La
+ hQx+EACgNgB6FWaBL5hKrml5JR/LSe05fbeTkb4OE4KB1tdx1/ahdpKJF1V7FVdAC7D9w/hhyj/
+ oRYK0QBpokYiSDYCqg1VTHu3DCSx6FO3s458MC5pbI6WJi6WW5xqXvU9uK43B1rpXlS8atGOoEX
+ 7Wcs2zX1CZfi4Lr3X1d8IcHPI85ChrU/IGY5fMxr23/wMUuTPw2cQr9vbw4m9NHScbjWnMklpvV
+ cEyBJwrQgmaEhSVyjRsEW5nkqO1xULrfNULs7wwKiRbjX/xryRl1MHvL+hjR3V1T6rtVUGEW7ct
+ WTLbSNS/0OvVLy4G01Lh94Yr8BrUQq1y6FGjQ8DAe5t9kUH0UO8B5DXDP5ubh3G/m0mGs6w13R6
+ qn2MnD9I1AZqK9WLnOthcCTc1LP1rzRfLwQvk39O1mrrPH4N1OiA7khNC0VuR8ZVw6SdnFem3U/
+ TDUuDK6DRjVF/oGTYNwejhhAkQXn9sTr0aoWFldVkFwqJkT2HuprFAgKZb4gurMxRjeguzzzEEG
+ XjOXhYwFwsXxSzmm+/p8rcDVHS/jbtU3B1VrRpTnM7OvtbAAy43CmQHZSDN0e/TKrV4QgKTbsN1
+ 7bC/wQGYHlvAQM9r2zeuaSGsyMqwukbdIOWPQAzGxNJ4Xu+jLI1PN+2YvRVGOV7zDgCShpVW0+/
+ BH7ZHwdqbqjst8A==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On Thu, Jan 16, 2025 at 5:34=E2=80=AFPM Linus Walleij <linus.walleij@linaro=
-.org> wrote:
->
-> Hi Andre,
->
-> some nice talk here, actually the following is just opinions, I will
-> be likely happy with whatever approach is taken eventually.
->
-> On Wed, Jan 15, 2025 at 4:26=E2=80=AFPM Andre Przywara <andre.przywara@ar=
-m.com> wrote:
->
-> > > pio: pinctrl@1c20800 {
-> > >                         compatible =3D "allwinner,sun8i-r40-pinctrl";
-> > > (...)
-> > >                         i2c0_pins: i2c0-pins {
-> > >                                 pins =3D "PB0", "PB1";
-> > >                                 function =3D "i2c0";
-> > >                         };
-> > >
-> > > abstract, strings, nice. The driver handles the particulars.
-> >
-> > What bugs me about this it that this has quite some seemingly redundant
-> > information (Who would have thought that the i2c0 pins use function
-> > "i2c0"?), but misses out on the actual 4 bits(!) of information.
->
-> the pins in this example are called PB0 and PB1 though. The designation
-> on the package. And often pins actually named "i2c0_1" "i2c0_2" are
-> for that primary function, but muxable to a few other functions,
-> at least GPIO in most cases. So it's just some name for the pin
-> really.
+Add helpers to get the device or device_node associated with clk_hw.
 
-No. Allwinner actually names their pins like this, kind of like Rockchip
-which provides standardized names such as "GPIO0_B2", but unlike MediaTek
-which just names the pins after their designated primary function such as
-"EINT22" or "TDM_BCLK". The ball names are a separate thing.
+This can be used by clock drivers to access various device related
+functionality such as devres, dev_ prints, etc ...
 
-Even though the pin names seem a bit random, there's actually a grouping
-logic underneath:
+Add test for these new helpers in clk-test.
 
-- PC pins are always for the bootable internal storage (NAND, SPI-NOR, eMMC=
-)
-- PF pins are always the external SD card / debug UART / JTAG
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/Makefile                    |   1 +
+ drivers/clk/clk.c                       |  33 +++++++++
+ drivers/clk/clk_test.c                  | 116 +++++++++++++++++++++++++++-----
+ drivers/clk/kunit_clk_dummy_device.dtso |  10 +++
+ include/linux/clk-provider.h            |   2 +
+ 5 files changed, 145 insertions(+), 17 deletions(-)
 
-> > > That is like so because we are designing for users which are
-> > > let's say customization engineers. If these engineers jump from
-> > > project to project matching function strings to group strings will
-> > > be a common way to set up pins, and easy to understand and
-> > > grasp, and it makes the DTS very readable.
-> >
-> > That's an interesting view, and I see the point of it being easy to rea=
-d,
-> > but this is partly because it doesn't convey too much actual informatio=
-n,
-> > does it, as it requires another lookup or two.
-> > And the pinctrl group nodes are actually in the .dtsi file, which are
-> > typically written once during the initial SoC enablement, and new board
-> > .dts files normally just reference the existing pingroup nodes. So anyo=
-ne
-> > dealing with just a new board is not bothered by this.
->
-> You have a point, and when working with a system the application
-> engineer often finds bugs in the pin control driver, and has to go
-> and fix the actual driver and then all the information hiding and
-> simplification is moot.
->
-> This can become an expensive lesson for the current attempts
-> to push pin control into firmware where the configuration is
-> mostly "dead simple" (and just using strings) - the bugs will be
-> in the firmware instead, and impossible or really hard to fix.
->
-> > Also in my experience most people have no problems in understanding the
-> > concept of pinmuxing and that there is a selector number, also where to
-> > find this.
->
-> Yeah the ambition with the strings was to avoid forcing application
-> engineers to know all about that. If they do, they are then
-> developing the driver, not just using it.
->
-> > > Mediatek and STM32 made a compromise by using pinmux
-> > > and adding some macros to define them so it looks more
-> > > pleasant:
-> > >
-> > >       i2c0_pins_a: i2c0-default {
-> > >                 pins-i2c0 {
-> > >                         pinmux =3D <MT7623_PIN_75_SDA0_FUNC_SDA0>,
-> > >                                  <MT7623_PIN_76_SCL0_FUNC_SCL0>;
-> >
-> > Well, I don't really get why they don't use the (MTK_PIN_NO(75) | 1)
-> > definition directly, seems to be more telling to me?
->
-> That's what STM32 does as well and it's usable.
->
-> But of course it drives a truck through the initial ambition that pins
-> on all systems be configured the same way, with strings. So now
-> there are some families of drivers all "necessarily different" which
-> is not so nice for people jumping between different SoCs, but
-> very compelling for people focusing on just one SoC.
->
-> Well, unless this way of doing things becomes so prevalent that
-> it's the new black.
->
-> > So the plan for sunxi would be: <SUNXI_PINMUX(PORTC, 23, MUX_1)>, ...
-> > And this would not be really "opaque", since it has a fixed known mappi=
-ng:
-> >         (port << 16) | (pin << 8) | (mux << 0))
-> > I find this both technically elegant, because it combines all the
-> > information into just one compact cell, but also readable by outsiders,
-> > thanks to the macro.
->
-> And a new standard, to add to the other standards, so that
-> is my problem as maintainer. It makes sense on its own, and it
-> complicates the bigger picture.
->
-> > My main arguments against the current (string-based) approach:
-> > - They require the mapping table to be in every DT user, so not only th=
-e
-> >   Linux kernel, but also U-Boot, FreeBSD, you name it...
->
-> That's true.
->
-> This comes from the DT ambition to describe hardware and config,
-> but not *define* hardware, i.e. to stop device tree to turn into
-> Verilog or SystemC, which is what will happen if we take the
-> 1:1 reflection of hardware to device tree too far.
->
-> I don't think anyone really knows where to cut the line.
->
-> > - The tables are getting quite large, and they pollute the single image
-> >   Linux kernel, with tons of very specific information for a number of =
-very
-> >   pitiful Allwinner SoCs. At the moment the tally is at 145KB of code+d=
-ata
-> >   for the existing arm64 SoCs, with the newer SoCs ever growing (H616 a=
-lone
-> >   is 27KB, A523 would be quite larger even, I guess 40K). The new A523
-> >   specific pinctrl support adds 872 Bytes.
->
-> This is a generic problem though, look at GPU drivers.
->
-> The community (especially Android) seem set on fixing this by using
-> modules.
->
-> > - Most of the mappings are untested at pinctrl driver commit time, sinc=
-e we
-> >   don't have the device drivers ready yet - by a margin. The new approa=
-ch
-> >   would add the pinmux values when we need them and can test them.
->
-> I like this argument the best.
->
-> However this also reads "upfront firmware to handle pin control is a
-> dead end" yet there are people dedicatedly working on exactly that.
-> (Not that its' the Allwinner developers' problem...)
->
-> > - The comments in the table give away that something is not quite right=
-:
-> >                   SUNXI_FUNCTION(0x2, "i2c0")),         /* SDA */
-> >   This is just a comment, so has no relevance for the code, but it's no=
-t
-> >   meant for humans either. Yet we try to make this correct and maintain
-> >   it. Odd.
->
-> So i2c0 is SDA and i2c1 is SCL or something?
-> It seems common, but yeah it can be confusing.
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index bf4bd45adc3a0ed8c9dc699c76f303dc91b524c4..b38ec888a449249340cd1ef147a774361558af3c 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -18,6 +18,7 @@ clk-test-y			:= clk_test.o \
+ 				   kunit_clk_assigned_rates_without_consumer.dtbo.o \
+ 				   kunit_clk_assigned_rates_zero.dtbo.o \
+ 				   kunit_clk_assigned_rates_zero_consumer.dtbo.o \
++				   kunit_clk_dummy_device.dtbo.o \
+ 				   kunit_clk_parent_data_test.dtbo.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-factor.o
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 9b45fa005030f56e1478b9742715ebcde898133f..726f63ecc3758538a75dc4e7b3783ccf66029db1 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -365,6 +365,39 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_get_name);
+ 
++/**
++ * clk_hw_get_dev - get device from an hardware clock.
++ * @hw: the clk_hw pointer to get the struct device from
++ *
++ * This is an helper to get the struct device associated with an hardware
++ * clock. Some clock, such as with early clock constroller, may not be
++ * associated with any struct device.
++ *
++ * Return: the struct device associated with the clock, or NULL if there
++ * is none.
++ */
++struct device *clk_hw_get_dev(const struct clk_hw *hw)
++{
++	return hw->core->dev;
++}
++EXPORT_SYMBOL_GPL(clk_hw_get_dev);
++
++/**
++ * clk_hw_get_of_node - get device_node from an hardware clock.
++ * @hw: the clk_hw pointer to get the struct device_node from
++ *
++ * This is an helper to get the struct device_node associated with an
++ * hardware clock.
++ *
++ * Return: the struct device associated with the clock, or NULL if there
++ * is none.
++ */
++struct device_node *clk_hw_get_of_node(const struct clk_hw *hw)
++{
++	return hw->core->of_node;
++}
++EXPORT_SYMBOL_GPL(clk_hw_get_of_node);
++
+ struct clk_hw *__clk_get_hw(struct clk *clk)
+ {
+ 	return !clk ? NULL : clk->core->hw;
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index f08feeaa3750bc86859294650de298762dea690a..4dcdde283598b7f940c653ebc0d5a5f4c27637a2 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -2794,43 +2794,40 @@ static struct kunit_suite clk_register_clk_parent_data_of_suite = {
+ };
+ 
+ /**
+- * struct clk_register_clk_parent_data_device_ctx - Context for clk_parent_data device tests
++ * struct clk_register_device_ctx - Context for clock device tests
+  * @dev: device of clk under test
+  * @hw: clk_hw for clk under test
+  * @pdrv: driver to attach to find @dev
+  */
+-struct clk_register_clk_parent_data_device_ctx {
++struct clk_register_device_ctx {
+ 	struct device *dev;
+ 	struct clk_hw hw;
+ 	struct platform_driver pdrv;
+ };
+ 
+-static inline struct clk_register_clk_parent_data_device_ctx *
+-clk_register_clk_parent_data_driver_to_test_context(struct platform_device *pdev)
++static inline struct clk_register_device_ctx *
++clk_register_device_to_test_context(struct platform_device *pdev)
+ {
+ 	return container_of(to_platform_driver(pdev->dev.driver),
+-			    struct clk_register_clk_parent_data_device_ctx, pdrv);
++			    struct clk_register_device_ctx, pdrv);
+ }
+ 
+-static int clk_register_clk_parent_data_device_probe(struct platform_device *pdev)
++static int clk_register_device_probe(struct platform_device *pdev)
+ {
+-	struct clk_register_clk_parent_data_device_ctx *ctx;
++	struct clk_register_device_ctx *ctx;
+ 
+-	ctx = clk_register_clk_parent_data_driver_to_test_context(pdev);
++	ctx = clk_register_device_to_test_context(pdev);
+ 	ctx->dev = &pdev->dev;
+ 
+ 	return 0;
+ }
+ 
+-static void clk_register_clk_parent_data_device_driver(struct kunit *test)
++static void clk_register_of_device_driver(struct kunit *test,
++					  const struct of_device_id *match_table)
+ {
+-	struct clk_register_clk_parent_data_device_ctx *ctx = test->priv;
+-	static const struct of_device_id match_table[] = {
+-		{ .compatible = "test,clk-parent-data" },
+-		{ }
+-	};
++	struct clk_register_device_ctx *ctx = test->priv;
+ 
+-	ctx->pdrv.probe = clk_register_clk_parent_data_device_probe;
++	ctx->pdrv.probe = clk_register_device_probe;
+ 	ctx->pdrv.driver.of_match_table = match_table;
+ 	ctx->pdrv.driver.name = __func__;
+ 	ctx->pdrv.driver.owner = THIS_MODULE;
+@@ -2839,6 +2836,16 @@ static void clk_register_clk_parent_data_device_driver(struct kunit *test)
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx->dev);
+ }
+ 
++static void clk_register_clk_parent_data_device_driver(struct kunit *test)
++{
++	static const struct of_device_id match_table[] = {
++		{ .compatible = "test,clk-parent-data" },
++		{ }
++	};
++
++	clk_register_of_device_driver(test, match_table);
++}
++
+ static const struct clk_register_clk_parent_data_test_case
+ clk_register_clk_parent_data_device_cases[] = {
+ 	{
+@@ -2909,7 +2916,7 @@ KUNIT_ARRAY_PARAM(clk_register_clk_parent_data_device_test,
+  */
+ static void clk_register_clk_parent_data_device_test(struct kunit *test)
+ {
+-	struct clk_register_clk_parent_data_device_ctx *ctx;
++	struct clk_register_device_ctx *ctx;
+ 	const struct clk_register_clk_parent_data_test_case *test_param;
+ 	struct clk_hw *parent_hw;
+ 	struct clk_init_data init = { };
+@@ -3016,7 +3023,7 @@ KUNIT_ARRAY_PARAM(clk_register_clk_parent_data_device_hw_test,
+  */
+ static void clk_register_clk_parent_data_device_hw_test(struct kunit *test)
+ {
+-	struct clk_register_clk_parent_data_device_ctx *ctx;
++	struct clk_register_device_ctx *ctx;
+ 	const struct clk_register_clk_parent_data_test_case *test_param;
+ 	struct clk_dummy_context *parent;
+ 	struct clk_hw *parent_hw;
+@@ -3077,6 +3084,80 @@ static struct kunit_suite clk_register_clk_parent_data_device_suite = {
+ 	.test_cases = clk_register_clk_parent_data_device_test_cases,
+ };
+ 
++static void clk_register_dummy_device_driver(struct kunit *test)
++{
++	static const struct of_device_id match_table[] = {
++		{ .compatible = "test,clk-dummy-device" },
++		{ }
++	};
++
++	clk_register_of_device_driver(test, match_table);
++}
++
++/*
++ * Test that a clk registered with a struct device can provide back the
++ * struct device it was registered with.
++ */
++static void clk_hw_get_dev_test(struct kunit *test)
++{
++	struct clk_register_device_ctx *ctx;
++
++	ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
++	test->priv = ctx;
++
++	clk_register_dummy_device_driver(test);
++	ctx->hw.init = CLK_HW_INIT_NO_PARENT("test_get_dev",
++					     &clk_dummy_rate_ops, 0);
++
++	KUNIT_ASSERT_EQ(test, 0, clk_hw_register_kunit(test, ctx->dev, &ctx->hw));
++	KUNIT_EXPECT_PTR_EQ(test, ctx->dev, clk_hw_get_dev(&ctx->hw));
++}
++
++/*
++ * Test that a clk registered with a struct device_node can provide back the
++ * struct device_node it was registered with.
++ */
++static void clk_hw_get_of_node_test(struct kunit *test)
++{
++	struct device_node *np;
++	struct clk_hw *hw;
++
++	hw = kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
++
++	np = of_find_compatible_node(NULL, NULL, "test,clk-dummy-device");
++	hw->init = CLK_HW_INIT_NO_PARENT("test_get_of_node",
++					 &clk_dummy_rate_ops, 0);
++	of_node_put_kunit(test, np);
++
++	KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, np, hw));
++	KUNIT_EXPECT_PTR_EQ(test, np, clk_hw_get_of_node(hw));
++}
++
++static struct kunit_case clk_hw_test_cases[] = {
++	KUNIT_CASE(clk_hw_get_dev_test),
++	KUNIT_CASE(clk_hw_get_of_node_test),
++	{}
++};
++
++static int clk_hw_test_init(struct kunit *test)
++{
++	KUNIT_ASSERT_EQ(test, 0,
++			of_overlay_apply_kunit(test, kunit_clk_dummy_device));
++
++	return 0;
++}
++
++/*
++ * Test suite to verify the sanity clk_hw helper functions.
++ */
++static struct kunit_suite clk_hw_test_suite = {
++	.name = "clk_hw_test_suite",
++	.init = clk_hw_test_init,
++	.test_cases = clk_hw_test_cases,
++};
++
+ struct clk_assigned_rates_context {
+ 	struct clk_dummy_context clk0;
+ 	struct clk_dummy_context clk1;
+@@ -3399,6 +3480,7 @@ kunit_test_suites(
+ 	&clk_assigned_rates_suite,
+ 	&clk_leaf_mux_set_rate_parent_test_suite,
+ 	&clk_test_suite,
++	&clk_hw_test_suite,
+ 	&clk_multiple_parents_mux_test_suite,
+ 	&clk_mux_no_reparent_test_suite,
+ 	&clk_mux_notifier_test_suite,
+diff --git a/drivers/clk/kunit_clk_dummy_device.dtso b/drivers/clk/kunit_clk_dummy_device.dtso
+new file mode 100644
+index 0000000000000000000000000000000000000000..5cc89aa11264428b09e47fd29c5f9ecfb8c32fdd
+--- /dev/null
++++ b/drivers/clk/kunit_clk_dummy_device.dtso
+@@ -0,0 +1,10 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++/plugin/;
++
++&{/} {
++	kunit-clock-controller {
++		compatible = "test,clk-dummy-device";
++		#clock-cells = <0>;
++	};
++};
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 2e6e603b749342931c0d0693c3e72b62c000791b..83852346a32beae919d223f30cb88baa4b2fd62b 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1360,6 +1360,8 @@ void clk_hw_unregister(struct clk_hw *hw);
+ /* helper functions */
+ const char *__clk_get_name(const struct clk *clk);
+ const char *clk_hw_get_name(const struct clk_hw *hw);
++struct device *clk_hw_get_dev(const struct clk_hw *hw);
++struct device_node *clk_hw_get_of_node(const struct clk_hw *hw);
+ #ifdef CONFIG_COMMON_CLK
+ struct clk_hw *__clk_get_hw(struct clk *clk);
+ #else
 
-No. i2c0 is the actual peripheral that gets muxed in. The SDA / SCL
-comments are simply denoting which signal from the peripheral this
-pin & mux value carry.
+-- 
+2.45.2
+
