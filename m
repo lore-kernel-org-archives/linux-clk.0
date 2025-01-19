@@ -1,121 +1,176 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23752B9A8;
-	Sat, 18 Jan 2025 14:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818CDD531
+	for <linux-clk@vger.kernel.org>; Sun, 19 Jan 2025 00:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737210925; cv=none; b=ko36pQ9qA5d7IvojvjGHN4kEujuR2NO3mzoGhiaF7ryozrIQpOGbfU1aeiR6I96YIOSMplhvQ1Pk1taZfYX60A/jJ1SM8C9SguJdMlRGd3XI7FYj92Nhr1GCx4uZuv4rZAP2NQ+7JgyonWE6JdWW9oHvXYlOb3qrzCLoaxeiroI=
+	t=1737248101; cv=none; b=ZS2B52xZXnRZG7IJW03aHD+OhQ0sYy1gZ67qqcOGOnuWqcPDh2k55xmE+kwhk9HQ1WxgHTxId5TuIQH7adBSRubE6rVSGky6fEdcArTP9wBHW7qjTY97BJUizMrknSY8oPAoPi442JNFJygnGq+SCP4KVpoAFrldu5onz5qVdZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737210925; c=relaxed/simple;
-	bh=X8S9ixEcY8abMh6hBNRFz4AKcSH2mJNqJhoZUq3Q+OU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qvpO4dxyXMv0FpemQpKC5F4JWBAObQnNrnGGUsUfZiJvmgI54Z547uTTDz+gWTNOGuuMiWN6QDLlt32dtwVD4RPE1cGSl/2zmIRgk62jel7hhTJRTfEsqWbU/QaxKet8dLYGQsDsugN2l0WL/oEEtrw2RotVfRMJ9Z69R0LrFe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nE7/1Ni0; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737248101; c=relaxed/simple;
+	bh=VFtYwX07oZvHGxiVg/5uqQZa1Rz1XByvclsQUprLecg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ceEVCpClg0zcnGAArC8KwUtPXfHM6Z9J7iLePNQLAbxtWOuaovt830/dJKditwOzAR2DuCo8MqxwfxCk/O6SMEUTJ5R8gqUMrEm1eIezqGTrOgEyZSh7j7aQFkzUq8duNgx1cS71ZG4Z28g/2+pR2dfIXVth4k9Ea0lGrokr7TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZXnssyyG; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nE7/1Ni0"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d0ac27b412so4060508a12.1;
-        Sat, 18 Jan 2025 06:35:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZXnssyyG"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38634c35129so2698667f8f.3
+        for <linux-clk@vger.kernel.org>; Sat, 18 Jan 2025 16:54:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737210922; x=1737815722; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X8S9ixEcY8abMh6hBNRFz4AKcSH2mJNqJhoZUq3Q+OU=;
-        b=nE7/1Ni0fq6sN2HhBmRSloQ8lhAQZ9ZP5qzqNPBDd0qCn/6DSGQ/ZYcbbWROWrtxX5
-         TlO6T9fNq6yI3qbcvX5my5Aal6mARXCgwldmeEepXhgut6TcjsZ1x+q6jrckapndOhyC
-         5NoHj2FnBGMscN5IhPyZ/PWWMDfc8wo1aAvJujeAowS8BzpVkTLLmSjFhNlBaFhWIdnE
-         MeFCV57B1A70UMecAWe2EMVm9L2xvCLcJJJ9a7cqdSTXyRF/641IPmmEksibGfp2Vhbf
-         jemnEOSNaq+Myw8KMcH19eQaYWD5mndT8xuQrr2AJ9C1tbWIyLkNh6TYxB1RV6gXl2Ds
-         HMFA==
+        d=linaro.org; s=google; t=1737248098; x=1737852898; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sPVy2TZ7nxNOnPzYmR2/3BBjXksk2FPEQABRuEps/hI=;
+        b=ZXnssyyG9sM7nECFu5g+PTqS54/M93wzP/RPV96DF6Gh+KinkDtFeeu9YGnbJ0O2Pu
+         +xxTxeB3LPYfIZycV9Sjf5Ih/ZvfayqkuO1LdCIJJnlR/h8FsG6st2so28xCkQiLzrOV
+         ikqFe1kDd0lq3UrjMbfdood7PCHtHG+ncLuRJwq4hnIDHWSNRZ8BwLTTrKL0itYfELHH
+         ImKkAKqp7IlzBh4QwRhFzE0yIRSmeBXGsYP7Rn4HxhzVMzWGn28l2Tyf6kueZ5gpruo5
+         rY4E2NM1C2zK3QjzSpjAcl8IJcXYfLFrafOBaxalYb04rgWsUpAcaYDDOJTIUBOuqq5h
+         qw8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737210922; x=1737815722;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X8S9ixEcY8abMh6hBNRFz4AKcSH2mJNqJhoZUq3Q+OU=;
-        b=lMNpE5DUPN5HMXkGuwgfpO3xEXPsXHdwZUE1Vgd/LpDKvf43vd8JlAUgpFA0NHowzg
-         9sScigfAG5n7iKMMy6CNlsze8w5lAwhaOXVSqew8wjfYSrRcAjBs0/BS8TuaHvYsNEv8
-         hG4hXCBQvLNeAfkOivxFRUdyOsIa9Evbao41uMBSfnAPcfXhTVOjKMcZmMzDWUt+katv
-         4GqKDJAIXKECRMPE8PgxGbYjnC6kriK1uyD9lab55wziW6c1nFei8DFFVKvA5JyDt1CT
-         otT+zNxkrZiGoEmiOLcwp+OEqo/bXcZeaUWE9WTYXVz5r2aDKLFsNusvYIfkJMMrGGCj
-         ngvw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9u3lAeKtcsCixn6P8hXGAlC9Tqu1c5lRWMxulGtbvHaywWoe9lZqPaYPWvdSRX88oWiI33dp7yqzjBspy@vger.kernel.org, AJvYcCW8q7pmVQaW8YwoxkgQRuXZRvBDHLcGCUvkwCt5s358fIB5gokH3hTd7XAKbBDxdUGoZ28Z2OUsauXx@vger.kernel.org, AJvYcCXAG8mCoWJjAydaGaT4YVmZAxdFntbcFb36x+T/aancIxzGkrkcIq8Ba3Yl+Nk7JQ+pKdvRoXOzwUvd@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+NUzbcpJR9+LND8IIvAOmciqxpdSbacbK7Mr/8QNo3FQlet9Q
-	jnGp7H5SrxD8rvrcRNPyqUec7G7xgFdpTw5MBXpF8FDiVA4U9FfWcDOnYYmPlp3U+nJbTbsOxnh
-	eUtXkbwgNOM+bDEXlT2CeJLPx8OI=
-X-Gm-Gg: ASbGncu9TV++PFp8iMirBNed5VvDXBdIR4VhNLidhMZsxEusku7wOafLN8D0STDMgT0
-	+CRic27ERZcSeg6qWdToGvW15o0GhQG5MY9l37g2owWF0c3ISxShC
-X-Google-Smtp-Source: AGHT+IFDZpftdKqBFqBjBkAeeMYE15CR2JHURmc/olRPtILwjDfNNssQSQSY8GDDreU8V095+cJIkrJgg1PZfxTj8hY=
-X-Received: by 2002:a50:8d17:0:b0:5d1:22d2:8965 with SMTP id
- 4fb4d7f45d1cf-5db7db2bff6mr5038044a12.30.1737210921703; Sat, 18 Jan 2025
- 06:35:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737248098; x=1737852898;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sPVy2TZ7nxNOnPzYmR2/3BBjXksk2FPEQABRuEps/hI=;
+        b=U9x/Rm0+lwnjatN/OA81z59JPbIsRMUFbj0yths5OWDgbXSia+NA1SF+3gwCXEnrnC
+         F/BL1+QM1+a/fZz+XWzYVClFu/LShxyjWGexCGsxFvpl0oB2hJfBNGZ+JZTAWOUHYlcq
+         B1JRhkhdf7+rV+W74uP+luzlzgct1hF1B9SMRI9T8DJqf0Enl1QGoGQLnz4zSEZjGiS1
+         Vyqp++OBXsRKURQbIgT3jie34Mso6KkBpWVBpnwXxp3DRqsrDNY2IP4F0Dy/L6SlXzfd
+         nF4fxJHqfrvnTaLbd9d9WydDlpQ8ttf9jo7RQjgpnBpYK/bL+6Y2TO/F6ZpzqsRXl8XI
+         MKAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXMM4zG5SuelwotipXeAu8QOouun7kawzMombFd+sCBcn+4MkcAbc66O0csX1+VNESOJTNk9CKoHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykqVzc9n5SyhaTJ/ECgV3bB/6i2jvvzj10LR4Jko3Ui6lQ9ljl
+	mdSSq6aKFWcVFc+6fkeRV60In64Qmdn9DW8nbbLNI1CfscGQYRfEyXwWnpuzQgo=
+X-Gm-Gg: ASbGncsHUmpQcct/cgTPmZ6e2NDkHAXgB3rxbNeG4wj35J/swLS9JfM1mruFwS9FOCi
+	q7AZMlRYldUlIYTv/wBlWB34QZdj81cRfWc3CLlhRNwHUpHmHobHbuG794unp+UezfMiYJ0hPfa
+	ycCzq3/ZHOG9ekpl4fkrcOV6BErbbt5GLbaYGKsGJ30IaRKGcrfe3rbhq7WhR7/muzKC4Blb7lI
+	a/2nl9HLp2PaKVp/wV9K+xRtir6Z8cThsQ1GrauXUA5vIjbuqEG1Ask4JLR2RWujoZIMEG3YhN7
+	a9c=
+X-Google-Smtp-Source: AGHT+IGtOaL5Zt6V5dTGsVlWfUStNwZWdqma2iCttMpY56KqQ7XHBLD+8DWgwoEHOAJDPekrodr5Eg==
+X-Received: by 2002:adf:fec5:0:b0:38a:88d0:18d6 with SMTP id ffacd0b85a97d-38bf58e8fa8mr4691530f8f.42.1737248097750;
+        Sat, 18 Jan 2025 16:54:57 -0800 (PST)
+Received: from [127.0.1.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38bf322aa40sm6339241f8f.45.2025.01.18.16.54.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Jan 2025 16:54:56 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v4 0/4] Add dt-bindings and dtsi changes for CAMSS on
+ x1e80100 silicon
+Date: Sun, 19 Jan 2025 00:54:52 +0000
+Message-Id: <20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-0-c2964504131c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250115012628.1035928-1-pgwipeout@gmail.com> <00cbc2a1-b4c1-46a2-8234-f66edc19fac9@kernel.org>
-In-Reply-To: <00cbc2a1-b4c1-46a2-8234-f66edc19fac9@kernel.org>
-From: Peter Geis <pgwipeout@gmail.com>
-Date: Sat, 18 Jan 2025 09:35:08 -0500
-X-Gm-Features: AbW1kva6DFr1RzjQp9KXMYYlhacM2koJu0uBfxOzcSRq7CyYw1cACxFrw_KEa_w
-Message-ID: <CAMdYzYoE54PSdTH9JPBFLggDy9CZsj47N6qFKJFZz4xe3VVbBw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/6] rockchip: add a functional usb3 phy driver for rk3328
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, zyw@rock-chips.com, kever.yang@rock-chips.com, 
-	frank.wang@rock-chips.com, william.wu@rock-chips.com, wulf@rock-chips.com, 
-	linux-rockchip@lists.infradead.org, Alex Bee <knaerzche@gmail.com>, 
-	Algea Cao <algea.cao@rock-chips.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Conor Dooley <conor+dt@kernel.org>, Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
-	Diederik de Haas <didi.debian@cknow.org>, Dragan Simic <dsimic@manjaro.org>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, FUKAUMI Naoki <naoki@radxa.com>, 
-	Johan Jonker <jbx6244@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Trevor Woerner <twoerner@gmail.com>, Vinod Koul <vkoul@kernel.org>, 
-	Zhang Yubing <yubing.zhang@rock-chips.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFxNjGcC/53NwUrEMBDG8VdZcnZkZppJqiffQzykmXQ3oK0kt
+ VSWvrvZBRHxtB6/gfn9z6amklM1j4ezKWnNNc9TG/buYOIpTMcEWds2jGyJ6AEGC695+thgSts
+ CbIEIqAddaoaNUo+ECDG81Qo9B9f5zil6Ng18L2nM2zX2/NL2KddlLp/X9kqX678yKwGCWPSiX
+ kYn9ql9hjLfz+VoLp2Vf2xmf5PNzUY3qkrwKsPwx+6+bWlvfJPdNTsOzqmIMsb4y973/QuC+Ft
+ InQEAAA==
+X-Change-ID: 20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-82a63736d072
+To: Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Jagadeesh Kona <quic_jkona@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-33ea6
 
-On Sat, Jan 18, 2025 at 4:08=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 15/01/2025 02:26, Peter Geis wrote:
-> >
-> > This is my newly reworked phy driver for the rk3328 usb3 phy. It is
-> > based loosely on my original version, but as of now almost nothing of
-> > the original driver remains. The main fix here is the discovery of
-> > BIT(6) in the interrupt enable grf register fixes the usb3 disconnectio=
-n
-> > detection (mostly). On occasion an unpopulated usb3 hub will take
-> > several seconds to disconnect. However this means all of the hack aroun=
-d
-> > work to reset the usb core manually is no longer required.
-> >
-> BTW, RFC for some maintainers means "do not review, work-in-progress".
-> For some means "review, but low priority" or "review, but for sure I
-> have bugs here". I usually review and then someone responds: "it is not
-> for review, it is just RFC", so to avoid my wasted time please always
-> mention in cover letter why this is RFC. What do you expect here or why
-> this is not ready for review as normal patch.
+v4:
+- Applies RB from Konrad
+- Adds the second CCI I2C bus to CCI commit log description.
+  I previously considered leaving out the always on pins but, decided
+  to include them in the end and forgot to align the commit log.
+- Alphabetises the camcc.h included in the dtsi. - Vlad
+- Link to v3: https://lore.kernel.org/r/20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org
 
-Thank you, that makes sense. I marked it as RFC as I'm aware it isn't
-a perfect solution and there's a lot of undefined values. What I was
-looking for here was:
-- Review for code quality, so if I'm completely off track I can get to
-work fixing it. (Thank you so far)
-- Sanity testing from others struggling with the issues it fixes.
-- Feedback from USB engineers about the issues remaining.
-- Hopefully someone with access to the IP can provide insight into the
-magic registers.
+v3:
+- Fixes ordering of headers in dtsi - Vlad
+- Changes camcc to always on - Vlad
+- Applies RB as indicated - Krzysztof, Konrad
+- Link to v2: https://lore.kernel.org/r/20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org
 
->
-> Best regards,
-> Krzysztof
+v2:
+
+I've gone through each comment and implemented each suggestion since IMO
+they were all good/correct comments.
+
+Detail:
+
+- Moves x1e80100 camcc to its own yaml - Krzysztof
+- csid_wrapper comes first because it is the most relevant
+  register set - configuring all CSID blocks subordinate to it - bod, Krzysztof
+- Fixes missing commit log - Krz
+- Updates to latest format established @ sc7280 - bod
+- Includes CSID lite which I forgot to add @ v1 - Konrad, bod
+- Replaces static ICC parameters with defines - Konrad
+- Drops newlines between x and x-name - Konrad
+- Drops redundant iommu extents - Konrad
+- Leaves CAMERA_AHB_CLK as-is - Kronrad, Dmitry
+  Link: https://lore.kernel.org/r/3f1a960f-062e-4c29-ae7d-126192f35a8b@oss.qualcomm.com
+- Interrupt EDGE_RISING - Vladimir
+- Implements suggested regulator names pending refactor to PHY API - Vladimir
+- Drop slow_ahb_src clock - Vladimir
+
+Link to v1:
+https://lore.kernel.org/r/20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org
+
+Working tree:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/arm-laptop/wip/x1e80100-6.13-rc3
+
+v1:
+
+This series adds dt-bindings and dtsi for CAMSS on x1e80100.
+
+The primary difference between x1e80100 and other platforms is a new VFE
+and CSID pair at version 680.
+
+Some minor driver churn will be required to support outside of the new VFE
+and CSID blocks but nothing too major.
+
+The CAMCC in this silicon requires two, not one power-domain requiring
+either this fix I've proposed here or something similar:
+
+https://lore.kernel.org/linux-arm-msm/bad60452-41b3-42fb-acba-5b7226226d2d@linaro.org/T/#t
+
+That doesn't gate adoption of the binding description though.
+
+A working tree in progress can be found here:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.12-rc7+camss?ref_type=heads
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (4):
+      dt-bindings: media: Add qcom,x1e80100-camss
+      arm64: dts: qcom: x1e80100: Add CAMCC block definition
+      arm64: dts: qcom: x1e80100: Add CCI definitions
+      arm64: dts: qcom: x1e80100: Add CAMSS block definition
+
+ .../bindings/media/qcom,x1e80100-camss.yaml        | 367 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 351 ++++++++++++++++++++
+ 2 files changed, 718 insertions(+)
+---
+base-commit: 0907e7fb35756464aa34c35d6abb02998418164b
+change-id: 20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-82a63736d072
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
