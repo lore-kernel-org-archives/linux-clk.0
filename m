@@ -1,64 +1,64 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9445916F841
-	for <linux-clk@vger.kernel.org>; Mon, 20 Jan 2025 17:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BFD1E2613
+	for <linux-clk@vger.kernel.org>; Mon, 20 Jan 2025 17:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737393411; cv=none; b=q9JMgU9pmzrhWmG3eeCTInDIpmm3QvY5y5UWlAtleLuAEH9gBIsIeG2DLJ1o44TdMetaYVGdib8JNi6W9O1BXWFG5+NrAFFfudJCEVGI1gDAdweLop3nInCiTP+O/2xIOqp142JjwHr3D77XLXaDdkY1iw+HzSqUcqdL/f+8qEs=
+	t=1737393412; cv=none; b=e7JtDjT6WArIq8qgqwZE+n947qaD/3cIYP5rR7CGqE4amcfk7eH9TVJtkrqs18k8Qky5PgrX8VvIPcPz3NSZkU4JkP8TdUgaEyCULvmSk2A694rXEjr6StafO4R/RjCnCivOk1ustAPgfecItNOGUKRXqZRoZ5eQi+fNxnhgvi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737393411; c=relaxed/simple;
-	bh=DeCsmBBpdW664QNCp4XGq6tz+M8IRL34Kw3VTvPG5eU=;
+	s=arc-20240116; t=1737393412; c=relaxed/simple;
+	bh=J7Y6Fp4+iqMqIfQq3Hnn537f1r3kZcJaD4ddKCmmXtk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iqAmHBn5/7VfDUI+xmwoLFS3LQ+YftSJy4oYgqth+qGeQg4nn3jnTpRJVq4Py22vAqkgPaD4miwkqUo8CNvuri+2bLLaiihO9pivqEU3hIuhcLeyeq7l+HE4CMs/6duhIicC+zIW9FGxdONZcKmhelrsaxSR0F+sjNhQ56DanVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FnQoBc2e; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:To:Cc; b=oJ5IPuMAGzJcxUSAvatkJzNF1Vfn+zbEoEopeTt3KqQR6dO9X67PS/Ae+jS628SMVXbFLw236lnERiX4YV3KdmbxhO+7m63400rVZXVGooKfkDL5a1vqLrSmhKvBkAdKfomJ98RamqR6in8tPdpz231FA75qKnS2hWlGEK0AfYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=a1+bkqTt; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FnQoBc2e"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4363dc916ceso35823875e9.0
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jan 2025 09:16:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="a1+bkqTt"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43622267b2eso47109505e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jan 2025 09:16:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1737393407; x=1737998207; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1737393408; x=1737998208; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Tfvb/9D1Ez6OPrxjfKbAnbGQNGi/lvE7qXPfftYcTf0=;
-        b=FnQoBc2eWJDHBvt7oHMLI7Q9DlwLdKzqHGsLcKiUzPFbWHnsNLdaeQ8rWUkoo0kNyZ
-         Y4CMofoOzyhS1+IofkK7eNPErnyGbYqAOBStxj/d0Wti1yLnDCFu66kWylNmUshflIF5
-         dnRJPyWa5mmYOWnSwqu83ozimYEEbTM1/oNZy93QWczf6pc5gv86QaUWKhd79BEXH6vV
-         5zCOgOGdH2At8opfzMLO5apNgEJH0Mkt9StpxCfgSveNSPD4WqnuP1VRpjt6UhQ5Wcuj
-         iS9ymNOq0rGW8gFC2B4bANwVvhfpKLOv/kS/RJRJBUMd33sXbvmpkkQahKzgGpeq2hlk
-         Wmkw==
+        bh=zy0IE3lDkOJmEZbfzxIyV3pw1iHxHTRFthowgi2frig=;
+        b=a1+bkqTtj0BkOWpnaxbenAzOfORO+1wUH8NsJC1gqvFAuIhU3Ule7B/ByIg9uUZQW5
+         BgGG5a51GYQq4XySisQaJRUf7qN/EgAMiga6J2AW7PrVufdTqK36nCSPkv1iFwS/POHM
+         GbFuhuIQ3029PSKz2f91meCIZ9z9NL8g0LL69H/stSOhstZPArV4QTNyLnmj09qn83Fe
+         +2LDCUMfm3IZrjP0EtvXNi8avM9BOEsyHnMANZwPJDVZ5bqcKVg2CXx8O00hSqat3/k1
+         ce0Z0pxdZUnYg9p/Ln4BDYdpKMN2iEH9EyvuqGuZNWGrQ74uL5TUDmXGP6O0zOJB96W3
+         3E3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737393407; x=1737998207;
+        d=1e100.net; s=20230601; t=1737393408; x=1737998208;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tfvb/9D1Ez6OPrxjfKbAnbGQNGi/lvE7qXPfftYcTf0=;
-        b=CyohtSZPl5IeOUbaNlzOuU58IsFZvlulrRugjCsGHu92gvP1YUppYVAYM+l+k4RCQY
-         qKOzMHp4tNWKBhbyfLmKV3fatF56msRdcbgELonaJPPjkDlLD3WSz/f8W4rPizxDzorK
-         fVlDY5GxWdFSC1NSNShbuWTlPJtfF/PujJsIQHrxCJZI3ORD/jy+vSxMK1PNNrXB1gZW
-         Ce1icC0itD8u/Y2il25hzfOcQYo2i53WzIak8O+esLPCjzJRTHZUYj71/oXcLxsakkBA
-         nwNJgxFMvxmnuUs2KJNsNHQAR+3v16jV7L3A6Z9EkEnxV+QyFlJkMtcylVqNNspAD/zH
-         wqNQ==
-X-Gm-Message-State: AOJu0Yys5iO75JFFI3epSbo3r4NWKlUs+tflDcWA5NP1NqBDltMMnAbU
-	C80HALeTH1++tfk3GJMZ7DzkqB/ovZLr8xcWKJQ+F8yM24L6kqkpg0u/3kjgPfM=
-X-Gm-Gg: ASbGncszVt0M4iMKFM+nzZ4QKkwHEXHIFeaQw7cbYsOvIi+rSj3C72Nh3qIRnKUfppc
-	z+p/Y687G6R3yM3ebSE7iu3bRmxCTAN80jl5SzWuJQZpfF0xX3POVpUVYISw1JcPcdWY+0sOp7l
-	zsa5xm3kj7FvLMS6DGepQuZA7biiDNs3yDFdEiluC5qPY2ujQLdMLvyqJi0iF9wFiq/PRrY41Cj
-	wiI4QxLaesEQktX7q7frY6qwHeP/5Dh/S0xTlKfMT4mOsHyHDbkXgAT2+PWvWR1BtgKBQ/IRcF1
-	rd06LhWG
-X-Google-Smtp-Source: AGHT+IEfhYB2mOpJAOFHaURWWL0moDkjx4UB4rJYkwC3iuyyd1pL9Agrv/k9fMVlUj7WMSWQv0FSyg==
-X-Received: by 2002:a05:6000:2a1:b0:386:42b1:d7e4 with SMTP id ffacd0b85a97d-38bec54287fmr15643541f8f.19.1737393406093;
-        Mon, 20 Jan 2025 09:16:46 -0800 (PST)
+        bh=zy0IE3lDkOJmEZbfzxIyV3pw1iHxHTRFthowgi2frig=;
+        b=NeXutXbZ+gxJKPg2/7/WQQJirelkWUdULnTW/eYK5TfDNukF/qHJaCQyfXUMjhsDVF
+         7QpFH77vbZmyT9eQTp7NLMjxKXntNhepC0xMazeT9NdYEQgbGkvpRB2LyNRLs+Mc5XTX
+         v01dCUwyJu0dJmgUQdw1QElLyCDiRoMuXVxOHLitFKHySLElWGFb5/0ZrcZS/YwTKYbP
+         HquT/RY4IpA6XMimWdR4rXoud0rh6lWk0vsJvGYq19+NgAsQ7Q1Lno2f/EQo8FJw3QTa
+         2LZ+uZa+ubosi++DhpykBP6sSbRDAM1pS1TGF4Kpz7pjqJECtMS9r7JkhX0/3D7n970u
+         5eqg==
+X-Gm-Message-State: AOJu0YxCzEjg34FJxL7AtSpCei412oVI9gvQTjPF07LIdY9AvhImSQEy
+	GtFo+tJJgVgjq9knC7qFRt1ZhZXxL5gUd5VgRsaflIKUHiog/bNW04aQTFfkZmo=
+X-Gm-Gg: ASbGncvqkKoRal/6CVps+M7oH4pZkUtj8KiGkb8ZF5wJAMYT32YErrrrcAA2uHAVuD4
+	8Yw/rwLRjeK1BxU0cB4Vi2AGX1guufcOvT6Frwb3il7XcIIPaIVR53uFSXqH2s0E1ZV6j64J+yR
+	R5cTlcdEk+d/wTnL3ae7sP+qhjI9iRyIpE43LCZt1xhuCE8D7EgfpkGMNkDAnjpl4Xzm0LP1LOG
+	wiZYTfh8FmBMxbnUzDHx97oxQqW6CGaVjVpIqW8iC/E6fqHuKYvEz2In+Wl1EINiUzmXGPnH+U4
+	93azyxKV
+X-Google-Smtp-Source: AGHT+IFY5DPWP40kn2YE2hfzn5IShoB+jBqP5C8IE7mj9UvjFLQNXC7FFM6GCKi20FV/1FQ4AsYs8w==
+X-Received: by 2002:a05:600c:1f8c:b0:436:fb02:e90 with SMTP id 5b1f17b1804b1-438913cdaa8mr152617415e9.10.1737393408342;
+        Mon, 20 Jan 2025 09:16:48 -0800 (PST)
 Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:66cc:1b13:f78a:5738])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-437c75298adsm208629865e9.30.2025.01.20.09.16.45
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-437c75298adsm208629865e9.30.2025.01.20.09.16.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2025 09:16:45 -0800 (PST)
+        Mon, 20 Jan 2025 09:16:47 -0800 (PST)
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 20 Jan 2025 18:15:31 +0100
-Subject: [PATCH v3 2/4] clk: amlogic: get regmap with clk_regmap_init
+Date: Mon, 20 Jan 2025 18:15:33 +0100
+Subject: [PATCH v3 4/4] clk: amlogic: s4: remove unused data
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250120-amlogic-clk-drop-clk-regmap-tables-v3-2-126244146947@baylibre.com>
+Message-Id: <20250120-amlogic-clk-drop-clk-regmap-tables-v3-4-126244146947@baylibre.com>
 References: <20250120-amlogic-clk-drop-clk-regmap-tables-v3-0-126244146947@baylibre.com>
 In-Reply-To: <20250120-amlogic-clk-drop-clk-regmap-tables-v3-0-126244146947@baylibre.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -78,357 +78,159 @@ Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
  Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12538; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=DeCsmBBpdW664QNCp4XGq6tz+M8IRL34Kw3VTvPG5eU=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnjoT4AlRm1ps99QDaN11SpAXqiBDGHAGYYzK0j
- TDtG4c6A42JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ46E+AAKCRDm/A8cN/La
- hQD0D/47xVTSFrx+M6jW/+mjrrNr+49pkq/yr7KHWf1RbFhXXvICAgFpDw1HwVa5zJB8i5HXHhu
- iweYowIhYr/qbdFv1JCpNKZ30Gcw575gV7m9SP19W4XlwcGrA8d99a9p+FHPsZ7555lYyCdaql+
- hCXcURqPZFkXj6N51P6ge9EvRdTFqycWbSh6CEuTP8fJm5EDwFiJfs4NuiYiwoU1rLimrq6QHQ0
- CafKnHY9YxVF7X6nOD2DXsb17vSwvDuco+h9YZ2vkQzDcBqmI947ccUYu2WCiVEm+ce2zp31Hr6
- ut6axUsMyFAl2uGBacLJPaWWwrJc5jMFE+bpAdxscmIGkXMk9W8Z+XpcwJ75+b5JliyADdOdHC+
- r5eK0Q3R5nFdn7xfgvXKghuZNx16gLe7zEfh80mDzjqiJgha0hcP4H5df1AbirHWrqJhlEn/oKV
- q56mAIrhAzHZYbwf+ZSfGbEnNqJ9kypdkJ/SjPteo67QO772Q2/68akpPfaPBu6TxLmnQVWpdi6
- UFfmkhz4+i23h82pfWeoqUjbrQHwBU+Wm9eqlxuOLPwdpWHybwTIH+5oofNVncWJg8+qJbWe8Lt
- ygk5gfN0oSIrtO0ntLujuvDtYmD3ZUkRIsXupUcSurogRVZS1mzYc9KNWq6+P8zwLH+ReCamr4h
- KhKUxGR4y+igIaw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3973; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=J7Y6Fp4+iqMqIfQq3Hnn537f1r3kZcJaD4ddKCmmXtk=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnjoT64OhzMylXK7S80fv+A6bFKs/lGqharlcVS
+ tH/hOFeOB6JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ46E+gAKCRDm/A8cN/La
+ hW37EACoX2ZfZnDa/X38DZwOqeh8ZuhGamXjGCNbVY/Z/WfrR249u2iiH9j/R/Psui7oR1mA9Ld
+ X42+U3Hn6T+JnjBI+EDHXbrWvJ4Rfhlty4X//QmgkRRJcrLXtMC0q39qIScOV2Y3aL7U8HRVKrk
+ p1YJFwoZv3CLgTzbjOPhdBu3a7v3K/4bXx8mMOaqjHo23AkxHeWbQ18OwC+XNCGv5p2u/ZbsmHn
+ rKiOgy2fkpxpp6D6nptKau7C0ip4FycM2q/vEle0ECO5MMNiHUcmS4kH1Q9WlkGoG8wo+Oo0pLJ
+ fjhKa/qo51vCTBIgoVALhsxCCul22x95Uk+vRcUX833T4XXhr7FID+3Jwi89OnGbawYPfStl0wO
+ so6HWxgoco3l/gmUCGEvRx9DBOcQ0Ykb4CZPsSYoGUcKLsmrsrrqFxbaGP8s8WEUotr1/W5dott
+ HVdMsSX5QVdjw8Z0Ap1ubUm3sRwq85Fx8clqUHQ+eZgs/LVXk2GgX29SI7yAHVjViy+pqcIL6B8
+ fEs2fnOU19zKnW+kq+yA8hjuTYTodoURRq6SIBoYeYD+9fd8M5toULw85BQGNy+flXIPgG9u6XZ
+ XO+emPEYYzXC2BZceW7kchSb2kV8W8gZ2X0SoFtAD7VMMSov6Hr1Hjrmqz6aE+oFgHan8FTg6Hz
+ 4UAkYQMvR7xlk9A==
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Add clk_regmap_init() and use it with all clock types which derive from
-clk_regmap. This helps initialise clk_regmap clocks without requiring
-tables to keep track of the clock using this type.
+Following the removal of the clk_regmap clock table from the s4-peripherals
+clock controller driver, it appears some clocks are unused, which means
+these are not exported or even registered.
 
-The way it is done couples clk_regmap with the controllers, which is not
-ideal. This is a temporary solution to get rid of the tables. The situation
-will eventually be improved.
+In all likelihood, these clocks have not been tested. Remove the unused
+clocks for now. These can added back later when they have been properly
+tested.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/Kconfig          |  1 +
- drivers/clk/meson/clk-cpu-dyndiv.c |  1 +
- drivers/clk/meson/clk-dualdiv.c    |  2 ++
- drivers/clk/meson/clk-mpll.c       |  6 +++++
- drivers/clk/meson/clk-phase.c      | 11 +++++++++
- drivers/clk/meson/clk-pll.c        |  7 ++++++
- drivers/clk/meson/clk-regmap.c     | 49 ++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/clk-regmap.h     |  4 ++++
- drivers/clk/meson/sclk-div.c       |  5 ++++
- drivers/clk/meson/vclk.c           |  2 ++
- drivers/clk/meson/vid-pll-div.c    |  1 +
- 11 files changed, 89 insertions(+)
+ drivers/clk/meson/s4-peripherals.c | 112 -------------------------------------
+ 1 file changed, 112 deletions(-)
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index be2e3a5f83363b07cdcec2601acf15780ff24892..d6e2ddb4eac85ddad44b99a8efa9d33426edbab3 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -5,6 +5,7 @@ menu "Clock support for Amlogic platforms"
- config COMMON_CLK_MESON_REGMAP
- 	tristate
- 	select REGMAP
-+	select MFD_SYSCON
- 
- config COMMON_CLK_MESON_DUALDIV
- 	tristate
-diff --git a/drivers/clk/meson/clk-cpu-dyndiv.c b/drivers/clk/meson/clk-cpu-dyndiv.c
-index 6c1f58826e24a2bf7706f0fc98cdcdb44fd60b64..0498fd3af7de7b9a4e72930ac4de11368d686393 100644
---- a/drivers/clk/meson/clk-cpu-dyndiv.c
-+++ b/drivers/clk/meson/clk-cpu-dyndiv.c
-@@ -61,6 +61,7 @@ static int meson_clk_cpu_dyndiv_set_rate(struct clk_hw *hw, unsigned long rate,
+diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
+index 6a736e32e0ed8e2e8a37fbea94f9c5a90ea95fa6..853053b5f0689399a0224d263c30a985df6e1652 100644
+--- a/drivers/clk/meson/s4-peripherals.c
++++ b/drivers/clk/meson/s4-peripherals.c
+@@ -3129,118 +3129,6 @@ static struct clk_regmap s4_gen_clk = {
+ 	},
  };
  
- const struct clk_ops meson_clk_cpu_dyndiv_ops = {
-+	.init = clk_regmap_init,
- 	.recalc_rate = meson_clk_cpu_dyndiv_recalc_rate,
- 	.determine_rate = meson_clk_cpu_dyndiv_determine_rate,
- 	.set_rate = meson_clk_cpu_dyndiv_set_rate,
-diff --git a/drivers/clk/meson/clk-dualdiv.c b/drivers/clk/meson/clk-dualdiv.c
-index 913bf25d3771bdffa8db28e9b08dc566d1aac1ff..7c668df1a29f6eb20bde3f23d8701443602d774c 100644
---- a/drivers/clk/meson/clk-dualdiv.c
-+++ b/drivers/clk/meson/clk-dualdiv.c
-@@ -126,6 +126,7 @@ static int meson_clk_dualdiv_set_rate(struct clk_hw *hw, unsigned long rate,
- }
+-static const struct clk_parent_data s4_adc_extclk_in_parent_data[]  = {
+-	{ .fw_name = "xtal", },
+-	{ .fw_name = "fclk_div4", },
+-	{ .fw_name = "fclk_div3", },
+-	{ .fw_name = "fclk_div5", },
+-	{ .fw_name = "fclk_div7", },
+-	{ .fw_name = "mpll2", },
+-	{ .fw_name = "gp0_pll", },
+-	{ .fw_name = "hifi_pll", },
+-};
+-
+-static struct clk_regmap s4_adc_extclk_in_mux = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_DEMOD_CLK_CTRL,
+-		.mask = 0x7,
+-		.shift = 25,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "adc_extclk_in_mux",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = s4_adc_extclk_in_parent_data,
+-		.num_parents = ARRAY_SIZE(s4_adc_extclk_in_parent_data),
+-		.flags = 0,
+-	},
+-};
+-
+-static struct clk_regmap s4_adc_extclk_in_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_DEMOD_CLK_CTRL,
+-		.shift = 16,
+-		.width = 7,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "adc_extclk_in_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_adc_extclk_in_mux.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_adc_extclk_in_gate = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_DEMOD_CLK_CTRL,
+-		.bit_idx = 24,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "adc_extclk_in",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_adc_extclk_in_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_demod_core_clk_mux = {
+-	.data = &(struct clk_regmap_mux_data) {
+-		.offset = CLKCTRL_DEMOD_CLK_CTRL,
+-		.mask = 0x3,
+-		.shift = 9,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "demod_core_clk_mux",
+-		.ops = &clk_regmap_mux_ops,
+-		.parent_data = (const struct clk_parent_data []) {
+-			{ .fw_name = "xtal", },
+-			{ .fw_name = "fclk_div7", },
+-			{ .fw_name = "fclk_div4", },
+-			{ .hw = &s4_adc_extclk_in_gate.hw }
+-		},
+-		.num_parents = 4,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_demod_core_clk_div = {
+-	.data = &(struct clk_regmap_div_data) {
+-		.offset = CLKCTRL_DEMOD_CLK_CTRL,
+-		.shift = 0,
+-		.width = 7,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "demod_core_clk_div",
+-		.ops = &clk_regmap_divider_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_demod_core_clk_mux.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+-static struct clk_regmap s4_demod_core_clk_gate = {
+-	.data = &(struct clk_regmap_gate_data) {
+-		.offset = CLKCTRL_DEMOD_CLK_CTRL,
+-		.bit_idx = 8,
+-	},
+-	.hw.init = &(struct clk_init_data){
+-		.name = "demod_core_clk",
+-		.ops = &clk_regmap_gate_ops,
+-		.parent_hws = (const struct clk_hw *[]) {
+-			&s4_demod_core_clk_div.hw
+-		},
+-		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+-	},
+-};
+-
+ #define MESON_GATE(_name, _reg, _bit) \
+ 	MESON_PCLK(_name, _reg, _bit, &s4_sys_clk.hw)
  
- const struct clk_ops meson_clk_dualdiv_ops = {
-+	.init		= clk_regmap_init,
- 	.recalc_rate	= meson_clk_dualdiv_recalc_rate,
- 	.determine_rate	= meson_clk_dualdiv_determine_rate,
- 	.set_rate	= meson_clk_dualdiv_set_rate,
-@@ -133,6 +134,7 @@ const struct clk_ops meson_clk_dualdiv_ops = {
- EXPORT_SYMBOL_NS_GPL(meson_clk_dualdiv_ops, CLK_MESON);
- 
- const struct clk_ops meson_clk_dualdiv_ro_ops = {
-+	.init		= clk_regmap_init,
- 	.recalc_rate	= meson_clk_dualdiv_recalc_rate,
- };
- EXPORT_SYMBOL_NS_GPL(meson_clk_dualdiv_ro_ops, CLK_MESON);
-diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
-index aa9abd06ae653585f68043bb1ddc2b0b96feeb6d..166fbcb053cc573ec92489c2bb03f81caffdf64b 100644
---- a/drivers/clk/meson/clk-mpll.c
-+++ b/drivers/clk/meson/clk-mpll.c
-@@ -128,6 +128,11 @@ static int mpll_init(struct clk_hw *hw)
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct meson_clk_mpll_data *mpll = meson_clk_mpll_data(clk);
-+	int ret;
-+
-+	ret = clk_regmap_init(hw);
-+	if (ret)
-+		return ret;
- 
- 	if (mpll->init_count)
- 		regmap_multi_reg_write(clk->map, mpll->init_regs,
-@@ -151,6 +156,7 @@ static int mpll_init(struct clk_hw *hw)
- }
- 
- const struct clk_ops meson_clk_mpll_ro_ops = {
-+	.init		= clk_regmap_init,
- 	.recalc_rate	= mpll_recalc_rate,
- 	.determine_rate	= mpll_determine_rate,
- };
-diff --git a/drivers/clk/meson/clk-phase.c b/drivers/clk/meson/clk-phase.c
-index c1526fbfb6c4ccdd4034df465f70a56e0f9214ac..d05065e56483a218e0eaf402807c8734271d0cf5 100644
---- a/drivers/clk/meson/clk-phase.c
-+++ b/drivers/clk/meson/clk-phase.c
-@@ -58,6 +58,7 @@ static int meson_clk_phase_set_phase(struct clk_hw *hw, int degrees)
- }
- 
- const struct clk_ops meson_clk_phase_ops = {
-+	.init		= clk_regmap_init,
- 	.get_phase	= meson_clk_phase_get_phase,
- 	.set_phase	= meson_clk_phase_set_phase,
- };
-@@ -83,6 +84,11 @@ static int meson_clk_triphase_sync(struct clk_hw *hw)
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct meson_clk_triphase_data *tph = meson_clk_triphase_data(clk);
- 	unsigned int val;
-+	int ret;
-+
-+	ret = clk_regmap_init(hw);
-+	if (ret)
-+		return ret;
- 
- 	/* Get phase 0 and sync it to phase 1 and 2 */
- 	val = meson_parm_read(clk->map, &tph->ph0);
-@@ -142,6 +148,11 @@ static int meson_sclk_ws_inv_sync(struct clk_hw *hw)
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct meson_sclk_ws_inv_data *tph = meson_sclk_ws_inv_data(clk);
- 	unsigned int val;
-+	int ret;
-+
-+	ret = clk_regmap_init(hw);
-+	if (ret)
-+		return ret;
- 
- 	/* Get phase and sync the inverted value to ws */
- 	val = meson_parm_read(clk->map, &tph->ph);
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 89f0f04a16abad99748e1ff3784e7ed91abd0f88..eaaf021d2f6911a99a722c8b9d8b4e1f1f77d0e6 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -311,6 +311,11 @@ static int meson_clk_pll_init(struct clk_hw *hw)
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
-+	int ret;
-+
-+	ret = clk_regmap_init(hw);
-+	if (ret)
-+		return ret;
- 
- 	/*
- 	 * Keep the clock running, which was already initialized and enabled
-@@ -468,6 +473,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-  * the other ops except set_rate since the rate is fixed.
-  */
- const struct clk_ops meson_clk_pcie_pll_ops = {
-+	.init		= clk_regmap_init,
- 	.recalc_rate	= meson_clk_pll_recalc_rate,
- 	.determine_rate	= meson_clk_pll_determine_rate,
- 	.is_enabled	= meson_clk_pll_is_enabled,
-@@ -488,6 +494,7 @@ const struct clk_ops meson_clk_pll_ops = {
- EXPORT_SYMBOL_NS_GPL(meson_clk_pll_ops, CLK_MESON);
- 
- const struct clk_ops meson_clk_pll_ro_ops = {
-+	.init		= clk_regmap_init,
- 	.recalc_rate	= meson_clk_pll_recalc_rate,
- 	.is_enabled	= meson_clk_pll_is_enabled,
- };
-diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-index 07f7e441b9161c47fdb38ec61ed162a2f9d4fe41..d6bce32b087b174482ca896e4a0f3c57b58f155c 100644
---- a/drivers/clk/meson/clk-regmap.c
-+++ b/drivers/clk/meson/clk-regmap.c
-@@ -4,9 +4,52 @@
-  * Author: Jerome Brunet <jbrunet@baylibre.com>
-  */
- 
-+#include <linux/device.h>
- #include <linux/module.h>
-+#include <linux/mfd/syscon.h>
- #include "clk-regmap.h"
- 
-+int clk_regmap_init(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct device_node *np, *parent_np;
-+	struct device *dev;
-+
-+	/* Allow regmap to be preset as it was historically done */
-+	if (clk->map)
-+		return 0;
-+
-+	/*
-+	 * FIXME: what follows couples the controller implementation
-+	 * and clk_regmap clock type. This situation is not desirable
-+	 * but temporary, until the controller is able to register
-+	 * a hook to initialize a clock type
-+	 */
-+
-+	/* Check the usual dev enabled controller with an basic IO regmap */
-+	dev = clk_hw_get_dev(hw);
-+	if (dev) {
-+		clk->map = dev_get_regmap(dev, NULL);
-+		if (clk->map)
-+			return 0;
-+	}
-+
-+	/* Move on to early and syscon based controllers */
-+	np = clk_hw_get_of_node(hw);
-+	if (np) {
-+		parent_np = of_get_parent(np);
-+		clk->map = syscon_node_to_regmap(parent_np);
-+		of_node_put(parent_np);
-+
-+		if (!IS_ERR_OR_NULL(clk->map))
-+			return 0;
-+	}
-+
-+	/* Bail out if regmap can't be found */
-+	return -EINVAL;
-+}
-+EXPORT_SYMBOL_NS_GPL(clk_regmap_init, CLK_MESON);
-+
- static int clk_regmap_gate_endisable(struct clk_hw *hw, int enable)
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
-@@ -45,6 +88,7 @@ static int clk_regmap_gate_is_enabled(struct clk_hw *hw)
- }
- 
- const struct clk_ops clk_regmap_gate_ops = {
-+	.init		= clk_regmap_init,
- 	.enable = clk_regmap_gate_enable,
- 	.disable = clk_regmap_gate_disable,
- 	.is_enabled = clk_regmap_gate_is_enabled,
-@@ -52,6 +96,7 @@ const struct clk_ops clk_regmap_gate_ops = {
- EXPORT_SYMBOL_NS_GPL(clk_regmap_gate_ops, CLK_MESON);
- 
- const struct clk_ops clk_regmap_gate_ro_ops = {
-+	.init		= clk_regmap_init,
- 	.is_enabled = clk_regmap_gate_is_enabled,
- };
- EXPORT_SYMBOL_NS_GPL(clk_regmap_gate_ro_ops, CLK_MESON);
-@@ -121,6 +166,7 @@ static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
- /* Would prefer clk_regmap_div_ro_ops but clashes with qcom */
- 
- const struct clk_ops clk_regmap_divider_ops = {
-+	.init = clk_regmap_init,
- 	.recalc_rate = clk_regmap_div_recalc_rate,
- 	.determine_rate = clk_regmap_div_determine_rate,
- 	.set_rate = clk_regmap_div_set_rate,
-@@ -128,6 +174,7 @@ const struct clk_ops clk_regmap_divider_ops = {
- EXPORT_SYMBOL_NS_GPL(clk_regmap_divider_ops, CLK_MESON);
- 
- const struct clk_ops clk_regmap_divider_ro_ops = {
-+	.init = clk_regmap_init,
- 	.recalc_rate = clk_regmap_div_recalc_rate,
- 	.determine_rate = clk_regmap_div_determine_rate,
- };
-@@ -170,6 +217,7 @@ static int clk_regmap_mux_determine_rate(struct clk_hw *hw,
- }
- 
- const struct clk_ops clk_regmap_mux_ops = {
-+	.init		= clk_regmap_init,
- 	.get_parent = clk_regmap_mux_get_parent,
- 	.set_parent = clk_regmap_mux_set_parent,
- 	.determine_rate = clk_regmap_mux_determine_rate,
-@@ -177,6 +225,7 @@ const struct clk_ops clk_regmap_mux_ops = {
- EXPORT_SYMBOL_NS_GPL(clk_regmap_mux_ops, CLK_MESON);
- 
- const struct clk_ops clk_regmap_mux_ro_ops = {
-+	.init		= clk_regmap_init,
- 	.get_parent = clk_regmap_mux_get_parent,
- };
- EXPORT_SYMBOL_NS_GPL(clk_regmap_mux_ro_ops, CLK_MESON);
-diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
-index e365312da54ece08098293b1a831c803415db814..f8cac2df5755b0f894570305604485f54c17ea49 100644
---- a/drivers/clk/meson/clk-regmap.h
-+++ b/drivers/clk/meson/clk-regmap.h
-@@ -7,6 +7,7 @@
- #ifndef __CLK_REGMAP_H
- #define __CLK_REGMAP_H
- 
-+#include <linux/device.h>
- #include <linux/clk-provider.h>
- #include <linux/regmap.h>
- 
-@@ -31,6 +32,9 @@ static inline struct clk_regmap *to_clk_regmap(struct clk_hw *hw)
- 	return container_of(hw, struct clk_regmap, hw);
- }
- 
-+/* clk_regmap init op to get and cache regmap from the controllers */
-+int clk_regmap_init(struct clk_hw *hw);
-+
- /**
-  * struct clk_regmap_gate_data - regmap backed gate specific data
-  *
-diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
-index ae03b048182f3bbaf4a7e86b605fb4fb37b9cfd5..13536df1760d135cc2d62062e2699ed6842e1e5f 100644
---- a/drivers/clk/meson/sclk-div.c
-+++ b/drivers/clk/meson/sclk-div.c
-@@ -222,6 +222,11 @@ static int sclk_div_init(struct clk_hw *hw)
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
- 	unsigned int val;
-+	int ret;
-+
-+	ret = clk_regmap_init(hw);
-+	if (ret)
-+		return ret;
- 
- 	val = meson_parm_read(clk->map, &sclk->div);
- 
-diff --git a/drivers/clk/meson/vclk.c b/drivers/clk/meson/vclk.c
-index 36f637d2d01b5d86bf5d85196643ad9d66c6f19b..bcdec8a444f60838c84eb27c4cdf2b8f8574ce71 100644
---- a/drivers/clk/meson/vclk.c
-+++ b/drivers/clk/meson/vclk.c
-@@ -45,6 +45,7 @@ static int meson_vclk_gate_is_enabled(struct clk_hw *hw)
- }
- 
- const struct clk_ops meson_vclk_gate_ops = {
-+	.init = clk_regmap_init,
- 	.enable = meson_vclk_gate_enable,
- 	.disable = meson_vclk_gate_disable,
- 	.is_enabled = meson_vclk_gate_is_enabled,
-@@ -127,6 +128,7 @@ static int meson_vclk_div_is_enabled(struct clk_hw *hw)
- }
- 
- const struct clk_ops meson_vclk_div_ops = {
-+	.init = clk_regmap_init,
- 	.recalc_rate = meson_vclk_div_recalc_rate,
- 	.determine_rate = meson_vclk_div_determine_rate,
- 	.set_rate = meson_vclk_div_set_rate,
-diff --git a/drivers/clk/meson/vid-pll-div.c b/drivers/clk/meson/vid-pll-div.c
-index 486cf68fc97a0205ee5139056b1eabc6e743ff35..c28d8b150400308df050e500c2aedc14157c1bcf 100644
---- a/drivers/clk/meson/vid-pll-div.c
-+++ b/drivers/clk/meson/vid-pll-div.c
-@@ -90,6 +90,7 @@ static unsigned long meson_vid_pll_div_recalc_rate(struct clk_hw *hw,
- }
- 
- const struct clk_ops meson_vid_pll_div_ro_ops = {
-+	.init		= clk_regmap_init,
- 	.recalc_rate	= meson_vid_pll_div_recalc_rate,
- };
- EXPORT_SYMBOL_NS_GPL(meson_vid_pll_div_ro_ops, CLK_MESON);
 
 -- 
 2.45.2
