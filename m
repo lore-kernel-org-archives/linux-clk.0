@@ -1,55 +1,55 @@
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764101E9B16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4C11E9B29
 	for <linux-clk@vger.kernel.org>; Mon, 20 Jan 2025 17:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737393690; cv=none; b=lqxZIWEeQB0uc/+Ts1pjoSBoZbFDomryI7SMGBK/iOrMYt7NSl6402ZlqD31A7/10Y8GYIqjtR2Ti/5TweFMfzk/tHaoeRVDd2l7Wos8nAL9afvKwMspJ94GJq6nfDpnTLc2tK5x/y2eSvLzUy+M/wr4y0gw08dYPlcIpAbGX8M=
+	t=1737393690; cv=none; b=Ia+k/iz7j4PAdH6fcFehSKEXRROhbOp38kZ2BclzNCp8hiiLPuxaOEUCGkIilyaFuGMifJiRQVEZSguLtJ8gUWxTetNxpcXTYyWBw80ScFPtdzZiqR4NkJQh2QqmwpE8W9sqNhkm4Qj5Bx0YyCd8Om4iGakfrWTLiWPQkToxByY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1737393690; c=relaxed/simple;
-	bh=eSypQm46eotf51Ii0DktfXAZbKU8828gOXl7ZFNDATQ=;
+	bh=lgcJQo5kvt5yoZIxHqdXohNevd42kdRsvfuMz4YNqGY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=NE2Oh7ZD3KM3mfnhfmhZaKoHcT8qsA+nGrinCe2HMyQgPwyKZQrPCofzL3fPsn0+wuAZZqd0LK6qErDQu+9rO2H2VYzO+L2+7qH/MAWkdW7oBKjTKLT8Nzub3lTI9OTGfumfSlcPzOkUsoLkn+XzupKeUT8LUOv8FquSknh6PeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=p7ZyCUIX; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=sfQWnEwAWa/OD/uOKwt0Qh0/6eCc5MyIN2LWWwqlWy0BYQIMmiqjMnpf3b2T9B+92bJyas36GZXpQIDzfeSsRHyoPIDypYR1RZh9AazOSXbsUrEioo/jcCTHlUMMcnG+NevOWDXXc635etNO+rwqEHFgFBX999s+4r07KCqWRRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=SbUIJRvp; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="p7ZyCUIX"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250120172124euoutp020d7298fb443905aafeb0703c540455db~cdlnRWgPD1439914399euoutp02K
-	for <linux-clk@vger.kernel.org>; Mon, 20 Jan 2025 17:21:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250120172124euoutp020d7298fb443905aafeb0703c540455db~cdlnRWgPD1439914399euoutp02K
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="SbUIJRvp"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250120172127euoutp029cd6f44c3eb2446ec8cde0298ee13d69~cdlqFEHHK1664816648euoutp02j
+	for <linux-clk@vger.kernel.org>; Mon, 20 Jan 2025 17:21:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250120172127euoutp029cd6f44c3eb2446ec8cde0298ee13d69~cdlqFEHHK1664816648euoutp02j
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1737393684;
-	bh=0OEwJDD9UosNBE7/klOOmElhNj46cDXsS2V1zQFs2EU=;
+	s=mail20170921; t=1737393687;
+	bh=iYT1w+/Dd518pn6hLQh14JBk4rMm96TOguMA+BPTxKc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p7ZyCUIXI8EelxIS5vr1q1aG4blH7+/N+kY+kF95csDYNZ0M0HBVKRmIvTJrLvt+h
-	 xZ4UyBZJzTcEcMINzsluNgDfvPpib9EWoeV+sCB4ELO+Jjn4qKuwjGEg5P3adCUxFi
-	 uzxKyk8zUKSHsQXU31ZWfYLgpOQkdxShjmg5WPzY=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	b=SbUIJRvpxoIM6OdZac69PjOlm87GRgeGY7E94R5CDJW3pl571ewbr9nnUYuQ7J3b+
+	 hQu22EaFfMtiHIl9XmXcbcpdwrRteuL/6vLtwc/3KQkE3+K6MPO+0J98h+HsK88/Ma
+	 tvFLyPPc2xLUuGgCG5KiEBQUXItZExc+vcVscGwk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250120172123eucas1p1e17c4ff78a73499e160eb28d9a1a52b2~cdlmqt4Jh0503405034eucas1p1i;
-	Mon, 20 Jan 2025 17:21:23 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 5B.7B.20821.3168E876; Mon, 20
-	Jan 2025 17:21:23 +0000 (GMT)
+	20250120172126eucas1p1db54330cb14a4773b4e232b4546edd38~cdlppR8DM1582415824eucas1p1H;
+	Mon, 20 Jan 2025 17:21:26 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 03.76.20409.6168E876; Mon, 20
+	Jan 2025 17:21:26 +0000 (GMT)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250120172123eucas1p13564bf2d07000506caf44cf55bda7fd9~cdlmMcU7W0726407264eucas1p16;
-	Mon, 20 Jan 2025 17:21:23 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	20250120172125eucas1p141540607f423eea4c55b2bd22ff5adf0~cdlos4Mcb1001110011eucas1p1a;
+	Mon, 20 Jan 2025 17:21:25 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
 	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250120172123eusmtrp20400e15340aab59212cb82ef85870e6e~cdlmLnAXi0490804908eusmtrp2f;
-	Mon, 20 Jan 2025 17:21:23 +0000 (GMT)
-X-AuditID: cbfec7f2-b09c370000005155-01-678e86131473
+	20250120172125eusmtrp20f719d71305ff3bfc9c4da7384cdb4a1~cdlolQ8Ga0490804908eusmtrp2k;
+	Mon, 20 Jan 2025 17:21:25 +0000 (GMT)
+X-AuditID: cbfec7f4-c39fa70000004fb9-c6-678e86162ebb
 Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 9A.C8.19920.3168E876; Mon, 20
-	Jan 2025 17:21:23 +0000 (GMT)
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id AA.95.19654.5168E876; Mon, 20
+	Jan 2025 17:21:25 +0000 (GMT)
 Received: from AMDC4942.home (unknown [106.210.136.40]) by
 	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250120172121eusmtip11cb0a66c108a17251b163a3a6dd5443a~cdlk2OBOf1307113071eusmtip1O;
-	Mon, 20 Jan 2025 17:21:21 +0000 (GMT)
+	20250120172124eusmtip1fc55a85f3401af220c94dce8ebf491f2~cdlnSNFmS1307113071eusmtip1P;
+	Mon, 20 Jan 2025 17:21:24 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
 To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
@@ -63,10 +63,9 @@ Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
 	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org, Michal Wilczynski
 	<m.wilczynski@samsung.com>
-Subject: [RFC v3 03/18] dt-bindings: firmware: thead,th1520: Add support for
- firmware node
-Date: Mon, 20 Jan 2025 18:20:56 +0100
-Message-Id: <20250120172111.3492708-4-m.wilczynski@samsung.com>
+Subject: [RFC v3 05/18] pmdomain: thead: Add power-domain driver for TH1520
+Date: Mon, 20 Jan 2025 18:20:58 +0100
+Message-Id: <20250120172111.3492708-6-m.wilczynski@samsung.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250120172111.3492708-1-m.wilczynski@samsung.com>
 Precedence: bulk
@@ -76,169 +75,321 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTZxjG851zes6hS/XQuvGFLTK6jYlzXHZxn0AEshnOXJxsWaJOs63T
-	Y61ySwvbxCkgpaOsXKdZVmA4ROmIrGtLK0U6kJWLE4nKRbJIB5HL6LiWi4oBR23d/O95n/f3
-	fs/7Jh+NCy+S/rQsKZWTJ0kSxCSfsLTd73pVpCqQho10vIg6blViyPxAS6ELti4MVdi7eMhx
-	sw5DPQvTJPpl5DqF/rZlEahPV06h7DY9ica1DhLNahw81N1QRqK5fDtAljkliWrtAxTSL1Rg
-	6KdZM4Gq6hsAUqnP89CNP7ahAUcHgca7NThSadeih431FFrpMxCodKqJQnUTxTzUXrsLKZtO
-	ETHr2en+HIqdGB8n2N9z5ynWtniGYK3aAYrVWDsBa6xRk+ztvkaS/fHKB+xf37ZjrKkqg1XW
-	tmFs4XIYO/1bL8kW1NUA9mb2LSpe+DE/6gCXIPuCk4du/Yx/yKKzYyn5z39VUtBLZQKXfx7w
-	oSHzBjxnN5B5gE8LGR2AJS13ME8xD+D5gn8oTzEH4MV8Jfl4ZLTTxPM0qgEsmr7kpSYAXKjW
-	Y26KZF6Dg9UVj6h1TA4Bc1qzgLvAmTEALcNlj94SMfugaWh+laJpgnkJNhu3uG0BEw0NeTpv
-	XABsunwNd2sfJgbe7bVRHsYXXvlhmHBrfJXJNpfi7vchY+DD5qVR3DP8Dry3VEp5tAg62+u8
-	+jn40FqBeXQyHDS7vPzX0Kpp9+pIeLtriXTvhjPBUN8Q6rFjYVGhCnfbkFkD+yd9PSusgSWW
-	7722AOaqhB46CJ7W5P8X2qWzeENZWHL9T14RCNQ+cYz2iWO0/+eeAXgN8OPSFIlSThGexH0Z
-	opAkKtKSpCH7kxONYPVvX11pd9WDcudsSAvAaNACII2L1wmentFIhYIDkqPpnDz5U3laAqdo
-	Ac/ShNhPUNmUIxUyUkkqd4TjUjj54y5G+/hnYjsyN0j3aLv70o8HzULnuQ0HD+60ica2x9wt
-	nJUPF5jeq9rbOhOKy2g84/BTkXqN4ZM76lyuxy/oRITAJ/BsrLFVHbMrv2zTyzu2BFYvz0+Z
-	phTKyuISrTrAqXnb6rBPKUVFwabytb6/yhKCwzePDMlPPnPPOjgpYBs3x7YMhU5ePWF85cP4
-	/XFj8Xs3ORfxB2EZbwo6P3ohPXXPvrGIz8XW8aCI0VHqBtJtPdYv4w8X68Ni1BWXr2136QLN
-	ccfFG0PjVN8ZLxl8oqM6x96VRe6+MHfkGP/k6+EpPxeu7wkw56qduxUrOdHvJzS7slJCmOVv
-	3jp7f2ZxW9RMAHH4qGFnnZhQHJKEb8TlCsm/xXnsUEoEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsVy+t/xu7rCbX3pBhuvslucuL6IyWLr71ns
-	Fmv2nmOymH/kHKvFvUtbmCyufH3PZrHu6QV2ixd7G1ksrq2Yy27RfGw9m8XLWffYLD723GO1
-	uLxrDpvF594jjBbbPrewWaw9cpfdYv3X+UwWCz9uZbFYsmMXo0Vb5zJWi4unXC3u3jvBYvHy
-	cg+zRdssfov/e3awW/y7tpHFYva7/ewWW95MZLU4vjbcomX/FBYHOY/3N1rZPd68fMnicbjj
-	C7vH3m8LWDx2zrrL7tGz8wyjx6ZVnWwed67tYfOYdzLQ4373cSaPzUvqPVrWHmPy6P9r4PF+
-	31U2j74tqxg9LjVfZw8QitKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rez
-	SUnNySxLLdK3S9DL2LbiCFNBr0LFpL6r7A2Mn6S6GDk5JARMJJ6d2czaxcjFISSwlFFi7+mH
-	7BAJGYlr3S9ZIGxhiT/XuthAbCGBV4wS9xaGgdhsAkYSD5bPZwWxRQQWs0js3VcJMohZ4C2j
-	xPWZG8GahQWiJO6uW8DUxcjBwSKgKnFgkyVImFfAXmJj1wo2iPnyEvsPnmUGsTkFHCS+X93L
-	DrHLXuLO1W5GiHpBiZMzn4CNZAaqb946m3kCo8AsJKlZSFILGJlWMYqklhbnpucWG+oVJ+YW
-	l+al6yXn525iBCaXbcd+bt7BOO/VR71DjEwcjIcYJTiYlUR4RT/0pAvxpiRWVqUW5ccXleak
-	Fh9iNAU6eyKzlGhyPjC95ZXEG5oZmBqamFkamFqaGSuJ87pdPp8mJJCeWJKanZpakFoE08fE
-	wSnVwDTNfx9P2qmM1Yu3tjx5VhPSt/n98tbuQx/q+u4VTm1r9gtPmherqH/J/uyznR++H87r
-	X3dBUPr7Xgduzrtsn1UZr3zamzi9Wrzv5dLUz1+2tVoXKt2+OWXjztU9mX/9JeZc4UswOJg3
-	lfVehNiFib/217GGXr4qlHd0UqJTrOLfoKPHbjf+3LlX8Sajpa30pxv/SgKup6w7saLUZc2L
-	jvP/WNIsjDnD+9t/XPLwuHW8Qa8kNbhwxr7C2Hgrk5QTN14VXDzx4O2LreExPTHF05qn+HqW
-	ll+f62njWRpZZtLAo1Ln2Sk8M7clyelT070+qal1VQWHbobeV5vR8iS0+qFEvde9qE4TA/9d
-	Ku8tWpRYijMSDbWYi4oTATFqopu3AwAA
-X-CMS-MailID: 20250120172123eucas1p13564bf2d07000506caf44cf55bda7fd9
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf1CTdRzH+T7Ps+cZcKOHofANyo6dadkJRBHfuzqClOtJ5M6uTA4rG/I0
+	MH7dJgheXSobqU2Cjq5zMjYmwuQcGzIW4yBsIJs/QJAfwgnbMowf8UMCNI0wxmb53/v7+bze
+	3/fnc/fh4vyfyGBuetZBVpwlzBCQPoSp8+GNrYFFxaKIHsdryHZLg6HGvxUUutDajSFVRzcH
+	2W8aMdS/NEeiurs9FJpoPUqgQa2SQoWdehJNKuwkmpfbOaivuZxEC6c6ADItSEmk6xilkH5J
+	haHK+UYCVTU1A1R0opqDeq/Go1G7jUCTfXIcFSmeQY9bmii0MlhPoDOzbRQyTpdykFW3B0nb
+	yojYDczckIxipicnCab9+CLFtN5XE4xZMUoxcvN1wFysPUEyI4MtJFNx5X3G8a0VYxqqvmak
+	uk6M+e6fCGbu5wGSKTbWAuZm4S1qFz/Z561UNiM9jxWHx3zmk6YxVHFyDNvylWYZdgQsR58E
+	3lxIvw5blJeok8CHy6e1ANadHwfuxyKA5VIDcFF8egHAXn3ME4ehbxp3QzUAalQaj2MaQOmv
+	PRwXRdKR0Fmj4rga62gZAWWXj65ROD0OoGmsnHRRAXQCvHP/xpqDoF+ELYXFmEvz6LehZlZG
+	ufNegG2/dOEu7U3HwgcDrZSb8YdXTo8RLo2vMoWNZ9ZmgrTOB/bbVoDbvB06K87ibh0Ap6xG
+	z6fPwcdmFebW2dDZ+KeH+RKa5VaPfhOOdD9aHZS7GvAy1DeHu8txsH1KibvKkPaDQzP+7hH8
+	4PemHz1lHjxexHfTm+AP8lP/hXZrTZ5QBtafv0eVgFDFU8sonlpG8X+uGuC1IIjNlWSKWElk
+	FnsoTCLMlORmicL2Z2deBKu3fW3FutgEaqbmwywA4wILgFxcsI63/p5cxOelCgsOs+LsfeLc
+	DFZiASFcQhDE07TJRHxaJDzIfsGyOaz4SRfjegcfwYJiU7JHhlOuarb2J174PdKUr1WFTxSI
+	HZV31H7f2K75flJZaslWO2FNRe/QXke6JakkUDf1bM7Z9fZHtcRLuoYSr1dCNu+K5OVEbPoo
+	JTHPkrD3N9OO0urqzVjyPuOoIK7r9jsFM97nHNG7I3ZLU/vCgsu1d49lRvnTx/Z/DroCkga8
+	DtVdfoOzmOf7Qew5357hwzsnNWW8D0ejgSykPClxR4MtdaMthGuXVw/mbxmPmEn23xDeGees
+	ejdpSfnXe2msYea2PnDbV8Pkw09DQoPE1sqNzgdlByaGxvfMRuPR25frP1aGX/dKyLSEtqov
+	Rf3hOKAbarc+H59sirKNxXcsxwgISZrw1S24WCL8F1A8aJVKBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUwbdRzH87+73pXFjrNQvTAR1zhNMJS2K92/OtgComdIzPbCmWgIVjgL
+	rA+zLTII7iEtKFBRGqdSYGXlaSPioCus3ehQRoBZ2XTQAhvtjGHEUgQJg4nbqi1osnef5Pv0
+	e/Fjo9x2VgK7SK1ntGq5ko9vwzzhUX8Kr6pOIXxw6yU4NmVDYN8DCwG/dV9HoHX4OgsGbjoQ
+	OLm2jMPv7v5MwN/dJzHoO9tMQMPIeRwGLQEcrpgCLDhxqQmHq58NA9i/asRh97CfgOfXrAg8
+	s9KHwTbnJQCrqjtY8Jcfs6E/MIbB4IQJhVWWWPjPgJOAYV8vBhuXBgnoWKxnwdHut6Fx8Ets
+	/7P08nQlQS8Ggxh99dN7BO1eb8Fol8VP0CbXT4C2d1Xj9KxvAKdPXztI36kdRegLbcdpY/cI
+	Qn/+SEgvX/HidJ2jC9A3DVPEAe47gr1aTYmeea5Qo9On898VQbFAJIMCsUQmEO3ek/uyOI2f
+	mrG3gFEWfcRoUzPeExTaetpYR3qyjja7KpET4OGeGhDDpkgJ1TOxiNaAbWwu2Q6o0FgI2xKe
+	oXy1wf84jnroq8GjzCUXIqaWpCjjpJj6tdPKinI82YpR7itl0SKU/ANQUw29m+E4Mof6bf3G
+	pgkjd1EDhjokyhxyH2VbqiS2BpKowR/G0SjHkPup+143sTW2j5r11oIt/5PUtYa5zU404jf0
+	NaJfANLymGR5TGoBSBeIZ0p0KoVKJxbo5CpdiVohyNeo7CDyL/0jGw4nOLewIhgCCBsMAYqN
+	8uM5vD9NCi6nQF5Wzmg1edoSJaMbAmmRu+vRBF6+JvJwan2eSCpME0mkMmGaTLqb/zQHn7zx
+	AZdUyPXMYYY5wmj/zyHsmIQTSOLHpmKp0UMeUlmzXYdiG53TfCZxR8ob0lDDUW4pESz/RGm9
+	J1G++ddVta0oFPf16+a2C2bqYufkyfkK9dz6qlRy/7Rz5v2UrEfmpeCGfWcYkrlKdovslui2
+	8qtXZeVh11S2IqR8StsX7szJzJ55MfB35oHOJ6yWxKyMrNZW+/hcylus7lc6JvpnD64XZ6Yy
+	AfP2ZM8xTxs6PVL2fZ4Qb/Lf3VEvOZ7vZvFs4/rkmcsFS7fJBe9ry97xcwOmO0kGizF2Ib1H
+	3SRZVJUers6tuGxx8DnY87L5jt6N9p3N6bvO6L+ppfxmT479VOn2smNrPLf8w7PFGxUX54Uv
+	aPmYrlAuSka1Ovm/ELO5PbgDAAA=
+X-CMS-MailID: 20250120172125eucas1p141540607f423eea4c55b2bd22ff5adf0
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250120172123eucas1p13564bf2d07000506caf44cf55bda7fd9
+X-RootMTR: 20250120172125eucas1p141540607f423eea4c55b2bd22ff5adf0
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20250120172123eucas1p13564bf2d07000506caf44cf55bda7fd9
+X-CMS-RootMailID: 20250120172125eucas1p141540607f423eea4c55b2bd22ff5adf0
 References: <20250120172111.3492708-1-m.wilczynski@samsung.com>
-	<CGME20250120172123eucas1p13564bf2d07000506caf44cf55bda7fd9@eucas1p1.samsung.com>
+	<CGME20250120172125eucas1p141540607f423eea4c55b2bd22ff5adf0@eucas1p1.samsung.com>
 
-The kernel communicates with the E902 core through the mailbox
-transport using AON firmware protocol. Add dt-bindings to document it
-the dt node.
+The T-Head TH1520 SoC contains multiple power islands that can be
+programmatically turned on and off using the AON (Always-On) protocol
+and a hardware mailbox [1]. The relevant mailbox driver has already been
+merged into the mainline kernel in commit 5d4d263e1c6b ("mailbox:
+Introduce support for T-head TH1520 Mailbox driver");
+
+This commit introduces a power-domain driver for the TH1520 SoC, which
+is using AON firmware protocol to communicate with E902 core through the
+hardware mailbox. This way it can send power on/off commands to the E902
+core.
+
+Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
 
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
- .../bindings/firmware/thead,th1520-aon.yaml   | 53 +++++++++++++++++++
- MAINTAINERS                                   |  2 +
- .../dt-bindings/firmware/thead,th1520-aon.h   | 18 +++++++
- 3 files changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
- create mode 100644 include/dt-bindings/firmware/thead,th1520-aon.h
+ MAINTAINERS                                |   1 +
+ drivers/pmdomain/Kconfig                   |   1 +
+ drivers/pmdomain/Makefile                  |   1 +
+ drivers/pmdomain/thead/Kconfig             |  12 ++
+ drivers/pmdomain/thead/Makefile            |   2 +
+ drivers/pmdomain/thead/th1520-pm-domains.c | 174 +++++++++++++++++++++
+ 6 files changed, 191 insertions(+)
+ create mode 100644 drivers/pmdomain/thead/Kconfig
+ create mode 100644 drivers/pmdomain/thead/Makefile
+ create mode 100644 drivers/pmdomain/thead/th1520-pm-domains.c
 
-diff --git a/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml b/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
-new file mode 100644
-index 000000000000..bbc183200400
---- /dev/null
-+++ b/Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
-@@ -0,0 +1,53 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/firmware/thead,th1520-aon.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: T-HEAD TH1520 AON (Always-On) Firmware
-+
-+description: |
-+  The Always-On (AON) subsystem in the TH1520 SoC is responsible for managing
-+  low-power states, system wakeup events, and power management tasks. It is
-+  designed to operate independently in a dedicated power domain, allowing it to
-+  remain functional even during the SoC's deep sleep states.
-+
-+  At the heart of the AON subsystem is the E902, a low-power core that executes
-+  firmware responsible for coordinating tasks such as power domain control,
-+  clock management, and system wakeup signaling. Communication between the main
-+  SoC and the AON subsystem is handled through a mailbox interface, which
-+  enables message-based interactions with the AON firmware.
-+
-+maintainers:
-+  - Michal Wilczynski <m.wilczynski@samsung.com>
-+
-+properties:
-+  compatible:
-+    const: thead,th1520-aon
-+
-+  mboxes:
-+    maxItems: 1
-+
-+  mbox-names:
-+    items:
-+      - const: aon
-+
-+  "#power-domain-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - mboxes
-+  - mbox-names
-+  - "#power-domain-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    aon: aon {
-+        compatible = "thead,th1520-aon";
-+        mboxes = <&mbox_910t 1>;
-+        mbox-names = "aon";
-+        #power-domain-cells = <1>;
-+    };
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 0fa7c5728f1e..c56a1fb6e02a 100644
+index c96a1e6c8831..363bb3471a33 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -20184,6 +20184,7 @@ M:	Fu Wei <wefu@redhat.com>
- L:	linux-riscv@lists.infradead.org
- S:	Maintained
- T:	git https://github.com/pdp7/linux.git
-+F:	Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
- F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
- F:	Documentation/devicetree/bindings/mailbox/thead,th1520-mbox.yaml
- F:	Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
-@@ -20194,6 +20195,7 @@ F:	drivers/mailbox/mailbox-th1520.c
+@@ -20195,6 +20195,7 @@ F:	drivers/firmware/thead,th1520-aon.c
+ F:	drivers/mailbox/mailbox-th1520.c
  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
  F:	drivers/pinctrl/pinctrl-th1520.c
++F:	drivers/pmdomain/thead/
  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
-+F:	include/dt-bindings/firmware/thead,th1520-aon.h
+ F:	include/dt-bindings/firmware/thead,th1520-aon.h
+ F:	include/linux/firmware/thead/thead,th1520-aon.h
+diff --git a/drivers/pmdomain/Kconfig b/drivers/pmdomain/Kconfig
+index 23c64851a5b0..91f04ace35d4 100644
+--- a/drivers/pmdomain/Kconfig
++++ b/drivers/pmdomain/Kconfig
+@@ -16,6 +16,7 @@ source "drivers/pmdomain/st/Kconfig"
+ source "drivers/pmdomain/starfive/Kconfig"
+ source "drivers/pmdomain/sunxi/Kconfig"
+ source "drivers/pmdomain/tegra/Kconfig"
++source "drivers/pmdomain/thead/Kconfig"
+ source "drivers/pmdomain/ti/Kconfig"
+ source "drivers/pmdomain/xilinx/Kconfig"
  
- RNBD BLOCK DRIVERS
- M:	Md. Haris Iqbal <haris.iqbal@ionos.com>
-diff --git a/include/dt-bindings/firmware/thead,th1520-aon.h b/include/dt-bindings/firmware/thead,th1520-aon.h
+diff --git a/drivers/pmdomain/Makefile b/drivers/pmdomain/Makefile
+index a68ece2f4c68..7030f44a49df 100644
+--- a/drivers/pmdomain/Makefile
++++ b/drivers/pmdomain/Makefile
+@@ -14,6 +14,7 @@ obj-y					+= st/
+ obj-y					+= starfive/
+ obj-y					+= sunxi/
+ obj-y					+= tegra/
++obj-y					+= thead/
+ obj-y					+= ti/
+ obj-y					+= xilinx/
+ obj-y					+= core.o governor.o
+diff --git a/drivers/pmdomain/thead/Kconfig b/drivers/pmdomain/thead/Kconfig
 new file mode 100644
-index 000000000000..7607522289f7
+index 000000000000..c7a1ac0c61dc
 --- /dev/null
-+++ b/include/dt-bindings/firmware/thead,th1520-aon.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++++ b/drivers/pmdomain/thead/Kconfig
+@@ -0,0 +1,12 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++config TH1520_PM_DOMAINS
++	tristate "Support TH1520 Power Domains"
++	depends on TH1520_AON_PROTOCOL || !TH1520_AON_PROTOCOL
++	select REGMAP_MMIO
++	help
++	  This driver enables power domain management for the T-HEAD
++	  TH-1520 SoC. On this SoC there are number of power domains,
++	  which can be managed independently. For example GPU, NPU,
++	  and DPU reside in their own power domains which can be
++	  turned on/off.
+diff --git a/drivers/pmdomain/thead/Makefile b/drivers/pmdomain/thead/Makefile
+new file mode 100644
+index 000000000000..adfdf5479c68
+--- /dev/null
++++ b/drivers/pmdomain/thead/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++obj-$(CONFIG_TH1520_PM_DOMAINS)		+= th1520-pm-domains.o
+diff --git a/drivers/pmdomain/thead/th1520-pm-domains.c b/drivers/pmdomain/thead/th1520-pm-domains.c
+new file mode 100644
+index 000000000000..d913ad40fb76
+--- /dev/null
++++ b/drivers/pmdomain/thead/th1520-pm-domains.c
+@@ -0,0 +1,174 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright (C) 2022 Alibaba Group Holding Limited.
++ * Copyright (C) 2021 Alibaba Group Holding Limited.
 + * Copyright (c) 2024 Samsung Electronics Co., Ltd.
 + * Author: Michal Wilczynski <m.wilczynski@samsung.com>
 + */
 +
-+#ifndef __DT_BINDINGS_AON_TH1520_H
-+#define __DT_BINDINGS_AON_TH1520_H
++#include <linux/firmware/thead/thead,th1520-aon.h>
++#include <linux/slab.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
 +
-+#define TH1520_AON_VDEC_PD	1
-+#define TH1520_AON_NPU_PD	2
-+#define TH1520_AON_VENC_PD	3
-+#define TH1520_AON_GPU_PD	4
-+#define TH1520_AON_DSP0_PD	5
-+#define TH1520_AON_DSP1_PD	6
++#include <dt-bindings/firmware/thead,th1520-aon.h>
 +
-+#endif
++struct th1520_power_domain {
++	struct th1520_aon_chan *aon_chan;
++	struct generic_pm_domain genpd;
++	u32 rsrc;
++};
++
++struct th1520_power_info {
++	const char *name;
++	u32 rsrc;
++};
++
++static const struct th1520_power_info th1520_pd_ranges[] = {
++	{ "vdec", TH1520_AON_VDEC_PD },
++	{ "npu", TH1520_AON_NPU_PD },
++	{ "venc", TH1520_AON_VENC_PD },
++	{ "gpu", TH1520_AON_GPU_PD },
++	{ "dsp0", TH1520_AON_DSP0_PD },
++	{ "dsp1", TH1520_AON_DSP1_PD }
++};
++
++static inline struct th1520_power_domain *
++to_th1520_power_domain(struct generic_pm_domain *genpd)
++{
++	return container_of(genpd, struct th1520_power_domain, genpd);
++}
++
++static int th1520_pd_power_on(struct generic_pm_domain *domain)
++{
++	struct th1520_power_domain *pd = to_th1520_power_domain(domain);
++
++	return th1520_aon_power_update(pd->aon_chan, pd->rsrc, true);
++}
++
++static int th1520_pd_power_off(struct generic_pm_domain *domain)
++{
++	struct th1520_power_domain *pd = to_th1520_power_domain(domain);
++
++	return th1520_aon_power_update(pd->aon_chan, pd->rsrc, false);
++}
++
++static struct generic_pm_domain *th1520_pd_xlate(const struct of_phandle_args *spec,
++						 void *data)
++{
++	struct generic_pm_domain *domain = ERR_PTR(-ENOENT);
++	struct genpd_onecell_data *pd_data = data;
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(th1520_pd_ranges); i++) {
++		struct th1520_power_domain *pd;
++
++		pd = to_th1520_power_domain(pd_data->domains[i]);
++		if (pd->rsrc == spec->args[0]) {
++			domain = &pd->genpd;
++			break;
++		}
++	}
++
++	return domain;
++}
++
++static struct th1520_power_domain *
++th1520_add_pm_domain(struct device *dev, const struct th1520_power_info *pi)
++{
++	struct th1520_power_domain *pd;
++	int ret;
++
++	pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
++	if (!pd)
++		return ERR_PTR(-ENOMEM);
++
++	pd->rsrc = pi->rsrc;
++	pd->genpd.power_on = th1520_pd_power_on;
++	pd->genpd.power_off = th1520_pd_power_off;
++	pd->genpd.name = pi->name;
++
++	ret = pm_genpd_init(&pd->genpd, NULL, true);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return pd;
++}
++
++static void th1520_pd_init_all_off(struct generic_pm_domain **domains,
++				   struct device *dev)
++{
++	int ret;
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(th1520_pd_ranges); i++) {
++		struct th1520_power_domain *pd =
++			to_th1520_power_domain(domains[i]);
++
++		ret = th1520_aon_power_update(pd->aon_chan, pd->rsrc, false);
++		if (ret)
++			dev_err(dev,
++				"Failed to initially power down power domain %s\n",
++				pd->genpd.name);
++	}
++}
++
++static int th1520_pd_probe(struct platform_device *pdev)
++{
++	struct generic_pm_domain **domains;
++	struct genpd_onecell_data *pd_data;
++	struct th1520_aon_chan *aon_chan;
++	struct device *dev = &pdev->dev;
++	int i;
++
++	aon_chan = dev_get_drvdata(dev->parent);
++	if (!aon_chan) {
++		dev_err(dev, "Failed to get AON channel from parent\n");
++		return -EINVAL;
++	}
++
++	domains = devm_kcalloc(dev, ARRAY_SIZE(th1520_pd_ranges),
++			       sizeof(*domains), GFP_KERNEL);
++	if (!domains)
++		return -ENOMEM;
++
++	pd_data = devm_kzalloc(dev, sizeof(*pd_data), GFP_KERNEL);
++	if (!pd_data)
++		return -ENOMEM;
++
++	for (i = 0; i < ARRAY_SIZE(th1520_pd_ranges); i++) {
++		struct th1520_power_domain *pd;
++
++		pd = th1520_add_pm_domain(dev, &th1520_pd_ranges[i]);
++		if (IS_ERR(pd))
++			return PTR_ERR(pd);
++
++		pd->aon_chan = aon_chan;
++		domains[i] = &pd->genpd;
++		dev_dbg(dev, "added power domain %s\n", pd->genpd.name);
++	}
++
++	pd_data->domains = domains;
++	pd_data->num_domains = ARRAY_SIZE(th1520_pd_ranges);
++	pd_data->xlate = th1520_pd_xlate;
++
++	/*
++	 * Initialize all power domains to off to ensure they start in a
++	 * low-power state. This allows device drivers to manage power
++	 * domains by turning them on or off as needed.
++	 */
++	th1520_pd_init_all_off(domains, dev);
++
++	return of_genpd_add_provider_onecell(dev->parent->of_node, pd_data);
++}
++
++static struct platform_driver th1520_pd_driver = {
++	.driver = {
++		.name = "th1520-pd",
++	},
++	.probe = th1520_pd_probe,
++};
++module_platform_driver(th1520_pd_driver);
++
++MODULE_AUTHOR("Michal Wilczynski <m.wilczynski@samsung.com>");
++MODULE_DESCRIPTION("T-HEAD TH1520 SoC power domain controller");
++MODULE_LICENSE("GPL");
 -- 
 2.34.1
 
