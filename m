@@ -1,240 +1,218 @@
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9621B0415;
-	Tue, 21 Jan 2025 06:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC601AFB36
+	for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2025 08:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737442258; cv=none; b=AtXN83+y4Bw5TmBPOfbQrVD8vYwS6n4eElVtVPM+rSAFCXfRMTjGXIunj5PSv2Lvt5JGNBC6usgoLms/K4AdPdPLuvMFJ7Wlx/E1blR8dGz8vcuEKuutXzlvd4u01QmUcHnbM98gRCoRRzI0ndT69b4LYCJtM+GHR7JNak7A2NY=
+	t=1737447929; cv=none; b=q8SCzg5p3v9l5jvrAS5cUWsPk+yrNKgurRQW1RWbANYK+4B92xzWkJfRNfZ/wzljF63K0qomUejj5kE4nrnwU4G9TnQT2FnxsaIifGfVfvEPr3kzd1GZGjN6arkuEHdaI2dcSlsnTddGvuiWj0qmYTG4q7M7TSnGfxA2CKbMwag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737442258; c=relaxed/simple;
-	bh=crT3UkNHDMmrmJ0xIMFGb/sJp8PxdYIxrjak1NcHUbA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FCQeZvNR1fBWDQAPv6or3RGnqgQaLTHrniskfiDpckrbGpVLbURoNiVFfPJI72cMqtcvKfW8hQlMJCnI5Z9/K1u76tzbb0vl0Aer7XwsnrwITx3Zk2CQgZqAiUWNQZOrxqYP7EhbiwWq8WycLzogPhuhEiVW64qIHr2ezYbRjRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PGmKEFta; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PGmKEFta"
-X-UUID: 0d7c300ed7c411efbd192953cf12861f-20250121
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=JYPAX7LoVN1/JdJmBbS2hnQMHCw7Autq/Ry7rigjYjU=;
-	b=PGmKEFtaO94yD+kI6vRoN8lDW00uBqL6XQk5eza4HZVu6RAdRuhMVNc0h6SQwocaeOq7V1sBgRsDwhJq2YClrfzzVX3Klf9xp+WpVg11G+nnckQfti8PiCsSab5ZtGmMujLRpWEiqN6bnykEWF5QeoX/HRQbAZ7m34wvI6jCtGs=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.46,REQID:89c066e6-f059-4668-ac97-b2af5c773802,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:0
-X-CID-META: VersionHash:60aa074,CLOUDID:30c3380f-078a-483b-8929-714244d25c49,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:5,
-	IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:
-	0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 0d7c300ed7c411efbd192953cf12861f-20250121
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
-	(envelope-from <friday.yang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1009262644; Tue, 21 Jan 2025 14:50:51 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Tue, 21 Jan 2025 14:50:49 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Tue, 21 Jan 2025 14:50:48 +0800
-From: Friday Yang <friday.yang@mediatek.com>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Garmin Chang
-	<garmin.chang@mediatek.com>, Yong Wu <yong.wu@mediatek.com>
-CC: Friday Yang <friday.yang@mediatek.com>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v3 2/2] clk: mediatek: Add SMI LARBs reset for MT8188
-Date: Tue, 21 Jan 2025 14:50:41 +0800
-Message-ID: <20250121065045.13514-3-friday.yang@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250121065045.13514-1-friday.yang@mediatek.com>
-References: <20250121065045.13514-1-friday.yang@mediatek.com>
+	s=arc-20240116; t=1737447929; c=relaxed/simple;
+	bh=XO7wqmEVw8nwWxjLiNe3gBRgbB2cNz60Ex69gWJYHyk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RH6i9ldou2oa/krAaQmnoRxsTv6diK/1uLazDataBwGA7XuKodVSnc5yaLE47ZYOiqN+rXpe7gm94D4+g3fPjJmil5GGjvNzX9pKWOGpN1aDGvLWexwqBRnuFzFK1EnPM/xBvOpWTgJGYgPL8LSIB2w6RLGZs10iQCRqAXCzDCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ta9Z6-0008Ps-UH; Tue, 21 Jan 2025 09:24:52 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ta9Z3-0014lS-0a;
+	Tue, 21 Jan 2025 09:24:49 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1ta9Z3-0001U4-0B;
+	Tue, 21 Jan 2025 09:24:49 +0100
+Message-ID: <518c440a74b592099b1f5dddd95dbc23615dd034.camel@pengutronix.de>
+Subject: Re: [RFC v3 09/18] drm/imagination: Add reset controller support
+ for GPU initialization
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com, 
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+  drew@pdp7.com, guoren@kernel.org, wefu@redhat.com,
+ jassisinghbrar@gmail.com,  paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu,  frank.binns@imgtec.com, matt.coster@imgtec.com, 
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+  airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
+ jszhang@kernel.org,  m.szyprowski@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+Date: Tue, 21 Jan 2025 09:24:48 +0100
+In-Reply-To: <20250120172111.3492708-10-m.wilczynski@samsung.com>
+References: <20250120172111.3492708-1-m.wilczynski@samsung.com>
+	 <CGME20250120172131eucas1p1ed7fc14a96c66b1dc9e14e9fc7cbb2b7@eucas1p1.samsung.com>
+	 <20250120172111.3492708-10-m.wilczynski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-SMI LARBs require reset functions when applying clamp operations.
-Add reset platform data for SMI LARBs in the image, camera and IPE
-subsystems.
+On Mo, 2025-01-20 at 18:21 +0100, Michal Wilczynski wrote:
+> Certain platforms, such as the T-Head TH1520 and Banana Pi BPI-F3,
+> require a controlled GPU reset sequence during the power-up procedure
+> to ensure proper initialization. Without this reset, the GPU may remain
+> in an undefined state, potentially leading to stability or performance
+> issues.
+>=20
+> This commit integrates a dedicated reset controller within the
+> drm/imagination driver. By doing so, the driver can coordinate the
+> necessary reset operations as part of the normal GPU bring-up process,
+> improving reliability and ensuring that the hardware is ready for
+> operation.
+>=20
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  drivers/gpu/drm/imagination/pvr_device.c | 21 +++++++++++++++++++++
+>  drivers/gpu/drm/imagination/pvr_device.h |  9 +++++++++
+>  drivers/gpu/drm/imagination/pvr_power.c  | 15 ++++++++++++++-
+>  3 files changed, 44 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/imagination/pvr_device.c b/drivers/gpu/drm/i=
+magination/pvr_device.c
+> index 1704c0268589..7ae9875d8d74 100644
+> --- a/drivers/gpu/drm/imagination/pvr_device.c
+> +++ b/drivers/gpu/drm/imagination/pvr_device.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/reset.h>
+>  #include <linux/slab.h>
+>  #include <linux/stddef.h>
+>  #include <linux/types.h>
+> @@ -120,6 +121,21 @@ static int pvr_device_clk_init(struct pvr_device *pv=
+r_dev)
+>  	return 0;
+>  }
+> =20
+> +static int pvr_device_reset_init(struct pvr_device *pvr_dev)
+> +{
+> +	struct drm_device *drm_dev =3D from_pvr_device(pvr_dev);
+> +	struct reset_control *reset;
+> +
+> +	reset =3D devm_reset_control_get_exclusive_by_index(drm_dev->dev, 0);
 
-Signed-off-by: Friday Yang <friday.yang@mediatek.com>
----
- drivers/clk/mediatek/clk-mt8188-cam.c | 17 +++++++++++++++++
- drivers/clk/mediatek/clk-mt8188-img.c | 18 ++++++++++++++++++
- drivers/clk/mediatek/clk-mt8188-ipe.c | 14 ++++++++++++++
- 3 files changed, 49 insertions(+)
+The dt-bindings only specify a single reset. No need to request by
+index. Please use:
 
-diff --git a/drivers/clk/mediatek/clk-mt8188-cam.c b/drivers/clk/mediatek/clk-mt8188-cam.c
-index 7500bd25387f..9b029fdd584e 100644
---- a/drivers/clk/mediatek/clk-mt8188-cam.c
-+++ b/drivers/clk/mediatek/clk-mt8188-cam.c
-@@ -20,6 +20,8 @@ static const struct mtk_gate_regs cam_cg_regs = {
- #define GATE_CAM(_id, _name, _parent, _shift)			\
- 	GATE_MTK(_id, _name, _parent, &cam_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+	reset =3D devm_reset_control_get_exclusive(drm_dev->dev, NULL);
 
-+#define CAM_SYS_SMI_LARB_RST_OFF	(0xA0)
-+
- static const struct mtk_gate cam_main_clks[] = {
- 	GATE_CAM(CLK_CAM_MAIN_LARB13, "cam_main_larb13", "top_cam", 0),
- 	GATE_CAM(CLK_CAM_MAIN_LARB14, "cam_main_larb14", "top_cam", 1),
-@@ -72,6 +74,17 @@ static const struct mtk_gate cam_yuvb_clks[] = {
- 	GATE_CAM(CLK_CAM_YUVB_CAMTG, "cam_yuvb_camtg", "top_cam", 2),
- };
+instead. Or devm_reset_control_get_optional_exclusive(), perhaps? See
+below.
 
-+/* Reset for SMI larb 16a/16b/17a/17b */
-+static u16 cam_sys_rst_ofs[] = {
-+	CAM_SYS_SMI_LARB_RST_OFF,
-+};
-+
-+static const struct mtk_clk_rst_desc cam_sys_rst_desc = {
-+	.version = MTK_RST_SIMPLE,
-+	.rst_bank_ofs = cam_sys_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(cam_sys_rst_ofs),
-+};
-+
- static const struct mtk_clk_desc cam_main_desc = {
- 	.clks = cam_main_clks,
- 	.num_clks = ARRAY_SIZE(cam_main_clks),
-@@ -80,21 +93,25 @@ static const struct mtk_clk_desc cam_main_desc = {
- static const struct mtk_clk_desc cam_rawa_desc = {
- 	.clks = cam_rawa_clks,
- 	.num_clks = ARRAY_SIZE(cam_rawa_clks),
-+	.rst_desc = &cam_sys_rst_desc,
- };
+> +	if (IS_ERR(reset))
+> +		return dev_err_probe(drm_dev->dev, PTR_ERR(reset),
+> +				     "failed to get gpu reset line\n");
+> +
+> +	pvr_dev->reset =3D reset;
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * pvr_device_process_active_queues() - Process all queue related events=
+.
+>   * @pvr_dev: PowerVR device to check
+> @@ -509,6 +525,11 @@ pvr_device_init(struct pvr_device *pvr_dev)
+>  	if (err)
+>  		return err;
+> =20
+> +	/* Get the reset line for the GPU */
+> +	err =3D pvr_device_reset_init(pvr_dev);
+> +	if (err)
+> +		return err;
+> +
+>  	/* Explicitly power the GPU so we can access control registers before t=
+he FW is booted. */
+>  	err =3D pm_runtime_resume_and_get(dev);
+>  	if (err)
+> diff --git a/drivers/gpu/drm/imagination/pvr_device.h b/drivers/gpu/drm/i=
+magination/pvr_device.h
+> index 6d0dfacb677b..f6576c08111c 100644
+> --- a/drivers/gpu/drm/imagination/pvr_device.h
+> +++ b/drivers/gpu/drm/imagination/pvr_device.h
+> @@ -131,6 +131,15 @@ struct pvr_device {
+>  	 */
+>  	struct clk *mem_clk;
+> =20
+> +	/**
+> +	 * @reset: Optional reset line.
 
- static const struct mtk_clk_desc cam_rawb_desc = {
- 	.clks = cam_rawb_clks,
- 	.num_clks = ARRAY_SIZE(cam_rawb_clks),
-+	.rst_desc = &cam_sys_rst_desc,
- };
+This looks like the reset control really should be made optional in
+pvr_device_reset_init().
 
- static const struct mtk_clk_desc cam_yuva_desc = {
- 	.clks = cam_yuva_clks,
- 	.num_clks = ARRAY_SIZE(cam_yuva_clks),
-+	.rst_desc = &cam_sys_rst_desc,
- };
+> +	 *
+> +	 * This may be used on some platforms to provide a reset line that need=
+s to be de-asserted
+> +	 * after power-up procedure. It would also need to be asserted after th=
+e power-down
+> +	 * procedure.
+> +	 */
+> +	struct reset_control *reset;
+> +
+>  	/** @irq: IRQ number. */
+>  	int irq;
+> =20
+> diff --git a/drivers/gpu/drm/imagination/pvr_power.c b/drivers/gpu/drm/im=
+agination/pvr_power.c
+> index ba7816fd28ec..87a955600d8b 100644
+> --- a/drivers/gpu/drm/imagination/pvr_power.c
+> +++ b/drivers/gpu/drm/imagination/pvr_power.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/reset.h>
+>  #include <linux/timer.h>
+>  #include <linux/types.h>
+>  #include <linux/workqueue.h>
+> @@ -252,6 +253,9 @@ pvr_power_device_suspend(struct device *dev)
+>  	clk_disable_unprepare(pvr_dev->sys_clk);
+>  	clk_disable_unprepare(pvr_dev->core_clk);
+> =20
+> +	if (pvr_dev->reset)
+> +		err =3D reset_control_assert(pvr_dev->reset);
 
- static const struct mtk_clk_desc cam_yuvb_desc = {
- 	.clks = cam_yuvb_clks,
- 	.num_clks = ARRAY_SIZE(cam_yuvb_clks),
-+	.rst_desc = &cam_sys_rst_desc,
- };
+No need for conditional assert, reset_control_assert(NULL) is a no-op.
+Just use:
 
- static const struct of_device_id of_match_clk_mt8188_cam[] = {
-diff --git a/drivers/clk/mediatek/clk-mt8188-img.c b/drivers/clk/mediatek/clk-mt8188-img.c
-index cb2fbd4136b9..d44bfbd8308a 100644
---- a/drivers/clk/mediatek/clk-mt8188-img.c
-+++ b/drivers/clk/mediatek/clk-mt8188-img.c
-@@ -20,6 +20,8 @@ static const struct mtk_gate_regs imgsys_cg_regs = {
- #define GATE_IMGSYS(_id, _name, _parent, _shift)			\
- 	GATE_MTK(_id, _name, _parent, &imgsys_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
+	err =3D reset_control_assert(pvr_dev->reset);
 
-+#define IMG_SYS_SMI_LARB_RST_OFF	(0xC)
-+
- static const struct mtk_gate imgsys_main_clks[] = {
- 	GATE_IMGSYS(CLK_IMGSYS_MAIN_LARB9, "imgsys_main_larb9", "top_img", 0),
- 	GATE_IMGSYS(CLK_IMGSYS_MAIN_TRAW0, "imgsys_main_traw0", "top_img", 1),
-@@ -58,6 +60,17 @@ static const struct mtk_gate imgsys1_dip_nr_clks[] = {
- 	GATE_IMGSYS(CLK_IMGSYS1_DIP_NR_DIP_NR, "imgsys1_dip_nr_dip_nr", "top_img", 1),
- };
+> +
+>  err_drm_dev_exit:
+>  	drm_dev_exit(idx);
+> =20
+> @@ -282,16 +286,25 @@ pvr_power_device_resume(struct device *dev)
+>  	if (err)
+>  		goto err_sys_clk_disable;
+> =20
+> +	if (pvr_dev->reset) {
+> +		err =3D reset_control_deassert(pvr_dev->reset);
+> +		if (err)
+> +			goto err_mem_clk_disable;
+> +	}
 
-+/* Reset for SMI larb 10/11a/11b/11c/15 */
-+static u16 img_sys_rst_ofs[] = {
-+	IMG_SYS_SMI_LARB_RST_OFF,
-+};
-+
-+static const struct mtk_clk_rst_desc img_sys_rst_desc = {
-+	.version = MTK_RST_SIMPLE,
-+	.rst_bank_ofs = img_sys_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(img_sys_rst_ofs),
-+};
-+
- static const struct mtk_clk_desc imgsys_main_desc = {
- 	.clks = imgsys_main_clks,
- 	.num_clks = ARRAY_SIZE(imgsys_main_clks),
-@@ -66,26 +79,31 @@ static const struct mtk_clk_desc imgsys_main_desc = {
- static const struct mtk_clk_desc imgsys_wpe1_desc = {
- 	.clks = imgsys_wpe1_clks,
- 	.num_clks = ARRAY_SIZE(imgsys_wpe1_clks),
-+	.rst_desc = &img_sys_rst_desc,
- };
+Same as above, reset_control_deassert(NULL) returns 0:
 
- static const struct mtk_clk_desc imgsys_wpe2_desc = {
- 	.clks = imgsys_wpe2_clks,
- 	.num_clks = ARRAY_SIZE(imgsys_wpe2_clks),
-+	.rst_desc = &img_sys_rst_desc,
- };
+	err =3D reset_control_deassert(pvr_dev->reset);
+	if (err)
+		goto err_mem_clk_disable;
 
- static const struct mtk_clk_desc imgsys_wpe3_desc = {
- 	.clks = imgsys_wpe3_clks,
- 	.num_clks = ARRAY_SIZE(imgsys_wpe3_clks),
-+	.rst_desc = &img_sys_rst_desc,
- };
-
- static const struct mtk_clk_desc imgsys1_dip_top_desc = {
- 	.clks = imgsys1_dip_top_clks,
- 	.num_clks = ARRAY_SIZE(imgsys1_dip_top_clks),
-+	.rst_desc = &img_sys_rst_desc,
- };
-
- static const struct mtk_clk_desc imgsys1_dip_nr_desc = {
- 	.clks = imgsys1_dip_nr_clks,
- 	.num_clks = ARRAY_SIZE(imgsys1_dip_nr_clks),
-+	.rst_desc = &img_sys_rst_desc,
- };
-
- static const struct of_device_id of_match_clk_mt8188_imgsys_main[] = {
-diff --git a/drivers/clk/mediatek/clk-mt8188-ipe.c b/drivers/clk/mediatek/clk-mt8188-ipe.c
-index 8f1933b71e28..70a011c1f9ce 100644
---- a/drivers/clk/mediatek/clk-mt8188-ipe.c
-+++ b/drivers/clk/mediatek/clk-mt8188-ipe.c
-@@ -20,6 +20,8 @@ static const struct mtk_gate_regs ipe_cg_regs = {
- #define GATE_IPE(_id, _name, _parent, _shift)			\
- 	GATE_MTK(_id, _name, _parent, &ipe_cg_regs, _shift, &mtk_clk_gate_ops_setclr)
-
-+#define IPE_SYS_SMI_LARB_RST_OFF	(0xC)
-+
- static const struct mtk_gate ipe_clks[] = {
- 	GATE_IPE(CLK_IPE_DPE, "ipe_dpe", "top_ipe", 0),
- 	GATE_IPE(CLK_IPE_FDVT, "ipe_fdvt", "top_ipe", 1),
-@@ -28,9 +30,21 @@ static const struct mtk_gate ipe_clks[] = {
- 	GATE_IPE(CLK_IPE_SMI_LARB12, "ipe_smi_larb12", "top_ipe", 4),
- };
-
-+/* Reset for SMI larb 12 */
-+static u16 ipe_sys_rst_ofs[] = {
-+	IPE_SYS_SMI_LARB_RST_OFF,
-+};
-+
-+static const struct mtk_clk_rst_desc ipe_sys_rst_desc = {
-+	.version = MTK_RST_SIMPLE,
-+	.rst_bank_ofs = ipe_sys_rst_ofs,
-+	.rst_bank_nr = ARRAY_SIZE(ipe_sys_rst_ofs),
-+};
-+
- static const struct mtk_clk_desc ipe_desc = {
- 	.clks = ipe_clks,
- 	.num_clks = ARRAY_SIZE(ipe_clks),
-+	.rst_desc = &ipe_sys_rst_desc,
- };
-
- static const struct of_device_id of_match_clk_mt8188_ipe[] = {
---
-2.46.0
-
+regards
+Philipp
