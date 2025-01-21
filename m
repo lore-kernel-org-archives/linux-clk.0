@@ -1,64 +1,99 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40391EE7CD
-	for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2025 11:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5F21F2380
+	for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2025 13:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737457677; cv=none; b=hGt4wQ2TQIRnOBW+v3OlqfHe9LGoEQXidxRdqhOimszwJJRCSOyno0B2ZRQLn1Ge6TIcbXuULgUB/4B7nX400IXqM9cwmhUPY7MhqplEM4oKQDI4o7f1OwqVimZmSeO4TO/kkVCDAoUs/y9Swqputh4SRN4tIMUvQQ0aXDJ7jyw=
+	t=1737467913; cv=none; b=aGTeWnqhtBC92HNdgYxRylu6YTxdMJQNYDP6r2CW4HXqVCBMxqv7GNmDQtmDmretFL9tqxpaFZIyVYx3amjSeY9DNiJ9kGUaMLRYIXFayN0o6F7CKdFpcUKR2BA/cGLYcIgdHW6KLGWSQ1cg2OdyWn6Bg9oZVgOpq5U6ObMEs2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737457677; c=relaxed/simple;
-	bh=bVAloRxO0qForNKrOwCdOGe69VlKmVFEDTMH+0w7E9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=F5dLXXYVftJFIkfLz6mi4pgYPjXCE6AHMNvxJirwrckqvT2/hN6bEdoDj+/XOaBp3c/8gajnhyyWxpxyOaPumS2i3FlMvQX38knrxoqBlq2I3NIlrYF5Og7ATFuJAh3Ax05Td3N3AiBZsVyG5jWCda6/k2yHc4AC7FE5m2lE458=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WS6JG75F; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1737467913; c=relaxed/simple;
+	bh=jQzXuU3BlH5a1zJ/BamQoNSatZlIbAHnl77mcwz9/Dk=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhuXOVBOY97QdGjB41v0eQ5xwA9tJyGwa2CYPqe7JGRhj7+tCRqtvlanrqxZbMsbJDEHpSLLc7zmefcorm7GS5mqkulRg8Z5SLtlTC87tRgv4ilq6rDd7tJvFZDXNnBC19PkS6+8GNY50pWRqLFvbpUTM2zF9Qgq10i0sGceWJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=T9e5cQEv; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WS6JG75F"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43622267b2eso54346955e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2025 03:07:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="T9e5cQEv"
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-aab925654d9so999211966b.2
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2025 05:58:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737457674; x=1738062474; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d8fRHIrh2xpHGD7EayKut4LgTeZge1YncTW6fc5+fqg=;
-        b=WS6JG75FGeryXeVmKcwzXFuHYjm2k8DpBGt2vXulLFMJrjIuhYQT2z4IXSd7e11FgV
-         KegYqIohu+cYffOUZFWT4pCNbig2rHyNEpjph3Ul7IU/ajo7Y9pGHmSueGSAlt3ezh/S
-         m0g0gd7+kpS1qVeqE9Sc2nNvWqHAioL9CU+IzUFCPWY3WlfojVn33mtQHhYrzIh4Oeas
-         /Ay9pXcOQlD4uPo4IlhRO1UvXYsVFT0t7r6m8Rx7YY/yxgq1gqpO0Mhb9qBHX1FjuY8A
-         Qs4GqfMQNdRMTEMNPILde2QKdasujElRvMLoWYShutqK2NOidNajd2uJihUzDOp2NsU7
-         pcpQ==
+        d=suse.com; s=google; t=1737467908; x=1738072708; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ndX+bS7mfcHIUz3eSPCBChEUR/+D/+QHPhUMGbWKkjw=;
+        b=T9e5cQEvREUvXyqRhhD5eAV2nfjPCGzjN++Tz2ucCQ7EEwC+FBjJPzHZ2XSKNI/9Fd
+         iFRIiYzEsSkQWN7ddx4YGD0EsgQPsKEHrkMz8Wz8CcBkdPIX+NIlzY+7GQnKoL9kzQV2
+         Ycc9fAejae0ZDTsB7rcWWGW++ZG9onozPvd924M9ZVE7shwggIYiivqwxknXTqrHK6hA
+         FSEGZ2jePN/9lImkKVkkW7dGqvjfM9zm58YEzyynNrIZSVM2NewPm+cW/U14SxGKHeMu
+         JBSaUewH1tQV3karBYsBn9sKMnGevJBdkS4XzSxNLlhVYTd3peAER5VwYOVAVt3Iajnf
+         0QCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737457674; x=1738062474;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d8fRHIrh2xpHGD7EayKut4LgTeZge1YncTW6fc5+fqg=;
-        b=sMLP3v7kQtjhHejNAC1KZlJ5WLTJEyYtloELiS+5K7BeWaMEEG/KIh4m7r7tV6VRBT
-         W27DkXY8uvzve9eoNtJxqV2DVZfmVWgSEZAi3hQ+uHuLp/rEkjL1+D2Kfki1gc9QkJms
-         YHWRrou5KMzaG3wWLqKdrnhvClc/SXG3MtwAjwIrHEaqIOCK/oOEs6OTsm7AVztFRXKB
-         7J2VPhTvgkn8+pfQlsVwODizgcH3GH6+ql65LmvCoIsE/TdO4XU8MNfhE7Vqo3ghOAkm
-         EsguQgaC5IO99Cl3V4H2mGLdxOmfDHboK8uOK74ky3SC4L+b1xypXuLo/osUG+PlvCLF
-         0TMA==
-X-Gm-Message-State: AOJu0YwS6IGZI4jcl7s3/caq81jGjrfRpJ2Ev96tSmG0JJzHiwU4If5H
-	yvoVwj/1Z3ymyOApDtKA6y5pCBzsQiU9IjTfWo3U3V6BdLb8VZAB5RLVvssAG2c=
-X-Gm-Gg: ASbGnctZZqt/A+pkpUyGAtdnce9CCh5Z2BUCGk1LgSmVEXw72dcTkwtPluJt+q2PQ33
-	0HeYZ1eVHpGzjA4bI9WvXp+wCEM+JeVQ+aYFd+is/wslnBdoryyDOUqTuQFj/BMvQKmE8uruDVr
-	hngPhFgIinDCAERVFisqX1toq3ccwZReze0aaxa0XAi55nFIMPwmREX/oelqqaG3VYl9YDrchoL
-	nYIvMJdQAYTDvkFA4ofDRcn8qCZNi3w4WeeMoq08kWpfYSIjyQLdLWczW3t2bwthmUW69dX/gQ=
-X-Google-Smtp-Source: AGHT+IEpmUaU9yXOr+F4IbitftjPKymPQPUSc3rJ7r49fnlxGQ04Gx20Y10shwlJevx5EHSdpphxeg==
-X-Received: by 2002:a05:600c:34c1:b0:438:a432:7c44 with SMTP id 5b1f17b1804b1-438a4327dadmr84054275e9.21.1737457674294;
-        Tue, 21 Jan 2025 03:07:54 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c753cc1fsm239012775e9.39.2025.01.21.03.07.53
+        d=1e100.net; s=20230601; t=1737467908; x=1738072708;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ndX+bS7mfcHIUz3eSPCBChEUR/+D/+QHPhUMGbWKkjw=;
+        b=aODIkc+8MnTyrz/BEaTWkC0Kf6DKUf+lYGZzSSFoRbMWKTWwNfOoEG7borUtNuHweo
+         RUHgenwZQOMhq4FDsQTrPCS1+H5sGP8YqbSTw6A3WIzkxt4H3kdgMcMAQ5ITiXOeJEe+
+         /gyRGa2mt5XnpHD6aSucR84/JFKzBNI1YwfhTfd8Ntfv8WNzOhYWapfCuZgfL2p1U9gG
+         o+M6de8RQrBah2yKTPR0kvqAy98l854T5FF/SFPycpo9/kUY+M8dS91Y8Mf6POD4YD+j
+         yUwbI0V4rp8R3In9KXI8IsDwZyOX3cI8+sob2TIrVN3xtVCDAF7rNOerTbrqX9OwhXFr
+         me5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX4u7/8ZjdGJXKwxUzd6NL1FKEyVb7Zc4iLgCt3JmfVJD9ro0/wkfJRFccjwOs5vlzvrS3yAjMVW/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuFatoRSz9NzEnPhSQm/Q584glm7GKrHBk1A9bKSQ/D1IfbBFf
+	kzbiS43PabeICaaU1Op0aVN8b2uHUi9XRg8We+AfdaKgYF7VMhFVW+VNBcqfYgY=
+X-Gm-Gg: ASbGncvPOs/37LF9KCKOah+aTQz4UL5uHf5wA95wIukvigNll6wM+TS7mwLZDaDWx1V
+	CfDEMNnYfTmeXzV7CslxDB/0ndMn4KBhv01KN2O7YTuEZ5KgVmXsg3HNrisf5VgDD4pGIL/yG7q
+	9t+8rYu2OqBbapKunPU4ZrA9cwtaV6fbQVMgbSiNh+0DIw+NVrgWUQ5DmtzM+IU6mtwOPvo3DKI
+	0EyZ9yBHAxAUdsCRlQt8AT3VPjYQ+zAySx5eED9P6HV04/s6fOGHGCp/kq+PBDAIw46Bvmv4vSx
+	IcYeARQbXd0I8Jx2lOUESRNiq9kYf/S2OPWAwUNk
+X-Google-Smtp-Source: AGHT+IGUuk+xvGmbiQD3bRfCbckgBF2RVH3B6tetIFWqVCQnsVutS7iL+mu2n84MUq9YEhicZgprHw==
+X-Received: by 2002:a17:906:f58e:b0:ab2:f816:c5e0 with SMTP id a640c23a62f3a-ab38b1e569cmr1477479066b.12.1737467908253;
+        Tue, 21 Jan 2025 05:58:28 -0800 (PST)
+Received: from localhost (host-87-14-236-197.retail.telecomitalia.it. [87.14.236.197])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab384c5ad98sm753624766b.28.2025.01.21.05.58.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2025 03:07:53 -0800 (PST)
-Date: Tue, 21 Jan 2025 14:07:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-clk@vger.kernel.org
-Subject: [bug report] clk: stm32f4: support spread spectrum clock generation
-Message-ID: <77355eb9-19b3-46e5-a003-c21c0fae5bcd@stanley.mountain>
+        Tue, 21 Jan 2025 05:58:27 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 21 Jan 2025 14:59:21 +0100
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v6 08/10] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <Z4-oORWO4BgOqibB@apocalypse>
+References: <cover.1736776658.git.andrea.porta@suse.com>
+ <550590a5a0b80dd8a0c655921ec0aa41a67c8148.1736776658.git.andrea.porta@suse.com>
+ <2025011722-motocross-finally-e664@gregkh>
+ <Z49eOdVvwknOoD3E@apocalypse>
+ <2025012143-rippling-rehydrate-581b@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,56 +102,126 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <2025012143-rippling-rehydrate-581b@gregkh>
 
-Hello Dario Binacchi,
+Hi Greg,
 
-Commit 65b3516dbe50 ("clk: stm32f4: support spread spectrum clock
-generation") from Jan 14, 2025 (linux-next), leads to the following
-Smatch static checker warning:
+On 09:48 Tue 21 Jan     , Greg Kroah-Hartman wrote:
+> On Tue, Jan 21, 2025 at 09:43:37AM +0100, Andrea della Porta wrote:
+> > Hi Greg,
+> > 
+> > On 12:47 Fri 17 Jan     , Greg Kroah-Hartman wrote:
+> > > On Mon, Jan 13, 2025 at 03:58:07PM +0100, Andrea della Porta wrote:
+> > > > The RaspberryPi RP1 is a PCI multi function device containing
+> > > > peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > > > and others.
+> > > > 
+> > > > Implement a bare minimum driver to operate the RP1, leveraging
+> > > > actual OF based driver implementations for the on-board peripherals
+> > > > by loading a devicetree overlay during driver probe.
+> > > > 
+> > > > The peripherals are accessed by mapping MMIO registers starting
+> > > > from PCI BAR1 region.
+> > > > 
+> > > > With the overlay approach we can achieve more generic and agnostic
+> > > > approach to managing this chipset, being that it is a PCI endpoint
+> > > > and could possibly be reused in other hw implementations. The
+> > > > presented approach is also used by Bootlin's Microchip LAN966x
+> > > > patchset (see link) as well, for a similar chipset.
+> > > > 
+> > > > For reasons why this driver is contained in drivers/misc, please
+> > > > check the links.
+> > > 
+> > > Links aren't always around all the time, please document it here why
+> > > this is needed, and then links can "add to" that summary.
+> > 
+> > Ack.
+> > 
+> > > 
+> > > > This driver is heavily based on downstream code from RaspberryPi
+> > > > Foundation, and the original author is Phil Elwell.
+> > > > 
+> > > > Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+> > 
+> > ...
+> > 
+> > > > diff --git a/drivers/misc/rp1/rp1_pci.c b/drivers/misc/rp1/rp1_pci.c
+> > > > new file mode 100644
+> > > > index 000000000000..3e8ba3fa7fd5
+> > > > --- /dev/null
+> > > > +++ b/drivers/misc/rp1/rp1_pci.c
+> > > > @@ -0,0 +1,305 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +/*
+> > > > + * Copyright (c) 2018-24 Raspberry Pi Ltd.
+> > > > + * All rights reserved.
+> > > > + */
+> > > > +
+> > > > +#include <linux/err.h>
+> > > > +#include <linux/interrupt.h>
+> > > > +#include <linux/irq.h>
+> > > > +#include <linux/irqchip/chained_irq.h>
+> > > > +#include <linux/irqdomain.h>
+> > > > +#include <linux/module.h>
+> > > > +#include <linux/msi.h>
+> > > > +#include <linux/of_platform.h>
+> > > > +#include <linux/pci.h>
+> > > > +#include <linux/platform_device.h>
+> > > > +
+> > > > +#include "rp1_pci.h"
+> > > 
+> > > Why does a self-contained .c file need a .h file?  Please put it all in
+> > > here.
+> > 
+> > I agree with you. Indeed, the very first version of this patch had the header
+> > file placed inside the .c, but I received concerns about it and some advice to
+> > do it differently, as you can see here:
+> > https://lore.kernel.org/all/ZtWDpaqUG9d9yPPf@apocalypse/
+> > so I've changed it accordingly in V2. So right now I'm not sure what the
+> > acceptable behaviour should be ...
+> 
+> It's a pretty simple rule:
+> 	Only use a .h file if multiple .c files need to see the symbol.
+> 
+> So no .h file is needed here.
 
-	drivers/clk/clk-stm32f4.c:918 stm32f4_pll_ssc_parse_dt()
-	error: uninitialized symbol 's'.
+Perfect, I'll revert back that two lines to V1 then. Please be aware
+though that this will trigger the following checkpatch warning:
 
-drivers/clk/clk-stm32f4.c
-    887 static int __init stm32f4_pll_ssc_parse_dt(struct device_node *np,
-    888                                            struct stm32f4_pll_ssc *conf)
-    889 {
-    890         int ret;
-    891         const char *s;
-    892 
-    893         if (!conf)
-    894                 return -EINVAL;
-    895 
-    896         ret = of_property_read_u32(np, "st,ssc-modfreq-hz", &conf->mod_freq);
-    897         if (ret)
-    898                 return ret;
-    899 
-    900         ret = of_property_read_u32(np, "st,ssc-moddepth-permyriad",
-    901                                    &conf->mod_depth);
-    902         if (ret) {
-    903                 pr_err("%pOF: missing st,ssc-moddepth-permyriad\n", np);
-    904                 return ret;
-    905         }
-    906 
-    907         ret = fwnode_property_match_property_string(of_fwnode_handle(np),
-    908                                                     "st,ssc-modmethod",
-    909                                                     stm32f4_ssc_mod_methods,
-    910                                                     ARRAY_SIZE(stm32f4_ssc_mod_methods));
-    911         if (ret < 0) {
-    912                 pr_err("%pOF: failed to get st,ssc-modmethod\n", np);
-    913                 return ret;
-    914         }
-    915 
-    916         conf->mod_type = ret;
-    917 
---> 918         pr_debug("%pOF: SSCG settings: mod_freq: %d, mod_depth: %d mod_method: %s [%d]\n",
-    919                  np, conf->mod_freq, conf->mod_depth, s, conf->mod_type);
-                                                              ^
-s isn't ininitialized
+WARNING: externs should be avoided in .c files
 
-    920 
-    921         return 0;
-    922 }
+> 
+> > > > +struct rp1_dev {
+> > > > +	struct pci_dev *pdev;
+> > > > +	struct irq_domain *domain;
+> > > > +	struct irq_data *pcie_irqds[64];
+> > > > +	void __iomem *bar1;
+> > > > +	int ovcs_id;	/* overlay changeset id */
+> > > > +	bool level_triggered_irq[RP1_INT_END];
+> > > > +};
+> > > > +
+> > > > +static void msix_cfg_set(struct rp1_dev *rp1, unsigned int hwirq, u32 value)
+> > > > +{
+> > > > +	iowrite32(value, rp1->bar1 + RP1_PCIE_APBS_BASE + REG_SET + MSIX_CFG(hwirq));
+> > > 
+> > > Do your writes need a read to flush them properly?  Or can they handle
+> > > this automatically?
+> > >
+> > 
+> > I had some thoughts with RaspberryPi foundation folks to double check it, and it
+> > seems that there should be no need to readback the value (unless we want to go
+> > really paranoid), so I would avoid that since in case of level handled interrupt
+> > we would end up reading the register on every triggering interrupts.
+> 
+> Ok, if it passes testing, that's fine, hopefully it works properly, but
+> if not, you now have a trail to go and fix it in the future :)
 
-regards,
-dan carpenter
+Sure :)
+
+Many thanks,
+Andrea
+
+> 
+> thanks,
+> 
+> greg k-h
