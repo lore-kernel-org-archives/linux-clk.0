@@ -1,146 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DAF784A2B;
-	Tue, 21 Jan 2025 10:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40391EE7CD
+	for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2025 11:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737454290; cv=none; b=ILQrF9uZ/I+i2km+F7aRywWF/e5xHZ0Pj0xrnrwU1k8mHHFq+t+MykPYQUk5l2OAu74D/P82MFdByaD/gOUVn5amkzKvI45IJrsZXGxBoEaFdLwcrN6Msdx9gZfaiz90w8CBrAiZMwLLaap2cpnBxUSXFUg4DBkSvyJaf34JLTw=
+	t=1737457677; cv=none; b=hGt4wQ2TQIRnOBW+v3OlqfHe9LGoEQXidxRdqhOimszwJJRCSOyno0B2ZRQLn1Ge6TIcbXuULgUB/4B7nX400IXqM9cwmhUPY7MhqplEM4oKQDI4o7f1OwqVimZmSeO4TO/kkVCDAoUs/y9Swqputh4SRN4tIMUvQQ0aXDJ7jyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737454290; c=relaxed/simple;
-	bh=nYA/Il3Q3+Rs2oc9UDAvzzbRS3MucwqejkJ4R7lBUeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oBHLCefTlL01B8fdRM84Mu+8P+NL1wZkIHOx0T+ZIkkuDf+OvhNi9J/MW/wiArPoLyTM3bnDTd0i/H8jtFxVplXEt/01sWAsuiTE57N8PmcrfIVTPbHfRoJYKoFmhbrEaYv92iDldVsJ7WNX6W1GmC2l1v83zdusI/V/FMyweo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pgDlHpBA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1737457677; c=relaxed/simple;
+	bh=bVAloRxO0qForNKrOwCdOGe69VlKmVFEDTMH+0w7E9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=F5dLXXYVftJFIkfLz6mi4pgYPjXCE6AHMNvxJirwrckqvT2/hN6bEdoDj+/XOaBp3c/8gajnhyyWxpxyOaPumS2i3FlMvQX38knrxoqBlq2I3NIlrYF5Og7ATFuJAh3Ax05Td3N3AiBZsVyG5jWCda6/k2yHc4AC7FE5m2lE458=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WS6JG75F; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pgDlHpBA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC518C4CEDF;
-	Tue, 21 Jan 2025 10:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737454289;
-	bh=nYA/Il3Q3+Rs2oc9UDAvzzbRS3MucwqejkJ4R7lBUeg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pgDlHpBA4lhqkLuMu1HkydS3ti5ct0KyB/yzyLhnfJLcHzFeawG4ZZqkj6GZz+Anl
-	 JySfUgwy282OFIe5eB+0LzpWXSHMKd2Gm0iM9Kvq362umdu/49xRmxJQf0+3+55IS8
-	 U6IsgOVPc3he85WofZXbwVP8XtTdK2RCyqZy0DNB2H1pB8N8vQ+IVbXWLsFNB78usA
-	 REXEzXYfuKu0XMEk2IpRvvLZm1ocNemHkvVmJxCdUBTPOeb2ZA4pW5UNck12PKUBLp
-	 v5uvBsYF3y23AGneOls9+Yqcc7QQWUOzzd0+Qsv9R/ScP+Wxrnt7EAJEDKFjl4v1re
-	 gCW+cO7RcIwWQ==
-Message-ID: <9dee2610-019b-4b8c-af8f-0a401e46a307@kernel.org>
-Date: Tue, 21 Jan 2025 11:11:21 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WS6JG75F"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43622267b2eso54346955e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2025 03:07:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1737457674; x=1738062474; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d8fRHIrh2xpHGD7EayKut4LgTeZge1YncTW6fc5+fqg=;
+        b=WS6JG75FGeryXeVmKcwzXFuHYjm2k8DpBGt2vXulLFMJrjIuhYQT2z4IXSd7e11FgV
+         KegYqIohu+cYffOUZFWT4pCNbig2rHyNEpjph3Ul7IU/ajo7Y9pGHmSueGSAlt3ezh/S
+         m0g0gd7+kpS1qVeqE9Sc2nNvWqHAioL9CU+IzUFCPWY3WlfojVn33mtQHhYrzIh4Oeas
+         /Ay9pXcOQlD4uPo4IlhRO1UvXYsVFT0t7r6m8Rx7YY/yxgq1gqpO0Mhb9qBHX1FjuY8A
+         Qs4GqfMQNdRMTEMNPILde2QKdasujElRvMLoWYShutqK2NOidNajd2uJihUzDOp2NsU7
+         pcpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737457674; x=1738062474;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d8fRHIrh2xpHGD7EayKut4LgTeZge1YncTW6fc5+fqg=;
+        b=sMLP3v7kQtjhHejNAC1KZlJ5WLTJEyYtloELiS+5K7BeWaMEEG/KIh4m7r7tV6VRBT
+         W27DkXY8uvzve9eoNtJxqV2DVZfmVWgSEZAi3hQ+uHuLp/rEkjL1+D2Kfki1gc9QkJms
+         YHWRrou5KMzaG3wWLqKdrnhvClc/SXG3MtwAjwIrHEaqIOCK/oOEs6OTsm7AVztFRXKB
+         7J2VPhTvgkn8+pfQlsVwODizgcH3GH6+ql65LmvCoIsE/TdO4XU8MNfhE7Vqo3ghOAkm
+         EsguQgaC5IO99Cl3V4H2mGLdxOmfDHboK8uOK74ky3SC4L+b1xypXuLo/osUG+PlvCLF
+         0TMA==
+X-Gm-Message-State: AOJu0YwS6IGZI4jcl7s3/caq81jGjrfRpJ2Ev96tSmG0JJzHiwU4If5H
+	yvoVwj/1Z3ymyOApDtKA6y5pCBzsQiU9IjTfWo3U3V6BdLb8VZAB5RLVvssAG2c=
+X-Gm-Gg: ASbGnctZZqt/A+pkpUyGAtdnce9CCh5Z2BUCGk1LgSmVEXw72dcTkwtPluJt+q2PQ33
+	0HeYZ1eVHpGzjA4bI9WvXp+wCEM+JeVQ+aYFd+is/wslnBdoryyDOUqTuQFj/BMvQKmE8uruDVr
+	hngPhFgIinDCAERVFisqX1toq3ccwZReze0aaxa0XAi55nFIMPwmREX/oelqqaG3VYl9YDrchoL
+	nYIvMJdQAYTDvkFA4ofDRcn8qCZNi3w4WeeMoq08kWpfYSIjyQLdLWczW3t2bwthmUW69dX/gQ=
+X-Google-Smtp-Source: AGHT+IEpmUaU9yXOr+F4IbitftjPKymPQPUSc3rJ7r49fnlxGQ04Gx20Y10shwlJevx5EHSdpphxeg==
+X-Received: by 2002:a05:600c:34c1:b0:438:a432:7c44 with SMTP id 5b1f17b1804b1-438a4327dadmr84054275e9.21.1737457674294;
+        Tue, 21 Jan 2025 03:07:54 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c753cc1fsm239012775e9.39.2025.01.21.03.07.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2025 03:07:53 -0800 (PST)
+Date: Tue, 21 Jan 2025 14:07:50 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-clk@vger.kernel.org
+Subject: [bug report] clk: stm32f4: support spread spectrum clock generation
+Message-ID: <77355eb9-19b3-46e5-a003-c21c0fae5bcd@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 16/18] riscv: dts: thead: Introduce power domain nodes
- with aon firmware
-To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- frank.binns@imgtec.com, matt.coster@imgtec.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
- jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-References: <20250120172111.3492708-1-m.wilczynski@samsung.com>
- <CGME20250120172140eucas1p26bd83fb8195d0ed01b7b214ed374948f@eucas1p2.samsung.com>
- <20250120172111.3492708-17-m.wilczynski@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250120172111.3492708-17-m.wilczynski@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 20/01/2025 18:21, Michal Wilczynski wrote:
-> The DRM Imagination GPU requires a power-domain driver. In the T-HEAD
-> TH1520 SoC implements power management capabilities through the E902
-> core, which can be communicated with through the mailbox, using firmware
-> protocol.
-> 
-> Add AON node, which servers as a power-domain controller.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  arch/riscv/boot/dts/thead/th1520.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-> index d4cba0713cab..d6af27cbb786 100644
-> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> @@ -6,6 +6,7 @@
->  
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/clock/thead,th1520-clk-ap.h>
-> +#include <dt-bindings/firmware/thead,th1520-aon.h>
+Hello Dario Binacchi,
 
+Commit 65b3516dbe50 ("clk: stm32f4: support spread spectrum clock
+generation") from Jan 14, 2025 (linux-next), leads to the following
+Smatch static checker warning:
 
-What do you need this header for?
+	drivers/clk/clk-stm32f4.c:918 stm32f4_pll_ssc_parse_dt()
+	error: uninitialized symbol 's'.
 
->  
->  / {
->  	compatible = "thead,th1520";
-> @@ -229,6 +230,13 @@ stmmac_axi_config: stmmac-axi-config {
->  		snps,blen = <0 0 64 32 0 0 0>;
->  	};
->  
-> +	aon: aon {
-> +		compatible = "thead,th1520-aon";
-> +		mboxes = <&mbox_910t 1>;
+drivers/clk/clk-stm32f4.c
+    887 static int __init stm32f4_pll_ssc_parse_dt(struct device_node *np,
+    888                                            struct stm32f4_pll_ssc *conf)
+    889 {
+    890         int ret;
+    891         const char *s;
+    892 
+    893         if (!conf)
+    894                 return -EINVAL;
+    895 
+    896         ret = of_property_read_u32(np, "st,ssc-modfreq-hz", &conf->mod_freq);
+    897         if (ret)
+    898                 return ret;
+    899 
+    900         ret = of_property_read_u32(np, "st,ssc-moddepth-permyriad",
+    901                                    &conf->mod_depth);
+    902         if (ret) {
+    903                 pr_err("%pOF: missing st,ssc-moddepth-permyriad\n", np);
+    904                 return ret;
+    905         }
+    906 
+    907         ret = fwnode_property_match_property_string(of_fwnode_handle(np),
+    908                                                     "st,ssc-modmethod",
+    909                                                     stm32f4_ssc_mod_methods,
+    910                                                     ARRAY_SIZE(stm32f4_ssc_mod_methods));
+    911         if (ret < 0) {
+    912                 pr_err("%pOF: failed to get st,ssc-modmethod\n", np);
+    913                 return ret;
+    914         }
+    915 
+    916         conf->mod_type = ret;
+    917 
+--> 918         pr_debug("%pOF: SSCG settings: mod_freq: %d, mod_depth: %d mod_method: %s [%d]\n",
+    919                  np, conf->mod_freq, conf->mod_depth, s, conf->mod_type);
+                                                              ^
+s isn't ininitialized
 
+    920 
+    921         return 0;
+    922 }
 
-If it is not used at all?
-
-
-
-Best regards,
-Krzysztof
+regards,
+dan carpenter
