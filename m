@@ -1,340 +1,127 @@
-Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8461C75F2;
-	Wed, 22 Jan 2025 22:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F7A1CAA81;
+	Wed, 22 Jan 2025 22:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737584780; cv=none; b=d2iwLtO5Rz6YvuqT2GUAdhus8OkEIacuorFkqFmjuGgD3yFvEibPGBwKg6Liqv/nw57fNDvIWLTCmgRRPJK++Y+zIj4yuG+MVrGf2syu7Z59/iI4OZw/gtZ04W0eZluEM2nzfvV0zs+pX6cjmLk5WMYP/A9awvN2poC9CD3C4r0=
+	t=1737586692; cv=none; b=VXBpGMMJiQys27QqKDyZspAGOWQb7GzxvXBVR2hb0wOSpjNMudPD1dOhak8KUKKsKwpbxcfaTItOxrWZZ0IwG9Tx+D7KjR1eDL9wKXAN5hLFP0XsRi360tGDq8z516bwrSoaGiQXDmi7Ujljyw6aWeyAsPbX51svvt2jr0qB6E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737584780; c=relaxed/simple;
-	bh=NYcnhN3o/NROQIKRYnG+tlZFEUhQAYVZzANdCtP/wSI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tEObL5jQpZD/erkRxJNISpSVZYPXZ9g6r2Oy+3uRgHvhtTCtV5AiGLvUZK0Zg1htBuYGC9bItycmoghdei9Cezt3UsdNbfyLKq5FxpuqkgOu4Ja3gb+lVKjMrgaUG0FZgyUWryvdceFWF02FLBW/Hqm6kX4zIfduHk1aw3O5Bpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=fJiO+cYM; arc=none smtp.client-ip=52.119.213.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1737586692; c=relaxed/simple;
+	bh=XnI1poJQc8O5qaUJnfVt25oXI1SQjL+/Lx12G7Eytt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N2PlayVkZqimrvZwJhlkUH+OHDsHR/zTDAhx9qnV402KpUrNm9gweBHmXRQvnzFdnssjAwkFleXeB/mW4B3UhLZu96tsDldcxOwy+IZHqjN+JJeJ+241qYr3ygRZ+I5DSegm6kaC0tbxHeSZq+0LRRnkZ7AuulxQZHvU01DbpxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hu8OJGBH; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="fJiO+cYM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hu8OJGBH"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-436341f575fso2912545e9.1;
+        Wed, 22 Jan 2025 14:58:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1737584778; x=1769120778;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ZK+REyhq3YTkgs/0ZD4kGQxwiumHBdVmbRdbd9Brkso=;
-  b=fJiO+cYMYvmKtOH0rFHRErJN/huc+8898611bGXYjR/Vytco0vtpgmlT
-   dXg1BmiQg4oULA1Xm375gMxPSuxJS6GljF4cFaw7Z/xXSa8uOzrwRH53f
-   GZnGr1i69e1V1VY+W6Uf1mLavPauBkhqR3ZyLb9MUmVc8/yS4rOJ0GP7F
-   0=;
-X-IronPort-AV: E=Sophos;i="6.13,226,1732579200"; 
-   d="scan'208";a="59791611"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2025 22:26:17 +0000
-Received: from EX19MTAUEC001.ant.amazon.com [10.0.0.204:20440]
- by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.50.34:2525] with esmtp (Farcaster)
- id a0fb71a3-e430-4bd5-8fe7-e72bd1d368a0; Wed, 22 Jan 2025 22:26:16 +0000 (UTC)
-X-Farcaster-Flow-ID: a0fb71a3-e430-4bd5-8fe7-e72bd1d368a0
-Received: from EX19MTAUEC001.ant.amazon.com (10.252.135.222) by
- EX19MTAUEC001.ant.amazon.com (10.252.135.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Wed, 22 Jan 2025 22:26:13 +0000
-Received: from email-imr-corp-prod-iad-all-1b-af42e9ba.us-east-1.amazon.com
- (10.43.8.6) by mail-relay.amazon.com (10.252.135.200) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.39 via Frontend Transport; Wed, 22 Jan 2025 22:26:13 +0000
-Received: from dev-dsk-jorcrous-2c-c78924fd.us-west-2.amazon.com (dev-dsk-jorcrous-2c-c78924fd.us-west-2.amazon.com [172.23.179.86])
-	by email-imr-corp-prod-iad-all-1b-af42e9ba.us-east-1.amazon.com (Postfix) with ESMTP id 3FDEC4062E;
-	Wed, 22 Jan 2025 22:26:13 +0000 (UTC)
-Received: by dev-dsk-jorcrous-2c-c78924fd.us-west-2.amazon.com (Postfix, from userid 14178300)
-	id 0580910E4; Wed, 22 Jan 2025 22:26:12 +0000 (UTC)
-From: Jordan Crouse <jorcrous@amazon.com>
-To: <linux-arm-msm@vger.kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] clk: qcom: camcc-sm8250: Use clk_rcg2_shared_ops for some RCGs
-Date: Wed, 22 Jan 2025 22:26:12 +0000
-Message-ID: <20250122222612.32351-1-jorcrous@amazon.com>
-X-Mailer: git-send-email 2.40.1
+        d=gmail.com; s=20230601; t=1737586687; x=1738191487; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jqVF0cBTijRuq0m7GTGEM8FFP9eJBtgNqw9jRV9T5lo=;
+        b=Hu8OJGBH7SbgHKVSaVYP0hhXBxXiE0vEqLt+KOp0cN0T7p/fzGMmLDzrLrG6UBqSQp
+         YadJt0OIVyKF7kPZTE6l80ZpwSjciZbW1H76Rs62AjRch5aF8fVzql5oZ7NndzQuk8n4
+         ObnASvgXoI8qrYoA1vjCWpWjbvrEYohDbvC/DVOWahwRB7fCOxR80BafpBQQQV9TnFUb
+         D2wE4iOIHI2AeSlIa8Er7pWmtgevt2pRKkf0owXDA0n3+EmUHO5Ie6KsuwXx6IsJ4nUE
+         WBDe4/qAIW+qTohN86lhLTxx5gr2iZu83CLZd3U0HzOaeRoz+/ZntOwTSUABkpuMHX7/
+         caBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737586687; x=1738191487;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jqVF0cBTijRuq0m7GTGEM8FFP9eJBtgNqw9jRV9T5lo=;
+        b=SxDpAZLH3fa1is3WH/J5essGYUT4RGdxXfMoa5mgog/WiZ+LQv+iaS0CHRRxsNNBnL
+         3o/yeHL4pol9nnD0sW3A0Siy6RJCSGbPo0sxw34EiaOwG9YuiNSVFKzQ3fGlRP2bxjo0
+         Rmwjuj168UIzaQW3DiyRTapEmCPTv4CWqSuyN/VDewgK96CElsAEYOH+mpqpR+F5ntA8
+         dXSWZtA4mbXa7dMlE52UijQUhfQiMVZCEJWfB+yqrGd4g5mwzV5Qj3nqVIqFMzQaqSjd
+         eDVsrDslLy+QRrak0jRTS+bFuJuJE9mBA791aIKB5DsNjUhvH43BdKPo1TSaPlqyURDf
+         cZ4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUYm1NateH1fLHEyLM3WHfa3PVj0UkdikIFUDrNJpsLGxQJ9kTcOkETx1USSU0j+gB0jzggukoNPs3UZ0WZ@vger.kernel.org, AJvYcCWPUI6Hy5eHuzXfzGbyhUCueAiu+oNU/qR6KEqFul4SwxHk6xVbhWBtEtsB5Xdv14bdk1i8f274gT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjU2rrlMRh4AlGiwhmDBcTol+s5GR6F2s2/OsnqqlR65dj6iTZ
+	lag84wxYWcvxqbXOr4CJQsnb0/2Ge1l354S+HArquKyQ5ot6SV3o
+X-Gm-Gg: ASbGncscJaekPGY4dCjdNsG2TuwGPcxGVv/90na50FoHmfvIKdpil3AkPQbpr+Axvq6
+	84iMGrg4SMLiNOYvCWA2xf+CsyrsQVoY6ni0j8gJdq4mUBgTik4D5+7aEWjImmTjsBkkzJPr1H6
+	W+4Bmvk/eLVkm+ZQAwKE3pc4GvcROyYaMi2HCIyw7YZlD7e6s6mSk2PqCKo8ziP+uek4BkrUVeC
+	TA+KqN1jMHW1RixvUOlDqTrPeG3Zqn32+J+sCwQUdqLCXJcvMj0U/K82ZPJ1e45w5Hvw1KW43Iu
+	i2gpTLf+pDm2OWLhvRDL5rbAqjNjIyxD
+X-Google-Smtp-Source: AGHT+IEQnQhWcYcYLwtPUsp3QOoc70eLrq7vJCaIVuPYRH/ywGliFi/4zTlOAPB9XOacsMLy93f4rg==
+X-Received: by 2002:a05:6000:1f88:b0:385:fd31:ca23 with SMTP id ffacd0b85a97d-38bf57a7797mr24374385f8f.40.1737586687462;
+        Wed, 22 Jan 2025 14:58:07 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438b31df412sm40115765e9.36.2025.01.22.14.58.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2025 14:58:06 -0800 (PST)
+Date: Wed, 22 Jan 2025 22:58:05 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Anastasia Belova <abelova@astralinux.ru>
+Cc: Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Hans de Goede <hdegoede@redhat.com>, Maxime Ripard
+ <mripard@kernel.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH] clk: sunxi: add explicit casting to prevent overflow
+Message-ID: <20250122225805.2ba6a062@pumpkin>
+In-Reply-To: <20250120084719.63116-1-abelova@astralinux.ru>
+References: <20250120084719.63116-1-abelova@astralinux.ru>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Update some RCGs on the sm8250 camera clock controller to use
-clk_rcg2_shared_ops. The shared_ops ensure the RCGs get parked
-to the XO during clock disable to prevent the clocks from locking up
-when the GDSC is enabled. These mirror similar fixes for other controllers
-such as commit e5c359f70e4b ("clk: qcom: camcc: Update the clock ops for
-the SC7180").
+On Mon, 20 Jan 2025 11:47:16 +0300
+Anastasia Belova <abelova@astralinux.ru> wrote:
 
-Signed-off-by: Jordan Crouse <jorcrous@amazon.com>
----
+> If n = 255, the result of multiplication of n and 24000000
+> may not fit int type. Add explicit casting to prevent overflow.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-(no changes since v1)
+You need to read and understand the code before writing any patches.
+The '>> p' and '/ (m + 1)' are both just conditional 'divide by 2'.
+So can be done before the multiply.
+Since req->rate is 'signed long' and the value is a frequency it is
+only just possible that it exceeds 31 bits (and will be wrong on 32bit
+builds - but sun-9 might be 64bit only?)
 
- drivers/clk/qcom/camcc-sm8250.c | 56 ++++++++++++++++-----------------
- 1 file changed, 28 insertions(+), 28 deletions(-)
+In any case it would be sensible to force an unsigned divide.
+So perhaps:
+	unsigned int n = DIV_ROUND_UP(req->rate, 6000000ul);
+	...
+	req->rate = ((24000000ul >> p) / (m + 1)) * n;
 
-diff --git a/drivers/clk/qcom/camcc-sm8250.c b/drivers/clk/qcom/camcc-sm8250.c
-index 34d2f17520dc..450ddbebd35f 100644
---- a/drivers/clk/qcom/camcc-sm8250.c
-+++ b/drivers/clk/qcom/camcc-sm8250.c
-@@ -411,7 +411,7 @@ static struct clk_rcg2 cam_cc_bps_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -433,7 +433,7 @@ static struct clk_rcg2 cam_cc_camnoc_axi_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -454,7 +454,7 @@ static struct clk_rcg2 cam_cc_cci_0_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -469,7 +469,7 @@ static struct clk_rcg2 cam_cc_cci_1_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -490,7 +490,7 @@ static struct clk_rcg2 cam_cc_cphy_rx_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -511,7 +511,7 @@ static struct clk_rcg2 cam_cc_csi0phytimer_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -526,7 +526,7 @@ static struct clk_rcg2 cam_cc_csi1phytimer_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -556,7 +556,7 @@ static struct clk_rcg2 cam_cc_csi3phytimer_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -571,7 +571,7 @@ static struct clk_rcg2 cam_cc_csi4phytimer_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -586,7 +586,7 @@ static struct clk_rcg2 cam_cc_csi5phytimer_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -611,7 +611,7 @@ static struct clk_rcg2 cam_cc_fast_ahb_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -634,7 +634,7 @@ static struct clk_rcg2 cam_cc_fd_core_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -649,7 +649,7 @@ static struct clk_rcg2 cam_cc_icp_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -673,7 +673,7 @@ static struct clk_rcg2 cam_cc_ife_0_clk_src = {
- 		.parent_data = cam_cc_parent_data_2,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_2),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -710,7 +710,7 @@ static struct clk_rcg2 cam_cc_ife_0_csid_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -734,7 +734,7 @@ static struct clk_rcg2 cam_cc_ife_1_clk_src = {
- 		.parent_data = cam_cc_parent_data_3,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_3),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -749,7 +749,7 @@ static struct clk_rcg2 cam_cc_ife_1_csid_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -771,7 +771,7 @@ static struct clk_rcg2 cam_cc_ife_lite_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -786,7 +786,7 @@ static struct clk_rcg2 cam_cc_ife_lite_csid_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -810,7 +810,7 @@ static struct clk_rcg2 cam_cc_ipe_0_clk_src = {
- 		.parent_data = cam_cc_parent_data_4,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_4),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -825,7 +825,7 @@ static struct clk_rcg2 cam_cc_jpeg_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -847,7 +847,7 @@ static struct clk_rcg2 cam_cc_mclk0_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -862,7 +862,7 @@ static struct clk_rcg2 cam_cc_mclk1_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -877,7 +877,7 @@ static struct clk_rcg2 cam_cc_mclk2_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -892,7 +892,7 @@ static struct clk_rcg2 cam_cc_mclk3_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -907,7 +907,7 @@ static struct clk_rcg2 cam_cc_mclk4_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -922,7 +922,7 @@ static struct clk_rcg2 cam_cc_mclk5_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -993,7 +993,7 @@ static struct clk_rcg2 cam_cc_slow_ahb_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
--- 
-2.40.1
+David
+
+> 
+> Fixes: 6424e0aeebc4 ("clk: sunxi: rewrite sun9i_a80_get_pll4_factors()")
+> Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> ---
+>  drivers/clk/sunxi/clk-sun9i-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/sunxi/clk-sun9i-core.c b/drivers/clk/sunxi/clk-sun9i-core.c
+> index d93c7a53c6c0..70fbd7390d96 100644
+> --- a/drivers/clk/sunxi/clk-sun9i-core.c
+> +++ b/drivers/clk/sunxi/clk-sun9i-core.c
+> @@ -50,7 +50,7 @@ static void sun9i_a80_get_pll4_factors(struct factors_request *req)
+>  	else if (n < 12)
+>  		n = 12;
+>  
+> -	req->rate = ((24000000 * n) >> p) / (m + 1);
+> +	req->rate = ((24000000ULL * n) >> p) / (m + 1);
+>  	req->n = n;
+>  	req->m = m;
+>  	req->p = p;
 
