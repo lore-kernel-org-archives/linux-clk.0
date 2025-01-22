@@ -1,119 +1,119 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082682135A8
-	for <linux-clk@vger.kernel.org>; Wed, 22 Jan 2025 13:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07A7212B1A
+	for <linux-clk@vger.kernel.org>; Wed, 22 Jan 2025 15:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737552651; cv=none; b=dmFskEMFlK2NgmDCBLTTp5pGu+2U+n1Uvx7JwY0oBUV7JHq95dHQQV/gAaqLJzwX1ff+2BBtlZmyY5mIrfHrNqhRecopkqLGYqaF3KR4tVFCdnEnjrtdocSWXcEWg9FcUJMK30CdUb7cIQfXQylkFt4TMzwu2k99gKrMWyuxH1M=
+	t=1737560325; cv=none; b=fedfw3RS9Yp+bAbncOQXs+PVENUJkQUwcCkOlzgz6BzGEfQ1l25aWHs6CEASb7KO+3Xmpnm9ISoPPF3J3lbXUUAZBA6MKKQ0bLx+dIglzVUxG++XCjtO/kno17Eyf8NMI+kZGO9o53aQnfrZ6afskXNdhdf+YYkaySLxml4OtBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737552651; c=relaxed/simple;
-	bh=MT1Qd4GfkNXwqWLqiWPdrTymaf6z71RpZBpS8qzx2Bk=;
+	s=arc-20240116; t=1737560325; c=relaxed/simple;
+	bh=xYKMPTuBDts6tsHI2iDmnq6xesXtDwIjCgZNrXOuqTs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MXZD+0JUu1rqfIAPQKnwQfHQnx9SNbVGDBM0wp4SVWON+vvMl81ag9Xf8vrx/j9JfWwfeDvwV/z045hrZQoBx0BmCgb05yVKQGw4RCEb/xB4edwof15NU1v+uLtlGVvdaSuBCXyEzOkPjnX7/H0/CwW5Lk3s50cM/3iAl1SvEpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vv/Y+178; arc=none smtp.client-ip=209.85.208.181
+	 To:Cc:Content-Type; b=a9J9Jfx7hQug3sytY7NBoaz0zEWfAUkMVli1UoQ0YIghER0DzAVlY94/QxZCja1x3mnwsOHprAnrBhmAYqxstHBZSMRPMgHQAs6KuxfyRU7hZmLXPCBvQo7hhCaSOxurlWqQl0RYFm63HI250BQHoPJUwTmWS9HHHI4FIzu6F4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HsNU0d96; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vv/Y+178"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30615661f98so74698681fa.2
-        for <linux-clk@vger.kernel.org>; Wed, 22 Jan 2025 05:30:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HsNU0d96"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aaec61d0f65so1480928166b.1
+        for <linux-clk@vger.kernel.org>; Wed, 22 Jan 2025 07:38:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737552648; x=1738157448; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MT1Qd4GfkNXwqWLqiWPdrTymaf6z71RpZBpS8qzx2Bk=;
-        b=vv/Y+178v6T/33PtFV1XX+V/CPi6mqf84bJy9c+E1vOtjZQp8QPy9+s7upo8Xw2ViH
-         JZ03icyH7aLJjEBJ1VUWjaj5uR6bORmRJmIXpxP1yQ9q1keAiD6WWPAIsDT5mUIUngnr
-         8Ms5Kh5OLncFqXSSqTUCGWP54Q8Le2dDiCCgmqjkyGuEfu0MxAOqaqC9cJWWI+7oauv8
-         xcnEHzpFNOkDHROQuXAqMiUN90vuD5aBwchQeOtlGDbD0pbhU/LCTlat89sVwzs5gcOy
-         5mlYVxK07KatnsL4GDNQ+JtkXl9WjdkHOYjoED/Lp+5TurSuSQoMs5MIccLDqTwzmoAL
-         R/9w==
+        d=linaro.org; s=google; t=1737560322; x=1738165122; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bQ/UGr0IGpTF4zgyCNABJQGGulQl+wyvTdTpCyzBgc0=;
+        b=HsNU0d96PQS+ZT4c9eN0c/wBr+SYlqRgsDow7XI3TVwQXJllZcr100P8FBOXNE3Hzh
+         gKSm94nYCu3k7OXEIv/Rt5c+ZJcg/zRZijfoQfilfnU26vyKWEvmgwXTjs8g7lXfNXPI
+         4MNShqvEbQcs7uv2Mt2g6/biURv5W0G1i0N9okzuczyRIzgY2UN6TPFaF7TV84mfbyeX
+         fExCjV64evwDvsA/gPZR+8nrer7Ljtw+2bzoV02fjS0n+0vjR906BSAjQP4H+A92pTzf
+         4BFGA4YlGMs0JUybjVp/iDc7UHuKJLFC2H/91AIdnblnP00OpktOVGuRx4nJOwFJsAa3
+         pqiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737552648; x=1738157448;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MT1Qd4GfkNXwqWLqiWPdrTymaf6z71RpZBpS8qzx2Bk=;
-        b=jqGVR/T77QoRqdd/uITptqHRPxT6tj1qMhuS3xkRKK7scbxICz5IRJEZ+TLy58xUDu
-         M7MJlnBgvdfVUORylJpnl4rHQzGycrKXBAxOqkuahocwHka2isk0gFBYls6SXk59JB/v
-         yRUnqOrmAy1pbCJHa+1MQPXjk4zQymA2P3mlbeD6r4v/WKP1KY3iQA8ibQYBC1yBHiKa
-         sV5pNZARyWKFyl2RrLRgGtJrKcu5b/5poZKJuSHhmLj1ikLnoW/CQ0OoOqgj20eftGQY
-         gt/1wx2SGZ1BUk5vQQ3k864hvmGDXdNwZ4i2f33pnyUMWzFAV8MLEJZp+QyQugjesspt
-         sasQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVlZma+h8qmD1UT8ir/rKdxBXU5JOatnZyY7l8M0fM5mVWUIST62uMMnUcl/IUlUMLzipOoq/hs8+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeJkHbbwyT4sRNE6oNuK9Qqx6p88t835cQRULWIZfP7WPvjibj
-	1Wvq2jM3gWcX3lHR2igcc0V4wN597zMXn3ZuTiF0s9GGYMiJh4UGzW0hjB88oNdF0ptQYh53440
-	AkcvxXazRG0p/k9KlXHAk9YvJhFOX00p0I6bdCA==
-X-Gm-Gg: ASbGnctb9o8P4eBGp+jUH5WFVvUHvSfTK3u/gXWU6cievWNYaQHxiBRPj/RqH+NyLQd
-	vuAqW9JFe7chT7XP7KggZZ0MvAJCZBnYPqj3U8wH4HxrrhyOwGg==
-X-Google-Smtp-Source: AGHT+IGs/n7Ljor2d3ADarC6NG+9NmWSbVqt5BnALy/+iVRtZ9CeuWAGeuayEWCsA+u7d2kSrA4qXict3/8+PKzO1MM=
-X-Received: by 2002:a05:6512:ad5:b0:542:8d45:cb3e with SMTP id
- 2adb3069b0e04-5439c241016mr8306080e87.18.1737552647836; Wed, 22 Jan 2025
- 05:30:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737560322; x=1738165122;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bQ/UGr0IGpTF4zgyCNABJQGGulQl+wyvTdTpCyzBgc0=;
+        b=NSm1yX5sO5cS+yQqYY0mZuZ9lesGVG7TUxjCj9MRo9u9P+WM+waGGcFc4pSalSemXd
+         1PW1HY/NvThYhsaDpZBA6kVFjXwsP9v8ZVfuFlIZyd5phJWsj7I5TqVXz/Mfr2XRm/CK
+         RU7a89ZpMOB+yPPvJEINch3AiYwGFj8isOzM30rGP+AK0DE6ZdCZ+noQOoYxF6gIEJSw
+         kv6CbAAKEYqf14gGNs48c6kMDskrNB4pyJKQ1WZQCkUsjOMYtIwqEUeX7cdRBUDfidw2
+         3HMGDQPjU8zm++LMlrDFpdJoLKNfy5eW6wJjBYe+3k/fazPQ6jo6v5JhWP1TQE2B+f6I
+         OEpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlpvRWebY2BkYHdVpvOoaQ3kTy04jlof5i07y0AGYoskDQEcTyLQq3A279oZpBKi+X2jPdu/twxxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKOxUL+SuCOUOyggaLEF+QHiIsTdDn0Ld4QOii6eVbwwXTAyqn
+	6ItkFisvexHdI1st5WB/GSEJlV/JMvkC6rO89hD7LdisC3VsvghpZj0vOJm0ugD5+7uuh58qjU3
+	/Kd6cpUgmYZZaSn7y2s6Q5x15YJL5nBex+v+Lfw==
+X-Gm-Gg: ASbGnctNnny/LhzRQsKNaAOzadmyFT8PpTPFbJzXC4A+lXqLmeXbWcXDXV4HIay838b
+	Haq8XiPe67CVbw1luK0P+cDe/5EeVpLFemkVS09gku2zL7NLxwMQ=
+X-Google-Smtp-Source: AGHT+IETe7thCSCpbowi9b632hZFutI2WPKAcE0XCFKit3ktxcH+m2wBt0ggMcEmf46PQAkItYj8rzjojIKKysN3liI=
+X-Received: by 2002:a17:907:980b:b0:ab3:61e1:9b06 with SMTP id
+ a640c23a62f3a-ab38b0a2221mr2259438766b.5.1737560322096; Wed, 22 Jan 2025
+ 07:38:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250110123923.270626-1-szemzo.andras@gmail.com>
- <20250110123923.270626-4-szemzo.andras@gmail.com> <20250114141954.2785879a@donnerap.manchester.arm.com>
- <CACRpkda0nx3SQtdjmXdCEbVJSWM10TM=p-6JbDjbiYcOSF5PxQ@mail.gmail.com>
- <20250115152635.1b89e7f4@donnerap.manchester.arm.com> <CACRpkdYVTedEon0X-izvaDTGF6yRhD2s=Z6NEM=zBf4vD-T0Pg@mail.gmail.com>
- <20250117145228.2fc8a64e@donnerap.manchester.arm.com>
-In-Reply-To: <20250117145228.2fc8a64e@donnerap.manchester.arm.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 22 Jan 2025 14:30:36 +0100
-X-Gm-Features: AbW1kvbmavQU6KJ-WzCpG2eI69ENGFRQZ6H5c_O0ajyC4q6k3ZeKpvUjD-d9bk8
-Message-ID: <CACRpkdZ29=mCqLku4Obq+E5j6kS4NZchwCtrTeCt0qUctn6Czg@mail.gmail.com>
-Subject: Re: [PATCH 03/12] pinctrl: sunxi: add driver for Allwinner V853.
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Andras Szemzo <szemzo.andras@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <20250113-support-pll-reconfigure-v1-0-1fae6bc1062d@quicinc.com>
+In-Reply-To: <20250113-support-pll-reconfigure-v1-0-1fae6bc1062d@quicinc.com>
+From: Stefan Schmidt <stefan.schmidt@linaro.org>
+Date: Wed, 22 Jan 2025 16:38:31 +0100
+X-Gm-Features: AbW1kvZRlPPxGJ_AeXkZFPES8Z8xuCbPMXteMeA5f4p_3jWBu1lE4xY8dVXg-1U
+Message-ID: <CAEvtbuviH+bGNz1dEPKXTbBD582hu=us4aiFyo=zHqfRw7+YRQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Add support to reconfigure PLL
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 17, 2025 at 3:52=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
-com> wrote:
+Hello Taniya,
 
-> That is actually a good argument: At the moment I am happy with my
-> proposal (the allwinner,pinmux =3D <number>; property), but that seems li=
-ke
-> standard #15 then.
-> So would biting the bullet and adopting the Apple/STM32 way then be more
-> sustainable?
-
-I suppose...
-
-> On the other hand: the allwinner,pinmux solution has the advantage of bei=
-ng
-> already written and proven working, also it stays very close to the
-> existing description/binding - so implementations like U-Boot could just
-> keep on using the "function" string.
+On Mon, 13 Jan 2025 at 18:27, Taniya Das <quic_tdas@quicinc.com> wrote:
 >
-> I am a bit torn here... I don't think I will find the solitude to
-> implement this "Apple" approach in the next few weeks.
+> During boot-up, there is a possibility that the PLL configuration might
+> be missed even after invoking pll_configure() from the clock controller
+> probe. This is often due to the PLL being connected to rail or rails
+> that are in an OFF state and current clock controller also cannot vote
+> on multiple rails. As a result, the PLL may be enabled with suboptimal
+> settings, leading to functional issues.
+>
+> The PLL configuration, now part of clk_alpha_pll, can be reused to
+> reconfigure the PLL to a known good state before scaling for frequency.
+> The 'clk_alpha_pll_reconfigure()' can be updated to support more PLLs
+> in future.
+>
+> The IRIS driver support added
+> https://lore.kernel.org/all/20241212-qcom-video-iris-v9-0-e8c2c6bd4041@quicinc.com/
+> observes the pll latch warning during boot up due to the dependency of
+> the PLL not in good state, thus add config support for SM8550 Video
+> clock controller PLLs.
+>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+> Taniya Das (3):
+>       clk: qcom: clk-alpha-pll: Integrate PLL configuration into PLL structure
+>       clk: qcom: clk-alpha-pll: Add support to reconfigure PLL
+>       clk: qcom: videocc-sm8550: Update the pll config for Video PLLs
+>
+>  drivers/clk/qcom/clk-alpha-pll.c  | 30 ++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/clk-alpha-pll.h  |  2 ++
+>  drivers/clk/qcom/videocc-sm8550.c |  2 ++
+>  3 files changed, 34 insertions(+)
+> ---
+> base-commit: 37136bf5c3a6f6b686d74f41837a6406bec6b7bc
+> change-id: 20250113-support-pll-reconfigure-9a9cbb43a90b
 
-I think whatever the Allwinner maintainers agree is the best should
-be what you go for. It is a lot of hobbyist maintainers in this space
-and for them the bar should be lower.
+I tested the full patchset on my X Elite Dell XPS and can confirm that
+the Lucid PLL latch failed warning is gone when using the iris driver.
 
-If you have buy-in from the other maintainers, then go for that
-solution.
+Tested-by: Stefan Schmidt <stefan.schmidt@linaro.org> # x1e80100 (Dell
+XPS 13 9345)
 
-Yours,
-Linus Walleij
+regards
+Stefan Schmidt
