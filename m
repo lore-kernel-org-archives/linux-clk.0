@@ -1,338 +1,113 @@
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFF68F7D;
-	Wed, 22 Jan 2025 21:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1DB1C4A0E
+	for <linux-clk@vger.kernel.org>; Wed, 22 Jan 2025 22:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737581671; cv=none; b=UQxtuCBucXx4h0eIXkhn2H9KacLfWNV4AY05wI2H7/57TzwDiMWl7AmATrYfEXrjUXngP7MEdWFQRl6Yk1C1S5QTJEAigjHqobbp4Om+G8nLoQYOuIlaFVNV5sBiwLe+iXfi3mQRUKOqZR5B8DryLziRKe0AdY4BIO+Nqsq4e5o=
+	t=1737583974; cv=none; b=aLpoi49+n6mrdRgoyKzDeqkrEgTR9MwqQP9NWht7kr7Ymno3ejGS3cjV9oGmseIEwBv7pc/ZDLM4JS5LDw18CbSyQuNHZ+DAIfq10CRc7K3yedeJJ9+jTw3XQ+O4gJuSHgsSqizTP7rUSOljFWswdYTuR2FzIUDzp6bPzzHK4c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737581671; c=relaxed/simple;
-	bh=FWJ6LtlrZIyowerH1vA8kg7UJyXV2DtoRhjYLHHI32o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gGOsqHuZedp4D9xtTUqnM0azluE8QB/FKU7UX8fCB3VAknexjswLjfInoxG0e6q5I87mX5PZSBZ/ugFxjyvlBRJMBXy+F6iOJEQBH3Acpz0fnFW3YHYx7fQOQHNlg+6oSRyiKv9GeqQsh35AbYFB9ng8I17IOB1s462i5hpZl5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=aFKjAB7N; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1737583974; c=relaxed/simple;
+	bh=zx6nlq4TdF0oc0AA2sY4ngyfD1Q7bR2PjwPmdky7ar8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p/YWe+hQWs6d8uf42FFTX+gZ0++aKW/b+fRsI7pkLjGwQCxbMtgULwO5xZBVDQk3bDyRpDMdrxhSSvtVKYJGKeEyfKlc4MUu/PYX8rq0SJ6iHVs8tHn+/jvZwgbkiquTPLOiuXKZcTdh5Z80QzpO7Axa7Cnq3FeG/wqxtbEOum4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zL+NHhjJ; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="aFKjAB7N"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zL+NHhjJ"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53f757134cdso297553e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 22 Jan 2025 14:12:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1737581670; x=1769117670;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=mJEFE6M75VlFyq9GgtCeaVXA0ZP9bKpMm1FEYeQNDGY=;
-  b=aFKjAB7NI+bYbKv1ToWU6g3EvVbSYq3LHXUzPm6dpqDElTQChmRTyp2W
-   vcxvXemOLGtusOSaOSAUujfTB8tSUvJmX3u7ecVoAj0/tgDqWaO3QNOEE
-   zrnZEjgwoKRlt2T/s2WDQ7zDEW1tJTfpSqjw3tUYnm3h8k1+De+6Ht+EZ
-   s=;
-X-IronPort-AV: E=Sophos;i="6.13,226,1732579200"; 
-   d="scan'208";a="712845713"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2025 21:34:29 +0000
-Received: from EX19MTAUEA001.ant.amazon.com [10.0.29.78:52194]
- by smtpin.naws.us-east-1.prod.farcaster.email.amazon.dev [10.0.28.220:2525] with esmtp (Farcaster)
- id 017fc3ba-7345-468c-b602-49b39085fa76; Wed, 22 Jan 2025 21:34:27 +0000 (UTC)
-X-Farcaster-Flow-ID: 017fc3ba-7345-468c-b602-49b39085fa76
-Received: from EX19MTAUEA002.ant.amazon.com (10.252.134.9) by
- EX19MTAUEA001.ant.amazon.com (10.252.134.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.39;
- Wed, 22 Jan 2025 21:34:27 +0000
-Received: from email-imr-corp-prod-iad-all-1b-1323ce6b.us-east-1.amazon.com
- (10.43.8.2) by mail-relay.amazon.com (10.252.134.34) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.39 via Frontend Transport; Wed, 22 Jan 2025 21:34:27 +0000
-Received: from dev-dsk-jorcrous-2c-c78924fd.us-west-2.amazon.com (dev-dsk-jorcrous-2c-c78924fd.us-west-2.amazon.com [172.23.179.86])
-	by email-imr-corp-prod-iad-all-1b-1323ce6b.us-east-1.amazon.com (Postfix) with ESMTP id 7983C4051E;
-	Wed, 22 Jan 2025 21:34:27 +0000 (UTC)
-Received: by dev-dsk-jorcrous-2c-c78924fd.us-west-2.amazon.com (Postfix, from userid 14178300)
-	id 3EBAC10E4; Wed, 22 Jan 2025 21:34:27 +0000 (UTC)
-From: Jordan Crouse <jorcrous@amazon.com>
-To: <linux-arm-msm@vger.kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: qcom: camcc-sm8250: Use clk_rcg2_shared_ops for some RCGs
-Date: Wed, 22 Jan 2025 21:34:27 +0000
-Message-ID: <20250122213427.28169-1-jorcrous@amazon.com>
-X-Mailer: git-send-email 2.40.1
+        d=linaro.org; s=google; t=1737583970; x=1738188770; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ftW+4Yw00+JFJ6rlbyJpHGoVvPKx//uXTQZgt05Kuj8=;
+        b=zL+NHhjJvWHLux1KEZsClkqjZBrZ5iGKr1f8/ttdVjvoTb+oBGZ2gp9kypL6rHyI0W
+         MJ6di82rsjXxFJWywJRcUrs7SxQqiCUHHb5JHdk59FNmY+FRJxB/IuQRCoUXTTNLAYvY
+         y3fxzuZi/MsuDreqaH2YW7CWBVEzTiAmcQO0KvnDQuawYGkv3dh7jW4WbrSXjEXcHp+o
+         WBflquknzc3u+luM8AK4Vi0eA4X8pUC8XX3Kq9qfEDcIMmPDsYaPPw1iqgTlOg2Wfv9+
+         W6VAgTrttZVJTmUXU7gOpMYiqQPUjfxZOTlC4JP4xyVXffnKf/VFb+hG6kQfkWsSs5vw
+         CA0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737583970; x=1738188770;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ftW+4Yw00+JFJ6rlbyJpHGoVvPKx//uXTQZgt05Kuj8=;
+        b=q6NeqDndlRvhYVEHqURdPQujvxBa6IGErRhS66FNXJiQ1rbH5iaIXoNn3iCgURafxW
+         ohsPOfHfDMiD1aEz5TbQmKSOP5cfMqreBw7KKyAuczVTar6zxyV/1Ve3+wEjFbSprksm
+         cnomcewko+waRYvvMWRgwX6O8KoJF+vRhhWRI2yLfzEL29bRSNwlg4xOphUB20Souru9
+         nG2rW8eASLt1p4Isu2ROAdiwbMlPpP8TbX0rWAeqx42MLQa7snUCC4+K8RKZtmk0+8dg
+         r2CkasdoX3v2uOWflJGjF4XwQFVxv+91m7648LtnxCozkLNDegeAmR/x4Pjc4eK29DQd
+         BgVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVx5+PhEpXPTnDIu0T+LJHhb12tDpycA+qzvfGWskhnsX1LsIzrvz4kQ/U2wmRSlD2p1PwmUnbnMPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhAenu6tgXuxrSqaX7DlRb+esU1ofCDLwwNjmVWLj1tUByb+9R
+	EhYCWpFq9yPeqx0fk5N5g4JR4G3hncregKoFuOg9yWrDw2ZRQT2tozW7uh9nFiI=
+X-Gm-Gg: ASbGncsYvR2trDNVPCRq2N7cbH85m+K3+yWmDJi32GQFHWvH3EojXZeEIXqQzo13hzQ
+	eC3v7ORCsWfsJmMjUnbm9FyEjGdAQx5dtIbuH8BQPCxVf3ikFcL79ARA/Ch9C7dM/exRLSy222m
+	iD5KtAHjg6jSRbdw9Lg6rkec6ZjK6dKwB3hlRqHlzN7WyOLeXHiCU5G+VeOMxjld41LjG9Ek1KS
+	CXllYdT0cv2DcmxerBsBlf4q88Z34G7z60X87V3w3NyvBkfVy9INDaZPNLuI1pp8OpGzNQm5TpC
+	rURrhupe42wd/H6NFafViiqVjU7oUKqm2YfhPOte6c+UwiHYUw==
+X-Google-Smtp-Source: AGHT+IEKgozzQWCaRMcmqnr6uwOlEaioHrS4zp6iyVTx4JgfzDbdyzNfJ4Vpq0ndepnddZS8lGCd4A==
+X-Received: by 2002:a05:6512:1312:b0:542:1b63:141b with SMTP id 2adb3069b0e04-5439c2674d3mr9341377e87.32.1737583970287;
+        Wed, 22 Jan 2025 14:12:50 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5439af78683sm2366610e87.242.2025.01.22.14.12.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 22 Jan 2025 14:12:48 -0800 (PST)
+Date: Thu, 23 Jan 2025 00:12:46 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jordan Crouse <jorcrous@amazon.com>
+Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: camcc-sm8250: Use clk_rcg2_shared_ops for
+ some RCGs
+Message-ID: <fye2hzgb7pbd7mc7txdl6c57uohrs224ivicgwy3xxqzximard@gvwsey2yqgin>
+References: <20250122213427.28169-1-jorcrous@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250122213427.28169-1-jorcrous@amazon.com>
 
-Update some RCGs on the sm8250 camera clock controller to use
-clk_rcg2_shared_ops. The shared_ops ensure the RCGs get parked
-to the XO during clock disable to prevent the clocks from locking up
-when the GDSC is enabled. These mirror similar fixes for other controllers
-such as commit 8d4025943e13 ("clk: qcom: camcc-sc7180: Use runtime PM ops
-instead of clk ones").
+On Wed, Jan 22, 2025 at 09:34:27PM +0000, Jordan Crouse wrote:
+> Update some RCGs on the sm8250 camera clock controller to use
+> clk_rcg2_shared_ops. The shared_ops ensure the RCGs get parked
+> to the XO during clock disable to prevent the clocks from locking up
+> when the GDSC is enabled. These mirror similar fixes for other controllers
+> such as commit 8d4025943e13 ("clk: qcom: camcc-sc7180: Use runtime PM ops
+> instead of clk ones").
 
-Signed-off-by: Jordan Crouse <jorcrous@amazon.com>
----
+I'm not sure, how the mentioned commit is relevant to this fix.
+Did you mean e5c359f70e4b ("clk: qcom: camcc: Update the clock ops for the SC7180")?
 
- drivers/clk/qcom/camcc-sm8250.c | 56 ++++++++++++++++-----------------
- 1 file changed, 28 insertions(+), 28 deletions(-)
+> 
+> Signed-off-by: Jordan Crouse <jorcrous@amazon.com>
+> ---
+> 
+>  drivers/clk/qcom/camcc-sm8250.c | 56 ++++++++++++++++-----------------
+>  1 file changed, 28 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/camcc-sm8250.c b/drivers/clk/qcom/camcc-sm8250.c
+> index 34d2f17520dc..450ddbebd35f 100644
+> --- a/drivers/clk/qcom/camcc-sm8250.c
+> +++ b/drivers/clk/qcom/camcc-sm8250.c
+> @@ -411,7 +411,7 @@ static struct clk_rcg2 cam_cc_bps_clk_src = {
+>  		.parent_data = cam_cc_parent_data_0,
+>  		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
+>  		.flags = CLK_SET_RATE_PARENT,
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
 
-diff --git a/drivers/clk/qcom/camcc-sm8250.c b/drivers/clk/qcom/camcc-sm8250.c
-index 34d2f17520dc..450ddbebd35f 100644
---- a/drivers/clk/qcom/camcc-sm8250.c
-+++ b/drivers/clk/qcom/camcc-sm8250.c
-@@ -411,7 +411,7 @@ static struct clk_rcg2 cam_cc_bps_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -433,7 +433,7 @@ static struct clk_rcg2 cam_cc_camnoc_axi_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -454,7 +454,7 @@ static struct clk_rcg2 cam_cc_cci_0_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -469,7 +469,7 @@ static struct clk_rcg2 cam_cc_cci_1_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -490,7 +490,7 @@ static struct clk_rcg2 cam_cc_cphy_rx_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -511,7 +511,7 @@ static struct clk_rcg2 cam_cc_csi0phytimer_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -526,7 +526,7 @@ static struct clk_rcg2 cam_cc_csi1phytimer_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -556,7 +556,7 @@ static struct clk_rcg2 cam_cc_csi3phytimer_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -571,7 +571,7 @@ static struct clk_rcg2 cam_cc_csi4phytimer_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -586,7 +586,7 @@ static struct clk_rcg2 cam_cc_csi5phytimer_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -611,7 +611,7 @@ static struct clk_rcg2 cam_cc_fast_ahb_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -634,7 +634,7 @@ static struct clk_rcg2 cam_cc_fd_core_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -649,7 +649,7 @@ static struct clk_rcg2 cam_cc_icp_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -673,7 +673,7 @@ static struct clk_rcg2 cam_cc_ife_0_clk_src = {
- 		.parent_data = cam_cc_parent_data_2,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_2),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -710,7 +710,7 @@ static struct clk_rcg2 cam_cc_ife_0_csid_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -734,7 +734,7 @@ static struct clk_rcg2 cam_cc_ife_1_clk_src = {
- 		.parent_data = cam_cc_parent_data_3,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_3),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -749,7 +749,7 @@ static struct clk_rcg2 cam_cc_ife_1_csid_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -771,7 +771,7 @@ static struct clk_rcg2 cam_cc_ife_lite_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -786,7 +786,7 @@ static struct clk_rcg2 cam_cc_ife_lite_csid_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -810,7 +810,7 @@ static struct clk_rcg2 cam_cc_ipe_0_clk_src = {
- 		.parent_data = cam_cc_parent_data_4,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_4),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -825,7 +825,7 @@ static struct clk_rcg2 cam_cc_jpeg_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -847,7 +847,7 @@ static struct clk_rcg2 cam_cc_mclk0_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -862,7 +862,7 @@ static struct clk_rcg2 cam_cc_mclk1_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -877,7 +877,7 @@ static struct clk_rcg2 cam_cc_mclk2_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -892,7 +892,7 @@ static struct clk_rcg2 cam_cc_mclk3_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -907,7 +907,7 @@ static struct clk_rcg2 cam_cc_mclk4_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -922,7 +922,7 @@ static struct clk_rcg2 cam_cc_mclk5_clk_src = {
- 		.parent_data = cam_cc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
-@@ -993,7 +993,7 @@ static struct clk_rcg2 cam_cc_slow_ahb_clk_src = {
- 		.parent_data = cam_cc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_shared_ops,
- 	},
- };
- 
 -- 
-2.40.1
-
+With best wishes
+Dmitry
