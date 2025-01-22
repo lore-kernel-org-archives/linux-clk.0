@@ -1,126 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5640E20FA9A;
-	Wed, 22 Jan 2025 11:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082682135A8
+	for <linux-clk@vger.kernel.org>; Wed, 22 Jan 2025 13:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737545814; cv=none; b=PH6aB+Bzr0RNXe+DhYS0D7G5QownZVAxl2BtuXrlEYNJjj3mDvemTdgppthLtYMspR3c+84s53sNGxi6fSXQokDAptsfoxOmWWHLSfJhb1iSH30rVv6Pr1odyVn5RcpS/R5u7zkGtvP2MVKTvkWqLdJg3+BbepCUtNB2YLBSg7s=
+	t=1737552651; cv=none; b=dmFskEMFlK2NgmDCBLTTp5pGu+2U+n1Uvx7JwY0oBUV7JHq95dHQQV/gAaqLJzwX1ff+2BBtlZmyY5mIrfHrNqhRecopkqLGYqaF3KR4tVFCdnEnjrtdocSWXcEWg9FcUJMK30CdUb7cIQfXQylkFt4TMzwu2k99gKrMWyuxH1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737545814; c=relaxed/simple;
-	bh=QXBJrbdJNrzd7hS7zAoyeNa80X0oZtjbs/tgpeIyX+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N5rWwnNYNxJHtmXw9FaJrstmIVSldDiTB/7RmeYIy7aIoNVhUD80D2zHYtAp+orsdeuBZO4+ZTpo4esFS5+UPIL1u29m3rwj1QhyLkgv2U6k70lYmnz7TpdwQtDDe/bGCDQ9DYKCMrX33/Doq6oQ+NUpDjNbqWYdnun1ycwrpjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBc2QoFT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1737552651; c=relaxed/simple;
+	bh=MT1Qd4GfkNXwqWLqiWPdrTymaf6z71RpZBpS8qzx2Bk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MXZD+0JUu1rqfIAPQKnwQfHQnx9SNbVGDBM0wp4SVWON+vvMl81ag9Xf8vrx/j9JfWwfeDvwV/z045hrZQoBx0BmCgb05yVKQGw4RCEb/xB4edwof15NU1v+uLtlGVvdaSuBCXyEzOkPjnX7/H0/CwW5Lk3s50cM/3iAl1SvEpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vv/Y+178; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBc2QoFT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D52BC4CED6;
-	Wed, 22 Jan 2025 11:36:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737545813;
-	bh=QXBJrbdJNrzd7hS7zAoyeNa80X0oZtjbs/tgpeIyX+s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aBc2QoFT1QBxnoYHzpr3pE+UVo3IFIl9ccHznGiXuCYPUnOEW4zyQWPfhW4s10RZ+
-	 CFtMM16k/12gWo1dEmcKxojAuNpF+zsXDwTHWkTpCsKQf+cD2/DBcFUxV9dS510xor
-	 wrdUU1L5qg9dfypKDk/TNvUJWn7ZL9kcbUoxCliRyVOxD2E9rMq4tP5APAPVsq/Op9
-	 0ZA0RRpCcQ74ZrbFf0Sq6BfBx3g70ciFlEtlDoZTznsNzxhuPlFKOPFTsFh2AW2SZ7
-	 sfNcoDgdsNIf4M0aTCn/aruxgUjMQEUuB2/TepPnkc/vVIe+C636zdt1aqbCEM7e5i
-	 xhTNqro5eHXRA==
-Message-ID: <3639243f-ac84-4c28-b78d-c82aef672782@kernel.org>
-Date: Wed, 22 Jan 2025 12:36:42 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vv/Y+178"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30615661f98so74698681fa.2
+        for <linux-clk@vger.kernel.org>; Wed, 22 Jan 2025 05:30:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1737552648; x=1738157448; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MT1Qd4GfkNXwqWLqiWPdrTymaf6z71RpZBpS8qzx2Bk=;
+        b=vv/Y+178v6T/33PtFV1XX+V/CPi6mqf84bJy9c+E1vOtjZQp8QPy9+s7upo8Xw2ViH
+         JZ03icyH7aLJjEBJ1VUWjaj5uR6bORmRJmIXpxP1yQ9q1keAiD6WWPAIsDT5mUIUngnr
+         8Ms5Kh5OLncFqXSSqTUCGWP54Q8Le2dDiCCgmqjkyGuEfu0MxAOqaqC9cJWWI+7oauv8
+         xcnEHzpFNOkDHROQuXAqMiUN90vuD5aBwchQeOtlGDbD0pbhU/LCTlat89sVwzs5gcOy
+         5mlYVxK07KatnsL4GDNQ+JtkXl9WjdkHOYjoED/Lp+5TurSuSQoMs5MIccLDqTwzmoAL
+         R/9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737552648; x=1738157448;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MT1Qd4GfkNXwqWLqiWPdrTymaf6z71RpZBpS8qzx2Bk=;
+        b=jqGVR/T77QoRqdd/uITptqHRPxT6tj1qMhuS3xkRKK7scbxICz5IRJEZ+TLy58xUDu
+         M7MJlnBgvdfVUORylJpnl4rHQzGycrKXBAxOqkuahocwHka2isk0gFBYls6SXk59JB/v
+         yRUnqOrmAy1pbCJHa+1MQPXjk4zQymA2P3mlbeD6r4v/WKP1KY3iQA8ibQYBC1yBHiKa
+         sV5pNZARyWKFyl2RrLRgGtJrKcu5b/5poZKJuSHhmLj1ikLnoW/CQ0OoOqgj20eftGQY
+         gt/1wx2SGZ1BUk5vQQ3k864hvmGDXdNwZ4i2f33pnyUMWzFAV8MLEJZp+QyQugjesspt
+         sasQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlZma+h8qmD1UT8ir/rKdxBXU5JOatnZyY7l8M0fM5mVWUIST62uMMnUcl/IUlUMLzipOoq/hs8+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeJkHbbwyT4sRNE6oNuK9Qqx6p88t835cQRULWIZfP7WPvjibj
+	1Wvq2jM3gWcX3lHR2igcc0V4wN597zMXn3ZuTiF0s9GGYMiJh4UGzW0hjB88oNdF0ptQYh53440
+	AkcvxXazRG0p/k9KlXHAk9YvJhFOX00p0I6bdCA==
+X-Gm-Gg: ASbGnctb9o8P4eBGp+jUH5WFVvUHvSfTK3u/gXWU6cievWNYaQHxiBRPj/RqH+NyLQd
+	vuAqW9JFe7chT7XP7KggZZ0MvAJCZBnYPqj3U8wH4HxrrhyOwGg==
+X-Google-Smtp-Source: AGHT+IGs/n7Ljor2d3ADarC6NG+9NmWSbVqt5BnALy/+iVRtZ9CeuWAGeuayEWCsA+u7d2kSrA4qXict3/8+PKzO1MM=
+X-Received: by 2002:a05:6512:ad5:b0:542:8d45:cb3e with SMTP id
+ 2adb3069b0e04-5439c241016mr8306080e87.18.1737552647836; Wed, 22 Jan 2025
+ 05:30:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 05/18] pmdomain: thead: Add power-domain driver for
- TH1520
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
- wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
- matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
- m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
- linux-pm@vger.kernel.org
-References: <20250120172111.3492708-1-m.wilczynski@samsung.com>
- <CGME20250120172125eucas1p141540607f423eea4c55b2bd22ff5adf0@eucas1p1.samsung.com>
- <20250120172111.3492708-6-m.wilczynski@samsung.com>
- <20250121-mature-marigold-ammonite-b379d2@krzk-bin>
- <ce69a49d-6221-458d-b0e5-0f3507f1aeac@samsung.com>
- <508d6120-53df-4db1-ab62-5f4c49358cbf@kernel.org>
- <9039d98b-ea3b-401a-804c-8c60ec714b99@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <9039d98b-ea3b-401a-804c-8c60ec714b99@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250110123923.270626-1-szemzo.andras@gmail.com>
+ <20250110123923.270626-4-szemzo.andras@gmail.com> <20250114141954.2785879a@donnerap.manchester.arm.com>
+ <CACRpkda0nx3SQtdjmXdCEbVJSWM10TM=p-6JbDjbiYcOSF5PxQ@mail.gmail.com>
+ <20250115152635.1b89e7f4@donnerap.manchester.arm.com> <CACRpkdYVTedEon0X-izvaDTGF6yRhD2s=Z6NEM=zBf4vD-T0Pg@mail.gmail.com>
+ <20250117145228.2fc8a64e@donnerap.manchester.arm.com>
+In-Reply-To: <20250117145228.2fc8a64e@donnerap.manchester.arm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 22 Jan 2025 14:30:36 +0100
+X-Gm-Features: AbW1kvbmavQU6KJ-WzCpG2eI69ENGFRQZ6H5c_O0ajyC4q6k3ZeKpvUjD-d9bk8
+Message-ID: <CACRpkdZ29=mCqLku4Obq+E5j6kS4NZchwCtrTeCt0qUctn6Czg@mail.gmail.com>
+Subject: Re: [PATCH 03/12] pinctrl: sunxi: add driver for Allwinner V853.
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Andras Szemzo <szemzo.andras@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Maxime Ripard <mripard@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/01/2025 12:26, Michal Wilczynski wrote:
->>>
->>> These power-domain constants are defined by the AON firmware protocol,
->>> which dictates the exact IDs (e.g., 1 for NPU). They are not just array
->>> indices; we must use these specific values to communicate with the
->>> firmware correctly. Using array indices starting with 1 would be
->>> unusual.
->>
->> Then that's a no. Binding constants do not represent values used by your
->> hardware. The binding constant should start from 0.
-> 
-> Would it be a problem if those overlapped ? There is one more value that
+On Fri, Jan 17, 2025 at 3:52=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
+com> wrote:
 
-No, I just don't care about hardware constants here. Use the bindings
-constants in your driver at least as abstract IDs or these are not
-suitable for bindings.
+> That is actually a good argument: At the moment I am happy with my
+> proposal (the allwinner,pinmux =3D <number>; property), but that seems li=
+ke
+> standard #15 then.
+> So would biting the bullet and adopting the Apple/STM32 way then be more
+> sustainable?
 
-Best regards,
-Krzysztof
+I suppose...
+
+> On the other hand: the allwinner,pinmux solution has the advantage of bei=
+ng
+> already written and proven working, also it stays very close to the
+> existing description/binding - so implementations like U-Boot could just
+> keep on using the "function" string.
+>
+> I am a bit torn here... I don't think I will find the solitude to
+> implement this "Apple" approach in the next few weeks.
+
+I think whatever the Allwinner maintainers agree is the best should
+be what you go for. It is a lot of hobbyist maintainers in this space
+and for them the bar should be lower.
+
+If you have buy-in from the other maintainers, then go for that
+solution.
+
+Yours,
+Linus Walleij
