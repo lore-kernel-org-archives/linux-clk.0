@@ -1,187 +1,108 @@
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E4E2101A0;
-	Wed, 22 Jan 2025 09:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737539815; cv=pass; b=VVcts54EpD7bUaiLb2P+TwsO2pBrRfeQRNSBkQ9Mptzxy/ZdtdJBBpZ+EbCO7yQ4yhttWFljy/SauI/VbF9twGjuy9WPzARHRe292opbzr8lN/74KGBnBqQ5DFACssERTioBm5S2EkbfBB0RoGDgji63itCYP1GsC6EAnQ8Dk3Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737539815; c=relaxed/simple;
-	bh=9BGGTOY6yT36nVbt7kfshSB1MUAlKHK8K+9HhFzfsww=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=M4sFyj5llNcqHCN1KX5c3MfWCA+vm/D5kqIw/eH+3UJowd+dhmDSj+Sgek7Vh3wdMdlMndqsIkKwDCHTAvILpgunDHki42mhsBXqT5oiNugW7PwVk9+ZxNzsg12P4s1Df3C1JolfsuwhZox2O88CXSYxSgQxtWg/8hH7f8vYrqs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=eD+sY8B0; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="eD+sY8B0"
-ARC-Seal: i=1; a=rsa-sha256; t=1737539795; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=aEB8UfvzVcUGfqqmgS5/Zii0kzFVUsKwDLuU/Z7/aHiuwhOBxyqTt5jUtJT3BINYFCFwDBk8yl8BJblAsBadfK6XXF6gJ1ZtSUpWQevaTLpfUzx9xTIc8Ed5wOdjdRPMID+uuA5H8/3z6Pvaz9mvll7xppLLjI63NW6OU/4s+MU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1737539795; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=8lJSvQ11CH9dzk5I855KdjRvtef7HBh0f04dbmt0uHM=; 
-	b=NJeFElefbkDRBs0ZmNqvYmP3wU4BoVQppXcy0GSOrHA4LwDN/qB2wP0omfsWJVZ3itN0Ic1Gu3qhx0Z3MHGDgHSZJ8ica+bEwLOjeMnu67pzIl8bYA1+YSo/HsfzvGZH7HQWEZgEhVRymKeQh7N0PPJUlSFmIjH7Xd+h/QoDdJM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1737539795;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Feedback-ID:Reply-To;
-	bh=8lJSvQ11CH9dzk5I855KdjRvtef7HBh0f04dbmt0uHM=;
-	b=eD+sY8B059/iFwx9rWVuZpunN9yK+BFoYw2C5960jbBuTkjCs15ALiNqwumxMrOE
-	hjFm/00JhmzvHalwEl02VFx7yUECIIqFZj2Oe6EBX/rwDnvEwjr/OHW+NZfumoL7/YX
-	1aGeIjfZ64alMqyXtt8aIjR90GjuQ3oHpI+56rEg=
-Received: by mx.zohomail.com with SMTPS id 1737539793559427.6581738396278;
-	Wed, 22 Jan 2025 01:56:33 -0800 (PST)
-From: Xukai Wang <kingxukai@zohomail.com>
-Date: Wed, 22 Jan 2025 17:55:55 +0800
-Subject: [PATCH v3 1/3] dt-bindings: clock: Add bindings for Canaan K230
- clock controller
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85471210190;
+	Wed, 22 Jan 2025 09:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737539824; cv=none; b=tRWZy1VEzQpq7JC4TnTz5wE+9fxF2wL8VUkIAqMrNCT7zuoKCP6HyKFl8F6Zyh4yClOBcq3JurDYGUAf1tabedS4E5C7HflTAkE7ImdSXn0Yk7L3db6f4MAsRUp7b5MAbYZSQ2KPedmgJv7g4vJHNB7AHKhIgiWyWlnxVsIe6pk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737539824; c=relaxed/simple;
+	bh=bQItIC9OMhkwNciZtvw/Y85t+lW3PH9iS0vi8IEpgUg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qSGL+kND645x6l8FKSZXUZDLsNwIQRqceEAD4NAZY5TJiWdzKVa+7kcOMzdBZ/ELS/IbiRY+YWg1PgXw32C0akHqxa+tGZBpznoofAn4DVEoHWGuFXxDIiCZfQsUKYJj+JtsjG1hx6q9zyWy2DLjIPmrF0UfzQIZyTK4UZ/ytiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-85b95896cefso1156337241.2;
+        Wed, 22 Jan 2025 01:57:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737539821; x=1738144621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Me3Jqra0wJNLZUqRxXUXHKeEureOarGNmBw0jL34Frc=;
+        b=sdfrSLckfQxwOCLC/1qCRNVmL8scuQFm8pt4PBtYtmo1SiwkGiAGKRS/NrAGxuWyMy
+         8QMFP9+99c4wOeW8hGKeJ6kcEDGgl9YaMKJO7mMVJuR7JWt0IJU2wUOalnn3grqw2Ko+
+         2Bxj1hY1UuqKlx1j7DpmY4duZNo7Utt9hMGQ1davVHRQ36acm6dkgF/GayCz11O1XwcE
+         3uZMlrZvN3g2X356kXxrzuEXBIlVZpDfkGqf0gfrD6ttOhW+wnZm8+cuByG1aaqHyCtL
+         /pxSZkrySU9329VmItpb7D/w+sPzcj3AvVk4KW7oueV6vW0F+teYg95UT5I8NAiLvLdO
+         fncw==
+X-Forwarded-Encrypted: i=1; AJvYcCWZffBHepN8YFn3tjLW5c7uJiZUL6f3JSv7rrIC13Efq/SgWD9BWYjRyfIbmAJu+yKYODbfBnZyvT9l7iKb2HOvCFA=@vger.kernel.org, AJvYcCXZdWpDHiTnAso1EVK25nb/dGMZUCe/mkQ+NIne6Eica973B0x64aQ7D1IYaXiiQPOWwQM7H0857u32ME6S@vger.kernel.org, AJvYcCXzXPmlTXO+oU4lgdy23bnn5+yzEfNJ+qspjhZxxUNy8FFSqlSQUKtS3RZcXT1t3opKmouyaRYnKHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+iVXHKiw0v+Iqt2ScEs1s24Lo3P5+8oOjSNdWSz4ZR6XZYHoa
+	XCPzIDRKylFbA1e59SHs2WLrj/+6BhVZiU3CFeaCRyvmF821pgKg0YcGSCEf
+X-Gm-Gg: ASbGncsBqZor/eEN+2PJhpR2uOlhGz/yhen3xeIA44fY5MzLKYxe2txMdY1BOxLvLvj
+	Yn2aVM8/94r5oC8m4ZX/8QvQMt0FUOky6Hfu6PPOBpjG3L9hfyVdDIY+ziN3dgFjCkLq7ypqokA
+	irXSq0pUOv6xmXFet6ZgPgryMrQDUqThSGZZvtOCcfvXP+6Ox7aPe/C6CxkFaZVqxhP7QhcJun9
+	1Ug4u26dxLXTO0HChrLZB/eTpKEy8psrC83pwGjIfrqTlwrHVHWUs8OlU0+HZaL+uQYk7CheNXm
+	sSuh8hUC1PlEXvEjdH3ewdXWz+aYQ+A7
+X-Google-Smtp-Source: AGHT+IFGGTyXISy6L6ewDSZgkHz7Sw63GBJsRj8HL7FofKSa2sTTrRKWwQh5QGKXlw3kySkHOdUqMg==
+X-Received: by 2002:a05:6102:b02:b0:4b1:3409:93dd with SMTP id ada2fe7eead31-4b690cde1f1mr16214786137.18.1737539821025;
+        Wed, 22 Jan 2025 01:57:01 -0800 (PST)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b68a33f5d7sm2613705137.27.2025.01.22.01.57.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jan 2025 01:57:00 -0800 (PST)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4affd0fb6adso1911399137.1;
+        Wed, 22 Jan 2025 01:57:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVVE/qdf/BUAPJKbFVBWlXItChTDzuILddyv/6q62/L0ACbhQjYGVxlNL7adeWYYXhHGK1RNwl2s+bWB+FORkjmuQQ=@vger.kernel.org, AJvYcCW6gi0yQPAA6zefNReasPwbsr0FWLrvEchstCKax4IL/vJrPxTjVL3GqGq5pt6eXkUWr08Q2IeMF1nBA/kp@vger.kernel.org, AJvYcCWBmv7/MRlvWKx4l2HCU4JxQys1rsW+pL33YJ5mj6MorEAd+IVPLTxeayBCtvCKJH7lK0DdWyOs9Bs=@vger.kernel.org
+X-Received: by 2002:a05:6102:a47:b0:4b6:1ce1:30a4 with SMTP id
+ ada2fe7eead31-4b690d1233fmr14880755137.21.1737539820170; Wed, 22 Jan 2025
+ 01:57:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250122-b4-k230-clk-v3-1-bff755ac9cfc@zohomail.com>
-References: <20250122-b4-k230-clk-v3-0-bff755ac9cfc@zohomail.com>
-In-Reply-To: <20250122-b4-k230-clk-v3-0-bff755ac9cfc@zohomail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Xukai Wang <kingxukai@zohomail.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Troy Mitchell <TroyMitchell988@gmail.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-Feedback-ID: rr080112277424974544b8a03554681af500001118515830cbe37f90985c8ac7a8f8b3659e15983402420192:zu08011227e3b5756bd69474ae62fecf4d00002b8ae1ff626267421c0935d7c176f10baf66443b8864ea1763:rf0801122d01409bd7ff647a77c51402d70000da60b6217fa03a53ad9da5486b1f148d7b0c546ca9519a1b55e834be1c6cbd:ZohoMail
-X-ZohoMailClient: External
+References: <20250115142059.1833063-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250115142059.1833063-1-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 22 Jan 2025 10:56:48 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU_zLGJUWj-58ESJr41Vh1vuxcB_NGU1KQUb0cKEJTtUA@mail.gmail.com>
+X-Gm-Features: AWEUYZlWR9X3PMqN3mR_5o4BFUWL7637w4s5j_LDRbFwcQ4YepNQoOsHPiLskHM
+Message-ID: <CAMuHMdU_zLGJUWj-58ESJr41Vh1vuxcB_NGU1KQUb0cKEJTtUA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: r8a08g045: Check the source of the CPU
+ PLL settings
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds the Device Tree binding for the clock controller
-on Canaan k230. The binding defines the new clocks available and
-the required properties to configure them correctly.
+On Wed, Jan 15, 2025 at 3:21=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> On the RZ/G3S SoC, the CPU PLL settings can be set and retrieved through
+> the CPG_PLL1_CLK1 and CPG_PLL1_CLK2 registers. However, these settings ar=
+e
+> applied only when CPG_PLL1_SETTING.SEL_PLL1 is set to 0. Otherwise, the
+> CPU PLL operates at the default frequency of 1.1 GHz. This patch adds
+> support to the PLL driver to return the 1.1 GHz frequency when the CPU PL=
+L
+> is configured with the default frequency.
+>
+> Fixes: 01eabef547e6 ("clk: renesas: rzg2l: Add support for RZ/G3S PLL")
+> Fixes: de60a3ebe410 ("clk: renesas: Add minimal boot support for RZ/G3S S=
+oC")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
----
- .../devicetree/bindings/clock/canaan,k230-clk.yaml | 43 +++++++++++++++++++
- include/dt-bindings/clock/canaan,k230-clk.h        | 49 ++++++++++++++++++++++
- 2 files changed, 92 insertions(+)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.15.
 
-diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..d7220fa30e4699a68fa5279c04abc63c1905fa4a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
-@@ -0,0 +1,43 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Canaan Kendryte K230 Clock
-+
-+maintainers:
-+  - Xukai Wang <kingxukai@zohomail.com>
-+
-+properties:
-+  compatible:
-+    const: canaan,k230-clk
-+
-+  reg:
-+    items:
-+      - description: PLL control registers.
-+      - description: Sysclk control registers.
-+
-+  clocks:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@91102000 {
-+        compatible = "canaan,k230-clk";
-+        reg = <0x91102000 0x1000>,
-+              <0x91100000 0x1000>;
-+        clocks = <&osc24m>;
-+        #clock-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/clock/canaan,k230-clk.h b/include/dt-bindings/clock/canaan,k230-clk.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..47d966fda5771615dad8ade64eeec42a9b27696e
---- /dev/null
-+++ b/include/dt-bindings/clock/canaan,k230-clk.h
-@@ -0,0 +1,49 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Kendryte Canaan K230 Clock Drivers
-+ *
-+ * Author: Xukai Wang <kingxukai@zohomail.com>
-+ */
-+
-+#ifndef CLOCK_K230_CLK_H
-+#define CLOCK_K230_CLK_H
-+
-+/* Kendryte K230 SoC clock identifiers (arbitrary values). */
-+#define K230_CPU0_SRC			0
-+#define K230_CPU0_ACLK			1
-+#define K230_CPU0_PLIC			2
-+#define K230_CPU0_NOC_DDRCP4		3
-+#define K230_CPU0_PCLK			4
-+#define K230_PMU_PCLK			5
-+#define K230_HS_HCLK_HIGH_SRC		6
-+#define K230_HS_HCLK_HIGH_GATE		7
-+#define K230_HS_HCLK_SRC		8
-+#define K230_HS_SD0_HS_AHB_GAT		9
-+#define K230_HS_SD1_HS_AHB_GAT		10
-+#define K230_HS_SSI1_HS_AHB_GA		11
-+#define K230_HS_SSI2_HS_AHB_GA		12
-+#define K230_HS_USB0_HS_AHB_GA		13
-+#define K230_HS_USB1_HS_AHB_GA		14
-+#define K230_HS_SSI0_AXI15		15
-+#define K230_HS_SSI1			16
-+#define K230_HS_SSI2			17
-+#define K230_HS_QSPI_AXI_SRC		18
-+#define K230_HS_SSI1_ACLK_GATE		19
-+#define K230_HS_SSI2_ACLK_GATE		20
-+#define K230_HS_SD_CARD_SRC		21
-+#define K230_HS_SD0_CARD_TX		22
-+#define K230_HS_SD1_CARD_TX		23
-+#define K230_HS_SD_AXI_SRC		24
-+#define K230_HS_SD0_AXI_GATE		25
-+#define K230_HS_SD1_AXI_GATE		26
-+#define K230_HS_SD0_BASE_GATE		27
-+#define K230_HS_SD1_BASE_GATE		28
-+#define K230_HS_OSPI_SRC		29
-+#define K230_HS_USB_REF_50M		30
-+#define K230_HS_SD_TIMER_SRC		31
-+#define K230_HS_SD0_TIMER_GATE		32
-+#define K230_HS_SD1_TIMER_GATE		33
-+#define K230_HS_USB0_REFERENCE		34
-+#define K230_HS_USB1_REFERENCE		35
-+
-+#endif /* CLOCK_K230_CLK_H */
+Gr{oetje,eeting}s,
 
--- 
-2.34.1
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
