@@ -1,133 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6328C17BB6;
-	Wed, 22 Jan 2025 08:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737534165; cv=none; b=OOfoVY1qHEzHCCH5FUdaKJSO9SYpD2zS8zs5Zzqji5K03IMC1mXsqBw2HvjmOrnY9ID1bO29KdvdFTn0YbxoNkyPNIPjX5/CTl6CUOGHtjNWpoIoXxqALhbDKotFptDtqRuDDiYEEkioiy+kfuNuAOOwUJ70CFdwxV29PlRvTu8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737534165; c=relaxed/simple;
-	bh=+L0LCy9nENdCNACnCQyr3V9VXLR21yhtkYUpPtZ4BXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j18ZYUFdWcN4vCHh4wblmgMwAt2UQVYQinaqB6q6Ij2mOCVvjOuC5bVgPu5u35XayYMnGOe/OIhw/zQW/oFDgbUE4Sy0vNSWc7b0WRoNSGhjtQaWH0oluDAJ4aTGnQdKVugo4XI+v79sJ7DRAWv45KuZ7nkOsJEPg/LNArqiUcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OYXHd5WF; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAEB210190;
+	Wed, 22 Jan 2025 09:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737539804; cv=pass; b=M4YZAQdqiPmexsTfNvvU34CCmLH7WfH3PcyhWemxG5/si5mys115auB7/SSl4wLhzr4AmxoLpf9u8owShzfH0eHMSrgbmUUTDVctSW32/tqCPWAylQXFeW3ixuWr/5wGij+HGprVuf7nevZbq5jFzP/yEU2bber5OZSA7DI1sik=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737539804; c=relaxed/simple;
+	bh=WelBFfZbtejXJSMGbVp9XKbykO5+q686zJwMMmM3RF4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ei62UuISG/ZzhuXVSBuU4yNCTQtEjAOmv7ONVjr71QhdrXpoOc3IWC9jNht1Dg9U8Ba4ChuvIP2ePqK+6/1HowFHczmogX5FyV8iD/adDU2k8wnL+FTefcMNMs20KHdGma43KBj5ikA9K9oNF3gxJWquC/e+tvbXUCFVFJ1FKUo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=a7xfvnau; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYXHd5WF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F3C4C4CED6;
-	Wed, 22 Jan 2025 08:22:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737534162;
-	bh=+L0LCy9nENdCNACnCQyr3V9VXLR21yhtkYUpPtZ4BXg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OYXHd5WFRn/X3nVAjqajR4R8RtVTe0GC4gEtGnJCJTEXqmwYL5758s5sEgc+1fiRS
-	 3qK8Gj9rrf1NWgLrQFFKhc0OC48qyuVvqSlz9aKQzBdUjlF3snA5e0CTx7XrPzCsTS
-	 3uyWk9fVoH2VIqKgVfspflZsYuN3rlZ5dRItjcDplG+uXHYPMZuupDEFjFZ3GJhVcS
-	 8KlXWBdcieRdp8vdRgmHs/loXPkyB3xIAJhrawW8LKnQ/fAxaqJwsdYqgcjKgqop1i
-	 jgqoqsAtJKoTIdnZH4ukpCwYf8SPfYw+LTKtYOEVgYtRFugyo98G8Ckmco/FJ86/Af
-	 bnlAV6ff9dZng==
-Message-ID: <05b8ae46-f8af-413f-8870-ab1997c8f5b9@kernel.org>
-Date: Wed, 22 Jan 2025 09:22:24 +0100
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="a7xfvnau"
+ARC-Seal: i=1; a=rsa-sha256; t=1737539790; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UE7jcF2fQcu4jgRTFlXtWzmag44c3YNzwJ+1NTDGouZP7Vune2mBuvKG4IExub3qrw6I/eQtpKscb9wLZfKvivrscK9b4CfnEMwHyU6JGPktrZpMYEtdAqfA4/9e5CzupmfrUJB0bFBDZoXi852bLTERMbDXeRhdMHuBlm4v2a0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1737539790; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=p+D6wi74FwpSWk9Lp1ZOmorWX1OSVZVlzhaeyMgcJb8=; 
+	b=JckvrPe/p1kJa0N/rSzkFuUuBBLrW0aIo8/TsT7/ewCL6EdAMLD0eacsBrASNeEW9NZ2/Y6KrvX6X2GqaMsthYW/+2Kop24RZjf9tsG9tNopX39M0fVVGAotIxydxua8x8P1XcQxaIgvJsJ2+q63RUMJ5D8dOVooF+9XosZqtyk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1737539790;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Feedback-ID:Reply-To;
+	bh=p+D6wi74FwpSWk9Lp1ZOmorWX1OSVZVlzhaeyMgcJb8=;
+	b=a7xfvnauxI7BLLF9Zzfoxs39jZxgXHju0UV6GGR46zMITjUmL/HBLQLxga/CJFuF
+	okWt4lO1EeJt0c2AESEixBqmbJX47/T54tlc8rh5a0OPDuMeSid0UNka2X2h8ZPbk5x
+	Eo0s2cR9BfkIy0TmKoPQcMk2qMuqfS7EcLKymXw8=
+Received: by mx.zohomail.com with SMTPS id 1737539787445648.1380220280148;
+	Wed, 22 Jan 2025 01:56:27 -0800 (PST)
+From: Xukai Wang <kingxukai@zohomail.com>
+Subject: [PATCH v3 0/3] riscv: canaan: Add support for K230-Canmv clock
+Date: Wed, 22 Jan 2025 17:55:54 +0800
+Message-Id: <20250122-b4-k230-clk-v3-0-bff755ac9cfc@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 07/18] dt-bindings: reset: Add T-HEAD TH1520 SoC Reset
- Controller
-To: Michal Wilczynski <m.wilczynski@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- frank.binns@imgtec.com, matt.coster@imgtec.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
- jszhang@kernel.org, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-References: <20250120172111.3492708-1-m.wilczynski@samsung.com>
- <CGME20250120172128eucas1p2847f0863524b53d2d5029e5e9d238298@eucas1p2.samsung.com>
- <20250120172111.3492708-8-m.wilczynski@samsung.com>
- <6018a750dcbb46fe1bd9f653f469d54928c23610.camel@pengutronix.de>
- <ff53263d-813f-43c3-9090-e73dc0031949@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ff53263d-813f-43c3-9090-e73dc0031949@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKrAkGcC/23PTW7DIBAF4KtYrEsFAxg7q96j6mJghhrlx4ntW
+ m2j3L3EaaW4CisG6XvMO4uRh8yj2FRnMfCcx9wfymCeKhE7PLyzzFRmAQqsBlXLYOUWjJJxt5U
+ tuGRMYqojiCKOA6f8uaS9vt3mgU8fJXS6PYojTrErkZuKmNBE6yGpclIiqyIR+ZhqMsExkCf0F
+ K+5AUeWsd/v87SpPDrtQ6BkKDYtArJzSpW42nMDJjUJoqkTi+sGXR6nfvha6s1mWeG3iV81mY0
+ sl6B963TTsPcv333X7zHvnsu/S9Rs77i2a24L11G1EetgbIMPuL7j0K65LhxAY6tLB8X0gMMfd
+ 0qrZs3hyn0wCiGig//8crn8AC1O4t3oAQAA
+X-Change-ID: 20241206-b4-k230-clk-925f33fed6c2
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Xukai Wang <kingxukai@zohomail.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ Troy Mitchell <TroyMitchell988@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+Feedback-ID: rr080112272655f399bdfb06f697025a9400007ebbc27c8137e54e8244f37a3b2e2fa953ef406e654243698a:zu08011227b09711424aeca21637fc607500005cecc874c3f5cb847f5787458ac109a2a28fd4d66ef5d7c13a:rf0801122d20920e79d8d5358c21f852e60000293e3ea288f3bed5f29597ebd5ecc4ced25d3cb9fe80eeed59b00f61a0881e:ZohoMail
+X-ZohoMailClient: External
 
-On 21/01/2025 22:58, Michal Wilczynski wrote:
->>> +maintainers:
->>> +  - Michal Wilczynski <m.wilczynski@samsung.com>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - thead,th1520-reset
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  "#reset-cells":
->>> +    const: 0
->>
->> Should this be "const: 1" instead?
-> 
-> Right now I'm not planning to extend by more resets, I've thought about
-> this during the discussion on v2 of this patchset. At this point I just
-> can't see more interesting resets to have. Vendor kernel implements WDT
-> and NPU. I don't think NPU driver will be upstream anytime soon. That
-> would leave WDT reset potentially.
+This patch series adds clock controller support for the Canaan Kendryte
+K230 SoC. The K230 SoC includes an external 24MHz OSC and 4 internal
+PLLs, with the controller managing these sources and their derived clocks.
 
-Bindings should be complete, regardless whether you implement reset
-consumer driver or not.
+The clock tree and hardware-specific definition can be found in the
+vendor's DTS [1],
+and this series is based on the K230 initial series [2].
+
+Link: https://github.com/kendryte/k230_sdk/blob/main/src/little/linux/arch/riscv/boot/dts/kendryte/clock_provider.dtsi [1]
+Link: https://lore.kernel.org/linux-clk/tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com/ [2]
+
+Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+
+---
+Changes in v3:
+- Reorder the defination and declaration in drivers code.
+- Reorder the properties in dts node.
+- Replace global variable `k230_sysclk` with dynamic memory allocation.
+- Rename the macro K230_NUM_CLKS to K230_CLK_NUM.
+- Use dev_err_probe for error handling.
+- Remove unused includes.
+- Link to v2: https://lore.kernel.org/r/20250108-b4-k230-clk-v2-0-27b30a2ca52d@zohomail.com
+
+Changes in v2:
+- Add items and description.
+- Rename k230-clk.h to canaan,k230-clk.h
+- Link to v1: https://lore.kernel.org/r/20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com
+
+---
+Xukai Wang (3):
+      dt-bindings: clock: Add bindings for Canaan K230 clock controller
+      clk: canaan: Add clock driver for Canaan K230
+      riscv: dts: canaan: Add clock initial support for K230
+
+ .../devicetree/bindings/clock/canaan,k230-clk.yaml |   43 +
+ arch/riscv/boot/dts/canaan/k230.dtsi               |   32 +
+ drivers/clk/Kconfig                                |    6 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-k230.c                             | 1378 ++++++++++++++++++++
+ include/dt-bindings/clock/canaan,k230-clk.h        |   49 +
+ 6 files changed, 1509 insertions(+)
+---
+base-commit: 7a517bbdf3dc89a2ae5500ded67e823f8f2c36fe
+change-id: 20241206-b4-k230-clk-925f33fed6c2
+prerequisite-patch-id: deda3c472f0000ffd40cddd7cf6d3b5e2d7da7dc
 
 Best regards,
-Krzysztof
+-- 
+Xukai Wang <kingxukai@zohomail.com>
+
