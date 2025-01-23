@@ -1,352 +1,135 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCBB20E318
-	for <linux-clk@vger.kernel.org>; Thu, 23 Jan 2025 11:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EDF20F98F;
+	Thu, 23 Jan 2025 13:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737631923; cv=none; b=mn3HQsHiw0rP0Xq4hjFxy2/B1aDz5hfBEQKlYS1V3nFgDbyq76MYfChjipmhk/cc7Z2nRLIGrt5F3cpQqB0VXJMp5qo9GAl6NBgWD61X7fWPbZKMtBRtwzKhB7TR2mnz56K8uLg+op6vuUk7OW8GNnBUhCCaHjMm1p6/BctH2HQ=
+	t=1737638962; cv=none; b=tCBEXfkPM9hj0iKJSQRxgKerYk9Jm8Ow7fFDMXHt44gQoq3xoLY/JcEzY7Voz0kd9f079N/F7PEgLpDvIPLKv7WkH+qTH12/fRpdvmiBx90sIC4i/H9jNR7WskgtrWv6ysCYcLRW3CA4zKJpBtM20GSGMYJP9VZwqmCB+AJ93/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737631923; c=relaxed/simple;
-	bh=c1x3wOL/Jg/CxqmpfvXlIfxTazE833rR3Za4g0QHXGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u9SrzbDNiStcZCwWJ4VEVGmEnGfb6neIB68SeNlWF/FCYgf+kL/xUrtUZmXG8dpo+kZobeN2I7vwjMk38e0RvDn8aEVW8sGuFcGXprp88NyKWKXM6v/phGdxadOYd93HaGcRaxnz5DDG8pi/XnKhGdZDxMKkRwXl42ecrrKOUoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=feLEUCE4; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
+	s=arc-20240116; t=1737638962; c=relaxed/simple;
+	bh=ORV782yc+Xa9p2g1Kkfw4AWuIgFv3ctCh4Pi95fq/8U=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dYlkWb4J+VLE8iwiJZxNfB43iTqKugZEm6qI6RKWQ9Q5TG5BBYzfPUjFbfssCKiLTxx1/oSoUsxPXoz4S6mbh5O9v9+i7ZOXpxhyEE1GQpeYuMYlbkjgabZuCc6blNVDiUdT+Oed1ukw0X5h7pbzGjRwcY2I0Lyovp9aOKJGl/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lVgiSUWV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="feLEUCE4"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43690d4605dso5210875e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 23 Jan 2025 03:32:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1737631919; x=1738236719; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tkzdprg0mUGbGqhZY3kXquNpxLnOQ+rAcPKbs65QhXA=;
-        b=feLEUCE4xOl4/S6REbbmzJ2I5cqXeV728tqB7yF/+31mBTmv5ciiRY5p0RNdMn5l2g
-         3nP8uIaj0ZkuupG15iCJ9kJoxMykLJV/93eaZzQYiZRkXzpYrAMOwC4oAjj8s6zKL9R0
-         Afc6aGzs2SNOwDx4sg3Zg5jsvXW6lGS8CCF6fEHOeTaNSG+8d6Ayux75OCXu9kNjjCBi
-         AKf52yHJOfqA+QCJb01Xv9kE9b4xnxMc02X+39L6sg5fs+6P0J2blO5U8Qo/D+lHfB10
-         h5PHRVeMljwThvGS8Qp3puX2JCxRNq++0JYTqL5jXNwpiP+7/X4Lg38WrBkqv2rwd6Wy
-         huMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737631919; x=1738236719;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tkzdprg0mUGbGqhZY3kXquNpxLnOQ+rAcPKbs65QhXA=;
-        b=YjSyVAEe6Z7h90cKY2V/NxaaixnQtisTf5zxTLBGpas80l6AubZ2wFLPlmdQbVkO4z
-         LpoTQGKYaWeobzCrdrAqI7fpsbVfC5XTFF60EQT4vOF1oBabbtF+d7vCTM5W7CAfF6FW
-         5bTJYFAmYuylU210UJT4bMw6DXPVZ7ZU77I4Mk5h8i7M5B6fqBRD8T5xSj6XL1Eb6ZyQ
-         74wY5OGyhcDPnxgONy8+4xh9+oA4BjIB/oWyaV99eLp4U1uPjMCBr/jIsgKEVhHUS7YU
-         OT0D1NHaCxNZCZtmz3H5ZIq90G55mRWQvoO1hcWwZWUQdK5vm+Yne7ApoJgx+BUZXciE
-         i4ng==
-X-Forwarded-Encrypted: i=1; AJvYcCXDGhNj/y05IARuNIlFB4K5AOxMpPu1cXerappo++n8g70MdeLNFC9/OmIL7rO801wTawGRjCAETXM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZRKcfHSRfTS3GMa05ZcVxV6FnVTudODUNhYP4Wr4dz0hZirgX
-	wfRQHmUhW3Zj2SlChVi8KXPfVtlM5J9eJC7kyDldVNk5BfTrlds7n8FJ1UUttMY=
-X-Gm-Gg: ASbGncvFub3vr3wVRKhHMPXRRKNCeJWK3iMqjOC+EgAB8pmVj5hfGBEqVQ+dS8aPMrG
-	7BFaSx+4d4nUyDW5lhHseaHxCDbLSsF6FZva6D5AU6aWSNHLuafVs2A/KBwenBAVW7r7+Hj41/A
-	bNXrDc8r76n1JyJafeWmDMpGfw3+1WHxII1aAJwdBcrP8QnwfInDS/f1OxnD+WIWVgukQMhS/Iz
-	l9OHwxfyo4Ckbyc6C+t55uFYeVLLGDGPDWhQ9hsqDp3BosRUr4mVHLNbbafhtpQZ7yZwhS+gKaO
-	2P1ETumvxar/VXVn2gK3
-X-Google-Smtp-Source: AGHT+IFiwhNji8Lf/iwS/ygWq2vKMB+3GZnN8Ve/tOSfQIqp9x7RXP66a/ZU5FmQMIv4WX+dRn8Uuw==
-X-Received: by 2002:a05:600c:1d14:b0:436:46f9:4fc6 with SMTP id 5b1f17b1804b1-438913d63cfmr233979795e9.8.1737631919110;
-        Thu, 23 Jan 2025 03:31:59 -0800 (PST)
-Received: from [192.168.0.35] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438b3189ba8sm60603645e9.5.2025.01.23.03.31.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2025 03:31:58 -0800 (PST)
-Message-ID: <d4aa6903-f350-4130-a915-7a8d2916f1e0@nexus-software.ie>
-Date: Thu, 23 Jan 2025 11:31:57 +0000
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lVgiSUWV"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50NAo2jv024913;
+	Thu, 23 Jan 2025 13:29:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	O8lxYdh3YczE7Et2KG6V1s0UxT73D3aeU59zH165uOg=; b=lVgiSUWVN12fhIpk
+	dKBcxRf86qf7WL81MFMOYz9eIoEwT+J2K3deK+Gdyl7kdHpixIexZU1S9u23fIUR
+	4rqn7w1ewHmnOfeI5EADLL8ZQKM6QwZ5kah45jcF5xbbWxXLCxGQgYvNYyfs2tNd
+	Rb678qu+6V4AKJCJUBKs2ZcNzed5IWcDH9VQnUfoQlljT7Y9bN/Ywd8OLHmUrbez
+	9vI+lKTMSH/Oolo54qnCbTIG1IwEzDOZP/Iy7fJ09d+7gYyrJF+L25//t7/Foq2C
+	cDKua7hy3r4t0O9TN2D6DN869lfKLmUbz1AocUet8hkbUocgu+U/62oxSksV1W2F
+	j6or5A==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44bmbg8c54-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Jan 2025 13:29:16 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 50NDTFWc021185
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 23 Jan 2025 13:29:15 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 23 Jan 2025 05:29:12 -0800
+Date: Thu, 23 Jan 2025 18:59:08 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_srichara@quicinc.com>
+Subject: Re: [PATCH] clk: qcom: ipq5424: fix software and hardware flow
+ control error of UART
+Message-ID: <Z5JEJCJsYDz9b85b@hu-varada-blr.qualcomm.com>
+References: <20250123111618.1048461-1-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: camcc-sm8250: Use clk_rcg2_shared_ops for some
- RCGs
-To: Jordan Crouse <jorcrous@amazon.com>, linux-arm-msm@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250122213427.28169-1-jorcrous@amazon.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <20250122213427.28169-1-jorcrous@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250123111618.1048461-1-quic_mmanikan@quicinc.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tEv4nDBXFgDgKUwnP8x9fnWOBhQ2Fb0n
+X-Proofpoint-ORIG-GUID: tEv4nDBXFgDgKUwnP8x9fnWOBhQ2Fb0n
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-01-23_06,2025-01-22_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ phishscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0
+ suspectscore=0 malwarescore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2501230100
 
-On 22/01/2025 21:34, Jordan Crouse wrote:
-> Update some RCGs on the sm8250 camera clock controller to use
-> clk_rcg2_shared_ops. The shared_ops ensure the RCGs get parked
-> to the XO during clock disable to prevent the clocks from locking up
-> when the GDSC is enabled. These mirror similar fixes for other controllers
-> such as commit 8d4025943e13 ("clk: qcom: camcc-sc7180: Use runtime PM ops
-> instead of clk ones").
-> 
-> Signed-off-by: Jordan Crouse <jorcrous@amazon.com>
+On Thu, Jan 23, 2025 at 04:46:18PM +0530, Manikanta Mylavarapu wrote:
+> The UART’s software and hardware flow control are currently not
+> functioning correctly.
+>
+> For software flow control, the following error is encountered:
+> qcom_geni_serial 1a80000.serial: Couldn't find suitable
+> clock rate for 56000000, 3500000, 2500000, 1152000, 921600, 19200
+>
+> During hardware flow control testing, a “Retry 0: Got ZCAN error” is
+> observed.
+>
+> To address these issues, update the UART frequency table to include all
+> supported frequencies according to the frequency plan.
+
+Would this need fixes tag?
+
+-Varada
+
+>
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
 > ---
-> 
->   drivers/clk/qcom/camcc-sm8250.c | 56 ++++++++++++++++-----------------
->   1 file changed, 28 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/camcc-sm8250.c b/drivers/clk/qcom/camcc-sm8250.c
-> index 34d2f17520dc..450ddbebd35f 100644
-> --- a/drivers/clk/qcom/camcc-sm8250.c
-> +++ b/drivers/clk/qcom/camcc-sm8250.c
-> @@ -411,7 +411,7 @@ static struct clk_rcg2 cam_cc_bps_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -433,7 +433,7 @@ static struct clk_rcg2 cam_cc_camnoc_axi_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -454,7 +454,7 @@ static struct clk_rcg2 cam_cc_cci_0_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -469,7 +469,7 @@ static struct clk_rcg2 cam_cc_cci_1_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -490,7 +490,7 @@ static struct clk_rcg2 cam_cc_cphy_rx_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -511,7 +511,7 @@ static struct clk_rcg2 cam_cc_csi0phytimer_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -526,7 +526,7 @@ static struct clk_rcg2 cam_cc_csi1phytimer_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -556,7 +556,7 @@ static struct clk_rcg2 cam_cc_csi3phytimer_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -571,7 +571,7 @@ static struct clk_rcg2 cam_cc_csi4phytimer_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -586,7 +586,7 @@ static struct clk_rcg2 cam_cc_csi5phytimer_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -611,7 +611,7 @@ static struct clk_rcg2 cam_cc_fast_ahb_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -634,7 +634,7 @@ static struct clk_rcg2 cam_cc_fd_core_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -649,7 +649,7 @@ static struct clk_rcg2 cam_cc_icp_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -673,7 +673,7 @@ static struct clk_rcg2 cam_cc_ife_0_clk_src = {
->   		.parent_data = cam_cc_parent_data_2,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_2),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -710,7 +710,7 @@ static struct clk_rcg2 cam_cc_ife_0_csid_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -734,7 +734,7 @@ static struct clk_rcg2 cam_cc_ife_1_clk_src = {
->   		.parent_data = cam_cc_parent_data_3,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_3),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -749,7 +749,7 @@ static struct clk_rcg2 cam_cc_ife_1_csid_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -771,7 +771,7 @@ static struct clk_rcg2 cam_cc_ife_lite_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -786,7 +786,7 @@ static struct clk_rcg2 cam_cc_ife_lite_csid_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -810,7 +810,7 @@ static struct clk_rcg2 cam_cc_ipe_0_clk_src = {
->   		.parent_data = cam_cc_parent_data_4,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_4),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -825,7 +825,7 @@ static struct clk_rcg2 cam_cc_jpeg_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -847,7 +847,7 @@ static struct clk_rcg2 cam_cc_mclk0_clk_src = {
->   		.parent_data = cam_cc_parent_data_1,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -862,7 +862,7 @@ static struct clk_rcg2 cam_cc_mclk1_clk_src = {
->   		.parent_data = cam_cc_parent_data_1,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -877,7 +877,7 @@ static struct clk_rcg2 cam_cc_mclk2_clk_src = {
->   		.parent_data = cam_cc_parent_data_1,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -892,7 +892,7 @@ static struct clk_rcg2 cam_cc_mclk3_clk_src = {
->   		.parent_data = cam_cc_parent_data_1,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -907,7 +907,7 @@ static struct clk_rcg2 cam_cc_mclk4_clk_src = {
->   		.parent_data = cam_cc_parent_data_1,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -922,7 +922,7 @@ static struct clk_rcg2 cam_cc_mclk5_clk_src = {
->   		.parent_data = cam_cc_parent_data_1,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_1),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -993,7 +993,7 @@ static struct clk_rcg2 cam_cc_slow_ahb_clk_src = {
->   		.parent_data = cam_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(cam_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>  drivers/clk/qcom/gcc-ipq5424.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
+> index d5b218b76e29..37b1a3ff8f4e 100644
+> --- a/drivers/clk/qcom/gcc-ipq5424.c
+> +++ b/drivers/clk/qcom/gcc-ipq5424.c
+> @@ -592,13 +592,19 @@ static struct clk_rcg2 gcc_qupv3_spi1_clk_src = {
+>  };
+>
+>  static const struct freq_tbl ftbl_gcc_qupv3_uart0_clk_src[] = {
+> -	F(960000, P_XO, 10, 2, 5),
+> -	F(4800000, P_XO, 5, 0, 0),
+> -	F(9600000, P_XO, 2, 4, 5),
+> -	F(16000000, P_GPLL0_OUT_MAIN, 10, 1, 5),
+> +	F(3686400,  P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC, 1, 144, 15625),
+> +	F(7372800,  P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC, 1, 288, 15625),
+> +	F(14745600, P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC, 1, 576, 15625),
+>  	F(24000000, P_XO, 1, 0, 0),
+>  	F(25000000, P_GPLL0_OUT_MAIN, 16, 1, 2),
+> -	F(50000000, P_GPLL0_OUT_MAIN, 16, 0, 0),
+> +	F(32000000, P_GPLL0_OUT_MAIN, 1, 1, 25),
+> +	F(40000000, P_GPLL0_OUT_MAIN, 1, 1, 20),
+> +	F(46400000, P_GPLL0_OUT_MAIN, 1, 29, 500),
+> +	F(48000000, P_GPLL0_OUT_MAIN, 1, 3, 50),
+> +	F(51200000, P_GPLL0_OUT_MAIN, 1, 8, 125),
+> +	F(56000000, P_GPLL0_OUT_MAIN, 1, 7, 100),
+> +	F(58982400, P_GPLL0_OUT_MAIN, 1, 1152, 15625),
+> +	F(60000000, P_GPLL0_OUT_MAIN, 1, 3, 40),
+>  	F(64000000, P_GPLL0_OUT_MAIN, 12.5, 0, 0),
+>  	{ }
+>  };
+>
+> --
+> 2.34.1
+>
