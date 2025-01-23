@@ -1,135 +1,121 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EDF20F98F;
-	Thu, 23 Jan 2025 13:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681851BC4E;
+	Thu, 23 Jan 2025 18:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737638962; cv=none; b=tCBEXfkPM9hj0iKJSQRxgKerYk9Jm8Ow7fFDMXHt44gQoq3xoLY/JcEzY7Voz0kd9f079N/F7PEgLpDvIPLKv7WkH+qTH12/fRpdvmiBx90sIC4i/H9jNR7WskgtrWv6ysCYcLRW3CA4zKJpBtM20GSGMYJP9VZwqmCB+AJ93/k=
+	t=1737656367; cv=none; b=ZTUiwRYkI/eqIcHqMoqKmxNnvDbbG5N/cX8y4GtS3Kr+M2EcDm4n3snkfFX3+raup0vHgaTDnTulGzFTFaGoAXR1m8Yep2xGvKAzMEjW7v8vybqJ4K9KebvdDJluQmTwF17/yVRQmYiSxjHFpk5Z50H/6W3dWvFVAGH9hyfZfqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737638962; c=relaxed/simple;
-	bh=ORV782yc+Xa9p2g1Kkfw4AWuIgFv3ctCh4Pi95fq/8U=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dYlkWb4J+VLE8iwiJZxNfB43iTqKugZEm6qI6RKWQ9Q5TG5BBYzfPUjFbfssCKiLTxx1/oSoUsxPXoz4S6mbh5O9v9+i7ZOXpxhyEE1GQpeYuMYlbkjgabZuCc6blNVDiUdT+Oed1ukw0X5h7pbzGjRwcY2I0Lyovp9aOKJGl/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lVgiSUWV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1737656367; c=relaxed/simple;
+	bh=h0PZIyvKyo5FSgd27LZM19qMYAT35hddubrJVWlLBoU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JWk0BhtItw1uh3LCgTkco8IRBM8yQRur0YA2ERk+R8fZ+E6wetHuJDSmVhRfsqZ9kdbU81l09NT1g0m3aeyMjzopPvNcTvgCTINZOwQEnoTDL88gEDMp7p8xB1m4DXfDxef0dltcOFp2YIh+yfWlfqHPZnkisJiW0KV+1/ZRmlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UIwoQbBB; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lVgiSUWV"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50NAo2jv024913;
-	Thu, 23 Jan 2025 13:29:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	O8lxYdh3YczE7Et2KG6V1s0UxT73D3aeU59zH165uOg=; b=lVgiSUWVN12fhIpk
-	dKBcxRf86qf7WL81MFMOYz9eIoEwT+J2K3deK+Gdyl7kdHpixIexZU1S9u23fIUR
-	4rqn7w1ewHmnOfeI5EADLL8ZQKM6QwZ5kah45jcF5xbbWxXLCxGQgYvNYyfs2tNd
-	Rb678qu+6V4AKJCJUBKs2ZcNzed5IWcDH9VQnUfoQlljT7Y9bN/Ywd8OLHmUrbez
-	9vI+lKTMSH/Oolo54qnCbTIG1IwEzDOZP/Iy7fJ09d+7gYyrJF+L25//t7/Foq2C
-	cDKua7hy3r4t0O9TN2D6DN869lfKLmUbz1AocUet8hkbUocgu+U/62oxSksV1W2F
-	j6or5A==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44bmbg8c54-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Jan 2025 13:29:16 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 50NDTFWc021185
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 23 Jan 2025 13:29:15 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 23 Jan 2025 05:29:12 -0800
-Date: Thu, 23 Jan 2025 18:59:08 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_srichara@quicinc.com>
-Subject: Re: [PATCH] clk: qcom: ipq5424: fix software and hardware flow
- control error of UART
-Message-ID: <Z5JEJCJsYDz9b85b@hu-varada-blr.qualcomm.com>
-References: <20250123111618.1048461-1-quic_mmanikan@quicinc.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UIwoQbBB"
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 50NIJEwQ1219135
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 23 Jan 2025 12:19:14 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1737656354;
+	bh=4av+8cgjAiZNOfHQIwugRwkrm7JLS5G+a8WUKEYz2PU=;
+	h=From:To:CC:Subject:Date;
+	b=UIwoQbBBBVYUtNEEjNyQA6JPdgJiH5+wZ/2E9tytiC9H7bhgd1QfVdl99c4/uDvtJ
+	 7eyNm63q4oTtku0V+LAVw5BkUL8mBpPhvHCc+12c34ciQAsU2R4MaQkZ1OMib0xDCR
+	 vix1OCBelK8n1kfTHEw3/q2Se5uvsn0LpKX295h4=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 50NIJEuv048832;
+	Thu, 23 Jan 2025 12:19:14 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 23
+ Jan 2025 12:19:14 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 23 Jan 2025 12:19:14 -0600
+Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 50NIJE8q041686;
+	Thu, 23 Jan 2025 12:19:14 -0600
+From: Andrew Davis <afd@ti.com>
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Andrew Davis
+	<afd@ti.com>
+Subject: [PATCH] clk: keystone: syscon-clk: Do not use syscon helper to build regmap
+Date: Thu, 23 Jan 2025 12:19:13 -0600
+Message-ID: <20250123181913.597304-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250123111618.1048461-1-quic_mmanikan@quicinc.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tEv4nDBXFgDgKUwnP8x9fnWOBhQ2Fb0n
-X-Proofpoint-ORIG-GUID: tEv4nDBXFgDgKUwnP8x9fnWOBhQ2Fb0n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-01-23_06,2025-01-22_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- phishscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0
- suspectscore=0 malwarescore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2501230100
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Jan 23, 2025 at 04:46:18PM +0530, Manikanta Mylavarapu wrote:
-> The UART’s software and hardware flow control are currently not
-> functioning correctly.
->
-> For software flow control, the following error is encountered:
-> qcom_geni_serial 1a80000.serial: Couldn't find suitable
-> clock rate for 56000000, 3500000, 2500000, 1152000, 921600, 19200
->
-> During hardware flow control testing, a “Retry 0: Got ZCAN error” is
-> observed.
->
-> To address these issues, update the UART frequency table to include all
-> supported frequencies according to the frequency plan.
+The syscon helper device_node_to_regmap() is used to fetch a regmap
+registered to a device node. It also currently creates this regmap
+if the node did not already have a regmap associated with it. This
+should only be used on "syscon" nodes. This driver is not such a
+device and instead uses device_node_to_regmap() on its own node as
+a hacky way to create a regmap for itself.
 
-Would this need fixes tag?
+This will not work going forward and so we should create our regmap
+the normal way by defining our regmap_config, fetching our memory
+resource, then using the normal regmap_init_mmio() function.
 
--Varada
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ drivers/clk/keystone/syscon-clk.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
->
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
->  drivers/clk/qcom/gcc-ipq5424.c | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
-> index d5b218b76e29..37b1a3ff8f4e 100644
-> --- a/drivers/clk/qcom/gcc-ipq5424.c
-> +++ b/drivers/clk/qcom/gcc-ipq5424.c
-> @@ -592,13 +592,19 @@ static struct clk_rcg2 gcc_qupv3_spi1_clk_src = {
->  };
->
->  static const struct freq_tbl ftbl_gcc_qupv3_uart0_clk_src[] = {
-> -	F(960000, P_XO, 10, 2, 5),
-> -	F(4800000, P_XO, 5, 0, 0),
-> -	F(9600000, P_XO, 2, 4, 5),
-> -	F(16000000, P_GPLL0_OUT_MAIN, 10, 1, 5),
-> +	F(3686400,  P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC, 1, 144, 15625),
-> +	F(7372800,  P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC, 1, 288, 15625),
-> +	F(14745600, P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC, 1, 576, 15625),
->  	F(24000000, P_XO, 1, 0, 0),
->  	F(25000000, P_GPLL0_OUT_MAIN, 16, 1, 2),
-> -	F(50000000, P_GPLL0_OUT_MAIN, 16, 0, 0),
-> +	F(32000000, P_GPLL0_OUT_MAIN, 1, 1, 25),
-> +	F(40000000, P_GPLL0_OUT_MAIN, 1, 1, 20),
-> +	F(46400000, P_GPLL0_OUT_MAIN, 1, 29, 500),
-> +	F(48000000, P_GPLL0_OUT_MAIN, 1, 3, 50),
-> +	F(51200000, P_GPLL0_OUT_MAIN, 1, 8, 125),
-> +	F(56000000, P_GPLL0_OUT_MAIN, 1, 7, 100),
-> +	F(58982400, P_GPLL0_OUT_MAIN, 1, 1152, 15625),
-> +	F(60000000, P_GPLL0_OUT_MAIN, 1, 3, 40),
->  	F(64000000, P_GPLL0_OUT_MAIN, 12.5, 0, 0),
->  	{ }
->  };
->
-> --
-> 2.34.1
->
+diff --git a/drivers/clk/keystone/syscon-clk.c b/drivers/clk/keystone/syscon-clk.c
+index 935d9a2d8c2b3..073c2ebcdf6af 100644
+--- a/drivers/clk/keystone/syscon-clk.c
++++ b/drivers/clk/keystone/syscon-clk.c
+@@ -105,6 +105,12 @@ static struct clk_hw
+ 	return &priv->hw;
+ }
+ 
++static const struct regmap_config ti_syscon_regmap_cfg = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
++};
++
+ static int ti_syscon_gate_clk_probe(struct platform_device *pdev)
+ {
+ 	const struct ti_syscon_gate_clk_data *data, *p;
+@@ -113,12 +119,18 @@ static int ti_syscon_gate_clk_probe(struct platform_device *pdev)
+ 	int num_clks, num_parents, i;
+ 	const char *parent_name;
+ 	struct regmap *regmap;
++	void __iomem *base;
+ 
+ 	data = device_get_match_data(dev);
+ 	if (!data)
+ 		return -EINVAL;
+ 
+-	regmap = device_node_to_regmap(dev->of_node);
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return dev_err_probe(dev, PTR_ERR(base),
++				     "failed to get base memory resource\n");
++
++	regmap = regmap_init_mmio(dev, base, &ti_syscon_regmap_cfg);
+ 	if (IS_ERR(regmap))
+ 		return dev_err_probe(dev, PTR_ERR(regmap),
+ 				     "failed to get regmap\n");
+-- 
+2.39.2
+
