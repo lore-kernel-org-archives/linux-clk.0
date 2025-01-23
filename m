@@ -1,204 +1,149 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC021C5D4B;
-	Thu, 23 Jan 2025 20:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27391B424B;
+	Thu, 23 Jan 2025 20:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737664058; cv=none; b=dE1AzMaCb1tifmexHPnpa1iBfLNBX0upm46EhOO8YyZOELOk6HxZTIIvXLOD4Vmo9rG1zSkJ8TEFwLkkuDa0mJ8VtPv6+f212lAXLOxpd/PSWcnLbUfJyQ1HgIfOOKg38GIU9jwddY4gHE8UotVhwRfl1qdA8hkVCR/KfyVoSK8=
+	t=1737664168; cv=none; b=uih7ZrwQnZYGw5rTdkWM9miB+R0ClnXxUzs0GtCkjmLg6WKhJ/4filedmWYL3blqbLCluYiOP0n8RSp8l22uHicGYREDEvfyQrTNvZojnvKtipW29X2v4YA1UoVU9IEWwCvE9c1w5JkiAgZ48KAdqq6lMfYlEPJ1MgpHEzvpA5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737664058; c=relaxed/simple;
-	bh=XjYNMqbWZ4n/XbjzqN1/SpWN54nBY4NkBU2QqHtYu+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pBnAaxvhbn51YeJ8kSusamy62elnaeUPSCnvu7JnPctzCOxYC7Ad/ucnKe/V506KkDEtgAji/y7ItoW7Vq4dWs1J0xF6yE+Edm08ysX/MhxMVYy27NG0g20mpTgZP0k3GNHzApGD/1if0pVkiCLstK8mUlPVMuBsnz6hzhP0UgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d9FAFOxY; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1737664168; c=relaxed/simple;
+	bh=pnwh62on35oF9nCa2yi0bKTQ8+BApmfGta6a4WMK9Xk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c2qTMOyyWocvLQmFWdjh0bX4TTUD7lSvN/aHjWoT6o2fiwIHNybWPvl02Fysv6xtafRDLH3tXw6LmUjHPcUe9vWi57p51FyOBsd0fmoScvIvoPWIoZN9l+Ugp/BUKGj+/SKlwUdaO1ThUCDtOZ7VRYrpRzFT+kdTD9Wm3h5k0sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9FAFOxY"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-436ce2ab251so9147955e9.1;
-        Thu, 23 Jan 2025 12:27:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737664054; x=1738268854; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=00Jd7qfRLvc64aDOsfuy6UISvWMt9cQyEiI056IRJNA=;
-        b=d9FAFOxYmpnDUoFdtN0323r296ddXvHDPbc7bjTBVvz2FjBbYgth90TZRvh0sWK1oB
-         i6bq4UhgasyqOScH030iQGZ23gZROkTyZrZOCCfSYbnh4OmLWZArKVOYjjTSjtcNdj7Z
-         yrKYcd9yW87IMa90XkISVMbtU2HbYo1z4MCAw8oTLMcLvHOO88EoZ19klFgFFv6j+1d8
-         9/0ccJO4p3kHtqogyokyjWCKKIu40WDcdaB1lt73xMLEk9PFCgCvdQdbJ21ccMfSBUTJ
-         PHoHHDOOXsHUN1oAwFcsYxBWisyhdJ/WFE6LDxO/m9ZQwGyPb4uYJT3FiMaRlnGLTd3v
-         w3/w==
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-51cee9d5013so826621e0c.3;
+        Thu, 23 Jan 2025 12:29:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737664054; x=1738268854;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1737664164; x=1738268964;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=00Jd7qfRLvc64aDOsfuy6UISvWMt9cQyEiI056IRJNA=;
-        b=TN891/4eXk7fWEkXdas2l1T6lFmDVWWSv0KTIl5t3qaqWo68tJafci5zHluuN0pUdQ
-         S1pYrT9lflt4VHE9X6vqmUkvbAYuT5TvYNwxYLLY55mAJC4rkOsz1LZ7t2NGO2hHXs6A
-         5UefCnVC4GYSRV5A0cUNFWgeWe0Hw5x8Y5IvGVtJrJ2jhK5PGhg+8O7phNis4oBjeDVs
-         Q8xeJq/oSQeyR7U+mD9XH35QFzzI6MtmnMug4dtKOp7ID2LtbGzymOJbiWtTt7ltahig
-         7IX2U9BYFedggYAh/xagrfwnPrN/9FBYm4j6hfZRw9Iyp6p8YAwrbleq2U4kl33SqJHN
-         ZgAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIVq3XjqXCavYMWeN+1RGUA65go2Kgc6tkYXGplG1+vYkAWrsU2gzzX9A/cFdRNAFAYaNTHOXh3Qg=@vger.kernel.org, AJvYcCX/grHsBEzmbDP2HiKiH0FFEkntub2dyTdKMKHmkDYHL7TLuboC1BNkVfkVBEnnPZ2JPpknE3NfvakAuh0n@vger.kernel.org
-X-Gm-Message-State: AOJu0YzObHW0RwDvk8FnCFaf1qMIYk93yIhcgidpvmVEisykEzsGIss2
-	9tJA8LSIi3DNXba3yGl2d04tMsEngzw0JvcZDoC5lF7aq7DYKzjr
-X-Gm-Gg: ASbGncskhLffKy0lOxp1IexCZ9BzglRJPy3T/jihMRDyQ1lwz6yWcwS/cMvlRHjHPGO
-	EsV3milzSEvjZxvsbaRli5c8ZuTUvd1GYI5HEjvVXBidiNUFW/qihKZYgnfm1WDe8BjFMWbD4c1
-	mc7IGcfNzRzo4dsUhcuganR7V2IkxPqd7FiIQ1SI9iGMJpEAWCeat8A3ow5RESTWpbW74/EiGfK
-	ajkYHlPqHKB6cWF/pXe/L9uCXmwQg4/0yCI/7ypiL5g34h7OtwZit36D+lM5j+++/7CrZByB6E/
-	zlgEOUj3/ICS5w/ogCDKiQ8kSLnoGCx715dBggEpGQ4=
-X-Google-Smtp-Source: AGHT+IELmIj4TMdtO6F0JzBvp13pItF/CqH7DVKu4Caf20C2VuLCa8NuLXlr21iKRQntmJ/EV7Urrw==
-X-Received: by 2002:a05:600c:3c82:b0:434:f623:9fe3 with SMTP id 5b1f17b1804b1-438913e024emr291117265e9.16.1737664053774;
-        Thu, 23 Jan 2025 12:27:33 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd507e0csm2624815e9.20.2025.01.23.12.27.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2025 12:27:33 -0800 (PST)
-Date: Thu, 23 Jan 2025 20:27:32 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Anastasia Belova <abelova@astralinux.ru>, Emilio =?UTF-8?B?TMOzcGV6?=
- <emilio@elopez.com.ar>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Hans de Goede <hdegoede@redhat.com>, Maxime Ripard <mripard@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org
-Subject: Re: [PATCH] clk: sunxi: add explicit casting to prevent overflow
-Message-ID: <20250123202732.5f7eb52b@pumpkin>
-In-Reply-To: <20250123005556.57b2331d@minigeek.lan>
-References: <20250120084719.63116-1-abelova@astralinux.ru>
-	<20250122225805.2ba6a062@pumpkin>
-	<20250123005556.57b2331d@minigeek.lan>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=Vd1TkqSq28vmFyt5g4A7LX87fPOL7pqaSEPxXJnJuPk=;
+        b=OxAegnkpxGAg8bDFnQgzYVCeYbR9PYu9w3mBC38V7TuUXTYXG2zWqF1Y7aHTuo87el
+         8i6rJqdv67fa+CTSsHMz+p0AxlIG6vyeZ6XCfBppcw0+qhptAI687O+tuA22KU+YFRbR
+         YJhfTOYBxa33BXA0cdmAxrGjOsJ3ClbBMSn12zA001243YWb+jWWNJBfrHzIBQKH6dKG
+         O1uvcho67gZIMlyZTbPYmLeVsyNZ3ITZpEEEUs/wdhzSuHu36Eb09HyILj4xRLVcnsdi
+         QVoIirZ9W5nRloa9SVd5wQcB/FGG9MEt/PK+JLD9xHg1XrAfi04Dh9fb+pTRH8xOJals
+         cxGg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2xmFhR2FkDEF6DgMNvDljnjgdKGOejG5h8zh3hjeVeq+zN+gb5nogF10i2up41scT7CEK3WOeFOA=@vger.kernel.org, AJvYcCUssFhZ3SzqjOIZ9UqfP+/NshXdLsO+4PLo2Uv/CXa+aqRD1DHUuEzdZSGRWIpfvlY12zLR8jm692PoHE2t@vger.kernel.org, AJvYcCWpoNhlIEWTRFinZghzIngx5+47tLFIexs5N3xzVd0ofkM0MAi6Z6B4IaOGcSUdLaEPaWgmwrLB@vger.kernel.org, AJvYcCXqEO1Q6nLHaCqpzTI+D2MvfCPZeiLzIyt59kjCtZKOysZ+YoaJ9ZPaCpEWFvHD+aeEanF2bk7mwtYYJomNYNIjUTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx33J8V9dwd463nTgNYgcfDSuCR8c/QXSsDuZcm4UA9vOItDtKu
+	u5OT1ebNkJeBWu17gFEtr0maWJ06QLgBi9xZ3bfXDCnB3H4tbBfzeQqCmGsi
+X-Gm-Gg: ASbGncv2WYaaHf+k0aMe/CisyxlgbbYiLVR8Nycv8muIooCEAiBI/E5DpaUZzmG2cBw
+	dn4wTrvkGaE1oO8KYwnj9RgCUAtNkv68MHcAhg93NvQXLgrTMyZFAzdElCDadR5qDk8c420/uph
+	mp5vyFiOw9vtu2L3wbdA6kb9MDqPw1UHOJAUb8t3kICL71Ig7IL9EYbMvPSIhX8UW8m40XXojkw
+	x95r8J+Oquz+00z3JQz6e361HXFBLmJc8iuVB+wguXWIvuyT6aG1In9nEP0b7QaF+kxgzOmGOEf
+	s1TNooUSkc3JkzUWqw50fkLKSTDYloIeJDf3uC97m+ihNWQ=
+X-Google-Smtp-Source: AGHT+IF0JpaP7SycLmVKkQh1KNy+m9jRLyyph1u4m940IjB+Y+5hMfRDVxoUPPhCjVaAHFbdqZOfpA==
+X-Received: by 2002:a05:6122:2105:b0:51b:8949:c9a8 with SMTP id 71dfb90a1353d-51d5b33f5d8mr24670094e0c.9.1737664163943;
+        Thu, 23 Jan 2025 12:29:23 -0800 (PST)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51e4ebea36esm115107e0c.41.2025.01.23.12.29.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Jan 2025 12:29:23 -0800 (PST)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-517aea3ee2aso796124e0c.2;
+        Thu, 23 Jan 2025 12:29:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU/YCHJICbnZ0HqxdBKHzMfvT4tehptGEzafgzr03dlaaDX+Al7PR4RAPGvnFgU9bTLFCHuT5ntkhA=@vger.kernel.org, AJvYcCUuecueWimRVO1oMpyRXI2rSuYMTQJOKty1+ZfVgjOM+bbgNbM/yCrMLWyy6lI/BpCsvWIcocD6wRBRSowH+Wa63UU=@vger.kernel.org, AJvYcCXVzzKnF7QS5Zq/rpqPLAaqnoe8s9pGPjcwsVVgoi0wr7A6ORbdaOdmmpDeu2wp1Q9IgCSNFzrM@vger.kernel.org, AJvYcCXmeQxGgIfyXCHczOkLqlPUf0ZWdV1TgJ1OwNhHiTOS+sZ3iVk5g70jzKBSi9xtF0thHhNl/J8u0ypmAOdi@vger.kernel.org
+X-Received: by 2002:a05:6102:2ad0:b0:4af:597b:ef with SMTP id
+ ada2fe7eead31-4b690bb51d3mr23979878137.8.1737664163332; Thu, 23 Jan 2025
+ 12:29:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250122100828.395091-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250122100828.395091-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Jan 2025 21:29:10 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVP8LrqAYK7sPJqiB+Fagk=CrhSwX1CixKOxoiGgyDEoQ@mail.gmail.com>
+X-Gm-Features: AWEUYZnkzUSG80PrWtV5m7mXIgljPubn8AIQbb5HVVIJvBFGHO3N8MKYLmuYOUM
+Message-ID: <CAMuHMdVP8LrqAYK7sPJqiB+Fagk=CrhSwX1CixKOxoiGgyDEoQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a07g043: Fix HP clock source for RZ/Five SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 23 Jan 2025 00:55:56 +0000
-Andre Przywara <andre.przywara@arm.com> wrote:
+Hi Prabhakar,
 
-> On Wed, 22 Jan 2025 22:58:05 +0000
-> David Laight <david.laight.linux@gmail.com> wrote:
-> 
-> Hi,
-> 
-> please note that this is all practically irrelevant:
-> - PLL4 is PLL_PERIPH0, which is meant to be fixed to 960MHz. Linux
->   would not change this frequency.
-> - the Allwinner A80 is both old and quite rare/obscure: the most
->   prominent board (Cubieboard4) was broken for a while and nobody
->   noticed
-> - this "allwinner,sun9i-a80-pll4-clk" clock is not used by any DT
->   in the kernel, so it's effectively dead code
-> 
-> But just for sports:
+Thanks for your patch!
 
-Doesn't surprise me ...
+On Wed, Jan 22, 2025 at 11:08=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> According to the Rev.1.20 hardware manual for the RZ/Five SoC, the clock
+> source for HP is derived from PLL6 divided by 2. This patch corrects the
+> implementation by configuring HP as a fixed clock source instead of a MUX=
+.
+>
+> The `CPG_PL6_ETH_SSEL` register, which is available on the RZ/G2UL SoC, i=
+s
+> not present on the RZ/Five SoC, necessitating this change.
 
-> 
-> > On Mon, 20 Jan 2025 11:47:16 +0300
-> > Anastasia Belova <abelova@astralinux.ru> wrote:
-> >   
-> > > If n = 255, the result of multiplication of n and 24000000
-> > > may not fit int type. Add explicit casting to prevent overflow.
-> > > 
-> > > Found by Linux Verification Center (linuxtesting.org) with SVACE.    
-> > 
-> > You need to read and understand the code before writing any patches.
-> > The '>> p' and '/ (m + 1)' are both just conditional 'divide by 2'.
-> > So can be done before the multiply.  
-> 
-> Well, normally you would try to multiply first, then divide, to avoid
-> losing precision. In this case it's fine, since it's just dividing by 2
-> or 4, and 24E6 is dividable by both, so no loss. But the formula in the
-> data sheet is written as "24MHz*N/(Input_div+1)/(Output_div+1)", which
-> matches the code (somewhat).
+While the register is not documented to exist, it reads back the same
+default value as on RZ/G2UL, selecting the right parent that does exist.
 
-That PLL can generate all sorts of frequencies due to the multiply
-and divide (as well as the shift).
-The code was clearly sub-optimal for arbitrary frequencies :-)
- 
-> So I think it's indeed better to divide first here, to avoid using
-> heavy library based 64-bit mul/div algorithms, just for this one corner
-> case, but it would need a comment, to point to the problem and avoid
-> people "fixing it back".
-> 
-> > Since req->rate is 'signed long' and the value is a frequency it is  
-> 
-> struct factors_request.rate is "unsigned long"
-> 
-> > only just possible that it exceeds 31 bits (and will be wrong on 32bit
-> > builds - but sun-9 might be 64bit only?)  
-> 
-> The A80 has Cortex-A7 cores, so it's 32-bit only. The SoC can address
-> more than 4GB, but that's not relevant here.
+> Fixes: 95d48d270305ad2c ("clk: renesas: r9a07g043: Add support for RZ/Fiv=
+e SoC")
+> Cc: stable@vger.kernel.org
+> Reported-by: Hien Huynh <hien.huynh.px@renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I couldn't decide whether the code was for 32bit or not.
-Using 'long' is pretty dubious almost everywhere.
-I'm sure it is a hangover from people worried about int being 16bit.
-But that has never been true for linux (or pretty much any unix since
-the early 1980s).
+> --- a/drivers/clk/renesas/r9a07g043-cpg.c
+> +++ b/drivers/clk/renesas/r9a07g043-cpg.c
+> @@ -138,7 +138,11 @@ static const struct cpg_core_clk r9a07g043_core_clks=
+[] __initconst =3D {
+>         DEF_DIV("P2", R9A07G043_CLK_P2, CLK_PLL3_DIV2_4_2, DIVPL3A, dtabl=
+e_1_32),
+>         DEF_FIXED("M0", R9A07G043_CLK_M0, CLK_PLL3_DIV2_4, 1, 1),
+>         DEF_FIXED("ZT", R9A07G043_CLK_ZT, CLK_PLL3_DIV2_4_2, 1, 1),
+> +#ifdef CONFIG_ARM64
+>         DEF_MUX("HP", R9A07G043_CLK_HP, SEL_PLL6_2, sel_pll6_2),
 
->  
-> > In any case it would be sensible to force an unsigned divide.
-> > So perhaps:
-> > 	unsigned int n = DIV_ROUND_UP(req->rate, 6000000ul);
-> > 	...
-> > 	req->rate = ((24000000ul >> p) / (m + 1)) * n;  
-> 
-> Yeah, I don't think we need the "long" qualifier, but this looks like
-> indeed the best solution, just with an added comment.
+When building with W=3D1 on non-ARM64:
 
-Maybe just mention it only need to generate 96MHz.
+    error: =E2=80=98sel_pll6_2=E2=80=99 defined but not used
 
-> And we probably
-> want to change the type of "p" and "m" to u8 on the way, to match the
-> struct and make them unsigned as well.
+so sel_pll6_2 [] needs to be protected by an #ifdef too (or __maybe_unused,
+but the rest of the file uses __ifdef).
 
-Make them unsigned, but not u8.
-The u8 would get promoted to signed int before any arithmetic.
+> +#else
 
-	David
+The rest of the file uses:
 
-> 
-> Cheers,
-> Andre
->  
-> 
-> > 
-> > David
-> >   
-> > > 
-> > > Fixes: 6424e0aeebc4 ("clk: sunxi: rewrite sun9i_a80_get_pll4_factors()")
-> > > Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
-> > > ---
-> > >  drivers/clk/sunxi/clk-sun9i-core.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/sunxi/clk-sun9i-core.c b/drivers/clk/sunxi/clk-sun9i-core.c
-> > > index d93c7a53c6c0..70fbd7390d96 100644
-> > > --- a/drivers/clk/sunxi/clk-sun9i-core.c
-> > > +++ b/drivers/clk/sunxi/clk-sun9i-core.c
-> > > @@ -50,7 +50,7 @@ static void sun9i_a80_get_pll4_factors(struct factors_request *req)
-> > >  	else if (n < 12)
-> > >  		n = 12;
-> > >  
-> > > -	req->rate = ((24000000 * n) >> p) / (m + 1);
-> > > +	req->rate = ((24000000ULL * n) >> p) / (m + 1);
-> > >  	req->n = n;
-> > >  	req->m = m;
-> > >  	req->p = p;    
-> > 
-> >   
-> 
+    #endif
+    #ifdef CONFIG_RISCV
 
+instead of #else, so please use the same construct for consistency.
+
+> +       DEF_FIXED("HP", R9A07G043_CLK_HP, CLK_PLL6_250, 1, 1),
+> +#endif
+>         DEF_FIXED("SPI0", R9A07G043_CLK_SPI0, CLK_DIV_PLL3_C, 1, 2),
+>         DEF_FIXED("SPI1", R9A07G043_CLK_SPI1, CLK_DIV_PLL3_C, 1, 4),
+>         DEF_SD_MUX("SD0", R9A07G043_CLK_SD0, SEL_SDHI0, SEL_SDHI0_STS, se=
+l_sdhi,
+
+The actual change LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
