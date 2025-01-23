@@ -1,124 +1,102 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C08520C00D;
-	Thu, 23 Jan 2025 08:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B391B87C3;
+	Thu, 23 Jan 2025 09:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737622712; cv=none; b=hZsbB5wVREDrik8N71Vrdl3tbmbD7DijTocK6EahFRHPLGBpzT4xwaQ63pHU7NACrdoCoGyQhXBaIRcFNewKEcz5OOj729yqYMs506JWrKWvudzOwGw+EM/baXpUWgNvQpg+w9DB37aCXl8uIM5MVMo8x81xK1jlGO1/pi8Bppk=
+	t=1737624948; cv=none; b=r/ruunYtVeIPbsQ0LUYhGKM88D5GHpUia9SaZsrqCnD3HvaXEEvgaxl/EqWz8YuODfsGLiVzvvWwbf4/JacuY0XZmNdUiVr1a4Wf5wY5e6tqh+qvq471XC8j0WPNwU8IE5jdTcpOz/XEME7OZqI0hY1V3LHN0BrzeFRfk2fwAYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737622712; c=relaxed/simple;
-	bh=HkyeRQ66zp1oc6NXegGG+5zPV8GgPQJyFzgH5zMyigE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=q7D9bM2jwpCv1Zw7HLbrJp1IptI1z8hQj/wceh5Kn894BrG2bRws/r3eTWWlB7NHgaX2SJLDswA/DLLd4zKy/Yt+tNK0+jW0QQGaG3Cyt32GXqFuRiR3fSxYdYilVnmtO7t35i/F+/I/SUqPK1Vnoevpo5vpvve1I2FEZBFSy8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M6McpOru; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1737624948; c=relaxed/simple;
+	bh=eaJoKzW6wkE6ki/ELC9AQXU7Q4QTLZ+i3pNbEaAN4Lg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oLLqR/klz/Oc5dlKrR0qdViOSXSt2bQXPe8XVlAmbe5aebbRyL79woHsuIy0cJF9Gh3HJ0D2knDOxGPbEwtcWx3GRJZYYz8TZVRVx31hmrFoPs6gKwJYNOGsF4eaI4i9XtysgQFKd4Zyz5AONQ5Rfp0ZpwbUr3FrNw2IMBmzAAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M6McpOru"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38be3bfb045so1221273f8f.0;
-        Thu, 23 Jan 2025 00:58:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737622709; x=1738227509; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HkyeRQ66zp1oc6NXegGG+5zPV8GgPQJyFzgH5zMyigE=;
-        b=M6McpOruscsWDOzcdeDw/uEBtammRmlfH3opcjr5YJwVGs0cTG0ojYJK2iD86Xve69
-         +Q9GKu+C7vxmvi8CXP6o/UJZNvidPvxuVag1kBRd4vQ7cOZ+bPrncMHZpKkiwZfY52z6
-         WeR90hPbivu1sVlUkQUq+P+bbxj7ILKTIyarcNrpZ+p2AStUqxZdV+1tfXHjm3EX9qoZ
-         9T8EtX/y5St/7sA9rUBiQbdvtt9SnpTNpbNVO6P9q2oJhlj+jE+JEYB6F11iXkoVKMmO
-         ieTs18wlT2fDvdVe/oWekYewiyXMzI9K5V0lcrP1/hAnGsjKGYB8/TVuT9erF4qdT4N8
-         1qpg==
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4aff78a39e1so195063137.1;
+        Thu, 23 Jan 2025 01:35:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737622709; x=1738227509;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1737624945; x=1738229745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HkyeRQ66zp1oc6NXegGG+5zPV8GgPQJyFzgH5zMyigE=;
-        b=bL7PHrwghmopBrjPJJPKE/48y6ecgrott4zh0flVYzuLuxpce8DbXXGOp/ogfylzWH
-         WifdFTw3Q7z/dcpTzXQV/bRjtjgZ6QDiiG4lFvBKC+WSFZd5RFCK/bzcUH/HrB5i97X5
-         6uvpe5+Vxooz7s872nRLICNd8z6wN2N9n1SeEntqXE6sFLX5dFBdHowLtdZcBHPws29D
-         NBtkjh6+Ctf58nhWO8JGmyP3JOqKeUEN+I3Q7JXr2BZKorFJtNn9Jw6SRXgreoq7cOHY
-         UBHzh5n1a0fUyjZfGX6FGO77vLh0gzsmcenwOActP0XxLaEdbxoTfB4GPLb7F/aoYyC+
-         tazA==
-X-Forwarded-Encrypted: i=1; AJvYcCUG9HGVrzQBKBU0g31UqMQuDa5QIgSwlxrgQdLkfOWWuBxH8zEW5FBgBVndjQkgk9CC599i41dCg3y2@vger.kernel.org, AJvYcCV5qdw6yK6syI5FVjQZDsFP1SgIiNFZet0w90iM1emuAXlAaDymhuK1BPDW9ajApM+Av4Oe12/fHkU=@vger.kernel.org, AJvYcCV7CF0CIggqXvBVr1Md5lYICke1z/c8m8Rfc9xFg8SqF2og9Tly8dVQr8p2Ag5ZDcWohDuVPFW6tgdDsluC@vger.kernel.org, AJvYcCWT6VellgufhCioEGlwIWznbB1xdkkiSPGL6qDXTPb+xWmW5TsZic0ofk8pJp++WhV5U+KaHLSio/SleQ==@vger.kernel.org, AJvYcCWtv4uhBjeAolPeYmg572b2gZhCz4r9Z98IXKQV1yX8iXHggpQty7FiOqELu+tg+J3JLs4N0NS82RnE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHgUJGPUtRUuBWkJzw1qlHl5A8KEWg5NxrDSyYhTK4eNrjdQs4
-	V6cJTw1C2jhOZsvT/7xlGOPO/tv9W4A3ThSyLk04t6mJw1SZHHvP
-X-Gm-Gg: ASbGncvcBV8dJFoY7Q4AfWVAL7ofMSpmuK01ECNJ9OC+RGJfP9XLt2n8D+OAdJKJTB+
-	k92moCJztV8ejPSq+lpLBNw7nADNvwz2jp7tNtjYFmWMCJ7FOsTmyKNFW0gkclKji3otVj1emaf
-	o9o0qg+bfJlI3APQnUNpELBVSntWkVxZ4pKkUy+AzJPgjWg6sJh1D611rSf1TzBlyBc/8wmgeXL
-	ZMIi4Hj/nkenWPtZGvY8ZNBPgiZjLhj/gAPE9V8hLoDyWCkgS9kzXOOCGyU1G3j+UkSW1dhkxXg
-	hrqR1P3hPp2jByLhBACsGvCQxTKXmjM1DVkm5MUn6eQ=
-X-Google-Smtp-Source: AGHT+IHc1t5fGPvcthsivd2P9fI8/r4mtQiSRE3tXH+2jfQUvFcq70i0y1FajJPpW7lEuohcXqidQg==
-X-Received: by 2002:adf:f8c5:0:b0:388:c61d:4415 with SMTP id ffacd0b85a97d-38c22275647mr1806903f8f.18.1737622709399;
-        Thu, 23 Jan 2025 00:58:29 -0800 (PST)
-Received: from smtpclient.apple (185.174.17.62.zt.hu. [185.174.17.62])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38bf322236csm18793946f8f.39.2025.01.23.00.58.27
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 23 Jan 2025 00:58:29 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+        bh=b7jYYO+2y1p+BFp6JLhMQ3Tnjo7YEzk0CDOkXbIVVUo=;
+        b=oBvWLXi5/T3S9epur2jDNg5WNYopk9/+xWHd4EhaIQQ2XWFUneyV7PAoLckLliEGrn
+         yYKBOFt9oLey6iMETBXFN6UHxfJmT3jVyRjCg44wmib+YoSMbpNLHKSpwW9prKOhcz2w
+         i1JZiep/pzrpLvtJrgDkKloseHAfBPyfuqWYdZzs0n4SxJoIlcLM/KuvQQc7MY34GVvU
+         9mzJI58SpZcI0V1K5oHb5IqKtTt2mB0CG7jaNxoRsfWwUmWVDEWUN4Fh8tLqrPRO+EjV
+         2gZ1L17PchxUYReiyjxIBMMs1sc8UGjajwXxdaYl+PJXYKa7bLyzfdIUyYYzPyEo+nza
+         X9Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCjkW1u2GQcuVJhaXSale/Gkv/CUL477NHbosTQr73I21ejVHi4Oog+dFSkXO09rw1/Aq15QgHvdSceJTy@vger.kernel.org, AJvYcCV9PA57MKocrvIZBmcrcm3tZ9+roXgiTLFBLOtWWCLchWeE6uU0pZWVpZMEbpzFs91asOMgKdhVcSg=@vger.kernel.org, AJvYcCXJMzXomoNAT5ZWLDdmTB9TOfTzLLzEhL7IPGXCK7gW/Ae7kgu4U9zJ9uo6+T+XD6pdhUBCANCrJZjsowHpTuHJWB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq/iCKBrJ+d6Tj84gsMSU9IDjmSbQJuohPL45zEU4b5JDA7qo8
+	h2yoV86rcdLHBFdzNYlMGE9TKO1WbGPQPsnszDfKCwpzmehYTiWEqTMaPAsF
+X-Gm-Gg: ASbGncu0PvhY/NU/XDeTlDJiaBnDtE0tU4tZ7bRuVuHkllafOg4yV/9whpmcUd8izSL
+	2meJPQ3ucdsN47i5jmxscZ4UG4nHDo/g+nUMKyIO1lQxOtwlmSR01Wv8WWoxykVv6QUDthasBnd
+	KJRTDV/6DdCJbOpiMQTt3/9tpW9DfgTvWBWpzVcm7nR1FkgJBmgdtNFxSvPnYhLxjLFRmLQn7Tz
+	mluRmTHdH1qzGTD1ATTXy077PFjPt3WjXh0tbSEY2lzLxjWyL6rta60jugTbTDDDaCFibBbKc39
+	tg4um1W2+hi33W66N6+lR9xeJHWQCBd9cKbC7bNjjH/fXXc=
+X-Google-Smtp-Source: AGHT+IH3wei3mYrhmg8YznS2lGYmLd7r80U3VDnUsTfHXoFA+Lr/nUb+LICE6AzX38/T5buJf6RK7g==
+X-Received: by 2002:a05:6102:5716:b0:4b4:6988:b12b with SMTP id ada2fe7eead31-4b690d3ae95mr20272974137.23.1737624945296;
+        Thu, 23 Jan 2025 01:35:45 -0800 (PST)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4b68a20cbffsm3056061137.12.2025.01.23.01.35.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Jan 2025 01:35:45 -0800 (PST)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-51cccafb073so314441e0c.1;
+        Thu, 23 Jan 2025 01:35:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWK6IFk5LL2jvnQc6mBQfJ/vs9FVld8PnqH0CugLxaI7qVgclc+Gcugf+2v45GhPd79Bbaimmk4ZU8=@vger.kernel.org, AJvYcCWQueAxJHmrSbI4x2Y31j6HGvppQmPKdARpq7RHHhXm6XhAydq+m5jo/PDpau7yK5uMMVcbmvjAJMswpOKHYCNeY0o=@vger.kernel.org, AJvYcCXc+mPdaT75XaRoJ0bCVhornTo5mWjv8bVZBTEYI5QUaKM50hZaavoO1cN0LnGATsQMLI5PuW1JqbYHDWnt@vger.kernel.org
+X-Received: by 2002:a05:6122:1682:b0:516:1b30:8797 with SMTP id
+ 71dfb90a1353d-51d5b377327mr19120555e0c.11.1737624944900; Thu, 23 Jan 2025
+ 01:35:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH 05/12] clk: sunxi-ng: add CCU drivers for V853
-From: =?utf-8?B?QW5kcsOhcyBTemVtesWR?= <szemzo.andras@gmail.com>
-In-Reply-To: <36af1162-cd43-4045-bb43-b8bbf44f9788@quicinc.com>
-Date: Thu, 23 Jan 2025 09:58:17 +0100
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maxime Ripard <mripard@kernel.org>,
- Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org,
- linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org,
- linux-riscv@lists.infradead.org
+MIME-Version: 1.0
+References: <20250106202853.262787-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250106202853.262787-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 23 Jan 2025 10:35:33 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWFC0Mwaz6UDWRL4bCNF8mgcjNx1g2qps42UsR2F=mkdA@mail.gmail.com>
+X-Gm-Features: AWEUYZli1HgEXGfTIJ-8VJRlz6swtgPnZ8drKOA_64sc5EdwBONelvWK8OsBk-w
+Message-ID: <CAMuHMdWFC0Mwaz6UDWRL4bCNF8mgcjNx1g2qps42UsR2F=mkdA@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: renesas: r9a07g044: Add clock and reset entry for DRP-AI
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <266DB665-67E8-40FA-8BE6-E7F82955BAEB@gmail.com>
-References: <20250110123923.270626-1-szemzo.andras@gmail.com>
- <20250110123923.270626-6-szemzo.andras@gmail.com>
- <36af1162-cd43-4045-bb43-b8bbf44f9788@quicinc.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: Apple Mail (2.3776.700.51)
 
+On Mon, Jan 6, 2025 at 9:29=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
+m> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add clock and reset entries for the DRP-AI block, which is available only
+> on the Renesas RZ/V2L SoC.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2
+> - Made dtable_4_32 available only when CONFIG_CLK_R9A07G054 is defined
 
-> On 23 Jan 2025, at 00:23, Jeff Johnson <quic_jjohnson@quicinc.com> =
-wrote:
->=20
-> On 1/10/25 04:39, Andras Szemzo wrote:> =
-+module_platform_driver(sun8i_v853_r_ccu_driver);
->> +
->> +MODULE_IMPORT_NS("SUNXI_CCU");
->> +MODULE_LICENSE("GPL");
->=20
-> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
-> description is missing"), a module without a MODULE_DESCRIPTION() will
-> result in a warning with make W=3D1. Please add a MODULE_DESCRIPTION()
-> to avoid this warning in all of your new modules.
->=20
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.15.
 
-Thanks for pointing it out, I=E2=80=99ll add it.=
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
