@@ -1,154 +1,204 @@
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80898BF8;
-	Thu, 23 Jan 2025 20:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC021C5D4B;
+	Thu, 23 Jan 2025 20:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737662537; cv=none; b=P+6qpZAl59CwKRZPAZ0Nh4x8TxEMW4eGEQLqoAxkoQ7wQ9y5S5xJ1/kgS/nSZsWeg8tiyPVwY7LgyyyFVctfaMvQEO08SrAJf/JN4XBFLLj60tjw3Ca9xAIes2H72k9sg8k/1snWmqUYMEVV47Ay6e+oB0obBah9Ivf1TW3/EQU=
+	t=1737664058; cv=none; b=dE1AzMaCb1tifmexHPnpa1iBfLNBX0upm46EhOO8YyZOELOk6HxZTIIvXLOD4Vmo9rG1zSkJ8TEFwLkkuDa0mJ8VtPv6+f212lAXLOxpd/PSWcnLbUfJyQ1HgIfOOKg38GIU9jwddY4gHE8UotVhwRfl1qdA8hkVCR/KfyVoSK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737662537; c=relaxed/simple;
-	bh=0nonnXqeny+FnM/4d+e8iY8HfcowR3c9J6N3RH+Ym6c=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDrjeomn5EmgtK6HgJmRSborlXU1TjeTP6S+vcsiYPom2t0FAO549H1Twmi3c1xRSA3l5afyzfv4pn+DrJ/6TWyX2GEbEzLcSbq7+fAyQfAXT/S06+p7V1nOdXTc5SCd4l4BLGF2Ks/0UrlKoUusyEdbomsk3EkbTxyrrCz1QDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tiWM3V37; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1737664058; c=relaxed/simple;
+	bh=XjYNMqbWZ4n/XbjzqN1/SpWN54nBY4NkBU2QqHtYu+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pBnAaxvhbn51YeJ8kSusamy62elnaeUPSCnvu7JnPctzCOxYC7Ad/ucnKe/V506KkDEtgAji/y7ItoW7Vq4dWs1J0xF6yE+Edm08ysX/MhxMVYy27NG0g20mpTgZP0k3GNHzApGD/1if0pVkiCLstK8mUlPVMuBsnz6hzhP0UgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d9FAFOxY; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tiWM3V37"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 50NK2AXM1231042
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 23 Jan 2025 14:02:10 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1737662530;
-	bh=RdtBTjfFcbNJRmOhE0vXapIJhvOUi2PQsuLDeU8sq9o=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=tiWM3V37CaIXAy54okQehkD9nmG+YwnY4idK5hWpcO5JmQvSKLtpQlOgWQRrO7VAJ
-	 nY61j3jFJ3mK99sfIJlwExNcOLE1CxGbXxwne7dgi/RdLhW89L70FRWjVYuvUkXY3k
-	 yZK+ziJFv8GVw+3PB6aIOCl7MfN3Xjp2TTD0g+4g=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 50NK2A5f015782
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 23 Jan 2025 14:02:10 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 23
- Jan 2025 14:02:09 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 23 Jan 2025 14:02:09 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 50NK29aP003510;
-	Thu, 23 Jan 2025 14:02:09 -0600
-Date: Thu, 23 Jan 2025 14:02:09 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Andrew Davis <afd@ti.com>, Stephen Boyd <sboyd@kernel.org>
-CC: Vignesh Raghavendra <vigneshr@ti.com>,
-        Santosh Shilimkar
-	<ssantosh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, "Rob Herring (Arm)" <robh@kernel.org>,
-        Lee Jones
-	<lee@kernel.org>
-Subject: Re: [PATCH] clk: keystone: syscon-clk: Do not use syscon helper to
- build regmap
-Message-ID: <20250123200209.lqdap6jdzz4ud37f@riveter>
-References: <20250123181913.597304-1-afd@ti.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9FAFOxY"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-436ce2ab251so9147955e9.1;
+        Thu, 23 Jan 2025 12:27:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737664054; x=1738268854; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=00Jd7qfRLvc64aDOsfuy6UISvWMt9cQyEiI056IRJNA=;
+        b=d9FAFOxYmpnDUoFdtN0323r296ddXvHDPbc7bjTBVvz2FjBbYgth90TZRvh0sWK1oB
+         i6bq4UhgasyqOScH030iQGZ23gZROkTyZrZOCCfSYbnh4OmLWZArKVOYjjTSjtcNdj7Z
+         yrKYcd9yW87IMa90XkISVMbtU2HbYo1z4MCAw8oTLMcLvHOO88EoZ19klFgFFv6j+1d8
+         9/0ccJO4p3kHtqogyokyjWCKKIu40WDcdaB1lt73xMLEk9PFCgCvdQdbJ21ccMfSBUTJ
+         PHoHHDOOXsHUN1oAwFcsYxBWisyhdJ/WFE6LDxO/m9ZQwGyPb4uYJT3FiMaRlnGLTd3v
+         w3/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737664054; x=1738268854;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=00Jd7qfRLvc64aDOsfuy6UISvWMt9cQyEiI056IRJNA=;
+        b=TN891/4eXk7fWEkXdas2l1T6lFmDVWWSv0KTIl5t3qaqWo68tJafci5zHluuN0pUdQ
+         S1pYrT9lflt4VHE9X6vqmUkvbAYuT5TvYNwxYLLY55mAJC4rkOsz1LZ7t2NGO2hHXs6A
+         5UefCnVC4GYSRV5A0cUNFWgeWe0Hw5x8Y5IvGVtJrJ2jhK5PGhg+8O7phNis4oBjeDVs
+         Q8xeJq/oSQeyR7U+mD9XH35QFzzI6MtmnMug4dtKOp7ID2LtbGzymOJbiWtTt7ltahig
+         7IX2U9BYFedggYAh/xagrfwnPrN/9FBYm4j6hfZRw9Iyp6p8YAwrbleq2U4kl33SqJHN
+         ZgAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIVq3XjqXCavYMWeN+1RGUA65go2Kgc6tkYXGplG1+vYkAWrsU2gzzX9A/cFdRNAFAYaNTHOXh3Qg=@vger.kernel.org, AJvYcCX/grHsBEzmbDP2HiKiH0FFEkntub2dyTdKMKHmkDYHL7TLuboC1BNkVfkVBEnnPZ2JPpknE3NfvakAuh0n@vger.kernel.org
+X-Gm-Message-State: AOJu0YzObHW0RwDvk8FnCFaf1qMIYk93yIhcgidpvmVEisykEzsGIss2
+	9tJA8LSIi3DNXba3yGl2d04tMsEngzw0JvcZDoC5lF7aq7DYKzjr
+X-Gm-Gg: ASbGncskhLffKy0lOxp1IexCZ9BzglRJPy3T/jihMRDyQ1lwz6yWcwS/cMvlRHjHPGO
+	EsV3milzSEvjZxvsbaRli5c8ZuTUvd1GYI5HEjvVXBidiNUFW/qihKZYgnfm1WDe8BjFMWbD4c1
+	mc7IGcfNzRzo4dsUhcuganR7V2IkxPqd7FiIQ1SI9iGMJpEAWCeat8A3ow5RESTWpbW74/EiGfK
+	ajkYHlPqHKB6cWF/pXe/L9uCXmwQg4/0yCI/7ypiL5g34h7OtwZit36D+lM5j+++/7CrZByB6E/
+	zlgEOUj3/ICS5w/ogCDKiQ8kSLnoGCx715dBggEpGQ4=
+X-Google-Smtp-Source: AGHT+IELmIj4TMdtO6F0JzBvp13pItF/CqH7DVKu4Caf20C2VuLCa8NuLXlr21iKRQntmJ/EV7Urrw==
+X-Received: by 2002:a05:600c:3c82:b0:434:f623:9fe3 with SMTP id 5b1f17b1804b1-438913e024emr291117265e9.16.1737664053774;
+        Thu, 23 Jan 2025 12:27:33 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd507e0csm2624815e9.20.2025.01.23.12.27.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jan 2025 12:27:33 -0800 (PST)
+Date: Thu, 23 Jan 2025 20:27:32 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Anastasia Belova <abelova@astralinux.ru>, Emilio =?UTF-8?B?TMOzcGV6?=
+ <emilio@elopez.com.ar>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ Hans de Goede <hdegoede@redhat.com>, Maxime Ripard <mripard@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+Subject: Re: [PATCH] clk: sunxi: add explicit casting to prevent overflow
+Message-ID: <20250123202732.5f7eb52b@pumpkin>
+In-Reply-To: <20250123005556.57b2331d@minigeek.lan>
+References: <20250120084719.63116-1-abelova@astralinux.ru>
+	<20250122225805.2ba6a062@pumpkin>
+	<20250123005556.57b2331d@minigeek.lan>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250123181913.597304-1-afd@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 12:19-20250123, Andrew Davis wrote:
-> The syscon helper device_node_to_regmap() is used to fetch a regmap
-> registered to a device node. It also currently creates this regmap
-> if the node did not already have a regmap associated with it. This
-> should only be used on "syscon" nodes. This driver is not such a
-> device and instead uses device_node_to_regmap() on its own node as
-> a hacky way to create a regmap for itself.
+On Thu, 23 Jan 2025 00:55:56 +0000
+Andre Przywara <andre.przywara@arm.com> wrote:
+
+> On Wed, 22 Jan 2025 22:58:05 +0000
+> David Laight <david.laight.linux@gmail.com> wrote:
 > 
-> This will not work going forward and so we should create our regmap
-> the normal way by defining our regmap_config, fetching our memory
-> resource, then using the normal regmap_init_mmio() function.
+> Hi,
 > 
-> Signed-off-by: Andrew Davis <afd@ti.com>
-
-Tested-by: Nishanth Menon <nm@ti.com>
-
-Could we get this routed to master as fixes asap please to get a sane 6.14?
-
-This is part of the fixes TI K3 platforms boot issues reported in
-https://lore.kernel.org/all/b2413460-ec8b-4c77-99b8-4c32b262439a@ti.com/
-
-on the latest linus master v6.13-5001-gd0d106a2bd21 + linux
-next-20250123
-
-Total set of patches tested with:
-https://lore.kernel.org/all/20250119182121.3956546-1-vaishnav.a@ti.com/
-https://lore.kernel.org/r/20250123181726.597144-1-afd@ti.com
-https://lore.kernel.org/r/20250123181913.597304-1-afd@ti.com
-https://lore.kernel.org/r/20250123182059.597491-1-afd@ti.com
-https://lore.kernel.org/r/20250123182234.597665-1-afd@ti.com
-
-
-Cc Rob and Lee
-
-> ---
->  drivers/clk/keystone/syscon-clk.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
+> please note that this is all practically irrelevant:
+> - PLL4 is PLL_PERIPH0, which is meant to be fixed to 960MHz. Linux
+>   would not change this frequency.
+> - the Allwinner A80 is both old and quite rare/obscure: the most
+>   prominent board (Cubieboard4) was broken for a while and nobody
+>   noticed
+> - this "allwinner,sun9i-a80-pll4-clk" clock is not used by any DT
+>   in the kernel, so it's effectively dead code
 > 
-> diff --git a/drivers/clk/keystone/syscon-clk.c b/drivers/clk/keystone/syscon-clk.c
-> index 935d9a2d8c2b3..073c2ebcdf6af 100644
-> --- a/drivers/clk/keystone/syscon-clk.c
-> +++ b/drivers/clk/keystone/syscon-clk.c
-> @@ -105,6 +105,12 @@ static struct clk_hw
->  	return &priv->hw;
->  }
+> But just for sports:
+
+Doesn't surprise me ...
+
+> 
+> > On Mon, 20 Jan 2025 11:47:16 +0300
+> > Anastasia Belova <abelova@astralinux.ru> wrote:
+> >   
+> > > If n = 255, the result of multiplication of n and 24000000
+> > > may not fit int type. Add explicit casting to prevent overflow.
+> > > 
+> > > Found by Linux Verification Center (linuxtesting.org) with SVACE.    
+> > 
+> > You need to read and understand the code before writing any patches.
+> > The '>> p' and '/ (m + 1)' are both just conditional 'divide by 2'.
+> > So can be done before the multiply.  
+> 
+> Well, normally you would try to multiply first, then divide, to avoid
+> losing precision. In this case it's fine, since it's just dividing by 2
+> or 4, and 24E6 is dividable by both, so no loss. But the formula in the
+> data sheet is written as "24MHz*N/(Input_div+1)/(Output_div+1)", which
+> matches the code (somewhat).
+
+That PLL can generate all sorts of frequencies due to the multiply
+and divide (as well as the shift).
+The code was clearly sub-optimal for arbitrary frequencies :-)
+ 
+> So I think it's indeed better to divide first here, to avoid using
+> heavy library based 64-bit mul/div algorithms, just for this one corner
+> case, but it would need a comment, to point to the problem and avoid
+> people "fixing it back".
+> 
+> > Since req->rate is 'signed long' and the value is a frequency it is  
+> 
+> struct factors_request.rate is "unsigned long"
+> 
+> > only just possible that it exceeds 31 bits (and will be wrong on 32bit
+> > builds - but sun-9 might be 64bit only?)  
+> 
+> The A80 has Cortex-A7 cores, so it's 32-bit only. The SoC can address
+> more than 4GB, but that's not relevant here.
+
+I couldn't decide whether the code was for 32bit or not.
+Using 'long' is pretty dubious almost everywhere.
+I'm sure it is a hangover from people worried about int being 16bit.
+But that has never been true for linux (or pretty much any unix since
+the early 1980s).
+
 >  
-> +static const struct regmap_config ti_syscon_regmap_cfg = {
-> +	.reg_bits = 32,
-> +	.val_bits = 32,
-> +	.reg_stride = 4,
-> +};
-> +
->  static int ti_syscon_gate_clk_probe(struct platform_device *pdev)
->  {
->  	const struct ti_syscon_gate_clk_data *data, *p;
-> @@ -113,12 +119,18 @@ static int ti_syscon_gate_clk_probe(struct platform_device *pdev)
->  	int num_clks, num_parents, i;
->  	const char *parent_name;
->  	struct regmap *regmap;
-> +	void __iomem *base;
+> > In any case it would be sensible to force an unsigned divide.
+> > So perhaps:
+> > 	unsigned int n = DIV_ROUND_UP(req->rate, 6000000ul);
+> > 	...
+> > 	req->rate = ((24000000ul >> p) / (m + 1)) * n;  
+> 
+> Yeah, I don't think we need the "long" qualifier, but this looks like
+> indeed the best solution, just with an added comment.
+
+Maybe just mention it only need to generate 96MHz.
+
+> And we probably
+> want to change the type of "p" and "m" to u8 on the way, to match the
+> struct and make them unsigned as well.
+
+Make them unsigned, but not u8.
+The u8 would get promoted to signed int before any arithmetic.
+
+	David
+
+> 
+> Cheers,
+> Andre
 >  
->  	data = device_get_match_data(dev);
->  	if (!data)
->  		return -EINVAL;
->  
-> -	regmap = device_node_to_regmap(dev->of_node);
-> +	base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return dev_err_probe(dev, PTR_ERR(base),
-> +				     "failed to get base memory resource\n");
-> +
-> +	regmap = regmap_init_mmio(dev, base, &ti_syscon_regmap_cfg);
->  	if (IS_ERR(regmap))
->  		return dev_err_probe(dev, PTR_ERR(regmap),
->  				     "failed to get regmap\n");
-> -- 
-> 2.39.2
+> 
+> > 
+> > David
+> >   
+> > > 
+> > > Fixes: 6424e0aeebc4 ("clk: sunxi: rewrite sun9i_a80_get_pll4_factors()")
+> > > Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
+> > > ---
+> > >  drivers/clk/sunxi/clk-sun9i-core.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/sunxi/clk-sun9i-core.c b/drivers/clk/sunxi/clk-sun9i-core.c
+> > > index d93c7a53c6c0..70fbd7390d96 100644
+> > > --- a/drivers/clk/sunxi/clk-sun9i-core.c
+> > > +++ b/drivers/clk/sunxi/clk-sun9i-core.c
+> > > @@ -50,7 +50,7 @@ static void sun9i_a80_get_pll4_factors(struct factors_request *req)
+> > >  	else if (n < 12)
+> > >  		n = 12;
+> > >  
+> > > -	req->rate = ((24000000 * n) >> p) / (m + 1);
+> > > +	req->rate = ((24000000ULL * n) >> p) / (m + 1);
+> > >  	req->n = n;
+> > >  	req->m = m;
+> > >  	req->p = p;    
+> > 
+> >   
 > 
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
