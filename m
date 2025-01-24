@@ -1,115 +1,207 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2055.outbound.protection.outlook.com [40.107.21.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0AE4C91
-	for <linux-clk@vger.kernel.org>; Fri, 24 Jan 2025 11:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737717438; cv=none; b=r2kO4K3lrAGIdx9Kl+PvZCINB/9cqsGTqjrjIBFxnHauGyI4bYLr0pfE/CN100adtc6+63AEUgkkfVbB3GSGu7pK6GAs08suGkOGIJ+FXHwGfgHlGzzMvftBrALMKNKC5MAKFVyGsSDJ9fXpJvMY/6rS6nnWyKFHXXSt/jFVKdo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737717438; c=relaxed/simple;
-	bh=9zptOK9BGQ3fQ4IWt6tQmxVxGeYtZVHhKTOywc7Kx3w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D5LPzzQmLrVdEnhxq3322HMqVH5BuqOWsHG1wr7DDqDWbMZSkdDhr8Oen26IzOR3jJWLthpTk/wpbafEOibKJ4LBPh10rcdw/GNPvmXn5WuIQwtPJpnkiPmFUI+UoofVfvXZYph78pakswDM36sTsyoKGTF7y5r9lfYfEi1gSM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=khgu4iRC; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178181E4BE;
+	Fri, 24 Jan 2025 13:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737724750; cv=fail; b=V+82tbCGbdcA845UcHv/5Kf4hM/5PDwm734Uxodu5ADEEZXQwncooUN1EGSNErd0A1dWhB7G98dTH4sBRNwXoYgGs+KXzpikQHzg6LgFcDBMzDAN5v2WC8K8VKVi5+lfbQE1o+5GQWIFyytPaMQ/Ticz70LWSWZA9UrWomNCKgY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737724750; c=relaxed/simple;
+	bh=S7LKLYgUXoH6r4BqdtZEKryHWfnuka6NNRAcmStSltk=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=FVzKuXUV3T7lAqwNgppYZiELig0lQnemooKdRK2MWeS3Hs42KkCTz18jXz670lmLXJ4yMOmr53ixHBhv+PZbWmwC+7tiLeUfJeaFkvJRjetOZsTYwII7Gt6rt249vxz8uadPfi2DG3KGfR73Oa8sFvbcXFDJ3LoixzLWxWEixCg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=wtYWvVWj; arc=fail smtp.client-ip=40.107.21.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="khgu4iRC"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43621d27adeso13031555e9.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jan 2025 03:17:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1737717435; x=1738322235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cVXKrB+O1fh/6+48GtXPh7iohUuDCptQ4J19ggAdm2o=;
-        b=khgu4iRC6CzJix4AQQDixAj6KirH+KEF0uBml61hq5gNwq93tCRyB3vbxGhuhwu3mW
-         XiGoksaXzZac37UD8q71YRRdRWCAhxn6/yeHCTsxRJm/q3cZ80acg0x56o2tR7RIQvXc
-         CvHwqokbX9VOaV9m+I9pDYGuxuSdvdrlefPWs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737717435; x=1738322235;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cVXKrB+O1fh/6+48GtXPh7iohUuDCptQ4J19ggAdm2o=;
-        b=QHbY0rPtAgGja4MeSBa2DPvX0n2+Kh8M0uhPha3W7Psf9mMpcZMYGVKEItSaGNCRw3
-         tlhtCFsCokWq+dUl2zQU7pkEEOO2dSpZoxO8QIbwWJxHVruBlWaSnJSIYaXAO0hTtG+o
-         3ZVNtg1bD9jwJQCMkowZ4UlMt+o16KpfpXnqEIWAdwQ+P4CRDamxpuppd9T7YEUz2MnN
-         g3Cjwkpc+WK8sTf/Bg0rVnjsecRbv+9dS7TWrvIV8lpXVYvyZixVeeJH2H/uyjua2m+4
-         64ffP0B2zYORxRoLBkKVSMBrQSE4hE2X3ML0BeHliDsj5N5meggVhUe8RTC24iIFTQ7E
-         SQOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjIpI0JIUyqwIYFXeChyqdT2kv48ZTh61JkBGDbhyo4qgJJqWKQ2JifzNqnT13KmT9CfRjeL3Wqgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5/UC0BQKornLuczaG1gILBokgJnfqKtLXY/cYLl7xNOlZQEJW
-	MDC5XhF14WVcR58UhbMPzVfkCA8lHiUuIqVsi164M71yZ7owPlkr60PTyzaAXyE=
-X-Gm-Gg: ASbGncu5/uMyFOzw9YEMjYJ4WHbEbCI3WpsHTPNkHW7CDy/5mvRF8pHtggCL/8rhF17
-	ELfu3tITUrzMrMLkCorzzFhQk3UuXtZ+7o97mpDLU59GthZFDQSX7j1ROujIIw91ofW7M5z8/7F
-	uCOzFcnm+mDRmzVKEAmoKmUERpq5wZHfofRHLC9+GASOYUVT729EAQ8aFTxw5rrRSLjtW4SsPXT
-	tTVur84Rl/QXdeVso1vgvf+Ns8mxxL5OV4htVLj9LsRPyWkpIg6oNppzDqaVy94svjg54Sysmj8
-	FwtmKLGfDZMx4j0KzJ4cXYfcQzGXcZrMSjfAKOHffQ==
-X-Google-Smtp-Source: AGHT+IF7P9coZufZpIyRLi78wcbOmVrALszhypBmaNuECTkf3A9PTixnF+7VqbmWI7lij1JXG+mT6Q==
-X-Received: by 2002:a05:6000:1a8c:b0:38a:888c:6786 with SMTP id ffacd0b85a97d-38bf57c063fmr27161921f8f.52.1737717435139;
-        Fri, 24 Jan 2025 03:17:15 -0800 (PST)
-Received: from localhost.localdomain ([2001:b07:6474:ebbf:a445:7786:b555:5259])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c2a188bf5sm2431547f8f.50.2025.01.24.03.17.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2025 03:17:14 -0800 (PST)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH] clk: stm32f4: fix an uninitialized variable
-Date: Fri, 24 Jan 2025 12:16:54 +0100
-Message-ID: <20250124111711.1051436-1-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="wtYWvVWj"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IxFTXW0nihzgOSHmi1SCUsXdkD3us78U0+B/3Huc0FuErzfeeFTxQNyYChecYt9lrl7z3tZ314msKUNm546OmB5ZG27RiPPfiEdU8wAXE22TTWAvYrKEodLJLvx0eNaWFvLjANcGex8WJNL3Bwrm2wd1t9biA0XrrQ4WcQssy6Nn8pkkDFjXDEFfMOlQmo1MNf3dmpaMVF9NM9vaKCJbNG0vXotLDH8ndoL2/rGLrn/43toBAdvpOSyER21VGXvm2mYyKDr0uwc8zIWC5S6DvIsQV8suBgjUWAprOgRHvtZjQJvcJ/nGMbVxeiH+cnEdxZjiE2JPM8Nj5b47NCsmsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HCn9yw89RDvVl8IQcyDeF2oyCpee4nnHDV42F/EJH68=;
+ b=W0MUKJCP5Y9wIVqUqCmV03Qj3BEm4rpP44ZeFCrnPBOFl/8rYAdXEuEvpcf4CNTaNxYpanGB6ENa48W68aCBpJd6MrZZBp+CroaVefJaoNX0i3dwJLt1/x4+cMHHWAkdZpeDQjKYA7iruXTEaIvrqtQnl/H0txNboBNr+cc0/ko2u1PcOl9Ttg44iHlUO4fzl9OrIMz5NFPTHugss6daNbKpCu9xYoMasjdfUphy1rzdQD8xPfQy46fWqorAbn1YIaa87YLrxyH6JsYiFuC7NRjjy2jBEdxyoORebQ1cJVJOeBox6sAdUKudymJwwpkZ9ATzx8ycshxx6BtPhChWxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HCn9yw89RDvVl8IQcyDeF2oyCpee4nnHDV42F/EJH68=;
+ b=wtYWvVWjBLz93Gp56HVYbJ/QuRba1uFEYfcfNhPcd0TNSzfPLcMTLH6HVqWjmeiwwP0QwgjeufFD9Zfo7zLh+10y9GyAXd9rno7jgOe6e4/6jBbjN3RMY1uZ72ph0Q3+Nv94iv0/xpHAUK6eHeEuTs+DF4e1AWN/p7jFpu2s6LWxVeJUxHmG3PgP3D5MmbysfPIlofZ3poiVdpA8fEV1uCPmtDzEu2UC/NZKrmYz0s2rUFKXUnwFd4+pKP/6nEtoyjSBC0jfm9E1VR9UiHk1L9PtXdr0xV40SLmHT0ide3ZRsPZQX6AgknAKk9i7g/n94BfBKR6dtlWymNavCbMJ5w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by PAWPR04MB10007.eurprd04.prod.outlook.com (2603:10a6:102:387::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8377.18; Fri, 24 Jan
+ 2025 13:19:02 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8377.009; Fri, 24 Jan 2025
+ 13:19:02 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH 0/3] clk: Support spread spectrum and use it in clk-scmi
+Date: Fri, 24 Jan 2025 22:25:16 +0800
+Message-Id: <20250124-clk-ssc-v1-0-2d39f6baf2af@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMyik2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDQyMT3eScbN3i4mTdtOTkFJM0M4MU81RTJaDqgqLUtMwKsEnRsbW1AHp
+ Io5RZAAAA
+X-Change-ID: 20250124-clk-ssc-fccd4f60d7e5
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Sudeep Holla <sudeep.holla@arm.com>, 
+ Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
+ Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: SG2PR02CA0127.apcprd02.prod.outlook.com
+ (2603:1096:4:188::7) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|PAWPR04MB10007:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4947ea18-8793-4485-c860-08dd3c79ab59
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y2VrbnVHcm1FY09DS2tmS0FoUHZMQlYxZlZtaTdvRm16d0w0eUl4Q3QyUnBS?=
+ =?utf-8?B?c2JnYlhlYnhGWGg3ZDJPOTdCdXJ4U2tJdTdNci9KRUo0MG9SS2U0S1drRytp?=
+ =?utf-8?B?VW1tMytLWWFKVUhoNU9LUGpCZFJlOVBMRVdZNm42bE5FN1BwWldObk9ma21w?=
+ =?utf-8?B?TDlLVjJwbXJaS3RzZkhHSndlRVU3SHBZVCt5WmV1aHZCK05oQkcyRmRsc0t2?=
+ =?utf-8?B?NkU4ZXEyUHJxdWpkS3dXWnVPNXZwY0dzNHRtYlVFViswRUtMVHRVVFZKaTBX?=
+ =?utf-8?B?dE5YOFN6V2JTQnp0eGc3SVJMSzlRSW1xcXBKc1FWVXpGRWZBVEpTWTJCZmM0?=
+ =?utf-8?B?Q0tyUnhpVDQxc0JiUlM5TUJheEpTZjdjekY5QVRaL2I0d0hGR3dqYzFsSHBM?=
+ =?utf-8?B?SzVDekZyTk1GdGg2bXloc2VNSkg3NzFPSjFLSVR2eC9oeHZMejhTemdmdkdP?=
+ =?utf-8?B?QUFRRjZ3ZHFEd2hYd0htRVpiTCtTWTV0Uk8vMFBWV3lVdEc1eUEvb25ISmZt?=
+ =?utf-8?B?RytIa3NOU0llM09KeVJqWWRCSGZ5K3RnWUl5ZVZuc3UzVWNHNVRnNFAxbzVx?=
+ =?utf-8?B?bHV4VE5KK0RDOEtxcGgrWGtLZGZLSUN5WENBL01tME54TXNVMlhjMHFCdDdy?=
+ =?utf-8?B?MFNBWWlJcXpXYnNKM0dVaFR1YW1UYlBCQlFTK1ZDVms4N2RJenJIcUYvTWVC?=
+ =?utf-8?B?NHRnZmVTdGp1eG9mR0RSSkcvRmJPbGJWMk5TajdmUGF1aDZOc1ZFRDN2SXpQ?=
+ =?utf-8?B?c1dvL2x2NXE4UGZ2RFJ6OHIxZDdxeFJQaG82OHhnUUZHUmkxRzZ1QlQ2R3Jl?=
+ =?utf-8?B?ZmFSMm9ubFZkVGpoRTdnT24xRVJnTWNmNXJSbzBwUUQzU1NBVUVGRDB1TFBZ?=
+ =?utf-8?B?V094NDk5cWRVdGNGVkVCeXdVVDFuQ0VWcjVQc2t2eTNMbHg2bk1jTmduaHhE?=
+ =?utf-8?B?L1V4RVpGZlN3aVJXSnlreXJaUUNwbVdHTEZEYWJWU2R5c3ZIVlNoZnM3MXpY?=
+ =?utf-8?B?enV4Q1ZhNllQZ1ZFMzJBeEVxcnFNbjdWa2sxaWNJYTlZS3AyTDlpcDNxZXAy?=
+ =?utf-8?B?MnBwYVo5U0NDSk41WHI0NmNna2gwTHlXb0NneS84a25nNzIxN2tscWtKNGww?=
+ =?utf-8?B?MkVNdUtad0dVTGNSc202QVhsazhnQStENTNZZ2hzYkRUWmVPaG1WWUNaSDZY?=
+ =?utf-8?B?clZ3K1U0MFBSWklOQzNCcEhpd0t2bCtiWVZObFNhcFI0T0Z6cGpzb3FZeWE3?=
+ =?utf-8?B?OHQ0NEVxRmdEd2xNT0xmM0JGaGhyQUZFQ2c1TkQ3WVF3b2RhZFZSdkZidFFS?=
+ =?utf-8?B?UVN4cFBNSm9OaE5tbzRRZ0pIWkxYSXlGak5zREZPUGppZzUvV1dXd1gyQlU2?=
+ =?utf-8?B?czNTL3hwSFJxUGhvdnozLzFTdGRBeEV4dThXaUdzNWc2eWR1QTBkM1dXV0gw?=
+ =?utf-8?B?Y0ZqOUpablZRY3FxMEh6MDVGTStxY3loMCtTYlZsZlA4dGZRNkNnQmRvLzJI?=
+ =?utf-8?B?djVZU2dlaEVpVUF0TzdXaytxdEJNOFB2aHFCbWhBdkFDa014RFpkSTYwazhU?=
+ =?utf-8?B?SGVTM2JYS1lkOGVCNUpyN25Hc0FhZzMyUnFGNXkrL0UxS0xhNm1pOCtSZHNn?=
+ =?utf-8?B?NTZML0Y1Y1oweFV5TXNTUVZIN0VGL2RZVHVNWTRqSTFBKzNMOCtUdGo2dlJv?=
+ =?utf-8?B?aGgyT0E3dTRGR3JhdFpMWVAvazVUYkNJbEh4elZCZVBrUk9EWFNXY2VJV0R0?=
+ =?utf-8?B?bEdkWmQ5em9vVit2TUoxSVp6NmRYVHlreWZXQ21rdTlDQU9EbzFpbXN2Zmg3?=
+ =?utf-8?B?dWFWVXpDeWc4b08xU0ZxUkF5TGJieHEzOTVPRDMxVFZiTDkwc09lVyt6UEha?=
+ =?utf-8?B?UGovYlB1VUtFdmpKNVBSa1gwNGtPdHlYLzNFL2NOUmNWUXB2MzNsN2h2SzY1?=
+ =?utf-8?Q?Cuzv3k43QzwQKJcDc0UvtyHAZZXrspAv?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cU9acEdSemMxRUZ3emczeHBpVjR6N2FiSGtCMExubUM1dDh3SkVNZ3Y0TDdN?=
+ =?utf-8?B?Z2NxQVRnTzNoNllYZHZxUWZZMnhDZk5WV2szT0ovOTBKeXgxLzdEcnZuQ0hY?=
+ =?utf-8?B?SGd1bDdobGxhN0ljS3FMMmNNRVhnR1pKZHVlSmYxaVdRUUx6Z2ErVlBRKzQx?=
+ =?utf-8?B?QTNqQWJOSmRTTDZKS0U2TU9tbVBuVG9MWUZlSmtwajdmRk52NDN5OE5KaTVJ?=
+ =?utf-8?B?bDdtajRoUzZzQUVRNlI3dmt1Y3ZLUDU4RUplaTZHT3RxdVF5SEcrZGpPWWMw?=
+ =?utf-8?B?dUU4ZmE4VXN2K1BmaFZTczBmaW5lcHhETWFFWXZJL1dmNkcyY2ZwUGJLeTFF?=
+ =?utf-8?B?eDEzOGNoUndOUGdTeS9DNUI2RzhGMFRucTk5azZpd0R0cG52WWx1amVNa2E1?=
+ =?utf-8?B?dEJrS3lTdEtET2o4MW5xWngwZ0Ezanp3bEoyTlFjZ2krcXg2c1B6OXB5L1A3?=
+ =?utf-8?B?V2lDaEUraGt0bndZaU1aTldhV09CSFI1OUw4WEorZW56V3BERUExTStPR2NV?=
+ =?utf-8?B?WFVoeU1KNnVEblkxRDRlbWU3bXNaNHlFdWkrZ2FnMDV1WjhnaTN5ODU5bTNF?=
+ =?utf-8?B?dlBxQVBOYWVMam9ydUlPZy9qcUVrT0dEMzhWRWtzTDZTY0srVUNMRUNXdmpi?=
+ =?utf-8?B?VVN5NlF2MU5PNmw3OUl4UnhTSzVUS3VsMkxnY2JQUkFuOGN2YkkrUDVyVzhC?=
+ =?utf-8?B?T3YzTEZ4S2NmdGJLQWRWU0EyNFFuNkpzMmVNU3l0bjVOa2luMWxMQVlHU3N1?=
+ =?utf-8?B?MUFBdjBCU2ZHQ1Q5eGkyNGMvbzM5UVdFSi9OcDd2bW5zQk1wS3Y3c2VtNEZ1?=
+ =?utf-8?B?QzhaODYxM2dRdkZudFhwVzQwWE14eFNFWEE2cWhlenM2N2t1S05lQzNFaWlN?=
+ =?utf-8?B?Q3Y2M2FwNUJKa3AxRm5aNW81VWEwLzRpeG5ERVVLakV1a01pck56OXNuTHB2?=
+ =?utf-8?B?UEozQWhubG1md0lDTE9wazNiYi8rOU4rR1A4RVpwUmF0eEJWTkc1UzJwSFBx?=
+ =?utf-8?B?V1pWa2NkdFY0bnd0UnNpWFhpTlpUOGlVUFU2c2t4SVZFV0lrT3JFY1dnNXF2?=
+ =?utf-8?B?RlVZRkpEL1hudlNUbTIyVUNjMm9KMlNHb0Y0NlpiUGl6Tnl2VDFrUFZEa0p4?=
+ =?utf-8?B?WkMwelBXRHFuT21tMmxYSkJUeGVValk5cVRSM0hvakl1ek92cFI1MFJnU0xx?=
+ =?utf-8?B?MHlEYXJ4bFdsbGZFN0hhbTlaWFBuNkVUODB1Q3RVSFRzUFhxTWZrdkxTN0xv?=
+ =?utf-8?B?UDN4K2ZaM3BaT2w2Y2FOTG4vWEhGeXdJcmJkalpTUGllRUp1MUhJTHdROEwv?=
+ =?utf-8?B?MWM2Mi8wMFYwdzJ1anhxYlNTYTV4UXJSY1FLb2Q2ZlhNSUliZ1luZk5kRFZV?=
+ =?utf-8?B?YVVVdW4wWjIvNkROWHEybXhBR0JMeDBuRm5iMXI3ZURsd3V1aDBaT3p3SUVE?=
+ =?utf-8?B?WkZ0SDVBU3VZb0JlWHlHdDB2dnJDOTc4M0VVMG9HYUpzNzVwYnFRMThYL1Rk?=
+ =?utf-8?B?NUUrazNieElpWVNMaForTDVHd2YxN1FUd29aVCtzQmZoMG1Nam1KZXl2dkp5?=
+ =?utf-8?B?cjBXRDM0T3JmMDFLS2hzQ3F2TUhGZDJ0YzIrU3B6L3MwY2NiRTBRV1VSSUsx?=
+ =?utf-8?B?clZYM0NMMi9ObEllb05IWWx1UitrTjJnckVZV2lFUG1NMytSNnBPcVlTMjdM?=
+ =?utf-8?B?Mm56bGhnUnBTaVMvSE9YNkJ1cXMwYkR2bzhhQUplWnVRc1pRalEzZHNFNmhy?=
+ =?utf-8?B?VzN5dFlkaU5KNlB0SU9sYWhXREIvK0x3TmlrRjR5V3pXbG5xb05UOWVJYVdr?=
+ =?utf-8?B?NkZMMkRJY3FUNFF2K1lQaFMvWFBsMkViUE8zWEpLWU5sdXZDSnkwamc5dHYy?=
+ =?utf-8?B?T2tiK2dhek5iNXRndlZZYzVBZkNrRXU4d28wNTJ3UkJYeXZtOTluNVlVRnJR?=
+ =?utf-8?B?ZnROWFBOOEN4SmJCbXRTY2NKTFJNdUxqblk3S3NHMTM4VVBZNTArRVhUMTIw?=
+ =?utf-8?B?a2ROWWFnVmVKWTNkQUErOHRibGZyT0ZEck5qZ0Mrdk85Tkc1OGMzWXBWQUp4?=
+ =?utf-8?B?Qm5FZm5vc1RXbDVkUUtYcE1Ba2VQd0JFWkF4bzE5NmdMMTYwNTJTdGV0RW9j?=
+ =?utf-8?Q?L01gj2k3kjM66H0jbAJRBRrW6?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4947ea18-8793-4485-c860-08dd3c79ab59
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jan 2025 13:19:02.2180
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: REFortzIY6Z813YnfB2UdHEgWKDQ+uLbLvh977Uz8yNsBuyLFblMuCCtfTXiXWdqiX3WPPoSRFuD/kT3Knprzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB10007
 
-The variable s, used by pr_debug() to print the mnemonic of the modulation
-depth in use, was not initialized. Fix the output by addressing the correct
-mnemonic.
+- Introduce clk_set_spread_spectrum to set the parameters for enabling
+  spread spectrum of a clock.
+- Parse 'assigned-clock-sscs' and configure it by default before using the
+  clock. The pull request for this property is at [1]
+  This property is parsed before parsing clock rate.
 
-Fixes: 65b3516dbe50 ("clk: stm32f4: support spread spectrum clock generation")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+- Enable this feature for clk-scmi on i.MX95.
+  This may not the best, since checking machine compatibles.
+  I am thinking to provide an API scmi_get_vendor_info, then driver
+  could use it for OEM stuff, such as
+  if (scmi_get_vendor_info returns NXP_IMX)
+      ops->set_spread_spectrum = scmi_clk_set_spread_spectrum_imx;
 
+[1] https://github.com/devicetree-org/dt-schema/pull/154
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
+Peng Fan (3):
+      clk: Introduce clk_set_spread_spectrum
+      clk: conf: Support assigned-clock-sscs
+      clk: scmi: Support spread spectrum
 
- drivers/clk/clk-stm32f4.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-conf.c        | 68 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/clk-scmi.c        | 37 +++++++++++++++++++++++
+ drivers/clk/clk.c             | 39 +++++++++++++++++++++++++
+ include/linux/clk-provider.h  | 22 ++++++++++++++
+ include/linux/clk.h           | 22 ++++++++++++++
+ include/linux/scmi_protocol.h |  5 ++++
+ 6 files changed, 193 insertions(+)
+---
+base-commit: 5ffa57f6eecefababb8cbe327222ef171943b183
+change-id: 20250124-clk-ssc-fccd4f60d7e5
 
-diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
-index f476883bc93b..85e23961ec34 100644
---- a/drivers/clk/clk-stm32f4.c
-+++ b/drivers/clk/clk-stm32f4.c
-@@ -888,7 +888,6 @@ static int __init stm32f4_pll_ssc_parse_dt(struct device_node *np,
- 					   struct stm32f4_pll_ssc *conf)
- {
- 	int ret;
--	const char *s;
- 
- 	if (!conf)
- 		return -EINVAL;
-@@ -916,7 +915,8 @@ static int __init stm32f4_pll_ssc_parse_dt(struct device_node *np,
- 	conf->mod_type = ret;
- 
- 	pr_debug("%pOF: SSCG settings: mod_freq: %d, mod_depth: %d mod_method: %s [%d]\n",
--		 np, conf->mod_freq, conf->mod_depth, s, conf->mod_type);
-+		 np, conf->mod_freq, conf->mod_depth,
-+		 stm32f4_ssc_mod_methods[ret], conf->mod_type);
- 
- 	return 0;
- }
+Best regards,
 -- 
-2.43.0
+Peng Fan <peng.fan@nxp.com>
 
