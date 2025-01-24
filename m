@@ -1,32 +1,32 @@
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8D4146596
-	for <linux-clk@vger.kernel.org>; Fri, 24 Jan 2025 14:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE2A78F57
+	for <linux-clk@vger.kernel.org>; Fri, 24 Jan 2025 15:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737730041; cv=none; b=aXIa8LdQOdC/4nQNpIBVqyE/zcE6uarVWx40CikbTs5tYURn+PjYFst/bMjR+Llh9mMBH+vkLy3BFX9aBNzUiQxxg6CR2LJCbIazMZ30fDwSdp4mli2dqmGFIyvie3L4ON/n5tveuCJHncHXb3XJG7Yjkpv9REkuWO65MNQKqag=
+	t=1737730958; cv=none; b=gXN8ZgaSq4xnZS59WMvOcNLgYsqNgIGmUN93Rt+f6j+8nrp+qCwLIMTPe+nJdrlfFk10x7J+fC3V0Figm+2iXMFgWbGf8xv2eNz584V4R7YaX+Cuu7R2i7SzwBG2WxUTSCydMXYx/Fk0lebwY0Ga0BaVeoyCZulTUooB4LF3pWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737730041; c=relaxed/simple;
-	bh=eTaf9HW41uxqE2CPS5NCpTxA6jYnk9XYAKcaAuJgBMc=;
+	s=arc-20240116; t=1737730958; c=relaxed/simple;
+	bh=DOW7ZQCoyBFfJmoCI5MTQFFq9YjIfjcsUIXQyLyB98w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UcsZCO0AyZTXweOhokhTxBJEg8ytMa7bbzVofRnwZBIIwCgER9cJCZxxo77nXHb5GHW/D9tFslftOZvLciTnfAoFUQ9VUtnBM3qVt20Rtt8ElKA2RrrOusy8v9555hwEFU25iu0WGk3jpR8xiz8AK6fNom6vHAuAcbkrx8bp6iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=SGYY3MWT; arc=none smtp.client-ip=149.28.215.223
+	 In-Reply-To:Content-Type; b=gVfq817lrepdPy3QNVYVptEpyhQndzZpfb+Xmlai/ZbzGuCWuWw5ozRC5Qm/7iFB2FG3iDQe5m8DljtHepeI3tzT4uzryxThkduMO1ZCUmMWmtllGCDHWSMwkQtI8U1XT9rahFscbXQi9iQdHYWKCJqMMUfvwhI+/rFjtQ70nLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=grsCwhtr; arc=none smtp.client-ip=149.28.215.223
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="SGYY3MWT"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="grsCwhtr"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
  h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
  Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1737730039;
- bh=bWc4eegiqIRik/oWmiPzWCZlgXnb9uJU2PJU56uMGgM=;
- b=SGYY3MWTQ1XEwbNFVhymOC1zL+LU3faK1Xb/b4Jy6SkwV9B2sUhuwqCaecUGIYN2M9iOQKRke
- y03vU2CIc15/BNSrDsyVEoSoHwtdkl3kRPYEG0Iola5dYnbS2v09b7Ekj55lnDYPuNwnnT/alZO
- uUV+79OUvRHO/OuNKQo6ylsrWKLveBZlNFaMZGhnyYZapbIxeM/sw5LnSOFd+Xx5+v71dOmWDk3
- hveefviQAD7FpLqdTWggeAAR3VnKu+VBhm2MStXd8m45jnfxlj+1byaYXme/0TktGoZvMZTc7gw
- 16IXYrPvx+di79zD0GDTYVBrrBc3R5DVyPaNMEhRDFjw==
-X-Forward-Email-ID: 6793a7ea3e07d3fa85055a37
+ s=fe-e1b5cab7be; t=1737730956;
+ bh=MsYLWrXefMP5m34iCp3jAP9mKY5iNXf4rWORER2MwmY=;
+ b=grsCwhtrDfyUZT6VOFPQs1Wz+mLNXKJM9ogR10hjYtJfqQMQa7NyKaC/kFghHLntlbk1ZHyUW
+ 4yJXRHal6lUhDXPWFQZ3wyF0p64N4JXnOFjMvo6sxlWL2HrJsSIcmFUyD0M8iwcFoPwWe/SE5yb
+ 5y2eyQ7jw63ZnQK96g8JpCFIbRTzJtdMURzrlk8A89ZHGvevKLa8NZsbo2flpDXh4O3rQIHkqhy
+ OSkc3CJjpzI5CxlUqjWpkpNe3dX1fdZK/1NHvaJwkUY1MImdBADJ/Ht3520EgInY8D6iDWzIT96
+ HgBfKjSAlYPY5fqEdFoEdQeEuY8OYlExMKX1HsCwWvZA==
+X-Forward-Email-ID: 6793a67f3e07d3fa850557b4
 X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  149.28.215.223
 X-Forward-Email-Version: 0.4.40
@@ -34,8 +34,8 @@ X-Forward-Email-Website: https://forwardemail.net
 X-Complaints-To: abuse@forwardemail.net
 X-Report-Abuse: abuse@forwardemail.net
 X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <cae9cb0a-1500-4fbc-bbf4-a6266549bcb9@kwiboo.se>
-Date: Fri, 24 Jan 2025 15:47:00 +0100
+Message-ID: <d95d317c-5f6e-42bd-94a9-e1a6c7685e2f@kwiboo.se>
+Date: Fri, 24 Jan 2025 15:40:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,8 +43,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] arm64: dts: rockchip: Increase VOP clk rate on
- RK3328
+Subject: Re: [PATCH v1 1/3] Revert "clk: rockchip: Set parent rate for
+ DCLK_VOP clock on RK3228"
 To: Elaine Zhang <zhangqing@rock-chips.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, kever.yang@rock-chips.com,
  heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
@@ -52,59 +52,57 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, kever.yang@rock-chips.com,
  linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20250124064619.13893-1-zhangqing@rock-chips.com>
- <20250124064619.13893-4-zhangqing@rock-chips.com>
+ <20250124064619.13893-2-zhangqing@rock-chips.com>
 Content-Language: en-US
 From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250124064619.13893-4-zhangqing@rock-chips.com>
+In-Reply-To: <20250124064619.13893-2-zhangqing@rock-chips.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi Elaine,
 
 On 2025-01-24 07:46, Elaine Zhang wrote:
-> The VOP on RK3328 needs to run at a higher rate in order to produce
-> a proper 3840x2160 signal.
-> Change to use 300MHz for VIO clk and 400MHz for VOP clk.
+> This reverts commit 1d34b9757523c1ad547bd6d040381f62d74a3189.
+> 
+> RK3228 Only GPLL and CPLL, GPLL is a common clock, does not allow
+> dclk_vop to change its frequency, CPLL is used by GMAC,
+> if dclk_vop use CLK_SET_RATE_PARENT and CLK_SET_RATE_NO_REPARENT flags will
+> affect the GMAC function.
 
-It is probably better to merge this change and the prior revert into a
-single patch with a Fixes-tag for the commit 0f2ddb128fa2 ("arm64: dts:
-rockchip: Increase VOP clk rate on RK3328") to ensure this change get
-backported correctly.
+Please explain how CPLL and GPLL is affected by this? According to TRM
+the hdmiphy is default parent (reset value), this is also how similar
+clock is defined for RK3328.
+
+  vop_pll_sel  
+  Control vop clock PLL source selection.  
+  1'b0: select hdmiphy pll clock (reset value)
+  1'b1: select vop dclk
+
+Maybe the dclk_vop name is causing confusion, or am I missing something?
 
 Regards,
 Jonas
 
 > 
-> Fixes: 4b6764f200f2 ("Revert "arm64: dts: rockchip: Increase VOP clk
-> rate on RK3328"")
+> If the client application does not use GMAC and CPLL is free, make this
+> change on the local branch.
 > 
 > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 > ---
->  arch/arm64/boot/dts/rockchip/rk3328.dtsi | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/clk/rockchip/clk-rk3228.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> index f3ef8cbfbdae..0c905f411e92 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-> @@ -842,7 +842,8 @@
->  			<&cru ACLK_BUS_PRE>, <&cru HCLK_BUS_PRE>,
->  			<&cru PCLK_BUS_PRE>, <&cru ACLK_PERI_PRE>,
->  			<&cru HCLK_PERI>, <&cru PCLK_PERI>,
-> -			<&cru SCLK_RTC32K>;
-> +			<&cru SCLK_RTC32K>, <&cru ACLK_VIO_PRE>,
-> +			<&cru ACLK_VOP_PRE>;
->  		assigned-clock-parents =
->  			<&cru HDMIPHY>, <&cru PLL_APLL>,
->  			<&cru PLL_GPLL>, <&xin24m>,
-> @@ -863,7 +864,8 @@
->  			<150000000>, <75000000>,
->  			<75000000>, <150000000>,
->  			<75000000>, <75000000>,
-> -			<32768>;
-> +			<32768>, <300000000>,
-> +			<400000000>;
->  	};
+> diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+> index ed602c27b624..9c0284607766 100644
+> --- a/drivers/clk/rockchip/clk-rk3228.c
+> +++ b/drivers/clk/rockchip/clk-rk3228.c
+> @@ -409,7 +409,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+>  			RK2928_CLKSEL_CON(29), 0, 3, DFLAGS),
+>  	DIV(0, "sclk_vop_pre", "sclk_vop_src", 0,
+>  			RK2928_CLKSEL_CON(27), 8, 8, DFLAGS),
+> -	MUX(DCLK_VOP, "dclk_vop", mux_dclk_vop_p, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
+> +	MUX(DCLK_VOP, "dclk_vop", mux_dclk_vop_p, 0,
+>  			RK2928_CLKSEL_CON(27), 1, 1, MFLAGS),
 >  
->  	usb2phy_grf: syscon@ff450000 {
+>  	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
 
