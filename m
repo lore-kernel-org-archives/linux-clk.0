@@ -1,115 +1,146 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3E029A5;
-	Fri, 24 Jan 2025 03:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7763A258A;
+	Fri, 24 Jan 2025 05:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737690523; cv=none; b=mRDBBf/BkVTe9Z5rFdlI6/hnZGGUQGI0Kjtt20bx2SWYVDHwG2b8bRE7eUDJ/ShuCiTGVbPlSGW3PNIqohgGj/NDYnt4qL1i0fBS5ewklqXI4K6GlW0Ww+h/a857kQlUMC70oEIgI8O++0dLy6eJ7bAEgnmaE5EiCCpD15pM/ZI=
+	t=1737698119; cv=none; b=osRdqh2uYTACT/AFHApikwe1XQLS0FX6Yq0tYQolzB5GFjfHEe/B6s4h+aZsMVhIPWZ87nD1kPaxyqBPFAlxlRTOUf3iM+XdBsOca8j5C66TTznEF3lMYwO5wGyiAXggAATidGiJorozuRxzJwti3fIstXDhx4yuRknrfYTzlK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737690523; c=relaxed/simple;
-	bh=ESESZlbmbscGyg08fJZIcgd/7xsDYidU9KIpFT/rdAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JkgRjS+Fm8Dem/aB4Egx8+L64ElgfOLZqqsZEDd9foefceF1DxAuvTpqXpZ00bqEX7QANMzRwkNft6NgGKYaxIAQ/YOk8vU/m0MOD7QvXYnC3mU+ky2UqtU1X8/93+opoDBSzex5MEMeN63Muyr6Db166RV0Mf19+aKuQ/qkIs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iYSjCxE5; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1737698119; c=relaxed/simple;
+	bh=POx47aC6wW6J+oA/R0mjtatSQsIm9ZGRPOhlCzWVie4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KW3fsK7ICa/emVuDLsrEyJVsGtBdcSCzP+sgn5OUaZ4VGuPlRv4W85Vr0DE5PXVimH1HormjkbBykrrA0suYJuAmDwFRnWXe9K74+HPFKvLH+h1H5uUZNLJ8iZLNOR62xS+HBWaEY13aDDzZWz/iOW4842uQbqCEpN2fD3mXfLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g6ucRXJT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iYSjCxE5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1737690522; x=1769226522;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ESESZlbmbscGyg08fJZIcgd/7xsDYidU9KIpFT/rdAY=;
-  b=iYSjCxE5Q8+ua1qyg5uhDzzxqqbg/nlL1dC5nA9os9Y9qHfgAEC7HKwq
-   O2miXbUzyynPiILb2BMOkYrMCqI5VI9oP/R6vDxeCkZ1zPCTlQ2QtAX9n
-   qks55q/KoPer+p+c8BSVoez/kG4estTrD7FwdNmWRPVayNYYk/P7PhgJa
-   w9Gv6BQSzI8GUrQlx4Lww30JN3Yms029shROYMuQE2vQG/K+cDvKWsC+M
-   2oylZ66gQN4iGS2LxTDkfkBybk9yFoBAbNRbGkP7QNb2bSo/WujGlncFp
-   Z8nYe6JDVLaecvNhN5CcMa4j0myar8sx4fnzNNSQITwEvyKA/njp4cUZ9
-   g==;
-X-CSE-ConnectionGUID: 2zltuufAS0GPJ8mc2qFc+Q==
-X-CSE-MsgGUID: fRMAXE1dQiGH3uD8X5iyfA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11324"; a="41883734"
-X-IronPort-AV: E=Sophos;i="6.13,230,1732608000"; 
-   d="scan'208";a="41883734"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jan 2025 19:48:42 -0800
-X-CSE-ConnectionGUID: FcaMMzkpTRiK0gGgdkLT9w==
-X-CSE-MsgGUID: SIwu+aytSZuzIOueLOhRyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,230,1732608000"; 
-   d="scan'208";a="138528984"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 23 Jan 2025 19:48:37 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tbAgM-000c63-2F;
-	Fri, 24 Jan 2025 03:48:34 +0000
-Date: Fri, 24 Jan 2025 11:48:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Taniya Das <quic_tdas@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v4 07/10] clk: qcom: gpucc-qcs615: Add QCS615 graphics
- clock controller driver
-Message-ID: <202501241339.AZK5Ob8e-lkp@intel.com>
-References: <20250119-qcs615-mm-v4-clockcontroller-v4-7-5d1bdb5a140c@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g6ucRXJT"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50O3FqW7004810;
+	Fri, 24 Jan 2025 05:55:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Fq8fpTt6CcNxipuPp+zlLdG6yWiS++CuUohVRKckzSg=; b=g6ucRXJTr7Vk5u3u
+	nuQzyVlusirkU/3BHOfjv+hvR14OH5+NvWrMGiVdN5pXGlGC4DF5dPpG3Qujv68e
+	Ny8BjFKHS/GUs/7SZtjWxe7PTX6HVcF6OHWPIWxpyykpneoyJrYf3UBB0Uyaa+Rg
+	QiHsJ24dTWeff6+QECQcaoskC1OBsR8xhRmbSLas7tRVfTj279381TwnQFY8Jt/f
+	sVxEymvtt18nkoiDVCUnudN3xOrH2TYm2ce7N2e7cHcnuZUI0bP0e2Kwh2GAlGGm
+	9mDIQ4i0KinUJ60/w61QmaD+is9iMMzk99r0mq222V3jsqssgd6OfHgWtPl+cLsJ
+	lmBnrw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44c2t48967-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Jan 2025 05:55:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 50O5tDuH018970
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 24 Jan 2025 05:55:13 GMT
+Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 23 Jan
+ 2025 21:55:09 -0800
+Message-ID: <68f01848-fcea-4849-b355-6479bb1f9fc4@quicinc.com>
+Date: Fri, 24 Jan 2025 11:25:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250119-qcs615-mm-v4-clockcontroller-v4-7-5d1bdb5a140c@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: ipq5424: fix software and hardware flow
+ control error of UART
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_srichara@quicinc.com>
+References: <20250123111618.1048461-1-quic_mmanikan@quicinc.com>
+ <Z5JEJCJsYDz9b85b@hu-varada-blr.qualcomm.com>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <Z5JEJCJsYDz9b85b@hu-varada-blr.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: hjD4sUGUVmiymUaqOt6XJMdY1C3KQGsd
+X-Proofpoint-GUID: hjD4sUGUVmiymUaqOt6XJMdY1C3KQGsd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-01-24_02,2025-01-23_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ clxscore=1015 malwarescore=0 mlxscore=0 lowpriorityscore=0 mlxlogscore=999
+ suspectscore=0 priorityscore=1501 phishscore=0 impostorscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2501240040
 
-Hi Taniya,
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on 0907e7fb35756464aa34c35d6abb02998418164b]
+On 1/23/2025 6:59 PM, Varadarajan Narayanan wrote:
+> On Thu, Jan 23, 2025 at 04:46:18PM +0530, Manikanta Mylavarapu wrote:
+>> The UART’s software and hardware flow control are currently not
+>> functioning correctly.
+>>
+>> For software flow control, the following error is encountered:
+>> qcom_geni_serial 1a80000.serial: Couldn't find suitable
+>> clock rate for 56000000, 3500000, 2500000, 1152000, 921600, 19200
+>>
+>> During hardware flow control testing, a “Retry 0: Got ZCAN error” is
+>> observed.
+>>
+>> To address these issues, update the UART frequency table to include all
+>> supported frequencies according to the frequency plan.
+> 
+> Would this need fixes tag?
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Taniya-Das/clk-qcom-clk-alpha-pll-Add-support-for-dynamic-update-for-slewing-PLLs/20250119-182754
-base:   0907e7fb35756464aa34c35d6abb02998418164b
-patch link:    https://lore.kernel.org/r/20250119-qcs615-mm-v4-clockcontroller-v4-7-5d1bdb5a140c%40quicinc.com
-patch subject: [PATCH v4 07/10] clk: qcom: gpucc-qcs615: Add QCS615 graphics clock controller driver
-config: nios2-randconfig-r111-20250124 (https://download.01.org/0day-ci/archive/20250124/202501241339.AZK5Ob8e-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250124/202501241339.AZK5Ob8e-lkp@intel.com/reproduce)
+Yes, it needs fixes tag. I will add it in the next version.
+Thank you for pointing this.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202501241339.AZK5Ob8e-lkp@intel.com/
+Thanks & Regards,
+Manikanta.
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/clk/qcom/gpucc-qcs615.c:394:15: sparse: sparse: symbol 'gpu_cc_sm6150_hws' was not declared. Should it be static?
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>>  drivers/clk/qcom/gcc-ipq5424.c | 16 +++++++++++-----
+>>  1 file changed, 11 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
+>> index d5b218b76e29..37b1a3ff8f4e 100644
+>> --- a/drivers/clk/qcom/gcc-ipq5424.c
+>> +++ b/drivers/clk/qcom/gcc-ipq5424.c
+>> @@ -592,13 +592,19 @@ static struct clk_rcg2 gcc_qupv3_spi1_clk_src = {
+>>  };
+>>
+>>  static const struct freq_tbl ftbl_gcc_qupv3_uart0_clk_src[] = {
+>> -	F(960000, P_XO, 10, 2, 5),
+>> -	F(4800000, P_XO, 5, 0, 0),
+>> -	F(9600000, P_XO, 2, 4, 5),
+>> -	F(16000000, P_GPLL0_OUT_MAIN, 10, 1, 5),
+>> +	F(3686400,  P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC, 1, 144, 15625),
+>> +	F(7372800,  P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC, 1, 288, 15625),
+>> +	F(14745600, P_GCC_GPLL0_OUT_MAIN_DIV_CLK_SRC, 1, 576, 15625),
+>>  	F(24000000, P_XO, 1, 0, 0),
+>>  	F(25000000, P_GPLL0_OUT_MAIN, 16, 1, 2),
+>> -	F(50000000, P_GPLL0_OUT_MAIN, 16, 0, 0),
+>> +	F(32000000, P_GPLL0_OUT_MAIN, 1, 1, 25),
+>> +	F(40000000, P_GPLL0_OUT_MAIN, 1, 1, 20),
+>> +	F(46400000, P_GPLL0_OUT_MAIN, 1, 29, 500),
+>> +	F(48000000, P_GPLL0_OUT_MAIN, 1, 3, 50),
+>> +	F(51200000, P_GPLL0_OUT_MAIN, 1, 8, 125),
+>> +	F(56000000, P_GPLL0_OUT_MAIN, 1, 7, 100),
+>> +	F(58982400, P_GPLL0_OUT_MAIN, 1, 1152, 15625),
+>> +	F(60000000, P_GPLL0_OUT_MAIN, 1, 3, 40),
+>>  	F(64000000, P_GPLL0_OUT_MAIN, 12.5, 0, 0),
+>>  	{ }
+>>  };
+>>
+>> --
+>> 2.34.1
+>>
 
-vim +/gpu_cc_sm6150_hws +394 drivers/clk/qcom/gpucc-qcs615.c
-
-   393	
- > 394	struct clk_hw *gpu_cc_sm6150_hws[] = {
-   395		[CRC_DIV_PLL0] = &crc_div_pll0.hw,
-   396		[CRC_DIV_PLL1] = &crc_div_pll1.hw,
-   397	};
-   398	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
