@@ -1,149 +1,115 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27391B424B;
-	Thu, 23 Jan 2025 20:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3E029A5;
+	Fri, 24 Jan 2025 03:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737664168; cv=none; b=uih7ZrwQnZYGw5rTdkWM9miB+R0ClnXxUzs0GtCkjmLg6WKhJ/4filedmWYL3blqbLCluYiOP0n8RSp8l22uHicGYREDEvfyQrTNvZojnvKtipW29X2v4YA1UoVU9IEWwCvE9c1w5JkiAgZ48KAdqq6lMfYlEPJ1MgpHEzvpA5Q=
+	t=1737690523; cv=none; b=mRDBBf/BkVTe9Z5rFdlI6/hnZGGUQGI0Kjtt20bx2SWYVDHwG2b8bRE7eUDJ/ShuCiTGVbPlSGW3PNIqohgGj/NDYnt4qL1i0fBS5ewklqXI4K6GlW0Ww+h/a857kQlUMC70oEIgI8O++0dLy6eJ7bAEgnmaE5EiCCpD15pM/ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737664168; c=relaxed/simple;
-	bh=pnwh62on35oF9nCa2yi0bKTQ8+BApmfGta6a4WMK9Xk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c2qTMOyyWocvLQmFWdjh0bX4TTUD7lSvN/aHjWoT6o2fiwIHNybWPvl02Fysv6xtafRDLH3tXw6LmUjHPcUe9vWi57p51FyOBsd0fmoScvIvoPWIoZN9l+Ugp/BUKGj+/SKlwUdaO1ThUCDtOZ7VRYrpRzFT+kdTD9Wm3h5k0sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-51cee9d5013so826621e0c.3;
-        Thu, 23 Jan 2025 12:29:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737664164; x=1738268964;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vd1TkqSq28vmFyt5g4A7LX87fPOL7pqaSEPxXJnJuPk=;
-        b=OxAegnkpxGAg8bDFnQgzYVCeYbR9PYu9w3mBC38V7TuUXTYXG2zWqF1Y7aHTuo87el
-         8i6rJqdv67fa+CTSsHMz+p0AxlIG6vyeZ6XCfBppcw0+qhptAI687O+tuA22KU+YFRbR
-         YJhfTOYBxa33BXA0cdmAxrGjOsJ3ClbBMSn12zA001243YWb+jWWNJBfrHzIBQKH6dKG
-         O1uvcho67gZIMlyZTbPYmLeVsyNZ3ITZpEEEUs/wdhzSuHu36Eb09HyILj4xRLVcnsdi
-         QVoIirZ9W5nRloa9SVd5wQcB/FGG9MEt/PK+JLD9xHg1XrAfi04Dh9fb+pTRH8xOJals
-         cxGg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2xmFhR2FkDEF6DgMNvDljnjgdKGOejG5h8zh3hjeVeq+zN+gb5nogF10i2up41scT7CEK3WOeFOA=@vger.kernel.org, AJvYcCUssFhZ3SzqjOIZ9UqfP+/NshXdLsO+4PLo2Uv/CXa+aqRD1DHUuEzdZSGRWIpfvlY12zLR8jm692PoHE2t@vger.kernel.org, AJvYcCWpoNhlIEWTRFinZghzIngx5+47tLFIexs5N3xzVd0ofkM0MAi6Z6B4IaOGcSUdLaEPaWgmwrLB@vger.kernel.org, AJvYcCXqEO1Q6nLHaCqpzTI+D2MvfCPZeiLzIyt59kjCtZKOysZ+YoaJ9ZPaCpEWFvHD+aeEanF2bk7mwtYYJomNYNIjUTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx33J8V9dwd463nTgNYgcfDSuCR8c/QXSsDuZcm4UA9vOItDtKu
-	u5OT1ebNkJeBWu17gFEtr0maWJ06QLgBi9xZ3bfXDCnB3H4tbBfzeQqCmGsi
-X-Gm-Gg: ASbGncv2WYaaHf+k0aMe/CisyxlgbbYiLVR8Nycv8muIooCEAiBI/E5DpaUZzmG2cBw
-	dn4wTrvkGaE1oO8KYwnj9RgCUAtNkv68MHcAhg93NvQXLgrTMyZFAzdElCDadR5qDk8c420/uph
-	mp5vyFiOw9vtu2L3wbdA6kb9MDqPw1UHOJAUb8t3kICL71Ig7IL9EYbMvPSIhX8UW8m40XXojkw
-	x95r8J+Oquz+00z3JQz6e361HXFBLmJc8iuVB+wguXWIvuyT6aG1In9nEP0b7QaF+kxgzOmGOEf
-	s1TNooUSkc3JkzUWqw50fkLKSTDYloIeJDf3uC97m+ihNWQ=
-X-Google-Smtp-Source: AGHT+IF0JpaP7SycLmVKkQh1KNy+m9jRLyyph1u4m940IjB+Y+5hMfRDVxoUPPhCjVaAHFbdqZOfpA==
-X-Received: by 2002:a05:6122:2105:b0:51b:8949:c9a8 with SMTP id 71dfb90a1353d-51d5b33f5d8mr24670094e0c.9.1737664163943;
-        Thu, 23 Jan 2025 12:29:23 -0800 (PST)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51e4ebea36esm115107e0c.41.2025.01.23.12.29.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2025 12:29:23 -0800 (PST)
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-517aea3ee2aso796124e0c.2;
-        Thu, 23 Jan 2025 12:29:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU/YCHJICbnZ0HqxdBKHzMfvT4tehptGEzafgzr03dlaaDX+Al7PR4RAPGvnFgU9bTLFCHuT5ntkhA=@vger.kernel.org, AJvYcCUuecueWimRVO1oMpyRXI2rSuYMTQJOKty1+ZfVgjOM+bbgNbM/yCrMLWyy6lI/BpCsvWIcocD6wRBRSowH+Wa63UU=@vger.kernel.org, AJvYcCXVzzKnF7QS5Zq/rpqPLAaqnoe8s9pGPjcwsVVgoi0wr7A6ORbdaOdmmpDeu2wp1Q9IgCSNFzrM@vger.kernel.org, AJvYcCXmeQxGgIfyXCHczOkLqlPUf0ZWdV1TgJ1OwNhHiTOS+sZ3iVk5g70jzKBSi9xtF0thHhNl/J8u0ypmAOdi@vger.kernel.org
-X-Received: by 2002:a05:6102:2ad0:b0:4af:597b:ef with SMTP id
- ada2fe7eead31-4b690bb51d3mr23979878137.8.1737664163332; Thu, 23 Jan 2025
- 12:29:23 -0800 (PST)
+	s=arc-20240116; t=1737690523; c=relaxed/simple;
+	bh=ESESZlbmbscGyg08fJZIcgd/7xsDYidU9KIpFT/rdAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JkgRjS+Fm8Dem/aB4Egx8+L64ElgfOLZqqsZEDd9foefceF1DxAuvTpqXpZ00bqEX7QANMzRwkNft6NgGKYaxIAQ/YOk8vU/m0MOD7QvXYnC3mU+ky2UqtU1X8/93+opoDBSzex5MEMeN63Muyr6Db166RV0Mf19+aKuQ/qkIs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iYSjCxE5; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iYSjCxE5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1737690522; x=1769226522;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ESESZlbmbscGyg08fJZIcgd/7xsDYidU9KIpFT/rdAY=;
+  b=iYSjCxE5Q8+ua1qyg5uhDzzxqqbg/nlL1dC5nA9os9Y9qHfgAEC7HKwq
+   O2miXbUzyynPiILb2BMOkYrMCqI5VI9oP/R6vDxeCkZ1zPCTlQ2QtAX9n
+   qks55q/KoPer+p+c8BSVoez/kG4estTrD7FwdNmWRPVayNYYk/P7PhgJa
+   w9Gv6BQSzI8GUrQlx4Lww30JN3Yms029shROYMuQE2vQG/K+cDvKWsC+M
+   2oylZ66gQN4iGS2LxTDkfkBybk9yFoBAbNRbGkP7QNb2bSo/WujGlncFp
+   Z8nYe6JDVLaecvNhN5CcMa4j0myar8sx4fnzNNSQITwEvyKA/njp4cUZ9
+   g==;
+X-CSE-ConnectionGUID: 2zltuufAS0GPJ8mc2qFc+Q==
+X-CSE-MsgGUID: fRMAXE1dQiGH3uD8X5iyfA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11324"; a="41883734"
+X-IronPort-AV: E=Sophos;i="6.13,230,1732608000"; 
+   d="scan'208";a="41883734"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jan 2025 19:48:42 -0800
+X-CSE-ConnectionGUID: FcaMMzkpTRiK0gGgdkLT9w==
+X-CSE-MsgGUID: SIwu+aytSZuzIOueLOhRyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,230,1732608000"; 
+   d="scan'208";a="138528984"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 23 Jan 2025 19:48:37 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tbAgM-000c63-2F;
+	Fri, 24 Jan 2025 03:48:34 +0000
+Date: Fri, 24 Jan 2025 11:48:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Taniya Das <quic_tdas@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v4 07/10] clk: qcom: gpucc-qcs615: Add QCS615 graphics
+ clock controller driver
+Message-ID: <202501241339.AZK5Ob8e-lkp@intel.com>
+References: <20250119-qcs615-mm-v4-clockcontroller-v4-7-5d1bdb5a140c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250122100828.395091-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250122100828.395091-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 23 Jan 2025 21:29:10 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVP8LrqAYK7sPJqiB+Fagk=CrhSwX1CixKOxoiGgyDEoQ@mail.gmail.com>
-X-Gm-Features: AWEUYZnkzUSG80PrWtV5m7mXIgljPubn8AIQbb5HVVIJvBFGHO3N8MKYLmuYOUM
-Message-ID: <CAMuHMdVP8LrqAYK7sPJqiB+Fagk=CrhSwX1CixKOxoiGgyDEoQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: r9a07g043: Fix HP clock source for RZ/Five SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250119-qcs615-mm-v4-clockcontroller-v4-7-5d1bdb5a140c@quicinc.com>
 
-Hi Prabhakar,
+Hi Taniya,
 
-Thanks for your patch!
+kernel test robot noticed the following build warnings:
 
-On Wed, Jan 22, 2025 at 11:08=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> According to the Rev.1.20 hardware manual for the RZ/Five SoC, the clock
-> source for HP is derived from PLL6 divided by 2. This patch corrects the
-> implementation by configuring HP as a fixed clock source instead of a MUX=
-.
->
-> The `CPG_PL6_ETH_SSEL` register, which is available on the RZ/G2UL SoC, i=
-s
-> not present on the RZ/Five SoC, necessitating this change.
+[auto build test WARNING on 0907e7fb35756464aa34c35d6abb02998418164b]
 
-While the register is not documented to exist, it reads back the same
-default value as on RZ/G2UL, selecting the right parent that does exist.
+url:    https://github.com/intel-lab-lkp/linux/commits/Taniya-Das/clk-qcom-clk-alpha-pll-Add-support-for-dynamic-update-for-slewing-PLLs/20250119-182754
+base:   0907e7fb35756464aa34c35d6abb02998418164b
+patch link:    https://lore.kernel.org/r/20250119-qcs615-mm-v4-clockcontroller-v4-7-5d1bdb5a140c%40quicinc.com
+patch subject: [PATCH v4 07/10] clk: qcom: gpucc-qcs615: Add QCS615 graphics clock controller driver
+config: nios2-randconfig-r111-20250124 (https://download.01.org/0day-ci/archive/20250124/202501241339.AZK5Ob8e-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250124/202501241339.AZK5Ob8e-lkp@intel.com/reproduce)
 
-> Fixes: 95d48d270305ad2c ("clk: renesas: r9a07g043: Add support for RZ/Fiv=
-e SoC")
-> Cc: stable@vger.kernel.org
-> Reported-by: Hien Huynh <hien.huynh.px@renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202501241339.AZK5Ob8e-lkp@intel.com/
 
-> --- a/drivers/clk/renesas/r9a07g043-cpg.c
-> +++ b/drivers/clk/renesas/r9a07g043-cpg.c
-> @@ -138,7 +138,11 @@ static const struct cpg_core_clk r9a07g043_core_clks=
-[] __initconst =3D {
->         DEF_DIV("P2", R9A07G043_CLK_P2, CLK_PLL3_DIV2_4_2, DIVPL3A, dtabl=
-e_1_32),
->         DEF_FIXED("M0", R9A07G043_CLK_M0, CLK_PLL3_DIV2_4, 1, 1),
->         DEF_FIXED("ZT", R9A07G043_CLK_ZT, CLK_PLL3_DIV2_4_2, 1, 1),
-> +#ifdef CONFIG_ARM64
->         DEF_MUX("HP", R9A07G043_CLK_HP, SEL_PLL6_2, sel_pll6_2),
+sparse warnings: (new ones prefixed by >>)
+>> drivers/clk/qcom/gpucc-qcs615.c:394:15: sparse: sparse: symbol 'gpu_cc_sm6150_hws' was not declared. Should it be static?
 
-When building with W=3D1 on non-ARM64:
+vim +/gpu_cc_sm6150_hws +394 drivers/clk/qcom/gpucc-qcs615.c
 
-    error: =E2=80=98sel_pll6_2=E2=80=99 defined but not used
+   393	
+ > 394	struct clk_hw *gpu_cc_sm6150_hws[] = {
+   395		[CRC_DIV_PLL0] = &crc_div_pll0.hw,
+   396		[CRC_DIV_PLL1] = &crc_div_pll1.hw,
+   397	};
+   398	
 
-so sel_pll6_2 [] needs to be protected by an #ifdef too (or __maybe_unused,
-but the rest of the file uses __ifdef).
-
-> +#else
-
-The rest of the file uses:
-
-    #endif
-    #ifdef CONFIG_RISCV
-
-instead of #else, so please use the same construct for consistency.
-
-> +       DEF_FIXED("HP", R9A07G043_CLK_HP, CLK_PLL6_250, 1, 1),
-> +#endif
->         DEF_FIXED("SPI0", R9A07G043_CLK_SPI0, CLK_DIV_PLL3_C, 1, 2),
->         DEF_FIXED("SPI1", R9A07G043_CLK_SPI1, CLK_DIV_PLL3_C, 1, 4),
->         DEF_SD_MUX("SD0", R9A07G043_CLK_SD0, SEL_SDHI0, SEL_SDHI0_STS, se=
-l_sdhi,
-
-The actual change LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
