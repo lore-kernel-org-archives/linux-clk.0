@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140141EEF9;
-	Fri, 24 Jan 2025 13:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5C84A0C;
+	Fri, 24 Jan 2025 13:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737726318; cv=none; b=t/Ez2yw8VVmHwnrTnMesdBoy6LhmSGY85HUZ+khaV3FS1cpRpj4WJLnKt8P9cwfmmhp3vDM931EJxxlFsoUSUvAtQdSnUij44nDBykF+0OcEE37tkEUSg+mIQ2HY6fhRtOOVOdFoFYMkvtg9R7zY31lPJIxUYPsevK8Qrwo2yZE=
+	t=1737726380; cv=none; b=AjYkGOSF+yaxjfRw/z+1/KQoV4tkE4B9xVVPVo2/TFeRP0QNFX7VJ0rvVzF+kpcnZ0Pb7S5c8HJNiHuNDOhRjxE20pHGMA7Kenv+xAtAvuv+hHb8mJ8bzaf2KzSMOwAfBEtzuYWhiHiMxRvcoYhxgjFRRIYtLLBDasEoVzW44ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737726318; c=relaxed/simple;
-	bh=kmLfqUhU2c8IgHn1RWT6GuLpEbSDCyp6IvbEnyTtry0=;
+	s=arc-20240116; t=1737726380; c=relaxed/simple;
+	bh=rqJ7MtkN0NJ3IbpIzJE6dNQ3uQUgLR2K4PX33hFwLaA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q3iSXSDuOPWaueYGLrvU/qmYYhW5kFtJxOyIcqfFXEX9QnBTXy27Gp86vBs/3oP1UG95iHv+c+gQsgRjLEfnlc8C8VGtQJLm0vAuvvl4WAKyuYwTZ19a6oDuz56E1mjEkCy/w3U611tAwsQ57gTVV8RqVQSs2UVTiRbySkQ0wJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kkW3C5xJ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=rYdoWWLYDI2uwemP8FR2+eELVEaJ3FdWxJo4099trR0j07285NzlCepw3BEDoUonkrqaOwsWGR6JACe1YfOTG/nUFWYtcCeDlXdxIYjrcYxi/LVYjKeiPgwjP/XXxos81PkKo4+MASXx/F1Qt7NULwuSA6q/2QlYU7ysOGVb77Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pHQn7lS+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkW3C5xJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A120AC4CEE0;
-	Fri, 24 Jan 2025 13:45:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pHQn7lS+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 051E2C4CED2;
+	Fri, 24 Jan 2025 13:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737726315;
-	bh=kmLfqUhU2c8IgHn1RWT6GuLpEbSDCyp6IvbEnyTtry0=;
+	s=k20201202; t=1737726379;
+	bh=rqJ7MtkN0NJ3IbpIzJE6dNQ3uQUgLR2K4PX33hFwLaA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kkW3C5xJ74J4W6yqdTdlIlihI2oEisUEVeJ8I3CZS+zNgJw4EUcuGZcOgjsrnWIbg
-	 vy25r6SYwnhMiFoOOXRY2CPH3r5WOx07HRfTvTX6LHCa9fOB533jzf0kBSr5lSc3qS
-	 TRxcJh7jyBF/Rb/DaQNecQP42g8y6zwXqrGnRuukjb/WHeU3QNvE4gw45ghjG0kzQA
-	 5WqtgGsVWqRYzIuQpK6qiYZm1nvjH523BfD3j4CZybNtMAHAtka+VI1xz2t7XmS07p
-	 biHBhy3hidnisOET96XX0pnc/YtYNL3c85D8AuTgJ279FXj7URreiZauM9t7ecNKrp
-	 yUdRoArbLTyqw==
-Message-ID: <47865ef4-fb8c-4ba5-82d8-eed1f292bf4d@kernel.org>
-Date: Fri, 24 Jan 2025 14:45:09 +0100
+	b=pHQn7lS+JjZY+tLwMNWXyi3KDutDewUONgA+GFXHRLrQu2FbCnGlkz6B/QkwIVxvx
+	 F7n0XzFL5tLtM5EYDph6/TEa/3id/nD2eZ/t74PU3v7BaDeDca264KZvrwbmueXk6C
+	 AiYbtLFsXoMcYBbFkQ7fsgs8r1dTjDDMWOaFvhh1fMs0MSp0/AfCGQdW7xEChIicB4
+	 AM2BRER72YcFqMuRUksOExhOqP4ExaCH+KPt/TrVqANRP0sPkuX/hBc5DEHn/qDctC
+	 aigphh2ofeowfIPytro9MckJojnP94B4hZG+s4wfl0LbEINP3zePjl0tZurfJSABCc
+	 Q2fTZxSKrpvNg==
+Message-ID: <e2de94ab-82ea-4d36-a9dc-75f6891d8927@kernel.org>
+Date: Fri, 24 Jan 2025 14:46:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,22 +35,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dt-bindings: clock: st,stm32-rcc: support spread
- spectrum clocking
-To: Stephen Boyd <sboyd@kernel.org>,
- Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+Subject: Re: [PATCH v9 00/23] Support spread spectrum clocking for i.MX8M PLLs
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
  linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20250114182021.670435-1-dario.binacchi@amarulasolutions.com>
- <20250114182021.670435-3-dario.binacchi@amarulasolutions.com>
- <73ad1336d9fbfa020ba666eef340f784.sboyd@kernel.org>
+Cc: linux-amarula@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dan Carpenter
+ <dan.carpenter@linaro.org>, Fabio Estevam <festevam@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20250118124044.157308-1-dario.binacchi@amarulasolutions.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -96,28 +94,31 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <73ad1336d9fbfa020ba666eef340f784.sboyd@kernel.org>
+In-Reply-To: <20250118124044.157308-1-dario.binacchi@amarulasolutions.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/01/2025 00:22, Stephen Boyd wrote:
-> Quoting Dario Binacchi (2025-01-14 10:19:47)
->> The addition of DT bindings for enabling and tuning spread spectrum
->> clocking generation is available only for the main PLL of stm32f{4,7}
->> platforms.
->>
->> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> ---
+On 18/01/2025 13:39, Dario Binacchi wrote:
+> The series adds support for spread spectrum clocking for i.MX8M{M,N,P}
+> PLLs (audio, video and DRAM). It has been tested for the video PLL on
+> boards using i.MX8MN and i.MX8MP.
 > 
-> Applied to clk-next
+> Changes in v9:
+> - Add 'Reviewed-by' tag of Peng Fan for imx8mn platform patches
+> - Fix building warning raised by the kernel test robot for patch
+>   v8, 11/18 clk: imx: add support for i.MX8MN anatop clock driver
+> - Add patches for imx8m{m,p} platforms:
+>   - 23/23 clk: imx8mm: support spread spectrum clock generation
+>   - 22/23 clk: imx: add support for i.MX8MM anatop clock driver
+>   - 21/23 clk: imx8mp: support spread spectrum clock generation
+>   - 20/23 clk: imx8mp: rename ccm_base to base
+>   - 19/23 clk: imx: add support for i.MX8MP anatop clock driver
+I responded in particular patch, but let's respond for formality to
+cover letter as well.
 
-Unlucky timing. NXP just sent this:
+The bindings here might get obsolete already with work:
 
 https://github.com/devicetree-org/dt-schema/pull/154
-
-which makes these bindings obsolete.
 
 Best regards,
 Krzysztof
