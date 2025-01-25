@@ -1,133 +1,132 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963451E491B
-	for <linux-clk@vger.kernel.org>; Sat, 25 Jan 2025 13:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7589218E2A
+	for <linux-clk@vger.kernel.org>; Sat, 25 Jan 2025 21:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737811286; cv=none; b=OPmKUwnAHc54xouETBo7mKxo8JHvrOg1f55ouH5/eTQJ/H6T7pxwIewfJSOhCaoOaulzHpldZ/uOYJitpWIjBSsWiwioSlB7Gz4+6pvLBCZVpd06D88tHUJe8ITmO4ndVGfDYtjES34KuhvyEWDDIBMzC+/tImZSI0XnH0VuMz4=
+	t=1737840553; cv=none; b=TTEMs8n4IqwJ80UiZ20F/xcZ4Pxqk2u21jA+u0lqMHSBjQZCB5lqLUwQwYFdpaM08zhEkqPb5dLhT4cqNdIr/1d91gIo9FHxI0jrkt3AmLL76VdjWz0HFI7l+VSLHcfTi/XUDwVp88cdIgSW4AWhzHz4viz6l5U60WPyPEgtT8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737811286; c=relaxed/simple;
-	bh=rqQlkYxYh5YiVxFjsX2QaXZvcKyx1dpoVsF7zYYgoA4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RUtEjsu+SUHB8ABA9/kN8B6jBCgptcDP6uVCCog0mTigZIsEE5byvzq6knMqT8VLL6oRnD81+B0e4TlZ0HhBjXWfuM/sWWapPN955sOLIBtw6OM84aCl9b0RBc/LQssSdLnE38eAPEvUJ6Bx34n3PsWUhR5miU/ZGb71+WaSjys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=V5tHekW3; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	s=arc-20240116; t=1737840553; c=relaxed/simple;
+	bh=NM9R4AEFHYfq5k9ExvyYEZKAJ2zvHEerEs3wJuX/PxU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bcv1v0JJKceW+3YB2XzAYGn6sDh0r07Q5nEVPFcoN07f5sHOWHppyVY861ZFRE1DkXOMJrNFPEkcPieRJQH+8THx8qH9f31QoQhD1nGUphnWLZcS7aZLGE9lZv/d4NboYUrFGC3OTaMHuu0oltePL06g61CzBs1uhh2Xt77QKbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=gU/XTUY5; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="V5tHekW3"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e3a0acba5feso4240647276.2
-        for <linux-clk@vger.kernel.org>; Sat, 25 Jan 2025 05:21:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1737811283; x=1738416083; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rqQlkYxYh5YiVxFjsX2QaXZvcKyx1dpoVsF7zYYgoA4=;
-        b=V5tHekW399w2KB/CZ5EmIr/jHO72JUiSIYq7DHlM5CHdnR8E1Nlp56UgJnGaxCPtMG
-         skdQf+EpEjnYp8FbBl9pJcGgExuUXQkm1YogMw1j4xLd12yZxZbDd7tJkNGPlmO2+Ktq
-         vhWrf6ZH1+x5bSetTHcgdO5TT2Gx810hqtQBs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737811283; x=1738416083;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rqQlkYxYh5YiVxFjsX2QaXZvcKyx1dpoVsF7zYYgoA4=;
-        b=YwG44cZGAy9bmx7p0OREL+SvhnlmM7fP0gPfK3ZMsiZ4Wq/MP8FKBZzAoDhcCXL/8v
-         VqvbMB2Evh+f6I+vtlEBxHt8NdyWWUlXUQQ5ZQ402IqY9xQec37Ub1JP1isbf+4RFbRp
-         1gG4T46zBfMaDD9/Fyy3CD6c21UrqC0pQpgZbNDsBmNO1lYu5atNQ4Rd5bHpp86/T0Ic
-         B3p9fHMm5060+K6T9nrFclKAsy6UJaJLxxn9onY3ThMH+derm/Sairlpj8fM4sXfG9kN
-         C6/55LRLsqnW5G6cIyEYavf19y7DVId3xdzT4xWc9Lg+hP6KM4zEakl+uJ0QTk3JL1xp
-         AKcA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqbh1IC5d7aXKSdjVUPyHCGpQNKoJdxKirj9yXSr8zTA+nfw6uhLnhIKvTXANbUW+HU3ymMcYhkBw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsaO7iYtET0teyxQRSohJby0VOVSioK5/RLsbkWyRQ62LBmeAh
-	abHdXn3ZSam9gBsMeOJ8fHe1PYP5qMqV2CW7N0KEowa1NGzmo3Hq1foXVUckhkTe6shCx1zcauy
-	QBuvTYtb1UmHoppI9ZRlX310zuqqe+wpOJfJbcQ==
-X-Gm-Gg: ASbGncs+IHoxu1bXb7ZW1DD6A3oAhBXnPuD5yjUf4MbJSCBg+ets2+nCrzeLiJ3K8mg
-	Wg8Qosg3P8d83vxOzjmaAk4g9QzwiLL+aK7aK5xMvfKIgC0+Vvn6Sqb6ZQoPT
-X-Google-Smtp-Source: AGHT+IEC66mHyu/T69Up/dX022TugdsmD0uulT2kpXSasOG+om+qGGY/LBwo1LfOlHcKiAvuEQ7Oi2p0ts4rAblyPzI=
-X-Received: by 2002:a05:690c:25c7:b0:6ef:6c57:ddc6 with SMTP id
- 00721157ae682-6f6eb937ac1mr261166397b3.34.1737811283560; Sat, 25 Jan 2025
- 05:21:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="gU/XTUY5"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1737840545;
+ bh=PLiub32TzGOVCaRQu14Q2l8GT6j31oGwqg3AtHjXG9A=;
+ b=gU/XTUY5ztPo8cAbTDVmoZmgkY6P6B0vFiXJjwVzpsdRplcx8zi+vFoKxTN4BdnuPOdA91xoq
+ Bct+Kf0IcATcQ5lF1aucZkxzR834GAWMdC7uennRBaASFIFzA54a2Xk157hsydli2gYU9/RNWuU
+ WarmiYPhMTy+jriIrXCFoA28279gCzuSi8TsqmeipBArhJexmZdeiPsRkGWC7Y1bGQqfiyNmz6B
+ W76DwEWF3JfXsTanFALfaGKa7B3KHtuJtFiw3J05yTqHt/chyXF8ONuMfCxUBWvz8T2Li0W5Fon
+ RJI9/sfVjjW6h5HEEuxrvqME+cTxqmQuC6XNh8mcqVYg==
+X-Forward-Email-ID: 6795578c58390289d47a0c06
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <e0bef56d-0777-4467-8ddc-3b8b23d7ac21@kwiboo.se>
+Date: Sat, 25 Jan 2025 22:28:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250114182021.670435-1-dario.binacchi@amarulasolutions.com>
- <20250114182021.670435-3-dario.binacchi@amarulasolutions.com>
- <73ad1336d9fbfa020ba666eef340f784.sboyd@kernel.org> <47865ef4-fb8c-4ba5-82d8-eed1f292bf4d@kernel.org>
-In-Reply-To: <47865ef4-fb8c-4ba5-82d8-eed1f292bf4d@kernel.org>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Sat, 25 Jan 2025 14:21:13 +0100
-X-Gm-Features: AWEUYZn9YZy8Owehe6KhYJIuvjU2tyrCD5F9XaUX2lhI1_Zpu924GXyOjD3iZ7A
-Message-ID: <CABGWkvpeOyrzcU64pNxSYC7n-VOsjSEL-iD-_YqmCveGsrH-hg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: clock: st,stm32-rcc: support spread
- spectrum clocking
-To: Krzysztof Kozlowski <krzk@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] Revert "clk: rockchip: Set parent rate for
+ DCLK_VOP clock on RK3228"
+To: Elaine Zhang <zhangqing@rock-chips.com>, Alex Bee <knaerzche@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, kever.yang@rock-chips.com,
+ heiko@sntech.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, huangtao@rock-chips.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250125011545.15547-1-zhangqing@rock-chips.com>
+ <20250125011545.15547-2-zhangqing@rock-chips.com>
+ <8752cfda-b90a-4296-a08b-054b177aa586@gmail.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <8752cfda-b90a-4296-a08b-054b177aa586@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 24, 2025 at 2:45=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 16/01/2025 00:22, Stephen Boyd wrote:
-> > Quoting Dario Binacchi (2025-01-14 10:19:47)
-> >> The addition of DT bindings for enabling and tuning spread spectrum
-> >> clocking generation is available only for the main PLL of stm32f{4,7}
-> >> platforms.
-> >>
-> >> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> >> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> >>
-> >> ---
-> >
-> > Applied to clk-next
->
-> Unlucky timing. NXP just sent this:
->
-> https://github.com/devicetree-org/dt-schema/pull/154
->
-> which makes these bindings obsolete.
->
+Hi Elaine,
 
-Why have the DT bindings already become obsolete even though the PR
-has not yet been accepted? The series has already been merged into
-the kernel. Please let me know if and when I need to make the changes.
-This is the first time I find myself in such a situation.
+On 2025-01-25 06:38, Alex Bee wrote:
+> Hi Elaine,
+> 
+> Am 25.01.25 um 02:15 schrieb Elaine Zhang:
+>> This reverts commit 1d34b9757523c1ad547bd6d040381f62d74a3189.
+>>
+>> RK3228 Only GPLL and CPLL, GPLL is a common clock, does not allow
+>> dclk_vop to change its frequency, CPLL is used by GMAC,
+>> if dclk_vop use CLK_SET_RATE_PARENT and CLK_SET_RATE_NO_REPARENT flags will
+>> affect the GMAC function.
+>>
+> how do you come to this conclusion?
+> 
+> On the RK3228, hdmiphy is the default parent of dclk_vop, a clock that is
+> not even generated by the CRU but is the output of an external HDMI PHY.
+> The CLK_SET_RATE_NO_REPARENT flag ensures that the parent of dclk_vop never
+> changes to sclk_vop_pre (and thus never uses CPLL or GPLL). With
+> CLK_SET_RATE_PARENT we only ensure that we can use all rates of [0] since
+> there is no divider between dclk_vop and hdmiphy. Overall it is pretty much
+> the same situation as for RK3328, which handles these clocks in the same
+> way (see dclk_lcdc for RK3328).
 
-Thanks and regards,
-Dario
+I came to similar conclusion for v1 of this patch, see [2].
 
-> Best regards,
-> Krzysztof
+Maybe we should assign clk parent in DT similar to rk3328.dtsi to make
+it extra clear that hdmiphy should be used as parent?
 
+  assigned-clocks = <&cru DCLK_VOP>;
+  assigned-clock-parents = <&cru SCLK_HDMI_PHY>;
 
+Also for next revert patch you send, please include the patch author in
+the recipient list :-)
 
---=20
+[2] https://lore.kernel.org/all/d95d317c-5f6e-42bd-94a9-e1a6c7685e2f@kwiboo.se/
 
-Dario Binacchi
+Regards,
+Jonas
 
-Senior Embedded Linux Developer
+> 
+> Regards,
+> Alex
+> 
+> [0] [1] 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/phy/rockchip/phy-rockchip-inno-hdmi.c?h=v6.13#n293
+>> If the client application does not use GMAC and CPLL is free, make this
+>> change on the local branch.
+>>
+>> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+>> ---
+>>   drivers/clk/rockchip/clk-rk3228.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+>> index ed602c27b624..9c0284607766 100644
+>> --- a/drivers/clk/rockchip/clk-rk3228.c
+>> +++ b/drivers/clk/rockchip/clk-rk3228.c
+>> @@ -409,7 +409,7 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+>>   			RK2928_CLKSEL_CON(29), 0, 3, DFLAGS),
+>>   	DIV(0, "sclk_vop_pre", "sclk_vop_src", 0,
+>>   			RK2928_CLKSEL_CON(27), 8, 8, DFLAGS),
+>> -	MUX(DCLK_VOP, "dclk_vop", mux_dclk_vop_p, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
+>> +	MUX(DCLK_VOP, "dclk_vop", mux_dclk_vop_p, 0,
+>>   			RK2928_CLKSEL_CON(27), 1, 1, MFLAGS),
+>>   
+>>   	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
+> 
+> 
 
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
