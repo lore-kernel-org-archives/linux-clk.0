@@ -1,120 +1,93 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9541E2D057;
-	Sun, 26 Jan 2025 13:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015AC1DE3DE;
+	Sun, 26 Jan 2025 15:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737899206; cv=none; b=g1B+uxdaD6Qdemb9L/PzGkmD+BkKC0G4B+Sj7XhJi2U+8IUa5nY+JeAdkI+Z+9jApzYuWlNtz9dq6w+OFfuZ79UnMbADThDhXTej/GfRhN5ZRCRH9F7OVwIXOEr+wItGxZUttas0LWd0MrGbea2rJDDTCV/iVppsM+wJNr4BzRA=
+	t=1737903652; cv=none; b=H8AHs3tkL9SytaYIPrcVF6GyX5xI3R97GeGw1A5OJZylb624qmlcgVNV1X06s/2ZlQ3QAJI7E6iIVLWnixOwnMo1Hdejjg2N4faDdwPul/1eop5sf0YLzKabadbp34j1qMHwq94bhdYwJKXDmOecUtzluO5Y9C/xANUxo4AeBRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737899206; c=relaxed/simple;
-	bh=WefMHa81IgA5jTULkLJB5v0338ahisA7uCWwqoG/poI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RczN2C7MHS76xgigggNxWu++Vig8nysTEsg9dx+Xx3mJys+cKtjxaPfa3yETaViFCFWQL+HOb4Hzt5Jovt0NYAmXM4E0Pd7EvJtIAGh4bABQ+bJNdzC93MVKcjLltpqfknpdASY1EIi4R4EYy5HO1R3kiAqlg44TMG0mvKijxuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: BDmoBzXWRHuFJ65ZSbtW4g==
-X-CSE-MsgGUID: 3athBfeSQlGsKvzqbG0stQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 26 Jan 2025 22:46:42 +0900
-Received: from localhost.localdomain (unknown [10.226.92.41])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 16D644002654;
-	Sun, 26 Jan 2025 22:46:27 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 2/7] clk: renesas: r9a09g047: Add SDHI clocks/resets
-Date: Sun, 26 Jan 2025 13:46:04 +0000
-Message-ID: <20250126134616.37334-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250126134616.37334-1-biju.das.jz@bp.renesas.com>
-References: <20250126134616.37334-1-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1737903652; c=relaxed/simple;
+	bh=02d56irNDBarfWo5Mkhq/+ZsO4/9M/5X0LzmTKTyCeY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=F1+1ou2X6bSIiFoamoc3fVQuDtHzl9Pw5H/2Od21iY1e3zP2gajXQ4oddxAg/kNBheueuZTyNruvojBasPEQB6XprdZntUgg2hQ08Oca04xD5pKrf81nHUTm9GHenISs+hhYB3FcmZlMrwFleja5HsB7i+zaiNRVp5Q0EvOet9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kdwxC1EG; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kdwxC1EG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BB05C4CEE2;
+	Sun, 26 Jan 2025 15:00:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737903651;
+	bh=02d56irNDBarfWo5Mkhq/+ZsO4/9M/5X0LzmTKTyCeY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kdwxC1EG0zOl2d9b+g3nNZf1Cmm9eAnHFf/oviRJ+ukcTnwjjNFL8RQNoXs3LKxPJ
+	 xD36Mhs7vvH0GG2dpWEFXcEO5E1D/0QAtVFbmEPAJZGe51zLaA5y26IYGvtXTaY9Uh
+	 2h1oDHB9QBxsHE5H7Lr0xZz8ZQ6XSS1JuFcKen6iVhP3VcoM2I0Cb0pWV/18c8XKv+
+	 RNpZgn/lh6z5UwU7ANlWwDysQCnyFmygxXEkMX9+WuhEPiD6W9SMFgyXUxBWWi+gzR
+	 h4xgmUnfY4wM46htXdFm4oTPoe2oZDLgdCi6YdsYoyw54SWpNlulGj8Ju4x0DDtxPj
+	 aCPqb2Mpb3J0g==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.13 12/35] clk: qcom: Make GCC_8150 depend on QCOM_GDSC
+Date: Sun, 26 Jan 2025 10:00:06 -0500
+Message-Id: <20250126150029.953021-12-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250126150029.953021-1-sashal@kernel.org>
+References: <20250126150029.953021-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.13
 Content-Transfer-Encoding: 8bit
 
-Add SDHI{0..2} clock and reset entries.
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-This patch depend upon [1]
-[1] https://lore.kernel.org/all/20250120094715.25802-3-biju.das.jz@bp.renesas.com/
----
- drivers/clk/renesas/r9a09g047-cpg.c | 31 +++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+[ Upstream commit 1474149c4209943b37a2c01b82f07ba39465e5fe ]
 
-diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
-index 1181e7b605e8..51fd24c20ed5 100644
---- a/drivers/clk/renesas/r9a09g047-cpg.c
-+++ b/drivers/clk/renesas/r9a09g047-cpg.c
-@@ -31,6 +31,8 @@ enum clk_ids {
- 
- 	/* Internal Core Clocks */
- 	CLK_PLLCM33_DIV16,
-+	CLK_PLLCLN_DIV2,
-+	CLK_PLLCLN_DIV8,
- 	CLK_PLLCLN_DIV16,
- 	CLK_PLLDTY_ACPU,
- 	CLK_PLLDTY_ACPU_DIV4,
-@@ -71,6 +73,8 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
- 	/* Internal Core Clocks */
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
- 
-+	DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
-+	DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
- 	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
- 
- 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
-@@ -126,6 +130,30 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
- 						BUS_MSTOP(1, BIT(7))),
- 	DEF_MOD("riic_7_ckm",			CLK_PLLCLN_DIV16, 9, 11, 4, 27,
- 						BUS_MSTOP(1, BIT(8))),
-+	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_imclk2",		CLK_PLLCLN_DIV8, 10, 4, 5, 4,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_clk_hs",		CLK_PLLCLN_DIV2, 10, 5, 5, 5,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_0_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 6, 5, 6,
-+						BUS_MSTOP(8, BIT(2))),
-+	DEF_MOD("sdhi_1_imclk",			CLK_PLLCLN_DIV8, 10, 7, 5, 7,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_imclk2",		CLK_PLLCLN_DIV8, 10, 8, 5, 8,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_clk_hs",		CLK_PLLCLN_DIV2, 10, 9, 5, 9,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_1_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 10, 5, 10,
-+						BUS_MSTOP(8, BIT(3))),
-+	DEF_MOD("sdhi_2_imclk",			CLK_PLLCLN_DIV8, 10, 11, 5, 11,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_imclk2",		CLK_PLLCLN_DIV8, 10, 12, 5, 12,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_clk_hs",		CLK_PLLCLN_DIV2, 10, 13, 5, 13,
-+						BUS_MSTOP(8, BIT(4))),
-+	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
-+						BUS_MSTOP(8, BIT(4))),
- };
- 
- static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
-@@ -146,6 +174,9 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
- 	DEF_RST(9, 14, 4, 15),		/* RIIC_6_MRST */
- 	DEF_RST(9, 15, 4, 16),		/* RIIC_7_MRST */
- 	DEF_RST(10, 0, 4, 17),		/* RIIC_8_MRST */
-+	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
-+	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
-+	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
- };
- 
- const struct rzv2h_cpg_info r9a09g047_cpg_info __initconst = {
+Like all other non-ancient Qualcomm clock drivers, QCOM_GDSC is
+required, as the GCC driver defines and instantiates a bunch of GDSCs.
+
+Add the missing dependency.
+
+Reported-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Closes: https://lore.kernel.org/linux-arm-msm/ab85f2ae-6c97-4fbb-a15b-31cc9e1f77fc@linaro.org/
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Link: https://lore.kernel.org/r/20241026-topic-8150gcc_kconfig-v1-1-3772013d8804@oss.qualcomm.com
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/qcom/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index ef89d686cbc4e..c27ea46283fd9 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -1079,6 +1079,7 @@ config SM_GCC_7150
+ config SM_GCC_8150
+ 	tristate "SM8150 Global Clock Controller"
+ 	depends on ARM64 || COMPILE_TEST
++	select QCOM_GDSC
+ 	help
+ 	  Support for the global clock controller on SM8150 devices.
+ 	  Say Y if you want to use peripheral devices such as UART,
 -- 
-2.43.0
+2.39.5
 
