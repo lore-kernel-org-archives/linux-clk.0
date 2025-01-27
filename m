@@ -1,158 +1,147 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4CB747F
-	for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 15:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A116660B8A;
+	Mon, 27 Jan 2025 15:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737990733; cv=none; b=OXmHwaZo2IqnP0VK01nNjkNupEgMPb4DIUwAEOgcC9q5ZwK0ZjVq6k/jfEOEkDM6yC0o+o9sf9XW7gz+oafp1G+3ogm6DijTDcmvFKmFsHPDte8pwY9fEXoSgP7eyDsOkiPBdjxrbj3JrnYUD/I+GJcDDQWq52zFLKDN8+oCi+M=
+	t=1737993508; cv=none; b=JnyaHaD+CQ3nMjwO8IrAPULbo3ereE/f3ICedrFw3pOj3nDcWFJ5fmFul5CigsHT/npaZ3myeqbgg/ZZyquSy2xmh5RgDzArdbe6ITqbF4dWYssFZMWqhH05afBy6UtOgjWTHW/uEyscEyh6gH+jXMFg3neqrQ/wkbR4fb+AMSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737990733; c=relaxed/simple;
-	bh=0/2bJnEnDs8um6XYYODDkPZ2omRK56ST66i1OlyJEKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JW2gyJBGskStPTQfuUAco4EP+lwiV0fUlBLpu30imKCFvyftoON3Ko5U5UikKTrisOyvSdc6bpSgkmiv1YdM2u2VXwD60axrNp/PqKAw4dFD20MiKANPuR1q7Ps7XmMKBslLeg2CN+Ei/E5qmgWlWkuz9P0UhxcwNPQ1qjeVSJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KGG265+9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1737993508; c=relaxed/simple;
+	bh=sgn7B7gYKw4oRSChjpiRNU7Ip4Inh0W9b6zsPKwd9hM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FmHjj7ZQ5cpQzQuuIPt9jUHShjKeNdV3XGOopDxJQxeZhsTXMu1y9iZXBuLXjpbEnfP/cf4pf3ZEi9P/K6/70haoAnEy+wPWwoIth3eXY2u4lF28mnUQZg60WRHTWy9nQwUumTtmjVrjZoRX80sk2N+kqhVtp4i2pCXHMB6het8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VjM9dDZA; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KGG265+9"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50RD3VUv019469
-	for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 15:12:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dQpvtI6u3lxTYx1xzlqCxqIm9uDJhDvieISDzIxyB3U=; b=KGG265+9kok1dsaT
-	jn6yay7UsmHlM/Z8GeR6dq0lOj8NRdcbVnkCK9FjAgc3tAtygj884BfBU/Y4duZb
-	mAXtAxfG1N2FPdjXGLFHUxV4wf1zWn1YDYibnQLOlvw7OayBOOgtyoNDv8dco2mk
-	0F7Tmw0NOeJUz7SbgEXcBRbHfGi9GFQ/iNh+MbHy++Ghsr8jKLvRvUBVuqyVuXOV
-	uBhYWn7rBrnJSv/tDYBYL27oRJXd7ixngJkN9WnhNZNKuTiWIKxAPLl2CVNmGde/
-	evcctEhYbEKA64Y+lA/s5bonhY3+b58n5Vp1TPM6RkwN4gNpSks69TV10fbfc5DV
-	VQwpKw==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44eapq88ja-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 15:12:09 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7b6e43ed084so90667685a.0
-        for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 07:12:09 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VjM9dDZA"
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-5187f0b893dso1475020e0c.3;
+        Mon, 27 Jan 2025 07:58:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737993505; x=1738598305; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TrdPISaA88VM3tVAVhAjIRcAVMkAWcHxKvma6bQDGX4=;
+        b=VjM9dDZAK1+BBRFhsdJWWajczpJelG7SJub4I950AQvniWCWM8Co655L6XdXeyMe0W
+         ObdsLSvd6hSgbiYvEaBQvmFk2757SNW/c6zh71oPD0+36X0sh8t2OjE6Vo8A1CegM8ji
+         NYqXby4lR+xknc0DadR7ieEK8cIVsVP27WbO6ik+VbErdInZ1VctiPvyQ+bRXSg1rwKF
+         HY14h4ltunOYArXjzX196VxFSJPhda76tb95Fxjq33U+YD3lfAo3/Jh0JeAUS3ryr6dG
+         rkLQuUvlaX3wOpGxvPyw9Tbibo+1P0ks81tUnXFaRE9Z90LENoOuES8mm2EYz9iKQYF8
+         mFLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737990728; x=1738595528;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dQpvtI6u3lxTYx1xzlqCxqIm9uDJhDvieISDzIxyB3U=;
-        b=VhqcBNCmdkmUVytUw0x7cDoamS62GWa36Q75HSOJh3bkoIEuR1UFqfgm107ofhTIGQ
-         HPmWpI9x92oGeBBAVdPtS78YHO2AKLz4qybIY65CU61oZoAhDZO6AiVORFCxAQDIAXbB
-         bLijZ2JpC1bCE9c80ab9JXEA1eIjgfkk3pv/T8VC1oo6LlQk94Yr6Slyk7ZZOdd9fP0a
-         JtdGa8dXjv5VXigmj8UEHHUp9NHYe3vNQjnN7y5qAqb/ECw/xFR9PeXyzMqxBEB4Uumx
-         iJ197W/03EK3G0je9W7eoBwSIDM+7umAIueEt9Q4j6+ztnW6vmO4lWZyVbUPytedjslU
-         jwEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXyYD5Vw9ZdvjxOJyILCsSERWD9DEm6Jibtd5EFXZ9ijRYZWHD12KWUSxRvZ0A0Q3hINY4apkGTqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiVQbXN0xF/BosYIj/QM4i3Jzw5Zr77fU1c49TIk0lh8pMtVZT
-	gsJUKNVq1BpsIZSWUOx6pJvGGsHQn1hav2w7W7pIoNxeiDnbSbCZkFVgRZnojs569dGc4anmYAK
-	G1TX4R1n4scgdfEFtjekrRQbG7rXBQ5k1cXzn6KWr1uJ9695TY/poOoWw0w0=
-X-Gm-Gg: ASbGnctQEy/awWtWscgu3GNOEiN2yVL55zLapKmh5JDs97LCaQh++gz4QvjIIX3yxiI
-	OnR8TJyw8K+8esfh1FIUV93LFhyvzQhUaCLQhezHM9Vq12Y+TWjBpHlQoJz1XCir3GZoX76xquC
-	Ez4MTF64wAsDYyhH9L7WSIBSSsHNoPGO9h3tplg4VvAxg2cb0EaOb1B9ygR07USnLesNp2/Pwx+
-	i4B9Ik51VK5v9rXVqFYpDudJvsNKJSLudoG4fEt3V1rCA5ped2oQdJp4G3O7pNGVdH8DPUP3Z02
-	UrlbdzOeweah8o5YX1/UViI66jsj1d+F0FxhyIHDi+1MjrzoD9cDh4esKpw=
-X-Received: by 2002:a05:622a:1b92:b0:467:692b:754f with SMTP id d75a77b69052e-46e12ba7bbcmr222256401cf.13.1737990728542;
-        Mon, 27 Jan 2025 07:12:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGAXSyKsvfmhX3h/ssch181jhsbqIKNv4LNE3vkPaU53NS6RVkISKb6uv5OLWtSlIdF4nr7xQ==
-X-Received: by 2002:a05:622a:1b92:b0:467:692b:754f with SMTP id d75a77b69052e-46e12ba7bbcmr222256191cf.13.1737990727978;
-        Mon, 27 Jan 2025 07:12:07 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6760ab363sm598975666b.114.2025.01.27.07.12.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Jan 2025 07:12:07 -0800 (PST)
-Message-ID: <7e118726-b22b-4c7b-9966-07c3b1ff709c@oss.qualcomm.com>
-Date: Mon, 27 Jan 2025 16:12:05 +0100
+        d=1e100.net; s=20230601; t=1737993505; x=1738598305;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TrdPISaA88VM3tVAVhAjIRcAVMkAWcHxKvma6bQDGX4=;
+        b=EtihSrBpVfrCctvtKKqak/HEMcvBNIioAfypS54yIZZCz9p7Dp1jszFGxyFbFjxQG7
+         DddfHvVx8ezFRhvwGBy1Q/y5LdvCaYqZSNv0aDKVfkvTrj09IPCz6epbflI7z7O3n0a3
+         wvJg3FM2dIee+TFM9EK882htlfDttuEhLzmbmor9lcUzI1qBYyFPmm1LUSQhDQQTInzL
+         ZvIXzSDnzk2Gg+js0xPGEg1EgDvO32vALHalkdtyiTPEJkPfw5BuYhdf4TM9cSiB6a85
+         j7BISonektttL0ou3cXWmc2qctwnWGF++DZ7t59GJwG2QOQkPVYT/CUw2dsDJ5ySiM5s
+         A71w==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Hpef5jB+Ms0Fs7Myt4uAaz1/SvQjxlHWoSO/DH10E/kl5jcIFAvUZzkTITwlSbmT0RufBi/fm/A=@vger.kernel.org, AJvYcCU2shHMg+LMUh/ohxktnJSJEC/KDQesRvuncXiKeyrCr4h0i+pAlfCuKOaPM5/jVOTvNKZgsCLmz2Cnpu4n8pSYqjM=@vger.kernel.org, AJvYcCV2uTYtM6I+kmdT5oiADTw5tFJBV9PBq9zXCWnLGuI1W3N4699j0yRDoAEP7lnX0ddImuZskYapbhagye2g@vger.kernel.org, AJvYcCXsYmgH2qCn14HwbCb/LG9Qngm+ihr05ns7RRRhfncZse7vlM6vs1LFKTkMq4swAR6ufTB7l5+l@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvMhbYm26Q8rOY9+mD/hPGhV6QVKJJ4/8d7JsGIcH44UB9k2u2
+	35Orzq0Ut0VsVCgLrJF3wkU6PjoJBYMRxvpffq8jZMZ7dydb+//9OMB9KQnnYCEgcKu/RUE21m1
+	h5su4NalSdMEbKFZ6RloJWBXM4oU=
+X-Gm-Gg: ASbGncsT3++CBnMOHpoBAb4CptXE2XzLgeFiwQ2V2pFHhy8awHD9ckDDK5krXjiJXW7
+	jLnGM0Ab8roTT1RMQ6ye/nrxTRcVcDQ6FvBR9rSFBK5qmv6/roX53TwVU4dBOdQ==
+X-Google-Smtp-Source: AGHT+IFewEgzh+navCckBdb7lL+wzy5gFVB2RdeBSc6PAtpESEp7ykvGRV8OwGhoOa5sYl9xq0BHhqbVkNkj6TSnp84=
+X-Received: by 2002:a05:6122:4887:b0:51b:a11f:cbdb with SMTP id
+ 71dfb90a1353d-51d592bcc7amr39968496e0c.4.1737993505400; Mon, 27 Jan 2025
+ 07:58:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] cpufreq: qcom-nvmem: Enable cpufreq for ipq5424
-To: Sricharan R <quic_srichara@quicinc.com>, andersson@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
-        rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-References: <20250127093128.2611247-1-quic_srichara@quicinc.com>
- <20250127093128.2611247-4-quic_srichara@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250127093128.2611247-4-quic_srichara@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: Us9-tpy-Mj1qvxHMlgouAJqZvCYcoW_M
-X-Proofpoint-GUID: Us9-tpy-Mj1qvxHMlgouAJqZvCYcoW_M
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-01-27_07,2025-01-27_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 spamscore=0 phishscore=0 adultscore=0 clxscore=1015
- mlxscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- lowpriorityscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2501270121
+References: <20250122100828.395091-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVP8LrqAYK7sPJqiB+Fagk=CrhSwX1CixKOxoiGgyDEoQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVP8LrqAYK7sPJqiB+Fagk=CrhSwX1CixKOxoiGgyDEoQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 27 Jan 2025 15:57:59 +0000
+X-Gm-Features: AWEUYZn7naazeV0KeZB-JQnjTKvmJ64OyQblw-v_fwKe0kUX2om_A9-SNmN0UYk
+Message-ID: <CA+V-a8tQOGeahv37ikq9Re6_4Hqdo5XbfQOv_KMf6pw9UsidZQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a07g043: Fix HP clock source for RZ/Five SoC
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27.01.2025 10:31 AM, Sricharan R wrote:
-> From: Md Sadre Alam <quic_mdalam@quicinc.com>
-> 
-> IPQ5424 have different OPPs available for the CPU based on
-> SoC variant. This can be determined through use of an eFuse
-> register present in the silicon.
-> 
-> Added support for ipq5424 on nvmem driver which helps to
-> determine OPPs at runtime based on the eFuse register which
-> has the CPU frequency limits. opp-supported-hw dt binding
-> can be used to indicate the available OPPs for each limit.
-> 
-> nvmem driver also creates the "cpufreq-dt" platform_device after
-> passing the version matching data to the OPP framework so that the
-> cpufreq-dt handles the actual cpufreq implementation.
-> 
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 1 +
->  drivers/cpufreq/qcom-cpufreq-nvmem.c | 5 +++++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index 9c198bd4f7e9..4045bc3ce805 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -187,6 +187,7 @@ static const struct of_device_id blocklist[] __initconst = {
->  	{ .compatible = "ti,am62p5", },
->  
->  	{ .compatible = "qcom,ipq5332", },
-> +	{ .compatible = "qcom,ipq5424", },
->  	{ .compatible = "qcom,ipq6018", },
->  	{ .compatible = "qcom,ipq8064", },
->  	{ .compatible = "qcom,ipq8074", },
-> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> index 3a8ed723a23e..102f7f1b031c 100644
-> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> @@ -200,6 +200,10 @@ static int qcom_cpufreq_kryo_name_version(struct device *cpu_dev,
->  	case QCOM_ID_IPQ9574:
->  		drv->versions = 1 << (unsigned int)(*speedbin);
->  		break;
-> +	case QCOM_ID_IPQ5424:
-> +	case QCOM_ID_IPQ5404:
-> +		drv->versions =  (*speedbin != 0x3b) ? BIT(0) : BIT(1);
+Hi Geert,
 
-Perhaps:
+Thank you for the review.
 
-drv->versions =  (*speedbin == 0x3b) ? BIT(1) : BIT(0);
+On Thu, Jan 23, 2025 at 8:29=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> Thanks for your patch!
+>
+> On Wed, Jan 22, 2025 at 11:08=E2=80=AFAM Prabhakar <prabhakar.csengg@gmai=
+l.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > According to the Rev.1.20 hardware manual for the RZ/Five SoC, the cloc=
+k
+> > source for HP is derived from PLL6 divided by 2. This patch corrects th=
+e
+> > implementation by configuring HP as a fixed clock source instead of a M=
+UX.
+> >
+> > The `CPG_PL6_ETH_SSEL` register, which is available on the RZ/G2UL SoC,=
+ is
+> > not present on the RZ/Five SoC, necessitating this change.
+>
+> While the register is not documented to exist, it reads back the same
+> default value as on RZ/G2UL, selecting the right parent that does exist.
+>
+Yep.
 
-But ultimately both work:
+> > Fixes: 95d48d270305ad2c ("clk: renesas: r9a07g043: Add support for RZ/F=
+ive SoC")
+> > Cc: stable@vger.kernel.org
+> > Reported-by: Hien Huynh <hien.huynh.px@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> > --- a/drivers/clk/renesas/r9a07g043-cpg.c
+> > +++ b/drivers/clk/renesas/r9a07g043-cpg.c
+> > @@ -138,7 +138,11 @@ static const struct cpg_core_clk r9a07g043_core_cl=
+ks[] __initconst =3D {
+> >         DEF_DIV("P2", R9A07G043_CLK_P2, CLK_PLL3_DIV2_4_2, DIVPL3A, dta=
+ble_1_32),
+> >         DEF_FIXED("M0", R9A07G043_CLK_M0, CLK_PLL3_DIV2_4, 1, 1),
+> >         DEF_FIXED("ZT", R9A07G043_CLK_ZT, CLK_PLL3_DIV2_4_2, 1, 1),
+> > +#ifdef CONFIG_ARM64
+> >         DEF_MUX("HP", R9A07G043_CLK_HP, SEL_PLL6_2, sel_pll6_2),
+>
+> When building with W=3D1 on non-ARM64:
+>
+>     error: =E2=80=98sel_pll6_2=E2=80=99 defined but not used
+>
+> so sel_pll6_2 [] needs to be protected by an #ifdef too (or __maybe_unuse=
+d,
+> but the rest of the file uses __ifdef).
+>
+Agreed, I'll use #ifdef for consistency.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > +#else
+>
+> The rest of the file uses:
+>
+>     #endif
+>     #ifdef CONFIG_RISCV
+>
+> instead of #else, so please use the same construct for consistency.
+>
+Sure, I'll update it as mentioned above.
 
-Konrad
+Cheers,
+Prabhakar
