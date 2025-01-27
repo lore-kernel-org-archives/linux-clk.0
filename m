@@ -1,130 +1,78 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDFA1FF7B4;
-	Mon, 27 Jan 2025 13:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398F520010C
+	for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 13:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737984332; cv=none; b=odp24p0j+3utK+dhrDZp54Fqr5Vng5pVzNhMZP+6uWvNhaM5NdV3jnReXtHuLUHJ9+p6rObv2tN+KeceJ6ciDNuxculzSKgTCu3dOcTJhiFY4oV+ZkCrZ4Fo+Q3u7JVQz7ZaYMsyzG5qXlOrxlbJbWiuFkVQ7s7emVdSVz3ikUY=
+	t=1737986084; cv=none; b=RTzrUBrqGQysM/6bgLFoelKIsC0h2oBARkw91fcpT2FD5pLVzWOUZAv9EvtPOhBHofe6E8PpTzW41M+J0HVubWgDAVkCGEpZY6/78RbquHkUttcPm6sF659zZahT30QSxUTdJutY2G4kSCqSimjV3gcxz7JqWPYatCBZmQh/iso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737984332; c=relaxed/simple;
-	bh=RjFj+btLOrA1I0c/0XDEPot6dd9rNyckywxmgkJzq3o=;
+	s=arc-20240116; t=1737986084; c=relaxed/simple;
+	bh=4pN0JqogpuXrg2SLbBAUBg8nV9QiDA72RP8sN6rDFQM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aEfhAR3RlQYiSsb42lAOvxkw+nUntoz6q6DHAY0pQYX9yAkuDsIcFi/ef/RPnfCGfMo6aaLv5F7HtRLQF2WK23ejmtY2BNY7EEaLm0JP2UncX78LDNu5Z20MP1wE0lxRljio5NohTrvoN6ZN1daJdMi5M+IsFEMnMgznBw9oovI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QSGUOvEZ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=YdBxV1TnVpDCiCSEBn8W0iOGjhea1uClDHLSkXkKFuTiMsweF6lt9pHg/RNj3MCWLPVqysH2KiNlpK7wN05XaeC7VOBGPZHq8I0vesOifN3H8HLqA5CvhqsgXUyMUJOkmUfIqD1pOVuL6wbrRvnvxRwszJN2zCdFiZ2niYoh0x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V0RSkRih; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QSGUOvEZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1737984330; x=1769520330;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RjFj+btLOrA1I0c/0XDEPot6dd9rNyckywxmgkJzq3o=;
-  b=QSGUOvEZzlCLg52m+Lkyf/+kcHVE68FvAFk33+V3UhwIx/K/THbEuyid
-   qJ438VnvterjDhGelKR5fP6BxrrxRkqifOI54cau6t1t8osjTRna9hBxM
-   No2vFYIs3XvcsO1WP4e5Biv+WmJTB68gdx3/u0mrAfgwMTVAD015W4iZ3
-   /IS6Kq3c9DS8MxtJuSPO9pAimIX5JPT9iSW8d4LmXW3YyQJxw6TCZ90TZ
-   /GjxSPzYFVZHfh4LDTMcdRhtiKIjHF1pelA8u+BGatnQUd04z2t7ouweY
-   lN5ljcLdmzwZ6ey8werqdArXQ+hfBfCOql1cBQHnUxfs2OPHqKl0LQjSz
-   w==;
-X-CSE-ConnectionGUID: WXPLNx9wSDWvyiA2ZoPUwA==
-X-CSE-MsgGUID: Ov3TekHxTxuVTp8Y/oIV5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11328"; a="42105354"
-X-IronPort-AV: E=Sophos;i="6.13,238,1732608000"; 
-   d="scan'208";a="42105354"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2025 05:25:22 -0800
-X-CSE-ConnectionGUID: oOw//HyuRH2sXbDiVD3/cA==
-X-CSE-MsgGUID: F7vXYkyrSx2N1gt4t3xT9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="131730368"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2025 05:25:02 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tcP6l-00000005jpm-3fIe;
-	Mon, 27 Jan 2025 15:24:55 +0200
-Date: Mon, 27 Jan 2025 15:24:55 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Damien Le Moal <dlemoal@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Corey Minyard <minyard@acm.org>, Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Ian Abbott <abbotti@mev.co.uk>,
-	H Hartley Sweeten <hsweeten@visionengravers.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Len Brown <lenb@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	John Allen <john.allen@amd.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Vinod Koul <vkoul@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Moritz Fischer <mdf@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
-	Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Peter Rosin <peda@axentia.se>, Lars-Peter Clausen <lars@metafoo.de>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Markuss Broks <markuss.broks@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Lee Jones <lee@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Yisen Zhuang <yisen.zhuang@huawei.com>,
-	Stanislaw Gruszka <stf_xl@wp.pl>, Kalle Valo <kvalo@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Xiang Chen <chenxiang66@hisilicon.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Vaibhav Hiremath <hvaibhav.linux@gmail.com>,
-	Alex Elder <elder@kernel.org>, Jiri Slaby <jirislaby@kernel.org>,
-	Jacky Huang <ychuang3@nuvoton.com>, Helge Deller <deller@gmx.de>,
-	Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kees Cook <keescook@chromium.org>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Anna Schumaker <anna@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Takashi Iwai <tiwai@suse.com>, linuxppc-dev@lists.ozlabs.org,
-	linux-ide@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
-	linux-integrity@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-fpga@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-input@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	linux-leds@vger.kernel.org, linux-wireless@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, greybus-dev@lists.linaro.org,
-	linux-staging@lists.linux.dev, linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	iommu@lists.linux.dev, linux-trace-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 00/34] address all -Wunused-const warnings
-Message-ID: <Z5eJJ199QwL0HVJT@smile.fi.intel.com>
-References: <20240403080702.3509288-1-arnd@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V0RSkRih"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30219437e63so56707991fa.1
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 05:54:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1737986080; x=1738590880; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MG8vL6IasZgSPWiGApP4GVL5c9606qD22ZEA08oiK0c=;
+        b=V0RSkRihbc5pQwafnrfZlxd+aSkuyJ0hw7o0q/vuv4owy/7qimCGmHpCmKf2fOtth0
+         Uox5vweV8m9X08eUAXYACo5KS5CEH5gABzEsdeoCdMuGt3l60iQsX55FcBN+ylC5/444
+         dnbpn3Y6SrCNC7GoRtDKvdn0tC2du3mP6lWOlCUgfvpl5HwTM5RmFGCZEeFK36PwNDQy
+         B2HOFIVPnYuWb0uN0543sN1DGVkI0B7QEKY1r8kLRG7NfpCcTMi9Dbd1cMdnn8fH6Oa5
+         kUIpnt/60aAunXtBVnmuAci26+ktc5f2oMAy9d4FrbDhUCdpFMcnA8HvUtv/Ok3R4XYO
+         SY7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737986080; x=1738590880;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MG8vL6IasZgSPWiGApP4GVL5c9606qD22ZEA08oiK0c=;
+        b=Vxjc3wZo9ojs8V0tFFRNG6zlTfyqRFD1LsJGdEWJmWua/riTUKagOsSP8eWdRWP5v9
+         +414bOsYqJNGZsNgF8VU7t2FjqTokD87wEpUmaf6k8H/ZoJ1Y7F3P7hZt41qboRYJ4OZ
+         cf2ui4JQr2vNVtF6MJy0d067tDLZIHfcID84/ClgC43+bzJ2F+QV7rMzPpyvm63wlttQ
+         Fzqzt1uFWDurQmYcAGKpo64wq0HvUDWZsKTVnF8d5pNufqVydIEF/mkQ0Htf9JTGvlxK
+         MjYM8CopztEebMi5GrAf+9XFnxt1dZ5i7WGHoeERnhK0PnxIE3wDt+DyP62S1S1NEbfA
+         jTOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWH71ISuIrfYokSSG33eWEND8K0Gs1BtdMFRGra8wIcO5olEaMy3cTsh4RfigSF72cep3ED4Nf1UQc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfcg6VBRl/w087GTs31yMRyf4EhqnZgc8tehbEE80m6uOXhxM+
+	o+puZq75B/MSSV4ntjbZawmDqOjdQ73Cyv6h+wUUNSzCCkQC+Z6RJX6YKsdhPb4=
+X-Gm-Gg: ASbGncuHSTR7lCngY0/bEcs4LH4/abqtV37Fdvqy8B2fBlXHNH2wnnJgM4xjGQMvkRl
+	qlNHX8rdu+r+icP2W1chLww85Ij08nJ81RXnBwSoA2cWPggIlshvodTUfgY0dVrXh8DAXuLaMeG
+	V3NHP91VKIVTWTUsSELP6e7MXYP+4txwDBJtKBPlIpfXLiPkRaH74XGtpLXH1Q6/GlAybfT/Fsl
+	S0ve22D4Eys/LWkibMbQWt1CTcyWzbDqA4oyY25fGKMf9QtoBnAxbr00/AF7sLgOxBa7MrwziY/
+	6qy81/AwsDYgdc4GOFOj4KWcdXt3rwgFPl0WA26IPNeoo9nE4GSRPKNLRLnj
+X-Google-Smtp-Source: AGHT+IEZNRgyG7avdiIFrrqpYNJ9ma4eAM8WC44WUlJD0d6Eyzriv+5OslGJLlbJ5m5dOBVSOwRTkw==
+X-Received: by 2002:a2e:a917:0:b0:302:2097:392f with SMTP id 38308e7fff4ca-3076c33d8d0mr50387271fa.7.1737986080297;
+        Mon, 27 Jan 2025 05:54:40 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3076ba6bd1asm14100191fa.11.2025.01.27.05.54.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jan 2025 05:54:38 -0800 (PST)
+Date: Mon, 27 Jan 2025 15:54:37 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/msm/dsi/phy: Use the header with clock IDs
+Message-ID: <ccs5oxfgtk5zrnw27okvbskddqynurx6hl3e6g4zbmlqcqm4yl@sxghz575bqdo>
+References: <20250127132105.107138-1-krzysztof.kozlowski@linaro.org>
+ <20250127132105.107138-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -133,47 +81,24 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240403080702.3509288-1-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250127132105.107138-2-krzysztof.kozlowski@linaro.org>
 
-On Wed, Apr 03, 2024 at 10:06:18AM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Mon, Jan 27, 2025 at 02:21:05PM +0100, Krzysztof Kozlowski wrote:
+> Use the header with clock IDs to bind the interface between driver and
+> DTS.
 > 
-> Compilers traditionally warn for unused 'static' variables, but not
-> if they are constant. The reason here is a custom for C++ programmers
-> to define named constants as 'static const' variables in header files
-> instead of using macros or enums.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy.h           | 5 ++---
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      | 1 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      | 1 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      | 1 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c | 1 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       | 1 +
+>  6 files changed, 7 insertions(+), 3 deletions(-)
 > 
-> In W=1 builds, we get warnings only static const variables in C
-> files, but not in headers, which is a good compromise, but this still
-> produces warning output in at least 30 files. These warnings are
-> almost all harmless, but also trivial to fix, and there is no
-> good reason to warn only about the non-const variables being unused.
-> 
-> I've gone through all the files that I found using randconfig and
-> allmodconfig builds and created patches to avoid these warnings,
-> with the goal of retaining a clean build once the option is enabled
-> by default.
-> 
-> Unfortunately, there is one fairly large patch ("drivers: remove
-> incorrect of_match_ptr/ACPI_PTR annotations") that touches
-> 34 individual drivers that all need the same one-line change.
-> If necessary, I can split it up by driver or by subsystem,
-> but at least for reviewing I would keep it as one piece for
-> the moment.
-> 
-> Please merge the individual patches through subsystem trees.
-> I expect that some of these will have to go through multiple
-> revisions before they are picked up, so anything that gets
-> applied early saves me from resending.
 
-Arnd, can you refresh this one? It seems some misses still...
-I have got 3+ 0-day reports against one of the mux drivers.
-
-https://lore.kernel.org/all/?q=adg792a.c
-
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+With best wishes
+Dmitry
