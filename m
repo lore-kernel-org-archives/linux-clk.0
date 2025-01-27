@@ -1,60 +1,62 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C6818D
-	for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 13:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004101FF7AD
+	for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 13:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737984072; cv=none; b=U+4wuZdAt3j3p/PdwZjVMT6v4fRzRU0MwRk5d9lD8veO+fvgy5Oc+mPEEp9Kx7s9kUdyeDbc24jI7IxxiCbUiio77Mdpz83P58//+yHC8ViSo9gfNCZJKVYJewiGXEQfyY/VoalTme7iapepn/xZQfqnM5KEqoWIcF1BOFSphI4=
+	t=1737984074; cv=none; b=HbAmry5WRXp6AOuXTaQPGSXMenmg0lhzW85DEH2JdnORp6kZMP2XdxQzqICt8NriRijRiAdkebLD738oBaPE8p5aWqDwe2+ubJQZUIsZVXr/FlF3BGHeJ53hH0jU8euJlz1DOWaIBKyVl15CJX7tjEcoMpMXjEUJbY0JfKtID84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737984072; c=relaxed/simple;
-	bh=Ngxb6CRJg7Ow6aP/LBJWxZeYdq9qdffG1shfNRm5Db0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cdW+AYjGCSLCYdjS0UFSM36Tin3d2chNpsYqul1RFArdTAQNvQolFH9kFsdOLKT8WISl0d4f5vHW+SPC2e0UpmbPNPk/IbTcKUhpYUQL4ebeoJvwsPL2VuIN7CXdrhvh5UYefd8jdYWuPh/z2XiaOTLshw5LnwQst/U5LLcJcHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E5FqEXAI; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1737984074; c=relaxed/simple;
+	bh=IUbaxPS+HQnJ43himjlEznUpNzuts8QFvAEId8JRW6E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HKiT0qkkounP4HG5RvBuooBFglAJq0dAcXqMruggw5Vq+gdsHA4Xktg/n+EWS7InNfQCtRjuqqPQNWrMczb1uGlBN/6R1jisMD3A7H9Q2u4dsy59G5XDkeWBrnvOBhclold39WPO2fkPVa+3Ufne4wqvoLU3Ie6m1IO0vJLIno8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uQbHqjSm; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E5FqEXAI"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-436284cdbe0so7026735e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 05:21:10 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uQbHqjSm"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43658c452f5so2777505e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 05:21:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737984069; x=1738588869; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+klEMk0HAOeZBAXubltjLaVWMvzRQNoO88wNMjjAFMg=;
-        b=E5FqEXAIJ6dtBLqtAuo0rflmtwwfcUT/B9DuqGmB7ZNl3A47W+3cFZwZjaAJ91k6po
-         RGy4lAHsMpGZf+IOSGBmcOQUkvqM++B/CyxPA0O0iyyWojOTrwUxzVPm8/NB4Qb8IM52
-         l1F7kNC1AnCvwVrdCQZDcDaVsjz+N6ZIZXO1YnpvJQBa7A1P2sLci2H65VUis9Am7MsU
-         PIL1fbVPZNrTntX1uCXBFnu9EDY5Kkk1UGDRXNtMh3osIP0Mxh7q2N/RH3KqAKE31nPm
-         wtOM/3wTv+bHv+sSIZvarVaG1+l76qzfZTsxR+/ILwx6ZYlbinnMTfOqrU4AQKmMZ35k
-         +q0A==
+        d=linaro.org; s=google; t=1737984071; x=1738588871; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1lrk19+x0xCyWtNAM9zqIl3MR0fAbQ4p3LHFnpdDhys=;
+        b=uQbHqjSmL3xY6zOmgponX/GjfcHJVTbPqMZ3SXL4jNsl238sUGEDNNS9etdIemPEqk
+         fu9g279Ktu7veueqXUM7YmwotHehJgfSL43vMD7czk4ox7B5Clo4CovdpnxPDrrL+Cvh
+         vEKgwLn/zDNs+a/n19P+/zSU0aou247ln6Sbeuqqp38OVklvCJaFmAhRYZEMpr9Ejmh4
+         evSeeHWffJIKHjg7YXfgCNX5fyr2ODPEmLsVX8NKElrbBL2uk1JD6zuRePd3OBuQTzQF
+         P7wAnrtvr2yzoiGGIizlAVRndxyaFia4VFoS4YcI0FdnnesOHVwdKQB3s6BtbIzPac3R
+         xAdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737984069; x=1738588869;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+klEMk0HAOeZBAXubltjLaVWMvzRQNoO88wNMjjAFMg=;
-        b=FbKrN/IiSLvewU87dKiJ+QKmZJ+vbqklouiSDEFqO1jPmAjltbgo46yeSCuOMvz4V6
-         0pasXEMNJ63QRNVwa6O2KbJweNh4kkB9CsUJ48xmAofUNalnAahPkvL5RYGUnA+Jpmoj
-         HSxhBuePDtsmq1vcQzLEiZ7ilAZtKQVTipF5EEIvw102BVHx/3KmY+qM5RD1+H54zN2L
-         1RjJNK5j5bQIdDFkXYdNL53cSbCJG6Vtdqcjb2zBucAeunjZ8FyNc0ABm4ljqZJj7i/z
-         WE6hHff2ehmh3aaLVtGLphb6LQtgvL+f6I4tRlIcwJ+rL/+wy9hkQt+7kWQycy/USx9S
-         3FsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcDMe4h0U4PQyzRg0oZzbQGku66pN9SNVq50JsopvndbZWvcG4o5bgT9EKL0LNlPzhbe1fAibqZVQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo808xWSNzT87MINDOb3cYC9kojxz6/o6nqntuawYkawnVI5+1
-	UGOKmNOEmwjK+hI27SZ7REF8vLlAJFNu8abre4tHHH5rWsopILKKivpF1UKAgKI=
-X-Gm-Gg: ASbGncs0ViTCXXu0FhlPH3r1kiAyncSccaU2T6H4FL6D4EbEkAHSp4NED67t5ryMQ+O
-	akZCQj8kEYYOZnZh7Dq51pEtchRjijrLkwhebkGSw7pvjJv8ljg5detBIZbYDfY0cwj5o72uDyd
-	azNQ0DnnCc8Hxo0c4Lh/Z2FZkp0uUecbBQZRV5yBIh+MOPBpZN3J3SOoRdORWSZDYFlHCxTC68E
-	dKjfbxilsUVqX/r45f3Hyv1INp6nY20/4mQyD8/tzG1PrlZleSHwcLVeccd/EiPWyHfiNWAGC4G
-	7GtSWlmrMkd6TGrAcA==
-X-Google-Smtp-Source: AGHT+IHXp0TkSnUcKeJc7jgumcRa74yvba9PnZUCBYFw4tCqyzZOJvhurHlS0rdMsNnSl5Phd/c0+g==
-X-Received: by 2002:a05:600c:1c0a:b0:42c:bfd6:9d2f with SMTP id 5b1f17b1804b1-438913bde78mr147472595e9.1.1737984068879;
-        Mon, 27 Jan 2025 05:21:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737984071; x=1738588871;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1lrk19+x0xCyWtNAM9zqIl3MR0fAbQ4p3LHFnpdDhys=;
+        b=IeSTzSM8SID+qDTkx+XvDLehkEK0Acr/+r/xnKif2EFrRQzxuspYISBeTtKUtMQnuf
+         UPEkH1Ej/NG9Mu2FrEV6yQ6Qo0rf1ErF1j26rbW2t5ChPIz8k9O1xBeFKc6NVapfQhG6
+         BGEyzDBd7zZ0ZJEufapi2/3vhHnTy/3Odw8LEhPsufQ5uITgb/er2eMcCl+BOMrJmT9O
+         h0X/X9t5uMMzm9ACfJo5hMqpCQil9fZRw3fgoDPKy37C4/e8k/UJz84U6/4ToowKCtk6
+         Pz/VwMTCZ2GMW6mMLQ1/wUIeZvA8H3wed/yICfgwTLGMYrzsG1MbLhLV45uXgAPIcC/P
+         5Hrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXX63j0sQISRV936gen8zPMKDqlux9q+RY9RLpz8yp9iuzfVjtDtudwyCAPF04+Mj5aOkZpJblNrPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqdMEhWzBqh3byscRC+qHca2TXngRMuY13Z5JJfOEe4pxAl+9d
+	dnws3VM4aZdhKvrFubwX/WJ+LKWfIdbR1tfR3bgHN5JDRhagvbPRIzF00DPbHo4=
+X-Gm-Gg: ASbGncsIowPRRoGRuXFtjzwA7961GEqhZwaryC6th7+uhRIR3suDxhp4UaUicz2xB78
+	kXzfqbQLvzvKEgTrJwTe6JWuVJhLpBf7K0C6q3VRokdkh0mKL3Luuxc93pe1b60LB2gmLAq/lq9
+	DOS/nHu46tTf1qqUKVxtvBQvOBczMX2Nk8EOWEWqtqqlwsoFMiNtIRodI2DZEI6MabK6kVao4XH
+	7g06hkj+DtDsMI2XNlnX3zYdnosrZ7cpu7cTeqzgSJLnq2kUwrSwiOIG+VQW7UqvOGVXA0ffhS6
+	cepKkhMIxrFgN5508Q==
+X-Google-Smtp-Source: AGHT+IFQ3yteVkt9TcZzs8X17uQXuOmJxl9Leoqq2TKqJE6nDiurSR7kDwbdcXBuU+CbDYLyoR4UeQ==
+X-Received: by 2002:a05:600c:1f10:b0:436:fb10:d595 with SMTP id 5b1f17b1804b1-438b1763eeemr80946485e9.1.1737984070644;
+        Mon, 27 Jan 2025 05:21:10 -0800 (PST)
 Received: from krzk-bin.. ([178.197.218.98])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd4b9977sm132386105e9.25.2025.01.27.05.21.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd4b9977sm132386105e9.25.2025.01.27.05.21.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2025 05:21:08 -0800 (PST)
+        Mon, 27 Jan 2025 05:21:10 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Rob Clark <robdclark@gmail.com>,
 	Abhinav Kumar <quic_abhinavk@quicinc.com>,
@@ -80,10 +82,12 @@ To: Rob Clark <robdclark@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 1/2] dt-bindings: display/msm/dsi-phy: Add header with exposed clock IDs
-Date: Mon, 27 Jan 2025 14:21:04 +0100
-Message-ID: <20250127132105.107138-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 2/2] drm/msm/dsi/phy: Use the header with clock IDs
+Date: Mon, 27 Jan 2025 14:21:05 +0100
+Message-ID: <20250127132105.107138-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250127132105.107138-1-krzysztof.kozlowski@linaro.org>
+References: <20250127132105.107138-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -92,62 +96,102 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-DSI phys, from earliest (28 nm) up to newest (3 nm) generation, provide
-two clocks.  The respective clock ID is used by drivers and DTS, so it
-should be documented as explicit ABI.
+Use the header with clock IDs to bind the interface between driver and
+DTS.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
 ---
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.h           | 5 ++---
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c      | 1 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c      | 1 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c      | 1 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c | 1 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c       | 1 +
+ 6 files changed, 7 insertions(+), 3 deletions(-)
 
-Patch for Display tree, although with Ack from clock.
----
- .../devicetree/bindings/display/msm/dsi-phy-common.yaml  | 2 ++
- MAINTAINERS                                              | 1 +
- include/dt-bindings/clock/qcom,dsi-phy-28nm.h            | 9 +++++++++
- 3 files changed, 12 insertions(+)
- create mode 100644 include/dt-bindings/clock/qcom,dsi-phy-28nm.h
-
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-phy-common.yaml b/Documentation/devicetree/bindings/display/msm/dsi-phy-common.yaml
-index 6b57ce41c95f..d0ce85a08b6d 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-phy-common.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-phy-common.yaml
-@@ -15,6 +15,8 @@ description:
- properties:
-   "#clock-cells":
-     const: 1
-+    description:
-+      See include/dt-bindings/clock/qcom,dsi-phy-28nm.h for clock IDs.
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
+index fdb6c648e16f..7541ffde6521 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
+@@ -6,6 +6,7 @@
+ #ifndef __DSI_PHY_H__
+ #define __DSI_PHY_H__
  
-   "#phy-cells":
-     const: 0
-diff --git a/MAINTAINERS b/MAINTAINERS
-index eb75c95f6c45..30103e3918ea 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7398,6 +7398,7 @@ T:	git https://gitlab.freedesktop.org/drm/msm.git
- F:	Documentation/devicetree/bindings/display/msm/
- F:	drivers/gpu/drm/ci/xfails/msm*
- F:	drivers/gpu/drm/msm/
-+F:	include/dt-bindings/clock/qcom,dsi-phy-28nm.h
- F:	include/uapi/drm/msm_drm.h
++#include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/regulator/consumer.h>
+@@ -85,9 +86,7 @@ struct msm_dsi_dphy_timing {
+ 	u8 hs_halfbyte_en_ckln;
+ };
  
- DRM DRIVER FOR NOVATEK NT35510 PANELS
-diff --git a/include/dt-bindings/clock/qcom,dsi-phy-28nm.h b/include/dt-bindings/clock/qcom,dsi-phy-28nm.h
-new file mode 100644
-index 000000000000..ab94d58377a1
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,dsi-phy-28nm.h
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_DSI_PHY_28NM_H
-+#define _DT_BINDINGS_CLK_QCOM_DSI_PHY_28NM_H
-+
-+#define DSI_BYTE_PLL_CLK		0
-+#define DSI_PIXEL_PLL_CLK		1
-+
-+#endif
+-#define DSI_BYTE_PLL_CLK		0
+-#define DSI_PIXEL_PLL_CLK		1
+-#define NUM_PROVIDED_CLKS		2
++#define NUM_PROVIDED_CLKS		(DSI_PIXEL_PLL_CLK + 1)
+ 
+ #define DSI_LANE_MAX			5
+ 
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+index 677c62571811..9812b4d69197 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_10nm.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2018, The Linux Foundation
+  */
+ 
++#include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/iopoll.h>
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+index 2c3cbe0f2870..3a1c8ece6657 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2016, The Linux Foundation. All rights reserved.
+  */
+ 
++#include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
+index 1383e3a4e050..90348a2af3e9 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+  */
+ 
++#include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ 
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+index 5311ab7f3c70..f3643320ff2f 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_28nm_8960.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2012-2015, The Linux Foundation. All rights reserved.
+  */
+ 
++#include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ 
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+index ed8192d56b06..305042c29b2b 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2018, The Linux Foundation
+  */
+ 
++#include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
+ #include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/iopoll.h>
 -- 
 2.43.0
 
