@@ -1,33 +1,64 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29373523A;
-	Mon, 27 Jan 2025 08:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5781482E8
+	for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 08:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737966694; cv=none; b=N+BSpXv32OKwlkJgnEWUEwCjOkeyDM2p+9UuIAGv4FX8dlwH434pAgVQHW1/qyI1K59TrAMVclEkth/+eY7jnIU0ypApPcQ1xYHMp8Pnkkvjw3E68vTo4JP50KHWseTBzbyAr56pErqN3KB/XZ+nH93qpjQPQODMxG4MD0wL9y0=
+	t=1737966786; cv=none; b=aTkV+5NYkeLEh6b5MSluJsq83r9iDj+s9Xrqkv8nFSpIcD7OwRyPscHlvhXHVRrzs02hdjKObfXvLKZa/aFCd4y4hU5td20G2IxtIJRdnaxj5FxI/F4ssSSta79ZKdC5WXygrgcXhw8disFtCeWWE7oQ0EII/i0MPwjfDVysh9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737966694; c=relaxed/simple;
-	bh=4kVQB3TwUde870obOhf97qAtIGbL0FwIw1k1hGzz9kw=;
+	s=arc-20240116; t=1737966786; c=relaxed/simple;
+	bh=Kg3ShiX3X+9p/kE2BPKyqJFla4aCm2pLOyyJ75gY4Es=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EkQWLrye/BTEyTR8fdLp/mPlBTbNurHG9uQIsCqQg/G6/nUTIle4Mb/fNWe5exuycrOplY069S2M8ApZLQYN6QWh1S/oUp1HpRTrEUw1tt8SQYWjHYJOqNXA0/BsrCiwD7Hns6ll5F+yQ1kYreEDXXCPBPDeWRbw6vu6yGq887k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shoGLgjE; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=AwOWW9zM8YYJereaybjz0qwnoaViG6meJqudrwGJvQMwpAFrQYmifP4pwQoceZ6uvXlYTTPHJNMCI8hclwwrM0OOYRpAbv7s+KdMC+t0XTlNLYKbudi7MtGXwleYfNEoBEsSFFvbUaUDDM6/TjTYKrVDBHMdBs/Eu6lG4nS7mMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=e0uwDPoj; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shoGLgjE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B3E4C4CED2;
-	Mon, 27 Jan 2025 08:31:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737966693;
-	bh=4kVQB3TwUde870obOhf97qAtIGbL0FwIw1k1hGzz9kw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=shoGLgjEZwY0pbm7opbk+KgUkEgoEAY5yjyaQx8pJhEzX9Mzmhn3fC8LfhJFqtN1v
-	 GR5jrxNkWQUlNiGkbiOq7lQV7gl1vGkQkxgjh0nI2bUgqYrL06obzPUVY5kC5qoIgR
-	 iKr6Qh983MjsD1m00AAtxY0ardTxOeWGaFVAOlvvOPpv1jhTLFk9Qxdt1ACxzIJa3b
-	 cRvYXAiVUKq5HmlTgkXSzNBEh61bFbOzVq1tUwPj+fqb8C89jDsWtvyG3dJLyZbYf7
-	 3PUBv26hZdzMXzPgjX0sY0FEs3TdMi9COiwuvP4xH8XkHv89qbJrPZGcG/aVlosmX8
-	 Rg2Da7nrFED0A==
-Message-ID: <5165cc5e-4ba3-45a8-8bc0-6ff6f379c4af@kernel.org>
-Date: Mon, 27 Jan 2025 09:31:25 +0100
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="e0uwDPoj"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3862d161947so2102979f8f.3
+        for <linux-clk@vger.kernel.org>; Mon, 27 Jan 2025 00:33:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1737966782; x=1738571582; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a2Ji82GDu0qEHZkiYbmz0Eb1XpkbUWFD9sNNEsdWqqg=;
+        b=e0uwDPojzRdVbGxQdkqshbkiInloS78/mC1Nf+SBeEphF2iv+W7D+D/L/EOKIUUMHI
+         io6Rzqem6/0W9Y9Sq+SQqmkUbjM7fZnbuzwedPEcRAmgx4mc8eLn7SdKCwkyG1VdC3Wg
+         Yezf0aGLUQ3KYOX9aCNBqNGwVKoP2ZJ1W9AoSwdAmqrxEP/PGDFdM8EJWyPTxyli1kf4
+         Q2TtjqNGe2ecjjTLoo9hSmbToHyIAQfgAnGTkAT/hNcfDeJMpH70MgjWg+8I+k+tzzOj
+         BVxWvM0EZ1N5/CClVd9c5Uqhav8zhdkgSZ7sXEsJq/FgmGWEyD7xrXVT1lxTcOjm2LTg
+         b9AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737966782; x=1738571582;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a2Ji82GDu0qEHZkiYbmz0Eb1XpkbUWFD9sNNEsdWqqg=;
+        b=K2V64uBmEyl/9w/51V13mktHG+Mm69Q8zLtpWuJrkAgrcDeKmdZ7cj++7A57ljCBjy
+         SJHem0snUHT0iPZ5AAs3i34cneHV8a/jvn8a9W+aWy6KT4DwCcsycwnZHQpyZrADtR+P
+         VyL4XXNaxWBhFwSZbMQ+RSKyFm+9vLwp9VnMPFHsj8MwgSWp21GQThb+CRmsWOg0MEWb
+         Gagf9be63zH/uQ9aMpHRQe/eHNSdaI58RUGB/0VFzD2MUyeaUX0iZSarX+egokvx4VL+
+         cHAked3zquHC0FjFmgqkSKdbbTnnr40t2IRtDXsTcicKxtSA1l121xSfjtQlGxA49ceV
+         HvBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJCf6PScCUNUmEMqmy9Ks13tU8vexRhiNy6ygzagv2kMwkaqIr0VnJ7wii3hFOlP5jn1JRcDoWXgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY0UtlXIx4JGw6l2Z1SWF6TCAmqoWh50XS+5/lsdN/nEi/3/u6
+	DeGFafrLpESDBB0nDe3L4VROjSDII2ycoWZxqzDvEZkxx7zGfjNpkZdJ2j7fFus=
+X-Gm-Gg: ASbGncvB+9m2/cVW2t9bsIFOvICqmrbX18lFZcVVDNTw1oqEyjg2T6niTWe/2y5WIYM
+	+XRwBR4XQJ3URpK/iDjlpe5F1X3ZuEkJVkPgniPsNT3KguEDF4dv5cxQa/5qOp2CGhojoIDhUz+
+	vvEaCUlsXwLyPxndiVov4m8BYflt9s2f5knz/QUc+qxJ1Fg+bfa9sYVEaxlKYYTVettAklZq5cF
+	K37N/t3sMhP2BBPhD6068XHh1OX5YWnf38wQ6VG0itMGiVES86udMdNNC/hVR56MQlucm26C/HG
+	hNas8K66z4cB
+X-Google-Smtp-Source: AGHT+IHpMIbXH/ROA6dm+Hnrzv+rG9utZdsejuvQ4p2UjcOm0impQgdG4YV+X768DL8GecEbw47bEA==
+X-Received: by 2002:a5d:588e:0:b0:385:faec:d94d with SMTP id ffacd0b85a97d-38bf57bd65bmr42270165f8f.51.1737966782251;
+        Mon, 27 Jan 2025 00:33:02 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.35])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c2a1bb062sm10322276f8f.71.2025.01.27.00.33.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Jan 2025 00:33:01 -0800 (PST)
+Message-ID: <3c7f5a92-254c-4ce1-9813-80c98c1f549e@tuxon.dev>
+Date: Mon, 27 Jan 2025 10:32:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,128 +66,139 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] clk: Support spread spectrum and use it in clk-scmi
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Cristian Marussi <cristian.marussi@arm.com>, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
- Peng Fan <peng.fan@nxp.com>
-References: <20250124-clk-ssc-v1-0-2d39f6baf2af@nxp.com>
- <CABGWkvpj2bYyqiOp4D9Ss2aWOnoR7BxqDOGpXdRusq=aWu9BEA@mail.gmail.com>
- <74663d9d-364e-4db3-b18a-1068e2845215@kernel.org>
- <CABGWkvo+HXF4hu-TG314HSb2omSmTE57hbHQt5V2zoc2_SkxvQ@mail.gmail.com>
+Subject: Re: [PATCH 4/6] thermal: renesas: rzg3s: Add thermal driver for the
+ Renesas RZ/G3S SoC
+To: Jonathan Cameron <jic23@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
+ lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de, ulf.hansson@linaro.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>
+References: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250103163805.1775705-5-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdUDKFRsZWsZG9DY4PHdxQEDoPqzfeRx8MNTreOpxdLvpw@mail.gmail.com>
+ <20250125121826.6abbe7de@jic23-huawei>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CABGWkvo+HXF4hu-TG314HSb2omSmTE57hbHQt5V2zoc2_SkxvQ@mail.gmail.com>
+In-Reply-To: <20250125121826.6abbe7de@jic23-huawei>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 27/01/2025 08:59, Dario Binacchi wrote:
-> On Mon, Jan 27, 2025 at 8:42 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 25/01/2025 13:58, Dario Binacchi wrote:
->>> On Fri, Jan 24, 2025 at 2:19 PM Peng Fan (OSS) <peng.fan@oss.nxp.com> wrote:
->>>>
->>>> - Introduce clk_set_spread_spectrum to set the parameters for enabling
->>>>   spread spectrum of a clock.
->>>> - Parse 'assigned-clock-sscs' and configure it by default before using the
->>>>   clock. The pull request for this property is at [1]
->>>>   This property is parsed before parsing clock rate.
->>>>
->>>> - Enable this feature for clk-scmi on i.MX95.
->>>>   This may not the best, since checking machine compatibles.
->>>>   I am thinking to provide an API scmi_get_vendor_info, then driver
->>>>   could use it for OEM stuff, such as
->>>>   if (scmi_get_vendor_info returns NXP_IMX)
->>>>       ops->set_spread_spectrum = scmi_clk_set_spread_spectrum_imx;
->>>>
->>>
->>> I wonder if your solution is truly generic or merely a generalization
->>> of your use case, which seems significantly simpler compared to what
->>
->> Please come with specific arguments why this is not generic enough, not
->> just FUD. Does it fit your case? If not, what would had to be changed?
->> These are the comments needed to actually work on generic solution.
->>
->>> happens on the i.MX8M platform, as discussed in thread
->>> https://lore.kernel.org/lkml/PAXPR04MB8459537D7D2A49221D0E890D88E32@PAXPR04MB8459.eurprd04.prod.outlook.com/,
->>> or on the STM32F platform, where parameters are not written directly
->>> to registers but are instead used in calculations involving the
->>> parent_rate and the PLL divider, for example.
->>>
->>> I am the author of the patches that introduced spread spectrum
->>> management for the AM33x and STM32Fx platforms, as well as the
->>> series, still pending acceptance, for the i.MX8M.
->>> From my perspective, this functionality varies significantly
->>> from platform to platform, with key differences that must be
->>> considered.
->>
->> So what exactly varies? Come with specifics.
+
+
+On 25.01.2025 14:18, Jonathan Cameron wrote:
+> On Wed, 22 Jan 2025 11:29:19 +0100
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 > 
-> In all the cases I implemented, I enabled spread spectrum within
-> the set_rate of the clock/PLL in question, as information such as
-> the parent rate or the divisor used was necessary to perform the
-> calculations needed to extract the data for setting the SSCG
-> register bitfields.
+>> Hi Claudiu,
+>>
+>> CC iio
+>>
+>> On Fri, Jan 3, 2025 at 5:38 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> The Renesas RZ/G3S SoC features a Thermal Sensor Unit (TSU) that reports
+>>> the junction temperature. The temperature is reported through a dedicated
+>>> ADC channel. Add a driver for the Renesas RZ/G3S TSU.
+>>>
+>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>  
+>>
+>> Thanks for your patch!
+>>
+>>> --- /dev/null
+>>> +++ b/drivers/thermal/renesas/rzg3s_thermal.c  
+>>
+>>> +static int rzg3s_thermal_probe(struct platform_device *pdev)
+>>> +{
+>>> +       struct rzg3s_thermal_priv *priv;
+>>> +       struct device *dev = &pdev->dev;
+>>> +       int ret;
+>>> +
+>>> +       priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>>> +       if (!priv)
+>>> +               return -ENOMEM;
+>>> +
+>>> +       priv->base = devm_platform_ioremap_resource(pdev, 0);
+>>> +       if (IS_ERR(priv->base))
+>>> +               return PTR_ERR(priv->base);
+>>> +
+>>> +       priv->channel = devm_iio_channel_get(dev, "tsu");  
+>>
+>> Given there's only a single IIO channel, you could pass NULL instead
+>> of the name, and drop "io-channel-names" from the DT bindings.
+>> I don't know what's the IIO policy w.r.t. unnamed channels, though.
 > 
-> If I'm not mistaken, I think this is not the case implemented by this
-> series.
+> It's supported, so fine as long as no future additional names show up.
+> Will just fallback to index 0 I think.
 
-It feels like you speak about driver, so I misunderstood the concerns. I
-did not check the drivers at all, so here I do not claim patchsets are
-compatible.
+If everyone agrees, I would keep the name, too, to avoid complications in
+case this IP variant will be extended on future SoCs.
 
-But the binding takes the same values - the main PLL/clock rate.
+Thank you,
+Claudiu
 
-Best regards,
-Krzysztof
+> 
+> Jonathan
+> 
+>>
+>>> +       if (IS_ERR(priv->channel))
+>>> +               return dev_err_probe(dev, PTR_ERR(priv->channel), "Failed to get IIO channel!\n");
+>>> +
+>>> +       priv->rstc = devm_reset_control_get_exclusive_deasserted(dev, NULL);
+>>> +       if (IS_ERR(priv->rstc))
+>>> +               return dev_err_probe(dev, PTR_ERR(priv->rstc), "Failed to get reset!\n");
+>>> +
+>>> +       priv->dev = dev;
+>>> +       priv->mode = THERMAL_DEVICE_DISABLED;
+>>> +       platform_set_drvdata(pdev, priv);
+>>> +
+>>> +       pm_runtime_set_autosuspend_delay(dev, 300);
+>>> +       pm_runtime_use_autosuspend(dev);
+>>> +       pm_runtime_enable(dev);
+>>> +
+>>> +       ret = rzg3s_thermal_read_calib(priv);
+>>> +       if (ret) {
+>>> +               dev_err_probe(dev, ret, "Failed to read calibration data!\n");
+>>> +               goto rpm_disable;
+>>> +       }
+>>> +
+>>> +       priv->tz = thermal_of_zone_register(dev->of_node, 0, priv, &rzg3s_tz_of_ops);
+>>> +       if (IS_ERR(priv->tz)) {
+>>> +               dev_err_probe(dev, PTR_ERR(priv->tz), "Failed to register thermal zone!\n");
+>>> +               goto rpm_disable;
+>>> +       }
+>>> +
+>>> +       ret = thermal_add_hwmon_sysfs(priv->tz);
+>>> +       if (ret) {
+>>> +               dev_err_probe(dev, ret, "Failed to add hwmon sysfs!\n");
+>>> +               goto tz_unregister;
+>>> +       }
+>>> +
+>>> +       return 0;
+>>> +
+>>> +tz_unregister:
+>>> +       thermal_of_zone_unregister(priv->tz);
+>>> +rpm_disable:
+>>> +       pm_runtime_disable(dev);
+>>> +       pm_runtime_dont_use_autosuspend(dev);
+>>> +       return ret;
+>>> +}  
+>>
+>> Gr{oetje,eeting}s,
+>>
+>>                         Geert
+>>
+>> --
+>> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>>
+>> In personal conversations with technical people, I call myself a hacker. But
+>> when I'm talking to journalists I just say "programmer" or something like that.
+>>                                 -- Linus Torvalds
+>>
+> 
+
