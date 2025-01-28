@@ -1,164 +1,159 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B601F943D
-	for <linux-clk@vger.kernel.org>; Tue, 28 Jan 2025 19:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3882113632B;
+	Tue, 28 Jan 2025 20:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738093737; cv=none; b=AntYU3Ka9Zc2oD/HCBdp69DfmJKK05SIw76BU280Yog8VCeKR2uzIop2he32SkttrvI4y5nIbcaftAa7quTlYlv1NKBQMK7dgVvAB5MHYwUSCbgt9x+9wwh9XHsgly++w8x2ZbFqEB6aYFqZdXor6FNPw47ju9EuAqRJ7FdKq4c=
+	t=1738095931; cv=none; b=CEpJgBLF/4O05SeY0orMM4xEitz+42R5m2OdkgYNQoV366OCfdfKkvivN9kwcdTWia1I+N85lWX9T40rojiwZyKnLVj8/Jga0t97r6hxEB00GlYTaUNcNZxbT39yBQ+N8z9HOOjF9acZ9wHY/7mKCgkEOqSbPHsJFS05/oKA3Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738093737; c=relaxed/simple;
-	bh=TtksT9hap2TJwbA3M9qEwfaScDYn9rIlJty2hDGsRwA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=LbYsSa6u0QfMvPAwcjESE2rL3ciBllSXn35142t5B5s/ubMPVv7GDAA4brNt2ccCNssNeLU8qPjsfo924sB+mDM0FacCgr7ZUUkuQ2qhXXefqUypeGiE4+1hwSUYgWhtcFJZCV33LXwnd601rGOS2yXBhOrpbHnZjiUI81SVS8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=CNxgZhcG; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1738095931; c=relaxed/simple;
+	bh=vsE8IFVrzUvktukSA+TorUfPU/BVdbA/l2O5s9pg3UQ=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=iqd3mvfXVMnzvCZ2Nbuvfcbb2l6bubKKkVQBTyLG9qNaw6o42swG+fyv9csPIUKTIFMRbxHLdHsadjAHD9QDychVHVplupbLrgdjohO8eB/MLfHMym1OcKi7YDobg2GN9vfUrccfuMipuWjohGSQNOgA/zDeCmi3hi8ZGsf0dY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfeGp7x7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CNxgZhcG"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250128194851euoutp01de7d43200cbf1e1c5980f26de926d7fb~e8wpHj1JX1614616146euoutp01f
-	for <linux-clk@vger.kernel.org>; Tue, 28 Jan 2025 19:48:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250128194851euoutp01de7d43200cbf1e1c5980f26de926d7fb~e8wpHj1JX1614616146euoutp01f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1738093731;
-	bh=vt7JWzghtAmS4fKJN8Ir00QUirp5ujThWVAc+56dmcM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CNxgZhcGjcpvAthpuJEXiAkruh9b4Lovk42IzlZaLsEiy8WWiZrN3P/FfsOrSx4I1
-	 9y8WnLHZI1uaQsGOEDTecePedUYrvs2MDb12fZNQvNohVfUBYj2HqED+V/Cp0YxaIG
-	 DJHRyaL325s3Zyz+HIqcLRwbzc5gdmx4KdClUeKs=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250128194850eucas1p11f9e60d10d2e7c183dc984e76151c4d4~e8woS9N4J1601016010eucas1p13;
-	Tue, 28 Jan 2025 19:48:50 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id C3.C2.20409.2A439976; Tue, 28
-	Jan 2025 19:48:50 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250128194849eucas1p1c957dedd293b3091d8dfb35bdfa1fb0c~e8wnEPIKG1601116011eucas1p18;
-	Tue, 28 Jan 2025 19:48:49 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250128194849eusmtrp2e8eaba1fb03f93c070f3988728d2da39~e8wnDgw6k0493804938eusmtrp2N;
-	Tue, 28 Jan 2025 19:48:49 +0000 (GMT)
-X-AuditID: cbfec7f4-c0df970000004fb9-2c-679934a295ca
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 51.F0.19920.1A439976; Tue, 28
-	Jan 2025 19:48:49 +0000 (GMT)
-Received: from AMDC4942.home (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250128194847eusmtip1fc75fd1ce7c2e9e3f0336886a24de17f~e8wlX99iV0756107561eusmtip1V;
-	Tue, 28 Jan 2025 19:48:47 +0000 (GMT)
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
-	m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org, Michal Wilczynski
-	<m.wilczynski@samsung.com>
-Subject: [PATCH v4 18/18] riscv: dts: thead: Add GPU node to TH1520 device
- tree
-Date: Tue, 28 Jan 2025 20:48:16 +0100
-Message-Id: <20250128194816.2185326-19-m.wilczynski@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250128194816.2185326-1-m.wilczynski@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfeGp7x7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD4BC4CED3;
+	Tue, 28 Jan 2025 20:25:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738095930;
+	bh=vsE8IFVrzUvktukSA+TorUfPU/BVdbA/l2O5s9pg3UQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=WfeGp7x7LRpK0MQbXzwGZNO+zX9Z2ydtAlj60oBAqLR6E6fHVLnmXpMKevOBWJ9cq
+	 UnPvWNvMo/e+cu/PWf9rYx+UhMQFWknRd43z0stLEqYt9sxT1idroeB9f2wJp25dai
+	 CHOWfedXslPW+L70bOJDBV5r9afQNlDBvFwXuMFAJyKzfOH7YzAUPAP271XJiDC8gb
+	 4RTPupnAsqpxoerFDjlPA1B+WULohj4NS0NB7AdCHt2MJBV97AsP6DgcluJEEQg6qw
+	 b5rO++8Y/bzk9BqbpgJEIF2TF/r8+CV6y65dJKvlw0cmLItjYAN3oXb+QvsVxw471A
+	 KS47V0T+5GAkA==
+Message-ID: <ff801714249c492abc3781da55675a38.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxbVRjGc+69vfdSZd6WEU4AURsdkUVWCZrjZgi6Oe9kkLG4kJgIdHBX
-	mKWQFpybRkv4EGonY6GZFBhY2fisndB2fMpkSDemdYMJiMDYHOFj3SiDkm1mVMpF3X/P+7y/
-	c573PTk0LraQgXS6MptTKWUKCSkkbP0PHa8YI8vlUn1ZGLo0YsSQ9W8DhZq7HRiq7nMI0OSg
-	BUPX3Qsk+n76KoVmu3MJNFxfRaG8fjOJ5gyTJFrUTQrQUEcliZaO9wFkW8onkalvgkJmdzWG
-	vl20Eqi2rQOgwuKzAnRt4B00MXmJQHNDOhwVGp5Bnq42Cq0O/0Cgins9FLI4SwXIbkpA+T1l
-	RHQIuzBaQLHOuTmCvVi0TLHdKzUE226YoFhd+y+AbWksJtnx4S6SPX05nr3xlR1jW2u/YPNN
-	/Rhb8ljKLvz4O8l+bWkE7GDeCLVP/IHwzVROkf4xp9oWlSxMa/VMYVkzwk++y0vSgDu0FtA0
-	ZCKh5qZEC4S0mKkHcEA3S/HFMoBV2mKSL5YAXNGXEFrgs37Cfm5ewDfqADyjsW9QTgBLmyvX
-	KZKJgFN11evUZqaAgAU/5wJvgTMzANpuV5Jeyo+Jh+5qJ+adhGBegmNng7y2LxMNS1tLBHzc
-	c7Dnp19xr/ZZ81se1xM8I4KXy2+va3yNybNW4DxvEkKXO5HXu2Cj8fTGPX5w3m6heB0MPe3V
-	GK8z4ZT1/sbZz2C7zr6hd8BxxyPSOxrOvAzNHdt4+y34191WjH+7TXD0roifYBM8aTuF87Yv
-	LCoU8/QWqNcd/y/UUW/bCGXhoCeXPAFeMDyxi+GJXQz/59YAvBEEcDnqDDmnjlByR8LVsgx1
-	jlIenpKZ0QLWPvaVVftyG6ibXwzvBRgNegGkcclm3w8d38jFvqmyo8c4VWaSKkfBqXtBEE1I
-	AnyNPQVyMSOXZXMfcVwWp/q3i9E+gRosI7jkS1ckXeIISWxuiqnzO5Clp5NvBk4PWbfqnQPv
-	N9zYZb/oeu9RXIw5Fo90hV4Y2psymrJVmy/d4fx8xWN7mDKe1FmzpDGf3zc/diRmzy37ikNU
-	tHO8Qvrg6tMXnFX3T/52KGX/dmnT6xEW9cxhSdinz1aEbG9QnDrW9G5CnH+qCY53US216rnV
-	O2PlQZ5DV/yvR6/8EW/O14nSog4qY3d3vtig1xgdBTMJwScOu/zzcqzDlQE1B4LLotNvZTu6
-	joadUSQO7S27Nli2ADtytLPGN5Zj7zG7G3ZqXnM/H1fxdub5c1GhyaLYxpHQXsVTDX8agTvQ
-	FJSgjDrYKZ1+gPVJCHWa7NUwXKWW/QN5kRGYRwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsVy+t/xu7oLTWamG1yaKWFx4voiJoutv2ex
-	W6zZe47JYv6Rc6wW9y5tYbK48vU9m8W6pxfYLV7sbWSxuLZiLrtF87H1bBYvZ91js/jYc4/V
-	4vKuOWwWn3uPMFps+9zCZrH2yF12i/Vf5zNZLPy4lcViyY5djBZtnctYLS6ecrW4e+8Ei8XL
-	yz3MFm2z+C3+79nBbvHv2kYWi9nv9rNbbHkzkdXi+Npwi5b9U1gc5Dze32hl93jz8iWLx+GO
-	L+wee78tYPHYOesuu0fPzjOMHptWdbJ53Lm2h81j3slAj/vdx5k8Ni+p92hZe4zJo/+vgcf7
-	fVfZPPq2rGL0uNR8nT1AKErPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/O
-	JiU1J7MstUjfLkEvY/P/B0wFz7kqFjfHNzC+5uhi5OSQEDCROL7hFWsXIxeHkMBSRon5m++y
-	QiRkJK51v2SBsIUl/lzrYoMoesUo8fbGFnaQBJuAkcSD5fPBGkQEFrNI7N1XCVLELPCWUeL6
-	zI1g3cIC/hKPzyxj6mLk4GARUJW4tUwaJMwr4CAxcXM/1DJ5if0HzzKD2JxA8U1/V4C1CgnY
-	Szx6O4MNol5Q4uTMJ2BxZqD65q2zmScwCsxCkpqFJLWAkWkVo0hqaXFuem6xoV5xYm5xaV66
-	XnJ+7iZGYHLZduzn5h2M81591DvEyMTBeIhRgoNZSYQ39tyMdCHelMTKqtSi/Pii0pzU4kOM
-	pkBnT2SWEk3OB6a3vJJ4QzMDU0MTM0sDU0szYyVxXrfL59OEBNITS1KzU1MLUotg+pg4OKUa
-	mHYc7fJ+IbxXSjL07v1FwZOer4pNyj9tF/f/+/7XvonJB79P1QsT3+Uzubon+e0cBecJ7ZM2
-	bL/R9EXogbblLsktazpjeiUt0zmmHJ4Ylff4ZHHdqv/O8qk3fSouB/UxeAV4cxoZL7cOZ49b
-	zlda/+VUe9bq9osRqxQ3FO+KFE2dH6Z72qf9aIPNfvf79xYss9qkr/Nob8eS7vI3DPqa78X5
-	6gNmvfPcu/m7aX/w4cVxUT87BFWPaf6seVhVd3rC5Qbzv+tUdZOr+LZWzONUXy65eKny16O3
-	hD/UtW7yE3Y/tKPL4OTOlcbbWErVl31KLWnn3RfMfjk62qvz0qZjat5C7+alOclu+Wm+WH2C
-	kxJLcUaioRZzUXEiAHobLJy3AwAA
-X-CMS-MailID: 20250128194849eucas1p1c957dedd293b3091d8dfb35bdfa1fb0c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250128194849eucas1p1c957dedd293b3091d8dfb35bdfa1fb0c
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250128194849eucas1p1c957dedd293b3091d8dfb35bdfa1fb0c
-References: <20250128194816.2185326-1-m.wilczynski@samsung.com>
-	<CGME20250128194849eucas1p1c957dedd293b3091d8dfb35bdfa1fb0c@eucas1p1.samsung.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250124-clk-ssc-v1-1-2d39f6baf2af@nxp.com>
+References: <20250124-clk-ssc-v1-0-2d39f6baf2af@nxp.com> <20250124-clk-ssc-v1-1-2d39f6baf2af@nxp.com>
+Subject: Re: [PATCH 1/3] clk: Introduce clk_set_spread_spectrum
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Dario Binacchi <dario.binacchi@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, Peng Fan <peng.fan@nxp.com>
+To: Cristian Marussi <cristian.marussi@arm.com>, Michael Turquette <mturquette@baylibre.com>, Peng Fan (OSS) <peng.fan@oss.nxp.com>, Russell King <linux@armlinux.org.uk>, Sudeep Holla <sudeep.holla@arm.com>
+Date: Tue, 28 Jan 2025 12:25:28 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Add a device tree node for the IMG BXM-4-64 GPU present in the T-HEAD
-TH1520 SoC used by the Lichee Pi 4A board. This node enables support for
-the GPU using the drm/imagination driver.
+Quoting Peng Fan (OSS) (2025-01-24 06:25:17)
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index cf7720b9172ff223d86227aad144e15375ddfd86..a4fe4a60f839244b736e3c275=
+1eeb38dc4577b1f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2790,6 +2790,45 @@ int clk_set_max_rate(struct clk *clk, unsigned lon=
+g rate)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_set_max_rate);
+> =20
+> +int clk_set_spread_spectrum(struct clk *clk, unsigned int modfreq,
+> +                           unsigned int spreadpercent, unsigned int meth=
+od,
+> +                           bool enable)
+> +{
+> +       struct clk_spread_spectrum clk_ss;
+> +       struct clk_core *core;
+> +       int ret =3D 0;
 
-By adding this node, the kernel can recognize and initialize the GPU,
-providing graphics acceleration capabilities on the Lichee Pi 4A and
-other boards based on the TH1520 SoC.
+The assignment looks unnecessary.
 
-Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
----
- arch/riscv/boot/dts/thead/th1520.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> +
+> +       if (!clk || !clk->core)
 
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index bdbb1b985b0b..b4b3add0d98d 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -498,6 +498,18 @@ clk: clock-controller@ffef010000 {
- 			#clock-cells = <1>;
- 		};
- 
-+		gpu: gpu@ffef400000 {
-+			compatible = "thead,th1520-gpu", "img,img-bxm";
-+			reg = <0xff 0xef400000 0x0 0x100000>;
-+			interrupt-parent = <&plic>;
-+			interrupts = <102 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk_vo CLK_GPU_CORE>,
-+				 <&clk_vo CLK_GPU_CFG_ACLK>;
-+			clock-names = "core", "mem";
-+			power-domains = <&aon TH1520_GPU_PD>;
-+			resets = <&rst TH1520_RESET_ID_GPU>;
-+		};
-+
- 		rst: reset-controller@ffef528000 {
- 			compatible = "thead,th1520-reset";
- 			reg = <0xff 0xef528000 0x0 0x4f>;
--- 
-2.34.1
+How do you not have clk->core?
 
+> +               return 0;
+> +
+> +       clk_ss.modfreq =3D modfreq;
+> +       clk_ss.spreadpercent =3D spreadpercent;
+> +       clk_ss.method =3D method;
+> +       clk_ss.enable =3D enable;
+> +
+> +       clk_prepare_lock();
+> +
+> +       core =3D clk->core;
+
+Why do we need to get the core under the lock?
+
+> +
+> +       if (core->prepare_count) {
+
+Why does prepare count matter?
+
+> +               ret =3D -EBUSY;
+> +               goto fail;
+
+We just left without releasing the lock.
+
+> +       }
+> +
+> +       ret =3D clk_pm_runtime_get(core);
+> +       if (ret)
+> +               goto fail;
+
+We just left without releasing the lock.
+
+> +
+> +       if (core->ops->set_spread_spectrum)
+> +               ret =3D core->ops->set_spread_spectrum(core->hw, &clk_ss);
+> +
+> +       clk_pm_runtime_put(core);
+> +       clk_prepare_unlock();
+> +fail:
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_set_spread_spectrum);
+> +
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index b607482ca77e987b9344c38f25ebb5c8d35c1d39..49a7f7eb8b03233e11cd3b927=
+68896c4e45c4e7c 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -858,6 +858,21 @@ int clk_set_rate(struct clk *clk, unsigned long rate=
+);
+>   */
+>  int clk_set_rate_exclusive(struct clk *clk, unsigned long rate);
+> =20
+> +/**
+> + * clk_set_spread_spectrum - set the spread spectrum for a clock
+> + * @clk: clock source
+> + * @modfreq: modulation freq
+> + * @spreadpercent: modulation percentage
+> + * @method: down spread, up spread, center spread or else
+
+Did we get cut off?
+
+> + * @enable: enable or disable
+
+Isn't 'disable' equal to spread_percent of zero?
+
+> + *
+> + * Configure the spread spectrum parameters for a clock.
+> + *
+> + * Returns success (0) or negative errno.
+> + */
+> +int clk_set_spread_spectrum(struct clk *clk, unsigned int modfreq,
+
+Does this need to be a consumer API at all? Usually SSC is figured out
+when making a board and you have to pass some certification testing
+because some harmonics are interfering. Is the DT property sufficient
+for now and then we can do it when the driver probes in the framework?
+
+> +                           unsigned int spreadpercent, unsigned int meth=
+od,
+
+I'd assume 'method' would be some sort of enum?
+
+> +                           bool enable);
+>  /**
+>   * clk_has_parent - check if a clock is a possible parent for another
+>   * @clk: clock source
