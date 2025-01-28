@@ -1,352 +1,138 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9371E521;
-	Tue, 28 Jan 2025 09:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD2CC2ED;
+	Tue, 28 Jan 2025 09:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738056115; cv=none; b=nEDEIPog367aZGTnsuVoF0MZD5RE1mmx7UV8lt0VqGyYFCu8LA5IO7xydHzgnOpjJ1ZHpItCn5iXof6NCKrFMDQ3KrbDU1QCxsrrvsk24gQz2lFYGqa9X9q8Q2efYHSXoprUAJyjOYPxMCIZw+IzfPhbNQcTnGvxpB6D5uopfgU=
+	t=1738057344; cv=none; b=dwbLON2y7N7BT4LG9SaNto9TjYy2Q1J+J4Pm1LO4+SEONHzsiUhovG3tMyXrNpc4taaFshPuhnsNRyEsTmaa/CT+SScsRoXpvdrq0z2Ap7yuTZYJZu5ZW3DjMKGA3XevNhj8IS32c4/1YGQRkTq7BigQj1uxfhRJToKoXasPRpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738056115; c=relaxed/simple;
-	bh=AjNogne13c4qMiwZddfdCgFJisJ5oHihprr5OfKcQ60=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rl/AHyK0cwHZ4B6hx6VinFClmZr6H5WS+nrFlC6asfVhxUieP7uwXqBO9s3LjZw0wK2DbNTOEAQvDEAZKZ+eqSV9Ec9k3M3rFclNf+qOENkL8PpYEh5o30LumcVqgxrAmbIPk/EJLhOSMu02qUrkOFSmDOiuyu13wRMOXbv4iiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBwdFfeu; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738057344; c=relaxed/simple;
+	bh=8UmfTiUjgig6HkJA7ndG8uEs4d9kM/xDaFqPN0Q9zao=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=icg3/zHP42+RoqmueDMX6TAWl1SgPOxcyLOpoPqoBeQMaH9xDMLq8L99ysvAESW6q/MBzWP6QmAtr4EY7XJVtnY24UXQVuC4TWMliQDCTBYPhjmP6aL4Im8Vq1RiyHYVh9Ywf0BZFSNaudpbc8DOnF0nffhpuxt7T3+9/WSFAe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FpKXmVQ6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBwdFfeu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6158C4CED3;
-	Tue, 28 Jan 2025 09:21:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FpKXmVQ6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6050C4CED3;
+	Tue, 28 Jan 2025 09:42:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738056114;
-	bh=AjNogne13c4qMiwZddfdCgFJisJ5oHihprr5OfKcQ60=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JBwdFfeuQyX3ANNV4Jje98erGq9uD/7JZEEuT6hA0nUNhk0Ax+82Cb5zsxfMr4yHi
-	 lkiZr/p1KLdffkM/c59zkhpj5xP/5VBY+5vgURcbBexoXsK+Fg78CRoKu2XxuPuyI8
-	 otOtlA6rk62oU3ceRu3AJj9BsPhbp/UbxlFujFmklXhOuXfemWkrkluciGXQq9Rusb
-	 G0Woo+q9x2a2sEYDMkM+UKYYGqRGbSzmrrwYmAqV/xgsPezbXxHqlc97d/n1047E8X
-	 2jwGRYvWTehVr5E+4k3ul0DwLPLRgNtPdafOHMBHjYdwvVeUJWTVvkjV3iTJyKxczu
-	 f5ljfmFiB6elg==
-Date: Tue, 28 Jan 2025 10:21:51 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, catalin.marinas@arm.com, will@kernel.org, abelvesa@kernel.org, 
-	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	quic_bjorande@quicinc.com, geert+renesas@glider.be, dmitry.baryshkov@linaro.org, 
-	arnd@arndb.de, nfraprado@collabora.com, marex@denx.de
-Subject: Re: [PATCH v7 0/7] Add ITE IT6263 LVDS to HDMI converter support
-Message-ID: <64eaq2n3pfcxxxcw5n3cqpx3ie3vyqo6v6akc5g72anoazendf@5vrlafr3q676>
-References: <20241114065759.3341908-1-victor.liu@nxp.com>
- <20241217-uppish-sapphire-dinosaur-4c40a2@houat>
- <aba80c42-1b48-426f-b29d-88bf18473602@nxp.com>
+	s=k20201202; t=1738057344;
+	bh=8UmfTiUjgig6HkJA7ndG8uEs4d9kM/xDaFqPN0Q9zao=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=FpKXmVQ6np+7gd4q/WhO8Rl/Acpfqxz0HCSwkfTWUyK9Mp5a1ahWcKCGDCfieGa5E
+	 lCBi2D+SBz3148F0M9I/pL1XdA6uAv3n8rHHK8UzH5mUZk07prXmd0YSMy63W0Heku
+	 FUSH0iN+1yejig5nmzWmTp63zBypBoW03zIAdxBAb4XGruP0XoFa7YlzsUKvra9xk1
+	 oobDOaAXZNidUi07PC23oz0DjGqwnNnc1oAQQ5VuN9cH/QXZy15vP2KBKgApvLCn84
+	 b7Y0fh8ugYY28y3wqBeaQO6l8SZ8zwJbbszLAk3DuOibyGa8WoYrZjicEcgsKyiuwz
+	 Q5hHjFW/Ye//Q==
+Message-ID: <1a04d8e9-ef02-40e5-b070-82c9a35ad0cd@kernel.org>
+Date: Tue, 28 Jan 2025 10:42:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="7kmjyo7mbnkjzcvj"
-Content-Disposition: inline
-In-Reply-To: <aba80c42-1b48-426f-b29d-88bf18473602@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/7] dt-bindings: display: renesas,du: Add missing
+ constraints
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+ Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ linux-clk@vger.kernel.org,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+References: <20241217-rcar-gh-dsi-v5-0-e77421093c05@ideasonboard.com>
+ <20241217-rcar-gh-dsi-v5-3-e77421093c05@ideasonboard.com>
+ <jn5fsjg5zufi2c3u3tvpzoafrshgrze67e5x4iyhbyzf7opwbp@6i5vqdgeor3l>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <jn5fsjg5zufi2c3u3tvpzoafrshgrze67e5x4iyhbyzf7opwbp@6i5vqdgeor3l>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 17/12/2024 07:25, Krzysztof Kozlowski wrote:
+> On Tue, Dec 17, 2024 at 07:31:37AM +0200, Tomi Valkeinen wrote:
+>> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>>
+>> The binding is missing maxItems for all renesas,cmms and renesas,vsps
+>> properties. As the amount of cmms or vsps is always a fixed amount, set
+>> the maxItems to match the minItems.
+>>
+>> Also add the minItems and maxItems to the top level properties.
+>>
+>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+>> ---
+>>  Documentation/devicetree/bindings/display/renesas,du.yaml | 15 ++++++++++++++-
+>>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
---7kmjyo7mbnkjzcvj
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 0/7] Add ITE IT6263 LVDS to HDMI converter support
-MIME-Version: 1.0
+So you just repeated parts I sent much earlier...
 
-On Wed, Dec 18, 2024 at 02:02:18PM +0800, Liu Ying wrote:
-> On 12/17/2024, Maxime Ripard wrote:
-> > On Thu, Nov 14, 2024 at 02:57:52PM +0800, Liu Ying wrote:
-> >> This patch series aims to add ITE IT6263 LVDS to HDMI converter on
-> >> i.MX8MP EVK.
-> >>
-> >> Since IT6263 DT binding and driver were picked up from v5 and landed
-> >> in drm-misc, this patch series contains patches almost all i.MX8MP
-> >> SoC/platform specific.
-> >>
-> >> Patch 1 is a preparation patch to allow display mode of an existing
-> >> panel to pass the added mode validation logic in patch 3.
-> >>
-> >> Patch 2 is a preparation patch to drop CLK_SET_RATE_PARENT flag for
-> >> media_disp{1,2}_pix clocks.  Patch 5 depends on patch 2.
-> >>
-> >> Patch 3 allows i.MX8MP LVDS Display Bridge(LDB) bridge driver to find
-> >> the next non-panel bridge, that is the IT6263 in this case.
-> >>
-> >> Patch 4 adds mode validation logic to i.MX8MP LDB bridge driver against
-> >> "ldb" clock so that it can filter out unsupported display modes read
-> >> from EDID.
-> >>
-> >> Patch 5 adds mode validation logic to i.MX8MP LDB bridge driver against
-> >> "pix" clock so that it can filter out display modes which are not
-> >> supported by pixel clock tree.
-> >>
-> >> Patch 6 adds DT overlays to support NXP adapter cards[1][2] with IT6263
-> >> populated.
-> >>
-> >> Patch 7 enables the IT6263 bridge driver in defconfig.
-> >>
-> >> Note that patch 3 and 4 depend on patch[3] in shawnguo/imx/fixes.
-> >>
-> >> Since this patch series is related to another one[4] authored by Marek,
-> >> Maxime asked for a proper description[5] about the exact problem.
-> >>
-> >> Admittedly, it's a bit complicated.  Here, I'm trying to do so and exp=
-lain
-> >> a bit more.
-> >>
-> >> [ Description ]
-> >> It's a clock problem about shared i.MX8MP video PLL between MIPI DSI a=
-nd
-> >> LVDS display pipelines.  The pipelines are driven by separate DRM driv=
-er
-> >> instances, hence there is no way to negotiate a dynamically changeable
-> >> PLL rate to satisfy both of them.  The only solution is to assign a
-> >> sensible/unchangeable clock rate for the PLL in DT.
-> >>
-> >> Admittedly, sys_pll3_out can be another clock source to derive pixel c=
-lock
-> >> for i.MX8MP MIPI DSI display pipeline if a particalur i.MX8MP platform
-> >> doesn't use audio(sys_pll3_out is supposed to derive audio AXI clock r=
-unning
-> >> at nominal 600MHz).  However, for i.MX8MP platforms with audio feature=
-s,
-> >> the shared video PLL case has to be handled and it determines that the=
- above
-> >> solution(unchangeable PLL rate assigned in DT) has to be used no matter
-> >> sys_pll3_out is for display or audio, because the separate DRM driver
-> >> instances really don't know if they are sharing the video PLL or not.
-> >>
-> >> [[ i.MX8MP Display Hardware ]]
-> >> i.MX8MP SoC supports three display pipelines:
-> >>
-> >>  -----------------------------           ------------------------
-> >> | imx8mp_media_disp_pix_sels  |         | imx8mp_media_ldb_sels  |
-> >>  -----------------------------           ------------------------
-> >> |  osc_24m (fixed 24MHz)      |         |  osc_24m (fixed 24MHz) |
-> >> |*-video_pll1_out (video)     |         |  sys_pll2_333m (sys)   |
-> >> |  audio_pll2_out (audio)     |         |  sys_pll2_100m (sys)   |
-> >> |  audio_pll1_out (audio)     |         | -sys_pll1_800m (sys)   |
-> >> | -sys_pll1_800m (sys)        |         | -sys_pll2_1000m (sys)  |
-> >> | -sys_pll2_1000m (sys)       |         |  clk_ext2 (external)   |
-> >> |  sys_pll3_out (audio ?)     |         |  audio_pll2_out (audio)|
-> >> |  clk_ext4 (external)        |         |*-video_pll1_out (video)|
-> >>  -----------------------------           ------------------------
-> >>              ||                                     |
-> >>  -----------------------------           ------------------------
-> >> |   media_disp{1,2}_pix       |         |        media_ldb       |
-> >>  ----------------------------- mux+div   ------------------------ mux+=
-div
-> >>              ||                                     |
-> >>  -----------------------------           ------------------------
-> >> | media_disp{1,2}_pix_root_clk|         |   media_ldb_root_clk   |
-> >>  ----------------------------- gate      ------------------------ gate
-> >>              ||                                     | (LVDS serial clo=
-ck)
-> >>              ||                                     V
-> >> 	     || (Disp2 Pclk)  --------      ------------------
-> >> 	     | ------------> | LCDIF2 | -> |       LDB        | -> panel/brid=
-ge
-> >> 	     |                --------      ------------------
-> >> 	     |  (Disp1 Pclk)  --------      ------------------
-> >> 	      -------------> | LCDIF1 | -> | Samsung MIPI DSI | -> panel/brid=
-ge
-> >> 	                      --------      ------------------
-> >>                               --------      ------------------      --=
---------
-> >>                              | LCDIF3 | -> | Synopsys HDMI TX | -> | H=
-DMI PHY |
-> >>                               --------      ------------------     |  =
-   +    |
-> >>                                  ^                                 |  =
-  PLL   |
-> >>                                  |                                  --=
---------
-> >>                                  | (Disp3 pclk)                       =
-  | |
-> >>                                   ------------------------------------=
---  |
-> >>                                                                       =
-    V
-> >>                                                                     pa=
-nel/bridge
-> >>
-> >> * video_pll1_out is supposed to be used by video outputs.
-> >>
-> >> - LCDIF2 + LDB can only use the *same* video_pll1_out, sys_pll1_800m or
-> >>   sys_pll2_1000m.
-> >>
-> >> [[ i.MX8MP Display Drivers ]]
-> >> LCDIF: drivers/gpu/drm/mxsfb/lcdif_*.c
-> >> Three LCDIFv3 display controllers are driven by three imx-lcdif DRM in=
-stances
-> >> separately.
-> >>
-> >> LDB: drivers/gpu/drm/bridge/fsl-ldb.c
-> >>
-> >> Samsung MIPI DSI: drivers/gpu/drm/bridge/samsung-dsim.c
-> >>
-> >> Synopsys HDMI TX: drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
-> >>
-> >> [[ Problem - Shared Video PLL Between Samsung MIPI DSI and LDB ]]
-> >> osc_24m, audio_pll*, sys_pll* and clk_ext* are not for video outputs,
-> >> because:
-> >> a. Aparently, osc_24m runs at fixed 24MHz which is too low for most di=
-splays.
-> >> b. Audio subsystem may consume all audio_pll*.
-> >> c. sys_pll* are system clocks which are supposed to run at fixed typic=
-al
-> >>    rates, e.g., sys_pll2_1000m runs at 1000MHz.
-> >> d. sys_pll3_out is supposed to derive audio AXI clock running at nomin=
-al
-> >>    600MHz(i.MX8MP data sheet specifies the rate), see NXP downstream k=
-ernel:
-> >>    https://github.com/nxp-imx/linux-imx/blob/lf-6.6.y/arch/arm64/boot/=
-dts/freescale/imx8mp-evk-ndm.dts#L19
-> >>    https://github.com/nxp-imx/linux-imx/blob/lf-6.6.y/arch/arm64/boot/=
-dts/freescale/imx8mp-ddr4-evk.dts#L25
-> >=20
-> > Is there any downside to using any of these clocks, aside from the fact
-> > that their rate must not change?
->=20
-> osc_24m and sys_pll* don't support spread spectrum while audio_pll* and
-> video_pll1_out support it. Other than that, I don't see any downside to
-> use any of these clocks, if their clock rates happen to meet the clock
-> rate requirements of the MIPI DSI and LDB display pipelines.
->=20
-> >=20
-> > Also, if they can't change their rate, why do they have
-> > CLK_SET_RATE_PARENT (sys_pll* in particular) ?
->=20
-> If media_disp{1,2}_pix and media_ldb clocks have no CLK_SET_RATE_PARENT,
-> it doesn't mattter whether their parent clocks(these clocks) have it or n=
-ot.
-> Note that patch 2 drops CLK_SET_RATE_PARENT for media_disp{1,2}_pix clock=
-s.
->=20
-> Anyway, why have sys_pll* clocks got CLK_SET_RATE_PARENT? The reason I can
-> think of is that it makes some potential i.MX8MP platforms possible to set
-> the sys_pll* rates with the parent clock rates(sys_pll1/2/3) updated
-> accordingly, e.g., if sys_pll2_1000m is the only active child of sys_pll2=
-_out,
-> sys_pll2_1000m's rate can be assigned to 800MHz(not typical 1000MHz) in D=
-T.
-> Or, maybe, the sys_pll* rates can be assigned to some particular values to
-> support nominal/overdrive modes of various i.MX8MP clock roots(some are
-> derived from the sys_pll* clocks).
->=20
-> >=20
-> >> e. clk_ext* are external clocks without known capabilities.
-> >>
-> >> So, the only eligible video_pll1_out is supposed to be shared between =
-LDB
-> >> and Samsung MIPI DSI in the two separate display pipelines if sys_pll3=
-_out
-> >> is already used to derive the audio AXI clock.
-> >>
-> >> With the shared video_pll1_out, drivers for the two display pipelines =
-cannot
-> >> change the PLL clock rate in runtime, since the pipelines are driven b=
-y two
-> >> DRM driver instances.
-> >=20
-> > What is the typicall frequency on those pipelines? Could setting the PLL
->=20
-> For MIPI DSI to HDMI(ADV7535) and LVDS to HDMI(IT6263), the typical pixel
-> rates are 148.5MHz(1080p60Hz) and 74.25MHz(720p60Hz) and the typical LDB
-> clock rate is 519.75MHz.
->=20
-> For MIPI DSI panel and LVDS panel, there no typical pixel rates. It depen=
-ds
-> on individual panels. However, it's possible to override panel's pixel cl=
-ock
-> rate in DT to use a fixed PLL clock rate if the pixel clock rate deviation
-> is still acceptable by the panel.
->=20
-> > high enough that any frequency required by any of these pipelines can be
-> > accomodated through a divider work?
->=20
-> Yes, that's why media_blk_ctrl node in imx8mp.dtsi assigns video_pll1 clo=
-ck
-> rate to 1.0395GHz. That rate supports the typical 148.5MHz and 74.25MHz
-> pixel clock rates. With this patch series applied, i.MX8MP EVK would use
-> this fixed 1.0395GHz video_pll1 clock to drive both MIPI DSI to HDMI and
-> LVDS to HDMI simultaneously.
->=20
-> >=20
-> > Something like you run the PLL at 594MHz, and then most HDMI frequencies
-> > can be reached by a 1, 2 or 4 divider.
->=20
-> PLL running at 594MHz does support the typical pixel clock rates for MIPI
-> DSI to HDMI, but not for LVDS to HDMI due to the 7x(single-LVDS link) or
-> 3.5x(dual-LVDS link) folder between LDB clock rate and pixel clock rate.
-> PLL running at 1.0395GHz is the one chosen to support both MIPI DSI to
-> HDMI and LVDS to HDMI, e.g., with dual-LVDS link, 148.5MHz pixel clock ra=
-te
-> =3D 1.0395GHz / 7 and 519.75MHz LDB clock rate(148.5MHz * 3.5) =3D 1.0395=
-GHz / 2.
->=20
-> >=20
-> >> [[ Solution ]]
-> >> Assign the PLL clock source(s) and the PLL clock rate(s) in DT.  Disal=
-low
-> >> display drivers to change the PLL clock source(s) or rate(s) in runtime
-> >> including LCDIF driver and bridge drivers.  With sensible PLL clock ra=
-te(s),
-> >> typical display modes like 1920x1080@60 can be supported if external H=
-DMI
-> >> bridges are connected, and panel display modes can be too.  Also the u=
-nneeded
-> >> CLK_SET_RATE_PARENT flag can be dropped for media_disp{1,2}_pix clocks.
-> >> If needed, bridge drivers just call clk_round_rate() to validate clock=
-s so
-> >> that unsupported display modes can be filtered out.  Although the
-> >> unchangeable PLL clock rate disallows more potential display modes, the
-> >> solution works for single/dual/triple display pipelines(OFC, hardware =
-designers
-> >> should pick panel/bridge display devices carefully first by considerin=
-g clock
-> >> resources).
-> >=20
-> > I think it's a reasonable idea, if not for the hardcode-it it DT stuff.
-> > If we can manage to have a fixed setup work ok for all display use
-> > cases, why would it be in DT? The clock driver seems like a much better
-> > choice to me.
->=20
-> Different i.MX8MP platforms may have different display devices(panel(s)
-> and/or bridge(s)). It's flexible to allow each platform to assign the PLL
-> rate(s) in DT. It doesn't look doable with clock driver, does it?
+https://lore.kernel.org/all/20240818173003.122025-2-krzysztof.kozlowski@linaro.org/
 
-Why not? Plenty of platforms are doing it. If anything, it's more
-flexible to deal with it in the clock driver, because then you don't
-have to filter out modes that aren't compatible with the frequency that
-got assigned in the DT.
+That one got reviews but was not merged for some reason.
 
-Also, it's more robust since that frequency isn't guaranteed to be
-constant across the system life.
-
-Maxime
-
---7kmjyo7mbnkjzcvj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ5ihrgAKCRAnX84Zoj2+
-dnSLAYDt6cWcr36B59F3FD29h+8EhJFZdQYolvJ7EnbMmgpcvvyE+/jFQvdZDB98
-KGeKET0BgPuI14uRS6azReXJHElsJi4ivmgc+xYGykxLt6yA7fTYJlBo9mxtbI4E
-Hpqm546xvg==
-=UCgp
------END PGP SIGNATURE-----
-
---7kmjyo7mbnkjzcvj--
+Best regards,
+Krzysztof
