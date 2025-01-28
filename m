@@ -1,133 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3B02F29;
-	Tue, 28 Jan 2025 12:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10546F9F8;
+	Tue, 28 Jan 2025 14:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738067432; cv=none; b=hfrEgPOl+jsYNr77458PJRNmkJkQuqgnfmW4ZI77h6t9ZSEcc/fQ2aG18FY/B/trRrwiUx4ABVvqc+lCMqJQrMYiMhOJE9uTpPIZD+GecanyIXL4tub/l7QeqHxxDhcX5aBLBorhiNiQRlY6DA4hcWCGpEQgMQ4Nkd1aSsKGh1U=
+	t=1738075689; cv=none; b=BI3rKSwXu2uwMDqz2wBvBA6j6CXg0dnqHFoYyXsdAjeTRrMa90eC3gfNZISfEFjGXuGdaR0r7PuvxcvBCb1ovUiKiYdthjIPdh3uPiYqXjxQnGHXpJE6rx4UtxPV2KtzZ+q85NT2zYe7s90TeqDCUJVTpzvV8EIQ6UryHXFrbfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738067432; c=relaxed/simple;
-	bh=QyOoZd7UPQK8ox6uSZo8sq13eTCA+uLjpoc9Hps1+Q4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jsln1ph8iTL1Ij1bLJ3l0UFvoSQLamfZuTDQWS5CM7SM9NbHC9LCQXCvPjXHTYjogyQpDXqs70qv0nRU+cTXt7SOI218iej+HgcXtz7ADqA+qtb75Y6xQI2tzDXcF/qMkn2n8wpfK3NPB6csXyyiKtrlsiY0LE/3lrOCV1xAYis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsmPZnKl; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsmPZnKl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41591C4CED3;
-	Tue, 28 Jan 2025 12:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738067430;
-	bh=QyOoZd7UPQK8ox6uSZo8sq13eTCA+uLjpoc9Hps1+Q4=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=OsmPZnKl4XFKima6WKEvpbZTIyqfv+K3Vu8ZDm7vAKszr+y7GYY9+b2ayLb7X6Cos
-	 ukEYcpVLLeP/gvJ79LxQqB7l4ushpCuLLMXUnm1HNWvSmTFIZMY1qlylBWu4lQszrF
-	 nm4miHh0EocNw6rfN0Ed9Bm9wMCr7o11tg/cnpmsrVIKCYBPqjvETP80n18aBYE7s5
-	 BchwucYy538eL7+sLkMyrIUwxoSQ+dLAjnYFeJM6f2X4uSYUj8R45xe0KrRRIO8T/n
-	 lAcPl8c6egkbxVHiD+Gc3cJ0KMaFZ/+/x0GIb2BvBjNkzqV5LP81nFBZVuNEbRD1mu
-	 2sRvLmnsyHJnQ==
-Message-ID: <c3b6c20f-6e35-446d-a61d-f24611dd815d@kernel.org>
-Date: Tue, 28 Jan 2025 13:30:24 +0100
+	s=arc-20240116; t=1738075689; c=relaxed/simple;
+	bh=JGBOI0jWiJMIE/VtOyCKJHZtvJ7jUOtyoNaK1zFaKqs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o3OTlvqc9skCq/jRck3DIMX39wZ8LEqcS9XkhAjDao+jZ6kkb0YmgnfKI5EkbTt6rGvq8LVK12igQXLfFBhuXtqPZ7LeNRxpsked32WyniiC+l0a3yLVN0ieXuRdMS119aa7ebN7vjTv50XLqeFThuBZ3pselQQOl+N7h/tabQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-51640f7bbd3so1822458e0c.2;
+        Tue, 28 Jan 2025 06:48:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738075684; x=1738680484;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/emlu5iyumP7h0/eMpSZj0+L2wsHCfavXd9axlfYbf0=;
+        b=NAT0TsCUullP6Axeqg5/bsclTb/E7ca0xqbcUc8a1tbeh/5XdUB/zVpdzZRNbw0Jvp
+         s27ievPxmVI3Bw5zP2xHLORPeRWf1sW3jx0n6radxNxB/ZhipwQQR6GxV2LlrdCG9WEr
+         7TBlG4GMmf3Zatdc8k3JoHaPPTDKS00lJteoMKDXDI3z5KizGWB3p2jAqBrzY8A17PRq
+         COZDCYCJyMms3RkKP8ihXVzvuYX06WgPPB8mKGXdyAyTXlueu6XBRcGOBWr/Nfm8Vu9B
+         3gbSLBnkj6iP/peQWjh2MPIl79+ubjhCsbhd9cztI8qWBZ7FlVNPA0b2QnRo3reZQw9R
+         P9Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtVzVgEDrdUJ89r/NB3asZDWlKUHLJ1hTob4nCxoD0UyliTR+zuifToTYjgIq6WhQWWxdKdeEGvBr6VhPp9V2Gu9Y=@vger.kernel.org, AJvYcCVQLHpbQWpahrVUmGlmfN7EHYcDrUSY8z7LndZRWhtbZlJMv22vB0gT6ZGQQxugkzEa2Miu0VWdX6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6qmGQx2RALVj6dZHtaswDKq2wvYJWxGG2FfLxvKAAaWLymx0a
+	Sv+QN0vZUU/LKaDbRoLopjX/3vUsz1TUywQql6mz3Y8MN3VlrCyNxL2mb2BW
+X-Gm-Gg: ASbGncv/d4DWJSBDwSOS0/fbc/bLVh8lLRFc84bkjiEPZ75rdMMt2C7kX4K4z8GRO5L
+	mlPGRXBeM3XtFSpEl81DJ8+JsTMA3n4fg+0JPeB7c7SnH6FUSE9P2awhaMEvgSX7uP2vOvNLQMe
+	I0d9J0pIID3munWuRtboyyfo4QPvPl82s8UcdHPHeRbcgsRW3kMyvydtoTNE3xUKXwuLoKStxxU
+	mFzl7g+eBLL1IwrPu5VHm2L59uRIdwI7n9DAiKg8XE53a8XDrm2iRXDcwyxwn8BrmmY4UxBKDth
+	lD7aa9Ea5q1pBN1f3qjlGw4Ano3A2f/neoCndkD5cm1qHKlRom5qAQ==
+X-Google-Smtp-Source: AGHT+IHeg3UJGp0K+NaI5wdBjmUkqPK3YKqZRxA/ObP1jhEg5kQ4nE7Z7qwvkSY2kiA7TEN3fdv4vQ==
+X-Received: by 2002:a05:6122:29c2:b0:518:865e:d177 with SMTP id 71dfb90a1353d-51d5b33f5c9mr37773464e0c.9.1738075683675;
+        Tue, 28 Jan 2025 06:48:03 -0800 (PST)
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51e979fb6b9sm96908e0c.48.2025.01.28.06.48.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Jan 2025 06:48:03 -0800 (PST)
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-85baea70afeso1167107241.2;
+        Tue, 28 Jan 2025 06:48:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUDxFDFtz7RPMSHGiN49nl82T0MPztjbXLQ6wAcbYTbxk5cIQHOtDrgShyTWLpi05cmfTWwcCP45i9qP+NGapUCg/I=@vger.kernel.org, AJvYcCXFb61EcHrJ1l94IwEWWZsePJszzSJg8BOuP/nxB42O5qIZUHJ8DpJUSulC95B39nqT5CxDy3GWz/8=@vger.kernel.org
+X-Received: by 2002:a05:6102:3584:b0:4af:f3bd:51cd with SMTP id
+ ada2fe7eead31-4b690cdd7e9mr37544407137.16.1738075683000; Tue, 28 Jan 2025
+ 06:48:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
- apss clock controller
-To: Sricharan Ramabadhran <quic_srichara@quicinc.com>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
- rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250127093128.2611247-1-quic_srichara@quicinc.com>
- <20250127093128.2611247-2-quic_srichara@quicinc.com>
- <0c26af56-ed7a-4de8-ac47-7447298b87f0@kernel.org>
- <92836021-ee0e-4fb4-bf01-49b46a5af3a4@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <92836021-ee0e-4fb4-bf01-49b46a5af3a4@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250128104714.80807-1-biju.das.jz@bp.renesas.com> <20250128104714.80807-3-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250128104714.80807-3-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 28 Jan 2025 15:47:51 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUdx3jVNXjtoYCyf5KV-2bEe3FVpnnWJhE_T4Uc_X8L3A@mail.gmail.com>
+X-Gm-Features: AWEUYZl_QBB7F3gufD9zX40mtUJ789ig9DK8UyWLYtp39vA-6oM4MO1Lz78c96I
+Message-ID: <CAMuHMdUdx3jVNXjtoYCyf5KV-2bEe3FVpnnWJhE_T4Uc_X8L3A@mail.gmail.com>
+Subject: Re: [PATCH v3 02/13] clk: renesas: r9a09g047: Add ICU clock/reset
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 28/01/2025 12:15, Sricharan Ramabadhran wrote:
-> 
-> 
-> On 1/28/2025 1:04 PM, Krzysztof Kozlowski wrote:
->> On 27/01/2025 10:31, Sricharan R wrote:
->>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>>
->>> The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
->>> The RCG and PLL have a separate register space from the GCC.
->>> Also the L3 cache has a separate pll and needs to be scaled along
->>> with the CPU.
->>>
->>> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>
->> Considering that there were multiple conflicting patches coming from
->> Qualcomm around IPQ SoCs and that we are in the merge window, I will
->> skip this patch.
->>
->> I suspect this duplicates the other chip as well, but that's your task
->> to sync up internally.
->>
-> ok, but this .yaml is specific to IPQ5424 and would not conflict with
-> IPQ5332. That said, will post it after merge window as a part of
-> V3 (for other patch changes) to avoid any confusion.
+On Tue, 28 Jan 2025 at 11:47, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add ICU clock and reset entries.
+>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.15.
 
-But maybe it is the same on ipq5332? or similar? Other works were
-totally de-synced and you ask community to sync them. That's not how it
-works.
+Gr{oetje,eeting}s,
 
-Best regards,
-Krzysztof
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
