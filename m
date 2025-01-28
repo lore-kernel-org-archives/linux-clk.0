@@ -1,179 +1,99 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472D61DA0E0
-	for <linux-clk@vger.kernel.org>; Tue, 28 Jan 2025 16:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBB51BDA91;
+	Tue, 28 Jan 2025 17:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738081637; cv=none; b=rIr6cMzVMqRT6PPX/52mO+6zMDwSob6DSEeyBNIXGxe/ceMq+VVO4Um4t1Xd5d9ouIzB054iPOj93O6QAFl6wEeT9XBGfRT7nUusBqa9XCfjbBOKaarBPBq3Md5FztCLq08xr1DNEgGyDg0sZz92IwQ/LPIFoQM4rWDKFa53MMY=
+	t=1738085949; cv=none; b=sSd9lkF86lozAnUL+zdRvsuJCXbYfAbj6x8DjU4K90HTLuXMs3okkYZoVPfZk7eIDFRKc12TP9xVPvG3anBQmlYXnUnXOg4rsmykNOjgyP9qkJSiVRNvewUqwKi3QwVGtJ56xkO/o2oSY1tnBEMh4YLrM07WChsDe8Tp3SWkUfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738081637; c=relaxed/simple;
-	bh=bG+t/CzJT5bkoQhWeyO22+5w5KevtD23rkGzScuT6Ks=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
-	 Content-Type:References; b=r5rByUdvza8xtzzAsTU0TGA0ZRh1q1cQnfOOEzoT6NbugsSl2H89fRbBAANzXBm/NVAfNQJCXFVd8BSE4AwBnCQZ+DXcEKFwWLmONv5D+Idko8jwo0DAF1UduLa1SSN4QA1ESM5x/0Y+dUE8BXcEzNv709HDeIoVZ9K4vygdr40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TFmaGkOa; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1738085949; c=relaxed/simple;
+	bh=jjeI4vwu2iND+mSguPTJSTWaIvWFuRgs4M594184mbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WgqdDq/xqWoFZeXbiEG5r+zH+uIm6AB8kmYURFR+9az8pwkkPPVD6ETGI4lWftTgP0niIhR+hPDF34+ftyRKZrHJB2Ag/FZsy6bJ6zYPXw2FFqO/KTYRe6YEVXxN1LcDw35Raorhf9WNP36Kohb58cEcHon7/S4viXIvlmva5SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pdy+m9ai; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TFmaGkOa"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250128162712euoutp02af78896fd7ef00b9a9c90ea2bd9f314b~e6AlGD49_2638726387euoutp02a
-	for <linux-clk@vger.kernel.org>; Tue, 28 Jan 2025 16:27:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250128162712euoutp02af78896fd7ef00b9a9c90ea2bd9f314b~e6AlGD49_2638726387euoutp02a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1738081632;
-	bh=fFbTh+PWSmdRFBoGu9O4DUva9iXla1md7758aeiDLz4=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=TFmaGkOaOngHdMQ/pXWXbzPxRWkXqYTQQ7blYdU3MnDfl4Ui55OQEmZS92nkRU0QK
-	 9TX/PY4ci0p5GYDsRhsOWS2re8kN/l4fph6zMyF8e9fF3u2UyhZjQvigLMkKzbjp+H
-	 aiwUFOqcNtxzG4ahagzXxHPBOw/dUlGvc2SLwdcg=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250128162712eucas1p1c6f2938e96b8144aaccff7d0c3905440~e6Akmdgug0040500405eucas1p1R;
-	Tue, 28 Jan 2025 16:27:12 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 6C.C2.20409.06509976; Tue, 28
-	Jan 2025 16:27:12 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250128162711eucas1p2bfe8403d51943e5d5e7bc99c165a3a3b~e6AkKpP0F2095320953eucas1p2R;
-	Tue, 28 Jan 2025 16:27:11 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250128162711eusmtrp14491c4910474d6a0c0a4fb4333444735~e6AkJufsr1458214582eusmtrp1e;
-	Tue, 28 Jan 2025 16:27:11 +0000 (GMT)
-X-AuditID: cbfec7f4-c0df970000004fb9-38-67990560a4fa
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 84.F2.19654.F5509976; Tue, 28
-	Jan 2025 16:27:11 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250128162710eusmtip144e6661f192407d315ac892b5ee175de~e6Ai2D0jv2024520245eusmtip1G;
-	Tue, 28 Jan 2025 16:27:10 +0000 (GMT)
-Message-ID: <51846fb3-3d86-4ba7-8504-0725d3cd738f@samsung.com>
-Date: Tue, 28 Jan 2025 17:27:10 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pdy+m9ai"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FFC2C4CED3;
+	Tue, 28 Jan 2025 17:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738085949;
+	bh=jjeI4vwu2iND+mSguPTJSTWaIvWFuRgs4M594184mbE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pdy+m9aiWaJ/5lwS/fspPrSkiIdjkugamqy269xrv+LCCC9inYpUsFjBqWwy60+Cy
+	 Kj1mby5Gpz4umZUm2gsuECX6Uul7b7VMD6pQ4yFWS+VkdjKGOHv9e/ljgyY244RhY2
+	 pyR2BIo+IvnmbRE3TRkQTRATvID14T7gNYtGImVVdv7yI6gmAdOIWlq5D6elEwdVQY
+	 QuXLqRs1NK9zKvTtYVY3EoDhsOtq9R6tui5JBohfJnBELy4qZpCYEfhX2Mbh08b+P4
+	 +0n83a3XIwfaxQr+AzMDsDs9+7BYeeTpwpoyJ06ZpT1jVw5B8Jo3RWx0GLjsk+WOk2
+	 S8elNmAkeEaJg==
+Date: Tue, 28 Jan 2025 11:39:08 -0600
+From: Rob Herring <robh@kernel.org>
+To: Imran Shaik <quic_imrashai@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Subject: Re: [PATCH v4 0/6] Add support for GPUCC, CAMCC and VIDEOCC on
+ Qualcomm QCS8300 platform
+Message-ID: <20250128173908.GA3705252-robh@kernel.org>
+References: <20250109-qcs8300-mm-patches-new-v4-0-63e8ac268b02@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 04/18] firmware: thead: Add AON firmware protocol
- driver
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
-	m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
-	linux-pm@vger.kernel.org
-Content-Language: en-US
-In-Reply-To: <0324973c-2180-4077-a000-b7b6d895b7aa@samsung.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxbZRTGfW9v771tUrgUTF9Rx0LG4pyygajvnEPmmLlomGiWmGwaaLa7
-	DsdX2nXTzY/yMdygncCQj4IWcANsVj5qYaWhVFltGczC2AZIoEyFZCDIKh1kKMXRdsp/v/Oc
-	5815zslLcYRXiVAqNeM4K80Qp4UTfLzd9qD/+RRupWR72QqJeobrMNT2t5pEl80ODGmsDi5y
-	DhowdOv+PIGapgZIdNecjaOhxq9JlGtrJtC02kmg/v4WErmUTi66aaom0ILKClD7Qh6BdNZx
-	EtW62nB00WgCKP9cPRfd6N2Lxp09OJq+qeSgfHUgWu00ksgz1Iqjqj8tJDLMFnORXfceyrOU
-	4nEbmPmRMyQzOz2NM1fPuknGvFiDMx3qcZJRdlwHjF57jmDGhjoJ5ptr7zAThXaM+f7i50ye
-	zoYxX65sZ+a7bhPMeYMWMIO5w2SS8AD/1cNsWuoJVrotNoV/tLbBCrLs/I+Gij2EAgxQBYBH
-	QToGDruNnALAp4R0I4AaTTnmK9wANiunuL5iAcAC8yLn0ZOl7y75XQ0AFlsq/cUcgNcNjfia
-	S0DHQu3UIrnGOB0Bq1ZngE8PgtcqJ72ex+kwODFa4fUE02/DpsLb3DUm6Gh4p0Hj5RB6Cxxe
-	WfLG4NCdXFhW2uJtcGgRHJ3UYGvMo1+D5TmDmE8Pg1fmqr0bQfoGH2p6nf7c8bDngRv3cTCc
-	sRtIHz8F+y4o/XomvNP2l9//CexQ2v28E445lokCQD0csAU2m7b55N2wtWTWK0M6AI7MBfki
-	BMCS9nKOTxbAs/lCn3sz/Eqp+m+oo7EdKwLh6nVXUa9bTL1uGfX/c2sArgUiVi5Ll7Cy6Az2
-	ZKRMnC6TZ0giD2Wm68HDf97nsbuNoGHGFdkNMAp0A0hxwkMEHzgqJELBYfHHp1hpZrJUnsbK
-	usGTFB4uEtRZzkiEtER8nD3Gslms9FEXo3ihCuwIoGZsn5bxkuIU708I5LlGg+HyclhOb32x
-	2Fl193Rl4NYBUXCmsui5mOVC4Hol+V7r6hPchJgR3bGTp35sUaTMHjwR77miv9WVwB9SyWP7
-	E7+oFWe/+Fn2rpyDNaKc0Q8jdrwRVb/pH0dKyB8Hdr+ZzFv1MBx4vvDbH5Rq+87ZIzNxqKKl
-	7d6cqeunsYSquv18W6i1ZE+QfrDnLVFAoCL/UFGWLnSxQOdOTFrauO/dkR1btYmWpgu1P0ed
-	Rpd6m2o8Val79728oflpV/DqZOnvGf3teboJ3saA/fH66vL7quG53wBm6vvlGVWAxbVnl/Yx
-	2vBr9EutParNEamvv7Ap0WwOx2VHxVHPcqQy8b+TFE+hVgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKKsWRmVeSWpSXmKPExsVy+t/xu7rxrDPTDXauU7c4cX0Rk8XW37PY
-	LdbsPcdkMf/IOVaLe5e2MFlc+fqezWLd0wvsFi/2NrJYXFsxl92i+dh6NouXs+6xWZw/v4Hd
-	4mPPPVaLy7vmsFl87j3CaLHtcwubxdojd9ktFn7cymKxZMcuRou2zmWsFhdPuVrcvXeCxeLl
-	5R5mi7ZZ/Bb/9+xgt/h3bSOLxex3+9kttryZyGpxfG24Rcv+KSwOch7vb7Sye7x5+ZLF43DH
-	F3aPvd8WsHjsnHWX3aNn5xlGj02rOtk87lzbw+Yx72Sgx/3u40wem5fUe7SsPcbk0f/XwOP9
-	vqtsHn1bVjF6XGq+zh4gFKVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9n
-	k5Kak1mWWqRvl6CXsXD5EcaC41wV1yb+Y2tgvMDRxcjJISFgIvF95VKmLkYuDiGBpYwSyy5e
-	ZoNIyEhc637JAmELS/y51sUGUfSaUWJFywZ2kASvgJ3EqqffwGwWAVWJ2f9fMULEBSVOznwC
-	1iwqIC9x/9YMsBphAV+JJdf2M4HYbAJGEg+Wz2cFsUUENCWu//3OCrKAWWAPq8ThzZ+htq1n
-	krj0cRVYB7OAuMStJ/PBbE4Be4npTZeAbA6guLrE+nlCECXyEtvfzmGewCg0C8kds5B0z0Lo
-	mIWkYwEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzA9LXt2M8tOxhXvvqod4iRiYPxEKME
-	B7OSCG/suRnpQrwpiZVVqUX58UWlOanFhxhNgWExkVlKNDkfmEDzSuINzQxMDU3MLA1MLc2M
-	lcR52a6cTxMSSE8sSc1OTS1ILYLpY+LglGpgmhkpFen85fHhW6F71sgEGC2b/zmMNytTba3N
-	NM17uwImv+WVYYrSZg97kSPq0bX01u+rglURPc0PJzoVvVnw58WZd73fXs6Wd02+UH7jgvf/
-	3pD2SUfCHJ8V+HvH7i4tvNPq5c/IsPjmD7v1lp9+C68MvPg3Mrty9oO6KdbZFdd331TRPnPV
-	Vdjo5xXbFvuPHhGu0Y/W73g1adGZdXc4F0nlcfHtvTu/43tjfpTo5h+af7lbP025rhj6zTro
-	tFLjguldRU0GqqFCL2bU/3l8omxxs1T024LqCFPV7Qrdhx85aXuJMB+vVX2oxe92vfJ7s8jk
-	0IVPTnZvL5zWF/ux7PbZtnVzPj8IbjfpXXzxpRJLcUaioRZzUXEiAD4ihYDoAwAA
-X-CMS-MailID: 20250128162711eucas1p2bfe8403d51943e5d5e7bc99c165a3a3b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250120172124eucas1p233b3f6da39e7064db62b02a66bc1ac29
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250120172124eucas1p233b3f6da39e7064db62b02a66bc1ac29
-References: <20250120172111.3492708-1-m.wilczynski@samsung.com>
-	<CGME20250120172124eucas1p233b3f6da39e7064db62b02a66bc1ac29@eucas1p2.samsung.com>
-	<20250120172111.3492708-5-m.wilczynski@samsung.com>
-	<20250121-small-ruby-seahorse-7475d0@krzk-bin>
-	<0324973c-2180-4077-a000-b7b6d895b7aa@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250109-qcs8300-mm-patches-new-v4-0-63e8ac268b02@quicinc.com>
 
+On Thu, Jan 09, 2025 at 02:27:43PM +0530, Imran Shaik wrote:
+> This patch series add support for GPUCC, CAMCC and VIDEOCC on Qualcomm
+> QCS8300 platform.
+> 
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> ---
+> Changes in v4:
+> - Updated the commit text as per the comment from Bjorn.
+> - Fixed the CamCC QDSS clock offset.
+> - Link to v3: https://lore.kernel.org/all/20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com/
+> 
+> Changes in v3:
+> - Added new GPUCC and CAMCC binding headers for QCS8300 as per the review comments
+> - Updated the new bindings header files for GPUCC and CAMCC drivers. 
+> - Added the R-By tags received in v2.
+> - Link to v2: https://lore.kernel.org/r/20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com
+> 
+> Changes in v2:
+> - Updated commit text details in bindings patches as per the review comments.
+> - Sorted the compatible order and updated comment in VideoCC driver patch as per the review comments.
+> - Added the R-By tags received in V1.
+> - Link to v1: https://lore.kernel.org/r/20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com
+> 
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+> 
+> ---
+> Imran Shaik (6):
+>       dt-bindings: clock: qcom: Add GPU clocks for QCS8300
+>       clk: qcom: Add support for GPU Clock Controller on QCS8300
+>       dt-bindings: clock: qcom: Add CAMCC clocks for QCS8300
+>       clk: qcom: Add support for Camera Clock Controller on QCS8300
+>       dt-bindings: clock: qcom: Add QCS8300 video clock controller
+>       clk: qcom: Add support for Video Clock Controller on QCS8300
 
+I've applied the bindings patches because the .dts files using them are 
+already in Linus' tree.
 
-On 1/28/25 16:54, Michal Wilczynski wrote:
-> 
-> 
-> On 1/21/25 10:56, Krzysztof Kozlowski wrote:
-> 
->>> diff --git a/include/linux/firmware/thead/thead,th1520-aon.h b/include/linux/firmware/thead/thead,th1520-aon.h
->>> new file mode 100644
->>> index 000000000000..3daa17c01d17
->>> --- /dev/null
->>> +++ b/include/linux/firmware/thead/thead,th1520-aon.h
->>> @@ -0,0 +1,186 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +/*
->>> + * Copyright (C) 2021 Alibaba Group Holding Limited.
->>> + */
->>> +
->>> +#ifndef _THEAD_AON_H
->>> +#define _THEAD_AON_H
->>> +
->>> +#include <linux/device.h>
->>> +#include <linux/types.h>
->>> +
->>> +#define AON_RPC_MSG_MAGIC (0xef)
->>> +#define TH1520_AON_RPC_VERSION 2
->>> +#define TH1520_AON_RPC_MSG_NUM 7
->>> +
->>> +extern struct th1520_aon_chan *aon_chan;
->>
->> Drop all externs.
-> 
-> This is required so the code will compile as the
-> int th1520_aon_call_rpc(struct th1520_aon_chan *aon_chan, void *msg);
-> is non static and exposed in the same header.
-> 
-> I really would like to keep th1520_aon_call_rpc in this header, as it
-> could be useful for other drivers to construct their own RPC calls to
-> reboot or shutdown the system e.g watchdog.
+Bjorn, please stop taking dts changes without the bindings.
 
-Oh I get it, simply drop extern not the whole expression, sorry it's
-fine.
-
-> 
->>
->>
->> Best regards,
->> Krzysztof
->>
->>
+Rob
