@@ -1,108 +1,179 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB58C1991D2
-	for <linux-clk@vger.kernel.org>; Tue, 28 Jan 2025 16:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472D61DA0E0
+	for <linux-clk@vger.kernel.org>; Tue, 28 Jan 2025 16:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738080563; cv=none; b=MHWHXWixGcuecuisfz3VVn2Pjzwmqjdl5/1OMx3I1RrUgU6kCmpEcVMabDl+aGER/pBCvoDC0G7Y6Kjx03iL3YcMJ2Rg+dOh1wms6TunofN4XOgwO3+Mq/hasPJe7MrNuLRo+N4owU7h46RmJ1kgW5nyThCIzM5O9jKXwKlHfbE=
+	t=1738081637; cv=none; b=rIr6cMzVMqRT6PPX/52mO+6zMDwSob6DSEeyBNIXGxe/ceMq+VVO4Um4t1Xd5d9ouIzB054iPOj93O6QAFl6wEeT9XBGfRT7nUusBqa9XCfjbBOKaarBPBq3Md5FztCLq08xr1DNEgGyDg0sZz92IwQ/LPIFoQM4rWDKFa53MMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738080563; c=relaxed/simple;
-	bh=BEceo0pyOWNwrQgM5P+ElC1rpnayGRzLlO9HRB1nWeo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZTUQ+5hbPq4Dkz6LRJsi/1fEO6ZGRCeJcyNhpjKJvskbiMG3EVkshW4Lv63yIRB8ba1hXGj1kKVEQeMiGCAUXMFGFp2cQZkvtNEdYJeBOqPFQsdjtfojAj8mU5dLfqpzFRUrJmt+giSJl5iLEc0w6/litTOPUW0Cos4PBcn4lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dx3jCmkf; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1738081637; c=relaxed/simple;
+	bh=bG+t/CzJT5bkoQhWeyO22+5w5KevtD23rkGzScuT6Ks=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:In-Reply-To:
+	 Content-Type:References; b=r5rByUdvza8xtzzAsTU0TGA0ZRh1q1cQnfOOEzoT6NbugsSl2H89fRbBAANzXBm/NVAfNQJCXFVd8BSE4AwBnCQZ+DXcEKFwWLmONv5D+Idko8jwo0DAF1UduLa1SSN4QA1ESM5x/0Y+dUE8BXcEzNv709HDeIoVZ9K4vygdr40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TFmaGkOa; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dx3jCmkf"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53e384e3481so5560861e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jan 2025 08:09:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1738080559; x=1738685359; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8hyWKduVNC9ouiWAJq4WnkCOtxjNZB1VnYrFoYk4udA=;
-        b=dx3jCmkfR2fG5MyNInak4Wl8/kJyRHvcvDkd+kYwncRIWwuH4O1imGSdVmwdZvXMup
-         o8SCsNc7isyz7PQodm1Mpo5ipYDbJ4+fxE9AZRm7mFskRF76ChN2jP7bEvttVRGisCbu
-         s+yS9N+sggF3Bj7TbZi7qHvMju42dF736dgNptJvGnbtyDfnC58513UQJ9RLvaqpGdap
-         f65GD40Wp86/kbSFQ2M/KTS3V7+d5WrI8/m3iNb7XwKHaBQLBpZCY/KrRGiTLWt5TCdo
-         fUHb8eJsouwpYBrogDTh8LgSo+XUJ7FPMOZrkYoxA6bBO0SrfoTQYS4Hsotw7/DZrMxz
-         kwug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738080559; x=1738685359;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8hyWKduVNC9ouiWAJq4WnkCOtxjNZB1VnYrFoYk4udA=;
-        b=dng4nxaKW8lUVi+9O48n/2P/SocSOfok2vQdZPDDbk58zk/1GW8oCSx3YQ7mvTQFO3
-         zAm970YpXapaglkVie+WiRVaUIefTFGEoaYfQWEhoQUjX7vG8TC5U01I7iZM6YfCAeWz
-         sX30tb5AwBqUrO34NjDB+IIMMVCJFsYH47kKVlCmQse1ZlSb7M0jv51HFbuy5Yx3Pst1
-         ayhL3awjfKYj1Gx6aDWoW0daxR16IyGXXXiFkFQhsnJxEecUeTs3pWrZXj80fesyYENj
-         TzdH1+BmkBz/WaQ2b14NGWq/+yGb/irinzOm4//zZRPlIji3hcJOEH62rt+nLUSRpNQU
-         KnZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKAFdmfNk8ZmWVpVvTgsIGaNRq/fDsNUtd5vhhLHdKluREtkV/hd3diUCXVJKOy8nin/9qLhYjlC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPbpiDsR5Xfsq3Zs4lfGHuBLfbXE3OaRjF3r2fLI1VL4jIr4ha
-	6BFEl4IxZHbmvSkXUcGn9J0u36EKX9bJ+k+ZYzp5QEtAwV8M+7wmzKQOPq0XUGM=
-X-Gm-Gg: ASbGncsyUO/fGiq4HzuzAFvb8hUcTY7iZS6MYSjtf+aSj8YstnI5Ijyt+GzA5E9oW6M
-	sll+Uo3FiONdramfliKbvZKpsA4sdNYLsN0NrG/CuJ8/JPG9sAyBjaNTF9soVqRATNFfH1TtFL3
-	5571g4Z0Eyv+l6lO7ym4bozzRm9bQs3lEDRzl3FncmjtWPJ2TUEbxDBGPDz05BOh/UvZRx+HNIf
-	nBnHiBTwHLSjzRQQg+MRvghNzCVW1eO78QjoSyiqy03nLxCR2c+ww3EcNRc/3MqpyrgdQtMZybs
-	IfEZZDbGsNZ0YEKB2MF3nZb+ARsKMulM2YzU0kAz6OUzOlb1zLnU3sPKxK3JvYfH6TEjdwAG0au
-	Julm/NA==
-X-Google-Smtp-Source: AGHT+IHC2sjROuFhZA0YjUt5mQF/zuLJNR2MX3vLn942u6zWQ2Beugmg5eWKUBTr/IVWHBJ5ABtFKg==
-X-Received: by 2002:a19:7618:0:b0:542:1b6b:1e89 with SMTP id 2adb3069b0e04-5439c216beemr12823836e87.7.1738080558882;
-        Tue, 28 Jan 2025 08:09:18 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-543c836840fsm1670414e87.132.2025.01.28.08.09.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2025 08:09:17 -0800 (PST)
-Date: Tue, 28 Jan 2025 18:09:15 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ajit Pandey <quic_ajipan@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: clk-branch: Fix invert halt status bit check
- for votable clocks
-Message-ID: <sfrnlwwmoh5ic5c5r6b3mzh4dq2ud27qu3bclcm4p5vwfbckhw@utti7c4ejxr6>
-References: <20250128-push_fix-v1-1-fafec6747881@quicinc.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TFmaGkOa"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250128162712euoutp02af78896fd7ef00b9a9c90ea2bd9f314b~e6AlGD49_2638726387euoutp02a
+	for <linux-clk@vger.kernel.org>; Tue, 28 Jan 2025 16:27:12 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250128162712euoutp02af78896fd7ef00b9a9c90ea2bd9f314b~e6AlGD49_2638726387euoutp02a
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1738081632;
+	bh=fFbTh+PWSmdRFBoGu9O4DUva9iXla1md7758aeiDLz4=;
+	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
+	b=TFmaGkOaOngHdMQ/pXWXbzPxRWkXqYTQQ7blYdU3MnDfl4Ui55OQEmZS92nkRU0QK
+	 9TX/PY4ci0p5GYDsRhsOWS2re8kN/l4fph6zMyF8e9fF3u2UyhZjQvigLMkKzbjp+H
+	 aiwUFOqcNtxzG4ahagzXxHPBOw/dUlGvc2SLwdcg=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250128162712eucas1p1c6f2938e96b8144aaccff7d0c3905440~e6Akmdgug0040500405eucas1p1R;
+	Tue, 28 Jan 2025 16:27:12 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 6C.C2.20409.06509976; Tue, 28
+	Jan 2025 16:27:12 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250128162711eucas1p2bfe8403d51943e5d5e7bc99c165a3a3b~e6AkKpP0F2095320953eucas1p2R;
+	Tue, 28 Jan 2025 16:27:11 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250128162711eusmtrp14491c4910474d6a0c0a4fb4333444735~e6AkJufsr1458214582eusmtrp1e;
+	Tue, 28 Jan 2025 16:27:11 +0000 (GMT)
+X-AuditID: cbfec7f4-c0df970000004fb9-38-67990560a4fa
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 84.F2.19654.F5509976; Tue, 28
+	Jan 2025 16:27:11 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250128162710eusmtip144e6661f192407d315ac892b5ee175de~e6Ai2D0jv2024520245eusmtip1G;
+	Tue, 28 Jan 2025 16:27:10 +0000 (GMT)
+Message-ID: <51846fb3-3d86-4ba7-8504-0725d3cd738f@samsung.com>
+Date: Tue, 28 Jan 2025 17:27:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250128-push_fix-v1-1-fafec6747881@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v3 04/18] firmware: thead: Add AON firmware protocol
+ driver
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
+	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
+	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
+	m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-pm@vger.kernel.org
+Content-Language: en-US
+In-Reply-To: <0324973c-2180-4077-a000-b7b6d895b7aa@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxbZRTGfW9v771tUrgUTF9Rx0LG4pyygajvnEPmmLlomGiWmGwaaLa7
+	DsdX2nXTzY/yMdygncCQj4IWcANsVj5qYaWhVFltGczC2AZIoEyFZCDIKh1kKMXRdsp/v/Oc
+	5815zslLcYRXiVAqNeM4K80Qp4UTfLzd9qD/+RRupWR72QqJeobrMNT2t5pEl80ODGmsDi5y
+	DhowdOv+PIGapgZIdNecjaOhxq9JlGtrJtC02kmg/v4WErmUTi66aaom0ILKClD7Qh6BdNZx
+	EtW62nB00WgCKP9cPRfd6N2Lxp09OJq+qeSgfHUgWu00ksgz1Iqjqj8tJDLMFnORXfceyrOU
+	4nEbmPmRMyQzOz2NM1fPuknGvFiDMx3qcZJRdlwHjF57jmDGhjoJ5ptr7zAThXaM+f7i50ye
+	zoYxX65sZ+a7bhPMeYMWMIO5w2SS8AD/1cNsWuoJVrotNoV/tLbBCrLs/I+Gij2EAgxQBYBH
+	QToGDruNnALAp4R0I4AaTTnmK9wANiunuL5iAcAC8yLn0ZOl7y75XQ0AFlsq/cUcgNcNjfia
+	S0DHQu3UIrnGOB0Bq1ZngE8PgtcqJ72ex+kwODFa4fUE02/DpsLb3DUm6Gh4p0Hj5RB6Cxxe
+	WfLG4NCdXFhW2uJtcGgRHJ3UYGvMo1+D5TmDmE8Pg1fmqr0bQfoGH2p6nf7c8bDngRv3cTCc
+	sRtIHz8F+y4o/XomvNP2l9//CexQ2v28E445lokCQD0csAU2m7b55N2wtWTWK0M6AI7MBfki
+	BMCS9nKOTxbAs/lCn3sz/Eqp+m+oo7EdKwLh6nVXUa9bTL1uGfX/c2sArgUiVi5Ll7Cy6Az2
+	ZKRMnC6TZ0giD2Wm68HDf97nsbuNoGHGFdkNMAp0A0hxwkMEHzgqJELBYfHHp1hpZrJUnsbK
+	usGTFB4uEtRZzkiEtER8nD3Gslms9FEXo3ihCuwIoGZsn5bxkuIU708I5LlGg+HyclhOb32x
+	2Fl193Rl4NYBUXCmsui5mOVC4Hol+V7r6hPchJgR3bGTp35sUaTMHjwR77miv9WVwB9SyWP7
+	E7+oFWe/+Fn2rpyDNaKc0Q8jdrwRVb/pH0dKyB8Hdr+ZzFv1MBx4vvDbH5Rq+87ZIzNxqKKl
+	7d6cqeunsYSquv18W6i1ZE+QfrDnLVFAoCL/UFGWLnSxQOdOTFrauO/dkR1btYmWpgu1P0ed
+	Rpd6m2o8Val79728oflpV/DqZOnvGf3teboJ3saA/fH66vL7quG53wBm6vvlGVWAxbVnl/Yx
+	2vBr9EutParNEamvv7Ap0WwOx2VHxVHPcqQy8b+TFE+hVgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKKsWRmVeSWpSXmKPExsVy+t/xu7rxrDPTDXauU7c4cX0Rk8XW37PY
+	LdbsPcdkMf/IOVaLe5e2MFlc+fqezWLd0wvsFi/2NrJYXFsxl92i+dh6NouXs+6xWZw/v4Hd
+	4mPPPVaLy7vmsFl87j3CaLHtcwubxdojd9ktFn7cymKxZMcuRou2zmWsFhdPuVrcvXeCxeLl
+	5R5mi7ZZ/Bb/9+xgt/h3bSOLxex3+9kttryZyGpxfG24Rcv+KSwOch7vb7Sye7x5+ZLF43DH
+	F3aPvd8WsHjsnHWX3aNn5xlGj02rOtk87lzbw+Yx72Sgx/3u40wem5fUe7SsPcbk0f/XwOP9
+	vqtsHn1bVjF6XGq+zh4gFKVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9n
+	k5Kak1mWWqRvl6CXsXD5EcaC41wV1yb+Y2tgvMDRxcjJISFgIvF95VKmLkYuDiGBpYwSyy5e
+	ZoNIyEhc637JAmELS/y51sUGUfSaUWJFywZ2kASvgJ3EqqffwGwWAVWJ2f9fMULEBSVOznwC
+	1iwqIC9x/9YMsBphAV+JJdf2M4HYbAJGEg+Wz2cFsUUENCWu//3OCrKAWWAPq8ThzZ+htq1n
+	krj0cRVYB7OAuMStJ/PBbE4Be4npTZeAbA6guLrE+nlCECXyEtvfzmGewCg0C8kds5B0z0Lo
+	mIWkYwEjyypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzA9LXt2M8tOxhXvvqod4iRiYPxEKME
+	B7OSCG/suRnpQrwpiZVVqUX58UWlOanFhxhNgWExkVlKNDkfmEDzSuINzQxMDU3MLA1MLc2M
+	lcR52a6cTxMSSE8sSc1OTS1ILYLpY+LglGpgmhkpFen85fHhW6F71sgEGC2b/zmMNytTba3N
+	NM17uwImv+WVYYrSZg97kSPq0bX01u+rglURPc0PJzoVvVnw58WZd73fXs6Wd02+UH7jgvf/
+	3pD2SUfCHJ8V+HvH7i4tvNPq5c/IsPjmD7v1lp9+C68MvPg3Mrty9oO6KdbZFdd331TRPnPV
+	Vdjo5xXbFvuPHhGu0Y/W73g1adGZdXc4F0nlcfHtvTu/43tjfpTo5h+af7lbP025rhj6zTro
+	tFLjguldRU0GqqFCL2bU/3l8omxxs1T024LqCFPV7Qrdhx85aXuJMB+vVX2oxe92vfJ7s8jk
+	0IVPTnZvL5zWF/ux7PbZtnVzPj8IbjfpXXzxpRJLcUaioRZzUXEiAD4ihYDoAwAA
+X-CMS-MailID: 20250128162711eucas1p2bfe8403d51943e5d5e7bc99c165a3a3b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250120172124eucas1p233b3f6da39e7064db62b02a66bc1ac29
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250120172124eucas1p233b3f6da39e7064db62b02a66bc1ac29
+References: <20250120172111.3492708-1-m.wilczynski@samsung.com>
+	<CGME20250120172124eucas1p233b3f6da39e7064db62b02a66bc1ac29@eucas1p2.samsung.com>
+	<20250120172111.3492708-5-m.wilczynski@samsung.com>
+	<20250121-small-ruby-seahorse-7475d0@krzk-bin>
+	<0324973c-2180-4077-a000-b7b6d895b7aa@samsung.com>
 
-On Tue, Jan 28, 2025 at 05:08:35PM +0530, Ajit Pandey wrote:
-> BRANCH_HALT_ENABLE and BRANCH_HALT_ENABLE_VOTED flags are used to check
-> halt status of branch clocks, which have an inverted logic for the halt
-> bit in CBCR register. However, the current logic in the _check_halt()
-> method only compares the BRANCH_HALT_ENABLE flags, ignoring the votable
-> branch clocks.
-> 
-> Update the logic to correctly handle the invert logic for votable clocks
-> using the BRANCH_HALT_ENABLE_VOTED flags.
-> 
-> Fixes: 9092d1083a62 ("clk: qcom: branch: Extend the invert logic for branch2 clocks")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
-> ---
-> This patch update the logic to correctly handle the invert logic for votable
-> clocks using the BRANCH_HALT_ENABLE_VOTED flags.
-> ---
->  drivers/clk/qcom/clk-branch.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
--- 
-With best wishes
-Dmitry
+On 1/28/25 16:54, Michal Wilczynski wrote:
+> 
+> 
+> On 1/21/25 10:56, Krzysztof Kozlowski wrote:
+> 
+>>> diff --git a/include/linux/firmware/thead/thead,th1520-aon.h b/include/linux/firmware/thead/thead,th1520-aon.h
+>>> new file mode 100644
+>>> index 000000000000..3daa17c01d17
+>>> --- /dev/null
+>>> +++ b/include/linux/firmware/thead/thead,th1520-aon.h
+>>> @@ -0,0 +1,186 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +/*
+>>> + * Copyright (C) 2021 Alibaba Group Holding Limited.
+>>> + */
+>>> +
+>>> +#ifndef _THEAD_AON_H
+>>> +#define _THEAD_AON_H
+>>> +
+>>> +#include <linux/device.h>
+>>> +#include <linux/types.h>
+>>> +
+>>> +#define AON_RPC_MSG_MAGIC (0xef)
+>>> +#define TH1520_AON_RPC_VERSION 2
+>>> +#define TH1520_AON_RPC_MSG_NUM 7
+>>> +
+>>> +extern struct th1520_aon_chan *aon_chan;
+>>
+>> Drop all externs.
+> 
+> This is required so the code will compile as the
+> int th1520_aon_call_rpc(struct th1520_aon_chan *aon_chan, void *msg);
+> is non static and exposed in the same header.
+> 
+> I really would like to keep th1520_aon_call_rpc in this header, as it
+> could be useful for other drivers to construct their own RPC calls to
+> reboot or shutdown the system e.g watchdog.
+
+Oh I get it, simply drop extern not the whole expression, sorry it's
+fine.
+
+> 
+>>
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>>
