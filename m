@@ -1,194 +1,133 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92CB290F;
-	Tue, 28 Jan 2025 12:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3B02F29;
+	Tue, 28 Jan 2025 12:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738066072; cv=none; b=sDawDd9xMAMPkuzu/Mu2Hvo3B5qFDkNY5acAsukMUxOk+tb+lW6gHPhO5BJ9iCgTpI2dGdTPpPOSyetk2S1/0G6UsqbddS17ln4mxzva+lUpzcRAPMY6Tp6pSCaS+fx7LQilSiUNUwKtUF9zaXfZ6WJeMQtPFqeeLBQnTtfHCpI=
+	t=1738067432; cv=none; b=hfrEgPOl+jsYNr77458PJRNmkJkQuqgnfmW4ZI77h6t9ZSEcc/fQ2aG18FY/B/trRrwiUx4ABVvqc+lCMqJQrMYiMhOJE9uTpPIZD+GecanyIXL4tub/l7QeqHxxDhcX5aBLBorhiNiQRlY6DA4hcWCGpEQgMQ4Nkd1aSsKGh1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738066072; c=relaxed/simple;
-	bh=6SL7MDBmqpnkWJJ1wgrJsDWjBrNbvE0BumoAvatK9R8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sLrSP7zK8EV4w1+kJuPBWph4yJ6mCFJEoVnqkp/tUf/EqMLBUHA5G5DNLDKfhQZ17UNhrhpkdDoSM6LlW14amZN95MmOHAQj1kXgqAYbLqK+Trv4uAwKq9qLMNGPh6a/QaIiDVtnSlZpEz/00OEFQ5OI69e8u4CjEha4I7IY78o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84D7D497;
-	Tue, 28 Jan 2025 04:08:12 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7AD9A3F694;
-	Tue, 28 Jan 2025 04:07:43 -0800 (PST)
-Date: Tue, 28 Jan 2025 12:07:35 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
-	Souvik Chakravarty <souvik.chakravarty@arm.com>,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 3/3] clk: scmi: Support spread spectrum
-Message-ID: <Z5jIh6cLEqRKRdCd@pluto>
-References: <20250124-clk-ssc-v1-0-2d39f6baf2af@nxp.com>
- <20250124-clk-ssc-v1-3-2d39f6baf2af@nxp.com>
+	s=arc-20240116; t=1738067432; c=relaxed/simple;
+	bh=QyOoZd7UPQK8ox6uSZo8sq13eTCA+uLjpoc9Hps1+Q4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jsln1ph8iTL1Ij1bLJ3l0UFvoSQLamfZuTDQWS5CM7SM9NbHC9LCQXCvPjXHTYjogyQpDXqs70qv0nRU+cTXt7SOI218iej+HgcXtz7ADqA+qtb75Y6xQI2tzDXcF/qMkn2n8wpfK3NPB6csXyyiKtrlsiY0LE/3lrOCV1xAYis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OsmPZnKl; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OsmPZnKl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41591C4CED3;
+	Tue, 28 Jan 2025 12:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738067430;
+	bh=QyOoZd7UPQK8ox6uSZo8sq13eTCA+uLjpoc9Hps1+Q4=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=OsmPZnKl4XFKima6WKEvpbZTIyqfv+K3Vu8ZDm7vAKszr+y7GYY9+b2ayLb7X6Cos
+	 ukEYcpVLLeP/gvJ79LxQqB7l4ushpCuLLMXUnm1HNWvSmTFIZMY1qlylBWu4lQszrF
+	 nm4miHh0EocNw6rfN0Ed9Bm9wMCr7o11tg/cnpmsrVIKCYBPqjvETP80n18aBYE7s5
+	 BchwucYy538eL7+sLkMyrIUwxoSQ+dLAjnYFeJM6f2X4uSYUj8R45xe0KrRRIO8T/n
+	 lAcPl8c6egkbxVHiD+Gc3cJ0KMaFZ/+/x0GIb2BvBjNkzqV5LP81nFBZVuNEbRD1mu
+	 2sRvLmnsyHJnQ==
+Message-ID: <c3b6c20f-6e35-446d-a61d-f24611dd815d@kernel.org>
+Date: Tue, 28 Jan 2025 13:30:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250124-clk-ssc-v1-3-2d39f6baf2af@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
+ apss clock controller
+To: Sricharan Ramabadhran <quic_srichara@quicinc.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+ rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20250127093128.2611247-1-quic_srichara@quicinc.com>
+ <20250127093128.2611247-2-quic_srichara@quicinc.com>
+ <0c26af56-ed7a-4de8-ac47-7447298b87f0@kernel.org>
+ <92836021-ee0e-4fb4-bf01-49b46a5af3a4@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <92836021-ee0e-4fb4-bf01-49b46a5af3a4@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 24, 2025 at 10:25:19PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 28/01/2025 12:15, Sricharan Ramabadhran wrote:
 > 
-> Support Spread Spectrum for i.MX95 with adding
-> scmi_clk_set_spread_spectrum_imx
 > 
+> On 1/28/2025 1:04 PM, Krzysztof Kozlowski wrote:
+>> On 27/01/2025 10:31, Sricharan R wrote:
+>>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>>
+>>> The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
+>>> The RCG and PLL have a separate register space from the GCC.
+>>> Also the L3 cache has a separate pll and needs to be scaled along
+>>> with the CPU.
+>>>
+>>> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>
+>> Considering that there were multiple conflicting patches coming from
+>> Qualcomm around IPQ SoCs and that we are in the merge window, I will
+>> skip this patch.
+>>
+>> I suspect this duplicates the other chip as well, but that's your task
+>> to sync up internally.
+>>
+> ok, but this .yaml is specific to IPQ5424 and would not conflict with
+> IPQ5332. That said, will post it after merge window as a part of
+> V3 (for other patch changes) to avoid any confusion.
 
-[CC: Souvik from ATG]
 
-Hi Peng,
+But maybe it is the same on ipq5332? or similar? Other works were
+totally de-synced and you ask community to sync them. That's not how it
+works.
 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/clk-scmi.c        | 37 +++++++++++++++++++++++++++++++++++++
->  include/linux/scmi_protocol.h |  5 +++++
->  2 files changed, 42 insertions(+)
-> 
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index 15510c2ff21c0335f5cb30677343bd4ef59c0738..e43902aea6bee3633f8328acddcf54eef907b640 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -98,6 +98,35 @@ static int scmi_clk_set_parent(struct clk_hw *hw, u8 parent_index)
->  	return scmi_proto_clk_ops->parent_set(clk->ph, clk->id, parent_index);
->  }
->  
-> +static int scmi_clk_set_spread_spectrum_imx(struct clk_hw *hw,
-> +					    struct clk_spread_spectrum *clk_ss)
-> +{
-> +	struct scmi_clk *clk = to_scmi_clk(hw);
-> +	int ret;
-> +	u32 val;
-> +
-> +	/* SCMI OEM Duty Cycle is expressed as a percentage */
-> +	/*
-> +	 * extConfigValue[7:0]   - spread percentage (%)
-> +	 * extConfigValue[23:8]  - Modulation Frequency (KHz)
-> +	 * extConfigValue[24]    - Enable/Disable
-> +	 * extConfigValue[31:25] - Reserved
-> +	 */
-> +	val = FIELD_PREP(IMX_CLOCK_EXT_SS_PERCENTAGE_MASK, clk_ss->spreadpercent);
-> +	val |= FIELD_PREP(IMX_CLOCK_EXT_SS_MOD_FREQ_MASK, clk_ss->modfreq);
-> +	val |= IMX_CLOCK_EXT_SS_ENABLE_MASK;
-> +	ret = scmi_proto_clk_ops->config_oem_set(clk->ph, clk->id,
-> +						 SCMI_CLOCK_CFG_NXP_IMX_SSC,
-
-If this is determined to be general enough (as per other mail in this
-thread), since it effectively provides a new general clock framework
-callback, I wonder if we should not try to make this straight away one
-of the standard SCMI Clock Extended config types by adding it as a new
-0x3 Extended config type value in the SCMI v3.2 Table 16 (with the above
-extConfigValue synatx too)...
-
-...that would mean having 0x3 reserved already for this in the upcoming
-v3.3....but of course ATG has to agree on this so I copied Souvik.
-
-In this way we could just get rid of the Vendor customization...if NOT I
-would certainly base this Vendor OEM type extension on the SCMI FW-provided
-vendor_info as you mentioned in the cover-letter, instead of compatibles.
-
-Either way, it would also be wise to check if the specific Extended
-config type is supported by the specific FW version (despite the version)
-before registering a callback that could then always fail due to a missing
-feature; currently, in fact, we do NOT take this precaution for for Duty
-cycle callbacks and just assume that if SCMI Clocks extended configs are
-suppported, all the standard ones are supported: this seems NOT right
-BUT the only way to assure that an Extended config type is supported, as
-of now, would be to query the current extended_config with CLOCK_CONFIG_GET
-and see what the FW replies...this would allow us to avoid registering
-unsupported features (like DutyCycle or SSC) with the core Clock framework
-if NOT really supported by the running SCMI server...which in turn would
-mean,potentially, 1 more SCMI message exchange per-clock at initialization
-time, and I know this overhead is not always welcomed :D
-
-> +						 val, false);
-> +	if (ret)
-> +		dev_warn(clk->dev,
-> +			 "Failed to set spread spectrum(%u,%u,%u) for clock ID %d\n",
-> +			 clk_ss->modfreq, clk_ss->spreadpercent, clk_ss->method,
-> +			 clk->id);
-> +
-> +	return ret;
-> +}
-> +
->  static u8 scmi_clk_get_parent(struct clk_hw *hw)
->  {
->  	struct scmi_clk *clk = to_scmi_clk(hw);
-> @@ -266,6 +295,11 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
->   * Return: A pointer to the allocated and configured clk_ops on success,
->   *	   or NULL on allocation failure.
->   */
-> +static const char * const scmi_clk_ssc_allowlist[] = {
-> +	"fsl,imx95",
-> +	NULL
-> +};
-
-Fw vednor info would be better as you said, if we stick to a Vendor
-implementation...
-
-> +
->  static const struct clk_ops *
->  scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
->  {
-> @@ -316,6 +350,9 @@ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
->  		ops->set_duty_cycle = scmi_clk_set_duty_cycle;
->  	}
->  
-> +	if (of_machine_compatible_match(scmi_clk_ssc_allowlist))
-> +		ops->set_spread_spectrum = scmi_clk_set_spread_spectrum_imx;
-> +
->  	return ops;
->  }
->  
-> diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-> index 688466a0e816247d24704f7ba109667a14226b67..7012d5efef00eb7b52f17d0f3d8d69f3d0063557 100644
-> --- a/include/linux/scmi_protocol.h
-> +++ b/include/linux/scmi_protocol.h
-> @@ -80,9 +80,14 @@ enum scmi_clock_oem_config {
->  	SCMI_CLOCK_CFG_DUTY_CYCLE = 0x1,
->  	SCMI_CLOCK_CFG_PHASE,
->  	SCMI_CLOCK_CFG_OEM_START = 0x80,
-> +	SCMI_CLOCK_CFG_NXP_IMX_SSC = 0x80,
-
-If using a Vendor OEM type, I feel this should be somehow defined
-per-vendor....you cannot just grab 0x80 Extended config type for NXP
-because you arrived first :P
-
->  	SCMI_CLOCK_CFG_OEM_END = 0xFF,
->  };
->  
-> +#define IMX_CLOCK_EXT_SS_PERCENTAGE_MASK	GENMASK(7, 0)
-> +#define IMX_CLOCK_EXT_SS_MOD_FREQ_MASK		GENMASK(23, 8)
-> +#define IMX_CLOCK_EXT_SS_ENABLE_MASK		BIT(24)
-> +
-
-Same...I feel the best would be to just add a standard 0x3 SSC Extended
-type as said...lets see what Souvik says and if we can assume such 0x3
-AND the above extConfigValue syntax to be reserved for this usage BEFORE
-v3.3 is out...
-
-Thans,
-Cristian
+Best regards,
+Krzysztof
