@@ -1,107 +1,292 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7CEBA50
-	for <linux-clk@vger.kernel.org>; Wed, 29 Jan 2025 16:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E261E04BD;
+	Wed, 29 Jan 2025 16:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738167919; cv=none; b=Jjn4kE/7ZxOfqijC7kXjKcHA6naiq6sdUtbTIuC1tNfvPyRM2C2TZIcCdo4IcW4Tt8Lk/8YrDa7HK7WIZ1io0NC7wR16o+wyDYUcV7cSkKLC4c9KgGZ3rFwWYcre6ym7e5VR0oLzDbmEumDUy4F0o/VxnAQHeVQFIoQyDYUI6VE=
+	t=1738169538; cv=none; b=eK+JhNBbBomip/XrmCaqOqckOH1IMH4VgtgC7zUe0XY1OmmMBmcNnfv93GvSRli1T9Z2RGEcJVmYd/oCv3I71ItCgZuPml5MzI06CmnF52WPegWyUrJ5kcANzfS92gHGNRVzU8o5OHss3dO6BXVYPyoZLrpoMZpsJ09LUF6mIj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738167919; c=relaxed/simple;
-	bh=eTe7u4R9tM7SfXPBUlFg06jXBlzWIenc8aOm26K9+hA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E2G/zqiDc1geZtBsujaz5ofjYJUnaJV7quUqLp4IbN6EYAF2pnbJKUX5/ju6RmaMf02OZVAUKT62BBsbMKmpSg+Gp+AEQ/z5k5si+wZH7thM5KP5BNU74ZPW8s9n35PxswLbSCeg2igxxlDbVSPvOY8q00VraHx01TB3NC566hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k0gWxZq1; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k0gWxZq1"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53e3778bffdso7694784e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jan 2025 08:25:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1738167916; x=1738772716; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QO/x1oTf7a0srTFjfunlm88nqvMdqFvIe3oraA8GH6U=;
-        b=k0gWxZq1KnD9iBxzzd0wh5Y/Fmy9nTalgJZxGJ1ddHsiAULIVVPvUiPm8haRfHyXgJ
-         I3wWFnUiLIxQfBiNTyI2ldTqoaCDEWKGtb9jws5wdsah0fFgRod7Nvf7zNH+G0jOlcIZ
-         7p1pDn7wwloaMKn3WIRqAcrrhgqmPh2+bIt67fG1/c0xUua0I1DJWuO0/IoPCKxvgKVz
-         mCN3/oHPD3XRVedzxmg7i9qORjMK2Vw/POC+UTAz/Lzk47/TYkswkn8xRIX5fIpTnt3G
-         cgIE4pl0uaSqbm8YtQVpY2BWZAkKHq73xwMwLlU+hvIPeQMLChLwSB1aY9VpQ4lYp52w
-         RyiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738167916; x=1738772716;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QO/x1oTf7a0srTFjfunlm88nqvMdqFvIe3oraA8GH6U=;
-        b=Ws5iREOBbqdgi2hOZjuP8/64kfN/CxQehqEnab5duF4l4BpCNs5tEiynyj3h7e6QOp
-         oq/x5+ykpA/tvYv+hONXvi0sR1iTk3QP6JdXPedrQhzwFCa6KoXPADaI9GbHor9Nsebz
-         ybu1xMSM0X3YOGxgIYnWqEkMoh/Ppti4n0J+D/isanmggys9rrbqvUKI66woApI1jEW/
-         mEPxrgc402Xa9ftd5C1qA6G8yyxXqLmdhXbCkgMDBNQPvEDep9FIclV9obdgfcKEANIT
-         J6HUmWcpDY2DvAeaoikp0IPWudRd2UMaKdoUiE45/7hpB8pC9jPEgW8DYAU8bHzuJ7JU
-         dMjw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjXkFQiF/ZWwOTgtS3HOI1vTnWM5Wo8y3hu+pRXAIOXXEfocp5oo/m/8qyqFTthOSlZgVgq55z7J8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcLpq/67w+UD7D/qLX/NC0xDolSTydv3QSL3zThWWSCmL9eKu8
-	Rd6TD6RWev0Xw07xyGPHJIxPAGvowSRYi6w1nFE9G+H4fYdgZcWXBSH9K8ZmFLIpCSiuO+vftJK
-	KGqg=
-X-Gm-Gg: ASbGncsfXnpfuLm9RGRSmbBCCxpS78pl3lZVgNj4CVAIqS1kWiHobJR7SKUlkazr7ru
-	EiW7LSFa9TgEvLNqyWzLH/fOS0sc9Vp5SFUED+cStYkGMf80hnpTCgwgTknUKk9oXiwwFUes2ea
-	1fSHjPWaiTakQC8GPD6sazEU9/MoVNJ9KCCCxnvgBWSOaK76UQ3Hf/jTkESoovJp1bx4c74PLVW
-	UTELVWz//FNY65DVfZxHNakFXjTaB4Stw0z7/mMhXEjlOxiqhSAAXpYQLsgQ1iB/P6Cxz2zBAYN
-	ETnH3HS4866XGcR3Xer/wb7oc5kx3RepJyOcrQmV3g3GtMGIwcAzETcNsQD1zgRAyEjAW6k=
-X-Google-Smtp-Source: AGHT+IET0XFFm4nQy05VSjs4EMucd01BjcVOGhckKXNaEyF8FTW0tgtOo7C/7RncS5097j7cJOotMg==
-X-Received: by 2002:ac2:4c86:0:b0:540:2188:763c with SMTP id 2adb3069b0e04-543e4c31246mr1146851e87.37.1738167916238;
-        Wed, 29 Jan 2025 08:25:16 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-543c83682f4sm2001573e87.113.2025.01.29.08.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2025 08:25:15 -0800 (PST)
-Date: Wed, 29 Jan 2025 18:25:13 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: dispcc-sm8750: Drop incorrect
- CLK_SET_RATE_PARENT on byte intf parent
-Message-ID: <ktwnhspd2krxwzcswrqj7ffoyhdzplplosy3f6bu6gqrzi5uxj@i5xqxthpha4n>
-References: <20250129154519.209791-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1738169538; c=relaxed/simple;
+	bh=9lLPFIXz6ZQceuk/AtSkSJ0SfJktgU8m3ojTa4ld+d0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WRTwZ1UD8iD5UFMvD8jl9ifVYTuI5s80PsN09lGea7CQyRptgR5wLHwsWY7VLX2u4Yq1puc8QUD2AI0rmN2+3b7156P7LRkeyAWY2Vph9CLx5gxfmWrJ1iNWwrkDjOnv+3jueVjoZTnz26aaQIFV7mJ9R6IVKtn1xyrBgKDjU0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: pMXj4B3YSs2NyQm8dJ20ZA==
+X-CSE-MsgGUID: 3Pil8R0NQAeozhfuZSwFWg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 30 Jan 2025 01:52:13 +0900
+Received: from wvbox.administration.lan (unknown [10.226.92.145])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 66D24402E786;
+	Thu, 30 Jan 2025 01:51:59 +0900 (JST)
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 04/14] dt-bindings: clock: Document cpg bindings for the Renesas RZ/T2H SoC
+Date: Wed, 29 Jan 2025 16:37:40 +0000
+Message-ID: <20250129165122.2980-5-thierry.bultel.yh@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250129165122.2980-1-thierry.bultel.yh@bp.renesas.com>
+References: <20250129165122.2980-1-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250129154519.209791-1-krzysztof.kozlowski@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 29, 2025 at 04:45:19PM +0100, Krzysztof Kozlowski wrote:
-> The parent of disp_cc_mdss_byte0_intf_clk clock should not propagate up
-> the rates, because this messes up entire clock hierarchy when setting
-> clock rates in MSM DSI driver.
-> 
-> The dsi_link_clk_set_rate_6g() first sets entire clock hierarchy rates
-> via dev_pm_opp_set_rate() on byte clock and then sets individual clock
-> rates, like pixel and byte_intf clocks, to proper frequencies.  Having
-> CLK_SET_RATE_PARENT caused that entire tree was re-calced and the byte
-> clock received halved frequency.  Drop CLK_SET_RATE_PARENT to fix this
-> and align with SM8550 and SM8650.
-> 
-> Fixes: f1080d8dab0f ("clk: qcom: dispcc-sm8750: Add SM8750 Display clock controller")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Fix for v6.14-rcX.
-> ---
->  drivers/clk/qcom/dispcc-sm8750.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
+Document RZ/T2H (a.k.a r9a09g077) CPG (Clock Pulse Generator) binding.
+Add the header file for the resets and clocks definitions.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+---
+ .../bindings/clock/renesas,rzt2h-cpg.yaml     |  73 +++++++++
+ include/dt-bindings/clock/r9a09g077-cpg.h     | 144 ++++++++++++++++++
+ 2 files changed, 217 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzt2h-cpg.yaml
+ create mode 100644 include/dt-bindings/clock/r9a09g077-cpg.h
 
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rzt2h-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzt2h-cpg.yaml
+new file mode 100644
+index 000000000000..9a3a00126d2b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,rzt2h-cpg.yaml
+@@ -0,0 +1,73 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/renesas,rzt2h-cpg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/T2H(P) Clock Pulse Generator (CPG)
++
++maintainers:
++  - Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
++
++description:
++  On Renesas RZ/T2H SoCs, the CPG (Clock Pulse Generator) handles generation
++  and control of clock signals for the IP modules, generation and control of resets,
++  and control over booting, low power consumption and power supply domains.
++
++properties:
++  compatible:
++    const: renesas,r9a09g077-cpg
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: EXTAL clock input
++      - description: LOCO clock input
++
++  clock-names:
++    items:
++      - const: extal
++      - const: loco
++
++  '#clock-cells':
++    description: |
++      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
++        and a core clock reference, as defined in
++        <dt-bindings/clock/renesas,r9a09g077-cpg.h>,
++      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
++        a module number, also defined <dt-bindings/clock/r9a09g077-cpg.h>,
++    const: 2
++
++  '#power-domain-cells':
++    const: 0
++
++  '#reset-cells':
++    description:
++      The single reset specifier cell must be the reset number, as defined in
++      <dt-bindings/clock/r9a09g077-cpg.h>.
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++  - '#power-domain-cells'
++  - '#reset-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@10420000 {
++        compatible = "renesas,r9a09g077-cpg";
++        reg = <0x10420000 0x10000>;
++        clocks = <&extal>, <&loco>;
++        clock-names = "extal", "loco";
++        #clock-cells = <2>;
++        #power-domain-cells = <0>;
++        #reset-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/r9a09g077-cpg.h b/include/dt-bindings/clock/r9a09g077-cpg.h
+new file mode 100644
+index 000000000000..413c428478df
+--- /dev/null
++++ b/include/dt-bindings/clock/r9a09g077-cpg.h
+@@ -0,0 +1,144 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++ *
++ * Copyright (C) 2025 Renesas Electronics Corp.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* R9A09G077 CPG Core Clocks */
++#define R9A09G077_CA55C0		0
++#define R9A09G077_CA55C1		1
++#define R9A09G077_CA55C2		2
++#define R9A09G077_CA55C3		3
++#define R9A09G077_SDHIHS		4
++#define R9A09G077_CLK_PLL1_ETH_PHY	5
++#define R9A09G077_CLK_OSC_ETH_PHY	6
++#define R9A09G077_CLK_ETHPHY		7
++#define R9A09G077_PCLKAH		8
++#define R9A09G077_PCLKAM		9
++#define R9A09G077_PCLKAL		10
++#define R9A09G077_CLK_SEL_ETH_PHY	11
++#define R9A09G077_DFI			12
++#define R9A09G077_PCLKH			13
++#define R9A09G077_PCLKM			14
++#define R9A09G077_PCLKL			15
++#define R9A09G077_PCLKGPTL		16
++#define R9A09G077_PCLKSHOST		17
++#define R9A09G077_PCLKRTC		18
++#define R9A09G077_USB			19
++#define R9A09G077_SPI0			20
++#define R9A09G077_SPI1			21
++#define R9A09G077_SPI2			22
++#define R9A09G077_SPI3			23
++#define R9A09G077_ETCLKA		24
++#define R9A09G077_ETCLKB		25
++#define R9A09G077_ETCLKC		26
++#define R9A09G077_ETCLKD		27
++#define R9A09G077_ETCLKE		28
++#define R9A09G077_ETHCLKE		29
++#define R9A09G077_ETHCLK_EXTAL		30
++#define R9A09G077_ETH_REFCLK		31
++#define R9A09G077_LCDC_CLKA		32
++#define R9A09G077_LCDC_CLKP		33
++#define R9A09G077_CA55			34
++#define R9A09G077_LCDC_CLKD		35
++
++/* R9A09G077 Module Clocks */
++#define R9A09G077_SCI0_CLK		0
++#define R9A09G077_CA55_CORE0_CLK	1
++#define R9A09G077_CA55_CORE1_CLK	2
++#define R9A09G077_CA55_CORE2_CLK	3
++#define R9A09G077_CA55_CORE3_CLK	4
++#define R9A09G077_PCIE_CLK		5
++#define R9A09G077_USB_CLK		6
++#define R9A09G077_SDHI0_CLK		7
++#define R9A09G077_SDHI1_CLK		8
++#define R9A09G077_MTU3_CLK		9
++#define R9A09G077_GPT0_CLK		10
++#define R9A09G077_GPT1_CLK		11
++#define R9A09G077_ACD0_CLK		12
++#define R9A09G077_ACD1_CLK		13
++#define R9A09G077_ACD2_CLK		14
++#define R9A09G077_GMAC0_CLK		15
++#define R9A09G077_GMAC1_CLK		16
++#define R9A09G077_GMAC2_CLK		17
++#define R9A09G077_SHOSTIF_CLK		18
++#define R9A09G077_IIC0_CLK		19
++#define R9A09G077_IIC1_CLK		20
++#define R9A09G077_IIC2_CLK		21
++#define R9A09G077_DOC_CLK		22
++#define R9A09G077_CMT0_CLK		23
++#define R9A09G077_CMT1_CLK		24
++#define R9A09G077_CMT2_CLK		25
++#define R9A09G077_CMTW0_CLK		26
++#define R9A09G077_CMTW1_CLK		27
++#define R9A09G077_SPI0_CLK		28
++#define R9A09G077_SPI1_CLK		29
++#define R9A09G077_SPI2_CLK		30
++#define R9A09G077_SPI3_CLK		31
++#define R9A09G077_SCI1_CLK		32
++#define R9A09G077_SCI2_CLK		33
++#define R9A09G077_SCI3_CLK		34
++#define R9A09G077_SCI4_CLK		35
++#define R9A09G077_SCI5_CLK		36
++#define R9A09G077_SCIE0_CLK		37
++#define R9A09G077_SCIE1_CLK		38
++#define R9A09G077_SCIE2_CLK		39
++#define R9A09G077_SCIE3_CLK		40
++#define R9A09G077_SCIE4_CLK		41
++#define R9A09G077_SCIE5_CLK		42
++#define R9A09G077_SCIE6_CLK		43
++#define R9A09G077_SCIE7_CLK		44
++#define R9A09G077_SCIE8_CLK		45
++#define R9A09G077_SCIE9_CLK		46
++#define R9A09G077_SCIE10_CLK		47
++#define R9A09G077_SCIE11_CLK		48
++#define R9A09G077_RTC_CLK		49
++#define R9A09G077_ETHSS_CLK		50
++#define R9A09G077_ETHSW_CLK		51
++#define R9A09G077_GPT2_CLK		52
++#define R9A09G077_GPT3_CLK		53
++#define R9A09G077_GPT4_CLK		54
++#define R9A09G077_GPT5_CLK		55
++#define R9A09G077_GPT6_CLK		56
++#define R9A09G077_GPT7_CLK		57
++#define R9A09G077_GPT8_CLK		58
++#define R9A09G077_GPT9_CLK		59
++#define R9A09G077_GPT10_CLK		60
++#define R9A09G077_CANFD_CLK		61
++#define R9A09G077_TSU_CLK		62
++#define R9A09G077_LCDC_CLK		63
++
++/* R9A09G077 Resets */
++#define R9A09G077_xSPI0_RST		0
++#define R9A09G077_xSPI1_RST		1
++#define R9A09G077_GMAC0_PCLKH_RST	2
++#define R9A09G077_GMAC0_PCLKM_RST	3
++#define R9A09G077_ETHSW_RST		4
++#define R9A09G077_ESC_BUS_RST		5
++#define R9A09G077_ESC_IP_RST		6
++#define R9A09G077_ETH_SUBSYSTEM_RST	7
++#define R9A09G077_MII_CONVERT_RST	8
++#define R9A09G077_GMAC1_PCLKAH_RST	9
++#define R9A09G077_GMAC1_PCLKAM_RST	10
++#define R9A09G077_GMAC2_PCLKAH_RST	11
++#define R9A09G077_GMAC2_PCLKAM_RST	12
++#define R9A09G077_SHOSTIF_MASTER_RST	13
++#define R9A09G077_SHOSTIF_SLAVE_RST	14
++#define R9A09G077_SHOSTIF_IP_RST	15
++#define R9A09G077_DDRSS_RST_N_RST	16
++#define R9A09G077_DDRSS_PWROKIN_RST	17
++#define R9A09G077_DDRSS_RST_RST		18
++#define R9A09G077_DDRSS_AXI0_RST	19
++#define R9A09G077_DDRSS_AXI1_RST	20
++#define R9A09G077_DDRSS_AXI2_RST	21
++#define R9A09G077_DDRSS_AXI3_RST	22
++#define R9A09G077_DDRSS_AXI4_RST	23
++#define R9A09G077_DDRSS_MC_RST		24
++#define R9A09G077_PCIE_RST		25
++#define R9A09G077_DDRSS_PHY_RST		26
++
++#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
+\ No newline at end of file
 -- 
-With best wishes
-Dmitry
+2.43.0
+
