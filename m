@@ -1,141 +1,120 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA95A78F58
-	for <linux-clk@vger.kernel.org>; Wed, 29 Jan 2025 12:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F121B4235
+	for <linux-clk@vger.kernel.org>; Wed, 29 Jan 2025 15:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738152345; cv=none; b=Az9wHX5A7rW0GBHKGXGiXvxsSZ9Bcmz+7tZF/kUvWDuzXbruBtANXDYGv0oWaLJ12K38o99lQ55yZA/Fk16kVx3u5/0wW62cl5mC/4BGNowHgSJrnU/5+znkzokJwxPFjiIPsWKn5qoCwbrWEMDdxnq1K59L8Ztk8ZN2uL0MFJU=
+	t=1738165527; cv=none; b=hMAw7ZnrnPMgtePx+3nBXUrZYRjfnjUa5x1DEqXWXo0ZIKuhutGHm54xtVoD1F32OAo7AEvh4u3H53ElUMUx3FPv4heuseTWLyzVK02Y/D5RD4QgjVuKAtLeV4LZhI3Sg5vsYdY95BeQ4vLIN2tuNCxURMPk1OgLyAia6CRbYoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738152345; c=relaxed/simple;
-	bh=OMSNasQ/l727Tn5e5HeIPtR0C/HUH9P7QAHXwxfQRNo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=N2c8vSCu5MITkDYHAEVkWiKOR8o1nvKsC9DeAhyBkiOCKEdzGLrrNS21cRlGK1i2bb63tMVHJnOHMc8ung1n5k8amXp8ZA1Y8KzzN71g1rVXJFbTvGIn2Y4CFshXl8fKRmljmIQAEE3jbk6ZyZ4zu4G/rPXFPGuHri/2sYQWphM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1td6oV-00084D-9t; Wed, 29 Jan 2025 13:04:59 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1td6oP-002SPe-2U;
-	Wed, 29 Jan 2025 13:04:53 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1td6oP-000561-27;
-	Wed, 29 Jan 2025 13:04:53 +0100
-Message-ID: <f79109bad50ed926af7ffc06bc3ab155fe6224ed.camel@pengutronix.de>
-Subject: Re: [PATCH v4 09/18] reset: thead: Add TH1520 reset controller
- driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com, 
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-  drew@pdp7.com, guoren@kernel.org, wefu@redhat.com,
- jassisinghbrar@gmail.com,  paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu,  frank.binns@imgtec.com, matt.coster@imgtec.com, 
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
-  airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
- jszhang@kernel.org,  m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Date: Wed, 29 Jan 2025 13:04:53 +0100
-In-Reply-To: <20250128194816.2185326-10-m.wilczynski@samsung.com>
-References: <20250128194816.2185326-1-m.wilczynski@samsung.com>
-	 <CGME20250128194836eucas1p151c4fc83a17173fd1b79bfc959976301@eucas1p1.samsung.com>
-	 <20250128194816.2185326-10-m.wilczynski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1738165527; c=relaxed/simple;
+	bh=BA64t5SYSYkOLxkZWrGOQjE+0SMxTI7sjqP+S2gmT/g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=HcLfMdaw1zGt1o9Mc5XxRM3n3jrtlkWLcom8JYv5ssOrGywHEvyRG1ZynLth3dpbt5GyG/UFZujf0Anwq/7IcxYTgjhnrGLyHfbZUL4X6H1XT+SQ+FiYe1QE/b7NDliYN6Bz3uQdyRMThqeUcSofVC3vMJlehX6R7c45q4M9UF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fJNTIU9t; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fJNTIU9t"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385d851e7c3so440138f8f.3
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jan 2025 07:45:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1738165524; x=1738770324; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1xwoQGzhrBwYofIiNp2Mcwgnk/Tu/TxGj4txKCeU0uI=;
+        b=fJNTIU9tqxmyBQJH+mPdw7G6dm62vB3MFhPEHprnARB1NZiMVPuHU0SMcyOkp5+sfw
+         K+hwqlHXD9y+J6G89Jd9FU457KVx2PPHOxpLrkLt0fgJ1IdGwqKgg26Wua6cvrMJYD6x
+         NqLckVTIr+FojmhezjrorrL0J795IZ+TPYO8JypnZWycBdhCOziZo+y9Vzwfjv78WmQN
+         xqtg0HugT29BWA5GKqZAHVMaXnTWkkBOeaS6eohDvr2Kmb+wv8F9Z13QQp72MlBh663w
+         jPCuwweHSNfIj+7T9osw7SIoX70pbbLPgp+UMSc7u7pmjoQ3Hzml0Bq6GGlt/rchzkFZ
+         j3jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738165524; x=1738770324;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1xwoQGzhrBwYofIiNp2Mcwgnk/Tu/TxGj4txKCeU0uI=;
+        b=Q8Up/xCiWAyxOpu84zwSNSn0jLmaLN8o2rJNfN53NCrGWGidBo/Z0M5gcCU06ZrZQ8
+         tdglNu7jHE769yI3l+lm1qkwTSAKdg3nxlWn7i7u9gKnDCgFqxu7ajTXu8+6Ey/VLGmw
+         ELv+oECGNFLjURDqtpIJRs/amoLvvN/txbyfg5mbKFF+qzKTiiKsHz2yHHiyyD1EHT74
+         oqQng8kvG3A4VhEkflBhi2J1GwVfiNySeQBHb5jTn0fJ3ZcknEashxnSoz6BZdFfiqXA
+         MLPnrepRa+v7bmx6g0j6p1P3ZVCAolSd4NFEi4P4axfOE+ZKtDiuHQp7iuV27y1SXUIB
+         zjgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUns4GpR5mu37T1L7BkzstedkBNvCs/+z0lRNSJ4kuNWV08KSEHY50slFO6hIWq3CRguw957q8gnic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUwLU85STIQZvnk03jP8DJHOoHQnJwEy3549rwvsLb/v89dCQu
+	3OOoxtCHRCDyf3BOJFunnququOP4PWTzcQpZ4QWAPtYiMVFtkv9HYbBYkQow5P8=
+X-Gm-Gg: ASbGncsdVKgXrMx1/pUNm91GZY486781cpjto7F0XlzCa1TYrpRaaHaMeCoBfVFn0yJ
+	UuEzjdIZpSrMm56eYkXcZZX8CGK+vEWSS8dl4JL45GeX3eAMlgKTW9umUoPE6qQD7Hvr13jiI95
+	Z3uLKInAz7djD9aXUQPydOpPwuq1OvfY5cByUn5a/MFFSw+VLxCxzY/RlsHmm/B6QaV1fWnQh7v
+	+8p/q0p1jb9YsJZ2gvDl040s2WLtDkMQDIdScM1wwF/5eDR1fQhlJ7ltLzuHRjxNx4zJ2LYEaHq
+	EABMCfXkU8KwEiQGucLr4uLzuWiraSqFnXA/IGk=
+X-Google-Smtp-Source: AGHT+IEk6tZpuUhcKuvgEnJpRzTURe8077PPeQePy3IFm2+dKtAmJ5+B9AOZVnD3MmFn3EOLwAt/aA==
+X-Received: by 2002:a05:6000:2a7:b0:38a:69a9:af95 with SMTP id ffacd0b85a97d-38c51b5eef7mr1334149f8f.7.1738165523755;
+        Wed, 29 Jan 2025 07:45:23 -0800 (PST)
+Received: from krzk-bin.. ([178.197.218.98])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c2a1bb040sm17528115f8f.67.2025.01.29.07.45.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jan 2025 07:45:23 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte intf parent
+Date: Wed, 29 Jan 2025 16:45:19 +0100
+Message-ID: <20250129154519.209791-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Di, 2025-01-28 at 20:48 +0100, Michal Wilczynski wrote:
-> Add reset controller driver for the T-HEAD TH1520 SoC that manages
-> hardware reset lines for various subsystems. The driver currently
-> implements support for GPU reset control, with infrastructure in place
-> to extend support for NPU and Watchdog Timer resets in future updates.
->=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  MAINTAINERS | 1 +
->  drivers/reset/Kconfig | 10 ++
->  drivers/reset/Makefile | 1 +
->  drivers/reset/reset-th1520.c | 178 +++++++++++++++++++++++++++++++++++
->  4 files changed, 190 insertions(+)
->  create mode 100644 drivers/reset/reset-th1520.c
->=20
-[...]
-> diff --git a/drivers/reset/reset-th1520.c b/drivers/reset/reset-th1520.c
-> new file mode 100644
-> index 000000000000..48afbc9f1cdd
-> --- /dev/null
-> +++ b/drivers/reset/reset-th1520.c
-> @@ -0,0 +1,178 @@
-[...]
-> +static int th1520_reset_xlate(struct reset_controller_dev *rcdev,
-> + const struct of_phandle_args *reset_spec)
-> +{
-> + unsigned int index =3D reset_spec->args[0];
-> +
-> + /* currently, only GPU reset is implemented in this driver */
-> + if (index =3D=3D TH1520_RESET_ID_GPU)
-> + return index;
-> +
-> + return -EOPNOTSUPP;
+The parent of disp_cc_mdss_byte0_intf_clk clock should not propagate up
+the rates, because this messes up entire clock hierarchy when setting
+clock rates in MSM DSI driver.
 
-It is customary to return -EINVAL for unsupported resets.
+The dsi_link_clk_set_rate_6g() first sets entire clock hierarchy rates
+via dev_pm_opp_set_rate() on byte clock and then sets individual clock
+rates, like pixel and byte_intf clocks, to proper frequencies.  Having
+CLK_SET_RATE_PARENT caused that entire tree was re-calced and the byte
+clock received halved frequency.  Drop CLK_SET_RATE_PARENT to fix this
+and align with SM8550 and SM8650.
 
-Further, you don't have to implement a custom .of_xlate at all.
-With nr_resets being set to 1, and because TH1520_RESET_ID_GPU happens
-to be 0, the of_reset_simple_xlate() default implementation will do
-exactly the same.
+Fixes: f1080d8dab0f ("clk: qcom: dispcc-sm8750: Add SM8750 Display clock controller")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[...]
-> +static int th1520_reset_probe(struct platform_device *pdev)
-> +{
-> + struct device *dev =3D &pdev->dev;
-> + struct th1520_reset_priv *priv;
-> + void __iomem *base;
-> +
-> + priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> + if (!priv)
-> + return -ENOMEM;
-> +
-> + base =3D devm_platform_ioremap_resource(pdev, 0);
-> + if (IS_ERR(base))
-> + return PTR_ERR(base);
-> +
-> + priv->map =3D devm_regmap_init_mmio(dev, base,
-> + &th1520_reset_regmap_config);
-> + if (IS_ERR(priv->map))
-> + return PTR_ERR(priv->map);
-> +
-> + mutex_init(&priv->gpu_seq_lock);
-> +
-> + priv->rcdev.owner =3D THIS_MODULE;
-> + priv->rcdev.nr_resets =3D 1;
-> + priv->rcdev.ops =3D &th1520_reset_ops;
-> + priv->rcdev.of_node =3D dev->of_node;
->    A. > + priv->rcdev.of_xlate =3D th1520_reset_xlate;
-> + priv->rcdev.of_reset_n_cells =3D 1;
+---
 
-You could just drop these two lines again. With that,
+Fix for v6.14-rcX.
+---
+ drivers/clk/qcom/dispcc-sm8750.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+diff --git a/drivers/clk/qcom/dispcc-sm8750.c b/drivers/clk/qcom/dispcc-sm8750.c
+index 0358dff91da5..e9bca179998b 100644
+--- a/drivers/clk/qcom/dispcc-sm8750.c
++++ b/drivers/clk/qcom/dispcc-sm8750.c
+@@ -827,7 +827,6 @@ static struct clk_regmap_div disp_cc_mdss_byte0_div_clk_src = {
+ 			&disp_cc_mdss_byte0_clk_src.clkr.hw,
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+ 		.ops = &clk_regmap_div_ops,
+ 	},
+ };
+@@ -842,7 +841,6 @@ static struct clk_regmap_div disp_cc_mdss_byte1_div_clk_src = {
+ 			&disp_cc_mdss_byte1_clk_src.clkr.hw,
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
+ 		.ops = &clk_regmap_div_ops,
+ 	},
+ };
+-- 
+2.43.0
 
-regards
-Philipp
