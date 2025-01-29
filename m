@@ -1,75 +1,168 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDDA1799F;
-	Wed, 29 Jan 2025 07:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7630D16C854;
+	Wed, 29 Jan 2025 10:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738135940; cv=none; b=YKdEtl7glr30ireNuLhmFF9oL1KtAbZKyHe7Hk4OnnugoSZ/z7EQZnhJHah9jJuZsvgurmabMCKWy7FFbfXRvIvBycg7lv8NGQOwI7oS0icSBNV2rjaLzDstw6qshoRa4DjJ2WaU+wtBlfDewgVHRLuTSJbT6feMUFGyvBhIllM=
+	t=1738145512; cv=none; b=U+tgHr5M7Rp/2kaTjpRpybl1h1twn1H+M0TiYe1fd/fjjhPZhYmdcTyDGIdX0rGh1X8npRV/WzBHe4iP9CtPnrcQr6G/QqSyoEK4F2CbihKECti/+62GA1cI6uLj7gDkMHgWSjjB+t771sUwfnPiMDs5/mUgDCL9ivBIx3RWeWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738135940; c=relaxed/simple;
-	bh=edf6GahyS4kb1UUMjT6wYRelLIajZBKgtmSAla2YLgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qRz1XnbAdxj3Dm3zPI05JgKg4wbHQl5nZNBZja0mgm+kK3k8JpMyNuk1VzXOtQPp9N6zUcHPz6W/RPNOWbo/p3B4l3CT+7k+1lLHeRy9mU3AFS9MqAsKG5O1IFa6Yew5qWYPeqgrv5usULlhAgPQBnn12/6QSvXu2s5BRzHzzJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjv8wCD2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738145512; c=relaxed/simple;
+	bh=tBkppjVXsn9B2MEol1Nn2brAXT24xOJpyu7reeKlEI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eCulsgPXgXXFAIRchEtZd8SVmKjuj8hMaeD0YEBeVj0/AoJl4+pSumM/f1RzU4NTmdYDDMRRe0ziKJXSco4Dpxgab6jpM8DUlcsUB7XqUOJiJoNTvk1+ywYt69EzQt9lXEWT9LhoWOHmc9NM/rF8prK6xYjxIdI/qBQ9tdE5hvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hqiu30rH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjv8wCD2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0791BC4CED3;
-	Wed, 29 Jan 2025 07:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738135939;
-	bh=edf6GahyS4kb1UUMjT6wYRelLIajZBKgtmSAla2YLgY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kjv8wCD2xyOyOzx6Ndz/9YmNXJrbfN0QJI5XzsYL/xBliwLXKzqYaleXdo7ByuVJa
-	 QTJBzwtwN46kGOat1zK6Wsg0FRh7OfdUa+IL1j+ZhOtg2Av8dCXtcQSIRpvBUq3vr/
-	 zlmXZKObadkO9d7vZsOQLTKC994XxA1LLd0vcwrLTCByse9TaVJWHqdN6Q9CtbKlSm
-	 RKDYE8QKFskkBoWsEuHllVQESs5ofolRAZ4cuBoR/gikHpPPfQPeyannm4PXskLZUC
-	 7+wAxRXTJxCMaknotTf3cp0QXyN8NESG39PJ81pxKiG4FAfEAo45IFhxsbGIvIXyEu
-	 wEzzJqrDpRZFA==
-Date: Wed, 29 Jan 2025 08:32:16 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com, 
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org, 
-	jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 08/18] dt-bindings: reset: Add T-HEAD TH1520 SoC Reset
- Controller
-Message-ID: <20250129-stereotyped-just-sponge-c8ffab@krzk-bin>
-References: <20250128194816.2185326-1-m.wilczynski@samsung.com>
- <CGME20250128194835eucas1p29b16bee72365f321e1056fc4d9d44345@eucas1p2.samsung.com>
- <20250128194816.2185326-9-m.wilczynski@samsung.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hqiu30rH"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50T8Sodc012740;
+	Wed, 29 Jan 2025 10:11:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/bT1gqjk4MonCeC0VkfnwWluu7UqtmxAs1W41GSbqFY=; b=hqiu30rHF3VqJpVG
+	DFZuy2vPxanMzwwxWoh+VyvNC/XAM+UtOxfuFKZaD4hxOJOX9iRbYKexgniCiaYx
+	vbt8UQj2gxuU2f7eqXJccG4XelgEbdNa87jTiQIjGHCISuTOfv9k/g4JvoW5Uefm
+	gRXrnsUEh3GKFy0qmUw9sIOudM32UJdILNh8qj8p8sYtRr4TQ/E2PTcge4Uigx7G
+	SAn426HpkQExMUJnfnzrOmqeJbxhgX3Gj6iFGWpM+69oZqfKAa9QweJtDXwwUqmV
+	9Lj5s7hYmACVeu4qTkqeBuy0qRUaQHMFUXhpQvcaYT82ZCLaoZSAvPQN5h53sgFR
+	TytNJA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44fguvg5rr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 Jan 2025 10:11:39 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 50TABc0E005382
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 Jan 2025 10:11:38 GMT
+Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 Jan
+ 2025 02:11:32 -0800
+Message-ID: <a6d01332-1f3a-483e-ad32-49265bdda4b0@quicinc.com>
+Date: Wed, 29 Jan 2025 15:41:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250128194816.2185326-9-m.wilczynski@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: ipq5424: Enable PCIe PHYs and
+ controllers
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <manivannan.sadhasivam@linaro.org>,
+        <bhelgaas@google.com>, <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+References: <20250125035920.2651972-1-quic_mmanikan@quicinc.com>
+ <20250125035920.2651972-5-quic_mmanikan@quicinc.com>
+ <3e92c8e2-7745-4205-8a48-5ef783b098a2@oss.qualcomm.com>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <3e92c8e2-7745-4205-8a48-5ef783b098a2@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JACaO_Pl-Hfslr77pklejouLWdAfKZs7
+X-Proofpoint-GUID: JACaO_Pl-Hfslr77pklejouLWdAfKZs7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-01-28_04,2025-01-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 spamscore=0 mlxlogscore=933 bulkscore=0 suspectscore=0
+ mlxscore=0 adultscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2501290083
 
-On Tue, Jan 28, 2025 at 08:48:06PM +0100, Michal Wilczynski wrote:
-> Add a YAML schema for the T-HEAD TH1520 SoC reset controller. This
-> controller manages resets for subsystems such as the GPU within the
-> TH1520 SoC.
+
+
+On 1/28/2025 5:09 PM, Konrad Dybcio wrote:
+> On 25.01.2025 4:59 AM, Manikanta Mylavarapu wrote:
+>> Enable the PCIe controller and PHY nodes corresponding to RDP466.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>> Changes in V3:
+>> 	- No change.
+>>
+>>  arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 41 ++++++++++++++++++++-
+>>  1 file changed, 40 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+>> index b6e4bb3328b3..73e6b38ecc26 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+>> +++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+>> @@ -53,6 +53,30 @@ &dwc_1 {
+>>  	dr_mode = "host";
+>>  };
+>>  
+>> +&pcie2 {
+>> +	pinctrl-0 = <&pcie2_default_state>;
+>> +	pinctrl-names = "default";
+>> +
+>> +	perst-gpios = <&tlmm 31 GPIO_ACTIVE_LOW>;
+>> +	status = "okay";
 > 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  .../bindings/reset/thead,th1520-reset.yaml    | 44 +++++++++++++++++++
->  MAINTAINERS                                   |  2 +
->  .../dt-bindings/reset/thead,th1520-reset.h    | 15 +++++++
->  3 files changed, 61 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
->  create mode 100644 include/dt-bindings/reset/thead,th1520-reset.h
+> Please add a new line before 'status'
+> 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Okay, sure.
 
-Best regards,
-Krzysztof
+>> +};
+>> +
+>> +&pcie2_phy {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pcie3 {
+>> +	pinctrl-0 = <&pcie3_default_state>;
+>> +	pinctrl-names = "default";
+>> +
+>> +	perst-gpios = <&tlmm 34 GPIO_ACTIVE_LOW>;
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pcie3_phy {
+>> +	status = "okay";
+>> +};
+>> +
+>>  &qusb_phy_0 {
+>>  	vdd-supply = <&vreg_misc_0p925>;
+>>  	vdda-pll-supply = <&vreg_misc_1p8>;
+>> @@ -147,6 +171,22 @@ data-pins {
+>>  			bias-pull-up;
+>>  		};
+>>  	};
+>> +
+>> +	pcie2_default_state: pcie2-default-state {
+>> +		pins = "gpio31";
+>> +		function = "gpio";
+>> +		drive-strength = <8>;
+>> +		bias-pull-up;
+>> +		output-low;
+>> +	};
+>> +
+>> +	pcie3_default_state: pcie3-default-state {
+>> +		pins = "gpio34";
+>> +		function = "gpio";
+>> +		drive-strength = <8>;
+>> +		bias-pull-up;
+>> +		output-low;
+> 
+> The GPIO APIs are in control of in/out state instead, please remove the
+> last property from both entries
 
+Okay, sure.
+
+Thanks & Regards,
+Manikanta.
