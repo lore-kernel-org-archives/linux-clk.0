@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C105918EFDE;
-	Wed, 29 Jan 2025 10:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94441ACEDE;
+	Wed, 29 Jan 2025 10:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738146438; cv=none; b=Wl4stb7ShU6AmxsWKUDW/j6sjfNTGCZdIH1YV68nHyZLiJbBDCsJtMujtbNdDp2RvvxOds/IiDwjlxjEqYopYlrebEFAEY3SKcILpDBpc7eF1EC/Dh8x4npsYhI9UokBD/KnJQzaGwNKf/gY9+ArokCS4jc/c/3En9iK796fNmQ=
+	t=1738146531; cv=none; b=ZuFjVS0yIXoBk4norBYISBZBuN5MwngzFBgAno3iu1+KKHYHyVFjibb55IAqIe/JTBM0im2bOVus/gBZAoGIibSCOuG3Tgxm4xM08maKCPWXVABtJTycNtREZ5TYrHmCJWSrSDy5dVlDtZKOCQsHJ0REcXN+tiZYu/MQtoFC5tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738146438; c=relaxed/simple;
-	bh=uBT3ejglKkQaJtrS6mfhhItAiv0N/sFD7dce8pAqUi8=;
+	s=arc-20240116; t=1738146531; c=relaxed/simple;
+	bh=5f4JuMOYp7f2hLD5NXCiPEZrHysszbhoJCKKnmU5RVc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j2YVXjtkP3HroZ9dAw3cWNYM48KO8OLJHCg+DbOjyTQ4Jn8TwGoRl9+zbWU6z86IDyfFghRuBEk43LejpBxiOjm16bV/Eud5f8tE4sQ67YP+JRaWZriMlXvjVobsfoBEeo7B/iZ5CBVrnQKPbqE7bH6lVjYJ0OI7QRIoEAKZabs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CenCyuSF; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Yahg+cyiU9OmP6iRlX9lvds5HjGJJPNmR1ArjCz1I4hz/PCBBvv5AELvWBrJIhMNHsdSC2N3+I3w5KHyw/grbYVqndYCl+TJk5g72nY+p+EnSJunfAw1B5QDi5vITbQJTsTs3wobbEhA2Km1Hh2JPvHwFNCEF8gquek7tdcUCLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uPmhsUs4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CenCyuSF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6394DC4CED3;
-	Wed, 29 Jan 2025 10:27:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uPmhsUs4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B1CC4CED3;
+	Wed, 29 Jan 2025 10:28:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738146437;
-	bh=uBT3ejglKkQaJtrS6mfhhItAiv0N/sFD7dce8pAqUi8=;
+	s=k20201202; t=1738146531;
+	bh=5f4JuMOYp7f2hLD5NXCiPEZrHysszbhoJCKKnmU5RVc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CenCyuSF/g2CRjAp+dmPSzie40a4Lk1A0sfUefdZ5B3jNMNcJS0wE3ou3Osr0mWAO
-	 HrvtWVl4okAk3oyAYVf4iVa6v2YEWfyX8I3CuyqkSAnnxHALOGfgwrCsdV0f87t1oX
-	 fwAS6ihVSRuBy213dIGOfxy5eTMPBZ5oiqsp72hXPzuXX7RAgVROpvNmZO0dSITJme
-	 HoPzy+E5h0KFVRs1qFA7VYQe7ePth8h1KZrOhSwS1R5uT2j4OdwtXwOnC8ogwumO58
-	 +ATOeVbFET3Vu2XVCFfDxFo/gb10Pvksrd64v2BNR3wI4fPfiJfYFHQiPo2d/EpQko
-	 FcfPaXjASwGBA==
-Message-ID: <bc92f439-00fb-4ed6-a70b-9fe1761f9da0@kernel.org>
-Date: Wed, 29 Jan 2025 11:27:12 +0100
+	b=uPmhsUs4O9h/8NfDwjbkwo1RryAVsgVvT3rGP0sYLhqwCVbptIWDg+RNreAFtvjKV
+	 LGrQPlJonC6qGH9JjHvyopAYLB78XR6VxHHNHi4yjpxkW4Ju8bswq2mtzGkuCmrrzq
+	 9vxl7HDCseJkrCWkz6VGSjl8j3NZYS1xYMlKQ4PQv2nj3mKLf1nSm+EpocRfh6gaus
+	 DfFPu1rybitCY9Xe/VNAily+fJXe6nnU3EEjE4rKfyjiYgDKL80ubLAlqjtnJWwch0
+	 FaSY1FfpFgEunQXGGSch6hc5qJ6dFn02Mu9TSRqCfXKW/qLEdcdetxrIrpLDgmzKMq
+	 j4G9kf6kTwI2Q==
+Message-ID: <fbf1e3aa-cab3-44b5-b873-b4061eb169b2@kernel.org>
+Date: Wed, 29 Jan 2025 11:28:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,12 +35,12 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: socfpga: clk-pll: Optimize local variables
+Subject: Re: [PATCH] clk: socfpga: stratix10: Optimize local variables
 To: Thorsten Blum <thorsten.blum@linux.dev>, Dinh Nguyen
  <dinguyen@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250114121453.618120-2-thorsten.blum@linux.dev>
+References: <20250114112943.617371-2-thorsten.blum@linux.dev>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -86,23 +86,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250114121453.618120-2-thorsten.blum@linux.dev>
+In-Reply-To: <20250114112943.617371-2-thorsten.blum@linux.dev>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/01/2025 13:14, Thorsten Blum wrote:
-> Since readl() returns a u32, the local variables reg and bypass can also
-> have the data type u32. Furthermore, divf and divq are derived from reg
-> and can also be a u32.
+On 14/01/2025 12:29, Thorsten Blum wrote:
+> Since readl() returns a u32, the local variable reg can also have the
+> data type u32. Furthermore, mdiv and refdiv are derived from reg and can
+> also be a u32.
 > 
 > Since do_div() casts the divisor to u32 anyway, changing the data type
-> of divq to u32 removes the following Coccinelle/coccicheck warning
+> of refdiv to u32 removes the following Coccinelle/coccicheck warning
 > reported by do_div.cocci:
 > 
 >   WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead
 > 
 > Compile-tested only.
 > 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
