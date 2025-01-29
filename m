@@ -1,159 +1,103 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3882113632B;
-	Tue, 28 Jan 2025 20:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B054114A60A;
+	Wed, 29 Jan 2025 01:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738095931; cv=none; b=CEpJgBLF/4O05SeY0orMM4xEitz+42R5m2OdkgYNQoV366OCfdfKkvivN9kwcdTWia1I+N85lWX9T40rojiwZyKnLVj8/Jga0t97r6hxEB00GlYTaUNcNZxbT39yBQ+N8z9HOOjF9acZ9wHY/7mKCgkEOqSbPHsJFS05/oKA3Xk=
+	t=1738114940; cv=none; b=Ji/7TO03r61ApxK2BYzad17QDvzdMRNZKoAx9zS7fYOgVQZKrPGpJqkJEEQGcC47m4rzY9kka3NSUF68HPDq8LSkficAEmzbgWrzhj0eWyQejAnB+YwPy3D3Qp2+hbINqsfq23pWYNvhFRmUDjwqS+nbv8DfDyUYNQkV/tQ+mpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738095931; c=relaxed/simple;
-	bh=vsE8IFVrzUvktukSA+TorUfPU/BVdbA/l2O5s9pg3UQ=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=iqd3mvfXVMnzvCZ2Nbuvfcbb2l6bubKKkVQBTyLG9qNaw6o42swG+fyv9csPIUKTIFMRbxHLdHsadjAHD9QDychVHVplupbLrgdjohO8eB/MLfHMym1OcKi7YDobg2GN9vfUrccfuMipuWjohGSQNOgA/zDeCmi3hi8ZGsf0dY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WfeGp7x7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738114940; c=relaxed/simple;
+	bh=XsBY+N8Xy+Xq/wB4sa5tol2/3SUkstHmrkcWo6Zmqwo=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=kc7yEPmtSz7a6UGMHqps4sUoSX5jrzoTCKPSZx93j5+gGDE6rfTT5DIPfNVfKaubJSCxRwd8168CfZi8nY00ueSXiwGV1iBg2uRrdHI7rK1hmFaCWxC642A3vmWPkKgEeCcdLolb1uM2zG+bV/zSW3Q7P0R5OZAj3hEQjb94mJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ww5gOyeX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WfeGp7x7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AD4BC4CED3;
-	Tue, 28 Jan 2025 20:25:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ww5gOyeX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08C8CC4CED3;
+	Wed, 29 Jan 2025 01:42:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738095930;
-	bh=vsE8IFVrzUvktukSA+TorUfPU/BVdbA/l2O5s9pg3UQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=WfeGp7x7LRpK0MQbXzwGZNO+zX9Z2ydtAlj60oBAqLR6E6fHVLnmXpMKevOBWJ9cq
-	 UnPvWNvMo/e+cu/PWf9rYx+UhMQFWknRd43z0stLEqYt9sxT1idroeB9f2wJp25dai
-	 CHOWfedXslPW+L70bOJDBV5r9afQNlDBvFwXuMFAJyKzfOH7YzAUPAP271XJiDC8gb
-	 4RTPupnAsqpxoerFDjlPA1B+WULohj4NS0NB7AdCHt2MJBV97AsP6DgcluJEEQg6qw
-	 b5rO++8Y/bzk9BqbpgJEIF2TF/r8+CV6y65dJKvlw0cmLItjYAN3oXb+QvsVxw471A
-	 KS47V0T+5GAkA==
-Message-ID: <ff801714249c492abc3781da55675a38.sboyd@kernel.org>
+	s=k20201202; t=1738114938;
+	bh=XsBY+N8Xy+Xq/wB4sa5tol2/3SUkstHmrkcWo6Zmqwo=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Ww5gOyeXthUxw1WP6Z+SUn2RxAFSBx01TRULJHQT6xdG6EEEdVrN2bjEKFDQGZd6L
+	 riF1Mc3K4WWIw1KS8xctGA1uFXYcd1rcA1WQQS60O+g97Spg3fxW+Y0PZ9XK9hwaQk
+	 9GkmQs8SMQUR6SMwMLqJF82u2hiVChnX9p37Wl+K+x+Ce0i/qI1MSN+FNBdSNajLMn
+	 uj5jOh4R0aCBdpn1RFo1shsl7Zr33hH5291xELxoVry9lPpjZ9pUgutq90RGaevLDC
+	 8crQXJw7hC3lahBd5Js/8woZOz4Ca9DoKDpRa3GH1XsyRvk3JlEz9uQJDzLba0oRs8
+	 KRaFQL65b6PHw==
+Date: Tue, 28 Jan 2025 19:42:17 -0600
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250124-clk-ssc-v1-1-2d39f6baf2af@nxp.com>
-References: <20250124-clk-ssc-v1-0-2d39f6baf2af@nxp.com> <20250124-clk-ssc-v1-1-2d39f6baf2af@nxp.com>
-Subject: Re: [PATCH 1/3] clk: Introduce clk_set_spread_spectrum
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Dario Binacchi <dario.binacchi@amarulasolutions.com>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, Peng Fan <peng.fan@nxp.com>
-To: Cristian Marussi <cristian.marussi@arm.com>, Michael Turquette <mturquette@baylibre.com>, Peng Fan (OSS) <peng.fan@oss.nxp.com>, Russell King <linux@armlinux.org.uk>, Sudeep Holla <sudeep.holla@arm.com>
-Date: Tue, 28 Jan 2025 12:25:28 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: guoren@kernel.org, krzk+dt@kernel.org, aou@eecs.berkeley.edu, 
+ airlied@gmail.com, wefu@redhat.com, ulf.hansson@linaro.org, 
+ jszhang@kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, jassisinghbrar@gmail.com, 
+ linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-clk@vger.kernel.org, palmer@dabbelt.com, 
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+ mturquette@baylibre.com, p.zabel@pengutronix.de, m.szyprowski@samsung.com, 
+ linux-riscv@lists.infradead.org, simona@ffwll.ch, drew@pdp7.com, 
+ frank.binns@imgtec.com, conor+dt@kernel.org, tzimmermann@suse.de, 
+ sboyd@kernel.org, paul.walmsley@sifive.com, matt.coster@imgtec.com
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20250128194816.2185326-13-m.wilczynski@samsung.com>
+References: <20250128194816.2185326-1-m.wilczynski@samsung.com>
+ <CGME20250128194841eucas1p29048dc05a26475d8323a7a318a8c7a25@eucas1p2.samsung.com>
+ <20250128194816.2185326-13-m.wilczynski@samsung.com>
+Message-Id: <173811493702.543459.14627465568650161345.robh@kernel.org>
+Subject: Re: [PATCH v4 12/18] dt-bindings: gpu: Add support for T-HEAD
+ TH1520 GPU
 
-Quoting Peng Fan (OSS) (2025-01-24 06:25:17)
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index cf7720b9172ff223d86227aad144e15375ddfd86..a4fe4a60f839244b736e3c275=
-1eeb38dc4577b1f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2790,6 +2790,45 @@ int clk_set_max_rate(struct clk *clk, unsigned lon=
-g rate)
->  }
->  EXPORT_SYMBOL_GPL(clk_set_max_rate);
-> =20
-> +int clk_set_spread_spectrum(struct clk *clk, unsigned int modfreq,
-> +                           unsigned int spreadpercent, unsigned int meth=
-od,
-> +                           bool enable)
-> +{
-> +       struct clk_spread_spectrum clk_ss;
-> +       struct clk_core *core;
-> +       int ret =3D 0;
 
-The assignment looks unnecessary.
+On Tue, 28 Jan 2025 20:48:10 +0100, Michal Wilczynski wrote:
+> Add bindings for the PowerVR BXM-4-64 GPU integrated in the T-HEAD
+> TH1520 SoC.  This GPU requires two clocks.
+> 
+> Document the integration details including clock, reset, power domain
+> and interrupt assignments. Add a dt-bindings example showing the proper
+> usage of the compatible string "thead,th1520-gpu" along with
+> "img,img-bxm".
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  .../bindings/gpu/img,powervr-rogue.yaml       | 39 +++++++++++++++++--
+>  1 file changed, 35 insertions(+), 4 deletions(-)
+> 
 
-> +
-> +       if (!clk || !clk->core)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-How do you not have clk->core?
+yamllint warnings/errors:
 
-> +               return 0;
-> +
-> +       clk_ss.modfreq =3D modfreq;
-> +       clk_ss.spreadpercent =3D spreadpercent;
-> +       clk_ss.method =3D method;
-> +       clk_ss.enable =3D enable;
-> +
-> +       clk_prepare_lock();
-> +
-> +       core =3D clk->core;
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/gpu/img,powervr-rogue.example.dts:46.28-29 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/gpu/img,powervr-rogue.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1506: dt_binding_check] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
 
-Why do we need to get the core under the lock?
+doc reference errors (make refcheckdocs):
 
-> +
-> +       if (core->prepare_count) {
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250128194816.2185326-13-m.wilczynski@samsung.com
 
-Why does prepare count matter?
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-> +               ret =3D -EBUSY;
-> +               goto fail;
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
-We just left without releasing the lock.
+pip3 install dtschema --upgrade
 
-> +       }
-> +
-> +       ret =3D clk_pm_runtime_get(core);
-> +       if (ret)
-> +               goto fail;
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
-We just left without releasing the lock.
-
-> +
-> +       if (core->ops->set_spread_spectrum)
-> +               ret =3D core->ops->set_spread_spectrum(core->hw, &clk_ss);
-> +
-> +       clk_pm_runtime_put(core);
-> +       clk_prepare_unlock();
-> +fail:
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(clk_set_spread_spectrum);
-> +
-> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> index b607482ca77e987b9344c38f25ebb5c8d35c1d39..49a7f7eb8b03233e11cd3b927=
-68896c4e45c4e7c 100644
-> --- a/include/linux/clk.h
-> +++ b/include/linux/clk.h
-> @@ -858,6 +858,21 @@ int clk_set_rate(struct clk *clk, unsigned long rate=
-);
->   */
->  int clk_set_rate_exclusive(struct clk *clk, unsigned long rate);
-> =20
-> +/**
-> + * clk_set_spread_spectrum - set the spread spectrum for a clock
-> + * @clk: clock source
-> + * @modfreq: modulation freq
-> + * @spreadpercent: modulation percentage
-> + * @method: down spread, up spread, center spread or else
-
-Did we get cut off?
-
-> + * @enable: enable or disable
-
-Isn't 'disable' equal to spread_percent of zero?
-
-> + *
-> + * Configure the spread spectrum parameters for a clock.
-> + *
-> + * Returns success (0) or negative errno.
-> + */
-> +int clk_set_spread_spectrum(struct clk *clk, unsigned int modfreq,
-
-Does this need to be a consumer API at all? Usually SSC is figured out
-when making a board and you have to pass some certification testing
-because some harmonics are interfering. Is the DT property sufficient
-for now and then we can do it when the driver probes in the framework?
-
-> +                           unsigned int spreadpercent, unsigned int meth=
-od,
-
-I'd assume 'method' would be some sort of enum?
-
-> +                           bool enable);
->  /**
->   * clk_has_parent - check if a clock is a possible parent for another
->   * @clk: clock source
