@@ -1,212 +1,88 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905C31BD9CF
-	for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2025 10:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78491BC07A
+	for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2025 11:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738234220; cv=none; b=i9XB1iyqwy90chkFi6voYGs0SW2SEoHaX1/QZEoWWm2xD3Iz73Tlg6/0tv6ry10j774FJO+kuY0LzUJK9uGfEcPMgQL7CTUufqYJcWnWuoLMrlUaY0SPX2DG2DrX/YZjN9fqJgkPmF/QCw8OTi8nRWrBSXcTRsbWKiGFpuOXr7A=
+	t=1738236580; cv=none; b=GnREUqx2hu0ieYCuheg76RHPXtKgLyhrVlrYGtxXBEiIVwPO+o+FnqJjLX8cchrZjrKCnYCREc1jJGsUpLXP4PziVH3oWQndm4cpAEofCKX56TgjxvwlwzRwbJuV3QhVo1BMuOr8gT4gvdy4qADlwcMCf3xrT3CEcUivEC1CpHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738234220; c=relaxed/simple;
-	bh=b/mMBfe5yGAaGHpFmunxqm2ro+eOBQzP6/VLUP04LdU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DxII/B6VYkla+NRsj56HbvpZvbhIzgcOaZZCqjfLUMdflxrt/lC6fThki3jHOGsf+3uqK1Wudpp4XQZrKsDmdDHf/Sf5CkzROrTrFQTnGD6mBjBSHHAKAkEieK35IJNFF2pNkwDJapn5DGZ1KBUCy9ttWfi+rhTPvibPh/gPZeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=okVltQAz; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1738236580; c=relaxed/simple;
+	bh=Rl6iPZmIsx5OB3kYzIg7Sny9tKV0nIuvvUeFWacwWDU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WM7WDYnxPc030wrWQWq65r2jt8HSWaZpBzSHKxx1kyVYeLeub8UbpakLnuZVUjfc4RGHDWTbpTzzc2vQd96J8Y/YWee8ypK434shJsF//Nzks3bJNVjMvZ8mQlDsS419z093oG+88KuAVkJe8mDASAhMmMeHZ1kpusG3UCKXnug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=UmYWfAn2; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="okVltQAz"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dbfab8a2b0so1245826a12.3
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2025 02:50:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1738234217; x=1738839017; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=e62YlGUXIAw8wozyK1kiiHHdUZMhPFXjOjYgl63mVoA=;
-        b=okVltQAzwV1sHpvHR/UTSdG/nwUVINwH1R2vQDO9b88F7y+SiVPslB1SrpcjcuJwZw
-         fj4JSTNtu1iEOLv32q/CSldJcMDjpYlacdIdpGMtrWdnbhF+vfxnyMZIp9CfTM5k1gX9
-         qRSvaURQ7+Rbf6fzgMVNHUTCVLn7ejUucJnYXVxqCAxabyMEhOuQdSDUmHKIpuScpJZR
-         gM4q/WMqIYTRTkwTzbjcLk/mVXIQid9kQOiEzDtPZPnlgdVDJhPTllqQTLEGaIEYtqco
-         ZNjrKDJEitCsSXUCWbTYYdpOMmDJXAifKgH7xq3Kgk5DkXbvddmbf1noVdWXqIbe9/L4
-         f+hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738234217; x=1738839017;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e62YlGUXIAw8wozyK1kiiHHdUZMhPFXjOjYgl63mVoA=;
-        b=Wel1GW20nqlIDv5HJAOYmyzKveAAb49Ca9xY1p623oa8zS9yYI7tNr3cwU0h9iNQv+
-         oO1v3IadQR3l2ZoRbWfzcllmZcngxgCKJPHON2mU0g4y3tWNQtT7N981cdBfp64DrOkB
-         pEPfvBASQkQ3cgno9njKuPUW4Q/BIv3WOeRewuYHA0KBahvGRMr7yy1RBX/bF+rfI7JU
-         QtP6aj19Q/1TQ0wSUYkvqT/Rkg9QPG+9iDPU06yKYS/4sAgzM1xkbgljMPdVfK8oOO0s
-         R6/aIuNuwzlP1D5Gg0ZJFndqnpd2LmvSTj3tIzYiYoLqvetVSqugr/yWh/WYW6gPh+ly
-         jkaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWp37463/b/6OAJOvjdxC9YRwGclMJcSlNKhr6u587deZ7HRnnINLcCThxYv16JJ+kyR4n7hh2o+x0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLt4X/ugL96pfsMQpSDluhBTQgeA/xe+2b19yeG3xcVp6KAXBP
-	2qds4UXfZT58eXt6L+vZS7ebkB86EyzH8qJSHl/GWNFoZuoxZaqeNZvZr7On3m4=
-X-Gm-Gg: ASbGncsdwGu/q3GWHHtz/oiMQ8K/LQVxKniDCtQwa5paF634jPDZp/FJHNeCDmdtudU
-	jYyBqV3qOkSYh2X8JAgvIU1chEPOjx1olGt8vLPtA3gtXbKpBjpDV2JOf+8OLPYPZNihzg4mPBO
-	GfQgd73UQkG+6p/Flwaa+RbxGTMB/mT89ccY1pWgeWeLHxcCWB8TBGbEs+etOVU6bVjx5pWhhSf
-	pvZC/YLQWW6nNiaaTuAgqi2iCQ1NbzGMY3JEGm0vye6/EeK7J5Mi52A0EZV0VKXqBBoXD842wdw
-	DmXt++99TGDRBRdwrTB8umWf
-X-Google-Smtp-Source: AGHT+IHWoNagdbyI+0VCJRCuNUgGA7SE/I4LH2LJrOHgZ3deawOyjrGsdrBIZ5qzd2KNDtUu3ZBA4Q==
-X-Received: by 2002:a17:906:178a:b0:ab6:d467:811b with SMTP id a640c23a62f3a-ab6d467849emr482692566b.32.1738234216026;
-        Thu, 30 Jan 2025 02:50:16 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.173])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e47a7df0sm100215566b.2.2025.01.30.02.50.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jan 2025 02:50:15 -0800 (PST)
-Message-ID: <3d1abbd5-8ca6-4cd3-9800-e9aeda398e86@tuxon.dev>
-Date: Thu, 30 Jan 2025 12:50:13 +0200
+	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="UmYWfAn2"
+Message-ID: <6312f316-f407-494b-91c4-04d761396e22@postmarketos.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+	s=key1; t=1738236575;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JWcktz/MAlG+7TUszakeV42NRt0QCMjIbkWs7JIUlnc=;
+	b=UmYWfAn2PY7GbBqgM2bvR3M3BGIvRxBLwTdLL03KqT6k9W6yZhuuWH1+O6P9+NbIkGg0v8
+	GDRLR5kYDO1zU04XJLduOqC/IL04cLHg2V14heyxHHU5abBZG8qssdLzFtIyc5sR7GAcol
+	Qk63nLb6Px5ph4FeVeNsf1tnrIyGbzgRpupKFefmY4ADu8KKTalFIRuW4XZ6iiiBd/Q/ip
+	yBka6oXCYdxnZ0HVNQ44+S3ha/kiIM/Sp4MeSK1TF5MB8xgb3LkCcG5WHG1KwIlZQ5Vng1
+	RCPU8S0AGYVFrjSiE9m825Pl/ae6ZQTipi/x25me7FvzTcBcYmXXdPc7iyfQxw==
+Date: Thu, 30 Jan 2025 14:29:31 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] thermal: of: Export non-devres helper to
- register/unregister thermal zone
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: rafael@kernel.org, rui.zhang@intel.com, lukasz.luba@arm.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de, ulf.hansson@linaro.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
- <20250103163805.1775705-3-claudiu.beznea.uj@bp.renesas.com>
- <Z5pkUNNvsWPjRQvy@mai.linaro.org>
- <65a16c3f-456e-40ec-91b0-afb57269ed46@tuxon.dev>
- <Z5tPR_tv7vWDkUI7@mai.linaro.org>
- <6ed7d545-82d7-4bca-95ec-95447586bb58@tuxon.dev>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: gcc-sdm660: Add missing SDCC
+ resets
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Craig Tatlor <ctatlor97@gmail.com>,
+ Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org
+References: <20250129212328.1627891-1-alexeymin@postmarketos.org>
+ <20250130-cheerful-splendid-cockatoo-d833f6@krzk-bin>
 Content-Language: en-US
-In-Reply-To: <6ed7d545-82d7-4bca-95ec-95447586bb58@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Alexey Minnekhanov <alexeymin@postmarketos.org>
+In-Reply-To: <20250130-cheerful-splendid-cockatoo-d833f6@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 30.01.2025 12:30, Claudiu Beznea wrote:
-> 
-> 
-> On 30.01.2025 12:07, Daniel Lezcano wrote:
->> On Thu, Jan 30, 2025 at 11:08:03AM +0200, Claudiu Beznea wrote:
->>> Hi, Daniel,
->>>
->>> On 29.01.2025 19:24, Daniel Lezcano wrote:
->>>> Hi Claudiu,
->>>>
->>>> On Fri, Jan 03, 2025 at 06:38:01PM +0200, Claudiu wrote:
->>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>
->>>>> On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
->>>>> clocks are managed through PM domains. These PM domains, registered on
->>>>> behalf of the clock controller driver, are configured with
->>>>> GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
->>>>> clocks are enabled/disabled using runtime PM APIs.
->>>>>
->>>>> During probe, devices are attached to the PM domain controlling their
->>>>> clocks. Similarly, during removal, devices are detached from the PM domain.
->>>>>
->>>>> The detachment call stack is as follows:
->>>>>
->>>>> device_driver_detach() ->
->>>>>   device_release_driver_internal() ->
->>>>>     __device_release_driver() ->
->>>>>       device_remove() ->
->>>>>         platform_remove() ->
->>>>> 	  dev_pm_domain_detach()
->>>>>
->>>>> In the upcoming Renesas RZ/G3S thermal driver, the
->>>>> struct thermal_zone_device_ops::change_mode API is implemented to
->>>>> start/stop the thermal sensor unit. Register settings are updated within
->>>>> the change_mode API.
->>>>>
->>>>> In case devres helpers are used for thermal zone register/unregister the
->>>>> struct thermal_zone_device_ops::change_mode API is invoked when the
->>>>> driver is unbound. The identified call stack is as follows:
->>>>>
->>>>> device_driver_detach() ->
->>>>>   device_release_driver_internal() ->
->>>>>     device_unbind_cleanup() ->
->>>>>       devres_release_all() ->
->>>>>         devm_thermal_of_zone_release() ->
->>>>> 	  thermal_zone_device_disable() ->
->>>>> 	    thermal_zone_device_set_mode() ->
->>>>> 	      rzg3s_thermal_change_mode()
->>>>>
->>>>> The device_unbind_cleanup() function is called after the thermal device is
->>>>> detached from the PM domain (via dev_pm_domain_detach()).
->>>>>
->>>>> The rzg3s_thermal_change_mode() implementation calls
->>>>> pm_runtime_resume_and_get()/pm_runtime_put_autosuspend() before/after
->>>>> accessing the registers. However, during the unbind scenario, the
->>>>> devm_thermal_of_zone_release() is invoked after dev_pm_domain_detach().
->>>>> Consequently, the clocks are not enabled, as the device is removed from
->>>>> the PM domain at this time, leading to an Asynchronous SError Interrupt.
->>>>> The system cannot be used after this.
->>>>
->>>> I've been through the driver before responding to this change. What is the
->>>> benefit of powering down / up (or clock off / on) the thermal sensor when
->>>> reading the temperature ?
->>>>
->>>> I can understand for disable / enable but I don't get for the classic usage
->>>> where a governor will be reading the temperature regularly.
->>>
->>> I tried to be as power saving as possible both at runtime and after the IP
->>> is not used anymore as the HW manual doesn't mentioned anything about
->>> accuracy or implications of disabling the IP clock at runtime. We use
->>> similar approach (of disabling clocks at runtime) for other IPs in the
->>> RZ/G3S SoC as well.
->>>
->>>>
->>>> Would the IP need some cycles to capture the temperature accurately after the
->>>> clock is enabled ?
->>>
->>> There is nothing about this mentioned about this in the HW manual of the
->>> RZ/G3S SoC. The only points mentioned are as described in the driver code:
->>> - wait at least 3us after each IIO channel read
->>> - wait at least 30us after enabling the sensor
->>> - wait at least 50us after setting OE bit in TSU_SM
->>>
->>> For this I chose to have it implemented as proposed.
+On 1/30/25 11:35 AM, Krzysztof Kozlowski wrote:
+> On Thu, Jan 30, 2025 at 12:23:25AM +0300, Alexey Minnekhanov wrote:
+>> Add resets for eMMC/SD card blocks that were missed during initial
+>> driver submission.
 >>
->> IMO, disabling/enabling the clock between two reads through the pm runtime may
->> not be a good thing, especially if the system enters a thermal situation where
->> it has to mitigate.
-
-If it's not 100% safe I can drop the runtime PM support.
-
->>
->> Without any testing capturing the temperatures and compare between the always-on
->> and on/off, it is hard to say if it is true or not. Up to you to test that or
->> not. If you think it is fine, then let's go with it.
+>> Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
+>> Fixes: f2a76a2955c0 ("clk: qcom: Add Global Clock controller (GCC) driver for SDM660")
 > 
-> I tested it with and w/o the runtime PM and on/off support (so, everything
-> ON from the probe) and the reported temperature values were similar.
+> Your SoB is always the last tag, but repeating what I asked during
+> previous review - what sort of bug is here? Missing feature is not a bug
+> per se.
 > 
-> Thank you,
-> Claudiu
-> 
->>  
->>> If any, the HW manual is available here
->>> https://www.renesas.com/en/document/mah/rzg3s-group-users-manual-hardware?r=25458591
->>> (an archive is here; the manual is in Deliverables/r01uh1014ej0110-rzg3s.pdf)
->>>
->>> Thank you for your review,
->>> Claudiu
->>>
->>>>
->>>>> Add thermal_of_zone_register()/thermal_of_zone_unregister(). These will
->>>>> be used in the upcomming RZ/G3S thermal driver.
->>>>>
->>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>
->>
+> Best regards,
+> Krzysztof
 > 
 
+I was hesitant about adding fixes tag myself, because there is no any 
+user-observable bug being fixed here. In fact the behavior is unchanged, 
+eMMC and SD worked fine before this and still work fine with this patch.
+ From Linux side this is mostly for consistency with other 
+younger/sibling SoCs, like MSM8998 & 8996 all have these resets 
+specified. This will probably be much more useful for U-Boot port.
+
+Perhaps fixes tag should be removed completely?
+
+--
+Regards,
+Alexey
