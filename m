@@ -1,82 +1,144 @@
-Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DA91E32DB;
-	Wed, 29 Jan 2025 21:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B6C1531DC;
+	Thu, 30 Jan 2025 06:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738185869; cv=none; b=pCNRb8fM1FA0011M/KJzT9gUOMClAv9ghAAq5XwYZaxyIN5kzLrZOeqlh5JAb3d84vX0/4jjaIGo35hYXQavOeDcrNx7vuimlCmMtxnt6xnwnmL9uRKLpOJi7w9N8muy2d+yUfvxCg7E3JdVEBLgI83iWshgRKafpQ575XFiyvI=
+	t=1738220189; cv=none; b=XrEkANjBeg3uwX0CpbS5HtuWST/4LczqotG/qGl6uVpt3LkT9/iknwiPewltl899R6pdit4ul+CzIEdxxNjGJbQvoAn0haLJSDeDlHs6PkxMM6ObH6p2QskDp22b/KWjdz742nEccMUp3crH4hGaTJsyLB8BFDeqBLk4x0CvvCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738185869; c=relaxed/simple;
-	bh=IE2XmwtCSi2uLHoGwf2THCB2jPoratrPfoMxiPiN7dw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EZ0aOTCPY28pwNz4p8gP7TH6dDj8zti4Szj7WppmLTyvfUQ0OPBYEH06v6P0L/WlkVBLQfeOzsD5K/m/CimJQPA/vHzG1BLwuodcI7qU0+hLcvbVxXjGM8O6Mm9JtlOYeLsdPJJeXvs+AmwC8emyDhFvMR72ec+n5cYxBR8Ozos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=pRmbz4py; arc=none smtp.client-ip=91.218.175.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
+	s=arc-20240116; t=1738220189; c=relaxed/simple;
+	bh=bDUDa2kKJ2m28/SuqJvaFEwQArNQYtW+ACO7M0a6Mjg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PthKhbNTxfBSKjb/me29pZaofQDcPbYg+WLUe973rjkDfog7DUKEBn6Qk8W/KiglYKH+YwALiTufiHicqyLI27G2cJVTfExs05maTq96PpGm+5Fs4xQ1MibOsqGy4zT4GgzsCkwB29nuRRFKUGBtIK3lfA/WA6UDDZJC6u701PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C7ZWaSs3; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="pRmbz4py"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-	s=key1; t=1738185865;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eTw5ALbz+eNCK5haVBAw0e9IWB0QRVmD6iP4AxauZSk=;
-	b=pRmbz4pyxVMtr648pdFf3V8A2wGvSUoRfTzZ7CNxOFxcQY05HLuHMeb0bs8qPJ0TkZPGku
-	fIMNRIgX2FoyPSk2xcbvfg0qa6a1jfl/Ti0/lfONWlOEZs/mKv/GQ0KT7EreixpDKGBl0a
-	Pp2DkLmDlSChAXgB3qnW30yFzoMX2wnv3nTbjHWWyY9hw3rzL60f/RaQKZZ+7W+Yq0j2GG
-	ZFMWtwsACgVQjz0/nXH32075XqtGJ1BTo4cQ+qbAlYp1TCsJSdeLESQZ7qJzXWzYoWvkBa
-	8isTEY2muAGXffJPdtwiOskubNDKhbmo6r1LEKZVag0tPn/QNe2hOjy4cdz0Fw==
-From: Alexey Minnekhanov <alexeymin@postmarketos.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Craig Tatlor <ctatlor97@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	Alexey Minnekhanov <alexeymin@postmarketos.org>
-Subject: [PATCH v2 2/3] clk: qcom: gcc-sdm660: Add missing SDCC block resets
-Date: Thu, 30 Jan 2025 00:23:26 +0300
-Message-ID: <20250129212328.1627891-2-alexeymin@postmarketos.org>
-In-Reply-To: <20250129212328.1627891-1-alexeymin@postmarketos.org>
-References: <20250129212328.1627891-1-alexeymin@postmarketos.org>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C7ZWaSs3"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50U2qp4c016525;
+	Thu, 30 Jan 2025 06:56:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gOPD14HMCAKE464aezTE9xvjjU7zGIU5KHQ4DrNH65M=; b=C7ZWaSs3a4xIPnRi
+	CJA5L98rswKmHdt60h0A/jPwndVUoVmHCNAlfPDi1mobdtts6CGFx9Cp/aw7IJoD
+	FLkRqGCBPumNe+AgEiUvuQpQa8/jjO9dJBN0dX2rjOvpyfn98VvPdrcEIaATNHu8
+	yrAmKTF3XoupapOJA4g21XrDTOt5OIZ2cS2BBUHkHxrYh14Jcgu6RJ433PCoMOhh
+	770CSOMfLb02/ZYU0ddihdP1Xsrk/RE/VXFKIaZABx6cz9PtLnBpuKipeKJe/ZuX
+	nW7Gaw4kw2Ntt2OtkaiLQHAyGprhvkms5LAgPMXGVRNzX7ip5DneRmZ6s/PMpvti
+	mcO19A==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44fwe28r5w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Jan 2025 06:56:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 50U6uIC2025170
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Jan 2025 06:56:18 GMT
+Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 29 Jan
+ 2025 22:56:13 -0800
+Message-ID: <1c30cce4-eb9f-4fb9-b454-c6f5de604237@quicinc.com>
+Date: Thu, 30 Jan 2025 12:26:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] dt-bindings: clock: update interconnect cells for
+ ipq5424
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <manivannan.sadhasivam@linaro.org>,
+        <bhelgaas@google.com>, <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+References: <20250125035920.2651972-1-quic_mmanikan@quicinc.com>
+ <20250125035920.2651972-3-quic_mmanikan@quicinc.com>
+ <56dfc864-9a7e-4954-a7f6-91ff6b6d05ec@oss.qualcomm.com>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <56dfc864-9a7e-4954-a7f6-91ff6b6d05ec@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: c102XWjtmUQa_Gq7Bf8umocxBRUsgq2Y
+X-Proofpoint-GUID: c102XWjtmUQa_Gq7Bf8umocxBRUsgq2Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-01-30_03,2025-01-29_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ clxscore=1015 malwarescore=0 adultscore=0 phishscore=0 mlxlogscore=999
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2501300052
 
-This will allow linux to properly reset eMMC/SD blocks.
 
-Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
-Fixes: f2a76a2955c0 ("clk: qcom: Add Global Clock controller (GCC) driver for SDM660")
----
- drivers/clk/qcom/gcc-sdm660.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-sdm660.c b/drivers/clk/qcom/gcc-sdm660.c
-index df79298a1a25..01a76f1b5b4c 100644
---- a/drivers/clk/qcom/gcc-sdm660.c
-+++ b/drivers/clk/qcom/gcc-sdm660.c
-@@ -2420,6 +2420,8 @@ static struct gdsc *gcc_sdm660_gdscs[] = {
- static const struct qcom_reset_map gcc_sdm660_resets[] = {
- 	[GCC_QUSB2PHY_PRIM_BCR] = { 0x12000 },
- 	[GCC_QUSB2PHY_SEC_BCR] = { 0x12004 },
-+	[GCC_SDCC2_BCR] = { 0x14000 },
-+	[GCC_SDCC1_BCR] = { 0x16000 },
- 	[GCC_UFS_BCR] = { 0x75000 },
- 	[GCC_USB3_DP_PHY_BCR] = { 0x50028 },
- 	[GCC_USB3_PHY_BCR] = { 0x50020 },
--- 
-2.45.3
+On 1/28/2025 4:56 PM, Konrad Dybcio wrote:
+> On 25.01.2025 4:59 AM, Manikanta Mylavarapu wrote:
+>> Interconnect cells differ between the IPQ5332 and IPQ5424.
+>> Therefore, update the interconnect cells according to the SoC.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>>  .../devicetree/bindings/clock/qcom,ipq5332-gcc.yaml       | 8 ++++++--
+>>  1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> index 1230183fc0a9..fac7922d2473 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq5332-gcc.yaml
+>> @@ -35,8 +35,6 @@ properties:
+>>        - description: PCIE 2-lane PHY3 pipe clock source
+>>  
+>>    '#power-domain-cells': false
+>> -  '#interconnect-cells':
+>> -    const: 1
+>>  
+>>  required:
+>>    - compatible
+>> @@ -54,6 +52,9 @@ allOf:
+>>          clocks:
+>>            maxItems: 5
+>>  
+>> +        '#interconnect-cells':
+>> +          const: 1
+>> +
+>>    - if:
+>>        properties:
+>>          compatible:
+>> @@ -65,6 +66,9 @@ allOf:
+>>            minItems: 7
+>>            maxItems: 7
+>>  
+>> +        '#interconnect-cells':
+>> +          const: 2
+> 
+> Please apply some criticism to the review comments you receive.. this only
+> makes sense for platforms using icc-rpm or icc-rpmh.
+> 
+> Since this driver registers an interconnect provider through icc_clk APIs,
+> it explicitly uses a simple, onecell translation function to .get the nodes
+> 
+> Please drop this patch
 
+
+Hi Konrad,
+
+Thank you for pointing this.
+I will drop the patch.
+
+Thanks & Regards,
+Manikanta.
