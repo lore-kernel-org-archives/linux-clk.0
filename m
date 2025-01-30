@@ -1,64 +1,48 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964721B4143
-	for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2025 09:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4277E0E4;
+	Thu, 30 Jan 2025 10:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738228090; cv=none; b=fYq4rPb1QEDVVKhG3dBJNs6kUj7alv9a1+SzhG6BlQZa3xAt1dsYag9TXjKZ+smy1qeHMeV7fWj7tr/SZeqWZ5YJix72+rQ6m5JbGk5Rjgar/ZcW/rHJRb0l8Y7wgIUE6zeL96OI0Ohk+W0+jzqkJwm89xgRpH+GGu/7c5SWlZY=
+	t=1738231415; cv=none; b=i1k/dMhSn5C8u4RCfH1S6jgVB8UhFNXBtmxIgK4WO2kPMZ07OW8AlsfdwChgS8b4nTlloQZ0u19i2D2XJSEQQodsGQEpsekfDWuPWDPdV2I4Xu5G9ca/oz9uJkvNKES/nSd6nO4Ebn4U5wZzM1b68/mjOoUn+cOYclHytTgEchw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738228090; c=relaxed/simple;
-	bh=OBNGLE/SBRHOIMdTMZvbtABJhm/g1DTPsBcuphE4iS4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fDUvgkEVlM+gmdP5yximWDN5mBE5ICINiEjy1PebR/mMBBqFAFmkxt5TJFg/93eWjWG2K8D0/bNixtyeXY5mrGE/roOzC8+9Jpe/WIznSjY8uLFozdJkidMT+d4zlKgcvmZqccv1iAkt4lFfl7BbwwUcxkhYu3auvSjDnQWedyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=EJy4UFpK; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1738231415; c=relaxed/simple;
+	bh=2sXW4GBxPt/yJ3Q152hJbd3MBIixTAR4IBbse8RQ5NI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XXEoZwu2TaE+fzwX3ZPXV/uyayJpE25k/vsExElO3koZ7xtMpkdn28Wdd91AS+rvyiPrgTdSD8j1UZkicZMcRVVCe0bZxkqo7nPpjm12M2k1xK24UiEYc4cAtzob31i7AG29Z+zK4SS6mbrPwt0hup1e/hAEFbVkSnlHtQ77qlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OYAJGn7I; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="EJy4UFpK"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-385dece873cso236738f8f.0
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2025 01:08:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1738228086; x=1738832886; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ANhml7M+MMMD3LKkNci+JpTEfPstAMQQQpY+9UHoOXg=;
-        b=EJy4UFpKS+n6GHSFxX1+XPhIPnP2n9VHhsq11l/oDiEbOpn3dyPHXMUGjWcujTbSZJ
-         rk5B9F4a9M/U6qIJ/qHySCVswSmZo9rZ0MCbjwaTi5mc9I/BdBbGDCPrNy5aBoK0OCje
-         ME3zbo904Lk9QcgdTne41r6jcO1Lpn2UFolG2VrFYYgsJ0lNECv6teWsqAeRYHgLOS/A
-         DHhM+V+Z87JR4nVBwUc6fvlUBWq/RWJ8dWtZyXLmp2QHeSTdLSEyJTw7JsqZSesxRS8u
-         idRz7aIjPomosaaOdgKMnttXeaFrYcrliUi/54PfoSv2t59cBJY7mdW5/LBTBocvyR+j
-         U0cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738228086; x=1738832886;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ANhml7M+MMMD3LKkNci+JpTEfPstAMQQQpY+9UHoOXg=;
-        b=mC3U8PAXpeLTKfr7bK7/Yvb+Ouz32BvIuxqmUgXJKQ6T25Dqq+fGScZCMJeQodQfpo
-         FDYCI5e/a2a2P1AfWZNyvZncfpQ3R05/lbD7549bI2YnL8kOOG0kA+2bhmq2qWpLX0b/
-         A6kvtZnt0DiTxEmB7TsXyinUzBXza/60n004pV6nnY7f2LPFuYmsDCpfOK2WNZKLSFzj
-         0ynfVST6RXTiKe/y5s4tLieVC+958tFDdDJzLBhYNRbUTWtdpHAONkPVzWrQ/i6zrysF
-         Ff3xadALfHID+2oc6UVQm+gYszBCzMrVV08e4BZTUJfkBRcLnRxvhWPU/V3x/aGh8FGp
-         Nwmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgDKe7Y9i+lVdkI436YGUzWqPLoNBGWgtG3XGQ3aQud7m3q3S88SEdpIQs2Bcq2U93XLVbKls92CE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP63UXq/gYTTShHcvkgmB1SFMvYBXS1RzsBh1Swh+AAeRZV1i/
-	qg0nn//A/okoJ4z/jXnGgG0BzDHMhAaUw78ArFrQq+NthNXDc5TqzD39Ra/bsUs=
-X-Gm-Gg: ASbGncu1u2CFYu2GQZEnyiFby3ew3yQ5kNrA8OmW2v6wACbth9JjHVBdhtp2C3KoDrO
-	jSCloAtuZggNYy6XjzSdYza+C+W69q+QFmpjFp9YjpB+mN24NDo1t97ds6Oagr2I35ranvwuVOf
-	IM/9s6Mz4Fo1V6QVoQ0xeIlClCj+H7vhO8UO2cD86nR189STL1FRHhy0pkdT77g6EdWSwWzhuj3
-	37QKvh0VmnGI2nacGBBWyTNXQILe3c705j/226pGeu+E0L17ZKawMms4jC2ZF7PmZzDipfJmYM+
-	X9RW3QR+UH3eEw3FXZ7KPuDt
-X-Google-Smtp-Source: AGHT+IEjxgi6T0u+WBslXxqIsPByCV1IEbwLcjNUUJAJZf9hq5VGIBAWjwewMxDvT3YhfK7VwFb5eQ==
-X-Received: by 2002:a5d:5f4c:0:b0:38a:4184:151c with SMTP id ffacd0b85a97d-38c519602e8mr4907671f8f.27.1738228085612;
-        Thu, 30 Jan 2025 01:08:05 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.173])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c5c102d2esm1368334f8f.33.2025.01.30.01.08.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jan 2025 01:08:05 -0800 (PST)
-Message-ID: <65a16c3f-456e-40ec-91b0-afb57269ed46@tuxon.dev>
-Date: Thu, 30 Jan 2025 11:08:03 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OYAJGn7I"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50U1dC6S023830;
+	Thu, 30 Jan 2025 10:03:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZUGoZU9SmpWtYDyisJW6wY5gUB1sQNSLSjbLV3TJrP8=; b=OYAJGn7IV6Nd4mOf
+	Q2mKdyj33Zu5SrlBzLhwdOwUJpcVPaH7xkHWpUpkrCkWIJtDWSQWCSuIaNjIaAY1
+	lFGKS0XiQ1zRfnoVSjx3eKVUdEMcRFQa2I7SgliuE1ESL4nZQnbgNoCrg4Uf5cKH
+	GEt2XaM9CkvyqX7l2PQQGE5x3o4lkyM4/i4J2AIt4DQeIFuZrCuoAykyQlnhZ7q5
+	DOl0RxtnuEuXVin2GvqfHZFAafjibcq2YBZAhESfeJdw7+l70N7dSpYcW2XeOKGH
+	/70+cLibjFa8jW/DeciPNUQBimC/HRnmXf4kZqaYvxQqqMnFQwJcQNy5/vElb4kG
+	npJPcw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44fyxnrth2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Jan 2025 10:03:23 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 50UA3Mxa024644
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 30 Jan 2025 10:03:22 GMT
+Received: from [10.216.8.207] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 30 Jan
+ 2025 02:03:17 -0800
+Message-ID: <123a324c-561a-4081-be43-8d8ed0662acc@quicinc.com>
+Date: Thu, 30 Jan 2025 15:33:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -66,116 +50,281 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] thermal: of: Export non-devres helper to
- register/unregister thermal zone
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: rafael@kernel.org, rui.zhang@intel.com, lukasz.luba@arm.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de, ulf.hansson@linaro.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
- <20250103163805.1775705-3-claudiu.beznea.uj@bp.renesas.com>
- <Z5pkUNNvsWPjRQvy@mai.linaro.org>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH 2/4] clk: qcom: apss-ipq5424: Add ipq5424 apss clock
+ controller
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <konradybcio@kernel.org>,
+        <rafael@kernel.org>, <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+References: <20250127093128.2611247-1-quic_srichara@quicinc.com>
+ <20250127093128.2611247-3-quic_srichara@quicinc.com>
+ <47f7553d-74a2-4da0-a64c-cc49a2170efb@oss.qualcomm.com>
 Content-Language: en-US
-In-Reply-To: <Z5pkUNNvsWPjRQvy@mai.linaro.org>
-Content-Type: text/plain; charset=UTF-8
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <47f7553d-74a2-4da0-a64c-cc49a2170efb@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ap5pL5MPNMORJ5j2I9WNVpI2JPP6wEA8
+X-Proofpoint-GUID: ap5pL5MPNMORJ5j2I9WNVpI2JPP6wEA8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-01-30_06,2025-01-30_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0
+ adultscore=0 malwarescore=0 priorityscore=1501 bulkscore=0 clxscore=1015
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2501300077
 
-Hi, Daniel,
 
-On 29.01.2025 19:24, Daniel Lezcano wrote:
-> Hi Claudiu,
+
+On 1/28/2025 5:29 PM, Konrad Dybcio wrote:
+> On 27.01.2025 10:31 AM, Sricharan R wrote:
+>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>
+>> CPU on Qualcomm ipq5424 is clocked by huayra PLL with RCG support.
+>> Add support for the APSS PLL, RCG and clock enable for ipq5424.
+>> The PLL, RCG register space are clubbed. Hence adding new APSS driver
+>> for both PLL and RCG/CBC control. Also the L3 cache has a separate pll
+>> and needs to be scaled along with the CPU.
+>>
+>> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> ---
 > 
-> On Fri, Jan 03, 2025 at 06:38:01PM +0200, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
->> clocks are managed through PM domains. These PM domains, registered on
->> behalf of the clock controller driver, are configured with
->> GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
->> clocks are enabled/disabled using runtime PM APIs.
->>
->> During probe, devices are attached to the PM domain controlling their
->> clocks. Similarly, during removal, devices are detached from the PM domain.
->>
->> The detachment call stack is as follows:
->>
->> device_driver_detach() ->
->>   device_release_driver_internal() ->
->>     __device_release_driver() ->
->>       device_remove() ->
->>         platform_remove() ->
->> 	  dev_pm_domain_detach()
->>
->> In the upcoming Renesas RZ/G3S thermal driver, the
->> struct thermal_zone_device_ops::change_mode API is implemented to
->> start/stop the thermal sensor unit. Register settings are updated within
->> the change_mode API.
->>
->> In case devres helpers are used for thermal zone register/unregister the
->> struct thermal_zone_device_ops::change_mode API is invoked when the
->> driver is unbound. The identified call stack is as follows:
->>
->> device_driver_detach() ->
->>   device_release_driver_internal() ->
->>     device_unbind_cleanup() ->
->>       devres_release_all() ->
->>         devm_thermal_of_zone_release() ->
->> 	  thermal_zone_device_disable() ->
->> 	    thermal_zone_device_set_mode() ->
->> 	      rzg3s_thermal_change_mode()
->>
->> The device_unbind_cleanup() function is called after the thermal device is
->> detached from the PM domain (via dev_pm_domain_detach()).
->>
->> The rzg3s_thermal_change_mode() implementation calls
->> pm_runtime_resume_and_get()/pm_runtime_put_autosuspend() before/after
->> accessing the registers. However, during the unbind scenario, the
->> devm_thermal_of_zone_release() is invoked after dev_pm_domain_detach().
->> Consequently, the clocks are not enabled, as the device is removed from
->> the PM domain at this time, leading to an Asynchronous SError Interrupt.
->> The system cannot be used after this.
+> [...]
 > 
-> I've been through the driver before responding to this change. What is the
-> benefit of powering down / up (or clock off / on) the thermal sensor when
-> reading the temperature ?
+>> +#define GPLL0_CLK_RATE		800000000
+>> +#define CPU_NOM_CLK_RATE	1416000000
+>> +#define CPU_TURBO_CLK_RATE	1800000000
+>> +#define L3_NOM_CLK_RATE		984000000
+>> +#define L3_TURBO_CLK_RATE	1272000000
 > 
-> I can understand for disable / enable but I don't get for the classic usage
-> where a governor will be reading the temperature regularly.
-
-I tried to be as power saving as possible both at runtime and after the IP
-is not used anymore as the HW manual doesn't mentioned anything about
-accuracy or implications of disabling the IP clock at runtime. We use
-similar approach (of disabling clocks at runtime) for other IPs in the
-RZ/G3S SoC as well.
-
+> Please inline these values
 > 
-> Would the IP need some cycles to capture the temperature accurately after the
-> clock is enabled ?
+ok.
 
-There is nothing about this mentioned about this in the HW manual of the
-RZ/G3S SoC. The only points mentioned are as described in the driver code:
-- wait at least 3us after each IIO channel read
-- wait at least 30us after enabling the sensor
-- wait at least 50us after setting OE bit in TSU_SM
-
-For this I chose to have it implemented as proposed.
-
-If any, the HW manual is available here
-https://www.renesas.com/en/document/mah/rzg3s-group-users-manual-hardware?r=25458591
-(an archive is here; the manual is in Deliverables/r01uh1014ej0110-rzg3s.pdf)
-
-Thank you for your review,
-Claudiu
-
+>> +
+>> +enum {
+>> +	P_XO,
+>> +	P_GPLL0,
+>> +	P_APSS_PLL_EARLY,
+>> +	P_L3_PLL,
+>> +};
+>> +
+>> +struct apss_clk {
+>> +	struct notifier_block cpu_clk_notifier;
+>> +	struct clk_hw *hw;
+>> +	struct device *dev;
+>> +	struct clk *l3_clk;
+>> +};
+>> +
 > 
->> Add thermal_of_zone_register()/thermal_of_zone_unregister(). These will
->> be used in the upcomming RZ/G3S thermal driver.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> +static struct clk_branch l3_core_clk = {
+>> +	.halt_reg = 0x1008c,
+>> +	.clkr = {
+>> +		.enable_reg = 0x1008c,
+>> +		.enable_mask = BIT(0),
+>> +		.hw.init = &(struct clk_init_data){
+>> +			.name = "l3_clk",
+>> +			.parent_hws = (const struct clk_hw *[]){
+>> +				&l3_clk_src.clkr.hw },
+> 
+> 	&l3_clk_src.clkr.hw
+> },
+> 
+>> +static unsigned long get_l3_clk_from_tbl(unsigned long rate)
+>> +{
+>> +	struct clk_rcg2 *l3_rcg2 = container_of(&l3_clk_src.clkr, struct clk_rcg2, clkr);
+>> +	u8 max_clk = sizeof(ftbl_apss_clk_src) / sizeof(struct freq_tbl);
+>> +	u8 loop;
+>> +
+>> +	for (loop = 0; loop < max_clk; loop++)
+>> +		if (ftbl_apss_clk_src[loop].freq == rate)
+>> +			return l3_rcg2->freq_tbl[loop].freq;
+> 
+> This looks extremely explosive if anyone makes changes to the driver..
+> 
+> Use an OPP table in the devicetree instead
+> 
+ok, already using OPPtable for cpu. To understand better, since L3 clk
+is separate that needs to be scaled along with cpu, are you suggesting
+to use dev_pm_opp_find_freq here for indexing ?
 
+> And please add a newline before the return statement
+> 
+ok
+
+>> +	return 0;
+>> +}
+>> +
+>> +static int cpu_clk_notifier_fn(struct notifier_block *nb, unsigned long action,
+>> +			       void *data)
+>> +{
+>> +	struct apss_clk *apss_ipq5424_cfg = container_of(nb, struct apss_clk, cpu_clk_notifier);
+>> +	struct clk_notifier_data *cnd = (struct clk_notifier_data *)data;
+>> +	struct device *dev = apss_ipq5424_cfg->dev;
+>> +	unsigned long rate = 0, l3_rate;
+>> +	int err = 0;
+> 
+> Please use 'ret'
+> 
+ok
+
+>> +
+>> +	dev_dbg(dev, "action:%ld old_rate:%ld new_rate:%ld\n", action,
+>> +		cnd->old_rate, cnd->new_rate);
+>> +
+>> +	switch (action) {
+>> +	case PRE_RATE_CHANGE:
+>> +		if (cnd->old_rate < cnd->new_rate)
+>> +			rate = cnd->new_rate;
+>> +	break;
+> 
+> Why are the breaks indented like this?
+> 
+ok, will fix
+
+>> +	case POST_RATE_CHANGE:
+>> +		if (cnd->old_rate > cnd->new_rate)
+>> +			rate = cnd->new_rate;
+>> +	break;
+>> +	};
+>> +
+>> +	if (!rate)
+>> +		goto notif_ret;
+> 
+> In cases like these, just return directly instead of jumping
+> 
+ok
+
+>> +
+>> +	l3_rate = get_l3_clk_from_tbl(rate);
+>> +	if (!l3_rate) {
+>> +		dev_err(dev, "Failed to get l3 clock rate from l3_tbl\n");
+>> +		return NOTIFY_BAD;
+>> +	}
+>> +
+>> +	err = clk_set_rate(apss_ipq5424_cfg->l3_clk, l3_rate);
+>> +	if (err) {
+>> +		dev_err(dev, "Failed to set l3 clock rate(%ld) err(%d)\n", l3_rate, err);
+>> +		return NOTIFY_BAD;
+>> +	}
+>> +
+>> +notif_ret:
+>> +	return NOTIFY_OK;
+>> +}
+>> +
+>> +static int apss_ipq5424_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct apss_clk *apss_ipq5424_cfg;
+>> +	struct regmap *regmap;
+>> +	void __iomem *base;
+>> +	int ret;
+>> +
+>> +	apss_ipq5424_cfg = devm_kzalloc(&pdev->dev, sizeof(struct apss_clk), GFP_KERNEL);
+> 
+> Since there is no "config" in there, something like "ipq5424_apsscc" would be
+> more fitting
+> 
+ok
+
+>> +	if (IS_ERR_OR_NULL(apss_ipq5424_cfg))
+>> +		return PTR_ERR(apss_ipq5424_cfg);
+> 
+> https://elixir.bootlin.com/linux/v6.13/source/include/linux/device.h#L326-L329
+> |_
+>     > elixir.bootlin.com/linux/v6.13/source/drivers/base/devres.c#L819-L820
+> 
+> It can never throw an errno, just check for if (!apss...)
+> 
+ok
+
+>> +
+>> +	base = devm_platform_ioremap_resource(pdev, 0);
+>> +	if (IS_ERR(base))
+>> +		return PTR_ERR(base);
+>> +
+>> +	regmap = devm_regmap_init_mmio(dev, base, &apss_ipq5424_regmap_config);
+>> +	if (!regmap)
+>> +		return PTR_ERR(regmap);
+> 
+> devm_platform_get_and_ioremap_resource()
+> 
+ok
+
+>> +
+>> +	clk_alpha_pll_configure(&ipq5424_l3_pll, regmap, &l3_pll_config);
+>> +
+>> +	clk_alpha_pll_configure(&ipq5424_apss_pll, regmap, &apss_pll_config);
+>> +
+>> +	ret = qcom_cc_really_probe(dev, &apss_ipq5424_desc, regmap);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	dev_dbg(&pdev->dev, "Registered APSS & L3 clock provider\n");
+>> +
+>> +	apss_ipq5424_cfg->dev = dev;
+>> +	apss_ipq5424_cfg->hw = &apss_silver_clk_src.clkr.hw;
+>> +	apss_ipq5424_cfg->cpu_clk_notifier.notifier_call = cpu_clk_notifier_fn;
+>> +
+>> +	apss_ipq5424_cfg->l3_clk = clk_hw_get_clk(&l3_core_clk.clkr.hw, "l3_clk");
+>> +	if (IS_ERR(apss_ipq5424_cfg->l3_clk)) {
+>> +		dev_err(&pdev->dev, "Failed to get L3 clk, %ld\n",
+>> +			PTR_ERR(apss_ipq5424_cfg->l3_clk));
+>> +		return PTR_ERR(apss_ipq5424_cfg->l3_clk);
+>> +	}
+> 
+> Now that you'll use OPP, you can drop all this getting.. maybe even the
+> apss_ipq5424_cfg struct could be let go
+
+ok, is the suggestion here to use devm_pm_opp_set_config ?
+
+>> +
+>> +	ret = devm_clk_notifier_register(&pdev->dev, apss_ipq5424_cfg->hw->clk,
+>> +					 &apss_ipq5424_cfg->cpu_clk_notifier);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return 0;
+> 
+> Just return ret instead
+> 
+ok
+
+>> +}
+>> +
+>> +static const struct of_device_id apss_ipq5424_match_table[] = {
+>> +	{ .compatible = "qcom,ipq5424-apss-clk" },
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(of, apss_ipq5424_match_table);
+>> +
+>> +static struct platform_driver apss_ipq5424_driver = {
+>> +	.probe = apss_ipq5424_probe,
+>> +	.driver = {
+>> +		.name   = "apss-ipq5424-clk",
+>> +		.of_match_table = apss_ipq5424_match_table,
+>> +	},
+>> +};
+>> +
+>> +module_platform_driver(apss_ipq5424_driver);
+>> +
+>> +MODULE_DESCRIPTION("QCOM APSS IPQ5424 CLK Driver");
+>> +MODULE_LICENSE("GPL v2");
+> 
+> Please don't skip running 'checkpatch'.
+
+Infact ran it with --strict as well. But thought "GPL V2" was correct
+and let it. Anyways will change.
+
+Regards,
+  Sricharan
