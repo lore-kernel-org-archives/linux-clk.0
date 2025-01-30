@@ -1,64 +1,64 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3050C1DE4CB
-	for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2025 17:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A69E1EE00F
+	for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2025 17:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738258320; cv=none; b=mjDV9BljWe4dfmWA9h1YpFBj03xnpSvRT06SrSbv9hNZ2EgQdF5riHSoQcbGAEB0sV4YCdZsI7444mztJbnV/nuM9odRRIuil1qpFSOSfnRzWLIQ9nM2lfFzsLaYIqo5FSfobmd0b+kMcum49mRqFRvnMZDjht+acxBx175vDoQ=
+	t=1738258359; cv=none; b=gdYFQw/H/72i7vGPbecqSnq7X/dxbWh8nvXcMGBvLhLkcIV7IyIZNR+HmktpwrsLi10lozikhK2kz/zGAby+x7kd86RiZJA0rSv7SBCzKb7DR0HcDJlGnYV9kMknoSnim0ZCBg30xEHFJztbBy7tJjdN+Se1H/So7VcT1oXVO2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738258320; c=relaxed/simple;
-	bh=xuMqgfxSwdbvy3i+zP5z3UiMW6qWNT7u1ikBE5pPpQE=;
+	s=arc-20240116; t=1738258359; c=relaxed/simple;
+	bh=hT7kPUT71Rn2wgaiKE56N2bGMy3aiQWOQ7ryplZAs4Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nZ1PvFP8+nZU2vwsb4WI0k5fWPvLIoAsRQXFv44QzZd5GfzrF/+s0hyYdDhROp6AvqlVCt6VxtRYGsmlmqLK+ZOaDKZbaQv6/rSgsdDI5tFmzA1Hxnow58qi+AGwlfp1auHO6GX4+LNEHkdBuezUgUnSPFT1c5IzGsKy8tcy4Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xU9ISn5Y; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=tElRtDIR8TjsoWzLbDppbOwJZ+JneToQscTtRe4sBpXsYQRLQf9eLd7kwGec8Hk1E+TrYb2HJxn2AgCj+HULw6952ajqJt6qTU/DLTYl42GDPo+3ia/EPsa4u9fsOFjkm35eHfutNJiBnZfaeKDH4x7dqBHffPvpVLZDSuqN9F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dDQX9FKQ; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xU9ISn5Y"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-385eed29d17so584834f8f.0
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2025 09:31:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dDQX9FKQ"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385ef8b64b3so1024892f8f.0
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2025 09:32:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1738258317; x=1738863117; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=tuxon.dev; s=google; t=1738258355; x=1738863155; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oGFJ/SZJyjcLl8OPYBdzU/HVC+kA3jQp0maWZ+GZ/dM=;
-        b=xU9ISn5YNM4PqXbcJdH+FDjWnqWiOO2PrgINE+YWbNLMyn81xSu6eY9s3xB+W8R6Of
-         jHz4bHNsu9tpHZJ6oRuR1pNu8cHFWyu9e50qVAGcOtEr6ru6xWJRDwvD1K+MTS8wp46P
-         JA74pOza82yBz5pGO0ccrHb6xVhHb4TCzL7wa8ji5C6PXBHWTK6ZCRAlhDCMbb5u4H7o
-         G51RTBDbbVN2ThBRwKBb/Wz+g03vOatiihFwMVHFqRqNStobnMtKTQPe84BQLg8Ft1t2
-         uawCMv83M1vQVYpdDH3RcsjhUANOXPIBmnFStIDklbWw1xk5fCJ3PnfyS3nNwLoW4fxZ
-         w/aA==
+        bh=xKM3RWBudOMOvAAaqh0C7cledBNgLwcsgWWCL/oBsw8=;
+        b=dDQX9FKQw+x1gmzfvZHJPoXCQfkZicTBfIN8TEk6wDTi7faWREltQyd3H9SZZbQRYG
+         5t5wlBaPLC8y3GZwffQjvdy78aa8QLnSQ1eirtd3BXU79NzbtPP9AHkPgBNjXCfDLOEv
+         nCxsqBFYK3SPJSXHz3hZawHjNvDNfA96WedkGWrxv68En/gv32NUo3yU9x5hJVd9o8H+
+         Uq+7ZzebllVzRXs7eOggrnPqphjbAD5CyEFyzlbHVjvlb4+uWjrLTHh1F8I3Yxj/dWuC
+         NJ9Gn1M+8CNmMhgE51qWZ7olpqmxoRtL8XM7h55tny9JQaMt2BxpzRiPt9lj5Ngm0lmC
+         9uSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738258317; x=1738863117;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1738258355; x=1738863155;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oGFJ/SZJyjcLl8OPYBdzU/HVC+kA3jQp0maWZ+GZ/dM=;
-        b=XfCDwkybWFHTiaWGboTQoQraAzPhI6/5r8RyW0imAXkBfWmOFZsDl/WRdkvPlLTfoA
-         hgtLc5wNXZDfPWDPcvzGiVAhPdAdg0Z/pwMC/frty4N5RSkPjLsWEx3v2xlDqTdsc9fS
-         9xJulcmXRpC8w7QV+5WVbtdZXu3mT1Ba/oCZq3iA33Pbx5MEg3n4uzgxgk8nsnOemni5
-         48/a7f/mH0b/oRSgGd5qvCn8ZGFvrohEuC4uaBDxnbxWdj4Gscjv+rcBTEPX5vNqYHrr
-         f3X4JHTHrN9AOKN2s02XQmYEyfyCe/MTd8aDLW/CnDUiArxQ6j88qhr9FgyiE65lsPTq
-         37tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVXdPp/x6v2e+4vt1SP8WK8kvJQxLkiVHxxYoR3Q6nqlT9cs3tafFmETtAHhM8faVBcxucD0pr4y0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8Tp4KH9gtckYcuLgCqtdKWbChGxf5LPSKLEsunxcSJIcSRlsQ
-	yNUGG7XznbmTjnHcQgelT2RkROcH8obXGB+yFp7aL9Myeuzsff05f4Sy9jz1S6Q=
-X-Gm-Gg: ASbGncuOmiwAEu0pR/WarLcLcehU59Lte4VTmuHL8g1kPt0w+e5X/We/i2u856QKPBu
-	wYK83hOmvDHqCnaM7ZnjOJRQ4IxgJk9jWq5N8W7K7Agn5mKASBFDIOVlb7k7OB3rM6X11p9d1R1
-	82CPUVSJ1FxfieggeWe2ij/+gilNrAfvZMHdwhOxRpwIi5SR+t6y+nhwiGI81Rkrz34Ma17XV/p
-	9mZZbdhlMsImXkWvU4Z11uWs5KulaliVB6UgVib9yfjQLs3FOhJJIKvSv0DBp6o42M7UyyBZQE0
-	w411wouIBKHJX63TrSWI0zPAbmgTANVUzPmQRSMfaPZnCZqeE+OxafE=
-X-Google-Smtp-Source: AGHT+IEi5kedgLMkork5YJAKY/3aI2UDvYGuUStK46XPsuiG324UkAjxLQwuOm9AwPnUYK4o3lkp9Q==
-X-Received: by 2002:a5d:64a1:0:b0:38a:86fe:52b5 with SMTP id ffacd0b85a97d-38c5195f256mr8386213f8f.14.1738258316013;
-        Thu, 30 Jan 2025 09:31:56 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-438e244f087sm29478855e9.29.2025.01.30.09.31.54
+        bh=xKM3RWBudOMOvAAaqh0C7cledBNgLwcsgWWCL/oBsw8=;
+        b=sVgq5w61SN/B1qEAdOKUMbLAHIWEsFw40pRFTp7HA7ScmXl5Yk8Vn4PhQOFAzZAvf9
+         QEmcks+tQLgVL69LGVVzGvIoGK7QKWIm6WC0VZFGSxOMOFduC8DTizVi6YxNdNQP69CO
+         C74oBpiwElnx8t1RLx7ElL1N9CbRTumu5CE5Qv2Q2ZvWNPl1JzeFDdhjtLf08XuRVsas
+         uPaG3uS/4UWf9IBthTtO47BYYjCgBihHkyhIaGXFoYx7sNgE8+B7m722WRyT4zWCCXOJ
+         BVUqTlYOBn0WOhPakK4fGGPSkIX2iLZMOo61v9srq9a0CaCFuwgqyIiiWTYz7RXyYzA5
+         p69Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXd80Z5vuyJbn1NiHso8qXn3C4mYxqmo7EnSPk0l9NRW/IrisfXuW4oqFo5Hz157solwLFK7IWC4PQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqoW0d1VDl7GAWhRp4NixcejH89+zLsXDY5HB2NoB9MafqEg6I
+	2jfCaKnK3imNw/fYTIz4m0unLmNSzDFtu0qcDDuRDoGcoxxpUbpq6f11qbVQoQk=
+X-Gm-Gg: ASbGncuVlUXQivgrsLig4mBYhOVbfvH+ckbKTLQviLq0f9Woxwk5rsyuo/Hg1D8AafW
+	buyIeCqw+3wTbQNlvB//JoDKTZOtHe0CyRI1FbEhy4FwWNCf6F1cOwm440H2GCdu6OQYktNG61m
+	PnLRZ2MHotSt4yyREz54gFxVR7lo7x94ZWBJAIsidg6VbT7ycCAgPVDrldIpdN6kS1AO7TruwS9
+	ZIvdMmN2OoKsalVkVcuf51RpE8Robfeq9HkoPMTmU1Wzkp94/5twycSXcq9HzX6/0sLJqhpcnuS
+	B20T3FGquPi8IEtTay+m1I08
+X-Google-Smtp-Source: AGHT+IG0JtM8ysE8yCX0gXJFKaojoUHoYmkNQfMIe/tVvsLydgMxPhUkmT/xfpvP3KXVGI9I0CFgmA==
+X-Received: by 2002:a5d:6d09:0:b0:385:fae7:fe50 with SMTP id ffacd0b85a97d-38c5209128bmr6322840f8f.42.1738258355362;
+        Thu, 30 Jan 2025 09:32:35 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.173])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c5c102bdbsm2538261f8f.28.2025.01.30.09.32.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jan 2025 09:31:54 -0800 (PST)
-Message-ID: <867eb310-11a7-48bd-b2fa-35e001875498@linaro.org>
-Date: Thu, 30 Jan 2025 18:31:53 +0100
+        Thu, 30 Jan 2025 09:32:34 -0800 (PST)
+Message-ID: <2d5be56d-4334-4ad3-a98b-33d3a86f028a@tuxon.dev>
+Date: Thu, 30 Jan 2025 19:32:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,93 +68,75 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 2/6] thermal: of: Export non-devres helper to
  register/unregister thermal zone
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>
-Cc: "rafael@kernel.org" <rafael@kernel.org>,
- "rui.zhang@intel.com" <rui.zhang@intel.com>,
- "lukasz.luba@arm.com" <lukasz.luba@arm.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: rafael@kernel.org, rui.zhang@intel.com, lukasz.luba@arm.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de, ulf.hansson@linaro.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
  Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 References: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
  <20250103163805.1775705-3-claudiu.beznea.uj@bp.renesas.com>
  <Z5pkUNNvsWPjRQvy@mai.linaro.org>
  <65a16c3f-456e-40ec-91b0-afb57269ed46@tuxon.dev>
  <Z5tPR_tv7vWDkUI7@mai.linaro.org>
- <TY3PR01MB11346E087A4DFCC5BDCCB10B486E92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <6ed7d545-82d7-4bca-95ec-95447586bb58@tuxon.dev>
+ <b496d933-3c57-4b02-ab65-0582a30939af@linaro.org>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <TY3PR01MB11346E087A4DFCC5BDCCB10B486E92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <b496d933-3c57-4b02-ab65-0582a30939af@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 30/01/2025 11:33, Biju Das wrote:
-> Hi Daniel Lezcano,
-> 
->> -----Original Message-----
 
-[ ... ]
 
->>>> I've been through the driver before responding to this change. What
->>>> is the benefit of powering down / up (or clock off / on) the thermal
->>>> sensor when reading the temperature ?
->>>>
->>>> I can understand for disable / enable but I don't get for the
->>>> classic usage where a governor will be reading the temperature regularly.
->>>
->>> I tried to be as power saving as possible both at runtime and after
->>> the IP is not used anymore as the HW manual doesn't mentioned anything
->>> about accuracy or implications of disabling the IP clock at runtime.
->>> We use similar approach (of disabling clocks at runtime) for other IPs
->>> in the RZ/G3S SoC as well.
->>>
->>>>
->>>> Would the IP need some cycles to capture the temperature accurately
->>>> after the clock is enabled ?
->>>
->>> There is nothing about this mentioned about this in the HW manual of
->>> the RZ/G3S SoC. The only points mentioned are as described in the driver code:
->>> - wait at least 3us after each IIO channel read
->>> - wait at least 30us after enabling the sensor
->>> - wait at least 50us after setting OE bit in TSU_SM
->>>
->>> For this I chose to have it implemented as proposed.
+On 30.01.2025 19:24, Daniel Lezcano wrote:
+> On 30/01/2025 11:30, Claudiu Beznea wrote:
 >>
->> IMO, disabling/enabling the clock between two reads through the pm runtime may not be a good thing,
->> especially if the system enters a thermal situation where it has to mitigate.
+>>
+>> On 30.01.2025 12:07, Daniel Lezcano wrote:
+>>> On Thu, Jan 30, 2025 at 11:08:03AM +0200, Claudiu Beznea wrote:
+>>>> Hi, Daniel,
 > 
-> Just a question, You mean to avoid device destruction due to high temperature?? Assuming disabling the clk happens
-> when the temp reaches the boundary and re-enabling of the clk after a time(which involves monitoring the CLK ON
-> bit after enabling it, or a run time enable failure happens), where it exceeds the threshold??
+> [ ... ]
+> 
+>>>>> Would the IP need some cycles to capture the temperature accurately
+>>>>> after the
+>>>>> clock is enabled ?
+>>>>
+>>>> There is nothing about this mentioned about this in the HW manual of the
+>>>> RZ/G3S SoC. The only points mentioned are as described in the driver code:
+>>>> - wait at least 3us after each IIO channel read
+>>>> - wait at least 30us after enabling the sensor
+>>>> - wait at least 50us after setting OE bit in TSU_SM
+>>>>
+>>>> For this I chose to have it implemented as proposed.
+>>>
+>>> IMO, disabling/enabling the clock between two reads through the pm
+>>> runtime may
+>>> not be a good thing, especially if the system enters a thermal situation
+>>> where
+>>> it has to mitigate.
+>>>
+>>> Without any testing capturing the temperatures and compare between the
+>>> always-on
+>>> and on/off, it is hard to say if it is true or not. Up to you to test
+>>> that or
+>>> not. If you think it is fine, then let's go with it.
+>>
+>> I tested it with and w/o the runtime PM and on/off support (so, everything
+>> ON from the probe) and the reported temperature values were similar.
+> 
+> 
+> Did you remove the roundup to 0.5°C ?
 
+No, the roundup was present in both tested versions.
 
-Well, I have some comments with the device tree thermal configuration 
-which may answer your question but I'll wait for Claudiu to check the 
-temperature read comparison without rounding to 0.5°C
+Thank you,
+Claudiu
 
-What I meant is if the temperature read is inaccurate, the mitigation 
-will be inaccurate too. It may not reach the critical temperature but it 
-is possible the performance could be impacted negatively under thermal 
-stress.
+> 
+> 
 
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
