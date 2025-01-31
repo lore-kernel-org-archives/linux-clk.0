@@ -1,304 +1,202 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2118.outbound.protection.outlook.com [40.107.215.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9361B4146
-	for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2025 23:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738278989; cv=none; b=DVhq/yObqiclGQLQA512YBxVSSPcwC/XvBLHNsmqrgafNjF4/+Zy4Bi7HInHLRXvW5uK0ipo8HzQ24zUkmpfa8YuXf2xVxVxAbDqxbQhs2Dg/6ToH7wLppKAgEILoYCwGaOWeP2uasOlxSVejKFQKEHq5Lvnyk6bxjogifThhgE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738278989; c=relaxed/simple;
-	bh=TGahVvidfwxP6TepVdPQTcGpGmgLsnQxPjpRz+CZAFc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h2M40MR/O3Fvh6jkTl9irQ6uSI2uq99IltvHth4Sv/3WqipfD2ej3ZTuIjBWwQw25icr6hfaIXdJZiSk+Go2cd26+ZGA1OyE+wJruXc2rhVDOzO3fRohlYqJihG2q7pgRBVvn15ccepm3FGVzw7/YybT91omm96Cl/Gcx8FnAww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=MLjAIdE0; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C383328EC;
+	Fri, 31 Jan 2025 03:51:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.118
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738295486; cv=fail; b=E7G6yuUkUTK3M8VDci/JAKQiXibXPlb5dNKBt4R29aLYGVkoJu7CGY+3cxt7R1SSTA+IYQ51tdmZTY/zaf0qfXwR37j+MR4cemMDo7yjvFfygoBH+4fZU3XzjP4pOx5BiWSKsIP/+4c3emADjWycDaKQ3QOzL4dWVmkhzwzSEYU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738295486; c=relaxed/simple;
+	bh=U33jYAcVacAA4lASJW+1OjO0yYPHmXnlO3zb1cOxpXE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Qkl7LaaZ66C9S14NRms9WCTBIDX1kmmCjhYHLGXh+MaqJFn26CfOejjSfvH0022bFbiwKKr/dgcY+xnLtNulUSh0El/T3AbMEbNxUcgspKaiO3rq9MUEmNTwrvINDOmcayo0M92eoLLb1S3Ogtxe9h92oclIafOuBeEPmJkH+g0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=ewBVehg3; arc=fail smtp.client-ip=40.107.215.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MLjAIdE0"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43626213fffso16286665e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2025 15:16:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1738278984; x=1738883784; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kKipKjwmAYHSpItleSKPId0JyA0V7zJvz2+mQe2PcFk=;
-        b=MLjAIdE0bylsUNSGJSESLj3wBUGEji1zgn06/qPyMPOCUntKk8Od+sUK5F/IZ60XV7
-         BLDOTLmOuyaZLrkt8eTQfNk+WpMLz6cOvZ+NlJEKBFmNye2XK9F7FQweTOiz4pOFnJ+O
-         839VJxQ0VVOR4nkcmzPdAbk+PVqi/8GG/lHrwBHADWjE42LwI42Vd/e88qyDhPykm03t
-         F1xoLOr5Wa+FXDhBUOfK9dgZPM5de2VzjyHsastItVpeUXw8UYdTEwqqpFH5t1158yD+
-         9Dfb8ZNxrjqaxvgTYELht8Bpu+B2JhR3sNIYgH335q9pxbvfaK4MUM1bCJu6ua/p5IEW
-         RwDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738278984; x=1738883784;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKipKjwmAYHSpItleSKPId0JyA0V7zJvz2+mQe2PcFk=;
-        b=PJikK1qQscxUl2PObq0bdWNGTJ5NtryaM2m2gMV5ywc6R0LRxSaQONoO0Tyl/AKT6+
-         ecD4moCWLibYgKJ3hrixo1H3gmRhlHuLs/1DcDb9MZ0AhS3XJ+YpHIh/xvNlfkwGUudt
-         rP8uUVJ1Rew0sNLBuwp3BtYhQ/58l57MueqpNlIYkODCHkfbF+ltPmzf7x22xuQdPtZF
-         0IDjHegZXpDltVqNs5ERfgWmucZdKDEmLDnYrjqZaoK3VAR/3UsY6O7Xz5H2NixVMNBk
-         lbfDuT57msKumCPP5UQypqglAUsXQfzf/WYRxY68NcCFq+K1pSVXFAXFs/It8J6hPCzH
-         HKHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFvn0DyYZAM84hXzPfgW3o/M5zVKhgD8DzYooZST3IwRU2+0/Izhju0acll+gch9r/JNE/mY+lDjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFW3A8iGt3kfiAngc5JwQ/HfwB2+H8a+dYGq8jCL4d7Xv+540B
-	HPt1b/2+LS+WP7BIVSSJFofNtA3E6bEKXnTe3HAWKDEK1XtOnC2xjgTp0KrQYQY=
-X-Gm-Gg: ASbGncs7pSSGUXB8/Bib8hG8+6FOxNk9afu9jM7x5MTaoisETlGBBKoW/7+avyyXGlU
-	wQ6sgxvcqflLT0trulpcYzp5F+G0H0mIK8KwWTP0gdflvTb3xt5ga/9RkUvy5HS52JmJR8PKSDM
-	yE0kLWOVQrr9vUcSm/hx5VGB5/4BQy60R50JI75LXVHEt4bwuJvEbnmVtpekSF5BIwD1fwTVwAB
-	l2kGQoz0vUTAk/brjJjeHzIyVGlHigKi9DxB3NG+rf3zMlzfrpUR/EfP/6YC83Dglt8YOGL+4DI
-	1NyrSzDbwFc/iGcWwwhz1fKG
-X-Google-Smtp-Source: AGHT+IFcX0KAMJy9mDTmsmnBGbqaMI8pUxKSFAWR413yvxqX324Lhy/8MDI3PwdZ8Dx+waNguOL2CQ==
-X-Received: by 2002:a05:600c:3b83:b0:436:e3ea:64dd with SMTP id 5b1f17b1804b1-438e6eff1fbmr11181485e9.11.1738278984176;
-        Thu, 30 Jan 2025 15:16:24 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.173])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c5c0ecc80sm3263917f8f.16.2025.01.30.15.16.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jan 2025 15:16:23 -0800 (PST)
-Message-ID: <e7374f91-a65d-4882-8a9b-de478582e09e@tuxon.dev>
-Date: Fri, 31 Jan 2025 01:16:21 +0200
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="ewBVehg3"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G6zDU++KuQsoE20u8AsA+009BqEZF8mxkQNcT1Go/emZTIbP6SN0I15X9XG1kx/qhqzyAjNDR4inMPKV346brmbeRqc0K64mvNeJFYhAUmnKyIJ9pAYo8ZKBzKIyYDJuYKyfAMu1lp7woPBZGHUJGlUME1nixzyGrepjFI4c6BZeTLnGTXMibfIcAFBRg++hsaVPtxe1rhBuHr9bBD+PC8U9tJfQT2vPSCR6tTCr70o6D3+TGLtLxyRfWbpGseGSM4R4sej8fuok8ETJeVXm1zg6idWgDNviSJ5IhhpasuddK+yoOXWII0J9gcZQQc/v4TjKhlYFOA6CXDzhLBNv/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U33jYAcVacAA4lASJW+1OjO0yYPHmXnlO3zb1cOxpXE=;
+ b=ouWw57lWajNHw2au0MI//nAG/Fb2yPddb5J1S2TGLiEhbTTazRGmCeYjLQwBSZxwUATQpKZkAJeBSchZPGP+Bn2WLwz9v3ufM7Sk6ZNYhCxyFIAFP5WlxktQAOXWrCCz8DxfyDfSeGqACBx0bVoS4IIYkr9Qku/pEj0octmAIrb/uI3Wu2vOuD+t87LB1worwRuW/RLiPs7sz2Prtidx6PNkBty8P/nmFWKD/205FD27QVIm8I+08kt7YKYWOumaLdPAj4c6PbI4V+ynu6mN+Da77kjR13+0ro06Qqlxki8zmYRhPN/ZI0NomOB41d03j/7k6LvgZXs/rCQvYxHkJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U33jYAcVacAA4lASJW+1OjO0yYPHmXnlO3zb1cOxpXE=;
+ b=ewBVehg3Gxo6udpFHmm4VlGJ/IoMsgn7WQqqkUiAD2f06EQPtg3Kz9QDX3Cofv7m4M9M7pnvMJBd/NSjXq2KPTYBslVjpOZw0i0a/izjOnUyPsCkx5vr2CllI26RcJPYlV17iieBmLgFZIb5V5CS+mzo7pBzSgCHtPL1UGqexjlC4U5I3Xqyuu7+DvRJAP6tou2jEQRu4urxQ5WfJowA2Hl6F3ya2nqvHVxjmY66Uy5H2TwYdpBHbb3Vi/gNpcXNMLpJLgsNzCtRp6XwtFOd3zAOQtRXat7zKZ/nNC4pFdRMgEWgx5iSxz09I2CU9fZXzyqUaOUOFF7ucO0fpm+Bow==
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com (2603:1096:604:2b1::11)
+ by JH0PR06MB7177.apcprd06.prod.outlook.com (2603:1096:990:9b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.14; Fri, 31 Jan
+ 2025 03:51:16 +0000
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11]) by OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11%4]) with mapi id 15.20.8398.014; Fri, 31 Jan 2025
+ 03:51:16 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Lee Jones <lee@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "joel@jms.id.au" <joel@jms.id.au>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
+	<sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "dmitry.baryshkov@linaro.org"
+	<dmitry.baryshkov@linaro.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: RE: (subset) [PATCH v6 1/3] dt-bindings: mfd: aspeed: support for
+ AST2700
+Thread-Topic: (subset) [PATCH v6 1/3] dt-bindings: mfd: aspeed: support for
+ AST2700
+Thread-Index: AQHbJSo35P/BmRLgIU6SdF4s0TdcdrKip1gAgI4zhZA=
+Date: Fri, 31 Jan 2025 03:51:15 +0000
+Message-ID:
+ <OS8PR06MB75417CF1E84556D1492EADF4F2E82@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20241023090153.1395220-1-ryan_chen@aspeedtech.com>
+ <20241023090153.1395220-2-ryan_chen@aspeedtech.com>
+ <173047754439.1930424.6922132618537420144.b4-ty@kernel.org>
+In-Reply-To: <173047754439.1930424.6922132618537420144.b4-ty@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS8PR06MB7541:EE_|JH0PR06MB7177:EE_
+x-ms-office365-filtering-correlation-id: 871d53a7-6a23-4f02-f7cc-08dd41aa8357
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020|7053199007|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?L2M1SnFKMENSeWJiUzljWTVhUzRUaW5HR0hCOUxWM3dwOVdteERQVWw5Y3RN?=
+ =?utf-8?B?QXVISHZJd29VbmJ4bU9DZitXeit1ZnhjWVEydG1NNHhLUDVVMjlyMHVBaXla?=
+ =?utf-8?B?Y0plMDVma1J2bXhRYU9UTm45cHNlR3pLb1hxWDVuMWhReVBwWmZMZVpmRlpy?=
+ =?utf-8?B?enJVaExER01iOVNGU3dKT1A2Tmxna21pWjRqcE55eUJ5NUVXMkFBQUFhSVJn?=
+ =?utf-8?B?V0p5T2hOZWxzWE5EYWhGUkRMQVhKVERwMTh3TFNLaFlNRWJPUGRJa04yVUU1?=
+ =?utf-8?B?SXE5Q0RqVVdWNTA0cHZneTUwT2YrV2JwUXF1K1p2S1VKMEdWVkp1ZDJndFpE?=
+ =?utf-8?B?S1dIL0g1K2lzOFhrZHhCWUVaSVZldXNzVVFVMlJKa0FFU3Vpek80VXVzY3V4?=
+ =?utf-8?B?ZVhXcGlEdU9OMkduS1lTL2dEbnBYRllocEliV2FZd3l4SEpJQWFxTzJocXND?=
+ =?utf-8?B?bk55T2RiY1Jxd1dYT09ldGlzUnZ1YnhHSVRwR0swSkhYZHFaeEgySStIRFlp?=
+ =?utf-8?B?eXBXRmJ3bks3SS9WTlJQM3hUMVNoeXhMSWJnNDBNc3RJRG5ZT29QQVpzbllZ?=
+ =?utf-8?B?aSsvZFM4L3BldFhENjAveGFZQTlqSjBFR3VrVndMMFU0UkE2bDlidnllY1Bl?=
+ =?utf-8?B?dDEzVFVRRmFYMGVqdmRTRHJ1Y2VjZTAwSjdKVDMweXZOZWlrbmFPamxsb3hR?=
+ =?utf-8?B?VzRFalArZk1ZNUFrWnVQajNQK0o0TTZObzAwc1FoWnFVUkh2VWk2NGw4b1pW?=
+ =?utf-8?B?dlp0cDJyZEQ4MktTTmprMHFXTFRRS3hDRGQ5akFTdG9qTTFSYkhUcVVlbUhM?=
+ =?utf-8?B?WUhIVldPMktFek1lZEIxd0crUmJ1dVF1S3dQODdXbTRjMXZYLzBlemF4VFUv?=
+ =?utf-8?B?TlBrUFNjQ3RPWm5OczFMRWJTU1VjaEgwVSt1SUQ4LzlxbW4vcUwrRm5iZFdq?=
+ =?utf-8?B?K2Y2TEVZN2RkWmtvTE5haWtOZXZkcWJ4dzVsMFBRVmxwbElzMWNHNmJYYjUw?=
+ =?utf-8?B?cUs1OStnb1VGZzRUWjRhMmp3NE9RRVVZSnE5RGkrbmkrUWhzVzd5dkdxQ2pH?=
+ =?utf-8?B?TXVOdGJiUVQxT2hTejFGMVcybnFpUmQwandJTGIweWpyWU1OMGQ5RVN1Znk4?=
+ =?utf-8?B?SmcrVVZXSkFselV0QUsrbXhmSU5yNzVaQnV4WnZIOE83NXEzRzJsQ2hNYk5q?=
+ =?utf-8?B?RWRQR1pRUVdiYURUUWpWTkZ3bHlaMTl3Q2k2OTkzZkNUMkxTdklVVkdmWDIv?=
+ =?utf-8?B?NjB0a0l5ajZuamRtdm1hYUsrRWhtdFhwRlRzd015eVlQaXRSWmhNNys5amZQ?=
+ =?utf-8?B?TmkwUjh5emtsck5HQS9yeXpkNWMrMjBYWExST2tkQTlHVHF1dGszdktUMmxJ?=
+ =?utf-8?B?U2picnFtNmpHWGV3YXllZTVjclVOckptZXhGcTZVRk9jM2Nad3pVbE45anF3?=
+ =?utf-8?B?VW5sMWs1RzdVWktuc3dJS09GNlFkbFlPdjJyS0hEcUhGYWovTXBXQnlzbHpw?=
+ =?utf-8?B?VW5YZnlIU3B4WFdxS21qUk53M3NBMGdVRDJLMnVyRVIxeGg5aEduL3NOVmk3?=
+ =?utf-8?B?Rzh4L01IZDAwTmk3aFA4NityTFFNQmJNeUFNRHpLSUQrTnVlMHRhRkFmOWdi?=
+ =?utf-8?B?N2swR3NBVkRiS3pEWmxvZHRKTmpxbHkvN1VpYm9VY0hhVlA2MFprdU9BNjgy?=
+ =?utf-8?B?UDNCZ292eSsrWnhqWlI1di9EcEc3N1N3YW53ODZtQVZuMUg1N0IzRkdsM1dW?=
+ =?utf-8?B?NzNwUUlXTzgzSS9MWDlRMDJFU3BhZml6c2EwbkwrdkRJSkV6Uzg2NDVvSVNM?=
+ =?utf-8?B?a21xYTMxb05vb0xaV3ZaUm9XTTNZdXV0Y2RmLytsUER3RXp1U3ZkZWZKWWMx?=
+ =?utf-8?B?MDlYdkdqSnV1M2tJZk9sK0JhaHBZSlMrcXJ1ZXZ2UENYTjFvK2NqTTdVdnJF?=
+ =?utf-8?B?ak5SelFPb25ScHYva2p1T0VkTmNhTlNwRW9NUzl4dklRem9CQVJOQWxKRXNw?=
+ =?utf-8?B?KytORFM5N0JnPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR06MB7541.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020)(7053199007)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?TG8vT1RWVjl0SCtBa1p6RGFaOWRzK1RKMXpOY3hCTXhSZ0R2TStZZVo3UVkw?=
+ =?utf-8?B?cHlsbUpxbFZoQUVBdmpvSFIxSCswdk9oSXhqNWEwaXVONFNQSHg3c1YxNG9i?=
+ =?utf-8?B?YWFRSHJkZldVbkJhMU42OGJkQjBGYTE4UTk2SU9ZZ3RvQjE5WGhWOHQrWnJw?=
+ =?utf-8?B?OXVscTNnSVc1ZWpLU014Y0JKYnVNU0NLZE1lN2E3WlhNTTdWYmNvK3E2ZjR5?=
+ =?utf-8?B?RjdheStoS1RSdnM2Sk1McW82RmpoR09lUUI5WU9vOXF0a216SkVES29ob3Vr?=
+ =?utf-8?B?UURpN0hGcFhlWWFZcGFPWStTS3lGVGExU2Fob2hNWFRBbXRIL0FWNnQ5bUZn?=
+ =?utf-8?B?bkl1VXZhNTlLWm9CVFBxbjBtaHdrREl3a05NTUFlR0lzd2JJUXJIREtlTVRs?=
+ =?utf-8?B?MHFxeldlaVhKc0pPWWRweVhyOGhKM1lZaE1XbFlNSkF4clI1SG9WeTJLdDh5?=
+ =?utf-8?B?K3VsVGlzWDdHaFlFV0dpZy9SUjdnWElyTEZIUWhoMHFwZzZHeFUyTnhic2Z0?=
+ =?utf-8?B?NzUvN0RxUUNhaDM4cDltMVVOZVJkSExyamk1T2R6UmcrVU1uWXZoNmVMZG1Q?=
+ =?utf-8?B?OTlCbWdEU0YyKzdFNENTSTZpSTRscjc4S1l0U0Y0RThvYTdWUHZ4cHIvcElP?=
+ =?utf-8?B?RmcyQlFwenkyeXhWOS8xUkRsSGpob2ZZeG9MamhMTE1Oeis2L0NkV2h4RW00?=
+ =?utf-8?B?RytMRkZYcHBjYjk4S0R1VzVXOU0yUmdiZWlnRkpnaE05VU1jQzdFN240VnZG?=
+ =?utf-8?B?TVJBbTBGa2x1bnd2b3V0aS9Sa052c1J2VHdjMW5IL2Y4eHh6K2VQeXBXMmlM?=
+ =?utf-8?B?TWdQY25YVXc2SVZqQUdwa0hmN3JVSkxPQzAxMVp6aGY5RHdraDhZWVNzK2R4?=
+ =?utf-8?B?U1NrNjR1SGdHQ2x4ZFkrcXB6VFdnTWc3Q0JhTXRjWGpsbkhNZTF6Y3l5UjFs?=
+ =?utf-8?B?Wlp2OFJ2M25LamNuMzRqcmRDd1B1NFNub3NvUjNpenVKanljNjE5SzJaWnVn?=
+ =?utf-8?B?N0xBaUYyQ3JOb2RmR3doTWxBYUl3bE1WWE9sSVpvbDIzelJrY3VsS0paQy9O?=
+ =?utf-8?B?NnFaUi9jSkUybnhmcUhOT1NGUXJ3SXE3QzZGbXVoZW9ua2NRMDBDZ2VVMWM5?=
+ =?utf-8?B?T204amJsbEtMS0R5NHFxckIzK0tnMEVjc05HVUhNUkEreWY5Vk50MDlXT3hj?=
+ =?utf-8?B?Z0UzOStBUXRqZjVlTFA1N3FXb2N3dXRjQklsRW9QY2JEbFF0aFNLYTVHeDZn?=
+ =?utf-8?B?UVJLeU9lTEpUWHBBZU9wQUtjL3EzYmJoN2o0ZFk1cVJFWnFVd2srd09pNGV5?=
+ =?utf-8?B?NEFVZnB5d1NOZis4YXJBRUhBQWJVTGZZNFBtNVZkOHppc0sxSGxWZUpXNEdm?=
+ =?utf-8?B?Z3FnZ0Y3V0lOM1JVNEt5Z0ZEVTVqdXl2R01vRmNhQ2VIUldBK0RYQzViMmZl?=
+ =?utf-8?B?UjhDcGpqejJRLzlweUF0U0JIWHVtN2VXQVB5TVVRaGlic1NhaUtKMmI2VGNq?=
+ =?utf-8?B?U3QvZTBWNHRyYi9yRUJnRGFmOGdMY3dUaDd4RkhwUndybElCQnN3c053U2JS?=
+ =?utf-8?B?VGIxM3QwS0x5U1E0R050UHJycGVaUDlTK3VhcmhJMjhFSW9WcUptaDV1TmFz?=
+ =?utf-8?B?U280YWEzTG96MUpLdUV1WVJ1NTBjR0s4a1A0RnYwWFU1UzV0SU9jeXhzUTNE?=
+ =?utf-8?B?MGp0Z0xVTHNlYlQ0dXVJRlJBK0laU1JSWStXUzdmMU83dWdQdzlObndNcWhN?=
+ =?utf-8?B?TVZpdFhGaEtpRjE2NzZzUURCeCsrdnBXdk03cjBpRnFRcTZqdUsvYU1xNGg2?=
+ =?utf-8?B?NERZanpHckk4SVp1VkNHeDRuQWdXSXhablNWWWdDaG1EME4xZGVjNVgydzJS?=
+ =?utf-8?B?cGxXTm90bk9ScGJuYTNBcDhsSGE3RmFYbFFjNE9LYXVOdEZFVFVPTmJUajhV?=
+ =?utf-8?B?SW9HRFNuYno4MzRSK3h1ck03R0JaVzVHT0kzRTZXVmFRQk1yaDh1OUkyYlBm?=
+ =?utf-8?B?Zm1GZUFjRTR5Y1BzZk9iaitGUGRFUC9BWXo0WHdLR1ErT281WTE1S3BLTTJk?=
+ =?utf-8?B?NFExMC8xTWUweVpuT01VRmt5NWEyTUxkZTJnNnN4VTZMQ3N3RDVNc2dsZStp?=
+ =?utf-8?Q?IKSqXxildCsEeT4flLuNqvvk2?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] thermal: of: Export non-devres helper to
- register/unregister thermal zone
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: rafael@kernel.org, rui.zhang@intel.com, lukasz.luba@arm.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de, ulf.hansson@linaro.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
- <20250103163805.1775705-3-claudiu.beznea.uj@bp.renesas.com>
- <Z5pkUNNvsWPjRQvy@mai.linaro.org>
- <65a16c3f-456e-40ec-91b0-afb57269ed46@tuxon.dev>
- <Z5tPR_tv7vWDkUI7@mai.linaro.org>
- <6ed7d545-82d7-4bca-95ec-95447586bb58@tuxon.dev>
- <b496d933-3c57-4b02-ab65-0582a30939af@linaro.org>
- <98ddf1b6-1804-4116-b4e2-f54a62c27966@tuxon.dev>
- <7d1bf72b-183a-429d-9a0c-10e1936a9abe@linaro.org>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <7d1bf72b-183a-429d-9a0c-10e1936a9abe@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS8PR06MB7541.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 871d53a7-6a23-4f02-f7cc-08dd41aa8357
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2025 03:51:16.0025
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /GrjuQzA3XjkX4agVbhVDaGI9xaKA4sTeR4eZfJD1WLj6CtF9Vqx4Jj8HM8Ld6WNzfgdyElWH2GWXwTyLudMtjEAuRco54TAWehlUvoFEsk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7177
 
-Hi, Daniel,
-
-On 31.01.2025 00:33, Daniel Lezcano wrote:
-> On 30/01/2025 21:53, Claudiu Beznea wrote:
->> Hi, Daniel,
->>
->> On 30.01.2025 19:24, Daniel Lezcano wrote:
->>> On 30/01/2025 11:30, Claudiu Beznea wrote:
->>>>
->>>>
->>>> On 30.01.2025 12:07, Daniel Lezcano wrote:
->>>>> On Thu, Jan 30, 2025 at 11:08:03AM +0200, Claudiu Beznea wrote:
->>>>>> Hi, Daniel,
->>>
->>> [ ... ]
->>>
->>>>>>> Would the IP need some cycles to capture the temperature accurately
->>>>>>> after the
->>>>>>> clock is enabled ?
->>>>>>
->>>>>> There is nothing about this mentioned about this in the HW manual of the
->>>>>> RZ/G3S SoC. The only points mentioned are as described in the driver
->>>>>> code:
->>>>>> - wait at least 3us after each IIO channel read
->>>>>> - wait at least 30us after enabling the sensor
->>>>>> - wait at least 50us after setting OE bit in TSU_SM
->>>>>>
->>>>>> For this I chose to have it implemented as proposed.
->>>>>
->>>>> IMO, disabling/enabling the clock between two reads through the pm
->>>>> runtime may
->>>>> not be a good thing, especially if the system enters a thermal situation
->>>>> where
->>>>> it has to mitigate.
->>>>>
->>>>> Without any testing capturing the temperatures and compare between the
->>>>> always-on
->>>>> and on/off, it is hard to say if it is true or not. Up to you to test
->>>>> that or
->>>>> not. If you think it is fine, then let's go with it.
->>>>
->>>> I tested it with and w/o the runtime PM and on/off support (so, everything
->>>> ON from the probe) and the reported temperature values were similar.
->>>
->>>
->>> Did you remove the roundup to 0.5°C ?
->>
->> I did the testing as suggested and, this time, collected results and
->> compared side by side. I read the temperature for 10 minutes, 60 seconds
->> after the Linux prompt showed up. There is, indeed, a slight difference b/w
->> the 2 cases.
->>
->> When the runtime PM doesn't touch the clocks on read the reported
->> temperature varies b/w 53-54 degrees while when the runtime PM
->> enables/disables the clocks a single read reported 55 degrees, the rest
->> reported 54 degrees.
->>
->> I plotted the results side by side here:
->> https://i2.paste.pics/f07eaeddc2ccc3c6695fe5056b52f4a2.png?
->> trs=0a0eaab99bb59ebcb10051eb298f437c7cd50c16437a87392aebc16cd9013e18&rand=vWXm2VTrbt
->>
->> Please let me know how do you consider it.
-> 
-
-After sending this to you I figured it out that precision is lost somewhere
-so I re-tested it with the following diff (multiplied parts of the equation
-with 1000):
-
-diff --git a/drivers/thermal/renesas/rzg3s_thermal.c
-b/drivers/thermal/renesas/rzg3s_thermal.c
-index 6719f9ca05eb..84e18ff69d7c 100644
---- a/drivers/thermal/renesas/rzg3s_thermal.c
-+++ b/drivers/thermal/renesas/rzg3s_thermal.c
-@@ -83,7 +83,7 @@ static int rzg3s_thermal_get_temp(struct
-thermal_zone_device *tz, int *temp)
-        }
-
-        ret = 0;
--       ts_code_ave = DIV_ROUND_CLOSEST(ts_code_ave, TSU_READ_STEPS);
-+       ts_code_ave = DIV_ROUND_CLOSEST(MCELSIUS(ts_code_ave), TSU_READ_STEPS);
-
-        /*
-         * According to the HW manual (section 40.4.4 Procedure for
-Measuring the Temperature)
-@@ -91,11 +91,8 @@ static int rzg3s_thermal_get_temp(struct
-thermal_zone_device *tz, int *temp)
-         *
-         * Tj = (ts_code_ave - priv->calib0) * 165 / (priv->calib0 -
-priv->calib1) - 40
-         */
--       *temp = DIV_ROUND_CLOSEST((ts_code_ave - priv->calib1) * 165,
--                                 (priv->calib0 - priv->calib1)) - 40;
--
--       /* Report it in mili degrees Celsius and round it up to 0.5 degrees
-Celsius. */
--       *temp = roundup(MCELSIUS(*temp), 500);
-+       *temp = DIV_ROUND_CLOSEST((u64)(ts_code_ave -
-MCELSIUS(priv->calib1)) * MCELSIUS(165),
-+                                 MCELSIUS(priv->calib0 - priv->calib1)) -
-MCELSIUS(40);
-
- rpm_put:
-        pm_runtime_mark_last_busy(dev);
-
-With this, the results seems similar b/w runtime PM and no runtime PM cases.
-
-The tests were executed after the board was off for few hours. The
-first test was with runtime PM suspend/resume on each read. Then the board
-was rebooted and re-run the test w/o runtime PM suspend/resume on reads.
-
-Figure with results is here:
-https://i2.paste.pics/5f353a4f04b07b4bead3086624aba23f.png?trs=0a0eaab99bb59ebcb10051eb298f437c7cd50c16437a87392aebc16cd9013e18&rand=5n34QNjWID
-
-
-> Thanks for taking the time to provide a figure
-> 
-> Testing thermal can be painful because it should be done under certain
-> conditions.
-> 
-> I guess there was no particular work load on the system when running the
-> tests.
-
-No load, indeed.
-
-> 
-> At the first glance, it seems, without the pm runtime, the measurement is
-> more precise as it catches more thermal changes. But the test does not give
-> information about the thermal behavior under stress. And one second
-> sampling is too long to really figure it out.
-> 
-> In the kernel source tree, there is a tool to read the temperature in an
-> optimized manner, you may want to use it to read the temperature at a
-> higher rate. It is located in tools/thermal/thermometer
-> 
-> Compiling is a bit fuzzy ATM, so until it is fixed, here are the steps:
-> 
-> (you should install libconfig-dev and libnl-3-dev packages).
-> 
-> cd $LINUX_DIR/tools/thermal/lib
-> make
-> LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LINUX_DIR/tools/thermal/lib
-> 
-> cd $LINUX_DIR/tools
-> make thermometer
-> 
-> 
-> 
-> Then change directory:
-> 
-> cd $LINUX_DIR/tools/thermal/thermometer
-> 
-> 
-> Run the tool:
-> 
-> ./thermometer -o out -c t.conf -l DEBUG -- <my_command>
-> 
-> 
-> The content of the configuration file t.conf is:
-> 
-> thermal-zones = (
->           {    name = "cpu[0_9].*-thermal";
->         polling = 100; }
->       )
-> 
-> All the captured data will be in the 'out' directory
-> 
-> For 'my_command', I suggest to use a script containing:
-> 
-> sleep 10; dhrystone -t 1 -r 120; sleep 10
-> 
-> If you need the dhrystone binary, let me know.
-> 
-> The thermal zone device tree configuration should be changed to use a 65°C
-> passive trip point instead of 100°C (and the kernel setup with the step
-> wise governor as default).
-> 
-> The resulting figure from the temperature should show a flat temperature
-> figure during 10 seconds, then the temperature increasing until reaching
-> the temperature threshold of 65°C, the temperature stabilizing around it,
-> then followed by a temperature decreasing when the test finishes.
-> 
-> If the temperature does not reach the limit, decrease the trip point
-> temperature or increase the dhrystone duration (the -r 120 option)
-> 
-> At this point, you should the test with and without pm runtime but in order
-> to have consistent results, you should wait ~20 minutes between two tests.
-> 
-> The shape of the figures will give the immediate information about how the
-> mitigation vs thermal sensor vs cooling device behave.
-> 
-> Additionally, you can enable the thermal DEBUGFS option and add the
-> collected information statistics from /sys/kernel/debug/thermal/*** in the
-> results.
-> 
-> 
-> Hope that helps
-
-Thank you for all these details. I'll have a look on it but starting with
-Monday as I won't have access to setup in the following days.
-
-Thank you,
-Claudiu
-
-> 
-> 
-> 
-> 
-> 
-> 
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBMZWUgSm9uZXMgPGxlZUBrZXJu
+ZWwub3JnPg0KPiBTZW50OiBTYXR1cmRheSwgTm92ZW1iZXIgMiwgMjAyNCAxMjoxMiBBTQ0KPiBU
+bzogbGVlQGtlcm5lbC5vcmc7IHJvYmhAa2VybmVsLm9yZzsga3J6aytkdEBrZXJuZWwub3JnOw0K
+PiBjb25vcitkdEBrZXJuZWwub3JnOyBqb2VsQGptcy5pZC5hdTsgYW5kcmV3QGNvZGVjb25zdHJ1
+Y3QuY29tLmF1Ow0KPiBtdHVycXVldHRlQGJheWxpYnJlLmNvbTsgc2JveWRAa2VybmVsLm9yZzsg
+cC56YWJlbEBwZW5ndXRyb25peC5kZTsNCj4gZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxp
+bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbGludXgtYXNwZWVkQGxpc3Rz
+Lm96bGFicy5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWNsa0B2
+Z2VyLmtlcm5lbC5vcmc7IGRtaXRyeS5iYXJ5c2hrb3ZAbGluYXJvLm9yZzsgUnlhbiBDaGVuDQo+
+IDxyeWFuX2NoZW5AYXNwZWVkdGVjaC5jb20+DQo+IENjOiBLcnp5c3p0b2YgS296bG93c2tpIDxr
+cnprQGtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6IFJlOiAoc3Vic2V0KSBbUEFUQ0ggdjYgMS8zXSBk
+dC1iaW5kaW5nczogbWZkOiBhc3BlZWQ6IHN1cHBvcnQgZm9yDQo+IEFTVDI3MDANCj4gDQo+IE9u
+IFdlZCwgMjMgT2N0IDIwMjQgMTc6MDE6NTEgKzA4MDAsIFJ5YW4gQ2hlbiB3cm90ZToNCj4gPiBB
+ZGQgcmVzZXQsIGNsayBkdCBiaW5kaW5ncyBoZWFkZXJzLCBhbmQgdXBkYXRlIGNvbXBhdGlibGUg
+c3VwcG9ydCBmb3INCj4gPiBBU1QyNzAwIGNsaywgc2lsaWNvbi1pZCBpbiB5YW1sLg0KPiA+DQo+
+ID4NCj4gDQo+IEFwcGxpZWQsIHRoYW5rcyENCj4gDQo+IFsxLzNdIGR0LWJpbmRpbmdzOiBtZmQ6
+IGFzcGVlZDogc3VwcG9ydCBmb3IgQVNUMjcwMA0KPiAgICAgICBjb21taXQ6IDc2YzYyMTdjMzEy
+NjZlODAwYjY3YTQ3NmJiYTU5ZGZlYjk4NThhOTANCj4gDQo+IC0tDQo+IExlZSBKb25lcyBb5p2O
+55C85pavXQ0KDQpIZWxsbywNClNpbmNlIHRoaXMgcGF0Y2ggaGF2ZSBiZWVuIGFwcGxpZWQsIGlm
+IEkgc3RpbGwgd2FudCBtb2RpZnkgSSB3aWxsIGRvIHRoZSByZWJhc2UgYW5kIHN0aWxsIHBhdGNo
+IGJhc2Ugb24gdGhpcy4NCkFtIEkgcmlnaHQ/DQoNCkZvciBleGFtcGxlIEkgd2FudCB0byBtb2Rp
+ZnkgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9hc3BlZWQsYXN0MjcwMC1zY3UuaA0KSSBzZW5k
+IHRoZSBwYXRjaHY4IFsxLzNdIHBhdGNoIGZvciBhc3BlZWQsYXN0MjcwMC1zY3UuaA0KT3RoZXJz
+IFsyLzNdLCBbMy8zXSBzdGlsbCBwcm9ncmVzcywgYW0gSSByaWdodD8NCg0KT3IgSSBzaG91bGQg
+Z28gZm9yIG5ldyBwYXRjaCBzZXJpZXM/DQoNClJ5YW4NCg==
