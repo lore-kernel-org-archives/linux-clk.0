@@ -1,126 +1,156 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03031D7E57;
-	Sun,  2 Feb 2025 14:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB10E1FBCB6;
+	Sun,  2 Feb 2025 17:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738507119; cv=none; b=SgAXcaJocbZKbx85MAAEKeKz0FWwhDZhsqMTad//LSLyKuKCkjxLhtvjzzeZ39XvjYhXVsL3hmME7kBfrrM2SRJ3x4eVJdfg/Dvhrz1TjKtlGotG9jOajkZEoZ78prcC6+wQ5A19R8vbfG/asJD5p1s5k1gIq8XMC3Gxi+VOl88=
+	t=1738518839; cv=none; b=ub+LKxdT6Nd/MharsksR5NA1OGvoK75GP6nzkMfqW983mmRZ2L0AewqU6R2H5AAyc1HrDPptuLXxDVsn5N9R9skGp4ykcUs25BXo2IWnOh7ibFC+xZonXxSDqirdj4xL11qldi2HCVlSO+ybIypRv3f3/So90KvAJ2DQ1rvdB6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738507119; c=relaxed/simple;
-	bh=VC3TvpTS3OgA37PYjJzVzTBE9twfsQyPycmL+dK3wBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GKdxNFHGJ/l43t87FrMMKRt0s5bVBSdU5xVkm0xM0bkqh175Cd6G1Tnz3PIDxHVqkjjjs/LUobni663iSjTBBD17lvPaRPe6Sg6Uns4irmMSjKkOhIlxJfW5ePfTqOwXLjwPvZXNfjHB6PlQp2rZuwpsVbrRVIzithm4iqdUXNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MRsQeMtS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738518839; c=relaxed/simple;
+	bh=wJ1UIWu8ialmyd9DgBW/S9FAV5r3Qu1m/hwmDc7n5FU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CbpdXPcWvjXpg4RCUFAdM6KwJmdJsdIAeOQ5A/ke+kaH5UetinyXcGz9lz2JsxvnYgOtsdxYGrV2bDnDyl1stgs46J2s6sU/LFH646AReX6hx3YlKUmDgyq98VILRSIp1GBjx/n4+dzOx6rSMQla+5Qqxaij+GCYzr3jfL+4V7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EL0EzNW3; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRsQeMtS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 259F0C4CED1;
-	Sun,  2 Feb 2025 14:38:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738507118;
-	bh=VC3TvpTS3OgA37PYjJzVzTBE9twfsQyPycmL+dK3wBA=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=MRsQeMtSY+inEX470+z190fXTmCy/XJsG9DcJGD9GGaXRAdKyo5aGjZg+Bvj6nx2y
-	 mFm4a0d5H6HlVKyMcBdHFcOjimNMZNMgHop2pBWrIAdGYalK8gv0mxzVUnSAi/2QEV
-	 sXpLxitPs4qTr129yOmb3/CwdHIsUaWlyOJLyDUySYvPDVbuMcqptZJhpl1W0JEw+5
-	 kr0yFrrUlehxg04AD29TB3GBc5d3BbV9f0wejwzZAtp3Yt2HLLB2O4u0q/Tlk1XtAH
-	 LoYPMyq/MmiI945iT5mmtJcg0DNOdUIz1ixwZSseZuYpAZWld1Ff2QM2LOxG/cMExC
-	 XBPhaMKS6Bcyw==
-Message-ID: <4e1c3a64-5c66-4312-b96a-334eac933684@kernel.org>
-Date: Sun, 2 Feb 2025 15:38:30 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EL0EzNW3"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6f6cb364c7fso17285577b3.3;
+        Sun, 02 Feb 2025 09:53:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738518835; x=1739123635; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bu/o5ZKE+DmrVvfqpvDfKwO+d8/POCqsIdA64ajmPWE=;
+        b=EL0EzNW3p/UPCWPz5ixqlfJGRdBUqpe0WKZhc7nXfdCL8/VqiPW6x9P4SiH1/QOZd0
+         FjJUaHs/RXXdgqfUZ2+Dj0MoNBpGRPht3vC6qkq/vDm+m9Rt8joSyh7lbIDn1ri0e6Zy
+         SZLnZ7yQIz06zgKYYfIfRSaIF9XeCqUgXal7tdaW9T/iD4UQSKDuBVftGrGToRg5YFwf
+         YsXoYFt8d+c6adfG9fmn8Le0OX2t1eiJIDoC8gpMT+6tsiyM0eNoURWxoe2XvN+NH+Yo
+         UQKS6W2PAWb2FSjrcWrNkP9wWJmQKLglJMoaIuAFKA+V3pqOIPvTtc25GlrtT4iWlZrr
+         W5kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738518835; x=1739123635;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bu/o5ZKE+DmrVvfqpvDfKwO+d8/POCqsIdA64ajmPWE=;
+        b=lFX9CW2Ej/CQ4fh6590qXQwVyC/60LbbjqztW2x0M/K1BcfCVcvAHVgp1jl2FMrt/Q
+         ogSWmE49G//JHtcblA4JZQVyBBlz/tuZw7Q34ZFwQc52dTTJ+a/8e2/We+NlVg/oatPU
+         ewXjt5h+mpme4wRnWSop0viOGmJMvnFugwQzb0HHXchrwJqQ9rqKrTEY3k+i7Oy2qDiU
+         4KBhEIQG+xrweB6ySe6c70cwJO/vZVcgHOzvzHFH2ZRLVayQlqZJAvXjmX6uZVDcMcoY
+         Tc/0kVohcBY8LjnND1vBoPov3Yl53Nh1jA85mwKXeZ2oSS1UFBQ8xdPLuvLLdmYJl3zO
+         kLlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAaajvYpz8GSj4uwIKIZ6e1iQmkQ4DNRARryjdFX2EF3QRBCoafBEi19HLPBsgZcIGWT2fCR/JEAZaNhYZ/SOoUzg=@vger.kernel.org, AJvYcCUyMLvJz0jFM+cf8vwi/Ol41pBzglnBX8qNf47Jxk3lq6xeFZsudL1z0kjiRZXMFEexC94plh4kX8UZtKOd@vger.kernel.org, AJvYcCUzR0qxnDRAKnfWoDtN3pgFAwaU2XDkKtOdkptEfnOK3Zxfjmg7q8Fk1bLDzpYJRBMRVrNM42XFwBtWaOg=@vger.kernel.org, AJvYcCWQA94JmZ+mXRYpsIgQUearpO9l6cc6scycTAVbiEEPTLjHaar4CO/GMPE2c0LDN0ehWF5Mqe5BBxNK@vger.kernel.org, AJvYcCWqO6+XOXU6i8QtuXaDUDaMEV4eG6QWJT5fIo6YnikOQw0l+hKh91OnZh0v9I/PeSk9EOzYYe45kVNepTAB@vger.kernel.org, AJvYcCX5/ErFzWLIR6q1Cab99QaEUsZ1gqJxQTJjIL/IzcgVE4zKIQq0tVyMaCGsZfTcUcFm9zOA4VXu9sTDzQ==@vger.kernel.org, AJvYcCXRJyy4eB36v/hQq2Jtg1D3kKuZ0NApl+flXdz52yJUYx1J12gZo+nmln1luDa4KrgLviVeAlssVy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzslZo50tx0HH7PMmBGlgNIgZUjRYuVbFvxRDcnrM0qDjfoIO9t
+	1nPsIS/WBc7/325FpDUdMFw2NqrAhkE6YfOZFPRpnrqUdKJXgEeq
+X-Gm-Gg: ASbGncszc/3FFpH4moRgk6T4zetiveR/EFL2cMbbjKDRjQ92BcpFy8KKKSX5BkbStDL
+	WCd3dz5r0jT9VIZM9kedqZFLY70sORczXebsKTxs4e+VqTY4B7Xpps+EJChlQg/VogIafUrI5N7
+	Fm/jmFsPPXSiuFfQ/UjNvOcNIwYVfWvbQY3J+XBHILjxwC93wIPbCh1YnpJZenG1i9eGlHBAsxF
+	sWKzSNKWf/LTQTsHDMWbIH4xR86BE7Swvqwp7hAky8nFk9S5Ypcvm+JkXFLyjy+0swxyFE84aKX
+	/3JOczHz7VpQRXZE3mTN8ZaaZFV7sO6QGUuf/cqZEcZeoIqQqVI=
+X-Google-Smtp-Source: AGHT+IHHQI3478HvRiKWIVLIdATv32EFyyXdDb7s9xEv/S/0xqBbGzFcSVKK2nIkOtoAuYeOo+6nPg==
+X-Received: by 2002:a05:690c:6e09:b0:6f5:4304:fdc with SMTP id 00721157ae682-6f7a832a301mr158970467b3.6.1738518835574;
+        Sun, 02 Feb 2025 09:53:55 -0800 (PST)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f8c465b884sm17908247b3.59.2025.02.02.09.53.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Feb 2025 09:53:55 -0800 (PST)
+Date: Sun, 2 Feb 2025 12:53:53 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+	qat-linux@intel.com, linux-gpio@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>
+Subject: Re: [PATCH treewide v2 1/3] bitfield: Add non-constant
+ field_{prep,get}() helpers
+Message-ID: <Z5-xMUqrDuaE8Eo_@thinkpad>
+References: <cover.1738329458.git.geert+renesas@glider.be>
+ <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
+ <e20a177a-30cd-4088-89e1-b479aba1356c@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
- apss clock controller
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Sricharan R <quic_srichara@quicinc.com>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
- rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20250127093128.2611247-1-quic_srichara@quicinc.com>
- <20250127093128.2611247-2-quic_srichara@quicinc.com>
- <0c26af56-ed7a-4de8-ac47-7447298b87f0@kernel.org>
- <ee608de8-ad3c-4cb4-994d-fc3cf930e29c@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ee608de8-ad3c-4cb4-994d-fc3cf930e29c@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e20a177a-30cd-4088-89e1-b479aba1356c@wanadoo.fr>
 
-On 01/02/2025 16:21, Konrad Dybcio wrote:
-> On 28.01.2025 8:34 AM, Krzysztof Kozlowski wrote:
->> On 27/01/2025 10:31, Sricharan R wrote:
->>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>>
->>> The CPU core in ipq5424 is clocked by a huayra PLL with RCG support.
->>> The RCG and PLL have a separate register space from the GCC.
->>> Also the L3 cache has a separate pll and needs to be scaled along
->>> with the CPU.
->>>
->>> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
->>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>
->> Considering that there were multiple conflicting patches coming from
->> Qualcomm around IPQ SoCs and that we are in the merge window, I will
->> skip this patch.
+On Sun, Feb 02, 2025 at 05:26:04PM +0900, Vincent Mailhol wrote:
+> On 31/01/2025 at 22:46, Geert Uytterhoeven wrote:
+> > The existing FIELD_{GET,PREP}() macros are limited to compile-time
+> > constants.  However, it is very common to prepare or extract bitfield
+> > elements where the bitfield mask is not a compile-time constant.
 > 
-> I think you confused this with something else, I don't see any other IPQ
-> clock patches
+> Why is it that the existing FIELD_{GET,PREP}() macros must be limited to
+> compile time constants?
 
-The conflicts were not about clocks, but I just don't want to spend my
-time to figure out whether clocks also have conflicting work or not.
+I guess, for historical reasons?
 
-Best regards,
-Krzysztof
+> Instead of creating another variant for
+> non-constant bitfields, wouldn't it be better to make the existing macro
+> accept both?
+
+Yes, it would definitely be better IMO.
+
+> As far as I can see, only __BUILD_BUG_ON_NOT_POWER_OF_2()  and
+> __BF_FIELD_CHECK() need to be adjusted. I am thinking of this:
+> 
+> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> index 63928f173223..c6bedab862d1 100644
+> --- a/include/linux/bitfield.h
+> +++ b/include/linux/bitfield.h
+> @@ -8,6 +8,7 @@
+>  #define _LINUX_BITFIELD_H
+> 
+>  #include <linux/build_bug.h>
+> +#include <linux/compiler.h>
+>  #include <asm/byteorder.h>
+> 
+>  /*
+> @@ -62,15 +63,13 @@
+> 
+>  #define __BF_FIELD_CHECK(_mask, _reg, _val, _pfx)                      \
+>         ({                                                              \
+> -               BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),          \
+> -                                _pfx "mask is not constant");          \
+> -               BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");    \
+> -               BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
+> -                                ~((_mask) >> __bf_shf(_mask)) &        \
+> -                                       (0 + (_val)) : 0,               \
+> +               BUILD_BUG_ON_MSG(statically_true((_mask) == 0),         \
+> +                                _pfx "mask is zero");                  \
+> +               BUILD_BUG_ON_MSG(statically_true(~((_mask) >>
+
+This should be a const_true(), because statically_true() may be OK
+with something like:
+        ((runtime_var << 1) & 1 == 0)
+
+I think it's your own patch that adds const_true(): 4f3d1be4c2f8a :)
+
+Thanks,
+Yury
