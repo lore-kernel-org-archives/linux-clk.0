@@ -1,114 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from out.smtpout.orange.fr (out-13.smtpout.orange.fr [193.252.22.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0569208A9;
-	Sat,  1 Feb 2025 16:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9F18BE7;
+	Sun,  2 Feb 2025 08:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738428772; cv=none; b=AOS7KiTYQfH6OEHEhrfwCMvm85Ry7A+Uul04PNQG4xqPHrptt8T+Uf5o4fDkd+FBUDAN0leSpBdbWQlPjzbyebQ8ohVzHoz3X85Bfjcf3gGORrE33e1vhRVj2sAo9Ire8ilwZw2jAxdr+FCMWaUZhUxPcAXWVzGMitOfvnpLHWo=
+	t=1738484863; cv=none; b=r7I6IAAd8B5HpnbfRXWLtYdxv6MYPdBP/oLmyeTLde2Zr51UUwgRNYEMGPZmGRTOpvBwEmz90CSlN1cpCMv3Nc/JpV9K+ml2agsMvwTBexcnx1QIn9gbwhCk90sJTiFpVpsAu7tP5jJ6yqke+/4ab8O/eieU2SfhpNBcYBYEF4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738428772; c=relaxed/simple;
-	bh=MGMbXg/l4cT2mVq5Z460kZHZEWj1jubCnLtTj3OH4lk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rTrf6lnH7Wcjj3Zx4sZ7wnBlT9R+CdRuOLoE/g9Px23Yy9+20nF840nYULCcDW2g0V9dphC1r31VhCqUt2WuoXU3Hg0JuFcSh5a/K8MftgI7PBpWoxtbi0hY9HP+NQl3/jFU0cQCtC/CEiOqTl/ZmzL92bYg3GUptXdGGzYjUBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m9fdFv2g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738484863; c=relaxed/simple;
+	bh=3R02TGIEWd2cVE8jGoGk2IukoLrWOAmI6UyxCl1vFdc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LUgU023YRTxZuRNY2oxBcMpXpDjnIJs5WAvy4bNrsR+IxiMNFMm4801PCYAEsuRlxo0shOtlEXLlIWhJWmrAsR54NkfvETJJRjx+g7kttnNa55zVNtwfLWbNwOUR+qAb8sYl78QGpRkYKz3Yw8koIE44Ngxy1Y+Itugh7dDksxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Er14Dtt3; arc=none smtp.client-ip=193.252.22.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9fdFv2g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6FC8C4CED3;
-	Sat,  1 Feb 2025 16:52:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738428772;
-	bh=MGMbXg/l4cT2mVq5Z460kZHZEWj1jubCnLtTj3OH4lk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=m9fdFv2gFykxrh2G726bUQ4w+w4Y1F94Sqsa2Sikna95GnEKLB2P7OIK9W6B6tfBr
-	 kOvURrHYNFcoXJHCaoXvHQ49rBsfsP2oYEC7nFX1n13uW2rcb7X2zDbp1M9YtylJ1J
-	 tQ5qZdk8RvWpUWeL7BFkWmhvYGN0eus2flE2twVZ8Bw2kN3Q6x525P+a1H5XJ7ctJH
-	 LEVZB54cjvO5jN225b4yDzTy8KfPQaqBzTzn4pUyozoVW91YMmXLog7mgjLmt6fkAH
-	 xrrzZrPHx/IYcrCPWs5alJet4EcW5ytQX1aRp47gZ9r6gNxjl4YvGgzplAq8PavXMF
-	 FcJaYqbTjQZGQ==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Sat, 01 Feb 2025 17:52:30 +0100
-Subject: [PATCH] clk: Warn (and therefore taint the kernel) on
- clk_ignore_unused
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Er14Dtt3"
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id eVIrtwgZkM6ZbeVIwtQSlb; Sun, 02 Feb 2025 09:26:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1738484790;
+	bh=PzrthrLkW4R8v6fQu4F9Z0+3j1oj2AKD6gdwJR3+YjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Er14Dtt3+zfNicUpvicGUD6Vdf5OQJsDpkGPvY598Y41dT4BnaZJiPDU0Z9Am45FA
+	 rt5j0Pz9QRRm/z1mN2d3bb772DaBoyfWVgR/c2muJ80mlphsG3rFguogAus2nGUtIq
+	 SMzYzyRktW1gkaZRsNIAjVI989zqNQFAkzvJwc+c2MnnUIjwGsK+qKlmGw7er9lbI/
+	 pIddcTj+3U4H8qpjYBDjjnhQpTydKf0sXi6FZhIfK4nK0TsNcNc/SvIiJquLWgQ3LP
+	 O1s8+gqFJZHGsDqv+oFJDfLSh35L6j+QPDYeBSJJCpC011UxtV+bXz1kDtn/PestXd
+	 +aDON8InPsqFw==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 02 Feb 2025 09:26:30 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <e20a177a-30cd-4088-89e1-b479aba1356c@wanadoo.fr>
+Date: Sun, 2 Feb 2025 17:26:04 +0900
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH treewide v2 1/3] bitfield: Add non-constant
+ field_{prep,get}() helpers
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
+ qat-linux@intel.com, linux-gpio@vger.kernel.org,
+ linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S . Miller" <davem@davemloft.net>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>,
+ Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela
+ <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>,
+ Alex Elder <elder@ieee.org>
+References: <cover.1738329458.git.geert+renesas@glider.be>
+ <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250201-topic-ignore_unused_warn-v1-1-f29db78cea3a@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAE1RnmcC/x3MSwqAMAwA0atI1hZq0IpeRUSKRs0mldQfiHe3u
- HyLmQciKVOENntA6eTIQRKKPINx9bKQ4SkZ0GJl0RZmDxuPhhcJSsMhR6RpuLyKwar0jXOzw9p
- Dyjelme9/3fXv+wEJPDFoagAAAA==
-X-Change-ID: 20250201-topic-ignore_unused_warn-254a966f627a
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1738428769; l=1975;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=RUMTNPwf39+R3he/xz33fiHQcMU6Lh+Bmch14er4pSY=;
- b=F95J3OADT0N/lGBf0V6M8IOA7T0LxEemcA0qlcgZVs4t+jVd5i9ILtKjNpi+4tkLwZm89oJqR
- 5PUlX8niPURCcL/TZBr+VWXPLBJD3nN+izTK/0zWTRRTtyUT2CMWQk6
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On 31/01/2025 at 22:46, Geert Uytterhoeven wrote:
+> The existing FIELD_{GET,PREP}() macros are limited to compile-time
+> constants.  However, it is very common to prepare or extract bitfield
+> elements where the bitfield mask is not a compile-time constant.
 
-If any sort of ignore_unused is in place, it means one of:
+Why is it that the existing FIELD_{GET,PREP}() macros must be limited to
+compile time constants? Instead of creating another variant for
+non-constant bitfields, wouldn't it be better to make the existing macro
+accept both?
 
-* power is going to waste
-* the platform description is incomplete (missing consumer-provider
-  relationships)
-* the platform description is just broken
+As far as I can see, only __BUILD_BUG_ON_NOT_POWER_OF_2()  and
+__BF_FIELD_CHECK() need to be adjusted. I am thinking of this:
 
-Many people will happily declare their job done when a platform
-magically happens to work as they make use of bootloader-enabled
-resources, which then leads to double or triple the amount of work
-of another person, as they attempt to reduce the unnecessary power
-drainage and/or ensure stabiility throughout a suspend-resume cycle.
+diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+index 63928f173223..c6bedab862d1 100644
+--- a/include/linux/bitfield.h
++++ b/include/linux/bitfield.h
+@@ -8,6 +8,7 @@
+ #define _LINUX_BITFIELD_H
 
-Issue a good ol' warning (and taint the kernel) to make such cases
-obvious and hopefully draw more attention to it. This way, it'll be
-easier to avoid effectively untested code or DT description getting
-merged into the kernel, or worse, going into production.
+ #include <linux/build_bug.h>
++#include <linux/compiler.h>
+ #include <asm/byteorder.h>
 
-The clock subsystem plays a crucial part in this quest, as even if
-the clock controllers themselves don't draw a lot of power when on
-(comparatively), improper description of clock requirements has been
-the #1 cause of incomplete/incorrect devicetree bindings in my
-experience.
+ /*
+@@ -62,15 +63,13 @@
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- drivers/clk/clk.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ #define __BF_FIELD_CHECK(_mask, _reg, _val, _pfx)                      \
+        ({                                                              \
+-               BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),          \
+-                                _pfx "mask is not constant");          \
+-               BUILD_BUG_ON_MSG((_mask) == 0, _pfx "mask is zero");    \
+-               BUILD_BUG_ON_MSG(__builtin_constant_p(_val) ?           \
+-                                ~((_mask) >> __bf_shf(_mask)) &        \
+-                                       (0 + (_val)) : 0,               \
++               BUILD_BUG_ON_MSG(statically_true((_mask) == 0),         \
++                                _pfx "mask is zero");                  \
++               BUILD_BUG_ON_MSG(statically_true(~((_mask) >>
+__bf_shf(_mask)) & \
++                                                (0 + (_val))),         \
+                                 _pfx "value too large for the field"); \
+-               BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
+-                                __bf_cast_unsigned(_reg, ~0ull),       \
++
+BUILD_BUG_ON_MSG(statically_true(__bf_cast_unsigned(_mask, _mask) > \
++
+__bf_cast_unsigned(_reg, ~0ull)), \
+                                 _pfx "type of reg too small for mask"); \
+                __BUILD_BUG_ON_NOT_POWER_OF_2((_mask) +                 \
+                                              (1ULL << __bf_shf(_mask))); \
+diff --git a/include/linux/build_bug.h b/include/linux/build_bug.h
+index 3aa3640f8c18..3b8055ebb55f 100644
+--- a/include/linux/build_bug.h
++++ b/include/linux/build_bug.h
+@@ -18,9 +18,9 @@
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index cf7720b9172ff223d86227aad144e15375ddfd86..9e2e240efc31f02e4880542370ba773037b733a0 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1527,7 +1527,8 @@ static int __init clk_disable_unused(void)
- 	struct clk_core *core;
- 	int ret;
- 
--	if (clk_ignore_unused) {
-+	/* If you need ignore_unused, your platform description is broken / incomplete */
-+	if (WARN_ON(clk_ignore_unused)) {
- 		pr_warn("clk: Not disabling unused clocks\n");
- 		return 0;
- 	}
+ /* Force a compilation error if a constant expression is not a power of
+2 */
+ #define __BUILD_BUG_ON_NOT_POWER_OF_2(n)       \
+-       BUILD_BUG_ON(((n) & ((n) - 1)) != 0)
++       BUILD_BUG_ON(statically_true((n) & ((n) - 1)))
+ #define BUILD_BUG_ON_NOT_POWER_OF_2(n)                 \
+-       BUILD_BUG_ON((n) == 0 || (((n) & ((n) - 1)) != 0))
++       BUILD_BUG_ON(statically_true(!(n) || ((n) & ((n) - 1))))
 
----
-base-commit: df4b2bbff898227db0c14264ac7edd634e79f755
-change-id: 20250201-topic-ignore_unused_warn-254a966f627a
+ /*
+  * BUILD_BUG_ON_INVALID() permits the compiler to check the validity of the
 
-Best regards,
--- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+> To avoid this limitation, the AT91 clock driver and several other
+> drivers already have their own non-const field_{prep,get}() macros.
+> Make them available for general use by consolidating them in
+> <linux/bitfield.h>, and improve them slightly:
+>   1. Avoid evaluating macro parameters more than once,
+>   2. Replace "ffs() - 1" by "__ffs()",
+>   3. Support 64-bit use on 32-bit architectures.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+(...)
+
+
+Yours sincerely,
+Vincent Mailhol
 
