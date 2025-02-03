@@ -1,92 +1,64 @@
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937F71EBFE8
-	for <linux-clk@vger.kernel.org>; Mon,  3 Feb 2025 06:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4252557C;
+	Mon,  3 Feb 2025 07:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738564504; cv=none; b=bKvJnzrRq6i7MifXR8sqLQCjvcq6MgCOeEZg6ZRw0xXdtaE8Yq1tMuq+GUv5lGpd45HqMCghk64eTZxsC0zYmtexdgq59SbB0m9fGt9E/SlKvdJ7noQFmO6yFW18+8HA0nU2PWvabAKtHkLXKElMdX0r/OU98GeOyt+QpGICTGg=
+	t=1738568211; cv=none; b=WO4/sg4Gf85SKxDbOfe2DBW5agyJPWF5HUTd8lTkk7cRGDLcJHS7UVNpAL4fHj+OgQGSsPj+2EjJuw3kOaZgtaBlPGxfNNumsYfvUqXxCIz8YI31JIFBXy7d5DlFETryfhef4aDR5tbe6deNVV9ssgv4MSivPL73rw5z6gCAGro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738564504; c=relaxed/simple;
-	bh=MvHOs/prmCaGsMdoXg9G8LLJtKC+Frm9bhsedB5JUP8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BReDWWslskIgBtU/BxohoxcpdfRDs6njjWSTzn5qMZ3DtDL4uFPqYJvb6ZIr6q00XWU/Wumb+BhKOJxuvWnVXWFIzccqbOI9PiEIXYOiqEg/kVVoFv33ZCLEcmXzoNb+QMJjVqxiWnnGkx4fyDv6mvB6rYrx1EJ5qQ9anNAhXJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=U+lc7m8v; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=postmarketos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
+	s=arc-20240116; t=1738568211; c=relaxed/simple;
+	bh=Hg5sCKmDMIH5N6S7Afmz4ils8tiC2ujQXPYqn/6TxTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hf/05mfUApmC0T58db6E5p+79F4XWescQs2qDbx1u0j4Vs/GxKhJu4RDWqaGfa6qUYEZbu6bfrFrn5WkkAUv93GBvNjNzMkisvr2s9jAS/Bzl/0d6g6g4aEzPMn5G4gm5AKSfjkIOW4Eziw0QBfj7f1axrQfzuhIW7GQI9ZD6pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaf1MwRP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="U+lc7m8v"
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
-	s=key1; t=1738564500;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rXujrocl/q/AoW1/bTP6mXk3VvohzMz5MXKMXXqfQK0=;
-	b=U+lc7m8v7Ln+09sAx8bM2qlC3mc3ybFktdoJp3fBrsdrcvexU/YtXhMI/05RXu2M/t64EV
-	cW/tfruWSXtMgDOlSIbDALltcE6DTZbKqDRi0+fiRvW6oMdaNbsYD7iBCk9uII4LDnSl/W
-	5COMjC4bx4RmOcuL0yMN1i1Es2jvU8gIuPjYrrPTKbj0o79DOdDFG6zr/fDCQjj4QSmfIz
-	kKhyvFVwiPk84UiY729caG3LkdJ8wUsQi5RHFpbNHtlt8dcu6SSmGgIqjdWmxxu9Vb+fVW
-	XO79XaKJOK9qSMaGl/HN8dSgIingtiqsgLu7IgkeL80li2fG0N+6u4Hs5vGGHA==
-From: Alexey Minnekhanov <alexeymin@postmarketos.org>
-To: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	Alexey Minnekhanov <alexeymin@postmarketos.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v3 3/3] arm64: dts: qcom: sdm630: Add missing resets to mmc blocks
-Date: Mon,  3 Feb 2025 09:34:26 +0300
-Message-ID: <20250203063427.358327-4-alexeymin@postmarketos.org>
-In-Reply-To: <20250203063427.358327-1-alexeymin@postmarketos.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaf1MwRP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6202FC4CEE2;
+	Mon,  3 Feb 2025 07:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738568211;
+	bh=Hg5sCKmDMIH5N6S7Afmz4ils8tiC2ujQXPYqn/6TxTY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qaf1MwRPb0ZMDY1sKLNjGOwcQ00rVSm9VQ4mTNcfI8WfUDPF4tGZIzKqLCHOiR6J8
+	 0vuGr3+qHsg7NQTOs4JTfc28zkjkgNo7wbCjBer7qMtvbRC7RClWJW/s1ivKRJ6tw2
+	 Hl7/wtd9Fc7Nm1wMIZslfI2NkWwH+Qm6tGNH4sJLrcQ0TrZMbksufeInsnPZCKpmRQ
+	 B4y9SpxjOLIKiBrPDpWTXHEKMZdkXicdI+9+OINTmCLNsHZxUDkf8ELOlyB67G+eMH
+	 fQMDwxYDmXSrzUBy6tvt6JnEKbHOXhOCqNHtYJVzqGPNjCl0JRyW56Zgsc6DOiao93
+	 FWiIoPrsrwYMg==
+Date: Mon, 3 Feb 2025 08:36:47 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alexey Minnekhanov <alexeymin@postmarketos.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: gcc-sdm660: Add missing SDCC
+ resets
+Message-ID: <20250203-bright-copper-tuatara-6d9eb9@krzk-bin>
 References: <20250203063427.358327-1-alexeymin@postmarketos.org>
+ <20250203063427.358327-2-alexeymin@postmarketos.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250203063427.358327-2-alexeymin@postmarketos.org>
 
-Add resets to eMMC/SD card blocks so linux can properly reset
-them during initialization.
+On Mon, Feb 03, 2025 at 09:34:24AM +0300, Alexey Minnekhanov wrote:
+> Add resets for eMMC/SD card blocks that were missed during initial
+> driver submission.
+> 
+> Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
+> ---
 
-Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sdm630.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-index a2c079bac1a7..3722e405a97c 100644
---- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-@@ -1379,6 +1379,7 @@ sdhc_2: mmc@c084000 {
- 					<&xo_board>;
- 			clock-names = "iface", "core", "xo";
- 
-+			resets = <&gcc GCC_SDCC2_BCR>;
- 
- 			interconnects = <&a2noc 3 &a2noc 10>,
- 					<&gnoc 0 &cnoc 28>;
-@@ -1433,6 +1434,8 @@ sdhc_1: mmc@c0c4000 {
- 				 <&gcc GCC_SDCC1_ICE_CORE_CLK>;
- 			clock-names = "iface", "core", "xo", "ice";
- 
-+			resets = <&gcc GCC_SDCC1_BCR>;
-+
- 			interconnects = <&a2noc 2 &a2noc 10>,
- 					<&gnoc 0 &cnoc 27>;
- 			interconnect-names = "sdhc-ddr", "cpu-sdhc";
--- 
-2.45.3
+Best regards,
+Krzysztof
 
