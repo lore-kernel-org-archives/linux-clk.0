@@ -1,64 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4252557C;
-	Mon,  3 Feb 2025 07:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBF41D86C3;
+	Mon,  3 Feb 2025 07:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738568211; cv=none; b=WO4/sg4Gf85SKxDbOfe2DBW5agyJPWF5HUTd8lTkk7cRGDLcJHS7UVNpAL4fHj+OgQGSsPj+2EjJuw3kOaZgtaBlPGxfNNumsYfvUqXxCIz8YI31JIFBXy7d5DlFETryfhef4aDR5tbe6deNVV9ssgv4MSivPL73rw5z6gCAGro=
+	t=1738568683; cv=none; b=d4OeZ2MhM/TckPGXCMnSkBjYUxgNjYUZgZ3EztGHbwxNQd6eauZRp+Q5AcoJd6P9+Sr6iRGVYyMjqyWrlHCrlMKWvT9KH1OCzcv0isc6XkPFVh1DL8R4Btc7wASI9uJN8iMuahG5sNHWJcX30LH4VXdI6aTSQQLjtd6mjMpkIho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738568211; c=relaxed/simple;
-	bh=Hg5sCKmDMIH5N6S7Afmz4ils8tiC2ujQXPYqn/6TxTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hf/05mfUApmC0T58db6E5p+79F4XWescQs2qDbx1u0j4Vs/GxKhJu4RDWqaGfa6qUYEZbu6bfrFrn5WkkAUv93GBvNjNzMkisvr2s9jAS/Bzl/0d6g6g4aEzPMn5G4gm5AKSfjkIOW4Eziw0QBfj7f1axrQfzuhIW7GQI9ZD6pI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaf1MwRP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738568683; c=relaxed/simple;
+	bh=x1beuisn9wdEKP1QdS1UhUe3+GT+LqGgI15rKS+Adds=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PBS2W+TN9NlQUKii18bmNWAbfkPBQpDxslQpEHeQp9R60UqvcvZmNqQqIMIWRffTblPrQG1vKLU4+2UP2bERaMJPCfcVatVfKnh6Nlz2Q50PpxLdjr+BixYxcJkHPaiAkeGB7877gCvVexgexycPSjaNtRrIO0gWhpUivML+/AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=mRvKnnWs; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaf1MwRP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6202FC4CEE2;
-	Mon,  3 Feb 2025 07:36:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738568211;
-	bh=Hg5sCKmDMIH5N6S7Afmz4ils8tiC2ujQXPYqn/6TxTY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qaf1MwRPb0ZMDY1sKLNjGOwcQ00rVSm9VQ4mTNcfI8WfUDPF4tGZIzKqLCHOiR6J8
-	 0vuGr3+qHsg7NQTOs4JTfc28zkjkgNo7wbCjBer7qMtvbRC7RClWJW/s1ivKRJ6tw2
-	 Hl7/wtd9Fc7Nm1wMIZslfI2NkWwH+Qm6tGNH4sJLrcQ0TrZMbksufeInsnPZCKpmRQ
-	 B4y9SpxjOLIKiBrPDpWTXHEKMZdkXicdI+9+OINTmCLNsHZxUDkf8ELOlyB67G+eMH
-	 fQMDwxYDmXSrzUBy6tvt6JnEKbHOXhOCqNHtYJVzqGPNjCl0JRyW56Zgsc6DOiao93
-	 FWiIoPrsrwYMg==
-Date: Mon, 3 Feb 2025 08:36:47 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexey Minnekhanov <alexeymin@postmarketos.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: gcc-sdm660: Add missing SDCC
- resets
-Message-ID: <20250203-bright-copper-tuatara-6d9eb9@krzk-bin>
-References: <20250203063427.358327-1-alexeymin@postmarketos.org>
- <20250203063427.358327-2-alexeymin@postmarketos.org>
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="mRvKnnWs"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=x1beuisn9wdEKP1QdS1UhUe3+GT+LqGgI15rKS+Adds=;
+	t=1738568681; x=1739778281; b=mRvKnnWso7bumZit+yviqahz/44SggGsn0LU225JzCFCnWw
+	qkExAMOaXIxp9bIgjunoUdpGVPXuqaSpv6kKrcwJ22yC89lKYgaUf8r5naJrAAAh4uPi1GsG4ML6l
+	Bf4IeLdDPUx7i7vW+7d+uoSuG7PeJgajncxQQczZwRL6T68UKKpSBbrb2cMIh9hNpcDJSak/dcJ98
+	Ounk7o4ivaH0UXjG3gCeNc0LUBfysnYlK1C4Q8SDEbTw25DCm67kkUUSI1me78ACOpYCYUTs6jc77
+	O2XNSB4qygsj3h82m/1sqpafeLlUH1wb8LjgegC/oLGHGfFBpcTnyhY/OFtBi+Xg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1ter7q-00000001RTp-38Nc;
+	Mon, 03 Feb 2025 08:44:11 +0100
+Message-ID: <74cab7d1ec31e7531cdda0f1eb47acdebd5c8d3f.camel@sipsolutions.net>
+Subject: Re: [PATCH treewide v2 1/3] bitfield: Add non-constant
+ field_{prep,get}() helpers
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Yury Norov <yury.norov@gmail.com>, Vincent Mailhol
+	 <mailhol.vincent@wanadoo.fr>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk@vger.kernel.org,
+ 	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, qat-linux@intel.com,
+ linux-gpio@vger.kernel.org, 	linux-aspeed@lists.ozlabs.org,
+ linux-iio@vger.kernel.org, 	linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Michael Turquette	 <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Nicolas Ferre	
+ <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>,  Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+ Herbert Xu	 <herbert@gondor.apana.org.au>, "David S . Miller"
+ <davem@davemloft.net>,  Linus Walleij <linus.walleij@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,  Andrew Jeffery
+ <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, Jonathan Cameron
+ <jic23@kernel.org>,  Lars-Peter Clausen	 <lars@metafoo.de>, Jacky Huang
+ <ychuang3@nuvoton.com>, Shan-Chun Hung	 <schung@nuvoton.com>, Rasmus
+ Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Jakub Kicinski <kuba@kernel.org>, Alex Elder
+ <elder@ieee.org>
+Date: Mon, 03 Feb 2025 08:44:06 +0100
+In-Reply-To: <Z5-xMUqrDuaE8Eo_@thinkpad>
+References: <cover.1738329458.git.geert+renesas@glider.be>
+	 <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
+	 <e20a177a-30cd-4088-89e1-b479aba1356c@wanadoo.fr>
+	 <Z5-xMUqrDuaE8Eo_@thinkpad>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250203063427.358327-2-alexeymin@postmarketos.org>
+X-malware-bazaar: not-scanned
 
-On Mon, Feb 03, 2025 at 09:34:24AM +0300, Alexey Minnekhanov wrote:
-> Add resets for eMMC/SD card blocks that were missed during initial
-> driver submission.
-> 
-> Signed-off-by: Alexey Minnekhanov <alexeymin@postmarketos.org>
-> ---
+On Sun, 2025-02-02 at 12:53 -0500, Yury Norov wrote:
+>=20
+> > Instead of creating another variant for
+> > non-constant bitfields, wouldn't it be better to make the existing macr=
+o
+> > accept both?
+>=20
+> Yes, it would definitely be better IMO.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On the flip side, there have been discussions in the past (though I
+think not all, if any, on the list(s)) about the argument order. Since
+the value is typically not a constant, requiring the mask to be a
+constant has ensured that the argument order isn't as easily mixed up as
+otherwise.
 
-Best regards,
-Krzysztof
+With a non-constant mask there can also be no validation that the mask
+is contiguous etc.
 
+Now that doesn't imply a strong objection - personally I've come to
+prefer the lower-case typed versions anyway - but something to keep in
+mind when doing this.
+
+However, the suggested change to BUILD_BUG_ON_NOT_POWER_OF_2 almost
+certainly shouldn't be done for the same reason - not compiling for non-
+constant values is [IMHO] part of the API contract for that macro. This
+can be important for the same reasons.
+
+(Obviously, doing that change now doesn't invalidate existing code, but
+it does remove checks that may have been intended to be present in the
+code.)
+
+johannes
