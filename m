@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3BEA2AF10;
-	Mon,  3 Feb 2025 19:15:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8DC212F84;
+	Mon,  3 Feb 2025 19:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738610120; cv=none; b=kultlgGIM5qtuRUojn/L12MUwlo/CjimqYDniT5h8LTEm5L+cZaINBeQgkXkMvlCNxV+c/9BU0SZCIrfT+Cu4FrwJcpabOSC31crN9NIGWPUwuirsemUqPeeXQ6hzSvd/0kj5UeVSTqbxd7HiBi5i8rAMN6CR9NpoICEvFmMirY=
+	t=1738610136; cv=none; b=M69dL2XQ1ApqBoce634ENvOzz944tsnqJI2B0/oOUyVab8CYL69/yPp7gjAqktjsw00fVRIcLdAhHL46QQgEOaso6R5mJHi/qwOYo5d9xs6nHoWeB2Oi6IhUCq5V1G+IeVb6fq6RsfCVTRYop2KGkibZQpOsw7lLrFwa3b2OeHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738610120; c=relaxed/simple;
-	bh=sJAddZDtrl7Dn/grqJ5XfBYKamzCFxh20mlHE9ocpd0=;
+	s=arc-20240116; t=1738610136; c=relaxed/simple;
+	bh=yIVYx2Injx0V5rbEcq4duBBRKtzAISqSSzu7G/z33hY=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=h1e+W3IEHeXBI5Lk+ywgGJF6dM+ep28OL+Gav1XASQTm+zCQlk8G/wJBELeL5mTUrxPFw8itunSXNtRgfOPdwx0BEmS2BF9JV0Y/X30FfGFIq6aUbpEyYpew54AAWbUNXDId2LLLWp/PAkOstDkyLYRNTMp88RFnDkXa61+gfR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TEBXHW/Y; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=US7zO1rhgGKMtrC7dN15mU1GmJ7PIj4LTo79LibLzaK/jEKkT9+cgxM5NQxmkiFv7LEzEDx+wx1a+/FZgy4tImi9jkrKZVjQwUypr+2i6QKkOrEI9Ox5UIChuW3+jpBeh8FlgeWtb08Ku1gBh158MQ22qvHiDIGQ2KqOWGw59to=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HH0ZsWIH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TEBXHW/Y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C699C4CEEF;
-	Mon,  3 Feb 2025 19:15:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HH0ZsWIH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 650CEC4CED2;
+	Mon,  3 Feb 2025 19:15:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738610119;
-	bh=sJAddZDtrl7Dn/grqJ5XfBYKamzCFxh20mlHE9ocpd0=;
+	s=k20201202; t=1738610135;
+	bh=yIVYx2Injx0V5rbEcq4duBBRKtzAISqSSzu7G/z33hY=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=TEBXHW/YrzoSQA6bNyPK5hvPskWayDl9mYhOA5SpoP+yMMUbP1RdYKp9INyLXAwN3
-	 /WWxT25sNqNmxq8dmYmhzlCuRARNhHIHnyfAuQ2uZH6R9Z8O3jMd52hYc4KeiveJdL
-	 xt5I3E1gXsmn05Fc+JBE43I71cCg/SnfiADoZty7bKLTLOd3kYRTDu/mbqH5/6pDW+
-	 wzbckyo1jnicDNXrf1cFe/0FMcrfb3O7U8i7unoac4XlAEhSR3qzi5GnPnIhpZU+Zk
-	 EdncoU0qlb4+pFR4NxItaOYbs7MPlG8UEq/YOBDFFW8gidmMwsRSjpvcoVdDUwq62D
-	 9puU0JnrrGUsg==
+	b=HH0ZsWIHJBGpXlVL3gXhPosWAg7/NDxPYAztafp1qE8nDjdyBmkgON17aHRZfsUyJ
+	 VraQT5d7wYuNZWchQ6W0xe+QsJzpjoMS2f/b1uDStP1aAcykJ/EG6p2ClS6pSxdcaB
+	 oCb/AaCssu2PPGAjUcvAhGjoRtcNlK+Ty8Wy9eq4HiALarnKhvORCLt5hX1IaaHXWs
+	 sizCtCuuLS0e1a1+vAWQ+UeKFAhhLUNPZIIsYZA2Z4QDPYnvtzFRuiwAbMze3aYCEh
+	 HmeHhfcuDdOXniZaFIKUhzM0MsJmkds9KIsWO6WEabchJE/5sbkpYMLvvJyO3QcMvs
+	 UpJc9heOMbf9g==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71BD9380AA67;
-	Mon,  3 Feb 2025 19:15:47 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEAC380AA67;
+	Mon,  3 Feb 2025 19:16:03 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -37,42 +37,37 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH RESEND 0/2] clk: thead: Fix TH1520 boot dependency on
- clk_ignore_unused
+Subject: Re: [PATCH] clk: thead: Fix cpu2vp_clk for TH1520 AP_SUBSYS clocks
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <173861014596.3409359.5224078103636343294.git-patchwork-notify@kernel.org>
-Date: Mon, 03 Feb 2025 19:15:45 +0000
-References: <20250113-th1520-clk_ignore_unused-v1-0-0b08fb813438@tenstorrent.com>
-In-Reply-To: <20250113-th1520-clk_ignore_unused-v1-0-0b08fb813438@tenstorrent.com>
+ <173861016251.3409359.9684011048470573342.git-patchwork-notify@kernel.org>
+Date: Mon, 03 Feb 2025 19:16:02 +0000
+References: <20241228034802.1573554-1-dfustini@tenstorrent.com>
+In-Reply-To: <20241228034802.1573554-1-dfustini@tenstorrent.com>
 To: Drew Fustini <dfustini@tenstorrent.com>
 Cc: linux-riscv@lists.infradead.org, drew@pdp7.com, guoren@kernel.org,
  wefu@redhat.com, mturquette@baylibre.com, sboyd@kernel.org,
- jszhang@kernel.org, frank.li@vivo.com, linux-clk@vger.kernel.org,
+ frank.li@vivo.com, jszhang@kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to riscv/linux.git (fixes)
+This patch was applied to riscv/linux.git (fixes)
 by Stephen Boyd <sboyd@kernel.org>:
 
-On Mon, 13 Jan 2025 12:31:23 -0800 you wrote:
-> Add the CLK_IGNORE_UNUSED flag to apb_pclk, cpu2peri_x2h_clk,
-> perisys_apb2_hclk and perisys_apb3_hclk. Without this flag, the boot
-> hangs after "clk: Disabling unused clocks" unless clk_ignore_unused
-> is in the kernel cmdline.
+On Fri, 27 Dec 2024 19:48:04 -0800 you wrote:
+> cpu2vp_clk is a gate but was mistakenly in th1520_div_clks[] instead
+> of th1520_gate_clks[].
 > 
-> In order to allow individual clk gates to specify their own flags,
-> the call to devm_clk_hw_register_gate_parent_data() is changeed to
-> actually pass the clk flags instead of just 0.
-> 
-> [...]
+> Fixes: ae81b69fd2b1 ("clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks")
+> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> ---
+>  drivers/clk/thead/clk-th1520-ap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Here is the summary with links:
-  - [RESEND,1/2] clk: thead: Fix clk gate registration to pass flags
-    https://git.kernel.org/riscv/c/a826e53fd78c
-  - [RESEND,2/2] clk: thead: Add CLK_IGNORE_UNUSED to fix TH1520 boot
-    https://git.kernel.org/riscv/c/037705e94bf6
+  - clk: thead: Fix cpu2vp_clk for TH1520 AP_SUBSYS clocks
+    https://git.kernel.org/riscv/c/3a43cd19f1b8
 
 You are awesome, thank you!
 -- 
