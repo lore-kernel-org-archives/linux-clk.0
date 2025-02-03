@@ -1,118 +1,141 @@
-Received: from mail-gw01.astralinux.ru (mail-gw01.astralinux.ru [37.230.196.243])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6288D1FC7E1;
-	Mon,  3 Feb 2025 11:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.230.196.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDD62036E1
+	for <linux-clk@vger.kernel.org>; Mon,  3 Feb 2025 12:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738582226; cv=none; b=bKdvmDkmMpybHbEHWlVO5y/WXdWd4i8VJy3uqY9PfUrB9/SZpn/uoxEYhEnaxgEqic8mgr8mkgpwxuQl7WXZMmVwGUeRMAbYzqF9Nc9lTrjh+EIO37mLzuVIOezPiT/c1fNBuCyRqwwOOH8/ROwHeOXQPlBoTjv8ajfsmwLJzk0=
+	t=1738585477; cv=none; b=bysjbhhuZe06DAqEF50ZNoQS2NNNVHrvf/5lFT0ZRwkHSuhgqTybQtfHbjVFqJjmUdSJZ+xbnHbuNyf88lj7JHKqxH+RdFupF5tZBp+B/7hGiDNkr5lr0r8ThIz0ebXW7DpdUvGVCdbWNph53sWqFVCkpZe3YO6AN5pazE3wHj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738582226; c=relaxed/simple;
-	bh=baN8Og7egUm0YAgH+MLV7CddHfdSlD1CiAUJq8ntw68=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S7sPSt7inh7vJ47E5ZwJdDQZXREk6o4IzYfzIpc6VFwJ3ncul7npHivFz4dyS1CT+n69fbUZt+hIATyiHIanNKumMJmH+MXtGVsdbs2zLhY8Toqb8f/ebIiV5zT91bM4/KWatxCpCMXYqjaqtcUjdC5PxLpktiFp2w15J3KRJbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=37.230.196.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-sc-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw01.astralinux.ru (Postfix) with ESMTP id 630DD24D3A;
-	Mon,  3 Feb 2025 14:30:12 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail04.astralinux.ru [10.177.185.109])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw01.astralinux.ru (Postfix) with ESMTPS;
-	Mon,  3 Feb 2025 14:30:05 +0300 (MSK)
-Received: from localhost.localdomain (unknown [10.198.57.103])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4Ymkn30cV8zkWyl;
-	Mon,  3 Feb 2025 14:29:58 +0300 (MSK)
-From: Anastasia Belova <abelova@astralinux.ru>
-To: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
-	David Laight <david.laight.linux@gmail.com>
-Cc: Anastasia Belova <abelova@astralinux.ru>,
+	s=arc-20240116; t=1738585477; c=relaxed/simple;
+	bh=YtbmQWrRsenA3xCb9GNs8QhaBMLEYTDtSq23s95XQKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lfNAjm8D4I7oPhoAjHbIbvlrROuIHZLwsziJCBjsc5dRXrUlTWC1Z2yUnkLTjMPVGn2nFogb1MjCYgDaWSt30eGmq7wN7eXVzc8wmjatgIhKdB14+sflvhGjcsxBYAHcOAxajjBZRW1ygiCXARTkf3IpHHI0Ao1qszrp8FFzp/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=oLv++D1A; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="oLv++D1A"
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b6ea711805so618741785a.1
+        for <linux-clk@vger.kernel.org>; Mon, 03 Feb 2025 04:24:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1738585474; x=1739190274; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ApUlLTpGY8QIpFfh/w6kk6nMf7s8VLTCzZhJ/61KofQ=;
+        b=oLv++D1AXObui7HF6XXnx0Wa37b6G3UJkQOPaI9LrvzLSLL/IphhaLVKH/FdYkWV1h
+         bba39Wae7cy27pu68kmOTToixflcnEf3Z6knJOErgBZw/U+n+2oIZRz1afj8SRSkpgKc
+         N2sE5c6uz3y0L/5qonYb4e+1oYRkYaStRFSNNuKQWcdqyHMLDo1dJA+dl6dyNXRKZSz6
+         1R4j68BAmZYOxjLJXQB1ZIA8U2A3SaNdCFQP8muJJuPvOp7HE05gV8/tpkkUReIEiGxO
+         +rSkAjiXIiAtk5cab3qSoGW/6308a1CZ2ByAdtkHYcTegQSkpQw4ATH+DtTti9RP6eL0
+         6zxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738585474; x=1739190274;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ApUlLTpGY8QIpFfh/w6kk6nMf7s8VLTCzZhJ/61KofQ=;
+        b=Om3iJbNP/HzScsMoF/ypq8OQFtuLX/FpIjCzmogc+dwff5rAQD19XvblIb0ylPp+ED
+         ph6l2kZmseMVl+791zP31CAouXfHujvqMSGeLSLYBgFCdPazonEHj2rJxTGl7vn03fsR
+         D5PRl0rhoa/C2xrfXHiVVBKLqVX3X6G2ZCKE5z/uhWYW1ewxyxmy516NOpVwfLrDnvQZ
+         25mk6xQlG3ocuobnSgHdIxdWCQc9NCqeNMIfJHRC5hwPb5Ia3KXm1SruF4xo7gjPd2Zc
+         y2+QhX9FwrPrwUXEBrwhji22TFDWpUz9E05rIzwlJ8YIbYJPaGX3PQ8eTifkr9XoF5dD
+         cBbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvVv+eH859Kz4q6bkFz9Rt+yRxDN7qNreg2U/80Ozue+m87IlMlC8Rg9NhSzPbSFVOQm6Awdt9aiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1OrjeyIkJtxoSHKKjznV9eU6wmGr4mQ2B8fgqCU5u3UWPW9dN
+	KoAhCLsCU3n4lYrRnoIaXNFRd3MRK2CXHbag8xjCNX7vufMR+fYmVBJGZIrF+Mw=
+X-Gm-Gg: ASbGncs1TnJk6ChbQKpWicQnwO+98hE1Ki8wUc3qm8AMtdXQrl4wjfiybwLmfMEnda3
+	xDTzYelWuczDnLtldsxNDV505PUqLE6vfuEBzxpHZX/7iZ2ghpU6Vxs2FkUBHvnkAlU7kOILixq
+	Wqg4Dlzx6F+7+Kaho75syNdQQXpBepGQ6fkokaE8oJjEGVUO5vOzOdwmRW6S3pkrkBR2qjTqz7u
+	7qwQ2BJmbnaiDEprFhPLoWvfux0516Ak2zmHCuE7cd73cj2tZ1YILjYJGN6/F9AkQC4Wv1KFXkJ
+	uSxygonTBuN3mDszETjUqXM=
+X-Google-Smtp-Source: AGHT+IFeBMX4wQkkK1eZgQ8lEKlzFJNSPxCZvzrd8VL8RcDP/uXgxJnPmX9jLerE3byptPWEc3Kg4A==
+X-Received: by 2002:a05:620a:2719:b0:7b1:11d9:446e with SMTP id af79cd13be357-7bffccc9b53mr2979634885a.3.1738585474447;
+        Mon, 03 Feb 2025 04:24:34 -0800 (PST)
+Received: from sunil-laptop ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c00a8d02b1sm518627785a.43.2025.02.03.04.24.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2025 04:24:33 -0800 (PST)
+Date: Mon, 3 Feb 2025 17:54:18 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Anup Patel <apatel@ventanamicro.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] clk: sunxi: clean up rate counting
-Date: Mon,  3 Feb 2025 14:29:28 +0300
-Message-ID: <20250203112930.650813-1-abelova@astralinux.ru>
-X-Mailer: git-send-email 2.43.0
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 12/17] ACPI: property: Add support for nargs_prop
+ in acpi_fwnode_get_reference_args()
+Message-ID: <Z6C1cg3cqik8ZxvU@sunil-laptop>
+References: <20250203084906.681418-1-apatel@ventanamicro.com>
+ <20250203084906.681418-13-apatel@ventanamicro.com>
+ <Z6CPvteWv89Xo70j@smile.fi.intel.com>
+ <20250203105840.GH3713119@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 50 0.3.50 df4aeb250ed63fd3baa80a493fa6caee5dd9e10f, {Tracking_from_domain_doesnt_match_to}, astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 190748 [Feb 03 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/02/03 07:33:00 #27201296
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250203105840.GH3713119@black.fi.intel.com>
 
-If n = 255, the result of multiplication of n and 24000000
-may not fit int type. Swap division and shift with multiplication.
+On Mon, Feb 03, 2025 at 12:58:40PM +0200, Mika Westerberg wrote:
+> On Mon, Feb 03, 2025 at 11:43:26AM +0200, Andy Shevchenko wrote:
+> > On Mon, Feb 03, 2025 at 02:19:01PM +0530, Anup Patel wrote:
+> > > From: Sunil V L <sunilvl@ventanamicro.com>
+> > > 
+> > > fwnode_get_reference_args() which is common for both DT and ACPI passes
+> > > a property name like #mbox-cells which needs to be fetched from the
+> > > reference node to determine the number of arguments needed for the
+> > > property. However, the ACPI version of this function doesn't support
+> > > this and simply ignores the parameter passed from the wrapper function.
+> > > Add support for dynamically finding number of arguments by reading the
+> > > nargs property value. Update the callers to pass extra parameter.
+> > 
+> > I don't like this (implementation).
+> 
+> Agree.
+> 
+> > It seems that we basically have two parameters which values are duplicating
+> > each other. This is error prone API and confusing in the cases when both are
+> > defined. If you want property, add a new API that takes const char *nargs
+> > and relies on the property be present.
+> 
+> Also this is not really needed for ACPI case because it has types so it can
+> distinguish references from integer. Having separate property for this just
+> makes things more complex than they need to be IMHO.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Thanks! Andy and Mika for your kind feedback. I agree that having both
+property name and nargs is confusing and also ACPI would not need
+nargs_prop. In fact, I think ACPI doesn't need even nargs integer value
+as well from the caller since all integers after the reference are
+counted as arguments.  However, the issue is acpi_get_ref_args() assumes
+that caller passes valid num_args. But typically the common
+fwnode_property_get_reference_args() doesn't usually pass both valid
+values. So, should fwnode_property_get_reference_args() pass both
+nargs_prop (for DT) and nargs (for ACPI). Or do you mean it is better to
+remove the check for num_args in the loop inside acpi_get_ref_args()
+function?
 
-Fixes: 6424e0aeebc4 ("clk: sunxi: rewrite sun9i_a80_get_pll4_factors()")
-Signed-off-by: Anastasia Belova <abelova@astralinux.ru>
----
- drivers/clk/sunxi/clk-sun9i-core.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/sunxi/clk-sun9i-core.c b/drivers/clk/sunxi/clk-sun9i-core.c
-index d93c7a53c6c0..639c83ed63b8 100644
---- a/drivers/clk/sunxi/clk-sun9i-core.c
-+++ b/drivers/clk/sunxi/clk-sun9i-core.c
-@@ -25,12 +25,12 @@
- 
- static void sun9i_a80_get_pll4_factors(struct factors_request *req)
- {
--	int n;
--	int m = 1;
--	int p = 1;
-+	unsigned int n;
-+	unsigned int m = 1;
-+	unsigned int p = 1;
- 
- 	/* Normalize value to a 6 MHz multiple (24 MHz / 4) */
--	n = DIV_ROUND_UP(req->rate, 6000000);
-+	n = DIV_ROUND_UP(req->rate, 6000000ul);
- 
- 	/* If n is too large switch to steps of 12 MHz */
- 	if (n > 255) {
-@@ -50,7 +50,11 @@ static void sun9i_a80_get_pll4_factors(struct factors_request *req)
- 	else if (n < 12)
- 		n = 12;
- 
--	req->rate = ((24000000 * n) >> p) / (m + 1);
-+	/* Division and shift should be done before multiplication to
-+	 * avoid overflow. The result will be correct because '>> p' and
-+	 * '/ (m + 1)' are both just conditional 'divide by 2'
-+	 */
-+	req->rate = ((24000000ul >> p) / (m + 1)) * n;
- 	req->n = n;
- 	req->m = m;
- 	req->p = p;
--- 
-2.43.0
-
+Thanks,
+Sunil
