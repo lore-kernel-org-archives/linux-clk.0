@@ -1,46 +1,81 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A365C1FFC4A;
-	Mon,  3 Feb 2025 09:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3361FF613;
+	Mon,  3 Feb 2025 09:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738575826; cv=none; b=P34Firb8oWuTC8onaDzG3fbARy+zuXIVLgT/Vh3b0NG0LqLbIHamciRNF5b8KPGO+lVLPH42BpZzs6H3lQRDPrm8JK6b6OhNewik8EHCkjdsEIwObDjuRLDWMVhhSzBg80M9TtgVMk+QxGmg7Q8zfcusaXXgt3t1rvXxkLAp0DE=
+	t=1738575954; cv=none; b=lEM+jWl0k/z9puVWVNIyO972EZsdTosnAt1eqjTdUpm4qS7rDAZBxuRvDJTwoVNXVoKpm9pFbAuEbb/pOeY0oFrVadKW2JoV2m/jMLE96eRMiIM/Oal7jShchQV+m8wuAEYKeDjvskDDHc5yscVPkkr2PRLz+6C+byqyz6sJ0eE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738575826; c=relaxed/simple;
-	bh=68Zku97RPEEwg9tefXwCcE/jH8eChHTU012LSEuMO2w=;
+	s=arc-20240116; t=1738575954; c=relaxed/simple;
+	bh=rstTH4HxPCJrnbCU4UITudFVvJpWca+YiZPY4gaILw8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bvaJOr/e+kdAo8LA77llUVFLYKYkFAFUgnE+pwvgOEugvmCqiFF8ZEbgRis496oWcU0A03WehlR2gxhj9CzivhvgLtgqYGOg0E04T9XVTwi0kCGGbBZEI2zKB9IQcGLFz0Fe/UGkZtjmG3Gv7boKNP/l6mnElB3bDNC8J7fTtLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FDF11063;
-	Mon,  3 Feb 2025 01:44:08 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 96BF23F5A1;
-	Mon,  3 Feb 2025 01:43:41 -0800 (PST)
-Date: Mon, 3 Feb 2025 09:43:39 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Sudeep Holla <sudeep.holla@arm.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 1/3] clk: Introduce clk_set_spread_spectrum
-Message-ID: <Z6CPy89TVxV1jaDn@pluto>
-References: <20250124-clk-ssc-v1-0-2d39f6baf2af@nxp.com>
- <20250124-clk-ssc-v1-1-2d39f6baf2af@nxp.com>
- <ff801714249c492abc3781da55675a38.sboyd@kernel.org>
- <20250202104256.GA13402@localhost.localdomain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W8eUNYky0ok6zrA9LegIVQxFEC4phtr/DafUTSL9gPtn3v3oPfkvP0GiDaVNOPWE5jege9cePa/Yn08owMiM2Xt8cpfK9fAj+5gh0eNAQKtWtzCiH1dLM2xdofWW10zu+PFOSeP0jTd6Ng5AQH4BQy+hGl0uSPMSW75vkHU0I/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C9O9iHMd; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C9O9iHMd"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1738575953; x=1770111953;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rstTH4HxPCJrnbCU4UITudFVvJpWca+YiZPY4gaILw8=;
+  b=C9O9iHMdtJRKGg8Zyk4A3mJ9Bo+zE/7AqAWvcfjNzfcjPyTmX0HF8I/1
+   1DasM/XkF6o+dRQtaXf9HBBKoazWvpWuIp/+E7tNdEgbycnctMz9SNlbm
+   uIE4VWDXQUhfPZVyiEHYnGZFEMhxPimtGKH9yU9PdF9cbfOdTIww4Y92c
+   LpxZoI3O1DooGmW59MFsaSeuZwiqbOx4PbbxpVMzlkIMZXOzgyiNJ7Z6t
+   e7YcQTpQ+k1ytw6GcTPORAgJlgEQ/3XU1dHLKXjIaC9g3zsgalPvum5Pp
+   hUkQ8CjR6V+UnXRXAWDvwR6SbSNXpGtonsR/rruOYpZxXkxM0RPeAP3Sa
+   A==;
+X-CSE-ConnectionGUID: c86LGA8ZRMOeZtslT5wSsA==
+X-CSE-MsgGUID: YsHdFvQqQZq7ymd2aOu0Ag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11334"; a="41894391"
+X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; 
+   d="scan'208";a="41894391"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 01:45:52 -0800
+X-CSE-ConnectionGUID: QlEalOV5SXWFrYoa7tlydw==
+X-CSE-MsgGUID: +zqACfbiSdGiFD7VLplOnQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,255,1732608000"; 
+   d="scan'208";a="109997448"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 01:45:45 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tet1R-00000007mwP-3nns;
+	Mon, 03 Feb 2025 11:45:41 +0200
+Date: Mon, 3 Feb 2025 11:45:41 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 15/17] mailbox/riscv-sbi-mpxy: Add ACPI support
+Message-ID: <Z6CQRU4uCNBwVStY@smile.fi.intel.com>
+References: <20250203084906.681418-1-apatel@ventanamicro.com>
+ <20250203084906.681418-16-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,145 +84,20 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250202104256.GA13402@localhost.localdomain>
+In-Reply-To: <20250203084906.681418-16-apatel@ventanamicro.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, Feb 02, 2025 at 06:42:56PM +0800, Peng Fan wrote:
-> On Tue, Jan 28, 2025 at 12:25:28PM -0800, Stephen Boyd wrote:
-> >Quoting Peng Fan (OSS) (2025-01-24 06:25:17)
-> >> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> >> index cf7720b9172ff223d86227aad144e15375ddfd86..a4fe4a60f839244b736e3c2751eeb38dc4577b1f 100644
-> >> --- a/drivers/clk/clk.c
-> >> +++ b/drivers/clk/clk.c
-> >> @@ -2790,6 +2790,45 @@ int clk_set_max_rate(struct clk *clk, unsigned long rate)
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(clk_set_max_rate);
-> >>  
-> >> +int clk_set_spread_spectrum(struct clk *clk, unsigned int modfreq,
-> >> +                           unsigned int spreadpercent, unsigned int method,
-> >> +                           bool enable)
-> >> +{
-> >> +       struct clk_spread_spectrum clk_ss;
-> >> +       struct clk_core *core;
-> >> +       int ret = 0;
-> >
-> >The assignment looks unnecessary.
+On Mon, Feb 03, 2025 at 02:19:04PM +0530, Anup Patel wrote:
+> From: Sunil V L <sunilvl@ventanamicro.com>
 > 
-> To avoid uninitialized variable warning.
-> 
-> >
-> >> +
-> >> +       if (!clk || !clk->core)
-> >
-> >How do you not have clk->core?
-> >
-> >> +               return 0;
-> >> +
-> >> +       clk_ss.modfreq = modfreq;
-> >> +       clk_ss.spreadpercent = spreadpercent;
-> >> +       clk_ss.method = method;
-> >> +       clk_ss.enable = enable;
-> >> +
-> >> +       clk_prepare_lock();
-> >> +
-> >> +       core = clk->core;
-> >
-> >Why do we need to get the core under the lock?
-> 
-> Drop in v2.
-> 
-> >
-> >> +
-> >> +       if (core->prepare_count) {
-> >
-> >Why does prepare count matter?
-> 
-> I was thinking to configure Spread Spectrum(SS) before
-> prepare/enable a clock. But it should be fine to not
-> check prepare count.
-> 
-> >
-> >> +               ret = -EBUSY;
-> >> +               goto fail;
-> >
-> >We just left without releasing the lock.
-> 
-> True. Dan also reported this. Fix in V2.
-> 
-> >
-> >> +       }
-> >> +
-> >> +       ret = clk_pm_runtime_get(core);
-> >> +       if (ret)
-> >> +               goto fail;
-> >
-> >We just left without releasing the lock.
-> >
-> >> +
-> >> +       if (core->ops->set_spread_spectrum)
-> >> +               ret = core->ops->set_spread_spectrum(core->hw, &clk_ss);
-> >> +
-> >> +       clk_pm_runtime_put(core);
-> >> +       clk_prepare_unlock();
-> >> +fail:
-> >> +       return ret;
-> >> +}
-> >> +EXPORT_SYMBOL_GPL(clk_set_spread_spectrum);
-> >> +
-> >> diff --git a/include/linux/clk.h b/include/linux/clk.h
-> >> index b607482ca77e987b9344c38f25ebb5c8d35c1d39..49a7f7eb8b03233e11cd3b92768896c4e45c4e7c 100644
-> >> --- a/include/linux/clk.h
-> >> +++ b/include/linux/clk.h
-> >> @@ -858,6 +858,21 @@ int clk_set_rate(struct clk *clk, unsigned long rate);
-> >>   */
-> >>  int clk_set_rate_exclusive(struct clk *clk, unsigned long rate);
-> >>  
-> >> +/**
-> >> + * clk_set_spread_spectrum - set the spread spectrum for a clock
-> >> + * @clk: clock source
-> >> + * @modfreq: modulation freq
-> >> + * @spreadpercent: modulation percentage
-> >> + * @method: down spread, up spread, center spread or else
-> >
-> >Did we get cut off?
-> 
-> Sorry I not get this point.
-> 
-> >
-> >> + * @enable: enable or disable
-> >
-> >Isn't 'disable' equal to spread_percent of zero?
-> 
-> yeah. Drop the last parameter.
-> 
-> >
-> >> + *
-> >> + * Configure the spread spectrum parameters for a clock.
-> >> + *
-> >> + * Returns success (0) or negative errno.
-> >> + */
-> >> +int clk_set_spread_spectrum(struct clk *clk, unsigned int modfreq,
-> >
-> >Does this need to be a consumer API at all? Usually SSC is figured out
-> >when making a board and you have to pass some certification testing
-> >because some harmonics are interfering. Is the DT property sufficient
-> >for now and then we can do it when the driver probes in the framework?
-> 
-> I suppose 'DT property' you are refering the stm32 and i.MX8M SSC patchsets.
-> I am proposing a generic interface for drivers to enable SSC.
-> Otherwise we need to introduce vendor properties for each vendor.
-> And looking at clk-scmi.c, we need a generic way to enable SSC, I think SCMI
-> maintainers not agree to add vendor properties for it.
-> 
+> Add ACPI support for the RISC-V SBI message proxy (MPXY) based
+> mailbox driver.
 
-To clarify, from the SCMI point of view, I expressed the idea that it
-would make sense to have a common SSC interface on the SCMI backend too
-instead of a custom NXP since you are adding a common CLK framework feature,
-BUT only if it turns out, from this discussion, that a common general way of
-configuring SSC can be found...and I dont know that, so I am waiting to see
-what this discussion with CLK framework and iMX maintainers goes before
-excluding the SCMI CLK vendor OEM types scenario...it would be ideal and
-easier NOT to use SCMI vendor extensions BUT ONLY if this NXP SSC/config generic
-solution is deemed to be really generic and usable by any other vendor.
+Ah, here are the same comments are applicable as per patch 16.
+Haven't noticed there are two similarly looking changes.
 
-Thanks,
-Cristian
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
