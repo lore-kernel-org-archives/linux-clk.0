@@ -1,217 +1,109 @@
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87C125A623
-	for <linux-clk@vger.kernel.org>; Mon,  3 Feb 2025 20:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7197220E32D;
+	Mon,  3 Feb 2025 20:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738614297; cv=none; b=fDryXu4Ij1CqmXkSFtJpP/IJhpqT//xeFIuACU4SrjvHC9B18YSt/FviJOlOwz656KdfI6TwiVH6eHrO6B/q3xKYPIxu4SBUR39yU3ZKYpCxx++9RyQzBJTps4A8A7sAy7yn3kHhgNc9BYalDE4TDnWQ64ioqYvGf6VxnxHUPWE=
+	t=1738615068; cv=none; b=slqqms70kXPsqpTKOECK/wQqdnsVTLysPN3Z0H4VCq+yeQAkwIR7+sQl2mgxCxmA1joNip+CsXOP9zQFlpvM26UnJdT8kDH2e2PkPlR6rmFHViXx50CfF/X5ND2IMhBIPJZFKAWKuPjIahgwa4m8HJWkiub15TaUo5vgSdDUrP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738614297; c=relaxed/simple;
-	bh=4ZBhPOFz5eul4AYPe6eHBKQQNaWdLcFFW5q5R1zympQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y7kd55G4dSCfLLjbHuUSeT0l/Z1qZMgtZyFb0wVkJJYbO8ImYpttb+ooYPSKl9Sf7Lnv7oG9jEKAmwkJQRRfV3mEuI3hDvgH2UDiqzW4WvfMiVoGXn6nLZ5NKTvPJ2zZZL1v0PltcIuDN9/wluaGEYS0il+Acvy/T+UIaqq4R0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=LWm2nX3r; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+	s=arc-20240116; t=1738615068; c=relaxed/simple;
+	bh=UOdlW/B5f7UyeRQyINQBWwmZXqqYBsym7EwJVm9wZFM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=a4e4xVELDZXmFULVNTv+cySDGU9T0YIgOVBerD4ajtHuGbTnNw0n/JriAMaUBgIW1e8vYDklhUnawaWEwDh5oHhWz5UYJTSiFV35ZxAsiocrjMFqfXaicoPQpSW+mzc8Xuc4o0smAmCOXe+gl4lX57o1rPtRHjTWG/Q4Bu0UAoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Zt8GS/88; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="LWm2nX3r"
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-84cdacbc373so124664939f.1
-        for <linux-clk@vger.kernel.org>; Mon, 03 Feb 2025 12:24:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1738614295; x=1739219095; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hk9JFObA4COff1XvgL6pyI7Lgpee7/4aC4TK3AK7tuo=;
-        b=LWm2nX3r4yuzLJk7bOC4zGbj5+8RlS9DO117ViHxA3RN2J2sFGf0/0GgeAsohuqu1a
-         dxLbznRbKU3anqRnheABr+NdfYUa4//B4hRp4v9hnA8Tk/Uyz0D2wVYSali6/xwWF9dO
-         5OR9hTIGUgXRC1e3XEBBCxLQIqEY4cTMRf2Nwp3lU5nfjaqqTin4Tq6Xh6p2j2xQHaLS
-         OdlLlBJHZ1zOKKlkoktIlb8rGz9evpMVLxJFBLNEh71+OfQlUJd2d3giJsNe1W4l7sPf
-         DYAdoZNPj2Rm8N7/8JwFuWUcCGWRQEZi2yE1CzeyXG36E35ChYoC81EUE8TjFmiEPKUW
-         Z9Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738614295; x=1739219095;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hk9JFObA4COff1XvgL6pyI7Lgpee7/4aC4TK3AK7tuo=;
-        b=IOLZHJLPTXvqDuKLxL4rk70HkPCt2T03Y/4H74uqrXOG2oBto8iWc3yicYCpfu6RYy
-         EapKOPogpm0ADcSWLxd409fSEOZ4OMRvqR/4glAXOXTlb/tYXmpFfbfxqIgpHbugCNt4
-         wARqJTTX7/l3kokpMhRcsmz2ttBKUIMaY9EQH6GaKWqO6r3JSWPh9m9C0o+vzi6WZkwc
-         KzznwC+cGOwDpoM1SLoK5abMXQEAc2/6s8OFvu3mTz4i3DhWjYGRvyIEKv1EiLJXx6GT
-         PYcBQBIhbJJUAmDq5lcsr+y7cNELGfXZpT8RaFcVL05rtx7ycRBeeaHZRUgte1ZRFwsQ
-         OoWg==
-X-Gm-Message-State: AOJu0Yzvtme6GKWKA2+N0APp5Nd35d94+Rk057VdrSY+o5UiUD8Fwnqj
-	GPVgZLK/17v1WGiWGYIZY9SmkCEIlkXj4Hp+FubZOHKUeJqyr1iYu+90+m5C5kE=
-X-Gm-Gg: ASbGnct7P4yOS4AOIZQBWuCHhP7k4UzcXiUge5+jhA7F3yRgGP8LgtzbvfBgmbfpsfJ
-	/t9HiD0kAaSxoDxa8JcMOOKtzz5FiPSQawtWKMT7Nb3rPiAwWiCGACQKMdZ3fOoPWmCAxkc2uJ8
-	R1JM1W2k787LL9KVvTpJmTZPyfCVNjJYV84/YPjmfuBL9LuGIL9wk++ff86gkt3LV/Oj2ShVXaN
-	QUswMKWVSpbgfQMzUr5cYZZliZlka9n5aZpSwjdtL6QVdUqPS9Hmb4kZuTGg7Na7ua17FyC8p5D
-	nRZZzwRl2rRUwMTnxHh7dqEZ1Ms+FLEugLtwI5k=
-X-Google-Smtp-Source: AGHT+IHEJGxfKm/XxR5HOi6egCzTPsETR1qnlZiOaKKIny+VHepRdiI6w/LjA3M3OvHKbwmvA+nh+Q==
-X-Received: by 2002:a05:6602:3f0b:b0:84a:5201:570b with SMTP id ca18e2360f4ac-854006dfe26mr2249929239f.0.1738614294882;
-        Mon, 03 Feb 2025 12:24:54 -0800 (PST)
-Received: from [100.64.0.1] ([165.188.116.9])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ec7458ef58sm2399719173.5.2025.02.03.12.24.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Feb 2025 12:24:54 -0800 (PST)
-Message-ID: <237ce4e3-d66f-43ee-bd4e-38007dc750e5@sifive.com>
-Date: Mon, 3 Feb 2025 14:24:52 -0600
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Zt8GS/88"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id E483D25B8F;
+	Mon,  3 Feb 2025 21:37:44 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id hm_wKjRRSMgf; Mon,  3 Feb 2025 21:37:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1738615064; bh=UOdlW/B5f7UyeRQyINQBWwmZXqqYBsym7EwJVm9wZFM=;
+	h=From:Subject:Date:To:Cc;
+	b=Zt8GS/88Cfkl0ztoKt1rcl+Prdo0NIC2Jp8TIYWayM9RqioUrK2cgR3HO7+ucFlXm
+	 +GtWsUFxt7BuAnHfYHwihFZivNezu7WvFO43nhjngLyhoUwsR6opY4EnEBskVWbFqV
+	 yKq2zRGKJiZKg1vHzRGa2XAGYa45AK93jb2HkQK9G3ujz48r/rdmtpPtDZn0BzB04Q
+	 o6jztToSnTaZFGQ29bNhaACQx8uWZWG1nM8CuZSmyMB5YrC8UcCQ/cUEvvvT1jcpmU
+	 OKDcg5jhuFSfap+9cC9/kApo0+D0GEubsuj6PPSdL/r4GjN3bYlI5onx0+YNOnI9Kr
+	 sMzMvpVyxYz0w==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH 0/5] Introduce support for Exynos7870 clocks and PMU
+Date: Tue, 04 Feb 2025 02:07:28 +0530
+Message-Id: <20250204-exynos7870-pmu-clocks-v1-0-a3030ae5bb53@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 1/3] dt-bindings: clock: Add bindings for Canaan
- K230 clock controller
-To: Xukai Wang <kingxukai@zohomail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Troy Mitchell <TroyMitchell988@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>
-References: <20250203-b4-k230-clk-v3-0-362c79124572@zohomail.com>
- <20250203-b4-k230-clk-v3-1-362c79124572@zohomail.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <20250203-b4-k230-clk-v3-1-362c79124572@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAkpoWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDIwNj3dSKyrz8YnMLcwPdgtxS3eSc/OTsYt0UgyRjYwNLc4PURHMloN6
+ CotS0zAqwudGxtbUA8ZNRCWcAAAA=
+X-Change-ID: 20250203-exynos7870-pmu-clocks-d0b330970ea7
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sergey Lisov <sleirsgoevy@gmail.com>, linux-kernel@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1738615054; l=1455;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=UOdlW/B5f7UyeRQyINQBWwmZXqqYBsym7EwJVm9wZFM=;
+ b=Wd6SgxBY6MpmKjGF60sKQhCVMjPZIXG0ikzab0iWnyaGKGbqvukvR19AEl6Qzg+BoZQyujYlw
+ 7khlksWWCBCCtohWfL8dTsrqLL1hZRxePuxNeuDMU10hIvLpvWb1Xjd
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On 2025-02-03 8:49 AM, Xukai Wang wrote:
-> This patch adds the Device Tree binding for the clock controller
-> on Canaan k230. The binding defines the new clocks available and
-> the required properties to configure them correctly.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
-> ---
->  .../devicetree/bindings/clock/canaan,k230-clk.yaml | 43 +++++++++++++++++++
->  include/dt-bindings/clock/canaan,k230-clk.h        | 49 ++++++++++++++++++++++
->  2 files changed, 92 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..d7220fa30e4699a68fa5279c04abc63c1905fa4a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
-> @@ -0,0 +1,43 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Canaan Kendryte K230 Clock
-> +
-> +maintainers:
-> +  - Xukai Wang <kingxukai@zohomail.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: canaan,k230-clk
-> +
-> +  reg:
-> +    items:
-> +      - description: PLL control registers.
-> +      - description: Sysclk control registers.
+Add a CMU driver for Exynos7870 devices. It handles the following
+clock banks:
+ * CMU_MIF
+ * CMU_DISPAUD
+ * CMU_FSYS
+ * CMU_G3D
+ * CMU_ISP
+ * CMU_MFCMSCL
+ * CMU_PERI
 
-From the way the driver is structured, this looks rather like two separate
-hardware blocks, not two groups of registers for a single hardware block. For
-example, the driver registers two clock providers for the same DT node, with
-overlapping indexes. This doesn't work. Either you need two separate DT nodes --
-one for the PLLs and another for the sysclks -- or you need to include the PLLs
-in the binding header below at non-overlapping indexes.
+It also documents Exynos7870 PMU's compatible, and adds a CLKOUT driver
+which depends on the compatible. The CLKOUT driver manages clocks from
+PMU_DEBUG.
 
-Regards,
-Samuel
+This patch series is a part of Exynos7870 upstreaming.
 
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller@91102000 {
-> +        compatible = "canaan,k230-clk";
-> +        reg = <0x91102000 0x1000>,
-> +              <0x91100000 0x1000>;
-> +        clocks = <&osc24m>;
-> +        #clock-cells = <1>;
-> +    };
-> diff --git a/include/dt-bindings/clock/canaan,k230-clk.h b/include/dt-bindings/clock/canaan,k230-clk.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..47d966fda5771615dad8ade64eeec42a9b27696e
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/canaan,k230-clk.h
-> @@ -0,0 +1,49 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Kendryte Canaan K230 Clock Drivers
-> + *
-> + * Author: Xukai Wang <kingxukai@zohomail.com>
-> + */
-> +
-> +#ifndef CLOCK_K230_CLK_H
-> +#define CLOCK_K230_CLK_H
-> +
-> +/* Kendryte K230 SoC clock identifiers (arbitrary values). */
-> +#define K230_CPU0_SRC			0
-> +#define K230_CPU0_ACLK			1
-> +#define K230_CPU0_PLIC			2
-> +#define K230_CPU0_NOC_DDRCP4		3
-> +#define K230_CPU0_PCLK			4
-> +#define K230_PMU_PCLK			5
-> +#define K230_HS_HCLK_HIGH_SRC		6
-> +#define K230_HS_HCLK_HIGH_GATE		7
-> +#define K230_HS_HCLK_SRC		8
-> +#define K230_HS_SD0_HS_AHB_GAT		9
-> +#define K230_HS_SD1_HS_AHB_GAT		10
-> +#define K230_HS_SSI1_HS_AHB_GA		11
-> +#define K230_HS_SSI2_HS_AHB_GA		12
-> +#define K230_HS_USB0_HS_AHB_GA		13
-> +#define K230_HS_USB1_HS_AHB_GA		14
-> +#define K230_HS_SSI0_AXI15		15
-> +#define K230_HS_SSI1			16
-> +#define K230_HS_SSI2			17
-> +#define K230_HS_QSPI_AXI_SRC		18
-> +#define K230_HS_SSI1_ACLK_GATE		19
-> +#define K230_HS_SSI2_ACLK_GATE		20
-> +#define K230_HS_SD_CARD_SRC		21
-> +#define K230_HS_SD0_CARD_TX		22
-> +#define K230_HS_SD1_CARD_TX		23
-> +#define K230_HS_SD_AXI_SRC		24
-> +#define K230_HS_SD0_AXI_GATE		25
-> +#define K230_HS_SD1_AXI_GATE		26
-> +#define K230_HS_SD0_BASE_GATE		27
-> +#define K230_HS_SD1_BASE_GATE		28
-> +#define K230_HS_OSPI_SRC		29
-> +#define K230_HS_USB_REF_50M		30
-> +#define K230_HS_SD_TIMER_SRC		31
-> +#define K230_HS_SD0_TIMER_GATE		32
-> +#define K230_HS_SD1_TIMER_GATE		33
-> +#define K230_HS_USB0_REFERENCE		34
-> +#define K230_HS_USB1_REFERENCE		35
-> +
-> +#endif /* CLOCK_K230_CLK_H */
-> 
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Kaustabh Chakraborty (3):
+      dt-bindings: clock: document exynos7870 clock driver CMU bindings
+      dt-bindings: soc: samsung: exynos-pmu: add exynos7870-pmu compatible
+      clk: samsung: add exynos7870 CLKOUT support
+
+Sergey Lisov (2):
+      dt-bindings: clock: add clock definitions for exynos7870 CMU
+      clk: samsung: add initial exynos7870 clock driver
+
+ .../bindings/clock/samsung,exynos7870-clock.yaml   |  246 +++
+ .../bindings/soc/samsung/exynos-pmu.yaml           |    1 +
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos-clkout.c            |    3 +
+ drivers/clk/samsung/clk-exynos7870.c               | 1830 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos7870.h             |  324 ++++
+ 6 files changed, 2405 insertions(+)
+---
+base-commit: df4b2bbff898227db0c14264ac7edd634e79f755
+change-id: 20250203-exynos7870-pmu-clocks-d0b330970ea7
+
+Best regards,
+-- 
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
