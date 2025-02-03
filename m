@@ -1,181 +1,125 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2478B20ADCE;
-	Mon,  3 Feb 2025 14:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738593707; cv=none; b=s+/stviJKH/5NU46Caee0gF6j1EA/WZvRBA3Eo/yd/b1WkfnRIItXob0Ue2D/RMK8J/Gfq6N1lOD/yZfAYOkEuBylnSCtXdd448chUVJfgJB3E1KCnYmEmyGBM30gDVf7BbPbJoDbk2gQhKh7FUIubikTOT54JKDmAdaIYc2VHo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738593707; c=relaxed/simple;
-	bh=eqHJ6iLQC6PaAIkGJVA+giLkfaYuuTRYHIPTbp/HUeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9mpziJVXYzDuzLjCRmHfCFJxn/uj+e6s695fRH9PL7ieYfQ4svX1iRjpSXEdxBcqK14iGNvFlOJS8JdHV0zixbpuHHd62IND0W68U5gHHyZfZh9mTLgulFvnYd1yAzKog7146nU3m5b4QCMof0viffq8pzBctJDGpR7OjLROeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OO2ifQqF; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DD22AE96;
+	Mon,  3 Feb 2025 14:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738594415; cv=pass; b=dVIn6hTB+PkD5oFtYnFF6Fybr7LqokOrxn5CSaAo2f/5TUUaBwkcErT1rEYYMTmoVxIfi2BGi0GCT4/yWLhToDYu5wHF8PmGX0dPPXVWVm1PPN0aMfWfUBEhhP0OjWHjj6mXWtgsPYEQ+TJqoyA3Bjk8CCGUsjeGBjxlObEQ0Zc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738594415; c=relaxed/simple;
+	bh=uAf1Qu5iAwOF6w7+cykNRQ6N+q3faRjDxXIe6ls3p/s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DuB6wMWlWQKyYSYKM//aX7iljxcbzOEdWSQNuTFERENUsLp7Z7CAgkscrXrjfrTNZeIUepNZ/hJdrlqzfa+W2zPenvcAYSrVWr3B5wXjFbf5UzktIYxlVBhk1H8noAVTajOjnRq5VqtppjER5vkZpegZ5kwil4uq1KQtTQmVQ+Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=IBeKPXax; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OO2ifQqF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738593706; x=1770129706;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eqHJ6iLQC6PaAIkGJVA+giLkfaYuuTRYHIPTbp/HUeE=;
-  b=OO2ifQqFVmV7kG4nW5obr55+UI88HnNLPwTVLRyC6gkABIl/NcAmxuMC
-   6m+HeHCqTEoI9japp1fm9iUQUrKI4ziqFNew2PK5XuZQ6FOjxCDr9fzrv
-   HA0bqRMm/d5LrrG/epMaLlDPZEGx/TE0CzvCXT3OfUJU0qgWhG1J9+Fyv
-   vqvn3SaTaDoc2TEXQfb8kg6ZMgU6ZSe3ov41M2k5sU0XQvWCIfgVEfmUN
-   Vhh2MIdN3UczM+1jEcsyht2yJmfFi0nawDu4JSIrmtdJcbvBbkuCVX9bi
-   zzbZdXy1cztNNhQtDbCfetQWG7p0Osw5m73q2TZ376LNVnn4iWB6vG82t
-   g==;
-X-CSE-ConnectionGUID: FXKj8CnjToqM8N1IVO/elw==
-X-CSE-MsgGUID: epKpmSa5QqSJA2n3yozLfg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11335"; a="43012117"
-X-IronPort-AV: E=Sophos;i="6.13,256,1732608000"; 
-   d="scan'208";a="43012117"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 06:41:45 -0800
-X-CSE-ConnectionGUID: /GE/cKmzS16OqKpC32VlUg==
-X-CSE-MsgGUID: 17ywrmFcQAaESKVe9X2uPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="114340726"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2025 06:41:39 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1texdo-00000007rLu-0rgk;
-	Mon, 03 Feb 2025 16:41:36 +0200
-Date: Mon, 3 Feb 2025 16:41:35 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sunil V L <sunilvl@ventanamicro.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 12/17] ACPI: property: Add support for nargs_prop
- in acpi_fwnode_get_reference_args()
-Message-ID: <Z6DVn8u-2EwMaMR4@smile.fi.intel.com>
-References: <20250203084906.681418-1-apatel@ventanamicro.com>
- <20250203084906.681418-13-apatel@ventanamicro.com>
- <Z6CPvteWv89Xo70j@smile.fi.intel.com>
- <20250203105840.GH3713119@black.fi.intel.com>
- <Z6C1cg3cqik8ZxvU@sunil-laptop>
- <20250203123658.GI3713119@black.fi.intel.com>
- <Z6DJ9kmNx4JoqRg-@sunil-laptop>
- <Z6DVDicVEgmSyGcT@smile.fi.intel.com>
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="IBeKPXax"
+ARC-Seal: i=1; a=rsa-sha256; t=1738594393; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=LOqLGkygm7V2gIYETMg6LFnKgtXNMxmvaoCx9w/yCBa1An44em7600Q3Dc7lR2XQRpeWf3FK3nJ8TPXuc/LtogtqeOErh5wIQ3zpystjSjf+t2BZOo5d/UR20qN0rBJww4nKgrdFC1ccaBAXdnv96zjBhusf17OuFRIyGxP50Hw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1738594393; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=9FBpXPNQ/O7C3kvwwBaoJusx+yF7wtAqh45WHVLBK9E=; 
+	b=VX80JuHjRfxYFcEaTLsbh87fS8nIZEFqixWlCtDBTGRYDI4qPwyJDKpGJ2K7KPzo0kqdnSo/i3dNNq9dknfSNqJDNWdwuzGwAOr20kwuHXn05hgPJxqYi+NDi6R0OryB+4TndI8q9jv0VDprN3FlA5sllJPKGJTQ1Stup19DAIM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1738594393;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Feedback-ID:Reply-To;
+	bh=9FBpXPNQ/O7C3kvwwBaoJusx+yF7wtAqh45WHVLBK9E=;
+	b=IBeKPXaxZpHA/VIu41bW1W1wr5b79pO8iTa7HCjxq3yMh8u9Pm8Bpm7lg7W82a5s
+	lTV1WIYb14UoIxX8pMXrzD7pckerclMNkwTQUoPRuADKQFKstdcmJ2zfoI9eM9+9cEt
+	4DQi5lmVkqcmEqSAY73mE8eMff2Igf++4nRxSWhw=
+Received: by mx.zohomail.com with SMTPS id 1738594389391931.2624604192613;
+	Mon, 3 Feb 2025 06:53:09 -0800 (PST)
+From: Xukai Wang <kingxukai@zohomail.com>
+Subject: [PATCH RESEND v3 0/3] riscv: canaan: Add support for K230-Canmv
+ clock
+Date: Mon, 03 Feb 2025 22:49:54 +0800
+Message-Id: <20250203-b4-k230-clk-v3-0-362c79124572@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6DVDicVEgmSyGcT@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJLXoGcC/23Pu07DMBQG4FeJPGNkH9tx0omBrgwwIgb7HJtYv
+ aQkIQKqvjtOKFID9eSLvt//ObI+dCn0bFUcWRfG1Kd2nw/qpmDYuP1r4InymYEALUGU3Gu+ASU
+ 4bje8BhOVioFKBJbFoQsxfcxpz+xx/bR+uGcvP/ddeHvP4cP58eAGbHL0qqBATqG2EEVeMZIWS
+ EQWY0nKmwBkyVnCKd+7PnBsd7s0rArrjLTeU1SEVe3ABWOEyHGlDRWoWEVAVcYwN2hSP7Td5zz
+ mqOYK54nsYqJR8bzx0tZGVlWw9u6rbdqdS9vb/O/UITMjJMB/5mO0xjisMeKSTQ1GffGr1EuuM
+ 5coanSlV7pyV7i84FAvucwcQLpa5tFFoCscfnkuL6olh4lbr4QDdAb+8tPp9A0vAdH6JwIAAA=
+ =
+X-Change-ID: 20241206-b4-k230-clk-925f33fed6c2
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Xukai Wang <kingxukai@zohomail.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ Troy Mitchell <TroyMitchell988@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+Feedback-ID: rr08011227eacedceba60c4476cc4e07bd000017c7dfb419cf004296e5ba00ad2accf505e42645bb0986f39f:zu0801122737ed594d3df406b351e29cc20000b074cadc34b5eab45684974784152d0d14e3d1f9501fea7ad4:rf0801122dc4b18f66a3e2640540f745880000b75a1bc68ba714d550431b5842fecb09d3a409da7c48875c423cc6863ed0a3:ZohoMail
+X-ZohoMailClient: External
 
-On Mon, Feb 03, 2025 at 04:39:11PM +0200, Andy Shevchenko wrote:
-> On Mon, Feb 03, 2025 at 07:21:50PM +0530, Sunil V L wrote:
-> > On Mon, Feb 03, 2025 at 02:36:58PM +0200, Mika Westerberg wrote:
-> > > On Mon, Feb 03, 2025 at 05:54:18PM +0530, Sunil V L wrote:
-> > > > On Mon, Feb 03, 2025 at 12:58:40PM +0200, Mika Westerberg wrote:
-> > > > > On Mon, Feb 03, 2025 at 11:43:26AM +0200, Andy Shevchenko wrote:
-> > > > > > On Mon, Feb 03, 2025 at 02:19:01PM +0530, Anup Patel wrote:
-> > > > > > > From: Sunil V L <sunilvl@ventanamicro.com>
-> > > > > > > 
-> > > > > > > fwnode_get_reference_args() which is common for both DT and ACPI passes
-> > > > > > > a property name like #mbox-cells which needs to be fetched from the
-> > > > > > > reference node to determine the number of arguments needed for the
-> > > > > > > property. However, the ACPI version of this function doesn't support
-> > > > > > > this and simply ignores the parameter passed from the wrapper function.
-> > > > > > > Add support for dynamically finding number of arguments by reading the
-> > > > > > > nargs property value. Update the callers to pass extra parameter.
-> > > > > > 
-> > > > > > I don't like this (implementation).
-> > > > > 
-> > > > > Agree.
-> > > > > 
-> > > > > > It seems that we basically have two parameters which values are duplicating
-> > > > > > each other. This is error prone API and confusing in the cases when both are
-> > > > > > defined. If you want property, add a new API that takes const char *nargs
-> > > > > > and relies on the property be present.
-> > > > > 
-> > > > > Also this is not really needed for ACPI case because it has types so it can
-> > > > > distinguish references from integer. Having separate property for this just
-> > > > > makes things more complex than they need to be IMHO.
-> > > > 
-> > > > Thanks! Andy and Mika for your kind feedback. I agree that having both
-> > > > property name and nargs is confusing and also ACPI would not need
-> > > > nargs_prop. In fact, I think ACPI doesn't need even nargs integer value
-> > > > as well from the caller since all integers after the reference are
-> > > > counted as arguments.  However, the issue is acpi_get_ref_args() assumes
-> > > > that caller passes valid num_args. But typically the common
-> > > > fwnode_property_get_reference_args() doesn't usually pass both valid
-> > > > values. So, should fwnode_property_get_reference_args() pass both
-> > > > nargs_prop (for DT) and nargs (for ACPI). Or do you mean it is better to
-> > > > remove the check for num_args in the loop inside acpi_get_ref_args()
-> > > > function?
-> > > 
-> > > Can you show an example of a case you are trying to solve with this? So far
-> > > we have been able to go with the current implementation so why this is
-> > > needed now?
-> > 
-> > Basically one can call fwnode_property_get_reference_args()
-> > irrespective of DT/ACPI. The case we are trying is like below.
-> > 
-> > if (fwnode_property_get_reference_args(dev->fwnode, "mboxes",
-> > 					       "#mbox-cells", 0, index, &fwspec)) {
-> > ...
-> > }
-> > 
-> > As you can see this works for DT since OF interface handles
-> > "#mbox-cells". But since nargs is passed as 0, it won't work for ACPI
-> > due to the reason I mentioned earlier.
-> > 
-> > Mandating to pass both "#mbox-cell" and valid nargs count looks
-> > redundant to me.
-> 
-> Ah, interesting. The original change that introduces this 3e3119d3088f ("device
-> property: Introduce fwnode_property_get_reference_args") hadn't been reviewed
-> by Mika or me, that's probably why we are not familiar with.
-> 
-> Since interface is already established, I would recommend to fix
-> this as proposed, i.e. with a new API. This is the way to match
-> how OF seems to be doing.
+This patch series adds clock controller support for the Canaan Kendryte
+K230 SoC. The K230 SoC includes an external 24MHz OSC and 4 internal
+PLLs, with the controller managing these sources and their derived clocks.
 
-For the reference see implementation of of_fwnode_get_reference_args()
+The clock tree and hardware-specific definition can be found in the
+vendor's DTS [1],
+and this series is based on the K230 initial series [2].
 
-	if (nargs_prop)
-		ret = of_parse_phandle_with_args(to_of_node(fwnode), prop,
-						 nargs_prop, index, &of_args);
-	else
-		ret = of_parse_phandle_with_fixed_args(to_of_node(fwnode), prop,
-						       nargs, index, &of_args);
+Link: https://github.com/kendryte/k230_sdk/blob/main/src/little/linux/arch/riscv/boot/dts/kendryte/clock_provider.dtsi [1]
+Link: https://lore.kernel.org/linux-clk/tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com/ [2]
 
+Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
 
+---
+Changes in v3:
+- Reorder the defination and declaration in drivers code.
+- Reorder the properties in dts node.
+- Replace global variable `k230_sysclk` with dynamic memory allocation.
+- Rename the macro K230_NUM_CLKS to K230_CLK_NUM.
+- Use dev_err_probe for error handling.
+- Remove unused includes.
+- Link to v2: https://lore.kernel.org/r/20250108-b4-k230-clk-v2-0-27b30a2ca52d@zohomail.com
+
+Changes in v2:
+- Add items and description.
+- Rename k230-clk.h to canaan,k230-clk.h
+- Link to v1: https://lore.kernel.org/r/20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com
+
+---
+Xukai Wang (3):
+      dt-bindings: clock: Add bindings for Canaan K230 clock controller
+      clk: canaan: Add clock driver for Canaan K230
+      riscv: dts: canaan: Add clock initial support for K230
+
+ .../devicetree/bindings/clock/canaan,k230-clk.yaml |   43 +
+ arch/riscv/boot/dts/canaan/k230.dtsi               |   32 +
+ drivers/clk/Kconfig                                |    6 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-k230.c                             | 1372 ++++++++++++++++++++
+ include/dt-bindings/clock/canaan,k230-clk.h        |   49 +
+ 6 files changed, 1503 insertions(+)
+---
+base-commit: 7a517bbdf3dc89a2ae5500ded67e823f8f2c36fe
+change-id: 20241206-b4-k230-clk-925f33fed6c2
+prerequisite-patch-id: deda3c472f0000ffd40cddd7cf6d3b5e2d7da7dc
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Xukai Wang <kingxukai@zohomail.com>
 
