@@ -1,156 +1,60 @@
-Received: from out.smtpout.orange.fr (out-71.smtpout.orange.fr [193.252.22.71])
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065951FFC69;
-	Mon,  3 Feb 2025 15:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B67120AF74
+	for <linux-clk@vger.kernel.org>; Mon,  3 Feb 2025 16:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738597411; cv=none; b=E4ol8BjCZ++pH0XU+LATyRNx7zA74PuHbbvcowhVoaV4thTvph5jT7zGh5EE8wvvHGgPjrUcPqVVe/CbkeAWlHp8jjOWcyMLIFDrb3aDfEimImu0gR5pSrHmCIixPUf2t0ULtiUa230Iny8avodK8xR1i18i0KV47H4tVIjyjG0=
+	t=1738600077; cv=none; b=MhAt+HCLokUfsiImRpAhR6Iao7rOe6qQ8LUnzh8YtyeaOSEkR8Fga8yV8F9u3KT9PeyhLh7/BAAPMkSPIUgxcQ74K5gkTuxF0IRS0BR5lyTqS2B6BIL3P/8nidPSKDhs3EdO/p5lYIODcRKFv4aH0Ec95Z+DVUVw4tnL+XmS6d8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738597411; c=relaxed/simple;
-	bh=jOOv4bWa7lwO2nXyPXwBxnGGClSHOQVZio/1vYoQaLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gVVT5muqfgwed5sQG7AlvcfrFtlamOkEKVtWN9o99V9akx7wVfX4JEfdXu+FMQZd/tgabbiHh+kpTd+UPyNxzqv6/mhwRxBCf7xjTyoISH6KatftBUvPjKz02vgXresTCN2Fyzsj84DnLHZKt6aVG9fMXCpx3vtlWMSmEZtGTf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=E6vkO1BK; arc=none smtp.client-ip=193.252.22.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="E6vkO1BK"
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id eyaCtfZi6inFieyaHt4JBP; Mon, 03 Feb 2025 16:42:19 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1738597339;
-	bh=RZsvS79FyvH7npVg4P4SWlQ3ou2VaFduLz7By9FNQMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=E6vkO1BKyl9ZpZ/TIQbXnlfLL271wV2srdURu+fgQIsPEjIDixSMulc1y5cgOUdvQ
-	 iU0xocdrubJQbaGqdM4S1eETa1X3VnmbyIlCpIe+a4qtacRIMNgrbIBohfYQ/Cbs11
-	 4XcRUGo4AdWzSsrodY9VqO3xRb+ccURkqfTphOk6wf42jjzptRkf6Ew7LUPb8/7xmB
-	 4nxFwkSmDXyg1SOWrja+h9uckxzLz1buRrs02RmLyeg90pT9qhR9xDfFtDYVrbgxVL
-	 8i8tQrSryz9UIKkC0YPWmVq5f1paxeJQ4qhOnmIpEQ2eQwpF8/yY2k5burgk4+LioO
-	 cQ9XcwAjHlJHA==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 03 Feb 2025 16:42:19 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <16e1568d-8747-41e0-91b9-ce23c5592799@wanadoo.fr>
-Date: Tue, 4 Feb 2025 00:41:55 +0900
+	s=arc-20240116; t=1738600077; c=relaxed/simple;
+	bh=rYWmXaYScpoaMc2618PKbrqUETuGturSXQt5VcAoO8I=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=CYvQ1wzMGPBbHFEbhL9JtWMhMZeOJmrLpTCxlXFoqgMg4C3WWAH62RqkZoatnEnjTV3+gz0yzgLHANx/G6R65O8zT+6Ro1oDXcmJi4LdrMMaWI9Y5jQFLFxtOFoD7tkurwsVarv1iB7OB2CUz0wrqDF+68C7FTq5CX/ETvZORHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alefors.se; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alefors.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2a3bf796cccso2019922fac.1
+        for <linux-clk@vger.kernel.org>; Mon, 03 Feb 2025 08:27:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738600073; x=1739204873;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rYWmXaYScpoaMc2618PKbrqUETuGturSXQt5VcAoO8I=;
+        b=CLusofWXbLfiI6DP/RAIEIDX5SX0ruzNwmCOSv2fFS4SR0qMRpAuEC3L0jzmrbqL9Z
+         ByDB6to7cGgHvy1QLzG6QPe9g8SPuFcG/fddMLzDlAOjJnwoVXlVPkjios0+v2hPPT7o
+         dDX0bT4oypV7XVYYNc02kWUwDerfmqMlGdlEX8z2g34T4MbrNdxJh6P3EXWM/WTwHcfU
+         t9e86s+EygEszGjByVT5ZxFYovc4SS0/V1tX2aXKgZ7uvQXss3Yt2aEq6dK71RC9KL4l
+         tFzqKc/GmKYxJpOCWafCcSGvuI+IUdRL+AIaXUAKP1RX9k1ohyUB8v3oCY2+ZcNIXtpH
+         Qfeg==
+X-Gm-Message-State: AOJu0Yz+OmzKvIULaVcRDkPauo6dL5CkDR8JniUGx3PtWW8jWhW/2mUE
+	rNG90nCbgFIskfoSv0YBL49PFV2pU5FonvjiAI+XG8+ZfcWaiB3cstypihz1cyuiCJ7EUANsSnF
+	23xF76glZPGX3aW8uSYs+LdKxnBP9DK0j
+X-Gm-Gg: ASbGncvg5pxQQQHmYa8oRlgtyH4NDVcYHTfjjFJ3xLNQwyF0Ws3eZubxEpboqFShbMq
+	pa54I5QPrCognZiSbSzw1hGSbZ8oaMg94EdIFK0Lvvf9CkKQwtl+PeiEPqdA0dJsl56xJdg==
+X-Google-Smtp-Source: AGHT+IFf+8faAkzcYS1IQQ/NsR2vVI77o5rrC+/ukT07VzZHrjOBkYTvZEYUiQw2b2xepbzcuA3ech1+T5m8Dsgapis=
+X-Received: by 2002:a05:6870:7985:b0:29f:df27:8b80 with SMTP id
+ 586e51a60fabf-2b32f261909mr12470341fac.24.1738600072712; Mon, 03 Feb 2025
+ 08:27:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH treewide v2 1/3] bitfield: Add non-constant
- field_{prep,get}() helpers
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>,
- Yury Norov <yury.norov@gmail.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-crypto@vger.kernel.org, qat-linux@intel.com,
- linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
- linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Nicolas Ferre
- <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S . Miller" <davem@davemloft.net>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>,
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela
- <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>
-References: <cover.1738329458.git.geert+renesas@glider.be>
- <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
- <e20a177a-30cd-4088-89e1-b479aba1356c@wanadoo.fr> <Z5-xMUqrDuaE8Eo_@thinkpad>
- <74cab7d1ec31e7531cdda0f1eb47acdebd5c8d3f.camel@sipsolutions.net>
- <45920591-e1d6-4337-a906-35bb5319836c@wanadoo.fr>
- <CAMuHMdXZKNtAmiMP8uuSngZMsDLGcYwrLS0xNWzN4UfLaccdyA@mail.gmail.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <CAMuHMdXZKNtAmiMP8uuSngZMsDLGcYwrLS0xNWzN4UfLaccdyA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: =?UTF-8?Q?Magnus_H=C3=B6rlin?= <magnus@alefors.se>
+Date: Mon, 3 Feb 2025 17:27:42 +0100
+X-Gm-Features: AWEUYZmMZDbKoxoFDS70Ev91cTPNxTL84eVQ1wFy58vILXoVpuPOcVaW7x7LQO8
+Message-ID: <CAB6pCHSesbBLVAVaLgGKo8yhe6P6HxPcAFjKxrV589dVKjcRow@mail.gmail.com>
+Subject: Re: [PATCH v9 00/23] Support spread spectrum clocking for i.MX8M PLLs
+To: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/02/2025 at 22:59, Geert Uytterhoeven wrote:
-> Hi Vincent,
-> 
-> On Mon, 3 Feb 2025 at 14:37, Vincent Mailhol <mailhol.vincent@wanadoo.fr> wrote:
->> On 03/02/2025 at 16:44, Johannes Berg wrote:
->>> On Sun, 2025-02-02 at 12:53 -0500, Yury Norov wrote:
->>>>> Instead of creating another variant for
->>>>> non-constant bitfields, wouldn't it be better to make the existing macro
->>>>> accept both?
->>>>
->>>> Yes, it would definitely be better IMO.
->>>
->>> On the flip side, there have been discussions in the past (though I
->>> think not all, if any, on the list(s)) about the argument order. Since
->>> the value is typically not a constant, requiring the mask to be a
->>> constant has ensured that the argument order isn't as easily mixed up as
->>> otherwise.
->>
->> If this is a concern, then it can be checked with:
->>
->>   BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask) &&
->>                    __builtin_constant_p(_val),
->>                    _pfx "mask is not constant");
->>
->> It means that we forbid FIELD_PREP(non_const_mask, const_val) but allow
->> any other combination.
-> 
-> Even that case looks valid to me. Actually there is already such a user
-> in drivers/iio/temperature/mlx90614.c:
-> 
->     ret |= field_prep(chip_info->fir_config_mask, MLX90614_CONST_FIR);
-> 
-> So if you want enhanced safety, having both the safer/const upper-case
-> variants and the less-safe/non-const lower-case variants makes sense.
-
-So, we are scared of people calling FIELD_PREP() with the arguments in
-the wrong order:
-
-  FIELD_PREP(val, mask)
-
-thus adding the check that mask must be a compile time constant.
-
-But if we introduce a second function, don't we introduce the risk of
-having people use the lower case variant instead of the upper case variant?
-
-  field_prep(incorrect_const_mask, val)
-
-I am not sure to follow the logic of why having two functions is the
-safer choice. Whatever the solution you propose, there will be a way to
-misuse it. Let me ask, what is the most likely to happen:
-
-  1. wrong parameter order
-  2. wrong function name
-
-?
-
-If you have the conviction that people more often do mistake 1. then I
-am fine with your solution. Otherwise, if 1. and 2. have an equally
-likelihood, then I would argue to go with the simplicity of the single
-function.
-
-
-Yours sincerely,
-Vincent Mailhol
-
+Hi, I would like to assist in testing these patches but have failed to
+do so so far. I applied the 23 patches to my vanilla 6.12.12 kernel
+that runs just fine on my custom imx8mp board but with them it doesn't
+boot at all. Uart console is dead efter the standard u-boot "Starting
+kernel ...". Nothing on the display, leds or usb that normally are
+alive. Do I need to modify anything in the device-tree for this
+patchset to work or what can be the problem here? Any help is very
+much appreciated.
+/Magnus
