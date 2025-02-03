@@ -1,460 +1,184 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2065.outbound.protection.outlook.com [40.107.236.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4D620AF99
-	for <linux-clk@vger.kernel.org>; Mon,  3 Feb 2025 16:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738600636; cv=none; b=EIYJ+r+niXAM8YsAKywAYtQUIO7uRJbNfzyv53jb+/IIRmE7B4pmShZhGowCHjd0R7AR8xE39SwJS9kYhTQ+VaHK0YG9xxmpT/B5luUGXuWElXZsLwsSE1VDR9kEqspZu8XoKiMiKyu08HsRZ/4F974GXqmF1n+qGGsJj9UGXyQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738600636; c=relaxed/simple;
-	bh=S5xz3BOn2q5hEPeQurYXiPfbGl/GMz2S1iwPaT+H+7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=GWaYS3vzoK+duF72BnI0qU+D1PHASGRE1+EOPT6L7pHgturfKItyv2mv1pfqqRlPhG3O+rF9ny6UJwMCLJ+UE93roOv2mVoygEKZXML4qcdVBLy3uhnd81bEG4A7y2T++DqspLtXWkZkRAWbhBcsnC3jPzt+gxvI4J9PCmmQAEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eqIlO/HO; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD612080FD;
+	Mon,  3 Feb 2025 16:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738600764; cv=fail; b=mX3ZYPF0gAHEvhzOcs894o7QAsvDghm8cYhyXWANEUmNrWp8HUalZ6C+kZOjOoOHQy0V3ixoO03CXWTHm+hD+Q1oWPN7K4sVrbCg9W9z/ZbLxdylFqgskmae18LuwQLiNCLQ/w3778SBY1qAGrWjhartcKE7Yk91jbR7b65M6OQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738600764; c=relaxed/simple;
+	bh=NtgvXicW8DllxHCFVc+qXu3UYT6RjWPVYssNClQ0tqA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ob/AjBPIL7bLlWuXSOWkrrPE5EfBTI95hHrXpqX0pRChbKwdk6V/u06Bv6vLwNNeIgY5w/xoaKnoY9keaeQKT4m5SKKIG60KD69g2U80Mtav/Msj/m3Dsr1xPUzAiH7qdETbUHHZBOVzD2dFdfYoECbinJ+e8NDUk6xvaPOK9pU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Og7buhXF; arc=fail smtp.client-ip=40.107.236.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eqIlO/HO"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250203163712euoutp01f722a17d7ba2422cebfb43776fe0f9ef~gwBBseX_S1604216042euoutp01C
-	for <linux-clk@vger.kernel.org>; Mon,  3 Feb 2025 16:37:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250203163712euoutp01f722a17d7ba2422cebfb43776fe0f9ef~gwBBseX_S1604216042euoutp01C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1738600632;
-	bh=/cjF2im7siOiRdn6B6izW0xKqowa+3BJEzUkFArNsjo=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=eqIlO/HOAFpoGziSEqaOMHHc+ydxjJJu8CpeLv0ufip4qyRX9/GVe4MwHyM18GO4p
-	 G5Htabhaa706MiR8mAA5vpe5FN9TkY04l613ObrzbTiQKPG4DHUXQM3TU5TaBHFGeS
-	 9JUVGgJaBHcG8CnDnpnKYrsINeOmFOSXzWQODxQg=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250203163712eucas1p196275d9f0ceacf6984a9f5673ad536bb~gwBBPupgn2798727987eucas1p1N;
-	Mon,  3 Feb 2025 16:37:12 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id C1.B5.20397.8B0F0A76; Mon,  3
-	Feb 2025 16:37:12 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250203163711eucas1p2ab0c98052dc0a04ce4987506bd35a049~gwBAlOVr90838708387eucas1p2D;
-	Mon,  3 Feb 2025 16:37:11 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250203163711eusmtrp25c9d58ffb8e37537f418fd4b3409e540~gwBAkaHwf0261902619eusmtrp2P;
-	Mon,  3 Feb 2025 16:37:11 +0000 (GMT)
-X-AuditID: cbfec7f5-e59c770000004fad-81-67a0f0b809ad
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 64.52.19654.7B0F0A76; Mon,  3
-	Feb 2025 16:37:11 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250203163709eusmtip19af3cc094845c3ff2a93337b7ae89a3b~gwA_S6qf32821528215eusmtip1O;
-	Mon,  3 Feb 2025 16:37:09 +0000 (GMT)
-Message-ID: <ac770f68-8518-460c-ae07-7655b4dd2dea@samsung.com>
-Date: Mon, 3 Feb 2025 17:37:08 +0100
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Og7buhXF"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mPfOGpcOcwYjl3zA3O72cDmjhHaEeh2ugeqqgf2SrziEglDwuw/RubzgaI28qCFtvAC6NAnVzQis2L9MdUcSoRkb+AY3e9ORw5s/DtNDJz3I05bRGD03NWiNsbbnyol3LfCn1fvZJrNXrcPqNrGj51iqnDNbGsV1db6z2kMv9E8EhdyQtBWo2GSzHydJJK0CBw25T+aN0v2xWBiXqnWdvnpgy+ItdHFh2x9z6sK3Zkk8juTgXx7XIrwITzL2dv5S3TOy0FC6ZKFJalpXiF69akC/jFLGUc+r77Y2tqrTSfTanjxAQYIcCA03OhQzrS87kluGdW2063Haun44NJo0tg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GMQc94gA4RuTHwJ+H56qNlZxhgA90xOSrP1iV38eZDc=;
+ b=pnffvB6TuO9xxlea0qXxVOknUVYtGC0qNui0LB9DGYkWfH4WMWeOt038uYsNDx0OCOeIgu0gYlz6dMZgs12vNlHszmQ+tEjdtUYOtiadTqgkVjCorwH8D6Gd78FgzFuvU279Cnr2+GL7nSaBHHMsQlJC7v99vQITKBp2bT7E9k7IU2xpB0ciYrvC193SpNQ1Oq4qErq3Mzu4KcNLwRubvoCh0TTKUGycbNQXGUONlvrSGeyWfqRNpdSzkXpvGt7a9KkksGeCBMxJS4AHhOuhKpx8UpMSArcUL64CUGNx7mlXV7CAf3/37D9m0J6kE+XRTgS9t47HKixRkMEo2cpWfA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GMQc94gA4RuTHwJ+H56qNlZxhgA90xOSrP1iV38eZDc=;
+ b=Og7buhXFpczM+LhtxpAg8dtRQHaXprPT4ehpU/3IyGPcsnBZ9e6bYKRTvxuCM4ycOMpIC9c1j2/1ao4pupEFoCpayjNuMQcutVBd/k1bJ9Klt3YJ/7fzMeF/JFiBBJnOo4sSbl94ku2NQ/zt7QijgKkGP5w42MyFy1Q+7ipYZfA=
+Received: from SA0PR12CA0021.namprd12.prod.outlook.com (2603:10b6:806:6f::26)
+ by DS7PR12MB6311.namprd12.prod.outlook.com (2603:10b6:8:94::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.25; Mon, 3 Feb
+ 2025 16:39:19 +0000
+Received: from SN1PEPF00036F43.namprd05.prod.outlook.com
+ (2603:10b6:806:6f:cafe::92) by SA0PR12CA0021.outlook.office365.com
+ (2603:10b6:806:6f::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8398.24 via Frontend Transport; Mon,
+ 3 Feb 2025 16:39:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF00036F43.mail.protection.outlook.com (10.167.248.27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8398.14 via Frontend Transport; Mon, 3 Feb 2025 16:39:19 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 3 Feb
+ 2025 10:39:15 -0600
+From: Michal Simek <michal.simek@amd.com>
+To: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
+	<michal.simek@xilinx.com>, <git@xilinx.com>
+CC: Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>, Andrew Lunn
+	<andrew+netdev@lunn.ch>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, "Conor
+ Dooley" <conor+dt@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Harini Katakam
+	<harini.katakam@amd.com>, Jakub Kicinski <kuba@kernel.org>, Jonathan Cameron
+	<jic23@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Lars-Peter
+ Clausen" <lars@metafoo.de>, Mark Brown <broonie@kernel.org>, Michael Tretter
+	<m.tretter@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
+	Mubin Sayyed <mubin.sayyed@amd.com>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Niklas Cassel <cassel@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Shyam Pandey
+	<radhey.shyam.pandey@amd.com>, Stephen Boyd <sboyd@kernel.org>, Vinod Koul
+	<vkoul@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE
+ BINDINGS" <devicetree@vger.kernel.org>, "open list:DMA GENERIC OFFLOAD ENGINE
+ SUBSYSTEM" <dmaengine@vger.kernel.org>, "moderated list:ARM/ZYNQ
+ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:COMMON CLK
+ FRAMEWORK" <linux-clk@vger.kernel.org>, "open list:LIBATA SUBSYSTEM (Serial
+ and Parallel ATA drivers)" <linux-ide@vger.kernel.org>, "open list:XILINX AMS
+ DRIVER" <linux-iio@vger.kernel.org>, "open list:SPI SUBSYSTEM"
+	<linux-spi@vger.kernel.org>, "open list:USB SUBSYSTEM"
+	<linux-usb@vger.kernel.org>, "open list:NETWORKING DRIVERS"
+	<netdev@vger.kernel.org>
+Subject: [PATCH 0/2] arm64: zynqmp: Move firmware constants from binding to platform
+Date: Mon, 3 Feb 2025 17:39:09 +0100
+Message-ID: <cover.1738600745.git.michal.simek@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/18] clk: thead: Add clock support for VO subsystem
- in T-Head TH1520 SoC
-To: Matt Coster <Matt.Coster@imgtec.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"drew@pdp7.com" <drew@pdp7.com>, "guoren@kernel.org" <guoren@kernel.org>,
-	"wefu@redhat.com" <wefu@redhat.com>, "jassisinghbrar@gmail.com"
-	<jassisinghbrar@gmail.com>, "paul.walmsley@sifive.com"
-	<paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Frank Binns
-	<Frank.Binns@imgtec.com>, "maarten.lankhorst@linux.intel.com"
-	<maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
-	<mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
-	<simona@ffwll.ch>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-	"jszhang@kernel.org" <jszhang@kernel.org>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>, "m.szyprowski@samsung.com"
-	<m.szyprowski@samsung.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <cf668998-4f86-4a85-8137-7a8f689c2aa9@imgtec.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTZxzGfXtOzzltUjgUGC86A6mOOeOwG3V5iYYogXFwH7YlZDP7oFQ5
-	qSi39ABublM2LgGsiIBBi0DxMlgn4LgWUmDSCnZVoHQrxEFhG2SAXGT1Mh2DUQ9ufPvl+V+e
-	//PmpTCpkdhIxSelsuokZYKMEOMtPc/63zQ81Knk9puvoDtDVwSo+W8tiW509AlQpblPiJyD
-	TQL00+MFAtVNDpBoquMrHDlqykmU2VNPoGmtk0CLGqcQ2dsvE8h11gxQiyuLQLXmURJVLTbj
-	6JqhHaCcvG+EyPZjJBp13sHRtF2DoRytJ1oxGki07PgeR2XzXSRqmj0vRL21H6OsrhJ872Zm
-	YTibZGanp3HGlPuIZDqe6HCmTTtKMpq2u4Bp0OcRzIjDSDAVlg+ZsTO9Aqbx2mkmq7ZHwJz7
-	R84sdP5MMAVNesAMZg6RH0g/Ee+JYxPi01n1zrBY8dG79gEspZz9dPaXQmEGeBKTD0QUpBWw
-	KKME5AMxJaVrAJycN5HugpR+BKDT/A5fcAH4YHgKezlhzJhYm6gGsOKHBYKfmAPQZPVys4QO
-	g+Z6G3AzTm+Fi+Zsgte9oOXSBO5mXzoAjt2/+MLNmz4Cr56bFLqX+tCtFCxoHHtRwOgMDOYW
-	nuLZD96fqBS4maDfhuPVlUI3i1bNzpuyAN8TAFvnLmPuRZC+J4ZPbzmE/NkRsG6pai2CN5zp
-	bSJ5fhWutPFLIZ0Mx5v/XOv5ArZpetd4Nxzpe76agFo1eAPWt+/k5X1wvPw26ZYh7QGH57z4
-	EzxgUUspxssSmJsj5buD4AXN2f9M+2paBIVApl33Ktp1IbXrwmj/99UBXA/82DQuUcVyIUns
-	iWBOmcilJamCjyQnNoDVD25d7n1sADUzi8HdQECBbgApTOYjsbbqVFJJnPKzk6w6+ZA6LYHl
-	usEmCpf5Sa50ZauktEqZyh5n2RRW/bIqoEQbMwSb+vee9IigLv1eF1lxVTVVPONDK7KHd7TT
-	+3yrDx/ovBmeeHprkF0dcEv17LbveH93bObn1lKPyHe37WeWg4pB4475wcKDZbrQsl2HuMOp
-	qqHimfiPxCmG8uvRCnHMif0rYeH96QOug9fzOxWnZHLV7p5joX+UBIso/1C5PjBkaVEs3OAa
-	fD2ZEln8l6LSrJ6eN4y/vn/stYGGvD1/VR33ezAz4giJKoivimtLln9bFBhSvhJvVBQn/Vbq
-	76SzYzu8N39niYo+0FApfy/wjE6hD8+MiJVHx+yyLV20lT3kvvSO0mzgpiK23MMTbRav9Jav
-	Tf7GUf0Fq23789Gn2xyVW2Q4d1T51nZMzSn/BQp3GV1PBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIKsWRmVeSWpSXmKPExsVy+t/xu7rbPyxIN+h+oWZx4voiJoutv2ex
-	W6zZe47JYv6Rc6wW9y5tYbK48vU9m8W6pxfYLV7sbWSxuLZiLrtF87H1bBYvZ91js/jYc4/V
-	4vKuOWwWn3uPMFps+9zCZrH2yF12i4Uft7JYLNmxi9GirXMZq8XFU64Wd++dYLF4ebmH2aJt
-	Fr/F/z072C3+XdvIYjH73X52iy1vJrJaHF8bbtGyfwqLg6zH+xut7B5vXr5k8Tjc8YXdY++3
-	BSweO2fdZffo2XmG0WPTqk42jzvX9rB5zDsZ6HG/+ziTx+Yl9R4ta48xefT/NfB4v+8qm0ff
-	llWMHpear7MHCEXp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSW
-	pRbp2yXoZZy5fIG5YG5qxZvbE1gbGL+FdDFyckgImEjsaXjC2MXIxSEksJRRYuKxFawQCRmJ
-	a90vWSBsYYk/17rYIIpeM0r8PX2ZCSTBK2AncWT9RUYQm0VAReLjkVY2iLigxMmZT8CaRQXk
-	Je7fmsEOYgsLJEss7n/KCjJIRGAvh8SuGz9ZQBxmgQZmiVWzbzBDrPjLKHH09hKwFcwC4hK3
-	nswHs9kEjCQeLJ8Pdh8n0OqJh1uAVnMA1ahLrJ8nBFEuL7H97RzmCYxCs5AcMgvJpFkIHbOQ
-	dCxgZFnFKJJaWpybnltspFecmFtcmpeul5yfu4kRmLa2Hfu5ZQfjylcf9Q4xMnEwHmKU4GBW
-	EuE9vX1BuhBvSmJlVWpRfnxRaU5q8SFGU2BgTGSWEk3OBybOvJJ4QzMDU0MTM0sDU0szYyVx
-	XrYr59OEBNITS1KzU1MLUotg+pg4OKUamBadD7rj/1l//7y3gaz7TvfK3/qR5ajo0rVCouH6
-	p6m+tg6sBUVNdmfFfrH/uG1x1Kbec+WxG9maUu1di0+wCe2PyCu8e2TDj9OvDEOmMFkZ8pee
-	dBDa92xxaA6L7ql7BvyTGy/9PV1lfGGnSna8auSNqw/qko//ehK6okLusubJvX/tz8lZW3qE
-	cpq38h1/0DSRt8Te8arwe7ezaxUuuaZ8Z2K+++rfVZ9SfvUlLLnW5e2ruSz2VW7SSrXJbnNb
-	XvXd8+fMZq3lzBba1UL19s5J7gzTo17z2U1xefe1q3nD1b9KH4VtBCaz3lXtuhSrer7hWrDF
-	BJ51fOf+vsj/4tN15//RjVda/vE+mvnllBJLcUaioRZzUXEiAJshIF/kAwAA
-X-CMS-MailID: 20250203163711eucas1p2ab0c98052dc0a04ce4987506bd35a049
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250128194827eucas1p25db822456e223563b8b411f77754c760
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250128194827eucas1p25db822456e223563b8b411f77754c760
-References: <20250128194816.2185326-1-m.wilczynski@samsung.com>
-	<CGME20250128194827eucas1p25db822456e223563b8b411f77754c760@eucas1p2.samsung.com>
-	<20250128194816.2185326-3-m.wilczynski@samsung.com>
-	<cf668998-4f86-4a85-8137-7a8f689c2aa9@imgtec.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1362; i=michal.simek@amd.com; h=from:subject:message-id; bh=NtgvXicW8DllxHCFVc+qXu3UYT6RjWPVYssNClQ0tqA=; b=owGbwMvMwCR4yjP1tKYXjyLjabUkhvQFH/XO9aSdvRt6edPv2Vp+/kZ8dWIMGz6mbFlxdOK8Z cs29Les74hlYRBkYpAVU2SRtrlyZm/ljCnCFw/LwcxhZQIZwsDFKQATCbnEMJv9X03yK0ZNMcH6 vO2TFxv4/nzZ/JNhvs+iIwIrey9Z/9rWeONr5s5lRVMu+gAA
+X-Developer-Key: i=michal.simek@amd.com; a=openpgp; fpr=67350C9BF5CCEE9B5364356A377C7F21FE3D1F91
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F43:EE_|DS7PR12MB6311:EE_
+X-MS-Office365-Filtering-Correlation-Id: b13da256-9f65-4880-4245-08dd44714e69
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gRRc5v6PqVw/xUB/0pO5QmPVMVs5BLUNXEhz0u3D6rsQCtHp3IjUz6ajjk2O?=
+ =?us-ascii?Q?dfgkyo8D0/vmZqhChzjLO7jSvDA+JjSdDQdY57DdD2yvfopsCYwPhoh7SHdO?=
+ =?us-ascii?Q?4VeuRzKcaOl0EfGovAE3IVXeQhHe1RoDlnZXvKJJ5v3SGnQtLBfj4apfio4V?=
+ =?us-ascii?Q?1z8EJkH/oAyQ6UDqyqq22JOjmvWawZVLswLxAyA1bbRD5i556+1rmEWG5MNL?=
+ =?us-ascii?Q?HvtTgdizLCvjaLO4qL+Wmsna8f5Vi13bbWjWdDHJGnSzHNU199txzk1nIROT?=
+ =?us-ascii?Q?sun166WQFquGiAIp5KVsMswnhcHT21Zs9c1aHcL+mosOEUeyDRKkwQcM7m7t?=
+ =?us-ascii?Q?a87lFRXzfn3o0byFhR/ioMXD/fSYj1j9NU66aAXYwKJutPo+0ZdudjJyWFyB?=
+ =?us-ascii?Q?8k0efBNU2H6XQorzdn2T64boKbiaIwQ60XrtN9kqvuHZBzOx7pwDXU2Eedjl?=
+ =?us-ascii?Q?UH4Cajz0r72mdDjPUlhsjBiySXvs2SiprF4XxmnbtrfwyZWl9f9ioBmpNyL+?=
+ =?us-ascii?Q?BtFAxItfSXAnzizMvsqeIdpYygbXlADfRN14ohed8uvV9n+gJpBast7OVNR3?=
+ =?us-ascii?Q?QQjCYW+CXyi8Aqi4Na2S/xu6wHnDyeXxjvgBJ86Aam6SRbphAluLw5TF10fL?=
+ =?us-ascii?Q?dUYLY8PX57JC0sjQwpmsnYWS+jbMgrmZw7qtwG8xGqq4p8BIHotomC/tbYaW?=
+ =?us-ascii?Q?gWY6fYd7CCteyXJ2T/5IGlwJYHw71Ol16zBZFpkfIcRF+6toE3BBrVzlaR5H?=
+ =?us-ascii?Q?/pR0VCX+cQhk4IvoS6VilxBKitoniEcoFLFrUROnep9eIbNbeQGadXm+vxXh?=
+ =?us-ascii?Q?gcc1DPhCqlRPjZPA+8aBs8Hnb/uKZ5fBb+gi//uVQe6ONCGXjMIc4LF65Yx8?=
+ =?us-ascii?Q?EYsMnTwmYToKsuPLIS0FVzkq+xcqHi+aNmCbjB9U7p5x9oVZ4zFcNNrpoN+T?=
+ =?us-ascii?Q?3A8SWOE2hOKIityDXZJnhtTaUHnHSADegI3Y+7ZzLTuTt9G10q58HoByy6/f?=
+ =?us-ascii?Q?hC3lQ245ZXGg9s1lfj1JtkA7E8Kr4rIQpqLBv3/rfbiJDzm5eu2XTRPBgLbw?=
+ =?us-ascii?Q?wyzbqxeUa6CwO2zpC+w0ouoyDBJI4hNaHdGWpZLNHoluXChuqm6UnFatfqWr?=
+ =?us-ascii?Q?qtjFnywyxMuUFFigmJOpSgFt0WePNvojyBIElqoZyWXPoNgR8IMps7/qGtVe?=
+ =?us-ascii?Q?57WNiiDCYvkVgS5lHz+HyNnso1OlpwBtoWyL6/5UPb0QYjeq7q99l/NZ0+vF?=
+ =?us-ascii?Q?JjW+pguEuuS+dze/1Cc5Ftf4SIhnMnMJTQL1povml5wTd2LYbuDV31CkA+7G?=
+ =?us-ascii?Q?t+zpOl4taLTPefIEPdHrUIIqzCEuLVP/J7qL6rLIMZ6WbwiBnR4A71JeheS2?=
+ =?us-ascii?Q?a9DXrTSldw24lFPG892bxq9R/cl4bBWZ8QzDvXnn3GhO+HshJZ2DM7/kUkTi?=
+ =?us-ascii?Q?waJdjcVTX9VYpN2OtBzIr9944EMCvsqAulIs6twYQ5XBtb+XsYfWIKR+4QQ7?=
+ =?us-ascii?Q?1YTxJjh6e6bXzTU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Feb 2025 16:39:19.3211
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b13da256-9f65-4880-4245-08dd44714e69
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00036F43.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6311
+
+Hi,
+
+Based on discussion done long time ago
+https://lore.kernel.org/all/5353872c-56a3-98f9-7f22-ec1f6c2ccdc8@linaro.org/
+it is better to deprecate firmware contants which are not used in any code
+and it's only purpose is to use macros in dt files.
+
+There is no reason to be the part of dt bindings but it should be kept
+there with adding deprecated warning.
+
+I want to see if this is the right way to go. If yes, I will also do the
+same changes in other headers which contain only constans which are not
+used in any code.
+
+Thanks,
+Michal
 
 
+Michal Simek (2):
+  arm64: zynqmp: Use DT header for firmware constants
+  dt-bindings: xilinx: Deprecate header with firmware constants
 
-On 1/31/25 16:39, Matt Coster wrote:
-> On 28/01/2025 19:48, Michal Wilczynski wrote:
->> The T-Head TH1520 SoC integrates a variety of clocks for its subsystems,
->> including the Application Processor (AP) and the Video Output (VO) [1].
->> Up until now, the T-Head clock driver only supported AP clocks.
->>
->> This commit extends the driver to provide clock functionality for the VO
->> subsystem. At this stage, the focus is on implementing the VO clock
->> gates, as these are currently the most relevant and required components
->> for enabling and disabling the VO subsystem functionality.  Future
->> enhancements may introduce additional VO-related clocks as necessary.
->>
->> Link: https://protect2.fireeye.com/v1/url?k=e2f52701-bd6e1e1e-e2f4ac4e-000babdfecba-2c98780e6a3b772c&q=1&e=4ed72090-09ae-4d99-9a05-caed33873a2b&u=https%3A%2F%2Fopenbeagle.org%2Fbeaglev-ahead%2Fbeaglev-ahead%2F-%2Fblob%2Fmain%2Fdocs%2FTH1520%2520System%2520User%2520Manual.pdf  [1]
->>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  drivers/clk/thead/clk-th1520-ap.c | 197 +++++++++++++++++++++++++-----
->>  1 file changed, 169 insertions(+), 28 deletions(-)
->>
->> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
->> index 4c9555fc6184..57972589f120 100644
->> --- a/drivers/clk/thead/clk-th1520-ap.c
->> +++ b/drivers/clk/thead/clk-th1520-ap.c
->> @@ -847,6 +847,67 @@ static CCU_GATE(CLK_SRAM1, sram1_clk, "sram1", axi_aclk_pd, 0x20c, BIT(3), 0);
->>  static CCU_GATE(CLK_SRAM2, sram2_clk, "sram2", axi_aclk_pd, 0x20c, BIT(2), 0);
->>  static CCU_GATE(CLK_SRAM3, sram3_clk, "sram3", axi_aclk_pd, 0x20c, BIT(1), 0);
->>  
->> +static CCU_GATE(CLK_AXI4_VO_ACLK, axi4_vo_aclk, "axi4-vo-aclk",
->> +		video_pll_clk_pd, 0x0, BIT(0), 0);
->> +static CCU_GATE(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk", video_pll_clk_pd,
->> +		0x0, BIT(3), 0);
->> +static CCU_GATE(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
->> +		video_pll_clk_pd, 0x0, BIT(4), 0);
-> 
-> I see CORE and CFG clocks here; what about MEM? It's listed in the
-> linked TRM as BIT(2).
+ .../bindings/ata/ceva,ahci-1v84.yaml          |   4 +-
+ .../dma/xilinx/xlnx,zynqmp-dma-1.0.yaml       |   3 +-
+ .../bindings/iio/adc/xlnx,zynqmp-ams.yaml     |   3 +-
+ .../devicetree/bindings/net/cdns,macb.yaml    |   7 +-
+ .../bindings/spi/spi-zynqmp-qspi.yaml         |   3 +-
+ .../devicetree/bindings/usb/dwc3-xilinx.yaml  |   3 +-
+ arch/arm64/boot/dts/xilinx/xlnx-zynqmp-clk.h  | 126 ++++++++++++++++++
+ .../arm64/boot/dts/xilinx/zynqmp-clk-ccf.dtsi |   2 +-
+ include/dt-bindings/clock/xlnx-zynqmp-clk.h   |   7 +
+ 9 files changed, 142 insertions(+), 16 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/xilinx/xlnx-zynqmp-clk.h
 
-It is however marked as 'Reserved' in manual, so I assumed I shouldn't
-touch it.
+-- 
+2.43.0
 
-Additionally referring to the vendor kernel, only two clocks are used to
-program the GPU [1] in the old non-upstream driver.
-
-[1] - https://github.com/revyos/thead-kernel/blob/lpi4a/drivers/gpu/drm/img-rogue/thead_sys.c#L400
-
-> 
-> Cheers,
-> Matt
-> 
->> +static CCU_GATE(CLK_DPU_PIXELCLK0, dpu0_pixelclk, "dpu0-pixelclk",
->> +		video_pll_clk_pd, 0x0, BIT(5), 0);
->> +static CCU_GATE(CLK_DPU_PIXELCLK1, dpu1_pixelclk, "dpu1-pixelclk",
->> +		video_pll_clk_pd, 0x0, BIT(6), 0);
->> +static CCU_GATE(CLK_DPU_HCLK, dpu_hclk, "dpu-hclk", video_pll_clk_pd, 0x0,
->> +		BIT(7), 0);
->> +static CCU_GATE(CLK_DPU_ACLK, dpu_aclk, "dpu-aclk", video_pll_clk_pd, 0x0,
->> +		BIT(8), 0);
->> +static CCU_GATE(CLK_DPU_CCLK, dpu_cclk, "dpu-cclk", video_pll_clk_pd, 0x0,
->> +		BIT(9), 0);
->> +static CCU_GATE(CLK_HDMI_SFR, hdmi_sfr_clk, "hdmi-sfr-clk", video_pll_clk_pd,
->> +		0x0, BIT(10), 0);
->> +static CCU_GATE(CLK_HDMI_PCLK, hdmi_pclk, "hdmi-pclk", video_pll_clk_pd, 0x0,
->> +		BIT(11), 0);
->> +static CCU_GATE(CLK_HDMI_CEC, hdmi_cec_clk, "hdmi-cec-clk", video_pll_clk_pd,
->> +		0x0, BIT(12), 0);
->> +static CCU_GATE(CLK_MIPI_DSI0_PCLK, mipi_dsi0_pclk, "mipi-dsi0-pclk",
->> +		video_pll_clk_pd, 0x0, BIT(13), 0);
->> +static CCU_GATE(CLK_MIPI_DSI1_PCLK, mipi_dsi1_pclk, "mipi-dsi1-pclk",
->> +		video_pll_clk_pd, 0x0, BIT(14), 0);
->> +static CCU_GATE(CLK_MIPI_DSI0_CFG, mipi_dsi0_cfg_clk, "mipi-dsi0-cfg-clk",
->> +		video_pll_clk_pd, 0x0, BIT(15), 0);
->> +static CCU_GATE(CLK_MIPI_DSI1_CFG, mipi_dsi1_cfg_clk, "mipi-dsi1-cfg-clk",
->> +		video_pll_clk_pd, 0x0, BIT(16), 0);
->> +static CCU_GATE(CLK_MIPI_DSI0_REFCLK, mipi_dsi0_refclk, "mipi-dsi0-refclk",
->> +		video_pll_clk_pd, 0x0, BIT(17), 0);
->> +static CCU_GATE(CLK_MIPI_DSI1_REFCLK, mipi_dsi1_refclk, "mipi-dsi1-refclk",
->> +		video_pll_clk_pd, 0x0, BIT(18), 0);
->> +static CCU_GATE(CLK_HDMI_I2S, hdmi_i2s_clk, "hdmi-i2s-clk", video_pll_clk_pd,
->> +		0x0, BIT(19), 0);
->> +static CCU_GATE(CLK_X2H_DPU1_ACLK, x2h_dpu1_aclk, "x2h-dpu1-aclk",
->> +		video_pll_clk_pd, 0x0, BIT(20), 0);
->> +static CCU_GATE(CLK_X2H_DPU_ACLK, x2h_dpu_aclk, "x2h-dpu-aclk",
->> +		video_pll_clk_pd, 0x0, BIT(21), 0);
->> +static CCU_GATE(CLK_AXI4_VO_PCLK, axi4_vo_pclk, "axi4-vo-pclk",
->> +		video_pll_clk_pd, 0x0, BIT(22), 0);
->> +static CCU_GATE(CLK_IOPMP_VOSYS_DPU_PCLK, iopmp_vosys_dpu_pclk,
->> +		"iopmp-vosys-dpu-pclk", video_pll_clk_pd, 0x0, BIT(23), 0);
->> +static CCU_GATE(CLK_IOPMP_VOSYS_DPU1_PCLK, iopmp_vosys_dpu1_pclk,
->> +		"iopmp-vosys-dpu1-pclk", video_pll_clk_pd, 0x0, BIT(24), 0);
->> +static CCU_GATE(CLK_IOPMP_VOSYS_GPU_PCLK, iopmp_vosys_gpu_pclk,
->> +		"iopmp-vosys-gpu-pclk", video_pll_clk_pd, 0x0, BIT(25), 0);
->> +static CCU_GATE(CLK_IOPMP_DPU1_ACLK, iopmp_dpu1_aclk, "iopmp-dpu1-aclk",
->> +		video_pll_clk_pd, 0x0, BIT(27), 0);
->> +static CCU_GATE(CLK_IOPMP_DPU_ACLK, iopmp_dpu_aclk, "iopmp-dpu-aclk",
->> +		video_pll_clk_pd, 0x0, BIT(28), 0);
->> +static CCU_GATE(CLK_IOPMP_GPU_ACLK, iopmp_gpu_aclk, "iopmp-gpu-aclk",
->> +		video_pll_clk_pd, 0x0, BIT(29), 0);
->> +static CCU_GATE(CLK_MIPIDSI0_PIXCLK, mipi_dsi0_pixclk, "mipi-dsi0-pixclk",
->> +		video_pll_clk_pd, 0x0, BIT(30), 0);
->> +static CCU_GATE(CLK_MIPIDSI1_PIXCLK, mipi_dsi1_pixclk, "mipi-dsi1-pixclk",
->> +		video_pll_clk_pd, 0x0, BIT(31), 0);
->> +static CCU_GATE(CLK_HDMI_PIXCLK, hdmi_pixclk, "hdmi-pixclk", video_pll_clk_pd,
->> +		0x4, BIT(0), 0);
->> +
->>  static CLK_FIXED_FACTOR_HW(gmac_pll_clk_100m, "gmac-pll-clk-100m",
->>  			   &gmac_pll_clk.common.hw, 10, 1, 0);
->>  
->> @@ -963,7 +1024,38 @@ static struct ccu_common *th1520_gate_clks[] = {
->>  	&sram3_clk.common,
->>  };
->>  
->> -#define NR_CLKS	(CLK_UART_SCLK + 1)
->> +static struct ccu_common *th1520_vo_gate_clks[] = {
->> +	&axi4_vo_aclk.common,
->> +	&gpu_core_clk.common,
->> +	&gpu_cfg_aclk.common,
->> +	&dpu0_pixelclk.common,
->> +	&dpu1_pixelclk.common,
->> +	&dpu_hclk.common,
->> +	&dpu_aclk.common,
->> +	&dpu_cclk.common,
->> +	&hdmi_sfr_clk.common,
->> +	&hdmi_pclk.common,
->> +	&hdmi_cec_clk.common,
->> +	&mipi_dsi0_pclk.common,
->> +	&mipi_dsi1_pclk.common,
->> +	&mipi_dsi0_cfg_clk.common,
->> +	&mipi_dsi1_cfg_clk.common,
->> +	&mipi_dsi0_refclk.common,
->> +	&mipi_dsi1_refclk.common,
->> +	&hdmi_i2s_clk.common,
->> +	&x2h_dpu1_aclk.common,
->> +	&x2h_dpu_aclk.common,
->> +	&axi4_vo_pclk.common,
->> +	&iopmp_vosys_dpu_pclk.common,
->> +	&iopmp_vosys_dpu1_pclk.common,
->> +	&iopmp_vosys_gpu_pclk.common,
->> +	&iopmp_dpu1_aclk.common,
->> +	&iopmp_dpu_aclk.common,
->> +	&iopmp_gpu_aclk.common,
->> +	&mipi_dsi0_pixclk.common,
->> +	&mipi_dsi1_pixclk.common,
->> +	&hdmi_pixclk.common
->> +};
->>  
->>  static const struct regmap_config th1520_clk_regmap_config = {
->>  	.reg_bits = 32,
->> @@ -972,8 +1064,44 @@ static const struct regmap_config th1520_clk_regmap_config = {
->>  	.fast_io = true,
->>  };
->>  
->> +struct th1520_plat_data {
->> +	struct ccu_common **th1520_pll_clks;
->> +	struct ccu_common **th1520_div_clks;
->> +	struct ccu_common **th1520_mux_clks;
->> +	struct ccu_common **th1520_gate_clks;
->> +
->> +	int nr_clks;
->> +	int nr_pll_clks;
->> +	int nr_div_clks;
->> +	int nr_mux_clks;
->> +	int nr_gate_clks;
->> +};
->> +
->> +static const struct th1520_plat_data th1520_ap_platdata = {
->> +	.th1520_pll_clks = th1520_pll_clks,
->> +	.th1520_div_clks = th1520_div_clks,
->> +	.th1520_mux_clks = th1520_mux_clks,
->> +	.th1520_gate_clks = th1520_gate_clks,
->> +
->> +	.nr_clks = CLK_UART_SCLK + 1,
->> +
->> +	.nr_pll_clks = ARRAY_SIZE(th1520_pll_clks),
->> +	.nr_div_clks = ARRAY_SIZE(th1520_div_clks),
->> +	.nr_mux_clks = ARRAY_SIZE(th1520_mux_clks),
->> +	.nr_gate_clks = ARRAY_SIZE(th1520_gate_clks),
->> +};
->> +
->> +static const struct th1520_plat_data th1520_vo_platdata = {
->> +	.th1520_gate_clks = th1520_vo_gate_clks,
->> +
->> +	.nr_clks = CLK_HDMI_PIXCLK + 1,
->> +
->> +	.nr_gate_clks = ARRAY_SIZE(th1520_vo_gate_clks),
->> +};
->> +
->>  static int th1520_clk_probe(struct platform_device *pdev)
->>  {
->> +	const struct th1520_plat_data *plat_data;
->>  	struct device *dev = &pdev->dev;
->>  	struct clk_hw_onecell_data *priv;
->>  
->> @@ -982,11 +1110,17 @@ static int th1520_clk_probe(struct platform_device *pdev)
->>  	struct clk_hw *hw;
->>  	int ret, i;
->>  
->> -	priv = devm_kzalloc(dev, struct_size(priv, hws, NR_CLKS), GFP_KERNEL);
->> +	plat_data = device_get_match_data(&pdev->dev);
->> +	if (!plat_data) {
->> +		dev_err(&pdev->dev, "Error: No device match data found\n");
->> +		return -ENODEV;
->> +	}
->> +
->> +	priv = devm_kzalloc(dev, struct_size(priv, hws, plat_data->nr_clks), GFP_KERNEL);
->>  	if (!priv)
->>  		return -ENOMEM;
->>  
->> -	priv->num = NR_CLKS;
->> +	priv->num = plat_data->nr_clks;
->>  
->>  	base = devm_platform_ioremap_resource(pdev, 0);
->>  	if (IS_ERR(base))
->> @@ -996,35 +1130,35 @@ static int th1520_clk_probe(struct platform_device *pdev)
->>  	if (IS_ERR(map))
->>  		return PTR_ERR(map);
->>  
->> -	for (i = 0; i < ARRAY_SIZE(th1520_pll_clks); i++) {
->> -		struct ccu_pll *cp = hw_to_ccu_pll(&th1520_pll_clks[i]->hw);
->> +	for (i = 0; i < plat_data->nr_pll_clks; i++) {
->> +		struct ccu_pll *cp = hw_to_ccu_pll(&plat_data->th1520_pll_clks[i]->hw);
->>  
->> -		th1520_pll_clks[i]->map = map;
->> +		plat_data->th1520_pll_clks[i]->map = map;
->>  
->> -		ret = devm_clk_hw_register(dev, &th1520_pll_clks[i]->hw);
->> +		ret = devm_clk_hw_register(dev, &plat_data->th1520_pll_clks[i]->hw);
->>  		if (ret)
->>  			return ret;
->>  
->>  		priv->hws[cp->common.clkid] = &cp->common.hw;
->>  	}
->>  
->> -	for (i = 0; i < ARRAY_SIZE(th1520_div_clks); i++) {
->> -		struct ccu_div *cd = hw_to_ccu_div(&th1520_div_clks[i]->hw);
->> +	for (i = 0; i < plat_data->nr_div_clks; i++) {
->> +		struct ccu_div *cd = hw_to_ccu_div(&plat_data->th1520_div_clks[i]->hw);
->>  
->> -		th1520_div_clks[i]->map = map;
->> +		plat_data->th1520_div_clks[i]->map = map;
->>  
->> -		ret = devm_clk_hw_register(dev, &th1520_div_clks[i]->hw);
->> +		ret = devm_clk_hw_register(dev, &plat_data->th1520_div_clks[i]->hw);
->>  		if (ret)
->>  			return ret;
->>  
->>  		priv->hws[cd->common.clkid] = &cd->common.hw;
->>  	}
->>  
->> -	for (i = 0; i < ARRAY_SIZE(th1520_mux_clks); i++) {
->> -		struct ccu_mux *cm = hw_to_ccu_mux(&th1520_mux_clks[i]->hw);
->> +	for (i = 0; i < plat_data->nr_mux_clks; i++) {
->> +		struct ccu_mux *cm = hw_to_ccu_mux(&plat_data->th1520_mux_clks[i]->hw);
->>  		const struct clk_init_data *init = cm->common.hw.init;
->>  
->> -		th1520_mux_clks[i]->map = map;
->> +		plat_data->th1520_mux_clks[i]->map = map;
->>  		hw = devm_clk_hw_register_mux_parent_data_table(dev,
->>  								init->name,
->>  								init->parent_data,
->> @@ -1040,10 +1174,10 @@ static int th1520_clk_probe(struct platform_device *pdev)
->>  		priv->hws[cm->common.clkid] = hw;
->>  	}
->>  
->> -	for (i = 0; i < ARRAY_SIZE(th1520_gate_clks); i++) {
->> -		struct ccu_gate *cg = hw_to_ccu_gate(&th1520_gate_clks[i]->hw);
->> +	for (i = 0; i < plat_data->nr_gate_clks; i++) {
->> +		struct ccu_gate *cg = hw_to_ccu_gate(&plat_data->th1520_gate_clks[i]->hw);
->>  
->> -		th1520_gate_clks[i]->map = map;
->> +		plat_data->th1520_gate_clks[i]->map = map;
->>  
->>  		hw = devm_clk_hw_register_gate_parent_data(dev,
->>  							   cg->common.hw.init->name,
->> @@ -1057,19 +1191,21 @@ static int th1520_clk_probe(struct platform_device *pdev)
->>  		priv->hws[cg->common.clkid] = hw;
->>  	}
->>  
->> -	ret = devm_clk_hw_register(dev, &osc12m_clk.hw);
->> -	if (ret)
->> -		return ret;
->> -	priv->hws[CLK_OSC12M] = &osc12m_clk.hw;
->> +	if (plat_data == &th1520_ap_platdata) {
->> +		ret = devm_clk_hw_register(dev, &osc12m_clk.hw);
->> +		if (ret)
->> +			return ret;
->> +		priv->hws[CLK_OSC12M] = &osc12m_clk.hw;
->>  
->> -	ret = devm_clk_hw_register(dev, &gmac_pll_clk_100m.hw);
->> -	if (ret)
->> -		return ret;
->> -	priv->hws[CLK_PLL_GMAC_100M] = &gmac_pll_clk_100m.hw;
->> +		ret = devm_clk_hw_register(dev, &gmac_pll_clk_100m.hw);
->> +		if (ret)
->> +			return ret;
->> +		priv->hws[CLK_PLL_GMAC_100M] = &gmac_pll_clk_100m.hw;
->>  
->> -	ret = devm_clk_hw_register(dev, &emmc_sdio_ref_clk.hw);
->> -	if (ret)
->> -		return ret;
->> +		ret = devm_clk_hw_register(dev, &emmc_sdio_ref_clk.hw);
->> +		if (ret)
->> +			return ret;
->> +	}
->>  
->>  	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, priv);
->>  	if (ret)
->> @@ -1081,6 +1217,11 @@ static int th1520_clk_probe(struct platform_device *pdev)
->>  static const struct of_device_id th1520_clk_match[] = {
->>  	{
->>  		.compatible = "thead,th1520-clk-ap",
->> +		.data = &th1520_ap_platdata,
->> +	},
->> +	{
->> +		.compatible = "thead,th1520-clk-vo",
->> +		.data = &th1520_vo_platdata,
->>  	},
->>  	{ /* sentinel */ },
->>  };
-> 
