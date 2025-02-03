@@ -1,113 +1,142 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from out.smtpout.orange.fr (out-70.smtpout.orange.fr [193.252.22.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1304F20468D;
-	Mon,  3 Feb 2025 12:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DAC20551A;
+	Mon,  3 Feb 2025 13:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738586423; cv=none; b=hEiBGCzunqjS3tpalGUO8RnIeje4+A3PJH1ZHtQqDb7XIlx/DNLeqRIQ6BB2RiuKzg9qyOACvPSBo3hZ2JB7K9/hgy9qa9zKrE+bde0u6jz0AMrBtqgUiId+W5Fgcwq6Dt671RjIhosbE74Pu3ANu9lxA1Wmh5AjBsm+Ntfnw7I=
+	t=1738589916; cv=none; b=C8AYm79wvMPc/83kQbnKigvTQ0zz+U4UIiD7qMOK007Mm6WMZD3kevDYkjEawY+aJtppNjs5Y4aHnP6lZ0ujc4sE+gj5ichl2Czr2+Knf7Vv6rY5XqzWNHhGaf0ER7QiObdndCPU+AOPlDcAUf03+s4QFYAzhiZvHqZd0ffci18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738586423; c=relaxed/simple;
-	bh=AkDFsgM8ht/4xOTKn+YGxCP4v6cjlpjp8uRWn5voH7o=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=p+Jl7/QB4J7x5+L3u6xAPXXe+wUQE7B0L3Dr7akbvtjo6Uk2M83BtoP9Q6TZBP+UXOW4OH0VCoGlp/pRTGdEnQ2JbgsCHNZOBXGsyhk+JRLzSvzvL36zHlP2gOBY2TKYiYdO6mE71dyCMnCptjF0oLoaS/N/3gAlMN48t0Ma55g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=NiCsXrG7; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1738589916; c=relaxed/simple;
+	bh=vxVOoUrEMpOIpnFj54sWmKsuUYbIQUlu2hobKUo1VJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Et+6QpfO6QkU+//3kYTchf99MV8z+fIBfDQUjZVmYauJGrqnpmOIL3njGgRov7ecIZrPWnDK18cD5AohXk2BGR61RQ3J3lYNQ7gpO6xH7mrzEV4f1w4RjCVze78RPFEiZO66VftUOzpkmNiwuNnLulXhWsj3j+128H/Udjy/TwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XwYwJD9q; arc=none smtp.client-ip=193.252.22.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="NiCsXrG7"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E576025CAA;
-	Mon,  3 Feb 2025 13:40:17 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id kOJee6X8J05I; Mon,  3 Feb 2025 13:40:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1738586417; bh=AkDFsgM8ht/4xOTKn+YGxCP4v6cjlpjp8uRWn5voH7o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=NiCsXrG7LpnG5w/NFwLl1Xf4k91ChodYcxZdyx5YPPOd49ovtD7MWdYY8MSqveHJL
-	 AjJK0tAADkF89VLXYecmauRE5Gbv5iijR/wWAk4bwUHJvvvhXCYprAkat0d0TGYHIf
-	 ykOg1aVULxEsuMRLAo+lnp61mnypYcYTcGh8agQvcbDbQ93GggzGqmU2WdUo/fnERe
-	 cf0a6u52bgH+nL3XJ9zgtBTU2ZwrsvKehCSZyQANT07sLZRkG2mrLpJPC599dAG4RR
-	 gPgmAg3QdVtp9K9GV7ZrzkCmvJgfX0tErHPHs9P/aQnPsTEdcVAPpr+zHZOgyA1afb
-	 2mgxyQClmL60Q==
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XwYwJD9q"
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id ewd2tOy0dEoZKewdIt5Ip4; Mon, 03 Feb 2025 14:37:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1738589839;
+	bh=/g4W8zsNjOkB4DJtFhM/WsfKs6gE5EsQ2w79HWI72oI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=XwYwJD9qo2zk974igNaK7YRqOSOeQpGfDoLCz5WdqzVZVaQCeXRz5fRwVtek4nccr
+	 IIPachRHSkoVTOEAWF+Q1RzHqSOorzh7zXI195lPeh6rI9NWNNeXuWFRvNezWJTw3p
+	 PujsqHiaXsnhXn4ml0tu+soSLAwHQx/2ykUaxgbrj/FrCgmqj2lH181uuMut8tBYuy
+	 aja0FJrJQgnw/6NiWOYkVZxNTWgTqVbG3qy26HXJ2+cOUzaAglixyIojvdf5gfQ1kK
+	 saeXLw4BQa+dsq1UxBUW8SPV6tQMuEPXP5HvV9PLKQ6hwtsv5+NhzubCQc+XQUYX3M
+	 ZF/4/IEW0rvcw==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 03 Feb 2025 14:37:19 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <45920591-e1d6-4337-a906-35bb5319836c@wanadoo.fr>
+Date: Mon, 3 Feb 2025 22:36:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 03 Feb 2025 12:40:16 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Tomasz
- Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Lee Jones <lee@kernel.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Vinod Koul
- <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Marek
- Szyprowski <m.szyprowski@samsung.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Andi Shyti <andi.shyti@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, Jaehoon Chung
- <jh80.chung@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Thinh
- Nguyen <Thinh.Nguyen@synopsys.com>, Kees Cook <kees@kernel.org>, Tony Luck
- <tony.luck@intel.com>, "Guilherme G . Piccoli" <gpiccoli@igalia.com>, Sergey
- Lisov <sleirsgoevy@gmail.com>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-usb@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org, Kaustabh
- Chakraborty <kauschluss@disroot.org>
-Subject: Re: [PATCH 02/33] dt-bindings: clock: add clock definitions for
- exynos7870 CMU
-In-Reply-To: <20250203-enigmatic-remarkable-beagle-709955@krzk-bin>
-References: <20250203-exynos7870-v1-0-2b6df476a3f0@disroot.org>
- <20250202190758.14986-1-kauschluss@disroot.org>
- <20250203-enigmatic-remarkable-beagle-709955@krzk-bin>
-Message-ID: <c1249f2f6ac8a2f5a1dcb3bbbba647f9@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH treewide v2 1/3] bitfield: Add non-constant
+ field_{prep,get}() helpers
+To: Johannes Berg <johannes@sipsolutions.net>,
+ Yury Norov <yury.norov@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, qat-linux@intel.com,
+ linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+ linux-iio@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S . Miller" <davem@davemloft.net>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela
+ <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>
+References: <cover.1738329458.git.geert+renesas@glider.be>
+ <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
+ <e20a177a-30cd-4088-89e1-b479aba1356c@wanadoo.fr> <Z5-xMUqrDuaE8Eo_@thinkpad>
+ <74cab7d1ec31e7531cdda0f1eb47acdebd5c8d3f.camel@sipsolutions.net>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <74cab7d1ec31e7531cdda0f1eb47acdebd5c8d3f.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2025-02-03 07:54, Krzysztof Kozlowski wrote:
-> On Mon, Feb 03, 2025 at 12:37:58AM +0530, Kaustabh Chakraborty wrote:
->> From: Sergey Lisov <sleirsgoevy@gmail.com>
->> 
->> Add unique identifiers for exynos7870 clocks for every bank. It adds all
->> clocks of CMU_MIF, CMU_DISPAUD, CMU_G3D, CMU_ISP, CMU_MFCMSCL, and
->> CMU_PERI.
->> 
->> Signed-off-by: Sergey Lisov <sleirsgoevy@gmail.com>
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->> ---
->>  include/dt-bindings/clock/exynos7870.h | 324 +++++++++++++++++++++++++
->>  1 file changed, 324 insertions(+)
+On 03/02/2025 at 16:44, Johannes Berg wrote:
+> On Sun, 2025-02-02 at 12:53 -0500, Yury Norov wrote:
+>>
+>>> Instead of creating another variant for
+>>> non-constant bitfields, wouldn't it be better to make the existing macro
+>>> accept both?
+>>
+>> Yes, it would definitely be better IMO.
 > 
-> Look at git log - that's never a separate commit.
+> On the flip side, there have been discussions in the past (though I
+> think not all, if any, on the list(s)) about the argument order. Since
+> the value is typically not a constant, requiring the mask to be a
+> constant has ensured that the argument order isn't as easily mixed up as
+> otherwise.
 
-Hmm, I see past examples which are mixed.
+If this is a concern, then it can be checked with:
 
-2ae5c2c3f8d586b709cf67efe94488be397d7544
-Exynos850 CMU (c. 2021). CMU definitions are in a separate commit.
+  BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask) &&
+                   __builtin_constant_p(_val),
+                   _pfx "mask is not constant");
 
-591020a516720e9eba1c4b1748cb73b6748e445f
-Exynos7885 CMU (c. 2021). CMU definitions are in a separate commit.
+It means that we forbid FIELD_PREP(non_const_mask, const_val) but allow
+any other combination.
 
-while
-
-96bd6224f07b8bf73e0359f15a3d7678118494e6
-Exynos5433 CMU (c. 2015). CMU definitions and driver are in a single commit.
-
-Let me know if I should still continue with the approach you mentioned.
-
+> With a non-constant mask there can also be no validation that the mask
+> is contiguous etc.
 > 
-> Best regards,
-> Krzysztof
+> Now that doesn't imply a strong objection - personally I've come to
+> prefer the lower-case typed versions anyway - but something to keep in
+> mind when doing this.
+> 
+> However, the suggested change to BUILD_BUG_ON_NOT_POWER_OF_2 almost
+> certainly shouldn't be done for the same reason - not compiling for non-
+> constant values is [IMHO] part of the API contract for that macro. This
+> can be important for the same reasons.
+
+Your point is fair enough. But I do not see this as a killer argument.
+We can instead just add below helper:
+
+  BUILD_BUG_ON_STATICALLY_NOT_POWER_OF_2()
+
+But, for the same reason why I would rather not have both the
+FIELD_{PREP,GET}() and the field_{prep,get}(), I would also rather not
+have a BUILD_BUG_ON_NOT_POWER_OF_2() and a
+BUILD_BUG_ON_STATICALLY_NOT_POWER_OF_2().
+
+If your concern is the wording of the contract, the description can just
+be updated.
+
+
+Yours sincerely,
+Vincent Mailhol
+
