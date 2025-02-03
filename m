@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D0E18B46E;
-	Mon,  3 Feb 2025 22:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0F47D07D;
+	Mon,  3 Feb 2025 22:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738621822; cv=none; b=lNXb6m1PZZSOWAHD+fLNVgsmCGaWqL3HRxdWWNY8hRroJzC5cQuiptncPQCi4PPYoTM6jZck/2J+SqMth/56TZKu2e8TJIJ9FB+Su2I/pq1sIq6Nm5Vrjr1TGifdSnrsbzvEgukpG6rFzd0AShhwP5FJbCrn3B02P195LRGovWU=
+	t=1738622679; cv=none; b=kLGIBUSUL+4o+sBG0zC3NJ2t0y3FpYWqUuRX9oSgMTvcHO5w7XvOXwb93ZvIGw02E3qlwnYQVQtyQg4I9OqD5NzmazwYsbKUkmDUVlIMwLYnT8X+6oQWsYBf1Nxp48Uu8A5I+93R/A6iw6yuSGNkVsd39S4LB89CcpwfEwYO1DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738621822; c=relaxed/simple;
-	bh=nQVY1dDboaeGX4s/kBcCQBGi1C5MiXmG7BkFyi87hcI=;
+	s=arc-20240116; t=1738622679; c=relaxed/simple;
+	bh=xmSkXHE4yrh5WE9/qixdoYlepUyA6sUkXRP9MquXhMc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lhHI4MerArmT4d4KjHktef337UHa/81RBqB4q2VQbARBSZTVXwu42WqWsZIeXc2CnamqabJHrjCfS6C/pOcBapykuPGTlR+IM5reE/Q4eYFPJjBAeo3SEydtpPS0dFMXN4/j70SgtXzAxYo9mXx5Z3qvwB1r+s1C99kQiEm59eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gg38RWDy; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=QeGVlk5t0O3U4ILknIMJeHmgvmzDayadm9E1ouDHFkLpHc+yI69mwdni7Wzgi/VBy7rz802tfT611/xM+lJ2NcBviqwEaPJgeb3p5K53K9wopX/B7XWoDxzsVru4uNe2I746o6uKhvg+tz+SpZ/svblCETVTs/vPRG3GhX2mgpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mDjWdEXq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gg38RWDy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78F2DC4CED2;
-	Mon,  3 Feb 2025 22:30:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mDjWdEXq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0094AC4CED2;
+	Mon,  3 Feb 2025 22:44:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738621821;
-	bh=nQVY1dDboaeGX4s/kBcCQBGi1C5MiXmG7BkFyi87hcI=;
+	s=k20201202; t=1738622678;
+	bh=xmSkXHE4yrh5WE9/qixdoYlepUyA6sUkXRP9MquXhMc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gg38RWDyo4/DO/c18+GqHN9+P5Wj0kKkr03sEttx6ObUNrE30x4KSUURwsJdmro44
-	 r1LafdcOekf3nL3YGCvs+3+yW00QdBSEe+8OyaWQLKifKsJ4fMJf4LDHz20+Moa8OQ
-	 qvQKnaUDlTbuVIOTIsmOunydTlpH74XO4lmUqJc++rYDB2hvFYjn6RwK8RFSwel9w/
-	 wHL56G7hOk8/eBS+lDJcg4XvbVAf2PVXLYqMeVh60gmDqF4mudpvg1YGdHMIAYUz+w
-	 1v3HZICV3H8pjbLZHYHudE11xTWGwErGoW/5juK8WYRrXbFSA/61sXhQcB4IpEG5iK
-	 XgapaV/Jv7wvg==
-Date: Mon, 3 Feb 2025 16:30:20 -0600
+	b=mDjWdEXqxxXWHowybWCOSGUTQQYvNaN0HJKdcy0XG+3P+6+Zyi7W+ZW6HL+FLXBmW
+	 rjGNNk1bXv8y7Ng877xCBeGfFHT6d5cKoybz0QVzOwmjgdH2NqpKoh85lPRjGQlves
+	 QIBhCyfsai8kXc4WqCdOU0ksZpBcokQNBqc5ndZgpfsS1vBewEmMRUqmqobiJzuHdw
+	 6Jnw1YGcv8Gw7Jz+TeyYu9qDFonxzuEhuEJJCvifHzeasZLIcFJfUXTRe/hGqjnnfA
+	 /FEv9Rq/vsGfJYe63aQN8CnvalH0XhQeU5c/CBOQ9uFSKC5UvHXF4Dc32Ydz4VRwNK
+	 ZT1TtAny0D32g==
+Date: Mon, 3 Feb 2025 16:44:36 -0600
 From: Rob Herring <robh@kernel.org>
 To: Anup Patel <apatel@ventanamicro.com>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -52,11 +52,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 02/17] dt-bindings: mailbox: Add bindings for RPMI
- shared memory transport
-Message-ID: <20250203223020.GA277987-robh@kernel.org>
+Subject: Re: [RFC PATCH v2 03/17] dt-bindings: mailbox: Add bindings for
+ RISC-V SBI MPXY extension
+Message-ID: <20250203224436.GA363790-robh@kernel.org>
 References: <20250203084906.681418-1-apatel@ventanamicro.com>
- <20250203084906.681418-3-apatel@ventanamicro.com>
+ <20250203084906.681418-4-apatel@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,187 +65,84 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250203084906.681418-3-apatel@ventanamicro.com>
+In-Reply-To: <20250203084906.681418-4-apatel@ventanamicro.com>
 
-On Mon, Feb 03, 2025 at 02:18:51PM +0530, Anup Patel wrote:
-> Add device tree bindings for the common RISC-V Platform Management
-> Interface (RPMI) shared memory transport as a mailbox controller.
+On Mon, Feb 03, 2025 at 02:18:52PM +0530, Anup Patel wrote:
+> Add device tree bindings for the RISC-V SBI Message Proxy (MPXY)
+> extension as a mailbox controller.
 > 
 > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 > ---
->  .../mailbox/riscv,rpmi-shmem-mbox.yaml        | 150 ++++++++++++++++++
->  1 file changed, 150 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
+>  .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml | 54 +++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
 > 
-> diff --git a/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
+> diff --git a/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml b/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
 > new file mode 100644
-> index 000000000000..c339df5d9e24
+> index 000000000000..8a05e089b710
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
-> @@ -0,0 +1,150 @@
+> +++ b/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
+> @@ -0,0 +1,54 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/mailbox/riscv,rpmi-shmem-mbox.yaml#
+> +$id: http://devicetree.org/schemas/mailbox/riscv,sbi-mpxy-mbox.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: RISC-V Platform Management Interface (RPMI) shared memory mailbox
+> +title: RISC-V SBI Message Proxy (MPXY) extension based mailbox
 > +
 > +maintainers:
 > +  - Anup Patel <anup@brainfault.org>
 > +
 > +description: |
-> +  The RISC-V Platform Management Interface (RPMI) [1] defines a common shared
-> +  memory based RPMI transport. This RPMI shared memory transport integrates as
-> +  mailbox controller in the SBI implementation or supervisor software whereas
-> +  each RPMI service group is mailbox client in the SBI implementation and
-> +  supervisor software.
+> +  The RISC-V SBI Message Proxy (MPXY) extension [1] allows supervisor
+> +  software to send messages through the SBI implementation (M-mode
+> +  firmware or HS-mode hypervisor). The underlying message protocol
+> +  and message format used by the supervisor software could be some
+> +  other standard protocol compatible with the SBI MPXY extension
+> +  (such as RISC-V Platform Management Interface (RPMI) [2]).
 > +
 > +  ===========================================
 > +  References
 > +  ===========================================
 > +
-> +  [1] RISC-V Platform Management Interface (RPMI)
+> +  [1] RISC-V Supervisor Binary Interface (SBI)
+> +      https://github.com/riscv-non-isa/riscv-sbi-doc/releases
+> +
+> +  [2] RISC-V Platform Management Interface (RPMI)
 > +      https://github.com/riscv-non-isa/riscv-rpmi/releases
 > +
 > +properties:
+> +  $nodename:
+> +    const: sbi-mpxy-mbox
+
+'mailbox' is the defined name for mailbox providers.
+
+> +
 > +  compatible:
-> +    const: riscv,rpmi-shmem-mbox
-> +
-> +  reg:
-> +    oneOf:
-> +      - items:
-> +          - description: A2P request queue base address
-> +          - description: P2A acknowledgment queue base address
-> +          - description: P2A request queue base address
-> +          - description: A2P acknowledgment queue base address
-> +          - description: A2P doorbell address
-> +      - items:
-> +          - description: A2P request queue base address
-> +          - description: P2A acknowledgment queue base address
-> +          - description: P2A request queue base address
-> +          - description: A2P acknowledgment queue base address
-> +      - items:
-> +          - description: A2P request queue base address
-> +          - description: P2A acknowledgment queue base address
-> +          - description: A2P doorbell address
-> +      - items:
-> +          - description: A2P request queue base address
-> +          - description: P2A acknowledgment queue base address
-> +
-> +  reg-names:
-> +    oneOf:
-> +      - items:
-> +          - const: a2p-req
-> +          - const: p2a-ack
-> +          - const: p2a-req
-> +          - const: a2p-ack
-> +          - const: doorbell
-> +      - items:
-> +          - const: a2p-req
-> +          - const: p2a-ack
-> +          - const: p2a-req
-> +          - const: a2p-ack
-
-These first 2 items lists can be combined with the addition of 
-'minItems: 4'
-
-> +      - items:
-> +          - const: a2p-req
-> +          - const: p2a-ack
-> +          - const: doorbell
-> +      - items:
-> +          - const: a2p-req
-> +          - const: p2a-ack
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description:
-> +      The RPMI shared memory transport supports wired interrupt specified by
-> +      this property as the P2A doorbell.
-> +
-> +  msi-parent:
-> +    description:
-> +      The RPMI shared memory transport supports MSI as P2A doorbell and this
-> +      property specifies the target MSI controller.
-> +
-> +  riscv,slot-size:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 64
-> +    description:
-> +      Power-of-2 RPMI slot size of the RPMI shared memory transport.
-> +
-> +  riscv,doorbell-mask:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    default: 0xffffffff
-> +    description:
-> +      Update only the register bits of doorbell defined by the mask (32 bit).
-> +
-> +  riscv,doorbell-value:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    default: 0x1
-> +    description:
-> +      Value written to the doorbell register bits (32-bit access) specified
-> +      by the riscv,db-mask property.
-
-You mean riscv,doorbell-mask?
-
-I'm confused why you would need both? If the value to write is fixed 
-here, then why do you need a mask? You could just mask the value here.
-
-I assume there's some dependency between these 2 properties. That needs 
-to be captured with 'dependencies'.
-
+> +    const: riscv,sbi-mpxy-mbox
 > +
 > +  "#mbox-cells":
-> +    const: 1
+> +    const: 2
 > +    description:
-> +      The first cell specifies RPMI service group ID.
+> +      The first cell specifies channel_id of the SBI MPXY channel,
+> +      the second cell specifies MSG_PROT_ID of the SBI MPXY channel
 > +
 > +required:
 > +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - riscv,slot-size
 > +  - "#mbox-cells"
-> +
-> +anyOf:
-> +  - required:
-> +      - interrupts
-> +  - required:
-> +      - msi-parent
 > +
 > +additionalProperties: false
 > +
 > +examples:
 > +  - |
-> +    // Example 1 (RPMI shared memory with only 2 queues):
-> +    mailbox@10080000 {
-> +        compatible = "riscv,rpmi-shmem-mbox";
-> +        reg = <0x10080000 0x10000>,
-> +              <0x10090000 0x10000>,
-> +              <0x100a0000 0x4>;
-> +        reg-names = "a2p-req", "p2a-ack", "doorbell";
-> +        msi-parent = <&imsic_mlevel>;
-> +        riscv,slot-size = <64>;
-> +        #mbox-cells = <1>;
-> +    };
-> +  - |
-> +    // Example 2 (RPMI shared memory with only 4 queues):
-> +    mailbox@10001000 {
-> +        compatible = "riscv,rpmi-shmem-mbox";
-> +        reg = <0x10001000 0x800>,
-> +              <0x10001800 0x800>,
-> +              <0x10002000 0x800>,
-> +              <0x10002800 0x800>,
-> +              <0x10003000 0x4>;
-> +        reg-names = "a2p-req", "p2a-ack", "p2a-req", "a2p-ack", "doorbell";
-> +        msi-parent = <&imsic_mlevel>;
-> +        riscv,slot-size = <64>;
-> +        riscv,doorbell-mask = <0x00008000>;
-> +        riscv,doorbell-value = <0x00008000>;
-> +        #mbox-cells = <1>;
-> +    };
-> -- 
-> 2.43.0
-> 
+> +    sbi-mpxy-mbox {
+> +          compatible = "riscv,sbi-mpxy-mbox";
+> +          #mbox-cells = <2>;
+
+Is there an SBI node? #mbox-cells could just be part of that along with 
+anything else that SBI is a provider for. And we already have the PMU 
+SBI binding. It's all one thing, so there should be one SBI node. Then 
+we can debate about child nodes of it.
+
+Rob
