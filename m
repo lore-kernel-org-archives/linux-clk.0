@@ -1,167 +1,195 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C721E7C34;
-	Mon,  3 Feb 2025 07:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5101E9905
+	for <linux-clk@vger.kernel.org>; Mon,  3 Feb 2025 08:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738569428; cv=none; b=aA0cZyGdFQLcnuc9/THy2sBkG5tXss6vFJSX6tRgMs6dOKvAC1lGkGuEJUksl3Vy2bp46D+u8hR5PkXnnYrrG3c/f8s6RWO1oIe80AYkTz60QzKLN6Pbm+78dRZuz7nPHulvyiLyPG3ghapaFjPWD7MavoSbE4VRv55vNBJ+YRM=
+	t=1738572567; cv=none; b=LC/iXZbgmgdlY86UCs9LxAdXrtadW2a7VTlN4J74t1c6AETgBrEDUN2PJr6ugFyCMuvbfUpIvOTDzk2j9yt/uy03e5BTzoApKAVEUgMjOnSaPrBHbewguNUQfqJGR3Ehynyxccw6rjXgO1lNybem3KtVPCN8XrqWos0PJRPLlec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738569428; c=relaxed/simple;
-	bh=5kJGuiN/HJ5xJyJ8CV/kCat9j7iBCMcYyia9cYykokw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPE32m7ZMXJepl7iClcl5bjIe7H3mj+BQvRF1jvlDDDwxfsdpeIzyxQAgaOVhBB05NeVjgQSjbF8C1fr6IqGt2v9lvtcaoMlGAe0i9q6MPfsgC98iNGTD0X+eTC/WQN4UJo4kWd2YPZ9E70Tm60aQ2f/nKjBwD2YQNvEUBvisPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mH1VjjzF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738572567; c=relaxed/simple;
+	bh=QX7jvlQtJHPQQYG8K+ZSemcwjKxBQzn04tV2KwSSgSA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FZau7JXOKuMg40JX0BrMxyjD2/uhUV4XgDj+KuxORp8Rr396N+lM86na8B9as5WQqjhp1gqX2ZOeBzyCOWoGhrxcqyKMdNLRcC60Pf+HRkJrZIuHAnbaVRIdB8BXYjnJjTiLAGA1vkOA0V3RthkG2wo7h9AKPpzeL99pPjtvEi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CEHwPyEk; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mH1VjjzF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67AE8C4CEE2;
-	Mon,  3 Feb 2025 07:57:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738569427;
-	bh=5kJGuiN/HJ5xJyJ8CV/kCat9j7iBCMcYyia9cYykokw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mH1VjjzFMznyc23SuohffVCndcU3q/YdzYR/SqCthoRVEnF6c5vo/uyAJD4itxzmg
-	 AN8S1mOgDCwqjsS1IblK7xZE+IbZ4isReC2oRPp4S5ECn9tVDV+kuLpbVk+jDHR1q8
-	 PDXYM8hmJ6B9vMirBDkMETCUHP9yIYAeJoOFyX7yKNhKMaZL2zHqa7N0j1SnfP0TUo
-	 Ay1dvF6uilNs/NFgm8T705/fLAp51TEyS4Nay6Jxl6fvxUXl54ekqsNnmhaNbif2PH
-	 /fB60l1Zix7lnVrxmUUwFAJaFNVoMb6/foIbVFBeXGj7VlsV9cx8t4u4MVzmEhPcTk
-	 gV3AAAwX7rxZA==
-Date: Mon, 3 Feb 2025 08:57:04 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Andi Shyti <andi.shyti@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, 
-	Vivek Gautam <gautam.vivek@samsung.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G . Piccoli" <gpiccoli@igalia.com>, Sergey Lisov <sleirsgoevy@gmail.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 03/33] dt-bindings: clock: document exynos7870 clock
- driver CMU bindings
-Message-ID: <20250203-congenial-transparent-horse-cc5d4b@krzk-bin>
-References: <20250203-exynos7870-v1-0-2b6df476a3f0@disroot.org>
- <20250202190924.15036-1-kauschluss@disroot.org>
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CEHwPyEk"
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46788c32a69so54848601cf.2
+        for <linux-clk@vger.kernel.org>; Mon, 03 Feb 2025 00:49:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1738572565; x=1739177365; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qYXXlTk5HduQbMTIlt80IsYvDUjFzMF5KSYRQGJL3Uk=;
+        b=CEHwPyEkB32JXlqIMEVtUcOgmxV3oBMYDqRJ+3WCpyMsy3bTYxoj+Y18cGmPY017QQ
+         B9RQRAmYEvhEPG+j8PAoIi30aGU/n2FKBKiv8SBVyWBRhJHriZC9KIE0OsIEi5cAEEnH
+         CbtT+hhfGDh8QtXAfUEDkER0teao1imyUSnMbuG5wcF94fVrLpFNwPpcermhFPfobemq
+         jmZP5wVZ4HcoOK6ZG/b0rC9Jz20eTqBmMf0OX24xRj+KU7Q1g/rEJ6wtn2xO15lK5Q6F
+         PQEGqchkp9IwtXOoekcZAcFPrSiOgcyjJTiO8tT6pCFCpPttB0oe34MgDe4DtZ0FlNT9
+         vnPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738572565; x=1739177365;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qYXXlTk5HduQbMTIlt80IsYvDUjFzMF5KSYRQGJL3Uk=;
+        b=BnlJu0S2oWTNXjDx12M+y79LEyagKJKBnKCRD/dKG3OghOctD5m7NzO4KwkA+eXUl+
+         T7KShdF5b74isgYzgPYe/QYlplbnSOHlKDcJ9O+riRUiB5VhBYz0eU4X0mmNL7YGLX1D
+         08aSTckUkYlELoWt0xVnyfjSAr/oU8TuLWyVGOF28/aIM60t2/YuG1KzlfrAmU3qEAiV
+         RCkN4k1Gj1JJsCcCIIifnpoSSdanhojpBvIVf13UJTNuaPcgx4x4XIW1LIDkizkXz2f0
+         Dd3ISKCA5ICfdm4froK5ljGH7Sg2VtrxkZ0TEjCqJNd/laoAdrwecqK9qXYSNj0L0KZ0
+         ll9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUaPBZBpV98bDIHxCUJX37QbD7wMtYe5tH/ycIMDFYjEKDJAFUz5eQObYsSw8VE4+9odYnBI1Gq2co=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyUP/b+2Kt5i+pcrVQ7X4dKNKyHIngQHLZ1Bo992nGNpx+BxPE
+	78gbCr7w5OczpfUTgxjmx2vVM/hI1TGbc3znARg80oyKzc7/PZoR3y7X4IT3HnU=
+X-Gm-Gg: ASbGncs6qxZ1cGRvhWUPaDlMJpvuOesnjDiKIUCwL0xLdFITQ9CmKytLlUvyXIkDfF7
+	RxBeAU6ISs2g8o6rsQeF29m55T+7QtVTcWgU61347iWSerL34++X6u9mTJEIC0uTjn4FxoMy9nC
+	3SNVhM9KQ8p/crLi7qN8kIHZhSZPYpI8VY4FuaGTxc9j1dERoRH84d6O8NPHkj6wzZUdVpEM4GZ
+	5nmxAApAdNDWANRRFbr8b0NVKZJgMtkGIHFuSVBt/YEyglxkfM6TPfbH7rGG4unzLCzrSnMnUDF
+	OdGIVOlf8RgLIVFEKzKnIvMAVJpzxOOKEcaKFCvs0X9rZG1nCeIYpZY=
+X-Google-Smtp-Source: AGHT+IGH0XTcN/X29iLH8kRSIgCwIt85vlSYKgmJJ/8YJqUZ2p1KY2bxWsy8EAgScZgVFzZwv6JhNQ==
+X-Received: by 2002:ac8:584f:0:b0:467:5e4f:3d1 with SMTP id d75a77b69052e-46fd0b924b4mr302004001cf.33.1738572564583;
+        Mon, 03 Feb 2025 00:49:24 -0800 (PST)
+Received: from anup-ubuntu-vm.localdomain ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46fdf0e3089sm47657911cf.46.2025.02.03.00.49.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2025 00:49:23 -0800 (PST)
+From: Anup Patel <apatel@ventanamicro.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Anup Patel <apatel@ventanamicro.com>
+Subject: [RFC PATCH v2 00/17] Linux SBI MPXY and RPMI drivers
+Date: Mon,  3 Feb 2025 14:18:49 +0530
+Message-ID: <20250203084906.681418-1-apatel@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250202190924.15036-1-kauschluss@disroot.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 03, 2025 at 12:39:24AM +0530, Kaustabh Chakraborty wrote:
+The SBI v3.0 MPXY extension [1] and RPMI v1.0 [2] specifications are
+in stable state and under ARC review at the RISC-V International so
+as part of the RVI process we would like to receive an early feedback
+on the device tree bindings and mailbox drivers hence this series.
 
-Subject - drop driver. Bindings are about hardware. This applies to all
-your bindings patches
+Currently, most of the RPMI and MPXY drivers are in OpenSBI whereas
+for Linux only has SBI MPXY mailbox controller driver, RPMI clock
+driver.and RPMI system MSI driver This series also includes ACPI
+support for SBI MPXY mailbox controller and RPMI system MSI drivers.
 
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: gout_mif_cmu_mfcmscl_mfc
-> +            - const: gout_mif_cmu_mfcmscl_mscl
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: samsung,exynos7870-cmu-peri
-> +
+These patches can be found in the riscv_sbi_mpxy_mailbox_v2 branch at:
+https://github.com/avpatel/linux.git
 
-Drop blank line
+To test these patches, boot Linux on "virt,rpmi=on,aia=aplic-imsic"
+machine with OpenSBI and QEMU from the dev-upstream QEMU branch at:
+https://github.com/ventanamicro/opensbi.git
+https://github.com/ventanamicro/qemu.git
 
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: External reference clock (26 MHz)
-> +            - description: CMU_PERI bus clock (from CMU_MIF)
-> +            - description: SPI0 clock (from CMU_MIF)
-> +            - description: SPI1 clock (from CMU_MIF)
-> +            - description: SPI2 clock (from CMU_MIF)
-> +            - description: SPI3 clock (from CMU_MIF)
-> +            - description: SPI4 clock (from CMU_MIF)
-> +            - description: UART0 clock (from CMU_MIF)
-> +            - description: UART1 clock (from CMU_MIF)
-> +            - description: UART2 clock (from CMU_MIF)
-> +
-> +        clock-names:
-> +          items:
-> +            - const: oscclk
-> +            - const: gout_mif_cmu_peri_bus
-> +            - const: gout_mif_cmu_peri_spi0
-> +            - const: gout_mif_cmu_peri_spi1
-> +            - const: gout_mif_cmu_peri_spi2
-> +            - const: gout_mif_cmu_peri_spi3
-> +            - const: gout_mif_cmu_peri_spi4
-> +            - const: gout_mif_cmu_peri_uart0
-> +            - const: gout_mif_cmu_peri_uart1
-> +            - const: gout_mif_cmu_peri_uart2
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clocks
-> +  - clock-names
-> +  - reg
+[1] https://github.com/riscv-non-isa/riscv-sbi-doc/releases
+[2] https://github.com/riscv-non-isa/riscv-rpmi/releases
 
-required block is just after properties.
+Changes since v1:
+ - Addressed DT bindings related comments in PATCH2, PATCH3, and
+   PATCH7 of v1 series
+ - Addressed comments in PATCH6 and PATCH8 of v1 series
+ - New PATCH6 in v2 series to allow fwnode based mailbox channel
+   request
+ - New PATCH10 and PATCH11 to add RPMI system MSI based interrupt
+   controller driver
+ - New PATCH12 to PATCH16 which adds ACPI support in SBI MPXY
+   mailbox driver and RPMI system MSI driver
+ - New PATCH17 to enable required kconfig option to allow graceful
+   shutdown on QEMU virt machine
 
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # Clock controller node for CMU_PERI
+Anup Patel (11):
+  riscv: Add new error codes defined by SBI v3.0
+  dt-bindings: mailbox: Add bindings for RPMI shared memory transport
+  dt-bindings: mailbox: Add bindings for RISC-V SBI MPXY extension
+  RISC-V: Add defines for the SBI message proxy extension
+  mailbox: Add common header for RPMI messages sent via mailbox
+  mailbox: Allow controller specific mapping using fwnode
+  mailbox: Add RISC-V SBI message proxy (MPXY) based mailbox driver
+  dt-bindings: clock: Add bindings for RISC-V RPMI clock service group
+  dt-bindings: interrupt-controller: Add bindings for RISC-V RPMI system
+    MSI
+  irqchip: Add driver for the RISC-V RPMI system MSI service group
+  RISC-V: Enable GPIO keyboard and event device in RV64 defconfig
 
-Drop
+Rahul Pathak (1):
+  clk: Add clock driver for the RISC-V RPMI clock service group
 
-> +  - |
-> +    #include <dt-bindings/clock/exynos7870.h>
-> +
-> +    cmu_peri: clock-controller@101F0000 {
+Sunil V L (5):
+  ACPI: property: Add support for nargs_prop in
+    acpi_fwnode_get_reference_args()
+  ACPI: scan: Update honor list for RPMI System MSI
+  ACPI: RISC-V: Add RPMI System MSI to GSI mapping
+  mailbox/riscv-sbi-mpxy: Add ACPI support
+  irqchip/riscv-rpmi-sysmsi: Add ACPI support
 
-Lowercase hex
+ .../bindings/clock/riscv,rpmi-clock.yaml      |   77 ++
+ .../riscv,rpmi-system-msi.yaml                |   89 ++
+ .../mailbox/riscv,rpmi-shmem-mbox.yaml        |  150 +++
+ .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml |   54 +
+ arch/riscv/configs/defconfig                  |    2 +
+ arch/riscv/include/asm/irq.h                  |    1 +
+ arch/riscv/include/asm/sbi.h                  |   70 ++
+ drivers/acpi/property.c                       |   15 +-
+ drivers/acpi/riscv/irq.c                      |   33 +
+ drivers/acpi/scan.c                           |    2 +
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-rpmi.c                        |  601 ++++++++++
+ drivers/gpio/gpiolib-acpi.c                   |    2 +-
+ drivers/irqchip/Kconfig                       |    7 +
+ drivers/irqchip/Makefile                      |    1 +
+ drivers/irqchip/irq-riscv-rpmi-sysmsi.c       |  315 +++++
+ drivers/mailbox/Kconfig                       |   11 +
+ drivers/mailbox/Makefile                      |    2 +
+ drivers/mailbox/mailbox.c                     |   44 +-
+ drivers/mailbox/riscv-sbi-mpxy-mbox.c         | 1027 +++++++++++++++++
+ drivers/pwm/core.c                            |    2 +-
+ include/linux/acpi.h                          |   12 +-
+ include/linux/mailbox/riscv-rpmi-message.h    |  235 ++++
+ include/linux/mailbox_controller.h            |    3 +
+ 25 files changed, 2737 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
+ create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
+ create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
+ create mode 100644 drivers/clk/clk-rpmi.c
+ create mode 100644 drivers/irqchip/irq-riscv-rpmi-sysmsi.c
+ create mode 100644 drivers/mailbox/riscv-sbi-mpxy-mbox.c
+ create mode 100644 include/linux/mailbox/riscv-rpmi-message.h
 
-> +      compatible = "samsung,exynos7870-cmu-peri";
-> +      reg = <0x101f0000 0x1000>;
-> +      #clock-cells = <1>;
-> +
-> +      clock-names = "oscclk",
-> +                    "gout_mif_cmu_peri_bus",
-> +                    "gout_mif_cmu_peri_spi0",
-> +                    "gout_mif_cmu_peri_spi1",
-> +                    "gout_mif_cmu_peri_spi2",
-> +                    "gout_mif_cmu_peri_spi3",
-> +                    "gout_mif_cmu_peri_spi4",
-> +                    "gout_mif_cmu_peri_uart0",
-> +                    "gout_mif_cmu_peri_uart1",
-> +                    "gout_mif_cmu_peri_uart2";
-> +      clocks = <&oscclk>,
-> +               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_BUS>,
-> +               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_SPI0>,
-> +               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_SPI1>,
-> +               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_SPI2>,
-> +               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_SPI3>,
-> +               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_SPI4>,
-> +               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_UART0>,
-> +               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_UART1>,
-> +               <&cmu_mif CLK_GOUT_MIF_CMU_PERI_UART2>;
-> +    };
-> +
-> +...
-> -- 
-> 2.48.1
-> 
+-- 
+2.43.0
+
