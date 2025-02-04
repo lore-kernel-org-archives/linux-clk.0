@@ -1,247 +1,132 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB08828399;
-	Tue,  4 Feb 2025 16:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512162147F4
+	for <linux-clk@vger.kernel.org>; Tue,  4 Feb 2025 16:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738687525; cv=none; b=nTea9ztSaBrgL45YstbaCBMC8D63S8LISWkt2N8PtqflDe+7fKi6PDZgkmbou7Lm2lcm76fladKDe5bGy2hJG0ERvQS51dI3h0R/PRKQ+8G3ETt6JoXAAtfPTYftGjzf0solDaFxaio1GA/1d4F7kRmo8i3vXHYzjZOS6aM8OqY=
+	t=1738688298; cv=none; b=Qn8FM93TZsiqEfq2CBNRVH84RNfLIMcEdBi86TjqxXBksALW+a/VzaIOfwCN78UEF5WEx2NVaiSOxCaalQkMic/52ij+aeR2ezJeV5157ld8jG5xbM9XWfOMSf0yVKZ4DsymtG0cQU5l7vU4G+GhdHYj+Kk4mpsbfbiLQ5gSXY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738687525; c=relaxed/simple;
-	bh=5zUYjqsp1rc0xxpQnCyXSSdQdeKvNFI+5WXBz1zhvzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XLQcVqCTNtxI16J6yDOxeQAkbCUK0L83Q5/SnaO80gnMKztl6X2zpJ8Cr4/Xl+TbwfwNC8lH95UTJEwBleh3K0faHvfyzO0KzBPCS6GOI/omlLwF6fgFTQ4ze+O64pg0ppH/6CysPLWsKcI3jZZhqSHyKkGBjcmmX2gNH3TIAsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: JV7UAgS7Rk2HGLTliDa5lg==
-X-CSE-MsgGUID: FE4m9sxoSyyoBLRLqiAeAg==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Feb 2025 01:45:19 +0900
-Received: from [10.24.1.103] (unknown [10.24.1.103])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3AAD9402E56A;
-	Wed,  5 Feb 2025 01:45:00 +0900 (JST)
-Message-ID: <1a7b6bf0-5ceb-4308-bb71-6baff945b99d@bp.renesas.com>
-Date: Tue, 4 Feb 2025 16:44:59 +0000
+	s=arc-20240116; t=1738688298; c=relaxed/simple;
+	bh=i8RsDQsHeAslGjYrHeMWqMCw59W/EPLvwnmHdBmCEzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mM83hocccvxbowFniuqgEEH4zBR5IfeG+ZdprWCkLLiZ/NRZ1FQbIFof+L4l0QWax35FCwFiJ+tv0GL2aVB/CgJOhfjRX8dQsdcIfTQR47qAOQYOf5Ef3GodDn5RBm7i3QwtabBjVSHIfXzNU1mgJQdq35ZCqD4inS6bY7yvnl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=EX2Lvt6P; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="EX2Lvt6P"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21619108a6bso98983095ad.3
+        for <linux-clk@vger.kernel.org>; Tue, 04 Feb 2025 08:58:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1738688296; x=1739293096; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EwLeQKf0vtUui74lT12wFv843Oi1b36R7jDrobGeWGo=;
+        b=EX2Lvt6PH4v1K5/Ca+5fgwHWSJoaaXnrBti1qOMPIDdNol/DeZKC1ej05FGA28Xvuk
+         IGpPt7kmseUnpOa1ufrg3sA+e4qvwzteUoAobigp2z8oFJpH1GJuwYCt2UB6vWKzUFxt
+         GZdyUhk4Q6tKUbTqYDHwxdbAO10rDYKqgFeicmQ2UehREY66Tg2cyZ9IP2J4mDzF0wvS
+         2oQoGDUsZsW5eOlC/AvWhQdQc4kkt/OrU21Gzi8uEeVivJU+mwi4G+7cCl6oNq1vrW+q
+         Ne0LlxsxcIZlmqqgVGZftRC29hSIb/o3hdObdRIeXHO41VLCPQTUcP6Fn1/RQlMNIpDd
+         9egQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738688296; x=1739293096;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EwLeQKf0vtUui74lT12wFv843Oi1b36R7jDrobGeWGo=;
+        b=K3EwI9jql+S/nwOgX3Kqmn+yhKqUwernSSaRSxODe3yQA2cU+Wh4dvRKbodcLUc6jY
+         m02xWVGI0bsCN9Hr2gvWpFMtm8KivQ8RHVvrN6IR1HtSXpaUwvqvwST01KS2aUEGXzS8
+         oFnwIG3f62RmOhCDMEYt9A3XN2QKDI2Ai37YhFbcr64eut0IBL8HIv587/nsxb0tiXn/
+         rDDp+qTspCVbUCONRjzToPwJsYyOyxXaMgVe01OkeXo5kOi+SueiLDHZ+mqOd7YlBL9b
+         rUQP1h+8GXOF6IkSjryqugb7sbrkxBF/z/xoWuOUAiDG0tzs+039W6tZXojZRUE9/Agz
+         K9WA==
+X-Forwarded-Encrypted: i=1; AJvYcCXDpItbCB7uvHIyDyggWdEtGBPy41Dz7DmofOQLGEzb0NnJJNeNFIG1YtN1T0t/rofbWCiL79q+sl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfK5kt9v5gMzReMJbhSc4aa4aHHV4FNeZ/G0cnG/FN5nSfSute
+	UTQ91Oq/eyBGhjhrIRZwo42L8qjY/d9VsGbApdXszJu941qcQR9Z4eGHf2FKD4g=
+X-Gm-Gg: ASbGnctLzBsCQbvVJFoYIlsPqu//zWOV36gYPP1M7MhW/03Gx/8yhmZ4rC6VBqfJcQT
+	cCLgcCdVBwb524RAoIYvaK2NW1rPONcrnxMm3gnpS5yZduhS7+wEHcr8TjoK46N6ZyIYy/1s51o
+	vSQ4Lj+wi+0yJMeQdrXN+Rayms+nTYCUcqBptwH8ItMQHPMwts7SQTOepzjFRCJnmE670vUZ7lf
+	xQTqlhtQbOM9NIejGIiJFZETpmbI37KW4tlkW8ShEfCZ4qOu+JqWjgNgaXqb400XkXeEH2uLDBl
+	kJNTj2IQRceE/glSFAnOulg=
+X-Google-Smtp-Source: AGHT+IH1Yx22xVxfTcYpwaH4xx/e93Sx3gcR5IYL+etceVupvjY9dDNCANrsvumn1lQdWQaHc/HUqg==
+X-Received: by 2002:a17:902:d4c3:b0:216:4e9f:4ebe with SMTP id d9443c01a7336-21dd7de213cmr392230845ad.42.1738688296579;
+        Tue, 04 Feb 2025 08:58:16 -0800 (PST)
+Received: from sunil-laptop ([103.97.166.196])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21de32eb34esm98292765ad.149.2025.02.04.08.58.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2025 08:58:15 -0800 (PST)
+Date: Tue, 4 Feb 2025 22:28:03 +0530
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Len Brown <lenb@kernel.org>,
+	Rahul Pathak <rpathak@ventanamicro.com>,
+	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+	Atish Patra <atishp@atishpatra.org>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 12/17] ACPI: property: Add support for nargs_prop
+ in acpi_fwnode_get_reference_args()
+Message-ID: <Z6JHG-nqFWDv-jpE@sunil-laptop>
+References: <20250203084906.681418-1-apatel@ventanamicro.com>
+ <20250203084906.681418-13-apatel@ventanamicro.com>
+ <Z6CPvteWv89Xo70j@smile.fi.intel.com>
+ <20250203105840.GH3713119@black.fi.intel.com>
+ <Z6C1cg3cqik8ZxvU@sunil-laptop>
+ <20250203123658.GI3713119@black.fi.intel.com>
+ <Z6DJ9kmNx4JoqRg-@sunil-laptop>
+ <Z6DVDicVEgmSyGcT@smile.fi.intel.com>
+ <Z6DVn8u-2EwMaMR4@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/14] clk: renesas: Add support for R9A09G077 SoC
-Content-Language: en-GB
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20250129165122.2980-1-thierry.bultel.yh@bp.renesas.com>
- <20250129165122.2980-8-thierry.bultel.yh@bp.renesas.com>
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-In-Reply-To: <20250129165122.2980-8-thierry.bultel.yh@bp.renesas.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------N4HHktQPozPo0zP20eTBlemk"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6DVn8u-2EwMaMR4@smile.fi.intel.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------N4HHktQPozPo0zP20eTBlemk
-Content-Type: multipart/mixed; boundary="------------GwrN4trEP52IDyjoACCo2w0N";
- protected-headers="v1"
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org
-Message-ID: <1a7b6bf0-5ceb-4308-bb71-6baff945b99d@bp.renesas.com>
-Subject: Re: [PATCH 07/14] clk: renesas: Add support for R9A09G077 SoC
-References: <20250129165122.2980-1-thierry.bultel.yh@bp.renesas.com>
- <20250129165122.2980-8-thierry.bultel.yh@bp.renesas.com>
-In-Reply-To: <20250129165122.2980-8-thierry.bultel.yh@bp.renesas.com>
+On Mon, Feb 03, 2025 at 04:41:35PM +0200, Andy Shevchenko wrote:
+> > Ah, interesting. The original change that introduces this 3e3119d3088f ("device
+> > property: Introduce fwnode_property_get_reference_args") hadn't been reviewed
+> > by Mika or me, that's probably why we are not familiar with.
+> > 
+> > Since interface is already established, I would recommend to fix
+> > this as proposed, i.e. with a new API. This is the way to match
+> > how OF seems to be doing.
+> 
+> For the reference see implementation of of_fwnode_get_reference_args()
+> 
+> 	if (nargs_prop)
+> 		ret = of_parse_phandle_with_args(to_of_node(fwnode), prop,
+> 						 nargs_prop, index, &of_args);
+> 	else
+> 		ret = of_parse_phandle_with_fixed_args(to_of_node(fwnode), prop,
+> 						       nargs, index, &of_args);
+> 
+> 
+Thanks!. I can do similar. But the change in
+__acpi_node_get_property_reference() will be still required since that
+is the place where the actual decoding of AML object is done. That would
+be similar to __of_parse_phandle_with_args() as well. Hope that is fine.
 
---------------GwrN4trEP52IDyjoACCo2w0N
-Content-Type: multipart/mixed; boundary="------------tLmamLKW0XDVk1cAJYwNlnb7"
-
---------------tLmamLKW0XDVk1cAJYwNlnb7
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On 29/01/2025 16:37, Thierry Bultel wrote:
-> Add the R9A09G077 SoC specific definitions to the CPG driver.
->=20
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> ---
->  drivers/clk/renesas/Kconfig         |   5 ++
->  drivers/clk/renesas/Makefile        |   1 +
->  drivers/clk/renesas/r9a09g077-cpg.c | 100 ++++++++++++++++++++++++++++=
-
->  3 files changed, 106 insertions(+)
->  create mode 100644 drivers/clk/renesas/r9a09g077-cpg.c
->=20
-> diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-> index 7ad59be2099d..017ae990d50c 100644
-> --- a/drivers/clk/renesas/Kconfig
-> +++ b/drivers/clk/renesas/Kconfig
-> @@ -41,6 +41,7 @@ config CLK_RENESAS
->  	select CLK_R9A08G045 if ARCH_R9A08G045
->  	select CLK_R9A09G011 if ARCH_R9A09G011
->  	select CLK_R9A09G057 if ARCH_R9A09G057
-> +	select CLK_R9A09G077 if ARCH_R9A09G077
->  	select CLK_SH73A0 if ARCH_SH73A0
-> =20
->  if CLK_RENESAS
-> @@ -198,6 +199,10 @@ config CLK_R9A09G057
->         bool "RZ/V2H(P) clock support" if COMPILE_TEST
->         select CLK_RZV2H
-> =20
-> +config CLK_R9A09G077
-> +	bool "RZ/T2H clock support" if COMPILE_TEST
-> +	select CLK_RZT2H
-> +
->  config CLK_SH73A0
->  	bool "SH-Mobile AG5 clock support" if COMPILE_TEST
->  	select CLK_RENESAS_CPG_MSTP
-> diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefil=
-e
-> index bd9f0b54fcda..fe11b10bc451 100644
-> --- a/drivers/clk/renesas/Makefile
-> +++ b/drivers/clk/renesas/Makefile
-> @@ -38,6 +38,7 @@ obj-$(CONFIG_CLK_R9A07G054)		+=3D r9a07g044-cpg.o
->  obj-$(CONFIG_CLK_R9A08G045)		+=3D r9a08g045-cpg.o
->  obj-$(CONFIG_CLK_R9A09G011)		+=3D r9a09g011-cpg.o
->  obj-$(CONFIG_CLK_R9A09G057)		+=3D r9a09g057-cpg.o
-> +obj-$(CONFIG_CLK_R9A09G077)		+=3D r9a09g077-cpg.o
->  obj-$(CONFIG_CLK_SH73A0)		+=3D clk-sh73a0.o
-> =20
->  # Family
-> diff --git a/drivers/clk/renesas/r9a09g077-cpg.c b/drivers/clk/renesas/=
-r9a09g077-cpg.c
-> new file mode 100644
-> index 000000000000..0b2895c796d1
-> --- /dev/null
-> +++ b/drivers/clk/renesas/r9a09g077-cpg.c
-> @@ -0,0 +1,100 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * r9a09g077 Clock Pulse Generator / Module Standby and Software Reset=
-
-> + *
-> + * Copyright (C) 2025 Renesas Electronics Corp.
-> + *
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-
-Please use alphabetical order for these includes.
-
-> +
-> +#include <dt-bindings/clock/r9a09g077-cpg.h>
-> +
-> +#include "rzt2h-cpg.h"
-> +
-> +enum clk_ids {
-> +	/* Core Clock Outputs exported to DT */
-> +	/* External Input Clocks */
-> +	LAST_DT_CORE_CLK =3D R9A09G077_LCDC_CLKD,
-> +	CLK_EXTAL,
-> +	CLK_LOCO,
-
-I think the above lines have got slightly mixed up, it should be:
-
-    /* Core Clock Outputs exported to DT */
-    LAST_DT_CORE_CLK =3D R9A09G077_LCDC_CLKD,
-
-    /* External Input Clocks */
-    CLK_EXTAL,
-    CLK_LOCO,
-
-With these minor changes,
-Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-
---=20
-Paul Barker
---------------tLmamLKW0XDVk1cAJYwNlnb7
-Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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3D
-=3DsIIN
------END PGP PUBLIC KEY BLOCK-----
-
---------------tLmamLKW0XDVk1cAJYwNlnb7--
-
---------------GwrN4trEP52IDyjoACCo2w0N--
-
---------------N4HHktQPozPo0zP20eTBlemk
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZ6JECwUDAAAAAAAKCRDbaV4Vf/JGvdE5
-AQDJJ88qcues5xRYB0O6XbN8+ovWVW4RLO45XSnH0+kExQEA/eFJIrB2UAiURFM7NKd0eZ6ZmfIB
-ujUEcmfjhk1SaAo=
-=exzD
------END PGP SIGNATURE-----
-
---------------N4HHktQPozPo0zP20eTBlemk--
+Thanks,
+Sunil
