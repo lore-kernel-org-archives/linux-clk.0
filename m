@@ -1,181 +1,146 @@
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C171552FA
-	for <linux-clk@vger.kernel.org>; Tue,  4 Feb 2025 04:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED95E25A655;
+	Tue,  4 Feb 2025 06:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738642722; cv=none; b=Nm/JKzDJArQLgAGHk3VaRSG8MObK7JG7EIxXZ7nwACh5dum6klvXW+gAgLpDSZpcyf7dErjYROxxmR2K2jkvjYS0l+asCh91ZFEZI6DVUmtu66sMpb6T5R59qOkv6kGKbZkmN7VeixdmmWM0jDNRmAByGnRej9olC3oNsttNxMw=
+	t=1738650538; cv=none; b=JGiHqKXoNsiEvqs9jIvqikJFT+9mw8aVzOUcVhG7yEGmRl9kbrFuRtJsHA1rtDHoR5zvublOJhZBkwVtJuUhYYPluRgxFKqvO+iDpBGWHaHfbR9R23XkI41uHZHYhPRTz6nnS0nTykZbtu9rJuSA9NUN6vazBF9xuZtI+D7ixzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738642722; c=relaxed/simple;
-	bh=8RYsFsyt9XKOqCwg6qJ9SOV8hycqHVsUml8P7H6kN0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BDwDe6jYmtQy7pPIiH2DOZJwbPX6YoT+UzthTYc8aV0xwGp81VO3WrX9ZPByWfL6krdML8xjfnv9l2qnhPMgZkZq7HBYB4/VMyamPXWIx4iHp+oF+pi2T4x36K2anuGTcePMUCdiIsr+5ZK7XaIyU9uSYugTa3EAtfFWnoEVH/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ckHZ8DZ1; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+	s=arc-20240116; t=1738650538; c=relaxed/simple;
+	bh=Dqn57KPeZHxLv4sYXabrO0zuW/2UdonbxL7YbLPQmiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QpWj374Afh7h1n/13l5w+UuJnO3mqEd/4ooLp95qCTHZRs8e2BxHPnSJDoLq+ICZirQYza4NQQ2C2wkEDDDxl/GBjPRBLwMLDP9W+ELAuk6p1XmGIOvqD2/rWnPcvhPo4z1YmCYe1/WDpXGhkU1RVU6/XPrq8AmWwz4bdcfxvEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ix3T/+eO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ckHZ8DZ1"
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b6e9317a2aso532619985a.0
-        for <linux-clk@vger.kernel.org>; Mon, 03 Feb 2025 20:18:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1738642719; x=1739247519; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1DvyAG/gibJ4Np4As+DdlCtpsc8Q7r5eOByPQszzk7g=;
-        b=ckHZ8DZ1q3jbYj6f/WhJveGGHgffBtMr7vry6JKPQQSVTFfGB6ivffFF378nYcSrN0
-         0C/FVyMUplPBbGNj9kr4JwBGUe8CJe1Mm7p4FOz7PVH7QThfawbcq13PfzFYqlqRVXyD
-         f51ZJNQdouOem6vYs2v58TjnJR04m2iPER2ygZD4mL+My+FJLgT2Y3P1/GoJ9ojo98Xr
-         IWhwyvgehCOSb1Hvynhe2TKMKlaUKdW1zgNu6heDjgfeO6HdOONFLSN7MT05WJrGmQGy
-         sdIPIrJEbJWhnJ0jiD6ZIvvrH3VwyzR1gscfFGsvS9+DMOoNpKS2ZiFpFghpgu6CreKE
-         yb6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738642719; x=1739247519;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1DvyAG/gibJ4Np4As+DdlCtpsc8Q7r5eOByPQszzk7g=;
-        b=HZDtBjQQu7upZWcTwy5A7sEj5xhYw6AfG1XjMGLpOR2mJi/SLkA1vlmBwIFUmVCPHD
-         pQNfevQvOkHQfp9lsaYifvmh8691hVbn+Q0Q/IePQF4QXFpb4HXSlFzHSizfv43hD01k
-         2FgoORm1vOkVlhim9EvfAbyxjuL9EzS25ObZoQhDIdc5mH0jmqkc+zTtZcer9hVV4qXE
-         LHAT4+Wx8jAK+TOSNkTJ46UHAcs+EwqtyD7br+ArD7bwIZnX1p7VaX7jr6Ftb5G009dM
-         cVi/OD4cRJkzMsdZBFNjRWixMShrMApRoJxJxwzYhCMIW0sQ1bgvvByaH1uOESvAcfxS
-         R6Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOMnKSdFlBIjiBBvtFHt31pr3TWyZOeWC9cRqGCSkWkhyD1KYuZIAtd/UyA6BgQG/EfMVXT1C4Sms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzUNDec+JDj8nZxPxOCMJht6L8+6EELgvTqWZgQHlvDd5HeA8C
-	lpl4KGVMJkZaU7elnx/jo0n9hcyLVwr7Q+OONI7Nf5vAmbWdqMSxPGsLOJVerss=
-X-Gm-Gg: ASbGnct7EC9fD44Ritu2aOGO7D97vSiaGggDMdf4/Q228ytlm42ey3odYyssj2pqWNY
-	WrXcbFTwvsU0y1X+BxXsStud771ZcNwR974zkqOVkuXBiiUXhbT5cPaz/9+3bch0cFUY6F1aCYd
-	2uQ57eBv+gQd2mNN0LXfBCVjAsBQtrB4QIL8AgsTephPI8vmuCCmORgQb5una1OMbUREVJKIbd+
-	j/ep7RRqT5DdE69y5Vq5VGtwuxSc/9fHhp4ESTpKENJUf5wMfxphsPncck8phL69nKXa41A/ZB8
-	VZbgGUohzPN3xQQ4Xxxh9sI=
-X-Google-Smtp-Source: AGHT+IE0f4QugKabfRRSBRleOS2KB1pvcyWkZ6UoqvN4crpYoZxJOEqx3b/6o3pkY3LuZEm1BmbQlA==
-X-Received: by 2002:a05:620a:3d84:b0:7b1:ab32:b71e with SMTP id af79cd13be357-7c02eb7da0bmr280078885a.0.1738642719178;
-        Mon, 03 Feb 2025 20:18:39 -0800 (PST)
-Received: from sunil-laptop ([103.97.166.196])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c00a90571csm597775385a.83.2025.02.03.20.18.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2025 20:18:37 -0800 (PST)
-Date: Tue, 4 Feb 2025 09:48:22 +0530
-From: Sunil V L <sunilvl@ventanamicro.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Anup Patel <apatel@ventanamicro.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Len Brown <lenb@kernel.org>,
-	Rahul Pathak <rpathak@ventanamicro.com>,
-	Leyfoon Tan <leyfoon.tan@starfivetech.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 16/17] irqchip/riscv-rpmi-sysmsi: Add ACPI support
-Message-ID: <Z6GVDuhNyjFQ4OKT@sunil-laptop>
-References: <20250203084906.681418-1-apatel@ventanamicro.com>
- <20250203084906.681418-17-apatel@ventanamicro.com>
- <Z6COlL_5n2AfRADL@smile.fi.intel.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ix3T/+eO"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5141aNFs003771;
+	Tue, 4 Feb 2025 06:28:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Poa3aqsD9Vd5Zi+ir9FLHytRK+1RHlmIkI4PXgUyVKU=; b=Ix3T/+eOjTelPdow
+	TdWSeK0NjkOlOiOdNL+w6KhaqdMo/jaXeikWlyW8kFdhJH6T4v11kuUvSNoJ6T2C
+	h0UBeWa4I7cFBydObyMdQD1sfX8UfoDdoWSAa+rYCDFM8dNC/ED3DGKjyinSeHEF
+	0zv/tcqYN4Vus91YO//ZSN928f+icssiZeLOASAQXpc1Bc3orOzOeANhqKMfFXRw
+	WcOTuk0SyDDQusgdxRdgZEWMp/WCILQjnyoVTczKO+pJVLzgwbif4p4p0sh/4P0Q
+	Iahr78rId4mOykh3CzNwkNrVzHjFFujONL3oTskpfLUOEpkS4I6C4OlCH21+8olq
+	PRxmHQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44k9cn0gh6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Feb 2025 06:28:52 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5146SpeB023620
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 4 Feb 2025 06:28:51 GMT
+Received: from [10.216.35.77] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Feb 2025
+ 22:28:45 -0800
+Message-ID: <7031f2da-36bb-4655-a4df-fa85c99e6eb4@quicinc.com>
+Date: Tue, 4 Feb 2025 11:58:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6COlL_5n2AfRADL@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] clk: qcom: apss-ipq5424: Add ipq5424 apss clock
+ controller
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <konradybcio@kernel.org>,
+        <rafael@kernel.org>, <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+References: <20250127093128.2611247-1-quic_srichara@quicinc.com>
+ <20250127093128.2611247-3-quic_srichara@quicinc.com>
+ <47f7553d-74a2-4da0-a64c-cc49a2170efb@oss.qualcomm.com>
+ <123a324c-561a-4081-be43-8d8ed0662acc@quicinc.com>
+ <6c8bb178-1758-4b73-bbaf-8572dc1216d3@oss.qualcomm.com>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <6c8bb178-1758-4b73-bbaf-8572dc1216d3@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: G66RT-xuFG8CsmYLyVRQpd6xlsfrBNfF
+X-Proofpoint-ORIG-GUID: G66RT-xuFG8CsmYLyVRQpd6xlsfrBNfF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-04_03,2025-01-31_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ spamscore=0 bulkscore=0 mlxlogscore=999 clxscore=1015 phishscore=0
+ suspectscore=0 priorityscore=1501 adultscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502040050
 
-On Mon, Feb 03, 2025 at 11:38:28AM +0200, Andy Shevchenko wrote:
-> On Mon, Feb 03, 2025 at 02:19:05PM +0530, Anup Patel wrote:
-> > From: Sunil V L <sunilvl@ventanamicro.com>
-> > 
-> > Add ACPI support for the RISC-V RPMI system MSI based irqchip driver.
-> 
-> ...
-> 
-> > +	if (!is_of_node(dev->fwnode)) {
-> 
-> Please, use dev_fwnode(),
-> 
-> But why do you need this? Can't the below simply become a no-op without
-> this check?
-> 
-> > +		rc = riscv_acpi_get_gsi_info(dev->fwnode, &priv->gsi_base, &id,
-> 
-> Ditto.
-> 
-> > +					     &priv->nr_irqs, NULL);
-> > +		if (rc) {
-> > +			dev_err(dev, "failed to find GSI mapping\n");
-> > +			return rc;
-> > +		}
-> > +	}
-> 
-> ...
-> 
-> >  		 * then we need to set it explicitly before using any platform
-> >  		 * MSI functions.
-> >  		 */
-> > -		if (is_of_node(dev->fwnode))
-> > +		if (is_of_node(dev->fwnode)) {
-> >  			of_msi_configure(dev, to_of_node(dev->fwnode));
-> > +		} else {
-> > +			struct irq_domain *msi_domain;
-> > +
-> > +			msi_domain = irq_find_matching_fwnode(imsic_acpi_get_fwnode(dev),
-> > +							      DOMAIN_BUS_PLATFORM_MSI);
-> 
-> > +			if (msi_domain)
-> 
-> Hmm... The OF case above assumes this check is not needed. Why is it special
-> otherwise?
-> 
-> > +				dev_set_msi_domain(dev, msi_domain);
-> > +		}
-> >  
-> >  		if (!dev_get_msi_domain(dev))
-> 
-> Even here you have a check for NULL, so I believe the conditional is simply
-> redundant.
-> 
-> ...
-> 
-> > +#ifdef CONFIG_ACPI
-> 
-> > +	if (!acpi_disabled)
-> 
-> Why?
-> 
-> > +		acpi_dev_clear_dependencies(ACPI_COMPANION(dev));
-> > +#endif
-> 
-> ...
-> 
-> > +#ifdef CONFIG_ACPI
-> 
-> Drop this ugly ifdeffery along with ACPI_PTR(). They are more harmful than
-> useful.
-> 
-> ...
-> 
-> > +static const struct acpi_device_id acpi_rpmi_sysmsi_match[] = {
-> > +	{ "RSCV0006", 0 },
-> 
-> Drop ', 0' part as it may be converted to a pointer in the future.
-> 
-Thanks!. Let me address your comments in next revision.
 
-Thanks,
-Sunil
+
+On 2/1/2025 8:55 PM, Konrad Dybcio wrote:
+> On 30.01.2025 11:03 AM, Sricharan Ramabadhran wrote:
+>>
+>>
+>> On 1/28/2025 5:29 PM, Konrad Dybcio wrote:
+>>> On 27.01.2025 10:31 AM, Sricharan R wrote:
+>>>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>>>
+>>>> CPU on Qualcomm ipq5424 is clocked by huayra PLL with RCG support.
+>>>> Add support for the APSS PLL, RCG and clock enable for ipq5424.
+>>>> The PLL, RCG register space are clubbed. Hence adding new APSS driver
+>>>> for both PLL and RCG/CBC control. Also the L3 cache has a separate pll
+>>>> and needs to be scaled along with the CPU.
+>>>>
+>>>> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>>>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>>>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>>> ---
+> 
+> [...]
+> 
+>>>> +    clk_alpha_pll_configure(&ipq5424_l3_pll, regmap, &l3_pll_config);
+>>>> +
+>>>> +    clk_alpha_pll_configure(&ipq5424_apss_pll, regmap, &apss_pll_config);
+>>>> +
+>>>> +    ret = qcom_cc_really_probe(dev, &apss_ipq5424_desc, regmap);
+>>>> +    if (ret)
+>>>> +        return ret;
+>>>> +
+>>>> +    dev_dbg(&pdev->dev, "Registered APSS & L3 clock provider\n");
+>>>> +
+>>>> +    apss_ipq5424_cfg->dev = dev;
+>>>> +    apss_ipq5424_cfg->hw = &apss_silver_clk_src.clkr.hw;
+>>>> +    apss_ipq5424_cfg->cpu_clk_notifier.notifier_call = cpu_clk_notifier_fn;
+>>>> +
+>>>> +    apss_ipq5424_cfg->l3_clk = clk_hw_get_clk(&l3_core_clk.clkr.hw, "l3_clk");
+>>>> +    if (IS_ERR(apss_ipq5424_cfg->l3_clk)) {
+>>>> +        dev_err(&pdev->dev, "Failed to get L3 clk, %ld\n",
+>>>> +            PTR_ERR(apss_ipq5424_cfg->l3_clk));
+>>>> +        return PTR_ERR(apss_ipq5424_cfg->l3_clk);
+>>>> +    }
+>>>
+>>> Now that you'll use OPP, you can drop all this getting.. maybe even the
+>>> apss_ipq5424_cfg struct could be let go
+>>
+>> ok, is the suggestion here to use devm_pm_opp_set_config ?
+> 
+> Since what you tried to do here is binding CPU and L3 frequencies together,
+> yeah, we can just scale two clocks from OPP.
+> 
+> On some newer platforms using the epss-l3 driver, or on msm8996 with a more
+> complex setup, we expose the L3 voter as an interconnect, but here it would
+> seem that we directly control the clock that feeds it.
+
+ok, will update and check.
+
+Regards,
+Sricharan
