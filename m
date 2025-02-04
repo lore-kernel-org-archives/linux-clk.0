@@ -1,221 +1,197 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673A221638A;
-	Tue,  4 Feb 2025 17:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738688856; cv=pass; b=lgcv/nkox5NgrTu2VZoNnESoi2l6sLbAuBg1YkJ5LA8NPOPLFIdgv/7V2A6dde3xCxxbTH3RXflsBsXCBftuXgtC23umt2onvnYeK79bVS0oZPQG4o5SuS+tPgTBoW34NET/zjK733cmsGNwHQCw8KHZ9qRy1fsfXWAwcCY6y8U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738688856; c=relaxed/simple;
-	bh=3aizgtkyv+vyDjr/YzeQveJFTdDlVYb50Uzzlt1Cnt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G68dtnXfsbcyj7YMQCvNu6OdAFaOYoU3EKttX2cjQzUn/Dc0rH639jyXSifJWv0o3soPEyTmPBczsXN4q6QB+rHcmmvYyf7ISGG8ExGldg6V5/Xs2HLMQOFhMirCHew4+W+RJVaDkHPsDDGQ4f4m7gqw0oO5sUH2rNklOwtiuBs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=DovUD6N/; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="DovUD6N/"
-ARC-Seal: i=1; a=rsa-sha256; t=1738688834; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=UKjD3CPU5LdLmJHrs9IvCjNrg/fKunRdRaInbr0+/Vrib/z/A9Y1/1XKZ59q/TkAXdSjn4ltFL49ouoXC0NUxv6gYUksmlDF/kjlkkcD2TadX627mH1wSt/4sW+qYkWFFZnRcGCTidZkUv3Q9zqvARa8QF5EI2T/tld72PECWpo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1738688834; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=/1H455YKzcoh4msMSl2MwzBYNQnAg4q7KrJ23YCw80U=; 
-	b=P10qHI1QhFsOFehZwP+Qftbs2BCN/1DOE+7ntrx7DyE2IHJ7L8Cz67cy7/umkmhWi+8XBGc3qsk73tJenuBT6Pl/VsNIYVWJcOjscF6an052OvgYicz2XHA+v9+sjqs0y1rFCRzzuoFylwe9O/J6HSkOBmq3I+8m5WBTJXLFFVc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1738688834;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=/1H455YKzcoh4msMSl2MwzBYNQnAg4q7KrJ23YCw80U=;
-	b=DovUD6N/FMEEDj/H/LHxdqYExu4lEcta0tSd6oDDCiCvvifQ9UXVAl102LkTt7W0
-	6ejqPQfYwKa+eYsYXwV2ZyJbOusenySUqNRT9IIn1xSbuz5fJ7yKySPTVK9ZqEqAcqH
-	tsXdQX7QYuJsLVPqNiPspYMGgPrPlP4gUaVamV30=
-Received: by mx.zohomail.com with SMTPS id 1738688830787231.45268121999618;
-	Tue, 4 Feb 2025 09:07:10 -0800 (PST)
-Message-ID: <525d4b18-4ce9-4448-a9b9-dfce4aa15ee3@zohomail.com>
-Date: Wed, 5 Feb 2025 01:06:57 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A028E21516C
+	for <linux-clk@vger.kernel.org>; Tue,  4 Feb 2025 17:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738689549; cv=none; b=Rv2inVEH0KPzUOGzIDVytz5kW503l92OEMDtDmOI+CnTyX50n5KC6u4IwkFOyj+LKLi5cXN/Al/mHMBsEf4uCTnqsKnwkewTeAnYB1aluH+h7id3ySm9WsFvl4Po2UNDr783H4O6DJ0Aha45Aaqd6xnEDdq9su/zAY49uY1B3rA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738689549; c=relaxed/simple;
+	bh=48SY1O6657ygyTl0Qqylk4SilVwsM+xj4X+rzO7pz30=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=F1xaQHFz0oCmpp+bR/cQpvOdNP+edn2qJg3OV9ylayUDQoFrWJPIThJu1ZsMOJJGwAcB/KfQy6WoTqSYBQ1Evo0GWIIrNpjskXx4entKSMEV+XeoMRt4NGew0wOId5UgMRZ7bwi2y8dLsUBSUSsznLPWUOmZ0tpWyIBz5pZSKDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tfMZF-0005M0-My; Tue, 04 Feb 2025 18:18:33 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tfMZC-003VAT-0S;
+	Tue, 04 Feb 2025 18:18:30 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tfMZC-000B3w-05;
+	Tue, 04 Feb 2025 18:18:30 +0100
+Message-ID: <48261cdfab6e0bc16e5327664b06728e1894422a.camel@pengutronix.de>
+Subject: Re: [PATCH v4 09/18] reset: thead: Add TH1520 reset controller
+ driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, Matt Coster
+ <Matt.Coster@imgtec.com>, "mturquette@baylibre.com"
+ <mturquette@baylibre.com>,  "sboyd@kernel.org" <sboyd@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+ "drew@pdp7.com" <drew@pdp7.com>, "guoren@kernel.org" <guoren@kernel.org>,
+ "wefu@redhat.com" <wefu@redhat.com>, "jassisinghbrar@gmail.com"
+ <jassisinghbrar@gmail.com>,  "paul.walmsley@sifive.com"
+ <paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+ "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Frank Binns
+ <Frank.Binns@imgtec.com>,  "maarten.lankhorst@linux.intel.com"
+ <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
+ <mripard@kernel.org>,  "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "airlied@gmail.com" <airlied@gmail.com>,  "simona@ffwll.ch"
+ <simona@ffwll.ch>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, 
+ "jszhang@kernel.org" <jszhang@kernel.org>, "m.szyprowski@samsung.com"
+ <m.szyprowski@samsung.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"devicetree@vger.kernel.org"
+	 <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+	 <linux-riscv@lists.infradead.org>, "dri-devel@lists.freedesktop.org"
+	 <dri-devel@lists.freedesktop.org>, "linux-pm@vger.kernel.org"
+	 <linux-pm@vger.kernel.org>
+Date: Tue, 04 Feb 2025 18:18:29 +0100
+In-Reply-To: <e83ea320-23f0-41ed-934c-2f1687b55ec1@samsung.com>
+References: <20250128194816.2185326-1-m.wilczynski@samsung.com>
+	 <CGME20250128194836eucas1p151c4fc83a17173fd1b79bfc959976301@eucas1p1.samsung.com>
+	 <20250128194816.2185326-10-m.wilczynski@samsung.com>
+	 <816db99d-7088-4c1a-af03-b9a825ac09dc@imgtec.com>
+	 <e83ea320-23f0-41ed-934c-2f1687b55ec1@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 1/3] dt-bindings: clock: Add bindings for Canaan
- K230 clock controller
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Troy Mitchell <TroyMitchell988@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>
-References: <20250203-b4-k230-clk-v3-0-362c79124572@zohomail.com>
- <20250203-b4-k230-clk-v3-1-362c79124572@zohomail.com>
- <237ce4e3-d66f-43ee-bd4e-38007dc750e5@sifive.com>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <237ce4e3-d66f-43ee-bd4e-38007dc750e5@sifive.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227a499705bedd88d51f0cfd560000033583ae4408614494e6bce16ec0ea8b0a69522ce2dfd91b3d0:zu080112276e35433809ba80609751686e00008039a89b06b66fee628922148895a733f30129b83e56e766c5:rf0801122bd12795581b912999f26052ca000078a8f2585976c3819e36b85f046ce5eb9ac08fdd07b64b353c03d6797f:ZohoMail
-X-ZohoMailClient: External
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
+On Mo, 2025-02-03 at 19:15 +0100, Michal Wilczynski wrote:
+>=20
+> On 1/31/25 16:39, Matt Coster wrote:
+> > On 28/01/2025 19:48, Michal Wilczynski wrote:
+> > > Add reset controller driver for the T-HEAD TH1520 SoC that manages
+> > > hardware reset lines for various subsystems. The driver currently
+> > > implements support for GPU reset control, with infrastructure in plac=
+e
+> > > to extend support for NPU and Watchdog Timer resets in future updates=
+.
+> > >=20
+> > > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> > > ---
+> > >  MAINTAINERS                  |   1 +
+> > >  drivers/reset/Kconfig        |  10 ++
+> > >  drivers/reset/Makefile       |   1 +
+> > >  drivers/reset/reset-th1520.c | 178 +++++++++++++++++++++++++++++++++=
+++
+> > >  4 files changed, 190 insertions(+)
+> > >  create mode 100644 drivers/reset/reset-th1520.c
+> > >=20
+[...]
+> > > diff --git a/drivers/reset/reset-th1520.c b/drivers/reset/reset-th152=
+0.c
+> > > new file mode 100644
+> > > index 000000000000..48afbc9f1cdd
+> > > --- /dev/null
+> > > +++ b/drivers/reset/reset-th1520.c
+> > > @@ -0,0 +1,178 @@
+[...]
+> > > +static void th1520_rst_gpu_enable(struct regmap *reg,
+> > > +				  struct mutex *gpu_seq_lock)
+> > > +{
+> > > +	int val;
+> > > +
+> > > +	mutex_lock(gpu_seq_lock);
+> > > +
+> > > +	/* if the GPU is not in a reset state it, put it into one */
+> > > +	regmap_read(reg, TH1520_GPU_RST_CFG, &val);
+> > > +	if (val)
+> > > +		regmap_update_bits(reg, TH1520_GPU_RST_CFG,
+> > > +				   TH1520_GPU_RST_CFG_MASK, 0x0);
 
-On 2025/2/4 04:24, Samuel Holland wrote:
-> On 2025-02-03 8:49 AM, Xukai Wang wrote:
->> This patch adds the Device Tree binding for the clock controller
->> on Canaan k230. The binding defines the new clocks available and
->> the required properties to configure them correctly.
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
->> ---
->>  .../devicetree/bindings/clock/canaan,k230-clk.yaml | 43 +++++++++++++++++++
->>  include/dt-bindings/clock/canaan,k230-clk.h        | 49 ++++++++++++++++++++++
->>  2 files changed, 92 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..d7220fa30e4699a68fa5279c04abc63c1905fa4a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
->> @@ -0,0 +1,43 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Canaan Kendryte K230 Clock
->> +
->> +maintainers:
->> +  - Xukai Wang <kingxukai@zohomail.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: canaan,k230-clk
->> +
->> +  reg:
->> +    items:
->> +      - description: PLL control registers.
->> +      - description: Sysclk control registers.
-> From the way the driver is structured, this looks rather like two separate
-> hardware blocks, not two groups of registers for a single hardware block. For
-> example, the driver registers two clock providers for the same DT node, with
-> overlapping indexes. This doesn't work. Either you need two separate DT nodes --
-> one for the PLLs and another for the sysclks -- or you need to include the PLLs
-> in the binding header below at non-overlapping indexes.
+BIT(2) is not documented, but cleared here.
+
+> > > +
+> > > +	/* rst gpu clkgen */
+> > > +	regmap_set_bits(reg, TH1520_GPU_RST_CFG, TH1520_GPU_SW_CLKGEN_RST);
+> >=20
+> > Do you know what this resets? From our side, the GPU only has a single
+> > reset line (which I assume to be GPU_RESET).
+>=20
+> This is clock generator reset, as described in the manual 5.4.2.6.1
+> GPU_RST_CFG. It does reside in the same register as the GPU reset line.
+>=20
+> I think this is required because the MEM clock gate is somehow broken
+> and marked as 'reserved' in manual, so instead as a workaround, since we
+> can't reliably enable the 'mem' clock it's a good idea to reset the
+> whole CLKGEN of the GPU.
+
+If this is a workaround for broken gating of the "mem" clock, would it
+be possible (and reasonable) to make this a separate reset control that
+is handled by the clock driver? ...
+
+> > > +
+> > > +	/*
+> > > +	 * According to the hardware manual, a delay of at least 32 clock
+> > > +	 * cycles is required between de-asserting the clkgen reset and
+> > > +	 * de-asserting the GPU reset. Assuming a worst-case scenario with
+> > > +	 * a very high GPU clock frequency, a delay of 1 microsecond is
+> > > +	 * sufficient to ensure this requirement is met across all
+> > > +	 * feasible GPU clock speeds.
+> > > +	 */
+> > > +	udelay(1);
+> >=20
+> > I don't love that this procedure appears in the platform reset driver.
+> > I appreciate it may not be clear from the SoC TRM, but this is the
+> > standard reset procedure for all IMG Rogue GPUs. The currently
+> > supported TI SoC handles this in silicon, when power up/down requests
+> > are sent so we never needed to encode it in the driver before.
+> >=20
+> > Strictly speaking, the 32 cycle delay is required between power and
+> > clocks being enabled and the reset line being deasserted. If nothing
+> > here touches power or clocks (which I don't think it should), the delay
+> > could potentially be lifted to the GPU driver.
+
+... This could be expressed as a delay between clk_prepare_enable() and
+reset_control_deassert() in the GPU driver then.
+
+> Yeah you're making excellent points here, I think it would be a good   =
+=20
+> idea to place the delay in the GPU driver, since this is specific to the
+> whole family of the GPU's not the SoC itself.
 >
-> Regards,
-> Samuel
-Thank you for your feedback.
+> > Is it expected that if a device exposes a reset in devicetree that it
+> > can be cleanly reset without interaction with the device driver itself?
+> > I.E. in this case, is it required that the reset driver alone can clean=
+ly
+> > reset the GPU?
 
-You mentioned the issue of registering two clock providers on the same
-DT node with overlapping indexes, which was indeed my oversight.
+No, the "resets" property should just describe the physical
+connection(s) between reset controller and the device.
 
-The actual situation is that PLLs are only used for internal
-configuration by PLL_DIVs, and since PLL_DIVs do not be directly invoked
-using `clock=<PLL_DIVs Index>` in the DT node, there is no need to use
-`devm_of_clk_hw_add_provider` to add them as clock providers.
+It is fine for the device driver to manually assert the reset, enable
+clocks and power, delay, and then deassert the reset, if that is the
+device specific reset procedure.
 
-Therefore, I will remove the code that registers PLL_DIVs as clock
-providers ant its `onecell_get` function.
+> I'm not sure what the community as a whole thinks about that, so maybe
+> someone else can answer this, but I would code SoC specific stuff in the
+> reset driver for the SoC, and the GPU specific stuff (like the delay) in
+> the GPU driver code. I wasn't sure whether the delay was specific to the
+> SoC or the GPU so I've put it here.
 
-Moreover, since PLLs are only used internally by PLL_DIVs and do not
-need to be exposed as clock providers externally, 
+I agree.
 
-so I think there is no need to modify the implementation to separate
-them into PLLs and sysclk.
-
-If there's anything I might have overlooked or misunderstood, please
-feel free to point it out.
-
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - '#clock-cells'
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    clock-controller@91102000 {
->> +        compatible = "canaan,k230-clk";
->> +        reg = <0x91102000 0x1000>,
->> +              <0x91100000 0x1000>;
->> +        clocks = <&osc24m>;
->> +        #clock-cells = <1>;
->> +    };
->> diff --git a/include/dt-bindings/clock/canaan,k230-clk.h b/include/dt-bindings/clock/canaan,k230-clk.h
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..47d966fda5771615dad8ade64eeec42a9b27696e
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/canaan,k230-clk.h
->> @@ -0,0 +1,49 @@
->> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->> +/*
->> + * Kendryte Canaan K230 Clock Drivers
->> + *
->> + * Author: Xukai Wang <kingxukai@zohomail.com>
->> + */
->> +
->> +#ifndef CLOCK_K230_CLK_H
->> +#define CLOCK_K230_CLK_H
->> +
->> +/* Kendryte K230 SoC clock identifiers (arbitrary values). */
->> +#define K230_CPU0_SRC			0
->> +#define K230_CPU0_ACLK			1
->> +#define K230_CPU0_PLIC			2
->> +#define K230_CPU0_NOC_DDRCP4		3
->> +#define K230_CPU0_PCLK			4
->> +#define K230_PMU_PCLK			5
->> +#define K230_HS_HCLK_HIGH_SRC		6
->> +#define K230_HS_HCLK_HIGH_GATE		7
->> +#define K230_HS_HCLK_SRC		8
->> +#define K230_HS_SD0_HS_AHB_GAT		9
->> +#define K230_HS_SD1_HS_AHB_GAT		10
->> +#define K230_HS_SSI1_HS_AHB_GA		11
->> +#define K230_HS_SSI2_HS_AHB_GA		12
->> +#define K230_HS_USB0_HS_AHB_GA		13
->> +#define K230_HS_USB1_HS_AHB_GA		14
->> +#define K230_HS_SSI0_AXI15		15
->> +#define K230_HS_SSI1			16
->> +#define K230_HS_SSI2			17
->> +#define K230_HS_QSPI_AXI_SRC		18
->> +#define K230_HS_SSI1_ACLK_GATE		19
->> +#define K230_HS_SSI2_ACLK_GATE		20
->> +#define K230_HS_SD_CARD_SRC		21
->> +#define K230_HS_SD0_CARD_TX		22
->> +#define K230_HS_SD1_CARD_TX		23
->> +#define K230_HS_SD_AXI_SRC		24
->> +#define K230_HS_SD0_AXI_GATE		25
->> +#define K230_HS_SD1_AXI_GATE		26
->> +#define K230_HS_SD0_BASE_GATE		27
->> +#define K230_HS_SD1_BASE_GATE		28
->> +#define K230_HS_OSPI_SRC		29
->> +#define K230_HS_USB_REF_50M		30
->> +#define K230_HS_SD_TIMER_SRC		31
->> +#define K230_HS_SD0_TIMER_GATE		32
->> +#define K230_HS_SD1_TIMER_GATE		33
->> +#define K230_HS_USB0_REFERENCE		34
->> +#define K230_HS_USB1_REFERENCE		35
->> +
->> +#endif /* CLOCK_K230_CLK_H */
->>
+regards
+Philipp
