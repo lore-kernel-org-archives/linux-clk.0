@@ -1,251 +1,171 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43FC14B094;
-	Tue,  4 Feb 2025 20:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DE32139D7;
+	Wed,  5 Feb 2025 03:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738699499; cv=none; b=ikzxlCo5P5d2rydWolcUF+zZVUgmvmVqSfEsw+43hsiADjjFiAAjP1y6+O4HLqpgyTef9tTH9Km4poDYLK3IGmLgqZVDFLeo6H3KHkC1WgUshDKOyahH13FsfDY3xiZlesqK0zl0VUDkpR2t8JJXp+YBOgiM0yDw5aEKy1snNY0=
+	t=1738727427; cv=none; b=XEnBlJCY0X616w9tRayBbrC8i9+LAfaVuAmkQSJWh9JYUw4nwwMDjB310o4qKnBKEwd8e1xSVXHtSLriUpa913s49DkcGeRH5nB6Pad23ch3bp4RCj+42jHyxxgCSeLMc4uG8TBneETLdGyUGtyh4qn4ktu4/IiWWFqHXYzvqAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738699499; c=relaxed/simple;
-	bh=6y3E8+OpE5ZmqjX7Om9uPkD+ZQQXyu1GMUrqnd3TjQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JHa0/pwhn3IvK/N+IniLqc3WgNTcsXkpHQ+K62FGBmNpOU2fEZscyZz7zjSeWhQNQ2LXupQMlOTifcH+xqdvSFe2J9TWiO5eOTnD6OOH0PH7a1mqpIpOA0HHsutsAqfA6KwM2/k9flKcoAbTCoU/LOpaGO8MK7PX1JcpuQGPcd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATqxfuIi; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738727427; c=relaxed/simple;
+	bh=EpWQWjImqyRYqEcLnWSHB62PXoo8u9X+HQ45MLJGTQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YLOCDEQGe4ZOr+4VmzFW+TK5xKuht0mfxRPgS6b+bf+vQy28ysQx9kn+1w7quSBXYglfUZuxJx2CNs+tWLeVv7iP10nL/ncF3viQeqgfzeYD1RenCunRrFA11sqAyJD4qL64NsufHA0XvA6sRHdew5ivepavHApJ7IowVpVp+ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mcEhfNlg; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATqxfuIi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CF3FC4CEE2;
-	Tue,  4 Feb 2025 20:04:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738699499;
-	bh=6y3E8+OpE5ZmqjX7Om9uPkD+ZQQXyu1GMUrqnd3TjQk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ATqxfuIih0h8cjA2h0bfzeW8/14cKwjo0aYg/EDyMiNfuHEuMgbIUArMXwpxbH8tQ
-	 Da4cVQL4P8+pftQUNXCfpHfx7R/c8T5y9fXpFVdrQBkPwgdoDHoEsw5o2N/iwNbzt8
-	 snOmZS5hwa+n4hlL3owOGHovG/7gC5BR91zkSxLubTB/2goLFqeTbHt28F5FnmdKY4
-	 hCflsbEgNgW4l3dpav/XeOnh8UfB9jdhSJ/P2ICbj8kqOcpTDEmCzBb1u2EZeyPCm/
-	 PCiZB/g/1ohi/zf1NFeXq1TtDI49Zm/hGspFF4kYcp0temKz7YcZ9Fx3qzuE1DJICk
-	 QRfqRdleBGwGQ==
-Date: Tue, 4 Feb 2025 20:04:46 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Michal Simek <michal.simek@amd.com>
-Cc: <linux-kernel@vger.kernel.org>, <monstr@monstr.eu>,
- <michal.simek@xilinx.com>, <git@xilinx.com>, Anand Ashok Dumbre
- <anand.ashok.dumbre@xilinx.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, "Conor Dooley"
- <conor+dt@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, Harini Katakam
- <harini.katakam@amd.com>, Jakub Kicinski <kuba@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, "Lars-Peter Clausen" <lars@metafoo.de>,
- Mark Brown <broonie@kernel.org>, Michael Tretter
- <m.tretter@pengutronix.de>, Michael Turquette <mturquette@baylibre.com>,
- Mubin Sayyed <mubin.sayyed@amd.com>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Niklas Cassel <cassel@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Shyam Pandey
- <radhey.shyam.pandey@amd.com>, Stephen Boyd <sboyd@kernel.org>, Vinod Koul
- <vkoul@kernel.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE
- BINDINGS" <devicetree@vger.kernel.org>, "open list:DMA GENERIC OFFLOAD
- ENGINE SUBSYSTEM" <dmaengine@vger.kernel.org>, "moderated list:ARM/ZYNQ
- ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:COMMON CLK
- FRAMEWORK" <linux-clk@vger.kernel.org>, "open list:LIBATA SUBSYSTEM (Serial
- and Parallel ATA drivers)" <linux-ide@vger.kernel.org>, "open list:XILINX
- AMS DRIVER" <linux-iio@vger.kernel.org>, "open list:SPI SUBSYSTEM"
- <linux-spi@vger.kernel.org>, "open list:USB SUBSYSTEM"
- <linux-usb@vger.kernel.org>, "open list:NETWORKING DRIVERS"
- <netdev@vger.kernel.org>
-Subject: Re: [PATCH 2/2] dt-bindings: xilinx: Deprecate header with firmware
- constants
-Message-ID: <20250204200446.32bfb3f8@jic23-huawei>
-In-Reply-To: <2a6f0229522327939e6893565e540b75f854a37b.1738600745.git.michal.simek@amd.com>
-References: <cover.1738600745.git.michal.simek@amd.com>
-	<2a6f0229522327939e6893565e540b75f854a37b.1738600745.git.michal.simek@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mcEhfNlg"
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6d8f99cb0d9so51972586d6.0;
+        Tue, 04 Feb 2025 19:50:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738727424; x=1739332224; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oY/LRQrEONhpx7jV7tRjQrWKGlOM9UwhZOdagg+z6r4=;
+        b=mcEhfNlgFEhijZJzcO3dkpeXJSXyD/gKYVtLNa6s5ACpN+o/aYd11hAqvaF/1EHZGY
+         Oh0zd/52mnVWESJ15Dn/0kQLtmkqZXNQsEX6hoEpburpif0mwVCSpnPsn14D8mfWYTP2
+         ZIqBMVZr/dsueqMyaXzjQmVO3EiqXeljV6Fbz0vihk1uJaoxF1N5hqEdAtL3iU4opBc0
+         sPqFgeZQokhjkFjhLna+8bPmEX+KC3j7pEX4jsDNRI9GB/z9ipjpWuPLKyJHFbLoqL0E
+         ADV7PzdTyltYjgnqjgKQa7TL+3ptYCvF6DQcS1HaLzfjLC1Y8fd3EBmJ/nvP7q2iY77V
+         drjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738727424; x=1739332224;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oY/LRQrEONhpx7jV7tRjQrWKGlOM9UwhZOdagg+z6r4=;
+        b=oBXl06kFkPr3Or9D5X57R5xwgUmiK8rK5M2bnIhd3hhKmH5QoEbkJmkgOzv55tDzDr
+         Py7f5LmP70DIflv9mKjXYWRgFzyrGk1agl9oXR9yyiG/w8xX4Kgfmvo628SH2+hIzPPd
+         y2oV1w/B1eUprz+M+Dd4FJ69G9Tlsq0l1zYLrzpxoDugAR8bVD39/cex8Tx+/18nOrbM
+         3QR6fSCBSH9VQ2wIVDjiFEBDgy7Tdm7DlOPfBLmQW7soq4kiUgXucBj6FNN66zEsXC2k
+         92JYB1aX4lZSVHpVu+RnvaaGBF1i2sNKsxXPPUx3lbQzWHpwq6kccBsoNju7MyMRBuBW
+         LMCg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3ldNMIyiFhl4YZp/eHuPq+k4n4p8tOoRI+BSGNyPkHAbvBZa+FlSw6J/3fPnIppJ0MVLWcFyAlpg3@vger.kernel.org, AJvYcCUEXmbECNEqKv7paJA52j5bheWwhXTVOZjafWVkRb4f6DIVj9tJx2OB1Rg+gE8EUVUvUSF4iAvrOH+fyOG92w==@vger.kernel.org, AJvYcCVyhqWh6NMmck5b3H3kjoqE4zKM588QtTenBHHzjUl/o87F93ckmB1UvQNaM9dwa+2noHNCOmf6idfq0gU=@vger.kernel.org, AJvYcCXdu/DJi1oJl0zZMyyGzpSrK6TXcFlMJynzioM+z/KHtqlwdHV/C6i51nAb3bZOgv+oZfJ4QdjoXEtx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJsAXMbhYc/UDr8yAaP8cMduAwcf01ju1BmG096GlEabkz+ZJS
+	0jZU7iWYFy9DYKYAaedUAFjeTMrJc5ua2Pb36MCgvWkIhsNB9dEZ
+X-Gm-Gg: ASbGnctHmE93sDUJhVNI8f31F5cxyH25HEu4h84McEvSh+Z402MfvUl/btzbFt3Cl9f
+	xLpiPQvAGp1wF4td8weZA4IttVHcW63Q6qaMjxwiUYRTxv0bjkAQXpJGTFDPy7lb8LRg6tMQ2OF
+	5Yt/EaME5R/0P1U6hU2fpgreeI/J1ECyV8JlOMSVYJHuC8GorJwq8iyoPAmaaB2lHRBK3kUegV+
+	+vg1x6wTMeT16z/wPlfesbp4k3yR6do9zz7+wR271hEzPgKvYYVSiVRV2HcYVzUPAG1wzv45jxE
+	rZk=
+X-Google-Smtp-Source: AGHT+IHGf3nij/gEdTKMxskmjbS80/KEflVLRuwNf0FDZLwPAgq1ExaaW7h92l/VxUwH73gxI0a3KA==
+X-Received: by 2002:a05:6214:5085:b0:6d8:9677:fbe4 with SMTP id 6a1803df08f44-6e42fb0a9b0mr20303146d6.9.1738727424516;
+        Tue, 04 Feb 2025 19:50:24 -0800 (PST)
+Received: from localhost ([2607:fea8:52a3:d200::2692])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e2548141aasm69890786d6.28.2025.02.04.19.50.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2025 19:50:24 -0800 (PST)
+From: Richard Acayan <mailingradian@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Todor Tomov <todor.too@gmail.com>,
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-media@vger.kernel.org
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Richard Acayan <mailingradian@gmail.com>
+Subject: [PATCH v10 0/3] Add SDM670 camera subsystem
+Date: Tue,  4 Feb 2025 22:50:14 -0500
+Message-ID: <20250205035013.206890-5-mailingradian@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 3 Feb 2025 17:39:11 +0100
-Michal Simek <michal.simek@amd.com> wrote:
+This adds support for the camera subsystem on the Snapdragon 670.
 
-> Firmware contants do not fit the purpose of bindings because they are not
-> independent IDs for abstractions. They are more or less just contants which
-> better to wire via header with DT which is using it.
-> That's why add deprecated message to dt binding header and also update
-> existing dt bindings not to use macros from the header  and replace them by
-> it's value. Actually value is not relevant because it is only example.
-> 
-> The similar changes have been done by commit 9d9292576810 ("dt-bindings:
-> pinctrl: samsung: deprecate header with register constants").
-> 
-> Signed-off-by: Michal Simek <michal.simek@amd.com>
-For IIO
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
-> 
->  Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml  | 4 +---
->  .../bindings/dma/xilinx/xlnx,zynqmp-dma-1.0.yaml           | 3 +--
->  .../devicetree/bindings/iio/adc/xlnx,zynqmp-ams.yaml       | 3 +--
->  Documentation/devicetree/bindings/net/cdns,macb.yaml       | 7 +++----
->  Documentation/devicetree/bindings/spi/spi-zynqmp-qspi.yaml | 3 +--
->  Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml     | 3 +--
->  include/dt-bindings/clock/xlnx-zynqmp-clk.h                | 7 +++++++
->  7 files changed, 15 insertions(+), 15 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml b/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml
-> index 9952e0ef7767..6ad78429dc74 100644
-> --- a/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml
-> +++ b/Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml
-> @@ -163,11 +163,9 @@ additionalProperties: false
->  
->  examples:
->    - |
-> -    #include <dt-bindings/clock/xlnx-zynqmp-clk.h>
->      #include <dt-bindings/interrupt-controller/irq.h>
->      #include <dt-bindings/power/xlnx-zynqmp-power.h>
->      #include <dt-bindings/reset/xlnx-zynqmp-resets.h>
-> -    #include <dt-bindings/clock/xlnx-zynqmp-clk.h>
->      #include <dt-bindings/phy/phy.h>
->  
->      sata: ahci@fd0c0000 {
-> @@ -175,7 +173,7 @@ examples:
->          reg = <0xfd0c0000 0x200>;
->          interrupt-parent = <&gic>;
->          interrupts = <0 133 IRQ_TYPE_LEVEL_HIGH>;
-> -        clocks = <&zynqmp_clk SATA_REF>;
-> +        clocks = <&zynqmp_clk 22>;
->          ceva,p0-cominit-params = /bits/ 8 <0x0F 0x25 0x18 0x29>;
->          ceva,p0-comwake-params = /bits/ 8 <0x04 0x0B 0x08 0x0F>;
->          ceva,p0-burst-params = /bits/ 8 <0x0A 0x08 0x4A 0x06>;
-> diff --git a/Documentation/devicetree/bindings/dma/xilinx/xlnx,zynqmp-dma-1.0.yaml b/Documentation/devicetree/bindings/dma/xilinx/xlnx,zynqmp-dma-1.0.yaml
-> index ac3198953b8e..b5399c65a731 100644
-> --- a/Documentation/devicetree/bindings/dma/xilinx/xlnx,zynqmp-dma-1.0.yaml
-> +++ b/Documentation/devicetree/bindings/dma/xilinx/xlnx,zynqmp-dma-1.0.yaml
-> @@ -75,7 +75,6 @@ additionalProperties: false
->  
->  examples:
->    - |
-> -    #include <dt-bindings/clock/xlnx-zynqmp-clk.h>
->  
->      fpd_dma_chan1: dma-controller@fd500000 {
->        compatible = "xlnx,zynqmp-dma-1.0";
-> @@ -84,7 +83,7 @@ examples:
->        interrupts = <0 117 0x4>;
->        #dma-cells = <1>;
->        clock-names = "clk_main", "clk_apb";
-> -      clocks = <&zynqmp_clk GDMA_REF>, <&zynqmp_clk LPD_LSBUS>;
-> +      clocks = <&zynqmp_clk 19>, <&zynqmp_clk 31>;
->        xlnx,bus-width = <128>;
->        dma-coherent;
->      };
-> diff --git a/Documentation/devicetree/bindings/iio/adc/xlnx,zynqmp-ams.yaml b/Documentation/devicetree/bindings/iio/adc/xlnx,zynqmp-ams.yaml
-> index 8cbad7e792b6..a403392fb263 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/xlnx,zynqmp-ams.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/xlnx,zynqmp-ams.yaml
-> @@ -193,7 +193,6 @@ additionalProperties: false
->  
->  examples:
->    - |
-> -    #include <dt-bindings/clock/xlnx-zynqmp-clk.h>
->  
->      bus {
->          #address-cells = <2>;
-> @@ -204,7 +203,7 @@ examples:
->              interrupt-parent = <&gic>;
->              interrupts = <0 56 4>;
->              reg = <0x0 0xffa50000 0x0 0x800>;
-> -            clocks = <&zynqmp_clk AMS_REF>;
-> +            clocks = <&zynqmp_clk 70>;
->              #address-cells = <1>;
->              #size-cells = <1>;
->              #io-channel-cells = <1>;
-> diff --git a/Documentation/devicetree/bindings/net/cdns,macb.yaml b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-> index 3c30dd23cd4e..8d69846b2e09 100644
-> --- a/Documentation/devicetree/bindings/net/cdns,macb.yaml
-> +++ b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-> @@ -197,7 +197,6 @@ examples:
->      };
->  
->    - |
-> -    #include <dt-bindings/clock/xlnx-zynqmp-clk.h>
->      #include <dt-bindings/power/xlnx-zynqmp-power.h>
->      #include <dt-bindings/reset/xlnx-zynqmp-resets.h>
->      #include <dt-bindings/phy/phy.h>
-> @@ -210,9 +209,9 @@ examples:
->                      interrupt-parent = <&gic>;
->                      interrupts = <0 59 4>, <0 59 4>;
->                      reg = <0x0 0xff0c0000 0x0 0x1000>;
-> -                    clocks = <&zynqmp_clk LPD_LSBUS>, <&zynqmp_clk GEM1_REF>,
-> -                             <&zynqmp_clk GEM1_TX>, <&zynqmp_clk GEM1_RX>,
-> -                             <&zynqmp_clk GEM_TSU>;
-> +                    clocks = <&zynqmp_clk 31>, <&zynqmp_clk 105>,
-> +                             <&zynqmp_clk 51>, <&zynqmp_clk 50>,
-> +                             <&zynqmp_clk 44>;
->                      clock-names = "pclk", "hclk", "tx_clk", "rx_clk", "tsu_clk";
->                      #address-cells = <1>;
->                      #size-cells = <0>;
-> diff --git a/Documentation/devicetree/bindings/spi/spi-zynqmp-qspi.yaml b/Documentation/devicetree/bindings/spi/spi-zynqmp-qspi.yaml
-> index 04d4d3b4916d..02cf1314367b 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-zynqmp-qspi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/spi-zynqmp-qspi.yaml
-> @@ -65,14 +65,13 @@ allOf:
->  
->  examples:
->    - |
-> -    #include <dt-bindings/clock/xlnx-zynqmp-clk.h>
->      soc {
->        #address-cells = <2>;
->        #size-cells = <2>;
->  
->        qspi: spi@ff0f0000 {
->          compatible = "xlnx,zynqmp-qspi-1.0";
-> -        clocks = <&zynqmp_clk QSPI_REF>, <&zynqmp_clk LPD_LSBUS>;
-> +        clocks = <&zynqmp_clk 53>, <&zynqmp_clk 82>;
->          clock-names = "ref_clk", "pclk";
->          interrupts = <0 15 4>;
->          interrupt-parent = <&gic>;
-> diff --git a/Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml b/Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml
-> index 00f87a558c7d..b5843f4d17d8 100644
-> --- a/Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml
-> +++ b/Documentation/devicetree/bindings/usb/dwc3-xilinx.yaml
-> @@ -101,7 +101,6 @@ examples:
->      #include <dt-bindings/dma/xlnx-zynqmp-dpdma.h>
->      #include <dt-bindings/power/xlnx-zynqmp-power.h>
->      #include <dt-bindings/reset/xlnx-zynqmp-resets.h>
-> -    #include <dt-bindings/clock/xlnx-zynqmp-clk.h>
->      #include <dt-bindings/reset/xlnx-zynqmp-resets.h>
->      #include <dt-bindings/phy/phy.h>
->      axi {
-> @@ -113,7 +112,7 @@ examples:
->              #size-cells = <0x2>;
->              compatible = "xlnx,zynqmp-dwc3";
->              reg = <0x0 0xff9d0000 0x0 0x100>;
-> -            clocks = <&zynqmp_clk USB0_BUS_REF>, <&zynqmp_clk USB3_DUAL_REF>;
-> +            clocks = <&zynqmp_clk 32>, <&zynqmp_clk 34>;
->              clock-names = "bus_clk", "ref_clk";
->              power-domains = <&zynqmp_firmware PD_USB_0>;
->              resets = <&zynqmp_reset ZYNQMP_RESET_USB1_CORERESET>,
-> diff --git a/include/dt-bindings/clock/xlnx-zynqmp-clk.h b/include/dt-bindings/clock/xlnx-zynqmp-clk.h
-> index cdc4c0b9a374..f0f7ddd3dcbd 100644
-> --- a/include/dt-bindings/clock/xlnx-zynqmp-clk.h
-> +++ b/include/dt-bindings/clock/xlnx-zynqmp-clk.h
-> @@ -9,6 +9,13 @@
->  #ifndef _DT_BINDINGS_CLK_ZYNQMP_H
->  #define _DT_BINDINGS_CLK_ZYNQMP_H
->  
-> +/*
-> + * These bindings are deprecated, because they do not match the actual
-> + * concept of bindings but rather contain pure firmware values.
-> + * Instead include the header in the DTS source directory.
-> + */
-> +#warning "These bindings are deprecated. Instead use the header in the DTS source directory."
-> +
->  #define IOPLL			0
->  #define RPLL			1
->  #define APLL			2
+Changes since v9 (20241218231729.270137-7-mailingradian@gmail.com):
+- add Reviewed-by from Bryan (2/3)
+- drop applied camcc patches (previously 1/5, 5/5)
+- rebase on media.git branch next and sdm670 dts patches
+
+Changes since v8 (20241216223019.70155-8-mailingradian@gmail.com):
+- revert clocks before interrupts change from v8 (3/5, 5/5)
+- pre-declare endpoint nodes in dtsi (5/5)
+- rename camss node to isp@acb3000 (2/5, 5/5)
+- add Reviewed-by from Krzysztof for camss dt-bindings patch (2/5)
+- add Reviewed-by from Vladimir for camss dtsi patch (5/5)
+
+Changes since v7 (20241210233534.614520-7-mailingradian@gmail.com):
+- move regulators to CSIPHY blocks (3/5)
+- move clocks before interrupts (2/5, 5/5)
+- sort clocks alphanumerically (2/5, 5/5)
+- rename example node to generic node name (2/5)
+
+Changes since v6 (20241011023724.614584-7-mailingradian@gmail.com):
+- set unit address in node name to first address in regs (2/5, 5/5)
+
+Changes since v5 (20241001023520.547271-9-mailingradian@gmail.com):
+- sort reg and reg-names alphabetically (2/5, 5/5)
+- drop CCI I2C patches since they are applied (formerly 2/7, 3/7)
+
+Changes since v4 (20240904020448.52035-9-mailingradian@gmail.com):
+- change camss interrupts to rising edge in dts (7/7)
+- change IRQs to rising edge in camss dt-bindings example (4/7)
+- move gcc and ahb clocks in camss dt-bindings example (4/7)
+- add reviewed-by for camcc dt-bindings patch (1/7)
+
+Changes since v3 (20240819221051.31489-7-mailingradian@gmail.com):
+- add specific sdm670 compatible for camcc to dt schema and dts (1/7, 6/7)
+- pick up patch from Bryan for CCI driver (3/7)
+- stop assigning CCI frequency in dts (7/7)
+- add maxItems for sdm670 cci clocks (2/7)
+- remove empty line at top of camss dt schema (4/7)
+- move regs and reg-names up in camss dt schema (4/7)
+- move gcc and ahb clocks up in dts and dt schema (4/7, 7/7)
+- add reviewed-by from Vladimir for CCI dt-bindings patch (2/7)
+- add reviewed-by from Bryan for dts patch (7/7)
+- add reviewed-by from Krzysztof for camss dt-bindings patch (4/7)
+- add rewiew tags for camss driver patch (5/7)
+
+Changes since v2 (20240813230037.84004-8-mailingradian@gmail.com):
+- drop unnecessary assigned AXI clock frequency (5/5)
+- drop src clocks from cci (5/5)
+- add unit name, remove mmio properties from port in example dts (2/5)
+- correct the reg-names order (2/5)
+- add parent_dev_ops to csid (3/5)
+- remove CSID clocks from VFE (3/5)
+- remove AXI clock from CSIPHY (3/5)
+- change subsystem part of the commit message summary (3/5)
+- add reviewed-by (4/5)
+
+Changes since v1 (20240806224219.71623-7-mailingradian@gmail.com):
+- define dedicated resource structs/arrays for sdm670 (3/5)
+- separate camcc device tree node into its own patch (4/5)
+- specify correct dual license (2/5)
+- add include directives in dt-bindings camss example (2/5)
+- remove src clocks from dt-bindings (2/5)
+- remove src clocks from dtsi (5/5)
+- add power-domain-names to camss (5/5)
+- specify power domain names (3/5)
+- restrict cci-i2c clocks (1/5)
+- populate a commit message with hw info (2/5)
+- reword commit message (3/5)
+
+Richard Acayan (3):
+  dt-bindings: media: camss: Add qcom,sdm670-camss
+  media: qcom: camss: add support for SDM670 camss
+  arm64: dts: qcom: sdm670: add camss and cci
+
+ .../bindings/media/qcom,sdm670-camss.yaml     | 318 ++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sdm670.dtsi          | 197 +++++++++++
+ drivers/media/platform/qcom/camss/camss.c     | 191 +++++++++++
+ 3 files changed, 706 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,sdm670-camss.yaml
+
+-- 
+2.48.1
 
