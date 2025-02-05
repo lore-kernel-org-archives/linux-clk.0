@@ -1,319 +1,245 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AD222B8A0;
-	Wed,  5 Feb 2025 11:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A9022B8CD
+	for <linux-clk@vger.kernel.org>; Wed,  5 Feb 2025 12:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738755594; cv=none; b=U6oibl8fwWk+fyOxABmPyV1QNuf9hfEwxPwkAOM1YILgTtnk68qOYIwmFSMof6omD4Sk9CmEYBTcfz4o6DLzqUPLlM9jo3RJHcwYgbVHa7oTzuu7grAkSzDej/JkAB4QxYt7MjunwbYWCPkt2moYHIFUJ0euEZc9zRJVMndp/aA=
+	t=1738756962; cv=none; b=utftyhRE+E20eE7wB5SiU0vvt3pi/M0IO+/1yjUoL7oDHP3RYXFLfW62/3a6CdTtHfYzX9dTF+7RlPnzhfObn+FIMsYBHXncKXdGtXcZpTcFhiJsRknXAO/Fk5zRwad2cI9H6LdOIKx8cQXmLBS8Fz1HS+10ZvExBOf8+fHChXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738755594; c=relaxed/simple;
-	bh=JuhDBXqqW8GETPfT0ftd0AdkeZW0m2a2KI7DDoLASms=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dVRDZrjNCbyKA5+/ag4yphOSCLPUtcBwtOLDkYRAR4IKjl+tTKMmMzwmWoa94dexS3rYG0MPdjExeGhRdLpmHJE9whKeHlEUtcjLPIJp8z237DIeJbilsBcdhpIN04W20WV+/p8dvrkHoKyvaFr8aE1Oh8Zk7JmIEZDmWNPvZtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YnyrQ6QDcz6L4tl;
-	Wed,  5 Feb 2025 19:37:10 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 17349140C98;
-	Wed,  5 Feb 2025 19:39:49 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 5 Feb
- 2025 12:39:48 +0100
-Date: Wed, 5 Feb 2025 11:39:46 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-CC: Ulf Hansson <ulf.hansson@linaro.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, <rafael@kernel.org>, <rui.zhang@intel.com>,
-	<lukasz.luba@arm.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <geert+renesas@glider.be>, <magnus.damm@gmail.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
-	<linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>, "Claudiu
- Beznea" <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 2/6] thermal: of: Export non-devres helper to
- register/unregister thermal zone
-Message-ID: <20250205113946.00002fbb@huawei.com>
-In-Reply-To: <567adde6-a348-41c0-b415-80daf16d3dbb@tuxon.dev>
-References: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
-	<20250103163805.1775705-3-claudiu.beznea.uj@bp.renesas.com>
-	<46c8e8ff-ea39-4dbd-a26c-67fcabf4b589@linaro.org>
-	<CAPDyKFq40KB6jKapnm0mOkFGB9-7VEGiBhNrVn_2fzrcziq0=Q@mail.gmail.com>
-	<20250204143303.0000174a@huawei.com>
-	<567adde6-a348-41c0-b415-80daf16d3dbb@tuxon.dev>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1738756962; c=relaxed/simple;
+	bh=agqfF/moWRFKv9gbK1sBe2qFqcKmhT34Jw/CPToM4sU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u7qMe/6CTJYsBIhgsmbo168KzX3IGoDjMvHGaQ9lFJlMTeuLIy/oFRgREZ6o/gq98g1uU/eY6Gpbb1FxCeTyzu4G3IJXB9RfKLvBqThi4YR93+zkNa1hQlJ3lqwehxpPgVwbs1HtsBfrXIOhrY1lp2hqMALqmuYVetTfauGvWVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tfe6j-0006Bx-19; Wed, 05 Feb 2025 13:02:17 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tfe6i-003d20-0M;
+	Wed, 05 Feb 2025 13:02:16 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tfe6h-00FWfW-39;
+	Wed, 05 Feb 2025 13:02:15 +0100
+Date: Wed, 5 Feb 2025 13:02:15 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	imx@lists.linux.dev, Fabio Estevam <festevam@gmail.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, arm-scmi@vger.kernel.org,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/4] clk: Introduce clk_hw_set_spread_spectrum
+Message-ID: <20250205120215.if3egfj6vbnynwl3@pengutronix.de>
+References: <20250205-clk-ssc-v2-0-fa73083caa92@nxp.com>
+ <20250205-clk-ssc-v2-1-fa73083caa92@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250205-clk-ssc-v2-1-fa73083caa92@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Wed, 5 Feb 2025 10:33:39 +0200
-Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
+Hi Peng,
 
-> Hi, Jonathan,
->=20
-> On 04.02.2025 16:33, Jonathan Cameron wrote:
-> > On Wed, 15 Jan 2025 16:42:37 +0100
-> > Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >  =20
-> >> On Thu, 9 Jan 2025 at 18:34, Daniel Lezcano <daniel.lezcano@linaro.org=
-> wrote: =20
-> >>>
-> >>>
-> >>> Ulf,
-> >>>
-> >>> can you have a look at this particular patch please ?
-> >>>
-> >>> Perhaps this scenario already happened in the past and there is an
-> >>> alternative to fix it instead of this proposed change   =20
-> >>
-> >> I think the patch makes sense.
-> >>
-> >> If there is a PM domain that is attached to the device that is
-> >> managing the clocks for the thermal zone, the detach procedure
-> >> certainly needs to be well controlled/synchronized.
-> >> =20
-> > Does this boil down to the same issue as
-> > https://lore.kernel.org/linux-iio/20250128105908.0000353b@huawei.com/
-> > ? =20
->=20
-> Yes, as described in the cover letter.
->=20
-> >=20
-> > Just to point out there is another way like is done in i2c:
-> > https://elixir.bootlin.com/linux/v6.12.6/source/drivers/i2c/i2c-core-ba=
-se.c#L630
-> >=20
-> > Register a devres_release_group() in bus probe() and release it before
-> > the dev_pm_domain_detach() call.  That keeps the detach procedure well
-> > controlled and synchronized as it is entirely in control of the driver.=
- =20
->=20
-> From the IIO thread I got that Ulf doesn't consider it a good approach for
-> all the cases.
->=20
+On 25-02-05, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Add clk_hw_set_spread_spectrum to configure a clock to enable spread
+> spectrum feature. set_spread_spectrum ops is added for clk drivers to
+> have their own hardware specific implementation.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/clk.c            | 34 ++++++++++++++++++++++++++++++++++
+>  include/linux/clk-provider.h | 32 ++++++++++++++++++++++++++++++++
+>  include/linux/clk.h          | 22 ++++++++++++++++++++++
+>  3 files changed, 88 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index cf7720b9172ff223d86227aad144e15375ddfd86..e11f9615e683af52c719d4c8419bd30f369f301b 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2790,6 +2790,40 @@ int clk_set_max_rate(struct clk *clk, unsigned long rate)
+>  }
+>  EXPORT_SYMBOL_GPL(clk_set_max_rate);
+>  
+> +int clk_hw_set_spread_spectrum(struct clk_hw *hw, unsigned int modfreq,
+> +			       unsigned int spreaddepth, enum clk_ssc_method method,
+> +			       bool enable)
+> +{
+> +	struct clk_spread_spectrum clk_ss;
+> +	struct clk_core *core;
+> +	int ret;
+> +
+> +	if (!hw)
+> +		return 0;
+> +
+> +	core = hw->core;
+> +
+> +	clk_ss.modfreq = modfreq;
+> +	clk_ss.spreaddepth = spreaddepth;
+> +	clk_ss.method = method;
+> +	clk_ss.enable = enable;
+> +
+> +	clk_prepare_lock();
+> +
+> +	ret = clk_pm_runtime_get(core);
+> +	if (ret)
+> +		goto fail;
+> +
+> +	if (core->ops->set_spread_spectrum)
+> +		ret = core->ops->set_spread_spectrum(hw, &clk_ss);
+> +
+> +	clk_pm_runtime_put(core);
+> +
+> +fail:
+> +	clk_prepare_unlock();
+> +	return ret;
+> +}
+> +
+>  /**
+>   * clk_get_parent - return the parent of a clk
+>   * @clk: the clk whose parent gets returned
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 2e6e603b749342931c0d0693c3e72b62c000791b..ac0270cc9ec133954b1f8dcffed015723bd1ff5d 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -84,6 +84,28 @@ struct clk_duty {
+>  	unsigned int den;
+>  };
+>  
+> +/* Aligned with dtschema/schemas/clock/clock.yaml */
+> +enum clk_ssc_method {
+> +	CLK_SSC_CENTER_SPREAD,
+> +	CLK_SSC_UP_SPREAD,
+> +	CLK_SSC_DOWN_SPREAD,
+> +};
+> +
+> +/**
+> + * struct clk_spread_spectrum - Structure encoding spread spectrum of a clock
+> + *
+> + * @modfreq:		Modulation frequency
+> + * @spreadpercent:	Modulation percent
+> + * @method:		Modulation method
+> + * @enable:		Modulation enable or disable
+> + */
+> +struct clk_spread_spectrum {
+> +	unsigned int modfreq;
+> +	unsigned int spreaddepth;
 
-Maybe true (I'll let Ulf comment!) and I think the solution proposed here is
-not great because it is putting the cost on every driver rather than solving
-the basic problem in one place (and there is clear precedence in other
-bus subsystems). Ideally I'd like more people to get involved in that discu=
-ssion.
+Please use per mil as unit since I noticed that 0.x% is a common value
+too.
 
-Jonathan
+Regards,
+  Marco
 
 
-
-> Thank you,
-> Claudiu
->=20
-> >=20
-> > That IIO thread has kind of died out for now though with no resolution
-> > so far.
-> >=20
-> > Jonathan
-> >=20
-> >  =20
-> >>>
-> >>>
-> >>> On 03/01/2025 17:38, Claudiu wrote:   =20
-> >>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>>
-> >>>> On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL=
-}),
-> >>>> clocks are managed through PM domains. These PM domains, registered =
-on
-> >>>> behalf of the clock controller driver, are configured with
-> >>>> GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, t=
-he
-> >>>> clocks are enabled/disabled using runtime PM APIs.
-> >>>>
-> >>>> During probe, devices are attached to the PM domain controlling their
-> >>>> clocks. Similarly, during removal, devices are detached from the PM =
-domain.
-> >>>>
-> >>>> The detachment call stack is as follows:
-> >>>>
-> >>>> device_driver_detach() ->
-> >>>>    device_release_driver_internal() ->
-> >>>>      __device_release_driver() ->
-> >>>>        device_remove() ->
-> >>>>          platform_remove() ->
-> >>>>         dev_pm_domain_detach()
-> >>>>
-> >>>> In the upcoming Renesas RZ/G3S thermal driver, the
-> >>>> struct thermal_zone_device_ops::change_mode API is implemented to
-> >>>> start/stop the thermal sensor unit. Register settings are updated wi=
-thin
-> >>>> the change_mode API.
-> >>>>
-> >>>> In case devres helpers are used for thermal zone register/unregister=
- the
-> >>>> struct thermal_zone_device_ops::change_mode API is invoked when the
-> >>>> driver is unbound. The identified call stack is as follows:
-> >>>>
-> >>>> device_driver_detach() ->
-> >>>>    device_release_driver_internal() ->
-> >>>>      device_unbind_cleanup() ->
-> >>>>        devres_release_all() ->
-> >>>>          devm_thermal_of_zone_release() ->
-> >>>>         thermal_zone_device_disable() ->
-> >>>>           thermal_zone_device_set_mode() ->
-> >>>>             rzg3s_thermal_change_mode()
-> >>>>
-> >>>> The device_unbind_cleanup() function is called after the thermal dev=
-ice is
-> >>>> detached from the PM domain (via dev_pm_domain_detach()).
-> >>>>
-> >>>> The rzg3s_thermal_change_mode() implementation calls
-> >>>> pm_runtime_resume_and_get()/pm_runtime_put_autosuspend() before/after
-> >>>> accessing the registers. However, during the unbind scenario, the
-> >>>> devm_thermal_of_zone_release() is invoked after dev_pm_domain_detach=
-().
-> >>>> Consequently, the clocks are not enabled, as the device is removed f=
-rom
-> >>>> the PM domain at this time, leading to an Asynchronous SError Interr=
-upt.
-> >>>> The system cannot be used after this.
-> >>>>
-> >>>> Add thermal_of_zone_register()/thermal_of_zone_unregister(). These w=
-ill
-> >>>> be used in the upcomming RZ/G3S thermal driver.
-> >>>>
-> >>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>   =
-=20
-> >>
-> >> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> >>
-> >> Kind regards
-> >> Uffe
-> >> =20
-> >>>> ---
-> >>>>   drivers/thermal/thermal_of.c |  8 +++++---
-> >>>>   include/linux/thermal.h      | 14 ++++++++++++++
-> >>>>   2 files changed, 19 insertions(+), 3 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_=
-of.c
-> >>>> index fab11b98ca49..8fc35d20db60 100644
-> >>>> --- a/drivers/thermal/thermal_of.c
-> >>>> +++ b/drivers/thermal/thermal_of.c
-> >>>> @@ -329,11 +329,12 @@ static bool thermal_of_should_bind(struct ther=
-mal_zone_device *tz,
-> >>>>    *
-> >>>>    * @tz: a pointer to the thermal zone structure
-> >>>>    */
-> >>>> -static void thermal_of_zone_unregister(struct thermal_zone_device *=
-tz)
-> >>>> +void thermal_of_zone_unregister(struct thermal_zone_device *tz)
-> >>>>   {
-> >>>>       thermal_zone_device_disable(tz);
-> >>>>       thermal_zone_device_unregister(tz);
-> >>>>   }
-> >>>> +EXPORT_SYMBOL_GPL(thermal_of_zone_unregister);
-> >>>>
-> >>>>   /**
-> >>>>    * thermal_of_zone_register - Register a thermal zone with device =
-node
-> >>>> @@ -355,8 +356,8 @@ static void thermal_of_zone_unregister(struct th=
-ermal_zone_device *tz)
-> >>>>    *  - ENOMEM: if one structure can not be allocated
-> >>>>    *  - Other negative errors are returned by the underlying called =
-functions
-> >>>>    */
-> >>>> -static struct thermal_zone_device *thermal_of_zone_register(struct =
-device_node *sensor, int id, void *data,
-> >>>> -                                                         const stru=
-ct thermal_zone_device_ops *ops)
-> >>>> +struct thermal_zone_device *thermal_of_zone_register(struct device_=
-node *sensor, int id, void *data,
-> >>>> +                                                  const struct ther=
-mal_zone_device_ops *ops)
-> >>>>   {
-> >>>>       struct thermal_zone_device_ops of_ops =3D *ops;
-> >>>>       struct thermal_zone_device *tz;
-> >>>> @@ -429,6 +430,7 @@ static struct thermal_zone_device *thermal_of_zo=
-ne_register(struct device_node *
-> >>>>
-> >>>>       return ERR_PTR(ret);
-> >>>>   }
-> >>>> +EXPORT_SYMBOL_GPL(thermal_of_zone_register);
-> >>>>
-> >>>>   static void devm_thermal_of_zone_release(struct device *dev, void =
-*res)
-> >>>>   {
-> >>>> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> >>>> index 69f9bedd0ee8..adbb4092a064 100644
-> >>>> --- a/include/linux/thermal.h
-> >>>> +++ b/include/linux/thermal.h
-> >>>> @@ -195,13 +195,23 @@ struct thermal_zone_params {
-> >>>>
-> >>>>   /* Function declarations */
-> >>>>   #ifdef CONFIG_THERMAL_OF
-> >>>> +struct thermal_zone_device *thermal_of_zone_register(struct device_=
-node *sensor, int id, void *data,
-> >>>> +                                                  const struct ther=
-mal_zone_device_ops *ops);
-> >>>>   struct thermal_zone_device *devm_thermal_of_zone_register(struct d=
-evice *dev, int id, void *data,
-> >>>>                                                         const struct=
- thermal_zone_device_ops *ops);
-> >>>>
-> >>>> +void thermal_of_zone_unregister(struct thermal_zone_device *tz);
-> >>>>   void devm_thermal_of_zone_unregister(struct device *dev, struct th=
-ermal_zone_device *tz);
-> >>>>
-> >>>>   #else
-> >>>>
-> >>>> +static inline
-> >>>> +struct thermal_zone_device *thermal_of_zone_register(struct device_=
-node *sensor, int id, void *data,
-> >>>> +                                                  const struct ther=
-mal_zone_device_ops *ops)
-> >>>> +{
-> >>>> +     return ERR_PTR(-ENOTSUPP);
-> >>>> +}
-> >>>> +
-> >>>>   static inline
-> >>>>   struct thermal_zone_device *devm_thermal_of_zone_register(struct d=
-evice *dev, int id, void *data,
-> >>>>                                                         const struct=
- thermal_zone_device_ops *ops)
-> >>>> @@ -209,6 +219,10 @@ struct thermal_zone_device *devm_thermal_of_zon=
-e_register(struct device *dev, in
-> >>>>       return ERR_PTR(-ENOTSUPP);
-> >>>>   }
-> >>>>
-> >>>> +static inline void thermal_of_zone_unregister(struct thermal_zone_d=
-evice *tz)
-> >>>> +{
-> >>>> +}
-> >>>> +
-> >>>>   static inline void devm_thermal_of_zone_unregister(struct device *=
-dev,
-> >>>>                                                  struct thermal_zone=
-_device *tz)
-> >>>>   {   =20
-> >>>
-> >>>
-> >>> --
-> >>> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-> >>>
-> >>> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> >>> <http://twitter.com/#!/linaroorg> Twitter |
-> >>> <http://www.linaro.org/linaro-blog/> Blog   =20
-> >> =20
-> >  =20
->=20
-
+> +	enum clk_ssc_method method;
+> +	bool enable;
+> +};
+> +
+>  /**
+>   * struct clk_ops -  Callback operations for hardware clocks; these are to
+>   * be provided by the clock implementation, and will be called by drivers
+> @@ -178,6 +200,11 @@ struct clk_duty {
+>   *		separately via calls to .set_parent and .set_rate.
+>   *		Returns 0 on success, -EERROR otherwise.
+>   *
+> + * @set_spread_spectrum: Configure the modulation frequency, modulation percentage
+> + *		and method. This callback is optional for clocks that does not
+> + *		support spread spectrum feature or no need to enable this feature.
+> + *		Returns 0 on success, -EERROR otherwise.
+> + *
+>   * @recalc_accuracy: Recalculate the accuracy of this clock. The clock accuracy
+>   *		is expressed in ppb (parts per billion). The parent accuracy is
+>   *		an input parameter.
+> @@ -255,6 +282,8 @@ struct clk_ops {
+>  	int		(*set_rate_and_parent)(struct clk_hw *hw,
+>  				    unsigned long rate,
+>  				    unsigned long parent_rate, u8 index);
+> +	int		(*set_spread_spectrum)(struct clk_hw *hw,
+> +					       struct clk_spread_spectrum *clk_ss);
+>  	unsigned long	(*recalc_accuracy)(struct clk_hw *hw,
+>  					   unsigned long parent_accuracy);
+>  	int		(*get_phase)(struct clk_hw *hw);
+> @@ -1404,6 +1433,9 @@ void clk_hw_get_rate_range(struct clk_hw *hw, unsigned long *min_rate,
+>  			   unsigned long *max_rate);
+>  void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long min_rate,
+>  			   unsigned long max_rate);
+> +int clk_hw_set_spread_spectrum(struct clk_hw *hw, unsigned int modfreq,
+> +			       unsigned int spreaddepth, enum clk_ssc_method method,
+> +			       bool enable);
+>  
+>  static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw *src)
+>  {
+> diff --git a/include/linux/clk.h b/include/linux/clk.h
+> index b607482ca77e987b9344c38f25ebb5c8d35c1d39..49a7f7eb8b03233e11cd3b92768896c4e45c4e7c 100644
+> --- a/include/linux/clk.h
+> +++ b/include/linux/clk.h
+> @@ -858,6 +858,21 @@ int clk_set_rate(struct clk *clk, unsigned long rate);
+>   */
+>  int clk_set_rate_exclusive(struct clk *clk, unsigned long rate);
+>  
+> +/**
+> + * clk_set_spread_spectrum - set the spread spectrum for a clock
+> + * @clk: clock source
+> + * @modfreq: modulation freq
+> + * @spreadpercent: modulation percentage
+> + * @method: down spread, up spread, center spread or else
+> + * @enable: enable or disable
+> + *
+> + * Configure the spread spectrum parameters for a clock.
+> + *
+> + * Returns success (0) or negative errno.
+> + */
+> +int clk_set_spread_spectrum(struct clk *clk, unsigned int modfreq,
+> +			    unsigned int spreadpercent, unsigned int method,
+> +			    bool enable);
+>  /**
+>   * clk_has_parent - check if a clock is a possible parent for another
+>   * @clk: clock source
+> @@ -1088,6 +1103,13 @@ static inline int clk_set_rate_exclusive(struct clk *clk, unsigned long rate)
+>  	return 0;
+>  }
+>  
+> +static inline int clk_set_spread_spectrum(struct clk *clk, unsigned int modfreq,
+> +					  unsigned int spreadpercent,
+> +					  unsigned int method, bool enable)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline long clk_round_rate(struct clk *clk, unsigned long rate)
+>  {
+>  	return 0;
+> 
+> -- 
+> 2.37.1
+> 
+> 
+> 
