@@ -1,326 +1,294 @@
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA6B214A7B;
-	Wed,  5 Feb 2025 03:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2742922A1D2
+	for <linux-clk@vger.kernel.org>; Wed,  5 Feb 2025 08:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738727436; cv=none; b=YnoKLbQtsQzsBf+PKkjOv8DjRgcacmvwsJmp54P76A8/4o7NwDYFfRa2qy8fZkRv2fzn88/GTo4DRlAcPrMkchLepJt4KXRZEuqDodT9cLIbobAB5sO0TZmN+Nka9jLlFU+Bu95LVIsT4zxCkF7otIKKDIU5qaCrSt8t5bDf2S8=
+	t=1738744428; cv=none; b=bPzF4w11MLK7JEwicm6GI+X6dfl12F3qW+Y2/vywgOcEGwXTsTjR+6FezmEc9UCX4H6siWu3zu5i+jnFDwIepVqVK4hq7BUeiEtCFFxPCv98k0n0Kr5TBEFWCmp52Wthcuij7FCD/vjRWzJ+62WA4SLwaUfIFUketv7nVB/pzLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738727436; c=relaxed/simple;
-	bh=3d/XSiH31qjL/Ihtu6kqAwoq5OHbRDINsw7eUK/DfNc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YdskvhXcgUYoycNbxmM1b2f7qlK3b9Kmj3kjDdXHd7ODz5jU93PdQdwNfRM38q1QsBMHQuj+zjGeygLMHi+hXbfXtE99yNBcU/lmf5bwpqyr/kAdt9P94cDMn+jeLqBdshacOA0QAvFR5lsMqvAcqstH1kr7ESPlpsITXXkc56Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jT0VB7ug; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1738744428; c=relaxed/simple;
+	bh=tyDu95QILmv23E+SCN8/LpSR8y4LOLUkoXXA3keVQjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C+hVTy1HZqA3Qu4jSJafDi07uiZ0RKn728Ov7hEAelWYoeZuXjLnUMB/JQ892ZDUCvSVHTVlrcwxseiIauoIPoRCw5ii6t9inGUkVqSQ3k0ADP0CLPoZhZS56G5RQCeUBSU/QKq/aemgO5dsqIi+uoE0AqY9gWcYWD6PX8+HqLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=lJqo5xnH; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jT0VB7ug"
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e41e17645dso18478266d6.2;
-        Tue, 04 Feb 2025 19:50:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="lJqo5xnH"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5dccc90a4f1so2784277a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 05 Feb 2025 00:33:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738727433; x=1739332233; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ltVESsqwLovrNlzlWrFxftnJMM/f40s5RlQq/y9Ie/8=;
-        b=jT0VB7ugL1Lha8ckHiUAy0DgqUXyzCqMtY6CD5ut6SW3ksE7ugSegQtKDXG9AdNK3j
-         tVh4oSMem4F4AW5xn4lZ1DhhAduSzMpvI9iWltuHO8GIXMykAu99bOQOIb+0PnIPzase
-         EOv/k8WAycYGu9tVOgBexQ6N9LjdXhn38Eoedgj3ZSJAOmVHYJsEEQbvwVG/oKvJxKpj
-         zHiiu7gLyvFLVZ3Wej8Go6eAkOgjjkitfIGVqfuD0qsde32Q5I9G5SpAuxmPCBA6l4mi
-         uc4wLV1WGwqU4+Yqosq/FsJ9st8sEq4i5Vt5lZZEPk9Uk8qso5sHB1yWYnBtac5djhlt
-         nv6Q==
+        d=tuxon.dev; s=google; t=1738744423; x=1739349223; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZWJMgZaIr7eyfAuY5Dzkz5IEHRAy8S7VHAn+U+qmklk=;
+        b=lJqo5xnHt6Vq8N9Gn4s8GqDYmsypPisnG+fjhs8ZBwjz+f5j6nh5BCBm+yrZgs1wLz
+         V1d4UNhzUN8mMTENcoce2lbMaKuVy2rLPs0VVPxkUUOb9pjV5JcyoA0jKLwh474LobGQ
+         iyCxx2tUcvCLaGu1P3wXxo3ce2rIeaUtXSTQtDcRTJl0lceBLWwNT6lOMgsYtrlxU9tn
+         jIEceR/nqY/ksRJiuRH1kdx5UQQ6fDyRfuovPcs8BwgYwzXzTvs4qXMQC5AsbzOa7DgO
+         sY5HCH/VBgvtpUgqDTjmxi0N8oEOFvhinNg26etoDzaTtDzbdxZUgPaaEH/nJ8duNPLp
+         AMgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738727433; x=1739332233;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ltVESsqwLovrNlzlWrFxftnJMM/f40s5RlQq/y9Ie/8=;
-        b=Hm2s0lysNNwp6OQsJ3XPvAUCXVNpTn7MdIXY82gPY+nCLRAsFxw4BfZuq9Hfbx6pRj
-         unSKBRA9nWox09PQh5FGcJXYcMyihx0d6WkuyWO8EstX0+33Xhjc1oHOwN9XPyeZLIL8
-         C4S7Bt+4rvaO8EszGfdz8tPmAaZPsdAXsdavWuqeTPXHckEwLZrkwHKPgFmgMhkHZLDI
-         CMQRNE7qOTyAgJ3aMLWWQIarHW3IehqYPL7nQ0hqTQuOOyQzMtmCkR42Urg8ZT9FDvqK
-         Z7Nls17s3e/FuQoq4Y8X+qcGuRNMqNdaokiFd2PaCWTNBHrq45NXjcWe4MHqmKZwkA2g
-         YHAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVz1IxP+7CCdFlIFEppImWSCRiie1kEr8ID/7OhJJuz9AVejg938mnYVifHiEf91CetpFVrt9dMYaZv4mQ=@vger.kernel.org, AJvYcCX1nfyhKuIkGRZEPIR4hKcmGj9cVAjEd26lTUs1URC/Z6/JYaJXyBkmIosKrGmSuCv/0mCENQErfZF3VxYm1g==@vger.kernel.org, AJvYcCX20r4HFhzB1H8tg4D2+PcTdg11Hk6ciKGXpVRya5uewyfnWi1NFcPeXt4uWG8yeMKFUheQ1iHiyEcZ@vger.kernel.org, AJvYcCXRyv3W65pglzKoADSIy0gvYGVquMCAMA11zQIR+VUJvfy2z2eki9pAMSFRkJGQidjoM4xTVpVee/CY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz10ab8Lj5c1/0yuq9mJAKJb6XLieYPo7zqE7Z7YvLtvf95pn7R
-	UoPWR3GR+WoKcXGSirhsXUd/L9/TrjdpDIDAvke1FQ1r0UrU/uvk
-X-Gm-Gg: ASbGnctxbk01Y9+2sLmnnLHL3NWTcqDhLr70PppQZ1lcRC92abAYmUG9JE2KkiaqpQX
-	hGauttaRQYjXObeq0/TVIvn2yeKzb88pp+mQB1c+qsGSyxVZyRuxBdRdTM5a6Db2kOBisJN0POH
-	/KVdnlIq8NBbeuFb0LvLrlbw2ry20bgj3YuLOMC4bm7uZSt93dV/nioHy61Yo2DoihK2cQk1lZ5
-	BaRAy477q90YjT5BRWZEDdVXvdbINdh+thBOb0mYffR+T2UAnBzptvJcvCzWkOeId6qwvVpgIXN
-	gcc=
-X-Google-Smtp-Source: AGHT+IHZ6lS+7pdK3/dMBm693BIxHLrGZo920oevzHRgcu5oG9LCNVHQZOPDHNG08EjwXL2Iv/4WLg==
-X-Received: by 2002:a05:6214:212c:b0:6d8:88fc:c0fb with SMTP id 6a1803df08f44-6e42fc72a69mr20627676d6.35.1738727433625;
-        Tue, 04 Feb 2025 19:50:33 -0800 (PST)
-Received: from localhost ([2607:fea8:52a3:d200::2692])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e2547f0e44sm69277506d6.4.2025.02.04.19.50.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2025 19:50:32 -0800 (PST)
-From: Richard Acayan <mailingradian@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-media@vger.kernel.org
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Richard Acayan <mailingradian@gmail.com>
-Subject: [PATCH v10 3/3] arm64: dts: qcom: sdm670: add camss and cci
-Date: Tue,  4 Feb 2025 22:50:17 -0500
-Message-ID: <20250205035013.206890-8-mailingradian@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250205035013.206890-5-mailingradian@gmail.com>
-References: <20250205035013.206890-5-mailingradian@gmail.com>
+        d=1e100.net; s=20230601; t=1738744423; x=1739349223;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZWJMgZaIr7eyfAuY5Dzkz5IEHRAy8S7VHAn+U+qmklk=;
+        b=QXpc6+5Sraj/QmtOAFchV+OpJzm0B7pJOU7eYYut9fKigyVhoSv0SW5gizpkvb701e
+         OaNM7+mwcRFaOB4clpbdkoh5cIsvxZW+43QXYaffCI59v2iRD2FG+0c4iNrv4H1Asvjx
+         EKaCnFEwaHJ77Zep5QD/5IUC12WQaKhO2eA9u7H7wQ/62NQoqLfW9dq1CgZ0UU6xkjpo
+         K4Rp4uiUMG8VMxxYY38B0dLsalKkjIldr5f0E++Ytk3SdDQt4dUf6sFB00CEfndTr8Ld
+         VcmTxXnEDjFIgvFS+i4mduD7zSiC45FqxgP2GsDrfgVZLL2hxsqI3L1ZqITZl4SbzeGl
+         lvSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOm2ircCGrxuWfBPEsRbNZ9NihsIZ+R74BAXi1VpqWwb9wVx7BZLr91dhQ6V3rOcY3gUq3VHXydg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydoySgf/AKsYwnN5et3h7Io8dKDgII9hTmqP2+RAwEDQ2PxWn4
+	2jSkMQZW/rEVAppPkihe4bx/qML7AbApa/NWX/LjiPvCq2YVMQOkvNAHsnTQVe0=
+X-Gm-Gg: ASbGnctJPF+N9SqUSRNlOQ2/x/t4x1xbpYZXO+ALrlouL0tKCzAHtyGp8wc3KtnDIAz
+	PN/E0tsOzjE838n/AQZgZGeptlrLZ2lh0mb7fj4qbBD5IxRBKSAgMAF1UsubJ9di0BOhKva7jws
+	nq4dOQGV8H46GTEt5kcm9WGe1KviqQT1Y3gbczb0aia0E5j9Mks26WydbHhhZAfqFkg9kiWY5cM
+	P77JY6pQTVejNcYpw7awva9V51ur6CvkpCHQEXrTTUa5fndgbK09s584jQMefCXU18bSe2/WuQj
+	S/bLQtCjtIq/YYpFeVm1jvJC
+X-Google-Smtp-Source: AGHT+IGEhtb+H3GSiFZ15hfS2O4DULBg79tuO2z8AqJ7PA+RjBlmFu+bQNPdm0vgf5fs1z4uefNclg==
+X-Received: by 2002:a17:906:6a1a:b0:ab3:974:3d45 with SMTP id a640c23a62f3a-ab75e24c011mr195996166b.1.1738744423032;
+        Wed, 05 Feb 2025 00:33:43 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.173])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab6e49ff2c6sm1074003866b.96.2025.02.05.00.33.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Feb 2025 00:33:42 -0800 (PST)
+Message-ID: <567adde6-a348-41c0-b415-80daf16d3dbb@tuxon.dev>
+Date: Wed, 5 Feb 2025 10:33:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] thermal: of: Export non-devres helper to
+ register/unregister thermal zone
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org,
+ rui.zhang@intel.com, lukasz.luba@arm.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
+ magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250103163805.1775705-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250103163805.1775705-3-claudiu.beznea.uj@bp.renesas.com>
+ <46c8e8ff-ea39-4dbd-a26c-67fcabf4b589@linaro.org>
+ <CAPDyKFq40KB6jKapnm0mOkFGB9-7VEGiBhNrVn_2fzrcziq0=Q@mail.gmail.com>
+ <20250204143303.0000174a@huawei.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <20250204143303.0000174a@huawei.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add the camera subsystem and CCI used to interface with cameras on the
-Snapdragon 670.
+Hi, Jonathan,
 
-Signed-off-by: Richard Acayan <mailingradian@gmail.com>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
----
- arch/arm64/boot/dts/qcom/sdm670.dtsi | 197 +++++++++++++++++++++++++++
- 1 file changed, 197 insertions(+)
+On 04.02.2025 16:33, Jonathan Cameron wrote:
+> On Wed, 15 Jan 2025 16:42:37 +0100
+> Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> 
+>> On Thu, 9 Jan 2025 at 18:34, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
+>>>
+>>>
+>>> Ulf,
+>>>
+>>> can you have a look at this particular patch please ?
+>>>
+>>> Perhaps this scenario already happened in the past and there is an
+>>> alternative to fix it instead of this proposed change  
+>>
+>> I think the patch makes sense.
+>>
+>> If there is a PM domain that is attached to the device that is
+>> managing the clocks for the thermal zone, the detach procedure
+>> certainly needs to be well controlled/synchronized.
+>>
+> Does this boil down to the same issue as
+> https://lore.kernel.org/linux-iio/20250128105908.0000353b@huawei.com/
+> ?
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm670.dtsi b/arch/arm64/boot/dts/qcom/sdm670.dtsi
-index 279e62ec5433..d79aa3461b5a 100644
---- a/arch/arm64/boot/dts/qcom/sdm670.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm670.dtsi
-@@ -6,6 +6,7 @@
-  * Copyright (c) 2022, Richard Acayan. All rights reserved.
-  */
- 
-+#include <dt-bindings/clock/qcom,camcc-sdm845.h>
- #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
- #include <dt-bindings/clock/qcom,gcc-sdm845.h>
- #include <dt-bindings/clock/qcom,gpucc-sdm845.h>
-@@ -1188,6 +1189,34 @@ tlmm: pinctrl@3400000 {
- 			gpio-ranges = <&tlmm 0 0 151>;
- 			wakeup-parent = <&pdc>;
- 
-+			cci0_default: cci0-default-state {
-+				pins = "gpio17", "gpio18";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			cci0_sleep: cci0-sleep-state {
-+				pins = "gpio17", "gpio18";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-down;
-+			};
-+
-+			cci1_default: cci1-default-state {
-+				pins = "gpio19", "gpio20";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-up;
-+			};
-+
-+			cci1_sleep: cci1-sleep-state {
-+				pins = "gpio19", "gpio20";
-+				function = "cci_i2c";
-+				drive-strength = <2>;
-+				bias-pull-down;
-+			};
-+
- 			qup_i2c0_default: qup-i2c0-default-state {
- 				pins = "gpio0", "gpio1";
- 				function = "qup0";
-@@ -1594,6 +1623,174 @@ spmi_bus: spmi@c440000 {
- 			#interrupt-cells = <4>;
- 		};
- 
-+		cci: cci@ac4a000 {
-+			compatible = "qcom,sdm670-cci", "qcom,msm8996-cci";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			reg = <0 0x0ac4a000 0 0x4000>;
-+			interrupts = <GIC_SPI 460 IRQ_TYPE_EDGE_RISING>;
-+			power-domains = <&camcc TITAN_TOP_GDSC>;
-+
-+			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-+				 <&camcc CAM_CC_SOC_AHB_CLK>,
-+				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-+				 <&camcc CAM_CC_CCI_CLK>;
-+			clock-names = "camnoc_axi",
-+				      "soc_ahb",
-+				      "cpas_ahb",
-+				      "cci";
-+
-+			pinctrl-names = "default", "sleep";
-+			pinctrl-0 = <&cci0_default &cci1_default>;
-+			pinctrl-1 = <&cci0_sleep &cci1_sleep>;
-+
-+			status = "disabled";
-+
-+			cci_i2c0: i2c-bus@0 {
-+				reg = <0>;
-+				clock-frequency = <1000000>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+
-+			cci_i2c1: i2c-bus@1 {
-+				reg = <1>;
-+				clock-frequency = <1000000>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
-+		};
-+
-+		camss: isp@acb3000 {
-+			compatible = "qcom,sdm670-camss";
-+			reg = <0 0x0acb3000 0 0x1000>,
-+			      <0 0x0acba000 0 0x1000>,
-+			      <0 0x0acc8000 0 0x1000>,
-+			      <0 0x0ac65000 0 0x1000>,
-+			      <0 0x0ac66000 0 0x1000>,
-+			      <0 0x0ac67000 0 0x1000>,
-+			      <0 0x0acaf000 0 0x4000>,
-+			      <0 0x0acb6000 0 0x4000>,
-+			      <0 0x0acc4000 0 0x4000>;
-+			reg-names = "csid0",
-+				    "csid1",
-+				    "csid2",
-+				    "csiphy0",
-+				    "csiphy1",
-+				    "csiphy2",
-+				    "vfe0",
-+				    "vfe1",
-+				    "vfe_lite";
-+
-+			interrupts = <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "csid0",
-+					  "csid1",
-+					  "csid2",
-+					  "csiphy0",
-+					  "csiphy1",
-+					  "csiphy2",
-+					  "vfe0",
-+					  "vfe1",
-+					  "vfe_lite";
-+
-+			clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
-+				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CSID_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CSID_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CSID_CLK>,
-+				 <&camcc CAM_CC_CSIPHY0_CLK>,
-+				 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY1_CLK>,
-+				 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
-+				 <&camcc CAM_CC_CSIPHY2_CLK>,
-+				 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
-+				 <&gcc GCC_CAMERA_AHB_CLK>,
-+				 <&gcc GCC_CAMERA_AXI_CLK>,
-+				 <&camcc CAM_CC_SOC_AHB_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CLK>,
-+				 <&camcc CAM_CC_IFE_0_AXI_CLK>,
-+				 <&camcc CAM_CC_IFE_0_CPHY_RX_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CLK>,
-+				 <&camcc CAM_CC_IFE_1_AXI_CLK>,
-+				 <&camcc CAM_CC_IFE_1_CPHY_RX_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CLK>,
-+				 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>;
-+			clock-names = "camnoc_axi",
-+				      "cpas_ahb",
-+				      "csi0",
-+				      "csi1",
-+				      "csi2",
-+				      "csiphy0",
-+				      "csiphy0_timer",
-+				      "csiphy1",
-+				      "csiphy1_timer",
-+				      "csiphy2",
-+				      "csiphy2_timer",
-+				      "gcc_camera_ahb",
-+				      "gcc_camera_axi",
-+				      "soc_ahb",
-+				      "vfe0",
-+				      "vfe0_axi",
-+				      "vfe0_cphy_rx",
-+				      "vfe1",
-+				      "vfe1_axi",
-+				      "vfe1_cphy_rx",
-+				      "vfe_lite",
-+				      "vfe_lite_cphy_rx";
-+
-+			iommus = <&apps_smmu 0x808 0x0>,
-+				 <&apps_smmu 0x810 0x8>,
-+				 <&apps_smmu 0xc08 0x0>,
-+				 <&apps_smmu 0xc10 0x8>;
-+
-+			power-domains = <&camcc IFE_0_GDSC>,
-+					<&camcc IFE_1_GDSC>,
-+					<&camcc TITAN_TOP_GDSC>;
-+			power-domain-names = "ife0",
-+					     "ife1",
-+					     "top";
-+
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					camss_endpoint0: endpoint {
-+						status = "disabled";
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					camss_endpoint1: endpoint {
-+						status = "disabled";
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					camss_endpoint2: endpoint {
-+						status = "disabled";
-+					};
-+				};
-+			};
-+		};
-+
- 		camcc: clock-controller@ad00000 {
- 			compatible = "qcom,sdm670-camcc", "qcom,sdm845-camcc";
- 			reg = <0 0x0ad00000 0 0x10000>;
--- 
-2.48.1
+Yes, as described in the cover letter.
+
+> 
+> Just to point out there is another way like is done in i2c:
+> https://elixir.bootlin.com/linux/v6.12.6/source/drivers/i2c/i2c-core-base.c#L630
+> 
+> Register a devres_release_group() in bus probe() and release it before
+> the dev_pm_domain_detach() call.  That keeps the detach procedure well
+> controlled and synchronized as it is entirely in control of the driver.
+
+From the IIO thread I got that Ulf doesn't consider it a good approach for
+all the cases.
+
+Thank you,
+Claudiu
+
+> 
+> That IIO thread has kind of died out for now though with no resolution
+> so far.
+> 
+> Jonathan
+> 
+> 
+>>>
+>>>
+>>> On 03/01/2025 17:38, Claudiu wrote:  
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
+>>>> clocks are managed through PM domains. These PM domains, registered on
+>>>> behalf of the clock controller driver, are configured with
+>>>> GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
+>>>> clocks are enabled/disabled using runtime PM APIs.
+>>>>
+>>>> During probe, devices are attached to the PM domain controlling their
+>>>> clocks. Similarly, during removal, devices are detached from the PM domain.
+>>>>
+>>>> The detachment call stack is as follows:
+>>>>
+>>>> device_driver_detach() ->
+>>>>    device_release_driver_internal() ->
+>>>>      __device_release_driver() ->
+>>>>        device_remove() ->
+>>>>          platform_remove() ->
+>>>>         dev_pm_domain_detach()
+>>>>
+>>>> In the upcoming Renesas RZ/G3S thermal driver, the
+>>>> struct thermal_zone_device_ops::change_mode API is implemented to
+>>>> start/stop the thermal sensor unit. Register settings are updated within
+>>>> the change_mode API.
+>>>>
+>>>> In case devres helpers are used for thermal zone register/unregister the
+>>>> struct thermal_zone_device_ops::change_mode API is invoked when the
+>>>> driver is unbound. The identified call stack is as follows:
+>>>>
+>>>> device_driver_detach() ->
+>>>>    device_release_driver_internal() ->
+>>>>      device_unbind_cleanup() ->
+>>>>        devres_release_all() ->
+>>>>          devm_thermal_of_zone_release() ->
+>>>>         thermal_zone_device_disable() ->
+>>>>           thermal_zone_device_set_mode() ->
+>>>>             rzg3s_thermal_change_mode()
+>>>>
+>>>> The device_unbind_cleanup() function is called after the thermal device is
+>>>> detached from the PM domain (via dev_pm_domain_detach()).
+>>>>
+>>>> The rzg3s_thermal_change_mode() implementation calls
+>>>> pm_runtime_resume_and_get()/pm_runtime_put_autosuspend() before/after
+>>>> accessing the registers. However, during the unbind scenario, the
+>>>> devm_thermal_of_zone_release() is invoked after dev_pm_domain_detach().
+>>>> Consequently, the clocks are not enabled, as the device is removed from
+>>>> the PM domain at this time, leading to an Asynchronous SError Interrupt.
+>>>> The system cannot be used after this.
+>>>>
+>>>> Add thermal_of_zone_register()/thermal_of_zone_unregister(). These will
+>>>> be used in the upcomming RZ/G3S thermal driver.
+>>>>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>  
+>>
+>> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>>
+>> Kind regards
+>> Uffe
+>>
+>>>> ---
+>>>>   drivers/thermal/thermal_of.c |  8 +++++---
+>>>>   include/linux/thermal.h      | 14 ++++++++++++++
+>>>>   2 files changed, 19 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+>>>> index fab11b98ca49..8fc35d20db60 100644
+>>>> --- a/drivers/thermal/thermal_of.c
+>>>> +++ b/drivers/thermal/thermal_of.c
+>>>> @@ -329,11 +329,12 @@ static bool thermal_of_should_bind(struct thermal_zone_device *tz,
+>>>>    *
+>>>>    * @tz: a pointer to the thermal zone structure
+>>>>    */
+>>>> -static void thermal_of_zone_unregister(struct thermal_zone_device *tz)
+>>>> +void thermal_of_zone_unregister(struct thermal_zone_device *tz)
+>>>>   {
+>>>>       thermal_zone_device_disable(tz);
+>>>>       thermal_zone_device_unregister(tz);
+>>>>   }
+>>>> +EXPORT_SYMBOL_GPL(thermal_of_zone_unregister);
+>>>>
+>>>>   /**
+>>>>    * thermal_of_zone_register - Register a thermal zone with device node
+>>>> @@ -355,8 +356,8 @@ static void thermal_of_zone_unregister(struct thermal_zone_device *tz)
+>>>>    *  - ENOMEM: if one structure can not be allocated
+>>>>    *  - Other negative errors are returned by the underlying called functions
+>>>>    */
+>>>> -static struct thermal_zone_device *thermal_of_zone_register(struct device_node *sensor, int id, void *data,
+>>>> -                                                         const struct thermal_zone_device_ops *ops)
+>>>> +struct thermal_zone_device *thermal_of_zone_register(struct device_node *sensor, int id, void *data,
+>>>> +                                                  const struct thermal_zone_device_ops *ops)
+>>>>   {
+>>>>       struct thermal_zone_device_ops of_ops = *ops;
+>>>>       struct thermal_zone_device *tz;
+>>>> @@ -429,6 +430,7 @@ static struct thermal_zone_device *thermal_of_zone_register(struct device_node *
+>>>>
+>>>>       return ERR_PTR(ret);
+>>>>   }
+>>>> +EXPORT_SYMBOL_GPL(thermal_of_zone_register);
+>>>>
+>>>>   static void devm_thermal_of_zone_release(struct device *dev, void *res)
+>>>>   {
+>>>> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+>>>> index 69f9bedd0ee8..adbb4092a064 100644
+>>>> --- a/include/linux/thermal.h
+>>>> +++ b/include/linux/thermal.h
+>>>> @@ -195,13 +195,23 @@ struct thermal_zone_params {
+>>>>
+>>>>   /* Function declarations */
+>>>>   #ifdef CONFIG_THERMAL_OF
+>>>> +struct thermal_zone_device *thermal_of_zone_register(struct device_node *sensor, int id, void *data,
+>>>> +                                                  const struct thermal_zone_device_ops *ops);
+>>>>   struct thermal_zone_device *devm_thermal_of_zone_register(struct device *dev, int id, void *data,
+>>>>                                                         const struct thermal_zone_device_ops *ops);
+>>>>
+>>>> +void thermal_of_zone_unregister(struct thermal_zone_device *tz);
+>>>>   void devm_thermal_of_zone_unregister(struct device *dev, struct thermal_zone_device *tz);
+>>>>
+>>>>   #else
+>>>>
+>>>> +static inline
+>>>> +struct thermal_zone_device *thermal_of_zone_register(struct device_node *sensor, int id, void *data,
+>>>> +                                                  const struct thermal_zone_device_ops *ops)
+>>>> +{
+>>>> +     return ERR_PTR(-ENOTSUPP);
+>>>> +}
+>>>> +
+>>>>   static inline
+>>>>   struct thermal_zone_device *devm_thermal_of_zone_register(struct device *dev, int id, void *data,
+>>>>                                                         const struct thermal_zone_device_ops *ops)
+>>>> @@ -209,6 +219,10 @@ struct thermal_zone_device *devm_thermal_of_zone_register(struct device *dev, in
+>>>>       return ERR_PTR(-ENOTSUPP);
+>>>>   }
+>>>>
+>>>> +static inline void thermal_of_zone_unregister(struct thermal_zone_device *tz)
+>>>> +{
+>>>> +}
+>>>> +
+>>>>   static inline void devm_thermal_of_zone_unregister(struct device *dev,
+>>>>                                                  struct thermal_zone_device *tz)
+>>>>   {  
+>>>
+>>>
+>>> --
+>>> <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+>>>
+>>> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+>>> <http://twitter.com/#!/linaroorg> Twitter |
+>>> <http://www.linaro.org/linaro-blog/> Blog  
+>>
+> 
 
