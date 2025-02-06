@@ -1,61 +1,63 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BF422653B
-	for <linux-clk@vger.kernel.org>; Thu,  6 Feb 2025 09:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2113922A1C2;
+	Thu,  6 Feb 2025 11:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738835270; cv=none; b=EB2jTq5uh0rxAWZ9jD6DLI9olxhscWfq/Ho4pTgsCae0pfWmSCjBtAoa3sEaCBhTixpMoiFXgROwQzgjuvqSLvu/dHeggYxeEk1sTPSWHaB1IVqbumq3F9mkO1rMHCsSB7w3sDbkmz05A6GgscLWB8eoK+AYJ9YKeD4DpAxOD7c=
+	t=1738842314; cv=none; b=t61KXAu4IJdeoClgKRfM8KMA7aRJipffljp1MdsVAUDtwEAxHfSbu8aEPorLq8omP+iI8tDAWpHvgTjOUQTTx+DYUJKpG/lfbSBA3SxnRxnj0hNVYxj1D+V1C7AA6Ja9pUBin+I+OvIrzHAPrh6M5beO2mFkvhCi/fjU77lebRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738835270; c=relaxed/simple;
-	bh=4hgc0MuHG5FvWdrZpFfso+UT5CtO43uqX8XMsBNTa2Q=;
+	s=arc-20240116; t=1738842314; c=relaxed/simple;
+	bh=noSQ+Xs1uJzUWnLdUjp+J+1wjOFITtMZFxGZIKDmVzs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DNjW17AVUckj9YpdwXmmRpEYrUIO1zzSWst6GwWo/rec/sV8A9VcEPk9K2rwwhCF96trPIlwsgz9WditQ0AnoLCCZbEj9zhKDNqktQSc+C5oy8TgpP7R3DyRE0A8VtfWwUS5EAl2W+Aup7rbuoLM4rpy+8EVWLsC9U46Og+8kA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tfyTq-0008NS-9e; Thu, 06 Feb 2025 10:47:30 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tfyTp-003meg-2S;
-	Thu, 06 Feb 2025 10:47:29 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tfyTp-00HMaX-21;
-	Thu, 06 Feb 2025 10:47:29 +0100
-Date: Thu, 6 Feb 2025 10:47:29 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMlrfra7u4a9V1gARUAsj3EIG38uaaZ0FfImNt68PHOCk3vXLMIAQYDmcqKTB2E0Hf58sEDCBI63NBm0rWD95wNrCqBAs+kJTeBAQFhMSpC0lF/3UVRBZmdKm4uBpGhj5wSalogopVVV6AQLPiAx+2aYRMKn6QBWBj8YLLXgDYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ESd0vkMf; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESd0vkMf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFC8EC4CEDD;
+	Thu,  6 Feb 2025 11:45:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738842313;
+	bh=noSQ+Xs1uJzUWnLdUjp+J+1wjOFITtMZFxGZIKDmVzs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ESd0vkMfYhujEVmrRpUZ0wDb0ZV5NTnVgJUEpDrUPF4CQi+h/Cf9Esuiv0oCZ+YOG
+	 L/lUns9YVFIT4P4FAOpWwpNFQKeyKDHxOIYLi1P++4nH0Jo4CFAS5IuClaWlCnF1CV
+	 8BQ18cdpnGZ0IXjAqsYKtZd6XDMiqvUiEa5ChrKMKN/QXRNS5JX1bGigUNazj7+jPe
+	 20ER3q7r25ncTItfphqtkZWtT2K1gG37xBfSU7bB2GSZJxBrVax4UhouPuwuC6Yseb
+	 YrQsFhspM3H7f5mG8UVQuLB8pAAzX8R6Cr4B9yK/NrpKl0vx7ss2wgmOqIvIT2cGzJ
+	 FY0Inw1I72C8Q==
+Date: Thu, 6 Feb 2025 12:45:05 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Benno Lossin <benno.lossin@proton.me>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
 	Michael Turquette <mturquette@baylibre.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Abel Vesa <abelvesa@kernel.org>, Rob Herring <robh@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	Fabio Estevam <festevam@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/4] clk: Introduce clk_hw_set_spread_spectrum
-Message-ID: <20250206094729.7ebs4ocruw6yrnxc@pengutronix.de>
-References: <20250205-clk-ssc-v2-0-fa73083caa92@nxp.com>
- <20250205-clk-ssc-v2-1-fa73083caa92@nxp.com>
- <20250205120215.if3egfj6vbnynwl3@pengutronix.de>
- <PAXPR04MB8459CDBB65AE57CDE780339A88F62@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	Thomas Gleixner <tglx@linutronix.de>,
+	Trevor Gross <tmgross@umich.edu>, Viresh Kumar <vireshk@kernel.org>,
+	Yury Norov <yury.norov@gmail.com>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Anisse Astier <anisse@astier.eu>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V8 00/14] Rust bindings for cpufreq and OPP core + sample
+ driver
+Message-ID: <Z6Sgwbgfp-9SCr8Y@pollux>
+References: <cover.1738832118.git.viresh.kumar@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,243 +66,36 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459CDBB65AE57CDE780339A88F62@PAXPR04MB8459.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <cover.1738832118.git.viresh.kumar@linaro.org>
 
-On 25-02-06, Peng Fan wrote:
-> > Subject: Re: [PATCH v2 1/4] clk: Introduce
-> > clk_hw_set_spread_spectrum
-> > 
-> > Hi Peng,
-> > 
-> > On 25-02-05, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > Add clk_hw_set_spread_spectrum to configure a clock to enable
-> > spread
-> > > spectrum feature. set_spread_spectrum ops is added for clk drivers to
-> > > have their own hardware specific implementation.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >  drivers/clk/clk.c            | 34 ++++++++++++++++++++++++++++++++++
-> > >  include/linux/clk-provider.h | 32
-> > ++++++++++++++++++++++++++++++++
-> > >  include/linux/clk.h          | 22 ++++++++++++++++++++++
-> > >  3 files changed, 88 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c index
-> > >
-> > cf7720b9172ff223d86227aad144e15375ddfd86..e11f9615e683af52c7
-> > 19d4c8419b
-> > > d30f369f301b 100644
-> > > --- a/drivers/clk/clk.c
-> > > +++ b/drivers/clk/clk.c
-> > > @@ -2790,6 +2790,40 @@ int clk_set_max_rate(struct clk *clk,
-> > unsigned
-> > > long rate)  }  EXPORT_SYMBOL_GPL(clk_set_max_rate);
-> > >
-> > > +int clk_hw_set_spread_spectrum(struct clk_hw *hw, unsigned int
-> > modfreq,
-> > > +			       unsigned int spreaddepth, enum
-> > clk_ssc_method method,
-> > > +			       bool enable)
-> > > +{
-> > > +	struct clk_spread_spectrum clk_ss;
-> > > +	struct clk_core *core;
-> > > +	int ret;
-> > > +
-> > > +	if (!hw)
-> > > +		return 0;
-> > > +
-> > > +	core = hw->core;
-> > > +
-> > > +	clk_ss.modfreq = modfreq;
-> > > +	clk_ss.spreaddepth = spreaddepth;
-> > > +	clk_ss.method = method;
-> > > +	clk_ss.enable = enable;
-> > > +
-> > > +	clk_prepare_lock();
-> > > +
-> > > +	ret = clk_pm_runtime_get(core);
-> > > +	if (ret)
-> > > +		goto fail;
-> > > +
-> > > +	if (core->ops->set_spread_spectrum)
-> > > +		ret = core->ops->set_spread_spectrum(hw, &clk_ss);
-> > > +
-> > > +	clk_pm_runtime_put(core);
-> > > +
-> > > +fail:
-> > > +	clk_prepare_unlock();
-> > > +	return ret;
-> > > +}
-> > > +
-> > >  /**
-> > >   * clk_get_parent - return the parent of a clk
-> > >   * @clk: the clk whose parent gets returned diff --git
-> > > a/include/linux/clk-provider.h b/include/linux/clk-provider.h index
-> > >
-> > 2e6e603b749342931c0d0693c3e72b62c000791b..ac0270cc9ec13395
-> > 4b1f8dcffed0
-> > > 15723bd1ff5d 100644
-> > > --- a/include/linux/clk-provider.h
-> > > +++ b/include/linux/clk-provider.h
-> > > @@ -84,6 +84,28 @@ struct clk_duty {
-> > >  	unsigned int den;
-> > >  };
-> > >
-> > > +/* Aligned with dtschema/schemas/clock/clock.yaml */ enum
-> > > +clk_ssc_method {
-> > > +	CLK_SSC_CENTER_SPREAD,
-> > > +	CLK_SSC_UP_SPREAD,
-> > > +	CLK_SSC_DOWN_SPREAD,
-> > > +};
-> > > +
-> > > +/**
-> > > + * struct clk_spread_spectrum - Structure encoding spread spectrum
-> > of
-> > > +a clock
-> > > + *
-> > > + * @modfreq:		Modulation frequency
-> > > + * @spreadpercent:	Modulation percent
-> > > + * @method:		Modulation method
-> > > + * @enable:		Modulation enable or disable
-> > > + */
-> > > +struct clk_spread_spectrum {
-> > > +	unsigned int modfreq;
-> > > +	unsigned int spreaddepth;
-> > 
-> > Please use per mil as unit since I noticed that 0.x% is a common value
-> > too.
-> 
-> I use " The modulation depth in permyriad " in dt-schema, since
-> Dario said ST chips has permyriad.
+Hi Viresh,
 
-Ah okay, thanks for the explanation, this wasn't clear since also the
-comment says: "Modulation percent". I wouldn't call it permyriad or
-per_myriad since this unit is rather rare. Instead I would call it "basis
-point" so the variable name could be 'spread_bp'. While on it, we could
-rename modfreq to modfreq_hz to make it clear.
+On Thu, Feb 06, 2025 at 02:58:21PM +0530, Viresh Kumar wrote:
+> Hello,
+> 
+> I am seeking a few Acks for this patch series before merging it into the PM tree
+> for the 6.15 merge window, unless there are any objections.
+> 
+> This series introduces initial Rust bindings for two subsystems: cpufreq and
+> Operating Performance Points (OPP). The bindings cover most of the interfaces
+> exposed by these subsystems. It also includes minimal bindings for the clk and
+> cpumask frameworks, which are required by the cpufreq bindings.
+> 
+> Additionally, a sample cpufreq driver, rcpufreq-dt, is included. This is a
+> duplicate of the existing cpufreq-dt driver, which is a platform-agnostic,
+> device-tree-based driver commonly used on ARM platforms.
+> 
+> The implementation has been tested using QEMU, ensuring that frequency
+> transitions, various configurations, and driver binding/unbinding work as
+> expected. However, performance measurements have not been conducted yet.
+> 
+> For those interested in testing these patches, they can be found at:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/linux.git rust/cpufreq-dt
+> 
+> This version is rebased on v6.14-rc1.
 
-Regards,
-  Marco
+I gave it a quick shot and it seems there are a few Clippy warnings, plus
+rustfmtcheck complains.
 
-> 
-> So change it to moddepth_per_myriad?
-> 
-> Thanks,
-> Peng.
-> 
-> > 
-> > Regards,
-> >   Marco
-> > 
-> > 
-> > > +	enum clk_ssc_method method;
-> > > +	bool enable;
-> > > +};
-> > > +
-> > >  /**
-> > >   * struct clk_ops -  Callback operations for hardware clocks; these are
-> > to
-> > >   * be provided by the clock implementation, and will be called by
-> > > drivers @@ -178,6 +200,11 @@ struct clk_duty {
-> > >   *		separately via calls to .set_parent and .set_rate.
-> > >   *		Returns 0 on success, -EERROR otherwise.
-> > >   *
-> > > + * @set_spread_spectrum: Configure the modulation frequency,
-> > modulation percentage
-> > > + *		and method. This callback is optional for clocks that
-> > does not
-> > > + *		support spread spectrum feature or no need to enable
-> > this feature.
-> > > + *		Returns 0 on success, -EERROR otherwise.
-> > > + *
-> > >   * @recalc_accuracy: Recalculate the accuracy of this clock. The
-> > clock accuracy
-> > >   *		is expressed in ppb (parts per billion). The parent
-> > accuracy is
-> > >   *		an input parameter.
-> > > @@ -255,6 +282,8 @@ struct clk_ops {
-> > >  	int		(*set_rate_and_parent)(struct clk_hw *hw,
-> > >  				    unsigned long rate,
-> > >  				    unsigned long parent_rate, u8
-> > index);
-> > > +	int		(*set_spread_spectrum)(struct clk_hw *hw,
-> > > +					       struct
-> > clk_spread_spectrum *clk_ss);
-> > >  	unsigned long	(*recalc_accuracy)(struct clk_hw *hw,
-> > >  					   unsigned long
-> > parent_accuracy);
-> > >  	int		(*get_phase)(struct clk_hw *hw);
-> > > @@ -1404,6 +1433,9 @@ void clk_hw_get_rate_range(struct clk_hw
-> > *hw, unsigned long *min_rate,
-> > >  			   unsigned long *max_rate);
-> > >  void clk_hw_set_rate_range(struct clk_hw *hw, unsigned long
-> > min_rate,
-> > >  			   unsigned long max_rate);
-> > > +int clk_hw_set_spread_spectrum(struct clk_hw *hw, unsigned int
-> > modfreq,
-> > > +			       unsigned int spreaddepth, enum
-> > clk_ssc_method method,
-> > > +			       bool enable);
-> > >
-> > >  static inline void __clk_hw_set_clk(struct clk_hw *dst, struct clk_hw
-> > > *src)  { diff --git a/include/linux/clk.h b/include/linux/clk.h index
-> > >
-> > b607482ca77e987b9344c38f25ebb5c8d35c1d39..49a7f7eb8b03233e
-> > 11cd3b927688
-> > > 96c4e45c4e7c 100644
-> > > --- a/include/linux/clk.h
-> > > +++ b/include/linux/clk.h
-> > > @@ -858,6 +858,21 @@ int clk_set_rate(struct clk *clk, unsigned
-> > long rate);
-> > >   */
-> > >  int clk_set_rate_exclusive(struct clk *clk, unsigned long rate);
-> > >
-> > > +/**
-> > > + * clk_set_spread_spectrum - set the spread spectrum for a clock
-> > > + * @clk: clock source
-> > > + * @modfreq: modulation freq
-> > > + * @spreadpercent: modulation percentage
-> > > + * @method: down spread, up spread, center spread or else
-> > > + * @enable: enable or disable
-> > > + *
-> > > + * Configure the spread spectrum parameters for a clock.
-> > > + *
-> > > + * Returns success (0) or negative errno.
-> > > + */
-> > > +int clk_set_spread_spectrum(struct clk *clk, unsigned int modfreq,
-> > > +			    unsigned int spreadpercent, unsigned int
-> > method,
-> > > +			    bool enable);
-> > >  /**
-> > >   * clk_has_parent - check if a clock is a possible parent for another
-> > >   * @clk: clock source
-> > > @@ -1088,6 +1103,13 @@ static inline int
-> > clk_set_rate_exclusive(struct clk *clk, unsigned long rate)
-> > >  	return 0;
-> > >  }
-> > >
-> > > +static inline int clk_set_spread_spectrum(struct clk *clk, unsigned
-> > int modfreq,
-> > > +					  unsigned int spreadpercent,
-> > > +					  unsigned int method, bool
-> > enable) {
-> > > +	return 0;
-> > > +}
-> > > +
-> > >  static inline long clk_round_rate(struct clk *clk, unsigned long
-> > > rate)  {
-> > >  	return 0;
-> > >
-> > > --
-> > > 2.37.1
-> > >
-> > >
-> > >
-> 
+There are also two minor checkpatch complaints about line length.
