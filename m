@@ -1,167 +1,155 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8D2215046
-	for <linux-clk@vger.kernel.org>; Thu,  6 Feb 2025 12:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6692253F0;
+	Thu,  6 Feb 2025 12:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738844270; cv=none; b=bEqh3/Y3X623LWvMlZU2w861V5aGrGy0wnaUvW7BV6cLIUi8UDLgTuRYxJQ+jCuHIu5Qy/so/LBWI7MAvG52+VvVtjckrbuX9ie/Oakdw/yUxMsyxyFL6TSd7NZbygqTlDFEEGXYo0BAf9SpRKGjgOolOJ/GnsfyssGSxN82BRg=
+	t=1738844800; cv=none; b=eZt3JlXvrX48x50sNv8KeH5EZnQ2IYwLi+Zzb67198jQ/+vtYmjieOx7PJ3bXlZ/woWE9quBkqwdwW0GUQa7+eEwcX4CIMHg+i772GdU0edvCAI4xa8Rd6kIhgUyu58WT02njpXc2BjdXc/4fdw3VJq14SGzpzO+8htgUzZEl70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738844270; c=relaxed/simple;
-	bh=4cdFR+B95oVkXNiulG1qv9Pup9VHoxewsSMqD4dgVBM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=US+o3QfnG7w9mn0RgcdT6PBSwvR5vdHfUKXwyETslLUmoKsWtmnNAP6RUbt7cbtjpIulgByl2f861jMRxHOtcHWPKiIhWvJ1vrjYGwFIY2xYyEgZfaG7G9e3KtT+nCouYt2gHB49cKDtQ9T8kAFppo33PxPviyXnWQmr1OSweXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=iaJ/HPQk; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="iaJ/HPQk"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-306007227d3so7991351fa.0
-        for <linux-clk@vger.kernel.org>; Thu, 06 Feb 2025 04:17:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1738844267; x=1739449067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kVaPm6svnrZmjjZXaQ6INFYIHurE1c31ambChU45jvE=;
-        b=iaJ/HPQkyb/z3PjJ/QEpfQx0Xjpwjgah/jbqVvaqQWz0nNbb9eWZp0Y+ucFlEeziCC
-         N7RpO7V0Wkkfi8Qf8vVDQSQXVXokZBrd11qieJEjO5uHuNez7Te7Kooyg67uOh2BWAnv
-         l+R+IZM8Rzjw2+lVfb6F5EyGpFFZ/YKZ1tZhO1DwsF8PyTZb5Si+DKf9S4jXUdcJ2ttm
-         lWcE7bKU24fSwXHgyPXBXUAM+JKnUzDHjUhMhFE85bEB3BQ9Hcwq6CCAN7MN6BFi7E40
-         tzx4FVBokSZ0Ye5OrKnFmb5zlAs4BrXavuc4agTeQH7yF76OO3yeZz6u/vgh0JIIXQGU
-         FIgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738844267; x=1739449067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kVaPm6svnrZmjjZXaQ6INFYIHurE1c31ambChU45jvE=;
-        b=C7AlstPZcJCHSJTu6fn4YVM/WksbDRAzb2+IK9yykHTnec+PNohHDf+Et/i7JFMc3m
-         PvfhXShSfMTLdbAo9V+ogsDlgoioS8XGjhzsUonztH63D/E5Zdn8ZDRkVcN5Upp4cB2z
-         PL3mB0rE2NnUKypDeuSDYuuI3Dlzq+8DnjmWHW3UfxIoMubWnQw1L5fkSeqi05Eo4rpW
-         yqwkDqS/H4YCz1D3K2xexrOSHp6smm4R6aFMCyxbc7SKejQOwuwD9LpxqgXzn9UyDlh+
-         fluCsKyddN43lV223o4B/m13H1v1jFsAJE8kLMnLqTl5EJZ5gx0V0mF51jkD2ujH2ydG
-         d7Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEdsQNMKSniImGX860U2bkYT/RfnWAALKdUKfUrkzmbboHiv5tp9D1i5FzInC9NCBUCpyzUPV3O8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1Asq+b18k1/QUs0LMEZJHa8/SnxwTAlvreHxBx4zZR1HL89zK
-	EhdOx205Fhw2k3DbyA7VrD7WlX/HOVPTYMwwP/l6WR6LIhEVYHnjJ3cvaYxsiF1o/fTK9oHC/MD
-	vd7Al9o2r0RqRovRtz4HBy3is7h0pT3J5RrjRjQ==
-X-Gm-Gg: ASbGncuGhW+bby9YZ8NmgrfEouCWQ5TQdvmiQY0GULOulOUieCetKzXVGSncnQ+oZbQ
-	iAZcBLIL1S7LobR1J/1phWxsbHE+SizESNAsxL9p4d0Zye9yIIfxt3PsIG71sSIKFP7lhm9fAcA
-	==
-X-Google-Smtp-Source: AGHT+IEdOcygqBJ9zpwt9AnW8YGVVzGNtNdwXSyeVHKPWBPAI82GsWsII++eZWvLHpNnJrehz+aGVI+bK2PH2gmRR6A=
-X-Received: by 2002:a05:651c:b08:b0:2ff:c242:29c8 with SMTP id
- 38308e7fff4ca-307cf386eaamr25840471fa.35.1738844267233; Thu, 06 Feb 2025
- 04:17:47 -0800 (PST)
+	s=arc-20240116; t=1738844800; c=relaxed/simple;
+	bh=RQyg43+Uu2hbupDUSgH3bbfuehTuytBTZhP+/VpdDjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hRUGoeH23970mT0NUbbbjKIszL23+LaiUWanTyCaYPYXdczlj4x+/cXf+PxI5EuW7wBMsAOFGWJaqFXQQJ+3toYpVpD14yXWtnzaU0FOlAjqvyVql2e2CS777SScx7KndCHbnlwzcUd08uaRwIn1sLBR6PjUgbZIiWm4bVjT8os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FFE812FC;
+	Thu,  6 Feb 2025 04:27:00 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7FD453F63F;
+	Thu,  6 Feb 2025 04:26:34 -0800 (PST)
+Date: Thu, 6 Feb 2025 12:26:32 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Abel Vesa <abelvesa@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH NOT APPLY v2 4/4] clk: scmi: Support spread spectrum
+Message-ID: <Z6SqeNsAqbZM8nr1@pluto>
+References: <20250205-clk-ssc-v2-0-fa73083caa92@nxp.com>
+ <20250205-clk-ssc-v2-4-fa73083caa92@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250203084906.681418-1-apatel@ventanamicro.com>
- <20250203084906.681418-12-apatel@ventanamicro.com> <871pwfp272.ffs@tglx>
-In-Reply-To: <871pwfp272.ffs@tglx>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Thu, 6 Feb 2025 17:47:34 +0530
-X-Gm-Features: AWEUYZnkWoBjjXJZwQi6NEV8e_1cUvMnkW_wF5FuGhI66P5vlROSq0JSDO_qX_Y
-Message-ID: <CAK9=C2U537LvffPLGad=LsFsN27uW2UB2X=Oxrub9v2U5vneYQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 11/17] irqchip: Add driver for the RISC-V RPMI
- system MSI service group
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, Leyfoon Tan <leyfoon.tan@starfivetech.com>, 
-	Atish Patra <atishp@atishpatra.org>, Andrew Jones <ajones@ventanamicro.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250205-clk-ssc-v2-4-fa73083caa92@nxp.com>
 
-Hi Thomas,
+On Wed, Feb 05, 2025 at 05:49:54PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Support Spread Spectrum with adding scmi_clk_set_spread_spectrum
+> 
 
-On Mon, Feb 3, 2025 at 7:20=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->
-> On Mon, Feb 03 2025 at 14:19, Anup Patel wrote:
-> > +
-> > +struct rpmi_sysmsi_priv {
-> > +     struct device *dev;
-> > +     struct mbox_client client;
-> > +     struct mbox_chan *chan;
-> > +     u32 nr_irqs;
-> > +     u32 gsi_base;
-> > +};
->
-> AS requested before please use tabular layout for structs:
->
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct=
--declarations-and-initializers
->
-> > +static int rpmi_sysmsi_set_msi_state(struct rpmi_sysmsi_priv *priv,
-> > +                                  u32 sys_msi_index, u32 sys_msi_state=
-)
-> > +{
-> > +     struct rpmi_sysmsi_set_msi_state_tx tx;
-> > +     struct rpmi_sysmsi_set_msi_state_rx rx;
-> > +     struct rpmi_mbox_message msg;
-> > +     int ret;
-> > +
-> > +     tx.sys_msi_index =3D sys_msi_index;
-> > +     tx.sys_msi_state =3D sys_msi_state;
-> > +     rpmi_mbox_init_send_with_response(&msg, RPMI_SYSMSI_SRV_SET_MSI_S=
-TATE,
-> > +                                       &tx, sizeof(tx), &rx, sizeof(rx=
-));
-> > +     ret =3D rpmi_mbox_send_message(priv->chan, &msg);
-> > +     if (ret)
-> > +             return ret;
-> > +     if (rx.status)
-> > +             return rpmi_to_linux_error(rx.status);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +#define rpmi_sysmsi_mask(__priv, __msi_index)                \
-> > +     rpmi_sysmsi_set_msi_state(__priv, __msi_index, 0)
-> > +#define rpmi_sysmsi_unmask(__priv, __msi_index)              \
-> > +     rpmi_sysmsi_set_msi_state(__priv, __msi_index, RPMI_SYSMSI_MSI_ST=
-ATE_ENABLE)
->
-> These macros are not really providing any value.
->
-> > +static void rpmi_sysmsi_irq_mask(struct irq_data *d)
-> > +{
-> > +     struct rpmi_sysmsi_priv *priv =3D irq_data_get_irq_chip_data(d);
-> > +     int ret;
-> > +
-> > +     ret =3D rpmi_sysmsi_mask(priv, d->hwirq);
-> > +     if (ret)
-> > +             dev_warn(priv->dev, "Failed to mask hwirq %d (error %d)\n=
-",
-> > +                      (u32)d->hwirq, ret);
->
->         if (ret) {
->                 ....
->         }
->
-> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#bracke=
-t-rules
->
-> > +     irq_chip_mask_parent(d);
-> > +}
->
-> Other than those nits, this looks reasonable.
+Hi,
 
-I will address all above comments in the next revision.
+I forwarded ATG with our latest exchange on the possibility of using a
+standard OEM type instead of Vendor one if it is general enough....
+
+...waiting for their feedback on this before reviewing further...BUT
+just one comment down below
+
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/clk-scmi.c        | 47 +++++++++++++++++++++++++++++++++++++++++--
+>  include/linux/scmi_protocol.h |  6 ++++++
+>  2 files changed, 51 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> index 15510c2ff21c0335f5cb30677343bd4ef59c0738..56b9d0166b0170807c1a83fff391033fecee2159 100644
+> --- a/drivers/clk/clk-scmi.c
+> +++ b/drivers/clk/clk-scmi.c
+> @@ -23,6 +23,7 @@ enum scmi_clk_feats {
+>  	SCMI_CLK_RATE_CTRL_SUPPORTED,
+>  	SCMI_CLK_PARENT_CTRL_SUPPORTED,
+>  	SCMI_CLK_DUTY_CYCLE_SUPPORTED,
+> +	SCMI_CLK_SSC_SUPPORTED,
+>  	SCMI_CLK_FEATS_COUNT
+>  };
+>  
+> @@ -98,6 +99,36 @@ static int scmi_clk_set_parent(struct clk_hw *hw, u8 parent_index)
+>  	return scmi_proto_clk_ops->parent_set(clk->ph, clk->id, parent_index);
+>  }
+>  
+> +static int scmi_clk_set_spread_spectrum(struct clk_hw *hw,
+> +					struct clk_spread_spectrum *clk_ss)
+> +{
+> +	struct scmi_clk *clk = to_scmi_clk(hw);
+> +	int ret;
+> +	u32 val;
+> +
+> +	/*
+> +	 * extConfigValue[7:0]   - spread percentage (%)
+> +	 * extConfigValue[23:8]  - Modulation Frequency (KHz)
+> +	 * extConfigValue[24]    - Enable/Disable
+> +	 * extConfigValue[31:25] - Modulation method
+> +	 */
+> +	val = FIELD_PREP(SCMI_CLOCK_EXT_SS_PERCENTAGE_MASK, clk_ss->spreaddepth);
+> +	val |= FIELD_PREP(SCMI_CLOCK_EXT_SS_MOD_FREQ_MASK, clk_ss->modfreq);
+> +	val |= FIELD_PREP(SCMI_CLOCK_EXT_SS_METHOD_MASK, clk_ss->method);
+> +	if (clk_ss->enable)
+> +		val |= SCMI_CLOCK_EXT_SS_ENABLE_MASK;
+> +	ret = scmi_proto_clk_ops->config_oem_set(clk->ph, clk->id,
+> +						 SCMI_CLOCK_CFG_SSC,
+> +						 val, false);
+> +	if (ret)
+> +		dev_warn(clk->dev,
+> +			 "Failed to set spread spectrum(%u,%u,%u) for clock ID %d\n",
+> +			 clk_ss->modfreq, clk_ss->spreaddepth, clk_ss->method,
+> +			 clk->id);
+> +
+> +	return ret;
+> +}
+> +
+>  static u8 scmi_clk_get_parent(struct clk_hw *hw)
+>  {
+>  	struct scmi_clk *clk = to_scmi_clk(hw);
+> @@ -316,9 +347,17 @@ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
+>  		ops->set_duty_cycle = scmi_clk_set_duty_cycle;
+>  	}
+>  
+> +	if (feats_key & BIT(SCMI_CLK_SSC_SUPPORTED))
+> +		ops->set_spread_spectrum = scmi_clk_set_spread_spectrum;
+> +
+>  	return ops;
+>  }
+>  
+> +static const char * const scmi_clk_imxlist[] = {
+> +	"fsl,imx95",
+> +	NULL
+> +};
+> +
+>  /**
+>   * scmi_clk_ops_select() - Select a proper set of clock operations
+>   * @sclk: A reference to an SCMI clock descriptor
+> @@ -370,8 +409,12 @@ scmi_clk_ops_select(struct scmi_clk *sclk, bool atomic_capable,
+>  	if (!ci->parent_ctrl_forbidden)
+>  		feats_key |= BIT(SCMI_CLK_PARENT_CTRL_SUPPORTED);
+>  
+> -	if (ci->extended_config)
+> -		feats_key |= BIT(SCMI_CLK_DUTY_CYCLE_SUPPORTED);
+> +	if (ci->extended_config) {
+> +		if (of_machine_compatible_match(scmi_clk_imxlist))
+
+... please NOT this also here if we use a standard OEM type :D..if it
+won't be a vendor thing anymore, you should query with CONFIG_GET, OR we
+should think also about adding some way in the spec to query the support
+for extended configs like we do for other clock features...
 
 Thanks,
-Anup
+Cristian
