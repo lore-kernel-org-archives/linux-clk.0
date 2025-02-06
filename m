@@ -1,129 +1,242 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B961FDE08;
-	Thu,  6 Feb 2025 07:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ADC226884
+	for <linux-clk@vger.kernel.org>; Thu,  6 Feb 2025 09:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738825328; cv=none; b=okfjyiRjOWXr+x2mgB4qYxh9TmAFI0vb7myIsNdqhAWJmRxa++49Dv8M0fGkNHlYYkG1jhWRLpJ10FE9ypNi9Kb4QTgJ+Xg54fUcH3YCoyE7NbYe/28R/qr/kNDejHCiDIRz71KVmA+MdTztAiAQPHmKICQPLRmXkJGHlt+nhSs=
+	t=1738834136; cv=none; b=P583XFpJc+B6wsiHB7MIBUzPgT41P2NFjquXcsY/0Y317PyZ7Q31aA8crPNfKOvgyXCGDkHk8pBBGrVxdOgFLj0ex4UGySZM4NaV9S9KquqhPHKWJwIdJ2PxfupT9D4xHokVZdmNYEE55uIyXo2+FspLqMaX1RARDdhWW7LTFAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738825328; c=relaxed/simple;
-	bh=2GiFkygq3de9GLjZ4hEtVqwNNmejJsX0fXM8BEvQD+4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RPLpLRKuMwGNw4jCBX6WUyHlZaQQAd7ryeF2Kl3xS+NRKFzoWJj4BVKSPKCYXkrSKdJKaXzjIWNMXoYxkR/gKnoE2BplmkIHUNflt9j3QH5rogqwe8SLM5innFJfY+PU2mQagOAOhwc7QHYOnltKVitfcifGMCR55Je3idMeUIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yp060fIw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1738834136; c=relaxed/simple;
+	bh=xydhrXNwbR6b23NtRkGsxwSBfZgDAxPgbGHs9xWaEVc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SfnK4ba2KutDx4HbrlbAn4P3zts9bkjqVUrdOjnI63Ba/twWUOL3gW7UfzE2ue2uJhH7QBC6UsH7xfT4ag1FgTurEjWVgXCAZjC57hVtqW+4e7+6L3ZYw8phUonE/rGQyRY4UnWZKAugyByjejYRce/NCJloFQM8B3QHfAxl3as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rswwmq7Z; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yp060fIw"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 515J0TJv031638;
-	Thu, 6 Feb 2025 07:01:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZrAPzN3R+g1+r+81eLhRZv0SycNO8ZdkZdwOO3LB4P0=; b=Yp060fIwEXZ2Lmia
-	I6xC/YsvbTDluwBhMfCfrp2hjbbBVCu8BlrYf7D12R1+/z/0KMJGO8jox3N5Xe5e
-	Q1QqKHaOvy2aLbSLhA+Mr6/5AvuMjLuaqRhtnq6IFN0ZcNA/KhH/GXPlm8+sSh5k
-	tPpcayFuwe7TGdxLouIxrWMpnnt5HUkqfElJXDiVySnzqOz9x2N/yrpc3erJsTeW
-	XhF+NltzsWBqcVy5QDRhTLAZ/Ie7nJOu2au2uKuQXzFB1ha+88JBb0vIrgT9dt9u
-	DX8lcAmoFPJ5xO8kZtiKqmTLM2/mNgFNGEFsg+FGFxOO7cYNA1RUvKHxkO2PxfWy
-	6ZXQOg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44mds2hbb4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Feb 2025 07:01:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51671i9h019165
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Feb 2025 07:01:44 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Feb 2025
- 23:01:36 -0800
-Message-ID: <1cac47ba-f33d-4d2b-8808-c56012b5bbaf@quicinc.com>
-Date: Thu, 6 Feb 2025 12:31:33 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rswwmq7Z"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2165cb60719so12799445ad.0
+        for <linux-clk@vger.kernel.org>; Thu, 06 Feb 2025 01:28:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1738834134; x=1739438934; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UNiJjfxZrKVMTDCAqOVZp5Rhiszwav3OEDmf8+LxyHc=;
+        b=rswwmq7ZtRgBqKUefbHZsTxz7jwgOu5gX9d1gqhFCRJZrwSsEXhLzFvZgqudNYnHz8
+         s1UU1Z/novLDMCEzb4c+5pbZlke6Nb/nduYlg+ualueTSbhj9Ji2wrr+7cjkkbPEemM7
+         aRHQZONl+rolk/jSL4EjCUcsG17IWnx/GacWZIGxbhF7Jr+UtCfS6PYI4VIVUQLihfSa
+         e+wEkYhlEMiWPydrug1/xGe87IgZ3jNjj2lB7qpnInJ1vpmZcQKc2zNu/C3hnG4uYJ/w
+         UHkKYZQfvZO5qCywWZ8MMF6dbZB/wcMuVcSUjIE83u2x2wnrzq7smv1bxK5jU0DZEAJ0
+         woGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738834134; x=1739438934;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UNiJjfxZrKVMTDCAqOVZp5Rhiszwav3OEDmf8+LxyHc=;
+        b=EJaTD+gjb2lcCoULvUQnqDg7tUGZ/hmV+51WCjUrvGY2CAdT8dqyoCg0ne2vwRnnyA
+         i9y1qjqQ1gw15/ZkrSTZz8mJ5ig2BNxYmuU4Iqr7Lyw0bWzAe4PA0WoAUfYsVNnG9c1B
+         JiZsdss+1tO0A2THL6dEN/s6Guu6HEnJO5VToNxA57hw7kUM0icWC6t/69YnaB1upjuX
+         XFojBhTy2TgvmT/LTYE/oegUvzAIbiOgXTsh6bdayqNxfwRTRe5OEvPdVqxQo99PW6/o
+         mmvl/uAPKaG+vkKvW3MPF36zT9uT26LV/h+VO7cBeWgXfM9stZ729HGgPIdYJoYjDp4H
+         C2oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdteo0shneBgVqOdifnhSZN2xHiRpNw7Vo3Vmu1RwDVv4NulzSyWD9dBajluh48yDcGwj2Pac2fj8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHBHmMPzcY0fgJeJvYogcKKy78IhedapIP/GSCPT8KVBwh7JWy
+	IAztm1xexqCxCtPcxfbZAnolIcUjz0S4YHbfKcJwz5swwSjeqsyLKuejNZG+KzA=
+X-Gm-Gg: ASbGncvuyjzs/raxtzP9GF0EI2xHzjOSvk60ppzwCgFwY0KBx5tZhvwhdeMsZLawpJ6
+	UXVQ1gpG8dNAWRbokrJMd2oWc36dIHXr7SfSCVmbH4yRbaQH9Co64N0KM6ACxedE7sBIrFcjR28
+	HODBPSeyAAMgeKqxQONwsp9L5rVMo3OXyXUN62b4Aw1GQUfpJQgQT31LWj/Rdg7A8jTW/sumUOF
+	zBBShtk6tFqWFTakOMNeuqmITPOr7D4pMKQszNofp1PZUMUF0saX9idlp9fXNHEj+Mno184JfpO
+	xF1T3mqcxeAGVk5VtQ==
+X-Google-Smtp-Source: AGHT+IGnSqJQjNRy6mCYk0/OJtqZQdpZtORA2QNISIKIb5NfeUD1BwRd+d4p1y7xF51rpRHpqEukhQ==
+X-Received: by 2002:a17:903:190:b0:21f:3a7b:f4f1 with SMTP id d9443c01a7336-21f3a7bf8d0mr19186405ad.32.1738834133861;
+        Thu, 06 Feb 2025 01:28:53 -0800 (PST)
+Received: from localhost ([122.172.84.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fa09b3ee47sm871574a91.39.2025.02.06.01.28.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2025 01:28:53 -0800 (PST)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Benno Lossin <benno.lossin@proton.me>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Trevor Gross <tmgross@umich.edu>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Yury Norov <yury.norov@gmail.com>
+Cc: linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	=?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Anisse Astier <anisse@astier.eu>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V8 00/14] Rust bindings for cpufreq and OPP core + sample driver
+Date: Thu,  6 Feb 2025 14:58:21 +0530
+Message-Id: <cover.1738832118.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/7] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
-        <geert+renesas@glider.be>, <angelogioacchino.delregno@collabora.com>,
-        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
-        <nfraprado@collabora.com>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241025035520.1841792-1-quic_mmanikan@quicinc.com>
- <20241025035520.1841792-6-quic_mmanikan@quicinc.com>
- <jhykmuvgltvuqf74evvenbagmftam2gaeoknuq5msxop4mkh65@dya6vvqytfcx>
- <21365836-aa06-4269-885c-591f43e2e5fc@quicinc.com>
- <befd6574-b9f0-4483-a767-684a729cfde0@oss.qualcomm.com>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <befd6574-b9f0-4483-a767-684a729cfde0@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: WdhfDpuHSihYg8CzZyg0zXeFFz5NP4Q0
-X-Proofpoint-GUID: WdhfDpuHSihYg8CzZyg0zXeFFz5NP4Q0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-06_01,2025-02-05_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- spamscore=0 adultscore=0 mlxlogscore=709 bulkscore=0 malwarescore=0
- impostorscore=0 clxscore=1011 suspectscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502060057
+Content-Transfer-Encoding: 8bit
 
+Hello,
 
+I am seeking a few Acks for this patch series before merging it into the PM tree
+for the 6.15 merge window, unless there are any objections.
 
-On 12/30/2024 8:18 PM, Konrad Dybcio wrote:
-> On 28.10.2024 7:25 AM, Manikanta Mylavarapu wrote:
->>
->>
->> On 10/25/2024 11:21 AM, Dmitry Baryshkov wrote:
->>> On Fri, Oct 25, 2024 at 09:25:18AM +0530, Manikanta Mylavarapu wrote:
->>>> From: Devi Priya <quic_devipriy@quicinc.com>
->>>>
->>>> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
->>>> devices.
->>>>
->>>> Reported-by: kernel test robot <lkp@intel.com>
->>>> Closes: https://lore.kernel.org/oe-kbuild-all/202410101431.tjpSRNTY-lkp@intel.com/
->>>
->>> These tags are incorrect. Please read the text of the email that you've
->>> got.
->>
->> Added these tags since the dependent patch [1] was included in v8.
->> Please let me know if this should be removed.
-> 
-> These tags are useful when you submit a faulty patch, it gets merged
-> quickly, and only then the robot reports it. In that situation, you
-> would be expected to send a fix, including these tags to credit the
-> robot for catching the issue.
-> 
-> Here, your patches haven't been merged yet, so it's not applicable.
+This series introduces initial Rust bindings for two subsystems: cpufreq and
+Operating Performance Points (OPP). The bindings cover most of the interfaces
+exposed by these subsystems. It also includes minimal bindings for the clk and
+cpumask frameworks, which are required by the cpufreq bindings.
 
-Hi Konrad,
+Additionally, a sample cpufreq driver, rcpufreq-dt, is included. This is a
+duplicate of the existing cpufreq-dt driver, which is a platform-agnostic,
+device-tree-based driver commonly used on ARM platforms.
 
-I apologize for the delay. I will remove the tags and post the next version.
+The implementation has been tested using QEMU, ensuring that frequency
+transitions, various configurations, and driver binding/unbinding work as
+expected. However, performance measurements have not been conducted yet.
 
-Thanks & Regards,
-Manikanta.
+For those interested in testing these patches, they can be found at:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/linux.git rust/cpufreq-dt
+
+This version is rebased on v6.14-rc1.
+
+--
+Viresh
+
+V7->V8:
+- Updated cpumask bindings to work with !CONFIG_CPUMASK_OFFSTACK case.
+- Dropped few patches (property_present() and opp helpers), as they are already
+  merged.
+- from_cpu() is marked unsafe.
+- Included a patch by Anisse Astier, to solve a long standing issue with this
+  series.
+- Dropped: "DO-NOT_MERGE: cpufreq: Rename cpufreq-dt platdev."
+- Updated MAINTAINERS for new files.
+- Other minor changes / cleanups.
+
+V6->V7:
+- from_cpu() is moved to cpu.rs and doesn't return ARef anymore, but just a
+  reference.
+- Dropped cpufreq_table_len() and related validation in cpufreq core.
+- Solved the issue with BIT() macro differently, using an enum now.
+- Few patches are broken into smaller / independent patches.
+- Improved Commit logs and SAFETY comments at few places.
+- Removed print message from cpufreq driver.
+- Rebased over linux-next/master.
+- Few other minor changes.
+
+V5->V6:
+- Rebase over latest rust/dev branch, which changed few interfaces that the
+  patches were using.
+- Included all other patches, which weren't included until now to focus only on
+  core APIs.
+- Other minor cleanups, additions.
+
+V4->V5:
+- Rename Registration::register() as new().
+- Provide a new API: Registration::new_foreign_owned() and use it for
+  rcpufreq_dt driver.
+- Update MAINTAINERS file.
+
+V3->V4:
+- Fix bugs with freeing of OPP structure. Dropped the Drop routine and fixed
+  reference counting.
+- Registration object of the cpufreq core is modified a bit to remove the
+  registered field, and few other cleanups.
+- Use Devres for instead of platform data.
+- Improve SAFETY comments.
+
+V2->V3:
+- Rebased on latest rust-device changes, which removed `Data` and so few changes
+  were required to make it work.
+- use srctree links (Alice Ryhl).
+- Various changes the OPP creation APIs, new APIs: from_raw_opp() and
+  from_raw_opp_owned() (Alice Ryhl).
+- Inline as_raw() helpers (Alice Ryhl).
+- Add new interface (`OPP::Token`) for dynamically created OPPs.
+- Add Reviewed-by tag from Manos.
+- Modified/simplified cpufreq registration structure / method a bit.
+
+V1->V2:
+- Create and use separate bindings for OF, clk, cpumask, etc (not included in
+  this patchset but pushed to the above branch). This helped removing direct
+  calls from the driver.
+- Fix wrong usage of Pinning + Vec.
+- Use Token for OPP Config.
+- Use Opaque, transparent and Aref for few structures.
+- Broken down into smaller patches to make it easy for reviewers.
+- Based over staging/rust-device.
+
+Thanks.
+
+Anisse Astier (1):
+  rust: macros: enable use of hyphens in module names
+
+Viresh Kumar (13):
+  cpufreq: Use enum for cpufreq flags that use BIT()
+  rust: cpu: Add from_cpu()
+  rust: Add cpumask helpers
+  rust: Add bindings for cpumask
+  rust: Add bare minimal bindings for clk framework
+  rust: Add initial bindings for OPP framework
+  rust: Extend OPP bindings for the OPP table
+  rust: Extend OPP bindings for the configuration options
+  rust: Add initial bindings for cpufreq framework
+  rust: Extend cpufreq bindings for policy and driver ops
+  rust: Extend cpufreq bindings for driver registration
+  rust: Extend OPP bindings with CPU frequency table
+  cpufreq: Add Rust based cpufreq-dt driver
+
+ MAINTAINERS                     |    6 +
+ drivers/cpufreq/Kconfig         |   12 +
+ drivers/cpufreq/Makefile        |    1 +
+ drivers/cpufreq/rcpufreq_dt.rs  |  238 +++++++
+ include/linux/cpufreq.h         |   96 +--
+ rust/bindings/bindings_helper.h |    5 +
+ rust/helpers/cpufreq.c          |   10 +
+ rust/helpers/cpumask.c          |   40 ++
+ rust/helpers/helpers.c          |    2 +
+ rust/kernel/clk.rs              |   48 ++
+ rust/kernel/cpu.rs              |   31 +
+ rust/kernel/cpufreq.rs          | 1054 +++++++++++++++++++++++++++++++
+ rust/kernel/cpumask.rs          |  138 ++++
+ rust/kernel/lib.rs              |    8 +
+ rust/kernel/opp.rs              |  889 ++++++++++++++++++++++++++
+ rust/macros/module.rs           |   17 +-
+ 16 files changed, 2543 insertions(+), 52 deletions(-)
+ create mode 100644 drivers/cpufreq/rcpufreq_dt.rs
+ create mode 100644 rust/helpers/cpufreq.c
+ create mode 100644 rust/helpers/cpumask.c
+ create mode 100644 rust/kernel/clk.rs
+ create mode 100644 rust/kernel/cpu.rs
+ create mode 100644 rust/kernel/cpufreq.rs
+ create mode 100644 rust/kernel/cpumask.rs
+ create mode 100644 rust/kernel/opp.rs
+
+-- 
+2.31.1.272.g89b43f80a514
 
