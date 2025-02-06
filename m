@@ -1,80 +1,83 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD7C1B4231;
-	Thu,  6 Feb 2025 20:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430C322FF22;
+	Thu,  6 Feb 2025 22:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738872362; cv=none; b=GOHXLIWdz63knXSIBBSRu5KnwHCKWu31CJCwY2HQtR2VBTyHevWJvTpYN+zmWpSkeRdyMp7hq8hbNuetnfl0qX72r0U+5UhNL0NPTckbv2lTPc4IC9jZ4Xzqy4XbFZbpoZTQtINDfG4KnqcrV0OXEKu3Z2mxvfh+EkQPtXHL+Ko=
+	t=1738879403; cv=none; b=HbvgyWpX79meq/+YsQwlHWpmKZthNulE9nb/g0ZG53roc+QbAdNEuq1HMlRzSHGcvpfhvDyVxcPg4jaxqko1l/5C2C4MJBn9O3snCcYLLB052ud6aHkCwzKzLVLD7gPr+LX5Zj8rr4NUOEhzGtiqBwF+PgILMLmjBfvCIklLgaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738872362; c=relaxed/simple;
-	bh=zIOxhng+9030YiafVBMIF0uinyUABG6TP/2uiKz/A/8=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=rfbM+JeeZzim8/bCyDbyX7GeLJlxSI6pP+9fFUVqgaQFNm7BVD3hwkzy3gOeayhfqu1u1UdPpWtbZUQiqtI5KUO3mNuSsYPS+npeB+iWl94nx2uxUPRpHkcrAYp2vLqlS9DVCyJbJCol14CJDb9pTkN5aXKGzv2iZcujsJczDrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0drsea/; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0drsea/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A7DC4CEDD;
-	Thu,  6 Feb 2025 20:06:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738872361;
-	bh=zIOxhng+9030YiafVBMIF0uinyUABG6TP/2uiKz/A/8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=M0drsea/HyZE1xa7yUTso301Gdw3Gk+GPpxzYfnvohY+PoRnWlB5J9WBiT41q2SgR
-	 h8IS/sh70fuYAn2ETIUWhAYXuF1NDdIS4Yj5ix1awHKCI/K/HGp1Ti069WVDAhexf9
-	 sj4TuI85jWaFJd/QCLGwHfXeARrhK8D0oWZ/cAfpdOcNmSfSQ9B4pPnUvlceYlu33t
-	 NqgOTeK8Dsz/gEO1EfRw109jEmLURrwxQYT6hHpmKpgyhC3Hm5ilE6RiOY/SzS3RfJ
-	 QaRKagxmPZ6uLy6Dx5kJA2ypD75NoGKuVV43RIYXJztroJ5BebGCykwY9iPhWIKIGt
-	 PyRB7x1n5UNzw==
-Message-ID: <0cd42d2d683ea057e6034978b02c7f84.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1738879403; c=relaxed/simple;
+	bh=T9S3SlEM08zIdMPS0+kGE5sEJCeV+6w4sawVogoumo8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dYu84kRXcl0rd+xKjzCl/yN46EIMQXgWxeiXsK23WmymWDBkLc19cSiThEfTqA1PBD8SLhWtXYT5JemsfneEnLUZGyevTRQuSIqKEsIZ83iv8TD1aDiGk/7Va/jw1O0VkfBQdeAtxiJskoUxQl1mTJnDvu1hPl7gp8XBEKHc4Rw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: IOxmfAN+Tg2cYa9PuhdzIQ==
+X-CSE-MsgGUID: m/8ySjWrRtWfWf2hdAqoAA==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 07 Feb 2025 07:03:18 +0900
+Received: from mulinux.example.org (unknown [10.226.93.55])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id CC07040AF2B1;
+	Fri,  7 Feb 2025 07:03:12 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/7] Add DMAC support to the RZ/V2H(P)
+Date: Thu,  6 Feb 2025 22:03:01 +0000
+Message-Id: <20250206220308.76669-1-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Z6SiiRubSXGInbgj@pollux>
-References: <cover.1738832118.git.viresh.kumar@linaro.org> <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org> <Z6ShsuLykigNscz8@pollux> <Z6SiiRubSXGInbgj@pollux>
-Subject: Re: [PATCH V8 06/14] rust: Add bare minimal bindings for clk framework
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Rafael J. Wysocki <rafael@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, Erik Schilling <erik.schilling@linaro.org>, Alex =?utf-8?q?Benn=C3=A9e?= <alex.bennee@linaro.org>, Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-To: Danilo Krummrich <dakr@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
-Date: Thu, 06 Feb 2025 12:05:59 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Transfer-Encoding: 8bit
 
-Quoting Danilo Krummrich (2025-02-06 03:52:41)
-> On Thu, Feb 06, 2025 at 12:49:14PM +0100, Danilo Krummrich wrote:
-> > On Thu, Feb 06, 2025 at 02:58:27PM +0530, Viresh Kumar wrote:
-> > > diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-> > > new file mode 100644
-> > > index 000000000000..123cdb43b115
-> > > --- /dev/null
-> > > +++ b/rust/kernel/clk.rs
-> > > @@ -0,0 +1,48 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +//! Clock abstractions.
-> > > +//!
-> > > +//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
-> > > +
-> > > +use crate::{
-> > > +    bindings,
-> > > +    device::Device,
-> > > +    error::{from_err_ptr, Result},
-> > > +    prelude::*,
-> > > +};
-> > > +
-> > > +use core::ptr;
-> > > +
-> > > +/// A simple implementation of `struct clk` from the C code.
-> > > +#[repr(transparent)]
-> > > +pub struct Clk(*mut bindings::clk);
-> >=20
-> > Guess this should be Opaque<bindings::clk>.
->=20
-> Sorry, I meant NonNull<bindings::clk>.
+Dear All,
 
-NULL is a valid clk. It's like "don't care" in the common clk framework
-as most clk consumer operations bail out early in that case.
+This series adds DMAC support to the Renesas RZ/V2H(P).
+
+Cheers,
+Fab
+
+Fabrizio Castro (7):
+  clk: renesas: r9a09g057: Add entries for the DMACs
+  dt-bindings: dma: rz-dmac: Restrict properties for RZ/A1H
+  dt-bindings: dma: rz-dmac: Document RZ/V2H(P) family of SoCs
+  irqchip/renesas-rzv2h: Add rzv2h_icu_register_dma_req_ack
+  dmaengine: sh: rz-dmac: Allow for multiple DMACs
+  dmaengine: sh: rz-dmac: Add RZ/V2H(P) support
+  arm64: dts: renesas: r9a09g057: Add DMAC nodes
+
+ .../bindings/dma/renesas,rz-dmac.yaml         | 148 +++++++++++++--
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    | 165 +++++++++++++++++
+ drivers/clk/renesas/r9a09g057-cpg.c           |  24 +++
+ drivers/clk/renesas/rzv2h-cpg.h               |   2 +
+ drivers/dma/sh/Kconfig                        |   1 +
+ drivers/dma/sh/rz-dmac.c                      | 170 ++++++++++++++++--
+ drivers/irqchip/irq-renesas-rzv2h.c           |  61 +++++++
+ include/linux/irqchip/irq-renesas-rzv2h.h     |  19 ++
+ 8 files changed, 555 insertions(+), 35 deletions(-)
+ create mode 100644 include/linux/irqchip/irq-renesas-rzv2h.h
+
+-- 
+2.34.1
+
