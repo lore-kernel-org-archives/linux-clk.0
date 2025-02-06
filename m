@@ -1,93 +1,80 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709931DDC15;
-	Thu,  6 Feb 2025 18:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD7C1B4231;
+	Thu,  6 Feb 2025 20:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738865764; cv=none; b=oCBqZJJnK+w04ehQ51plaOVEDD/bIskMykK5UP5O4UR7VbjIfk/iHUcHoJJ0Hc3YzXtvuiHAe9vTbVliXj/CurMexa90az8+9Iep8wPC4KFBEmF4jvADO6dodfK2sA/iWYea+Q2q0/UxJxwbfRVp1tuN8mLeQhMU/6tXwWtT1o8=
+	t=1738872362; cv=none; b=GOHXLIWdz63knXSIBBSRu5KnwHCKWu31CJCwY2HQtR2VBTyHevWJvTpYN+zmWpSkeRdyMp7hq8hbNuetnfl0qX72r0U+5UhNL0NPTckbv2lTPc4IC9jZ4Xzqy4XbFZbpoZTQtINDfG4KnqcrV0OXEKu3Z2mxvfh+EkQPtXHL+Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738865764; c=relaxed/simple;
-	bh=Jos/hi+/8kc69r3zVe5hi6bwnwOoBz55vx9UJaURjZI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YK7jdmQm8w+PES4KtOCrsTToNLSAPcsfJR8eYrB0kWlcwQSlsqsVrjX3LFA3Qmca77udMXdG7ugFYU9tx73p52qvDlkLIfIGFRZ7PDkyQUqMgbvhBtnKfdH25q3I7q3VrriJ7/GA/8uOk1SOL3ql4eQkyq6VrBiY6fPSV+O+ey4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UeawXaFe; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1738872362; c=relaxed/simple;
+	bh=zIOxhng+9030YiafVBMIF0uinyUABG6TP/2uiKz/A/8=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=rfbM+JeeZzim8/bCyDbyX7GeLJlxSI6pP+9fFUVqgaQFNm7BVD3hwkzy3gOeayhfqu1u1UdPpWtbZUQiqtI5KUO3mNuSsYPS+npeB+iWl94nx2uxUPRpHkcrAYp2vLqlS9DVCyJbJCol14CJDb9pTkN5aXKGzv2iZcujsJczDrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M0drsea/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UeawXaFe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1738865762; x=1770401762;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Jos/hi+/8kc69r3zVe5hi6bwnwOoBz55vx9UJaURjZI=;
-  b=UeawXaFeccZH2i1OYVJE7t/TQiQJBxuv9SQRjKz3GWJBCZfwjT/ytsR9
-   0Pi8L/tUoY8dKeHhNQmdqoTGP8W4N0fOQbbftqSwjJw/mUOev/bHmLxBf
-   WZ5+1KBfQNNyjVx+r1mt8+QrFKGuLx2xS6OC1ZfsEkdQT7hIG9nxlyV3l
-   8l0glpA46wLrKw+AvusjlbQy6uAA6h/6AI8ZNYRkxc7AnD5gBl37wtNrg
-   IWIDuDDXw2SVHgx+z+Ch6Kg0+5VgNa3seXz6S1sbKRorY/1bNE6NQDXd2
-   2B2c45acYTJyU39/F2TUiD0PrhzbqJebabCbAR96jEUhKCW4JdzCTaZnx
-   g==;
-X-CSE-ConnectionGUID: RUzZ0s40Rb2+hOFS2V1Qww==
-X-CSE-MsgGUID: tdrkNp/4Rsed0wn4y4s5rQ==
-X-IronPort-AV: E=Sophos;i="6.13,264,1732604400"; 
-   d="scan'208";a="36973015"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Feb 2025 11:15:53 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 6 Feb 2025 11:15:32 -0700
-Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 6 Feb 2025 11:15:32 -0700
-From: <Ryan.Wanner@microchip.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <mripard@kernel.org>, Ryan Wanner
-	<Ryan.Wanner@microchip.com>
-Subject: [PATCH 2/2] clk: at91: sama7d65: Add missing clk_hw to parent_data
-Date: Thu, 6 Feb 2025 11:14:43 -0700
-Message-ID: <a64f5fd10b1af61dbf01d2f2839af532e25547c4.1738864727.git.Ryan.Wanner@microchip.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1738864727.git.Ryan.Wanner@microchip.com>
-References: <cover.1738864727.git.Ryan.Wanner@microchip.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M0drsea/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A7DC4CEDD;
+	Thu,  6 Feb 2025 20:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738872361;
+	bh=zIOxhng+9030YiafVBMIF0uinyUABG6TP/2uiKz/A/8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=M0drsea/HyZE1xa7yUTso301Gdw3Gk+GPpxzYfnvohY+PoRnWlB5J9WBiT41q2SgR
+	 h8IS/sh70fuYAn2ETIUWhAYXuF1NDdIS4Yj5ix1awHKCI/K/HGp1Ti069WVDAhexf9
+	 sj4TuI85jWaFJd/QCLGwHfXeARrhK8D0oWZ/cAfpdOcNmSfSQ9B4pPnUvlceYlu33t
+	 NqgOTeK8Dsz/gEO1EfRw109jEmLURrwxQYT6hHpmKpgyhC3Hm5ilE6RiOY/SzS3RfJ
+	 QaRKagxmPZ6uLy6Dx5kJA2ypD75NoGKuVV43RIYXJztroJ5BebGCykwY9iPhWIKIGt
+	 PyRB7x1n5UNzw==
+Message-ID: <0cd42d2d683ea057e6034978b02c7f84.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Z6SiiRubSXGInbgj@pollux>
+References: <cover.1738832118.git.viresh.kumar@linaro.org> <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org> <Z6ShsuLykigNscz8@pollux> <Z6SiiRubSXGInbgj@pollux>
+Subject: Re: [PATCH V8 06/14] rust: Add bare minimal bindings for clk framework
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Rafael J. Wysocki <rafael@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, Erik Schilling <erik.schilling@linaro.org>, Alex =?utf-8?q?Benn=C3=A9e?= <alex.bennee@linaro.org>, Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: Danilo Krummrich <dakr@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
+Date: Thu, 06 Feb 2025 12:05:59 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-From: Ryan Wanner <Ryan.Wanner@microchip.com>
+Quoting Danilo Krummrich (2025-02-06 03:52:41)
+> On Thu, Feb 06, 2025 at 12:49:14PM +0100, Danilo Krummrich wrote:
+> > On Thu, Feb 06, 2025 at 02:58:27PM +0530, Viresh Kumar wrote:
+> > > diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+> > > new file mode 100644
+> > > index 000000000000..123cdb43b115
+> > > --- /dev/null
+> > > +++ b/rust/kernel/clk.rs
+> > > @@ -0,0 +1,48 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +//! Clock abstractions.
+> > > +//!
+> > > +//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
+> > > +
+> > > +use crate::{
+> > > +    bindings,
+> > > +    device::Device,
+> > > +    error::{from_err_ptr, Result},
+> > > +    prelude::*,
+> > > +};
+> > > +
+> > > +use core::ptr;
+> > > +
+> > > +/// A simple implementation of `struct clk` from the C code.
+> > > +#[repr(transparent)]
+> > > +pub struct Clk(*mut bindings::clk);
+> >=20
+> > Guess this should be Opaque<bindings::clk>.
+>=20
+> Sorry, I meant NonNull<bindings::clk>.
 
-The main_xtal clk_hw struct is not passed into parent_data.hw causing an
-issue with main_osc parent. Passing the main_xtal struct into the
-parent_data struct will ensure the correct parent structure.
-
-Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
----
- drivers/clk/at91/sama7d65.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
-index a5d40df8b2f27..08306261c9c7e 100644
---- a/drivers/clk/at91/sama7d65.c
-+++ b/drivers/clk/at91/sama7d65.c
-@@ -1138,6 +1138,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
- 
- 	parent_data.name = main_xtal_name;
- 	parent_data.fw_name = main_xtal_name;
-+	parent_data.hw = main_xtal_hw;
- 	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
- 						 &parent_data, bypass);
- 	if (IS_ERR(main_osc_hw))
--- 
-2.43.0
-
+NULL is a valid clk. It's like "don't care" in the common clk framework
+as most clk consumer operations bail out early in that case.
