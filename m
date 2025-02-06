@@ -1,144 +1,108 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2FF22FF43;
-	Thu,  6 Feb 2025 22:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67932417DB;
+	Thu,  6 Feb 2025 23:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738879405; cv=none; b=fDOANUhtnbEQekHaOUAZEQpz9wt55MhE8Kh2odq8pLiB2BpH6O9KpPI5tSo/QCAo/hnoV5BL4x92XDORqbMGT6tO+AazqFEvckOCzqhy+6W3Kys9T8w7Gkq52dsnRVWG3xCSJ0dDwTqwpfyb4gqkSlzryOTA9RedXLPnk92Xbd4=
+	t=1738883500; cv=none; b=EDm28jItlnk2McBEdndj9YaYQ35aqPjo2oz+xd2QlVNcFXoTXmD6T2k1Jk9+XVzqq1zV6hVLjJwJQLKg2WGhxDjLorxFwtdYDgI46ZnL8UCluGBbG4o5pJ/NahKzl6Qf62Txo0PkaqIQkHMIHKtOT+n7Rz8sVwajHMqdYAbOWVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738879405; c=relaxed/simple;
-	bh=F+3/oMFDbPvjlPx+rIojF6LujV07AlIZiDsfk9y5WKc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qONKZuE/CTHKUJw8M1J0WE96+ugSVFJyjS8IHVa3TawTdmTy6c5xcazyeZZBZXJV1K5jL3C2aThZsVBJnMvROLWAhM3CVLY7HACCpkzG56wJc5v1eYOO4PClVVm9I082eV6WeqD3UM/lm1opdjhycRDkGMXQhw6WFhgahmi2C0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: TOJHo+hLTJivgEeV1b509A==
-X-CSE-MsgGUID: lMVwRpkDTiSFPY2e1vjySQ==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Feb 2025 07:03:22 +0900
-Received: from mulinux.example.org (unknown [10.226.93.55])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3F6BB40AF2B1;
-	Fri,  7 Feb 2025 07:03:18 +0900 (JST)
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 1/7] clk: renesas: r9a09g057: Add entries for the DMACs
-Date: Thu,  6 Feb 2025 22:03:02 +0000
-Message-Id: <20250206220308.76669-2-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250206220308.76669-1-fabrizio.castro.jz@renesas.com>
-References: <20250206220308.76669-1-fabrizio.castro.jz@renesas.com>
+	s=arc-20240116; t=1738883500; c=relaxed/simple;
+	bh=jDuPmiaq9ueizgTW8FkupCOJkVQUdjLVaZ6njpeHcVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kRoQvOL8as2rccaOlEKAPp1UqZ7xd/fXnkByMRwBYalBgnf16wBfkXfLJtDYPFguxzFMu3LDqfydjcemIyzcec9rDcPBniKEgM7xX7Vteow28h7C8Jw6AQzhqfiV+grb0lNb89Y5q0SZpj5A/+ednqcBgdYj8cOT38wIwU3l2Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GLWwQsGr; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GLWwQsGr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9C81C4CEE0;
+	Thu,  6 Feb 2025 23:11:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738883499;
+	bh=jDuPmiaq9ueizgTW8FkupCOJkVQUdjLVaZ6njpeHcVc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GLWwQsGrqCWiTz7ciZe4TH4q5zurpTo/1k/REn+QY+m/lsMxACI9XrXHYVq7TI/4r
+	 lmTZHCJqQ8QDobZSitExjwGTZDEwnQuAyfBFeK4n99h0ZJFMp1l1VqRc+ZDLKEoBHE
+	 vlLnYizUdODzUifm5I4MxmEF+AAhsvL0QqVxMQElohT8cuwk4Z5Bz5cIYudv63Z3gU
+	 /flYP8ChC1hQRZhau+nyetKGMuGPSxeDdeea+RFSCcRIEcTyWDHyveYN2TQlB9zo2W
+	 RAW8MlfC0ac8q7Txom/mUMuQ7NVj6ZA1k6zCLkGQW8WzXO0O2Tk9wBmAP6x2D5HP9H
+	 P0GgNC01AaIXA==
+Date: Fri, 7 Feb 2025 00:11:31 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH V8 06/14] rust: Add bare minimal bindings for clk
+ framework
+Message-ID: <Z6VBo51g54xAmelQ@cassiopeiae>
+References: <cover.1738832118.git.viresh.kumar@linaro.org>
+ <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org>
+ <Z6ShsuLykigNscz8@pollux>
+ <Z6SiiRubSXGInbgj@pollux>
+ <0cd42d2d683ea057e6034978b02c7f84.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0cd42d2d683ea057e6034978b02c7f84.sboyd@kernel.org>
 
-Add clock and reset entries for the Renesas RZ/V2H(P) DMAC IPs.
+On Thu, Feb 06, 2025 at 12:05:59PM -0800, Stephen Boyd wrote:
+> Quoting Danilo Krummrich (2025-02-06 03:52:41)
+> > On Thu, Feb 06, 2025 at 12:49:14PM +0100, Danilo Krummrich wrote:
+> > > On Thu, Feb 06, 2025 at 02:58:27PM +0530, Viresh Kumar wrote:
+> > > > diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+> > > > new file mode 100644
+> > > > index 000000000000..123cdb43b115
+> > > > --- /dev/null
+> > > > +++ b/rust/kernel/clk.rs
+> > > > @@ -0,0 +1,48 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +
+> > > > +//! Clock abstractions.
+> > > > +//!
+> > > > +//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
+> > > > +
+> > > > +use crate::{
+> > > > +    bindings,
+> > > > +    device::Device,
+> > > > +    error::{from_err_ptr, Result},
+> > > > +    prelude::*,
+> > > > +};
+> > > > +
+> > > > +use core::ptr;
+> > > > +
+> > > > +/// A simple implementation of `struct clk` from the C code.
+> > > > +#[repr(transparent)]
+> > > > +pub struct Clk(*mut bindings::clk);
+> > > 
+> > > Guess this should be Opaque<bindings::clk>.
+> > 
+> > Sorry, I meant NonNull<bindings::clk>.
+> 
+> NULL is a valid clk. It's like "don't care" in the common clk framework
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
----
- drivers/clk/renesas/r9a09g057-cpg.c | 24 ++++++++++++++++++++++++
- drivers/clk/renesas/rzv2h-cpg.h     |  2 ++
- 2 files changed, 26 insertions(+)
+Thanks for clarifying!
 
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-index 3705e18f66ad..d63eafbca780 100644
---- a/drivers/clk/renesas/r9a09g057-cpg.c
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -31,6 +31,8 @@ enum clk_ids {
- 	CLK_PLLVDO,
- 
- 	/* Internal Core Clocks */
-+	CLK_PLLCM33_DIV4,
-+	CLK_PLLCM33_DIV4_PLLCM33,
- 	CLK_PLLCM33_DIV16,
- 	CLK_PLLCLN_DIV2,
- 	CLK_PLLCLN_DIV8,
-@@ -39,6 +41,8 @@ enum clk_ids {
- 	CLK_PLLDTY_ACPU_DIV2,
- 	CLK_PLLDTY_ACPU_DIV4,
- 	CLK_PLLDTY_DIV16,
-+	CLK_PLLDTY_RCPU,
-+	CLK_PLLDTY_RCPU_DIV4,
- 	CLK_PLLVDO_CRU0,
- 	CLK_PLLVDO_CRU1,
- 	CLK_PLLVDO_CRU2,
-@@ -85,6 +89,9 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 	DEF_FIXED(".pllvdo", CLK_PLLVDO, CLK_QEXTAL, 105, 2),
- 
- 	/* Internal Core Clocks */
-+	DEF_FIXED(".pllcm33_div4", CLK_PLLCM33_DIV4, CLK_PLLCM33, 1, 4),
-+	DEF_DDIV(".pllcm33_div4_pllcm33", CLK_PLLCM33_DIV4_PLLCM33,
-+		 CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
- 
- 	DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
-@@ -95,6 +102,8 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 	DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
- 	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
- 	DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
-+	DEF_DDIV(".plldty_rcpu", CLK_PLLDTY_RCPU, CLK_PLLDTY, CDDIV3_DIVCTL2, dtable_2_64),
-+	DEF_FIXED(".plldty_rcpu_div4", CLK_PLLDTY_RCPU_DIV4, CLK_PLLDTY_RCPU, 1, 4),
- 
- 	DEF_DDIV(".pllvdo_cru0", CLK_PLLVDO_CRU0, CLK_PLLVDO, CDDIV3_DIVCTL3, dtable_2_4),
- 	DEF_DDIV(".pllvdo_cru1", CLK_PLLVDO_CRU1, CLK_PLLVDO, CDDIV4_DIVCTL0, dtable_2_4),
-@@ -115,6 +124,16 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- };
- 
- static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
-+	DEF_MOD("dmac_0_aclk",			CLK_PLLCM33_DIV4_PLLCM33, 0, 0, 0, 0,
-+						BUS_MSTOP(5, BIT(9))),
-+	DEF_MOD("dmac_1_aclk",			CLK_PLLDTY_ACPU_DIV2, 0, 1, 0, 1,
-+						BUS_MSTOP(3, BIT(2))),
-+	DEF_MOD("dmac_2_aclk",			CLK_PLLDTY_ACPU_DIV2, 0, 2, 0, 2,
-+						BUS_MSTOP(3, BIT(3))),
-+	DEF_MOD("dmac_3_aclk",			CLK_PLLDTY_RCPU_DIV4, 0, 3, 0, 3,
-+						BUS_MSTOP(10, BIT(11))),
-+	DEF_MOD("dmac_4_aclk",			CLK_PLLDTY_RCPU_DIV4, 0, 4, 0, 4,
-+						BUS_MSTOP(10, BIT(12))),
- 	DEF_MOD_CRITICAL("icu_0_pclk_i",	CLK_PLLCM33_DIV16, 0, 5, 0, 5,
- 						BUS_MSTOP_NONE),
- 	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
-@@ -223,6 +242,11 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
- 
- static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
- 	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
-+	DEF_RST(3, 1, 1, 2),		/* DMAC_0_ARESETN */
-+	DEF_RST(3, 2, 1, 3),		/* DMAC_1_ARESETN */
-+	DEF_RST(3, 3, 1, 4),		/* DMAC_2_ARESETN */
-+	DEF_RST(3, 4, 1, 5),		/* DMAC_3_ARESETN */
-+	DEF_RST(3, 5, 1, 6),		/* DMAC_4_ARESETN */
- 	DEF_RST(3, 6, 1, 7),		/* ICU_0_PRESETN_I */
- 	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
- 	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
-diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
-index fd8eb985c75b..576a070763cb 100644
---- a/drivers/clk/renesas/rzv2h-cpg.h
-+++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -38,11 +38,13 @@ struct ddiv {
- #define CPG_CDDIV3		(0x40C)
- #define CPG_CDDIV4		(0x410)
- 
-+#define CDDIV0_DIVCTL1	DDIV_PACK(CPG_CDDIV0, 4, 3, 1)
- #define CDDIV0_DIVCTL2	DDIV_PACK(CPG_CDDIV0, 8, 3, 2)
- #define CDDIV1_DIVCTL0	DDIV_PACK(CPG_CDDIV1, 0, 2, 4)
- #define CDDIV1_DIVCTL1	DDIV_PACK(CPG_CDDIV1, 4, 2, 5)
- #define CDDIV1_DIVCTL2	DDIV_PACK(CPG_CDDIV1, 8, 2, 6)
- #define CDDIV1_DIVCTL3	DDIV_PACK(CPG_CDDIV1, 12, 2, 7)
-+#define CDDIV3_DIVCTL2	DDIV_PACK(CPG_CDDIV3, 8, 3, 14)
- #define CDDIV3_DIVCTL3	DDIV_PACK(CPG_CDDIV3, 12, 1, 15)
- #define CDDIV4_DIVCTL0	DDIV_PACK(CPG_CDDIV4, 0, 1, 16)
- #define CDDIV4_DIVCTL1	DDIV_PACK(CPG_CDDIV4, 4, 1, 17)
--- 
-2.34.1
+> as most clk consumer operations bail out early in that case.
 
+Most? Does that mean NULL isn't *always* valid?
