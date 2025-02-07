@@ -1,118 +1,93 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D271E1A33;
-	Fri,  7 Feb 2025 13:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091CD18DB21;
+	Fri,  7 Feb 2025 17:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738934095; cv=none; b=XzQtAyGTotTVvDlI9jyNM0L/0Dook+pI9C70mxOyVHdwhi7Idt/i45hCvYvQmwGnLOYNTzIudPjw2r5mh1hrvgc/9Kgyzrn8KAq1lVdkm4yFwne2mj+H2kp5wjzNLut2BKC8R0QYwn7qlVPxoSMoegT6CXF1HiDNztPyjxBs/5M=
+	t=1738948761; cv=none; b=j7yaf9lgZE5T72GiVbvRYHI1xXbHLxiBlJxDwBx0Hio0HTrLemvEXjTKROtm/mLKsPuxGYJkoGqyow6MCwQb/ma/IVUZSqgcqkFgKUElkqS2GQN0pGx9dfW86vrgPZoD5RA9pxo8vKxKsCcqaeDG2LX5CwerJmZ1ysDO4WOmq1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738934095; c=relaxed/simple;
-	bh=OW7OP/NQ49fQv/lKJd6pSJwjF7WpKW61USJQD2CXCbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fU0rzIEQMzjKA/liA8WBmureVKtkXo7cGXnK2nFcB/oY+H4BlWPeLZ7xdbonGSlmfLujWQyeCFYMvksfY4g2XkKv/l9air5I0b0s14w3I/Huj5i+kX8q51XB0/ZlrUhsIHKu575OyUSwj6kKyoD4mjYoELDY46exyiMckWJzrZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3F50113E;
-	Fri,  7 Feb 2025 05:15:15 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7FE453F63F;
-	Fri,  7 Feb 2025 05:14:49 -0800 (PST)
-Date: Fri, 7 Feb 2025 13:14:46 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Abel Vesa <abelvesa@kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH v2 3/4] clk: imx: pll14xx: support spread spectrum clock
- generation
-Message-ID: <Z6YHRlxJG4V56wrZ@bogus>
-References: <20250205-clk-ssc-v2-0-fa73083caa92@nxp.com>
- <20250205-clk-ssc-v2-3-fa73083caa92@nxp.com>
- <CABGWkvqXf0ZmJKofrbahB5N5uer6ye6Q4s_PXz_Z61vG2pMu=g@mail.gmail.com>
- <PAXPR04MB8459F1CE0E8049355ADC9F3C88F62@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <CABGWkvrKe6az5XR=MvdMwBOfeXqd5yPoF4Yf4pqyyGPD4Kpvpg@mail.gmail.com>
- <Z6TgesTZklGvmI56@bogus>
- <20250207112622.GB14860@localhost.localdomain>
+	s=arc-20240116; t=1738948761; c=relaxed/simple;
+	bh=sdUkcNhVQ5Ph1CRzdktcyKpovBSX+j6bHeJqjw6Pme0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cKaCtlUkwzOS3n0kNym4rpIskWljVMeIqmH78n99VGIKVz0bLyqIk/DVx+x7KzgPeUMk6HH7y59c/kfbPJ5CivF8HrQknPdfs3YKZykeYH668mWm/gfyE0jIdCULyqr/uURcggkw6z3+PdAtSbRzEks17FZT6cEzrltc5WWCAzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uHWfCybx; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHWfCybx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B03EDC4CED1;
+	Fri,  7 Feb 2025 17:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738948760;
+	bh=sdUkcNhVQ5Ph1CRzdktcyKpovBSX+j6bHeJqjw6Pme0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uHWfCybxKmDKxLPbJCai952AKWzoeLRR3Xgsq8OWU4rCAoJoCLjOAzlXjv8EulxJ3
+	 6u7B7/ggvChz2k6lf5SWWexSBkukKo68xlmPg75gzZXVjbfRfIZVrbBfVsWNFKIIKA
+	 12FL1MJ729o+AlBBszUVeUY+VsHNxrOEaZO9mxHkutGSN/yosIE9R2D4e9W/iXhI1R
+	 VcRA5LzJN6b9YipC4WBsA0TnU5/X3604LXYRHCs5KTkhzPmkjvLEYP8yaMDgHW0xxN
+	 feAq+w82tWo01y3f9Il7gQ9kBHwGprddW+d6lQyZdTaPxIqEyxgTyNj4S6IEJGzofM
+	 QEAvAhY2uHOLQ==
+Message-ID: <52a3d4fc-b08c-499c-ba47-7a1d782b57db@kernel.org>
+Date: Fri, 7 Feb 2025 18:19:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250207112622.GB14860@localhost.localdomain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V8 06/14] rust: Add bare minimal bindings for clk
+ framework
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Michael Turquette
+ <mturquette@baylibre.com>, linux-pm@vger.kernel.org,
+ Vincent Guittot <vincent.guittot@linaro.org>, Nishanth Menon <nm@ti.com>,
+ rust-for-linux@vger.kernel.org,
+ Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+ Erik Schilling <erik.schilling@linaro.org>,
+ =?UTF-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
+ Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <cover.1738832118.git.viresh.kumar@linaro.org>
+ <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org>
+ <Z6ShsuLykigNscz8@pollux> <Z6SiiRubSXGInbgj@pollux>
+ <0cd42d2d683ea057e6034978b02c7f84.sboyd@kernel.org>
+ <Z6VBo51g54xAmelQ@cassiopeiae> <20250207092448.n5mzbt6lg6zqud4a@vireshk-i7>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250207092448.n5mzbt6lg6zqud4a@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 07, 2025 at 07:26:22PM +0800, Peng Fan wrote:
-> Hi Sudeep,
->
-> V2 is actually 2 weeks after V1. So after addressing the comments
-> from Stephen and Dan, also updated clk-scmi.c to use a non-vendor
-> changes, I posted out V2.
->
+On 2/7/25 10:24 AM, Viresh Kumar wrote:
+> On 07-02-25, 00:11, Danilo Krummrich wrote:
+>> On Thu, Feb 06, 2025 at 12:05:59PM -0800, Stephen Boyd wrote:
+>>> Quoting Danilo Krummrich (2025-02-06 03:52:41)
+>>>> On Thu, Feb 06, 2025 at 12:49:14PM +0100, Danilo Krummrich wrote:
+>>>>> On Thu, Feb 06, 2025 at 02:58:27PM +0530, Viresh Kumar wrote:
+> 
+>>>>>> +/// A simple implementation of `struct clk` from the C code.
+>>>>>> +#[repr(transparent)]
+>>>>>> +pub struct Clk(*mut bindings::clk);
+>>>>>
+>>>>> Guess this should be Opaque<bindings::clk>.
+>>>>
+>>>> Sorry, I meant NonNull<bindings::clk>.
+>>>
+>>> NULL is a valid clk. It's like "don't care" in the common clk framework
+>>
+>> Thanks for clarifying!
+> 
+>> Guess this should be Opaque<bindings::clk>.
+> 
+> So it should be this now ?
 
-Sure, but as I said you posted on the very first day of the merge window.
-So 2 weeks just cover the end of merge window.
+I actually meant NonNull<bindings::clk>, which I corrected in a subsequent mail,
+where Stephen pointed out that NULL is a valid value for a struct clk.
 
-> 2 days, this is just after got Cristian's comments. Then I posted V2.
-> I try to follow your working style on handling scmi patches, but seems you are
-> not active, so I mainly count on Cristian's comments and update patches.
->
-
-Yes, his comments were for more discussions internally and externally.
-Not to churn up another patch set.
-
-> The i.MX pll patches in V2 is orthogonal to clk scmi, I did not expect
-> complains. But ...
->
-
-Sorry if I overlooked, but with not all the platform specific
-knowledge it is just too much info to consume at once. Again it is
-fine if you don't make it hard but churning newer versions. So please
-give time.
-
-> In my view, maintainers have patchwork to maintain patches. patches send
-> out in merge window will not be reviewed in short time or surely not
-> picked up, I understand this. patches could just be marked new in patchwork.
-> If new version is out, old version just marked as not apply.
-
-Though I don't use patchwork(probably I should not your problem).
-However, sometimes I see all versions to understand the changes and
-evolution sometimes. And it just gets hard if there are too many
-versions in short duration.
-
-> And I use b4 to manage patchset, and each revision has changelog.
->
-
-Good.
-
-> Indeed I not track merge window since I am not maintainer role. I was
-> not aware this would introduce complain (: I will track the cycle
-> in following days.
->
-
-I don't say it is a must. But good if you manage to.
-
-I will look at all the pending patches from you soon, give me until
-middle of next week.
-
---
-Regards,
-Sudeep
