@@ -1,97 +1,157 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FA51DD88D;
-	Fri,  7 Feb 2025 09:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779F0185B5F
+	for <linux-clk@vger.kernel.org>; Fri,  7 Feb 2025 09:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738921024; cv=none; b=MV+k33HOA+NW4AOJoYMdcoT+cOg1oaHRP+o1vkXfRe9v6RDQp5oqDua4fE71A7FSxyO/9Zm6P2TOJb7ZToHs/kWxiOR3wR/wb23a16QlZ+/G++0Lj4AZ7DG3GJ+an+OB7cKAp52BUqAmy1OGcYidLHqs8g315XnWiyvYfDA2whw=
+	t=1738921797; cv=none; b=TZ6KLFo3K4FByqwyX9CkDL3/QCriYP68cIqVsCjNcWBmX/1GAFoerqG+GgnXiulRfuZ5q8+JlE5Nq8q2OeFz6/UQEiINSooOY6cDtbHEXLyXzAlDIN+39pV9cAhtv/AjHaJz3toTB1B7/0uuY+qn2iuOLw9gyQhsgOm0+puumvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738921024; c=relaxed/simple;
-	bh=f8S5Z26MQ4v00FiRKizfZIrEOYaW+rK3aHSMP+4o0HY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eYPygVfulTvRIBL5wSYQ2a4wdXZoJIBu6lpBJ+w5P2+vDJXL4YCcQu4zC+HPm5UMsrxcbY1G6rMM1FTxjBofiQLOsTQ39pcgRBu7sTRfmvc43A7GQbKHyUGzuAX+XLSVlLZsQ/H5GjNAVQm0rhsbRPeO7zVqm7JwamB3OLnLlmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+CqAoLq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738921797; c=relaxed/simple;
+	bh=S4p6LLSLOPSpJE9g1forZYx4llbSsosHafGdaXkcLks=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N/glBzeC437TaaepTbXnLj3B22EXk1bE9Al8djJHfLgROiUaRR60nSlB2Uo3KkuNqPKfCHWhslQWVpm970Fq70T1Qp5AV7nJiQzs9Ij2Fs8G/UImdp576Wx0uUB0A8+MToiapvbku/Q9r9hdJzZIjXLh/Va6/Rbm4xDqMf8/S/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=R0QQ6qqk; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+CqAoLq"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BAAE2C4CED1;
-	Fri,  7 Feb 2025 09:37:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738921023;
-	bh=f8S5Z26MQ4v00FiRKizfZIrEOYaW+rK3aHSMP+4o0HY=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=h+CqAoLqfWodIlcT3E1goZycS0fH2ARZzvspuepmfVQRN8e/4R6ZmXXwAD/CeceZP
-	 3LKwJJISJuBYojRQZ+WFiesGfqF9yix1uiYWixcywfkcVG8PvwU9xrw13mbc8SAeBY
-	 4uTGNEP62Nw3Blil+RiPt9GWTAR1ZHU6Czpp7irFkEtlBHDKiS56Gkm8+4d/Cf9FgU
-	 1xv6jS/D+an01o2ehJWb40AICepUBq+rmhCsl48v4MAzxFr03bhg7qFwv5v3iW1alW
-	 qHJpB6pNayqXKm3Dk1Yl2MHib/THDE0eSGTVxTKOXmev/RAhQc6xnnhqC/Zd1oC7FQ
-	 uRHhvFiC02bfQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE96BC02196;
-	Fri,  7 Feb 2025 09:37:03 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Fri, 07 Feb 2025 17:36:10 +0800
-Subject: [PATCH] clk: Correct the data types of the variables in
- clk_calc_new_rates
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="R0QQ6qqk"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5dc82e38c10so4135360a12.3
+        for <linux-clk@vger.kernel.org>; Fri, 07 Feb 2025 01:49:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1738921794; x=1739526594; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hHxN1cJYA/N06QjEqFReiwPXLdQZSTCuNsi3b9gHzjE=;
+        b=R0QQ6qqkuCHyh/Lspg5x220NQrmp3N6wdbNGoWH7PyXNdhvxz4Jbe7NchDCCV30XOR
+         4UrnQQ0BAftdo0xjDtYM/BhzjoxDNhCnK34Yghwjgj4YH3Z24bCg8BkDMUE3cBgRNqoW
+         IN/BOoMUZKikliYvQvrQhGKp5soXPZt7bLmqMnjeOaoYU/2tpjpLxYXKJbjHw7zOiTqT
+         Jb0g9NZP4p3/v2EQoEOMoMl4ILwB4ZGwXP6h8dqQJOw5YWwV47WyQt2MnRb6xO1swpGW
+         M+TB33esmktLN3zuHbZ6n5BvKOB6V9Gwuspyo58dC6FTQjuOuV/zfe3lbKR/zWYucP9I
+         CxeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738921794; x=1739526594;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hHxN1cJYA/N06QjEqFReiwPXLdQZSTCuNsi3b9gHzjE=;
+        b=wDBWfaKZPLxD5aNiN7LfDnc+veuhlGFL344eZWuAJDpEUqInm6vcfx4RpyOoW0tlFM
+         1kng4zO5S97KVw7rMGM08DdBXStuyhRG5h4w5A4j/dH0uNOMztt/H9kYo21gwuKqjne2
+         Yulf6niiilSvn6Hhjtsxy9PtolzgZkja9E2eto8xj/lbP2kzRWhmaccEl6aVd4byS7Np
+         B1sooW+jygPAd3N0mfSW9hIZHRzUD2Be3eC9VQynMd+ZGopAgx8QzBQc1vkpMngd6ZZT
+         1ypCfZ5tnh/9JAffdvcb8YrDnRvZuKQoPEmvWXplvYquvPcn5WmNIQt+81/iHIvgfGZk
+         z/cw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0flQWiB5HH5PPIALQ1GybIQI6FQDsZZ5EezzCsm+/Do104mi6AyfC2R8UVBJSl/0swUxxIJ/FOHM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoDCuephMYdv/u0Hg1LaLp7+6IWLLXHi5CaEhEXk1esFQUQC6z
+	oc6Jm1jqrxWGF6b+FuHw99DMpYSRlBA1rWzGiXyq4gUNRzTxut9T5/Lp2ZYSi48=
+X-Gm-Gg: ASbGncvpdOIdkVjUyiLaewBxD7CFEvzgRSd3OvaHj1Teg5oMI+bTAbbHWTYZvwU6PTn
+	dDA76kDE1azrZOJ1KrUs/Cr4jYxkAht1+AyqzcyXvRANOUXWCLdPaIl+UB741tfXc9UdKrRqzLP
+	Fkr54KFqPev8Cyvpk8CxTTw+aKhywCGmpzzBsHZc7XYJJJi+OPFWX+Mf9Itn8aPZAAQdjyUMo1P
+	IFFgJG7MFOsQBBxN8NmrULwPHqcIkkghOVHa7WyYQ5JFWKJifKv8zedFu89xebfHVYCzZlb5hvA
+	R/YtcldV/eRPa7Ih1cwEOBVMBo3/JGEF9OhENrvU8IRK52NuhZWNR1pUWE8=
+X-Google-Smtp-Source: AGHT+IHCzEFvSIhfMGLJjDLN8sAOhYITMeHBywqkNc2QJXqBWAThFj4V/KSvjovgix5IZ8ADaCm//w==
+X-Received: by 2002:a17:907:1b27:b0:ab2:f8e9:723c with SMTP id a640c23a62f3a-ab789a9ed0amr257773366b.5.1738921793776;
+        Fri, 07 Feb 2025 01:49:53 -0800 (PST)
+Received: from localhost (host-79-41-239-37.retail.telecomitalia.it. [79.41.239.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab772fd6ba1sm235401366b.79.2025.02.07.01.49.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Feb 2025 01:49:53 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 7 Feb 2025 10:50:52 +0100
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v6 05/10] clk: rp1: Add support for clocks provided by RP1
+Message-ID: <Z6XXfL1-ER2dLmZI@apocalypse>
+References: <b12caa1c8c674a56afa7b2de780d9ae5423159a3.1736776658.git.andrea.porta@suse.com>
+ <20250203234443.GA810409@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250207-correct_data_types-v1-1-f22bc7ea220d@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAAnUpWcC/x3MTQqAIBBA4avErBNM+oGuEhGTTjUbi1GiEO+et
- PwW7yUIJEwBxiqB0M2BT1/Q1BXYA/1Oil0xGG06bfSg7ClCNi4OIy7xvSioDR0SYtuveoASXkI
- bP/90mnP+AOo8U/tkAAAA
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1738921022; l=877;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=kAjBoWOCJ4Ktd9GA2YrUkGuLwEKid48PkvX+9Mpiwa0=;
- b=bOGjHFE86GTkOgfuiMiFJ2HgIDxYB+nL6hQ5zLfsBT3io0i9+CYMt0vF2wV3Q9XTRoJola1oj
- HpJMjHnIE+UA0Xg1yf8L4IHfXfd+Lh0V4FU+6TNriHw4gihEglu4w+i
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250203234443.GA810409@bhelgaas>
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+Hi Bjorn,
 
-In clk_calc_new_rates, the "ret" is only used to store the return value
-of clk_core_determine_round_nolock, and the data type of the return
-value of clk_core_determine_round_nolock is int.
+On 17:44 Mon 03 Feb     , Bjorn Helgaas wrote:
+> On Mon, Jan 13, 2025 at 03:58:04PM +0100, Andrea della Porta wrote:
+> > RaspberryPi RP1 is an MFD providing, among other peripherals, several
+> > clock generators and PLLs that drives the sub-peripherals.
+> > Add the driver to support the clock providers.
+> 
+> > +#define PLL_PRIM_DIV1_SHIFT		16
+> > +#define PLL_PRIM_DIV1_WIDTH		3
+> > +#define PLL_PRIM_DIV1_MASK		GENMASK(PLL_PRIM_DIV1_SHIFT + \
+> > +						PLL_PRIM_DIV1_WIDTH - 1, \
+> > +						PLL_PRIM_DIV1_SHIFT)
+> > +
+> > +#define PLL_PRIM_DIV2_SHIFT          12
+> > +#define PLL_PRIM_DIV2_WIDTH          3
+> > +#define PLL_PRIM_DIV2_MASK           GENMASK(PLL_PRIM_DIV2_SHIFT + \
+> > +                                             PLL_PRIM_DIV2_WIDTH - 1, \
+> > +                                             PLL_PRIM_DIV2_SHIFT)
+> 
+> Maybe this is standard drivers/clk style, but this seems like overkill
+> to me.  I think this would be sufficient and easier to read:
+> 
+>   #define PLL_PRIM_DIV1_MASK   GENMASK(18, 16)
+>   #define PLL_PRIM_DIV2_MASK   GENMASK(14, 12)
 
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
----
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ack.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 9b45fa005030..e153d1901a60 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2283,7 +2283,7 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 	unsigned long min_rate;
- 	unsigned long max_rate;
- 	int p_index = 0;
--	long ret;
-+	int ret;
- 
- 	/* sanity */
- 	if (IS_ERR_OR_NULL(core))
+> 
+> > +static unsigned long rp1_pll_recalc_rate(struct clk_hw *hw,
+> > +					 unsigned long parent_rate)
+> > +{
+> > +	struct rp1_clk_desc *pll = container_of(hw, struct rp1_clk_desc, hw);
+> > +	struct rp1_clockman *clockman = pll->clockman;
+> > +	const struct rp1_pll_data *data = pll->data;
+> > +	u32 prim, prim_div1, prim_div2;
+> > +
+> > +	prim = clockman_read(clockman, data->ctrl_reg);
+> > +	prim_div1 = (prim & PLL_PRIM_DIV1_MASK) >> PLL_PRIM_DIV1_SHIFT;
+> > +	prim_div2 = (prim & PLL_PRIM_DIV2_MASK) >> PLL_PRIM_DIV2_SHIFT;
+> 
+> And then here, I think you can just use FIELD_GET():
+> 
+>   prim_div1 = FIELD_GET(PLL_PRIM_DIV1_MASK, prim);
+>   prim_div2 = FIELD_GET(PLL_PRIM_DIV2_MASK, prim);
+> 
+> It looks like the same could be done for PLL_SEC_DIV_MASK,
+> PLL_CS_REFDIV_SHIFT, PLL_PH_PHASE_SHIFT, CLK_CTRL_AUXSRC_MASK, etc.
 
----
-base-commit: 1e1fd26ed4ca05cc1f0e5857918da4dd54967f7d
-change-id: 20250207-correct_data_types-fadaeaa46b07
+Ack.
 
-Best regards,
--- 
-Chuan Liu <chuan.liu@amlogic.com>
-
-
+Regards,
+Andrea
