@@ -1,156 +1,185 @@
-Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADAC223327
-	for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2025 12:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2335222FF37;
+	Mon, 10 Feb 2025 13:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739192045; cv=none; b=b5o8wqd/zw2kCPyb2dyAwKWxuvKksarUc1XK6S/gtTO4S+DKeSw+QNloP9tZZr5fFNlzzwFgY/30jeU+2IGxZx2Zv8zoWprOBHkTsbwFK5/4F6kosnsKwGdK/4G4Lu23jZJIDM3YDHWyMefNgOFpDMS9fdbifhoj5HGsx9veBZk=
+	t=1739194791; cv=none; b=Y78EbI54KsTnriSpSdoIgR5nHk7fMrnKJdIybrqsCL4+hdGqRUlsydo5Dq7L4Vaj+tN+6Yg4/0/ioRC6gBItVvIkhY5kYzLYfvfP4hQoTbF0hwe563Nk04pRe4ZioKLVVY6WyyZSjCJxkqwi+efbRpoIygyYNzAnAfsBVNF57Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739192045; c=relaxed/simple;
-	bh=7A6tQDHT8Gygs27nVXNQUFzlGL1/SnpgPWEJccOdUoo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jPE2xjek63X24Mr8IXwW0G2J01nGrCuXAsLpVGUTErkCxiAai3s7Z76aLtRfd/r1Zmq3PrslmHepzrrNgRp2IDdfTBnHjeXvedlq1rj0fPWHQQCfeORXfS+GJWO/dwzpWgpzT4uLZd2VUMaHCgXhi/7QBjJtBmEnxpggC5qya6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=P3h0rmGS; arc=none smtp.client-ip=209.85.208.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="P3h0rmGS"
-Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-5de47cf93dfso4504610a12.2
-        for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2025 04:54:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1739192041; x=1739796841; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rf85jElMNnrDZvKC7vVh5MfFio59DRgJHRcTUJEvgGI=;
-        b=P3h0rmGSIzJypOlZkNcOiyOuXI9tPLb8MlACDEThOAmgaAuxTYNrH+YuKT7i7yUlJe
-         3GV7NlcMOfW4VBTuhIIPv267BuafGzPV1lho4qwXOY7/1CvHrjhg+v4v+hWTL5gKOmFA
-         h6egxTBbEwr5mmM4yJvfrYuUDz+Z3ybIOY70fvMIfk+jM4yS+Jdvdmv+NH1DuGF/yn+B
-         eK82cPFvWzpWNWbg57bM2nERXIMKbOa2lVAllWKClLUiUXvd+X/DNIhXSWpWVHk0PqNe
-         U/x2tQfgAgNUvIFXKhvVwAhpjwIqKPTdBvxkdDss43zbnZMMlY77rzoTYBgTMANcMrkV
-         wwzw==
+	s=arc-20240116; t=1739194791; c=relaxed/simple;
+	bh=bvgKcF/zsPsZW1pYAnIB1W+ArRQZobLALphZkahUOcE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qyw9FtFKv23lr/0r+7tJW7MoNLNXZUB0Rh/Z1YVJMZX1sY6LBmx5dC03BLqFopXbTG+Y53LbDwCyjREiRpHpMYQr5OqgWONU+YMSNWsYzfZ5F1ZB9GpQD47jJbOgjRSXpSFjPEPROlHjwHuSy/4IDnSEZ7+4ccgaLkGh6wsd4AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-51eb1a714bfso2726674e0c.3;
+        Mon, 10 Feb 2025 05:39:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739192041; x=1739796841;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rf85jElMNnrDZvKC7vVh5MfFio59DRgJHRcTUJEvgGI=;
-        b=cv0sxDqW0zCPJZhmXHjoTbcNvWIc5WLyMdlw33OPhl20O8sMBoiZYy//TWVOhAFRn/
-         wWmsMl0M4x6u03G7+t3zlbyK1g2rAtk+s0zEb1KNFRM5cOtRoc2ik9kVHpe+0nkWua4w
-         jNzZorc9XG+LxAMiIV83qP6NgovAPQTwCLHkyvxvpl1hC6KO1+XmeWJYGTEeY98PWpCD
-         Lpdftokiq+07q4zcYjXsue95KuyEOqdEstOeayZ0FflVSe+BTBebizPCKwbv6RQ3CNfL
-         +9p8CT3YO2y0GWw6jl2KG2U3Q/JK+IUMiRBUdJ0bTDXSwdJ/wGOWKbClIdao3NSHu+vh
-         JlQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXV+HxNzs6d/pwLZDH9HcIZdL/VYide9q3gCk7XfzUI99wB437GaeRdRmvI3bTSO287SeLfBZj+YMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4cGGiXKGhPzna5XzjC28uP/Qgli8lQffhxwZ9rjldzk54QPJx
-	n8krWW7qTjpe97mPLJgxtzarQ2HZz7QBIyVmHDz3O5TvMgKGNRZoHPk+ZGuUg0U=
-X-Gm-Gg: ASbGncvQkJ3dZlSK/1fArcyPUSWW/qaDctBXmeR14Yg6lTeYr/aHNCOlFS9lHSBeqrW
-	JKSyTus9KGtEMCgWZtjEFHssBAS/r+aqGpKSNc+z06WCb8S5EMMy1NDu3g9WBOtDp3bZVWYDSm1
-	4tVTjHzrea2RmVz1DuEU0GGz3Wo/kL/poFJlLYKaoL8qU4QPI5Grs1MHJDnNBvihAS154lxuTcb
-	1R7mfDclHwgxoCRx6vvd+DrzfZ0B/m0LlwHf2JHmk/B71iR94vw8DwArYyz0eOk8oTfrsMmqQep
-	cTJhgWig5bqCTZs3hh2/SM+XQoADU7M+Q9bAFYgjrNf0vCZDm3HjCueAd4E=
-X-Google-Smtp-Source: AGHT+IExaOon2TXZW9Vep+azLuX3PC+zXsCFuFLx/CO8qnQeXU427WnR0bcNBj8GMhFUwVXVl5oCDw==
-X-Received: by 2002:a05:6402:5290:b0:5dc:6e27:e6e8 with SMTP id 4fb4d7f45d1cf-5de450706fcmr34849448a12.24.1739192040759;
-        Mon, 10 Feb 2025 04:54:00 -0800 (PST)
-Received: from localhost (host-79-41-239-37.retail.telecomitalia.it. [79.41.239.37])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5de5a2fc79esm4970729a12.10.2025.02.10.04.53.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2025 04:54:00 -0800 (PST)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Mon, 10 Feb 2025 13:55:00 +0100
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v7 11/11] arm64: defconfig: Enable OF_OVERLAY option
-Message-ID: <Z6n3JLOn-PrSt3Pa@apocalypse>
-References: <cover.1738963156.git.andrea.porta@suse.com>
- <49da5d0cf961fef23a1622253825443eb51d660d.1738963156.git.andrea.porta@suse.com>
- <ab88fe2a-4f59-47d1-855b-517d98773f3c@gmx.net>
+        d=1e100.net; s=20230601; t=1739194788; x=1739799588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6cMEUxxIiVjhSag/1DMe0EfQjJIVo434JzDuK6UAnU8=;
+        b=g+BlbQM7nsHAZdfAaTnt95ZHytLvUcPBkcVp86t7YKEL8TonkEEJuP3YB2T0zrK63E
+         vXSRYy9snd4u6xxAucD8tTAaEdwqk0J+fLGledEx8mQkzK9SfYFoJZX+aT9ydxXlIFvv
+         WyU6ZgXyLhNuNYFzGTWCfZaXHggTjtaiS8EFLSuq6UYyvY6/2c0VqTNyqZHAw0dWcNbA
+         HZkXLPaI6WVXrLWEozfNIFdWUslesf4jNlHpjW1QiYA8L11VsYMdhdNfAIOZC8qynwxA
+         oXO+TD1BFW4lwFCKzXP9fLMvM8y9hMfZ7V8RKxDExMuTqZXc5aYqzHc4WMVLorIQvXJE
+         svFw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Lglj7zU7LMjpgEtfbacFVO1AWZdgmlLvjKeEQpgLzss5lWxnhxyPZeq1hJBd3HkzpzNTCkpGbWHyoSZAfnXiGOQ=@vger.kernel.org, AJvYcCUBy3VEVztXHOdedBaRP/CHAUmWAWLN58q40o+ud/VT4g8fMW4AZnqr/5yE3oluzIbsS9ByFibVbmgk@vger.kernel.org, AJvYcCUJwWG/qhek9OnGQQHunAOHYn/y3mtfBKb99vgqXN+JtKi0cF3yi8uocANtXEP/4smo3d/+Ug1DOwiZ@vger.kernel.org, AJvYcCVBJPifwm50rhqLbbIQfpQSIOLI2lKK52iUYdYQoXdGwFKPecRFcW6NSTL3BHwCTPm8UtfpA2o4hLAQxmcs@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCuEEqsPnziX5NxZGVg899mO6DMl0B7eAh6lYIeGK0jTmIIbJF
+	bGru5nKfsQ9q9AcGyZEcs18FS9OsYyQE8KaLl2FPVCdkZB7v7tKzjbOD6CPD
+X-Gm-Gg: ASbGncspaL+A0MD1wzq2WAcHsRkvDHn+xY5E3ap1p0SOatGJM8Qze+JYiV9tnFxma/W
+	pMmY+XZpw4N3f9f9vk+wYSiONoZoFBPnAkaevJksny0dJFM9rAYYf8ZmoPBp9EXOFB7qF+P8kL8
+	ybt0n9JN1e0bVnZEZfKh5QvCQAs97MR1luV44rOHsJmDgMoyrRJpfBXX1izIhr8axcEpC0x6zi7
+	k9cnqQSzN0BdYXLOzDlhe9w3bzbBffh/YDBe3kr+2skhCmQEZlv4IK0thwBoMZgRyq1ohLnM6gV
+	OkIxb/aHGzlgweug16xO8w8AV7//sDuL5t9TCGBWe+PIoDBH4wQJsw==
+X-Google-Smtp-Source: AGHT+IGPtN83FakRFO5HUE7kQGUQ+JmavU4Q5MDms4m3T7gkh1q7lJuK+nlzEpznNZPZ2jfp8PUvOw==
+X-Received: by 2002:a05:6122:c9d:b0:51e:9efb:a23a with SMTP id 71dfb90a1353d-51f2e105cbfmr8950592e0c.5.1739194787361;
+        Mon, 10 Feb 2025 05:39:47 -0800 (PST)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52050a2c061sm81485e0c.32.2025.02.10.05.39.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Feb 2025 05:39:46 -0800 (PST)
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4bbd3cff198so453576137.2;
+        Mon, 10 Feb 2025 05:39:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV5PAe8RouCNGEeY99ygw5C8pJ6BVmdUG/j3yHWaKZJrZ0EyK6PvOgy3FW7XaT0bc7gJJH3yF+zdftl3+hq@vger.kernel.org, AJvYcCWhEcy4rZQ++0zU0MpqIoXzpiQqx24IowxLYNe75/TmLeRt9gm16Aa/gwvZpBfx82BXvSt8fGx2kSdyvt+Vew6Paog=@vger.kernel.org, AJvYcCWhddMV/BI9Z8Z02o//vJWbPiR/X62Qz9Sro7oRo2npBN2IzYdjJX3u/T5rSMgzX84tBgFAGlbLoG6T@vger.kernel.org, AJvYcCWxZE7RAdq5rohSZqPnPr/vt7hY+7WZKk+t+FQqqXVitg0L35w6+fnMCV5AkazOaTpQ+/rZVQjFHxKR@vger.kernel.org
+X-Received: by 2002:a05:6102:b14:b0:4af:f8b9:bea3 with SMTP id
+ ada2fe7eead31-4ba85e5e938mr9199396137.15.1739194786481; Mon, 10 Feb 2025
+ 05:39:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab88fe2a-4f59-47d1-855b-517d98773f3c@gmx.net>
+References: <20250129165122.2980-1-thierry.bultel.yh@bp.renesas.com> <20250129165122.2980-5-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250129165122.2980-5-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Feb 2025 14:39:34 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU782OZcug9DJnnm6Yz3gTJfjaz3_wbRVUDg334dkVrJA@mail.gmail.com>
+X-Gm-Features: AWEUYZmn9YNCQWAsUIaaP9A_bpMkZmF0h5OLfC9QOl_Iy3p8mjd3hchwtHUxn-o
+Message-ID: <CAMuHMdU782OZcug9DJnnm6Yz3gTJfjaz3_wbRVUDg334dkVrJA@mail.gmail.com>
+Subject: Re: [PATCH 04/14] dt-bindings: clock: Document cpg bindings for the
+ Renesas RZ/T2H SoC
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Stefan,
+Hi Thierry,
 
-On 14:42 Sat 08 Feb     , Stefan Wahren wrote:
-> Hi Andrea,
-> 
-> Am 07.02.25 um 22:31 schrieb Andrea della Porta:
-> > The RP1 driver uses the infrastructure enabled by OF_OVERLAY config
-> > option. Enable that option in defconfig in order to produce a kernel
-> > usable on RaspberryPi5 avoiding to enable it separately.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> > This patch is *OPTIONAL* since I'm not sure if OF_OVERLAY is a desirable
-> > feature to have enabled by default. It would be advisable to have it included
-> > so that 'make defconfig' can produce a kernel config that will work out
-> > of the box on Rpi5, otherwise OF_OVERLAY has to be enabled separately.
-> I think this isn't a good approach to convince the arm64 maintainer.
-> This change is not really optional for the Raspberry Pi 5 and possible
-> users/testers/CI rely on a working default configuration.
-> 
-> So my first suggestion would be to provide a scripts/bloat-o-meter
-> output (before/after). Based on this the maintainer can better decided.
+On Wed, 29 Jan 2025 at 17:52, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> Document RZ/T2H (a.k.a r9a09g077) CPG (Clock Pulse Generator) binding.
+> Add the header file for the resets and clocks definitions.
+>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 
-I agree with you. IIUC what you are proposing, the following metrics should
-help to decide. The defconfig kernel with CONFIG_OF_OVERLAY=y added (wrt to
-the defconfig one without that set) has:
+Thanks for your patch!
 
-- same uncompressed kernel image size (due to ELF section alignment I guess)
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rzt2h-cpg.yaml
+> @@ -0,0 +1,73 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/renesas,rzt2h-cpg.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas RZ/T2H(P) Clock Pulse Generator (CPG)
+> +
+> +maintainers:
+> +  - Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> +
+> +description:
+> +  On Renesas RZ/T2H SoCs, the CPG (Clock Pulse Generator) handles generation
+> +  and control of clock signals for the IP modules, generation and control of resets,
+> +  and control over booting, low power consumption and power supply domains.
+> +
+> +properties:
+> +  compatible:
+> +    const: renesas,r9a09g077-cpg
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: EXTAL clock input
+> +      - description: LOCO clock input
+> +
+> +  clock-names:
+> +    items:
+> +      - const: extal
+> +      - const: loco
+> +
+> +  '#clock-cells':
+> +    description: |
+> +      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
+> +        and a core clock reference, as defined in
+> +        <dt-bindings/clock/renesas,r9a09g077-cpg.h>,
+> +      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
+> +        a module number, also defined <dt-bindings/clock/r9a09g077-cpg.h>,
 
-- ~7Kb bigger Image.gz
+As there is a set of 32-bit Module Stop Control Registers (albeit
+inconveniently named A, B, C, and so on (including some gaps)),
+the hardware documentation does provide you with a number space like
+on R-Car.  Hence I think you're better off without defining module numbers
+in the DT bindings header file.
 
-- 3 new modules (all related to RP1, i.e.: clk-rp1, pinctrl-rp1 and rp1-pci)
+> +    const: 2
+> +
+> +  '#power-domain-cells':
+> +    const: 0
+> +
+> +  '#reset-cells':
+> +    description:
+> +      The single reset specifier cell must be the reset number, as defined in
+> +      <dt-bindings/clock/r9a09g077-cpg.h>.
 
-- 27 added symbols, of which 5 exported
- 
-hoping this is enough to gather a rough idea of the impact.
+Likewise for the Module Reset Control Registers and the reset numbers.
 
-> 
-> In case this change is still rejected, we still have the option of
-> something like this [1]
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#power-domain-cells'
+> +  - '#reset-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@10420000 {
 
-I'm ready to go down this way should the previous numbers not be convincing
-enough.
+That address can't be right ;-)
 
-Many thanks,
-Andrea
+> +        compatible = "renesas,r9a09g077-cpg";
+> +        reg = <0x10420000 0x10000>;
+> +        clocks = <&extal>, <&loco>;
+> +        clock-names = "extal", "loco";
+> +        #clock-cells = <2>;
+> +        #power-domain-cells = <0>;
+> +        #reset-cells = <1>;
+> +    };
 
-> 
-> Best regards
-> 
-> [1] -
-> https://patchwork.kernel.org/project/linux-kbuild/patch/20200203184820.4433-3-nsaenzjulienne@suse.de/
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
