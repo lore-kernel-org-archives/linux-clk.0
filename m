@@ -1,163 +1,125 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E6A230D30;
-	Mon, 10 Feb 2025 14:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A7821C9E0;
+	Mon, 10 Feb 2025 14:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739196346; cv=none; b=brmU+OpgDWAUubMsmyjw/zlv0wwEtXMStaL+td7CEpDAThsnqM8dduTlWcsn7g/iRJUgVb3x+y+sfxDP/L9QI5o/RoZxrOd/lPYlreEq5jtt8dMAkCMqAyZtzhJ9iEhpr80P9oNYqUwZ6klPKVab0p6UE77ayibbcGL44WUkwcs=
+	t=1739196406; cv=none; b=PPcdXzviVVANYEkcb9vYvFB6DUsy+KkXwUUx04bVM1MtsNgWKB3hlSc2qtHdEbxK88PTc25AqRIM6qqA05IDL9U6ibArzkz88xScQKspFf1FTZQXLNtfJajoVJdHQKf23ZaevFQuOHPwE0+0Zc7xgZD2+yqZUDajuy8Byz0GZus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739196346; c=relaxed/simple;
-	bh=ydVz+zuGrahOcdRUAMPxvr0Xto4ogVWbtEh5mJ+m7E4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SA9R63Jc98kHNpOhGidhruYUl46IPwQud8AVLguk2NwIU9hZ6+J7Y/pVrRKo4PLvWL8Kopvm+lXxzokSaz495AwTRGFQk5qnEVolAASGMBOJ9sEZHVJtRwMDYgUP3iPzYEt1inocKySTWRy+H/EKJ+Ob0dRfTcf2jbZ1mEdOqTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78C0D1477;
-	Mon, 10 Feb 2025 06:06:03 -0800 (PST)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54FD13F5A1;
-	Mon, 10 Feb 2025 06:05:40 -0800 (PST)
-Date: Mon, 10 Feb 2025 14:05:36 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Philippe Simons <simons.philippe@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
- linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner sunXi
- SoC support), linux-sunxi@lists.linux.dev (open list:ARM/Allwinner sunXi
- SoC support), linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH] clk: sunxi-ng: h616: Reparent GPU clock during
- frequency changes
-Message-ID: <20250210140536.08c33a56@donnerap.manchester.arm.com>
-In-Reply-To: <20250209183142.97671-1-simons.philippe@gmail.com>
-References: <20250209183142.97671-1-simons.philippe@gmail.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1739196406; c=relaxed/simple;
+	bh=s/SxefOb0H15AdMHQedNI/+EiassRRLisDihao+TjBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eW51xcGCSaHYQcOzST4hT78se4E2LnnvnVmAELC69FsLUK9i+f2MIs1uSLJb52TvZl6YYBJaiq6vJoeBDHF1+GEXmRttcth6gQg84rdU+sTfio3sRGLx8nbQUkLzMYoxfKfPCkz3YMn0sQdQ6JNHGMeZeOUDERoqVdmF7PUG1h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-86707fe3eccso1975327241.0;
+        Mon, 10 Feb 2025 06:06:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739196403; x=1739801203;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W6kDmgOXvSCpquS8DR4mGKaDibtph7+ZMfxSIa+WafI=;
+        b=smf8qhtWvm1/SfJWPtCyq9qY+cbVAOD+MzC+REuNsSXuBgRp0LPiQ2dmv1K95QwOTA
+         3KxpXlXUEo7V7NKNnYToGOTI9BHn0Am8ZyVX/G/RcjAKYHeLEoa9t12+YIDC/IdqxrZn
+         upFGH7nc1B2Z/G4J1Jc96hYqriD81ki1iXLYdXgTsc5GMwp+gTICvn/eBAJR6h19BiBI
+         4h/6RATDokY20/aaQVi4n1Q3cbAYngZDsVtXaE27rPd9WR5GbdAQbc21P6In12zvx2sM
+         pY8IL35ywLkyVij/CbxqrjtkwrHzYqFt4puhKYjto/TwGQBDKiT284g04XJDRse+BMmS
+         ntlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVa2A5LyZ43U8KcKo72wnQOFSA5LKsANEZ1TrQpqtcp9B1V651OV4DDFZeVnqeVKPyWXj3Qp0oXMpfy5ust@vger.kernel.org, AJvYcCW1Aj2OqoMavwZjwf3P4IAV8ArRcFqlB0cQZvOhW0DBoAtvfajzHsX6EQCUxTwSdeUYyQRT7NEVj1Dh73NaGedb7RI=@vger.kernel.org, AJvYcCWbLTU1NiXF1FbEGkmEBW9CrpNuZwU4o0IbOqrtxcdXqAizd7MWe1J6PeqFKnN2ZkKTF4m9Ev3mIfs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE+OpTGQZq/h+yORuWII5mUw2dlntoFoYpRQScv0QXqq/Jtx6o
+	Ysk0olYw0M0EcggZuM/UxJ8KHOussRuLFCfPs6RGf2V4eoNh5phNsO7z4gHu
+X-Gm-Gg: ASbGncsO9T6K1Wjx+1FHGe/6PF1lTZfupdyPqkEv8tWApf/n8ykfhlYyfOvudjX8Y4U
+	TE0cYCHoFM+7o/HY5uifJIfqlsQPw+QTsx+lF7T8PQxj8Fvw6d3pTi1Qz2nsdN1aO+kYCyWlOw3
+	zfduZwy16oFUHR84PvMOB0Ar9WaK9/+2rm+f8zfLjgNjwP+c2seVCGIXfGzW6XwXX62PAMKSV/O
+	RHRD5J+1MTRQtOnl3lZoqDkQjhLG5aFUf1I79O2RTA0juy84hWwA+xKA7rFcQMbK87Fv0O552TG
+	3Wqa9m+zpdB7yUMIyx3GJzPqSvIvq/ueOvcfkpzxJj0bZgTp56fl0QHXqg==
+X-Google-Smtp-Source: AGHT+IE+4XSQ2aR0FjRorBL+9LH2mQxQzUkHI3/2oMG3atZU/FeaJxfnMLyvVb4pPDBxqfaiMvHY/A==
+X-Received: by 2002:a05:6122:17a0:b0:520:3aea:e55d with SMTP id 71dfb90a1353d-5203aeae7d8mr2920965e0c.5.1739196402013;
+        Mon, 10 Feb 2025 06:06:42 -0800 (PST)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5204e43616esm133891e0c.21.2025.02.10.06.06.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Feb 2025 06:06:41 -0800 (PST)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-52043dec766so600990e0c.1;
+        Mon, 10 Feb 2025 06:06:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCULYTzDSetat2ZwQ+qSp9UE5cqPcWe0RpyBsCGyMsDb/Pvk2r2whtoBUQ+pdBCvuWmTZCJxf/9Locx2GNZT@vger.kernel.org, AJvYcCV/8nU8tgJ3d/Ay25XxRo8eBsLICZ0xSzq0Ys1MfqIMnSMtg6I801GXBjS9s+f3z8EDWd/gZrfY8B4=@vger.kernel.org, AJvYcCWDkb1zgnJXuvY8SvS0UZEaDdQiNF0amfFk1jjOPbuc+pcYInSA2PIyZOjk3hBMGe8J/E5eXf3Psu3Vtlsy3yYthso=@vger.kernel.org
+X-Received: by 2002:a05:6122:11ad:b0:520:5267:819c with SMTP id
+ 71dfb90a1353d-5205267840emr509770e0c.1.1739196400794; Mon, 10 Feb 2025
+ 06:06:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250129165122.2980-1-thierry.bultel.yh@bp.renesas.com> <20250129165122.2980-7-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250129165122.2980-7-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 10 Feb 2025 15:06:29 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVUhXQ80DRbr7yFNgzmGMuDEuScZZhKihhtee1U4qP3UA@mail.gmail.com>
+X-Gm-Features: AWEUYZnxtULZ_SWBBZBuFBwb88yi1TbL8Xe3rYQd7YgpyPS1Ki3tGXTD_QAkkWk
+Message-ID: <CAMuHMdVUhXQ80DRbr7yFNgzmGMuDEuScZZhKihhtee1U4qP3UA@mail.gmail.com>
+Subject: Re: [PATCH 06/14] clk: renesas: Add support for RZ/T2H family clock
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun,  9 Feb 2025 19:31:42 +0100
-Philippe Simons <simons.philippe@gmail.com> wrote:
+Hi Thierry,
 
-Hi Philippe,
+On Wed, 29 Jan 2025 at 17:52, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> Add the CPG driver for T2H family.
+>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 
-thanks for bringing this patch together!
+Thanks for your patch!
 
-You should mention here *why* you want this patch, the motivation seems to
-be missing, but would be crucial - and preventing a sure crash should make
-this a no-brainer.
+> --- /dev/null
+> +++ b/drivers/clk/renesas/rzt2h-cpg.c
+> @@ -0,0 +1,549 @@
 
-Maybe start with: The H616 manual does not state that the GPU PLL supports
-dynamic frequency configuration, so we must take extra care when changing
-the frequency. Currently any attempt to do device DVFS on the GPU lead ...
-
-Then mention that the manual describes the algorithm for changing the PLL
-frequency, which the CPU PLL notifier code already support, so we reuse
-that.
-
-> Re-parent the GPU clock during frequency changes of the PLL.
-> Also it asks to disable and then re-enable the PLL lock bit,
-> after the factor changes have been applied.
-> 
-> Add clock notifiers for the PLL and the GPU mux clock, using the existing
-> notifier callbacks, and tell them to use mux 1 (the GPU_CLK1 source),
-> and bit 29 (the LOCK_ENABLE) bit. The existing code already follows the
-> correct algorithms.
-> 
-> Signed-off-by: Philippe Simons <simons.philippe@gmail.com>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 33 +++++++++++++++++++++++++-
->  1 file changed, 32 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> index 190816c35..e88eefa24 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> @@ -328,10 +328,12 @@ static SUNXI_CCU_M_WITH_MUX_GATE(gpu0_clk, "gpu0", gpu0_parents, 0x670,
->  				       24, 1,	/* mux */
->  				       BIT(31),	/* gate */
->  				       CLK_SET_RATE_PARENT);
+> +static void __init
+> +rzt2h_cpg_register_mod_clk(const struct rzt2h_mod_clk *mod,
+> +                          const struct rzt2h_cpg_info *info,
+> +                          struct rzt2h_cpg_priv *priv)
+> +{
+> +       struct mstp_clock *clock = NULL;
+> +       struct device *dev = priv->dev;
+> +       unsigned int id = mod->id;
+> +       struct clk_init_data init;
+> +       struct clk *parent, *clk;
+> +       const char *parent_name;
+> +       unsigned int i;
 > +
-> +#define SUN50I_H616_GPU_CLK1_REG        0x674
->  static SUNXI_CCU_M_WITH_GATE(gpu1_clk, "gpu1", "pll-periph0-2x", 0x674,
->  					0, 2,	/* M */
->  					BIT(31),/* gate */
-> -					0);
-> +					CLK_IS_CRITICAL);
-
-The addition of CLK_IS_CRITICAL deserves a comment, something about that
-this clock is needed as a temporary fallback clock for the PLL frequency
-changes or so.
-
->  static SUNXI_CCU_GATE(bus_gpu_clk, "bus-gpu", "psi-ahb1-ahb2",
->  		      0x67c, BIT(0), 0);
-> @@ -1120,6 +1122,19 @@ static struct ccu_pll_nb sun50i_h616_pll_cpu_nb = {
->  	.lock		= BIT(28),
->  };
->  
-> +static struct ccu_mux_nb sun50i_h616_gpu_nb = {
-> +	.common		= &gpu0_clk.common,
-> +	.cm		= &gpu0_clk.mux,
-> +	.delay_us	= 1, /* manual doesn't really say */
-> +	.bypass_index	= 1, /* GPU_CLK1 */
-> +};
+> +       WARN_DEBUG(id < priv->num_core_clks);
+> +       WARN_DEBUG(id >= priv->num_core_clks + priv->num_mod_clks);
+> +       WARN_DEBUG(mod->parent >= priv->num_core_clks + priv->num_mod_clks);
+> +       WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
 > +
-> +static struct ccu_pll_nb sun50i_h616_pll_gpu_nb = {
-> +	.common		= &pll_gpu_clk.common,
-> +	.enable		= BIT(29),	/* LOCK_ENABLE */
-> +	.lock		= BIT(28),
-> +};
-> +
->  static int sun50i_h616_ccu_probe(struct platform_device *pdev)
->  {
->  	void __iomem *reg;
-> @@ -1170,6 +1185,15 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
->  	val |= BIT(0);
->  	writel(val, reg + SUN50I_H616_PLL_AUDIO_REG);
->  
-> +	/*
-> +	 * Set the input-divider for the gpu1 clock to 3.
-> +	 * Also enable gpu1 clock.
-> +	 */
-> +	val = readl(reg + SUN50I_H616_GPU_CLK1_REG);
-> +	val |= BIT(31);
+> +       /* Skip NULLified clock */
+> +       if (!mod->name)
+> +               return;
 
-Do we need this if the clock is marked as critical now?
+Copied from rzg2l-cpg.c (which copied from renesas-cpg-mssr.c)?
+Do you need this?
 
-> +	val |= BIT(1);
+Given RZ/T2 does not use the "write bit 16 + n when touching bit
+n"-scheme (like RZ/G2L and RZ/V2H), I am wondering if it would be easier
+to use renesas-cpg-mssr.c instead, like R-Car and RZ/A2M are doing?
 
-You probably want to clear the lowest 2 bits first, then set bit 1,
-otherwise you end up with either 2 or 3, depending on what bit 0 was
-before.
+Gr{oetje,eeting}s,
 
-Cheers,
-Andre
+                        Geert
 
-> +	writel(val, reg + SUN50I_H616_GPU_CLK1_REG);
-> +
->  	/*
->  	 * First clock parent (osc32K) is unusable for CEC. But since there
->  	 * is no good way to force parent switch (both run with same frequency),
-> @@ -1190,6 +1214,13 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
->  	/* Re-lock the CPU PLL after any rate changes */
->  	ccu_pll_notifier_register(&sun50i_h616_pll_cpu_nb);
->  
-> +	/* Reparent GPU during GPU PLL rate changes */
-> +	ccu_mux_notifier_register(pll_gpu_clk.common.hw.clk,
-> +				  &sun50i_h616_gpu_nb);
-> +
-> +	/* Re-lock the GPU PLL after any rate changes */
-> +	ccu_pll_notifier_register(&sun50i_h616_pll_gpu_nb);
-> +
->  	return 0;
->  }
->  
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
