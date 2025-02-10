@@ -1,76 +1,88 @@
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2069.outbound.protection.outlook.com [40.107.102.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3CC1E0DCA;
-	Mon, 10 Feb 2025 11:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739187401; cv=fail; b=jSEX+xPhANBC43i6dRqdjvW+aYiJqvViOQ/wqL3tx0XJvQua5jPBdU2iJdkm2UtkD1nYQjUlwgYpeeq7SOqytFEWG0XQpVVstIR/FUyUh7MC+68ZKdnC58TGU+k/gTkRmvU2hcETHGXA48HBjpUCYrJXkH5DSBJMxGQCZhvU0Io=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739187401; c=relaxed/simple;
-	bh=gFGqXHxwsC0+PWSy//fIrjvVkWpvGIY3aIc4o7Pyim0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OOvlVTR6/dzgCay1AkCPysUPIf7UueYoIG+wIGLJ0v/eRJD485kEGhAaJT9ghX8FTJV/BORcIztUxvoqnczUuPS1WlVllOhoLI7LingHXrgahgupaR99nPESHDIjISya9TAoMb5HJ6VUaAApLJqAMSNXPp5VmVWtyCigFE0YaMk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UQLcDVm9; arc=fail smtp.client-ip=40.107.102.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2295D1F3B95;
+	Mon, 10 Feb 2025 11:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739187983; cv=none; b=cr+PZ5J13goO83maDuzw+IJ4va63YaPhrhmJzyxM3IaWKBirQMCivqf8K8eIxNor4v6NCHQDBfsI7HnLXCIj8BLSXq1yL0qJxHqSj8QYZT66TASaQ592zkmbuJtZ5mKw7WU3ZMHZEC+HVLk6tICIiE0zO9YeGUhMI18ZSsIPeS8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739187983; c=relaxed/simple;
+	bh=Uo4TmisU7wn9Kpc2fbHxaydHm+iJ80nLy/agd1E+ApM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dJnJaf5idzdP7m8BGkLiu73fyf/NDo34qKT9Tjq+/YS5tRNmLt3EUXX1t1QaYxHkFQoB/oHw/w8++KAFxSHhUvmNY70YuwdrQFHeVJLWmiTb86cf/wcFtIbLM0XMFM3zI/p01Kawhm00rf9MAsg/2mVrlqaQsCQ3xx+bYngrmc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ncC5G3X+; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UQLcDVm9"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pit0fpz0PlWb0kL9qmwGCFIHDopUWeshTjU/C6Op9sg1A/Xa1QAeMZIDNLIIvc+ZRad85rTqLwsDyZH0SBzhysCBQkX3aYHE3AZnC5ZTwdchFOu0lW+yvgvpB24gQp9FR7SpOXuFOvXC/9WPjgXx949cANReOBNYyge6mvsByeFOMxlhdEVbFFWvCDjJP1RTfksJiJ9jBZ+VbIsgmcMi39q5L9vKp6Eq3J5HCnv9jh832bGoHnrpWhegK1YYnn/icm2tpASxysdBuK4zQlRAavrNtM6tsmw3qG9wOPUet+HRaQaM3k4M7gBSuxhv61aV0DRWH9+MSwvK3f7sbJC+zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yPXFuQLXP5o9LljXT9gOjIOd3ugazJJUoGLuNZmQnCM=;
- b=O8mgz5okogDE992s+Lj+JOA9vfksr7k0/HdFIiRnI6ZeW9KeZX59YDBc6DAh5oWqWf7QciRI5/yHBUZGcAFNXGtvzNG5Vr/f/gY5JVEAoG0JIA6hYtU3H0W8Lh1EorZuATmteUeRQbhPX8ajQ21VnD7OCDaLEVLNn73ySGAO4+c5cTLqtak64XEQ1mAz+YES9fy2YFxmd1eikZBnxGMvMoFp5W3YxIt4l0kKaxJFNgiaBRlg6gvWNql7dDH4qqJqvjS3xxsG/wsjRkDbWhUtH5h8Zo+VgkLHkTOUznMlIntIU/Q75p7pz0qQEy+ygQxa9uUR7ZVyGx0n54Ru37Y4Yg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=baylibre.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yPXFuQLXP5o9LljXT9gOjIOd3ugazJJUoGLuNZmQnCM=;
- b=UQLcDVm9X4GnLC+lOEtqgjpko3GVMOZNOXK75FAxje+lrJV4n3E8UNNYMIBFSu5rlpILJatktpulgD8WogtTgH8+CLgyAcLMsHrsSiQXs7nLwepbdVKVT564UUFf3Z98r3uzVaZ+RrjQSlkx2Y2x0m2mSVO2hEX3h5bty8idxDA=
-Received: from BY3PR10CA0026.namprd10.prod.outlook.com (2603:10b6:a03:255::31)
- by MW4PR12MB7120.namprd12.prod.outlook.com (2603:10b6:303:222::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.18; Mon, 10 Feb
- 2025 11:36:35 +0000
-Received: from SJ1PEPF000023D4.namprd21.prod.outlook.com
- (2603:10b6:a03:255:cafe::d2) by BY3PR10CA0026.outlook.office365.com
- (2603:10b6:a03:255::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8398.25 via Frontend Transport; Mon,
- 10 Feb 2025 11:36:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF000023D4.mail.protection.outlook.com (10.167.244.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8466.0 via Frontend Transport; Mon, 10 Feb 2025 11:36:35 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 10 Feb
- 2025 05:36:34 -0600
-Received: from xsjssw-mmedia4.xilinx.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39
- via Frontend Transport; Mon, 10 Feb 2025 05:36:34 -0600
-From: Rohit Visavalia <rohit.visavalia@amd.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <michal.simek@amd.com>,
-	<vishal.sagar@amd.com>
-CC: <javier.carrasco.cruz@gmail.com>, <geert+renesas@glider.be>,
-	<u.kleine-koenig@baylibre.com>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	"Rohit Visavalia" <rohit.visavalia@amd.com>
-Subject: [PATCH v3 2/2] clk: xilinx: vcu: Update vcu init/reset sequence
-Date: Mon, 10 Feb 2025 03:36:14 -0800
-Message-ID: <20250210113614.4149050-3-rohit.visavalia@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250210113614.4149050-1-rohit.visavalia@amd.com>
-References: <20250210113614.4149050-1-rohit.visavalia@amd.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ncC5G3X+"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aaecf50578eso845220666b.2;
+        Mon, 10 Feb 2025 03:46:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739187980; x=1739792780; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Tcko+2LGTEjB783TiWIDWhciLjGO64bpOmui7Jw9kx0=;
+        b=ncC5G3X+l8Y2u7nnqBi8C5zewdTstlg8XvTnSU7xFRk2CMucmwRm+2G0s0tVQ0WhUe
+         Gn7HmbCEVQWqo91ODCOVKfKy+Fzod1a8NsSrUMPM/j9V0Gus9G0Y9OLHDl/aKMyqHIff
+         vcyskuMBthqjFslvRjoln9W3EYL2pH31CudkpTMmJ/y1ADtWNi3GiuQxMAOvJvb8RcRI
+         F1wqH8e0bsteZNkgmc9L4IO5+PLKGPzj6T0UeR7YVaazbJ5PcDdInnKEOChV6GkElWNm
+         SZ/Ei3F5SoOZrWV/BLiocUYpmWLL+qKztfi43GCYHgkQiApgq1D5oFTes6GrCVTwc+RY
+         yLJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739187980; x=1739792780;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Tcko+2LGTEjB783TiWIDWhciLjGO64bpOmui7Jw9kx0=;
+        b=fkCo/hYAVEz0szVu0hA3yURJBBCzVrAzNOb9nwAgwgcCBZhljlY9n7DMpTqpJZTRVs
+         7nRdVkvvMbGwE/sGj3HsVzqsRQ+yGEse5gjWi5RRmBc6kz75q+IX2GvVme+gK40b+Fm1
+         bie6qvYG1FJL+cassyfY7iWX0z4haX9n4jOxdOkVNCYi6c/UQX7AHpcJWtT/QgjigQPx
+         VaoZ0ersKEfKXMfRoyUKxtnIz7LFYj8PeQn17+Xrl+3IF9fBC78V0T+PEUa0SYzcHxnE
+         TK/BMaDoruU2irUM1lG9c5+CYArsMqq2fLbzGrAZkg0h9iacFYb4J63ebxwmpHBP9hCW
+         AcZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOMfK67oy4lvFtQldM2VWrtH6vmDaL1BxP5W7v/9NneiN3qHNfmbcvZg5/xk05lkPziimKldW5SSkd@vger.kernel.org, AJvYcCVZXs1ob/hrqFX6mSZCR6jbx1uYhVb7uqC0AFkpyWIRQ0Q7J3vwT19NoCYowWNzynzKSCVsE8QE2++fpYE=@vger.kernel.org, AJvYcCW3VxN4vk9I7eO7cTS7JKVyddba5Fm4IbKcmdnrzQEMt56pTALa4/n/Qp7P8YgH+FnxGL45hOclcAuaJYjo@vger.kernel.org, AJvYcCXsnIHw5tdm97n9Tp4BUbRsBCNeTWuixqNdJVi43Q9UtiypStDsjZ6UQPpE3ZVvDT6HW309379WrnDc@vger.kernel.org
+X-Gm-Message-State: AOJu0YydQbkEsRKAVnpRazZo0LGnFDoeI2FdwCv7VPB48BndFaZJwOEP
+	vlluMsFiV6VSFyUfvoawIKdQCWpYAGUTczzXQcPIqmBegSDpQEk3
+X-Gm-Gg: ASbGncsgyEb7nXtcq5P4FDa4dPhLX8ZMFHmoadJRwdfboLMgx3LCslyVQCE4zepOp+W
+	MrBOfVakLfJ4kFxb0jhk7X/hA+xnJoKIfCg2t16QIFeVwYDSEDP5KPSofNP3XxhLIMv5u2wtt3o
+	uarAgWKaqz1a3trDsQm8mfNEUOIIMW3b408KrR8iuuDiIPKBQYxYr3T0T4f5DHP4roWH/q/dkAh
+	2gLBRSE2X2DWwoqcftsnOEMnuqY7Il4bx1quYhFDVSTEPlw4rH9LsGch4P3LFSkfUreyMJ0S3fy
+	EFCz+WV6S594whUjqmc25Uej2f8984pbof8gk1RpN0Je2HVTxJQ/sXWXJZp30GfCJt03gX8l8E7
+	grwYE8jQR6t+XQlmqJoMFAu6FH84=
+X-Google-Smtp-Source: AGHT+IHLu0Y36JRC+51o0vyk4KbOZ8N6uUlsAc0UT5MymiVYg29nPUAml9edHiLfIvZ3aUgSS41LBA==
+X-Received: by 2002:a17:907:1ca0:b0:ab7:9df1:e562 with SMTP id a640c23a62f3a-ab79df1e783mr831432766b.48.1739187980240;
+        Mon, 10 Feb 2025 03:46:20 -0800 (PST)
+Received: from tom-desktop.example.org (net-188-217-54-237.cust.vodafonedsl.it. [188.217.54.237])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7a9e6e06fsm428948566b.80.2025.02.10.03.46.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2025 03:46:19 -0800 (PST)
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+X-Google-Original-From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: tomm.merciai@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH 1/8] clk: renesas: r9a09g047: Add support for CRU0 clocks, and resets
+Date: Mon, 10 Feb 2025 12:45:33 +0100
+Message-Id: <20250210114540.524790-2-tommaso.merciai.xr@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250210114540.524790-1-tommaso.merciai.xr@bp.renesas.com>
+References: <20250210114540.524790-1-tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,145 +90,94 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: rohit.visavalia@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D4:EE_|MW4PR12MB7120:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b6c366a-7d34-4e37-a438-08dd49c72ce3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EAA36S9r7af2BKe2nruqq++bOeF02M+JU9jLAOu1WAjo2ohn+taVuqUSJ9kG?=
- =?us-ascii?Q?Yd+zzCVHgGw+60Es6LN2x7pBd3tcPSjI5k1zoYunNGxANhW5VYs47pSLjiCN?=
- =?us-ascii?Q?FfFrc7v1f6l0oK3Z/6wE1yaYq8/CMiy7+StlH4jidG1MIS47I8aV4SZNT6Ro?=
- =?us-ascii?Q?Vd7RqmsZTbtBUoVacOmX23LgtW2uTwv8HhmGUwdzljfTMRPRPbQ37XDX3V4y?=
- =?us-ascii?Q?4VQdi3WjBFVEQj0oxmIs57GAFkPnMc/G5n4PKFWDfeEbXzmGAANs2mKuw/h2?=
- =?us-ascii?Q?1BvfMWMSMVBgZoiCw2TS+veGqXysfUl4z0u2i3p1cBQ1HYq0Y5IjQqrxMcxA?=
- =?us-ascii?Q?RPT2ur3D41fJB1GtBY3p6cntTbccykHMHAdPMdYd6nfVcSg9Q/DoWMOwZYAZ?=
- =?us-ascii?Q?LPlMHiglAM5kGP6yhTI0eEL7N/w5rBfOp5OQOytIX+l7jNQvTXYjKGOuNBU6?=
- =?us-ascii?Q?IXaHWqJ8pO/1NglxEfd4E2Ek1Zz1YBCRZQ7xR9t2Ja0hCfhl1HIZ5+7B4p4c?=
- =?us-ascii?Q?BiHomS74yDmE7i9xWvCeZxk4pjMB/aixa0WUrRX4FZkeVM4Q4azPB9jvLG/k?=
- =?us-ascii?Q?3BoyK8xIG6zJHyI+zhuQCl7B0CFHQNjE1OFm5iUSu7Fg0ziWIuVFgzfiPVGW?=
- =?us-ascii?Q?iEkGVjHgb9UFaMnSc35wxGP7fA7SzADgQVaCc9cl+kMYahmHSWmrr/C0q1eh?=
- =?us-ascii?Q?RzFy8O8fBBzGl6DnJvQlEzysAu+4YwhrTvKvBT0ALxbLefHe8dOGDz4iGfQx?=
- =?us-ascii?Q?hyGFXrPsuQSuYUaffoM2qbnd9SY7C6Qdcv1M8ql7aUHJ1+X6qa2aOxZ5tIT6?=
- =?us-ascii?Q?ak71yiaJsskJr1ncvcRImuiZck7YcvxcUxgL2HMY3UOhCVfgHM94apELkFR/?=
- =?us-ascii?Q?NGKTsZchxkz2lxPA37h1DvHRAIDkeoRTgHDGV7PKrctga3fR3aoLdm4pJh54?=
- =?us-ascii?Q?FPjjJYnGTXcYBDcI4ULmJnv1EwvXJv638Enm2vD4CgY4V4YjesxGAu+g8Q+K?=
- =?us-ascii?Q?Kv8ho4XwsE4BmtIq76cwlrvMnRPvNqT3d5rWm3J3gEltK6Rys8xZsiS5Du6s?=
- =?us-ascii?Q?beRUoDFMOqRMjnDlHc7BlgolIg7fr6UGGCaN/Qg3srLXQCWtrIUklfG/bEO2?=
- =?us-ascii?Q?AEFPJFBHmQGJ7whW7DwJtva7mfdUG2ckdDlBL1NgdzzEg9zjXueZ13ji25jp?=
- =?us-ascii?Q?ynhqo6J6xeCLOLbYK8AAaTgHvNeANcPPzMr9n3jQlVYCvrHSYk39+VGIJg1G?=
- =?us-ascii?Q?mA4XVlStkxs2lDwdmceHIBR90n1unsjttOy27yLTvm/LrYiHf9XHrZdKtyE+?=
- =?us-ascii?Q?eYqJ5LybaMwBI33W+RJoKf5ZZMgEETiXhqJERNycABQk1SjP0OR1SYt9/Kwe?=
- =?us-ascii?Q?p/S86UxpzIfL2pGLo3romhyGit/6NfkYuDrmCWagoa4UEV24KvaerY7c3lGw?=
- =?us-ascii?Q?Tyt5IFu8rfrlUWr3k6ip8Btx71sydZXbq5UZqJv0L1oMdwK2VO2RSpym9IDX?=
- =?us-ascii?Q?F8UUqmVQaj4cQ48=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Feb 2025 11:36:35.5351
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b6c366a-7d34-4e37-a438-08dd49c72ce3
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D4.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7120
 
-Updated vcu init/reset sequence as per design changes.
-If VCU reset GPIO is available then do assert and de-assert it before
-enabling/disabling gasket isolation.
-This GPIO is added because gasket isolation will be removed during startup
-that requires access to SLCR register space. Post startup, the ownership of
-the register interface lies with logiCORE IP.
+Add support for CRU0 clocks and resets along with the corresponding
+divider.
 
-Signed-off-by: Rohit Visavalia <rohit.visavalia@amd.com>
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 ---
- drivers/clk/xilinx/xlnx_vcu.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ drivers/clk/renesas/r9a09g047-cpg.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/clk/xilinx/xlnx_vcu.c b/drivers/clk/xilinx/xlnx_vcu.c
-index 88b3fd8250c2..1ded67bee06c 100644
---- a/drivers/clk/xilinx/xlnx_vcu.c
-+++ b/drivers/clk/xilinx/xlnx_vcu.c
-@@ -11,6 +11,7 @@
- #include <linux/clk-provider.h>
- #include <linux/device.h>
- #include <linux/errno.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/io.h>
- #include <linux/mfd/syscon.h>
- #include <linux/mfd/syscon/xlnx-vcu.h>
-@@ -51,6 +52,7 @@
-  * @dev: Platform device
-  * @pll_ref: pll ref clock source
-  * @aclk: axi clock source
-+ * @reset_gpio: vcu reset gpio
-  * @logicore_reg_ba: logicore reg base address
-  * @vcu_slcr_ba: vcu_slcr Register base address
-  * @pll: handle for the VCU PLL
-@@ -61,6 +63,7 @@ struct xvcu_device {
- 	struct device *dev;
- 	struct clk *pll_ref;
- 	struct clk *aclk;
-+	struct gpio_desc *reset_gpio;
- 	struct regmap *logicore_reg_ba;
- 	void __iomem *vcu_slcr_ba;
- 	struct clk_hw *pll;
-@@ -676,6 +679,24 @@ static int xvcu_probe(struct platform_device *pdev)
- 	 * Bit 0 : Gasket isolation
- 	 * Bit 1 : put VCU out of reset
- 	 */
-+	xvcu->reset_gpio = devm_gpiod_get_optional(&pdev->dev, "reset",
-+						   GPIOD_OUT_LOW);
-+	if (IS_ERR(xvcu->reset_gpio)) {
-+		ret = PTR_ERR(xvcu->reset_gpio);
-+		dev_err_probe(&pdev->dev, ret, "failed to get reset gpio for vcu.\n");
-+		goto error_get_gpio;
-+	}
+diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
+index 51fd24c20ed5..5d02031219d8 100644
+--- a/drivers/clk/renesas/r9a09g047-cpg.c
++++ b/drivers/clk/renesas/r9a09g047-cpg.c
+@@ -28,6 +28,7 @@ enum clk_ids {
+ 	CLK_PLLCLN,
+ 	CLK_PLLDTY,
+ 	CLK_PLLCA55,
++	CLK_PLLVDO,
+ 
+ 	/* Internal Core Clocks */
+ 	CLK_PLLCM33_DIV16,
+@@ -35,7 +36,10 @@ enum clk_ids {
+ 	CLK_PLLCLN_DIV8,
+ 	CLK_PLLCLN_DIV16,
+ 	CLK_PLLDTY_ACPU,
++	CLK_PLLDTY_ACPU_DIV2,
+ 	CLK_PLLDTY_ACPU_DIV4,
++	CLK_PLLDTY_DIV16,
++	CLK_PLLVDO_CRU0,
+ 
+ 	/* Module Clocks */
+ 	MOD_CLK_BASE,
+@@ -49,6 +53,12 @@ static const struct clk_div_table dtable_1_8[] = {
+ 	{0, 0},
+ };
+ 
++static const struct clk_div_table dtable_2_4[] = {
++	{0, 2},
++	{1, 4},
++	{0, 0},
++};
 +
-+	if (xvcu->reset_gpio) {
-+		gpiod_set_value(xvcu->reset_gpio, 0);
-+		/* min 2 clock cycle of vcu pll_ref, slowest freq is 33.33KHz */
-+		usleep_range(60, 120);
-+		gpiod_set_value(xvcu->reset_gpio, 1);
-+		usleep_range(60, 120);
-+	} else {
-+		dev_dbg(&pdev->dev, "No reset gpio info found in dts for VCU. This may result in incorrect functionality if VCU isolation is removed after initialization in designs where the VCU reset is driven by gpio.\n");
-+	}
+ static const struct clk_div_table dtable_2_64[] = {
+ 	{0, 2},
+ 	{1, 4},
+@@ -69,6 +79,7 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+ 	DEF_FIXED(".pllcln", CLK_PLLCLN, CLK_QEXTAL, 200, 3),
+ 	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
+ 	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
++	DEF_FIXED(".pllvdo", CLK_PLLVDO, CLK_QEXTAL, 105, 2),
+ 
+ 	/* Internal Core Clocks */
+ 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
+@@ -78,7 +89,11 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+ 	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
+ 
+ 	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
++	DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
+ 	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
++	DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
 +
- 	regmap_write(xvcu->logicore_reg_ba, VCU_GASKET_INIT, VCU_GASKET_VALUE);
++	DEF_DDIV(".pllvdo_cru0", CLK_PLLVDO_CRU0, CLK_PLLVDO, CDDIV3_DIVCTL3, dtable_2_4),
  
- 	ret = xvcu_register_clock_provider(xvcu);
-@@ -690,6 +711,7 @@ static int xvcu_probe(struct platform_device *pdev)
+ 	/* Core Clocks */
+ 	DEF_FIXED("sys_0_pclk", R9A09G047_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
+@@ -154,6 +169,12 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+ 						BUS_MSTOP(8, BIT(4))),
+ 	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14,
+ 						BUS_MSTOP(8, BIT(4))),
++	DEF_MOD("cru_0_aclk",			CLK_PLLDTY_ACPU_DIV2, 13, 2, 6, 18,
++						BUS_MSTOP(9, BIT(4))),
++	DEF_MOD_NO_PM("cru_0_vclk",		CLK_PLLVDO_CRU0, 13, 3, 6, 19,
++						BUS_MSTOP(9, BIT(4))),
++	DEF_MOD("cru_0_pclk",			CLK_PLLDTY_DIV16, 13, 4, 6, 20,
++						BUS_MSTOP(9, BIT(4))),
+ };
  
- error_clk_provider:
- 	xvcu_unregister_clock_provider(xvcu);
-+error_get_gpio:
- 	clk_disable_unprepare(xvcu->aclk);
- 	return ret;
- }
-@@ -711,6 +733,13 @@ static void xvcu_remove(struct platform_device *pdev)
- 	xvcu_unregister_clock_provider(xvcu);
+ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
+@@ -177,6 +198,9 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
+ 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
+ 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
+ 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
++	DEF_RST(12, 5, 5, 22),		/* CRU_0_PRESETN */
++	DEF_RST(12, 6, 5, 23),		/* CRU_0_ARESETN */
++	DEF_RST(12, 7, 5, 24),		/* CRU_0_S_RESETN */
+ };
  
- 	/* Add the Gasket isolation and put the VCU in reset. */
-+	if (xvcu->reset_gpio) {
-+		gpiod_set_value(xvcu->reset_gpio, 0);
-+		/* min 2 clock cycle of vcu pll_ref, slowest freq is 33.33KHz */
-+		usleep_range(60, 120);
-+		gpiod_set_value(xvcu->reset_gpio, 1);
-+		usleep_range(60, 120);
-+	}
- 	regmap_write(xvcu->logicore_reg_ba, VCU_GASKET_INIT, 0);
- 
- 	clk_disable_unprepare(xvcu->aclk);
+ const struct rzv2h_cpg_info r9a09g047_cpg_info __initconst = {
 -- 
-2.25.1
+2.34.1
 
