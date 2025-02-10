@@ -1,59 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA308264604;
-	Mon, 10 Feb 2025 22:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC45B2512ED;
+	Mon, 10 Feb 2025 22:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739225272; cv=none; b=ml6FtKjqPSc20TaLvX+5RUPVUYoy4WrVnjDC4OnLJLKXqplJUHsGphiYe9hnLr/tjNtGCQP45JDCfvl8uSuRj9h6fQmaORbRZbBOTR6Y30TZg7QHTf9lYqVrfI2tSJBIHbr+PYfekQ4UXzHe09KSNYnua3kJYuk9nfOPTufxtmw=
+	t=1739226767; cv=none; b=Xt0PEKp9sW+f5qIQbBZ2R3NhyA0x7XTBruX2oytXYblqlosQZAdtvReUzPdIuuhQckDrHW1YKsjPcKSy0asndzEs/9CH3DSXV/02vuGuRHIdUUI366uwz5O1QJdSV0red2O5Fv7yu1y92lGeWy7Rwfl3mHbWKtfMhVTMK2rNI+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739225272; c=relaxed/simple;
-	bh=soGGYi5SZ7hfquIE86n6wxhLDKzRy/sjal53c1wfsY0=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=crzJh6qJ7dTnKaqz4b0yTJfeqazVRvyOMBXqSUp5erj8YueqfcbGl1WyWY3ZzUmGCC5zG//Nt6VJ/RXmiWaGL1csN7hPvbYL9V3dQjg4+cEt47EYnnGq9da3P99ZmHIr3AlDyhEl4ECTZjrrm/IaU+cqEIPseefQfNU7qr4tGAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQIrr4TP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739226767; c=relaxed/simple;
+	bh=Fk1CFlse0fOzf7hyLwkoZOv8fJZ86dz0i7DYgJbGnDo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Mlemr7q+cEvftu4TJVHZeY2CL+S6RaPauNVg6+qKQTr8oSlD2USbqBKpNO6QIJCGlCs7OCcnQtcIsRLPT2O/eP23+stco+CibhdTi8P2CRQ0AE2QibW25WLQcG2/agIC6t+a7SVTGe/6Lvaug+WfdVX4MjG8Hq8KOfeww2HhGEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=jVJznroL; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQIrr4TP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1F00C4CED1;
-	Mon, 10 Feb 2025 22:07:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739225272;
-	bh=soGGYi5SZ7hfquIE86n6wxhLDKzRy/sjal53c1wfsY0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=kQIrr4TPbWfLCp09znKaOCMCRcXmAsnF6bsbBaRFkl9EQDQwQDEjMAA98sXrWr/hK
-	 t4al5X+2jM0+HVKP1cXr/YSu36GJ8IF0hF7BD7vKVPGVAoOFYNCUzn48K2uUz8ZWMV
-	 GueGQ6rWq8BEtYatNcVQ+GZntF6n+fdO8oKCcU9P54cmMIOqZflrfbD5LOpMCYx37L
-	 EXCE1bF4kdkfgo0/Yqmf0GWoQtyiRtTPcgHW7OEhUkW30U7abDpQWtVr/6jZCZ8E94
-	 fLOv3BG8kd2D7tdjy0CGyf+NrTWsAUn+5aG8d5urK8S5oo1io+ykfDu6Crn/e2ACuP
-	 Ge2Z+QtLTbRbQ==
-Message-ID: <a66c949345e9118b2ebbdca39e4962c5.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="jVJznroL"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
+	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=gScTzSF5SmDK0ItX+9bERNg9WxTsYpnT5wGwYZDdZ9I=; b=jVJznroLLXwS8UOrupccZJB2qf
+	I/0LaWZxs6cLc7Kq98/Tjiwa7wOp3fA83fF5CaEUrPu0JfMgT9MnqGnGy9ELf7W0T1bJLwFT947dQ
+	afkAXNPRg0XFX7fd723sV5o45i9UiUwA0UFtOTEpi/VrcRemR/tFsoCSVxgpoutYFw+WAhpgqmw7a
+	v70K7hWD9b8vR0cGGxlKq3ms/Mx6Vx+USZyPH7fT3u4Su8924fO43e8Jg4MpAQZftVSFq66acwcL3
+	Dac+q5Nr/fg0YEVB0EMRbio4L1WPlbvyBmYqLD9J3DOTZ39PEFUOTbtvPKiLTEDb03EiQyUO9HzgK
+	d19LYBVA==;
+Received: from i53875bc0.versanet.de ([83.135.91.192] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1thcKZ-0008Cw-CH; Mon, 10 Feb 2025 23:32:43 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: srinivas.kandagatla@linaro.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	detlev.casanova@collabora.com,
+	sebastian.reichel@collabora.com,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 3/6] dt-bindings: nvmem: rockchip,otp: add missing limits for clock-names
+Date: Mon, 10 Feb 2025 23:32:09 +0100
+Message-ID: <20250210223219.1193346-4-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250210223219.1193346-1-heiko@sntech.de>
+References: <20250210223219.1193346-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Z6VBo51g54xAmelQ@cassiopeiae>
-References: <cover.1738832118.git.viresh.kumar@linaro.org> <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org> <Z6ShsuLykigNscz8@pollux> <Z6SiiRubSXGInbgj@pollux> <0cd42d2d683ea057e6034978b02c7f84.sboyd@kernel.org> <Z6VBo51g54xAmelQ@cassiopeiae>
-Subject: Re: [PATCH V8 06/14] rust: Add bare minimal bindings for clk framework
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Rafael J. Wysocki <rafael@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Michael Turquette <mturquette@baylibre.com>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, Erik Schilling <erik.schilling@linaro.org>, Alex =?utf-8?q?Benn=C3=A9e?= <alex.bennee@linaro.org>, Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-To: Danilo Krummrich <dakr@kernel.org>
-Date: Mon, 10 Feb 2025 14:07:49 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Transfer-Encoding: 8bit
 
-Quoting Danilo Krummrich (2025-02-06 15:11:31)
-> On Thu, Feb 06, 2025 at 12:05:59PM -0800, Stephen Boyd wrote:
->=20
-> > as most clk consumer operations bail out early in that case.
->=20
-> Most? Does that mean NULL isn't *always* valid?
+The clocks property correctly declares minItems and maxItems for its
+variants, but clock-names does not. Both properties are always used
+together, so should declare the same limits.
 
-I'm hedging because the common clk framework is just one implementation
-of the clk.h API in the kernel. We still have a couple other
-implementations (sadly) where I haven't checked to see what they do if a
-NULL pointer is passed in. But NULL should always be a valid clk handle
-per the clk.h API documentation, so an implementation that fails at that
-is broken.
+Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml b/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
+index a44d44b32809..3201ff8f9334 100644
+--- a/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
++++ b/Documentation/devicetree/bindings/nvmem/rockchip,otp.yaml
+@@ -62,6 +62,8 @@ allOf:
+       properties:
+         clocks:
+           maxItems: 3
++        clock-names:
++          maxItems: 3
+         resets:
+           maxItems: 1
+         reset-names:
+@@ -78,6 +80,8 @@ allOf:
+       properties:
+         clocks:
+           minItems: 4
++        clock-names:
++          minItems: 4
+         resets:
+           minItems: 3
+         reset-names:
+-- 
+2.47.2
+
