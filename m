@@ -1,139 +1,192 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292E125A2A7;
-	Mon, 10 Feb 2025 18:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C0725E446
+	for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2025 19:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739213382; cv=none; b=gO/17Qa5QOuvlVfabQnpAC2gFBMk3IrnYXh8dPtXOk23eHEYCbJYcyZzQRGwY5YM41l1QTgewOM9+ssqZn0tXk1kArLIvFCpVm55P/FM5v2y7ENodZVCT/Xj3vSV9XHe2sCKKAMllTmF2MAusOxBABSPpB9JyIftx8JRW/hTStw=
+	t=1739214870; cv=none; b=RokUMVRDYOCATEip6SawyY55+WUVQEnRJLYE/bCWBd7T0WhH1GYk8EH8fdPNd2k3b2heVfL6wokGBdNJQ7UDR3FpgL8kPhsINf9SabrZON5eRwTat3k5dxIxYJun0vkkD+57R85H93eetXzZI8GWQKcCveoTGTIkNVsGaePeibo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739213382; c=relaxed/simple;
-	bh=k38V+jXxgn0GoVBcVBbF5ntBNRE28teJ9MO2dFSdiXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hxmb+CaF3WQz63Nbckc84d5KMPqovWemnjSbJmZld7tnmKpIXRsKUu8KLFcZD6vRRKuEt1M11r8pRjC6G7x/Veouxa9PTKT90w+H2ucLIFgDSne4Chxka0EfBaHjOYC0JivzshcKjAUKCf3VcZm1sHSlNeTSGqPAeNDpUBxKMHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHpMYp8l; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739214870; c=relaxed/simple;
+	bh=X9wUf0/KLMn21rtND5bb3daS3KaNjeTHthMpob+ENes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=EcbWFb/JeE3r9qkpVcr2S/yP5NkEEDWUegTTBMjIFJvui7YIWJ8gn0myeZ7osebCr/khlPXY+2f4BYdGo77yn3qiwi5sWjDLJeLuz9Tja4ghwZWhw5EUtx7Atz53aORlmGlvNTzZjXb50TZt2vo9sHLdZFEccb592+tE7snaUI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pmGCU/Jf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHpMYp8l"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-439307d83f0so14543035e9.3;
-        Mon, 10 Feb 2025 10:49:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739213379; x=1739818179; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y8b7IQZlv8qmqmi8EZCZagpGi+bugYSxp9YD0b1kLR4=;
-        b=eHpMYp8lwst1lqRWSc2TAOIQJX+Imj+8SC251YpChPB32eTsGqnkOFrEhcXa4wSpHz
-         9/bcVRQo5dHGAYEs10JfNtnbVoDw5BHpPBK1BPHbLZTnEgKBKqCnGN3l1V6pOI3NSrmk
-         FLd2XyoTwHh+DtZnRsfO6gda/6PQlOF897IbAbqSfOjXkiaV+s7PM3MeBWiCn6GqfEJs
-         sLuAsMMCJiKmltd8fZcakp4aEOw4JKS8WSAjGQAAp7CLCtS40bG9rB1iDk38c146043u
-         Nvpa6s4uJTfs7CDqdLzh9kLHZhvrQ8VOuR+zxYYUE3kt41X1tpE9b+bhNt1zzwCY+aIG
-         jZLQ==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pmGCU/Jf"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51AAoqL7012005
+	for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2025 19:14:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ETjjjuQUc5pHSX3yBeU6idxOQ9U9vuazBiCwM3NwEKs=; b=pmGCU/JfshY/9Mh0
+	zQBJzaek2Ddrgwzg5swf9mG4JSzJdGKUk3OI8NCiYCEy/wp8BOSkBFgBC1gxI93Q
+	rL8eThnX3J7ZYkm53xq9pnxjLdqg2/yKJkweFYXSyd3g0LudXO4CN6UHCNm5i10V
+	MF+N3GNvPReKMtNLo6GQmkqatGldG4/z5wbNYNRqpvrjvj76se8rI0jitHHG2Nl/
+	Xir8AJoZN7NtPHvTNXMmARDAsUSCA6ViYbqdn0hT/6mgWGKzKrriWDIezbEd36Wd
+	YBWcUZTLmk1JMQREcXeEM8JEIuVJkm0nbrQZu6oaLXaEItDtrSG/ZwBBpy6N84qA
+	uhFK2Q==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44q8kyakmb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2025 19:14:27 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e422f1ceadso8703286d6.0
+        for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2025 11:14:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739213379; x=1739818179;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y8b7IQZlv8qmqmi8EZCZagpGi+bugYSxp9YD0b1kLR4=;
-        b=f425lAwLNNF0wEOTt3A4ekFWPB44yD9/15I8VrlzRC/FL8KLQStDmD4rbOhiTzuQgz
-         BjNeToUSXoyKbo43N2Ic4lO/NZCcRQZWNM3NJZRXbjN3Pw7FelOJ8YhKBHGrp1fnz9h0
-         eujWCQyMWfMRy/Mc7odPqYb+EqTO1eC9mveiB0oMxpLMSkvEOqJsQUGgGtGx8QQDAXD8
-         F7+SpSpnf0e40rrJvVFAS9kWEXyQXj8HFJoaxliJzRs4hesTQniLgdbg72EntkUg+vvy
-         1W7dLnfIqFvMe+SquhhVRn4LW654237AFFUSNC+sSlTk+p1Til7yN1+79xOd0UwhcPIq
-         6X+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVjusg8serfRphBIiJh2mNWf5Bdl/UMfCwnbgAKEntq6RxtturCky8fWQdsgo8Bs5YeyBAFfgQ7syLES/kE@vger.kernel.org, AJvYcCVxqqc77cZu2NuweWccTaBnki1qLdRHeNkIJyZs84MWxnVWDddqln2A3HhfLRVaAqn4LFdJOpeXDRKh@vger.kernel.org, AJvYcCWMeYRWy/IaYJZaEkqBwEWUn4ocLbgxy9oSlhuxxBdsW/BTAV8tTJGJk6z8RaDqesM0aUAyQGth6CqanDvigqo=@vger.kernel.org, AJvYcCWpEFwfUWWlynpnR08WAZf7RHCa/Vo5xwjw/e2L9hJ49w09RRV7HMvbQdTLgzEGDhGVC0mXwtkl5t7f@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7nGfnquKMW38qfSIGoyKoMH8pGvCvBihNd0JFZMiUgt8LdAYd
-	Zlp1vlOA6yXicwUlFxmusvJZNSCpvHZBAYwMTssyPcJ2A+5EbOr3
-X-Gm-Gg: ASbGncsewDpZQmPxS6dsQlt8t8GEecE6fjWeoKPUrtr7Jvkl3fWOXVNI7l/qZzftpOX
-	Non0lSoWh0/fhFE2uaNF60/SZAnOK4GKhUp1G2NfGJ++3++oL3AXJaxW3YQaNC9CLCsiNXyQdIH
-	m+c9KZ1SyqPFq8Zh1C21lo28QPMKcptupVv/iUTduiSav3WhKFYIYknBq8uldmhFIa4NRWabR79
-	WjuQvRHCx6umE+AJjykloUaWEc2jd24P2dmKjO6PrD8S2c/qLl1evZmMioLsZSmVpDjKt3+t2La
-	b81iiNfm3jV4HrMYLxxHxB7rcZ3rxMwi9G0XRBRQYVOk
-X-Google-Smtp-Source: AGHT+IE/mOnkpqBaeuLtkMcUXOGjBJGy3u2cASTxZFKh+PKUDu39uiZqrLZqJgNMIiNIjZjghKLfgQ==
-X-Received: by 2002:a05:600c:4f90:b0:434:a7e7:a1ca with SMTP id 5b1f17b1804b1-439249b04f8mr114951105e9.20.1739213379301;
-        Mon, 10 Feb 2025 10:49:39 -0800 (PST)
-Received: from prasmi.Home ([2a06:5906:61b:2d00:b833:1deb:a929:b461])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439452533ecsm22911525e9.0.2025.02.10.10.49.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2025 10:49:38 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 9/9] arm64: dts: renesas: r9a09g047: Add `renesas,syscon-cpg-error-rst` property to WDT node
-Date: Mon, 10 Feb 2025 18:49:10 +0000
-Message-ID: <20250210184910.161780-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250210184910.161780-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250210184910.161780-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1739214866; x=1739819666;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ETjjjuQUc5pHSX3yBeU6idxOQ9U9vuazBiCwM3NwEKs=;
+        b=mG+U7jmBK+jJDLJzuXp3Szf2wHIkovVEuaDNBHi7GN6Z0zlp1Au/vHj5Hf54hemcON
+         NRdzcnnwT2iINBxRrM4UtTyFdxUVXIh8gc0U0l0tapKzNOBqsdRtUgJpLfvGiNbD9dCv
+         sRbdvX6EGY3fgO2k+FrtJR+bvIBh3jUyWVeJxLO9r8PLA7Njjtmi6PcWTlhNaL85Me2l
+         eMAs09gfJcfWbokbPAEnBNMpPAnfKt0mWNS7CKwKIfGd4kBV7WBx3ExmfeaCCdZw5VS/
+         MO09PwKIiBg+tmty2338hNdd622xlH4UWGbdBG1WWUUf/Om9pwM6AFfn+Oc1LJzfL9ZL
+         m3zw==
+X-Forwarded-Encrypted: i=1; AJvYcCWVC+x020IlBtt62AJWm3IYoIa9stuCa++PGMv5slJTKQK4SBqysR8YHs+EOQJodr982MeNcD39Y2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4souxIthXGyXak3ONyUqH1Ts8qNn5ZhjhAi7QQH1clNFupcdS
+	ebh+dDayIEY2yQiXlR1JAdBggIOzjLNvFmqeubAsh47JOrDeNeo0LDSMC+XmXhtt1HzgMkbCEPD
+	zj2NeA4ac8fJCKxsfx2mvf28sfCOtXvlWtVlXiHZ/nl+naP3mjyYafJPpIR0=
+X-Gm-Gg: ASbGncs+kWMu8nOGVhwsjfR3/rOwD1KLNkBZrGAlSoHepWjOCXE+4R3OWJyJsciYMic
+	8O8PE3RWGVZnhLr0+xCq4Q6BAh1t90x/o/aHoy40jAEHhhL8hGt7zqBZVEMeTIeYmu+FfcGPrFg
+	Vyv8DCBgn+T3X2obdgIUgcULhUh/2q7wl9gEU8Fl71EbOTQGYl2eSoCFFgXCMlwMRVnUqYfESe4
+	ZJhcfBClU1SUHp2FFmK7Pa0pD8vRNvwgBsu0Ui/RVNcgZLk1ta1crBQXFSVXIgW1s1EHdeexDvZ
+	e0kfOnp3Fz5KZ9T6oge1u3OkNU0wB5sLMAcqmRccly4p/mHVkNCNEd0AlDA=
+X-Received: by 2002:a05:6214:226a:b0:6e4:2e03:c55a with SMTP id 6a1803df08f44-6e445705e57mr80589566d6.10.1739214866439;
+        Mon, 10 Feb 2025 11:14:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFi3+tZ3onY9PM5B+ZRVR/Zg17E/DK7VPjVLQUCOO6KcOVvBRA2fmi6hwkbimYG7gCvx5WsRw==
+X-Received: by 2002:a05:6214:226a:b0:6e4:2e03:c55a with SMTP id 6a1803df08f44-6e445705e57mr80589336d6.10.1739214865950;
+        Mon, 10 Feb 2025 11:14:25 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7d5f84968sm66674366b.164.2025.02.10.11.14.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Feb 2025 11:14:25 -0800 (PST)
+Message-ID: <32b02433-bf2a-4f22-afb3-485bcef4f85d@oss.qualcomm.com>
+Date: Mon, 10 Feb 2025 20:14:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] clk: qcom: apss-ipq5424: Add ipq5424 apss clock
+ controller
+To: Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, andersson@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+        rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20250127093128.2611247-1-quic_srichara@quicinc.com>
+ <20250127093128.2611247-3-quic_srichara@quicinc.com>
+ <47f7553d-74a2-4da0-a64c-cc49a2170efb@oss.qualcomm.com>
+ <123a324c-561a-4081-be43-8d8ed0662acc@quicinc.com>
+ <6c8bb178-1758-4b73-bbaf-8572dc1216d3@oss.qualcomm.com>
+ <7031f2da-36bb-4655-a4df-fa85c99e6eb4@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <7031f2da-36bb-4655-a4df-fa85c99e6eb4@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: G4GO4ldN0O3XPsHK3R-5KcYwHJnQ0M36
+X-Proofpoint-ORIG-GUID: G4GO4ldN0O3XPsHK3R-5KcYwHJnQ0M36
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-10_10,2025-02-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ phishscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ mlxlogscore=999 spamscore=0 malwarescore=0 impostorscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502100154
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 4.02.2025 7:28 AM, Sricharan Ramabadhran wrote:
+> 
+> 
+> On 2/1/2025 8:55 PM, Konrad Dybcio wrote:
+>> On 30.01.2025 11:03 AM, Sricharan Ramabadhran wrote:
+>>>
+>>>
+>>> On 1/28/2025 5:29 PM, Konrad Dybcio wrote:
+>>>> On 27.01.2025 10:31 AM, Sricharan R wrote:
+>>>>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>>>>
+>>>>> CPU on Qualcomm ipq5424 is clocked by huayra PLL with RCG support.
+>>>>> Add support for the APSS PLL, RCG and clock enable for ipq5424.
+>>>>> The PLL, RCG register space are clubbed. Hence adding new APSS driver
+>>>>> for both PLL and RCG/CBC control. Also the L3 cache has a separate pll
+>>>>> and needs to be scaled along with the CPU.
+>>>>>
+>>>>> Co-developed-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>>>>> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+>>>>> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>>>> ---
+>>
+>> [...]
+>>
+>>>>> +    clk_alpha_pll_configure(&ipq5424_l3_pll, regmap, &l3_pll_config);
+>>>>> +
+>>>>> +    clk_alpha_pll_configure(&ipq5424_apss_pll, regmap, &apss_pll_config);
+>>>>> +
+>>>>> +    ret = qcom_cc_really_probe(dev, &apss_ipq5424_desc, regmap);
+>>>>> +    if (ret)
+>>>>> +        return ret;
+>>>>> +
+>>>>> +    dev_dbg(&pdev->dev, "Registered APSS & L3 clock provider\n");
+>>>>> +
+>>>>> +    apss_ipq5424_cfg->dev = dev;
+>>>>> +    apss_ipq5424_cfg->hw = &apss_silver_clk_src.clkr.hw;
+>>>>> +    apss_ipq5424_cfg->cpu_clk_notifier.notifier_call = cpu_clk_notifier_fn;
+>>>>> +
+>>>>> +    apss_ipq5424_cfg->l3_clk = clk_hw_get_clk(&l3_core_clk.clkr.hw, "l3_clk");
+>>>>> +    if (IS_ERR(apss_ipq5424_cfg->l3_clk)) {
+>>>>> +        dev_err(&pdev->dev, "Failed to get L3 clk, %ld\n",
+>>>>> +            PTR_ERR(apss_ipq5424_cfg->l3_clk));
+>>>>> +        return PTR_ERR(apss_ipq5424_cfg->l3_clk);
+>>>>> +    }
+>>>>
+>>>> Now that you'll use OPP, you can drop all this getting.. maybe even the
+>>>> apss_ipq5424_cfg struct could be let go
+>>>
+>>> ok, is the suggestion here to use devm_pm_opp_set_config ?
+>>
+>> Since what you tried to do here is binding CPU and L3 frequencies together,
+>> yeah, we can just scale two clocks from OPP.
+>>
+>> On some newer platforms using the epss-l3 driver, or on msm8996 with a more
+>> complex setup, we expose the L3 voter as an interconnect, but here it would
+>> seem that we directly control the clock that feeds it.
+> 
+> ok, will update and check.
 
-Add `renesas,syscon-cpg-error-rst` property to WDT node, to determine
-whether the current boot resulted from a `Power-on Reset` or a
-`Watchdog Reset`.
++Dmitry
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v3->v4
-- New patch
----
- arch/arm64/boot/dts/renesas/r9a09g047.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+Giving it yet another thought, we now have infrastructure in clk/qcom/common.c
+to register icc clocks. We can register the L3 one as such and make the
+description like:
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-index c366bd2667ff..d5d7b390fac9 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g047.dtsi
-@@ -189,6 +189,7 @@ wdt1: watchdog@14400000 {
- 			clock-names = "pclk", "oscclk";
- 			resets = <&cpg 0x76>;
- 			power-domains = <&cpg>;
-+			renesas,syscon-cpg-error-rst = <&cpg 0xb40 1>;
- 			status = "disabled";
- 		};
- 
-@@ -199,6 +200,7 @@ wdt2: watchdog@13000000 {
- 			clock-names = "pclk", "oscclk";
- 			resets = <&cpg 0x77>;
- 			power-domains = <&cpg>;
-+			renesas,syscon-cpg-error-rst = <&cpg 0xb40 2>;
- 			status = "disabled";
- 		};
- 
-@@ -209,6 +211,7 @@ wdt3: watchdog@13000400 {
- 			clock-names = "pclk", "oscclk";
- 			resets = <&cpg 0x78>;
- 			power-domains = <&cpg>;
-+			renesas,syscon-cpg-error-rst = <&cpg 0xb40 3>;
- 			status = "disabled";
- 		};
- 
--- 
-2.43.0
+cpu0: cpu@0 {
+	[...]
+	interconnects = <&apss L3_CLK>;
+	[...]
+};
 
+cpu_opp_table: opp-table {
+	opp-1234000 {
+		opp-hz = /bits/ 64 <1234000>;
+		opp-peak-kBps = <SOME_L3_FREQ>;
+	};
+};
+
+as that will both match how we modeled msm8996 & require less code changes
+
+Dmitry, Bjorn?
+
+Konrad
