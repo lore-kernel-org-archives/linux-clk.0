@@ -1,35 +1,35 @@
 Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C208925290A;
-	Mon, 10 Feb 2025 16:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74DC24061F;
+	Mon, 10 Feb 2025 16:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739205931; cv=none; b=rMjGcRp6y3HbSLDb18sP/+HRH2N7vOlcKCx8VOBl3gkxyuZPlcmEB13Ukjr3+bigblxc4Ba4FvoK/gpStakB470MIbuc0SPIEZPV5djkAWMr22za3A0DxvGMXeW79Rm5UqmQ13UAzkV9B8wpGBWOD4QUkfUdlvLs7HCqwynDTRQ=
+	t=1739205940; cv=none; b=mj7CsAaUXzyDy6nDae/ne2dduO/pxBpHTPZKQvUWp1CflbrsT5P6eXDOBgiBKy4AjADCBIIPgq6HnyFlbx3kKE9//MlWJCpeLKxKbIoJc1piO1mmWEsKApfk++X8YQwi9SK+ZI4t/rFeYFwTvwoGjXKGM5epCP3tILUKmtW+/xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739205931; c=relaxed/simple;
-	bh=LjrwlwZ+3R1B7xD0oalyvet03mKMfgLP08Mc6sltId8=;
+	s=arc-20240116; t=1739205940; c=relaxed/simple;
+	bh=Ib+aRuOZ1DzzF4UQ00U+Y9SNM1ucCEeo0DE0zobw5yw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=R0/RBwEItLsF5jwyC4bAD4mSiIZ3nPjws1IKD224naEJLy4/QOrIWBZlf3l4rfxiRAPzjZBXNyr5k5RC7NRpj+DxjiBm8vgV3Gj209tax5rORHW0TlmbF5pFH0HbY3HPLY+QO5/e1NKT3KcTockERicVKDJE6QFn9zJX97+obXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=bNcPmcyc; arc=none smtp.client-ip=217.92.40.78
+	 MIME-Version; b=sX9+kSf2sRLBJ58VkUf6QTcTHef8kDuT1kynCj+DVtcA5iVGEji7JMcZjlX3UFaEGpLcFL+0byQFDRcFtXI3IjITktgcpa4oHfeOXQGnbAIjv7gdTCkXbbBw+svF3lbFHTW7g0tvekZk5hSHQS3kHg1K+glF8vLmg4s7Xnu+xLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=jy8TyQca; arc=none smtp.client-ip=217.92.40.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="bNcPmcyc"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 36879148026A;
-	Mon, 10 Feb 2025 17:45:27 +0100 (CET)
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="jy8TyQca"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7D213148026A;
+	Mon, 10 Feb 2025 17:45:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1739205927;
+	t=1739205936;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0WHUhKfS+ZaE2np/nTIVSoQCKqx2vGtVJRjfiTaKlFI=;
-	b=bNcPmcycV16BVxYBZn4F/R/IPE5AjKPvr1AaFSMK12kIuoE0BNKJ8Cf23OP4hppFsuIOqR
-	3lIVX8EhZlpJfRggCvq0YttBKutSbqIhi5PNgMPwI3QrBk0nmS2XWfd7ValonGF7hISV3A
-	wfAMZ1Hv5YVzrXpeAO0LTP98ALZZfIEg6FuyJlle2Y0UuqGe2URVFn1cdALz2K2RVZLGhT
-	srEOTJkp8b/B8azWu0R1fnlFHsc/h/NYk2qpMU9C+1WQK0UpnZl3IXTDf0BEEKwyqj0GMV
-	bKCIAuER9uvBpFVNfOvka4YmEXpJxSn49oJ1SbQSBBKWEIa5FXUPqsSH5YJsWw==
+	bh=UIGNu3f6Vyqk5hPI7JVYcMMOBwHkl3SRqCUKCqsPTxc=;
+	b=jy8TyQcaMaIs3amJmcfBQvMtkXeLEkYb+iVEDCz891gac0gUP0LwaayyaAGFgmN0RmKCQE
+	zqlD8enJnFxj5IZ8ZgOyQt9fcZ7DagtMziMGiTih3QzyX/k1Ef95jD/lGzoNudB82dSnag
+	NETKvuD06HeeR0+C3RZDpgup/rcH1sRcAMThRgq7hAIJCQ/5GejIvDqeRjWFEbvcqbuGGU
+	F4ztBAq9+b5o4O3Q2rkrA2akfl668wHirYaGgMjpZwkL4ah/2eMnXGlj6+9MQQu3uhHO5s
+	SISq36BQTK2+t2bqhNolkAPfVtSwDX/Z20QRUvi3pEvjBPHts7mzruFb7JNWaQ==
 From: Alexander Dahl <ada@thorsis.com>
 To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
@@ -40,12 +40,12 @@ Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
 	linux-kernel@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: [PATCH v2 04/16] dt-bindings: clock: at91: Allow referencing main rc oscillator in DT
-Date: Mon, 10 Feb 2025 17:44:54 +0100
-Message-Id: <20250210164506.495747-5-ada@thorsis.com>
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Varshini Rajendran <varshini.rajendran@microchip.com>,
+	Ryan Wanner <Ryan.Wanner@microchip.com>
+Subject: [PATCH v2 05/16] clk: at91: Allow enabling main_rc_osc through DT
+Date: Mon, 10 Feb 2025 17:44:55 +0100
+Message-Id: <20250210164506.495747-6-ada@thorsis.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250210164506.495747-1-ada@thorsis.com>
 References: <20250210164506.495747-1-ada@thorsis.com>
@@ -58,73 +58,83 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-The main rc oscillator will be needed for the OTPC to work properly.
+SAM9X60 Datasheet (DS60001579G) Section "23.4 Product Dependencies"
+says:
 
-The new index introduced here was not used on the four affected SoC
-clock drivers before, but for sama5d2 only (PMC_I2S1_MUX).
+    "The OTPC is clocked through the Power Management Controller (PMC).
+    The user must power on the main RC oscillator and enable the
+    peripheral clock of the OTPC prior to reading or writing the OTP
+    memory."
 
-Link: https://lore.kernel.org/linux-devicetree/20250207-jailbird-circus-bcc04ee90e05@thorsis.com/T/#u
+The code for enabling/disabling that clock is already present, it was
+just not possible to hook into DT anymore, after at91 clk devicetree
+binding rework back in 2018 for kernel v4.19.
+
+Do it for all controllers with an OTPC controller, where the main rc
+oscillator is required for proper operation.
+
 Signed-off-by: Alexander Dahl <ada@thorsis.com>
 ---
 
 Notes:
     v2:
-    - new patch, not present in v1
+    - split out dt-bindings changes into separate patch
+    - extend to drivers for other SoCs providing the OTPC
 
- include/dt-bindings/clock/microchip,sam9x60-pmc.h  | 3 +++
- include/dt-bindings/clock/microchip,sam9x7-pmc.h   | 3 +++
- include/dt-bindings/clock/microchip,sama7d65-pmc.h | 3 +++
- include/dt-bindings/clock/microchip,sama7g5-pmc.h  | 3 +++
- 4 files changed, 12 insertions(+)
+ drivers/clk/at91/sam9x60.c  | 1 +
+ drivers/clk/at91/sam9x7.c   | 1 +
+ drivers/clk/at91/sama7d65.c | 1 +
+ drivers/clk/at91/sama7g5.c  | 1 +
+ 4 files changed, 4 insertions(+)
 
-diff --git a/include/dt-bindings/clock/microchip,sam9x60-pmc.h b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
-index e01e867e8c4da..dcd3c74f75b54 100644
---- a/include/dt-bindings/clock/microchip,sam9x60-pmc.h
-+++ b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
-@@ -16,4 +16,7 @@
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+index 11fe2d05fa9bb..58a5b6c4473da 100644
+--- a/drivers/clk/at91/sam9x60.c
++++ b/drivers/clk/at91/sam9x60.c
+@@ -225,6 +225,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 					   50000000);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
++	sam9x60_pmc->chws[SAM9X60_PMC_MAIN_RC] = hw;
  
- #define SAM9X60_PMC_PLLACK	PMC_PLLACK	/* 7 */
+ 	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL, 0);
+ 	if (IS_ERR(hw))
+diff --git a/drivers/clk/at91/sam9x7.c b/drivers/clk/at91/sam9x7.c
+index c3c12e0523c4b..8a2955d1f67c6 100644
+--- a/drivers/clk/at91/sam9x7.c
++++ b/drivers/clk/at91/sam9x7.c
+@@ -758,6 +758,7 @@ static void __init sam9x7_pmc_setup(struct device_node *np)
+ 					   50000000);
+ 	if (IS_ERR(hw))
+ 		goto err_free;
++	sam9x7_pmc->chws[SAM9X7_PMC_MAIN_RC] = hw;
  
-+/* new from after bindings splitup */
-+#define SAM9X60_PMC_MAIN_RC	6
-+
- #endif
-diff --git a/include/dt-bindings/clock/microchip,sam9x7-pmc.h b/include/dt-bindings/clock/microchip,sam9x7-pmc.h
-index 2df1ff97a5b18..6f17d6553b33c 100644
---- a/include/dt-bindings/clock/microchip,sam9x7-pmc.h
-+++ b/include/dt-bindings/clock/microchip,sam9x7-pmc.h
-@@ -22,4 +22,7 @@
- #define SAM9X7_PMC_PLLADIV2	PMC_PLLADIV2	/* 14 */
- #define SAM9X7_PMC_LVDSPLL	PMC_LVDSPLL	/* 15 */
+ 	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NULL, 0);
+ 	if (IS_ERR(hw))
+diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+index 024c5abee25ff..eaddb154c4381 100644
+--- a/drivers/clk/at91/sama7d65.c
++++ b/drivers/clk/at91/sama7d65.c
+@@ -1131,6 +1131,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+ 						   50000000);
+ 	if (IS_ERR(main_rc_hw))
+ 		goto err_free;
++	sama7d65_pmc->chws[SAMA7D65_PMC_MAIN_RC] = hw;
  
-+/* new from after bindings splitup */
-+#define SAM9X7_PMC_MAIN_RC	6
-+
- #endif
-diff --git a/include/dt-bindings/clock/microchip,sama7d65-pmc.h b/include/dt-bindings/clock/microchip,sama7d65-pmc.h
-index f5be643be9b36..5c8e52299c110 100644
---- a/include/dt-bindings/clock/microchip,sama7d65-pmc.h
-+++ b/include/dt-bindings/clock/microchip,sama7d65-pmc.h
-@@ -29,4 +29,7 @@
+ 	bypass = of_property_read_bool(np, "atmel,osc-bypass");
  
- #define SAMA7D65_PMC_INDEX_MAX		25
+diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
+index 7dfeec8f2232b..e6d5739371a76 100644
+--- a/drivers/clk/at91/sama7g5.c
++++ b/drivers/clk/at91/sama7g5.c
+@@ -1012,6 +1012,7 @@ static void __init sama7g5_pmc_setup(struct device_node *np)
+ 						   50000000);
+ 	if (IS_ERR(main_rc_hw))
+ 		goto err_free;
++	sama7g5_pmc->chws[SAMA7G5_PMC_MAIN_RC] = hw;
  
-+/* new from after bindings splitup */
-+#define SAMA7D65_PMC_MAIN_RC		6
-+
- #endif
-diff --git a/include/dt-bindings/clock/microchip,sama7g5-pmc.h b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
-index ad69ccdf9dc78..7bcd2634da37e 100644
---- a/include/dt-bindings/clock/microchip,sama7g5-pmc.h
-+++ b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
-@@ -21,4 +21,7 @@
+ 	bypass = of_property_read_bool(np, "atmel,osc-bypass");
  
- #define SAMA7G5_PMC_MCK1	PMC_MCK1	/* 13 */
- 
-+/* new from after bindings splitup */
-+#define SAMA7G5_PMC_MAIN_RC	6
-+
- #endif
 -- 
 2.39.5
 
