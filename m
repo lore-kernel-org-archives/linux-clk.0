@@ -1,129 +1,172 @@
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AEE130E58
-	for <linux-clk@vger.kernel.org>; Tue, 11 Feb 2025 04:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28D7175D50;
+	Tue, 11 Feb 2025 05:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739246888; cv=none; b=b8zVZZcbFBwslBHOYOoeN38xPhWz8wcU8HmQzsog00lm/PR4ZjIXWnXjsqnzNYl90Tbdf068EMLTc+I/2DmCqhjeOL5uXErN6VC99eDs4GbdsvhSqwyur7MSY83LAWHUTnfLt64ImgiOJo643YjpH7FUUeiP7uLC6kOxi/Brp/o=
+	t=1739252169; cv=none; b=RuhzUnvjnG9/pgA6eV5eXZCK6Lpzvqjg5uBWTStjph7vxuNnL10LanL3S3j1mHW8gs7UBPGHIc7PWh44lrhwh+RGfPMKkYdwU/kpFlbpZ/usI8qUqWSE7Hp4my5nDGLTins4jYZvDXqYCcmiLLsE6qaIcuL+wk1Q81jaUxIn+Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739246888; c=relaxed/simple;
-	bh=b6XY/v5c1IShWi7Mnzp3g3rBRfTPLqoqs/fcWxDfeEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TqlIZrUo/NUik7QPiv4GUZUm0hqe7g7tiBCgDRoKSwPsR4Y6qmFTSaWJZtm7FfAmphUY8DwALJdL0nP3vBmUE+73YFynET5tL3u3+LvtQbu8vAMtFB5z0qYW1VRahHZ9puV3sPTGVcb8lUSdV80JLKqKnU6zFe6UdD5/r6csygM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=b2Pwc+jJ; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1739252169; c=relaxed/simple;
+	bh=FN1LucoCbTc7+M/GZvEt8vYIt4uB2BvVXHfxWPX4kZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ljT17t6bHn6NWsRYqI3xR1lNhkg+z2fdjkrmSyLedgoIsD9rCU99t5R1uAS1LsmUBWcSP6CU9nRZ6Q2M051UWRtLn5E6y4o8plWWIfOj2rJ1S6DqMxb/RL0O7vyTiLn05OKCbMqyQ0gVnieoyxA8Pz4Ov4mLg6PXNiCcaWFUe9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=v8o7fNGv; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=wqmG01jJ; arc=none smtp.client-ip=5.78.89.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="b2Pwc+jJ"
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-71fbb0d035dso2851688a34.2
-        for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2025 20:08:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1739246886; x=1739851686; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=t8eYWsGO5bR6d/A4TPLNpDeU5HcoQR1tHKfNDbSFT88=;
-        b=b2Pwc+jJ4jVFOaDwaDWWBD4g1f3mOtu5WE0oXVLvwulvsu6BXTJz7LRn88fibO6Y0C
-         KN3MT79GAbDfPYUZvDzwgZ4o6/Kk2+h8eyut371dXb3KZ6BUjFxTbKNFW1PjmiDPE6OJ
-         AHRhN5hTLmCbFU1TBDemGknqhnsfF4VliHBto=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739246886; x=1739851686;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t8eYWsGO5bR6d/A4TPLNpDeU5HcoQR1tHKfNDbSFT88=;
-        b=vDAi1dZjN/KX48h6NaRZA95gVZp+YVm61iV32kp+wke8bHZ7vwvusgahUsQQWqQm5W
-         zQ1OmBboEh/IM8DQjUEV12+mhOT2CdoCxdFf9Cah+ERRVK8EIU1oKpLuNmch2ivlzfpH
-         EFc3Ul6ZZGlLkn2lw7AM25mj1DbH91TECtFnq8RFSHNtm3Xi9W1L334747nXteODx8GV
-         FVMGXEOEryZDxrix+n4Ma9g1fpIfNIBoMkpseXtaFrR3+om2ILHgpKtoKe737SWQWP80
-         yY2Iv2YBmxs1cw/iHtqL5cfvKAvrtotWdr7sL7kT9icyla52acgsC6xdENn4VP+Jdk4O
-         v6Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWNwNIcBrXXHaH+44mOEedkVhQ7oHb1S/1o6RLnm44NN0KAdMiSdiAeUIFZ7g3bAAkCnDTHDNHXA10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDD2zXwk7wmn0WmNDWGKvxCsGCuwwOdyLxzMSWUhOFCehE2KpF
-	idEbPTd9XiDuVBE+mo874qyfnTaZC7MGAAtgW0JKqdT1RNUG5dUAYTh+DcaWvw==
-X-Gm-Gg: ASbGncvbtO+WU4DBj8k6O28rCE84QdnmSFbxUJMu7hhODNchKSw+TC8egUC7qUHVUJR
-	ahxqOIbKkdFzn1ODHYv3vy4L0gYXGqwpC2wHEuLPkqJSk65Msjgi/YJ9klKVkLH7EEd2dTlI0e6
-	KvwjeyEaa6Bfw4+GcQLHdsTcZXBTKkJC2Ni7MoGawujHSY/W3jW5a7P1wIVAybUeXCAlnIkSThF
-	Caa6HZmMxhEAxUCm6EBHNdo7XRslyBM6PSvEVYhwtL3x8sWuxSWvQnOFJt3R0xN4MYDSzIe0lcr
-	E6W6xb8pgoHMRu01OS2W+iUqjL0Dif33qb1nMFTFfjwzbpEq0mooRSy89l8yUTk9/g==
-X-Google-Smtp-Source: AGHT+IFapi4wMv31NrAKWbcvGGOIg6pfCWW86OI3QXYEtKOl36IiOEMw2fKlDSL1dacmx7ZY5EhBlg==
-X-Received: by 2002:a05:6830:6d11:b0:726:ea48:5993 with SMTP id 46e09a7af769-726ea485bb5mr589459a34.2.1739246885929;
-        Mon, 10 Feb 2025 20:08:05 -0800 (PST)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-726e93d873csm380757a34.47.2025.02.10.20.08.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Feb 2025 20:08:04 -0800 (PST)
-Message-ID: <d6f3bedd-11b9-4eaf-a8a2-a6da460fc7b3@broadcom.com>
-Date: Mon, 10 Feb 2025 20:08:01 -0800
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="v8o7fNGv";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="wqmG01jJ"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 587C0122FE5F;
+	Mon, 10 Feb 2025 21:16:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1739250974; bh=FN1LucoCbTc7+M/GZvEt8vYIt4uB2BvVXHfxWPX4kZg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=v8o7fNGv9Zaqha8RjVEqM2IWywdriu0mBx/IFCCmVvQ+XrXKWq0X3iCVceMimuqUf
+	 TfZufiZOGt132Vr8T/nriOX8TofSCX5B5QHgZktU1FO9qw3pcoKyhPSQ/X0R9esjCF
+	 80DuaBEGuBOoL7lJOnZkPuRUEZ/m2Jeyzcg11Xjr8kvasaKIw6GdS7tpEuye8i0GAS
+	 KoUKFrcQfsfF1N6O4BR/ro2VruVxRmwQ2JApif6bbLFE16zpO2Y6vlAxLCRxHexBO5
+	 K4PtHDf0gmxcJ4UVzr34w4LBinIKcmab03rz5WiYUHNXFturTOqgcSR61kltnOLozl
+	 bCfNAFiZLJoYg==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id wnxHnOhZCS-n; Mon, 10 Feb 2025 21:16:02 -0800 (PST)
+Received: from ketchup (unknown [183.217.81.160])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id E462B122FE21;
+	Mon, 10 Feb 2025 21:15:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1739250962; bh=FN1LucoCbTc7+M/GZvEt8vYIt4uB2BvVXHfxWPX4kZg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wqmG01jJ/0yHHWdc2qUdEnH9Nf0yqDio3fPcsdKuOJhiU9PxYqqAqbQ0EDykmbUpc
+	 ccwdVTqENqhHUrANZ03HIhXtQ5a6nokJvCx1rHiNg570K4qf2FSWQwd9g4I6sLTX2q
+	 X7NaJV/j2bctiyTq4HvmI+4xgzrIzOg47c5IcFn5h9K64Mvhha+78666Wx0/K3P67+
+	 UVcTw9DfIz7hLtifrY2ThA4K6cnKt0Y/Pk7bZ5KTWAwTNc1ZbdbSvzmLNwasiLUvjb
+	 ZnB6zsK5PwZGXNyWdvHds9ZKvxSdnabk/HiMRWvMmJuhU0oMKvfUYOn1RKRpX5Xusf
+	 L0Xy2FKm6LJ5A==
+Date: Tue, 11 Feb 2025 05:15:50 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+Message-ID: <Z6rdBhQ7s2ReOgBL@ketchup>
+References: <20250103215636.19967-2-heylenay@4d2.org>
+ <20250103215636.19967-4-heylenay@4d2.org>
+ <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: bcm: rpi: Fix potential NULL pointer dereference
-To: Chenyuan Yang <chenyuan0y@gmail.com>, mturquette@baylibre.com,
- sboyd@kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com, richardcochran@gmail.com,
- dave.stevenson@raspberrypi.com, popcornmix@gmail.com, mripard@kernel.org,
- u.kleine-koenig@baylibre.com, nathan@kernel.org, linux-clk@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, zzjas98@gmail.com
-References: <20250211000917.1739835-1-chenyuan0y@gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250211000917.1739835-1-chenyuan0y@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
 
-
-
-On 2/10/2025 4:09 PM, Chenyuan Yang wrote:
-> The `init.name` could be NULL. Add missing check in the
-> raspberrypi_clk_register().
-> This is similar to commit 3027e7b15b02
-> ("ice: Fix some null pointer dereference issues in ice_ptp.c").
-> Besides, bcm2835_register_pll_divider() under the same directory also
-> has a very similar check.
+On Sat, Jan 04, 2025 at 11:07:58AM +0100, Krzysztof Kozlowski wrote:
+> On Fri, Jan 03, 2025 at 09:56:35PM +0000, Haylen Chu wrote:
+> > Add documentation to describe Spacemit K1 system controller registers.
+> > 
+> > Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> > ---
+> >  .../soc/spacemit/spacemit,k1-syscon.yaml      | 52 +++++++++++++++++++
+> >  1 file changed, 52 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> > new file mode 100644
+> > index 000000000000..79c4a74ff30e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> > @@ -0,0 +1,52 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/soc/spacemit/spacemit,k1-syscon.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Spacemit K1 SoC System Controller
+> > +
+> > +maintainers:
+> > +  - Haylen Chu <heylenay@4d2.org>
+> > +
+> > +description:
+> > +  The Spacemit K1 SoC system controller provides access to shared register files
+> > +  for related SoC modules, such as clock controller and reset controller.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - spacemit,k1-apbc-syscon
+> > +          - spacemit,k1-apbs-syscon
+> > +          - spacemit,k1-apmu-syscon
+> > +          - spacemit,k1-mpmu-syscon
+> > +      - const: syscon
+> > +      - const: simple-mfd
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clock-controller:
+> > +    $ref: /schemas/clock/spacemit,k1-ccu.yaml#
+> > +    type: object
 > 
-> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> So now we see the full picture and it leads to questions.
+> 
+> 1. Why spacemit,k1-apbc-syscon with spacemit,k1-ccu-apmu child is a
+> correct combination?
+> 
+> 2. Why having this split in the first place? Please confirm that clock
+> controller is really, really a separate device and its child in
+> datasheet. IOW, fake child for your Linux is a no-go. Fake child while
+> devices are independent is another no-go.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+These syscons are introduced because the clock controllers share
+registers with reset controllers. Folding them into the parents results
+in devicetree nodes act as both reset and clock controllers, like what
+has been done for Rockchip SoCs. Such folding isn't practical for the
+MPMU region either, since watchdog and other misc bits (e.g. PLL lock
+status) locates in it.
 
+If you're more comfortable with reset and clock controllers folded
+together and eliminating most of these syscons, I'm willing to make the
+change.
+
+> Actual answer for 1+2 above would be to fold the child into parent,
+> assuming clock controller split is fake in terms of datasheet.
+> 
+> If it is real device, then allOf:if:then: narrowing the compatibles of
+> child might not be worth the complexity.
+> 
+> 3. Why using different naming, look:
+> 
+> spacemit,k1-XXXX-syscon
+> spacemit,k1-ccu-XXXX
+
+I didn't consider about consistency when naming them. Talked to Yixun,
+I'll unify them as spacemit,k1-syscon-* and spacemit,k1-ccu-*, keeping
+synchronized with other K1 peripherals.
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Thanks,
+Haylen Chu
