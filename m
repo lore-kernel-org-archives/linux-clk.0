@@ -1,97 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BBB01F0E21;
-	Tue, 11 Feb 2025 08:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525C01F152D;
+	Tue, 11 Feb 2025 09:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739261866; cv=none; b=r6lu/W3ETPSUs3WH636cpOkrN2g6YXlsMhTXCvkEU7EUKhK8/RJN9537roF5g/EATEnGRANrZZqYmn7fzY14KSVMT9qpIUyTgpLsLHv1tRSgYmuvRMwjhhjONmOezNE53y4kJGFFdiuS3z+8bys6ByE3sUR4GO04k+zW8v5vyn4=
+	t=1739266141; cv=none; b=UxJm6uX9VWr40BVRdZYX/brQABnYjS2IfhLcLm3qRNQc4cRBm6ZCMdV8YujNBSzXfUUSLN0Nn7Y13KXU4PqXhpW9Tp5cRejX+lR/4ArFofN+iusu7kSCoubFoeScImpOGODcEZiTIP40qZHPXSNZElXTQH6tCYYn6z4e3t1RIdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739261866; c=relaxed/simple;
-	bh=Rhu162EIhM1z2w4T5glLEdRgvuphMT5lNfv79kXrgZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hK6r9ZkNKoL2H1xUMex7Klod7zhr9Z8mE5YpHADfKzteFY6BmIKjn7H597uT76aoVISt3Obd67P29wtdUo6yRU9vIZrIJihC+LPDpbDR9j+/o3DrZipGLa0O4QRSfZd5jfUMO58wdNoAnq20pv3gaN5cmPBazUnevkE1uBl/LuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fi8qdzTN; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fi8qdzTN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38DB8C4CEE6;
-	Tue, 11 Feb 2025 08:17:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739261865;
-	bh=Rhu162EIhM1z2w4T5glLEdRgvuphMT5lNfv79kXrgZk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fi8qdzTNv5o5L6fULK5uB2A8iFz0rpLxfz9BzCcQbs++3URe8eKfSZyPMv0nGybMa
-	 ENrEJh94hP0C8V+77xFjgzwwam64bLelN/HEgdamZ7MmlHYUAm3O3kQcww8Pp1vF89
-	 gqBgHPMW6KrAG1RuvyYW1kI+4cLMj+KJaMVJ9vPNd1uZ4NGrI/PydQOtkzLiaNHOVz
-	 p7EgbGECVZ+jfPckA1DTVPSavkJV0ih5VQbkcRIyVdV2Cv8KVvhXrOCxHv8NGaVVfL
-	 8xd+tbRE8u9h4N1UeDwahSTZqxFm6Pc68LkMpMXcxuKvv0azhCbEsUAM6iR640mJE3
-	 X2qJ4ZNQc4nmQ==
-Date: Tue, 11 Feb 2025 09:17:42 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 1/3] dt-binding: clock: ast2700: modify soc0/1 clock
- define
-Message-ID: <20250211-encouraging-free-aardwolf-0fabb1@krzk-bin>
-References: <20250210085004.1898895-1-ryan_chen@aspeedtech.com>
- <20250210085004.1898895-2-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1739266141; c=relaxed/simple;
+	bh=xo45PM8TrHahZlxbt5sqgf+4HRRVOvr/8qDmixd+8qk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=exyknZQBz0DVhdTDXxpBmqJknAe9wDBiIbkdbY9pAhHI2j/31BFhhKqMA0mt02pJTon7Xu/QN4EWjBQoeEBQjShpbaA3btBa73JUoFG2yLSq/7vuJf9flVH/CgRXGdhTXx3rfbJ4MReiujW8yv06P+Zdzc1MWEyS/3PbcvASHAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowADHzCh7FqtnRPQrDA--.4577S2;
+	Tue, 11 Feb 2025 17:21:04 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: andersson@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH] clk: qcom: Fix missing error check for dev_pm_domain_attach()
+Date: Tue, 11 Feb 2025 17:20:17 +0800
+Message-ID: <20250211092017.562-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250210085004.1898895-2-ryan_chen@aspeedtech.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADHzCh7FqtnRPQrDA--.4577S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ary5WFyDAr4rtr4xuryUKFg_yoW8JFy8pa
+	93GFykCrZ5GFyxJF4xWF48uFyFka4jkFyUGryvq34qvwn5XFZ8tr4rAa429F4rGryFyw13
+	ArnIqFy8ua1DCF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvq14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCY02Avz4vE14v_GFWl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JU3b1nUUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwsKA2eq7ySM2AAAsX
 
-On Mon, Feb 10, 2025 at 04:50:02PM +0800, Ryan Chen wrote:
-> remove soc0 clock:
+In the current implementation, the return value of dev_pm_domain_attach()
+is not checked. This can lead to silent failures if the function fails,
+as the code would continue execution and return 0, ignoring the error.
 
-Why? Your commit msg must explain why. What is obvious from the diff,
-isn't it?
+This patch adds a check for the return value of dev_pm_domain_attach().
+If the function fails, an error message is logged using dev_err_probe(),
+and the error is propagated to the existing error handling path `err`,
+which ensures proper cleanup by calling clk_notifier_unregister().
 
->  SOC0_CLK_UART_DIV13
->  SOC0_CLK_HPLL_DIV_AHB
->  SOC0_CLK_MPLL_DIV_AHB
-> add soc0 clock:
->  SOC0_CLK_AHBMUX
->  SOC0_CLK_MPHYSRC
->  SOC0_CLK_U2PHY_REFCLKSRC
-> add soc1 clock:
->  SOC1_CLK_I3C
-> 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> ---
->  include/dt-bindings/clock/aspeed,ast2700-scu.h | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/dt-bindings/clock/aspeed,ast2700-scu.h b/include/dt-bindings/clock/aspeed,ast2700-scu.h
-> index 63021af3caf5..c7389530629d 100644
-> --- a/include/dt-bindings/clock/aspeed,ast2700-scu.h
-> +++ b/include/dt-bindings/clock/aspeed,ast2700-scu.h
-> @@ -13,18 +13,17 @@
->  #define SCU0_CLK_24M		1
->  #define SCU0_CLK_192M		2
->  #define SCU0_CLK_UART		3
-> -#define SCU0_CLK_UART_DIV13	3
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ drivers/clk/qcom/apcs-sdx55.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-NAK, ABI break without any explanation.
-
->  #define SCU0_CLK_PSP		4
->  #define SCU0_CLK_HPLL		5
->  #define SCU0_CLK_HPLL_DIV2	6
->  #define SCU0_CLK_HPLL_DIV4	7
-> -#define SCU0_CLK_HPLL_DIV_AHB	8
-> +#define SCU0_CLK_AHBMUX		8
-
-NAK, ABI break without any explanation.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/qcom/apcs-sdx55.c b/drivers/clk/qcom/apcs-sdx55.c
+index 76ece6c4a969..3ba01622d8f0 100644
+--- a/drivers/clk/qcom/apcs-sdx55.c
++++ b/drivers/clk/qcom/apcs-sdx55.c
+@@ -111,7 +111,11 @@ static int qcom_apcs_sdx55_clk_probe(struct platform_device *pdev)
+ 	 * driver, there seems to be no better place to do this. So do it here!
+ 	 */
+ 	cpu_dev = get_cpu_device(0);
+-	dev_pm_domain_attach(cpu_dev, true);
++	ret = dev_pm_domain_attach(cpu_dev, true);
++	if (ret) {
++		dev_err_probe(dev, ret, "can't get PM domain: %d\n", ret);
++		goto err;
++	}
+ 
+ 	return 0;
+ 
+-- 
+2.42.0.windows.2
 
