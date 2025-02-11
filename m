@@ -1,171 +1,209 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09401FBEAB
-	for <linux-clk@vger.kernel.org>; Tue, 11 Feb 2025 12:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF331F542B
+	for <linux-clk@vger.kernel.org>; Tue, 11 Feb 2025 13:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739275219; cv=none; b=fxNMK0+VBhYUOpNRGsjQrdxfAMo4VfocdRInov3kZda+29TWLZgwwiUNXW2DWW9VupDR+Toxyh9mPL5WX68+2gyAThxeNQ16Ox4fktlENsTYNq0sL/fLTzwzpFCWepn5jfWTLuQVMSnPUzLQ6i8aibaDopl37QpkLGadZ69ajek=
+	t=1739281558; cv=none; b=fkX9whYlj8Bfo/CtpSoTtS6Bbzv403oQua6EuM6uIqu2IjsVJcSPhLBgbR0P2+xxDQC7w9MeEkjPI8IF5NY8pj35p1J3cP02TyXfbGCbMGbOTwNfkI7Yz0Fe2n3IhQjqDM32/h7mfmyfTg0R87mNjDdsa6uP4TYRBZsrnD+cOQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739275219; c=relaxed/simple;
-	bh=3SbQezCP+ISh10ulY9GEv5MsF0c84+68s6utxCeC34s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=f7b50oPuwjr/VyPcdwUgXTO6lKQr5Vf3ZccuD8HhbnmrUFAn2s+4kVa1079/8KJJRCpSR2GObGPgtJ/hGWNQLLguWZxde4nOAYre8FCkvY+YDvMjh+DUcvGwZFpleJ5RA5XLPaLUsa6JS1DAvw2iHVKd9+Zer7ZJRuhkIEDRLJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1thovX-0000Xi-9K; Tue, 11 Feb 2025 12:59:43 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1thovT-000PPU-3A;
-	Tue, 11 Feb 2025 12:59:39 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1thovT-0005DW-2n;
-	Tue, 11 Feb 2025 12:59:39 +0100
-Message-ID: <945fb7e913a9c3dcb40697328b7e9842b75fea5c.camel@pengutronix.de>
-Subject: Re: [PATCH v4 09/18] reset: thead: Add TH1520 reset controller
- driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Michal Wilczynski <m.wilczynski@samsung.com>, Matt Coster
- <Matt.Coster@imgtec.com>, "mturquette@baylibre.com"
- <mturquette@baylibre.com>,  "sboyd@kernel.org" <sboyd@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
- "drew@pdp7.com" <drew@pdp7.com>, "guoren@kernel.org" <guoren@kernel.org>,
- "wefu@redhat.com" <wefu@redhat.com>, "jassisinghbrar@gmail.com"
- <jassisinghbrar@gmail.com>,  "paul.walmsley@sifive.com"
- <paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
- "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Frank Binns
- <Frank.Binns@imgtec.com>,  "maarten.lankhorst@linux.intel.com"
- <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
- <mripard@kernel.org>,  "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "airlied@gmail.com" <airlied@gmail.com>,  "simona@ffwll.ch"
- <simona@ffwll.ch>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, 
- "jszhang@kernel.org" <jszhang@kernel.org>, "m.szyprowski@samsung.com"
- <m.szyprowski@samsung.com>
-Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"devicetree@vger.kernel.org"
-	 <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, "linux-riscv@lists.infradead.org"
-	 <linux-riscv@lists.infradead.org>, "dri-devel@lists.freedesktop.org"
-	 <dri-devel@lists.freedesktop.org>, "linux-pm@vger.kernel.org"
-	 <linux-pm@vger.kernel.org>
-Date: Tue, 11 Feb 2025 12:59:39 +0100
-In-Reply-To: <7d8a3f8d-f369-47dd-8c5f-dcff8d692ea8@samsung.com>
-References: <20250128194816.2185326-1-m.wilczynski@samsung.com>
-	 <CGME20250128194836eucas1p151c4fc83a17173fd1b79bfc959976301@eucas1p1.samsung.com>
-	 <20250128194816.2185326-10-m.wilczynski@samsung.com>
-	 <816db99d-7088-4c1a-af03-b9a825ac09dc@imgtec.com>
-	 <e83ea320-23f0-41ed-934c-2f1687b55ec1@samsung.com>
-	 <48261cdfab6e0bc16e5327664b06728e1894422a.camel@pengutronix.de>
-	 <7d8a3f8d-f369-47dd-8c5f-dcff8d692ea8@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1739281558; c=relaxed/simple;
+	bh=5Ls6ehrFuNfDtokxDzaR2J5p2+P5rZ6x9GJCMdIdOXU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CJBzBVPOP3ig3gTuAm3MooRz3C7zX0LbeIHGXFUeRxJl6+TpFbnMTXa2mt8PFWs1AqQ/pKBprnpMiDOmxOaYpZeumX6GZ6iJnKx7ezJIlunqzIYDCElTqWlVJ/YlQDnOWiZ1rwt3xauaEKvrdYuJAjs7eaR45oQZsmyHuNPEZy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=A2DLbn6D; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="A2DLbn6D"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ab771575040so1074271966b.1
+        for <linux-clk@vger.kernel.org>; Tue, 11 Feb 2025 05:45:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1739281555; x=1739886355; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RkP+VyXyd2LDTq1dE/e/+i0gFwY3obdySQr3wdtK8hs=;
+        b=A2DLbn6D3yiNZvfFC/1uJgUHenzjcoi+hkZfcq814JXPSlSOlPs/Qet+GZmi+76MTV
+         Lu5xGnRkPKsiG0VsG7jiM6C/1ChBjq3mvshyHDa83MCd4FQ+B05gIaSQ1p7K0uM+ltxN
+         NNuARlr/LY7RPhAcItmlQxmAp8qXpsVH5kEHTrBzBXGqMxkL/NwWNBz7p2bWAuC9iciq
+         fK8W/yz6buao4PKvhXcSHihHdoLjidcAndLA7Xxw0tTAt2hFq6Oyl+UPDmJwF9FrLw2c
+         ueckiz/HoRw6zAoLvKxraQp4js/qXehAsdcQyn1D4JMR8LshNiT0VzQsUKV0Lr2ONejI
+         vY/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739281555; x=1739886355;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RkP+VyXyd2LDTq1dE/e/+i0gFwY3obdySQr3wdtK8hs=;
+        b=NIWbp7GfOTYIVHX97dEMF8btlNQW0m/wTjBLd56c93w4rOEFpyhMTBUvNcsw5A6cyt
+         xdmDNw7DjtMABc+yAHG+RPJb+aiXyq6remLu6FVxjCm99co/OgxLt9HdFjDrCl/vwroz
+         hnCXJi66YXNpHythqufV0cO2A5qdfIfIzEIgUrcgAG1qFuQFF9A1hglYORMicThKtk0S
+         HyC6LD83ccVaOm2vLYP2cvd6MWhOkxJIwncWe8NQCwXHkDhwgKVeeQ2NH9EaxIXQnR/I
+         Ux7/wH5julgVJ8l+ZwHI2Zg8EeZpTiU164dDypRKEHJKaBwyckJ/qghonXJnAIwOPX8f
+         W/xg==
+X-Forwarded-Encrypted: i=1; AJvYcCVe/CIcnUww13FFyUnxVRYVRt7++noMJUSBecb5zoVRu0UqA+ItZcieQZxevm+3qs7dd+hNZPeoSIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdvxcY8Eej10OUM9311TVma8W5vYoLNjieTICPXlqciHMkQibC
+	ZTED8AFLrUH5g2tl7FtFynlPUdHQSu2k6wEa5zDP2j52/K9sW0HxbnZcr7JvaQE=
+X-Gm-Gg: ASbGnctocwo8HGPzB+JiHjvbAIACk6r/+9XCPSRve5AYz6zbb337dY2r/wMfTj7dSfV
+	7II94NCytLTC7QjIqns9bon+9mXsqSTazkeqjnf621DgNjMbpZ3kB1SpYlAlrIo3268D+qIG40e
+	0zSKaksLxCbVTXxBqU0O7K+2FX8+K9HJPbUNdyRI6k+uDtXkXvVgXK6a4pW4mXBL7VvzH6PFilA
+	8SimjEZEVFqwGOtYNerN79qgX1PRUw/fOwUg1jBKmRn/ihcDIkh/VEmk5h/kuHx2jvPJE7FdpZv
+	IOHCwHtj1Dlcl5ng3IGyqFHn6xvQ00tWSRL4ZihWsXRNMHO4f1yq5gL9HWg=
+X-Google-Smtp-Source: AGHT+IG51KR7uQClui5T80GFu03wGjZtCbiNcOn2c2quAcoJxfpyu2MvcnnQYDV8Nd/6UX7Ol8OjhA==
+X-Received: by 2002:a17:907:6ea0:b0:ab7:c11:a980 with SMTP id a640c23a62f3a-ab7db544773mr282512766b.17.1739281554584;
+        Tue, 11 Feb 2025 05:45:54 -0800 (PST)
+Received: from localhost (host-79-41-239-37.retail.telecomitalia.it. [79.41.239.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7b43ee08asm522714066b.88.2025.02.11.05.45.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 05:45:54 -0800 (PST)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Tue, 11 Feb 2025 14:46:53 +0100
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v7 06/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio
+ support
+Message-ID: <Z6tUzcCqI2xdKSQ5@apocalypse>
+References: <cover.1738963156.git.andrea.porta@suse.com>
+ <c4b60fda4b9c87a5efaf5103507fb568413c841a.1738963156.git.andrea.porta@suse.com>
+ <8e2b0e05-cd60-4b79-8763-005c3f72a64d@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8e2b0e05-cd60-4b79-8763-005c3f72a64d@gmx.net>
 
-On Mo, 2025-02-10 at 19:17 +0100, Michal Wilczynski wrote:
-> On 2/4/25 18:18, Philipp Zabel wrote:
-> > On Mo, 2025-02-03 at 19:15 +0100, Michal Wilczynski wrote:
-[...]
-> > > I think this is required because the MEM clock gate is somehow broken
-> > > and marked as 'reserved' in manual, so instead as a workaround, since=
- we
-> > > can't reliably enable the 'mem' clock it's a good idea to reset the
-> > > whole CLKGEN of the GPU.
-> >=20
-> > If this is a workaround for broken gating of the "mem" clock, would it
-> > be possible (and reasonable) to make this a separate reset control that
-> > is handled by the clock driver? ...
->=20
-> Thank you for the detailed feedback, Philipp.
->=20
-> After further consideration, I believe keeping the current reset driver
-> implementation would be preferable to moving the CLKGEN reset handling
-> to the clock driver. While it's technically possible to implement this
-> in the clock driver, I have concerns about the added complexity:
->=20
-> 1. We'd need to expose the CLKGEN reset separately in the reset driver
+Hi Stefan,
 
-I'd expect this to simplify the reset driver.
+On 15:36 Sat 08 Feb     , Stefan Wahren wrote:
+> Hi Andrea,
+> 
+> Am 07.02.25 um 22:31 schrieb Andrea della Porta:
+> > The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
+> > Add minimum support for the gpio only portion. The driver is in
+> > pinctrl folder since upcoming patches will add the pinmux/pinctrl
+> > support where the gpio part can be seen as an addition.
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+> > ---
+> >   MAINTAINERS                   |   1 +
+> >   drivers/pinctrl/Kconfig       |  11 +
+> >   drivers/pinctrl/Makefile      |   1 +
+> >   drivers/pinctrl/pinctrl-rp1.c | 789 ++++++++++++++++++++++++++++++++++
+> >   4 files changed, 802 insertions(+)
+> >   create mode 100644 drivers/pinctrl/pinctrl-rp1.c
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index a4a9555c07c5..f2ba6f565d30 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19756,6 +19756,7 @@ F:	Documentation/devicetree/bindings/misc/pci1de4,1.yaml
+> >   F:	Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> >   F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> >   F:	drivers/clk/clk-rp1.c
+> > +F:	drivers/pinctrl/pinctrl-rp1.c
+> >   F:	include/dt-bindings/clock/rp1.h
+> >   F:	include/dt-bindings/misc/rp1.h
+> > 
+> > diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+> > index 95a8e2b9a614..53b265cabc26 100644
+> > --- a/drivers/pinctrl/Kconfig
+> > +++ b/drivers/pinctrl/Kconfig
+> > @@ -612,6 +612,17 @@ config PINCTRL_MLXBF3
+> >   	  each pin. This driver can also be built as a module called
+> >   	  pinctrl-mlxbf3.
+> > 
+> > +config PINCTRL_RP1
+> > +	tristate "Pinctrl driver for RP1"
+> > +	depends on MISC_RP1
+> > +	default MISC_RP1
+> > +	select PINMUX
+> > +	select PINCONF
+> > +	select GENERIC_PINCONF
+> > +	help
+> > +	  Enable the gpio and pinctrl/mux driver for RaspberryPi RP1
+> > +	  multi function device.
+> > +
+> >   source "drivers/pinctrl/actions/Kconfig"
+> >   source "drivers/pinctrl/aspeed/Kconfig"
+> >   source "drivers/pinctrl/bcm/Kconfig"
+> > diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+> > index fba1c56624c0..6fb77de58545 100644
+> > --- a/drivers/pinctrl/Makefile
+> > +++ b/drivers/pinctrl/Makefile
+> > @@ -48,6 +48,7 @@ obj-$(CONFIG_PINCTRL_PIC32)	+= pinctrl-pic32.o
+> >   obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
+> >   obj-$(CONFIG_PINCTRL_RK805)	+= pinctrl-rk805.o
+> >   obj-$(CONFIG_PINCTRL_ROCKCHIP)	+= pinctrl-rockchip.o
+> > +obj-$(CONFIG_PINCTRL_RP1)       += pinctrl-rp1.o
+> >   obj-$(CONFIG_PINCTRL_SCMI)	+= pinctrl-scmi.o
+> >   obj-$(CONFIG_PINCTRL_SINGLE)	+= pinctrl-single.o
+> >   obj-$(CONFIG_PINCTRL_ST) 	+= pinctrl-st.o
+> > diff --git a/drivers/pinctrl/pinctrl-rp1.c b/drivers/pinctrl/pinctrl-rp1.c
+> > new file mode 100644
+> > index 000000000000..0d081f75d2ec
+> > --- /dev/null
+> > +++ b/drivers/pinctrl/pinctrl-rp1.c
+> > @@ -0,0 +1,789 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Driver for Raspberry Pi RP1 GPIO unit
+> > + *
+> > + * Copyright (C) 2023 Raspberry Pi Ltd.
+> > + *
+> > + * This driver is inspired by:
+> > + * pinctrl-bcm2835.c, please see original file for copyright information
+> > + */
+> > +
+> ...
+> > +
+> > +static struct irq_chip rp1_gpio_irq_chip = {
+> > +	.name = MODULE_NAME,
+> > +	.irq_enable = rp1_gpio_irq_enable,
+> > +	.irq_disable = rp1_gpio_irq_disable,
+> > +	.irq_set_type = rp1_gpio_irq_set_type,
+> > +	.irq_ack = rp1_gpio_irq_ack,
+> > +	.irq_mask = rp1_gpio_irq_disable,
+> > +	.irq_unmask = rp1_gpio_irq_enable,
+> > +	.flags = IRQCHIP_IMMUTABLE,
+> Sorry not sure, but doesn't this miss GPIOCHIP_IRQ_RESOURCE_HELPERS here?
 
-> 2. The clock driver's dt-bindings would need modification to add an
->    optional resets property
+Right. Added.
 
-If it describes the hardware correctly, that should be fine.
+Thanks,
+Andrea
 
-> 3. We'd need custom clk_ops for all three clock gates (including a dummy
->    'mem' gate)
-> 4. Each clock gate's .enable operation would need to handle CLKGEN reset
->    deassertion
-
-I accept these arguments, as I have no good feeling for how much
-complexity this would actually add.
-
-In my mind it shouldn't be much: the GPU clocks could all share the
-same refcounted implementation. The first clock to get enabled would
-ungate both GPU_CORE and GPU_CFG_ACLK gates and deassert
-GPU_SW_CLKGEN_RST, all in one place. The remaining enable(s) would be
-no-ops. Would that work?
-
-Whether a separate "dummy" MEM clock for the DT bindings is added or
-not would not make a difference.
-
-> While the clock framework could theoretically handle this, there's no
-> clean way to express the requirement that the CLKGEN reset should only
-> be deasserted after all clocks in the group are enabled. We could
-> implement this explicitly, but it would make the code more complex and
-> harder to understand.
-
-Doing this in the clock driver would have the advantage of clk_enabled
-GPU clocks actually staying physically enabled, without the reset
-driver disabling them via GPU_SW_CLKGEN_RST from the outside.
-
-> The current solution in the reset driver is simpler and clearer - it
-> treats this as what it really is: a TH1520-specific reset sequence.
-
-Yes. What this also is: a workaround for a SoC specific defect in the
-clock tree. I think it belongs in the clock driver because of this.
-
-
-[...]
-> Regarding the delay between clock enable and reset deassert - for SoCs
-> like BPI-F3 with a single reset line, implementing this in the GPU
-> consumer driver makes perfect sense. However, for the T-HEAD SoC, moving
-> the delay there would actually complicate things since we need to manage
-> both the CLKGEN and GPU reset lines in a specific sequence. Having this
-> handled entirely within the reset driver keeps the implementation
-> cleaner.
-
-You could delay in both places, it's just a microsecond after all.
-Whether the workaround is implemented in the reset driver or in the
-clock driver,=C2=A0I wouldn't want the GPU driver to have to carry a specia=
-l
-case for TH1520.
-
-> Does this reasoning align with your thoughts? I'm happy to explore the
-> clock driver approach further if you still see significant advantages to
-> that solution.
-
-I won't object to carry this in the reset driver if the clock
-implementation turns out to be unreasonably complex, but I currently
-don't expect that to be the case. Please give it a shot.
-
-regards
-Philipp
+> 
+> Thanks
