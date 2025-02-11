@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D09F1E9B39;
-	Tue, 11 Feb 2025 07:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D582190486;
+	Tue, 11 Feb 2025 08:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739260224; cv=none; b=riBDfpzkhepwHwAxJ2svaYYnrM/iR6CSKmMQQ967x3B6SZ8Uh4cg0FALfn4tQnRqvDJg0sSyjMxb1TuqCdBKvaxSqUUUHe3SrdPdk46WApF0aqiHyca2jLynpnRkTk0wIHzt1uEKVoOq0M4TLLScYJVc7W5brbGPYRGNbDc2rLs=
+	t=1739260916; cv=none; b=rt4arUAbWveZDUAx+8PlNzP8SsL5ez+X8FGJuQxJauNhZNzqPoanWm3se/U9hDph9w6hcU5T7JJBFSNM8R/NUC1yzMKas/PJthU2QIETizp0lpLF53hdTuloehT0Ykhatx9CwWW/KTIAMtk0/RHWY5s2yJpJVVug9PtsrotBGNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739260224; c=relaxed/simple;
-	bh=EF1TKhjntnzy3W5RYekoNWTXsY1QRykYaRxSzp7OJ94=;
+	s=arc-20240116; t=1739260916; c=relaxed/simple;
+	bh=9bEXdxYB2C9XASX0APAaNux1TnoL9FXfmnFhFF334pQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qEVhUn/WwnW86HbMHitYTH23OXkuXvHovsxCSk3k2I2LbZAZSuwys2v1AssYFCtLSHjEvdQUnGZEPV0JjSbpwH0iI+3B8TUltQP4k0xu/63BcP3M1pDe6gC5B1fOKYg2PC2OYHvpmnv4oPJOgq22rQJehWVglWd78c12NtJs05Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gB87xESB; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=Zm5viP+WZmY1Au4cKArpg03HU/sVyT9ASvUVepzeEVzzLHrw0jhGgizePAJxGtlB8IRq0TvSQCuGup/SX8iU685aKb1eMHMwUpA6AVtBbP2npndKYQlFkJKnkbIwFVtNRRR1BZmP6/WRWZpvVyF5Nsx+HErVzRNJeJY4GrzorBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sIVrXrLJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gB87xESB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F0CC4CEDD;
-	Tue, 11 Feb 2025 07:50:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIVrXrLJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CC1CC4CEDD;
+	Tue, 11 Feb 2025 08:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739260224;
-	bh=EF1TKhjntnzy3W5RYekoNWTXsY1QRykYaRxSzp7OJ94=;
+	s=k20201202; t=1739260915;
+	bh=9bEXdxYB2C9XASX0APAaNux1TnoL9FXfmnFhFF334pQ=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=gB87xESBUQtg3OTfLiVUbAOJY3GWxWeQYzco4QfapW38Yq6WPIM9S+znxkRFd+pdp
-	 DXZ8C2ggw04AB16w8oJ9R1whXfgcd1/CY5yT/fbGKGJWu87iYjtOZ2DjJiQMIPq9yt
-	 ayVbtwHnvufaofEV31KO7t4JQ+FdxQgLVhZUdN5WVouDw4Ws3mkwx/uOqF5k11y0ZV
-	 QKkh56aG8mowoWklhYCLD41PdT9Qpbo4W7oNqbS/HByhmFpUXEYb48tdE+bBD4GOff
-	 eEgTVoc4L6HaRqeFJsl1lmTdHhNOmCDSgMFLBcDM8VsBaVKWiB0mn3/6U0VQ2fgMO4
-	 yonNaC5271QQg==
-Message-ID: <7fa40597-ebc8-495e-885f-ff2c6b80d5e7@kernel.org>
-Date: Tue, 11 Feb 2025 08:50:17 +0100
+	b=sIVrXrLJMyjKOfNIUsmIqRbfYw9FsIoNLdKxCBPf2TK/lRFnL1gldbGNzqFq3GH8t
+	 r4zLsXkb2TPtTNIzYp8OIwupCNgduA5bXZNCmIUYeKBkZ9MEb2qBdPezXXsd7iILZV
+	 1lsNQKQZdT0VjM/bvZzuEAT5fPyc0Q2T12x9aUBF8vfbVrWBeW9uO6D853mmSc/LPE
+	 3w26EH0QUiI38AwcSUEctcecy7e9Bsz67E9A+f1W73vLo/19Tc97jXbNUbtopMQVX4
+	 UHYuZz/WiWxyhSfgGpp7KUFiiuNvE6PjSdL4/Db35I4DeGUYToZI/OEZaMItrFExUg
+	 PqH69oO5cH4gg==
+Message-ID: <71910842-6310-4e1f-81a1-3b218e1ee69a@kernel.org>
+Date: Tue, 11 Feb 2025 09:01:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,20 +35,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/16] dt-bindings: nvmem: microchip-otpc: Add required
- clocks
+Subject: Re: [PATCH v2 04/16] dt-bindings: clock: at91: Allow referencing main
+ rc oscillator in DT
 To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
  Nicolas Ferre <nicolas.ferre@microchip.com>,
  Ryan Wanner <ryan.wanner@microchip.com>,
  linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
 References: <20250210164506.495747-1-ada@thorsis.com>
- <20250210164506.495747-9-ada@thorsis.com>
- <8e9562c8-5c01-4b5c-b2b0-4dad3d16e7a8@kernel.org>
- <20250211-primer-epic-d07bc3752569@thorsis.com>
+ <20250210164506.495747-5-ada@thorsis.com>
+ <89d51ac4-0690-42a7-b5fb-2887363e8a8b@kernel.org>
+ <20250211-deprive-relocate-353ad26f46b7@thorsis.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,29 +94,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250211-primer-epic-d07bc3752569@thorsis.com>
+In-Reply-To: <20250211-deprive-relocate-353ad26f46b7@thorsis.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 11/02/2025 08:05, Alexander Dahl wrote:
+On 11/02/2025 08:26, Alexander Dahl wrote:
 > Hello Krzysztof,
 > 
-> Am Mon, Feb 10, 2025 at 05:59:52PM +0100 schrieb Krzysztof Kozlowski:
+> Am Mon, Feb 10, 2025 at 06:07:10PM +0100 schrieb Krzysztof Kozlowski:
 >> On 10/02/2025 17:44, Alexander Dahl wrote:
->>> The OTPC requires both the peripheral clock through PMC and the main RC
->>> oscillator.  Seemed to work without explicitly enabling those clocks on
->>> sama7g5 before, but did not on sam9x60.
+>>> The main rc oscillator will be needed for the OTPC to work properly.
 >>>
->>> Older datasheets were not clear and explicit about this, but recent are,
->>> e.g. SAMA7G5 series datasheet (DS60001765B),
->>> section 30.4.1 Power Management:
+>>> The new index introduced here was not used on the four affected SoC
+>>> clock drivers before, but for sama5d2 only (PMC_I2S1_MUX).
 >>>
->>>> The OTPC is clocked through the Power Management Controller (PMC).
->>>> The user must power on the main RC oscillator and enable the
->>>> peripheral clock of the OTPC prior to reading or writing the OTP
->>>> memory.
->>>
->>> Link: https://lore.kernel.org/linux-clk/ec34efc2-2051-4b8a-b5d8-6e2fd5e08c28@microchip.com/T/#u
+>>> Link: https://lore.kernel.org/linux-devicetree/20250207-jailbird-circus-bcc04ee90e05@thorsis.com/T/#u
 >>> Signed-off-by: Alexander Dahl <ada@thorsis.com>
 >>> ---
 >>>
@@ -124,99 +116,50 @@ On 11/02/2025 08:05, Alexander Dahl wrote:
 >>>     v2:
 >>>     - new patch, not present in v1
 >>>
->>>  .../nvmem/microchip,sama7g5-otpc.yaml         | 28 +++++++++++++++++++
->>>  1 file changed, 28 insertions(+)
+>>>  include/dt-bindings/clock/microchip,sam9x60-pmc.h  | 3 +++
+>>>  include/dt-bindings/clock/microchip,sam9x7-pmc.h   | 3 +++
+>>>  include/dt-bindings/clock/microchip,sama7d65-pmc.h | 3 +++
+>>>  include/dt-bindings/clock/microchip,sama7g5-pmc.h  | 3 +++
+>>>  4 files changed, 12 insertions(+)
 >>>
->>> diff --git a/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml b/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
->>> index 9a7aaf64eef32..1fa40610888f3 100644
->>> --- a/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
->>> +++ b/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
->>> @@ -29,6 +29,16 @@ properties:
->>>    reg:
->>>      maxItems: 1
+>>> diff --git a/include/dt-bindings/clock/microchip,sam9x60-pmc.h b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
+>>> index e01e867e8c4da..dcd3c74f75b54 100644
+>>> --- a/include/dt-bindings/clock/microchip,sam9x60-pmc.h
+>>> +++ b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
+>>> @@ -16,4 +16,7 @@
 >>>  
->>> +  clocks:
->>> +    items:
->>> +      - description: main rc oscillator
->>> +      - description: otpc peripheral clock
->>> +
->>> +  clock-names:
->>> +    items:
->>> +      - const: main_rc_osc
->>
->> osc
-> 
-> On at91 SoCs main oscillator and main RC oscillator are two different
-> things, and those are different clocks in Linux as well.  This clock
-> is named "main_rc_osc" in the clock driver.  In
-
-It does not matter, you could have 5 oscillators. This device takes one.
-What is this clock from the point of view of device?
-
-> drivers/clk/at91/sam9x60.c this clock is added like this:
-> 
->     hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000, 50000000);
-> 
-> The datasheet makes it explicit, it's exactly the main rc oscillator
-> clock required for the OTPC to work, no other clock.
-
-You speak about source clock but this has to be the clock here, in the
-device context.
-
-> 
-> So why name this "osc" only then?  This is confusing at best.
-> 
->>
->>> +      - const: otpc_clk
->>
->> otpc or bus or whatever logically this is
-> 
-> Okay the "_clk" suffix is redundant.  Since the peripheral clock for
-> the OTPC is required here, I would go with "otpc" only then.
-> 
->>
->>> +
->>>  required:
->>>    - compatible
->>>    - reg
->>> @@ -37,6 +47,8 @@ unevaluatedProperties: false
+>>>  #define SAM9X60_PMC_PLLACK	PMC_PLLACK	/* 7 */
 >>>  
->>>  examples:
->>>    - |
->>> +    #include <dt-bindings/clock/at91.h>
->>> +    #include <dt-bindings/clock/microchip,sama7g5-pmc.h>
->>>      #include <dt-bindings/nvmem/microchip,sama7g5-otpc.h>
->>>  
->>>      otpc: efuse@e8c00000 {
->>> @@ -44,10 +56,26 @@ examples:
->>>          reg = <0xe8c00000 0xec>;
->>>          #address-cells = <1>;
->>>          #size-cells = <1>;
->>> +        clocks = <&pmc PMC_TYPE_CORE SAMA7G5_PMC_MAIN_RC>, <&pmc PMC_TYPE_PERIPHERAL 67>;
->>> +        clock-names = "main_rc_osc", "otpc_clk";
->>>  
->>>          temperature_calib: calib@1 {
->>>              reg = <OTP_PKT(1) 76>;
->>>          };
->>>      };
->>>  
->>> +  - |
->>> +    #include <dt-bindings/clock/at91.h>
->>> +    #include <dt-bindings/clock/microchip,sam9x60-pmc.h>
->>> +    #include <dt-bindings/nvmem/microchip,sama7g5-otpc.h>
->>> +
->>> +    efuse@eff00000 {
->>> +        compatible = "microchip,sam9x60-otpc", "syscon";
->>> +        reg = <0xeff00000 0xec>;
+>>> +/* new from after bindings splitup */
+>>> +#define SAM9X60_PMC_MAIN_RC	6
 >>
->> No need for new example with difference in what exactly? Even compatible
->> was not added here...
+>> This is confusing me, because:
+>> 1. You still have holes in IDs
 > 
-> Different compatible, different clocks, no sub nodes, different
-> peripheral clock id …  From a human doc readers I'd like another
+> Yes, I was told to maintain the old values for interface stability in
+> series v1 feedback.
+> 
+>> 2. This should be placed in proper order by ID
+> 
+> Okay, no problem.
+> 
+>> 3. Why not using 4 - the next available empty ID?
+> 
+> The MAIN_RC clock is used on four out of thirteen (?) SoC variants
+> which all used the same IDs before.  6 is the first ID which is free
+> on all of sam9x60, sam9x7, sama7g5, and sama7d65.  The last two
+> already use 4 for a different clock.
 
-Clocks are the same. Their actual value does not matter.
+So driver for this device already uses something for 4?
 
+> 
+> The whole splitup is to avoid even more and/or bigger holes, but is it
+> important where the existent holes are filled?
+> 
+> Technically if the next available empty ID should be used it would be
+> 4 for sam9x60 and sam9x7, 2 for sama7d65, and 6 for sama7g5.  I
+> thought it would be nice to use the same value instead to make
+> somewhat compatible to the old approach.
 
 
 Best regards,
