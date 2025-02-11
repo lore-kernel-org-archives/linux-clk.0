@@ -1,36 +1,35 @@
 Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBCB26BDB6;
-	Tue, 11 Feb 2025 07:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8E81D63F7;
+	Tue, 11 Feb 2025 07:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739257525; cv=none; b=qSdtV67m9iD1MyOm+a92giFmk8d9N1lyA6DfhAtypGmaRVw49AMr5pxfgoXR3Si9+hGsWpPrsQzx9PcGCvOpGW3ODW8p2Z6CHylAumedIAWPZBcHknC+pppUDJpk1jyz5gyH4TLmB6fOV/oqzNHg0mdHN71XYUymcYj7SuBMVxo=
+	t=1739258218; cv=none; b=TotSjVgJQS3wK7in7ouTEDlzWrBIbDZGXoRYQoxs2liNo+e/psS4umO0AfVgq+526sDGZybOvbO/kij9SxR5xUiF+SmsFabsCuUoXe5pWMojsgu3gtxC9mWsm3HMMNJSAOlFGuzeO54wOBux87NxJ6pIbC1/YZqamn83Epsp7NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739257525; c=relaxed/simple;
-	bh=mwmPV6GcjGF953IW1HDwL4a6zb02eH1Tc0c3yrbIinQ=;
+	s=arc-20240116; t=1739258218; c=relaxed/simple;
+	bh=IFpGeEAigtCzbpG6npskBYBPARY5X3pUB2Xudv1CS9M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mjt8OAwajiL3D8HVX7PtQh0vgwO9dVmVtQoJ6GGX3bIwy+FtXdhNT70HotBJYdFt0tJDj7GbKqIhv+3ILrN8yrY8kUCmqzybzqnPukG4/YH93ZUkdgb6awvMjG4ehA8a9cYq/yDabznQ4lk3WacREcTrX3yfYC+4rtGBO8fTyaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=fZ3S4PNW; arc=none smtp.client-ip=217.92.40.78
+	 Content-Type:Content-Disposition:In-Reply-To; b=XrfUAJwkRIa5KF7+7Awhsj6DaT3kd/kEZYMA4kUBw8jZgTsQtc8wvzx/cUORgAI86etiC3GsSo1Oyz7vZNAOW+LCbPhLMjVLSnGk5XSAEyhFldWIYr1HfZIAfhskkQ3F2m/BbtJNUeRlJhOlUGj0yfl/mg6ITAqTmosxvEekCgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=DMziTgXL; arc=none smtp.client-ip=217.92.40.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="fZ3S4PNW"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 395C81480388;
-	Tue, 11 Feb 2025 08:05:19 +0100 (CET)
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="DMziTgXL"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6ACF014801C8;
+	Tue, 11 Feb 2025 08:16:52 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1739257520;
+	t=1739258213;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=zhmjHnHw3vjWo+tkwmIIDKtbQQYkCfKwRVCsE4/6FJ0=;
-	b=fZ3S4PNWa3z+AJjC0z2Rbjb5irYPnhzFSGve2WHv/xVHrClSkkw1Oes9qbeC/rN/TQZh5m
-	KrVmjp6tTe3JZa0PMnQEZFj+kESGp912bmTFau0QfHIltHr4fb0isN2eAYvm8uSYjR0TZg
-	NpUqCvPoVIOFWaolUjEMi4nruboGJWZco7zOLxrjNKaYfJcOOChhvyNaNs26HVnmAvR6Tg
-	XyS9tX9ilujx0t0bxAxs45yYEXWzCm4SG8fhljKGhNvao+jh7Z+VK9r33o2Ov7q5sIsCU8
-	Pll5wN5r0QX6RRXhKR/8Jrazpa5tfCXRic9raMqghv/C5Bk0FPfe1Gl2Mh5RhQ==
-Date: Tue, 11 Feb 2025 08:05:14 +0100
+	bh=yeqbZ8gL7IKSa34fSG0N17oAXiPh2xQ8hnnmu14TEIc=;
+	b=DMziTgXLFFkMPBIUw0l+qb1cicwXk6RP1JRgVBdieHePTf6A9XxfYQAbHK1mRnWtit1/+c
+	lOPY0j0hROIzye3E9Hy0fmr0YIZyqAJO2MTYOjGNH1NDjZhhG48RIDaYrn5f8rrmxT996m
+	aCevm5dfQvc94CDLX+BADaqRy/78YpzSKzKyvu6YJL7mPRrFzlldHE+y+Ar59I0FHMylr5
+	M7qbxS+Bo3CxTHcghua9xPX/xyc8Qy0xqnd02z119zba+HWR2s9ew+cKqbkLZMQYMbABUP
+	7wAyy37HonNmzNaxcYKG143AceSx8qXJtS9cKAGI7vaP92wNUL+3ytlel4rEtA==
+Date: Tue, 11 Feb 2025 08:16:51 +0100
 From: Alexander Dahl <ada@thorsis.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Alexander Dahl <ada@thorsis.com>,
@@ -39,57 +38,57 @@ Cc: Alexander Dahl <ada@thorsis.com>,
 	Ryan Wanner <ryan.wanner@microchip.com>,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 08/16] dt-bindings: nvmem: microchip-otpc: Add
- required clocks
-Message-ID: <20250211-primer-epic-d07bc3752569@thorsis.com>
+Subject: Re: [PATCH v2 01/16] dt-bindings: clock: at91: Split up per SoC
+ partially
+Message-ID: <20250211-cuddly-system-33432b3ced5f@thorsis.com>
 Mail-Followup-To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
 	Nicolas Ferre <nicolas.ferre@microchip.com>,
 	Ryan Wanner <ryan.wanner@microchip.com>,
 	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
 References: <20250210164506.495747-1-ada@thorsis.com>
- <20250210164506.495747-9-ada@thorsis.com>
- <8e9562c8-5c01-4b5c-b2b0-4dad3d16e7a8@kernel.org>
+ <20250210164506.495747-2-ada@thorsis.com>
+ <a199849a-ca36-439d-8246-7addd9a78833@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e9562c8-5c01-4b5c-b2b0-4dad3d16e7a8@kernel.org>
+In-Reply-To: <a199849a-ca36-439d-8246-7addd9a78833@kernel.org>
 User-Agent: Mutt/2.2.12 (2023-09-09)
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Krzysztof,
+Hello everyone,
 
-Am Mon, Feb 10, 2025 at 05:59:52PM +0100 schrieb Krzysztof Kozlowski:
+Am Mon, Feb 10, 2025 at 06:05:31PM +0100 schrieb Krzysztof Kozlowski:
 > On 10/02/2025 17:44, Alexander Dahl wrote:
-> > The OTPC requires both the peripheral clock through PMC and the main RC
-> > oscillator.  Seemed to work without explicitly enabling those clocks on
-> > sama7g5 before, but did not on sam9x60.
+> > Before adding even more new indexes creating more holes in the
+> > clk at91 drivers pmc_data->chws arrays, split this up.
 > > 
-> > Older datasheets were not clear and explicit about this, but recent are,
-> > e.g. SAMA7G5 series datasheet (DS60001765B),
-> > section 30.4.1 Power Management:
+> > This is a partial split up only for SoCs affected by upcoming changes
+> > and by that PMC_MAIN + x hack, others could follow by the same scheme.
 > > 
-> >> The OTPC is clocked through the Power Management Controller (PMC).
-> >> The user must power on the main RC oscillator and enable the
-> >> peripheral clock of the OTPC prior to reading or writing the OTP
-> >> memory.
+> > Binding splitup was proposed for several reasons:
 > > 
-> > Link: https://lore.kernel.org/linux-clk/ec34efc2-2051-4b8a-b5d8-6e2fd5e08c28@microchip.com/T/#u
+> > 1) keep the driver code simple, readable, and efficient
+> > 2) avoid accidental array index duplication
+> > 3) avoid memory waste by creating more and more unused array members.
+> > 
+> > Old values are kept to not break dts, and to maintain dt ABI.
+> > 
+> > Link: https://lore.kernel.org/linux-devicetree/20250207-jailbird-circus-bcc04ee90e05@thorsis.com/T/#u
 > > Signed-off-by: Alexander Dahl <ada@thorsis.com>
 > > ---
 > > 
@@ -97,101 +96,66 @@ Am Mon, Feb 10, 2025 at 05:59:52PM +0100 schrieb Krzysztof Kozlowski:
 > >     v2:
 > >     - new patch, not present in v1
 > > 
-> >  .../nvmem/microchip,sama7g5-otpc.yaml         | 28 +++++++++++++++++++
-> >  1 file changed, 28 insertions(+)
+> >  .../dt-bindings/clock/microchip,sam9x60-pmc.h | 19 +++++++++++
+> >  .../dt-bindings/clock/microchip,sam9x7-pmc.h  | 25 +++++++++++++++
+> >  .../clock/microchip,sama7d65-pmc.h            | 32 +++++++++++++++++++
+> >  .../dt-bindings/clock/microchip,sama7g5-pmc.h | 24 ++++++++++++++
+> >  4 files changed, 100 insertions(+)
+> >  create mode 100644 include/dt-bindings/clock/microchip,sam9x60-pmc.h
+> >  create mode 100644 include/dt-bindings/clock/microchip,sam9x7-pmc.h
+> >  create mode 100644 include/dt-bindings/clock/microchip,sama7d65-pmc.h
+> >  create mode 100644 include/dt-bindings/clock/microchip,sama7g5-pmc.h
 > > 
-> > diff --git a/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml b/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
-> > index 9a7aaf64eef32..1fa40610888f3 100644
-> > --- a/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
-> > +++ b/Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
-> > @@ -29,6 +29,16 @@ properties:
-> >    reg:
-> >      maxItems: 1
-> >  
-> > +  clocks:
-> > +    items:
-> > +      - description: main rc oscillator
-> > +      - description: otpc peripheral clock
+> > diff --git a/include/dt-bindings/clock/microchip,sam9x60-pmc.h b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
+> > new file mode 100644
+> > index 0000000000000..e01e867e8c4da
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
+> > @@ -0,0 +1,19 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> > +/*
+> > + * The constants defined in this header are being used in dts and in
+> > + * at91 sam9x60 clock driver.
+> > + */
 > > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: main_rc_osc
-> 
-> osc
-
-On at91 SoCs main oscillator and main RC oscillator are two different
-things, and those are different clocks in Linux as well.  This clock
-is named "main_rc_osc" in the clock driver.  In
-drivers/clk/at91/sam9x60.c this clock is added like this:
-
-    hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000, 50000000);
-
-The datasheet makes it explicit, it's exactly the main rc oscillator
-clock required for the OTPC to work, no other clock.
-
-So why name this "osc" only then?  This is confusing at best.
-
-> 
-> > +      - const: otpc_clk
-> 
-> otpc or bus or whatever logically this is
-
-Okay the "_clk" suffix is redundant.  Since the peripheral clock for
-the OTPC is required here, I would go with "otpc" only then.
-
-> 
+> > +#ifndef _DT_BINDINGS_CLOCK_MICROCHIP_SAM9X60_PMC_H
+> > +#define _DT_BINDINGS_CLOCK_MICROCHIP_SAM9X60_PMC_H
 > > +
-> >  required:
-> >    - compatible
-> >    - reg
-> > @@ -37,6 +47,8 @@ unevaluatedProperties: false
-> >  
-> >  examples:
-> >    - |
-> > +    #include <dt-bindings/clock/at91.h>
-> > +    #include <dt-bindings/clock/microchip,sama7g5-pmc.h>
-> >      #include <dt-bindings/nvmem/microchip,sama7g5-otpc.h>
-> >  
-> >      otpc: efuse@e8c00000 {
-> > @@ -44,10 +56,26 @@ examples:
-> >          reg = <0xe8c00000 0xec>;
-> >          #address-cells = <1>;
-> >          #size-cells = <1>;
-> > +        clocks = <&pmc PMC_TYPE_CORE SAMA7G5_PMC_MAIN_RC>, <&pmc PMC_TYPE_PERIPHERAL 67>;
-> > +        clock-names = "main_rc_osc", "otpc_clk";
-> >  
-> >          temperature_calib: calib@1 {
-> >              reg = <OTP_PKT(1) 76>;
-> >          };
-> >      };
-> >  
-> > +  - |
-> > +    #include <dt-bindings/clock/at91.h>
-> > +    #include <dt-bindings/clock/microchip,sam9x60-pmc.h>
-> > +    #include <dt-bindings/nvmem/microchip,sama7g5-otpc.h>
+> > +#include <dt-bindings/clock/at91.h>
 > > +
-> > +    efuse@eff00000 {
-> > +        compatible = "microchip,sam9x60-otpc", "syscon";
-> > +        reg = <0xeff00000 0xec>;
+> > +/* old from before bindings splitup */
+> > +#define SAM9X60_PMC_MCK		PMC_MCK		/* 1 */
+> > +#define SAM9X60_PMC_UTMI	PMC_UTMI	/* 2 */
+> > +#define SAM9X60_PMC_MAIN	PMC_MAIN	/* 3 */
+> > +
+> > +#define SAM9X60_PMC_PLLACK	PMC_PLLACK	/* 7 */
 > 
-> No need for new example with difference in what exactly? Even compatible
-> was not added here...
+> IIUC, you want to have bindings per SoC, so why not adding proper
+> constants here instead of including entire old binding header? The
+> binding header should be entirely abandoned later.
 
-Different compatible, different clocks, no sub nodes, different
-peripheral clock id …  From a human doc readers I'd like another
-example, but fine, we can drop it if it adds too much redundancy.
+Which binding header should be abandoned entirely?
 
-Greets
+The bindings per SoC idea was proposed in series v1 feedback.  I'm
+neither a binding nor a clock expeert.  As far as I understood it's
+important to keep the exact same values as before to not change any
+ABI.  The non SoC specific values are still used on older SoCs of the
+at91 family, so this is why I used the old constants for now.
+
+These PMC indexes are not the only definitions in
+dt-bindings/clock/at91.h however, there are more which are not SoC
+specific.
+
+I'd like some thoughts from the Microchip maintainers here,
+what's their idea on how to proceed with the at91 clock stuff?
+
+This works for me, but the current state is more or less still an idea
+as base for discussion.  Please don't make it overly complicated, this
+is not the primary focus of my work.
+
+Thanks and greets
 Alex
 
-> 
-> > +        #address-cells = <1>;
-> > +        #size-cells = <1>;
-> > +        clocks = <&pmc PMC_TYPE_CORE SAM9X60_PMC_MAIN_RC>, <&pmc PMC_TYPE_PERIPHERAL 46>;
-> > +        clock-names = "main_rc_osc", "otpc_clk";
-> > +    };
-> > +
-> >  ...
 > 
 > 
 > Best regards,
