@@ -1,57 +1,82 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCC8257ADA;
-	Mon, 10 Feb 2025 22:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13DF1361;
+	Tue, 11 Feb 2025 00:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739227531; cv=none; b=Vskrtmv8nAH3ZnDTGqXfY64O3hmZIGGoA9g+QRC0Ix//LMFJ6G+w6dhASQlAlNqVXf1zn6y9dnx21/vSfC2zX41golhtEACNvHXKt1zdPuxBGFZhrxvp1WbV8pgxe4SfzuosIeB+gcIjNkECPzmxeFe1dIkr/fo25qXlx9Rxsag=
+	t=1739232564; cv=none; b=lUeN08mDWAvNNPnTT4vqDY7TitriNXSz05TPSGtyc6g907czj/BMpMygykPd1u3g1tbgLZCiFwKG+9rtwH5rnSVtz2+0hJU0S+op626QD1mtb9GWYWG13h64lft5dZqelkxw8WWm7G1V05L7p8GVuDAuv3si+KaYPKmc4z1c8+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739227531; c=relaxed/simple;
-	bh=w95MJfxzfRGWFOpMQJPgSmIkbW+uGttHTGyC1aMnmdA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=i41zTs1k3mVs+8Y8UK+21TA5FhEUwICDbyYZdikuhvCu+m9DSp6Kp6iRItOXeNVqJIYC57uF+o+cYM0CYYpQtnD+yFlev9oTr8vXuwJfi3ddVLea9t1MqCqUphHm0bN1qxCF0qaGSTz4aSwZPtxD4R6J1nohZp8Gc7EVbRzS6S0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Cr23s9de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1739232564; c=relaxed/simple;
+	bh=01uiTrRRxKutdrpyTfLES+sUzCNND8v4qkEDza+0xVk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JXawYtviyWMtupCpvVdrNXuWj9RyW9Z48nflFqP1semNQlpVwptAuJKcfrtQybJGvjFk6dpzFEKo+fYX9QyfPccdzLQbTuhXC0tzMOTUuvzq/JNEuqTUatVpgsNMnhSeAzdh0Ywag5YNUyW31ZO6TbG9+mcMgJZK5lZCmjgEZ3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DyUbyw+l; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Cr23s9de"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=q4Sl4j7z0914oZOToKd009OuMMVWZTH/qa7XeAPVimQ=; b=Cr23s9depxi0kBcC4raALGKcHz
-	sq9N1ty8NzSvYSLJQrG5nxm7l1Pv9TDBaP3vs/zegJ56U4C4uRdTvlJjEQIXJgXTltEt53S2tkXJY
-	uo/Qc8vjNao2vJcT3Ba2lCR1r55gvrlXESqXQHXR1KbjfgPRYgYE2c+vSzRuCQv8jXz4LntSqmwfL
-	mgYrEBCkEpBQe3CTkjEN4lE+JiP+CIXX0dmdOw3xUMMjvDwNhgPxsm6LxXgLMsUbZJL3xx7iDzOWu
-	qkkJUSvTPQfQrxlvsAqsng9r2o9AKyUrfTnCxjWhXTCfvQefIRsE7+zDW9HtERNfTIvBBPrzOUI9I
-	KLMd6x5w==;
-Received: from i53875bc0.versanet.de ([83.135.91.192] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1thcWr-0008Re-CF; Mon, 10 Feb 2025 23:45:25 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: srinivas.kandagatla@linaro.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyUbyw+l"
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c05cce598dso33064585a.3;
+        Mon, 10 Feb 2025 16:09:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739232561; x=1739837361; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Ah4k5+xQ1fRNUu+6C0S6nP1nA7x+T5drbERSfhVVRE=;
+        b=DyUbyw+llULRR/gNW25wUNQcCiJsgDvNGPfbMGDyh7KRrLzCDrojJYPulljVI7ynQg
+         mZRYOP5bUJYH/RuXgGdZtgQhFNAVENsY4PgHPiCqP0Ns0eju4LTKYSiC4rJrNP6tI+7B
+         CDIIYdeI49RnAu4KnytGElwqMCraivxGssRXrPe4TTeYWNFiHmOccThNnLaMeIm0Nm2X
+         VOKsi8YZyqIDIrwcHjPXQqJGE1v14jNavWiC2nnf5CNELOR+1GJZER1srMrU0Xe12UFE
+         l4lIjy7GL7a0jENZoNmjSxz7I5HKVxk+8pSL/JjIHlw8Ct7xSmnZTl1rpAzsp0KV2Zi/
+         8fXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739232561; x=1739837361;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4Ah4k5+xQ1fRNUu+6C0S6nP1nA7x+T5drbERSfhVVRE=;
+        b=lAOMqGN3BW3W11egb7opNrhRv6EGKc5jGxgCw700D+GwvVxGoQ9CvSWa6VmLDiaT8p
+         kiHfIw0gjEWSBkcFwD15/Iq0iHAkoQDRJQi/POd2DGDofdakeg0OEMo18MDGDGaOTM3a
+         gSfwrvWrhaZgnbPX8je/eR1qLFO24ufAq0UO7FvClKModiIgCENeNbuHr5a7OdJW2Q+U
+         Nvkbn6ETzIbpkwYg4V2JPWMKZaYYBM4mRKJaAaiHCJocsSAUfpVSBTRiz3akaUBpx2oU
+         2GVUNIAa2Drnz0WGh9SHFgn9zG9ZnEGOd8yZ00zAQJRLt5OEYtpWJekTfkKV4wY4Xrcm
+         kQvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBqCMZ6WD+S6kOTAuoFYjIXy0VblKAZcURC2/NoK0dxTXE6yESsDKRiRVRtFJGrVKVdhAJYVhY@vger.kernel.org, AJvYcCVqBqKMvmSq9yPFJYaTXU+rYs7tj7HzabQlBcmgm8MA7tgieomDNi6e+OmZJaDSs0O9KLDrUN0PKjk=@vger.kernel.org, AJvYcCVrv+yMU29QWLVSSpRe488j7z9+r6Rmd6N7Gal02fqNyGIfTdYr6q/PToeaa6hZZ83inwdnGMj09T6aPzDR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8IA8JTPMr4Q1uFyI0fS9AacoEZdV7QV3g3Km1sOsykQ/NHFFb
+	9ThlLArkGj/U8cEs1NWgXWNARuVI6qwKJNxChC8FZM8XcowF0/U=
+X-Gm-Gg: ASbGncsnXUzZToqlqeoC715swCdh/FjjyPTJkDfYoJlMzCJVc2nf7IVKxa43fADO/Or
+	qW9oeMb2DQwrnr1wI8zUDLxmTlEzYLZu74kEcAKggbObwuXJhvoYjjM1ggBmY1fM+BHF99Az/IY
+	sHcbNSiyUIW+8GcUjp4BngJYnp4akPtAEC9c3kLjU5ATiW8vKtu9ume9AXDvFDa6WxwM87jgzTm
+	u0wR7JEsFH6rJOZajm8c2gjV64O4NmaevL8cnjZzyEUh8wDIPt5U+LWyapigSRVlETR9ABD2mvv
+	6F2CyR+wjErb
+X-Google-Smtp-Source: AGHT+IEBNymajCc+NwMXIImuo+y111CUAjewA7syDuazHuJdvT8SyYtv2TQjZ/rPxap9qo/cAU2erw==
+X-Received: by 2002:a05:620a:4150:b0:7b6:dc5c:de5 with SMTP id af79cd13be357-7c069ce9f4emr42655285a.1.1739232561394;
+        Mon, 10 Feb 2025 16:09:21 -0800 (PST)
+Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0603216c4sm173032885a.97.2025.02.10.16.09.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2025 16:09:20 -0800 (PST)
+From: Chenyuan Yang <chenyuan0y@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	florian.fainelli@broadcom.com
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	richardcochran@gmail.com,
+	dave.stevenson@raspberrypi.com,
+	popcornmix@gmail.com,
+	mripard@kernel.org,
+	u.kleine-koenig@baylibre.com,
+	nathan@kernel.org,
 	linux-clk@vger.kernel.org,
-	detlev.casanova@collabora.com,
-	sebastian.reichel@collabora.com
-Subject: [PATCH RESEND v2 6/6] arm64: dts: rockchip: add rk3576 otp node
-Date: Mon, 10 Feb 2025 23:45:10 +0100
-Message-ID: <20250210224510.1194963-7-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250210224510.1194963-1-heiko@sntech.de>
-References: <20250210224510.1194963-1-heiko@sntech.de>
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	zzjas98@gmail.com,
+	Chenyuan Yang <chenyuan0y@gmail.com>
+Subject: [PATCH] clk: bcm: rpi: Fix potential NULL pointer dereference
+Date: Mon, 10 Feb 2025 18:09:17 -0600
+Message-Id: <20250211000917.1739835-1-chenyuan0y@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,64 +85,31 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds the otp node to the rk3576 soc devicetree including the
-individual fields we know about.
+The `init.name` could be NULL. Add missing check in the
+raspberrypi_clk_register().
+This is similar to commit 3027e7b15b02
+("ice: Fix some null pointer dereference issues in ice_ptp.c").
+Besides, bcm2835_register_pll_divider() under the same directory also
+has a very similar check.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
 ---
- arch/arm64/boot/dts/rockchip/rk3576.dtsi | 39 ++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+ drivers/clk/bcm/clk-raspberrypi.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index 4dde954043ef..29b47799849a 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@ -1260,6 +1260,45 @@ sdhci: mmc@2a330000 {
- 			status = "disabled";
- 		};
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+index 0e1fe3759530..720acc10f8aa 100644
+--- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -286,6 +286,8 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
+ 	init.name = devm_kasprintf(rpi->dev, GFP_KERNEL,
+ 				   "fw-clk-%s",
+ 				   rpi_firmware_clk_names[id]);
++	if (!init.name)
++		return ERR_PTR(-ENOMEM);
+ 	init.ops = &raspberrypi_firmware_clk_ops;
+ 	init.flags = CLK_GET_RATE_NOCACHE;
  
-+		otp: otp@2a580000 {
-+			compatible = "rockchip,rk3576-otp";
-+			reg = <0x0 0x2a580000 0x0 0x400>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			clocks = <&cru CLK_OTPC_NS>, <&cru PCLK_OTPC_NS>,
-+				 <&cru CLK_OTP_PHY_G>;
-+			clock-names = "otp", "apb_pclk", "phy";
-+			resets = <&cru SRST_OTPC_NS>, <&cru SRST_P_OTPC_NS>;
-+			reset-names = "otp", "apb";
-+
-+			/* Data cells */
-+			cpu_code: cpu-code@2 {
-+				reg = <0x02 0x2>;
-+			};
-+			otp_cpu_version: cpu-version@5 {
-+				reg = <0x05 0x1>;
-+				bits = <3 3>;
-+			};
-+			otp_id: id@a {
-+				reg = <0x0a 0x10>;
-+			};
-+			cpub_leakage: cpub-leakage@1e {
-+				reg = <0x1e 0x1>;
-+			};
-+			cpul_leakage: cpul-leakage@1f {
-+				reg = <0x1f 0x1>;
-+			};
-+			npu_leakage: npu-leakage@20 {
-+				reg = <0x20 0x1>;
-+			};
-+			gpu_leakage: gpu-leakage@21 {
-+				reg = <0x21 0x1>;
-+			};
-+			log_leakage: log-leakage@22 {
-+				reg = <0x22 0x1>;
-+			};
-+		};
-+
- 		gic: interrupt-controller@2a701000 {
- 			compatible = "arm,gic-400";
- 			reg = <0x0 0x2a701000 0 0x10000>,
 -- 
-2.47.2
+2.34.1
 
