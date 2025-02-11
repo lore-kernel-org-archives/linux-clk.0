@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D582190486;
-	Tue, 11 Feb 2025 08:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C184A1EBFE6;
+	Tue, 11 Feb 2025 08:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739260916; cv=none; b=rt4arUAbWveZDUAx+8PlNzP8SsL5ez+X8FGJuQxJauNhZNzqPoanWm3se/U9hDph9w6hcU5T7JJBFSNM8R/NUC1yzMKas/PJthU2QIETizp0lpLF53hdTuloehT0Ykhatx9CwWW/KTIAMtk0/RHWY5s2yJpJVVug9PtsrotBGNk=
+	t=1739261008; cv=none; b=We6Bknl2jdw+JHXZdXIfHEbVO4AOdQV/ERkGJ+Wppi/kZ8N3j/+oBSbXp1vP2XrLEfNOaS1LbKZQwaEplt/4BZZEQDYyX3acwCdGsw5FJEh2RgLPPCgl+EjTqq7a2TRRnHcRjCnbPf/ccqWOaMzU+6P4eva0/+1PYtMhFax+rlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739260916; c=relaxed/simple;
-	bh=9bEXdxYB2C9XASX0APAaNux1TnoL9FXfmnFhFF334pQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Zm5viP+WZmY1Au4cKArpg03HU/sVyT9ASvUVepzeEVzzLHrw0jhGgizePAJxGtlB8IRq0TvSQCuGup/SX8iU685aKb1eMHMwUpA6AVtBbP2npndKYQlFkJKnkbIwFVtNRRR1BZmP6/WRWZpvVyF5Nsx+HErVzRNJeJY4GrzorBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sIVrXrLJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739261008; c=relaxed/simple;
+	bh=fcMnfF/02PwcgIb5knjQyysxW5tjvDb1ZQDm57WEIcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uus6zlqfrIVP1yk52+boZtOUOUZ6hMhUwcZSe95JLVtjSPc63b1sNwuTlTzp6Ppu/VJ5I1j2x8jtdkDYYeuPDY6uaZ1WGdZDwBHTfh5b9UJu3Ajy7Evy0njXDIyLVuyPCzyiqW8FFfzGCu30wli6BDAlRD/hndi5+4lWa2Xlc8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsFMZLR8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIVrXrLJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CC1CC4CEDD;
-	Tue, 11 Feb 2025 08:01:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsFMZLR8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A03C4CEDD;
+	Tue, 11 Feb 2025 08:03:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739260915;
-	bh=9bEXdxYB2C9XASX0APAaNux1TnoL9FXfmnFhFF334pQ=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=sIVrXrLJMyjKOfNIUsmIqRbfYw9FsIoNLdKxCBPf2TK/lRFnL1gldbGNzqFq3GH8t
-	 r4zLsXkb2TPtTNIzYp8OIwupCNgduA5bXZNCmIUYeKBkZ9MEb2qBdPezXXsd7iILZV
-	 1lsNQKQZdT0VjM/bvZzuEAT5fPyc0Q2T12x9aUBF8vfbVrWBeW9uO6D853mmSc/LPE
-	 3w26EH0QUiI38AwcSUEctcecy7e9Bsz67E9A+f1W73vLo/19Tc97jXbNUbtopMQVX4
-	 UHYuZz/WiWxyhSfgGpp7KUFiiuNvE6PjSdL4/Db35I4DeGUYToZI/OEZaMItrFExUg
-	 PqH69oO5cH4gg==
-Message-ID: <71910842-6310-4e1f-81a1-3b218e1ee69a@kernel.org>
-Date: Tue, 11 Feb 2025 09:01:49 +0100
+	s=k20201202; t=1739261008;
+	bh=fcMnfF/02PwcgIb5knjQyysxW5tjvDb1ZQDm57WEIcg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tsFMZLR8qsPO+zv9eVl6FbzRTs8M8hQz09kMMyaS8RjZ3zBm4n6xDol93yXXRicYQ
+	 8mAvdhNHGkFMO6S5b+Y6ceXIP1Cp4L9kuiPX244ZLwefhssfnBwZsG2mjDbtAtqtAS
+	 noaCrdhkhiQQMr0peRWbfWoWf/8pzxW09npugDlLlVXcQ6SVVg9S2J8Nn1B4jUREIO
+	 rEhVzEwP0fQBnPObim/sDQm46Fd/XoAY3MDX+Ak2WWnKLAyqAByXk9gQMtGd0T7Djl
+	 A1lu7r6qyBw/qeQKsr3PekZIia/cc2UGO6AvMtF2IdUzi07IxmKL1oap19qglc8sCJ
+	 iNn8F40djQ84w==
+Message-ID: <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
+Date: Tue, 11 Feb 2025 09:03:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,20 +35,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/16] dt-bindings: clock: at91: Allow referencing main
- rc oscillator in DT
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Ryan Wanner <ryan.wanner@microchip.com>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <20250210164506.495747-1-ada@thorsis.com>
- <20250210164506.495747-5-ada@thorsis.com>
- <89d51ac4-0690-42a7-b5fb-2887363e8a8b@kernel.org>
- <20250211-deprive-relocate-353ad26f46b7@thorsis.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+To: Haylen Chu <heylenay@4d2.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
+ Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
+ Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>,
+ Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+References: <20250103215636.19967-2-heylenay@4d2.org>
+ <20250103215636.19967-4-heylenay@4d2.org>
+ <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
+ <Z6rdBhQ7s2ReOgBL@ketchup>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,72 +95,94 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250211-deprive-relocate-353ad26f46b7@thorsis.com>
+In-Reply-To: <Z6rdBhQ7s2ReOgBL@ketchup>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/02/2025 08:26, Alexander Dahl wrote:
-> Hello Krzysztof,
-> 
-> Am Mon, Feb 10, 2025 at 06:07:10PM +0100 schrieb Krzysztof Kozlowski:
->> On 10/02/2025 17:44, Alexander Dahl wrote:
->>> The main rc oscillator will be needed for the OTPC to work properly.
+On 11/02/2025 06:15, Haylen Chu wrote:
+> On Sat, Jan 04, 2025 at 11:07:58AM +0100, Krzysztof Kozlowski wrote:
+>> On Fri, Jan 03, 2025 at 09:56:35PM +0000, Haylen Chu wrote:
+>>> Add documentation to describe Spacemit K1 system controller registers.
 >>>
->>> The new index introduced here was not used on the four affected SoC
->>> clock drivers before, but for sama5d2 only (PMC_I2S1_MUX).
->>>
->>> Link: https://lore.kernel.org/linux-devicetree/20250207-jailbird-circus-bcc04ee90e05@thorsis.com/T/#u
->>> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+>>> Signed-off-by: Haylen Chu <heylenay@4d2.org>
 >>> ---
+>>>  .../soc/spacemit/spacemit,k1-syscon.yaml      | 52 +++++++++++++++++++
+>>>  1 file changed, 52 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
 >>>
->>> Notes:
->>>     v2:
->>>     - new patch, not present in v1
->>>
->>>  include/dt-bindings/clock/microchip,sam9x60-pmc.h  | 3 +++
->>>  include/dt-bindings/clock/microchip,sam9x7-pmc.h   | 3 +++
->>>  include/dt-bindings/clock/microchip,sama7d65-pmc.h | 3 +++
->>>  include/dt-bindings/clock/microchip,sama7g5-pmc.h  | 3 +++
->>>  4 files changed, 12 insertions(+)
->>>
->>> diff --git a/include/dt-bindings/clock/microchip,sam9x60-pmc.h b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
->>> index e01e867e8c4da..dcd3c74f75b54 100644
->>> --- a/include/dt-bindings/clock/microchip,sam9x60-pmc.h
->>> +++ b/include/dt-bindings/clock/microchip,sam9x60-pmc.h
->>> @@ -16,4 +16,7 @@
->>>  
->>>  #define SAM9X60_PMC_PLLACK	PMC_PLLACK	/* 7 */
->>>  
->>> +/* new from after bindings splitup */
->>> +#define SAM9X60_PMC_MAIN_RC	6
+>>> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+>>> new file mode 100644
+>>> index 000000000000..79c4a74ff30e
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+>>> @@ -0,0 +1,52 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/soc/spacemit/spacemit,k1-syscon.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Spacemit K1 SoC System Controller
+>>> +
+>>> +maintainers:
+>>> +  - Haylen Chu <heylenay@4d2.org>
+>>> +
+>>> +description:
+>>> +  The Spacemit K1 SoC system controller provides access to shared register files
+>>> +  for related SoC modules, such as clock controller and reset controller.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - enum:
+>>> +          - spacemit,k1-apbc-syscon
+>>> +          - spacemit,k1-apbs-syscon
+>>> +          - spacemit,k1-apmu-syscon
+>>> +          - spacemit,k1-mpmu-syscon
+>>> +      - const: syscon
+>>> +      - const: simple-mfd
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  clock-controller:
+>>> +    $ref: /schemas/clock/spacemit,k1-ccu.yaml#
+>>> +    type: object
 >>
->> This is confusing me, because:
->> 1. You still have holes in IDs
+>> So now we see the full picture and it leads to questions.
+>>
+>> 1. Why spacemit,k1-apbc-syscon with spacemit,k1-ccu-apmu child is a
+>> correct combination?
+>>
+>> 2. Why having this split in the first place? Please confirm that clock
+>> controller is really, really a separate device and its child in
+>> datasheet. IOW, fake child for your Linux is a no-go. Fake child while
+>> devices are independent is another no-go.
 > 
-> Yes, I was told to maintain the old values for interface stability in
-> series v1 feedback.
-> 
->> 2. This should be placed in proper order by ID
-> 
-> Okay, no problem.
-> 
->> 3. Why not using 4 - the next available empty ID?
-> 
-> The MAIN_RC clock is used on four out of thirteen (?) SoC variants
-> which all used the same IDs before.  6 is the first ID which is free
-> on all of sam9x60, sam9x7, sama7g5, and sama7d65.  The last two
-> already use 4 for a different clock.
+> These syscons are introduced because the clock controllers share
+> registers with reset controllers. Folding them into the parents results
 
-So driver for this device already uses something for 4?
+So a fake split...
+
+> in devicetree nodes act as both reset and clock controllers, like what
+
+Which is correct hardware representation, isn't it?
+
+> has been done for Rockchip SoCs. Such folding isn't practical for the
+> MPMU region either, since watchdog and other misc bits (e.g. PLL lock
+> status) locates in it.
+
+Hm? Why? You have a device which is reset and clock controller, so why
+one device node is not practical? Other vendors do not have problem with
+this.
 
 > 
-> The whole splitup is to avoid even more and/or bigger holes, but is it
-> important where the existent holes are filled?
-> 
-> Technically if the next available empty ID should be used it would be
-> 4 for sam9x60 and sam9x7, 2 for sama7d65, and 6 for sama7g5.  I
-> thought it would be nice to use the same value instead to make
-> somewhat compatible to the old approach.
+> If you're more comfortable with reset and clock controllers folded
+> together and eliminating most of these syscons, I'm willing to make the
+> change.
+
+This is expected.
+
 
 
 Best regards,
