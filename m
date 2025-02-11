@@ -1,62 +1,42 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBEA1E98EB;
-	Tue, 11 Feb 2025 06:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4313C17580;
+	Tue, 11 Feb 2025 06:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739254192; cv=none; b=mrLD37p6KgjV01A7ZO7oCeyYuJhgEScRTjXWgwOu6KxN9mmCxp8sBiExaiyQ4Fd77hM/+0vbx9kOXRY0x1iPwFScthQ9X/ZAFF9JqnK5F4I+hUgdGipSjgNJy6gIUrUT/+OnfzIWyMGoWn7JMgFXhprCIf0+MvgkHTShR39siAM=
+	t=1739256539; cv=none; b=cE3yReLQoMI5lgTJ+SBOua0lCl8N5Iq/HBNjSCvQoPvbLndUAqAN8PmRrfhl4KCR6BbhXuAujZVPYptIz6MLFmKnC7lmFq4wKGAM8elUEzU21O42nYt3gN5qYJtailfurdYjoJgku48MP9FYNjLEBJ/Yw3Z0G3Ojut5knDzJVmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739254192; c=relaxed/simple;
-	bh=Ce5Ji/WXQMDkmcJjDCJf+Ub6K+lODSKEHTLEvD1ibhI=;
+	s=arc-20240116; t=1739256539; c=relaxed/simple;
+	bh=ZHfx+4Nv96WH3hNik5d0XW8kD3MVsgqww7n4KBECW7Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wf8srS55Iy35O99rwo4n3f6C+13n8eYmGL/gHOiP3YmPijIQXUyD1qk/Y5Em/WehEiVQ3U6VIcHLersUJ4ir4eBFc0b09JrxoCjzG6Oh67tW82R2s9AKIkQZ1F+S8Fk5N9IEC2e31pSlQVz1otINXZiMV2Q4Kh4QIb+JTOSowy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JcXzk/t2; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=c4wcvd8wbWuosA5b4IGu/LvhhblXDc2LKakDY2Utjh0ZSpCTxdaXlYljoO2ur8gW1S+wTNKlTR3SXhqQBY43UrdhZbCsQAtrNSi36MQWP4/UgE/EqYU7MU0LOskvRAZw2NSLm8C1aq/nR8WmlSSAGiKjYkEuxpb5LA3p0vrqB0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ubx07Ina; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JcXzk/t2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739254191; x=1770790191;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Ce5Ji/WXQMDkmcJjDCJf+Ub6K+lODSKEHTLEvD1ibhI=;
-  b=JcXzk/t22Flzvyu0qFl6mi1a2XAzgJ4lzKpS7VYXxM7Q8h0QpMyOetDt
-   +h5ylWwBYxYNlYR7PjIjCM8DCRLnxgtehZ/9AbC6uT0D8gQ+rniqMic3e
-   zLD9w1oQWv2X3WlbwwIp9kaGn9ZMvir9AUUAGyTbZz7NK+c6AHjI0Wuvt
-   clGl7lZ7+61orj8ByPXabT1+q9C5U6BxwNqpo9nMRQBjwGlsPSgNcp2kQ
-   a3unM6yslOo0RY4BfbAfO33CEww4eZIf7sd+kaGIV5NKZcR/EmD+CwL+9
-   8byCkixf+lZQMgU/0GCBk9327NC+p2ViCS2bBrklH1gSKlAxI1wiaxGJA
-   A==;
-X-CSE-ConnectionGUID: EKLivomvQq+HG6MntZrpDw==
-X-CSE-MsgGUID: fgYI+swiQSigIyCUnbJRrQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11341"; a="57271607"
-X-IronPort-AV: E=Sophos;i="6.13,276,1732608000"; 
-   d="scan'208";a="57271607"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2025 22:09:50 -0800
-X-CSE-ConnectionGUID: KjhHhETEQwW6nEdSX5vO5w==
-X-CSE-MsgGUID: W7KoF7IvT3CDUO0isJnv+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,276,1732608000"; 
-   d="scan'208";a="117493893"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Feb 2025 22:09:47 -0800
-Date: Tue, 11 Feb 2025 07:06:11 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org,
-	florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com, richardcochran@gmail.com,
-	dave.stevenson@raspberrypi.com, popcornmix@gmail.com,
-	mripard@kernel.org, u.kleine-koenig@baylibre.com, nathan@kernel.org,
-	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, zzjas98@gmail.com
-Subject: Re: [PATCH] clk: bcm: rpi: Fix potential NULL pointer dereference
-Message-ID: <Z6ro06dd81bGO77a@mev-dev.igk.intel.com>
-References: <20250211000917.1739835-1-chenyuan0y@gmail.com>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ubx07Ina"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55321C4CEDD;
+	Tue, 11 Feb 2025 06:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739256538;
+	bh=ZHfx+4Nv96WH3hNik5d0XW8kD3MVsgqww7n4KBECW7Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ubx07InaSxuiNjrbv0nXqqcL+taMxCjmOs+JENNvSFnOJYYXF6EcHOVS+nyRyvug6
+	 jzwU6N9eAdOVDYezckWtKBO1sCEKi4WcOh9GgJM6gZXRPkAtz/mrWbSlGfVVwQsn6f
+	 poFZXXp3CbTWEjppHBkTxxGTUjxj2Rsde4AEO9/0=
+Date: Tue, 11 Feb 2025 07:47:56 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alexander Dahl <ada@thorsis.com>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH v2 09/16] nvmem: microchip-otpc: Avoid reading a
+ write-only register
+Message-ID: <2025021146-rope-angles-df16@gregkh>
+References: <20250210164506.495747-1-ada@thorsis.com>
+ <20250210165050.496486-1-ada@thorsis.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,42 +45,53 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250211000917.1739835-1-chenyuan0y@gmail.com>
+In-Reply-To: <20250210165050.496486-1-ada@thorsis.com>
 
-On Mon, Feb 10, 2025 at 06:09:17PM -0600, Chenyuan Yang wrote:
-> The `init.name` could be NULL. Add missing check in the
-> raspberrypi_clk_register().
-> This is similar to commit 3027e7b15b02
-> ("ice: Fix some null pointer dereference issues in ice_ptp.c").
-> Besides, bcm2835_register_pll_divider() under the same directory also
-> has a very similar check.
+On Mon, Feb 10, 2025 at 05:50:47PM +0100, Alexander Dahl wrote:
+> The OTPC Control Register (OTPC_CR) has just write-only members.
+> Reading from that register leads to a warning in OTPC Write Protection
+> Status Register (OTPC_WPSR) in field Software Error Type (SWETYP) of
+> type READ_WO (A write-only register has been read (warning).)
 > 
-> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+> Just create the register write content from scratch is sufficient here.
+> 
+> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> Fixes: 98830350d3fc ("nvmem: microchip-otpc: add support")
 > ---
->  drivers/clk/bcm/clk-raspberrypi.c | 2 ++
->  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-> index 0e1fe3759530..720acc10f8aa 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -286,6 +286,8 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
->  	init.name = devm_kasprintf(rpi->dev, GFP_KERNEL,
->  				   "fw-clk-%s",
->  				   rpi_firmware_clk_names[id]);
-> +	if (!init.name)
-> +		return ERR_PTR(-ENOMEM);
->  	init.ops = &raspberrypi_firmware_clk_ops;
->  	init.flags = CLK_GET_RATE_NOCACHE;
+> Notes:
+>     v2:
+>     - Add Fixes tag
+>     - Remove temporary variable usage
+>     - Reword misleading subject (s/writing/reading/)
+> 
 
-Thanks for the fix. There is a need for a fixes tag in case like that.
-Please add it in commit message. Take a look here for example [1].
+Hi,
 
-[1] https://lore.kernel.org/netdev/DM3PR11MB8736BC7EF3A66720427F3775ECF22@DM3PR11MB8736.namprd11.prod.outlook.com/T/#mbc8028620ecffb2f3a23c96130fe03708e679b25
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-Beside that:
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+You are receiving this message because of the following common error(s)
+as indicated below:
 
->  
-> -- 
-> 2.34.1
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
