@@ -1,116 +1,171 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298F81F193C;
-	Tue, 11 Feb 2025 10:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09401FBEAB
+	for <linux-clk@vger.kernel.org>; Tue, 11 Feb 2025 12:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739271379; cv=none; b=fUUFCu2UqOaEwLosfEFFeZbk4oir8LVRp32mnF7R6lvBtr103ywfdeWwPtepwCtkx8kVOXOfqOXzHihye+YJQpukrjGXfZZx58oLZe/MJn3hw9vQKnrzhRmwVBbir1/y8ba4K26TQLmtpR1LT01kJNH+/qE7APeAc4t+ErQtOto=
+	t=1739275219; cv=none; b=fxNMK0+VBhYUOpNRGsjQrdxfAMo4VfocdRInov3kZda+29TWLZgwwiUNXW2DWW9VupDR+Toxyh9mPL5WX68+2gyAThxeNQ16Ox4fktlENsTYNq0sL/fLTzwzpFCWepn5jfWTLuQVMSnPUzLQ6i8aibaDopl37QpkLGadZ69ajek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739271379; c=relaxed/simple;
-	bh=Y1XrKCOtv9qxBYR3Su1pCe6JZ2L33Fio3MEaQAqVVOE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bSRz1r1ZX7cgQGI7pDsDBSFjzsnCMpxz1FgZrr0lB2NV+wk9XqLjEbCc0C/jbrOx3rVR+WDWSEqjuQME3bfLy4yQTmdyrtwS5uLoCosY8OV8nYuFAa6eMGYJw638yhcQZ29Qhwo+X3/pCcvFpW5in/Z1Q5tlG3YgthS+xPTNFU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=biTSKRBV; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="biTSKRBV"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43618283d48so37228155e9.1;
-        Tue, 11 Feb 2025 02:56:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739271376; x=1739876176; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jnLzczR9h9GUGbhBy5Ok+9WYUKgSFnCQkNKMm74353I=;
-        b=biTSKRBVWIAssgi74uPlDPjrUrYh+f1F3KX41nU67RiW0I2mS60I16LpBmrs+4+xRY
-         cSXI8BCfRncv3yUohpOYY4ao1xejYFi6aT5rgwcMsTkM25MudKak5FtwL4GQ4veWAgOl
-         qk5ynP88CECEivkT0rkXt5pXefMaW1ghG7ASEIIyRalm+gszRjL1VD4N8tOvWhbJaYzF
-         CM4igs1fhsCkz1MdzNX4gtdSBDAny2MFdumSchLHTByuv5jhxRHTQXhOBlmzR14vEGZV
-         fH4jOWsm4v/b5+nDMgclQxwyDox4ELjuQVpwaoMZc6ch94hP42YdT5QtU6l28BrDqbzb
-         VpRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739271376; x=1739876176;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jnLzczR9h9GUGbhBy5Ok+9WYUKgSFnCQkNKMm74353I=;
-        b=ZGPo9lHyKTvEVffQiQQZX3NusTFOtYxeR6Lnptrrp7R7j9/fE/87wN6ClhV3QpH00C
-         Q9o9G7/dZ3l0NLCo6TwrIf9xfLMAc08DhZmCkwP7azWnOhxoIg3Ntb4VLBLJGqdGjyja
-         lxPzGLAglLbYVSioRcj4PZPJJ+hhmR7MTF46ePYf6fjdHIU9jdS6ZZ0LUAAcQF7SKHVs
-         9Top0sN7va6ib2AT1qDych2rWifRfm+puKqdVXosJVpzXjUmawBUNCjmoPc8LFibjGLw
-         jpWb2nzqxELVZK31NgFbGR0hz2VMggvAkgGUFpOwxlS2FhXnNn1QJOE1ZKb+jKzfo5Vn
-         Jkyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUK92R2Hud1II8GOm+TWXdzEVc4a91iXKkb2sBQybLo5ONNxsX0KAUKIHh2hekCQ09k+JwIgKnMWf8=@vger.kernel.org, AJvYcCWNqNcgDKuYSq5/gT9vBnSgcu0OQpcLfpCqnxGzTtaZsOxWvVi2maMnWzYv0hPk9m0INTTThJYQ4Tg1Auuy@vger.kernel.org
-X-Gm-Message-State: AOJu0YwofMZiBgAkdQpyQS6FLIhMInrquFHj6iHqOLEISLCaAyX03T9W
-	Y5QguR7hwae1ajVxfvhHgUHB1pB2OZOyG+71vBz+GaHC4QT3RTI9
-X-Gm-Gg: ASbGnctwiwgnEhcE3D7ZiT2WAIQ8Rl3HiMjYy9YJ/wyouwwxKovmIH6Fas1L3pMFG8p
-	XljMha72fxJtLjSbAeV9bMTZuZg8HB8qbjuxeXzj+VlN032PdLqRwd+E+JOvXTz7S4h1NOVvP67
-	A1MtCI6O2YXhwCNxFD+0CGWfN9MHxgWHkiy3f3++/w32DoVdD7WPeLpDtcDZtR5NvSTcYoZiVSg
-	psRJiXr8tCMH2J0KlHLZD6YnlqgjrqFWZlceKgM3IXPrGVcESNfeHVdfZZP+RnmPaFzNXjBzAnS
-	TOzpOEsIzacQSNzS25PiBJseCVAtbjliYcUI5Jozwn1X
-X-Google-Smtp-Source: AGHT+IHwCi9jaCgG3lTclzF6uZLYafji1VSP1+CRBm1b+aI3RIZ/Hk32x4rxvZSCxm8+fr6gEvBlwA==
-X-Received: by 2002:a05:600c:1d19:b0:434:a711:ace4 with SMTP id 5b1f17b1804b1-4394c8213d6mr33966545e9.17.1739271376099;
-        Tue, 11 Feb 2025 02:56:16 -0800 (PST)
-Received: from prasmi.Home ([2a06:5906:61b:2d00:cfdc:8258:1d0b:42be])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4394376118esm64088655e9.40.2025.02.11.02.56.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Feb 2025 02:56:15 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] clk: renesas: rzv2h-cpg: Update error message
-Date: Tue, 11 Feb 2025 10:56:03 +0000
-Message-ID: <20250211105603.195905-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250211105603.195905-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250211105603.195905-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1739275219; c=relaxed/simple;
+	bh=3SbQezCP+ISh10ulY9GEv5MsF0c84+68s6utxCeC34s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=f7b50oPuwjr/VyPcdwUgXTO6lKQr5Vf3ZccuD8HhbnmrUFAn2s+4kVa1079/8KJJRCpSR2GObGPgtJ/hGWNQLLguWZxde4nOAYre8FCkvY+YDvMjh+DUcvGwZFpleJ5RA5XLPaLUsa6JS1DAvw2iHVKd9+Zer7ZJRuhkIEDRLJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1thovX-0000Xi-9K; Tue, 11 Feb 2025 12:59:43 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1thovT-000PPU-3A;
+	Tue, 11 Feb 2025 12:59:39 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1thovT-0005DW-2n;
+	Tue, 11 Feb 2025 12:59:39 +0100
+Message-ID: <945fb7e913a9c3dcb40697328b7e9842b75fea5c.camel@pengutronix.de>
+Subject: Re: [PATCH v4 09/18] reset: thead: Add TH1520 reset controller
+ driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, Matt Coster
+ <Matt.Coster@imgtec.com>, "mturquette@baylibre.com"
+ <mturquette@baylibre.com>,  "sboyd@kernel.org" <sboyd@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+ "drew@pdp7.com" <drew@pdp7.com>, "guoren@kernel.org" <guoren@kernel.org>,
+ "wefu@redhat.com" <wefu@redhat.com>, "jassisinghbrar@gmail.com"
+ <jassisinghbrar@gmail.com>,  "paul.walmsley@sifive.com"
+ <paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+ "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Frank Binns
+ <Frank.Binns@imgtec.com>,  "maarten.lankhorst@linux.intel.com"
+ <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
+ <mripard@kernel.org>,  "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "airlied@gmail.com" <airlied@gmail.com>,  "simona@ffwll.ch"
+ <simona@ffwll.ch>, "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, 
+ "jszhang@kernel.org" <jszhang@kernel.org>, "m.szyprowski@samsung.com"
+ <m.szyprowski@samsung.com>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"devicetree@vger.kernel.org"
+	 <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+	 <linux-riscv@lists.infradead.org>, "dri-devel@lists.freedesktop.org"
+	 <dri-devel@lists.freedesktop.org>, "linux-pm@vger.kernel.org"
+	 <linux-pm@vger.kernel.org>
+Date: Tue, 11 Feb 2025 12:59:39 +0100
+In-Reply-To: <7d8a3f8d-f369-47dd-8c5f-dcff8d692ea8@samsung.com>
+References: <20250128194816.2185326-1-m.wilczynski@samsung.com>
+	 <CGME20250128194836eucas1p151c4fc83a17173fd1b79bfc959976301@eucas1p1.samsung.com>
+	 <20250128194816.2185326-10-m.wilczynski@samsung.com>
+	 <816db99d-7088-4c1a-af03-b9a825ac09dc@imgtec.com>
+	 <e83ea320-23f0-41ed-934c-2f1687b55ec1@samsung.com>
+	 <48261cdfab6e0bc16e5327664b06728e1894422a.camel@pengutronix.de>
+	 <7d8a3f8d-f369-47dd-8c5f-dcff8d692ea8@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mo, 2025-02-10 at 19:17 +0100, Michal Wilczynski wrote:
+> On 2/4/25 18:18, Philipp Zabel wrote:
+> > On Mo, 2025-02-03 at 19:15 +0100, Michal Wilczynski wrote:
+[...]
+> > > I think this is required because the MEM clock gate is somehow broken
+> > > and marked as 'reserved' in manual, so instead as a workaround, since=
+ we
+> > > can't reliably enable the 'mem' clock it's a good idea to reset the
+> > > whole CLKGEN of the GPU.
+> >=20
+> > If this is a workaround for broken gating of the "mem" clock, would it
+> > be possible (and reasonable) to make this a separate reset control that
+> > is handled by the clock driver? ...
+>=20
+> Thank you for the detailed feedback, Philipp.
+>=20
+> After further consideration, I believe keeping the current reset driver
+> implementation would be preferable to moving the CLKGEN reset handling
+> to the clock driver. While it's technically possible to implement this
+> in the clock driver, I have concerns about the added complexity:
+>=20
+> 1. We'd need to expose the CLKGEN reset separately in the reset driver
 
-Update the error message in `rzv2h_mod_clock_endisable()` to provide
-clearer debugging information. Instead of printing only the register
-address, include both the `GET_CLK_ON_OFFSET(reg)` offset and the
-corresponding `clk` name (`%pC`). This enhances readability and aids
-in debugging clock enable failures.
+I'd expect this to simplify the reset driver.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/renesas/rzv2h-cpg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 2. The clock driver's dt-bindings would need modification to add an
+>    optional resets property
 
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index a4c1e92e1fd7..419dc8cd2766 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -541,8 +541,8 @@ static int rzv2h_mod_clock_endisable(struct clk_hw *hw, bool enable)
- 	error = readl_poll_timeout_atomic(priv->base + reg, value,
- 					  value & bitmask, 0, 10);
- 	if (error)
--		dev_err(dev, "Failed to enable CLK_ON %p\n",
--			priv->base + reg);
-+		dev_err(dev, "Failed to enable CLK_ON 0x%x/%pC\n",
-+			GET_CLK_ON_OFFSET(clock->on_index), hw->clk);
- 
- 	return error;
- }
--- 
-2.43.0
+If it describes the hardware correctly, that should be fine.
 
+> 3. We'd need custom clk_ops for all three clock gates (including a dummy
+>    'mem' gate)
+> 4. Each clock gate's .enable operation would need to handle CLKGEN reset
+>    deassertion
+
+I accept these arguments, as I have no good feeling for how much
+complexity this would actually add.
+
+In my mind it shouldn't be much: the GPU clocks could all share the
+same refcounted implementation. The first clock to get enabled would
+ungate both GPU_CORE and GPU_CFG_ACLK gates and deassert
+GPU_SW_CLKGEN_RST, all in one place. The remaining enable(s) would be
+no-ops. Would that work?
+
+Whether a separate "dummy" MEM clock for the DT bindings is added or
+not would not make a difference.
+
+> While the clock framework could theoretically handle this, there's no
+> clean way to express the requirement that the CLKGEN reset should only
+> be deasserted after all clocks in the group are enabled. We could
+> implement this explicitly, but it would make the code more complex and
+> harder to understand.
+
+Doing this in the clock driver would have the advantage of clk_enabled
+GPU clocks actually staying physically enabled, without the reset
+driver disabling them via GPU_SW_CLKGEN_RST from the outside.
+
+> The current solution in the reset driver is simpler and clearer - it
+> treats this as what it really is: a TH1520-specific reset sequence.
+
+Yes. What this also is: a workaround for a SoC specific defect in the
+clock tree. I think it belongs in the clock driver because of this.
+
+
+[...]
+> Regarding the delay between clock enable and reset deassert - for SoCs
+> like BPI-F3 with a single reset line, implementing this in the GPU
+> consumer driver makes perfect sense. However, for the T-HEAD SoC, moving
+> the delay there would actually complicate things since we need to manage
+> both the CLKGEN and GPU reset lines in a specific sequence. Having this
+> handled entirely within the reset driver keeps the implementation
+> cleaner.
+
+You could delay in both places, it's just a microsecond after all.
+Whether the workaround is implemented in the reset driver or in the
+clock driver,=C2=A0I wouldn't want the GPU driver to have to carry a specia=
+l
+case for TH1520.
+
+> Does this reasoning align with your thoughts? I'm happy to explore the
+> clock driver approach further if you still see significant advantages to
+> that solution.
+
+I won't object to carry this in the reset driver if the clock
+implementation turns out to be unreasonably complex, but I currently
+don't expect that to be the case. Please give it a shot.
+
+regards
+Philipp
