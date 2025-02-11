@@ -1,115 +1,129 @@
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13DF1361;
-	Tue, 11 Feb 2025 00:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AEE130E58
+	for <linux-clk@vger.kernel.org>; Tue, 11 Feb 2025 04:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739232564; cv=none; b=lUeN08mDWAvNNPnTT4vqDY7TitriNXSz05TPSGtyc6g907czj/BMpMygykPd1u3g1tbgLZCiFwKG+9rtwH5rnSVtz2+0hJU0S+op626QD1mtb9GWYWG13h64lft5dZqelkxw8WWm7G1V05L7p8GVuDAuv3si+KaYPKmc4z1c8+c=
+	t=1739246888; cv=none; b=b8zVZZcbFBwslBHOYOoeN38xPhWz8wcU8HmQzsog00lm/PR4ZjIXWnXjsqnzNYl90Tbdf068EMLTc+I/2DmCqhjeOL5uXErN6VC99eDs4GbdsvhSqwyur7MSY83LAWHUTnfLt64ImgiOJo643YjpH7FUUeiP7uLC6kOxi/Brp/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739232564; c=relaxed/simple;
-	bh=01uiTrRRxKutdrpyTfLES+sUzCNND8v4qkEDza+0xVk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JXawYtviyWMtupCpvVdrNXuWj9RyW9Z48nflFqP1semNQlpVwptAuJKcfrtQybJGvjFk6dpzFEKo+fYX9QyfPccdzLQbTuhXC0tzMOTUuvzq/JNEuqTUatVpgsNMnhSeAzdh0Ywag5YNUyW31ZO6TbG9+mcMgJZK5lZCmjgEZ3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DyUbyw+l; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739246888; c=relaxed/simple;
+	bh=b6XY/v5c1IShWi7Mnzp3g3rBRfTPLqoqs/fcWxDfeEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TqlIZrUo/NUik7QPiv4GUZUm0hqe7g7tiBCgDRoKSwPsR4Y6qmFTSaWJZtm7FfAmphUY8DwALJdL0nP3vBmUE+73YFynET5tL3u3+LvtQbu8vAMtFB5z0qYW1VRahHZ9puV3sPTGVcb8lUSdV80JLKqKnU6zFe6UdD5/r6csygM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=b2Pwc+jJ; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyUbyw+l"
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c05cce598dso33064585a.3;
-        Mon, 10 Feb 2025 16:09:22 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="b2Pwc+jJ"
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-71fbb0d035dso2851688a34.2
+        for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2025 20:08:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739232561; x=1739837361; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Ah4k5+xQ1fRNUu+6C0S6nP1nA7x+T5drbERSfhVVRE=;
-        b=DyUbyw+llULRR/gNW25wUNQcCiJsgDvNGPfbMGDyh7KRrLzCDrojJYPulljVI7ynQg
-         mZRYOP5bUJYH/RuXgGdZtgQhFNAVENsY4PgHPiCqP0Ns0eju4LTKYSiC4rJrNP6tI+7B
-         CDIIYdeI49RnAu4KnytGElwqMCraivxGssRXrPe4TTeYWNFiHmOccThNnLaMeIm0Nm2X
-         VOKsi8YZyqIDIrwcHjPXQqJGE1v14jNavWiC2nnf5CNELOR+1GJZER1srMrU0Xe12UFE
-         l4lIjy7GL7a0jENZoNmjSxz7I5HKVxk+8pSL/JjIHlw8Ct7xSmnZTl1rpAzsp0KV2Zi/
-         8fXA==
+        d=broadcom.com; s=google; t=1739246886; x=1739851686; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=t8eYWsGO5bR6d/A4TPLNpDeU5HcoQR1tHKfNDbSFT88=;
+        b=b2Pwc+jJ4jVFOaDwaDWWBD4g1f3mOtu5WE0oXVLvwulvsu6BXTJz7LRn88fibO6Y0C
+         KN3MT79GAbDfPYUZvDzwgZ4o6/Kk2+h8eyut371dXb3KZ6BUjFxTbKNFW1PjmiDPE6OJ
+         AHRhN5hTLmCbFU1TBDemGknqhnsfF4VliHBto=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739232561; x=1739837361;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4Ah4k5+xQ1fRNUu+6C0S6nP1nA7x+T5drbERSfhVVRE=;
-        b=lAOMqGN3BW3W11egb7opNrhRv6EGKc5jGxgCw700D+GwvVxGoQ9CvSWa6VmLDiaT8p
-         kiHfIw0gjEWSBkcFwD15/Iq0iHAkoQDRJQi/POd2DGDofdakeg0OEMo18MDGDGaOTM3a
-         gSfwrvWrhaZgnbPX8je/eR1qLFO24ufAq0UO7FvClKModiIgCENeNbuHr5a7OdJW2Q+U
-         Nvkbn6ETzIbpkwYg4V2JPWMKZaYYBM4mRKJaAaiHCJocsSAUfpVSBTRiz3akaUBpx2oU
-         2GVUNIAa2Drnz0WGh9SHFgn9zG9ZnEGOd8yZ00zAQJRLt5OEYtpWJekTfkKV4wY4Xrcm
-         kQvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBqCMZ6WD+S6kOTAuoFYjIXy0VblKAZcURC2/NoK0dxTXE6yESsDKRiRVRtFJGrVKVdhAJYVhY@vger.kernel.org, AJvYcCVqBqKMvmSq9yPFJYaTXU+rYs7tj7HzabQlBcmgm8MA7tgieomDNi6e+OmZJaDSs0O9KLDrUN0PKjk=@vger.kernel.org, AJvYcCVrv+yMU29QWLVSSpRe488j7z9+r6Rmd6N7Gal02fqNyGIfTdYr6q/PToeaa6hZZ83inwdnGMj09T6aPzDR@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8IA8JTPMr4Q1uFyI0fS9AacoEZdV7QV3g3Km1sOsykQ/NHFFb
-	9ThlLArkGj/U8cEs1NWgXWNARuVI6qwKJNxChC8FZM8XcowF0/U=
-X-Gm-Gg: ASbGncsnXUzZToqlqeoC715swCdh/FjjyPTJkDfYoJlMzCJVc2nf7IVKxa43fADO/Or
-	qW9oeMb2DQwrnr1wI8zUDLxmTlEzYLZu74kEcAKggbObwuXJhvoYjjM1ggBmY1fM+BHF99Az/IY
-	sHcbNSiyUIW+8GcUjp4BngJYnp4akPtAEC9c3kLjU5ATiW8vKtu9ume9AXDvFDa6WxwM87jgzTm
-	u0wR7JEsFH6rJOZajm8c2gjV64O4NmaevL8cnjZzyEUh8wDIPt5U+LWyapigSRVlETR9ABD2mvv
-	6F2CyR+wjErb
-X-Google-Smtp-Source: AGHT+IEBNymajCc+NwMXIImuo+y111CUAjewA7syDuazHuJdvT8SyYtv2TQjZ/rPxap9qo/cAU2erw==
-X-Received: by 2002:a05:620a:4150:b0:7b6:dc5c:de5 with SMTP id af79cd13be357-7c069ce9f4emr42655285a.1.1739232561394;
-        Mon, 10 Feb 2025 16:09:21 -0800 (PST)
-Received: from ise-alpha.. ([2620:0:e00:550a:642:1aff:fee8:511b])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0603216c4sm173032885a.97.2025.02.10.16.09.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2025 16:09:20 -0800 (PST)
-From: Chenyuan Yang <chenyuan0y@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	florian.fainelli@broadcom.com
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	richardcochran@gmail.com,
-	dave.stevenson@raspberrypi.com,
-	popcornmix@gmail.com,
-	mripard@kernel.org,
-	u.kleine-koenig@baylibre.com,
-	nathan@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	zzjas98@gmail.com,
-	Chenyuan Yang <chenyuan0y@gmail.com>
-Subject: [PATCH] clk: bcm: rpi: Fix potential NULL pointer dereference
-Date: Mon, 10 Feb 2025 18:09:17 -0600
-Message-Id: <20250211000917.1739835-1-chenyuan0y@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1739246886; x=1739851686;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t8eYWsGO5bR6d/A4TPLNpDeU5HcoQR1tHKfNDbSFT88=;
+        b=vDAi1dZjN/KX48h6NaRZA95gVZp+YVm61iV32kp+wke8bHZ7vwvusgahUsQQWqQm5W
+         zQ1OmBboEh/IM8DQjUEV12+mhOT2CdoCxdFf9Cah+ERRVK8EIU1oKpLuNmch2ivlzfpH
+         EFc3Ul6ZZGlLkn2lw7AM25mj1DbH91TECtFnq8RFSHNtm3Xi9W1L334747nXteODx8GV
+         FVMGXEOEryZDxrix+n4Ma9g1fpIfNIBoMkpseXtaFrR3+om2ILHgpKtoKe737SWQWP80
+         yY2Iv2YBmxs1cw/iHtqL5cfvKAvrtotWdr7sL7kT9icyla52acgsC6xdENn4VP+Jdk4O
+         v6Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWNwNIcBrXXHaH+44mOEedkVhQ7oHb1S/1o6RLnm44NN0KAdMiSdiAeUIFZ7g3bAAkCnDTHDNHXA10=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDD2zXwk7wmn0WmNDWGKvxCsGCuwwOdyLxzMSWUhOFCehE2KpF
+	idEbPTd9XiDuVBE+mo874qyfnTaZC7MGAAtgW0JKqdT1RNUG5dUAYTh+DcaWvw==
+X-Gm-Gg: ASbGncvbtO+WU4DBj8k6O28rCE84QdnmSFbxUJMu7hhODNchKSw+TC8egUC7qUHVUJR
+	ahxqOIbKkdFzn1ODHYv3vy4L0gYXGqwpC2wHEuLPkqJSk65Msjgi/YJ9klKVkLH7EEd2dTlI0e6
+	KvwjeyEaa6Bfw4+GcQLHdsTcZXBTKkJC2Ni7MoGawujHSY/W3jW5a7P1wIVAybUeXCAlnIkSThF
+	Caa6HZmMxhEAxUCm6EBHNdo7XRslyBM6PSvEVYhwtL3x8sWuxSWvQnOFJt3R0xN4MYDSzIe0lcr
+	E6W6xb8pgoHMRu01OS2W+iUqjL0Dif33qb1nMFTFfjwzbpEq0mooRSy89l8yUTk9/g==
+X-Google-Smtp-Source: AGHT+IFapi4wMv31NrAKWbcvGGOIg6pfCWW86OI3QXYEtKOl36IiOEMw2fKlDSL1dacmx7ZY5EhBlg==
+X-Received: by 2002:a05:6830:6d11:b0:726:ea48:5993 with SMTP id 46e09a7af769-726ea485bb5mr589459a34.2.1739246885929;
+        Mon, 10 Feb 2025 20:08:05 -0800 (PST)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-726e93d873csm380757a34.47.2025.02.10.20.08.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Feb 2025 20:08:04 -0800 (PST)
+Message-ID: <d6f3bedd-11b9-4eaf-a8a2-a6da460fc7b3@broadcom.com>
+Date: Mon, 10 Feb 2025 20:08:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: bcm: rpi: Fix potential NULL pointer dereference
+To: Chenyuan Yang <chenyuan0y@gmail.com>, mturquette@baylibre.com,
+ sboyd@kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com, richardcochran@gmail.com,
+ dave.stevenson@raspberrypi.com, popcornmix@gmail.com, mripard@kernel.org,
+ u.kleine-koenig@baylibre.com, nathan@kernel.org, linux-clk@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, zzjas98@gmail.com
+References: <20250211000917.1739835-1-chenyuan0y@gmail.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250211000917.1739835-1-chenyuan0y@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The `init.name` could be NULL. Add missing check in the
-raspberrypi_clk_register().
-This is similar to commit 3027e7b15b02
-("ice: Fix some null pointer dereference issues in ice_ptp.c").
-Besides, bcm2835_register_pll_divider() under the same directory also
-has a very similar check.
 
-Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
----
- drivers/clk/bcm/clk-raspberrypi.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index 0e1fe3759530..720acc10f8aa 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -286,6 +286,8 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
- 	init.name = devm_kasprintf(rpi->dev, GFP_KERNEL,
- 				   "fw-clk-%s",
- 				   rpi_firmware_clk_names[id]);
-+	if (!init.name)
-+		return ERR_PTR(-ENOMEM);
- 	init.ops = &raspberrypi_firmware_clk_ops;
- 	init.flags = CLK_GET_RATE_NOCACHE;
- 
+On 2/10/2025 4:09 PM, Chenyuan Yang wrote:
+> The `init.name` could be NULL. Add missing check in the
+> raspberrypi_clk_register().
+> This is similar to commit 3027e7b15b02
+> ("ice: Fix some null pointer dereference issues in ice_ptp.c").
+> Besides, bcm2835_register_pll_divider() under the same directory also
+> has a very similar check.
+> 
+> Signed-off-by: Chenyuan Yang <chenyuan0y@gmail.com>
+
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-2.34.1
+Florian
 
