@@ -1,140 +1,100 @@
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8491210191;
-	Wed, 12 Feb 2025 14:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC10C18D65E;
+	Wed, 12 Feb 2025 14:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739371308; cv=none; b=Jb0nqIdAVx43AzbXW2rn3BQlIv0sQk+0X72/c9TATCz75foH7lujikGthIssUYSDIQ2Z2lh6bZ0enCN7Cg7l8lgawgC4lLc154DdeOJTz0RO8Ka23Z2JPNw5JHQ7zbK7vPq9xDB/PPM/Eg1wv6kIsWVosJ7ql5SU+Q4413JGiZA=
+	t=1739371543; cv=none; b=TOER2Ta8/oyLOv3k0+JhlIWc/ABitC2XK7JkWjMWQAaNguja0eBH7AmnO15fhhDgARQ8VVCB9XmdWOV6/0I78mHMOIkN/hNHy8VA5vjxt6zUsn/djOwWYk3y5hKBStZvZvEl4+mIhfm0B0BADktLdycnW9Mz4zkfH0Bow1x9q5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739371308; c=relaxed/simple;
-	bh=6VsvBgPqBd5Zqef3iWLEMJWJApBWl49CoJqvuwZAeiw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NbzMgA6HDIsrUztWrvqnRq4YSPBCn86U3VjlsqhmYl2g5q0ZD2e1DvSfK5LpwM7QR86/RHgXCVGne9FBqOYdxHQEyVKtZYdM+/0V08V05NZTsr+H4Ob9f1vLn7MAF6Ei7pCqdlpgUbba7orFD1GKdr9ZNlXHKrgCrmUiQKryVdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GvBu9t56; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1739371543; c=relaxed/simple;
+	bh=zPPPVDyPCQy/uHZXmtEqFziYEoLwnzvm/k6HokPTs8Y=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ReSfxEUqRdZDEV6vudAUHO7o0baFs/ro9DSJd/sZ6eahzcEQ3S3T7esCYkn0aMZS/x3rURn12OR+7+VpLT2RaN/ZOLVIWg35YCmVaYH5KxSHcGOQqTua34BOima48LNxr1lzwLMQqRBMNzc5ZmgDDPDioAMZ21DJQCyg+TeNG9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wI5257yL; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GvBu9t56"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1FDCF204A5;
-	Wed, 12 Feb 2025 14:41:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739371303;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hV58UJrNiafKUEEBYyT5622rc4906GKqOPPegyEjpJc=;
-	b=GvBu9t563kxnFl8vpKqJnl1NlFNwRhwgqpgwrV/WKHt+P/P2VyItdyvSR8e7YpylVkrJFh
-	ZambmdwrU19UQNsfxlqJs00qmG1mJgRSWTe8ObzqtbHpk8slTgRKlELpQzT2avGKq6lyJb
-	LL8HprxNBtH1BHLc61viq/yj9L1DFSAe2WWN2RQe9dFql+ICrfKfp8CUe3mO2pCCPgX8tS
-	TP6aR8s3Mrn/9Z42s8BUVceDzlUrOyyDuDl6gLHzqZEXHOkCL7Q/nrgv8UdwGzqRqtay8e
-	1kA/qjLYuimHcatcpaPr75L+A1gxNamRx4P/B6fzdeCUHAvX/o80W0TZ2LG1gg==
-From: =?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>
-To: jbrunet@baylibre.com
-Cc: Laurent.pinchart@ideasonboard.com,
-	abelvesa@kernel.org,
-	airlied@gmail.com,
-	andrzej.hajda@intel.com,
-	arnd@arndb.de,
-	bryan.odonoghue@linaro.org,
-	conor.dooley@microchip.com,
-	daire.mcnamara@microchip.com,
-	dakr@kernel.org,
-	david.m.ertman@intel.com,
-	dianders@chromium.org,
-	dri-devel@lists.freedesktop.org,
-	festevam@gmail.com,
-	gregkh@linuxfoundation.org,
-	gregory.clement@bootlin.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	imx@lists.linux.dev,
-	ira.weiny@intel.com,
-	jernej.skrabec@gmail.com,
-	jonas@kwiboo.se,
-	kernel@pengutronix.de,
-	khilman@baylibre.com,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	maarten.lankhorst@linux.intel.com,
-	martin.blumenstingl@googlemail.com,
-	mripard@kernel.org,
-	mturquette@baylibre.com,
-	neil.armstrong@linaro.org,
-	p.zabel@pengutronix.de,
-	peng.fan@nxp.com,
-	platform-driver-x86@vger.kernel.org,
-	rafael@kernel.org,
-	rfoss@kernel.org,
-	s.hauer@pengutronix.de,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	simona@ffwll.ch,
-	theo.lebrun@bootlin.com,
-	tzimmermann@suse.de,
-	vladimir.kondratiev@mobileye.com
-Subject: [PATCH] reset: eyeq: drop device_set_of_node_from_dev() done by parent
-Date: Wed, 12 Feb 2025 15:41:26 +0100
-Message-ID: <20250212144126.120231-1-theo.lebrun@bootlin.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250211-aux-device-create-helper-v3-5-7edb50524909@baylibre.com>
-References: <20250211-aux-device-create-helper-v3-5-7edb50524909@baylibre.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wI5257yL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1739371528; x=1739976328; i=markus.elfring@web.de;
+	bh=zPPPVDyPCQy/uHZXmtEqFziYEoLwnzvm/k6HokPTs8Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wI5257yL/FVTiY5mUkYGejkdhVaRmGYvugLmvPDMzLMngyHvByBwQQQknYe+C3lg
+	 840gW3JUYmvLT8Z51sOVUamRng+HvfbWhyC+KycDYSjHzhU4YNWpHZh7dghAeLKrW
+	 zv4D2yi+Atoemvj3brYS4dAVEjYl+q8KZRceYtUxCWTJ3Aj+dipeP2TbrdwZ13K3x
+	 XA5aw8S4hoAeTzRsoHu3ZzIxTHt9vPx20OBmZLSSORekQBrwtMGaB0XyQ6z52ox3d
+	 PUblNMwdNVJco5ntQ7U3hP1X841h7TiFErFa/pBfi028I4v1UH6JXswlTzb2Zymvn
+	 67iPkISqALY+GVOOpA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.93.11]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MGgJK-1teKFu0sgk-009tly; Wed, 12
+ Feb 2025 15:45:28 +0100
+Message-ID: <f4757a63-c1f7-4b4f-854b-db533c8b70ad@web.de>
+Date: Wed, 12 Feb 2025 15:45:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: vulab@iscas.ac.cn, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+References: <20250211092017.562-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] clk: qcom: Fix missing error check for
+ dev_pm_domain_attach()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250211092017.562-1-vulab@iscas.ac.cn>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggeduhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucenucfjughrpefhvfevufffkffojghfgggtgfesthekredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeghfejhfdviefftedvieetfedugeefvedtfedujefhhedvhefggfduhfefueektdenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgupdhhvghlohepthhlvggsqdgsohhothhlihhnqdhffidqtddvrddrpdhmrghilhhfrhhomhepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgeejpdhrtghpthhtohepjhgsrhhunhgvthessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopegrsggvlhhvvghsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghirhhlihgvugesghhmr
- ghilhdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopegsrhihrghnrdhoughonhhoghhhuhgvsehlihhnrghrohdrohhrghdprhgtphhtthhopegtohhnohhrrdguohholhgvhiesmhhitghrohgthhhiphdrtghomh
-X-GND-Sasl: theo.lebrun@bootlin.com
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:9HptBoJr+kFWKWd/ACV89eXSi3Vqg5qVerrcCbM5ck8oPCJkGhW
+ H11Szp+hF184Zyod+1e14zLL/BbnjEBwuS49kqycnWHR0DDAgK+9/WwanAUkts7SfXTlFkA
+ s28hgN4rCw350nRlH2uI9aopBiBRaKTbrEIpMeLPnoFAl6+4h4+agoaC720zkQVBha04VTb
+ QRHR53cyeO8df3y/5GiiA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Qjil/6/MEY8=;B6S1G8rplb9b1l6QX8AOpnucNI6
+ dL/ZMmIeQJuyZU3DSZc/mQMrrp17/l7okkgDsGor1bbTU03dM3IjXTOd058vYbkunYfbNbxaw
+ fpSdFytDXDJE7OZ4k3tz+u+0Ocbi0RvvScIGnZWk3d+wl4n6XF12t6QT8lPhxnLUL5k+pIWZn
+ IjkwBMJ2uzlwLZ6et+cd7g1SrY7xVa10hsWE7Y4x8za6aSpchOCf7AalXz/EuKxwEVQ2NAFDn
+ Om6SwG8tgfr6genhda7+Z8qZYn4Tog7Ed99RBSJh9rjkJl3COkIsgUK71w0M41e4ygfbAt2Z0
+ 6WsZ3vHQqWTht8GH7lUWUJV7CGC4eXKLrNpdmhWc9ZhGvfGzwClJu8NnK3BeS4Q//z0U4tZ8E
+ WCak4R/GNZJZSdp49QtgBondz2kyVmJa0nBpHhHMQDQEpt/QwG5G+8XaepORSzXR6MTGhJh5x
+ uijktZ8jGBqHwUu8GSmzrwaMFPyaqO5MGLgGPp0XPuB8ONfEQJOIbVh1sPUrdr9PJSCgnAQy6
+ grcj2NrtklCHw2R6WbZbQ/hp1hkC94MPvp9shLFgUyX0QFbwXlTeqE5NpTjEbiy3RsInLCVwe
+ joAZkQpn+M3EEpRLrORHDC2+G/pdTcanjhgASpl226e8k9WHHvEWRXRQxeWUbgl6SJREMeY3Y
+ orjhjr0BbyGmo5/rCoRqwHsOShcHMA1Y6Cpq4db1h878NMNVD3LV6YS4HNF4Vja23A8BR8jD6
+ hbKpwsuGJcPxSPsWza/a2UaluKYM+aCnBD2Ke1NQ4S1oqU3KOBvy/oeksDtZpepNza9aMrJws
+ LMKb5Uudq9338WBAS7qRKLFTiml6IHK4Y1CW80VcWbTR1zne8vEoE9G+m4OLUNqK3UD6IMc2m
+ bjg2BudAoC6KUZuMJBQwgOgyWXnemQLPl04bmMFFx3d5nvZwXHB0axtiZOnsaDMXHcZ2ITlK9
+ VjzsPUZroZBJ4efIhjL6kdGQETijEci3VYHNhYWcAsUuDOxSwhS637bYly0qLr9lc7iEXWVdE
+ qv46FHaFt94pLc2l9mI9B6ZMz4LxmDi7t7InppklqN0fbDXJXMabLXLs4pclS3Ud5fKtPTPT7
+ drLuXxXwgfZ1QY2Cm2dtaB1QxAKM9/VfndG8k5xD3gjQeu1LFiwj6LbuZhpr2kD4R4ACzsOX3
+ dKtofWp5OrNcCP7aTNsAFOimsw5Gq0XiA1Vn8vFY5XjQBmWiF875sF0s2OHvmesHFoAo0By4c
+ 1LWEGWXBf+abj2nqn0zu5nP5S+GBTDZ86Ag42hjizZrOjerzW91+2xAHJ+8ktHwc+SgjcwOeC
+ 4b9+wL7PZ9BjgXYNp+h8wYW5ZW1K5UdalgKBweVjR/iK4FMwN1xwvOKBYUyPzKoQLeerLAyGq
+ lh8kXmt9EaS11HrydZNMXHJLzi3bOeh+dHnHb7RP/e22bEtTStuB4lj8L4UfvarJqS6qET1EV
+ u5EeQJQsc86cc4U4Kmz6MU91xEjg=
 
-Our parent driver (clk-eyeq) now does the
-	device_set_of_node_from_dev(dev, dev->parent)
-call through the newly introduced devm_auxiliary_device_create() helper.
+=E2=80=A6
+> This patch adds a check for the return value =E2=80=A6
 
-Doing it again in the reset-eyeq probe would be redundant.
-Drop both the WARN_ON() and the device_set_of_node_from_dev() call.
-Also fix the following comment that talks about "our newfound OF node".
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc2#n94
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- drivers/reset/reset-eyeq.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/reset/reset-eyeq.c b/drivers/reset/reset-eyeq.c
-index 02d50041048b..8018fa895427 100644
---- a/drivers/reset/reset-eyeq.c
-+++ b/drivers/reset/reset-eyeq.c
-@@ -420,17 +420,8 @@ static int eqr_probe(struct auxiliary_device *adev,
- 	int ret;
- 
- 	/*
--	 * We are an auxiliary device of clk-eyeq. We do not have an OF node by
--	 * default; let's reuse our parent's OF node.
--	 */
--	WARN_ON(dev->of_node);
--	device_set_of_node_from_dev(dev, dev->parent);
--	if (!dev->of_node)
--		return -ENODEV;
--
--	/*
--	 * Using our newfound OF node, we can get match data. We cannot use
--	 * device_get_match_data() because it does not match reused OF nodes.
-+	 * Get match data. We cannot use device_get_match_data() because it does
-+	 * not accept reused OF nodes; see device_set_of_node_from_dev().
- 	 */
- 	match = of_match_node(dev->driver->of_match_table, dev->of_node);
- 	if (!match || !match->data)
--- 
-2.48.1
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc2#n145
 
+Regards,
+Markus
