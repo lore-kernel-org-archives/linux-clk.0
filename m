@@ -1,193 +1,176 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B331FBC96
-	for <linux-clk@vger.kernel.org>; Wed, 12 Feb 2025 20:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1C41FF7D7
+	for <linux-clk@vger.kernel.org>; Wed, 12 Feb 2025 20:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739390428; cv=none; b=PJfh/ddQXtmsiq7txlbWxj/QUKve4DwRQlzxF+xq3R4bZr9ciUd8aQy88C7ZOQot6i2s1ev96grA45B6wDqIOCTQjBduMFPn4mweZkMapZewWCgZh2xGzz1fmjnxvs+CvwE2McZFIXbZR1Ti1taAsDZJYVhjWl4gOXSLETcbHFc=
+	t=1739390512; cv=none; b=oGuY/c2Pe86KUf1aeaN4IUbIORtSrZ/RZpMzDzAE2CRpKfDVAKJfm8luy0Vuk4nBVvH9XpgFGajubHPt81LaNKvT6eA+TqwhHC3WeheuFdKqQVHmpiPXbLezdDkBuIDsh/js9veirIMcKyFWQxYwp+oODvadODIjP/qjJQKHjPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739390428; c=relaxed/simple;
-	bh=Sk3/jI2UsX7t1K7DBMsBontenZTYBCF6xe8eKBZ82QE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hHL2Kz0j9WbEHAgKEflWvicyKU/3qucKOPbS4EJweoJeZPQS+epg5xeEnkhWONIF0it4SoVd+lzWsJUIzfGajoRci1GiwKsnkwovRD/7tRLWfSkgzXj4FfZLLeleK2/1W2/HDPBpjdUNemGLQ0LgAw3eNte8zQ2t1Z01cWFESbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TyDBdVH9; arc=none smtp.client-ip=209.85.128.181
+	s=arc-20240116; t=1739390512; c=relaxed/simple;
+	bh=ZVcEJO7Uv5wpU5tV1MnJcYqReg/8tOXkFVGMPRFbqiY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NmGXHmLmXN9UOKG5mYqS17KR8tmfTUWkIIIO67Y/miDRyfspN4VQ5yBr1MYzA+V5KwWSItyPOyNM5O28FLjq8FVpLgm0DtZsvpEEBinBvkvJ9x2phspLw/95C5vU4pOXL+y7cmtxu0z0o9NpGQHiJmQ3GMMngNSVhooN2Hidy3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QsgTi5hs; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TyDBdVH9"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6fb0e9e6f6bso1178197b3.2
-        for <linux-clk@vger.kernel.org>; Wed, 12 Feb 2025 12:00:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QsgTi5hs"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5dc5a32c313so6862a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 12 Feb 2025 12:01:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739390426; x=1739995226; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/fTY3RzHJmo0B1XLCBasCOuHNrW5LerLaWls5wlJiRQ=;
-        b=TyDBdVH9JvqtN5SzB24bhuzfz3OgOzgK5KwPhSr3Gf5JEEg8QwlwhCITBHMI0r54pL
-         /8KdC9AKD4A3uSv+wKyX+5pNdeTRnVJEsHl3zCq6qjnvh29aahzbyPJ71JvwPdDzX+/S
-         IAkzHMuF/z0/XDAwpys5b5ZsiT1DJQ/r0cmS3K/FG1WJhcd6JR6awkQNEPQrT3iy8aFi
-         0EMzbnTHY0ROzD9EheD03FAAT93fmtNGcIwMsQTDrEHmvTUu2zHhL7z+4PS3s3JAkxcK
-         JB1vLKyHjXcJassl+kg0cTG8yuscl8cZ6RtTwB+UI3fGbO3uQWmqlsV2WiBHCHSaiF9l
-         HZOA==
+        d=linaro.org; s=google; t=1739390509; x=1739995309; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+slArvciEKrrbWeiR+2AOpVb8wZSxh9//svIa/sklZI=;
+        b=QsgTi5hsfNo85ypXM7cuFpEWkqA0x+gmep2zeYX8mS8O9B9FoyOaZHq6lg/Wwgyluj
+         D2g6vT12o9T8tdWchONBd9fwhVgMXUNnXH0O4y3zQhtsvHCwXmJNiAy+Tml6bKcNKUbP
+         vjbXrk5QS6z38YDcn5fQED5X+ODcuVpBf1I3wnIJeYRqanItzsOoP7twWFbtNjhdcofL
+         Nru2cBqFMfEXVUUrS4atuj9Q/T/hFNB+lYfUm8NXaD25W3eTvGQ3ZT8LmHvQt2L2zx+3
+         dYcgHr71M46nWLQVoZutZJuxYejYm0ytTSX5aqERWYbB0pK6CeSfRHjZ6Sf4b+zDctz2
+         RX9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739390426; x=1739995226;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1739390509; x=1739995309;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/fTY3RzHJmo0B1XLCBasCOuHNrW5LerLaWls5wlJiRQ=;
-        b=hqgIA+kn1sWaH93EooVEHnITcbqTEdqTzHOn42ez9IuM3q/wq/DN4HArvCBlkDuWfd
-         NG/tVS9ZHbLjBW+kLfhnNt/BwxFSeae4eIlsfHWQ+QxAdcp83qlqdP6yAW/586h7qdN4
-         ++zMe4Vw6iPbtIQfE4VY94OGujG2jvlOih0aN95xVa9w1N+ZP8C5IndhRI0yrzFUXjpP
-         Hu/277NiQQ72AVM3fzrhDwxadHirAsI8arMhGLk6Q1q1j4uLKn0NyCDjKWuOql856u1P
-         BojpeSShjp0mES0+Wdz4TNjYb7epG8QB/lrJJhmVRF4ngvprfhDFWWvfh3Bs45Z6tYqe
-         erMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWncAcsJeoA691BHN+j4GXYeFoyca/7mJdKv3cL9DxBQ/iIUTzwhej+EfYiNAwrpFeSALaBtIwV7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLPValkMZWQqCXpGWeuNXEwsrgh16jMl+5D80QW+XE5ULHu5fe
-	06lZ8i7WnPGK9bzun14C4h7HjLpihdGNcfnYKCMefCoTsRylLhdhdmIN79faloDH39GFxEoxjDV
-	L4w+PhdG8qgoIZu/awsAyczli+zJyg2u39ycDHQ==
-X-Gm-Gg: ASbGncvc1EADHqkAFuSMz6f8UjXF/9pJx3rrvqrN3oBDG2LSpJTazLYOuWhXYUlcvWk
-	55n48XBAOZC30iIo5zz3xvdkblJwbKCFuBt2QLmZPZ2w4iIeLvajnysvHemZlN3crHjYq1fXlLe
-	Mpv//hpXbfSNlbujXPJ2n4noH8uWpR
-X-Google-Smtp-Source: AGHT+IHpP/gC08VN7wUxKZsuy3lhOhgymj/1ecYGtVd8W+HYEBiuQTcPZ00XpHQf5kS9j1OsDnAxBJQ5Gt36la9oIrA=
-X-Received: by 2002:a05:690c:f87:b0:6f9:4306:5d0b with SMTP id
- 00721157ae682-6fb32c49cf2mr8626497b3.6.1739390425591; Wed, 12 Feb 2025
- 12:00:25 -0800 (PST)
+        bh=+slArvciEKrrbWeiR+2AOpVb8wZSxh9//svIa/sklZI=;
+        b=AQqUnE/MgcIXwU2Cp1ANNqGDDK0OqqNvpaceY1EybicJyYFwcT46sg0kSeNk3Kj6s6
+         qBbobY1YSTQ5xAF9zqr14oVW4gxZFmFr28fRxbg0C+vDQCmyj/dUd5sQzudqCepR674w
+         b9dzgYRzzZpQ18MFxIUuEonuhyKMWgM2ZC8AkcGH6FyX7dAYMNvAXsjQ9OAIgj14OAxJ
+         TzKJic/GGyRSycumISgszCYnAJ+rqaS2+pUwOdNvi8X8HuNQjWqBOpEgj7hXIhtXba1R
+         8zJnbJlpzptS5Ffp3HFbFe5sLAXfh89+b/95kDApvVKduop55AZyhq0Vc1kBLGmasf29
+         0OOA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0+GoD1ELen8y8IcUjuUAeYF0UrEynUyAi4gmjd8LWL1MIElJHzfqb7EqzSJ/x860dFcC0k/3s+Fg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3yCAiC8aJAJnMBDL79XSVFZ0Ov2fP92NSZH7uivskttQ4fCqV
+	xJasoz+aKYVnVA/AYTXQCwA+E41a6IqjnumwcqFn/T6NGFQNb7fA6MMD10lA3x0=
+X-Gm-Gg: ASbGncti3U7DvpESdFAwH5KLJf/JBaTxkDuZqdxqHZnR/MqES+o2LPwdWamstZ5x+Il
+	qfHD3NDJkUChn4b2LsrSpmoYouJU/lDXoymH8ZLgnJEHMMfXeHcqEJhikTI4ekQVxttqxdqh+Vs
+	humkEsGs0QyJn7vu4L0CoWQVRmBa8J1jL826REBE2wOgGlTI2FGTR1FtWE//DEMPd/PxFPh1PsM
+	S33LooC9TlzU7D7G5AzdhOlDXl08OrzuA+4KC7KkPVowE4jIrA72/HRhjidvnSdMlqfr38TP11L
+	bGNKyiBAoo2CmY+mpx9TuqWAyj94Zm0=
+X-Google-Smtp-Source: AGHT+IEvaK9RPP1CAa0irVYvJ+1eexH6xB1jgfwN8E1yBqsYAA7ZjywZReEgSbjPmnurHsZozzjmAA==
+X-Received: by 2002:a05:6402:278a:b0:5dc:1ff6:c973 with SMTP id 4fb4d7f45d1cf-5deae0512bfmr1686638a12.10.1739390508449;
+        Wed, 12 Feb 2025 12:01:48 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5deca41378fsm144527a12.74.2025.02.12.12.01.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 12:01:46 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v3 0/3] clk: qcom: few old cleanups
+Date: Wed, 12 Feb 2025 21:01:34 +0100
+Message-Id: <20250212-b4-clk-qcom-clean-v3-0-499f37444f5d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
- <20250212-lpass_qcm6490_resets-v3-2-0b1cfb35b38e@quicinc.com>
- <exyxni7td5vow2n6jarav5euje6dnbue5f5yxzu6az554dthfe@zn5yd2byvkoj> <ccc87c55-d157-4ffc-8081-1a5900752931@quicinc.com>
-In-Reply-To: <ccc87c55-d157-4ffc-8081-1a5900752931@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 12 Feb 2025 22:00:13 +0200
-X-Gm-Features: AWEUYZn3gLjvd1HsKl-sxJNZx8W02W3If6M3qoD7FnpzYCeutPv1jLp6seThGZg
-Message-ID: <CAA8EJpp7e5q36jGmB-TZX5A=XVGKsDtmBF8kJmxoga8NqGZP1A@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for
- LPASS resets for QCM6490
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAB7+rGcC/x2MQQqAIBAAvxJ7bqHMSPpKdDDdaqmsFCIQ/550m
+ znMRAjkmQL0RQRPDwc+XZamLMCs2i2EbLODqERbiVrgJNHsG97mPDKQdkhaKTt1tjZaQu4uTzO
+ //3MYU/oAQGHEq2MAAAA=
+X-Change-ID: 20250212-b4-clk-qcom-clean-ea88db7d1ca4
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Taniya Das <quic_tdas@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3233;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=ZVcEJO7Uv5wpU5tV1MnJcYqReg/8tOXkFVGMPRFbqiY=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnrP4ha55FsfM6qCWgFOtdX2P+hAOEoLysxAdvc
+ Lz/3/buoBOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ6z+IQAKCRDBN2bmhouD
+ 1z41EACAim1OudpUvk5X3Xol75msgm2ZeyndHNs0JiiWixVqLiLpwEcA54tBijDButy/m6SY61t
+ 7VagoGhdJxfZHvv3zfBkCsLOoe64R8Cu/NmbjTPX2FRwvpXs79UveAeCNNA6Vh0dVJcA/VzFkW9
+ iEUYpppKNRJ6UNY2QhAVz3WWQ50dgty26OE5VmEBb3WwhOGrY9qkLpiaOQENfrZ8nyEllVYTyM/
+ HgQOtpnxok98sqR9NOGdVu6TYfDN91sgu26wDxvdt9j5rmdldK5VZeFsKWyWQTMmpL3AweeSUVq
+ OQS/wwwgQEQfbAEhH5AfYppySEHtlgxTJK/vAY66Dgcw7K4L3+RkpGg9jAXq2bmi/S72iSD56Lx
+ VEiHHxLbud8rTXILBSldEj7i7Cr8buRy8l2ZM+yk7TRc0iCfRae/3DU95kIOLiwALyV2lZpRA0z
+ xdKVGi/0HSIpM3cELMl5euCbZlMr+H9uMupym/fYmO1+5WRCXvjN3x8lEmVDRVGjm/d8MLogU9u
+ g9KX1i+fPp3U7rwjSsQubUgxiTu7K5QmQnDXEYpGVhv4JoxAeOA+9dXYjqvLoAFcj/iDAfOS42o
+ Lya3IOQWoX6CICXQGXJX54xlSoewp4eFCaoXxIfTglWqH6ucm5HnY3Rh1gDBV2NO/WStS8QDm0K
+ LTb6HcoF1cFwBCw==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On Wed, 12 Feb 2025 at 19:15, Taniya Das <quic_tdas@quicinc.com> wrote:
->
->
->
-> On 2/12/2025 4:39 PM, Dmitry Baryshkov wrote:
-> > On Wed, Feb 12, 2025 at 01:52:20PM +0530, Taniya Das wrote:
-> >> On the QCM6490 boards the LPASS firmware controls the complete clock
-> >> controller functionalities. But the LPASS resets are required to be
-> >> controlled from the high level OS. The Audio SW driver should be able to
-> >> assert/deassert the audio resets as required. Thus in clock driver add
-> >> support for the resets.
-> >>
-> >> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> >> ---
-> >>  drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
-> >>  1 file changed, 19 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> >> index 45e7264770866f929a3f4663c477330f0bf7aa84..b6439308926371891cc5f9a5e0d4e8393641560d 100644
-> >> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> >> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-> >> @@ -1,6 +1,7 @@
-> >>  // SPDX-License-Identifier: GPL-2.0-only
-> >>  /*
-> >>   * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-> >> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> >>   */
-> >>
-> >>  #include <linux/clk-provider.h>
-> >> @@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
-> >>      [LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
-> >>  };
-> >>
-> >> +static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
-> >> +    .name = "lpassaudio_cc_reset",
-> >> +    .reg_bits = 32,
-> >> +    .reg_stride = 4,
-> >> +    .val_bits = 32,
-> >> +    .fast_io = true,
-> >> +    .max_register = 0xc8,
-> >> +};
-> >> +
-> >>  static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
-> >> -    .config = &lpass_audio_cc_sc7280_regmap_config,
-> >> +    .config = &lpass_audio_cc_sc7280_reset_regmap_config,
-> >>      .resets = lpass_audio_cc_sc7280_resets,
-> >>      .num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
-> >>  };
-> >>
-> >>  static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
-> >> -    { .compatible = "qcom,sc7280-lpassaudiocc" },
-> >> +    { .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
-> >> +    { .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
-> >>      { }
-> >>  };
-> >>  MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
-> >> @@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
-> >>      struct regmap *regmap;
-> >>      int ret;
-> >>
-> >> +    desc = device_get_match_data(&pdev->dev);
-> >> +
-> >> +    if (desc->num_resets)
-> >> +            return qcom_cc_probe_by_index(pdev, 1, desc);
-> >
-> > Won't this break SC7280 support by causing an early return?
-> >
->
-> The resets are not defined for SC7280.
-> static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
->         .config = &lpass_audio_cc_sc7280_regmap_config,
->         .clks = lpass_audio_cc_sc7280_clocks,
->         .num_clks = ARRAY_SIZE(lpass_audio_cc_sc7280_clocks),
-> };
->
-> The reset get registered for SC7280 after the clocks are registered.
-> qcom_cc_probe_by_index(pdev, 1,  &lpass_audio_cc_reset_sc7280_desc);
+Change in v3:
+1. Patch #3: Drop change to dispcc-sm4450.c
 
-Could you please make this condition more obvious and error-prone
-rather than checking one particular non-obvious property?
+Previous changelogs:
+https://lore.kernel.org/all/20241209111315.60776-1-krzysztof.kozlowski@linaro.org/
+https://lore.kernel.org/all/20241203105707.34996-1-krzysztof.kozlowski@linaro.org/
 
->
-> >> +
-> >>      ret = lpass_audio_setup_runtime_pm(pdev);
-> >>      if (ret)
-> >>              return ret;
-> >>
-> >>      lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc";
-> >>      lpass_audio_cc_sc7280_regmap_config.max_register = 0x2f000;
-> >> -    desc = &lpass_audio_cc_sc7280_desc;
-> >>
-> >>      regmap = qcom_cc_map(pdev, desc);
-> >>      if (IS_ERR(regmap)) {
-> >> @@ -772,7 +787,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
-> >>      regmap_write(regmap, 0x4, 0x3b);
-> >>      regmap_write(regmap, 0x8, 0xff05);
-> >>
-> >> -    ret = qcom_cc_really_probe(&pdev->dev, &lpass_audio_cc_sc7280_desc, regmap);
-> >> +    ret = qcom_cc_really_probe(&pdev->dev, desc, regmap);
-> >>      if (ret) {
-> >>              dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
-> >>              goto exit;
-> >>
-> >> --
-> >> 2.45.2
-> >>
-> >
->
+Best regards,
+Krzysztof
 
+---
+Krzysztof Kozlowski (3):
+      clk: qcom: clk-alpha-pll: Do not use random stack value for recalc rate
+      clk: qcom: Drop unused header includes
+      clk: qcom: Add missing header includes
 
+ drivers/clk/qcom/camcc-sa8775p.c      |  1 -
+ drivers/clk/qcom/camcc-sc7180.c       |  2 +-
+ drivers/clk/qcom/camcc-sc7280.c       |  2 +-
+ drivers/clk/qcom/camcc-sdm845.c       |  1 +
+ drivers/clk/qcom/camcc-sm4450.c       |  1 -
+ drivers/clk/qcom/camcc-sm6350.c       |  1 +
+ drivers/clk/qcom/camcc-sm7150.c       |  1 -
+ drivers/clk/qcom/camcc-sm8150.c       |  2 +-
+ drivers/clk/qcom/camcc-sm8250.c       |  2 +-
+ drivers/clk/qcom/clk-alpha-pll.c      | 52 ++++++++++++++++++++++++-----------
+ drivers/clk/qcom/dispcc-qcm2290.c     |  3 +-
+ drivers/clk/qcom/dispcc-sc7180.c      |  1 +
+ drivers/clk/qcom/dispcc-sc7280.c      |  1 +
+ drivers/clk/qcom/dispcc-sc8280xp.c    |  3 +-
+ drivers/clk/qcom/dispcc-sdm845.c      |  2 +-
+ drivers/clk/qcom/dispcc-sm4450.c      |  1 -
+ drivers/clk/qcom/dispcc-sm6115.c      |  3 +-
+ drivers/clk/qcom/dispcc-sm6125.c      |  1 +
+ drivers/clk/qcom/dispcc-sm6350.c      |  1 +
+ drivers/clk/qcom/dispcc-sm6375.c      |  1 +
+ drivers/clk/qcom/dispcc-sm7150.c      |  1 -
+ drivers/clk/qcom/dispcc-sm8250.c      |  2 +-
+ drivers/clk/qcom/dispcc-sm8450.c      |  3 +-
+ drivers/clk/qcom/dispcc-sm8550.c      |  3 +-
+ drivers/clk/qcom/dispcc0-sa8775p.c    |  1 -
+ drivers/clk/qcom/dispcc1-sa8775p.c    |  1 -
+ drivers/clk/qcom/gcc-msm8960.c        |  1 -
+ drivers/clk/qcom/gcc-msm8974.c        |  1 -
+ drivers/clk/qcom/gpucc-msm8998.c      |  3 +-
+ drivers/clk/qcom/gpucc-sar2130p.c     |  1 +
+ drivers/clk/qcom/gpucc-sc7180.c       |  1 +
+ drivers/clk/qcom/gpucc-sc7280.c       |  1 +
+ drivers/clk/qcom/gpucc-sc8280xp.c     |  1 +
+ drivers/clk/qcom/gpucc-sdm660.c       |  5 ++--
+ drivers/clk/qcom/gpucc-sdm845.c       |  1 +
+ drivers/clk/qcom/gpucc-sm4450.c       |  1 -
+ drivers/clk/qcom/gpucc-sm6350.c       |  1 +
+ drivers/clk/qcom/gpucc-sm8150.c       |  1 +
+ drivers/clk/qcom/gpucc-sm8250.c       |  1 +
+ drivers/clk/qcom/gpucc-sm8350.c       |  2 +-
+ drivers/clk/qcom/kpss-xcc.c           |  1 -
+ drivers/clk/qcom/krait-cc.c           |  1 -
+ drivers/clk/qcom/lpasscc-sdm845.c     |  1 -
+ drivers/clk/qcom/lpasscorecc-sc7180.c |  1 -
+ drivers/clk/qcom/lpasscorecc-sc7280.c |  1 -
+ drivers/clk/qcom/mmcc-apq8084.c       |  2 +-
+ drivers/clk/qcom/mmcc-msm8960.c       |  4 +--
+ drivers/clk/qcom/mmcc-msm8974.c       |  2 +-
+ drivers/clk/qcom/mmcc-msm8994.c       |  3 +-
+ drivers/clk/qcom/mmcc-msm8996.c       |  4 +--
+ drivers/clk/qcom/mmcc-msm8998.c       |  3 +-
+ drivers/clk/qcom/mmcc-sdm660.c        |  6 +---
+ 52 files changed, 75 insertions(+), 68 deletions(-)
+---
+base-commit: c674aa7c289e51659e40dda0f954886ef7f80042
+change-id: 20250212-b4-clk-qcom-clean-ea88db7d1ca4
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
