@@ -1,417 +1,173 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4887A1E500C;
-	Wed, 12 Feb 2025 10:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05272209F3C
+	for <linux-clk@vger.kernel.org>; Wed, 12 Feb 2025 11:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739355529; cv=none; b=BHe8uegBFTtOyfwcaclKSV0nXIsXSj1Qx6kV3AwD4nTl+anQ6/aJBJmI/lYPIIFYluWvvItU02aoOJu9Hl1etOLHRejGaH5zv7oWTxdq6xMaVQhe3RZ35OPVSsHo22RztrtWqZgpGm1cvg7IjGvRZcw1a30inDKIGtL6zJhVWUc=
+	t=1739358556; cv=none; b=VEQHGL/463AYQNujBM4VsS2xoA4/60Z4ZYgR19CTsOkZNKOzfhkBFe79VXCEbIfKMk3/JJwCzX8TLjF2qlfIIr7MVYCdiJ6vePp371g30KYwy/mXucKBDrAz3IHWN+2t7Az44QTKs1LC6IFMQqDWI8FF7KaKri3U3vO7md2Ne+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739355529; c=relaxed/simple;
-	bh=JQ3hUkVizyyC5PrH498KuKklwrEwcMwv0zzmt6N8YDU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=S9F56l0Tba+9HJFX4tq8Y3pN1coTZwEJUhJY2M0KMtNtNesO6p4J7/WBUu6iwa62wNKuoIMM+TqQoAYhmAiLhnAnAkvQ/ABrt1mTGqnoQV6IWXrUeDnGUDQPit3v4nGVvNlHomLclvwfsPZNe0+pCrKAhD5nj3mNyhvjn/bg+zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z7dv0/Vh; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739358556; c=relaxed/simple;
+	bh=V7cTxoKC4qFDUHpP6eGwhH/5GVuxqzS62ckVRbB6Tqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bxr38UPfI51mg2fomk4it44eq8kKItFQ4zx0PaBmrdFGeYzHENxUq4j1cDdMJkk1FzL6qSmBL/6N/1et9H3f9yCrLHzpOakRqeNxGekbpGNOWkB3NzqD4UsUZ6n1jsW0Gv/+re/mCrHtsHC4S+sJqZ51Hf6l4+h4GmTGg9NzSQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UazEc6Q5; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7dv0/Vh"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7ca64da5dso131076866b.0;
-        Wed, 12 Feb 2025 02:18:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UazEc6Q5"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-545097ff67cso3679735e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 12 Feb 2025 03:09:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739355525; x=1739960325; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WWVlua/ySHVMeIr/pzJ7+6ofC41BpQURgsGblrbr2lM=;
-        b=Z7dv0/Vh3Y9hL8RiD7yi65+z0MxHANtGCHxSNoomJEGkm2/a7WgoTird8+3U8IZnlV
-         i5NxhsIUNsT6tKK7tdqt47W4TV6rvfbejgQYemsITkPyzi8qxBSwTzX6uKhtMR4cma/o
-         WqDzMlrgTrNmQRlypIn9ExK0BFOerW3mKAAf8k26BS8Z6JikRt1TmAtbTSSfeIdgChbv
-         x9zjzpgPQTL8UYYPjwhlYfvEy7kmou+sCDjO9qzYWpPODXudsH+dsg+NKL5n+d3cX+k8
-         CASyPWn62J7fXbZ0k4JNVFNggTplAhwnpUaroDT9W9yn7eCDSJVs6Dut80gIgTokm36e
-         CvGA==
+        d=linaro.org; s=google; t=1739358551; x=1739963351; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YbssXtG/QA34n1PeVVnkmd3ZznSQoiHIQujbnuL56Is=;
+        b=UazEc6Q5Fz1/B1VvE1vyRkAW3PGwoqJiTvlWDOIlVPHsUNiHP5wNSd+3rfWzZtowiN
+         f+7gZF6L7FSK+KASK/BVvrjYzwO1sEFaOz/HLWWCEN0y1UlqeTMdGpDC0h0HYaMGdhlC
+         45QC49Pn/eR5s4mCCSFAbuRK4zW8dIhS/BtrAPsIJpmgzvcTl/GozMbfDMzRWF/j4cUg
+         SdneeBaCzdDhwec3Cz5ALiM8PpQYVCKPJo013TdPy/HRhdcIkkw5mgjpBWIZu+wbrMXm
+         bOhFzrfwJaJQ8IxXBawVqvu/qi2T5DMD6jmQwyPGyhPTa/1nfheFjJCeEZtWCy9n/ZFk
+         Yjsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739355525; x=1739960325;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WWVlua/ySHVMeIr/pzJ7+6ofC41BpQURgsGblrbr2lM=;
-        b=n02vTlATn/FooeeEnq+MxtQXxRACo7mvEpUf8tVqAo3c33jDXreq/OG30R5OSF+q1U
-         pZaZuzi5/mqYswBcGHWPvfL8zI+HYoO641B1ygSbCa7HHy3nYY1q9ze6gzVIHE0ylx/B
-         OuHJ2w3g0P/O+aXZz/xj0bjiZ0imJcSCTxDnS9hNVXnKmUwLMPhplAC8CHesasnZFg//
-         Ak1I2zMgzJvV8o/6dUQHKfaWjcSlibiuAA69Rq0TTRL6AqEtbmy64a4vi8vVkzng0N7c
-         b9inaDYUYqJO44cyYSfqxFR6eJMFIYUM/P072dtlSK/VpdN1CPYm7jGaBdYUDORpd1A+
-         7MNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoLOp31FR+/Y3SSuUZIGK6N2c8EDikHSQCpyZI2e9OS5qcFLMC2jkQOBZXCyuBiDT7E5mDApBMoxYN@vger.kernel.org, AJvYcCUpqnvC7Pto/p2DNoUWSz6FPBeINyOJ1qBMaSeH7rHviD/LEdeg6lhDf7ZdhlqDQ8TGPj2SfugRZyHu@vger.kernel.org, AJvYcCVt9RFN9jmy7UgBKdDnO6qQu2pGUAk9yjK+IlQsmlEN+EkJXQfrf7F8oMImS5hHeqmlMS4wbo/b4/y4bKB+@vger.kernel.org, AJvYcCWpsdsXcTm0cuQ/Cv+dODdn40GEE2QYF5bCMvwZU+N6FXe07nJxblPezKyrlQwE7t+rqsi5MKoK40k=@vger.kernel.org, AJvYcCXelilkWfO7WB9NRq3xm2mizSY21hRWClFvJw0qenutbvt/qo+ySulyTQ1xkjd2NyDNomlcZM65n+2diQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcpdrdWPUcn8lSEqg7TAUKlpn9DgCPcEqgcr2PAEHzlcbQIpKN
-	Bur4WJSiKJE9IXT1jRHg3Np4EhWGiXmrcLCGfhj7JnW9GZhy/OVp
-X-Gm-Gg: ASbGnctD/xrwzfjlLKWZniWmMJlgSy+f5oUgvC35jQS6/b3yvZm9iPdr0EBgIVUdkll
-	0CIMQfyCBQe9YJCOsVygHiyTnjZam6JYPG7NqosW/0pTdRLi0MsB++zAOXwEl+85I30Dp2KFccX
-	ViPBZDgUt9EVfuY/LWLHAmCM07Gv3WsNztr+a0K7pFHv49OL0mMvom8ytJq1uPS6hgvrkEGkuVh
-	WAqZjuL+hLcHTO0uA/ooU5n3z11+rYNcDUm0fKslxiycadiyGc8aXO8lVv28IftCj/AbEx7apc4
-	d6VlXoahFe+lbgq733n+zEqwS6Mvhc005uXmyVDSbfCarLnQS/UBsA==
-X-Google-Smtp-Source: AGHT+IHXhHYBhp/jwxugJOxSy8fbHAg4RaSJF+XHK6rh7pamhtjknOPXD7Wlf+ulQuEN06XXx7/uPg==
-X-Received: by 2002:a17:907:2cc5:b0:ab7:d1d0:1a84 with SMTP id a640c23a62f3a-ab7f2e8a301mr221194166b.4.1739355525335;
-        Wed, 12 Feb 2025 02:18:45 -0800 (PST)
-Received: from smtpclient.apple (185.174.17.62.zt.hu. [185.174.17.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7d6acd8f1sm381126966b.50.2025.02.12.02.18.43
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Feb 2025 02:18:44 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1739358551; x=1739963351;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YbssXtG/QA34n1PeVVnkmd3ZznSQoiHIQujbnuL56Is=;
+        b=vxLTPF5jexUs6f/pO8P/g6fOyLxQ6tZQ5EaZfJoU3zd5m6fcbkM7VwfBIozd0m/6lH
+         X14KKRJTyA8pyh5vpZh3A++H/iFmOv5Rq70qbs9xkOyRZD5HpQuuJ9Ul34EeEr9rE6Wt
+         DK+I18trHLAFfSlXqviWdpGCdsphXDcYJYdGeLSoPbkTa3DfE+xRVif9lOFqKkcIKXa/
+         qXebyFs6YqhmT/PBQb6K2bdFZOGHiuhpDwVVY91bO2QXzJoAS8X0YldNXBTbqQApoHmc
+         qukqVIIKQhWTvVI1wAAAy6S5v85PS4MoeG8YdXCmgMkIWBpcLT0zA9bQ2tDkCvfVBJSL
+         UT5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWQHZHq7v/28uNczsvHlzGXwwAhICeVrDEBEYISZdf20Wi0ESXNgMHEimo/Tuqx+pUDkhwePs4TEH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6TkA1AE79ZY4tN8fVK3l5NZ8JCRi9jWft2Z/jSmcyIwmRUuBT
+	ZE/Gq3MW9HWScHyfEt8q2GLAyA8cgg0c2zT65akIW+vxpeBNUig19zsBhmtYS0E=
+X-Gm-Gg: ASbGncveXSeypPgXhqEHb/F+6m0RMPPWJ5VT8k8ejSTFKkNomNE6/v+3QTPMvlmVnJq
+	f5zLkcnSuMcvUidHPyuDBQ7/XrcZCc66JX5wGAdxwWRl4p7Og+pXYHG7ZfwR/vmVNLfhZpWOeVK
+	LEiNbuovxbgBWeF5SCiZBmknegp3cCn3E+Oi8bLtT/x4qSVvrYFBHzrzLaJaQW9xNEVltRN8xef
+	qdcao0PJojH1jw9fZxXvaPGQDYDW3qXQ13EsfjQLEguWNZ5UBDsasju18MVSYHv+DkMcKeWiba9
+	dNW2WHzOn+crf239L80QtCIgBvtyvQUH2uGUAAXn4t/TS6ZYlx6+zsYsybRbZSbFYq/QvdY=
+X-Google-Smtp-Source: AGHT+IG8DOlndM4U9VJ2z0AwAfYopx4atfO3q+HybkdNtfp+U20/vFw4YpnTunKNuceOvd0hxJ7CgQ==
+X-Received: by 2002:ac2:4e05:0:b0:545:aaf:13f5 with SMTP id 2adb3069b0e04-545184a3aa5mr849690e87.37.1739358551002;
+        Wed, 12 Feb 2025 03:09:11 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5450d49c661sm870125e87.162.2025.02.12.03.09.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 03:09:10 -0800 (PST)
+Date: Wed, 12 Feb 2025 13:09:08 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for
+ LPASS resets for QCM6490
+Message-ID: <exyxni7td5vow2n6jarav5euje6dnbue5f5yxzu6az554dthfe@zn5yd2byvkoj>
+References: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
+ <20250212-lpass_qcm6490_resets-v3-2-0b1cfb35b38e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v2 03/10] dt-bindings: clock: sunxi-ng: add compatibles
- for V853
-From: =?utf-8?B?QW5kcsOhcyBTemVtesWR?= <szemzo.andras@gmail.com>
-In-Reply-To: <20250211210215.GA1160917-robh@kernel.org>
-Date: Wed, 12 Feb 2025 11:18:32 +0100
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maxime Ripard <mripard@kernel.org>,
- Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>,
- =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org,
- linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org,
- linux-riscv@lists.infradead.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6B18CA59-65CE-4C7A-A9A6-769157BB73A9@gmail.com>
-References: <20250205125225.1152849-1-szemzo.andras@gmail.com>
- <20250205125225.1152849-4-szemzo.andras@gmail.com>
- <20250211210215.GA1160917-robh@kernel.org>
-To: Rob Herring <robh@kernel.org>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250212-lpass_qcm6490_resets-v3-2-0b1cfb35b38e@quicinc.com>
 
-Thanks for your review, I=E2=80=99ll change and explain it better.
+On Wed, Feb 12, 2025 at 01:52:20PM +0530, Taniya Das wrote:
+> On the QCM6490 boards the LPASS firmware controls the complete clock
+> controller functionalities. But the LPASS resets are required to be
+> controlled from the high level OS. The Audio SW driver should be able to
+> assert/deassert the audio resets as required. Thus in clock driver add
+> support for the resets.
+> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+> index 45e7264770866f929a3f4663c477330f0bf7aa84..b6439308926371891cc5f9a5e0d4e8393641560d 100644
+> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+>   * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+>  #include <linux/clk-provider.h>
+> @@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
+>  	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+>  };
+>  
+> +static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
+> +	.name = "lpassaudio_cc_reset",
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.fast_io = true,
+> +	.max_register = 0xc8,
+> +};
+> +
+>  static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
+> -	.config = &lpass_audio_cc_sc7280_regmap_config,
+> +	.config = &lpass_audio_cc_sc7280_reset_regmap_config,
+>  	.resets = lpass_audio_cc_sc7280_resets,
+>  	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
+>  };
+>  
+>  static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
+> -	{ .compatible = "qcom,sc7280-lpassaudiocc" },
+> +	{ .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
+> +	{ .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
+> @@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>  	struct regmap *regmap;
+>  	int ret;
+>  
+> +	desc = device_get_match_data(&pdev->dev);
+> +
+> +	if (desc->num_resets)
+> +		return qcom_cc_probe_by_index(pdev, 1, desc);
 
-> On 11 Feb 2025, at 22:02, Rob Herring <robh@kernel.org> wrote:
->=20
-> On Wed, Feb 05, 2025 at 01:52:18PM +0100, Andras Szemzo wrote:
->> V853 has 2 CCUs, add compatible strings for it.
->>=20
->> Signed-off-by: Andras Szemzo <szemzo.andras@gmail.com>
->> ---
->> .../clock/allwinner,sun4i-a10-ccu.yaml        |   3 +
->> .../clock/allwinner,sun8i-v853-ccu.h          | 132 =
-++++++++++++++++++
->> .../clock/allwinner,sun8i-v853-r-ccu.h        |  16 +++
->> .../reset/allwinner,sun8i-v853-ccu.h          |  60 ++++++++
->> .../reset/allwinner,sun8i-v853-r-ccu.h        |  14 ++
->> 5 files changed, 225 insertions(+)
->> create mode 100644 =
-include/dt-bindings/clock/allwinner,sun8i-v853-ccu.h
->> create mode 100644 =
-include/dt-bindings/clock/allwinner,sun8i-v853-r-ccu.h
->> create mode 100644 =
-include/dt-bindings/reset/allwinner,sun8i-v853-ccu.h
->> create mode 100644 =
-include/dt-bindings/reset/allwinner,sun8i-v853-r-ccu.h
->>=20
->> diff --git =
-a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml =
-b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
->> index 1690b9d99c3d..9369d62284ed 100644
->> --- =
-a/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
->> +++ =
-b/Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml
->> @@ -33,6 +33,8 @@ properties:
->>       - allwinner,sun8i-r40-ccu
->>       - allwinner,sun8i-v3-ccu
->>       - allwinner,sun8i-v3s-ccu
->> +      - allwinner,sun8i-v853-ccu
->> +      - allwinner,sun8i-v853-r-ccu
->=20
-> Please explain the difference between these in the commit message.
->=20
->>       - allwinner,sun9i-a80-ccu
->>       - allwinner,sun20i-d1-ccu
->>       - allwinner,sun20i-d1-r-ccu
->> @@ -103,6 +105,7 @@ else:
->>       compatible:
->>         enum:
->>           - allwinner,sun20i-d1-ccu
->> +          - allwinner,sun8i-v853-ccu
->>           - allwinner,sun50i-a100-ccu
->>           - allwinner,sun50i-h6-ccu
->>           - allwinner,sun50i-h616-ccu
->> diff --git a/include/dt-bindings/clock/allwinner,sun8i-v853-ccu.h =
-b/include/dt-bindings/clock/allwinner,sun8i-v853-ccu.h
->> new file mode 100644
->> index 000000000000..cf56c168e1cd
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/allwinner,sun8i-v853-ccu.h
->> @@ -0,0 +1,132 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->=20
-> Dual license.
->=20
->> +/*
->> + * Copyright (C) 2024 Andras Szemzo <szemzo.andras@gmail.com.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_ALLWINNER_SUN8I_V85X_CCU_H_
->> +#define _DT_BINDINGS_CLK_ALLWINNER_SUN8I_V85X_CCU_H_
->> +
->> +#define CLK_OSC12M		0
->> +#define CLK_PLL_CPU		1
->> +#define CLK_PLL_DDR		2
->> +#define CLK_PLL_PERIPH_4X	3
->> +#define CLK_PLL_PERIPH_2X	4
->> +#define CLK_PLL_PERIPH_800M	5
->> +#define CLK_PLL_PERIPH_480M	6
->> +#define CLK_PLL_PERIPH_600M	7
->> +#define CLK_PLL_PERIPH_400M	8
->> +#define CLK_PLL_PERIPH_300M	9
->> +#define CLK_PLL_PERIPH_200M	10
->> +#define CLK_PLL_PERIPH_160M	11
->> +#define CLK_PLL_PERIPH_150M	12
->> +#define CLK_PLL_VIDEO_4X	13
->> +#define CLK_PLL_VIDEO_2X	14
->> +#define CLK_PLL_VIDEO_1X	15
->> +#define CLK_PLL_CSI_4X		16
->> +#define CLK_PLL_AUDIO_DIV2	17
->> +#define CLK_PLL_AUDIO_DIV5	18
->> +#define CLK_PLL_AUDIO_4X	19
->> +#define CLK_PLL_AUDIO_1X	20
->> +#define CLK_PLL_NPU_4X		21
->> +#define CLK_CPU			22
->> +#define CLK_CPU_AXI		23
->> +#define CLK_CPU_APB		24
->> +#define CLK_AHB			25
->> +#define CLK_APB0		26
->> +#define CLK_APB1		27
->> +#define CLK_MBUS		28
->> +#define CLK_DE			29
->> +#define CLK_BUS_DE		30
->> +#define CLK_G2D			31
->> +#define CLK_BUS_G2D		32
->> +#define CLK_CE			33
->> +#define CLK_BUS_CE		34
->> +#define CLK_VE			35
->> +#define CLK_BUS_VE		36
->> +#define CLK_NPU			37
->> +#define CLK_BUS_NPU		38
->> +#define CLK_BUS_DMA		39
->> +#define CLK_BUS_MSGBOX0		40
->> +#define CLK_BUS_MSGBOX1		41
->> +#define CLK_BUS_SPINLOCK	42
->> +#define CLK_BUS_HSTIMER		43
->> +#define CLK_AVS			44
->> +#define CLK_BUS_DBG		45
->> +#define CLK_BUS_PWM		46
->> +#define CLK_BUS_IOMMU		47
->> +#define CLK_DRAM		48
->> +#define CLK_MBUS_DMA		49
->> +#define CLK_MBUS_VE		50
->> +#define CLK_MBUS_CE		51
->> +#define CLK_MBUS_CSI		52
->> +#define CLK_MBUS_ISP		53
->> +#define CLK_MBUS_G2D		54
->> +#define CLK_BUS_DRAM		55
->> +#define CLK_MMC0		56
->> +#define CLK_MMC1		57
->> +#define CLK_MMC2		58
->> +#define CLK_BUS_MMC0		59
->> +#define CLK_BUS_MMC1		60
->> +#define CLK_BUS_MMC2		61
->> +#define CLK_BUS_UART0		62
->> +#define CLK_BUS_UART1		63
->> +#define CLK_BUS_UART2		64
->> +#define CLK_BUS_UART3		65
->> +#define CLK_BUS_I2C0		66
->> +#define CLK_BUS_I2C1		67
->> +#define CLK_BUS_I2C2		68
->> +#define CLK_BUS_I2C3		69
->> +#define CLK_BUS_I2C4		70
->> +#define CLK_SPI0		71
->> +#define CLK_SPI1		72
->> +#define CLK_SPI2		73
->> +#define CLK_SPI3		74
->> +#define CLK_BUS_SPI0		75
->> +#define CLK_BUS_SPI1		76
->> +#define CLK_BUS_SPI2		77
->> +#define CLK_BUS_SPI3		78
->> +#define CLK_SPIF		79
->> +#define CLK_BUS_SPIF		80
->> +#define CLK_EMAC_25M		81
->> +#define CLK_BUS_EMAC		82
->> +#define CLK_BUS_GPADC		83
->> +#define CLK_BUS_THS		84
->> +#define CLK_I2S0		85
->> +#define CLK_I2S1		86
->> +#define CLK_BUS_I2S0		87
->> +#define CLK_BUS_I2S1		88
->> +#define CLK_DMIC		89
->> +#define CLK_BUS_DMIC		90
->> +#define CLK_AUDIO_CODEC_DAC	91
->> +#define CLK_AUDIO_CODEC_ADC	92
->> +#define CLK_BUS_AUDIO_CODEC	93
->> +#define CLK_USB_OHCI		94
->> +#define CLK_BUS_OHCI		95
->> +#define CLK_BUS_EHCI		96
->> +#define CLK_BUS_OTG		97
->> +#define CLK_BUS_DPSS_TOP	98
->> +#define CLK_MIPI_DSI		99
->> +#define CLK_BUS_MIPI_DSI	100
->> +#define CLK_TCON_LCD		101
->> +#define CLK_BUS_TCON_LCD	102
->> +#define CLK_CSI_TOP		103
->> +#define CLK_CSI_MCLK0		104
->> +#define CLK_CSI_MCLK1		105
->> +#define CLK_CSI_MCLK2		106
->> +#define CLK_BUS_CSI		107
->> +#define CLK_BUS_WIEGAND		108
->> +#define CLK_RISCV		109
->> +#define CLK_RISCV_AXI		110
->> +#define CLK_RISCV_CORE_GATE	111
->> +#define CLK_RISCV_CFG_GATE	112
->> +#define CLK_FANOUT_24M		113
->> +#define CLK_FANOUT_12M		114
->> +#define CLK_FANOUT_16M		115
->> +#define CLK_FANOUT_25M		116
->> +#define CLK_FANOUT_27M		117
->> +#define CLK_FANOUT_PCLK		118
->> +#define CLK_FANOUT0		119
->> +#define CLK_FANOUT1		120
->> +#define CLK_FANOUT2		121
->> +
->> +#endif
->> diff --git a/include/dt-bindings/clock/allwinner,sun8i-v853-r-ccu.h =
-b/include/dt-bindings/clock/allwinner,sun8i-v853-r-ccu.h
->> new file mode 100644
->> index 000000000000..48fe598b7bd8
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/allwinner,sun8i-v853-r-ccu.h
->> @@ -0,0 +1,16 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2025 Andras Szemzo <szemzo.andras@gmail.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_ALLWINNER_SUN8I_V853_R_CCU_H_
->> +#define _DT_BINDINGS_CLK_ALLWINNER_SUN8I_V853_R_CCU_H_
->> +
->> +#define CLK_R_AHB		0
->> +#define CLK_R_APB0		1
->> +#define CLK_BUS_R_TWD		2
->> +#define CLK_BUS_R_PPU		3
->> +#define CLK_BUS_R_RTC		4
->> +#define CLK_BUS_R_CPUCFG	5
->> +
->> +#endif
->> diff --git a/include/dt-bindings/reset/allwinner,sun8i-v853-ccu.h =
-b/include/dt-bindings/reset/allwinner,sun8i-v853-ccu.h
->> new file mode 100644
->> index 000000000000..e258117518aa
->> --- /dev/null
->> +++ b/include/dt-bindings/reset/allwinner,sun8i-v853-ccu.h
->> @@ -0,0 +1,60 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2024 Andras Szemzo <szemzo.andras@gmail.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_RST_ALLWINNER_SUN8I_V85X_CCU_H_
->> +#define _DT_BINDINGS_RST_ALLWINNER_SUN8I_V85X_CCU_H_
->> +
->> +#define RST_MBUS		0
->> +#define RST_BUS_DE		1
->> +#define RST_BUS_G2D		2
->> +#define RST_BUS_CE		3
->> +#define RST_BUS_VE		4
->> +#define RST_BUS_NPU		5
->> +#define RST_BUS_DMA		6
->> +#define RST_BUS_MSGBOX0		7
->> +#define RST_BUS_MSGBOX1		8
->> +#define RST_BUS_SPINLOCK	9
->> +#define RST_BUS_HSTIMER		10
->> +#define RST_BUS_DBG		11
->> +#define RST_BUS_PWM		12
->> +#define RST_BUS_DRAM		13
->> +#define RST_BUS_MMC0		14
->> +#define RST_BUS_MMC1		15
->> +#define RST_BUS_MMC2		16
->> +#define RST_BUS_UART0		17
->> +#define RST_BUS_UART1		18
->> +#define RST_BUS_UART2		19
->> +#define RST_BUS_UART3		20
->> +#define RST_BUS_I2C0		21
->> +#define RST_BUS_I2C1		22
->> +#define RST_BUS_I2C2		23
->> +#define RST_BUS_I2C3		24
->> +#define RST_BUS_I2C4		25
->> +#define RST_BUS_SPI0		26
->> +#define RST_BUS_SPI1		27
->> +#define RST_BUS_SPI2		28
->> +#define RST_BUS_SPI3		29
->> +#define RST_BUS_SPIF		30
->> +#define RST_BUS_EMAC		31
->> +#define RST_BUS_GPADC		32
->> +#define RST_BUS_THS		33
->> +#define RST_BUS_I2S0		34
->> +#define RST_BUS_I2S1		35
->> +#define RST_BUS_DMIC		36
->> +#define RST_BUS_AUDIO_CODEC	37
->> +#define RST_USB_PHY		38
->> +#define RST_BUS_OHCI		39
->> +#define RST_BUS_EHCI		40
->> +#define RST_BUS_OTG		41
->> +#define RST_BUS_DPSS_TOP	42
->> +#define RST_BUS_MIPI_DSI	43
->> +#define RST_BUS_TCON_LCD	44
->> +#define RST_BUS_CSI		45
->> +#define RST_BUS_WIEGAND		46
->> +#define RST_RISCV_SYS_APB	47
->> +#define RST_RISCV_SOFT		48
->> +#define RST_RISCV_CFG		49
->> +
->> +#endif
->> diff --git a/include/dt-bindings/reset/allwinner,sun8i-v853-r-ccu.h =
-b/include/dt-bindings/reset/allwinner,sun8i-v853-r-ccu.h
->> new file mode 100644
->> index 000000000000..57629d635115
->> --- /dev/null
->> +++ b/include/dt-bindings/reset/allwinner,sun8i-v853-r-ccu.h
->> @@ -0,0 +1,14 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2025 Andras Szemzo <szemzo.andras@gmail.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_RST_ALLWINNER_SUN8I_V853_R_CCU_H_
->> +#define _DT_BINDINGS_RST_ALLWINNER_SUN8I_V853_R_CCU_H_
->> +
->> +#define RST_BUS_R_TWD		0
->> +#define RST_BUS_R_PPU		1
->> +#define RST_BUS_R_RTC		2
->> +#define RST_BUS_R_CPUCFG	3
->> +
->> +#endif
->> --=20
->> 2.39.5
->>=20
+Won't this break SC7280 support by causing an early return?
 
+> +
+>  	ret = lpass_audio_setup_runtime_pm(pdev);
+>  	if (ret)
+>  		return ret;
+>  
+>  	lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc";
+>  	lpass_audio_cc_sc7280_regmap_config.max_register = 0x2f000;
+> -	desc = &lpass_audio_cc_sc7280_desc;
+>  
+>  	regmap = qcom_cc_map(pdev, desc);
+>  	if (IS_ERR(regmap)) {
+> @@ -772,7 +787,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>  	regmap_write(regmap, 0x4, 0x3b);
+>  	regmap_write(regmap, 0x8, 0xff05);
+>  
+> -	ret = qcom_cc_really_probe(&pdev->dev, &lpass_audio_cc_sc7280_desc, regmap);
+> +	ret = qcom_cc_really_probe(&pdev->dev, desc, regmap);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
+>  		goto exit;
+> 
+> -- 
+> 2.45.2
+> 
+
+-- 
+With best wishes
+Dmitry
