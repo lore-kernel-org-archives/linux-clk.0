@@ -1,64 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2F0205AD9;
-	Wed, 12 Feb 2025 09:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049C8208997;
+	Wed, 12 Feb 2025 10:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739351631; cv=none; b=LglHuw1N6DcIlQi0teIIKiD6p9RDD9fd6a9BI9ir+3WikBPFrI26tBZKnDYVkwViPcJqtH4nzmJyTpRK40HTBAWBy26BpiwUhtv9HILeXtIvdKkxVjFSiYNoC5LqJI07FyywKZGFlEUVYxPcN7aqFISy3Tq9gj/g3kILejtkx+4=
+	t=1739354644; cv=none; b=LWNwLNvRrjp7F4EAhc8CLRE1V8sV1U5xIECaYD+ke1NfvAXnsOHY3Scqnz8Qh+cz4GhkCnsdk8FXKr7m9xkxCIC8X4CLgfg2mF5Hc3TdZYu9U70Pomo5KH3mUDjYJRR9kerNCyNet4eUhpzwYif++HToykzpmORuWlCJs9aF+f0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739351631; c=relaxed/simple;
-	bh=m8hs1EQzDriUMRQFfLQbZLGjCLK5Tchyqt6Tq25FBmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZN4rTM2udLvPoigschafvYM8p5xVerHzbBqN9rwV+GaT4CYJ6M5yyUJVe08zCGDDVZutxFrVmtWRjDK9fSXQVX2cKz3+pyQUpTzMrd7ZTXMfiBOB25/tz/gTnz2bobO2Xouukib2Eu3pj1rDbzeduDjdsJftxz6AORJ8XyClW/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k0wH+HtM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739354644; c=relaxed/simple;
+	bh=8gwwanPEnjOVfUVp0WRUpBFYyCdDpvG9FjVwyVI7Dbw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HOFBdl2/XC3mD9VQwdJN5loY85wjfzdxifYLpRGeLexiA1CJyJaF5/FzXj1Tuc+njBkHOzx47YagQ01eCXeDQTMs+dc+YqcaIaFEDGuQEjiZFqnC5CDDx+U01roTzUXNUvaJy3U+ujRoNO/pxPMq3u3sw+daOaPzETTNvuFf9FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BhHkKrsq; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k0wH+HtM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F4DC4CEE2;
-	Wed, 12 Feb 2025 09:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739351630;
-	bh=m8hs1EQzDriUMRQFfLQbZLGjCLK5Tchyqt6Tq25FBmY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k0wH+HtMMeLv2bILij2hae73ypCmOGu6XB7618BrDg9dA+OXCvw4Wlw1L/n5489ag
-	 CF+3vjW3/31gmpwDOiGtnIgoiDn62rFTOwpj/aVPvEkcHemS4EMll1e3AGMyirKK3H
-	 UQJRL4ZSZy4uYqSk1RG3oOrIST75/wfQ2fXJ41BPDwuVjKompYR6GRVkkHHvPF/2Vq
-	 26jK0XQN5uUR0o9csMhpi10+Uu6AeHBIimADArQR5M7W9jthxnfjyhm8cqLyuNmYnJ
-	 Rnux+8jarjQ9JV7l/90CQqTPNDghBK10FxQXMzgnYRxeFSBzqTsLLtND78IISepghV
-	 4HhX1M3CXC9tw==
-Date: Wed, 12 Feb 2025 10:13:47 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexander Dahl <ada@thorsis.com>
-Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Ryan Wanner <ryan.wanner@microchip.com>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 07/16] dt-bindings: nvmem: microchip-otpc: Add
- compatible for SAM9X60
-Message-ID: <20250212-space-junglefowl-of-teaching-53f57c@krzk-bin>
-References: <20250210164506.495747-1-ada@thorsis.com>
- <20250210164506.495747-8-ada@thorsis.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BhHkKrsq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1739354641;
+	bh=8gwwanPEnjOVfUVp0WRUpBFYyCdDpvG9FjVwyVI7Dbw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BhHkKrsqnofPKSE2FYG2N2nqv1F2YW6EkyIil2ayb0kLsgbivUjH4opF5/DWWrqoC
+	 Mukn0tu4tA2ChsaLHuwNt3gl4NkfmQ9Sk+wUQEt0zSY8b6J+qOrr4WYfzCfFHKxNwm
+	 MLnze3dR+VngLb3k1y5qouk+rVBR4BZ71vP01faL6g5Cb71gOVbliRiTe/+J2SpT5D
+	 GOUE6sQ/SgEJlkrZir+uqcqAQwW6Qehe912bA9vz9rbhWWzm9tGzm/WqT42HRjm75V
+	 KPDwrMpkQni5kSIQr9QRKGiV0lxxbtqpkXtRY/7r+rf8kme7YWGRmFjeUDpNEv0Xr0
+	 Tk5NE32PbBmHA==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 224EF17E0C9D;
+	Wed, 12 Feb 2025 11:04:00 +0100 (CET)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: sboyd@kernel.org
+Cc: mturquette@baylibre.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	u.kleine-koenig@baylibre.com,
+	amergnat@baylibre.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	kernel@collabora.com,
+	macpaul.lin@mediatek.com,
+	pablo.sun@mediatek.com
+Subject: [PATCH v2 1/2] dt-bindings: clock: mediatek,mt8188: Add VDO1_DPI1_HDMI clock
+Date: Wed, 12 Feb 2025 11:03:41 +0100
+Message-ID: <20250212100342.33618-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250210164506.495747-8-ada@thorsis.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 10, 2025 at 05:44:57PM +0100, Alexander Dahl wrote:
-> The SAM9X60 SoC family has a similar, but slightly different OTPC to the
-> SAMA7G5 family.
-> 
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> ---
+Add binding for the HDMI TX clock found in the VDO1 controller.
+While at it, also remove the unused CLK_VDO1_NR_CLK.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ include/dt-bindings/clock/mediatek,mt8188-clk.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/include/dt-bindings/clock/mediatek,mt8188-clk.h b/include/dt-bindings/clock/mediatek,mt8188-clk.h
+index bd5cd100b796..0e87f61c90f4 100644
+--- a/include/dt-bindings/clock/mediatek,mt8188-clk.h
++++ b/include/dt-bindings/clock/mediatek,mt8188-clk.h
+@@ -721,6 +721,6 @@
+ #define CLK_VDO1_DPINTF				58
+ #define CLK_VDO1_DISP_MONITOR_DPINTF		59
+ #define CLK_VDO1_26M_SLOW			60
+-#define CLK_VDO1_NR_CLK				61
++#define CLK_VDO1_DPI1_HDMI			61
+ 
+ #endif /* _DT_BINDINGS_CLK_MT8188_H */
+-- 
+2.48.1
 
