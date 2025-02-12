@@ -1,142 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1CE25A33E;
-	Wed, 12 Feb 2025 14:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8491210191;
+	Wed, 12 Feb 2025 14:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739371077; cv=none; b=oKgfhoP7P8/29+oiy+kWHcvIKba6n/33QfAdvVhAw/5IlNHrncRGEwxxLt1QrjCNCsJTBRCoXv3wLVca4HezUupoPvZ+Po7mD8iMjCrHJKB+vF+yjT538DhQxT0C0qSBh2HgmQ7bmgN5xlTqELUk7qgD5+dekhrvgCPwL47Jc1Y=
+	t=1739371308; cv=none; b=Jb0nqIdAVx43AzbXW2rn3BQlIv0sQk+0X72/c9TATCz75foH7lujikGthIssUYSDIQ2Z2lh6bZ0enCN7Cg7l8lgawgC4lLc154DdeOJTz0RO8Ka23Z2JPNw5JHQ7zbK7vPq9xDB/PPM/Eg1wv6kIsWVosJ7ql5SU+Q4413JGiZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739371077; c=relaxed/simple;
-	bh=VUBM57jOz21qhzl4JgnGGgiFmJ16K4z/3nSk3V+odWQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=s2shW5vJglAG87cdDeYvL24imuL5UvQsf1AjZDX+Yeu2/TwaFKy9yTZxDAWk7sh7XliIjfQq/zfeqBWxeq2o1eTTNsnGLhQqRPaIXrR/fhNhYrDuA/7p062z5ukppZU4Y/6dMdpxFTk8Ao1cjjXMdX8OD15O72sLkw2Eah3N9D4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Je5v/O6R; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739371308; c=relaxed/simple;
+	bh=6VsvBgPqBd5Zqef3iWLEMJWJApBWl49CoJqvuwZAeiw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NbzMgA6HDIsrUztWrvqnRq4YSPBCn86U3VjlsqhmYl2g5q0ZD2e1DvSfK5LpwM7QR86/RHgXCVGne9FBqOYdxHQEyVKtZYdM+/0V08V05NZTsr+H4Ob9f1vLn7MAF6Ei7pCqdlpgUbba7orFD1GKdr9ZNlXHKrgCrmUiQKryVdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GvBu9t56; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Je5v/O6R"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B43F8C4CEE4;
-	Wed, 12 Feb 2025 14:37:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739371076;
-	bh=VUBM57jOz21qhzl4JgnGGgiFmJ16K4z/3nSk3V+odWQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Je5v/O6RvOmLtL1lWrIBnUZdIB9qSs5EzOVdh0V7z1Wp5/q7Seycikmd3UDwzVhZd
-	 r60tyUtkLhGWXvRZua2EZbVry+x0exOrN9X7SVOi670+LrPax9T3ze+hHf3T2ZZQlx
-	 qJ3AfWEUNv2W3g7BTWsTnpXRct0ysuDJFPDaK4km1V1sbRsMa51ZkgF4LNXd/YgKfV
-	 8FLPNGgSpj8395pzX311yHjDr5sDyA5Hqhin4D4jIxNmmIMpqqWi3EcLZL9QstKpGG
-	 aTsR2kRVHbQCnBFJD15qKYbIyjx5k7u6LwWO/hTn/KMThp19m0vZvZEkAlWJ7UK6dK
-	 oA8B5HOGhqO1g==
-Date: Wed, 12 Feb 2025 08:37:55 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GvBu9t56"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1FDCF204A5;
+	Wed, 12 Feb 2025 14:41:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1739371303;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hV58UJrNiafKUEEBYyT5622rc4906GKqOPPegyEjpJc=;
+	b=GvBu9t563kxnFl8vpKqJnl1NlFNwRhwgqpgwrV/WKHt+P/P2VyItdyvSR8e7YpylVkrJFh
+	ZambmdwrU19UQNsfxlqJs00qmG1mJgRSWTe8ObzqtbHpk8slTgRKlELpQzT2avGKq6lyJb
+	LL8HprxNBtH1BHLc61viq/yj9L1DFSAe2WWN2RQe9dFql+ICrfKfp8CUe3mO2pCCPgX8tS
+	TP6aR8s3Mrn/9Z42s8BUVceDzlUrOyyDuDl6gLHzqZEXHOkCL7Q/nrgv8UdwGzqRqtay8e
+	1kA/qjLYuimHcatcpaPr75L+A1gxNamRx4P/B6fzdeCUHAvX/o80W0TZ2LG1gg==
+From: =?UTF-8?q?Th=C3=A9o=20Lebrun?= <theo.lebrun@bootlin.com>
+To: jbrunet@baylibre.com
+Cc: Laurent.pinchart@ideasonboard.com,
+	abelvesa@kernel.org,
+	airlied@gmail.com,
+	andrzej.hajda@intel.com,
+	arnd@arndb.de,
+	bryan.odonoghue@linaro.org,
+	conor.dooley@microchip.com,
+	daire.mcnamara@microchip.com,
+	dakr@kernel.org,
+	david.m.ertman@intel.com,
+	dianders@chromium.org,
+	dri-devel@lists.freedesktop.org,
+	festevam@gmail.com,
+	gregkh@linuxfoundation.org,
+	gregory.clement@bootlin.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	imx@lists.linux.dev,
+	ira.weiny@intel.com,
+	jernej.skrabec@gmail.com,
+	jonas@kwiboo.se,
+	kernel@pengutronix.de,
+	khilman@baylibre.com,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	maarten.lankhorst@linux.intel.com,
+	martin.blumenstingl@googlemail.com,
+	mripard@kernel.org,
+	mturquette@baylibre.com,
+	neil.armstrong@linaro.org,
+	p.zabel@pengutronix.de,
+	peng.fan@nxp.com,
+	platform-driver-x86@vger.kernel.org,
+	rafael@kernel.org,
+	rfoss@kernel.org,
+	s.hauer@pengutronix.de,
+	sboyd@kernel.org,
+	shawnguo@kernel.org,
+	simona@ffwll.ch,
+	theo.lebrun@bootlin.com,
+	tzimmermann@suse.de,
+	vladimir.kondratiev@mobileye.com
+Subject: [PATCH] reset: eyeq: drop device_set_of_node_from_dev() done by parent
+Date: Wed, 12 Feb 2025 15:41:26 +0100
+Message-ID: <20250212144126.120231-1-theo.lebrun@bootlin.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250211-aux-device-create-helper-v3-5-7edb50524909@baylibre.com>
+References: <20250211-aux-device-create-helper-v3-5-7edb50524909@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Will Deacon <will@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Daniil Titov <daniilt971@gmail.com>, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Joerg Roedel <joro@8bytes.org>, Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Stephan Gerhold <stephan@gerhold.net>, linux-arm-msm@vger.kernel.org, 
- linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, 
- iommu@lists.linux.dev, Stephen Boyd <sboyd@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, Dang Huynh <danct12@riseup.net>, 
- Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>
-To: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-In-Reply-To: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org>
-References: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org>
-Message-Id: <173937096484.3561919.15204410384855360487.robh@kernel.org>
-Subject: Re: [PATCH 00/10] Initial support of MSM8937 and Xiaomi Redmi 3S
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdeggeduhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucenucfjughrpefhvfevufffkffojghfgggtgfesthekredtredtjeenucfhrhhomhepvfhhrohoucfnvggsrhhunhcuoehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeghfejhfdviefftedvieetfedugeefvedtfedujefhhedvhefggfduhfefueektdenucfkphepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgdugeemheehieemjegrtddtmeeiieegsgemfhdtfhhfmehfvgdutdemlegvfhgupdhhvghlohepthhlvggsqdgsohhothhlihhnqdhffidqtddvrddrpdhmrghilhhfrhhomhepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgeejpdhrtghpthhtohepjhgsrhhunhgvthessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopegrsggvlhhvvghsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghirhhlihgvugesghhmr
+ ghilhdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopegsrhihrghnrdhoughonhhoghhhuhgvsehlihhnrghrohdrohhrghdprhgtphhtthhopegtohhnohhrrdguohholhgvhiesmhhitghrohgthhhiphdrtghomh
+X-GND-Sasl: theo.lebrun@bootlin.com
 
+Our parent driver (clk-eyeq) now does the
+	device_set_of_node_from_dev(dev, dev->parent)
+call through the newly introduced devm_auxiliary_device_create() helper.
 
-On Tue, 11 Feb 2025 23:37:44 +0100, Barnabás Czémán wrote:
-> This patch series add initial support for MSM8937 SoC
-> and Xiaomi Redmi 3S (land).
-> 
-> The series is extending the MSM8917 gcc and pinctrl drivers
-> because they are sibling SoCs.
-> MSM8937 have 4 more A53 cores and have one more dsi port then
-> MSM8917.
-> It implements little-big architecture and uses Adreno 505.
-> 
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
-> Barnabás Czémán (5):
->       dt-bindings: mfd: qcom,tcsr: Add compatible for MSM8937
->       dt-bindings: nvmem: Add compatible for MS8937
->       dt-bindings: iommu: qcom,iommu: Add MSM8937 IOMMU to SMMUv1 compatibles
->       dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
->       arm64: dts: qcom: Add Xiaomi Redmi 3S
-> 
-> Dang Huynh (2):
->       pinctrl: qcom: msm8917: Add MSM8937 wsa_reset pin
->       arm64: dts: qcom: Add initial support for MSM8937
-> 
-> Daniil Titov (3):
->       dt-bindings: clock: gcc-msm8917: Split to separate schema
->       dt-bindings: clock: Add MSM8937 Global Clock controller compatible
->       clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
-> 
->  Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
->  .../bindings/clock/qcom,gcc-msm8909.yaml           |   10 +-
->  .../bindings/clock/qcom,gcc-msm8917.yaml           |   74 +
->  .../devicetree/bindings/iommu/qcom,iommu.yaml      |    1 +
->  .../devicetree/bindings/mfd/qcom,tcsr.yaml         |    1 +
->  .../devicetree/bindings/nvmem/qcom,qfprom.yaml     |    1 +
->  arch/arm64/boot/dts/qcom/Makefile                  |    1 +
->  arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts   |  402 ++++
->  arch/arm64/boot/dts/qcom/msm8937.dtsi              | 2145 ++++++++++++++++++++
->  drivers/clk/qcom/Kconfig                           |    6 +-
->  drivers/clk/qcom/gcc-msm8917.c                     |  617 +++++-
->  drivers/pinctrl/qcom/Kconfig.msm                   |    4 +-
->  drivers/pinctrl/qcom/pinctrl-msm8917.c             |    8 +-
->  include/dt-bindings/clock/qcom,gcc-msm8917.h       |   17 +
->  14 files changed, 3277 insertions(+), 17 deletions(-)
-> ---
-> base-commit: df5d6180169ae06a2eac57e33b077ad6f6252440
-> change-id: 20250210-msm8937-228ef0dc3ec9
-> 
-> Best regards,
-> --
-> Barnabás Czémán <barnabas.czeman@mainlining.org>
-> 
-> 
+Doing it again in the reset-eyeq probe would be redundant.
+Drop both the WARN_ON() and the device_set_of_node_from_dev() call.
+Also fix the following comment that talks about "our newfound OF node".
 
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+ drivers/reset/reset-eyeq.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250211-msm8937-v1-0-7d27ed67f708@mainlining.org:
-
-arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dtb: gpu@1c00000: clock-names:5: 'alwayson' is not one of ['core', 'iface', 'mem', 'mem_iface', 'alt_mem_iface', 'gfx3d', 'rbbmtimer', 'rbcpr']
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml#
-arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dtb: clock-controller@1800000: clocks: [[18], [51], [52, 1], [52, 0]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/qcom,gcc-msm8917.yaml#
-arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dtb: clock-controller@1800000: clock-names: ['xo', 'sleep_clk', 'dsi0pll', 'dsi0pllbyte'] is too short
-	from schema $id: http://devicetree.org/schemas/clock/qcom,gcc-msm8917.yaml#
-arch/arm64/boot/dts/qcom/msm8917-xiaomi-riva.dtb: clock-controller@1800000: Unevaluated properties are not allowed ('clock-names', 'clocks' were unexpected)
-	from schema $id: http://devicetree.org/schemas/clock/qcom,gcc-msm8917.yaml#
-
-
-
-
+diff --git a/drivers/reset/reset-eyeq.c b/drivers/reset/reset-eyeq.c
+index 02d50041048b..8018fa895427 100644
+--- a/drivers/reset/reset-eyeq.c
++++ b/drivers/reset/reset-eyeq.c
+@@ -420,17 +420,8 @@ static int eqr_probe(struct auxiliary_device *adev,
+ 	int ret;
+ 
+ 	/*
+-	 * We are an auxiliary device of clk-eyeq. We do not have an OF node by
+-	 * default; let's reuse our parent's OF node.
+-	 */
+-	WARN_ON(dev->of_node);
+-	device_set_of_node_from_dev(dev, dev->parent);
+-	if (!dev->of_node)
+-		return -ENODEV;
+-
+-	/*
+-	 * Using our newfound OF node, we can get match data. We cannot use
+-	 * device_get_match_data() because it does not match reused OF nodes.
++	 * Get match data. We cannot use device_get_match_data() because it does
++	 * not accept reused OF nodes; see device_set_of_node_from_dev().
+ 	 */
+ 	match = of_match_node(dev->driver->of_match_table, dev->of_node);
+ 	if (!match || !match->data)
+-- 
+2.48.1
 
