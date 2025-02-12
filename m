@@ -1,138 +1,195 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58141253F09;
-	Wed, 12 Feb 2025 17:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3D42046BD;
+	Wed, 12 Feb 2025 17:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739379857; cv=none; b=uvod2HbXDW861B8L5xSxoyYq6VzmXiiSL9z7n1QVmrJpBeyhfeI1k/SNH4FQTvi4r7f4mH56LL5IcF4n8HiW0YU+1x9YJj96/frL4he7lziBzkWk047OKDDE78hkIsxc88TyXaT5rvNMjI+ldZ/ukVz5cW9xtwnrqYNBf5yAZi8=
+	t=1739380520; cv=none; b=YAnRlCkNXmI9bY82Ot6SBCm42YQeABIA//8vRJLBTSTyBOFF66c0XS5ENq3UPg87o07o0tARMbccKVNZAjIMFTDG+7LRYo/9EAGd2gK6K0rhKoTe6YmUarRU1RzNLISc0O1fnYY0iuUrYKyTFlZgPVQB6Rjzy6ilSt7JFyWbxP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739379857; c=relaxed/simple;
-	bh=KtCtiu3HdxGB+elt6zIdrSwpsiFCDhpc2RS0AWHPdFI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZqzRPaj6M5azJwXfZtaUMp/ejQBZm8fJSwgoOT6efj0iGt2kjn9g0D/pdY6n2ZYZQ4WGycsS7ymCsn3DqmU6UYpkRUUgzKDWt0gdsYN0WckzkgpZbsId8pzlWwo7/yKEhclibfIvqrwbRpxp78mL0E/Z/keiykLOhRl2vjNTfXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Wh+nIwYr; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1739380520; c=relaxed/simple;
+	bh=GVymmSVS1ebyVXbVBweLRHWKTDtLJbwNbno7SHJrNQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=E+3LcjgZ7BSH8wRb6ObE4okm7IfLqGCNS+pkQIRa6we5RMosg+znAMpl0b7P51XfZ9JZFEWWO69gE8MqfH3gBwsRUNg4R7g1t1v2MFdF3ga3sWcdK1ReARf6TGv9nyHv4pczKmyf4+0qoJ2xhW3PTBVuUZXTkJRoJtbMKhelQNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xd9MBPY+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Wh+nIwYr"
-Received: from [192.168.244.162] (254C23D7.nat.pool.telekom.hu [37.76.35.215])
-	by mail.mainlining.org (Postfix) with ESMTPSA id BA7E6BB83A;
-	Wed, 12 Feb 2025 17:04:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1739379853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qSkfr6mNx85SD3B+tK98X+gwaurO564E0jqWeUP4rL8=;
-	b=Wh+nIwYrFM6tNM6qZ04n4yTdAJyNi80HGi8guNn/76DkKUgIUtHZDsGZvhlUtLw7iCrIda
-	eVRHf4w0u1BZbFAqRO0s07eMFJqbP4TUTkLNZOkKHt25d89oXRVxgeu3yf22Ntdcjtd0SS
-	LBaYu25U2jPBDBAcpIPVvZ4dmCOUyGmxA07UEajL85nwsGJPN2cHoab2s+8ddKABCIsNGY
-	eUkGd5TUV21o5OHBpYe+yvPQHY2Xu/fl0XruLCEyXisy92ZAhVoTc/8Jw5usYzFqFswWiT
-	d6A4tWpbN+5364BPzdTvsGtZbF/Q7DaqEq1J8HMDumWJ34IiuHTkZVW8CjlmIQ==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Wed, 12 Feb 2025 18:04:10 +0100
-Subject: [PATCH 2/2] clk: qcom: smd-rpm: Add clocks for SDM429
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xd9MBPY+"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C7ZO0t008337;
+	Wed, 12 Feb 2025 17:15:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fn/Uz0QQ5xJlUtUINV8OA+ppVRksOiwjgOFLQIeYh9c=; b=Xd9MBPY+gJ+/a5wl
+	pt1UGCoaLOEXvvjQB1BeZxAaXtR63bNm8bc+ymc/1bDSo0auww2W1yY08X4axja7
+	FTTF03kVLt+j114oNdJG2sglmhLw5w+CUNwiQ/QoBIrIeilfwoydIJZPUvJzeFcm
+	JHkkS4hP/Eh4dCmUZKz6gY9rVVvEv2ACqR7zYVIdSNaqiMdCLKOkoiRSdJV/rY5a
+	ZTl13SVFwWsANUmZMyXtc+0OrTLiMSrjCBVFZS6KoQEel/KDQ33Dm1ta9OH4aw9g
+	JV7BjTA442WmIWs0i7y8V5gXs5vb/dOhLC1f89w/Vjpb3u8STnTSxp1PU/7vbG+t
+	nr5Bhw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qewh88xr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 17:15:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51CHF65x010552
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Feb 2025 17:15:06 GMT
+Received: from [10.216.2.211] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
+ 2025 09:15:01 -0800
+Message-ID: <ccc87c55-d157-4ffc-8081-1a5900752931@quicinc.com>
+Date: Wed, 12 Feb 2025 22:44:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250212-sdm429-rpm-v1-2-0a24ac19a478@mainlining.org>
-References: <20250212-sdm429-rpm-v1-0-0a24ac19a478@mainlining.org>
-In-Reply-To: <20250212-sdm429-rpm-v1-0-0a24ac19a478@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
- Daniil Titov <daniilt971@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739379850; l=3273;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=fyggwXhk9oUXnNEQR7/yS+FGPmSxOG/fD7VIcXM5TRw=;
- b=+S6GYw5dJCjDduaMBbGNCl+5KorNoSqzFoc7zIOjILn2T4U4CHuAnP87bu9slQco6NyM89B3y
- p1CUAAMhSVlBWS/2YgbiZ5r76UdrN5S5KjqUHsoU+ONWvY0wZ0+THFV
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for
+ LPASS resets for QCM6490
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
+ <20250212-lpass_qcm6490_resets-v3-2-0b1cfb35b38e@quicinc.com>
+ <exyxni7td5vow2n6jarav5euje6dnbue5f5yxzu6az554dthfe@zn5yd2byvkoj>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <exyxni7td5vow2n6jarav5euje6dnbue5f5yxzu6az554dthfe@zn5yd2byvkoj>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ccX__PlDW1lE0AA6xIKmP-_va8_5B_LK
+X-Proofpoint-GUID: ccX__PlDW1lE0AA6xIKmP-_va8_5B_LK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-12_05,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ impostorscore=0 mlxlogscore=985 phishscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502120126
 
-From: Daniil Titov <daniilt971@gmail.com>
 
-SDM429 has mostly the same rpm clocks as MSM8953, but lacks RF_CLK3 and
-IPA_CLK and additionally has the BB_CLK3.
 
-Signed-off-by: Daniil Titov <daniilt971@gmail.com>
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- drivers/clk/qcom/clk-smd-rpm.c | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+On 2/12/2025 4:39 PM, Dmitry Baryshkov wrote:
+> On Wed, Feb 12, 2025 at 01:52:20PM +0530, Taniya Das wrote:
+>> On the QCM6490 boards the LPASS firmware controls the complete clock
+>> controller functionalities. But the LPASS resets are required to be
+>> controlled from the high level OS. The Audio SW driver should be able to
+>> assert/deassert the audio resets as required. Thus in clock driver add
+>> support for the resets.
+>>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> ---
+>>  drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
+>>  1 file changed, 19 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>> index 45e7264770866f929a3f4663c477330f0bf7aa84..b6439308926371891cc5f9a5e0d4e8393641560d 100644
+>> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>> @@ -1,6 +1,7 @@
+>>  // SPDX-License-Identifier: GPL-2.0-only
+>>  /*
+>>   * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>   */
+>>  
+>>  #include <linux/clk-provider.h>
+>> @@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
+>>  	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+>>  };
+>>  
+>> +static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
+>> +	.name = "lpassaudio_cc_reset",
+>> +	.reg_bits = 32,
+>> +	.reg_stride = 4,
+>> +	.val_bits = 32,
+>> +	.fast_io = true,
+>> +	.max_register = 0xc8,
+>> +};
+>> +
+>>  static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
+>> -	.config = &lpass_audio_cc_sc7280_regmap_config,
+>> +	.config = &lpass_audio_cc_sc7280_reset_regmap_config,
+>>  	.resets = lpass_audio_cc_sc7280_resets,
+>>  	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
+>>  };
+>>  
+>>  static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
+>> -	{ .compatible = "qcom,sc7280-lpassaudiocc" },
+>> +	{ .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
+>> +	{ .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
+>>  	{ }
+>>  };
+>>  MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
+>> @@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>>  	struct regmap *regmap;
+>>  	int ret;
+>>  
+>> +	desc = device_get_match_data(&pdev->dev);
+>> +
+>> +	if (desc->num_resets)
+>> +		return qcom_cc_probe_by_index(pdev, 1, desc);
+> 
+> Won't this break SC7280 support by causing an early return?
+> 
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 29ef08a9d50b47fb71ac253c6f50f4c28f4d6519..3fbaa646286f284da12b902873b079863a2c0d77 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -486,6 +486,7 @@ DEFINE_CLK_SMD_RPM(qup, QCOM_SMD_RPM_QUP_CLK, 0);
- 
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(bb_clk1, 1, 19200000);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(bb_clk2, 2, 19200000);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(bb_clk3, 3, 19200000);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(ln_bb_clk1, 1, 19200000);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(ln_bb_clk2, 2, 19200000);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(ln_bb_clk3, 3, 19200000);
-@@ -1046,6 +1047,36 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
- 	.num_icc_clks = ARRAY_SIZE(msm8998_icc_clks),
- };
- 
-+static struct clk_smd_rpm *sdm429_clks[] = {
-+	[RPM_SMD_XO_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo,
-+	[RPM_SMD_XO_A_CLK_SRC]		= &clk_smd_rpm_branch_bi_tcxo_a,
-+	[RPM_SMD_QDSS_CLK]		= &clk_smd_rpm_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK]		= &clk_smd_rpm_qdss_a_clk,
-+	[RPM_SMD_BB_CLK1]		= &clk_smd_rpm_bb_clk1,
-+	[RPM_SMD_BB_CLK1_A]		= &clk_smd_rpm_bb_clk1_a,
-+	[RPM_SMD_BB_CLK2]		= &clk_smd_rpm_bb_clk2,
-+	[RPM_SMD_BB_CLK2_A]		= &clk_smd_rpm_bb_clk2_a,
-+	[RPM_SMD_BB_CLK3]		= &clk_smd_rpm_bb_clk3,
-+	[RPM_SMD_BB_CLK3_A]		= &clk_smd_rpm_bb_clk3_a,
-+	[RPM_SMD_RF_CLK2]		= &clk_smd_rpm_rf_clk2,
-+	[RPM_SMD_RF_CLK2_A]		= &clk_smd_rpm_rf_clk2_a,
-+	[RPM_SMD_DIV_CLK2]		= &clk_smd_rpm_div_clk2,
-+	[RPM_SMD_DIV_A_CLK2]		= &clk_smd_rpm_div_clk2_a,
-+	[RPM_SMD_BB_CLK1_PIN]		= &clk_smd_rpm_bb_clk1_pin,
-+	[RPM_SMD_BB_CLK1_A_PIN]		= &clk_smd_rpm_bb_clk1_a_pin,
-+	[RPM_SMD_BB_CLK2_PIN]		= &clk_smd_rpm_bb_clk2_pin,
-+	[RPM_SMD_BB_CLK2_A_PIN]		= &clk_smd_rpm_bb_clk2_a_pin,
-+	[RPM_SMD_BB_CLK3_PIN]		= &clk_smd_rpm_bb_clk3_pin,
-+	[RPM_SMD_BB_CLK3_A_PIN]		= &clk_smd_rpm_bb_clk3_a_pin,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_sdm429 = {
-+	.clks = sdm429_clks,
-+	.num_clks = ARRAY_SIZE(sdm429_clks),
-+	.icc_clks = bimc_pcnoc_snoc_smmnoc_icc_clks,
-+	.num_icc_clks = ARRAY_SIZE(bimc_pcnoc_snoc_smmnoc_icc_clks),
-+};
-+
- static struct clk_smd_rpm *sdm660_clks[] = {
- 	[RPM_SMD_XO_CLK_SRC] = &clk_smd_rpm_branch_bi_tcxo,
- 	[RPM_SMD_XO_A_CLK_SRC] = &clk_smd_rpm_branch_bi_tcxo_a,
-@@ -1276,6 +1307,7 @@ static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8998", .data = &rpm_clk_msm8998 },
- 	{ .compatible = "qcom,rpmcc-qcm2290", .data = &rpm_clk_qcm2290 },
- 	{ .compatible = "qcom,rpmcc-qcs404",  .data = &rpm_clk_qcs404  },
-+	{ .compatible = "qcom,rpmcc-sdm429",  .data = &rpm_clk_sdm429  },
- 	{ .compatible = "qcom,rpmcc-sdm660",  .data = &rpm_clk_sdm660  },
- 	{ .compatible = "qcom,rpmcc-sm6115",  .data = &rpm_clk_sm6115  },
- 	{ .compatible = "qcom,rpmcc-sm6125",  .data = &rpm_clk_sm6125  },
+The resets are not defined for SC7280.
+static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
+        .config = &lpass_audio_cc_sc7280_regmap_config,
+        .clks = lpass_audio_cc_sc7280_clocks,
+        .num_clks = ARRAY_SIZE(lpass_audio_cc_sc7280_clocks),
+};
 
--- 
-2.48.1
+The reset get registered for SC7280 after the clocks are registered.
+qcom_cc_probe_by_index(pdev, 1,  &lpass_audio_cc_reset_sc7280_desc);
+
+>> +
+>>  	ret = lpass_audio_setup_runtime_pm(pdev);
+>>  	if (ret)
+>>  		return ret;
+>>  
+>>  	lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc";
+>>  	lpass_audio_cc_sc7280_regmap_config.max_register = 0x2f000;
+>> -	desc = &lpass_audio_cc_sc7280_desc;
+>>  
+>>  	regmap = qcom_cc_map(pdev, desc);
+>>  	if (IS_ERR(regmap)) {
+>> @@ -772,7 +787,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>>  	regmap_write(regmap, 0x4, 0x3b);
+>>  	regmap_write(regmap, 0x8, 0xff05);
+>>  
+>> -	ret = qcom_cc_really_probe(&pdev->dev, &lpass_audio_cc_sc7280_desc, regmap);
+>> +	ret = qcom_cc_really_probe(&pdev->dev, desc, regmap);
+>>  	if (ret) {
+>>  		dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
+>>  		goto exit;
+>>
+>> -- 
+>> 2.45.2
+>>
+> 
 
