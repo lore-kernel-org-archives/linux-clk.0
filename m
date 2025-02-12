@@ -1,187 +1,102 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59AD1D516D;
-	Wed, 12 Feb 2025 16:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28E3212FB3
+	for <linux-clk@vger.kernel.org>; Wed, 12 Feb 2025 16:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739377227; cv=none; b=dLwSFRMkXtyFr+hb4g4KMpKRjiluKlLAAH/mGnhWtPcTDwZJ1Jsn1KVfGgDUC8ZqNKSqMY5ustgfPrlGlDeodgPiKDCmDhL6A0a1EYiDqzgsW9B2TVzrX1p2A8dUr6FQ9sAMg0j6jWJwWrXWMIOAhYktPcucj497QXGs4jvggZU=
+	t=1739377970; cv=none; b=owcjbIBPa6gxd9m8ycrTw1tEhC60Hho/Th95FVhqyKXKqVBPbEPIgDfybraNjUCDuwm7T/IxBuPVcOH5KvjNdg0nCWg69XtPNFBhZE8m9QWeYtgTrFuyzhWRURoSP3FspC1/iKgefVw5dCWXQ8pTmUmFZUAD5Fqn68NKwSp4SGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739377227; c=relaxed/simple;
-	bh=IH6FJ/LOaKwyiedQHW7mKTCXkZR7qoVHrS4dm49fsuM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=ZhQwkM6mZGHCVjCTIeBOGvh4hzx4GSfZ86pys+JvVXN2Q46G07dbEW2RbH5CWxcpX/FuLqQU53VLa3vo3W7yLyiOtbfpOCHvBp9japJIlSWhdB+okZuVWOjrt+ZOkxNli7cGhWthnB0zKzeFSVhtviNDhgy1F6ZcfgAOtTNNZSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Byx1S3Df; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1739377970; c=relaxed/simple;
+	bh=uM+rgeiyIG3H/nI3hJGwzzxr1vwwAYELU/clwSlSP0A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j5ROplRa4vvtTvFWaGS4XQ/13u3hQLmjHrAfj8FJzlXqDXhMQG+f1Pn+4OcHPkAi6OgGDIIcURVgaN4dKPgEvyp9er+L/LfJxdlyJheuzqpxLPQCHTntO/ktLVUSEmQJ37/6xaEogW67XYV7J54EbhpyOKDcY0s2FwqUHNbhO4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TR4QmaMS; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Byx1S3Df"
-Received: from localhost (web.docker-mailserver_default [172.18.0.2])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 1EEE9BB835;
-	Wed, 12 Feb 2025 16:20:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1739377223;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QIxsFEW0fxFxc9Uh+/NGJ+ZhMAYCRBTTVCPuNqXBoWo=;
-	b=Byx1S3Df880pwgYYJt/jlleUmRcSPicWQL0Wc8t66UFcEb4Ymrj0X6U5GMcQUYlG72P2mw
-	AeaCaTksiVCGthozukYYKwjh3r55Uz37MR6DYqQJeSryK0a28AaAI628C8QpSgwcNHP8YN
-	Ugp1f/43WQ36lJKDc/0i2PQxPXa9x9s6e5JY19LUMUxLF26KtosgKVuDcScxwxfcNnXhTl
-	I2VksJS6LWy8Axv7ckWW8Blhfu29BQg92lauuTdMQbk2adwD+FDeA1/O/6pkjMXAnZ2L7e
-	27oLOvRuwFSq3zr1O60LashbJabjiwJfddqgNM7GEOJWHLXh+m8VAne7uyZi2Q==
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TR4QmaMS"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab7ee6f5535so26556566b.1
+        for <linux-clk@vger.kernel.org>; Wed, 12 Feb 2025 08:32:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739377967; x=1739982767; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D3+GwMSFhqocbDKQfg41i+abCZPRjFt/R7A5GSXrnUk=;
+        b=TR4QmaMSTyI3dInttInKYSlUMSiQa/vAht7WqMRcncedRANOJeNfczhQbmODSlgbKV
+         9StRjkTtPrf9EY/xCJOAPEHwmi7To1KHjkuKMnqxKmwdxBqllJKTGYhjWM8Iv+OdW80h
+         hY4J1/wRRwVoVgm7gwc9k3QascxowxfyWXB8Fquc4P9rb+n6AOZ/N9sXxC2uUhaJmw27
+         YPzHVqygaOwKCkuOp/SLN4epm3hd41pg5MITHfUyNbcvEbskgMqVR6gGyR8LlRrHs1Vb
+         PhsSH+/DPGmXpu+PmQolSIBYya+tVwZstmWNLd9ODP32l1Y0f03QfXUIs2VJv5GN/Whz
+         2Dng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739377967; x=1739982767;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D3+GwMSFhqocbDKQfg41i+abCZPRjFt/R7A5GSXrnUk=;
+        b=QRL1M8PGXNk4L21Bd98dvoOdaOlfRe7lgp1h4G1Inw9g/5Cgg+IuaZ3dEetjZeW5Xa
+         e6qedVfXdAbrccGSnwMBMMK8w+enQ7Cd4VDBxuK08nJg13/tES8LDpJdzmSRZGAQIP2q
+         vPpekrgdNLzctcQaKMs+tj+L45R0q48U9tAH2ukQlqhM2sjKhKfCpYyQJiTsMDvEheGh
+         vLwbEPGVBTwy5ISwmdv3z+3DnTh9kOhL2janCm0JdVAD6HDBrR2saMpMTM+eKTk8jQQB
+         fL3Yb9r+TkUeEcPYuUQTbfzRCmu3meyN7SP1Oa1mCy/vDu32fKEg1r9eFWXN8lC3yS2G
+         ycQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUS2rY5XQ8MJDrvJZQNzuW59OjFpx216CEW2hgludxWP/4ETUdqcXkld32UOa/cekYlAM3HRf4eZDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWsFh3ftCxsLCtqDyrOPFSXuwZbuQTQQWg/5xk5jEWjeOJE1o7
+	IucHe++5JJoNNmazGbjYFPo6iixuQeOgZ8qo1id4mBcLnII4N0YRrB7gy8FE1Jg=
+X-Gm-Gg: ASbGnctlVcGP8MFvL2rMEqWjIIjf+9jvmaKe58kWzSigJHfP8OzBNFlycYv2nGQV7PJ
+	wlflHzndCt8S93cirL0XmSjJA9LqxhQMyCQCL9fdhwe2D2tNX0bkroOiB/ZrDES+yyhbh/8PKKs
+	rxJU7l9JrxD9LNcNrY9rek85X7Co6/fxiDCubRiVfkdr9cnFDdEnBcM9q2ZKkypYdKRIbTclGTm
+	UYomh1SFMtTtbyHpEd6uxIqTX2IjhKHjblmpf/CMOLTS9vmpzJPSNU1mg4uJQWZ7iGZVFD8MUaQ
+	TXECRGARrbsZU9BNGig8hbWo9/qA4w==
+X-Google-Smtp-Source: AGHT+IF8u/EmJRpY1cgIvJEM+EbW+M73tl7S5R2stGgnFzaxNtA80WlogXUtJNIeXD6qOocbR1VfGg==
+X-Received: by 2002:a17:907:9719:b0:aa6:9c29:86d1 with SMTP id a640c23a62f3a-ab7f334003emr129760866b.3.1739377966988;
+        Wed, 12 Feb 2025 08:32:46 -0800 (PST)
+Received: from krzk-bin.. ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab7a697c2besm917631366b.151.2025.02.12.08.32.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Feb 2025 08:32:46 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] clk: qcom: dispcc-sm8750: Allow dumping regmap
+Date: Wed, 12 Feb 2025 17:32:43 +0100
+Message-ID: <20250212163243.237658-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 12 Feb 2025 17:20:23 +0100
-From: barnabas.czeman@mainlining.org
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
- =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, Linus Walleij
- <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Srinivas Kandagatla
- <srinivas.kandagatla@linaro.org>, Joerg Roedel <joro@8bytes.org>, Will
- Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio
- <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- iommu@lists.linux.dev, Dang Huynh <danct12@riseup.net>
-Subject: Re: [PATCH 08/10] arm64: dts: qcom: Add initial support for MSM8937
-In-Reply-To: <7664b71c-ed47-4765-9ac4-5dbe3ec80d3c@oss.qualcomm.com>
-References: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org>
- <20250211-msm8937-v1-8-7d27ed67f708@mainlining.org>
- <7664b71c-ed47-4765-9ac4-5dbe3ec80d3c@oss.qualcomm.com>
-Message-ID: <d4792e6323e2dd5392a0d9633df62174@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2025-02-12 14:07, Konrad Dybcio wrote:
-> On 11.02.2025 11:37 PM, Barnabás Czémán wrote:
->> From: Dang Huynh <danct12@riseup.net>
->> 
->> Add initial support for MSM8937 SoC.
->> 
->> Signed-off-by: Dang Huynh <danct12@riseup.net>
->> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->> ---
-> 
-> So the computer tells me 8917 and 8937 are *very* similar. Have you
-> tried assessing how making 8937.dtsi an overlay atop 8917.dtsi would
-> work out?
+Reading few registers at the end of the block (e.g. 0x10000, 0x10004)
+results in synchronous external abort, so limit the regmap to the last
+readable register which allows dumping the regs for debugging.
 
-They are similar but there are many small differences:
-- have two dsi
-- using adreno 505
-- different iommu it uses arm,smmu for gpu and qcom,iommu for 
-applications
-- 8 cores
-- camss will be a different a bit
-- venus will be different a bit
-- have more i2c and spi
-- different mdp version
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/clk/qcom/dispcc-sm8750.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Maybe i can find more differences, originally it was based on 
-msm8917.dtsi
-but we have decided to keep it separate, also it have different license 
-from 8917.
-The plan is MSM8940 and SDM439 support will based on msm8937.dtsi in the 
-future.
+diff --git a/drivers/clk/qcom/dispcc-sm8750.c b/drivers/clk/qcom/dispcc-sm8750.c
+index e9bca179998b..2c9714788739 100644
+--- a/drivers/clk/qcom/dispcc-sm8750.c
++++ b/drivers/clk/qcom/dispcc-sm8750.c
+@@ -1881,7 +1881,7 @@ static const struct regmap_config disp_cc_sm8750_regmap_config = {
+ 	.reg_bits = 32,
+ 	.reg_stride = 4,
+ 	.val_bits = 32,
+-	.max_register = 0x11014,
++	.max_register = 0xf004, /* 0x10000, 0x10004 and maybe others are for TZ */
+ 	.fast_io = true,
+ };
+ 
+-- 
+2.43.0
 
-> 
-> 
->>  arch/arm64/boot/dts/qcom/msm8937.dtsi | 2145 
->> +++++++++++++++++++++++++++++++++
->>  1 file changed, 2145 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/qcom/msm8937.dtsi 
->> b/arch/arm64/boot/dts/qcom/msm8937.dtsi
->> new file mode 100644
->> index 
->> 0000000000000000000000000000000000000000..ef633c1694ad98165e58130cbeb186d2f0e2dcaa
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/msm8937.dtsi
->> @@ -0,0 +1,2145 @@
->> +// SPDX-License-Identifier: BSD-3-Clause
->> +/*
->> + * Copyright (c) 2023, Dang Huynh <danct12@riseup.net>
->> + */
->> +
->> +#include <dt-bindings/clock/qcom,gcc-msm8917.h>
->> +#include <dt-bindings/clock/qcom,rpmcc.h>
->> +#include <dt-bindings/interrupt-controller/arm-gic.h>
->> +#include <dt-bindings/power/qcom-rpmpd.h>
->> +#include <dt-bindings/thermal/thermal.h>
->> +
->> +/ {
->> +	interrupt-parent = <&intc>;
->> +
->> +	#address-cells = <2>;
->> +	#size-cells = <2>;
->> +
->> +	clocks {
->> +		xo_board: xo-board {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
->> +		};
->> +
->> +		sleep_clk: sleep-clk {
->> +			compatible = "fixed-clock";
->> +			#clock-cells = <0>;
->> +		};
->> +	};
->> +
->> +	cpus {
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		cpu4: cpu@0 {
-> 
-> I'm pretty sure a CPU with a MPIDR of 0 should be called CPU0
-> 
->> +			compatible = "arm,cortex-a53";
->> +			reg = <0x0>;
->> +			device_type = "cpu";
->> +			enable-method = "psci";
->> +			operating-points-v2 = <&cpu_opp_table_c0>;
->> +			next-level-cache = <&l2_0>;
->> +			#cooling-cells = <2>;
->> +			l2_0: l2-cache {
-> 
-> Please add a newline between the last property and the subnode
-> 
->> +				compatible = "cache";
->> +				cache-level = <2>;
-> 
-> cache-size = <0x80000>;
-> 
-> [...]
-> 
->> +		cpu0: cpu@100 {
->> +			compatible = "arm,cortex-a53";
->> +			reg = <0x100>;
->> +			device_type = "cpu";
->> +			next-level-cache = <&l2_1>;
->> +			enable-method = "psci";
->> +			operating-points-v2 = <&cpu_opp_table_c1>;
->> +			#cooling-cells = <2>;
->> +			power-domains = <&cpu_pd0>;
->> +			power-domain-names = "psci";
->> +			l2_1: l2-cache {
->> +				compatible = "cache";
->> +				cache-level = <2>;
-> 
-> cache-size = <0x100000>;
-> 
-> I'll do further review if you decide it makes sense to keep this
-> separate from 8917
-> 
-> Konrad
