@@ -1,173 +1,172 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE7C1EE013;
-	Wed, 12 Feb 2025 08:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A552F271828;
+	Wed, 12 Feb 2025 08:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739348714; cv=none; b=tDF0nFHicizhqUASOmMTKhDWoFb3AfaURMNWmRAsCtFwtVe072wRKf3D++/WDQJ7X68Ch26Y5h7mzm7mYveIysOXIwsLtj7NaRBrn8xCzgZ6fzbgMd9TSfJZsvH9nNmWF4zr9FHwAEPuA1Ou0tkrPHDSPx/PLz5eZXLmWtviGJg=
+	t=1739350655; cv=none; b=G3ihDGGR8HoP9ADHh9nClo9yt2kSlfpMjv4PaKHeRpxvR0c/p97CTnl/OHtN4bydBDLb3RxN8sRNpySG7us2Y024vvrzVWTh8ZeL24NCSmP/BHPrs8Iw6BUy5iRUjjBtokIJM+8p0rq6DbUhN8dQ8DPKHG19aQqt3zWDm7x+EDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739348714; c=relaxed/simple;
-	bh=UxLLrFR3unDkQEVXT9keu7/Y/BnzW500e0pY1YknrSw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=TcRUHQV44O7qE0s+MqlKyVE735jfwkzIrWwwOu4eqn7qelNCd9oHWZ06mLaOxf5+iGvzKo6gMwL9SAJsBhlYZuw46tUQ6BqfYZXrLnvMI7D5bPRo3ASJPvfWrP9m6heecKs2Rk0MSz33ykxHxWruRYh7+6PQpxjlLk8bnnjSvzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MYDLgWlD; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1739350655; c=relaxed/simple;
+	bh=vX6/CDrLsi+PiLy4kwaL8vsmQecJaGwqitg7vNz+psg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rM7edg4+K5s6dSRr3WcNdq0mANTRBoh8B/LBd/GRJ5udWuuGISGbKrNSbx0l/cfI76WWxfAks4fi1Ing1XghxbcDAp0Yf/cm/MNgPacwv5X/0jnW76ENcvgxjhtjHP8Xn2Z+F0Zn0ucubnlTktlJWFYDFhvWBk1IaepesEvkBVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RiZjoGPb; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MYDLgWlD"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51C0oYeI030181;
-	Wed, 12 Feb 2025 08:25:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4+MbO4I6cRAV6UyKT51mOFpjDAxPBVOlCZ8ub22QxvI=; b=MYDLgWlD8AHtOUSQ
-	gkOXzM8RLv2eMnZ5GcwVnFr8at6sPnSqb9LcvMDY6/gifokQUE+jKMxdURv9OH/o
-	f39aNULAGiXEd3V8d7EG3nUrTC3/PdsGVFv4haM5P6XH/QKHPemtbv1WDwNJNMDF
-	XXSoMDVxkFPbww7mJzkFzYcPpCSzjthaUlJdkhv1RRIfRZN1+HFzKJrKgQhsAGFi
-	4zHlC4RzgbrjrD1xVfs/mKZG6UKuU5swuj4a63UNk0BuctY5ZJocu3RNakHUuqY6
-	QZxsPJBSTOhmWqcRyKLrj5eJz5knrso8nBDNsSHBXoCe8G9k+ntuXAL+d34CbiRE
-	VBScug==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44qxg9m7dy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 08:25:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51C8P8Od011271
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 08:25:08 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 12 Feb 2025 00:23:05 -0800
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Wed, 12 Feb 2025 13:52:20 +0530
-Subject: [PATCH v3 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for
- LPASS resets for QCM6490
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RiZjoGPb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739350654; x=1770886654;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vX6/CDrLsi+PiLy4kwaL8vsmQecJaGwqitg7vNz+psg=;
+  b=RiZjoGPbeHA4adRY+t71J8ZREbTeuJq+vo3OgvtiulukZkvgeiiagDmW
+   qYmgDomwWxR+A/OcDl5GixJZAVZSqpjDK5LlQf9VAsFdd0QPvb5fVm107
+   QhIT8i+zrrip41z0EBlOSQ72EoiojRAjjLVqf3x5SgmpH0G/+SnDlJj08
+   qL/tSk4Vi3Ht2Zn3NilzNuL05Z4j1dygderbwnRWKWjzcBC2Bjddnc10P
+   OsAHlbrkH6xQoWB72TIFXpR5FVUSJmX9yX/KaWQrRdYjQyad5BOY6tmq2
+   pFKo67WH4Qy0AiAwG+JgT1fEGsbA2o+Hs3eqL+v+MqNDU8vft2GFHEpoM
+   g==;
+X-CSE-ConnectionGUID: eaiQqH7+R36DTbJBseTnpw==
+X-CSE-MsgGUID: oNF8XexaRxqXC1nGoiMImg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11342"; a="50630749"
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="50630749"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 00:57:33 -0800
+X-CSE-ConnectionGUID: dLQFfP+/S8+lS5adRI8UFQ==
+X-CSE-MsgGUID: gpKNy4SXS6Kp2XEwreVocg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,279,1732608000"; 
+   d="scan'208";a="117778390"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 12 Feb 2025 00:57:29 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ti8Yg-0015P7-1H;
+	Wed, 12 Feb 2025 08:57:26 +0000
+Date: Wed, 12 Feb 2025 16:57:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
+	linux-clk@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v8 3/3] clk: aspeed: add AST2700 clock driver
+Message-ID: <202502121624.f9xpltGE-lkp@intel.com>
+References: <20250210085004.1898895-4-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250212-lpass_qcm6490_resets-v3-2-0b1cfb35b38e@quicinc.com>
-References: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
-In-Reply-To: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: IitNfqJQCIE0OPCcJirzuOhfYsQkrB9P
-X-Proofpoint-GUID: IitNfqJQCIE0OPCcJirzuOhfYsQkrB9P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_02,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- mlxscore=0 priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
- mlxlogscore=880 lowpriorityscore=0 phishscore=0 clxscore=1015
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502120064
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250210085004.1898895-4-ryan_chen@aspeedtech.com>
 
-On the QCM6490 boards the LPASS firmware controls the complete clock
-controller functionalities. But the LPASS resets are required to be
-controlled from the high level OS. The Audio SW driver should be able to
-assert/deassert the audio resets as required. Thus in clock driver add
-support for the resets.
+Hi Ryan,
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-index 45e7264770866f929a3f4663c477330f0bf7aa84..b6439308926371891cc5f9a5e0d4e8393641560d 100644
---- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
-+++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- #include <linux/clk-provider.h>
-@@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
- 	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
- };
- 
-+static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
-+	.name = "lpassaudio_cc_reset",
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.fast_io = true,
-+	.max_register = 0xc8,
-+};
-+
- static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
--	.config = &lpass_audio_cc_sc7280_regmap_config,
-+	.config = &lpass_audio_cc_sc7280_reset_regmap_config,
- 	.resets = lpass_audio_cc_sc7280_resets,
- 	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
- };
- 
- static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
--	{ .compatible = "qcom,sc7280-lpassaudiocc" },
-+	{ .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
-+	{ .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
-@@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
- 	struct regmap *regmap;
- 	int ret;
- 
-+	desc = device_get_match_data(&pdev->dev);
-+
-+	if (desc->num_resets)
-+		return qcom_cc_probe_by_index(pdev, 1, desc);
-+
- 	ret = lpass_audio_setup_runtime_pm(pdev);
- 	if (ret)
- 		return ret;
- 
- 	lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc";
- 	lpass_audio_cc_sc7280_regmap_config.max_register = 0x2f000;
--	desc = &lpass_audio_cc_sc7280_desc;
- 
- 	regmap = qcom_cc_map(pdev, desc);
- 	if (IS_ERR(regmap)) {
-@@ -772,7 +787,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
- 	regmap_write(regmap, 0x4, 0x3b);
- 	regmap_write(regmap, 0x8, 0xff05);
- 
--	ret = qcom_cc_really_probe(&pdev->dev, &lpass_audio_cc_sc7280_desc, regmap);
-+	ret = qcom_cc_really_probe(&pdev->dev, desc, regmap);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
- 		goto exit;
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on pza/reset/next linus/master v6.14-rc2]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-binding-clock-ast2700-modify-soc0-1-clock-define/20250210-165421
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20250210085004.1898895-4-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v8 3/3] clk: aspeed: add AST2700 clock driver
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20250212/202502121624.f9xpltGE-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250212/202502121624.f9xpltGE-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502121624.f9xpltGE-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/swab.h:5,
+                    from include/uapi/linux/byteorder/big_endian.h:14,
+                    from include/linux/byteorder/big_endian.h:5,
+                    from arch/m68k/include/uapi/asm/byteorder.h:5,
+                    from include/asm-generic/bitops/le.h:6,
+                    from arch/m68k/include/asm/bitops.h:566,
+                    from include/linux/bitops.h:68,
+                    from include/linux/of.h:15,
+                    from include/linux/clk-provider.h:9,
+                    from drivers/clk/clk-ast2700.c:7:
+   drivers/clk/clk-ast2700.c: In function 'ast2700_soc1_configure_i3c_clk':
+>> drivers/clk/clk-ast2700.c:981:32: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+     981 |                                FIELD_PREP(SCU1_CLK_I3C_DIV_MASK,
+         |                                ^~~~~~~~~~
+   include/uapi/linux/swab.h:118:38: note: in definition of macro '__swab32'
+     118 |         (__u32)(__builtin_constant_p(x) ?       \
+         |                                      ^
+   include/linux/byteorder/generic.h:88:21: note: in expansion of macro '__cpu_to_le32'
+      88 | #define cpu_to_le32 __cpu_to_le32
+         |                     ^~~~~~~~~~~~~
+   arch/m68k/include/asm/io_mm.h:373:26: note: in expansion of macro 'out_le32'
+     373 | #define writel(val,addr) out_le32((addr),(val))
+         |                          ^~~~~~~~
+   drivers/clk/clk-ast2700.c:979:17: note: in expansion of macro 'writel'
+     979 |                 writel((readl(clk_ctrl->base + SCU1_CLK_SEL2) &
+         |                 ^~~~~~
+   drivers/clk/clk-ast2700.c: At top level:
+   drivers/clk/clk-ast2700.c:369:37: warning: 'd_clk_sels' defined but not used [-Wunused-const-variable=]
+     369 | static const struct clk_parent_data d_clk_sels[] = {
+         |                                     ^~~~~~~~~~
+   drivers/clk/clk-ast2700.c:353:37: warning: 'soc1_ahb' defined but not used [-Wunused-const-variable=]
+     353 | static const struct clk_parent_data soc1_ahb[] = {
+         |                                     ^~~~~~~~
+   drivers/clk/clk-ast2700.c:349:37: warning: 'uart16clk' defined but not used [-Wunused-const-variable=]
+     349 | static const struct clk_parent_data uart16clk[] = {
+         |                                     ^~~~~~~~~
+   drivers/clk/clk-ast2700.c:345:37: warning: 'uart15clk' defined but not used [-Wunused-const-variable=]
+     345 | static const struct clk_parent_data uart15clk[] = {
+         |                                     ^~~~~~~~~
+   drivers/clk/clk-ast2700.c:341:37: warning: 'uart14clk' defined but not used [-Wunused-const-variable=]
+     341 | static const struct clk_parent_data uart14clk[] = {
+         |                                     ^~~~~~~~~
+   drivers/clk/clk-ast2700.c:337:37: warning: 'uart13clk' defined but not used [-Wunused-const-variable=]
+     337 | static const struct clk_parent_data uart13clk[] = {
+         |                                     ^~~~~~~~~
+   drivers/clk/clk-ast2700.c:237:37: warning: 'soc0_ahb' defined but not used [-Wunused-const-variable=]
+     237 | static const struct clk_parent_data soc0_ahb[] = {
+         |                                     ^~~~~~~~
+   drivers/clk/clk-ast2700.c:209:37: warning: 'soc0_mpll_div8' defined but not used [-Wunused-const-variable=]
+     209 | static const struct clk_parent_data soc0_mpll_div8[] = {
+         |                                     ^~~~~~~~~~~~~~
+
+
+vim +/FIELD_PREP +981 drivers/clk/clk-ast2700.c
+
+   974	
+   975	static void ast2700_soc1_configure_i3c_clk(struct ast2700_clk_ctrl *clk_ctrl)
+   976	{
+   977		if (readl(clk_ctrl->base + SCU1_REVISION_ID) & REVISION_ID)
+   978			/* I3C 250MHz = HPLL/4 */
+   979			writel((readl(clk_ctrl->base + SCU1_CLK_SEL2) &
+   980				~SCU1_CLK_I3C_DIV_MASK) |
+ > 981				       FIELD_PREP(SCU1_CLK_I3C_DIV_MASK,
+   982						  SCU1_CLK_I3C_DIV(4)),
+   983			       clk_ctrl->base + SCU1_CLK_SEL2);
+   984	}
+   985	
 
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
