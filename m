@@ -1,109 +1,206 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB59203719
-	for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2025 17:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0368F23F400;
+	Thu, 13 Feb 2025 17:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739469472; cv=none; b=Xc2GkWrxq7P3/zQxJG/3F4Ktr8VsBtOx5/Ctsvy5NI45DChbzYW4gmTXLy4RKv07FaZll3Tn0B4oYACRPwSGvyvultuiKVSOETosd5lrDKgik8kKjW4JRV1QN1hHbR7jXx9l2gIc3HYjpHQREFIuxWlOcXiKa13HwW4UHcYNigI=
+	t=1739469559; cv=none; b=h9NGXXWCCEjnClT7XuzFbHsGpwy9TPOuWw9qOcoqMwwcFM3LtPNHKnTueLk5AURp/IuywAEPDO1wcFzpUAdhvHGLJKOPMJBS5PPDgAfqV8tCokCaAKhVbwrFR3NCVV04uK3kBbWB3h5NQSctz24M9XpXmDRb9AE7b9eC1xUdYCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739469472; c=relaxed/simple;
-	bh=uxe/sPCuvuszkG09tatgP/sxrgyFyklm5riZrTlzQJA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mqMMXh8+VRrktRGrDnGIxw7PMj8A4IKoiVGxXdc5+jZDJthgc6UCHuw3FnkJ+e+3z0Xml/KYPK4fe80owWNvTstLlPJOMlIrgWcR7pRFCcMvpk0h419NG9cvFi86XFzo6/NBZaSJU9eJB2PZ1KsxIPlA3jFAtrsGOg8PSaEU9U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=DCdtDMF5; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+	s=arc-20240116; t=1739469559; c=relaxed/simple;
+	bh=Pgn2vbpHZGhCOn5YhZz8fN0a5lPUgj2hH+tawYr3GvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HCirjKBarElf9k30UWDEsANIbYgN0nssQvMJuOex6wGA1FXOaZpjkg9teMX8/+z8lR3DPJG/YzSd7JlQ/pqiNbGkP3960nckW9kCX8WcSQBam6XziGGUwNfEFV4/zXcXz9tYQJVAaMKvHw9io/+We43TaSJ67qVMCr1ztSOTVQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R52iamQn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="DCdtDMF5"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7430e27b2so234033666b.3
-        for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2025 09:57:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1739469469; x=1740074269; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uxe/sPCuvuszkG09tatgP/sxrgyFyklm5riZrTlzQJA=;
-        b=DCdtDMF5xCu6D99J8ipr2xNNMloOw+nxwbV7J0RxdRxacuH4MLAcWkzqtpIHvJYCsM
-         KGY4uK5XpYAuDtgVd4Ss3RTctRp88G8zCecrUOV27ugzkMoH7212U2Rs+kcEbKuKRNsC
-         +jX9HQbSahUZr3i8BcpOM4+R0eJzFvitJafrZFsHdXPaXbYmguyaG/uPo64CMcfSYKAs
-         7klaC8saAfUGmAB3+4njsEQkayE/iCvnAOWqyl/7R3VHT4+UWu8hUK0tJo/izRYCY52A
-         rVD6D6AGDYBB5GYW+BeM0dZ2MHE3K/nTA9ZOG0U/bHhHZalhV6dmmVuojwom3Xybtn/4
-         Wdxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739469469; x=1740074269;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uxe/sPCuvuszkG09tatgP/sxrgyFyklm5riZrTlzQJA=;
-        b=oaz4GuUsEzhNhQ8mLYtxSV7MW4dWfCaCBtds0nKYrrRAX2oJYBVHp7bE+yamDpMmgJ
-         XH7Y9JOEt/C+0wY0Xd31EDpavfNrfRkClxXNgRumVPS+Hz/gLYm8wQsFZsHZ9ekijVuT
-         b54URwbXcqoetFdLXO32OKABRyzsFifVa9Qxc/TGx0Y3ExHnGnCBfduJFqcxquoEBUZ7
-         qpHKVXMaohwxfyqVCRAV3K2RtBwZZFfQiKkC7Aq/GCCgI/Qj008ucU+Fzc6h23AJQEkB
-         HucX35TUpkjYDVkmz+uP2SBVgFhExC19KHm0VimJbgB+rxMtb+BbpWk9TL/36y3ddaeg
-         cz/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWNbCvPg9PgZG+oW6IIXUuJMzLMHcpMofao07qeSR+qFtuw5QEOb6b4d0faVVAN/lTpEcAZQy4o4Xw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1mjgo1b63Nd2J4GRfyNfsPo5aVFwiISS4An6ebHdUDl3wC739
-	4d88wtFJFwEtoDnEYaSUZb72LE3qZrafqGUi9dYl/f+jSXpMPySs5VN94G5oue5Y+ouT/ibEoc/
-	Csrfy9BIRkwUKhfccwuCAhxA0uiLqbTdp+tFI2Q==
-X-Gm-Gg: ASbGncuw8T9iL38El9RJ20pdTqajosp2/9zsr4grpn4pLnLoh3VzLr71J6avWOl3iWq
-	Q4xss3V1xMjDPEgin9FExpDUyub49SDFfOrtGvspeuaClbSXVVL7XfZMeS3klUMuHsXiw8g5uHo
-	CaGg8Tzg72KEUnuqUeuwUSEYmEecnS
-X-Google-Smtp-Source: AGHT+IEK78m51sGJDd3X7obouAmtice1DYZhDC7vdVZTdA3vPC4baSC0McAYMZqXZ2JdRz2CuZ0fh5G5y4aENoDxPdM=
-X-Received: by 2002:a17:907:971a:b0:ab9:63bf:8105 with SMTP id
- a640c23a62f3a-ab963bf8270mr490444566b.1.1739469468776; Thu, 13 Feb 2025
- 09:57:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R52iamQn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 537F5C4CEE5;
+	Thu, 13 Feb 2025 17:59:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739469558;
+	bh=Pgn2vbpHZGhCOn5YhZz8fN0a5lPUgj2hH+tawYr3GvI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R52iamQnStdvdjPzrUWP5m3f6dlxeAVUJqqh2Zat/hZmMmlZ3FHIP25gpThz11R/D
+	 vg96qHC/2qAMYIMR6wmNuF/4329RLihz4GzMSQUEt68g3bpYzwf1dJzrZl3Rg7/t1p
+	 jvOBSQiBorqQZPb3p1svf5VOM8/TFStUBnvqPVCIw4pO27r3Z6Qnyi3pk4mD0z74yO
+	 B66OYoxbo/tqlkGISaWYvy3fvp2dC5W/XgM4ye3k/MUixPd3wsUdolVYLoaiZk9TAl
+	 7no88D98e6379shrdeW11gVSPGGHH/QAm4ezRmpsgWS00PbSjF8oG67spsPDlwYQfa
+	 cFQyhc2+LYypQ==
+Date: Thu, 13 Feb 2025 17:59:07 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Douglas Anderson <dianders@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v3 2/7] reset: mpfs: use the auxiliary device creation
+ helper
+Message-ID: <20250213-crown-clustered-81c6434c892b@spud>
+References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
+ <20250211-aux-device-create-helper-v3-2-7edb50524909@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
- <20250213171435.1c2ce376@bootlin.com> <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
- <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com> <821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch>
-In-Reply-To: <821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch>
-From: Phil Elwell <phil@raspberrypi.com>
-Date: Thu, 13 Feb 2025 17:57:37 +0000
-X-Gm-Features: AWEUYZnQGb_LTFgRMGvR2NkevZWJdZdjShSWV1aYMFwhkUzlH95FjIU8_Kkz2O0
-Message-ID: <CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
- a DT overlay
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Herve Codina <herve.codina@bootlin.com>, Andrea della Porta <andrea.porta@suse.com>, 
-	Arnd Bergmann <arnd@arndb.de>, 
-	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
-	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
-	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, kw@linux.com, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
-	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
-	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
-	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
-	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="hayvwxyUW11W/dJv"
+Content-Disposition: inline
+In-Reply-To: <20250211-aux-device-create-helper-v3-2-7edb50524909@baylibre.com>
 
-On Thu, 13 Feb 2025 at 17:45, Andrew Lunn <andrew@lunn.ch> wrote:
->
-> > > Or do you mean a custom board, which has a CPU, RP1 and the button and
-> > > fan are directly on this custom board? You then want a board DTS which
-> > > includes all these pieces?
-> >
-> > That depends on whether you count the Raspberry Pi 5 as a custom board.
->
-> So you mean the Pi 5 board would itself make use of the resources the
-> RP1 device has? They are not simply connected to headers for plugin
-> boards, but used by the main board? Hence you want to describe them in
-> the board .DTS file.
 
-That's correct. But even for plug-in devices, those which are on
-non-discoverable buses need overlays to declare them, which causes a
-problem when the overlay application happens before the kernel is
-started.
+--hayvwxyUW11W/dJv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Phil
+On Tue, Feb 11, 2025 at 06:27:59PM +0100, Jerome Brunet wrote:
+> The auxiliary device creation of this driver is simple enough to
+> use the available auxiliary device creation helper.
+>=20
+> Use it and remove some boilerplate code.
+>=20
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/reset/reset-mpfs.c | 52 +++-------------------------------------=
+------
+>  1 file changed, 3 insertions(+), 49 deletions(-)
+>=20
+> diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+> index 574e59db83a4fcf30b60cb5f638607a2ec7b0580..bbea64862181877eb7ae51fda=
+a9e50ffac17c908 100644
+> --- a/drivers/reset/reset-mpfs.c
+> +++ b/drivers/reset/reset-mpfs.c
+> @@ -155,62 +155,16 @@ static int mpfs_reset_probe(struct auxiliary_device=
+ *adev,
+>  	return devm_reset_controller_register(dev, rcdev);
+>  }
+> =20
+> -static void mpfs_reset_unregister_adev(void *_adev)
+> -{
+> -	struct auxiliary_device *adev =3D _adev;
+> -
+> -	auxiliary_device_delete(adev);
+> -	auxiliary_device_uninit(adev);
+> -}
+> -
+> -static void mpfs_reset_adev_release(struct device *dev)
+> -{
+> -	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> -
+> -	kfree(adev);
+> -}
+> -
+> -static struct auxiliary_device *mpfs_reset_adev_alloc(struct device *clk=
+_dev)
+> -{
+> -	struct auxiliary_device *adev;
+> -	int ret;
+> -
+> -	adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
+> -	if (!adev)
+> -		return ERR_PTR(-ENOMEM);
+> -
+> -	adev->name =3D "reset-mpfs";
+> -	adev->dev.parent =3D clk_dev;
+> -	adev->dev.release =3D mpfs_reset_adev_release;
+> -	adev->id =3D 666u;
+> -
+> -	ret =3D auxiliary_device_init(adev);
+> -	if (ret) {
+> -		kfree(adev);
+> -		return ERR_PTR(ret);
+> -	}
+> -
+> -	return adev;
+> -}
+> -
+>  int mpfs_reset_controller_register(struct device *clk_dev, void __iomem =
+*base)
+>  {
+>  	struct auxiliary_device *adev;
+> -	int ret;
+> =20
+> -	adev =3D mpfs_reset_adev_alloc(clk_dev);
+> +	adev =3D devm_auxiliary_device_create(clk_dev, "reset-mpfs",
+> +					    (__force void *)base, 666u);
+
+Moving the boilerplate into a helper makes sense:
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+One think that's always felt a bit meh to me is this id number stuff,
+I just threw in 666 for meme value. The whole thing seems super
+arbitrary, do any of the users of this helper actually put meaningful
+values into the id parameter?
+
+>  	if (IS_ERR(adev))
+>  		return PTR_ERR(adev);
+> =20
+> -	ret =3D auxiliary_device_add(adev);
+> -	if (ret) {
+> -		auxiliary_device_uninit(adev);
+> -		return ret;
+> -	}
+> -
+> -	adev->dev.platform_data =3D (__force void *)base;
+> -
+> -	return devm_add_action_or_reset(clk_dev, mpfs_reset_unregister_adev, ad=
+ev);
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL_NS_GPL(mpfs_reset_controller_register, "MCHP_CLK_MPFS");
+> =20
+>=20
+> --=20
+> 2.45.2
+>=20
+
+--hayvwxyUW11W/dJv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ64y1gAKCRB4tDGHoIJi
+0tpDAQDNGTJm0hUvHu9/lgcEwur44fxS2Qlcl7n70eboDVTC6gD/VBr9uDAEKvks
+C7yxajoK6tXd6NFsVd0104wfqGk41QU=
+=kI4Q
+-----END PGP SIGNATURE-----
+
+--hayvwxyUW11W/dJv--
