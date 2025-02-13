@@ -1,145 +1,220 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BC74D8A3;
-	Thu, 13 Feb 2025 00:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955FA2063E3;
+	Thu, 13 Feb 2025 06:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739407297; cv=none; b=MIHUfjsUgAvZ1MmQNZGEUZTLrPtVvr/DrwDcdXfYTIPtl49D/WSKvc3LNcNnytcsC9fZhQqJE0uW/0YpP0kSp5hQVL7wS9Uw6xtFWUbOd9c+YGEuQnskd4JoV73az9d84FolRZdWRC8u/FM6xAaVszQjWdIf0X1lkKMbmbdpuFw=
+	t=1739429533; cv=none; b=VwpeuUGMRedAf+LywghvbPJ5zdtD01j3DPn1BW7wrTmsE7ZyGsCvA1hNfTKCehey7nZUaxq852btK/PDQaHvT0Tq/KyAluulbtYTgmCJmK29NF9eZd1VnLuBbdDUw72CgWVCgEJRG5+AzTUWxNHIhaOiFddXWaZ8IbOqVvkRiSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739407297; c=relaxed/simple;
-	bh=XF1Oc7XRHCDJlXTYTMN0xm9ThQduj5ZYw+BLfCKe+Ec=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gwa6BF0ZLDzs+SD9wPHh0EiwvOlRnQvUHmL25UCD/5ZskH7hsZ1OqyVvnLjsYbsQRti8cp2//NaHopw951wAP89R8+JCBYVlY7DY4tBvvPM1Ps7l7FRRf2g4z2kh1v81+jggzy364fKnsdw8YlzUd0nHakSdNfPD/8bIwPUrhUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 332FA1762;
-	Wed, 12 Feb 2025 16:41:54 -0800 (PST)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F6513F5A1;
-	Wed, 12 Feb 2025 16:41:31 -0800 (PST)
-Date: Thu, 13 Feb 2025 00:39:27 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Chris Morgan <macroalpha82@gmail.com>
-Cc: linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, p.zabel@pengutronix.de, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, samuel@sholland.org,
- jernej.skrabec@gmail.com, wens@csie.org, sboyd@kernel.org,
- mturquette@baylibre.com, ryan@testtoast.com, Chris Morgan
- <macromorgan@hotmail.com>
-Subject: Re: [PATCH 2/2] clk: sunxi-ng: h616: Add clock/reset for LCD TCON
-Message-ID: <20250213003927.6f4c0b09@minigeek.lan>
-In-Reply-To: <20250212191109.156766-3-macroalpha82@gmail.com>
-References: <20250212191109.156766-1-macroalpha82@gmail.com>
-	<20250212191109.156766-3-macroalpha82@gmail.com>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	s=arc-20240116; t=1739429533; c=relaxed/simple;
+	bh=HIsQirg/QfSVOdumsSMLsN22L13lwLj+hm+E8Aa5z/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fI0z2Ty17QJGYUBL9uYsXVaXivC/LW4Zb+OPpkiud9QCtdf1I70w85JZCuNXZHWcptgwR6FUl2LIr769SRgFYbXGdeH8eeahxwXMe940HisxsV1r/p86Paei17hLUIoHM8LgwPxfr1hBhcXyJd6WSHwSnPoiYNO3U4Vrs0NNZho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bzWGu+WG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bzWGu+WG"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CJCiMM025783;
+	Thu, 13 Feb 2025 06:52:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pSoWe0tkC6qoe3u34Vl9ApP4YwUG2Z+ydK+WaKmQ7kw=; b=bzWGu+WG3XlpNyH1
+	tXoqtpiap4vX841JbsQ2QViLmCuE54wxSuLbhlmsdvhtS5c5E/UzK5xPAWnuLRyJ
+	XqPnByxz6C3aR8ZpLO87YRmkucppLpyfwRXgVDRiBCITHXkUAnxwYa/zOYwD8F74
+	qXsKdc/QbukB1AFXu4FzUH2TIFwTveRpPuCx4/QJuAB5cRzTySbxtYd2MSMglYKu
+	KPv485bpJFHU03fCjilGedZjiRA6AE0jdAJqzMkNzZVf62QnXcop/IxUgF1aYmo/
+	paLGdbgGfDl7ZM9ycKs5V/1l7W1R7rn426yJ2hmg1+53XRAcXlxdjRE80vivk46V
+	yIAG2w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44r5j5e4sg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 06:52:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D6pxRm001266
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Feb 2025 06:51:59 GMT
+Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Feb
+ 2025 22:51:54 -0800
+Message-ID: <c820c697-c3ec-4ae3-9720-fb80cb3a0450@quicinc.com>
+Date: Thu, 13 Feb 2025 12:21:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for
+ LPASS resets for QCM6490
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
+ <20250212-lpass_qcm6490_resets-v3-2-0b1cfb35b38e@quicinc.com>
+ <exyxni7td5vow2n6jarav5euje6dnbue5f5yxzu6az554dthfe@zn5yd2byvkoj>
+ <ccc87c55-d157-4ffc-8081-1a5900752931@quicinc.com>
+ <CAA8EJpp7e5q36jGmB-TZX5A=XVGKsDtmBF8kJmxoga8NqGZP1A@mail.gmail.com>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <CAA8EJpp7e5q36jGmB-TZX5A=XVGKsDtmBF8kJmxoga8NqGZP1A@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UfpzANZj0WxZR_L58fQ8IpHUO76VBsY-
+X-Proofpoint-GUID: UfpzANZj0WxZR_L58fQ8IpHUO76VBsY-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-13_02,2025-02-11_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 mlxscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ phishscore=0 adultscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502130051
 
-On Wed, 12 Feb 2025 13:11:09 -0600
-Chris Morgan <macroalpha82@gmail.com> wrote:
 
-> From: Chris Morgan <macromorgan@hotmail.com>
+
+On 2/13/2025 1:30 AM, Dmitry Baryshkov wrote:
+> On Wed, 12 Feb 2025 at 19:15, Taniya Das <quic_tdas@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 2/12/2025 4:39 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Feb 12, 2025 at 01:52:20PM +0530, Taniya Das wrote:
+>>>> On the QCM6490 boards the LPASS firmware controls the complete clock
+>>>> controller functionalities. But the LPASS resets are required to be
+>>>> controlled from the high level OS. The Audio SW driver should be able to
+>>>> assert/deassert the audio resets as required. Thus in clock driver add
+>>>> support for the resets.
+>>>>
+>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>> ---
+>>>>  drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
+>>>>  1 file changed, 19 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>>> index 45e7264770866f929a3f4663c477330f0bf7aa84..b6439308926371891cc5f9a5e0d4e8393641560d 100644
+>>>> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>>> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>>> @@ -1,6 +1,7 @@
+>>>>  // SPDX-License-Identifier: GPL-2.0-only
+>>>>  /*
+>>>>   * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+>>>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>   */
+>>>>
+>>>>  #include <linux/clk-provider.h>
+>>>> @@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
+>>>>      [LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+>>>>  };
+>>>>
+>>>> +static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
+>>>> +    .name = "lpassaudio_cc_reset",
+>>>> +    .reg_bits = 32,
+>>>> +    .reg_stride = 4,
+>>>> +    .val_bits = 32,
+>>>> +    .fast_io = true,
+>>>> +    .max_register = 0xc8,
+>>>> +};
+>>>> +
+>>>>  static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
+>>>> -    .config = &lpass_audio_cc_sc7280_regmap_config,
+>>>> +    .config = &lpass_audio_cc_sc7280_reset_regmap_config,
+>>>>      .resets = lpass_audio_cc_sc7280_resets,
+>>>>      .num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
+>>>>  };
+>>>>
+>>>>  static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
+>>>> -    { .compatible = "qcom,sc7280-lpassaudiocc" },
+>>>> +    { .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
+>>>> +    { .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
+>>>>      { }
+>>>>  };
+>>>>  MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
+>>>> @@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>>>>      struct regmap *regmap;
+>>>>      int ret;
+>>>>
+>>>> +    desc = device_get_match_data(&pdev->dev);
+>>>> +
+>>>> +    if (desc->num_resets)
+>>>> +            return qcom_cc_probe_by_index(pdev, 1, desc);
+>>>
+>>> Won't this break SC7280 support by causing an early return?
+>>>
+>>
+>> The resets are not defined for SC7280.
+>> static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
+>>         .config = &lpass_audio_cc_sc7280_regmap_config,
+>>         .clks = lpass_audio_cc_sc7280_clocks,
+>>         .num_clks = ARRAY_SIZE(lpass_audio_cc_sc7280_clocks),
+>> };
+>>
+>> The reset get registered for SC7280 after the clocks are registered.
+>> qcom_cc_probe_by_index(pdev, 1,  &lpass_audio_cc_reset_sc7280_desc);
 > 
-> Add the required clock and reset which is used for the LCD TCON.
-
-Please mention here (and in the cover letter) that while those clocks
-do exist on every H616 die, the respective LCD controllers are not
-exposed on the H616 package, but only on the T507 and H700 version.
-
+> Could you please make this condition more obvious and error-prone
+> rather than checking one particular non-obvious property?
 > 
-> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
 
-Apart from the part, I compared the code against the T507 manual, that
-is a match:
+Dmitry, we had earlier tried [1], but seems like we could not align on
+this patchset.
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+If you are aligned, please let me know I can fall back on the approach.
 
-Cheers,
-Andre
+[1]:
+https://lore.kernel.org/all/20240318053555.20405-3-quic_tdas@quicinc.com/
 
-> ---
->  drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 24 ++++++++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun50i-h616.h |  2 +-
->  2 files changed, 25 insertions(+), 1 deletion(-)
+Do you have any suggestions that we could consider?
+
+>>
+>>>> +
+>>>>      ret = lpass_audio_setup_runtime_pm(pdev);
+>>>>      if (ret)
+>>>>              return ret;
+>>>>
+>>>>      lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc";
+>>>>      lpass_audio_cc_sc7280_regmap_config.max_register = 0x2f000;
+>>>> -    desc = &lpass_audio_cc_sc7280_desc;
+>>>>
+>>>>      regmap = qcom_cc_map(pdev, desc);
+>>>>      if (IS_ERR(regmap)) {
+>>>> @@ -772,7 +787,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+>>>>      regmap_write(regmap, 0x4, 0x3b);
+>>>>      regmap_write(regmap, 0x8, 0xff05);
+>>>>
+>>>> -    ret = qcom_cc_really_probe(&pdev->dev, &lpass_audio_cc_sc7280_desc, regmap);
+>>>> +    ret = qcom_cc_really_probe(&pdev->dev, desc, regmap);
+>>>>      if (ret) {
+>>>>              dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
+>>>>              goto exit;
+>>>>
+>>>> --
+>>>> 2.45.2
+>>>>
+>>>
+>>
 > 
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> index 190816c35da9..40ab6873b797 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> @@ -645,6 +645,20 @@ static const char * const tcon_tv_parents[] = { "pll-video0",
->  						"pll-video0-4x",
->  						"pll-video1",
->  						"pll-video1-4x" };
-> +static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd0_clk, "tcon-lcd0",
-> +			       tcon_tv_parents, 0xb60,
-> +			       24, 3,	/* mux */
-> +			       BIT(31),	/* gate */
-> +			       CLK_SET_RATE_PARENT);
-> +static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd1_clk, "tcon-lcd1",
-> +			       tcon_tv_parents, 0xb64,
-> +			       24, 3,	/* mux */
-> +			       BIT(31),	/* gate */
-> +			       CLK_SET_RATE_PARENT);
-> +static SUNXI_CCU_GATE(bus_tcon_lcd0_clk, "bus-tcon-lcd0", "ahb3",
-> +		      0xb7c, BIT(0), 0);
-> +static SUNXI_CCU_GATE(bus_tcon_lcd1_clk, "bus-tcon-lcd1", "ahb3",
-> +		      0xb7c, BIT(1), 0);
->  static SUNXI_CCU_MP_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0",
->  				  tcon_tv_parents, 0xb80,
->  				  0, 4,		/* M */
-> @@ -855,8 +869,12 @@ static struct ccu_common *sun50i_h616_ccu_clks[] = {
->  	&hdmi_cec_clk.common,
->  	&bus_hdmi_clk.common,
->  	&bus_tcon_top_clk.common,
-> +	&tcon_lcd0_clk.common,
-> +	&tcon_lcd1_clk.common,
->  	&tcon_tv0_clk.common,
->  	&tcon_tv1_clk.common,
-> +	&bus_tcon_lcd0_clk.common,
-> +	&bus_tcon_lcd1_clk.common,
->  	&bus_tcon_tv0_clk.common,
->  	&bus_tcon_tv1_clk.common,
->  	&tve0_clk.common,
-> @@ -989,8 +1007,12 @@ static struct clk_hw_onecell_data sun50i_h616_hw_clks = {
->  		[CLK_HDMI_CEC]		= &hdmi_cec_clk.common.hw,
->  		[CLK_BUS_HDMI]		= &bus_hdmi_clk.common.hw,
->  		[CLK_BUS_TCON_TOP]	= &bus_tcon_top_clk.common.hw,
-> +		[CLK_TCON_LCD0]		= &tcon_lcd0_clk.common.hw,
-> +		[CLK_TCON_LCD1]		= &tcon_lcd1_clk.common.hw,
->  		[CLK_TCON_TV0]		= &tcon_tv0_clk.common.hw,
->  		[CLK_TCON_TV1]		= &tcon_tv1_clk.common.hw,
-> +		[CLK_BUS_TCON_LCD0]	= &bus_tcon_lcd0_clk.common.hw,
-> +		[CLK_BUS_TCON_LCD1]	= &bus_tcon_lcd1_clk.common.hw,
->  		[CLK_BUS_TCON_TV0]	= &bus_tcon_tv0_clk.common.hw,
->  		[CLK_BUS_TCON_TV1]	= &bus_tcon_tv1_clk.common.hw,
->  		[CLK_TVE0]		= &tve0_clk.common.hw,
-> @@ -1062,6 +1084,8 @@ static const struct ccu_reset_map sun50i_h616_ccu_resets[] = {
->  	[RST_BUS_HDMI]		= { 0xb1c, BIT(16) },
->  	[RST_BUS_HDMI_SUB]	= { 0xb1c, BIT(17) },
->  	[RST_BUS_TCON_TOP]	= { 0xb5c, BIT(16) },
-> +	[RST_BUS_TCON_LCD0]	= { 0xb7c, BIT(16) },
-> +	[RST_BUS_TCON_LCD1]	= { 0xb7c, BIT(17) },
->  	[RST_BUS_TCON_TV0]	= { 0xb9c, BIT(16) },
->  	[RST_BUS_TCON_TV1]	= { 0xb9c, BIT(17) },
->  	[RST_BUS_TVE_TOP]	= { 0xbbc, BIT(16) },
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.h b/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
-> index a75803b49f6a..7056f293a8e0 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
-> @@ -51,6 +51,6 @@
->  
->  #define CLK_BUS_DRAM		56
->  
-> -#define CLK_NUMBER		(CLK_BUS_GPADC + 1)
-> +#define CLK_NUMBER		(CLK_BUS_TCON_LCD1 + 1)
->  
->  #endif /* _CCU_SUN50I_H616_H_ */
+> 
 
