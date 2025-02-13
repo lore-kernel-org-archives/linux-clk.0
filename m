@@ -1,189 +1,151 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B2E266B73
-	for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2025 21:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+Received: from mail.mvand.net (mail.mvand.net [185.229.52.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842E226E15D;
+	Thu, 13 Feb 2025 22:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.229.52.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739481179; cv=none; b=Do3u4oxWgO5ajt541JbPBwAWLCiqnA0k6LF28OqyohCiY9MlwNCAVWLb4k0SfVU21pbKmrT2xSyeGoSUUDklQHVu6DHP061ZKJ2YjA41wnDYZzNRrqR5/2R6NlV5u2FMdg6a8KNTNVFI7MNzbSy6h9GpMxwWkrojLGEJiBa4xkg=
+	t=1739485566; cv=none; b=aI+61OJ1w7NwRlZKustztxzzWorMdQgRqCwLUZ6RzuYmjPK/wZuwvVHgX68mUKJ3NG5GVXarU0RVuwmZf8U9rL3npQzYIHa2fuJg7RKl9Sa0YFs19Bl6tTNwap+l3iFsD+UFvkekiUJ0HfT2UA3Na8PlFYkp/Po1Amyy+4agNtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739481179; c=relaxed/simple;
-	bh=GU5EKBsXZ0eJtx8gWdltsHJFmXYyKXIQbjJRo0aYZgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S9P2LTu7kW8lTqnRYNDY5HH+Eriwzsq3R8W0/Redcn1siWe7qoZJvN/wDpAU9zPjotrKqDEascmxhiho1JzSCC7vYEJj/rm4oN0JaPrmoDW1i7IV+n4DuQeD7dhpI4m5QqWKs4v+ci39P37hCGkRrel56n07uz19V0kOdttVR2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=n5WZaoDY; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+	s=arc-20240116; t=1739485566; c=relaxed/simple;
+	bh=++zlBheuf2ghp6IKg2VkyhrcpY1H9g9JvPugZj9lb6c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ItujleHTMyDivYxde2Rv8tNb0aDPCir5ZnLrRexg+6EJb6nXSGhu43qI3mhHRZPF6ZMDvw0Yi9c7ys4YRXMEYsyqbZIyMs4AdzAuDhw4HCOHZNgsxsxFrCxbl/2+VYHjJ3YQOz+lYz9jh9TeY7mPOelI9PADTcwZC4oYkA7oaqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=martijnvandeventer.nl; spf=pass smtp.mailfrom=martijnvandeventer.nl; dkim=pass (2048-bit key) header.d=martijnvandeventer.nl header.i=@martijnvandeventer.nl header.b=wQ+otXL/; arc=none smtp.client-ip=185.229.52.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=martijnvandeventer.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=martijnvandeventer.nl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="n5WZaoDY"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab7ee6f54faso161390466b.2
-        for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2025 13:12:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1739481176; x=1740085976; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GU5EKBsXZ0eJtx8gWdltsHJFmXYyKXIQbjJRo0aYZgw=;
-        b=n5WZaoDYrcDOTqhAY7PALPZuAM5RX0e4cy30yr6wfMN4BjCPFODmZhgxqi6MQxLXIt
-         0h8pSgbD3iG9ZsErIu6HYiptUXJbWP4uiUj/oV+wQAm1JNS644Jhmw7GL5K0OrmMoygH
-         twh8l1w3yBDVdTpyii2Okp/NT9SiYO3lrFMrPLVuv1wR7ZB0xB7fiuTpMDaTeCbxx2r+
-         WKngoFZ1/o/4SJbe9LnFvuxeiiZiUAIZu+dM/TAqoDoRXMs+bNMmnl/coBHDQ6FvVgtK
-         VZBI+KJZ1bSU2eGfy16zitK8fauY2Gee1qdMJvkVy5lIYcu4N4Fo16QhqaVnkieHp8qs
-         Qa+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739481176; x=1740085976;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GU5EKBsXZ0eJtx8gWdltsHJFmXYyKXIQbjJRo0aYZgw=;
-        b=rtiZp4hQf5RHIFrjmnlZcdgtYAVeOS31zlLmKC1fIzf4e5NHW5Om1XYV0NC/v5CgmR
-         KWwvFBLM2Fc1bnkSVerlySgGnTqpVZhUWXvBuNCRYHml+gI6X8iGQiNc8zJfaRYswigj
-         DVFF2bXO6pM08GBfeMIbURVeI7f1+/JFF/MrPmwKrxTDcKup9rct+/PjxL5oVHq5DOAG
-         KqVEZOalUamIQPrYLEZUFf1UaQ7AnLpYC8zE9S8e8BSAFjBBHm4dr+pPH5+A8EGcAYGA
-         kgc9svSzA0KSZk1tyzhiJMZmFXnzlSo3xITlTYHg2QCWbXYJc7u5/mO+tYqH8yLuDp4L
-         6vmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjJZxYIZzjAHQpH4dE8BT5puitG07WnUxDrxRcty2rIxzGXOvGMGFR4jvUO9N8Y9Vi9uVaxSDm8KE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiW6o0ZtLRuRZ4ONHH3j50yF/O2p+mE7KFyP0zn4aItwpHWzrC
-	xW5KxUe8upyQr63dWeHxtMtqtj/4mq0bXn61kvp0Wzq69OMiiAWC2cjxY/+APO/8cVH19pn+o33
-	0FTKLO/iQwoEUEaIW2d/8rL4ynmTMHy2nTVFPYw==
-X-Gm-Gg: ASbGncsPyQ9n+/SlNXt1JymahuvXcE5PuJD6KGOlauhJmE4m0B0DHtamr6PgDX0dkDw
-	tzV1w3cjf0P9jzGAY41jcDXXpn18iSEI5RHAAsTZsiVX8XU+yYHBD5lcpV+iokVmhQEnNv6Vn
-X-Google-Smtp-Source: AGHT+IFLkOYux/AZD1CsLOqigpm7V6aZfKxqg/U6JY+qfqXEvwuM2AidB1/2uIOCxn6vFgt7OscVy95MylrJ55QfbDA=
-X-Received: by 2002:a05:6402:540a:b0:5dc:d8d2:e38f with SMTP id
- 4fb4d7f45d1cf-5dec9faaeebmr12089446a12.31.1739481175796; Thu, 13 Feb 2025
- 13:12:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=martijnvandeventer.nl header.i=@martijnvandeventer.nl header.b="wQ+otXL/"
+Received: from xrossbuild.mvand.net (mail.mvand.net [185.229.52.35])
+	by mail.mvand.net (Postfix) with ESMTPSA id 4E4D21FF3D;
+	Thu, 13 Feb 2025 23:17:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=martijnvandeventer.nl; s=default; t=1739485043;
+	bh=++zlBheuf2ghp6IKg2VkyhrcpY1H9g9JvPugZj9lb6c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=wQ+otXL/AsRnI0M5Wli7eTKcR1/hhmmL/vCU/O1IhJgNCGT7hTbuBSjpI+2RlDVQ2
+	 vNBKUGLbrLt7BuIbR/sr98pFGcsxJpO4V6wg7ZEfTK9x9PtOAL8a0vwBYaW0+jDfSE
+	 yv3oblxoousTZWjoAWLYGD3akzcFCRTO+f5jC51/VEjvVR7dUubb0MD8Rl0fSQWVdN
+	 QaXHBZkqMHh6HClJNQBSgndP8VJwIZ2HXQ2a4NZsoiEWa+ItYcVlLje011BRFs8yKe
+	 6CMAAdUy04lLaOLmm2IIYfOIZefKiENDwZzArE4ADVmbMHRE6EXVPKJTX1Y2yDE8yb
+	 PT6ice7j7RwIw==
+From: Martijn van Deventer <linux@martijnvandeventer.nl>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: meson: g12a: Fix kernel warnings when no display attached
+Date: Thu, 13 Feb 2025 23:17:01 +0100
+Message-Id: <20250213221702.606-1-linux@martijnvandeventer.nl>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
- <20250213171435.1c2ce376@bootlin.com> <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
- <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
- <821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch> <CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
- <20250213195304.3a2df02c@bootlin.com> <CAMEGJJ0kGCj=tjM6KswbG_+ZFkzMwPY+06BXCU0qSnbBKz0=ug@mail.gmail.com>
- <20250213220639.373da07b@bootlin.com>
-In-Reply-To: <20250213220639.373da07b@bootlin.com>
-From: Phil Elwell <phil@raspberrypi.com>
-Date: Thu, 13 Feb 2025 21:12:43 +0000
-X-Gm-Features: AWEUYZlVo_apDuZYuyVu1Lfe1LA9oZG5SHRyZ3oyNNk68YQAzKqOxyiz3nLno9I
-Message-ID: <CAMEGJJ2_HVKfsE3P22baadbzxSDAX=yTr=m76YuXa5A2cJsJig@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
- a DT overlay
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>, 
-	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
-	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
-	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, kw@linux.com, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
-	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
-	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
-	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
-	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 13 Feb 2025, 21:06 Herve Codina, <herve.codina@bootlin.com> wrote:
->
-> Hi Phil,
->
-> On Thu, 13 Feb 2025 20:15:06 +0000
-> Phil Elwell <phil@raspberrypi.com> wrote:
->
-> > Once more, with plain text, which I'd hoped the Android GMail client
-> > would work out for itself.
-> >
-> > On Thu, 13 Feb 2025, 18:53 Herve Codina, <herve.codina@bootlin.com> wrote:
-> > >
-> > > Hi Phil,
-> > >
-> > > On Thu, 13 Feb 2025 17:57:37 +0000
-> > > Phil Elwell <phil@raspberrypi.com> wrote:
-> > >
-> > > > On Thu, 13 Feb 2025 at 17:45, Andrew Lunn <andrew@lunn.ch> wrote:
-> > > > >
-> > > > > > > Or do you mean a custom board, which has a CPU, RP1 and the button and
-> > > > > > > fan are directly on this custom board? You then want a board DTS which
-> > > > > > > includes all these pieces?
-> > > > > >
-> > > > > > That depends on whether you count the Raspberry Pi 5 as a custom board.
-> > > > >
-> > > > > So you mean the Pi 5 board would itself make use of the resources the
-> > > > > RP1 device has? They are not simply connected to headers for plugin
-> > > > > boards, but used by the main board? Hence you want to describe them in
-> > > > > the board .DTS file.
-> > > >
-> > > > That's correct. But even for plug-in devices, those which are on
-> > > > non-discoverable buses need overlays to declare them, which causes a
-> > > > problem when the overlay application happens before the kernel is
-> > > > started.
-> > > >
-> > >
-> > > Hum, I see.
-> > >
-> > > We worked on overlay usage on non-discoverable buses wired to a connector
-> > > and we did a talk about issues we are facing on at Plumber [0].
-> > >
-> > > You can also find our big picture in [1] and a last contribution introducing
-> > > export-symbols feature in [2]. export-symbols is also under discussion on
-> > > some other threads.
-> > >
-> > > Also, we proposed the i2c bus extensions feature [3] whose goal is to allow
-> > > an addon board to add devices on an i2c bus provided by a base board and
-> > > wired to an connector the addon board is connected to.
-> > >
-> > > Maybe in your case, you can decouple resources (gpio, pwm) provided by the
-> > > addon board and used by the base board using also nexus node.
-> > >
-> > > We use a nexus node [4] (not presented at the Plumbers talk because the idea
-> > > came during 'out of talk' discussions in Plumbers) in order to allow our
-> > > addon board to use resources provided by the base board.
-> > >
-> > > In your case, if I understood, you are in the other direction but why not
-> > > using also a nexus node to decouple and translate resources in this other
-> > > direction ?
-> > >
-> > > Don't know if this idea can help but feel free to ask for some more
-> > > information if needed.
-> >
-> > Nexus nodes look interesting - I see them as adding a layer of
-> > abstraction such that, for example, boards can declare which of their
-> > specific resources performs a common function so that clients can
-> > treat them all the same. We do the same thing in a limited way by
-> > using common labels on nodes, but this goes much further.
-> >
-> > In the case of Pi 5 and RP1, I imagine you are proposing that the Pi 5
-> > dtb declares the connector node and the overlay fills in the content
-> > with references to its GPIO controller, PWM controller etc. However, I
-> > think the overlay would also have to be board specific because it's
-> > not possible to patch part of a property from an overlay, so you'd end
-> > up overwriting the GPIO number as well as the controller reference.
-> >
-> > What is needed to make this work is the ability to cope with
-> > unresolved references in the base dtb, to be resolved as each overlay
-> > is applied, with runtime checking that each reference is resolved
-> > before it is used, all of which sounds like a nightmare. Plus, we
-> > really don't want to have to change the way all our camera and display
-> > overlays work on all Raspberry Pis just to accommodate somebody's idea
-> > of how RP1 should be handled.
->
-> Just to be clear, my comments were not there to tell you how RP1 should
-> work. I just proposed ideas without trying to force anything and I can
-> fully understand that ideas proposed don't feed your needs.
->
-> Sorry if my approach was misunderstood.
+When booting SM1 or G12A boards without a dislay attached to HDMI,
+the kernel shows the following warning:
 
-I feel I've been misunderstood - I appreciate your ideas.
+[CRTC:46:meson_crtc] vblank wait timed out
+WARNING: CPU: 2 PID: 265 at drivers/gpu/drm/drm_atomic_helper.c:1682 drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+CPU: 2 UID: 0 PID: 265 Comm: setfont Tainted: G         C
+Tainted: [C]=CRAP
+pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+lr : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+Call trace:
+ drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+ drm_atomic_helper_commit_tail_rpm+0x84/0xa0
+ commit_tail+0xa4/0x18c
+ drm_atomic_helper_commit+0x164/0x178
+ drm_atomic_commit+0xb4/0xec
+ drm_client_modeset_commit_atomic+0x210/0x270
+ drm_client_modeset_commit_locked+0x5c/0x188
+ drm_fb_helper_pan_display+0xb8/0x1d4
+ fb_pan_display+0x7c/0x120
+ bit_update_start+0x20/0x48
+ fbcon_switch+0x418/0x54c
+ el0t_64_sync+0x194/0x198
 
-Perhaps it would help if you could outline how you think we could
-apply your suggestions?
+This happens when the kernel disables the unused clocks.
+Sometimes this causes the boot to hang.
 
-Thanks,
+By (re)adding the flag CLK_IGNORE_UNUSED to the VCLK2 clocks, these
+clocks will not be disabled.
 
-Phil
+This partially reverts commit b70cb1a21a54 ("clk: meson: g12a:
+make VCLK2 and ENCL clock path configurable by CCF").
+
+Fixes: b70cb1a21a54 ("clk: meson: g12a: make VCLK2 and ENCL clock path configurable by CCF").
+Signed-off-by: Martijn van Deventer <linux@martijnvandeventer.nl>
+---
+ drivers/clk/meson/g12a.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index cfffd434e998..1651898658f5 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -3234,7 +3234,7 @@ static struct clk_regmap g12a_vclk2_div = {
+ 			&g12a_vclk2_input.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_GATE,
++		.flags = CLK_SET_RATE_GATE | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
+@@ -3270,7 +3270,7 @@ static struct clk_regmap g12a_vclk2 = {
+ 		.ops = &meson_vclk_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
+@@ -3354,7 +3354,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
+@@ -3368,7 +3368,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
+@@ -3382,7 +3382,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
+@@ -3396,7 +3396,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+ 	},
+ };
+ 
+-- 
+2.39.2
+
