@@ -1,118 +1,90 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31A920D4F2;
-	Thu, 13 Feb 2025 09:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F5420A5DC
+	for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2025 09:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739438181; cv=none; b=nYM6BO8xm1KLC8p2CH6WPfH56eQAj99brO+YS675+5+CdzqvXALfNNL4yGxIAIaFwwY+NgvWiIzd0MP2Qv6uB36PVQ4FlVhJONpZYzFJ337rbWB1nB4fh3j423bG+J4Ig+LpQXK6J1zVK+4ehDtUD9lPaJzqs5nBy/ptg02nhH8=
+	t=1739438864; cv=none; b=FDR72OaYbixHzXCeh3rembLoWHwqiYKStiQvqR2BGzdPvkQH8s0ae1aLf3j7CAQlvaAWUkweRI6Zvx1laJ2Z235sGdSwlPYLV/w/JzOVnZ0m71fI7P/iHhtARD7Wgcp6UyYgLcY/2saJdE+s52r02eprGyXrjAQFbBVaI4IdTd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739438181; c=relaxed/simple;
-	bh=3zJFNSKbu3I7a6dKS4WaJ6Z+tpm3UXjS3mMZyMR95b4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aMyBQyiUYWPZIhe6YGNQEAnzIPmIZlOw/Ku0AsOMwy8y1r5Tb3hsEvs7RdUHpEqE5oVouBJ1DyPj9Y/r+xZTF0MHWLhibQBB54bTRRAlg6q9cIGTljFC2zOXdhomg/UwbAzc0BDbd3m9rSCfVn04KZHgFXeAYYKP5tgwrJBOiVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UbZ0iLnD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1739438864; c=relaxed/simple;
+	bh=VDL0uOf7T+TaCXbMfwI4rehvDdg7Qqg1J9JvQJ5p670=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gMIaJOQC51wAUSagIWgrrZlZkOp53vJS+vtGqzTEqsRCDduEdAAw5wq9Q/Nn83XvN8KbC+97NYMft9BccFkjxAEfqQR5qq9OuMnbKQfAH/imnWlFL4/xfTsc8u71TDLieCCHUN7RsBQyrHYR5A9ro+hCbNKD7BceMrW0gkWx4+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=SgYp9BO+; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UbZ0iLnD"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51D05eqb002493;
-	Thu, 13 Feb 2025 09:16:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	b6c7aU1FwFS9e82x4bDgTLiYBRWSCyA8OWoEzOOkMVM=; b=UbZ0iLnD7IELmZ6Q
-	p4sCJzw/gaKsFiiJLXiASupIjnbvnpskW2KAwxWZzlDUIYFwA+N1b66KC8HTDZQx
-	Cqj/Kkg/DTldmocmOLQ4JemARh5K90pMmrqmINxwtCByFIhj7Qzf5X7pzlKlCb4k
-	cyzdweUCxsKTdIzQSLMuqR5E6544avXumzknRK6Y7/cddb0a3FaznywKyFvJK12F
-	ax/LowwcGMoHcKQmtKwCYcEACjWBlRt2wi9uQlZyTxoTs5pHiT7xbqkEs4NErlsy
-	Skw7MBNIUqykZYdSSi/c4f15gXJZZfrBDxB+fKloFsqUGyilZKK9W/4tywEleupA
-	Ji8LQg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44s5w495gf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 09:16:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51D9GEid017503
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Feb 2025 09:16:14 GMT
-Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Feb
- 2025 01:16:09 -0800
-Message-ID: <0300a27f-5228-4f24-b011-5043a0b740bf@quicinc.com>
-Date: Thu, 13 Feb 2025 14:46:06 +0530
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SgYp9BO+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=HUhoK5tjELfjF0
+	VqSsnZsbkAizYp2E8hPEyT0wBFLSU=; b=SgYp9BO+sJEDfmB6Dla7eOwn+K7vbG
+	f+PSyGCy8Um/Gk907fN5lQbRGOOTm9xC7lGPK/rhyUFBqXwwTIpWzKjz8gAvpxIh
+	bbwt56fszeCSRw/vWlAfZ01U90t/fHw41zPTJNpF4TlzEC9UOP6nmks2uAdQMga/
+	xg28hCz/d7HEpxKFiJVp0Q8d5iaiXyc2dkkgI2dzmsALBpfvDs1m1UOqqELRQ5ma
+	hqto6+7Bn/uBMCa6AssmmQfyfuKw6nrJgwRslKqFkwJM48NlSQ1F4pu0sDFndk0a
+	I1NVAkLHToUckfzOcyk+mYRpH8Ic9eYnjECoMqJIjV2fWVDVmMtMLhQA==
+Received: (qmail 1812528 invoked from network); 13 Feb 2025 10:27:31 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Feb 2025 10:27:31 +0100
+X-UD-Smtp-Session: l3s3148p1@PcbTqgIu6LVehh99
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: clocks: atmel,at91rm9200-pmc: add missing compatibles
+Date: Thu, 13 Feb 2025 10:26:34 +0100
+Message-ID: <20250213092728.11659-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: qcom: Add compatible for
- QCM6490 boards
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
- <20250212-lpass_qcm6490_resets-v3-1-0b1cfb35b38e@quicinc.com>
- <20250213-banana-bullmastiff-of-fascination-dbb65b@krzk-bin>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20250213-banana-bullmastiff-of-fascination-dbb65b@krzk-bin>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bAZCJT2QKb96lqUW6DSEVuNMlF-mbDLI
-X-Proofpoint-ORIG-GUID: bAZCJT2QKb96lqUW6DSEVuNMlF-mbDLI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-13_03,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- phishscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
- suspectscore=0 mlxlogscore=761 priorityscore=1501 adultscore=0
- malwarescore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502130070
+Content-Transfer-Encoding: 8bit
 
+The driver support more SoCs. Add the missing ones.
 
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-On 2/13/2025 1:45 PM, Krzysztof Kozlowski wrote:
-> On Wed, Feb 12, 2025 at 01:52:19PM +0530, Taniya Das wrote:
->> @@ -130,6 +131,19 @@ allOf:
->>          reg:
->>            maxItems: 1
->>  
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            const: qcom,qcm6490-lpassaudiocc
->> +
->> +    then:
-> 
-> You need to constrain everything, also clocks. See all other examples.
-> 
+Changes since v1:
+* add new compatibles also to clock restrictions (Thanks, Krzysztof!)
 
-Sure, I will take care to update in the next patch.
+ .../devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml       | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> Best regards,
-> Krzysztof
-> 
+diff --git a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+index 885d47dd5724..e803a1fc3681 100644
+--- a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
++++ b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+@@ -34,6 +34,8 @@ properties:
+           - enum:
+               - atmel,at91rm9200-pmc
+               - atmel,at91sam9260-pmc
++              - atmel,at91sam9261-pmc
++              - atmel,at91sam9263-pmc
+               - atmel,at91sam9g45-pmc
+               - atmel,at91sam9n12-pmc
+               - atmel,at91sam9rl-pmc
+@@ -111,6 +113,8 @@ allOf:
+             enum:
+               - atmel,at91rm9200-pmc
+               - atmel,at91sam9260-pmc
++              - atmel,at91sam9261-pmc
++              - atmel,at91sam9263-pmc
+               - atmel,at91sam9g20-pmc
+     then:
+       properties:
+-- 
+2.45.2
 
