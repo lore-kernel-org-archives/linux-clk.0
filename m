@@ -1,151 +1,153 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA5E23A98D;
-	Thu, 13 Feb 2025 13:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727A7221721
+	for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2025 13:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739453400; cv=none; b=s6Aq5G0xuvi5poRjETcGcMZHmv1WTxcalgFbYnIVQGVkV7lTmxlQaqC70esdOA0Ukdpb/2wLWWl49OnruGdfv84LKBDO5XwsopwX9dzjdocDNBKKgHxwZx8C7vAZN7xMqvj9oiqTZhI3DbHp+fOMgN1jFQMP81TMYISYJsIE6yc=
+	t=1739453762; cv=none; b=g0oCJG7hm3n0QsUA4hNPnxKYLS76z4zTn3JqELzXlATuqMOyYUmCDEjD/JftT6avWgsJ3DhN/im9ukthqmM3nMa8n0pIfcn/xMhlfyZ9pSDDcL8w/0owOaBmanG/NqidOwH5c1hIMApfqRJKpZVwrjE8+XA4TfgLFMKxe1E518Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739453400; c=relaxed/simple;
-	bh=NMQPNDCcm8JGx9RYby7i9GevlsbEO++oBZ/hdEV5koI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k2Mv7YKRQHxdFRrEf18gwiYzmQcK+O4jg49J49wB+H2t7MFfruAmpneV3k9YJkwg26Xw18BqnwRtjQHo9BKNI93ZZQ4EFqhXqog99pAvdt3mKAEGbwcBTvC4UfzBLVfg+44h5syw8fvkaPSoRYqkkeCcO2tGOp1/jYPgThO8B0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5ded6c31344so348321a12.1;
-        Thu, 13 Feb 2025 05:29:57 -0800 (PST)
+	s=arc-20240116; t=1739453762; c=relaxed/simple;
+	bh=yVvqosbfBaZN59lYnyfV7wTLt5V4gEraGzYMEdvy9dQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZuWkd3NciHORxjbvyJ3Fq8QseBfv3e+h2s+JpQVSTDrw/46DyH38xqB0of+6ABswVfpKbFnF2m/cJCfhZzPLorEB4mUuiKJYWzqsBv8JLJXgQkvuXkps8rBIe0NhnY1bEUC9h8TuZABUZ+oedbrn1p/KPXo+YgiVzKbFjKBkIto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Kwt7lkya; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Kwt7lkya"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4395f81db4dso5337215e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2025 05:36:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739453759; x=1740058559; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4lyrHtSipeKghn9xCx+8COWh0BWty29N6DnBPAUwOek=;
+        b=Kwt7lkyaR7i6RrsjyNhunBJrvwQ8PXiwnQrRIwvma4UE9b7JHJrXhnWmKdcHFUd412
+         vgm9xVjTo4qjZ/7U96UoghzM4axpKsuVKDaGOsPAg1CAU5hd6tl8gh4QSYcueulLlTHu
+         FOFu3Md9p8T/s9a0/YQyUG/UOD3FVUaXvm8N22vT6JNGk/nWq/9a0J/HyI9gZBY9p7ZQ
+         82VSje2duFX2/HKYxhCsKl0XibsWajIn52wj4a+mulVCLFUTii/5xS/04GoYzQkwpuIr
+         4K0edys8eZrTSRk52uIyTxC96ieJjwefLQETEldsFGRnnjeL71qnfYv+L1h529jznoOG
+         8kZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739453396; x=1740058196;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2+Osd+o4oeF7UOkAzBL7Y6gvuaR3T2ZzMDs5XXXCLJo=;
-        b=bpBBGIpwzvfowGrqczILW5M6c2ldWLBZJhpFs/Dd/2srBUCeYviHvY/OKkq8PjHpuP
-         ZozyUMZlgEqrc2YELSqKgCIMsElVVpDID6IngZrWVWQvKAItHK35B0eZ2JxesHn9veMG
-         YmtXVPdxrB9mkW3E+N34xZG4QqFKKDeXBmgo4dKfkOchWqhUaMKsQQDGslBBgbbLL9FD
-         LtXIegmJqvkeouav4fhgAnWtBGJ2jKhWLk5mpqSqMJDEaK9trmTJFF4KL1LumClqJ6c4
-         6vGmaOC0Umsn7J0RdGkdQz27rki5V+zjq0Jc0rz7BlS46fBGZDknTaJguKKq3tYpwFJU
-         76ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqcfr/2ZmC5xOnYvwWhXV00zuhu9plW+UaglI/io3//y2fUM3F7xJP6Qp8YQ0oH7wlgJpkRRgiWPlg@vger.kernel.org, AJvYcCW5z5NWjZ+xFNbzYCK57xSOA/mmf9PliWnxdBgZPrJKNwQUzfybraEA9etQV+eitn3Ac656+KjVncyW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv6X63MKJVekSS4KM22yIIneePl5zS2x9wx3GmiR3zB+FYj9eZ
-	e4INJ+uMWnH6vdhEpCSy1KskqeiBS68e5v8byNQO/FBOyvsvOYE6Jy+i4+jrDnI=
-X-Gm-Gg: ASbGncsZWdxvhCNmSTpgAzJSeyvTBkM9JvI2O6/ne4NUuSvrNfTM4/kRgj+582RGZ9m
-	7J1cRnIjPk3InECeHCMsUPypk2j65f1SRz/xtMTwnddFAed2htnYmTaPJn6dag/zXnp2D9zfSiL
-	fQxLC7OavC30zMSnw69Ci933Jjk16R26PooJndt32KEHsYAKlKypG6ByDR58+lJ8A+zSV52EhtJ
-	IgJ1APAVzxr9Ngxl6UPXa/leMWoo8C1X+fE6QoKWvmylYmTZhnFt9Qf/o2hsDG9Zjfex3GbF2KP
-	9TLcCs2rpLiU/Ad78oEOOUQap9cmEv6tcQXpgALT1abSJkZydPpX1A==
-X-Google-Smtp-Source: AGHT+IEiv/yzS8DfAB4izud73af1Vjg/Ybj9hCzvC7helmQxRGPyCEdEvmZB6EqtRxuj/yAQIrMT1g==
-X-Received: by 2002:a05:6402:13c9:b0:5dc:796f:fc86 with SMTP id 4fb4d7f45d1cf-5dec9d4a4ccmr7112162a12.16.1739453395646;
-        Thu, 13 Feb 2025 05:29:55 -0800 (PST)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53258215sm132963266b.53.2025.02.13.05.29.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Feb 2025 05:29:55 -0800 (PST)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5dcdb56c9d3so1314576a12.0;
-        Thu, 13 Feb 2025 05:29:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUXXnj7xmazbKK5njoLjV+F7aDAhypx5nF/AdLXFO7evbzbHnFDJ9XHi212m1M6IGYR6SooVJhhIkwl@vger.kernel.org, AJvYcCWXKWrtYy+mTeH4ruX22PfYsMiyV7T2uXY2/3D2FXRfZiMuvwPmL6OvfEBjf8fZ4+aJLGHQLHTgCuDp@vger.kernel.org
-X-Received: by 2002:a05:6402:3606:b0:5dc:a44e:7644 with SMTP id
- 4fb4d7f45d1cf-5dec9d2c125mr8162950a12.2.1739453395177; Thu, 13 Feb 2025
- 05:29:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739453759; x=1740058559;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4lyrHtSipeKghn9xCx+8COWh0BWty29N6DnBPAUwOek=;
+        b=gVJOW3tmGUFuzcw37zjC1XVJh7CDvPc5KDK7DW4tumi7Z0WSm/LalY8sG8aU7VrUyb
+         mlp7D2AX4khZxV6GMWK7kjP2nvzVKNoh3LV9TnK4B1UpTzVxn+amGfYcozSZAItbse7h
+         zeUr0luQRDNfa6B2bAM7EpVU9NghdWHGj8VWp+xEOxcc5277x9U8IqsVueqfWqGhtpbI
+         QeLT2qL9JTOX1wPjraUyF27gEGcEqQPOQeCXhMixVhrSuaB2u7W2G25Z1oSkhXPOJdYJ
+         IjKobrgThddgA6gF76ivGzlOiexucEg2Ylp9fp+27HGiuy3os02AsxGnz7RrFFLqpXK2
+         9Jig==
+X-Forwarded-Encrypted: i=1; AJvYcCVilGhZib6NoqHBKTRMu1/xzaNdiIiVCowIzBrUv4B9iAYimr/9a4BIx6zhMlAIi16UFZZWqOcQFMw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4G2vYj6MPmN9oIlWy8Wvq/bhyCvKEFdqr2qO8F4ihieiRNSs7
+	l54pYKZgSQSc510vr6NPgpBKN4ldfVkEmWPNTK1803GaxKE+/Tlp2bzl0VzkSHc=
+X-Gm-Gg: ASbGncuKriLNzxQ0HxR1AHK7oaWKNeQ17BrNN8QC6vhc+If8prdqOQBD93Ks8i7BdKi
+	0DBZQctV3APKS3J+ruFCkvKQY2z0J58b+2WCe0Fsqy51yZYnOLhBf/BosIFXfIKOvzL2BeeTnr8
+	f8iC7s+C4SwJsi2oWlpMzzgrcODWUdN1PXnTX9RtfdziCwkut0Z5CBWZ5xmtSiwdBqHgcEqKCb8
+	EG4GshP3Bq0i8XKfcKGUSNAEy+XtIJsstuyOndbpsigRWwEdbu7/xq0YBrz4vajy2mSCJ2AFnjs
+	4ucsgIxf23KZ7g==
+X-Google-Smtp-Source: AGHT+IFlyyROQN/jp5N25OPHAwGGncnJ/FLwqH6qkR/P/8dmal2Zk5G/l0wZieziiMnBJNT5H1Y22g==
+X-Received: by 2002:a05:600c:a0c:b0:434:f1bd:1e40 with SMTP id 5b1f17b1804b1-43960e81b92mr29235125e9.6.1739453758160;
+        Thu, 13 Feb 2025 05:35:58 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:b617:2c1:fc8c:2705])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4395a056151sm49618825e9.16.2025.02.13.05.35.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 05:35:57 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: "Arnd Bergmann" <arnd@arndb.de>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Dave Ertman"
+ <david.m.ertman@intel.com>,  "Ira Weiny" <ira.weiny@intel.com>,  "Rafael J
+ . Wysocki" <rafael@kernel.org>,  "Stephen Boyd" <sboyd@kernel.org>,
+  "Danilo Krummrich" <dakr@kernel.org>,  "Conor.Dooley"
+ <conor.dooley@microchip.com>,  "Daire McNamara"
+ <daire.mcnamara@microchip.com>,  "Philipp Zabel" <p.zabel@pengutronix.de>,
+  "Doug Anderson" <dianders@chromium.org>,  "Andrzej Hajda"
+ <andrzej.hajda@intel.com>,  "Neil Armstrong" <neil.armstrong@linaro.org>,
+  "Robert Foss" <rfoss@kernel.org>,  "laurent.pinchart"
+ <Laurent.pinchart@ideasonboard.com>,  "Jonas Karlman" <jonas@kwiboo.se>,
+  "Jernej Skrabec" <jernej.skrabec@gmail.com>,  "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>,  "Maxime Ripard"
+ <mripard@kernel.org>,  "Thomas Zimmermann" <tzimmermann@suse.de>,  "Dave
+ Airlie" <airlied@gmail.com>,  "Simona Vetter" <simona@ffwll.ch>,  "Hans de
+ Goede" <hdegoede@redhat.com>,  Ilpo =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,  "Bryan O'Donoghue"
+ <bryan.odonoghue@linaro.org>,  "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>,  "Gregory Clement"
+ <gregory.clement@bootlin.com>,  =?utf-8?Q?Th=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>,
+  "Michael Turquette" <mturquette@baylibre.com>,  "Abel Vesa"
+ <abelvesa@kernel.org>,  "Peng Fan" <peng.fan@nxp.com>,  "Shawn Guo"
+ <shawnguo@kernel.org>,  "Sascha Hauer" <s.hauer@pengutronix.de>,
+  "Pengutronix Kernel Team" <kernel@pengutronix.de>,  "Fabio Estevam"
+ <festevam@gmail.com>,  "Kevin Hilman" <khilman@baylibre.com>,  "Martin
+ Blumenstingl" <martin.blumenstingl@googlemail.com>,
+  linux-kernel@vger.kernel.org,  linux-riscv@lists.infradead.org,
+  dri-devel@lists.freedesktop.org,  platform-driver-x86@vger.kernel.org,
+  linux-mips@vger.kernel.org,  linux-clk@vger.kernel.org,
+  imx@lists.linux.dev,  linux-arm-kernel@lists.infradead.org,
+  linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v3 7/7] clk: amlogic: axg-audio: use the auxiliary reset
+ driver - take 2
+In-Reply-To: <73c1ab6b-fd5e-47e3-8815-8f74758535f1@app.fastmail.com> (Arnd
+	Bergmann's message of "Thu, 13 Feb 2025 13:26:12 +0100")
+References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
+	<20250211-aux-device-create-helper-v3-7-7edb50524909@baylibre.com>
+	<73c1ab6b-fd5e-47e3-8815-8f74758535f1@app.fastmail.com>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Thu, 13 Feb 2025 14:35:56 +0100
+Message-ID: <1j1pw20xxf.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <devicetree-org/dt-schema/pull/154@github.com> <d385e871-f33f-4133-8347-3f108f8a6736@kernel.org>
- <CAMuHMdWLWDTi1jeSOGKDAmvhGZzxAVTM-NjBJzW__1jfECHFQg@mail.gmail.com> <20250213134247.GB1208@localhost.localdomain>
-In-Reply-To: <20250213134247.GB1208@localhost.localdomain>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 13 Feb 2025 14:29:41 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX78GBk3Fm-USGgGyCo+Fy028qccLrDuE1Vrkw=OAz1Vw@mail.gmail.com>
-X-Gm-Features: AWEUYZmQlQcufE1xuHcnAspRmTS4_fhlUKRp9i2xKersWeA-cgKKFe9Y3mXqLoA
-Message-ID: <CAMuHMdX78GBk3Fm-USGgGyCo+Fy028qccLrDuE1Vrkw=OAz1Vw@mail.gmail.com>
-Subject: Re: [devicetree-org/dt-schema] schemas: introduce assigned-clock-sscs
- (PR #154)
-To: Peng Fan <peng.fan@oss.nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor@kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hi Peng,
+On Thu 13 Feb 2025 at 13:26, "Arnd Bergmann" <arnd@arndb.de> wrote:
 
-On Thu, 13 Feb 2025 at 13:35, Peng Fan <peng.fan@oss.nxp.com> wrote:
-> On Thu, Feb 13, 2025 at 11:16:31AM +0100, Geert Uytterhoeven wrote:
-> >On Fri, 24 Jan 2025 at 15:42, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >> Just FYI, below is a foward of pull request for dtschema for bindings
-> >> adding spread spectrum to clocks. As Clock framework maintainers this
-> >> might be relevant to you.
-> >>
-> >> -------- Forwarded Message --------
-> >> Subject: [devicetree-org/dt-schema] schemas: introduce
-> >> assigned-clock-sscs (PR #154)
-> >> Date: Fri, 24 Jan 2025 04:31:30 -0800
-> >> From: Peng Fan <notifications@github.com>
-> >> Reply-To: devicetree-org/dt-schema
-> >> <reply+ACPRLI5YLXX27TFZX2P7NVOFT5USFEVBNHHKO4ZXHM@reply.github.com>
-> >> To: devicetree-org/dt-schema <dt-schema@noreply.github.com>
-> >> CC: Subscribed <subscribed@noreply.github.com>
-> >>
-> >> To support spread spectrum clock, introduce assigned-clock-sscs, it is
-> >> an uint32-matrix with format multiple elements of below
-> >> &lt;modfreq spreadpercentage modmethod&gt;, &lt;...&gt;
-> >> You can view, comment on, or merge this pull request online at:
-> >>
-> >>   https://github.com/devicetree-org/dt-schema/pull/154
-> >>
-> >> -- Commit Summary --
-> >>
-> >>   * schemas: introduce assigned-clock-sscs
-> >
-> >>   assigned-clock-sscs:
-> >>     $ref: /schemas/types.yaml#/definitions/uint32-matrix
-> >>     items:
-> >>       items:
-> >>         - description: The modulation frequency
-> >>         - description: The modulation depth in permyriad
-> >>         - description: The modulation method, down(2), up(1), center(0)
-> >
-> >Is there a way to explicitly disable it, if it was enabled by the
-> >firmware? See also my comment in "Re: [PATCH v2 1/4] clk: Introduce
+> On Tue, Feb 11, 2025, at 18:28, Jerome Brunet wrote:
+>>
+>>  I also think this is more readeable and maintainable than a bunch of
+>>  'default CONFIG_FOO if CONFIG_FOO' for CONFIG_RESET_MESON_AUX. This approach
+>>  also would have several pitfall, such as picking the value of the first config
+>>  set or the config of RESET_MESON_AUX staying to 'n' if CONFIG_FOO is turned on
+>>  with menuconfig.
 >
-> The binding here is just to describe the parameter to configure
-> spread spectrum of a clk.
+> I still think you should just drop the 'imply' line, all it does it
+> force reviewers to double-check that you didn't make a mistake
+> here, so it's a waste of time.
+
+Arnd, you've made you preference clear and this note has been added
+specifically for this reason, and transparency. 
+
+I've exposed a technical reason for my choice. Going with the 'default'
+approach makes things more difficult in the long run for those
+maintaining this platform, me included.
+
+The trouble of having to coordinate changes in 2 different subsystems to
+have an appropriate configuration and the pitfalls of using 'default'
+outweigh the extra review trouble of using 'imply' ... especially when
+the pitfall mentioned in documentation is explicitly addressed in the
+description.
+
+If there something wrong with 'imply' existing and being used, maybe the
+Documentation should be updated to reflect this, or the support be
+removed entirely.
+
+ATM, it exists and it makes things a lot easier for me to support and
+maintain this device.
+
+This all started with a maintainer request to move some resets away
+from clock. More requests have been added along the way, making things
+more generic. I'm more than happy to have contributed my effort and
+time on this and I don't think anybody's time has been wasted so far.
+
 >
-> To disable spread spectrum, the clk_hw_set_spread_spectrum could be
-> used with enable as false or as you suggested using CLK_SSC_NONE_SPREAD?
-
-But the bindings don't have an enable flag...
-
-> >clk_hw_set_spread_spectrum".
-> >
-> >>           minimum: 0
-> >>           maximum: 2
-> >
-> >What's the meaning of these limits?
->
-> Modulation has three methods:
-> Down-spread modulation
-> Up-spread modulation
-> Center-spread modulation.
->
-> I use 2 for down, 1 for up, 0 for center here. So the limits:
-> min: 0, max: 2.
-
-Silly me, they apply to the last description...
-
-Gr{oetje,eeting}s,
-
-                        Geert
+>     Arnd
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Jerome
