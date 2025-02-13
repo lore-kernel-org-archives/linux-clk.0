@@ -1,126 +1,112 @@
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB73202C4C;
-	Thu, 13 Feb 2025 17:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2B815539A;
+	Thu, 13 Feb 2025 17:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739466462; cv=none; b=njKsgs1rW0h/sWLjEcn4/Ff0UURyaMa8HtlPA0ssNJWnKs5cWyII6b2txl1oqL9llTX3Cn1rC6YQPgdFUxbINYHaFFeFCapv6tE/zLSujcGlVVAxMLQXEPfhvgRjfxwir9f4kCkLZ/tmOKCz5qo/V+WTK5UrVhDdS6JArDnDQN4=
+	t=1739467517; cv=none; b=vGntKmBajEevcGj3IjmK5nhw0hZPHgfIcKqLWxCrtHBEzQGEHqvwN/fObjmxu2JUixjFhJCWJUwNR5Q77o2SdC7FJwrXfdAVgQgBt/Vf4otwlwgUIrL3zloU+eJprhE4Wk5W95axggQAY53fy9OStOZumdLnRZ0CBvBUhBuUHWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739466462; c=relaxed/simple;
-	bh=W4OErFGysDwGXaHwpzIF3REBjPTSH176IPgpfA/4uJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Dx5pHIT1jWLtPbBA5vVTA+SexOV5kaFHBwYdsWeXkBPkPT4v8W97NoYpcCck7ZrKGZy90JnTkz4GTOGhc4qC1XVIkzGnag4jnwVJ5stM/J3D19mcuxGcNfDGEM4OlTY0yd8w3kiMULLJq8uk6XbWKXBqyRJ8jo+bBIVGWydRD6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SIO/nQJZ; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1739467517; c=relaxed/simple;
+	bh=VMYWSsH8QrPxZbFQtUpelBA46x5+bWjvZ2r99Z1W3HQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TtjmcvCdQ7oF/Lhkfp1jd6Z0mIY1p4hVuPmuzyIXxJtuG1K7on8hX1Nx6mmMUNYKBRKky7sClkPFBzgMjF223Jzao2p9S7QdHpJdR0DEzOIfQKO8zYxrLbIWKcysYoR/t8XNlGkXNo5wijOtTZO8nV1hV6x4bKR02mR8BgKEGR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ELTXc3+A; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SIO/nQJZ"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 393344445D;
-	Thu, 13 Feb 2025 17:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1739466457;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pkRWv4JP/idAuAK+mR/AdT1Zif8+aeGhHShLWeul7BY=;
-	b=SIO/nQJZv43iVUadTFzcCneOf8JkXKitdCkSooThMyMJzhEtByvC05ZJRe+qnJb/hviIcI
-	DH1RlVBOcZUqBeq9xEK6DmbHgonpPz9mVKmv4RhCMF9auDacoaHaLoXmEuBwuRv9JFluok
-	R+vvrhaltCo9NJVrf1vIjkj1uum3p2wE0077wC72ivgzPLxTyM/tZOoCphmdDWNcgUliLM
-	ArcBDF9EmKibqx6ABf+zoGTTDy6zLJFFstjH4YZCudasC5tLxeNCZcnWE4sS3bBeDS/SY6
-	FPPv3yskQLPfHk+3OFCdoLIf7LGAA5/lAAvIaGp0Ave040GhGpDoHn4d3HfKIQ==
-Date: Thu, 13 Feb 2025 18:07:33 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Phil Elwell <phil@raspberrypi.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta
- <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>,
- "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE"
- <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com,
- brgl@bgdev.pl, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
- <conor+dt@kernel.org>, derek.kiernan@amd.com, devicetree@vger.kernel.org,
- dragan.cvetic@amd.com, Florian Fainelli <florian.fainelli@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
- kw@linux.com, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel
- <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "open
- list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
- <linux-pci@vger.kernel.org>, "moderated list:BROADCOM BCM2711/BCM2835 ARM
- ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
- lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
- manivannan.sadhasivam@linaro.org, masahiroy@kernel.org, Michael Turquette
- <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- saravanak@google.com, Stephen Boyd <sboyd@kernel.org>,
- thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, Will Deacon
- <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
- using a DT overlay
-Message-ID: <20250213180733.11999e07@bootlin.com>
-In-Reply-To: <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
-	<20250213171435.1c2ce376@bootlin.com>
-	<a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
-	<CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ELTXc3+A"
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5fcb72ffb76so339836eaf.0;
+        Thu, 13 Feb 2025 09:25:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739467514; x=1740072314; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NC0gjVnxt4O15p2NxkemDQxdl3X7+EfnLKcG4TwVy48=;
+        b=ELTXc3+Aj0kbG61fv7XnPcbLWX34OvBH/FYq+/yA9V5UIMtXNit66qNGGaPuLmM8Cb
+         otbiYYFWOW98mhoE/8yhVAVL8qR954z4Sns0iBz12o8U6POrxocO8pqxaPZMXlLSDcI+
+         vFm6yKqxkBtWPxIdxCCtzS66nig6ef20TiWj5cf/qUk2WswXR5bfwYDH2NMXpzRNsWWn
+         eInCKXbEAVa5WVQV0ezJjgezIQewKCBXY2dcTWok5i3CBql0gFzxjWtY1/EP5yWVdyLB
+         qz7HPMljDzUOV8xhZsB56DFiBGF8Nwm4pt9WLcjiXWkTtVE2C62EtnWpAPTgMwcA56t+
+         o5fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739467514; x=1740072314;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NC0gjVnxt4O15p2NxkemDQxdl3X7+EfnLKcG4TwVy48=;
+        b=Qo+/OgF8Ao/jeDOl7OD9q5XaWaxNTPHXyde7h/jqpjqj9+jmVkX0qn7EtNJT898owC
+         TETqyMyVS98e38AopJMwPNvz2lgdkIGkfQLlbZpieivRD0ubPdfP11XBkL7vzi2hLyaO
+         HSjtTGv5lZboXXO5OeI6/i5IOWNUzTDoWVX2TrPZ2mmk2ekDkDq4en3u+x82e5Z3IhfH
+         BWwvz8F5wwxVaHwTzULncn2nES+yLYds91EsFJ98txuv/6z28+sovjF4AMOgyMR0vFHg
+         HxAIhAlv0vtiAmt+QC4ioycM0lHfgqKqg3ScGFEDqTQrOMFbzFFATHhKq36fq0z1o852
+         dnuA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4vS5rcwHgZ2tInie9ql6Z46hm0hu0v3BwsDew3IdhYj+sEBsVc31SLgnY2wpwepCT6/oaZ6duI1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn6i7n+IbTzV3iZKlbcgfUUght73ZpzdQJ/h0X91nfac/iXUBi
+	SLWT07iMbsqbRM5KIXsxUwPOPe4uq5ldYgbIjDUttNIGNbjc2n53
+X-Gm-Gg: ASbGnctNRwYcj28x0G+G1gmKGlDN77WQ8JhbuWnXG78e/j+MKBuKCpkEvHlkmZIxijL
+	syJ3utKWhkQzLoOIp8YJ/I5y2VBDb4yCSTGQOCSSBSeionXRmtOPVJtrueilDyFB0uhxw/flZUt
+	zfuFbRZuswJM8172VfNbI+bycglbhpPAOggcAcy6O+RwciqlpkDUiIvbx7kf37fC3xmt4t98XTS
+	J0NaTAwGIwEJgGH3Aga1Ow/zgOZ2LzF8AChbB61tCBt2ltZAL7GghJTqCMoLvGtEU8EuezJG4Js
+	GMC19qqTlyUJl5rqbKFotVhMx4YTZ8sqqWw=
+X-Google-Smtp-Source: AGHT+IHMPb5bBBC/1QDSYybmG+VaVkuaJ/TpwRYu/tD+Ot2X4QRdZ62tgboTYHD4NCXnaisKyPW16g==
+X-Received: by 2002:a4a:e849:0:b0:5fa:61a7:16b8 with SMTP id 006d021491bc7-5fcb08fb8e1mr2213914eaf.2.1739467514552;
+        Thu, 13 Feb 2025 09:25:14 -0800 (PST)
+Received: from localhost.localdomain ([2600:1700:fb0:1bcf:2d58:1e06:61bd:218e])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5fcb155b77dsm680358eaf.0.2025.02.13.09.25.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2025 09:25:14 -0800 (PST)
+From: Chris Morgan <macroalpha82@gmail.com>
+To: linux-sunxi@lists.linux.dev
+Cc: devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	p.zabel@pengutronix.de,
+	conor+dt@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	samuel@sholland.org,
+	jernej.skrabec@gmail.com,
+	wens@csie.org,
+	sboyd@kernel.org,
+	mturquette@baylibre.com,
+	ryan@testtoast.com,
+	Chris Morgan <macromorgan@hotmail.com>
+Subject: [PATCH V2 0/2] Add Clock and Reset for TCON LCD
+Date: Thu, 13 Feb 2025 11:22:46 -0600
+Message-ID: <20250213172248.158447-1-macroalpha82@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdegjeeffecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeehpdhrtghpthhtohepphhhihhlsehrrghsphgsvghrrhihphhirdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtoheprghnughrvggrrdhpohhrthgrsehsuhhsvgdrtghomhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtoheps
- ggtmhdqkhgvrhhnvghlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhm
-X-GND-Sasl: herve.codina@bootlin.com
 
-On Thu, 13 Feb 2025 16:30:44 +0000
-Phil Elwell <phil@raspberrypi.com> wrote:
+From: Chris Morgan <macromorgan@hotmail.com>
 
-> Hi Andrew,
-> 
-> On Thu, 13 Feb 2025 at 16:27, Andrew Lunn <andrew@lunn.ch> wrote:
-> >
-> > On Thu, Feb 13, 2025 at 05:14:35PM +0100, Herve Codina wrote:  
-> > > Hi Phil,
-> > >
-> > > On Thu, 13 Feb 2025 15:18:45 +0000
-> > > Phil Elwell <phil@raspberrypi.com> wrote:
-> > >  
-> > > > Hi Andrea,
-> > > >
-> > > > The problem with this approach (loading an overlay from the RP1 PCIe
-> > > > driver), and it's one that I have raised with you offline, is that
-> > > > (unless anyone can prove otherwise) it becomes impossible to create a
-> > > > Pi 5 DTS file which makes use of the RP1's resources. How do you
-> > > > declare something as simple as a button wired to an RP1 GPIO, or fan
-> > > > connected to a PWM output?  
-> >
-> > Where is this button or fan? On a pluggable board? Isn't that what
-> > overlays are for, and they are stackable. So when you probe the
-> > pluggable board via its eeprom etc, you find the overlay and load it?  
-> 
-> In the Raspberry Pi ecosystem it would be the firmware that applies
-> the overlay, and it can't do that if the resources the overlay refers
-> to are not yet present in the dtb.
+Add the required resets and clocks used by the display engine TCON for
+LCD output. This is required for LCD output for the DE33 which is
+currently pending acceptance into mainline.
 
-What do you mean by the 'the resources are not yet present in the dtb' ?
+Note that while the clock is exposed on the T507, H616, and H700 the
+H616 does not expose the LCD controller that requires these clocks.
 
-Also what you call the 'firmware' is the bootloader ? the kernel ?
-Can you tell me who is the 'firmware' what is the mecanisme it uses to
-load the overlay.
+https://lore.kernel.org/linux-sunxi/67acd970.050a0220.1eb03a.101e@mx.google.com/
 
-Best regards,
-Hervé
+Changes since V1:
+ - Updated commit message to note that the H616 has this clock, but not
+   the LCD controller that uses this clock.
 
+Chris Morgan (2):
+  dt-bindings: clock: sun50i-h616-ccu: Add LCD TCON clk and reset
+  clk: sunxi-ng: h616: Add clock/reset for LCD TCON
 
-> 
-> > Or do you mean a custom board, which has a CPU, RP1 and the button and
-> > fan are directly on this custom board? You then want a board DTS which
-> > includes all these pieces?  
-> 
-> That depends on whether you count the Raspberry Pi 5 as a custom board.
-> 
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.c      | 24 +++++++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.h      |  2 +-
+ include/dt-bindings/clock/sun50i-h616-ccu.h |  4 ++++
+ include/dt-bindings/reset/sun50i-h616-ccu.h |  2 ++
+ 4 files changed, 31 insertions(+), 1 deletion(-)
+
+-- 
+2.43.0
+
