@@ -1,147 +1,145 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CFA3200BB5;
-	Wed, 12 Feb 2025 22:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BC74D8A3;
+	Thu, 13 Feb 2025 00:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739398400; cv=none; b=BMBXqlzYUE9ZBQ6sabCehkJ4vCNUC4G9DLHJNvdQf0vxKJt9ZFT5XOAA0MZYJe2AQ7lGubtt5/zCIzT3diY6Z1HrhH7p3B0QJWLT2Q/6BZPkkOK6cXDoVhF9X6MGkNzHNIQcJf4z0P/wt/fafiUUl980hRaw13Fy8ylxL6dwek4=
+	t=1739407297; cv=none; b=MIHUfjsUgAvZ1MmQNZGEUZTLrPtVvr/DrwDcdXfYTIPtl49D/WSKvc3LNcNnytcsC9fZhQqJE0uW/0YpP0kSp5hQVL7wS9Uw6xtFWUbOd9c+YGEuQnskd4JoV73az9d84FolRZdWRC8u/FM6xAaVszQjWdIf0X1lkKMbmbdpuFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739398400; c=relaxed/simple;
-	bh=LggmwKzu09jsfAe31qfYc7xZ4PHLnZo6PLoKH3PGqeY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eqjMnZo7AtPPORCvaqXtTs3/9AtyWWjDNxhwQrm3SqQu/TaKWVoHUZhci7UEFjfuygIy1uKxKFP8QeRBrZNGcs/f5j+91eXB/seJFdX7s/LgctuJj8x0oqHwFIxmEyltY+7z/OxUTmEtlKxSdojJc40eHZSxVZR7rbm3tV3QyR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: QEbGhWcISP+j69eSxK4Xng==
-X-CSE-MsgGUID: 3lXIk8oVSymPse/Rjzq0bQ==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 13 Feb 2025 07:13:16 +0900
-Received: from mulinux.example.org (unknown [10.226.93.8])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 296FF40AACBB;
-	Thu, 13 Feb 2025 07:13:13 +0900 (JST)
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/7] clk: renesas: r9a09g057: Add entries for the DMACs
-Date: Wed, 12 Feb 2025 22:12:59 +0000
-Message-Id: <20250212221305.431716-2-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250212221305.431716-1-fabrizio.castro.jz@renesas.com>
-References: <20250212221305.431716-1-fabrizio.castro.jz@renesas.com>
+	s=arc-20240116; t=1739407297; c=relaxed/simple;
+	bh=XF1Oc7XRHCDJlXTYTMN0xm9ThQduj5ZYw+BLfCKe+Ec=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gwa6BF0ZLDzs+SD9wPHh0EiwvOlRnQvUHmL25UCD/5ZskH7hsZ1OqyVvnLjsYbsQRti8cp2//NaHopw951wAP89R8+JCBYVlY7DY4tBvvPM1Ps7l7FRRf2g4z2kh1v81+jggzy364fKnsdw8YlzUd0nHakSdNfPD/8bIwPUrhUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 332FA1762;
+	Wed, 12 Feb 2025 16:41:54 -0800 (PST)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F6513F5A1;
+	Wed, 12 Feb 2025 16:41:31 -0800 (PST)
+Date: Thu, 13 Feb 2025 00:39:27 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Chris Morgan <macroalpha82@gmail.com>
+Cc: linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org, p.zabel@pengutronix.de, conor+dt@kernel.org,
+ krzk+dt@kernel.org, robh@kernel.org, samuel@sholland.org,
+ jernej.skrabec@gmail.com, wens@csie.org, sboyd@kernel.org,
+ mturquette@baylibre.com, ryan@testtoast.com, Chris Morgan
+ <macromorgan@hotmail.com>
+Subject: Re: [PATCH 2/2] clk: sunxi-ng: h616: Add clock/reset for LCD TCON
+Message-ID: <20250213003927.6f4c0b09@minigeek.lan>
+In-Reply-To: <20250212191109.156766-3-macroalpha82@gmail.com>
+References: <20250212191109.156766-1-macroalpha82@gmail.com>
+	<20250212191109.156766-3-macroalpha82@gmail.com>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add clock and reset entries for the Renesas RZ/V2H(P) DMAC IPs.
+On Wed, 12 Feb 2025 13:11:09 -0600
+Chris Morgan <macroalpha82@gmail.com> wrote:
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
----
-v1->v2:
-* No change.
----
- drivers/clk/renesas/r9a09g057-cpg.c | 24 ++++++++++++++++++++++++
- drivers/clk/renesas/rzv2h-cpg.h     |  2 ++
- 2 files changed, 26 insertions(+)
+> From: Chris Morgan <macromorgan@hotmail.com>
+> 
+> Add the required clock and reset which is used for the LCD TCON.
 
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-index 3705e18f66ad..d63eafbca780 100644
---- a/drivers/clk/renesas/r9a09g057-cpg.c
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -31,6 +31,8 @@ enum clk_ids {
- 	CLK_PLLVDO,
- 
- 	/* Internal Core Clocks */
-+	CLK_PLLCM33_DIV4,
-+	CLK_PLLCM33_DIV4_PLLCM33,
- 	CLK_PLLCM33_DIV16,
- 	CLK_PLLCLN_DIV2,
- 	CLK_PLLCLN_DIV8,
-@@ -39,6 +41,8 @@ enum clk_ids {
- 	CLK_PLLDTY_ACPU_DIV2,
- 	CLK_PLLDTY_ACPU_DIV4,
- 	CLK_PLLDTY_DIV16,
-+	CLK_PLLDTY_RCPU,
-+	CLK_PLLDTY_RCPU_DIV4,
- 	CLK_PLLVDO_CRU0,
- 	CLK_PLLVDO_CRU1,
- 	CLK_PLLVDO_CRU2,
-@@ -85,6 +89,9 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 	DEF_FIXED(".pllvdo", CLK_PLLVDO, CLK_QEXTAL, 105, 2),
- 
- 	/* Internal Core Clocks */
-+	DEF_FIXED(".pllcm33_div4", CLK_PLLCM33_DIV4, CLK_PLLCM33, 1, 4),
-+	DEF_DDIV(".pllcm33_div4_pllcm33", CLK_PLLCM33_DIV4_PLLCM33,
-+		 CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
- 
- 	DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
-@@ -95,6 +102,8 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 	DEF_FIXED(".plldty_acpu_div2", CLK_PLLDTY_ACPU_DIV2, CLK_PLLDTY_ACPU, 1, 2),
- 	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
- 	DEF_FIXED(".plldty_div16", CLK_PLLDTY_DIV16, CLK_PLLDTY, 1, 16),
-+	DEF_DDIV(".plldty_rcpu", CLK_PLLDTY_RCPU, CLK_PLLDTY, CDDIV3_DIVCTL2, dtable_2_64),
-+	DEF_FIXED(".plldty_rcpu_div4", CLK_PLLDTY_RCPU_DIV4, CLK_PLLDTY_RCPU, 1, 4),
- 
- 	DEF_DDIV(".pllvdo_cru0", CLK_PLLVDO_CRU0, CLK_PLLVDO, CDDIV3_DIVCTL3, dtable_2_4),
- 	DEF_DDIV(".pllvdo_cru1", CLK_PLLVDO_CRU1, CLK_PLLVDO, CDDIV4_DIVCTL0, dtable_2_4),
-@@ -115,6 +124,16 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- };
- 
- static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
-+	DEF_MOD("dmac_0_aclk",			CLK_PLLCM33_DIV4_PLLCM33, 0, 0, 0, 0,
-+						BUS_MSTOP(5, BIT(9))),
-+	DEF_MOD("dmac_1_aclk",			CLK_PLLDTY_ACPU_DIV2, 0, 1, 0, 1,
-+						BUS_MSTOP(3, BIT(2))),
-+	DEF_MOD("dmac_2_aclk",			CLK_PLLDTY_ACPU_DIV2, 0, 2, 0, 2,
-+						BUS_MSTOP(3, BIT(3))),
-+	DEF_MOD("dmac_3_aclk",			CLK_PLLDTY_RCPU_DIV4, 0, 3, 0, 3,
-+						BUS_MSTOP(10, BIT(11))),
-+	DEF_MOD("dmac_4_aclk",			CLK_PLLDTY_RCPU_DIV4, 0, 4, 0, 4,
-+						BUS_MSTOP(10, BIT(12))),
- 	DEF_MOD_CRITICAL("icu_0_pclk_i",	CLK_PLLCM33_DIV16, 0, 5, 0, 5,
- 						BUS_MSTOP_NONE),
- 	DEF_MOD_CRITICAL("gic_0_gicclk",	CLK_PLLDTY_ACPU_DIV4, 1, 3, 0, 19,
-@@ -223,6 +242,11 @@ static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
- 
- static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
- 	DEF_RST(3, 0, 1, 1),		/* SYS_0_PRESETN */
-+	DEF_RST(3, 1, 1, 2),		/* DMAC_0_ARESETN */
-+	DEF_RST(3, 2, 1, 3),		/* DMAC_1_ARESETN */
-+	DEF_RST(3, 3, 1, 4),		/* DMAC_2_ARESETN */
-+	DEF_RST(3, 4, 1, 5),		/* DMAC_3_ARESETN */
-+	DEF_RST(3, 5, 1, 6),		/* DMAC_4_ARESETN */
- 	DEF_RST(3, 6, 1, 7),		/* ICU_0_PRESETN_I */
- 	DEF_RST(3, 8, 1, 9),		/* GIC_0_GICRESET_N */
- 	DEF_RST(3, 9, 1, 10),		/* GIC_0_DBG_GICRESET_N */
-diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
-index fd8eb985c75b..576a070763cb 100644
---- a/drivers/clk/renesas/rzv2h-cpg.h
-+++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -38,11 +38,13 @@ struct ddiv {
- #define CPG_CDDIV3		(0x40C)
- #define CPG_CDDIV4		(0x410)
- 
-+#define CDDIV0_DIVCTL1	DDIV_PACK(CPG_CDDIV0, 4, 3, 1)
- #define CDDIV0_DIVCTL2	DDIV_PACK(CPG_CDDIV0, 8, 3, 2)
- #define CDDIV1_DIVCTL0	DDIV_PACK(CPG_CDDIV1, 0, 2, 4)
- #define CDDIV1_DIVCTL1	DDIV_PACK(CPG_CDDIV1, 4, 2, 5)
- #define CDDIV1_DIVCTL2	DDIV_PACK(CPG_CDDIV1, 8, 2, 6)
- #define CDDIV1_DIVCTL3	DDIV_PACK(CPG_CDDIV1, 12, 2, 7)
-+#define CDDIV3_DIVCTL2	DDIV_PACK(CPG_CDDIV3, 8, 3, 14)
- #define CDDIV3_DIVCTL3	DDIV_PACK(CPG_CDDIV3, 12, 1, 15)
- #define CDDIV4_DIVCTL0	DDIV_PACK(CPG_CDDIV4, 0, 1, 16)
- #define CDDIV4_DIVCTL1	DDIV_PACK(CPG_CDDIV4, 4, 1, 17)
--- 
-2.34.1
+Please mention here (and in the cover letter) that while those clocks
+do exist on every H616 die, the respective LCD controllers are not
+exposed on the H616 package, but only on the T507 and H700 version.
+
+> 
+> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
+
+Apart from the part, I compared the code against the T507 manual, that
+is a match:
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+Cheers,
+Andre
+
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 24 ++++++++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu-sun50i-h616.h |  2 +-
+>  2 files changed, 25 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> index 190816c35da9..40ab6873b797 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
+> @@ -645,6 +645,20 @@ static const char * const tcon_tv_parents[] = { "pll-video0",
+>  						"pll-video0-4x",
+>  						"pll-video1",
+>  						"pll-video1-4x" };
+> +static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd0_clk, "tcon-lcd0",
+> +			       tcon_tv_parents, 0xb60,
+> +			       24, 3,	/* mux */
+> +			       BIT(31),	/* gate */
+> +			       CLK_SET_RATE_PARENT);
+> +static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd1_clk, "tcon-lcd1",
+> +			       tcon_tv_parents, 0xb64,
+> +			       24, 3,	/* mux */
+> +			       BIT(31),	/* gate */
+> +			       CLK_SET_RATE_PARENT);
+> +static SUNXI_CCU_GATE(bus_tcon_lcd0_clk, "bus-tcon-lcd0", "ahb3",
+> +		      0xb7c, BIT(0), 0);
+> +static SUNXI_CCU_GATE(bus_tcon_lcd1_clk, "bus-tcon-lcd1", "ahb3",
+> +		      0xb7c, BIT(1), 0);
+>  static SUNXI_CCU_MP_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0",
+>  				  tcon_tv_parents, 0xb80,
+>  				  0, 4,		/* M */
+> @@ -855,8 +869,12 @@ static struct ccu_common *sun50i_h616_ccu_clks[] = {
+>  	&hdmi_cec_clk.common,
+>  	&bus_hdmi_clk.common,
+>  	&bus_tcon_top_clk.common,
+> +	&tcon_lcd0_clk.common,
+> +	&tcon_lcd1_clk.common,
+>  	&tcon_tv0_clk.common,
+>  	&tcon_tv1_clk.common,
+> +	&bus_tcon_lcd0_clk.common,
+> +	&bus_tcon_lcd1_clk.common,
+>  	&bus_tcon_tv0_clk.common,
+>  	&bus_tcon_tv1_clk.common,
+>  	&tve0_clk.common,
+> @@ -989,8 +1007,12 @@ static struct clk_hw_onecell_data sun50i_h616_hw_clks = {
+>  		[CLK_HDMI_CEC]		= &hdmi_cec_clk.common.hw,
+>  		[CLK_BUS_HDMI]		= &bus_hdmi_clk.common.hw,
+>  		[CLK_BUS_TCON_TOP]	= &bus_tcon_top_clk.common.hw,
+> +		[CLK_TCON_LCD0]		= &tcon_lcd0_clk.common.hw,
+> +		[CLK_TCON_LCD1]		= &tcon_lcd1_clk.common.hw,
+>  		[CLK_TCON_TV0]		= &tcon_tv0_clk.common.hw,
+>  		[CLK_TCON_TV1]		= &tcon_tv1_clk.common.hw,
+> +		[CLK_BUS_TCON_LCD0]	= &bus_tcon_lcd0_clk.common.hw,
+> +		[CLK_BUS_TCON_LCD1]	= &bus_tcon_lcd1_clk.common.hw,
+>  		[CLK_BUS_TCON_TV0]	= &bus_tcon_tv0_clk.common.hw,
+>  		[CLK_BUS_TCON_TV1]	= &bus_tcon_tv1_clk.common.hw,
+>  		[CLK_TVE0]		= &tve0_clk.common.hw,
+> @@ -1062,6 +1084,8 @@ static const struct ccu_reset_map sun50i_h616_ccu_resets[] = {
+>  	[RST_BUS_HDMI]		= { 0xb1c, BIT(16) },
+>  	[RST_BUS_HDMI_SUB]	= { 0xb1c, BIT(17) },
+>  	[RST_BUS_TCON_TOP]	= { 0xb5c, BIT(16) },
+> +	[RST_BUS_TCON_LCD0]	= { 0xb7c, BIT(16) },
+> +	[RST_BUS_TCON_LCD1]	= { 0xb7c, BIT(17) },
+>  	[RST_BUS_TCON_TV0]	= { 0xb9c, BIT(16) },
+>  	[RST_BUS_TCON_TV1]	= { 0xb9c, BIT(17) },
+>  	[RST_BUS_TVE_TOP]	= { 0xbbc, BIT(16) },
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.h b/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
+> index a75803b49f6a..7056f293a8e0 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.h
+> @@ -51,6 +51,6 @@
+>  
+>  #define CLK_BUS_DRAM		56
+>  
+> -#define CLK_NUMBER		(CLK_BUS_GPADC + 1)
+> +#define CLK_NUMBER		(CLK_BUS_TCON_LCD1 + 1)
+>  
+>  #endif /* _CCU_SUN50I_H616_H_ */
 
