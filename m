@@ -1,171 +1,212 @@
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7932D25D539;
-	Fri, 14 Feb 2025 11:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B9425A652
+	for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 11:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739531438; cv=none; b=ftg4dXxg4D/TXtXtr3QT213O5Azw3ZtE+ciPKa2/v2QzcUcuIaAYxEM1L/lReYLm4GSe8oaNSwvgszIP8WFumruBktHlAOtxpaF0Q4SCq6hya8MjvaQjj0YbeinPKPqldQUVI1ndfKLrVXfHuZTu0h1vIh+O1mDaUqrK7sXv7J8=
+	t=1739531718; cv=none; b=sGH/Zznz+hcqIwSdPa33i5Zn7b3Si58VKm/o/5F9lWlRWR/gbjvqeVzKcXhXHJaWD0t2w+ee+8ybvHneg9q4FAjAfo1rzAa1XfLwWnIKR4/efrMYz+Lw8v0nfpRqUYChsKuTBl43SPcE+l1Dig2/NiHPpU+eiypsvVja7zUfwaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739531438; c=relaxed/simple;
-	bh=hdsgSjQQ8qgcIp8XrQEUL7+bx/XSkrcszbmnaoinpo4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OTACUON0S9b2/1hwURkwaq/Y/en56w2Ix+F3c0NaMa/4c3DKSJiGjD0nvrXNORXouKNJxvj8+FNhLxKhJe3KnT0qfoI+zpaxzPxaVyb/DW+2Z2H2hGVSuM85uvNqkgcsrrKyHsTXX7w3LoaOb70+WPSY1yaHQ/R+v4VwD7cXHpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3f3b93e4e32so1796708b6e.0;
-        Fri, 14 Feb 2025 03:10:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739531435; x=1740136235;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+	s=arc-20240116; t=1739531718; c=relaxed/simple;
+	bh=Byc7coW9dudIXZ8IkgWh7fAF1R3OFkHSFllItq8iXtM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bYhc0/u4sy1QS9MrpfPtfP/cUajrEOgY6VSBpA0rHcIR1BIhdAJOsFE3nx78zYtnFu7InfOi5tbC4zeHQsHs5Bm33XJqAKuJV4ELMJyG7rCsSi/ZiXFlz1ZiXTmiJuLKhxgUn5SGvyk8BBmuev3xi7alA2TtROrunfBn7ptiKrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yx/B4F3N; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yx/B4F3N"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso21178715e9.1
+        for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 03:15:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739531715; x=1740136515; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=r+/2I2hmbkU9zkmHuYX1t9oqaBOTTvF7uTNap3Wsbsk=;
-        b=n+gFbF+9HQy32m63+iRfU7baomTogRZt8Q0x+8p1o1I9VNtjyMgiSGmrWFtaOCJWOx
-         dbXd7ASszWZp7+nJFerhuQlESYXG1au5TAw8zwj0rnqkNbDHNjTW/zvBrVJgbh8jK5v+
-         hTPxf4M+elrzhwfKUADHYwCg6zdPhc1FPuR9yoxDOSbNdZ/ZrYnkxfln5pEr0258OWP+
-         ObRSjx7bTgA+uxEdA7EmOtmi6IUqhJkfbZSlWuVesMmpuqqmcxUBhvphOIzgD9SmpOr+
-         Lwc1LYPyG4BnC15MkYla0AxiBBxq/3hmajbV0X6Xa6xu4p0DsZk7RSp79XKK2vc4ai+R
-         R4wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDVCUK6c/F3iml1NpIaVqopvbCyJAh8oxLb9I3BOXnjFJic1zL0taRowjbrVA1MN9gPwp4Ow3VqssDNqY=@vger.kernel.org, AJvYcCUbTOYIh1mG8TPX0Bi4c5rn5098w8UcKyqORjVAaFM6JCLn+hHFFsIHaVUAey5iUsTrMdJHJD1VP5m2@vger.kernel.org, AJvYcCUiHv7z7osjvN7WSDwCff0AV7rGVxgWHrJvyZ9rTEQKdFwO6pTmPaQfAIoLZDiUUPvNRm7eYV0CP3U=@vger.kernel.org, AJvYcCVKS/5ZYXsPcouogUjX1/7d56V4NXP/ZjViLwkHqpkfOss36i9fu9SRTbrEmpmaWJPmKDlOCowPguWnDfof@vger.kernel.org, AJvYcCVguviZY4vRnP70NorWp75Xw2fv1Z+mhtQ7r/c2apzkZCIQeecTjcRkaiJlyVgLCQFH0O4os6pGlYjO7xOcHtk83Y8=@vger.kernel.org, AJvYcCW5cx1lF5pOHqZKo0CKzLdtS/2tTkQ6kcS3kq/p/UyobKPe/lUIHCDmYAQxQPsWHXXO8AV9FC2r+Q853Q==@vger.kernel.org, AJvYcCWnpjvqjCh5ARprm5JFHRwhBOZw3EWQkHBoFYxXJRJFUA8O2rUsa4QoCi2nZTZVKsp5NHQFDhR8yHSAhCCq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6f0rdew3/WcRh9++9RoN6tQciQDyRPIlq7sLsYoQfh066Cs8g
-	Mc0oOV5ObrC61jrHfYNxtQuyyPVwW88b2iJhchQVVmOUJIQawZk50r4Pyts8Tp0=
-X-Gm-Gg: ASbGncvRkLVEyhKe5BvrB7ocx1yBnp4UQJczt0gdj48+Ag/O7lqsGg/ePTEm1kgz3c0
-	p3RJHBPUXeN8tSav7dtbLxFOJWGeOr0WVXhfOP6ITcqod3O6QC3CtR557+tbHvpKoFjUcSzMaXZ
-	AeqtIXfz7q7Y6TKq0TFL9I8quBxoQkeLzI04g/Ec8PUB70GM0TrYmX44/DgwLPu6R3RHTTPxHCf
-	djR4v9ZsrpWL6gwYqW4KN1lmRXKWW7zWH7pUWTxavgT8zJHZR/P0rYWqWoXGDrqA8F4gNRZqa4t
-	CB+P+cFPzq4PT0nIHeCdhOREwjqDTcQj71p5JtdawaCDM4Tk4l0PKA==
-X-Google-Smtp-Source: AGHT+IEmOpncqw55JDATPBMdgoevFZbTsL+l4QREB3q5EOlWtwZuqK0wyAgTzC8TAmqM9FoNpjSQ/g==
-X-Received: by 2002:a05:6808:2508:b0:3f3:b97d:769e with SMTP id 5614622812f47-3f3d90dc9b8mr4185959b6e.7.1739531435211;
-        Fri, 14 Feb 2025 03:10:35 -0800 (PST)
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com. [209.85.160.51])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f3daa1a4b8sm1191927b6e.49.2025.02.14.03.10.34
+        bh=QmEs8ouBliGOCMobju3l9AIdN9DwWGs50L/Ux0bkJ98=;
+        b=yx/B4F3Ni1V58MQMZ0MeiyadUjq/XpVfwquVToTEyzdz/O4b0VWt7iNleWjmRrTqc/
+         FD9Ma5ptv9FVmfFoHHoZ0bZEHupsfCtVGP7/tS9CnbT11ApvOJrROfU5868xG8BQsmU7
+         XDVe3sp2hi79MC1w7LXlZOaMgPle6/VelUwg7MDCay2d0O3YrcrrXWmSY9Yu01Z6ib7M
+         4RKRAljD7Zztfmuvsj1KxAPYbNnrBP5gZ3wA6fE7ZWmHCyuVXdbK76+kdZbOeraEG4jZ
+         pc4vh/uYFJENeax8mLdgNUZMES2PNTnJvMItgeftBqJgTwBd5q5ciykGIjEj998w9/OX
+         xZPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739531715; x=1740136515;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QmEs8ouBliGOCMobju3l9AIdN9DwWGs50L/Ux0bkJ98=;
+        b=M9IF6OLP032G1D9E4nOens3OtKEYxetYbjZUolvlIIPG5drgq58OuvfTi7zo8HqEdn
+         nZKiL43MmnYqYU37sMdZvP1UX+EoiBZ4awWU5sIt7B272oE1H0TMdXmMcjrB8bdOchyU
+         gvLgBIdU196p2K60Gocb78qe1BGECOeBYnfpKfHKre6WNjkBCrKE84sCyMo/+XljahbK
+         u82nu/kbTgvFeMzo/ahScMm6eTD+lYNdOpt6BitpYQmYWoMSLVDmFqKaYNVTNW0iK82o
+         tL/sVCchVZ5dz5vhXsTGWGLwgRpFcYvT4/GxpRfUPyoHIZtmXIqJQLcd19gmGS3Ws7dw
+         qGWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXFBJoPL7EtURzd2r3A2hil29jU1YmJ4ftSRLRMr6zxP18VToaKeUXpgsMyWiR/WX8vN9C/3rANtKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaCPSxzTGYaQbpVj+ZMYKMOF3skM2wwxDOZL7d1U+JvehI6Aw5
+	NReycT1LAxu9lGYpumUd5xCusiHtBgJJBNg+bXiU/3jtfq8ZvXjI9WD2gmQGYUM=
+X-Gm-Gg: ASbGnctJwH9eYv7aFuUeWLrZd+8LHyDPlguPfID4IuadSt7ASnKR/CbrlMsvcAi9Y9x
+	AgmCHAn31ck9SAHdmxScmaQB6NfeREf5MGXyXRgfKBRwa7qHAJc1ZPSHun9JRAA24yJdz8pXrUQ
+	HAJ5AaUudI/bCC62GqCeFmfyk0fydkl7YeDi2vPbxLqql/TUBvNnrUAfHtP04w5t2KrEZC7jrPu
+	YuL0JrwteoSLD0eAjvg3TF9UvOmbq8bwMb9+cUjdp2l2lMwJyvUzQdByir22/yvHo1WnOdgmscc
+	fbfzmfxb/dQoaudPWuUoG6sAtyYq24vilybJvIVRl6NMVUszb1u/GqnyficslN0=
+X-Google-Smtp-Source: AGHT+IH5QDoLnhR0CwlUWQfd6my7FcGNb6CjS78uJgkB/lJP1TtFLz/ksqBTEmg2Q8Mj2ObQDYbmrg==
+X-Received: by 2002:a05:600c:783:b0:439:654e:ddf6 with SMTP id 5b1f17b1804b1-439654ede03mr61452765e9.9.1739531714673;
+        Fri, 14 Feb 2025 03:15:14 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:1506:c298:390c:8a? ([2a01:e0a:982:cbb0:1506:c298:390c:8a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439617da91asm42409885e9.2.2025.02.14.03.15.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 03:10:34 -0800 (PST)
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2bc607b3190so788701fac.1;
-        Fri, 14 Feb 2025 03:10:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUy1lu/GJ6ERAmnfIqzVmu3C/Md9NgZanbZ9AlBkuxSikVLdWVTmv16zY9OytdJ9x+1bOD1xBdZoVtQDc2H@vger.kernel.org, AJvYcCVgqycNxfL55R6c69VsRIV//3UbVnRy1LsM6IXcdNZYTodYYbT5innUZI6qyiaXzFTDRrBAWAEYH0aK@vger.kernel.org, AJvYcCVpGAmsVWktjDWORoOa8SWbZwR93fR8IPXy2OueOJIEQibrvap3HctBV43GhtrSUSFdRoQjJT5SbI6afK3k8MmVtH0=@vger.kernel.org, AJvYcCWWolf/nrJ/6oXgSTgl4K14aY2GU29mdny1O3QmYSTUlOy83g0aI8cAUH46uNcAE8RT4WEzhyw79zid0g==@vger.kernel.org, AJvYcCWpxs59d1sDbltZAD01S8wzlCfefYW8qP+/tZshXhdVgrZs0TFBeWYfiGZaBJEEMeoH8TTdo0ifxNACHlY5@vger.kernel.org, AJvYcCXjdZfphJOJxdL4qtr/C2vSJUbLZss3zvveDNYzH/+JwLUMPqZ4sgGhNUqedcDrwir7VegLfNqsyVQ=@vger.kernel.org, AJvYcCXnbvOjDVxkbOaz9rzFBCQak2a0XzV/FMhTNT9F6vcz8d4anXpU42wkjTw7eso94fv0n53k7Wnu03YBCgE=@vger.kernel.org
-X-Received: by 2002:a05:6102:829:b0:4bb:c670:7ef4 with SMTP id
- ada2fe7eead31-4bc04dbedfdmr3900426137.3.1739531008576; Fri, 14 Feb 2025
- 03:03:28 -0800 (PST)
+        Fri, 14 Feb 2025 03:15:14 -0800 (PST)
+Message-ID: <d0ec285d-6a27-4f28-b622-6048a9dcb6e8@linaro.org>
+Date: Fri, 14 Feb 2025 12:15:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1738329458.git.geert+renesas@glider.be> <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
- <e20a177a-30cd-4088-89e1-b479aba1356c@wanadoo.fr> <Z5-xMUqrDuaE8Eo_@thinkpad>
- <74cab7d1ec31e7531cdda0f1eb47acdebd5c8d3f.camel@sipsolutions.net>
- <45920591-e1d6-4337-a906-35bb5319836c@wanadoo.fr> <CAMuHMdXZKNtAmiMP8uuSngZMsDLGcYwrLS0xNWzN4UfLaccdyA@mail.gmail.com>
- <16e1568d-8747-41e0-91b9-ce23c5592799@wanadoo.fr> <Z6DzQHebEKBb12Wo@thinkpad>
-In-Reply-To: <Z6DzQHebEKBb12Wo@thinkpad>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 14 Feb 2025 12:03:16 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVFG57rUVC-XXk6bsZupVTeV0YAcue=zKWGnm4owjDiEA@mail.gmail.com>
-X-Gm-Features: AWEUYZnx82TO-9m0J2Kj8kCR7cxX7DuFclptN97k0_3_zHZhXPo2iBI5bXbywtI
-Message-ID: <CAMuHMdVFG57rUVC-XXk6bsZupVTeV0YAcue=zKWGnm4owjDiEA@mail.gmail.com>
-Subject: Re: [PATCH treewide v2 1/3] bitfield: Add non-constant
- field_{prep,get}() helpers
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Johannes Berg <johannes@sipsolutions.net>, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	qat-linux@intel.com, linux-gpio@vger.kernel.org, 
-	linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S . Miller" <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Shan-Chun Hung <schung@nuvoton.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Alex Elder <elder@ieee.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] clk: meson: g12a: Fix kernel warnings when no display
+ attached
+To: Martijn van Deventer <linux@martijnvandeventer.nl>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250213221702.606-1-linux@martijnvandeventer.nl>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250213221702.606-1-linux@martijnvandeventer.nl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hu Yury,
+On 13/02/2025 23:17, Martijn van Deventer wrote:
+> When booting SM1 or G12A boards without a dislay attached to HDMI,
+> the kernel shows the following warning:
+> 
+> [CRTC:46:meson_crtc] vblank wait timed out
+> WARNING: CPU: 2 PID: 265 at drivers/gpu/drm/drm_atomic_helper.c:1682 drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+> CPU: 2 UID: 0 PID: 265 Comm: setfont Tainted: G         C
+> Tainted: [C]=CRAP
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+> lr : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+> Call trace:
+>   drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+>   drm_atomic_helper_commit_tail_rpm+0x84/0xa0
+>   commit_tail+0xa4/0x18c
+>   drm_atomic_helper_commit+0x164/0x178
+>   drm_atomic_commit+0xb4/0xec
+>   drm_client_modeset_commit_atomic+0x210/0x270
+>   drm_client_modeset_commit_locked+0x5c/0x188
+>   drm_fb_helper_pan_display+0xb8/0x1d4
+>   fb_pan_display+0x7c/0x120
+>   bit_update_start+0x20/0x48
+>   fbcon_switch+0x418/0x54c
+>   el0t_64_sync+0x194/0x198
+> 
+> This happens when the kernel disables the unused clocks.
+> Sometimes this causes the boot to hang.
+> 
+> By (re)adding the flag CLK_IGNORE_UNUSED to the VCLK2 clocks, these
+> clocks will not be disabled.
+> 
+> This partially reverts commit b70cb1a21a54 ("clk: meson: g12a:
+> make VCLK2 and ENCL clock path configurable by CCF").
+> 
+> Fixes: b70cb1a21a54 ("clk: meson: g12a: make VCLK2 and ENCL clock path configurable by CCF").
+> Signed-off-by: Martijn van Deventer <linux@martijnvandeventer.nl>
+> ---
+>   drivers/clk/meson/g12a.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index cfffd434e998..1651898658f5 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -3234,7 +3234,7 @@ static struct clk_regmap g12a_vclk2_div = {
+>   			&g12a_vclk2_input.hw
+>   		},
+>   		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_GATE,
+> +		.flags = CLK_SET_RATE_GATE | CLK_IGNORE_UNUSED,
+>   	},
+>   };
+>   
+> @@ -3270,7 +3270,7 @@ static struct clk_regmap g12a_vclk2 = {
+>   		.ops = &meson_vclk_gate_ops,
+>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw },
+>   		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>   	},
+>   };
+>   
+> @@ -3354,7 +3354,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
+>   		.ops = &clk_regmap_gate_ops,
+>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>   		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>   	},
+>   };
+>   
+> @@ -3368,7 +3368,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
+>   		.ops = &clk_regmap_gate_ops,
+>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>   		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>   	},
+>   };
+>   
+> @@ -3382,7 +3382,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
+>   		.ops = &clk_regmap_gate_ops,
+>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>   		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>   	},
+>   };
+>   
+> @@ -3396,7 +3396,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
+>   		.ops = &clk_regmap_gate_ops,
+>   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>   		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>   	},
+>   };
+>   
 
-On Mon, 3 Feb 2025 at 17:48, Yury Norov <yury.norov@gmail.com> wrote:
-> On Tue, Feb 04, 2025 at 12:41:55AM +0900, Vincent Mailhol wrote:
-> > On 03/02/2025 at 22:59, Geert Uytterhoeven wrote:
-> > > On Mon, 3 Feb 2025 at 14:37, Vincent Mailhol <mailhol.vincent@wanadoo.fr> wrote:
-> > >> On 03/02/2025 at 16:44, Johannes Berg wrote:
-> > >>> On Sun, 2025-02-02 at 12:53 -0500, Yury Norov wrote:
-> > >>>>> Instead of creating another variant for
-> > >>>>> non-constant bitfields, wouldn't it be better to make the existing macro
-> > >>>>> accept both?
-> > >>>>
-> > >>>> Yes, it would definitely be better IMO.
-> > >>>
-> > >>> On the flip side, there have been discussions in the past (though I
-> > >>> think not all, if any, on the list(s)) about the argument order. Since
-> > >>> the value is typically not a constant, requiring the mask to be a
-> > >>> constant has ensured that the argument order isn't as easily mixed up as
-> > >>> otherwise.
-> > >>
-> > >> If this is a concern, then it can be checked with:
-> > >>
-> > >>   BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask) &&
-> > >>                    __builtin_constant_p(_val),
-> > >>                    _pfx "mask is not constant");
-> > >>
-> > >> It means that we forbid FIELD_PREP(non_const_mask, const_val) but allow
-> > >> any other combination.
-> > >
-> > > Even that case looks valid to me. Actually there is already such a user
-> > > in drivers/iio/temperature/mlx90614.c:
-> > >
-> > >     ret |= field_prep(chip_info->fir_config_mask, MLX90614_CONST_FIR);
-> > >
-> > > So if you want enhanced safety, having both the safer/const upper-case
-> > > variants and the less-safe/non-const lower-case variants makes sense.
->
-> I agree with that. I just don't want the same shift-and operation to be
-> opencoded again and again.
->
-> What I actually meant is that I'm OK with whatever number of field_prep()
-> macro flavors, if we make sure that they don't duplicate each other. So
-> for me, something like this would be the best solution:
->
->  #define field_prep(mask, val) \
->        (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask))
->
->  #define FIELD_PREP(mask, val)                                         \
->          (                                                             \
->                  FIELD_PREP_INPUT_CHECK(_mask, _val,);                 \
->                  field_prep(mask, val);                                \
->          )
->
-> #define FIELD_PREP_CONST(_mask, _val)                                  \
->         (                                                              \
->                 FIELD_PREP_CONST_INPUT_CHECK(mask, val);
->                 FIELD_PREP(mask, val); // or field_prep()
->         )
->
-> We have a similar macro GENMASK() in linux/bits.h. It is implemented
-> like this:
->
->  #define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(const_true((l) > (h)))
->  #define GENMASK(h, l) \
->          (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
->
-> And it works just well. Can we end up with a similar approach here?
-
-Note that there already exists a FIELD_PREP_CONST() macro, which is
-intended for struct member initialization.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
