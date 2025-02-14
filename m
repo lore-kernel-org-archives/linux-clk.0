@@ -1,185 +1,149 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563FA264A9F;
-	Fri, 14 Feb 2025 14:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3168F266F12
+	for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 15:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739543987; cv=none; b=blA6Ba25xb8bm+Yj/Te/R/UzHzHmS0XnSziyzSQreiLCbhttvchStqqb9k3nvXIq4ehjl/UtO4lnE2ByiSjXem/7i4TMZ1xYMpK4mKFwgQx1fcpSkLY5ZzdLYtjDBYo5Vup20W2JfNbFiEttG8LM/+0WiCGwkUk8ht/6noiXiR0=
+	t=1739546779; cv=none; b=rIewP5DKee++zlUSoZsqrdpPTGLGK5tmTjVl9+rxMryGZ03sTRthwStKpsUHRXde7fhKVGHDspFvCuC6/VBpAdH9jr/ivZ9X7vKgY/pHWOurMXRL4kGQxVy48VHjLshphl3DibMQfUDVhahBa2fNuxFimT15whIRlM7FJfAq9CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739543987; c=relaxed/simple;
-	bh=NX77pwb06Kvs7WxpDXaPVihgFPdSFRjITEXfK2Hopjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jfks0SxrCjtVE7TLsl5QcHV5GKivNYfeTFv9X/TpqqK6Ad6+O8rG9JWMFaUl+PcofLIfNnNQl3NrzpO6S6MqJ1Ld9//Cesjk/Zw4P+yqk1WgMwCT69Y/Wwu+ju+JScZ1WZU431J+YkvFDdEa5Gf1JQ5hURRJB2vu/EYas+7YyCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1lYWQD1; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739546779; c=relaxed/simple;
+	bh=fHqSVsarbr9/GNSKcHw7mFlABcvHBZA79lxaZw7Ee7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jzWVcd+/Qlwn+dG0eJ6JgaY5z/AD6LgVn13lG8JsHCwyCH/jT3aQho2aLERSjtAyublDPEsS3xNQqCPNhda+KFwZrFpbtYckRW9zuZXBYoBstlxSn2ZiBNFrX2RUaXRakPaJENFBEcwLGyHT7u4KGRYxTGy8Wz1HCYIYkrrzZXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=C5stt3BB; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1lYWQD1"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6f9c6d147edso19887417b3.3;
-        Fri, 14 Feb 2025 06:39:46 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C5stt3BB"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5450622b325so2172021e87.1
+        for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 07:26:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739543985; x=1740148785; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BI8KVq1D2a2mMAsVtcWo7XlUKAeczvE5EfV30VmWJCY=;
-        b=L1lYWQD1HeOZuTlLSjNWY981oW2qoKZCC/qOnmyqYQl4K+Pm17y6r12jG7xcaG+1VX
-         BbvZ2/rjdlC7W/83sZLAcah/+biNula3fnw1P0aMO2kjOCX03DpgNkW8AR0yPXy1xMYN
-         KjEHjRz6dncJ+zDuUFgltJCDd32dZK1qUKYRvmU0b6e0rSGRgvTWnttj8F/k1tJ8aOTI
-         P8RrFLxafZesdgaj8ZLSeooQXlxQdpIWXGRahoKmTqNdBSL6mVLiPLzJty0/vNThf/eW
-         fKZLL0Xx0JMnhGZ+Rc4lKzvhR0W3XH4x5B+1IrjfULcZLgzG6I9IVrCaVIa2fpwv/2YU
-         iCkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739543985; x=1740148785;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1739546773; x=1740151573; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BI8KVq1D2a2mMAsVtcWo7XlUKAeczvE5EfV30VmWJCY=;
-        b=MmDABZ7Olj1WJ+JicG7nJFSEByTcLqV178qsLh9Ttld4XqtMqmP4KSn3PLjvY2Z13I
-         0xNYBylTIWdV75549CmuUzSqa+lvGf1B7DPojz8mQBm8Ve//1VAS9FbPS2Yqtc9BoxuN
-         yvtBLJUqy4twjToirMZHN8oJbjNxg05e0zWRvFZwj/plu0KLPFWzTvjpdptITAh6JQc1
-         Y4fifXB13bGu/u5NHN4pyL27GcTFmb5zTti15lrn9NVc4bN3lQilRxnhHC//thMstr3b
-         kRSIsKAbFhaDDX2OAWtFMWXLZo8PufbjUoq+BVUNkeuHqeSLWPRyKqTKuyIDcJgkr9vs
-         QGqg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9zKa+ZZcNTFTQFhx5u3Jfju+l6atRRqftutvHlB8qAmNYB0JsSipfA4kgv70k8hcLd+lB9F16o+kHQI8q@vger.kernel.org, AJvYcCUyTgyuo9pBFAVqxFu+C/8z0NB64lfjKYlV0pSBkV91I5uHl9JA2mdHU6AdZ2Jrp8ARLzdj3DpzzhOhqoI=@vger.kernel.org, AJvYcCVQ25wsogKO1J9hdg0xlYTR4zgZf2i8XjS+tSG1BuEv+FXL0B/6v8VI0DdSGwVrgmCTfYojiGOc+dgBP82hx8z0mOQ=@vger.kernel.org, AJvYcCWXX19V/6efSVl3+hZ+agotxk81yqPslfj2j1zhnhzrmEozVuD+GOmCz2favD9OFCBcoK5fRjf3R5bw@vger.kernel.org, AJvYcCWu1Pe+Ct1o+OYuX9jx/Uhyn0LUJRbwsiZJmTwdPkW80koDpcNmPpCGajjFViqLQDCDqpKQVmuGceASpQ==@vger.kernel.org, AJvYcCXSa0su7Ym3VesrF+ipApPdz4if0gPGiHJ8VkqrHnh4Nx42YfPhL+6WwBTDotf2eaTnTJsrf/yG7nI=@vger.kernel.org, AJvYcCXUrhuCTJaATfRo6CuuoTcJzfVIRPRM20mF2xlJ3eiFpNmXV1FadFINdjdS1i3KC0eFDybUmeHWJrIzWiGp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtiU5bya+44KiEEY2z+atVGfKOCzl7i+swR4Uw5zs5BAMPzaXt
-	Va0MeGD/TjU6LB/3Q/phyP5cngHS9QC23pen1JE71V8UOBejNI9h
-X-Gm-Gg: ASbGnctbhFxQniYN7pDyKsH8fU59roj4JE1Y+xDcMXrGZPdYXR+Fj7eADxt7aoyc6O5
-	SuWjIcol5Dh59VkApoSu3opVFnO/z2DZYaDYFcixP+DPpMY47cuxL0IpraUirdFUvhtkBc+3VnZ
-	/i5qVcCqXeGNGdfMMWgTsN+2z6k+bBuMyeG9Bkq/nzSg7EOsaENNPE3gWc3xlKxMeYlAD0+x7Ne
-	Icjs+BCCn1SmxIu3NFio32ZFFHsImUWsLvUifKSlCosUoggp3SxBbcABrFOXMOjc+8vxRLITep3
-	sGSAYQEYlFczu/hfz6VRJ21PLBs2oxSz9xuU/mzdMbQ9ADtMaO8=
-X-Google-Smtp-Source: AGHT+IFSk6lpEhh1WcbK3saqrHokhIjyrUSazUu/lghjS/PE2nJjXAP82B0Z/67hwQGCLhksXNnAww==
-X-Received: by 2002:a05:690c:6206:b0:6ef:6fef:4cb6 with SMTP id 00721157ae682-6fb1edcc561mr119515777b3.0.1739543985181;
-        Fri, 14 Feb 2025 06:39:45 -0800 (PST)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fb3609589asm7800987b3.56.2025.02.14.06.39.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 06:39:44 -0800 (PST)
-Date: Fri, 14 Feb 2025 09:39:43 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org, linux-crypto@vger.kernel.org,
-	qat-linux@intel.com, linux-gpio@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Jacky Huang <ychuang3@nuvoton.com>,
-	Shan-Chun Hung <schung@nuvoton.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>
-Subject: Re: [PATCH treewide v2 1/3] bitfield: Add non-constant
- field_{prep,get}() helpers
-Message-ID: <Z69Vr4ZGlrq7HxmT@thinkpad>
-References: <cover.1738329458.git.geert+renesas@glider.be>
- <1824412519cb8791ab428065116927ee7b77cf35.1738329459.git.geert+renesas@glider.be>
- <e20a177a-30cd-4088-89e1-b479aba1356c@wanadoo.fr>
- <Z5-xMUqrDuaE8Eo_@thinkpad>
- <74cab7d1ec31e7531cdda0f1eb47acdebd5c8d3f.camel@sipsolutions.net>
- <45920591-e1d6-4337-a906-35bb5319836c@wanadoo.fr>
- <CAMuHMdXZKNtAmiMP8uuSngZMsDLGcYwrLS0xNWzN4UfLaccdyA@mail.gmail.com>
- <16e1568d-8747-41e0-91b9-ce23c5592799@wanadoo.fr>
- <Z6DzQHebEKBb12Wo@thinkpad>
- <CAMuHMdVFG57rUVC-XXk6bsZupVTeV0YAcue=zKWGnm4owjDiEA@mail.gmail.com>
+        bh=fHqSVsarbr9/GNSKcHw7mFlABcvHBZA79lxaZw7Ee7Y=;
+        b=C5stt3BBJuOOXMAzfMyhLZv00eXEca7HZwOE73UqnCR9RjwLASUVnP6Y7bc4l6Yd+c
+         +tkE3SvTx2vg6Zv9rZ6gG5RIy1LO5N7sbN+7bCQOAF2dXw46lbBUjyYzQoKBRVu6ZrKN
+         z2+8xkiAjZgSuaQKggOcPLYmoXGdKq6YfH5uw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739546773; x=1740151573;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fHqSVsarbr9/GNSKcHw7mFlABcvHBZA79lxaZw7Ee7Y=;
+        b=u86QYZ93df3KD4V3irIVmbwQghHq2xN8hBcyWBFMrZm3uIAQXVBeD0oBODk+ynUOGp
+         5K/7h0oVbeJjz5BmpqFoPfNKRaZ2ub/8dUdjavgLpnmVjUJ6LuIw3p7//f3h1wPOLDCE
+         xeTyVFgtiosJo40nbbfKk0nQq8WNvVeDD74XrGtACqrogPTg1o17mqfrCx6jlNd4QIWs
+         PEh1Z4ANiyOkl/qvGX2nMnoJLVRG2ceKnvhyfe4TVu1Bsn04nKL/u+3i23L+8LoBvalA
+         7PlD4aEfvIDZGsmVJB+eAwQDnGpeiCxwJZJ3xEHv9wJ9eqZhNlTVjhUL8Pg7I5IIxws7
+         kRqA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9Ulb0nzE2aQ0GJBs7XB8iaWbBMhHj2DXA8zqHqCtnI5r3nZF5H2S5BL9q1F+JmNn+tCoNb30Y8K0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv+DAxuGNu2FfpuEJg8Z1csoEbxHzqxbJZGuFfhxNbWxCRDp48
+	GmkebORImkpTy4YSabeKL1priu3OPbLyf8BQJqgRiXGpbVM4IimB8Y7VaXmhLZGcsEIoslSvQN/
+	ocg==
+X-Gm-Gg: ASbGncs3xvPScvlsCzvcdmRsJ2Jkm20zi27kIormivpxU6tbKMomNHszewWKG6kogm+
+	hBlnUPrsd/t/IjT63PfaLJ7DTauJUMQJNEaSqnK8vsxKRZD/dQHjGwxt/qCwJp3c+GAxV6wxIg4
+	9SFuRDqxcIJHl4+KoAzMM4jhemRkpDoZJK82VdfIxwjgrXXdhY6Y5XxaFAaeopfXnYqQm9zMGKB
+	Resy25pW0h7zcWoFu+GUXuKCs0mVqlBssXP9jjc0HEKzZVvDgqvcewQgIHebxbUmUBHkMLUPsoP
+	idJOwWe+BUy0aBpQHvU0sL0IXOPqdjN/F/q8bPkL1VKSlKE52b1DaO63dfM=
+X-Google-Smtp-Source: AGHT+IHImGpAh2fbjAOAnvmJAao/IurOHYmL65jqg5/8cIgpxIMeNHL5f/L4uhecRzVqUWh/Kt96zw==
+X-Received: by 2002:a05:6512:401e:b0:545:ee3:f3d2 with SMTP id 2adb3069b0e04-5451dd8fb8amr2890737e87.17.1739546773030;
+        Fri, 14 Feb 2025 07:26:13 -0800 (PST)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-545280ec98dsm259373e87.42.2025.02.14.07.26.10
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Feb 2025 07:26:12 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30613802a6bso22931621fa.1
+        for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 07:26:10 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUdzow+3cbiv2oPHCdOf5ci8ULLevMmol4rW/kq2aq7Q7xdR5TAqQnWkymlQo7yCwZqrxmfnCq8iig=@vger.kernel.org
+X-Received: by 2002:a2e:8a97:0:b0:308:eb58:6581 with SMTP id
+ 38308e7fff4ca-30914801891mr14311001fa.0.1739546770563; Fri, 14 Feb 2025
+ 07:26:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVFG57rUVC-XXk6bsZupVTeV0YAcue=zKWGnm4owjDiEA@mail.gmail.com>
+References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
+ <20250211-aux-device-create-helper-v3-2-7edb50524909@baylibre.com>
+ <20250213-crown-clustered-81c6434c892b@spud> <1jv7tczytk.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jv7tczytk.fsf@starbuckisacylon.baylibre.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 14 Feb 2025 07:25:59 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=VeSrZktEbxNXXTgD80QGTpW5b-WiXUFko+a8FUzmN+fQ@mail.gmail.com>
+X-Gm-Features: AWEUYZn5Dl35ky148QOOCnARP_86rg2vhIKgVTUOs7s9KbdYhXOWWeRWr_r9yF0
+Message-ID: <CAD=FV=VeSrZktEbxNXXTgD80QGTpW5b-WiXUFko+a8FUzmN+fQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/7] reset: mpfs: use the auxiliary device creation helper
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Conor Dooley <conor@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Danilo Krummrich <dakr@kernel.org>, Conor Dooley <conor.dooley@microchip.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	Gregory CLEMENT <gregory.clement@bootlin.com>, =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Abel Vesa <abelvesa@kernel.org>, 
+	Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 12:03:16PM +0100, Geert Uytterhoeven wrote:
-> Hu Yury,
-> 
-> On Mon, 3 Feb 2025 at 17:48, Yury Norov <yury.norov@gmail.com> wrote:
-> > On Tue, Feb 04, 2025 at 12:41:55AM +0900, Vincent Mailhol wrote:
-> > > On 03/02/2025 at 22:59, Geert Uytterhoeven wrote:
-> > > > On Mon, 3 Feb 2025 at 14:37, Vincent Mailhol <mailhol.vincent@wanadoo.fr> wrote:
-> > > >> On 03/02/2025 at 16:44, Johannes Berg wrote:
-> > > >>> On Sun, 2025-02-02 at 12:53 -0500, Yury Norov wrote:
-> > > >>>>> Instead of creating another variant for
-> > > >>>>> non-constant bitfields, wouldn't it be better to make the existing macro
-> > > >>>>> accept both?
-> > > >>>>
-> > > >>>> Yes, it would definitely be better IMO.
-> > > >>>
-> > > >>> On the flip side, there have been discussions in the past (though I
-> > > >>> think not all, if any, on the list(s)) about the argument order. Since
-> > > >>> the value is typically not a constant, requiring the mask to be a
-> > > >>> constant has ensured that the argument order isn't as easily mixed up as
-> > > >>> otherwise.
-> > > >>
-> > > >> If this is a concern, then it can be checked with:
-> > > >>
-> > > >>   BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask) &&
-> > > >>                    __builtin_constant_p(_val),
-> > > >>                    _pfx "mask is not constant");
-> > > >>
-> > > >> It means that we forbid FIELD_PREP(non_const_mask, const_val) but allow
-> > > >> any other combination.
-> > > >
-> > > > Even that case looks valid to me. Actually there is already such a user
-> > > > in drivers/iio/temperature/mlx90614.c:
-> > > >
-> > > >     ret |= field_prep(chip_info->fir_config_mask, MLX90614_CONST_FIR);
-> > > >
-> > > > So if you want enhanced safety, having both the safer/const upper-case
-> > > > variants and the less-safe/non-const lower-case variants makes sense.
-> >
-> > I agree with that. I just don't want the same shift-and operation to be
-> > opencoded again and again.
-> >
-> > What I actually meant is that I'm OK with whatever number of field_prep()
-> > macro flavors, if we make sure that they don't duplicate each other. So
-> > for me, something like this would be the best solution:
-> >
-> >  #define field_prep(mask, val) \
-> >        (((typeof(_mask))(_val) << __bf_shf(_mask)) & (_mask))
-> >
-> >  #define FIELD_PREP(mask, val)                                         \
-> >          (                                                             \
-> >                  FIELD_PREP_INPUT_CHECK(_mask, _val,);                 \
-> >                  field_prep(mask, val);                                \
-> >          )
-> >
-> > #define FIELD_PREP_CONST(_mask, _val)                                  \
-> >         (                                                              \
-> >                 FIELD_PREP_CONST_INPUT_CHECK(mask, val);
-> >                 FIELD_PREP(mask, val); // or field_prep()
-> >         )
-> >
-> > We have a similar macro GENMASK() in linux/bits.h. It is implemented
-> > like this:
-> >
-> >  #define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(const_true((l) > (h)))
-> >  #define GENMASK(h, l) \
-> >          (GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
-> >
-> > And it works just well. Can we end up with a similar approach here?
-> 
-> Note that there already exists a FIELD_PREP_CONST() macro, which is
-> intended for struct member initialization.
+Hi,
 
-Hi Geert,
+On Fri, Feb 14, 2025 at 12:59=E2=80=AFAM Jerome Brunet <jbrunet@baylibre.co=
+m> wrote:
+>
+> > One think that's always felt a bit meh to me is this id number stuff,
+> > I just threw in 666 for meme value.
+>
+> :)
+>
+> > The whole thing seems super
+> > arbitrary, do any of the users of this helper actually put meaningful
+> > values into the id parameter?
+>
+> In example changes I've sent, no.
+>
+> In other simple usages (those using container_of()) of the auxiliary
+> bus, I think there are a few that uses 0 and 1 for 2 instances.
+>
+> I guess your question is "do we really need this parameter here ?"
+>
+> We could remove it and still address 90% of the original target.
+>
+> Keeping it leaves the door open in case the figure above does not hold
+> and it is pretty cheap to do. It could also enable drivers requiring an
+> IDA to use the helper, possibly.
 
-That was my suggestion. Now that we're going to have many flavors
-of the same macro, can we subordinate them to each other? 
+FWIW, once you resolve the conflicts in drm-misc with ti-sn65dsi86
+you'll need the ID value. ;-)
+
+There was a big-ol' discussion here:
+
+https://lore.kernel.org/r/8c2df6a903f87d4932586b25f1d3bd548fe8e6d1.17291804=
+70.git.geert+renesas@glider.be
+
+I eventually pushed v2 of the patch:
+
+https://lore.kernel.org/r/7a68a0e3f927e26edca6040067fb653eb06efb79.17338400=
+89.git.geert+renesas@glider.be
+
+
+-Doug
