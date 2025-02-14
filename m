@@ -1,78 +1,84 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA9A22D4F9
-	for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 09:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D41022D4D6
+	for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 09:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739524106; cv=none; b=QqjtVWESlrgDVDX5JMmXTbOjU9SFK+QpadxlDv9sqWjtjhV5MLgbvWEe6VUtAeLMPE3MvQDZC5NYCUdChDtjeKETcmxQSTDpG9qH2TeHBgyDXZGuuwkSasFFcTDiTK0jlbOwTUFqu/Lkreo3gZ8alK0TFMwjY0Ewhz4+gellXvM=
+	t=1739524338; cv=none; b=TlikizmlCFkMQ3tGR//3uItgwjFkj7WZ3r4HOPKy82cLd0vpcrcGV1SghzeoBG5xguojt799MMQS2ZSF/OHaVRzdsTt1Vz16U1riUkr44nO9rCfrP/63nA09pfDuHFp0eF7O5UePp7d9UJyhKcHlbenWkwa83FX8GxYO2IDLjg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739524106; c=relaxed/simple;
-	bh=S/KKmbMokH0GSXh6+xn2Xwon8nvwaj8CZLF3bojbyFQ=;
+	s=arc-20240116; t=1739524338; c=relaxed/simple;
+	bh=09wSG3UP8DXNAydNOXO7UcqtL1Q2WajdRDiW/oR5ky0=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NbiZZRzIRE156gPHZUZPe4AUi5/jR4W8jhWTzY29auhrVaRuyiDVSOv9K7QBMvCYh6tRVwEoIAt0egk0MUDn/a5ZeUfCBCDhpbdsxlLKEoZE9Gs9KnXN6gP8oLbSDzjwpRw7wvr6B8yueqVjoa3moYK2f59OeF0QyTS0RY8nCxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=g21e2qMc; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version:Content-Type; b=QVdKgoldGYWFn765P7/m569emWSTuG5x0SSqHa1Uc5Yv08KbXl6ZY2LlhjVtpEG6QSHajpapPTDufB45avZZf6GxRPBd5XsISqQE+tt+6o06pW1+A8n1OPw9chcIEggoI+QdbM2EWJn32waAZeD3r/A8mkRo1kLzWimK2FEIt54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=w/ZqNx6a; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="g21e2qMc"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f22fe8762so884126f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 01:08:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="w/ZqNx6a"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38dd93ace00so1006610f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 01:12:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739524102; x=1740128902; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739524334; x=1740129134; darn=vger.kernel.org;
         h=mime-version:message-id:date:user-agent:references:in-reply-to
          :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FRBZ9LnljeKdyPrMlrMbswWuQjbGiHO54rQVeWsI8fs=;
-        b=g21e2qMcOnjxZ30r+2Yz/IFN7l24CJ6jquAM+mcJDV+f1PvNYP+Om9UUeRFLd1bqaG
-         UJSkxCtfNzv0Ol0tXutTTCCfzAlu9PMysmfVdu1chudjTcmAwyOUXkcOVnd5bzE+GD3O
-         wOBDLLtIbnup6OVo/IzYN+Xu6qAywnsUE2klhzoHpq7M7bB6Kr5TNzypWrMoFBCYpg8M
-         a8wDmi4Sji3Y0X3K3LwqIazymSo7cTLXITUxQu9Kc02DnzL7z4HpbWkW4BVGckB95GME
-         KZ2JPO35slYaxC5vOQeCZcSrWOJIoi37aHQYZ2v6hPnBVYGp5vuwlcFdh6Jou9TUq8Wj
-         keKw==
+        bh=XWPLpS01eydUHu6GBaBUe8/ayY4CKHZMhz0y47NMUSQ=;
+        b=w/ZqNx6a+M2Pc/myYEC492A2kNrYpbyRBq0ytUzsSS1GYHgLk1bcaaIeoAJvRF2JJ2
+         01ivQJTq/vrsfJztn42XLtvO5Alo4Cuk1XcjK6UHr1MwFxe9CAmAHj5C292A93AFvtCj
+         p2GPoFJ6pY6K/B/RxaMj04qIhr5blexwqgCcjqBWKOYilwSqwap+9Qb9/MXvJge6eO4K
+         UYbimlzsfQjh1IPuUAOdlPpwMnCIbtbvPWTm6FY+2Mzn6dJuAQ1ylJN+t9FQ3RSh778j
+         aXIk5WgprR9E6MndzyjQlfxBc0sKOLOwlBJq4PBayY42jxeM4w6gkc1sFrNFPudcPqYp
+         3RbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739524102; x=1740128902;
+        d=1e100.net; s=20230601; t=1739524334; x=1740129134;
         h=mime-version:message-id:date:user-agent:references:in-reply-to
          :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FRBZ9LnljeKdyPrMlrMbswWuQjbGiHO54rQVeWsI8fs=;
-        b=VnO+b08kfyLLoS2mdX2l0oyEhLnaWJi23I1eKK/gqVLmorARRI4jAk6HNWhBq4n8+R
-         BNjFPwwOaig15F61HLWQPlEw74cWbnb5ho0bd0ID67eENSR8LXQBA7vETAxMt7lyy61Q
-         bPrFcqtxyKc2zVk3WW4tpxCnXDM5dv90+o2xO5DL4FlXhIlhuJaNvK5PYgEnaB74qg3c
-         ZSCXo6sqoXoKEfO68lwWvDWcBnq7WBfbNywNVRM2J/xA7S6i6Z2GIAvbc+d7SYyhygGT
-         GtIxdhn8kLSPkLi23x/Bu0o9sLa8j6SVkyqwvfTr/CJsbn57M6X2WOD0muoxF7mAK4Pz
-         NDnA==
-X-Forwarded-Encrypted: i=1; AJvYcCX58Mf25HAPzHRsYvYzYSlQQLtlovFBH/Tel+F0YvXFJrM/65eP3YoOIrrUF7Iaqqi/ywQH3fB7Ldo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4iMdjBMs4JdTqVGqsddLcpzOwRZKWBob12/BqOAemBwWQ621L
-	1iveNZDUu7jHPfb8dbrt7VwxATyIW7Ovy1Bfjnwvtx5FsICBFmjLqE6ggqOoHuHlDbOGD9naPMZ
-	CXLY=
-X-Gm-Gg: ASbGncsHh2CW/R5pWTwkcKRsu5WWhHwqyXcC/5Zvto8rK4+o8HLMi4ELpZkvAzLX9yo
-	2d7L1zvSejkASHndkiOOPIGU5j0KnK521YD/pYiNgmp3KHL1GhxuWN92vVUyr84WFlC4jKxhQnL
-	IXCWDMOkSOePx3lpa+PibQhIQxPDbBQWnYYfqY6XfuuyN17TdMHjV6a7Y/XAYH/ozqRrib7oGy+
-	WtmB55OvaDARnFy3H62kA+SfjTjC5NqR8n1I90O1MBoDI4JquHhAlyC4VNlXCEm6d/gx+GDX6X9
-	/XcuGZ0k/uUcjH4=
-X-Google-Smtp-Source: AGHT+IE0/rSxXHcT0d8T4npVkX/xeGrYvHZ7lAWe+eAfluyBR05NqZXCHJQG0OjEOL1oPVBXgPrHSg==
-X-Received: by 2002:a05:6000:18a4:b0:38f:3009:61d7 with SMTP id ffacd0b85a97d-38f30096396mr623237f8f.4.1739524100676;
-        Fri, 14 Feb 2025 01:08:20 -0800 (PST)
+        bh=XWPLpS01eydUHu6GBaBUe8/ayY4CKHZMhz0y47NMUSQ=;
+        b=rVRLH6XOlqPpZd4FdTbmGNZ7uZJYj8MKjDCekSmdUBYLMous0RptOBY485dJfclbbe
+         D9kU/kIWiLmckmG6QFl465jhXiZNa98ftIT8GcCp0EZff/sUIgdhFq7GUImppetNc+TU
+         0KURBzjxuSDnBREtSeTOPQUez7LnT4GzOvy7KBuxDb3cOJLkn53TGlX0kfJ4AUvsR3qe
+         69+ZGER6zFUHZ5VAX4wp83vmBTRiyGz9OonYAMDoHjeaOhti12tkPSjlJzmXXwzuLPp/
+         64rTdr+EycE20gBmBHZqm/jt/LlGIhC1njoc0BKcGGouC/a1I/So1/z7CD4k76zdEfCK
+         pYvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTQmOu4UKU1aCBLjo32FGSAG+kQpQQiFTh9JDekabP020FR+/XjXnL9rLFQ1yzn0yMTmcikAk1boQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjseEuVUi9llKoqLfdE8QJ2ZP5ocTyLq37GHYMQQD9bYvmDH39
+	Z68YV4asie7O1V/uvanGd9MY+pUTrGKESnsPpdFxwVN7kCo+gtytNTgUeQyCzIM=
+X-Gm-Gg: ASbGncvC+6Y3g397qilpoyjw8sGGmLQQyWkpsiBovoFVMdh2dtOIxC7kJWMlFo8j8FN
+	bi5AvcVKzwrDb/BGl4+vKKBMob9VS1qL5urnWKE6NLMIqKuqo9DazfyypADhIIk5SUMlBs+bRKx
+	8ihfoI6S8dkQ1Cs71Lky8qn0fK0M7L2ZjnLaOX6lPiyl47NX200xColQ9yCQXOXx3XiRydvvMU+
+	IqpBuPHzcQTX+JwxDUFwFADBgCe7RGWmyEEVhXh/Mru3A4tVFqDQqm2TukUPmu2CeGZ9ShMWr0M
+	T6fqEeuDaMep/3A=
+X-Google-Smtp-Source: AGHT+IHB7Zaq1DV8SNQlu/uvUkXW1GOYMzSJKw6n2qPshAIpNTdXKTBQ2IDut6nlYHPtUDgvHL/tTA==
+X-Received: by 2002:adf:e390:0:b0:388:da10:ff13 with SMTP id ffacd0b85a97d-38dea26e7e4mr10175098f8f.21.1739524334488;
+        Fri, 14 Feb 2025 01:12:14 -0800 (PST)
 Received: from localhost ([2a01:e0a:3c5:5fb1:baa6:bc65:b9db:3759])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38f259d8dd6sm4117993f8f.62.2025.02.14.01.08.20
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38f258dcc45sm4114605f8f.33.2025.02.14.01.12.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 01:08:20 -0800 (PST)
+        Fri, 14 Feb 2025 01:12:14 -0800 (PST)
 From: Jerome Brunet <jbrunet@baylibre.com>
-To: Martijn van Deventer <linux@martijnvandeventer.nl>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson: g12a: Fix kernel warnings when no display
- attached
-In-Reply-To: <20250213221702.606-1-linux@martijnvandeventer.nl> (Martijn van
-	Deventer's message of "Thu, 13 Feb 2025 23:17:01 +0100")
-References: <20250213221702.606-1-linux@martijnvandeventer.nl>
+To: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,  Mark Brown <broonie@kernel.org>,
+  Rob Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>,  Jaroslav Kysela <perex@perex.cz>,
+  Takashi Iwai <tiwai@suse.com>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,
+  jiebing.chen@amlogic.com,  linux-sound@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  jian.xu@amlogic.com,  shuai.li@amlogic.com,
+  zhe.wang@amlogic.com
+Subject: Re: [PATCH v2 1/5] dt-bindings: clock: axg-audio: Add mclk and sclk
+ pad for s4
+In-Reply-To: <20250214-audio_drvier-v2-1-37881fa37c9e@amlogic.com> (jiebing
+	chen via's message of "Fri, 14 Feb 2025 10:13:40 +0800")
+References: <20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com>
+	<20250214-audio_drvier-v2-1-37881fa37c9e@amlogic.com>
 User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Fri, 14 Feb 2025 10:08:19 +0100
-Message-ID: <1jpljkzyf0.fsf@starbuckisacylon.baylibre.com>
+Date: Fri, 14 Feb 2025 10:12:13 +0100
+Message-ID: <1jjz9szy8i.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -81,115 +87,100 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On Thu 13 Feb 2025 at 23:17, Martijn van Deventer <linux@martijnvandeventer.nl> wrote:
+On Fri 14 Feb 2025 at 10:13, jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org> wrote:
 
-> When booting SM1 or G12A boards without a dislay attached to HDMI,
-> the kernel shows the following warning:
+> From: jiebing chen <jiebing.chen@amlogic.com>
 >
-> [CRTC:46:meson_crtc] vblank wait timed out
-> WARNING: CPU: 2 PID: 265 at drivers/gpu/drm/drm_atomic_helper.c:1682 drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
-> CPU: 2 UID: 0 PID: 265 Comm: setfont Tainted: G         C
-> Tainted: [C]=CRAP
-> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
-> lr : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
-> Call trace:
->  drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
->  drm_atomic_helper_commit_tail_rpm+0x84/0xa0
->  commit_tail+0xa4/0x18c
->  drm_atomic_helper_commit+0x164/0x178
->  drm_atomic_commit+0xb4/0xec
->  drm_client_modeset_commit_atomic+0x210/0x270
->  drm_client_modeset_commit_locked+0x5c/0x188
->  drm_fb_helper_pan_display+0xb8/0x1d4
->  fb_pan_display+0x7c/0x120
->  bit_update_start+0x20/0x48
->  fbcon_switch+0x418/0x54c
->  el0t_64_sync+0x194/0x198
->
-> This happens when the kernel disables the unused clocks.
-> Sometimes this causes the boot to hang.
->
-> By (re)adding the flag CLK_IGNORE_UNUSED to the VCLK2 clocks, these
-> clocks will not be disabled.
->
-> This partially reverts commit b70cb1a21a54 ("clk: meson: g12a:
-> make VCLK2 and ENCL clock path configurable by CCF").
+> add the s4 audio power domain, add the mclk pad, sclk pad
+> and lrclk pad clock id for s4
 
-It looks like DRM needs those clock enabled regardless of connection
-status on HDMI. Even with this change applied, you would get the same
-problem again if the bootloader does not take of turning the clock on,
-which is not a given.
+Incomplete description of the changes that follows
 
-CLK_IGNORE_UNUSED gives not guarantee a clock will be enabled or stay
-enabled at any point.
-
-A proper fix to this issue should be done in DRM, IMO.
+Also the change mixes 2 differents topic for no reason AFAICT.
 
 >
-> Fixes: b70cb1a21a54 ("clk: meson: g12a: make VCLK2 and ENCL clock path configurable by CCF").
-> Signed-off-by: Martijn van Deventer <linux@martijnvandeventer.nl>
+> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
 > ---
->  drivers/clk/meson/g12a.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  .../bindings/clock/amlogic,axg-audio-clkc.yaml         | 18 ++++++++++++++++++
+>  include/dt-bindings/clock/axg-audio-clkc.h             | 11 +++++++++++
+>  2 files changed, 29 insertions(+)
 >
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index cfffd434e998..1651898658f5 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -3234,7 +3234,7 @@ static struct clk_regmap g12a_vclk2_div = {
->  			&g12a_vclk2_input.hw
->  		},
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_GATE,
-> +		.flags = CLK_SET_RATE_GATE | CLK_IGNORE_UNUSED,
->  	},
->  };
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> index fd7982dd4ceab82389167079c2258a9acff51a76..364783c6f7572b09d57de2b35d33adb7bcf7db18 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> @@ -21,6 +21,7 @@ properties:
+>        - amlogic,axg-audio-clkc
+>        - amlogic,g12a-audio-clkc
+>        - amlogic,sm1-audio-clkc
+> +      - amlogic,s4-audio-clkc
 >  
-> @@ -3270,7 +3270,7 @@ static struct clk_regmap g12a_vclk2 = {
->  		.ops = &meson_vclk_gate_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->  	},
->  };
+>    '#clock-cells':
+>      const: 1
+> @@ -100,6 +101,9 @@ properties:
+>    resets:
+>      description: internal reset line
 >  
-> @@ -3354,7 +3354,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->  	},
->  };
+> +  power-domains:
+> +    description: audio controller power
+> +
+>  required:
+>    - compatible
+>    - '#clock-cells'
+> @@ -116,12 +120,26 @@ allOf:
+>              enum:
+>                - amlogic,g12a-audio-clkc
+>                - amlogic,sm1-audio-clkc
+> +              - amlogic,s4-audio-clkc
+>      then:
+>        required:
+>          - '#reset-cells'
+>      else:
+>        properties:
+>          '#reset-cells': false
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - amlogic,s4-audio-clkc
+> +    then:
+> +      required:
+> +        - power-domains
+> +
+> +    else:
+> +      properties:
+> +        power-domains: false
 >  
-> @@ -3368,7 +3368,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->  	},
->  };
+>  additionalProperties: false
 >  
-> @@ -3382,7 +3382,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->  	},
->  };
+> diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
+> index 607f23b83fa7287fe0403682ebf827e2df26a1ce..75dde05343d1fa74304ee21c9ec0541a8f51b15e 100644
+> --- a/include/dt-bindings/clock/axg-audio-clkc.h
+> +++ b/include/dt-bindings/clock/axg-audio-clkc.h
+> @@ -162,5 +162,16 @@
+>  #define AUD_CLKID_EARCRX_DMAC_SEL	182
+>  #define AUD_CLKID_EARCRX_DMAC_DIV	183
+>  #define AUD_CLKID_EARCRX_DMAC		184
+> +#define AUD_CLKID_TDM_MCLK_PAD0_SEL     185
+> +#define AUD_CLKID_TDM_MCLK_PAD1_SEL     186
+> +#define AUD_CLKID_TDM_MCLK_PAD0_DIV     187
+> +#define AUD_CLKID_TDM_MCLK_PAD1_DIV     188
+> +#define AUD_CLKID_TDM_MCLK_PAD2         189
+> +#define AUD_CLKID_TDM_MCLK_PAD2_SEL     190
+> +#define AUD_CLKID_TDM_MCLK_PAD2_DIV     191
+> +#define AUD_CLKID_TDM_SCLK_PAD3		192
+> +#define AUD_CLKID_TDM_SCLK_PAD4		193
+> +#define AUD_CLKID_TDM_LRCLK_PAD3	194
+> +#define AUD_CLKID_TDM_LRCLK_PAD4	195
+
+I think we've been over the fact that s4 audio clock is very unlikely to be
+compatible with the axg/g12 generation.
+
+I doubt they should share the same bindings ID.
+
 >  
-> @@ -3396,7 +3396,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
->  		.ops = &clk_regmap_gate_ops,
->  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->  		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->  	},
->  };
+>  #endif /* __AXG_AUDIO_CLKC_BINDINGS_H */
 
 -- 
 Jerome
