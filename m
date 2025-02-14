@@ -1,212 +1,188 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B9425A652
-	for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 11:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9BA25A62E
+	for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 11:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739531718; cv=none; b=sGH/Zznz+hcqIwSdPa33i5Zn7b3Si58VKm/o/5F9lWlRWR/gbjvqeVzKcXhXHJaWD0t2w+ee+8ybvHneg9q4FAjAfo1rzAa1XfLwWnIKR4/efrMYz+Lw8v0nfpRqUYChsKuTBl43SPcE+l1Dig2/NiHPpU+eiypsvVja7zUfwaQ=
+	t=1739531797; cv=none; b=mLdoFcVCqqfQArhiX4rSmlkRjNcmT8aUA6V3NBF/ApDhHHNS4YN/WAIOS2PZuzgS4u6XDzGikO9nPHgcF/0aGl78btemSaVS1W++CMaZGHKJumzoIdOKNjrEeLX9yakOLSvdpjsfqM1wkp973j9NCIq1FyrXMvySIKdtgiBPY5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739531718; c=relaxed/simple;
-	bh=Byc7coW9dudIXZ8IkgWh7fAF1R3OFkHSFllItq8iXtM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bYhc0/u4sy1QS9MrpfPtfP/cUajrEOgY6VSBpA0rHcIR1BIhdAJOsFE3nx78zYtnFu7InfOi5tbC4zeHQsHs5Bm33XJqAKuJV4ELMJyG7rCsSi/ZiXFlz1ZiXTmiJuLKhxgUn5SGvyk8BBmuev3xi7alA2TtROrunfBn7ptiKrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yx/B4F3N; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1739531797; c=relaxed/simple;
+	bh=Nv+6Ycy+r/YLOTrYHkPYwU3kd5MfJvihnaHXExKMBQs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ty8G69hN4osNcoG0pQ4sFRhkYA6fC83OCx1qPvr5vCA3tRy+KUvqXc2DCkcIErksg0YSm1Ajru3Uw41V9WpYpDPO7+isAESDrh4zenplj12VHOEg57pLJI3FL21KfKR5d0OkjZUF3aaZkWjc5iJKEsm0AJRlVg/cd9rQvTZpW2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OI2otWP4; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yx/B4F3N"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso21178715e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 03:15:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OI2otWP4"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e4930eca0d4so1451879276.3
+        for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 03:16:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739531715; x=1740136515; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QmEs8ouBliGOCMobju3l9AIdN9DwWGs50L/Ux0bkJ98=;
-        b=yx/B4F3Ni1V58MQMZ0MeiyadUjq/XpVfwquVToTEyzdz/O4b0VWt7iNleWjmRrTqc/
-         FD9Ma5ptv9FVmfFoHHoZ0bZEHupsfCtVGP7/tS9CnbT11ApvOJrROfU5868xG8BQsmU7
-         XDVe3sp2hi79MC1w7LXlZOaMgPle6/VelUwg7MDCay2d0O3YrcrrXWmSY9Yu01Z6ib7M
-         4RKRAljD7Zztfmuvsj1KxAPYbNnrBP5gZ3wA6fE7ZWmHCyuVXdbK76+kdZbOeraEG4jZ
-         pc4vh/uYFJENeax8mLdgNUZMES2PNTnJvMItgeftBqJgTwBd5q5ciykGIjEj998w9/OX
-         xZPQ==
+        d=linaro.org; s=google; t=1739531794; x=1740136594; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9jM48aKf/sbl9H/oOIzSS3d/8y4m7nkDsYlbYDKZEDc=;
+        b=OI2otWP44QmJsoWW6RJiWch/jCTDIewr6cfpbcKwj/F7m36rqzqlUgKidAe42S+0S4
+         Z7sl3GyDZudsFFofQHZvvXpLyBBeIxAlhSPSmFD2b9fQ8MrDh8lYn64YjwcrstwGrPph
+         UcOOQIc6sq3RMSX77WwLDimMAqZosz21ge6REELimIcopeiS/RZF2FNLUhbWcGDpUgbu
+         0PACkJqPTYGriSinpNaJtPZooZGLlY1F1SA2cVH4oMNuYPeCktrvhZSCMCgYqCRidG9r
+         WD/sauw0CRoqsGpFsTrR1EpxCRtFdzkud54FGFRQCIJlNQzwkGVPWnAEZz9jH/S/AUCV
+         PVQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739531715; x=1740136515;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=QmEs8ouBliGOCMobju3l9AIdN9DwWGs50L/Ux0bkJ98=;
-        b=M9IF6OLP032G1D9E4nOens3OtKEYxetYbjZUolvlIIPG5drgq58OuvfTi7zo8HqEdn
-         nZKiL43MmnYqYU37sMdZvP1UX+EoiBZ4awWU5sIt7B272oE1H0TMdXmMcjrB8bdOchyU
-         gvLgBIdU196p2K60Gocb78qe1BGECOeBYnfpKfHKre6WNjkBCrKE84sCyMo/+XljahbK
-         u82nu/kbTgvFeMzo/ahScMm6eTD+lYNdOpt6BitpYQmYWoMSLVDmFqKaYNVTNW0iK82o
-         tL/sVCchVZ5dz5vhXsTGWGLwgRpFcYvT4/GxpRfUPyoHIZtmXIqJQLcd19gmGS3Ws7dw
-         qGWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFBJoPL7EtURzd2r3A2hil29jU1YmJ4ftSRLRMr6zxP18VToaKeUXpgsMyWiR/WX8vN9C/3rANtKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaCPSxzTGYaQbpVj+ZMYKMOF3skM2wwxDOZL7d1U+JvehI6Aw5
-	NReycT1LAxu9lGYpumUd5xCusiHtBgJJBNg+bXiU/3jtfq8ZvXjI9WD2gmQGYUM=
-X-Gm-Gg: ASbGnctJwH9eYv7aFuUeWLrZd+8LHyDPlguPfID4IuadSt7ASnKR/CbrlMsvcAi9Y9x
-	AgmCHAn31ck9SAHdmxScmaQB6NfeREf5MGXyXRgfKBRwa7qHAJc1ZPSHun9JRAA24yJdz8pXrUQ
-	HAJ5AaUudI/bCC62GqCeFmfyk0fydkl7YeDi2vPbxLqql/TUBvNnrUAfHtP04w5t2KrEZC7jrPu
-	YuL0JrwteoSLD0eAjvg3TF9UvOmbq8bwMb9+cUjdp2l2lMwJyvUzQdByir22/yvHo1WnOdgmscc
-	fbfzmfxb/dQoaudPWuUoG6sAtyYq24vilybJvIVRl6NMVUszb1u/GqnyficslN0=
-X-Google-Smtp-Source: AGHT+IH5QDoLnhR0CwlUWQfd6my7FcGNb6CjS78uJgkB/lJP1TtFLz/ksqBTEmg2Q8Mj2ObQDYbmrg==
-X-Received: by 2002:a05:600c:783:b0:439:654e:ddf6 with SMTP id 5b1f17b1804b1-439654ede03mr61452765e9.9.1739531714673;
-        Fri, 14 Feb 2025 03:15:14 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:1506:c298:390c:8a? ([2a01:e0a:982:cbb0:1506:c298:390c:8a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439617da91asm42409885e9.2.2025.02.14.03.15.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Feb 2025 03:15:14 -0800 (PST)
-Message-ID: <d0ec285d-6a27-4f28-b622-6048a9dcb6e8@linaro.org>
-Date: Fri, 14 Feb 2025 12:15:14 +0100
+        d=1e100.net; s=20230601; t=1739531794; x=1740136594;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9jM48aKf/sbl9H/oOIzSS3d/8y4m7nkDsYlbYDKZEDc=;
+        b=nwPH5v4LCvhKTerVDvcX2zCv+Ogp0Rb9abMuWYL2FIqGAKM1OcYd6/USeRCXvlghC7
+         s4vCh5BtwS/ZzRO2SbWnIq7gngNFDYlmFiBEhZAV+glKXgXCLm7fX5LHpj5w98qN3A6g
+         qNWVCY+nHmSJAVEHiyrzcwMTf2x4paEBEDAMSkgj0BdGOZwA3ChGyMTCv0WM4MXpQscY
+         eupTVOGhNw/xhIweZahZt9k+mJ1YrMAsbWp3Btpv+kpi7lg9LWxblwkDAg9Ln437oqbo
+         7+gZYi7BZXl0DJCnNmxbIQdmCGNBELbS9pz+Y56jJevZGIGYC1GZKdc4jGTeRW3/ITwR
+         0/Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaFzbaftGcy5a7OJd7WjK829QOw4pke23PN2T7xX1B3frbl8kuid08qlJj/WrqwKGOtDi2OgHF+bk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS6OXL3gpgEo/e1inuXR0fzeT3gXGgc45yENMJBJ0VKfT3mo3C
+	PvhFAptUDio7YO3a6Rq7JBuiBIRKyK9Eo85WTe3RKz3onu5uqvGdfIxmIc6NBUbLxnVh16gicEK
+	n6kdfYqQO0FBrZSV8kEtuxn3EmdBInySxxCglkQ==
+X-Gm-Gg: ASbGncu9TlEARN4iBCb1/UOY1zEXelM8BCtk8KOWqsE4kRk8IqPyBr0tXlFAVJrbfhD
+	sN5zqxbR48hD/mzsnKRVp9ZvwftqQg6wO79w+UTB+VQmv4weyx/h645YUqk8nZ6Q4w3yPdRvnrA
+	==
+X-Google-Smtp-Source: AGHT+IE6woj8oPDle191tVLCdn9IrSTd52LbGDiCC/HBR/zbujT5GVfsySFK4K0WQQyEViMhqMK63WlGFClc8+pjkbk=
+X-Received: by 2002:a05:6902:841:b0:e5b:323b:a1a4 with SMTP id
+ 3f1490d57ef6-e5d9f180dc6mr10461212276.41.1739531793901; Fri, 14 Feb 2025
+ 03:16:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] clk: meson: g12a: Fix kernel warnings when no display
- attached
-To: Martijn van Deventer <linux@martijnvandeventer.nl>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250213221702.606-1-linux@martijnvandeventer.nl>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250213221702.606-1-linux@martijnvandeventer.nl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CGME20250128194832eucas1p15db9ed3575703812ecc0374ffc5b2861@eucas1p1.samsung.com>
+ <20250128194816.2185326-1-m.wilczynski@samsung.com> <20250128194816.2185326-7-m.wilczynski@samsung.com>
+In-Reply-To: <20250128194816.2185326-7-m.wilczynski@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 14 Feb 2025 12:15:58 +0100
+X-Gm-Features: AWEUYZmWRXn0bzCrMyNA_HXGOtxuTTirzpyDWms-8p0mq8f1JPxvJIR_18CPMCg
+Message-ID: <CAPDyKFrcs5Hc-X6qExEA992MoQcakCuKRjw7cek3KpYZihsLFw@mail.gmail.com>
+Subject: Re: [PATCH v4 06/18] pmdomain: thead: Add power-domain driver for TH1520
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
+	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com, 
+	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, jszhang@kernel.org, 
+	p.zabel@pengutronix.de, m.szyprowski@samsung.com, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 13/02/2025 23:17, Martijn van Deventer wrote:
-> When booting SM1 or G12A boards without a dislay attached to HDMI,
-> the kernel shows the following warning:
-> 
-> [CRTC:46:meson_crtc] vblank wait timed out
-> WARNING: CPU: 2 PID: 265 at drivers/gpu/drm/drm_atomic_helper.c:1682 drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
-> CPU: 2 UID: 0 PID: 265 Comm: setfont Tainted: G         C
-> Tainted: [C]=CRAP
-> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
-> lr : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
-> Call trace:
->   drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
->   drm_atomic_helper_commit_tail_rpm+0x84/0xa0
->   commit_tail+0xa4/0x18c
->   drm_atomic_helper_commit+0x164/0x178
->   drm_atomic_commit+0xb4/0xec
->   drm_client_modeset_commit_atomic+0x210/0x270
->   drm_client_modeset_commit_locked+0x5c/0x188
->   drm_fb_helper_pan_display+0xb8/0x1d4
->   fb_pan_display+0x7c/0x120
->   bit_update_start+0x20/0x48
->   fbcon_switch+0x418/0x54c
->   el0t_64_sync+0x194/0x198
-> 
-> This happens when the kernel disables the unused clocks.
-> Sometimes this causes the boot to hang.
-> 
-> By (re)adding the flag CLK_IGNORE_UNUSED to the VCLK2 clocks, these
-> clocks will not be disabled.
-> 
-> This partially reverts commit b70cb1a21a54 ("clk: meson: g12a:
-> make VCLK2 and ENCL clock path configurable by CCF").
-> 
-> Fixes: b70cb1a21a54 ("clk: meson: g12a: make VCLK2 and ENCL clock path configurable by CCF").
-> Signed-off-by: Martijn van Deventer <linux@martijnvandeventer.nl>
+On Tue, 28 Jan 2025 at 20:48, Michal Wilczynski
+<m.wilczynski@samsung.com> wrote:
+>
+> The T-Head TH1520 SoC contains multiple power islands that can be
+> programmatically turned on and off using the AON (Always-On) protocol
+> and a hardware mailbox [1]. The relevant mailbox driver has already been
+> merged into the mainline kernel in commit 5d4d263e1c6b ("mailbox:
+> Introduce support for T-head TH1520 Mailbox driver");
+>
+> Introduce a power-domain driver for the TH1520 SoC, which is using AON
+> firmware protocol to communicate with E902 core through the hardware
+> mailbox. This way it can send power on/off commands to the E902 core.
+>
+> The interaction with AUDIO power island e.g trying to turn it OFF proved
+> to crash the firmware running on the E902 core. Introduce the workaround
+> to disable interacting with the power island.
+>
+> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf [1]
+>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 > ---
->   drivers/clk/meson/g12a.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index cfffd434e998..1651898658f5 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -3234,7 +3234,7 @@ static struct clk_regmap g12a_vclk2_div = {
->   			&g12a_vclk2_input.hw
->   		},
->   		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_GATE,
-> +		.flags = CLK_SET_RATE_GATE | CLK_IGNORE_UNUSED,
->   	},
->   };
->   
-> @@ -3270,7 +3270,7 @@ static struct clk_regmap g12a_vclk2 = {
->   		.ops = &meson_vclk_gate_ops,
->   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw },
->   		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->   	},
->   };
->   
-> @@ -3354,7 +3354,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
->   		.ops = &clk_regmap_gate_ops,
->   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->   		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->   	},
->   };
->   
-> @@ -3368,7 +3368,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
->   		.ops = &clk_regmap_gate_ops,
->   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->   		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->   	},
->   };
->   
-> @@ -3382,7 +3382,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
->   		.ops = &clk_regmap_gate_ops,
->   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->   		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->   	},
->   };
->   
-> @@ -3396,7 +3396,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
->   		.ops = &clk_regmap_gate_ops,
->   		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
->   		.num_parents = 1,
-> -		.flags = CLK_SET_RATE_PARENT,
-> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
->   	},
->   };
->   
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+[...]
+
+> +
+> +static int th1520_pd_probe(struct platform_device *pdev)
+> +{
+> +       struct generic_pm_domain **domains;
+> +       struct genpd_onecell_data *pd_data;
+> +       struct th1520_aon_chan *aon_chan;
+> +       struct device *dev = &pdev->dev;
+> +       int i;
+> +
+> +       aon_chan = dev_get_drvdata(dev->parent);
+> +       if (!aon_chan) {
+> +               dev_err(dev, "Failed to get AON channel from parent\n");
+> +               return -EINVAL;
+> +       }
+
+As pointed out on patch4. Rather than receiving the aon_chang from the
+parent device like this, it seems better to receive it from a call to
+a library function provided by the FW library.
+
+> +
+> +       domains = devm_kcalloc(dev, ARRAY_SIZE(th1520_pd_ranges),
+> +                              sizeof(*domains), GFP_KERNEL);
+> +       if (!domains)
+> +               return -ENOMEM;
+> +
+> +       pd_data = devm_kzalloc(dev, sizeof(*pd_data), GFP_KERNEL);
+> +       if (!pd_data)
+> +               return -ENOMEM;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(th1520_pd_ranges); i++) {
+> +               struct th1520_power_domain *pd;
+> +
+> +               if (th1520_pd_ranges[i].disabled)
+> +                       continue;
+> +
+> +               pd = th1520_add_pm_domain(dev, &th1520_pd_ranges[i]);
+> +               if (IS_ERR(pd))
+> +                       return PTR_ERR(pd);
+> +
+> +               pd->aon_chan = aon_chan;
+> +               domains[i] = &pd->genpd;
+> +               dev_dbg(dev, "added power domain %s\n", pd->genpd.name);
+> +       }
+> +
+> +       pd_data->domains = domains;
+> +       pd_data->num_domains = ARRAY_SIZE(th1520_pd_ranges);
+> +       pd_data->xlate = th1520_pd_xlate;
+> +
+> +       /*
+> +        * Initialize all power domains to off to ensure they start in a
+> +        * low-power state. This allows device drivers to manage power
+> +        * domains by turning them on or off as needed.
+> +        */
+> +       th1520_pd_init_all_off(domains, dev);
+> +
+> +       return of_genpd_add_provider_onecell(dev->parent->of_node, pd_data);
+> +}
+> +
+> +static struct platform_driver th1520_pd_driver = {
+> +       .driver = {
+> +               .name = "th1520-pd",
+> +       },
+> +       .probe = th1520_pd_probe,
+> +};
+> +module_platform_driver(th1520_pd_driver);
+
+There is no ->remove() callback.
+
+Either add one or make this a builtin_platform_driver() with
+"suppress_bind_attrs = true".
+
+> +
+> +MODULE_AUTHOR("Michal Wilczynski <m.wilczynski@samsung.com>");
+> +MODULE_DESCRIPTION("T-HEAD TH1520 SoC power domain controller");
+> +MODULE_LICENSE("GPL");
+> --
+> 2.34.1
+>
+
+Besides the minor thing above, this looks good to me!
+
+Kind regards
+Uffe
