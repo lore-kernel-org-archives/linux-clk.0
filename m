@@ -1,106 +1,163 @@
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F3424BC1A
-	for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 11:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D221230985;
+	Fri, 14 Feb 2025 12:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739532690; cv=none; b=brzyqlTw4Sb0pjDg4HASIsUOynIzsqhzVVTjh1m5iSc2lY/SiDJtFjdz8Xfp4dq/psAm0MF4SPAKu8R0vviqsxDvvznd6FqpZ2xcROG1caFzzjBp5N9bBpm/sFMyJWGc+jYZciibLZWXtAVZfKx1ZlcdoFfx11RzWsi9aETooGE=
+	t=1739537767; cv=none; b=WVcia1PyBK0WGPggSzHK8pHeVvWN4kX0FYmH1iiQLuFpyZfIMweum7TSdX6vJ7q9oQVVLRwID2SQNePioT6s+BZXIx6fVQc0a1WtxTC7R8TIjH828xi++abuxW7nfAGYC3OahPExvMsTEVujHGx2JjlMDpu5es7zVen3pfGZrdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739532690; c=relaxed/simple;
-	bh=2U0g1+m0tosU4qQlWPu1j9YKUDgGDzukDvuljJcEnVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mq3nMCmiC9fFMZ4ZSMQEeUyeja9BKFqLb9x6jt4bLNqvp/1YnMToZiBn5/Ipuqpdod/957uBr7XdhpTdZfI0WOgpkY066D6mFXlSatRF4DaFfE/VgK6OABBjaVuqtqPMAWtgTbhdkqrAg4cSSdl07Lb1V9AjROCFw27thSf1o2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sFNnp2sq; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sFNnp2sq"
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5452c1daabeso308516e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 03:31:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739532687; x=1740137487; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZQrrMIIcsdepuAUZtYMG2ibPJAIlpej8VrcFVh4LEgA=;
-        b=sFNnp2sqD7mjLqfNrs/1f501u+5IytNpwB0hTBLpq5dLCrIpxV0Z59e7XHuoC3lB0p
-         J+Gz9sNGFhGZMPLJ5ZwW7VifwETi80zCLQZ6lPKoPKblO3Cqiq5eoll7E96QTMpbOyyV
-         tcEUO9Sq/IjlkO8imriCpyG746jvnAtieoCz2IHWxsz27QoA1lU6QMZ9ciqrQAOZMfhb
-         14c/oGsfRph0UWKGO5r0Dm+dIhzBWWqf99EDujoUMnmKUB0kJwlRPzQZOK2CiJ3XsC+o
-         1iH/S+Tx6tnJ+ez29pe1Qj6hlEpR2FRfHnAvODb2WtBtHzR4xVkkziJbzkqMU8tV9YDW
-         SNQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739532687; x=1740137487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZQrrMIIcsdepuAUZtYMG2ibPJAIlpej8VrcFVh4LEgA=;
-        b=HMtvnxk1x2oxFCOSIUkul8XbnQl7u8m+zaM8Sxed8ebrNsrhIGIKrVLpMvCXtWCS46
-         8v/QKa7aNNo4+eVOIvkyeyj/FXHriystMGconOuLcg7ZEZWy4YGt6L4z7adVzOpgpjyI
-         nT3gxDPBLAfO5RLLb9oslAK4ckDsSChKbiZXkWv3J8SqiitUVgaBGmE89TfoErj7NYmY
-         0eCnuKEXJ2UXwEm3hAhsjyHzufH4Ojcprjc0axSjEAJ84bWvaQbtXYfHSUCANZs4JFh6
-         NEyIIrpdzd9T0oncx3J2qDJDjoCdCOSKjjJZ8R5wSy8/C0fyRg/UzsP4YH7rX7X0RDyW
-         jPeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlX73NALL8S/FoKrsOG6m2rbdY/oSmeczjlue5DrQ6OGFY4QGTLeD5EkgR2p6+XGssFWabHzXC/MA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAwwv2NY8+4DR5tasstYhdLY19fbK+7lHbj+/ASUkGbjmEYYB5
-	mSiwDrKgZWdYDoMFDsdoAdCmXFQ7uGRZcXt6MuOMM8syiAMxgtymayviQ9QTAXU=
-X-Gm-Gg: ASbGncuU2NKmcnFUKh9aTYhPtMwS8mVeAL6vzBkm9vsmyRvWxZ3HLdrWmxUFoPtR/Rz
-	VaFnampadoYi4TMUseYnlOtynIQ0PAmatYL0RhB+1AO0Pu8kICr305d8pkE5l1c6crhVsEs8k9h
-	cGEy/bk58vZYxEJdHWjKv759+gd3bP1kE2lehr+lDGCn2ybk14BZOoxmcosGPHUTvEOtpTdoGw8
-	vust+jtq+nX4fJuTidmUd3LmnKPi+daGpwdoeUVjyXJiuORgbh5/tCjrJWVjtG/n/WfPAAKRiFr
-	vy8vVv8Y/NcSc9g9RRjxzAj1Z/D35SRSAL3zSL+rrbdhiD3mgcx0DW4jMA+HC/WUv8PHPck=
-X-Google-Smtp-Source: AGHT+IGjs9yMg+iCQr3IF2oWlxeySoJlOZkKJgyEb8x4vfVkiQxa9wP3j61Oy3tVPMRng/3g23DMxw==
-X-Received: by 2002:a05:6512:2216:b0:545:62c:4b13 with SMTP id 2adb3069b0e04-545184a2e51mr2906212e87.40.1739532686682;
-        Fri, 14 Feb 2025 03:31:26 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5451f083593sm487198e87.18.2025.02.14.03.31.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2025 03:31:25 -0800 (PST)
-Date: Fri, 14 Feb 2025 13:31:22 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Krishna Manikandan <quic_mkrishn@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: display/msm/dsi-phy: Add header with
- exposed clock IDs
-Message-ID: <cpem2v3z5slkihza4h4kaocxitpmdpnkrnl3iksevbewsqo5tb@zugjn5ng6oci>
-References: <20250127132105.107138-1-krzysztof.kozlowski@linaro.org>
- <b4d07c0a-5b09-4a89-84b0-e8508ae12ba5@linaro.org>
+	s=arc-20240116; t=1739537767; c=relaxed/simple;
+	bh=4T7OLcqGW/wYv42Er8iU0CmHpl1TG9/5qKHcWsLu3wA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XDR2a2W4RFXBobIlCvnnFe7qGbJMWr0meKeKwVZaWM7ufuWHg0094IPX4FqkSEcZ4ADVkaLi03IU9GldAbDedYkhWzKUHIfFEGrdY8+IehNZ7JOwqQYtfYk0Z6L92+6M7rJaITtwi+Ij+UQn9HbfsOIF1JHo4Js3InUInRuhHSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C64D6113E;
+	Fri, 14 Feb 2025 04:56:23 -0800 (PST)
+Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 971273F58B;
+	Fri, 14 Feb 2025 04:56:01 -0800 (PST)
+From: Andre Przywara <andre.przywara@arm.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/15] clk: sunxi-ng: add A523 clock support
+Date: Fri, 14 Feb 2025 12:53:44 +0000
+Message-ID: <20250214125359.5204-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.46.3
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b4d07c0a-5b09-4a89-84b0-e8508ae12ba5@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 14, 2025 at 11:50:14AM +0100, Krzysztof Kozlowski wrote:
-> On 27/01/2025 14:21, Krzysztof Kozlowski wrote:
-> > DSI phys, from earliest (28 nm) up to newest (3 nm) generation, provide
-> > two clocks.  The respective clock ID is used by drivers and DTS, so it
-> > should be documented as explicit ABI.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > 
-> > ---
-> > 
-> > Patch for Display tree, although with Ack from clock.
-> 
-> 
-> Any more comments from DRM side? Can it be merged?
+Hi,
 
-Yes, it can.
+this is the second drop of the series introducing basic clock support for
+the Allwinner A523 family of SoCs, comprising A523, A527, T527, H728. [1]
+Since the posting of v1, a T527 user manual surfaced, so we could add
+an extra clock, and confirm and clarify on some existing (guessed) ones.
+This also contains some fixes to some clock definitions, which were
+found either during testing or while checking for new clocks.
+One big change in this series is the split of the main CCU driver into 9
+patches, purely to help review. For a more detailed changelog, see below.
+
+*************
+Please note that the clock numbers changed compared to v1, so DTs from
+that era cannot be used anymore with this driver: you have to update
+the DTB. Just copying the binding header and recompiling the DTB should do
+the trick, since the symbols stayed mostly the same, at least as far they
+are used in the basic DTs we use today.
+*************
+
+The SoCs contain *four* CCU components, aside from the usual main clock
+device and the PRCM clock (in the always-on-domain), there is an MCU
+clock and a DSP clock. This series just adds support for the first two,
+the other two don't seem to be required for the basic functionality.
+
+The clock tree of each SoC has always been individual, even though the
+main clock *types* mostly remain the same. This time we see two slight
+variations: There is an MP clock without the P (shift) part, and there
+is one with two dividers instead of one divider and one shift field.
+The first three patches add support for these new clock types.
+
+Patch 04/15 add the DT binding description for the main CCU, along with
+all the clock numbers already defined in the binding headers.
+Since the main CCU is massive, and contains a lot of detail, I decided
+to split this driver up into 9 patches, simply to help review. I tried
+to group them somewhat logically, although this is rather arbitrary, and
+just to make each individual patch smaller. I am happy to squash them
+all back into one patch once they have been reviewed, for the final
+merge. The PRCM CCU is comparably small, so I kept this in one patch.
+
+Interestingly the Allwinner BSP has switched to using the existing sunxi
+CCU framework for modelling the clocks (they had their own way before), so
+we could theoretically use their code. However when I started working on
+this more than a year ago, their files had a GPL-3.0-only license header,
+which, according to my research, makes them incompatible for mainline
+inclusion. I thus started from "scratch" (adjusting the D1 driver, really).
+Meanwhile they seem to have changed the license, and a quick comparison
+turned up some differences, some of which seem to be bugs on their, some
+on my side, probably. I hope having such a "reference" helps the mainline
+code quality, as people can help the review by comparing code.
+
+Given the level of detail required in CCU drivers, I am certain there are
+many bugs in there, also many things that can be improved. But after
+starring and editing this for weeks, I feel like it's time for the
+community to have a look, so please help with the review, and also test.
+
+Based on v6.14-rc1.
+
+Cheers,
+Andre
+
+[1] https://linux-sunxi.org/A523#Family_of_sun55iw3
+
+Changelog v1 .. v2:
+- rebase onto v6.14-rc1
+- split main CCU definition patch into 9 smaller patches
+- rename RST_BUS_VO1_TCONLCD0 to RST_BUS_TCON_LCD2
+- insert CLK_PLL_VIDEO3_xx clocks
+- add clock for 2nd EMAC
+- add R_SPI name (though clock definiton is still missing)
+- fix ISP clock definition
+- remove BSP comments from clocks now documented in the T527 manual
+- add Conor's binding ACKs (with thanks!)
+
+Andre Przywara (15):
+  clk: sunxi-ng: mp: Add SUNXI_CCU_P_DATA_WITH_MUX_GATE wrapper
+  clk: sunxi-ng: mp: introduce dual-divider clock
+  clk: sunxi-ng: mp: provide wrapper for setting feature flags
+  dt-bindings: clk: sunxi-ng: add compatible for the A523 CCU
+  clk: sunxi-ng: Add support for the A523/T527 CCU PLLs
+  clk: sunxi-ng: a523: Add support for bus clocks
+  clk: sunxi-ng: a523: add video mod clocks
+  clk: sunxi-ng: a523: add system mod clocks
+  clk: sunxi-ng: a523: add interface mod clocks
+  clk: sunxi-ng: a523: add USB mod clocks
+  clk: sunxi-ng: a523: remaining mod clocks
+  clk: sunxi-ng: a523: add bus clock gates
+  clk: sunxi-ng: a523: add reset lines
+  dt-bindings: clk: sunxi-ng: add compatible for the A523 PRCM-CCU
+  clk: sunxi-ng: add support for the A523/T527 PRCM CCU
+
+ .../clock/allwinner,sun4i-a10-ccu.yaml        |   76 +-
+ drivers/clk/sunxi-ng/Kconfig                  |   10 +
+ drivers/clk/sunxi-ng/Makefile                 |    4 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c      |  245 +++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-r.h      |   14 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c        | 1641 +++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.h        |   14 +
+ drivers/clk/sunxi-ng/ccu_common.h             |    1 +
+ drivers/clk/sunxi-ng/ccu_mp.c                 |   51 +-
+ drivers/clk/sunxi-ng/ccu_mp.h                 |   39 +-
+ include/dt-bindings/clock/sun55i-a523-ccu.h   |  190 ++
+ include/dt-bindings/clock/sun55i-a523-r-ccu.h |   37 +
+ include/dt-bindings/reset/sun55i-a523-ccu.h   |   87 +
+ include/dt-bindings/reset/sun55i-a523-r-ccu.h |   25 +
+ 14 files changed, 2394 insertions(+), 40 deletions(-)
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-r.h
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+ create mode 100644 include/dt-bindings/clock/sun55i-a523-ccu.h
+ create mode 100644 include/dt-bindings/clock/sun55i-a523-r-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun55i-a523-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun55i-a523-r-ccu.h
 
 -- 
-With best wishes
-Dmitry
+2.46.3
+
