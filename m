@@ -1,100 +1,195 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580822135B3;
-	Fri, 14 Feb 2025 09:01:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA9A22D4F9
+	for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 09:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739523716; cv=none; b=MuMAiSMoMPephlDzqPSzOTOOMaQcZ00j2AAGyf+rrIXC3DQF/ZjEJQlTmciQKGzL/bwNnFTshB/6grisi6P04LVcAlXppJGLELceBb0uMOYmmIbECutWfzjkb7SAT80b3866pcV+5S/KGHiOwIxPav30fjybhL2mXa1ZtHCC0G8=
+	t=1739524106; cv=none; b=QqjtVWESlrgDVDX5JMmXTbOjU9SFK+QpadxlDv9sqWjtjhV5MLgbvWEe6VUtAeLMPE3MvQDZC5NYCUdChDtjeKETcmxQSTDpG9qH2TeHBgyDXZGuuwkSasFFcTDiTK0jlbOwTUFqu/Lkreo3gZ8alK0TFMwjY0Ewhz4+gellXvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739523716; c=relaxed/simple;
-	bh=EgLgzCrv/qBPOyDd4OU9mDEx8AfdL88weeWAthnioMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K01/Ofgvx2ybxU1x5oIl9aYqt0cYlsyrtu24ZnM9mCulkuBv66QKIAt2TFq2vYpY9GxiR6h1HnxXsee0qi7PvG5tZy4+QPwyosjuy5/tdM5yG0On1SrdBRKm1ZUEDNNnm76Xoy332vMNwmEkEBpZMltW06wIgy22b7a5MinpN2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/xkqLGe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739524106; c=relaxed/simple;
+	bh=S/KKmbMokH0GSXh6+xn2Xwon8nvwaj8CZLF3bojbyFQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NbiZZRzIRE156gPHZUZPe4AUi5/jR4W8jhWTzY29auhrVaRuyiDVSOv9K7QBMvCYh6tRVwEoIAt0egk0MUDn/a5ZeUfCBCDhpbdsxlLKEoZE9Gs9KnXN6gP8oLbSDzjwpRw7wvr6B8yueqVjoa3moYK2f59OeF0QyTS0RY8nCxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=g21e2qMc; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/xkqLGe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF991C4CED1;
-	Fri, 14 Feb 2025 09:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739523715;
-	bh=EgLgzCrv/qBPOyDd4OU9mDEx8AfdL88weeWAthnioMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R/xkqLGeQGghNFr1UXpBpJRHIIje3QwfnTJTBpNw6Ra8d8dAPE4Q8WlcdkpFjPULY
-	 6fiY8XSsnWRQaOGEO9Fn/LUFdm59gBRy63nOZ5JDwuJnWFx3Ti15VEZ73bQYHe58bH
-	 QpMMrmThdQ6un8gTOHIRlQgHM4Tp1JLabTifPT0RztTYAZvD898m+TTR6uD7gI+W61
-	 5wsuCC4Np6I3McOTrzAoeuniD1join6UrtkvFbwqHjWZdhDVpSzQWh2L4fG+BkLdR0
-	 9VQl41n/7fSxn64C/prTvjPHDS44kCN0kUlgVRrQH+GOESdGXYoyXK+x/mJMj7H24B
-	 1JsU87DUZ+oUA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tiraG-000000006Eq-0Iki;
-	Fri, 14 Feb 2025 10:02:04 +0100
-Date: Fri, 14 Feb 2025 10:02:04 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Add support to reconfigure PLL
-Message-ID: <Z68GjM-X7Qkpyv7B@hovoldconsulting.com>
-References: <20250113-support-pll-reconfigure-v1-0-1fae6bc1062d@quicinc.com>
- <Z6HnOUfsSaKYyYfh@hovoldconsulting.com>
- <15d16afd-8e1a-479f-9573-8845d1408178@quicinc.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="g21e2qMc"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38f22fe8762so884126f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2025 01:08:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739524102; x=1740128902; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FRBZ9LnljeKdyPrMlrMbswWuQjbGiHO54rQVeWsI8fs=;
+        b=g21e2qMcOnjxZ30r+2Yz/IFN7l24CJ6jquAM+mcJDV+f1PvNYP+Om9UUeRFLd1bqaG
+         UJSkxCtfNzv0Ol0tXutTTCCfzAlu9PMysmfVdu1chudjTcmAwyOUXkcOVnd5bzE+GD3O
+         wOBDLLtIbnup6OVo/IzYN+Xu6qAywnsUE2klhzoHpq7M7bB6Kr5TNzypWrMoFBCYpg8M
+         a8wDmi4Sji3Y0X3K3LwqIazymSo7cTLXITUxQu9Kc02DnzL7z4HpbWkW4BVGckB95GME
+         KZ2JPO35slYaxC5vOQeCZcSrWOJIoi37aHQYZ2v6hPnBVYGp5vuwlcFdh6Jou9TUq8Wj
+         keKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739524102; x=1740128902;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FRBZ9LnljeKdyPrMlrMbswWuQjbGiHO54rQVeWsI8fs=;
+        b=VnO+b08kfyLLoS2mdX2l0oyEhLnaWJi23I1eKK/gqVLmorARRI4jAk6HNWhBq4n8+R
+         BNjFPwwOaig15F61HLWQPlEw74cWbnb5ho0bd0ID67eENSR8LXQBA7vETAxMt7lyy61Q
+         bPrFcqtxyKc2zVk3WW4tpxCnXDM5dv90+o2xO5DL4FlXhIlhuJaNvK5PYgEnaB74qg3c
+         ZSCXo6sqoXoKEfO68lwWvDWcBnq7WBfbNywNVRM2J/xA7S6i6Z2GIAvbc+d7SYyhygGT
+         GtIxdhn8kLSPkLi23x/Bu0o9sLa8j6SVkyqwvfTr/CJsbn57M6X2WOD0muoxF7mAK4Pz
+         NDnA==
+X-Forwarded-Encrypted: i=1; AJvYcCX58Mf25HAPzHRsYvYzYSlQQLtlovFBH/Tel+F0YvXFJrM/65eP3YoOIrrUF7Iaqqi/ywQH3fB7Ldo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4iMdjBMs4JdTqVGqsddLcpzOwRZKWBob12/BqOAemBwWQ621L
+	1iveNZDUu7jHPfb8dbrt7VwxATyIW7Ovy1Bfjnwvtx5FsICBFmjLqE6ggqOoHuHlDbOGD9naPMZ
+	CXLY=
+X-Gm-Gg: ASbGncsHh2CW/R5pWTwkcKRsu5WWhHwqyXcC/5Zvto8rK4+o8HLMi4ELpZkvAzLX9yo
+	2d7L1zvSejkASHndkiOOPIGU5j0KnK521YD/pYiNgmp3KHL1GhxuWN92vVUyr84WFlC4jKxhQnL
+	IXCWDMOkSOePx3lpa+PibQhIQxPDbBQWnYYfqY6XfuuyN17TdMHjV6a7Y/XAYH/ozqRrib7oGy+
+	WtmB55OvaDARnFy3H62kA+SfjTjC5NqR8n1I90O1MBoDI4JquHhAlyC4VNlXCEm6d/gx+GDX6X9
+	/XcuGZ0k/uUcjH4=
+X-Google-Smtp-Source: AGHT+IE0/rSxXHcT0d8T4npVkX/xeGrYvHZ7lAWe+eAfluyBR05NqZXCHJQG0OjEOL1oPVBXgPrHSg==
+X-Received: by 2002:a05:6000:18a4:b0:38f:3009:61d7 with SMTP id ffacd0b85a97d-38f30096396mr623237f8f.4.1739524100676;
+        Fri, 14 Feb 2025 01:08:20 -0800 (PST)
+Received: from localhost ([2a01:e0a:3c5:5fb1:baa6:bc65:b9db:3759])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38f259d8dd6sm4117993f8f.62.2025.02.14.01.08.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2025 01:08:20 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Martijn van Deventer <linux@martijnvandeventer.nl>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
+ <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Kevin Hilman
+ <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson: g12a: Fix kernel warnings when no display
+ attached
+In-Reply-To: <20250213221702.606-1-linux@martijnvandeventer.nl> (Martijn van
+	Deventer's message of "Thu, 13 Feb 2025 23:17:01 +0100")
+References: <20250213221702.606-1-linux@martijnvandeventer.nl>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Fri, 14 Feb 2025 10:08:19 +0100
+Message-ID: <1jpljkzyf0.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15d16afd-8e1a-479f-9573-8845d1408178@quicinc.com>
+Content-Type: text/plain
 
-On Tue, Feb 04, 2025 at 11:13:08PM +0530, Taniya Das wrote:
-> On 2/4/2025 3:38 PM, Johan Hovold wrote:
-> > On Mon, Jan 13, 2025 at 10:57:03PM +0530, Taniya Das wrote:
-> >> During boot-up, there is a possibility that the PLL configuration might
-> >> be missed even after invoking pll_configure() from the clock controller
-> >> probe. This is often due to the PLL being connected to rail or rails
-> >> that are in an OFF state and current clock controller also cannot vote
-> >> on multiple rails. As a result, the PLL may be enabled with suboptimal
-> >> settings, leading to functional issues.
-> >>
-> >> The PLL configuration, now part of clk_alpha_pll, can be reused to
-> >> reconfigure the PLL to a known good state before scaling for frequency.
-> >> The 'clk_alpha_pll_reconfigure()' can be updated to support more PLLs
-> >> in future.
-> > 
-> > This sounds like a hack. You already describe the underlying problem (and
-> > indirectly its solution) in the first paragraph above, namely that the
-> > video clock controller has not enabled the power domain needed to
-> > configure the PLL.
-> 
-> This is not a hack, but another alternative way to ensure the PLL is 
-> configured to the right configuration before being used.
+On Thu 13 Feb 2025 at 23:17, Martijn van Deventer <linux@martijnvandeventer.nl> wrote:
 
-I say it's a hack since it sounds like since you're relying on some
-other entity to have enabled resources that this clock controller
-depends on.
+> When booting SM1 or G12A boards without a dislay attached to HDMI,
+> the kernel shows the following warning:
+>
+> [CRTC:46:meson_crtc] vblank wait timed out
+> WARNING: CPU: 2 PID: 265 at drivers/gpu/drm/drm_atomic_helper.c:1682 drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+> CPU: 2 UID: 0 PID: 265 Comm: setfont Tainted: G         C
+> Tainted: [C]=CRAP
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+> lr : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+> Call trace:
+>  drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
+>  drm_atomic_helper_commit_tail_rpm+0x84/0xa0
+>  commit_tail+0xa4/0x18c
+>  drm_atomic_helper_commit+0x164/0x178
+>  drm_atomic_commit+0xb4/0xec
+>  drm_client_modeset_commit_atomic+0x210/0x270
+>  drm_client_modeset_commit_locked+0x5c/0x188
+>  drm_fb_helper_pan_display+0xb8/0x1d4
+>  fb_pan_display+0x7c/0x120
+>  bit_update_start+0x20/0x48
+>  fbcon_switch+0x418/0x54c
+>  el0t_64_sync+0x194/0x198
+>
+> This happens when the kernel disables the unused clocks.
+> Sometimes this causes the boot to hang.
+>
+> By (re)adding the flag CLK_IGNORE_UNUSED to the VCLK2 clocks, these
+> clocks will not be disabled.
+>
+> This partially reverts commit b70cb1a21a54 ("clk: meson: g12a:
+> make VCLK2 and ENCL clock path configurable by CCF").
 
-> > I believe support for clock controllers that need to enable multiple
-> > power domains is on its way into 6.15:
-> > 
-> > 	https://lore.kernel.org/lkml/20250117-b4-linux-next-24-11-18-clock-multiple-power-domains-v10-0-13f2bb656dad@linaro.org/
-> > 
-> > Perhaps that's what you need to fix this properly.
-> 
-> Yes, this is just to add a dependency on clock controller to put the 
-> rail vote, but this series does not fully solve the clock controller's 
-> PLL requirement problems.
+It looks like DRM needs those clock enabled regardless of connection
+status on HDMI. Even with this change applied, you would get the same
+problem again if the bootloader does not take of turning the clock on,
+which is not a given.
 
-Why not? What else is needed beyond enabling the video (?) power domain
-before configuring the PLL?
+CLK_IGNORE_UNUSED gives not guarantee a clock will be enabled or stay
+enabled at any point.
 
-Johan
+A proper fix to this issue should be done in DRM, IMO.
+
+>
+> Fixes: b70cb1a21a54 ("clk: meson: g12a: make VCLK2 and ENCL clock path configurable by CCF").
+> Signed-off-by: Martijn van Deventer <linux@martijnvandeventer.nl>
+> ---
+>  drivers/clk/meson/g12a.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index cfffd434e998..1651898658f5 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -3234,7 +3234,7 @@ static struct clk_regmap g12a_vclk2_div = {
+>  			&g12a_vclk2_input.hw
+>  		},
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_GATE,
+> +		.flags = CLK_SET_RATE_GATE | CLK_IGNORE_UNUSED,
+>  	},
+>  };
+>  
+> @@ -3270,7 +3270,7 @@ static struct clk_regmap g12a_vclk2 = {
+>  		.ops = &meson_vclk_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2_div.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>  	},
+>  };
+>  
+> @@ -3354,7 +3354,7 @@ static struct clk_regmap g12a_vclk2_div1 = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>  	},
+>  };
+>  
+> @@ -3368,7 +3368,7 @@ static struct clk_regmap g12a_vclk2_div2_en = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>  	},
+>  };
+>  
+> @@ -3382,7 +3382,7 @@ static struct clk_regmap g12a_vclk2_div4_en = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>  	},
+>  };
+>  
+> @@ -3396,7 +3396,7 @@ static struct clk_regmap g12a_vclk2_div6_en = {
+>  		.ops = &clk_regmap_gate_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_vclk2.hw },
+>  		.num_parents = 1,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>  	},
+>  };
+
+-- 
+Jerome
