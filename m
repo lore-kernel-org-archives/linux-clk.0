@@ -1,153 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84223BB;
-	Sat, 15 Feb 2025 12:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21041369B6
+	for <linux-clk@vger.kernel.org>; Sat, 15 Feb 2025 13:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739623823; cv=none; b=l7EWvJoe6yHG+c0nkQpdjNf4oToZuTtIO0XnzlUfk4VJX8g1+XZb6WV8NqYvIMUBhC5TSkR5p1HA1LP4sh+8mAuiDLd2l3QBkpo2Qol6LASxjom6MOMH1e6nK7C+YrtVxwPVY342xcUwNbXK/yevOroyWNQnfDkHX3S8sZhAPQo=
+	t=1739626978; cv=none; b=oIc/zENFs9YSh0GYDhYhdr30dI5vo8DfXVfH719T1CWe3nuctWU/QXiHjUPuR/UISRkblOxOFQLeAeSfOYkpDVME86Wy5XCLUcjTWkCqVeGDhuMsIfWZh2ty3/uETo/mEhlhooFAJ+RRn9qY4IYOcyMlLym8dfT56dmwijJs1l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739623823; c=relaxed/simple;
-	bh=drN/Xok8UudjMurUXacPKQ2++MI+GHNgJsb1gQKHxmw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SxQI287W/cQwb9q0j2vOZFWxeh//FeHDG+Tm0GWlVrUlm2+97RWiKpTBLcuhyaV13x0oKE6F0A/JIehUfcj8CRZi44ztiYLu8uKMnld0ctTpNyZ1t0QYXieZcBA7t6N5bD8oIbPYzTIyOyES5tmCS4dXMk/STuCPYoVBv11DggA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TI7OwbBe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739626978; c=relaxed/simple;
+	bh=8u9nr5FRgOHoWSar9IPoRBpRxyWBfCzeKcQuS3h5YJs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jnViLMFb0KDatj/xONmKSb2ss4MDau4WwN2DnMpQjJn7oLAJywsgmiZ1S+dW1EBYrOu4bOPN8OSg7t0e4/aTx5htqss2VIR69EDpJxPXpd63VBinR2bO7Wu0m2Z53jVC77asRj5M3D85bVqhqLsqxt/SWN8wZgwZVOe+qqaonmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yqEEbsgy; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TI7OwbBe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84BD0C4CEE9;
-	Sat, 15 Feb 2025 12:50:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739623822;
-	bh=drN/Xok8UudjMurUXacPKQ2++MI+GHNgJsb1gQKHxmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TI7OwbBejVq+s0MNcjVR0OO68WWGeU3nLMSFjv/iooPZQkFgekvtYlJVZMHL4yhGu
-	 X+NvMH38mriKk1PDUcyHjwbzECOAXrRCBNn9U36VXx/c8m+LhK9r+9CyTE6RYI4i18
-	 r1pLW7R4TInPKnEeFX9WUG5PqtfWIPuLmmuUoi3E8A0A0/4ZupRtFx5ykSkJfxoWU1
-	 JSSIsK/AtdQvdtCF3n/UYl3JTA4Hs4cA70QyCuK0IzY+i8/ZvMd1HSVZ2fGkRVyFmc
-	 3KBpadsxw7ag6TDN+7Q0Rn0JRDwxVXa6Ic4DnHHR5HSm4OAwa2yr2Q1DySe1dJlh9Y
-	 F8vI+B2Os2Bpg==
-Date: Sat, 15 Feb 2025 12:50:12 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v3 2/7] reset: mpfs: use the auxiliary device creation
- helper
-Message-ID: <20250215-scared-clothing-942f9bf3d039@spud>
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
- <20250211-aux-device-create-helper-v3-2-7edb50524909@baylibre.com>
- <20250213-crown-clustered-81c6434c892b@spud>
- <1jv7tczytk.fsf@starbuckisacylon.baylibre.com>
- <CAD=FV=VeSrZktEbxNXXTgD80QGTpW5b-WiXUFko+a8FUzmN+fQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yqEEbsgy"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4395f645200so2407115e9.2
+        for <linux-clk@vger.kernel.org>; Sat, 15 Feb 2025 05:42:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739626973; x=1740231773; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H9bUNgNxjXLAmLIe9VuTDeyH0e/ktEVFp6QB6bUy4rI=;
+        b=yqEEbsgypFkVVrazq9FXVjbu26sme3nDfzG7mcuXa0NhZfMcUqYKDvPg/B/tX79y48
+         m6wA6EOMQgm5c0LsMBj+nKtgV2M/WOwm8j7NB8ZkRIWYQYoMUVwp/K0uOE44PLqA+bvY
+         nGkx1pYFFnljRwHNNFBVH4H0amMTIvClk69VWsFpT4V1K1neqjhK7CBwFOP0VCBO0U9N
+         QZOU0h4t5JNnQHBeTPf+QrXOwFGWFVOoJEVj7imsbidfp7+gMCW1tYLTfnL9hX0/fs4+
+         bDq86aB4boTwfPQfNLdTeMEtyQU9JeDvA5B0OxQCFfJ4hIWfHZlr6WTR1vBGhld1sxfa
+         1Cbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739626973; x=1740231773;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H9bUNgNxjXLAmLIe9VuTDeyH0e/ktEVFp6QB6bUy4rI=;
+        b=Wb6539lLh2IiRZKIE0TvTp4AySTVNDXEVF5EH0mrBAedo3j9necDWqiDUC588SACC2
+         oei/g2PSmlEusSCTXWp2E05oZZTOi8HsqfaVm0wKW1M9RoQ+RuVF8tG1aRAYOaH7i35i
+         DP2EutgYD5vFO6UJq4auSRGwPEBiURPopasibAjdjOTGAKBtv8ZFN6TYVUPsMFhkpiFh
+         MnDLm1TX2c2jaJA0t6cuBIGz4jsMvuRkduszMGvoFprnHt+pEE7J4Axap3DC6HXFQ7h+
+         AVu4psTHBCl2IUg1NEimTp+9fJBVvQvO1Bd6N9JfiytLI6iXQZ37vkZ6lYxabsK70qee
+         IwYA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6m8JPQDPZgYPDvpuGCPce/7GIz2+6hKKgTI3mq0SzIpApJIFeJ9kXhZk45P7EYjHtFKi5BpB4JBU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbpafErsiBTtzdeZvHa4CC9IxPb01KwTGQFrr6TvOslNAqQr2b
+	DLcCg2wC1JE7pD6BQmzSyET3TFbT9lDZALIEyUgAsk6nCuHlKovc4pKemi5Qi5I=
+X-Gm-Gg: ASbGncubChf8RVudFSvWXC7qkQ61sut2fBn9lh29Dn0aTbKu2ls2Rt1HMbIQOgddUtj
+	qdTxMnt6R3eCbuxweuh0MYa7Ub92UBiikruY0GWW1j+J+nuknhkpGcS1sz6/2lBvT9vak5iCfuW
+	Er8nOf9/ksLrPWqpju6XjOd/LiNld59Znxlsr+UjHRz4npT09RZcI7JsuP4VCy4FfMAxl0tJtXg
+	lwK/EypjdZTXxxSfWHK8A3xScota54y6kA4hHGUZwtV8CDPg/1VwFGxeGDdRCsFdfTKI2Zf8+Ku
+	KBXTa2dKEitOPDmdCnwZQ1fa9ookRYY=
+X-Google-Smtp-Source: AGHT+IHMxDo2wTuV3RGHOn8oJ+HNcqupAs51y/sqm5Bh1EezBPlgRPt7QMuWXQaOwvAdxUJsc4b5fA==
+X-Received: by 2002:a05:600c:4711:b0:439:614a:8bee with SMTP id 5b1f17b1804b1-4396e730a4emr14755285e9.5.1739626973256;
+        Sat, 15 Feb 2025 05:42:53 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4396181026fsm69929005e9.18.2025.02.15.05.42.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 05:42:51 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Stephen Kitt <steve@sk2.org>, 
+ "Gustavo A. R. Silva" <gustavo@embeddedor.com>, 
+ Will McVicker <willmcvicker@google.com>
+Cc: kernel-team@android.com, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250212183253.509771-1-willmcvicker@google.com>
+References: <20250212183253.509771-1-willmcvicker@google.com>
+Subject: Re: [PATCH] clk: samsung: Fix UBSAN panic in samsung_clk_init()
+Message-Id: <173962697098.235665.12602558292611832915.b4-ty@linaro.org>
+Date: Sat, 15 Feb 2025 14:42:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2DqldZNjQ+dLYWFk"
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=VeSrZktEbxNXXTgD80QGTpW5b-WiXUFko+a8FUzmN+fQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
---2DqldZNjQ+dLYWFk
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 12 Feb 2025 10:32:52 -0800, Will McVicker wrote:
+> With UBSAN_ARRAY_BOUNDS=y, I'm hitting the below panic due to
+> dereferencing `ctx->clk_data.hws` before setting
+> `ctx->clk_data.num = nr_clks`. Move that up to fix the crash.
+> 
+>   UBSAN: array index out of bounds: 00000000f2005512 [#1] PREEMPT SMP
+>   <snip>
+>   Call trace:
+>    samsung_clk_init+0x110/0x124 (P)
+>    samsung_clk_init+0x48/0x124 (L)
+>    samsung_cmu_register_one+0x3c/0xa0
+>    exynos_arm64_register_cmu+0x54/0x64
+>    __gs101_cmu_top_of_clk_init_declare+0x28/0x60
+>    ...
+> 
+> [...]
 
-On Fri, Feb 14, 2025 at 07:25:59AM -0800, Doug Anderson wrote:
-> Hi,
->=20
-> On Fri, Feb 14, 2025 at 12:59=E2=80=AFAM Jerome Brunet <jbrunet@baylibre.=
-com> wrote:
-> >
-> > > One think that's always felt a bit meh to me is this id number stuff,
-> > > I just threw in 666 for meme value.
-> >
-> > :)
-> >
-> > > The whole thing seems super
-> > > arbitrary, do any of the users of this helper actually put meaningful
-> > > values into the id parameter?
-> >
-> > In example changes I've sent, no.
-> >
-> > In other simple usages (those using container_of()) of the auxiliary
-> > bus, I think there are a few that uses 0 and 1 for 2 instances.
-> >
-> > I guess your question is "do we really need this parameter here ?"
-> >
-> > We could remove it and still address 90% of the original target.
-> >
-> > Keeping it leaves the door open in case the figure above does not hold
-> > and it is pretty cheap to do. It could also enable drivers requiring an
-> > IDA to use the helper, possibly.
->=20
-> FWIW, once you resolve the conflicts in drm-misc with ti-sn65dsi86
-> you'll need the ID value. ;-)
->=20
-> There was a big-ol' discussion here:
->=20
-> https://lore.kernel.org/r/8c2df6a903f87d4932586b25f1d3bd548fe8e6d1.172918=
-0470.git.geert+renesas@glider.be
->=20
-> I eventually pushed v2 of the patch:
->=20
-> https://lore.kernel.org/r/7a68a0e3f927e26edca6040067fb653eb06efb79.173384=
-0089.git.geert+renesas@glider.be
+Applied, thanks!
 
-Think it makes sense to have a "simplified" wrapper for the cases where
-the id has no meaning then? Not really a fan of the drivers coming up with
-magic numbers.
+[1/1] clk: samsung: Fix UBSAN panic in samsung_clk_init()
+      https://git.kernel.org/krzk/linux/c/d19d7345a7bcdb083b65568a11b11adffe0687af
 
---2DqldZNjQ+dLYWFk
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7CNhAAKCRB4tDGHoIJi
-0tAUAQCqnRPkOySGXu//3wT8OcQkfE+e51feUW6fi3X49on2qQD9FeMpjQKlnQ9Q
-UjJ/Rxce6BMBO5o9ndbm21Ie8SKdSAY=
-=owAZ
------END PGP SIGNATURE-----
-
---2DqldZNjQ+dLYWFk--
