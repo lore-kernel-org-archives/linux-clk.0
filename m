@@ -1,134 +1,242 @@
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28FB6BB5B;
-	Sat, 15 Feb 2025 03:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A87D1537AC;
+	Sat, 15 Feb 2025 06:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739591345; cv=none; b=EV/9RUsBIEUdq0DYW5wQko8sPG1UU5zoSD6wt4zTXfNG832WgLUnHmSnxcwJx6a6HXhT8y60xr/sYIGyQ9bIR8G9b+mFy92+s6JgVHbpCH7yNo89L3ll81XWyahhuX6eUpKlKG5VNdVQY44nAiLXgMywq7Mr4YTNZa1dexrqkwI=
+	t=1739602461; cv=none; b=VYPJsUp1kMKmjSu/EUfyr9VvpjUCm86mVzUaoqzsFqxtb0wS4ET1r9BWiRuYJCmthrBhJVE1y7kWV5rL9e3v8+nBrsWQFttgFQd7ZZkOFLweWOmlk0hiT3kYIDL/bNBBMPanUJ4Z5Da/XM0e9pGwygb8eop2OIDemgg5XgMXBi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739591345; c=relaxed/simple;
-	bh=R1sxzCqvhdem/phYlSbYJoFA5ZHeSTwnLYouy/wFB3g=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=bG5fpwz5i1dQ4vPeDG3JWfoGnxvpfW74khAOdRlS58uBOLNLtwu+2FCHJiGUaCZHcGzNZHnp9LlgqkVngnA4MV/ZAkQnmtSmpPxjfMf8+zlwb7bp13w7tCarK8jjvGqDGbognE1j7Ms2yshYEEGy91+epYIb6bzKZ889Mzca+pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=f2mN4FYA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=h5kGlGKe; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
+	s=arc-20240116; t=1739602461; c=relaxed/simple;
+	bh=mfCqWG6NaYR6Sxd++9L3Sle7RqL0qWrh+kjSNFtksAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PiNsvpWNPiLItwfMnNORdjoG3HwQoox7xq8011uwWVUSGUTVDRTWICOLDf6SQQFAIY3tG4wknLnvesxu1/KreEUX6FkVqR+L0sa1GLmZS0YiG3FLXjcONFEIFfvBBq+VUNZkAegJV7vBjNia6txTuEqLia7tjV2qGH1mkqjJgV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=uS4GDR/S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="f2mN4FYA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="h5kGlGKe"
-Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id C4F5C11401A1;
-	Fri, 14 Feb 2025 22:49:01 -0500 (EST)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-13.internal (MEProxy); Fri, 14 Feb 2025 22:49:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm3;
-	 t=1739591341; x=1739677741; bh=myPH6l0fPDFrYP8tIa5SQdEq5I1Vnw5X
-	3g3YUMM3Fvo=; b=f2mN4FYAsZWTmcoXQzLdOm6nhCSQVsklPCaxxA3I0gRl6Llb
-	r7XnsUtluxKlfvd0CvNdhDXW5oqw0eXUTxWXGPRwEAe8/48OmMyUZ5DaRga+/+om
-	T49CWoIlw6YUesuxbcrecerkGSFutscBq4RLnY1K+DaTvzDIhbaEHI6ax33FgLgC
-	zk486z37on20gABwb27Uludiseema+Zywyshlxfjg23XHb1u1FqUPP0o0wbSLfOE
-	PgFdntSbZxXBHsucZTX6a1r2UgZiaumeoVzSaJENkC5DisSWrs2ueAAoxpCG8CvJ
-	9O+DVifnxQo1Up2Tm7ZUi4DsqFT7BLF9FICa+g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739591341; x=
-	1739677741; bh=myPH6l0fPDFrYP8tIa5SQdEq5I1Vnw5X3g3YUMM3Fvo=; b=h
-	5kGlGKe8nmS4hPtg4pyM/dztqaM1EI/EUXKsufWrss4oipO4lSS9bFUucVo4SNp1
-	+JXOOypne61enHqc5tB5kn88ixbz/gd5CDUao5NaeDAq8x7/E6tuc27d16u48QfS
-	J9Iu9d8r0Dl+brQaLUprh0KktWb+CYPA0S6JztTAyEdR3yRcZ1ez0ZrzBHN3qU95
-	QNhuPw65PjxSjtqcrzSwynVyKoB6pffHN8Nz8U8XLUutkCAHeKFLjQuiswM4xVPu
-	QL42I5S4zEcIODBJ8U5WQRaJkgPEV5TgHhhHgq7bDfN5W26/5to+X4KAtzajydcc
-	WBVM+Q5TSBs0pR5iPkRcQ==
-X-ME-Sender: <xms:qw6wZ3Nc5rAOzMC_OTcN0l0edsxhS-uHEt9Sa7PrG6D6mwUQAtKocA>
-    <xme:qw6wZx_LHoVEOB_G13QugvaiTAkZRDFj1YEa9aHqHFd8i9vQqGs7dbXxGCPuXrDmp
-    0CcVTkoHx1_LLGRgA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehudeglecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdfthigrnhcuhggrlhhklhhinhdfuceorhihrghnsehtvghsthhtoh
-    grshhtrdgtohhmqeenucggtffrrghtthgvrhhnpeejhfeukeejjefguddvffehveevjefh
-    tddutdfhudduvdevfeejfffgvdelfeeugfenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehrhigrnhesthgvshhtthhorghsthdrtghomhdpnhgs
-    pghrtghpthhtohepvddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhgurh
-    gvrdhprhiihiifrghrrgesrghrmhdrtghomhdprhgtphhtthhopehmthhurhhquhgvthht
-    vgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepfigvnhhssegtshhivgdrohhrgh
-    dprhgtphhtthhopegurghnihgvlhesfhhffihllhdrtghhpdhrtghpthhtoheprghirhhl
-    ihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtg
-    esghhmrghilhdrtghomhdprhgtphhtthhopehmrggtrhhorghlphhhrgekvdesghhmrghi
-    lhdrtghomhdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:qw6wZ2SujnKu_6uipJMxuvzHBwznXkOUFi4IQc6DAf04ouMRp0sR3Q>
-    <xmx:qw6wZ7uEgbjmfrGBLm1FIJath51BFS5DtwamInX0oUUVWq--KZOe0Q>
-    <xmx:qw6wZ_dJDa88Ul43SQZRdrfFvtanu8cSuRQkj_uri896EP7RTUWTjw>
-    <xmx:qw6wZ30Et1uGUl--L6okTQMkGs0qI1C2w6hwzu_tR1UxvxTfY84y7A>
-    <xmx:rQ6wZ18oljfrxqA20zSQwEBuF_J-YT7KozvLnYThvbAI55hTEkpjvDsM>
-Feedback-ID: idc0145fc:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 981AEBA006F; Fri, 14 Feb 2025 22:48:59 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="uS4GDR/S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 326CCC4CEDF;
+	Sat, 15 Feb 2025 06:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739602457;
+	bh=mfCqWG6NaYR6Sxd++9L3Sle7RqL0qWrh+kjSNFtksAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uS4GDR/SYf5jq318wLFt00h54nZgI/f4yIrfYTZvBV7jtSKQ1RY9pTAqlNYYxSCC6
+	 zygTR0MT/JQ5CQ/0x1v48rY/2sgioAgVjQlS+fAcz/p+8ZpKoylYdoM2+Ime/YZKv1
+	 76WODxrBGyq6uEyBhlP3dGL1sSbDsZD2GKoZSyLE=
+Date: Sat, 15 Feb 2025 07:53:12 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Douglas Anderson <dianders@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v3 1/7] driver core: auxiliary bus: add device creation
+ helpers
+Message-ID: <2025021501-tamer-sank-142a@gregkh>
+References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
+ <20250211-aux-device-create-helper-v3-1-7edb50524909@baylibre.com>
+ <2025021437-washout-stonewall-d13e@gregkh>
+ <1jwmdsxugx.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 15 Feb 2025 16:48:39 +1300
-From: "Ryan Walklin" <ryan@testtoast.com>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
-Cc: "Maxime Ripard" <mripard@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "David Airlie" <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>,
- "Samuel Holland" <samuel@sholland.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Andre Przywara" <andre.przywara@arm.com>,
- "Chris Morgan" <macroalpha82@gmail.com>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Message-Id: <6f14b319-fbb8-413d-a88d-edebf624c7fb@app.fastmail.com>
-In-Reply-To: <4c31826f-0ffa-4ada-bcf9-199fcbe6db07@app.fastmail.com>
-References: <20240929091107.838023-1-ryan@testtoast.com>
- <20240929091107.838023-9-ryan@testtoast.com>
- <4cumvwkhmbi7fecjeq6r7elon63u3ytootqcvavjg5vfnargy3@wrjpy6pnphmb>
- <4c31826f-0ffa-4ada-bcf9-199fcbe6db07@app.fastmail.com>
-Subject: Re: [PATCH v5 08/26] drm: sun4i: de3: add YUV support to the DE3 mixer
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1jwmdsxugx.fsf@starbuckisacylon.baylibre.com>
 
-On Sat, 15 Feb 2025, at 2:18 PM, Ryan Walklin wrote:
-> On Sun, 20 Oct 2024, at 3:14 AM, Dmitry Baryshkov wrote:
->> On Sun, Sep 29, 2024 at 10:04:40PM +1300, Ryan Walklin wrote:
->
->>> diff --git a/drivers/gpu/drm/sun4i/sunxi_engine.h b/drivers/gpu/drm/sun4i/sunxi_engine.h
->>> index c48cbc1aceb80..ffafc29b3a0c3 100644
->>> --- a/drivers/gpu/drm/sun4i/sunxi_engine.h
->>> +++ b/drivers/gpu/drm/sun4i/sunxi_engine.h
->
->>> @@ -151,6 +153,9 @@ struct sunxi_engine {
->>>  
->>>  	int id;
->>>  
->>> +	u32				format;
->>> +	enum drm_color_encoding		encoding;
->>
->> Should these be a part of the state instead of being a part of the
->> sunxi_engine?
->
-> Sure, would you suggest in sun8i_mixer_cfg?
+On Fri, Feb 14, 2025 at 07:16:30PM +0100, Jerome Brunet wrote:
+> On Fri 14 Feb 2025 at 17:33, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> 
+> > On Tue, Feb 11, 2025 at 06:27:58PM +0100, Jerome Brunet wrote:
+> >> Add helper functions to create a device on the auxiliary bus.
+> >> 
+> >> This is meant for fairly simple usage of the auxiliary bus, to avoid having
+> >> the same code repeated in the different drivers.
+> >> 
+> >> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> >> Cc: Arnd Bergmann <arnd@arndb.de>
+> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> >> ---
+> >>  drivers/base/auxiliary.c      | 88 +++++++++++++++++++++++++++++++++++++++++++
+> >>  include/linux/auxiliary_bus.h | 10 +++++
+> >>  2 files changed, 98 insertions(+)
+> >
+> > I like the idea, see much the same of what I recently did for the "faux"
+> > bus here:
+> > 	https://lore.kernel.org/all/2025021023-sandstorm-precise-9f5d@gregkh/
+> 
+> Reading this, I'm getting the feeling that some (most?) simple auxiliary
+> driver might be better off migrating to "faux", instead of what I'm
+> proposing here ? Is this what you are suggesting ?
 
-Hmm, on second thought the mixer config is a const struct, presumably because it is defined per engine variant in sun8i_mixer.c. Is there a better place to store state like this? Otherwise the engine may not be the worst choice, as the color format and encoding apply to the entire pipeline, at least in the case of a single display?
+For any that do not actually talk to any real hardware (i.e. they are
+NOT sharing resources with a parent device), then yes, they should.  I
+was also trying to point out that "simple" apis like what you created
+here are a good thing in my opinion, I like it!
 
-Regards,
+> Few Q:
+> Is there some sort of 'platform_data' (sorry for the lack of a better
+> term, no provocation intended ;) ) ... it there a
+> simple way to pass an arbitrary struct to the created device with 'faux' ?
 
-Ryan
+There are at least 2 ways to do this:
+  - embed a faux_device inside a larger structure and then do a
+    container_of() in any sysfs callback to get to your real structure
+  - in a provided probe() callback, set the driverdata field with a call
+    to faux_device_set_drvdata()
+
+> The difference between aux and faux I'm seeing it that aux seems to
+> decouple things a bit more. The only thing aux needs is a module name to
+> pop something up, while faux needs a reference to the ops instead.
+
+aux is needed for when you want multiple drivers to be bound to the same
+hardware resource and need some way to share all of that.  faux is used
+for "fake" devices where you just need a struct device in the /sys/ tree
+to be used for "something" or as a parent device for something else.
+See the examples in the above patch series where I convert many
+different types of drivers over to use faux.
+
+> I can see the appeal to use aux for maintainers trying to decouple
+> different subsystems.
+
+Again aux is needed for "sharing" a real device.  faux is there for fake
+ones that people previously were using platform devices for.
+
+> > Some review comments:
+> >
+> >> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+> >> index afa4df4c5a3f371b91d8dd8c4325495d32ad1291..0f697c9c243dc9a50498a52362806db594345faf 100644
+> >> --- a/drivers/base/auxiliary.c
+> >> +++ b/drivers/base/auxiliary.c
+> >> @@ -385,6 +385,94 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv)
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(auxiliary_driver_unregister);
+> >>  
+> >> +static void auxiliary_device_release(struct device *dev)
+> >> +{
+> >> +	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
+> >> +
+> >> +	kfree(auxdev);
+> >> +}
+> >> +
+> >> +static struct auxiliary_device *auxiliary_device_create(struct device *dev,
+> >> +							const char *modname,
+> >> +							const char *devname,
+> >> +							void *platform_data,
+> >
+> > Can you have the caller set the platform_data if they need/want it after
+> > the device is created?  Or do you need that in the probe callback?
+> 
+> My assumption was that it is needed in probe, but I guess that entirely
+> depends on the driver. If that was ever needed, it could be added later
+> I think.
+> 
+> >
+> > And can't this be a global function too for those that don't want to
+> > deal with devm stuff?
+> 
+> There was a note about that in the cover-letter of the v1 but I did not
+> repeat it after.
+> 
+> It can be exported but I had no use for it so I thought It was better not
+> export it until it was actually needed. I really do not have a strong
+> preference over this.
+> 
+> >
+> >> +							int id)
+> >> +{
+> >> +	struct auxiliary_device *auxdev;
+> >> +	int ret;
+> >> +
+> >> +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
+> >> +	if (!auxdev)
+> >> +		return ERR_PTR(-ENOMEM);
+> >
+> > Ick, who cares what the error value really is?  Why not just do NULL or
+> > a valid pointer?  That makes the caller much simpler to handle, right?
+> >
+> 
+> Sure why not
+> 
+> >> +
+> >> +	auxdev->id = id;
+> >> +	auxdev->name = devname;
+> >> +	auxdev->dev.parent = dev;
+> >> +	auxdev->dev.platform_data = platform_data;
+> >> +	auxdev->dev.release = auxiliary_device_release;
+> >> +	device_set_of_node_from_dev(&auxdev->dev, dev);
+> >> +
+> >> +	ret = auxiliary_device_init(auxdev);
+> >
+> > Only way this will fail is if you forgot to set parent or a valid name.
+> > So why not check for devname being non-NULL above this?
+> 
+> If auxiliary_device_init() ever changes it would be easy to forget to
+> update that and lead to something nasty to debug, don't you think ?
+
+Yes, this is being more defensive, I take back my objection, thanks.
+
+> >> +	if (ret) {
+> >> +		kfree(auxdev);
+> >> +		return ERR_PTR(ret);
+> >> +	}
+> >> +
+> >> +	ret = __auxiliary_device_add(auxdev, modname);
+> >> +	if (ret) {
+> >> +		/*
+> >> +		 * NOTE: It may look odd but auxdev should not be freed
+> >> +		 * here. auxiliary_device_uninit() calls device_put()
+> >> +		 * which call the device release function, freeing auxdev.
+> >> +		 */
+> >> +		auxiliary_device_uninit(auxdev);
+> >
+> > Yes it is odd, are you SURE you should be calling device_del() on the
+> > device if this fails?  auxiliary_device_uninit(), makes sense so why not
+> > just call that here?
+> 
+> I'm confused ... I am call auxiliary_device_uninit() here. What do you
+> mean ? 
+
+Oh wow, I got this wrong, sorry, I was thinking you were calling
+auxiliary_device_destroy().  Nevermind, ugh, it was a long day...
+
+thanks,
+
+greg k-h
