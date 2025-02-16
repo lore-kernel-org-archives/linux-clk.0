@@ -1,62 +1,62 @@
 Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2A61A00ED;
-	Sun, 16 Feb 2025 18:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905611A0714;
+	Sun, 16 Feb 2025 18:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739731217; cv=none; b=kPZ0n9aBOcAYid2bvc8kpfYaCWCevVvXoi1p381pXc0vv/W4S1rpgGusGKgkvnhaniwJc1sl2e00eW+KrZZ2iqQYNojbRYIMdy5yMsGlNosmNUX7FvOzdm8kRmL5facnv4vtb13HoKB1Lf3uWR0DWdpcePA+e1HYeghXolKdiRI=
+	t=1739731225; cv=none; b=r8WYYO/K6nnL0A7idyKJijoG09oOEG9+CindWD7McoRItN4hYr/4Nqgm/5/mo1htQLMejrrtotNJQLEt6NxkccEJjEkvGvUeHxQIRMBwoy5xnslWnQDkwSxc5qAwa+Lzm5TqUUhXyfFzUoQtsuKr+lkN09usCGiOtPMCS9+EQxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739731217; c=relaxed/simple;
-	bh=GxmJA29+HiacNFcc1pD/DAk2xoAeB9EDa9VQhsNGzZ8=;
+	s=arc-20240116; t=1739731225; c=relaxed/simple;
+	bh=XYVT+05ZUp9STT/svO0FkxXdAaFevUI5l1FknCIZU14=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YMo16ajut9JJHeGnZxLxTk9iGBr2AxkKxMYURnzOyo50bNcCy/ukjgNrRsccMZwRWbeynf4WQRwhzi7A2szfqSrSeAyFpaoOCPTODfO+o3Ly60OJ3nTC1xY3Yx3DKoMtqn07tXamRgNQgz65LMDqmtbYs1FqtOSZDJqdpMo+T1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=K3iTI4vm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H7uFJplD; arc=none smtp.client-ip=202.12.124.155
+	 MIME-Version; b=JV9XS/5Szk0yiR9aqQIBlpLI6RT2d/FeealFo7ghJJmZ7Joe4MKremRyevtMY5s633zha8fusDyCvOeiFCaXoouQm+XixTAFKiea3tq1aWDEVH32jYnsEDcQ4iYDM3YzvTOeB/pGdxnTma97NdE1yMOLSzRfKD5iNDy+GaODjyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=S9/Ruk9O; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g7iJc4tM; arc=none smtp.client-ip=202.12.124.155
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="K3iTI4vm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H7uFJplD"
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 433FE25400C3;
-	Sun, 16 Feb 2025 13:40:14 -0500 (EST)
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="S9/Ruk9O";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g7iJc4tM"
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 1CB7625400C3;
+	Sun, 16 Feb 2025 13:40:22 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Sun, 16 Feb 2025 13:40:14 -0500
+  by phl-compute-11.internal (MEProxy); Sun, 16 Feb 2025 13:40:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1739731214; x=
-	1739817614; bh=BJw/apkD9aGn51IELkXxp/idESG6pC1H6gAPScSoptk=; b=K
-	3iTI4vmFvxu3qmPRAyN6NKLbUQDs+uvE4PDgBnT1JTOFv+Dki0Id5371AYeYugbB
-	maKBucXiOYeXE2qw420KZAhgAyyutpajeyO0padtMIs9cBxtf3GKeLUq14aZpU2D
-	qLNDvPi47KymMjoR1BxX1lyteZPUzQy/NPioDGpwcNb7jWXqUMJxQkeiGVEAwoRb
-	WfEbqvZDu3ooA+mbD6/kQNIVGw64MMuArZ3Zb4VvPmQYfRcO4Agn1VOyeI3IquFp
-	N7h5mbwQpjOoMbdkkjBQJs4ZmxlfIhaV8lkIFjeNvfCvz+nhuMOo3LfkrYxrnCoB
-	05n8eo1PcvBVycIMIo5vg==
+	:reply-to:subject:subject:to:to; s=fm3; t=1739731221; x=
+	1739817621; bh=8S0LM67ZallGhiis5MmmYmAmKnXDOKUkcZarC5rYtYI=; b=S
+	9/Ruk9OGI1fHRkob/9Y67jzlqMZaeKF/NeUc2Bk6b54vs4OHDfenmvKsry+67Hcn
+	Bmbxc8F1ZQ+2YIva1p01QoIUKlM0fGPiQumZUBCQOP5comKy1mNxuDSSvzMEeY5M
+	3ey+Sccm3MphM3TwHCBRnrDt/W1IPugoRdB3O0TVA0lnd4Wbj975jO9nmteaXVFp
+	V3CpiEQVmQZcO9Hn/SLzULNkNoKUGy5XMeyswZj4VDpOcbAHRiwCaZYqmo6R6mKA
+	84sE3W7EM7xx66VdUTL4Kt6bvO+tAh6UE6ZvLyasbGe9xRX4MoF+70e9BeiTGqw9
+	le304pp+xyk7hYf/kQHFQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1739731214; x=1739817614; bh=B
-	Jw/apkD9aGn51IELkXxp/idESG6pC1H6gAPScSoptk=; b=H7uFJplDX0y/cWnUW
-	8sskksipym/7VyiwoA+cPGFR6fCMDRL9TmA4aHz0oi8tDzOdrTdwFeRH2e5H0VCW
-	ojcR32RT5IYoUCA1m22CXvmfSLqspk0bxtqZZpp4d/E+0nAu0S/86H8lQ4kZjQmg
-	xu4G6XNOoopCwMbudpCLJflJLkf1Ti/OfJnapjLh/ppF+sT+BnaAPPWoBnFT6cun
-	ixUk8LBFyZnWDUwUfB5q5DPm4QrYuuB4CIXHQJVvIdo7q7O58rrJb4EmYrAwRoHK
-	+npJ65QQfIhRpdvgjXso4aZ/JVBhLZpepUFomdEzqbp94ypsm+uSjDmlhxs+tPNN
-	87Qrw==
-X-ME-Sender: <xms:DTGyZ2N290orpzVL4IsITh6Hu_ZwVg6Zz-dYDkqp5X7oBprfQLcVrw>
-    <xme:DTGyZ0929IRlCJFfLSiTNJzpOp3oP8eOzbkbCC14F38pbSZmLI1k3eIzT7PfBbggd
-    PSyDyqlgJMsxb-ABw>
-X-ME-Received: <xmr:DTGyZ9SxlchJi2EFRaaSEQDd1Pql2KZ8AuufblLadY20txgKpid8jBH_aXgijh8w80hF66sOy6g8vW7--L7LTOqrWkF2ClTv42AeWPcqgF_s>
+	:x-me-sender:x-sasl-enc; s=fm3; t=1739731221; x=1739817621; bh=8
+	S0LM67ZallGhiis5MmmYmAmKnXDOKUkcZarC5rYtYI=; b=g7iJc4tMVK4JDm2pu
+	NTnaEbGA3DcV90CBTXvUFzGSn9gftSGIaNVTQxIbBERMAMBV/iAQKfhoomNVC8+y
+	3CZkbuYKH1QjdollwISLWjFv7CCWM89LxGNLzBHRlTaBDj+Vn+NPlXpSCXgxYOqi
+	OsIwhGuOrtgcQVWf/RremJ2YthD0FJyBpwshrpu6UeiqAijHzjCgSQr7ioks0/r+
+	NfZSVZI3PPZbyt7rw9h6SCcKzwD/41xXbSg2QgzX5RY8XeS0QAYN+bLsBbHSZKts
+	6E/JGOCwkPo0EvTkCbsolCx1OGUzxcvUQrX7MVTZ0EkZ5/qv3lxu43rPb0rH36R4
+	Bq7Gg==
+X-ME-Sender: <xms:FTGyZzXIWnZl9wER3MmnE6DsO_9VjnqqeEj42VPUb-VmjmqcUVfSww>
+    <xme:FTGyZ7n4WMPDF04weBFUbwW46aZge0ndvJs5esqUv7KkDmjxRaNeYIQMsIuZpNkFO
+    TV-I0ggFv0w0qMAQg>
+X-ME-Received: <xmr:FTGyZ_Z0RMw3buwGoB_4mokNN3fm8rI5JTPORSWRRxN_JLLA2qJ6MUKBDGBFHb-_kR53QGFjKBH3YVCBd5kd_scgxta3XrCw1P_CtzBezg2m>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehiedvtdcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
     uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
     hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
     necuhfhrohhmpefthigrnhcuhggrlhhklhhinhcuoehrhigrnhesthgvshhtthhorghsth
     drtghomheqnecuggftrfgrthhtvghrnhepffehieffgedtgfffjeetveegfeekleeileek
-    veeuteffteetudffveegieeiheetnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrg
+    veeuteffteetudffveegieeiheetnecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrg
     hmpehmrghilhhfrhhomheprhihrghnsehtvghsthhtohgrshhtrdgtohhmpdhnsggprhgt
     phhtthhopedvhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhrihhprghrug
     eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfigvnhhssegtshhivgdrohhrghdprhgt
@@ -66,14 +66,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehiedvtdcutefuodetgg
     hffhiflhhlrdgthhdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghi
     lhdrtghomhdprhgtphhtthhopehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgpdhrtg
     hpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:DTGyZ2ub1PH5L9YG_AauZQZI8QPFsXA6Jj5PQH9Dp0xCG1RHS5ydgQ>
-    <xmx:DTGyZ-cSEEhaTzct0DaM5sv0jDZ-ICWoJa23iqqZrMHCZ-mC-WlpVg>
-    <xmx:DTGyZ60yrl-NUxeZgpaysArIa4YE7ficiL2YPqsIo01xv9xNUgiykA>
-    <xmx:DTGyZy-TzG5rZISRZQ0eVzy8hlZ3N2X-NXYC9rj5JXXubO0E1dKHhQ>
-    <xmx:DjGyZ9kytfZviclP8KqFbYkQpPb2nluA6HKKlZz_JGOB-nyPLClDvPo7>
+X-ME-Proxy: <xmx:FTGyZ-U85uWqlsyUHiRSjV1NMN2MZeQ1btwAyDt4yMxWO3Y6t_I6TA>
+    <xmx:FTGyZ9lvHbOHeulGv1nvJgCG0R3MK0o5Ox70IqVxMBODiufGylcvVg>
+    <xmx:FTGyZ7cx-IDY2lYyaeCKChuvCo1gltRXPhBnl5VoALXbE7npKNM7uQ>
+    <xmx:FTGyZ3Emqd_nopGXeNgrWJSkRyUMiUG1Ni7fi23o4yhr3_GmW0inzg>
+    <xmx:FTGyZ1MZJxY2aYa0Fdfc_Gj9Y6VoMu559YwlJ0AH3LGjEhRvVYpEJ2Me>
 Feedback-ID: idc0145fc:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 16 Feb 2025 13:40:06 -0500 (EST)
+ 16 Feb 2025 13:40:15 -0500 (EST)
 From: Ryan Walklin <ryan@testtoast.com>
 To: Maxime Ripard <mripard@kernel.org>,
 	Chen-Yu Tsai <wens@csie.org>,
@@ -100,9 +100,9 @@ Cc: Andre Przywara <andre.przywara@arm.com>,
 	linux-clk@vger.kernel.org,
 	Ryan Walklin <ryan@testtoast.com>,
 	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v7 20/27] dt-bindings: allwinner: add H616 DE33 bus binding
-Date: Mon, 17 Feb 2025 07:36:20 +1300
-Message-ID: <20250216183710.8443-21-ryan@testtoast.com>
+Subject: [PATCH v7 21/27] dt-bindings: allwinner: add H616 DE33 clock binding
+Date: Mon, 17 Feb 2025 07:36:21 +1300
+Message-ID: <20250216183710.8443-22-ryan@testtoast.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250216183710.8443-3-ryan@testtoast.com>
 References: <20250216183710.8443-3-ryan@testtoast.com>
@@ -117,47 +117,31 @@ Content-Transfer-Encoding: 8bit
 The Allwinner H616 and variants have a new display engine revision
 (DE33).
 
-Add a display engine bus binding for the DE33 and increase reg maxItems
-to 3 to accommodate additional register blocks.
+Add a clock binding for the DE33.
 
 Signed-off-by: Ryan Walklin <ryan@testtoast.com>
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
 ---
-Changelog v1..v2:
-- Correct DE2 bus enum to reflect fallback devices accurately.
-
 Changelog v2..v3:
 - Separate content into three patches for three separate subsystems
-
-Changelog v5..v6:
-- Increase reg maxItems to 3.
 ---
- .../devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml  | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml  | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml b/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
-index 9845a187bdf65..317a27cf590b3 100644
---- a/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
-+++ b/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
-@@ -24,11 +24,14 @@ properties:
-     oneOf:
-       - const: allwinner,sun50i-a64-de2
+diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
+index 70369bd633e40..7fcd55d468d49 100644
+--- a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
++++ b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
+@@ -25,6 +25,7 @@ properties:
+       - const: allwinner,sun50i-a64-de2-clk
+       - const: allwinner,sun50i-h5-de2-clk
+       - const: allwinner,sun50i-h6-de3-clk
++      - const: allwinner,sun50i-h616-de33-clk
        - items:
--          - const: allwinner,sun50i-h6-de3
-+          - enum:
-+              - allwinner,sun50i-h6-de3
-+              - allwinner,sun50i-h616-de33
-           - const: allwinner,sun50i-a64-de2
- 
-   reg:
--    maxItems: 1
-+    minItems: 1
-+    maxItems: 3
- 
-   allwinner,sram:
-     description:
+           - const: allwinner,sun8i-r40-de2-clk
+           - const: allwinner,sun8i-h3-de2-clk
 -- 
 2.48.1
 
