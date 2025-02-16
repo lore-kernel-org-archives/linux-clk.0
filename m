@@ -1,62 +1,62 @@
 Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D33A1632DA;
-	Sun, 16 Feb 2025 08:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797891624F7;
+	Sun, 16 Feb 2025 08:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739696226; cv=none; b=Vbm6BDYvlaO556WAZMDKQHwUN80/Nz3Geuo60LJ1IPtxnbk2IK3TWV2dGhVvjp3qZTHVWYIoL8fn7j6dYEvkAVi5Peqf8lTIh4w4B3PsNc8le0769uVVyV+R8abO2l2h1YbZF8fWZ6cWza7J/EoGa7gpzNEORJYDBHwxwgjYpZg=
+	t=1739696234; cv=none; b=K+MGFwuUs4VTgOo5qEU/phHfSrxKezhuW2zB5aHyjXIzXiQ1ThjKOX57wb+7/oYrNnoub+06zzT8July2Hz4C0CcIyOWrqEdl3mz5LiaT0yVuwNslBIci7aC+SlnnW/xLg5/cy8hmEvt7JNovScySr8FCpEYxKkZf/WCJelLCR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739696226; c=relaxed/simple;
-	bh=4zO0a9Rf2UUu8f8/bBFqg7KRGrrHDDYKYVdKWh61GtI=;
+	s=arc-20240116; t=1739696234; c=relaxed/simple;
+	bh=m/HQEOs3sIqQx5pHpxexvu6bxOLHwr9LC471uzTV+Cg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=utrb40sNcgdQ+PnTuJL22mKiia6L544ap5ml3wOYD13CYZxswvlqkL/zWCu1dTB39SzeaA1M7vzD81f+RGUVk0Psr9tS85cvobWbr6QGT07fAATE2MEJLRm8xZgbY8FiyUn5yn2ZknspjKbFx8k4DlJTsk9npmKDh+OQiXqO6ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=Ps0sPvx1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=h5Jcwdtt; arc=none smtp.client-ip=202.12.124.149
+	 MIME-Version; b=hgjRm7fgGTo6rJg9rWcDTICO9qEeOvN3V9eODxCExylGNpkyROqeKmALIhL18h6r0iFwhuo0UYaaVMVB3w63nqHxnTYoDkZ+5kle5zsmrJ5Lp86k+qqsaLvVG1qzlV+gmXV6A+Bi1ncr82cLTElX/YNAC5Dal0fx/uvQUzfAUy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=Dmox648l; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wT6T8Vwb; arc=none smtp.client-ip=202.12.124.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="Ps0sPvx1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="h5Jcwdtt"
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 53ADF1140113;
-	Sun, 16 Feb 2025 03:57:03 -0500 (EST)
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="Dmox648l";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wT6T8Vwb"
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id F2DFD1140115;
+	Sun, 16 Feb 2025 03:57:10 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Sun, 16 Feb 2025 03:57:03 -0500
+  by phl-compute-05.internal (MEProxy); Sun, 16 Feb 2025 03:57:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1739696223; x=
-	1739782623; bh=oNtQL9sxppnGlWKrImLnx1rLFbj0k2zmSqYqt+MhF00=; b=P
-	s0sPvx1DbPPaDtLWoyB3FL1C/qbk8VXiBlg+a9luLomSUGHMTxLQYfYCltRKSWUq
-	qE+1Wp8d/koepl4UqLrBa444xbWbiPEMr9D/6LgO3Tm0iXiKPKnWvYmfIBQJVx/w
-	1kJrkVmDmv3ykvKHkJBiPXCEiOr9v/EqhOccQw3li5M18+FyxJScwNfthyE8IU2u
-	/YitYHYBZ43384paUF1Pq5qdkbuLHXW4sZq6tSf1rrq957Kqnv+KVf9ZNL5rcIIl
-	zgxA3LXPUWEJmo6N1mDFKfyMWH776J6Jf1d09ENwTyEr7CtHgnB8eOQev3idgXBD
-	OVDN97NP8hVLvefoVAJbA==
+	:reply-to:subject:subject:to:to; s=fm3; t=1739696230; x=
+	1739782630; bh=pNN4RBGoTZlMx5uVmdpRTe10uEZ7WZE2J9+a1pOThlU=; b=D
+	mox648ljHJDAW9ch+aahuxNujXkNk5hFGEDG20Elnn5o5dFLoEKfYDe6suXRWoz3
+	Zn4ZclfUoJwtWM2kekRtX2MN7+TVHsBPXRjeaueokrpsJrJ1gKgD5n6tgLptseDB
+	YewTBXHQz5sVOSy5+HF0Np4ntQxDgB3gJhSaX9c6c3I2OoKhMGmfh8HfwrTDNvWe
+	mGbiL3FQieeCZQ/W0h7MhqZaKCxEHYyDlLjxotZv/flO9u9jIyw1VbwrN9zGjp1+
+	8yLXTjI5KwJAWViPg1PwUwwLMdj7SdWlkkk/XFBz9pg8dh3jXDA7cWHnzFoB1QtV
+	dofZmXrWBtPuzs/51rTIA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1739696223; x=1739782623; bh=o
-	NtQL9sxppnGlWKrImLnx1rLFbj0k2zmSqYqt+MhF00=; b=h5JcwdttwManKY6Fo
-	Ff67XqaoMG6Zc4oNGRPewN1kLWTBD30Po36zhFI0kSeyioaUjBvnTuHOmDEa3zdF
-	+dGE1Mhj4zruXLzfP1T7pIfhYXM5eeCj0+QpmmhBmlm2od9e75nDataoiR8O9B4U
-	8DZ4uctQlLdgcwpGxci+wSMwEdTrjcRH77E86pt37vrvHI6bpJBav/E5QTLBH+sL
-	l9S2JPBPkz/t0oojF9ajSrctt3v680pKoxnt3OnuyB6mvQtQq6z3083hic9zYmaL
-	sSGbrTvpwpnAAgS9tNam9gDiVbWx07OjH2poeJGOxuEF3gsbVUBWyJ6afrghq3R+
-	L5M3Q==
-X-ME-Sender: <xms:X6ixZwNrKKXzeRJqQ0VXgmekKd24b4PrrPhLw26WQOoHJZtBaKTmjQ>
-    <xme:X6ixZ29eFCt6MLFApboyHq5TAwF5l501WXC5uVArd6WU432dGI-NR_UHD2y-yE6HW
-    xwHK1Dc3TzIqEODOA>
-X-ME-Received: <xmr:X6ixZ3RHOOywmz0AdnpDXAIujzVQVzMukX9y30XA0YrDErDKsQPxWlEVO4EoZ4iYXV8wOIcZdH5GAxPCF6rWdt11GEptEXvp-pbe5Bs9XM1B>
+	:x-me-sender:x-sasl-enc; s=fm3; t=1739696230; x=1739782630; bh=p
+	NN4RBGoTZlMx5uVmdpRTe10uEZ7WZE2J9+a1pOThlU=; b=wT6T8VwbGoZOaHsmL
+	1IsQfv763ZAsvlX1YfNZ4R1AwVFwoCNe/8RnNrN6rKe7fCG/dCuxAP6PvKXAGM6c
+	Y3LMXI0DJO+1L61GiezmB/6slQ0GPfYgj9PdeORFGAfdIUG0ymcBpsUrPvE2NoQt
+	pPRHLS3zc4qjQIgLUUhBqwnHo3nKZpvwYO3DEQRBN7N3XFYL5a/cg2zYGg+4u13C
+	CEHR/SPvmikBwkbOiUT3NwBJi9O210YQleKKW4jRRzRQfs/jW5P4DlT+EytYj1jS
+	B8Di/lqBGtZBLcxffRtdYF5rm/T0zpKf0nvTE1rs+um2hDmtUV9qrB7I4qQWTdhB
+	2/ukg==
+X-ME-Sender: <xms:ZqixZxVs2b-0fqK9Mfi6b5eQQRqdS816JyVvQz1UnU-jI3C4pbDZmw>
+    <xme:ZqixZxn__ycx_Y_wPX_W1ghJLMY2CbLK-s8WjzwOFwWRkRcJR-epF4eT9YSJruHQ8
+    XrVvDANsivtyvAPtQ>
+X-ME-Received: <xmr:ZqixZ9ZrnNevqaWjayGtljJe7zrYUNPrv7RF49-3cpkBjZqBkXsVLbGR0IY_KchuusMTRQQRK4SrR00xkLiVzNU4KzSKRaWcmGz56NdJeHkX>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehhedtgecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
     uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
     hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
     necuhfhrohhmpefthigrnhcuhggrlhhklhhinhcuoehrhigrnhesthgvshhtthhorghsth
     drtghomheqnecuggftrfgrthhtvghrnhepffehieffgedtgfffjeetveegfeekleeileek
-    veeuteffteetudffveegieeiheetnecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrg
+    veeuteffteetudffveegieeiheetnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrg
     hmpehmrghilhhfrhhomheprhihrghnsehtvghsthhtohgrshhtrdgtohhmpdhnsggprhgt
     phhtthhopedvgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhrihhprghrug
     eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfigvnhhssegtshhivgdrohhrghdprhgt
@@ -66,14 +66,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehhedtgecutefuodetgg
     hffhiflhhlrdgthhdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghi
     lhdrtghomhdprhgtphhtthhopehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgpdhrtg
     hpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:X6ixZ4sQ_N_kAlFZTr-fWxUUj3oAERMwhO278ry6k85APm4R5S9hYw>
-    <xmx:X6ixZ4exl9v2ba689X1ey7NoiNL8XX8YhTwTbFFURaqz5VJoppPcLg>
-    <xmx:X6ixZ818cASfe1NLBjBS0MloGXZUN5m8D_c8w1BLd2fX9SbW4dJsPw>
-    <xmx:X6ixZ8_injmwwPRmy87QUsKFRflDtEhKWWbhKcyNZ-_LpSPrhkEODA>
-    <xmx:X6ixZ5vzO2T-uk89aozwtqylW5D3i_A1ebRtEW6HgImw8JS0LMgaYyvV>
+X-ME-Proxy: <xmx:ZqixZ0Wap5gvd0kklJrH8YbWKKBwlypw8aq87hGIU35ZK2JCmU_1qA>
+    <xmx:ZqixZ7lx1t3WkXDmAZhjXJ_udfD-fYGUMynhvMK2e1LO742VHG8uXg>
+    <xmx:ZqixZxc-7eOkdYivHuMYmhDu7IaDBXrd8c0uxIXzjNn_Aj-Dmsmhcg>
+    <xmx:ZqixZ1GrndMDCSePKp9cZGt9gSYTLApbGOFSjo492sF7CxR0fb1b-A>
+    <xmx:ZqixZ_3wQ9cKsCXNIdYn4wjefIeGrOPuiH2Td9MRxuL46QCcTp8sebMs>
 Feedback-ID: idc0145fc:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 16 Feb 2025 03:56:56 -0500 (EST)
+ 16 Feb 2025 03:57:04 -0500 (EST)
 From: Ryan Walklin <ryan@testtoast.com>
 To: Maxime Ripard <mripard@kernel.org>,
 	Chen-Yu Tsai <wens@csie.org>,
@@ -99,9 +99,9 @@ Cc: Andre Przywara <andre.przywara@arm.com>,
 	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Ryan Walklin <ryan@testtoast.com>
-Subject: [PATCH v6 11/27] drm: sun4i: de3: add YUV support to the color space correction module
-Date: Sun, 16 Feb 2025 21:50:42 +1300
-Message-ID: <20250216085432.6373-13-ryan@testtoast.com>
+Subject: [PATCH v6 12/27] drm: sun4i: de3: add YUV support to the TCON
+Date: Sun, 16 Feb 2025 21:50:43 +1300
+Message-ID: <20250216085432.6373-14-ryan@testtoast.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250216085432.6373-2-ryan@testtoast.com>
 References: <20250216085432.6373-2-ryan@testtoast.com>
@@ -115,208 +115,94 @@ Content-Transfer-Encoding: 8bit
 
 From: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-Add coefficients and support for YUV formats to the display engine
-colorspace and dynamic range correction submodule.
+Account for U/V channel subsampling by reducing the dot clock and
+resolution with a divider in the DE3 timing controller if a YUV format
+is selected.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 Signed-off-by: Ryan Walklin <ryan@testtoast.com>
----
- drivers/gpu/drm/sun4i/sun8i_csc.c | 151 +++++++++++++++++++++++++++++-
- 1 file changed, 149 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.c b/drivers/gpu/drm/sun4i/sun8i_csc.c
-index 7f3dc6a7b550d..0db946ef30b1b 100644
---- a/drivers/gpu/drm/sun4i/sun8i_csc.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_csc.c
-@@ -5,6 +5,8 @@
+--
+Changelog v5..v6:
+- Update to obtain color format from mixer if required.
+---
+ drivers/gpu/drm/sun4i/sun4i_tcon.c | 28 +++++++++++++++++++++-------
+ 1 file changed, 21 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+index 960e83c8291da..4cd3a07daf6e4 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
++++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+@@ -37,6 +37,7 @@
+ #include "sun4i_tcon.h"
+ #include "sun6i_mipi_dsi.h"
+ #include "sun4i_tcon_dclk.h"
++#include "sun8i_mixer.h"
+ #include "sun8i_tcon_top.h"
+ #include "sunxi_engine.h"
  
- #include <drm/drm_print.h>
- 
-+#include <uapi/linux/media-bus-format.h>
-+
- #include "sun8i_csc.h"
- #include "sun8i_mixer.h"
- 
-@@ -107,6 +109,135 @@ static const u32 yuv2rgb_de3[2][3][12] = {
- 	},
- };
- 
-+/* always convert to limited mode */
-+static const u32 rgb2yuv_de3[3][12] = {
-+	[DRM_COLOR_YCBCR_BT601] = {
-+		0x0000837A, 0x0001021D, 0x00003221, 0x00000040,
-+		0xFFFFB41C, 0xFFFF6B03, 0x0000E0E1, 0x00000200,
-+		0x0000E0E1, 0xFFFF43B1, 0xFFFFDB6E, 0x00000200,
-+	},
-+	[DRM_COLOR_YCBCR_BT709] = {
-+		0x00005D7C, 0x00013A7C, 0x00001FBF, 0x00000040,
-+		0xFFFFCC78, 0xFFFF52A7, 0x0000E0E1, 0x00000200,
-+		0x0000E0E1, 0xFFFF33BE, 0xFFFFEB61, 0x00000200,
-+	},
-+	[DRM_COLOR_YCBCR_BT2020] = {
-+		0x00007384, 0x00012A21, 0x00001A13, 0x00000040,
-+		0xFFFFC133, 0xFFFF5DEC, 0x0000E0E1, 0x00000200,
-+		0x0000E0E1, 0xFFFF3135, 0xFFFFEDEA, 0x00000200,
-+	},
-+};
-+
-+/* always convert to limited mode */
-+static const u32 yuv2yuv_de3[2][3][3][12] = {
-+	[DRM_COLOR_YCBCR_LIMITED_RANGE] = {
-+		[DRM_COLOR_YCBCR_BT601] = {
-+			[DRM_COLOR_YCBCR_BT601] = {
-+				0x00020000, 0x00000000, 0x00000000, 0x00000000,
-+				0x00000000, 0x00020000, 0x00000000, 0x00000000,
-+				0x00000000, 0x00000000, 0x00020000, 0x00000000,
-+			},
-+			[DRM_COLOR_YCBCR_BT709] = {
-+				0x00020000, 0xFFFFC4D7, 0xFFFF9589, 0xFFC00040,
-+				0x00000000, 0x0002098B, 0x00003AAF, 0xFE000200,
-+				0x00000000, 0x0000266D, 0x00020CF8, 0xFE000200,
-+			},
-+			[DRM_COLOR_YCBCR_BT2020] = {
-+				0x00020000, 0xFFFFBFCE, 0xFFFFC5FF, 0xFFC00040,
-+				0x00000000, 0x00020521, 0x00001F89, 0xFE000200,
-+				0x00000000, 0x00002C87, 0x00020F07, 0xFE000200,
-+			},
-+		},
-+		[DRM_COLOR_YCBCR_BT709] = {
-+			[DRM_COLOR_YCBCR_BT601] = {
-+				0x00020000, 0x000032D9, 0x00006226, 0xFFC00040,
-+				0x00000000, 0x0001FACE, 0xFFFFC759, 0xFE000200,
-+				0x00000000, 0xFFFFDAE7, 0x0001F780, 0xFE000200,
-+			},
-+			[DRM_COLOR_YCBCR_BT709] = {
-+				0x00020000, 0x00000000, 0x00000000, 0x00000000,
-+				0x00000000, 0x00020000, 0x00000000, 0x00000000,
-+				0x00000000, 0x00000000, 0x00020000, 0x00000000,
-+			},
-+			[DRM_COLOR_YCBCR_BT2020] = {
-+				0x00020000, 0xFFFFF782, 0x00003036, 0xFFC00040,
-+				0x00000000, 0x0001FD99, 0xFFFFE5CA, 0xFE000200,
-+				0x00000000, 0x000005E4, 0x0002015A, 0xFE000200,
-+			},
-+		},
-+		[DRM_COLOR_YCBCR_BT2020] = {
-+			[DRM_COLOR_YCBCR_BT601] = {
-+				0x00020000, 0x00003B03, 0x000034D2, 0xFFC00040,
-+				0x00000000, 0x0001FD8C, 0xFFFFE183, 0xFE000200,
-+				0x00000000, 0xFFFFD4F3, 0x0001F3FA, 0xFE000200,
-+			},
-+			[DRM_COLOR_YCBCR_BT709] = {
-+				0x00020000, 0x00000916, 0xFFFFD061, 0xFFC00040,
-+				0x00000000, 0x0002021C, 0x00001A40, 0xFE000200,
-+				0x00000000, 0xFFFFFA19, 0x0001FE5A, 0xFE000200,
-+			},
-+			[DRM_COLOR_YCBCR_BT2020] = {
-+				0x00020000, 0x00000000, 0x00000000, 0x00000000,
-+				0x00000000, 0x00020000, 0x00000000, 0x00000000,
-+				0x00000000, 0x00000000, 0x00020000, 0x00000000,
-+			},
-+		},
-+	},
-+	[DRM_COLOR_YCBCR_FULL_RANGE] = {
-+		[DRM_COLOR_YCBCR_BT601] = {
-+			[DRM_COLOR_YCBCR_BT601] = {
-+				0x0001B7B8, 0x00000000, 0x00000000, 0x00000040,
-+				0x00000000, 0x0001C1C2, 0x00000000, 0xFE000200,
-+				0x00000000, 0x00000000, 0x0001C1C2, 0xFE000200,
-+			},
-+			[DRM_COLOR_YCBCR_BT709] = {
-+				0x0001B7B8, 0xFFFFCC08, 0xFFFFA27B, 0x00000040,
-+				0x00000000, 0x0001CA24, 0x0000338D, 0xFE000200,
-+				0x00000000, 0x000021C1, 0x0001CD26, 0xFE000200,
-+			},
-+			[DRM_COLOR_YCBCR_BT2020] = {
-+				0x0001B7B8, 0xFFFFC79C, 0xFFFFCD0C, 0x00000040,
-+				0x00000000, 0x0001C643, 0x00001BB4, 0xFE000200,
-+				0x00000000, 0x0000271D, 0x0001CEF5, 0xFE000200,
-+			},
-+		},
-+		[DRM_COLOR_YCBCR_BT709] = {
-+			[DRM_COLOR_YCBCR_BT601] = {
-+				0x0001B7B8, 0x00002CAB, 0x00005638, 0x00000040,
-+				0x00000000, 0x0001BD32, 0xFFFFCE3C, 0xFE000200,
-+				0x00000000, 0xFFFFDF6A, 0x0001BA4A, 0xFE000200,
-+			},
-+			[DRM_COLOR_YCBCR_BT709] = {
-+				0x0001B7B8, 0x00000000, 0x00000000, 0x00000040,
-+				0x00000000, 0x0001C1C2, 0x00000000, 0xFE000200,
-+				0x00000000, 0x00000000, 0x0001C1C2, 0xFE000200,
-+			},
-+			[DRM_COLOR_YCBCR_BT2020] = {
-+				0x0001B7B8, 0xFFFFF88A, 0x00002A5A, 0x00000040,
-+				0x00000000, 0x0001BFA5, 0xFFFFE8FA, 0xFE000200,
-+				0x00000000, 0x0000052D, 0x0001C2F1, 0xFE000200,
-+			},
-+		},
-+		[DRM_COLOR_YCBCR_BT2020] = {
-+			[DRM_COLOR_YCBCR_BT601] = {
-+				0x0001B7B8, 0x000033D6, 0x00002E66, 0x00000040,
-+				0x00000000, 0x0001BF9A, 0xFFFFE538, 0xFE000200,
-+				0x00000000, 0xFFFFDA2F, 0x0001B732, 0xFE000200,
-+			},
-+			[DRM_COLOR_YCBCR_BT709] = {
-+				0x0001B7B8, 0x000007FB, 0xFFFFD62B, 0x00000040,
-+				0x00000000, 0x0001C39D, 0x0000170F, 0xFE000200,
-+				0x00000000, 0xFFFFFAD1, 0x0001C04F, 0xFE000200,
-+			},
-+			[DRM_COLOR_YCBCR_BT2020] = {
-+				0x0001B7B8, 0x00000000, 0x00000000, 0x00000040,
-+				0x00000000, 0x0001C1C2, 0x00000000, 0xFE000200,
-+				0x00000000, 0x00000000, 0x0001C1C2, 0xFE000200,
-+			},
-+		},
-+	},
-+};
-+
- static void sun8i_csc_setup(struct regmap *map, u32 base,
- 			    enum sun8i_format_type fmt_type,
- 			    enum drm_color_encoding encoding,
-@@ -153,25 +284,41 @@ static void sun8i_de3_ccsc_setup(struct sun8i_mixer *mixer, int layer,
- 				 enum drm_color_encoding encoding,
- 				 enum drm_color_range range)
+@@ -598,14 +599,27 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
+ static void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+ 				 const struct drm_display_mode *mode)
  {
--	u32 addr, val, mask;
-+	u32 addr, val = 0, mask;
- 	struct regmap *map;
- 	const u32 *table;
- 	int i;
-+	struct sun8i_color_model model;
+-	unsigned int bp, hsync, vsync, vtotal;
++	unsigned int bp, hsync, vsync, vtotal, div;
++	struct sun4i_crtc *scrtc = tcon->crtc;
++	struct sun8i_mixer *mixer = engine_to_sun8i_mixer(scrtc->engine);
++
+ 	u8 clk_delay;
+ 	u32 val;
  
- 	mask = SUN50I_MIXER_BLEND_CSC_CTL_EN(layer);
- 	table = yuv2rgb_de3[range][encoding];
- 	map = mixer->engine.regs;
-+	model = mixer->color_model;
+ 	WARN_ON(!tcon->quirks->has_channel_1);
  
- 	switch (fmt_type) {
- 	case FORMAT_TYPE_RGB:
--		val = 0;
-+		if (model.format == MEDIA_BUS_FMT_RGB888_1X24)
-+			break;
-+		val = mask;
-+		addr = SUN50I_MIXER_BLEND_CSC_COEFF(DE3_BLD_BASE, layer, 0);
-+		regmap_bulk_write(map, addr, rgb2yuv_de3[model.encoding], 12);
- 		break;
- 	case FORMAT_TYPE_YUV:
-+		table = sun8i_csc_get_de3_yuv_table(encoding, range,
-+						    model.format,
-+						    model.encoding);
-+		if (!table)
-+			break;
- 		val = mask;
- 		addr = SUN50I_MIXER_BLEND_CSC_COEFF(DE3_BLD_BASE, layer, 0);
- 		regmap_bulk_write(map, addr, table, 12);
- 		break;
- 	case FORMAT_TYPE_YVU:
-+		table = sun8i_csc_get_de3_yuv_table(encoding, range,
-+						    model.format,
-+						    model.encoding);
-+		if (!table)
-+			table = yuv2yuv_de3[range][encoding][encoding];
- 		val = mask;
- 		for (i = 0; i < 12; i++) {
- 			if ((i & 3) == 1)
++	switch (mixer->color_model.format) {
++	case MEDIA_BUS_FMT_UYYVYY8_0_5X24:
++	case MEDIA_BUS_FMT_UYYVYY10_0_5X30:
++		div = 2;
++		break;
++	default:
++		div = 1;
++		break;
++	}
++
+ 	/* Configure the dot clock */
+-	clk_set_rate(tcon->sclk1, mode->crtc_clock * 1000);
++	clk_set_rate(tcon->sclk1, mode->crtc_clock * 1000 / div);
+ 
+ 	/* Adjust clock delay */
+ 	clk_delay = sun4i_tcon_get_clk_delay(mode, 1);
+@@ -624,17 +638,17 @@ static void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+ 
+ 	/* Set the input resolution */
+ 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC0_REG,
+-		     SUN4I_TCON1_BASIC0_X(mode->crtc_hdisplay) |
++		     SUN4I_TCON1_BASIC0_X(mode->crtc_hdisplay / div) |
+ 		     SUN4I_TCON1_BASIC0_Y(mode->crtc_vdisplay));
+ 
+ 	/* Set the upscaling resolution */
+ 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC1_REG,
+-		     SUN4I_TCON1_BASIC1_X(mode->crtc_hdisplay) |
++		     SUN4I_TCON1_BASIC1_X(mode->crtc_hdisplay / div) |
+ 		     SUN4I_TCON1_BASIC1_Y(mode->crtc_vdisplay));
+ 
+ 	/* Set the output resolution */
+ 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC2_REG,
+-		     SUN4I_TCON1_BASIC2_X(mode->crtc_hdisplay) |
++		     SUN4I_TCON1_BASIC2_X(mode->crtc_hdisplay / div) |
+ 		     SUN4I_TCON1_BASIC2_Y(mode->crtc_vdisplay));
+ 
+ 	/* Set horizontal display timings */
+@@ -642,8 +656,8 @@ static void sun4i_tcon1_mode_set(struct sun4i_tcon *tcon,
+ 	DRM_DEBUG_DRIVER("Setting horizontal total %d, backporch %d\n",
+ 			 mode->htotal, bp);
+ 	regmap_write(tcon->regs, SUN4I_TCON1_BASIC3_REG,
+-		     SUN4I_TCON1_BASIC3_H_TOTAL(mode->crtc_htotal) |
+-		     SUN4I_TCON1_BASIC3_H_BACKPORCH(bp));
++		     SUN4I_TCON1_BASIC3_H_TOTAL(mode->crtc_htotal / div) |
++		     SUN4I_TCON1_BASIC3_H_BACKPORCH(bp / div));
+ 
+ 	bp = mode->crtc_vtotal - mode->crtc_vsync_start;
+ 	DRM_DEBUG_DRIVER("Setting vertical total %d, backporch %d\n",
 -- 
 2.48.1
 
