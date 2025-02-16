@@ -1,62 +1,62 @@
 Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE90319F471;
-	Sun, 16 Feb 2025 18:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B000119F471;
+	Sun, 16 Feb 2025 18:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739731193; cv=none; b=Ppp9Rxdd4vMrQZOIL2ZQ5LbB0iEDJKcuIbRxMTtq2J12GMG7wrdvtb/bV2/0pzw9g3Ade1eoNdrpp0eVGxb2+OxItmElfKmGjD/uh+tcsq8BofJG6HwIDtDkLn9wohdXprJdcJIteknrhKIOg57U0vA3w/sBCGi6OWxO1BU7l0s=
+	t=1739731201; cv=none; b=jh5Gj/OJsV2VkqmTt5a8T6QNa4n1WLMEXGKex7Mz6+8lzcgyYMmI+WYdNL5fYlGZGRxK6lpO8/lyw9jlnOsbcqDaaZg9YeeIwpUdD8HgJYZdTjU8O03UDxY0CPvJrEzB1Wc1YFdsIsEYAfD2KrenpXFy3+APvqbvQ40Lsq1jbvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739731193; c=relaxed/simple;
-	bh=uzgXJJMEaruw9VJ7FltBzG7mE6vBjD2r0bOVD1fXLv0=;
+	s=arc-20240116; t=1739731201; c=relaxed/simple;
+	bh=5a3WJ4vN0jQVlZlqpdMa46odcjFczTtBEL5VlOOUucQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ozn18YsQaXnwleOJK7c40zHIXU/jnOLU3fJUEeQrKZv3tdv84oh4lYT4X9IdWnxPm+MM7zl2CzN9ihZ0rrHZnu+ZsLdwFYC29JMtVidjsnrqHXPA01Bagjkn5qQyaMl71WWaR6OXkChZpPdVhm6y7OCVbn+iV7tdQWogiBqr4TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=b58uyOyq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TsSF14+s; arc=none smtp.client-ip=202.12.124.155
+	 MIME-Version; b=U1fdo4KLlh574KK2ZXYWLPVT2u2ux46GL0dCuQzVesqVOT3hJ8TNF7no6RVUzKOk3xfSK8ppo1q+kWtgv38zQrCZCcBaVbQKNtlFsVjGu8G/uIVZ1ivlnciN9q8hgz46K+HxROD/E0wt/uHY4IzdyL/VS0Yl8kTsa5CMrwa0P9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=FC7Uydqo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=yHuGUqQm; arc=none smtp.client-ip=202.12.124.155
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="b58uyOyq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TsSF14+s"
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 67CBA25400C3;
-	Sun, 16 Feb 2025 13:39:50 -0500 (EST)
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="FC7Uydqo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yHuGUqQm"
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 0AB6425400EC;
+	Sun, 16 Feb 2025 13:39:58 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Sun, 16 Feb 2025 13:39:51 -0500
+  by phl-compute-11.internal (MEProxy); Sun, 16 Feb 2025 13:39:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1739731190; x=
-	1739817590; bh=hVbx/e/0O8lGVMfw6nGdAuWIs0CL+nJx0lLTRkCftPw=; b=b
-	58uyOyqJ5jv9OsllnTaGcbf0ahweqov/I7rhV6tq5guHoiXk5PfnqjH5ASMjK7Gz
-	o7ISZP77bh7lCmWU0sBH9bBWb46xQpfN35tSA8sAmvP0F7TcIMepiyUoiV7wykQl
-	DKdcZd/e7j+BtEK8GnclsXplA2LSWc+sofn65cDxIqtCbAIpciMS1x7Q60FPb7II
-	Az9aWERfqC0trXttTMl54x3wGBofxvBjPwLeEZ7xuaGgjmrW8F+lRCdBh5vuNrrY
-	4XVWLbik+ZiN7jg+MjlgFkR/wC26XxUnN7NnUERrQLHyNkejwXbfcXH54Nn4wIBw
-	fGcmRMgbGASgAEDyjZtUQ==
+	:reply-to:subject:subject:to:to; s=fm3; t=1739731197; x=
+	1739817597; bh=KKYj19PCNF+aI9EiVNVBvzfmUWleJEMpK2qkXaq7+DA=; b=F
+	C7Uydqo6IbV8eJTv3OWp7Xm1jHNIFkIknjM1S6dapxzp+482NOuaIqHMHpnAX5f9
+	F0bFh87v+/8Qw6ufWCfWBJ0TQ4DeV7Vh/iuc+LixCade79to6YLqKXt+NMk8oWbk
+	RN3miXHzZwNklK8gpFJuxQ+GzoUQpTDb/M9jVR/HajAWz1bvc05Bq1rI5nYOoWLi
+	ZB44nKhljqroHkR+kdwHPJZLxxIWcYao/wRL/Mhp3Qyep297TOpnVy1LIHZm5Nnb
+	UZPswfUUHz2NzwxtKcsNbBcEaXnytIT00WH7YV+nVso74vPORI+lk4rgG5DbphCC
+	R9Mq12r1Se7WjtX0datbA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1739731190; x=1739817590; bh=h
-	Vbx/e/0O8lGVMfw6nGdAuWIs0CL+nJx0lLTRkCftPw=; b=TsSF14+ssyzaTz07+
-	5uF87Ooh98jX/TJ4BYzO0jc/V62b7cc9SiRzdDAbYxL5vUGgP7qWawOsOLgvqhSj
-	0HcqJv0xiAveWWoCZJUjglNfGehh1uNe+bIguzsUtK/qO78/KiiOzJYcYQcB48sK
-	oJ6sYvQ0laYVmUuZJqHn3pE9LRoPAK1KjNdpUkpNlj5b7K+s9fTh37B1sopPEpqp
-	QtkE7VDLar2+yJ4OVy/SwlJqr8ENlaXM0kuU6Y6HkiQmtVORba4ZccOXEtqpTW4X
-	c89LdM1RcApYcHydKaB4W1ewZ58cwXXMlPKnOMVhbWHrR5YNtAqNhwbdDHRcovuu
-	GclUg==
-X-ME-Sender: <xms:9jCyZ4LPvjVcTAndkLKEWxpV9YrI5eoUv60O4YABpfOKV2sfPeQQAA>
-    <xme:9jCyZ4JCe6CkGGMsqexDHf-yabvcTtyc-GPbcpVZiIX07_jjHWSm-DqIZq9Ef-5AU
-    xdG034CDOD6RW5gWw>
-X-ME-Received: <xmr:9jCyZ4t1dBXZ1DRY-z71rGCIabEvc8Z2kjZhMopLFnxnlUfCJO0b0z4VHQcJlVcB12yC8OReJ_ZM_Pm9nHp4Nfno5-AylRuTngAHNCtny9fo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehiedvudcutefuodetggdotefrod
+	:x-me-sender:x-sasl-enc; s=fm3; t=1739731197; x=1739817597; bh=K
+	KYj19PCNF+aI9EiVNVBvzfmUWleJEMpK2qkXaq7+DA=; b=yHuGUqQmvrLwkewBW
+	8faCkwOkNQ8QMNP0TA2DNmCIIUw3Kd8lYKBw4LdhS3Ok0mxZBWCP9lD8zMG6/aj6
+	iF1efPwMucdqmsOu+8qBmcQ9jxYvifSML+0GrDsWTd45NokQ2WUcz/KwEckQOIOD
+	XoUkN0iJNOtcCJHrydJ3K4sKNxFNMZjmyicHZPLH/HU8wHjYan/Wr9o3B8zkOgyu
+	KFZWZFhgLh6BAcLJX0NNP6OMsYum9jNT0oO+nnpZAm9LkUMcJq7ivDgl8YdVE6li
+	vwgT1y9QovQ5gFTQE6dHXx6KaiD914KZP+qGMa6KkaT0RavBt0kFAaW/cxEb3/al
+	T5KWQ==
+X-ME-Sender: <xms:_TCyZwgRo2tT6wLUgZNEEOfYXjlyT4Nh30JO9O7RAag9ShsYfWjh0w>
+    <xme:_TCyZ5CMEUGesByuixDpXGG1vnMOE75IhxFI86AKxbXFhILrF_JDckU6fdYh0HoQ4
+    1r0Bp6xyW9QTy6H-Q>
+X-ME-Received: <xmr:_TCyZ4GR4uRx8BjNdTISuWUxcY8cVUwtXC5KcdPa42ruPHAGqgoUgq67gU3N4FF773uhPdGlXvnnFwpHhS0_31n56qhePSKCyv_k9PjaqSHH>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehiedvtdcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
     uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
     hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
     necuhfhrohhmpefthigrnhcuhggrlhhklhhinhcuoehrhigrnhesthgvshhtthhorghsth
     drtghomheqnecuggftrfgrthhtvghrnhepffehieffgedtgfffjeetveegfeekleeileek
-    veeuteffteetudffveegieeiheetnecuvehluhhsthgvrhfuihiivgepgeenucfrrghrrg
+    veeuteffteetudffveegieeiheetnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrg
     hmpehmrghilhhfrhhomheprhihrghnsehtvghsthhtohgrshhtrdgtohhmpdhnsggprhgt
     phhtthhopedvgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhrihhprghrug
     eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfigvnhhssegtshhivgdrohhrghdprhgt
@@ -66,14 +66,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehiedvudcutefuodetgg
     hffhiflhhlrdgthhdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghi
     lhdrtghomhdprhgtphhtthhopehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgpdhrtg
     hpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:9jCyZ1ZaOO_uxuw_ufHHBLWYIRn_kN7f3LFu71i_ogor4AW-ng6pwQ>
-    <xmx:9jCyZ_Z-s5MmE_ry4rRtcmkPbIFYJQiwqbCTeeGTinzPZiDcIVrBGg>
-    <xmx:9jCyZxCvLAdSz8SgnyNgq5RKgeG2pYtNivnhc1fWR1vfUzU2fA-30Q>
-    <xmx:9jCyZ1Z7rOhTjVXFW-7ALPMmfdn522JuuPHmtaIf_xzwCyWYfiIO9w>
-    <xmx:9jCyZzL5c7DAoxy5EHq3kRzu-IHNUt56RKK-2OquLlBu3tC9RgMm0f5C>
+X-ME-Proxy: <xmx:_TCyZxRGAUlJV4PFaozMxlJVDtni3ZtD7DQmzYtYL8_Yy1cX30AusA>
+    <xmx:_TCyZ9ySNGndSGRvSNBW_cLsWQGofJcurzl88CEV0qXuIXVDoahM3g>
+    <xmx:_TCyZ_7LCrPuD5stolvLJS_S6O1H2nBhHt2LH3409g_cG8eRN4-q_Q>
+    <xmx:_TCyZ6ygpLOC4rg0GTsMluWGKoifhw-nHcF8E0sULGpgU-c6co1eTA>
+    <xmx:_TCyZyhI3c-bWP7tWOAWVeSvvq219qD47MSkbwBqu9qqTRm6Sfkcjnkf>
 Feedback-ID: idc0145fc:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 16 Feb 2025 13:39:43 -0500 (EST)
+ 16 Feb 2025 13:39:51 -0500 (EST)
 From: Ryan Walklin <ryan@testtoast.com>
 To: Maxime Ripard <mripard@kernel.org>,
 	Chen-Yu Tsai <wens@csie.org>,
@@ -99,9 +99,9 @@ Cc: Andre Przywara <andre.przywara@arm.com>,
 	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Ryan Walklin <ryan@testtoast.com>
-Subject: [PATCH v7 17/27] drm: sun4i: de2/de3: add generic blender register reference function
-Date: Mon, 17 Feb 2025 07:36:17 +1300
-Message-ID: <20250216183710.8443-18-ryan@testtoast.com>
+Subject: [PATCH v7 18/27] drm: sun4i: de2/de3: use generic register reference function for layer configuration
+Date: Mon, 17 Feb 2025 07:36:18 +1300
+Message-ID: <20250216183710.8443-19-ryan@testtoast.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250216183710.8443-3-ryan@testtoast.com>
 References: <20250216183710.8443-3-ryan@testtoast.com>
@@ -115,36 +115,118 @@ Content-Transfer-Encoding: 8bit
 
 From: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-The DE2 and DE3 engines have a blender register range within the
-mixer engine register map, whereas the DE33 separates this out into
-a separate display group.
-
-Prepare for this by adding a function to look the blender reference up,
-with a subsequent patch to add a conditional based on the DE type.
+Use the new blender register lookup function where required in the layer
+commit and update code.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 Signed-off-by: Ryan Walklin <ryan@testtoast.com>
----
- drivers/gpu/drm/sun4i/sun8i_mixer.h | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-index baf2d024898a9..db962ccd66964 100644
---- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-@@ -235,6 +235,12 @@ sun8i_blender_base(struct sun8i_mixer *mixer)
- 	return mixer->cfg->de_type == sun8i_mixer_de3 ? DE3_BLD_BASE : DE2_BLD_BASE;
- }
- 
-+static inline struct regmap *
-+sun8i_blender_regmap(struct sun8i_mixer *mixer)
-+{
-+	return mixer->engine.regs;
-+}
-+
- static inline u32
- sun8i_channel_base(struct sun8i_mixer *mixer, int channel)
+---
+Changelog v2..v3:
+- Refactor for 6.11 layer init/modesetting changes
+---
+ drivers/gpu/drm/sun4i/sun8i_mixer.c    | 5 +++--
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 7 +++++--
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 6 ++++--
+ 3 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index acebbaa60785c..f0d48796d651f 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -277,6 +277,7 @@ static void sun8i_mixer_commit(struct sunxi_engine *engine,
  {
+ 	struct sun8i_mixer *mixer = engine_to_sun8i_mixer(engine);
+ 	u32 bld_base = sun8i_blender_base(mixer);
++	struct regmap *bld_regs = sun8i_blender_regmap(mixer);
+ 	struct drm_plane_state *plane_state;
+ 	struct drm_plane *plane;
+ 	u32 route = 0, pipe_en = 0;
+@@ -316,8 +317,8 @@ static void sun8i_mixer_commit(struct sunxi_engine *engine,
+ 		pipe_en |= SUN8I_MIXER_BLEND_PIPE_CTL_EN(zpos);
+ 	}
+ 
+-	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ROUTE(bld_base), route);
+-	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(bld_base),
++	regmap_write(bld_regs, SUN8I_MIXER_BLEND_ROUTE(bld_base), route);
++	regmap_write(bld_regs, SUN8I_MIXER_BLEND_PIPE_CTL(bld_base),
+ 		     pipe_en | SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(0));
+ 
+ 	regmap_write(engine->regs, SUN8I_MIXER_GLOBAL_DBUFF,
+diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+index cb9b694fef101..7f1231cf0f012 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+@@ -24,6 +24,7 @@
+ #include "sun8i_mixer.h"
+ #include "sun8i_ui_layer.h"
+ #include "sun8i_ui_scaler.h"
++#include "sun8i_vi_scaler.h"
+ 
+ static void sun8i_ui_layer_update_alpha(struct sun8i_mixer *mixer, int channel,
+ 					int overlay, struct drm_plane *plane)
+@@ -52,6 +53,7 @@ static int sun8i_ui_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+ {
+ 	struct drm_plane_state *state = plane->state;
+ 	u32 src_w, src_h, dst_w, dst_h;
++	struct regmap *bld_regs;
+ 	u32 bld_base, ch_base;
+ 	u32 outsize, insize;
+ 	u32 hphase, vphase;
+@@ -60,6 +62,7 @@ static int sun8i_ui_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+ 			 channel, overlay);
+ 
+ 	bld_base = sun8i_blender_base(mixer);
++	bld_regs = sun8i_blender_regmap(mixer);
+ 	ch_base = sun8i_channel_base(mixer, channel);
+ 
+ 	src_w = drm_rect_width(&state->src) >> 16;
+@@ -104,10 +107,10 @@ static int sun8i_ui_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+ 	DRM_DEBUG_DRIVER("Layer destination coordinates X: %d Y: %d\n",
+ 			 state->dst.x1, state->dst.y1);
+ 	DRM_DEBUG_DRIVER("Layer destination size W: %d H: %d\n", dst_w, dst_h);
+-	regmap_write(mixer->engine.regs,
++	regmap_write(bld_regs,
+ 		     SUN8I_MIXER_BLEND_ATTR_COORD(bld_base, zpos),
+ 		     SUN8I_MIXER_COORD(state->dst.x1, state->dst.y1));
+-	regmap_write(mixer->engine.regs,
++	regmap_write(bld_regs,
+ 		     SUN8I_MIXER_BLEND_ATTR_INSIZE(bld_base, zpos),
+ 		     outsize);
+ 
+diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+index e348fd0a3d81c..d19349eecc9de 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+@@ -55,6 +55,7 @@ static int sun8i_vi_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+ 	struct drm_plane_state *state = plane->state;
+ 	const struct drm_format_info *format = state->fb->format;
+ 	u32 src_w, src_h, dst_w, dst_h;
++	struct regmap *bld_regs;
+ 	u32 bld_base, ch_base;
+ 	u32 outsize, insize;
+ 	u32 hphase, vphase;
+@@ -66,6 +67,7 @@ static int sun8i_vi_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+ 			 channel, overlay);
+ 
+ 	bld_base = sun8i_blender_base(mixer);
++	bld_regs = sun8i_blender_regmap(mixer);
+ 	ch_base = sun8i_channel_base(mixer, channel);
+ 
+ 	src_w = drm_rect_width(&state->src) >> 16;
+@@ -182,10 +184,10 @@ static int sun8i_vi_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+ 	DRM_DEBUG_DRIVER("Layer destination coordinates X: %d Y: %d\n",
+ 			 state->dst.x1, state->dst.y1);
+ 	DRM_DEBUG_DRIVER("Layer destination size W: %d H: %d\n", dst_w, dst_h);
+-	regmap_write(mixer->engine.regs,
++	regmap_write(bld_regs,
+ 		     SUN8I_MIXER_BLEND_ATTR_COORD(bld_base, zpos),
+ 		     SUN8I_MIXER_COORD(state->dst.x1, state->dst.y1));
+-	regmap_write(mixer->engine.regs,
++	regmap_write(bld_regs,
+ 		     SUN8I_MIXER_BLEND_ATTR_INSIZE(bld_base, zpos),
+ 		     outsize);
+ 
 -- 
 2.48.1
 
