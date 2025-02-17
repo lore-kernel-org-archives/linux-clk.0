@@ -1,112 +1,128 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BCF216E28
-	for <linux-clk@vger.kernel.org>; Mon, 17 Feb 2025 10:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BB12163B6;
+	Mon, 17 Feb 2025 10:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739787543; cv=none; b=g4WGU1RpounSFjpKg8dGbw4/PiK630TnFfByNiq9HL4GeSMekM1g8QX3a+G7ZRslp/46StXzq9moNX3ctqlWlZUJg8I9u2FRHplvmo0DPmpCtF/femI7OSGgJ21siF8Uax6JmoI8NEoDx5iGzUfpFYAhWzLLC+Ypmrwqhoh6lHI=
+	t=1739789679; cv=none; b=FAVSrpQgVtR6OCKNlSArhP6nuVjrJ6uWGNdpEq2xuCrpyMVcpnbpWOGkoCDz7mau19FvKOBg/9BT32azBbutlBX1qeKHCS2CTZjtTC0siyysIKoCW6k/SS7vMkOLP0L78xQjx9t7RvhMcZMbqiEEJypZEImFKq/e7zN1bwr1TAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739787543; c=relaxed/simple;
-	bh=6aGtaVpBLW3kX82mTVYH8G/6ueq7kvdSb7JTLpAZZLc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LcEL3ayET0svL1H8rRn2s/BMnNxUjnH/Zzq7oYbVUbOx3QE0XcFq5jYjOLr4ymj+5E4U6uZL3a1xZbjPHdiGJVvxNA2tjRNnsGfraO/L12qbT4iJM61n0KKv0MNwy/SU5YSzTpyVjobREVITExic6luuw+ipDbt+oiAaxwIqv90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bgbWDzl0; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bgbWDzl0"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4397dff185fso9299355e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 17 Feb 2025 02:19:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739787540; x=1740392340; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I16xu1ecVLtS/758jqaD8vtXmxaLQ5I+Y1leyu/ANx0=;
-        b=bgbWDzl0YMN13FktJuVGVCN4x1e4OQk4q605e0tnV+NHr8DMp8x3r8EP++thgdcgz/
-         biCxqVMH4kggn9jnMbmtA4EgMyAgMLJ60VmfB0qF3zH+VxqP7sjZDu3P3HuYorNJw4TN
-         9wkwEi/C380Kt33h1fvFWQIgckv9U5TiHwae8k0AKjoQvypnI8GNcGpXFy3FpcHs50n9
-         NoEQAYZRvC1vr1iiIOPCC8DLI4HHTmZLxXY+9KlDzw0zgbgiCVrj3pSg8kwTBIy8nd5S
-         wQ6LoPpxy0ueRrbBGFKnS/N4z7szEmtcHRo4M7yEmohz5/M2an3sTJdWoPLHh4Wr7Twh
-         IzOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739787540; x=1740392340;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I16xu1ecVLtS/758jqaD8vtXmxaLQ5I+Y1leyu/ANx0=;
-        b=DyC0xqjoSxZr6NyQdyR8zJlEb5CoINGFxzwwaEi9iL5u7ixCyq5/cYtFTxxnBhHWn1
-         /Ung2LoioiO1/qBqlbpghd7TI+dUHWu+XCxyr/SNQCWRfuTux6wQOrqId017kGSW6VJL
-         Nb/QrdeBvHnlNInyTek/U3i57+kbW37yJmOaRp3/V7puS+8aCoiVHHGfjVUso7koV6TH
-         QjA4OlPH7qWNiJ72ij/NKbpW81QQ8qG7aHH534lKWNUGLvKcw+M0z0ORUeiNBfrrl4fW
-         pmq2Hpxs55QiD+UaDwUeCfKmQU96xfbwRt7d0fDxHjq0gOvOoIDxwh/G0H+nxSE9c4e8
-         qo7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVpOtOt0yG/T12fvEBCpdyIfITDmJO/9pK3QiTyV3hqIM4TbhS+wZwzzePyjHiMyU9fPX2AGpw7yg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj2HsYXUgJAOf6K3LbMMsqsDrg5PmqLza3vCBa8WpxgofHBjjz
-	mshp/FbJkFh/TwI0ouDwMxxSQ5IiFWBe/hRxUtKuu5NOUVY05AvsyObJOD+RVMc=
-X-Gm-Gg: ASbGncsf/DaLxRvSX8Gxvfx+dthWXPuU90GJ6a2BqcxU3QEbFOE/KzyBRxbkVAT2xEL
-	oz4/N2zs2goJaIEch3uOHtzOz/3KH/xdQplBDmMKjTeMmj0X41oNB3bEg3Z1LNjaAPrtrZxofGh
-	ganNla3mViIiFvXyTPcS7YGi0kAUcY6vOfUC7PL+NvDJC/1naiHsyFAFC7tIqpSfAQHkf2hmfr8
-	1BpiO4eVW03QefeZS15mmMtonmsP9k3V8Apc/b/mJeCSSFMOYXLnGevroikugIExojDJI3KHrCM
-	YG2N5PBhjVOyMPv+ZyLLj0Fh4S9PzC3xAQ==
-X-Google-Smtp-Source: AGHT+IHCqlAmBeWIh3RQpDK/wqa/aOOAMFIkBi6CvjLI3mDlej3LMKvDj2NLspjgKzRYrxIEx1isLQ==
-X-Received: by 2002:a05:600c:3b0f:b0:439:8c6d:7ad9 with SMTP id 5b1f17b1804b1-4398c6d7da4mr9647825e9.31.1739787540052;
-        Mon, 17 Feb 2025 02:19:00 -0800 (PST)
-Received: from [192.168.68.111] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43970c8fed9sm35658385e9.0.2025.02.17.02.18.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 02:18:59 -0800 (PST)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
- Daniil Titov <daniilt971@gmail.com>, Dang Huynh <danct12@riseup.net>
-In-Reply-To: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org>
-References: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org>
-Subject: Re: (subset) [PATCH 00/10] Initial support of MSM8937 and Xiaomi
- Redmi 3S
-Message-Id: <173978753882.27418.10124969396742370731.b4-ty@linaro.org>
-Date: Mon, 17 Feb 2025 10:18:58 +0000
+	s=arc-20240116; t=1739789679; c=relaxed/simple;
+	bh=aZTht+TSWw8f5DrTjGvycp3e+AZMQiHqsfpC/jdp7d4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gK5ZjrxbwBEz3IZX4vR8vZpNMoRmkglT6ZCSmfCb9sdn1OAoAbymE9b8FaOrjWZncFRhDkd2qD8HO/Y7226lLZXIwddX0uCXyeH61TDtzAPaoWkbOVdyODhIo2FyeoVasEKxZn5Lu4262MFnKge3inDJI3AIQq/wkzGt44OeYG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: PD6Kg1XiQ3u0mN2pRoz2YA==
+X-CSE-MsgGUID: O1J+Ij7FQKiQapk+JOdWEg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 17 Feb 2025 19:54:30 +0900
+Received: from superbuilder.administration.lan (unknown [10.226.93.254])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E44BB428055E;
+	Mon, 17 Feb 2025 19:54:25 +0900 (JST)
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+To: thierry.bultel@linatsea.fr,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 02/13] dt-bindings: clock: Add cpg for the Renesas RZ/T2H SoC
+Date: Mon, 17 Feb 2025 11:52:03 +0100
+Message-ID: <20250217105354.551788-3-thierry.bultel.yh@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com>
+References: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.12.2
 
+Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
 
-On Tue, 11 Feb 2025 23:37:44 +0100, Barnabás Czémán wrote:
-> This patch series add initial support for MSM8937 SoC
-> and Xiaomi Redmi 3S (land).
-> 
-> The series is extending the MSM8917 gcc and pinctrl drivers
-> because they are sibling SoCs.
-> MSM8937 have 4 more A53 cores and have one more dsi port then
-> MSM8917.
-> It implements little-big architecture and uses Adreno 505.
-> 
-> [...]
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+---
+ .../bindings/clock/renesas,cpg-mssr.yaml      |  1 +
+ .../dt-bindings/clock/r9a09g077-cpg-mssr.h    | 49 +++++++++++++++++++
+ 2 files changed, 50 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r9a09g077-cpg-mssr.h
 
-Applied, thanks!
-
-[06/10] dt-bindings: nvmem: Add compatible for MS8937
-        commit: 07d914dd683f9ccb62a530fad76c36d5d4e6d894
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+index 77ce3615c65a..5649dee7178a 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+@@ -52,6 +52,7 @@ properties:
+       - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+       - renesas,r8a779g0-cpg-mssr # R-Car V4H
+       - renesas,r8a779h0-cpg-mssr # R-Car V4M
++      - renesas,r9a09g077-cpg-mssr # RZ/T2H
+ 
+   reg:
+     maxItems: 1
+diff --git a/include/dt-bindings/clock/r9a09g077-cpg-mssr.h b/include/dt-bindings/clock/r9a09g077-cpg-mssr.h
+new file mode 100644
+index 000000000000..27c9cdcdf7c8
+--- /dev/null
++++ b/include/dt-bindings/clock/r9a09g077-cpg-mssr.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++ *
++ * Copyright (C) 2025 Renesas Electronics Corp.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* R9A09G077 CPG Core Clocks */
++#define R9A09G077_CA55C0		0
++#define R9A09G077_CA55C1		1
++#define R9A09G077_CA55C2		2
++#define R9A09G077_CA55C3		3
++#define R9A09G077_SDHIHS		4
++#define R9A09G077_CLK_PLL1_ETH_PHY	5
++#define R9A09G077_CLK_OSC_ETH_PHY	6
++#define R9A09G077_CLK_ETHPHY		7
++#define R9A09G077_PCLKAH		8
++#define R9A09G077_PCLKAM		9
++#define R9A09G077_PCLKAL		10
++#define R9A09G077_CLK_SEL_ETH_PHY	11
++#define R9A09G077_DFI			12
++#define R9A09G077_PCLKH			13
++#define R9A09G077_PCLKM			14
++#define R9A09G077_PCLKL			15
++#define R9A09G077_PCLKGPTL		16
++#define R9A09G077_PCLKSHOST		17
++#define R9A09G077_PCLKRTC		18
++#define R9A09G077_USB			19
++#define R9A09G077_SPI0			20
++#define R9A09G077_SPI1			21
++#define R9A09G077_SPI2			22
++#define R9A09G077_SPI3			23
++#define R9A09G077_ETCLKA		24
++#define R9A09G077_ETCLKB		25
++#define R9A09G077_ETCLKC		26
++#define R9A09G077_ETCLKD		27
++#define R9A09G077_ETCLKE		28
++#define R9A09G077_ETHCLKE		29
++#define R9A09G077_ETHCLK_EXTAL		30
++#define R9A09G077_ETH_REFCLK		31
++#define R9A09G077_LCDC_CLKA		32
++#define R9A09G077_LCDC_CLKP		33
++#define R9A09G077_CA55			34
++#define R9A09G077_LCDC_CLKD		35
++
++#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
 -- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+2.43.0
 
