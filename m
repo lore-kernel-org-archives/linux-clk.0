@@ -1,176 +1,98 @@
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE589216607;
-	Mon, 17 Feb 2025 11:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739793518; cv=none; b=DOieHuUhQnqJftVTFAfAA3jmWw+SR7gb/gYo0nDwOB8dFi1TVpE3a4GBI4E811d1mDbMbDCsqZcDsgj7rPdh5uAAJXNAR9INZ88reUJpisiTfXBwZ1YyewPQhURBe69jQaLur/4cKEmV8bqW9ZmfgFcLXvA4MzPLDb502lvRFHs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739793518; c=relaxed/simple;
-	bh=gt7VgS6o45xuZB5H9cazNXtgtAyYISWcnpGjQDOTNH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kSbIZ9CV/Q8rzhPffOKKyx6g6TIuhrkCV+YkIzn+VYjjFMN2wsOeo/49SYwdqiuXg2AUtT4LoBchLEJLsJKYpR6ZT6HHDE48+15+EfDSpXGt87uexDjEvhppXOjcE8KKU9jt8sMgeYNIyi+ZCZGKesKL/1TQELaSt3HJiUhqxaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=j9PlSA/j; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E73218842;
+	Mon, 17 Feb 2025 12:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739794844; cv=pass; b=ew2V2i0a9edksFJQ8OAEVRgshR7LCX5ZYuekihHqxkEiBAO2HNOFm0lzpOTipCJjH+rjr29YuBGMBmBUL2Kd4PFhUQ0ikapu5Jce5ATBWXWja6m2IVmhZulyE5bcGIJMEVvU1Z3D4qBKxcCwSMijOM+gmFWCKMNYrCgzWWFGOxg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739794844; c=relaxed/simple;
+	bh=gAK0z1eMSFkXTRTMPAieGLJr3Bhl0DvjUlpsOZAm4jo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=dOHkYHlhk3S72PmGaz3dn7bYuQms900Oz11RDuy4Lbu+ALxO8IoEEa4gcWugv1sJzzphyGMb3B1x2wKOV1Mr7iK6TZDHgwTwWXzHgG1BIMfVL2Hbf1+zuv/ZzQbyDzDpAl2YVwh8A/61P1Q7F2L5taiiGZgFGalZqA0JOg56mu4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=djEOSibu; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="j9PlSA/j"
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H4i6q6022196;
-	Mon, 17 Feb 2025 05:58:32 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=XfmnE56dbkEZ/5nrIC07zGvwJtM7l8jp3KumcBWKXEQ=; b=
-	j9PlSA/jOWVhiOBoIdjCSgDwaLhj3bGcTh8g7eIbLJcZrdNyvzuV/8zqeUCV2ddK
-	8/paJl9lriZmtWHZ6K1k/6Y9NpXlwfwOdO993tot2jhehClfgJfn24qGVs+32ys/
-	M+AY+pzK3U3Zvbo2QqAjjkVdXuwmb8x+5x1i0+Dm4VMOJCzgo0FRuiS01YZJ3ihq
-	rmNdCYCPX6HhKq/Ap6XKAq2YYp8oR2giaQNH9AeEgIDYiQlLuXfBrgBJdV6ayFI+
-	nncGRpEuMbUew+z4GPpyOKEqFTtbXPfmF4EB56hH4WU6lfFL1mBi+FVNHKa5N/8e
-	kzpaL6bJdyUo5dqpBiewjw==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 44uwg18qgm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 05:58:32 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 17 Feb
- 2025 11:58:30 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Mon, 17 Feb 2025 11:58:30 +0000
-Received: from [198.90.208.18] (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id CBDA2822561;
-	Mon, 17 Feb 2025 11:58:30 +0000 (UTC)
-Message-ID: <e5c967af-89f1-4414-8e35-99ebdbf0e3a3@opensource.cirrus.com>
-Date: Mon, 17 Feb 2025 11:58:30 +0000
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="djEOSibu"
+ARC-Seal: i=1; a=rsa-sha256; t=1739794815; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=GuXIgRTKfl5pnsPmwHwiTzLe4SKUWKrV3qrYKBVJ2X8sRCVcOuVzlCNMdH4r3KbF5TN//FC6nnkG+1czD1/CHFHD9xyTDn+6pCnPsMTJ+W+BZ/wvb3jp6E6rWwW5pxiockASliDqWtccqobD1r2xh0id+AeOEWTyIhVbL0eHHOE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739794815; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=gAK0z1eMSFkXTRTMPAieGLJr3Bhl0DvjUlpsOZAm4jo=; 
+	b=ADkVlSunrvisvHSJYruzGBvyLQ0JgTHRlE/8vCx56tYr24gRa3DCSq80RNUK4T0PWGZE3OjJtI2cM1bXTRpYCSKVM5wwg9AizxM//2xDuScLGsnYhcN58eVj6P79DJ6uoz/GZqfCYIDvFUJg13cNtXuhQW//gDCGhD0X96w3AmE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739794814;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=gAK0z1eMSFkXTRTMPAieGLJr3Bhl0DvjUlpsOZAm4jo=;
+	b=djEOSibu6AvPYJWLed81y8oFIIl+78SQKw0jnPrX35Z1OOKFsiIFsRQylmZKUE8M
+	dtr3PomY7yEBu3dJZ0ZufI17rO3ko6MGJ61Z/gh+bEpLMjP3Om/MH2xFrJBqFIEvahF
+	NgyLjsXX4BdU4y11ScItRUafA22XF2vBa9ha8eL8=
+Received: by mx.zohomail.com with SMTPS id 1739794812898824.9432494406607;
+	Mon, 17 Feb 2025 04:20:12 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v5 1/2] dt-bindings: clock: cs2600: Add support for
- the CS2600
-To: <linux-clk@vger.kernel.org>, <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <devicetree@vger.kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <patches@opensource.cirrus.com>
-References: <20241231202018.3956166-1-paulha@opensource.cirrus.com>
- <20241231202018.3956166-2-paulha@opensource.cirrus.com>
-Content-Language: en-GB
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-In-Reply-To: <20241231202018.3956166-2-paulha@opensource.cirrus.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: XexzBLr9-2LTV1KZpuhIipnWY3wIoBuq
-X-Proofpoint-ORIG-GUID: XexzBLr9-2LTV1KZpuhIipnWY3wIoBuq
-X-Authority-Analysis: v=2.4 cv=CYzy5Krl c=1 sm=1 tr=0 ts=67b32468 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=gEfo2CItAAAA:8 a=w1d2syhTAAAA:8 a=n6xhqUudf17nAtCk1qoA:9 a=QEXdDO2ut3YA:10
- a=sptkURWiP4Gy88Gu7hUp:22 a=YXXWInSmI4Sqt1AkVdoW:22
-X-Proofpoint-Spam-Reason: safe
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH V8 06/14] rust: Add bare minimal bindings for clk
+ framework
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org>
+Date: Mon, 17 Feb 2025 09:19:51 -0300
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Danilo Krummrich <dakr@redhat.com>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ linux-pm@vger.kernel.org,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Nishanth Menon <nm@ti.com>,
+ rust-for-linux@vger.kernel.org,
+ Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+ Erik Schilling <erik.schilling@linaro.org>,
+ =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
+ Joakim Bech <joakim.bech@linaro.org>,
+ Rob Herring <robh@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <EC290802-2C5E-4ACA-A530-E776654C7E94@collabora.com>
+References: <cover.1738832118.git.viresh.kumar@linaro.org>
+ <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-On 31/12/2024 8:20 pm, Paul Handrigan wrote:
-> Add device tree support for the Cirrus Logic CS2600 clock
-> device.
-> 
-> Signed-off-by: Paul Handrigan <paulha@opensource.cirrus.com>
-> ---
->   .../bindings/clock/cirrus,cs2600.yaml         | 100 ++++++++++++++++++
->   1 file changed, 100 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml b/Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml
-> new file mode 100644
-> index 000000000000..1ef4d5ddfc51
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/cirrus,cs2600.yaml
-> @@ -0,0 +1,100 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/cirrus,cs2600.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Cirrus Logic Fractional-N Clock Synthesizer & Clock Multiplier
-> +
-> +maintainers:
-> +  - Paul Handrigan <paulha@opensource.cirrus.com>
+Hi Viresh
 
-Paul no longer works at Cirrus so shouldn't be listed as a maintainer.
+> On 6 Feb 2025, at 06:28, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>=20
+> This adds very basic bindings for the clk framework, implements only
+> clk_get() and clk_put(). These are the bare minimum bindings required
+> for many users and are simple enough to add in the first attempt.
 
-> +  - patches@opensource.cirrus.com>
-> +
-> +description:
-> +  The CS2600 is a system-clocking device that enables frequency synthesis and
-> +  clock generation from a stable timing reference clock. The device can
-> +  generate low-jitter clocks from a noisy clock reference at frequencies
-> +  as low as 50 Hz. The device has two potental clock inputs (xti and clk_in)
+I am missing clk_prepare_enable/clk_disable_unprepare.
 
-The pin isn't called "xti" in the datasheet.
-Also typo potental -> potential.
+Otherwise I see no way of enabling and disabling clks. IMHO I would also
+consider these as =E2=80=9Cbare minimum=E2=80=9D.
 
-> +  where xti can either be a crystal or a constant refclk and the clk_in. The
-> +  device can have either xti, clk_in, or both as a clock input depending on
-> +  the usecase. It also has three possible outputs CLK_OUT, BCLK_OUT, and
-> +  FSYNC_OUT.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - cirrus,cs2600
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      enum:
-> +        - xti
-
-This doesn't match the datasheet pin name
-
-> +        - clk_in
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  vdd-supply:
-> +    description: Power Supply
-> +
-> +  clock-output-names:
-> +    maxItems: 3
-> +    description: Names for CLK_OUT, BCLK_OUT and FSYNC_OUT clocks.
-> +
-> +  cirrus,aux-output-source:
-> +    description:
-> +      Specifies the function of the auxiliary output pin with "phase_unlock"
-> +      to indicate the input and output clocks are not in phase, "freq_unlock"
-> +      to indicate the PLL is unlocked, and "no_clkin" to indicate the clock on
-> +      the clk_in pin is not present.
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum:
-> +      - phase_unock
-> +      - freq_unlock
-> +      - no_clkin
-> +
-> +  cirrus,clock-mode:
-> +    description:
-> +      Sets the device into smart mode whith "smart_mode" and sets the device
-> +      into smart mode that only outputs a clock when clk_in starts with
-> +      "smart_clkin_only_mode".
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum:
-> +      - smart_mode
-> +      - smart_clkin_only_mode
-
-This doesn't need to be an enum. It can be two booleans. The two modes
-are only flags to indicate whether a feature is enabled.
-
+=E2=80=94 Daniel=
