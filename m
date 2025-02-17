@@ -1,276 +1,119 @@
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D0C1A08A3;
-	Sun, 16 Feb 2025 18:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCF2C8CE;
+	Mon, 17 Feb 2025 00:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739731276; cv=none; b=Sw4Jm+Tx8K6GTxjMBNDoScwZ2ogTpYYybEJZS2IIDJjVNoEDcVcoTNL9JeCmo7ukmKoNmcvP/SaRY9lzQI4PxNmF3dBLly/i+8A0osmGb6Ta8X7uSRystuKBGVQV5wjbLrDv5JtYbMWd1gw61ESuuWZsTTClm5GXQV61NzWRSLc=
+	t=1739753913; cv=none; b=QQaHZG4NH8IJdOItj/4vMYxr51s8vmQi8cA6edXOjGoKU6ELJeQuyufazfYyv+pnxfQvabcBOtP5BzIhI+E+9B/7CGSP5N5FCkm7tZsbew9/855XnC/i8eOaXawWHrdDzIDs2hyfeeV0ntMY3v+Qg3Qk1XA4N2LxwYEFJg/kQFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739731276; c=relaxed/simple;
-	bh=FgdOGHYO0gvjEX4F+2Pv1ZOHkT3jwclpoYLe5Lr7Gio=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TMa+jxhUUcNYjcvehxAbYGIEQl9wV9tTM32o8XLNBJ2YsrlSanRjTf7PiKKwvySBBUYbvj/+dHC9TYiXjPxDiEjclN/18scyaUQE7itTyKdFs3ax/DDC27wa38NmUAKzdTeJ2jRyXA315PUQCxHLPckBWlCwdFrl8orVik+fD0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=KrTVil1P; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MR2e+PAs; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
+	s=arc-20240116; t=1739753913; c=relaxed/simple;
+	bh=Jp8o8qVhIJkaOVn8N2q451ecCoVBAtz9pozCbiQhoPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUz27Pz06A/v/kONO4itffh2DzDm9e6Q67OPgIhDsXYS6Qy+/+DG71kAdEXGOMaSHDQf8Dfv5MBlwVGUETebxyEkJQSNbMtmvVKyYUjpF32u8llDnQ2PICgu8lGqX5mC9bvJ5+7FOX/avBkLDpj4CnB7QpWBQGXP8zMBz45amVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OehdSTFo; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="KrTVil1P";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MR2e+PAs"
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 66EA61140114;
-	Sun, 16 Feb 2025 13:41:13 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Sun, 16 Feb 2025 13:41:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1739731273; x=
-	1739817673; bh=yn06nNMTN3kxcpZkZJtZKmYTN2rUWD3mBgjPfdEVi54=; b=K
-	rTVil1P8qkkoDMJY6hJSN7BPViuIMzoPyWQTydIpHUANaNPX1UzbXIdV+GZpymOi
-	DrcQ5nO9KKkqfntjmcHq2TNxrdRlcYWuFUocSl7ztcHny1M6OetrKbFbl/VgBqOr
-	YKZhnrqptYCAmJhP2gv5gOiWfFzj0MTKn/Y6FSn91ow4MtqUIOpsi5pP4FjnJtCR
-	PTBdGi7HxcikZ8HgP4eZY4ESGjsatJUJPB8DVjf1Jwp3+y6kUEluMLDs2BNjKRnF
-	YmNFyBDu9eXMgp6MyQbG2HBk9TmN0KNYs+kaCpRqIDUeukf4TEXvQEldcb3IRz3h
-	gXWSVAfzqvrdWL+0L4PwA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1739731273; x=1739817673; bh=y
-	n06nNMTN3kxcpZkZJtZKmYTN2rUWD3mBgjPfdEVi54=; b=MR2e+PAs5SYel3vaQ
-	fBcQNiEpZIhNVdDFIj7EXkledti4o6MG1Vq/doWT/lwGXrnIExyevNfEMLS06NOk
-	uGWiNwd5By/B3x1f2363tYmJZ8LthJOgEsfXnN/sc+xrQY6vEtDMz9ZtekgWUIWC
-	rwBheGs3jxu7FmxZiUKp4y+CC6lIDMKZ9BibP/YAle4C8DjBeVH7dD1N7S/sz6II
-	1Axi+8JYelF3vMLq/HgRS5USMhE34qfFUEH31mhQ5iOYethY7R+DKoob5stuQmJ9
-	bk8CIVUCJSgSBr77CfRmrKainxReC365Z6X+Mh61HnyepeuswCH1/UFtajiIyPjn
-	PoV4Q==
-X-ME-Sender: <xms:STGyZzEi4Eo9MocwZJRxVDveCrCTXarcfKd_mbqHD2R6MTrORDGXmg>
-    <xme:STGyZwWxSIs_iBPuBao3J70VojZxBrIfYp89S8ZzX3bKzCEC7kAK386_nbg343jKB
-    d4Hi3sP61dFvvAVsw>
-X-ME-Received: <xmr:STGyZ1I1-hrOHj7gxoqzbWQfNdr34IpRznrj9CS78PwXmkwGtwbAMmDS0mzimHAz1Qh7GX31YOjiWODfbCWaWdE-a3cZuWT7YXD_d9snAlW6>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehiedvudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
-    necuhfhrohhmpefthigrnhcuhggrlhhklhhinhcuoehrhigrnhesthgvshhtthhorghsth
-    drtghomheqnecuggftrfgrthhtvghrnhepffehieffgedtgfffjeetveegfeekleeileek
-    veeuteffteetudffveegieeiheetnecuvehluhhsthgvrhfuihiivgepjeenucfrrghrrg
-    hmpehmrghilhhfrhhomheprhihrghnsehtvghsthhtohgrshhtrdgtohhmpdhnsggprhgt
-    phhtthhopedvhedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhrihhprghrug
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfigvnhhssegtshhivgdrohhrghdprhgt
-    phhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrd
-    gtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphht
-    thhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrnhhivghlse
-    hffhiflhhlrdgthhdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghi
-    lhdrtghomhdprhgtphhtthhopehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgpdhrtg
-    hpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:STGyZxHM69Aet00ps82H0t8Y3QXokFhvvbKS8gnJDi8Yq8Cw8VyMtA>
-    <xmx:STGyZ5XtrOfXDD5M7j6yCIX15YWPhVNQzAetgsI0Y939kfBAPCqA6Q>
-    <xmx:STGyZ8OiV77nOaBf5SCN5JDBLiTbsxN-62Z9CO6te7dCIwTlt47zrA>
-    <xmx:STGyZ40Q7V_ZzYUCh-V-X_CzMBT4w0VeAU8d1NFO4pQdndxcq3ZsyQ>
-    <xmx:STGyZ8q_E1dHZNz2CrOB1te7v5jYcnMxnZLHozQw1odHOq2lD6FTFAiE>
-Feedback-ID: idc0145fc:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 16 Feb 2025 13:41:05 -0500 (EST)
-From: Ryan Walklin <ryan@testtoast.com>
-To: Maxime Ripard <mripard@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Andre Przywara <andre.przywara@arm.com>,
-	Chris Morgan <macroalpha82@gmail.com>,
-	Hironori KIKUCHI <kikuchan98@gmail.com>,
-	Philippe Simons <simons.philippe@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Ryan Walklin <ryan@testtoast.com>,
-	Chris Morgan <macromorgan@hotmail.com>
-Subject: [PATCH v7 27/27] drm: sun4i: de33: csc: add Display Engine 3.3 (DE33) support
-Date: Mon, 17 Feb 2025 07:36:27 +1300
-Message-ID: <20250216183710.8443-28-ryan@testtoast.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250216183710.8443-3-ryan@testtoast.com>
-References: <20250216183710.8443-3-ryan@testtoast.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OehdSTFo"
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6dd049b5428so32352936d6.2;
+        Sun, 16 Feb 2025 16:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739753911; x=1740358711; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HXn7orZMrPjYfNUMRy6CXAqwRe5GzTPX3oZy/iJZ4Gk=;
+        b=OehdSTFoA+x0qPeb1XdusX7gQiQUVmXwlVlkkefsN8Ak1ahGfcP8RmqjJfWJx6bMCY
+         1SoMheek0W0VloIIUvDiWk2Yqb0OkIV9THZR5CH7EF/hs7jdJxs2m203GaBrlSnaPdfg
+         t/c/VpOU/CUwZW+2/1J4/+03qm2J35hpaR5YSMoHEljDnzD60DLrthEjh0CjbDUnjAcR
+         RwKUGwO8N4A+rNlL91FKVc1GlmxkXM0ISjEOkpMmGPpPfQwqTj8HoRBmlYw8eegEDl9W
+         Nd9Wv8bD8ikyLwX0jXn7DYIb9C7JD1KsvjpYrBrjuxCMSsesnbKcOmzE10SJYAwTMeav
+         3vzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739753911; x=1740358711;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HXn7orZMrPjYfNUMRy6CXAqwRe5GzTPX3oZy/iJZ4Gk=;
+        b=J4+4JJix7mlbSJMj1p+FNJT06+wB93zTh2+EopdztuayATRscQwwpxhlQ0nIPQ3BKf
+         l13QM4sG87VFqg/73HqKyEdTrzD6/WD4Zlmtb8aPjm3WT1sZwZiKyaYAVOoDubTBnGT/
+         A9qcz++jRh8drzAsvh7FwJVIUB+TktRX4TXkubxnfgMluaJQnrINlebeep26KvdpMQs0
+         6ZDf+5XJOiSXUH+6MFpzPBVgj5Ig51BLqWIiPGC9TLG0Y02/Rq02R5fXo3f/u4XzsfJ5
+         uzmKR131GqXc3jHNjZm73TVEiPLEVUnUtnIn6itnxJNBMAY8O9eC4rVSsPqOsQVHw+QB
+         gz1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUKK3/I27Dilwopv1+0Ku/Y83Kpx02fsnzVSuQFs6qyPuVkrCQQxNB3pJeTb92JELDIs9dA2dTRz71E@vger.kernel.org, AJvYcCWR1abx9mXThjXYNQkMrL+Iy8qyOe4/551KeTNqB/naC3WFMoY/EamkHIbrh1ePkoXQO+pWJronZDZd@vger.kernel.org, AJvYcCXFEU2z50zT/fqo4a1XH6fVq7KRcMQlVl70zcb2T/gigRdB6uMBjOnBLGjpY+oCXuAPSTN+ZDWi@vger.kernel.org, AJvYcCXXvPT8W4AcQmLx0FywrGWk6Ih5FV/vVm1qO7HdHIHI5WDZcXcabNjBDpg9XiI9gFscaKQeDLg8yztWw44n@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfZZ/F9VZknFcjSNtfPJxj01cff3Hs+ungPcoFgbgmImWD9bxC
+	KCogGGBEDoxbmSRrVWz6hZqVXE7yF/F9wRD6yuiokBGWO37pSM95
+X-Gm-Gg: ASbGncvgTsp9X91OvZ3E8jG0BJoJinVqwg7GREH58itNtPv+cj+WiV77CgdZ6jCzk2Z
+	rzpDvH7pni6YtrmK384wJPuVuZTf8U/CbPH1BuWVeBlEEaO8WYhAaKpc+R8F2Jt2xMiB8WpTZ3o
+	bBl625GKIf83BLH86pZeNWke3VnJFtqAlQ4RUvK6895M5uQYOWqzIYxyXbm8s3X5RiGx1UW6NWs
+	shwxGDYIXhmgYsy8L+AAb6JpQ4Q3YeHCogWRJmX2y46hQKb0eeivVkmSakyAenGH5s=
+X-Google-Smtp-Source: AGHT+IEgSQyQW3zA8QJefSJEenw/B9cty6/ifR4qhZM8XgSTbrQMgAJJkDUDnzQXeXhRPzlbR81NSw==
+X-Received: by 2002:ad4:5fcb:0:b0:6e6:69d9:2bc0 with SMTP id 6a1803df08f44-6e66cd0dea0mr102261396d6.37.1739753911143;
+        Sun, 16 Feb 2025 16:58:31 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e65d784e99sm47187946d6.28.2025.02.16.16.58.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 16:58:30 -0800 (PST)
+Date: Mon, 17 Feb 2025 08:58:19 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
+	Richard Cochran <richardcochran@gmail.com>
+Cc: Inochi Amaoto <inochiama@gmail.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v2 0/2] clk: sophgo: add SG2044 clock controller support
+Message-ID: <pxej4mmrhvfpvbj2mxy6zoa65tfqpxrkul5amebwjtuuebrixf@mzpcxq7zc47h>
+References: <20250204084439.1602440-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250204084439.1602440-1-inochiama@gmail.com>
 
-Like earlier DE versions, the DE33 has a CSC (Color Space Correction)
-module. which provides color space conversion between BT2020/BT709, and
-dynamic range conversion between SDR/ST2084/HLG.
+On Tue, Feb 04, 2025 at 04:44:33PM +0800, Inochi Amaoto wrote:
+> The clock controller of SG2044 provides multiple clocks for various
+> IPs on the SoC, including PLL, mux, div and gates. As the PLL and
+> div have obvious changed and do not fit the framework of SG2042,
+> a new implement is provided to handle these.
+> 
+> Changed from v1:
+> patch 1:
+> 1. Applied Krzysztof's tag
+> 
+> patch 2:
+> 1. Fix the build warning from bot.
+> 
+> Inochi Amaoto (2):
+>   dt-bindings: clock: sophgo: add clock controller for SG2044
+>   clk: sophgo: Add clock controller support for SG2044 SoC
+> 
+>  .../bindings/clock/sophgo,sg2044-clk.yaml     |   40 +
+>  drivers/clk/sophgo/Kconfig                    |   11 +
+>  drivers/clk/sophgo/Makefile                   |    1 +
+>  drivers/clk/sophgo/clk-sg2044.c               | 2271 +++++++++++++++++
+>  drivers/clk/sophgo/clk-sg2044.h               |   62 +
+>  include/dt-bindings/clock/sophgo,sg2044-clk.h |  170 ++
+>  6 files changed, 2555 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
+>  create mode 100644 drivers/clk/sophgo/clk-sg2044.c
+>  create mode 100644 drivers/clk/sophgo/clk-sg2044.h
+>  create mode 100644 include/dt-bindings/clock/sophgo,sg2044-clk.h
+> 
+> --
+> 2.48.1
+> 
 
-Add support for the DE33.
+Hi Stephen,
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Signed-off-by: Ryan Walklin <ryan@testtoast.com>
-Tested-by: Philippe Simons <simons.philippe@gmail.com>
-Tested-by: Chris Morgan <macromorgan@hotmail.com>
+Would you like to share some suggestions on this patch?
 
---
-Changelog v5..v6:
-- Amend format_type to sun8i_format_type
-- Add Tested-by: tags
----
- drivers/gpu/drm/sun4i/sun8i_csc.c | 98 +++++++++++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_csc.h |  3 +
- 2 files changed, 101 insertions(+)
-
-diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.c b/drivers/gpu/drm/sun4i/sun8i_csc.c
-index 66c9ee29842cd..2274a82223164 100644
---- a/drivers/gpu/drm/sun4i/sun8i_csc.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_csc.c
-@@ -238,6 +238,14 @@ static const u32 yuv2yuv_de3[2][3][3][12] = {
- 	},
- };
- 
-+static u32 sun8i_csc_base(struct sun8i_mixer *mixer, int layer)
-+{
-+	if (mixer->cfg->de_type == sun8i_mixer_de33)
-+		return sun8i_channel_base(mixer, layer) - 0x800;
-+	else
-+		return ccsc_base[mixer->cfg->ccsc][layer];
-+}
-+
- static void sun8i_csc_setup(struct regmap *map, u32 base,
- 			    enum sun8i_format_type fmt_type,
- 			    enum drm_color_encoding encoding,
-@@ -360,6 +368,92 @@ static void sun8i_de3_ccsc_setup(struct sun8i_mixer *mixer, int layer,
- 			   mask, val);
- }
- 
-+/* extract constant from high word and invert sign if necessary */
-+static u32 sun8i_de33_ccsc_get_constant(u32 value)
-+{
-+	value >>= 16;
-+
-+	if (value & BIT(15))
-+		return 0x400 - (value & 0x3ff);
-+
-+	return value;
-+}
-+
-+static void sun8i_de33_convert_table(const u32 *src, u32 *dst)
-+{
-+	dst[0] = sun8i_de33_ccsc_get_constant(src[3]);
-+	dst[1] = sun8i_de33_ccsc_get_constant(src[7]);
-+	dst[2] = sun8i_de33_ccsc_get_constant(src[11]);
-+	memcpy(&dst[3], src, sizeof(u32) * 12);
-+	dst[6] &= 0xffff;
-+	dst[10] &= 0xffff;
-+	dst[14] &= 0xffff;
-+}
-+
-+static void sun8i_de33_ccsc_setup(struct sun8i_mixer *mixer, int layer,
-+				  enum sun8i_format_type fmt_type,
-+				  enum drm_color_encoding encoding,
-+				  enum drm_color_range range)
-+{
-+	u32 addr, val = 0, base, csc[15];
-+	struct sunxi_engine *engine;
-+	struct regmap *map;
-+	const u32 *table;
-+	int i;
-+	struct sun8i_color_model model;
-+
-+	table = yuv2rgb_de3[range][encoding];
-+	base = sun8i_csc_base(mixer, layer);
-+	model = mixer->color_model;
-+	engine = &mixer->engine;
-+	map = engine->regs;
-+
-+	switch (fmt_type) {
-+	case FORMAT_TYPE_RGB:
-+		if (mixer->color_model.format == MEDIA_BUS_FMT_RGB888_1X24)
-+			break;
-+		val = SUN8I_CSC_CTRL_EN;
-+		sun8i_de33_convert_table(rgb2yuv_de3[mixer->color_model.encoding], csc);
-+		regmap_bulk_write(map, SUN50I_CSC_COEFF(base, 0), csc, 15);
-+		break;
-+	case FORMAT_TYPE_YUV:
-+		table = sun8i_csc_get_de3_yuv_table(encoding, range,
-+						    model.format,
-+						    model.encoding);
-+		if (!table)
-+			break;
-+		val = SUN8I_CSC_CTRL_EN;
-+		sun8i_de33_convert_table(table, csc);
-+		regmap_bulk_write(map, SUN50I_CSC_COEFF(base, 0), csc, 15);
-+		break;
-+	case FORMAT_TYPE_YVU:
-+		table = sun8i_csc_get_de3_yuv_table(encoding, range,
-+						    model.format,
-+						    model.encoding);
-+		if (!table)
-+			table = yuv2yuv_de3[range][encoding][encoding];
-+		val = SUN8I_CSC_CTRL_EN;
-+		sun8i_de33_convert_table(table, csc);
-+		for (i = 0; i < 15; i++) {
-+			addr = SUN50I_CSC_COEFF(base, i);
-+			if (i > 3) {
-+				if (((i - 3) & 3) == 1)
-+					addr = SUN50I_CSC_COEFF(base, i + 1);
-+				else if (((i - 3) & 3) == 2)
-+					addr = SUN50I_CSC_COEFF(base, i - 1);
-+			}
-+			regmap_write(map, addr, csc[i]);
-+		}
-+		break;
-+	default:
-+		val = 0;
-+		DRM_WARN("Wrong CSC mode specified.\n");
-+		return;
-+	}
-+
-+	regmap_write(map, SUN8I_CSC_CTRL(base), val);
-+}
-+
- void sun8i_csc_set_ccsc(struct sun8i_mixer *mixer, int layer,
- 			enum sun8i_format_type fmt_type,
- 			enum drm_color_encoding encoding,
-@@ -371,6 +465,10 @@ void sun8i_csc_set_ccsc(struct sun8i_mixer *mixer, int layer,
- 		sun8i_de3_ccsc_setup(mixer, layer,
- 				     fmt_type, encoding, range);
- 		return;
-+	} else if (mixer->cfg->de_type == sun8i_mixer_de33) {
-+		sun8i_de33_ccsc_setup(mixer, layer, fmt_type,
-+				      encoding, range);
-+		return;
- 	}
- 
- 	if (layer < mixer->cfg->vi_num) {
-diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.h b/drivers/gpu/drm/sun4i/sun8i_csc.h
-index 9b63c92782f56..4a06fc43de2d0 100644
---- a/drivers/gpu/drm/sun4i/sun8i_csc.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_csc.h
-@@ -20,6 +20,9 @@ struct sun8i_mixer;
- #define SUN8I_CSC_CTRL(base)		((base) + 0x0)
- #define SUN8I_CSC_COEFF(base, i)	((base) + 0x10 + 4 * (i))
- 
-+#define SUN50I_CSC_COEFF(base, i)	((base) + 0x04 + 4 * (i))
-+#define SUN50I_CSC_ALPHA(base)		((base) + 0x40)
-+
- #define SUN8I_CSC_CTRL_EN		BIT(0)
- 
- enum sun8i_format_type {
--- 
-2.48.1
-
+Regards,
+Inochi
