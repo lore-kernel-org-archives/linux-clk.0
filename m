@@ -1,98 +1,124 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E73218842;
-	Mon, 17 Feb 2025 12:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739794844; cv=pass; b=ew2V2i0a9edksFJQ8OAEVRgshR7LCX5ZYuekihHqxkEiBAO2HNOFm0lzpOTipCJjH+rjr29YuBGMBmBUL2Kd4PFhUQ0ikapu5Jce5ATBWXWja6m2IVmhZulyE5bcGIJMEVvU1Z3D4qBKxcCwSMijOM+gmFWCKMNYrCgzWWFGOxg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739794844; c=relaxed/simple;
-	bh=gAK0z1eMSFkXTRTMPAieGLJr3Bhl0DvjUlpsOZAm4jo=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=dOHkYHlhk3S72PmGaz3dn7bYuQms900Oz11RDuy4Lbu+ALxO8IoEEa4gcWugv1sJzzphyGMb3B1x2wKOV1Mr7iK6TZDHgwTwWXzHgG1BIMfVL2Hbf1+zuv/ZzQbyDzDpAl2YVwh8A/61P1Q7F2L5taiiGZgFGalZqA0JOg56mu4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=djEOSibu; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="djEOSibu"
-ARC-Seal: i=1; a=rsa-sha256; t=1739794815; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GuXIgRTKfl5pnsPmwHwiTzLe4SKUWKrV3qrYKBVJ2X8sRCVcOuVzlCNMdH4r3KbF5TN//FC6nnkG+1czD1/CHFHD9xyTDn+6pCnPsMTJ+W+BZ/wvb3jp6E6rWwW5pxiockASliDqWtccqobD1r2xh0id+AeOEWTyIhVbL0eHHOE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739794815; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=gAK0z1eMSFkXTRTMPAieGLJr3Bhl0DvjUlpsOZAm4jo=; 
-	b=ADkVlSunrvisvHSJYruzGBvyLQ0JgTHRlE/8vCx56tYr24gRa3DCSq80RNUK4T0PWGZE3OjJtI2cM1bXTRpYCSKVM5wwg9AizxM//2xDuScLGsnYhcN58eVj6P79DJ6uoz/GZqfCYIDvFUJg13cNtXuhQW//gDCGhD0X96w3AmE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739794814;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=gAK0z1eMSFkXTRTMPAieGLJr3Bhl0DvjUlpsOZAm4jo=;
-	b=djEOSibu6AvPYJWLed81y8oFIIl+78SQKw0jnPrX35Z1OOKFsiIFsRQylmZKUE8M
-	dtr3PomY7yEBu3dJZ0ZufI17rO3ko6MGJ61Z/gh+bEpLMjP3Om/MH2xFrJBqFIEvahF
-	NgyLjsXX4BdU4y11ScItRUafA22XF2vBa9ha8eL8=
-Received: by mx.zohomail.com with SMTPS id 1739794812898824.9432494406607;
-	Mon, 17 Feb 2025 04:20:12 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72255218842;
+	Mon, 17 Feb 2025 12:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739795126; cv=none; b=VSnl/PNqFAlkVKRMhQGGoJUsSGjJg+FEKCQz0j9dxkPkYHepJ0Rwb+n+mt6XfWnhzwzbprtNKSi7e/hRhlHJOr7aHT+WQq3A/4GAdUSDTLt5Iw8uoeKX1hR2b2i0z807bMnqoFk3rbs9CErkvASe5S09F5kmrA11iBZ7NsphIEg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739795126; c=relaxed/simple;
+	bh=8EsnnAExLIbmkwz6a9yiUKwK1x2zuwj8e5URNlsIZ30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pR6hgqZYquXlC56jyhKK0ko5Qjy/x8zJ+tkkDV5yM36j6FM7gb11BBV+nR5QuiLUq2JV4D5a3dCM01aiPXQQntX6CzNXb/cgBnbAveHDNW2/mKJCHlJX/dGsf63L41vNvF0QiM6o2I1+9z5h4do4IPvgjUViJUa0VxdOobTDK+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4be707fffbcso15975137.0;
+        Mon, 17 Feb 2025 04:25:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739795122; x=1740399922;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bEdtyBK7UfY7e+VMYAhKXbR5/lho4BcZPMg1z6On5mg=;
+        b=Ht9bObPxfDi3UhB6XqxB4uDk3z1F5CB/cdMnsKyyTBE/bzDHoZLyoUMTN9pEeqRoua
+         Butmrg5XBoPkNoLPPEjFkprOUlg5fSK7sDD0qH7CTjpffFMH8k6/lTgN6yb0tmkPCMrV
+         Oi4QS13LWBXlYtWvO2Z7hf9lhfTBr14usIEYIYG3WSLO4xaZNEIM/s3PU6qPU0vF1kZi
+         VAgy3au5IwYAQ7q3XB0ze/6GL7kijFo8j+HR2zKdHUl/ZvzymaTfkRE/yIDJsTaoakzt
+         1QAUg3UJvyyDi5fumeQnZcZyJDdqYyaB2ZIeeCuW+9MFf7AjvgHNdm1z5bpeBv4Xh3eG
+         nSSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVV0MKexn1x+hQRwtXpi3gGclLXbub38PMssLZQXshE+oNUGVU/nY/a4OmHLJgCLbLBDq8FXLUoAwzFD677@vger.kernel.org, AJvYcCVXyAZEUZPb0kd5287Fsu3buvOFHIOlOUQf+txewUCWFXlmxUKzE69zXXFNd8OaoOe/FV6uPN787axf@vger.kernel.org, AJvYcCWZGkGLQT+cYCZSSN3uCyT80LH66r5SiUS8/eHb7jZt/Mufh98vlOfVRRKmY7E4iUGY6Uj6l4ujjAPKTPgzbdBxLlg=@vger.kernel.org, AJvYcCXdUFpM1z3Z8fJmwvdutzHCtqMLX3xM8YaAOhovUTX7sAcizT/dvmKqgpGnZZVpkXY6n8YnbnDBIcsR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAOfhMWOwkIewF8t2uRr+0qS7gJedB5LiJbFaAd0zeVR3X+2tZ
+	uI4ElmOpiw6Oix3Zei4hAiG4SuQeUKo33GoV2Ssi7oZQwoOmeaAGlrIiwCQs
+X-Gm-Gg: ASbGnctyudZ89pHL+Ki1KBCQLm7kJyY0Z/9oVMmHQ2SHVKJ4BXed0APMvR1X8KtR8NK
+	gl4b+PCmFGEMvYfg3pqE705zEi111Awbv3tJ37yLyN9D/0PFZv9mV42w1R1j+rUoBAbF6sO5Fwn
+	SEDbqqQvbM9iVhTAHzWiOdC3DYlWS7bNlCiBKrLQl4Vboz9xK3rgletEfEb/k45A2wlhHg2M/tf
+	mgkjTwv0W9MOmYoruD96ELaf7B8E74busaHrK7sG9N1EFMh7J+daeA0yPPqnbiQRpr+tZmIGdQI
+	8OdSIRuNhC7czJiXkC95ivKjwPL6P0JOqgCHm5tj1oNUD1zJzJJX3Q==
+X-Google-Smtp-Source: AGHT+IE6V22RxoJTvqpVsArlX0GgX8+ONmFxYb0F9J3/nu4Ea0Xp5vfgpnXvNR+k6XkkwK0c5MwY1w==
+X-Received: by 2002:a05:6102:419e:b0:4bb:bf49:9088 with SMTP id ada2fe7eead31-4bd3fe85bacmr4042638137.16.1739795122664;
+        Mon, 17 Feb 2025 04:25:22 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-520be32e8c0sm356107e0c.38.2025.02.17.04.25.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Feb 2025 04:25:22 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4be5033a2cbso625964137.1;
+        Mon, 17 Feb 2025 04:25:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVNndBZlTn3FXDbV645BlM+s49cRRrBaPPdYSDgZT81HmMzB0a4Qw6bIVe8lVF3zV6PH/9zH9g3PK66@vger.kernel.org, AJvYcCVdyR6tOyRYMHsZ83WjH1hcoyLMpMP+tT+EjeCqNUmepzoRxkBPizzNMhND3KOnvwYjPhIusigjosJrkF7a@vger.kernel.org, AJvYcCVmWS5xJUUAnwid9NfU+bi5uWb4d009I7D0dpgycwr/a5E+mHxzdOOkB+/PD35luNJH/sNA63lgWpuu@vger.kernel.org, AJvYcCXMgoDdtVyGwu+De2MrXRbtBwAmHKCbfc34cLmv+2+enuC3PLuYvGFim8hDmCySbNfeZeuXEqsKj4JScmUNzA5Z7Qo=@vger.kernel.org
+X-Received: by 2002:a05:6102:3748:b0:4ba:9abf:800f with SMTP id
+ ada2fe7eead31-4bd3fd491f7mr3336947137.6.1739795122029; Mon, 17 Feb 2025
+ 04:25:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH V8 06/14] rust: Add bare minimal bindings for clk
- framework
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org>
-Date: Mon, 17 Feb 2025 09:19:51 -0300
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Danilo Krummrich <dakr@redhat.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- linux-pm@vger.kernel.org,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Nishanth Menon <nm@ti.com>,
- rust-for-linux@vger.kernel.org,
- Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
- Erik Schilling <erik.schilling@linaro.org>,
- =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
- Joakim Bech <joakim.bech@linaro.org>,
- Rob Herring <robh@kernel.org>,
- linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <EC290802-2C5E-4ACA-A530-E776654C7E94@collabora.com>
-References: <cover.1738832118.git.viresh.kumar@linaro.org>
- <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+References: <20250217105354.551788-1-thierry.bultel.yh@bp.renesas.com> <20250217105354.551788-3-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250217105354.551788-3-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Feb 2025 13:25:10 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU_rw30Qnqzxb4cmEsPs4FBXzqG7+BQtztx3=XMMnE6wg@mail.gmail.com>
+X-Gm-Features: AWEUYZnGIe1bslYNmy-rEq37IhcV1Co9ygTyuYFINdfTDxCoBelELzNKvBlVgCM
+Message-ID: <CAMuHMdU_rw30Qnqzxb4cmEsPs4FBXzqG7+BQtztx3=XMMnE6wg@mail.gmail.com>
+Subject: Re: [PATCH v2 02/13] dt-bindings: clock: Add cpg for the Renesas
+ RZ/T2H SoC
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Viresh
+Hi Thierry,
 
-> On 6 Feb 2025, at 06:28, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->=20
-> This adds very basic bindings for the clk framework, implements only
-> clk_get() and clk_put(). These are the bare minimum bindings required
-> for many users and are simple enough to add in the first attempt.
+On Mon, 17 Feb 2025 at 11:54, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
+>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 
-I am missing clk_prepare_enable/clk_disable_unprepare.
+Thanks for your patch!
 
-Otherwise I see no way of enabling and disabling clks. IMHO I would also
-consider these as =E2=80=9Cbare minimum=E2=80=9D.
+> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> @@ -52,6 +52,7 @@ properties:
+>        - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+>        - renesas,r8a779g0-cpg-mssr # R-Car V4H
+>        - renesas,r8a779h0-cpg-mssr # R-Car V4M
+> +      - renesas,r9a09g077-cpg-mssr # RZ/T2H
+>
+>    reg:
+>      maxItems: 1
+> diff --git a/include/dt-bindings/clock/r9a09g077-cpg-mssr.h b/include/dt-bindings/clock/r9a09g077-cpg-mssr.h
+> new file mode 100644
+> index 000000000000..27c9cdcdf7c8
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r9a09g077-cpg-mssr.h
 
-=E2=80=94 Daniel=
+Please include a "renesas,"-prefix in new binding definition headers.
+
+> @@ -0,0 +1,49 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corp.
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
+> +#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
+
+Ah, here you do have the prefix; good!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
