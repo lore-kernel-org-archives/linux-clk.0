@@ -1,138 +1,138 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EE31DE2CC;
-	Mon, 17 Feb 2025 10:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5941B216E0B
+	for <linux-clk@vger.kernel.org>; Mon, 17 Feb 2025 10:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739787385; cv=none; b=ArOEQqFYmu7X9XTzT7+W90jCIw8kB0UyfucpC9jW0NFq3gOVmOovDy4kAdbPGvV4BuzOcuwEckHqLtIrr8yNzeRx12P3MFvXRU+dz47IcA7ebohUIpOcfRvyoKUJG1OLy96x572e0NAAtQSJGzgHZQOb6tr63RIrcvTg3r0Y32o=
+	t=1739787494; cv=none; b=Eepn7G3UN0NCx5P19oLNmKRZkj4e7Pv55zAhqxERnRMDcShvaiOP78t4nYJXv5SKKc8vkea335pWZYgZ+Nq3ma0fEFklcfycOzQ8uWUo9+j/wtKkF3WJnAYvnTI3TWIA9Hy2A6m95WvLc2hVvYo3l8rPiKv66k07uKuWGn9nBt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739787385; c=relaxed/simple;
-	bh=EepYzkCHB0rsnka4KljNMJk8FzzQcmIUFi+FBoSl4qE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=QfqbybrEs/iYJ5A06GS7oMMlbPtyBMnIX0FtBE1nezTP9C6+QQt0t87DnwRtb2dEno779VdRn6NEmdAmUxWHjII0Cr+nx5y54ngncdN9RrxO6X4POZNerU68Iu8MCmsgvCB8JufgznaL5Msjiz8Z8ZtmGC1QZGcX1hOheWcTPW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ToDPQVtt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1739787494; c=relaxed/simple;
+	bh=H8Yjq3z/rw7nRyXOlTznVPJ6PUKJuVKPnKBPhN1Qy5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fY8+jO8EfXIE76CbZKNeM8Z21V0TQY+MIyA2yjLLf15XjOS8r1o89FwdUGHHsSGPoOC/GQTDGO+ZnjEcnViFfOIiXHYa/CsTrMoyj1qxEEiXXmdyom6Rf0C8B/jeIVqKEmT0kZWM4l0IZ/A8ak/zHuqDwjEr9hdiODllgXMsPI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XcwEHFWJ; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ToDPQVtt"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51H02t8J026647;
-	Mon, 17 Feb 2025 10:16:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WyWuVGSGYphL0Y244NpcdJRuqh/Em99Ndt8snuKmv/Q=; b=ToDPQVttdKVMJrGI
-	mwKBrX60Kly312gRPCUvheid6d6nDsJY5OmDusWknJW+S3+3MBw3bMHMnLDNR1C8
-	gJNMJ4VC1ALiYQowtzXS0POUvciK1n1Ul1XSEAh3Xv9c41M8XiXnWBBxdOpL8sq+
-	ligSncZYJ7Pu8x+vaY4+nlxUy+1/faHTySAn/TJW7pLJH2uVtyiOkMS9f6BAJOgv
-	Y60fHn6pKBYVtEo5dEUWqduiqUiDSBZIpy6slayD/kGT3zI5Y1WOxmoBM6UGtEFJ
-	Zo71VSMiaKAl+iLUVizi+n6nwNMW/qXU94R4zUsZidp9zULdoXIHItzq6BuSZ2nx
-	02ifng==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7sha6m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 10:16:19 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51HAGIRl009198
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Feb 2025 10:16:18 GMT
-Received: from [10.231.216.103] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Feb
- 2025 02:16:15 -0800
-Message-ID: <dbeace93-ed19-4719-a72e-53be8999b0b3@quicinc.com>
-Date: Mon, 17 Feb 2025 18:15:30 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XcwEHFWJ"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fc0d44a876so5953292a91.3
+        for <linux-clk@vger.kernel.org>; Mon, 17 Feb 2025 02:18:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739787493; x=1740392293; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fu0INveFi62eikawLzwjz3VL3L6K5JPkT0wcB0x2gBM=;
+        b=XcwEHFWJ0s/nSpZCusg5KkV5h7GrPerRWfZaxrTlqUoeE6ELDTE/+4UHJ1QirlR17D
+         7aLJ7xEqDLa1jka6HVdOp6EuhFMAy7VdH0Xs5VCqHVb4bem/fZ1f5OIceMtACdaJIybr
+         yl0DoxAb6GP7tYqLzQtp1djcBlcJbeceh0jcqERR2+md4mlrzoFzvuSqwQz8+uFUj6Ju
+         XrtBSulZKubXfvtyQuxfuLVx6617Oocb8uEJJwgRwm7pdtRghkUUDD+0PCAwV3fws87z
+         TXn38O2yrH3gMGWBKbZdp0ghG6gi8W64SSiulykFuMPzZ4PZcgOr0914VfU8+KYa5C7C
+         zEMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739787493; x=1740392293;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fu0INveFi62eikawLzwjz3VL3L6K5JPkT0wcB0x2gBM=;
+        b=fQASqWyjUMnZZrMypGvUhXDOFo7IPgMiiNi9pz9ukJVnKZM/fiC9CyOTdyfG6kb3vW
+         TwK/n+0tvPTaKw/fZG3XszdnAV1rkP9bo+2SfLt8vFC511voK9FKF8MMEvU3h6vu655I
+         94PKhoefLz1bQU55Z9dxCLy7sYF3Nhpp8pMU+pxH+Lb5iYowp4QVVC+IGntRZZvq2qsK
+         mxgUGbsich2YpbLDop+CM8SUJLmAWKbhIizISauLJt6iJB46APcXX9Bid8o1apJFEEM7
+         fE42FoGBz7pQbqhy5yLTa7I326iBPbZYUvfZgIJHnq29WVvWgGmvcUKMIckm2RW3kFDy
+         6FQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBCAOnMVpRWO48QRkYuHI86L801DoYtF3oQ/lFLsyhR3UNoPFNLf/Fdi1+E8i4dqnC9H14Dbct35M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb4ZlV90a4SDJxVQpeLlW2zEn52c5t0hDrbx+G/o+7+uFDED7v
+	S3favxBULpEppOVwFHfKR6zkn6pLP2fC4m84j8lwOmCxDnv2nLAgBNEQhq84tsE=
+X-Gm-Gg: ASbGncv3v0K+4DtXYc23pOJc3lVyprO4UXfHMNwERcRT1Z+7P0EgrYnANf9HcGO9qMI
+	kVXnYEHbgITJJSNNdynASbAUIrj+BHXhLbWLEVjvoJy9Z3FKhmkMi28Fx2Bnyiuoa4QPAO3H4Mb
+	Os6kKTypS/Tb1mTmUEsBA2r65S+bC/cR6Cb/N0ZLFaY7IaKCtKbJ1Dt8GcL18ld91jF5C0wFd3v
+	36wSPCXmQeS9LRUShREnYeahok1KEkmbeactkDbUlt+6emID87x9ERciMgu3jjxWDjIu1rKvWBb
+	VDvzpmNe2XIyzvNwnw==
+X-Google-Smtp-Source: AGHT+IE/JsAXrNdfIVWSDqL+q49O/G9yQ+bipOIfparOozc5D45H1FB/VF6I+KOFErnxnRWxPlUA2w==
+X-Received: by 2002:a17:90b:510c:b0:2ee:ab29:1a57 with SMTP id 98e67ed59e1d1-2fc40d13203mr14479699a91.2.1739787492679;
+        Mon, 17 Feb 2025 02:18:12 -0800 (PST)
+Received: from localhost ([122.172.84.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55960ecsm68106515ad.253.2025.02.17.02.18.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Feb 2025 02:18:12 -0800 (PST)
+Date: Mon, 17 Feb 2025 15:48:09 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Benno Lossin <benno.lossin@proton.me>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Trevor Gross <tmgross@umich.edu>, Viresh Kumar <vireshk@kernel.org>,
+	Yury Norov <yury.norov@gmail.com>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Anisse Astier <anisse@astier.eu>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V8 00/14] Rust bindings for cpufreq and OPP core + sample
+ driver
+Message-ID: <20250217101809.fi2b5q5wgxsseqko@vireshk-i7>
+References: <cover.1738832118.git.viresh.kumar@linaro.org>
+ <Z6Sgwbgfp-9SCr8Y@pollux>
+ <20250207071538.xjxauatta2jsedz4@vireshk-i7>
+ <CANiq72k4N_bD3_QxFKveyjGsSeXJX7y6fKU4EVt0hBOcq9q7tA@mail.gmail.com>
+ <20250210080601.afrxidoywz4ukqdt@vireshk-i7>
+ <CANiq72kuebpOa4aPxmTXNMA0eo-SLL+Ht9u1SGHymXBF5_92eA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] Use APIs in gdsc genpd to switch gdsc mode for
- venus v4 core
-From: Renjiang Han <quic_renjiang@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-References: <20250115-switch_gdsc_mode-v3-0-9a24d2fd724c@quicinc.com>
- <bkjthw5osu5dkwpr46zanwyfqquo45gaivlojqp6n7ixwbdnua@3t3ap2yor5z4>
- <00449451-d97f-47fe-b0ab-cddb9d2b0e93@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <00449451-d97f-47fe-b0ab-cddb9d2b0e93@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: lPtMAZwyvINoLSY2k07M5JjZq5dSjKo5
-X-Proofpoint-ORIG-GUID: lPtMAZwyvINoLSY2k07M5JjZq5dSjKo5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-17_05,2025-02-13_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 impostorscore=0 bulkscore=0 spamscore=0 priorityscore=1501
- suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=843 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502170090
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiq72kuebpOa4aPxmTXNMA0eo-SLL+Ht9u1SGHymXBF5_92eA@mail.gmail.com>
 
+On 17-02-25, 09:39, Miguel Ojeda wrote:
+> Ah, I see now -- yeah, this is due to:
+> 
+>     https://blog.rust-lang.org/2024/10/17/Rust-1.82.0.html#safely-addressing-unsafe-statics
+> 
+> You could do (probably with a comment):
+> 
+>         pub fn new(name: &'static CStr, data: T::Data, flags: u16,
+> boost: bool) -> Result<Self> {
+>     +        #![allow(unused_unsafe)]
+>     +
+>             let mut drv = KBox::new(
+> 
+> Yeah, a bit annoying... :(
 
-On 1/17/2025 12:17 PM, Renjiang Han wrote:
->
-> On 1/15/2025 5:59 PM, Dmitry Baryshkov wrote:
->>> If only the clock patch or the venus driver patch is merged, the venus
->>> driver will not work properly. Although it does not affect other system
->>> functions, it is still recommended to wait until both the clock patch
->>> and the venus driver patch are reviewed and passed, and then merge them
->>> into the same release by their respective maintainers.
->> NO! This will not work, as both -media and arm-soc branches will be
->> broken. Please read about the git-bisect before making such suggestions.
->>
->> A proper plan would be:
->> - implement a function which allows one to check that hwmode is
->>    supported by the genpd driver
->> - Change Venus to use hwmode for those platforms if it is enabled
->> - Enable HWMODE support in the clock driver. Clearly identify that this
->>    patch should be merged together and after Venus changes if all
->>    maintainers agree with that
->> - Clean up now-dead code.
->>
->> Doing it in any other way would result in the broken kernels.
->  Thanks for your comment. dev_pm_genpd_set_hwmode() has a check function.
->  So I think I can do it like this to add compatibility in venus driver:
->  - 1. the dev_pm_genpd_set_hwmode() is used to switch the GDSC mode by
->  default.
->  - 2. If it fails and dev_pm_genpd_set_hwmode() returns -EOPNOTSUPP, it
->  means that the clock driver uses the HW_CTRL flag. At this time, the
->  GDSC mode is switched by writing the POWER_CONTROL register.
->
->  In addition, the merged code needs to follow this order.
->  - 1. Add compatibility in venus driver.
->  - 2. Use the HW_CTRL_TRIGGER flag in clock driver
->  - 3. Remove the dead code in venus driver.
->
-  As internal discussion, in order to merge the patches in the correct order, we
-  plan to submit two patch series.
-  One patch series uses dev_pm_genpd_set_hwmode() to check if hwmode is supported,
-  and the venus driver is compatible with the two methods of switching GDSC mode.
-  Then the clock driver enables hwmode.
-  The other patch series will clean up the dead code.
-  Do you agree to submit two patch series or one?
++        // Required due to Rust 1.82's stricter handling of `unsafe` in mutable statics. The
++        // `unsafe` blocks aren't required anymore with later versions.
++        #![allow(unused_unsafe)]
+
+> diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
+> index d2e7913e170b..e7c62770fc3b 100644
+> --- a/rust/kernel/cpufreq.rs
+> +++ b/rust/kernel/cpufreq.rs
+
+> +        attr[next] =
+> +            // SAFETY: ...
+
+Ah, I wasn't sure if adding a SAFETY comment after `=` is fine.
+
+Thanks.
 
 -- 
-Best Regards,
-Renjiang
-
+viresh
