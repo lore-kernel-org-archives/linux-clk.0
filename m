@@ -1,116 +1,283 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947C8226869;
-	Mon, 17 Feb 2025 17:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CF922758B
+	for <linux-clk@vger.kernel.org>; Mon, 17 Feb 2025 17:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739811656; cv=none; b=PAYa1K7rBmT4o9PrOSz9SpLL4ooR5SKvNsM8wdmIfdtaVO+8NBUt86pHas9kBgXMxQfgZbonvGLlbw1XGbtKsQ2PasDOmITs5NRWlzWfE7PeAAJmGofwQwl5XhA4vGSK//cQnik49uEIQQlO9+y3UWqQSNK1Nu7mYSjp1V7cBgs=
+	t=1739811830; cv=none; b=d5mrlBLWv4reYG+ac8yl/zVZg8XesyFq3rkFUnGmn/oa0qaOr8pE7KopFPpi3Pd0Z4TW023w2MZ6joeAoxEToubn4Yw0WpnpigX2hO4qEaKdEgmK38aihc83pDPEE0R6yEtF8ZDovfU+sjEQl9QYeZ9Ah9DbjZ7ty+x0pjDij4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739811656; c=relaxed/simple;
-	bh=JHzcxwkGTQ+OHOtDsXcrrca2cc1Rfq1hPqll8mFwPvs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j6TVdf9iJ7HWhvt45EHz6z/Y+cLl8poEOTESog8mpnXwhzkzx3i741GXohIfMSP4G+G1lItteuH5aRv4RHTavZduvpdNGS+zZuPDsJ7kxCRrj6OV5CcfGYFk0mV09erIJ7h5Ubi7V9hkQ2ftyf6jr3cUtQloXJXW0Ad0OCbRZSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PIOK1RQO; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739811830; c=relaxed/simple;
+	bh=sVe4+bfdWEjsoANvC8eHlYrzwyl246zxZjPy+JCIdt0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dD73QYAwyBX1j40eBWVtDGKgUvoCs+zu5i7SsOabZ5wphA9+qxJOEH7tHNs7jJVnRh2kSa8x0Eyhy8y8EY/hABmC44dT7BTRm+AYIpsvlRhecTxgKkMYijMk+5U//9oH/am6HQ3pWbwRPhRgvkPdStucLj8hDf/s5Ba4BcA2wI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=Uj/pIdLV; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PIOK1RQO"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abb7520028bso267909166b.3;
-        Mon, 17 Feb 2025 09:00:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="Uj/pIdLV"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abb8e405640so223540466b.0
+        for <linux-clk@vger.kernel.org>; Mon, 17 Feb 2025 09:03:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739811653; x=1740416453; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=raspberrypi.com; s=google; t=1739811827; x=1740416627; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JqaLFrErmA8TuMfUKne+UP0vowW73z4ybOt+Ip1qbmc=;
-        b=PIOK1RQOTvaxvy6hI02eBfBM2nvHp3vrmfvO0DhQliUkoyG6JmZr3hf18BdFdn8h5o
-         auT0ajfbQf0ey10e8vfoV7dbe2KtImg/dbcAkxV3DKGB+ZkgbV6BtnLcv0EZGm7s7+vG
-         k6241oliRZZh89iElmrHhXWVlwPK3+XTLD4mh4RuN0MPYtdUVy/1DRLpWoDI1h3rVI0X
-         SRkkzPl2gYz8xbuDRiXzDGxlG61BEUXMpkYDh9JThdIGq3t3r/ptaqXAEH5qtvurx3e6
-         ASZrXcuoDqiH4AvKb8iAR0lSmyI5uFUgU/fEifflru7WokDBcUHqo8FOUNHYaN2x9lZI
-         D+jw==
+        bh=sVe4+bfdWEjsoANvC8eHlYrzwyl246zxZjPy+JCIdt0=;
+        b=Uj/pIdLVrb1JsxVQ5DSgHObs/ghRS9jMTCilgZ29atub3HO7Fm8v/BzaA+FJAo1Jzd
+         8KN1fn5GM4+w7R1s3mwuoUCDDOu9I7SxAbq2heYGejB22DTlXMjGhdFMGHR1m1lfGdAS
+         jt8o/n0QITzjgyeEWUKcAAt0S6aL8oR9974QhK2AtMpX8Oaoa7nR6YM2xVGz7ISAxhAo
+         tqpiUyhcJUZVxitUAxERcsF3PhC5Y2wIRKRdonH10PBMiECP2FKMw0Ispe+/9A/5LlZT
+         WDIh43piz0GgMKlcRmLxb10DvJjfyz/LiYQrqt6unjLSXmc4uaxIJov6Mt5LGGcfHPDr
+         KTRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739811653; x=1740416453;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1739811827; x=1740416627;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JqaLFrErmA8TuMfUKne+UP0vowW73z4ybOt+Ip1qbmc=;
-        b=UnJVHqmdO6FRfnXqown0/j8xiUx/g+1Sy/BOiBkNU7fUewduOv803WhaUPGS/kHh9N
-         CMgpBd+MqIcfyRU9qNmTIOLQ43CHW8yFsbyybrCw0znLtQHLaI7F5N0I72VLJFLWuRNw
-         rBhejg2I/0oV+nqMP48GjbbwMfGtxbOm4eDCT3m8l28VRC5m0ERKHECZeVCCm4AkGnPD
-         1g5JatrsKEo/Ni/qbZs1WK9drB524x4ZFhe6QniYtMYUdDN3DGqyccMXgXN6tSNip0Xp
-         KY1FGCza0CZnDnMEGpiKoa0E3VG8WlJPBqfI3h1ZwR2TFGgDb7HlQBInDTqiIAzyx3bX
-         hmgw==
-X-Forwarded-Encrypted: i=1; AJvYcCU99z9ZVr7LDstwSSDWyJzbPBYFqOdZMyz94fRtLL7FsEDH3X3GMqkvmHHj0bpFLApopAxaZ+HIiU59@vger.kernel.org, AJvYcCUkmVfF/jA5CHZtQYgOVSGII2+cMNXJ3WifWd5Vbt8LgCfqyXnRRCZyg7ymVg7ted6kffxlnFH8SfBmC+1t@vger.kernel.org, AJvYcCVMm4ZRtbs6qKuKSbm3GrtDtk8pDu5YZPR4cJ98OKM0nXhtg40jv5L7Zfq8bvQd9yqaDS60rcRXVNM0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHKnLAojxHPweTMT8kff8qo5Q1EmyFdpaME8kBa16M5s+FcBT1
-	UiqJcu6TbHNahawtZS0nDRL1u5UnD9IWXRR7asmfLC2qngt+L2AE
-X-Gm-Gg: ASbGncve6jlYgFFYRjIfOHgeQmGkiXSKJK8oIKGffd95XahkxmjO9jbm6BdVjQ423Nn
-	iR4B37zg3mbbKRdRbDsYFTlvX6VEpEoMsOpde5Ov/HyZFq5imbYR4UWP0Eiv8+or3BBstjBK/jS
-	oS4WVXgMvJ3QBYu564EDkLF6rxX4Vh7ZPtyTNX8X3OmJ8XJ88cPSpXGa2Dh2C8MpLKGKlOeLmEf
-	r9Y35YsBHPiemjnVx4L8E8vsF/fNb2k2wkpHvMQF68FDN3DFecC6CyfUKP/6u36KbavYrBtNWmE
-	Z/7VYFIp2z1+mAMpCvGnNVuUZxP8tv8qDHvsUNSz/KKKKZKG7rhrOQ==
-X-Google-Smtp-Source: AGHT+IHrNiu7Mfg0Om2Rj3jVA5y5sNcTyvnjB9HoCWBNScTUmN+dS44zo9eg//XHmKb0LBd6UmiAuw==
-X-Received: by 2002:a17:907:1b12:b0:ab7:bfb1:99c3 with SMTP id a640c23a62f3a-abb70e323cdmr1177370066b.53.1739811652549;
-        Mon, 17 Feb 2025 09:00:52 -0800 (PST)
-Received: from playground.localdomain ([82.79.237.175])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53376aa2sm920570766b.103.2025.02.17.09.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2025 09:00:52 -0800 (PST)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Marek Vasut <marex@denx.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] arm64: dts: imx8mp: change AUDIO_AXI_CLK_ROOT freq. to 800MHz
-Date: Mon, 17 Feb 2025 11:57:18 -0500
-Message-Id: <20250217165718.74619-5-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250217165718.74619-1-laurentiumihalcea111@gmail.com>
-References: <20250217165718.74619-1-laurentiumihalcea111@gmail.com>
+        bh=sVe4+bfdWEjsoANvC8eHlYrzwyl246zxZjPy+JCIdt0=;
+        b=vdZMS6Zs8nVruFznDApu0er350QkboTi7zYyQ3o2xIbC3aBO4G2l90r06/Pj/XTeFb
+         +vIrukPxO4cHgDwQEA/mrDt5UCJRDcadBNnjPijSAv0ks7SfG82rs7LqE7mkzyA9C13G
+         pHioYxGSWHwGrs3cSxFuDfHmUZ+cqnjfJM1EmsOrch2ReeFBjxDE4ZTc8RaOKlnDGqrR
+         7d987hNOcq9g/Vy28Yp1s1mLrnAR9cvL+ImEl8wVppbsI9Zfwu6S382esnwbheN0noR5
+         aqH9QRo7zQRNNnNCejt7MscCcP9po/acGtKs6PEUljY6koRb6XUwplfXkkHGUUgS14E7
+         uh0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVmaeMjrGFC0zgyfNJOGxUTGz3sbeln+XO0kD41gOfb6TVvOou2mCB5Anqua6pAf7PFt+nGsr9V5n4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHKUxvXQR3uwU454oqEuJAyQYbD0IeLe6TeTk7I3nL9OOU1U2z
+	CVeDKiy810+7RhItcLZsgQnDQYNcjmU6t+H0Jlh17uctsassC5BcuCfBTfqAgiQPtmTsslmiDB4
+	s5q5/jeuQkO7haB/V5+uUhNQQEDuAVNHNkhLOAw==
+X-Gm-Gg: ASbGncu5AqP6glOqZAf6N95zwfuUh6M3Z8h+yLH2bKk0+HdU5Lvky/BFU41ZM7anor4
+	jcF0EuQogllMAO184nYCCCq9VlcLVo0htcpfJ2F9LCkbElC3jF7komYyCP9LIVXbgHADcrrmJs/
+	FyeE68KNV4PphAJ1uuDEbYyYgNb/fn
+X-Google-Smtp-Source: AGHT+IFkoXeeLdTp4ohksx/YA+HrSV2VwP7+Qhyrz/nRGWdx2ClM/1bE+rZOPCDLjkQFeVjoPNdqjMROBQE6WvwLweM=
+X-Received: by 2002:a17:906:f10d:b0:abb:83b9:4dbe with SMTP id
+ a640c23a62f3a-abb83ba516emr844832566b.47.1739811826606; Mon, 17 Feb 2025
+ 09:03:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+ <20250213171435.1c2ce376@bootlin.com> <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+ <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
+ <821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch> <CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
+ <20250213195304.3a2df02c@bootlin.com> <CAMEGJJ0kGCj=tjM6KswbG_+ZFkzMwPY+06BXCU0qSnbBKz0=ug@mail.gmail.com>
+ <20250213220639.373da07b@bootlin.com> <CAMEGJJ2_HVKfsE3P22baadbzxSDAX=yTr=m76YuXa5A2cJsJig@mail.gmail.com>
+ <20250217165306.3f055b94@bootlin.com>
+In-Reply-To: <20250217165306.3f055b94@bootlin.com>
+From: Phil Elwell <phil@raspberrypi.com>
+Date: Mon, 17 Feb 2025 17:03:34 +0000
+X-Gm-Features: AWEUYZm71GLVUoOTfXPdGocteYtufVoYDo-ggiP-vBU3iN5Twxu9zylrsVoZz_U
+Message-ID: <CAMEGJJ13476pKJb441o5X0Y+rbfromj5-3V-j2KZiOt326OL4A@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
+ a DT overlay
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>, 
+	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
+	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
+	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, kw@linux.com, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
+	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
+	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
+	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
+	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+Hi Herv=C3=A9,
 
-AUDIO_AXI_CLK_ROOT can't run at currently requested 600MHz w/ its parent
-SYS_PLL1 configured at 800MHz. Configure it to run at 800MHz as some
-applications running on the DSP expect the core to run at this frequency
-anyways. This change also affects the AUDIOMIX NoC.
+On Mon, 17 Feb 2025 at 15:53, Herve Codina <herve.codina@bootlin.com> wrote=
+:
+>
+> Hi Phil,
+>
+> On Thu, 13 Feb 2025 21:12:43 +0000
+> Phil Elwell <phil@raspberrypi.com> wrote:
+>
+> > On Thu, 13 Feb 2025, 21:06 Herve Codina, <herve.codina@bootlin.com> wro=
+te:
+> > >
+> > > Hi Phil,
+> > >
+> > > On Thu, 13 Feb 2025 20:15:06 +0000
+> > > Phil Elwell <phil@raspberrypi.com> wrote:
+> > >
+> > > > Once more, with plain text, which I'd hoped the Android GMail clien=
+t
+> > > > would work out for itself.
+> > > >
+> > > > On Thu, 13 Feb 2025, 18:53 Herve Codina, <herve.codina@bootlin.com>=
+ wrote:
+> > > > >
+> > > > > Hi Phil,
+> > > > >
+> > > > > On Thu, 13 Feb 2025 17:57:37 +0000
+> > > > > Phil Elwell <phil@raspberrypi.com> wrote:
+> > > > >
+> > > > > > On Thu, 13 Feb 2025 at 17:45, Andrew Lunn <andrew@lunn.ch> wrot=
+e:
+> > > > > > >
+> > > > > > > > > Or do you mean a custom board, which has a CPU, RP1 and t=
+he button and
+> > > > > > > > > fan are directly on this custom board? You then want a bo=
+ard DTS which
+> > > > > > > > > includes all these pieces?
+> > > > > > > >
+> > > > > > > > That depends on whether you count the Raspberry Pi 5 as a c=
+ustom board.
+> > > > > > >
+> > > > > > > So you mean the Pi 5 board would itself make use of the resou=
+rces the
+> > > > > > > RP1 device has? They are not simply connected to headers for =
+plugin
+> > > > > > > boards, but used by the main board? Hence you want to describ=
+e them in
+> > > > > > > the board .DTS file.
+> > > > > >
+> > > > > > That's correct. But even for plug-in devices, those which are o=
+n
+> > > > > > non-discoverable buses need overlays to declare them, which cau=
+ses a
+> > > > > > problem when the overlay application happens before the kernel =
+is
+> > > > > > started.
+> > > > > >
+> > > > >
+> > > > > Hum, I see.
+> > > > >
+> > > > > We worked on overlay usage on non-discoverable buses wired to a c=
+onnector
+> > > > > and we did a talk about issues we are facing on at Plumber [0].
+> > > > >
+> > > > > You can also find our big picture in [1] and a last contribution =
+introducing
+> > > > > export-symbols feature in [2]. export-symbols is also under discu=
+ssion on
+> > > > > some other threads.
+> > > > >
+> > > > > Also, we proposed the i2c bus extensions feature [3] whose goal i=
+s to allow
+> > > > > an addon board to add devices on an i2c bus provided by a base bo=
+ard and
+> > > > > wired to an connector the addon board is connected to.
+> > > > >
+> > > > > Maybe in your case, you can decouple resources (gpio, pwm) provid=
+ed by the
+> > > > > addon board and used by the base board using also nexus node.
+> > > > >
+> > > > > We use a nexus node [4] (not presented at the Plumbers talk becau=
+se the idea
+> > > > > came during 'out of talk' discussions in Plumbers) in order to al=
+low our
+> > > > > addon board to use resources provided by the base board.
+> > > > >
+> > > > > In your case, if I understood, you are in the other direction but=
+ why not
+> > > > > using also a nexus node to decouple and translate resources in th=
+is other
+> > > > > direction ?
+> > > > >
+> > > > > Don't know if this idea can help but feel free to ask for some mo=
+re
+> > > > > information if needed.
+> > > >
+> > > > Nexus nodes look interesting - I see them as adding a layer of
+> > > > abstraction such that, for example, boards can declare which of the=
+ir
+> > > > specific resources performs a common function so that clients can
+> > > > treat them all the same. We do the same thing in a limited way by
+> > > > using common labels on nodes, but this goes much further.
+> > > >
+> > > > In the case of Pi 5 and RP1, I imagine you are proposing that the P=
+i 5
+> > > > dtb declares the connector node and the overlay fills in the conten=
+t
+> > > > with references to its GPIO controller, PWM controller etc. However=
+, I
+> > > > think the overlay would also have to be board specific because it's
+> > > > not possible to patch part of a property from an overlay, so you'd =
+end
+> > > > up overwriting the GPIO number as well as the controller reference.
+> > > >
+> > > > What is needed to make this work is the ability to cope with
+> > > > unresolved references in the base dtb, to be resolved as each overl=
+ay
+> > > > is applied, with runtime checking that each reference is resolved
+> > > > before it is used, all of which sounds like a nightmare. Plus, we
+> > > > really don't want to have to change the way all our camera and disp=
+lay
+> > > > overlays work on all Raspberry Pis just to accommodate somebody's i=
+dea
+> > > > of how RP1 should be handled.
+> > >
+> > > Just to be clear, my comments were not there to tell you how RP1 shou=
+ld
+> > > work. I just proposed ideas without trying to force anything and I ca=
+n
+> > > fully understand that ideas proposed don't feed your needs.
+> > >
+> > > Sorry if my approach was misunderstood.
+> >
+> > I feel I've been misunderstood - I appreciate your ideas.
+> >
+> > Perhaps it would help if you could outline how you think we could
+> > apply your suggestions?
+> >
+>
+> I was thinking about what your mentioned, i.e. the overlay fill the nexus=
+ node.
+> No sure to understand why the overlay should patch some properties.
+> Also where are the unresolved references in that case. The base DT refers=
+ to
+> the Nexus node.
+> The issue will probably be that the translation performed by the nexus no=
+de is
+> not available until the overlay is applied. The consumer will see errors =
+other
+> than PROBE_DEFER when if probes while the overlay is not applied.
 
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mp.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The job of the nexus node would be to translate a generic request for
+a numbered resource to a specific request for an RP1 resource with
+arbitrary properties. The arbitrary properties could be GPIO offsets,
+which are board specific, while the node supplying the resource is
+provided by the overlay. This means that an entry in the table,
+described by a single property, could have contributions from the base
+DT and the overlay, which is not possible since overlays overwrite
+whole properties.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index 86c3055789ba..54147bce3b83 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-@@ -834,7 +834,7 @@ pgc_audio: power-domain@5 {
- 						assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
- 									 <&clk IMX8MP_SYS_PLL1_800M>;
- 						assigned-clock-rates = <400000000>,
--								       <600000000>;
-+								       <800000000>;
- 					};
- 
- 					pgc_gpu2d: power-domain@6 {
--- 
-2.34.1
+Perhaps that particular problem could be overcome by creating a
+single-entry map, using the map-mask feature to pass through all of
+the GPIO offset and flags to the parent, so that the whole table
+becomes a proxy for RP1's GPIO controller. Is that what you had in
+mind?
 
+> Also, the solution will lead to memory leak at runtime. Indeed, the overl=
+ay
+> add properties in an already existing node.
+> If the overlay is applied by the Kernel itself, this lead to memory leak =
+when
+> the overlay is removed.
+> Indeed, an overlay can add/remove node without any issue but it cannot
+> add/remove properties to/from existing nodes.
+
+Fortunately for me I'm not arguing _for_ the use of an overlay.
+
+> In the case described here, the nexus node is already present in the DT a=
+nd the
+> overlay add/remove properties to/from this existing node.
+
+I think I can see how that could be made to work for GPIOs. It looks
+as though the GPIO subsystem is the only one making use of
+of_parse_phandle_with_args_map. Interrupts seem to have an open-coded
+equivalent, and iommus. What about I2C and PWM?
+
+Phil
