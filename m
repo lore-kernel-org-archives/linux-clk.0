@@ -1,66 +1,65 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F581E5200
-	for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 19:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467271E833E
+	for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 19:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739907039; cv=none; b=PkLPsTmBPZTFWs/MK4jXfORrQ9Y1kkvhTZTwRISZl5QTC+b1FXc3GAPBnsNwCZnGnuLur8SzbpT2ZayYn8QQQliU9yTuKVYKP1y/sCak+cRyFcuhupnFFqB0JHeEigZVuQ90yWl1zXnOWih5/eB4ng3prcmz+46ahOB5v6pk2wQ=
+	t=1739907042; cv=none; b=JXKKUVrgaTk2IiBTG6/nZcwylREYs0ZUbMAE/YYpGccmLBQJaqQ4x9lHZeEFXwNkR1wU+E5sHGrjM9zNvg5ooeBFACOWpZ1wCPtefcEt5/dTlj219gXDnQ+h+rTc+vSl+2ctuHU1K0Gq6gvA7oRu2ohwtKOwlKhpN9R7y42K3t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739907039; c=relaxed/simple;
-	bh=PkjdIaC56eTrgW6J5aLTcTBWZbxgsIMKj1P2361ZPvk=;
+	s=arc-20240116; t=1739907042; c=relaxed/simple;
+	bh=lC4JGAW79Gffs1TQMyzi5K8iGZRUrc3LT4D+fKp54fk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WHCDXNmDl2kvyJji4r3RYB/vtDapMhzh24FwjLWYW4yj8z//pXQd+V0/bZv66/Ve5JNF43AKH+MDKszh17Px2BJ5bPzRVW5pw9WJevsy3hYuccwzw+K8xF7fkQmjV5hc7beeTDHB6W1xBkvNmlXV8d4XXfzvIeAdEZClSmrSDig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QitoUgnU; arc=none smtp.client-ip=209.85.208.46
+	 In-Reply-To:To:Cc; b=PhD2cAWFwFiRCJsv8yRRdKcnExMrLS/hBMRpJJfIcmHhiE/Pj35LfI6kqyKFkFs9w7T5zDfzhdQdUwsyxwSR0N1dvqVl346KERZuW7XmPo5H4v/wmxYQI/OpsEq/NuhdqEuwsxr9s2mNd0VN+UCRIoJ8dDn7tIp9HxxwcarP70U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=I6KT5ERU; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QitoUgnU"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e04064af07so6279400a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 11:30:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="I6KT5ERU"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e04c044224so4701904a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 11:30:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739907035; x=1740511835; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739907039; x=1740511839; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=A496sD4a/2Yi1AUooRYlTxVGsi1ThKtEtWKAWQ65LbM=;
-        b=QitoUgnUu6objB1c8eInwA74Rxj/YNOtLDxQOu20evB5BHsGWE8+nNb/ApXx4WPlqs
-         +SbY2pjOEKgmt+Y/txXzzL2GblDdRkBqPSTy9VdAnteToymQzP7Nq3CIR81HrL0NEr5s
-         rCTz2oiIbH1ynOnaEbi1aufi53fNYwE6nc7913T5vpW0V1uR7elrKnMyF/zv7+WBxxHw
-         QzCJZwJii89j6QRVnfbZviotNLeEXz6geOuy3kaOxbwBX4uSlD2pCkwIfqXCFj7IjgCe
-         YyqhWK44hTHYgeKVCeJGN+3g/HEAa5Lwq0wK2k7w0doj8SOW6106hi5NDocLYFtI7Oue
-         QcaQ==
+        bh=0T8F81F4dclX+rJ/ZeU1mJZ2+c2tosLP5JZ1w46AvKI=;
+        b=I6KT5ERUW4yZOYSpceLTh8Hj7Hj2z9FnqDH90o41VKHDpH+RKWKOa2g1FymGReAaop
+         wqURxSAyw39hP8zIq2wjNU0cvkLaSQSTgVi7CAEf53Ca/NPgxRydDJQKR2NOS9/t2Igz
+         Ehhd8EIu/f5pQbMLNQrIL+clLVJk0ctNiNDM8M5WaYgbOotUpdG92oxwl5H0jMh1rVEC
+         F78IvPs68xJPiYA9Ygu8gJNEjJ1V0LRbk4kKhrDYbeoae3VTMCuPbc7Q+e4DWAIhCJ1M
+         j6ciBqcgd2uDZ/ksBssj+0uWHYhX0YyjBIMpNBogGtJIN3+NDNc1oa8VGKXpY3LCnJDg
+         Hh/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739907035; x=1740511835;
+        d=1e100.net; s=20230601; t=1739907039; x=1740511839;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=A496sD4a/2Yi1AUooRYlTxVGsi1ThKtEtWKAWQ65LbM=;
-        b=QEngf10Su4+j+xYeDZIRUDlNWD61B87HTMnt3zTWHsZF26CI/PlltsrVLWfJHRykgk
-         2QCQjNoDm3sdEgtcc7iOD401gpX29negz4lXTzcwJg+L7/HnBh+IcZBRRAaznNssQhrX
-         tQIqQ4cFGIdi6rPegRxfyVwXGQYprcwTcQOtxu+kKy4TGcMz2Ps8GssOZpdkihL5Ltk8
-         2pEYBVFMXKc/BkVqG4u660A7vL4TuOLx9TaTTHx8yIP/ylwRQ/mEN5998okglg12NSZo
-         x7+hiEtjjpDFHHofg4TWyHnjydE/5Orseob+YRoP+EplBRxyJ5BE41gq0x8PLGzFeL3o
-         DqDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVovYhTZccx/Fo/aj5HNaGGH4CMi0YTe2gduRqaamgjstMhF5Y6SvAN4dET5l4RzTX8Cga7/5Hor2k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoP9nYe9PpSjjKw63YLxjIIbrsxdfkg+3P5dNpMFYf4AwDoQvi
-	CqgqghIsoc8hpXMZ6wJfZu4aEPxFd4Tw3oWsk631Zpx5UJ93bHK/5XnDR9mLS+g=
-X-Gm-Gg: ASbGncsdUOM6+guOPc94e1YhviOXU7m6K0TLMUTpJd6VhLtXm48G3DmK++chqsS6vnq
-	GS38rHz9+KjhBxoX+b0/0QFdnCDdNV8uO0Cd2pvdHhwICe89/2nTnG6z0wL4xnhEIdZMiVo65Lv
-	ElwtiMoNKT2pXpxmMukZfLCkLPS6Qss/SGshRqI1g1kDIwgf9JtUy4WuBEgNJkH9xewlBdzUqBR
-	BHe5idoJH3Av06parXl9zqRR2MSK1x1+V/bp5vAk6D4UrYrlFnTNE8zcnoURMwyBGS3Ei9X6iSq
-	wMLhzavY35yYGOViRVXAs4L40LbH
-X-Google-Smtp-Source: AGHT+IE5Wa5KJ5irXNEqRMx0DZmNPYCFnRuPmEtxdUqVwUY8iuRTnfmnPlFGCgRgwZYmZjYuGxKlHA==
-X-Received: by 2002:a05:6402:3589:b0:5e0:82a0:50d9 with SMTP id 4fb4d7f45d1cf-5e082a0580dmr1610706a12.25.1739907035420;
-        Tue, 18 Feb 2025 11:30:35 -0800 (PST)
+        bh=0T8F81F4dclX+rJ/ZeU1mJZ2+c2tosLP5JZ1w46AvKI=;
+        b=itzLRgjAPPpgeKOStVbqvY9g6KlTLyWZGO5mW7RWCsBe0uXv09jqGOVCkwLx66zrV7
+         SeMiP6/zsTWU+cHWsmb+n7ht16vGkSBCD0qE6gRRmV591DDxWm55gWxGjQHXstCvys+i
+         F2t6xrUH62AG/xz+g1O2eEydpIxaBuQr1r8HIV6lTklUHxvnVd8vovQmRUOedc37RWYz
+         w26PiU+c9qCh8AXEVY4L8VWzcT8wOQPNHU0qDsrz25HDttH+quixoaDhZ2dWmV0Udfn/
+         WjkzcJnt0lvVrh1ELKrZPnkZX5a++o/ZSW4zgWzVXX3eDBmy8mRRbwx946088gXsblaY
+         ayxw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+y3LhaSefR33Fic+OSnSAkYsHcN+o2V7I7qOHdzks6VQr88G+oQTv1O6gS6vgFU5LJ0iY4qBjExc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8aPBqxmb+XVFFCauvxqGVtNZdYUMltJTf5BaBPmymg5cmk/hB
+	B83PVWkjLJsnv1xmegNKc6z3s0U7J6v9LCa9oqr1WTLb9dupTjNNmtlLeF3lInY=
+X-Gm-Gg: ASbGncsmNAGLHmWYojQg4sbx6/08nOCHBGMv/Ct7EEMRswbzn1GDD08jVz9Q++6xAXl
+	Ri/uPBH4FOFC3z3GgDU6ZDAuh5+rMTnd2nZu8OxojJMULLCfUdOU6dOpGk9KSqWvd4DCo1fdKKg
+	d6fVBTEka0aRvfOGhpuj1Kj8xdtpuYvlYd8HJaGFmtQDsi+rkG6L7jsqeoQsBZf6wtnFTf6irhO
+	GIVMVl72cwCrwMdFZVLw/wiw6mp0jZhECWpJWjc8ZzxCpczGA8amvZP49nCiRS/gezqOhTd9Bt4
+	fcdLFKxgNdk2/TYQ5jC9t1w8a9DR
+X-Google-Smtp-Source: AGHT+IE38d9H2TgXTyTup8jkjPe2nCO1VlNwQJGJqEx5dpp48IZsz14VskWGHfiixxpwINWmEkNfGA==
+X-Received: by 2002:a05:6402:13ce:b0:5e0:4a92:6b45 with SMTP id 4fb4d7f45d1cf-5e04a926cd7mr12713674a12.24.1739907038738;
+        Tue, 18 Feb 2025 11:30:38 -0800 (PST)
 Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:cbaf:af0:839d:fb4a])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c3ce5sm9338985a12.17.2025.02.18.11.30.32
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c3ce5sm9338985a12.17.2025.02.18.11.30.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 11:30:35 -0800 (PST)
+        Tue, 18 Feb 2025 11:30:37 -0800 (PST)
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 18 Feb 2025 20:29:46 +0100
-Subject: [PATCH v4 1/8] driver core: auxiliary bus: add device creation
- helpers
+Date: Tue, 18 Feb 2025 20:29:47 +0100
+Subject: [PATCH v4 2/8] reset: mpfs: use the auxiliary device creation
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,7 +68,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250218-aux-device-create-helper-v4-1-c3d7dfdea2e6@baylibre.com>
+Message-Id: <20250218-aux-device-create-helper-v4-2-c3d7dfdea2e6@baylibre.com>
 References: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
 In-Reply-To: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -105,183 +104,106 @@ Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
  Jerome Brunet <jbrunet@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5226; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=PkjdIaC56eTrgW6J5aLTcTBWZbxgsIMKj1P2361ZPvk=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBntN/PpRSgjntFL4im0pKu+WkiaMHGJvFgAMlXT
- 2MCP0memWuJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ7TfzwAKCRDm/A8cN/La
- hUPFEACcW0XW9/B/qo7EEmYWuIE8aUcE5HUVtsI0TkkMJMo5YnwHLpUNDoSEEbkKbv14vquBqbK
- Iy+dvIFKZ8BWMQZBDDHhi6jRtAFTgeQEsZMQIg2J0/+IlKhpJPF6AscLdg5p1Dgg1HXCauRxeou
- 1VbEV6GrwhuTydry6GLWfyOUlmQju6OvpILm+L4mwrJpX9ykPJ6gwNIuVAlkqcJFHXmKBqJFgj6
- KmJeCGEATTKhIA/om6qi2z2GpvWfCdIjowrVc2yMdeagAGBqUnPLvJxYn6/bwDJ6h742YWZ9goy
- yRyWpO1O2zJ/6uRzZgkE1tCxJhV1BCaER8ZC7ZWzRmZhcfP6T5zY6x8Z33wkUs/HFqTl3HgAfuE
- nZdvMSmzDoGdQe4cDAzwVpup4fg2nKxCgjDq7p19/7CQWZU/HryiyHo6ek/pOAUc0xw9szxXdPV
- pJ7sSRrMpc9RV5K8nGfJW40rcwG+cKC2qkas/TwbNgzYhnn0M7XyVAVMUyQ28Gyhe3nAdEIpfHB
- rdQPj4DLQq3e/67HhncZL8agAL/LVgSmQ2/7PdJB44hJsNi1V7VGMLF9MD8RrZu1m5x/nSyXkq2
- LbPW+TWunsUuPoXm0HIZln4YNEsHFz6LlLOFjeAbeKtyzFEDL2/pqWRat04XTNU1u7RsW1bHRrR
- EFlV+exOQmrhA/Q==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2301; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=lC4JGAW79Gffs1TQMyzi5K8iGZRUrc3LT4D+fKp54fk=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBntN/QcUQEhOWVZzyl8Bk6xzmnH//yZHJXSRo9/
+ qRN2pMyjUyJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ7Tf0AAKCRDm/A8cN/La
+ hWnTD/9N7uDw2MgUMxhgsAUT5/+278puGBABcsLjbLLras1TheSQNvuJ2k6CxLv1JzCY2D66v4g
+ 1IZyaW6xKXiWnXsDJvRMfcjRdcEROcGnF3UC4ySSisSHu/ZQztXxFB+ZWe/fkAj0Yr8I5rv9jdi
+ CVlbgdypg0F/xyy31QioTBrNDzru3kX+AZPogf8//n1HoaxOA5nRQAU+AMJDDJE4Tu3ZuwXujs8
+ eHY+xCL7EVf2v0LnCxVtOkWdzWc1WD/1f83AvRqQh8zo/ADR5A8bcX432Ca2efhXfpTiJtTGV3C
+ nkRAlV3jUon29+Atl1cui8KDavDFHk/+0IIwCMvrCreR+4YHxT4f+w2ay7hyiJ93zHmOpeBNwlD
+ nsa+oMRZdeU6vHD2y2GJHX7m9CSFp1E8zmd2evt/+ZCvVMPhdfGJInOpC0HIWUKb46a8NeJxWly
+ 0eI7MOS4MfFJow59r73kkCyYHBPv3mfqUg+oCigQGJHFaP5irNw8C9yO4xX7Rabili/pwsYyI7G
+ JTcCo+pvGbCJ2MnXqS0x6JpyZ/ZFrneZmwpN5fi3gPKSYljCbeXbCHd8pjuzg/Gu0I9u//RPWWo
+ ufdtuzliUyzrzCu0/+O2KjwjCQuyA3XbhhDaA6uUq+TsSZbwdcJ6nKs4JMfwO9I4wruQJBQ8Dxc
+ 0NFwBr/IpdOtN0g==
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Add helper functions to create a device on the auxiliary bus.
+The auxiliary device creation of this driver is simple enough to
+use the available auxiliary device creation helper.
 
-This is meant for fairly simple usage of the auxiliary bus, to avoid having
-the same code repeated in the different drivers.
+Use it and remove some boilerplate code.
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/base/auxiliary.c      | 108 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/auxiliary_bus.h |  17 +++++++
- 2 files changed, 125 insertions(+)
+ drivers/reset/reset-mpfs.c | 56 +++++-----------------------------------------
+ 1 file changed, 5 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-index afa4df4c5a3f371b91d8dd8c4325495d32ad1291..a6d46c2759be81a0739f07528d5959c2a76eb8a8 100644
---- a/drivers/base/auxiliary.c
-+++ b/drivers/base/auxiliary.c
-@@ -385,6 +385,114 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv)
+diff --git a/drivers/reset/reset-mpfs.c b/drivers/reset/reset-mpfs.c
+index 574e59db83a4fcf30b60cb5f638607a2ec7b0580..f6fa10e03ea889e5434110156f7bece808a6ae92 100644
+--- a/drivers/reset/reset-mpfs.c
++++ b/drivers/reset/reset-mpfs.c
+@@ -155,62 +155,16 @@ static int mpfs_reset_probe(struct auxiliary_device *adev,
+ 	return devm_reset_controller_register(dev, rcdev);
  }
- EXPORT_SYMBOL_GPL(auxiliary_driver_unregister);
  
-+static void auxiliary_device_release(struct device *dev)
-+{
-+	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
-+
-+	kfree(auxdev);
-+}
-+
-+/**
-+ * auxiliary_device_create - create a device on the auxiliary bus
-+ * @dev: parent device
-+ * @modname: module name used to create the auxiliary driver name.
-+ * @devname: auxiliary bus device name
-+ * @platform_data: auxiliary bus device platform data
-+ * @id: auxiliary bus device id
-+ *
-+ * Helper to create an auxiliary bus device.
-+ * The device created matches driver 'modname.devname' on the auxiliary bus.
-+ */
-+struct auxiliary_device *auxiliary_device_create(struct device *dev,
-+						 const char *modname,
-+						 const char *devname,
-+						 void *platform_data,
-+						 int id)
-+{
-+	struct auxiliary_device *auxdev;
-+	int ret;
-+
-+	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
-+	if (!auxdev)
-+		return NULL;
-+
-+	auxdev->id = id;
-+	auxdev->name = devname;
-+	auxdev->dev.parent = dev;
-+	auxdev->dev.platform_data = platform_data;
-+	auxdev->dev.release = auxiliary_device_release;
-+	device_set_of_node_from_dev(&auxdev->dev, dev);
-+
-+	ret = auxiliary_device_init(auxdev);
-+	if (ret) {
-+		kfree(auxdev);
-+		return NULL;
-+	}
-+
-+	ret = __auxiliary_device_add(auxdev, modname);
-+	if (ret) {
-+		/*
-+		 * It may look odd but auxdev should not be freed here.
-+		 * auxiliary_device_uninit() calls device_put() which call
-+		 * the device release function, freeing auxdev.
-+		 */
-+		auxiliary_device_uninit(auxdev);
-+		return NULL;
-+	}
-+
-+	return auxdev;
-+}
-+EXPORT_SYMBOL_GPL(auxiliary_device_create);
-+
-+/**
-+ * auxiliary_device_destroy - remove an auxiliary device
-+ * @auxdev: pointer to the auxdev to be removed
-+ *
-+ * Helper to remove an auxiliary device created with
-+ * auxiliary_device_create()
-+ */
-+void auxiliary_device_destroy(void *auxdev)
-+{
-+	struct auxiliary_device *_auxdev = auxdev;
-+
-+	auxiliary_device_delete(_auxdev);
-+	auxiliary_device_uninit(_auxdev);
-+}
-+EXPORT_SYMBOL_GPL(auxiliary_device_destroy);
-+
-+/**
-+ * __devm_auxiliary_device_create - create a managed device on the auxiliary bus
-+ * @dev: parent device
-+ * @modname: module name used to create the auxiliary driver name.
-+ * @devname: auxiliary bus device name
-+ * @platform_data: auxiliary bus device platform data
-+ * @id: auxiliary bus device id
-+ *
-+ * Device managed helper to create an auxiliary bus device.
-+ * The device created matches driver 'modname.devname' on the auxiliary bus.
-+ */
-+struct auxiliary_device *__devm_auxiliary_device_create(struct device *dev,
-+							const char *modname,
-+							const char *devname,
-+							void *platform_data,
-+							int id)
-+{
-+	struct auxiliary_device *auxdev;
-+	int ret;
-+
-+	auxdev = auxiliary_device_create(dev, modname, devname, platform_data, id);
-+	if (IS_ERR(auxdev))
-+		return auxdev;
-+
-+	ret = devm_add_action_or_reset(dev, auxiliary_device_destroy,
-+				       auxdev);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return auxdev;
-+}
-+EXPORT_SYMBOL_GPL(__devm_auxiliary_device_create);
-+
- void __init auxiliary_bus_init(void)
+-static void mpfs_reset_unregister_adev(void *_adev)
+-{
+-	struct auxiliary_device *adev = _adev;
+-
+-	auxiliary_device_delete(adev);
+-	auxiliary_device_uninit(adev);
+-}
+-
+-static void mpfs_reset_adev_release(struct device *dev)
+-{
+-	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+-
+-	kfree(adev);
+-}
+-
+-static struct auxiliary_device *mpfs_reset_adev_alloc(struct device *clk_dev)
+-{
+-	struct auxiliary_device *adev;
+-	int ret;
+-
+-	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+-	if (!adev)
+-		return ERR_PTR(-ENOMEM);
+-
+-	adev->name = "reset-mpfs";
+-	adev->dev.parent = clk_dev;
+-	adev->dev.release = mpfs_reset_adev_release;
+-	adev->id = 666u;
+-
+-	ret = auxiliary_device_init(adev);
+-	if (ret) {
+-		kfree(adev);
+-		return ERR_PTR(ret);
+-	}
+-
+-	return adev;
+-}
+-
+ int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base)
  {
- 	WARN_ON(bus_register(&auxiliary_bus_type));
-diff --git a/include/linux/auxiliary_bus.h b/include/linux/auxiliary_bus.h
-index 65dd7f15437474468acf0e28f6932a7ff2cfff2c..4086afd0cc6b96084c190f24acc304cde5d1749a 100644
---- a/include/linux/auxiliary_bus.h
-+++ b/include/linux/auxiliary_bus.h
-@@ -254,6 +254,23 @@ int __auxiliary_driver_register(struct auxiliary_driver *auxdrv, struct module *
+ 	struct auxiliary_device *adev;
+-	int ret;
  
- void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv);
+-	adev = mpfs_reset_adev_alloc(clk_dev);
+-	if (IS_ERR(adev))
+-		return PTR_ERR(adev);
+-
+-	ret = auxiliary_device_add(adev);
+-	if (ret) {
+-		auxiliary_device_uninit(adev);
+-		return ret;
+-	}
+-
+-	adev->dev.platform_data = (__force void *)base;
++	adev = devm_auxiliary_device_create(clk_dev, "reset-mpfs",
++					    (__force void *)base);
++	if (!adev)
++		return -ENODEV;
  
-+struct auxiliary_device *auxiliary_device_create(struct device *dev,
-+						 const char *modname,
-+						 const char *devname,
-+						 void *platform_data,
-+						 int id);
-+void auxiliary_device_destroy(void *auxdev);
-+
-+struct auxiliary_device *__devm_auxiliary_device_create(struct device *dev,
-+							const char *modname,
-+							const char *devname,
-+							void *platform_data,
-+							int id);
-+
-+#define devm_auxiliary_device_create(dev, devname, platform_data)     \
-+	__devm_auxiliary_device_create(dev, KBUILD_MODNAME, devname,  \
-+				       platform_data, 0)
-+
- /**
-  * module_auxiliary_driver() - Helper macro for registering an auxiliary driver
-  * @__auxiliary_driver: auxiliary driver struct
+-	return devm_add_action_or_reset(clk_dev, mpfs_reset_unregister_adev, adev);
++	return 0;
+ }
+ EXPORT_SYMBOL_NS_GPL(mpfs_reset_controller_register, "MCHP_CLK_MPFS");
+ 
 
 -- 
 2.47.2
