@@ -1,105 +1,155 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6165246348;
-	Tue, 18 Feb 2025 17:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739900244; cv=pass; b=riEb4UxEwIIqqxxUvgBqfYZaHZhkI+wCyx8c/rStokyFoMbHGzaXPt01+MjpBjREfmOLm8mN1LPQFxZZkh95EeuEz+GHtUQJC7hyxeav+/lcvtiCmeP/HW+ejwGNBvDiPBdgDBgNCShe6wmBVdY5/x4HEkDk9atbaowKhdjjVJQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739900244; c=relaxed/simple;
-	bh=UixU1Y8H/6oLRHZaemHuH3J3DlfIiJ+CWy16hrFxz+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xq7d7PFqg7oGKWHsbLYwX2+QdUSIWVcga2B43bMAWFJJUPsaaVRA2Pj9zjrl+izy1UaGbCkzPupNuARe9C7cVN52fPTiDFO7wBsFGcGofneV7QJlZmIUTpJosl9zSEMfGtU56VsfXunevHoynz58N+OoTwdqSGs4aAWHwH+3WC8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=MG2Ietzs; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="MG2Ietzs"
-ARC-Seal: i=1; a=rsa-sha256; t=1739900221; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=grr+0lS3/3BYH360gRwkzLM+3E466IAaltXYKBbg79sVz19or3+IQpyGZDcAklYrm+slRNSSCYXNJ99pmPLE9ObA1Jc6dWW+sJQjp2yidnreWBuFFaELBfRPNos4zb9+cDDm3QxSRI3FwqQBxo1E+gTAOV+y7d9wQcTRMXMiK0M=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1739900221; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ltKaZrI9teXpHN3rxYKOD+ITb8+l8u8RqERzWuBNvdA=; 
-	b=V3gCXeeN44w4wXMEB0QD46IIGQR+mXNwYx2navETCqdQoO+kYcisMlC0ofEk60S3oZDR1CyciSCEukHn/fzabVUcWsAgP8KO/pQs9Liy3hC+hXO4kXq8flp5jYaS7x8RI6xJizBsW2WpmmXO0IvRzk6E4nMVEoF7Occl5I+5dO4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739900221;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=ltKaZrI9teXpHN3rxYKOD+ITb8+l8u8RqERzWuBNvdA=;
-	b=MG2IetzsDhA8+Sfnq0OUEnWCZy+ea618WnHYx4ejx49qE25J+rYyojOqnsM5hT/Y
-	LD0rGafHN23Hp+vSdMV7OPcOfCqfzvlYCwu9hr6u2Q6ciu4kjTyMRloMIzjSvHgcjEq
-	oQE1xMJrvwXhtunOZi1NnO5M/diXh67EhWru+nuY=
-Received: by mx.zohomail.com with SMTPS id 1739900216177414.7839071442543;
-	Tue, 18 Feb 2025 09:36:56 -0800 (PST)
-Message-ID: <56310dfb-62c8-4508-a36f-22f383053024@zohomail.com>
-Date: Wed, 19 Feb 2025 01:36:45 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA4C2356B3
+	for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 18:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739903220; cv=none; b=G7ADCGqDTO6jfVdgK5lF2kYxWw6bO3wF57sU54VRfCx6ac5hPncH9LangO6WnKZjwMOCj8jgNOqyVkuB3E9W9LDBDR7tS3mX5zY27vnScCqMWb6miJI3ln1B7XFc3qQNcJLVPNqYo2Z8vCMnU7z3eifz5x+2A7i7ffDVY0/wdnQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739903220; c=relaxed/simple;
+	bh=Juc2Akbil/KjIj7GVAhkfHO1s/KyIG4/hSAIW20NKvo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pOilmg0HfKIL/26p9NO/FWCReKtU6fqoqM/YAIEIZ6Ufw4V7iCK8gl6OMvQcTzA7tDhuS6NCdD7hZpD0qyEAVtyXAuZ3OqR2KZwnaJo2UzNhaN9EAb5ZSbD298OT4OfOUC3Le764l1WI+bzANg3D4z0w9xQYqb2GUEF89t/k5lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tkSIy-0006Bk-0v; Tue, 18 Feb 2025 19:26:48 +0100
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tkSIx-001dVB-1e;
+	Tue, 18 Feb 2025 19:26:47 +0100
+Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
+	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tkSIx-00A9Hm-1C;
+	Tue, 18 Feb 2025 19:26:47 +0100
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Date: Tue, 18 Feb 2025 19:26:42 +0100
+Subject: [PATCH v4 2/6] arm64: dts: imx8mp: Add optional nominal drive mode
+ DTSI
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] riscv: dts: canaan: Add clock initial support for
- K230
-To: Conor Dooley <conor@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>
-References: <20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com>
- <20250217-b4-k230-clk-v4-3-5a95a3458691@zohomail.com>
- <20250218-status-friend-51fb039ab97e@spud>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <20250218-status-friend-51fb039ab97e@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr08011227cd7930601ff6ebc2a10e2da600003679650531eac0101031d31a21ff948c946d9e95b9b798b92f:zu08011227e9cf27d652ab798f48ced574000072302a8a14e3f70cb8059410b94c92a96d722e96a5a4a72a3a:rf0801122b73a3e2e54c7314499e8c1a04000091975e61466cda03089d952cd1635febf3eea1ae3ebb2c624ecb168621:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250218-imx8m-clk-v4-2-b7697dc2dcd0@pengutronix.de>
+References: <20250218-imx8m-clk-v4-0-b7697dc2dcd0@pengutronix.de>
+In-Reply-To: <20250218-imx8m-clk-v4-0-b7697dc2dcd0@pengutronix.de>
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Frank Li <Frank.li@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Abel Vesa <abel.vesa@linaro.org>, 
+ Marek Vasut <marex@denx.de>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Ahmad Fatoum <a.fatoum@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On 2025/2/19 01:00, Conor Dooley wrote:
-> On Mon, Feb 17, 2025 at 10:45:18PM +0800, Xukai Wang wrote:
->> +		sysclk: clock-controller@91102000 {
->> +			compatible = "canaan,k230-clk";
->> +			reg = <0x0 0x91102000 0x0 0x1000>,
->> +			      <0x0 0x91100000 0x0 0x1000>;
->> +			clocks = <&osc24m>;
->> +			clock-output-names = "CPU0_ACLK", "CPU0_PLIC", "CPU0_NOC_DDRCP4",
->> +					     "CPU0_PCLK", "PMU_PCLK", "HS_HCLK_HIGH_SRC",
->> +					     "HS_HCLK_HIGH_GATE", "HS_HCLK_SRC",
->> +					     "HS_SD0_HS_AHB_GAT", "HS_SD1_HS_AHB_GAT",
->> +					     "HS_SSI1_HS_AHB_GA", "HS_SSI2_HS_AHB_GA",
->> +					     "HS_USB0_HS_AHB_GA", "HS_USB1_HS_AHB_GA",
->> +					     "HS_SSI0_AXI", "HS_SSI1", "HS_SSI2",
->> +					     "HS_QSPI_AXI_SRC", "HS_SSI1_ACLK_GATE",
->> +					     "HS_SSI2_ACLK_GATE", "HS_SD_CARD_SRC",
->> +					     "HS_SD0_CARD_TX", "HS_SD1_CARD_TX",
->> +					     "HS_SD_AXI_SRC", "HS_SD0_AXI_GATE",
->> +					     "HS_SD1_AXI_GATE", "HS_SD0_BASE_GATE",
->> +					     "HS_SD1_BASE_GATE", "HS_OSPI_SRC",
->> +					     "HS_USB_REF_51M", "HS_SD_TIMER_SRC",
->> +					     "HS_SD0_TIMER_GATE", "HS_SD1_TIMER_GATE",
->> +					     "HS_USB0_REFERENCE", "HS_USB1_REFERENCE";
->> +			#clock-cells = <1>;
->> +		};
-> Apologies for not commenting on it until now, but this patch seems like
-> there's some hunks missing from it. I'd expect you to remove the dummy
-> "apb-clk-clock" from the dts and replace it with a real one sourced from
-> the newly added clock controller.
+Unlike the i.MX8MM and i.MX8MN SoCs added earlier, the device tree for
+the i.MX8MP configures some clocks at frequencies that are only validated
+for overdrive mode, i.e. when VDD_SOC is 950 mV.
 
-Thanks for your time.
+Boards may want to run their SoC at the lower voltage of 850 mV though
+to reduce heat generation and power usage. For this to work, clock rates
+need to adhere to the limits of the nominal drive mode.
 
-I've modified all nodes that previously depended on apb_clk， and they
-are now referencing the new clock controller.
+Add an optional DTSI file which can be included by various boards to run
+in this mode.
+
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+ arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi | 63 +++++++++++++++++++++++
+ 1 file changed, 63 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
+new file mode 100644
+index 0000000000000000000000000000000000000000..f9a82a663033a1dfb72163eebb62e4aee66cee2f
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp-nominal.dtsi
+@@ -0,0 +1,63 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (C) 2024 Pengutronix, Ahmad Fatoum <kernel@pengutronix.de>
++ */
++
++&clk {
++	assigned-clocks = <&clk IMX8MP_CLK_A53_SRC>,
++			  <&clk IMX8MP_CLK_A53_CORE>,
++			  <&clk IMX8MP_SYS_PLL3>,
++			  <&clk IMX8MP_CLK_NOC>,
++			  <&clk IMX8MP_CLK_NOC_IO>,
++			  <&clk IMX8MP_CLK_GIC>;
++	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
++				 <&clk IMX8MP_ARM_PLL_OUT>,
++				 <0>,
++				 <&clk IMX8MP_SYS_PLL1_800M>,
++				 <&clk IMX8MP_SYS_PLL3_OUT>,
++				 <&clk IMX8MP_SYS_PLL1_800M>;
++	assigned-clock-rates = <0>, <0>,
++			       <600000000>,
++			       <800000000>,
++			       <600000000>,
++			       <400000000>;
++};
++
++&pgc_hdmimix {
++	assigned-clocks = <&clk IMX8MP_CLK_HDMI_AXI>,
++			  <&clk IMX8MP_CLK_HDMI_APB>;
++	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
++				 <&clk IMX8MP_SYS_PLL1_133M>;
++	assigned-clock-rates = <400000000>, <133000000>;
++};
++
++&pgc_hsiomix {
++	assigned-clocks = <&clk IMX8MP_CLK_HSIO_AXI>;
++	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>;
++	assigned-clock-rates = <400000000>;
++};
++
++&pgc_gpumix {
++	assigned-clocks = <&clk IMX8MP_CLK_GPU_AXI>,
++			  <&clk IMX8MP_CLK_GPU_AHB>;
++	assigned-clock-parents = <&clk IMX8MP_SYS_PLL3_OUT>,
++				 <&clk IMX8MP_SYS_PLL3_OUT>;
++	assigned-clock-rates = <600000000>, <300000000>;
++};
++
++&media_blk_ctrl {
++	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_AXI>,
++			  <&clk IMX8MP_CLK_MEDIA_APB>,
++			  <&clk IMX8MP_CLK_MEDIA_DISP1_PIX>,
++			  <&clk IMX8MP_CLK_MEDIA_DISP2_PIX>,
++			  <&clk IMX8MP_CLK_MEDIA_ISP>,
++			  <&clk IMX8MP_VIDEO_PLL1>;
++	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_800M>,
++				 <&clk IMX8MP_SYS_PLL1_800M>,
++				 <&clk IMX8MP_VIDEO_PLL1_OUT>,
++				 <&clk IMX8MP_VIDEO_PLL1_OUT>,
++				 <&clk IMX8MP_SYS_PLL1_800M>;
++	assigned-clock-rates = <400000000>, <200000000>,
++			       <0>, <0>, <400000000>,
++			       <1039500000>;
++};
+
+-- 
+2.39.5
 
