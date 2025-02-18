@@ -1,149 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7592EAE6;
-	Tue, 18 Feb 2025 17:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3518426F44F
+	for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 17:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739898158; cv=none; b=e7IymiN1IkGWXFtpRryNvxSk3Nc45tU/ZoWWbkYFW+g32KsRzW2GdlkhITsqQh8U+ifwrTLUcfdKTVFz1hmbHy7ARZBeBt4J5Geqyjbowh1P9ywEgf1pCSTauCwb0+QKgeXYfhTqrOfffEJwzjCGgxFZfjbeRsHrFynejPj8UE0=
+	t=1739899086; cv=none; b=kY5Ok2dqnpznuuJ9msteCq+tXUcwSWD0QRcfaSF7Bq1eSwTK3jwE3HoLsf8UxGKlI9pwVxZhaR+yKYCNVX23XJttLadRZmG3EJMOho6xNb+IrpkJS9ntRhkhtciT9VMTCwOTI5rWkWxLWANc6OCxTVlxr6iNhR10q11U1ns8GGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739898158; c=relaxed/simple;
-	bh=hxZMRmhOej47toRK0ik8X/JMRjiOAT/0BXqJA9WLLpI=;
+	s=arc-20240116; t=1739899086; c=relaxed/simple;
+	bh=+HqbUx3NMhsdQmv5gJG5aY4LXcTPtScM4DxHwm+OZQE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u/trUrBISxvmihN5/23WUoorEArDR/LQYPP56sXWXHGEBsaAe2n8y2CVEnF71UdvW8ybdoxaTL7xqBT4x1aWyl58OI/OM3DDvJX+a+v3T4b1palv/GJvtMpT8vAm5cbgyuxEZ77BVvMkGP258xSZ9858r7Cua4wICxHJodesRCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0rViv0s; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYoTA9wI2ta9oBqhhVKfmyF0m0yhqg5h4H95YquWadQDnnBGFMPL+LW++F4JPuRhme7lDZufU3XNJbeLzHOnzndEDQ7IjgMhbXOzJU3TfUX79pMRgCm8VekpYYFIOhMgJuTkNdWB+srBI3wJis4XxkKGbTFEvgMlJHxw6oWMTuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EVNvjlRT; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0rViv0s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0710C4CEE2;
-	Tue, 18 Feb 2025 17:02:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739898158;
-	bh=hxZMRmhOej47toRK0ik8X/JMRjiOAT/0BXqJA9WLLpI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V0rViv0sVQMs1kcS09YPvJGHeRgaoq1Jl9rlYGzR4H9ea6gvTt6GDQSQFfi39D5MW
-	 Lx0wkdSCEG6bIPhtC94JRqFKxcR9OBZYlYA+INqx3FWi7nUQh5Y/aBXq+qiEQI8EyK
-	 sgbC8X2HWlAbIc9fuXT0ZQxNxgZ72DWakw6ivVnB1ou4fdsrCeyCZ4yfUuuaCeWVwa
-	 wWyeva0LHupfTEwL4WJKQ17ZCeLMaJObNQO+uNdz0eByJHKyYmltmKp6BsTPAPUv83
-	 i+OgfxTIjVRcgGpIVjTZO2yfanb7r58xBadVfuw1off27um1zAjgVgWHynyitiYJap
-	 Hs4iFjifok+cw==
-Date: Tue, 18 Feb 2025 17:02:32 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Xukai Wang <kingxukai@zohomail.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Troy Mitchell <TroyMitchell988@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 0/3] riscv: canaan: Add support for K230-Canmv clock
-Message-ID: <20250218-poplar-iron-c894fe8deca6@spud>
-References: <20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EVNvjlRT"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30737db1aa9so54484511fa.1
+        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 09:18:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1739899083; x=1740503883; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vFCpXaDjW046OAnqXzChWWxg9c6BmmKNGNdZCuQPouY=;
+        b=EVNvjlRTUjkWqiPgbRWJw+S1FY9HkvT9IlDK2h1m0AJwDk16lysLtGRpnmF6DDGZ/u
+         wA1eVgnaopeOtemJJSeb+neL4Xf+y63zfagZhIEiSEzYDwlXQiabOLHkJ5DQdR+vkglT
+         RATECJW+hfCEci9yB+imfuLfJen7QC6TP2si8Vc86GA0FauTPr6rzMWaTw+hKJFkV+DA
+         8x3PvFxtfec23ZKgOPtaRvQzj7gUXJgaXuFDdecqiowCO4AmkaUjfXPtYb8g+MCCbL4+
+         LEtn6VylQrUhQc8Dg+BwO12JvMA/IiByyvbaNotBh+gTHGqHzgULgOqpRDYfaCqzfbsC
+         YDLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739899083; x=1740503883;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vFCpXaDjW046OAnqXzChWWxg9c6BmmKNGNdZCuQPouY=;
+        b=pQn8CKg50/PjWs6PGPzJ29EQgDVkfAmGQw9N6vnX/G3Akype7nasIt57Wc1CrSBmGz
+         Q3cHGoioRVMGa4rguF2Qj+5AXHYJxqMhQ0GPBeunWhLJW9Ldb9nZVXBr8Pby+QZkzimf
+         SeJByVKFAs+GCsb+2qmKHjxphf80YU0OASIKV9CzzpdYLnbdvV7tPYL+Fag4OMi4P+Fy
+         iwQWp66vspRV2jhZ55ETDs1lOirFiBbCRjMnbyDLxndoqhRLB6v6QYkGTzRvpj2Xg3/r
+         I6afwPP3BwSA4aJKgHIJALVIq5uVw1MS9Dz43TYgyof8IdtzPSZ5Xrh28d++LCRM4w8p
+         8PDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWt4c8+5tYM5Bygjoa73kGuOw7o/Jiyj1v1FAbb9+fm+1uB/1JTK6T27TPb/bT7U+ujxc08uSMgyDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPu7kr0deQvBfK57elSypQGZUDFuX0YCFH+Y2wTGFphoMB1T9W
+	c1EqZPbXK4/6kpPv+qUGHITwJCHxLyEWw7MBwjxNh5Wbx/bGRvu4ubN0cAAy3nA=
+X-Gm-Gg: ASbGnct+RJTDnifCn80f0YjlqMnb8/QtVyVUQU829wPvOMTd/FNmy0r25xeVAnltGkW
+	Wc4qtof5QYVla9dmsfRyXXM6WHWDCGrzHaZUgrdpsW5thwk4NqZmgFn8e2XkU1NS2lQZDH1EUTp
+	HL+IA5JlPkPuW3Pf7eEQOgRyEeMmYBUeST/Pd5CV7m1pXLQ2wgFMHU0g9bqg2XhTQXw3bWGYP3R
+	2mCbAbabmP3LZxcoyjxevcUSzylVJgsGpOxz+G3S9D0ErUssk3da2ATpcac4s/pElvqKb+qIJZc
+	h9GThXnqD1sUL0wkkTrd0ve8XwGg2x8Tvdd+ZN4tZP/wx+vd3DCAFm4q15XfnLdsytmxCDw=
+X-Google-Smtp-Source: AGHT+IE6rXImPRtO7WIVZArsGTCop6s7h35hJORLydABfahalgPYT5N99LSGxqzFHXrjk0jBaudiMg==
+X-Received: by 2002:a05:651c:94:b0:309:1c03:d2d3 with SMTP id 38308e7fff4ca-30a45035a02mr559491fa.25.1739899083255;
+        Tue, 18 Feb 2025 09:18:03 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309311777a8sm12756301fa.25.2025.02.18.09.18.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 09:18:02 -0800 (PST)
+Date: Tue, 18 Feb 2025 19:18:01 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] clk: qcom: common: Attach clock power domains
+ conditionally
+Message-ID: <2c5rbbpe5muw53oemyq6vhsmhzpzcpn7on4ujl5v7i7s3fdlob@eh37gy5dpfnp>
+References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+ <20250218-videocc-pll-multi-pd-voting-v1-3-cfe6289ea29b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="kbLHPbgA0NhUTES7"
-Content-Disposition: inline
-In-Reply-To: <20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com>
-
-
---kbLHPbgA0NhUTES7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250218-videocc-pll-multi-pd-voting-v1-3-cfe6289ea29b@quicinc.com>
 
-Stephen,
+On Tue, Feb 18, 2025 at 07:56:48PM +0530, Jagadeesh Kona wrote:
+> Attach clock power domains in qcom_cc_really_probe() only
+> if the clock controller has not already attached to them.
 
-Is the driver in this series satisfactory to you? If it is, can I send
-you a PR containing it and the binding so that I can apply the final
-patch in the series (and merge the basic support for the k230 soc)?
+Squash this to the previous patch and call the new function. No need to
+duplicate the code.
 
-Cheers,
-Conor.
-
-On Mon, Feb 17, 2025 at 10:45:15PM +0800, Xukai Wang wrote:
-> This patch series adds clock controller support for the Canaan Kendryte
-> K230 SoC. The K230 SoC includes an external 24MHz OSC and 4 internal
-> PLLs, with the controller managing these sources and their derived clocks.
->=20
-> The clock tree and hardware-specific definition can be found in the
-> vendor's DTS [1],
-> and this series is based on the K230 initial series [2].
->=20
-> Link: https://github.com/kendryte/k230_sdk/blob/main/src/little/linux/arc=
-h/riscv/boot/dts/kendryte/clock_provider.dtsi [1]
-> Link: https://lore.kernel.org/linux-clk/tencent_F76EB8D731C521C18D5D7C4F8=
-229DAA58E08@qq.com/ [2]
->=20
-> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
-> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
->=20
+> 
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
 > ---
-> Changes in v4:
-> - Remove redundant onecell_get callback and add_provider function
-> for pll_divs.
-> - Modify the base-commit in cover letter.
-> - Link to v3: https://lore.kernel.org/r/20250203-b4-k230-clk-v3-0-362c791=
-24572@zohomail.com
->=20
-> Changes in v3:
-> - Reorder the defination and declaration in drivers code.
-> - Reorder the properties in dts node.
-> - Replace global variable `k230_sysclk` with dynamic memory allocation.
-> - Rename the macro K230_NUM_CLKS to K230_CLK_NUM.
-> - Use dev_err_probe for error handling.
-> - Remove unused includes.
-> - Link to v2: https://lore.kernel.org/r/20250108-b4-k230-clk-v2-0-27b30a2=
-ca52d@zohomail.com
->=20
-> Changes in v2:
-> - Add items and description.
-> - Rename k230-clk.h to canaan,k230-clk.h
-> - Link to v1: https://lore.kernel.org/r/20241229-b4-k230-clk-v1-0-221a917=
-e80ed@zohomail.com
->=20
-> ---
-> Xukai Wang (3):
->       dt-bindings: clock: Add bindings for Canaan K230 clock controller
->       clk: canaan: Add clock driver for Canaan K230
->       riscv: dts: canaan: Add clock initial support for K230
->=20
->  .../devicetree/bindings/clock/canaan,k230-clk.yaml |   43 +
->  arch/riscv/boot/dts/canaan/k230.dtsi               |   32 +
->  drivers/clk/Kconfig                                |    6 +
->  drivers/clk/Makefile                               |    1 +
->  drivers/clk/clk-k230.c                             | 1347 ++++++++++++++=
-++++++
->  include/dt-bindings/clock/canaan,k230-clk.h        |   49 +
->  6 files changed, 1478 insertions(+)
-> ---
-> base-commit: 7fdb24bbac37ce692346d60b89f5aa29844b8b88
-> change-id: 20241206-b4-k230-clk-925f33fed6c2
->=20
-> Best regards,
-> --=20
-> Xukai Wang <kingxukai@zohomail.com>
->=20
+>  drivers/clk/qcom/common.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index ec27f70b24bdec24edd2f6b3df0d766fc1cdcbf0..eb7e2a56d1d135f839fd9bd470ba6231ce775a8c 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -300,9 +300,12 @@ int qcom_cc_really_probe(struct device *dev,
+>  	if (!cc)
+>  		return -ENOMEM;
+>  
+> -	ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+> -	if (ret < 0 && ret != -EEXIST)
+> -		return ret;
+> +	cc->pd_list = desc->pd_list;
+> +	if (!cc->pd_list) {
+> +		ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+> +		if (ret < 0 && ret != -EEXIST)
+> +			return ret;
+> +	}
+>  
+>  	reset = &cc->reset;
+>  	reset->rcdev.of_node = dev->of_node;
+> 
+> -- 
+> 2.34.1
+> 
 
---kbLHPbgA0NhUTES7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7S9KAAKCRB4tDGHoIJi
-0rI1AP9y8hypNtdPcY14Ojl+N98Ywv6/Uwj7IvHIC4k2+k80ZAD/RhGE8a8Zix3V
-2BB5hrI/mGOw51ydyOw7cdBuw6S8nAk=
-=hINT
------END PGP SIGNATURE-----
-
---kbLHPbgA0NhUTES7--
+-- 
+With best wishes
+Dmitry
