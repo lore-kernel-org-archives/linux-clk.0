@@ -1,140 +1,150 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F841A5BA7;
-	Tue, 18 Feb 2025 11:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B61B23FC4A
+	for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 11:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739878088; cv=none; b=At6OVHFD9K+4Ux/B6UUjKbvUHGXDkouM4eqKKs8XaCR3SgbsEcgeo89uC2TR+TOsCUYkJMAB2xHVn250AKjqbqaLD+J8TmIUPFbVNiRxqbnrgth7rTJCRBpA7xQfj9d86VmL7xZeSyrflDAlZwDpetqELb7aJCEs6JU7HsJSe40=
+	t=1739878919; cv=none; b=oOojq/YHdqYJgFFBFAm75Ua8Kw0nZyT+qK071EwG7ufZN7rpF13UGOrfQXZQ/wFc9JJNXa5A1qPh+bZidjbvU5gwcMrxYhxH1KR3iMIIN6jOHe5BIfbs38SJ0y24ydaMtknUHdroPVjNkuY+j2cUFVgDxB8+JTuQ0i/HMKsvPD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739878088; c=relaxed/simple;
-	bh=iovXbbyKWiK/0EHpRva+oRsY15LjviC8RGRvQ9oppKM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RusaDebgb/aqmYrUtDQxvTLZCwp3cLhMhRaSP9M5k0px3xP40WKHnoox44ypt03PDhAFTIuqmYnQcqbPDfkDoDshyAkBikPsVz+tLFjug6l63wPkhgSS1vTVrcgNeZedcaf7ZpY5OnHhTuwAI3GceYJZy54HPC3AnFHmIjpV21g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PvtAQfNW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1739878919; c=relaxed/simple;
+	bh=qetabGxYbS2Xn9VVfPXOuzSTSZeCSKTs2TYqNLNDv8U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UKFnpBPD6CAd2PYQ03W2wlF4ZgCfB+rgf0m2f03G8hLqqeZU7xX9TrupTkpISTf1WxUaeijNLAb9WEJTudn1qZDDJz2c1n0QebU1+tmuBYqUgt11u8/4BqPgUImC8Yujkh+CD8aMND+Qf56drzbM1pAZEIaQUstf54c3IMS4dN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=fLzPseWo; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PvtAQfNW"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51HNmHMn004131;
-	Tue, 18 Feb 2025 11:27:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5OfFu0RkbbUZXKY+wlw4vZE7RYzdrPOYjbu2BnT5c6Y=; b=PvtAQfNWI3yUvGM2
-	Dd0P6GTjmPE1mlYQa5mhDKT+hFVhmIVHJCznIxxQ7RyKA82HCT46KJhK1KBadAzj
-	goXnUWyyCxFQ1FaR/Yjq+TMwcg0ijMH3jsqCaGj1mM9e79AXbYyw4hpv76fQbc7F
-	l/szK2KjM/PamX7SCCC6FEx5uFTYjyeTxLt4x+CuyGK0MgjJx7reZjx7uS5FxcOg
-	/Xq4W/bTIA65Lrrs7qbZMUesPjnjEw2ahRApkv849l9eesvkmHh5wN3cpR0x6ITE
-	lx2wXDiw6ZAwBFvhPifKxTlZjOf2k48gENOhEMEMm2PEHiA3WXzvldYoqy94dvt/
-	EUNuvQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7uvmq9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 11:27:44 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51IBRPD8031473
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Feb 2025 11:27:25 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Feb
- 2025 03:27:15 -0800
-Message-ID: <25e5840d-a9c3-45fa-ae06-e18c387f1efc@quicinc.com>
-Date: Tue, 18 Feb 2025 16:57:12 +0530
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="fLzPseWo"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e02eba02e8so4546893a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 03:41:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1739878915; x=1740483715; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8aKmlMmkGK0UfyeuqhRhT99w4TL2OYZoP6ekSWwvJ0Q=;
+        b=fLzPseWoH2hHIdsJvFm5EYZJ5fe2BQ2oyyryYNXQlkSZHNxxgBhMrCzgkN0n3FGmc/
+         TCYlHYeRKhydcmYvbb1WAHRpODulIpLojkkwbiw6IWSzqUqUr1J/TXZihfmpMCei/8KG
+         3dnuVsojDWrJYJ24vI/5sI9u7vyI9aSPSpQih0ULu7y1cWWide6ZG73jl012J4VQwMdW
+         PMNzuG2XGRHLAASQFJSNmN/kyLkmKndyhhJlzr7DKJ4XCpNgg+XGdS3nFBPx//EpVcvm
+         rF7cerWXZjrZyvnaBWIoA+De5bTAaZWTuW8CABQytJ5zrrvJP77+XmNk8u52doe+YeZW
+         lhKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739878915; x=1740483715;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8aKmlMmkGK0UfyeuqhRhT99w4TL2OYZoP6ekSWwvJ0Q=;
+        b=vm2ANR50z6EGBwGNTbTWr1+ObvkG2pTZGl6QDhLxVvM8yG/5Aj6DNMVcvwfkb2fsg2
+         guPcBIq4JJ0CLNlrEtGVeqEcLJw/PjD43AouZxCGlZp/d3hPwG4PJLzcE0820rtD+Srr
+         a1jPDO3Ytn+OSmfM1AFVCNbEKBWxvf+bM19mFYT0B5H5V4F1i85j9rMOu80JL8mYtIV8
+         acc8U92ppsLXg5IwFdbQZsjuSFc+pjvPaBRnekXPX3O3XoeCWEl0DvgDlTTxJcff+wFt
+         jglYOh10MXb6ZD9BU1rRo8Sm4GfnX0XXEuRakjrg/arrCLHUucM+1XLnVXlymPSyCS7t
+         zvNw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1uaBzoD1DIT+SOYvwGgkaJjzGGVTTQe8kCou7Ro/4d9ybdx+AWHe4S3CAAodZi9MMsxsgu/hY1ZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy092Q8fL+al+esAegZPONJvH/gLNq+PRh8ep9PjcoHEu+5ryzD
+	EBnOYenCzGGFVXJChPhh5bXGelfDwm7/lg3Wg+COragk1Sx3G2z1A34C2JxJvedgz9geHoqpBpG
+	x6mwzxBKZrASPaI83bcFHxc6fsgoJj6ytXEDs5Q==
+X-Gm-Gg: ASbGnctkCDtmXhSgs9+N6ScIoyxqrjZgt8xCXGTz0nX3vu3mac5lZ1LXj3Rs1pCyG6I
+	ckFdjxGg5cmPAX5x8PJ95DtUgdFOu3EGXZvWUuwT9BqUXKlur5z+lBf/RKYmvKlN3WM3Sn18e
+X-Google-Smtp-Source: AGHT+IEPNee71mSksjXSeSsWHrS2KAR9wIT4sz1ud5v06geo9drLnl7hEt7tvSIgJJ+4DJzXS69UPDMhP8dla+sJ57w=
+X-Received: by 2002:a17:907:c1f:b0:ab7:86af:9e19 with SMTP id
+ a640c23a62f3a-abb70db8274mr1197625166b.43.1739878915362; Tue, 18 Feb 2025
+ 03:41:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 5/6] arm64: dts: qcom: ipq9574: Add nsscc node
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <konradybcio@kernel.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>, <p.zabel@pengutronix.de>,
-        <richardcochran@gmail.com>, <geert+renesas@glider.be>,
-        <dmitry.baryshkov@linaro.org>, <arnd@arndb.de>,
-        <nfraprado@collabora.com>, <biju.das.jz@bp.renesas.com>,
-        <quic_tdas@quicinc.com>, <ebiggers@google.com>, <ardb@kernel.org>,
-        <ross.burton@arm.com>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20250207073926.2735129-1-quic_mmanikan@quicinc.com>
- <20250207073926.2735129-6-quic_mmanikan@quicinc.com>
- <ee166cf3-4486-4172-a510-bafa1624ab79@oss.qualcomm.com>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <ee166cf3-4486-4172-a510-bafa1624ab79@oss.qualcomm.com>
+References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
+ <20250213171435.1c2ce376@bootlin.com> <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
+ <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
+ <821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch> <CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
+ <20250213195304.3a2df02c@bootlin.com> <CAMEGJJ0kGCj=tjM6KswbG_+ZFkzMwPY+06BXCU0qSnbBKz0=ug@mail.gmail.com>
+ <20250213220639.373da07b@bootlin.com> <CAMEGJJ2_HVKfsE3P22baadbzxSDAX=yTr=m76YuXa5A2cJsJig@mail.gmail.com>
+ <20250217165306.3f055b94@bootlin.com> <CAMEGJJ13476pKJb441o5X0Y+rbfromj5-3V-j2KZiOt326OL4A@mail.gmail.com>
+ <20250217185559.2e56bd75@bootlin.com>
+In-Reply-To: <20250217185559.2e56bd75@bootlin.com>
+From: Phil Elwell <phil@raspberrypi.com>
+Date: Tue, 18 Feb 2025 11:41:43 +0000
+X-Gm-Features: AWEUYZmepFe2lsLe25Me9NjAHmXEX0-yOAHWU0twEqpljxZQoXOSSXs2uoT9kzs
+Message-ID: <CAMEGJJ2m+Qjk4L5xFJZk+X7XSiop_63BH9gsrykLwz3+VMAQfA@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
+ a DT overlay
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>, 
+	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
+	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
+	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, kw@linux.com, 
+	Linus Walleij <linus.walleij@linaro.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
+	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
+	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
+	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
+	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8uUAcfAcj6CylrdPtUO1K7NHTHtu96ta
-X-Proofpoint-ORIG-GUID: 8uUAcfAcj6CylrdPtUO1K7NHTHtu96ta
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-18_04,2025-02-18_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=999 spamscore=0 clxscore=1015 malwarescore=0 bulkscore=0
- mlxscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502180090
 
+On Mon, 17 Feb 2025 at 17:56, Herve Codina <herve.codina@bootlin.com> wrote:
+>
+> On Mon, 17 Feb 2025 17:03:34 +0000
+> Phil Elwell <phil@raspberrypi.com> wrote:
+>
 
+<snip>
 
-On 2/10/2025 11:47 PM, Konrad Dybcio wrote:
-> On 7.02.2025 8:39 AM, Manikanta Mylavarapu wrote:
->> From: Devi Priya <quic_devipriy@quicinc.com>
->>
->> Add a node for the nss clock controller found on ipq9574 based devices.
->>
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->> Changes in V9:
->> 	- Rebased on linux-next tip.
->>
->>  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->> index 942290028972..29008b156a7e 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->> @@ -1193,6 +1193,25 @@ pcie0: pci@28000000 {
->>  			status = "disabled";
->>  		};
->>  
->> +		nsscc: clock-controller@39b00000 {
->> +			compatible = "qcom,ipq9574-nsscc";
->> +			reg = <0x39b00000 0x80000>;
->> +			clocks = <&xo_board_clk>,
->> +				 <&cmn_pll NSS_1200MHZ_CLK>,
->> +				 <&cmn_pll PPE_353MHZ_CLK>,
->> +				 <&gcc GPLL0_OUT_AUX>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>,
->> +				 <0>,
->> +				 <&gcc GCC_NSSCC_CLK>;
-> 
-> This last clock doesn't seem to be used in the driver - is that by design?
+> > The job of the nexus node would be to translate a generic request for
+> > a numbered resource to a specific request for an RP1 resource with
+> > arbitrary properties. The arbitrary properties could be GPIO offsets,
+> > which are board specific, while the node supplying the resource is
+> > provided by the overlay. This means that an entry in the table,
+> > described by a single property, could have contributions from the base
+> > DT and the overlay, which is not possible since overlays overwrite
+> > whole properties.
+>
+> Hum, I am a bit lost.
+> Some DT example (base and overlay) could help me to understand.
 
-Hi Konrad,
+I could, but I think it is becoming a distraction.
 
-Initially, was under the impression that the GCC_NSSCC_CLK will be enabled by the Ethernet driver.
-However, that is incorrect and this clock is needed for accessing the NSSCC block itself. Hence restoring this.
+<snip>
 
-I will enable this clock by using the PM APIs (pm_clk_add()) in next version.
+> > I think I can see how that could be made to work for GPIOs. It looks
+> > as though the GPIO subsystem is the only one making use of
+> > of_parse_phandle_with_args_map. Interrupts seem to have an open-coded
+> > equivalent, and iommus. What about I2C and PWM?
+>
+> Support for PWM has been recently accepted.
+>   https://lore.kernel.org/all/ufl4kwrjyp4zid4muvghefevqc6hk3zyvxnsu72fxd4f46fzg6@hufkci2dzjid/
+>
+> For i2c, nexus node is not suitable.
+>
+> Nexus node works well when resources are indexed (gpio line in a gpio chip
+> for instance). For bus controller there is no index.
+> I mean we never refer a i2c bus controller using <&i2c-ctrl 12>.
+>
+> For i2c, I proposed i2c bus extension:
+>   https://lore.kernel.org/all/20250205173918.600037-1-herve.codina@bootlin.com/
 
-Thanks & Regards,
-Manikanta.
+I don't see in principle why an address-cells of 0 should cause a
+problem - it's a degenerate case, but it's still conceptually valid.
+
+However, we seem to be having to invent a lot of new infrastructure -
+some of it already supported by the kernel, some of it not - because
+we have made the mistake of using a discoverable bus for a
+point-to-point link on a PCB. I don't see how this is fundamentally
+different to the USB-attached Ethernet controller on e.g. the Pi 3B.
+Despite the fact that the Ethernet interface is discoverable, it has a
+Device Tree declaration (see
+arch/arm/boot/dts/broadcom/bcm283x-rpi-smsc9514.dtsi) in order that
+the firmware can supply a MAC address. Yes, the RP1 DT declaration is
+significantly larger, but size shouldn't matter for what seems to be
+objections based on tenets.
+
+Phil
