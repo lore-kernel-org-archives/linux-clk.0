@@ -1,140 +1,114 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE5C26AA94
-	for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 16:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3567322A80F;
+	Tue, 18 Feb 2025 16:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739897052; cv=none; b=pNRr7Hsb3YqEPYbE/4zw2LeeS3kSbJxrJ9tcyYOh2Bq5OKzgSkm433IkArH7KD6Z60luvjeKfF1fX7G55cjh7cjsh8RWSPXw3HQjR2+yhjMewvjeL84noZrApymgV5e9vX47MrKHDJY2FcHewgebRAMrRrlF784+QT6oCL+N1GE=
+	t=1739897435; cv=none; b=AYa9BHUXzaaZGrhBk7kTFVebiYeHaUYPykb2BuivW9ovDv8oVN3PV56lRCq4u4wo362nH/fAHpgcb2mXSCZ9cLyAQZth+8sFip/urz9wVlZWMWtjCuFeVV7sAHnfmy7yT1+T5rAW3x4J4VwGok+MqCokEpswoy4ySTQUWivpxPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739897052; c=relaxed/simple;
-	bh=ecVY+gv1Bw65DvJhP3WRsBzu8IgIbbZITzxHtqJ/Ow0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tFbmJ3ZLpbUHEwuJ/Xhj4ktClDy4EUw6VJHR1znts7ntrNvsBpgvRwKK7IlnhWKSeAbzTgk5fe6oU1pQdKYXyqCXSKdhrsuidigB5yLR0tSqwoPdP5V5xH32Hkk6Lmu7MQJGdOUOqK+5YWy3IKrQHqfpAuwzuOJl4CtOCNGtuLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LLnSo7/W; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1739897435; c=relaxed/simple;
+	bh=/YVHQ+p5V3VCdn+u9aKhlu71S03saM0vo09sgG79sWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y7x5Q5fayr5u26qdMsAsNXGZVqccfXWQhU5wtx3Cs0V6nHE412vaiyQ7vel7XkOqcvrDbmBzJB1imoKCqe6IDQ9UyYyYuftTK6CSIkJ4YQVnSkwSL+gfKTmcd9pPAM2U8sdqPwF3ADBY3lLZMkRndS9WA154/tAQRFrjYOYCc60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qDqc9Ukk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LLnSo7/W"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so38753375e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 08:44:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739897049; x=1740501849; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rNolTsZiemwL3MqHvmSKz5sOO+WofguQrhSb8yM7bJM=;
-        b=LLnSo7/Wrx/TOXZwwpTh5iDQKrGRXm0/eyiHuMxnt2ej+x4bPCI9hWm6PLXr6QZsCP
-         ltxaopu5I0UNowQbvj5DnMtVAOZbQ3ntdERzRyBKoKvGJJ6CB/fpr+O/L7N1Xb34Ybbh
-         b6XAP+nF/lV2+YoWBu1rKlIXX6eMekxmrdbYlREwWrKiRkEgmxmgY37SI3qpsItnLNPM
-         kko4UmjalEHMmp8LgZNybTuzmE0MAPF7qWGDnB5ceu45ClJv3aINB56mEGxCtYRkO+yg
-         fq8M51JKcmw1BiYmAnZxZRdFGJr/fP9LJ0N3GnzrsbParooItfs3q679uDyemXe5WoIx
-         OsFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739897049; x=1740501849;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rNolTsZiemwL3MqHvmSKz5sOO+WofguQrhSb8yM7bJM=;
-        b=SCQOznjrysBCatN+SkoF4xYlS1mRHSYJ69J9q0EcbNbLh0UifRHpTGZP6LOq967+/i
-         V0qd1yaJFOAjF92eMz0M0oIR2ddEw4aSjGoa083cAdEoX8RmTFAci6xwd/KXjSX5WQ59
-         ZlpgMYPZX9Zu7FY5DtDGmTn0NqhY/ze+TE2sHAMrYuprn46qMmN4XsqJkSfUFPBWWMpG
-         jsxcNdpF+hdGaRGUxdDCVbtdxCB7geffI0XOjn+8dEpDXSw5nmjXhSghBGVxjTsyrtrh
-         RSp8ho+MsSf4JPrJjxOPvnB+bLfMW2Z8//FUDsPuKiQ/DxSOJ78LlsMYMFhQ/KiDBMq9
-         iXsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOExqHg92tpbXj/Adc8a2HZMydQLZSZ1amcEY8ojISjoFBV1ehskOE9uX+TfJnoMY5Cj7IsrQuuEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeXU4WqMq0q4BjgfuIoNuCC0t5tMPtWX4b0PTdaZ0aMnLBj9E6
-	uguTNR7q/DWO8+MKY3uvZopQQ30UfaVb0A0mW6jzpeK1c1sW2I9SA0n/AxUjEJk=
-X-Gm-Gg: ASbGncsxdHAddjfEljdOaoyHm9jfJcvCvXWnuvHWmN17KO6njIq4/21bJfRSG5LkkF8
-	KLaIolpP/8hBE3OiflXtlaNIDaFs69BJMI8r3ceuJGFrPZ3Wc1usulg+0vxAbO9MZzsILKyLGO8
-	ma/ic83hon20AZPbS/zKdU7stBToocTVKDuWmMi6LCD/FmLNMPoHovQasUtvNeYUjaqGrkw3Gu/
-	1awO/y3Jmw+ciRbEKAwdFAye4ipZlTyKKJWDX+DbxmuyxljZOl3kwwUu7o+LgagtrjdUAgp/Jzx
-	WNh6MuEL5lt3Pf1+fxcUE89G169Of7hELyzThRPMEA+YOo/vaP6E9UC7
-X-Google-Smtp-Source: AGHT+IHRNK4mSxCdis54SwXkqCDZrb5jymOcpWY4wAXt2MV8r6iy6nxS/LiPmAc4W5Fyl5byIMaTTA==
-X-Received: by 2002:a5d:5f50:0:b0:38f:28dc:db50 with SMTP id ffacd0b85a97d-38f33f11953mr14595414f8f.1.1739897049224;
-        Tue, 18 Feb 2025 08:44:09 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258ddbbdsm15567675f8f.37.2025.02.18.08.44.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2025 08:44:08 -0800 (PST)
-Message-ID: <9e9f742a-2972-476a-91cf-fc596221bedb@linaro.org>
-Date: Tue, 18 Feb 2025 16:44:07 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDqc9Ukk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C74C4CEE2;
+	Tue, 18 Feb 2025 16:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739897434;
+	bh=/YVHQ+p5V3VCdn+u9aKhlu71S03saM0vo09sgG79sWU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qDqc9UkkxW2nMEk503wToA7FM1ONqMLx5RxYYa0YBCAQy+2Uxgtk2qJ7veH03JWTM
+	 JeNXodB/0x36gmhoNiS5jDt0pUodg8nlD+P0K9gzwp5hOdld34yotKzi8cPR5acJem
+	 /gWw33X4Fzt1czqg5v5AJOcXhNlkRAb+1ZqgAaC+RqhiXAaz1Iiuv0XHfJcAMxlinS
+	 8esBOwlcuxaK2Jd5ctgNIS6QT0TwCGIgXUfECcMSodmFqesrREcU8ExwGw4ENrgVHn
+	 ePwfCtEVUozIlhZQN4+liIK+LbtQJjQl3N/acjqWIpXbu2RRZ6xr1Ca82dFEudnGxH
+	 I9irZQomDOdqg==
+Date: Tue, 18 Feb 2025 16:50:29 +0000
+From: Conor Dooley <conor@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: sboyd@kernel.org, mturquette@baylibre.com, matthias.bgg@gmail.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	geert+renesas@glider.be, u.kleine-koenig@baylibre.com,
+	amergnat@baylibre.com, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	kernel@collabora.com, macpaul.lin@mediatek.com,
+	pablo.sun@mediatek.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: mediatek,mt8188: Add
+ VDO1_DPI1_HDMI clock
+Message-ID: <20250218-ferry-glorifier-e10b0ae13371@spud>
+References: <20250212100342.33618-1-angelogioacchino.delregno@collabora.com>
+ <20250212-arming-gyration-103e42b94ed6@spud>
+ <906ed1df-3c63-4028-ae7d-97e086acca32@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
- power domains
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
- <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
- <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
-Content-Language: en-US
-In-Reply-To: <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="koIZKDiabKMrvHLl"
+Content-Disposition: inline
+In-Reply-To: <906ed1df-3c63-4028-ae7d-97e086acca32@collabora.com>
 
-On 18/02/2025 15:46, Bryan O'Donoghue wrote:
->> +    ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8550_desc);
->> +    if (ret)
->> +        return ret;
->> +
->>       ret = devm_pm_runtime_enable(&pdev->dev);
->>       if (ret)
->>           return ret;
->>
-> 
-> What's the difference between doing the attach here or doing it in 
-> really_probe() ?
-> 
-> There doesn't seem to be any difference except that we will have an 
-> additional delay introduced.
-> 
-> Are you describing a race condition ?
-> 
-> I don't see _logic_ here to moving the call into the controller's higher 
-> level probe.
 
-I see you're saying do this before waking up the local PLLs prior to 
-really_probe.
+--koIZKDiabKMrvHLl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-hmm.. the existing code works for me on the CRD but not on the Dell 
-Insprion14 so I missed this on my series.
+On Tue, Feb 18, 2025 at 02:22:25PM +0100, AngeloGioacchino Del Regno wrote:
+> Il 12/02/25 20:17, Conor Dooley ha scritto:
+> > On Wed, Feb 12, 2025 at 11:03:41AM +0100, AngeloGioacchino Del Regno wr=
+ote:
+> > > Add binding for the HDMI TX clock found in the VDO1 controller.
+> > > While at it, also remove the unused CLK_VDO1_NR_CLK.
+> > >=20
+> > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@=
+collabora.com>
+> > > ---
+> > >   include/dt-bindings/clock/mediatek,mt8188-clk.h | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/include/dt-bindings/clock/mediatek,mt8188-clk.h b/includ=
+e/dt-bindings/clock/mediatek,mt8188-clk.h
+> > > index bd5cd100b796..0e87f61c90f4 100644
+> > > --- a/include/dt-bindings/clock/mediatek,mt8188-clk.h
+> > > +++ b/include/dt-bindings/clock/mediatek,mt8188-clk.h
+> > > @@ -721,6 +721,6 @@
+> > >   #define CLK_VDO1_DPINTF				58
+> > >   #define CLK_VDO1_DISP_MONITOR_DPINTF		59
+> > >   #define CLK_VDO1_26M_SLOW			60
+> > > -#define CLK_VDO1_NR_CLK				61
+> > > +#define CLK_VDO1_DPI1_HDMI			61
+> >=20
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > btw, I see the mt8195 has this same CLK_VDO1_NR_CLK define in it, if you
+> > fancy getting rid of that too.
+>=20
+> Thanks Conor, yeah I'll do that asap... one commit for each NR_CLK is a b=
+it
+> too much... I should just clean them all up :-)
+>=20
+> That requires a bit of work though, so it's not something that I can do in
+> a few minutes; let's see if I can make it for this cycle, but no promises.
 
-Instead of pushing qcom_cc_attach_pds() back up one level and having to 
-do that over and over again for each clock controller that has multiple 
-power domains, we could just move the configure pll logic to a callback.
+Yah, no worries. Was just pointing it out, don't need to let this
+particular patch wait around for it by any means.
 
-Add a new callback to qcom_cc_desc()->configure_plls()
+--koIZKDiabKMrvHLl
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Then qcom_cc_really_probe() would look like:
+-----BEGIN PGP SIGNATURE-----
 
-ret = devm_pm_domain_attach_list();
-if (ret < 0 && ret != -EEXIST);
-	return ret;
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7S6VAAKCRB4tDGHoIJi
+0menAPwMIMl/Yz8zjCE/wgQtTGuMlk04Porrv7GFsIP8l1gNMQEArAqwMMdmP2j1
+yXgjRkIPaKsOrL54hlT7KowOxubhEAo=
+=hGQS
+-----END PGP SIGNATURE-----
 
-desc->configure_plls();
-
-There's no point in having devm_pm_domain_attach_list() twice within < 
-20 LOC we should just force the sequencing in the right order once and 
-IMO do it in really_probe() so that we don't keep adding custom logic to 
-multi-pd controllers.
-
-Its a generic problem we can solve closer to the core logic.
-
----
-bod
+--koIZKDiabKMrvHLl--
