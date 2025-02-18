@@ -1,285 +1,144 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3892F269D1B;
-	Tue, 18 Feb 2025 14:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9972226A0DA;
+	Tue, 18 Feb 2025 14:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739888704; cv=none; b=uYoerA+FZiJgPCmoq2ckaaR428vWXo0mqTYZfl2uj0V33utSP+PfsSReRroy7KqkU1mNt5l2TWr5QZkB0MN/7wIDyW3BumykIT5qbVfoO0WLO3EY3lNIMavyvBiY4+R1Lom6Hr+PUsEv9EnGSUgdCanr3Q9EfCHxm/0GlkV7vcA=
+	t=1739888840; cv=none; b=YYQpFURAr7kV4QK6y0YhidrIBuveawfmkMHNP0f82q1mNFZUmaZZ/Ct4oKHN9M2mS+ONk+ifpgGcY7U/GpxMNCEeJIfuSPc+QPD1LlkpYpgB3p2JZ509+DdhsU4eBW/JlLzuJ12541FAm0+LYDS3tAPyvY4QsNXe6Lv3RaLdjpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739888704; c=relaxed/simple;
-	bh=J2eO9J9+mwdPHssF4xChq4+/7PjWA0b/HAjHIFjPlDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VgRDLrUfzXaSomwbbQy47OPql25/vfZ7jF1hS+30FnaGBdYwvAkqt1uGXOmvVtKIiaHMw4IkajlaUwpg+RrnC1YY81J0MPxCbwnA5u2dccRU6Yc3EWC/bwyLNww7kyqbZfYejxm9irRBgOWAIjpohpxvd85BFKmVi1CaojSZXiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T0PM7SUX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1739888840; c=relaxed/simple;
+	bh=QH903NIb9GJyvYyKPIRRFqRFCxhLcmgmnr5XXY1E+CY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=rbDemHJdFmFTcs2QxAPr4HJbNIf52iM4zMruvmhGtYdp0mH1GBv+bl/I0Ui3W876ZkANoKSH1BI9xTj7zeQfJqFOIE8GdQHAvFVV9cZ+XZLVQMqsb+hMDUyu/pGG3fyay0uVVFlR6cBlSym3kYmg2qqp9IP9f7xYqWGxVOpkz1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hRq1BfKI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T0PM7SUX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1739888700;
-	bh=J2eO9J9+mwdPHssF4xChq4+/7PjWA0b/HAjHIFjPlDM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T0PM7SUXm0tzDEgb3p7/B4sIX18u9xqr1zsMb31gron78SXny/pUQb6dWPugS+zHK
-	 zoRxMEOJH5ELNcNoNXjLsff5yFYH9vXdMnovMKc7AMmN62b2pQNnov79IbV0FQLk3B
-	 PXFsY/eKKaFsJH2puzbVSOdMjnxVVnDaIFcUftyxAvwpHK/X54+h5zn/KiNHU+9j/5
-	 VucuGlCZG1/a1HhI92k+VT46yqGIAsFt0VVpaC6SkCDd4pHOvCciFMzuexi8zTfCIk
-	 2vVJ3A3uIonc1hKstWUjrHX7JeMqNSLFHvAZzL7rTzLm+7LB+UPa04mp/oKg3+4mxU
-	 hhbiJDpHVNpUw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 636C717E0391;
-	Tue, 18 Feb 2025 15:24:59 +0100 (CET)
-Message-ID: <ddd1d62e-b1d2-4271-99a3-74bb0a48fb48@collabora.com>
-Date: Tue, 18 Feb 2025 15:24:58 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hRq1BfKI"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51IAmPmW020884;
+	Tue, 18 Feb 2025 14:27:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=9iwfL+tR5+6OVjLiIJa571
+	ZpVFtFKi21lmL2m7+nQz0=; b=hRq1BfKIBzarL8E3t4zsaSaBsLbWg0p0rrHbce
+	vcubzs4rPrh1MiDWKJa4856Gq73/0W669++cF+Xs751vZq8zq40c3TvCNtxQ0MVx
+	XmieVMPtA3+cgr0zAP2Kc9TBPHyeySdUl+2sGY1ASiHSxzgwtzH/brJeP4l2xw/J
+	BdO8LBqxq34DZuOyyRPK1e1Wbwvjv60ZugrrKVvJivyUjpLz8x7jIDZyOzMZPv5H
+	xSEwn437/GdGCytR2zqQ28wMz5qtIukCf8PUAhHCTXLbalLOe6kdIEnJxHWgz6tW
+	Lw8O6H/KG8rN2iZegMH2+GW1IsrvmwDbyxoTvT9uAvYY61yw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ut7sw530-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 14:27:14 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51IERD4Y012465
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Feb 2025 14:27:13 GMT
+Received: from [10.213.98.28] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Feb
+ 2025 06:27:09 -0800
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+Subject: [PATCH 0/5] clk: qcom: Add support to attach multiple power
+ domains in cc probe
+Date: Tue, 18 Feb 2025 19:56:45 +0530
+Message-ID: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: mediatek: Add SMI LARBs reset
- for MT8188
-To: =?UTF-8?B?RnJpZGF5IFlhbmcgKOadqOmYsyk=?= <Friday.Yang@mediatek.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- =?UTF-8?B?R2FybWluIENoYW5nICjlvLXlrrbpipgp?= <Garmin.Chang@mediatek.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>, =?UTF-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?=
- <Yong.Wu@mediatek.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor@kernel.org" <conor@kernel.org>
-References: <20250121065045.13514-1-friday.yang@mediatek.com>
- <20250121065045.13514-2-friday.yang@mediatek.com>
- <20250121-violet-widely-df3567b085a4@spud>
- <2bfb6c05a3471e54f51c06895709853661e82c9a.camel@mediatek.com>
- <20250124-aide-feisty-821cf9cf1382@spud>
- <85c616dd195da26313cab552b24f514b539193c1.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <85c616dd195da26313cab552b24f514b539193c1.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKWYtGcC/x3MQQqDMBAAwK/InruQBKu2XykeJLvqQkxCEkNB/
+ HtDj3OZCzIn4Qzv7oLEVbIE36AfHdh98RujUDMYZZ7K6AmrEAdrMTqHx+mKYCSsoYjfkAbdk+W
+ XVjxCG2LiVb7//TPf9w/GonXMbQAAAA==
+X-Change-ID: 20250218-videocc-pll-multi-pd-voting-d614dce910e7
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: DyjMi4cZoWxtEdqa8PrD4YZOxeKRWxC1
+X-Proofpoint-ORIG-GUID: DyjMi4cZoWxtEdqa8PrD4YZOxeKRWxC1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-18_07,2025-02-18_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=975 phishscore=0 spamscore=0 clxscore=1011
+ mlxscore=0 suspectscore=0 adultscore=0 priorityscore=1501 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502180108
 
-Il 18/02/25 13:44, Friday Yang (杨阳) ha scritto:
-> On Fri, 2025-01-24 at 17:31 +0000, Conor Dooley wrote:
->> On Wed, Jan 22, 2025 at 07:40:12AM +0000, Friday Yang (杨阳) wrote:
->>> On Tue, 2025-01-21 at 17:30 +0000, Conor Dooley wrote:
->>>> On Tue, Jan 21, 2025 at 02:50:40PM +0800, Friday Yang wrote:
->>>>> SMI LARBs require reset functions when applying clamp
->>>>> operations.
->>>>> Add '#reset-cells' for the clock controller located in image,
->>>>> camera
->>>>> and IPE subsystems.
->>>>
->>>> A new required property is an abi break, please explain why this
->>>> is
->>>> required.
->>
->> You never answered this part. From a quick check, looks like the
->> change
->> you made will cause probe failures if the resets are not present?
->> Maybe
->> I misread the driver code in my quick skim - but that is the
->> implication
->> of a new required property, so I didn't dig super far.
->>
->> Adding new properties that break a driver is not really acceptable,
->> so I
->> hope I made a mistake there.
->>
-> 
-> Sorry to reply late.
-> This is a known bus glitch issue. It worked because MediaTek has
-> provided patches 1, 2 and 3. In other word, it can not work
-> without patches 1, 2 and 3.
-> 
-> 1.
-> https://lore.kernel.org/all/20240327055732.28198-1-yu-chang.lee@mediatek.com/
-> 2.
-> https://lore.kernel.org/all/20240327055732.28198-2-yu-chang.lee@mediatek.com/
-> 3.
-> https://lore.kernel.org/all/20240327055732.28198-3-yu-chang.lee@mediatek.com/
-> 
-> Patches 1, 2 and 3 have been previously reviewed, and the reviewers
-> provided the following comments:
-> 4.
-> https://lore.kernel.org/all/CAFGrd9qZhObQXvm2_abqaX83xMLqxjQETB2=wXpobDWU1CnvkA@mail.gmail.com/
-> 5.
-> https://lore.kernel.org/all/CAPDyKFpokXV2gJDgowbixTvOH_5VL3B5H8eyhP+KJ5Fasm2rFg@mail.gmail.com/
-> As I mentioned earlier, SMI clamp and reset operations should be
-> implemented in SMI driver rather than the PM driver. Additionally, the
-> reset operations have already been implemented in the clock control
-> driver. There is no need to submit duplicate code.
-> 
-> To address this, I have provided patches 6, 7 to replace patches 1, 2,
-> and 3, as I believe this approach aligns more closely with the
-> reviewers' requirements.
-> 6.
-> https://lore.kernel.org/lkml/20250121065045.13514-1-friday.yang@mediatek.com/
-> 7.
-> https://lore.kernel.org/lkml/20250121064934.13482-1-friday.yang@mediatek.com/
-> 
-> What's more, I have tested the patch 6, 7 in MediaTek MT8188 SoC.
-> It could work well. If you have any questions, please feel free to
-> contact me.
-> 
->>> What are "SMI LARBs"? Why did things previously work
->>>> without
->>>> acting as a reset controller?
->>>>
->>>
->>> The background can refer to the discussion in the following link:
->>>
->>>
-> https://lore.kernel.org/all/CAFGrd9qZhObQXvm2_abqaX83xMLqxjQETB2=wXpobDWU1CnvkA@mail.gmail.com/
->>>
->>>
-> https://lore.kernel.org/all/CAPDyKFpokXV2gJDgowbixTvOH_5VL3B5H8eyhP+KJ5Fasm2rFg@mail.gmail.com/
->>> SMI clamp and reset operations should be implemented in SMI driver
->>> instead of PM driver.
->>
->> So the answer to how it worked previously was that nothing actually
->> used
->> this multimedia interface?
->>
->> Your commit message needs to explain why a new required property is
->> okay
->> and why it was not there before.
->>
+During boot-up, the PLL configuration might be missed even after
+calling pll_configure() from the clock controller probe. This can
+happen because the PLL is connected to one or more rails that
+are turned off, and the current clock controller code cannot
+enable multiple rails during probe. Consequently, the PLL may
+be activated with suboptimal settings, causing functional issues.
 
-This conversation slipped through the cracks - wanted to reply to this quite a bit
-of time ago but then for whatever reason .... eh here we are :-)
+The support to attach multiple power domains to clock controllers
+was recently added in Bryan's series[1] but it currently doesn't
+enable all clock controller power domains during probe which are
+needed for PLL configuration.
 
-Anyway.
+This series adds required support to enable the multiple power
+domains during clock controllers probe and adds support to enable
+both MMCX & MXC rails during probe for videocc on SM8450, SM8475,
+SM8550 and SM8650 platforms to configure the video PLLs properly.
 
-The cleanest option to get the glitching situation to get resolved is probably
-exactly the one that Friday proposed with this series...
+This fixes the below warning reported in SM8550 venus testing due
+to video_cc_pll0 not properly getting configured during videocc probe
 
-I agree that the commit needs a proper description, though, and even though the
-drivers were never actually used (so it's not a huge problem - as in - no device
-gets broken when this is merged), it's still an ABI breakage, and that has to be
-justified with a good reason.
+[   46.535132] Lucid PLL latch failed. Output may be unstable!
 
-The good reason is that there's a hardware bug that you're trying to resolve here
-and that emerged only after the initial upstreaming of this binding (do *not*
-mention drivers in DT bindings, those describe the hardware, not software!), and
-the only way to resolve this situation is by resetting the Local Arbiter (LARB)
-of the cam/img/ipe macro-blocks.
+[1]: https://lore.kernel.org/all/20250117-b4-linux-next-24-11-18-clock-multiple-power-domains-v10-0-13f2bb656dad@linaro.org/ 
 
-Failing to do this, the hardware is going to be unstable during high/dynamic load
-conditions.
+Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+---
+Jagadeesh Kona (4):
+      dt-bindings: clock: qcom,sm8450-videocc: Add MXC power domain
+      clk: qcom: common: Attach clock power domains conditionally
+      clk: qcom: videocc: Add support to attach multiple power domains
+      arm64: dts: qcom: Add MXC power domain to videocc nodes
 
-So, just describe the problem and how you're solving it in the commit description:
-that's going to be okay and justifying everything that you're doing here.
+Taniya Das (1):
+      clk: qcom: common: Add support to attach multiple power domains
 
-I'm sorry for chiming in that late, btw.
+ .../bindings/clock/qcom,sm8450-videocc.yaml         |  9 ++++++---
+ arch/arm64/boot/dts/qcom/sm8450.dtsi                |  3 ++-
+ arch/arm64/boot/dts/qcom/sm8550.dtsi                |  3 ++-
+ arch/arm64/boot/dts/qcom/sm8650.dtsi                |  3 ++-
+ drivers/clk/qcom/common.c                           | 21 ++++++++++++++++++---
+ drivers/clk/qcom/common.h                           |  2 ++
+ drivers/clk/qcom/videocc-sm8450.c                   |  4 ++++
+ drivers/clk/qcom/videocc-sm8550.c                   |  4 ++++
+ 8 files changed, 40 insertions(+), 9 deletions(-)
+---
+base-commit: e5d3fd687aac5eceb1721fa92b9f49afcf4c3717
+change-id: 20250218-videocc-pll-multi-pd-voting-d614dce910e7
 
-Cheers,
-Angelo
-
->> Thanks,
->> Conor.
->>
->>>
->>> I previously added the SMI reset control driver. However, the
->>> reviewer's comments are correct, these functions have already
->>> been implemented in the clock control driver. There is no need
->>> to submit duplicate code.
->>>
->>>
-> https://lore.kernel.org/lkml/20241120063305.8135-2-friday.yang@mediatek.com/
->>>
->>>
-> https://lore.kernel.org/lkml/20241120063305.8135-3-friday.yang@mediatek.com/
->>>
->>>
->>> On the MediaTek platform, the SMI block diagram like this:
->>>
->>>                  DRAM
->>>                   |
->>>              EMI(External Memory Interface)
->>>                   |  |
->>>            MediaTek IOMMU(Input Output Memory Management Unit)
->>>                   |  |
->>>               SMI-Common(Smart Multimedia Interface Common)
->>>                   |
->>>           +----------------+------------------+
->>>           |                |                  |
->>>           |                |                  |
->>>           |                |                  |
->>>           |                |                  |
->>>           |                |                  |
->>>         larb0       SMI-Sub-Common0     SMI-Sub-Common1
->>>                     |      |     |      |             |
->>>                    larb1  larb2 larb3  larb7       larb9
->>>
->>> The SMI-Common connects with SMI LARBs and IOMMU. The maximum LARBs
->>> number that connects with a SMI-Common is 8. If the engines number
->>> is
->>> over 8, sometimes we use a SMI-Sub-Common which is nearly same with
->>> SMI-Common. It supports up to 8 input and 1 output(SMI-Common has 2
->>> output).
->>>
->>>>>
->>>>> Signed-off-by: Friday Yang <friday.yang@mediatek.com>
->>>>> ---
->>>>>   .../bindings/clock/mediatek,mt8188-clock.yaml | 21
->>>>> +++++++++++++++++++
->>>>>   1 file changed, 21 insertions(+)
->>>>>
->>>>> diff --git
->>>>> a/Documentation/devicetree/bindings/clock/mediatek,mt8188-
->>>>> clock.yaml
->>>>> b/Documentation/devicetree/bindings/clock/mediatek,mt8188-
->>>>> clock.yaml
->>>>> index 860570320545..2985c8c717d7 100644
->>>>> --- a/Documentation/devicetree/bindings/clock/mediatek,mt8188-
->>>>> clock.yaml
->>>>> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt8188-
->>>>> clock.yaml
->>>>> @@ -57,6 +57,27 @@ required:
->>>>>     - reg
->>>>>     - '#clock-cells'
->>>>>
->>>>> +allOf:
->>>>> +  - if:
->>>>> +      properties:
->>>>> +        compatible:
->>>>> +          contains:
->>>>> +            enum:
->>>>> +              - mediatek,mt8188-camsys-rawa
->>>>> +              - mediatek,mt8188-camsys-rawb
->>>>> +              - mediatek,mt8188-camsys-yuva
->>>>> +              - mediatek,mt8188-camsys-yuvb
->>>>> +              - mediatek,mt8188-imgsys-wpe1
->>>>> +              - mediatek,mt8188-imgsys-wpe2
->>>>> +              - mediatek,mt8188-imgsys-wpe3
->>>>> +              - mediatek,mt8188-imgsys1-dip-nr
->>>>> +              - mediatek,mt8188-imgsys1-dip-top
->>>>> +              - mediatek,mt8188-ipesys
->>>>> +
->>>>> +    then:
->>>>> +      required:
->>>>> +        - '#reset-cells'
->>>>> +
->>>>>   additionalProperties: false
->>>>>
->>>>>   examples:
->>>>> --
->>>>> 2.46.0
->>>>>
-
+Best regards,
+-- 
+Jagadeesh Kona <quic_jkona@quicinc.com>
 
