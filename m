@@ -1,120 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB57749A;
-	Tue, 18 Feb 2025 08:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0221A841B;
+	Tue, 18 Feb 2025 08:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739866503; cv=none; b=F9ycMRELl+Rsb7jZfDH79A0+JXBMmfXoPxPZejS2OFi1ft+yoTFhCi2P5yymo8zoEonFrvCyyXTf7If8+4PbEf1a699N8gdIGD4lWpmNtXK/J7O9pz7HaEXjOdRhvWw2FT32J+TAQSgTXV4OTDyn2SQEvbCPmZOdwTji4GfLqVk=
+	t=1739867150; cv=none; b=IAkuEcpiAFAYhzb2LcNfGL+YCvbTedjcocrxGrZDPIKVk3TDLsX7wdKMtbC+C27qkDTGjTIJaIMSebqXyKH+0oz27bVxHgxAWmHqhlVY8NumCMvQiViVVYPQAp/GE7HVrE2tDuXUg+snsVe4k7GLRfD2EvRfpQo4IvcqN2M3M4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739866503; c=relaxed/simple;
-	bh=UFdR7IbguGl7iKpceVwoQo+fFJc+Ocd7Dgzg0nOOeAE=;
+	s=arc-20240116; t=1739867150; c=relaxed/simple;
+	bh=EvID7D86PKXTeqELs9veszakyXMUP1t20zGjfOD7Rt4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QR0TTmQpVg9VULZAspdn3kAXaCZJChPkVIgXhsTYTZbzZVqgBBNZoz0wAp3d7nmjlQNxnAR0aYXJhD8IWKBH+ur1iKiUOBz2XASSXQVyfPO1LB6oe+AwzwMqPB4q2W9x1nJZa+Az6/z5rPiZqgOKYUn2m6kp347tvTIBHSeLW6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=f4mC4+xj; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=u1l1FDXY72pPhwogVPO8gG67DNI4NezrgPDvGteJVIGnw3dJZI/vxPJ7rHP96ux4VCqtmlaJ2i4E0g2iqU8SFhrmLAmXpToGXhEXnNb+OEPCCcvhFJbx7+mWbYuyaV7FgPxzzPCTg0Uut0Eiv2koMiwp4nTKAtNfRaqpJpFBpjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3r4LZVw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="f4mC4+xj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 303D0C4CEE2;
-	Tue, 18 Feb 2025 08:15:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739866502;
-	bh=UFdR7IbguGl7iKpceVwoQo+fFJc+Ocd7Dgzg0nOOeAE=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3r4LZVw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A7A8C4CEE2;
+	Tue, 18 Feb 2025 08:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739867150;
+	bh=EvID7D86PKXTeqELs9veszakyXMUP1t20zGjfOD7Rt4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f4mC4+xjy8+3Ap3+zmCq4f4juZVPx3MmLXCA2pN+OuMHab5gaVtMq0RgIb/vmcIt4
-	 5pomyFm6UrsvIjuGwEbtdC0Cnn6HgTkNdbLBGtu/S6H3634IT4Qh8f1TMWeYpsxTMx
-	 HEiie4JkezV19OJAsaovd47Bq7gU0JDqjGhlceHw=
-Date: Tue, 18 Feb 2025 09:14:59 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Douglas Anderson <dianders@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v3 1/7] driver core: auxiliary bus: add device creation
- helpers
-Message-ID: <2025021826-smile-batting-e52f@gregkh>
-References: <20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com>
- <20250211-aux-device-create-helper-v3-1-7edb50524909@baylibre.com>
- <2025021437-washout-stonewall-d13e@gregkh>
- <1jwmdsxugx.fsf@starbuckisacylon.baylibre.com>
- <2025021501-tamer-sank-142a@gregkh>
- <1jikp8xx01.fsf@starbuckisacylon.baylibre.com>
+	b=X3r4LZVwnWLy/POh9hH3tZRQxKLNC1XClRyAHPbp2o1mm4xMHA4MRjgdRBRszn8tX
+	 y7VJKFLeiz+p+r2UUM82Nptn726NNgkG/JuPjxcYYDTQIRneYDE/hKbRtXngp00Fph
+	 g68+Z3QiTUgGQfW6oOOEGwZmsYRwJLkvJ8xXh0IItNPlFBaBjArVl8TDhPv76WXnuD
+	 xxv2EdFS64ShgdI6qiezKwfEqLbBNmWw98LM9ys50zz9t3GqWgDmXWlOIV4jB5WlkT
+	 GASt9J1eAtYDKfm+/6e9gfIP5l47Q3ERmlNZx4TuosVJPnKlT/9byu1o0WovsunJJK
+	 ExYJsVmS1wKEQ==
+Date: Tue, 18 Feb 2025 09:25:46 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: jiebing chen <jiebing.chen@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, jian.xu@amlogic.com, 
+	shuai.li@amlogic.com, zhe.wang@amlogic.com
+Subject: Re: [PATCH v2 2/5] dt-bindings: Asoc: axg-audio: Add s4 audio tocodec
+Message-ID: <20250218-opalescent-teal-of-patience-82cecb@krzk-bin>
+References: <20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com>
+ <20250214-audio_drvier-v2-2-37881fa37c9e@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1jikp8xx01.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <20250214-audio_drvier-v2-2-37881fa37c9e@amlogic.com>
 
-On Mon, Feb 17, 2025 at 07:10:54PM +0100, Jerome Brunet wrote:
-> On Sat 15 Feb 2025 at 07:53, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> 
-> [...]
-> 
-> >> 
-> >> >
-> >> >> +							int id)
-> >> >> +{
-> >> >> +	struct auxiliary_device *auxdev;
-> >> >> +	int ret;
-> >> >> +
-> >> >> +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
-> >> >> +	if (!auxdev)
-> >> >> +		return ERR_PTR(-ENOMEM);
-> >> >
-> >> > Ick, who cares what the error value really is?  Why not just do NULL or
-> >> > a valid pointer?  That makes the caller much simpler to handle, right?
-> >> >
-> >> 
-> >> Sure why not
-> 
-> I have tried the 'NULL or valid' approach. In the consumers,
-> which mostly return an integer from their various init function, I got
-> this weird to come up with one from NULL. EINVAL, ENOMEM, etc ... can't
-> really pick one.
-> 
-> It is actually easier to pass something along.
+On Fri, Feb 14, 2025 at 10:13:41AM +0800, jiebing chen wrote:
+> add the s4 tocodec compatible
 
-Ok, fair enough, thanks for trying.  But I would have returned just
--ENODEV in all cases, as that's what the end result was :)
+1. Please write full sentences.
+2. We see that from the diff. Say something about hardware instead.
 
-thanks,
+Please use subject prefixes matching the subsystem. You can get them for
+example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-greg k-h
+> 
+> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+> ---
+>  Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
+> index 23f82bb89750898d20c866015bc2e1a4b0554846..ea669f4359bc81b0f45bc2105c832fc2b11d8441 100644
+> --- a/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
+> +++ b/Documentation/devicetree/bindings/sound/amlogic,g12a-toacodec.yaml
+> @@ -26,6 +26,7 @@ properties:
+>        - items:
+>            - enum:
+>                - amlogic,sm1-toacodec
+> +              - amlogic,s4-toacodec
+
+Keep alphabetical order.
+
+Best regards,
+Krzysztof
+
