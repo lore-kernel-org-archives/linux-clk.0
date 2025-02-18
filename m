@@ -1,99 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3476822D7B1;
-	Tue, 18 Feb 2025 10:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CC423C8A9
+	for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 11:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739876079; cv=none; b=CAPoGX0nttFuclGDQaeW7Kjqgk1TZcKkd6P0EkQpeJFQuP7KjvQldRp45xz87dSvTLyj1evOMjQUXCjArwtV0PI/unP5Rv48n5v6o86kES+juAot1UDeohDXGzkN0KtCJPd/kct3BG9+yqNCr0OBTUHs/lmEKrAX+eJLAPVocTc=
+	t=1739877279; cv=none; b=B/+ltYFtVxgNoTInKb096xl8faDRN3Jw/zuTfKOnGdGYuUu/ODXU8s0VOQuoRiP2qk0U9v8souzAAeXDgh/5NjnWFxc6ycl2jefU+K8uMkODXHE3PZNAGnhEXu71Idntqi6XsS0a+M0/Wjh5yttQ0BkHuVMUyWe5Hh4qLP/d9xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739876079; c=relaxed/simple;
-	bh=RdaxUeKvZh5sL0uJ9BtFySXbqU59fk3zLkq47gAsBp0=;
+	s=arc-20240116; t=1739877279; c=relaxed/simple;
+	bh=CzKvQA0VswSdpIHPfZkDC1XIgL8JGpwAbo8/WLHhC+0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kGNLHsEKg1XeUDBwxLbFtr8hWw/NF+mQgB4oqcu12Kg/0Jb6u9oMMSGvlPa40KmL1fUoF1hSrN4YCEtdYjjssnVgXK68NMWCXP/RvTuGzNWNmpLBKgNOECczyK4J+JKsPE71Pu5+/kgWx73N6cjnJ1vLAVoBs0HV7XrnZhqHVn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NGdJ0xWo; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGdJ0xWo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DED8EC4CEE2;
-	Tue, 18 Feb 2025 10:54:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739876078;
-	bh=RdaxUeKvZh5sL0uJ9BtFySXbqU59fk3zLkq47gAsBp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NGdJ0xWorHM+qXxP6z1rSeaxtuPdGwDGjNbPbIrWqn2LZYrgAwf7tfZPrZJfTUp2k
-	 HAQMk4W5ei9khWJkMH+utPXmDd1oRqzwdKNh9yBkDxqo1Kwqm7JawToKHk8S3bNLF5
-	 QMihBcdYKQBetKQdUBAtsQ1mDQE0HTxkQv5d2v8ZgI2LSYNRcy31utnMKWhBXPPncG
-	 ypCuFYUO6ZlKV2AfP3Yxt9Fl9YLBOWK9PtChtQ2AxuKkBcc6dZu/LME9uclFbq9nbh
-	 a0BqbTtPB8mlohh/4vGAClo6rDyAh9d1d6UUrjKeY+V9JAqdWuFSvfb13pdTSf+qOJ
-	 NQ9zKlK53hOGw==
-Date: Tue, 18 Feb 2025 16:24:35 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Michal Simek <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
-	git@xilinx.com, Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Harini Katakam <harini.katakam@amd.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Mark Brown <broonie@kernel.org>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Mubin Sayyed <mubin.sayyed@amd.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Niklas Cassel <cassel@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" <dmaengine@vger.kernel.org>,
-	"moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" <linux-ide@vger.kernel.org>,
-	"open list:XILINX AMS DRIVER" <linux-iio@vger.kernel.org>,
-	"open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>,
-	"open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 2/2] dt-bindings: xilinx: Deprecate header with firmware
- constants
-Message-ID: <Z7Rm6/DYM67QbXvT@vaman>
-References: <cover.1738600745.git.michal.simek@amd.com>
- <2a6f0229522327939e6893565e540b75f854a37b.1738600745.git.michal.simek@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nXRfbhw1WAFyrm22K2iNtOHyBW8RSEyltWZrvgICaDhl1posf0uwXLmmuUgc9QQotjbSUSTmU6lWlpBR9WY5LOP03Ew9sXynvf6Gmc00sfJgjfoqLfHJwRfftXIVNsND20byXzOYAS59aC26FdhlhtR0tZTj64BQ5r3dAfKKNmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tkLYP-0005B9-Ti; Tue, 18 Feb 2025 12:14:17 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tkLYN-001aFH-2r;
+	Tue, 18 Feb 2025 12:14:15 +0100
+Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 702BE3C5B2C;
+	Tue, 18 Feb 2025 11:14:15 +0000 (UTC)
+Date: Tue, 18 Feb 2025 12:14:15 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-can@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
+Subject: Re: [PATCH 00/11] Add support for RZ/G3E CANFD
+Message-ID: <20250218-outgoing-binturong-of-tact-aa4d49-mkl@pengutronix.de>
+References: <20250218105007.66358-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="z6lokcnpvxqlpaay"
 Content-Disposition: inline
-In-Reply-To: <2a6f0229522327939e6893565e540b75f854a37b.1738600745.git.michal.simek@amd.com>
+In-Reply-To: <20250218105007.66358-1-biju.das.jz@bp.renesas.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On 03-02-25, 17:39, Michal Simek wrote:
-> Firmware contants do not fit the purpose of bindings because they are not
-> independent IDs for abstractions. They are more or less just contants which
-> better to wire via header with DT which is using it.
-> That's why add deprecated message to dt binding header and also update
-> existing dt bindings not to use macros from the header  and replace them by
-> it's value. Actually value is not relevant because it is only example.
-> 
-> The similar changes have been done by commit 9d9292576810 ("dt-bindings:
-> pinctrl: samsung: deprecate header with register constants").
-> 
-> Signed-off-by: Michal Simek <michal.simek@amd.com>
-> ---
-> 
->  Documentation/devicetree/bindings/ata/ceva,ahci-1v84.yaml  | 4 +---
->  .../bindings/dma/xilinx/xlnx,zynqmp-dma-1.0.yaml           | 3 +--
 
-Acked-by: Vinod Koul <vkoul@kernel.org>
+--z6lokcnpvxqlpaay
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 00/11] Add support for RZ/G3E CANFD
+MIME-Version: 1.0
 
--- 
-~Vinod
+On 18.02.2025 10:49:50, Biju Das wrote:
+> The CAN-FD module on RZ/G3E is very similar to the one on both R-Car V4H
+> and RZ/G2L, but differs in some hardware parameters:
+>  * No external clock, but instead has ram clock.
+>  * Support up to 6 channels.
+>  * 20 interrupts.
+
+Thanks for you contribution. Can you split this series in fixes and
+enhancements and post the fixes as a separate series. Please add
+stable@k.o on Cc if needed.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--z6lokcnpvxqlpaay
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme0a4QACgkQDHRl3/mQ
+kZy1HQf/Ra/7NSy+7EbzmQjtexxW1MNCxtpZKA3Bh5+doGSLvtiwwD5TePU41XMc
+36D4mLSyExIuxREb6Zd188JVf0W9PVoFO6paThCK1jPKzTJI0H5u2dTXrbyFYm5N
+b+udrsOoV6ivihs9itEePaQ7QwZMEG6ONZSvPw9maHNzIvUdJeukqOtTSvWzATCa
+T/NHWcR6rZk1Xjf/JhKeTythzpu7WmcqHbNE/VOHzWLDubKJvXw5nmMN6q2Ob76V
+lCMGx3Lm+ww3mhBO6T2ObN5j9LsIwI9YHk14kwhgUZ8a5xATAJIZ2keBtnpRAWmv
+J110WHSpR1bGISUnlsgik8KJncgeOg==
+=r/2J
+-----END PGP SIGNATURE-----
+
+--z6lokcnpvxqlpaay--
