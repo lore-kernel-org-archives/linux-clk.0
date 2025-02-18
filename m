@@ -1,39 +1,40 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786311EB5DC
-	for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 18:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D6B26FA5D;
+	Tue, 18 Feb 2025 18:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739903248; cv=none; b=rjNHgOogtzGhroqN7OYxsYP98fuydAehbtT6EhGJrmsPUfMMoiEmRQttcFbzcWZQxO0wz06sR+7/FSrdSLUNxEcTSSxpp9T6nAiEFMLfKrOJK4mBgw3PU6/aSn9T0wIPvj8fhjoBT50/n/3TfSRBHSIBjWZwUQ88ES/TCbY/Reo=
+	t=1739904659; cv=none; b=a5eTh9QjtOWcdLGRrFcrPOygmw2a9v6SdRjCxJ7phbkpLXHQqJBeOl4r68JS+YKafBUY8bN/uuw8Qi1tl+m80Ffw96C6od3mkF6/386whwm0RDHnUMHCEoTeNzfsITWUUb1xJhLYXUUsVIG+qOuSdSAWEbkKAHmLe9FRZrqt5mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739903248; c=relaxed/simple;
-	bh=zNE/DNv8Rppeo9YS/X0VZcm7JvRezuQoHrQ8Y+6T7r0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CBUetHAvegy9ME0M31VzQDbTPlvygWa4JHPYbBNJ96v0A1KEjfQMx8jhyUuSebIxOGsxOb3YkcAYcMG6wRZhJw6bWapU2UbM5ozHv+kvFk4JeJSH8GdxX5z6K5nbPcrQm+ybagLs7/9yVVH7SAuqNsBMjodAVM7uAsf/O/kP0kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tkSIy-0006Bf-13; Tue, 18 Feb 2025 19:26:48 +0100
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tkSIx-001dVA-1V;
-	Tue, 18 Feb 2025 19:26:47 +0100
-Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
-	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tkSIx-00A9Hm-1B;
-	Tue, 18 Feb 2025 19:26:47 +0100
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Tue, 18 Feb 2025 19:26:41 +0100
-Subject: [PATCH v4 1/6] dt-bindings: clock: imx8m: document
- nominal/overdrive properties
+	s=arc-20240116; t=1739904659; c=relaxed/simple;
+	bh=BXcSZpx+Le2bntwbZDzn7we6IloI2TDAfbSfncDltOE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UKv85A3sNwtZQoPTSeMtuycEooowhSAJ14dqKiP1edv2fVVIYgQa3nkot5xD18PdKbWH/D7SktLms0zeF4SFhQRExdO+UD+Ejj9k7fBiutvDkMMEJKwz03vq38/sA2wN4jATCAUCn2EVkhWROYbDDREU0/9AWpgPOLEEH3GDucY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=fXFaJ5Oq; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="fXFaJ5Oq"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 7CA7525FB4;
+	Tue, 18 Feb 2025 19:50:55 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id D7HvUdC65Vq9; Tue, 18 Feb 2025 19:50:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1739904654; bh=BXcSZpx+Le2bntwbZDzn7we6IloI2TDAfbSfncDltOE=;
+	h=From:Subject:Date:To:Cc;
+	b=fXFaJ5OqeuwDC+WuzjXOs8vW1foiisKEEffYVOfdFCplENol26rGMgwcgm9iWa8QK
+	 M54UNyaCsDfiOpAuWDGFqXfmTeW717GEh9NGS3dk4uoYoMue19ZM8R9ezgywsMeZTh
+	 q8cqsAUXZp4JQrQuhnUXc2ZsZlEfJxFQw/N999cw0g+NDNGP8KRl+JSnuLYT04WaSl
+	 Nrc0Hpdzp43xmUH3n/Yd2olo4aCeAckLJ/hVBukDyJy2ECW0o740F6S9nDfJ37XCTc
+	 Dg2u3SVa3uoNcK8sXwzq68SuPo2sTNulczv4uhfQ6X9n0FuIXmD/EUwM6RqDyIPn8z
+	 4ebmQBV1Aqzmg==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v3 0/5] Introduce support for Exynos7870 clocks and PMU
+Date: Wed, 19 Feb 2025 00:20:27 +0530
+Message-Id: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,88 +43,86 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250218-imx8m-clk-v4-1-b7697dc2dcd0@pengutronix.de>
-References: <20250218-imx8m-clk-v4-0-b7697dc2dcd0@pengutronix.de>
-In-Reply-To: <20250218-imx8m-clk-v4-0-b7697dc2dcd0@pengutronix.de>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+X-B4-Tracking: v=1; b=H4sIAHPWtGcC/3WNQQ6CQAxFr0K6dkyhklFX3MOwGKBCozJkigRCu
+ LsjiUuX7yX//RWUg7DCNVkh8CQqvo9AhwTqzvUtG2kiQ4ZZjhmS4XnpvdqzRTO83qZ++vqhpsG
+ KCC8W2VmI2yHwXea9eysjd6KjD8t+M6Vf+yue/hSn1KBxhISO86rKqWhEg/fj0YcWym3bPpfOA
+ Fe8AAAA
+X-Change-ID: 20250203-exynos7870-pmu-clocks-d0b330970ea7
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, Frank Li <Frank.li@nxp.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abel.vesa@linaro.org>, 
- Marek Vasut <marex@denx.de>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Ahmad Fatoum <a.fatoum@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739904648; l=2379;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=BXcSZpx+Le2bntwbZDzn7we6IloI2TDAfbSfncDltOE=;
+ b=y+09pcC11CL24RvdlKFlTZ5Vaa3GKfmOCyi0Gb2s4Z00xUVnohX3SmWiXy06QZHlM5mdsvlPd
+ yKsXXXEXbBZDiAi4h7BK0P6N12/Z3juZq93EBiWLWQIs28Fyy4TzBwk
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-The imx8m-clock.yaml binding covers the clock controller inside all
-of the i.MX8M Q/M/N/P SoCs. All of them have in common that they
-support two operating modes: nominal and overdrive mode.
+Add a CMU driver for Exynos7870 devices. It handles the following
+clock banks:
+ * CMU_MIF
+ * CMU_DISPAUD
+ * CMU_FSYS
+ * CMU_G3D
+ * CMU_ISP
+ * CMU_MFCMSCL
+ * CMU_PERI
 
-While the overdrive mode allows for higher frequencies for many IPs,
-the nominal mode needs a lower SoC voltage, thereby reducing
-heat generation and power usage.
+It also documents Exynos7870 PMU's compatible, and adds a CLKOUT driver
+which depends on the compatible. The CLKOUT driver manages clocks from
+PMU_DEBUG.
 
-As increasing clock rates beyond the maximum permitted by the supplied
-SoC voltage can lead to difficult to debug issues, device tree consumers
-would benefit from knowing what mode is active to enforce the clock rate
-limits that come with it.
+This patch series is a part of Exynos7870 upstreaming.
 
-To facilitate this, extend the clock controller bindings with an
-optional fsl,operating-mode property. This intentionally allows the
-absence of the property, because there is no default suitable for all
-boards:
-
-For i.MX8M Mini and Nano, the kernel SoC DTSIs has assigned-clock-rates
-that are all achievable in nominal mode. For i.MX8MP, there are some
-rates only validated for overdrive mode.
-
-But even for the i.MX8M Mini/Nano boards, we don't know what rates they
-may configure at runtime, so it has not been possible so far to infer from
-just the device tree what the mode is.
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
 ---
- Documentation/devicetree/bindings/clock/imx8m-clock.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Changes in v3:
+- Fix incorrect versioning (Link to v2: is labelled as v1).
+- Fix formatting issues in clk-exynos7870 DT docs (from v1).
+- Add myself as maintainer for clk-exynos7870.
+- Change clock name definitions in clk-exynos7870 DT docs.
+- Fix line wrapping in commit message of exynos7870-pmu DT docs.
+- Change a few ordinals of PERI* clocks in the clk-exynos7870 driver.
+- Take over ownership of patches by the co-author, upon their request.
+- Link to v2: https://lore.kernel.org/r/20250204-exynos7870-pmu-clocks-v1-0-a3030ae5bb53@disroot.org
 
-diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-index c643d4a814786a1fc7e559140fe58911990f71bb..4fec558327027faa0a8d2a15699c03713da2deae 100644
---- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
-@@ -43,6 +43,13 @@ properties:
-       ID in its "clocks" phandle cell. See include/dt-bindings/clock/imx8m-clock.h
-       for the full list of i.MX8M clock IDs.
- 
-+  fsl,operating-mode:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    enum: [nominal, overdrive]
-+    description:
-+      The operating mode of the SoC. This affects the maximum clock rates that
-+      can safely be configured by the clock controller.
-+
- required:
-   - compatible
-   - reg
-@@ -109,6 +116,7 @@ examples:
-                  <&clk_ext3>, <&clk_ext4>;
-         clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
-                       "clk_ext3", "clk_ext4";
-+        fsl,operating-mode = "nominal";
-     };
- 
-   - |
+Changes in v2:
+- Drop all patches from v1 except:
+  - dt-bindings: clock: add clock definitions for exynos7870 CMU
+  - dt-bindings: clock: document exynos7870 clock driver CMU bindings
+- Add patch for adding appropriate PMU compatible.
+- Add patches for CMU and CLKOUT drivers.
+- Link to v1: https://lore.kernel.org/all/20250203-exynos7870-v1-0-2b6df476a3f0@disroot.org/
 
+---
+Kaustabh Chakraborty (5):
+      dt-bindings: clock: add clock definitions for exynos7870 CMU
+      dt-bindings: clock: document exynos7870 clock driver CMU bindings
+      dt-bindings: soc: samsung: exynos-pmu: add exynos7870-pmu compatible
+      clk: samsung: add initial exynos7870 clock driver
+      clk: samsung: add exynos7870 CLKOUT support
+
+ .../bindings/clock/samsung,exynos7870-clock.yaml   |  227 +++
+ .../bindings/soc/samsung/exynos-pmu.yaml           |    1 +
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos-clkout.c            |    3 +
+ drivers/clk/samsung/clk-exynos7870.c               | 1830 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos7870.h             |  324 ++++
+ 6 files changed, 2386 insertions(+)
+---
+base-commit: e5d3fd687aac5eceb1721fa92b9f49afcf4c3717
+change-id: 20250203-exynos7870-pmu-clocks-d0b330970ea7
+
+Best regards,
 -- 
-2.39.5
+Kaustabh Chakraborty <kauschluss@disroot.org>
 
