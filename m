@@ -1,150 +1,169 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B61B23FC4A
-	for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 11:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECA223C8DC
+	for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 11:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739878919; cv=none; b=oOojq/YHdqYJgFFBFAm75Ua8Kw0nZyT+qK071EwG7ufZN7rpF13UGOrfQXZQ/wFc9JJNXa5A1qPh+bZidjbvU5gwcMrxYhxH1KR3iMIIN6jOHe5BIfbs38SJ0y24ydaMtknUHdroPVjNkuY+j2cUFVgDxB8+JTuQ0i/HMKsvPD4=
+	t=1739879020; cv=none; b=kTkkjwQrxYI4100FEwCa4KJtIV/EWYb/11KjF6ccuq+OWLb3u22crD7Uq6Zop22I2FZEVjkiDEhUZ+6cE9ystdamEuhCZYi8/bCZ6RzrY9hyaYhNllRHGzF0di9znN1KZu6ZYES/yIlhSa/Le43uoNqfhORud9021ZQt74vDU5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739878919; c=relaxed/simple;
-	bh=qetabGxYbS2Xn9VVfPXOuzSTSZeCSKTs2TYqNLNDv8U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UKFnpBPD6CAd2PYQ03W2wlF4ZgCfB+rgf0m2f03G8hLqqeZU7xX9TrupTkpISTf1WxUaeijNLAb9WEJTudn1qZDDJz2c1n0QebU1+tmuBYqUgt11u8/4BqPgUImC8Yujkh+CD8aMND+Qf56drzbM1pAZEIaQUstf54c3IMS4dN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=fLzPseWo; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+	s=arc-20240116; t=1739879020; c=relaxed/simple;
+	bh=1mN+xNgaFFvNE9UYqlV3tBQki4fbSbB7xoygLiCSzbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t176ZL3jTLgjv9+ePd2DxKgN/8P0AJnkiHGgiOm62QENxROBa2aCEzl2lIkUJ+Q9Ijx+KL/EVdLRNWXllhzK08LB6XJgEV0YxvaPPa1rbqBo4zNaFDxnLRBvEWMwPP/kWwUbhoKrXrK9HK9rfBK0BX0eH+8iVMdjQSJghPE+bAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GB+XRPh/; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="fLzPseWo"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e02eba02e8so4546893a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 03:41:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GB+XRPh/"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-546237cd3cbso2052279e87.0
+        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 03:43:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1739878915; x=1740483715; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8aKmlMmkGK0UfyeuqhRhT99w4TL2OYZoP6ekSWwvJ0Q=;
-        b=fLzPseWoH2hHIdsJvFm5EYZJ5fe2BQ2oyyryYNXQlkSZHNxxgBhMrCzgkN0n3FGmc/
-         TCYlHYeRKhydcmYvbb1WAHRpODulIpLojkkwbiw6IWSzqUqUr1J/TXZihfmpMCei/8KG
-         3dnuVsojDWrJYJ24vI/5sI9u7vyI9aSPSpQih0ULu7y1cWWide6ZG73jl012J4VQwMdW
-         PMNzuG2XGRHLAASQFJSNmN/kyLkmKndyhhJlzr7DKJ4XCpNgg+XGdS3nFBPx//EpVcvm
-         rF7cerWXZjrZyvnaBWIoA+De5bTAaZWTuW8CABQytJ5zrrvJP77+XmNk8u52doe+YeZW
-         lhKQ==
+        d=linaro.org; s=google; t=1739879015; x=1740483815; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TDh3LF7I2VAOvbuYPKV/iG9cnLKgilP672D2NsUsYOM=;
+        b=GB+XRPh/KuwVxzzVET95bIwFd4RYRV4299ywjOQ62fWhQ2s1zEw2PK2sxauNE7PyCq
+         bpE2Ikmlfh7PhWNZGmxbc0YEKnTT3WddQFILl9YsRLM1nT1165fTx4nBXN1E1pgytwLU
+         jBSJqUamdr/mx9Ht9+Tdz5i8uUsPGT9Yfm9FugiIghlX/fHD46P87TnGjeHZyStoaCsO
+         g8EJFU/jTONwe4CAqPycMGjBqKmbtkzgD0B0mAcSQN5trbIy34irUD3NjYv19ygurvQI
+         lQqskxo8v0YRus/BuyB0nkOXUgQ9EsvKv5s9mTR4g16M5g5mRwNJmdd0pkP8AFFjMaL0
+         0MFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739878915; x=1740483715;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8aKmlMmkGK0UfyeuqhRhT99w4TL2OYZoP6ekSWwvJ0Q=;
-        b=vm2ANR50z6EGBwGNTbTWr1+ObvkG2pTZGl6QDhLxVvM8yG/5Aj6DNMVcvwfkb2fsg2
-         guPcBIq4JJ0CLNlrEtGVeqEcLJw/PjD43AouZxCGlZp/d3hPwG4PJLzcE0820rtD+Srr
-         a1jPDO3Ytn+OSmfM1AFVCNbEKBWxvf+bM19mFYT0B5H5V4F1i85j9rMOu80JL8mYtIV8
-         acc8U92ppsLXg5IwFdbQZsjuSFc+pjvPaBRnekXPX3O3XoeCWEl0DvgDlTTxJcff+wFt
-         jglYOh10MXb6ZD9BU1rRo8Sm4GfnX0XXEuRakjrg/arrCLHUucM+1XLnVXlymPSyCS7t
-         zvNw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1uaBzoD1DIT+SOYvwGgkaJjzGGVTTQe8kCou7Ro/4d9ybdx+AWHe4S3CAAodZi9MMsxsgu/hY1ZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy092Q8fL+al+esAegZPONJvH/gLNq+PRh8ep9PjcoHEu+5ryzD
-	EBnOYenCzGGFVXJChPhh5bXGelfDwm7/lg3Wg+COragk1Sx3G2z1A34C2JxJvedgz9geHoqpBpG
-	x6mwzxBKZrASPaI83bcFHxc6fsgoJj6ytXEDs5Q==
-X-Gm-Gg: ASbGnctkCDtmXhSgs9+N6ScIoyxqrjZgt8xCXGTz0nX3vu3mac5lZ1LXj3Rs1pCyG6I
-	ckFdjxGg5cmPAX5x8PJ95DtUgdFOu3EGXZvWUuwT9BqUXKlur5z+lBf/RKYmvKlN3WM3Sn18e
-X-Google-Smtp-Source: AGHT+IEPNee71mSksjXSeSsWHrS2KAR9wIT4sz1ud5v06geo9drLnl7hEt7tvSIgJJ+4DJzXS69UPDMhP8dla+sJ57w=
-X-Received: by 2002:a17:907:c1f:b0:ab7:86af:9e19 with SMTP id
- a640c23a62f3a-abb70db8274mr1197625166b.43.1739878915362; Tue, 18 Feb 2025
- 03:41:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739879015; x=1740483815;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TDh3LF7I2VAOvbuYPKV/iG9cnLKgilP672D2NsUsYOM=;
+        b=YPSq20JFpm3OkNuMWkLeKI8pFZm9UkHS8fx7Q4fY4kT21sH8aBQ88ZodTgSdDT9bIS
+         VzYf3HLYZyEEeXsmqx94hbuNCCCrtF+54A8RjZKTTwwCMROnhYWi90iAfua49HWvlVTV
+         nHqMPXhSzOzBbKltORmVu7Viv3IPQlQ+cllvA9b7lwPVXknoknZO7WgvpA/fD/Yj+YNT
+         urnYA+kdIwqq/UQpidhx/kdXT1InHhrMXD03cmIMEKqoYgHwG/H6DpYzWibbR5AbjmvC
+         quaS3YI279k/g63p9bgUHOa1NlPcoJwa+z+3GkHVnPgAW3M4fMz6uQAFeS2EkaRSUqt5
+         03/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW+EXyrWIvKQa/K73R2MiKbRaaaSv4u4ol4ptX2zAl2byz3kQLRuuAnZ/zm6sTTM9dfePZYHjz7OVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymnEfgm8XtrGrXSUQWEkoAIUqbt5ZwCe83fIrp7IPDRWvbR/id
+	3kfDjrrM9i7MwLap5i46tR+Z/oyLN/IuIa5nmqOWpXcMkA6uvJ5XcNchV5YsoKE=
+X-Gm-Gg: ASbGncuswl/6ANRPwEC7M/ITwYNKUVylZGJmYj/mRKpD5/aUBL/vB9+Z4CKjV/BzlSY
+	3h+mYgttwxzi/eQirZ4vNxMPI1Mxj6Lgk1ofo+eK2yXvxNjz+jNyB+0OvmgSoQ+0/DvI3eQ0DJz
+	Mv8VmxvfNoBiCuBrb8j64/ZP0gYoyLfDxduW9PPTwMSGC2jg67nQXfFHL+ScUEVgEeGp6y8+rdr
+	YUighPfTpaITB4guzoyrbo6BC3o2uzBvhaI4mDontskJQDETkq7aujR774kX/AorhxnLpkZqKVT
+	R9AJkZwnZWl6xidZBt7qSzSmB1W+dr36Xb2CiFvv8G8DbAWcl/jofgKpYwf/hAYOesf/PyE=
+X-Google-Smtp-Source: AGHT+IHO9NwIK+TdHNEcDP9zUALpP+YltWjVqof/wrSV+s+68TLTGCq/F5NabaF825FmYPwW4CFqtA==
+X-Received: by 2002:a05:6512:ea5:b0:545:6cf:6f3e with SMTP id 2adb3069b0e04-5452fea6e3fmr4013685e87.49.1739879015479;
+        Tue, 18 Feb 2025 03:43:35 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5461a6efd88sm980973e87.69.2025.02.18.03.43.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2025 03:43:35 -0800 (PST)
+Date: Tue, 18 Feb 2025 13:43:32 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for
+ LPASS resets for QCM6490
+Message-ID: <jxhkddeu32v5fg6avsa7pnzicreisrlzpws2nixaie2znn3eei@mstncyeqqfgg>
+References: <20250212-lpass_qcm6490_resets-v3-0-0b1cfb35b38e@quicinc.com>
+ <20250212-lpass_qcm6490_resets-v3-2-0b1cfb35b38e@quicinc.com>
+ <exyxni7td5vow2n6jarav5euje6dnbue5f5yxzu6az554dthfe@zn5yd2byvkoj>
+ <ccc87c55-d157-4ffc-8081-1a5900752931@quicinc.com>
+ <CAA8EJpp7e5q36jGmB-TZX5A=XVGKsDtmBF8kJmxoga8NqGZP1A@mail.gmail.com>
+ <c820c697-c3ec-4ae3-9720-fb80cb3a0450@quicinc.com>
+ <CAA8EJpon5+R5s0HXUmoikjtuyEf3sQUqBVYvWrxuh14h2DvjQg@mail.gmail.com>
+ <30e84d27-6047-492a-8602-8822b5d492fe@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
- <20250213171435.1c2ce376@bootlin.com> <a3c5103c-829a-4301-ba53-6ef9bd1e74e7@lunn.ch>
- <CAMEGJJ3-JXhin_Ht76EqUNAwLiNisa9PrCrdUzCgj=msGZfb5A@mail.gmail.com>
- <821d4c74-09b0-4c1b-b8ef-f8c08d0f6b5b@lunn.ch> <CAMEGJJ0QbzCScfTRA_pw_8A=iMYMAAFs69zFNLwcOxF5Syugpw@mail.gmail.com>
- <20250213195304.3a2df02c@bootlin.com> <CAMEGJJ0kGCj=tjM6KswbG_+ZFkzMwPY+06BXCU0qSnbBKz0=ug@mail.gmail.com>
- <20250213220639.373da07b@bootlin.com> <CAMEGJJ2_HVKfsE3P22baadbzxSDAX=yTr=m76YuXa5A2cJsJig@mail.gmail.com>
- <20250217165306.3f055b94@bootlin.com> <CAMEGJJ13476pKJb441o5X0Y+rbfromj5-3V-j2KZiOt326OL4A@mail.gmail.com>
- <20250217185559.2e56bd75@bootlin.com>
-In-Reply-To: <20250217185559.2e56bd75@bootlin.com>
-From: Phil Elwell <phil@raspberrypi.com>
-Date: Tue, 18 Feb 2025 11:41:43 +0000
-X-Gm-Features: AWEUYZmepFe2lsLe25Me9NjAHmXEX0-yOAHWU0twEqpljxZQoXOSSXs2uoT9kzs
-Message-ID: <CAMEGJJ2m+Qjk4L5xFJZk+X7XSiop_63BH9gsrykLwz3+VMAQfA@mail.gmail.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device using
- a DT overlay
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Andrea della Porta <andrea.porta@suse.com>, Arnd Bergmann <arnd@arndb.de>, 
-	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>, bhelgaas@google.com, brgl@bgdev.pl, 
-	Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com, 
-	devicetree@vger.kernel.org, dragan.cvetic@amd.com, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, kw@linux.com, 
-	Linus Walleij <linus.walleij@linaro.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, lpieralisi@kernel.org, 
-	luca.ceresoli@bootlin.com, manivannan.sadhasivam@linaro.org, 
-	masahiroy@kernel.org, Michael Turquette <mturquette@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, saravanak@google.com, Stephen Boyd <sboyd@kernel.org>, 
-	thomas.petazzoni@bootlin.com, Stefan Wahren <wahrenst@gmx.net>, 
-	Will Deacon <will@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <30e84d27-6047-492a-8602-8822b5d492fe@quicinc.com>
 
-On Mon, 17 Feb 2025 at 17:56, Herve Codina <herve.codina@bootlin.com> wrote:
->
-> On Mon, 17 Feb 2025 17:03:34 +0000
-> Phil Elwell <phil@raspberrypi.com> wrote:
->
+On Tue, Feb 18, 2025 at 10:53:05AM +0530, Taniya Das wrote:
+> 
+> 
+> On 2/13/2025 7:58 PM, Dmitry Baryshkov wrote:
+> >>>>>>  static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
+> >>>>>> -    .config = &lpass_audio_cc_sc7280_regmap_config,
+> >>>>>> +    .config = &lpass_audio_cc_sc7280_reset_regmap_config,
+> >>>>>>      .resets = lpass_audio_cc_sc7280_resets,
+> >>>>>>      .num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
+> >>>>>>  };
+> >>>>>>
+> >>>>>>  static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
+> >>>>>> -    { .compatible = "qcom,sc7280-lpassaudiocc" },
+> >>>>>> +    { .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
+> >>>>>> +    { .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
+> >>>>>>      { }
+> >>>>>>  };
+> >>>>>>  MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
+> >>>>>> @@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+> >>>>>>      struct regmap *regmap;
+> >>>>>>      int ret;
+> >>>>>>
+> >>>>>> +    desc = device_get_match_data(&pdev->dev);
+> >>>>>> +
+> >>>>>> +    if (desc->num_resets)
+> >>>>>> +            return qcom_cc_probe_by_index(pdev, 1, desc);
+> >>>>> Won't this break SC7280 support by causing an early return?
+> >>>>>
+> >>>> The resets are not defined for SC7280.
+> >>>> static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
+> >>>>         .config = &lpass_audio_cc_sc7280_regmap_config,
+> >>>>         .clks = lpass_audio_cc_sc7280_clocks,
+> >>>>         .num_clks = ARRAY_SIZE(lpass_audio_cc_sc7280_clocks),
+> >>>> };
+> >>>>
+> >>>> The reset get registered for SC7280 after the clocks are registered.
+> >>>> qcom_cc_probe_by_index(pdev, 1,  &lpass_audio_cc_reset_sc7280_desc);
+> >>> Could you please make this condition more obvious and error-prone
+> >>> rather than checking one particular non-obvious property?
+> >>>
+> >> Dmitry, we had earlier tried [1], but seems like we could not align on
+> >> this patchset.
+> >>
+> >> If you are aligned, please let me know I can fall back on the approach.
+> > You have been using of_device_is_compatible(). Krzysztof suggested
+> > using mach data. Both approaches are fine with me (I'm sorry,
+> > Krzysztof, this is a clock driver for a single platform, it doesn't
+> > need to scale).
+> > 
+> > You've settled on the second one. So far so good.
+> 
+> Sure, I will go ahead with the existing approach, but ensure I replace
+> the num_resets check with the of_device_is_compatible(), so it is more
+> readable. Hope this aligns with your thoughts as well.
 
-<snip>
+Ack, thanks.
 
-> > The job of the nexus node would be to translate a generic request for
-> > a numbered resource to a specific request for an RP1 resource with
-> > arbitrary properties. The arbitrary properties could be GPIO offsets,
-> > which are board specific, while the node supplying the resource is
-> > provided by the overlay. This means that an entry in the table,
-> > described by a single property, could have contributions from the base
-> > DT and the overlay, which is not possible since overlays overwrite
-> > whole properties.
->
-> Hum, I am a bit lost.
-> Some DT example (base and overlay) could help me to understand.
+> 
+> > 
+> > But! The problem is in readability. Checking for desc->num_resets is a
+> > _hidden_ or cryptic way of checking whether to register only a first
+> > controller or both.
+> > 
+> > BTW: the commit message also tells nothing about the dropped power
+> > domain and skipped PM code. Is it not required anymore? Is it handled
+> > automatically by the firmware? But I see that audio codecs still use
+> > that power domain.
+> Yes, it will be taken care in the firmware and I will update in the
+> commit text.
 
-I could, but I think it is becoming a distraction.
+Ack, thanks.
 
-<snip>
+> 
+> 
+> Thanks,
+> Taniya.
 
-> > I think I can see how that could be made to work for GPIOs. It looks
-> > as though the GPIO subsystem is the only one making use of
-> > of_parse_phandle_with_args_map. Interrupts seem to have an open-coded
-> > equivalent, and iommus. What about I2C and PWM?
->
-> Support for PWM has been recently accepted.
->   https://lore.kernel.org/all/ufl4kwrjyp4zid4muvghefevqc6hk3zyvxnsu72fxd4f46fzg6@hufkci2dzjid/
->
-> For i2c, nexus node is not suitable.
->
-> Nexus node works well when resources are indexed (gpio line in a gpio chip
-> for instance). For bus controller there is no index.
-> I mean we never refer a i2c bus controller using <&i2c-ctrl 12>.
->
-> For i2c, I proposed i2c bus extension:
->   https://lore.kernel.org/all/20250205173918.600037-1-herve.codina@bootlin.com/
-
-I don't see in principle why an address-cells of 0 should cause a
-problem - it's a degenerate case, but it's still conceptually valid.
-
-However, we seem to be having to invent a lot of new infrastructure -
-some of it already supported by the kernel, some of it not - because
-we have made the mistake of using a discoverable bus for a
-point-to-point link on a PCB. I don't see how this is fundamentally
-different to the USB-attached Ethernet controller on e.g. the Pi 3B.
-Despite the fact that the Ethernet interface is discoverable, it has a
-Device Tree declaration (see
-arch/arm/boot/dts/broadcom/bcm283x-rpi-smsc9514.dtsi) in order that
-the firmware can supply a MAC address. Yes, the RP1 DT declaration is
-significantly larger, but size shouldn't matter for what seems to be
-objections based on tenets.
-
-Phil
+-- 
+With best wishes
+Dmitry
