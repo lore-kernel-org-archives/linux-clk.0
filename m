@@ -1,383 +1,202 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A155617A308;
-	Tue, 18 Feb 2025 19:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9649721B9FF
+	for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 19:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739906796; cv=none; b=V/bzC3Oenf/k+3VTybKkP8mZ/T57Rt1IJ/muxTXFurUX55keTto9jCvBGOnc3DgmXrVlN+z1g5/iQyvUEp+yB+F4klCeomLza9XEXPzQgpf8Ndzu7Sfbyh7oqVPHINgzSFM7ID+6MXFWJC8KYAYIkC4CSjWl8O2x8vYPy+Pngkw=
+	t=1739907037; cv=none; b=vCMZEa24MrghrHr1dl0ybbglGv07NZmuRoqxk9ZKN7cLnIcKPWRM5uqYMukeBa4xEWyZ+6PUOQesgChwXqn6v2ZUY7eIJJIkyTG5FBncUdAEaNZ4DtNhkBfIIUUV9+1rtsy8yAxMcxxqzRId4Y5U2+V5BB0c3rs3HiER+xk7q8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739906796; c=relaxed/simple;
-	bh=RiKcmJX/8GC/W/buBuIX0hQHB/5PQiCKDdjKHe168CA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tRCoYNbD+4r36h9hUZ7iGpTHPg/mqkVdrwXo47KvEyXYiU6IaZZQM0n0Z8FsaOupb1MIqvPAw1PqZcZelJbf/06LcXt23QTc8qOntvRZmPP7mPjUATGhSF3ZhQVEWsSniAwK8CwwS+aFO4O5rEnGOvpqNrZWd+Cc9JAke059ucY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jc2ja61d; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739907037; c=relaxed/simple;
+	bh=5jr0njrsEqh+gx0/hryuSdGRgOG6j3FS8QheXHGTwG0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CzA0p28eQpaBkvbLF2dtach/S8bP0tFNKdEW3SjLLA2bO8tF2AZ8+S3oljpbPPdxG8TA+ySTxbLdwOXufq5FGEe5mnWupxErBmLudp9DeT4m0SOdWBarb5uHLH9BfhITnntNI9o1HEJIU6FJKSdr+Ydk6Kecbjze5lCtNve5b9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iPi9xbFX; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jc2ja61d"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-438a39e659cso40899025e9.2;
-        Tue, 18 Feb 2025 11:26:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iPi9xbFX"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so10886166a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2025 11:30:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739906793; x=1740511593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a0O7shOkTYYhzpBdc0RT+E/zz0YqOfNDEdfZfpbbnbE=;
-        b=jc2ja61dn+0iihPO9FTMRkA+xuc+qN01HuliVdsnuUxpINKI32nVSQMDOB7K4c/pXG
-         S90iOUz1syAY91lZ1fDrcoTOFJleBUrmjiKBKEEjHsWTd6DlTKdxxzfbzdHomyUy9G2H
-         VPxQ0OWen5RK5Fhxp8EcLINc6qZpS8zWiFIvyBSrd383Z/gQDkwLH1r7rLHU1XjSh/VV
-         T9bwphgJ/fAL1UDh8xzKXWxjrq2TrmUWMxIzbPPbaDYjU7yogghmH+L5cYTxNOwALeIP
-         pi3X8MDC8kNORw2bXZS0zXZVktvZ9+us9tTPJDgV71UjqTnS8UktoLttXa+hIQgj5KEv
-         sXIg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1739907033; x=1740511833; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mIW3Tj0XdfJSfKxjiYcsy2cS5srx8ZXffTdS0QjWZns=;
+        b=iPi9xbFXoFkuOB38lOMznWFcQ1MAMFKqht6vye+n3Kr7WYFLum3f5AyOCyMLjolYZb
+         Fpp85jTyXW1YczDxyrarLt+y1OTok1umGN6VdANm+G3B152uaDNvbSVo0psYdpfzZgqZ
+         U1V+bhTqhffnsmDklmKh6bWKjBLirzdisLJL8LDYUp6IWExy+G1YvNyRBQSqKxf/04+0
+         FlBh2y6DPVxJDi8NuFN04mH4NjuWF4S8vxwGvwdzy3xSoCDXmrVNRADn6q8lfoK2pXYX
+         MXzR4tnEn1nyGHXtaBSgZhzv6i5fO0wD13ecDvXJkqIHTPSRAX/mlUObCmJK6gvN203H
+         WW8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739906793; x=1740511593;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a0O7shOkTYYhzpBdc0RT+E/zz0YqOfNDEdfZfpbbnbE=;
-        b=PQVUsTj2I4EBcRmgnfbbqRZmHvLaDhdoFoWj880EaRMpB5uNOBcWhnjMYk0tXO9AT1
-         xDnu8e7VqktgOkr/f5KrigZ9nPBnrmgjPMa25gjaTVxFQrKVR0W+Fn9vIM/ezl2hL0eW
-         NZ2K/mou4UFppCVp3xXx5WX0yoYBNC5PH4dW05JqBTcItgQMnv9CcN2SYVCpkO6Qkv1x
-         goNIneQpJeUtEtBOvQsYDeGkyX1TMkeaQmgOUjnOjOJD8heIjjWnpxTJkGhFG9DvKaCK
-         oqS0H5FDFnqq8EqJitHjvlA6+xyUu3FW9F98dLGc2r798hK691ox3Tak6xk3ITEVUe1I
-         /G3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUC/RIzLONZpoF6B7ME0oVg2reZpbKIXqa7nVBpWG2OXnQQeRo56X8JWLYS5Yum2Vxl3BOewzSLkHqzh0RV@vger.kernel.org, AJvYcCUn0mk7/fliDPb6Qq5lL5qrQkAI5hHpICtSDgYDBdsWhbEG36zJ6FDZjzSuFOmRh/HfLjpLn8LFHnJp@vger.kernel.org, AJvYcCXFW6VQrkWSP8oZcK2Rqkn5dxNpFyYGoBzkWSGWyW/gf34gc7B7Ifs+J7x5EWifRCIcj3vwzET8BI8m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+bjJbu5YaXackjU/Ve1cdGckxnKvakTxRz5CiE6DXC5Iouhhb
-	YZrB6cAQIrrMFgfkeLsPQdHk97q2clRP3lT0duS7iy6UCqFEtdJU
-X-Gm-Gg: ASbGncu3CNpGNuGMCXZfowhbbocSLVoI+EsKwLqwei+MwhpDKNAbayvtJ5O7gRxdwkT
-	5mbP1+D3OMRppyyHCOZ4t9GKWYk3zq5yj4UggWGoDOl2RLdjZFsolHmZh13nsvFUlMapnqorAvU
-	HLALS8w7cuWTlZbmKYy7WuO07ZFbFm+z9QJ0SMecCwrZ/mh2U3Ggz63elDCQSpB2ijW6voC6Icy
-	c0XkQlipnqqOXGFbbuRoIHS0d3mToUkHIl950aLV9pCXpbvuVlajbOYojueFhG6SiGnAdNF1qvF
-	ktgQr3P2H8aGu+ctPzKHWbmS7dnpeoyHcwkKk0cw5he7Koaid0h9YP72httwE/z8ZAc=
-X-Google-Smtp-Source: AGHT+IE8P6Bf5j6JNMDNPPmdiyOQzARFL3KZEbRWk3stCaeMLQwc8p5C2vnHoL6JXmbjGbMJBisPYA==
-X-Received: by 2002:a05:600c:511a:b0:439:643a:c8c4 with SMTP id 5b1f17b1804b1-4396e7527cfmr125859015e9.22.1739906792544;
-        Tue, 18 Feb 2025 11:26:32 -0800 (PST)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439922141a5sm35844685e9.2.2025.02.18.11.26.31
+        d=1e100.net; s=20230601; t=1739907033; x=1740511833;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mIW3Tj0XdfJSfKxjiYcsy2cS5srx8ZXffTdS0QjWZns=;
+        b=M+UuPTSyomf/0Wz7AoqyGSI4y49VItCPEKUJG0wb7NlKhdMjJJkc23BRKUHVXrnOVm
+         YVD+2okur0MxUXg0IoaRWylyjAjykjDisNlrWgBFefQhtuX0FMWJxyBwRWDjhj9hDa1x
+         u4lvOj8P6C1akwYWXs0nGQP3pXtPhO2YQmS4OmSPsqjC03b9y8CmNkb1YrPl7ZBz8N9i
+         XiGd3NadTN37ycS8lkzwY0XjEmEC4XadOAiFGfopvIKEA/l1VLftVNNUwNzeviQxCkEn
+         G8zA9rboeSzjtzGKQg+Oy27Wc37AOPKvxRqiw9YWyvzFzhHNgP7rykKOOWWYmBUOwqq8
+         kp9w==
+X-Forwarded-Encrypted: i=1; AJvYcCU5e7+Nls8ge/31LPJH+oQ5ZsNYtxk6u+L5AS/Oji932EUeiZgk/k5CfXEWHhSOTR3wsvXDBXRn/2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzU75JUZH1mYnq9qYClQtC6cOm/8oHRoVSy6xq9jqMB67CSEU9
+	4ADDOcSNFn4wexPHfrj2Vw/u/D3UAnpE+MteOTtm4F++wu1rmm6HodBhlsDJT7U=
+X-Gm-Gg: ASbGncvNvuUacxx7jGQUGG3YyUEedAsjfWhmZwcEr+BWEsAt5M/OGMWmxfqLehLwH4N
+	4/ni/10PMJ5iaJ5g2FBKnMX1/CYld2e00/Z7gSNTmZ060M6qCxVT55ihgcfzdvgZDRv8hFm0PY0
+	BaZZzVYnfJwlLeNwd7B0cVaPEGTLXCkVxM0AaLIM5eQ/VG/g/eukYk58P3p3BmKFknhIs/AE8zk
+	DsGatSefoxWUvWuPx1KRc1GMEVHrcqEOg1WuArP7/6/xTKE26aKTpi2yHDxqItQRMhTBts+lINw
+	v9YwVxKiXb0IMQ6J2s3piQ0qosug
+X-Google-Smtp-Source: AGHT+IEsUkQkmLnMxncHVAOTmPsKmvVPSTaQR78ji9vJrVN7d833EMl3VWJfxC45bU7tBdks7OZrJg==
+X-Received: by 2002:a05:6402:51d4:b0:5e0:51a9:d410 with SMTP id 4fb4d7f45d1cf-5e051a9d59cmr11065896a12.25.1739907032830;
+        Tue, 18 Feb 2025 11:30:32 -0800 (PST)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:cbaf:af0:839d:fb4a])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1c3ce5sm9338985a12.17.2025.02.18.11.30.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2025 11:26:32 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
- Andre Przywara <andre.przywara@arm.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/15] clk: sunxi-ng: a523: add video mod clocks
-Date: Tue, 18 Feb 2025 20:26:31 +0100
-Message-ID: <9406479.CDJkKcVGEf@jernej-laptop>
-In-Reply-To: <20250214125359.5204-8-andre.przywara@arm.com>
-References:
- <20250214125359.5204-1-andre.przywara@arm.com>
- <20250214125359.5204-8-andre.przywara@arm.com>
+        Tue, 18 Feb 2025 11:30:32 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v4 0/8] driver core: auxiliary bus: add device creation
+ helper
+Date: Tue, 18 Feb 2025 20:29:45 +0100
+Message-Id: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKnftGcC/42NQQ6CMBBFr0Jm7RimLbG48h6GRSmDNEEgUyQQw
+ t2tnMDl+/n//R0iS+AI92wH4SXEMA4JzCUD37nhxRiaxKByZUhRju6zYpOKntELu5mx435iwVK
+ ToUIZLpSGNJ+E27Ce6meVuAtxHmU7nxb6pX9IF0LCwtpbaxpb6tw+arf1oRa++vEN1XEcXzgI+
+ /LDAAAA
+X-Change-ID: 20241210-aux-device-create-helper-93141524e523
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>, Danilo Krummrich <dakr@kernel.org>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Daire McNamara <daire.mcnamara@microchip.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Douglas Anderson <dianders@chromium.org>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ dri-devel@lists.freedesktop.org, platform-driver-x86@vger.kernel.org, 
+ linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3639; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=5jr0njrsEqh+gx0/hryuSdGRgOG6j3FS8QheXHGTwG0=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBntN/OWNreQDN/vUjV7hrjtf9acN+LfunziKrQQ
+ 0+55m0edLGJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZ7TfzgAKCRDm/A8cN/La
+ hRMsD/9ziamapLyta7b2bnUpuc3WwKbKpFZ9GL/J7nw2y3cw/h5jQBYbDSF9JrRSKgzBbfv6Sey
+ QRNn8YHjpUuiMQoo8wdF8JQAlfzz2s0Us6Or+rdpDD/QESOXyHDqj4MUG6FTXYd6FP3XToJ42vi
+ o298p/RQJt7nZk755yQCNu+oz2gqK2ZaQnsfxtwRPjODRR7EFCDtt6GzOIQ6gMys62o6Mk/PRs+
+ l1rKan/fK30ltLDStso25MaxLWBWV+npLFI35BMTlhMEwG+JTun3VMmjlWz9kiBjMqGBx2qiste
+ CCASomjcV/H2nDkNLAKwD/UefscVOHz9VIb3RNV4bBZIaCNqPYvjtZw8poWesaxupOoNpkApV1I
+ iuOjXT0pkOdE3AtkaBQ/6cVd15in+oW9zqTzplE86661VuagqxrOQ+l8pbmbmk0R89TtIXS6KLO
+ hLZG6xJCG94i6UMTAU0hCmZlQU/CW22okUfGUHjgTYK6ptzPX+PDffsa4fBWg7IHfxtdZ2bKtln
+ RgJlvATKPKlyz7ds7JlS5NJM9MAPT8rPBlDL08q9TxYGO1jW1mxv3I14XfLQ7XXv+yTGVoSNwA0
+ XUgHQc8fDO8z2hMMyQDJqxbCfvG5BaZ42qT2FGwEEHgMmmQe7i0RN0x7Le1Ppt/hMQ35Cpsysif
+ vfaUCrYJTwsPKFQ==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Dne petek, 14. februar 2025 ob 13:53:51 Srednjeevropski standardni =C4=8Das=
- je Andre Przywara napisal(a):
-> Add the clocks driving the various video subsystems of the SoC: the "DE"
-> display engine, the "DI" deinterlacer, the "G2D" 2D graphics system, the
-> Mali "GPU", the "VE" video engine, its associated IOMMU, as well as the
-> clocks for the various video output drivers (HDMI, DP, LCDs).
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 219 +++++++++++++++++++++++++
->  1 file changed, 219 insertions(+)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-n=
-g/ccu-sun55i-a523.c
-> index 59f45e7c0904b..0ef1fd71a1ca5 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> @@ -364,6 +364,192 @@ static SUNXI_CCU_M_DATA_WITH_MUX(apb1_clk, "apb1", =
-apb1_parents, 0x524,
->  				 24, 3,		/* mux */
->  				 0);
-> =20
-> +
-> +/***********************************************************************=
-***
-> + *                          mod clocks                                  =
-  *
-> + ***********************************************************************=
-***/
-> +
-> +static const struct clk_hw *de_parents[] =3D {
-> +	&pll_periph0_300M_clk.hw,
-> +	&pll_periph0_400M_clk.hw,
-> +	&pll_video3_4x_clk.common.hw,
-> +	&pll_video3_3x_clk.hw,
-> +};
-> +
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(de_clk, "de", de_parents, 0x600,
-> +				    0, 5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    CLK_SET_RATE_PARENT);
-> +
-> +static const struct clk_hw *di_parents[] =3D {
-> +	&pll_periph0_300M_clk.hw,
-> +	&pll_periph0_400M_clk.hw,
-> +	&pll_video0_4x_clk.common.hw,
-> +	&pll_video1_4x_clk.common.hw,
-> +};
-> +
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(di_clk, "di", di_parents, 0x620,
-> +				    0, 5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    CLK_SET_RATE_PARENT);
-> +
-> +static const struct clk_hw *g2d_parents[] =3D {
-> +	&pll_periph0_400M_clk.hw,
-> +	&pll_periph0_300M_clk.hw,
-> +	&pll_video0_4x_clk.common.hw,
-> +	&pll_video1_4x_clk.common.hw,
-> +};
-> +
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(g2d_clk, "g2d", g2d_parents, 0x630,
-> +				    0, 5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    0);
-> +
-> +static const struct clk_hw *gpu_parents[] =3D {
-> +	&pll_gpu_clk.common.hw,
-> +	&pll_periph0_800M_clk.common.hw,
-> +	&pll_periph0_600M_clk.hw,
-> +	&pll_periph0_400M_clk.hw,
-> +	&pll_periph0_300M_clk.hw,
-> +	&pll_periph0_200M_clk.hw,
-> +};
-> +
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
-> +				    0, 4,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    0);
+The suggestion for this change was initially discussed here: [1]
 
-GPU clock should have CLK_SET_RATE_FLAG.
+This patchset adds and use a helper to create a simple auxiliary device.
+The goal is to remove boilerplate code that tends to get repeated for
+simple cases.
 
-> +
-> +static const struct clk_hw *ve_parents[] =3D {
-> +	&pll_ve_clk.common.hw,
-> +	&pll_periph0_480M_clk.common.hw,
-> +	&pll_periph0_400M_clk.hw,
-> +	&pll_periph0_300M_clk.hw,
-> +};
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(ve_clk, "ve", ve_parents, 0x690,
-> +				    0, 5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    CLK_SET_RATE_PARENT);
-> +
-> +static const struct clk_parent_data iommu_parents[] =3D {
-> +	{ .hw =3D &pll_periph0_600M_clk.hw },
-> +	{ .hw =3D &pll_ddr0_clk.common.hw },
-> +	{ .hw =3D &pll_periph0_480M_clk.common.hw },
-> +	{ .hw =3D &pll_periph0_400M_clk.hw },
-> +	{ .hw =3D &pll_periph0_150M_clk.hw },
-> +	{ .fw_name =3D "hosc" },
-> +};
-> +
-> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(iommu_clk, "iommu", iommu_parents,=
- 0x7b0,
-> +				      0, 5,	/* M */
-> +				      24, 3,	/* mux */
-> +				      BIT(31),	/* gate */
-> +				      CLK_SET_RATE_PARENT);
+Only the last change was tested on actual HW. The other usage of the helper
+have only been compile tested with x64_64 allmodconfig. There are many other
+simple cases of auxiliary device creation but those tend to use the
+'container_of' trick to allocate the auxiliary device. It is possible to
+convert these drivers to use the provided helper but the conversion is
+slightly more complex.
 
-This won't work. IOMMU clock has also update bit, which must be set to actu=
-ally
-apply the new value, same as DDR clock.
+NOTE: This series is based on -rc1. Only the first change is meant to
+applied. The reset will likely wait for the helper to land in mainline.
+Rebase on the corresponding subsystem will be done when/if necessary.
 
-> +
-> +static SUNXI_CCU_GATE_DATA(hdmi_24M_clk, "hdmi-24M", osc24M, 0xb04, BIT(=
-31), 0);
-> +
-> +/* TODO: add mux between 32kOSC and PERIPH0/18750 */
+[1]: https://lore.kernel.org/linux-clk/df0a53ee859e450d84e81547099f5f36.sboyd@kernel.org
 
-Not sure what this TODO means.
+Changes in v4:
+- Added eyeq reset patch from Theo (Thanks)
+- Changed returned value to 'valid or NULL'. Consumers should return
+  -ENODEV if translation to int is necessary.
+- Export the non-managed function helpers
+- Default id to 0 for the simpler devm_auxiliary_device_create() as
+  suggested by Conor
+- Fix clk-imx8mp-audiomix config problem reported by Ira
+- Rebased on drm-next for ti-sn65dsi86
+- Link to v3: https://lore.kernel.org/r/20250211-aux-device-create-helper-v3-0-7edb50524909@baylibre.com
 
-> +static SUNXI_CCU_GATE_HWS_WITH_PREDIV(hdmi_cec_32k_clk, "hdmi-cec-32k",
-> +				      pll_periph0_2x_hws,
-> +				      0xb10, BIT(30), 36621, 0);
-> +
-> +static const struct clk_parent_data hdmi_cec_parents[] =3D {
-> +	{ .fw_name =3D "losc" },
-> +	{ .hw =3D &hdmi_cec_32k_clk.common.hw },
-> +};
-> +static SUNXI_CCU_MUX_DATA_WITH_GATE(hdmi_cec_clk, "hdmi-cec", hdmi_cec_p=
-arents,
-> +				    0xb10,
-> +				    24, 1,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    0);
-> +
-> +static const struct clk_parent_data mipi_dsi_parents[] =3D {
-> +	{ .fw_name =3D "hosc" },
-> +	{ .hw =3D &pll_periph0_200M_clk.hw },
-> +	{ .hw =3D &pll_periph0_150M_clk.hw },
-> +};
-> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(mipi_dsi0_clk, "mipi-dsi0",
-> +				      mipi_dsi_parents, 0xb24,
-> +				      0, 5,	/* M */
-> +				      24, 3,	/* mux */
-> +				      BIT(31),	/* gate */
-> +				      CLK_SET_RATE_PARENT);
-> +
-> +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(mipi_dsi1_clk, "mipi-dsi1",
-> +				      mipi_dsi_parents, 0xb28,
-> +				      0, 5,	/* M */
-> +				      24, 3,	/* mux */
-> +				      BIT(31),	/* gate */
-> +				      CLK_SET_RATE_PARENT);
-> +
-> +static const struct clk_hw *tcon_parents[] =3D {
-> +	&pll_video0_4x_clk.common.hw,
-> +	&pll_video1_4x_clk.common.hw,
-> +	&pll_video2_4x_clk.common.hw,
-> +	&pll_video3_4x_clk.common.hw,
-> +	&pll_periph0_2x_clk.common.hw,
-> +	&pll_video0_3x_clk.hw,
-> +	&pll_video1_3x_clk.hw,
-> +};
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(tcon_lcd0_clk, "tcon-lcd0", tcon_par=
-ents,
-> +				    0xb60,
-> +				    0,  5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    CLK_SET_RATE_PARENT);
-> +
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(tcon_lcd1_clk, "tcon-lcd1", tcon_par=
-ents,
-> +				    0xb64,
-> +				    0,  5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    CLK_SET_RATE_PARENT);
+Changes in v3:
+- Implement Ira's suggestion to use KBUILD_MODNAME by default, same as
+  auxiliary_driver_register()
+- Link to v2: https://lore.kernel.org/r/20250206-aux-device-create-helper-v2-0-fa6a0f326527@baylibre.com
 
-Missing tcon-lcd2 - see T527 manual.
+Changes in v2:
+- Add usage examples, as requested.
+- Add 'id' as function parameter:  Adding the example usage showed that
+  handling IDA allocation was not appropriate and making the usage more
+  complex for simple use case.
+- Also add 'modname' as parameter: Most driver have been using
+  KBUILD_MODNAME and this actually rarely align with the driver name.
+- Link to v1: https://lore.kernel.org/r/20241210-aux-device-create-helper-v1-1-5887f4d89308@baylibre.com
 
-> +
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(combophy_dsi0_clk, "combophy-dsi0",
-> +				    tcon_parents, 0xb6c,
-> +				    0,  5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    CLK_SET_RATE_PARENT);
-> +
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(combophy_dsi1_clk, "combophy-dsi1",
-> +				    tcon_parents, 0xb70,
-> +				    0,  5,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    CLK_SET_RATE_PARENT);
-> +
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0", tcon_paren=
-ts,
-> +				    0xb80,
-> +				    0, 4,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    CLK_SET_RATE_PARENT);
-> +
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(tcon_tv1_clk, "tcon-tv1", tcon_paren=
-ts,
-> +				    0xb84,
-> +				    0, 4,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    CLK_SET_RATE_PARENT);
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+Jerome Brunet (7):
+      driver core: auxiliary bus: add device creation helpers
+      reset: mpfs: use the auxiliary device creation
+      drm/bridge: ti-sn65dsi86: use the auxiliary device
+      platform: arm64: lenovo-yoga-c630: use the auxiliary device creation helper
+      clk: eyeq: use the auxiliary device creation helper
+      clk: clk-imx8mp-audiomix: use the auxiliary device creation helper
+      clk: amlogic: axg-audio: use the auxiliary reset driver - take 2
 
-TCON TV0-1 parents are subset of others, according to T527 manual.
+Théo Lebrun (1):
+      reset: eyeq: drop device_set_of_node_from_dev() done by parent
 
-> +
-> +static const struct clk_hw *edp_parents[] =3D {
-> +	&pll_video0_4x_clk.common.hw,
-> +	&pll_video1_4x_clk.common.hw,
-> +	&pll_video2_4x_clk.common.hw,
-> +	&pll_video3_4x_clk.common.hw,
-> +	&pll_periph0_2x_clk.common.hw,
-> +};
-> +static SUNXI_CCU_M_HW_WITH_MUX_GATE(edp_clk, "edp", edp_parents, 0xbb0,
-> +				    0, 4,	/* M */
-> +				    24, 3,	/* mux */
-> +				    BIT(31),	/* gate */
-> +				    0);
-> +
-
-Missing CLK_SET_RATE_PARENT flag.
+ drivers/base/auxiliary.c                  | 108 ++++++++++++++++++++++++++++
+ drivers/clk/clk-eyeq.c                    |  57 ++++-----------
+ drivers/clk/imx/clk-imx8mp-audiomix.c     |  49 +++----------
+ drivers/clk/meson/Kconfig                 |   2 +-
+ drivers/clk/meson/axg-audio.c             | 114 ++++--------------------------
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c     |  49 ++-----------
+ drivers/platform/arm64/lenovo-yoga-c630.c |  40 +----------
+ drivers/reset/reset-eyeq.c                |  13 +---
+ drivers/reset/reset-mpfs.c                |  56 ++-------------
+ include/linux/auxiliary_bus.h             |  17 +++++
+ 10 files changed, 176 insertions(+), 329 deletions(-)
+---
+base-commit: 0ed1356af8f629ae807963b7db4e501e3b580bc2
+change-id: 20241210-aux-device-create-helper-93141524e523
 
 Best regards,
-Jernej
-
->  /*
->   * Contains all clocks that are controlled by a hardware register. They
->   * have a (sunxi) .common member, which needs to be initialised by the c=
-ommon
-> @@ -394,6 +580,22 @@ static struct ccu_common *sun55i_a523_ccu_clks[] =3D=
- {
->  	&ahb_clk.common,
->  	&apb0_clk.common,
->  	&apb1_clk.common,
-> +	&de_clk.common,
-> +	&di_clk.common,
-> +	&g2d_clk.common,
-> +	&gpu_clk.common,
-> +	&ve_clk.common,
-> +	&iommu_clk.common,
-> +	&hdmi_24M_clk.common,
-> +	&hdmi_cec_32k_clk.common,
-> +	&hdmi_cec_clk.common,
-> +	&mipi_dsi0_clk.common,
-> +	&mipi_dsi1_clk.common,
-> +	&tcon_lcd0_clk.common,
-> +	&tcon_lcd1_clk.common,
-> +	&tcon_tv0_clk.common,
-> +	&tcon_tv1_clk.common,
-> +	&edp_clk.common,
->  };
-> =20
->  static struct clk_hw_onecell_data sun55i_a523_hw_clks =3D {
-> @@ -442,6 +644,23 @@ static struct clk_hw_onecell_data sun55i_a523_hw_clk=
-s =3D {
->  		[CLK_AHB]		=3D &ahb_clk.common.hw,
->  		[CLK_APB0]		=3D &apb0_clk.common.hw,
->  		[CLK_APB1]		=3D &apb1_clk.common.hw,
-> +		[CLK_DE]		=3D &de_clk.common.hw,
-> +		[CLK_DI]		=3D &di_clk.common.hw,
-> +		[CLK_G2D]		=3D &g2d_clk.common.hw,
-> +		[CLK_GPU]		=3D &gpu_clk.common.hw,
-> +		[CLK_VE]		=3D &ve_clk.common.hw,
-> +		[CLK_HDMI_24M]		=3D &hdmi_24M_clk.common.hw,
-> +		[CLK_HDMI_CEC_32K]	=3D &hdmi_cec_32k_clk.common.hw,
-> +		[CLK_HDMI_CEC]		=3D &hdmi_cec_clk.common.hw,
-> +		[CLK_MIPI_DSI0]		=3D &mipi_dsi0_clk.common.hw,
-> +		[CLK_MIPI_DSI1]		=3D &mipi_dsi1_clk.common.hw,
-> +		[CLK_TCON_LCD0]		=3D &tcon_lcd0_clk.common.hw,
-> +		[CLK_TCON_LCD1]		=3D &tcon_lcd1_clk.common.hw,
-> +		[CLK_COMBOPHY_DSI0]	=3D &combophy_dsi0_clk.common.hw,
-> +		[CLK_COMBOPHY_DSI1]	=3D &combophy_dsi1_clk.common.hw,
-> +		[CLK_TCON_TV0]		=3D &tcon_tv0_clk.common.hw,
-> +		[CLK_TCON_TV1]		=3D &tcon_tv1_clk.common.hw,
-> +		[CLK_EDP]		=3D &edp_clk.common.hw,
->  	},
->  };
-> =20
->=20
-
-
-
+-- 
+Jerome
 
