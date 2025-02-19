@@ -1,92 +1,89 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E26D211707;
-	Wed, 19 Feb 2025 17:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1638286284;
+	Wed, 19 Feb 2025 17:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739984847; cv=none; b=PfW7SgtsbgXBwbQObcS6sGcDpnAXoFWI0nFvQNVxOuv/gbPhGjWej1uUSVRjW+4eEL6n1qAz4Q5jCpmbSFxxmbrmb5Yw5qDdT3hWv/26axkcHTnJwx3kI+uR69jyix7oMA8ICalZK9OwfpvXerWnSIP/6CwBdpEmxC69qcn28wI=
+	t=1739985617; cv=none; b=BIzCetLulOlDoDN+2uw1/Vgba+NmgnCwgRCvrfeecFtBzG6ac00ZR4uvq9GKNheEBL6nLrQ3dXPvOUUKAe2ILBZCLQFPc9moERUscCBBj4puONTCAx/DBM51stLpHKXbz+VrB/ES+/4PfimUWdhvEIetjBk/BH/txN/RQmjXTp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739984847; c=relaxed/simple;
-	bh=hAryitJnIAa30axFWXeMrq2DsntcJ0u5SXN3znJATEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EwboHBnfuqE5ddAhK/JYnQXgftFe00Za1OHL37PHF3jWr6Z8I3fhTPsl2hijD0b6fdPaUsV0BoJ3oxw3E6+9qyW+0pujGPnJg2LEWnySI35pixcHO0T56cj/7ajh8Dx68/zARGGcuHi+xTQ+S8BrnGeCNN2avj4ERJCEWch3YBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UqAzD7MU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739985617; c=relaxed/simple;
+	bh=lhlb0oWuR17RNf0Vp0EHzjC/aagOic5Ps7J0XIlnC4o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DV+h0mB33XteaITzhCnKmT6MSNsRUKt6kLXhxccoZeBY20rUpT9zWkr4TBJUSf9zrsCwPTaeVL+OvYV0/pqPMRcalwPq4TuZPBQxxufsGe2LNojC2CD6eGoz/SDZ+/eQIMLnTdtQ4PsyhLseC17DDhCFxtHuCSb3lGMcTJLRpGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pa8cGCiH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UqAzD7MU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D16B5C4CEDD;
-	Wed, 19 Feb 2025 17:07:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pa8cGCiH"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AB4ACC4CED1;
+	Wed, 19 Feb 2025 17:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739984846;
-	bh=hAryitJnIAa30axFWXeMrq2DsntcJ0u5SXN3znJATEE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UqAzD7MUx6yyPo+t4ef6DxLjEy3DwHPL5S7aE9JoiSSDv6BF/bawG5Xu+Hkyc/T+w
-	 XsBGqGRG3fRWPF+hUxgphbEqPNtjPcY5GvEDbKocI7U1RoSWa2VdG4/g3ZMj3Taz8m
-	 +3mHcE21BxcBuVjYwTOIrle1MTK1Razb0/kp2q+xYVqFpkKF4iWIxgtuVJ6OdNv4Rv
-	 /bfI0oyFZAjCyJ21xxoJeVg83TX9n4RZt/Hdq2g4PZGUcgyBB4uvtpUz5a6RxNC1Qs
-	 V+tzt64/xyMbNzS5bAj3haUmAykY9ZLkHLIcp8eGMH3NQ3KHgDWzPpXXpFdP1bSyF2
-	 rdDTRFIQU3jFw==
-Date: Wed, 19 Feb 2025 17:07:21 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Xukai Wang <kingxukai@zohomail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Troy Mitchell <TroyMitchell988@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 0/3] riscv: canaan: Add support for K230-Canmv clock
-Message-ID: <20250219-provided-disregard-948f2988871f@spud>
-References: <20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com>
- <20250218-poplar-iron-c894fe8deca6@spud>
- <b2b9216c7c28e5eed267b9a39c8dcfb1.sboyd@kernel.org>
+	s=k20201202; t=1739985617;
+	bh=lhlb0oWuR17RNf0Vp0EHzjC/aagOic5Ps7J0XIlnC4o=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Pa8cGCiHaTjL+YhKQKoIToWtNMrLwGZhWDWegbQiP3xTvPhOh1NQiw6IUvYs66+MM
+	 Mj3NRp8YSgMRCW24dpbFa9raqPOkCUY6W9TOgWjaFPs0cI0gegHpeh6+ws3cqEo8wc
+	 8iQeJB6LB6X3kekBk1n0Cus9CUMcH4L7KVBrEQyhlDqW3j1tUJj8d22Rc3JnypjkaQ
+	 5vz6BtkQVXFCV5JgJkuvOUYqa3xq9mTbJmphxdEN03zvmJpZK7CfydPJRiCamC3K3z
+	 Mz6IGl396/rd0ZDhilFi9qT1YdE2Fpeadnviyu3r7BFn6SJCpCoV7Q+tcjQi1AshQx
+	 AOrBW+CU5Drjg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3418C021AA;
+	Wed, 19 Feb 2025 17:20:17 +0000 (UTC)
+From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
+Subject: [PATCH 0/6] clk: clk-axi-clkgen: improvements and some fixes
+Date: Wed, 19 Feb 2025 17:20:18 +0000
+Message-Id: <20250219-dev-axi-clkgen-limits-v1-0-26f7ef14cd9c@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DRM8MpnQrs8Rzg6i"
-Content-Disposition: inline
-In-Reply-To: <b2b9216c7c28e5eed267b9a39c8dcfb1.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIANIStmcC/x3MQQqAIBBA0avErBtQw4iuEi1KxxoyC40IpLsnL
+ d/i/wyJIlOCvsoQ6ebERyiQdQVmncJCyLYYlFBaKNmhpRunh9H4baGAnne+EraNm4XRZJpuhtK
+ ekRw//3cY3/cDW3y8mWcAAAA=
+X-Change-ID: 20250218-dev-axi-clkgen-limits-63fb0c5ec38b
+To: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, 
+ Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1739985620; l=872;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=lhlb0oWuR17RNf0Vp0EHzjC/aagOic5Ps7J0XIlnC4o=;
+ b=gAGHHx90yruTZFfFG9Pro8Lq67D9hlStPBzCz/mR0e8R52paS8QpFwcLUfWcEuFb8xNCG79jR
+ 0WROiYBw1u/CS5Fyw5cwyNlHkh8oUBl0rVA8fs6P69TLTllJtp6+Gj9
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
+ auth_id=100
+X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Reply-To: nuno.sa@analog.com
+
+This series starts with a small fix and then a bunch of small
+improvements. The main change though is to allow detecting of
+struct axi_clkgen_limits during probe().
+
+---
+Nuno Sá (6):
+      clk: clk-axi-clkgen: fix fpfd_max frequency for zynq
+      clk: clk-axi-clkgen: make sure to include mod_devicetable.h
+      include: fpga: adi-axi-common: add new helper macros
+      clk: clk-axi-clkgen: detect axi_clkgen_limits at runtime
+      clk: clk-axi-clkgen move to min/max()
+      clk: clk-axi-clkgen: fix coding style issues
+
+ drivers/clk/clk-axi-clkgen.c        | 149 +++++++++++++++++++++++++-----------
+ include/linux/fpga/adi-axi-common.h |  35 +++++++++
+ 2 files changed, 141 insertions(+), 43 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250218-dev-axi-clkgen-limits-63fb0c5ec38b
+--
+
+Thanks!
+- Nuno Sá
 
 
---DRM8MpnQrs8Rzg6i
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Feb 18, 2025 at 01:51:38PM -0800, Stephen Boyd wrote:
-> Quoting Conor Dooley (2025-02-18 09:02:32)
-> > Stephen,
-> >=20
-> > Is the driver in this series satisfactory to you? If it is, can I send
-> > you a PR containing it and the binding so that I can apply the final
-> > patch in the series (and merge the basic support for the k230 soc)?
-> >=20
->=20
-> Sorry, the driver is not ready.
-
-That's cool, was just basing off the v4 changelog being minimal, no
-worries.
-
---DRM8MpnQrs8Rzg6i
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7YPsgAKCRB4tDGHoIJi
-0m+pAP9zRwxRDmSEDI0bpcXZF3kIzUKuyLOHvSrhwH7btn+hvwD/WSTeoZC7nplx
-fom2EPgk7xMN4Tlkm8WQwu9xQCe8Fww=
-=DYtV
------END PGP SIGNATURE-----
-
---DRM8MpnQrs8Rzg6i--
