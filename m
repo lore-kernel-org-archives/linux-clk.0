@@ -1,91 +1,63 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817761DF724
-	for <linux-clk@vger.kernel.org>; Wed, 19 Feb 2025 09:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442441DE2C5;
+	Wed, 19 Feb 2025 09:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739955969; cv=none; b=tjxB5FxUAims9AqfTE2r7WPDgJBtTiC93Fy/5ss7VKGLmj8CEYr4EL16obI3996zydNNOIKxBdlJRy7MMqZlFH5tob+wh3hup1GoXm0YsVH5HkxDmxIIPwXm4V4HAJOSg42AyjHQYsE7ePbt2efy3AP3VjeOSKRNvpp9Y7uoVlE=
+	t=1739956128; cv=none; b=ZqTh4QBNybHKRt1bUcU+HcTTB35hZVTMXpD09ts4N8/0FqowFhk3NFOtFcu+vfei8YjF/1ziBWCVpGd6NGJY/JrWg7/b1OAERJnChE1hu2N7NWhn2oXcK0RwA2R9LcK4Fy26DGpSSPLANhPRZGMP75OGIyzUx14Uwi/bd/7KhrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739955969; c=relaxed/simple;
-	bh=Ll4Hm33BOP6BRDteNaeEkalteukRrEcf/dQJ2Kgc9eE=;
+	s=arc-20240116; t=1739956128; c=relaxed/simple;
+	bh=Z1bk0dL1MwViW5c8wTOmV9AYMz3fjx9VzE2Lsv1NMZQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RwZOsVt2z8X0GrTD3rKEvcNis6BX+qs/Iho1xP1QEGOMQxTD7eNOFG9+VroFqRmqst1nSvkqQxmLf4FCOcAuGGbwyTVuZVMmirytAfU4cuBjow4CIKD5e1Xorgqp4pM4In8f6s1DDNParhIw5Q5XiVHIl19WBRU8ZWcjIZ5h9Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Or4nQuM7; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=j3xGJP7iDWgzmkqtkHKfaRlWyAjs95IDK5U7TjHQz71sUQXzq9wb8IiscEkBox+IRAZniwpd+Rc/969LZjlRqS9vhv80ZTnKCpJTRa5Xtxxh0L6Bzp1MsXMMhevjGXlgTN9R6OqIP0GdI7EBZTDBQ/HqWnMJD/1Bi+Fgskg2Wtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=hZbi+bNX; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Or4nQuM7"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5461f2ca386so2888281e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 19 Feb 2025 01:06:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739955964; x=1740560764; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JParjzdc5yBYoG0m5UmXTy5mjDiWwZLgHUFOravZSiI=;
-        b=Or4nQuM7nTSyBqwDP5wJ/fwD8lL2sW7zUCjTGIDt5vK5uZQXQAsTbeDKtNdtRRIu3M
-         cGu5aeWkF4o/oouZ7hZHhBgpVdIkp7bhZC2HHJDNlybdeFhGVtZWfjhcKpvoM1JuMtVL
-         V3aaqxI0TGOZl8C5hPFh/PwbLTJNpgfmQY/hKHQknZIXREBN5Dpu1P72SoR5zj2Lf3tt
-         KMPTdpWaYhYiROMN3CREXh/jpTthjnAnDxBS8rAFwUjA5NS9d9W2+KMLKG8EEGi4CYfn
-         IYK7uFcZZaLr2uTNRyFx79y4VCPTsRSYu+pqk+8F07R/mLroAxNCLySC5x10SH7Edm23
-         GqGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739955964; x=1740560764;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JParjzdc5yBYoG0m5UmXTy5mjDiWwZLgHUFOravZSiI=;
-        b=L1dFS1PlaxfuhpaeG2HdkBOBKjXvb6RKC90q4gy1D6ObqUmpxq5OnTrPgk9Qy15wZq
-         XcDbKaz/KgLFRLfCsIAVIuoU8ix3yBMorvNT+elMP5T+Mk8RREOrxBJZHXkd01nrnPvP
-         AJNhxqQwCWYL9plcdSN/WrVhUIP/bDrZLLIzXojkwG301GZRqD+LlBw/3+fmE9mVkM45
-         aCTsizeTgWs6vbmjZwRTJFDB3Ya9kBS45moulE0lxLfxo//ncLwnrTv0ciNsjKTT1Y/w
-         zm2cmxLCmOslixRU5IZJkAtxzPQRT24kmkBT07AkGqLucsPiPWzdzwRduM/jm1BO1rwF
-         x60Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXoYDl/9Cep/5cbIM1TZkMyLD0U5ncwwurh7PAqv8sfHehWQRwUhrqGb52lnzV+U6jxr8siFrpo8Sk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwokUGcy6izKy+0BoxNyFZQPpcLs5SZcg5YjmgnjYnfz5uqg7Ua
-	KaWoRjr4ZYQvvrGgQNAruxlci8xhTFFyy6ZCnSEfA82AmSRJrQkboRCpnDsKUXM=
-X-Gm-Gg: ASbGnctttR1sJ9R3ZVbF7P/kqS7KB82nboWHLd4XX1fUqFkycK+VDmE+EgcdMDJshIa
-	3yWYw4YDU8tkLnozAr3onZ+5+K0/r5UPkHpQ7arXraPF+90VhG9O8Sl76ew8UiaCiOpjJD5iBI4
-	PpXHmXzi8RQVQh9tRpSSGkGKMRkErEnAUGqIK7Q17K9CY38oGhDW2ztpc/DmFxlhRw8OBtebmiK
-	BZ3K9vJaIpryZ1uLRCMyMcpRO7rKamaEWLh1gBHWKzsBpU74rb/YWs1Db/xRPrlxxx+MGNInLQN
-	wKYHYNnpzUyEhr/B/F3iqlaznZujHgJwe2/45a+1jCN3TvY9BO1zmaDx44DRUL/WgyfK/ng=
-X-Google-Smtp-Source: AGHT+IHm7rrZGF7gWE8rLuZPX4nvDlV3DcFc5Uk1QwC4R6ncjGo7U2SoOER3uymDvhu6BZaa/4okgQ==
-X-Received: by 2002:a05:6512:3a94:b0:545:10bc:20ca with SMTP id 2adb3069b0e04-5452fe583c4mr6368433e87.24.1739955964491;
-        Wed, 19 Feb 2025 01:06:04 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54530df9016sm1454714e87.36.2025.02.19.01.06.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2025 01:06:04 -0800 (PST)
-Date: Wed, 19 Feb 2025 11:06:02 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Danilo Krummrich <dakr@kernel.org>, Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Douglas Anderson <dianders@chromium.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>, =?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, 
-	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v4 1/8] driver core: auxiliary bus: add device creation
- helpers
-Message-ID: <crtrciitrlqkxh5mxvnbdjy6zoxny5onse7xgbw7biozg6myux@grp3ketgl2uh>
-References: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
- <20250218-aux-device-create-helper-v4-1-c3d7dfdea2e6@baylibre.com>
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="hZbi+bNX"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B7786148313E;
+	Wed, 19 Feb 2025 10:08:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1739956117;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nN7IHpShWJBpsyykGmnOLHdtsNK5mxWDwUr79QicVDo=;
+	b=hZbi+bNXalt75rPd6UHgk6ItE5xeqlHKA5Cgg0jsaoqecodXIHTiSLZyrFTFdlVt5UjMHm
+	ykm4EDPeEllisKaltxXDOUZjFZbSRySVuMrc0TbrSXP97bcuiM3DrW4x4Tj8CLJ9pkEgnq
+	DJkdWOpa7lFmG9dicxS0FZGPlbwCaPQfGoDFjVSemPr9WUGgP5sSHMUUIzvQW3fvnw0qF7
+	xVFn5NJJi1/1EsAvw0f57cAwCbYMNzNGXtTLd90MnHMqhnN4GE19uD/GsBiyBoSYzcyLw0
+	8ENt+C8JDSVztKQpdYHqirNV1E2IhrjEDwN3VGjUNrdS2pNTpVTDbznk+7/WOA==
+Date: Wed, 19 Feb 2025 10:08:30 +0100
+From: Alexander Dahl <ada@thorsis.com>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexander Dahl <ada@thorsis.com>
+Subject: Re: [PATCH v2 01/16] dt-bindings: clock: at91: Split up per SoC
+ partially
+Message-ID: <20250219-cornfield-rekindle-2addbd8db308@thorsis.com>
+Mail-Followup-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Ryan Wanner <ryan.wanner@microchip.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+References: <20250210164506.495747-1-ada@thorsis.com>
+ <20250210164506.495747-2-ada@thorsis.com>
+ <a1dff4af-d771-4424-869f-15d3b6bca013@tuxon.dev>
+ <20250217-shortwave-scoreless-38cb49fe5548@thorsis.com>
+ <a99ab8eb-274b-449c-8bb6-be9422c5b2a2@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -94,96 +66,210 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218-aux-device-create-helper-v4-1-c3d7dfdea2e6@baylibre.com>
+In-Reply-To: <a99ab8eb-274b-449c-8bb6-be9422c5b2a2@tuxon.dev>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Feb 18, 2025 at 08:29:46PM +0100, Jerome Brunet wrote:
-> Add helper functions to create a device on the auxiliary bus.
+Hello Claudiu,
+
+Am Wed, Feb 19, 2025 at 10:51:40AM +0200 schrieb Claudiu Beznea:
+> Hi, Alexander,
 > 
-> This is meant for fairly simple usage of the auxiliary bus, to avoid having
-> the same code repeated in the different drivers.
+> On 17.02.2025 11:47, Alexander Dahl wrote:
+> > Hello Claudiu,
+> > 
+> > Am Mon, Feb 17, 2025 at 11:11:44AM +0200 schrieb Claudiu Beznea:
+> >> Hi, Alexander,
+> >>
+> >> On 10.02.2025 18:44, Alexander Dahl wrote:
+> >>> Before adding even more new indexes creating more holes in the
+> >>> clk at91 drivers pmc_data->chws arrays, split this up.
+> >>>
+> >>> This is a partial split up only for SoCs affected by upcoming changes
+> >>> and by that PMC_MAIN + x hack, others could follow by the same scheme.
+> >>>
+> >>> Binding splitup was proposed for several reasons:
+> >>>
+> >>> 1) keep the driver code simple, readable, and efficient
+> >>> 2) avoid accidental array index duplication
+> >>> 3) avoid memory waste by creating more and more unused array members.
+> >>>
+> >>> Old values are kept to not break dts, and to maintain dt ABI.
+> >>>
+> >>> Link: https://lore.kernel.org/linux-devicetree/20250207-jailbird-circus-bcc04ee90e05@thorsis.com/T/#u
+> >>> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> >>> ---
+> >>>
+> >>> Notes:
+> >>>     v2:
+> >>>     - new patch, not present in v1
+> >>>
+> >>>  .../dt-bindings/clock/microchip,sam9x60-pmc.h | 19 +++++++++++
+> >>>  .../dt-bindings/clock/microchip,sam9x7-pmc.h  | 25 +++++++++++++++
+> >>>  .../clock/microchip,sama7d65-pmc.h            | 32 +++++++++++++++++++
+> >>>  .../dt-bindings/clock/microchip,sama7g5-pmc.h | 24 ++++++++++++++
+> >>>  4 files changed, 100 insertions(+)
+> >>>  create mode 100644 include/dt-bindings/clock/microchip,sam9x60-pmc.h
+> >>>  create mode 100644 include/dt-bindings/clock/microchip,sam9x7-pmc.h
+> >>>  create mode 100644 include/dt-bindings/clock/microchip,sama7d65-pmc.h
+> >>>  create mode 100644 include/dt-bindings/clock/microchip,sama7g5-pmc.h
+> >>>
+> >>
+> >> [ ...]
+> >>
+> >>> diff --git a/include/dt-bindings/clock/microchip,sama7g5-pmc.h b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
+> >>> new file mode 100644
+> >>> index 0000000000000..ad69ccdf9dc78
+> >>> --- /dev/null
+> >>> +++ b/include/dt-bindings/clock/microchip,sama7g5-pmc.h
+> >>> @@ -0,0 +1,24 @@
+> >>> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> >>> +/*
+> >>> + * The constants defined in this header are being used in dts and in
+> >>> + * at91 sama7g5 clock driver.
+> >>> + */
+> >>> +
+> >>> +#ifndef _DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H
+> >>> +#define _DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H
+> >>> +
+> >>> +#include <dt-bindings/clock/at91.h>
+> >>> +
+> >>> +/* old from before bindings splitup */
+> >>> +#define SAMA7G5_PMC_MCK0	PMC_MCK		/* 1 */
+> >>> +#define SAMA7G5_PMC_UTMI	PMC_UTMI	/* 2 */
+> >>> +#define SAMA7G5_PMC_MAIN	PMC_MAIN	/* 3 */
+> >>> +#define SAMA7G5_PMC_CPUPLL	PMC_CPUPLL	/* 4 */
+> >>> +#define SAMA7G5_PMC_SYSPLL	PMC_SYSPLL	/* 5 */
+> >>> +
+> >>> +#define SAMA7G5_PMC_AUDIOPMCPLL	PMC_AUDIOPMCPLL	/* 9 */
+> >>> +#define SAMA7G5_PMC_AUDIOIOPLL	PMC_AUDIOIOPLL	/* 10 */
+> >>> +
+> >>> +#define SAMA7G5_PMC_MCK1	PMC_MCK1	/* 13 */
+> >>> +
+> >>> +#endif
+> >>
+> >> I would have expected this to be something like:
+> >>
+> >> #ifndef __DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H__
+> >> #define __DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H__
+> >>
+> >> /* Core clocks. */
+> >> #define SAMA7G5_MCK0			1
+> >> #define SAMA7G5_UTMI			2
+> >> #define SAMA7G5_MAIN			3
+> >> #define SAMA7G5_CPUPLL			4
+> >> #define SAMA7G5_SYSPLL			5
+> >> #define SAMA7G5_DDRPLL			6
+> >> #define SAMA7G5_IMGPLL			7
+> >> #define SAMA7G5_BAUDPLL			8
+> > 
+> > Okay no reference to the old header, but numbers.  Got that.
+> > 
+> > I'm not sure where you got the 7 and 8 from here, according to my
+> > analysis, sama7g5 does not use those.
 > 
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/base/auxiliary.c      | 108 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/auxiliary_bus.h |  17 +++++++
->  2 files changed, 125 insertions(+)
+> From include/dt-bindings/clock/at91.sh
 > 
-> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-> index afa4df4c5a3f371b91d8dd8c4325495d32ad1291..a6d46c2759be81a0739f07528d5959c2a76eb8a8 100644
-> --- a/drivers/base/auxiliary.c
-> +++ b/drivers/base/auxiliary.c
-> @@ -385,6 +385,114 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv)
->  }
->  EXPORT_SYMBOL_GPL(auxiliary_driver_unregister);
->  
-> +static void auxiliary_device_release(struct device *dev)
-> +{
-> +	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
-> +
-> +	kfree(auxdev);
-> +}
-> +
-> +/**
-> + * auxiliary_device_create - create a device on the auxiliary bus
-> + * @dev: parent device
-> + * @modname: module name used to create the auxiliary driver name.
-> + * @devname: auxiliary bus device name
-> + * @platform_data: auxiliary bus device platform data
-> + * @id: auxiliary bus device id
-> + *
-> + * Helper to create an auxiliary bus device.
-> + * The device created matches driver 'modname.devname' on the auxiliary bus.
-> + */
-> +struct auxiliary_device *auxiliary_device_create(struct device *dev,
-> +						 const char *modname,
-> +						 const char *devname,
-> +						 void *platform_data,
-> +						 int id)
-> +{
-> +	struct auxiliary_device *auxdev;
-> +	int ret;
-> +
-> +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
-> +	if (!auxdev)
-> +		return NULL;
-> +
-> +	auxdev->id = id;
-> +	auxdev->name = devname;
-> +	auxdev->dev.parent = dev;
-> +	auxdev->dev.platform_data = platform_data;
-> +	auxdev->dev.release = auxiliary_device_release;
-> +	device_set_of_node_from_dev(&auxdev->dev, dev);
-> +
-> +	ret = auxiliary_device_init(auxdev);
-> +	if (ret) {
-> +		kfree(auxdev);
-> +		return NULL;
-> +	}
-> +
-> +	ret = __auxiliary_device_add(auxdev, modname);
-> +	if (ret) {
+> #define PMC_IMGPLL              (PMC_MAIN + 4)
+> 
+> #define PMC_BAUDPLL             (PMC_MAIN + 5)
 
-This loses possible error return values from __auxiliary_device_add().
-I'd suggest to return ERR_PTR(ret) here and in the
-auxiliary_device_init() chunks and ERR_PTR(-ENOMEM) in case of kzalloc()
-failure.
+Okay fine, but those defines are not used anywhere in the whole kernel
+as of v6.14-rc3, also not by sama7g5 clock driver.  Are those used in
+a different version or tree?  Should I rebase?
 
-> +		/*
-> +		 * It may look odd but auxdev should not be freed here.
-> +		 * auxiliary_device_uninit() calls device_put() which call
-> +		 * the device release function, freeing auxdev.
-> +		 */
-> +		auxiliary_device_uninit(auxdev);
-> +		return NULL;
-> +	}
-> +
-> +	return auxdev;
-> +}
-> +EXPORT_SYMBOL_GPL(auxiliary_device_create);
-> +
+Or do you want the whole SAMA7G5 section moved away from
+include/dt-bindings/clock/at91.sh already?  Then this would be four
+steps, right?
 
--- 
-With best wishes
-Dmitry
+1. introduce the new defines
+2. use the new defines in driver
+3. use the new defines in dt
+4. remove the old defines
+
+(Same for SAM9X7 and SAMA7D65 sections?)
+
+Or is this out of scope for this series?
+
+> 
+> 
+> > 
+> >>
+> >> // ...
+> >>
+> >> #define SAMA7G5_MCK1			13
+> >>
+> >> #endif /* __DT_BINDINGS_CLOCK_MICROCHIP_SAMA7G5_PMC_H__ */
+> >>
+> >> Same for the other affected SoCs.
+> >>
+> >> The content of include/dt-bindings/clock/at91.h would be limited eventually
+> >> only to the PMC clock types.
+> > 
+> > What does this mean?  The clocks split out are no PMC clocks?  
+> 
+> Still PMC clocks. Keeping the types in separate header allows keeping the
+> code PMC code common for all SoCs. Then the newly added headers will be
+> used only in the SoC DTes and SoC clock driver (e.g. in your case
+> drivers/clk/at91/sam9x60.c)
+
+I understand this as: PMC_TYPE_CORE, PMC_TYPE_SYSTEM, etc. will stay
+in include/dt-bindings/clock/at91.h as they are, but the IDs for core
+clocks I started to split out will be removed eventually?
+
+Then I would have to change my patch to slightly rename the new
+defines and use the static numbers instead of referencing the old
+defines, but besides that it's fine?
+
+Correct me, if I understood that wrong.
+
+Thanks and Greets
+Alex
+
+> 
+> > Then
+> > the old PMC_MAIN etc. definitions were named wrong?  All or only some
+> > of them?  Or is this different between older and newer SoC variants of
+> > the at91 family?
+> > 
+> > From a quick glance in the SAM9X60 datasheet for example the clock
+> > generator provides MD_SLCK, TD_SLCK, MAINCK, and PLL clocks, while the
+> > PMC provides MCK, USB clocks, GCLK, PCK, and the peripheral clocks.
+> 
+> drivers splits this into:
+> - core clocks
+> - peripheral clocks
+> - generic clocks
+> - system clocks
+> - programmable
+> 
+> It's how the code sees it, just a logical split.
+> 
+> Thank you,
+> Claudiu
+> 
+> > 
+> > The chws array in drivers/clk/at91/sam9x60.c however gets main_rc_osc
+> > (from clock generator), mainck (clock generator), pllack (clock
+> > generator), upllck (clock generator, UTMI), but also mck (from PMC).
+> > 
+> > This creates the impression things are mixed up here.  I find all this
+> > quite confusing to be honest.
+> > 
+> >> The other "#define PMC_*" defines will eventually go to SoC specific
+> >> bindings. "#define AT91_PMC_*" seems to not belong here anyway and these
+> >> would in the end removed, as well.
+> > 
+> > Okay, you seem to have an idea how this should look like in the long
+> > run.  Are there any plans at Microchip or at91 clock maintainer side
+> > to clean this up in the near future?
+> > 
+> > I would like to rather put my small changes for otpc on top of a clean
+> > tree, instead of trying to clean up clock drivers and bindings for a
+> > whole family of SoCs and boards, where I can test only one of them.
+> > O:-)
+> > 
+> > Greets
+> > Alex
+> > 
+> 
