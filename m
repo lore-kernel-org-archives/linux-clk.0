@@ -1,293 +1,194 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F94B1DF24B
-	for <linux-clk@vger.kernel.org>; Wed, 19 Feb 2025 12:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4873F1DED6C
+	for <linux-clk@vger.kernel.org>; Wed, 19 Feb 2025 12:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739966841; cv=none; b=ajFK1jaP/AOZz9d8MOIaQZCTBpAoUnjbgF6mBnippVrLK3YdvkaQ8Y3anwac3xFgGSjXZsdUgU6PIGn66In5E2xECp3miV0OaExuG4DTvEdYn2lTpKWNS28GsizHjNkzp0lBzIizwDwnGals8GbDu7X0l+5YaKhrgQo0egHtwOk=
+	t=1739966910; cv=none; b=B18i2jaKtQ8msqyBKwWL7NrDWbrkob+lHHpxk+zXpvXrjGe8I6t52mC2mV6O2cJHZcFZgAfGoc5bvJFirytPv1ec54I/boOiTrVSg3deNkgJTGkrxjvVfnDGZ4sRWb8eE0D6GBSGkIhnwQ0pptGL/KHUBEoVJt+cxySjcowGLbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739966841; c=relaxed/simple;
-	bh=4OjYJGHLbHcSgiHKjS0IIUhuCTr3EgjGNYeyisUEQZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gp3fXQBtGNSjKzxxg6cKoTtyDlh9VAX0VC4u06vG9qZnU6wo4mih0P918K4zuX9QSlxZ3faUJYJhjKiYF//BsotlGrwHPGg/SQDdhJVC7rfvR5cpziVNIXQoOvTEjwiRX1EVz65jZRqnpikbrMbZKDib8vEHzvNzQKs30CyWVtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GVOkFPPm; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1739966910; c=relaxed/simple;
+	bh=uE8CUjR58RLwuzsqmPJ2Twtd7ZBgQ7uMjtufoLK9fYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E1TigUOuVPdSK5WiMKFkq0GyU0ZncFOgKLjl5x0rYF5HbO8aF7b1bZFJxZ0LvMmkuDCiCQP/Fcs4LkS9G+pwAeqPI6gAScli72+INuzlmrFCoQw3IJpIZKCe6R0NPvuFKoRTkJqciifJs0JVxeV6y5yCj88diFsLPduP4Ts/78Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JLRk6MhQ; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GVOkFPPm"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38f406e9f80so3035859f8f.2
-        for <linux-clk@vger.kernel.org>; Wed, 19 Feb 2025 04:07:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JLRk6MhQ"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5452ca02bdbso4886784e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 19 Feb 2025 04:08:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1739966836; x=1740571636; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4Kmiv++4vNW0rEfTtHkFe1jOyHczktuNnrPo1TO1Qs0=;
-        b=GVOkFPPmQdtqr571kNUbLgld2FKyTxKsirRDIm8gSP3ZnvCrnlDmPSEBkB10ThU1lN
-         F2D2npTpW2M/za5qzOuUfxn8EKUe5hCj1uwNX/e9yfotOasYC4xh3DeH2fiOJHa2L2nZ
-         DKqm/MlOCs1wzwXBPKlE03tfkh+ubwaJM16gIo1lJySa9GOmaQ1mpBOp0LJUcXL5iqBj
-         wzDG8bgL9r9jsMCnX2FwSin7ZG8zYXX7Cafi6LkXCYL+HOLvETQoDoUJIhVPhis3nRQH
-         iuEzMvIwVfLuESsWCPnUg6GvoZNdAhE5L7yCuqrJmKOuQzcuSRHUwkeiUDqxXgxtfeVi
-         G3pw==
+        d=linaro.org; s=google; t=1739966905; x=1740571705; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kfNES95aCHrH5DW7HOssGE1cf0vTi0kl2N0MBpHNSOY=;
+        b=JLRk6MhQsI0egle9P/i5LwAyjj3vcerxgF3i5jjK8fqWvJZ23Dcy49YQs/LKCz50ec
+         lpGbdcNdoF4soVNTBp/2BmH3BvqpXN6W12QDoasuLNhEwqLBi+kiEx3OyUMzph0CeJGG
+         cG29ZFq/O/0YXeiO6ILOZ8Ubxsu3A5VWUqnMTnkkyXqgJK+jaQ0i54JbPzLQeS+vfTCx
+         CgsuyfP7movhUeItO23to2InSpjGHsrsxY6oKvWiW7vvCjOjhpYZ2ZTTCwoLTCuAcTGq
+         Z2VzaJYxIclGqUrTmCSov7RCtO1sWUfeoOY4ItVPNVtp3WxsCCZsO6fat0KyNG7cWVx/
+         kF2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739966836; x=1740571636;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Kmiv++4vNW0rEfTtHkFe1jOyHczktuNnrPo1TO1Qs0=;
-        b=gExsIZQ4mfPaeLMKMjTsCxCt/2vNq5Qmd7LoKauMDOxS90MBFXfI5316gyccsUTCzO
-         rO+pTAN5jDNt/gMkbwq8fTrNjpM5fn5TIPgF/Mt/IxyP8IukymUO6P4f7lm3wrcsOFWI
-         T/pbKINAi31RbpGTiOx2XefLl/FOLV5/FzIJjrIDP9f+EhgRLXfBM3OS36G6Nv+Ynyw0
-         YuNmO0UkIAnq9pHWORKsY8CPHExnE9PLvoAMN7xTbVGmzOzALuAVF4jHqO31wy5Hx+E5
-         Ke9H2AQ8ZvO7KHF3h7MFPyUl+CiPhhnS8hgGmoPMP2lT84AWu/AmckTsWPh7HuQHlwbL
-         SCRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwf5d6tEW/rareyEptiZJ1Mws+CmppazUW8Lz88S1DCM7M0qUVcOuOsMKJkH6ooGQtIIQQKdM19GU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYb5PNMYaBt5tin1Dc32qWEjanHrFqxeQKgS2JR/efBEFN9gre
-	/jJGaBQ4HY9wRuT0yiyLE4hq4u4nL6GV3KeQIJ/tdtFr/U0rXRaRWFVQGbIE8Bo=
-X-Gm-Gg: ASbGncvq/aefNSSNILgeH6Sg55ftcIDMMOlbYDP+AbCvbbPEICQa9eKIfcgV1PkMBlU
-	tpuc+bjs3U4zWuLROtcFhEIRm6tYdBtsfYvLGqWp1KjmKs/stt+AZDv5Kg1dD02q2SRiAZZ1OkC
-	xvyfyKQ7B5IIfQbbS6kKnrBGDKnD9xtQWOxjbG9OzcUWPQhMBxr+Sas5mNvQi4kiRGKMZV61Q+8
-	stfaS7B8QU7WRqPHXP3GD3fG+S675WGyXf42DKCbScpmQWiR2Kx2YE5PpAHCy9ItTzy/Z41cEeL
-	reikZTTtxiM5kBhPF29H1x0ommy0KKqUXT7BPheVLiytbXr1lYuzqoKG
-X-Google-Smtp-Source: AGHT+IHRib6UMMCKzb01An9fHSVtMmS4WBnrNIwVhvfDFSkboHIWb6WUN+wEq1fa+HU5RjFLzoLsKw==
-X-Received: by 2002:a05:6000:188d:b0:38d:bccf:f342 with SMTP id ffacd0b85a97d-38f587e16dbmr3408791f8f.43.1739966836406;
-        Wed, 19 Feb 2025 04:07:16 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d9be9sm17948979f8f.79.2025.02.19.04.07.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Feb 2025 04:07:15 -0800 (PST)
-Message-ID: <fcc31cc7-67bd-4102-a53f-ebe66b4fd1a7@linaro.org>
-Date: Wed, 19 Feb 2025 12:07:14 +0000
+        d=1e100.net; s=20230601; t=1739966905; x=1740571705;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kfNES95aCHrH5DW7HOssGE1cf0vTi0kl2N0MBpHNSOY=;
+        b=NmpLqnbTcn86dfmegLlFOH3LKLBtFZR25L/Ja1wXfIZKb3Ll2DwmERtroBmFDlr9WT
+         U2IiQA+4UVI79yTBP7JfPTOdBKFO0MqBTYiUY38ZjiXT0755hfqU0hm92JHutkdSd6QB
+         Pu+RKzYxsx1jrAKGdpd04NwjVCgL7GtSPm7Ylyngzwb7MeyFOz0YSGyrXlHQEmFf+tAI
+         PLPYXWS+i7tK6glYOBAN1gDlrS1Hgv4ecmj3YruRtBqw6C27jw9uhP4/1nc+kbnh9Lu2
+         8YifTfWInKH2S6rCdA1boGXSeo/ndrTjnREN9GJfGGg8kBYOAK7WizSzzW7VsiRshDFk
+         54pw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcsZ8KR7j/5Y3hNxYmlAGMt16T3vJF49x+5WXYtSno44l+VLVrJvL4On8Qowd34Sdir/UZgWV/ZB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4s04RRNNaGjzRi0BYs6XC3LGziP8oWwgHv6lwyHFu0Sxs54qS
+	If+qBKuWZLqXz1ndqEliJlH1zDtSTT+9C7u9DAP38Ol0XsDNiweORkV7/qGE76Y=
+X-Gm-Gg: ASbGncuPj98/GVfMZ9MvqXmmneEdfVslPfnINN6mGVQ9JBEHj2asEu1/Ws5Rjk5XxZT
+	QSNqj2HzpePoitIo9bxsFgg5QxEyVvHMwQ8oAJHkkaxYzYjuQsthhRWDSXKK5va7aXqTeUaC+1/
+	J7J5l4Xqx1cKxf17t5OYMzknkGFjEhlPD4yFHDV2BtffdoroRgLsCibnjuvlNr8gcfpGjVY3huT
+	3mXW5v0I1/5VJpkNO3VSKXrNbqK4NLEEUa1xW8w+Ewiv3bJVdnHj9/aBLrPzrtvjAw4tx/3t4mf
+	Di7csEMZxFmbXXj5OIF6jRUpINGaQBDaP0D9Y+feDa3DySqJ/Uc1CVJM+uHo0wJlIrW6s9A=
+X-Google-Smtp-Source: AGHT+IFMLOpDHMHA4h3/Gxx2zV0fjSL0lgJbRphbGzyITSKOMSUgTcKxT5mQ7K/tT3lwL8tk5JoMMA==
+X-Received: by 2002:ac2:4e05:0:b0:545:62c:4b29 with SMTP id 2adb3069b0e04-5452fe5bedcmr6706804e87.22.1739966905285;
+        Wed, 19 Feb 2025 04:08:25 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5461cfdd5a2sm1148260e87.39.2025.02.19.04.08.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2025 04:08:24 -0800 (PST)
+Date: Wed, 19 Feb 2025 14:08:22 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Danilo Krummrich <dakr@kernel.org>, Conor Dooley <conor.dooley@microchip.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Douglas Anderson <dianders@chromium.org>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	Gregory CLEMENT <gregory.clement@bootlin.com>, =?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v4 1/8] driver core: auxiliary bus: add device creation
+ helpers
+Message-ID: <eskvhtljnrkhm6vmqy52gkweexj3tcethejeywcoib4la72jcl@ojuqcazpvht4>
+References: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
+ <20250218-aux-device-create-helper-v4-1-c3d7dfdea2e6@baylibre.com>
+ <crtrciitrlqkxh5mxvnbdjy6zoxny5onse7xgbw7biozg6myux@grp3ketgl2uh>
+ <2025021922-spongy-swirl-0746@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
- power domains
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
- <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
- <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
- <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
- <d4c4ecf0-9094-4341-8711-78a48e5d1344@linaro.org>
- <d444f1fb-42a0-48ef-83bc-d5aab9282b22@quicinc.com>
- <gzjyyl2kzv52zsewn5zf6ei65fymyi4pspvsmsjaqj5sklfxvc@bkg46saulni5>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <gzjyyl2kzv52zsewn5zf6ei65fymyi4pspvsmsjaqj5sklfxvc@bkg46saulni5>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025021922-spongy-swirl-0746@gregkh>
 
-On 19/02/2025 11:59, Dmitry Baryshkov wrote:
-> On Wed, Feb 19, 2025 at 05:11:03PM +0530, Jagadeesh Kona wrote:
->>
->>
->> On 2/19/2025 6:51 AM, Bryan O'Donoghue wrote:
->>> On 18/02/2025 17:19, Dmitry Baryshkov wrote:
->>>> On Tue, Feb 18, 2025 at 03:46:15PM +0000, Bryan O'Donoghue wrote:
->>>>> On 18/02/2025 14:26, Jagadeesh Kona wrote:
->>>>>> During boot-up, the PLL configuration might be missed even after
->>>>>> calling pll_configure() from the clock controller probe. This can
->>>>>> happen because the PLL is connected to one or more rails that are
->>>>>> turned off, and the current clock controller code cannot enable
->>>>>> multiple rails during probe. Consequently, the PLL may be activated
->>>>>> with suboptimal settings, causing functional issues.
->>>>>>
->>>>>> To properly configure the video PLLs in the probe on SM8450, SM8475,
->>>>>> SM8550, and SM8650 platforms, the MXC rail must be ON along with MMCX.
->>>>>> Therefore, add support to attach multiple power domains to videocc on
->>>>>> these platforms.
->>>>>>
->>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>>>> ---
->>>>>>     drivers/clk/qcom/videocc-sm8450.c | 4 ++++
->>>>>>     drivers/clk/qcom/videocc-sm8550.c | 4 ++++
->>>>>>     2 files changed, 8 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
->>>>>> index f26c7eccb62e7eb8dbd022e2f01fa496eb570b3f..b50a14547336580de88a741f1d33b126e9daa848 100644
->>>>>> --- a/drivers/clk/qcom/videocc-sm8450.c
->>>>>> +++ b/drivers/clk/qcom/videocc-sm8450.c
->>>>>> @@ -437,6 +437,10 @@ static int video_cc_sm8450_probe(struct platform_device *pdev)
->>>>>>         struct regmap *regmap;
->>>>>>         int ret;
->>>>>> +    ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8450_desc);
->>>>>> +    if (ret)
->>>>>> +        return ret;
->>>>>> +
->>>>>>         ret = devm_pm_runtime_enable(&pdev->dev);
->>>>>>         if (ret)
->>>>>>             return ret;
->>>>>> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
->>>>>> index 7c25a50cfa970dff55d701cb24bc3aa5924ca12d..d4b223d1392f0721afd1b582ed35d5061294079e 100644
->>>>>> --- a/drivers/clk/qcom/videocc-sm8550.c
->>>>>> +++ b/drivers/clk/qcom/videocc-sm8550.c
->>>>>> @@ -542,6 +542,10 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
->>>>>>         int ret;
->>>>>>         u32 sleep_clk_offset = 0x8140;
->>>>>> +    ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8550_desc);
->>>>>> +    if (ret)
->>>>>> +        return ret;
->>>>>> +
->>>>>>         ret = devm_pm_runtime_enable(&pdev->dev);
->>>>>>         if (ret)
->>>>>>             return ret;
->>>>>>
->>>>>
->>>>> What's the difference between doing the attach here or doing it in
->>>>> really_probe() ?
->>>>
->>>> I'd second this. If the domains are to be attached before calling any
->>>> other functions, move the call to the qcom_cc_map(), so that all drivers
->>>> get all domains attached before configuring PLLs instead of manually
->>>> calling the function.
->>>>
->>>>> There doesn't seem to be any difference except that we will have an
->>>>> additional delay introduced.
->>>>>
->>>>> Are you describing a race condition ?
->>>>>
->>>>> I don't see _logic_ here to moving the call into the controller's higher
->>>>> level probe.
->>>>>
->>>>> Can you describe some more ?
->>>>>
->>>>> ---
->>>>> bod
->>>>
->>>
->>> Here's one way this could work
->>>
->>> Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> Date:   Tue Feb 18 19:46:55 2025 +0000
->>>
->>>      clk: qcom: common: Add configure_plls callback prototype
->>>
->>>      Add a configure_plls() callback so that we can stage qcom_cc_attach_pds()
->>>      before configuring PLLs and ensure that the power-domain rail list is
->>>      switched on prior to configuring PLLs.
->>>
->>>      Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>>
->>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
->>> index 9e3380fd71819..1924130814600 100644
->>> --- a/drivers/clk/qcom/common.c
->>> +++ b/drivers/clk/qcom/common.c
->>> @@ -304,6 +304,9 @@ int qcom_cc_really_probe(struct device *dev,
->>>          if (ret < 0 && ret != -EEXIST)
->>>                  return ret;
->>>
->>> +       if (desc->configure_plls)
->>> +               desc->configure_plls(regmap);
->>> +
->>>          reset = &cc->reset;
->>>          reset->rcdev.of_node = dev->of_node;
->>>          reset->rcdev.ops = &qcom_reset_ops;
->>> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
->>> index 7ace5d7f5836a..4955085ff8669 100644
->>> --- a/drivers/clk/qcom/common.h
->>> +++ b/drivers/clk/qcom/common.h
->>> @@ -38,6 +38,7 @@ struct qcom_cc_desc {
->>>          const struct qcom_icc_hws_data *icc_hws;
->>>          size_t num_icc_hws;
->>>          unsigned int icc_first_node_id;
->>> +       void (*configure_plls)(struct regmap *regmap);
->>>   };
->>>
->>> and
->>>
->>> % git diff drivers/clk/qcom/camcc-x1e80100.c
->>> diff --git a/drivers/clk/qcom/camcc-x1e80100.c b/drivers/clk/qcom/camcc-x1e80100.c
->>> index b73524ae64b1b..c9748d1f8a15b 100644
->>> --- a/drivers/clk/qcom/camcc-x1e80100.c
->>> +++ b/drivers/clk/qcom/camcc-x1e80100.c
->>> @@ -2426,6 +2426,21 @@ static const struct regmap_config cam_cc_x1e80100_regmap_config = {
->>>          .fast_io = true,
->>>   };
->>>
->>> +static void cam_cc_x1e80100_configure_plls(struct regmap *regmap)
->>> +{
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
->>> +       clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, &cam_cc_pll8_config);
->>> +
->>> +       /* Keep clocks always enabled */
->>> +       qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
->>> +       qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
->>> +}
->>> +
->>>   static const struct qcom_cc_desc cam_cc_x1e80100_desc = {
->>>          .config = &cam_cc_x1e80100_regmap_config,
->>>          .clks = cam_cc_x1e80100_clocks,
->>> @@ -2434,6 +2449,7 @@ static const struct qcom_cc_desc cam_cc_x1e80100_desc = {
->>>          .num_resets = ARRAY_SIZE(cam_cc_x1e80100_resets),
->>>          .gdscs = cam_cc_x1e80100_gdscs,
->>>          .num_gdscs = ARRAY_SIZE(cam_cc_x1e80100_gdscs),
->>> +       .configure_plls = cam_cc_x1e80100_configure_plls,
->>>   };
->>>
->>>   static const struct of_device_id cam_cc_x1e80100_match_table[] = {
->>> @@ -2461,18 +2477,6 @@ static int cam_cc_x1e80100_probe(struct platform_device *pdev)
->>>                  return PTR_ERR(regmap);
->>>          }
->>>
->>> -       clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
->>> -       clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
->>> -       clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
->>> -       clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
->>> -       clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
->>> -       clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
->>> -       clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, &cam_cc_pll8_config);
->>> -
->>> -       /* Keep clocks always enabled */
->>> -       qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
->>> -       qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
->>> -
->>>          ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_x1e80100_desc, regmap);
->>>
->>>          pm_runtime_put(&pdev->dev);
->>>
->>> Or a least it works for me.
->>>
->>
->> This patch will not work in all cases, maybe in your case required power domains might be ON
->> from bootloaders so it might be working.
+On Wed, Feb 19, 2025 at 11:13:14AM +0100, Greg Kroah-Hartman wrote:
+> On Wed, Feb 19, 2025 at 11:06:02AM +0200, Dmitry Baryshkov wrote:
+> > On Tue, Feb 18, 2025 at 08:29:46PM +0100, Jerome Brunet wrote:
+> > > Add helper functions to create a device on the auxiliary bus.
+> > > 
+> > > This is meant for fairly simple usage of the auxiliary bus, to avoid having
+> > > the same code repeated in the different drivers.
+> > > 
+> > > Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> > > Cc: Arnd Bergmann <arnd@arndb.de>
+> > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > > ---
+> > >  drivers/base/auxiliary.c      | 108 ++++++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/auxiliary_bus.h |  17 +++++++
+> > >  2 files changed, 125 insertions(+)
+> > > 
+> > > diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+> > > index afa4df4c5a3f371b91d8dd8c4325495d32ad1291..a6d46c2759be81a0739f07528d5959c2a76eb8a8 100644
+> > > --- a/drivers/base/auxiliary.c
+> > > +++ b/drivers/base/auxiliary.c
+> > > @@ -385,6 +385,114 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(auxiliary_driver_unregister);
+> > >  
+> > > +static void auxiliary_device_release(struct device *dev)
+> > > +{
+> > > +	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
+> > > +
+> > > +	kfree(auxdev);
+> > > +}
+> > > +
+> > > +/**
+> > > + * auxiliary_device_create - create a device on the auxiliary bus
+> > > + * @dev: parent device
+> > > + * @modname: module name used to create the auxiliary driver name.
+> > > + * @devname: auxiliary bus device name
+> > > + * @platform_data: auxiliary bus device platform data
+> > > + * @id: auxiliary bus device id
+> > > + *
+> > > + * Helper to create an auxiliary bus device.
+> > > + * The device created matches driver 'modname.devname' on the auxiliary bus.
+> > > + */
+> > > +struct auxiliary_device *auxiliary_device_create(struct device *dev,
+> > > +						 const char *modname,
+> > > +						 const char *devname,
+> > > +						 void *platform_data,
+> > > +						 int id)
+> > > +{
+> > > +	struct auxiliary_device *auxdev;
+> > > +	int ret;
+> > > +
+> > > +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
+> > > +	if (!auxdev)
+> > > +		return NULL;
+> > > +
+> > > +	auxdev->id = id;
+> > > +	auxdev->name = devname;
+> > > +	auxdev->dev.parent = dev;
+> > > +	auxdev->dev.platform_data = platform_data;
+> > > +	auxdev->dev.release = auxiliary_device_release;
+> > > +	device_set_of_node_from_dev(&auxdev->dev, dev);
+> > > +
+> > > +	ret = auxiliary_device_init(auxdev);
+> > > +	if (ret) {
+> > > +		kfree(auxdev);
+> > > +		return NULL;
+> > > +	}
+> > > +
+> > > +	ret = __auxiliary_device_add(auxdev, modname);
+> > > +	if (ret) {
+> > 
+> > This loses possible error return values from __auxiliary_device_add().
 > 
-> But with his patch domains are attached before configuring the PLLs, are
-> they not?
+> Why does that really matter?
 
-Yes, its logically the same just done in core code.
+At the very least the caller (or caller of a caller) can call
+dev_err_probe() or dev_err("%pe"). With the current implementation as
+everybody maps NULL to -ENOMEM the error message will be cryptic.
 
->>
->>> New clock controllers would then use this callback mechanism and potentially all of the controllers to have uniformity.
->>>
->>
->> No, above approach also requires changes in each individual clock driver to define the callback. So I don't see any advantage
->> with this than the current approach.
+Or just having a cryptic value in the logs.
+
+> > I'd suggest to return ERR_PTR(ret) here and in the
+> > auxiliary_device_init() chunks and ERR_PTR(-ENOMEM) in case of kzalloc()
+> > failure.
 > 
-> Bryan's proposal moves us towards having a common code, so it's better.
-> 
+> Will the caller do something different based on the error value here?
+> All we care is that this worked or not, the specific error isn't going
+> to matter for device creation like this.
 
-I can take the time to do the whole sweep and publish a RFC.
+The caller might not, the developer might.
 
----
-bod
+-- 
+With best wishes
+Dmitry
