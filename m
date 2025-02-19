@@ -1,74 +1,191 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1EE1DF974;
-	Wed, 19 Feb 2025 12:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42CD41C84A9;
+	Wed, 19 Feb 2025 13:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739968978; cv=none; b=IbtQNhstcpu8v+kY9TDI5s1V3pb7hRS0ED+wUTh9MvcHL/LAwJG+O+wCDP7Mh7mNkKlLSuqacdvmataU5yO9wwDY7yABSuroQABMZ/BdWnsVevmHig3wtbOnyeur+r54HrXrrfSlxFJMtI4ImlU2vECNHewS7tTgioKAcxCiBPQ=
+	t=1739971167; cv=none; b=J8QmLOWnINxKV2reKt61Svi5eBhWS5vVSej1DKf0iSjAy0NS2sOz3SlAtpUujX0OvWNFEQUjF9T0dYFE7lIEBhGtu9iJKuUiMOv5OOKwiJjvYixzUv8j1QinX3+luuPum5DLtMrdthwApj1KKhMRwfbYW+gG3Clu7NAJorsGxJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739968978; c=relaxed/simple;
-	bh=N2b5YBiD8Ug5lGLd2YA1Nf4Jy8KFodB2IWP6M3MqESA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h0W9q0Av7cH4Ng8oRBIsP0w3EbRt3L78Joz0SRbwZpLdwNipRF5gFWvuPpWISbqtQocnEU0DUW/tVromnZSmU+WRCECPrhVmGaEu3ys3x5pMUb5Lkq1vh1LEO0KmxLP7zVxpOTDmnarb3aEy8I5C3D7VPXlxl2BICudy4WCvM7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGeFGOHz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739971167; c=relaxed/simple;
+	bh=RcuQPWBAOebggXpc49oXCroXSGfFXw0R3wUoVFgSYw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WvXuSMXNAovZ4IujWzgVxdchoI/POpfRfB5hdK5zZLLim1FZk6O75SmIH2pk17FXII8pPobYNJ8E87z8kKZNOolK1BzDStRRliWn7zHpxJPQnDILQM65uiwbtCccpTTCmBQc5Z6L49Wq7Gc++LVXtQEpzGaWK3ZUOmwVzOLwiSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TZH/bQk4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGeFGOHz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24FD3C4CED1;
-	Wed, 19 Feb 2025 12:42:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739968977;
-	bh=N2b5YBiD8Ug5lGLd2YA1Nf4Jy8KFodB2IWP6M3MqESA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jGeFGOHzVoXR1H+/EtbaT9FQlUjfFd77IA9AsEy/0dGqtMJ3ngfjxFZXHjqv7iZZq
-	 v2l5zc4+pHmSZyKZ18phjDlRj4/cShDiSkoFpS1gFRyJaC9OoHryzxP3RKd4H4e8sP
-	 p7KXitCvSasc0c5GuNlicLnx/q9jZjpXVF55VyrXELYmgjZLMaQM+XGxtxxjS+kkL0
-	 uspFOaCczSXc6Qedemt6gBgoXI/tl81l1hHE4iC2JkxMrbveo9ad1fH1mZsReiiYTD
-	 bCNds8Tge5SqhRFFAvO5beT+26ZzdiLFe6moNAnX+jxXwbyh731Og4UInBfhszkCdc
-	 oE9vPnLdMo4hw==
-Message-ID: <5d96608a-8ed6-4b23-a725-ba7a8476a1c5@kernel.org>
-Date: Wed, 19 Feb 2025 06:42:55 -0600
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TZH/bQk4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26083C4CED1;
+	Wed, 19 Feb 2025 13:19:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1739971166;
+	bh=RcuQPWBAOebggXpc49oXCroXSGfFXw0R3wUoVFgSYw0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TZH/bQk4qL6+2tnUJqqWBkPPTthw5gu9C17UymFAIupjP536vP5/A2uuLTBTsi5EM
+	 G6Cwv45NY3dyN2GbwkOU/ec7M/aKurvYZOZohZZHB3xEdjNwkIGxGcUW3qgOJrXUR0
+	 jXyHDhQTIbUsWIurk+PCF0wp5cC3JQAlgnZOUB20=
+Date: Wed, 19 Feb 2025 14:19:23 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Douglas Anderson <dianders@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v4 1/8] driver core: auxiliary bus: add device creation
+ helpers
+Message-ID: <2025021937-trodden-snowdrop-99be@gregkh>
+References: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
+ <20250218-aux-device-create-helper-v4-1-c3d7dfdea2e6@baylibre.com>
+ <crtrciitrlqkxh5mxvnbdjy6zoxny5onse7xgbw7biozg6myux@grp3ketgl2uh>
+ <2025021922-spongy-swirl-0746@gregkh>
+ <eskvhtljnrkhm6vmqy52gkweexj3tcethejeywcoib4la72jcl@ojuqcazpvht4>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] clk: socfpga: stratix10: Optimize local variables
-To: Thorsten Blum <thorsten.blum@linux.dev>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250219104435.1525-2-thorsten.blum@linux.dev>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20250219104435.1525-2-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eskvhtljnrkhm6vmqy52gkweexj3tcethejeywcoib4la72jcl@ojuqcazpvht4>
 
-On 2/19/25 04:44, Thorsten Blum wrote:
-> Since readl() returns a u32, the local variable reg can also have the
-> data type u32. Furthermore, mdiv and refdiv are derived from reg and can
-> also be a u32.
+On Wed, Feb 19, 2025 at 02:08:22PM +0200, Dmitry Baryshkov wrote:
+> On Wed, Feb 19, 2025 at 11:13:14AM +0100, Greg Kroah-Hartman wrote:
+> > On Wed, Feb 19, 2025 at 11:06:02AM +0200, Dmitry Baryshkov wrote:
+> > > On Tue, Feb 18, 2025 at 08:29:46PM +0100, Jerome Brunet wrote:
+> > > > Add helper functions to create a device on the auxiliary bus.
+> > > > 
+> > > > This is meant for fairly simple usage of the auxiliary bus, to avoid having
+> > > > the same code repeated in the different drivers.
+> > > > 
+> > > > Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> > > > Cc: Arnd Bergmann <arnd@arndb.de>
+> > > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> > > > ---
+> > > >  drivers/base/auxiliary.c      | 108 ++++++++++++++++++++++++++++++++++++++++++
+> > > >  include/linux/auxiliary_bus.h |  17 +++++++
+> > > >  2 files changed, 125 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+> > > > index afa4df4c5a3f371b91d8dd8c4325495d32ad1291..a6d46c2759be81a0739f07528d5959c2a76eb8a8 100644
+> > > > --- a/drivers/base/auxiliary.c
+> > > > +++ b/drivers/base/auxiliary.c
+> > > > @@ -385,6 +385,114 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv)
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(auxiliary_driver_unregister);
+> > > >  
+> > > > +static void auxiliary_device_release(struct device *dev)
+> > > > +{
+> > > > +	struct auxiliary_device *auxdev = to_auxiliary_dev(dev);
+> > > > +
+> > > > +	kfree(auxdev);
+> > > > +}
+> > > > +
+> > > > +/**
+> > > > + * auxiliary_device_create - create a device on the auxiliary bus
+> > > > + * @dev: parent device
+> > > > + * @modname: module name used to create the auxiliary driver name.
+> > > > + * @devname: auxiliary bus device name
+> > > > + * @platform_data: auxiliary bus device platform data
+> > > > + * @id: auxiliary bus device id
+> > > > + *
+> > > > + * Helper to create an auxiliary bus device.
+> > > > + * The device created matches driver 'modname.devname' on the auxiliary bus.
+> > > > + */
+> > > > +struct auxiliary_device *auxiliary_device_create(struct device *dev,
+> > > > +						 const char *modname,
+> > > > +						 const char *devname,
+> > > > +						 void *platform_data,
+> > > > +						 int id)
+> > > > +{
+> > > > +	struct auxiliary_device *auxdev;
+> > > > +	int ret;
+> > > > +
+> > > > +	auxdev = kzalloc(sizeof(*auxdev), GFP_KERNEL);
+> > > > +	if (!auxdev)
+> > > > +		return NULL;
+> > > > +
+> > > > +	auxdev->id = id;
+> > > > +	auxdev->name = devname;
+> > > > +	auxdev->dev.parent = dev;
+> > > > +	auxdev->dev.platform_data = platform_data;
+> > > > +	auxdev->dev.release = auxiliary_device_release;
+> > > > +	device_set_of_node_from_dev(&auxdev->dev, dev);
+> > > > +
+> > > > +	ret = auxiliary_device_init(auxdev);
+> > > > +	if (ret) {
+> > > > +		kfree(auxdev);
+> > > > +		return NULL;
+> > > > +	}
+> > > > +
+> > > > +	ret = __auxiliary_device_add(auxdev, modname);
+> > > > +	if (ret) {
+> > > 
+> > > This loses possible error return values from __auxiliary_device_add().
+> > 
+> > Why does that really matter?
 > 
-> Since do_div() casts the divisor to u32 anyway, changing the data type
-> of refdiv to u32 removes the following Coccinelle/coccicheck warning
-> reported by do_div.cocci:
+> At the very least the caller (or caller of a caller) can call
+> dev_err_probe() or dev_err("%pe"). With the current implementation as
+> everybody maps NULL to -ENOMEM the error message will be cryptic.
 > 
->    WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead
-> 
-> Compile-tested only.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
->   drivers/clk/socfpga/clk-pll-s10.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
+> Or just having a cryptic value in the logs.
 
-Applied!
+So all you can get here could be:
+	-ENOMEM - memory couldn't be allocated somewhere
+	-EINVAL - wrong parameters sent to auxiliary_device_init() or __auxiliary_device_add()
+	-EEXIST - duplicate name
 
-Thanks,
-Dinh
+And if -EEXIST happens, you will get a kernel log splat from sysfs
+showing you that something went wrong.
 
+So while I understand the need to be specific here in reporting the
+exact error, I fail to understand how it really matters at all.  A
+driver writer really only wants to know "did it work?" and have a simple
+way to test it.
+
+IS_ERR_OR_NULL() and then getting the error using PTR_ERR() is rough and
+feels like boilerplate code that everyone gets wrong (how many times do
+people accidentally only check for NULL?).
+
+Anyway, I'm for simple apis, and NULL or valid pointer seems simple to
+me.
+
+thanks,
+
+greg k-h
