@@ -1,92 +1,269 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFDE1E5B65;
-	Wed, 19 Feb 2025 14:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2B41DFE2C
+	for <linux-clk@vger.kernel.org>; Wed, 19 Feb 2025 15:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739974852; cv=none; b=jGVAvEPkANxJZ8mxH3UoC3Nzd/vzhjn1NobQrnr0QBHxZ4v43tgPVCXmzHJqCbhmQfGaOOGGNz/QXaDsBSRbFTQXyJRr9IYUuLESOB+m2BURrv04X+nYWVnIoYO+6nWbNFURj8aT/ko18TwCkxpnVx0vC36eP/lcWJvnYYZ1hlI=
+	t=1739977349; cv=none; b=dEnUWQcCfWW+vDw6GwWYsLCnMeiM2+CmA+IbMCR0r6DOYbg5rdTyZbKzeULeSFTpJq15ic/CGnhhODZ5vlXbxu63rMtlvps10VH7Pt6dOG2Gtvi0cVMJvS4ExUwTelztzxnV033k+EH23fgTIulP4ULTpXyzkyZbKlEDYxbjtes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739974852; c=relaxed/simple;
-	bh=jOlrkiD0YDVnxiss19yqwIELdl/2yHZAb820zbK7+Y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NP0HukTbwe3YeQfR+1hbqTSrG7QzGPXRrOh8n+D/9+qq8CouyLZ14iMsTf68kb/p9dABhWYOOYsnvNRN9OK1C7vYB7Pp0/rslzdAKDia4ebWw5LcXCbLrbVLauVlUylmO1NKNYWhtyL6lwItNFQM8GAUANE5HSEnvrekLPwnboI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eIwtcQJF; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eIwtcQJF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05A12C4CED1;
-	Wed, 19 Feb 2025 14:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739974851;
-	bh=jOlrkiD0YDVnxiss19yqwIELdl/2yHZAb820zbK7+Y4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eIwtcQJFf0s+4hIHMz0Xth5Km8xhl2Lj7ZaQuf7QLCMOqOAThRQfWtj3OOU8+Ik2C
-	 CytUQ7xJ4zfZOAOJvCrqBSZxlDw0azh39huA2Zuu5ZtJlOIL5m02V31EfAhhq1xWd3
-	 QyVWZb0x+NzZ+cKpwIfGziYdpiVNagt0okrwp+Cw=
-Date: Wed, 19 Feb 2025 15:20:48 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Douglas Anderson <dianders@chromium.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org,
-	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v4 1/8] driver core: auxiliary bus: add device creation
- helpers
-Message-ID: <2025021938-swan-facedown-e96a@gregkh>
-References: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
- <20250218-aux-device-create-helper-v4-1-c3d7dfdea2e6@baylibre.com>
+	s=arc-20240116; t=1739977349; c=relaxed/simple;
+	bh=RUNbt4yGPSt7OH59avth3IQQbP99cZS7WYjTwXjBDTw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AuG8NC8S5OqLg26bxuYBXpCI4vZfFbAhDO4f3SzDXe5uzP8eRn0NMgN/UfU5R4udlcySNtCjDbg24Zg2KVzkUbl4W1ftRgIqusLLZOBGe7TZGSnEbyjzBtSxxgOyHEmhiCOgoSFYCWG3x2fBIz4D7k3n8+nFHZHDycO9lr6Xn4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tkla9-0004IU-Do; Wed, 19 Feb 2025 16:01:49 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tkla6-001mdz-12;
+	Wed, 19 Feb 2025 16:01:46 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tkla6-0009xm-0e;
+	Wed, 19 Feb 2025 16:01:46 +0100
+Message-ID: <ef2026c28b9e6d59a98f6f33eb14f3b762454423.camel@pengutronix.de>
+Subject: Re: [PATCH v5 12/21] reset: thead: Add TH1520 reset controller
+ driver
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com, 
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+  drew@pdp7.com, guoren@kernel.org, wefu@redhat.com,
+ jassisinghbrar@gmail.com,  paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu,  frank.binns@imgtec.com, matt.coster@imgtec.com, 
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+  airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
+ jszhang@kernel.org,  m.szyprowski@samsung.com
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+Date: Wed, 19 Feb 2025 16:01:46 +0100
+In-Reply-To: <20250219140239.1378758-13-m.wilczynski@samsung.com>
+References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
+	 <CGME20250219140305eucas1p26317b54727c68cf069458d270e06d962@eucas1p2.samsung.com>
+	 <20250219140239.1378758-13-m.wilczynski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250218-aux-device-create-helper-v4-1-c3d7dfdea2e6@baylibre.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Tue, Feb 18, 2025 at 08:29:46PM +0100, Jerome Brunet wrote:
-> Add helper functions to create a device on the auxiliary bus.
-> 
-> This is meant for fairly simple usage of the auxiliary bus, to avoid having
-> the same code repeated in the different drivers.
-> 
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+On Mi, 2025-02-19 at 15:02 +0100, Michal Wilczynski wrote:
+> Add reset controller driver for the T-HEAD TH1520 SoC that manages
+> hardware reset lines for various subsystems. The driver currently
+> implements support for GPU reset control, with infrastructure in place
+> to extend support for NPU and Watchdog Timer resets in future updates.
+>=20
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  MAINTAINERS                  |   1 +
+>  drivers/reset/Kconfig        |  10 +++
+>  drivers/reset/Makefile       |   1 +
+>  drivers/reset/reset-th1520.c | 141 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 153 insertions(+)
+>  create mode 100644 drivers/reset/reset-th1520.c
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 819686e98214..e4a0a83b4c11 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20425,6 +20425,7 @@ F:	drivers/mailbox/mailbox-th1520.c
+>  F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+>  F:	drivers/pinctrl/pinctrl-th1520.c
+>  F:	drivers/pmdomain/thead/
+> +F:	drivers/reset/reset-th1520.c
+>  F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
+>  F:	include/dt-bindings/power/thead,th1520-power.h
+>  F:	include/dt-bindings/reset/thead,th1520-reset.h
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 5b3abb6db248..fa0943c3d1de 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -272,6 +272,16 @@ config RESET_SUNXI
+>  	help
+>  	  This enables the reset driver for Allwinner SoCs.
+> =20
+> +config RESET_TH1520
+> +	tristate "T-HEAD 1520 reset controller"
+> +	depends on ARCH_THEAD || COMPILE_TEST
+> +	select REGMAP_MMIO
+> +	help
+> +	  This driver provides support for the T-HEAD TH1520 SoC reset controll=
+er,
+> +	  which manages hardware reset lines for SoC components such as the GPU=
+.
+> +	  Enable this option if you need to control hardware resets on TH1520-b=
+ased
+> +	  systems.
+> +
+>  config RESET_TI_SCI
+>  	tristate "TI System Control Interface (TI-SCI) reset driver"
+>  	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=3Dn)
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 677c4d1e2632..d6c2774407ae 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -35,6 +35,7 @@ obj-$(CONFIG_RESET_SIMPLE) +=3D reset-simple.o
+>  obj-$(CONFIG_RESET_SOCFPGA) +=3D reset-socfpga.o
+>  obj-$(CONFIG_RESET_SUNPLUS) +=3D reset-sunplus.o
+>  obj-$(CONFIG_RESET_SUNXI) +=3D reset-sunxi.o
+> +obj-$(CONFIG_RESET_TH1520) +=3D reset-th1520.o
+>  obj-$(CONFIG_RESET_TI_SCI) +=3D reset-ti-sci.o
+>  obj-$(CONFIG_RESET_TI_SYSCON) +=3D reset-ti-syscon.o
+>  obj-$(CONFIG_RESET_TI_TPS380X) +=3D reset-tps380x.o
+> diff --git a/drivers/reset/reset-th1520.c b/drivers/reset/reset-th1520.c
+> new file mode 100644
+> index 000000000000..d6816c86ba95
+> --- /dev/null
+> +++ b/drivers/reset/reset-th1520.c
+> @@ -0,0 +1,141 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2024 Samsung Electronics Co., Ltd.
+> + * Author: Michal Wilczynski <m.wilczynski@samsung.com>
+> + */
+> +
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/reset/thead,th1520-reset.h>
+> +
+> + /* register offset in VOSYS_REGMAP */
+> +#define TH1520_GPU_RST_CFG		0x0
+> +#define TH1520_GPU_RST_CFG_MASK		GENMASK(1, 0)
+> +
+> +/* register values */
+> +#define TH1520_GPU_SW_GPU_RST		BIT(0)
+> +#define TH1520_GPU_SW_CLKGEN_RST	BIT(1)
+> +
+> +struct th1520_reset_priv {
+> +	struct reset_controller_dev rcdev;
+> +	struct regmap *map;
+> +};
+> +
+> +struct th1520_reset_map {
+> +	u32 bit;
+> +	u32 reg;
+> +};
+> +
+> +static const struct th1520_reset_map th1520_resets[] =3D {
+> +	[TH1520_RESET_ID_GPU] =3D {
+> +		.bit =3D TH1520_GPU_SW_GPU_RST,
+> +		.reg =3D TH1520_GPU_RST_CFG,
+> +	},
+> +	[TH1520_RESET_ID_GPU_CLKGEN] =3D {
+> +		.bit =3D TH1520_GPU_SW_CLKGEN_RST,
+> +		.reg =3D TH1520_GPU_RST_CFG,
+> +	}
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I expect the NPU and WDT resets will be added to this list later?
+
+> +};
+> +
+> +static inline struct th1520_reset_priv *
+> +to_th1520_reset(struct reset_controller_dev *rcdev)
+> +{
+> +	return container_of(rcdev, struct th1520_reset_priv, rcdev);
+> +}
+> +
+> +static int th1520_reset_assert(struct reset_controller_dev *rcdev,
+> +			       unsigned long id)
+> +{
+> +	struct th1520_reset_priv *priv =3D to_th1520_reset(rcdev);
+> +	const struct th1520_reset_map *reset;
+> +
+> +	if (id >=3D ARRAY_SIZE(th1520_resets))
+> +		return -EINVAL;
+
+This check is not necessary. The core will have checked this in
+of_reset_simple_xlate() before returning the reset control.
+
+> +
+> +	reset =3D &th1520_resets[id];
+> +
+> +	return regmap_update_bits(priv->map, reset->reg, reset->bit, 0);
+> +}
+> +
+> +static int th1520_reset_deassert(struct reset_controller_dev *rcdev,
+> +				 unsigned long id)
+> +{
+> +	struct th1520_reset_priv *priv =3D to_th1520_reset(rcdev);
+> +	const struct th1520_reset_map *reset;
+> +
+> +	if (id >=3D ARRAY_SIZE(th1520_resets))
+> +		return -EINVAL;
+
+This check is not necessary.
+
+> +
+> +	reset =3D &th1520_resets[id];
+> +
+> +	return regmap_update_bits(priv->map, reset->reg, reset->bit,
+> +				  reset->bit);
+> +}
+> +
+> +static const struct reset_control_ops th1520_reset_ops =3D {
+> +	.assert	=3D th1520_reset_assert,
+> +	.deassert =3D th1520_reset_deassert,
+> +};
+> +
+> +static const struct regmap_config th1520_reset_regmap_config =3D {
+> +	.reg_bits =3D 32,
+> +	.val_bits =3D 32,
+> +	.reg_stride =3D 4,
+> +	.fast_io =3D true,
+> +};
+> +
+> +static int th1520_reset_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct th1520_reset_priv *priv;
+> +	void __iomem *base;
+> +	int ret;
+> +
+> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	base =3D devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	priv->map =3D devm_regmap_init_mmio(dev, base,
+> +					  &th1520_reset_regmap_config);
+> +	if (IS_ERR(priv->map))
+> +		return PTR_ERR(priv->map);
+> +
+> +	/* Initialize GPU resets to asserted state */
+> +	ret =3D regmap_update_bits(priv->map, TH1520_GPU_RST_CFG,
+> +				 TH1520_GPU_RST_CFG_MASK, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	priv->rcdev.owner =3D THIS_MODULE;
+> +	priv->rcdev.nr_resets =3D 2;
+
+Better use ARRAY_SIZE(th1520_resets) here, this will simplify adding
+further resets in the future. With that,
+
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+regards
+Philipp
