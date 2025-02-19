@@ -1,130 +1,113 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D6E28629B;
-	Wed, 19 Feb 2025 12:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739967495; cv=none; b=nZAf1jwsX0wPO3b3erVhxaitaia0vfgHSDjFr728G0Z2n8m6MSVCAH7Gf0GCDT5ayG57r+KgG0YXx4VdZ3yRZx0Bo4+RjyQk4ryasxwPUi/G/PyZ+ODigxQSjVNetmxTfGJ+tjb8ultPXOeXL7PHDyyLGj5MMJDl3q1bIv736+Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739967495; c=relaxed/simple;
-	bh=CkJjV4pYyBmnvMr8dXnwe++5yWa/O/7CmfltUEorV3c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EAFoytjvSa4xnulG5X5mxHcP+3I6Ooke2ioz5+5RCL1ZP7JdjYJu4TsU3/oIxspqdq1AHY2vhyVY4wjV8A347GS8ysq8hsQUr2cN1+e7Ic9j8z11qS2VkEYAAy+wc2IPTuKsLcdGS3YfQ16yD8UB3iiLJ3pWap1m8OYoV2NxAQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FLFT2SJR; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661011C5D4D;
+	Wed, 19 Feb 2025 12:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739968121; cv=pass; b=tyFwjhUZWxAZECdxwVyakqHiXte+s4FInsgUNH2Lfm3Nh2RHH1INbF5IKayCGdTG8viZGspLmbLp2NMumAEumTD5HuYf7EvehFOxTfjnpEJn89cUQMdxVAviQyU7qoFmLNR/85j0IkQKwjalZC+YD7Ob0uXFwGiI2WqpdR6nfQI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739968121; c=relaxed/simple;
+	bh=dvj8qG75FkUp1jBuCA8jXNa1JtN7/smeUcFRA68hJ2k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hRhEwzyjqrzykn6NvdEDpbnvbw85aKAcBTAEYXxyh+OkQ/KMGplmdWRibt2FyZyjgW/tAaHRwfvZ8hf/aDJy74X3s+ieS942/4uO0aSGR4O7D2aFl1zp83QLbFKxPsj/Qglp37sxHLkGuZAUgNVpn1Aj8SSSrMtAlMTQmhIgxG0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=YmQwLOKG; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FLFT2SJR"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-54622940ef7so3338166e87.3;
-        Wed, 19 Feb 2025 04:18:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739967492; x=1740572292; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VTPWbSgjrTLpPmlX3MdNrwi/24I03HDG8gfadoLFfKo=;
-        b=FLFT2SJRZs7hCYj0/HvesL/phOhwwi7aaiXz8f5Rzf8jA1Htf6uMKOMqfjZ08lJQW2
-         UkzoelAR3dzy+eoqZUHU8dedMG+xyRia/0fBBTjkXe7qXosU6838n/U4XZkVVX9btkME
-         U5YFkGHu3TiUySC88ad7+eFxJTep+6/OShXs75NlngaO7Bm4bC5/Xa+rFqD1WS31911s
-         VJEzXsCl83vngrR3LoeGPCknr2dUcKgDJ70yTX4y8qMSms8Trhk9YFqumXlMTsBvo+mw
-         hBpoJZacDpSUpa5xI8uEgBSmEYiYiNp2a1SEXXx338fspYa7mZ+dokPUd2P4z7QBlgpB
-         K+Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739967492; x=1740572292;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VTPWbSgjrTLpPmlX3MdNrwi/24I03HDG8gfadoLFfKo=;
-        b=ECCM27rx751PrFSm1TG1tyMTBQcXmpwbYtpkFTfcKXwhdeC2+OdnNIZWbTKnGX9k6Q
-         vtcCwdT/uSoSOpuLckWghLxFxnKwklTUA8gCGqKQSmL1OfQuGOqOhjFU+hMegv/nu9Ah
-         T6+PW06KkVHp82N1OXtXgAyiPqDz+mJTyVKE/qKOqHDiAG1lTs85siXcVsZCFtO5apmF
-         T9XM4ReN4gge9McauKr+6N+prbO0bqMECUvXoX8FFCDfq/8ojymXc7duhBSfLP757/CK
-         CTVtoDNCMjbX03fmqFQjkmdknILkZERig3saUxzsu8GQiLooodTo+b3EHnqDRdJQH/U0
-         ofWg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1kUkSSfF+h/lRRWPPrqxtk60+KXSOFxgkgV62cBowPjpPL/e2IPRj4UzdrBfD7XGAy/Ehp0bultT+3CW8@vger.kernel.org, AJvYcCUIrEJBvtnWBBduXUYIFvPC1WYFr8XHzLRVnycj/Fw+7V2Ql+CBKMfriDcXRu1Hpt2oPv3AaG4+v3Yc@vger.kernel.org, AJvYcCWwpqb8sYYEZVFV3mPNElZrWTXA8t8zQarokyaMJhikE1Rc6/jz/KDIaks8fUIV2RgE8m2UUlbR+7FV@vger.kernel.org
-X-Gm-Message-State: AOJu0YylPEB0CuVVQ6CgLUleQiO4pm1b4dDHRZH/JbAfnG/NtC4iOXgZ
-	6W/AJUSXa9M4ZqdgExi5V3P5GrefccwfI7DXjPYpYiW1oE9fxnN8ZdxMlEScVErdFtsC9DEE9aJ
-	8B9kG0+2rtZVGwE2NeqNl+Z5bwm0=
-X-Gm-Gg: ASbGnctMu1/KH472CgiFvzzpaKCAS4Cg0eUxUBeetud1q9oL2lfLTpyDLCD3m0jFizg
-	9EWJu+QOTYVNy0hUm4RNjEwwF2i3aatDcp+LO7sUAbNBMbYQKcndhD98mz8w7icNMEXNtxAblKn
-	RIXY311XDezNyO2nynQT3CstRC3d8=
-X-Google-Smtp-Source: AGHT+IGjNIoen8ULKXTmUUOdA8vnMJhMrh0uHRpn94zwbfBEqhRrLoruJpWGVHqyNRMVU7htjBuXJmu/uj1ajZZO9rM=
-X-Received: by 2002:a05:6512:3d28:b0:545:2eca:856 with SMTP id
- 2adb3069b0e04-5462eed85c8mr1170113e87.9.1739967491394; Wed, 19 Feb 2025
- 04:18:11 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="YmQwLOKG"
+ARC-Seal: i=1; a=rsa-sha256; t=1739968099; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=DwOm7E10jY6hnTNzCCj1JkCNeNmp5cnR4tsrNDv568EeiQsvOI/fwVWP12qAlSLNDuRdiPxHEtDk3H6B6MW/ilzNiWRmQIGhFujoZTZT55mLXNp02XahOi4c8BK6iWdE2E4xuWtSjAvW8o8mE+M1YkU/q2d6HsYQ4Ax2ECJLDmw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1739968099; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ErJtYKOge+GvQHMf4JHdyvPeqtIfe3Bc9K5kgIMMY60=; 
+	b=dQEYNF8Q1JVEneqIpP27h2QC5ssWSgcbr4h5714G6T8NGejgkDF57eGhlBLXW1k788ivzYkWx0UbNwoTRhHNsmIVKhUiBlCcwy0YyUJF3hwwLsHpvBXqhCw/ywI8ZSWPtQzJeoMKOQviz+B9jsflr3dXyudkmBRre/BLHM8ShXo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1739968099;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:From:From:Subject:Subject:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=ErJtYKOge+GvQHMf4JHdyvPeqtIfe3Bc9K5kgIMMY60=;
+	b=YmQwLOKGu4rY5j4baZqxOl0lYivbcDkBNS9011a2kCnyIiCAWgJfLqind0Cv8/Z2
+	Yq9xFCDXXfMWWnNWsliFn/iXEpDCfzKpUo8EIo0SopzP+h2NiZGgpFhD+RiuDECJTK1
+	3uWd2oJSLy9Ye3Bi0N++NeFDTA+Im0QdyhzhTedQ=
+Received: by mx.zohomail.com with SMTPS id 1739968094991431.0733059111493;
+	Wed, 19 Feb 2025 04:28:14 -0800 (PST)
+Message-ID: <41b3863a-0b2a-4cb1-8d83-8397822ed788@zohomail.com>
+Date: Wed, 19 Feb 2025 20:28:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219114936.3546530-1-lukma@denx.de> <56e56623-9cef-48b9-8a57-ef7840f0a8f3@kernel.org>
-In-Reply-To: <56e56623-9cef-48b9-8a57-ef7840f0a8f3@kernel.org>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 19 Feb 2025 09:18:00 -0300
-X-Gm-Features: AWEUYZl9H3BRYlwGymanzXLFA6lr62seClEuWhg-mC8ltYhyVYgZA4_v-XW8gpM
-Message-ID: <CAOMZO5Cf3JpKBjQXdjWNeSgOCOLmcNuSvQpR_ewiFtH-p3KwfQ@mail.gmail.com>
-Subject: Re: [PATCH] arm: clk: Add ETH switch clock description for vf610 SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Lukasz Majewski <lukma@denx.de>, Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Xukai Wang <kingxukai@zohomail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: clock: Add bindings for Canaan K230
+ clock controller
+To: Stephen Boyd <sboyd@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com>
+ <20250217-b4-k230-clk-v4-1-5a95a3458691@zohomail.com>
+ <c68c14422c7d27278f6fc75f285db7c7.sboyd@kernel.org>
+Content-Language: en-US
+In-Reply-To: <c68c14422c7d27278f6fc75f285db7c7.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr08011227ebd6254e49c7c0cdfe03935a0000a6ec7566cfabf3e694acedeb925f7105b625ce95562fa49b8b:zu08011227354929267fad4875a2f0fd7400000a59bb746f134a904ecc190f99b7fc8c6d6568ac7781fb3d72:rf0801122bf18172995ae17d7bb5eb31740000b17bd183a15457a0257c4e8f72133640fc83bda074112f4bc6c1cc9f77:ZohoMail
+X-ZohoMailClient: External
 
-Hi Lukasz,
+On 2025/2/19 05:51, Stephen Boyd wrote:
+> Quoting Xukai Wang (2025-02-17 06:45:16)
+>> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Canaan Kendryte K230 Clock
+>> +
+>> +maintainers:
+>> +  - Xukai Wang <kingxukai@zohomail.com>
+> Is this missing a description of the device?
 
-On Wed, Feb 19, 2025 at 9:06=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+Alright. Here's the added description:
 
-> This defiine should not change. If you need to change it, means it is
-> not an ABI. Just like for other cases, I suggest to drop the define in
-> preparatory patch.
+The K230 clock controller manages the PLLs and system clocks (sysclk),
+generating clocks for different domains. The internal PLLs are derived
+from the external osc24M, and all sysclk signals use either the PLLs'
+dividers or directly the osc24M source.
 
-You can follow the same approach that was done for i.MX93.
+Not all macros defined in include/dt-bindings/clock/canaan,k230-clk.h
+are available for use in clock consumer nodes yet.
 
-Please check the two commits below:
+Does this looks appropriate?
 
-commit c0813ce2e5b0d1174782aff30d366509377abc7b
-Author: Pengfei Li <pengfei.li_1@nxp.com>
-Date:   Wed Oct 23 11:46:48 2024 -0700
+>> +        reg = <0x91102000 0x1000>,
+> Is there a reason why the PLL range comes first?
+As I thought that the PLL is the base for other system clocks (sysclk),
+so I placed it first.
+> What's at 0x91101000? More clk hardware?
 
-    dt-bindings: clock: imx93: Drop IMX93_CLK_END macro definition
+Regarding 0x91101000, there is no clk hardware at that address; it is
+related to the Reset Management Unit (RMU).
 
-    IMX93_CLK_END should be dropped as it is not part of the ABI.
+You can refer to the K230 Technical Reference Manual [1] on page 11 for
+its Address Space mapping.
 
-    Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-    Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-    Acked-by: Peng Fan <peng.fan@nxp.com>
-    Acked-by: Conor Dooley <conor.dooley@microchip.com>
-    Link: https://lore.kernel.org/r/20241023184651.381265-3-pengfei.li_1@nx=
-p.com
-    Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+Thanks for your time.
 
+Link:
+https://kendryte-download.canaan-creative.com/developer/k230/HDK/K230%E7%A1%AC%E4%BB%B6%E6%96%87%E6%A1%A3/K230_Technical_Reference_Manual_V0.3.1_20241118.pdf
+[1]
 
-commit 0af18ba60752e8a4ba34404c1d9a4a799da690f5
-Author: Pengfei Li <pengfei.li_1@nxp.com>
-Date:   Wed Oct 23 11:46:47 2024 -0700
-
-    clk: imx93: Move IMX93_CLK_END macro to clk driver
-
-    IMX93_CLK_END was previously defined in imx93-clock.h to indicate
-    the number of clocks. However, it is not part of the ABI. For starters
-    it does no really appear in DTS. But what's more important - new clocks
-    are described later, which contradicts this define in binding header.
-    So move this macro to clock driver.
-
-    Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-    Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-    Link: https://lore.kernel.org/r/20241023184651.381265-2-pengfei.li_1@nx=
-p.com
-    Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-
-Also, the Subject should not contain 'arm'. You could use:
-
-clk: vf610: Add support for the Ethernet switch clock
+>> +              <0x91100000 0x1000>;
