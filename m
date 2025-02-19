@@ -1,299 +1,108 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C24F2144A1;
-	Wed, 19 Feb 2025 17:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E94121423A;
+	Wed, 19 Feb 2025 18:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739985618; cv=none; b=vErP1s6CK8apB4kCAZ4ZX6FxjrIWV4wn160SEZkeMHS8lwq6/FbEYDN9bkMp+PP17eJICKp4ZxcfYWuNyVnuYS7DgSPsW0Y6uItvUacXt6VHUyYFH4jiB7X4JbXwa70/uCFtu7LZfpYUHTcJkfzsNf5lvvwYfoiE9JHL6NqESD4=
+	t=1739988704; cv=none; b=rSIZm4YlD/zUmkg0HNgDf57ONDebvO8lqKz5N9GM/utcy2zmPiQjXNvFcb/sEeQMpMfGWzjkRmyUQPT7RkIfpiufGeT/DuU3hDfdEPZUp3FlZvp3dibmtIqJUI/n2xN5wsofrOTt40CK1HTKsfIHGrFiJOlBvKr6UmUuq+lfnGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739985618; c=relaxed/simple;
-	bh=i1VGXudil3uO8mpDRLwILbAkxLcKhM1U565yRk8gfXg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AeWKi7Oqq4ZFhcHcKnRbm9m2XZhpep8kC5h0YU6Gy2gwNES6IZRBb+RvG4fnU9yLG/kTPwADeIeiHHzKqxOVMjVPrqddyj1eTOU6iSTjzgjYEsxchNcthSEfBtWys/HZPmm3rjht843FktUfnK881h/oj22ZNQj6QuE5Scrz7+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p2qCmyP5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739988704; c=relaxed/simple;
+	bh=3LZDiVVNFHrrTvKMy+aaUFJQiQjaTqA2aBCNOTEezAQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g7KtoOh7KJ/OWQqtrSoLJOTsrwll4Rk4l8TVhf4D/oVgW8tP9yGXoSvM4XvVWMK8ry3FeP5Fw/X7DM1leWb/IkeDaQaMhDUijWAdSasqor7fgfHsY5oUQhLxFYfol4ukemKoq7cQf49uBB06i32WbeiLUOrnx2B/Q5pVBUwuNTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nhktd3B3; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2qCmyP5"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 20FA0C4CEF0;
-	Wed, 19 Feb 2025 17:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739985618;
-	bh=i1VGXudil3uO8mpDRLwILbAkxLcKhM1U565yRk8gfXg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=p2qCmyP5hZUekRMQcJ0nHd0lh/uPFISWV9mb/QQF2+sx9ntZswasaLiNjO4YUy/gh
-	 hVlrpN75Cwv6gwepJBrBMF58flW+/yZbCXj97XAZRuoLlkWitl0tfVIbrkXEqya9G6
-	 Iie4G5kfR5g+Q39uOxigSOoUE04Dm7PMx9L2ASTU3AJkl2e2Lq/uDh7l82h80AiDAa
-	 MPDoRKrk7HE42vdC9rLXvGqPFrZ54fx5ZZ4cIT6plvTyI+uqQUEYjaZM0LfiaehptK
-	 QGpae/Pubf5O3Qw03WUrd7RhKbr5+nOA9QhrgB1+lgQDviLgH+9/DWhtrEBYXNfOMW
-	 0UXiBemb4+o7g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10973C021B2;
-	Wed, 19 Feb 2025 17:20:18 +0000 (UTC)
-From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
-Date: Wed, 19 Feb 2025 17:20:24 +0000
-Subject: [PATCH 6/6] clk: clk-axi-clkgen: fix coding style issues
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nhktd3B3"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abb90f68f8cso21412166b.3;
+        Wed, 19 Feb 2025 10:11:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739988701; x=1740593501; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EX7iW7aQk19gr4mr35uOFeWPZKaps87azPiJHXGQMpU=;
+        b=Nhktd3B30VsiOGUO/lkf7lStQAHGwpc0v9juMyRY3zjMNjbg3hRdmu74xPXeJtdQcG
+         lYlzF5djsgtLSTucQCfnCpmHl8o4Xp0Mthrkn0SWS3pqXydihpuUQOEVVnL7YPe9ieFM
+         w+W7KI1ALy6oYhvo+RE9CegA4Z5+zyjDNCyzRiEk10Cet5U0ffK8eR/bQxPg2AqbKHp0
+         INAxhCkVe2vTmwJVGVo7YdI+drRv948Os/aFBANKLiDND79BHRZj5eZEIp3I6YgNOfMZ
+         wja5yrjdNiv565NafV8sFCHiKF3ahjYIb36Ae6iroqP066FGZzWNAML7lY9HJAqN11Og
+         grXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739988701; x=1740593501;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EX7iW7aQk19gr4mr35uOFeWPZKaps87azPiJHXGQMpU=;
+        b=BIZK5NMV5XuVztgajVyRXSDSiOdYRfdlx9C9SLz/S7AJP0MO9grcl8KfoY/NnOSuAg
+         vyXq2NX/iqYi51yff22XPwueQJRNOHWdZLkVQ6RdE5fFUVA8+9zBDh3S0Se08OTufB05
+         +nqh5xbUO7awhwnoE3SSabf197P0I+qRSJIYzbeDx2R7gCvnTQJ3pBd1MDT8n1bfOte5
+         nQyWolwp8QTXFOwD9gGJbY2BZNAJhjjX+uhJVWEBvvskdo1Sm9RynCycqpbYiDLrAgAu
+         dCdkvFv69E2U6imZqoyAdZmj8BE4ZFZOR4ui+bqEZHjjR2h2prECpprzgUNuxayE3Bge
+         Xmtg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjHQqXBlZHV5Q86wUjiLfcDryYnlJOEpTTW2P5PY2tkqVen12UTsIT2+EpgJurYHRFdRUrK50xYjCfXqwJ@vger.kernel.org, AJvYcCWyz8cdoZOMIfTsUJcyVq6DIkxChyNsl4HjMcskxw5Cb0csNfWIUKqGcQIbQ6NIYBkbIlv54wziHdoL@vger.kernel.org, AJvYcCXxXM6E+9eoSIaHp65NqXvBPdlDRk7CNdomGCFRgE59jWXFyMl36ZDHYuMZ6H7A08HLJEZ9EkrH4tXn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeQ2xi0GXMePu/MjNgc+VZj2rWsNbBW1y2MPOmZI1/g7Z1H6ma
+	dwa851UuSADhMOH5nwRmrSlyYT2VJNIBD/08ewxD1jQMkeV0nx1ZdNk5pR5B73g=
+X-Gm-Gg: ASbGnctu2sP7qCJqAL5EC8N0PGT2X2KzYzqdJNpgwdO77zWkal+TA3929by/Ld0N55G
+	Uuw+gb9JHv7SM/PKZDk1nmA/gJYrqeN5Tc8WtJacLacoud96Rf4HG5XLN9/nsSqwVB36hvK2s+3
+	/rEuCuHlsbRxtzE7BhgPwT/imUewC3S3EPfBDenxwoNPYU+TyOmGeQY7VrAsaHBgvnp89COK+nl
+	oXpMI32CrVx7pNyal3THZuZ2W/0JV+ArIsHUraZHbk00PBwA6blP0u0CSuBIdMp9J0CKN5hFUV7
+	QX5chRRqTFJ1BH5rZHTWJkOff359fgzo+eAmFYh01dEIJ68=
+X-Google-Smtp-Source: AGHT+IEJpTPW7wSmUpDukWtijT9eGXBjCmFlUxZGRjvR2GsGxyDjjg4XrIW4SthKGdN7ujvQTG+O+w==
+X-Received: by 2002:a17:907:934a:b0:aa6:9461:a186 with SMTP id a640c23a62f3a-abb70dd663amr1847442766b.46.1739988701033;
+        Wed, 19 Feb 2025 10:11:41 -0800 (PST)
+Received: from [192.168.125.132] ([82.79.237.175])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba7c63162sm524674566b.182.2025.02.19.10.11.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Feb 2025 10:11:40 -0800 (PST)
+Message-ID: <ceca2d24-78a4-48bf-872d-71866ad97b92@gmail.com>
+Date: Wed, 19 Feb 2025 13:10:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250219-dev-axi-clkgen-limits-v1-6-26f7ef14cd9c@analog.com>
-References: <20250219-dev-axi-clkgen-limits-v1-0-26f7ef14cd9c@analog.com>
-In-Reply-To: <20250219-dev-axi-clkgen-limits-v1-0-26f7ef14cd9c@analog.com>
-To: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org
-Cc: Stephen Boyd <sboyd@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, 
- Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1739985620; l=8515;
- i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
- bh=tI86xVg7YOftvhQhe4lqGIGeOGxdqHpIWGA5l8Te3T4=;
- b=hJnbc8/K+bhq/Lcif6ek1z9lnq9aCHnZLwwZ/JdW8wusoQtBwJt9aTrBw+WeGRWVxv73wYdLx
- Pme1b4X/TMqAZifURg8pjCdW9zVuNIV/97YtDXqutLYF8H8f8vj27k5
-X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
- pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
-X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
- auth_id=100
-X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Reply-To: nuno.sa@analog.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] clk: imx8mp: fix parents of AUDIOMIX DSP/OCRAM_A
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Abel Vesa <abelvesa@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Marek Vasut <marex@denx.de>,
+ Stephen Boyd <sboyd@kernel.org>, "S.J. Wang" <shengjiu.wang@nxp.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250217165718.74619-1-laurentiumihalcea111@gmail.com>
+ <DB9PR04MB8461866A0B6A068E49D53FBE88FA2@DB9PR04MB8461.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <DB9PR04MB8461866A0B6A068E49D53FBE88FA2@DB9PR04MB8461.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Nuno Sá <nuno.sa@analog.com>
 
-This is just cosmetics and so no functional changes intended.
+On 2/18/25 08:43, Peng Fan (OSS) wrote:
+> Hi Laurentiu,
+>
+>> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
+>> Subject: [PATCH 0/4] clk: imx8mp: fix parents of AUDIOMIX
+>> DSP/OCRAM_A
+>>
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>
+>> Correct the parent of the AUDIOMIX DSP and OCRAM_A clock gates by
+>> setting it to AUDIO_AXI_CLK_ROOT, instead of AUDIO_AHB_CLK_ROOT.
+>> Additionally, set the frequency of AUDIO_AXI_CLK_ROOT to 800MHz
+>> instead of the current 400MHz.
+> The patchset looks good to me, just one nit, 
+> Should fixes tag be added for the patchset?
 
-Signed-off-by: Nuno Sá <nuno.sa@analog.com>
----
- drivers/clk/clk-axi-clkgen.c | 76 +++++++++++++++++++++++---------------------
- 1 file changed, 39 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index 82a99c3b9063cd2dd8a9dc7fdec81a38feee12b9..c2b5c01698455075ad01d5fad356aa162c53b3bc 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
- #include <linux/err.h>
-+#include <linux/types.h>
- 
- #include <linux/fpga/adi-axi-common.h>
- 
-@@ -93,7 +94,7 @@ static uint32_t axi_clkgen_lookup_filter(unsigned int m)
- 	}
- }
- 
--static const uint32_t axi_clkgen_lock_table[] = {
-+static const u32 axi_clkgen_lock_table[] = {
- 	0x060603e8, 0x060603e8, 0x080803e8, 0x0b0b03e8,
- 	0x0e0e03e8, 0x111103e8, 0x131303e8, 0x161603e8,
- 	0x191903e8, 0x1c1c03e8, 0x1f1f0384, 0x1f1f0339,
-@@ -105,7 +106,7 @@ static const uint32_t axi_clkgen_lock_table[] = {
- 	0x1f1f012c, 0x1f1f0113, 0x1f1f0113, 0x1f1f0113,
- };
- 
--static uint32_t axi_clkgen_lookup_lock(unsigned int m)
-+static u32 axi_clkgen_lookup_lock(unsigned int m)
- {
- 	if (m < ARRAY_SIZE(axi_clkgen_lock_table))
- 		return axi_clkgen_lock_table[m];
-@@ -127,8 +128,9 @@ static const struct axi_clkgen_limits axi_clkgen_zynq_default_limits = {
- };
- 
- static void axi_clkgen_calc_params(const struct axi_clkgen_limits *limits,
--	unsigned long fin, unsigned long fout,
--	unsigned int *best_d, unsigned int *best_m, unsigned int *best_dout)
-+				   unsigned long fin, unsigned long fout,
-+				   unsigned int *best_d, unsigned int *best_m,
-+				   unsigned int *best_dout)
- {
- 	unsigned long d, d_min, d_max, _d_min, _d_max;
- 	unsigned long m, m_min, m_max;
-@@ -195,9 +197,9 @@ struct axi_clkgen_div_params {
- };
- 
- static void axi_clkgen_calc_clk_params(unsigned int divider,
--	unsigned int frac_divider, struct axi_clkgen_div_params *params)
-+				       unsigned int frac_divider,
-+				       struct axi_clkgen_div_params *params)
- {
--
- 	memset(params, 0x0, sizeof(*params));
- 
- 	if (divider == 1) {
-@@ -224,8 +226,8 @@ static void axi_clkgen_calc_clk_params(unsigned int divider,
- 
- 		if (params->edge == 0 || frac_divider == 1)
- 			params->low--;
--		if (((params->edge == 0) ^ (frac_divider == 1)) ||
--			(divider == 2 && frac_divider == 1))
-+		if ((params->edge == 0 ^ frac_divider == 1) ||
-+		    (divider == 2 && frac_divider == 1))
- 			params->frac_wf_f = 1;
- 
- 		params->frac_phase = params->edge * 4 + frac_divider / 2;
-@@ -233,13 +235,13 @@ static void axi_clkgen_calc_clk_params(unsigned int divider,
- }
- 
- static void axi_clkgen_write(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int val)
-+			     unsigned int reg, unsigned int val)
- {
- 	writel(val, axi_clkgen->base + reg);
- }
- 
- static void axi_clkgen_read(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int *val)
-+			    unsigned int reg, unsigned int *val)
- {
- 	*val = readl(axi_clkgen->base + reg);
- }
-@@ -260,7 +262,7 @@ static int axi_clkgen_wait_non_busy(struct axi_clkgen *axi_clkgen)
- }
- 
- static int axi_clkgen_mmcm_read(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int *val)
-+				unsigned int reg, unsigned int *val)
- {
- 	unsigned int reg_val;
- 	int ret;
-@@ -284,7 +286,8 @@ static int axi_clkgen_mmcm_read(struct axi_clkgen *axi_clkgen,
- }
- 
- static int axi_clkgen_mmcm_write(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int val, unsigned int mask)
-+				 unsigned int reg, unsigned int val,
-+				 unsigned int mask)
- {
- 	unsigned int reg_val = 0;
- 	int ret;
-@@ -305,8 +308,7 @@ static int axi_clkgen_mmcm_write(struct axi_clkgen *axi_clkgen,
- 	return 0;
- }
- 
--static void axi_clkgen_mmcm_enable(struct axi_clkgen *axi_clkgen,
--	bool enable)
-+static void axi_clkgen_mmcm_enable(struct axi_clkgen *axi_clkgen, bool enable)
- {
- 	unsigned int val = AXI_CLKGEN_V2_RESET_ENABLE;
- 
-@@ -322,31 +324,31 @@ static struct axi_clkgen *clk_hw_to_axi_clkgen(struct clk_hw *clk_hw)
- }
- 
- static void axi_clkgen_set_div(struct axi_clkgen *axi_clkgen,
--	unsigned int reg1, unsigned int reg2, unsigned int reg3,
--	struct axi_clkgen_div_params *params)
-+			       unsigned int reg1, unsigned int reg2,
-+			       unsigned int reg3,
-+			       struct axi_clkgen_div_params *params)
- {
- 	axi_clkgen_mmcm_write(axi_clkgen, reg1,
--		(params->high << 6) | params->low, 0xefff);
-+			      (params->high << 6) | params->low, 0xefff);
- 	axi_clkgen_mmcm_write(axi_clkgen, reg2,
--		(params->frac << 12) | (params->frac_en << 11) |
--		(params->frac_wf_r << 10) | (params->edge << 7) |
--		(params->nocount << 6), 0x7fff);
-+			      (params->frac << 12) | (params->frac_en << 11) |
-+			      (params->frac_wf_r << 10) | (params->edge << 7) |
-+			      (params->nocount << 6), 0x7fff);
- 	if (reg3 != 0) {
- 		axi_clkgen_mmcm_write(axi_clkgen, reg3,
--			(params->frac_phase << 11) | (params->frac_wf_f << 10), 0x3c00);
-+				      (params->frac_phase << 11) | (params->frac_wf_f << 10),
-+				      0x3c00);
- 	}
- }
- 
--static int axi_clkgen_set_rate(struct clk_hw *clk_hw,
--	unsigned long rate, unsigned long parent_rate)
-+static int axi_clkgen_set_rate(struct clk_hw *clk_hw, unsigned long rate,
-+			       unsigned long parent_rate)
- {
- 	struct axi_clkgen *axi_clkgen = clk_hw_to_axi_clkgen(clk_hw);
- 	const struct axi_clkgen_limits *limits = &axi_clkgen->limits;
- 	unsigned int d, m, dout;
- 	struct axi_clkgen_div_params params;
--	uint32_t power = 0;
--	uint32_t filter;
--	uint32_t lock;
-+	u32 power = 0, filter, lock;
- 
- 	if (parent_rate == 0 || rate == 0)
- 		return -EINVAL;
-@@ -366,22 +368,22 @@ static int axi_clkgen_set_rate(struct clk_hw *clk_hw,
- 
- 	axi_clkgen_calc_clk_params(dout >> 3, dout & 0x7, &params);
- 	axi_clkgen_set_div(axi_clkgen,  MMCM_REG_CLKOUT0_1, MMCM_REG_CLKOUT0_2,
--		MMCM_REG_CLKOUT5_2, &params);
-+			   MMCM_REG_CLKOUT5_2, &params);
- 
- 	axi_clkgen_calc_clk_params(d, 0, &params);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_CLK_DIV,
--		(params.edge << 13) | (params.nocount << 12) |
--		(params.high << 6) | params.low, 0x3fff);
-+			      (params.edge << 13) | (params.nocount << 12) |
-+			      (params.high << 6) | params.low, 0x3fff);
- 
- 	axi_clkgen_calc_clk_params(m >> 3, m & 0x7, &params);
- 	axi_clkgen_set_div(axi_clkgen,  MMCM_REG_CLK_FB1, MMCM_REG_CLK_FB2,
--		MMCM_REG_CLKOUT6_2, &params);
-+			   MMCM_REG_CLKOUT6_2, &params);
- 
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_LOCK1, lock & 0x3ff, 0x3ff);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_LOCK2,
--		(((lock >> 16) & 0x1f) << 10) | 0x1, 0x7fff);
-+			      (((lock >> 16) & 0x1f) << 10) | 0x1, 0x7fff);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_LOCK3,
--		(((lock >> 24) & 0x1f) << 10) | 0x3e9, 0x7fff);
-+			      (((lock >> 24) & 0x1f) << 10) | 0x3e9, 0x7fff);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_FILTER1, filter >> 16, 0x9900);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_FILTER2, filter, 0x9900);
- 
-@@ -410,7 +412,7 @@ static int axi_clkgen_determine_rate(struct clk_hw *hw,
- }
- 
- static unsigned int axi_clkgen_get_div(struct axi_clkgen *axi_clkgen,
--	unsigned int reg1, unsigned int reg2)
-+				       unsigned int reg1, unsigned int reg2)
- {
- 	unsigned int val1, val2;
- 	unsigned int div;
-@@ -437,7 +439,7 @@ static unsigned int axi_clkgen_get_div(struct axi_clkgen *axi_clkgen,
- }
- 
- static unsigned long axi_clkgen_recalc_rate(struct clk_hw *clk_hw,
--	unsigned long parent_rate)
-+					    unsigned long parent_rate)
- {
- 	struct axi_clkgen *axi_clkgen = clk_hw_to_axi_clkgen(clk_hw);
- 	unsigned int d, m, dout;
-@@ -445,9 +447,9 @@ static unsigned long axi_clkgen_recalc_rate(struct clk_hw *clk_hw,
- 	unsigned int val;
- 
- 	dout = axi_clkgen_get_div(axi_clkgen, MMCM_REG_CLKOUT0_1,
--		MMCM_REG_CLKOUT0_2);
-+				  MMCM_REG_CLKOUT0_2);
- 	m = axi_clkgen_get_div(axi_clkgen, MMCM_REG_CLK_FB1,
--		MMCM_REG_CLK_FB2);
-+			       MMCM_REG_CLK_FB2);
- 
- 	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_DIV, &val);
- 	if (val & MMCM_CLK_DIV_NOCOUNT)
-@@ -620,7 +622,7 @@ static int axi_clkgen_probe(struct platform_device *pdev)
- 
- 	clk_name = pdev->dev.of_node->name;
- 	of_property_read_string(pdev->dev.of_node, "clock-output-names",
--		&clk_name);
-+				&clk_name);
- 
- 	init.name = clk_name;
- 	init.ops = &axi_clkgen_ops;
-
--- 
-2.48.1
-
+sure, will send a V2 with that
 
