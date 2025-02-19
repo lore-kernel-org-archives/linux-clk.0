@@ -1,110 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612452528E7;
-	Wed, 19 Feb 2025 21:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBD125A2CD;
+	Wed, 19 Feb 2025 22:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739998847; cv=none; b=V912xexSyHSp0Jh+efEfun2mHw+TJyRTRot3zro8ZxUICoSVUBKac7B3LLsyukQSuqQFXVmNddTZ454wIaJt4aaUiSTS2niubsxt2QDjJpVuwUWhiQ0nRddZJm/OS04Fv6DPU88A9zYs5sQsR3Gyft+usS4C+3ob7YbXMKftTKg=
+	t=1740004692; cv=none; b=NIPaI1DMakYO6ito2rkSsmStOXZT6G/M3jzJhrZbr5mmMrcUd//d79cp3WI2vFJvm+IW2PV6wg5EyXHH4aBxFsmTWDTHPIwiDb4j+7tCrlVn7X+SXGqhNtFtdEIQdBr5NcI32xUT13SHOI05Jc8vtc7n7nA6EMKfhNSDsr8it48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739998847; c=relaxed/simple;
-	bh=dJby0au1n3GBFIoEqGjVxlDENJfg02NZV93N6+XJVWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zc7H54LPoFS32ZF7SFZuuk9jZxdZnRU8ZPr1JWodR0gG80p4nkNer2/lw+cUMc5388UNPuMhUVoPrzmDyfdiQRgyyn0+sqI1q82SIRTE5LNkcfMlRUH+mfmj8QgpNs3A0rb0Adt2bNYSctD8N2ctgry+praRBqmcQXjRUh501GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FX2ww+BL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740004692; c=relaxed/simple;
+	bh=3n0Geo1g1jnDSHEKNDbBxRrW0MqCJbEfVtvyC8SrjB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C463KlwNHprcxyW18WxFJ9MyNR/LfOc6iH7jGOLv2m21Afy281cjtuvZE0XTtVrmwOP4hythXioqICJ3XV3Ra5T3zrmYkaeAaJlfFIPEeYeKv2dLW6T+9PlxMbbJ1ynZodP1isZSgngyeUL8106MvqdnAg6OWa76ZgsKnwH/x5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=cbs6+BBZ; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FX2ww+BL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97CFDC4CED1;
-	Wed, 19 Feb 2025 21:00:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739998846;
-	bh=dJby0au1n3GBFIoEqGjVxlDENJfg02NZV93N6+XJVWs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FX2ww+BLXHMG+0m0u/PcpcdXd89TlO17qoAv2DCAwcN5mzSUelnVXlsRsDU902R5u
-	 TndA9Sv6ZSs9tzMKMJA45mPV688267VtW8HKg+BV6+F2P1h1aWAH5Psf1nCKnvPH8F
-	 QfdJfBONXDKTPPC+xxI9sy0e4UA560pYlF1GJOcqT9zhHg2O6OMiu++T3LNOfUy5Fr
-	 WcM8aJgnIfke2wGPjqX4vBMK+1XRQXWxkAOSdxT6KwLvKTFpIXaULTpv92U8S4H30h
-	 jYvUaPsreiK6bEHjF8PTkgPTZyAE0J5IonNyzdsWAmHnigJqsrbCQCRe4QlUvfQ8Pa
-	 NNxqJRFo+FlCQ==
-Date: Wed, 19 Feb 2025 15:00:45 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	linux-renesas-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [PATCH v4 5/9] dt-bindings: watchdog: renesas: Document
- `renesas,syscon-cpg-error-rst` property
-Message-ID: <173999884492.2929715.139176403208414695.robh@kernel.org>
-References: <20250210184910.161780-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250210184910.161780-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="cbs6+BBZ"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 47E9D10382D3C;
+	Wed, 19 Feb 2025 23:38:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1740004687;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3CFR1KvYqGJu5XHi3W+uo1kT/GLaG+YUtUrdXZ244hc=;
+	b=cbs6+BBZgqDbJeBfk1zMSTh4bT5RYpQTKivyzc9qbOKAFLxWGjL3TWBCA9D7S4EudNO6QO
+	1qK8+7uCSQIWKZsVeyTsNk1h4GWp0mi7RaTlWEuz/9zFjBT3AbKPsucqmCVq8iOYpbdWeK
+	QhwSpUpOBMHGiLsLsU7mewNM8gqvkIe/ANVNoqDfSM+HyT3+WeA1K/OythlTpGSph/XPQU
+	0MdJa0bsI6eXgWUAGKhfQHWSW6DZRJE2pLBedfhstcUc3kej22U0ClvICtL7w98kjvd2dK
+	1uPh963Uoa5yWHVz9/02d+K3LySFYKySUs4L455EUDrna3RQImLLRhS/kVZaUA==
+Date: Wed, 19 Feb 2025 23:38:02 +0100
+From: Lukasz Majewski <lukma@denx.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm: clk: Add ETH switch clock description for vf610
+ SoC
+Message-ID: <20250219233802.20ec53e5@wsk>
+In-Reply-To: <3cebe152-6326-454c-9da6-5cf5a64f71c9@lunn.ch>
+References: <20250219114936.3546530-1-lukma@denx.de>
+	<3cebe152-6326-454c-9da6-5cf5a64f71c9@lunn.ch>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250210184910.161780-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: multipart/signed; boundary="Sig_/yVJIrYnQ4O8OFO2hSM.94j5";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
+
+--Sig_/yVJIrYnQ4O8OFO2hSM.94j5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Andrew,
+
+> On Wed, Feb 19, 2025 at 12:49:36PM +0100, Lukasz Majewski wrote:
+> > The NXP's vf610 soc is equipped with L2 switch IP block from More
+> > Than IP (MTIP) vendor.
+> >=20
+> > It requires special clock (VF610_CLK_ESW) to be operational. =20
+>=20
+> So you have a driver for this switch? It has been talked about in the
+> past, but nobody made any progress with it. Ah, it was you in 2020.
+
+Yes, I'm going to try another time to upstream it.... :-)
+
+> It
+> will be interesting to see what you came up with in the end, pure
+> switchdev or a DSA driver.
+
+I think it would be:
+
+1. Standalone driver, which would configure the L2 switch from the very
+beginning to work (this is different from FEC on imx28/vf610 where
+switch is bypassed)
+
+2. It will use the in-switch registers to have two network interfaces
+separated. As a result - it may be slower than the fec_main.c in this
+use case.
+
+3. When somebody call "bridge ..." on it - then the in-switch
+separation would be disabled. This is the "normal" state of operation
+for L2 switch, which would be a HW accelerator for bridging.
+
+4. The switchdev would be used to manage it
+
+5. This would be just a very simple driver - just bridging and startup
+of the L2 switch.
+
+After we would have a consensus (i.e. it would be pulled to mainline) -
+I would proceed further.
+
+I will try to not touch fec_main.c driver - just write standalone, new
+for MoreThanIP L2 switch driver.
+
+If somebody would like to use FEC, then he will insert the proper
+module. If switch, another one can be inserted, depending o the target
+use case.
+
+>=20
+> 	Andrew
 
 
-On Mon, 10 Feb 2025 18:49:06 +0000, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> The CPG block in the RZ/V2H(P) and RZ/G3E SoCs includes Error Reset Select
-> Registers (`CPG_ERRORRST_SELm`) and Error Reset Registers
-> (`CPG_ERROR_RSTm`). The `CPG_ERRORRST_SELm` register must be configured to
-> trigger a system reset in response to specific error conditions, while the
-> `CPG_ERROR_RSTm` registers store the error interrupt factors that caused
-> the system reset.
-> 
-> For the watchdog IP to trigger a system reset on a watchdog timer
-> underflow, the `CPG_ERRORRST_SEL2` and `CPG_ERROR_RST2` registers in the
-> CPG block must be configured. For example, setting `BIT(1)` in
-> `CPG_ERRORRST_SEL2` allows WDT1 to issue a system reset upon a watchdog
-> timer underflow. Similarly, `BIT(1)` in `CPG_ERROR_RST2` indicates whether
-> the system reset was caused by a WDT1 underflow. This functionality
-> enables the watchdog driver to configure the `CPG_ERRORRST_SEL2` register
-> and determine whether the system booted due to a `Power-on Reset` or a
-> `Watchdog Reset`.
-> 
-> To support this operation, add the `renesas,syscon-cpg-error-rst` property
-> to the WDT node. This property maps to the `syscon` CPG node, allowing the
-> watchdog driver to configure and retrieve the necessary reset information.
-> 
-> Additionally, this property is marked as required for the RZ/V2H(P) and
-> RZ/G3E SoC to ensure future compatibility and is explicitly disallowed
-> for other SoCs.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> Note, this change doesnt break any ABI, as the subsequent driver patch
-> handles the case elegantly if the `syscon` node is missing to handle
-> backward compatibility.
-> 
-> v3->v4
-> - Updated commit message
-> 
-> v2->v3
-> - No change
-> 
-> v1->v2
-> - Renamed `renesas,r9a09g057-syscon-wdt-errorrst` to `renesas,syscon-cpg-error-rst`
-> - Updated commit message
-> ---
->  .../bindings/watchdog/renesas,wdt.yaml          | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
+Best regards,
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Lukasz Majewski
 
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/yVJIrYnQ4O8OFO2hSM.94j5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAme2XUoACgkQAR8vZIA0
+zr0H2wf+LDKQ2icJROSHbE6zYeCAmI0xkhWHqIw6W8DD1l7o1QJMYLJEsgSp9yP/
+UUWsmIh15IoamLIx3zCnhaiXns42Df+DUH7qsiAF8lLW0C11h9WAuVdJWSLNRLW7
+GQAuXwPM58hOymK71Cu9Eo1eacZ7vkd3SgZLpUa+7xIPd6Pei10g2VCpFJiv3ICw
+KM+lVEpZ93Orq35IGPAwAzTlhi4gGJPIsFez2+NtiW9vJ+KiodIfSb9mWw+bLqUn
+u9OY2vKtfVnuX8fYkd+ERBljmSeyR0fzU2ZB1+CbElSwI61y09f+CFBoSNwK4DhA
+Zoudj/6ZH6oCoKT6MoAO1nxGaCV49g==
+=xb9S
+-----END PGP SIGNATURE-----
+
+--Sig_/yVJIrYnQ4O8OFO2hSM.94j5--
