@@ -1,133 +1,89 @@
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A541DC991;
-	Thu, 20 Feb 2025 16:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CC11FF60B;
+	Thu, 20 Feb 2025 16:06:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740067520; cv=none; b=sWQFsilqi3yEf5a9137aGujuATWquQyUKFVWMjAmFwTHUb1n1g4v+F7vOxOX/Xoyjk9TUeFrLiHOGrFQ7oTMDNtUA5O0x4PEl6EgKaXvv1XhThWJMkzLbcdP5Sj6s5bab+aNTYlM7sFXy8D/1o8WoNFcNZF6+GGl4sgWD5pxULk=
+	t=1740067580; cv=none; b=Ov6LFRJ9H0Ka5UTKhBUsXcgQUYEDPGv4goN2p7Da+QBxnq25s3W2ypMCQ0XjBcD5kk7dE8rZvTI9ZbDFbIx24bc7Z/GGloNCq9P9AM3cZxUmzqwrkAaHwPDxHbZvRL9c4M93DOaYGmMY34VTOMiBfDELCRstBK4BEgKsa8vwQpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740067520; c=relaxed/simple;
-	bh=mb7aYcCG8Adpx+o3PB0V+PLcJxbA/KMq9DZ3PJrzvkA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BO+39W9gPOz43oAmS9vbANaAefdMLIOd+24MpGtPjLrxChD6RxvNY5qENFPsEWSNnlhgSI7EE0krXgKJDw4xXynUIOBo10FKCsdVGFM98e72HD19MLnJpa0Y59onfunN9eFsYppSObIgu3N9JDH3VjKALRuLjosi49ckdoCM9VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=A4hGitDb; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="A4hGitDb"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3A1C810382D3C;
-	Thu, 20 Feb 2025 17:05:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1740067515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DhrEMPazg4VWtR34qnd0rK9L+bUZ2MhCj/KoPwKqizc=;
-	b=A4hGitDbo72QAmhefQeUeZL3T3Rp2wKldnOpn/EQrjnDZScLwr/7Rd/j6nY9MKQ/KQtUiP
-	JG6759wwrIzoRhywmF9uAcVztzoO0PQMKccT4bfjss4i/bzvHo3e4QsMJ2ZFsmfKki2y0s
-	Acm5EEFFlh5RmmRGT0p4iYS3Da9UI9dAV27ZGIPW+JnIDvcDm/vLRZwAnuyp2SY9DGxbBN
-	WSS1HcMuR2u97P2HlCwVn4vftvNDGyHa/BA2d77O1avi3nCO/PcdfsCOuhwI7EudA97zsE
-	hReD8N+WY0jdzLWeauVDM1r5cp17mHQ9kRTZjsormprBNDTwtHdw6UDOts+SIQ==
-Date: Thu, 20 Feb 2025 17:05:11 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn
- Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
- <festevam@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-clk@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [PATCH] arm: clk: Add ETH switch clock description for vf610
- SoC
-Message-ID: <20250220170511.719a1cac@wsk>
-In-Reply-To: <f68ebe15-69ee-428a-8079-8bb05d7aa21b@lunn.ch>
-References: <20250219114936.3546530-1-lukma@denx.de>
-	<3cebe152-6326-454c-9da6-5cf5a64f71c9@lunn.ch>
-	<20250219233802.20ec53e5@wsk>
-	<5a9d9eef-f2ca-4168-aca4-4419dcfcacb6@lunn.ch>
-	<20250220154826.3455b15e@wsk>
-	<f68ebe15-69ee-428a-8079-8bb05d7aa21b@lunn.ch>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740067580; c=relaxed/simple;
+	bh=KmJV58XjM0H4Bi0GF4aCTXcJKt0E+QHiSK4dnhwVXDo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B7NWOhlK1wBh6Jvm3s4figUyKvfUPBt+EdjH7Gv10WQNmxJk2djDJbpjW0O9ttmSMAflMPCmqdyee1A2A3CS/nerpCKrNJuwR9vLy26fwEmyki3axG3kqdFyFxALYQqXDrFHS6wMEJkDPnsUrjK1Nqe/qYJAxErmARXyz0ZseE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c0a3d6a6e4so100060985a.1;
+        Thu, 20 Feb 2025 08:06:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740067576; x=1740672376;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yB4cxeiL7TbiQ7GPlKRnLR7D+jnPJcOOYMBm3C+KPOU=;
+        b=aPbTVJMzma8ZXz8EBiaVKQxALZZfgtel6LYEFP9VakL67AN8P+him9Hj9JtGtFaBLQ
+         HIM9URx16/HjSqcV5DEd6jFu1yt3Njf+FiwUtea8DDpsJA/DJ9Lmy2MZ/oiWvM8hnqKg
+         Z/AIbCZxUcEg3hVfeemO5c+Hg7lq+Ha5uwr7x1K+pQmApbLLOkeSLKPRDBRi3RxBhCvs
+         5NbZRGudV3xZlUXAdJ6/dm3x+JQhxySqSc5Pl/30yFvT4V7MxkCtKHxLf/A6GDi/vv3E
+         /N1itIMcmA9VBNXSei1bYiM5JVlsaFcOmAx/shT1OLK3RhCzfv3FSvkOUTWq4qaBD4Yt
+         eE0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXJY35P4KSIaTOFGO6st1n7bNmY+ZyiewvcvuHGDmUQ0oneeey4D59p8yT8AlZZ0+wO3Eh6lnyJ478=@vger.kernel.org, AJvYcCXK9gXQkAWLNpOk49Hj//DkufHGYjak77pp1NknKkoMUZcbF1TwTNqXcXgWkCBvRrqSJh3msJ0r4X8RXEM68HHO8Tc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNeRufyhWXKKxeuwVd6vKXOOiRQmNrfgjPov/17K+uSspQGlrH
+	fO+ghZPzAGd717Ex3yiP6368bxOIiDS3uBAO17mxr4FaMZetaRUvIs+sGdzx
+X-Gm-Gg: ASbGncuare1ldXDxxYQTuMaqhRd3OdMEEHqkvoRuqSY9PQjtOgpOC0m+S49/j65Wto7
+	ngyj0uNQSb8OPFTm4+P/UrCcwoEtHjySB1MQBWNEnPQFAIxfaRVnRaJQRQY4WTEZN2sK5UOkST5
+	gmFwLUTiukAznaQ2oFpG8pRXcV7p602CPPM96bz4x6OlQ2seBqCc7i5bkiJ1gLo/u74BxFucOoa
+	Meq6loHNIkyhoPZWIk4sKa07JqrnXckXisCANibQVugXm5bV6aEmz7S59SI+e5drGyrzloUR+nx
+	P9+fWVk/awoOKItcsX1zltgDj3uP4MoB0+qq+QHpdgP1u6zEybtuqfDKzg==
+X-Google-Smtp-Source: AGHT+IEIccqHyKqhNrBKfHoOdCHAerrHkXPWaPiX6si+metTOrnT06yQtyjLeRzwDmGLjopbFpRkcQ==
+X-Received: by 2002:a05:620a:2442:b0:7c0:b572:f58a with SMTP id af79cd13be357-7c0c42a6bd9mr349933385a.17.1740067575757;
+        Thu, 20 Feb 2025 08:06:15 -0800 (PST)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com. [209.85.222.172])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0a45585f3sm427470685a.93.2025.02.20.08.06.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 08:06:15 -0800 (PST)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c07cd527e4so97908385a.3;
+        Thu, 20 Feb 2025 08:06:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUpEHsMYMk6N27K8RqvtoNk5a9leXIEBbZf/u8GRkzg8//ElHg6AZIincVszE4PKmkSo6lXOKU5OjaTZucsQbuXhh4=@vger.kernel.org, AJvYcCUqh8tgnAvSBYKWUf4SN1Z6lhXX9ELWb9/wKi1vU17m0HRt6no/RYVS+X9t2Y8huefwOcTGqdY5Q6I=@vger.kernel.org
+X-Received: by 2002:a05:620a:800b:b0:7c0:bc54:fa52 with SMTP id
+ af79cd13be357-7c0c42a5621mr387647985a.16.1740067575069; Thu, 20 Feb 2025
+ 08:06:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/LvcxCIoyiyxMRzVmv5VeRt=";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250218105007.66358-1-biju.das.jz@bp.renesas.com> <20250218105007.66358-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250218105007.66358-2-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Feb 2025 17:06:03 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWAjCudnNjMS29biEheTxwYg+6BxO5ueVE7Lm4=apEm+g@mail.gmail.com>
+X-Gm-Features: AWEUYZnoBoYabM9raemHFjg1li3IvBc9YPSqYQFbhJrvoMdAt7QId9fsA7S1s58
+Message-ID: <CAMuHMdWAjCudnNjMS29biEheTxwYg+6BxO5ueVE7Lm4=apEm+g@mail.gmail.com>
+Subject: Re: [PATCH 01/11] clk: renesas: r9a09g047: Add CANFD clock/reset
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/LvcxCIoyiyxMRzVmv5VeRt=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 18 Feb 2025 at 11:50, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add CANFD clock and reset entries.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Hi Andrew,
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.15.
 
-> > > Seems like a reasonable compromise. You would only load this
-> > > driver if you intend to make use of the switch... =20
-> >=20
-> > Yes, the main use case would be the switch (after bridge ... command
-> > called).
-> >=20
-> > However, until then we shall? have port separation. =20
->=20
-> Yes. The model Linux uses is that the ports are individual interfaces
-> to start with. We should keep to that model.
+Gr{oetje,eeting}s,
 
-+1
+                        Geert
 
->=20
-> > > MoreThanIP is now part of Synopsys. I wounder if this IP now
-> > > exists in other SoCs? The press release however suggests Synopsys
-> > > was interesting in the high speed interfaces, not a two ports Fast
-> > > Ethernet switch. =20
-> >=20
-> > I would need some detailed documentation.... =20
->=20
-> Which is probably not available. You might be able to get some clues
-> from the Freescale datasheets, if they have kept the address spaces
-> separated. I don't see it as a strong requirement, given how old this
-> IP is, and the limited interest in supporting it over the years, My
-> guess is, nobody else uses it.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-:-)
-
->=20
-> 	Andrew
-
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/LvcxCIoyiyxMRzVmv5VeRt=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAme3UrcACgkQAR8vZIA0
-zr0WCQgAxyZwB9mNdVIeRsd8mJN2KEWBP3zwFWv3w1XX1glLh9Y/MFa9riYX2/XO
-P+so9vOKEXJUCHUxC3GIqJTIoHYB5Rk75zjTDoUs9K851v5SWlXwM2ZtMtbC3DpO
-xzh/XjXEoX63V/zJszTYRQKYpjBnep4z4+Qfyabs0TvNSakVz3qdIbSG5zbjiRUr
-mP3ZwG/37azFpwaqb2dYwt3IFLlpALBbNaJuSH+UlwqW+JPuiv9bjL6h+tSD7KTB
-CPrs16qxPsbOvnilSVURJZOjV9YsgFZBaRquJrlZwoJg9uvo5rUQWjX3x2HlUIX9
-uiqcEHdpcgkZDKIOXsnbvZSuE2d87w==
-=R4zZ
------END PGP SIGNATURE-----
-
---Sig_/LvcxCIoyiyxMRzVmv5VeRt=--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
