@@ -1,73 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3E61E5B7F;
-	Thu, 20 Feb 2025 15:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740064688; cv=none; b=J/K60W3HGfdte0GJLocQCdntA9omuktwEYs/kA5CZYMo7UScip5gTe7ZHsz8MvQY9bPD7nCFaPWD8oR6nw8c08ZDw64S7oEyTar/K9CgQdqtOSaZ9rkFiHglwDGIOk3pLCmoKX1LDB79r4ZHRf6U0VzDvmTEF9HbaVCipDM/lNs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740064688; c=relaxed/simple;
-	bh=ZnaNzN8t662cNw4RKpiVdVtvTtxMXS8tMZ1bItrIqqQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=px7at+6/7MEje4QdMlndBS5T8af3Lk89KgJYcy8HsSXx08RZ5URxMY2znJYJWvy9Gk271SNANGmW3AjQNw7j8/nlJ3C0mGEXGhoXkBu8v1rntaS2348KY8CT+jOOqugrKSwsv2xMfW3VzOIGXI7HQ4w0A5d2nBk/KuBSwmaQcTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCzR170y; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7E91FCCF7;
+	Thu, 20 Feb 2025 15:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740064726; cv=pass; b=i6Bps7/ewGXWCx0xLTDSB7hEyusIiFCywlNGYaB84Vj1m4beTgUhpdwF/XA4fF+8s9LcD8Y/FNLi+oXTh9IXpBAhNlDiLcxFNu9imj8aoFl52ShBmqLcOl6qznVtlvCCMEcZQoCKq5QokUT+bKODyd6pPEAOSk9poJ03Gn7zr5k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740064726; c=relaxed/simple;
+	bh=mZjeVny1wTdEsQOGHmI6uUbAFXvuL+TGGMXqWzQ6jrY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tK5iaotb+deiRJHO3ZNhNooM0+fwKehtCC+E6Mv34wu1Uf6Lx+RfUV1hsgy6juGLFb3O+AMa2hwt+B4uQOr2wcsBCfHHcwvnpL7lkWo72YerGX33gDnAiNaAKifXJ6ONpn/1DlMgWQVERkkYCbY8yhtg0yJ+QZ1kyuPzBytsT48=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=Tm3Ih817; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCzR170y"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 714E3C4CED1;
-	Thu, 20 Feb 2025 15:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740064687;
-	bh=ZnaNzN8t662cNw4RKpiVdVtvTtxMXS8tMZ1bItrIqqQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=UCzR170yfjLMG8S5D0SUT2ScspgvWTdIxWLSdlOAEgbAHISizyWLXzDn0Nc/SM9zv
-	 tP5FbFNxE37YyoKO7zioIbiHzmJVtP0T9qyRnHYdUmwTa2h6DgEhAc/hFHJ2oWeApv
-	 Yyq6wu6ja8UAdPx5gvWDzEDa4RyTHjAieJKi7cpyj0TYWyj/vr5FQgy4CcvAJaaK+f
-	 5XWBmk8EjXapPCfOi+nBngW21GnmKa1eT7T+SJoH5+/v8JuMQaSbUSwASbXusUygSG
-	 jKN7RC8F6qvv0/BUbT+SUey5didbDHTSUe5FEbGWH6mSdcGixO1Gr2nvZNSbn45heU
-	 fLckq+tO+O9Ew==
-From: Lee Jones <lee@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, iommu@lists.linux.dev
-In-Reply-To: <20250211-msm8937-v1-5-7d27ed67f708@mainlining.org>
-References: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org>
- <20250211-msm8937-v1-5-7d27ed67f708@mainlining.org>
-Subject: Re: (subset) [PATCH 05/10] dt-bindings: mfd: qcom,tcsr: Add
- compatible for MSM8937
-Message-Id: <174006468317.807943.10112581876441058365.b4-ty@kernel.org>
-Date: Thu, 20 Feb 2025 15:18:03 +0000
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="Tm3Ih817"
+ARC-Seal: i=1; a=rsa-sha256; t=1740064707; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=G/+dFvnYow67mmuUuLmRTYnzf6UeEIMw8b5heJkP4yhg3VI6Wu8itHtlVT0f5k3+zvz6rqK0Io35WWf5tI4GFPryqGxtXO7jtKuxtCSWutpwCW21mKkVRg1hcUIsTd37Rxb0eKMltcrrpTFLj/MbtNUHVjlmk7NOC7vIBA0bQWk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740064707; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Rp+rVrfDMPBn3/xNGZmxdi46SYzFWH1AX8BoNcE1XA0=; 
+	b=Yy+LJKb/1msFvFhDj8GqLA68hmVvFY/WsePiNwCl5IJagiF2Dc96D1vj6AZh0zEOK5zSQGE3CLMNFOo3IjRJ3B06dQpmOofIhqy2F8AjAuNloQin/mFhhpmte4KKxJ/feh1szHXAabI813qmYg7SkN5axm5eL3+7TGitdAPKiSw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740064707;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:From:From:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=Rp+rVrfDMPBn3/xNGZmxdi46SYzFWH1AX8BoNcE1XA0=;
+	b=Tm3Ih817EF7OdQgMv4PkGMP1Csn/XNibSQDOb+A15sNgloOSubjDB42opo25nxhM
+	niz7P2bUgYooZmsGEN6ULxEkXw7mheRM2bqwzzmLyMyMSOtj8dW6aWnTkagaDZZo+hG
+	cErNTk0Tixqbmjqo5yedIwORuTC8M5ecdaR/buw4=
+Received: by mx.zohomail.com with SMTPS id 1740064703309170.8682384978547;
+	Thu, 20 Feb 2025 07:18:23 -0800 (PST)
+Message-ID: <c76655ad-e1e4-46f1-aecd-e57716b80ee7@zohomail.com>
+Date: Thu, 20 Feb 2025 23:18:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-510f9
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] clk: canaan: Add clock driver for Canaan K230
+From: Xukai Wang <kingxukai@zohomail.com>
+To: Stephen Boyd <sboyd@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>
+References: <20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com>
+ <20250217-b4-k230-clk-v4-2-5a95a3458691@zohomail.com>
+ <3fb73691f50e599c361dddaff08d3af5.sboyd@kernel.org>
+ <364a8fbd-d78e-421d-a37b-cb7a29077802@zohomail.com>
+Content-Language: en-US
+In-Reply-To: <364a8fbd-d78e-421d-a37b-cb7a29077802@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr08011227b37c3d6cd7e77c464d706fea00008745026a1b51981f499518d14f3b24d3e15b70bb1178a690aa:zu080112272a2a88529145200e7fbbfe31000028805d1bb7a5f5248ffafce1771786117a59a676dbc0a667bb:rf0801122b9b232d296b2f5180ec561dd000007b4222c2519ad0007ac17d0ec5cfeaeb0f78e4f36397161f115294f8ae:ZohoMail
+X-ZohoMailClient: External
 
-On Tue, 11 Feb 2025 23:37:49 +0100, Barnabás Czémán wrote:
-> Document the qcom,msm8937-tcsr compatible.
-> 
-> 
 
-Applied, thanks!
-
-[05/10] dt-bindings: mfd: qcom,tcsr: Add compatible for MSM8937
-        commit: c9498d76a96f84a80ca88a862b6112cdc2e7cb64
-
---
-Lee Jones [李琼斯]
-
+On 2025/2/20 23:07, Xukai Wang wrote:
+> On 2025/2/19 05:48, Stephen Boyd wrote:
+>>> +static void k230_clk_disable(struct clk_hw *hw)
+>>> +{
+>>> +       struct k230_clk *clk = to_k230_clk(hw);
+>>> +       struct k230_sysclk *ksc = clk->ksc;
+>>> +       struct k230_clk_cfg *cfg = &k230_clk_cfgs[clk->id];
+>>> +       u32 reg;
+>>> +
+>>> +       if (!cfg->have_gate) {
+>>> +               dev_err(&ksc->pdev->dev, "This clock doesn't have gate\n");
+>> Why are the clk_ops assigned to this clk then?
+> If this clock doesn't have a gate, then the clk_ops will not be assigned to it. In this case, I'm simply checking it again. You can verify this in the k230_register_clk function to ensure it's handled correctly.
+Apologies for my script doesn't wrap this paragraph.
+> If you think this check is redundant, I can drop it.
