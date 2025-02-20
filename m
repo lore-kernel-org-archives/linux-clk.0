@@ -1,83 +1,118 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BACFD1F76B6;
-	Thu, 20 Feb 2025 13:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A628E1F460D;
+	Thu, 20 Feb 2025 13:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740056680; cv=none; b=RJIC8XHTlx1rOtq3XM6w3X8QWn09jNxZG1TPPqTLLvVwJg/M9pad1fu2uS/BRl+Mbh7LR1CWHXE1++dWM7NgZpvTng+S15gTOnqmBth4+ku7RXXUs7w9N06zwF5G5FplVE4YO6+0D+e9ALKYXo8jgkOHFZrfvoNaaDGjPIqpGnY=
+	t=1740058778; cv=none; b=p3KjyZtUhIe//ARDegUteP6KNcIhSQrjSmKnctyqc6wqJLYeLpYf9YHmLW9Gmj/ApHmaD7J3r5owGOFz41CnysMc9mQRwOjyMizd6xXRn3Je50NE/spdmkFoG/WJGLrYn1I0ttjKp/hk/Nhq6VyNX/t71f3R/+dk0RG2n/4Sflg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740056680; c=relaxed/simple;
-	bh=mNyYlk1tvzwaDS5PMmVdABs7TPuzIoueFANk+Ra89ks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qiu9xMa7lxmJOCj8bQ6AbW8Icn2Hm+LyFtTr8655riDPBpVzKxfjADqWV1CAxfgCuHZJas9fbnci8QT8USJLP3waKgiRDxSpEmq+lL5XWIBCVklzX6viyvNncOQPJTEypEts8uwtGZTXRa3tDUf1JR9bvS/bta/KDsLj5ILmDNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: 1O7ROPPsSAOv1E8HQpmxZg==
-X-CSE-MsgGUID: AIY8MB6pRJ+oicaW+fd92Q==
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Feb 2025 22:04:35 +0900
-Received: from localhost.localdomain (unknown [10.226.92.83])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4828C42B36D6;
-	Thu, 20 Feb 2025 22:04:30 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+	s=arc-20240116; t=1740058778; c=relaxed/simple;
+	bh=2y5wrvPA3QtP637YQRd8Romn+Qri1JD1V/ToFZNDnFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nVlJJB5n7vSGb67B17JOhFHohAaIe0tI9SV6+lAuoSApQdZwqQh73PLfXgLC1U/alzmdmw/8zZjUO9svQgvdg6JJsxrdxjkctwcpzWwNh4Nmzt7Vo2I+clxC652luSmG3marRzV7ghehoaoFlrQ8kPmeJ7JNpthtbVycKMznIwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CYXwOHmy; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CYXwOHmy"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=GQ45r65/eICG0K3oXWSgWL9Ap6Foqy+lEFou18SI24A=; b=CYXwOHmy+1GP64C83m4rlns27N
+	pEq8rW4Z/fLtOI8sMzqMjILB5WKu33wuRMYsFEBhwZfet4mFi/4IKt3DyQ/QE0LVwFp3IjaOTrsUw
+	doit/kIEHYq1LufuNCHrQevICeHbk6Eoz8AptY65evxvg9+uDhC2Fqofdw2F+VREn0Nc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tl6lw-00FyQq-Nk; Thu, 20 Feb 2025 14:39:24 +0100
+Date: Thu, 20 Feb 2025 14:39:24 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-can@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v2 0/7] Add support for RZ/G3E CANFD
-Date: Thu, 20 Feb 2025 13:04:16 +0000
-Message-ID: <20250220130427.217342-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm: clk: Add ETH switch clock description for vf610 SoC
+Message-ID: <5a9d9eef-f2ca-4168-aca4-4419dcfcacb6@lunn.ch>
+References: <20250219114936.3546530-1-lukma@denx.de>
+ <3cebe152-6326-454c-9da6-5cf5a64f71c9@lunn.ch>
+ <20250219233802.20ec53e5@wsk>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219233802.20ec53e5@wsk>
 
-The CAN-FD module on RZ/G3E is very similar to the one on both R-Car V4H
-and RZ/G2L, but differs in some hardware parameters:
- * No external clock, but instead has ram clock.
- * Support up to 6 channels.
- * 20 interrupts.
+On Wed, Feb 19, 2025 at 11:38:02PM +0100, Lukasz Majewski wrote:
+> Hi Andrew,
+> 
+> > On Wed, Feb 19, 2025 at 12:49:36PM +0100, Lukasz Majewski wrote:
+> > > The NXP's vf610 soc is equipped with L2 switch IP block from More
+> > > Than IP (MTIP) vendor.
+> > > 
+> > > It requires special clock (VF610_CLK_ESW) to be operational.  
+> > 
+> > So you have a driver for this switch? It has been talked about in the
+> > past, but nobody made any progress with it. Ah, it was you in 2020.
+> 
+> Yes, I'm going to try another time to upstream it.... :-)
+> 
+> > It
+> > will be interesting to see what you came up with in the end, pure
+> > switchdev or a DSA driver.
+> 
+> I think it would be:
+> 
+> 1. Standalone driver, which would configure the L2 switch from the very
+> beginning to work (this is different from FEC on imx28/vf610 where
+> switch is bypassed)
+> 
+> 2. It will use the in-switch registers to have two network interfaces
+> separated. As a result - it may be slower than the fec_main.c in this
+> use case.
 
-This patch series depend upon [1]
-[1] https://lore.kernel.org/all/20250220094516.126598-1-biju.das.jz@bp.renesas.com/
+Seems like a reasonable compromise. You would only load this driver if
+you intend to make use of the switch...
 
-v1->v2:
- * Split the series with fixes patch separately.
- * Added patch for Simplify rcar_canfd_probe() using
-   of_get_available_child_by_name() as dependency patch hit on can-next.
- * Added Rb tag from Vincent Mailhol.
- * Dropped redundant comment from commit description for patch#3.
+> 3. When somebody call "bridge ..." on it - then the in-switch
+> separation would be disabled. This is the "normal" state of operation
+> for L2 switch, which would be a HW accelerator for bridging.
+> 
+> 4. The switchdev would be used to manage it
+> 
+> 5. This would be just a very simple driver - just bridging and startup
+> of the L2 switch.
+> 
+> After we would have a consensus (i.e. it would be pulled to mainline) -
+> I would proceed further.
+> 
+> I will try to not touch fec_main.c driver - just write standalone, new
+> for MoreThanIP L2 switch driver.
 
-Biju Das (7):
-  dt-bindings: can: renesas,rcar-canfd: Simplify the conditional schema
-  dt-bindings: can: renesas,rcar-canfd: Document RZ/G3E support
-  can: rcar_canfd: Use of_get_available_child_by_name()
-  can: rcar_canfd: Add gen4_type variable to struct rcar_canfd_hw_info
-  can: rcar_canfd: Add only_internal_clks variable to struct
-    rcar_canfd_hw_info
-  can: rcar_canfd: Enhance multi_channel_irqs handling
-  can: rcar_canfd: Add RZ/G3E support
+It might make sense to refactor the MDIO code into a helper which both
+can share? No point duplicating that.
 
- .../bindings/net/can/renesas,rcar-canfd.yaml  | 180 +++++++++++++-----
- drivers/net/can/rcar/rcar_canfd.c             |  35 +++-
- 2 files changed, 165 insertions(+), 50 deletions(-)
+> If somebody would like to use FEC, then he will insert the proper
+> module. If switch, another one can be inserted, depending o the target
+> use case.
 
--- 
-2.43.0
+This all seems like a reasonable way forward.
 
+MoreThanIP is now part of Synopsys. I wounder if this IP now exists in
+other SoCs? The press release however suggests Synopsys was
+interesting in the high speed interfaces, not a two ports Fast
+Ethernet switch.
+
+	Andrew
