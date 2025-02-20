@@ -1,64 +1,64 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C361FF1A7
-	for <linux-clk@vger.kernel.org>; Thu, 20 Feb 2025 17:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A81E20E003
+	for <linux-clk@vger.kernel.org>; Thu, 20 Feb 2025 17:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740071994; cv=none; b=HnTUtxfAV4FNiU+KWhhpC4tWjc8uPs3xokKGBAOiYhhMLmkbsDUOmq3CNcz542F1FjIMfolzjjcDpcXVJE46RvtfYy/mJJMJZjIX9A+UPNxRIRAgodKmKotB6G3AO4+lZPwyBf27Nr5srnA8vlM1E6/aXG1gfF4IE5i+vDnryao=
+	t=1740072801; cv=none; b=gcQpCwumZpeHiq4Bf7h+KsFFUw/Kdot7F2HX6cc+/qx6pRUmeHk4w3N9eGKKvuciYo3d0zNcS9XkQwdWJsxibrHhAHC6e7IZer6IYgOxru2YGAEWVcpOC3Y70+JkBgYnk0L7/GzR7YkNLZYIwhkQLagUDR7f2M0dhm3ClE2MQz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740071994; c=relaxed/simple;
-	bh=wHpTEubI2khX23N3hbzesh0W4Nr5ERdcdAJECH9gUjw=;
+	s=arc-20240116; t=1740072801; c=relaxed/simple;
+	bh=tdSgk07Qmyb1E0a1lw0F1X8xB3gcZzChTJbUZHLvlvw=;
 	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jp3AGuuOIROuY02g+jfg+0y+lGOe3VUew+5MOi1UHiaGP1nSkR2tEBE5s8zqsQHsgbiGLp+mc4bDF8YLX70KnG9M7QoCEcAlxDiHvhAUL10rlIzSTKhPsJlBYjskdPWXXia+r1XZgPs3M7UHh9wf2Wby6CjSpw67VI4bzRol2ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Mo7fg0Zd; arc=none smtp.client-ip=209.85.208.47
+	 Content-Type:Content-Disposition:In-Reply-To; b=CXNi/96+G+l9ph3tQjTPwQKXIE6SsQajmc3fSYCrZygFhZp++AwszbMxiU/rb/ahpADF4jQmodUPVmpyZQDkSwtuPgqA8C5pPyws6ImWSBWBwYZ7VwzBSp2PHwQYSImTJcgY/jf+W+mlRBUSvX8jkXRgoWZENLf5Ta1YYlccTnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YBA/LN7t; arc=none smtp.client-ip=209.85.208.68
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Mo7fg0Zd"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5ded46f323fso1653989a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 20 Feb 2025 09:19:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YBA/LN7t"
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so4362924a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 20 Feb 2025 09:33:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1740071991; x=1740676791; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1740072797; x=1740677597; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MPZerQPnM8TdIpEWmUTlPs508hpImW7bIHM5wPNO+wc=;
-        b=Mo7fg0ZdyP6Uup760jYAa3GIQZJYAhnZjgZXWdjgqq9I6e10USVdSWyu1IKJCPykLc
-         /w2EL9MsZdarBClT2AgPpgo25Ag3W9ZmPFWsb3mXIjYHY3CoNFJKxSBdfe+ExfesmNr9
-         VEA3fcd/Ek0hWkX/luRhAkd9DSmNUvcaP1OJwC0/acYkTI+cRO9KaQxR1EBJiXbtsEv2
-         90SV1sLvrV0w5edHoxywpPQuCkpXJ9bekokBXHhEOOVKUwmh4u0yq92qGd9QBdbMr+XI
-         QFmi214BJzkS9RZcZCeVncCVJPuKE1QkVVlVTzGKjCPN8nnoKfXdmk7WjS+lC9ln0fdi
-         DULQ==
+        bh=ANYY81S4UUbSzxGp9vX0hw/u/obOtXq2bTCgGH3coGw=;
+        b=YBA/LN7thNd0kfJi6YUgXpWSohTH4hfKCGstG7P6rVOIvoqYVImMOkWF2SLD/TvS3l
+         zpzriDHW07QsPXQXaeYTV7dArcZpAMR00SnpouK21pHa8IZMfcHCKN9aIW0tYLBti9nL
+         8TcxgOH9SH9ZtwiVdF78otXhfJo0Db4W2ZMF41U/afSvTQIYgGrNe3dk6luNCA2iE42X
+         G0IfBQ4yS/WJwvG6cnMYDSRA4b7cl4AVk0fLBiedZQkYQdjIaBUZE6rSUso+xS9LIAf9
+         tllmocprm5GBV2KAAwnWvpRF5cqADPVnBL/l7qrNdktdMSYVjojg4vzhoU0OCcwZLthF
+         3HOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740071991; x=1740676791;
+        d=1e100.net; s=20230601; t=1740072797; x=1740677597;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MPZerQPnM8TdIpEWmUTlPs508hpImW7bIHM5wPNO+wc=;
-        b=iKHhA8O4Xd3HaZ/CHG/C3hKm5aKLDtIWdpeVaCaHB2AB//OMViz5pAKNvyrYzR4OKn
-         71Om6prNpd3HqorbJ99SnHTth8vQoap/5Y59JAfVFkbCKW5ovb9S2p2lsKRpM9CRw/Ss
-         k82q0589UzT6HV8vz3G7qr+wnTG7P9I09sLfE+4IeqqlpEognxFd9kuXMVLXpAoBibvw
-         ReOC3Eij82PT+XsxTpvcnUTdkhWG8OuLeuOyF9Mx6tmoNHJbYQKKFWv3HJyYp5MKmDin
-         AjDQ5du482YTy1a+Eclvk8+ySWwSnrIcnq86kZ3YyMmg2HF9LvQ9loFJKcnl1epNcjOh
-         hf8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUOhpUOoEZt/7pZLBQc1oaOPT4BgVcw3URi1C3WfztVS3gk26Oq4f89UFIdt4OcXq2VM+sQq3vvLf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRdMXbwtCF6fIynSLFBdk2ht7anb13fh3PSVhKh4C5K2c0L/5w
-	LkP6T3USZ24aHRIRRNKG0/VAVlJKY/ypI9f4/kiTZ9pwGj1VX8/zgAGgOILn1OE=
-X-Gm-Gg: ASbGncv0v4ARPB9rN9I9kGKDYs0dtIYK2xY8peuaF2Uo+srLUJAaBPhknDj8a9ZtwHq
-	tQCRkSXkSS3VfOtMGekQv8UgkgQdtdSc7Nh4YV3Et1HczcrioInv9XhCiCbbIVtbYEI3m65fPxN
-	X9Yv2Gd6v/KCEsddo7zgyj8PfN4SDGPgSFB4qTQ1v3EcP1mvzndrhvw9cxjh7Nbs9vh9DHIazmW
-	aUSHyg57dIQI38kEghUHBlGSOEEkBMqSMnl+U7wt9F6EM/aKKJutckU13923XHpQx1AyenlE3CK
-	cKwzvBV+tN0G2YMK1w9XqWv+Majgxv9PKyUFksM2PjzOnA4/noZrVaNxdIw=
-X-Google-Smtp-Source: AGHT+IHWDM5v5Bb9ov4BBEUlzQ3ZQRxMJhj7b+2LTELKPttlDQENJhZRr+MIBUS3293eAO/wNa8PsA==
-X-Received: by 2002:a17:907:6095:b0:ab7:bac4:b321 with SMTP id a640c23a62f3a-abc09aacbb4mr14530366b.29.1740071990587;
-        Thu, 20 Feb 2025 09:19:50 -0800 (PST)
+        bh=ANYY81S4UUbSzxGp9vX0hw/u/obOtXq2bTCgGH3coGw=;
+        b=OWkZQ9I/D2bhB2nqBptkwjqRrr41Lkkj6B4Xrf0tUboJppd5cuk/AFmEq9CtV4PwbN
+         clUWiObtzTAYmrOGj2xJUD+dOcQ9m+Bkj54HnbqOrJOY/EsHfqUfzFagjCNu+6tRwkkN
+         wtabaSgKjExAaEORIWwZx8fMrJP4MP9u6pPF75iVKFEUeEfTM3G6i6Ul83QoRHZJCeWL
+         bwf4LwEnyIPFpucYGkqbLu/7w2RzaG7qN9L6eoD4cgttgnvG7LUP+tTWjPsU5CZaHNmB
+         2vxBPOqk/8QXtoFIC1yrZTXyZCWhstSAr1upvsrEZJGAeK5NOVv+dYR6Ght/ngO4XDoi
+         Bw1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVE2gyLBMadz/K1dg40YoLcwuvS4Ky1RmmbScotYf//d7c2K5Nk1x5RLQF6Q4z09ZVpZ9kLGPMaXSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjZjaVAQgnh6B3Y66v73PK9LZxs8nmtUcAgcn61iCgOmblTkSW
+	gyjv/WLMr3uE6S9WQT85/nPVh3bSbeqgZ+VlhYlKJnVZcb5EEUE8a8RQ9MJGeZM=
+X-Gm-Gg: ASbGnctTFO2A+7fbmV9YdmIIrZX/yIAlR4Gx57WrUgcD2zmRGyEOWx/cYdsMQ8gx4iz
+	1aT6bhgoIkcFqayBDvBOJcU9IHko46QYCu1OCl5EAtZggRrMfvwQ9pN8G61GD4/xOnkpECaAqy8
+	P1s3+om6fztnmKl5EOe6r58Lqypa6BmWlrDMPRYRekRU72aPuZXhVml/aZTgJcgeP0pH4y9MvvG
+	JuQd7c7QlJwcSNAYa5bUEgBg8+rh+oO4wc0okSfbHX4pE+nV17+IAJSPDdSadAW9GmZGcvawViF
+	8+AQXeihygw6P+GqAHy3/9MYp9Bu9yHW4V2Nv+hTXMzp/pRtQgVmFkTJ/7k=
+X-Google-Smtp-Source: AGHT+IFcZuFtypbIC0ocwrn0UjtnE5zIzW4WQOLazDAdOMAwrDA8BDnjnnZ6hgx+i5rr6QtaeBrAFg==
+X-Received: by 2002:a05:6402:524b:b0:5de:50b4:b71f with SMTP id 4fb4d7f45d1cf-5e0a12baa86mr3394933a12.12.1740072797358;
+        Thu, 20 Feb 2025 09:33:17 -0800 (PST)
 Received: from localhost (host-79-41-239-37.retail.telecomitalia.it. [79.41.239.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb3d276290sm1176404866b.178.2025.02.20.09.19.49
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e076048c05sm5023923a12.35.2025.02.20.09.33.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 09:19:50 -0800 (PST)
+        Thu, 20 Feb 2025 09:33:16 -0800 (PST)
 From: Andrea della Porta <andrea.porta@suse.com>
 X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 20 Feb 2025 18:20:54 +0100
+Date: Thu, 20 Feb 2025 18:34:21 +0100
 To: Stefan Wahren <wahrenst@gmx.net>
 Cc: Andrea della Porta <andrea.porta@suse.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -87,11 +87,11 @@ Cc: Andrea della Porta <andrea.porta@suse.com>,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v7 05/11] clk: rp1: Add support for clocks provided by RP1
-Message-ID: <Z7dkdu4J7uvug7wP@apocalypse>
+Subject: Re: [PATCH v7 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <Z7dnnW4npJmfOVE0@apocalypse>
 References: <cover.1738963156.git.andrea.porta@suse.com>
- <4da2f1106ea6b239eba9c117bf6c129fbdb3ee87.1738963156.git.andrea.porta@suse.com>
- <0ef80d00-7213-47c8-9876-1d32011d8d3d@gmx.net>
+ <d1362766e3e966f78591129de918046a4b892c18.1738963156.git.andrea.porta@suse.com>
+ <87525350-b432-40b3-927c-60cd74228ea4@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -100,210 +100,98 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0ef80d00-7213-47c8-9876-1d32011d8d3d@gmx.net>
+In-Reply-To: <87525350-b432-40b3-927c-60cd74228ea4@gmx.net>
 
 Hi Stefan,
 
-On 15:58 Sat 08 Feb     , Stefan Wahren wrote:
+On 15:21 Sat 08 Feb     , Stefan Wahren wrote:
 > Hi Andrea,
 > 
 > Am 07.02.25 um 22:31 schrieb Andrea della Porta:
-> > RaspberryPi RP1 is an MFD providing, among other peripherals, several
-> > clock generators and PLLs that drives the sub-peripherals.
-> > Add the driver to support the clock providers.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > The RaspberryPi RP1 is a PCI multi function device containing
+> > peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > and others.
 
 ...
 
+> > +static int rp1_irq_set_type(struct irq_data *irqd, unsigned int type)
+> > +{
+> > +	struct rp1_dev *rp1 = irqd->domain->host_data;
+> > +	unsigned int hwirq = (unsigned int)irqd->hwirq;
 > > +
-> > +#define MAX_CLK_PARENTS			16
-> > +
-> > +/*
-> > + * Secondary PLL channel output divider table.
-> > + * Divider values range from 8 to 19.
-> > + * Invalid values default to 19
-> Maybe it's worth to add a short define for this invalid value?
+> > +	switch (type) {
+> > +	case IRQ_TYPE_LEVEL_HIGH:
+> > +		dev_dbg(&rp1->pdev->dev, "MSIX IACK EN for irq %d\n", hwirq);
+> This looks a little bit inconsistent. Only this type has a debug
+> message. So either we drop this or add at least a message for
+
+I think that this is indeed asymmetric. That warning says
+that the 'special' IACK management is engaged for level triggered
+interrupt, which is mandatory in order to avoid missing further
+interrupts without the performance loss of busy-polling for 
+active interrupts. This is explained in par. 6.2 of:
+
+https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+
+The point is that we're not stating the type of the interrupt
+(edge/level triggered), but we warn that we're enabling a mechanism
+useful for one type only (level triggered).
+
+> IRQ_TYPE_EDGE_RISING, too. Btw the format specifier looks wrong
+> (unsigned int vs %d).
 
 Ack.
 
-> > + */
-> > +static const struct clk_div_table pll_sec_div_table[] = {
-> > +	{ 0x00, 19 },
-> > +	{ 0x01, 19 },
-> > +	{ 0x02, 19 },
-> > +
+> > +		msix_cfg_set(rp1, hwirq, MSIX_CFG_IACK_EN);
+> > +		rp1->level_triggered_irq[hwirq] = true;
+> > +	break;
+> > +	case IRQ_TYPE_EDGE_RISING:
+> > +		msix_cfg_clr(rp1, hwirq, MSIX_CFG_IACK_EN);
+> > +		rp1->level_triggered_irq[hwirq] = false;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> It would be nice to document why only IRQ_TYPE_LEVEL_HIGH and
+> IRQ_TYPE_EDGE_RISING are supported. In case it's a software limitation,
+> this function would be a good place. In case this is a hardware
+> limitation this should be in the binding.
 
-...
+All ints are level-triggered. I guess I should add a short comment in
+the bindings.
 
-> > +	regmap_read(clockman->regmap, reg, &val);
-> > +
-> > +	return val;
-> > +}
-> > +
-> > +static int rp1_pll_core_is_on(struct clk_hw *hw)
-> > +{
-> > +	struct rp1_clk_desc *pll_core = container_of(hw, struct rp1_clk_desc, hw);
-> > +	struct rp1_clockman *clockman = pll_core->clockman;
-> > +	const struct rp1_pll_core_data *data = pll_core->data;
-> > +
-> Please drop this empty line
-
-Ack.
-
-> > +	u32 pwr = clockman_read(clockman, data->pwr_reg);
-> > +
-> > +	return (pwr & PLL_PWR_PD) || (pwr & PLL_PWR_POSTDIVPD);
-> > +}
-> > +
-> > +static int rp1_pll_core_on(struct clk_hw *hw)
-> > +{
-> > +	struct rp1_clk_desc *pll_core = container_of(hw, struct rp1_clk_desc, hw);
-> > +	struct rp1_clockman *clockman = pll_core->clockman;
-> > +	const struct rp1_pll_core_data *data = pll_core->data;
-> > +
-> ditto
-
-Ack.
-
-> > +	u32 fbdiv_frac, val;
-> > +	int ret;
-> > +
-> > +	spin_lock(&clockman->regs_lock);
-
-...
-
-> > +static int rp1_pll_ph_on(struct clk_hw *hw)
-> > +{
-> > +	struct rp1_clk_desc *pll_ph = container_of(hw, struct rp1_clk_desc, hw);
-> > +	struct rp1_clockman *clockman = pll_ph->clockman;
-> > +	const struct rp1_pll_ph_data *data = pll_ph->data;
-> > +	u32 ph_reg;
-> > +
-> > +	/* TODO: ensure pri/sec is enabled! */
-> Please extend this TODO. Primary/secondary of what
-
-I think the orginal comment is misleading. It seems to be related
-to the fact that phase shifted clocks should have their parent enabled
-before setting them up. Pri here shuold be the only phased clock, while
-Sec is not and depends directly on a core clock, so I'll change that
-comment entirely.
-
-> > +	spin_lock(&clockman->regs_lock);
-> > +	ph_reg = clockman_read(clockman, data->ph_reg);
-> > +	ph_reg |= data->phase << PLL_PH_PHASE_SHIFT;
-> > +	ph_reg |= PLL_PH_EN;
-> > +	clockman_write(clockman, data->ph_reg, ph_reg);
-> > +	spin_unlock(&clockman->regs_lock);
-> > +
-> > +	return 0;
-> > +}
-
-...
-
-> > +static unsigned long rp1_clock_recalc_rate(struct clk_hw *hw,
-> > +					   unsigned long parent_rate)
-> > +{
-> > +	struct rp1_clk_desc *clock = container_of(hw, struct rp1_clk_desc, hw);
-> > +	struct rp1_clockman *clockman = clock->clockman;
-> > +	const struct rp1_clock_data *data = clock->data;
-> > +	u64 calc_rate;
-> > +	u64 div;
-> > +
-> Please drop empty line
-
-Ack.
-
-> > +	u32 frac;
-> > +
-> > +	div = clockman_read(clockman, data->div_int_reg);
-> > +	frac = (data->div_frac_reg != 0) ?
-> > +		clockman_read(clockman, data->div_frac_reg) : 0;
-> > +
-> > +	/* If the integer portion of the divider is 0, treat it as 2^16 */
-> > +	if (!div)
-> > +		div = 1 << 16;
-> > +
-> > +	div = (div << CLK_DIV_FRAC_BITS) | (frac >> (32 - CLK_DIV_FRAC_BITS));
-> > +
-> > +	calc_rate = (u64)parent_rate << CLK_DIV_FRAC_BITS;
-> > +	calc_rate = div64_u64(calc_rate, div);
-> > +
-> > +	return calc_rate;
-> > +}
-
-...
-
-> > +		ctrl |= (AUX_SEL << CLK_CTRL_SRC_SHIFT) & data->clk_src_mask;
-> > +	} else {
-> > +		ctrl &= ~data->clk_src_mask;
-> > +		ctrl |= (index << CLK_CTRL_SRC_SHIFT) & data->clk_src_mask;
 > > +	}
 > > +
-> > +	clockman_write(clockman, data->ctrl_reg, ctrl);
-> > +	spin_unlock(&clockman->regs_lock);
-> > +
-> > +	sel = rp1_clock_get_parent(hw);
-> > +	WARN(sel != index, "(%s): Parent index req %u returned back %u\n",
-> > +	     clk_hw_get_name(hw), index, sel);
-> I don't think such an important clock callback should emit WARN(),
-> because this might cause a message flood.
-> 
-> So i think either a WARN_ONCE() or dev_warn_once() might be better.
-
-Ack.
-
-> > +
 > > +	return 0;
 > > +}
 > > +
-> > +static int rp1_clock_set_rate_and_parent(struct clk_hw *hw,
-> > +					 unsigned long rate,
-> > +					 unsigned long parent_rate,
-> > +					 u8 parent)
-> > +{
-> > +	struct rp1_clk_desc *clock = container_of(hw, struct rp1_clk_desc, hw);
-> > +	struct rp1_clockman *clockman = clock->clockman;
-> > +	const struct rp1_clock_data *data = clock->data;
-> > +	u32 div = rp1_clock_choose_div(rate, parent_rate, data);
-> > +
-> > +	WARN(rate > 4000000000ll, "rate is -ve (%d)\n", (int)rate);
-> This looks suspicious. Is this is a limit? Except of this, casting to
-> int is wrong.
+> > +static struct irq_chip rp1_irq_chip = {
+> > +	.name		= "rp1_irq_chip",
+> > +	.irq_mask	= rp1_mask_irq,
+> > +	.irq_unmask	= rp1_unmask_irq,
+> > +	.irq_set_type	= rp1_irq_set_type,
+> > +};
 
-I think that's not an hard limit, the original intent was probably
-to filter some clock rates resulting from functions that can return
-a (negative) error code.
-Since clock->data->max_freq contains the maximum frequency achievable,
-I'll turn that WARN into a proper one that check for that limit.
+...
 
-> 
-> In case this is not possible please make it a WARN_ONCE() or dev_warn_once()
+> > +		irq_set_chip_and_handler(irq, &rp1_irq_chip, handle_level_irq);
+> > +		irq_set_probe(irq);
+> > +		irq_set_chained_handler_and_data(pci_irq_vector(pdev, i),
+> > +						 rp1_chained_handle_irq, rp1);
+> > +	}
 > > +
-> > +	if (WARN(!div,
-> > +		 "clk divider calculated as 0! (%s, rate %ld, parent rate %ld)\n",
-> > +		 clk_hw_get_name(hw), rate, parent_rate))
-> > +		div = 1 << CLK_DIV_FRAC_BITS;
-> Same here
+> > +	err = of_overlay_fdt_apply(dtbo_start, dtbo_size, &rp1->ovcs_id, rp1_node);
+> > +	if (err)
+> > +		goto err_unregister_interrupts;
+> > +
+> > +	err = of_platform_default_populate(rp1_node, NULL, dev);
+> > +	if (err)
+> > +		goto err_unload_overlay;
+> I think in this case it's worth to add a suitable dev_err() here.
 
 Ack.
 
 Many thanks,
 Andrea
 
-> > +
-> > +	spin_lock(&clockman->regs_lock);
-> > +
-> > +	clockman_write(clockman, data->div_int_reg, div >> CLK_DIV_FRAC_BITS);
-> > +	if (data->div_frac_reg)
-> > +		clockman_write(clockman, data->div_frac_reg, div << (32 - CLK_DIV_FRAC_BITS));
-> > +
-> > +	spin_unlock(&clockman->regs_lock);
-> > +
-> > +	if (parent != 0xff)
-> > +		rp1_clock_set_parent(hw, parent);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > 
+> 
+> Thanks
