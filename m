@@ -1,121 +1,178 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1308A1FC7F5;
-	Thu, 20 Feb 2025 14:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A0F19D06E;
+	Thu, 20 Feb 2025 14:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740062399; cv=none; b=Azo3S8GEvyEL0nPerVj45qkEDtTHtxbgB9kvdnTpip6nZXH+SfDTv/qZCKFPhKiBvK4miyKjzEeO1fdl2i8Pxiq1r+7UOcTws61Ljhj8cgS7vxagiVWU3weq/q9aZw/E8W8shXkEqRReSayWztJGt9Mb/nJIdRGdhWOMgKsr8eY=
+	t=1740062920; cv=none; b=aFl+9DwTa7ElR1Ta0jyKOchfHfTfJgxuVGjoG29sH5EpAtXR17IEUjMEmPST+59Wm7JyNIwsJU8Kr3FUsBKot/k7DEibpsPrcWOXU7oUQXtYFVMh/Glg4Q12VuCp+PAJAr9ey/6qNPf5zQ1ffPk8MAjAq6x0Caa2ozx1Q4qYj+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740062399; c=relaxed/simple;
-	bh=yOyxFcnQjo1tbshqOofKNICwGL4gI6eqsn4VKiwbu68=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ARgi8vuixLL4lPC5xiVeEwp1B86pwCnKTbfOiw9sCKe/K2kVwfsI/kE/h/orio1utCn4BZ1zjL8ElqQZBJQDg4O15TDNT1eci/f7pQrrIkBW/APESZD1EHb4f40IFe8tNGmHBPmHfFsyeHSOAbEGlEbZpewHjz9TZYk4fNkws5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-52098b01902so643871e0c.0;
-        Thu, 20 Feb 2025 06:39:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740062396; x=1740667196;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bJo2T0INFBN8CdvT+pIiraJbdVrvgv9JeI3xz9LxrQ4=;
-        b=ppIynFP84P8woLyg8p+5VpDEXsxouyad0CGyqI1iCzlYYc01BxXGQh78+e7fYAPX0d
-         hXslamrO5/fWt+tyKjL/fzUBtjMLllG28Vft3a4UFO1Xdoieu76M0YzSaV/Qa6s9WiRK
-         ia+Hf6WiPGMBmh5YtvoQPTe3G+KuPcOtYBVqJiMDPVI4JFO0xEFQdx1fy+qaSeyA5F+S
-         rzn1HiB//4Iwe0c7Z2w3gllAs5k3M0KvoZ/j9MejLICujSqdDRj+qCz5aI7zROqGfO4X
-         qr4h+k2YW9xftoZFkcAZZZ77MJkl5bxanF5ZM+4XjaOggZCA0fXvb5s+TSLVPj4E/KBr
-         ojyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCIt7W4V13lDI+94SKNS+xGfC9pdPjJobK2HYOTJuLSPAJSyuAHFLrpSEFw6LX3JavmQHHTgSNWjIRJjF7@vger.kernel.org, AJvYcCUNvMlV03REIcRZ8As3wqjcGVvkdSE85kK+XH97hmexzLh+C3U/H/a27MgD82NzJnfcAFqyYmrIGVUR@vger.kernel.org, AJvYcCUe03bbl+9Jalvh4J0Mp5A9eJMqvjHhVP2J6Q2/vCVEOQYUcpjFg0Fh3vVVK8sbAONuTecXTlxwcdZw@vger.kernel.org, AJvYcCW/ovhnx5PnBDIsbHCO1yjbkkcfYVNqaiWcDTBYZG5HBwCn0t14c04BV8qpfIZeetNr4bZqHCyZklvhtfnT9JwSJ+Y=@vger.kernel.org, AJvYcCWtzTQu//nm9gbVqI6n5PPtXdgcS9aInfvdAiGuL36GaCM09n6lOaF0NX3iKQteLWWgkID39PXYpFEoArc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNoe88wAshS2nEjcRw2nzlDfQR3xUKyAM8OpfN8/++p/xdXXJ6
-	EtyzqP907avKG8/ZIDhCN0yCNip5mebOpnSbgDUohJTmIH0+WLjRUJuYELVY
-X-Gm-Gg: ASbGncu5Lpdlcz6wP7bG4WwxJpXCqrwAQXVTUv7zGaIbXPjGZatYS9RrDQFBBsG7zqS
-	bG/oeKfhiZfNYw1fiiQwo/r/Ttkh3k5X/Oa8DGnf/tCf9f8uH+ttsPNIIoWPSltLt1JzEqE94py
-	j5v4UZkMUNxU3+ouDjLIaB59x3a8kM9K185nESM7xyqnyZosOt3iGn3+bUtqzB4PCTPKn8r4qe5
-	OQTjpenHT1jeJJE+0DGEH8BvL1mivfZ7VLPKUvEsTDDJQN/9Sa+L8XmHyyewHgctJgFFReOv/m0
-	cjOlmk4wFozPhEXkjJ1GDN/Hsol3QBbnLmu7c06dzI1dDtdZ1xBbQQ==
-X-Google-Smtp-Source: AGHT+IH3/0+QNRd4RigimZHoDXInmhbeyF8ttOjkypl7rFBhYpozJxd+3vkmb2JaY9TjeKV0t4Mx3Q==
-X-Received: by 2002:a05:6122:3783:b0:520:b76d:f3c9 with SMTP id 71dfb90a1353d-521dcd709b4mr2023335e0c.1.1740062395635;
-        Thu, 20 Feb 2025 06:39:55 -0800 (PST)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-868e86bce70sm3320621241.27.2025.02.20.06.39.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Feb 2025 06:39:55 -0800 (PST)
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-4be78f8255fso1391377137.1;
-        Thu, 20 Feb 2025 06:39:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUiFBHGYW6X1mSV3J9WKGKC4YYGiyNYsnzFnSN7LECllrLuOMWpxgnEsPpBw+/ACtfz9sRQ2aLNfbasP2o=@vger.kernel.org, AJvYcCUs2DM6CCbI8b3OD3yukUoGX/0PPJp2lvSL904Hso9WP25H37GuOyBwnuWe/UmVXrkNwhkDnzQPSkw7@vger.kernel.org, AJvYcCVRprS1DyygFOKEj7QqsXlp4Tv6We05Hu36rCzUdgRgylUtJZwhowr7V9YNtApp/JKVN23Bgjc6EeU42MP1ekGZ2T4=@vger.kernel.org, AJvYcCWWV6BVvjofrapqjHvpdgL4IDpbeL/AEH9wV2odICXP+bE3P5njZ+iSegk7ikSng10aF/BMgj3yBtefbkuD@vger.kernel.org, AJvYcCXcYuig/cQV9F/RYdL8DoFjEiNnA3EqK9+zTkQbwaHrccpZUEXGQtg3qxM130HUs3fK3KrUB02nMa/X@vger.kernel.org
-X-Received: by 2002:a05:6102:5090:b0:4bc:d2d7:3e9c with SMTP id
- ada2fe7eead31-4be9930df0cmr1840246137.12.1740062395334; Thu, 20 Feb 2025
- 06:39:55 -0800 (PST)
+	s=arc-20240116; t=1740062920; c=relaxed/simple;
+	bh=PzEer1mTGvGb2m+KD/jgWxiPMBT75xyrk+ydbLeYI3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aVxv3SOy3mpiiJX2+KbuhTNOaZp3S4Bc/ayN7kfXzz99jH+5qd8ZDg3/I4GOBx9r1qO+E/e3leTP/KdE4MBKN/vmAO4kr4pLK1YdF2mLS5I/6AlwrjhtMKjVmyj2vQ8BzTAdYlJ/nT3MvoN1jto32wqykcEVqu8LIpfEuV8ehLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=iWtjEsLy; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="iWtjEsLy"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8F81210382D37;
+	Thu, 20 Feb 2025 15:48:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1740062910;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ldqI1Le+GNbE+uBRLkLvuLrordSQ/bU414re+PDqRgg=;
+	b=iWtjEsLylFgr2+ddtCwYOKZnorICgZLXMimUifa+okc9WQqYoo6+u6UKCRYO1RI10IL3Di
+	46+qHJXpjf3Z43lYHQM2qvPZ3Ivnu2Kq7LTgrbBFi2ZopTitbRaImYsWZL5dodu7p0JW0N
+	h9BjrlQElNSaPiQLSlfeCMOnzRYNURThGfezcLWolcaueVQzlMQ+ZvAAg2ZGESCmNC92x0
+	mbQIDRlR2lMHYQ4Ary2yPugSaa7wIOsVdwNNhZQ2Nij0WKSk2EaUlB1N6QK5RjCbiUyz6h
+	4UU3C+wlpwa22XeoR9XVKXNwpPsbdIZ4iCt5fP8kV7//a2Zil6r/dxf1LhqsAw==
+Date: Thu, 20 Feb 2025 15:48:26 +0100
+From: Lukasz Majewski <lukma@denx.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH] arm: clk: Add ETH switch clock description for vf610
+ SoC
+Message-ID: <20250220154826.3455b15e@wsk>
+In-Reply-To: <5a9d9eef-f2ca-4168-aca4-4419dcfcacb6@lunn.ch>
+References: <20250219114936.3546530-1-lukma@denx.de>
+	<3cebe152-6326-454c-9da6-5cf5a64f71c9@lunn.ch>
+	<20250219233802.20ec53e5@wsk>
+	<5a9d9eef-f2ca-4168-aca4-4419dcfcacb6@lunn.ch>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210114540.524790-1-tommaso.merciai.xr@bp.renesas.com>
- <20250210114540.524790-2-tommaso.merciai.xr@bp.renesas.com> <TY3PR01MB1134607367DA9D2B689E6562986F22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB1134607367DA9D2B689E6562986F22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Feb 2025 15:39:43 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU4XixfSsi-=FmFtuxqoKY2bH_s8DDyhNxcP61Zuds8YQ@mail.gmail.com>
-X-Gm-Features: AWEUYZmMFYua9ZuRn4WqoSFzYx7XcuqDWv5SwNUrf2ZCE8T3mAmPrGsjSVhjiN0
-Message-ID: <CAMuHMdU4XixfSsi-=FmFtuxqoKY2bH_s8DDyhNxcP61Zuds8YQ@mail.gmail.com>
-Subject: Re: [PATCH 1/8] clk: renesas: r9a09g047: Add support for CRU0 clocks,
- and resets
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Tommaso Merciai <tomm.merciai@gmail.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/EoF.xD3edO+ut3CeLCKvgE3";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Biju,
+--Sig_/EoF.xD3edO+ut3CeLCKvgE3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 10 Feb 2025 at 12:54, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > -----Original Message-----
-> > From: Tommaso Merciai <tomm.merciai@gmail.com>
-> > Sent: 10 February 2025 11:46
-> > Subject: [PATCH 1/8] clk: renesas: r9a09g047: Add support for CRU0 clocks, and resets
-> >
-> > Add support for CRU0 clocks and resets along with the corresponding divider.
-> >
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Hi Andrew,
 
-> > --- a/drivers/clk/renesas/r9a09g047-cpg.c
-> > +++ b/drivers/clk/renesas/r9a09g047-cpg.c
-> > @@ -49,6 +53,12 @@ static const struct clk_div_table dtable_1_8[] = {
-> >       {0, 0},
-> >  };
-> >
-> > +static const struct clk_div_table dtable_2_4[] = {
-> > +     {0, 2},
-> > +     {1, 4},
-> > +     {0, 0},
->
-> Not sure {0, 2}, {1, 4}, {0, 0}, to make lines shorter?
+> On Wed, Feb 19, 2025 at 11:38:02PM +0100, Lukasz Majewski wrote:
+> > Hi Andrew,
+> >  =20
+> > > On Wed, Feb 19, 2025 at 12:49:36PM +0100, Lukasz Majewski wrote: =20
+> > > > The NXP's vf610 soc is equipped with L2 switch IP block from
+> > > > More Than IP (MTIP) vendor.
+> > > >=20
+> > > > It requires special clock (VF610_CLK_ESW) to be operational.   =20
+> > >=20
+> > > So you have a driver for this switch? It has been talked about in
+> > > the past, but nobody made any progress with it. Ah, it was you in
+> > > 2020. =20
+> >=20
+> > Yes, I'm going to try another time to upstream it.... :-)
+> >  =20
+> > > It
+> > > will be interesting to see what you came up with in the end, pure
+> > > switchdev or a DSA driver. =20
+> >=20
+> > I think it would be:
+> >=20
+> > 1. Standalone driver, which would configure the L2 switch from the
+> > very beginning to work (this is different from FEC on imx28/vf610
+> > where switch is bypassed)
+> >=20
+> > 2. It will use the in-switch registers to have two network
+> > interfaces separated. As a result - it may be slower than the
+> > fec_main.c in this use case. =20
+>=20
+> Seems like a reasonable compromise. You would only load this driver if
+> you intend to make use of the switch...
 
-All SoCs from the RZ/G2L and RZ/V2H families use this formatting style:
+Yes, the main use case would be the switch (after bridge ... command
+called).
 
-    git grep -wW clk_div_table -- drivers/clk/renesas/r9a0*
+However, until then we shall? have port separation.
 
-Gr{oetje,eeting}s,
+>=20
+> > 3. When somebody call "bridge ..." on it - then the in-switch
+> > separation would be disabled. This is the "normal" state of
+> > operation for L2 switch, which would be a HW accelerator for
+> > bridging.
+> >=20
+> > 4. The switchdev would be used to manage it
+> >=20
+> > 5. This would be just a very simple driver - just bridging and
+> > startup of the L2 switch.
+> >=20
+> > After we would have a consensus (i.e. it would be pulled to
+> > mainline) - I would proceed further.
+> >=20
+> > I will try to not touch fec_main.c driver - just write standalone,
+> > new for MoreThanIP L2 switch driver. =20
+>=20
+> It might make sense to refactor the MDIO code into a helper which both
+> can share? No point duplicating that.
 
-                        Geert
+This is a latter step (common MDIO library code), IMHO.=20
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>=20
+> > If somebody would like to use FEC, then he will insert the proper
+> > module. If switch, another one can be inserted, depending o the
+> > target use case. =20
+>=20
+> This all seems like a reasonable way forward.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
++1
+
+>=20
+> MoreThanIP is now part of Synopsys. I wounder if this IP now exists in
+> other SoCs? The press release however suggests Synopsys was
+> interesting in the high speed interfaces, not a two ports Fast
+> Ethernet switch.
+
+I would need some detailed documentation....
+
+>=20
+> 	Andrew
+
+
+
+
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/EoF.xD3edO+ut3CeLCKvgE3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAme3QLoACgkQAR8vZIA0
+zr2Zzgf9HtLGK3Ux7Xf80L6yo2vvKfPiWZ/RuxE4tCAf9yjd5vk2Wfg9EizNIaaX
+ILs8pKZkCxVRQxUqQ7Cx2k02jDSZiHJ30GFYlE6EtUFGgk00siH1uUZA5ScSsHPj
+DZfO/gVB4MW+ofwapPvYEGyUdKQmyB2IOt5OfusD4f9p869BqoskJQpsESHDP16m
+qcDpAwgne46YXCHFpfzDFTEDmriOa0/iY04iTFAV/kbxGu+OwW23X7c5CJFE79KP
+AWxzzSzuu9iNAGcKEW1u9rH6H1iEb0GW9dVBDE/dX5VHwAqRct6S+tZonQGQzQab
+eNojXymqBTXSfY5w/1xzbDX5z4WPGw==
+=A4R8
+-----END PGP SIGNATURE-----
+
+--Sig_/EoF.xD3edO+ut3CeLCKvgE3--
