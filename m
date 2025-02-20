@@ -1,118 +1,96 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A628E1F460D;
-	Thu, 20 Feb 2025 13:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B3A1E32BD;
+	Thu, 20 Feb 2025 14:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740058778; cv=none; b=p3KjyZtUhIe//ARDegUteP6KNcIhSQrjSmKnctyqc6wqJLYeLpYf9YHmLW9Gmj/ApHmaD7J3r5owGOFz41CnysMc9mQRwOjyMizd6xXRn3Je50NE/spdmkFoG/WJGLrYn1I0ttjKp/hk/Nhq6VyNX/t71f3R/+dk0RG2n/4Sflg=
+	t=1740062201; cv=none; b=U0A6hGR7JdmzUxow4MGht0hIzNVCjg/uc693cQtRD8E38maTtVCref2Ufqb6BfaUjtI3yWoYq4pzpW56oc2Ej8MhN6wzTjmO57GufBwiGrOX6nk/5WTyDGQtTk/CBK7ZxxH5lVzp3mm3Mwf+xodVrtCfRPTzqEtAQZGKA/ZGvnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740058778; c=relaxed/simple;
-	bh=2y5wrvPA3QtP637YQRd8Romn+Qri1JD1V/ToFZNDnFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nVlJJB5n7vSGb67B17JOhFHohAaIe0tI9SV6+lAuoSApQdZwqQh73PLfXgLC1U/alzmdmw/8zZjUO9svQgvdg6JJsxrdxjkctwcpzWwNh4Nmzt7Vo2I+clxC652luSmG3marRzV7ghehoaoFlrQ8kPmeJ7JNpthtbVycKMznIwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CYXwOHmy; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CYXwOHmy"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=GQ45r65/eICG0K3oXWSgWL9Ap6Foqy+lEFou18SI24A=; b=CYXwOHmy+1GP64C83m4rlns27N
-	pEq8rW4Z/fLtOI8sMzqMjILB5WKu33wuRMYsFEBhwZfet4mFi/4IKt3DyQ/QE0LVwFp3IjaOTrsUw
-	doit/kIEHYq1LufuNCHrQevICeHbk6Eoz8AptY65evxvg9+uDhC2Fqofdw2F+VREn0Nc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tl6lw-00FyQq-Nk; Thu, 20 Feb 2025 14:39:24 +0100
-Date: Thu, 20 Feb 2025 14:39:24 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Lukasz Majewski <lukma@denx.de>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] arm: clk: Add ETH switch clock description for vf610 SoC
-Message-ID: <5a9d9eef-f2ca-4168-aca4-4419dcfcacb6@lunn.ch>
-References: <20250219114936.3546530-1-lukma@denx.de>
- <3cebe152-6326-454c-9da6-5cf5a64f71c9@lunn.ch>
- <20250219233802.20ec53e5@wsk>
+	s=arc-20240116; t=1740062201; c=relaxed/simple;
+	bh=jFVPJDOBUZyCdWk8xy5m/2iCATeanJQQE/XiObJ0FRs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HEG9uAibd/REwricEacSqaNsQANIjdwe/Lf4aQ0B894yNCFg76AQzz0NuoszuxxIK0J2Iau9v2X85BahMxRZDIZMR19hWsWhSHmolHIwQBebjGhQo0W1lj2YzL41cG1UleOi+47UNNh9CB/ybKLUwJYqvtKcb+icy6SqCpJbGL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-51eb181331bso363684e0c.0;
+        Thu, 20 Feb 2025 06:36:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740062197; x=1740666997;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lLsstvr+2wvMkW/NVaitwURxkfA+PbFMqhyTnZnrvpc=;
+        b=ZKF2Sfs4ES3gbAhz0+bDJspnYd5SZyy1kyuXTy8a39zUuIzR2x9Xi1rBQcN6nwXi1W
+         jrnkFkmHtYha4H6JezatcZSWCJorEYGWT5O2h1wSpRW6+CbJRPu9RFkmQg0hXDx8Cfop
+         ph1veOYOH7735YMzwmRkpoAGfQtLjc0fenrgiWRjgV7M9j4T/hf6MUjBGnfpmRm0LKNJ
+         AA0XZ95W9aX6g8LhidHGBbaMkc5gei4i188fLOh/eNyv58ngDBqJMi4HE+WlE1DtJNla
+         sCA98ZbuC+D2oPipKjSOvTJHDSqA1Vs2imuy9J5M6y7PNTxQCPWoA+oUf8TyQYVfRagv
+         Ur7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUah6QzFoWc5HyfDuPYfJPdqReGfLiXzfTp4Rq5fAiKF6/7g/cyWt2CvrYDBdTcGcCui8w9C7S6ky+5ZIw=@vger.kernel.org, AJvYcCX9+E0/0vwertYmQchkrkGNr3rFzCNr+03MgblOuCg0USFJPnsmjX4wCSaTgBFbFurPEKprMrI7M8Dh@vger.kernel.org, AJvYcCXBzVc1B1q3OI/EH261GdbYMQz4XOhCfpsoaVsDPbk1zi6mVbLeqp17bnuPygPJGZAyuiie+W2cz1oax6J+@vger.kernel.org, AJvYcCXiQaHfeS4+DYdcfdIs6iv58C/Hqo2swEFHR5UGiX5zLUSdtH0kvsx3ipjz4De9mD6lh+CRbm1A185g@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD6/Xzqk+ukh9zxC9mN24fuPAfG9f0iicBqJYq8Hl+BWcU/BK8
+	p5OEJMDefxm16CRVuDCDihBVf8y4EGQeEJK915DEuJYwh355W1uIBl9zuQgu
+X-Gm-Gg: ASbGncsS8qC944xWxjtYUo5/b6iUp6OO7FoXG2W3sTLDmugdJPn39m8pwxPwl3wsOg7
+	SiQWA2DChPkZkOo8d0FdRgyGIP3uxPfznp2vn9FEz7JFX93j6A7ZDagB47Bb3bI6LXsQwn7sIX0
+	xJVTJzrncLonBEmIoVLOUT2PGl+Fw1lDshn7wD1ej/c0pRV1HfD2PZiqbEdANcYhpUCqpZQkArS
+	8c9yZkGDW78TQd1xycK6sAAAkCNgg7BGPm4wLqNs2CJzHCd5HyxYw/1lFX1VSQBYS9LiNR1ar0l
+	x4diN5wotDW3+yTC+6bRlfdQpWQwLSvseenlFdV6H3Zp6S30WUQNUg==
+X-Google-Smtp-Source: AGHT+IH5YgVuU+q5QxnBO53JMh0jrsv0/nOk5xWC5Cb/HT3jJaCRN90HJbP+AUcLIlFfnze9GtfCMg==
+X-Received: by 2002:a05:6122:20a3:b0:520:6773:e5c5 with SMTP id 71dfb90a1353d-5209dbffe19mr11412455e0c.7.1740062197375;
+        Thu, 20 Feb 2025 06:36:37 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-520b9a3aca3sm2180924e0c.20.2025.02.20.06.36.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Feb 2025 06:36:37 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4be68eadf2fso338293137.1;
+        Thu, 20 Feb 2025 06:36:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVG3GZgM9jyWUCJOPJjUpBfXkksjq9FA2SOH/EjnmPNsIljZ/QHFgDJmkWQPH/ZJwlG40dXJtNFs4mnOx0=@vger.kernel.org, AJvYcCVQgfaaweQ3ISbvVpAfvAX419mRai94+QX8VNKNQzhrSXP+g+3DVevQAZ2WJCmKjBTm+on++YlvA9f3@vger.kernel.org, AJvYcCVbmX8qAYvVkpGmnwpyNm2rb3EvovkCvSU8YN6l7+fNxbGreF9q0GElw0y2TrVEieALBEFhth8wBQsIZLuS@vger.kernel.org, AJvYcCX1ZbT8V5WM5qCcP5s42IwdX2YUNRsJfUS000Qup8MGmDxpV66Rkh6bBXUuPUYnbQdqS9w+CrzDYaa5@vger.kernel.org
+X-Received: by 2002:a05:6102:2c88:b0:4bb:d7f0:6e74 with SMTP id
+ ada2fe7eead31-4bd3fe4fbf8mr13157485137.21.1740062196923; Thu, 20 Feb 2025
+ 06:36:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219233802.20ec53e5@wsk>
+References: <20250210114540.524790-1-tommaso.merciai.xr@bp.renesas.com> <20250210114540.524790-2-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20250210114540.524790-2-tommaso.merciai.xr@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 20 Feb 2025 15:36:24 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXeKfFWQV8DDBY1dFEqsg5BstxXGXF8+OL8UEBSKHt3CQ@mail.gmail.com>
+X-Gm-Features: AWEUYZnLFePd-1BqPnNONu7LKQ5aLnNkBdAFzP3SPXlTLKm6lkXDlAm8vW2tagc
+Message-ID: <CAMuHMdXeKfFWQV8DDBY1dFEqsg5BstxXGXF8+OL8UEBSKHt3CQ@mail.gmail.com>
+Subject: Re: [PATCH 1/8] clk: renesas: r9a09g047: Add support for CRU0 clocks,
+ and resets
+To: Tommaso Merciai <tomm.merciai@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 19, 2025 at 11:38:02PM +0100, Lukasz Majewski wrote:
-> Hi Andrew,
-> 
-> > On Wed, Feb 19, 2025 at 12:49:36PM +0100, Lukasz Majewski wrote:
-> > > The NXP's vf610 soc is equipped with L2 switch IP block from More
-> > > Than IP (MTIP) vendor.
-> > > 
-> > > It requires special clock (VF610_CLK_ESW) to be operational.  
-> > 
-> > So you have a driver for this switch? It has been talked about in the
-> > past, but nobody made any progress with it. Ah, it was you in 2020.
-> 
-> Yes, I'm going to try another time to upstream it.... :-)
-> 
-> > It
-> > will be interesting to see what you came up with in the end, pure
-> > switchdev or a DSA driver.
-> 
-> I think it would be:
-> 
-> 1. Standalone driver, which would configure the L2 switch from the very
-> beginning to work (this is different from FEC on imx28/vf610 where
-> switch is bypassed)
-> 
-> 2. It will use the in-switch registers to have two network interfaces
-> separated. As a result - it may be slower than the fec_main.c in this
-> use case.
+On Mon, 10 Feb 2025 at 12:46, Tommaso Merciai <tomm.merciai@gmail.com> wrote:
+> Add support for CRU0 clocks and resets along with the corresponding
+> divider.
+>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-Seems like a reasonable compromise. You would only load this driver if
-you intend to make use of the switch...
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.15.
 
-> 3. When somebody call "bridge ..." on it - then the in-switch
-> separation would be disabled. This is the "normal" state of operation
-> for L2 switch, which would be a HW accelerator for bridging.
-> 
-> 4. The switchdev would be used to manage it
-> 
-> 5. This would be just a very simple driver - just bridging and startup
-> of the L2 switch.
-> 
-> After we would have a consensus (i.e. it would be pulled to mainline) -
-> I would proceed further.
-> 
-> I will try to not touch fec_main.c driver - just write standalone, new
-> for MoreThanIP L2 switch driver.
+Gr{oetje,eeting}s,
 
-It might make sense to refactor the MDIO code into a helper which both
-can share? No point duplicating that.
+                        Geert
 
-> If somebody would like to use FEC, then he will insert the proper
-> module. If switch, another one can be inserted, depending o the target
-> use case.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-This all seems like a reasonable way forward.
-
-MoreThanIP is now part of Synopsys. I wounder if this IP now exists in
-other SoCs? The press release however suggests Synopsys was
-interesting in the high speed interfaces, not a two ports Fast
-Ethernet switch.
-
-	Andrew
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
