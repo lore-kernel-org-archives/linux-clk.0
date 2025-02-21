@@ -1,123 +1,157 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44CD205E0D
-	for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 09:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58D5205E1B;
+	Fri, 21 Feb 2025 10:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740130935; cv=none; b=aikLcQZV4jjrR5ejODfWvUnMTbN4yNmmLIVZSjwV2R7XQmkFBdL2UTl1atcOqvxod4PHs/AV+Bfr3Nh/LhSyVafecj36F7hSJNQJ0KZ5oFcr///kAh5yhu6yXA0+jj9jz9zPqfJsgjRDPazwJ6k/BJu8vKygIYd1Ujx4U6HXTyA=
+	t=1740132930; cv=none; b=JfTRSuKrakAL+D6SyGgyxV5vCh3VdZeA59t0fBfzv0XCdO/zHxX4NKWZJ22ZVgJZFqmRPsQDNTCeSDdvSg21JQMHlvLotw1Vpwlx65D7PXKkjevqNW5ZaG/WfFtnFpH0ei1jkFU3Pw/GFpUdI5ewcLOTkdJvsFI7AIYiXdhMhCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740130935; c=relaxed/simple;
-	bh=3d2Q2o3fJiHi3cJPY5LQ4dMhZv4asm/ZCUv1sU8Cby0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a9D736ncGvps1G7zXt/UQtGujW9F9fXoZYTZBCDiKM1jMxEiXTv793l8Jk40KM1kmb0MEKHibU+Tg2PHqjISE6yH9GQjGeOCpqWjZEc1YWnKsjwwSXFDixph+mO797TxVkBCxDEqBzQSS2PdOmuYFtZy5tVqO5lzJAqGfuW704Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nmiXNYn2; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1740132930; c=relaxed/simple;
+	bh=1vznFYSoeqK4WULqDA/ouXkxSQ6ThQs46OMs7yesxDo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=osWypz+aN5/tMFgrA3+qFuJaFsWKVQcyZXdDsV6x7HM1cPvJCIYP+8Ksr32JMrrMBWpEVBMEgac1Im0E9RswJH5uK98Pi4BHveNho5SUoNqdZm9ugFgp5cbr7EHmxN5zswb2DH/IVYNKWtojpC+EAUumiuUGfB4CDz4xhgq37FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ml++WQPy; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nmiXNYn2"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4399deda4bfso12874725e9.0
-        for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 01:42:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740130932; x=1740735732; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B0J1Zwx7ue86k31iPRIPZZnmcI3lqDR1yT4y7QR55Zw=;
-        b=nmiXNYn2abBlSDT+VzOFkFi7ImXLd9LMVco/Bw+50r7zsoF2yHY8TqX+FoFGBdPhQd
-         Yo2YO96ALOdf1bWyc4B1LumgZ/nWv0s6Bi03BOCBsnalh9GQzncqYFFak9BCNLR6zuKK
-         Gc/ItE9O4O6hX/UCwF9WD9SlzeCHZ0JGLSQEeXx+jJqbTwKSDnxnswtxBT5C/eY3BkEf
-         f6ckh4SGW+Lh7mp3T1duZi6AYQFP7dYMnDj5NQ2Ed7cc+WGwOmqyGcFeO5jPkhE7Ca+O
-         zMBeIWVdVuO7+bKo9yEEr8pcj580qhLknL6x2w9/WuZVEx/sHj9YxlV0FT4j5eMOBlE5
-         K65w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740130932; x=1740735732;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B0J1Zwx7ue86k31iPRIPZZnmcI3lqDR1yT4y7QR55Zw=;
-        b=gSYbeepW7snWwN+hCPLdq1WDhs7hwNaRbO1qWWQ4QPyQYTzTMOd0vSzUYeAn2x9n44
-         BQi7Di6a6AcQqMAUYUEs/6ecg3gCdDuR+TPO2ZpUd2bv2S3Jb6Zfdgwe1EkEuKS/cpl+
-         xsGRDjB+dFvw9Z98VUOuK53oCgRM/gS9IQ71u6ZOQBzq1ERduhFehzUZbVtkZCdoPZ3R
-         6+WuT6m3sDNyqipUHgT9Hh3FyJJF929bTvQpRDD1h5NHvuUtv21HW6kAP3bU5VnRdCNk
-         MA2t0ntUtRzhcQNLqd6IW2Za1UNEFLeV/4A01OhTe9j4qA0TAhv/7H6ker7j8Xqh6NFz
-         08zw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4y62+Jv9r9czhNJCTXrCZFBSD3stQZJPP6Jv2RNNcg1fcuTFoiq3bUCr8LyirQ5Xbd/O351erUUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5aLjWZirU/ndWxtKEq4qC8z896azfx2JqYzXxRome8gEdbP9D
-	zShCEHKQyUDcHDNIjFmFS0CDqmTyT4erzTYqay+ZRhk4ncjDnS2ueuoqaC85P/U=
-X-Gm-Gg: ASbGncv3mCyS+m5PYGpY984cR+kAIYQKorjxyUoXGm7tg13BenLDzXjr2SswR3CkRfm
-	XRxCs2X9ctLgWiFvB/7q/pQAGZL4t8TelGxLj7V6JJUaX/kKisj2qVKNooR7MBDZB3kIxLciBo3
-	gIYGUbER1uiMmoFH/NPtnCgTjMnOfB64JvyCJqtJ2+GEHvdVqEieCP8GRnBiC2KmYZejBSWJ4GS
-	G1VU1ADxGGHVXyO6PAzetZDt9geBKSR9YZXONv1QEp86uYmVxgJhUZbKKSM0Xgk68QbM29xun0O
-	PFvVwAVacxWCihwDYCXGYYTkcclrEecUwwLz34Jd0uvH0WglXZ6pLLKgaHkSHrF0GKE=
-X-Google-Smtp-Source: AGHT+IFroyABBpOsabWsgrl7KBQzfGBjKB3F9B9Cviyl/eoKnSnufExjTKsMZhY9Cx/IPYZ4EIrCAQ==
-X-Received: by 2002:a05:600c:3151:b0:439:a1ef:c242 with SMTP id 5b1f17b1804b1-439ae18fdc1mr24592065e9.0.1740130932194;
-        Fri, 21 Feb 2025 01:42:12 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4399be79d92sm53108625e9.0.2025.02.21.01.42.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 01:42:11 -0800 (PST)
-Message-ID: <85a51258-7cee-45b3-8760-bfbf943500c7@linaro.org>
-Date: Fri, 21 Feb 2025 09:42:10 +0000
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ml++WQPy"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51L6cTsU009360;
+	Fri, 21 Feb 2025 10:14:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=FuLgO3UHYcvVgACNXyKK8N
+	/z39nFVkNySO5odzxU4Jk=; b=ml++WQPyAZCJvjFFy4MqIgJbAfGMny7J9xhKvB
+	Y5VJsRvT5KLlqriWwcpgBH0I62B0Ms6+s0tiUxfJbfm0AwHqAY27t3h2yVL4hVw1
+	Pgnfo+F+eiYdewD7utHWIH0bW/kPLS4XD66kjZtCrwIEOgrovwfyrTbwEzxIILFP
+	0/uNF7ex1gv5eBPVaO0GW0eIng73hrUHatyWUcJJbmQG3HGXuwlxAMXnwkVamAMo
+	Jj5xjf4IGCdGVSG1hGueLqaLUJlap9HpHalUOV7B0ldUv3oC4qcvt28hsgBVU+te
+	D7eZtA8njD63N4uRRzp4nGUPD3e/nXwsIycR8yZTM/YxP3Dg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44vyy3hn27-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 10:14:57 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51LAEuZI001146
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 10:14:56 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 21 Feb 2025 02:14:47 -0800
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
+        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
+        <arnd@arndb.de>, <nfraprado@collabora.com>, <quic_tdas@quicinc.com>,
+        <biju.das.jz@bp.renesas.com>, <elinor.montmasson@savoirfairelinux.com>,
+        <ross.burton@arm.com>, <javier.carrasco@wolfvision.net>,
+        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <netdev@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+Subject: [PATCH v10 0/6] Add NSS clock controller support for IPQ9574 
+Date: Fri, 21 Feb 2025 15:44:20 +0530
+Message-ID: <20250221101426.776377-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
- power domains
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
- <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
- <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
- <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
- <d4c4ecf0-9094-4341-8711-78a48e5d1344@linaro.org>
- <d444f1fb-42a0-48ef-83bc-d5aab9282b22@quicinc.com>
- <gzjyyl2kzv52zsewn5zf6ei65fymyi4pspvsmsjaqj5sklfxvc@bkg46saulni5>
- <fcc31cc7-67bd-4102-a53f-ebe66b4fd1a7@linaro.org>
- <3da96df2-1127-49bf-8114-282cc488c194@quicinc.com>
- <6b0684a0-a519-463f-b7be-176a4752a786@linaro.org>
- <r73hnpusatba3hvyckv7jw3dcvffgvoxwawlcvvxhuol5rrrk7@ngo3fiv7va6e>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <r73hnpusatba3hvyckv7jw3dcvffgvoxwawlcvvxhuol5rrrk7@ngo3fiv7va6e>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4Fh9b7yRR1h8oOLA24KMLGFydN0BPkI2
+X-Proofpoint-GUID: 4Fh9b7yRR1h8oOLA24KMLGFydN0BPkI2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-21_01,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ phishscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 mlxlogscore=799 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502210077
 
-On 21/02/2025 00:10, Dmitry Baryshkov wrote:
->> +static int cam_cc_x1e80100_configure_plls(struct device *dev,
->> +                                         const struct qcom_cc_desc *desc,
->> +                                         struct regmap *regmap)
->> +{
->> +       int ret;
->> +
->> +       ret = devm_pm_runtime_enable(dev);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = pm_runtime_resume_and_get(dev);
->> +       if (ret)
->> +               return ret;
-> I think, it's better to add desc->use_rpm. Then these two calls and
-> pm_runtime_put() can go to a generic code.
-> 
-> Or maybe we can enable RPM for all clock controllers?
+Add bindings, driver and devicetree node for networking sub system clock
+controller on IPQ9574. Also add support for gpll0_out_aux clock
+which serves as the parent for some nss clocks.
 
-That second point is pretty interesting - I think at this stage ~ all of 
-them do this boilerplate stuff over and over again ..
+Changes in V10:
+	- nsscc dt-bindings
+		- Added clock-names in dt-bindings to obtain the nsscc clock and
+		  enable it using PM API's, as this clock is required to access
+		  nsscc block.
+		- Dropped #power-domain-cells from example, because nsscc doesn't
+		  provide any power domains.
+		- Update copy right year in include files.
+	- nsscc driver
+		- Enable nsscc clock with the help of PM API's
+		  because this clock is needed to access nsscc block. 
+		- Dropped R-b tag.
+	- dtsi
+		- Added clock-names in nsscc node.
+		- Dropped #power-domain-cells from nsscc node, because nsscc doesn't
+		  provide any power domains.
+	- Fixed review comments from Konrad.
+ 
+V9 can be found at:
+https://lore.kernel.org/linux-arm-msm/20250207073926.2735129-1-quic_mmanikan@quicinc.com/
 
----
-bod
+V8 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241025035520.1841792-1-quic_mmanikan@quicinc.com/
+
+V7 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241009074125.794997-1-quic_mmanikan@quicinc.com/
+
+V6 can be found at:
+https://lore.kernel.org/linux-arm-msm/20241004080332.853503-1-quic_mmanikan@quicinc.com/
+
+V5 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240626143302.810632-1-quic_devipriy@quicinc.com/
+
+V4 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240625070536.3043630-1-quic_devipriy@quicinc.com/
+
+V3 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240129051104.1855487-1-quic_devipriy@quicinc.com/
+
+V2 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230825091234.32713-1-quic_devipriy@quicinc.com/
+
+Devi Priya (6):
+  dt-bindings: clock: gcc-ipq9574: Add definition for GPLL0_OUT_AUX
+  clk: qcom: gcc-ipq9574: Add support for gpll0_out_aux clock
+  dt-bindings: clock: Add ipq9574 NSSCC clock and reset definitions
+  clk: qcom: Add NSS clock Controller driver for IPQ9574
+  arm64: dts: qcom: ipq9574: Add nsscc node
+  arm64: defconfig: Build NSS Clock Controller driver for IPQ9574
+
+ .../bindings/clock/qcom,ipq9574-nsscc.yaml    |   98 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   29 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-ipq9574.c                |   15 +
+ drivers/clk/qcom/nsscc-ipq9574.c              | 3107 +++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |    1 +
+ .../dt-bindings/clock/qcom,ipq9574-nsscc.h    |  152 +
+ .../dt-bindings/reset/qcom,ipq9574-nsscc.h    |  134 +
+ 10 files changed, 3545 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+ create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+ create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+
+
+base-commit: 8936cec5cb6e27649b86fabf383d7ce4113bba49
+-- 
+2.34.1
+
