@@ -1,160 +1,131 @@
-Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 118AE78F20;
-	Fri, 21 Feb 2025 01:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740102121; cv=pass; b=XvsZN/UGUsFQ9Jk5btPnFfQiWDIRRiRb7MaM0KFBN0/RZiaoYq0R4Ufu+pNV/a6uikfVa4M8gZ5O9JaQJqnC0jkrTN7gnIaoGdlK3W/WYSxdBa7BOWg0Z8kQrqf9EKUXPa6H0T00tcC5HaUsi/+dp7nfUbQnmg4QKW8K+Ml0d/4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740102121; c=relaxed/simple;
-	bh=u/drrcq0tRMW+dDu5EtV9HFVffzJAWHXL6OLPTF8o1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F3ZqZRbTjzxd6CYe0Q5qpF/2E1IICpXaLNRAwge0pUukuBgCGhoXIhUFA3adlIzOsE+kErEaxtbdxyBUuDhColLENO4l6BcTpXJE/uaO49GxtmljAlzCTKkQt6JHSCZhpqEl1xi1BxA5rhoE1pGQ/LHC5lJoYAyh51V0f/USwTQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=b5e5smDe; arc=pass smtp.client-ip=136.143.184.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7FD1FBC9A
+	for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 06:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740119633; cv=none; b=gs6zE2KH8iMrCEfvEuuVDLf3ccOK8/0dGnGVy0UbdnR7+I/sn3CcHwfKnnA1FceyMb8sbDJo2U1KG65EzvyL6ZwtwbB9So21bRBjqQyCwU/DcFwvAmvaEqGUk7n1nQgANFvtV+HkfV0lBUpVMeaYUWwH+v1OlOPk46VBZCyqgIU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740119633; c=relaxed/simple;
+	bh=UnV/+GfcAYzsBk/o1/mbrqjdXTKd+qmvgLBpMdIuhrI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C3xSsZtw4ycYa0Y/PJVGQC4txnJrMy+ZDgsH9Thco3qTZd3piH2cU3hCS9CMuWpXINi3mvZYRnSx8YGry61mhbKYpqU0uoxve8efhFulfiELkyGs49H2EKgeIQSAxNYXXxMhJNtzWzdsqN9t8ku0PbjlFcs0XGAL8QzroImGmiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PlcTKdCK; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="b5e5smDe"
-ARC-Seal: i=1; a=rsa-sha256; t=1740102106; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=H9BrAU7IWbxaMN4ydgJdpM6Seacug4G4FfwPIdl5NGiJxoE/bB1Fs5sggwZqTiEXM6EFONEobmcmytCdrD6Dt6nGB+qEFI33y2nSyov1OyLBHW+WnMKUL3xv7cYt2pxy3XSa1ZFmFaJEqJ2AcaIdeTKTXvR/h4pEGCJUcWb1G+8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740102106; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=kjI9jH3577PL+Qw8lBXddzvXfssk10bWk7N+gsrE/Yw=; 
-	b=ma3HnDiyVuwDTwbCRM1OIq56iWU8b6h3YqfO3BupHZwcrazdNIzyHkxfIp4Utoq05QMW2vvmaebwDFxU9RzUnkmVj++q60q2Fu50d/Ea/xor6cW9U2t5k9q9Yg3SQPcUZt78JWqDrfVui9Eyew7/YAKVwVlgKvf2TItY/0oR32A=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740102106;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=kjI9jH3577PL+Qw8lBXddzvXfssk10bWk7N+gsrE/Yw=;
-	b=b5e5smDeGD5pKB39CPlqy/lPuSs2aSRDjnktOk378gbrQAjDJA0fwdxrd4+LugAR
-	mntbJTWjj3FAv0JILWP7GAMdarSfk4KE2iauBAd6VmgTz2V/VunB7DilBQOBw0KOGN/
-	zJifTQxPIn4cuqWnw8fxvlabchf5+3ag/Uk6R+lk=
-Received: by mx.zohomail.com with SMTPS id 1740102103663427.97041222656264;
-	Thu, 20 Feb 2025 17:41:43 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id 7F64F1835E9; Fri, 21 Feb 2025 02:41:40 +0100 (CET)
-Date: Fri, 21 Feb 2025 02:41:40 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, liujianfeng1994@gmail.com, cristian.ciocaltea@collabora.com
-Subject: Re: [PATCH] clk: check for disabled clock-provider in
- of_clk_get_hw_from_clkspec
-Message-ID: <yd2vhz2rivseulpbw34vhyei5sojz5w7ltnzwgtfn3ywwldgu6@nhktt6iztd4r>
-References: <20250220225448.2763166-1-heiko@sntech.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PlcTKdCK"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-21c2f1b610dso48627635ad.0
+        for <linux-clk@vger.kernel.org>; Thu, 20 Feb 2025 22:33:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740119631; x=1740724431; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q3qkD2W8GHPxS6rjoat2i19yWeUXmPG3MQqxSAFZ/8c=;
+        b=PlcTKdCKDpi1QO7NG8AQYezLG/xToMvncu9ycJf9FhoLe2ZTRb9jfTPK998MKrBpKn
+         +ZOVThGps+zEJqqz6fLAa7SrK9Fz7ahCfSRTtbfR1NOYrI6EMF1nyHuWV9M3VYU7g2b3
+         EG/ldhckbswoCKjp7JNIBeyV1rJFjPipK/xeR4/WQx4W/WdjK0M4uyEFgahdrRObY5hh
+         vIS+mgHgHllHQjR4uMArpRYwdyiEQu03hWzFejE6rKIFz97MQCMUPz03MolP2V6kR6mW
+         1y0/mKdP2RV4MdomVsLK0ZwQ3xoR9MsdH/h2iumaq1XcuCHS6jQA8Atr2paIfNikn/xL
+         Nzmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740119631; x=1740724431;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q3qkD2W8GHPxS6rjoat2i19yWeUXmPG3MQqxSAFZ/8c=;
+        b=dFDZzesvh6jig970cdXEWzQ7S8+A8mhBDGqBEc4UxH2THs9Ng7dzgKiW4mx5M2+PWX
+         IQtLHZzwopBoBEYeek8IdDSL/TPN721MY0vLditrbHoYz9qk364CEpnGcjnkXiv5/1tt
+         C1gU88BHgCDk634FARGJKCoRdVPky/+JmlLCPJO+6TLoJdQaNqJ+3haT5JSvS1sgtkg4
+         ZadNPJ/w16r0WYkfsW9xG2SWl0i4BYlzhW8eKKpds+3Xxk9ciK+c7LmQaX16G1qnSoup
+         pNLhYCDotuXunmaBWPPL9NX7shsU9Zp6vPW/vCNoNFQHXmpk7zBoT5Q6yyhwwm7vJinB
+         4tJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXnnCVoiMpXDgn/CMoxiUSRY48bdeXi7C5s2tU8vtgebzEQE6ZtqWkXtykJGSKWr/dz/5FmDseSts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP/1gO1kwKoEdUSKMAygrRjV2xznUmkfHbqqOdryAHOIeE2EnC
+	WV3IFUb2zBuuWfSZI24PUC/Z8e5biahjRdsFXH9N6ekq7PiTCGvHbBLrYUPoHfA=
+X-Gm-Gg: ASbGnctXjsl5JuNrSrKS9cKdstTReP9CPE55M9YE+EbtV3nCFmRgB2QzXMDOH0tfb2Q
+	JkXhWCBZ5eHaf6KU7i1BM+YYOW9k9DSoH4CwWtsPkoGIMgynBR12BGSiUiHE+4dhXbkf+mNwkrM
+	sl9TGCwo/1jcEfBsFVrPwbbtnDxpE6tAuFjYea7pUaNUtl5ZmajJGX4hI8BtTLysY2QMtmygsf+
+	fuhQ4nvM3NHoEQNydeWJtnvH+2W+/PYTmzUSXPmiRXp7FTbspp25HPbtXs1dW0q5/m/WT/QZQbE
+	yVE/MWReg+uTUUiRPs7Zn9kk+Yit
+X-Google-Smtp-Source: AGHT+IGBFTKUqNROscBFlXFQPsAysi8TjZrSjaBBpoMwqoUOJ2o4jmxLvYsGM0FXUS1xsZzgGKCJBg==
+X-Received: by 2002:a17:902:d2c7:b0:21d:3bee:990c with SMTP id d9443c01a7336-2219ffb5fa6mr30105085ad.42.1740119631572;
+        Thu, 20 Feb 2025 22:33:51 -0800 (PST)
+Received: from localhost ([122.172.84.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb02d7dasm523355a91.5.2025.02.20.22.33.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 22:33:50 -0800 (PST)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Benno Lossin <benno.lossin@proton.me>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: [PATCH V2 0/2] rust: Add basic clock bindings
+Date: Fri, 21 Feb 2025 12:03:37 +0530
+Message-Id: <cover.1740118863.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="awhf732zrnbxpf5n"
-Content-Disposition: inline
-In-Reply-To: <20250220225448.2763166-1-heiko@sntech.de>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.2/240.10.19
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
+Hello,
 
---awhf732zrnbxpf5n
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: check for disabled clock-provider in
- of_clk_get_hw_from_clkspec
-MIME-Version: 1.0
+This adds initial bindings for the clk APIs. These provide the minimal
+functionality needed for common use cases, making them straightforward
+to introduce in the first iteration.
 
-Hi,
+These will be used by Rust based cpufreq / OPP layers to begin with.
 
-On Thu, Feb 20, 2025 at 11:54:48PM +0100, Heiko Stuebner wrote:
-> of_clk_get_hw_from_clkspec checks all available clock-providers by
-> compairing their of-nodes to the one from the clkspec. If no matching
-> clock-provider is found, the function returns EPROBE_DEFER to cause a
-> re-check at a later date.
->=20
-> If a matching clock-provider is found, a authoritative answer can be
-> retrieved from it whether the clock exists or not.
->=20
-> This does not take into account that the clock-provider may never appear,
-> because it's node is disabled. This can happen for example when a clock
-> is optional, provided by a separate block which just never gets enabled.
->=20
-> One example of this happening is the rk3588's VOP, which has optional
-> additional display-clock-supplies coming from PLLs inside the hdmiphy
-> blocks. These can be used for better rates, but the system will also
-> work without them.
->=20
-> The problem around that is described in the followups to:
-> https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-819=
-62a7151d6@collabora.com/
->=20
-> As we already know the of-node of the presumed clock-provider, just add
-> a check via of_device_is_available whether this is a "valid" device node.
-> This prevents ethernal defer-loops.
+For now I have added them under the maintainership umbrella of the common clk
+framework, please let me know if I should do it differently.
 
-if there is a respin:
+This was posted earlier as part of the series implementing cpufreq/OPP Rust
+bindings [1] (since its V6 version). In order to make sure this gets properly
+reviewed and I don't accidentally miss relevant reviewers, I am posting it
+separately now.
 
-s/ethernal/eternal
+If possible, I would like to get these merged via the PM tree along with
+cpufreq/OPP bindings, but its okay otherwise too.
 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+--
+Viresh
 
-Also seems useful for having a quick final error if a referenced
-clock node has not been enabled by accident during board bringup.
+[1] https://lore.kernel.org/all/cover.1738832118.git.viresh.kumar@linaro.org/
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+V1->V2:
+- Post this as an independent series.
+- Include more APIs, apart from clk_get() and clk_put().
 
-Thanks,
+Viresh Kumar (2):
+  rust: Add clk helpers
+  rust: Add basic bindings for clk APIs
 
--- Sebastian
+ MAINTAINERS                     |   2 +
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/clk.c              |  57 +++++++++++++++++
+ rust/helpers/helpers.c          |   1 +
+ rust/kernel/clk.rs              | 104 ++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |   1 +
+ 6 files changed, 166 insertions(+)
+ create mode 100644 rust/helpers/clk.c
+ create mode 100644 rust/kernel/clk.rs
 
->  drivers/clk/clk.c | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index cf7720b9172f..50faafbf5dda 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -5258,6 +5258,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args =
-*clkspec)
->  	if (!clkspec)
->  		return ERR_PTR(-EINVAL);
-> =20
-> +	/* Check if node in clkspec is in disabled/fail state */
-> +	if (!of_device_is_available(clkspec->np))
-> +		return ERR_PTR(-ENOENT);
-> +
->  	mutex_lock(&of_clk_mutex);
->  	list_for_each_entry(provider, &of_clk_providers, link) {
->  		if (provider->node =3D=3D clkspec->np) {
-> --=20
-> 2.47.2
->=20
+-- 
+2.31.1.272.g89b43f80a514
 
---awhf732zrnbxpf5n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAme32dQACgkQ2O7X88g7
-+podzRAAkNsuxysuCLodNUxcjL0c9vFQxV8jdiLweph03XdvKKwY41xKHnXNyFJG
-3gOsh0aYuPp6xbKrRj1FYfcvZKK8qA1I9r4xnamL3bBaMhzZSH2PSVqaBCzwrN5e
-vs4sRbDtyB8DAPxdiJbb4IiTzUOY96bjeUfSuC2wL+vCg5FKBAg5vKTprqjHGFws
-FrlcLdIb1I+/C7ETjC163wdWSsl82jIAeO54TvzJuPTXGEd2c4pP2JYuR8hxFQxC
-4vcN93kmIOwjbCn/z0PKZO7znBDZWC+Czn0c4s5lWpGcP715/CNquCtJyjCTQQBR
-5EYmWtMu17r2Df2oPqUsfvJH11fyT7Z0fmgt1hOnCxGtAws43/H10Q+rQL9k6VYd
-ZNErNZJF7nuWu2RheUD5rhHyU61rOVbU3J0iiXNzNGD4NHvaPg125OAbL4cHyiMC
-6tqzQxsdFakceBr5zK3c6vsqc6i1yGNhOPApd41MZmXelzg6rnAsuSsEDFMx8rb6
-V/2dAMl6JfByoxTw+Elr9nZLsjzHQGGIH8K9DDYkMrorprTlIMFDShZXvszu2frR
-yYJYIw5ECFcMSvlD76R/RxyTa1AIaVruuK5SZ1BH2mP1I2QEqr8jHsLegXfAKSMq
-k1PB1xUYp4iII0ka5D3ovg7Bvc1AihGkuzutBm3BP4qrSShfxGA=
-=5yO1
------END PGP SIGNATURE-----
-
---awhf732zrnbxpf5n--
