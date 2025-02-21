@@ -1,125 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21E522A4C4;
-	Fri, 21 Feb 2025 16:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED39C24397C
+	for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 17:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740157038; cv=none; b=RTrGAul2mm0hASX6W5ArnYrGY4PBq6snPR+Y8mRfPqNzpmVWn9CgIV/ykXTXBHskImf4er1yTfzDIybF3LV0czqFcrwSeB2tMa2GOlX1NUC8jeDQjWmhrThHvCI/wjLx5fOP1amVTJNKpZeDzo5ov07tRBSLXtY2d/obROrBmQ4=
+	t=1740157325; cv=none; b=g/L7RcHL9FF6cpSORupAIcdODykURI3gg2L0ac7jiR5vQDWl+R3nNCOv6cUT33dlmAy41JrMYZfcbHNBAeGiYHHiIC5Bbm5knwEIzxqL+RrYzZzbfApy86pr5BAHNHQjwTfGtafST7nDWLh5t6or4oj/M+4YIAH+eUI83qKsUj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740157038; c=relaxed/simple;
-	bh=Zermek77njNBefiJAHShs4Pi/BmVFoEIkevP8SsNO7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l2WWqTeGfq2AFTSUkg/rPsAx+U9qL4OXZKZ8pwbBWjvij3ksKSDmd69+NK1AdkeEunMAFW/ewHz9juxgEMryKklem6hs/5pqjD7G4D85UnkytVu8M4XyDiDggpRafltwEcdhTqqjoqtWz9aYYMOVCMxS683zTjog96IBG12F7l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjnfJHw4; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjnfJHw4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB91BC4CEE2;
-	Fri, 21 Feb 2025 16:57:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740157037;
-	bh=Zermek77njNBefiJAHShs4Pi/BmVFoEIkevP8SsNO7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KjnfJHw4iEGxUc/9qW1y7MXbhibKG8rh7AogVr9UljZJegm57+LQQHRNYxKckJ7CF
-	 FWayh52wKAV7sxOYBy2yRP1kIBucfaUT//Oz6Smay5wM4rX3aDy1XWtHwWW7TEQmw3
-	 SptwbeiWbL/fTdM1HOAih5VwfFervTEScmXCZsx8pEdHzYHE8WrTynaqiBwG4OZ6Ke
-	 vDGpq5FRy5051igtlr0CdoKc2Eih2iIJKMOuJP390ZByyLDQ2pj0Fwqyp9YV6FQXND
-	 O04FwzPPaYC+BJYhF3zEGDLtqIbpBXVRvhPU3jEGlY5r9nvEPOEH4m0Pu+KdL2FdgE
-	 +dM9ARU52UE5A==
-Date: Fri, 21 Feb 2025 16:57:12 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Friday Yang <friday.yang@mediatek.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Garmin Chang <garmin.chang@mediatek.com>,
-	Yong Wu <yong.wu@mediatek.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v4 1/2] dt-bindings: clock: mediatek: Add SMI LARBs reset
- for MT8188
-Message-ID: <20250221-cavalier-property-7e7eceba7bc6@spud>
-References: <20250221075058.14180-1-friday.yang@mediatek.com>
- <20250221075058.14180-2-friday.yang@mediatek.com>
+	s=arc-20240116; t=1740157325; c=relaxed/simple;
+	bh=G5jh78CS0PPFWm2IO43oDWs13N7ANvB9PlARKyawR+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PIgmqXHTfk2GUzgjELez6vGef9LuOvU+DmxvQSr5aaImQDPULqQEXBjv3Rt2o4+RJaTRmeO+isfDvJ1lL5NGI0S4mtYW02cnly6LBd1R0pGNTgyWEebe2C+GrZa6+1ZaTEx62y9qchMlXtvlAFiB4gJNlP78ACJHf8kx8Zagz+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:ae9a:419e:d123:9695])
+	by xavier.telenet-ops.be with cmsmtp
+	id GH212E00L0y8aK501H21Cd; Fri, 21 Feb 2025 18:02:01 +0100
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tlWPF-0000000BMsv-0Ddx;
+	Fri, 21 Feb 2025 18:02:01 +0100
+Received: from geert by rox.of.borg with local (Exim 4.97)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1tlWPZ-0000000EP5f-1eof;
+	Fri, 21 Feb 2025 18:02:01 +0100
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.15
+Date: Fri, 21 Feb 2025 18:01:59 +0100
+Message-ID: <cover.1740157133.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="+dgGrOCgl0PEyxI6"
-Content-Disposition: inline
-In-Reply-To: <20250221075058.14180-2-friday.yang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+	Hi Mike, Stephen,
 
---+dgGrOCgl0PEyxI6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-On Fri, Feb 21, 2025 at 03:50:53PM +0800, Friday Yang wrote:
-> On the MediaTek platform, some SMI LARBs are directly connected to
-> the SMI Common, while others are connected to the SMI Sub-Common,
-> which in turn is connected to the SMI Common. The hardware block
-> diagram can be described as follows.
->=20
->              SMI-Common(Smart Multimedia Interface Common)
->                  |
->          +----------------+------------------+
->          |                |                  |
->          |                |                  |
->          |                |                  |
->          |                |                  |
->          |                |                  |
->        larb0       SMI-Sub-Common0     SMI-Sub-Common1
->                    |      |     |      |             |
->                   larb1  larb2 larb3  larb7       larb9
->=20
-> For previous discussion on the direction of the code modifications,
-> please refer to:
-> https://lore.kernel.org/all/CAFGrd9qZhObQXvm2_abqaX83xMLqxjQETB2=3D
-> wXpobDWU1CnvkA@mail.gmail.com/
-> https://lore.kernel.org/all/CAPDyKFpokXV2gJDgowbixTvOH_5VL3B5H8ey
-> hP+KJ5Fasm2rFg@mail.gmail.com/
->=20
-> On the MediaTek MT8188 SoC platform, we encountered power-off failures
-> and SMI bus hang issues during camera stress tests. The issue arises
-> because bus glitches are sometimes produced when MTCMOS powers on or
-> off. While this is fairly normal, the software must handle these
-> glitches to avoid mistaking them for transaction signals. What's
-> more, this issue emerged only after the initial upstreaming of this
-> binding. Without these patches, the SMI becomes unstable during camera
-> stress tests.
->=20
-> The software solutions can be summarized as follows:
->=20
-> 1. Use CLAMP to disable the SMI sub-common port after turning off the
->    LARB CG and before turning off the LARB MTCMOS.
-> 2. Use CLAMP to disable/enable the SMI sub-common port.
-> 3. Implement an AXI reset for SMI LARBs.
->=20
-> This patch add '#reset-cells' for the clock controller located in image,
-> camera and IPE subsystems.
->=20
-> Signed-off-by: Friday Yang <friday.yang@mediatek.com>
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+are available in the Git repository at:
 
---+dgGrOCgl0PEyxI6
-Content-Type: application/pgp-signature; name="signature.asc"
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.15-tag1
 
------BEGIN PGP SIGNATURE-----
+for you to fetch changes up to 9b12504e8c8c2f1f7e5f16afdd829603dd0c9508:
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7iwaAAKCRB4tDGHoIJi
-0uzgAP4v0yoFN7BfxFWWiitccUXoshHXQp4HLPtHW7d1YoN4TAD+IQ2jThGJf4Pc
-L5rsRAnTiFrghIbu/VG+WOs0atI7nAI=
-=soR+
------END PGP SIGNATURE-----
+  clk: renesas: r9a09g047: Add CANFD clocks and resets (2025-02-20 17:42:03 +0100)
 
---+dgGrOCgl0PEyxI6--
+----------------------------------------------------------------
+clk: renesas: Updates for v6.15
+
+  - Add thermal (TSU) clock, reset, and power domain on RZ/G3S,
+  - Add AI accelerator (DRP-AI) clocks and reset on RZ/V2L,
+  - Add Image Signal Processor (ISP, FCPVX, VSPX) clocks on R-Car V3U,
+    V4H, and V4M,
+  - Add Watchdog (WDT), SDHI, Interrupt Controller (ICU), Camera (CRU0),
+    and CAN-FD clocks and resets on RZ/G3E,
+  - Miscellaneous fixes and improvements.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (4):
+      clk: renesas: r9a09g047: Add WDT clocks and resets
+      clk: renesas: r9a09g047: Add SDHI clocks/resets
+      clk: renesas: r9a09g047: Add ICU clock/reset
+      clk: renesas: r9a09g047: Add CANFD clocks and resets
+
+Claudiu Beznea (2):
+      clk: renesas: r9a08g045: Add clocks, resets and power domain support for the TSU IP
+      clk: renesas: r8a08g045: Check the source of the CPU PLL settings
+
+Lad Prabhakar (5):
+      clk: renesas: rzg2l-cpg: Refactor Runtime PM clock validation
+      clk: renesas: r9a07g044: Add clock and reset entry for DRP-AI
+      clk: renesas: r9a07g043: Fix HP clock source for RZ/Five
+      clk: renesas: rzg2l: Update error message
+      clk: renesas: rzv2h: Update error message
+
+Niklas Söderlund (6):
+      clk: renesas: r8a779a0: Add FCPVX clocks
+      clk: renesas: r8a779a0: Add ISP core clocks
+      clk: renesas: r8a779g0: Add ISP core clocks
+      clk: renesas: r8a779h0: Add ISP core clocks
+      clk: renesas: r8a779h0: Add FCPVX clock
+      clk: renesas: r8a779h0: Add VSPX clock
+
+Tommaso Merciai (1):
+      clk: renesas: r9a09g047: Add CRU0 clocks and resets
+
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c |   8 +++
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c |   2 +
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c |   3 +
+ drivers/clk/renesas/r9a07g043-cpg.c     |   7 ++
+ drivers/clk/renesas/r9a07g044-cpg.c     |  55 ++++++++++++++-
+ drivers/clk/renesas/r9a08g045-cpg.c     |   9 ++-
+ drivers/clk/renesas/r9a09g047-cpg.c     |  83 ++++++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.c         | 119 ++++++++++++++++++--------------
+ drivers/clk/renesas/rzg2l-cpg.h         |  12 +++-
+ drivers/clk/renesas/rzv2h-cpg.c         |   4 +-
+ 10 files changed, 242 insertions(+), 60 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
+
+Thanks for pulling!
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
