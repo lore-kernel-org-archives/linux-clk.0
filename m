@@ -1,134 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1519520FAA1;
-	Fri, 21 Feb 2025 14:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033701D9688;
+	Fri, 21 Feb 2025 14:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740149284; cv=none; b=rn0QErbI+XQNIMX6eFF6tinTwoEftBqRYyudB2njohLo2Jk3ZLl78n7V17dR+HD2txnA1xOiO0CCLuxn9Q/hqLfwezThqXTPkm/JJkOdY9JIF1hGueWkZePoQKpOvhaX1PstLRSIKMOgZ2qgetF4lOLTUPwDwZFj+oMDU+Go3cQ=
+	t=1740149421; cv=none; b=T/c+WCBj9g36DN8AiS3zQQ5GQtJLlwOmyVoEBxBAv9CVbEi2R0BJJAmMAev7Er93xLyUNdFc858++o/8T2vPk+Ae6tmyHLEO2c2bpkPElIoym82rqzmasVg4vqBmYfQmqfCG4B86LctbtAspXD9Xp90utUJi80AhN3GYZ5RCeSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740149284; c=relaxed/simple;
-	bh=Pydel3GDch9z7hvM8q8bAh48qo5Vb3Mw8itGDgMptC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uZcX/TLmFBkIa30emInHbxtiCdEYqiDT/wSPX6jDqVNEvt91G41bmw7OzFDdH5yqi9HirA8q02+q4GBXfHue8aEOExoh8wvHMFskRZT9Y9d0ERKFWdih3ZQE118+MJnGtRN8evqCnh950eDZFwOm7CjeAst3xbBMWKzudXtYLo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyph6rtQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740149421; c=relaxed/simple;
+	bh=ICu7jURi+eCrwMnxHY2hXLjjLEW2O8TGiD4PRBFSzOY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n0z4majEHLWeTslQfpl8NmwU/o0bakDrrdykSw01dFDbt67ggI7j8FN/OqW6EFmRAga5z+TRq8hHjc/caZknAQYFBtl7jgKFHYgqjrpNoLDXoQuaqMl7yIx8DjSd753n+MZofTlNB6NyI3cfr5ykNFlZZieFve9zJE6593Qps9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=du5vhu5y; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyph6rtQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041BCC4CED6;
-	Fri, 21 Feb 2025 14:47:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740149283;
-	bh=Pydel3GDch9z7hvM8q8bAh48qo5Vb3Mw8itGDgMptC4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kyph6rtQprpre7Tyd49/a/29K19NpkavMg0LywEqDU/Oyut1MviU1AJOCooSkjVnV
-	 vgUpsdp4744feuGl4XEgGrZQdE6NL3sPidMF85rw49qERD++bL6fBtgcPL0LaW1scc
-	 bPOkgUko76Q5egbkgxkGQuBY3xLWbqy3LFJV5OB2p5wmL2jPxT7GW5g1Z3FSX2MK0+
-	 uh6jrLq3Z5SvVA70iKCKEUR+/vdxHZVVa2YvWxHpMCyo0ptQO/hKKhbPL7ivYH6+/M
-	 jSmaAzTL91UHcucDaXBt59XNYXyrrCuf3CXxD4gO3DUyghNtg4IgIgizHRYq49hYHi
-	 QNvl1BEfXmvGQ==
-Date: Fri, 21 Feb 2025 15:47:57 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
-Message-ID: <Z7iSHR0F2QpiNpMZ@pollux>
-References: <cover.1740118863.git.viresh.kumar@linaro.org>
- <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
- <Z7iGHiQcqa-_AXli@pollux>
- <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="du5vhu5y"
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2f9b9c0088fso3884859a91.0;
+        Fri, 21 Feb 2025 06:50:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740149419; x=1740754219; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TnaCgJJbjuqCnFgvXsUR+uoiDyGbCE42OXDtThDpJQE=;
+        b=du5vhu5y7dEITCD11UhyEE28TAC7uDWe2CDSTaUqP6wISABQTdqxOuxw1F5CuajhCY
+         bHjOpjbRf7KEqnOCIyoNCAn5x2wwLW4IjGDmJsWA5/FMqwgf4qzceZfdqgK4Io7PlA5q
+         VELpveQZZ0NiT5mOQjmeZQYyJBtIpV/CfPylOqMnzgZLUO4BYdMjb1e9KTRiQ3/143xF
+         In8A5KQR4dgq4Mf5UDVEjU6xQDw/FvXfEka/8v6k9nR7lM9ZHK3ipNPIBXp0ppWg21uJ
+         etpGo6V2tnvGozRBDgUR4N1HO2/vjcbJrCN/pq63e/4yIJ4RklzY8S3Gcav+pAnwuz2c
+         Vfig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740149419; x=1740754219;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TnaCgJJbjuqCnFgvXsUR+uoiDyGbCE42OXDtThDpJQE=;
+        b=DfZ3jmY3srZOPdUZNi2EqjOv65bSJ6hnLVc8y8Kh9lzGLJeOQ/RFaWCmOVLwL2lykR
+         yfVMpqEiGdDbCSAFMYyN71fG89P76t0OtRM0vZSV6FN6bn23sw63qw7XJSCDbmSYoPZ/
+         zrKs9obNjw8ftuGb9JjPiaeRNpYpjGOwzQ+afsugBxqXYPZ/HeBNj3w1lC+D0bACWO5U
+         c5ieestvA8xjtGYq18UfkHMFKY/Fkn4JdslQHihga5SDcmkf4oSyU6OafOGqbc537c31
+         7SMsXek5561qVngNoJqWvsHFTuMYdpPULuaNw73DG7r9A92WmyreNJWE4oZPHb6wY/Z5
+         5/og==
+X-Forwarded-Encrypted: i=1; AJvYcCUw8JKJU3DFHzTwR+EFoO3ylIe6AA4+DdMIMH8O9eKvFF43Venv07MMGekKRgfKRVGQ4a1dpmgKwONRH8Oo@vger.kernel.org, AJvYcCWO4V7bMxNnlokDrq7BB7zzWQFdMOGxLGhRZ1U1lRMAhlYrIvFb49RTj6OdWbgQOLaS+uk8sHmmFyG4EA==@vger.kernel.org, AJvYcCWvDVKkFp4id18aho4wq/te2iKDTPyHZacBt15lWQSlRW86IOIEq+1aWsNsafPUPu7V/x8hWcywYnF6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLoS+GTs/rwdjNT3pvuDTFkO5O2FszZ13N0KUoYzBTqXt7wJ38
+	yeaGMAtC8GiJxjaNLMHmOUInPh/0dXs12ndr6ZIVW4+Vvow72WLLiP55qDOkrW3arfteYdCxgTa
+	6r1BD0w95qVzZTTwRW60XtGxmBF0=
+X-Gm-Gg: ASbGncvP3aM3Uzgpvex1qDAE0cAJb7fWBJPJoXQ1lapgUisyYSoxIAV6ZwBRp0uWa1c
+	7qpwzyrVdASQGDIrg0w2xZj31V65S4quQ6X3CmCE1KfFlk4apy/Mu66i8CpUVjILP9E/vqAson8
+	KTqAbjBQ==
+X-Google-Smtp-Source: AGHT+IGL5LVGSgK6IiICRZeBIWASDeK/qq211mmEywpTL8p7CKlj5qrng3Lt1HAaQc2t2ryZnSqP1uQVzUQ/vQHQd5g=
+X-Received: by 2002:a17:90a:c105:b0:2fb:fe21:4841 with SMTP id
+ 98e67ed59e1d1-2fccc117c76mr14345975a91.8.1740149417752; Fri, 21 Feb 2025
+ 06:50:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
+References: <20250120092146.471951-1-sergio.paracuellos@gmail.com>
+ <CAMhs-H-VevC+_=HxhMU6-at0bKut_JqdgO7j2detuB4s8R_QFQ@mail.gmail.com> <Z7iHorlRgtsi1LOo@alpha.franken.de>
+In-Reply-To: <Z7iHorlRgtsi1LOo@alpha.franken.de>
+From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Date: Fri, 21 Feb 2025 15:50:09 +0100
+X-Gm-Features: AWEUYZnevsycp0vJDlGMFc7DxBxXdxcU7bf0Djx6LzWJk3KIOpX1he7jf8P7O04
+Message-ID: <CAMhs-H-fcWU-rz_3FeAuRe0xdCMmvffX2zrZwwmt=8RYpY4Lyg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] mips: dts: ralink: update system controller nodes
+ and its consumers
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	p.zabel@pengutronix.de, linux-mips@vger.kernel.org, 
+	devicetree@vger.kernel.org, yangshiji66@outlook.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 21, 2025 at 11:29:21AM -0300, Daniel Almeida wrote:
-> 
-> 
-> > On 21 Feb 2025, at 10:56, Danilo Krummrich <dakr@kernel.org> wrote:
-> > 
-> > On Fri, Feb 21, 2025 at 12:03:39PM +0530, Viresh Kumar wrote:
-> >> +/// A simple implementation of `struct clk` from the C code.
-> >> +#[repr(transparent)]
-> >> +pub struct Clk(*mut bindings::clk);
-> > 
-> > I remember that Stephen explained that NULL is valid value for struct clk. As a
-> > consequence, all functions implemented for `Clk` have to consider this.
-> 
-> I am a bit confused here. If NULL is valid, then why should we have to specifically
-> consider that in the functions? No functions so far explicitly dereferences that value,
-> they only pass it to the clk framework.
+Hi Thomas,
 
-This was badly phrased, the current implementation does not need to consider it
-indeed. What I meant is that we have to consider it potentially. Especially,
-when adding new functionality later on. For instance, when accessing fields of
-struct clk directly. Maybe this only becomes relevant once we write a clk driver
-itself in Rust, but still.
+On Fri, Feb 21, 2025 at 3:05=E2=80=AFPM Thomas Bogendoerfer
+<tsbogend@alpha.franken.de> wrote:
+>
+> On Fri, Feb 21, 2025 at 11:48:34AM +0100, Sergio Paracuellos wrote:
+> > Hi Thomas,
+> >
+> > El El lun, 20 ene 2025 a las 10:21, Sergio Paracuellos <
+> > sergio.paracuellos@gmail.com> escribi=C3=B3:
+> >
+> > > Hi all!
+> > >
+> > > Ralinks SoCs have a system controller node which serves as clock and =
+reset
+> > > providers for the rest of the world. This patch series introduces clo=
+ck
+> > > definitions for these SoCs. The clocks are registered in the driver u=
+sing
+> > > a bunch of arrays in specific order so these definitions represent th=
+e
+> > > assigned
+> > > identifier that is used when this happens so client nodes can easily =
+use it
+> > > to specify the clock which they consume without the need of checking
+> > > driver code.
+> > >
+> > > DTS files which are currently on tree are not matching system control=
+ler
+> > > bindings. So all of them are updated to properly match them.
+> > >
+> > > I'd like this series to go through kernel mips git tree if possible.
+> > >
+> > > Thanks in advance for your time.
+> > >
+> > > Changes in v3:
+> > > - Address Krzysztof comments in v2 (Thanks!):
+> > >   + Drop reset include file since what it was defined there were hard=
+ware
+> > >     constants and no binding related indexes at all.
+> > >   + Update patches for not referring to this reset removed file.
+> >
+> >
+> > I was expecting this series going through the mips tree.
+>
+>   DTC     arch/mips/boot/dts/ralink/rt3883_eval.dtb
+> Error: /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/rt3883.d=
+tsi:2.1-9 syntax error
+> FATAL ERROR: Unable to parse input tree
 
-> 
-> Or are you referring to the safety comments only? In which case I do agree (sorry for
-> the oversight by the way)
-> 
-> > 
-> > I wonder if it could make sense to have a transparent wrapper type
-> > `MaybeNull<T>` (analogous to `NonNull<T>`) to make this fact more obvious for
-> > cases like this?
-> 
-> MaybeNull<T> sounds nice.
+Weird, it looks like dtc is not happy with the "include" line with new
+definitions? Are you getting this only with rt3883? Since all the
+patches are almost the same and I compile tested this before sending..
+Something got corrupted? I don't have my laptop now to check but I
+will recheck again on monday.
 
-Yeah, it's probably the correct thing to do, to make things obvious.
-
-> 
-> > 
-> >> +
-> >> +impl Clk {
-> >> +    /// Creates `Clk` instance for a device and a connection id.
-> >> +    pub fn new(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-> >> +        let con_id = if let Some(name) = name {
-> >> +            name.as_ptr() as *const _
-> >> +        } else {
-> >> +            ptr::null()
-> >> +        };
-> >> +
-> >> +        // SAFETY: It is safe to call `clk_get()`, on a device pointer earlier received from the C
-> >> +        // code.
-> >> +        Ok(Self(from_err_ptr(unsafe {
-> >> +            bindings::clk_get(dev.as_raw(), con_id)
-> >> +        })?))
-> >> +    }
-> >> +
-> >> +    /// Obtain the raw `struct clk *`.
-> >> +    pub fn as_raw(&self) -> *mut bindings::clk {
-> >> +        self.0
-> >> +    }
-> >> +
-> >> +    /// Clock enable.
-> >> +    pub fn enable(&self) -> Result<()> {
-> >> +        // SAFETY: By the type invariants, we know that `self` owns a reference, so it is safe to
-> >> +        // use it now.
-> > 
-> > This is not true.
-> > 
-> > 1. There is no type invariant documented for `Clk`.
-> > 2. The pointer contained in an instance of `Clk` may be NULL, hence `self` does
-> >   not necessarily own a reference.
-> 
-> > 
-> > The same applies for all other functions in this implementation.
-> > 
-> 
-> 
+Thanks,
+    Sergio Paracuellos
+>
+> that's what I get after applying the series building for RT3883.
+>
+> Thomas.
+>
+> --
+> Crap can work. Given enough thrust pigs will fly, but it's not necessaril=
+y a
+> good idea.                                                [ RFC1925, 2.3 =
+]
