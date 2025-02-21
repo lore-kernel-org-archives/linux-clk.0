@@ -1,265 +1,247 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2A420AF84;
-	Fri, 21 Feb 2025 13:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740144667; cv=pass; b=bhsWup973q+8SRzM4jxSL8WfLZMR9y0w37SigCTblgyK+NOgJskUoMdVCZIcbCyeMNc16KZ9HHBsbilN42l9jl9JVWsF7HzyqeSSlACSaV9JEHqa5hBvqtOZ7UKrKSoOa3u0kbijTvMhH0sLGA507Bu4kvNERbu2k8gTez4OVto=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740144667; c=relaxed/simple;
-	bh=nCdpaE1K9+MGr50OMsIMf32WrQ5N1FuRPptvOvgsB+o=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=RMU00wJzzmLBnnK/i+idAt5/PVitXpftIY0ab1NTthYmbbriFlSo+A+hGXI4LipFMfWzEthS5l7yZu4+g0A3s0K9+VHUnzwqWLrk9q6v6rcq9I2iC1sgRVv7gNNQDFU7tDBKq13vNfQwpsErl8g+ZC2EkcaZz61GdbliPIF3Ga8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=e6wbIEJK; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B0D202C20
+	for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 13:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740144961; cv=none; b=Ua3nGziUM8/9KcAYtPeSZhU4lAGBWS9PLNm9HHdnuhViJtJht3j2tXZ+GcMrvd26W1y3SrdoNYgN634fmBshpBxDXGhmROHCq7exRrj/B9oqIbSA+A51lAl81OH2xij6vLGfesNVQqjGpvyfamPscjBoMBgj9bcdkaDvxZ/MUjk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740144961; c=relaxed/simple;
+	bh=THgkhVyuplqOpdHYAC0kWmjFIeHTr4YYGuvs3oaScrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WA8+4nOkfsilIv7489GtRNerWd3q3i6pHMQrz39UePmFgFzP9L5TYrlq665+aalarSjZdIHFsU74YngI6NtH2fmi9nteJ08lIDwN2yk7a3R3jkqsS130NSz3Oswa6sSBDq8rLglGXXtwpGC4KG3+xWnY2Pqblyh82zIrpauN6yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pfMEaAbR; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="e6wbIEJK"
-ARC-Seal: i=1; a=rsa-sha256; t=1740144637; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=J18nX6Z3v2yzmaf8/1O4OB5FC0I4OjwerPr4mVmmbwj1NENX4QBO2BJgLg+XNNGidStnvPBeI/yGFNlZqu4A7Bk87TOOE1Na+3IEwaXHQfJ8RAGaQXdRGP2EkA/JJHuiTHg96afaVFuGjdlmtzoPv9Roy4EDRLH7OOqsFSzcgr4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740144637; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=KvYwYtWeaPtW8lwE8gHG4KOI90CKWqXAC4F6smx3L24=; 
-	b=dvpd1QsVWdvGTNEXBrn4EQo9bbB5i+rmyqSoPFNVt/yKok4DeRfJaSmSGqpGv3qq52gxS9bSEbWMAQNuyCUeaUBm0VV3OALWrSFfVc7oZdEVSfTF6yQ2T0XrLcOm5wXeYjOdWlXcWaQTL4T3k2wFg8Sh9gi+m/bCU9+jM7L7hBE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740144637;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=KvYwYtWeaPtW8lwE8gHG4KOI90CKWqXAC4F6smx3L24=;
-	b=e6wbIEJKeFbU141VW3c0624bBtV1h2g3q4jBhcoOBJX0p0i6sYvp0yyzKMpJ1Tfy
-	JFIVpFNovRSRzKU5mZsB5e9I9fImW1GVadTzkHwc5loWbZVYbQtuu8/fVaJPGKbxRx8
-	pIsYyn5F1yC75k1ofZ+eJorOIS0R89dhRZo9QYd8=
-Received: by mx.zohomail.com with SMTPS id 1740144634645949.3358858508584;
-	Fri, 21 Feb 2025 05:30:34 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pfMEaAbR"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5452efeb87aso2122323e87.3
+        for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 05:35:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740144957; x=1740749757; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=anN5YXbb780RfbrD6epAALpoKQXWItZZl79huLI3wIo=;
+        b=pfMEaAbRAcD1oKfTnI/5LbjEW7MB/zQQxLzC9o/8YS23qdyO9I89kV5BVs3LKt6aVS
+         JtglPdaXfAmGMgTqSLj08wf8X2tMIO5C2jXLl1aBSQbKjejSOXlVOz92rIhCLl9g2ood
+         g58hlkYi49nKj8aHUal9b81+ZM6+fwazyBCKQa4ZfgaZPDvag64MYafkoZ9ySirMVGIa
+         EgP0HROPzPLeFDzPBEk5PBPe9Qoz4e4KDyp6JU07YBsIU9W5jFDP440rMZrflpgNTu7r
+         09czbLkP+O7T29Je8f/KkCwia4UiuB8czZ3ZYKw9hutSGFMLNuLtAAFPr3qArZxuCx8N
+         GRiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740144957; x=1740749757;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=anN5YXbb780RfbrD6epAALpoKQXWItZZl79huLI3wIo=;
+        b=M+hYjkEwRyBwXz4yiOrzE6yEeLW6C0IZ8gDhOAZi1cdNa05zGnB9mkurbuU5G5sx51
+         xzItk/vm26HSoLHRUJjGJ1aQ6ezGN1BZK287vwFW31EafleKdMx/DQYJ7dCqIrn+l0rU
+         sh8xiOWWY70tY8FDaBcYSC1z8wGOEm7jnwcDG9cMC1d8tXey/TDhpfuKJGh0fkycvU7J
+         xCNnyDaOpjbW14qE6Ig+nRy/s8mNY9PkSdI0Hw4oBKp1qWhy+j7RNE6MLHlq+J0F1+qi
+         R82rgsNgV3RIziyMoBM9LK5yFFPr/M9fYlygGU2sXo0gIaf6Dq4fhm/bM2rOujs8oHfS
+         k5hw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2aitwdWaQh40liL7pl4gD7VrmNI8maernta4ehrhCHha5filL+KnieEeRyrHN8scwJRlZrkpiLSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHvmotC81RrYaoHQfx4H7Y/wEWOSYtmcWplaYvf85xI7JDGLyr
+	LEx2NERkv8dVHNEpx3Xb+N04xaC3zrIBu1ZzlJuQYXeAgmsG7MQKMsj96pcXNVg=
+X-Gm-Gg: ASbGncuQjOHDeNg1D5+gV138gMtvmXBsmiZ63TKlB25sFIlRNaPNiYlPS/ihjB+bSl+
+	fMUOWkrduoQVAmssxBGS2BCyiccgqTna9QQOqDYK+axz/JullNGOupz1NV4sls0yicV3R0PnF/b
+	ScWQqOjH4J3dszINNVqWXNcIMOCnT1tB7/9GLNQrJbU+ya2PAoE/ZK9Z+B6n3nRH7MEBRhsDG1+
+	Cig5tJvdTz22yP1CPVuYn9zbbnpkgPh1VAxfCJnMDNy3aEGToCIaNgJchg6Mo5eQWbkvpyENK1N
+	SxVWI1EQZnajkKYlcRMYbzO0I2O8RyiU/PzUxwIlK0CsbDB8xmT2AjaclkNIzJQAfPnKF5LbNIh
+	P2DhCXQ==
+X-Google-Smtp-Source: AGHT+IFTJUprq/bmwcMITRNSMPlbwS1DQQQg3Yl2GPDaDbW3LcCyQOI+ytFxUMTdaEVsJOOusUpaCg==
+X-Received: by 2002:a05:6512:158e:b0:545:2cf5:dc6c with SMTP id 2adb3069b0e04-54838f79e1fmr1089751e87.51.1740144957183;
+        Fri, 21 Feb 2025 05:35:57 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54620544eacsm1606350e87.136.2025.02.21.05.35.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 05:35:55 -0800 (PST)
+Date: Fri, 21 Feb 2025 15:35:53 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] clk: qcom: common: Attach clock power domains
+ conditionally
+Message-ID: <xrjrr34za6kl3icfoseq6jkaooee2mrg6gcojgjxpotzuonsw2@piciahpwgier>
+References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
+ <20250218-videocc-pll-multi-pd-voting-v1-3-cfe6289ea29b@quicinc.com>
+ <2c5rbbpe5muw53oemyq6vhsmhzpzcpn7on4ujl5v7i7s3fdlob@eh37gy5dpfnp>
+ <bb4cd14e-a9ea-4c13-9774-cca169dcb8d1@quicinc.com>
+ <fvcmc3ibqcwzokvqomntxn2vkgduvbdsx3gd5vkctzwrik7bis@iyjrejmqkpfp>
+ <bf217f30-967c-4ffb-a3ee-f47e8ee97ad4@quicinc.com>
+ <bap2qy5cqhdzphc7qeoqztp65g6jsmwpxkghpgagxpj4qdifts@ogj7nb34rv6f>
+ <10fc47a3-a58d-4ee8-8f88-fea7d69f38d1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
-Date: Fri, 21 Feb 2025 10:30:17 -0300
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Russell King <linux@armlinux.org.uk>,
- linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <17E31EBB-339C-47DD-87AE-0B39EB934559@collabora.com>
-References: <cover.1740118863.git.viresh.kumar@linaro.org>
- <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <10fc47a3-a58d-4ee8-8f88-fea7d69f38d1@quicinc.com>
 
-Hi Viresh, thank you for working on this.
+On Fri, Feb 21, 2025 at 05:12:58PM +0530, Jagadeesh Kona wrote:
+> 
+> 
+> On 2/20/2025 4:18 PM, Dmitry Baryshkov wrote:
+> > On Thu, Feb 20, 2025 at 12:43:42PM +0530, Jagadeesh Kona wrote:
+> >>
+> >>
+> >> On 2/19/2025 5:27 PM, Dmitry Baryshkov wrote:
+> >>> On Wed, Feb 19, 2025 at 05:06:11PM +0530, Jagadeesh Kona wrote:
+> >>>>
+> >>>>
+> >>>> On 2/18/2025 10:48 PM, Dmitry Baryshkov wrote:
+> >>>>> On Tue, Feb 18, 2025 at 07:56:48PM +0530, Jagadeesh Kona wrote:
+> >>>>>> Attach clock power domains in qcom_cc_really_probe() only
+> >>>>>> if the clock controller has not already attached to them.
+> >>>>>
+> >>>>> Squash this to the previous patch and call the new function. No need to
+> >>>>> duplicate the code.
+> >>>>>
+> >>>>
+> >>>> I tried calling the new function here instead of duplicating code, but that
+> >>>> is leading to below warning since the desc passed to qcom_cc_really_probe()
+> >>>> has a const qualifier and hence we cannot update desc->pd_list inside
+> >>>> qcom_cc_really_probe().
+> >>>>
+> >>>> drivers/clk/qcom/common.c:305:33:   WARNING : passing argument 2 of ‘qcom_cc_attach_pds’ discards ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
+> >>>
+> >>> It sounds like this can be fixed with a one-line patch.
+> >>>
+> >>
+> >> Removing const qualifier to qcom_cc_really_probe() will fix this, but that requires changes in
+> >> many other drivers which are currently passing const descriptor to it.
+> > 
+> > And this points out that the pd_list should not be a part of the
+> > struct qcom_cc_desc. You are not using it in the code, so allocate that
+> > memory on the fly, pass it to devm_pm_domain_attach_list() and then
+> > forget about it.
+> > 
+> 
+> Above suggestion looks good, but we need to store the pd_list to pass it to GDSC driver to attach
+> the power domains as GDSC parent domains. Instead, we can add a new API wrapper for attaching PDs
+> and to map the regmap(qcom_cc_attach_pds_map) and all clock drivers that need multiple power domains
+> support can update to use below new API and all new clock drivers can just use the new API.
+> 
+> The implementation would be something like below
+> 
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> +struct regmap *qcom_cc_attach_pds_map(struct platform_device *pdev, struct qcom_cc_desc *desc)
 
+I think it was established that qcom_cc_desc should be read-only. In the
+end it is a description. If you want to pass this data to gdsc probing,
+add new argument to qcom_cc_really_probe().
 
-> On 21 Feb 2025, at 03:33, Viresh Kumar <viresh.kumar@linaro.org> =
-wrote:
->=20
-> Add initial bindings for the clk APIs. These provide the minimal
-> functionality needed for common use cases, making them straightforward
-> to introduce in the first iteration.
->=20
-> These will be used by Rust based cpufreq / OPP layers to begin with.
->=20
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> MAINTAINERS        |   1 +
-> rust/kernel/clk.rs | 104 +++++++++++++++++++++++++++++++++++++++++++++
-> rust/kernel/lib.rs |   1 +
-> 3 files changed, 106 insertions(+)
-> create mode 100644 rust/kernel/clk.rs
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 726110d3c988..96e2574f41c0 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5779,6 +5779,7 @@ F: include/linux/clk-pr*
-> F: include/linux/clk/
-> F: include/linux/of_clk.h
-> F: rust/helpers/clk.c
-> +F: rust/kernel/clk.rs
-> X: drivers/clk/clkdev.c
->=20
-> COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)
-> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-> new file mode 100644
-> index 000000000000..c212cd3167e1
-> --- /dev/null
-> +++ b/rust/kernel/clk.rs
-> @@ -0,0 +1,104 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> +{
+> +       int ret;
 > +
-> +//! Clock abstractions.
-> +//!
-> +//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
+> +       ret = devm_pm_domain_attach_list(&pdev->dev, NULL, &desc->pd_list);
+> +       if (ret < 0 && ret != -EEXIST)
+> +               return ERR_PTR(ret);
 > +
-> +use crate::{
-> +    bindings,
-> +    device::Device,
-> +    error::{from_err_ptr, to_result, Result},
-> +    prelude::*,
-> +};
-> +
-> +use core::ptr;
-> +
-> +/// A simple implementation of `struct clk` from the C code.
-> +#[repr(transparent)]
-> +pub struct Clk(*mut bindings::clk);
-
-> +
-> +impl Clk {
-> +    /// Creates `Clk` instance for a device and a connection id.
-> +    pub fn new(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-> +        let con_id =3D if let Some(name) =3D name {
-> +            name.as_ptr() as *const _
-> +        } else {
-> +            ptr::null()
-> +        };
-> +
-> +        // SAFETY: It is safe to call `clk_get()`, on a device =
-pointer earlier received from the C
-> +        // code.
-> +        Ok(Self(from_err_ptr(unsafe {
-> +            bindings::clk_get(dev.as_raw(), con_id)
-> +        })?))
-> +    }
-> +
-> +    /// Obtain the raw `struct clk *`.
-> +    pub fn as_raw(&self) -> *mut bindings::clk {
-> +        self.0
-> +    }
-> +
-> +    /// Clock enable.
-> +    pub fn enable(&self) -> Result<()> {
-> +        // SAFETY: By the type invariants, we know that `self` owns a =
-reference, so it is safe to
-> +        // use it now.
-> +        to_result(unsafe { bindings::clk_enable(self.0) })
-> +    }
-> +
-> +    /// Clock disable.
-> +    pub fn disable(&self) {
-> +        // SAFETY: By the type invariants, we know that `self` owns a =
-reference, so it is safe to
-> +        // use it now.
-> +        unsafe { bindings::clk_disable(self.0) };
-> +    }
-> +
-> +    /// Clock prepare.
-> +    pub fn prepare(&self) -> Result<()> {
-> +        // SAFETY: By the type invariants, we know that `self` owns a =
-reference, so it is safe to
-> +        // use it now.
-> +        to_result(unsafe { bindings::clk_prepare(self.0) })
-> +    }
-> +
-> +    /// Clock unprepare.
-> +    pub fn unprepare(&self) {
-> +        // SAFETY: By the type invariants, we know that `self` owns a =
-reference, so it is safe to
-> +        // use it now.
-> +        unsafe { bindings::clk_unprepare(self.0) };
-> +    }
-> +
-> +    /// Clock prepare enable.
-> +    pub fn prepare_enable(&self) -> Result<()> {
-> +        // SAFETY: By the type invariants, we know that `self` owns a =
-reference, so it is safe to
-> +        // use it now.
-> +        to_result(unsafe { bindings::clk_prepare_enable(self.0) })
-> +    }
-> +
-> +    /// Clock disable unprepare.
-> +    pub fn disable_unprepare(&self) {
-> +        // SAFETY: By the type invariants, we know that `self` owns a =
-reference, so it is safe to
-> +        // use it now.
-> +        unsafe { bindings::clk_disable_unprepare(self.0) };
-> +    }
-> +
-> +    /// Clock get rate.
-> +    pub fn rate(&self) -> usize {
-> +        // SAFETY: By the type invariants, we know that `self` owns a =
-reference, so it is safe to
-> +        // use it now.
-> +        unsafe { bindings::clk_get_rate(self.0) }
-> +    }
-> +
-> +    /// Clock set rate.
-> +    pub fn set_rate(&self, rate: usize) -> Result<()> {
-
-It might be worth it to add a type here to make it clear what in what =
-unit is `rate` expressed as.
-
-Something like:
-
-pub struct Hertz(pub u32);
-
-pub fn set_rate(&self, rate: Hertz);
-
-Assuming `rate` is in Hertz.
-
-
-> +        // SAFETY: By the type invariants, we know that `self` owns a =
-reference, so it is safe to
-> +        // use it now.
-> +        to_result(unsafe { bindings::clk_set_rate(self.0, rate) })
-> +    }
+> +       return qcom_cc_map(pdev, desc);
 > +}
+> +EXPORT_SYMBOL_GPL(qcom_cc_attach_pds_map);
 > +
-> +impl Drop for Clk {
-> +    fn drop(&mut self) {
-> +        // SAFETY: By the type invariants, we know that `self` owns a =
-reference, so it is safe to
-> +        // relinquish it now.
-> +        unsafe { bindings::clk_put(self.0) };
-> +    }
-> +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 496ed32b0911..324b86f127a0 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -40,6 +40,7 @@
-> pub mod block;
-> #[doc(hidden)]
-> pub mod build_assert;
-> +pub mod clk;
-> pub mod cred;
-> pub mod device;
-> pub mod device_id;
-> --=20
-> 2.31.1.272.g89b43f80a514
->=20
->=20
+> 
+> 
+> --- a/drivers/clk/qcom/videocc-sm8550.c
+> +++ b/drivers/clk/qcom/videocc-sm8550.c
+> @@ -542,6 +542,12 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+>         int ret;
+>         u32 sleep_clk_offset = 0x8140;
+> 
+> +       regmap = qcom_cc_attach_pds_map(pdev, &video_cc_sm8550_desc);
+> +       if (IS_ERR(regmap)) {
+> +               pm_runtime_put(&pdev->dev);
+> +               return PTR_ERR(regmap);
+> +       }
+> +
+>         ret = devm_pm_runtime_enable(&pdev->dev);
+>         if (ret)
+>                 return ret;
+> @@ -550,12 +556,6 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
+>         if (ret)
+>                 return ret;
+> 
+> -       regmap = qcom_cc_map(pdev, &video_cc_sm8550_desc);
+> -       if (IS_ERR(regmap)) {
+> -               pm_runtime_put(&pdev->dev);
+> -               return PTR_ERR(regmap);
+> -       }
+> -
+> 
+> This way also, we are aligning more towards common code and the code will be uniform across all
+> clock drivers and this doesn't require separate callback in each individual clock driver.
+> 
+> Thanks,
+> Jagadeesh 
+> 
+> >>
+> >> But I can squash this to my previous patch by updating my qcom_cc_attach_pds() function
+> >> prototype as below and then calling that new function here
+> >>
+> >> -int qcom_cc_attach_pds(struct device *dev, struct qcom_cc_desc *desc)
+> >> +int qcom_cc_attach_pds(struct device *dev, struct dev_pm_domain_list *pd_list)
+> >>
+> >> -               ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+> >> -               if (ret < 0 && ret != -EEXIST)
+> >> +               ret = qcom_cc_attach_pds(dev, cc->pd_list);
+> >> +               if (ret)
+> >>
+> >> Thanks,
+> >> Jagadeesh
+> >>
+> >>>>
+> >>>> Thanks,
+> >>>> Jagadeesh
+> >>>>
+> >>>>>>
+> >>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> >>>>>> ---
+> >>>>>>  drivers/clk/qcom/common.c | 9 ++++++---
+> >>>>>>  1 file changed, 6 insertions(+), 3 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> >>>>>> index ec27f70b24bdec24edd2f6b3df0d766fc1cdcbf0..eb7e2a56d1d135f839fd9bd470ba6231ce775a8c 100644
+> >>>>>> --- a/drivers/clk/qcom/common.c
+> >>>>>> +++ b/drivers/clk/qcom/common.c
+> >>>>>> @@ -300,9 +300,12 @@ int qcom_cc_really_probe(struct device *dev,
+> >>>>>>  	if (!cc)
+> >>>>>>  		return -ENOMEM;
+> >>>>>>  
+> >>>>>> -	ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+> >>>>>> -	if (ret < 0 && ret != -EEXIST)
+> >>>>>> -		return ret;
+> >>>>>> +	cc->pd_list = desc->pd_list;
+> >>>>>> +	if (!cc->pd_list) {
+> >>>>>> +		ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+> >>>>>> +		if (ret < 0 && ret != -EEXIST)
+> >>>>>> +			return ret;
+> >>>>>> +	}
+> >>>>>>  
+> >>>>>>  	reset = &cc->reset;
+> >>>>>>  	reset->rcdev.of_node = dev->of_node;
+> >>>>>>
+> >>>>>> -- 
+> >>>>>> 2.34.1
+> >>>>>>
+> >>>>>
+> >>>
+> > 
 
-
-This is working fine on Tyr, so:
-
-Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
-
-With the minor change above:
-
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-
+-- 
+With best wishes
+Dmitry
