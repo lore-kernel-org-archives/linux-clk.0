@@ -1,90 +1,112 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6D920102C
-	for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 08:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBC633EA;
+	Fri, 21 Feb 2025 09:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740127500; cv=none; b=MyF8CBa9EjLw/QMr7WIojCkbLqw97kMC5FSo3M2qqwbhetfxTH36/uIFbw6BJh6uOzLmhAGLZdktwhVfI2uqndAvmQNpn0XqlHg/NfaAN7RHJN5namum3K8V7FCd9a49MtKM7UtX/FzeVGuHaYZSn5Mknv7dvlaSsW0ynPw89yw=
+	t=1740129102; cv=none; b=TUS6kErh8bbM1nTssmcD1CtU7K6c3niX4kNfS3COP9lSxl4Ggtkb41AMeIFUegXXufbvUha5uFuYaHzd2OVaFYL8XXt5xY3GhYrM+FolETeMv8w9V/MFKw+/qmXxNN32GzY2vbNWPyY/j6noBG6nQ1892RsPw5i6JnWUH9J3er4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740127500; c=relaxed/simple;
-	bh=6i83hX6VwKD3ElMxhPpSnKnbx/de5TK77AP6kfQbiqA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YuEvzo6a/JrpqV358ja9Cr7vw9xMZ9YeCQvlmbjHeoA9vJ3BDh4/01Je7I8HIoXu60XYbiPFptVSRvl4wSeJW+AMKZH1jVBqtM4zdOmmgMrhyyxO4ClkhuiPoYaFRabT1bjPFwB5UkMcr27WnpHboHmUmtaP91e4C6d+1zQP3KM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:ae9a:419e:d123:9695])
-	by albert.telenet-ops.be with cmsmtp
-	id G8kp2E0080y8aK5068kpU7; Fri, 21 Feb 2025 09:44:50 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tlOe4-0000000BKsd-33gP;
-	Fri, 21 Feb 2025 09:44:49 +0100
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tlOeP-0000000E5K4-0fTB;
-	Fri, 21 Feb 2025 09:44:49 +0100
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Chris Brandt <chris.brandt@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] clk: renesas: rzg2l: Remove unneeded nullify checks
-Date: Fri, 21 Feb 2025 09:44:46 +0100
-Message-ID: <64702c33396dde2689b44d3e326aa1727ef1557a.1740126560.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1740126560.git.geert+renesas@glider.be>
-References: <cover.1740126560.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1740129102; c=relaxed/simple;
+	bh=OnhM+IngcbfTGE1ogRH7mwjuGlDyBD9XjnvZeiestVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XGELvlIMkmmCDBC8d49a31RQ+pOkCncpXNTRGzhdil/nG1l0L57ejsYlIk3XAaRCNpl1gdA37ScSX9OLe4wgXX07898yyOzDxEX8XAo9OUIjotU/Q9VfO317WsMTwNvkFEXATAR+nDkYi2QlW6xwn70kBAu+kjQHJYpddODNxA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8zPwa7X; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8zPwa7X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34D00C4CED6;
+	Fri, 21 Feb 2025 09:11:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740129100;
+	bh=OnhM+IngcbfTGE1ogRH7mwjuGlDyBD9XjnvZeiestVM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m8zPwa7Xb55i7LAqI58OdJeShKNREpdDkpI1YATQdlyc5nCRDRdZN0I5YrBle66XN
+	 VNc/7jANzsn07jLN8/IM74GX4QngHJx5RAPjeNrgQBfyauJJM3auB53GrOsjcjGU+j
+	 gUYKsk63YZzIgkoX94R7rd52iMjRZTwSouG21VOjmPRw6F/kF+XRRAsHVDBNomPBzl
+	 cfpQL3tJoumzj8Ic3A2bdn2V6dPqyr1bGqxDjKnu/2oKTTjjVdGbSEqaDSbF0p7hjO
+	 ZC0JywTcJXnsDpdoNESpXVffOFF/HAmfvEXSFEqtUyz9bqsCSbqHCoD9fguLgLa29Z
+	 DxZCFi5Naz+7Q==
+Date: Fri, 21 Feb 2025 10:11:38 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
+	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com, 
+	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org, 
+	jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 09/21] dt-bindings: clock: thead: Add GPU clkgen reset
+ property
+Message-ID: <20250221-imaginary-ebony-macaque-aace8d@krzk-bin>
+References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
+ <CGME20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639@eucas1p2.samsung.com>
+ <20250219140239.1378758-10-m.wilczynski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250219140239.1378758-10-m.wilczynski@samsung.com>
 
-RZ/G2L family clock drivers never had a need to nullify clocks.
-Remove the unneeded checks.
+On Wed, Feb 19, 2025 at 03:02:27PM +0100, Michal Wilczynski wrote:
+> Add a mandatory reset property for the TH1520 VO clock controller that
+> handles the GPU clocks. This reset line controls the GPU CLKGEN reset,
+> which is required for proper GPU clock operation.
+> 
+> The reset property is only required for the "thead,th1520-clk-vo"
+> compatible, as it specifically handles the GPU-related clocks.
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  .../bindings/clock/thead,th1520-clk-ap.yaml      | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+> index 9d058c00ab3d..6ea8202718d0 100644
+> --- a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+> +++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+> @@ -40,6 +40,12 @@ properties:
+>              (integer PLL) typically running at 792 MHz (FOUTPOSTDIV), with
+>              a maximum FOUTVCO of 2376 MHz.
+>  
+> +  resets:
+> +    maxItems: 1
+> +    description:
+> +      Required for "thead,th1520-clk-vo". This reset line controls the
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/rzg2l-cpg.c | 10 ----------
- 1 file changed, 10 deletions(-)
+You just added the compatible in other patch, so are you saying you
+added knowingly incomplete code?
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index a6b87cc66cbba485..b91dfbfb01e31cd8 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1116,11 +1116,6 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
- 	WARN_DEBUG(id >= priv->num_core_clks);
- 	WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
- 
--	if (!core->name) {
--		/* Skip NULLified clock */
--		return;
--	}
--
- 	switch (core->type) {
- 	case CLK_TYPE_IN:
- 		clk = of_clk_get_by_name(priv->dev->of_node, core->name);
-@@ -1355,11 +1350,6 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
- 	WARN_DEBUG(mod->parent >= priv->num_core_clks + priv->num_mod_clks);
- 	WARN_DEBUG(PTR_ERR(priv->clks[id]) != -ENOENT);
- 
--	if (!mod->name) {
--		/* Skip NULLified clock */
--		return;
--	}
--
- 	parent = priv->clks[mod->parent];
- 	if (IS_ERR(parent)) {
- 		clk = parent;
--- 
-2.43.0
+No, this must be squashed.
+
+> +      GPU CLKGEN reset which is required for proper GPU clock operation.
+> +
+>    "#clock-cells":
+>      const: 1
+>      description:
+> @@ -51,6 +57,16 @@ required:
+>    - clocks
+>    - "#clock-cells"
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: thead,th1520-clk-vo
+> +    then:
+> +      required:
+> +        - resets
+
+else:
+? What's there? Also reset or no?
+
+Best regards,
+Krzysztof
 
