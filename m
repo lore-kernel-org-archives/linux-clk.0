@@ -1,87 +1,105 @@
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B671BCA07;
-	Fri, 21 Feb 2025 14:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4744A433DE
+	for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 14:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740146745; cv=none; b=G7XQ8pszPEGV9gN21UrvVFi4Wz6nyqwBINAqgCoA/AIBv7TrfXGD7FzorCz6QCbwn+KZyHPAwbPK17oNpKlfuezadEg/zHYzIQ2Pxc22JNnE48dHe9G2d/4MyhiN5oN+2TZJ9d9OldAv1ADzppB78pttsEcO+ArjGWuXWm6C0TQ=
+	t=1740147079; cv=none; b=HYxyjUtPDE7lTKPHUwZ2W5RMjo4VeboFDTZK9HlSKfKAFe13ESqGWcRLCuoYsH27++Tzd3UFu8vUj/bIa6US6xgiu+7rDjuV68EV6Glx9HBGPbI6eMeNiqr0I9aUKOiReScfrm1V2aAINeRZaCjM9PanG/6pRi6WvUgbf/bqVro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740146745; c=relaxed/simple;
-	bh=xU7/wEZfiw+9Pn0wYe4JOCCx45ck0D30lzuetNbvIYw=;
+	s=arc-20240116; t=1740147079; c=relaxed/simple;
+	bh=do6kcs4VaPfIUQ4XmVGLCf5JoEMWdQCupCtvTEi3S3w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BAMXJ+B18qzn+L1pgufpMMJBZ1AlkF3ht2G76gVNV64ul5BgApeqe1cKIIG8/YJ0V6ErDVgGSCIKN4m/ZB3TmyAmoh8yncQey3kA3FupCn2KKPC+BfTxorihugoaXsjlpkhIRW/yWUCIcHXMYtmwJyXyF/kJNyxqJQIeo450gog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tlTet-00007t-00; Fri, 21 Feb 2025 15:05:39 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id C0706C0135; Fri, 21 Feb 2025 15:03:14 +0100 (CET)
-Date: Fri, 21 Feb 2025 15:03:14 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-	p.zabel@pengutronix.de, linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org, yangshiji66@outlook.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] mips: dts: ralink: update system controller nodes
- and its consumers
-Message-ID: <Z7iHorlRgtsi1LOo@alpha.franken.de>
-References: <20250120092146.471951-1-sergio.paracuellos@gmail.com>
- <CAMhs-H-VevC+_=HxhMU6-at0bKut_JqdgO7j2detuB4s8R_QFQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X/j55IWuGgqitEJozt7g80IPzcCzf6dhU7uxQafZOpyfl3mvfe04PrMMskWYoeBcGKH62mNdMqbbjzv+2En9uL/Z0szpP6ynCrlPqHKbVNL0vh+KS1ZRPa9PzgaXnff0l75c7aCmhvDckXRjwajD6ABAnjo7J1JcCCBrWCKJMF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wL1U4wty; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wL1U4wty"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30a2cdb2b98so21315841fa.0
+        for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 06:11:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740147074; x=1740751874; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hY7q6HQ4FQaZazAg7YSbphco7l3aJQzJCtoIpLMsi3M=;
+        b=wL1U4wtya6qYKibQKOux2flP/Bg1V5rUVdUF4O1fKqQuN0Qg1TD4ASdQLj3uuUOexf
+         xKjcjzaK3my1TwFT2hfjeUg4O2zjRUs94WtO73opBGSGyBqlv77yZNGCP9i0TdLN81SR
+         ZoxroCsZmF3ZNuv4T9LG2VgHdOgFkocDmVtbrjZRFZT939BdKVNpHsBPIqyxsTTJi5km
+         6e/l/g+ZgqnKbQM+M4Llci2HbW6sy6TClvGyBUumVPXhtf3iJHROaRUAJMew3Tkd/IDH
+         JVC4asgE15HzAOodofBHJEm+segKyvYZcKXDUpWSpOEe/noYpX1iCsx5jjFRd+/kRFKH
+         4cTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740147074; x=1740751874;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hY7q6HQ4FQaZazAg7YSbphco7l3aJQzJCtoIpLMsi3M=;
+        b=vSDqBcGXVBwdFwtxo5HYme+hY3XYGPcoKJkoK8CqhXcQjkSZdXrD8ekCpT/nc/lt5f
+         wkrQEfXcHZ44xwez+9ibyFuI7UyNwYFAAgM5sHUsd2UMZ6InMmHgXtXNzaoaLlMoACgJ
+         1TkkfjQrROu+4qIakLwYQlAQmxs6DxHi6vYhxdqaBgqZJADgurazCRvLdOXVcXEISl0t
+         PSsgWws5V8VaOMIsLCSUoXydp1B9mLniR5lnGK+nlI1vtOg0v8pTHzDyUR7hGFCosHs4
+         VJ90g0aU6JbxrSjxQ/1777xBo0XiIQV/VENpBeoqpFe9kB92daOWTeNFmcfHdaA8Y0A5
+         8YVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcUFaQC5eaf6dQa7TIXIARsMzXV+ib1CdH9EvvZktcBgtCwEDq777I/KPeAJ2J4qwnj5FYBR3tXDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySmLobcApgysNE+5qm2VnawJQok13UNRsi3xamEyhPKHASwUZl
+	CPcC3cEHPWIMQvuNXYp7aamg7IARK+Bmn5wxe4jC5HzsLkITviE/Jauyk6RIp2I=
+X-Gm-Gg: ASbGncuSVTegaH1S/0Mdz8S6H+H5Uij14Pf14X4F1hCYUN8ck2ui/Um4r50trfxpGOM
+	GEVEApgGGu69SOviLNbHXmALSP0CKylVGPVQ186XfOopxxWccewIqKRcEZ2VAt8dyciGUB0JVOj
+	610BVn4gqsYmBL0Z0fUU8MyfAfMOVIKg1HRDj3p4Hvmm/u3Dv5TxmnoKS67qwSEifcExQ8mZQH6
+	e3gdHKcE69vjPgOTAlIQ7OYeqRL9YhhWAnqiJCvUwZn4yTAKO3PkHm0PC0skdbOc7ELUtj2ObrI
+	dy6mQKYaR4bWRD0O0+uenPwfrnacTJR61zkaE57LptS5guPvOIKdTX5gRUOCdm7AsDarh5Jp/6N
+	dsLA1Xg==
+X-Google-Smtp-Source: AGHT+IF4YOFfa5Kt8R2qRuDLGtHoO3z4a0J1rMxXFbaWLFLtIOV4Chzyik4Qt1FBw4hvpqQhKIqgvA==
+X-Received: by 2002:a2e:8202:0:b0:30a:44ca:7e72 with SMTP id 38308e7fff4ca-30a5b20dc6dmr10079311fa.24.1740147074062;
+        Fri, 21 Feb 2025 06:11:14 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30a3a6d3dcesm13384331fa.67.2025.02.21.06.11.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 06:11:13 -0800 (PST)
+Date: Fri, 21 Feb 2025 16:11:11 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v5 02/10] dt-bindings: clock: Add Qualcomm QCS615 Camera
+ clock controller
+Message-ID: <ljfgljuhlpkjvqwomhvq5l6giihqv6h5nzswncaqgelvjycgew@bcxjrgbj3lts>
+References: <20250221-qcs615-v5-mm-cc-v5-0-b6d9ddf2f28d@quicinc.com>
+ <20250221-qcs615-v5-mm-cc-v5-2-b6d9ddf2f28d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMhs-H-VevC+_=HxhMU6-at0bKut_JqdgO7j2detuB4s8R_QFQ@mail.gmail.com>
+In-Reply-To: <20250221-qcs615-v5-mm-cc-v5-2-b6d9ddf2f28d@quicinc.com>
 
-On Fri, Feb 21, 2025 at 11:48:34AM +0100, Sergio Paracuellos wrote:
-> Hi Thomas,
+On Fri, Feb 21, 2025 at 02:50:13PM +0530, Taniya Das wrote:
+> Add DT bindings for the Camera clock on QCS615 platforms. Add the
+> relevant DT include definitions as well.
 > 
-> El El lun, 20 ene 2025 a las 10:21, Sergio Paracuellos <
-> sergio.paracuellos@gmail.com> escribió:
-> 
-> > Hi all!
-> >
-> > Ralinks SoCs have a system controller node which serves as clock and reset
-> > providers for the rest of the world. This patch series introduces clock
-> > definitions for these SoCs. The clocks are registered in the driver using
-> > a bunch of arrays in specific order so these definitions represent the
-> > assigned
-> > identifier that is used when this happens so client nodes can easily use it
-> > to specify the clock which they consume without the need of checking
-> > driver code.
-> >
-> > DTS files which are currently on tree are not matching system controller
-> > bindings. So all of them are updated to properly match them.
-> >
-> > I'd like this series to go through kernel mips git tree if possible.
-> >
-> > Thanks in advance for your time.
-> >
-> > Changes in v3:
-> > - Address Krzysztof comments in v2 (Thanks!):
-> >   + Drop reset include file since what it was defined there were hardware
-> >     constants and no binding related indexes at all.
-> >   + Update patches for not referring to this reset removed file.
-> 
-> 
-> I was expecting this series going through the mips tree.
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-  DTC     arch/mips/boot/dts/ralink/rt3883_eval.dtb
-Error: /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/rt3883.dtsi:2.1-9 syntax error
-FATAL ERROR: Unable to parse input tree
+Just noticed. I've never replied with this tag. I've provided a comment
+to the v3 of the series, then in v4 this somehow appeared. Could you
+please comment, what has happened?
 
-that's what I get after applying the series building for RT3883.
-
-Thomas.
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  .../bindings/clock/qcom,qcs615-camcc.yaml          |  54 ++++++++++
+>  include/dt-bindings/clock/qcom,qcs615-camcc.h      | 110 +++++++++++++++++++++
+>  2 files changed, 164 insertions(+)
 
 -- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+With best wishes
+Dmitry
