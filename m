@@ -1,41 +1,41 @@
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08C63D69;
-	Fri, 21 Feb 2025 13:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2A420AF84;
+	Fri, 21 Feb 2025 13:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740143999; cv=pass; b=F0ByOPWan1jIFJB2SBUv/KQwYDZ/zEp8YnRk4BVS0tyzz5dPf1lRqeYq9iBC/c3zg6PCChniy5O5crdjrnDhSU1eMG5YxoUOi4bQJOcIGZuZE0sOtRKjfgL2rU+dddbZuDBHTjnYoD4Sub+QFqmNYbjMBh6vJm5PLITe4QA5m8E=
+	t=1740144667; cv=pass; b=bhsWup973q+8SRzM4jxSL8WfLZMR9y0w37SigCTblgyK+NOgJskUoMdVCZIcbCyeMNc16KZ9HHBsbilN42l9jl9JVWsF7HzyqeSSlACSaV9JEHqa5hBvqtOZ7UKrKSoOa3u0kbijTvMhH0sLGA507Bu4kvNERbu2k8gTez4OVto=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740143999; c=relaxed/simple;
-	bh=Kb7+wjOASoRGuV6siKUUZOZZ/lQdexbtHAhDUuJ0+NY=;
+	s=arc-20240116; t=1740144667; c=relaxed/simple;
+	bh=nCdpaE1K9+MGr50OMsIMf32WrQ5N1FuRPptvOvgsB+o=;
 	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=dJ9Y0ClEat7mOm9HEeC0CuevU0VaUWSzqaFRTwALLfqx84YtqGt739d8YSWGA62NItAgyXB6CCTz9yPx2Pc/2g/4m/J7w6BXaYaeYFhqe/k7Vtx7h3wdC917menNZcwbxk1DuYTINEyebkvE7sJvCS/Iy63yG6GLapuQatWFDG8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ODMba6qQ; arc=pass smtp.client-ip=136.143.188.112
+	 Message-Id:References:To; b=RMU00wJzzmLBnnK/i+idAt5/PVitXpftIY0ab1NTthYmbbriFlSo+A+hGXI4LipFMfWzEthS5l7yZu4+g0A3s0K9+VHUnzwqWLrk9q6v6rcq9I2iC1sgRVv7gNNQDFU7tDBKq13vNfQwpsErl8g+ZC2EkcaZz61GdbliPIF3Ga8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=e6wbIEJK; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ODMba6qQ"
-ARC-Seal: i=1; a=rsa-sha256; t=1740143969; cv=none; 
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="e6wbIEJK"
+ARC-Seal: i=1; a=rsa-sha256; t=1740144637; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=IugQHi1C6eZHLNbgqiaTXmkt+Ad2wKh7CNEwvZ4dX2RD8IEqoQVPb+Mhtrd95Z2qP3vt2Zm4fFVue58GNJRIYC23tIwKuNpVV1ZPefpEnjr0LJFPWwd4lp6/mGLCcXGbf259OYDZGW9OOyQ5KO8nCiMip75ckwpXwMVOloRZJbg=
+	b=J18nX6Z3v2yzmaf8/1O4OB5FC0I4OjwerPr4mVmmbwj1NENX4QBO2BJgLg+XNNGidStnvPBeI/yGFNlZqu4A7Bk87TOOE1Na+3IEwaXHQfJ8RAGaQXdRGP2EkA/JJHuiTHg96afaVFuGjdlmtzoPv9Roy4EDRLH7OOqsFSzcgr4=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740143969; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=3CaIBrzYWWjRIGQThZeNiKzCqZb7IKXxW3vw/DrceD8=; 
-	b=EHCejF3WAVD4Ofdzifa3+jjm8ISK6LHS3uKp/DOqM/w1ktnL9ipsmwuq8fHhv1u2BcKWYQdfe85gKMfdk5fLjNL2Sis478gbQJiqnoNifHoLJVORzkaLf7MoW+EVmDGmAwAZaC/klj385pUmRmCCb4H8mxTXrdBmPlUisAPFpNM=
+	t=1740144637; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=KvYwYtWeaPtW8lwE8gHG4KOI90CKWqXAC4F6smx3L24=; 
+	b=dvpd1QsVWdvGTNEXBrn4EQo9bbB5i+rmyqSoPFNVt/yKok4DeRfJaSmSGqpGv3qq52gxS9bSEbWMAQNuyCUeaUBm0VV3OALWrSFfVc7oZdEVSfTF6yQ2T0XrLcOm5wXeYjOdWlXcWaQTL4T3k2wFg8Sh9gi+m/bCU9+jM7L7hBE=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
 	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740143968;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740144637;
 	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
 	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=3CaIBrzYWWjRIGQThZeNiKzCqZb7IKXxW3vw/DrceD8=;
-	b=ODMba6qQeW2i0K8aFo2qgqdSUB/pMQz+hBDlFr4nHSy+S88plkBk03Cf1IHnce5p
-	xnAHxDPCNF6qUa96OzI7+5An5JTKrhBhThcUvP7nn85ESBRAyZXiLFQCSvtL3sNfDrr
-	q5Pa+wqOxjh7lTOi3FpH/VOpDMYn1o0Fn4194XFU=
-Received: by mx.zohomail.com with SMTPS id 174014396629894.6988383380359;
-	Fri, 21 Feb 2025 05:19:26 -0800 (PST)
+	bh=KvYwYtWeaPtW8lwE8gHG4KOI90CKWqXAC4F6smx3L24=;
+	b=e6wbIEJKeFbU141VW3c0624bBtV1h2g3q4jBhcoOBJX0p0i6sYvp0yyzKMpJ1Tfy
+	JFIVpFNovRSRzKU5mZsB5e9I9fImW1GVadTzkHwc5loWbZVYbQtuu8/fVaJPGKbxRx8
+	pIsYyn5F1yC75k1ofZ+eJorOIS0R89dhRZo9QYd8=
+Received: by mx.zohomail.com with SMTPS id 1740144634645949.3358858508584;
+	Fri, 21 Feb 2025 05:30:34 -0800 (PST)
 Content-Type: text/plain;
 	charset=us-ascii
 Precedence: bulk
@@ -44,11 +44,13 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH V2 1/2] rust: Add clk helpers
+Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
 From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <7e4e95e221569070d72bb45ea0922e76be7db2a3.1740118863.git.viresh.kumar@linaro.org>
-Date: Fri, 21 Feb 2025 10:19:09 -0300
-Cc: Miguel Ojeda <ojeda@kernel.org>,
+In-Reply-To: <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
+Date: Fri, 21 Feb 2025 10:30:17 -0300
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
  Alex Gaynor <alex.gaynor@gmail.com>,
  Boqun Feng <boqun.feng@gmail.com>,
  Gary Guo <gary@garyguo.net>,
@@ -57,157 +59,207 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,
  Andreas Hindborg <a.hindborg@kernel.org>,
  Alice Ryhl <aliceryhl@google.com>,
  Trevor Gross <tmgross@umich.edu>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
  Russell King <linux@armlinux.org.uk>,
  linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org,
  rust-for-linux@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <CE820212-E2D4-49DB-8B90-45088E74C1D2@collabora.com>
+Message-Id: <17E31EBB-339C-47DD-87AE-0B39EB934559@collabora.com>
 References: <cover.1740118863.git.viresh.kumar@linaro.org>
- <7e4e95e221569070d72bb45ea0922e76be7db2a3.1740118863.git.viresh.kumar@linaro.org>
+ <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
 To: Viresh Kumar <viresh.kumar@linaro.org>
 X-Mailer: Apple Mail (2.3826.300.87.4.3)
 X-ZohoMailClient: External
 
-Hi Viresh,
+Hi Viresh, thank you for working on this.
+
 
 > On 21 Feb 2025, at 03:33, Viresh Kumar <viresh.kumar@linaro.org> =
 wrote:
 >=20
-> In order to prepare for adding Rust abstractions for the clock APIs,
-> this patch adds clock helpers required by the Rust implementation.
+> Add initial bindings for the clk APIs. These provide the minimal
+> functionality needed for common use cases, making them straightforward
+> to introduce in the first iteration.
+>=20
+> These will be used by Rust based cpufreq / OPP layers to begin with.
 >=20
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
-> MAINTAINERS                     |  1 +
-> rust/bindings/bindings_helper.h |  1 +
-> rust/helpers/clk.c              | 57 +++++++++++++++++++++++++++++++++
-> rust/helpers/helpers.c          |  1 +
-> 4 files changed, 60 insertions(+)
-> create mode 100644 rust/helpers/clk.c
+> MAINTAINERS        |   1 +
+> rust/kernel/clk.rs | 104 +++++++++++++++++++++++++++++++++++++++++++++
+> rust/kernel/lib.rs |   1 +
+> 3 files changed, 106 insertions(+)
+> create mode 100644 rust/kernel/clk.rs
 >=20
 > diff --git a/MAINTAINERS b/MAINTAINERS
-> index 25c86f47353d..726110d3c988 100644
+> index 726110d3c988..96e2574f41c0 100644
 > --- a/MAINTAINERS
 > +++ b/MAINTAINERS
-> @@ -5778,6 +5778,7 @@ F: include/dt-bindings/clock/
-> F: include/linux/clk-pr*
+> @@ -5779,6 +5779,7 @@ F: include/linux/clk-pr*
 > F: include/linux/clk/
 > F: include/linux/of_clk.h
-> +F: rust/helpers/clk.c
+> F: rust/helpers/clk.c
+> +F: rust/kernel/clk.rs
 > X: drivers/clk/clkdev.c
 >=20
 > COMMON INTERNET FILE SYSTEM CLIENT (CIFS and SMB3)
-> diff --git a/rust/bindings/bindings_helper.h =
-b/rust/bindings/bindings_helper.h
-> index 55354e4dec14..4e4e16c3b479 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -10,6 +10,7 @@
-> #include <linux/blk-mq.h>
-> #include <linux/blk_types.h>
-> #include <linux/blkdev.h>
-> +#include <linux/clk.h>
-> #include <linux/cred.h>
-> #include <linux/errname.h>
-> #include <linux/ethtool.h>
-> diff --git a/rust/helpers/clk.c b/rust/helpers/clk.c
+> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
 > new file mode 100644
-> index 000000000000..3c63b50ad6fb
+> index 000000000000..c212cd3167e1
 > --- /dev/null
-> +++ b/rust/helpers/clk.c
-> @@ -0,0 +1,57 @@
+> +++ b/rust/kernel/clk.rs
+> @@ -0,0 +1,104 @@
 > +// SPDX-License-Identifier: GPL-2.0
 > +
-> +#include <linux/clk.h>
+> +//! Clock abstractions.
+> +//!
+> +//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
 > +
-> +#ifndef CONFIG_HAVE_CLK
+> +use crate::{
+> +    bindings,
+> +    device::Device,
+> +    error::{from_err_ptr, to_result, Result},
+> +    prelude::*,
+> +};
+> +
+> +use core::ptr;
+> +
+> +/// A simple implementation of `struct clk` from the C code.
+> +#[repr(transparent)]
+> +pub struct Clk(*mut bindings::clk);
 
-This is a bit confusing. Can you add a comment explaining how
-we get inlined stubs if these configs are not set, thus explaining why
-we need to define them in helpers.c?
+> +
+> +impl Clk {
+> +    /// Creates `Clk` instance for a device and a connection id.
+> +    pub fn new(dev: &Device, name: Option<&CStr>) -> Result<Self> {
+> +        let con_id =3D if let Some(name) =3D name {
+> +            name.as_ptr() as *const _
+> +        } else {
+> +            ptr::null()
+> +        };
+> +
+> +        // SAFETY: It is safe to call `clk_get()`, on a device =
+pointer earlier received from the C
+> +        // code.
+> +        Ok(Self(from_err_ptr(unsafe {
+> +            bindings::clk_get(dev.as_raw(), con_id)
+> +        })?))
+> +    }
+> +
+> +    /// Obtain the raw `struct clk *`.
+> +    pub fn as_raw(&self) -> *mut bindings::clk {
+> +        self.0
+> +    }
+> +
+> +    /// Clock enable.
+> +    pub fn enable(&self) -> Result<()> {
+> +        // SAFETY: By the type invariants, we know that `self` owns a =
+reference, so it is safe to
+> +        // use it now.
+> +        to_result(unsafe { bindings::clk_enable(self.0) })
+> +    }
+> +
+> +    /// Clock disable.
+> +    pub fn disable(&self) {
+> +        // SAFETY: By the type invariants, we know that `self` owns a =
+reference, so it is safe to
+> +        // use it now.
+> +        unsafe { bindings::clk_disable(self.0) };
+> +    }
+> +
+> +    /// Clock prepare.
+> +    pub fn prepare(&self) -> Result<()> {
+> +        // SAFETY: By the type invariants, we know that `self` owns a =
+reference, so it is safe to
+> +        // use it now.
+> +        to_result(unsafe { bindings::clk_prepare(self.0) })
+> +    }
+> +
+> +    /// Clock unprepare.
+> +    pub fn unprepare(&self) {
+> +        // SAFETY: By the type invariants, we know that `self` owns a =
+reference, so it is safe to
+> +        // use it now.
+> +        unsafe { bindings::clk_unprepare(self.0) };
+> +    }
+> +
+> +    /// Clock prepare enable.
+> +    pub fn prepare_enable(&self) -> Result<()> {
+> +        // SAFETY: By the type invariants, we know that `self` owns a =
+reference, so it is safe to
+> +        // use it now.
+> +        to_result(unsafe { bindings::clk_prepare_enable(self.0) })
+> +    }
+> +
+> +    /// Clock disable unprepare.
+> +    pub fn disable_unprepare(&self) {
+> +        // SAFETY: By the type invariants, we know that `self` owns a =
+reference, so it is safe to
+> +        // use it now.
+> +        unsafe { bindings::clk_disable_unprepare(self.0) };
+> +    }
+> +
+> +    /// Clock get rate.
+> +    pub fn rate(&self) -> usize {
+> +        // SAFETY: By the type invariants, we know that `self` owns a =
+reference, so it is safe to
+> +        // use it now.
+> +        unsafe { bindings::clk_get_rate(self.0) }
+> +    }
+> +
+> +    /// Clock set rate.
+> +    pub fn set_rate(&self, rate: usize) -> Result<()> {
 
-This will let everyone know why we have #ifndef here when the logical =
-thing
-would be #ifdef. It will also make it clear why the rust code is not =
-gated
-by these configs.
+It might be worth it to add a type here to make it clear what in what =
+unit is `rate` expressed as.
 
-> +struct clk *rust_helper_clk_get(struct device *dev, const char *id)
-> +{
-> + return clk_get(dev, id);
-> +}
-> +
-> +void rust_helper_clk_put(struct clk *clk)
-> +{
-> + clk_put(clk);
-> +}
-> +
-> +int rust_helper_clk_enable(struct clk *clk)
-> +{
-> + return clk_enable(clk);
-> +}
-> +
-> +void rust_helper_clk_disable(struct clk *clk)
-> +{
-> + clk_disable(clk);
-> +}
-> +
-> +unsigned long rust_helper_clk_get_rate(struct clk *clk)
-> +{
-> + return clk_get_rate(clk);
-> +}
-> +
-> +int rust_helper_clk_set_rate(struct clk *clk, unsigned long rate)
-> +{
-> + return clk_set_rate(clk, rate);
-> +}
-> +#endif
-> +
-> +#ifndef CONFIG_HAVE_CLK_PREPARE
+Something like:
 
-Same here.
+pub struct Hertz(pub u32);
 
-> +int rust_helper_clk_prepare(struct clk *clk)
-> +{
-> + return clk_prepare(clk);
+pub fn set_rate(&self, rate: Hertz);
+
+Assuming `rate` is in Hertz.
+
+
+> +        // SAFETY: By the type invariants, we know that `self` owns a =
+reference, so it is safe to
+> +        // use it now.
+> +        to_result(unsafe { bindings::clk_set_rate(self.0, rate) })
+> +    }
 > +}
 > +
-> +void rust_helper_clk_unprepare(struct clk *clk)
-> +{
-> + clk_unprepare(clk);
+> +impl Drop for Clk {
+> +    fn drop(&mut self) {
+> +        // SAFETY: By the type invariants, we know that `self` owns a =
+reference, so it is safe to
+> +        // relinquish it now.
+> +        unsafe { bindings::clk_put(self.0) };
+> +    }
 > +}
-> +#endif
-> +
-> +int rust_helper_clk_prepare_enable(struct clk *clk)
-> +{
-> + return clk_prepare_enable(clk);
-> +}
-> +
-> +void rust_helper_clk_disable_unprepare(struct clk *clk)
-> +{
-> + clk_disable_unprepare(clk);
-> +}
-> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> index 0640b7e115be..4700ee7aaf85 100644
-> --- a/rust/helpers/helpers.c
-> +++ b/rust/helpers/helpers.c
-> @@ -11,6 +11,7 @@
-> #include "bug.c"
-> #include "build_assert.c"
-> #include "build_bug.c"
-> +#include "clk.c"
-> #include "cred.c"
-> #include "device.c"
-> #include "err.c"
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 496ed32b0911..324b86f127a0 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -40,6 +40,7 @@
+> pub mod block;
+> #[doc(hidden)]
+> pub mod build_assert;
+> +pub mod clk;
+> pub mod cred;
+> pub mod device;
+> pub mod device_id;
 > --=20
 > 2.31.1.272.g89b43f80a514
 >=20
 >=20
 
-With this change,
+
+This is working fine on Tyr, so:
+
+Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+
+With the minor change above:
 
 Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
