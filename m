@@ -1,145 +1,107 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC2521147D;
-	Fri, 21 Feb 2025 15:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740151735; cv=pass; b=k3q/ropHf1fnlbrhzL0woU+bJDgm6lJEsBa/ZTj8bdtBmGCZ/O4qzU1Z3H9SZQa1aJoOMBCGTkbyi2HEjhkwboJa/CrCaQ2Z3yH1YFqyRi7NlgYUYfLRGyooTddjhrhaS1wNbPGO9Z65ODEZntpe3qFm/APmMFl4TnZ6Rxetn8Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740151735; c=relaxed/simple;
-	bh=btfqHh6gmsSIJcjU3GbXMDgWDvFVm8dzoDhioK/7wOI=;
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83D58632E;
+	Fri, 21 Feb 2025 15:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740152237; cv=none; b=YeBgsEAzQhgyDtrpk/atys9jr/QK3BcJmzaBPk60z9VXLZLn+387GtBdagNkEPAy4DeoX3XzWxTfFWcb93y5WzvMHKzJglvM+bpBaKWw1NiykYma/vYMzHcRQBmII7HonSPDtutAY0knHkznv/zx+WgHeMkWW6L2Z0DXsJiVyI8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740152237; c=relaxed/simple;
+	bh=fNwEUMICWArtXN6ij1vQ7gWszyVTypN8591MquG7YJ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g4QBT6Fez0Ij+2XJm7XK09HN+L7fhiBSkly32QFooBhjOk1tWAIy2Kilwps5hj8XVsDCwesqGTMOEPIwDTVXZCzjRPC6AcJ9KmE2qWLUahSlHDkkzPTzHWjUkRbHTGJkg/EOoT1iFBs7pPrt9PDmFhsiwyNoUn/792GJg66SwkE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=igFUWHSG; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="igFUWHSG"
-ARC-Seal: i=1; a=rsa-sha256; t=1740151705; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ETIPuLM6VzvUWWHUMIH7mvkbk+G00Mc52iuUtqTsQjo/FcOhLTllrie0OVJeiq2TCNXOlZ7QK5CL05uY7fR8JWfFGdONNSR0iNN4DP/8evV5WKXEzsB0rUt3fzYmU6Zmzb9DHzBuhxM+eCa4KDkfURwvYJuJCDt6Km9JvRbuJOg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740151705; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=btfqHh6gmsSIJcjU3GbXMDgWDvFVm8dzoDhioK/7wOI=; 
-	b=lYkTsng4RjSYwfRMWG+t3ZfcbH+Zof52remAbATqeErSTKXSnGeuFA2yttTRt04KTxVvr8aQy1nWTWMWORryLgEPF1f14pAnOohgEup3ql3HpU1KplokTZgo692ZCIu4GoYtIbOHQZ+IGTFYFvwovSCVk4psPr5zEIJvHOeMAWw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740151705;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=btfqHh6gmsSIJcjU3GbXMDgWDvFVm8dzoDhioK/7wOI=;
-	b=igFUWHSGKkX9Vaftwno4xBOvaOCkuK2X1S/vdVFYFUgj+mxT8BCmZfUxBAvNo3iF
-	RTeKXOQqsnztJzj+NOQHtkiQ5V8qAMoMZx8xoD7RTjkFLRVllFzhJ9tmx5O6l6pSjV8
-	q3ERmLpe1ldSN0fXXPWFhAPd/RmRzL7j5xJem4kY=
-Received: by mx.zohomail.com with SMTPS id 1740151703226401.9144883348604;
-	Fri, 21 Feb 2025 07:28:23 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id 1DF301826F6; Fri, 21 Feb 2025 16:28:18 +0100 (CET)
-Date: Fri, 21 Feb 2025 16:28:18 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
-Message-ID: <aoprvojsnmkbzmmpgx5wxjqtamnr3jyhyqfcqnwhxulp34gn32@aau57u4cotpe>
-References: <cover.1740118863.git.viresh.kumar@linaro.org>
- <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
- <Z7iGHiQcqa-_AXli@pollux>
- <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
- <Z7iSHR0F2QpiNpMZ@pollux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u0IcOx151YsOl3fv+o1XxCFOKebfRzigU3gRaXdx5gbdXsLUtO2cf8j6UKq6SN4H5/K+vnotN4YG7DRVg9hq7bH73Nw3pr3A4YVwNV0Ph8jOhjoS1v2wNDnULEkcD1HeefAyNWXuTOjFiSLSkB23utZDQFJsXhnaC3Oxgs0DT98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tlV5S-0001AO-00; Fri, 21 Feb 2025 16:37:10 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id CA4BEC0135; Fri, 21 Feb 2025 16:36:34 +0100 (CET)
+Date: Fri, 21 Feb 2025 16:36:34 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: linux-clk@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	p.zabel@pengutronix.de, linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org, yangshiji66@outlook.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] mips: dts: ralink: update system controller nodes
+ and its consumers
+Message-ID: <Z7idguBa2bxZRoxX@alpha.franken.de>
+References: <20250120092146.471951-1-sergio.paracuellos@gmail.com>
+ <CAMhs-H-VevC+_=HxhMU6-at0bKut_JqdgO7j2detuB4s8R_QFQ@mail.gmail.com>
+ <Z7iHorlRgtsi1LOo@alpha.franken.de>
+ <CAMhs-H-fcWU-rz_3FeAuRe0xdCMmvffX2zrZwwmt=8RYpY4Lyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="k3zauxydw4h5jdhh"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z7iSHR0F2QpiNpMZ@pollux>
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.2/240.10.19
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMhs-H-fcWU-rz_3FeAuRe0xdCMmvffX2zrZwwmt=8RYpY4Lyg@mail.gmail.com>
 
+On Fri, Feb 21, 2025 at 03:50:09PM +0100, Sergio Paracuellos wrote:
+> Hi Thomas,
+> 
+> On Fri, Feb 21, 2025 at 3:05 PM Thomas Bogendoerfer
+> <tsbogend@alpha.franken.de> wrote:
+> >
+> > On Fri, Feb 21, 2025 at 11:48:34AM +0100, Sergio Paracuellos wrote:
+> > > Hi Thomas,
+> > >
+> > > El El lun, 20 ene 2025 a las 10:21, Sergio Paracuellos <
+> > > sergio.paracuellos@gmail.com> escribió:
+> > >
+> > > > Hi all!
+> > > >
+> > > > Ralinks SoCs have a system controller node which serves as clock and reset
+> > > > providers for the rest of the world. This patch series introduces clock
+> > > > definitions for these SoCs. The clocks are registered in the driver using
+> > > > a bunch of arrays in specific order so these definitions represent the
+> > > > assigned
+> > > > identifier that is used when this happens so client nodes can easily use it
+> > > > to specify the clock which they consume without the need of checking
+> > > > driver code.
+> > > >
+> > > > DTS files which are currently on tree are not matching system controller
+> > > > bindings. So all of them are updated to properly match them.
+> > > >
+> > > > I'd like this series to go through kernel mips git tree if possible.
+> > > >
+> > > > Thanks in advance for your time.
+> > > >
+> > > > Changes in v3:
+> > > > - Address Krzysztof comments in v2 (Thanks!):
+> > > >   + Drop reset include file since what it was defined there were hardware
+> > > >     constants and no binding related indexes at all.
+> > > >   + Update patches for not referring to this reset removed file.
+> > >
+> > >
+> > > I was expecting this series going through the mips tree.
+> >
+> >   DTC     arch/mips/boot/dts/ralink/rt3883_eval.dtb
+> > Error: /local/tbogendoerfer/korg/linux/arch/mips/boot/dts/ralink/rt3883.dtsi:2.1-9 syntax error
+> > FATAL ERROR: Unable to parse input tree
+> 
+> Weird, it looks like dtc is not happy with the "include" line with new
+> definitions? Are you getting this only with rt3883? Since all the
+> patches are almost the same and I compile tested this before sending..
+> Something got corrupted? I don't have my laptop now to check but I
+> will recheck again on monday.
 
---k3zauxydw4h5jdhh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
-MIME-Version: 1.0
+rt2880_eval.dts:/include/ "rt2880.dtsi"
+rt3052_eval.dts:#include "rt3050.dtsi"
+rt3883_eval.dts:/include/ "rt3883.dtsi"
 
-Hi,
+rt3052 works, rt2880 and rt3883 don't.
 
-On Fri, Feb 21, 2025 at 03:47:57PM +0100, Danilo Krummrich wrote:
-> On Fri, Feb 21, 2025 at 11:29:21AM -0300, Daniel Almeida wrote:
-> > > On 21 Feb 2025, at 10:56, Danilo Krummrich <dakr@kernel.org> wrote:
-> > > On Fri, Feb 21, 2025 at 12:03:39PM +0530, Viresh Kumar wrote:
-> > >> +/// A simple implementation of `struct clk` from the C code.
-> > >> +#[repr(transparent)]
-> > >> +pub struct Clk(*mut bindings::clk);
-> > >=20
-> > > I remember that Stephen explained that NULL is valid value for struct=
- clk. As a
-> > > consequence, all functions implemented for `Clk` have to consider thi=
-s.
-> >=20
-> > I am a bit confused here. If NULL is valid, then why should we have to =
-specifically
-> > consider that in the functions? No functions so far explicitly derefere=
-nces that value,
-> > they only pass it to the clk framework.
->=20
-> This was badly phrased, the current implementation does not need to consi=
-der it
-> indeed. What I meant is that we have to consider it potentially. Especial=
-ly,
-> when adding new functionality later on. For instance, when accessing fiel=
-ds of
-> struct clk directly.=20
+changing the /include/ to #include makes them compile.
 
-Just a drive-by comment - the current implementation will never have
-a NULL clock anyways. That is only returned by the clk_get functions
-with the _optional() suffix. You are right now only using clk_get(),
-which will instead returns ERR_PTR(-ENOENT).
+Thomas.
 
-> Maybe this only becomes relevant once we write a clk driver itself
-> in Rust, but still.
-
-For a clock provider implementation you will mainly use 'struct
-clk_hw', which is different from 'struct clk'.
-
-Greetings,
-
--- Sebastian
-
---k3zauxydw4h5jdhh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAme4m4cACgkQ2O7X88g7
-+prYUQ//f59hToVXMAIGJ333jfHjvWUJFxssHgqDUIQPMSlxxpg9H6v8PiiZeIQf
-wFMPxKupdjH8J97e5hZy0U4NLVwDvj/RzyBPObVtV1f1/1RF2l4dp/gLqj25Hx3u
-zl2ZZhIFQRcfpbawE2FE10Dlk0Yswehiw5wB8HAbdHusjCzSFCZRkt51mEorFpPd
-7IwV/f+lpUgXueohG8JWVoQk2SsW0BOlsvZ3CMv6BuTtFfNDDUubEwja6ZzxV8ZW
-bRdUfEWnQuEd5ukSn39azfQ8obRwEJsmwuennHY0IR699PJIpPNqhCq5p7G6ldSy
-VsirllZ9OX4H2hR0PExn28VX6E6cln3vWlmh3Cw7zIwfaa6FvGL8hY75HkH+IEOq
-bOolzIJAcgTsqb9IFAbsCbPEl4OII87eBf6pABL8DSKnhFzu9KfNYvSKGhCiAiqe
-rHCsX2kElQud5R186pkoDKPNdfQEPuMFUa6eDt465hHP+fKbZ6Oso8PaRxZ8mGCw
-PeCwR5uKVhr7UQCPosrKRRJEZWBiP7lf3wE7TIPEYKl3sZyl8PW5mRUUt+mrIXs9
-AasBjvmHLzVm/TrAYop8vUx8Gcz9GiKKkGNVTTZ3ATvQoeyIyGa3rbxB5wRuynGt
-opY/3Sm3EjAObQTfAnMH5/A9CYnGSpwZtYdY01QxD0hPzZb2uNU=
-=khOL
------END PGP SIGNATURE-----
-
---k3zauxydw4h5jdhh--
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
