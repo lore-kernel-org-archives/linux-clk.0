@@ -1,129 +1,71 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C539F25290F;
-	Fri, 21 Feb 2025 19:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4942AE74;
+	Fri, 21 Feb 2025 20:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740166647; cv=none; b=cv0tb6/U0odQ4V/DMqOED2CztG7uQfy1EOB2Ev+roP1okp5j9s9Wvmc64qe88XuDx6dT/B816wetz8ippMGVwrUMvdL/0GbcyuyobVMtw8UAML73e4l9x7nAWBFkmnRPlt5ikLXl7PUOPYaYXr2ro04BreEnbqTd9WKBt4SNo7c=
+	t=1740169245; cv=none; b=urbciqL5iTBK8YxVSL4RfSyvBIyC76uIjmDqi5EdiYFO/74eR9oNs2ntOTZ+zwj3P/JszeYAn0NbtKrKsByNFNgcOc0GpZloKBf7/sgh3rfBmoYaxke4/0jz3hTiCQlsobTbvuVDqX1h+tdHEQBjiCD1S4DVXiEepYNvuy/OUZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740166647; c=relaxed/simple;
-	bh=HbTWCcViPPsmoLTr3+5YzQtPxy9tXO0RObpIhkFecVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N+OhivQLpAl33uymAjTp0m4AdDIz11Z0XCEnzWoMEjfqj3ITKtK4r6CpsP9N2M4+X/Tg+9Sa8Wrx8og+6AXPEWt4n7f3wsHtJ/lEMurvWmMbPTIxnNgta3Jh/rV8A21PKZAjfAN9xIhkaiyXILkoCh+N34+++dtCAi7yWWFfCME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPAEuwEu; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740169245; c=relaxed/simple;
+	bh=fbOHtpk/uuqRCAGB9uJvFdOTgJYlTLoDQqtrDMq4XCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ai2nierI5/5wWGsjVglRfGVtAPnRsYAEo81USapROtSjSVhe+gBo38XSaarYy7meIxsIutQNCdXGwBo7WeVdvISHsZbLal2BD+LpGwUd7g6WgUoh7p1PrbIuoLQNaNI8y642r/zJCTs7aMY9eAubSKf3XgHDXtVPELm1fhxQhAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X9MXwa7W; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPAEuwEu"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fbfa8c73a6so5029662a91.2;
-        Fri, 21 Feb 2025 11:37:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740166645; x=1740771445; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q5/TJQCPhOXtoCrPiCi87e6OcHCUr8SBAEgJYV6f4qI=;
-        b=IPAEuwEukYwc/X1YcABH98WLUJba1A7z2CNz5AFQpvocZy87uIfL/g3fkrVLAY1kxC
-         iNd+qaemUzyk3rhHurFNVupFbKt2HAPoH0d/MeqipX/BFvZoGY+3U+pwHoa96vVSZils
-         FqWrfz7vMKluxj02uzzczoZ+2PFFyuY6Xs/HAbb83o9NkJeabSHjUSPRZ4zTpYI5PzyT
-         oqJRzpB3pMMDF4UsJd7q2STtiG7kxM+zfHGMZ8pkr6GIyHns9btdM/JEDUco/5G46MeQ
-         h34v1ETJR+fpGhd9lcHijb5FWcdRsbdxt6Pd+Yd2VWphFKsl+IDkcEbpqrvI9H0WYqWF
-         kheA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740166645; x=1740771445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q5/TJQCPhOXtoCrPiCi87e6OcHCUr8SBAEgJYV6f4qI=;
-        b=SLhLQpsdvRDU5MTk3iqTXTqet2wyTvW5ipeTlA6tKmcbx5L2RbzaI0DNLJF6dcDjta
-         A4YAvsxbr/0x8OPSXhbJJs4Vpx5WtSivytCrTwSOS5tYkSa2FGHswoaIwYpP+RG/+fOi
-         e+HAscHaGPRsA9TGoTuRwZz8s/0mcuyvaQwp1ZM3oMofMKGukByFlZT0fvZ7Sggg/tr5
-         zrcXUZ5cWMgtab8SXBNNFKnX9ex9LGTt5RsG82Vx2T97irAJaRxwZotlIadrXNthnvhi
-         uwHEm9CSn91VQXnoY8HkfGQlwCv3YETGhSQ8Vq/BAthPy8dA5Ramm47bpz6sJpvdglpx
-         nWvg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4hPDiI58af51GEhBLeEEOhTqnPRgeeFtznsKDRtqanhQAmW3yHJfG8Xxok1/1AbhlftUviJuhvcfi@vger.kernel.org, AJvYcCUHe2Z0fX/F+aX/X+w+7r8MQjNtewjeiUZ0D3qn4fTWRm8i8m532vZoga9IgcI3zrZ1CwS+lWM58vG7@vger.kernel.org, AJvYcCWluazbK2ewV2P3tnxonlgbNBVOmatGRYzhSW162StHvXZVYnn8xmjzQG0hRQLgmcCOjEPxaMitxWRVx7ZJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7Hj3BwnVRKWU0ioahjZKPgU7tqi/vfj7j9QhaiUT1sD4S6B2J
-	1ikiEw/jh1XMpZ9xvbJCHQ/rcE6OddHUgTbAzQLEaHrORMIFvTBh+ACMxzo//CrXkJnYAzdwDve
-	U7GHRXLDMvVnSW6IkWmjYfITSTc+ROGnrt00=
-X-Gm-Gg: ASbGncsu6TTZNF+LieLQeoV4iGi5I/NtcbD3NV9GI8lLSarkVfTWrfnPRRovSk8TmVe
-	4fS7eMr+fwd6Q9ojPLiYMC9V3omTUPPK3Zr0IOLKfqtq0+08cwspswagLJgO0Q7mB115qErVj+n
-	bea0KgXUM=
-X-Google-Smtp-Source: AGHT+IGO5kmKNshQe2c5M4D/K0SzQbhuXNJ0QO3tdj2iHLQJhE4x02XTjnINnRUvMgd1/kya6uNiVNBOQ3RUUR6+yt8=
-X-Received: by 2002:a17:90b:4d0d:b0:2ee:aef4:2c5d with SMTP id
- 98e67ed59e1d1-2fce8724453mr5847905a91.26.1740166644954; Fri, 21 Feb 2025
- 11:37:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9MXwa7W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E356FC4CED6;
+	Fri, 21 Feb 2025 20:20:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740169244;
+	bh=fbOHtpk/uuqRCAGB9uJvFdOTgJYlTLoDQqtrDMq4XCg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X9MXwa7W8szpEUwdQhiiM0lIWCWNI9Qj7X9AHVg2FZEBzWUBMlV7McEtV4u91ZW5h
+	 5wQiFJwjWxNBFbFdEqD7iJCmUNXSx9rPdUTPDBFLAOUaaT1jTF/bLXzObgbiy1K4yg
+	 uxNAr8VCdoz6qC5eUiTGjPrzvXGm5PIVgbXZgBAp8e+Akw16vOM7gAlkIPSBbGQHzv
+	 P3AQbOM3DuimqIZHnkEhV7bly2Mjqk0VM5hhuxJKrxp7+X3VbHbdidW9M6tJ5nmcJb
+	 lX4rNuLifzAI4eAEarEZfuKKxDN/f7c1hf7wM4PqvMArsl7KY5hSipYOTrZBH/1XCV
+	 Jm8PQdekvu1aA==
+Date: Fri, 21 Feb 2025 14:20:41 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	Michael Turquette <mturquette@baylibre.com>,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Stanislav Jakubek <stano.jakubek@gmail.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Alex Elder <elder@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>
+Subject: Re: [PATCH RFC 1/5] dt-bindings: clock: brcm,kona-ccu: Add BCM21664
+ bus clocks
+Message-ID: <174016924068.13604.5835442277763303023.robh@kernel.org>
+References: <20250216-kona-bus-clock-v1-0-e8779d77a6f2@gmail.com>
+ <20250216-kona-bus-clock-v1-1-e8779d77a6f2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221190929.31469-1-laurentiumihalcea111@gmail.com> <20250221190929.31469-5-laurentiumihalcea111@gmail.com>
-In-Reply-To: <20250221190929.31469-5-laurentiumihalcea111@gmail.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Fri, 21 Feb 2025 13:37:13 -0600
-X-Gm-Features: AWEUYZlpZEzoF4sSIcwIUtnabf9TrVj8-PJAh3_pn5QwRKlyCWUIXfCyiFWMcs0
-Message-ID: <CAHCN7xL=QZHs5sD7Ja7pBOcXM8cWVQYe270EizDFN--CH_5+zQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] arm64: dts: imx8mp: change AUDIO_AXI_CLK_ROOT
- freq. to 800MHz
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Marek Vasut <marex@denx.de>, 
-	Stephen Boyd <sboyd@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250216-kona-bus-clock-v1-1-e8779d77a6f2@gmail.com>
 
-On Fri, Feb 21, 2025 at 1:11=E2=80=AFPM Laurentiu Mihalcea
-<laurentiumihalcea111@gmail.com> wrote:
->
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->
-> AUDIO_AXI_CLK_ROOT can't run at currently requested 600MHz w/ its parent
-> SYS_PLL1 configured at 800MHz. Configure it to run at 800MHz as some
-> applications running on the DSP expect the core to run at this frequency
-> anyways. This change also affects the AUDIOMIX NoC.
 
-Unless I am missing something, the i.MX 8M Plus Applications Processor
-Datasheet (rev 2.1)  has a table of frequencies, and
-AUDIO_AXI_CLK_ROOT is shown to be 600MHz nominal and 800MHz for
-overdrive.  I agree that it's likely not running at 600MHz now, but
-800MHz may be out of spec for people who are using the nominal voltage
-instead of the overdrive, since overdrive requires higher voltages
-than the nominal.
-
-adam
->
-> Fixes: b739681b3f8b ("arm64: dts: imx8mp: Fix SDMA2/3 clocks")
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+On Sun, 16 Feb 2025 17:12:36 +0100, Artur Weber wrote:
+> Add bus clocks for hub_timer, sdio, bsc, uart and usb_otg_ahb to the
+> allowed clock output names for BCM21664 CCUs.
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > ---
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/=
-dts/freescale/imx8mp.dtsi
-> index 86c3055789ba..54147bce3b83 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> @@ -834,7 +834,7 @@ pgc_audio: power-domain@5 {
->                                                 assigned-clock-parents =
-=3D <&clk IMX8MP_SYS_PLL1_800M>,
->                                                                          =
-<&clk IMX8MP_SYS_PLL1_800M>;
->                                                 assigned-clock-rates =3D =
-<400000000>,
-> -                                                                      <6=
-00000000>;
-> +                                                                      <8=
-00000000>;
->                                         };
->
->                                         pgc_gpu2d: power-domain@6 {
-> --
-> 2.34.1
->
->
+>  .../devicetree/bindings/clock/brcm,kona-ccu.yaml       | 18 ++++++++++++++++--
+>  1 file changed, 16 insertions(+), 2 deletions(-)
+> 
+
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+
