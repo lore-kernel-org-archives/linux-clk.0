@@ -1,49 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E6E1C3F02;
-	Fri, 21 Feb 2025 09:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97644B67E;
+	Fri, 21 Feb 2025 09:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740129379; cv=none; b=GlS7C0b48g4GIH4KwzLfaJUa86lA611bTcW28LZ6RX8OV3QoqQXIphdYg6/8vL7kkcnikqYPhtPfgq24zFHRTvjFczMj91CLHM3OOklglMjA68hXUmSquPspvw2n8u/PKC9g8+PSJtueTQaPilKH17zuta9YeFF+iX0mV6ltcpE=
+	t=1740129619; cv=none; b=kkxTVEbvnjeNfRH/jCI5in1any4UY0IjpZVlZyCEQVf5fHXeGzmPmn2Mwn5GXaYDLzZejpq1NjcSiGv21pGX6IL5HEaM/tR1PmCDc9Cz7pqvfJGZ6cpcY5/7xpwYV+H2qd9RzybAn3dwNSMof5OpSfWK+LBdRuDdTxFGtLnGAj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740129379; c=relaxed/simple;
-	bh=v4duxCBt31nnMKSAT2iTqhqPuTqDH0EcdtbEtxT5aeM=;
+	s=arc-20240116; t=1740129619; c=relaxed/simple;
+	bh=sMF0GfImDCqUxySHs2z5TP4zwlnmW0+egD/zqf04aj8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Om/tYB4wWQg64SVKeUKq4eFt3qtOAbExLDn3IjxfS9UqGGteATaA9tHrKr0Q2yqKmBmwvKPHSCbAW8BbuwpCA4PAKi/NvQKjhsQgFxvh7Kkj4n7mIRTMRd0lKaZVJVfK1wpB/S2L2h3XYs8J5o7GVHVgZErh1W3OfIb8TPqtYFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VINOrWZ0; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=D81UKBRXc9B7BPGzYkaPVA4q9yn8WyS23Hk1Jklod6ukO8vyTSv65CYvsDftr75n8harUub04DakVaUfPt/X9YSn+ItFzOvXwQxr/+YwFQsIw6b4uDTQuuth62zFJhIZL1/oL7NEuQCfWmLcbjQdwbKW7HFfhIXQ+2jj+SdtrIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ffyDNa++; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VINOrWZ0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EC04C4CED6;
-	Fri, 21 Feb 2025 09:16:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ffyDNa++"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C698C4CED6;
+	Fri, 21 Feb 2025 09:20:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740129379;
-	bh=v4duxCBt31nnMKSAT2iTqhqPuTqDH0EcdtbEtxT5aeM=;
+	s=k20201202; t=1740129619;
+	bh=sMF0GfImDCqUxySHs2z5TP4zwlnmW0+egD/zqf04aj8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VINOrWZ0MlUK8m4ViqyGszczMyknnwNDy1cX7Of0w9PFryWoN6z7k0/JPV/1ysj75
-	 iFXW2hjpcurfgMZtpyccXSeUa2fjzkvI4wxV0OwSjmr48Vkz8LCixF+LxySC+DdM1s
-	 5LRKP1R8WgRkclg9lf5i1Sjb0pQS2npaJS7ltxBVZame8ZtZkBILQdlvdxjrCLuAYS
-	 rEkcRctogB0dwhmdJ9jDXO+rcOd7qerQCf6FHAsHpMrp2dGwF0i+dlcTybyNDLas49
-	 EURRBLSAPtBNQnQclY5NzJtmxLDFNcFB9UpKuF9a9oCseJajZGe0XPoPruGwH7pU+R
-	 zV2aEAciRde8g==
-Date: Fri, 21 Feb 2025 10:16:16 +0100
+	b=ffyDNa++t+B0ITw+oVlS7LLrEjy1Yie/RYOPthHxRvosFXHg4CtPT35p+LQeGJkpa
+	 aLUmJVr8o+AWop2cnMNyN1fRQxLU1eb0sXrVgLVT2B0Uacppj6LpGdxT5ZR41Farvq
+	 TCXY6IxcjOaXFJ7tHrMk2yO2eooMnGHVuissvmAf2ldf9vK3/Xc1jmzEHJbipzTNBy
+	 sfgSYRcHZNpC/TwM15ioN+R33OsUvlwmGZRA1hDXAW0n5JMlbiLflfSgTJwHaRcqDO
+	 xGu5mtBPHhQZjUmpwCnkTNcJgZvKu3R1mv9fVymFVMtDpPYQmxaVj1cxy92iGb0O42
+	 VzmYjseVnnvKw==
+Date: Fri, 21 Feb 2025 10:20:16 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com, 
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org, 
-	jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 15/21] dt-bindings: gpu: Add support for T-HEAD TH1520
- GPU
-Message-ID: <20250221-adaptable-tamarin-of-variation-ad6dc6@krzk-bin>
-References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
- <CGME20250219140310eucas1p1297441a3da276569cd86b6b9e4544242@eucas1p1.samsung.com>
- <20250219140239.1378758-16-m.wilczynski@samsung.com>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: clock: qcom: Add compatible for
+ QCM6490 boards
+Message-ID: <20250221-rainbow-goldfish-of-masquerade-7d7627@krzk-bin>
+References: <20250220-lpass_qcm6490_resets-v4-0-68dbed85c485@quicinc.com>
+ <20250220-lpass_qcm6490_resets-v4-1-68dbed85c485@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,26 +49,40 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250219140239.1378758-16-m.wilczynski@samsung.com>
+In-Reply-To: <20250220-lpass_qcm6490_resets-v4-1-68dbed85c485@quicinc.com>
 
-On Wed, Feb 19, 2025 at 03:02:33PM +0100, Michal Wilczynski wrote:
->    reg:
->      maxItems: 1
-> @@ -60,6 +65,16 @@ allOf:
->          clocks:
->            maxItems: 1
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: thead,th1520-gpu
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
+On Thu, Feb 20, 2025 at 09:52:50AM +0530, Taniya Das wrote:
+> Add the new QCM6490 compatible to support the reset functionality for
+> Low Power Audio subsystem.
+> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+> index 488d63959424088ede67835eb4dcf3feef6d0848..64efb2c533d1e71a9bdc3bf0d245b00cec00841a 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+> @@ -20,6 +20,7 @@ description: |
+>  properties:
+>    compatible:
+>      enum:
+> +      - qcom,qcm6490-lpassaudiocc
+>        - qcom,sc7280-lpassaoncc
+>        - qcom,sc7280-lpassaudiocc
+>        - qcom,sc7280-lpasscorecc
+> @@ -68,7 +69,9 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: qcom,sc7280-lpassaudiocc
+> +            enum:
+> +              - qcom,sc7280-lpassaudiocc
+> +              - qcom,qcm6490-lpassaudiocc
 
-Missing constraint for clock-names. They *always* go together.
+Alphabetical order... although now I question whether these are
+compatible. Nothing in commit msg explains this, but it should.
 
 Best regards,
 Krzysztof
