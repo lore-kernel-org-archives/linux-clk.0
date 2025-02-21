@@ -1,117 +1,109 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167551E3DCF
-	for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 06:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD0A1FF1D1;
+	Fri, 21 Feb 2025 07:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740119712; cv=none; b=kXhEH5kuI1wniW487PDopJWgKZSVHkZpZ8/kVz+enw0sLLQWGFPFzolcDAUVYFClBithB07tAkH5dSIRUmAu397R+3gXjsJpltTUws3U5nCV6INxjiyQBuPG3GGQJFLuG4BmQypKh+F4Sq2AdQCBK78P3em2MxxKQfp18i8+llQ=
+	t=1740124270; cv=none; b=SgOCxtOnqX90sD3Rfd1ptnQ8Bd6+nj3AnMoq9tNO5RK9SyPaXJjHbS2fEc2sEIsRjnrj+G8ShYQ607WrzloGMpPcIpSyeKrJA8ZKU9vpNVh1zujozTw4Zoi0oa3bLbpPCsLsaLHuejYN26qKbbasRxkPiKO2pwp+hJyfEtA1b7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740119712; c=relaxed/simple;
-	bh=oc+EtHShi6bbNj9AJnLiY/NJj0NfEanMXEUTL2lUbmU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hto5nPTIFUGQFFM49SgKudoRpKMYxVhquHuG+79R1+Cgox1bLtaX5NwSDA/d4huUmDzQHiVlsXnFm73RE0T3mO0I8AXnj4KcKyx4pJXMuc+z4jaXkrbQlm2jBDNFUL9BKJTDf+XYzS9NtGR9v40+HLnRqVXx4ek+jrzsULl0uzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=idZAGIMr; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1740124270; c=relaxed/simple;
+	bh=WDF+AaPoasicPg5cjVd43KSl6VbCzFp6Lbsto9p3UZo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OYMgCNj3eVu+1D3iBRrGBixV4orUxWhzWE778orFI/yYjtLZLtKCDPmbPfLr2YCseVHbROMPRPjih0DkXGygV+KqHB11WvPYoD+t9xL0pvSetmW5X1Un4ReAiOqe1v7VR8a+1RvXNfm7Tnw0YK9nMxoHtFx+YmzvI0YGdMJKx10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dTd9H/mu; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="idZAGIMr"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220ec47991aso23323105ad.1
-        for <linux-clk@vger.kernel.org>; Thu, 20 Feb 2025 22:35:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740119710; x=1740724510; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4+iMivRKCEBsggc2rtGQq+coCu/bncplKGZAc6W2LxM=;
-        b=idZAGIMr16AeU38mVAUPU1g9TanDgO5TeB7Pv4IqYTw6Sv/Iwz2dQT/nXj9EGQXEaV
-         3SqdmwZz4Lo5Fda8PcJkT90hKaHznB3dEZUQbtNRl/i4L8HpxRNc1mHxDMRhtdo0A3Sm
-         aFKT0MYtKtWXHTEAYH2eTMTxQaKq/L6wHJyRLYC3ZlTQCYWGU9y624JZ1/pK2N5bCvwC
-         Bq1Ufa91CFoaCfQni5AvDauaED9YveH0TFTIhPoqnaDRWaBJ2KDzHPSlh7eObMngmwsW
-         WR4+Qc6lO3Q8mD8nmz0VeZojSJTQIDoQ31SkZ19lGBT+mGbVN9D9WSwbJL2vD3M3lHqg
-         t8tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740119710; x=1740724510;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4+iMivRKCEBsggc2rtGQq+coCu/bncplKGZAc6W2LxM=;
-        b=pn31jCb9xuvza+Hoix7JXgewQD657owt9lIDapHi7try4TLkrusyPkIOgLTFaIge7e
-         sNajzAS0l38YS0d0vX+j2eqCIKBzSUPJqeIgKnx8xo8aJyvyTbcWgJeNg3reGEcMwHYd
-         lroPJrBBVvllgbKlSMlWJuQ0fb7jFupza0shXu5ALDYccIuz5NycIdRJ2R3ichnY2MGb
-         YmoIQL7ZYnLibA2sDfxN/LK2QDvwVxde45vmg1oyhjChp0dRTczuFASq/4IYMI/Yn8a6
-         3KmRtMwD9zUPpZG4n2uNzzsK0mR72KxlcDPtcjjd79jyr/4HrtvIcMaAf1Zj3C6B+Yge
-         cu2A==
-X-Forwarded-Encrypted: i=1; AJvYcCXLPG/Ici5RWB+kfpRvILRwRGOjNGSS1H+MA/nbSF4s7HOnhm+pkKv135IOCAx/azvFbK0MghUco+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyCvLUExN8473XV7PuuqIZdx+vc6U2K+/xIH/8AyFdRV0rtNT4
-	UR77G1RzholDkYXjxB+5fDo3DF8qOjD/mhs0UkUUpgxvcF8ss7r5u7zn/1c6X2M=
-X-Gm-Gg: ASbGnctMuvUs+mivEH08rIVACBYZ0sZftiTrB6jsVfx+6+DpbvmFU86grVZ63Gh3/DC
-	D8qr5J3MmEFzgh/fX+pbYwRX7Kbqd5RcSQT5NHijvqenHzrdBFtf70J+A/sOxDNj60nPv24KpXD
-	0XNvapchBsynRMj/DkUyxfDSTtw2vOhAa10XLdT5/Fe1yoblPzr0wFOR38qd++x2h43XFa6JOls
-	YVIvwjLr8DmHVNz2G+xoPvoUjhVm0Xn2Nrd0KK8R4ow6e3B0gxD5XYjv2OzWl60sogF5gZk68U8
-	g7m1+duaN5OFHO6pjqVjG+aayMfe
-X-Google-Smtp-Source: AGHT+IEjF2u2RW/3YdAr0lHzjtV+TNOOgg3zCjt+GF/uyeQexQA0ARkffz5BS1YIj4YSEzPUqYDV+w==
-X-Received: by 2002:a05:6a00:2e08:b0:730:76a1:3935 with SMTP id d2e1a72fcca58-73426ca8308mr2801175b3a.6.1740119710461;
-        Thu, 20 Feb 2025 22:35:10 -0800 (PST)
-Received: from localhost ([122.172.84.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7324273e324sm14929891b3a.88.2025.02.20.22.35.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2025 22:35:09 -0800 (PST)
-Date: Fri, 21 Feb 2025 12:05:07 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Erik Schilling <erik.schilling@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V8 06/14] rust: Add bare minimal bindings for clk
- framework
-Message-ID: <20250221063507.3vffn55hkmcn6x35@vireshk-i7>
-References: <cover.1738832118.git.viresh.kumar@linaro.org>
- <c68081e18d939aefc7f6dac798df6b72e81bba4b.1738832118.git.viresh.kumar@linaro.org>
- <EC290802-2C5E-4ACA-A530-E776654C7E94@collabora.com>
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dTd9H/mu"
+X-UUID: 987e4e86f02811ef8eb9c36241bbb6fb-20250221
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=8NPujDCOA2i+sZ1Eo+mp2xCE16CGmm1ZdIPKOowNMtk=;
+	b=dTd9H/muFL+Wagj+GFDqM3ZXmia2b/QpBKPhDXD+XkDEgaJoTti9EvEPBryJsFf3pJQiRKB5PoYP4xdLeW8HbOWOosjwUJF3IUjukRjqKMKCAEe1KcxwnjvO5AY7AlrrIUnHb0M7LbFr7sawRhaexhL2aHn4DR4KWrU4F/15XmM=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:9938e1d6-09b7-4b87-8eb9-74d3a9758de0,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-30
+X-CID-META: VersionHash:60aa074,CLOUDID:800b63a4-5c06-4e72-8298-91cabc9efadf,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:2,IP:nil
+	,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 987e4e86f02811ef8eb9c36241bbb6fb-20250221
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
+	(envelope-from <friday.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 596277761; Fri, 21 Feb 2025 15:51:01 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 21 Feb 2025 15:51:01 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Fri, 21 Feb 2025 15:51:00 +0800
+From: Friday Yang <friday.yang@mediatek.com>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Garmin Chang
+	<garmin.chang@mediatek.com>, Yong Wu <yong.wu@mediatek.com>
+CC: Friday Yang <friday.yang@mediatek.com>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v4 0/2] Add SMI LARBs reset for MediaTek MT8188 SoC
+Date: Fri, 21 Feb 2025 15:50:52 +0800
+Message-ID: <20250221075058.14180-1-friday.yang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <EC290802-2C5E-4ACA-A530-E776654C7E94@collabora.com>
+Content-Type: text/plain
 
-On 17-02-25, 09:19, Daniel Almeida wrote:
-> Hi Viresh
-> 
-> > On 6 Feb 2025, at 06:28, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> > 
-> > This adds very basic bindings for the clk framework, implements only
-> > clk_get() and clk_put(). These are the bare minimum bindings required
-> > for many users and are simple enough to add in the first attempt.
-> 
-> I am missing clk_prepare_enable/clk_disable_unprepare.
-> 
-> Otherwise I see no way of enabling and disabling clks. IMHO I would also
-> consider these as “bare minimum”.
+Based on tag: next-20250220, linux-next/master
 
-I have posted the clk bindings separately now:
+On the MediaTek MT8188 SoC platform, we encountered power-off failures
+and SMI bus hang issues during camera stress tests. The issue arises
+because bus glitches are sometimes produced when MTCMOS powers on or
+off. While this is fairly normal, the software must handle these
+glitches to avoid mistaking them for transaction signals. What's
+more, this issue emerged only after the initial upstreaming of this
+binding.
 
-https://lore.kernel.org/all/cover.1740118863.git.viresh.kumar@linaro.org/
+The software solutions can be summarized as follows:
 
--- 
-viresh
+1. Use CLAMP to disable the SMI sub-common port after turning off the
+   LARB CG and before turning off the LARB MTCMOS.
+2. Use CLAMP to disable/enable the SMI sub-common port.
+3. Implement an AXI reset for SMI LARBs.
+
+This patch primarily provides the implementation of an AXI reset.
+
+Changes v4:
+- Modify the commit message
+
+v3:
+https://lore.kernel.org/lkml/20250121065045.13514-2
+-friday.yang@mediatek.com/
+https://lore.kernel.org/lkml/20250121065045.13514-3
+-friday.yang@mediatek.com/
+
+Friday Yang (2):
+  dt-bindings: clock: mediatek: Add SMI LARBs reset for MT8188
+  clk: mediatek: Add SMI LARBs reset for MT8188
+
+ .../bindings/clock/mediatek,mt8188-clock.yaml | 21 +++++++++++++++++++
+ drivers/clk/mediatek/clk-mt8188-cam.c         | 17 +++++++++++++++
+ drivers/clk/mediatek/clk-mt8188-img.c         | 18 ++++++++++++++++
+ drivers/clk/mediatek/clk-mt8188-ipe.c         | 14 +++++++++++++
+ 4 files changed, 70 insertions(+)
+
+--
+2.46.0
+
