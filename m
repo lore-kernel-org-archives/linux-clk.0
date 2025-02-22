@@ -1,230 +1,230 @@
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBC220B207
-	for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 23:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5DF2AEE1;
+	Sat, 22 Feb 2025 02:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740181261; cv=none; b=ubJHWKLweQXn/a+ssC5l9CUSOjTRh371Bj/JBIsm4rCkfSq1SeoXVfPrQX6fFLnkryjJQTYSTGTS2iSs/2OtITXYuP8ORKmIrUeht4vo3aqRmuZWInmacu1SOf0UTSBVY4Q65AwPk/iqTAFIAAbS6zmcIaC8tK7JIUDSbTrS/Gg=
+	t=1740192507; cv=none; b=UaWQiT8tj7G1lbpdIJT6yWJS01aPVFPOy9VMbYf9RPn6uU6+AMAexmeXIbEEwkiNq7FPgaBZC3+NyScg6kjvD2XLaxJGPlqrsrLBRbKWAS3fPmbZRmdvcpn/5RM8yoMHpcrWsqiCWR+kFnacn3ONNVuLmt8ZlbDk44vpEkCBFqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740181261; c=relaxed/simple;
-	bh=pwS0rRZAeo4K85b7BRAT0mUN789PYdreea+ymjVv7PE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YcRb9ETZeQ0/3rrBrNLfemk7Xn2jbntyYMkgwiO2p/wmaiDwPQZIJfrv5fRbElz2jEJfiJ8Cisb1d5+sK3axfIN1eH/Y2ndxqzpBVCjLD9L9JFj+aISH1Yr9qksHXLrv8eoLbMpSQ9FKjYUSiYKSFfwk+mPA8FI3Go5FRH8Wq5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=Wate1kkN; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1740192507; c=relaxed/simple;
+	bh=NHnjuluBBV4NxVlFad4bdOku97NB5P20SjOv81aRVg8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=RcRtdy5OhvE1qacYoVaJnZ3zQWOAQubrTBMp9DNplpwzu2O1feksXo+C+VOZaOTKlGJ6ndFGgTizvvugJYuTPpdiDZNhrV9ih/oT9ux8NUi+fmVF+LZmZKG9mxci/yvl78MOLIXD5qZTzHXw0pGGk9t8JFOk7Jwo4x8KR6nEDFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=W9eTPIkt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GXuQ/77m; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="Wate1kkN"
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4721aede532so24900901cf.2
-        for <linux-clk@vger.kernel.org>; Fri, 21 Feb 2025 15:40:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1740181259; x=1740786059; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f93o7FAG90qaVAfzA0geJ/uDU/bxaCxWXA35kHGThZA=;
-        b=Wate1kkN0JjhDmqJNYzTg4ONZzu4FBUhwnCk4Y2FY3926GdYyQWYFsQz04xIlxdxlY
-         EY6BiP3bpz5P78thX3kWa0xqij0elX8MZH3bhADIceM/pIJZNJgC2gp9q3+aM5mujOMg
-         Uh8mMvDAumPg9tzsKTnM3T0WDJe+kmz3IxB4+NO3N/HOBBuEg8ojUEysFFWmUNDCBC3P
-         WsCHMFSW3AA7p7PDZSARJNlI/OU19JjcBUXPVs/IqbQo3OgggLRGUocFLdIpVNf7cX1P
-         zC2TY4uDPfP2g/MwHrKMWeEgisGCKPrubfLujD+kRrHfC8kYs0ZfoSUBew0DoiEtpUU9
-         4IoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740181259; x=1740786059;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=f93o7FAG90qaVAfzA0geJ/uDU/bxaCxWXA35kHGThZA=;
-        b=jRkUfM3JQeWa9g9MnfnvzCp4WeXfrv2DxkICZSt8+U6WmWRk2dcwVxd3XHSDU3FibO
-         g2kvfZ90xWbFuVZGr6zOgXSUCKDamiUNdXzEiX6hkztuweugX4itCb29CVih4nH4L1JB
-         ryIASNosXfDqFUZqxP8Z4SfGl3fZB1oKZnNLdCdf88YMdGlg/7onbpXjc5q7mFiYB2VN
-         FtY52GKZvq46gbDe7mO8S7U+Qf+o1ghBv0eUF/JoDlYlh65VUDI2g3d7v1os0I+Ut4/m
-         1VcYak8keI3W7af3/fg/FTl0JIPavOWJp6AEyDjT1CDp4Leb0KvsLfFICuqNxl3Enpv0
-         evQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVrt3TP7BH45G5DYyQNeuS+lCQd1WCPGxQLQGxqoBk4/8FDnAG+om5mfj4klgr6TsriYqGHivnf/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB9waOaha8MAfRoLxyE1l1zR/jKmG4wUYUYTm823XD1KfBPEaG
-	hJx6ldNA1nienpbC+3mWR/i3wsXkAK8yKe6ZVEH/HZUfmnu71mE+LdCBoZcQOb8=
-X-Gm-Gg: ASbGncvYuFV+R2hXBupweT3llq2sNCwh7c/xgFvkGdG104l6mF5qT95V4J0+0h0+Sol
-	1w7z80hqWkr3yvQ4NzIYRZaaWXhCKzmpudw42nPUQX170kIxrzB1qQJZJfQyr1wwIZtUYLmH9Sc
-	GP++/0vK+uEBc6y/U0X0MrkyQNNLLU3W7Raz73+BRQijKceKfdhhq3hp/sTuhzI/HkXJBdAfKMq
-	1+fMa0do/9m4/TVRepEVC7u/CTe5j3z/Ef+TcVGF805c9OCUaJOGIAr56QyY9Ss/gLnEzcruV89
-	LuBmfGRGq156J33i2ndni4ymTpNpU9FzHqIGe7uAGV4tFumzOEBJXf1dIC4xzCHcYQ==
-X-Google-Smtp-Source: AGHT+IF09Y2l1WyaNQYoNtRessBI+9y7Evefa+3aJzpT7BdL6xOrBu5WGp0qzs26a1CPzjXqQ1pKmw==
-X-Received: by 2002:a05:622a:44f:b0:472:13e8:47a0 with SMTP id d75a77b69052e-4722473dd50mr66754041cf.21.1740181258850;
-        Fri, 21 Feb 2025 15:40:58 -0800 (PST)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471f506f819sm58485811cf.62.2025.02.21.15.40.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Feb 2025 15:40:58 -0800 (PST)
-Message-ID: <7c697e9a-d6d9-4672-9738-93ce3a71beb6@riscstar.com>
-Date: Fri, 21 Feb 2025 17:40:56 -0600
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="W9eTPIkt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GXuQ/77m"
+Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
+	by mailfout.phl.internal (Postfix) with ESMTP id B21EA1380A37;
+	Fri, 21 Feb 2025 21:48:24 -0500 (EST)
+Received: from phl-imap-07 ([10.202.2.97])
+  by phl-compute-13.internal (MEProxy); Fri, 21 Feb 2025 21:48:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1740192504; x=1740278904; bh=+Ml4921wRMeo4Va2Ot0cFWeiFqoEb/Sa
+	Xu+3hQO+9WI=; b=W9eTPIktQ2s23LhhHptCJ14xAtHMXQN1J5/nwPzlwHn5mb8X
+	sI024syw071x9sjmeAMIh2ftcBEykETf38Nl2CP7BTK7GqWMZfX4fUmBmRkCIlMW
+	dQhWbSSu2hdIQXmrR1r69jnBmAj8YpxtfcPMQbmNzV0zUl0h3pu7Zk0nBdM6fELV
+	mUc989mZIHLY8Gmsp5Kwl1IUwa4e6VG35ej8EaAbZjxey4rjBVIDgHrHeq8YTq+m
+	1fT5PIpqBLZdviWZZS6AOtgOS4tMgMONJuFtAay0fzNZVAHNRTAkMIM+T9de3zBG
+	QVeI/YedqDEgPDzIHJripftg8fgCXMyWToPwsQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740192504; x=
+	1740278904; bh=+Ml4921wRMeo4Va2Ot0cFWeiFqoEb/SaXu+3hQO+9WI=; b=G
+	XuQ/77mgC6GJMn17RU4R49h0XDjO1x78fm9CQsYnhSGGz7FGqN7m8MPASSVsdKX2
+	XtRZlsjzBEfYdYiSaaOkLo4ipcW2Y4hjAO7Dsq52o/XbRhc9HHRJRuKsLGr70gid
+	nIHrNBRBjZqfGl4KjkwXBQGlrzt3JaAZszJdI8sciJ47t51/JuxjoaQrFR2Qd7Ae
+	Be/icjIs47N05h2qmtc4L4V3tlmDTwx7WbRgIvjm/YG2clO8rEg6VVOHohfflkql
+	RecwZ3tCft1KmZ9d9l3ly40p8i3CiVbJMbc4vBTEIyX0hKsbASY/asSTDFO6YP4j
+	dmRt/Px0h+KMkveO53KRw==
+X-ME-Sender: <xms:9zq5Z0hLvkeuMwA_cnETwKqgUSlolXj9MQgsXpgwQzmaXeRWJMGNvA>
+    <xme:9zq5Z9DZ_qFRkViArcKCqmvRfwe8qbS8DdjR44qSon968tNtS82Eb82LLfPVJL4ph
+    gDB-8zLNei5Ue3SLA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejudejfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepfdfthigrnhcuhggrlhhklhhinhdfuceorhihrghnsehtvghsthhtoh
+    grshhtrdgtohhmqeenucggtffrrghtthgvrhhnpeeghffgkedtueeiudeukedvveevhfdu
+    uefhhedviefgffduheeuieeihefhfefgveenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehrhigrnhesthgvshhtthhorghsthdrtghomhdpnhgs
+    pghrtghpthhtohepvdefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhgurh
+    gvrdhprhiihiifrghrrgesrghrmhdrtghomhdprhgtphhtthhopehmthhurhhquhgvthht
+    vgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepfigvnhhssegtshhivgdrohhrgh
+    dprhgtphhtthhopegurghnihgvlhesfhhffihllhdrtghhpdhrtghpthhtoheprghirhhl
+    ihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtg
+    esghhmrghilhdrtghomhdprhgtphhtthhopehkihhkuhgthhgrnhelkeesghhmrghilhdr
+    tghomhdprhgtphhtthhopehmrggtrhhorghlphhhrgekvdesghhmrghilhdrtghomhdprh
+    gtphhtthhopehsihhmohhnshdrphhhihhlihhpphgvsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:9zq5Z8H1UxQeIorLCKziqKv-KX9dnWKQiRQFXXGqAoBi65EUPZ6f7g>
+    <xmx:9zq5Z1R1WkfRMZyxeOBaSEtFx6cRh4UH_ab5KOUMnXy_KDTCeK0r7Q>
+    <xmx:9zq5ZxwxoeTWFJcclrbFIm3Ibl6snmPR30wUQy_jZDWm6wqtin3Syw>
+    <xmx:9zq5Zz6tdzmIBMOl6MSs-EtVdatVYUt7niiNsSRE8LwWs3vQAfe2Jg>
+    <xmx:-Dq5Z4ipYhLDsQw2gde9HrsjorcDR9629C5VR3jImetuL6B0DxBdTVin>
+Feedback-ID: idc0145fc:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1E245BA006F; Fri, 21 Feb 2025 21:48:23 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-To: Haylen Chu <heylenay@4d2.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
- Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
- Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>,
- Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
- Guodong Xu <guodong@riscstar.com>
-References: <20250103215636.19967-2-heylenay@4d2.org>
- <20250103215636.19967-4-heylenay@4d2.org>
- <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
- <Z6rdBhQ7s2ReOgBL@ketchup> <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
- <Z63T_EDvXiuRQbvb@ketchup> <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
- <Z7BTVu10EKHMqOnJ@ketchup>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <Z7BTVu10EKHMqOnJ@ketchup>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Date: Sat, 22 Feb 2025 15:48:01 +1300
+From: "Ryan Walklin" <ryan@testtoast.com>
+To: "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+ "Maxime Ripard" <mripard@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "David Airlie" <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
+ "Samuel Holland" <samuel@sholland.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>
+Cc: "Andre Przywara" <andre.przywara@arm.com>,
+ "Chris Morgan" <macroalpha82@gmail.com>,
+ "Hironori KIKUCHI" <kikuchan98@gmail.com>,
+ "Philippe Simons" <simons.philippe@gmail.com>,
+ "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Message-Id: <2a864555-d81f-4048-aa0b-c286544faa50@app.fastmail.com>
+In-Reply-To: <2221204.Mh6RI2rZIc@jernej-laptop>
+References: <20250216183524.12095-1-ryan@testtoast.com>
+ <2221204.Mh6RI2rZIc@jernej-laptop>
+Subject: Re: [PATCH v7 00/27] drm: sun4i: add Display Engine 3.3 (DE33) support
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-I have a general proposal on how to represent this, but I'd
-like to know whether it makes sense.  It might be what Krzysztof
-is suggesting, but in any case, I hope this representation would
-work, because it could simplify the code, and compartmentalizes
-things.
+On Sat, 22 Feb 2025, at 7:57 AM, Jernej =C5=A0krabec wrote:
+> Hi Ryan,
+>
+> sorry for very late review, but here we go...
 
-Part of what motivates this is that I've been looking at the
-downstream reset code this week.  It contains a large number of
-register offset definitions identical to what's used for the
-clock driver.  The reset driver uses exactly the same registers
-as the clock driver does.  Downstream they are separate drivers,
-but the clock driver exports a shared spinlock for both drivers
-to use.
+No problem, thanks for the review!
 
-These really need to be incorporated into the same driver for
-upstream.
+> This patchset actually introduces 3 disticnt features, which should IM=
+O=20
+> be separated
+> and thus making reviewing patches easier.
+>
+> 1. native 10-bit YUV420 output (without YUV->RGB->YUV conversions) -=20
+> this is used on
+>     HDMI for proper 10-bit 4K@60 HDR output
+> 2. Display Engine 3.3 (DE33) support
+> 3. AFBC modifier/format support (used for more efficient GPU or VPU=20
+> output rendering)
+>
+> If I'm not mistaken, your goal is only DE33 support.=20
 
-The clock code defines four distinct "units" (a term I'll use
-from here on; there might be a better name):
-   MPMU  Main Power Management Unit
-   APMU  Application Power Management Unit
-   APBC  APB Clock
-   APBS  APB Spare
+This is my initial goal, but I would still like good HDMI and video supp=
+ort (including HW decode).=20
 
-The reset code defines some of those, but doesn't use APBS.
-It also defines three more:
-   APBC2 Another APB Clock
-   RCPU  Real-time CPU?
-   RCPU2 Another Real-time CPU
+It took some refactoring and resequencing of (your) existing driver work=
+ to get to this series, and I have left out the HDMI and separated the T=
+CON code for the same reason, that initially I am intending to just supp=
+ort RGB operation to an LCD. I do intend however to use the HDMI code ei=
+ther in or out of tree but think that will be a much bigger/more complex=
+ change to mainline given the current HDMI code is more invasive to the =
+generic driver.
 
-Each of these "units" has a distinct I/O memory region that
-contains registers that manage the clocks and reset signals.
+The YUV and AFBC changes seemed more self-contained and seemed reasonabl=
+e approaches given that they were both features of the DE3 and up. I am =
+happy either to split these into either 4 or 5 separate patches ie:
 
-I suggest a single "k1-clocks" device be created, which has
-access to all of the I/O address ranges.  And then within
-the DT node for that device there is a sub-node for the
-clocks, and another sub-node for the resets.  Each of these
-uses 2 cells for addressing.  The first indicates which
-"unit" contains the clock or reset registers, and the
-second indicates the clock or reset line implemented by
-that unit.
+1a. refactor CSC code to prepare for YUV
+1b. add YUV for DE3
+2. refactor mixer enumeration and regmaps to support DE3+
+3. add DE33
+4. Add AFBC
 
-I might not have this exactly right, but below I show some
-DTS code that I hope demonstrates what I mean.
+My only reluctance is that that adds more work to manage multiple patche=
+s which are logically grouped and in terms of ease of review, all these =
+4 steps are in the current set in that order (apart from AFBC which is c=
+ompletely standalone), and I don't think submitting them separately redu=
+ces complexity. It however will reduce reviewer burden as you suggest, b=
+ut this has been a slow process already.
 
-Could this approach, or something close, work?
+I am happy to accept either process but this has been some time already =
+now with lots of stylistic feedback but not much on the correctness of t=
+he approach and code, and I am keen to get this landed.
 
-					-Alex
+There is are two=20
+> reasons why
+> I've never sent these patches myself:
+>
+> 1. scaling YUV images doesn't work
+>
+> Not a problem for any user who doesn't use video player with DRM plane=20
+> rendering,
+> which I assume is most of them. We can get around of this issue to den=
+y=20
+> scaling
+> YUV buffers until the issue is sorted out.
 
-/* SpacemiT clock/reset unit numbers */
-#define SPACEMIT_CRST_RCPU      0
-#define SPACEMIT_CRST_RCPU2     1
-#define SPACEMIT_CRST_APBC      2
-         /* . . . */
-#define SPACEMIT_CRST_APBC2     6
+Good to know, I hadn't appreciated that. Mostly relevant for video as yo=
+u say and it would be good to land YUV support without scaling, then ext=
+end subsequently, possibly when we get to the video engine?
 
-/* SpacemiT RCPU unit reset IDs */
-#define SPACEMIT_RCPU_HDMIAUDIO 0
-#define SPACEMIT_RCPU_CAN       1
-         /* . . . */
-#define SPACEMIT_RCPU_UART1     6
+> 2. plane allocations are hackish
+>
+> DE33 for the first time introduced option to move planes between the=20
+> mixers. DRM
+> has also support for this, but for time being static allocation is=20
+> acceptable and tbh,
+> even dynamic support need appropriate initial setting.
+> As you might guessed this is done in DE33 clock driver using magic=20
+> values. Proper
+> way would be to introduce some kind of connection between mixer/plane=20
+> and clock
+> driver, so initial configuration can be moved to appropriate module=20
+> instead of
+> being thrown into clock driver. I need to check where to put it and ho=
+w=20
+> to properly
+> connect DT nodes. Maybe syscon phandle? I'll do some research.
 
-/* SpacemiT RCPU2 unit reset IDs */
-#define SPACEMIT_RCPU2_PWM0     0
-#define SPACEMIT_RCPU2_PWM1     1
-         /* . . . */
-#define SPACEMIT_RCPU2_PWM9     9
+Thanks, I was not aware of this either.
 
-/* SpacemiT APBC unit reset/clock IDs */
-#define SPACEMIT_APBC_UART1     0
-#define SPACEMIT_APBC_UART2     1
-#define SPACEMIT_APBC_GPIO      2
-         /* . . . */
-#define SPACEMIT_APBC_TWSI0     27
+> There is one glaring issue (when you work on driver and test every=20
+> aspect of it).
+> DE33 introduced RCQ, which is basically DMA, which copies shadowed=20
+> registers
+> from memory buffer directly to hw registers. IIRC it does that at=20
+> vblank time. This
+> tells you that current concept of writing register values at any time=20
+> userspace feels
+> to do commit is wrong and we've been lucky that it works as well as it=20
+> does. So,
+> in order to fix this, driver would need quite a big reorganization.=20
+> Introducing
+> shadow buffers would solve most of the issues, most likely also with=20
+> YUV scaling.
+> Implementing RCQ would be then relatively simple and even improve=20
+> timings.
+> Note that even DE3 has occasional issue with YUV scaler and also=20
+> read-modify-read
+> access to some of its register can produce bogus value and thus corrup=
+t=20
+> image
+> until next commit.
 
-/* APBC reset/clock IDs */
-#define SPACEMIT_APBC_UART1     0
-#define SPACEMIT_APBC_UART2     1
-#define SPACEMIT_APBC_GPIO      2
-/* . . . */
+Thanks, again I wasn't aware. All my testing has shown remarkable stabil=
+ity and there are some downstream users out-of-tree with good feedback, =
+but would be happy to support an effort to improve this.
 
-     clocks {
-         compatible = "spacemit,k1-clocks";
+Regards,
 
-         reg = <0x0 0xc0880000 0x0 0x2050>,
-               <0x0 0xc0888000 0x0 0x30>,
-               <0x0 0xd4015000 0x0 0x1000>,
-               <0x0 0xd4050000 0x0 0x209c>,
-               <0x0 0xd4090000 0x0 0x1000>,
-               <0x0 0xd4282800 0x0 0x400>,
-               <0x0 0xf0610000 0x0 0x20>;
-         reg-names = "rcpu",
-                     "rcpu2",
-                     "apbc",
-                     "mpmu",
-                     "apbs",
-                     "apmu",
-                     "apbc2";
-
-         /*
-          * The two reset cells indicate:
-          *     unit number (e.g. SPACEMIT_CRST_RCPU)
-          *     reset within that unit (e.g. SPACEMIT_RCPU_CAN)
-          */
-         k1_reset: spacemit-k1-reset {
-             #reset-cells = <2>;
-         };
-
-         /*
-          * The two clock cells indicate:
-          *     unit number (e.g. SPACEMIT_CRST_APBC)
-          *     clock within that unit (e.g. SPACEMIT_APBC_UART1)
-          */
-         k1_clock: spacemit-k1-clock {
-             #clock-cells = <2>;
-         };
-         /* . . . */
-     };
-
-     /* . . . */
-
-     uart8: serial@d4017700 {
-         compatible = "spacemit,k1-uart",
-                      "intel,xscale-uart";
-         reg = <0x0 0xd4017700 0x0 0x100>;
-         interrupts = <50>;
-         clocks = <&k1_clock SPACEMIT_CRST_APBC SPACEMIT_APBC_UART8>;
-                  <&k1_clock SPACEMIT_CRST_APBC SPACEMIT_APBC_UART8_BUS>;
-         clock-names = "core",
-                       "bus";
-         reg-shift = <2>;
-         reg-io-width = <4>;
-
-         resets = <&k1_reset SPACEMIT_CRST_APBC SPACEMIT_APBC_UART8>;
-
-         status = "disabled";
-     };
-
+Ryan
