@@ -1,253 +1,233 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4111D7E42;
-	Sat, 22 Feb 2025 09:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364A946434;
+	Sat, 22 Feb 2025 09:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740216641; cv=none; b=NyO1njDb0sb5hfoJFIMDA9P0VyifqMHLzZ6nXU9CXFCAyCdHD/M0FshoyVui3fEw1SwoxJhko6AeQmdqWopoPBYXl8KWQyHJyhzimzzshXpSVDnK35W1iQoLWS8O0Pyas8/MsgCb7xlSqvonZCm+emxslE22rOuOAwWMfKpDl2U=
+	t=1740217283; cv=none; b=d0rsypHhGH5Yl/D3X1/p+1c3F9XBWCQDAoja7noMLYa4V0aDuXgiFLgPM7TxIpvAK3JvUsNn7PVUm0aWFWmowB4kbBTGth6vraMPSnWJe5aRQQkPXiYlm4aEtjE0GWkEFqoL+YhSBFQh2odC1L/j7XPR11E4KEUWwYVfgEgwJ3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740216641; c=relaxed/simple;
-	bh=ohDuKgeYqsp+9JhZO++8jr92MnlHbq65lbOggkplOMg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r8bnZt4E2gcB4ucIUQjf3D9r5w0kZEWyF75RcFBxdbqf4wgbEdhCMld+6anUxr8xb9WA7lWwF3HYi7YsIlKuzka5nZwTY1/mbILm1LqDgSiejjmkqf806LLtLVR0FZRAWayiNwlbPDvc04Sm65Myqd2AVszKboEuLvGkZ7YLFEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKMZp71y; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740217283; c=relaxed/simple;
+	bh=DJC8m9RjcUzmFrWWZuFi8uTLafSc+0ybR8NGmMT4ltU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I2wB/gXdpF0lLRq/GbpioLQO2q4ViU947hy/cqysCg3xM/juOjN4k3eDEjocV7FyvDVMlREulSuzHmWaHolwMQae+7RozEOmEz3udUXM8AkJfknpm4vkpknceLaMt5yiRPAKJ0SC6uEoiQrQisZo3nxscisesejrMNOAm4J8+jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=MTmNgGFK; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=fsrD8CFh; arc=none smtp.client-ip=5.78.89.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKMZp71y"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38f488f3161so1476691f8f.3;
-        Sat, 22 Feb 2025 01:30:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740216638; x=1740821438; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K9F20fzricZrTGW+QeF883b7IwAmdJ0gyJoHIxyxNBc=;
-        b=VKMZp71yNa0qWdUIJNJzmWMZCX1Q5pTN6BLPmWyM7mHpJJMvImvRHbqrpPPPpq8K3c
-         Zkdqvr+pg2+yCPi9BgjxBoyiWQVuPUSzb1JZYf9KKcaQJAbn/Xye/81VlM6Z/8mpmeat
-         bcPdwscGNAoGwRqXq9jT1INLYlaF0ZiIuZF5pmPR0/ozGbCYYTEHLGQDDZvvY5EMl9Oq
-         vg6fpQmKpUX0D/C/VeUOZ3MedeJynFiWxsyHCnMVNJQtGHmGYrT3Fsms+N7iuE6JdyDY
-         Nv5mZyVQ4ZzqQ6XVA0YfVmummBbovCim59IUZ8cPx4j8gy2FO0Y6ocknmAN9QNKOiCB3
-         hISg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740216638; x=1740821438;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K9F20fzricZrTGW+QeF883b7IwAmdJ0gyJoHIxyxNBc=;
-        b=kM1Od0ccdwWBBgxULHc4MruPQLzytXO7RLWYVzD9DUjYSGecLgkJdr6ONHsfU1tZga
-         2LV/oHVA9s6g34wtkPARlsXmAGf68wWymLqaSMLMXLTsu0G5OG6obJtKxarnFURtDGgY
-         4YD6jp1sXs8oCLxw5JZWq/1OLrrJalrzO/PlfY3E9YYVAgaQavdQeTgGwMqXK6msTB/E
-         juOKlE2sxAUOS2AAxSY0pyjIYg10pqhbOl9xDSjb34Rjt3PyA87+oQmHnqT4HQ4/PawO
-         UuC8fMrnKWs5Q2hVHKYTwhR+Qt83pxxkE/5BSwCR4uXQnEa482EiWZcqK4fSWE8baqzy
-         uOqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoNkOLIVlqLRyk+t7cWlDntDCqrvkji01iqKUMv/fyJjfDw+sd/xZY9rZEuCSbbN4tHZ2qrUnSRNcI@vger.kernel.org, AJvYcCVluzBBOiEQW2PBJ/06LBmsoWQWkMaxpoYez8OVeqf+94cmgQ//jxy9L0cthzQK1R5LlL/FXwQNJU0E@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyPbsgSuY26UYD8KI2vmRrO+2zApWe/AZXxUCqAI4NxLssBbqa
-	3O/5LSL7tvJ9AtipISLeloOsynpQzEndIenwjwoumJZdb59FAHBR
-X-Gm-Gg: ASbGncvrRn50NHH/u3okwzTuQI7vkZan9nuQgIOrQbRqcWI3/LwjScv+3VLL+dJhyWD
-	gAt+WjD8jBowDLcbzTtzRCWeNQWz8Q+7FsPNdFDeHUlNVryq1LHCCzwEz0Hz3SOJMlbBHBUauSw
-	VxrgKKaq2FiLTV72l/fBsJxZayNR+kx4F8DRSzya0KVyAdbTiIbuQnHxjSFhfhSlfM+x4Wc6ijZ
-	UKB129eIai2rq9u848SeGJYy64Fef+INFIqhwg+WHRo+5K66T+zgnywLW0fCAyWoZ05mj/EZJSd
-	oXNcH7aV+xZpas6jx7wrkL7KDJPIMoYuVYWsu/ewfRoZVht7w4Pu88PVlvxnH7wOFlX/lzBTOMv
-	2cg==
-X-Google-Smtp-Source: AGHT+IGveW3w0SKQKx8LXKO0L/gAvng9bbQi2cKgrZ9bQASh6DROV0jb7VWS/TE7EA2uJePz27ztjw==
-X-Received: by 2002:a5d:47a9:0:b0:385:f249:c336 with SMTP id ffacd0b85a97d-38f70859ab3mr5498849f8f.45.1740216637740;
-        Sat, 22 Feb 2025 01:30:37 -0800 (PST)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d8e62sm25790168f8f.71.2025.02.22.01.30.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 01:30:37 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Samuel Holland <samuel@sholland.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Ryan Walklin <ryan@testtoast.com>
-Cc: Andre Przywara <andre.przywara@arm.com>,
- Chris Morgan <macroalpha82@gmail.com>,
- Hironori KIKUCHI <kikuchan98@gmail.com>,
- Philippe Simons <simons.philippe@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, Ryan Walklin <ryan@testtoast.com>
-Subject:
- Re: [PATCH v7 08/27] drm: sun4i: de3: add YUV support to the DE3 mixer
-Date: Sat, 22 Feb 2025 10:30:35 +0100
-Message-ID: <3860147.kQq0lBPeGt@jernej-laptop>
-In-Reply-To: <20250216183710.8443-9-ryan@testtoast.com>
-References:
- <20250216183710.8443-3-ryan@testtoast.com>
- <20250216183710.8443-9-ryan@testtoast.com>
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="MTmNgGFK";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="fsrD8CFh"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id BCC8D122FE22;
+	Sat, 22 Feb 2025 01:41:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1740217272; bh=DJC8m9RjcUzmFrWWZuFi8uTLafSc+0ybR8NGmMT4ltU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MTmNgGFKrF0rvg4QXmmV19OqkJVyWfyWDRyZWlpxDA6uFgBDQRsh5EQBzVy3cBc/r
+	 LFszsOKShCd6gP4NLii3bpQT0rtipIuw0HvQ1pEA/dVshKV2KARxM7ARIxg6/7YUft
+	 0UWP7172G67OqFIf7UGGXJY1EfOQRbRsdHTRlM0hV90WJXhBPp3e4VskBMegQTGJaK
+	 8ik2qQYHWXMbmNBpiDgMuvKQs9+w0cDz2RFsPi7N6H8jr4pkL/oENH/w5O8grpRhaN
+	 UBxrNKeCcHyTa9NVKdkLjjBWD6WM4kXQqeZZxWhrnORIiW6P+JAs9NQwOJiz5YYOcC
+	 EMXwp4zu67WtQ==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id LY7T0GXny8v4; Sat, 22 Feb 2025 01:40:59 -0800 (PST)
+Received: from ketchup (unknown [183.217.80.34])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 5985B122FE21;
+	Sat, 22 Feb 2025 01:40:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1740217259; bh=DJC8m9RjcUzmFrWWZuFi8uTLafSc+0ybR8NGmMT4ltU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fsrD8CFhRg9q1QR3OxrQIQHy3dE0MqTVoVYAvG3TGvs3NnmAxV9kTeBrX41ZVaBtk
+	 muxP1MVHiyiU0yciKzLJYVBEOE5Gj7qlSt85kYEf+dLglu0jow5R2YIU2jBMli0Idn
+	 7NVEOebBcciUrFG8/dgpB4bXshEJ+w1dd/xFlTrp1CxNsm72OEp7lW7h3ffMD/HRpB
+	 lv0EK5fRodtDs+leawlaqoCzkzXgx/o9sZlQngL5GUbTUPqenE5xFLBptADrbt8vRp
+	 +5Ek0voMUxAaNt0XZCptEvIcwtT2GEEBWcB4u14Ced7NxYvWHrnq9SvIa5p20iY4S7
+	 k4vGgMWkv0VSQ==
+Date: Sat, 22 Feb 2025 09:40:47 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Alex Elder <elder@riscstar.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Guodong Xu <guodong@riscstar.com>
+Subject: Re: [PATCH v4 3/4] clk: spacemit: Add clock support for Spacemit K1
+ SoC
+Message-ID: <Z7mbn_de-KV-yqQP@ketchup>
+References: <20250103215636.19967-2-heylenay@4d2.org>
+ <20250103215636.19967-5-heylenay@4d2.org>
+ <f8b30551-25e7-4626-8c03-6d8807041d8a@riscstar.com>
+ <Z7HNLq3DgJj7WKGI@ketchup>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7HNLq3DgJj7WKGI@ketchup>
 
-Dne nedelja, 16. februar 2025 ob 19:36:08 Srednjeevropski standardni =C4=8D=
-as je Ryan Walklin napisal(a):
-> From: Jernej Skrabec <jernej.skrabec@gmail.com>
->=20
-> The mixer in the DE3 display engine supports YUV 8 and 10 bit
-> formats in addition to 8-bit RGB. Add the required register
-> configuration and format enumeration callback functions to the mixer,
-> and store the in-use output format (defaulting to RGB) and color
-> encoding in the mixer configuration.
->=20
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
->=20
-> ---
-> Changelog v4..v5:
-> - Remove trailing whitespace
->=20
-> Changelog v5..v6:
-> - Move color format and encoding flags to mixer and add struct.
-> ---
->  drivers/gpu/drm/sun4i/sun8i_mixer.c | 54 +++++++++++++++++++++++++++--
->  drivers/gpu/drm/sun4i/sun8i_mixer.h | 11 ++++++
->  2 files changed, 62 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/=
-sun8i_mixer.c
-> index a170f68708b1f..bc934186bfd6f 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> @@ -23,7 +23,10 @@
->  #include <drm/drm_gem_dma_helper.h>
->  #include <drm/drm_probe_helper.h>
-> =20
-> +#include <uapi/linux/media-bus-format.h>
-> +
->  #include "sun4i_drv.h"
-> +#include "sun50i_fmt.h"
->  #include "sun8i_mixer.h"
->  #include "sun8i_ui_layer.h"
->  #include "sun8i_vi_layer.h"
-> @@ -390,12 +393,52 @@ static void sun8i_mixer_mode_set(struct sunxi_engin=
-e *engine,
-> =20
->  	DRM_DEBUG_DRIVER("Switching display mixer interlaced mode %s\n",
->  			 interlaced ? "on" : "off");
-> +
-> +	if (mixer->color_model.format =3D=3D MEDIA_BUS_FMT_RGB888_1X24)
-> +		val =3D SUN8I_MIXER_BLEND_COLOR_BLACK;
-> +	else
-> +		val =3D 0xff108080;
-> +
-> +	regmap_write(mixer->engine.regs,
-> +		     SUN8I_MIXER_BLEND_BKCOLOR(bld_base), val);
-> +	regmap_write(mixer->engine.regs,
-> +		     SUN8I_MIXER_BLEND_ATTR_FCOLOR(bld_base, 0), val);
-> +
-> +	if (mixer->cfg->has_formatter)
-> +		sun50i_fmt_setup(mixer, mode->hdisplay,
-> +				 mode->vdisplay, mixer->color_model.format);
-> +}
-> +
-> +static u32 *sun8i_mixer_get_supported_fmts(struct sunxi_engine *engine, =
-u32 *num)
-> +{
-> +	struct sun8i_mixer *mixer =3D engine_to_sun8i_mixer(engine);
-> +	u32 *formats, count;
-> +
-> +	count =3D 0;
-> +
-> +	formats =3D kcalloc(5, sizeof(*formats), GFP_KERNEL);
-> +	if (!formats)
-> +		return NULL;
-> +
-> +	if (mixer->cfg->has_formatter) {
-> +		formats[count++] =3D MEDIA_BUS_FMT_UYYVYY10_0_5X30;
-> +		formats[count++] =3D MEDIA_BUS_FMT_YUV8_1X24;
-> +		formats[count++] =3D MEDIA_BUS_FMT_UYVY8_1X16;
-> +		formats[count++] =3D MEDIA_BUS_FMT_UYYVYY8_0_5X24;
-> +	}
-> +
-> +	formats[count++] =3D MEDIA_BUS_FMT_RGB888_1X24;
-> +
-> +	*num =3D count;
-> +
-> +	return formats;
->  }
-> =20
->  static const struct sunxi_engine_ops sun8i_engine_ops =3D {
-> -	.commit		=3D sun8i_mixer_commit,
-> -	.layers_init	=3D sun8i_layers_init,
-> -	.mode_set	=3D sun8i_mixer_mode_set,
-> +	.commit			=3D sun8i_mixer_commit,
-> +	.layers_init		=3D sun8i_layers_init,
-> +	.mode_set		=3D sun8i_mixer_mode_set,
-> +	.get_supported_fmts	=3D sun8i_mixer_get_supported_fmts,
->  };
-> =20
->  static const struct regmap_config sun8i_mixer_regmap_config =3D {
-> @@ -484,6 +527,11 @@ static int sun8i_mixer_bind(struct device *dev, stru=
-ct device *master,
->  	if (!mixer->cfg)
->  		return -EINVAL;
-> =20
-> +	/* default output format, supported by all mixers */
-> +	mixer->color_model.format =3D MEDIA_BUS_FMT_RGB888_1X24;
-> +	/* default color encoding, ignored with RGB I/O */
-> +	mixer->color_model.encoding =3D DRM_COLOR_YCBCR_BT601;
-> +
->  	regs =3D devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(regs))
->  		return PTR_ERR(regs);
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/=
-sun8i_mixer.h
-> index 8417b8fef2e1f..5f465a974fbdf 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> @@ -9,6 +9,7 @@
->  #include <linux/clk.h>
->  #include <linux/regmap.h>
->  #include <linux/reset.h>
-> +#include <drm/drm_color_mgmt.h>
->  #include <drm/drm_plane.h>
-> =20
->  #include "sunxi_engine.h"
-> @@ -177,6 +178,11 @@ struct sun8i_mixer_cfg {
->  	unsigned int	scanline_yuv;
->  };
-> =20
-> +struct sun8i_color_model {
-> +	u32			format;
-> +	enum drm_color_encoding	encoding;
-> +};
-> +
->  struct sun8i_mixer {
->  	struct sunxi_engine		engine;
-> =20
-> @@ -186,6 +192,11 @@ struct sun8i_mixer {
-> =20
->  	struct clk			*bus_clk;
->  	struct clk			*mod_clk;
-> +
-> +	struct regmap			*top_regs;
-> +	struct regmap			*disp_regs;
+Hi Alex,
 
-This chunk is DE33 specific and should go in patch 24.
+Before answering the reply, I'd like to share some information on these
+unconfirmed questions.
 
-Best regards,
-Jernej
+On Sun, Feb 16, 2025 at 11:34:06AM +0000, Haylen Chu wrote:
+> On Thu, Feb 13, 2025 at 10:04:10PM -0600, Alex Elder wrote:
+> > On 1/3/25 3:56 PM, Haylen Chu wrote:
+> > > diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+> > > new file mode 100644
+> > > index 000000000000..6fb0a12ec261
+> > > --- /dev/null
+> > > +++ b/drivers/clk/spacemit/ccu-k1.c
 
-> +
-> +	struct sun8i_color_model	color_model;
->  };
-> =20
->  enum {
->=20
+...
 
+> The next clock is weird, and it's the only one of its kind.  It is not
+> > represented in the clock tree diagram. It is a "factor 1" clock (so it
+> > just passes the parent's rate through), and has no gate.  Do you know
+> > why it's defined?  It is used only as one of the MPMU parent clocks.
+> > Why isn't just the pll1_d7 clock used in its place?
+> 
+> It is represented in the diagram. The photo version of the diagram seems
+> hard to search so I will ask the vendor to publish a PDF version if
+> possible.
+> 
+> As the definition involves no hardware bits, I guess it's actually an
+> alias listed to keep the tree structure in similar form. Will confirm
+> this with the vendor.
 
+Yes, it's confirmed as a placeholder.
 
+> 
+> > > +static CCU_FACTOR_DEFINE(pll1_d7_351p08, "pll1_d7_351p08", CCU_PARENT_HW(pll1_d7),
+> > > +			 1, 1);
+> > > +
+> > > +static CCU_GATE_DEFINE(pll1_d6_409p6, "pll1_d6_409p6", CCU_PARENT_HW(pll1_d6),
+> > > +		       MPMU_ACGR,
+> > > +		       BIT(0), BIT(0), 0, 0);
+> > > +static CCU_GATE_FACTOR_DEFINE(pll1_d12_204p8, "pll1_d12_204p8", CCU_PARENT_HW(pll1_d6),
+> > > +			      MPMU_ACGR,
+> > > +			      BIT(5), BIT(5), 0, 2, 1, 0);
+> > > +
+> > > +static CCU_GATE_DEFINE(pll1_d5_491p52, "pll1_d5_491p52", CCU_PARENT_HW(pll1_d5),
+> > > +		       MPMU_ACGR,
+> > > +		       BIT(21), BIT(21), 0, 0);
+> > > +static CCU_GATE_FACTOR_DEFINE(pll1_d10_245p76, "pll1_d10_245p76", CCU_PARENT_HW(pll1_d5),
+> > > +			      MPMU_ACGR,
+> > > +			      BIT(18), BIT(18), 0, 2, 1, 0);
+> > > +
+> > > +static CCU_GATE_DEFINE(pll1_d4_614p4, "pll1_d4_614p4", CCU_PARENT_HW(pll1_d4),
+> > > +		       MPMU_ACGR,
+> > > +		       BIT(15), BIT(15), 0, 0);
+> > > +static CCU_GATE_FACTOR_DEFINE(pll1_d52_47p26, "pll1_d52_47p26", CCU_PARENT_HW(pll1_d4),
+> > > +			      MPMU_ACGR,
+> > > +			      BIT(10), BIT(10), 0, 13, 1, 0);
+> > > +static CCU_GATE_FACTOR_DEFINE(pll1_d78_31p5, "pll1_d78_31p5", CCU_PARENT_HW(pll1_d4),
+> > > +			      MPMU_ACGR,
+> > > +			      BIT(6), BIT(6), 0, 39, 2, 0);
+> > > +
+> > > +static CCU_GATE_DEFINE(pll1_d3_819p2, "pll1_d3_819p2", CCU_PARENT_HW(pll1_d3),
+> > > +		       MPMU_ACGR,
+> > > +		       BIT(14), BIT(14), 0, 0);
+> > > +
+> > > +static CCU_GATE_DEFINE(pll1_d2_1228p8, "pll1_d2_1228p8", CCU_PARENT_HW(pll1_d2),
+> > > +		       MPMU_ACGR,
+> > > +		       BIT(16), BIT(16), 0, 0);
 
+...
+
+> > I couldn't find the "ripc_clk" on the clock tree diagram.  It is
+> > never used elsewhere, so I think this definition can go away.
+> 
+> I'm not sure whether the ripc_clk doesn't exist or it's just missing in
+> both datasheet and clock tree diagram. Will confirm with the vendor.
+
+It's just missing in the datasheet and clock tree diagram and now they
+have been completed[1].
+
+> > > +static CCU_GATE_DEFINE(ripc_clk, "ripc_clk", CCU_PARENT_NAME(vctcxo_24m),
+> > > +		       MPMU_RIPCCR,
+> > > +		       0x3, 0x3, 0x0,
+> > > +		       0);
+> > > +
+
+....
+
+> > > +static const struct clk_parent_data dpubit_parents[] = {
+> > > +	CCU_PARENT_HW(pll1_d3_819p2),
+> > > +	CCU_PARENT_HW(pll2_d2),
+> > > +	CCU_PARENT_HW(pll2_d3),
+> > > +	CCU_PARENT_HW(pll1_d2_1228p8),
+> > > +	CCU_PARENT_HW(pll2_d4),
+> > > +	CCU_PARENT_HW(pll2_d5),
+> > 
+> > The next two parent clocks are duplicates.  It looks this way on the
+> > clock tree diagram as well.  Is this correct? Can you find out from
+> > SpacemiT whether one of them is actually a different clock (like
+> > pll2_d6 or something)?  It makes no sense to have two multiplexed
+> > parent clocks with the same source.
+> 
+> Yes, will confirm it later. The register description[2] suggests it's
+> wrong (there aren't two configuration for MIPI_BIT_CLK_SEL resulting in
+> the same frequency).
+
+The clock tree diagram (and the vendor driver) were wrong. The 7th.
+parent should be pll2_d7 (427MHz * 7 is roughly 3GHz, which is PLL2's
+frequency). The diagram has been corrected.
+
+> > > +	CCU_PARENT_HW(pll2_d8),
+> > > +	CCU_PARENT_HW(pll2_d8),
+> > > +};
+> > > +static CCU_DIV_FC_MUX_GATE_DEFINE(dpu_bit_clk, "dpu_bit_clk", dpubit_parents,
+> > > +				  APMU_LCD_CLK_RES_CTRL1,
+> > > +				  17, 3, BIT(31),
+> > > +				  20, 3, BIT(16), BIT(16), 0x0,
+> > > +				  0);
+> > > +
+
+...
+
+> > > diff --git a/drivers/clk/spacemit/ccu_ddn.c b/drivers/clk/spacemit/ccu_ddn.c
+> > > new file mode 100644
+> > > index 000000000000..1df555888ecb
+> > > --- /dev/null
+> > > +++ b/drivers/clk/spacemit/ccu_ddn.c
+> > > @@ -0,0 +1,140 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * Spacemit clock type ddn
+> > > + *
+> > > + * Copyright (c) 2024 SpacemiT Technology Co. Ltd
+> > > + * Copyright (c) 2024 Haylen Chu <heylenay@4d2.org>
+> > > + */
+> > > +
+> > > +#include <linux/clk-provider.h>
+> > > +
+> > > +#include "ccu_ddn.h"
+> > 
+> > What does "DDN" stand for?
+> 
+> I'm not sure, the name is kept from the vendor driver. I could change it
+> to a more descriptive name, like "fraction-factor".
+
+It's abbreviated from "Divider Denominator Numerator", confirmed by the
+vendor. Quite weird a name. I'll make the abbreviation and corresponding
+explanation more clear in the next revision.
+
+Thanks,
+Haylen Chu
+
+[1]: https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb#part208
