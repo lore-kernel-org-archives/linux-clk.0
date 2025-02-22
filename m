@@ -1,57 +1,57 @@
 Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E23F16F0FE;
-	Sat, 22 Feb 2025 10:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554C36FC3;
+	Sat, 22 Feb 2025 11:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740221326; cv=none; b=UVFCGdcBMVdRKsAmSVNoDDHBL7hMpZnfzNdrJm30PGGmKHYfd7ch5FtlJTJfGHjfOux4flWH3ugBJdjpdodH1PuzRx5k3y62ezEC5PvTmpyBjJOLdnOHzYLbMoLz1NDCBbReTpzCtwhXRml9ZL/WPWHzWq9+KfnrEkebFKLqKGY=
+	t=1740224181; cv=none; b=exn47O3uYRyGiG16ZW3SHRXR6p/6/RYW3qMKIcJvYxtijmL8H7CMDoKeklbakgdJX9oZn+3GohIRc1rKua+mSBrQw9rc8DPEI+bd3LlWdUBKh2XKQ9bbbsxlp1uljPR4/2yJrtXoOgMWQn9pdgCXlLxqGtqmPG7NlkroXs6pQ/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740221326; c=relaxed/simple;
-	bh=K6Nyh2RaPue8OIU5uYXZtZdm/qdGvXvMpPEc6QdZmgw=;
+	s=arc-20240116; t=1740224181; c=relaxed/simple;
+	bh=SOwH0X3o/HhmS2t6HTuMd4f+rDYK0rxVnzjVPLbUQq4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WlZjUw/DADfyuYmlxajZu6t48Oc2Kpr37vm6T0hp6wYEvzl2tn3FK3HP0dg0PxtIJd10N9dwFNJ3Mx5QD5P9rV9caXBWlDG1ky9bYv56udWAE4nFT34oEa+pJfPDeH3Na4fPgosYYiqT9659sMr2WUZeKBDQzjDszexJoZqYHoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=HzjEUkHq; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=0xpAi6Of; arc=none smtp.client-ip=5.78.89.93
+	 Content-Type:Content-Disposition:In-Reply-To; b=KOnCQixG19Lf3WZlQmm9f6ozYVICcTXt3i8EJRL0uLP236aTqGMcgfbXHG3xSInEXqA+RUYefQ3B3i5sYBRiIJcdfc+5ZMh+kb2u8aulLKmCfsO2xkQceCGKAjNZojr5Al4i6PRylwOmChgrkh2nX9Gs8K9AJJQCaSpTwdSFUPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=ABVOlES/; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=ujfBiNk5; arc=none smtp.client-ip=5.78.89.93
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="HzjEUkHq";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="0xpAi6Of"
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="ABVOlES/";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="ujfBiNk5"
 Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 9C190122FE22;
-	Sat, 22 Feb 2025 02:48:42 -0800 (PST)
+	by bayard.4d2.org (Postfix) with ESMTP id 5ED23122FE26;
+	Sat, 22 Feb 2025 03:36:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740221322; bh=K6Nyh2RaPue8OIU5uYXZtZdm/qdGvXvMpPEc6QdZmgw=;
+	t=1740224177; bh=SOwH0X3o/HhmS2t6HTuMd4f+rDYK0rxVnzjVPLbUQq4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HzjEUkHqYogZ4w4yPtviWueYx3hvNn9UNpccS9i/tP9tyGV1Z4Qww4PGQxXBhYLmn
-	 OuFgUUK7Tr3rTe9gF7sYohMdKKmUZoqQNn25sxgGu8kLYsaoRj2A7YYOFXErvmJUfF
-	 AQbUm+Ory1Et5e/yiqd2y+eIZOe+ZloZsNqAEiELT/myB/Ze8bKM9kl9IkZhdY1wQg
-	 jdv5p0krxErHwv8215mOwWfAP/p8co//eXlbtH1H2ecY9XuI3O0WnLAffPiJOal3MA
-	 WHErU5lEI0Mu8qH77YSYQ0O1vja2q+lF9heApJY1FjZDt2DkiF21iVsHelrWtq48DY
-	 SoZIfYI1NO9Zg==
+	b=ABVOlES/GvScXjONNVDQvu/S0Hs0wPhbGU2RDAYy2cEeih5WIoQHqUmafU13fxDFu
+	 YsWFXJluYDlaEhjHUYJtm2u/bMA+KvTfONDIopxwdKbEsNXl97hmYRAj+c2EU+Hw3p
+	 aedeLCEuNoaB0KPVlAkQ7MYLSueCdk9AD24hVdyeB8ILjIz+UYi6NcQ+cBwz+nZ3B5
+	 rufn8cDIc5M/ZRIN1c1aQh0Bo731er7upOX6k9iMX7l3fRbu1OlRImXED2Fh7wYcTZ
+	 m6Bv/z5YeJlkg0VNvaVFDSz/rgmlcKN7K5jzF/dAIfusm/7qdgudQVhZFY23ha9iDJ
+	 eIMiVIe5K6luw==
 X-Virus-Scanned: amavisd-new at 4d2.org
 Received: from bayard.4d2.org ([127.0.0.1])
  by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id iDt5bERNoadS; Sat, 22 Feb 2025 02:48:36 -0800 (PST)
+ with ESMTP id g1TN3FBn8qRe; Sat, 22 Feb 2025 03:36:13 -0800 (PST)
 Received: from ketchup (unknown [183.217.80.34])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 197FE122FE21;
-	Sat, 22 Feb 2025 02:48:31 -0800 (PST)
+	by bayard.4d2.org (Postfix) with ESMTPSA id A95BC122FE25;
+	Sat, 22 Feb 2025 03:36:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740221316; bh=K6Nyh2RaPue8OIU5uYXZtZdm/qdGvXvMpPEc6QdZmgw=;
+	t=1740224173; bh=SOwH0X3o/HhmS2t6HTuMd4f+rDYK0rxVnzjVPLbUQq4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0xpAi6Of6hQKz9iujbvRVBr3slZR+xJVJAu0zPYmyLnY7SzjI1s7DSDt7gOjoGho7
-	 YDJiMQZoRd/yVZQeHZhFeY8PuDcK8bhtqjE3IU6NoYh3Cz42WuhCFxIi+Bv10Ace1l
-	 hw5MxLUb3rm9RWOd3WL8bZ5Rxe2OM4F+1x9mb5iyCVN5iyjkNe/JqoRYgA3sQ0I1dR
-	 2cwbR/RHg/w5We67fqS3fkxegj2WMvyNzEYGWuEf3od5VzhTe0tSrqxFSwYaAul6Jn
-	 jKzbI9RjkJsfrtrvzdtX9xIvutwypw/i6w8XGuimC7ey7T7oi2rG8R808ZbKR2GFXi
-	 lxTxErqCfPQ6w==
-Date: Sat, 22 Feb 2025 10:48:22 +0000
+	b=ujfBiNk57CUKu+M7ljRJ0+19wzyuQi2TwhupqBRWE2X11DD7xojiJc8aH0nGqrQoO
+	 TRAGFEfGaWX/oiqAjv1Es0p6ALLAmtUospfJZV4CkJPT5E82aSN/F9LTdzFPP8ZDhf
+	 3qJlfAh1xm2cinokwTI4NuRutnBj7HD1c0v+GB69Enj4+A6qJ/3bbmh5Z0MUnbRyfA
+	 oLSLnZU+Gfebcy1tEnnKWUyi2SoCuZzL3zf0snIAMOy+Af/Vh+P462eOicyqiuPPZ/
+	 gsNYyP+yc0R/g2KdgmZ6Utb9q+qkFadB29zPBxIPZdkKhBlsWhX1k82nPc8YyvHejt
+	 Wo/go59RUiKOA==
+Date: Sat, 22 Feb 2025 11:36:00 +0000
 From: Haylen Chu <heylenay@4d2.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Alex Elder <elder@riscstar.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -62,10 +62,9 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Inochi Amaoto <inochiama@outlook.com>,
 	Chen Wang <unicornxdotw@foxmail.com>,
 	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	Guodong Xu <guodong@riscstar.com>
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
 Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-Message-ID: <Z7mrdrACFp3m-7sy@ketchup>
+Message-ID: <Z7m2oNXbwJ06KtLQ@ketchup>
 References: <20250103215636.19967-2-heylenay@4d2.org>
  <20250103215636.19967-4-heylenay@4d2.org>
  <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
@@ -74,8 +73,7 @@ References: <20250103215636.19967-2-heylenay@4d2.org>
  <Z63T_EDvXiuRQbvb@ketchup>
  <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
  <Z7BTVu10EKHMqOnJ@ketchup>
- <7c697e9a-d6d9-4672-9738-93ce3a71beb6@riscstar.com>
- <4f7bf109-bf18-42be-971c-5d5edd9595b5@kernel.org>
+ <3e196e9c-c942-4026-8d6c-69c9930bebd5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -84,123 +82,90 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4f7bf109-bf18-42be-971c-5d5edd9595b5@kernel.org>
+In-Reply-To: <3e196e9c-c942-4026-8d6c-69c9930bebd5@kernel.org>
 
-On Sat, Feb 22, 2025 at 10:59:09AM +0100, Krzysztof Kozlowski wrote:
-> On 22/02/2025 00:40, Alex Elder wrote:
-> > I have a general proposal on how to represent this, but I'd
-> > like to know whether it makes sense.  It might be what Krzysztof
-> > is suggesting, but in any case, I hope this representation would
-> > work, because it could simplify the code, and compartmentalizes
-> > things.
+On Sat, Feb 22, 2025 at 10:52:02AM +0100, Krzysztof Kozlowski wrote:
+> On 15/02/2025 09:41, Haylen Chu wrote:
 > > 
-> > Part of what motivates this is that I've been looking at the
-> > downstream reset code this week.  It contains a large number of
-> > register offset definitions identical to what's used for the
-> > clock driver.  The reset driver uses exactly the same registers
-> > as the clock driver does.  Downstream they are separate drivers,
-> > but the clock driver exports a shared spinlock for both drivers
-> > to use.
+> >>> 	};
+> >>>
+> >>> For the other two clock controllers (APBS and APBC), syscons are really
+> >>> unnecessary and it's simple to fold them.
+> >>
+> >>
+> >> I don't follow. Do we talk about children or syscon compatible?
 > > 
-> > These really need to be incorporated into the same driver for
-> > upstream.
-> 
-> Why? First, it is not related to the topic here at all. You can design
-> drivers as you wish and still nothing to do with discussion about binding.
-> Second, different subsystems justify different drivers and Linux handles
-> this well already. No need for custom spinlock - regmap already does it.
-> 
-> 
+> > APBS region contains only clock (PLL) bits and APBC region contains only
+> > reset and clock bits, so I was thinking about dropping the syscon nodes
+> > and changing their compatible to spacemit,k1-plls and
+> > spacemit,k1-cru-apbc.
 > > 
-> > The clock code defines four distinct "units" (a term I'll use
-> > from here on; there might be a better name):
-> >    MPMU  Main Power Management Unit
-> >    APMU  Application Power Management Unit
-> >    APBC  APB Clock
-> >    APBS  APB Spare
+> > In summary, my plan is,
 > > 
-> > The reset code defines some of those, but doesn't use APBS.
-> > It also defines three more:
-> >    APBC2 Another APB Clock
-> >    RCPU  Real-time CPU?
-> >    RCPU2 Another Real-time CPU
+> > - For MPMU, APMU and APBC region, keep the binding in soc/spacemit.
+> >   They'll be reset, clock and power controllers, with compatible
+> >   "spacemit,k1-syscon-*".
+> > - For APBS region, write a new binding clock/spacemit,k1-plls, as it
+> >   contains only PLL-related bits. It acts as clock controller.
+> > - All split children will be eliminated, there'll be only four device
+> >   nodes, one for each region, matching the datasheet.
+> > - Put all clock-related binding definition of SpacemiT K1 in
+> >   dt-bindings/clock/spacemit,k1-ccu.h
 > > 
-> > Each of these "units" has a distinct I/O memory region that
-> > contains registers that manage the clocks and reset signals.
-> 
-> So there are children - mpmu, apmu, apbclock, apbspare, apbclock2, rcpu
-> 1+2? But previous statements were saying these are intermixed?
-> 
-> " I'll make APMU/MPMU act as a whole device"
-
-My reply seems somehow misleading. The statement means I will merge the
-children with the syscon into one devicetree node, which applies for
-both APMU and MPMU. I wasn't going to say that APMU and MPMU are
-intermixed.
-
-As Alex said, all these units have their own distinct and separate MMIO
-regions.
-
+> > Is it fine for you?
 > > 
-> > I suggest a single "k1-clocks" device be created, which has
 > 
-> For four devices? Or for one device?
+> That did not explain hardware to me.
 
-By Alex's example, I think he means a device node taking all these
-distinct MMIO regions as resource.
+Sorry if my replies haven't made things clear. I'm goint to make a
+(hopefully) more clear conclusion,
 
-	clock {
-		compatible = "spacemit,k1-clocks";
-
-		reg = <0x0 0xc0880000 0x0 0x2050>,
-		      <0x0 0xc0888000 0x0 0x30>,
-		      <0x0 0xd4015000 0x0 0x1000>,
-		      <0x0 0xd4050000 0x0 0x209c>,
-		      <0x0 0xd4090000 0x0 0x1000>,
-		      <0x0 0xd4282800 0x0 0x400>,
-		      <0x0 0xf0610000 0x0 0x20>;
-		reg-names = "rcpu",
-			    "rcpu2",
-			    "apbc",
-			    "mpmu",
-			    "apbs",
-			    "apmu",
-			    "apbc2";
-
-		/* ... */
-	};
-
-> No, it's again going to wrong direction. I already said:
-> 
-> "You need to define what is the device here. Don't create fake nodes ust
-> for your drivers. If registers are interleaved and manual says "this is
-> block APMU/MPMU" then you have one device, so one node with 'reg'."
-> 
-> So what is the device here? Can you people actually answer?
-> 
-
-I'm not sure about the apbc2, rcpu and rcpu2 regions; they aren't
-related to the thread, either. For APBC, MPMU, APBS and APMU, I'm pretty
-sure they're standalone blocks with distinct and separate MMIO regions,
-this could be confirmed by the address mapping[1].
-
-> 
-> > access to all of the I/O address ranges.  And then within
-> > the DT node for that device there is a sub-node for the
-> 
-> Uh, confusing. You said there is one device for all the clocks, so if
-> there is one device so also one device node. No children.
-> 
-> Maybe you have more devices but none of you is explaining the hardware
-> that way. Mixing talk about drivers is really not helping.
-> 
+> You assume that some way, maybe
+> through magical crystal ball, I know your hardware and will tell you
+> what to do.
 >
+> No.
 > 
+> I have dozens of other patches in my inbox. It's you who should explain
+> the hardware in simple, concise way so we can judge whether DT
+> description is correct.
+> 
+> Again: define what is the actual device, what is its address space, what
+> are its possible *separate* and *distinctive* children.
+
+The series covers four seperate blocks,
+
+- Application Power Manage Unit, APMU
+- Main Power Manage Unit, MPMU
+- APB Bus Clock Unit, APBC
+- APB Spare, APBS
+
+they're clearly separate blocks and have their own distinct, separate
+address spaces, confirmed by the Address Mapping section in the TRM[1].
+
+These four blocks provide hardware bits for three purposes: power
+management, reset signals and clocks. Not every block is capable of all
+the three functionalities,
+
+- APMU, MPMU: power, reset, clock
+- APBC: clock, reset
+- APBS: clock
+
+Reset and clock bits, if present, always stay in the same register.
+Power management bits stay in others. These two types of registers
+interleave if present in the same block (APMU and MPMU case).
+
+These blocks have no child: power, clock and reset definitions differ
+from block to block, no reusable nodes could be split from them.
+
+Hope this conclusion will help the reviewing. Please tell if something
+is unclear.
+
 > 
 > Best regards,
 > Krzysztof
 
-Best regards,
+Thanks,
 Haylen Chu
 
 [1]: https://developer.spacemit.com/documentation?token=LzJyw97BCipK1dkUygrcbT0NnMg
