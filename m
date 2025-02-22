@@ -1,62 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016FF78F4A;
-	Sat, 22 Feb 2025 13:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D02156F41;
+	Sat, 22 Feb 2025 14:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740231368; cv=none; b=ocGGIq6A0IassQ7nQ5l2pPU9IcaMkHk0S6iYh6BMBWqnPGoZGbJRU1tcR30OhXcQg8FOLVJgWMElfVFMdzQ35WHeXYcVnbU9eyrrlko6p0Wq97qzi3QD/xR2MFF1iIEXGk1BahpdpqOG6OwD9/u4EZPKX/3wa7zyUDLZVIPg+b8=
+	t=1740233960; cv=none; b=Ui73iNp00JvP5+MlxWAjhzpzVWs1dyfaJxc261cxrgCG2DIzUQ0CqrEaCQd6YVPB+3qkTKtT/QJhYkHqvmYgvavRZWU0LsoQ/LqOEKodBJZmQepkvTUwk7ssrBl2dLrDpDi/3My+I6Y9MWGP1T16XmQgVjwcBimoK4C16y2R+KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740231368; c=relaxed/simple;
-	bh=/gXc0SkpbcqjdFEW1sUVpPIbLYC86EH6P7VZH8G9vII=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Z9TbvDd4lmhDvPiSH19EvJp1vbSrixp0KDOu4UWkcXRzcRlOui5tevKu+YHqlM0fsDdRnYbaY7O61wmESmbmXG1615ORrS4y59ee72/c2p457AcdEnVNj6DEeSdJQ2bG6FYyWecNsgN/5g6/53WnAv2JN/kcFmiIeN4wxHWMG+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55C62C4CED1;
-	Sat, 22 Feb 2025 13:36:07 +0000 (UTC)
-Received: from wens.tw (localhost [127.0.0.1])
-	by wens.tw (Postfix) with ESMTP id 0E24D5FB4D;
-	Sat, 22 Feb 2025 21:36:05 +0800 (CST)
-From: Chen-Yu Tsai <wens@csie.org>
-To: linux-sunxi@lists.linux.dev, Chris Morgan <macroalpha82@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
- p.zabel@pengutronix.de, conor+dt@kernel.org, krzk+dt@kernel.org, 
- robh@kernel.org, samuel@sholland.org, jernej.skrabec@gmail.com, 
- sboyd@kernel.org, mturquette@baylibre.com, ryan@testtoast.com, 
- Chris Morgan <macromorgan@hotmail.com>
-In-Reply-To: <20250213172248.158447-1-macroalpha82@gmail.com>
-References: <20250213172248.158447-1-macroalpha82@gmail.com>
-Subject: Re: (subset) [PATCH V2 0/2] Add Clock and Reset for TCON LCD
-Message-Id: <174023136503.2749343.5726687557898237585.b4-ty@csie.org>
-Date: Sat, 22 Feb 2025 21:36:05 +0800
+	s=arc-20240116; t=1740233960; c=relaxed/simple;
+	bh=UVCdIVJsnFhC5EPAk8rsCE0RK3FZZWu5YtUXp0PdQJM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bXSUOwGzJJBgZMbaJF6dl+tFRMa/I6LNYZwnElohWWcbC9xlK1SHm39JdounmRKflaVLSp1N0R/+KXbaNsuNx54vt5uM5jH4z53idwKKAEa+xvTdaheQ19Xn121PYfEmtHJXVdOhLCI1PU5BQibkvjxuxYJW0PscfW/LXS6r6lY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: DXNgfJc4QGmu7yR6mhgowg==
+X-CSE-MsgGUID: xrE1GFjsSxeJp86URmNjKg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 22 Feb 2025 23:19:08 +0900
+Received: from localhost.localdomain (unknown [10.226.92.41])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8ED55436E6E8;
+	Sat, 22 Feb 2025 23:19:06 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH] clk: renesas: rzv2h: Adjust for CPG_BUS_m_MSTOP starting from m = 1
+Date: Sat, 22 Feb 2025 14:17:01 +0000
+Message-ID: <20250222141903.41262-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-On Thu, 13 Feb 2025 11:22:46 -0600, Chris Morgan wrote:
-> From: Chris Morgan <macromorgan@hotmail.com>
-> 
-> Add the required resets and clocks used by the display engine TCON for
-> LCD output. This is required for LCD output for the DE33 which is
-> currently pending acceptance into mainline.
-> 
-> Note that while the clock is exposed on the T507, H616, and H700 the
-> H616 does not expose the LCD controller that requires these clocks.
-> 
-> [...]
+Avoid using the "- 1" for finding mstop_index in all functions accessing
+priv->mstop_count, by adjusting its pointer in rzv2h_cpg_probe().
 
-Applied to clk-for-6.15 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
+While at it, drop the intermediate local variable 'index'.
 
-[2/2] clk: sunxi-ng: h616: Add clock/reset for LCD TCON
-      commit: 730feeaea72f1260548e57d35dd49603cd86a7e4
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Closes: https://lore.kernel.org/all/CAMuHMdX1gPNCFddg_DyK7Bv0BeFLOLi=5eteT_HhMH=Ph2wVvA@mail.gmail.com/
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/rzv2h-cpg.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Best regards,
+diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
+index 419dc8cd2766..2b9771ab2b3f 100644
+--- a/drivers/clk/renesas/rzv2h-cpg.c
++++ b/drivers/clk/renesas/rzv2h-cpg.c
+@@ -447,8 +447,7 @@ static void rzv2h_mod_clock_mstop_enable(struct rzv2h_cpg_priv *priv,
+ {
+ 	unsigned long mstop_mask = FIELD_GET(BUS_MSTOP_BITS_MASK, mstop_data);
+ 	u16 mstop_index = FIELD_GET(BUS_MSTOP_IDX_MASK, mstop_data);
+-	unsigned int index = (mstop_index - 1) * 16;
+-	atomic_t *mstop = &priv->mstop_count[index];
++	atomic_t *mstop = &priv->mstop_count[mstop_index * 16];
+ 	unsigned long flags;
+ 	unsigned int i;
+ 	u32 val = 0;
+@@ -469,8 +468,7 @@ static void rzv2h_mod_clock_mstop_disable(struct rzv2h_cpg_priv *priv,
+ {
+ 	unsigned long mstop_mask = FIELD_GET(BUS_MSTOP_BITS_MASK, mstop_data);
+ 	u16 mstop_index = FIELD_GET(BUS_MSTOP_IDX_MASK, mstop_data);
+-	unsigned int index = (mstop_index - 1) * 16;
+-	atomic_t *mstop = &priv->mstop_count[index];
++	atomic_t *mstop = &priv->mstop_count[mstop_index * 16];
+ 	unsigned long flags;
+ 	unsigned int i;
+ 	u32 val = 0;
+@@ -630,8 +628,7 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
+ 	} else if (clock->mstop_data != BUS_MSTOP_NONE && mod->critical) {
+ 		unsigned long mstop_mask = FIELD_GET(BUS_MSTOP_BITS_MASK, clock->mstop_data);
+ 		u16 mstop_index = FIELD_GET(BUS_MSTOP_IDX_MASK, clock->mstop_data);
+-		unsigned int index = (mstop_index - 1) * 16;
+-		atomic_t *mstop = &priv->mstop_count[index];
++		atomic_t *mstop = &priv->mstop_count[mstop_index * 16];
+ 		unsigned long flags;
+ 		unsigned int i;
+ 		u32 val = 0;
+@@ -926,6 +923,9 @@ static int __init rzv2h_cpg_probe(struct platform_device *pdev)
+ 	if (!priv->mstop_count)
+ 		return -ENOMEM;
+ 
++	/* Adjust for CPG_BUS_m_MSTOP starting from m = 1 */
++	priv->mstop_count -= 16;
++
+ 	priv->resets = devm_kmemdup(dev, info->resets, sizeof(*info->resets) *
+ 				    info->num_resets, GFP_KERNEL);
+ 	if (!priv->resets)
 -- 
-Chen-Yu Tsai <wens@csie.org>
+2.43.0
 
