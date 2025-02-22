@@ -1,108 +1,148 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649912AF04;
-	Sat, 22 Feb 2025 22:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8BD1D6DB9;
+	Sat, 22 Feb 2025 23:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740263873; cv=none; b=nxq+ZcW2h2f9/jFjfU9WdS0i1ye0a3gzTuwoqhSe6GjJh6sWcRF/CXeqVp47D3Duo8oE3rQIYeOsnfwn+ORRoRhaq2peJ76/YS9ZTZmo9R8BFCagone8ZWD0BR7A/CEJnaoyAoYoG9rSixSMtKuDngIiXY+UHbANoq0IjSBG3U0=
+	t=1740266816; cv=none; b=DwsEJv9Uzq0Er1NLKxlBv8vGahoTQ8MQBR6yaK4Om6D7dTrh+XBsS4gMzJETgnd/Zs11yiLsBltS38QSUKF/NDHZX+GjkR/64etSwiRkO1iv4UHA5vhIk49wJmqRtA8O/vEo5bqbN/OggjVW1Fyqv74IBxSDczdSbl8Y/2U2Zo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740263873; c=relaxed/simple;
-	bh=0LcO31T+f5RdJjXLyY8cCqbfbF00bXtgTsBHBhv45A8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rUtf0fqIuDhJzvDFoNSu6urQpcv7aHM6asbiuQJNcABPW7OjYmeCQIcKL/WVgAMClOenUL3qyksVBX3TRjdYg/fWRqgmyC0O+zLlmB4L9eWKtjcdzyBviwxBcSgRJXWT5lzQCbyXg1tCK38ObEfngkkUHIwU5aFM2kCiNjXsEbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=2FVqp01P; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1740266816; c=relaxed/simple;
+	bh=mDgOKJm5asYlG0UTXQh0eQj73mpjq3Z3D6VUArTpLus=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=h1s1EGzdWpWlcdGZ/W7J3btVDNNqNSgvjP+FI7cWKAglk4aRNX1UG92W8o9kBBwf17a94KDqfZziTFdANZda3Dc25flsxTi5ycICZdBARtIdpNIhhUVjStlxBpxe1hMzBK+J3o/Aa7mlTGDXyPVtDbWLuuanO/Pzt7yxhbqsxvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=mSJuPdiL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=4G+8CdjT; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="2FVqp01P"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=OnNwP7mpVN7zXhPE9vJ/xWGv1zj1DccbezxtZx8sRBU=; b=2FVqp01PBKuoNTsqpzT9a0qVJV
-	G3QUGO/WP9lVGZkYEizeFgE8Y1QtXmFVmRQ6U7ui+ordMWasogTovwY0sJG/pUczGPi4Wskv9GEKj
-	t3FAig77PYjR7F7E8v/bKCn4kH8C86YC7mneIaTgI2zjstgWPCLePtrr9+EEWSicrra3sZdD/I9Xl
-	nlZklOPzophBA0MFiPGEOBv/UaQAaI/DXxZgKv56ocJ1F0nAIEOSR/Ayd4VcF2RVrFmPq0Ol9Px9A
-	0OyTybdHcUQFtDdRxYGVVtto9zF9+fDn1P7fMqpaYoY+Vf038317rM4zmkKpdu19ZzrjlC9FKPiOB
-	Ib4ZXsfg==;
-Received: from i53875a10.versanet.de ([83.135.90.16] helo=phil.fritz.box)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tly7x-00048S-Dp; Sat, 22 Feb 2025 23:37:41 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liujianfeng1994@gmail.com,
-	sebastian.reichel@collabora.com,
-	cristian.ciocaltea@collabora.com,
-	heiko@sntech.de
-Subject: [PATCH v2] clk: check for disabled clock-provider in of_clk_get_hw_from_clkspec
-Date: Sat, 22 Feb 2025 23:37:33 +0100
-Message-ID: <20250222223733.2990179-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="mSJuPdiL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="4G+8CdjT"
+Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 251401140108;
+	Sat, 22 Feb 2025 18:26:53 -0500 (EST)
+Received: from phl-imap-07 ([10.202.2.97])
+  by phl-compute-13.internal (MEProxy); Sat, 22 Feb 2025 18:26:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1740266813; x=1740353213; bh=mDgOKJm5asYlG0UTXQh0eQj73mpjq3Z3
+	D6VUArTpLus=; b=mSJuPdiLMVqlhvPFVqPxUarc1xh36WEBNJDEF0aOhocCy4X8
+	7Zam/qV9r7iQsEtm94KwL96SJNjy5GumusBLbD7Yvh9eAJlyFGpR9dx/zRoFST7I
+	0P5F5dC3cRzKezjG3/sANWWQAbOHqcUvuhV7X0dN67Trv+g59tHTwNrBXQIthONB
+	FnzVs5jXUs62sRbRHUDbe0Nh7ahDV/hDQdMAbieSWfTa5k8HC04s2ejqp4Arf8mf
+	4CV9xd2cA8D7nw36UaqhKjZ+Q22i5UPqHRreWpnTfZA9zUz5LCB8Kq4hrju2saeO
+	JGuCb8wHOgfJxl9msq2yQ1Toz2+ZzQ7Kbc63Vw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740266813; x=
+	1740353213; bh=mDgOKJm5asYlG0UTXQh0eQj73mpjq3Z3D6VUArTpLus=; b=4
+	G+8CdjTB47JYOAtauLKYh5Enm2dhLuCzVbd2vZXL8ZSvLmzbUesoZ4ycl9dnPU8e
+	8qFfhQ/SspMTqkXxk0r6daKBw+dh3+P+dxGGgVwPqHPjPF9e6Sjm2ohncLe3i+XG
+	rx5o2/wBVwn1ARnbA90wC4heaPjXHE93gDtF6ipyAYYJnKmIW+CB8u80iQCMdFK0
+	q9FJvERPOZdfAn3gh8cPxvXDA5xbHUbL41gN6laIQnmCXerO4GLSk8H+f+UGIQvC
+	Zp7AZUH212xoQlPjvJjAiz1oCY7bqs/l6YP77qL6qoGPsU/jXGNKyUlvnSiIWk1h
+	zLU4yLAF2TyJcQU1swtug==
+X-ME-Sender: <xms:O126Z7MhVol6pbvKJR79nM5A2zx0E6En9v9vqRkZovpelyjl17K2Fg>
+    <xme:O126Z19H7W7NY0J1PwMbpcdMHGkFitPIGRowE8Q1R5CNvpsQiCkW4lJFSR81VPW3d
+    joINqtFXPkCqYNhmA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejgedvhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepfdfthigrnhcuhggrlhhklhhinhdfuceorhihrghnsehtvghsthhtoh
+    grshhtrdgtohhmqeenucggtffrrghtthgvrhhnpefftdeuveejteeluedugfffhfekhefg
+    fedvgfeujeeiteeutedvgffhiefgkefhtdenucffohhmrghinhepkhgvrhhnvghlrdhorh
+    hgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprhih
+    rghnsehtvghsthhtohgrshhtrdgtohhmpdhnsggprhgtphhtthhopedvfedpmhhouggvpe
+    hsmhhtphhouhhtpdhrtghpthhtoheprghnughrvgdrphhriiihfigrrhgrsegrrhhmrdgt
+    ohhmpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprh
+    gtphhtthhopeifvghnshestghsihgvrdhorhhgpdhrtghpthhtohepuggrnhhivghlsehf
+    fhiflhhlrdgthhdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtg
+    hpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthht
+    ohepkhhikhhutghhrghnleeksehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrtghroh
+    grlhhphhgrkedvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhhsrdhphhhi
+    lhhiphhpvgesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:O126Z6QVG45LFxjSqt-KjnsnFc7ZS8pVdHI_u2EnMuCfA5JVmcsg_Q>
+    <xmx:O126Z_v6DEc-jCPyxH5nayPnym5NRDneUw9zUd_wyb3oi97XOHiMfg>
+    <xmx:O126ZzcjrC9MWCreab1-EeEElnCY3YJTA1ErM9zmDcahlMw2dURd-A>
+    <xmx:O126Z70EiZ257hUzdPwT4uj5TceUkDTqSIHZf3rOlVHMKnE3yQ8iHA>
+    <xmx:PV26Z3MRteuWw0neHkoT6N7idaUjo2AJRhxt7mTNeXRQgzv8EoS3H7Ik>
+Feedback-ID: idc0145fc:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 3029BBA006F; Sat, 22 Feb 2025 18:26:51 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Sun, 23 Feb 2025 12:26:17 +1300
+From: "Ryan Walklin" <ryan@testtoast.com>
+To: "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+ "Maxime Ripard" <mripard@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "David Airlie" <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
+ "Samuel Holland" <samuel@sholland.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>
+Cc: "Andre Przywara" <andre.przywara@arm.com>,
+ "Chris Morgan" <macroalpha82@gmail.com>,
+ "Hironori KIKUCHI" <kikuchan98@gmail.com>,
+ "Philippe Simons" <simons.philippe@gmail.com>,
+ "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Message-Id: <44980f16-4b9c-4e49-92fa-af8b2677ca31@app.fastmail.com>
+In-Reply-To: <7770397.EvYhyI6sBW@jernej-laptop>
+References: <20250216183524.12095-1-ryan@testtoast.com>
+ <2221204.Mh6RI2rZIc@jernej-laptop>
+ <2a864555-d81f-4048-aa0b-c286544faa50@app.fastmail.com>
+ <7770397.EvYhyI6sBW@jernej-laptop>
+Subject: Re: [PATCH v7 00/27] drm: sun4i: add Display Engine 3.3 (DE33) support
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-of_clk_get_hw_from_clkspec checks all available clock-providers by
-compairing their of-nodes to the one from the clkspec. If no matching
-clock-provider is found, the function returns EPROBE_DEFER to cause a
-re-check at a later date.
 
-If a matching clock-provider is found, an authoritative answer can be
-retrieved from it whether the clock exists or not.
 
-This does not take into account that the clock-provider may never appear,
-because it's node is disabled. This can happen for example when a clock
-is optional, provided by a separate block which just never gets enabled.
+On Sat, 22 Feb 2025, at 10:28 PM, Jernej =C5=A0krabec wrote:
+> Sorry, completely forgot. YUV420 HDMI code relies on my previous work,=20
+> with which
+> Maxime wasn't happy with:
+>
+> https://lore.kernel.org/linux-sunxi/20230924192604.3262187-1-jernej.sk=
+rabec@gmail.com/
+>
+> So unless switching HDMI to bridge ops is implemented, which also=20
+> brings format,
+> YUV formatter and some other patches just add unused code, which isn't=20
+> ideal,
+> especially if we decide to rework driver before that code can be put i=
+n=20
+> acceptable
+> state for all involved.
+>
+> From quick look, patches 5-13, 26 should be dropped for now. Not sure =
+about 1-4.
+>
+> I'm fine with AFBC support going in, it's just one patch.
 
-One example of this happening is the rk3588's VOP, which has optional
-additional display-clock-supplies coming from PLLs inside the hdmiphy
-blocks. These can be used for better rates, but the system will also
-work without them.
+Makes sense, ok I will prepare a pure DE33 patch with AFBC and RGB suppo=
+rt, removing the YUV code. I think the CSC changes (1-4) are good to sta=
+y as it is a change that makes sense regardless and makes the YUV work a=
+ bit easier.
 
-The problem around that is described in the followups to:
-https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com/
+Thanks for the other clarifications and vendor code links, will do a bit=
+ of reading.
 
-As we already know the of-node of the presumed clock-provider, just add
-a check via of_device_is_available whether this is a "valid" device node.
-This prevents eternal defer-loops.
+Regards,
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
-changes in v2:
-- add received Reviewed and Tested tags
-- fix two spelling issues (Cristian and Sebastian)
-
- drivers/clk/clk.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index cf7720b9172f..50faafbf5dda 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -5258,6 +5258,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
- 	if (!clkspec)
- 		return ERR_PTR(-EINVAL);
- 
-+	/* Check if node in clkspec is in disabled/fail state */
-+	if (!of_device_is_available(clkspec->np))
-+		return ERR_PTR(-ENOENT);
-+
- 	mutex_lock(&of_clk_mutex);
- 	list_for_each_entry(provider, &of_clk_providers, link) {
- 		if (provider->node == clkspec->np) {
--- 
-2.47.2
-
+Ryan
