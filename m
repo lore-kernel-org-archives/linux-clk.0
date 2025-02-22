@@ -1,121 +1,108 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FE12D05E;
-	Sat, 22 Feb 2025 15:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649912AF04;
+	Sat, 22 Feb 2025 22:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740238443; cv=none; b=oPCR1PplZMihq+d2GyF18MMuk8OJ+8VsR9912ak/jwCejHeDpW8tJfR2t/LEKY6EjeNFJoTzB1M0VYLf2nnsMWDQD7IjuSNoh6Bruu5v22FuKqMg+jdOJsZMkG8JS9gf+1gdNqN+tIl0FWdzRdOGgWG9yFsMnU5QrUL5evpqjs8=
+	t=1740263873; cv=none; b=nxq+ZcW2h2f9/jFjfU9WdS0i1ye0a3gzTuwoqhSe6GjJh6sWcRF/CXeqVp47D3Duo8oE3rQIYeOsnfwn+ORRoRhaq2peJ76/YS9ZTZmo9R8BFCagone8ZWD0BR7A/CEJnaoyAoYoG9rSixSMtKuDngIiXY+UHbANoq0IjSBG3U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740238443; c=relaxed/simple;
-	bh=gselFHu7vsy5BNx95BjFIuNv6dddMJLzHfF5VzpKKco=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mupnQuvItKuosIWN1d0oJzXK9ObU7VwhlZ4qNYBNu+T9+VyA5EvAyrawuRS3uEkl0VhCVar1P2+SXUNimfdarr/5CJppQL9S3TVPiMHkogmJdvzmptVByi5cBvqRgyx0TLXbVUxuhhnA+ZNhIl9zE3wnfxg6rjrJ3knikK3v4sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MOG+FDbt; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1740263873; c=relaxed/simple;
+	bh=0LcO31T+f5RdJjXLyY8cCqbfbF00bXtgTsBHBhv45A8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rUtf0fqIuDhJzvDFoNSu6urQpcv7aHM6asbiuQJNcABPW7OjYmeCQIcKL/WVgAMClOenUL3qyksVBX3TRjdYg/fWRqgmyC0O+zLlmB4L9eWKtjcdzyBviwxBcSgRJXWT5lzQCbyXg1tCK38ObEfngkkUHIwU5aFM2kCiNjXsEbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=2FVqp01P; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MOG+FDbt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740238438;
-	bh=gselFHu7vsy5BNx95BjFIuNv6dddMJLzHfF5VzpKKco=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MOG+FDbtPgNtTCXWLsDR0WErdiDmJBrbvkPx/oyOxKBzM2BF1qO9GiVRudGyfGRrU
-	 oVYvPqcOGoMlkz5kBl7m3K2ZR2Tl8wZTk4k8HztAxW/vT8bwGAsHBOQLU7dY11A+nx
-	 nv/aG5trfKKT10BLAqG2abLALJSBSx6zosgUxWacb1xLvZJo2jkZkZn79xbj4lIVwc
-	 drL8Rqp93ZwIsN1u7hSdIu1tqeE4FcYBQ40+cDSkX2XT3G28qAo8QdokB4BMRIqWY/
-	 VrqEIxObqoN6Vit0/jkh7sdRcYdgWchQf+vxFijSCKwYdJYNqRMjqDGyQDw9dHJKFb
-	 LAatvEy8LUP8w==
-Received: from [192.168.1.90] (unknown [188.27.58.83])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9B3AA17E00BD;
-	Sat, 22 Feb 2025 16:33:58 +0100 (CET)
-Message-ID: <aca747a9-5244-4535-bc22-976ed4a1dc3b@collabora.com>
-Date: Sat, 22 Feb 2025 17:33:57 +0200
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="2FVqp01P"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OnNwP7mpVN7zXhPE9vJ/xWGv1zj1DccbezxtZx8sRBU=; b=2FVqp01PBKuoNTsqpzT9a0qVJV
+	G3QUGO/WP9lVGZkYEizeFgE8Y1QtXmFVmRQ6U7ui+ordMWasogTovwY0sJG/pUczGPi4Wskv9GEKj
+	t3FAig77PYjR7F7E8v/bKCn4kH8C86YC7mneIaTgI2zjstgWPCLePtrr9+EEWSicrra3sZdD/I9Xl
+	nlZklOPzophBA0MFiPGEOBv/UaQAaI/DXxZgKv56ocJ1F0nAIEOSR/Ayd4VcF2RVrFmPq0Ol9Px9A
+	0OyTybdHcUQFtDdRxYGVVtto9zF9+fDn1P7fMqpaYoY+Vf038317rM4zmkKpdu19ZzrjlC9FKPiOB
+	Ib4ZXsfg==;
+Received: from i53875a10.versanet.de ([83.135.90.16] helo=phil.fritz.box)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tly7x-00048S-Dp; Sat, 22 Feb 2025 23:37:41 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujianfeng1994@gmail.com,
+	sebastian.reichel@collabora.com,
+	cristian.ciocaltea@collabora.com,
+	heiko@sntech.de
+Subject: [PATCH v2] clk: check for disabled clock-provider in of_clk_get_hw_from_clkspec
+Date: Sat, 22 Feb 2025 23:37:33 +0100
+Message-ID: <20250222223733.2990179-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: check for disabled clock-provider in
- of_clk_get_hw_from_clkspec
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
- sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- liujianfeng1994@gmail.com, sebastian.reichel@collabora.com
-References: <20250220225448.2763166-1-heiko@sntech.de>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20250220225448.2763166-1-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+of_clk_get_hw_from_clkspec checks all available clock-providers by
+compairing their of-nodes to the one from the clkspec. If no matching
+clock-provider is found, the function returns EPROBE_DEFER to cause a
+re-check at a later date.
 
-On 2/21/25 12:54 AM, Heiko Stuebner wrote:
-> of_clk_get_hw_from_clkspec checks all available clock-providers by
-> compairing their of-nodes to the one from the clkspec. If no matching
-> clock-provider is found, the function returns EPROBE_DEFER to cause a
-> re-check at a later date.
-> 
-> If a matching clock-provider is found, a authoritative answer can be
+If a matching clock-provider is found, an authoritative answer can be
+retrieved from it whether the clock exists or not.
 
-Nit: s/a authoritative/an authoritative/
+This does not take into account that the clock-provider may never appear,
+because it's node is disabled. This can happen for example when a clock
+is optional, provided by a separate block which just never gets enabled.
 
-> retrieved from it whether the clock exists or not.
-> 
-> This does not take into account that the clock-provider may never appear,
-> because it's node is disabled. This can happen for example when a clock
-> is optional, provided by a separate block which just never gets enabled.
-> 
-> One example of this happening is the rk3588's VOP, which has optional
-> additional display-clock-supplies coming from PLLs inside the hdmiphy
-> blocks. These can be used for better rates, but the system will also
-> work without them.
-> 
-> The problem around that is described in the followups to:
-> https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com/
-> 
-> As we already know the of-node of the presumed clock-provider, just add
-> a check via of_device_is_available whether this is a "valid" device node.
-> This prevents ethernal defer-loops.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  drivers/clk/clk.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index cf7720b9172f..50faafbf5dda 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -5258,6 +5258,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
->  	if (!clkspec)
->  		return ERR_PTR(-EINVAL);
->  
-> +	/* Check if node in clkspec is in disabled/fail state */
-> +	if (!of_device_is_available(clkspec->np))
-> +		return ERR_PTR(-ENOENT);
-> +
->  	mutex_lock(&of_clk_mutex);
->  	list_for_each_entry(provider, &of_clk_providers, link) {
->  		if (provider->node == clkspec->np) {
+One example of this happening is the rk3588's VOP, which has optional
+additional display-clock-supplies coming from PLLs inside the hdmiphy
+blocks. These can be used for better rates, but the system will also
+work without them.
 
-Without this patch applied, when disabling hdmi0 and hdptxphy0 nodes on
-Rock5B, rockchip-drm module fails to probe and hdmi1 output cannot be
-used anymore:
+The problem around that is described in the followups to:
+https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com/
 
-rockchip-drm display-subsystem: [drm] *ERROR* failed to get pll_hdmiphy0
+As we already know the of-node of the presumed clock-provider, just add
+a check via of_device_is_available whether this is a "valid" device node.
+This prevents eternal defer-loops.
 
-After applying the patch, I confirm the error is gone and hdmi1 is
-functional again.  Hence,
-
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+changes in v2:
+- add received Reviewed and Tested tags
+- fix two spelling issues (Cristian and Sebastian)
 
-Thanks,
-Cristian
+ drivers/clk/clk.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index cf7720b9172f..50faafbf5dda 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -5258,6 +5258,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
+ 	if (!clkspec)
+ 		return ERR_PTR(-EINVAL);
+ 
++	/* Check if node in clkspec is in disabled/fail state */
++	if (!of_device_is_available(clkspec->np))
++		return ERR_PTR(-ENOENT);
++
+ 	mutex_lock(&of_clk_mutex);
+ 	list_for_each_entry(provider, &of_clk_providers, link) {
+ 		if (provider->node == clkspec->np) {
+-- 
+2.47.2
+
