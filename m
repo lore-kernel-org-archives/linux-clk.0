@@ -1,26 +1,26 @@
-Received: from mail-m49236.qiye.163.com (mail-m49236.qiye.163.com [45.254.49.236])
+Received: from mail-m32102.qiye.163.com (mail-m32102.qiye.163.com [220.197.32.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE58724168A;
-	Mon, 24 Feb 2025 08:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD0824291B;
+	Mon, 24 Feb 2025 08:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740386873; cv=none; b=XXXadGOu7cCv7YWB5p2XLMBsc/m97rixkldWe3fWG8r8Onxgj0LT/T6BONp/rRHchbGP3yBeSoId9Gexun2nuC9UDP+k60CWHUq60s5coZWXigOzSE/BNPfiggksBwBuEpHdguubtLebF5sd0HWNqliNhNAzJHQ1uWgUnuhXZrM=
+	t=1740387141; cv=none; b=K0s5KW/ykXzXU1yglh1Y5eIcFEFyD67rueOV4IhM52/f0cIK4Q4w64ajhST8dKw/gOInH27w8CAoMbfjQK6t5nQ6YAb077NxcWUsDrN4LHfrQp479rAEJAViNGPbr553y6Hx8nozyOpqtb4Neww/pVklarwHs/0R6PEae6wYldI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740386873; c=relaxed/simple;
-	bh=HYPzYTRdGvlsjbHeaX9TM/gXHq6UxnWgvSlWzFt18KE=;
+	s=arc-20240116; t=1740387141; c=relaxed/simple;
+	bh=XUbjs4D7fQffAexiFbZyi3CRHGqUr80ymObuMcPyshU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hBbQvhTFxuP+nNCiEBXQCa2cWCls0n4PH9jhlBeyFVylVYBuvWzXZEaFApmmSgBpbzP0fFOkqgcFR0yWJ2lBqvAiHzTtEMS5qJOgM7Ji/ZvPDTOxT4PW8+Yt/CgMEM0gxBLsn6rsN80euLjl8xMaM/mR9dGMgZV8UFubcX85GJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=WA3pmr7Q; arc=none smtp.client-ip=45.254.49.236
+	 In-Reply-To:Content-Type; b=GNusO4MopIzhJmWue6YAkrgR5+J1Kh/+aCsTWkqXysTazE0uXGyp5hgH+POjxaXv5AoIgPCUzpjsSXFQRq3ogXYhB3eRSa+jvhg4I7acmuFmxaGn4o5LbEU+ZJFFc6kxCx9CqnApQCIjwIV6aBAIsSP0T5EdFxMfvezeXGyf/8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=PpTe76hO; arc=none smtp.client-ip=220.197.32.102
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="WA3pmr7Q"
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="PpTe76hO"
 Received: from [192.168.60.65] (unknown [103.29.142.67])
-	by smtp.qiye.163.com (Hmail) with ESMTP id bfe5cb08;
-	Mon, 24 Feb 2025 16:47:42 +0800 (GMT+08:00)
-Message-ID: <28dcac28-9060-4f65-8167-64f6a0e4532d@rock-chips.com>
-Date: Mon, 24 Feb 2025 16:47:40 +0800
+	by smtp.qiye.163.com (Hmail) with ESMTP id bfe919b3;
+	Mon, 24 Feb 2025 16:52:13 +0800 (GMT+08:00)
+Message-ID: <23c84fd5-83f4-46b3-a247-56e4a2c06d1d@rock-chips.com>
+Date: Mon, 24 Feb 2025 16:52:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -28,117 +28,102 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock, reset: rockchip: Add support
- for rk3562
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: add rk3562 cru bindings
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
- Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
  devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+ Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 References: <20241224092310.3814460-1-kever.yang@rock-chips.com>
- <20241224092310.3814460-2-kever.yang@rock-chips.com>
- <z7jb32foci6bamqqddkkp34hazi2itp6uclarsoi5pkrgso2go@bxflagkaciq6>
+ <krrqtjllx6akrurefbtuhgxw6bwmkiro5rtvdexoevjyufm2uz@r5biw7kbttyr>
 Content-Language: en-US
 From: Kever Yang <kever.yang@rock-chips.com>
-In-Reply-To: <z7jb32foci6bamqqddkkp34hazi2itp6uclarsoi5pkrgso2go@bxflagkaciq6>
+In-Reply-To: <krrqtjllx6akrurefbtuhgxw6bwmkiro5rtvdexoevjyufm2uz@r5biw7kbttyr>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSk4fVhgaTE1NSRgeSx4fT1YVFAkWGhdVEwETFh
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaThgeVh9OGktDHh9NSh9LSlYVFAkWGhdVEwETFh
 	oSFyQUDg9ZV1kYEgtZQVlKS0hVSUJVSk9JVU1MWVdZFhoPEhUdFFlBWU9LSFVKS0lCQ0NMVUpLS1
 	VLWQY+
-X-HM-Tid: 0a953724079603afkunmbfe5cb08
+X-HM-Tid: 0a95372829e503afkunmbfe919b3
 X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mhg6USo6KDITPxMsKzQMHgxR
-	Kx1PC09VSlVKTE9LSENNQ01NQ05NVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlKS0hVSUJVSk9JVU1MWVdZCAFZQUlPTEg3Bg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NSo6KQw5NjIUGRMeHQ5CCBEP
+	EiMKCgxVSlVKTE9LSENMSkhOTEJJVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlKS0hVSUJVSk9JVU1MWVdZCAFZQUpNT0s3Bg++
 DKIM-Signature:a=rsa-sha256;
-	b=WA3pmr7QT5Hkf9NM5J4r4h5VyGiCXSrAlc66OXg1bmLMCGq8+B/MxJUJuUTBwUobsDxt5vimbfthlLTb8yGUl78OUnFzK+4mK+s/50Qw5ldgbqV+MuwYxHQP3gbV0JmYJr2l6940JfCv8oDALgFpshdtPcSBah52AfMtjoxPQqk=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=dG+gxPUSWpwDoki4eEh/9rwYbhNLk1VbVLvja7f2r94=;
+	b=PpTe76hOHpGk0srvgTU0V496WB4QNRT16SyUTn3RovpGoBOgTamAQyJdyZ9toeKiU54XiNCMokCsB49WToThltFD51fK/JpVz+l7gvApnkmIk9Sa+5mI5YZHT4Ia9oRoVVDjyPoqbW/xiMS5xWNsf9kUucbzusnm/W+YIBC1iDc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=wkj5uNlX0tJSQD/Cdm3vu3AtdbrZyweYKQfMb+Q0YnQ=;
 	h=date:mime-version:subject:message-id:from;
 
 Hi Krzysztof,
 
-On 2024/12/27 16:28, Krzysztof Kozlowski wrote:
-> On Tue, Dec 24, 2024 at 05:23:09PM +0800, Kever Yang wrote:
->> From: Finley Xiao <finley.xiao@rock-chips.com>
+On 2024/12/27 16:25, Krzysztof Kozlowski wrote:
+> On Tue, Dec 24, 2024 at 05:23:08PM +0800, Kever Yang wrote:
+>> Document the device tree bindings of the rockchip rk3562 SoC
+>> clock and reset unit.
 >>
->> Add the dt-bindings header for the rk3562, that gets shared between
->> the clock controller and the clock references in the dts.
->> Add softreset ID for rk3562.
->>
->> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
->> Signed-off-by: Liang Chen <cl@rock-chips.com>
 >> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
 >> ---
->>
->> Changes in v2:
->> - rename the file to rockchip,rk3562-cru.h
->> - remove CLK_NR_CLKS
->> - add new file for reset ID
->> - update to use dual license
->>
->>   .../dt-bindings/clock/rockchip,rk3562-cru.h   | 377 ++++++++++++++++++
->>   .../dt-bindings/reset/rockchip,rk3562-cru.h   | 360 +++++++++++++++++
+> A nit, subject: drop second/last, redundant "bindings". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 >
-> No, that's not a separate patch. Headers *ALWAYS* go with the bindings
-> patch.
-Will fix.
->>   2 files changed, 737 insertions(+)
->>   create mode 100644 include/dt-bindings/clock/rockchip,rk3562-cru.h
->>   create mode 100644 include/dt-bindings/reset/rockchip,rk3562-cru.h
->>
->> diff --git a/include/dt-bindings/clock/rockchip,rk3562-cru.h b/include/dt-bindings/clock/rockchip,rk3562-cru.h
->> new file mode 100644
->> index 000000000000..ad07ad3a12ad
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/rockchip,rk3562-cru.h
->> @@ -0,0 +1,377 @@
->> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-> Why not using license requested by checkpatch?
-
-The checkpatch does not report error/warning for this license, and this 
-is the same as many other SoCs.
-
-Which license is recommend in the header file?
-
 >
->> +/*
->> + * Copyright (c) 2022-2024 Rockchip Electronics Co., Ltd.
->> + * Author: Finley Xiao <finley.xiao@rock-chips.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3562_H
->> +#define _DT_BINDINGS_CLK_ROCKCHIP_RK3562_H
->> +
->> +/* cru-clocks indices */
->> +
->> +/* cru plls */
->> +#define PLL_APLL			1
-> Start with 0. Your other binding also starts with 0, so be consistent.
-Will fix.
+> s/rk3562/Rocchip RK3562/
+> or whatever your proper name is (and use proper capitalized parts of
+> products)
+Will update.
 >
->> +#define PLL_GPLL			2
->> +#define PLL_VPLL			3
->> +#define PLL_HPLL			4
->> +#define PLL_CPLL			5
->> +#define PLL_DPLL			6
+>> +properties:
+>> +  compatible:
+>> +    const: rockchip,rk3562-cru
 >> +
->> +/* cru clocks */
-> Missing clock for 7. You are not supposed to have any holes here.
-
-Will fix.
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  "#reset-cells":
+>> +    const: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 2
+>
+> Why clocks are not required?
+The cru is the clock-controller, which is always on module in SoC,
+so we don't need to enable "clock" for this clock-controller.
 
 Thanks,
-
 - Kever
-
->> +#define ARMCLK				8
->> +#define CLK_GPU				9
->> +#define ACLK_RKNN			10
+>
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: xin24m
+>> +      - const: xin32k
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - "#clock-cells"
+>> +  - "#reset-cells"
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    clock-controller@ff100000 {
+>> +      compatible = "rockchip,rk3562-cru";
+>> +      reg = <0xff100000 0x40000>;
+>> +      #clock-cells = <1>;
+>> +      #reset-cells = <1>;
+> Why clocks are not here?
+>
 > Best regards,
 > Krzysztof
 >
