@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AEB24A044;
-	Mon, 24 Feb 2025 10:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4866E242934;
+	Mon, 24 Feb 2025 10:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391829; cv=none; b=BrHvE6rWAyiH4oHIdu9AtIgmwybIXyA/ncSs+uoUEAiQzKpBSinzd5JJ+vv6HsfY5ZXpvdXc1u0vqJ1dllsf6+mXW7dXPYsAxXYZJXqCHvJQAHWMEQ1nwXgVhUWIdL0rzqWko2b2BaX/c/wAIspDXO+bc/qHv4pGPrwc3h0i3ro=
+	t=1740391940; cv=none; b=IGNbU3yhXR69NoiHPQ+qAZad3reAKu7mrx2kp3bTs7rYydOr79sdK+74chTGYlYY2wJiPyxZUUPpRjARhGy3rYgM9YyG854whQTpujlhbN7R5SBeCgA+Iq6HuiIilzU8sFPxkBbLjlR3SFQQ98QCTRkOWua5ybrsA1dqaji0j+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391829; c=relaxed/simple;
-	bh=nGIgI5Cm6+5BTpZFR8Wf9vbZLwRowF8CBnVRRVc2t4s=;
+	s=arc-20240116; t=1740391940; c=relaxed/simple;
+	bh=PCYrjtUGVCNWA2UVJ7z9lylraitHnr5rIdAHSEZtMNk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pjm42Oz4zEjwrnagWQTiaKCwDMy77Pb5DpIEhVoEubuHdln+Fw6Rx9ZvawPKUsZR4srh4xiwVrkpBSIBRkQBoCkOhUHu3MCICELPGibMERke7GI6y+nia+6qo8v2jdo0euZGfs/A62s35iTmr7y+xuTxL8VVYQIfN2dZqCOlzB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gaav39Br; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=HKO61pxCH8D7RMJXMy4czxqfYbO+PO2533ptRh0FFTxCPF/n6lNQ1S8aE3tq/0iEcjH+u0FfdZdYuAroBwP8ig3yV+sIYVwlxrmjrw9a2yBoo3gWuok1+fdi7qrKqVtGGISu/Bm+0KZij8HgorH6jLQY59SEluX7LCZy8sUBLEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nuT1086/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gaav39Br"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE8EC4CED6;
-	Mon, 24 Feb 2025 10:10:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuT1086/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E632C4CED6;
+	Mon, 24 Feb 2025 10:12:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740391828;
-	bh=nGIgI5Cm6+5BTpZFR8Wf9vbZLwRowF8CBnVRRVc2t4s=;
+	s=k20201202; t=1740391939;
+	bh=PCYrjtUGVCNWA2UVJ7z9lylraitHnr5rIdAHSEZtMNk=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Gaav39BrdspeY62DXl0BvVCSbwBKXiuf/w7Cu3HImF8o1tsU+wA3P7cF16KWVpVUb
-	 3Zlt4E8NROAwG0DhJCe8Tcaet7K9+bLxiDGFhPb5+NtMjOc2HIxQOCzvyqei1K9fMI
-	 Q/wqenyTdrE229v+TICaIdNTnqXbROoE6lQNm+aJEwJ/dQGpq2zTn6DJ5R59eC1c4E
-	 mw3KT4q+kY3oehIiECukwYmo+BhM8g27Z0cc2oZV4zgyQ3qw/GX/LoRfzIk01OmL6j
-	 4qvt80OZLcGMl4Lp/5HdkVBPeDXw4TaS4mC56aNRQGMLGOq3ae4SZsLETVuNstiU6k
-	 9MQwpZe0XDiug==
-Message-ID: <f810b8a2-4261-4b68-b59b-4efa0219b5db@kernel.org>
-Date: Mon, 24 Feb 2025 11:10:23 +0100
+	b=nuT1086/FaATtLmemWY7kOIECVttghSCc4222D9Ldf9XVKoYAoTvqQy3s/KaSB3IY
+	 81PTkl2QIEWMA6zZM6BI5P6wZfDYoF1AnzNc6SKBdP9JEwYsdeW9BGnfgPeU2TAYMl
+	 mCHCT8linYBKLN8VQ6+l7EsAKaRYomEfkzZXVL2D2/wgVXYHB8r0p5Ba4367zLL3Qb
+	 6gxNP4F/yPnPsjwUjcjOZ4VQsQAWdvLGCJ3nlwEq/DmgRfj8p9zNSWiQbxFq/XnPSF
+	 GYSfBHYuATnubYut9uyyOqywvuJ8UMNofpuPAQMWbh5Vsu1z5174dT8BfsZ4/JmvVq
+	 s0DtFT/+KuHBQ==
+Message-ID: <71cf8012-3b77-43de-b8ac-54c84a97f9d3@kernel.org>
+Date: Mon, 24 Feb 2025 11:12:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/3] dt-binding: clock: ast2700: modify soc0/1 clock
- define
+Subject: Re: [PATCH v9 2/3] reset: aspeed: register AST2700 reset auxiliary
+ bus device
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
@@ -46,7 +46,7 @@ To: Ryan Chen <ryan_chen@aspeedtech.com>,
  linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250224095506.2047064-1-ryan_chen@aspeedtech.com>
- <20250224095506.2047064-2-ryan_chen@aspeedtech.com>
+ <20250224095506.2047064-3-ryan_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -92,25 +92,66 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250224095506.2047064-2-ryan_chen@aspeedtech.com>
+In-Reply-To: <20250224095506.2047064-3-ryan_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 24/02/2025 10:55, Ryan Chen wrote:
-> -remove redundant SOC0_CLK_UART_DIV13:
-> SOC0_CLK_UART_DIV13 is not use at clk-ast2700.c, the clock
-> source tree is uart clk src -> uart_div_table -> uart clk.
-> 
-> -Change SOC0_CLK_HPLL_DIV_AHB to SOC0_CLK_AHBMUX:
-> modify clock tree implement.
-> older CLK_AHB use mpll_div_ahb/hpll_div_ahb to be ahb clock source.
-> mpll->mpll_div_ahb
->                   -> clk_ahb
-> hpll->hpll_div_ahb
+> +
+> +static void aspeed_reset_unregister_adev(void *_adev)
+> +{
+> +	struct auxiliary_device *adev = _adev;
+> +
+> +	auxiliary_device_delete(adev);
+> +	auxiliary_device_uninit(adev);
+> +}
+> +
+> +static void aspeed_reset_adev_release(struct device *dev)
+> +{
+> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+> +
+> +	kfree(adev);
+> +}
+> +
 
+Every exported function *must* have kerneldoc.
 
-I can barely understand it and from the pieces I got, it does not
-explain need for ABI break.
+> +int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+> +				     const char *adev_name)
+> +{
+> +	struct auxiliary_device *adev;
+> +	int ret;
+> +
+> +	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+> +	if (!adev)
+> +		return -ENOMEM;
+> +
+> +	adev->name = adev_name;
+> +	adev->dev.parent = clk_dev;
+> +	adev->dev.release = aspeed_reset_adev_release;
+> +	adev->id = 666u;
+> +
+> +	ret = auxiliary_device_init(adev);
+> +	if (ret) {
+> +		kfree(adev);
+> +		return ret;
+> +	}
+> +
+> +	ret = auxiliary_device_add(adev);
+> +	if (ret) {
+> +		auxiliary_device_uninit(adev);
+> +		return ret;
+> +	}
+> +
+> +	adev->dev.platform_data = (__force void *)base;
+> +
+> +	return devm_add_action_or_reset(clk_dev, aspeed_reset_unregister_adev, adev);
+> +}
+> +EXPORT_SYMBOL_GPL(aspeed_reset_controller_register);
+
+No, you cannot export functions without users. There is no single user
+of this, so this is not justified at all.
+
 
 
 
