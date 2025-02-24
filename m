@@ -1,55 +1,57 @@
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0140D260A20;
-	Mon, 24 Feb 2025 09:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A82F2505C1;
+	Mon, 24 Feb 2025 09:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740388177; cv=none; b=Dy6eO1XH4GJqILK9pG9f14tV3jZeB7B5r1OHtDHpccHHdMsiTK0DWaWvQ2eGjtsRVFeM8O+FDbIweaf+Y/fobk0wGuF+E1PE1kGgJ7/tmnl/bwzGBlbkCNjojRzcRnkVkVwTaqUTRh/q1z6l7CK+6lq1bS4Ta5ktjvhhMXUeW2M=
+	t=1740388480; cv=none; b=TM4GmCKT3KZ2QPT56uCIV03ETTsfYsPA2vvEx5p7fWgXJIk+Xu252BYB5Nu/zFmK/bEG/2ji28WZ4fXjYs2KIU69OvyTA1HsUvUWIubfCWkWXhkGssjXingVpDFnsLaZ/BFbW0wmIRgiKZoqtWLKtqxVhRNFR6ijKxoSam4TTxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740388177; c=relaxed/simple;
-	bh=KsX/8SSW+cz7CNwOY/YoaslQjS4o9b23XIs173sPnl8=;
+	s=arc-20240116; t=1740388480; c=relaxed/simple;
+	bh=xTzt/V7CzY1hpEI3Om7LRDujb1rhEg9ix3VdzeV16hk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IdI6/uSSZPFrHo594R87ppT2MgLjn15YWm246jZmoANpI2lBgzb78KzH+aSLTmgrfU84RxruIR7kO9Jlnujgr2ay5mtyOLpDA30J6AOGvobv3PagITfeL3mrKr9LdFf0hryOrDxv4UmZFsVYGyc0YBUioWlfsBdCTglJQ4mcE6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=R+QVTnMS; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=qrCcI3+CKRNvCElcIuh43QMXsn8J72Q//OXuytAk6WCIAER+GoutSIKEF8SfYJ+LqxMGgNJ5BWbES/JBhUECAPhYA8bNjbZxk54kjFHriiTF/kRJ7nVOGAs2BUD+KoGYbQ+no3lJKQvkD0FcEcDJfOkL+aZbvI1b2ciSYHe0ivw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=C2Fa0Csg; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="R+QVTnMS"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="C2Fa0Csg"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5M7Vwq3vPNXFx3Y80ZtwPFH+1emkyTe/+TzCV6/qris=; b=R+QVTnMSw7oi9Bpt0LYcT9UKq4
-	S6qh/hExWGY2MjGrAJXZ/UJskhRHgBhj7NUc8YCb3yyXdogA+XM46XRTwGYtaqlpzCddUycQ8lzsc
-	sEzsEzeaR1HNprpcfA6U1gcWl0A4r2udHsy5rky6or/YSAao6UgyyY10qEc8ZFiX1IPVFvpAWy7qE
-	EOBGQxYwKIh4P4TOHMiTHxf24QgzXBFZQWRYKsdUsFQZZBbe9X3WuP+FDdIivF+dF/rYq7QkMdHcV
-	zwgrnMRfH8orgTr+O/6F04Xv+AyGhBl178+B/g5mZgDJXW1U9WCwepbxYIHlhJIE0X69qJ/C9JGKR
-	lmKWR6uA==;
+	bh=XWEADniHRGWcnzqbekRTv6/vtyL/MFZqYvazyCcPL/Y=; b=C2Fa0CsgkZ2/azdEMvlOzuYSf7
+	k3nUPkbtzi80jhqlddLODTZArqrjOaDbkhu6v27OfN1fu15qYrE1R7QEaDmBLvJTpwOZuImxSCdlv
+	PT7OHUIEehio+7EhaWCLkC5l2t1hnzwI3nK3xiD5mN1WzY9Ka+RgqS0uWK29Azt0pT4VxziiuCJYS
+	3+2l23UyPbiwiiGCJJ2j0ecmxMejx0hIixnJwUe4ao8qPsil05p4lQCEFfZyV9tyVszURLYogUaFm
+	F4EZIRXEQXn/DnoDqOooXtpsFYdHDBnzKB+LhJ2uBs5gGKOt+rhPaMwyRhRKK9AWlvUvhOiODeSmY
+	AsSi5PrQ==;
 Received: from i53875a0d.versanet.de ([83.135.90.13] helo=diego.localnet)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1tmUSw-0006ts-IJ; Mon, 24 Feb 2025 10:09:30 +0100
+	id 1tmUXo-0006wL-ID; Mon, 24 Feb 2025 10:14:32 +0100
 From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, Yao Zi <ziyao@disroot.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Yao Zi <ziyao@disroot.org>
-Subject:
- Re: [PATCH v3 1/5] dt-bindings: clock: Document clock and reset unit of
- RK3528
-Date: Mon, 24 Feb 2025 10:09:29 +0100
-Message-ID: <49730692.MN2xkq1pzW@diego>
-In-Reply-To: <20250217061142.38480-6-ziyao@disroot.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Kever Yang <kever.yang@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org,
+ Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock,
+ reset: rockchip: Add support for rk3562
+Date: Mon, 24 Feb 2025 10:14:31 +0100
+Message-ID: <2920539.yaVYbkx8dN@diego>
+In-Reply-To: <28dcac28-9060-4f65-8167-64f6a0e4532d@rock-chips.com>
 References:
- <20250217061142.38480-5-ziyao@disroot.org>
- <20250217061142.38480-6-ziyao@disroot.org>
+ <20241224092310.3814460-1-kever.yang@rock-chips.com>
+ <z7jb32foci6bamqqddkkp34hazi2itp6uclarsoi5pkrgso2go@bxflagkaciq6>
+ <28dcac28-9060-4f65-8167-64f6a0e4532d@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -59,71 +61,63 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
 
-Am Montag, 17. Februar 2025, 07:11:42 MEZ schrieb Yao Zi:
-> There are two types of clocks in RK3528 SoC, CRU-managed and
-> SCMI-managed. Independent IDs are assigned to them.
+Am Montag, 24. Februar 2025, 09:47:40 MEZ schrieb Kever Yang:
+> Hi Krzysztof,
 > 
-> For the reset part, differing from previous Rockchip SoCs and
-> downstream bindings which embeds register offsets into the IDs, gapless
-> numbers starting from zero are used.
+> On 2024/12/27 16:28, Krzysztof Kozlowski wrote:
+> > On Tue, Dec 24, 2024 at 05:23:09PM +0800, Kever Yang wrote:
+> >> From: Finley Xiao <finley.xiao@rock-chips.com>
+> >>
+> >> Add the dt-bindings header for the rk3562, that gets shared between
+> >> the clock controller and the clock references in the dts.
+> >> Add softreset ID for rk3562.
+> >>
+> >> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+> >> Signed-off-by: Liang Chen <cl@rock-chips.com>
+> >> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+> >> ---
+> >>
+> >> Changes in v2:
+> >> - rename the file to rockchip,rk3562-cru.h
+> >> - remove CLK_NR_CLKS
+> >> - add new file for reset ID
+> >> - update to use dual license
+> >>
+> >>   .../dt-bindings/clock/rockchip,rk3562-cru.h   | 377 ++++++++++++++++++
+> >>   .../dt-bindings/reset/rockchip,rk3562-cru.h   | 360 +++++++++++++++++
+> >
+> > No, that's not a separate patch. Headers *ALWAYS* go with the bindings
+> > patch.
+> Will fix.
+> >>   2 files changed, 737 insertions(+)
+> >>   create mode 100644 include/dt-bindings/clock/rockchip,rk3562-cru.h
+> >>   create mode 100644 include/dt-bindings/reset/rockchip,rk3562-cru.h
+> >>
+> >> diff --git a/include/dt-bindings/clock/rockchip,rk3562-cru.h b/include/dt-bindings/clock/rockchip,rk3562-cru.h
+> >> new file mode 100644
+> >> index 000000000000..ad07ad3a12ad
+> >> --- /dev/null
+> >> +++ b/include/dt-bindings/clock/rockchip,rk3562-cru.h
+> >> @@ -0,0 +1,377 @@
+> >> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+> > Why not using license requested by checkpatch?
 > 
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> ---
->  .../bindings/clock/rockchip,rk3528-cru.yaml   |  64 +++
->  .../dt-bindings/clock/rockchip,rk3528-cru.h   | 453 ++++++++++++++++++
->  .../dt-bindings/reset/rockchip,rk3528-cru.h   | 241 ++++++++++
->  3 files changed, 758 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
->  create mode 100644 include/dt-bindings/clock/rockchip,rk3528-cru.h
->  create mode 100644 include/dt-bindings/reset/rockchip,rk3528-cru.h
+> The checkpatch does not report error/warning for this license, and this 
+> is the same as many other SoCs.
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
-> new file mode 100644
-> index 000000000000..5a3ec902351c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/rockchip,rk3528-cru.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip RK3528 Clock and Reset Controller
-> +
-> +maintainers:
-> +  - Yao Zi <ziyao@disroot.org>
-> +
-> +description: |
-> +  The RK3528 clock controller generates the clock and also implements a reset
-> +  controller for SoC peripherals. For example, it provides SCLK_UART0 and
-> +  PCLK_UART0 as well as SRST_P_UART0 and SRST_S_UART0 for the first UART
-> +  module.
-> +  Each clock is assigned an identifier, consumer nodes can use it to specify
-> +  the clock. All available clock and reset IDs are defined in dt-binding
-> +  headers.
-> +
-> +properties:
-> +  compatible:
-> +    const: rockchip,rk3528-cru
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
+> Which license is recommend in the header file?
 
-I do think this needs a
-    minItems: 1
-    maxItems: 2
-or similar.
+I suppose
 
-xin24m is the main oscillator everything else is supplied from, so is
-absolutely required, but that gmac0 supply comes from an (probably)
-optional clock supply from a mac phy?
+/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
 
-So is possibly not available on a system without ethernet hardware?
+According to [0] "GPL-2.0" and "GPL-2.0-only" are equivalent, but I guess
+"GPL-2.0-only" simply makes the "only" part more visible.
 
 
 Heiko
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/LICENSES/preferred/GPL-2.0
+
 
 
