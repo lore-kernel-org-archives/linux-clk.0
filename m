@@ -1,134 +1,124 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECBE2627E1;
-	Mon, 24 Feb 2025 17:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2601EEA29;
+	Mon, 24 Feb 2025 19:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740419812; cv=none; b=YCvzjyP06BsOAwrwYv4wYVRvdR9PH+d5TUQpKgJecKU37jKgwQbSrzEAzqgi+WYjNDl5ZLJCDH2TRu3TEWP2HcxW3aX+krFpSvPj1Fao/M6qsc85wAQUVBXTAf9hhnCU2Z2qxVgD87HeUVVOZSrgQTTdPkk3kDgTeC0DoirmG78=
+	t=1740424426; cv=none; b=HjJoFIOaBAqxTYuPbUA6ezrOc72Ag7/0GyttGrFmh9oUHHXCMmv3KZdjDgN5YgSb4RQU4FUgXxyywiem2ypfitrbmrwOdX5fZaeW2/n/7Ki/nppsQdyUAtAZmQmDHjy0rpVwdJxpXu4GsTMUnkH/zPIYp1GfZiqCCrfpAU68OP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740419812; c=relaxed/simple;
-	bh=laLlXfTqdTi8U2cQjpNZyAGYUeq8S9FFniC6nm3tRK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q6YVwVPBPZAttrd3rrfv0VVLJIEoevajOXxaVGB/+Ph1tA3S9ty7EtHMhM6Ci2sG5xQQCahGy/c+5QN3mgi1riK2zWK91+KqMpKfbek5RYn6YABRlFh5MFaVP4H/HgC+PNJFo+sI0o+3rY4KxG08F6CSB6OuCsah5AHZ3TSzXvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7991B152B;
-	Mon, 24 Feb 2025 09:57:06 -0800 (PST)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D9C63F5A1;
-	Mon, 24 Feb 2025 09:56:46 -0800 (PST)
-Date: Mon, 24 Feb 2025 17:56:42 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Ryan Walklin <ryan@testtoast.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chris
- Morgan <macroalpha82@gmail.com>, Hironori KIKUCHI <kikuchan98@gmail.com>,
- Philippe Simons <simons.philippe@gmail.com>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Conor Dooley
- <conor.dooley@microchip.com>
-Subject: Re: [PATCH v7 22/27] dt-bindings: allwinner: add H616 DE33 mixer
- binding
-Message-ID: <20250224175642.170c124e@donnerap.manchester.arm.com>
-In-Reply-To: <20250216183710.8443-23-ryan@testtoast.com>
-References: <20250216183710.8443-3-ryan@testtoast.com>
-	<20250216183710.8443-23-ryan@testtoast.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1740424426; c=relaxed/simple;
+	bh=WAOfxPgc9tiZhiYwa3QpFYflhga5gLDQ+TLXha6GKOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jai8lNp6/S0tNx/GxhG+h4jUG33/t35tCLZwWD0bIU7gvfumMQE1v3PAX664eTCw40coCeUBOEz3bbq/7lCjHcZ2tz1vItAIfQIW1tTE5HDoLeM8+Ylq/ULqWY/At9HT/a6ChBts01HW1IR0x2DHwrbTorp9Ai17+U+1+6byPCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOL2Sv3W; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOL2Sv3W"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A9D7C4CED6;
+	Mon, 24 Feb 2025 19:13:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740424426;
+	bh=WAOfxPgc9tiZhiYwa3QpFYflhga5gLDQ+TLXha6GKOM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JOL2Sv3Woy2Q5WJ/EtpvbMwF2Huqz5mzi2THuBslL2zvM1MH3sUMkX9oBGGpq05jK
+	 sp+oCO9TeT0pABoIE4f0UCe7HmSqyRyAeWZMYboG1j83HltgHSj4oP+KaLX1ii1L95
+	 Bp49GoX9bhOj/zuuqewUEwrsiU/GtPE8ukoXk9D/2BEem90wpisyZC2lKcpYUU6j1r
+	 HsekTuV6vuunHlenlqThRmYdYMNmGv3VvpZbzKH/AdmvPgQYXCItizUjeHe+NY1hVI
+	 yvZWQlkd9yCeSlv/VrszILC4Md3phek67eLqZ74TRI+aF8MW/PKPS14oHa5ME/2cQW
+	 QT5iFvwblSM2Q==
+Message-ID: <5670d992-71f4-4791-94ff-4fadc1fb5993@kernel.org>
+Date: Mon, 24 Feb 2025 20:13:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/5] clk: samsung: add exynos7870 CLKOUT support
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
+ <20250219-exynos7870-pmu-clocks-v3-5-0d1e415e9e3a@disroot.org>
+ <20250219-discerning-affable-chital-1fdff4@krzk-bin>
+ <e2ebd4503100ddbbe8d7e21290329e38@disroot.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <e2ebd4503100ddbbe8d7e21290329e38@disroot.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Feb 2025 07:36:22 +1300
-Ryan Walklin <ryan@testtoast.com> wrote:
-
-Hi,
-
-> The Allwinner H616 and variants have a new display engine revision
-> (DE33).
+On 24/02/2025 18:47, Kaustabh Chakraborty wrote:
+>>
+>> I wonder why do we need to keep growing this list? All devices are
+>> compatible, aren't they?
 > 
-> The mixer configuration registers are significantly different to the DE3
-> and DE2 revisions, being split into separate top and display blocks,
-> therefore a fallback for the mixer compatible is not provided.
+> Well, there are two variants of compatibility having different mask
+> values.
 > 
-> Add a display engine mixer binding for the DE33.
+>> Do you use clkout, BTW?
 > 
-> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> 
-> ---
-> Changelog v2..v3:
-> - Separate content into three patches for three separate subsystems
-> 
-> Changelog v5..v6:
-> - increase reg maxItems to 3 and add conditional for h616-de33
-> ---
->  .../allwinner,sun8i-a83t-de2-mixer.yaml       | 21 ++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
-> index b75c1ec686ad2..274f5e6327333 100644
-> --- a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
-> +++ b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
-> @@ -24,9 +24,11 @@ properties:
->        - allwinner,sun50i-a64-de2-mixer-0
->        - allwinner,sun50i-a64-de2-mixer-1
->        - allwinner,sun50i-h6-de3-mixer-0
-> +      - allwinner,sun50i-h616-de33-mixer-0
->  
->    reg:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 3
+> Using the clocks defined by clkout? No. I added it as downstream
+> had it too. And the devices work fine without it. If you want me
+> to remove this patch and send the PMU patch to its respective
+> series I'll do that then (unless you object or suggest something
+> else).
 
-What are those three regions? I wonder if we should have reg-names here,
-to fix the order, and to document them on the way?
+clkout is a testing tool and I doubt you can use it on a phone - finding
+the actual clkout pins to connect the oscilloscope is tricky.
 
->  
->    clocks:
->      items:
-> @@ -61,6 +63,23 @@ properties:
->      required:
->        - port@1
->  
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - allwinner,sun50i-h616-de33-mixer-0
-> +
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 3
+If this is about to grow and be used, then we should fix the
+compatibility and do not duplicate the ID table.
 
-Should we override minItems here as well? I guess any driver would need
-all three region to work?
-
-Cheers,
-Andre
-
-> +
-> +    else:
-> +      properties:
-> +        reg:
-> +          maxItems: 1
-> +
->  required:
->    - compatible
->    - reg
-
+Best regards,
+Krzysztof
