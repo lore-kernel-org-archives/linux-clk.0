@@ -1,121 +1,118 @@
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7991724A048
-	for <linux-clk@vger.kernel.org>; Mon, 24 Feb 2025 09:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AEB24A044;
+	Mon, 24 Feb 2025 10:10:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391198; cv=none; b=kMsnqIhkrK8iDH5PMLSVLzA6Crsf3RlF/UP86yoDe9dOedCu/2MGqkBKTh6qSSwFhwuWRXuubwe3Z6Xj3LkIwwXGN/RVe6MlZKw6v8dYJoj4wF/CE23V6fVQ3ydHHU90hBlfPuxIOSNMUakI1DrdivkZArqPDEiRaZf3uT2I3g0=
+	t=1740391829; cv=none; b=BrHvE6rWAyiH4oHIdu9AtIgmwybIXyA/ncSs+uoUEAiQzKpBSinzd5JJ+vv6HsfY5ZXpvdXc1u0vqJ1dllsf6+mXW7dXPYsAxXYZJXqCHvJQAHWMEQ1nwXgVhUWIdL0rzqWko2b2BaX/c/wAIspDXO+bc/qHv4pGPrwc3h0i3ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391198; c=relaxed/simple;
-	bh=gkcWo6CbuipnuwBWmiERHV9pRVv4+yAvrJkF5cLVnqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KgRZdiMIMh4o5ijcfTBODAOruOLXXL5VJBt6Na2NwM9TyfzOd/H+7nI9QTU3Yc7l7ogDbNX3jcPm+WlGCcaTCR9BYUrNqVUU8Zm2FUZUAomfv3IC0OCo2rULWciEuzYgVvu/TgF3fhN2MF86QR7h4mTvuKQ/ex2HVJWJMDQu+wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xmfp9WQS; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1740391829; c=relaxed/simple;
+	bh=nGIgI5Cm6+5BTpZFR8Wf9vbZLwRowF8CBnVRRVc2t4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pjm42Oz4zEjwrnagWQTiaKCwDMy77Pb5DpIEhVoEubuHdln+Fw6Rx9ZvawPKUsZR4srh4xiwVrkpBSIBRkQBoCkOhUHu3MCICELPGibMERke7GI6y+nia+6qo8v2jdo0euZGfs/A62s35iTmr7y+xuTxL8VVYQIfN2dZqCOlzB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gaav39Br; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xmfp9WQS"
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2fcce9bb0ecso8222925a91.3
-        for <linux-clk@vger.kernel.org>; Mon, 24 Feb 2025 01:59:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740391197; x=1740995997; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5m/misXjt0Q5BUlaADzuQsIymnQ6d4dUSOqiq4YJRiI=;
-        b=xmfp9WQSnKiUHR/OQ9XeMlpxl/W8kLoEFW24Zc1zxPooalMafc5nahHvVIwhB0hpGJ
-         klpdF+2aOotaZoA4ycsOTXN7pECOh3qEWvE+usSXy6e9vYUWwyFd+UJz1zy2A+uKXaaa
-         jTUJhLp2zh6GjhhtgfLShWG0zrZdNRxncvm9w7tgy7EkojPD0rtpjAvVYMZkLVzN7zWd
-         gp0UC4IhgOFz2dBNali8fAUayQMUVRzNYQz9vWrSHQ7LSI3c4C02bFmwXHfXxoH1tiof
-         LSOx5eJZodjKuFtVufo0PUKDfet5K18E6dtyJp4rG9WlHvXU3zGnpWh83NaplXszcF/9
-         H4MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740391197; x=1740995997;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5m/misXjt0Q5BUlaADzuQsIymnQ6d4dUSOqiq4YJRiI=;
-        b=V7Bq51RyOJtYOnGRhzdq2xqIoX8A+7S6KOIcTo50SBPdiiMNdcdD0DeLs/8GXgQpD9
-         Cmb7U+a5tJls59AVLTgJ6L3ZlIjqKCgQvgppiefzykB496U+OnrHskKZ9d+ioSQGv6no
-         JptXlcQRMHw5oKaFLjLIo4N6Ojb3VOzSllPpsukx5Uj3xpIEfGsZ82T31Ms7YcVjeO3J
-         MnjB+b7KXKPWonzQS1l38Eet7sc4BcmiZ4Palcl/QdJObPbuUxbENKkqqQ/H+nCTEZKK
-         7mTePLZTp31F1RED1Noe6kFO6gG6qv93s69H7otC6cXuV8UrROFjFQ2AqfqtuwnBLws/
-         2+hA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3wu1UF7iSxtCq2neRqKjLBXV40Vl7FsrAoooe43G4N5ClaRf9TnqzMgfFUVoLpkO32TUjqOuPYDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsrD2MrGHR5O9kqxEIAgH7Ji0j/YPl1loObQRfoiIqc+ZyFMuq
-	ihWAu9pldJmhc66ogn/p92NqLTD0vgf1kuNkK6iPGnQdOfLLOu3x0BUsB968Gow=
-X-Gm-Gg: ASbGncsKlY7ajV1Amsv6gff4xYNtpNP+6BZZwaZVqGNMwDqt2u+ZwVtQJxFclllLUn1
-	LwPI7d6YsqsNjyHx3suIyRq4WdoV4uoQQU62iwNDGPWSx8QswtXtrrNyCbj+z3fWOODfV//E10d
-	FdAtF0O492ZwNuK6H7OYauaiBTNoqBol+EFtHApkwVvwb3XmmeRy0ChEl2mSrPuSH9JS1tWxF7s
-	X048p5F9/UejMyDdc6rvyaqD9V4HmmHVYufS42GBJl37CzXY8LbAkfaotqpc7ykVFM5BNEMZr0Z
-	d7cx9iWCxYOnNNg3eieQ3FNChyo=
-X-Google-Smtp-Source: AGHT+IFGXKt2Ne+312FHQKlsxHl1O51sDX7kIoA6jMtZwlTfC7DlPo6BokxDsPaa+yv/IacOx2QUMw==
-X-Received: by 2002:a17:90b:2644:b0:2fa:d95:4501 with SMTP id 98e67ed59e1d1-2fce78c90damr24754674a91.18.1740391196814;
-        Mon, 24 Feb 2025 01:59:56 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb10fb5bsm6054636a91.33.2025.02.24.01.59.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 01:59:55 -0800 (PST)
-Date: Mon, 24 Feb 2025 15:29:45 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
-Message-ID: <20250224095945.xjcjwkoqlgcsd2np@vireshk-i7>
-References: <cover.1740118863.git.viresh.kumar@linaro.org>
- <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
- <Z7iGHiQcqa-_AXli@pollux>
- <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
- <Z7iSHR0F2QpiNpMZ@pollux>
- <aoprvojsnmkbzmmpgx5wxjqtamnr3jyhyqfcqnwhxulp34gn32@aau57u4cotpe>
- <20250221215931.GA134397-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gaav39Br"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE8EC4CED6;
+	Mon, 24 Feb 2025 10:10:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740391828;
+	bh=nGIgI5Cm6+5BTpZFR8Wf9vbZLwRowF8CBnVRRVc2t4s=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Gaav39BrdspeY62DXl0BvVCSbwBKXiuf/w7Cu3HImF8o1tsU+wA3P7cF16KWVpVUb
+	 3Zlt4E8NROAwG0DhJCe8Tcaet7K9+bLxiDGFhPb5+NtMjOc2HIxQOCzvyqei1K9fMI
+	 Q/wqenyTdrE229v+TICaIdNTnqXbROoE6lQNm+aJEwJ/dQGpq2zTn6DJ5R59eC1c4E
+	 mw3KT4q+kY3oehIiECukwYmo+BhM8g27Z0cc2oZV4zgyQ3qw/GX/LoRfzIk01OmL6j
+	 4qvt80OZLcGMl4Lp/5HdkVBPeDXw4TaS4mC56aNRQGMLGOq3ae4SZsLETVuNstiU6k
+	 9MQwpZe0XDiug==
+Message-ID: <f810b8a2-4261-4b68-b59b-4efa0219b5db@kernel.org>
+Date: Mon, 24 Feb 2025 11:10:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221215931.GA134397-robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 1/3] dt-binding: clock: ast2700: modify soc0/1 clock
+ define
+To: Ryan Chen <ryan_chen@aspeedtech.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250224095506.2047064-1-ryan_chen@aspeedtech.com>
+ <20250224095506.2047064-2-ryan_chen@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250224095506.2047064-2-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 21-02-25, 15:59, Rob Herring wrote:
-> It would be nice to handle the optional case from the start. Otherwise, 
-> driver writers handle optional or not optional themselves. The not 
-> optional case is typically some form of error message duplicated in 
-> every driver.
+On 24/02/2025 10:55, Ryan Chen wrote:
+> -remove redundant SOC0_CLK_UART_DIV13:
+> SOC0_CLK_UART_DIV13 is not use at clk-ast2700.c, the clock
+> source tree is uart clk src -> uart_div_table -> uart clk.
 > 
-> Every foo_get() needs foo_get_optional(), so let's figure out the rust 
-> way to handle this once for everyone.
+> -Change SOC0_CLK_HPLL_DIV_AHB to SOC0_CLK_AHBMUX:
+> modify clock tree implement.
+> older CLK_AHB use mpll_div_ahb/hpll_div_ahb to be ahb clock source.
+> mpll->mpll_div_ahb
+>                   -> clk_ahb
+> hpll->hpll_div_ahb
 
-Are we talking about adding another field here (like below code) or
-something else ?
 
-impl Clk {
-        pub fn get(dev: &Device, name: Option<&CStr>, optional: bool) -> Result<Self> {
-                ...
+I can barely understand it and from the pieces I got, it does not
+explain need for ABI break.
 
-                let clk = if optional {
-                        bindings::clk_get(dev.as_raw(), con_id)
-                else {
-                        bindings::clk_get_optional(dev.as_raw(), con_id)
-                };
 
-                Ok(Self(from_err_ptr(clk)?))
-        }
-}
 
--- 
-viresh
+Best regards,
+Krzysztof
