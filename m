@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4866E242934;
-	Mon, 24 Feb 2025 10:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46B724FC1A;
+	Mon, 24 Feb 2025 10:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391940; cv=none; b=IGNbU3yhXR69NoiHPQ+qAZad3reAKu7mrx2kp3bTs7rYydOr79sdK+74chTGYlYY2wJiPyxZUUPpRjARhGy3rYgM9YyG854whQTpujlhbN7R5SBeCgA+Iq6HuiIilzU8sFPxkBbLjlR3SFQQ98QCTRkOWua5ybrsA1dqaji0j+c=
+	t=1740392129; cv=none; b=IH+oGesl/uNnHCPapmuzkH2lcBMx7USA+v7lFLxgwzZYjBYd0VUMqej+P+mCeOalmcmEgxIjAK0lmVBshG+PvdYYg5zCDhr9lnCzuFoMKudMgfdBUlxmrgf1FCcqB/DH1SZr/l9vAoxYI8L94R2FnFJhBHf0feoN2/ez4dpbiYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391940; c=relaxed/simple;
-	bh=PCYrjtUGVCNWA2UVJ7z9lylraitHnr5rIdAHSEZtMNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HKO61pxCH8D7RMJXMy4czxqfYbO+PO2533ptRh0FFTxCPF/n6lNQ1S8aE3tq/0iEcjH+u0FfdZdYuAroBwP8ig3yV+sIYVwlxrmjrw9a2yBoo3gWuok1+fdi7qrKqVtGGISu/Bm+0KZij8HgorH6jLQY59SEluX7LCZy8sUBLEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nuT1086/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740392129; c=relaxed/simple;
+	bh=nhdDyfK9oxoqYCHrduTPMT827OPl9ykkco5bv7xZgSA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=UQJhENKQ+3pkcZoClNpATYN2UZox4xpeuTipw+kwQbXDfh+lukhIYd5zPaKpoHhf7JmqMtnuFgzeXT/5SI3a/fwZJ8sjXW0jxNeu3wvXA8xElqU0nNewNQU9oB8Po7FxhJ37mkDj8XZhlQj5CtflLhp6ZVDAnLGnmpbCGV9Rav4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6VXbhAr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuT1086/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E632C4CED6;
-	Mon, 24 Feb 2025 10:12:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6VXbhAr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98C60C4CEE6;
+	Mon, 24 Feb 2025 10:15:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740391939;
-	bh=PCYrjtUGVCNWA2UVJ7z9lylraitHnr5rIdAHSEZtMNk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=nuT1086/FaATtLmemWY7kOIECVttghSCc4222D9Ldf9XVKoYAoTvqQy3s/KaSB3IY
-	 81PTkl2QIEWMA6zZM6BI5P6wZfDYoF1AnzNc6SKBdP9JEwYsdeW9BGnfgPeU2TAYMl
-	 mCHCT8linYBKLN8VQ6+l7EsAKaRYomEfkzZXVL2D2/wgVXYHB8r0p5Ba4367zLL3Qb
-	 6gxNP4F/yPnPsjwUjcjOZ4VQsQAWdvLGCJ3nlwEq/DmgRfj8p9zNSWiQbxFq/XnPSF
-	 GYSfBHYuATnubYut9uyyOqywvuJ8UMNofpuPAQMWbh5Vsu1z5174dT8BfsZ4/JmvVq
-	 s0DtFT/+KuHBQ==
-Message-ID: <71cf8012-3b77-43de-b8ac-54c84a97f9d3@kernel.org>
-Date: Mon, 24 Feb 2025 11:12:13 +0100
+	s=k20201202; t=1740392129;
+	bh=nhdDyfK9oxoqYCHrduTPMT827OPl9ykkco5bv7xZgSA=;
+	h=Date:Subject:From:To:References:In-Reply-To:From;
+	b=R6VXbhArAIL0nOd/yzjC2LPNaSBbJVh1MqyuEm2Td41KdiWTRmLdfz5jIaAYerCb9
+	 v/mSewLO0bPVocrhhm1aJmH1OHW2vInZTnvK0O1NOzDmNX85C/6/eYyOi4xiLpq5ZU
+	 02Cc/N9DTkm2xyiN0UbkjPPit3lnwQWk9iVn9O19STk22WRTu8QXh+MrjBHIYBPzCh
+	 GVQgvokZ17V3vLBFo4kAO8A/g0q53cY68Jt40b2nOJkKihS1bWVzRQFYEOPJ1h7BKj
+	 tDY9mWasrp5ghGJp7hELvIJA6s2IXPVtq2TuThQDtheBiVnbP0ZtgUCCl/xS3jrK2A
+	 OPHLUNggY4RQA==
+Message-ID: <d5d90f03-3db8-4f90-baad-0be4f3d3e0ea@kernel.org>
+Date: Mon, 24 Feb 2025 11:15:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -37,6 +37,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v9 2/3] reset: aspeed: register AST2700 reset auxiliary
  bus device
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
@@ -47,7 +48,7 @@ To: Ryan Chen <ryan_chen@aspeedtech.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250224095506.2047064-1-ryan_chen@aspeedtech.com>
  <20250224095506.2047064-3-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <71cf8012-3b77-43de-b8ac-54c84a97f9d3@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -92,68 +93,72 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250224095506.2047064-3-ryan_chen@aspeedtech.com>
+In-Reply-To: <71cf8012-3b77-43de-b8ac-54c84a97f9d3@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/02/2025 10:55, Ryan Chen wrote:
-> +
-> +static void aspeed_reset_unregister_adev(void *_adev)
-> +{
-> +	struct auxiliary_device *adev = _adev;
-> +
-> +	auxiliary_device_delete(adev);
-> +	auxiliary_device_uninit(adev);
-> +}
-> +
-> +static void aspeed_reset_adev_release(struct device *dev)
-> +{
-> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> +
-> +	kfree(adev);
-> +}
-> +
+On 24/02/2025 11:12, Krzysztof Kozlowski wrote:
+> On 24/02/2025 10:55, Ryan Chen wrote:
+>> +
+>> +static void aspeed_reset_unregister_adev(void *_adev)
+>> +{
+>> +	struct auxiliary_device *adev = _adev;
+>> +
+>> +	auxiliary_device_delete(adev);
+>> +	auxiliary_device_uninit(adev);
+>> +}
+>> +
+>> +static void aspeed_reset_adev_release(struct device *dev)
+>> +{
+>> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+>> +
+>> +	kfree(adev);
+>> +}
+>> +
+> 
+> Every exported function *must* have kerneldoc.
+> 
+>> +int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+>> +				     const char *adev_name)
+>> +{
+>> +	struct auxiliary_device *adev;
+>> +	int ret;
+>> +
+>> +	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+>> +	if (!adev)
+>> +		return -ENOMEM;
+>> +
+>> +	adev->name = adev_name;
+>> +	adev->dev.parent = clk_dev;
+>> +	adev->dev.release = aspeed_reset_adev_release;
+>> +	adev->id = 666u;
+>> +
+>> +	ret = auxiliary_device_init(adev);
+>> +	if (ret) {
+>> +		kfree(adev);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = auxiliary_device_add(adev);
+>> +	if (ret) {
+>> +		auxiliary_device_uninit(adev);
+>> +		return ret;
+>> +	}
+>> +
+>> +	adev->dev.platform_data = (__force void *)base;
+>> +
+>> +	return devm_add_action_or_reset(clk_dev, aspeed_reset_unregister_adev, adev);
+>> +}
+>> +EXPORT_SYMBOL_GPL(aspeed_reset_controller_register);
+> 
+> No, you cannot export functions without users. There is no single user
+> of this, so this is not justified at all.
+My mistake, I missed patch #3 which uses it.
 
-Every exported function *must* have kerneldoc.
-
-> +int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
-> +				     const char *adev_name)
-> +{
-> +	struct auxiliary_device *adev;
-> +	int ret;
-> +
-> +	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-> +	if (!adev)
-> +		return -ENOMEM;
-> +
-> +	adev->name = adev_name;
-> +	adev->dev.parent = clk_dev;
-> +	adev->dev.release = aspeed_reset_adev_release;
-> +	adev->id = 666u;
-> +
-> +	ret = auxiliary_device_init(adev);
-> +	if (ret) {
-> +		kfree(adev);
-> +		return ret;
-> +	}
-> +
-> +	ret = auxiliary_device_add(adev);
-> +	if (ret) {
-> +		auxiliary_device_uninit(adev);
-> +		return ret;
-> +	}
-> +
-> +	adev->dev.platform_data = (__force void *)base;
-> +
-> +	return devm_add_action_or_reset(clk_dev, aspeed_reset_unregister_adev, adev);
-> +}
-> +EXPORT_SYMBOL_GPL(aspeed_reset_controller_register);
-
-No, you cannot export functions without users. There is no single user
-of this, so this is not justified at all.
-
-
-
+I don't get why do you need to export this in the first place, instead
+of putting it in the clock driver, as usually expected. Handling child
+creation is logically the task of the device having children, the
+parent. Not the child.
 
 Best regards,
 Krzysztof
