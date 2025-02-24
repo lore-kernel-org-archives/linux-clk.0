@@ -1,99 +1,134 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCBB1A704B;
-	Mon, 24 Feb 2025 17:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECBE2627E1;
+	Mon, 24 Feb 2025 17:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740419280; cv=none; b=CVnjN4dgApwYxheIA3cbzCQYWvtPqECnN7+smixoWlgMUiT7cj4Qm1YMSKlrDLgtwEO8kiEROFvskjdXOo6bHDNQC01F6NnEMcA1nv7KUB643s90g5eSAtyv9uPtgbemcXty1nW3uMplr2DiESWs5iBxCbw1U79kMzb7nmr4QMo=
+	t=1740419812; cv=none; b=YCvzjyP06BsOAwrwYv4wYVRvdR9PH+d5TUQpKgJecKU37jKgwQbSrzEAzqgi+WYjNDl5ZLJCDH2TRu3TEWP2HcxW3aX+krFpSvPj1Fao/M6qsc85wAQUVBXTAf9hhnCU2Z2qxVgD87HeUVVOZSrgQTTdPkk3kDgTeC0DoirmG78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740419280; c=relaxed/simple;
-	bh=5Dld904E0IHeG2LNNgItT8r0/muuiN9ws/qnIs7U5TA=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Heubi6Cj59kf7kKWzvDOb3TDFvwzwKAN/GcCMyMkDEhVPBtc3GU0z21t3NwQmewIHJZe8QC5b7MRom9r5P3ozMw+9Odu9TTRFv3t/K+EQfy1/2tpevHIjw9uRoMjDU00tOGI/jZdoNK/9rqdyI5UX/en/6wKiOEA3pqR3NTvd04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=P3g1rziA; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="P3g1rziA"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 1950725B19;
-	Mon, 24 Feb 2025 18:47:57 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id PArui_dNLN8n; Mon, 24 Feb 2025 18:47:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1740419266; bh=5Dld904E0IHeG2LNNgItT8r0/muuiN9ws/qnIs7U5TA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=P3g1rziAdnhX2YblNyPfiR3AAhxzFY2a2ndkuJ+aIHo+hULpG9FghSrzHhVtVdkPw
-	 g2kzCK2lwW8jQ+OKADQw2BLZi5hm7jkm6gEYKxoINcdipif3I0+1KkNHELE51n20V1
-	 LQR4Lgx4X9CqwGrTZ7tDQ3gv/xq6Ff5AJJePUs7M/GxohccFfbhaq6n/OR80CLKCdP
-	 owPUxMgy93fpcc7bzJEMIZDhB2hIlMcDs91CL6juJrTqM9t/QbJGhvNpN8im43POvQ
-	 o+FEh2iq9EgOVFiGITvxkinTitrZ++pjeDedL6eeX8Ra7ECzAS/3a9pDmcGZ/9+IkO
-	 15sPoMRjczZ+g==
+	s=arc-20240116; t=1740419812; c=relaxed/simple;
+	bh=laLlXfTqdTi8U2cQjpNZyAGYUeq8S9FFniC6nm3tRK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q6YVwVPBPZAttrd3rrfv0VVLJIEoevajOXxaVGB/+Ph1tA3S9ty7EtHMhM6Ci2sG5xQQCahGy/c+5QN3mgi1riK2zWK91+KqMpKfbek5RYn6YABRlFh5MFaVP4H/HgC+PNJFo+sI0o+3rY4KxG08F6CSB6OuCsah5AHZ3TSzXvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7991B152B;
+	Mon, 24 Feb 2025 09:57:06 -0800 (PST)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D9C63F5A1;
+	Mon, 24 Feb 2025 09:56:46 -0800 (PST)
+Date: Mon, 24 Feb 2025 17:56:42 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Ryan Walklin <ryan@testtoast.com>
+Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
+ <daniel@ffwll.ch>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
+ Holland <samuel@sholland.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chris
+ Morgan <macroalpha82@gmail.com>, Hironori KIKUCHI <kikuchan98@gmail.com>,
+ Philippe Simons <simons.philippe@gmail.com>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Conor Dooley
+ <conor.dooley@microchip.com>
+Subject: Re: [PATCH v7 22/27] dt-bindings: allwinner: add H616 DE33 mixer
+ binding
+Message-ID: <20250224175642.170c124e@donnerap.manchester.arm.com>
+In-Reply-To: <20250216183710.8443-23-ryan@testtoast.com>
+References: <20250216183710.8443-3-ryan@testtoast.com>
+	<20250216183710.8443-23-ryan@testtoast.com>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 24 Feb 2025 23:17:46 +0530
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
- <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
- Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kaustabh
- Chakraborty <kauschluss@disroot.org>
-Subject: Re: [PATCH v3 5/5] clk: samsung: add exynos7870 CLKOUT support
-In-Reply-To: <20250219-discerning-affable-chital-1fdff4@krzk-bin>
-References: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
- <20250219-exynos7870-pmu-clocks-v3-5-0d1e415e9e3a@disroot.org>
- <20250219-discerning-affable-chital-1fdff4@krzk-bin>
-Message-ID: <e2ebd4503100ddbbe8d7e21290329e38@disroot.org>
-X-Sender: kauschluss@disroot.org
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2025-02-19 13:41, Krzysztof Kozlowski wrote:
-> On Wed, Feb 19, 2025 at 12:20:32AM +0530, Kaustabh Chakraborty wrote:
->> Exynos7870's CLKOUT registers are the same as Exynos5's. Add the PMU
->> compatible to the existing CLKOUT ID list.
->> 
->> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->> ---
->>  drivers/clk/samsung/clk-exynos-clkout.c | 3 +++
->>  1 file changed, 3 insertions(+)
->> 
->> diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
->> index 2ef5748c139b37ca5429b9071ee0e06f44fcf28e..9a31b1c311b45096f1d680b6724571854c08725c 100644
->> --- a/drivers/clk/samsung/clk-exynos-clkout.c
->> +++ b/drivers/clk/samsung/clk-exynos-clkout.c
->> @@ -75,6 +75,9 @@ static const struct of_device_id exynos_clkout_ids[] = {
->>  	}, {
->>  		.compatible = "samsung,exynos5433-pmu",
->>  		.data = &exynos_clkout_exynos5,
->> +	}, {
->> +		.compatible = "samsung,exynos7870-pmu",
->> +		.data = &exynos_clkout_exynos5,
+On Mon, 17 Feb 2025 07:36:22 +1300
+Ryan Walklin <ryan@testtoast.com> wrote:
+
+Hi,
+
+> The Allwinner H616 and variants have a new display engine revision
+> (DE33).
 > 
-> I wonder why do we need to keep growing this list? All devices are
-> compatible, aren't they?
+> The mixer configuration registers are significantly different to the DE3
+> and DE2 revisions, being split into separate top and display blocks,
+> therefore a fallback for the mixer compatible is not provided.
+> 
+> Add a display engine mixer binding for the DE33.
+> 
+> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> 
+> ---
+> Changelog v2..v3:
+> - Separate content into three patches for three separate subsystems
+> 
+> Changelog v5..v6:
+> - increase reg maxItems to 3 and add conditional for h616-de33
+> ---
+>  .../allwinner,sun8i-a83t-de2-mixer.yaml       | 21 ++++++++++++++++++-
+>  1 file changed, 20 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
+> index b75c1ec686ad2..274f5e6327333 100644
+> --- a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
+> +++ b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
+> @@ -24,9 +24,11 @@ properties:
+>        - allwinner,sun50i-a64-de2-mixer-0
+>        - allwinner,sun50i-a64-de2-mixer-1
+>        - allwinner,sun50i-h6-de3-mixer-0
+> +      - allwinner,sun50i-h616-de33-mixer-0
+>  
+>    reg:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 3
 
-Well, there are two variants of compatibility having different mask
-values.
+What are those three regions? I wonder if we should have reg-names here,
+to fix the order, and to document them on the way?
 
-> Do you use clkout, BTW?
+>  
+>    clocks:
+>      items:
+> @@ -61,6 +63,23 @@ properties:
+>      required:
+>        - port@1
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - allwinner,sun50i-h616-de33-mixer-0
+> +
+> +    then:
+> +      properties:
+> +        reg:
+> +          maxItems: 3
 
-Using the clocks defined by clkout? No. I added it as downstream
-had it too. And the devices work fine without it. If you want me
-to remove this patch and send the PMU patch to its respective
-series I'll do that then (unless you object or suggest something
-else).
+Should we override minItems here as well? I guess any driver would need
+all three region to work?
 
-> Best regards,
-> Krzysztof
+Cheers,
+Andre
+
+> +
+> +    else:
+> +      properties:
+> +        reg:
+> +          maxItems: 1
+> +
+>  required:
+>    - compatible
+>    - reg
+
