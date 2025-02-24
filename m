@@ -1,136 +1,109 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE9325485D
-	for <linux-clk@vger.kernel.org>; Mon, 24 Feb 2025 16:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6C326280C;
+	Mon, 24 Feb 2025 17:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740414483; cv=none; b=sGrL5GHhlPujV9hyW1rcb8n/DUs2I+gbbo21xb4J1NCEV0JwXHhltn+6Z8Zle2XU7TA+IYeyAYk8vJbYzW7cjp4vIgx32Hji583RMyHGaU5D3zL/GyOkK/Gvv0JcKWwvSNWE4+q+2KvrRER5mlDQTgHF6KpGEZw8EPBFOEysQak=
+	t=1740418478; cv=none; b=BsWPMHtyAf8naAVr+d0seHFlRnDjXaaqF40BOgl9jERX7xdiooNMSBxapvrdsHwo8+12ZQvKjaj6Z68HCA7TLVhl9qd207MNnraGJYUjJM7wfbO2WqfTarVTb65gBT19Q5VQN/uMPzne7TVSopuLaT8KvtnW3urvR7uuhGRtldA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740414483; c=relaxed/simple;
-	bh=FaoeYT/iHjZi1G6SmKpRmaQNHEWG3shJOhqhR6BNlxo=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ap7/HpZCko5lv9W3rRGuBJLmur1rc01hGPtkOxT1BcrD4MgDqJop9egD+mWPcBrkdbORq/MwHNYeT/GPqhPvTe1beTovQfZLjOyGz+KDCMh/qhz9q7wMaaPfoPup41XQlhcqXO3E2oCJf+hqessBylflxuNS7y76tEt3XYrwqec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tmbIv-0005GS-HA; Mon, 24 Feb 2025 17:27:37 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tmbIu-002csr-0G;
-	Mon, 24 Feb 2025 17:27:36 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tmbIu-000DzX-00;
-	Mon, 24 Feb 2025 17:27:36 +0100
-Message-ID: <b00aef9582e223a5770cebc714ad65168eab744b.camel@pengutronix.de>
-Subject: Re: [PATCH v9 2/3] reset: aspeed: register AST2700 reset auxiliary
- bus device
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Ryan Chen
- <ryan_chen@aspeedtech.com>,  Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew
- Jeffery <andrew@aj.id.au>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Date: Mon, 24 Feb 2025 17:27:35 +0100
-In-Reply-To: <d5d90f03-3db8-4f90-baad-0be4f3d3e0ea@kernel.org>
-References: <20250224095506.2047064-1-ryan_chen@aspeedtech.com>
-	 <20250224095506.2047064-3-ryan_chen@aspeedtech.com>
-	 <71cf8012-3b77-43de-b8ac-54c84a97f9d3@kernel.org>
-	 <d5d90f03-3db8-4f90-baad-0be4f3d3e0ea@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1740418478; c=relaxed/simple;
+	bh=sCwX7+nI/q81kiD2Y4/3tqSc3VlI4gc1dBG+Icft1Fs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gw5M+DM/TiHYubm9BbhQZvVfdnmDYvau/BfokQy4FPmhoMz45hb7Ronjg8FMHGgno4xV2XisD11XMC9rvXpt0R8jcg+XZ24UD4qXiuC3+AXkcXLfPpGv8lzOi33EwLhQH0szqVWi/dgx9oRZ99NiQkza5l3JJ65iwGpbEqS18AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTQ87Y5E; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTQ87Y5E"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3560DC4CED6;
+	Mon, 24 Feb 2025 17:34:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740418477;
+	bh=sCwX7+nI/q81kiD2Y4/3tqSc3VlI4gc1dBG+Icft1Fs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hTQ87Y5EJefkpgjqkOeu0y6B5lNoAOCly/eXwp3K8arYTGs7bcZbVzUX4x9a8zKrE
+	 fQMnAJNEPArkOi/b0YFY4zipLp+oj2+sz88wuvfD0yO3p41Pe2e4w5LNDdkuC1oJQy
+	 omNqK13szevPn7ITpFrP2LUzwKO/J8sRkcfbpy5Zaeha/9jYHIHOX2cVtpRYD7S21l
+	 TOT5v7/SM3B9U/Mxk+NSFxwq6QbA96irjalNyV1JWBXAnP6A6tF4kIsLiY74DmBH92
+	 eyLlIJyxOJV96k4y1RNOJQNyw17IoAyXKvuQO8vyOcHWgxlYN05Tcs9xKLHLNatvm6
+	 FGbpObWGrs0Lw==
+Date: Mon, 24 Feb 2025 11:34:35 -0600
+From: Rob Herring <robh@kernel.org>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>, Marek Vasut <marex@denx.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: imx8mp: add axi clock
+Message-ID: <20250224173435.GA3560337-robh@kernel.org>
+References: <20250221190929.31469-1-laurentiumihalcea111@gmail.com>
+ <20250221190929.31469-2-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221190929.31469-2-laurentiumihalcea111@gmail.com>
 
-On Mo, 2025-02-24 at 11:15 +0100, Krzysztof Kozlowski wrote:
-> On 24/02/2025 11:12, Krzysztof Kozlowski wrote:
-> > On 24/02/2025 10:55, Ryan Chen wrote:
-> > > +
-> > > +static void aspeed_reset_unregister_adev(void *_adev)
-> > > +{
-> > > +	struct auxiliary_device *adev =3D _adev;
-> > > +
-> > > +	auxiliary_device_delete(adev);
-> > > +	auxiliary_device_uninit(adev);
-> > > +}
-> > > +
-> > > +static void aspeed_reset_adev_release(struct device *dev)
-> > > +{
-> > > +	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> > > +
-> > > +	kfree(adev);
-> > > +}
-> > > +
-> >=20
-> > Every exported function *must* have kerneldoc.
-> >=20
-> > > +int aspeed_reset_controller_register(struct device *clk_dev, void __=
-iomem *base,
-> > > +				     const char *adev_name)
-> > > +{
-> > > +	struct auxiliary_device *adev;
-> > > +	int ret;
-> > > +
-> > > +	adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
-> > > +	if (!adev)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	adev->name =3D adev_name;
-> > > +	adev->dev.parent =3D clk_dev;
-> > > +	adev->dev.release =3D aspeed_reset_adev_release;
-> > > +	adev->id =3D 666u;
-> > > +
-> > > +	ret =3D auxiliary_device_init(adev);
-> > > +	if (ret) {
-> > > +		kfree(adev);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	ret =3D auxiliary_device_add(adev);
-> > > +	if (ret) {
-> > > +		auxiliary_device_uninit(adev);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	adev->dev.platform_data =3D (__force void *)base;
-> > > +
-> > > +	return devm_add_action_or_reset(clk_dev, aspeed_reset_unregister_ad=
-ev, adev);
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(aspeed_reset_controller_register);
-> >=20
-> > No, you cannot export functions without users. There is no single user
-> > of this, so this is not justified at all.
-> My mistake, I missed patch #3 which uses it.
->=20
-> I don't get why do you need to export this in the first place, instead
-> of putting it in the clock driver, as usually expected. Handling child
-> creation is logically the task of the device having children, the
-> parent. Not the child.
+On Fri, Feb 21, 2025 at 02:09:26PM -0500, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> 
+> The AUDIOMIX clock provider takes an additional clock: AUDIO_AXI_CLK_ROOT.
+> 
 
-Also, consider basing this on top of:
+Fixes tag? The commit message should be expanded a bit as this is an ABI 
+change.
 
-https://lore.kernel.org/all/20250218-aux-device-create-helper-v4-0-c3d7dfde=
-a2e6@baylibre.com/
-
-regards
-Philipp
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> ---
+>  .../devicetree/bindings/clock/imx8mp-audiomix.yaml     | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> index 6588a17a7d9a..0272c9527037 100644
+> --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> @@ -24,8 +24,8 @@ properties:
+>      maxItems: 1
+>  
+>    clocks:
+> -    minItems: 7
+> -    maxItems: 7
+> +    minItems: 8
+> +    maxItems: 8
+>  
+>    clock-names:
+>      items:
+> @@ -36,6 +36,7 @@ properties:
+>        - const: sai5
+>        - const: sai6
+>        - const: sai7
+> +      - const: axi
+>  
+>    '#clock-cells':
+>      const: 1
+> @@ -72,10 +73,11 @@ examples:
+>                   <&clk IMX8MP_CLK_SAI3>,
+>                   <&clk IMX8MP_CLK_SAI5>,
+>                   <&clk IMX8MP_CLK_SAI6>,
+> -                 <&clk IMX8MP_CLK_SAI7>;
+> +                 <&clk IMX8MP_CLK_SAI7>,
+> +                 <&clk IMX8MP_CLK_AUDIO_AXI_ROOT>;
+>          clock-names = "ahb",
+>                        "sai1", "sai2", "sai3",
+> -                      "sai5", "sai6", "sai7";
+> +                      "sai5", "sai6", "sai7", "axi";
+>          power-domains = <&pgc_audio>;
+>      };
+>  
+> -- 
+> 2.34.1
+> 
