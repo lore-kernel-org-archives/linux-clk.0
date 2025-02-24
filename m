@@ -1,222 +1,91 @@
-Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC5D24A07C;
-	Mon, 24 Feb 2025 10:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5252C25744C;
+	Mon, 24 Feb 2025 10:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740392285; cv=none; b=ugtgZX16ZOjmaOFtDZD/7Sp8981KZBDzZs9mv2uasIu1cdcJ27A6asHYQZiASZLCq7ZD0j+fd/VMeJ7/Po397OffWmmlmdk+aMrL2JHXsLnZ2J+riUqleHYhKTHh/6qfpXGsie7V/vpnKk53BvMtiop28wF1vtTp7n6vsjIvEHE=
+	t=1740394261; cv=none; b=jpn73/7bGK+oc0FghStsHy3Ft5Fa3lu5quX8iJ9jbd5bDzRy45TMk3FPar80pmdRGOeZ3HJ3DIjOI/Cfncd2ueIx+iVcTQ4LGSiIjhIFMu/+5CJScNwkCDXNugKJaPahq5Q+cvQnzbppBnO3j772ud4nBstcPiar5kTbOlmc6UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740392285; c=relaxed/simple;
-	bh=Lwv+SdLlgCCVTrLfdebdm1ZrgIaYP0UgzwvumboP/Ow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6iGFTLhWyOp4ZJ8P2hvNGbG/aPHnn5OO4etjxbb1MXCRkyhYy6TU94q2Wk4pg4WSTBon77ua4ha9z+TVJmPLjipSub6Abtg4+QUr575zQiQE/OaACx3oQXmnL8/M1WjGVvZb0mesGu3tfvoAH0F1R+YjdvwPed5dTVydpYklKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=niCjXbTi; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=UkjrEQil; arc=none smtp.client-ip=5.78.89.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="niCjXbTi";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="UkjrEQil"
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 52D4D122FE23;
-	Mon, 24 Feb 2025 02:17:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740392276; bh=Lwv+SdLlgCCVTrLfdebdm1ZrgIaYP0UgzwvumboP/Ow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=niCjXbTievjPfp2HmOums4MrUOg/tOro7gx/TCt7XJ2cPvwaMrZykwcckHHr0zJuG
-	 p9xSjwlq7D713ed9/6aXE4x6EDZ/ym1Z+pP7cVdK/zk1dRqMZjPbxnHAnRGtk3iotm
-	 XAEkIJ0aQ/Qkfref1IT+bVBZZT0QbM7QCjp47jQXdoOvFjhUmqSYNbNEroo9E4MFV1
-	 srPvEaBJ4dmpjRr5NJaaJazeMJREqJSZZILgGxjo/XY6fce5oAfHPdVVjLd08rSADt
-	 cIog1Xr8aUwP6vVrE2pFBkQH1CM0xlFwVbmEDzo2T4PUeDFm3lafA1b9icW3CZr25S
-	 BQ848tOhqzc+Q==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id zq8oGhaoyk3h; Mon, 24 Feb 2025 02:17:54 -0800 (PST)
-Received: from ketchup (unknown [183.217.80.34])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id D9D65122FE21;
-	Mon, 24 Feb 2025 02:17:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740392274; bh=Lwv+SdLlgCCVTrLfdebdm1ZrgIaYP0UgzwvumboP/Ow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UkjrEQilES+wAWOqAgIE+CWAGiRh2WE8Z77le9pWr5tgNy1pWWbTyvFrFuLig7CnF
-	 dyklHRklhPKiGkBC4LE6uYN+Rl0kydApuUOx4z+Z7LJpzk2udQKSZbeIGhkNZwg0jy
-	 9aDvewbfZHh8T4ZBHNmauBCB//kbGb41vZo9tvBDP8ob6o8J4J7cS/Q/o6GqPIP7Tk
-	 DT5ea06zULyMSIjah2/ojuRxiDYZP9KzU6IgCNnGOpNy5JImavBQtP+Rl042DCMURl
-	 qZyAc5btfGtkVngR4Qcf1rNwimx5rW5utOUyUm+S8G0DjcrYcxmmkpMkFs8No+GFT9
-	 sBeXApdL2iOjQ==
-Date: Mon, 24 Feb 2025 10:17:40 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Alex Elder <elder@riscstar.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	Guodong Xu <guodong@riscstar.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-Message-ID: <Z7xHRAFE4-QEA6PO@ketchup>
-References: <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
- <Z6rdBhQ7s2ReOgBL@ketchup>
- <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
- <Z63T_EDvXiuRQbvb@ketchup>
- <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
- <Z7BTVu10EKHMqOnJ@ketchup>
- <7c697e9a-d6d9-4672-9738-93ce3a71beb6@riscstar.com>
- <4f7bf109-bf18-42be-971c-5d5edd9595b5@kernel.org>
- <Z7mrdrACFp3m-7sy@ketchup>
- <6ea8ac17-42c8-46fa-b970-77ba89de66c4@kernel.org>
+	s=arc-20240116; t=1740394261; c=relaxed/simple;
+	bh=GyFOcA3OxwgMZUZIIm2ABMUKjnz5n6CvNzprvOPG1Cc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F6PtP+Zd2vN3Kqd/58kThFa4DRUXIWnDfNC3yt3jwSLeIMb4CtJTPBOoVR9HwVQBn5iBKmByIBQ1nu7F0lu1H0C5835J8hbHFnNhVuGxq7rqED0FNc466nuBtmma/oOUgKqYAbMfi3PxX3WvQkz5y66h5WIFLSrcjzLB+IM7O9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-520ac2b9b7bso995739e0c.3;
+        Mon, 24 Feb 2025 02:50:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740394258; x=1740999058;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eti4nso2xAHeppArihbMeS6OLJQJG9XodfItlumAHDY=;
+        b=VEMk6Xu6l8TUMglHkpeD4+Dts/eEM5byHnMUUPOa7aktfzoouG1j+IDCSHMQFZK4mX
+         tpxfpdR0Sa+K17NRbC+nML9wThJ8RvVABUQyQnU/AatPFFHoIjtW1JZlRoWghPiL9VsT
+         AJkBCNnppVPYIz6h5O/41gw/eXgypy/ZXz0e8uVTXxwNxKx1lLFwLKxR+9sI7wvfV7qU
+         tHqqF/sqb3inwt9kotNWXmUQWRfm03R268I3i0zt9ondfMbm6wrbYJlpG+o1q1CYNiB5
+         kc9Aq6JXcpAXVbmPwGY+SpC1i2fu4kQAIYM4SQiko5nMZ3uei99nUJM8QSCg0ABSz+ez
+         CWlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUL0s1jDU112k6lmbH5ZsHBsT1UOvY8BVW5I+k3caBOqGbF+101V/Y8KxQzh52MReWlFzJULqEu1U4P6KSt/7rAojA=@vger.kernel.org, AJvYcCUaGzGS8EkaiUy4uYr7NdXNHDyCi4z13ugQ16aZ4hFCe0lNBNLBzbyQz6PM0E58yZMsVuYfRt6481M=@vger.kernel.org, AJvYcCWD1+VNPUyR6mEp5zoPrM2AMx2FBhPDM16pKvK7yxDN0Ieuknq+Jmq1LyOyVZjKmeQJSaSHvOzmgkqDXoyt@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRGDofoG8s4U1jLTnyCP+HvV6waYDTPGh05fTTf5QFxSe6J1mU
+	+hFgZ/ZtscXWI15FAQKI3GPOBup3lEhAKGS4bG3W1sqNjLlktWQto5mKQmngIQ4=
+X-Gm-Gg: ASbGncsYr1YR1fql3y0xHpTbIw++M5Trl9+4HvbyCDwyAxmCCEYo4k9OHHYJ5Cw7Pmd
+	WZ7mXdmdq+fDaM8ekWqCFfL7cdOjFJRSOg5F4dzBgNHQNuKW9XJ3F/6cznkmeWGvpfminBD3Xfx
+	cICGzEcWmU7JbtEJbn4XPUV7H7Dn3IuSRaOfwFa1oHqOGeeDURPcgZadscooIPwuTol2knRsUiK
+	4dSyFybEcuFQa7M9H2MLC9jrhSzCAh/Y48U/xyDwMuJ8h1GtWxL31zAcMfSktq3aI1nx4JbuXsM
+	PtqeXSb1S0Q9TXL/EnY0dqizDAr3Wns00d0TQw/FWiY7nWsfGOVae/ZKULtzygwW
+X-Google-Smtp-Source: AGHT+IG649r7BHF+rPLYgkvEorG8KIuXFkp9hGuIpPx1reufVmsFCAHmMpChNSjpzjI+Gq7H2euZLQ==
+X-Received: by 2002:a05:6122:608a:b0:520:60c2:3f1 with SMTP id 71dfb90a1353d-521ef8ad527mr5361913e0c.0.1740394257715;
+        Mon, 24 Feb 2025 02:50:57 -0800 (PST)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-520ba1193aesm3130326e0c.23.2025.02.24.02.50.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 02:50:57 -0800 (PST)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4be75b2bbceso1460418137.1;
+        Mon, 24 Feb 2025 02:50:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUWogoWT7cHccg6BQBIiPLVGnC8N4pGb5wUwgBNrTV2Aliy0Lzix9YXe9GYNwAGq8rdQJr24EH8sylDgRO4@vger.kernel.org, AJvYcCUtC9lWDcwCWGWCoOR+nI0lxAbGfnGew+lyUK+03y06Va4JCCmVWD8tGgcnR9nqfs5sMCmg4iMcaW3mWfgL33EMs2g=@vger.kernel.org, AJvYcCXXw/M5jFWcW9rMJaolGFZxodJ2MTSDKJYdoeF5a9N1ZRTYwTUmnvrouWXJUUDOAZx2ucT5xLXctaM=@vger.kernel.org
+X-Received: by 2002:a05:6102:41a7:b0:4bb:c9bd:8dc5 with SMTP id
+ ada2fe7eead31-4bfc279eea6mr5617678137.3.1740394257211; Mon, 24 Feb 2025
+ 02:50:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6ea8ac17-42c8-46fa-b970-77ba89de66c4@kernel.org>
+References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com> <20250220150110.738619-2-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20250220150110.738619-2-fabrizio.castro.jz@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Feb 2025 11:50:45 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVjbuTJyonB1paY+chwMORG4WroZG0qsGCR1DW7wuV37w@mail.gmail.com>
+X-Gm-Features: AWEUYZkfQB1or1RpUu8mR2qJmTsSi282VL77AdsyOUW_0x5sxUAP1llZIUU63FU
+Message-ID: <CAMuHMdVjbuTJyonB1paY+chwMORG4WroZG0qsGCR1DW7wuV37w@mail.gmail.com>
+Subject: Re: [PATCH v4 1/7] clk: renesas: r9a09g057: Add entries for the DMACs
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Feb 22, 2025 at 12:50:13PM +0100, Krzysztof Kozlowski wrote:
-> On 22/02/2025 11:48, Haylen Chu wrote:
-> > On Sat, Feb 22, 2025 at 10:59:09AM +0100, Krzysztof Kozlowski wrote:
-> >> On 22/02/2025 00:40, Alex Elder wrote:
-> >>> I have a general proposal on how to represent this, but I'd
-> >>> like to know whether it makes sense.  It might be what Krzysztof
-> >>> is suggesting, but in any case, I hope this representation would
-> >>> work, because it could simplify the code, and compartmentalizes
-> >>> things.
-> >>>
-> >>> Part of what motivates this is that I've been looking at the
-> >>> downstream reset code this week.  It contains a large number of
-> >>> register offset definitions identical to what's used for the
-> >>> clock driver.  The reset driver uses exactly the same registers
-> >>> as the clock driver does.  Downstream they are separate drivers,
-> >>> but the clock driver exports a shared spinlock for both drivers
-> >>> to use.
-> >>>
-> >>> These really need to be incorporated into the same driver for
-> >>> upstream.
-> >>
-> >> Why? First, it is not related to the topic here at all. You can design
-> >> drivers as you wish and still nothing to do with discussion about binding.
-> >> Second, different subsystems justify different drivers and Linux handles
-> >> this well already. No need for custom spinlock - regmap already does it.
-> >>
-> >>
-> >>>
-> >>> The clock code defines four distinct "units" (a term I'll use
-> >>> from here on; there might be a better name):
-> >>>    MPMU  Main Power Management Unit
-> >>>    APMU  Application Power Management Unit
-> >>>    APBC  APB Clock
-> >>>    APBS  APB Spare
-> >>>
-> >>> The reset code defines some of those, but doesn't use APBS.
-> >>> It also defines three more:
-> >>>    APBC2 Another APB Clock
-> >>>    RCPU  Real-time CPU?
-> >>>    RCPU2 Another Real-time CPU
-> >>>
-> >>> Each of these "units" has a distinct I/O memory region that
-> >>> contains registers that manage the clocks and reset signals.
-> >>
-> >> So there are children - mpmu, apmu, apbclock, apbspare, apbclock2, rcpu
-> >> 1+2? But previous statements were saying these are intermixed?
-> >>
-> >> " I'll make APMU/MPMU act as a whole device"
-> > 
-> > My reply seems somehow misleading. The statement means I will merge the
-> > children with the syscon into one devicetree node, which applies for
-> > both APMU and MPMU. I wasn't going to say that APMU and MPMU are
-> > intermixed.
-> > 
-> > As Alex said, all these units have their own distinct and separate MMIO
-> > regions.
-> > 
-> >>>
-> >>> I suggest a single "k1-clocks" device be created, which has
-> >>
-> >> For four devices? Or for one device?
-> > 
-> > By Alex's example, I think he means a device node taking all these
-> > distinct MMIO regions as resource.
-> 
-> 
-> You still do not answer about the hardware: how many devices is there?
-
-In my understanding, the series covers four devices, APBC, APMU, MPMU
-and APBS, each comes with its separate MMIO region and is clearly
-described in the datasheet. I stated this in the later part of the
-reply,
-
-> > For APBC, MPMU, APBS and APMU, I'm pretty
-> > sure they're standalone blocks with distinct and separate MMIO regions,
-> > this could be confirmed by the address mapping[1].
-
-Thus I don't agree on Alex's solution, since it creates fake devices not
-mentioned by the datasheet (spacemit,k1-clocks and all its children in
-the example devicetree).
-
-> > 
-> > 	clock {
-> > 		compatible = "spacemit,k1-clocks";
-> > 
-> > 		reg = <0x0 0xc0880000 0x0 0x2050>,
-> > 		      <0x0 0xc0888000 0x0 0x30>,
-> > 		      <0x0 0xd4015000 0x0 0x1000>,
-> > 		      <0x0 0xd4050000 0x0 0x209c>,
-> > 		      <0x0 0xd4090000 0x0 0x1000>,
-> > 		      <0x0 0xd4282800 0x0 0x400>,
-> > 		      <0x0 0xf0610000 0x0 0x20>;
-> > 		reg-names = "rcpu",
-> > 			    "rcpu2",
-> > 			    "apbc",
-> > 			    "mpmu",
-> > 			    "apbs",
-> > 			    "apmu",
-> > 			    "apbc2";
-> > 
-> > 		/* ... */
-> > 	};
-> > 
-> >> No, it's again going to wrong direction. I already said:
-> >>
-> >> "You need to define what is the device here. Don't create fake nodes ust
-> >> for your drivers. If registers are interleaved and manual says "this is
-> >> block APMU/MPMU" then you have one device, so one node with 'reg'."
-> >>
-> >> So what is the device here? Can you people actually answer?
-> >>
-> > 
-> > I'm not sure about the apbc2, rcpu and rcpu2 regions; they aren't
-> > related to the thread, either. For APBC, MPMU, APBS and APMU, I'm pretty
-> > sure they're standalone blocks with distinct and separate MMIO regions,
-> > this could be confirmed by the address mapping[1].
-> 
-> They were brought here to discuss for some reason. Long discussions,
-> long emails, unrelated topics like hardware or different devices - all
-> this is not making it easier for me to understand.
+On Thu, 20 Feb 2025 at 16:01, Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+> Add clock and reset entries for the Renesas RZ/V2H(P) DMAC IPs.
 >
-> Best regards,
-> Krzysztof
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-By the way, I made a summary on the hardware covered by this series in
-one of my earlier reply[1]. Could you please comment further on my
-proposal[2] according it, or pointing out anything that's unclear or
-missing? It will be helpful for things to improve.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.15.
 
-Thanks,
-Haylen Chu
+Gr{oetje,eeting}s,
 
-[1]: https://lore.kernel.org/all/Z7m2oNXbwJ06KtLQ@ketchup/
-[2]: https://lore.kernel.org/all/Z7BTVu10EKHMqOnJ@ketchup/
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
