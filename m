@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026E378F2E;
-	Mon, 24 Feb 2025 09:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45FF24501D;
+	Mon, 24 Feb 2025 09:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740389962; cv=none; b=g1XUeDCbyIgmfkpPYRGljCNGCf6JjODCFsfYLn4kU6OdQsgC/SCqBYsiTHq0PbFys1NsMQSDkznxEYzpQeHwlCxIX8/Fjeg4Iqz1qjqcSB/eVCGkddLkWviCxHaiX6tz6MJP+w0aDhjUvHNR53RwBWIwztH1duFh2s5+RDCfXXU=
+	t=1740390092; cv=none; b=Aw5VjGvRY8IPaO7GCOlncx4/aAShxdfBsHCqnjOQHJBmacn2h8dRA0XsoJbCnsdS2v2zxkJisCV93qlzWG+6XBdRNqxRXV+DyvitRtcl62RVlz29J00o2UBELJIB5GtOJiCQTr6FTUPeR6CHpEqzzribRWMWPYiKlfm5JPXOauY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740389962; c=relaxed/simple;
-	bh=3PKhhqDl4PavsonkGg8Yx9ObgvEzeG4jz8Tmf0mpBko=;
+	s=arc-20240116; t=1740390092; c=relaxed/simple;
+	bh=K/BMaw7yksUW7asTY2fGFkaWht/cMbjJx1rTVr0UTP4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HkezuFliDvkm2T7FZ8ePqEmAF7KSfeueAxoLfRsJUmx5WyQUXQa2O4+E+7qT05ESnuJfWd1NSRuU9uhj6XuYX/XMyojtQlM60IrvPPTzq0peVn4aD4Uya7PGpjun2XaCnpCFDWXGGBV89Bny7/CzhY6UYWE6ak6xLva4FSgvgHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6uMHcNF; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=dMAgIMRP33L/wZ8kNxxELQO4sNH/nja7SNwkyaeOvSOmIKc28EJk663Ocr846d8w8Dj/XQwbuLLol6NYeg3nTuBDiuNnJVajSkPtXuDGLMEpiVDXgq+X/LszTbJnxSdU9EnIlRkTODZtI+iiq6xYKujghQ3OfyOzN1D8XXEb6lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhmrJpQS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6uMHcNF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73131C4CEDD;
-	Mon, 24 Feb 2025 09:39:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhmrJpQS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1968C4CED6;
+	Mon, 24 Feb 2025 09:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740389961;
-	bh=3PKhhqDl4PavsonkGg8Yx9ObgvEzeG4jz8Tmf0mpBko=;
+	s=k20201202; t=1740390092;
+	bh=K/BMaw7yksUW7asTY2fGFkaWht/cMbjJx1rTVr0UTP4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=u6uMHcNFouGfid1zt39RmM5n/d/QvxqWMP6UjEwnVFHVnd3OIbt8vvkwNIA1OEd+C
-	 ok1+0bImlugkG6eFWSnf9e9TVWoHLVgzzrmmGho1/VvnXjOY/rtS9KUrVtYozgmAS4
-	 QGEoHlzy6QWkHj6fqXky/sEEfU+Nv0ZU3GqHZlJEvv1MGCS6un2Gxt8vZYW5bSWGtU
-	 kf0RFfuOdIoXDwW8krT9nrJchhwbcdQVsK6mKXu9Ja/eO15iW7tjYlq6Wpdy4q61fx
-	 AfLXqBLBFqgNUYXknclqQRIxgEXkVLVRMCr5zU8uk1KzBcR1/GNfkun6iV4kCQBf/r
-	 nECuGAbkRVSrg==
-Message-ID: <5e740543-9bd6-483a-9722-f5d8307b6915@kernel.org>
-Date: Mon, 24 Feb 2025 10:39:15 +0100
+	b=KhmrJpQSqlbJvrog1f0QHlNyHDozd/5pew3gkhjaMJTlYGT1dzBQcpDRw+2p9FIy9
+	 2s4YAtUkyEQJrSerisG7+sH5UJ5wmVt/YtRfMXCeDxnsbIZlxEhJIQstInwuBc4ZTP
+	 v39bYkIaCO5hlX+4DgPv7tai36HwjkdHD6KsIgCNtRYsBCBWlqomWp45rP2SgXrlun
+	 YG93mEu7sejdgpEfeiIyOL2ksJZ5oqdKEAhoF+2GWD5Q4RiQykZ1coUhVJjfYma2B3
+	 NAYFriOCgVbjb3vzDNgGd2Ok0qMWCn6n3pudTyyFypOrY33ewo6We+XzuVMAYtnq9i
+	 Imqk3pdx9QcrA==
+Message-ID: <fa49d52f-0a55-4bce-8742-5b4f018c170c@kernel.org>
+Date: Mon, 24 Feb 2025 10:41:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,21 +35,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock, reset: rockchip: Add support
- for rk3562
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: add rk3562 cru bindings
 To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
  Kever Yang <kever.yang@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org,
- Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+ Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 References: <20241224092310.3814460-1-kever.yang@rock-chips.com>
- <z7jb32foci6bamqqddkkp34hazi2itp6uclarsoi5pkrgso2go@bxflagkaciq6>
- <28dcac28-9060-4f65-8167-64f6a0e4532d@rock-chips.com>
- <2920539.yaVYbkx8dN@diego>
+ <krrqtjllx6akrurefbtuhgxw6bwmkiro5rtvdexoevjyufm2uz@r5biw7kbttyr>
+ <23c84fd5-83f4-46b3-a247-56e4a2c06d1d@rock-chips.com>
+ <3234236.fEcJ0Lxnt5@diego>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,65 +94,78 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <2920539.yaVYbkx8dN@diego>
+In-Reply-To: <3234236.fEcJ0Lxnt5@diego>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 24/02/2025 10:14, Heiko Stübner wrote:
-> Am Montag, 24. Februar 2025, 09:47:40 MEZ schrieb Kever Yang:
+On 24/02/2025 10:05, Heiko Stübner wrote:
+> Am Montag, 24. Februar 2025, 09:52:12 MEZ schrieb Kever Yang:
 >> Hi Krzysztof,
 >>
->> On 2024/12/27 16:28, Krzysztof Kozlowski wrote:
->>> On Tue, Dec 24, 2024 at 05:23:09PM +0800, Kever Yang wrote:
->>>> From: Finley Xiao <finley.xiao@rock-chips.com>
+>> On 2024/12/27 16:25, Krzysztof Kozlowski wrote:
+>>> On Tue, Dec 24, 2024 at 05:23:08PM +0800, Kever Yang wrote:
+>>>> Document the device tree bindings of the rockchip rk3562 SoC
+>>>> clock and reset unit.
 >>>>
->>>> Add the dt-bindings header for the rk3562, that gets shared between
->>>> the clock controller and the clock references in the dts.
->>>> Add softreset ID for rk3562.
->>>>
->>>> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
->>>> Signed-off-by: Liang Chen <cl@rock-chips.com>
 >>>> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
 >>>> ---
->>>>
->>>> Changes in v2:
->>>> - rename the file to rockchip,rk3562-cru.h
->>>> - remove CLK_NR_CLKS
->>>> - add new file for reset ID
->>>> - update to use dual license
->>>>
->>>>   .../dt-bindings/clock/rockchip,rk3562-cru.h   | 377 ++++++++++++++++++
->>>>   .../dt-bindings/reset/rockchip,rk3562-cru.h   | 360 +++++++++++++++++
+>>> A nit, subject: drop second/last, redundant "bindings". The
+>>> "dt-bindings" prefix is already stating that these are bindings.
+>>> See also:
+>>> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 >>>
->>> No, that's not a separate patch. Headers *ALWAYS* go with the bindings
->>> patch.
->> Will fix.
->>>>   2 files changed, 737 insertions(+)
->>>>   create mode 100644 include/dt-bindings/clock/rockchip,rk3562-cru.h
->>>>   create mode 100644 include/dt-bindings/reset/rockchip,rk3562-cru.h
->>>>
->>>> diff --git a/include/dt-bindings/clock/rockchip,rk3562-cru.h b/include/dt-bindings/clock/rockchip,rk3562-cru.h
->>>> new file mode 100644
->>>> index 000000000000..ad07ad3a12ad
->>>> --- /dev/null
->>>> +++ b/include/dt-bindings/clock/rockchip,rk3562-cru.h
->>>> @@ -0,0 +1,377 @@
->>>> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
->>> Why not using license requested by checkpatch?
->>
->> The checkpatch does not report error/warning for this license, and this 
->> is the same as many other SoCs.
->>
->> Which license is recommend in the header file?
+>>>
+>>> s/rk3562/Rocchip RK3562/
+>>> or whatever your proper name is (and use proper capitalized parts of
+>>> products)
+>> Will update.
+>>>
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    const: rockchip,rk3562-cru
+>>>> +
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  "#clock-cells":
+>>>> +    const: 1
+>>>> +
+>>>> +  "#reset-cells":
+>>>> +    const: 1
+>>>> +
+>>>> +  clocks:
+>>>> +    maxItems: 2
+>>>
+>>> Why clocks are not required?
+>> The cru is the clock-controller, which is always on module in SoC,
+>> so we don't need to enable "clock" for this clock-controller.
 > 
-> I suppose
+> hmm, shouldn't clocks be
 > 
-> /* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+>   clocks:
+>     minItems: 1
+>     maxItems: 2
 > 
-> According to [0] "GPL-2.0" and "GPL-2.0-only" are equivalent, but I guess
-> "GPL-2.0-only" simply makes the "only" part more visible.
+> The CRU _needs_ the xin24m because that is the main oscillator
+> supplying everything, but _can_ work work without xin32k .
+> 
+> Sidenote: itseems we're doing this wrong on rk3588
 
-No, rather use the one expressed in checkpatch.
+
+Kever responded to a review 2 months ago. None of these emails are in my
+inbox anymore. All context is gone as well.
+
+No, I expect the comments to be applied full in such case. This is a bit
+ridicilous  that now I need to look for that email somwhere to check
+whether implementation follows received response. Response after 2 months!
+
+
+
+> 
+> Heiko
+> 
+> 
+
 
 Best regards,
 Krzysztof
