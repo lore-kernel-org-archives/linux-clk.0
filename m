@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B40D25A32D;
-	Tue, 25 Feb 2025 07:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D98B25A648;
+	Tue, 25 Feb 2025 07:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740469892; cv=none; b=M/6xVnQICb2BZjqfxdQdWpVIIZ9Y4mF1U/kBputGqGjobUKSG6Ym5OuxnSGZhF/gOuNVSvMtfq+jkPkWTOmpghGtt98OnhZ/bHBEJ2wvHPF973mDcgROXs6KCfZzjY2UQz9Law/dF//HpSMC+6NRZDigspm9x5NNA5fpAazxjlY=
+	t=1740470066; cv=none; b=LJajWhcw4Gle3p0goncPkkuAdnpNunv/TUApXes0m5nXZVxOz2yveyW9DLyXZthUnoJaAqa168yI4bjyKTPlcYsqpqODuv73mQGCtupQaLICKrm6bGz8dPxtt+mNbFos1LGmqtlmvZdIZh6so6aX8/ex3Fo5z/Rn7fqDKtzMdUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740469892; c=relaxed/simple;
-	bh=e2+1A+StkzfLCCel5frxscI5QVNiBlktYMKxy4nUtRU=;
+	s=arc-20240116; t=1740470066; c=relaxed/simple;
+	bh=NGk1qE7yXYQeTLoTmP1HbZudPoB9xCFk42t5aOZVRhM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VNcTZbwQ18UnKjl52KHIxeF/JmTgK/29/kvrBHNcJZLh53DLD3XEyjHl3q/w2M3Arya7G65oC8eeTyylX0WyIslx+snsb+eCE4TKwioqKuMytxzUede4/65E0ku0esv4rYaJ1KMoP9XZKO1XyU1xf1eoW28pUkEZPu0jYnPP20k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qsgE7zeT; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=U+BvZeVQjHzE2/MUlb6Ly2LLVd3OYQW5mFFEETMLQfY1JHk2oSGneuWL8sFJX9y6DyQiUTJ1UOGKm31mf4szYJOVtYpoH+Wia5dwvME1Tg8OfZFV8LJHztmqfQpjVRnuWou82GrAaJphue4DkXFk8VI8QaclZIBCEXlee+ZvwJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRYofVAH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qsgE7zeT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ED26C4CEE2;
-	Tue, 25 Feb 2025 07:51:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRYofVAH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E12E1C4CEE2;
+	Tue, 25 Feb 2025 07:54:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740469892;
-	bh=e2+1A+StkzfLCCel5frxscI5QVNiBlktYMKxy4nUtRU=;
+	s=k20201202; t=1740470066;
+	bh=NGk1qE7yXYQeTLoTmP1HbZudPoB9xCFk42t5aOZVRhM=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=qsgE7zeTur0CeHUbE6xMYk7Iu8Lv5GVrFDQKqMa94ooZDotUlfeuvEe3QbRv+/M2N
-	 EfjS0bDENCOpOwDF25PKvNY/iHPn9F3Z00i8h6Q/AQ1lbCtx4Jdnq+GhqNYvnC44Cp
-	 1ApDdRUq3ha7+IPfWnPthoT/sCXKMBMuwLgHC2h77kEa5siyEbDHIk2jJihRfViX6X
-	 Iyhx3nDVH/+HL+xetd27f6U2EwK13eNWpUUggPIn/LJb2yrhB+x2K3wjJzSS+dw9U4
-	 pHAedcVXu4W+OoaB/4D2XSPU7OxXM2C65ZbgCqCbpf4IDpAHKZnGE+4XXwb+2f46zz
-	 1GePnrYyq17Dg==
-Message-ID: <58d978fb-fbbd-433f-9c4c-8d9db425ea9c@kernel.org>
-Date: Tue, 25 Feb 2025 08:51:26 +0100
+	b=CRYofVAHxDFI6ppXko1J4AAfQLmKIj84eSLvfQOyLz6X4scFN+BepQpZtrjFcfCcV
+	 AFdPdeXvyeq30G6UqfHvVBuc5/gV5Iw8fb2697xvsLhnwXQeipusx5HTyLvPxaGREd
+	 MZ8krS8Ba/v8TRhoRR2QSCuyKz0OjYXS3nN1Hlp6bb4MD0sum8F0EyG2gGdvDk0wgk
+	 Ayzg4NBgvJ0j40BA03jTe2eIrgJfSj61mF/7soowqQYcNOk2jB8JrwF3NRTUChyCk1
+	 X4302vrmBPT/JEk9OkamR12eI8E10SkpKOkDgw350XVUHAkVCEAWOEX0zb3Okp8Arg
+	 jz0Z6EMW+0iRQ==
+Message-ID: <2b64a9d7-7048-4842-9cc1-fe23f5abdd00@kernel.org>
+Date: Tue, 25 Feb 2025 08:54:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,27 +35,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/3] reset: aspeed: register AST2700 reset auxiliary
- bus device
+Subject: Re: [PATCH v9 1/3] dt-binding: clock: ast2700: modify soc0/1 clock
+ define
 To: Ryan Chen <ryan_chen@aspeedtech.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>,
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
  "linux-arm-kernel@lists.infradead.org"
  <linux-arm-kernel@lists.infradead.org>,
  "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
  "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 References: <20250224095506.2047064-1-ryan_chen@aspeedtech.com>
- <20250224095506.2047064-3-ryan_chen@aspeedtech.com>
- <71cf8012-3b77-43de-b8ac-54c84a97f9d3@kernel.org>
- <d5d90f03-3db8-4f90-baad-0be4f3d3e0ea@kernel.org>
- <b00aef9582e223a5770cebc714ad65168eab744b.camel@pengutronix.de>
- <OS8PR06MB7541E77E1EA78D658E5444A6F2C32@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <20250224095506.2047064-2-ryan_chen@aspeedtech.com>
+ <f810b8a2-4261-4b68-b59b-4efa0219b5db@kernel.org>
+ <OS8PR06MB7541D685A626D300AC730A5BF2C32@OS8PR06MB7541.apcprd06.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,38 +98,57 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <OS8PR06MB7541E77E1EA78D658E5444A6F2C32@OS8PR06MB7541.apcprd06.prod.outlook.com>
+In-Reply-To: <OS8PR06MB7541D685A626D300AC730A5BF2C32@OS8PR06MB7541.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/02/2025 03:20, Ryan Chen wrote:
->>>>> +
->>>>> +	return devm_add_action_or_reset(clk_dev,
->>>>> +aspeed_reset_unregister_adev, adev); }
->>>>> +EXPORT_SYMBOL_GPL(aspeed_reset_controller_register);
->>>>
->>>> No, you cannot export functions without users. There is no single
->>>> user of this, so this is not justified at all.
->>> My mistake, I missed patch #3 which uses it.
+On 25/02/2025 01:41, Ryan Chen wrote:
+>> Subject: Re: [PATCH v9 1/3] dt-binding: clock: ast2700: modify soc0/1 clock
+>> define
+>>
+>> On 24/02/2025 10:55, Ryan Chen wrote:
+>>> -remove redundant SOC0_CLK_UART_DIV13:
+>>> SOC0_CLK_UART_DIV13 is not use at clk-ast2700.c, the clock source tree
+>>> is uart clk src -> uart_div_table -> uart clk.
 >>>
->>> I don't get why do you need to export this in the first place, instead
->>> of putting it in the clock driver, as usually expected. Handling child
->>> creation is logically the task of the device having children, the
->>> parent. Not the child.
+>>> -Change SOC0_CLK_HPLL_DIV_AHB to SOC0_CLK_AHBMUX:
+>>> modify clock tree implement.
+>>> older CLK_AHB use mpll_div_ahb/hpll_div_ahb to be ahb clock source.
+>>> mpll->mpll_div_ahb
+>>>                   -> clk_ahb
+>>> hpll->hpll_div_ahb
 >>
->> Also, consider basing this on top of:
 >>
->> https://lore.kernel.org/all/20250218-aux-device-create-helper-v4-0-c3d7dfdea
->> 2e6@baylibre.com/
+>> I can barely understand it and from the pieces I got, it does not explain need
+>> for ABI break.
+>>
 > 
-> Hello, Base on this series, I will use adev = devm_auxiliary_device_create instead addev_alloc, adev_releas.
-> But it still have EXPORT_SYMBOL_GPL(aspeed_reset_controller_register);
-> Am I right?
+> #1. SCU0_CLK_UART_DIV13 is redundant, it does not impact ABI break
+
+You did not explain how it does not impact. Clock was exported, there
+was a user and now there is no clock. User stops working. ABI break.
+
+> #2. Change SOC0_CLK_HPLL_DIV_AHB to SOC0_CLK_AHBMUX
+> Older implement where `mpll_div_ahb` and `hpll_div_ahb` were **hardcoded dividers** for AHB.
+> In **the new approach (v8)**, I refactored the clock tree to clock tree.
+
+I still cannot parse sentences like "refactoring A to A". It's
+meaningless to me.
+
+> It should be ABI-safe change
+
+No, you do not understand the ABI. You removed a clock ID, that's the
+ABI change.
+
+Otherwise explain how this is not changing ABI.
 
 
-Why? It looks like you skipped entirely my message. It is the same over
-and over - respond to people comments...
+> 
+> Or you want to keep original SOC0_CLK_HPLL_DIV_AHB define and then add SOC0_CLK_AHBMUX.
+> To be 1st patch, then 2n patch remove redundant SOC0_CLK_HPLL_DIV_AHB?
 
+If you break the ABI you need to clearly explain why. We have long
+conversations and you still did not say why.
 
 
 Best regards,
