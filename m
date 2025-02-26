@@ -1,22 +1,23 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B14238179
-	for <linux-clk@vger.kernel.org>; Wed, 26 Feb 2025 10:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C503724DFED
+	for <linux-clk@vger.kernel.org>; Wed, 26 Feb 2025 10:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740566320; cv=none; b=uFcS41jYBBnKW/qGA2hnZE172e3UTbXLWUg+3y4rEwQ9luAEa5EWt2lVdlBWdcV97TF/IifFY0tki5hHemPdswguuveR04asUVXiU1ygxYGTgM1Lvq+z/5YSYygPglG1fTtdtZ2rdzJOBRi4Zq9NOd21loAJct7I/ciuUL672Yw=
+	t=1740566321; cv=none; b=pXWpGmYoMWDl/EAd0xHRM6nrRxDaiBTP+Nry5ctU2cRjaFEzTRVvH7qdRhDKV8mxwAatOHqB1IZTYdKvxU04E8a0QSj0bIHvHSbCxZGnBlUMcbIgLyr4N8C7AuatoMYKCF8EeyKASPwP481sQjMJy7jeZSpAhYzIWaOE3SP4jns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740566320; c=relaxed/simple;
-	bh=9CKYbhGNwTYbDbUfruVG+2PT+6X9WHH0jTltm0XiPbc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tVYcElQXqb6kEpm8HKOUn9rkLXvH6T9ARJ012zky3BPkt0QpAP7iYJE/2ezdL2g5jrtQGDCw8UOscc33VP2QGA1dC/SLL/e7xrvgcM74oLG9Y66HyuqigipkOzyjwVTMjCcE7dUgn4D79HIPstdBxEInZUxmBNhUp01V/58Z1oA=
+	s=arc-20240116; t=1740566321; c=relaxed/simple;
+	bh=5ViMU98ehxd8Jt8NC941eN+n6sz+HFSLrU/Lq7seVIc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=my2FwpT6xhVIjyK2UzQ8lYOxYpASAotCZWBm4WuGWdUOKaszip7IKyOzFHErz3hzFyXEB4dIxlD/BMPlimUP9P01BYDze2xhdZH4nCEJUBUOQLpBwtvc3ZRyTo/ip6LdIaAs1+42+42+z4umWpzg5Ai4qouIYqT3GyGhZIHx4ug=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A2141BA8;
-	Wed, 26 Feb 2025 02:38:53 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B3241C0A;
+	Wed, 26 Feb 2025 02:38:55 -0800 (PST)
 Received: from donnerap.arm.com (donnerap.manchester.arm.com [10.32.100.21])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 601753F6A8;
-	Wed, 26 Feb 2025 02:38:35 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 650C73F6A8;
+	Wed, 26 Feb 2025 02:38:37 -0800 (PST)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -28,58 +29,83 @@ Cc: Maxime Ripard <mripard@kernel.org>,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev
-Subject: [PATCH 0/2] clk: sunxi-ng: d1: Fix halved MMC frequency
-Date: Wed, 26 Feb 2025 10:37:32 +0000
-Message-Id: <20250226103734.1252013-1-andre.przywara@arm.com>
+Subject: [PATCH 1/2] clk: sunxi-ng: mp: provide wrapper for setting feature flags
+Date: Wed, 26 Feb 2025 10:37:33 +0000
+Message-Id: <20250226103734.1252013-2-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250226103734.1252013-1-andre.przywara@arm.com>
+References: <20250226103734.1252013-1-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+So far our sunxi clock instantiation macros set the required flags
+depending on the clock type, but the new "dual divider MP clock"
+requires us to pass that piece of information in by the macro user.
 
-as Kuba reported, on an Allwinner T113-s3 based board the SD card
-performance is only half of what we expect: ~11 MB/s instead of the
-usual 23 MB/s.
-Looking at our MMC mod clock definition, this seems to be due to a
-missing fixed (and hidden) divider of 2, a "feature" of every other
-Allwinner SoC from the last 10 years.
+Add a new wrapper macro that allows to specify a "features" field, to
+allow marking those dual-divider clocks accordingly.
+Since the MMC clocks will be a prominent user, combine this with the
+postdiv field required there. Users who just want the feature, can
+pass in a postdiv of 1, users of just the postdiv can pass in a feature
+mask of 0.
 
-Patch 2/2 changes the MMC mod clock definition to carry this post_div
-of 2, in line with the A64, H6, A100, and H616 SoCs.
-Since the D1 clock driver describes clock parents using an array of
-pointers, we need to use a new macro that allows both parent_data and
-post_div to be specified. This is also needed by the new A523 clocks,
-so I lifted the patch from there[1]. Chen-Yu reviewed that one already,
-but I made some changes to make the macro more flexible, so I dropped
-his tag.
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+---
+ drivers/clk/sunxi-ng/ccu_mp.h | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
 
-I couldn't test this on a D1 board, so I'd be grateful if someone could
-confirm that the SD card performance is now as expected. I simply used
-"hdparm -t" to get a ballpark number of read performance, but any other
-benchmark or even a timed file copy should do.
-
-Thanks to Kuba for the report!
-
-Cheers,
-Andre
-
-[1]
-https://lore.kernel.org/linux-sunxi/20250214125359.5204-1-andre.przywara@arm.com/T/#m9adaa1fcea09185c561f3fd01ba895fa67af456c
-
-Andre Przywara (2):
-  clk: sunxi-ng: mp: provide wrapper for setting feature flags
-  clk: sunxi-ng: d1: Add missing divider for MMC mod clocks
-
- drivers/clk/sunxi-ng/ccu-sun20i-d1.c | 43 ++++++++++++++++------------
- drivers/clk/sunxi-ng/ccu_mp.h        | 19 ++++++++++--
- 2 files changed, 42 insertions(+), 20 deletions(-)
-
+diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
+index 6e50f3728fb5f..1da1dcaf62ea9 100644
+--- a/drivers/clk/sunxi-ng/ccu_mp.h
++++ b/drivers/clk/sunxi-ng/ccu_mp.h
+@@ -82,18 +82,22 @@ struct ccu_mp {
+ 				   _muxshift, _muxwidth,		\
+ 				   0, _flags)
+ 
+-#define SUNXI_CCU_MP_DATA_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
++#define SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(_struct, _name, _parents, _reg, \
+ 					_mshift, _mwidth,		\
+ 					_pshift, _pwidth,		\
+ 					_muxshift, _muxwidth,		\
+-					_gate, _flags)			\
++					_gate, _postdiv,		\
++					_flags, _features)		\
+ 	struct ccu_mp _struct = {					\
+ 		.enable	= _gate,					\
+ 		.m	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
+ 		.p	= _SUNXI_CCU_DIV(_pshift, _pwidth),		\
+ 		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
++		.fixed_post_div = _postdiv,				\
+ 		.common	= {						\
+ 			.reg		= _reg,				\
++			.features	= CCU_FEATURE_FIXED_POSTDIV |	\
++						_features,		\
+ 			.hw.init	= CLK_HW_INIT_PARENTS_DATA(_name, \
+ 								   _parents, \
+ 								   &ccu_mp_ops, \
+@@ -101,6 +105,17 @@ struct ccu_mp {
+ 		}							\
+ 	}
+ 
++#define SUNXI_CCU_MP_DATA_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
++					_mshift, _mwidth,		\
++					_pshift, _pwidth,		\
++					_muxshift, _muxwidth,		\
++					_gate, _flags)			\
++	SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(_struct, _name, _parents,	\
++					     _reg, _mshift, _mwidth,	\
++					     _pshift, _pwidth,		\
++					     _muxshift, _muxwidth,	\
++					     _gate, 1, _flags, 0)
++
+ #define SUNXI_CCU_MP_DATA_WITH_MUX(_struct, _name, _parents, _reg,	\
+ 				   _mshift, _mwidth,			\
+ 				   _pshift, _pwidth,			\
 -- 
 2.25.1
 
