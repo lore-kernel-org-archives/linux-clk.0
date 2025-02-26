@@ -1,23 +1,23 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C503724DFED
-	for <linux-clk@vger.kernel.org>; Wed, 26 Feb 2025 10:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B8E24DFFA
+	for <linux-clk@vger.kernel.org>; Wed, 26 Feb 2025 10:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740566321; cv=none; b=pXWpGmYoMWDl/EAd0xHRM6nrRxDaiBTP+Nry5ctU2cRjaFEzTRVvH7qdRhDKV8mxwAatOHqB1IZTYdKvxU04E8a0QSj0bIHvHSbCxZGnBlUMcbIgLyr4N8C7AuatoMYKCF8EeyKASPwP481sQjMJy7jeZSpAhYzIWaOE3SP4jns=
+	t=1740566323; cv=none; b=LzsLMfdREC6np8152oD6HIl2eCvu6Vt99w0cK8rRi9vw77pr0aP/CCHE6VnHdKQqCNfRe15araKwuAvDPrc0rKNtXq1AThIkwe1PUuChupQvBjB7BCE16xJ/LqFV5CNz7MVqvJwXStgmMqoSYgPAFU0QBLgp4UtwTVeYAXfiLgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740566321; c=relaxed/simple;
-	bh=5ViMU98ehxd8Jt8NC941eN+n6sz+HFSLrU/Lq7seVIc=;
+	s=arc-20240116; t=1740566323; c=relaxed/simple;
+	bh=dTkbp/z8Ll0lrnhbr35swQzc9aZOaXbiU3Fa3836y8E=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=my2FwpT6xhVIjyK2UzQ8lYOxYpASAotCZWBm4WuGWdUOKaszip7IKyOzFHErz3hzFyXEB4dIxlD/BMPlimUP9P01BYDze2xhdZH4nCEJUBUOQLpBwtvc3ZRyTo/ip6LdIaAs1+42+42+z4umWpzg5Ai4qouIYqT3GyGhZIHx4ug=
+	 MIME-Version:Content-Type; b=Mj9Pug9Q5BBc3ulXMixRfa4o1eL4zRiHrUHBrWUkYedj3sMhK//Q3vOaQZFmj42dY04ElJeKfktsvqu4CeqPIsiga1mopbEYqKILrUVPZ416MlXyIfwTAjZ+GyQUGV0FCx1YTM2VUb8ygkgrQ0fY4ssFmt2ywIQ0R3IEJNhHQWg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B3241C0A;
-	Wed, 26 Feb 2025 02:38:55 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 211FF2BC0;
+	Wed, 26 Feb 2025 02:38:57 -0800 (PST)
 Received: from donnerap.arm.com (donnerap.manchester.arm.com [10.32.100.21])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 650C73F6A8;
-	Wed, 26 Feb 2025 02:38:37 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 693993F6A8;
+	Wed, 26 Feb 2025 02:38:39 -0800 (PST)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -29,9 +29,9 @@ Cc: Maxime Ripard <mripard@kernel.org>,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev
-Subject: [PATCH 1/2] clk: sunxi-ng: mp: provide wrapper for setting feature flags
-Date: Wed, 26 Feb 2025 10:37:33 +0000
-Message-Id: <20250226103734.1252013-2-andre.przywara@arm.com>
+Subject: [PATCH 2/2] clk: sunxi-ng: d1: Add missing divider for MMC mod clocks
+Date: Wed, 26 Feb 2025 10:37:34 +0000
+Message-Id: <20250226103734.1252013-3-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250226103734.1252013-1-andre.przywara@arm.com>
 References: <20250226103734.1252013-1-andre.przywara@arm.com>
@@ -41,71 +41,88 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-So far our sunxi clock instantiation macros set the required flags
-depending on the clock type, but the new "dual divider MP clock"
-requires us to pass that piece of information in by the macro user.
+The D1/R528/T113 SoCs have a hidden divider of 2 in the MMC mod clocks,
+just as other recent SoCs. So far we did not describe that, which led
+to the resulting MMC clock rate to be only half of its intended value.
 
-Add a new wrapper macro that allows to specify a "features" field, to
-allow marking those dual-divider clocks accordingly.
-Since the MMC clocks will be a prominent user, combine this with the
-postdiv field required there. Users who just want the feature, can
-pass in a postdiv of 1, users of just the postdiv can pass in a feature
-mask of 0.
+Use a macro that allows to describe a fixed post-divider, to compensate
+for that divisor.
 
+This brings the MMC performance on those SoCs to its expected level,
+so about 23 MB/s for SD cards, instead of the 11 MB/s measured so far.
+
+Fixes: 35b97bb94111 ("clk: sunxi-ng: Add support for the D1 SoC clocks")
+Reported-by: Kuba Szczodrzyński <kuba@szczodrzynski.pl>
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 ---
- drivers/clk/sunxi-ng/ccu_mp.h | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun20i-d1.c | 43 ++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu_mp.h b/drivers/clk/sunxi-ng/ccu_mp.h
-index 6e50f3728fb5f..1da1dcaf62ea9 100644
---- a/drivers/clk/sunxi-ng/ccu_mp.h
-+++ b/drivers/clk/sunxi-ng/ccu_mp.h
-@@ -82,18 +82,22 @@ struct ccu_mp {
- 				   _muxshift, _muxwidth,		\
- 				   0, _flags)
+diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
+index bb66c906ebbb6..d52a0ef43ea6c 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
++++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
+@@ -412,19 +412,24 @@ static const struct clk_parent_data mmc0_mmc1_parents[] = {
+ 	{ .hw = &pll_periph0_2x_clk.common.hw },
+ 	{ .hw = &pll_audio1_div2_clk.common.hw },
+ };
+-static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc0_mmc1_parents, 0x830,
+-				       0, 4,	/* M */
+-				       8, 2,	/* P */
+-				       24, 3,	/* mux */
+-				       BIT(31),	/* gate */
+-				       0);
  
--#define SUNXI_CCU_MP_DATA_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
-+#define SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(_struct, _name, _parents, _reg, \
- 					_mshift, _mwidth,		\
- 					_pshift, _pwidth,		\
- 					_muxshift, _muxwidth,		\
--					_gate, _flags)			\
-+					_gate, _postdiv,		\
-+					_flags, _features)		\
- 	struct ccu_mp _struct = {					\
- 		.enable	= _gate,					\
- 		.m	= _SUNXI_CCU_DIV(_mshift, _mwidth),		\
- 		.p	= _SUNXI_CCU_DIV(_pshift, _pwidth),		\
- 		.mux	= _SUNXI_CCU_MUX(_muxshift, _muxwidth),		\
-+		.fixed_post_div = _postdiv,				\
- 		.common	= {						\
- 			.reg		= _reg,				\
-+			.features	= CCU_FEATURE_FIXED_POSTDIV |	\
-+						_features,		\
- 			.hw.init	= CLK_HW_INIT_PARENTS_DATA(_name, \
- 								   _parents, \
- 								   &ccu_mp_ops, \
-@@ -101,6 +105,17 @@ struct ccu_mp {
- 		}							\
- 	}
- 
-+#define SUNXI_CCU_MP_DATA_WITH_MUX_GATE(_struct, _name, _parents, _reg,	\
-+					_mshift, _mwidth,		\
-+					_pshift, _pwidth,		\
-+					_muxshift, _muxwidth,		\
-+					_gate, _flags)			\
-+	SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(_struct, _name, _parents,	\
-+					     _reg, _mshift, _mwidth,	\
-+					     _pshift, _pwidth,		\
-+					     _muxshift, _muxwidth,	\
-+					     _gate, 1, _flags, 0)
+-static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(mmc1_clk, "mmc1", mmc0_mmc1_parents, 0x834,
+-				       0, 4,	/* M */
+-				       8, 2,	/* P */
+-				       24, 3,	/* mux */
+-				       BIT(31),	/* gate */
+-				       0);
++static SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(mmc0_clk, "mmc0", mmc0_mmc1_parents,
++					  0x830,
++					  0, 4,		/* M */
++					  8, 2,		/* P */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,            /* post-div */
++					  0, 0);
 +
- #define SUNXI_CCU_MP_DATA_WITH_MUX(_struct, _name, _parents, _reg,	\
- 				   _mshift, _mwidth,			\
- 				   _pshift, _pwidth,			\
++static SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(mmc1_clk, "mmc1", mmc0_mmc1_parents,
++					  0x834,
++					  0, 4,		/* M */
++					  8, 2,		/* P */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,            /* post-div */
++					  0, 0);
+ 
+ static const struct clk_parent_data mmc2_parents[] = {
+ 	{ .fw_name = "hosc" },
+@@ -433,12 +438,14 @@ static const struct clk_parent_data mmc2_parents[] = {
+ 	{ .hw = &pll_periph0_800M_clk.common.hw },
+ 	{ .hw = &pll_audio1_div2_clk.common.hw },
+ };
+-static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(mmc2_clk, "mmc2", mmc2_parents, 0x838,
+-				       0, 4,	/* M */
+-				       8, 2,	/* P */
+-				       24, 3,	/* mux */
+-				       BIT(31),	/* gate */
+-				       0);
++static SUNXI_CCU_MP_MUX_GATE_POSTDIV_FEAT(mmc2_clk, "mmc2", mmc2_parents,
++					  0x838,
++					  0, 4,	/* M */
++					  8, 2,	/* P */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,            /* post-div */
++					  0, 0);
+ 
+ static SUNXI_CCU_GATE_HWS(bus_mmc0_clk, "bus-mmc0", psi_ahb_hws,
+ 			  0x84c, BIT(0), 0);
 -- 
 2.25.1
 
