@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E9B25D8EA;
-	Wed, 26 Feb 2025 22:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EA525D1E3;
+	Wed, 26 Feb 2025 22:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740609150; cv=none; b=ikvMw1qBWsfuTva49Cfsq1VM2Dnac6vAg9zQocOEON8wB+QO6egaJ9a8m0Nw0ACA5Gk4At63I2WXVjHFByGFi1r2F1N5YoOeVYG0qrGqffkZs9URvUIsU8NJMGSZDVVHiVxRuFhhGv5WBthrhvJRzoB9oHJAu9MPrvCwvSnFITw=
+	t=1740609549; cv=none; b=DwkFTcyaUPNkXSg3ifrEBq7AvuFQ31+xGp1ZZ+T8R1Cy9uJF+QcDppLNr77U/EUFh3lTIiFQyz/JNEn0LpeS82W9e7TO084N2T6iqsjrx413LF56SePlY6YirjDSijMsi2tevT6reaMN2pGH6mdIoFjfMHWbRdHOlkxyHC2xh0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740609150; c=relaxed/simple;
-	bh=ewq2iYDIma3Eaia/CK0Ze+cDY2qH5IAhMtulKZu9f7E=;
+	s=arc-20240116; t=1740609549; c=relaxed/simple;
+	bh=o0wDW1elrmIyGg/qOhv6CjT4a8C3ze88DyV6cl/5DNs=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=eCZYehdiF3Dj+PrLIEH9wglqYn6xXs8T7u9AdFqUWG12AfYbzSFQxq2fVKCIFYKXOp8Prrj4y5ly/YqojsWt3Xd6CRXQhdyemLw1RPdeWrdTY9xUOp3OkpohkTuocFZfDUOcl/NQMmkXURlmp4Eh9O0wJ2MV8aPmoKevr7Eso00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gM+dCu3z; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=RX1wFs4y5+VoMqQ9yollyvjyuMUDbLsVccGQzUYa/6i3dlssr+PJYDe4YgGMzufweJgo/vpYcUPjAtpgzxg0X//xxjZHlihDcIYoyJAYtwaleXa1RdGBl9QRIzJWhV1tOhIapB98qjxDNwAuH7zHyYF/YikKe99LyW04a5ZUNMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NV8nB54j; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gM+dCu3z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84961C4CED6;
-	Wed, 26 Feb 2025 22:32:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NV8nB54j"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69B3C4CED6;
+	Wed, 26 Feb 2025 22:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740609150;
-	bh=ewq2iYDIma3Eaia/CK0Ze+cDY2qH5IAhMtulKZu9f7E=;
+	s=k20201202; t=1740609548;
+	bh=o0wDW1elrmIyGg/qOhv6CjT4a8C3ze88DyV6cl/5DNs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=gM+dCu3zSXgP0vfv1zk0gj6h3oNPNl0PElzsk0x1f5eWDzXJHX0EoC2V2fPRrEESY
-	 VD4Z4dtx7XA2be0lAzeSsoxrlcP/ZQd/mYvrfoIDG3XkMx0f+X1/lgXO+T9a5OHaTZ
-	 Pewm8zsLi5m+VieImStVD7ghKyVVfS3BXy242hwYNuKd5kxXASWiUbJmE/NzQ8VRX5
-	 47OvCoDdb/t1kXw6TpZ/vaztlZgUrjEckmJx+TVl+fJbNjtyHFVYZi3NXzwBXb6wTg
-	 pDeXkuIJfIaQuDMUFB6YxzY4QHULpMhfnk+huq+RSdr4yNEiK/K2aGDcMG34wVa/hu
-	 gynIpQkJSNG+g==
-Message-ID: <24b641332461006bdedd5a4d682fb040.sboyd@kernel.org>
+	b=NV8nB54jsza0p8W421NDVZrfXhmO+SNWOGb7L1oPgNu+h/oVrkb4gchYvxrAXwnZA
+	 AmpMPKdN1KAp7QV4TQPBEt2s7RtKKoo3712qtc9yplGxnOF1ZyVE9knt/uGIqp0lhU
+	 e/t/HENbdx+ny9ieLrOttwkGsANmOHoUwDydZtbcZKda62l7gLw1f3QIsMqNatkT4U
+	 2hHf5pal6WMTDirnFKeY8+FEZ485NjX4g6fsGxbHW1Yyn6cKG3jHDbvuSoyF3o7Hq4
+	 QxXsXF7qmg6iDvkOpcD5JJxJiezj0MmBpBrb49z5E/1VNbi0QxOYylSkRVX63GaC7z
+	 V+Jg9F9OwZ5YQ==
+Message-ID: <eb867227ce8d9e9c02777a996d043f9a.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,51 +35,33 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250222223733.2990179-1-heiko@sntech.de>
-References: <20250222223733.2990179-1-heiko@sntech.de>
-Subject: Re: [PATCH v2] clk: check for disabled clock-provider in of_clk_get_hw_from_clkspec
+In-Reply-To: <cover.1740157133.git.geert+renesas@glider.be>
+References: <cover.1740157133.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.15
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, liujianfeng1994@gmail.com, sebastian.reichel@collabora.com, cristian.ciocaltea@collabora.com, heiko@sntech.de
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Wed, 26 Feb 2025 14:32:28 -0800
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Wed, 26 Feb 2025 14:39:06 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Heiko Stuebner (2025-02-22 14:37:33)
-> of_clk_get_hw_from_clkspec checks all available clock-providers by
-> compairing their of-nodes to the one from the clkspec. If no matching
-> clock-provider is found, the function returns EPROBE_DEFER to cause a
-> re-check at a later date.
+Quoting Geert Uytterhoeven (2025-02-21 09:01:59)
+>         Hi Mike, Stephen,
 >=20
-> If a matching clock-provider is found, an authoritative answer can be
-> retrieved from it whether the clock exists or not.
+> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
+5b:
 >=20
-> This does not take into account that the clock-provider may never appear,
-> because it's node is disabled. This can happen for example when a clock
-> is optional, provided by a separate block which just never gets enabled.
+>   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 >=20
-> One example of this happening is the rk3588's VOP, which has optional
-> additional display-clock-supplies coming from PLLs inside the hdmiphy
-> blocks. These can be used for better rates, but the system will also
-> work without them.
+> are available in the Git repository at:
 >=20
-> The problem around that is described in the followups to:
-> https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-819=
-62a7151d6@collabora.com/
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.15-tag1
 >=20
-> As we already know the of-node of the presumed clock-provider, just add
-> a check via of_device_is_available whether this is a "valid" device node.
-> This prevents eternal defer-loops.
+> for you to fetch changes up to 9b12504e8c8c2f1f7e5f16afdd829603dd0c9508:
 >=20
-> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
+>   clk: renesas: r9a09g047: Add CANFD clocks and resets (2025-02-20 17:42:=
+03 +0100)
+>=20
+> ----------------------------------------------------------------
 
-Applied to clk-next (unless this needs to fix something urgent?)
-
-Please write a unit test (or many). I also wonder if we should use a
-different return value so that we don't try to look up the clk by name
-(see clk_core_fill_parent_index()). We could go even further and stop
-trying to find the clk over and over again too. Maybe -ENODEV can
-indicate that and we can cache that parent entry value so we stop
-trying.
+Thanks. Pulled into clk-next
