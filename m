@@ -1,67 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EA525D1E3;
-	Wed, 26 Feb 2025 22:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A84315573A;
+	Wed, 26 Feb 2025 23:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740609549; cv=none; b=DwkFTcyaUPNkXSg3ifrEBq7AvuFQ31+xGp1ZZ+T8R1Cy9uJF+QcDppLNr77U/EUFh3lTIiFQyz/JNEn0LpeS82W9e7TO084N2T6iqsjrx413LF56SePlY6YirjDSijMsi2tevT6reaMN2pGH6mdIoFjfMHWbRdHOlkxyHC2xh0s=
+	t=1740612227; cv=none; b=kn3lARYYA0KpRAG4BS7uWFOzqTRSOU720DMMn6sZJakbBVYEor/zfRdjeegBotbUxdVd70UiFbatF1h5iX/VG4e/de+xKWuSq3eoAj6RT0HNDB03Ada6ARx0GezKmd/SB+xwLV0y282s8JQW9VLrjcOr9LZDt3E+6l0IXh6hlsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740609549; c=relaxed/simple;
-	bh=o0wDW1elrmIyGg/qOhv6CjT4a8C3ze88DyV6cl/5DNs=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=RX1wFs4y5+VoMqQ9yollyvjyuMUDbLsVccGQzUYa/6i3dlssr+PJYDe4YgGMzufweJgo/vpYcUPjAtpgzxg0X//xxjZHlihDcIYoyJAYtwaleXa1RdGBl9QRIzJWhV1tOhIapB98qjxDNwAuH7zHyYF/YikKe99LyW04a5ZUNMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NV8nB54j; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740612227; c=relaxed/simple;
+	bh=NS1U6w0kHkdvmIq20iE8adLqx2agJBYWUsJJbrc1VOQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bTWX6jlk/5UNFWfVgmA7dY/d0LAsafJpE+5I+kYapCpHEThssL4fK+24wlWgErDpl/uLteiNjz1fdIoIljVb8ti78XhULfRbS433hIVanh4L0l+O3P+iIeShD6eZoQo8dDNwWkE1DMlJeRAPF2VH/tIrE6rjTkQdBjNq83ccZtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Il/syCvH; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NV8nB54j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69B3C4CED6;
-	Wed, 26 Feb 2025 22:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740609548;
-	bh=o0wDW1elrmIyGg/qOhv6CjT4a8C3ze88DyV6cl/5DNs=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=NV8nB54jsza0p8W421NDVZrfXhmO+SNWOGb7L1oPgNu+h/oVrkb4gchYvxrAXwnZA
-	 AmpMPKdN1KAp7QV4TQPBEt2s7RtKKoo3712qtc9yplGxnOF1ZyVE9knt/uGIqp0lhU
-	 e/t/HENbdx+ny9ieLrOttwkGsANmOHoUwDydZtbcZKda62l7gLw1f3QIsMqNatkT4U
-	 2hHf5pal6WMTDirnFKeY8+FEZ485NjX4g6fsGxbHW1Yyn6cKG3jHDbvuSoyF3o7Hq4
-	 QxXsXF7qmg6iDvkOpcD5JJxJiezj0MmBpBrb49z5E/1VNbi0QxOYylSkRVX63GaC7z
-	 V+Jg9F9OwZ5YQ==
-Message-ID: <eb867227ce8d9e9c02777a996d043f9a.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Il/syCvH"
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e897847086so1251096d6.3;
+        Wed, 26 Feb 2025 15:23:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740612225; x=1741217025; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ybFFMG2SumuDeFcEvYzcDXHRApRA6j0FZMG4qQ5XA8A=;
+        b=Il/syCvHKW1O8zRCocqEhRPvEP1SF8K2GVB8FqAJ2DkErwzPN4Zbnxobv5wgVwzvLT
+         KTJgV45iuZ1hxK+BPeuFDpEQWOeXoOsdsicblvfB1wfMmW8qgo/7ZNHG1xkzpu5O5bTu
+         zwwFBGG/cOD6Khl7wdz7Z2sb+0Ox1aamZeLXAuDXEFmK1bL7axZqkwKNTQQqo2OZOabW
+         M7H2iUd229Wav5OsQliIPiERzWFX1zRYBuxZmYvdE5StfoMBWbI+5/VGw/QRXIJhjmfD
+         +Cc3Ymbz+NsvU+BRfBVkAHVt9IXbZq7w4P0fDW0T7MBBk6r74Am/EpMVlRYhvFtVlIrg
+         I5PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740612225; x=1741217025;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ybFFMG2SumuDeFcEvYzcDXHRApRA6j0FZMG4qQ5XA8A=;
+        b=cAYoYSwU1itm15WottVkMe4XVxFHVH4WWwk9aLPNCXaFPlXGbGwPXWeDbvRY8LP3De
+         /jwIMWb8yGygVPfDw6V4VH7SwwvFUKksPOTjXpysuZs7Z/sTehGx3sujEEaxkU69C8Nr
+         INe89icjFePOYkZ3g3Z0a7PLheAQ/b4yqKb7f92jtzek1SetWba07SQ959LUZj9mkde3
+         G0SPjiiu2xxduNGMU9aAugKw9m+SeHxWWfHOROsrf/QpT02u/brG/T4GyuS/kwdz7jwC
+         u9qT2VDJVSW/0Bnkg8V5ehPJipgG9+a7MWvMxYb/q3ies7m8iQ40WCf/nsSt1zUiGEot
+         Z/Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCWq4Dm+l2sdHDKrBsjkpJoGKvsfLu3I59oujjeGkQwG94lCA2QG3tMIzm3W+9NrH4U/x2GO6vkUANV3M3I0@vger.kernel.org, AJvYcCXP9R0HsJKX8drNnP31ZIrGGOWNVrzj3Tgxz3n+OYmGSfKoV1kSz0JF4WRwL1tfj3YqR5Ivnmns@vger.kernel.org, AJvYcCXvvunRiZlsSKg9NWyBMBBXVObUVxsnO5lZKUBx2pkxp60hjvyyzqsT0p1HYinltOgiwj7xCYy1sbDJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgZUK3TFx/D2zNx4XmazMvqKYZWWeLuq+vYnkU2AywtPX5IoQP
+	I+BuSiYO4p4EFUrWoX2UCBk/EZZKJHDi2ULKxHE4zfNNkcbu4JfSOVCbyg==
+X-Gm-Gg: ASbGncvJFj3e0xjFv/zY6QSiE+TZOmitkQXf411LCTlO265pXiSMV9k4C5W8wC+6TVP
+	l0aFLFH52nqs0Is8xuinlEWp8jz/n+BUQ+ErhBo3FGYczRSmWZZYo/2Rg3JAhTjW0uNarCs8KaE
+	lue9FJ4/Gm7BXxhdsgBqV3QNKexiwB+jFAWjYA8uXKYzbLk3P3jAJAJCHvqGYkKTjJMueZQl6jG
+	I+yaNysPdyOxYpLvwlBZoe4KYIfCklxBjfqrVN0p3lFDiMNMKINQk+EN8HE2n3m3bbFhLYd27AD
+	bQ==
+X-Google-Smtp-Source: AGHT+IF7cAYgeZFCIwEduu3hnNA9l8ESzsaaMKaj+MfGgWzkHkWX96Oowim500RK01tBq3mq5C+HwQ==
+X-Received: by 2002:a05:6214:400d:b0:6e4:3de6:e67a with SMTP id 6a1803df08f44-6e6ae967571mr246610626d6.30.1740612224915;
+        Wed, 26 Feb 2025 15:23:44 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e8976613cdsm2287886d6.56.2025.02.26.15.23.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 15:23:43 -0800 (PST)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH v3 0/2] clk: sophgo: add SG2044 clock controller support
+Date: Thu, 27 Feb 2025 07:23:17 +0800
+Message-ID: <20250226232320.93791-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1740157133.git.geert+renesas@glider.be>
-References: <cover.1740157133.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.15
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Wed, 26 Feb 2025 14:39:06 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Transfer-Encoding: 8bit
 
-Quoting Geert Uytterhoeven (2025-02-21 09:01:59)
->         Hi Mike, Stephen,
->=20
-> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
-5b:
->=20
->   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.15-tag1
->=20
-> for you to fetch changes up to 9b12504e8c8c2f1f7e5f16afdd829603dd0c9508:
->=20
->   clk: renesas: r9a09g047: Add CANFD clocks and resets (2025-02-20 17:42:=
-03 +0100)
->=20
-> ----------------------------------------------------------------
+The clock controller of SG2044 provides multiple clocks for various
+IPs on the SoC, including PLL, mux, div and gates. As the PLL and
+div have obvious changed and do not fit the framework of SG2042,
+a new implement is provided to handle these.
 
-Thanks. Pulled into clk-next
+Changed from v2:
+1. Applied Chen Wang' tag
+2. patch 2: fix author mail infomation
+
+Changed from v1:
+1. patch 1: Applied Krzysztof's tag
+2. patch 2: Fix the build warning from bot.
+
+Inochi Amaoto (2):
+  dt-bindings: clock: sophgo: add clock controller for SG2044
+  clk: sophgo: Add clock controller support for SG2044 SoC
+
+ .../bindings/clock/sophgo,sg2044-clk.yaml     |   40 +
+ drivers/clk/sophgo/Kconfig                    |   11 +
+ drivers/clk/sophgo/Makefile                   |    1 +
+ drivers/clk/sophgo/clk-sg2044.c               | 2271 +++++++++++++++++
+ drivers/clk/sophgo/clk-sg2044.h               |   62 +
+ include/dt-bindings/clock/sophgo,sg2044-clk.h |  170 ++
+ 6 files changed, 2555 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
+ create mode 100644 drivers/clk/sophgo/clk-sg2044.c
+ create mode 100644 drivers/clk/sophgo/clk-sg2044.h
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2044-clk.h
+
+--
+2.48.1
+
