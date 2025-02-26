@@ -1,98 +1,85 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99AF2222D1
-	for <linux-clk@vger.kernel.org>; Wed, 26 Feb 2025 21:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E9B25D8EA;
+	Wed, 26 Feb 2025 22:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740605446; cv=none; b=H4SaEvx92HiA640lrrXddEcjK2xFuBrGd7lBHiPT1GAcdl5bCd1mBmEFF5BDIJVG6rCyV9RV/YrmUcATi9xmXPHyGD8fPfa1iuEICy80gAXu58MYbfiR/OPO+N9WIrZyFw/Wl8RhWciCAS+hdy5z6/evDtrJybgrfgfFBfJ4HCE=
+	t=1740609150; cv=none; b=ikvMw1qBWsfuTva49Cfsq1VM2Dnac6vAg9zQocOEON8wB+QO6egaJ9a8m0Nw0ACA5Gk4At63I2WXVjHFByGFi1r2F1N5YoOeVYG0qrGqffkZs9URvUIsU8NJMGSZDVVHiVxRuFhhGv5WBthrhvJRzoB9oHJAu9MPrvCwvSnFITw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740605446; c=relaxed/simple;
-	bh=SUGyhrxSVMFnfbeL2igPaj/oiGAxEeL7XtDqz9AUnnk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=skS1DpaKV8AePmo0FeZEThOTI4jUnadUsDekCfOpDkWZZbmd2CMnCnPlfYYFQJ+cjfntef9ybGPv6+QPS+bZ6/ujhI0H5s9GqYEkScsqLnYKUqMLYqJrZaePYFdhFeomvTKslVLz4ody5whAmeokDhA7qaLNWdUa/O6tS2iFm30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ydanzjl1; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1740609150; c=relaxed/simple;
+	bh=ewq2iYDIma3Eaia/CK0Ze+cDY2qH5IAhMtulKZu9f7E=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=eCZYehdiF3Dj+PrLIEH9wglqYn6xXs8T7u9AdFqUWG12AfYbzSFQxq2fVKCIFYKXOp8Prrj4y5ly/YqojsWt3Xd6CRXQhdyemLw1RPdeWrdTY9xUOp3OkpohkTuocFZfDUOcl/NQMmkXURlmp4Eh9O0wJ2MV8aPmoKevr7Eso00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gM+dCu3z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ydanzjl1"
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-546210287c1so187466e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 26 Feb 2025 13:30:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740605443; x=1741210243; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SUGyhrxSVMFnfbeL2igPaj/oiGAxEeL7XtDqz9AUnnk=;
-        b=Ydanzjl14hrygn91S8Nko4t/Lu6O+jHrxkLHwEUvVpQLrL27BW1krQWoOXnuIpMhcD
-         /SCyOav0DKnLX3+CJqsN+yJkwcWvXzaD3AUkrBVlQo5QLPKSr7MFdSKsD4/M3B15RIrH
-         KfxPZhNEI6gnTqPTq8IqmLhfmV5Xlf/WdeG1sr2jZB3qRusSGa/01jV6J74VMuZ4C8DB
-         CE2blEc734i/ApojqloxUGTMjH6KtTB/8f4VNtupqKgzPYc56Y/fARkBT6vXoKjr6RTn
-         CRYn6WMMxVunHXwNtKEVpa4JluLqxKpNEtrx1E4LVcWGMyG135R0cr2o97Nka2L0wcBe
-         RxAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740605443; x=1741210243;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SUGyhrxSVMFnfbeL2igPaj/oiGAxEeL7XtDqz9AUnnk=;
-        b=aOSPac3kS4laERWF0K5x8NHJxInrlYDeVsEgLvoQfrnan5+S2VNTKMDjBfzfp3DTXQ
-         poIiA4Q4ok/bCAIKkLsgyqbt5k6caC5y+uBIGQ287nYay54y93BuEBI9DkGrk1nqNH8p
-         vLb1XaX6Xy6HoZSPhIlCDqNR9gXiq2r5LmQxQsU/jwpwTxW0aE1GsereSm3egPWMHF+e
-         cMwMS9kF2Myusrlrgipv5uVQJGtCPSZulHSNWJoj4cP1lzgqkGh0xPkLwm/0ty9vXttt
-         Qi8qIQbFct5VKpvEeft/VhD0krbQsYg7KgzAmyIxMflR7jdtoPYD/eN/5HhqfE6YXB5V
-         JydA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcP4nbsMuU6wAm0OSs4c8MJPzgTBtoMYrpntItThkye9J82g4RrRogB1ZbD5I4WgkX0YvihsW+Tro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbF2AP5OXcqrGHsw106G/V6svCuh+NQhVTK3arRy69ppiYkiCO
-	1ikm+0K2nWZULHq9qPdzXqjl2T36KRNYjK46YhlBnoAKDYAWbb51BeM8XKp5gMF2NJKOc1YWbs5
-	43vL68KsY3Xu9QnWA/H/6ObDFJEaex/JuL5Ay0w==
-X-Gm-Gg: ASbGncvxNzK/notDxh8scWutlj9yBZZ3n0JC36C/4jbCwgmRlO6lPE7cVzv3QaNiXnZ
-	o2FBYn0Lc0BXAvIwDH43Z98So936bb+vsRbi4xMHmXfCJhVW1J01vtFnZNPkk51dG6KL5UBO79x
-	MbfS4X8c0=
-X-Google-Smtp-Source: AGHT+IE8+uZvHOPVlO4cJtPSuzroRvBR0aRjVwpJAshWI+BRIHeRYPen8jIF3ZZZVKAcoSrk/otZQzN4xJtaQL33NME=
-X-Received: by 2002:a05:6512:2347:b0:545:27f0:7b6f with SMTP id
- 2adb3069b0e04-5483912fc82mr10885628e87.11.1740605442695; Wed, 26 Feb 2025
- 13:30:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gM+dCu3z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84961C4CED6;
+	Wed, 26 Feb 2025 22:32:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740609150;
+	bh=ewq2iYDIma3Eaia/CK0Ze+cDY2qH5IAhMtulKZu9f7E=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=gM+dCu3zSXgP0vfv1zk0gj6h3oNPNl0PElzsk0x1f5eWDzXJHX0EoC2V2fPRrEESY
+	 VD4Z4dtx7XA2be0lAzeSsoxrlcP/ZQd/mYvrfoIDG3XkMx0f+X1/lgXO+T9a5OHaTZ
+	 Pewm8zsLi5m+VieImStVD7ghKyVVfS3BXy242hwYNuKd5kxXASWiUbJmE/NzQ8VRX5
+	 47OvCoDdb/t1kXw6TpZ/vaztlZgUrjEckmJx+TVl+fJbNjtyHFVYZi3NXzwBXb6wTg
+	 pDeXkuIJfIaQuDMUFB6YxzY4QHULpMhfnk+huq+RSdr4yNEiK/K2aGDcMG34wVa/hu
+	 gynIpQkJSNG+g==
+Message-ID: <24b641332461006bdedd5a4d682fb040.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211-msm8937-v1-0-7d27ed67f708@mainlining.org> <20250211-msm8937-v1-4-7d27ed67f708@mainlining.org>
-In-Reply-To: <20250211-msm8937-v1-4-7d27ed67f708@mainlining.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 26 Feb 2025 22:30:31 +0100
-X-Gm-Features: AQ5f1JpA8TYnCxYWLh_Nsj3CaoL2jBGTRtip6jpMFprAlot5Cs6Ct5PvAxVIfSk
-Message-ID: <CACRpkdaokrm1wLHGpP6aCTA9uQYAptVqt8J6+BQu1MmJsk9=Cw@mail.gmail.com>
-Subject: Re: [PATCH 04/10] pinctrl: qcom: msm8917: Add MSM8937 wsa_reset pin
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephan Gerhold <stephan@gerhold.net>, =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
-	Lee Jones <lee@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	iommu@lists.linux.dev, Dang Huynh <danct12@riseup.net>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250222223733.2990179-1-heiko@sntech.de>
+References: <20250222223733.2990179-1-heiko@sntech.de>
+Subject: Re: [PATCH v2] clk: check for disabled clock-provider in of_clk_get_hw_from_clkspec
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, liujianfeng1994@gmail.com, sebastian.reichel@collabora.com, cristian.ciocaltea@collabora.com, heiko@sntech.de
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+Date: Wed, 26 Feb 2025 14:32:28 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Tue, Feb 11, 2025 at 11:38=E2=80=AFPM Barnab=C3=A1s Cz=C3=A9m=C3=A1n
-<barnabas.czeman@mainlining.org> wrote:
+Quoting Heiko Stuebner (2025-02-22 14:37:33)
+> of_clk_get_hw_from_clkspec checks all available clock-providers by
+> compairing their of-nodes to the one from the clkspec. If no matching
+> clock-provider is found, the function returns EPROBE_DEFER to cause a
+> re-check at a later date.
+>=20
+> If a matching clock-provider is found, an authoritative answer can be
+> retrieved from it whether the clock exists or not.
+>=20
+> This does not take into account that the clock-provider may never appear,
+> because it's node is disabled. This can happen for example when a clock
+> is optional, provided by a separate block which just never gets enabled.
+>=20
+> One example of this happening is the rk3588's VOP, which has optional
+> additional display-clock-supplies coming from PLLs inside the hdmiphy
+> blocks. These can be used for better rates, but the system will also
+> work without them.
+>=20
+> The problem around that is described in the followups to:
+> https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-819=
+62a7151d6@collabora.com/
+>=20
+> As we already know the of-node of the presumed clock-provider, just add
+> a check via of_device_is_available whether this is a "valid" device node.
+> This prevents eternal defer-loops.
+>=20
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-> From: Dang Huynh <danct12@riseup.net>
->
-> It looks like both 8917 and 8937 are the same except for one pin
-> "wsa_reset".
->
-> Signed-off-by: Dang Huynh <danct12@riseup.net>
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
-.org>
+Applied to clk-next (unless this needs to fix something urgent?)
 
-This patch 4/10 applied to the pinctrl tree.
-
-Yours,
-Linus Walleij
+Please write a unit test (or many). I also wonder if we should use a
+different return value so that we don't try to look up the clk by name
+(see clk_core_fill_parent_index()). We could go even further and stop
+trying to find the clk over and over again too. Maybe -ENODEV can
+indicate that and we can cache that parent entry value so we stop
+trying.
