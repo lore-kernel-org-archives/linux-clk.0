@@ -1,143 +1,120 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1243235C1E;
-	Thu, 27 Feb 2025 14:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F47125EFB7;
+	Thu, 27 Feb 2025 14:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740667004; cv=none; b=nvxo1qcIFCLLuAHd3j26M3xVFwiEdQrWWtK+3yOuYWJBltp+w4GwesG6Lfz1X3q23wyQPFJeSLXz42A06ns9ltqMAemCtdXe6uqvFfK3RbMat4hX7BHEADOLgzDQ3pVhxb48GjHfoqclPpEHmcMnNb5siuJku7HPzcW/76y2sgs=
+	t=1740668173; cv=none; b=Rfa1qLpIZkFx7f+A2CiWi6y0PUxQV8DbVCcsWnv7d3ep8B6JnlBoCuDguewWJndf94mIq1hfys9HluH0pgbfz01Fe4glavz7H5rVMQ8+kOtR/sn3BpXIMjzcYOo6WqmfJLfDq6Vg2luZHNxHz1t2tqvAlP+1kMKVkq2iMaipHDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740667004; c=relaxed/simple;
-	bh=WmGu8UBqaNEqmafRoiJAt+i+0hSd9k9YyFoBqyDaSX4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gFh02OplDqa1+ZOAB2vu7JORL+X76rALYiTaWaq0+B/m+t+iBFif4O0uhr8meZsbLkipkIYQq9PDtAZXfxYc0E/Y2NvM0OGxC/MGKDLPDY5dhwoEkPyADfSNKmR/tcaM6EaHF+T134zNbpiPdEWIPM+IQNJdT0PgJoDGXCJ3qdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uX7+RApk; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1740668173; c=relaxed/simple;
+	bh=9pifnqqy4pSoozn+ghyHOYktagFezR8KmfqYwHLFwpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LnYtgfwsfVB79uR/tT6zl8F8YcLQxHmBN5vAxndUnw/QeE7legP3+Im2pEauPIHyRVVBRGYQmjdmjl0u3RkpCpZ6RhFPXL9PAPQsMnwrxZPddniwidFLZMQOkBTIfaEXE6MxwBD5kMnFuwCx3Ik5VJYJ1z5O16KfRin2xAItG/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UWA/wIbR; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uX7+RApk"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wRx4iYCJbJeKN/dTXbqUdgQQYMQgt3Y3UiAiJX4U/fo=; b=uX7+RApk9Vje/TfbBDrC0dz1Ix
-	j0FmoL+WbKpwyEFeZiMLsOd2l7kG52KGs71FlelByzo0bcK/nIUUXYvci9PFsSMy4A8XMH3CUDhB1
-	K0Jnp5gkDMcNq8db6BZ/fgzh2St+ew7cbLB3Q9p7dEwiaxyc+h44lYakjsElDJlsMJWNUMnqCB5o8
-	wm6K2+4p3pzlUlmJk3r+WOL7HEaTJ07aB5wWeipAbshaR9PUp0x5CQY4asCSyOUN5+AuynNtQrxUA
-	W+bgHwvd8gFOa3KnB28aLcIoNlmEjdGHe+x+ID6LNFY7iA3JpHlYwc+9A7MiVhV5DjAXayomaqIL1
-	m1NliMOQ==;
-Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tnf0C-0001Y4-5r; Thu, 27 Feb 2025 15:36:40 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- liujianfeng1994@gmail.com, sebastian.reichel@collabora.com,
- cristian.ciocaltea@collabora.com
-Subject:
- Re: [PATCH v2] clk: check for disabled clock-provider in
- of_clk_get_hw_from_clkspec
-Date: Thu, 27 Feb 2025 15:36:39 +0100
-Message-ID: <10619139.qUNvkh4Gvn@diego>
-In-Reply-To: <24b641332461006bdedd5a4d682fb040.sboyd@kernel.org>
-References:
- <20250222223733.2990179-1-heiko@sntech.de>
- <24b641332461006bdedd5a4d682fb040.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UWA/wIbR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740668171; x=1772204171;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9pifnqqy4pSoozn+ghyHOYktagFezR8KmfqYwHLFwpU=;
+  b=UWA/wIbRhOKodLCu61MnZ8ZMPBxhb5fz63i5nLsQrfZ+c9mSPMq9Y3s9
+   bfuKhPBd4uXnWicE4KlBGGgj2y++xgl4hPKZ7fbfQ/rH8F+9yYBPNjuT4
+   N6FNOvtRejYCm8yAdpXPRhyu2axDLP8xNsoYhqrSsFPvyMjfO23+9uGJ7
+   uaKNJVxXaUu8g1f11BTlZuEZ6JTTLTSQq5vs5uu/vL+X1CW5K4wmvcbLC
+   a+t6ry6oLe1eifhUZFNS1hmXBOwW4Ephtt+D9F/R9ydPbKqezE9VGS+W3
+   SG0v9Qu5qdVUEXaMbNnfu5BvUiEYIJLZGrOBaa5xL4z5jlqDN/cne3p3Q
+   Q==;
+X-CSE-ConnectionGUID: NBN9dlMaQTuvJD0tMWW4Ig==
+X-CSE-MsgGUID: RTp4+IhYTHCI8BvZ2yk1oQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41760502"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41760502"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Feb 2025 06:56:11 -0800
+X-CSE-ConnectionGUID: rLfBfA0CQbGjXLAIO8Oe6Q==
+X-CSE-MsgGUID: yNl376CETuGLw2RzZA4V/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="147963548"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 27 Feb 2025 06:56:10 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tnfJ0-000DWc-2e;
+	Thu, 27 Feb 2025 14:56:06 +0000
+Date: Thu, 27 Feb 2025 22:55:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	thierry.bultel@linatsea.fr
+Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 06/13] clk: renesas: Add support for R9A09G077 SoC
+Message-ID: <202502272238.ZwLcNFEr-lkp@intel.com>
+References: <20250226130935.3029927-7-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226130935.3029927-7-thierry.bultel.yh@bp.renesas.com>
 
-Hi Stephen,
+Hi Thierry,
 
-Am Mittwoch, 26. Februar 2025, 23:32:28 MEZ schrieb Stephen Boyd:
-> Quoting Heiko Stuebner (2025-02-22 14:37:33)
-> > of_clk_get_hw_from_clkspec checks all available clock-providers by
-> > compairing their of-nodes to the one from the clkspec. If no matching
-> > clock-provider is found, the function returns EPROBE_DEFER to cause a
-> > re-check at a later date.
-> > 
-> > If a matching clock-provider is found, an authoritative answer can be
-> > retrieved from it whether the clock exists or not.
-> > 
-> > This does not take into account that the clock-provider may never appear,
-> > because it's node is disabled. This can happen for example when a clock
-> > is optional, provided by a separate block which just never gets enabled.
-> > 
-> > One example of this happening is the rk3588's VOP, which has optional
-> > additional display-clock-supplies coming from PLLs inside the hdmiphy
-> > blocks. These can be used for better rates, but the system will also
-> > work without them.
-> > 
-> > The problem around that is described in the followups to:
-> > https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com/
-> > 
-> > As we already know the of-node of the presumed clock-provider, just add
-> > a check via of_device_is_available whether this is a "valid" device node.
-> > This prevents eternal defer-loops.
-> > 
-> > Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> > Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> 
-> Applied to clk-next (unless this needs to fix something urgent?)
+kernel test robot noticed the following build errors:
 
-the area where this affects something for me is slated for 6.15, so
-personally I see no urge to have this in 6.14 - especially as the effect
-is present for so long already and nobody complained.
+[auto build test ERROR on tty/tty-testing]
+[also build test ERROR on tty/tty-next tty/tty-linus geert-renesas-devel/next linus/master v6.14-rc4 next-20250227]
+[cannot apply to geert-renesas-drivers/renesas-clk]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Though it looks like clk-next hasn't been pushed yet :-) .
+url:    https://github.com/intel-lab-lkp/linux/commits/Thierry-Bultel/dt-bindings-clock-Add-cpg-for-the-Renesas-RZ-T2H-SoC/20250226-221033
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
+patch link:    https://lore.kernel.org/r/20250226130935.3029927-7-thierry.bultel.yh%40bp.renesas.com
+patch subject: [PATCH v3 06/13] clk: renesas: Add support for R9A09G077 SoC
+config: sparc-allmodconfig (https://download.01.org/0day-ci/archive/20250227/202502272238.ZwLcNFEr-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250227/202502272238.ZwLcNFEr-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502272238.ZwLcNFEr-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/clk/renesas/r9a09g077-cpg-mssr.c:9:
+   drivers/clk/renesas/r9a09g077-cpg-mssr.c: In function 'r9a09g077_cpg_div_clk_register':
+>> drivers/clk/renesas/r9a09g077-cpg-mssr.c:72:33: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
+      72 | #define GET_REG_OFFSET(val)     FIELD_GET(GENMASK(31, 20), val)
+         |                                 ^~~~~~~~~
+   include/linux/clk-provider.h:869:51: note: in definition of macro 'clk_hw_register_divider_table'
+     869 |                                   NULL, (flags), (reg), (shift), (width),     \
+         |                                                   ^~~
+   drivers/clk/renesas/r9a09g077-cpg-mssr.c:166:63: note: in expansion of macro 'GET_REG_OFFSET'
+     166 |                                                        base + GET_REG_OFFSET(core->conf),
+         |                                                               ^~~~~~~~~~~~~~
 
 
-> Please write a unit test (or many).
+vim +/FIELD_GET +72 drivers/clk/renesas/r9a09g077-cpg-mssr.c
 
-Had to look a bit ... never noticed the kunit dtso files before.
-But will look into that :-) .
+    69	
+    70	#define GET_SHIFT(val)		FIELD_GET(GENMASK(19, 12), val)
+    71	#define GET_WIDTH(val)		FIELD_GET(GENMASK(11, 8), val)
+  > 72	#define GET_REG_OFFSET(val)	FIELD_GET(GENMASK(31, 20), val)
+    73	
 
-> I also wonder if we should use a
-> different return value so that we don't try to look up the clk by name
-> (see clk_core_fill_parent_index()). We could go even further and stop
-> trying to find the clk over and over again too. Maybe -ENODEV can
-> indicate that and we can cache that parent entry value so we stop
-> trying.
-
-Pffff ... no clue :-)
-
-I.e. in the case I have, we're coming from clk_get_optional() [0].
-which is supposed to just return NULL if the clock is not found, so at
-least for the consumer view, the internals are not fixed and we could have
-different "internal" error codes.
-
-Not sure if more direct users of the of_clk_ functions would be affected
-though?
-
-
-In the case above, the optional clock is just a single one coming from a
-phy-block, which may probe later (needing defer) or never (if disabled).
-
-As for caching the ENODEV, I'm not sure how often we'd experience that?
-
-Like "normally" you have that one big clock-controller + maybe a number
-of smaller ones + maybe some blocks that expose one or two clocks
-to one specific user - in my case the hdmi-phy exposing its hdmi-pll
-for a nicer rate to the display controller when generating a hdmi output.
-
-Does a case exist where some never-probed clock controller would have
-so many clock-consumers that caching that single of-property check
-would matter?
-
-
-Heiko
-
-[0] https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-next/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c#L3742
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
