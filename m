@@ -1,100 +1,125 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC051CB51F;
-	Fri, 28 Feb 2025 21:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110141DD525;
+	Fri, 28 Feb 2025 21:51:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740777265; cv=none; b=hyfLa9DL15cwwt7KQ7HJmfh1xNrLgP/+c6hLzc/+ghGpKLgfP9kZ/CZBS1nQidVBmb9IMvlfb0DqobOeop1Nu4dDo92nB5YeU8wx0IWlvX36cupH9FKD3JyK304FYXkuPQR+wP35sPmthxeQ6pEc2LRYZslSNV4OCq5VzrN+WnA=
+	t=1740779478; cv=none; b=sCcV3fOSB3J7ZxzbLEvmqqxLqHmmMkQ1aaT5k4x3mHqrmO3Cy97Hy0vz85V6HFGxNHvSk6B4nSziFeHrxL8UL1x5L8gHVjJaX6yTO1nuaJnsoXDvwN3H6w5tbK2vExiMHIz+wKhGBnLIMnWVMyCFA972npcaXCaGpEIagQ/FP5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740777265; c=relaxed/simple;
-	bh=0/d4OULk9b8bh2/XYAQGNaFdkygRUUKBHCtphcPEouU=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=MkCBLZL3iu9n7+7FTklP+wkf2xnWcYTMxVJDu6ZN6hzEmogukssyh2yhFPj0/Pd0zD8OSMJd1lc9m2xNGB+OJe+8VBWxxcdFJ67KuZb1XAF2sef5BC1RPA5geT5Q/MwFrPXlkoqLPiKgD8q8ULcHHyvoFecD5hWkURqZMk6G5Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDooDC2G; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740779478; c=relaxed/simple;
+	bh=MpxAPzTlZ5GUX0OOzjchOn8f8pXXh+0IM+v+xJd4WWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T4/qaYrDXEqZLSNIDHxicbozxYVIVjuS/AWZRtxghBdQl+lhtMGr8AHGm01uYmymbceB7u8TifgASOW4YvGc9pnjxhvQPkPz7bpKmfrRxMHRO92BaYwYT45tAG4//ZCQQu0+tuoLgwT96fqv3FFg1E1yANjtPjxdPK1fYXN+V2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TFJExWtH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDooDC2G"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F231AC4CED6;
-	Fri, 28 Feb 2025 21:14:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TFJExWtH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D6AAC4CED6;
+	Fri, 28 Feb 2025 21:51:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740777264;
-	bh=0/d4OULk9b8bh2/XYAQGNaFdkygRUUKBHCtphcPEouU=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=IDooDC2GnM+FW4Sd9a2yMSXvf3X3VfdVim4Id0vVn0lZzhyHJwyVwydMvzPLmCJXt
-	 UvbpBAi7gHsuxgoh/rxiC7ubIW/dfAygFkk59espEY08Jmlwhzj4LU5pQLboX++SQo
-	 WJKNTMQOwwSMmmRb6lRP0NPcidy/JpxMB5f5508fFcZQamzILX5vz5zdnEZd0nozNW
-	 Bkm4M1jVbhBYDrcOhnDUiTVIhBneqVzPPte3sNu6U+zUI2yDgBc5zfrgoWKMx9Tz0v
-	 1Z5kzfPnrhSbMg0nDbDMObkWQVEgIaXcCKXnjM4UbCI56CF/egLKhDLrV6Trg7BgrN
-	 GBvatut05mWxQ==
-Date: Fri, 28 Feb 2025 15:14:21 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1740779477;
+	bh=MpxAPzTlZ5GUX0OOzjchOn8f8pXXh+0IM+v+xJd4WWk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TFJExWtH2LCBe7zjInr9DuNEQHLDHXLiJBc3/HwBevOdhVxqXOryyZLBeVOEU1/O3
+	 Fse/CqUmQ2d/liVgpd2ZXuqL6ntJ5N1aNoevYQBSUczjhsGZdz8UWsCCb9sCOZ64Ia
+	 V3v75TzQM6ILLwp/YzYnXPrgWnrw2X+BNXymwVyUjdSsNkMNxcynq7pekl8uGa61rp
+	 YUluNc1Ho4kqxCSXsuPfa6GilbamXY8OCXa+uFQcgJE5nAtyz4cbfZSri/9CDpWXI+
+	 V1RFBZPCwaa4VMS43U6SMlg50kUWi4gkaeLQRKgYb49aZ5PfMcn2A7OjjMEkuClObu
+	 XAwNgq0DExw/g==
+Date: Fri, 28 Feb 2025 15:51:15 -0600
+From: Rob Herring <robh@kernel.org>
+To: jiebing chen <jiebing.chen@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
+Subject: Re: [PATCH v3 1/6] dt-bindings: clock: meson: Add audio power domain
+ for s4 soc
+Message-ID: <20250228215115.GA3756522-robh@kernel.org>
+References: <20250228-audio_drvier-v3-0-dbfd30507e4c@amlogic.com>
+ <20250228-audio_drvier-v3-1-dbfd30507e4c@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-clk@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, linux-samsung-soc@vger.kernel.org, 
- Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-In-Reply-To: <20250301-exynos7870-pmu-clocks-v4-1-0f3e73b10db7@disroot.org>
-References: <20250301-exynos7870-pmu-clocks-v4-0-0f3e73b10db7@disroot.org>
- <20250301-exynos7870-pmu-clocks-v4-1-0f3e73b10db7@disroot.org>
-Message-Id: <174077726185.3730179.16075411217823279787.robh@kernel.org>
-Subject: Re: [PATCH v4 1/2] dt-bindings: clock: add clock definitions and
- documentation for exynos7870 CMU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228-audio_drvier-v3-1-dbfd30507e4c@amlogic.com>
 
-
-On Sat, 01 Mar 2025 01:08:15 +0530, Kaustabh Chakraborty wrote:
-> Add unique identifiers for exynos7870 clocks for every bank. It adds all
-> clocks of CMU_MIF, CMU_DISPAUD, CMU_G3D, CMU_ISP, CMU_MFCMSCL, and
-> CMU_PERI. Document the devicetree bindings as well.
+On Fri, Feb 28, 2025 at 04:04:09PM +0800, jiebing chen wrote:
+> Audio power domain found on S4 device. It need to enable before audio work.
 > 
-> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
 > ---
->  .../bindings/clock/samsung,exynos7870-cmu.yaml     | 227 +++++++++++++++
->  include/dt-bindings/clock/samsung,exynos7870-cmu.h | 324 +++++++++++++++++++++
->  2 files changed, 551 insertions(+)
+>  .../bindings/clock/amlogic,axg-audio-clkc.yaml         | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> index fd7982dd4ceab82389167079c2258a9acff51a76..364783c6f7572b09d57de2b35d33adb7bcf7db18 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+> @@ -21,6 +21,7 @@ properties:
+>        - amlogic,axg-audio-clkc
+>        - amlogic,g12a-audio-clkc
+>        - amlogic,sm1-audio-clkc
+> +      - amlogic,s4-audio-clkc
+>  
+>    '#clock-cells':
+>      const: 1
+> @@ -100,6 +101,9 @@ properties:
+>    resets:
+>      description: internal reset line
+>  
+> +  power-domains:
+> +    description: audio controller power
 
-My bot found errors running 'make dt_binding_check' on your patch:
+You have to define how many (maxItems).
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/samsung,exynos7870-cmu.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/clock/samsung,exynos7870-clock.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/samsung,exynos7870-cmu.yaml
-Documentation/devicetree/bindings/clock/samsung,exynos7870-cmu.example.dts:18:18: fatal error: dt-bindings/clock/exynos7870.h: No such file or directory
-   18 |         #include <dt-bindings/clock/exynos7870.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/clock/samsung,exynos7870-cmu.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
-make: *** [Makefile:251: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250301-exynos7870-pmu-clocks-v4-1-0f3e73b10db7@disroot.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+> +
+>  required:
+>    - compatible
+>    - '#clock-cells'
+> @@ -116,12 +120,26 @@ allOf:
+>              enum:
+>                - amlogic,g12a-audio-clkc
+>                - amlogic,sm1-audio-clkc
+> +              - amlogic,s4-audio-clkc
+>      then:
+>        required:
+>          - '#reset-cells'
+>      else:
+>        properties:
+>          '#reset-cells': false
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - amlogic,s4-audio-clkc
+> +    then:
+> +      required:
+> +        - power-domains
+> +
+> +    else:
+> +      properties:
+> +        power-domains: false
+>  
+>  additionalProperties: false
+>  
+> 
+> -- 
+> 2.43.0
+> 
