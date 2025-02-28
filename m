@@ -1,24 +1,24 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8141C26B2B5;
-	Fri, 28 Feb 2025 13:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247461E4A9;
+	Fri, 28 Feb 2025 13:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740750154; cv=none; b=e2wyLbvOD0zHhhiqPNvRw8FMlVxA5GpLIujnMiKg99UET9dh171RPzH4+/waGakrqZbg+NGdxb20l1ik5Cz8wVvHl8J4vmWvKUejGppvFIn99bfmJji2H1BzWDBkpfa8akXEqBOH+gFweab+pWwYsV3AsDtQsIyHvJK2gI6zA3I=
+	t=1740750240; cv=none; b=WYYGxM5I1i9erHrgvD50iGqjcyfN2920hfRr/1LD1drxW6u1/Njcyk/2Y3AA39nff//JXwSBTXEt9dKYXWMsz7j/KYLFqrzGjFH6kLcaDHQh94PhrSn5ByhfN3hK4HpeuAgxK/rr/ENB27WKTDGQPgMqr+oNGHrZYkBNaZVYIzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740750154; c=relaxed/simple;
-	bh=W2w9ZNg8iB9YklEV1CdbhvEXiJbivO5K+LxJOETPskg=;
+	s=arc-20240116; t=1740750240; c=relaxed/simple;
+	bh=8VfttCI2j8FhlpTuINsb9JwtMhg0oGnFtBF6r7jwq2k=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jm6VbS647DLYOrybG5xfG4TIcZfsgEObzWerIlvZ9wpCDxKYvMSeby633ErgFDmDn7MxOGRh2YNo2Z7tCa5vVLCtezArDPxKf9tOE1iWJ1RKNELJc+w2pmFjQwadTglQBlWrerVwOXSGu6Mns5FgFnLRxbLn6ZzwVTF3Z2eU1Rw=
+	 MIME-Version:Content-Type; b=foQJiJk3t8rM6TxmldOvqRKCob3u0NnqO5QHzUa56DcSV0xPN0k0ue87dVcQs3VB1aYcjTgT0cXPJkHsUj6JNmZpPofBz/QKcvqlIt3JdEVVsFZXqz0XiSODHZFYiTtS9ESYyhWbk8on/MPqlTSRQ7XtKViG4PUBBc8d8hqrc58=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC8441515;
-	Fri, 28 Feb 2025 05:42:46 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AB0621515;
+	Fri, 28 Feb 2025 05:44:13 -0800 (PST)
 Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CDAAA3F5A1;
-	Fri, 28 Feb 2025 05:42:29 -0800 (PST)
-Date: Fri, 28 Feb 2025 13:42:27 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 966F73F5A1;
+	Fri, 28 Feb 2025 05:43:56 -0800 (PST)
+Date: Fri, 28 Feb 2025 13:43:53 +0000
 From: Andre Przywara <andre.przywara@arm.com>
 To: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -28,12 +28,12 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/15] clk: sunxi-ng: a523: add video mod clocks
-Message-ID: <20250228134227.4a955168@donnerap.manchester.arm.com>
-In-Reply-To: <9406479.CDJkKcVGEf@jernej-laptop>
+Subject: Re: [PATCH v2 08/15] clk: sunxi-ng: a523: add system mod clocks
+Message-ID: <20250228134353.6fa9e01d@donnerap.manchester.arm.com>
+In-Reply-To: <2013031.usQuhbGJ8B@jernej-laptop>
 References: <20250214125359.5204-1-andre.przywara@arm.com>
-	<20250214125359.5204-8-andre.przywara@arm.com>
-	<9406479.CDJkKcVGEf@jernej-laptop>
+	<20250214125359.5204-9-andre.przywara@arm.com>
+	<2013031.usQuhbGJ8B@jernej-laptop>
 Organization: ARM
 X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
@@ -45,329 +45,215 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 18 Feb 2025 20:26:31 +0100
+On Tue, 18 Feb 2025 20:34:27 +0100
 Jernej =C5=A0krabec <jernej.skrabec@gmail.com> wrote:
 
 Hi,
 
-> Dne petek, 14. februar 2025 ob 13:53:51 Srednjeevropski standardni =C4=8D=
+> Dne petek, 14. februar 2025 ob 13:53:52 Srednjeevropski standardni =C4=8D=
 as je Andre Przywara napisal(a):
-> > Add the clocks driving the various video subsystems of the SoC: the "DE"
-> > display engine, the "DI" deinterlacer, the "G2D" 2D graphics system, the
-> > Mali "GPU", the "VE" video engine, its associated IOMMU, as well as the
-> > clocks for the various video output drivers (HDMI, DP, LCDs).
+> > Add the clocks driving some core system related subsystems of the SoC:
+> > the "CE" crypto engine, the high speed timers, the DRAM and the associa=
+ted
+> > MBUS clock, and the PCIe clock.
 > >=20
 > > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 > > ---
-> >  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 219 +++++++++++++++++++++++++
-> >  1 file changed, 219 insertions(+)
+> >  drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 119 +++++++++++++++++++++++++
+> >  1 file changed, 119 insertions(+)
 > >=20
 > > diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi=
 -ng/ccu-sun55i-a523.c
-> > index 59f45e7c0904b..0ef1fd71a1ca5 100644
+> > index 0ef1fd71a1ca5..b68c44bce825f 100644
 > > --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
 > > +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-> > @@ -364,6 +364,192 @@ static SUNXI_CCU_M_DATA_WITH_MUX(apb1_clk, "apb1"=
-, apb1_parents, 0x524,
-> >  				 24, 3,		/* mux */
-> >  				 0);
+> > @@ -423,6 +423,18 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(gpu_clk, "gpu"=
+, gpu_parents, 0x670,
+> >  				    BIT(31),	/* gate */
+> >  				    0);
 > > =20
-> > +
-> > +/*********************************************************************=
-*****
-> > + *                          mod clocks                                =
-    *
-> > + *********************************************************************=
-*****/
-> > +
-> > +static const struct clk_hw *de_parents[] =3D {
-> > +	&pll_periph0_300M_clk.hw,
-> > +	&pll_periph0_400M_clk.hw,
-> > +	&pll_video3_4x_clk.common.hw,
-> > +	&pll_video3_3x_clk.hw,
-> > +};
-> > +
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(de_clk, "de", de_parents, 0x600,
-> > +				    0, 5,	/* M */
-> > +				    24, 3,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    CLK_SET_RATE_PARENT);
-> > +
-> > +static const struct clk_hw *di_parents[] =3D {
-> > +	&pll_periph0_300M_clk.hw,
-> > +	&pll_periph0_400M_clk.hw,
-> > +	&pll_video0_4x_clk.common.hw,
-> > +	&pll_video1_4x_clk.common.hw,
-> > +};
-> > +
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(di_clk, "di", di_parents, 0x620,
-> > +				    0, 5,	/* M */
-> > +				    24, 3,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    CLK_SET_RATE_PARENT);
-> > +
-> > +static const struct clk_hw *g2d_parents[] =3D {
-> > +	&pll_periph0_400M_clk.hw,
-> > +	&pll_periph0_300M_clk.hw,
-> > +	&pll_video0_4x_clk.common.hw,
-> > +	&pll_video1_4x_clk.common.hw,
-> > +};
-> > +
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(g2d_clk, "g2d", g2d_parents, 0x630,
-> > +				    0, 5,	/* M */
-> > +				    24, 3,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    0);
-> > +
-> > +static const struct clk_hw *gpu_parents[] =3D {
-> > +	&pll_gpu_clk.common.hw,
-> > +	&pll_periph0_800M_clk.common.hw,
-> > +	&pll_periph0_600M_clk.hw,
-> > +	&pll_periph0_400M_clk.hw,
-> > +	&pll_periph0_300M_clk.hw,
-> > +	&pll_periph0_200M_clk.hw,
-> > +};
-> > +
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
-> > +				    0, 4,	/* M */
-> > +				    24, 3,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    0); =20
->=20
-> GPU clock should have CLK_SET_RATE_FLAG.
-
-Yes indeed, fixed.
-
-> > +
-> > +static const struct clk_hw *ve_parents[] =3D {
-> > +	&pll_ve_clk.common.hw,
-> > +	&pll_periph0_480M_clk.common.hw,
-> > +	&pll_periph0_400M_clk.hw,
-> > +	&pll_periph0_300M_clk.hw,
-> > +};
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(ve_clk, "ve", ve_parents, 0x690,
-> > +				    0, 5,	/* M */
-> > +				    24, 3,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    CLK_SET_RATE_PARENT);
-> > +
-> > +static const struct clk_parent_data iommu_parents[] =3D {
-> > +	{ .hw =3D &pll_periph0_600M_clk.hw },
-> > +	{ .hw =3D &pll_ddr0_clk.common.hw },
+> > +static const struct clk_parent_data ce_parents[] =3D {
+> > +	{ .fw_name =3D "hosc" },
 > > +	{ .hw =3D &pll_periph0_480M_clk.common.hw },
 > > +	{ .hw =3D &pll_periph0_400M_clk.hw },
-> > +	{ .hw =3D &pll_periph0_150M_clk.hw },
-> > +	{ .fw_name =3D "hosc" },
+> > +	{ .hw =3D &pll_periph0_300M_clk.hw },
 > > +};
+> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(ce_clk, "ce", ce_parents, 0x680,
+> > +				       0, 5,	/* M */
+> > +				       24, 3,	/* mux */
+> > +				       BIT(31),	/* gate */
+> > +				       0);
 > > +
-> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(iommu_clk, "iommu", iommu_parent=
-s, 0x7b0,
-> > +				      0, 5,	/* M */
-> > +				      24, 3,	/* mux */
-> > +				      BIT(31),	/* gate */
-> > +				      CLK_SET_RATE_PARENT); =20
->=20
-> This won't work. IOMMU clock has also update bit, which must be set to ac=
-tually
-> apply the new value, same as DDR clock.
-
-Good point, I actually missed that. I now added a new feature flag in a
-new patch to flag those clocks that need bit 27 set whenever we change
-something. An update bitmask, defaulting to 0, sounds more elegant, but
-gets tricky because we would need that in all those clock routines (gate,
-div, mux), so hardcoding bit 27 behind a flag (which is already available
-to all those functions) gives a much easier implementation. Feel free to
-disagree on that new patch ;-)
-
-> > +
-> > +static SUNXI_CCU_GATE_DATA(hdmi_24M_clk, "hdmi-24M", osc24M, 0xb04, BI=
-T(31), 0);
-> > +
-> > +/* TODO: add mux between 32kOSC and PERIPH0/18750 */ =20
->=20
-> Not sure what this TODO means.
-
-Mhh, I don't remember either, and cannot find 18750 anywhere in the
-manuals. Maybe I forgot to remove this comment when implementing the below
-clock? Just removed it.
-
-> > +static SUNXI_CCU_GATE_HWS_WITH_PREDIV(hdmi_cec_32k_clk, "hdmi-cec-32k",
-> > +				      pll_periph0_2x_hws,
-> > +				      0xb10, BIT(30), 36621, 0);
-> > +
-> > +static const struct clk_parent_data hdmi_cec_parents[] =3D {
+> >  static const struct clk_hw *ve_parents[] =3D {
+> >  	&pll_ve_clk.common.hw,
+> >  	&pll_periph0_480M_clk.common.hw,
+> > @@ -435,6 +447,65 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(ve_clk, "ve", =
+ve_parents, 0x690,
+> >  				    BIT(31),	/* gate */
+> >  				    CLK_SET_RATE_PARENT);
+> > =20
+> > +static const struct clk_parent_data hstimer_parents[] =3D {
+> > +	{ .fw_name =3D "hosc" },
+> > +	{ .fw_name =3D "iosc" },
 > > +	{ .fw_name =3D "losc" },
-> > +	{ .hw =3D &hdmi_cec_32k_clk.common.hw },
-> > +};
-> > +static SUNXI_CCU_MUX_DATA_WITH_GATE(hdmi_cec_clk, "hdmi-cec", hdmi_cec=
-_parents,
-> > +				    0xb10,
-> > +				    24, 1,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    0);
-> > +
-> > +static const struct clk_parent_data mipi_dsi_parents[] =3D {
-> > +	{ .fw_name =3D "hosc" },
 > > +	{ .hw =3D &pll_periph0_200M_clk.hw },
-> > +	{ .hw =3D &pll_periph0_150M_clk.hw },
 > > +};
-> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(mipi_dsi0_clk, "mipi-dsi0",
-> > +				      mipi_dsi_parents, 0xb24,
-> > +				      0, 5,	/* M */
-> > +				      24, 3,	/* mux */
-> > +				      BIT(31),	/* gate */
-> > +				      CLK_SET_RATE_PARENT);
+> > +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(hstimer0_clk, "hstimer0",
+> > +				       hstimer_parents, 0x730,
+> > +				       0, 0,	/* M */
+> > +				       0, 3,	/* P */
+> > +				       24, 3,	/* mux */
+> > +				       BIT(31),	/* gate */
+> > +				       CLK_SET_RATE_PARENT); =20
+>=20
+> CLK_SET_RATE_PARENT doesn't make much sense for fixed clocks.
+
+That's a very good point ;-)
+Removed.
+
 > > +
-> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(mipi_dsi1_clk, "mipi-dsi1",
-> > +				      mipi_dsi_parents, 0xb28,
-> > +				      0, 5,	/* M */
-> > +				      24, 3,	/* mux */
-> > +				      BIT(31),	/* gate */
-> > +				      CLK_SET_RATE_PARENT);
+> > +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(hstimer1_clk, "hstimer1",
+> > +				       hstimer_parents,
+> > +				       0x734,
+> > +				       0, 0,	/* M */
+> > +				       0, 3,	/* P */
+> > +				       24, 3,	/* mux */
+> > +				       BIT(31),	/* gate */
+> > +				       CLK_SET_RATE_PARENT);
 > > +
-> > +static const struct clk_hw *tcon_parents[] =3D {
-> > +	&pll_video0_4x_clk.common.hw,
-> > +	&pll_video1_4x_clk.common.hw,
-> > +	&pll_video2_4x_clk.common.hw,
-> > +	&pll_video3_4x_clk.common.hw,
-> > +	&pll_periph0_2x_clk.common.hw,
-> > +	&pll_video0_3x_clk.hw,
-> > +	&pll_video1_3x_clk.hw,
+> > +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(hstimer2_clk, "hstimer2",
+> > +				       hstimer_parents,
+> > +				       0x738,
+> > +				       0, 0,	/* M */
+> > +				       0, 3,	/* P */
+> > +				       24, 3,	/* mux */
+> > +				       BIT(31),	/* gate */
+> > +				       CLK_SET_RATE_PARENT);
+> > +
+> > +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(hstimer3_clk, "hstimer3",
+> > +				       hstimer_parents,
+> > +				       0x73c,
+> > +				       0, 0,	/* M */
+> > +				       0, 3,	/* P */
+> > +				       24, 3,	/* mux */
+> > +				       BIT(31),	/* gate */
+> > +				       CLK_SET_RATE_PARENT);
+> > +
+> > +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(hstimer4_clk, "hstimer4",
+> > +				       hstimer_parents,
+> > +				       0x740,
+> > +				       0, 0,	/* M */
+> > +				       0, 3,	/* P */
+> > +				       24, 3,	/* mux */
+> > +				       BIT(31),	/* gate */
+> > +				       CLK_SET_RATE_PARENT);
+> > +
+> > +static SUNXI_CCU_MP_DATA_WITH_MUX_GATE(hstimer5_clk, "hstimer5",
+> > +				       hstimer_parents,
+> > +				       0x744,
+> > +				       0, 0,	/* M */
+> > +				       0, 3,	/* P */
+> > +				       24, 3,	/* mux */
+> > +				       BIT(31),	/* gate */
+> > +				       CLK_SET_RATE_PARENT);
+> > +
+> >  static const struct clk_parent_data iommu_parents[] =3D {
+> >  	{ .hw =3D &pll_periph0_600M_clk.hw },
+> >  	{ .hw =3D &pll_ddr0_clk.common.hw },
+> > @@ -450,6 +521,34 @@ static SUNXI_CCU_M_DATA_WITH_MUX_GATE(iommu_clk, "=
+iommu", iommu_parents, 0x7b0,
+> >  				      BIT(31),	/* gate */
+> >  				      CLK_SET_RATE_PARENT);
+> > =20
+> > +static const struct clk_hw *dram_parents[] =3D {
+> > +	&pll_ddr0_clk.common.hw,
+> > +	&pll_periph0_600M_clk.hw,
+> > +	&pll_periph0_480M_clk.common.hw,
+> > +	&pll_periph0_400M_clk.hw,
+> > +	&pll_periph0_150M_clk.hw,
 > > +};
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(tcon_lcd0_clk, "tcon-lcd0", tcon_p=
-arents,
-> > +				    0xb60,
-> > +				    0,  5,	/* M */
+> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(dram_clk, "dram", dram_parents, 0x=
+800,
+> > +				    0, 5,	/* M */
 > > +				    24, 3,	/* mux */
 > > +				    BIT(31),	/* gate */
-> > +				    CLK_SET_RATE_PARENT);
-> > +
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(tcon_lcd1_clk, "tcon-lcd1", tcon_p=
-arents,
-> > +				    0xb64,
-> > +				    0,  5,	/* M */
-> > +				    24, 3,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    CLK_SET_RATE_PARENT); =20
+> > +				    CLK_IS_CRITICAL); =20
 >=20
-> Missing tcon-lcd2 - see T527 manual.
+> Same comment as for IOMMU clock. Update bit is needed to actually apply c=
+onfiguration.
 
-Thanks, I added this.
+Fixed now.
 
-> > +
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(combophy_dsi0_clk, "combophy-dsi0",
-> > +				    tcon_parents, 0xb6c,
-> > +				    0,  5,	/* M */
-> > +				    24, 3,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    CLK_SET_RATE_PARENT);
-> > +
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(combophy_dsi1_clk, "combophy-dsi1",
-> > +				    tcon_parents, 0xb70,
-> > +				    0,  5,	/* M */
-> > +				    24, 3,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    CLK_SET_RATE_PARENT);
-> > +
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0", tcon_par=
-ents,
-> > +				    0xb80,
-> > +				    0, 4,	/* M */
-> > +				    24, 3,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    CLK_SET_RATE_PARENT);
-> > +
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(tcon_tv1_clk, "tcon-tv1", tcon_par=
-ents,
-> > +				    0xb84,
-> > +				    0, 4,	/* M */
-> > +				    24, 3,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    CLK_SET_RATE_PARENT); =20
->=20
-> TCON TV0-1 parents are subset of others, according to T527 manual.
-
-Nice catch, fixed.
-
-> > +
-> > +static const struct clk_hw *edp_parents[] =3D {
-> > +	&pll_video0_4x_clk.common.hw,
-> > +	&pll_video1_4x_clk.common.hw,
-> > +	&pll_video2_4x_clk.common.hw,
-> > +	&pll_video3_4x_clk.common.hw,
-> > +	&pll_periph0_2x_clk.common.hw,
-> > +};
-> > +static SUNXI_CCU_M_HW_WITH_MUX_GATE(edp_clk, "edp", edp_parents, 0xbb0,
-> > +				    0, 4,	/* M */
-> > +				    24, 3,	/* mux */
-> > +				    BIT(31),	/* gate */
-> > +				    0);
-> > + =20
->=20
-> Missing CLK_SET_RATE_PARENT flag.
-
-Yes, thanks, added.
-
-Cheers,
+Thanks!
 Andre
 
 >=20
 > Best regards,
 > Jernej
 >=20
-> >  /*
-> >   * Contains all clocks that are controlled by a hardware register. They
-> >   * have a (sunxi) .common member, which needs to be initialised by the=
- common
-> > @@ -394,6 +580,22 @@ static struct ccu_common *sun55i_a523_ccu_clks[] =
-=3D {
-> >  	&ahb_clk.common,
-> >  	&apb0_clk.common,
-> >  	&apb1_clk.common,
-> > +	&de_clk.common,
-> > +	&di_clk.common,
-> > +	&g2d_clk.common,
-> > +	&gpu_clk.common,
-> > +	&ve_clk.common,
-> > +	&iommu_clk.common,
-> > +	&hdmi_24M_clk.common,
-> > +	&hdmi_cec_32k_clk.common,
-> > +	&hdmi_cec_clk.common,
-> > +	&mipi_dsi0_clk.common,
-> > +	&mipi_dsi1_clk.common,
-> > +	&tcon_lcd0_clk.common,
-> > +	&tcon_lcd1_clk.common,
-> > +	&tcon_tv0_clk.common,
-> > +	&tcon_tv1_clk.common,
-> > +	&edp_clk.common,
-> >  };
+> > +
+> > +static CLK_FIXED_FACTOR_HW(mbus_clk, "mbus",
+> > +			   &dram_clk.common.hw, 4, 1, 0);
+> > +
+> > +static const struct clk_parent_data losc_hosc_parents[] =3D {
+> > +	{ .fw_name =3D "hosc" },
+> > +	{ .fw_name =3D "losc" },
+> > +};
+> > +
+> > +static SUNXI_CCU_M_DATA_WITH_MUX_GATE(pcie_aux_clk, "pcie-aux",
+> > +				      losc_hosc_parents, 0xaa0,
+> > +				      0, 5,	/* M */
+> > +				      24, 1,	/* mux */
+> > +				      BIT(31),	/* gate */
+> > +				      0);
+> > +
+> >  static SUNXI_CCU_GATE_DATA(hdmi_24M_clk, "hdmi-24M", osc24M, 0xb04, BI=
+T(31), 0);
 > > =20
-> >  static struct clk_hw_onecell_data sun55i_a523_hw_clks =3D {
-> > @@ -442,6 +644,23 @@ static struct clk_hw_onecell_data sun55i_a523_hw_c=
-lks =3D {
+> >  /* TODO: add mux between 32kOSC and PERIPH0/18750 */
+> > @@ -584,8 +683,17 @@ static struct ccu_common *sun55i_a523_ccu_clks[] =
+=3D {
+> >  	&di_clk.common,
+> >  	&g2d_clk.common,
+> >  	&gpu_clk.common,
+> > +	&ce_clk.common,
+> >  	&ve_clk.common,
+> > +	&hstimer0_clk.common,
+> > +	&hstimer1_clk.common,
+> > +	&hstimer2_clk.common,
+> > +	&hstimer3_clk.common,
+> > +	&hstimer4_clk.common,
+> > +	&hstimer5_clk.common,
+> >  	&iommu_clk.common,
+> > +	&dram_clk.common,
+> > +	&pcie_aux_clk.common,
+> >  	&hdmi_24M_clk.common,
+> >  	&hdmi_cec_32k_clk.common,
+> >  	&hdmi_cec_clk.common,
+> > @@ -644,11 +752,22 @@ static struct clk_hw_onecell_data sun55i_a523_hw_=
+clks =3D {
 > >  		[CLK_AHB]		=3D &ahb_clk.common.hw,
 > >  		[CLK_APB0]		=3D &apb0_clk.common.hw,
 > >  		[CLK_APB1]		=3D &apb1_clk.common.hw,
-> > +		[CLK_DE]		=3D &de_clk.common.hw,
-> > +		[CLK_DI]		=3D &di_clk.common.hw,
-> > +		[CLK_G2D]		=3D &g2d_clk.common.hw,
-> > +		[CLK_GPU]		=3D &gpu_clk.common.hw,
-> > +		[CLK_VE]		=3D &ve_clk.common.hw,
-> > +		[CLK_HDMI_24M]		=3D &hdmi_24M_clk.common.hw,
-> > +		[CLK_HDMI_CEC_32K]	=3D &hdmi_cec_32k_clk.common.hw,
-> > +		[CLK_HDMI_CEC]		=3D &hdmi_cec_clk.common.hw,
-> > +		[CLK_MIPI_DSI0]		=3D &mipi_dsi0_clk.common.hw,
-> > +		[CLK_MIPI_DSI1]		=3D &mipi_dsi1_clk.common.hw,
-> > +		[CLK_TCON_LCD0]		=3D &tcon_lcd0_clk.common.hw,
-> > +		[CLK_TCON_LCD1]		=3D &tcon_lcd1_clk.common.hw,
-> > +		[CLK_COMBOPHY_DSI0]	=3D &combophy_dsi0_clk.common.hw,
-> > +		[CLK_COMBOPHY_DSI1]	=3D &combophy_dsi1_clk.common.hw,
-> > +		[CLK_TCON_TV0]		=3D &tcon_tv0_clk.common.hw,
-> > +		[CLK_TCON_TV1]		=3D &tcon_tv1_clk.common.hw,
-> > +		[CLK_EDP]		=3D &edp_clk.common.hw,
-> >  	},
-> >  };
-> > =20
+> > +		[CLK_MBUS]		=3D &mbus_clk.hw,
+> >  		[CLK_DE]		=3D &de_clk.common.hw,
+> >  		[CLK_DI]		=3D &di_clk.common.hw,
+> >  		[CLK_G2D]		=3D &g2d_clk.common.hw,
+> >  		[CLK_GPU]		=3D &gpu_clk.common.hw,
+> > +		[CLK_CE]		=3D &ce_clk.common.hw,
+> >  		[CLK_VE]		=3D &ve_clk.common.hw,
+> > +		[CLK_HSTIMER0]		=3D &hstimer0_clk.common.hw,
+> > +		[CLK_HSTIMER1]		=3D &hstimer1_clk.common.hw,
+> > +		[CLK_HSTIMER2]		=3D &hstimer2_clk.common.hw,
+> > +		[CLK_HSTIMER3]		=3D &hstimer3_clk.common.hw,
+> > +		[CLK_HSTIMER4]		=3D &hstimer4_clk.common.hw,
+> > +		[CLK_HSTIMER5]		=3D &hstimer5_clk.common.hw,
+> > +		[CLK_IOMMU]		=3D &iommu_clk.common.hw,
+> > +		[CLK_DRAM]		=3D &dram_clk.common.hw,
+> > +		[CLK_PCIE_AUX]		=3D &pcie_aux_clk.common.hw,
+> >  		[CLK_HDMI_24M]		=3D &hdmi_24M_clk.common.hw,
+> >  		[CLK_HDMI_CEC_32K]	=3D &hdmi_cec_32k_clk.common.hw,
+> >  		[CLK_HDMI_CEC]		=3D &hdmi_cec_clk.common.hw,
 > >  =20
 >=20
 >=20
