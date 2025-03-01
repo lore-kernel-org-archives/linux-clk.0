@@ -1,108 +1,94 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661791EF1D;
-	Sat,  1 Mar 2025 07:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C12D1C5D79;
+	Sat,  1 Mar 2025 10:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740815199; cv=none; b=hpg2OPj8x75gciIpVMwPXI3XEtfWwfezgfF8XGeFMpVd+rvngwIr9MK7q6Qa+eYM/epUGtp6P+FG8u904ZrdV6cWD9R2XlCCEzIoBbaoavbhLB1FvYeE49FVaBC9lo4VtZ7+m4E/NLoSZm5meRsuBFr/gHx17AjmyQgpbGPzn5g=
+	t=1740825809; cv=none; b=iDWrdiXoWN1cb1ZYFnl8p7OCapdHprVMdAQyPXUNj35qwHD0YnYhuZ8XcbcrWe2wRljwrc6dmn5mOlSzjZC5wNGFsvbVpIm8IROiZGEUSPzAst8ssjFtjdXc95WPiR1u+JV/ZFhM8Es00WgFS9VqtQl+fs4xKyxcpAEh/PxLw2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740815199; c=relaxed/simple;
-	bh=T+ZH6Z4xoVhm2ILQyatQsfA4AMSbIyFGfcFpAnT/ieA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EZvYTZuq6sgf35QhpKMW/cFPQcjg7WVdHcPBOw8EmT7YNsguqryDDRegbNuseSx2InNc5/T8/5amN4QTE2n69uSqy4lIEs0/rBrzwCR2rtgkPf7RyDJFd0GPJeH0rl7vM7ogyNTA/yBQF/bTzOT6KyRm/RHDzLErUWApKqmpmwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3i25GKd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740825809; c=relaxed/simple;
+	bh=WnMErFQKGyzYsxdI0ujG7rvJaR/CFTazd4MxR3w0Rdw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gf7TeyppEUS0ZXfIo/g9BsvfkGjP7xmDokjNdGnGg+Xz8K1etJHEbOcaYu8yN7vqvL4Pk+9jiEG/xoEqGPHNV+fPSz1hsVyzJto9K98/Ty79atIUSEGSF8Oe6dJB1hPPWCoqAK4NXAzptr1R5nHJUQGP8pB6K2sm/1FVlTwtSWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=EZiQOsYq; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3i25GKd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BFF6C4CEDD;
-	Sat,  1 Mar 2025 07:46:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740815198;
-	bh=T+ZH6Z4xoVhm2ILQyatQsfA4AMSbIyFGfcFpAnT/ieA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N3i25GKdnVaDdTmjSfJpe2iMJNj55lWgOKVg3AlcRj9lhyMMYyOHb2aJHl39UATns
-	 jLr3VqN7kuijX1JwFfBHMsksWI63V2TZ322h8opfiTgkFOMBHW7KwnegB4mbsT5a7m
-	 V6yQNJcUOLnnLCQIzXoSj+vw3Na9BOOehaMoyjh/9HGnf5+zgH8R02DeDRzGQX1vZQ
-	 yPKi3u/LgCd/QS5uyrcJsFlpLT2WHDcgSL/h+ilR42xTmBzjwuHNKi+AjaXZZ7nvr/
-	 nV4+EkEFDwHolP0WJCbMCESuiWLAWFSFJmZdPFvz0f1tFg0nLjyy87hgUohKXO9NP/
-	 Bt3mP81UxrADA==
-From: Will Deacon <will@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="EZiQOsYq"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 2D81B25DBB;
+	Sat,  1 Mar 2025 11:43:24 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id EC3Mny1iksiZ; Sat,  1 Mar 2025 11:43:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1740825802; bh=WnMErFQKGyzYsxdI0ujG7rvJaR/CFTazd4MxR3w0Rdw=;
+	h=From:To:Cc:Subject:Date;
+	b=EZiQOsYqB3kMpB6EpYaGSf8co4UUq1tvB9+SYpPqC6XHSQA2L4QNRzW8yl7nB72f1
+	 GqPDxGQz6ElTk0i6U7eFTdWU6EOm+DDiuw9lksbmJdZtNiPXzRzUjpmCNiF386isKQ
+	 putn946KHxayUU9Iym2nHZmjGtKacKO6izBgYIcU5nACc5Nlk7XAkhNhfWpCbCFY2q
+	 jzTUVsCic9/AI8mtLUaErntianqZUvhp7mLy/Z258dmNF1/2yWN0LbcPt3t60cfgOs
+	 vytP3zPP1Q9+6lpX5hhgQf9wWxE02zFKufcVkWxAbyrSa5bMgZOLcs++jzOL8lrOMV
+	 /0CQyjINCzeAg==
+From: Yao Zi <ziyao@disroot.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	=?UTF-8?q?Otto=20Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Lee Jones <lee@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Clark <robdclark@gmail.com>,
-	Sean Paul <sean@poorly.run>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Jonas Karlman <jonas@kwiboo.se>
+Cc: linux-mmc@vger.kernel.org,
 	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	iommu@lists.linux.dev,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	Daniil Titov <daniilt971@gmail.com>,
-	Dang Huynh <danct12@riseup.net>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Adam Skladowski <a39.skl@gmail.com>
-Subject: Re: [PATCH v3 0/8] Initial support of MSM8937 and Xiaomi Redmi 3S
-Date: Sat,  1 Mar 2025 07:46:25 +0000
-Message-Id: <174081358091.1616995.4166112946005132135.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250224-msm8937-v3-0-dad7c182cccb@mainlining.org>
-References: <20250224-msm8937-v3-0-dad7c182cccb@mainlining.org>
+	linux-clk@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH 0/8] Support SD/SDIO controllers on RK3528
+Date: Sat,  1 Mar 2025 10:42:42 +0000
+Message-ID: <20250301104250.36295-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Mon, 24 Feb 2025 02:56:15 +0100, Barnabás Czémán wrote:
-> This patch series add initial support for MSM8937 SoC
-> and Xiaomi Redmi 3S (land).
-> 
-> The series is extending the MSM8917 gcc and pinctrl drivers
-> because they are sibling SoCs.
-> MSM8937 have 4 more A53 cores and have one more dsi port then
-> MSM8917.
-> It implements little-big architecture and uses Adreno 505.
-> 
-> [...]
+RK3528 features two SDIO controllers and one SD/MMC controller. This
+series adds essential support for their tuning clocks, document the
+controller in dt-bindings and bring the SD/MMC one up on Radxa E20C
+board with pinctrl set up by the previous bootloader. Both HS and SDR104
+mode are verified.
 
-Applied SMMU bindings change to iommu (arm/smmu/bindings), thanks!
+Yao Zi (8):
+  dt-bindings: soc: rockchip: Add RK3528 VO GRF syscon
+  dt-bindings: soc: rockchip: Add RK3528 VPU GRF syscon
+  dt-bindings: mmc: rockchip-dw-mshc: Add compatible string for RK3528
+  dt-bindings: clock: Add GRF clock definition for RK3528
+  clk: rockchip: Support MMC clocks in GRF region
+  clk: rockchip: rk3528: Add SD/SDIO tuning clocks in GRF region
+  arm64: dts: rockchip: Add SDMMC/SDIO controllers for RK3528
+  arm64: dts: rockchip: Enable SD-card interface on Radxa E20C
 
-[4/8] dt-bindings: iommu: qcom,iommu: Add MSM8937 IOMMU to SMMUv1 compatibles
-      https://git.kernel.org/iommu/c/7506be7d253f
+ .../bindings/mmc/rockchip-dw-mshc.yaml        |  1 +
+ .../devicetree/bindings/soc/rockchip/grf.yaml |  2 +
+ .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 14 +++++
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 62 +++++++++++++++++++
+ drivers/clk/rockchip/clk-mmc-phase.c          | 24 +++++--
+ drivers/clk/rockchip/clk-rk3528.c             | 56 +++++++++++++++--
+ drivers/clk/rockchip/clk.c                    | 42 +++++++++++++
+ drivers/clk/rockchip/clk.h                    | 23 ++++++-
+ .../dt-bindings/clock/rockchip,rk3528-cru.h   |  6 ++
+ 9 files changed, 220 insertions(+), 10 deletions(-)
 
-Cheers,
 -- 
-Will
+2.48.1
 
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
