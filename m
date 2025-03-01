@@ -1,130 +1,132 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784FA23F39A
-	for <linux-clk@vger.kernel.org>; Fri, 28 Feb 2025 22:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FDD23F399;
+	Sat,  1 Mar 2025 03:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740782335; cv=none; b=k+6A2h1akhRmIo9QqoiCCuYvzmrJvrMsvwh/1aWrCxtboxImOfB3IZCkDsFbDwqjmXHLLMfJIcO4D0fAdOw+7kulGCLtpY0c8YiECISk0a/DbLrFv6nQel/mxlwSAMGzxLmUrHqqQYJ07tWNa6lFc+0gLjZYpkB7A3MRjhio45Y=
+	t=1740801461; cv=none; b=fHKFuB5+4aYfaJitM34JYI0tn/311kUdlnW6tNmANQZpwIKoWC92hXSL+q/CkLm1z/19XpGv2tOAX4/qFpi8ssE9dXitnpk5zPXHoA/Tml+hPhePdBzU7ehZeB4Ptyu3LfmJm+I3AcPopiXFu5lBI/K+7jsNCQuIFDthT2Sf454=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740782335; c=relaxed/simple;
-	bh=qxmpwgVoph1AElRgemrOMCNkM0UQR+WMiPiIC7BqPOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1mYgMQb8n+V/ig1+Rb1z3auWEJFcIx6pE/fwkDSGNe9lKzjjCzRppZ/R7j2dWG2Lftv4kEMpTDsGeztec8Zm3NzQdqhCAW9AxzL9Cx1dO+JrGkGBvm3VNkwwd8sakxz5t0k3BogCdhu4fDhPWWo38qeDLsSi1W+TyQq2voRLCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XO/Y1l1p; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1740801461; c=relaxed/simple;
+	bh=rEHaf4maxyiGGOMN1IF2sOa3FpT4ACpF4a9JkiIWSt8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PbUewxnUvWvkHEqHLaOczbjoaadgFBSmTRLYDmL3KHNoWa8ufbnfunNemedcKTBvWL9YZAfGVc+cgzA7Otl5Cu3JhWISHeV+4Xwl62yzuJ0FtHdBLykDIsU7X6I5lSeVGvE4PQ3oQ6B1FnzUQabLamjUPDQb86RQO7u0Jig5LuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Em96SsLL; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XO/Y1l1p"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54959d1a856so104885e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 28 Feb 2025 14:38:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740782331; x=1741387131; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jVLtEZWmEyfafXYzQagUTDqOcJoOxE4zFmdp+hx7MFI=;
-        b=XO/Y1l1px9lPYSETYZ0dht9OL8qhdlVxau0kP6KT0GhMKh83TytQeVT5xvM8R5Jb6u
-         SWjfhD9XmY+W0rFy2kZgd3KJbHJe/1gcRshO1fae8ajFJrAImeN9rt5KyMR/Fw5UmSMm
-         Unu5u6aJdDV9qBB9s/MeVFAkEmRNbF7VcJZc3Bb10NNAkZpET1xgl5isg9uB9gz0QiXf
-         lUv57wxZ1+j53BSaRN7W37/1/7mUUcL9HoSoQB3KvyxRDGY6Odk5aEdRhHOSftCRNkXd
-         6IXf1qtw9wpqZMOKNjx7i9aVo/QCWPxvPJHsg9TPlZZDGd4WpvGc14+joUEy0ySM0+rz
-         5PKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740782331; x=1741387131;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jVLtEZWmEyfafXYzQagUTDqOcJoOxE4zFmdp+hx7MFI=;
-        b=rkufFQ5hPWyyCDfGddsiT4OGjUc8Y1/HEDrGOhty3EuLvIIjOwJXoPr8P8lwfEvUHr
-         EpUghbioXUKfYrMeG4l4MyEJp113ZKWGy8dUPscd37HVcVbccM+uCxQTSvbvNN5y35NJ
-         u05lXNtX/WRHebPScUu34C+Ehv4VZVdlaQT8/sfL4jlchnl94tHy9LeN+ECHBFPLysHR
-         I8UpgjcVFDLuqNavTJUL94uMHbDQyg1iBA1s5lS8+gpt37AgZFW9iDnvAu7ETpgCImur
-         lIS3tMRnJeb+8Pfxgek7AXSrLKh3dSaFJSFhMNuzTvqNE+vVg+HQB23/rZFDeUP123g7
-         /RUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVS4RdV+MdPBfoIow+FAonAEgFODXPlVWyOo5ggaqEry3BdFQC2PspjlOc3xp642JGwK8PquajzAhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzRDO56H8A4H+YaZN5k69ZslIf3//eTWij7N7KNhGMZNiAVVMg
-	X5mOY9oBcQP+S+m0N1YyHPADhIOTIQrniREAuluKVjoyMCZxoni86/N3ocj4FgTu7iSSFfujgeT
-	pkNA=
-X-Gm-Gg: ASbGnctk+JiiDO3FnSk08V+KjSNxgGKN4Q2SpabdwEgTTnRBDwH6eEPWI/W57641vBn
-	EJUgw3AAvgueCfmmfDzF+YgZp9gVtmjwf6+9zpkicufVt6aNhHRmkSiUOb3dAPGrfmNWMS0illF
-	oIhKkpKCaBhHtYzYTnjPYW7LzxJHU9g2YsdN3zIJ+xVxyQ2+aMumSDMrgn2MQK+gUL8iYJr4qwY
-	JgL3TP6hXNFe1CgehGhJ7ZLSD5P/bNXH5GIIa69jEQmZ6H5fk0oLPl93v6YRrSZuC5+09iYwhyH
-	v3CjUXFQsXntJSKXrlgCQYdU7yS9wOO5EMu5uQEkdVO7grqtKovHFnL0OWnHclIx+7hjtEo85xP
-	UHos2QA==
-X-Google-Smtp-Source: AGHT+IG9mAgP7zVwIktUs/UBARKaqjA/kl0Vs6vq5xs6d+5Gc5O4KLLVSbymtcmIIJXCsZL/fle75A==
-X-Received: by 2002:a05:6512:128e:b0:545:2474:2c9b with SMTP id 2adb3069b0e04-5494c35e0camr2328617e87.22.1740782331571;
-        Fri, 28 Feb 2025 14:38:51 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549443b1286sm630135e87.158.2025.02.28.14.38.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 14:38:50 -0800 (PST)
-Date: Sat, 1 Mar 2025 00:38:47 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] clk: qcom: Constify 'struct qcom_cc_desc'
-Message-ID: <jzqxj6b5brslayz6crvgenjiynlkagszdve3w5ablm5yyimmtv@pf3slvisucbv>
-References: <20250228-clk-qcom-const-v1-0-611ab80d45e4@linaro.org>
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Em96SsLL"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 63C7E25F0B;
+	Sat,  1 Mar 2025 04:57:35 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id V-yxFxoy9gdi; Sat,  1 Mar 2025 04:57:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1740801454; bh=rEHaf4maxyiGGOMN1IF2sOa3FpT4ACpF4a9JkiIWSt8=;
+	h=From:Subject:Date:To:Cc;
+	b=Em96SsLLK3JE0voTXKEtlh2B1s35FP/WwdY8OEFy+JYsArqkr+MlBGDTtjD4ZsuJO
+	 3PnuYqNR7CYabtK2nP0UPImD+xOIhJEBxb5e6imz2MNd56nWcgbjc7N7QGirJp9Rmj
+	 GAHsnOA+Ggf+E7qq52HQ4rRhjqkeoNOzqxvWj9QNO4qKrRZcHxSdqIOPJINGvf1Vph
+	 pMqtDs+sO7/ovusCmZM+49Px0zkXTRJMw3TIg4X2dcCIJm8ixfiJK7jq+5ImMgIg6N
+	 Exsd4XxFlqAvzo6azbKBN+bV15x9uSSRwIOKi9n7hRSUrNDueD3avU+FfEesUXLjBc
+	 oeMGgH8mOLnQA==
+From: Kaustabh Chakraborty <kauschluss@disroot.org>
+Subject: [PATCH v5 0/2] Introduce support for Exynos7870 clocks
+Date: Sat, 01 Mar 2025 09:27:11 +0530
+Message-Id: <20250301-exynos7870-pmu-clocks-v5-0-715b646d5206@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228-clk-qcom-const-v1-0-611ab80d45e4@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJeFwmcC/3XNQQrCMBCF4auUrI1MOg2xrryHuEia0Qa1KYkGS
+ +ndTQVRkS7/B/PNyCIFR5Fti5EFSi463+WQq4I1re5OxJ3NzUooJZSAnB5D56PaKOD99c6bi2/
+ OkVswiFArIK1Yvu0DHd3j5e4PuVsXbz4MrzdJzOtbrBbEJDhwjYCgSRojcWddDN7f1j6c2Gwm/
+ HJEveRgdsAKqoSkmlD/O9XHQRBLTjU7RySFRoA16teZpukJ68xDzkwBAAA=
+X-Change-ID: 20250203-exynos7870-pmu-clocks-d0b330970ea7
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740801448; l=2719;
+ i=kauschluss@disroot.org; s=20250202; h=from:subject:message-id;
+ bh=rEHaf4maxyiGGOMN1IF2sOa3FpT4ACpF4a9JkiIWSt8=;
+ b=UoI5gUYpp/4io6yU8aYNLdhMOhmNT64JGVnwQXQ3FZWV6ZbYTsbxDzPz5RstcQpMzgFknW08c
+ vkVYlaNEjwCCgcFk+h/SLVmnQH7NAnmqniUxQoZs1CyylIE0U3wT0Qt
+X-Developer-Key: i=kauschluss@disroot.org; a=ed25519;
+ pk=h2xeR+V2I1+GrfDPAhZa3M+NWA0Cnbdkkq1bH3ct1hE=
 
-On Fri, Feb 28, 2025 at 03:59:37PM +0100, Krzysztof Kozlowski wrote:
-> Make static 'struct qcom_cc_desc' const.
+Add a CMU driver for Exynos7870 devices. It handles the following
+clock banks:
+ * CMU_MIF
+ * CMU_DISPAUD
+ * CMU_FSYS
+ * CMU_G3D
+ * CMU_ISP
+ * CMU_MFCMSCL
+ * CMU_PERI
 
-For the series:
+This patch series is a part of Exynos7870 upstreaming.
 
+Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+---
+Changes in v5:
+- Fix dt_binding_check errors and fix dt example.
+- Link to v4: https://lore.kernel.org/r/20250301-exynos7870-pmu-clocks-v4-0-0f3e73b10db7@disroot.org
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Changes in v4:
+- Fix clock dt-binding description and ordering in properties:required.
+- Change filenames of clock dt-binding and header to match the compatible.
+- Squash the following patches from v3 into one:
+  [1/5] dt-bindings: clock: add clock definitions for exynos7870 CMU
+  [2/5] dt-bindings: clock: document exynos7870 clock driver CMU bindings
+- Drop the following patches from v3:
+  [3/5] dt-bindings: soc: samsung: exynos-pmu: add exynos7870-pmu compatible
+  [5/5] clk: samsung: add exynos7870 CLKOUT support
+- Link to v3: https://lore.kernel.org/r/20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org
 
-> 
-> Best regards,
-> Krzysztof
-> 
-> ---
-> Krzysztof Kozlowski (4):
->       clk: qcom: camcc: Constify 'struct qcom_cc_desc'
->       clk: qcom: dispcc: Constify 'struct qcom_cc_desc'
->       clk: qcom: gpucc: Constify 'struct qcom_cc_desc'
->       clk: qcom: videocc: Constify 'struct qcom_cc_desc'
-> 
->  drivers/clk/qcom/camcc-sa8775p.c   | 2 +-
->  drivers/clk/qcom/camcc-sc8280xp.c  | 2 +-
->  drivers/clk/qcom/camcc-sm4450.c    | 2 +-
->  drivers/clk/qcom/camcc-sm8150.c    | 2 +-
->  drivers/clk/qcom/camcc-sm8550.c    | 2 +-
->  drivers/clk/qcom/camcc-sm8650.c    | 2 +-
->  drivers/clk/qcom/dispcc-sc8280xp.c | 4 ++--
->  drivers/clk/qcom/dispcc-sm4450.c   | 2 +-
->  drivers/clk/qcom/dispcc-sm8450.c   | 2 +-
->  drivers/clk/qcom/dispcc-sm8550.c   | 2 +-
->  drivers/clk/qcom/dispcc-sm8750.c   | 2 +-
->  drivers/clk/qcom/dispcc0-sa8775p.c | 2 +-
->  drivers/clk/qcom/dispcc1-sa8775p.c | 2 +-
->  drivers/clk/qcom/gpucc-sc8280xp.c  | 2 +-
->  drivers/clk/qcom/gpucc-x1p42100.c  | 2 +-
->  drivers/clk/qcom/videocc-sa8775p.c | 2 +-
->  drivers/clk/qcom/videocc-sm8350.c  | 2 +-
->  drivers/clk/qcom/videocc-sm8450.c  | 2 +-
->  drivers/clk/qcom/videocc-sm8550.c  | 2 +-
->  19 files changed, 20 insertions(+), 20 deletions(-)
-> ---
-> base-commit: 8936cec5cb6e27649b86fabf383d7ce4113bba49
-> change-id: 20250228-clk-qcom-const-4218c42710a9
-> 
-> Best regards,
-> -- 
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
+Changes in v3:
+- Fix incorrect versioning (Link to v2: is labelled as v1).
+- Fix formatting issues in clk-exynos7870 DT docs (from v1).
+- Add myself as maintainer for clk-exynos7870.
+- Change clock name definitions in clk-exynos7870 DT docs.
+- Fix line wrapping in commit message of exynos7870-pmu DT docs.
+- Change a few ordinals of PERI* clocks in the clk-exynos7870 driver.
+- Take over ownership of patches by the co-author, upon their request.
+- Link to v2: https://lore.kernel.org/r/20250204-exynos7870-pmu-clocks-v1-0-a3030ae5bb53@disroot.org
 
+Changes in v2:
+- Drop all patches from v1 except:
+  - dt-bindings: clock: add clock definitions for exynos7870 CMU
+  - dt-bindings: clock: document exynos7870 clock driver CMU bindings
+- Add patch for adding appropriate PMU compatible.
+- Add patches for CMU and CLKOUT drivers.
+- Link to v1: https://lore.kernel.org/all/20250203-exynos7870-v1-0-2b6df476a3f0@disroot.org/
+
+---
+Kaustabh Chakraborty (2):
+      dt-bindings: clock: add clock definitions and documentation for exynos7870 CMU
+      clk: samsung: add initial exynos7870 clock driver
+
+ .../bindings/clock/samsung,exynos7870-cmu.yaml     |  227 +++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos7870.c               | 1830 ++++++++++++++++++++
+ include/dt-bindings/clock/samsung,exynos7870-cmu.h |  324 ++++
+ 4 files changed, 2382 insertions(+)
+---
+base-commit: be5c7bbb3a64baf884481a1ba0c2f8fb2f93f7c3
+change-id: 20250203-exynos7870-pmu-clocks-d0b330970ea7
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Kaustabh Chakraborty <kauschluss@disroot.org>
+
