@@ -1,198 +1,122 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE40738DDB;
-	Sat,  1 Mar 2025 13:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8037B28F5;
+	Sat,  1 Mar 2025 14:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740836035; cv=none; b=o3tIQodoAOmtimzfku/UYwVlJm/o+bzj2Y8XcNNdRScVMWwK/wa4KYTV1H/YzeJnwzgQyOQYOTJ1rslwbru9btYbq/p2PFXGKTOa4kpL29ChH2BxV4RA9CWMj484TH2MenZY5KOgsaH3aL4HgnmyLjRoQ4n+XnRGZRc0mH38edw=
+	t=1740837680; cv=none; b=VNwSEGZ0gyDGZi7na6S50/woB1EhTJLKeG/fqnVAtm2FYr8X1Wl+FcN+GQciHCwEdHMVLYVPX3080bnwCqNV6/yvcjZiXir7Phdj5rnQ1z8+mC8n+lCDtmNsGbaNTIaNuV9xXTyp7cX594wUDWq6TPnsCW59ssN6wSUQRquTeAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740836035; c=relaxed/simple;
-	bh=xXhNfYs+Cv3fr3hX+44GY6JZm8B/alrDUCYDIA/ILNM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MABZhRLRCINZs+juEW459pjf1dmgA6TSM8AGPhn35VePLB5yLkv5U4oGh3fUvOpdszuOyyIRivpNv3tDU03zYVPXlSMtq63B8LZigCvaHXZXdr6KCB2QLs0/oJ/HkywFYXpoR88GN7lfRDks+qkmt7waPBhAbYXjcuUC6mY/YzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=QTMG5tFI; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1740837680; c=relaxed/simple;
+	bh=TXbkCcmg1DwyJIZptj01ubpFGDFttiAsT9J/gFA2bRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hf0cNjC5oq0Ghy1DYlfFo37rKpd/Zp1mw5hwQpN+Cf9VHa34cgmsRqZi4N7ExRvNNEn27oegpEr0DQ9tDQHBPsZn03sdtzzAci+4LAmG9IqEvKi6MzRvjLKwKwNl2Dq0rahhiURoqgXTzN5Je9dxKAMBGpwqLoizxmGGoS5fzUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXvfrK/g; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="QTMG5tFI"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E788925D49;
-	Sat,  1 Mar 2025 14:33:49 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id hNqLrBIrmw-s; Sat,  1 Mar 2025 14:33:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1740836025; bh=xXhNfYs+Cv3fr3hX+44GY6JZm8B/alrDUCYDIA/ILNM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=QTMG5tFIqlv9LH5jixi4XxdUJKRFJpm4Rs5l2NruS3JwN2+12m0f5f1cVWZmwGD0k
-	 w84ZoPqHAOjEyFradRFbRJxjfkAsjZLtCBVDmwr3VN6EjKybTPe/w4bR7t3HwwzkIr
-	 D0FynI+BR+izgsEsEMEZUfeceFlVar3wYfI9KqgfRuLj19mx4L/CBz6ZH7hRO8Pt0T
-	 R3HllikmI8V/V7/P+NT8CuQRCfKijIQ7aaCQ/Ljjw8JR7mFPM+tqQP0SrbjULnUCY6
-	 gObIsg3FpsedbizyfKVUuhjJ5DwIAGmHP2cTlX8BKjXgD6Ko/fj0UFVYP/zOawg9gq
-	 2okGgpIGJffJQ==
-Date: Sat, 1 Mar 2025 13:33:15 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers for
- RK3528
-Message-ID: <Z8MMm7X31p_CrStZ@pie>
-References: <20250301104250.36295-1-ziyao@disroot.org>
- <20250301104749.36423-1-ziyao@disroot.org>
- <9fd51bcb-3e6a-46b6-b1f7-ff16fa562d9e@kwiboo.se>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXvfrK/g"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2CE3C4CEDD;
+	Sat,  1 Mar 2025 14:01:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740837680;
+	bh=TXbkCcmg1DwyJIZptj01ubpFGDFttiAsT9J/gFA2bRc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DXvfrK/gjEsCPFQhyE97cAMnLM7feY+wlB0Lhh9Kr1qihZEw/Dv9iQHR2EwX6JqaF
+	 9PGfNmzxHFVyjQXGUwdmDDBMTi5ozvNOVNK9u4bSy6K7jOn3qH9V8FHcXcdeLdCLrR
+	 JG4yHK5J9n8sSnevF1h7Ws43T/pUFlhs9ndM30ZrdxJYwZ6hWN19HvkHNsE0RPfou3
+	 smXwK5VC7srVsexJY3ywn9ZyOIPQtX3WhCfXAGkcF/KZB7BJHOf4x18QswYjOLosec
+	 +xM+jyulMMnWwUEwKAtAv+JkXB83N+K/FSccNo0r8eIez567JRUEJZlRK9rQ0050C6
+	 7o8VN9iMeSr3g==
+Message-ID: <8b85be4a-ecd9-4ea4-9cfc-905bb4bd5642@kernel.org>
+Date: Sat, 1 Mar 2025 15:01:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9fd51bcb-3e6a-46b6-b1f7-ff16fa562d9e@kwiboo.se>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: add Exynos2200 SoC
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250223115601.723886-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250223115601.723886-2-ivo.ivanov.ivanov1@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250223115601.723886-2-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Mar 01, 2025 at 01:47:47PM +0100, Jonas Karlman wrote:
-> Hi,
+On 23/02/2025 12:55, Ivaylo Ivanov wrote:
+> Provide dt-schema documentation for Exynos2200 SoC clock controller.
+> Add device tree clock binding definitions for the following CMU blocks:
+> - CMU_ALIVE
+> - CMU_CMGP
+> - CMU_HSI0
+> - CMU_PERIC0/1/2
+> - CMU_PERIS
+> - CMU_TOP
+> - CMU_UFS
+> - CMU_VTS
 > 
-> On 2025-03-01 11:47, Yao Zi wrote:
-> > RK3528 features two SDIO controllers and one SD/MMC controller, describe
-> > them in devicetree. Since their sample and drive clocks are located in
-> > the VO and VPU GRFs, corresponding syscons are added to make these
-> > clocks available.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 62 ++++++++++++++++++++++++
-> >  1 file changed, 62 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > index 5b334690356a..078c97fa1d9f 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > @@ -7,6 +7,7 @@
-> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >  #include <dt-bindings/interrupt-controller/irq.h>
-> >  #include <dt-bindings/clock/rockchip,rk3528-cru.h>
-> > +#include <dt-bindings/reset/rockchip,rk3528-cru.h>
-> >  
-> >  / {
-> >  	compatible = "rockchip,rk3528";
-> > @@ -122,6 +123,16 @@ gic: interrupt-controller@fed01000 {
-> >  			#interrupt-cells = <3>;
-> >  		};
-> >  
-> > +		vpu_grf: syscon@ff340000 {
-> > +			compatible = "rockchip,rk3528-vpu-grf", "syscon";
-> 
-> vpu_grf is also used for gmac1, so should possible be a "syscon",
-> "simple-mfd", or have I misunderstood when to use simple-mfd ?
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  .../clock/samsung,exynos2200-cmu.yaml         | 247 ++++++++++
+>  .../clock/samsung,exynos2200-cmu.h            | 431 ++++++++++++++++++
+>  2 files changed, 678 insertions(+)
 
-Just as Heiko explained, "simple-mfd" is only required when the child
-nodes should be populated automatically. Here these two GRFs are only
-referenced and have no child, thus "simple-mfd" compatible isn't useful.
 
-> > +			reg = <0x0 0xff340000 0x0 0x8000>;
-> > +		};
-> > +
-> > +		vo_grf: syscon@ff360000 {
-> > +			compatible = "rockchip,rk3528-vo-grf", "syscon";
-> 
-> similar here, vo_grf is also used for gmac0.
-> 
-> > +			reg = <0x0 0xff360000 0x0 0x10000>;
-> > +		};
-> > +
-> >  		cru: clock-controller@ff4a0000 {
-> >  			compatible = "rockchip,rk3528-cru";
-> >  			reg = <0x0 0xff4a0000 0x0 0x30000>;
-> > @@ -251,5 +262,56 @@ uart7: serial@ffa28000 {
-> >  			reg-shift = <2>;
-> >  			status = "disabled";
-> >  		};
-> > +
-> > +		sdio0: mmc@ffc10000 {
-> > +			compatible = "rockchip,rk3528-dw-mshc",
-> > +				     "rockchip,rk3288-dw-mshc";
-> > +			reg = <0x0 0xffc10000 0x0 0x4000>;
-> > +			clocks = <&cru HCLK_SDIO0>,
-> > +				 <&cru CCLK_SRC_SDIO0>,
-> > +				 <&cru SCLK_SDIO0_DRV>,
-> > +				 <&cru SCLK_SDIO0_SAMPLE>;
-> > +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> > +			fifo-depth = <0x100>;
-> > +			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-> > +			max-frequency = <150000000>;
-> > +			resets = <&cru SRST_H_SDIO0>;
-> > +			reset-names = "reset";
-> > +			status = "disabled";
-> > +		};
-> > +
-> > +		sdio1: mmc@ffc20000 {
-> > +			compatible = "rockchip,rk3528-dw-mshc",
-> > +				     "rockchip,rk3288-dw-mshc";
-> > +			reg = <0x0 0xffc20000 0x0 0x4000>;
-> > +			clocks = <&cru HCLK_SDIO1>,
-> > +				 <&cru CCLK_SRC_SDIO1>,
-> > +				 <&cru SCLK_SDIO1_DRV>,
-> > +				 <&cru SCLK_SDIO1_SAMPLE>;
-> > +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> > +			fifo-depth = <0x100>;
-> > +			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-> > +			max-frequency = <150000000>;
-> > +			resets = <&cru SRST_H_SDIO1>;
-> > +			reset-names = "reset";
-> > +			status = "disabled";
-> > +		};
-> > +
-> > +		sdmmc: mmc@ffc30000 {
-> > +			compatible = "rockchip,rk3528-dw-mshc",
-> > +				     "rockchip,rk3288-dw-mshc";
-> > +			reg = <0x0 0xffc30000 0x0 0x4000>;
-> > +			clocks = <&cru HCLK_SDMMC0>,
-> > +				 <&cru CCLK_SRC_SDMMC0>,
-> > +				 <&cru SCLK_SDMMC_DRV>,
-> > +				 <&cru SCLK_SDMMC_SAMPLE>;
-> > +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> > +			fifo-depth = <0x100>;
-> > +			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-> > +			max-frequency = <150000000>;
-> > +			resets = <&cru SRST_H_SDMMC0>;
-> > +			reset-names = "reset";
-> 
-> Suggest adding default pinctrl props here:
-> 
->   pinctrl-names = "default";
->   pinctrl-0 = <&sdmmc_bus4>, <&sdmmc_clk>, <&sdmmc_cmd>, <&sdmmc_det>;
-> 
-> And possible also for sdio0 and sdio1.
-> 
-> Regards,
-> Jonas
-
-It makes sense. As mentioned in the cover letter, I depended on the
-bootloader to setup pinctrl, to minimize dependency of the series.
-
-Will complete the pinctrl properties in next version.
-
-> > +			status = "disabled";
-> > +		};
-> >  	};
-> >  };
-> 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
-Yao Zi
+Krzysztof
