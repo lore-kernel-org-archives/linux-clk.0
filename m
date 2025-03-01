@@ -1,139 +1,181 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944B463A9;
-	Sat,  1 Mar 2025 14:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1256633E1;
+	Sat,  1 Mar 2025 15:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740838485; cv=none; b=ax0FxuRU30dsHEcfVFY0nrSUKBuv411hn7fh0Pr5rHl8x39XGRWD03wBRA+sBtEzuS/m6+tBYBsmWKA9IPK3Y8WmttseIDe6WBf8Te2HImWwdFstgpW+vXA/lWeKFEkWV+2vtXiE0MhN/ELyps1SwZmmJXNC0Z4AL9HtSrF9bU0=
+	t=1740842167; cv=none; b=IGrIfi+Qd3caQ3tOiALtNJhHHapZgs9VHGSVG9Jawi31SvRmxBGpsviZIsBod2SJePjxkhY0XYSOFRsqeKvQEk18SF/yhRWjolgLnOvqYSBsA8cjj5c7gXntSqh26YCjvQRbAl59RZINbRWioQt3YuMRW3kjRHiMG5PRVAaN4As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740838485; c=relaxed/simple;
-	bh=o0368wJb5Y92GremWcVyjHvnwdJ4nqQBlZdIgYR3XZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JsZwZ/IpbNn98AJqW1UO9/EuK/cEmDdpxNWXOCI4evyXXERDJpPfZYUZMF/QR+k73btpUYd7ln9zcFFlVia63plAPTnYvMRa9uVkDdpq2gCIuITlwDuEzPFDmjQUiGEdkJOsNviMYWgny+y/3zjo/qfT0E0i5VMobSQBstn/heo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIi8tZ91; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740842167; c=relaxed/simple;
+	bh=OmrR4xD/XRUKk2rcMTrbTAl5fxjRwq+7cvLzauhy6QI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WsF3NIjJywSh69G1d2FdSbiFKsaDXOjWvDrkNA9zrDF4VhPxtGcO/kHHrJvYiloQ6vuJ7yfXzZaA7MXnXnLhZhqkArXZeNOqC9ujWltMN6pskB2oEkEmf6d8LO/k2QrON0FkGuyK1sv8Sfq40v/ANYCYDAAbujIxrO01yLU83vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=EBrD/O9R; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIi8tZ91"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B5B5C4CEDD;
-	Sat,  1 Mar 2025 14:14:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740838485;
-	bh=o0368wJb5Y92GremWcVyjHvnwdJ4nqQBlZdIgYR3XZQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SIi8tZ91g090u2vtqcyg5d/KxEAATuo4P7tc7Mbxqnpi8nIdDpdzPknpj/tShE4U+
-	 g9V3ncjo4td5v+laIoGybGshgvaCvPGTlsHArBg/76lflLMaXK+gqevH4UZDpKMxQK
-	 CUdYxCDaDjmteOYCF9XR1/qlVdjCsM/1d+rL8ARA/vY7dZfYl8vzQ7OvctZ7bS/p4K
-	 Q2ZSvpJDkgy9kNnCcTXegmFThyPwxFeoBFQ54T2dZqyG8h7LK68WV/qUpZgasvmPuI
-	 AWvDkg2egYFvAFtGdQCJyhgas7g0Sd/r6avMq850vrKPRoTMA/SH2ryFPnhrIV0TRf
-	 sN64QIgJTYuww==
-Message-ID: <c5cef589-8091-41ce-94e7-82b56ba4143f@kernel.org>
-Date: Sat, 1 Mar 2025 15:14:37 +0100
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="EBrD/O9R"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 4033220523;
+	Sat,  1 Mar 2025 16:15:59 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 0iebN7Isx1Km; Sat,  1 Mar 2025 16:15:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1740842157; bh=OmrR4xD/XRUKk2rcMTrbTAl5fxjRwq+7cvLzauhy6QI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=EBrD/O9RrVrUYRP+VtXW2Qnd/HbT6/xhYVGcT888/R1u+nZe8io1CWfIKSlqN+xVh
+	 uosX1SmQ+uG6WyBFrvoMmT17JPz6bItHX9gMyXNllu8xgSfizzV9/xYzM1LbNK//Et
+	 VcfncIB0U4fB6PdG2Wr0kCCH4CPj0lKLyBnVPppk3SVEeRppfh+BHYiHR7srIIZm6A
+	 ZuNv1C5GeFy9qJKkYwH4vp2FPQ8LHcyP+uq4wv0TAsSn/7aviqrzZh7AF4LU9X0ETQ
+	 SdYn8QlV+4DLyohYjHZH6LlYQEMSzJDnHQBh8QLhYMBEBNdU96iGwsLn5J5LXGnR6b
+	 mXqu6/2U4c1gw==
+Date: Sat, 1 Mar 2025 15:15:32 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 8/8] arm64: dts: rockchip: Enable SD-card interface on
+ Radxa E20C
+Message-ID: <Z8MklJfFz2EA6oNS@pie.lan>
+References: <20250301104250.36295-1-ziyao@disroot.org>
+ <20250301104835.36439-1-ziyao@disroot.org>
+ <0aefd292-7980-434d-9c18-4ab9f6a0b40e@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] clk: samsung: update PLL locktime for PLL142XX
- used on FSD platform
-To: Varada Pavani <v.pavani@samsung.com>, aswani.reddy@samsung.com,
- pankaj.dubey@samsung.com, s.nawrocki@samsung.com, cw00.choi@samsung.com,
- alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: gost.dev@samsung.com, stable@vger.kernel.org
-References: <20250225131918.50925-1-v.pavani@samsung.com>
- <CGME20250225132507epcas5p455347acbd580b26ee807e467d3a6a05e@epcas5p4.samsung.com>
- <20250225131918.50925-3-v.pavani@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250225131918.50925-3-v.pavani@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0aefd292-7980-434d-9c18-4ab9f6a0b40e@kwiboo.se>
 
-On 25/02/2025 14:19, Varada Pavani wrote:
-> Currently PLL142XX locktime is 270. As per spec, it should be 150. Hence
-> update PLL142XX controller locktime to 150.
+On Sat, Mar 01, 2025 at 02:01:05PM +0100, Jonas Karlman wrote:
+> Hi,
 > 
-> Cc: stable@vger.kernel.org
-
-Fixes commit?
-
-> Signed-off-by: Varada Pavani <v.pavani@samsung.com>
-> ---
->  drivers/clk/samsung/clk-pll.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> On 2025-03-01 11:48, Yao Zi wrote:
+> > SD-card is available on Radxa E20C board.
+> > 
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+> > index d2cdb63d4a9d..473065aa4228 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+> > @@ -12,6 +12,10 @@ / {
+> >  	model = "Radxa E20C";
+> >  	compatible = "radxa,e20c", "rockchip,rk3528";
+> >  
+> > +	aliases {
+> > +		mmc0 = &sdmmc;
 > 
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index 2e94bba6c396..023a25af73c4 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -206,6 +206,7 @@ static const struct clk_ops samsung_pll3000_clk_ops = {
->   */
->  /* Maximum lock time can be 270 * PDIV cycles */
->  #define PLL35XX_LOCK_FACTOR	(270)
-> +#define PLL142XX_LOCK_FACTOR	(150)
->  
->  #define PLL35XX_MDIV_MASK       (0x3FF)
->  #define PLL35XX_PDIV_MASK       (0x3F)
-> @@ -272,7 +273,11 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
->  	}
->  
->  	/* Set PLL lock time. */
-> -	writel_relaxed(rate->pdiv * PLL35XX_LOCK_FACTOR,
-> +	if (pll->type == pll_142xx)
-> +		writel_relaxed(rate->pdiv * PLL142XX_LOCK_FACTOR,
-> +			pll->lock_reg);
-> +	else
-> +		writel_relaxed(rate->pdiv * PLL35XX_LOCK_FACTOR,
->  			pll->lock_reg);
->  
->  	/* Change PLL PMS values */
+> Suggest using mmc1 for sd-card because the e20c typically have onboard
+> emmc, compared to removable sd-card.
 
+My board doesn't have an eMMC: it's optional as well, but all variants
+of Radxa E20C come with an SD-card interface. The vendor devicetree sets
+sdmmc as mmc0 as well[1].
 
-Best regards,
-Krzysztof
+I won't insist on it and am willing to take the change if you still
+consider mmc0 is better.
+
+> > +	};
+> > +
+> >  	chosen {
+> >  		stdout-path = "serial0:1500000n8";
+> >  	};
+> > @@ -20,3 +24,13 @@ chosen {
+> >  &uart0 {
+> >  	status = "okay";
+> >  };
+> > +
+> > +&sdmmc {
+> > +	bus-width = <4>;
+> > +	cap-mmc-highspeed;
+> > +	cap-sd-highspeed;
+> > +	disable-wp;
+> > +	rockchip,default-sample-phase = <90>;
+> > +	sd-uhs-sdr104;
+> 
+> Are you sure uhs-sdr104 works as is should?
+
+In fact yes, tuning succeeds at 148.5MHz and results in 66MB/s reading
+speed.
+
+> Vendor kernel use a different "v2" tuning
+
+This isn't a problem. IMHO V2 tuning is more like a quick path, which
+tries inheritting the phase from firmware and then re-tunes roughly.
+Fine tunning is still a fallback here in case of failure, see the commit
+message in the downstream kernel[2]. And testing proves it's okay for
+RK3528 to issue fine-tuning always.
+
+> and this is also missing the vccio_sd vqmmc-supply to switch between
+> 3v3 and 1v8.
+
+But this is a problem, thanks for catching it! Somehow my card managed
+to run at 148.5MHz with 3v3 voltage level, but it's definitely a
+compatiblity issue. I'm surprised that the driver doesn't complain when
+switching to SDR modes without a regulator configured.
+
+> You could add following regulator for sdmmc:
+> 
+> 	vccio_sd: regulator-vccio-sd {
+> 		compatible = "regulator-gpio";
+> 		gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
+> 		pinctrl-names = "default";
+> 		pinctrl-0 = <&sdmmc_vol_ctrl_h>;
+> 		regulator-name = "vccio_sd";
+> 		regulator-min-microvolt = <1800000>;
+> 		regulator-max-microvolt = <3300000>;
+> 		states = <1800000 0x0>, <3300000 0x1>;
+> 	};
+>
+> and following pinctrl:
+> 
+> 	sdmmc {
+> 		sdmmc_vol_ctrl_h: sdmmc-vol-ctrl-h {
+> 			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+> 		};
+> 	};
+> 
+> add then the power supplies to the sdmmc node:
+> 
+> 	vmmc-supply = <&vcc_3v3>;
+> 	vqmmc-supply = <&vccio_sd>;
+> 
+> That matches the schematics for e20c, and works when testing non-uhs modes.
+
+Thanks for the hints. Will rebase on your pinctrl series and get
+regulators and pinctrl settings applied in the next version.
+
+> Regards,
+> Jonas
+> 
+> > +	status = "okay";
+> > +};
+> 
+
+Cheers,
+Yao Zi
+
+[1]: https://github.com/radxa/kernel/blob/2b0c8de7dc4c68947cda206dcc2e457e9677e426/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts#L22-L26
+[2]: https://github.com/rockchip-linux/kernel/commit/795e052cc8610aa59a64b104f975cc4a45493d5d
