@@ -1,160 +1,93 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from maynard.decadent.org.uk (maynard.decadent.org.uk [65.21.191.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8212AAD39;
-	Sun,  2 Mar 2025 16:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60CCC13B;
+	Sun,  2 Mar 2025 17:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.21.191.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740932218; cv=none; b=D/QrnF/4ndMcl6zDZkFsBJWrA0AyEQhT2ueyHctXdMKnWF4lHn6nif1fcORhGj2cDd8J4ZYCpaCUM1sBxazlNYl8UeZT+2v13hP14apJrv2JkOUP3Sb2+wDGV4NRuVDnlR/9ALxCHyIRGvpFPk3JK6cbExzYPQJ+1ZCsDOVNe24=
+	t=1740938171; cv=none; b=HSv5q07w0kDDcwo/lAGBZnPITHQpZ55vgVWzis44tjMlw5UGTe19Wg6Uvx1UwVmw7QJgeHP5gHlsUJ55BIOyPk8rE92P58VorglkyimIMZcXQzmlNEzi/ybuI/3/M1i9jZLjXsMOAXE7AKsnvJzLvWv9F9XM6YqPHl4s5X42Qw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740932218; c=relaxed/simple;
-	bh=24etwHDO43cgkA43Fvv7V97Li/I7jEmBfGtyam7R4FA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kqto+fPvqbpI91dZdVOB09lAqDGxqYX+0gGKFPTwLJwoIgo5AJJk/IeK9Sqz3qQ4idAv+h4Epyo5O3bTu2MCU/abKdA+WXfkr0dG2ZKYhA5fXSyjFVCpegDIqJmJLrsOJzNLS1i1k2K9K/yOtGfClSXI3Tu80H3799ssNP9Ulbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=K1qDYU19; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="K1qDYU19"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id B59DD25286;
-	Sun,  2 Mar 2025 17:16:54 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id K8mzO5PnjFYc; Sun,  2 Mar 2025 17:16:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1740932213; bh=24etwHDO43cgkA43Fvv7V97Li/I7jEmBfGtyam7R4FA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=K1qDYU19UIJxtbJclJuBESKTf/+cG2z3j4fCzAWLSJ9qrzXbEly5vnmFqOixyoZfL
-	 0YPsoEXi3eeNwH4/i/1i1RNlVaQMXfmRDqO/i1dBqMQacCT6F8bDcT7Hc0vun21Ny2
-	 N+XPzWaSuRmyvo1zfibKrIh+YWmsRFm2vMMNp4rTXSqqMv352pA7lnEo+6bkCIb1l1
-	 AW7Cb3a5kG7vtkED73cKZ2x5E9CxGarKuG77IBb1zvY1z447ghKpySnuSaWUwo52ev
-	 yQMAJ7Rj4YQyrAao7Beif4DJi0VdjqFuzXaGZci0YY91a6k8HdZuX0FGztJptwfRhE
-	 Bxtu6nu9FtxqA==
-Date: Sun, 2 Mar 2025 16:16:36 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Jonas Karlman <jonas@kwiboo.se>, FUKAUMI Naoki <naoki@radxa.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 8/8] arm64: dts: rockchip: Enable SD-card interface on
- Radxa E20C
-Message-ID: <Z8SEZOoQWiS4jl7n@pie.lan>
-References: <20250301104250.36295-1-ziyao@disroot.org>
- <20250301104835.36439-1-ziyao@disroot.org>
- <0aefd292-7980-434d-9c18-4ab9f6a0b40e@kwiboo.se>
- <Z8MklJfFz2EA6oNS@pie.lan>
- <d6928adc-1df2-494f-a3d3-7b028c220547@kwiboo.se>
+	s=arc-20240116; t=1740938171; c=relaxed/simple;
+	bh=lnQZAyT6pee79h3cEN16oOAZ7yiLgLiJJjZhexo20uE=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=TGdlAt1nGic/6FSwZmmo1qvTdG2bVlNKi/u/i/FBxz/iMOWwn+cTpQFt6ebJAXgaBwfVZl7ot4GEDxls032r4aOIQ4v98/4QVMAPvrK6BF7HhVQIwl2JYSUqVzBkV+BJHLiMgBi4J4Dk2FgxLqrGA8f16lW/qZ0unWe3WL69ejY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk; spf=pass smtp.mailfrom=decadent.org.uk; arc=none smtp.client-ip=65.21.191.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=decadent.org.uk
+Received: from [2a02:578:851f:1502:391e:c5f5:10e2:b9a3] (helo=deadeye)
+	by maynard with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ben@decadent.org.uk>)
+	id 1tonXr-007Sul-2g;
+	Sun, 02 Mar 2025 17:56:06 +0000
+Received: from ben by deadeye with local (Exim 4.98)
+	(envelope-from <ben@decadent.org.uk>)
+	id 1tonXo-00000003rfR-3Wo5;
+	Sun, 02 Mar 2025 18:56:04 +0100
+Message-ID: <5a5a21d119da57ad16d6971951e532b30465bf1c.camel@decadent.org.uk>
+Subject: CVE-2024-50181: clk: imx: Remove CLK_SET_PARENT_GATE for DRAM mux
+ for i.MX7D
+From: Ben Hutchings <ben@decadent.org.uk>
+To: Peng Fan <peng.fan@nxp.com>, Abel Vesa <abelvesa@kernel.org>, 
+	cve@kernel.org
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev
+Date: Sun, 02 Mar 2025 18:55:52 +0100
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-jI3jpvw8/Aw06qBarYxD"
+User-Agent: Evolution 3.54.1-1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6928adc-1df2-494f-a3d3-7b028c220547@kwiboo.se>
+X-SA-Exim-Connect-IP: 2a02:578:851f:1502:391e:c5f5:10e2:b9a3
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on maynard); SAEximRunCond expanded to false
 
-On Sun, Mar 02, 2025 at 12:56:42PM +0100, Jonas Karlman wrote:
-> Hi Yao Zi,
-> 
-> On 2025-03-01 16:15, Yao Zi wrote:
-> > On Sat, Mar 01, 2025 at 02:01:05PM +0100, Jonas Karlman wrote:
-> >> Hi,
-> >>
-> >> On 2025-03-01 11:48, Yao Zi wrote:
-> >>> SD-card is available on Radxa E20C board.
-> >>>
-> >>> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> >>> ---
-> >>>  arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts | 14 ++++++++++++++
-> >>>  1 file changed, 14 insertions(+)
-> >>>
-> >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> >>> index d2cdb63d4a9d..473065aa4228 100644
-> >>> --- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> >>> +++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> >>> @@ -12,6 +12,10 @@ / {
-> >>>  	model = "Radxa E20C";
-> >>>  	compatible = "radxa,e20c", "rockchip,rk3528";
-> >>>  
-> >>> +	aliases {
-> >>> +		mmc0 = &sdmmc;
-> >>
-> >> Suggest using mmc1 for sd-card because the e20c typically have onboard
-> >> emmc, compared to removable sd-card.
-> > 
-> > My board doesn't have an eMMC: it's optional as well, but all variants
-> > of Radxa E20C come with an SD-card interface. The vendor devicetree sets
-> > sdmmc as mmc0 as well[1].
-> 
-> This is strange as Radxa typically want to align with mmc0=emmc and
-> mmc1=sd-card, as seen in [3] and [4].
-> 
->   Align with other Radxa products.
->   - mmc0 is eMMC
->   - mmc1 is microSD
-> 
-> Also mainline U-Boot for Rockchip SoCs typically always treat mmc0 as
-> emmc and mmc1 as sd-card, and for most SoCs it will even override the
-> board aliases to have some predictability across boards.
-> 
-> > 
-> > I won't insist on it and am willing to take the change if you still
-> > consider mmc0 is better.
-> 
-> Yes, my position is that we should use following:
 
-Ack. I got your point but there's a typo (s/mmc0/mmc1) in my reply.
+--=-jI3jpvw8/Aw06qBarYxD
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->   mmc0 = &sdhci;
->   mmc1 = &sdmmc;
-> 
-> I will send out a short sdhci series based on top of v2 of this series.
-> Driver changes was not needed to get basic sdhci working on RK3528 and
-> is only required to get HS400 modes working.
-> 
-> [3] https://lore.kernel.org/r/20240620224435.2752-1-naoki@radxa.com
-> [4] https://lore.kernel.org/r/20240619050047.1217-2-naoki@radxa.com
-> 
-> > 
-> >>> +	};
-> >>> +
-> >>>  	chosen {
-> >>>  		stdout-path = "serial0:1500000n8";
-> >>>  	};
-> >>> @@ -20,3 +24,13 @@ chosen {
-> >>>  &uart0 {
-> >>>  	status = "okay";
-> >>>  };
-> >>> +
-> >>> +&sdmmc {
-> 
-> This node should be placed above &uart0 to be in alphabetical order.
-> 
+Hi all,
 
-The original patch keeps the order of nodes in the SoC devicetree
-(sorted by MMIO address), but alphabetical order seems more common. Will
-fix in v2, thanks.
+CVE-2024-50181 is supposed to be fixed by commit a54c441b46a0 "clk: imx:
+Remove CLK_SET_PARENT_GATE for DRAM mux for i.MX7D"=C2=A0but I think this
+assignment should be rejected.
 
-> >>> +	bus-width = <4>;
-> >>> +	cap-mmc-highspeed;
-> >>> +	cap-sd-highspeed;
-> >>> +	disable-wp;
-> >>> +	rockchip,default-sample-phase = <90>;
-> >>> +	sd-uhs-sdr104;
- 
-Thanks,
-Yao Zi
+Based on
+<https://lore.kernel.org/all/DU0PR04MB9417404E8E89CB82386146B6881E2@DU0PR04=
+MB9417.eurprd04.prod.outlook.com/>
+it doesn't seem like there was a real issue to be fixed in the upstream
+kernel.
+
+Ben.
+
+--=20
+Ben Hutchings
+Any smoothly functioning technology is indistinguishable
+from a rigged demo.
+
+
+--=-jI3jpvw8/Aw06qBarYxD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAmfEm6kACgkQ57/I7JWG
+EQmmxg/+Nb+BEUyQ7+twwSbrEVBoCaFG2DTaOn+HLgmmFenpoj04ynMfZJc0GelB
+B6YJ/vj7jY+LzWFKdZ0DKRNU5++TK8pLD2p2sMiTQhA3W7xSDGRcGKB6KjEkmsVv
+cjHTB67tgeGCsd0CpcI05iTeDyHXF26fJEHOPOEp+vsPTcD3BqnX1D+wC62dqDKP
+RMN6YNJ6Klo2/vRsp4rspdb3T+e7PPjE9NDfuqx7YF3Qx3TY4lUiW8kYq2VE+J35
+iwAwXKPwjzFJekhDJsOU0vPorAYF19isZjXmsJ8aYm67ODHM06YiLPo8+x+9FUPu
+mnyZDTtUDnKzUdpyDJHh6wokACwdiP1QirhRmBL77VpNUawyPNsoIJ879J6PHmd9
+0k7L+GD/LbDJXJoA1p9i8FPp4m0LOoEWCUAW1CyaY7JrGNpq7Gt0gaaQl45qpPsJ
+z7rvPaT/dy207oxp/suYNvcBRKZB2iuabBVNfaGuTtPs0U/2999NhQokn23savpR
+9Ow/kD2OH286Kg7+OxReGUm3eP0jUyWyR6Iec+Bzj/3QFfIeiyXtmxC7Qu46amSC
+XhwxELnTzPX8H3m3jI8mTfTxH/QBumXxAd6rlIrW/AD2BZpRdn9+xfHp/AvoN2lA
+GcYHbh+/tydSwssxuMv3z7wlAQFXeBqpbp1ZC1bC5Bec3QnCEEw=
+=CxY6
+-----END PGP SIGNATURE-----
+
+--=-jI3jpvw8/Aw06qBarYxD--
