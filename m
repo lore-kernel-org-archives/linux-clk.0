@@ -1,181 +1,139 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1256633E1;
-	Sat,  1 Mar 2025 15:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC901C9DC6
+	for <linux-clk@vger.kernel.org>; Sun,  2 Mar 2025 11:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740842167; cv=none; b=IGrIfi+Qd3caQ3tOiALtNJhHHapZgs9VHGSVG9Jawi31SvRmxBGpsviZIsBod2SJePjxkhY0XYSOFRsqeKvQEk18SF/yhRWjolgLnOvqYSBsA8cjj5c7gXntSqh26YCjvQRbAl59RZINbRWioQt3YuMRW3kjRHiMG5PRVAaN4As=
+	t=1740913308; cv=none; b=c7a2YrveNIJqBR39U282YPcNgzEPD3yOKxS5fCaXGRG/KuRLYGQcNmK6VxdXy135uPqMY7bBnKsI1YgOBy8mliX5RAw33w0QHWNrWlziCt3qrbhj42EUGFqErcprxNiQ7s1gq2lneCDkogO3FlK/EzyLLzFajSbM0Cin6iq22Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740842167; c=relaxed/simple;
-	bh=OmrR4xD/XRUKk2rcMTrbTAl5fxjRwq+7cvLzauhy6QI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WsF3NIjJywSh69G1d2FdSbiFKsaDXOjWvDrkNA9zrDF4VhPxtGcO/kHHrJvYiloQ6vuJ7yfXzZaA7MXnXnLhZhqkArXZeNOqC9ujWltMN6pskB2oEkEmf6d8LO/k2QrON0FkGuyK1sv8Sfq40v/ANYCYDAAbujIxrO01yLU83vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=EBrD/O9R; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1740913308; c=relaxed/simple;
+	bh=KUnys3Xiy1jo/gO60D3Flc66sLahi2ZFD78MfTjqu5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ozxvBFIVtN5FR6My1jEVI9CemPY9WbYQ3m7LBh6plzDclaKy1fT2qCYkF4zUTYUZZmFFevXk74mnMtGhSdX+6hXwS/wGR/hYnfcI4JPZMiFof9br9+i5IM3oWBiP6nIbbMKpBcEOfjym9I7c6TPAV3kn+mKcIbf0h3ZPN4caqtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=F6SZ35Qc; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="EBrD/O9R"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 4033220523;
-	Sat,  1 Mar 2025 16:15:59 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 0iebN7Isx1Km; Sat,  1 Mar 2025 16:15:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1740842157; bh=OmrR4xD/XRUKk2rcMTrbTAl5fxjRwq+7cvLzauhy6QI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EBrD/O9RrVrUYRP+VtXW2Qnd/HbT6/xhYVGcT888/R1u+nZe8io1CWfIKSlqN+xVh
-	 uosX1SmQ+uG6WyBFrvoMmT17JPz6bItHX9gMyXNllu8xgSfizzV9/xYzM1LbNK//Et
-	 VcfncIB0U4fB6PdG2Wr0kCCH4CPj0lKLyBnVPppk3SVEeRppfh+BHYiHR7srIIZm6A
-	 ZuNv1C5GeFy9qJKkYwH4vp2FPQ8LHcyP+uq4wv0TAsSn/7aviqrzZh7AF4LU9X0ETQ
-	 SdYn8QlV+4DLyohYjHZH6LlYQEMSzJDnHQBh8QLhYMBEBNdU96iGwsLn5J5LXGnR6b
-	 mXqu6/2U4c1gw==
-Date: Sat, 1 Mar 2025 15:15:32 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 8/8] arm64: dts: rockchip: Enable SD-card interface on
- Radxa E20C
-Message-ID: <Z8MklJfFz2EA6oNS@pie.lan>
-References: <20250301104250.36295-1-ziyao@disroot.org>
- <20250301104835.36439-1-ziyao@disroot.org>
- <0aefd292-7980-434d-9c18-4ab9f6a0b40e@kwiboo.se>
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="F6SZ35Qc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1740913304;
+ bh=5yKjuNQgVLhguVs5lWSzRacCXnEfMSyFuE69y4uYr1E=;
+ b=F6SZ35QcmEoxitylcaFYi8C/E0sWLYAmOhZr6J11xvy/xVu1+xf4qFWm5OOvjGZgAgOAjBPax
+ EM6HirQPBC55PzMh49Wsz3ZMKw1geHKYmwJ+EhOgEIT4nwEiep6MOAMERvMia7FeCbzACPdxG5r
+ 57k59CfxTi7oySNM8h2MARO1abFtHfgs5khALP5LzAoS6goVVR0+OR7BC1JhS8imTMrdtZYk6vr
+ OPEqBuwYNLAP+SudlBrzGTw4xhS3SKBWvFErGS0e4JrFa6+Pc/xfSovwwAWt388IoqqtIPoXJDN
+ Bb4ox3LL0QVEDAQXpI/4POft/yHn8Qd4ixexuR5JuiJA==
+X-Forward-Email-ID: 67c43a8f4a29b97c03d4da98
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <3cb87f70-1838-4492-b78e-0cd98457cb83@kwiboo.se>
+Date: Sun, 2 Mar 2025 12:01:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0aefd292-7980-434d-9c18-4ab9f6a0b40e@kwiboo.se>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers for
+ RK3528
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Yao Zi <ziyao@disroot.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Frank Wang <frank.wang@rock-chips.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250301104250.36295-1-ziyao@disroot.org>
+ <20250301104749.36423-1-ziyao@disroot.org>
+ <9fd51bcb-3e6a-46b6-b1f7-ff16fa562d9e@kwiboo.se> <3574922.QJadu78ljV@diego>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <3574922.QJadu78ljV@diego>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 01, 2025 at 02:01:05PM +0100, Jonas Karlman wrote:
-> Hi,
+Hi Heiko,
+
+On 2025-03-01 13:55, Heiko Stübner wrote:
+> Hey Joas,
 > 
-> On 2025-03-01 11:48, Yao Zi wrote:
-> > SD-card is available on Radxa E20C board.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> > index d2cdb63d4a9d..473065aa4228 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-> > @@ -12,6 +12,10 @@ / {
-> >  	model = "Radxa E20C";
-> >  	compatible = "radxa,e20c", "rockchip,rk3528";
-> >  
-> > +	aliases {
-> > +		mmc0 = &sdmmc;
+> Am Samstag, 1. März 2025, 13:47:47 MEZ schrieb Jonas Karlman:
+>> On 2025-03-01 11:47, Yao Zi wrote:
+>>> RK3528 features two SDIO controllers and one SD/MMC controller, describe
+>>> them in devicetree. Since their sample and drive clocks are located in
+>>> the VO and VPU GRFs, corresponding syscons are added to make these
+>>> clocks available.
+>>>
+>>> Signed-off-by: Yao Zi <ziyao@disroot.org>
+>>> ---
+>>>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 62 ++++++++++++++++++++++++
+>>>  1 file changed, 62 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>> index 5b334690356a..078c97fa1d9f 100644
+>>> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+>>> @@ -7,6 +7,7 @@
+>>>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>>  #include <dt-bindings/interrupt-controller/irq.h>
+>>>  #include <dt-bindings/clock/rockchip,rk3528-cru.h>
+>>> +#include <dt-bindings/reset/rockchip,rk3528-cru.h>
+>>>  
+>>>  / {
+>>>  	compatible = "rockchip,rk3528";
+>>> @@ -122,6 +123,16 @@ gic: interrupt-controller@fed01000 {
+>>>  			#interrupt-cells = <3>;
+>>>  		};
+>>>  
+>>> +		vpu_grf: syscon@ff340000 {
+>>> +			compatible = "rockchip,rk3528-vpu-grf", "syscon";
+>>
+>> vpu_grf is also used for gmac1, so should possible be a "syscon",
+>> "simple-mfd", or have I misunderstood when to use simple-mfd ?
 > 
-> Suggest using mmc1 for sd-card because the e20c typically have onboard
-> emmc, compared to removable sd-card.
-
-My board doesn't have an eMMC: it's optional as well, but all variants
-of Radxa E20C come with an SD-card interface. The vendor devicetree sets
-sdmmc as mmc0 as well[1].
-
-I won't insist on it and am willing to take the change if you still
-consider mmc0 is better.
-
-> > +	};
-> > +
-> >  	chosen {
-> >  		stdout-path = "serial0:1500000n8";
-> >  	};
-> > @@ -20,3 +24,13 @@ chosen {
-> >  &uart0 {
-> >  	status = "okay";
-> >  };
-> > +
-> > +&sdmmc {
-> > +	bus-width = <4>;
-> > +	cap-mmc-highspeed;
-> > +	cap-sd-highspeed;
-> > +	disable-wp;
-> > +	rockchip,default-sample-phase = <90>;
-> > +	sd-uhs-sdr104;
+> simple-mfd is needed when the additional device is completely contained
+> inside the particular syscon.
 > 
-> Are you sure uhs-sdr104 works as is should?
-
-In fact yes, tuning succeeds at 148.5MHz and results in 66MB/s reading
-speed.
-
-> Vendor kernel use a different "v2" tuning
-
-This isn't a problem. IMHO V2 tuning is more like a quick path, which
-tries inheritting the phase from firmware and then re-tunes roughly.
-Fine tunning is still a fallback here in case of failure, see the commit
-message in the downstream kernel[2]. And testing proves it's okay for
-RK3528 to issue fine-tuning always.
-
-> and this is also missing the vccio_sd vqmmc-supply to switch between
-> 3v3 and 1v8.
-
-But this is a problem, thanks for catching it! Somehow my card managed
-to run at 148.5MHz with 3v3 voltage level, but it's definitely a
-compatiblity issue. I'm surprised that the driver doesn't complain when
-switching to SDR modes without a regulator configured.
-
-> You could add following regulator for sdmmc:
+> For example, the usb2phy0 on rk3588 is completely living inside the
+> usb2phy0-grf.
 > 
-> 	vccio_sd: regulator-vccio-sd {
-> 		compatible = "regulator-gpio";
-> 		gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
-> 		pinctrl-names = "default";
-> 		pinctrl-0 = <&sdmmc_vol_ctrl_h>;
-> 		regulator-name = "vccio_sd";
-> 		regulator-min-microvolt = <1800000>;
-> 		regulator-max-microvolt = <3300000>;
-> 		states = <1800000 0x0>, <3300000 0x1>;
-> 	};
->
-> and following pinctrl:
+> Similarly the power-domains are living inside the rk3588 pmugrf.
+> But the pmugrf also contains more stuff, so the power-domains are a
+> subset of the pmugrf.
 > 
-> 	sdmmc {
-> 		sdmmc_vol_ctrl_h: sdmmc-vol-ctrl-h {
-> 			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-> 		};
-> 	};
+> Both of these above are a case for a simple-mfd.
 > 
-> add then the power supplies to the sdmmc node:
 > 
-> 	vmmc-supply = <&vcc_3v3>;
-> 	vqmmc-supply = <&vccio_sd>;
+> Similarly, gmac1 on rk3588 is ethernet@fe1c0000 , so a completely separate
+> io-memory area, but references both the sysgrf as well as the php-grf
+> as syscons for additional settings.
 > 
-> That matches the schematics for e20c, and works when testing non-uhs modes.
+> So here the syscon does not need to be a simple-mfd.
+> 
+> 
+> Hope that helps a bit
 
-Thanks for the hints. Will rebase on your pinctrl series and get
-regulators and pinctrl settings applied in the next version.
+Thanks for this explanation, it helped me better understand the meaning
+of simple-mfd :-)
 
-> Regards,
-> Jonas
+Regards,
+Jonas
+
+> Heiko
 > 
-> > +	status = "okay";
-> > +};
 > 
 
-Cheers,
-Yao Zi
-
-[1]: https://github.com/radxa/kernel/blob/2b0c8de7dc4c68947cda206dcc2e457e9677e426/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts#L22-L26
-[2]: https://github.com/rockchip-linux/kernel/commit/795e052cc8610aa59a64b104f975cc4a45493d5d
