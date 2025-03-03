@@ -1,61 +1,63 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C6023A9AB
-	for <linux-clk@vger.kernel.org>; Mon,  3 Mar 2025 22:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CEFF23A9A5
+	for <linux-clk@vger.kernel.org>; Mon,  3 Mar 2025 22:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741042537; cv=none; b=HESzN+SFihDaaGnT2n0FYovSCHvif4PZ1lMEK+2uQtRP/5evwnNK7a2hCTR3CgaQ0iF1lFM7nSHTh/+yYc3xSgilGkDNPvruZzxbOdMUMrheUgGuL5jLNnGth2TLAAa5ojEfa5OpAhuqs8Y1qk+3Gb+OQOI5lD27xYcA7hnL/ow=
+	t=1741042539; cv=none; b=KLG1G8GK0YX/lB2ByHyIXl1SRyONLS4BpWW8kGAM/t3AMnlzyz1bncXlS72kGXImHi8ayNW9WH+Vxdz5eVcj8V0jAfafEY2X3HGQncUzU6JMOO2aphSgRSwebh5Ud2+MOOIOQeezinDuX3A5gRr3JqiV0hG9j5kAh/dSeUx/jcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741042537; c=relaxed/simple;
-	bh=cFE6qDwi1fJylD2s+lQiGN8Qez/xInkZpe/71LGwZvg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YqiONVfNRYvlDliwd7S1+QtHvOKfEvU4OkkZLrbn43NCNe3nhA3GXQVqvmlxV1Or8lze5AiH86oPZxvXRY8OMdpG9NC8PBjG8aq3vnwMVhMAWuL6Xh9LoRK5U5vS2uDfh2WtPA51mgdTgjg+K4h2pXiu7NjZtvqIsah0i9Q7yac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SQCu7DmU; arc=none smtp.client-ip=209.85.208.182
+	s=arc-20240116; t=1741042539; c=relaxed/simple;
+	bh=2l4XCrqCkQucTXgYQNWv2U2oS7DHD/QEgRLBR2QDT7A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=p8+KclUkVvUfnDWcnNXI/l9N8b/aKCZWN3+6GvxAn5eUb8UrcOZ1WwKDAFtip8SZ5MhuFgQ8FUKkUL+JS54szL9sK2ZFMPKnDp4KmCTspbZkb819Y4tCIsgeEDU2QGSUt+7LzZU/lErG6r1Vy/Bd3DYT1Lxj1lxO+IyLHlkH7fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xne/v9LK; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SQCu7DmU"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30bade9a246so3052471fa.2
-        for <linux-clk@vger.kernel.org>; Mon, 03 Mar 2025 14:55:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xne/v9LK"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-549578af093so549633e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 03 Mar 2025 14:55:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741042533; x=1741647333; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=msppfnamUUGgJpFy91ELuhvjtms4xYNjAzSexKS9iEM=;
-        b=SQCu7DmUyoW66aZC0hQmREmKph5ZHXoiCbBagqpaGQ2uDwwoS2RjR2iYEfnuXqKOaa
-         D4oiRbo5LKedtT+1VHCeh2u0PKxpFOxJ50IFj7mRfidSsEM1XpS4ABqgRqgNImmyzy8F
-         +/Lt2Yq6Z67tK1OtY8bUhtCVBLx0an4dn2lB+uzVcvIjIhkROQXc+KjhIopPRsDA0VSL
-         fcBkoBt2Ib+ieCUAk6h4lLFY8Ywhoqy1bK3QYqWCCx4nSHZPDwtS9Xe41Gw/2J229f8w
-         6+DuNHCjlrJqt/peFDYm/8Q6O8JJNpsou+ihTjBWJ/N2KX23ekmu3fP+oBX4T3sY2s2l
-         NIwA==
+        d=linaro.org; s=google; t=1741042536; x=1741647336; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eIOoOtxpcPHl7i4MSdteBkV3xiIgoMMcqJLCqFrKEb0=;
+        b=xne/v9LKOVWBHlawNhNDhNqQOd6V7eTkRyrT28AAgXRKO1WjsaWyrQqgGnEEAnfZgn
+         1pacN8ek52MqN4mciiNcLTBu8wkHWsLb2pjG7IIn4CMvaVwtebuW/QqCDUZ011JSOs5/
+         3xtv7LGEWo+jwz3Q7deka90+R3vfB1+bLCcpWkX9/SyucxjfZSRoObkm8Siq5PK1Cwfz
+         plsU9lvzeHtTgQMxKj12EnkNC8UwjIDB0oQ3lZ3EaqWL5PTWk2biiik/+DC/lL7uCNuw
+         cTl9HIEYAMVVgs+veaj5N0QSsVFN/1O0yu/JXzzttRlJFg2WQkjQOUyWrhQvD0alsGrl
+         2jIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741042533; x=1741647333;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=msppfnamUUGgJpFy91ELuhvjtms4xYNjAzSexKS9iEM=;
-        b=Gw9jjMpGa6z0c1kKjuEV8Y9RsAOC4LSwCWMwR29HFzhC8phykVmglBdk5XuvvCIlXs
-         zg695Qsb3K4rqdR4t68VzE8pGcYnWmUZvI1UV7F9GTSvnoRCtp7dboVnlS2PMzHnGAHr
-         mTIKzu+OJa6ZeI1LBFW/6nPai1oxD1uV0xQiVxsFA0fsa08a7MAIeNHDNbzpjl5BEdh2
-         8CRUB9MrnKtZmO6BJypmBjiKclS85gXJAGt5Reom3vGPwLKbd4DiOzkTIhmWw2JsyLn8
-         J+FnNokn3jBo9rdxgnqDhWLz50ZAe2/wKmfxABzKH0qFTUAcpetJzDH/iJPEh1ED1MZM
-         Sjtg==
-X-Forwarded-Encrypted: i=1; AJvYcCW59eGmAzPjp09LrSwREX0e74ccDR30W4pKdjLDZhHflR0vSn3x6iMvVup8PwnHoGA4IOAAwJnOYk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMmYPV+4Zgj8Q8VzEpnxMxN7x7YDYxPSanukmQ1SSCDI8aS2AT
-	2WZOuze31v30wC3QQGAeUD1qvreiWBlRp404oNV0ApSJrgERtJFiiX0LsRgfljY=
-X-Gm-Gg: ASbGncvPW45QzRGfsLwxUbq6gzEQNSfqiV3i00jjnvwouwd9motxGUgqZ2I7aOb2E4l
-	NDq7iYt5MaPrlktihII5D9AXk1tESeO/lKAz1J8FSGH6IiZMadKVThfc+lBA5etbG/eEwbEPDeR
-	nqROleXUzb7shETNmAphUVOuTWoN8X8W5ndrvzXTFbTxXl63z27YNeyJ/yjiXoTQaKQ84AloQSl
-	zUehOdxDansVw4wyRm7fetKNno4ZfWzwwlgYxVvDD0PHRgTjAdqQj5BV8gwqiZzF/wIJJuXvJPq
-	GpajqpDVDcC0bAX/gT+SB/+yjI81NxBSbUFMxurOvDYROAAHmxnuBm3FbUyVS9MIVVsvpIf61Hh
-	PkOQzMJ1uJJyXHRj5ntWA4zc5PWLEs1TYKA==
-X-Google-Smtp-Source: AGHT+IFIz9OgAP1Nf0cMNCjQ5eIctZ65Z5mYLBJRd33pRm/cFHeBwdUYbtthRjYfB2mhF2ZBPgxgFA==
-X-Received: by 2002:a05:6512:b0a:b0:545:bda:f22 with SMTP id 2adb3069b0e04-54975fc58aamr78263e87.8.1741042533524;
-        Mon, 03 Mar 2025 14:55:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741042536; x=1741647336;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eIOoOtxpcPHl7i4MSdteBkV3xiIgoMMcqJLCqFrKEb0=;
+        b=KA947aKZu9kKIw81F5lz1AUB1Z0ndBCbrX/gmxJPznCSIPh4h6uFRGCfviO7Xu6Sj7
+         o9cG24TCxLo9V/ZhpPN2KF5zA2HaJKgl9LtVpZ4866gyStz1sKg3Y06f6KMZMxeYXcUf
+         1+UrfJH4XB68OLR9PAdcuDCb1sQ/39eoI9jcF/ocNxpIyFVrXGFRb/p8m/NPeam8a4ty
+         f4gv2zEirEWsvvG8PQZZQeqXOSwZcirOrU5GIURCsWzCnWL+abwb/0CDa/STYgTPqV5m
+         g1EIrsgo14mJI/i+2+BQjGrXCs3WEEJNw4RUef03EtC38KFVwexygYkZ895xAwaAruvg
+         mMQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfm1wYmjLYtBAwkEzvQiNsQM9UMvH4siAG8aEykbw7t6UiGHCTy4yH8WXyBnQUh36IFQSSInRqCcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXZS6dJP3cid8PpFeYEc/pkB8BjADVYWFb1iW3Pf9sR9CemkFU
+	+eRUwGODO9pUOOqk3LzT6k3Cwr1YUrX1MawwWbfcS5VAzeuPZQrlJVIsXJZVAQs=
+X-Gm-Gg: ASbGncshTaErt9sDU5DHc7nc1wQd38g/0MqUy8mIGaH/AP9fS1RLXZ0OtZ6WTOutl3b
+	07UFWfLJNyQd636L0ivUqRRXplS2yBJGD0iB0l4ZGyIb0TYwJYfOGStz4mH5/csqR2NNnMyKkqo
+	JCnxc8UGqxPppZJzNB+Ok5UGgd7I8wrq2NraYNVzJfwAeTTl8piATyYEY6eizeitRk9y9+P8pif
+	LtEbXKiZKiETidYVstLYufgWvpedMcAyOq9ux8TdJuyH5lXYXqh+HULYJcO5cSHmjzyI/LRtTZR
+	Sjqv7Mp+Lc7DgNyBhAREYEWj1oklWrXWq0p/CGJuQaobZuMYVGT1XB2dMkuNekGDt0n+r19aFpf
+	W1011zMrgjquJjsDXFIsAWeydchet5u482A==
+X-Google-Smtp-Source: AGHT+IGGU9cZXDSw27YYxHElxCiZpERaWAgIGFnaC31uzKIbcLL9ZsjIMNZ/+x0WMmOpWlMlmbI4fA==
+X-Received: by 2002:a05:6512:1245:b0:545:6f1:948d with SMTP id 2adb3069b0e04-549763cf7fcmr45673e87.7.1741042535641;
+        Mon, 03 Mar 2025 14:55:35 -0800 (PST)
 Received: from localhost.localdomain (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495f630cb5sm662059e87.212.2025.03.03.14.55.30
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495f630cb5sm662059e87.212.2025.03.03.14.55.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 14:55:32 -0800 (PST)
+        Mon, 03 Mar 2025 14:55:35 -0800 (PST)
 From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -70,10 +72,12 @@ Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
 	linux-arm-msm@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH 0/2] arm64: dts: qcom: sm8550: camcc: Manage MMCX and MXC
-Date: Tue,  4 Mar 2025 00:55:19 +0200
-Message-ID: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
+Subject: [PATCH 1/2] dt-bindings: clock: qcom: sm8450-camcc: Allow to specify two power domains
+Date: Tue,  4 Mar 2025 00:55:20 +0200
+Message-ID: <20250303225521.1780611-2-vladimir.zapolskiy@linaro.org>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
+References: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,23 +86,33 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-It was discovered that on SM8550 platform Camera Clock controller shall
-manage MMCX and MXC power domains, otherwise MMIO access to CCI or CAMSS
-breaks the execution, the problem has been discussed with Jagadeesh at
-https://lore.kernel.org/all/a5540676-9402-45c4-b647-02fdc2b92233@quicinc.com/
+During the tests it was unveiled and later it was confirmed that SM8550
+Camera Clock Controller shall enable both MXC and MMCX power domains.
 
-Since 'power-domains' property becomes generalized, Rob asked to remove
-its description, which is done in the first patch of the series, see
-https://lore.kernel.org/all/20240927224833.GA159707-robh@kernel.org/
+Since power-domains property is not specific to MMCX anymore, its
+description is removed.
 
-Vladimir Zapolskiy (2):
-  dt-bindings: clock: qcom: sm8450-camcc: Allow to specify two power domains
-  arm64: dts: qcom: sm8550: Additionally manage MXC power domain in camcc
-
+Fixes: 9cbc64745fc6 ("dt-bindings: clock: qcom: Add SM8550 camera clock controller")
+Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+---
  .../devicetree/bindings/clock/qcom,sm8450-camcc.yaml          | 4 +---
- arch/arm64/boot/dts/qcom/sm8550.dtsi                          | 3 ++-
- 2 files changed, 3 insertions(+), 4 deletions(-)
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+index 9e79f8fec437..d7fc9e5a2d20 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+@@ -37,9 +37,7 @@ properties:
+       - description: Sleep clock source
+ 
+   power-domains:
+-    maxItems: 1
+-    description:
+-      A phandle and PM domain specifier for the MMCX power domain.
++    maxItems: 2
+ 
+   required-opps:
+     maxItems: 1
 -- 
 2.43.0
 
