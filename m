@@ -1,219 +1,138 @@
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E193D1F12E8;
-	Mon,  3 Mar 2025 09:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E901EF0B1
+	for <linux-clk@vger.kernel.org>; Mon,  3 Mar 2025 10:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740995924; cv=none; b=dd1ii7eiz+FHerUW1/kwh9bBXNQFw7tdppEgYpZf6g/YfHbDHoiuPQwT6xdVNReGa42WO7oABf88Kq3vLnqrbG9vQR1Y7CM8YJkBUHcqQ2VCxuFRtyODFUHmW/vNfi4xXYvZWOib96rMyUOJL1RmafFfPHwTrEBeWqa2LNJsofU=
+	t=1740996023; cv=none; b=q9fUGjaEyApg+Bg81io6cH745+S7hptDYQ6N8pd4Q9b+0L0B2vKamDSFHiz/1Vdu4I6ZJ/r8D8qZnGXq/au92h5tCbs1gOCN60o3HC/EqRM4OW3xju6nq6Ek5jMEVSmKa3VymP8HXmX7nCSouXaB1FFVWuKeYM5d5L+Bza2G/PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740995924; c=relaxed/simple;
-	bh=XsOhRhGgIDJZEEWgUUzXOzwpJUSE7vf/DDvuB57+LP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qN3eS+nWQGcF5BRXSQBC9jAM4EoUIjlvTWPtH6wV1R7fWCXZ/PnqnvbuXt7hmoiAb5VAlvYZt0TB8xo9Cg5rcQ1ig5eMaxCgRdt+JGj1erxZ1dp/v2F1MhRe86cK9OlCDd2+UhOpjhVSi4kM9zAc+FFN01cDElL5dCLExGOiW88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=yFMzXf6x; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=d/tG6KbQ; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+	s=arc-20240116; t=1740996023; c=relaxed/simple;
+	bh=W/MWmFyRzRaY/L8mQHhIyX4NsQyvm3lJ3qdXyxFuKQA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rcIxnesOFZdEQ3ltoQcXBFdHtDOMwfVSy06gMcRHbkOwDLQwliQY5juywTeQg2/eB+/Ev5yVnHp6CI/N67Y5HMAueP/kdYJMqaAQTyykUOy9MSGGM0a5ZndMsBbtdqJPSElevdDSnJnKn6IFXuVWl7nh9dapCol7JYEU6ltvjgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LZfmi2mf; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="yFMzXf6x";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="d/tG6KbQ"
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 3AC39EC59F4;
-	Mon, 03 Mar 2025 01:41:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740994897; bh=XsOhRhGgIDJZEEWgUUzXOzwpJUSE7vf/DDvuB57+LP0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yFMzXf6x+euNhqYdyFc2mk88iMskDnSIVOTDXSspYDwR61/P5TtT40yJaGze14i99
-	 tQuWMrU1/jJkEUPl7lMg/y62pOd3WbyclC+UBtUVcdognCJTCkQXU9pcukBFwMGfdO
-	 MFpPPwV4YtsO8RLngunqoBnjFw2PjlOGEq1upPxN7sWbuLb/p1Mz8b4YSLQ7IEFcXn
-	 S/loUzkMUg8yqRGlah9v2CZD0xvadgb7TtV05K8J9eDW0F734GoseYmsG/PyH/X0lu
-	 0zwNLde4wN4SCC7DmrfK228b5/g3biZSihXiQnDYecKy1nY0B4wijv2IJM0cPiepT1
-	 IRQB0sWDRg4Hw==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id hd0nTS58Kd8d; Mon,  3 Mar 2025 01:41:29 -0800 (PST)
-Received: from ketchup (unknown [183.217.83.155])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id A2B54EC59F2;
-	Mon, 03 Mar 2025 01:41:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740994889; bh=XsOhRhGgIDJZEEWgUUzXOzwpJUSE7vf/DDvuB57+LP0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d/tG6KbQJ4zHh11BSoOdeU+HJBzVDLNbNySGcG3MspSkwmzZQsHkPzJwYts033mig
-	 yVsZyD230U/1mJDn+eTLyke8iQT0H6X+2iM9iFn4C0UiAS6ZN28fC/f4+XYoU7vGK2
-	 Me5seqNlkGmH4/KibAMv2yg1VI4j0uPK7IugBcqMiWJ5DJJsx+Q7Fu5y0n/zsC2ESE
-	 4D/nzftIbi2cDyklPBDP9LXJTe2/g1oOMGsMfM1Upohi9pHUGbeCY5LHK4ju91QokZ
-	 /P/GUY2tK/YeM1sGisZi0ZPo5b8166LDKRjgeINFNixcYoWhDz0Oh7kRQ5Z+KWE3/n
-	 +cWz0VMMjQo3A==
-Date: Mon, 3 Mar 2025 09:41:14 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Alex Elder <elder@riscstar.com>,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZfmi2mf"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2232b12cd36so55093215ad.0
+        for <linux-clk@vger.kernel.org>; Mon, 03 Mar 2025 02:00:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740996021; x=1741600821; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ui+QueMnTsbsw0Ov5sY4KY3gRDEpJNDApjz73wwqkjA=;
+        b=LZfmi2mfw8rquM1K61TDxyhk3do1+8SmeVxNSBf0CnylS2idN1uHBgltGIqEhe01P6
+         t5X8aIcDqIpNk4XmlzjsjHC/mYTkissaMAAXuMot/H+vdZOUlixw2m4/iK17ut/pULHz
+         p0Hraz/e+ASkIrR3lPa/WJZ+senZeQGCqu82EyO1CKMSDCTz9Lwz0NLmEyhnB67wUEUe
+         43QW0NAaa0Nhz2McwFLhwoQAuheCiPCx0/NcVrE0c1LKZGAAg3jT7nA5hDCQdzvb56Wg
+         VZMS7bGL9ufSlFeU/WroF31HQu9WlWWy1wN9jzF3W91Erk8yhJIVoWeCDfqbtFWh4s+h
+         lGtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740996021; x=1741600821;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ui+QueMnTsbsw0Ov5sY4KY3gRDEpJNDApjz73wwqkjA=;
+        b=LTj2KkcGUoFOWj374JaUYqJT8/DNWtZy6Xxp1POjDI9WLPZkZlgjAgWbpqcAOX6mJc
+         XMeCvQn7XTpx9l3C5zGdfTl1Kf6z4zt/lvCk1hwGBA6TTuSOYk4aI2YzOSlFg4PWMaVG
+         rd4mhuuJGDkpaS4gwOG7LtF6zkPUagdWfnZ8eeFi8uXWTs3jFry2OWQ5/5fb9gUThKyG
+         +GVWcA6munlGdJAecKne/YPB2JSDMAkHambrU4HB2Ua0gyXj8aKOV5qcX8D3Z3Z7+Kf5
+         q8rZsjX4ZZGKA+c/9Af3cszXL/9JOdtu3QvFTbHghS4YhIsow3giOg4GI3iRSG0ko1Uh
+         xQyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzwtsZFaNJBSJ8kjVp2u9r+8R93i6aimbzBGMcv6lf0HzUoz+xgd5AwJv4J0QyY9gIK959IXVOyxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk3ykd8cxy7k41aX94N0u9SJKHdKxXJAO+PRh8T/2YHp1xvWHj
+	P0NKXQcjEhoKogh5/oAcgPsRiwix9eM8zpkW5tC/tVJc+Rl851U2EiKg31XauG0=
+X-Gm-Gg: ASbGncsAX+bJwpJzvXvZCXz+ft1KcmY+uYFczAKRbM1+JLG5Dm+mT67xWbeR8/N6IPs
+	swoAh3Fp8mYCKtfVqYqibByJnwja/4sF6ferUsxFBwg+n3zDSeGFY/cAreHqIyP6CxAIiEGEkPM
+	dBx4biU+zyPeaCNFE0Pmi3F2rxtpDWcayZQLKGLQcqlAIE+uxCnedzV3TRD15dEPCUmJP5whYW0
+	8w3MabMXe8xZCxD/pLZQX/93IXOvdSfiE9fwmtEpWmykDB8vh21sWKEWXDgjVL79T57+8ltrImq
+	g+ijUmqniEhQ55lV6WhlBw9+nNEI6PVqZ4SyfL87nGdFgg==
+X-Google-Smtp-Source: AGHT+IFJ/3EtNRcapiKvA/LhInnujARn41J0eZebYdMRMc5AqmzRtaclMoy8+PxW2aUq83BCOeNAyQ==
+X-Received: by 2002:a05:6a00:14c9:b0:736:3979:369e with SMTP id d2e1a72fcca58-73639793857mr10236218b3a.9.1740996020598;
+        Mon, 03 Mar 2025 02:00:20 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7363288529dsm4567764b3a.41.2025.03.03.02.00.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 02:00:19 -0800 (PST)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Benno Lossin <benno.lossin@proton.me>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Guodong Xu <guodong@riscstar.com>
-Subject: Re: [PATCH v4 3/4] clk: spacemit: Add clock support for Spacemit K1
- SoC
-Message-ID: <Z8V5OjQTxVeRLAOU@ketchup>
-References: <20250103215636.19967-2-heylenay@4d2.org>
- <20250103215636.19967-5-heylenay@4d2.org>
- <f8b30551-25e7-4626-8c03-6d8807041d8a@riscstar.com>
+	Miguel Ojeda <ojeda@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+Subject: [PATCH V3 0/2] rust: Add basic clock abstractions
+Date: Mon,  3 Mar 2025 15:28:08 +0530
+Message-Id: <cover.1740995194.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8b30551-25e7-4626-8c03-6d8807041d8a@riscstar.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 10:04:10PM -0600, Alex Elder wrote:
-> On 1/3/25 3:56 PM, Haylen Chu wrote:
-> > The clock tree of K1 SoC contains three main types of clock hardware
-> > (PLL/DDN/MIX) and is managed by several independent controllers in
-> > different SoC parts (APBC, APBS and etc.), thus different compatible
-> > strings are added to distinguish them.
-> > 
-> > Some controllers may share IO region with reset controller and other low
-> > speed peripherals like watchdog, so all register operations are done
-> > through regmap to avoid competition.
-> > 
-> > Signed-off-by: Haylen Chu <heylenay@4d2.org>
-> 
-> This is a really big patch (over 3000 lines), and a fairly large
-> amount of code to review.  But I've given it a really thorough
-> read and I have a *lot* of review comments for you to consider.
-> 
-> First, a few top-level comments.
-> - This driver is very comprehensive.  It represents essentially
->   *all* of the clocks in the tree diagram shown here:
-> https://developer.spacemit.com/resource/file/images?fileName=DkWGb4ed7oAziVxE6PIcbjTLnpd.png
->   (I can tell you what's missing but I don't think it matters.)
-> - In almost all cases, the names of the clocks match the names
->   shown in that diagram, which is very helpful.
-> - All of the clocks are implemented using "custom" clock
->   implementations.  I'm fairly certain that almost all of
->   them can use standard clock framework types instead
->   (fixed-rate, fixed-factor, fractional-divider, mux, and
->   composite).  But for now I think there are other things
->   more important to improve.
-> - A great deal of my commentary below is simply saying that the
->   code is more complex than necessary.  Some simple (though
->   widespread) refactoring would improve things a lot.  And
->   some of the definitions can be done without having to
->   specify nearly so many values.
-> - Much of what might be considered generality in the
->   implementation actually isn't needed, because it isn't used.
->   This is especially true given that there are essentially no
->   clocks left unspecified for the K1 SoC.
-> - Once the refactoring I suggest has been done, I expect
->   that more opportunities for simplification and cleanup will
->   become obvious; we'll see.
-> - I suggest these changes because the resulting simplicity
->   will make the code much more understandable and maintainable
->   in the long term.  And if it's simpler to understand, it
->   should be easier for a maintainer to accept.
-> 
-> I'm not going to comment on the things related to Device Tree
-> that have already been mentioned, nor on the Makefile or Kconfig,
-> etc.  I'm focusing just on the code.
-> 
-> > ---
-> >   drivers/clk/Kconfig               |    1 +
-> >   drivers/clk/Makefile              |    1 +
-> >   drivers/clk/spacemit/Kconfig      |   20 +
-> >   drivers/clk/spacemit/Makefile     |    5 +
-> >   drivers/clk/spacemit/ccu-k1.c     | 1747 +++++++++++++++++++++++++++++
-> >   drivers/clk/spacemit/ccu_common.h |   51 +
-> >   drivers/clk/spacemit/ccu_ddn.c    |  140 +++
-> >   drivers/clk/spacemit/ccu_ddn.h    |   84 ++
-> >   drivers/clk/spacemit/ccu_mix.c    |  304 +++++
-> >   drivers/clk/spacemit/ccu_mix.h    |  309 +++++
-> >   drivers/clk/spacemit/ccu_pll.c    |  189 ++++
-> >   drivers/clk/spacemit/ccu_pll.h    |   80 ++
-> >   12 files changed, 2931 insertions(+)
-> >   create mode 100644 drivers/clk/spacemit/Kconfig
-> >   create mode 100644 drivers/clk/spacemit/Makefile
-> >   create mode 100644 drivers/clk/spacemit/ccu-k1.c
-> >   create mode 100644 drivers/clk/spacemit/ccu_common.h
-> >   create mode 100644 drivers/clk/spacemit/ccu_ddn.c
-> >   create mode 100644 drivers/clk/spacemit/ccu_ddn.h
-> >   create mode 100644 drivers/clk/spacemit/ccu_mix.c
-> >   create mode 100644 drivers/clk/spacemit/ccu_mix.h
-> >   create mode 100644 drivers/clk/spacemit/ccu_pll.c
-> >   create mode 100644 drivers/clk/spacemit/ccu_pll.h
-> > 
+Hello,
 
-...
+This adds initial abstractions for the clk APIs. These provide the minimal
+functionality needed for common use cases, making them straightforward to
+introduce in the first iteration.
 
-> > diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> > new file mode 100644
-> > index 000000000000..6fb0a12ec261
-> > --- /dev/null
-> > +++ b/drivers/clk/spacemit/ccu-k1.c
+These will be used by Rust based cpufreq / OPP layers to begin with.
 
-...
+For now I have added them under the maintainership umbrella of the common clk
+framework, please let me know if I should do it differently.
 
-> The next set of clocks differ from essentially all others, in that
-> they don't encode their frequency in the name.  I.e., I would expect
-> the first one to be named pll1_d2_1228p8.
+If possible, I would like to get these merged via the PM tree along with
+cpufreq/OPP abstractions, but its okay otherwise too.
 
-I found this change may not be possible: with the frequency appended,
-their names conflict with another set of MPMU gates.
+Danilo: I haven't done anything about MaybeNull<T> yet, as we can not access
+fields of the C clk pointer from Rust code. Not sure if that is still required
+or not.
 
-> 
-> > +static CCU_GATE_FACTOR_DEFINE(pll1_d2, "pll1_d2", CCU_PARENT_HW(pll1),
-> > +			      APB_SPARE2_REG,
-> > +			      BIT(1), BIT(1), 0, 2, 1, 0);
-> > +static CCU_GATE_FACTOR_DEFINE(pll1_d3, "pll1_d3", CCU_PARENT_HW(pll1),
-> > +			      APB_SPARE2_REG,
-> > +			      BIT(2), BIT(2), 0, 3, 1, 0);
-> > +static CCU_GATE_FACTOR_DEFINE(pll1_d4, "pll1_d4", CCU_PARENT_HW(pll1),
-> > +			      APB_SPARE2_REG,
-> > +			      BIT(3), BIT(3), 0, 4, 1, 0);
-> > +static CCU_GATE_FACTOR_DEFINE(pll1_d5, "pll1_d5", CCU_PARENT_HW(pll1),
-> > +			      APB_SPARE2_REG,
-> > +			      BIT(4), BIT(4), 0, 5, 1, 0);
-> > +static CCU_GATE_FACTOR_DEFINE(pll1_d6, "pll1_d6", CCU_PARENT_HW(pll1),
-> > +			      APB_SPARE2_REG,
-> > +			      BIT(5), BIT(5), 0, 6, 1, 0);
-> > +static CCU_GATE_FACTOR_DEFINE(pll1_d7, "pll1_d7", CCU_PARENT_HW(pll1),
-> > +			      APB_SPARE2_REG,
-> > +			      BIT(6), BIT(6), 0, 7, 1, 0);
-> > +static CCU_GATE_FACTOR_DEFINE(pll1_d8, "pll1_d8", CCU_PARENT_HW(pll1),
-> > +			      APB_SPARE2_REG,
-> > +			      BIT(7), BIT(7), 0, 8, 1, 0);
-> > +
+--
+Viresh
 
-...
+V2->V3:
+- Add type Hertz (Daniel Almeida).
+- Improved comments in helpers.rs (Daniel Almeida).
+- s/Clk::new/Clk::get/ (Daniel Almeida).
+- Implement OptionalClk as well (Rob Herring).
+- Fix Safety comments (Danilo Krummrich).
+- Add tags from Daniel Almeida.
 
-> > +/*	MPMU clocks start	*/
+V1->V2:
+- Post this as an independent series.
+- Include more APIs, apart from clk_get() and clk_put().
 
-...
+Viresh Kumar (2):
+  rust: Add clk helpers
+  rust: Add initial clk abstractions
 
-> > +static CCU_GATE_DEFINE(pll1_d3_819p2, "pll1_d3_819p2", CCU_PARENT_HW(pll1_d3),
-> > +		       MPMU_ACGR,
-> > +		       BIT(14), BIT(14), 0, 0);
-> > +
-> > +static CCU_GATE_DEFINE(pll1_d2_1228p8, "pll1_d2_1228p8", CCU_PARENT_HW(pll1_d2),
-> > +		       MPMU_ACGR,
-> > +		       BIT(16), BIT(16), 0, 0);
+ MAINTAINERS                     |   2 +
+ rust/bindings/bindings_helper.h |   1 +
+ rust/helpers/clk.c              |  66 ++++++++++++++++
+ rust/helpers/helpers.c          |   1 +
+ rust/kernel/clk.rs              | 134 ++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs              |   1 +
+ 6 files changed, 205 insertions(+)
+ create mode 100644 rust/helpers/clk.c
+ create mode 100644 rust/kernel/clk.rs
 
-Here're the conflicts.
+-- 
+2.31.1.272.g89b43f80a514
 
-Although they don't happen on all the clocks, I prefer to keep the clock
-names as is for now to keep the consistency.
-
-Thanks,
-Haylen Chu
