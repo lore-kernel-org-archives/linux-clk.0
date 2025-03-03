@@ -1,184 +1,97 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBE3235C1D;
-	Mon,  3 Mar 2025 20:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F7578F54;
+	Mon,  3 Mar 2025 21:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741033691; cv=none; b=BApV44aTVW3MXyxX5DZCArPQ3GJC4BkPT90MqsmxAxoqo6irq6jPyojr0DX1nqEFwhGrBFEkWEILpwuZWCZv1R91+NjaRnQ2UCWAiniyOhkTf7fPEMXbUxSF2f7qv5pAE9aAzhU/jX+5WLi15lW1Mzx8onIgVjr6XjjpihaNYbA=
+	t=1741038237; cv=none; b=FeqGhDOO5tLmUYSjcFeCgbQETpUDihUCM6rlJEtKyQnEgdnp1/WqL1Y2hqufRu1ph7uVLtAYyKmSRHJDGKYZ90QJo4mBSZHbcRFOyW0eFMq0N+PfTsg7Yk6Mdt5RYua/3Ea/856EPzcoAid4zJnhizx9p5R3pvN4kEF2Y5cIY9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741033691; c=relaxed/simple;
-	bh=6WL3+gww7pwy7HeSxhHT435XK+Ky7XngeaLYGMY0ueU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ixYuEVVjLskyfgZXTkURJwKzAi2Dsh6qG+FUnT1t7y4CKStxBNMrOIEADV/bEUo7fnkqMlIKkYX1rB+aJSYAcOdRpfvGPY0K6Lwe5f0kvIiF4y12y5ryZTrQACd9w+/RxMWoO4MS3C7t7Khi8fEz95+EVKanCMKE8lXQipaKZnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XlTt5QHD; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741038237; c=relaxed/simple;
+	bh=MAZ3GzDJqwIxbmpGTBoa7Vxr/bQjnRpqhcxx+9kHi58=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=qbFhdyJcwbnUAtGAISItSpHNjsRfFBawhsOOp14cT5iZxc2ZaVVs5QGdkAxIwVD25HFmEFa4dWS3Bo6ZoEbIAxTGQDhYmK+jvESYzv7gkV4SbOkG/xZEXV9rud77QswBR7wz3VLfOp42PfulqlGV56XLGmm4Fy0Yh8ETHcpT5v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Un46XJUC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlTt5QHD"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaeec07b705so782405966b.2;
-        Mon, 03 Mar 2025 12:28:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741033688; x=1741638488; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5mUS3JAucq16wAF6W5pFtM5mAxXgdUK4IDJ6WzSb7Xo=;
-        b=XlTt5QHD/036Y/EvQMbXJavmG1faoZbGk7GajTVGV/Uum7FsveeBmFBE8V4JkRR8tW
-         6QFiR1YzRh0y6Kgfuj7fB2AoSASPYgMNsXIATVOPRNjIYLBQRy/jBZdgjCUDQze8WP+w
-         NaWdL9zhLjR0SnaBdAYHXB4YuHL6uVVdwzSLKqeWRnsf43iTfuuEu1TxBWXJNpmeUhZZ
-         nY+XlksL9jSZNm5TE2kC90hLielDvhL8q8Y4jlyRfmrfKONB8q2N7sy3QaxKr+9oit8q
-         4kA7RNh9CnXvq6XuPO+rDF6tJi27ubyXVWwqpQQ57m3w1845WspzvzebeyMVrZOIv7jW
-         et+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741033688; x=1741638488;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5mUS3JAucq16wAF6W5pFtM5mAxXgdUK4IDJ6WzSb7Xo=;
-        b=iEteXGWNBjSItbITE5168yP7ctEstuPtn33hWx9uPSSHCG7y+nfnrLC/u666izXEwH
-         zEC+XUH2R9YJ1ejrVkno3iypLApOkI1ReOI5A0nOs8qCAczsQAbl4jOjDVJ45PJy7Sop
-         55tCJHWBAeDVhi9EsnWiT9ls/W1BTy0XXK+ekx38bIXjpz0c9YOXJwconpa9VqKilCj2
-         rh7pkWKs3zq9+o7WTMUhiKUlV6ZDXMxpFGudn6iqEQVRmgfIrXf6PU41e7fZJLbyh7VN
-         TlgEe6wAcntg5x/tH1ewbGWyJmqc4YGc+DNU6mX9TkF0JinPLa0xtm0l86/4VsEUEJin
-         kMFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJqA68rT5sUs1kqvDpdOfyc1TGr2lNTf+1DMFvdyoQDAJ7J+oNrVLHIDiF6K6qm3umyW9qtO6TZel/W3ng@vger.kernel.org, AJvYcCVXlVvKjNfigSZevbIpq8D4k1IxHjkeNXogSJDOkkB6A2/hquFsg6hZ9GXKiXOpFdhcduUVIMdN8x1k@vger.kernel.org, AJvYcCX8x2HV5XvRjAV6d44EyY128DPEBmi0aTdjXU2fabyWoK+EhGw0bNgxcEFRH9KANzi0Rfv+LDEoNtNt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB9hGHvst6L5X4Ic4zGBOqFkYxDRwWjjWa+CkO/ACIZBKO0D38
-	wXAbmvVWOvG+ppNOpmO9R/E9R0dqjWS3XVzx9ByzqpP2bDdvn3ug
-X-Gm-Gg: ASbGncuUAp9QwvEGh27my86qkGKjuNgU1+/kIy9AMBp9hk9ulLUwlNi9D2ZZ3r1kCmt
-	5veXnt5OjT3ase6JTBdPcy/eYHRKDVTYnz2OyFXsLhcdfS7h9U4h93pxyoZYybnLW32SJgCi60Z
-	fs7zA66T495Cjcdra92hjzxPBZF00HAOaH7go48j52Ktg+me2Umt26AWW1yQB2bVqrRY3adI2td
-	pW6jDof8sb0mLk9j/JkPZtQR5QKjZr8yHdTAQ1yJG+joEZ/YwMJ0Y1yM6viTVbzjzuXhcPl04R7
-	aypRG8RsNwoZjTcjT1PuwSpdGnbnHi8vdwlJIF5BTMCO5C0jvzwTh1v1OGxTRI8+KmV6xJRebng
-	KEP0wmRU4H1hXr58=
-X-Google-Smtp-Source: AGHT+IFVp/KeMVcrH5wtWWq6qXRVuys4s6zh1IG4Std3sZ5UncuOsGDVsCK+FtLJALUPefTCPbjmwQ==
-X-Received: by 2002:a17:907:1c28:b0:abb:e7b0:5453 with SMTP id a640c23a62f3a-abf261fae86mr1798482666b.12.1741033687882;
-        Mon, 03 Mar 2025 12:28:07 -0800 (PST)
-Received: from hex.my.domain (83.8.122.142.ipv4.supernova.orange.pl. [83.8.122.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf64dd565dsm389222166b.101.2025.03.03.12.28.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 12:28:04 -0800 (PST)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Mon, 03 Mar 2025 21:27:55 +0100
-Subject: [PATCH v2 7/7] ARM: dts: bcm11351: Add corresponding bus clocks
- for peripheral clocks
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Un46XJUC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FEE2C4CED6;
+	Mon,  3 Mar 2025 21:43:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741038236;
+	bh=MAZ3GzDJqwIxbmpGTBoa7Vxr/bQjnRpqhcxx+9kHi58=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Un46XJUCvFTptINfONNvksNFUZ/F10zNUxc8JhS1/zGtyiodoOnAfOcGeRhc6qHmX
+	 N3Guc2ZgzNXg55hNlG0q75Csc5LPOdEYGWDcB/udG/Rv6eEAwB8QvvWRTAlkc8cG2L
+	 el05QDEwWJUvZ/w6Kb6BHJqrRpFD+48xpBQDqtr2hM/XKUbQ0QPVvvKCagF1KHqj1m
+	 b91GGesEyDEQGNur665uNXCLzOPreG6ulkV+GboI9OiQ/BNZQwHUcHqOlCiHgB0pbX
+	 WEza652yAD008j+KBTGcE/Tqq3sp8OA5eDF+BXTCVt4QPf83cg+u1x6PquG+Irrfch
+	 BXvtF+6v97jSQ==
+Date: Mon, 03 Mar 2025 15:43:54 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250303-kona-bus-clock-v2-7-a363c6a6b798@gmail.com>
-References: <20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com>
-In-Reply-To: <20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, 
  Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Alex Elder <elder@kernel.org>, 
  Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Alex Elder <elder@kernel.org>, 
- Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741033671; l=2485;
- i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=6WL3+gww7pwy7HeSxhHT435XK+Ky7XngeaLYGMY0ueU=;
- b=VXAGORhDaWxXb847EqZoFtRva0y9l4g4B7YmCVKZNUAkDve22tgY2lHrpkBK5L7Pg24OQ1Kg+
- h0wO1xGP5yRAA4Dqe56IFBivb3VdGWg2VwVnY2T3/BidFY/KivG/eAP
-X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
- pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, devicetree@vger.kernel.org, 
+ Ray Jui <rjui@broadcom.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Scott Branden <sbranden@broadcom.com>
+To: Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <20250303-kona-bus-clock-v2-2-a363c6a6b798@gmail.com>
+References: <20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com>
+ <20250303-kona-bus-clock-v2-2-a363c6a6b798@gmail.com>
+Message-Id: <174103823477.2582909.2641429106641464271.robh@kernel.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: brcm,kona-ccu: Add BCM281xx
+ bus clocks
 
-Following changes in the clock driver, add matching bus clocks for
-existing peripheral clocks. Replace the usb_otg_ahb fixed clock with
-the real bus clock.
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-Changes in v2:
-- Add this patch (BCM281xx bus clocks)
----
- arch/arm/boot/dts/broadcom/bcm11351.dtsi | 33 ++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+On Mon, 03 Mar 2025 21:27:50 +0100, Artur Weber wrote:
+> Add bus clocks corresponding to peripheral clocks currently supported
+> by the BCM281xx clock driver and add the relevant clock IDs to the
+> clock/bcm281xx.h dt-bindings header.
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+> Changes in v2:
+> - Add this commit (BCM281xx bus clocks)
+> ---
+>  .../devicetree/bindings/clock/brcm,kona-ccu.yaml   | 21 +++++++++++++++++-
+>  include/dt-bindings/clock/bcm281xx.h               | 25 +++++++++++++++++++---
+>  2 files changed, 42 insertions(+), 4 deletions(-)
+> 
 
-diff --git a/arch/arm/boot/dts/broadcom/bcm11351.dtsi b/arch/arm/boot/dts/broadcom/bcm11351.dtsi
-index 53857e572080d752732c512ed27f942756d59c46..fac5cf5a46bd9a4b7e09a2e65c3e807d1b4ef960 100644
---- a/arch/arm/boot/dts/broadcom/bcm11351.dtsi
-+++ b/arch/arm/boot/dts/broadcom/bcm11351.dtsi
-@@ -233,7 +233,9 @@ aon_ccu: aon_ccu@35002000 {
- 			#clock-cells = <1>;
- 			clock-output-names = "hub_timer",
- 					     "pmu_bsc",
--					     "pmu_bsc_var";
-+					     "pmu_bsc_var",
-+					     "hub_timer_apb",
-+					     "pmu_bsc_apb";
- 		};
- 
- 		master_ccu: master_ccu@3f001000 {
-@@ -246,7 +248,14 @@ master_ccu: master_ccu@3f001000 {
- 					     "sdio4",
- 					     "usb_ic",
- 					     "hsic2_48m",
--					     "hsic2_12m";
-+					     "hsic2_12m",
-+					     "sdio1_ahb",
-+					     "sdio2_ahb",
-+					     "sdio3_ahb",
-+					     "sdio4_ahb",
-+					     "usb_ic_ahb",
-+					     "hsic2_ahb",
-+					     "usb_otg_ahb";
- 		};
- 
- 		slave_ccu: slave_ccu@3e011000 {
-@@ -262,7 +271,17 @@ slave_ccu: slave_ccu@3e011000 {
- 					     "bsc1",
- 					     "bsc2",
- 					     "bsc3",
--					     "pwm";
-+					     "pwm",
-+					     "uartb_apb",
-+					     "uartb2_apb",
-+					     "uartb3_apb",
-+					     "uartb4_apb",
-+					     "ssp0_apb",
-+					     "ssp2_apb",
-+					     "bsc1_apb",
-+					     "bsc2_apb",
-+					     "bsc3_apb",
-+					     "pwm_apb";
- 		};
- 
- 		ref_1m_clk: ref_1m {
-@@ -325,12 +344,6 @@ var_52m_clk: var_52m {
- 			clock-frequency = <52000000>;
- 		};
- 
--		usb_otg_ahb_clk: usb_otg_ahb {
--			compatible = "fixed-clock";
--			clock-frequency = <52000000>;
--			#clock-cells = <0>;
--		};
--
- 		ref_96m_clk: ref_96m {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
-@@ -396,7 +409,7 @@ usbotg: usb@3f120000 {
- 		compatible = "snps,dwc2";
- 		reg = <0x3f120000 0x10000>;
- 		interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&usb_otg_ahb_clk>;
-+		clocks = <&master_ccu BCM281XX_MASTER_CCU_USB_OTG_AHB>;
- 		clock-names = "otg";
- 		phys = <&usbphy>;
- 		phy-names = "usb2-phy";
+My bot found errors running 'make dt_binding_check' on your patch:
 
--- 
-2.48.1
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/brcm,kona-ccu.example.dtb: clock-controller@3e011000: clock-output-names: ['uartb', 'uartb2', 'uartb3', 'uartb4', 'ssp0', 'ssp2', 'bsc1', 'bsc2', 'bsc3', 'pwm'] is too short
+	from schema $id: http://devicetree.org/schemas/clock/brcm,kona-ccu.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250303-kona-bus-clock-v2-2-a363c6a6b798@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
