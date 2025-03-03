@@ -1,33 +1,66 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2022212B0A;
-	Mon,  3 Mar 2025 14:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A96520E03C
+	for <linux-clk@vger.kernel.org>; Mon,  3 Mar 2025 14:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010833; cv=none; b=W5RfAskR4c/NWRZXTbpajebB8fj/kqRMX0LPtY5cq9uxrQiVy/IKp1HaLxWBv0mRcYhvQ5woKtFOO+1Fuj4lHtpY//ekSNn+NWtWqENck5bEpC0ImqJcf39WCTEWDl1qNWAfhg4lBaa1WtuloyFKt9c4tS6Nq8pGGsfXoM4PAmI=
+	t=1741011044; cv=none; b=CwL5JsIBkyHVKnFQx4z+fFxo+/AGHRzTx/I5BD3ZWrLpvl4YYXBdRbdLqJkkrk+1VYKGrgLBx00r9SXsuXauKviw47EWtWwJEgpkIn1IGczVrPw2cceqgB2PNO91+6u1GTy48QBZ5280EwcaPQ76+2gRIpld8bGGFzXw2RZuFpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010833; c=relaxed/simple;
-	bh=lpis/SLy0ij+CNsW36P4QCLyGtfJ/WP7YKd97ynHmys=;
+	s=arc-20240116; t=1741011044; c=relaxed/simple;
+	bh=7SKQpx9L0mDryeMBd5/7MLfmRiaAKjLbl91XeEq0Yrw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X8H5C1QK4ZnC76a/vdQeWMSg9MOrd3nzaFZXjrfFgLssOrWdks4SCA5qodA5mhNWvx6cf5rb/x2Rta34zm2/ZpdihWFqZmreiwwLOQ10K1M7S8+H0bLf/5hEegeEycUFuXL3nvrVyPolG9fMWUqQmZkuJcOMEgeA4NjxDd5CKQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyqxOXPF; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=bj9pYGzjPvT51Z+t66JRsYDjw5Fk3qjWoAZSijuo9eWMBrfKwxvKaEQ6Y2NHPEk5ByYSbiMqm10HOeCS/W89pAAjx6OtmuEu/H1U05Vq5OtGJtiv4oTjn8gd2tulrqCB/2oVzhw3AVRb3yZfhWGoIbSFwvCTLoCRbvQr2U3x9pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=mtBilBuP; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyqxOXPF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEF78C4CEE6;
-	Mon,  3 Mar 2025 14:07:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741010833;
-	bh=lpis/SLy0ij+CNsW36P4QCLyGtfJ/WP7YKd97ynHmys=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lyqxOXPFsF9x17qZNcmlg/aMg5WJcN3dEmFdqOUp5TKVY2X9vYws8CtZpeYV15+xI
-	 yb6xay/8CPcpToj+RmlgZ7fStV71XpSEtKtxmGFNz1pHa6QaL0zwgiAG86jJ98ZjnL
-	 LivAuVHNTYJpNEd6zv/A4I5FTFMD/FYWfIc3LUipTFR3lDjRhdeZfu+NigDKfa981O
-	 HVSdH3bcPmFY8rKBgN3p+FKcfvJ+Apx+VA4r3z9kl2IDcGLFMjLH2gJn1wsY85T1sf
-	 pH58Mald0DF0MaX0hznMWrCg72fFrNTZ4+vemz+ODOBB5V97qeQhkoJBWQ7VcTgFPC
-	 XpAAtoqRP6hxQ==
-Message-ID: <16e6d822-97c1-4dcf-b538-04b6d8881d32@kernel.org>
-Date: Mon, 3 Mar 2025 15:07:00 +0100
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="mtBilBuP"
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-85ae9566c08so14448439f.0
+        for <linux-clk@vger.kernel.org>; Mon, 03 Mar 2025 06:10:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1741011040; x=1741615840; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JrwhJR5XVjeuOKMty1HTRitd46iSfsnGbIHub1a6zjU=;
+        b=mtBilBuPCSjtlExPj7kVVK/+ooaiH7eMrY4OEfgSfrko3r9clRXPLCSwV7RHBNHtT6
+         R+fcm5fQYIaK+qJwbJ7N6vFrarxR2pJZKpRc/HHVT2reeXtalTFLe6axyLRUxS4Pmu6R
+         Yah3UENiY8jYeM8RIkRAffS7796SX+lwWNhi6t7dZ8xBG4BCht2SAWREHZZgwsruS3yy
+         0ZQHMslx6T1hG0CYLa9nt3i8DILIFxSDuJQm0Jdh8BFZzuQSvj5QlBReCh9bOoL7zCrS
+         jgtiJ6Jg1KrGXQ4CwN0OG8M6oQtYilxpDENCS3ZoyoKQLWhdY+iCvgkghkckCF4YSBeC
+         6RvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741011040; x=1741615840;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JrwhJR5XVjeuOKMty1HTRitd46iSfsnGbIHub1a6zjU=;
+        b=YVed8GpSvpq8P7zokDNuH/XlxMaegL4hYHcub0Dirozr+CVEBgsbiyaPbEVb7K9Wky
+         6rUJ0rEZ4I8W3mF07lloFUSD9FoTCtuycyoOu91MMt6q7PqgdSVllXox6YGj6pAhqqrI
+         xV/QFXj/Ete8vRc5rYh69wAFjTAlUwKsm3s7iHCN7myF3wL2i4xUYP8p1fMEtwHPl7Ig
+         WzqexlzLuaPX/sNErxU32T2yKSutvCTbT+X/p9yDEH7+HThnzaOL4ZFiQCJYfpM0qA3i
+         6AGJT0jjP4R4OVp2+YCwdjec9pIT2v4glvgINzkYkfeVk1TaJ5a9apPOydxmPSd7Y//H
+         TAlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUg+XeLAP5QxQpnsZFlIHKOA/TgtcYh0tvb6KGvDQhdiIIewLXdCnjhwLI+r6pbbuK+oWWx7m+ltc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMC1LUpvv/n7fhfpuLMfdZEPFM2n1S8ZGHYdxByR7JumMeqbic
+	6cpkm3+aWt+xBuOTRoFpGuP8byXEK4ukqVOf3U0cY71usg7jI1RB/Ye7PBg2l7/bcPgMgri3DB5
+	hwkw=
+X-Gm-Gg: ASbGnctp8KkTqtAORsoeusPoPCauZYGRMAPR8/+kXp+SDIzzUcsb3KXKfGB+0zKzp7q
+	0z3qpaoBOIYMw/4snWV/Jiu9K755lEj77RhBXh9U9yTHYTgkL9rtrQ9ikh58ZvXHiYiehXl1SIu
+	yiy8vgX08eVhQu4xrJ9YqYSpEHJ+LsZJ23/0sYm/vXuImODeDJtGrLiPVBSfPgKDvGsaNR2thMn
+	YIgQm0v9S5jbt15oqLbTujjJLmCwGGo9jyve7xqvXk20oeEmgL2k6mU5kiX6PB4KKmZvtr0k3a5
+	kgIIFwh7+g/wMb6VXwGdgBDV8oZGwmOj/+zhEM3NbPf9q8SAplwbI2XtCzgJpLSDWl9u21q2E6+
+	0ctRXIiVJ
+X-Google-Smtp-Source: AGHT+IGN/6Wuw5ntiwHBSo1Y/sRm+1DKl1diOGW2BTS+FWQlOXMwdhDgI7em04WI3UtWDvgvTpPB4g==
+X-Received: by 2002:a05:6602:1604:b0:855:690e:ed8f with SMTP id ca18e2360f4ac-85881ff0edfmr1228718139f.12.1741011039763;
+        Mon, 03 Mar 2025 06:10:39 -0800 (PST)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f09d8cb493sm382508173.75.2025.03.03.06.10.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 06:10:39 -0800 (PST)
+Message-ID: <d9db0821-1cb8-43bc-81d3-d511ee164e91@riscstar.com>
+Date: Mon, 3 Mar 2025 08:10:37 -0600
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,105 +68,171 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 09/21] dt-bindings: clock: thead: Add GPU clkgen reset
- property
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
- wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
- matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
- m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
+Subject: Re: [PATCH v4 3/4] clk: spacemit: Add clock support for Spacemit K1
+ SoC
+To: Haylen Chu <heylenay@4d2.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
+ Yixun Lan <dlan@gentoo.org>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
- linux-pm@vger.kernel.org
-References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
- <CGME20250219140301eucas1p249b17ca44832eb8caad2e9ad0e4f8639@eucas1p2.samsung.com>
- <20250219140239.1378758-10-m.wilczynski@samsung.com>
- <20250221-imaginary-ebony-macaque-aace8d@krzk-bin>
- <7296ddb3-2096-4414-bfa4-28fc5bb8ec86@samsung.com>
- <df625379-b472-45d9-87a4-8bf52a87ea1e@kernel.org>
- <4deba4d6-b82d-4e57-bd27-f4e1523b38ea@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>,
+ Guodong Xu <guodong@riscstar.com>
+References: <20250103215636.19967-2-heylenay@4d2.org>
+ <20250103215636.19967-5-heylenay@4d2.org>
+ <f8b30551-25e7-4626-8c03-6d8807041d8a@riscstar.com>
+ <Z8V5OjQTxVeRLAOU@ketchup>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4deba4d6-b82d-4e57-bd27-f4e1523b38ea@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <Z8V5OjQTxVeRLAOU@ketchup>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 03/03/2025 10:55, Michal Wilczynski wrote:
-> 
-> 
-> On 3/3/25 09:52, Krzysztof Kozlowski wrote:
->> On 03/03/2025 09:42, Michal Wilczynski wrote:
->>>>> +allOf:
->>>>> +  - if:
->>>>> +      properties:
->>>>> +        compatible:
->>>>> +          contains:
->>>>> +            const: thead,th1520-clk-vo
->>>>> +    then:
->>>>> +      required:
->>>>> +        - resets
->>>>
->>>> else:
->>>> ? What's there? Also reset or no?
+On 3/3/25 3:41 AM, Haylen Chu wrote:
+> On Thu, Feb 13, 2025 at 10:04:10PM -0600, Alex Elder wrote:
+>> On 1/3/25 3:56 PM, Haylen Chu wrote:
+>>> The clock tree of K1 SoC contains three main types of clock hardware
+>>> (PLL/DDN/MIX) and is managed by several independent controllers in
+>>> different SoC parts (APBC, APBS and etc.), thus different compatible
+>>> strings are added to distinguish them.
 >>>
->>> If the else: case the reset is not required, as it's only required in
->>> the th1520clk-vo, so there is no need for else:.
->> That's not the question. I know it is not required, I can read code.
->> What is in the hardware?
+>>> Some controllers may share IO region with reset controller and other low
+>>> speed peripherals like watchdog, so all register operations are done
+>>> through regmap to avoid competition.
+>>>
+>>> Signed-off-by: Haylen Chu <heylenay@4d2.org>
+>>
+>> This is a really big patch (over 3000 lines), and a fairly large
+>> amount of code to review.  But I've given it a really thorough
+>> read and I have a *lot* of review comments for you to consider.
+>>
+>> First, a few top-level comments.
+>> - This driver is very comprehensive.  It represents essentially
+>>    *all* of the clocks in the tree diagram shown here:
+>> https://developer.spacemit.com/resource/file/images?fileName=DkWGb4ed7oAziVxE6PIcbjTLnpd.png
+>>    (I can tell you what's missing but I don't think it matters.)
+>> - In almost all cases, the names of the clocks match the names
+>>    shown in that diagram, which is very helpful.
+>> - All of the clocks are implemented using "custom" clock
+>>    implementations.  I'm fairly certain that almost all of
+>>    them can use standard clock framework types instead
+>>    (fixed-rate, fixed-factor, fractional-divider, mux, and
+>>    composite).  But for now I think there are other things
+>>    more important to improve.
+>> - A great deal of my commentary below is simply saying that the
+>>    code is more complex than necessary.  Some simple (though
+>>    widespread) refactoring would improve things a lot.  And
+>>    some of the definitions can be done without having to
+>>    specify nearly so many values.
+>> - Much of what might be considered generality in the
+>>    implementation actually isn't needed, because it isn't used.
+>>    This is especially true given that there are essentially no
+>>    clocks left unspecified for the K1 SoC.
+>> - Once the refactoring I suggest has been done, I expect
+>>    that more opportunities for simplification and cleanup will
+>>    become obvious; we'll see.
+>> - I suggest these changes because the resulting simplicity
+>>    will make the code much more understandable and maintainable
+>>    in the long term.  And if it's simpler to understand, it
+>>    should be easier for a maintainer to accept.
+>>
+>> I'm not going to comment on the things related to Device Tree
+>> that have already been mentioned, nor on the Makefile or Kconfig,
+>> etc.  I'm focusing just on the code.
+>>
+>>> ---
+>>>    drivers/clk/Kconfig               |    1 +
+>>>    drivers/clk/Makefile              |    1 +
+>>>    drivers/clk/spacemit/Kconfig      |   20 +
+>>>    drivers/clk/spacemit/Makefile     |    5 +
+>>>    drivers/clk/spacemit/ccu-k1.c     | 1747 +++++++++++++++++++++++++++++
+>>>    drivers/clk/spacemit/ccu_common.h |   51 +
+>>>    drivers/clk/spacemit/ccu_ddn.c    |  140 +++
+>>>    drivers/clk/spacemit/ccu_ddn.h    |   84 ++
+>>>    drivers/clk/spacemit/ccu_mix.c    |  304 +++++
+>>>    drivers/clk/spacemit/ccu_mix.h    |  309 +++++
+>>>    drivers/clk/spacemit/ccu_pll.c    |  189 ++++
+>>>    drivers/clk/spacemit/ccu_pll.h    |   80 ++
+>>>    12 files changed, 2931 insertions(+)
+>>>    create mode 100644 drivers/clk/spacemit/Kconfig
+>>>    create mode 100644 drivers/clk/spacemit/Makefile
+>>>    create mode 100644 drivers/clk/spacemit/ccu-k1.c
+>>>    create mode 100644 drivers/clk/spacemit/ccu_common.h
+>>>    create mode 100644 drivers/clk/spacemit/ccu_ddn.c
+>>>    create mode 100644 drivers/clk/spacemit/ccu_ddn.h
+>>>    create mode 100644 drivers/clk/spacemit/ccu_mix.c
+>>>    create mode 100644 drivers/clk/spacemit/ccu_mix.h
+>>>    create mode 100644 drivers/clk/spacemit/ccu_pll.c
+>>>    create mode 100644 drivers/clk/spacemit/ccu_pll.h
+>>>
 > 
-> I noticed the register SW_GMAC1_GRST_N in section 5.4.2.2.66 of the
-> manual (GMAC1_SWRST [2]), which indicates a GMAC1 CLKGEN soft reset.
-> Although this could theoretically reset part of the AP clock, it is not
-> actually used by the AP clock driver or needed for initialization.
+> ...
+> 
+>>> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+>>> new file mode 100644
+>>> index 000000000000..6fb0a12ec261
+>>> --- /dev/null
+>>> +++ b/drivers/clk/spacemit/ccu-k1.c
+> 
+> ...
+> 
+>> The next set of clocks differ from essentially all others, in that
+>> they don't encode their frequency in the name.  I.e., I would expect
+>> the first one to be named pll1_d2_1228p8.
+> 
+> I found this change may not be possible: with the frequency appended,
+> their names conflict with another set of MPMU gates.
 
-Thanks, this answers here.
+OK, that's fine, and perhaps is why it was done this way.  Thanks
+for checking.   I look forward to the next version of the series.
 
-Best regards,
-Krzysztof
+					-Alex
+
+> 
+>>
+>>> +static CCU_GATE_FACTOR_DEFINE(pll1_d2, "pll1_d2", CCU_PARENT_HW(pll1),
+>>> +			      APB_SPARE2_REG,
+>>> +			      BIT(1), BIT(1), 0, 2, 1, 0);
+>>> +static CCU_GATE_FACTOR_DEFINE(pll1_d3, "pll1_d3", CCU_PARENT_HW(pll1),
+>>> +			      APB_SPARE2_REG,
+>>> +			      BIT(2), BIT(2), 0, 3, 1, 0);
+>>> +static CCU_GATE_FACTOR_DEFINE(pll1_d4, "pll1_d4", CCU_PARENT_HW(pll1),
+>>> +			      APB_SPARE2_REG,
+>>> +			      BIT(3), BIT(3), 0, 4, 1, 0);
+>>> +static CCU_GATE_FACTOR_DEFINE(pll1_d5, "pll1_d5", CCU_PARENT_HW(pll1),
+>>> +			      APB_SPARE2_REG,
+>>> +			      BIT(4), BIT(4), 0, 5, 1, 0);
+>>> +static CCU_GATE_FACTOR_DEFINE(pll1_d6, "pll1_d6", CCU_PARENT_HW(pll1),
+>>> +			      APB_SPARE2_REG,
+>>> +			      BIT(5), BIT(5), 0, 6, 1, 0);
+>>> +static CCU_GATE_FACTOR_DEFINE(pll1_d7, "pll1_d7", CCU_PARENT_HW(pll1),
+>>> +			      APB_SPARE2_REG,
+>>> +			      BIT(6), BIT(6), 0, 7, 1, 0);
+>>> +static CCU_GATE_FACTOR_DEFINE(pll1_d8, "pll1_d8", CCU_PARENT_HW(pll1),
+>>> +			      APB_SPARE2_REG,
+>>> +			      BIT(7), BIT(7), 0, 8, 1, 0);
+>>> +
+> 
+> ...
+> 
+>>> +/*	MPMU clocks start	*/
+> 
+> ...
+> 
+>>> +static CCU_GATE_DEFINE(pll1_d3_819p2, "pll1_d3_819p2", CCU_PARENT_HW(pll1_d3),
+>>> +		       MPMU_ACGR,
+>>> +		       BIT(14), BIT(14), 0, 0);
+>>> +
+>>> +static CCU_GATE_DEFINE(pll1_d2_1228p8, "pll1_d2_1228p8", CCU_PARENT_HW(pll1_d2),
+>>> +		       MPMU_ACGR,
+>>> +		       BIT(16), BIT(16), 0, 0);
+> 
+> Here're the conflicts.
+> 
+> Although they don't happen on all the clocks, I prefer to keep the clock
+> names as is for now to keep the consistency.
+> 
+> Thanks,
+> Haylen Chu
+
