@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE3D1C84A0;
-	Mon,  3 Mar 2025 17:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4400C14A62B;
+	Mon,  3 Mar 2025 17:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741023709; cv=none; b=Dtl5dTKQmdOQHXCmcMtwZsDJPRJeJjCCRGQoGPneTC17O5OyvrqWlaVIZhggO0qWY89pzk+Aam3ArTS0lciHB2qy8C0HNKRMzV0zbnP7eFkEs+d7JFHkFZvCX7L3/iVsJj/A0K5B+G1wS1/A26N7wsy4Damk18CdlNCy90jXRbw=
+	t=1741023845; cv=none; b=BsIWmW78Fc6AygzZ5FY3/P6hP/ojeU9e3RoXIgYD3Qbl4on+9qslTio1OlDV1CsS0PhoItlKgurVTNXw40gCoOEzZrqa32KNB5Op8U/PMxxwWV1jjio4paEPiWOgN0lWwMg+2WUUqROytZRaTrFjnb7lU0vexiXjJ5zG0kPwVbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741023709; c=relaxed/simple;
-	bh=ehxewKg7M02dW9TT5+F+JOfuCd3oALT9ZxZ79Ry7PK4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ktKS83d0j8T05/oJxkjZ2iWac2VJEblfDAzCSUjUzlfHqIr/Zw8T22JzoRzaHGagI8LyPhP6dfnBexOUQBR8jbKDsZMqw1XDM8Hc/BqddnggtCBTnVtzneF/X/8NP93FOX/ujy851qLz5AByPyu+FC+EmW0xuthvr+rOlsm93lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f0XE7l+4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741023845; c=relaxed/simple;
+	bh=FHg++nb6XcLn2zgnWJ6wuRvYeN22ZPHDJ3B02BRO+xE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CRaa0m1m+BSzUPjq23GfqtzJEPWYaBJaccdedo2sUlmQg/osus6sEbKLxNv1NSsh8y7j2BuFGvqBFKFaYU8nfErObxwBRv1SswsjTcjIvTT1ptMebkMphqfYis6c2u91u45hkbUacm10zlrzvvhhsV78gRchFf4D7x27Oq6cs8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lp+87tJ1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f0XE7l+4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59AA4C4CEE5;
-	Mon,  3 Mar 2025 17:41:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lp+87tJ1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7731DC4CED6;
+	Mon,  3 Mar 2025 17:43:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741023709;
-	bh=ehxewKg7M02dW9TT5+F+JOfuCd3oALT9ZxZ79Ry7PK4=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=f0XE7l+479ZDSUgqqiGagMcKdUPamL6+mxbnSM/vA7CFOvvLrmktCVQtzEkoyc/tA
-	 h7pWHLrlRb18t87IrpEZkI9xWUGnPv+L214JuQmx19j4mMB6b/Mh5QShmX/Rz21va/
-	 fN+RM06cKvah9BfsQ/n7A8kBdb/S3k4fHHn3z4hDZBTH8JBWWDUWHbw3NWmMyZ8YrD
-	 DEejTbT/ar69vws0dA/VaPd5DS3yDjqt0FisKeNNj6gVeTehtzHkV+snnJB2/tPUFO
-	 btQNm1/cTOrg0klv3hy34DUdgorgwCb7N0Zv4/J74/oW0XCFeliifYP+tAeEttuGVQ
-	 6m8UNqbbXifxg==
-Message-ID: <cf6aa8bf-d424-49f4-b6a6-b6b10fd8092f@kernel.org>
-Date: Mon, 3 Mar 2025 18:41:42 +0100
+	s=k20201202; t=1741023844;
+	bh=FHg++nb6XcLn2zgnWJ6wuRvYeN22ZPHDJ3B02BRO+xE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lp+87tJ1pi10b59/2fo4zE/m+B8T1RtewpFqEzPZY6XT4dfGHus33dn7K2pt2UnRQ
+	 owxQjnYrV8ML8dFPKDg3JXOWp7FEvHq/tq+jrhhek7t2YZTGl4VlCTQzscO0rH5FW9
+	 0OPPt0RryywgAzJ+kfaXB2QcKwH+YW3zi49qbXKWqJXZZJhJnD6TnlJrpSX1okcyGs
+	 2A5p557v4r56tHjf9UV5jjBhcf91Tsf2dvQM8nCC0pZeVyBH8a3GnqgrQ1Zzfy79Jt
+	 IzvHl/Oso22RN7LmdGEXDrsye8ZNvWBRMfrVvc5bEMgqlON9Hcaf5H0dDWuHxYVxgJ
+	 KYVoL93if/z6g==
+Message-ID: <7ba53937-7922-41da-a7ed-909ce620db1f@kernel.org>
+Date: Mon, 3 Mar 2025 18:43:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,19 +35,25 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/21] Enable drm/imagination BXM-4-64 Support for
+ LicheePi 4A
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
+ wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
+ matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
+ m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ linux-pm@vger.kernel.org
+References: <CGME20250219140249eucas1p1291eb86c932373c847a3314ae54789d5@eucas1p1.samsung.com>
+ <20250219140239.1378758-1-m.wilczynski@samsung.com>
+ <20250221-eminent-squirrel-of-honor-dee80d@krzk-bin>
+ <90d0d409-f374-4e06-bc69-b9bf0622959d@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v1 1/4] dt-bindings: clock: thead: Add TH1520 VO clock
- controller
-To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20250303143629.400583-1-m.wilczynski@samsung.com>
- <CGME20250303143635eucas1p1dbcd26d4906b962e07cbde7f5ef704bf@eucas1p1.samsung.com>
- <20250303143629.400583-2-m.wilczynski@samsung.com>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -92,39 +98,41 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250303143629.400583-2-m.wilczynski@samsung.com>
+In-Reply-To: <90d0d409-f374-4e06-bc69-b9bf0622959d@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 03/03/2025 15:36, Michal Wilczynski wrote:
-> Add device tree bindings for the TH1520 Video Output (VO) subsystem
-> clock controller. The VO sub-system manages clock gates for multimedia
-> components including HDMI, MIPI, and GPU.
+On 03/03/2025 09:38, Michal Wilczynski wrote:
 > 
-> Document the VIDEO_PLL requirements for the VO clock controller, which
-> receives its input from the AP clock controller. The VIDEO_PLL is a
-> Silicon Creations Sigma-Delta (integer) PLL typically running at 792 MHz
-> with maximum FOUTVCO of 2376 MHz.
 > 
-> Add a mandatory reset property for the TH1520 VO clock controller that
-> handles the GPU clocks. This reset line controls the GPU CLKGEN reset,
-> which is required for proper GPU clock operation.
+> On 2/21/25 10:12, Krzysztof Kozlowski wrote:
+>> On Wed, Feb 19, 2025 at 03:02:18PM +0100, Michal Wilczynski wrote:
+>>> The LicheePi 4A board, featuring the T-HEAD TH1520 SoC, includes an Imagination
+>>> Technologies BXM-4-64 GPU. Initial support for this GPU was provided through a
+>>> downstream driver [1]. Recently, efforts have been made to upstream support for
+>>> the Rogue family GPUs, which the BXM-4-64 is part of [2].
+>>>
+>>> While the initial upstream driver focused on the AXE-1-16 GPU, newer patches
+>>> have introduced support for the BXS-4-64 GPU [3]. The modern upstream
+>>> drm/imagination driver is expected to support the BXM-4-64 as well [4][5]. As
+>>> this support is being developed, it's crucial to upstream the necessary glue
+>>> code including clock and power-domain drivers so they're ready for integration
+>>> with the drm/imagination driver.
+>>>
+>>
+>> This is v5 of big patchset which became huge. I understand you did like
+>> that for v1 which was RFC. But it stopped being RFC.
+>>
+>> Split your patchset, keeping versioning and changelog, per subsystem.
 > 
-> The reset property is only required for the "thead,th1520-clk-vo"
-> compatible, as it specifically handles the GPU-related clocks.
-> 
-> This binding complements the existing AP sub-system clock controller
-> which manages CPU, DPU, GMAC and TEE PLLs.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  .../bindings/clock/thead,th1520-clk-ap.yaml   | 33 ++++++++++++++++--
->  .../dt-bindings/clock/thead,th1520-clk-ap.h   | 34 +++++++++++++++++++
->  2 files changed, 64 insertions(+), 3 deletions(-)
+> Sorry for the late reply—I didn't have access to email. I agree with
+> your suggestion and will send the clock changes, firmware/power domain,
+> reset, and drm/imagination updates as separate patchsets for merging.
 
 
-Where is the changelog? Why is this v1? There was extensive discussion
-for many versions, so does it mean all of it was ignored?
+How did you implement above comment? You did the split, right? Where is
+versioning and where are changelogs?
+
 
 Best regards,
 Krzysztof
