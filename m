@@ -1,215 +1,157 @@
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C8D1D5CD9;
-	Mon,  3 Mar 2025 12:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741004824; cv=pass; b=ki/p7tMoJGP62hdT5zgouMerzGlnwFdBGcJtPLz2+2E23eQUVeaX/X0yjM3Ujh0q7OMCkGp5BhqLqe5M+KzdhSumZYVoGOkvel8YyhuBA1urcHqSeyTBxfx8KmE9NHB7aol1XNGRtWDEIBFHGw5xlbWzvfBe8aKSmEsNhoLsS8w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741004824; c=relaxed/simple;
-	bh=MjZmkjSJD6MJSiNXTKSj/Prb0VwfVgXZpp5KyeaYd/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=orQgWGC/KE9S9Ufj/wuWLkG1CIDihZaV+CsgtKyba3n7gKJ1ab6nWgWt257HgppzJ2SVZeflZdWvv90t2xHMpX28whJ3q5kLLShV/vpBNtrwdStWcizvSFGzRYBB/RVn4UoPIc6MFc4G0ht1HRguQ7OQSBAVZdhpzopvHBx7fkI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=CVNQlvez; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549DE2101A0
+	for <linux-clk@vger.kernel.org>; Mon,  3 Mar 2025 13:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741007488; cv=none; b=PnY0LUl3C9nZNvok7wlauuQqQju1ShZbSs7Vm7MuSQ4cI+i9Bg8AjQ6aEOuExYHv574CRCrFPAQaCqdBojR4nQ5E7wD04gxn7uaxZs6ZDtl49XcWK/GS765UxryCfRJkJNFapFD2n25/LVlgqiC19kqaV2xKyOXqbsT0B54+dJM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741007488; c=relaxed/simple;
+	bh=r0ACFUP8gmClzRtzoxXd/Ng22ZxFYgefb4nyAq8SEaU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Z641CvWww4bhJW8lZfaZHAWqmtkSseSFfFRulOFwHHOZpbHAeZgvCYy1PnLoMoBKtK194gyBmsnOi0qFvV2Jmh3ldWQWZerzPkxR4urCzcVMteUPHsU1NklI3Ax5AZfsN4eu7QDEaA3vSCT6yHr2X6KL2QckKLtb9x4tiXqrvmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pN4BIftL; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="CVNQlvez"
-ARC-Seal: i=1; a=rsa-sha256; t=1741004806; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=dCLmGOpMTmAuxvDdTWEmL7fKkPuH+dQVKI2GbNGEEroHR74o+fJ9Ksu7j8zBBKcab98QwVAg3SpP/eBDQUu+oH5U8orSSG3nCJUgUp6ta70uDZ1YXkgYlUX4oH+55L6EYmc6iKE//z4xO2tsVJhj2WaHiZ7MJECp8THtONN+HaQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741004806; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=KfBeFzP/GHd5Ky/PKHGXYMvqyX5pKSIENWPgz66iSM4=; 
-	b=LEm5jIlzhczQCmMjF9behFjYEXVl2qlXt2A4wF06HjSHE9jFInFLsQTeWXI7Z1nF327ScTZQohUs9K8r4u2Zx0kxxS4N3xkfuxf1UDVoqAuRGE4FV/o8rpZIxZ1cmQoiTBT5HRTi/0Ik6V00c8J0fE5O2q/ee016MVe52liHB/U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741004806;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=KfBeFzP/GHd5Ky/PKHGXYMvqyX5pKSIENWPgz66iSM4=;
-	b=CVNQlvezC9BgEqfUTl+0TxoPgFK5gwalMGh62+cf7hsN2qMQj6BVRH6H6r/2NdBs
-	Wx9BDzmYV04a7WDf8+QA9EMa6kC2SPrUPv1eTfWY3Y5C5fW/37MmSi4qEugw/zQdA79
-	UEcR/9cyl8Z/a6H6Qo9UhJaWwmm0j3OBYpk1w8zw=
-Received: by mx.zohomail.com with SMTPS id 1741004802325445.1739152543331;
-	Mon, 3 Mar 2025 04:26:42 -0800 (PST)
-Message-ID: <c9d436ff-1fc6-4f28-845c-c7635b31917f@zohomail.com>
-Date: Mon, 3 Mar 2025 20:26:20 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pN4BIftL"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43bc0b8520cso5806955e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 03 Mar 2025 05:11:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741007485; x=1741612285; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kBkIEoZc6BXsEi/Xl/zpbl5kQzqAT2D5l+fVFL9X634=;
+        b=pN4BIftLkHFRfR5AiJpuj19pHI5ut4jL33Ps2somyZnfde4kwsmxWa5EWjNccUAGsx
+         Aa/vUiFbOV8VpatiTYUh6iIvB36u+gDT8D7B4CalZ9xcEcr4iBDut5N1lqsCfNCDB8Xi
+         elv1Lg3eEJ9NUeVlmxFAwC7Tb1Tu9nk4GJmQb7t56JLL3/Y8EWqDzABdZ0OCDqMZn67i
+         +BnauNVri/z/ZjPDFShIjaZv+2JNzM2XfKWG3u34waH04tR/tYKETBogDDYqOrLUr3e6
+         xhp8k+jDkInJZbIgSm8PruesGfGGWBLDEwVJZE8ZKtaZJZxWOe459VwyTFlNbH/LdBEv
+         UVxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741007485; x=1741612285;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kBkIEoZc6BXsEi/Xl/zpbl5kQzqAT2D5l+fVFL9X634=;
+        b=oEqiVrR4PbTMogSmTj2gJEhpuTQNkSFdBBLfCsangUzWqj2letVFP4aEBG6Bb4Jfqq
+         A1TKJ0+v0ky7khTrQ15gDQg3p50ykYUzd1ywF2UeHvJeEjSfpXpTzLBGyMyeZlj3yJml
+         R/g37HkzAxkleCGXMRQx82TnqCvXdS8vY9F4SKLwVF6nw7H5iVZOwpMEnPgiPAoqMegf
+         77DvrvTFW72JDBnMsRg4WukuorC8s5gto+khO0DryPZ8tGaRL/LApS4ltO+u2jrRFoCF
+         WgI1OZglzyVsjtXjIyxe9xV+n5feH1eYQutcptDMbHmRwegG8MuDMmU7wpDgzfzZjUah
+         BW/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU413lbtxp5bwgCeQRBpOq4ex+K561CZWsVaM0wkbWfCFX3f34HOdKfp1jGmfNmUxM0VtOAGMA8ILs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8wsZv9Wktr0tz0gApDFumUfnLPpyx6pib+pXTXiE1TKjkiflI
+	g055ybMUoeNrg/dkKYPKR7BIB3ED8JxtefMMMAJFMMI7fDpSW3QH0tOX4UhnGhU=
+X-Gm-Gg: ASbGncv0SJRH0xeWg0SSqTOv81MhV8TxuC4YALAiPQ5F3z/AETy+gnXvooEG1wySr0c
+	17SWPACJRafhInXgbp5pe/aLrit7pBWGNan3sRYBoBN8mS+Tb/L59c/b58+jwTqhuCD7i2D4Mdb
+	iTy+Q5S9UHBFrNSr2nQQ7fxa1AGoOljw2/2mIMEU8Dmglbgcy5fd29wRDuUDf0AHIuD2GfOZJUJ
+	xN90xBd1lHY8IO9xSJhOekAYZ4sJvPkY06FLbGFe4EJ7PKMWI5RWSIwy52O0cIWhxcBlSCoZJU/
+	UsE6Gm+7Vgsv/ENNBUhx22nngvnJ44qzcceDUCb/lmWE2ULrVBl9kBEXu8Rc8TmJ6OhrU8rputY
+	=
+X-Google-Smtp-Source: AGHT+IFogfy4vTLX2D880m2Emlv1b0QxLptjPdeT4ir4OaH0lDrtdJ8Ijk5zG3y61SkNW3iZImJ9Gw==
+X-Received: by 2002:a5d:5f96:0:b0:38d:e3e2:27e5 with SMTP id ffacd0b85a97d-390ec7ca98fmr10768345f8f.5.1741007484699;
+        Mon, 03 Mar 2025 05:11:24 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([209.198.129.23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b73703caesm158307785e9.12.2025.03.03.05.11.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 05:11:24 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 03 Mar 2025 13:11:21 +0000
+Subject: [PATCH] clk: samsung: gs101: fix synchronous external abort in
+ samsung_clk_save()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] dt-bindings: clock: Add bindings for Canaan K230
- clock controller
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Stephen Boyd <sboyd@kernel.org>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor@kernel.org>
-References: <20250303-b4-k230-clk-v5-0-748d121283e3@zohomail.com>
- <20250303-b4-k230-clk-v5-1-748d121283e3@zohomail.com>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <20250303-b4-k230-clk-v5-1-748d121283e3@zohomail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112274afbe326d615e5b0444854c80000c326b26460fff2c574191e95b569a673be03c75ba6492d517c:zu08011227797b7a52fbefa521f9d5fee3000064a766f903853869ab26a37756b41ca77faa2d9e0002872fe9:rf0801122cfa59d5f02a79194a230f625700008f460aca7cd1b032c309e3721df5b9f8152e653064bd03aef47ebc6dabbd:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250303-clk-suspend-fix-v1-1-c2edaf66260f@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAHiqxWcC/x2MSQqAMAwAvyI5G+iCWvyKeJA2alCqNCiC9O8Wj
+ zMw84JQYhLoqxcS3Sx8xAK6rsCvU1wIORQGo0yjrLLo9w3lkpNiwJkfdNo3obXOdGShVGeiov/
+ jMOb8AUPfVtthAAAA
+To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com, 
+ Peter Griffin <peter.griffin@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1935;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=r0ACFUP8gmClzRtzoxXd/Ng22ZxFYgefb4nyAq8SEaU=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnxap7U2WN1YaRHw7W9uRbiu+2fenuf1A5eZ5Xs
+ bFL73mvclGJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ8WqewAKCRDO6LjWAjRy
+ urfgD/9/FuIh/ujTyKiv8Fzda0+kpo71fe+GrwZib/NQ3obhlvSc2WG2XGPhRQqKlMOt+DkEN5R
+ pkLY3fshHXDFGhS39zEkhSA7qIaltThWozUvf38use4WQqs4eriaJxl2vWe4+s2/uztjluGDzsO
+ 3h4ya7IYa8MwskiloUzzctUj72lrg1OatkYUBxed0T8dky1XnyAMxKJhvDO0b7pleAuVzbEaY6J
+ HOpd+dJS0SoZXlir3FNdpL1Tj9AO40Bi+GtLOYFu2qoBsIpAvgfZgsWkKgudL4fatx1TyChxbIU
+ WciyJusPm8nN9ZhblpHBPvx1TZBYKTqgSJH4l49LreqaSvPkll4IiVBtYdiTii3WKT/VYKpEQLm
+ eS1C0DH11KnPbQGXvk9hqQk/Hvnrwy/8H0By6KghKQZ1/KmpHEIEK3SzD9iYzK6ipbaMi53ihFx
+ MQ5YkGLXWljT8CAnz8WiWR+kP5Rc0ePEgX1/AH9j28xALgYmvS1oLEefx2divEis2r1ubctopys
+ xXiMu4ffHKQX/TM6zqkIFpeoXMvS+S/DjCpYVPeixRCu43QIBUO2/cSWIH8ArxA8OLg3vIZyTEe
+ n5W+B9NFHjIOfmXhKKZnbNo61bf2pAIkXP7TZPPB6X2Moqeo50SGuhjSusHrW7SMp9zX4j8mjvL
+ eagVef8tl5/9+hg==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
+EARLY_WAKEUP_SW_TRIG_*_SET and EARLY_WAKEUP_SW_TRIG_*_CLEAR
+registers are only writeable. Attempting to read these registers
+during samsung_clk_save() causes a synchronous external abort.
 
-On 2025/3/3 20:20, Xukai Wang wrote:
-> This patch adds the Device Tree binding for the clock controller
-> on Canaan k230. The binding defines the new clocks available and
-> the required properties to configure them correctly.
->
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Remove these 8 registers from cmu_top_clk_regs[] array so that
+system suspend gets further.
 
-This patch has been modified,
+Note: the code path can be exercised using the following command:
+echo mem > /sys/power/state
 
-but it only adds a few necessary UARTs and DMA macros,
+Fixes: 2c597bb7d66a ("clk: samsung: clk-gs101: Add cmu_top, cmu_misc and cmu_apm support")
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Cc: stable@vger.kernel.org
+---
+Note: to hit this clock driver issue you also need the CPU hotplug
+series otherwise system fails earlier offlining CPUs
+Link: https://lore.kernel.org/linux-arm-kernel/20241213-contrib-pg-cpu-hotplug-suspend2ram-fixes-v1-v1-0-c72978f63713@linaro.org/T/
+---
+ drivers/clk/samsung/clk-gs101.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-so I didn’t remove your `Reviewed-by` tag.
+diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
+index 86b39edba122..08b867ae3ed9 100644
+--- a/drivers/clk/samsung/clk-gs101.c
++++ b/drivers/clk/samsung/clk-gs101.c
+@@ -382,17 +382,9 @@ static const unsigned long cmu_top_clk_regs[] __initconst = {
+ 	EARLY_WAKEUP_DPU_DEST,
+ 	EARLY_WAKEUP_CSIS_DEST,
+ 	EARLY_WAKEUP_SW_TRIG_APM,
+-	EARLY_WAKEUP_SW_TRIG_APM_SET,
+-	EARLY_WAKEUP_SW_TRIG_APM_CLEAR,
+ 	EARLY_WAKEUP_SW_TRIG_CLUSTER0,
+-	EARLY_WAKEUP_SW_TRIG_CLUSTER0_SET,
+-	EARLY_WAKEUP_SW_TRIG_CLUSTER0_CLEAR,
+ 	EARLY_WAKEUP_SW_TRIG_DPU,
+-	EARLY_WAKEUP_SW_TRIG_DPU_SET,
+-	EARLY_WAKEUP_SW_TRIG_DPU_CLEAR,
+ 	EARLY_WAKEUP_SW_TRIG_CSIS,
+-	EARLY_WAKEUP_SW_TRIG_CSIS_SET,
+-	EARLY_WAKEUP_SW_TRIG_CSIS_CLEAR,
+ 	CLK_CON_MUX_MUX_CLKCMU_BO_BUS,
+ 	CLK_CON_MUX_MUX_CLKCMU_BUS0_BUS,
+ 	CLK_CON_MUX_MUX_CLKCMU_BUS1_BUS,
 
-> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
-> ---
->  .../devicetree/bindings/clock/canaan,k230-clk.yaml | 43 ++++++++++++++
->  include/dt-bindings/clock/canaan,k230-clk.h        | 69 ++++++++++++++++++++++
->  2 files changed, 112 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..d7220fa30e4699a68fa5279c04abc63c1905fa4a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
-> @@ -0,0 +1,43 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Canaan Kendryte K230 Clock
-> +
-> +maintainers:
-> +  - Xukai Wang <kingxukai@zohomail.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: canaan,k230-clk
-> +
-> +  reg:
-> +    items:
-> +      - description: PLL control registers.
-> +      - description: Sysclk control registers.
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller@91102000 {
-> +        compatible = "canaan,k230-clk";
-> +        reg = <0x91102000 0x1000>,
-> +              <0x91100000 0x1000>;
-> +        clocks = <&osc24m>;
-> +        #clock-cells = <1>;
-> +    };
-> diff --git a/include/dt-bindings/clock/canaan,k230-clk.h b/include/dt-bindings/clock/canaan,k230-clk.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..41edb13ea04bffaa1ddd1d1af87ae3406b688332
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/canaan,k230-clk.h
-> @@ -0,0 +1,69 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Kendryte Canaan K230 Clock Drivers
-> + *
-> + * Author: Xukai Wang <kingxukai@zohomail.com>
-> + */
-> +
-> +#ifndef CLOCK_K230_CLK_H
-> +#define CLOCK_K230_CLK_H
-> +
-> +/* Kendryte K230 SoC clock identifiers (arbitrary values). */
-> +#define K230_CPU0_SRC			0
-> +#define K230_CPU0_ACLK			1
-> +#define K230_CPU0_PLIC			2
-> +#define K230_CPU0_NOC_DDRCP4		3
-> +#define K230_CPU0_PCLK			4
-> +#define K230_PMU_PCLK			5
-> +#define K230_HS_HCLK_HIGH_SRC		6
-> +#define K230_HS_HCLK_HIGH_GATE		7
-> +#define K230_HS_HCLK_SRC		8
-> +#define K230_HS_SD0_HS_AHB_GAT		9
-> +#define K230_HS_SD1_HS_AHB_GAT		10
-> +#define K230_HS_SSI1_HS_AHB_GA		11
-> +#define K230_HS_SSI2_HS_AHB_GA		12
-> +#define K230_HS_USB0_HS_AHB_GA		13
-> +#define K230_HS_USB1_HS_AHB_GA		14
-> +#define K230_HS_SSI0_AXI15		15
-> +#define K230_HS_SSI1			16
-> +#define K230_HS_SSI2			17
-> +#define K230_HS_QSPI_AXI_SRC		18
-> +#define K230_HS_SSI1_ACLK_GATE		19
-> +#define K230_HS_SSI2_ACLK_GATE		20
-> +#define K230_HS_SD_CARD_SRC		21
-> +#define K230_HS_SD0_CARD_TX		22
-> +#define K230_HS_SD1_CARD_TX		23
-> +#define K230_HS_SD_AXI_SRC		24
-> +#define K230_HS_SD0_AXI_GATE		25
-> +#define K230_HS_SD1_AXI_GATE		26
-> +#define K230_HS_SD0_BASE_GATE		27
-> +#define K230_HS_SD1_BASE_GATE		28
-> +#define K230_HS_OSPI_SRC		29
-> +#define K230_HS_USB_REF_50M		30
-> +#define K230_HS_SD_TIMER_SRC		31
-> +#define K230_HS_SD0_TIMER_GATE		32
-> +#define K230_HS_SD1_TIMER_GATE		33
-> +#define K230_HS_USB0_REFERENCE		34
-> +#define K230_HS_USB1_REFERENCE		35
-> +#define K230_LS_APB_SRC			36
-> +#define K230_LS_UART0_APB		37
-> +#define K230_LS_UART1_APB		38
-> +#define K230_LS_UART2_APB		39
-> +#define K230_LS_UART3_APB		40
-> +#define K230_LS_UART4_APB		41
-> +#define K230_LS_I2C0_APB		42
-> +#define K230_LS_I2C1_APB		43
-> +#define K230_LS_I2C2_APB		44
-> +#define K230_LS_I2C3_APB		45
-> +#define K230_LS_GPIO_APB		46
-> +#define K230_LS_PWM_APB			47
-> +#define K230_LS_UART0			48
-> +#define K230_LS_UART1			49
-> +#define K230_LS_UART2			50
-> +#define K230_LS_UART3			51
-> +#define K230_LS_UART4			52
-> +#define K230_SHRM_AXI_SRC		53
-> +#define K230_SHRM_SDMA_AXI_GATE		54
-> +#define K230_SHRM_PDMA_AXI_GATE		55
-> +
-> +#endif /* CLOCK_K230_CLK_H */
->
+---
+base-commit: 480112512bd6e770fa1902d01173731d02377705
+change-id: 20250303-clk-suspend-fix-81c5d63827e3
+
+Best regards,
+-- 
+Peter Griffin <peter.griffin@linaro.org>
+
