@@ -1,131 +1,141 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED9F1FFC59
-	for <linux-clk@vger.kernel.org>; Mon,  3 Mar 2025 11:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741002250; cv=none; b=kyoONHxC9kN5/HowcDXVbKSUkqii9quRDtIUk9GLDxfxsf5eqvavmfDMWiH9xKrqi9kjz2ZQzjIo+EQPis12twqTeB4XRC9G2zuHfr3tbUc2ghoMQHCZFf7m2Jb83khOBNRRslQv1pIp//DaEWpnNoE+DZkBw8KtJLyyEX0fSFY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741002250; c=relaxed/simple;
-	bh=luQaXlapm+5N3MbCSgVBhzGQTHPZ+V+taACIos9pA2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xky6AKpSTYdoO0hLHxtUmjM/tLF5OLuXX+rtjtxh4GXgedAJC/PU6HxkobHp9Wd2ux8b2pwGGjScWtBTdzsexfpsvbR5xwkFhyNSt7eNomNAyJNYI48jtU4cufeRTgse4seDacW3vsi+zomItjfjgFnyk7Eg6YBngV2fnA3mI9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eay5GK+5; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7A31F0E3D;
+	Mon,  3 Mar 2025 12:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741004491; cv=pass; b=e6dGlvLVmIFjZ6bsrTTcdGb6BheqGPt63wiWALHnTYZ7e+f47XInbrOGGoLD6v8xx9Lg5L86ov1RGWf++QeJFe95FUN6mPrenCoY+Eq24nfe5yTFAyYS4OZsUKfsxMDmGM6L4y+M7g/mmiQQBct7eAG0JLKXn2aZNKHNjd7KwsE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741004491; c=relaxed/simple;
+	bh=volc7wpEytp1a1Qi/JANVrvsyBKoBmzJJEJNLozwvIU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=H2/o4rA7DkkON6EuuOr5tN8VA7+Axo+2Meq8AspRpGulZtl9hsWYlcx03waETYKkc/K13qpoFXFcMUavvI+Io8XCWD6WLHXZ5NZ9LMb3jJpy7qXF74P+8FZJvi+Jc659fFZZTBRF2XyigetFFGZdQ/HksQA9IbOl3Ji1EkRkHeM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=EdBJtbbg; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eay5GK+5"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2233622fdffso81548935ad.2
-        for <linux-clk@vger.kernel.org>; Mon, 03 Mar 2025 03:44:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741002248; x=1741607048; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/iVipZdD4W/u6xESxWCd4AYGgSc83dG/Ajr1AHkUSjs=;
-        b=eay5GK+5IUg2nQIEuL+HcdQXt6aY/71W1U7bdgeTTbeWlfeOvmrbJ69qEkHxL/V2S2
-         GOleLwYYUi40hcbZQ+Hk0bhdgJhrOhMStUUlC//QByBxlvAWK0KEJZPKd5oAixkFryfy
-         yek/Iyfe+vlMxJsPZBWVCNWDIInLhYTyx1XKF9HUPWKDnlLoFLbaCM7vzcXgldneFKSQ
-         kNNVEqBZdxOsG9Gk/dKC5P9W6uesN59f4qZ6P3aDGJ7P8XlmkMvg5/+7bfZ0qYseXWra
-         PCL9yXbel5L7q7qOApt5I3GLZD0KPBWneMTrq4rqRbZaS2uv3XpJTgLZlLwDXJ0ZvWbE
-         sVUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741002248; x=1741607048;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/iVipZdD4W/u6xESxWCd4AYGgSc83dG/Ajr1AHkUSjs=;
-        b=biQHQISy0YGF2cS9bogX66FekfQegl7ejXUtSQ6SyR47ACJPuirXfak53MT0Ljq57k
-         9GuU9P2Q0lttAlVS/95Qr0d8g9jJJO0MeHjLxLn6afZJpD/PVv/E0fjJ0euK1KcDrjLS
-         VKH+x7SgvN5FMszI22qyVIxtaFqdhMxyj/n1yKAvlO9sTU9Cy8dYUblVJDs2C2GTNECz
-         7RFAHH5IHeNasUlp4r6+eWqHoAoRDf66hW5C2sgChfo79kNUUzJ3LqB5S8Q2jG+d09Lt
-         yGjsXFh2AoNRg92udNlJsdk/ZyDGC8ZJ8oeAM8RPh0JJap0wDHnK9pzyumqI/WuXlC3P
-         s6fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrcr67r6ArH3m07+aJRKf9z0inABg1eS+5oO44UyzrBzYV9IeevrnbX1msvLUmH7PBn8Z7wqaAGR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVoCrfpjGHbqschD+1mnJB5VFForhrT1/CbTpGXbIHvooPiWLf
-	pwWuU43AF0gF1pblAkOillzrTXGLQcvJyyatQp+1ta3wN6QIFZ2Z5xhOtugbSNs=
-X-Gm-Gg: ASbGncvU7Ug8igceMQLVNuzdumbEbu0pOB9cYoCM1mFPghdjVlwQMG+1mXqrCo5S9Ws
-	Rsu1cHvkTWGlyBJn0VSCC1uv8WIuZIbx9HJFnx6lR//uG0VGHi4YpufkdkczSXwvNFPJJzxUBqc
-	RhyekSy7RlHoCgBCSy/ZoV2snZHQ8QaIwczVqP02zAB7FddcA4Y8QEQ28MD6n9rrcKNawlUpj2C
-	0sIJJKX4BEYQEaCTX2g1flruHWeewtho5WFsureQ4yT3aIJU0liUhcLFlloh+8nBEZFcuSBeJjn
-	lgQHqGqqinMKLbn7GiYkueviBbMlfmqxPonMT32YGImdOg==
-X-Google-Smtp-Source: AGHT+IHK6Lers8i6supYJLggNOwZjS+MBopT5CAeMJGX3443/hyOyrprvywUIlovcrK7G39ADGHiQA==
-X-Received: by 2002:a17:903:1d0:b0:220:bd61:a337 with SMTP id d9443c01a7336-223690ddef3mr188436085ad.23.1741002248534;
-        Mon, 03 Mar 2025 03:44:08 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235050d7ccsm75787615ad.202.2025.03.03.03.44.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 03:44:08 -0800 (PST)
-Date: Mon, 3 Mar 2025 17:14:06 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
-Message-ID: <20250303114406.xbfzhw7nvxdildb2@vireshk-i7>
-References: <cover.1740995194.git.viresh.kumar@linaro.org>
- <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
- <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="EdBJtbbg"
+ARC-Seal: i=1; a=rsa-sha256; t=1741004471; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cNoqCE84Lj/LK0jWFjUNzzlRm+/GkYA81ChiRnkKZJRcGs2VpgP7B/UJIlprEXWsGOjxs9Bhhp6MtEFRQ62XBbnL9glKIx5uhRdjD2zrUERPgK6dq/+bXYwkVW1ulca5kTrTOX5l6wZevyE6woAaPxMm53Ku+72qmE5c9b15P48=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741004471; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=K/QOC2qh7IZvAZiuNVR0WUquzApIsQsNg8wTJwm843Q=; 
+	b=Fu+wA9fKHI50RYfa6l3yUGb5WkZqt8V3akUPp/uJquSCrS9GB0KwD+dyfwfYD2C1fWAQ3AA0tYVCEINSngC6CW9sZT5alWjoqWi/5zvNFmDKcr9zLlQdQzkTa3T3Mci5YHCESIxGoL5YC6cNnBZeVre603Dh6okumJq0D/FHuNc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741004471;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Feedback-ID:Reply-To;
+	bh=K/QOC2qh7IZvAZiuNVR0WUquzApIsQsNg8wTJwm843Q=;
+	b=EdBJtbbgDKepHLvkqdgGyBm24c87ivKwfFIEAuMczCre9TiNvGPepi88uOoV3Jul
+	M9TsQEeHOYQ5gPK5GcuU4QdgXG/3H7FFjhUCc+V/gwyv7PsdC3xrR8N/wS+LBQgUcdN
+	y7soF2HIpDDlkmJQnGl1zGOKDZ77I/Oi4cqkFPgY=
+Received: by mx.zohomail.com with SMTPS id 1741004468938559.7940562973238;
+	Mon, 3 Mar 2025 04:21:08 -0800 (PST)
+From: Xukai Wang <kingxukai@zohomail.com>
+Subject: [PATCH v5 0/3] riscv: canaan: Add support for K230-Canmv clock
+Date: Mon, 03 Mar 2025 20:20:36 +0800
+Message-Id: <20250303-b4-k230-clk-v5-0-748d121283e3@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJSexWcC/3XQwU7DMAwG4FepcqYocZI62Yn3QBxSx6HR2Aptq
+ YBp7066gbSykVMc6bN/5yBGHjKPYlMdxMBzHnO/L4W9qwR1Yf/MdY6lFiDBKJBN3Zp6C1rW9LK
+ tPdikdeLYEIgiXgdO+ePU7fHpXA/89l6aTudH0YaRa+p3uzxtKskcvEPpXACIqKNT7BsXGbVBi
+ oRsvUl4bh0m6kqWTRU5Bk0GIclyUopGUowRKTVRt5ZLpxgwklgSdHmc+uHztN6sTxF+NsHVJrO
+ uy6VV6K1yjhEfvvqu34X8cl/SLgEKs1IBXLM2JbQ2kKdEtxlIfc10A4RegbEIa7YEn81FWGXW3
+ BSuSHoKTauNC/9MVXjNbPA2aGNd49WNqepiKvg1V4UDqOAVspMcb3D45eWrpFtzWDi2WgagYOE
+ vPx6P3yDhpuqNAgAA
+X-Change-ID: 20241206-b4-k230-clk-925f33fed6c2
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Xukai Wang <kingxukai@zohomail.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Troy Mitchell <TroyMitchell988@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+Feedback-ID: rr08011227ec6b7bdb78d015905e8a5b7800006b6c3e9f124e09cc2749c9387639307a802e9dac3f53e8f8d7:zu08011227834022bfad283179f557eec2000073ae6186d4c306b7ac224e2623b7a8ddc8d1e60a8ca9a28e03:rf0801122c69cf2ce71ba0d4a64bafba3000007b90b30649d48280376ff6c27451711db85aa7d804be149836bdeef4867b:ZohoMail
+X-ZohoMailClient: External
 
-On 03-03-25, 11:16, Miguel Ojeda wrote:
-> On Mon, Mar 3, 2025 at 11:00 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > +/// Frequency unit.
-> > +pub type Hertz = crate::ffi::c_ulong;
-> 
-> Do we want this to be an alias or would it make sense to take the
-> chance to make this a newtype?
+This patch series adds clock controller support for the Canaan Kendryte
+K230 SoC. The K230 SoC includes an external 24MHz OSC and 4 internal
+PLLs, with the controller managing these sources and their derived clocks.
 
-Actually Daneil did suggest to make this "Struct Hertz(c_ulong)", but then I
-looked at rust/kernel/time.rs:
+The clock tree and hardware-specific definition can be found in the
+vendor's DTS [1],
+and this series is based on the K230 initial series [2].
 
-pub type Jiffies = crate::ffi::c_ulong;
+Link: https://github.com/kendryte/k230_sdk/blob/main/src/little/linux/arch/riscv/boot/dts/kendryte/clock_provider.dtsi [1]
+Link: https://lore.kernel.org/linux-clk/tencent_F76EB8D731C521C18D5D7C4F8229DAA58E08@qq.com/ [2]
 
-And I thought this is probably what everyone would have agreed to and did it
-this way.
+Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
 
-> > +    /// Clock enable.
-> 
-> Should these be e.g. "Enable the clock." or similar?
-> 
-> Moreover, I see quite a lot of documentation about some of these
-> functions in the C side. I think we should not regress on that. Should
-> we link to the C docs, too?
+---
+Changes in v5:
+- Fix incorrect base-commit and add prerequisite-patch-id.
+- Replace dummy apb_clk with real ones for UARTs.
+- Add IDs of UARTs clock and DMA clocks in the binding header.
+- Replace k230_clk_cfgs[] array with corresponding named variables.
+- Remove some redundant checks in clk_ops.
+- Drop the unnecessary parenthesis and type casts.
+- Modify return value handling in probe path to avoid redundant print.
+- Link to v4: https://lore.kernel.org/r/20250217-b4-k230-clk-v4-0-5a95a3458691@zohomail.com
 
-Something like this (from print.rs) ?
+Changes in v4:
+- Remove redundant onecell_get callback and add_provider function
+for pll_divs.
+- Modify the base-commit in cover letter.
+- Link to v3: https://lore.kernel.org/r/20250203-b4-k230-clk-v3-0-362c79124572@zohomail.com
 
-/// [`pr_debug`]: https://docs.kernel.org/core-api/printk-basics.html#c.pr_debug
+Changes in v3:
+- Reorder the defination and declaration in drivers code.
+- Reorder the properties in dts node.
+- Replace global variable `k230_sysclk` with dynamic memory allocation.
+- Rename the macro K230_NUM_CLKS to K230_CLK_NUM.
+- Use dev_err_probe for error handling.
+- Remove unused includes.
+- Link to v2: https://lore.kernel.org/r/20250108-b4-k230-clk-v2-0-27b30a2ca52d@zohomail.com
 
-> > +pub mod clk;
-> 
-> Just to double check, do we need any `cfg`? I see some functions exist
-> even without e.g. `CONFIG_COMMON_CLK`, but I wanted to ask if you
-> tried to build it without it enabled.
+Changes in v2:
+- Add items and description.
+- Rename k230-clk.h to canaan,k230-clk.h
+- Link to v1: https://lore.kernel.org/r/20241229-b4-k230-clk-v1-0-221a917e80ed@zohomail.com
 
-Yes, I was using this under `cfg` earlier, but removed that recently after
-testing this without CONFIG_HAVE_CLK. clk.h provides wrappers for cases where
-the config option isn't available.
+---
+Xukai Wang (3):
+      dt-bindings: clock: Add bindings for Canaan K230 clock controller
+      clk: canaan: Add clock driver for Canaan K230
+      riscv: dts: canaan: Add clock definition for K230
 
+ .../devicetree/bindings/clock/canaan,k230-clk.yaml |   43 +
+ arch/riscv/boot/dts/canaan/k230.dtsi               |   25 +-
+ drivers/clk/Kconfig                                |    6 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-k230.c                             | 1717 ++++++++++++++++++++
+ include/dt-bindings/clock/canaan,k230-clk.h        |   69 +
+ 6 files changed, 1853 insertions(+), 8 deletions(-)
+---
+base-commit: 0eea987088a22d73d81e968de7347cdc7e594f72
+change-id: 20241206-b4-k230-clk-925f33fed6c2
+prerequisite-patch-id: deda3c472f0000ffd40cddd7cf6d3b5e2d7da7dc
+
+Best regards,
 -- 
-viresh
+Xukai Wang <kingxukai@zohomail.com>
+
