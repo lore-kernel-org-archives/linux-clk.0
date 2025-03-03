@@ -1,126 +1,124 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9DF234989
-	for <linux-clk@vger.kernel.org>; Mon,  3 Mar 2025 23:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692351F153C
+	for <linux-clk@vger.kernel.org>; Mon,  3 Mar 2025 23:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741043852; cv=none; b=lyV8BE0qn4Qc3HXMjjaUVZJOOaP9rUtbJ7E1YAwDEEbBN8xoBWr9NZrJzhyiRG8nLEyjDc5/RJxVyUk13XgJ2qLVqTxp5+NYpi12+tkr5OhBe6Uho/jYhKdeIfeT4zTxdTQ7HoVs6xYWUs20rUc7xnrIuc0Cg4ztslXttnOe8hQ=
+	t=1741045926; cv=none; b=BfVSsbbyH62woPIbjNeS+dtCC8dIiyBZZieYD1bPcHztbged0BjRaqOQMj0y/+Jt620MjPr2pIFLKzE/QPWi6pgge5AgFR8m3gyif9ACY4aTTrWq2E5pPCfzacjSMZJzrINEYZXDYapW/srwwbay2uSxDgw6r6pH5I/slo1dVQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741043852; c=relaxed/simple;
-	bh=NPxdklpo+hfB6Q5aEYjRbk28iZGSbxF0mOWy2NS6sNM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LGDYep637fQxYwYtYklf4D0anRe6iB97sigenxU3ouczS11kL9vz7lm6tBFdSg/sglwabBYuniZdGIFH5GM1CM9LqqQCIUBAhluoXJnnFOYY0N7ybJCqr76onQsrRRnEN/HrIylV0p5q6PNuESOvVku2QznoARj9nKgWuWYxgqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JZwTJNTS; arc=none smtp.client-ip=209.85.219.174
+	s=arc-20240116; t=1741045926; c=relaxed/simple;
+	bh=oIoGneK3UeGIUTIlDf4KvKMqAMpwSNXiYhvuFQnjiiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fkDFtRUPOQXjahjuAN3WvosUFmYAJ5rX7+Vf+rjw3W3TYujfdb/UckUOoALIKyQoCbh6PxK0n3Wy6ilAi0npsKa1PfMizHQTjwfQ5oofybQ5YBhvZ1lUG4y4cRkXe/ez80oNn9pPz/hy6Wf9FUt4Ubn2eC/R2WPgyH/lpyo0ARg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uwOkxCHK; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JZwTJNTS"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e608b2698fcso3439383276.1
-        for <linux-clk@vger.kernel.org>; Mon, 03 Mar 2025 15:17:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uwOkxCHK"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bae572157so22105341fa.3
+        for <linux-clk@vger.kernel.org>; Mon, 03 Mar 2025 15:52:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741043850; x=1741648650; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nJU/yvYz6haiwFOMPRsCHOU6kFhXq6ZBBygufHFSnzw=;
-        b=JZwTJNTSJ03cFQz1dWsA/AU9gfbqKKpWb53dCTMAxSDFBa4bQAUB4Gq9V0YAuAwavQ
-         rJcTfIChgqj0TQ4GDoHoZlXfOePZ49Rh2mO9VxlJ4sLVLQgX+tXtdhC0oEmXtjhJiQC4
-         LR4PFmpw4DnjrQkH2dVDgsFJuMwoSxHgipvDOK9CXDlE/gEypP9WoA8yHOGoe1y6plyg
-         +b2H+PWHY9NhdSaUFNeDwbznzU+6S/qTeQOlfMnZZNEpphuDS5y+vjHaXKTJjfV4ZRxM
-         ia7FUPwZxiL66EcFju7Y3sakaRMe2uytakcxz6NJ6we1OZfc4XSvjcNcMJy1TrMjEEvs
-         nQwA==
+        d=linaro.org; s=google; t=1741045922; x=1741650722; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2n5w8pShYE8jYi0hvqZwRKlhrBdNHQSTgdC19YmKRiQ=;
+        b=uwOkxCHK04UPTqEcQ6DU1M39Ye2IkIm6I7G5M0mdQ66JtrxfEWYP/RZ3AW9J3GQ1f8
+         4Lj45jA/hEq6ySFSP1Pb+nrodlS3B4GN9Cq+vrB5mb8DQFiCJINlBVeHb7TrRqRqEkkd
+         3hxzXeSd/HMAt3vNxcpgHRg2uBXYAtmxSR7mHRM7lgnHMAdgCN6Pu0P+9iP5J3/Jk/lw
+         CZta1w6+gWKKn6Dw/z483XOJeFnqGN4o5LgrjsYjkj25x09iEsBXN1SSAklEYtzjj597
+         zXKstTTN1AJO88Bo5Em/eXxQIAMGx6Ktfcgi491mnppi++ZS7qltjNN9xbpf5tllgb83
+         X2iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741043850; x=1741648650;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nJU/yvYz6haiwFOMPRsCHOU6kFhXq6ZBBygufHFSnzw=;
-        b=JLOZoFOdxKPIv+Vf8CHM0Fxsvm+MU/vIOF/412gAvR9J6VyglBaqnUMoyfp7stNn7L
-         q0CtkqWB5sVcCqYxSUX1usSW3ExHLl8g7WxI0sdqNByu3vUKZ0MlhypGE37pUHaROdcP
-         wina4dQHxrycgXfF3qm0PcLQ8LsoK5jR/0Q2uap7SdBJ+4xL+2ZTyUp12BL3xshbGjuJ
-         ubjXYnNE9eJKmrsBa0/d2kMNKQ1VHrRqdESg7VUCmujZMIkgwP3s+gK+vOaWBcA1xEq0
-         ZCnINmT8g8n+Tkl2pSrs99f4imkmURcB92bVcAOTgfgtKira8Kp73fVuHibQAygP/all
-         5R3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXV0EC6no1PhyfqIRELsfsls1eozEe4xYPmDsEeSB6o+ab9fIjKiVYMFWY0nFcZPc227QTm7FRU+3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKdJ75M1uc61BNsxQJhIn9dTQkXF3RQbkmXgjBjhMs/m56GFwi
-	Nzkpk+SRENPx45DY1Wn36P6+AR40zrgclI4d7SN6anhq+mWrdv+cuTc9so+lZfOz8oX/U19z5iO
-	MAkMNyNZ4BLSL2E2MFrNNpPb83HBLfi3QM/yHBg==
-X-Gm-Gg: ASbGncsMq+VNYmN+eQxyMG3bHkqXdeUFSgBrhxzjXIjojIHC3ngYgONyDa8N/Hy8xQn
-	VtQUSgG25uHUuoxl6SevOakV5lV4ysZU5vAU7orxxiM7mqtuFy1iMqCm/g1ijEJyF6b3igcW95J
-	Lq+r9e6kD5KquhHI/buxl5kBo461PEJXazcDm52OtrwniqwODOXwinpyMhFwM=
-X-Google-Smtp-Source: AGHT+IE6J32scZcQCUr9Yh/ghM/bua+zO4/HH6rxu31moRlCqq0EicPtjHBgPE4qSnbGz5efb6sDCSe0Ys70/YyeEEs=
-X-Received: by 2002:a05:6902:2405:b0:e60:9f80:535 with SMTP id
- 3f1490d57ef6-e60b2f1ceabmr19768288276.40.1741043850226; Mon, 03 Mar 2025
- 15:17:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741045922; x=1741650722;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2n5w8pShYE8jYi0hvqZwRKlhrBdNHQSTgdC19YmKRiQ=;
+        b=FQFAHEodtK8f2AHVk0k6eVKwS/i+X9WSbDXrvqP9biS4qUM+mSgQS/TZ9odpvKVKAS
+         Gi7A/shwjc9KPLyrv0+9V0QbYofPPUUkol7A4qPDs2zK/tT2f1U9s4N8eMew5bWaSnFs
+         du/rflofDcSe8n8stnDYoNLr4s5apUEjPkMOuGtqJ0TNch+k7pUvAghuQCPhimaRy7h6
+         nSEVXllTOd/PxWn9DDquYBqv5ajB6Z9OGz5VDD3yy41cu9udTsK7Ozg68G5rwZ8h6yGO
+         qjtbbcO9EgAunyDyiP3tVzy099pWDzy0sdTZeaxd6hTQcBArYy/bYB9++6jpRZx7AeaR
+         9gDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWOApAe1xhcxaI+hCjq7nXt712Vj5X7pqANW+ADnZjwQ1bMYzB0/Tazc63SVkBQPQiRRhh3hHVnso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUfTHByafySAB6PfhsEHIbPVpESTosmCbedhmBAuXihKg1BI/J
+	82Hx+HCkV7K6c+oTYMJKZm+2A8cjoylpiVYYTGu2jwpOxjd6gStR6bT8xAyInt0=
+X-Gm-Gg: ASbGncuI9ltGScmA0QyLqO/Vo74rsKSW+nkdbyoGzzku3WqtHkaaFYcT+b0iKtVRdHN
+	ZgyniCsgGivNDBb2+ixJjoUWA3i8NbqXZHwg7myiCe7RV8UE1o6TLEViPSYeQDDR+p3v9/WGZSN
+	U+vXQKQrVyZWpVtYofVYBkANzsQZpxU4JZ86jPtbMc8GdrOx4CiKARxjH46izK9iRwVTtLoGV52
+	Xlfeh/fmDTN7vY2DZMGTL6cGk46uERaUjBQbkxwTUo2xvPBVrtAE6jlaSBijMyD4l0aD2by/StH
+	6ZKAbunWzBlVy7GfHxgOpjlEQsusEv0VhCgihDRJ1043VczUDXYk06AobDpZK/YwgGVWorkOP41
+	mTk/x0M0JiaKHAoOsN6kj4jy6
+X-Google-Smtp-Source: AGHT+IG3xHqjP7zA+YAYgWJyZt0k8hzZjqRHbgURZmqSE3LkmE73kUYMjjbwKv1sJmuR3k/fg7H/Qg==
+X-Received: by 2002:a2e:be8e:0:b0:30b:bfca:bbe3 with SMTP id 38308e7fff4ca-30bbfcac3ffmr16343571fa.6.1741045922539;
+        Mon, 03 Mar 2025 15:52:02 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30bc7b379f6sm2108401fa.19.2025.03.03.15.52.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 15:52:01 -0800 (PST)
+Date: Tue, 4 Mar 2025 01:51:59 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: qcom: sm8450-camcc: Allow to
+ specify two power domains
+Message-ID: <4uuvboq5yfvdbqxd2oreu4bxfqyqegzl5uahgchw7wzlkyduyh@spjzrsef5flg>
+References: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
+ <20250303225521.1780611-2-vladimir.zapolskiy@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250201-topic-ignore_unused_warn-v1-1-f29db78cea3a@oss.qualcomm.com>
- <93b5004dacfe1151ca3abbb0fa31eaa6.sboyd@kernel.org> <87241686-90b5-44fe-b4e9-1a59451e3575@broadcom.com>
-In-Reply-To: <87241686-90b5-44fe-b4e9-1a59451e3575@broadcom.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 4 Mar 2025 00:17:21 +0100
-X-Gm-Features: AQ5f1JrNfSaFjOZVORaIa_wvDSL26potTqDwKAKcZrvq460zrESF_F1ECLmvBmM
-Message-ID: <CAA8EJppgU7_BoVCDfTuKVveBnnhtHUN6jEzkUaAou7=aypD-Dw@mail.gmail.com>
-Subject: Re: [PATCH] clk: Warn (and therefore taint the kernel) on clk_ignore_unused
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303225521.1780611-2-vladimir.zapolskiy@linaro.org>
 
-On Tue, 4 Mar 2025 at 00:16, Florian Fainelli
-<florian.fainelli@broadcom.com> wrote:
->
-> On 3/3/25 14:48, Stephen Boyd wrote:
-> > Quoting Konrad Dybcio (2025-02-01 08:52:30)
-> >> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >>
-> >> If any sort of ignore_unused is in place, it means one of:
-> >>
-> >> * power is going to waste
-> >> * the platform description is incomplete (missing consumer-provider
-> >>    relationships)
-> >> * the platform description is just broken
-> >>
-> >> Many people will happily declare their job done when a platform
-> >> magically happens to work as they make use of bootloader-enabled
-> >> resources, which then leads to double or triple the amount of work
-> >> of another person, as they attempt to reduce the unnecessary power
-> >> drainage and/or ensure stabiility throughout a suspend-resume cycle.
-> >>
-> >> Issue a good ol' warning (and taint the kernel) to make such cases
-> >> obvious and hopefully draw more attention to it. This way, it'll be
-> >> easier to avoid effectively untested code or DT description getting
-> >> merged into the kernel, or worse, going into production.
-> >>
-> >> The clock subsystem plays a crucial part in this quest, as even if
-> >> the clock controllers themselves don't draw a lot of power when on
-> >> (comparatively), improper description of clock requirements has been
-> >> the #1 cause of incomplete/incorrect devicetree bindings in my
-> >> experience.
-> >
-> > What is a user supposed to do about this warning stack? We already print
-> > a warning. I don't see us dumping the stack when a driver is unfinished
-> > and doesn't implement runtime PM to save power.
-> >
->
-> Agreed, I don't think this is tremendously helpful given that it does
-> not even tell you what part is incomplete, it's just a broad warning for
-> the entire system.
->
-> Assuming you have a clock provided that can be used to turn clocks off,
-> and you did not boot with 'clk_ignore_unused' set on the kernel command
-> line, then you should discover pretty quickly which driver is not
-> managing the clocks as it should no?
+On Tue, Mar 04, 2025 at 12:55:20AM +0200, Vladimir Zapolskiy wrote:
+> During the tests it was unveiled and later it was confirmed that SM8550
+> Camera Clock Controller shall enable both MXC and MMCX power domains.
+> 
+> Since power-domains property is not specific to MMCX anymore, its
+> description is removed.
+> 
+> Fixes: 9cbc64745fc6 ("dt-bindings: clock: qcom: Add SM8550 camera clock controller")
+> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,sm8450-camcc.yaml          | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> index 9e79f8fec437..d7fc9e5a2d20 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> @@ -37,9 +37,7 @@ properties:
+>        - description: Sleep clock source
+>  
+>    power-domains:
+> -    maxItems: 1
+> -    description:
+> -      A phandle and PM domain specifier for the MMCX power domain.
+> +    maxItems: 2
 
-Unfortunately it's sometimes not that easy. And some developers
-pretend that 'clk_ignore_unused' is a viable way to run the system.
+items:
+ - description: foo
+ - description: bar
+
+Also, don't we need power-domain-names now?
+
+>  
+>    required-opps:
+>      maxItems: 1
+> -- 
+> 2.43.0
+> 
 
 -- 
 With best wishes
