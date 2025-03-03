@@ -1,137 +1,153 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B57A20E706;
-	Mon,  3 Mar 2025 17:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4A51EDA3E;
+	Mon,  3 Mar 2025 20:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741023968; cv=none; b=WkqM/nSdlnkcSlKnopNF/QCcnKN8zxDr3xVsqI45G1PhhjJE5GHwO+KZPmgofUoMFeMsdpAoCY1N5y6uMagjD67ZJP0fGKjdXqhtJBg+K6SN2wwDb4fABKUNfaa3SOcZryicnZFuA/aHFTlPE6b9l/UOSLgY3Pyt88PZCA2Av5M=
+	t=1741033675; cv=none; b=gGV7DmTijVBcCBJXgDTaqaDikVwCmcH2XuYHWOWzV/OE3zTxOMoziC0RA+pkwx60hlQ7SybNVUDbRKDkuYIe4z4HrBvQlwd3NUu6Zwf5byI5O660twBHJ8H5lUt+6ESy0+M3dSHJM3zJgiO+mb1CKuNnkoGGAYmgoxS61Ai9u6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741023968; c=relaxed/simple;
-	bh=LFg0cQbBhx1KCS4G96feguNswXa0ogQID7bdaU1QdTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DWb/OrKRu3AjB5fOj2gkBg2rY5EEYIexlfQG9c8EpZoHryF5uSfmQwR0P45L9PNvpWxSLUQU20o8KG4GxTt1gHDNghRfpn1ogSo3uncojPMFgKuKpZ2KfvcQ7LGc1Ux7qFhv/J9849CsDEnBPNbFmgmS8y0mUoEnXXuKCTK8YgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cS+ybbp5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741033675; c=relaxed/simple;
+	bh=gMD9k1Qgdbybv2uBOP8stTocBsHxADMCNCVyb3oQlDk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=okrwKvnHlkoK6m5WDyFjFGT6o9vesj08PBn1pBM4Au3oMKpMuHreSrT/Yih8HSp7FbOpR2u0C55dsAdnOGYk5KYJxh9aVBf68iWSMcEY3kuFaDsirP7OWNrS0bzhHVjye90CC3ASatsRUA6W9mth6kjnRHEqn4C5tR/HzixkkGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S53b1Hmf; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cS+ybbp5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0379C4CED6;
-	Mon,  3 Mar 2025 17:46:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741023968;
-	bh=LFg0cQbBhx1KCS4G96feguNswXa0ogQID7bdaU1QdTQ=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=cS+ybbp5AlugX98w36ZHqxBNZ2Myr1Hp6RQYyvPR0/IBWMFhxQzLZbks0OBEDkcfL
-	 ldhVShIMHgCpFsBy+Uonyn1shmmsTLV1NMB9UdQowyxf9D+OyruavDqdj2bg/QwsI/
-	 UadV3Ximi/eQYLIRP+k3ec+Xx01RtAeJxPlA3554KiQPG1/6QAjRyfDIiaUYl+3uqa
-	 0QnekGNJM86+s0IXEDeCViYlWt5sdMVPbPCDhpASBnlgfKj4uEnPxUlWLgRckE3guM
-	 xH6RoiEnjMRnl05QGY+jXCyvLb+ZmPMD0k6NuOuvKVU1CzMRFo+1lGgl4qKsr18FD4
-	 XkN7Z+pKKlCCA==
-Message-ID: <ac4f8b31-2a9b-4860-a72e-379806ee9f77@kernel.org>
-Date: Mon, 3 Mar 2025 18:46:02 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S53b1Hmf"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abf4b376f2fso424623366b.3;
+        Mon, 03 Mar 2025 12:27:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741033672; x=1741638472; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5b60CN6bgvsucEwRWCH6wo9YbTIOsAqIH7mkhNo9S0Q=;
+        b=S53b1HmfY7/LkXz4xqy/3IHCbp2NDaZ/TwmTi7F1Bf+pkCwkUgLNeGWxXTWJDZqks2
+         xNpOEApyTYh38h6pZC7GHNkNM8eizrZk9JR7dUaV49NucXMwauhBk4YR3XyqSGlRypCa
+         lTT9FxRzT8KJ38DH2CgoBjUDh0mgbBMp/JM27iKeoa+6IJ/S2I5DF/S27Lq2M3hgqqhM
+         g6OzoyRaFN7QS/0bjOfkyVenBNIxL6a09jWFS2COA3LnJv8AT+NTFnx2JNj+jB+LwrRd
+         siMW5wO11wBeqy8vo76lUwDL3aMFYrGd3HSuTBcje2sYpTcwhLj8drhrf0D0POyUKCom
+         BAng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741033672; x=1741638472;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5b60CN6bgvsucEwRWCH6wo9YbTIOsAqIH7mkhNo9S0Q=;
+        b=tk+8BmGcjzBCjDvRii1FhTkRy5nIJzZP6DZMr015WCC98CrN+lo76iRCqudIIcM1V8
+         hKi850FzyYRzCPjBDYQ5vnKGvUGjqo0AnSsE9rmUm+FOQKVeV0qvV2xrbv233kzn3/GW
+         RHMQh+Y/+nfyb/eHfFh3r8MhSI/eX54iRxBAmnrlXYLuLoITRep36OSE3bNHtbKIirLs
+         vL/xwBrDD3vUqlukn7UrdyYpmt/9ZvLxj/K8RRdh2exyJlc9G7y0gRfgeYhzSFKBS3Di
+         p7IAyvJzMH4iczLqYb5Mr35wvOTquJcaAzlMiWy4VwOA0zegR+tJR3un0DFYggJUOWsK
+         MqkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVU9ihqk8BAtCR0uq6fvaH81ng8UYxuc0C+SR5OITjSfqcm0bMKwesYHfdZKPWNMe+VfiHk0yDjnUyxGyDW@vger.kernel.org, AJvYcCVUned7Fy3fHntXdXwf8LnPSGchVxfBSAOB6zTvccOwOKSW6kLZaXjJuoeCEgQWvEOhIQxYOLTTxw4J@vger.kernel.org, AJvYcCVpLEpVtULO3fOYft5OX3UU5K0hcUcmel8yISMTmQR+tQ8Mo08tkPR/DES659dFqSE688r1wgeoH0GO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcUbDMbJCpgiq9mtd+fNuJLblGXrBexvN2XVLvVQ9NlhsgEmGm
+	LVdeBENQyOdjaHQq9t9oIb5HUX4e6uWj7h2NUOASt9XV6AnBIfsbz86CNw==
+X-Gm-Gg: ASbGncvIaoRcXPftY3naV8h0mmA2mv0PBRf+5b3YwjSQW6qDBlhcQyfOieqDlom/Z50
+	R8JUAaw9rvHHetHhhjhqi4AnoXyizHdEJ/AtTAC0XHcGnwufLZZklfW5JA+biQTB964Wvk8LBBO
+	bBNPdARvEGpTVVICtqNDECd+rzLIa2cuM33gzrfOJKGJ2z2htjg15A4YDguFA1VtDzCdXq2jBky
+	oyqy8I4tvUni9CGTKl6xiMSNc/T9szqR4LrNgnANWZ/nodw3TALzygdbA2l1DCjE7sn53AE3X49
+	Zftd4SenYkNiciu6vitKl1GlUqg+udgCB36J7USa2sBsqo6f8Fky7Ys0VwQP0fEleJ30nuYnWzY
+	DtedNq9DMcaFLZII=
+X-Google-Smtp-Source: AGHT+IF77BedJBseCcnU1IQQMJBf/RtmIsVemRMwmoWoDaynloyfr0FemI6jF/O3BZRfQsaxHPJFsA==
+X-Received: by 2002:a17:906:478b:b0:abf:5759:7aa9 with SMTP id a640c23a62f3a-abf57597d07mr1137099866b.7.1741033672158;
+        Mon, 03 Mar 2025 12:27:52 -0800 (PST)
+Received: from hex.my.domain (83.8.122.142.ipv4.supernova.orange.pl. [83.8.122.142])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf64dd565dsm389222166b.101.2025.03.03.12.27.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 12:27:51 -0800 (PST)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v2 0/7] clk: bcm: kona: Add bus clock support, bus clocks
+ for BCM21664/BCM281xx
+Date: Mon, 03 Mar 2025 21:27:48 +0100
+Message-Id: <20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] dt-bindings: clock: thead: Add TH1520 VO clock
- controller
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20250303143629.400583-1-m.wilczynski@samsung.com>
- <CGME20250303143635eucas1p1dbcd26d4906b962e07cbde7f5ef704bf@eucas1p1.samsung.com>
- <20250303143629.400583-2-m.wilczynski@samsung.com>
- <cf6aa8bf-d424-49f4-b6a6-b6b10fd8092f@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <cf6aa8bf-d424-49f4-b6a6-b6b10fd8092f@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMQQxmcC/13Myw6CMBCF4Vchs3ZMmSAVV76HYVHLABMuJa02G
+ sK7W0ncuPxPcr4VAnvhAJdsBc9Rgrg5BR0ysL2ZO0ZpUgMpOinKCQc3G7w/A9rR2QELqjRza7g
+ qFKTT4rmV1w7e6tS9hIfz792P+Xf9UeU/FXNUyGetq0ZrU7Z07SYj49G6Cept2z6gCxEnrAAAA
+ A==
+X-Change-ID: 20250212-kona-bus-clock-4297eefae940
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alex Elder <elder@kernel.org>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, 
+ Artur Weber <aweber.kernel@gmail.com>, Alex Elder <elder@riscstar.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741033670; l=2598;
+ i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
+ bh=gMD9k1Qgdbybv2uBOP8stTocBsHxADMCNCVyb3oQlDk=;
+ b=iddqj2tp02CUcqIe1ypdcz2ln1fnPo0OdRmkCTcLdVbLQVr65P2WusLP+sB093wH/9T4CLFdN
+ xdg0hUi+SkWASH8zxVD1Aqutu4j/CPhtOtOzhK9Vjr2pZqORCH7ge++
+X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
+ pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
-On 03/03/2025 18:41, Krzysztof Kozlowski wrote:
-> On 03/03/2025 15:36, Michal Wilczynski wrote:
->> Add device tree bindings for the TH1520 Video Output (VO) subsystem
->> clock controller. The VO sub-system manages clock gates for multimedia
->> components including HDMI, MIPI, and GPU.
->>
->> Document the VIDEO_PLL requirements for the VO clock controller, which
->> receives its input from the AP clock controller. The VIDEO_PLL is a
->> Silicon Creations Sigma-Delta (integer) PLL typically running at 792 MHz
->> with maximum FOUTVCO of 2376 MHz.
->>
->> Add a mandatory reset property for the TH1520 VO clock controller that
->> handles the GPU clocks. This reset line controls the GPU CLKGEN reset,
->> which is required for proper GPU clock operation.
->>
->> The reset property is only required for the "thead,th1520-clk-vo"
->> compatible, as it specifically handles the GPU-related clocks.
->>
->> This binding complements the existing AP sub-system clock controller
->> which manages CPU, DPU, GMAC and TEE PLLs.
->>
->> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->> ---
->>  .../bindings/clock/thead,th1520-clk-ap.yaml   | 33 ++++++++++++++++--
->>  .../dt-bindings/clock/thead,th1520-clk-ap.h   | 34 +++++++++++++++++++
->>  2 files changed, 64 insertions(+), 3 deletions(-)
-> 
-> 
-> Where is the changelog? Why is this v1? There was extensive discussion
-> for many versions, so does it mean all of it was ignored?
+This patchset does the following:
 
+- Introduce support for bus clocks. These are fairly similar to
+  peripheral clocks, but only implement policy, gate and hyst.
 
-Plus this was reviewed so it is even more confusing. Where is the review
-tag? If tag was dropped, you must explain this - see submitting patches,
-which asks for that.
+- Add matching bus clocks for BCM21664 and BCM281xx peripheral clocks
+  and update device tree bindings to match.
+
+The previous (RFC) version of this patchset also introduced a
+prerequisite clock mechanism to enable bus clocks before their
+corresponding peripheral clocks. It seems that this is unnecessary - 
+the way these clocks are initialized leaves them enabled by default.
+Thus, the prerequisite mechanism has been dropped from this version.
+
+This is fine for now, and more accurate to hardware (bus clocks are
+a prerequisite for the bus, not the peripheral clock). I had an idea
+to connect bus clocks to buses using "simple-pm-bus" in DT, but
+this is a task for another patchset.
+
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+Changes in v2:
+- Drop prerequisite clock patch
+- Move clock/bcm21664.h dt-bindings header change to dt-bindings patch
+- Add BCM281xx bus clocks
+- Link to v1: https://lore.kernel.org/r/20250216-kona-bus-clock-v1-0-e8779d77a6f2@gmail.com
+
+---
+Artur Weber (7):
+      dt-bindings: clock: brcm,kona-ccu: Add BCM21664 bus clocks
+      dt-bindings: clock: brcm,kona-ccu: Add BCM281xx bus clocks
+      clk: bcm: kona: Add support for bus clocks
+      clk: bcm21664: Add matching bus clocks for peripheral clocks
+      clk: bcm281xx: Add corresponding bus clocks for peripheral clocks
+      ARM: dts: bcm2166x-common: Add matching bus clocks for peripheral clocks
+      ARM: dts: bcm11351: Add corresponding bus clocks for peripheral clocks
+
+ .../devicetree/bindings/clock/brcm,kona-ccu.yaml   |  37 ++++++-
+ arch/arm/boot/dts/broadcom/bcm11351.dtsi           |  33 ++++--
+ arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi    |  28 +++--
+ drivers/clk/bcm/clk-bcm21664.c                     |  83 ++++++++++++++
+ drivers/clk/bcm/clk-bcm281xx.c                     | 121 +++++++++++++++++++++
+ drivers/clk/bcm/clk-kona-setup.c                   | 116 ++++++++++++++++++++
+ drivers/clk/bcm/clk-kona.c                         |  62 ++++++++++-
+ drivers/clk/bcm/clk-kona.h                         |  10 ++
+ include/dt-bindings/clock/bcm21664.h               |  19 +++-
+ include/dt-bindings/clock/bcm281xx.h               |  25 ++++-
+ 10 files changed, 505 insertions(+), 29 deletions(-)
+---
+base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+change-id: 20250212-kona-bus-clock-4297eefae940
 
 Best regards,
-Krzysztof
+-- 
+Artur Weber <aweber.kernel@gmail.com>
+
