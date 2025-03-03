@@ -1,122 +1,98 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46A9212B14;
-	Mon,  3 Mar 2025 15:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB76422D79E;
+	Mon,  3 Mar 2025 16:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741017033; cv=none; b=SI0ulsX2n3Z4MTb6LMNxdi/6b6pKvhk6E+GrTN+nbRIfxd5UZwV9fw8I+UoZz36wsTDGgajX3xVpdHrOR1zpGtbF0VyTGf4WLeQbpxX4DILBh9CoADW7HsZMlSFucBuljpUzOHqGykyZmBdW6jq/EM0OhSiSu895D34VyJwJ+w8=
+	t=1741019051; cv=none; b=FmG+0v7J2v8n5FZeM8WKken7e2FQnRsmVM950G4KFR7TJcrXXoFyACcKxOdm31ebPBiPX5vvCLApY2PVAvsE6TzN7pBQfnBkOb1jlHJyI8i1L63lQM4QhswvQOPWGyLvNCrBfC/QTS1yQnxwcRTwkJifGZPq0VBw+cz9PkY8rn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741017033; c=relaxed/simple;
-	bh=2t8phkimNKbCd3gTW6R8MiP4kSzgvA5udw5lS8cnwYo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dFeiGMu/37XG/2o1oZDUEVSd2ykzPJGA4rTwJ9W5sG29Xqo5BtfMoxQkdhSnGPMVZWxRP03h/eORLRE1IuR6QARDVBLvOsjc7PRElI9OuzOroNRvb1gm0VXG3mr9g4nZyjAZeu7HojMiZDfnwNZfJQytPmZ9k4hwZ7uemq42Uxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/ODPCqF; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741019051; c=relaxed/simple;
+	bh=1yDqqVmCKFaOfepku4ibV9RAk9lyrZmb0xSVnZlX/L4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ex96cWwYG6x1Dp6k+qYI9JVCp6dWE1NfOuhu5itUde6s2hccu7D8GocUNOfI4Hk8Ze3TpTveU6stu7sbv+PwEEnZstisMgx/LxEfkP0ehT6mXMMxgN3baDG6Kv+xkothrXLYOqXIpbfnvDj+upMoXQ/8JjT67l540NsqhicbUgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lcN+cLwm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/ODPCqF"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2feae7e56c6so1213964a91.1;
-        Mon, 03 Mar 2025 07:50:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741017032; x=1741621832; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2t8phkimNKbCd3gTW6R8MiP4kSzgvA5udw5lS8cnwYo=;
-        b=G/ODPCqFePTgRcxyDNKR5NYkpcIYvKz2y6KFcTVTWxUYLFc3BokRhT7j5J/5BgoFb6
-         WDZlgtvIyuQRbIx0/56ZHx8mVFtm5xvNlw6AUSi+0tlB37VpuiyCCiLtxkJ7glCJQgpU
-         Zk2vWCDFbILsk5otMlfo6OqJ9XEoErJEtwbKMkShDoSvY1GIDmJum3dVJK0MdsuJg7LW
-         ysAq+Wb769uxGwEcvw3FShCd1YGYd1PS5LxBBrFyZRVbportlHqLry0wj/GSokXoa9f3
-         V/Nm4u/z5eNO3gBQQ3e1dJGGtU13dm5+mKOj79bl4wG6zLpjBiq5pEmU1NRBHNz+4+hE
-         zV3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741017032; x=1741621832;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2t8phkimNKbCd3gTW6R8MiP4kSzgvA5udw5lS8cnwYo=;
-        b=REfXpP5n1mpxPScQzuNJr/6mcTKSHR2xvr9xhhuwR/4V6GOiinuwqmBd3BsI26HBeU
-         OzRdZVJ/53DRD9jkbmM/IV6acTcuXVhDKa7zHoSp7s+uryg8gzXJ7KHe3SSx2ucp3jyF
-         hpNOLDj7yRLTHhtjxlB3d3+g3k5sWYW8fIE1ZLEnRGwVD24hGRzUa/wPEHiFKVLmGvzE
-         vPxngJydZKfGjQwddjWr4OTgTdbp0eYzFNfhf/RLHb5qhQADnPc50dpNSWDxe0kf0Yqt
-         iS0Nv6Lk+AqNHxpTuUsiBrpD7SXX34oIyc08zzyuUqrjPMkaJ50BTL+Rp4oa4vBIzH5s
-         33nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfEfOcPmDZc7pEFR+neuPwtEP/JcRpi2cLkkCLzyQrN13YzhxaFZVTY9D9rIzK/2CnNqhpFnpLvJDopQfq@vger.kernel.org, AJvYcCV4fD99WmzKfw1QKENd3pR0DgVUIhVIZio5dPkBBUK2Ad+ZRE3LVC5ufNGBqPHTiu47Fn5HAwelhmZ2SRsaGM0=@vger.kernel.org, AJvYcCWIT+bxH3DJv3M+oIWLH8iGIUrRd9tgcxfsl9XOyRcAaO3bIeLijhdk1oRc7wDdKsy3V+uJIxrIckI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgz90AHMdDRt5C9j9gyH9grhsLits8vM42P/l1ZFflH8x6ye3Z
-	krzdgYiYoCwWs2j0yg1oMEn4GSJ9TuKAoZ+m73UyU636uDTAqh7RY465kajArFFB1M0SXvU67A3
-	ZioyAYzg/02sKCLqkIPj+fwXYx8k=
-X-Gm-Gg: ASbGnct2Y2aJY9aWA52WZ4mtdwUulqx/xSiQW8YYfr5OaDGN5BNUymy7nMJUCtVQEpz
-	N/5f2N5oKUK/TrySZxKX+9kP6Cf6fsu3WNdgUPZ4frTD2YPJJE8ZegEueY9QR1+eBB+j9bqoIuL
-	2XeZueGUfK332SHkRGSt87GPcDhA==
-X-Google-Smtp-Source: AGHT+IFCWB/xyMhitMU72cViPJSPOslGxht2acBrAau8RUEYr8NM1n6NieTUvIWJwZXrkC95V761S3u1wfym0a6Pw6k=
-X-Received: by 2002:a17:90b:1b48:b0:2fe:7f51:d2ec with SMTP id
- 98e67ed59e1d1-2febaa8d1e9mr8553461a91.0.1741017031850; Mon, 03 Mar 2025
- 07:50:31 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcN+cLwm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7870EC4CED6;
+	Mon,  3 Mar 2025 16:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741019050;
+	bh=1yDqqVmCKFaOfepku4ibV9RAk9lyrZmb0xSVnZlX/L4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lcN+cLwmkh4DIQ6sWSD/sU2ZBMbfcJAiWSiMZS3bojcipN2vLCUA4RmRuD+lb1gch
+	 CooqYUk7Ll+ZuffNOvZZyvKaMzmbcZch6zQj26ow+RLtNOMZV+a63v45lBPJFplSSK
+	 50C5rgEiMZStbW3mCVjFD0RxJcChTlErOzVxZ1DStMcP29Ig/OmI30jJ4VYZGDu1V+
+	 6FSCShMeKGyxtqmQELiP2Qg1WThyQaxhTGHBglEP7nsCe6eN6T1cnuZ9rQyDnUA12i
+	 bE7Pzvf7Oi3nsgSB12FgxCvDEpzBO4wlixmwbmsedLVdCySol8pL7lOd8vQYW5TnOW
+	 PP05De7W0SY5A==
+Date: Mon, 3 Mar 2025 16:24:04 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com,
+	guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	jszhang@kernel.org, p.zabel@pengutronix.de,
+	m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v1 1/4] dt-bindings: clock: thead: Add TH1520 VO clock
+ controller
+Message-ID: <20250303-navy-radish-dcd4e6a24c0e@spud>
+References: <20250303143629.400583-1-m.wilczynski@samsung.com>
+ <CGME20250303143635eucas1p1dbcd26d4906b962e07cbde7f5ef704bf@eucas1p1.samsung.com>
+ <20250303143629.400583-2-m.wilczynski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740995194.git.viresh.kumar@linaro.org> <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
- <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com> <20250303114406.xbfzhw7nvxdildb2@vireshk-i7>
-In-Reply-To: <20250303114406.xbfzhw7nvxdildb2@vireshk-i7>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 3 Mar 2025 16:50:19 +0100
-X-Gm-Features: AQ5f1JrFbQ8weMRh-VTlkqlPmvY2gp-eeqNwnDEPnPGmFG3nSI7bQLtENogFXJo
-Message-ID: <CANiq72m2M=anoO5mbx5bR6UeYcaW++zFb62+h-vCgADibQMEKA@mail.gmail.com>
-Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Daniel Almeida <daniel.almeida@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CALOE5J+d774HnuJ"
+Content-Disposition: inline
+In-Reply-To: <20250303143629.400583-2-m.wilczynski@samsung.com>
+
+
+--CALOE5J+d774HnuJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 3, 2025 at 12:44=E2=80=AFPM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> Actually Daneil did suggest to make this "Struct Hertz(c_ulong)", but the=
-n I
-> looked at rust/kernel/time.rs:
->
-> pub type Jiffies =3D crate::ffi::c_ulong;
->
-> And I thought this is probably what everyone would have agreed to and did=
- it
-> this way.
+On Mon, Mar 03, 2025 at 03:36:26PM +0100, Michal Wilczynski wrote:
+> Add device tree bindings for the TH1520 Video Output (VO) subsystem
+> clock controller. The VO sub-system manages clock gates for multimedia
+> components including HDMI, MIPI, and GPU.
+>=20
+> Document the VIDEO_PLL requirements for the VO clock controller, which
+> receives its input from the AP clock controller. The VIDEO_PLL is a
+> Silicon Creations Sigma-Delta (integer) PLL typically running at 792 MHz
+> with maximum FOUTVCO of 2376 MHz.
+>=20
+> Add a mandatory reset property for the TH1520 VO clock controller that
+> handles the GPU clocks. This reset line controls the GPU CLKGEN reset,
+> which is required for proper GPU clock operation.
+>=20
+> The reset property is only required for the "thead,th1520-clk-vo"
+> compatible, as it specifically handles the GPU-related clocks.
+>=20
+> This binding complements the existing AP sub-system clock controller
+> which manages CPU, DPU, GMAC and TEE PLLs.
+>=20
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 
-I see, thanks!
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Personally, I would prefer that we consider using "strong typedefs"
-wherever possible, as early as possible -- otherwise it will be more
-painful later on.
+--CALOE5J+d774HnuJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Something like this (from print.rs) ?
->
-> /// [`pr_debug`]: https://docs.kernel.org/core-api/printk-basics.html#c.p=
-r_debug
+-----BEGIN PGP SIGNATURE-----
 
-Yeah. The docs in the C side may or may not make perfect sense on the
-Rust side though, i.e. it it may make sense to adapt them, add
-examples, etc., but it may be that they are exactly what you want, in
-which case only linking may be OK (i.e. normally linking is something
-to do on top of the new docs).
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8XXpAAKCRB4tDGHoIJi
+0gkWAP498RW2NwZO3txiozqaSy4rbLEB63zmzt4SqAiUaOeBVQEAt8JxtyMnMCfk
+vhJzjAMHGQhKi4qdTMFnXrJiVS5v1QQ=
+=iY3/
+-----END PGP SIGNATURE-----
 
-> Yes, I was using this under `cfg` earlier, but removed that recently afte=
-r
-> testing this without CONFIG_HAVE_CLK. clk.h provides wrappers for cases w=
-here
-> the config option isn't available.
-
-Great, thanks a lot for testing that!
-
-Cheers,
-Miguel
+--CALOE5J+d774HnuJ--
