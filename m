@@ -1,24 +1,24 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC253FFD;
-	Mon,  3 Mar 2025 11:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32781F0E28;
+	Mon,  3 Mar 2025 11:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740999892; cv=none; b=kh761QbP/Woq32KgpvqA6dL+ZqqOLTCycJYT+/qzVkokiB8ZhT+6t/1KSxY8D6jTcT0to4joXRPLrt4CNDU1GgAOP65H0ErP8BOlZzk+n5KpQrbw4MDGe/449ONdnFM1rCAHz/OrBsr6GriJfrU++9WKRi/mFZGrTroHOEMLP8s=
+	t=1740999893; cv=none; b=gnPAN5Dc+GoQvEWIloUEjOjYjHih87/tU/HskZtnWI6CpaXJP6C31hDtZupWZoS2cV4rna3WyihFMSCmgwwfr6D4EgojBpHFeqNJ44w80i9W+wqppHooy4I6GO2iwdjf6ABnCtRe16dYzJ4evK3HxJckTjhDziMYcWVzA9F408U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740999892; c=relaxed/simple;
-	bh=Th/LN0GZJEXOiYGsQhrigkVAWivgLdHq4P7FSbuCiwM=;
+	s=arc-20240116; t=1740999893; c=relaxed/simple;
+	bh=yR+YKysROohEErlYC99ff2Gs7mo6f9I6da75QvNX/24=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YVS3HFp5UJYsEQkI0IvfRWajDn4vA9rcCTwhKt3ywcaw1ptf+tI/jebB8NHZX+sldglPZpfM/ECvm8ySWQIf0LrWQsJVtXLBOqcbRGrCydSgmc8WmXR/n1Be3RG3/9UfvvoFriTFJwJ0UWp2HXshvMptnMdsZ+FZJtwCxAaaEzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+	 MIME-Version; b=KoqTmCv0ezDXculPkjnVxMVlvKlz2hF7UYm2JDL6ltAAqhaQgm/9zadxL490cH83SN7GyHXQ9Xlb3kepDHk6bh2dcXP1bCZ+8ocYP/VHv5W7jiQ0qo4YM7fAOWgyGO4voOqFKPGQD5ztb/IN6lwhzXEsK9bi6U3tLcfTt1/Zxps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: luFxIBJ3Sq6Sx7LXgkDy2Q==
-X-CSE-MsgGUID: PWHJKa2eQM2+ihYHiuKLBA==
+X-CSE-ConnectionGUID: +KgX7OR3QaWgGVwbigCV5w==
+X-CSE-MsgGUID: IgNT63C+SDuEGBDk/ac2Mw==
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 03 Mar 2025 20:04:44 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 03 Mar 2025 20:04:51 +0900
 Received: from localhost.localdomain (unknown [10.226.92.114])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8979A400CF09;
-	Mon,  3 Mar 2025 20:04:42 +0900 (JST)
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 18564400C742;
+	Mon,  3 Mar 2025 20:04:48 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -28,9 +28,9 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-clk@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH 2/4] clk: renesas: rzv2h-cpg: Add support for static dividers
-Date: Mon,  3 Mar 2025 11:04:20 +0000
-Message-ID: <20250303110433.76576-3-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 4/4] clk: renesas: r9a09g047: Add XSPI clock/reset
+Date: Mon,  3 Mar 2025 11:04:22 +0000
+Message-ID: <20250303110433.76576-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250303110433.76576-1-biju.das.jz@bp.renesas.com>
 References: <20250303110433.76576-1-biju.das.jz@bp.renesas.com>
@@ -42,88 +42,80 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add support for static dividers that does not need rmw operation.
-This will avoid unnecessary memory allocation and using associated
-legacy APIs.
+Add XSPI clock and reset entries.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/clk/renesas/rzv2h-cpg.c | 29 +++++++++++++++++++++++++++++
- drivers/clk/renesas/rzv2h-cpg.h |  7 +++++++
- 2 files changed, 36 insertions(+)
+ drivers/clk/renesas/r9a09g047-cpg.c | 15 +++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     |  1 +
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index 19fe225d48ed..42a517e11d42 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -349,6 +349,32 @@ rzv2h_cpg_ddiv_clk_register(const struct cpg_core_clk *core,
- 	return div->hw.clk;
- }
+diff --git a/drivers/clk/renesas/r9a09g047-cpg.c b/drivers/clk/renesas/r9a09g047-cpg.c
+index 05d8ccc81157..438077b13198 100644
+--- a/drivers/clk/renesas/r9a09g047-cpg.c
++++ b/drivers/clk/renesas/r9a09g047-cpg.c
+@@ -35,9 +35,11 @@ enum clk_ids {
+ 	CLK_PLLCM33_DIV4,
+ 	CLK_PLLCM33_DIV5,
+ 	CLK_PLLCM33_DIV16,
++	CLK_PLLCM33_GEAR,
+ 	CLK_SMUX2_XSPI_CLK0,
+ 	CLK_SMUX2_XSPI_CLK1,
+ 	CLK_PLLCM33_XSPI,
++	CLK_PLLCM33_XSPI_DIV2,
+ 	CLK_PLLCLN_DIV2,
+ 	CLK_PLLCLN_DIV8,
+ 	CLK_PLLCLN_DIV16,
+@@ -106,10 +108,13 @@ static const struct cpg_core_clk r9a09g047_core_clks[] __initconst = {
+ 	DEF_FIXED(".pllcm33_div5", CLK_PLLCM33_DIV5, CLK_PLLCM33, 1, 5),
+ 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
  
-+static struct clk * __init
-+rzv2h_cpg_sdiv_clk_register(const struct cpg_core_clk *core, struct rzv2h_cpg_priv *priv)
-+{
-+	struct ddiv cfg_ddiv = core->cfg.ddiv;
-+	const struct clk *parent;
-+	const char *parent_name;
-+	struct clk_hw *clk_hw;
++	DEF_DDIV(".pllcm33_gear", CLK_PLLCM33_GEAR, CLK_PLLCM33_DIV4, CDDIV0_DIVCTL1, dtable_2_64),
 +
-+	parent = priv->clks[core->parent];
-+	if (IS_ERR(parent))
-+		return ERR_CAST(parent);
-+
-+	parent_name = __clk_get_name(parent);
-+	clk_hw = clk_hw_register_divider_table(priv->dev, core->name,
-+					       parent_name, 0,
-+					       priv->base + cfg_ddiv.offset,
-+					       cfg_ddiv.shift, cfg_ddiv.width,
-+					       core->flag, core->dtable,
-+					       &priv->rmw_lock);
-+
-+	if (IS_ERR(clk_hw))
-+		return ERR_CAST(clk_hw);
-+
-+	return clk_hw->clk;
-+}
-+
- static struct clk * __init
- rzv2h_cpg_mux_clk_register(const struct cpg_core_clk *core,
- 			   struct rzv2h_cpg_priv *priv)
-@@ -451,6 +477,9 @@ rzv2h_cpg_register_core_clk(const struct cpg_core_clk *core,
- 	case CLK_TYPE_DDIV:
- 		clk = rzv2h_cpg_ddiv_clk_register(core, priv);
- 		break;
-+	case CLK_TYPE_SDIV:
-+		clk = rzv2h_cpg_sdiv_clk_register(core, priv);
-+		break;
- 	case CLK_TYPE_SMUX:
- 		clk = rzv2h_cpg_mux_clk_register(core, priv);
- 		break;
+ 	DEF_SMUX(".smux2_xspi_clk0", CLK_SMUX2_XSPI_CLK0, SSEL1_SELCTL2, smux2_xspi_clk0),
+ 	DEF_SMUX(".smux2_xspi_clk1", CLK_SMUX2_XSPI_CLK1, SSEL1_SELCTL3, smux2_xspi_clk1),
+ 	DEF_SDIV(".pllcm33_xspi", CLK_PLLCM33_XSPI, CLK_SMUX2_XSPI_CLK1, CSDIV0_DIVCTL3,
+ 		 dtable_2_16),
++	DEF_FIXED(".pllcm33_xspi_div2", CLK_PLLCM33_XSPI_DIV2, CLK_PLLCM33_XSPI, 1, 2),
+ 	DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
+ 	DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
+ 	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
+@@ -178,6 +183,14 @@ static const struct rzv2h_mod_clk r9a09g047_mod_clks[] __initconst = {
+ 						BUS_MSTOP(10, BIT(14))),
+ 	DEF_MOD("canfd_0_clkc",			CLK_PLLCLN_DIV20, 9, 14, 4, 30,
+ 						BUS_MSTOP(10, BIT(14))),
++	DEF_MOD("spi_hclk",			CLK_PLLCM33_GEAR, 9, 15, 4, 31,
++						BUS_MSTOP(4, BIT(5))),
++	DEF_MOD("spi_aclk",			CLK_PLLCM33_GEAR, 10, 0, 5, 0,
++						BUS_MSTOP(4, BIT(5))),
++	DEF_COUPLED("spi_clk_spi",		CLK_PLLCM33_XSPI_DIV2, 10, 1, 5, 1,
++						BUS_MSTOP(4, BIT(5))),
++	DEF_COUPLED("spi_clk_spix2",		CLK_PLLCM33_XSPI, 10, 1, 5, 2,
++						BUS_MSTOP(4, BIT(5))),
+ 	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3,
+ 						BUS_MSTOP(8, BIT(2))),
+ 	DEF_MOD("sdhi_0_imclk2",		CLK_PLLCLN_DIV8, 10, 4, 5, 4,
+@@ -230,6 +243,8 @@ static const struct rzv2h_reset r9a09g047_resets[] __initconst = {
+ 	DEF_RST(10, 0, 4, 17),		/* RIIC_8_MRST */
+ 	DEF_RST(10, 1, 4, 18),		/* CANFD_0_RSTP_N */
+ 	DEF_RST(10, 2, 4, 19),		/* CANFD_0_RSTC_N */
++	DEF_RST(10, 3, 4, 20),		/* SPI_HRESETN */
++	DEF_RST(10, 4, 4, 21),		/* SPI_ARESETN */
+ 	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
+ 	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
+ 	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
 diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
-index 4a568fef905d..1905e3a4afad 100644
+index 1f0e67f33cf9..3e95236b3b63 100644
 --- a/drivers/clk/renesas/rzv2h-cpg.h
 +++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -115,6 +115,7 @@ enum clk_types {
- 	CLK_TYPE_FF,		/* Fixed Factor Clock */
- 	CLK_TYPE_PLL,
- 	CLK_TYPE_DDIV,		/* Dynamic Switching Divider */
-+	CLK_TYPE_SDIV,		/* Static Switching Divider */
- 	CLK_TYPE_SMUX,		/* Static Mux */
- };
+@@ -68,6 +68,7 @@ struct smuxed {
+ #define CPG_CDDIV4		(0x410)
+ #define CPG_CSDIV0		(0x500)
  
-@@ -142,6 +143,12 @@ enum clk_types {
- 		.flag = CLK_DIVIDER_HIWORD_MASK)
- #define DEF_CSDIV(_name, _id, _parent, _ddiv_packed, _dtable) \
- 	DEF_DDIV(_name, _id, _parent, _ddiv_packed, _dtable)
-+#define DEF_SDIV(_name, _id, _parent, _ddiv_packed, _dtable) \
-+	DEF_TYPE(_name, _id, CLK_TYPE_SDIV, \
-+		.cfg.ddiv = _ddiv_packed, \
-+		.parent = _parent, \
-+		.dtable = _dtable, \
-+		.flag = CLK_DIVIDER_HIWORD_MASK)
- #define DEF_SMUX(_name, _id, _smux_packed, _parent_names) \
- 	DEF_TYPE(_name, _id, CLK_TYPE_SMUX, \
- 		 .cfg.smux = _smux_packed, \
++#define CDDIV0_DIVCTL1	DDIV_PACK(CPG_CDDIV0, 4, 3, 1)
+ #define CDDIV0_DIVCTL2	DDIV_PACK(CPG_CDDIV0, 8, 3, 2)
+ #define CDDIV1_DIVCTL0	DDIV_PACK(CPG_CDDIV1, 0, 2, 4)
+ #define CDDIV1_DIVCTL1	DDIV_PACK(CPG_CDDIV1, 4, 2, 5)
 -- 
 2.43.0
 
