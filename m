@@ -1,73 +1,75 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875FA1F03EE;
-	Tue,  4 Mar 2025 04:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABFE8AD24;
+	Tue,  4 Mar 2025 07:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741061384; cv=none; b=meumSOlnB/P7a/Mc5fxZgWhvqNFZVLv7sEagHJCzwlKLkGlHvoWe1Q4sxix5UslfobRCA2T789bZQbBJa0kc6qghtlY+erT0U9O9T+ydQymovDouIbFe8EQZDyfrVAL6BQBcANi2UFSO/0xW/Mfh+lNzAUAqz0XwNPPG95J+QeE=
+	t=1741073720; cv=none; b=VJSAMazTtQDaJ38Kk5X0+sx06Vfr2CLPP2S2wMpFORjgCfselz4iRjtDdZQ1X6HuwgBedQnARMIW00s1Fz9fkYU8kVV3G4C/Nh1kzSB6UP6yvk0PZ4Uik1B5D5W2XPxN4mdz/xp5umv/hG7JkJSJY+6nkkaMxhFzit7GGrTMcDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741061384; c=relaxed/simple;
-	bh=syIdLpCJWVBcGCAZBQ+VYIF0MGuaIBWI4fi5pFzAmKA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PVzw6DBFdN/I99fYATGwkrcZLU5LwdOlS33PRV+EZu16S8A2hOQDPltfj0EWXcgqmyJC/wOM2lfWUlQWitvKH1nDX7wvFUpdr9TImQl8u5wpV6o3ZFVhH0bD4BwjcEdL7yQ418p9eKEbsRTh1g3SqmsjhNeGZnpci6y+mJStTxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIabnGAM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741073720; c=relaxed/simple;
+	bh=BKl3YpxP921qg6Y9Mt0kJy44103dFeFyCIdjzDwM11s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KaKH4YKSIwj0eMRpcjgMdGHRBJoEzYUjf+zqowfUaTSthTUUPehsRwZ9lcs2yL3UQhiJzxr+UYLTGgx37JD3JhdsqfobjvDnYiMIUgKH7A5S1ZF9aqNXb0crsiAiaXtOsLvOHVl2Nn7nztrrtpPb9ds8mw3c6iOnDkl3xB7l8oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNaHQylf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIabnGAM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2F7EC4CEE8;
-	Tue,  4 Mar 2025 04:09:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNaHQylf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32DCFC4CEE5;
+	Tue,  4 Mar 2025 07:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741061384;
-	bh=syIdLpCJWVBcGCAZBQ+VYIF0MGuaIBWI4fi5pFzAmKA=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=GIabnGAM9pVYc852fc8WWCm2RGNHABkN76Nca3XivkgkvzEBS8uYuT1IY8/oCslb3
-	 UkssSc/Z1KUvm4GblYc9En9WUb8BYmY8p4V0lYLjLjoI5zaINtHbMHOJrMbATYxAA/
-	 sA2hdE4yzAw+aCFeixwlLuPJyDDkYljyZQmiK+9HFtzP9xI9+wi/Y29YTo0nJYwtmn
-	 lx4ITo4BzxGPyRdamMYtITdS/0oA+CoqUUUlFjryOG4x5eMRi/arJ9bn9HWl3n/yeP
-	 shme2fDGG8e8OaF1Zpckh8ilufWcX7iMrfMUokzrbovmmd+yrwjBXvW7XTr6PMLUz6
-	 8uta/QN7aUCpA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte intf parent
-Date: Mon,  3 Mar 2025 22:09:40 -0600
-Message-ID: <174106137701.690572.12789649327185591563.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250129154519.209791-1-krzysztof.kozlowski@linaro.org>
-References: <20250129154519.209791-1-krzysztof.kozlowski@linaro.org>
+	s=k20201202; t=1741073720;
+	bh=BKl3YpxP921qg6Y9Mt0kJy44103dFeFyCIdjzDwM11s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DNaHQylfVrNjgjfpQYhM9j/+K0ka8a+tNMEms/EW5ovxQ6etN1pULMMQ2teBYIMQH
+	 o5LN+8AqCm4zLo51UDh0nGEMvE+W6RcDBT0yITvUjYDC4qfFRkFa4v6H/QW7onq2j1
+	 zwIpgfF+j+NM0r7gj4CziF4RVthdIFSQ5gWsHvpPNPaYE8Vl6CaRZt1pviY7vdtr8V
+	 KzHQqG86iS8vq8+Ap8u1ddREOBQ6SngrEc+wc20e+mv73jMXmY1ROja0w2qbxgM4Pe
+	 pqyfktB0kzxZSROBSXfOQcuEKeDtIs0Ih4cuCxeC5JaWfknwXdMsr1dSy+t3XqOekP
+	 lnSrg4H8wroUw==
+Date: Tue, 4 Mar 2025 08:35:16 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alex Elder <elder@kernel.org>, Stanislav Jakubek <stano.jakubek@gmail.com>, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: brcm,kona-ccu: Add BCM281xx
+ bus clocks
+Message-ID: <20250304-fat-nebulous-meerkat-008f04@krzk-bin>
+References: <20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com>
+ <20250303-kona-bus-clock-v2-2-a363c6a6b798@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250303-kona-bus-clock-v2-2-a363c6a6b798@gmail.com>
 
+On Mon, Mar 03, 2025 at 09:27:50PM +0100, Artur Weber wrote:
+>    - if:
+>        properties:
+>          compatible:
+> diff --git a/include/dt-bindings/clock/bcm281xx.h b/include/dt-bindings/clock/bcm281xx.h
+> index d74ca42112e79746c513f6861a89628ee03f0f79..15449f998eb7a5a191fd847b689cfbe60b27c541 100644
+> --- a/include/dt-bindings/clock/bcm281xx.h
+> +++ b/include/dt-bindings/clock/bcm281xx.h
+> @@ -34,7 +34,9 @@
+>  #define BCM281XX_AON_CCU_HUB_TIMER		0
+>  #define BCM281XX_AON_CCU_PMU_BSC		1
+>  #define BCM281XX_AON_CCU_PMU_BSC_VAR		2
+> -#define BCM281XX_AON_CCU_CLOCK_COUNT		3
 
-On Wed, 29 Jan 2025 16:45:19 +0100, Krzysztof Kozlowski wrote:
-> The parent of disp_cc_mdss_byte0_intf_clk clock should not propagate up
-> the rates, because this messes up entire clock hierarchy when setting
-> clock rates in MSM DSI driver.
-> 
-> The dsi_link_clk_set_rate_6g() first sets entire clock hierarchy rates
-> via dev_pm_opp_set_rate() on byte clock and then sets individual clock
-> rates, like pixel and byte_intf clocks, to proper frequencies.  Having
-> CLK_SET_RATE_PARENT caused that entire tree was re-calced and the byte
-> clock received halved frequency.  Drop CLK_SET_RATE_PARENT to fix this
-> and align with SM8550 and SM8650.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte intf parent
-      commit: 787289a1d13d50ff4ce0f496947f8817ef3fdea9
+You cannot change defines, it is an ABI. Unless it is not an ABI... so
+just drop all these counts in separate patch, just like we were doing
+for other platforms.
 
 Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Krzysztof
+
