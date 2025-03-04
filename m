@@ -1,33 +1,25 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191181F5429;
-	Tue,  4 Mar 2025 07:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7421C84C9
+	for <linux-clk@vger.kernel.org>; Tue,  4 Mar 2025 07:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741074288; cv=none; b=IHuqac3aB1NKWD8dYuyKlV631Q7Kj0er74zy825Y1e1zk7hdHQ59WYTKzp4c7/mn9GwZmqIZ6alfPyC7/cEZUkfBjcZZprjh4FlTmmDy2z3LfwH0kS705dcFgPGIM/3IKhfGguC2bNimcQ2c6F9gj8Y0Az4G26IMOfeIo7rU9gI=
+	t=1741074994; cv=none; b=r63PRroFGJ604zcFCkhNgEnpM2gdyDfwr2G1dH5cUnxdYXYJKJnaRke6opC9oT+DW7Fhm85Qll24QmmRZcSBE4a0Sp4EDUyU1FSZbFaOWQZw3Zim1zpo3YrVprHbF0cK3z8W57u4CChiKYMSILWTjJDzLnfqq/gOYxIMLb8MY6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741074288; c=relaxed/simple;
-	bh=9bxpUZMc/I1HEv4SLq+lQIM/QZ/o1hTAwys66NHVlqM=;
+	s=arc-20240116; t=1741074994; c=relaxed/simple;
+	bh=VMRBgjIDZdW/DUx7Nvq3Qj0k9aCWgrwl34GD0mz0AqI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RwcGTLi4ZrrKnnXCg/eBKwHHA38E52GnOui8oJs1kzAqsmZ59CJxQebjHNRXR/VMT0SDAtfzNqG4TVc2pQwkxbduSB1FUsiTZbdvbERdCZsL7RrKIoGZvokqQv/qy2b8ShtlUpb3tMpIJHmp7uaSWibUCRd2VSTo9/297Obt/jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRjugh86; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRjugh86"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFAF5C4CEE9;
-	Tue,  4 Mar 2025 07:44:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741074287;
-	bh=9bxpUZMc/I1HEv4SLq+lQIM/QZ/o1hTAwys66NHVlqM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NRjugh86mZu6/NUJQyJD/KAXr6dzb2sdrCV7inzMKonWGk+8VCLebAzk1ZwF5VEZW
-	 JOXLDwCNuoOWHmytXIuINoCPIzuAyld8OFIoSXGgPcWWxKbhHNwBcgk9W8ZLy+RZNA
-	 3MrWRXkyDJOrvYfZEowwE7cCuy9/xU3sEzSB1AnFX8beMNuL7sguG3TlVCBngt84R8
-	 Vno2FlV4FbHHgetK+/qVsT785mbh1Yr9pM561RHJ/pmWoqOErTNR8wTK6uUypTGHvQ
-	 O1s74qQo8vphe8V6Ex1tcbsFhEOZcOEwIt9BfHdCzooRlwqI458jQxAaFUWmo5cmxP
-	 h+zRCmlOl/ncQ==
-Message-ID: <3190de22-67eb-4f28-b7f1-27bcd8db1e9a@kernel.org>
-Date: Tue, 4 Mar 2025 08:44:35 +0100
+	 In-Reply-To:Content-Type; b=V5rTbcYwMT7xf3axxrTrOd4og3OKDUqRU0arXReYuFbSncWzjkPiW8f10dD4Bhk2vXTlcI03UTGZxZUxmGVkqtQ6O5BLdt9cJGV3EAiYntUgYnHZpVS7E7Y0UWCIldot+cc9kf4UYu/900fBQEJkPMG91xJLjBIsEfo+UB20fFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tpN8b-0003qJ-4c; Tue, 04 Mar 2025 08:56:25 +0100
+Message-ID: <4175faf6-1d41-4409-89db-dd902c966dd5@pengutronix.de>
+Date: Tue, 4 Mar 2025 08:56:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,125 +27,88 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/21] Enable drm/imagination BXM-4-64 Support for
- LicheePi 4A
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
- wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
- matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
- m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
- linux-pm@vger.kernel.org
-References: <CGME20250219140249eucas1p1291eb86c932373c847a3314ae54789d5@eucas1p1.samsung.com>
- <20250219140239.1378758-1-m.wilczynski@samsung.com>
- <20250221-eminent-squirrel-of-honor-dee80d@krzk-bin>
- <90d0d409-f374-4e06-bc69-b9bf0622959d@samsung.com>
- <7ba53937-7922-41da-a7ed-909ce620db1f@kernel.org>
- <09411368-cd76-479f-ade3-5a87d3f9be38@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v4 0/6] arm64: dts: freescale: imx8mp-skov: switch to
+ nominal drive mode
+To: Abel Vesa <abel.vesa@linaro.org>, Abel Vesa <abelvesa@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Frank Li <Frank.li@nxp.com>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Marek Vasut <marex@denx.de>
+References: <20250218-imx8m-clk-v4-0-b7697dc2dcd0@pengutronix.de>
+ <174102306220.2928950.8878245519332562153.b4-ty@linaro.org>
+ <Z8XnuIIfDFykrKH8@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <09411368-cd76-479f-ade3-5a87d3f9be38@samsung.com>
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <Z8XnuIIfDFykrKH8@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On 04/03/2025 08:38, Michal Wilczynski wrote:
-> 
-> 
-> On 3/3/25 18:43, Krzysztof Kozlowski wrote:
->> On 03/03/2025 09:38, Michal Wilczynski wrote:
->>>
->>>
->>> On 2/21/25 10:12, Krzysztof Kozlowski wrote:
->>>> On Wed, Feb 19, 2025 at 03:02:18PM +0100, Michal Wilczynski wrote:
->>>>> The LicheePi 4A board, featuring the T-HEAD TH1520 SoC, includes an Imagination
->>>>> Technologies BXM-4-64 GPU. Initial support for this GPU was provided through a
->>>>> downstream driver [1]. Recently, efforts have been made to upstream support for
->>>>> the Rogue family GPUs, which the BXM-4-64 is part of [2].
->>>>>
->>>>> While the initial upstream driver focused on the AXE-1-16 GPU, newer patches
->>>>> have introduced support for the BXS-4-64 GPU [3]. The modern upstream
->>>>> drm/imagination driver is expected to support the BXM-4-64 as well [4][5]. As
->>>>> this support is being developed, it's crucial to upstream the necessary glue
->>>>> code including clock and power-domain drivers so they're ready for integration
->>>>> with the drm/imagination driver.
->>>>>
->>>>
->>>> This is v5 of big patchset which became huge. I understand you did like
->>>> that for v1 which was RFC. But it stopped being RFC.
->>>>
->>>> Split your patchset, keeping versioning and changelog, per subsystem.
->>>
->>> Sorry for the late reply—I didn't have access to email. I agree with
->>> your suggestion and will send the clock changes, firmware/power domain,
->>> reset, and drm/imagination updates as separate patchsets for merging.
+Hello Abel,
+Hello Shawn,
+
+On 03.03.25 18:32, Abel Vesa wrote:
+> On 25-03-03 19:31:02, Abel Vesa wrote:
 >>
+>> On Tue, 18 Feb 2025 19:26:40 +0100, Ahmad Fatoum wrote:
+>>> Unlike the i.MX8MM and i.MX8MN SoCs added earlier, the imx8mp.dtsi
+>>> configures some clocks at frequencies that are only validated for
+>>> overdrive mode, i.e., when VDD_SOC is 950 mV.
+>>>
+>>> For the Skov i.MX8MP board, we want to run the SoC at the lower voltage of
+>>> 850 mV though to reduce heat generation and power usage. For this to work,
+>>> clock rates need to adhere to the limits of the nominal drive mode.
+>>>
+>>> [...]
 >>
->> How did you implement above comment? You did the split, right? Where is
->> versioning and where are changelogs?
+>> Applied, thanks!
+>>
+>> [1/6] dt-bindings: clock: imx8m: document nominal/overdrive properties
+>>       commit: d5992f1af1550a9e11e42cfa2ca1ad2a1b7fd7f3
+>> [2/6] arm64: dts: imx8mp: Add optional nominal drive mode DTSI
+>>       (no commit info)
+>> [3/6] arm64: dts: imx8mp: add fsl,nominal-mode property into nominal.dtsi
+>>       (no commit info)
+>> [4/6] arm64: dts: freescale: imx8mp-skov: configure LDB clock automatically
+>>       (no commit info)
+>> [5/6] arm64: dts: freescale: imx8mp-skov: operate SoC in nominal mode
+>>       (no commit info)
+>> [6/6] clk: imx8mp: inform CCF of maximum frequency of clocks
+>>       commit: 06a61b5cb6a8638fa8823cd09b17233b29696fa2
 > 
-> So I thought the sub-series should be versioned independently from v1 ?
+> Applied only patches 1 and 6.
+> 
+> My b4 setup messed up. Sorry.
 
-Keep the versioning. Keep the changelog.
+Thanks for applying, Abel!
 
-You now versioned your new set independently, so I don't understand your
-question.
+@Shawn, could the remainder of the patches go through your tree?
 
-> Then linked the previous discussions in the cover letter, without
-> copying them.
+Thanks!
+Ahmad
 
-Nothing said this is the same patchset. You just mentioned some "bigger
-series" cover letter. How some other bigger series is anyhow related?
-And how can I find relevant pieces there?
+> 
+>>
+>> Best regards,
+>> -- 
+>> Abel Vesa <abel.vesa@linaro.org>
+>>
+> 
 
-You are supposed to make it easy for reviewers, not difficult.
 
-Best regards,
-Krzysztof
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
