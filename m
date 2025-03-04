@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A91E25FA19;
-	Tue,  4 Mar 2025 20:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988D31DB125;
+	Tue,  4 Mar 2025 21:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741121952; cv=none; b=RYm/+CZ+OSbhcUqgLP6IQZ1ov+5gpX5ak68f7ZpOp0WrjFcOLEh9uJjgUklZfmNbDgSyCEMRqSlZ97yN4k5/HcBp9zLJsT9mdjlNytU8OeomT5vr5vkqVsohuJEiqI9bsuC1p1CnyEm1BSpa4Y7FeOyz4buwo4D2D6UMa5MgMlo=
+	t=1741125312; cv=none; b=rhJcuXEkyfhzudkSe5+6x8JF4J15LMkngt/kPjhfEUxTRdiGu2SRsoRFX9Bm3c6IEVKk8kx8Ri/30wmidWO+kDQiqA/fVGSYKOirOBb3xfCedMK/LDaDQA9n9dUdNmt8B4bGL5oN2OobBtXNf2OQCWgif1cQql2XY7wCHT+DU2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741121952; c=relaxed/simple;
-	bh=RELrFMyc/G4fxXX2yNRBJZ22pSbk3iaff87P6+DkIow=;
+	s=arc-20240116; t=1741125312; c=relaxed/simple;
+	bh=E+EAnnp4I4YKN8xIDqGi1mGKb4aRTyIjB2wwQ6KnitQ=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Pa/dce5kUQZu1CKg5nS58+hiVxxFcnh/w1mgRYLfkPZVHG7AIYAPFR1RbtYd0/xjlx6HkLavJcXMN9kj7edrkkwk+C6WzoaaNRNITt3SFmqJkIGYaRRZAGyxsagAU2ax1LYSbhGz3HN53uJeZFDjB8XFqMNOK9683iOxOUBXL+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TWbWktBi; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=nJmbEDMHpn3LjiA7Rqg2yMLkEdtVuAyoy0B9exyDg98b3uQ52LpFdvBkTZ/i+tOKmdRulmETuZ8to9pAnK71Iv39DJcHUSSxMCpWelYJR42xiM3mplADsmdRUD3wENhURfFAsGp4OZqrDeWZVDYxvhMBxjjWkWJ7TqEASXIUmUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CmEVpzMn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TWbWktBi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0A12C4CEE5;
-	Tue,  4 Mar 2025 20:59:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CmEVpzMn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62946C4CEE5;
+	Tue,  4 Mar 2025 21:55:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741121951;
-	bh=RELrFMyc/G4fxXX2yNRBJZ22pSbk3iaff87P6+DkIow=;
+	s=k20201202; t=1741125312;
+	bh=E+EAnnp4I4YKN8xIDqGi1mGKb4aRTyIjB2wwQ6KnitQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=TWbWktBibHeBA0JcFqLn7LA0Nh3H8A6TDlv3GuKgLB3Rl/EgW2hf442XmMq+rYWHX
-	 LmsiTkt1EZ82B2lFTzrEeMoBqn3vmrdybx/5V+qKX4VyzI25xwdXqkoMUx6pXdQ8uE
-	 NMA+tRUh0cCnnNLx77oz/F5zrmvoX0womIPeMjgA1gR/XwtOt555yKfz8ULqw9Wu+o
-	 xWqyavCkgIpOuL61ApMchVfowlsxy1Ms2CCVskofnfeBJ4R1EhnBzotOOgcqCWgroS
-	 dwppkdbrW0YTdS+cvFhxa+z/s5VX2DPWTxx8opA4V3A293Srj4uTsl1uk/YCmaqkue
-	 pICqf5+4zp9dw==
-Message-ID: <5acbfebaa2aeedc093f8f56997eae7ee.sboyd@kernel.org>
+	b=CmEVpzMnSSYJ47NrjDjxl7jJNOwYUAc+vvTRZjz1Dd/vFEBoqBs9VeUGHfSm9GXhk
+	 hQMnGAUS1TIy2nXcC3fLsQOjS48YPgqw/o8a7Z/jkcRU4e5ypHFLTsiVeOxsQp4v1t
+	 Wmphf7JTK7UQdkYrZFM1n5t9ITAGpKPFGL3dB73h6pJiUECJCojeqslDQTRo2H1qMu
+	 3KLrSF5w8/DLgd10TtwKvD4xsdeEsw00k8kTVDdebk1WV7+s88u5bbCfJIJrXkqwmO
+	 SxE7zT8BIJUTWwKzABdKIkfrqQitZNmICUVlAlx3cJRQ+UO9OctO0RSFs3VrDsbRJd
+	 ga4y51xj7AhmQ==
+Message-ID: <2f6d1043d90ab901e6d0dfc09dcff358.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,23 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250207-correct_data_types-v1-1-f22bc7ea220d@amlogic.com>
-References: <20250207-correct_data_types-v1-1-f22bc7ea220d@amlogic.com>
-Subject: Re: [PATCH] clk: Correct the data types of the variables in clk_calc_new_rates
+In-Reply-To: <20250226235408.1339266-1-sboyd@kernel.org>
+References: <20250226235408.1339266-1-sboyd@kernel.org>
+Subject: Re: [PATCH] clk: Print an error when clk registration fails
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Chuan Liu <chuan.liu@amlogic.com>
-To: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>, Michael Turquette <mturquette@baylibre.com>, chuan.liu@amlogic.com
-Date: Tue, 04 Mar 2025 12:59:09 -0800
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Date: Tue, 04 Mar 2025 13:55:10 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Chuan Liu via B4 Relay (2025-02-07 01:36:10)
-> From: Chuan Liu <chuan.liu@amlogic.com>
+Quoting Stephen Boyd (2025-02-26 15:54:07)
+> We have a lot of driver code that prints an error message when
+> registering a clk fails. Do that in the core function instead to
+> consolidate code. This also helps drivers avoid the anti-pattern of
+> accessing the struct clk_hw::init pointer after registration.
 >=20
-> In clk_calc_new_rates, the "ret" is only used to store the return value
-> of clk_core_determine_round_nolock, and the data type of the return
-> value of clk_core_determine_round_nolock is int.
->=20
-> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
 
 Applied to clk-next
