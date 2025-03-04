@@ -1,70 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA39BAD24;
-	Tue,  4 Mar 2025 07:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672171F8734
+	for <linux-clk@vger.kernel.org>; Tue,  4 Mar 2025 07:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741073756; cv=none; b=nUoQoWB6AZ4rNUczs9viDBCZZRYrnQ+6LoTqbiTORrXo7yBkWKmoKPQkqGNsLYbdK0yIM+P6JN4m/0Ns6twncaLF2vryUsRSA09IAle5JkGSn9sx9svkIo/Fgj7+llVTqPZDUNxgNmMT3DTakCqK0c6oCqVZjlPW0RknBm0IEu0=
+	t=1741073897; cv=none; b=ZZ3gZGtVTCjI7z/6CMNJGdq0KlxGQN8cAWBys6pVRD0aUjwEJynjZ6Vc0qjqvnPgAkX2BEJUfBiEORVnxU+WgFvq3gmHAJq5wBEXqLud+XAXbmqGRD1UUbwwgQf7UcwnbowmTI2qX1g9mXGJc2nwXy9S7fy1V6sKslD5tPWwCsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741073756; c=relaxed/simple;
-	bh=Vt14l9x1ynHXlzYwcGCpTZXEItD0wcqiGeVk9WPAuMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UWIbH+/M6/JE6WhI91c5CDe/7IaJc+kpeJqgPJTpKznBd2AV0L+VW/jxxzQH5ClXFsiXPsYQk2EZJAox/FVYmkDbz+cixDQODr3lns1IEHPr6b8El6I9XqBprPhUOZTe64Akq1nRC7muC5ajZCFJp3QIo6CA1Tf9fNeqL2OZg24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lgot1MhF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741073897; c=relaxed/simple;
+	bh=oIaVZFk0lzr1P8/LPzkmqHPkHAITGomK/ZKTM/TZ/pg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=kEmP3EitoGi60kDlC4KLIXM184KbhgZZZvj+6BfPFiNZSTbyVWBzxhEVmw8NE5BOw1X5ma0PUnGsDcP4s7kFv1UF1aSgBX/cYg8LEiruRIrg5ZWtsgEA2448X6OIKIy3u2lZ4J+hH2kMxc/xiW+AxU+JBVR41p2/McNkTD6GOww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UVFJYAPS; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgot1MhF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B243C4CEE5;
-	Tue,  4 Mar 2025 07:35:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741073756;
-	bh=Vt14l9x1ynHXlzYwcGCpTZXEItD0wcqiGeVk9WPAuMM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lgot1MhF4OaA2vFC5slzJpCRF3ny1IzyKoAdOZgkun6IDVUpcN4CLnLp94l+utSIP
-	 mMTZQuWmefu1UYA2XIKrF/fuuoHsXPHnoY0wuariH2pZEXUUF08y0RFJEUC7iojkHm
-	 hGdusOMZJ2jDchmGw25+tPIFGRzBrHit2lzkKuj2/osHHRS/NbE+8DlpZ1GOY4eljz
-	 ObRG+kq+phNRsQmMk75Z0jQmmL60a1NrKgzY/vjYAg3jemU0XLxFie3fIWQQSrWQFD
-	 s2XHli1sSFjKm2b8Omlq4JYBKel2uPdyg3SvjaaR26vdzw9rhvmG65/Zp1BRZuNtEd
-	 /EeKgIGHJwNNw==
-Date: Tue, 4 Mar 2025 08:35:52 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alex Elder <elder@kernel.org>, Stanislav Jakubek <stano.jakubek@gmail.com>, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v2 1/7] dt-bindings: clock: brcm,kona-ccu: Add BCM21664
- bus clocks
-Message-ID: <20250304-squid-of-exotic-variation-f5b19d@krzk-bin>
-References: <20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com>
- <20250303-kona-bus-clock-v2-1-a363c6a6b798@gmail.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UVFJYAPS"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250304073813euoutp0190434c3de2c49a4d6fd01e931afe99e9~piXtUuqkH1409714097euoutp01S
+	for <linux-clk@vger.kernel.org>; Tue,  4 Mar 2025 07:38:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250304073813euoutp0190434c3de2c49a4d6fd01e931afe99e9~piXtUuqkH1409714097euoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741073893;
+	bh=FQT5t9XP/qXk2cTrhE2jEyDzyfg+dccdB+ublyOMgPE=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=UVFJYAPS8GJtDQS/u3HEPWiPOZSCOdfX45cJXXaI+vDMPzI0kl7iA6T4BZx3RcjAU
+	 njOr4havVtQlrUh/EIBVwBcw8POIRxr+ZZsJscMGjbG9KESYfWr1Aho5uH2E9kvtgX
+	 i8UlGs09pPXonqgOiHbz+ZN8iqDOvrBaewYY+5C0=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250304073812eucas1p276848c08635d2c51ac99656118f6b8b7~piXslpw1y0388203882eucas1p2H;
+	Tue,  4 Mar 2025 07:38:12 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 53.E5.20821.4EDA6C76; Tue,  4
+	Mar 2025 07:38:12 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250304073812eucas1p15180503dcd7cc128c2f3c06a3425b415~piXsF8AA82194621946eucas1p1L;
+	Tue,  4 Mar 2025 07:38:12 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250304073812eusmtrp1a8bee346d4242d1e3cc0a9553a2edaec~piXsE-O9C2862028620eusmtrp1Q;
+	Tue,  4 Mar 2025 07:38:12 +0000 (GMT)
+X-AuditID: cbfec7f2-b09c370000005155-f8-67c6ade4b965
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id E8.CA.19920.4EDA6C76; Tue,  4
+	Mar 2025 07:38:12 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250304073811eusmtip2dd48a10474efd786272294b7dc01e293~piXq0DZaX3187031870eusmtip2r;
+	Tue,  4 Mar 2025 07:38:11 +0000 (GMT)
+Message-ID: <09411368-cd76-479f-ade3-5a87d3f9be38@samsung.com>
+Date: Tue, 4 Mar 2025 08:38:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250303-kona-bus-clock-v2-1-a363c6a6b798@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/21] Enable drm/imagination BXM-4-64 Support for
+ LicheePi 4A
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
+	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
+	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
+	m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
+	linux-pm@vger.kernel.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <7ba53937-7922-41da-a7ed-909ce620db1f@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUxTVxjOaW/vLR3FS8Fx1AlZh8YuisIGHp0hLA5ykyVDsh9kLkbruCs4
+	vmylA7YMRyufRRCLbJc6xBlBBFGkDSBQA8iXjAoIZR0UfnTTEoTwNRwojPbixr/nfd7nPc/7
+	vDl8rqgV386PiT9Hy+OlsWJcgBk6/jHts1V3yA6UvQpAXebrHKRfYQhU1dzHQaXtfTxkHajj
+	oKeLMzi68+cTAj1v/hFDwxVXCaTqqMGRnbHiyGS6S6BZjZWHBht1OJrPawfIMK/GUXX7GIHK
+	ZvUYulHfCFBG9k0e6u8JRWPWLgzZBzVclMFsQWtN9QRaHb6HoZJpI4Hqpi7xUGd1JFIbtViI
+	NzUzcoGgpux2jGrLWiCo5r+vYVQDM0ZQmoZeQNVWZuPU6HATTv3SHUGN53ZyqPs30ih1dQeH
+	yn99gJppGcKpi3WVgBpQmYljouOCI1F0bIySlu8PPiWIftZVzE2cFyZ3G8LOg/K3coALH5If
+	Qm3XLSwHCPgisgLAv0aauWyxAKDaUrDRmV8vVGXgzUi2vRawjXIA84xrOFu8ALDh/u+4QyUk
+	g+FKwaATY6QvzDJX8VjeHXb/bMMceCvpA8ctPxEO7EFGwofWTI4De5ISaH69xHM8yiWbePCK
+	9q5zmEt6QYut1CnCyQA4UV7q5F3WzexlORir8YEqfYkzBCT7BVBnq8HYvT+BhZM9Gxk84GRn
+	HcHid+Djy5oNTQKc0M9xWfw9bNB0buCP4Gjf8noa/rqBBNY07mfpj+HT/CInDUk3OPLCnV3B
+	DRYairksLYRZGSJWvRsWafL+M+2rMHAKgJjZdBVmU0hmUxjmf99rAKsEXnSSIk5GK/zj6W/9
+	FNI4RVK8zO+rhLhasP7NH692ztWDq5Ozfq2AwwetAPK5Yk+hJfORTCSMkqak0vKEk/KkWFrR
+	CnbwMbGX8LrxgkxEyqTn6G9oOpGWv+ly+C7bz3P2HGbcT6a4plP4TsvOCqN7MuOtfDnuO9RW
+	zBTpZpczC0v0oSdoJdXQtnpIGjTnmR4TJA7XKhYlS0dy8eOq8FMrOzIffBcWafoN3xak2tsV
+	HXgseG9I1SHb+Cu3t4+eiOhdcPOP0592N5x5GPju7XT5r/kve0dHUgJbLvXcTryp8m0Rm/Jc
+	tU8s+Z9LXEfv8D5bXlwLeRbDlLdNS07blmHY84Pq0DSPLyfHz0y/lzS8RVm1rTI1MPnrMHNq
+	f9XhNSbC3N++6w/si13hyw8k0VMBFl1fyZLPwUflP9zyHPIvDt6958o+79yz9yZjSi7qBtKO
+	ZpcqJzx8XT+YU5yNaoKfKraKMUW01P99rlwh/RcRosxdVQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMKsWRmVeSWpSXmKPExsVy+t/xe7pP1h5LNzj2QtjixPVFTBZbf89i
+	t1iz9xyTxfwj51gt7l3awmRx5et7Not1Ty+wW7zY28hicW3FXHaL5mPr2SxezrrHZnH+/AZ2
+	i48991gtLu+aw2bxufcIo8W2zy1sFmuP3GW3WPhxK4vFkh27GC3aOpexWlw85Wpx994JFouX
+	l3uYLdpm8Vv837OD3eLftY0sFrPf7We32PJmIqvF8bXhFi37p7A4yHm8v9HK7vHm5UsWj8Md
+	X9g99n5bwOKxc9Zddo+enWcYPTat6mTzuHNtD5vHvJOBHve7jzN5bF5S79Gy9hiTR/9fA4/3
+	+66yefRtWcXocan5OnuAUJSeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6d
+	TUpqTmZZapG+XYJexvMT05kLPvNWnNzm1sC4nLuLkZNDQsBEovPlJkYQW0hgKaPE12XsEHEZ
+	iWvdL1kgbGGJP9e62LoYuYBqXjNKPHh2E6yIV8BO4veEy2wgNouAikTH9TWsEHFBiZMzn4A1
+	iwrIS9y/NQOsXlggXOLAvXYmEFtEQFPi+t/vrCBDmQX2sEoc3vwZasNmJon5rQuYQaqYBcQl
+	bj2ZD9bBJmAk8WD5fLANnECbXy7sAtrAAVSjLrF+nhBEubxE89bZzBMYhWYhuWMWkkmzEDpm
+	IelYwMiyilEktbQ4Nz232FCvODG3uDQvXS85P3cTIzB1bTv2c/MOxnmvPuodYmTiYDzEKMHB
+	rCTCe6v9aLoQb0piZVVqUX58UWlOavEhRlNgWExklhJNzgcmz7ySeEMzA1NDEzNLA1NLM2Ml
+	cV63y+fThATSE0tSs1NTC1KLYPqYODilGpiYo/WWdH+RlJnx7UKw6sv3fJkf9TSPfAh6pND1
+	R1A9vvntv3g/4YYenfPRhZb1L5blmUetDzBeXpUz/bjhujOzVlm99iplNTVY0Hdwq7dVgtpO
+	1m/yQUEnGPgf3qm4rxg9s/nQ6fNMhgy6DFd3f70npuWdq/nm3a0LPzcuvOV//tfvp5emnnMS
+	PvlY3WPriwUVDNVaCt29x/Qyzk6NXjh7y2L9Rbs/i604XOF2S5l/Vl7sAen0Tdt+hcXdqzq8
+	4tQj7t/CJhI/XHbktrAd0/j/6/yOnSrFPv1Bb9e5RnS86DgpqXHp4YOpmi7CDE0O8u+F/ry/
+	KqVi3lZupLNQrv+rzYLupd9ndbdsYdBez8CgxFKckWioxVxUnAgAez73NOYDAAA=
+X-CMS-MailID: 20250304073812eucas1p15180503dcd7cc128c2f3c06a3425b415
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250219140249eucas1p1291eb86c932373c847a3314ae54789d5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250219140249eucas1p1291eb86c932373c847a3314ae54789d5
+References: <CGME20250219140249eucas1p1291eb86c932373c847a3314ae54789d5@eucas1p1.samsung.com>
+	<20250219140239.1378758-1-m.wilczynski@samsung.com>
+	<20250221-eminent-squirrel-of-honor-dee80d@krzk-bin>
+	<90d0d409-f374-4e06-bc69-b9bf0622959d@samsung.com>
+	<7ba53937-7922-41da-a7ed-909ce620db1f@kernel.org>
 
-On Mon, Mar 03, 2025 at 09:27:49PM +0100, Artur Weber wrote:
-> diff --git a/include/dt-bindings/clock/bcm21664.h b/include/dt-bindings/clock/bcm21664.h
-> index 7c7492742f3d4ca439236f2f352e432989409570..8d3e3796c72b02eace84dfb90d6264dee0297a33 100644
-> --- a/include/dt-bindings/clock/bcm21664.h
-> +++ b/include/dt-bindings/clock/bcm21664.h
-> @@ -26,7 +26,8 @@
->  /* aon CCU clock ids */
->  
->  #define BCM21664_AON_CCU_HUB_TIMER		0
-> -#define BCM21664_AON_CCU_CLOCK_COUNT		1
 
-Same comment as other patch - this cannot change or it is not an ABI.
 
-Best regards,
-Krzysztof
+On 3/3/25 18:43, Krzysztof Kozlowski wrote:
+> On 03/03/2025 09:38, Michal Wilczynski wrote:
+>>
+>>
+>> On 2/21/25 10:12, Krzysztof Kozlowski wrote:
+>>> On Wed, Feb 19, 2025 at 03:02:18PM +0100, Michal Wilczynski wrote:
+>>>> The LicheePi 4A board, featuring the T-HEAD TH1520 SoC, includes an Imagination
+>>>> Technologies BXM-4-64 GPU. Initial support for this GPU was provided through a
+>>>> downstream driver [1]. Recently, efforts have been made to upstream support for
+>>>> the Rogue family GPUs, which the BXM-4-64 is part of [2].
+>>>>
+>>>> While the initial upstream driver focused on the AXE-1-16 GPU, newer patches
+>>>> have introduced support for the BXS-4-64 GPU [3]. The modern upstream
+>>>> drm/imagination driver is expected to support the BXM-4-64 as well [4][5]. As
+>>>> this support is being developed, it's crucial to upstream the necessary glue
+>>>> code including clock and power-domain drivers so they're ready for integration
+>>>> with the drm/imagination driver.
+>>>>
+>>>
+>>> This is v5 of big patchset which became huge. I understand you did like
+>>> that for v1 which was RFC. But it stopped being RFC.
+>>>
+>>> Split your patchset, keeping versioning and changelog, per subsystem.
+>>
+>> Sorry for the late reply—I didn't have access to email. I agree with
+>> your suggestion and will send the clock changes, firmware/power domain,
+>> reset, and drm/imagination updates as separate patchsets for merging.
+> 
+> 
+> How did you implement above comment? You did the split, right? Where is
+> versioning and where are changelogs?
 
+So I thought the sub-series should be versioned independently from v1 ?
+Then linked the previous discussions in the cover letter, without
+copying them.
+
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
