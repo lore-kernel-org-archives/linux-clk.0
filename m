@@ -1,111 +1,158 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9910B27D79C;
-	Tue,  4 Mar 2025 15:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38D825F789;
+	Tue,  4 Mar 2025 15:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102505; cv=none; b=Kao5lHliollAKpGNhu1/NAmnBYI2YIaSMYBbjVrga76VIzFAnX2dcA9FD08ZEVVowzBJ8jl3NLwngMEWNBjV6pbJLhSCT9y4t5w3rnb9gdpDJPfF7zzZ+pNM0vbw8Sq/4OX6C3eB8prL8NhOAuwcFuvSuc1NvyMzZkoSLzFfkRE=
+	t=1741103386; cv=none; b=WmgiRd1gGdR8l0/9Xg6lS8DL/RcYEaSZv1eknxIJRShG87f2Lxa+q2G35XbZrvWYlQ/a1vZpYxRZWiEirC/EhTqwETwnGU3Om6A7NSCxoxZhkM5ZS26mKNfx75d5ewfdZMsIyyx6qOE0qj0c8VhcQ5UYr9ZRVcokb+E0SRwXFdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102505; c=relaxed/simple;
-	bh=O5BPl3Fu5wJkHXKEYtyH4ta5yhgbg1I1X4DpIIkIPh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MNSEiQb0mSM24hR+XIg4ATtsCNx39MAbWcEA/tivSaqzpEIFcbcmvkybkEh3croLlO42BG+o7vEG/BAJWfXHHoutPuAOhmQ4ifcTb+s51NVSEpA/TdRXNGBbSzA3YjtjGY4h+xm/3H+GtzXaJubyEQypE0Jrv6mFiC9Ejib1bkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DifDLZQq; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741103386; c=relaxed/simple;
+	bh=IZVtyHAG93XJVToieMuxGIEaIhkUm3s79JumsH2atio=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rvt34SeYeEPW5z3lKcrSNBIHfsAvdM+qQnNkQyYx+dDkgTrN++r5+BcVbTd+6eeq/cvpiOXGLWFybBL1XhzMag3HNkxpUy6fV1Pd14i++9j47oW44d+uGx3ki5e7wMQPlFCwJVAAb5jKivHgoK5f7mx1+rKsLNkTcmhqVX/61W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ZAJmH9ma; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=PJ+RHd0k reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DifDLZQq"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abbd96bef64so908810766b.3;
-        Tue, 04 Mar 2025 07:35:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ZAJmH9ma";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="PJ+RHd0k"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741102502; x=1741707302; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XwZWXvpRlzaapz6M25h0ltLJIX9XFgudqnE1z2aOvDw=;
-        b=DifDLZQqmuk/rICdGfbZqKus8gIQF0RsDlXWsCQA2tcgRyjxN229DOKlb9Ix/nKkc8
-         xnZz0CaoMN0JeLRHv3Fgi2ymtg/ym7c1YUG6Yq2vt7sV3sXKxuhYnWQqWzWJ77yMBkmj
-         vve/ORUY1TWmCAQMipJOFouP6ucnMFNLVYBucYO9HanRBIo9NUFAUy3YdV68hNbC5Xco
-         nOwug+sR9sRaNUw351cv9gVGznzuo/0vbYnnFQ0iz0viUCBJ+bEu47X2jv6EfoQUsXYv
-         5UxEiTc1obwPgDqXm59N2X5yUugn5EcBoJYXQaaOPOMxMi2pZ3Niq1C4VJDmWM98yZIx
-         WO0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741102502; x=1741707302;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XwZWXvpRlzaapz6M25h0ltLJIX9XFgudqnE1z2aOvDw=;
-        b=kxVGH9fjKcogfMWt6+ecolEqbGyho2L895tAe/vywFete1hRLm4tnP6/tM+oV+gpcA
-         jsCVouyxJXFKaS9KdMi2DbY86NqVlWXClGFFpKlhc1XyyTFYiCt9OdA3PW6Ba28hW2GZ
-         lKr0PuG0U5JQwW8jXr+yNTyE+kOa7GXm5IjryE3of0xvKP+MgCm9LLlOfcODRWIRmHpv
-         jSCvsb0F/Z7K7xJLmT3jSXhDAMe+CHURICh4gcLGXVc/oNlY6n0lEOV14le+BixBRcMV
-         lm2BFoZ0DrtWZ+w9cA4JXwLOt6SYisAvQsLXacQ3T9xVfGSLRcIWa1F3QpTnnJRDVdO3
-         P+eg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJHvON/LGHLNvs/tKtskjkTjF+3LuYn8+fiRAewCN6D8jSBoBbNUoB3ZJFVW5RjkCRRsZAR7GGJeKb@vger.kernel.org, AJvYcCVCvw5CtI4paRtg1QiklfZYJUtWkzxKJ1hlbir/3NrT5GxhWYbd/GInBORufuUdVRgG2Y98IMO3Ho2Lz4kH@vger.kernel.org, AJvYcCVSGRLW1AlYipcpkNWLCJmOjKvH0qgJ3h1UILSL7UDetkUSz1ynDS3pMXavFTKoFKFJiId845iNXGZV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzON4oqPqDdx/dLkSEyDpDdEn9ked41/dD+bKAFGNHEwuqBF2lI
-	ZkD8L/sH5rxEH/7VROz/OGXKuCjbWZ3S/WhtTt3wJqK9oSoeZdqd
-X-Gm-Gg: ASbGnct78r5lKFy1osokgTGJTytw0CxdOb6Etd1VdEMtMf0KCjhYAgsvQ19sJddFciV
-	NeeEeQhQcvj4+t2drXRrPM7GyOksBvEeTi2X1PBlxrvUhlyfwTfcwbWOv8yXA0Upn8cePGyu0jO
-	iqWR0p2eYrfybcvhOt0DbfPVZvehxm/D1wJWbY2ZtvMSLv/AuXwIvhtklwSoFX0qNIycMP+7kKa
-	EtFV9QmpmxrGqF/bMLWhmdqbgCPSJRTtRL6nkXsfXswtI5e1HobEx9SnVTKnWVrBw7g02SHV+7k
-	fyE0LihdS1LAopES8k0k9rI+3bIhTPK2I/Zm06fzMS+9tfbAqbeUj6+9lq8vghp6GxdvbO6Faw=
-	=
-X-Google-Smtp-Source: AGHT+IGYG9XakyW+UdqNNLCDXpKkxXWG7Y4hV03XJnaZ6z+kf+TWlmY7SAdaNuPfFRb4w3Wi/uqpzw==
-X-Received: by 2002:a17:907:988:b0:ab7:da56:af9f with SMTP id a640c23a62f3a-abf26859581mr2151760166b.49.1741102501551;
-        Tue, 04 Mar 2025 07:35:01 -0800 (PST)
-Received: from [192.168.1.132] ([82.79.237.110])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf74e85fbfsm404613066b.15.2025.03.04.07.35.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 07:35:01 -0800 (PST)
-Message-ID: <09aba9f8-354d-4987-9026-37eb3ca26d6f@gmail.com>
-Date: Tue, 4 Mar 2025 17:34:57 +0200
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1741103382; x=1772639382;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=V/cWI6jCuZn3fcy5zPp0Q323xNqJa1S74loek1ZBh4w=;
+  b=ZAJmH9mar+mV2VqPDLb8zSS5DXU0LfY0oUxjSg3EhVIjKtQhNdKv1VX8
+   F2J82wkTZRukDdbZnqvYb1637rrMYa+vwlLkomBNrkAsvjOt5bgBYNewX
+   PGbD6Lv62aHEuTg0cN9tGywBgUz8fNTxDB8daHnL7gnxtGjj/Q9zS5Oxc
+   zr94REA82Z937NNfkTPjAu+ehWDqEUguy9EhSF//Y6v6q2rrNFt02o2el
+   aLAsa1ES80vk3hrVCfVo3ZJD8V+6BapfO7X2F3k3164YU5RoxnmFUTFCv
+   BRMwExgYdEJhDdITZXorYfK/ca/bvLAY3usfT33RZQvwYWvxLuj0zFTVD
+   Q==;
+X-CSE-ConnectionGUID: 5RRrExnVSsyHBiZxymnz2g==
+X-CSE-MsgGUID: W9sN2wF4TCe9QgLpWzcDKQ==
+X-IronPort-AV: E=Sophos;i="6.14,220,1736809200"; 
+   d="scan'208";a="42272726"
+X-URL-LookUp-ScanningError: 1
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 04 Mar 2025 16:49:39 +0100
+X-CheckPoint: {67C72113-5-2417938-F0170C2B}
+X-MAIL-CPID: 1B5DD4582515C3582BD7AD615B33C118_2
+X-Control-Analysis: str=0001.0A006369.67C72116.0066,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B3DFC16156A;
+	Tue,  4 Mar 2025 16:49:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1741103374;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=V/cWI6jCuZn3fcy5zPp0Q323xNqJa1S74loek1ZBh4w=;
+	b=PJ+RHd0k47M0p3Gvk5Gol0p05nmuw6+Wfy0Nb1JicPvJJ/gO0toelssg9xise111CADyl7
+	k9XiBKVmJUl8TFfjhQS90zCTMEdVC43H++eqnMUJEnca8KIzLieiJzO2rqdWaTnWM0gZhn
+	kIgCkD+cTdqOV5VUqNELxJd7KpUBhbIRymV2BaR1mwwBQFOjP06NQAtuYUFoomLYTYw9f2
+	gPkwMdefX3QnbzpT7hTcQgVa5AvH4DsRkW3nzpFF3bR9UMaxrUl5GZpRfF+CKDSGYfk4XK
+	qx2B3/aCSatZ0vafCGj8FNiGbpf14hMuks/v5cnwwooOrtYAMoJu1UDbXkvhyw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux@ew.tq-group.com,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v3 0/6] TQMa93xx on MBa93xxLA/CA LVDS support
+Date: Tue,  4 Mar 2025 16:49:19 +0100
+Message-ID: <20250304154929.1785200-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/4] clk: imx8mp: fix parents of AUDIOMIX DSP/OCRAM_A
-To: Abel Vesa <abel.vesa@linaro.org>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Marek Vasut <marex@denx.de>, Stephen Boyd <sboyd@kernel.org>,
- Shengjiu Wang <shengjiu.wang@nxp.com>, Adam Ford <aford173@gmail.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- linux-clk@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250226164513.33822-1-laurentiumihalcea111@gmail.com>
- <174102305899.2928950.8837177294161174759.b4-ty@linaro.org>
- <Z8Xn7f6vXg0aM4zx@linaro.org>
-Content-Language: en-US
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <Z8Xn7f6vXg0aM4zx@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi,
 
+this is v3 for the LVDS support on TQMa93xx module series.
 
-On 3/3/2025 7:33 PM, Abel Vesa wrote:
-> On 25-03-03 19:30:58, Abel Vesa wrote:
->> On Wed, 26 Feb 2025 11:45:09 -0500, Laurentiu Mihalcea wrote:
->>> Correct the parent of the AUDIOMIX DSP and OCRAM_A clock gates by setting
->>> it to AUDIO_AXI_CLK_ROOT, instead of AUDIO_AHB_CLK_ROOT. Additionally, set
->>> the frequency of AUDIO_AXI_CLK_ROOT to 800MHz instead of the current
->>> 400MHz.
->>>
->> Applied, thanks!
->>
->> [1/4] dt-bindings: clock: imx8mp: add axi clock
->>       commit: 2471a101938b0d1835b1983df08daeb98eef1205
->> [2/4] clk: clk-imx8mp-audiomix: fix dsp/ocram_a clock parents
->>       commit: 91be7d27099dedf813b80702e4ca117d1fb38ce6
->> [3/4] arm64: dts: imx8mp: add AUDIO_AXI_CLK_ROOT to AUDIOMIX block
->>       (no commit info)
->> [4/4] arm64: dts: imx8mp: change AUDIO_AXI_CLK_ROOT freq. to 800MHz
->>       (no commit info)
-> Applied only patches 1 and 2.
->
-> My b4 setup messed up. Sorry.
-would it be possible to also have patch no. 3 merged via the IMX CLK tree? I'd like to at least keep the first 3 patches together as they all fix the issue of OCRAM_A/DSP clocks having the wrong parent. if not, Shawn would you mind picking up patches 3 and 4? Thanks!
+It consists of three parts:
+1. New PLL configuration for 477.4 MHz
+2. LVDS support for imx93
+3. LVDS platform support for tqma9352-mba93xxla & tqma9352-mba93xxca
+
+Patch 1 adds a video PLL configuration for 477.4MHz
+Patch 2 is the imx93 equivalent of commit 1cb0c87d27dc ("dt-bindings:
+  soc: imx8mp-media-blk-ctrl: Add LDB subnode into schema and example")
+Patch 3 is the imx93 equivalent of commit 9cb6d1b39a8f ("soc: imx:
+  imx8m-blk-ctrl: Scan subnodes and bind drivers to them")
+Patch 4 is the imx93 equivalent of commit 94e6197dadc9 ("arm64: dts:
+  imx8mp: Add LCDIF2 & LDB nodes")
+Patch 5 adds LVDS DT overlay for tqma9352-mba93xxla platform
+Patch 6 adds LVDS DT overlay for tqma9352-mba93xxca platform
+
+Changes in v3:
+* Collected Peng's R-b
+* Fixed subject prefix in patch 3/6
+* Fix 'ranges' property both in bindings example and .dtsi
+
+Changes in v2:
+* Rebased to next-20250221
+* Reordered patches
+* Added 'ranges' to bindings
+* Use subnode constraint styles as suggested by Rob Herring
+* Use IMX93_CLK_SYS_PLL_PFD0 as parent for IMX93_CLK_MEDIA_AXI
+* Use 333MHz for IMX93_CLK_MEDIA_AXI
+* Do not set board compatible in orverlays
+* Add MBa93xxCA platform as well
+
+I skipped the support for dynamic PLL configuration for now. This is a
+separate task, see [2].
+
+Best regards,
+Alexander
+
+v2:
+* https://lore.kernel.org/all/20250224142831.485159-1-alexander.stein@ew.tq-group.com/
+v1:
+* https://lore.kernel.org/all/20231020130019.665853-1-alexander.stein@ew.tq-group.com/
+
+Alexander Stein (6):
+  clk: imx: clk-fracn-gppll: Add 477.4MHz config for video pll
+  dt-bindings: soc: imx93-media-blk-ctrl: Add LDB subnode into schema
+    and example
+  pmdomain: imx93-blk-ctrl: Scan subnodes and bind drivers to them
+  arm64: dts: imx93: Add LCDIF & LDB nodes
+  arm64: dts: tqma9352-mba93xxla: Add LVDS overlay
+  arm64: dts: tqma9352-mba93xxca: Add LVDS overlay
+
+ .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 51 ++++++++++++
+ arch/arm64/boot/dts/freescale/Makefile        |  5 ++
+ ...3-tqma9352-mba93xxca-lvds-tm070jvhg33.dtso | 40 ++++++++++
+ .../freescale/imx93-tqma9352-mba93xxca.dts    | 27 +++++++
+ ...3-tqma9352-mba93xxla-lvds-tm070jvhg33.dtso | 40 ++++++++++
+ .../freescale/imx93-tqma9352-mba93xxla.dts    | 27 +++++++
+ arch/arm64/boot/dts/freescale/imx93.dtsi      | 77 +++++++++++++++++++
+ drivers/clk/imx/clk-fracn-gppll.c             |  1 +
+ drivers/pmdomain/imx/imx93-blk-ctrl.c         |  7 ++
+ 9 files changed, 275 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca-lvds-tm070jvhg33.dtso
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla-lvds-tm070jvhg33.dtso
+
+-- 
+2.43.0
+
