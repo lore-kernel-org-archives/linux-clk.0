@@ -1,136 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6628743172;
-	Tue,  4 Mar 2025 08:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E641FAC5B
+	for <linux-clk@vger.kernel.org>; Tue,  4 Mar 2025 08:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076728; cv=none; b=Vh2YCUfluw3emKHB01++vWn2+U0PKYC2NaDasFGTKUQMM8bXd/K7tiKNnkyH1O9yuNN9YOa3JFldvMPIeHSLkUw8YVJq0PaboHpEzwdWOw9N3ywNKredLximA7d+kidbOBIMXdJFEBsrDrrv1m6pDhjiRWWZ9AcqOPNIhxqGqQ4=
+	t=1741077030; cv=none; b=iPTtPCLyrgYx5Oof2guyKkxz0kNRgF03e5f/aoRgDOMR3clk7MAxOzNcSpbOuYIdj9B4Xz9XmFH2/5kUExba02wT7piQvrbYLvAQIpKW7utbQn5TFCgDQiG4qg1YGzxo6Xod6QefDRNPtPNmLh9/cK+D8RkrrFvFdLNJ8tc3eJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076728; c=relaxed/simple;
-	bh=EjG1Ayc6WOrjJoENYUK2AAQIO5stxQf7QR9qv10BbjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=icJTvtuqlRP+U4BNIOLg7OauCitAyB+RQ0ClEN5gmC1+YmG9QHthuTT2gpchcKqyMJgBBn26VYkuJwRDl7ghYRtxbIQseX4SlT2mzjlXQg/lLjfy4r/2adKlLu7ydK+XpXCYNKR+EAMiIXq/rPCXB+cDcxVjP2rjMhLkuodX0Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PpDGT4pl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741077030; c=relaxed/simple;
+	bh=R7n1fGRKBqdjYD7qjAK0e0Z/E3j53RSIm1oESRXE5hs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ODXxGn5EziZByO8IelAJX3iQAoYz0asOzRr447oZ4vqh0j2fcZj8S32Gs/426jrVgtn+ZVD3AKh+BN7GRWvZFLuPUWOO7IU0RsXl9M2RPMwlZMfjf3xjf8YsNuRgVjeuwhcOApYvryNRYfLQfyzjs0obJWadyAhfi9tgl/bEkdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oLStp+Cy; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpDGT4pl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F116BC4CEE5;
-	Tue,  4 Mar 2025 08:25:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741076727;
-	bh=EjG1Ayc6WOrjJoENYUK2AAQIO5stxQf7QR9qv10BbjU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PpDGT4pl9OvTRcB3fq/ZOwLw8spKntrGFEwzLqPphNVifkDf/CruyEbhZQHgk/2P2
-	 OaO/XH8YBr7vXXUzzAXb9MCxHwhS3Gv6Lw96scmHOli+H3nQsIXZDQDGC9W3emPS3N
-	 nY3Dit1FlyI7es4f9fPs1wsEjQbPiYY11PCcNL82Y5z3/khVERpMwEhADig/jJn80Q
-	 vxoAqgpGd+J/JtYDXZxRHPHA6yhMPJnjnhv1xxRiF8rjLhR7Ykgb7/Uf0tznDN5Gph
-	 VGcFHF5LGIIO9dp4qig6fzhiykzDqDLh2TTUyPQxfH7e7pYRq0jETxtmR9wLg1j4SA
-	 C5CHMLvKvr0yQ==
-Date: Tue, 4 Mar 2025 09:25:24 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 04/15] dt-bindings: clk: sunxi-ng: document Allwinner
- A523 CCU
-Message-ID: <20250304-resilient-spiritual-crane-30d4e1@krzk-bin>
-References: <20250304012805.28594-1-andre.przywara@arm.com>
- <20250304012805.28594-5-andre.przywara@arm.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oLStp+Cy"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54953b2c112so356712e87.0
+        for <linux-clk@vger.kernel.org>; Tue, 04 Mar 2025 00:30:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741077027; x=1741681827; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=exz8dJdGpu0keF2ocUHooEu3xVfMKLaveroqXRkMjFE=;
+        b=oLStp+CyBpwi9PjekiWbpLhpJPiLNfBqQ7Xg7S2uBN0Nj+Rg1yRwihTXifdbumzjjv
+         td1RbEZtpyK1kYB7+axVkK542Xz7uGPQVl21+WOX/JQ37efVLRmk+KSb/3OkmMunqDRI
+         FeGo1oHZ4EmCyvOQX/4EhyDosAl5sAspNqU5SU8vgdTp3uwA72/qVVjMDnRtsp1Z6Tua
+         xK0u4OgpgrPfSR0slVvnoK+LfsLO/C8bmbEVUgbZgCr6XTneFf4nLfyU0//OnxAj8FDp
+         47jixILWSZFXZvibp5+EzbS42PIf7iALJhsjXp3mJuORpj/t5wn3OcP7Ho/uz0qHBniu
+         p9og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741077027; x=1741681827;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=exz8dJdGpu0keF2ocUHooEu3xVfMKLaveroqXRkMjFE=;
+        b=H12apLo7IZQ/L0manaiTmtNDoRJiSOAxaQaTFNFNhEFdLPlID8bHvj+3n8lfHgDALX
+         tp89Nox/2iGrdZd6gZTDd+bYBJpfeT0GZs6yd5C/01Dt1VcXohckPBTgNo6mLbETFzxM
+         3O7b4tl2wevvG6i3HMmQouJbcCHvn84lma4SPNdjbkeLrKTjA+uG+NK+PeunLhsOfhb3
+         gKt0XDPp6mLIiEAN++tjjzagXwy6jQ69VI/O1wgVpDO4lbhxvn/gkq5nTgq7kpiSvXmA
+         zakyQPU1fYq/Zrb4Cyex2D8mEA84zx5zDZpfm5Cveq2J7SP4ZbeI3ypGheIWP1xt+iqG
+         dRMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFkIdofMwrZs/a4V7cnR4sTiCi1+N6CgWqp1Ur1ODO1I472oc6ZnpXHeLCQmv0UggWkpyf7pdD30A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDDlWHJwXAPfr82ok3MFibzcKAsl7YlyIWA3lHFoRUU4X7wT7x
+	Sc+KthNag0PbhdGgnNIdkDwJbMIhTJsdTtf7nQvJKDofKz4D/bPt+KzWC6VWUoE=
+X-Gm-Gg: ASbGncuCndRD6G07BnzcDbsSERbp18TnBoV6G6zbnRWmV8qr9fl/DHN6nayGd391wOt
+	ybsFBMn7l0KznMtJ6ziNXxs8FsxJPOQ2/mShyDfOCeUKinuBI1KbbayeCuehv9rnb498aILyO6H
+	ojfUtNQj4JZtCJkqiChJifG3d+fWjvtmhnBLxWvBxT3KTGIhB9CfBDRrHwSe2ZyuwBDgNzqor1Z
+	5ov7jfJ/uV33yTmxPaSsBf5N3ii8DJ65xmjYy/tj+qH3iv+SY5OQfsbssCi/M3YXAGKiIAI8gbd
+	OYFa2SbU4N6NGk72qWhrZ3hfMCgYAXdxQD7NGhroxctVPaYdQBS+PUoytXo5vemZJKrVRhrdB1u
+	4Tzdl1t0hKiFQmi/WCsV+ysw=
+X-Google-Smtp-Source: AGHT+IEGXHdD67orThjoh+EdcaW0STtZkWcUjMqYIynw/oUS1Hi87oaWacTmj0dkEiU9M/5UUH0QdQ==
+X-Received: by 2002:ac2:5492:0:b0:549:5769:6af5 with SMTP id 2adb3069b0e04-54957696de8mr1360664e87.6.1741077026829;
+        Tue, 04 Mar 2025 00:30:26 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494e52a47asm1295952e87.152.2025.03.04.00.30.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 00:30:25 -0800 (PST)
+Message-ID: <2e6a0c7e-9c24-42fb-be9a-2b73da8dc69b@linaro.org>
+Date: Tue, 4 Mar 2025 10:30:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250304012805.28594-5-andre.przywara@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sm8550: Additionally manage MXC
+ power domain in camcc
+Content-Language: ru-RU
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
+ <20250303225521.1780611-3-vladimir.zapolskiy@linaro.org>
+ <dbxvzgqs5slrl5edqunal3wplg5jiszqv46dr4nzgowwlhkhxa@qwtfq7nfjwfo>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <dbxvzgqs5slrl5edqunal3wplg5jiszqv46dr4nzgowwlhkhxa@qwtfq7nfjwfo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 01:27:54AM +0000, Andre Przywara wrote:
-> The Allwinner A523/T527 SoCs have four CCUs, this adds the binding for
-> the main CCU.
+Hi Dmitry,
+
+On 3/4/25 01:53, Dmitry Baryshkov wrote:
+> On Tue, Mar 04, 2025 at 12:55:21AM +0200, Vladimir Zapolskiy wrote:
+>> SM8550 Camera Clock Controller shall enable both MXC and MMCX power
+>> domains.
 > 
-> The source clock list differs in some annoying details, and folding this
-> into the existing Allwinner CCU clock binding document gets quite
-> unwieldy, so create a new document for these CCUs.
-> Add the new compatible string, along with the required input clock
-> lists. This conditionally describes the input clock list, to make for
-> an easier patch adding the other CCUs.
+> Are those really required to access the registers of the cammcc? Or is
+> one of those (MXC?) required to setup PLLs? Also, is this applicable
+> only to sm8550 or to other similar clock controllers?
+
+as it is stated in the cover letter, both power domans shall be on
+to access CCI or CAMSS.
+
+>>
+>> Fixes: e271b59e39a6f ("arm64: dts: qcom: sm8550: Add camera clock controller")
+>> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> index d02d80d731b9..d22b1753d521 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> @@ -3329,7 +3329,8 @@ camcc: clock-controller@ade0000 {
+>>   				 <&bi_tcxo_div2>,
+>>   				 <&bi_tcxo_ao_div2>,
+>>   				 <&sleep_clk>;
+>> -			power-domains = <&rpmhpd SM8550_MMCX>;
+>> +			power-domains = <&rpmhpd SM8550_MXC>,
+>> +					<&rpmhpd SM8550_MMCX>;
+>>   			required-opps = <&rpmhpd_opp_low_svs>;
+>>   			#clock-cells = <1>;
+>>   			#reset-cells = <1>;
+>> -- 
+>> 2.43.0
+>>
 > 
-> Also add the DT binding headers, listing all the clocks with their ID
-> numbers.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  .../clock/allwinner,sun55i-a523-ccu.yaml      |  77 +++++++
->  include/dt-bindings/clock/sun55i-a523-ccu.h   | 189 ++++++++++++++++++
->  include/dt-bindings/reset/sun55i-a523-ccu.h   |  88 ++++++++
->  3 files changed, 354 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
->  create mode 100644 include/dt-bindings/clock/sun55i-a523-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun55i-a523-ccu.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-> new file mode 100644
-> index 0000000000000..2eacaeaeabac7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-> @@ -0,0 +1,77 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/allwinner,sun55i-a523-ccu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Allwinner A523 Clock Control Unit
-> +
-> +maintainers:
-> +  - Andre Przywara <andre.przywara@arm.com>
-> +
-> +properties:
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +  compatible:
-> +    enum:
-> +      - allwinner,sun55i-a523-ccu
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 4
 
-Drop, redundant.
-
-> +    maxItems: 4
-> +
-> +  clock-names:
-> +    minItems: 4
-> +    maxItems: 4
-
-Drop both and instead you need to list the items.
-
-> +
-> +required:
-> +  - "#clock-cells"
-> +  - "#reset-cells"
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +
-> +if:
-
-Drop, you have here only one device, no need for if:then.
-
-Best regards,
-Krzysztof
-
+--
+Best wishes,
+Vladimir
