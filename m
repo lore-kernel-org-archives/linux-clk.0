@@ -1,111 +1,345 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B121F582F
-	for <linux-clk@vger.kernel.org>; Tue,  4 Mar 2025 08:40:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A665320408A
+	for <linux-clk@vger.kernel.org>; Tue,  4 Mar 2025 08:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741077648; cv=none; b=VSi9MuydBmtD2+RzZVDM3J2DgCs3vwdC4wn5Vp2FlxIXKaMXgv6ngP1A5yw7PPi3GBjZL8I2G+Kcmc8+/Jou/C/LtLLukXxuCPToa3o+YebFZf/QL0iGnfgWZf169gk90wzA14ndM6T+E40E//EwMf+8Zo7N5iO5ohAcRAqXmQA=
+	t=1741078437; cv=none; b=Kbw5kl0yHfw4jpLlndCL7pgtFshdF7iqb+A4qgfu2NH2sgLNo10IsrFHmS3gXFYGoyfwob/zzJdCFx0KGohMCtOMXqzA3TND7Sa2fHYftp24/AHmVB9ZySNnzg8eaElltZo/97yP4W4tSYmQtXLd2zb0ewQkKe9K+Py9xBvgK9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741077648; c=relaxed/simple;
-	bh=n2dqkv6VmIcMBfY2ja3ECua8O5M36w0yuJN1pE6B8rU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=okaBEgjWHkQmGXb2jHORWfGRnmM9cPreSAQmimCU3XC4/BB5YkVI6lQnfM0IE3MeUDA1vVHstjsZYNd2Rhr1tx/Cyq+gW20HZ37EVUJfvnI/8E/B+2pqFCv1ypzPQwMow5NHyaKTY+hUgRSomjrtdWpawnF1cUrfWJnr8k1b3OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OR56CiQR; arc=none smtp.client-ip=209.85.219.175
+	s=arc-20240116; t=1741078437; c=relaxed/simple;
+	bh=wzgVeH2iZAgK+OV0AmNH5+torfAgfEWzdJZTvzH35RY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWNAzY7PCgsL94Qubfsem69X+GfDLJE9kdB9m17/PhfvBfNk6a+PxsSnOXOX4QvPXYEPFGCNX3CbLvajXNt+cdwHRpKbeEZPZ/mcKBw1S+7QDZbqXpFcvT605NEpnXEzCiUyJLdmfwDxEKwXNatlwv5TIom2elVMOJb1Oe2hTMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=br+aWbNg; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OR56CiQR"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e3c8ae3a3b2so3975654276.0
-        for <linux-clk@vger.kernel.org>; Tue, 04 Mar 2025 00:40:46 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="br+aWbNg"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2feb9078888so8634873a91.3
+        for <linux-clk@vger.kernel.org>; Tue, 04 Mar 2025 00:53:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741077645; x=1741682445; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QjHa/M7Ja6GZpMzIKOU9aL6acZmi6aLPsZx9gsCJNXU=;
-        b=OR56CiQRfELTC1vAZpAYq3Y5pA6jRmJnyCd/fzLFInPm/j5jnRTbHjjPB3bdDvpedc
-         /xOfZt14TRWEHNMqmnPOgrNnYXSaqi7gzoBzixBhUDMpEujCUa65O+Gh7t20mb+XoXUO
-         dSjMv9XPCiesyIS6NEA8zcgUSZ7W8eD2kSAmrcRaWPEb2tihUCGhRMqXeyWI/NO8Mfpc
-         2W0ltiT7VzIgrQigXg6274PaOKuzwA2jtNN7KBvJkBEAZTrY6DHBwwMFnAPYaNAL0lup
-         YadaXmTHVwuPCIZKXYb+Gop4Q2oJYwe59MKhoJfqovzym8Q7+O2Z44RnQwiPj33CyUTn
-         ofyA==
+        d=linaro.org; s=google; t=1741078435; x=1741683235; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=E0x864LV9vrzBzd/PsD5RrZ/kDJqjI2owc7G6mwEbH0=;
+        b=br+aWbNgaU5TNBEy7LA6bvRYNsXIRj6KMqH6MYZfQsjgOM3TP6M9d0PrOgNzTDdatL
+         4kigRFO0ugoO1PgyB/1Uz7k7GDv9m6YaoYnbS5bYvhbqVT0UbllMn0K5rqz46tn3G/LK
+         tm7hHEVs/zf0XabTvQyBtvwXeAivJLUcRFG7Ep4kbS7qboOZTlhCoRLcM/GsIv4mhsDW
+         I1p4+gEUtnnpYang5mbleu49diq8qSd87Ii8C5zpccUJLD6FmyQ43zEtZRKjtDpq6Idf
+         Kh45B7cvO7cr49xJ2go5s8jFCqKJWQo3VTGiW6DGS0SUfdvnyFNzHA0lI4tpPARi2SRX
+         qqeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741077645; x=1741682445;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QjHa/M7Ja6GZpMzIKOU9aL6acZmi6aLPsZx9gsCJNXU=;
-        b=HNgxKnzAkIqRzmKDRfLrcsOAA83AHAj/CIzF4aHTJuzUBGPyqdkVUlwEjkHyL01sv1
-         KtzA4YD0DEbSKtV0FFyRkFopVPZe0R8IKKcDwDHjwgTuGejr19ZIcPvnGk0FH8kSTyZh
-         2zNfJb1XuXQ/jdqZxSa+vDM4kpcwXvy5jkzBxG2o6SQ0R1bU54sPgMgC6umZktbMmk9x
-         X8CXp4DeLTJNXimDrWuXwGawNio5iKhegGBz4CUfdCNf7X2QH25EawfDLjzR4buoROQG
-         3x9dtqagGCCwyPB9CX5BtA6aCxJonXBftHvV+4ItnNxKNuTGATlkgGnKWxikCkRegYIC
-         BgEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfeSxni/pKqDwYtypJl8NhsWUUy1wQamKmszPaBCP2PgauV++IdSN1j6nlgRKcHPtQFZsTuBXP7MI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlhwcy0Aiu+Vo0Fi8d1LHFDj6AHq4y2DuHrsXleC56U+4hLlKv
-	CYIua91t6Ljqbz9NZNTB61x8jhR7PEonoN0c4fLMSlA7P2WQvjw/ppvr5azycVjp7x8GLXf2aku
-	glpi2ywcg1CPKv9lIRnRuEUgGASPUoxeJfPLKxA==
-X-Gm-Gg: ASbGncv9Ap81K3vo+JhQsV/rma4x6DhE7t7cZZ4kGMGJgF0Q8SB2uc/mlDMd4+Azo6a
-	fDT16bqXxOdkP0p1IaOT/0oP6Y1kYudnhG8czIifFvoa59gUtd3Z9hwHDpDyq1Ukz1JiRhJbZdk
-	l1Fqk+Bmlp6QZWEoR4bscN+Fy2
-X-Google-Smtp-Source: AGHT+IFXmE68ihSGPFYCeO8AjPuKwgMSkb/JwBeaSq10AY+V7CaG9Lq8teRSlJDX4sbY9VZhLECVXcDgKxqfBf0O+uI=
-X-Received: by 2002:a05:6902:988:b0:e57:4226:8ae0 with SMTP id
- 3f1490d57ef6-e60b2e9b57cmr18557753276.18.1741077645466; Tue, 04 Mar 2025
- 00:40:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741078435; x=1741683235;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E0x864LV9vrzBzd/PsD5RrZ/kDJqjI2owc7G6mwEbH0=;
+        b=XAukc85EGQ7j6kj3cd7PFeHti9aXsInQNFFoVL7PZWX2YxkhpdByrdxVp1SfduZDYO
+         EDtKGDy6NyMnRsl/Sgbnj47dH1dA2547S1v9hT4z1hezKniknsAC3cXgVmxkv9MiBZfq
+         vDQIuydwTXrZJqVvC4uMMQBSBH/Bhss/j5R1374fVsZ1bJpR9i2C1S6hE5dpvhH5DoeM
+         4eEcgqfMeHnY0w9kjPHp45eNh0imyvwqyS+m9d21L5o/P/e8LXUyo0XjKhktjbriHblk
+         f8T1Ts86N30iTvJOVNKQOuxQ+/2j4hQEpFxk2h18xrDZDEoEKxY6CvITq/tV+EX7LcgX
+         dxQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWr2TrfMI50ti8Gf+grKH3qPavhDNvd2gJ/mBUFcdBY5OvOm6fVe3x7baWdz3IhCQ+Qa2RWRxp9g1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0xW4pu4CauwSb7r7dsFGJ7cfNjR94shy2TrxSn+vocgQUrFXl
+	TUKax3C4tUHIW4+iQATLBKsM3FWOefdsG8VPyNBjwkLbtqBdrWADUDykfG+Lemg=
+X-Gm-Gg: ASbGncuhmj1104+1Y/s5t+PBArsIt1OzbI8W03+WIPh5yfP1LefboGaSVJwFJctSmk5
+	zh3xEq7HTetxR+s7u5xygZWveErx9yBMEY9Myxf1aucJ4FMaI+95ShUr6cHiW1C3/ej7vaF/TeQ
+	B5zWtOSMXRvU8QOFbLhHzXjB5GzoSbzadoSR+1CGNq/J40W7t68TZD3+tNJ5AZEBga/OEQogOE4
+	yjWs3Fc6TX4k7WkClc5Mr6b5SZ9sovLzyVI10Wj2y4o2HYiml3wDpQEcgYc7UhFkRAgL5rWnImv
+	N9AfQt5nhy/FsLb8hasqNoxS3RqaJ/03tVDoq2VrgCEyCA==
+X-Google-Smtp-Source: AGHT+IFdFTTfqIOr3puUYW+t+84g8sQqcnrDMvn/JLyondd0YLc+BE2wI//6xrrG8j4UY3K/GoC9Rw==
+X-Received: by 2002:a17:90b:3b85:b0:2f4:434d:c7ed with SMTP id 98e67ed59e1d1-2febab75e0bmr28826018a91.16.1741078434808;
+        Tue, 04 Mar 2025 00:53:54 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fea696e3f0sm10429399a91.37.2025.03.04.00.53.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 00:53:54 -0800 (PST)
+Date: Tue, 4 Mar 2025 14:23:51 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
+Message-ID: <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
+References: <cover.1740995194.git.viresh.kumar@linaro.org>
+ <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
+ <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
- <20250303225521.1780611-3-vladimir.zapolskiy@linaro.org> <dbxvzgqs5slrl5edqunal3wplg5jiszqv46dr4nzgowwlhkhxa@qwtfq7nfjwfo>
- <3210a484-b9c3-4399-bee1-9f5bbc90034c@linaro.org>
-In-Reply-To: <3210a484-b9c3-4399-bee1-9f5bbc90034c@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 4 Mar 2025 09:40:34 +0100
-X-Gm-Features: AQ5f1Jq_CG3rPPvbs12wI2I97a8wGeUJnFI5bNoL6Im5zfyjM1I9k5UBEMej_KU
-Message-ID: <CAA8EJprP9Z181VDCT=xfyrBipzgiB0tfb8M_XZ4H=yOrvEnB0w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: sm8550: Additionally manage MXC
- power domain in camcc
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
 
-On Tue, 4 Mar 2025 at 09:37, Vladimir Zapolskiy
-<vladimir.zapolskiy@linaro.org> wrote:
->
-> On 3/4/25 01:53, Dmitry Baryshkov wrote:
-> > On Tue, Mar 04, 2025 at 12:55:21AM +0200, Vladimir Zapolskiy wrote:
-> >> SM8550 Camera Clock Controller shall enable both MXC and MMCX power
-> >> domains.
+On 03-03-25, 11:16, Miguel Ojeda wrote:
+> On Mon, Mar 3, 2025 at 11:00 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
 > >
-> > Are those really required to access the registers of the cammcc? Or is
-> > one of those (MXC?) required to setup PLLs? Also, is this applicable
-> > only to sm8550 or to other similar clock controllers?
->
-> Due to the described problem I experience a fatal CPU stall on SM8550-QRD,
-> not on any SM8450 or SM8650 powered board for instance, however it does
-> not exclude an option that the problem has to be fixed for other clock
-> controllers, but it's Qualcomm to confirm any other touched platforms,
+> > +/// Frequency unit.
+> > +pub type Hertz = crate::ffi::c_ulong;
+> 
+> Do we want this to be an alias or would it make sense to take the
+> chance to make this a newtype?
 
-Please work with Taniya to identify used power domains.
-
-> for instance x1e80100-camcc has it resolved right at the beginning.
->
-> To my understanding here 'required-opps' shall also be generalized, so
-> the done copy from x1e80100-camcc was improper, and the latter dt-binding
-> should be fixed.
-
-Yes
-
-
+I have tried some improvements based on your (and Alice's comments), please see
+if it looks any better now.
 
 -- 
-With best wishes
-Dmitry
+viresh
+
+-------------------------8<-------------------------
+
+diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+new file mode 100644
+index 000000000000..fc3cb0f5f332
+--- /dev/null
++++ b/rust/kernel/clk.rs
+@@ -0,0 +1,232 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Clock abstractions.
++//!
++//! C header: [`include/linux/clk.h`](srctree/include/linux/clk.h)
++//!
++//! Reference: <https://docs.kernel.org/driver-api/clk.html>
++
++use crate::{
++    bindings,
++    device::Device,
++    error::{from_err_ptr, to_result, Result},
++    ffi::c_ulong,
++    prelude::*,
++};
++
++use core::{ops::Deref, ptr};
++
++/// Frequency unit.
++#[derive(Copy, Clone, PartialEq, Eq, Debug)]
++pub struct Hertz(c_ulong);
++
++impl Hertz {
++    /// Creates a new `Hertz` value.
++    pub fn new(freq: c_ulong) -> Self {
++        Hertz(freq)
++    }
++
++    /// Returns the frequency in `Hertz`.
++    pub fn value(self) -> c_ulong {
++        self.0
++    }
++}
++
++/// This structure represents the Rust abstraction for a C [`struct clk`].
++///
++/// # Invariants
++///
++/// A [`Clk`] instance always corresponds to a valid [`struct clk`] created by the C portion of the
++/// kernel.
++///
++/// Instances of this type are reference-counted. Calling `get` ensures that the allocation remains
++/// valid for the lifetime of the [`Clk`].
++///
++/// ## Example
++///
++/// The following example demonstrates how to obtain and configure a clock for a device.
++///
++/// ```
++/// use kernel::clk::{Clk, Hertz};
++/// use kernel::device::Device;
++/// use kernel::error::Result;
++///
++/// fn configure_clk(dev: &Device) -> Result {
++///     let clk = Clk::get(dev, "apb_clk")?;
++///
++///     clk.prepare_enable()?;
++///
++///     let expected_rate = Hertz::new(1_000_000_000);
++///
++///     if clk.rate() != expected_rate {
++///         clk.set_rate(expected_rate)?;
++///     }
++///
++///     clk.disable_unprepare();
++///     Ok(())
++/// }
++/// ```
++///
++/// [`struct clk`]: https://docs.kernel.org/driver-api/clk.html
++#[repr(transparent)]
++pub struct Clk(*mut bindings::clk);
++
++impl Clk {
++    /// Gets `Clk` corresponding to a [`Device`] and a connection id.
++    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
++        let con_id = if let Some(name) = name {
++            name.as_ptr() as *const _
++        } else {
++            ptr::null()
++        };
++
++        // SAFETY: It is safe to call `clk_get()` for a valid device pointer.
++        Ok(Self(from_err_ptr(unsafe {
++            bindings::clk_get(dev.as_raw(), con_id)
++        })?))
++    }
++
++    /// Obtain the raw `struct clk *`.
++    #[inline]
++    pub fn as_raw(&self) -> *mut bindings::clk {
++        self.0
++    }
++
++    /// Enable the clock.
++    #[inline]
++    pub fn enable(&self) -> Result {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
++        // by `clk_get()`.
++        to_result(unsafe { bindings::clk_enable(self.as_raw()) })
++    }
++
++    /// Disable the clock.
++    #[inline]
++    pub fn disable(&self) {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
++        // by `clk_get()`.
++        unsafe { bindings::clk_disable(self.as_raw()) };
++    }
++
++    /// Prepare the clock.
++    #[inline]
++    pub fn prepare(&self) -> Result {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
++        // by `clk_get()`.
++        to_result(unsafe { bindings::clk_prepare(self.as_raw()) })
++    }
++
++    /// Unprepare the clock.
++    #[inline]
++    pub fn unprepare(&self) {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
++        // by `clk_get()`.
++        unsafe { bindings::clk_unprepare(self.as_raw()) };
++    }
++
++    /// Prepare and enable the clock.
++    #[inline]
++    pub fn prepare_enable(&self) -> Result {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
++        // by `clk_get()`.
++        to_result(unsafe { bindings::clk_prepare_enable(self.as_raw()) })
++    }
++
++    /// Disable and unprepare the clock.
++    #[inline]
++    pub fn disable_unprepare(&self) {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
++        // by `clk_get()`.
++        unsafe { bindings::clk_disable_unprepare(self.as_raw()) };
++    }
++
++    /// Get clock's rate.
++    #[inline]
++    pub fn rate(&self) -> Hertz {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
++        // by `clk_get()`.
++        Hertz::new(unsafe { bindings::clk_get_rate(self.as_raw()) })
++    }
++
++    /// Set clock's rate.
++    #[inline]
++    pub fn set_rate(&self, rate: Hertz) -> Result {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
++        // by `clk_get()`.
++        to_result(unsafe { bindings::clk_set_rate(self.as_raw(), rate.value()) })
++    }
++}
++
++impl Drop for Clk {
++    fn drop(&mut self) {
++        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
++        // by `clk_get()`.
++        unsafe { bindings::clk_put(self.as_raw()) };
++    }
++}
++
++/// A lightweight wrapper around an optional [`Clk`].
++///
++/// An `OptionalClk` represents a [`Clk`] that a driver can function without but may improve
++/// performance or enable additional features when available.
++///
++/// # Invariants
++///
++/// An `OptionalClk` instance encapsulates a [`Clk`] with either a valid or `NULL` [`struct clk`] pointer.
++///
++/// Instances of this type are reference-counted. Calling `get` ensures that the allocation remains
++/// valid for the lifetime of the `OptionalClk`.
++///
++/// ## Example
++///
++/// The following example demonstrates how to obtain and configure an optional clock for a device.
++/// The code functions correctly whether or not the clock is available.
++///
++/// ```
++/// use kernel::clk::{OptionalClk, Hertz};
++/// use kernel::device::Device;
++/// use kernel::error::Result;
++///
++/// fn configure_clk(dev: &Device) -> Result {
++///     let clk = OptionalClk::get(dev, "apb_clk")?;
++///
++///     clk.prepare_enable()?;
++///
++///     let expected_rate = Hertz::new(1_000_000_000);
++///
++///     if clk.rate() != expected_rate {
++///         clk.set_rate(expected_rate)?;
++///     }
++///
++///     clk.disable_unprepare();
++///     Ok(())
++/// }
++/// ```
++///
++/// [`struct clk`]: https://docs.kernel.org/driver-api/clk.html
++pub struct OptionalClk(Clk);
++
++impl OptionalClk {
++    /// Gets `OptionalClk` corresponding to a [`Device`] and a connection id.
++    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
++        let con_id = if let Some(name) = name {
++            name.as_ptr() as *const _
++        } else {
++            ptr::null()
++        };
++
++        // SAFETY: It is safe to call `clk_get_optional()` for a valid device pointer.
++        Ok(Self(Clk(from_err_ptr(unsafe {
++            bindings::clk_get_optional(dev.as_raw(), con_id)
++        })?)))
++    }
++}
++
++// Make `OptionalClk` behave like [`Clk`].
++impl Deref for OptionalClk {
++    type Target = Clk;
++
++    fn deref(&self) -> &Clk {
++        &self.0
++    }
++}
