@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C3D1F6679;
-	Tue,  4 Mar 2025 07:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191181F5429;
+	Tue,  4 Mar 2025 07:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741074115; cv=none; b=RLmQv0VDtexzs1hOvUEilXwT5QEVHCIcvz7uAol5ZxBaIvWfM++beo9lWWQf/q5cGcyd47rAyJWQvwVw9Y5IofNuj+LjRuuBKhlWzIhFbhuimWH4d0QfjreDKCQoFjTlts+/NmzfHzAQg1rI9iGNCcHrMDNPiQDWbBWa81J/rQ0=
+	t=1741074288; cv=none; b=IHuqac3aB1NKWD8dYuyKlV631Q7Kj0er74zy825Y1e1zk7hdHQ59WYTKzp4c7/mn9GwZmqIZ6alfPyC7/cEZUkfBjcZZprjh4FlTmmDy2z3LfwH0kS705dcFgPGIM/3IKhfGguC2bNimcQ2c6F9gj8Y0Az4G26IMOfeIo7rU9gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741074115; c=relaxed/simple;
-	bh=e+d7LzNEHgC04AOhwlIbC1h4HJEdskxbs6owwHoZla4=;
+	s=arc-20240116; t=1741074288; c=relaxed/simple;
+	bh=9bxpUZMc/I1HEv4SLq+lQIM/QZ/o1hTAwys66NHVlqM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kaRLwgUfiKE1a1n09AkyeEBZ9+BxsI7ceJOvulgegbiVvi7uNtJXuqc+TVHcqTgNP8kApLqUUrPfe+yeCNHjr+sF/IjfsfYlQbjTEcjwxw5gnhVvlmqGaCz7+ya+0CxbrCpn0l5P/22dO5xfl6O22lwOd7oedgFIVXpLRKKZspg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZ4NE5jt; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=RwcGTLi4ZrrKnnXCg/eBKwHHA38E52GnOui8oJs1kzAqsmZ59CJxQebjHNRXR/VMT0SDAtfzNqG4TVc2pQwkxbduSB1FUsiTZbdvbERdCZsL7RrKIoGZvokqQv/qy2b8ShtlUpb3tMpIJHmp7uaSWibUCRd2VSTo9/297Obt/jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRjugh86; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZ4NE5jt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EBE8C4CEE5;
-	Tue,  4 Mar 2025 07:41:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRjugh86"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFAF5C4CEE9;
+	Tue,  4 Mar 2025 07:44:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741074114;
-	bh=e+d7LzNEHgC04AOhwlIbC1h4HJEdskxbs6owwHoZla4=;
+	s=k20201202; t=1741074287;
+	bh=9bxpUZMc/I1HEv4SLq+lQIM/QZ/o1hTAwys66NHVlqM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KZ4NE5jtbqkGmnE1o5QhOxcQmPZL4HeBaOIUFgUKIaIm91aSY4ZlgSAOeaCQZBeaq
-	 UQi/LW5hamW9Ak+aFTeW/NY3A3/xMza2AObFRsU4SWpVS8OuCJXsi8imcFnr1M6G3Z
-	 qwLUjx4aUi+S/d0A0VunusCOf4h5schrPtqedVMTbTnpBhtfZkt3XGQtIhRQxNb2/g
-	 UM1JwHtOuR7EhrjuUsLdGWkduk32YQcLqEkdDNuEXPStpidMXge/YSHelLs/63RT0K
-	 EVvZppM5sGFyjyCTPQkJUypK9T5ZbQfndVl1yZLDX6NoGIlE7CZAbrXNHHWqo9Wia3
-	 WbUyvXQ+3wYnQ==
-Message-ID: <2985a7d1-2d57-473a-b953-7a2c0ecb7195@kernel.org>
-Date: Tue, 4 Mar 2025 08:41:44 +0100
+	b=NRjugh86mZu6/NUJQyJD/KAXr6dzb2sdrCV7inzMKonWGk+8VCLebAzk1ZwF5VEZW
+	 JOXLDwCNuoOWHmytXIuINoCPIzuAyld8OFIoSXGgPcWWxKbhHNwBcgk9W8ZLy+RZNA
+	 3MrWRXkyDJOrvYfZEowwE7cCuy9/xU3sEzSB1AnFX8beMNuL7sguG3TlVCBngt84R8
+	 Vno2FlV4FbHHgetK+/qVsT785mbh1Yr9pM561RHJ/pmWoqOErTNR8wTK6uUypTGHvQ
+	 O1s74qQo8vphe8V6Ex1tcbsFhEOZcOEwIt9BfHdCzooRlwqI458jQxAaFUWmo5cmxP
+	 h+zRCmlOl/ncQ==
+Message-ID: <3190de22-67eb-4f28-b7f1-27bcd8db1e9a@kernel.org>
+Date: Tue, 4 Mar 2025 08:44:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,21 +35,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/4] dt-bindings: clock: thead: Add TH1520 VO clock
- controller
-To: Michal Wilczynski <m.wilczynski@samsung.com>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20250303143629.400583-1-m.wilczynski@samsung.com>
- <CGME20250303143635eucas1p1dbcd26d4906b962e07cbde7f5ef704bf@eucas1p1.samsung.com>
- <20250303143629.400583-2-m.wilczynski@samsung.com>
- <cf6aa8bf-d424-49f4-b6a6-b6b10fd8092f@kernel.org>
- <ac4f8b31-2a9b-4860-a72e-379806ee9f77@kernel.org>
- <1cd2f07d-14a1-4a25-8a81-b815f405018e@samsung.com>
+Subject: Re: [PATCH v5 00/21] Enable drm/imagination BXM-4-64 Support for
+ LicheePi 4A
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
+ wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
+ matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ ulf.hansson@linaro.org, jszhang@kernel.org, p.zabel@pengutronix.de,
+ m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ linux-pm@vger.kernel.org
+References: <CGME20250219140249eucas1p1291eb86c932373c847a3314ae54789d5@eucas1p1.samsung.com>
+ <20250219140239.1378758-1-m.wilczynski@samsung.com>
+ <20250221-eminent-squirrel-of-honor-dee80d@krzk-bin>
+ <90d0d409-f374-4e06-bc69-b9bf0622959d@samsung.com>
+ <7ba53937-7922-41da-a7ed-909ce620db1f@kernel.org>
+ <09411368-cd76-479f-ade3-5a87d3f9be38@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,56 +100,60 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <1cd2f07d-14a1-4a25-8a81-b815f405018e@samsung.com>
+In-Reply-To: <09411368-cd76-479f-ade3-5a87d3f9be38@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/03/2025 08:39, Michal Wilczynski wrote:
+On 04/03/2025 08:38, Michal Wilczynski wrote:
 > 
 > 
-> On 3/3/25 18:46, Krzysztof Kozlowski wrote:
->> On 03/03/2025 18:41, Krzysztof Kozlowski wrote:
->>> On 03/03/2025 15:36, Michal Wilczynski wrote:
->>>> Add device tree bindings for the TH1520 Video Output (VO) subsystem
->>>> clock controller. The VO sub-system manages clock gates for multimedia
->>>> components including HDMI, MIPI, and GPU.
->>>>
->>>> Document the VIDEO_PLL requirements for the VO clock controller, which
->>>> receives its input from the AP clock controller. The VIDEO_PLL is a
->>>> Silicon Creations Sigma-Delta (integer) PLL typically running at 792 MHz
->>>> with maximum FOUTVCO of 2376 MHz.
->>>>
->>>> Add a mandatory reset property for the TH1520 VO clock controller that
->>>> handles the GPU clocks. This reset line controls the GPU CLKGEN reset,
->>>> which is required for proper GPU clock operation.
->>>>
->>>> The reset property is only required for the "thead,th1520-clk-vo"
->>>> compatible, as it specifically handles the GPU-related clocks.
->>>>
->>>> This binding complements the existing AP sub-system clock controller
->>>> which manages CPU, DPU, GMAC and TEE PLLs.
->>>>
->>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->>>> ---
->>>>  .../bindings/clock/thead,th1520-clk-ap.yaml   | 33 ++++++++++++++++--
->>>>  .../dt-bindings/clock/thead,th1520-clk-ap.h   | 34 +++++++++++++++++++
->>>>  2 files changed, 64 insertions(+), 3 deletions(-)
+> On 3/3/25 18:43, Krzysztof Kozlowski wrote:
+>> On 03/03/2025 09:38, Michal Wilczynski wrote:
 >>>
 >>>
->>> Where is the changelog? Why is this v1? There was extensive discussion
->>> for many versions, so does it mean all of it was ignored?
+>>> On 2/21/25 10:12, Krzysztof Kozlowski wrote:
+>>>> On Wed, Feb 19, 2025 at 03:02:18PM +0100, Michal Wilczynski wrote:
+>>>>> The LicheePi 4A board, featuring the T-HEAD TH1520 SoC, includes an Imagination
+>>>>> Technologies BXM-4-64 GPU. Initial support for this GPU was provided through a
+>>>>> downstream driver [1]. Recently, efforts have been made to upstream support for
+>>>>> the Rogue family GPUs, which the BXM-4-64 is part of [2].
+>>>>>
+>>>>> While the initial upstream driver focused on the AXE-1-16 GPU, newer patches
+>>>>> have introduced support for the BXS-4-64 GPU [3]. The modern upstream
+>>>>> drm/imagination driver is expected to support the BXM-4-64 as well [4][5]. As
+>>>>> this support is being developed, it's crucial to upstream the necessary glue
+>>>>> code including clock and power-domain drivers so they're ready for integration
+>>>>> with the drm/imagination driver.
+>>>>>
+>>>>
+>>>> This is v5 of big patchset which became huge. I understand you did like
+>>>> that for v1 which was RFC. But it stopped being RFC.
+>>>>
+>>>> Split your patchset, keeping versioning and changelog, per subsystem.
+>>>
+>>> Sorry for the late reply—I didn't have access to email. I agree with
+>>> your suggestion and will send the clock changes, firmware/power domain,
+>>> reset, and drm/imagination updates as separate patchsets for merging.
 >>
 >>
->> Plus this was reviewed so it is even more confusing. Where is the review
->> tag? If tag was dropped, you must explain this - see submitting patches,
->> which asks for that.
+>> How did you implement above comment? You did the split, right? Where is
+>> versioning and where are changelogs?
 > 
-> There was a tag, but later in v5 I've added another part to this
-> dt-binding - reset, which I wasn't sure whether you would approve of, so
-> I've removed the Reviewed-by.
+> So I thought the sub-series should be versioned independently from v1 ?
 
-Dropping tag needs explicit explanation and the entire versioning plus
-changelog are gone from here.
+Keep the versioning. Keep the changelog.
+
+You now versioned your new set independently, so I don't understand your
+question.
+
+> Then linked the previous discussions in the cover letter, without
+> copying them.
+
+Nothing said this is the same patchset. You just mentioned some "bigger
+series" cover letter. How some other bigger series is anyhow related?
+And how can I find relevant pieces there?
+
+You are supposed to make it easy for reviewers, not difficult.
 
 Best regards,
 Krzysztof
