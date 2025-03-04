@@ -1,148 +1,60 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457752E3399;
-	Tue,  4 Mar 2025 19:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B982201110;
+	Tue,  4 Mar 2025 19:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741117814; cv=none; b=EcKx31YywJ9XEvAJ9I8MnVl0CBUPB+M0K1tYlfbavZFhYpBpTjr78a+94l4eUzzTrdbZUmrBEORyxBsvq3ubccgiKCnNRZy9DNWjqEhJX7+2J+qeofkSQTH5qPXSkIkXUojL+czlh59tTy2TJbLBizOwkuBHjctw9lDW2jHOueM=
+	t=1741117838; cv=none; b=PH1FVjcjwPRX3tqBKTYIQpGwWTjBLvAYf4L1tQU5juWw6xZejTIXT/BzxIEVvui7TspGz1u3NUqroFzFw7kcezTPnvYYO9Y1OaJ6/aMa9JCqCpGaZMbzBKnCmyn/gAb7rIup7wPmQr1e7bYN0ibfWYX42HEifOrAAMLGIyY5FDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741117814; c=relaxed/simple;
-	bh=/vRWKQtZKb8AVks66fKFJNA8Q7HHHVpV5dIgIcKRJh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B1hnNqRWs9nRa/GCBrZwc+9fEblU+wo1lkpRSIwI3jBDlKmwa+wcVU8Ch1dXsU8ALBlLZVA54xC+yHE1PF3EP6fKEzAeZeK4SIDldI1SHVJ5jg1lTlr2FvVkCX+ehCtB8ccF+XhTf7whnwVFLOl3mGACXK/j1hDs7CYx6Hr6hgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=EWOlvoXB; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1741117838; c=relaxed/simple;
+	bh=fwSFelqnv16O3Z5CfuJeHvjUeDPCoeSC6mIkfvyX/co=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=pd9uJyG/99g2mhH9+WtcGUOgShb9rhBk2JO3aWom+b+9jSkxPAHQ4GW8izzsgtE/oQB8rigjsOh8mc+9CXZ/5TpsGxvpV+P/PiuER7czQ5EpTo5Awr+oNuxZDvfbnXDK1RoJlXSQKeBjnN5Gu1g+qPVcD7NscNpd3fsD2aE74Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIkd9Ij2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="EWOlvoXB"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 0095C252B4;
-	Tue,  4 Mar 2025 20:50:09 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id YOe44yWLNYEa; Tue,  4 Mar 2025 20:50:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1741117804; bh=/vRWKQtZKb8AVks66fKFJNA8Q7HHHVpV5dIgIcKRJh8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=EWOlvoXB2lKejxwrdke4Er6of5ABdK3jBS9BAXlXEL0XFcLS/7C0FI/oEB1pz5JpR
-	 yStJAX5kufOc7R5KTMYtpQvzZZClaZe1L05PLt1BJlCvyAp0TMiVt3jZyiEQhZKrrh
-	 DC1g3n0EnlgV3+tBx61eFGMHLWBzWJuq3kRkNOP16r7p/9ZOBZKIVKjByeqdnt8ry/
-	 pkLkd8wXvLy+ItQptFHSWKUtx0nVA9JiMlh7MObc7kiMZrzVqHDyUo+bduvDD9iybP
-	 ZvfPyhbDp0qziwtu+YrJ/xUroOCsLzWzkjRo3HlIu3EkzYRmFG0gxi1zzBElz5i8f4
-	 /EsfnkVnFBvTg==
-Date: Tue, 4 Mar 2025 19:49:45 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: conor+dt@kernel.org, cristian.ciocaltea@collabora.com,
-	detlev.casanova@collabora.com, devicetree@vger.kernel.org,
-	frank.wang@rock-chips.com, heiko@sntech.de, jonas@kwiboo.se,
-	krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 8/8] arm64: dts: rockchip: Enable SD-card interface on
- Radxa E20C
-Message-ID: <Z8dZWYpABghRHHge@pie.lan>
-References: <20250301104835.36439-1-ziyao@disroot.org>
- <20250304121036.1453284-1-amadeus@jmu.edu.cn>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIkd9Ij2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADEEDC4CEE5;
+	Tue,  4 Mar 2025 19:50:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741117837;
+	bh=fwSFelqnv16O3Z5CfuJeHvjUeDPCoeSC6mIkfvyX/co=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=HIkd9Ij2H85qYKpF0MGi3HY94MySHtt+hjxDsSYKSNYnV+0uG1M8K0JtFT34w91f8
+	 ZFlFXdeybOfg2N1SYlxOjz11OAUt5MIQllkzSmR/Qu9F6uq72JMkouYukJpLbB/K06
+	 KGU1xzb0hHmjiLAYATZTbeIVuZEBPR+hBpS7YpZkx5+u/UHgZtrcV81FAW4/3YjKug
+	 vSIs0f70ziIk/CBnoc8OprIJaVCrAC1v31vrOE3Iaef7wWNVfAGzWZSS53EFfeWjjF
+	 Q3hUZ8iFAu+Ya9G+w1TrqASpOCbcfpVJket5PMDdGiGoV/6Y3LlTi4Pf4sgyRQykP5
+	 D1fudmyYA+Oyw==
+Message-ID: <2e9b95d5ac648daf07101cc0da77d20a.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304121036.1453284-1-amadeus@jmu.edu.cn>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250124111711.1051436-1-dario.binacchi@amarulasolutions.com>
+References: <20250124111711.1051436-1-dario.binacchi@amarulasolutions.com>
+Subject: Re: [PATCH] clk: stm32f4: fix an uninitialized variable
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>, Dan Carpenter <dan.carpenter@linaro.org>, Alexandre Torgue <alexandre.torgue@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>, linux-kernel@vger.kernel.org
+Date: Tue, 04 Mar 2025 11:50:35 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Tue, Mar 04, 2025 at 08:10:36PM +0800, Chukun Pan wrote:
-> Hi,
-> 
-> > +	aliases {
-> > +		mmc0 = &sdmmc;
-> 
-> s/mmc0/mmc1
+Quoting Dario Binacchi (2025-01-24 03:16:54)
+> The variable s, used by pr_debug() to print the mnemonic of the modulation
+> depth in use, was not initialized. Fix the output by addressing the corre=
+ct
+> mnemonic.
+>=20
+> Fixes: 65b3516dbe50 ("clk: stm32f4: support spread spectrum clock generat=
+ion")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+>=20
+> ---
 
-Will take it and add the missing pinctrl, as Jonas already pointed out.
-
-> > +&sdmmc {
-> > +	bus-width = <4>;
-> > +	cap-mmc-highspeed;
-> > +	cap-sd-highspeed;
-> 
-> I think for sdcard, only cap-sd-highspeed
-> is needed, not cap-mmc-highspeed?
-
-This makes sense, will remove it in the next version.
-
-> > +	disable-wp;
-> 
-> Missing pinctrl.
->
-> > +	rockchip,default-sample-phase = <90>;
-> 
-> It seems that all rk3528 devices need to set this
-> default phase, so maybe this can be placed in dtsi?
-
-Yes, since the tuned phase offset is a SoC-specific value, as pointed
-out by comment in the driver,
-
-	this is _not_ a value that is dynamically tuned and is also
-	_not_ a value that will vary from board to board.  It is a value
-	that could vary between different SoC models.
-
-Will take it in the next version, thanks for finding it!
-
-> > +	sd-uhs-sdr104;
-> 
-> The rk3528 devices uses gpio to switch IO voltage, maybe
-> more modes should be added here like vendor kernel?
-
-I cannot get the relationship between things you mentioned. For the
-regulator, yes, here vqmmc-supply is missing, as already pointed out by
-Jonas.
-
-> And these devices use 3.3V IO voltage by default.
-> 
-> 	sd-uhs-sdr12;
-> 	sd-uhs-sdr25;
-> 	sd-uhs-sdr50;
-> 	sd-uhs-sdr104;
-
-But I don't think it's necessary to lay out these slower modes
-explicitly, since SDR104 seems to imply them, see
-sd_update_bus_speed_mode() in drivers/mmc/core/sd.c[1],
-
-        if ((card->host->caps & MMC_CAP_UHS_SDR104) &&
-            (card->sw_caps.sd3_bus_mode & SD_MODE_UHS_SDR104)) {
-                        card->sd_bus_speed = UHS_SDR104_BUS_SPEED;
-        } else if ((card->host->caps & MMC_CAP_UHS_DDR50) &&
-                   (card->sw_caps.sd3_bus_mode & SD_MODE_UHS_DDR50)) {
-                        card->sd_bus_speed = UHS_DDR50_BUS_SPEED;
-        } else if ((card->host->caps & (MMC_CAP_UHS_SDR104 |
-                    MMC_CAP_UHS_SDR50)) && (card->sw_caps.sd3_bus_mode &
-                    SD_MODE_UHS_SDR50)) {
-                        card->sd_bus_speed = UHS_SDR50_BUS_SPEED;
-        } else if ((card->host->caps & (MMC_CAP_UHS_SDR104 |
-                    MMC_CAP_UHS_SDR50 | MMC_CAP_UHS_SDR25)) &&
-                   (card->sw_caps.sd3_bus_mode & SD_MODE_UHS_SDR25)) {
-                        card->sd_bus_speed = UHS_SDR25_BUS_SPEED;
-        } else if ((card->host->caps & (MMC_CAP_UHS_SDR104 |
-                    MMC_CAP_UHS_SDR50 | MMC_CAP_UHS_SDR25 |
-                    MMC_CAP_UHS_SDR12)) && (card->sw_caps.sd3_bus_mode &
-                    SD_MODE_UHS_SDR12)) {
-                        card->sd_bus_speed = UHS_SDR12_BUS_SPEED;
-        }
-
-> Thanks,
-> Chukun
-> 
-> -- 
-> 2.25.1
-> 
-
-Regards,
-Yao Zi
-
-[1]: https://elixir.bootlin.com/linux/v6.13.5/source/drivers/mmc/core/sd.c#L448-L479
+Applied to clk-next
