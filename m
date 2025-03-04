@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDF52E3385;
-	Tue,  4 Mar 2025 19:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9A525FA0E;
+	Tue,  4 Mar 2025 19:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741116862; cv=none; b=E7VzizgJ384ti+ESD7Xahx9ay6DYwRp8+ziKC/kxsOJnCqpGzVw57mzkC5MI3NgZQOLPY7hdjbii2i7u5/gwzcXlrCSOKbnMaErz+1Y5CqoC8nQ9ijTEez0QzHkzOLmEDvCN/rxNeCorp8pmK/m9mayMAgbkS06SKWRIqm8qQhw=
+	t=1741117793; cv=none; b=AEWoBGAGwsvUyaDfkijROTeGhNEwaNPigvdjIK0IyCq7OTsnN2plyqZT2TIwRLbnYqwzspg74R16Y2gR65aqIqnphNBKQGRn+Ib3PDnt7amvUXKjOF7g2Fs7xGpHXpJEIVfz1sNS3FlYuQx+1iXU7hfAOq1UcJ1LUPzGtBorD2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741116862; c=relaxed/simple;
-	bh=0PhniFa8GHtdXz3Hb41lDuOBvw8xpGDuE72A/qcIDEI=;
+	s=arc-20240116; t=1741117793; c=relaxed/simple;
+	bh=YaSgsivxqyV3yPSsK9Kts8rLmIRD2zXyCwJ8TTaOhTc=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=o9JKnO46c7ii3DyW86twEWdzqrACB3b1TK2+LmBbfTiRxmvG2d4MZS53cPKqCNdQeG0ZTGS06r66Qgw6D9V9Tt/BwlkA3F/F84w5R9w0b+tg73vEU0kKFzW0KVTaPx9hQnOlJolrOm6oJOxfpDSBcrBzsWR8dSsvrfFG4VLGkmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxmRyCbI; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Me6UbEKoq7j5RXBv+93st1FM2kedGlu3tb7jLv60yWm+XtqOIqnk6+cc8CArzfJq8QTVU9RueRbU5NkozE+iU/rjE6O7sn2eip2KfWnJDRwJQM/UBiaODnRN7Yo2SK0PCsIYLCWw9lgsUMyJ8Y0QLeRBtPhFrb49PVl3JDB/Dwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZW6OYsCr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxmRyCbI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 014BBC4CEE5;
-	Tue,  4 Mar 2025 19:34:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZW6OYsCr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32BEEC4CEE9;
+	Tue,  4 Mar 2025 19:49:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741116862;
-	bh=0PhniFa8GHtdXz3Hb41lDuOBvw8xpGDuE72A/qcIDEI=;
+	s=k20201202; t=1741117793;
+	bh=YaSgsivxqyV3yPSsK9Kts8rLmIRD2zXyCwJ8TTaOhTc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=BxmRyCbIP+sVdCIPPe6g96Y5dIlBdxGQa0FU25O1gOKceaLMv+GXSzdSP4pmao+oO
-	 MBcINv3xhVP1vks5eaGu/w+LdwSCQ5OZJjvHhV7mK6Bu1ht1lLviB2CfkYEqe8shdl
-	 gq/gD9idsvgcq84Qh8KzA6os+eMVXUmzMt6KaMxCEMWitQ2FWZVpD4pJxmyd/1U7eG
-	 3DAlAyZcYw/7Beey1Z3vSunHjvRkjL1WJfzVqOSjgrSpdC2bi2uswtpnQ6W3FhpM+h
-	 XEqYNNTavETHowHYhvI5R4uoJfu1+f5PX5zottflQqWAPt2/ezQ9VyVTX867+Gbn3X
-	 jtju8vXvlvJkQ==
-Message-ID: <efd38edbed2743a258bbec7e80ff2238.sboyd@kernel.org>
+	b=ZW6OYsCrxSo7xiEJgnQ/sDFRXqAwyK4lL22HIrpQteRpS1ivnAzTtNGlTXQt87DEz
+	 P8ocMKcgsxU3AY+iFjlkKdTcQGTM9TE0WumKVm4EgM8xIwp8zqTqlNgaxRmHGxLUY7
+	 /8H4/6XAbhmSVph6CgaeZTV0f5X0NRaKj2fg1SkY3N4bny0qcvc1hkM6EkayQ286ak
+	 pJY05a2iY/t6L2U17iJt1bFxTseqsgXK5LZub0d4lmrHq7aX5L9a0c70+ne3kXWRvh
+	 TgOnN1xTtkC4d82aYm+4KeLYsdoDxdH2WesLYcabaOFbEBmV24e0ZKmyySTmAOMGRc
+	 /d5KsQHma4+cw==
+Message-ID: <65e5503016f79f6c89219b5841c75b8c.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,50 +35,28 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAA8EJppgU7_BoVCDfTuKVveBnnhtHUN6jEzkUaAou7=aypD-Dw@mail.gmail.com>
-References: <20250201-topic-ignore_unused_warn-v1-1-f29db78cea3a@oss.qualcomm.com> <93b5004dacfe1151ca3abbb0fa31eaa6.sboyd@kernel.org> <87241686-90b5-44fe-b4e9-1a59451e3575@broadcom.com> <CAA8EJppgU7_BoVCDfTuKVveBnnhtHUN6jEzkUaAou7=aypD-Dw@mail.gmail.com>
-Subject: Re: [PATCH] clk: Warn (and therefore taint the kernel) on clk_ignore_unused
+In-Reply-To: <20250123181913.597304-1-afd@ti.com>
+References: <20250123181913.597304-1-afd@ti.com>
+Subject: Re: [PATCH] clk: keystone: syscon-clk: Do not use syscon helper to build regmap
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Marijn Suijten <marijn.suijten@somainline.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Florian Fainelli <florian.fainelli@broadcom.com>
-Date: Tue, 04 Mar 2025 11:34:19 -0800
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Andrew Davis <afd@ti.com>
+To: Andrew Davis <afd@ti.com>, Michael Turquette <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>
+Date: Tue, 04 Mar 2025 11:49:51 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Dmitry Baryshkov (2025-03-03 15:17:21)
-> On Tue, 4 Mar 2025 at 00:16, Florian Fainelli
-> <florian.fainelli@broadcom.com> wrote:
-> >
-> > On 3/3/25 14:48, Stephen Boyd wrote:
-> > > Quoting Konrad Dybcio (2025-02-01 08:52:30)
-[...]
-> > >>
-> > >> The clock subsystem plays a crucial part in this quest, as even if
-> > >> the clock controllers themselves don't draw a lot of power when on
-> > >> (comparatively), improper description of clock requirements has been
-> > >> the #1 cause of incomplete/incorrect devicetree bindings in my
-> > >> experience.
-> > >
-> > > What is a user supposed to do about this warning stack? We already pr=
-int
-> > > a warning. I don't see us dumping the stack when a driver is unfinish=
-ed
-> > > and doesn't implement runtime PM to save power.
-> > >
-> >
-> > Agreed, I don't think this is tremendously helpful given that it does
-> > not even tell you what part is incomplete, it's just a broad warning for
-> > the entire system.
-> >
-> > Assuming you have a clock provided that can be used to turn clocks off,
-> > and you did not boot with 'clk_ignore_unused' set on the kernel command
-> > line, then you should discover pretty quickly which driver is not
-> > managing the clocks as it should no?
+Quoting Andrew Davis (2025-01-23 10:19:13)
+> The syscon helper device_node_to_regmap() is used to fetch a regmap
+> registered to a device node. It also currently creates this regmap
+> if the node did not already have a regmap associated with it. This
+> should only be used on "syscon" nodes. This driver is not such a
+> device and instead uses device_node_to_regmap() on its own node as
+> a hacky way to create a regmap for itself.
 >=20
-> Unfortunately it's sometimes not that easy. And some developers
-> pretend that 'clk_ignore_unused' is a viable way to run the system.
+> This will not work going forward and so we should create our regmap
+> the normal way by defining our regmap_config, fetching our memory
+> resource, then using the normal regmap_init_mmio() function.
 >=20
+> Signed-off-by: Andrew Davis <afd@ti.com>
+> ---
 
-Maybe we would be better off with a config option that removes the clk
-ignore unused ability entirely. Then you can have a kernel config check
-somewhere in the build process that verifies that a user can't even set
-the kernel commandline to change the behavior.
+Applied to clk-next
