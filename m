@@ -1,65 +1,65 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E641FAC5B
-	for <linux-clk@vger.kernel.org>; Tue,  4 Mar 2025 08:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5C01FBC89
+	for <linux-clk@vger.kernel.org>; Tue,  4 Mar 2025 08:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741077030; cv=none; b=iPTtPCLyrgYx5Oof2guyKkxz0kNRgF03e5f/aoRgDOMR3clk7MAxOzNcSpbOuYIdj9B4Xz9XmFH2/5kUExba02wT7piQvrbYLvAQIpKW7utbQn5TFCgDQiG4qg1YGzxo6Xod6QefDRNPtPNmLh9/cK+D8RkrrFvFdLNJ8tc3eJQ=
+	t=1741077476; cv=none; b=StVgltzZCSz8uYLRdz70VksBQbZDf19jIGvzo++l+LyANItin9OetMEmZe2Hr/2qt8ljXcKAqbi91MXc0dAcVBp+3HlbwqykIKsf1GyPJ4XpbEnhzfshBdJbxffNoRRrznzLxZdpt5TYY20hUCEzmiPgQD4vu9jnv5xHvQCqHzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741077030; c=relaxed/simple;
-	bh=R7n1fGRKBqdjYD7qjAK0e0Z/E3j53RSIm1oESRXE5hs=;
+	s=arc-20240116; t=1741077476; c=relaxed/simple;
+	bh=KH3nMYakHro6elhaWLocPclcTEHSIfo+DXjkmYQmSBo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ODXxGn5EziZByO8IelAJX3iQAoYz0asOzRr447oZ4vqh0j2fcZj8S32Gs/426jrVgtn+ZVD3AKh+BN7GRWvZFLuPUWOO7IU0RsXl9M2RPMwlZMfjf3xjf8YsNuRgVjeuwhcOApYvryNRYfLQfyzjs0obJWadyAhfi9tgl/bEkdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oLStp+Cy; arc=none smtp.client-ip=209.85.167.44
+	 In-Reply-To:Content-Type; b=agoaGS7sMuSPnntjYIwuoWpARbZ6RNcpdnfjlrw35s2EuO2wGFjeKhdhJBGkC8C6MC6IlvrGgy2Q3okUTHprmfw5gA64EWrf/mQj58kW0mPTtTupuFduKtC4AGRjsk/Y//SjAbQFbXcoc6ugz4pl7xDJJsSU2zHEdviCZDXiHe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lo1VmYry; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oLStp+Cy"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54953b2c112so356712e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 04 Mar 2025 00:30:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lo1VmYry"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30baf244a97so4144061fa.1
+        for <linux-clk@vger.kernel.org>; Tue, 04 Mar 2025 00:37:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741077027; x=1741681827; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741077472; x=1741682272; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=exz8dJdGpu0keF2ocUHooEu3xVfMKLaveroqXRkMjFE=;
-        b=oLStp+CyBpwi9PjekiWbpLhpJPiLNfBqQ7Xg7S2uBN0Nj+Rg1yRwihTXifdbumzjjv
-         td1RbEZtpyK1kYB7+axVkK542Xz7uGPQVl21+WOX/JQ37efVLRmk+KSb/3OkmMunqDRI
-         FeGo1oHZ4EmCyvOQX/4EhyDosAl5sAspNqU5SU8vgdTp3uwA72/qVVjMDnRtsp1Z6Tua
-         xK0u4OgpgrPfSR0slVvnoK+LfsLO/C8bmbEVUgbZgCr6XTneFf4nLfyU0//OnxAj8FDp
-         47jixILWSZFXZvibp5+EzbS42PIf7iALJhsjXp3mJuORpj/t5wn3OcP7Ho/uz0qHBniu
-         p9og==
+        bh=ZVbEQw6RFiytzLhO8ZjD5z9kjTR3miKMHmSj3wWemVg=;
+        b=lo1VmYryAiBxPVDFIZC5eSkNeqBI3deA4pp5EhTPCjr20kw90PmXx/I618ird/ga8f
+         daZjZvXvOrqK+PgohZmmxDJ1YRWaPqUFF4ng3fO8hE6vdlTpxeA4lmykiQNBn2noVQ6b
+         KJQJXjBG/e5HQUaEMkugy/42Lq3yTDfpfdUKnC+H0DuK6wwaw8imvybxzL7l38RuRl20
+         4uiFO85T6BkwziKY8/Is8Oec4zeXy91ThjmtaknsrlSD2OdrObQ7yzXxSgf5SyaP8BYU
+         X0eBcorAx+o1uSEQcbVG97kMBPSfxghxp+MWCXH9CdUQoGfBDCqtIj2sc0UnDCZBDc5v
+         2SQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741077027; x=1741681827;
+        d=1e100.net; s=20230601; t=1741077472; x=1741682272;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=exz8dJdGpu0keF2ocUHooEu3xVfMKLaveroqXRkMjFE=;
-        b=H12apLo7IZQ/L0manaiTmtNDoRJiSOAxaQaTFNFNhEFdLPlID8bHvj+3n8lfHgDALX
-         tp89Nox/2iGrdZd6gZTDd+bYBJpfeT0GZs6yd5C/01Dt1VcXohckPBTgNo6mLbETFzxM
-         3O7b4tl2wevvG6i3HMmQouJbcCHvn84lma4SPNdjbkeLrKTjA+uG+NK+PeunLhsOfhb3
-         gKt0XDPp6mLIiEAN++tjjzagXwy6jQ69VI/O1wgVpDO4lbhxvn/gkq5nTgq7kpiSvXmA
-         zakyQPU1fYq/Zrb4Cyex2D8mEA84zx5zDZpfm5Cveq2J7SP4ZbeI3ypGheIWP1xt+iqG
-         dRMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFkIdofMwrZs/a4V7cnR4sTiCi1+N6CgWqp1Ur1ODO1I472oc6ZnpXHeLCQmv0UggWkpyf7pdD30A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDDlWHJwXAPfr82ok3MFibzcKAsl7YlyIWA3lHFoRUU4X7wT7x
-	Sc+KthNag0PbhdGgnNIdkDwJbMIhTJsdTtf7nQvJKDofKz4D/bPt+KzWC6VWUoE=
-X-Gm-Gg: ASbGncuCndRD6G07BnzcDbsSERbp18TnBoV6G6zbnRWmV8qr9fl/DHN6nayGd391wOt
-	ybsFBMn7l0KznMtJ6ziNXxs8FsxJPOQ2/mShyDfOCeUKinuBI1KbbayeCuehv9rnb498aILyO6H
-	ojfUtNQj4JZtCJkqiChJifG3d+fWjvtmhnBLxWvBxT3KTGIhB9CfBDRrHwSe2ZyuwBDgNzqor1Z
-	5ov7jfJ/uV33yTmxPaSsBf5N3ii8DJ65xmjYy/tj+qH3iv+SY5OQfsbssCi/M3YXAGKiIAI8gbd
-	OYFa2SbU4N6NGk72qWhrZ3hfMCgYAXdxQD7NGhroxctVPaYdQBS+PUoytXo5vemZJKrVRhrdB1u
-	4Tzdl1t0hKiFQmi/WCsV+ysw=
-X-Google-Smtp-Source: AGHT+IEGXHdD67orThjoh+EdcaW0STtZkWcUjMqYIynw/oUS1Hi87oaWacTmj0dkEiU9M/5UUH0QdQ==
-X-Received: by 2002:ac2:5492:0:b0:549:5769:6af5 with SMTP id 2adb3069b0e04-54957696de8mr1360664e87.6.1741077026829;
-        Tue, 04 Mar 2025 00:30:26 -0800 (PST)
+        bh=ZVbEQw6RFiytzLhO8ZjD5z9kjTR3miKMHmSj3wWemVg=;
+        b=jGPBbQG++t9PYX2d78cZk2rWFNsAdWwrXviFSSH8keLCroXqlon1ET6VtMmWSl4Ywy
+         RDeu4zwadY94dGuGabTIM4BBN4D5ExWqxP+dPkoN7vW15rLJGNBhKwUZRFRKxNmZ6tPL
+         pjiE0ffMaLGNXw/kKMEPS8UaHIuq66eg1eBkYoOmzF+BCg61q6bG6fJj9+5hSaqE2L6D
+         rNCQ9j8KAJriXIhPgWQlji5u+tDiT1R0baxuMCRIrMmsJm/qfSoH6zhlHckA6+byGz/G
+         DQ0erfHLzSbMIaN+n/wQ0ZVqFdo3ctFtK8cgbgOuZSmdXZfzvs3nm4VPuqxbJtxLrL/c
+         AJBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWm52W4KkZE1Y6w7d+rTltpafy6988s8lBuJwtZS03CtcXfyD1XupNQusq5PNqHKmAAuH+Nz19FqRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz20F8U2qlrvQVap1iLA+ndzy9Lg5Q3XJmV1Akk4ofVDvuWjHOC
+	dYAJXCctsbNfq8DPxBtqvzqgwd07d48tw91aN+NFKnm55mGY3DlamIN/1eZyKio=
+X-Gm-Gg: ASbGncv13SzNmLuiNMPvskr5lXXqG++ekRWoDyd4gkWrf87SsYQfgw1VrrDhXh2Czr4
+	LhLLKMlNBnVzZQz644niNJJ+RBgYOsslVvSGEoLZvWdM18YKXutzD9w5T7jpAROnvOE1VkcOqap
+	DLZh7+3aiANqqw40cxTlH7FGKG1VC0flvGhXEBl9QLMJCXiMuCn48yQuQiiB7fM3EVC9BfWiXdl
+	x8grApXSvRSy+cw5cOk3610ar1XKxWWA7giFXKD7ybf0NNlk/0jkfgOh9yHiOCnp3X8xHg9u54B
+	vmXqeUEOXW9ohbfN4wi0uKmxdDaOTwNIAAhaj4afMRErDfo81sZ5/swdG0dE6Rq0Xb2sp6W0axh
+	Ux6ty8sjSWAYnrkFFq9OXW1c=
+X-Google-Smtp-Source: AGHT+IHGTvkTD9fu2h/LbSP9/Yd5RUBp+SzgqOd1D6QzYUrOIsCFuwNCMHHcoRnNNIvYs952GekM0A==
+X-Received: by 2002:a2e:bc87:0:b0:309:1c59:ec89 with SMTP id 38308e7fff4ca-30bcbb0c89amr3368341fa.7.1741077472196;
+        Tue, 04 Mar 2025 00:37:52 -0800 (PST)
 Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494e52a47asm1295952e87.152.2025.03.04.00.30.23
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30ba4ac5f05sm10058081fa.22.2025.03.04.00.37.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 00:30:25 -0800 (PST)
-Message-ID: <2e6a0c7e-9c24-42fb-be9a-2b73da8dc69b@linaro.org>
-Date: Tue, 4 Mar 2025 10:30:14 +0200
+        Tue, 04 Mar 2025 00:37:50 -0800 (PST)
+Message-ID: <3210a484-b9c3-4399-bee1-9f5bbc90034c@linaro.org>
+Date: Tue, 4 Mar 2025 10:37:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -87,8 +87,6 @@ In-Reply-To: <dbxvzgqs5slrl5edqunal3wplg5jiszqv46dr4nzgowwlhkhxa@qwtfq7nfjwfo>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Dmitry,
-
 On 3/4/25 01:53, Dmitry Baryshkov wrote:
 > On Tue, Mar 04, 2025 at 12:55:21AM +0200, Vladimir Zapolskiy wrote:
 >> SM8550 Camera Clock Controller shall enable both MXC and MMCX power
@@ -98,34 +96,15 @@ On 3/4/25 01:53, Dmitry Baryshkov wrote:
 > one of those (MXC?) required to setup PLLs? Also, is this applicable
 > only to sm8550 or to other similar clock controllers?
 
-as it is stated in the cover letter, both power domans shall be on
-to access CCI or CAMSS.
+Due to the described problem I experience a fatal CPU stall on SM8550-QRD,
+not on any SM8450 or SM8650 powered board for instance, however it does
+not exclude an option that the problem has to be fixed for other clock
+controllers, but it's Qualcomm to confirm any other touched platforms,
+for instance x1e80100-camcc has it resolved right at the beginning.
 
->>
->> Fixes: e271b59e39a6f ("arm64: dts: qcom: sm8550: Add camera clock controller")
->> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
->> ---
->>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
->> index d02d80d731b9..d22b1753d521 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
->> @@ -3329,7 +3329,8 @@ camcc: clock-controller@ade0000 {
->>   				 <&bi_tcxo_div2>,
->>   				 <&bi_tcxo_ao_div2>,
->>   				 <&sleep_clk>;
->> -			power-domains = <&rpmhpd SM8550_MMCX>;
->> +			power-domains = <&rpmhpd SM8550_MXC>,
->> +					<&rpmhpd SM8550_MMCX>;
->>   			required-opps = <&rpmhpd_opp_low_svs>;
->>   			#clock-cells = <1>;
->>   			#reset-cells = <1>;
->> -- 
->> 2.43.0
->>
-> 
+To my understanding here 'required-opps' shall also be generalized, so
+the done copy from x1e80100-camcc was improper, and the latter dt-binding
+should be fixed.
 
 --
 Best wishes,
