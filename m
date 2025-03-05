@@ -1,273 +1,170 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D791C5F27;
-	Wed,  5 Mar 2025 11:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97EAE1FDA97
+	for <linux-clk@vger.kernel.org>; Wed,  5 Mar 2025 11:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741174526; cv=none; b=XRTagposjHBZL8X2rD8uZUYfcg6VitBGVEo3LusLXvlsPCiWNnpKs+uL9llf4xVijhZ20xpPxlbRZZrPVV3PyP2o7g+vxVZsm2W3Fy0t97wSwBPslTaT78XzeyiMmBMcv0jLYyUOL2GkK62408jOLh1uBLDwi3dhN++KEe+JMRE=
+	t=1741175225; cv=none; b=SLUxtZ7iLt4wJ/j205evlQ2/OPd1DTzEb7RXD5qt6iltyHAIE1OWD5rPP7Izu1uRWFUAX94uRKUMMCTZ6S580s3MaJKPQIc2bXSeEufoIeXzB2mpQf7hu5dJSokwoPx56VFM2x/KcyZmnNcghrhzxLc7OoIKV7zzRQ6kXFirYEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741174526; c=relaxed/simple;
-	bh=5wKZo1W3/KKJwo73d2ABuM4lG0wjBbXCHJqMn98euFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eR9OZKhc3kwjEo0bG7TO39EtaoQO1jOlzFANfFHagavY9r5MUX3tCfS9m2vc6ZArkKs/jfUShRfZNoqMD4JcqwpkAqm/+hltkJ/xDAhhhSMA5MS1wo/yiBN4KC8xjoqJCveS489c9NU7oR5+fNq75knjlILApjxZUzztFpsideo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNzwL2Ap; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741175225; c=relaxed/simple;
+	bh=Cas4miGuWF4X8Ueh2mbf616IC1RvlTWV01oJSrhCH5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a7onmrlUxs94jho1LJAdymYMsZzRQ+0VwLvBK4i4xXer0Vt5eQoVB8+ruUPMqUG1MqsUUfjWmNtufw4xCG4kgGfqKDSwD+07sALPjkha6awS2rXD6McSdSyBND5VKr1gxZ74GepCu7zmN2AHf+t2jnV4iUyLfXwKSqM0JjlQKgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X3D8gQuH; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNzwL2Ap"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD229C4CEE2;
-	Wed,  5 Mar 2025 11:35:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741174525;
-	bh=5wKZo1W3/KKJwo73d2ABuM4lG0wjBbXCHJqMn98euFU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HNzwL2Apz+ImWcI9E449fJ1uUCaPdrWT870QqZwQokeyeALzznCrATR+82SLgP5iR
-	 PNTj+ohzDf0Us/J46qONWbe9bakWDrN1d/DSgee/1e3NhX4sFWZ/vAVhJk9wwHzW21
-	 TmWMPE3apeOd993whfLADD6duv2C2uwBlf5MRjOuDIXMxf8tiWyj+Ft37yVK9ZrVPA
-	 lUTpnlqwIbVv8M020yEbOpnF74F99Tu4zzBx1DFMpW0MzXg27I0BZ6MQoRE6sX6bkt
-	 Vy48TaeHTxQI3sStfR6kbPjOeajO9cjOxotx/vyq8T5/lW+XWPmD2pOC8l5XjOZ/kQ
-	 4bjv6EnaztQsQ==
-Message-ID: <c7129d8e-87de-444c-be52-b2eedf03585f@kernel.org>
-Date: Wed, 5 Mar 2025 12:35:15 +0100
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X3D8gQuH"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22337bc9ac3so126312145ad.1
+        for <linux-clk@vger.kernel.org>; Wed, 05 Mar 2025 03:47:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741175223; x=1741780023; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Pfu3+TZx6+D0Zyy6rK5mXbmSh6WzrBwSPP3UW1ZgMZU=;
+        b=X3D8gQuHJmLr9c6WRRxjiCr4vy/8Sp0fhPQPXtoVpSFbrupVO+pBd9KdtWAtAyeruU
+         1AHX8L+ugZ2RwcyI72vbKxOu201g0OzW+KfmEixYE2T50HB8ha6nRj6cQPDHxkyoHAC0
+         77jxOcceL6cS2oZiwHMJjzevf0miI9BhuCrzDL3iRpui/md+nE7VOkoRAt9aCjQXSPVp
+         EV3AXi626amAmQ7xY6Sg9ubzICJKeCPiMcdqmuZ2HJ0zBDlQ+mrhNycOe3X9eXXhumOo
+         JWVubh72+Iw+doy3b//E9nfNby0LePSp39yfIp9J1PyG1766CUEmCNNGStYcXm+4V52x
+         tg7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741175223; x=1741780023;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pfu3+TZx6+D0Zyy6rK5mXbmSh6WzrBwSPP3UW1ZgMZU=;
+        b=PrdhLsPyUbjpye5xeH/DLI6/O73XmH3uE/gSGQGh81XW4DlQGWy396afG1uvwdMggN
+         qXKBMmxQbPrzenVXj02ypwFQpGPeGXGjafTlsoqI7pIQx1aKKwvxxNym2WJ7P7LkQD4w
+         YD/JIcHxzlzGNgiUIxZYmc4bsUogI3tOjpVt+KWc6jkjVd/ThRkbWrcowsFWdfBR3Owm
+         fM1+LvlDXtYhYSPworhKh6NbYfavUhrTS+fYrGG8fDLZYO+4h0AHiuflVdPLmMXYc40I
+         cPxWkZNJEewYmG8GRb2JYHOaoSr3nUDSsaqEC16y1npkprV9ILUgD6ewbqe9b7RAe4lI
+         oXNg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7zCBy2wYUbk9YBV4Tw2VtRoFnIzXCWPg1U8XWg16Hba278MR7BxLBX3zdnJWasNU7Q54Df503v0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztYbI5FHZTwLduaEDosclxLxk7Jv3pxaN6TPlq3iF/IWp/JJXv
+	UG8ZP/0LesPJcEiJD8Nylu3XAhXi3R1a7lvvgqxVPOd05uc5EtMOIYQxvGZDY0Fv4BX5Lo4I7Af
+	f
+X-Gm-Gg: ASbGncudPemmdczDJ6M2nO5R+8BHJtEIfNf0sY+wE7tI2VYpZEw+NQybxYfdCpB/j6o
+	05adtik6iC0IpQmiel1AALbR4d7R1OkY3CO5Nbv7Soffa4zjjseLa0o50kJxwdQOz7vTZBb0jI7
+	3IEDPnjIUPV3Dd1aCrVYcdkDBCtzZmV3pcX/8rjgPedhUFArV//hvXSBWTwjnZKJz/3zpcxq9Rd
+	F5O8UWzdwUixILfMeupyJrecIv+8aZFMzrlC29Yw3Ym+nF8BlOBD6QvkvKYjFqWy02Apz0KUSwg
+	ep7r7oh+yN9fl8rjPpfoHfUXNpFLUyk0sQjokGTYsO5dnw==
+X-Google-Smtp-Source: AGHT+IHS3XolbnTHiz90ZHqMPzwfVi03ruXNsyC83Cm7ljJr1IitVbI67JnaTA9B26A8OYNT3b6gWw==
+X-Received: by 2002:a05:6a00:3d4c:b0:736:3ed1:e842 with SMTP id d2e1a72fcca58-73682cc4160mr4386797b3a.20.1741175222794;
+        Wed, 05 Mar 2025 03:47:02 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734d444a9fasm10805158b3a.60.2025.03.05.03.47.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 03:47:01 -0800 (PST)
+Date: Wed, 5 Mar 2025 17:16:59 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
+Message-ID: <20250305114659.k5pptszvmusblynm@vireshk-i7>
+References: <cover.1740995194.git.viresh.kumar@linaro.org>
+ <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
+ <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
+ <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
+ <CANiq72=sU1sHvamC5REFPEC1aOVdZw9EKdxOgkUYESTR2yh3iQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB
- subnode into schema and example
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux@ew.tq-group.com, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250304154929.1785200-1-alexander.stein@ew.tq-group.com>
- <20250304154929.1785200-3-alexander.stein@ew.tq-group.com>
- <20250305-dandelion-axolotl-of-excitement-05fa70@krzk-bin>
- <4414669.ejJDZkT8p0@steina-w>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4414669.ejJDZkT8p0@steina-w>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72=sU1sHvamC5REFPEC1aOVdZw9EKdxOgkUYESTR2yh3iQ@mail.gmail.com>
 
-On 05/03/2025 10:02, Alexander Stein wrote:
-> Hi,
+On 04-03-25, 10:37, Miguel Ojeda wrote:
+> On Tue, Mar 4, 2025 at 9:53 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > +///     clk.disable_unprepare();
 > 
-> Am Mittwoch, 5. März 2025, 08:13:04 CET schrieb Krzysztof Kozlowski:
->> On Tue, Mar 04, 2025 at 04:49:21PM +0100, Alexander Stein wrote:
->>> Document the LDB bridge subnode and add the subnode into the example.
->>> For the subnode to work, the block control must scan its subnodes and
->>
->> Don't describe drivers, but describe the hardware.
+> Looking at the example, a question that one may have is: should we
+> have something like a scope guard or a closure-passing API for this,
+> or does it not make sense in general?
+
+Something like this (untested) ?
+
++/// Runs a cleanup function/closure when dropped.
++///
++/// The [`ClkGuard::dismiss`] function prevents the cleanup function from running.
++///
++pub type ClkGuard<'a> = ScopeGuard<&'a Clk, fn(&Clk)>;
++
+ /// A reference-counted clock.
+ ///
+ /// This represents the Rust abstraction for the C [`struct clk`].
+@@ -139,10 +146,12 @@ pub fn as_raw(&self) -> *mut bindings::clk {
+     ///
+     /// [`clk_enable`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_enable
+     #[inline]
+-    pub fn enable(&self) -> Result {
++    pub fn enable(&self) -> Result<ClkGuard<'_>> {
+         // SAFETY: By the type invariants, it is safe to call clk APIs of the C code for a clock
+         // pointer earlier returned by [`clk_get`].
+-        to_result(unsafe { bindings::clk_enable(self.as_raw()) })
++        to_result(unsafe { bindings::clk_enable(self.as_raw()) })?;
++
++        Ok(ClkGuard::new_with_data(self, Clk::disable))
+     }
+ 
+     /// Disable the clock.
+@@ -163,10 +172,12 @@ pub fn disable(&self) {
+     ///
+     /// [`clk_prepare`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_prepare
+     #[inline]
+-    pub fn prepare(&self) -> Result {
++    pub fn prepare(&self) -> Result<ClkGuard<'_>> {
+         // SAFETY: By the type invariants, it is safe to call clk APIs of the C code for a clock
+         // pointer earlier returned by [`clk_get`].
+-        to_result(unsafe { bindings::clk_prepare(self.as_raw()) })
++        to_result(unsafe { bindings::clk_prepare(self.as_raw()) })?;
++
++        Ok(ClkGuard::new_with_data(self, Clk::unprepare))
+     }
+ 
+     /// Unprepare the clock.
+@@ -185,10 +196,12 @@ pub fn unprepare(&self) {
+     ///
+     /// Equivalent to calling [`Clk::prepare`] followed by [`Clk::enable`].
+     #[inline]
+-    pub fn prepare_enable(&self) -> Result {
++    pub fn prepare_enable(&self) -> Result<ClkGuard<'_>> {
+         // SAFETY: By the type invariants, it is safe to call clk APIs of the C code for a clock
+         // pointer earlier returned by [`clk_get`].
+-        to_result(unsafe { bindings::clk_prepare_enable(self.as_raw()) })
++        to_result(unsafe { bindings::clk_prepare_enable(self.as_raw()) })?;
++
++        Ok(ClkGuard::new_with_data(self, Clk::disable_unprepare))
+     }
+ 
+> > +///     let expected_rate = Hertz::new(1_000_000_000);
 > 
-> Thanks, I'll rephrase to describe the hardware better regarding LVDS.
-> 
->>
->>> bind drivers to them, do not misuse either simple-bus or simple-mfd
->>> here.
->>
->> I don't understand that simple-bus or simple-mfd statement. There are no
->> such compatibles here.
-> 
-> Same as above, the wording stems from 1cb0c87d27dcc ("dt-bindings: soc:
-> imx8mp-media-blk-ctrl: Add LDB subnode into schema and example").
-> I'll drop it to avoid confusion.
-> 
->>
->>>
->>> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
->>> ---
->>>  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 51 +++++++++++++++++++
->>>  1 file changed, 51 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
->>> index b3554e7f9e76d..cd785111928bf 100644
->>> --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
->>> +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
->>> @@ -24,6 +24,14 @@ properties:
->>>    reg:
->>>      maxItems: 1
->>>  
->>> +  ranges: true
->>> +
->>> +  '#address-cells':
->>> +    const: 1
->>> +
->>> +  '#size-cells':
->>> +    const: 1
->>> +
->>>    '#power-domain-cells':
->>>      const: 1
->>>  
->>> @@ -46,9 +54,20 @@ properties:
->>>        - const: csi
->>>        - const: dsi
->>>  
->>> +  bridge@20:
->>
->> @20 looks wrong. Use 'ranges;' and try again your DTS...
->>
->> Binding is supposed to be complete. We have several examples when people
->> added children one-by-one, everytime with different reasoning about
->> child addressing.
->>
->> So please confirm: this is complete and no other children will ever be
->> added here... or you are 100% sure that all future children will be
->> unit-addressable (will have unit address and appropriate properties).
-> 
-> This block control is a collection of registers for different purposes:
-> * MIPI-DSI
-> * MIPI-CSI
-> * Parallel camera
-> * LVDS
-> * CAMERA_MUX
-> 
-> At lease for parallel camera, another subnode is expected ([1]).
+> On top of that, would any other kind of operation make sense? For
+> instance, `.inverse()` to/from time or things like that -- we don't
+> need to do any of this now, of course, but it may be worth taking a
+> minute to investigate how we could improve the type now that we have
+> it.
 
+I am not sure if we should be implementing them right away, I agree
+about from_hz/khz/mhz/ghz though. Let some users come for that and
+then we can consider it ?
 
-That one at least have MMIO as well. No I wonder whether the others will
-come without MMIO one day.
-
-Why this cannot be sent all at once? Entire device binding?
-
-> 
-> [1] https://lore.kernel.org/all/20240819024001.850065-1-victor.liu@nxp.com/
-> 
->> BTW, I don't quite get why this is both syscon and has translation for
->> child addresses. Does it mean your child does not use the same MMIO as
->> parent, thus leading to unsynchronized reg access?
-> 
-> I'm not sure what the best practices are. This LDB has two registers
-> inside this block. So it seems reasonable to me to indicate this using
-
-reg is fine, but you added ranges which means there is translation
-between child addressing and parent MMIO. Usually, although not always,
-when child is expected to use parent's syscon, you do not have ranges,
-because the syscon deals with that translation.
-
-What's more, your @20 means you depend on one specific value of ranges.
-
-I would just skip the ranges and claim there is no direct mapping of
-addresses. Reg defines offsets within this device addressing and this
-device will handle it.
-
-> a reg property. On the other hand, access is solely done by accessing
-> via syscon, so unsynchronized reg access is not an issue.
-> 
-> What I am getting from your comments this node should not have 'reg'
-> property, as it uses syscon anyway.
-
-
-> 
->>> +    type: object
->>> +    additionalProperties: true
->>> +    properties:
->>> +      compatible:
->>> +        contains:
->>> +          const: fsl,imx93-ldb
->>> +
->>>  required:
->>>    - compatible
->>>    - reg
->>> +  - ranges
->>> +  - '#address-cells'
->>> +  - '#size-cells'
->>>    - power-domains
->>>    - clocks
->>>    - clock-names
->>> @@ -77,4 +96,36 @@ examples:
->>>                 clock-names = "apb", "axi", "nic", "disp", "cam",
->>>                               "pxp", "lcdif", "isi", "csi", "dsi";
->>>        #power-domain-cells = <1>;
->>> +      #address-cells = <1>;
->>> +      #size-cells = <1>;
->>> +      ranges = <0x0 0x4ac10000 0x10000>;
->>> +
->>> +      bridge@20 {
->>> +          compatible = "fsl,imx93-ldb";
->>> +          reg = <0x20 0x4>, <0x24 0x4>;
->>> +          reg-names = "ldb", "lvds";
->>> +          clocks = <&clk IMX93_CLK_LVDS_GATE>;
->>> +          clock-names = "ldb";
->>> +
->>> +          ports {
->>> +              #address-cells = <1>;
->>> +              #size-cells = <0>;
->>> +
->>> +              port@0 {
->>> +                  reg = <0>;
->>> +
->>> +                  ldb_from_lcdif2: endpoint {
->>> +                      remote-endpoint = <&lcdif2_to_ldb>;
->>> +                  };
->>> +              };
->>> +
->>> +              port@1 {
->>> +                  reg = <1>;
->>> +
->>> +                  ldb_lvds: endpoint {
->>> +                      remote-endpoint = <&ldb_to_panel>;
->>> +                  };
->>> +              };
->>> +          };
->>
->> Messed indentation.
-> 
-> This is already from the original binding. I'll fix in a separate commit.
-
-How? I did not see any '-', only adding here.
-
-
-Best regards,
-Krzysztof
+-- 
+viresh
