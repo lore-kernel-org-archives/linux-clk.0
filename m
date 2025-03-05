@@ -1,147 +1,118 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49131262D21
-	for <linux-clk@vger.kernel.org>; Wed,  5 Mar 2025 21:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00ACE202C4F;
+	Wed,  5 Mar 2025 22:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741211074; cv=none; b=ZPwCeP+WcY74nMyiD9o/U5nBo7XlT9jArkG5DqvsYK9jw8qY69YcxUB8sXcrzIc+tZ/Jpc9a155IntORi8XFLTSYxG+ibifMoGFIUZk780WddycH8jH+ZEvDjKP0zIsjVS+sGGG0aXb5Q07NPCiCXRN+WYs2BRd2FcTNHm6ATY0=
+	t=1741213301; cv=none; b=nlDKbIYCJeC7GUKfcx/pwNFVQ9UygDbMRCkfj3fm/mEC4fKNkHEnrZ4zXuCJxH+nGA28o+53cVa+wZPFe9RWF6XMcxwNG8yKb2nqqKF2raRALq6kDZdavpSK4SmD6geGHki3MB9sK7BGspVe63vdHiWBGH0TKbeV9CZx0JRPhX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741211074; c=relaxed/simple;
-	bh=vp6W7iHQ9HDX8dPuiHrwQP51NV/6Z9WgxoY+8xbF4+o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZN1TCG99tyxx1pJXG0Djz6e0ahV5o53mUTzQ2rlKlE9YHWXP3+na5IBeN7TuouPPFtmFdxJSxn7wzTcB6FmmIIo/cejyhyPrbDpF4Q6wvhy2XjUhD063itU3aSBPhfcNSkcyYASH8Q3/1HMrXwnBjpHoDTTlRO+T45sn6ruMBrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mY8+n/DE; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741213301; c=relaxed/simple;
+	bh=Kt0JHoQRDxazbM9HAqvNWHaRPFS/Pp4uw1z28ZVUUwY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eZIH/oJ8yyglK4tsSlLnKfg8b8bAqDJmphYowf/rp29T1RUpgoqOcBJqjNBBmP7sNHL/J8okeq6VaMXYvg4uVQUOuurYSRiRDt2L14lGUgHR6t96Y7VP4A9b0PyQ58kEy1T4DWJEd/Z/KSBrbMbLGvl1evai8CSnbewRhPnXekE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0jTs1xQc; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mY8+n/DE"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3912622c9c0so78121f8f.3
-        for <linux-clk@vger.kernel.org>; Wed, 05 Mar 2025 13:44:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741211070; x=1741815870; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pXkIs54qm6LUI4kgzEJJnI1sUBwA7+zCVW8PggSja/s=;
-        b=mY8+n/DEzDGY3XCzPOSX9ZJIA/K72LniBoV36quIt75CFEgNJ2c5RN92HSGF2p1coV
-         UjGtooC7t7QxLqjAujlJQ4tjQrAdf8/2+6E3N25OQCqluCDmtU9/hN93927B9IMf/XEY
-         sqdTdbnvH1FRkoznwCMji6AhDkTb/7tHL4CvAAxBnir0embXDGZpUNT/VQpDOozi7bUg
-         ZJK5sTtII0KQjJkjAZGQAMQlkNcCJpW9jzCEgqVeEwDIbrHsUDSOhCHYQg77f7/AsO7u
-         vRzn7iGAAKko9oIRND97nIBLgOOK2JVayev4yodk8P3rzpt7HFqkQMjDmLnqSM+OXz81
-         3gmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741211070; x=1741815870;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pXkIs54qm6LUI4kgzEJJnI1sUBwA7+zCVW8PggSja/s=;
-        b=QTMgKGCI4yyypIqYXXPR1WFKKNONLTyVyRwqFosCdgwbXV3ToECHJtK8qNYFWrrb3y
-         Dja8UvXVg3fb0ztiKMv3gC1UJB2yZTesElw8VVBXCdAHrD14GfaHTpoefONNhhpHFJ+Q
-         NRZIuHSP/CyIBeo1vYDn3S8ZZc3qhi1yOdX49AtOcD8urfVnkHd1M9K6QACf08L8xaP5
-         5fVNjIdNFVwXH8Fk+4opDFtDJNXL+XO5iMwUR9TRhBK9tfQt7yFZ7e4/XhbZg+Ot0PVU
-         3x6SmNAm0I+AbjsUDOBuj4EpJ3pTvKDmjynyAU9d66aZuw7Gf/9CXPHdx0YwQ9LAQjaV
-         n5Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+zBcrQ/+d1B1q4HmfBs9eTHla/aMHUdyKVmaUw0qRXfruWurTKqpAnmhza0vjVosPisgyL4kq3sg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9hs5N36cLazgW8CFSZB3MToFq0niyhAfXt0eNzRLCW9Ibo+y+
-	93GuPLWsK8+j3Uz90UAA0+WVNjJaq3aCjJJVKbazaIWhV2UCMXpsa0MJppI7RSzvsmPB+d6f2zc
-	x33w=
-X-Gm-Gg: ASbGncub18prg5Rcoe/gNzodi6LzkbFKD3jczEQ1UenSDNrNLAr4h6sda139rBSH+5/
-	WbTC8g1ZqcNSXK8vfnan4MG8/xJ+0rdRf7JXLyaEcbqCal1Yyaq64SvO9mHbMpaXx2qNI8NJxBY
-	gH/OlkKgVKItSJtpYcNn1ybr19B4SjTRtF8VBO1lewPiTBhW/1RsD2djU86g0/hCKBzO95wb8hM
-	6X8n1b3fegj8VbnHkSf0SGeu+LjXQDJULnWFVegRnrHCXCQpJxMEKq3y6cjYS+p2hoTvKtcRNH6
-	5srT40JQtS68jPgYooo4xBgWTyc/6BFUgWXTXm/RTolwgsMG7WqK0GcfXatW
-X-Google-Smtp-Source: AGHT+IF3GZh+J/kzZkiIGp1RO9U18YWRAnLBj1hWD/sq99vtzP9wNUti0rkSiBo9jR1+7MHDit7nDw==
-X-Received: by 2002:a05:6000:156e:b0:38d:d743:7d36 with SMTP id ffacd0b85a97d-3911f7bce04mr1468019f8f.10.1741211069847;
-        Wed, 05 Mar 2025 13:44:29 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4796517sm21954802f8f.5.2025.03.05.13.44.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 13:44:29 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 05 Mar 2025 22:43:47 +0100
-Subject: [PATCH RFC/RFT 12/12] clk: samsung: gs101: Use
- platform_driver_probe() to avoid __refdata
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0jTs1xQc"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=06kA3D7q5+feETjZztMj3/pQCz9ZvioWeY+GXfhxs+g=; b=0jTs1xQcFwh5ox+whGadW7md9L
+	WS1OfCwNfoT/R60g3n715mKlYtI9WjDijcapfP4h/inDZR9976tcNGiyoNj0+yyneWUUZ2ggYSdAe
+	yTo082HyUXdH7MF4UTjHFsIIOaEanyKuNhhTjVOJGqQtmCMT0qjnUX24pLy8QLutraI3hv/b0hqYT
+	NjRL5QdypTnZidKKbC9xcOtUQ/4uTdV1VVo/ryphnbf6BiucQwY7rFp0uoRRwUprlDco3Mtw4ZcWk
+	t1fJObmKUI8LjICwz9D/wFRCAQHEJ0kTZTE91wGbNagju9vdMn3f0SDQJxg7PBglm6o8jBr62LP8Y
+	IiygmWWQ==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tpx74-00060i-4M; Wed, 05 Mar 2025 23:21:14 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Sugar Zhang <sugar.zhang@rock-chips.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: Re: [PATCH 2/7] clk: rockchip: add support for GRF gated clocks
+Date: Wed, 05 Mar 2025 23:21:12 +0100
+Message-ID: <4964374.GXAFRqVoOG@phil>
+In-Reply-To: <20250305-rk3576-sai-v1-2-64e6cf863e9a@collabora.com>
+References:
+ <20250305-rk3576-sai-v1-0-64e6cf863e9a@collabora.com>
+ <20250305-rk3576-sai-v1-2-64e6cf863e9a@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-clk-samsung-ref-init-data-v1-12-a4e03a019306@linaro.org>
-References: <20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org>
-In-Reply-To: <20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1440;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=vp6W7iHQ9HDX8dPuiHrwQP51NV/6Z9WgxoY+8xbF4+o=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnyMWgtf+xtNx1az5n1ge5uKzzuPqzgx3d+Io+p
- 36d5Qd9+TeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ8jFoAAKCRDBN2bmhouD
- 13p0D/9g9PM/WxzSeqBZhZcyDz4cecwCph7JPpVFAx5ZMUxuNrH1+k4jvJr03AlrC7k2bLFjBmZ
- n1CU/XAGCmNkAluP+1Ascyn3qmtbG74Segm+byK1IS8xNgyA3x/Lofb73zklDZgDuCc9koJEEVx
- aUZnWYBejQP45fHdFopm/O9rB250CPHTBf6pLhAACMOXTreScW0KdYM4lBWu/a4Lr+DzPJoHpC2
- rFsA6+/NkhuBnEbWS8ZLriPlacULNqJxzzG39dNrfYfZUGQM7Hhpli+8a7y5mbCi3VEbVk4hfBc
- TdITfRgV+Bb9FpD9P2VAowHqr1Ha7kKlrKOHA6SQV059Fc55rtWcC1juY+JSP1RnBz9dCGf5kyI
- seMUWWBzfDapDwaKYtYbSOu3eytOSzue9EeacncNiNWCSSeWhYRJqaCBhD5Z8pvOaT8y3JI/3MC
- 3yTSUea0MDX/alU7xRiXSoIe2zpnhRZdCGhDFyQ0eVt197H8cz6UZh6VydNECw8cBp+RoSOgHht
- 1by7Oo0MiSbjdLDfCTUpIGipFnva61aaHrWQYDfAjOOVqXE2a7SX96lxZKIMTKIOJMd5Pmb9A2+
- ycZZ+Srl1jQ1NIGn/HfSQHp4+Lor9ToJX/nKjq2TB1m07Xj9sZUdt1yaX6j5em9GxDaYlYj3I2F
- VNc0i4YZHaH1r6Q==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Switch registering platform driver to platform_driver_probe(), so the
-'struct platform_driver' can be properly discarded after init and there
-won't be need of __refdata to silence DEBUG_SECTION_MISMATCH.
+Hey,
 
-The change requires using subsys_initcall instead of core_initcall,
-because no device drivers would bound in the latter, as required by
-platform_driver_probe().
+Am Mittwoch, 5. M=C3=A4rz 2025, 22:24:22 MEZ schrieb Nicolas Frattaroli:
+> Certain Rockchip SoCs, the RK3576 in particular, have some clocks that
+> are essentially gated behind an additional GRF write. Downstream uses an
+> additional entirely separate clock driver that maps over the same
+> address range as ioc_grf in the DT.
+>=20
+> Instead, this implementation introduces a new gate type, GRF gates.
+> These gates function quite like regular gates. In effect, this means
+> they'll only be enabled if the clock is used, which I feel is a more
+> appropriate way to describe this compared to doing it in, say, pinctrl,
+> or even in the drivers of the respective clock consumers such as SAI.
+>=20
+> It should be noted that RK3588 has similar GRF-gated clocks, but has
+> gotten away with not having to deal with any of this because the clocks
+> are ungated by the hardware's register reset value by default. The
+> RK3576 is not so lucky, and the hardware's reset value gates them
+> instead, which means we'll have to ungate them somewhere.
+>=20
+> In order to facilitate the GRF gating on RK3576, we introduce the
+> concept of auxiliary GRFs. The RK3576 has several defined GRF nodes, and
+> so far it could get away with just using one for MUXGRF by reassigning
+> the clock provider's grf member.
+>=20
+> However, with the IOC GRF gated clocks, we now also need access to the
+> IOC GRF, so we can't get away with this anymore. Instead, we add a
+> hashtable to the clock provider struct, keyed by a grf type enum. The
+> clock branches can then specify through the use of a new member of that
+> enum's type (with corresponding changes to relevant macros) which GRF
+> range they would like to use.
+>=20
+> The SoC-specific clk_init can then populate the hashtable with the GRFs
+> that it needs. This way, GRF-dependent clock branches don't have to be
+> registered in a different step than everything else, as they would need
+> to be had I extended the branch struct to instead take a pointer to a
+> GRF, which isn't available at the time most of our branches are defined.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/samsung/clk-gs101.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+I only did a short look through the patch and didn't see anything
+glaringly wrong, but this wants to be at least 3 patches:
+=2D add the handling (hash-table etc) for multiple grfs
+  (including adapting the grf-mux)
+=2D adding the grf-gate clock-type
+=2D adding the rk3576 grf-gates
 
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index 86b39edba12276745a124df6a2ea9c22d74b915a..69c121d478f3fec98dcd84e0639e204fe604e91c 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -4412,17 +4412,16 @@ static const struct of_device_id gs101_cmu_of_match[] = {
- 	},
- };
- 
--static struct platform_driver gs101_cmu_driver __refdata = {
-+static struct platform_driver gs101_cmu_driver __initdata = {
- 	.driver	= {
- 		.name = "gs101-cmu",
- 		.of_match_table = gs101_cmu_of_match,
- 		.suppress_bind_attrs = true,
- 	},
--	.probe = gs101_cmu_probe,
- };
- 
- static int __init gs101_cmu_init(void)
- {
--	return platform_driver_register(&gs101_cmu_driver);
-+	return platform_driver_probe(&gs101_cmu_driver, gs101_cmu_probe);
- }
--core_initcall(gs101_cmu_init);
-+subsys_initcall(gs101_cmu_init);
 
--- 
-2.43.0
+Heiko
+
 
