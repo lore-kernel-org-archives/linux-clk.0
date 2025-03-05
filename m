@@ -1,147 +1,159 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C891D1917E4;
-	Wed,  5 Mar 2025 20:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741207069; cv=none; b=RoOFqJ0vnBWCA4xz43pa5JG4hSmzUV/AKQ10BaUTqyMha2UrKeir5E1dxSJh85ETg+pURf96704pBYecRfJLrZEcbHUYOeIIy9qTi11d8Jl/5sHbT/slekf4X1JBZXlJ2zHOvihZDCKUqMwSgYjregB2jhm8gDjeyG6KxQFznVM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741207069; c=relaxed/simple;
-	bh=ZUWFGvKGlqNxqZiNLWOJo7/lk4bDNYSeo5WGLyBUrUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DQ+idZWNi/tnqjL4IBSPpYU5zyd3yRuQ45EGwzT4HwpMI1MSSAnNsg6rI5ovNB2vrS1F9niwsNGBkmLxfvQHcDiVzsJI6o6UunyFYAL05+L0/oggPxWwg2NxqLylog2O3lQ++RdpBxkBR0HbSvM6tlXAq9VG2w5VE6Zqxqy7nvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtS7b78z; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283351C6FE1;
+	Wed,  5 Mar 2025 21:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741209931; cv=pass; b=MVWaVs1lJ282TBm89ogkMARy5WqNJRkMvS3Zr54rZKUfq/LG3xoXLP8QIZ+W2L9cxf9Sxu/9dF+aFlppRWmY8DP7zdfbhJkZD4vOEt4HrOq9ueB93dncx/gspvyfKfkarSX+hACkK0CDDFuZBpnhy4hhlyO8gZUqtKEE7EJ+hEs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741209931; c=relaxed/simple;
+	bh=jLOOjWApcp9OJszvlkNggAmMoe8M/uG5DU7YDTZVOTo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rQThjDCUxspemtTDxlwWALCBesFgfCQKq+3clFyDbqITeQkOWB1WWe06eJRic06dRc8iFYRObRAuWPdNpbI4V4Aw6JVEqC84jm+Pl5n2+YogzQAqbuIQpZYUCCvaPnNPlCNTxLpVN0PXG/jBgYnKlEbkNHmuuKl+2oN+t1WLFvI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=SEVI2LBS; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtS7b78z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14044C4CED1;
-	Wed,  5 Mar 2025 20:37:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741207069;
-	bh=ZUWFGvKGlqNxqZiNLWOJo7/lk4bDNYSeo5WGLyBUrUM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RtS7b78zRCPa6ftSk4nV04FBFLHcgMqg+TVH5rinj32s3no0VIInMYQxRszeCDCt6
-	 g1GR9ls+5oGnyxDxa9mtz7GlJpSfurjZQTtMohtjNOYrdnU25Ant01CjaxiIdV7BNE
-	 noN3JzMc0g0+nudsQfYdgAh7jDCRnM/2TIPih53KZu/2qZ357NtRuW9ZN8nx02mL6V
-	 2ZBkbBFjjL0Rfu83nRZVziq+g8JdJ5CjrhqmamEjUhNQe2IHpmxqeJz41XasZSnM/4
-	 zTAmc7+L+kBWk/28s5y+ZqVZ2GK3Ud79AZpc27hdeJfoD0YtGLik2l7PlMH/uDLEJQ
-	 TBU/8TvycOmeA==
-Message-ID: <d0f6fba8-cf04-4040-add4-35e001473f22@kernel.org>
-Date: Wed, 5 Mar 2025 21:37:42 +0100
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="SEVI2LBS"
+ARC-Seal: i=1; a=rsa-sha256; t=1741209895; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bzzh4J066rrlw/ihx9SLlY9zNNloZQebThe9AanCEKNf/e+8VOgCHxIXTTW7xevUvZ4QGun97hwXW7C5PEdExoYn2zIhoAN8n4AyzNGJtJy03F4AEYXvoT3kJsXeP0qtSIq5y36Vmr+WKxNlR1OrNXsfA9y+LFIJ6EAaMKk84Cw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741209895; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=oDZwMEiKq4FsOgak5vQT4YukQizxtAjLgSODP2Tnuxo=; 
+	b=IgTCk5EeMB/shkwzD58Rro5ckfJPfaiucDqxl1CYcYnrHhVxAekcCrM77OFeHftE+YBc1g2tuf9jM/4lBwIrZeXLKfDt70lz17t4OkE7tn+tEL5AVNTbx3PNFDSDsCDnEMccwE4LQAD/aeWZq4OQE0CiaiKPhBbUn0Xc+ISx20s=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741209895;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=oDZwMEiKq4FsOgak5vQT4YukQizxtAjLgSODP2Tnuxo=;
+	b=SEVI2LBS4pji0ctEHwmFV91C8epT7xQIAur9xxQztsqBzYcddjC6bVpVdeg6yv/s
+	mrlLIbYNjQTVNz/UpVwltUTLT3RFZ9kmX8XAEbherSW3ipeM/RdjspwQMgqA5OvbMXO
+	pQH1jZSGVLRc8IqwJd2BzMTy74ikczMpYg0tDQ0w=
+Received: by mx.zohomail.com with SMTPS id 1741209893493878.8606211832787;
+	Wed, 5 Mar 2025 13:24:53 -0800 (PST)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH 0/7] Add RK3576 SAI Audio Controller Support
+Date: Wed, 05 Mar 2025 22:24:20 +0100
+Message-Id: <20250305-rk3576-sai-v1-0-64e6cf863e9a@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] clk: samsung: introduce Exynos2200 clock driver
-To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250223115601.723886-1-ivo.ivanov.ivanov1@gmail.com>
- <20250223115601.723886-4-ivo.ivanov.ivanov1@gmail.com>
- <7b182615f1439dd39a17b8e74cf740bf.sboyd@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <7b182615f1439dd39a17b8e74cf740bf.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAATByGcC/zXMQQrCMBCF4auEWTswNsbGXkW6iHHUQZraSZRC6
+ d0NFpf/g/ctkFmFM3RmAeWPZBlTjf3OQHyEdGeUa21oqHFkyaE+rWuPmINgbD3TwZI/eYZ6eCn
+ fZP5h535r5eldzbKNcAmZMY7DIKUzieeCfxf6df0CpSjUSY0AAAA=
+X-Change-ID: 20250305-rk3576-sai-c78e0430898e
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Sugar Zhang <sugar.zhang@rock-chips.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 04/03/2025 19:19, Stephen Boyd wrote:
-> Quoting Ivaylo Ivanov (2025-02-23 03:56:00)
->> diff --git a/drivers/clk/samsung/clk-exynos2200.c b/drivers/clk/samsung/clk-exynos2200.c
->> new file mode 100644
->> index 000000000..151bdb35a
->> --- /dev/null
->> +++ b/drivers/clk/samsung/clk-exynos2200.c
->> @@ -0,0 +1,3928 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (C) 2025 Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> + * Author: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> + *
->> + * Common Clock Framework support for Exynos2200 SoC.
->> + */
->> +
->> +#include <linux/clk.h>
-> 
-> Remove this include because this is a clk provider and not a clk
-> consumer.
+This series adds support for Rockchip's Serial Audio Interface (SAI)
+controller, found on SoCs such as the RK3576. The SAI is a flexible
+controller IP that allows both transmitting and receiving digital audio
+in the I2S, TDM and PCM formats. Instances of this controller are used
+both for externally exposed audio interfaces, as well as for audio on
+video interfaces such as HDMI.
 
-I sent a fix for this.
+Patch 1 and 2 do some preparatory work in the clock bindings and clock
+controller. The RK3576 has the SAI0 through SAI4 output mclks as well as
+the FSPI0 and FSPI1 clocks gated behind some GRF register writes. The
+RK3588 had this for its I2S audio clocks as well, but got away with not
+caring about it in mainline because the clocks were ungated by default.
+This is no longer the case with RK3576: the SAI mclk need to be ungated
+before they can be used.
 
-> 
+The gritty details are in patch 2, but to sum it up: we need to
+introduce a new clock branch type, and also rework the rockchip clock
+code to deal with multiple separate GRF regmaps.
 
->> +static struct platform_driver exynos2200_cmu_driver __refdata = {
->> +       .driver = {
->> +               .name = "exynos2200-cmu",
->> +               .of_match_table = exynos2200_cmu_of_match,
->> +               .suppress_bind_attrs = true,
->> +       },
->> +       .probe = exynos2200_cmu_probe,
->> +};
->> +
->> +static int __init exynos2200_cmu_init(void)
->> +{
->> +       return platform_driver_register(&exynos2200_cmu_driver);
-> 
-> Was this supposed to be platform_driver_probe()? The __refdata usage
-> suggests that but all of the __init markings and stuff in the samsung
-> clk driver worry me.
+NB: checkpatch.pl seems to trip over patch 2 in some way that seems like
+a combination of the diff being too clever and at the same time too
+stupid.
 
+Patch 3 adds the devicetree schema for the SAI. Right now, we only have
+a RK3576 compatible, but as I understand it, the RK3528 uses this audio
+controller as well.
 
-I'll fix this and existing drivers.
+Patch 4 is the main course and adds the driver. It's based on the
+downstream vendor driver, but substantial changes have been made in the
+hopes to make it suitable for upstream inclusion.
 
+Patch 5 and 6 are boring devicetree changes to add the nodes and use
+them in the ArmSoM Sige5 board. Patch 6 goes into some schematic-derived
+knowledge about where the audio signal can actually be tapped into in
+order to test this.
+
+Patch 7 enables the driver in the arm64 defconfig, as the RK3576 is
+supported in mainline, so its drivers should be enabled in the
+defconfig.
+
+To test this on the Sige5, I both soldered to the output 2 testpads, as
+well as fashioned a cable to plug into the headphone header. I should
+have some stuff arriving by mid-March to make more such cables, so if
+you have a Sige5 and want to test this but don't happen to sit on a pile
+of 03SUR-32S cables, then you may contact me off-list to request I send
+you such a cable from Switzerland, and I'll see what I can do.
+
+HDMI audio isn't enabled in this series yet, but I'll look into it
+either for a v2 or in a follow-up series. I really wanted to get this
+out to be reviewed now, as there's a substantial amount of code to look
+at that is ready for both review and testing.
+
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Nicolas Frattaroli (7):
+      dt-bindings: clock: rk3576: add IOC gated clocks
+      clk: rockchip: add support for GRF gated clocks
+      ASoC: dt-bindings: add schema for rockchip SAI controllers
+      ASoC: rockchip: add Serial Audio Interface (SAI) driver
+      arm64: dts: rockchip: Add RK3576 SAI nodes
+      arm64: dts: rockchip: Add analog audio on RK3576 Sige5
+      arm64: defconfig: Enable Rockchip SAI
+
+ .../devicetree/bindings/sound/rockchip,sai.yaml    |  151 ++
+ MAINTAINERS                                        |    7 +
+ .../boot/dts/rockchip/rk3576-armsom-sige5.dts      |   56 +
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi           |  194 +++
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/clk/rockchip/Makefile                      |    1 +
+ drivers/clk/rockchip/clk-rk3328.c                  |    6 +-
+ drivers/clk/rockchip/clk-rk3568.c                  |    2 +-
+ drivers/clk/rockchip/clk-rk3576.c                  |   59 +-
+ drivers/clk/rockchip/clk.c                         |   24 +-
+ drivers/clk/rockchip/clk.h                         |   49 +-
+ drivers/clk/rockchip/gate-grf.c                    |  105 ++
+ include/dt-bindings/clock/rockchip,rk3576-cru.h    |   10 +
+ sound/soc/rockchip/Kconfig                         |    8 +
+ sound/soc/rockchip/Makefile                        |    2 +
+ sound/soc/rockchip/rockchip_sai.c                  | 1623 ++++++++++++++++++++
+ sound/soc/rockchip/rockchip_sai.h                  |  251 +++
+ 17 files changed, 2533 insertions(+), 16 deletions(-)
+---
+base-commit: a03be51d680391ba113e2e22b38743c276b6e2fa
+change-id: 20250305-rk3576-sai-c78e0430898e
 
 Best regards,
-Krzysztof
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
