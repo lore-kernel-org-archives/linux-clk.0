@@ -1,142 +1,53 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6F31EEA5D;
-	Wed,  5 Mar 2025 22:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE4C1E505;
+	Wed,  5 Mar 2025 23:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741214880; cv=none; b=qboWZw4vaWIX+lpwWZ8UFdNw8iqCNM02LDAq/NuzVgJHuEcmlKPikYMm/u5cWIaar4loWYhZ++xWuJMNCwF2oFngjXwvYFpn1GECQJGLi2oTKRnSov/RgI7NwfM7DpeVAJOMFgfou6QtBjr3WRezKK00wBXP/ZZr7lDg7TIrzrA=
+	t=1741216613; cv=none; b=DCrASeiqSRqGehjjodYmWVqJfDIcqd9X0Pba8QqbbnXVVxhcLWbbGH1AZaoiPctaFBUXj9FWcMhIr2JoQ+7HCNnz44eZNl6ewH8CZ9yvYxrV4dhyXCitzGYRMTTbsd3+u115oJ4KoMGB7zQRKjdsWR4KMZqNfbI+Qc+t1X/qhN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741214880; c=relaxed/simple;
-	bh=j690KMyiLxuuR24G6j9sZerB6/YuInfz3g49qZUsgvQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DvBSqmxuCq4BFdpy3nFIfx8BraHMt9blhmFRAkgHyOILrw/Smctd7/y5l1LYpRwdiml3s8c5jw2qJzyUmzcSvw5qSOcyJTIpFAkCFSpvsW7XaEPtySP3Ibg7vO5Ssw6S/Bhg9/02+GxeRfrGymmvEMWJpnfkD1W5MO6wVCgmZCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=h4ZCL+WE; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1741216613; c=relaxed/simple;
+	bh=cG6vsCG90EAJSPt/F9Elqf8boQ0oADDov+5AMiRq8mg=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=oTZNphzmijVVDQM2zDM+cxUjvPsCwi1OH2tTZ0PMy/+2vF/0gqZb8mm6cpZ+ec6h3TiURK9OvCWsrx/YmhgAxhSJi+WkdOG76WItU4Uh1453GXPZ8DwBYWxZkkcN4ZmLhhA/Mk+ya5ASGWd8+/y/k2BcSbxzzjD0a4kJfkMoFLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fj7/s2I+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="h4ZCL+WE"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=7fAKyPcFLbipyj8e2+HaYX8ZN0IQD4FgvUWGz9wiNuY=; b=h4ZCL+WExFSPRI+oi7iGgFW+yy
-	gjmzS3Ki/r2yubN8dEfbBxkmDm69I0j96wpiL0X5wnLPU3+GwHBGdXQXci1MaRq8r8y42C+BSh8pM
-	Yh+dVJNI5dPat7hrnubUkrPOWJFtz5O3qs0+vSQwI8HgqFrw/l9uRubI4ZOu4Wqebnm3yFCGg6pld
-	dZ1UDrNkA8+5wUTuCsHLhyNbKL3DDORA8PQ1Hj96+xgvpLSGfYOf0cGObfdqpQUXRiV7t7TgL2eCE
-	oZnpAK84atGBwcgVaroU9Sumv60buX6pyc4yjlarRxvvwCLsiIXjGFX4QGoYpa3WXrdiTo7r9eoRH
-	ccfANGDA==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tony@atomide.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH] dt-bindings: clock: ti: Convert ti-clkctrl.txt to json-schema
-Date: Wed,  5 Mar 2025 23:47:22 +0100
-Message-Id: <20250305224722.66360-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fj7/s2I+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D9B8C4CED1;
+	Wed,  5 Mar 2025 23:16:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741216612;
+	bh=cG6vsCG90EAJSPt/F9Elqf8boQ0oADDov+5AMiRq8mg=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=fj7/s2I+HFigCsO8p61/LvB+vTSGJM9IPBoKYdEJ+r8ShBGfPegISSpwkFX80flxW
+	 t84Zpc16NZLkez2wPK2LgMpc6t/ydDpt1AllkJrdBuESbsvuMml0EsZDOgBZUXRZvS
+	 KBc8Yu8qFJZyLDCtXYajtG8V7I4T83mpp8UBUP0EhhuZRf2GkEO+k3f2OohlPM1oAb
+	 cQGVe2g/Sr+KvDIEDJb+WVz75fF9ZAigYpoPVT368Dg+pWopic2sOlH/k5BPS5PJ3o
+	 lufhgTyxKbgW0XB9GccyZTW/6q/mu+f0mvf1hc6OY4hFAvMqtJbfHl34O7K+ujX4P1
+	 cb8aMQ5nVJL/Q==
+Message-ID: <1347ee4d678ce81c33917b3802601aee.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250303110433.76576-2-biju.das.jz@bp.renesas.com>
+References: <20250303110433.76576-1-biju.das.jz@bp.renesas.com> <20250303110433.76576-2-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH 1/4] clk: renesas: rzv2h-cpg: Add support for coupled clock
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Wed, 05 Mar 2025 15:16:46 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Convert the TI clkctrl clock device tree binding to json-schema.
-Specify the creator of the original binding as a maintainer.
+Quoting Biju Das (2025-03-03 03:04:19)
+> The spi and spix2 clk share same bit for clock gating. Add support
+> for coupled clock with checking the monitor bit for both the clocks.
 
-reg property is used mostly with one item, in am3xxx also with
-an arbitrary number of items, so divert from the original binding
-specifying two (probably meaning one address and one size).
-The consumer part of the example is left out because the full consumer
-node would be needed.
-
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
-@Tony: you seem to be the only contributor to the txt binding,
-so we could go with dual-licensing if you agree.
-
- .../devicetree/bindings/clock/ti,clkctrl.yaml | 64 +++++++++++++++++++
- 1 file changed, 64 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
-
-diff --git a/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml b/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
-new file mode 100644
-index 0000000000000..bf4119c9c61fe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
-@@ -0,0 +1,64 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti,clkctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments clkctrl clock
-+
-+maintainers:
-+  - Tony Lindgren <tony@atomide.com>
-+
-+description: |
-+  Texas Instruments SoCs can have a clkctrl clock controller for each
-+  interconnect target module. The clkctrl clock controller manages functional
-+  and interface clocks for each module. Each clkctrl controller can also
-+  gate one or more optional functional clocks for a module, and can have one
-+  or more clock muxes. There is a clkctrl clock controller typically for each
-+  interconnect target module on omap4 and later variants.
-+
-+  The clock consumers can specify the index of the clkctrl clock using
-+  the hardware offset from the clkctrl instance register space. The optional
-+  clocks can be specified by clkctrl hardware offset and the index of the
-+  optional clock.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,clkctrl
-+      - ti,clkctrl-l4-cfg
-+      - ti,clkctrl-l4-per
-+      - ti,clkctrl-l4-secure
-+      - ti,clkctrl-l4-wkup
-+
-+  "#clock-cells":
-+    const: 2
-+
-+  clock-output-names:
-+    maxItems: 1
-+
-+  reg:
-+    minItems: 1
-+    maxItems: 8 # arbitrary, should be enough
-+
-+required:
-+  - compatible
-+  - "#clock-cells"
-+  - clock-output-names
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    bus {
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+
-+      clock@20 {
-+        compatible = "ti,clkctrl";
-+        clock-output-names = "l4_per";
-+        reg = <0x20 0x1b0>;
-+        #clock-cells = <2>;
-+      };
-+    };
--- 
-2.39.5
-
+Could you add an intermediate parent clk of both spi and spix2 that only
+handles the enable bit for clock gating? Then the enable count handling
+would be in the core clk code.
