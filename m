@@ -1,177 +1,273 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673432459E0;
-	Wed,  5 Mar 2025 11:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D791C5F27;
+	Wed,  5 Mar 2025 11:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741174477; cv=none; b=WeURlJfbfu9xUMSi7/Xg8RztHJJQ45hhzV0GEIuuODjhlLde2xOBRJsmIWEICUMps53uXGoRLRQN10MA0JsV2eidNPE3FUbj/6+tX4zeBBEHnhzioSYqQD4EHUWHNgYK2Tefzh9scxHak/rAJSoySVFWkUAZIDNemrvctPTamOU=
+	t=1741174526; cv=none; b=XRTagposjHBZL8X2rD8uZUYfcg6VitBGVEo3LusLXvlsPCiWNnpKs+uL9llf4xVijhZ20xpPxlbRZZrPVV3PyP2o7g+vxVZsm2W3Fy0t97wSwBPslTaT78XzeyiMmBMcv0jLYyUOL2GkK62408jOLh1uBLDwi3dhN++KEe+JMRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741174477; c=relaxed/simple;
-	bh=PX8YtGNzZCKFmT6MLhflwzHPvwo1LGdQ1btFvdv/xnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TI+WTvKSHtprhv7cuvXM2JGoTj4G6nImWAD/KgfofzAGO/xfRxOQleytx2ZpWZbAlN8jE6FLrS5NfRb0T9coOXHdDEVdWA7cdJqB+Y275ASfzNnRVhOPZTFN71XpswNQ6VHV1dIyRw4TMlBxBi20B/VKJ4t4DAzsvcd8CnrVN5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5691D1007;
-	Wed,  5 Mar 2025 03:34:48 -0800 (PST)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 31DF23F673;
-	Wed,  5 Mar 2025 03:34:33 -0800 (PST)
-Date: Wed, 5 Mar 2025 11:34:30 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Philipp
- Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 04/15] dt-bindings: clk: sunxi-ng: document Allwinner
- A523 CCU
-Message-ID: <20250305113430.47166de3@donnerap.manchester.arm.com>
-In-Reply-To: <20250304141125.GA2518548-robh@kernel.org>
-References: <20250304012805.28594-1-andre.przywara@arm.com>
-	<20250304012805.28594-5-andre.przywara@arm.com>
-	<20250304141125.GA2518548-robh@kernel.org>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1741174526; c=relaxed/simple;
+	bh=5wKZo1W3/KKJwo73d2ABuM4lG0wjBbXCHJqMn98euFU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eR9OZKhc3kwjEo0bG7TO39EtaoQO1jOlzFANfFHagavY9r5MUX3tCfS9m2vc6ZArkKs/jfUShRfZNoqMD4JcqwpkAqm/+hltkJ/xDAhhhSMA5MS1wo/yiBN4KC8xjoqJCveS489c9NU7oR5+fNq75knjlILApjxZUzztFpsideo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNzwL2Ap; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNzwL2Ap"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD229C4CEE2;
+	Wed,  5 Mar 2025 11:35:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741174525;
+	bh=5wKZo1W3/KKJwo73d2ABuM4lG0wjBbXCHJqMn98euFU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HNzwL2Apz+ImWcI9E449fJ1uUCaPdrWT870QqZwQokeyeALzznCrATR+82SLgP5iR
+	 PNTj+ohzDf0Us/J46qONWbe9bakWDrN1d/DSgee/1e3NhX4sFWZ/vAVhJk9wwHzW21
+	 TmWMPE3apeOd993whfLADD6duv2C2uwBlf5MRjOuDIXMxf8tiWyj+Ft37yVK9ZrVPA
+	 lUTpnlqwIbVv8M020yEbOpnF74F99Tu4zzBx1DFMpW0MzXg27I0BZ6MQoRE6sX6bkt
+	 Vy48TaeHTxQI3sStfR6kbPjOeajO9cjOxotx/vyq8T5/lW+XWPmD2pOC8l5XjOZ/kQ
+	 4bjv6EnaztQsQ==
+Message-ID: <c7129d8e-87de-444c-be52-b2eedf03585f@kernel.org>
+Date: Wed, 5 Mar 2025 12:35:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/6] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB
+ subnode into schema and example
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux@ew.tq-group.com, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250304154929.1785200-1-alexander.stein@ew.tq-group.com>
+ <20250304154929.1785200-3-alexander.stein@ew.tq-group.com>
+ <20250305-dandelion-axolotl-of-excitement-05fa70@krzk-bin>
+ <4414669.ejJDZkT8p0@steina-w>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <4414669.ejJDZkT8p0@steina-w>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 4 Mar 2025 08:11:25 -0600
-Rob Herring <robh@kernel.org> wrote:
-
-Hi,
-
-> On Tue, Mar 04, 2025 at 01:27:54AM +0000, Andre Przywara wrote:
-> > The Allwinner A523/T527 SoCs have four CCUs, this adds the binding for
-> > the main CCU.
-> > 
-> > The source clock list differs in some annoying details, and folding this
-> > into the existing Allwinner CCU clock binding document gets quite
-> > unwieldy, so create a new document for these CCUs.
-> > Add the new compatible string, along with the required input clock
-> > lists. This conditionally describes the input clock list, to make for
-> > an easier patch adding the other CCUs.
-> > 
-> > Also add the DT binding headers, listing all the clocks with their ID
-> > numbers.
-> > 
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > ---
-> >  .../clock/allwinner,sun55i-a523-ccu.yaml      |  77 +++++++
-> >  include/dt-bindings/clock/sun55i-a523-ccu.h   | 189 ++++++++++++++++++
-> >  include/dt-bindings/reset/sun55i-a523-ccu.h   |  88 ++++++++
-> >  3 files changed, 354 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-> >  create mode 100644 include/dt-bindings/clock/sun55i-a523-ccu.h
-> >  create mode 100644 include/dt-bindings/reset/sun55i-a523-ccu.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-> > new file mode 100644
-> > index 0000000000000..2eacaeaeabac7
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-> > @@ -0,0 +1,77 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/allwinner,sun55i-a523-ccu.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Allwinner A523 Clock Control Unit
-> > +
-> > +maintainers:
-> > +  - Andre Przywara <andre.przywara@arm.com>
-> > +
-> > +properties:
-> > +  "#clock-cells":
-> > +    const: 1
-> > +
-> > +  "#reset-cells":
-> > +    const: 1
-> > +
-> > +  compatible:
-> > +    enum:
-> > +      - allwinner,sun55i-a523-ccu
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    minItems: 4
-> > +    maxItems: 4
-> > +
-> > +  clock-names:
-> > +    minItems: 4
-> > +    maxItems: 4
-> > +
-> > +required:
-> > +  - "#clock-cells"
-> > +  - "#reset-cells"
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - clock-names
-> > +
-> > +if:  
+On 05/03/2025 10:02, Alexander Stein wrote:
+> Hi,
 > 
-> Put this under an allOf and use another 'if' instead of the 'else' 
-> clause in the 2nd patch.
-
-Ah, that's a neat idea! What do I do with the clocks and clock-names
-above, then? Just have them as "true"?
-
-Krzysztof, would you agree with this approach, and shall I still combine
-both in just one patch?
-
-Cheers,
-Andre
-
-> > +  properties:
-> > +    compatible:
-> > +      enum:
-> > +        - allwinner,sun55i-a523-ccu
-> > +
-> > +then:
-> > +  properties:
-> > +    clocks:
-> > +      items:
-> > +        - description: High Frequency Oscillator (usually at 24MHz)
-> > +        - description: Low Frequency Oscillator (usually at 32kHz)
-> > +        - description: Internal Oscillator
-> > +        - description: Low Frequency Oscillator fanout
-> > +
-> > +    clock-names:
-> > +      items:
-> > +        - const: hosc
-> > +        - const: losc
-> > +        - const: iosc
-> > +        - const: losc-fanout
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    ccu: clock@2001000 {  
+> Am Mittwoch, 5. März 2025, 08:13:04 CET schrieb Krzysztof Kozlowski:
+>> On Tue, Mar 04, 2025 at 04:49:21PM +0100, Alexander Stein wrote:
+>>> Document the LDB bridge subnode and add the subnode into the example.
+>>> For the subnode to work, the block control must scan its subnodes and
+>>
+>> Don't describe drivers, but describe the hardware.
 > 
-> Drop ccu and it's 'clock-controller' not 'clock'.
+> Thanks, I'll rephrase to describe the hardware better regarding LVDS.
 > 
-> > +        compatible = "allwinner,sun55i-a523-ccu";
-> > +        reg = <0x2001000 0x1000>;
-> > +        clocks = <&osc24M>, <&osc32k>, <&iosc>, <&r_ccu 2>;
-> > +        clock-names = "hosc", "losc", "iosc", "losc-fanout";
-> > +        #clock-cells = <1>;
-> > +        #reset-cells = <1>;
-> > +    };
-> > +
-> > +...  
+>>
+>>> bind drivers to them, do not misuse either simple-bus or simple-mfd
+>>> here.
+>>
+>> I don't understand that simple-bus or simple-mfd statement. There are no
+>> such compatibles here.
+> 
+> Same as above, the wording stems from 1cb0c87d27dcc ("dt-bindings: soc:
+> imx8mp-media-blk-ctrl: Add LDB subnode into schema and example").
+> I'll drop it to avoid confusion.
+> 
+>>
+>>>
+>>> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+>>> ---
+>>>  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 51 +++++++++++++++++++
+>>>  1 file changed, 51 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+>>> index b3554e7f9e76d..cd785111928bf 100644
+>>> --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+>>> +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+>>> @@ -24,6 +24,14 @@ properties:
+>>>    reg:
+>>>      maxItems: 1
+>>>  
+>>> +  ranges: true
+>>> +
+>>> +  '#address-cells':
+>>> +    const: 1
+>>> +
+>>> +  '#size-cells':
+>>> +    const: 1
+>>> +
+>>>    '#power-domain-cells':
+>>>      const: 1
+>>>  
+>>> @@ -46,9 +54,20 @@ properties:
+>>>        - const: csi
+>>>        - const: dsi
+>>>  
+>>> +  bridge@20:
+>>
+>> @20 looks wrong. Use 'ranges;' and try again your DTS...
+>>
+>> Binding is supposed to be complete. We have several examples when people
+>> added children one-by-one, everytime with different reasoning about
+>> child addressing.
+>>
+>> So please confirm: this is complete and no other children will ever be
+>> added here... or you are 100% sure that all future children will be
+>> unit-addressable (will have unit address and appropriate properties).
+> 
+> This block control is a collection of registers for different purposes:
+> * MIPI-DSI
+> * MIPI-CSI
+> * Parallel camera
+> * LVDS
+> * CAMERA_MUX
+> 
+> At lease for parallel camera, another subnode is expected ([1]).
 
+
+That one at least have MMIO as well. No I wonder whether the others will
+come without MMIO one day.
+
+Why this cannot be sent all at once? Entire device binding?
+
+> 
+> [1] https://lore.kernel.org/all/20240819024001.850065-1-victor.liu@nxp.com/
+> 
+>> BTW, I don't quite get why this is both syscon and has translation for
+>> child addresses. Does it mean your child does not use the same MMIO as
+>> parent, thus leading to unsynchronized reg access?
+> 
+> I'm not sure what the best practices are. This LDB has two registers
+> inside this block. So it seems reasonable to me to indicate this using
+
+reg is fine, but you added ranges which means there is translation
+between child addressing and parent MMIO. Usually, although not always,
+when child is expected to use parent's syscon, you do not have ranges,
+because the syscon deals with that translation.
+
+What's more, your @20 means you depend on one specific value of ranges.
+
+I would just skip the ranges and claim there is no direct mapping of
+addresses. Reg defines offsets within this device addressing and this
+device will handle it.
+
+> a reg property. On the other hand, access is solely done by accessing
+> via syscon, so unsynchronized reg access is not an issue.
+> 
+> What I am getting from your comments this node should not have 'reg'
+> property, as it uses syscon anyway.
+
+
+> 
+>>> +    type: object
+>>> +    additionalProperties: true
+>>> +    properties:
+>>> +      compatible:
+>>> +        contains:
+>>> +          const: fsl,imx93-ldb
+>>> +
+>>>  required:
+>>>    - compatible
+>>>    - reg
+>>> +  - ranges
+>>> +  - '#address-cells'
+>>> +  - '#size-cells'
+>>>    - power-domains
+>>>    - clocks
+>>>    - clock-names
+>>> @@ -77,4 +96,36 @@ examples:
+>>>                 clock-names = "apb", "axi", "nic", "disp", "cam",
+>>>                               "pxp", "lcdif", "isi", "csi", "dsi";
+>>>        #power-domain-cells = <1>;
+>>> +      #address-cells = <1>;
+>>> +      #size-cells = <1>;
+>>> +      ranges = <0x0 0x4ac10000 0x10000>;
+>>> +
+>>> +      bridge@20 {
+>>> +          compatible = "fsl,imx93-ldb";
+>>> +          reg = <0x20 0x4>, <0x24 0x4>;
+>>> +          reg-names = "ldb", "lvds";
+>>> +          clocks = <&clk IMX93_CLK_LVDS_GATE>;
+>>> +          clock-names = "ldb";
+>>> +
+>>> +          ports {
+>>> +              #address-cells = <1>;
+>>> +              #size-cells = <0>;
+>>> +
+>>> +              port@0 {
+>>> +                  reg = <0>;
+>>> +
+>>> +                  ldb_from_lcdif2: endpoint {
+>>> +                      remote-endpoint = <&lcdif2_to_ldb>;
+>>> +                  };
+>>> +              };
+>>> +
+>>> +              port@1 {
+>>> +                  reg = <1>;
+>>> +
+>>> +                  ldb_lvds: endpoint {
+>>> +                      remote-endpoint = <&ldb_to_panel>;
+>>> +                  };
+>>> +              };
+>>> +          };
+>>
+>> Messed indentation.
+> 
+> This is already from the original binding. I'll fix in a separate commit.
+
+How? I did not see any '-', only adding here.
+
+
+Best regards,
+Krzysztof
