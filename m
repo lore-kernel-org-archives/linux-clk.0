@@ -1,121 +1,136 @@
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48CB191F75;
-	Wed,  5 Mar 2025 08:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968AF1FECB8
+	for <linux-clk@vger.kernel.org>; Wed,  5 Mar 2025 08:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741165030; cv=none; b=Orv1AjMFjDeKQfkMZKSNSbhEdAi0Sh6KgPf43y75oU+yYOpSrJM0t2BIyIsQwgfoREoMya7tPP+Df71FGgqYlYQLBiNbrDQimSu+C+uWAHD7iFVPpMEFf07Am4qOZj1ka4QKDTKv4e/NXMFSRieKHYAWeE6Gt/WYkRk95gOBuMw=
+	t=1741165114; cv=none; b=Rzm2hm2+pGYHqFmbngbF2NqCG7MErrvlKj12ZcmUoCg5/fEENkDAw8nTOoq0BB67LQO0qkBOBZSMVtTynNFUmYnuC6+aEZox/r31cnDplKKSLKgVioFgq+O+YV5WV5h6XOspkXkMo53oI4ElOHElv+bbuIRnMnZGqGYhnvnQedo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741165030; c=relaxed/simple;
-	bh=qsGsvCAfdcfeE51ac9RONSysVMtYIjNdL+vMqgURXUM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jLQ327KnYTMWvy1UFsd+zKJUFRhKcleJF9hao6k9ZdWx72ArRymkjZlpTg3zJn0h9JhhgAGLals2R4UzeCuxqWLf8hHsqIepLfDr6O5RCaCRCwV+AxqpHLCmd2zKZk1ZN/s56J9moNYCyt6ZrTocGMUuWAMC+BTzIda+Pmy9MXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=YhY5E9MR; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=kD1rLRYV reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1741165114; c=relaxed/simple;
+	bh=PNhskAE8Hw6NT1lxJLEmtkJRKWfn63/vyOBjmtkEi6M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SDwU2wxDFId7Qtf9XUs2Hag4VJOkytsadl45opugBykCIKuVq61fhtx7wjnWV28Tmdwo1w9B9vxUakuePQxok9t2ev18A22nTAkP6cOXmQsTgFf4Nx38nhaLaIydshc3rMiVUy1Jpk+DcpbxE8t4lnnSA89JqAdjQbKV5QOsedg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gvgGLMrv; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="YhY5E9MR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="kD1rLRYV"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gvgGLMrv"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54953b2c112so457482e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 05 Mar 2025 00:58:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1741165026; x=1772701026;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=e+jhkYS0TRz2o1la5b8D/3y4xT0VqD2+ekryj9z0zm8=;
-  b=YhY5E9MRkL1bzexUheXHxzsAnUxw7MYdVwuJ9o5YNTk7GsZePzUJOUdU
-   Rey1WV+tByzJRQl4p69S0TxfpZYx38yAB3zbjbH5uQwDqXAfBwKpGOBq3
-   c1FnVaj460O5eY4Ly/SKe3GPG1uhKGsVfhamg8krsZQVouAG282Xa3f3s
-   ja3ajHNjIITTMHILoDX4I4P9sf8MeoScwDC3fLefW7Jr4LSBTa+BeoX5p
-   FYaRBHL8840gNXIpkPXzVjeVWbsN9sg6vYuACnEweWI/jnQhgr4JLB65h
-   yq4dbFGGAzzmtz0tqehRqALpGVc878NR2BYfhUCArpOoUUQlyGttt2k10
-   w==;
-X-CSE-ConnectionGUID: tRwjRDSeTueS95ISt5PufQ==
-X-CSE-MsgGUID: Mp++ScJxRMCuLKwD8CNM4Q==
-X-IronPort-AV: E=Sophos;i="6.14,222,1736809200"; 
-   d="scan'208";a="42301545"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 05 Mar 2025 09:57:03 +0100
-X-CheckPoint: {67C811DE-42-F35B2447-E1635CDE}
-X-MAIL-CPID: AD65E4B5510E62E90C988CDA2D9A3F96_1
-X-Control-Analysis: str=0001.0A006369.67C811E2.0079,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 57F63170E8E;
-	Wed,  5 Mar 2025 09:56:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1741165018;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e+jhkYS0TRz2o1la5b8D/3y4xT0VqD2+ekryj9z0zm8=;
-	b=kD1rLRYVbR3w7K+GjtmEYISp04lQVjebsKh0ladQK1ogzl0H2UjpGi0i4ws1KRAWE9Ben5
-	J/KK43vOQAQglcqLXMdTLik/Proj5m3Zrr6y8DiM1oZIWRBB+AU9hV4GTpuMlH4tRoYhMX
-	f5qdmvq+GeBBXE8uYaflFBt9jBdLbEo3UfXoj39skcRBERlo3pvaNiVjxGtcRhWbfTSR5K
-	ldNQG+ygagGit6y17MuQcwn+Nt3MgoKh7WsT/yCaOZmtosTKn0MDN1YFghS/w5IXgF6OcT
-	xEJlW0G3MR6dajelV0nnEPPFgqVPU2SxMW1Evo+vvmhX1cvan1wM/aT4IxJX+w==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux@ew.tq-group.com, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject:
- Re: [PATCH v3 3/6] pmdomain: imx93-blk-ctrl: Scan subnodes and bind drivers
- to them
-Date: Wed, 05 Mar 2025 09:56:55 +0100
-Message-ID: <23858231.6Emhk5qWAg@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20250305-keen-shaggy-bullfinch-fc77fd@krzk-bin>
-References:
- <20250304154929.1785200-1-alexander.stein@ew.tq-group.com>
- <20250304154929.1785200-4-alexander.stein@ew.tq-group.com>
- <20250305-keen-shaggy-bullfinch-fc77fd@krzk-bin>
+        d=linaro.org; s=google; t=1741165111; x=1741769911; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WY5vuVhs6pBFMntJgEjYvG2DSltfmIip5HvFcUhCgso=;
+        b=gvgGLMrvm4TezDWk4WPh00LMkMgv/qGmfku7r0kO6LqQiZqWPlyIG1HL5zzfOpH8Qb
+         UQe0Zo5b+MQxTqNi2iwhhDhlwxKuzFxb7pbgLCljcBxWUN1pTUjGJeqqpRSDgsFx53bC
+         r7tdyVQX81dkU63de67cAeOd0xYv/6byQfxrUWul98bU4eHCCHIV/usl9IRUpH1COY6m
+         UiRvQlmoBc9T7Hsp8UTOiCUPqY2XJnv781QrF0wD2Fs5eE7mkKnd61VZTa1iqYL1ytZZ
+         wm5/PMgqi4mKgANWsLzQSrhWmX478c3tqxfXYLWUzKNiCv7IiOAvtlD5z92sX8cHY+ij
+         +dEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741165111; x=1741769911;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WY5vuVhs6pBFMntJgEjYvG2DSltfmIip5HvFcUhCgso=;
+        b=F77sAu4qkoXB2QOUuYMYc2NdUIzvbhb9e/QgrY0Kpy/vw+kbj70Bl2izjUWXs0nDwK
+         KXfASAeXQDv/Qv13Oi+FSzA1f9KIcjVtXjk2NP4i3I6LTea/hjdMtIm05OkwiMlmxZXU
+         3AthuPQarg2Mk7l9ZvN736FsE3FTcc3NsFDeO5V3rjChpR+ZoZ3LyItmkjqnISvcJ+8M
+         36HeZCexYP5FvODAjUvoYOAdxqO112u7MR2nF6dO7dFtubyJAF2dwcZbN9Hb9XKJAfRY
+         slc+bNQya3WU9/HZ8x/pZuQerUu3xyB3XaARfRO5eb1ni4NMYywpr2XB3X37HUNWI0fL
+         4Jwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrY7PTyEoYG6/fpt9+5y6WGxDGeIUtOYX9aZ5K8ZznQccUptBH41kg0pZbkLOxn35FBNfUZrCkHuk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJrUI29hJow8AmJJMnlUVgcx7PplqY8Vq8z1hjsT2gJ7tAI13w
+	olSBwzRBEBNJYq/OCTK9f7G51B8gkB92axGE1g452bqQpP5s39eKcYxGvm1Lz/4=
+X-Gm-Gg: ASbGncsw1Gn3z1l7fciYkp8Wr3sZTbUa+RUGvSx5XmvNka/oeaCp+k25mwqRc1UMhVt
+	tNVHwrLAU3OdjldvVO5e+8SjSQhRzK7u9sjFnlLhPpDwtf7p9PR0DVQv8GM8GJ+wfPeQkxTD5Nm
+	FAmzE/5Ev8BxGRNE4ncPLhePeHApAKhenNyX4EtmUo4ny0txuj0TIvDN/gu8+1ABvPl6Vq8XiSu
+	WW21OxXcPMn62RPudAF9/Qg2luDast4dCzZ8D8UAEYbz/bjmIjuCZSLPTr/uiqd6GTTsxOOra/F
+	0WwdHW5uN89aI6MSX+nMRnfOZwRrukYT7pkcBiId0qjbQFXd5YpFgp2NtS4wohsaeKOX7nflxtE
+	l2PWErn/cHGkii1etnDjRHDE=
+X-Google-Smtp-Source: AGHT+IFru+CnoO/K8BouBY87L2tjCxv0I44B8TgnGQhueATpKA6i0oswVIJN7d54HfLg412IUkDTmA==
+X-Received: by 2002:a05:6512:6cd:b0:546:2ea9:665e with SMTP id 2adb3069b0e04-5497d336cffmr332895e87.5.1741165110566;
+        Wed, 05 Mar 2025 00:58:30 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495ba676a7sm1137946e87.39.2025.03.05.00.58.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Mar 2025 00:58:28 -0800 (PST)
+Message-ID: <19393198-75ad-48bf-b21a-3d9cc1848499@linaro.org>
+Date: Wed, 5 Mar 2025 10:58:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: qcom,x1e80100-camcc: Fix the list of
+ required-opps
+Content-Language: ru-RU
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250304143152.1799966-1-vladimir.zapolskiy@linaro.org>
+ <20250305-little-frigatebird-of-calibration-244f79@krzk-bin>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20250305-little-frigatebird-of-calibration-244f79@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+On 3/5/25 09:56, Krzysztof Kozlowski wrote:
+> On Tue, Mar 04, 2025 at 04:31:52PM +0200, Vladimir Zapolskiy wrote:
+>> The switch to multiple power domains implies that the required-opps
+>> property shall be updated accordingly, a record in one property
+>> corresponds to a record in another one.
+>>
+>> Fixes: 7ec95ff9abf4 ("dt-bindings: clock: move qcom,x1e80100-camcc to its own file")
+>> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,x1e80100-camcc.yaml   | 9 +++++----
+>>   1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml
+>> index 5bbbaa15a260..938a2f1ff3fc 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml
+>> @@ -40,9 +40,9 @@ properties:
+>>         - description: A phandle to the MMCX power-domain
+>>   
+>>     required-opps:
+>> -    maxItems: 1
+>> -    description:
+>> -      A phandle to an OPP node describing MMCX performance points.
+>> +    items:
+>> +      - description: A phandle to an OPP node describing MXC performance points
+>> +      - description: A phandle to an OPP node describing MMCX performance points
+> 
+> If rewriting this, then:
+> s/A phandle to an OPP node describing//
+> because it is redundant (this cannot be anything else).
+> 
+> But more important is that you introduced ABI break, without actual
+> reason. Switch to multiple power domains does not look like fix so
+> neither should this be. Reverse the items to keep the ABI intact...
 
-Am Mittwoch, 5. M=E4rz 2025, 08:17:23 CET schrieb Krzysztof Kozlowski:
-> On Tue, Mar 04, 2025 at 04:49:22PM +0100, Alexander Stein wrote:
-> > +#include <linux/of_platform.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/pm_domain.h>
-> >  #include <linux/pm_runtime.h>
-> > @@ -297,8 +298,14 @@ static int imx93_blk_ctrl_probe(struct platform_de=
-vice *pdev)
-> > =20
-> >  	dev_set_drvdata(dev, bc);
-> > =20
-> > +	ret =3D devm_of_platform_populate(dev);
->=20
-> This means in remove() you will depopulate in different order than error
-> path (e.g. after genpd removal). This is rather unexpected - remove()
-> should be cleaning up in exactly reversed order of probe. Not sure if it
-> can lead to any issues, but usual recommendation is that you either use
-> devm() or not.
+To the best of my knowledge there is no users of this compatible in the
+Linux kernel, so likely there is no ABI break.
 
-Thanks for pointing out. I will add a devm_of_platform_depopulate() to
-remove().
+> unless ABI was broken earlier and this just keeps doing it to make code
+> consistent. But then please explain it in commit msg why we need to
+> break it second time.
+> 
 
-Best regards
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+https://lore.kernel.org/all/CAA8EJprP9Z181VDCT=xfyrBipzgiB0tfb8M_XZ4H=yOrvEnB0w@mail.gmail.com/
 
-
+--
+Best wishes,
+Vladimir
