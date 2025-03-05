@@ -1,254 +1,81 @@
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F801FC7D1;
-	Wed,  5 Mar 2025 09:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6E71FC7FA;
+	Wed,  5 Mar 2025 10:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741165348; cv=none; b=t5ULx4n6ZcTSlo0zH5myketOKdmO64TMObgGSonG+LepUGXRNJBxDD6SJcytoJrhvO7D02ayCasNYvZBb5p1BTI5hVdA17kbHTE/UOgstzX/TnSzyynPlro7ngoD6da95P/Mwbp54gpjfP3KyRRNNiGYWVKD25c3CL6pLszjmz8=
+	t=1741168827; cv=none; b=up39YMGlV0Z2zJW09rT6dBPUiTZLMoJzmrjGI59NLLBbRl7lJFYRE1iD8Rwyrbel400eG/QnJIQez3X9ZvlXAOLy3UXX4iP+FNnqlT0Ovj2pVDbLSoq2MhIzgZ2yQBcbRc+RYjuHSR2zuMu3xIfOSLLw0ZiOLZmueTlkz2+ISt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741165348; c=relaxed/simple;
-	bh=7BZUuY0NVXBKg5hilWvkKI6gUrRsdS6N+7BHvgE6STY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LOQhZYf9zer4jky7LpeJtklNWuuK7NBDBp/F3Zs7YqpPZsZs2Kc8HyaCg2NOd3DPJT0j4AaVLq6p4/QYS1QLaHY7RxsTEVVk3xCQMdHrlTR2IXQkStlZ4PgAHYImnyHoC7AUEOPcGVXhc4MKwUHHyYOEruPUPhpw/r6UL5akVuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=FGEdSHsJ; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=qzcWgjDG reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="FGEdSHsJ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="qzcWgjDG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1741165346; x=1772701346;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vqA7WR0bg0u4G+HAomrK/aLC9+18x4n+S7IKkNThfiM=;
-  b=FGEdSHsJUzdScXTdYhZDaxdAawHc2qDZosoNyGgeUVrIIunht89aqQqJ
-   HbUFHh48AM65l+XSXqsGhMG9kuBuNclOfyJOb6cJVCMoEll6EDKETj/OH
-   jbdIelhBCxMNFMdTse2GCSiSzcYRvC/ukcGFFmT1KzbJ6SScr756bTxD2
-   4X2TT9k8TUoH3/Vf7vAgXx/kMNl3nO1ma7HamU/roKjhhF4f1fOGyc5nE
-   th+OlHdXuqXo5zwZGT4noy59M1frVRKYYf5yCSt4SJuqEP+v66pLAvPVr
-   +39vEol0TS7h4+Txq3T3sL3fkuax/hlRo99rFeytb+WN0uJz7CaxMlNDK
-   g==;
-X-CSE-ConnectionGUID: IH657TY3Tl23yR3Vv1dR/A==
-X-CSE-MsgGUID: cgkFUMvxRU6w9KHMn9F1ow==
-X-IronPort-AV: E=Sophos;i="6.14,222,1736809200"; 
-   d="scan'208";a="42301885"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 05 Mar 2025 10:02:22 +0100
-X-CheckPoint: {67C8131E-23-7141A0B0-E6EDEC14}
-X-MAIL-CPID: 0BDC1C9894ABA85FF037DCAB1A11A9B5_3
-X-Control-Analysis: str=0001.0A00636C.67C8131F.010A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A72F3170EA5;
-	Wed,  5 Mar 2025 10:02:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1741165338;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vqA7WR0bg0u4G+HAomrK/aLC9+18x4n+S7IKkNThfiM=;
-	b=qzcWgjDGS6jWPY+RITIk8yBviKpMKL0y16KSXMlshqTDttq6zKFd8uRh0rjbusm21alLLO
-	0zncE1o54zqa2PkjSbvWyACMubP8NqizUU7F39NtdEyf8B7h5zWhZ3ivT6X25sqtCFjSSc
-	Bq3JpoZAEKG0N2u2vqMbhZJRAtcHkfgPLIvm7R5McponzskDZSRi22nXnOhJg1CUW3KHx/
-	aVeSFRyy4/ATHnHp/9XUjp3UP5VCYqp6++6rG5zw1KmH82cgRaFpKEHzJKR3F3q1GHoDJc
-	hgimR61srqwk7i5wU9S6wvO15O4FIatNLRGINZRrOvbwgrcOGQlB24ojz6hXxA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux@ew.tq-group.com, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject:
- Re: [PATCH v3 2/6] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB subnode
- into schema and example
-Date: Wed, 05 Mar 2025 10:02:16 +0100
-Message-ID: <4414669.ejJDZkT8p0@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20250305-dandelion-axolotl-of-excitement-05fa70@krzk-bin>
-References:
- <20250304154929.1785200-1-alexander.stein@ew.tq-group.com>
- <20250304154929.1785200-3-alexander.stein@ew.tq-group.com>
- <20250305-dandelion-axolotl-of-excitement-05fa70@krzk-bin>
+	s=arc-20240116; t=1741168827; c=relaxed/simple;
+	bh=RnAp8NybBTwcpa0tW1tirFA2zgXjPhyRvEErVdTWaQA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=A19JXe7qRHdQ5nChL9BSXZw1/E+jF0qSjO1vjo3tqhs7hoVWDvAW34zEZz5rRewWZGCgpFUiwT9Kf8X9XQJGlt4APFh0B82owygQryaq3xgvw1UMWQ2lQj3ImVBSV/tYIajPzUGQ7djfV+VitYIEHU8I9L3ekM5xyWClERJCiqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c02:1dd0:9019:911e:6b73:1fea])
+	by smtp.qiye.163.com (Hmail) with ESMTP id d05d5703;
+	Wed, 5 Mar 2025 18:00:17 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: ziyao@disroot.org
+Cc: conor+dt@kernel.org,
+	cristian.ciocaltea@collabora.com,
+	detlev.casanova@collabora.com,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	jonas@kwiboo.se,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: Re: [PATCH 6/8] clk: rockchip: rk3528: Add SD/SDIO tuning clocks in GRF region
+Date: Wed,  5 Mar 2025 18:00:15 +0800
+Message-Id: <20250305100015.1353849-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250301104724.36399-1-ziyao@disroot.org>
+References: <20250301104724.36399-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDQk9OVkhKGk5KHUtDSRoZQ1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtJQUofH0tBQktKQkFCSkoeQU0ZTEhBSh0eGllXWRYaDx
+	IVHRRZQVlPS0hVSktISk5MTlVKS0tVSkJLS1kG
+X-HM-Tid: 0a9565bfb64d03a2kunmd05d5703
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MBg6Pyo4FTIBFDg2NC4pMhIS
+	SxAaCR1VSlVKTE9KSk1DQ0pDTE1KVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0lBSh8fS0FCS0pCQUJKSh5BTRlMSEFKHR4aWVdZCAFZQUxNTzcG
 
 Hi,
 
-Am Mittwoch, 5. M=E4rz 2025, 08:13:04 CET schrieb Krzysztof Kozlowski:
-> On Tue, Mar 04, 2025 at 04:49:21PM +0100, Alexander Stein wrote:
-> > Document the LDB bridge subnode and add the subnode into the example.
-> > For the subnode to work, the block control must scan its subnodes and
->=20
-> Don't describe drivers, but describe the hardware.
+> +	nr_clks = rockchip_clk_find_max_clk_id(rk3528_clk_branches,
+> +					       nr_branches) + 1;
+> +
+> +	vo_grf = syscon_regmap_lookup_by_compatible("rockchip,rk3528-vo-grf");
+> +	if (!IS_ERR(vo_grf))
+> +		nr_clks = MAX(rockchip_clk_find_max_clk_id(rk3528_vo_clk_branches,
+> +							   nr_vo_branches) + 1,
 
-Thanks, I'll rephrase to describe the hardware better regarding LVDS.
+drivers/clk/rockchip/clk-rk3528.c: In function 'clk_rk3528_probe':
+drivers/clk/rockchip/clk-rk3528.c:1105:27: error: implicit declaration of function 'MAX'; did you mean 'MUX'?
+ 1105 |                 nr_clks = MAX(rockchip_clk_find_max_clk_id(rk3528_vo_clk_branches,
+      |                           ^~~
+      |                           MUX
 
->=20
-> > bind drivers to them, do not misuse either simple-bus or simple-mfd
-> > here.
->=20
-> I don't understand that simple-bus or simple-mfd statement. There are no
-> such compatibles here.
+It seems that missing definition with older kernels.
 
-Same as above, the wording stems from 1cb0c87d27dcc ("dt-bindings: soc:
-imx8mp-media-blk-ctrl: Add LDB subnode into schema and example").
-I'll drop it to avoid confusion.
+Thanks,
+Chukun
 
->=20
-> >=20
-> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > ---
-> >  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 51 +++++++++++++++++++
-> >  1 file changed, 51 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-=
-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-b=
-lk-ctrl.yaml
-> > index b3554e7f9e76d..cd785111928bf 100644
-> > --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctr=
-l.yaml
-> > +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctr=
-l.yaml
-> > @@ -24,6 +24,14 @@ properties:
-> >    reg:
-> >      maxItems: 1
-> > =20
-> > +  ranges: true
-> > +
-> > +  '#address-cells':
-> > +    const: 1
-> > +
-> > +  '#size-cells':
-> > +    const: 1
-> > +
-> >    '#power-domain-cells':
-> >      const: 1
-> > =20
-> > @@ -46,9 +54,20 @@ properties:
-> >        - const: csi
-> >        - const: dsi
-> > =20
-> > +  bridge@20:
->=20
-> @20 looks wrong. Use 'ranges;' and try again your DTS...
->=20
-> Binding is supposed to be complete. We have several examples when people
-> added children one-by-one, everytime with different reasoning about
-> child addressing.
->=20
-> So please confirm: this is complete and no other children will ever be
-> added here... or you are 100% sure that all future children will be
-> unit-addressable (will have unit address and appropriate properties).
-
-This block control is a collection of registers for different purposes:
-* MIPI-DSI
-* MIPI-CSI
-* Parallel camera
-* LVDS
-* CAMERA_MUX
-
-At lease for parallel camera, another subnode is expected ([1]).
-
-[1] https://lore.kernel.org/all/20240819024001.850065-1-victor.liu@nxp.com/
-
-> BTW, I don't quite get why this is both syscon and has translation for
-> child addresses. Does it mean your child does not use the same MMIO as
-> parent, thus leading to unsynchronized reg access?
-
-I'm not sure what the best practices are. This LDB has two registers
-inside this block. So it seems reasonable to me to indicate this using
-a reg property. On the other hand, access is solely done by accessing
-via syscon, so unsynchronized reg access is not an issue.
-
-What I am getting from your comments this node should not have 'reg'
-property, as it uses syscon anyway.
-
-> > +    type: object
-> > +    additionalProperties: true
-> > +    properties:
-> > +      compatible:
-> > +        contains:
-> > +          const: fsl,imx93-ldb
-> > +
-> >  required:
-> >    - compatible
-> >    - reg
-> > +  - ranges
-> > +  - '#address-cells'
-> > +  - '#size-cells'
-> >    - power-domains
-> >    - clocks
-> >    - clock-names
-> > @@ -77,4 +96,36 @@ examples:
-> >                 clock-names =3D "apb", "axi", "nic", "disp", "cam",
-> >                               "pxp", "lcdif", "isi", "csi", "dsi";
-> >        #power-domain-cells =3D <1>;
-> > +      #address-cells =3D <1>;
-> > +      #size-cells =3D <1>;
-> > +      ranges =3D <0x0 0x4ac10000 0x10000>;
-> > +
-> > +      bridge@20 {
-> > +          compatible =3D "fsl,imx93-ldb";
-> > +          reg =3D <0x20 0x4>, <0x24 0x4>;
-> > +          reg-names =3D "ldb", "lvds";
-> > +          clocks =3D <&clk IMX93_CLK_LVDS_GATE>;
-> > +          clock-names =3D "ldb";
-> > +
-> > +          ports {
-> > +              #address-cells =3D <1>;
-> > +              #size-cells =3D <0>;
-> > +
-> > +              port@0 {
-> > +                  reg =3D <0>;
-> > +
-> > +                  ldb_from_lcdif2: endpoint {
-> > +                      remote-endpoint =3D <&lcdif2_to_ldb>;
-> > +                  };
-> > +              };
-> > +
-> > +              port@1 {
-> > +                  reg =3D <1>;
-> > +
-> > +                  ldb_lvds: endpoint {
-> > +                      remote-endpoint =3D <&ldb_to_panel>;
-> > +                  };
-> > +              };
-> > +          };
->=20
-> Messed indentation.
-
-This is already from the original binding. I'll fix in a separate commit.
-
-Best regards,
-Alexander
-
->=20
-> > +        };
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
+-- 
+2.25.1
 
