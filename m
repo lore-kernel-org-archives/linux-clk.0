@@ -1,145 +1,79 @@
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C039189919;
-	Wed,  5 Mar 2025 17:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3991151992;
+	Wed,  5 Mar 2025 17:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194733; cv=none; b=bWfNV7xoBTJqivUlYNHFuSyiWxukPbvr0Wh8wqtvzD4IquxRh+rgQulxxrWWILWbS04naUPO1bxfrQaT7QcLfQvMcyumHujWI1Y4WBagxZjicOU3GWyvwdhq2bJcjQuKKLg12XowQHSkCeFYR7uuGXrnnc34i4uhcFQqThi9tfI=
+	t=1741195801; cv=none; b=HVZtCNfplZjkpnuXyMDe3FioaVZxZSu/JcPnxxMN6GPhxbQu3hVZjS2SoCPOJuoWcbWebiDAKcEuzlFoyBs/eary3ulqDG4/6Y1jVrhepzDlQE1tMrfUh0o1rUfQIb9H5tzUlqj0sEMowehDyLGnxyLLdWu5o2yOtcd1Q3Ow1qA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194733; c=relaxed/simple;
-	bh=ymdjfPVj3Gx6VMSsnlo3NNdGoCg5MQjlKLzXkCVz3hk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kdk9aL8kL8s/0u9dH4DyYmhW+veBVG7WyuwSK+CRKhfvUrMGwPd48IUQ+jN1DaY8RevJkYXolWa5+sm/29XYctPPXUoSCGZa3piDQtF7sj8OjmkjP2sfKDEExH/HbWjamk4m8D3k+VSTScbkUO7VIuk4wTZ0YTXGxBsO3TUqa+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c3b4c4b409so605688285a.3;
-        Wed, 05 Mar 2025 09:12:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741194729; x=1741799529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xwvfJ3zSM1ne0HhPozptDXxYsyU2cKa7T+hm9UKjZ2o=;
-        b=D76UdXgt8XMbNoMg3jFnSy7hdhRpjgZ1GUQwQPdv3xmQzhBSF51yWui3tk5S3MbsWX
-         RtPOrZWHs28qm+f15U2wNZIbUFEBIVFwn8RYgcvzbZqv3CESBKNPO+FZ6E2mI5SX3i3X
-         dNnUc8NLRiYmyyxjvdW5gF9Syqsz2wgdzXa1VUmfNtQ7qoZ9WMGC7UM3VNW7LuPrB7WW
-         vCBaXmuAtYJ+2pljQVzhJ3BRpEvA9VcRcKdf8R0hJBpiKN62R+60uqf5x9UvJOLF+ajt
-         8ZmLI/Kxw1NcEiuRNn+CXcDx6cBKsNCdg3cHA+qSDVrG6OegLSv3Y6BTycoxTjOHXe5z
-         XU3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmuz5Lu/n44f6RkofkyNpbnyMKqg/pqyH6+cTRY/5DKbg4rtc3ALxWQoLcNql3vQUQLMhJXmsW2hHPfHw1@vger.kernel.org, AJvYcCVOYCkFDqjYfprgKifjGk6uJdKL6XpRjxwQdr1qnzrRpOTexhhT3UdBr6eKqz4iOOaKvk3NalkUdoFDTp7l4sFO0E8=@vger.kernel.org, AJvYcCWrtJjEv/sJeYjHSariV6Yho2lId96k/jF7ES5NGpzKCrRBXbU0zx5Ouyhrf7U4hJsRkcglMbfhT10=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3oYDiJlv+2KBVVMXOoUEpbPoffxZZp+X+SrKYfA8fienSrFvL
-	2DQ+C2+qvXKnTS7hm7yvu/xJUIuNteao4/dml0uRT5RbALx9qxw3GI3NhKeM
-X-Gm-Gg: ASbGncvLH8hTnVnPpsYKfcpoV5x5Emdq6xjqiBzcJv3oFNKEipZzMyMvVAh+K3NctMj
-	oBzM0qyRAJfYTYjT3zTf/0NB8Ek3mHWQ2Plt8OgdRbgIQ3LDvKSqOGOZ5azgqDMjGvd8Hhi2igU
-	Ug2HYVCKNwDkBCRhhXRLh9ekhlispFCjPrYo9SRdU4bRg7DBmgLmGtzKUUG+u76/jdQLhpKyafY
-	zMKnyE8FtmkDxG6HphK4hyMR3vtedu6pdIWgbIyig6CbEMccVrYfMP2iMTFyiwtX+beuAFbOp/E
-	yG60dgecal9a1m54YP+XIoTyd2aKrhIUezwmv3237s+8nq1Gr/S3Kk3QVtotCkPl9OWRd5ofIAz
-	L+GGyEsRmHds=
-X-Google-Smtp-Source: AGHT+IEBwVWbIXQ/xgbiO3Ai+oTFWUpJ8O6nu2UYjJyaymQtru8AIaeCIVhqBqus8TBFvqvJu41Scw==
-X-Received: by 2002:a05:620a:8806:b0:7c3:cd38:9be8 with SMTP id af79cd13be357-7c3d8e5f40bmr693787585a.25.1741194728905;
-        Wed, 05 Mar 2025 09:12:08 -0800 (PST)
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com. [209.85.160.169])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378d9fe2bsm901948085a.88.2025.03.05.09.12.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 09:12:08 -0800 (PST)
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-474faf23fbeso28943101cf.2;
-        Wed, 05 Mar 2025 09:12:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUVep2sMP7vEV6vFUgOi7MBDiu17DUn6bstsiIey9idXBuS9qQkp6VsQdXpP9J79zBeVxgk4izXJ9M=@vger.kernel.org, AJvYcCWK1Oiu2xho1W/NQiw9yKFjiNMZNLwEAKNl0dH/U5+9pGNqyoVDj6rBbSu/nMP3vXxNtq7srJvBa3YqZTuwu8xo8QE=@vger.kernel.org, AJvYcCX7/XuIXYlPCckEfQ8WJYIfPkFjZXwGb2DbtaB8Q3muJL4sOswVAll4xOCXqfiUAbxrhGvReHh7CbPYqScw@vger.kernel.org
-X-Received: by 2002:ac8:7f83:0:b0:472:1f07:7a9 with SMTP id
- d75a77b69052e-4750b496c02mr55280851cf.31.1741194728486; Wed, 05 Mar 2025
- 09:12:08 -0800 (PST)
+	s=arc-20240116; t=1741195801; c=relaxed/simple;
+	bh=QT1Q/bmG89S72y6eL6ERN7cq/WwbniJG65e3HFm1/I0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MBXO6YEWzS/t/fO/2R88/GpllHBN0lKc0HovCDM0EgQlFSQNXKAReIJe5qAVl1KCtXSeKgbxRjyQXPihrcA9rzIvYfmcRisq9bXW3pw4VzbpR6VOd1/4weKwg7jivlqd1c2oa0R+ugEPWog/gZdEEvzdJghCZm4z74v4VXAalOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81087FEC;
+	Wed,  5 Mar 2025 09:30:12 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D0FF3F66E;
+	Wed,  5 Mar 2025 09:29:56 -0800 (PST)
+Date: Wed, 5 Mar 2025 17:29:54 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Abel Vesa <abelvesa@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH NOT APPLY v2 4/4] clk: scmi: Support spread spectrum
+Message-ID: <Z8iKErarE0lHWxEy@pluto>
+References: <20250205-clk-ssc-v2-0-fa73083caa92@nxp.com>
+ <20250205-clk-ssc-v2-4-fa73083caa92@nxp.com>
+ <Z6SqeNsAqbZM8nr1@pluto>
+ <20250303041125.GC13236@nxa18884-linux>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218114353.406684-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250218114353.406684-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdVwVemQfrDFH48n9Csp6=KtFs5MpZ6e+wLWSnEuh2gdvg@mail.gmail.com> <CA+V-a8sj-jEu8y_qPv-KvVCu_YQCQ1MDK9zrRB93LjfhmB_qfQ@mail.gmail.com>
-In-Reply-To: <CA+V-a8sj-jEu8y_qPv-KvVCu_YQCQ1MDK9zrRB93LjfhmB_qfQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Mar 2025 18:11:56 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVfnGhaJwfK93_StWsUDWDfwNp_9uwZB6VvKLMMNga9tg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jp0YyLAxKgAuapwsJ9uQO_sQxnabNdrvwWGoyLAOSsLGNVRJc3_g6dsEy4
-Message-ID: <CAMuHMdVfnGhaJwfK93_StWsUDWDfwNp_9uwZB6VvKLMMNga9tg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: renesas: rzv2h-cpg: Move PLL access macros to
- source file
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303041125.GC13236@nxa18884-linux>
 
-Hi Prabhakar,
+On Mon, Mar 03, 2025 at 12:11:25PM +0800, Peng Fan wrote:
+> Hi Cristian,
+> 
+> On Thu, Feb 06, 2025 at 12:26:32PM +0000, Cristian Marussi wrote:
+> >On Wed, Feb 05, 2025 at 05:49:54PM +0800, Peng Fan (OSS) wrote:
+> >> From: Peng Fan <peng.fan@nxp.com>
+> >> 
+> >> Support Spread Spectrum with adding scmi_clk_set_spread_spectrum
+> >> 
+> >
+> >Hi,
+> >
+> >I forwarded ATG with our latest exchange on the possibility of using a
+> >standard OEM type instead of Vendor one if it is general enough....
+> 
+> Do you have any update?
+> 
 
-On Wed, 5 Mar 2025 at 17:38, Lad, Prabhakar <prabhakar.csengg@gmail.com> wr=
-ote:
-> On Wed, Mar 5, 2025 at 4:19=E2=80=AFPM Geert Uytterhoeven <geert@linux-m6=
-8k.org> wrote:
-> > On Tue, 18 Feb 2025 at 12:44, Prabhakar <prabhakar.csengg@gmail.com> wr=
-ote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Move the `PLL_CLK_ACCESS()`, `PLL_CLK1_OFFSET()`, and `PLL_CLK2_OFFSE=
-T()`
-> > > macros from `rzv2h-cpg.h` to `rzv2h-cpg.c`, as they are not intended =
-for
-> > > use by SoC-specific CPG drivers.
-> > >
-> > > Additionally, update `PLL_CLK1_OFFSET()` and `PLL_CLK2_OFFSET()` to u=
-se
-> > > the `FIELD_GET()` macro for better readability and simplify the
-> > > `PLL_CLK_ACCESS()` macro.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
-> >
-> > Thanks for your patch!
-> >
-> > The changes look correct to me, so
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > but I still have some comments...
-> >
-> > > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> > > @@ -56,6 +56,10 @@
-> > >
-> > >  #define CPG_CLKSTATUS0         (0x700)
-> > >
-> > > +#define PLL_CLK_ACCESS(n)      (!!((n) & BIT(31)))
-> >
-> > OK
-> >
-> > > +#define PLL_CLK1_OFFSET(n)     FIELD_GET(GENMASK(15, 0), (n))
-> > > +#define PLL_CLK2_OFFSET(n)     (PLL_CLK1_OFFSET(n) + (0x4))
-> >
-> > IMO, the original versions are more readable, as they clearly show
-> > the symmetry between encoding and decoding.
-> >
-> > Perhaps a good alternative would be a structure with bitfields and
-> > a PACK() macro, like is used for DDIV and SMUX?
-> >
-> Sure, I'll do that. Is it OK if I make that change on top of this
-> series or do you want me to rework and send a v2?
+Yes I think you can go on with your original plan of using vendor OEM
+types: as of now we are not gonna standardize a new commmon SCMI type
+for Clock-SS, given there is really just one SCMI user of such clock
+features...maybe in the future if more users shows up...
 
-I think there will be a v2 ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks,
+Cristian
