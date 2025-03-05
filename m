@@ -1,110 +1,223 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827CA253F01;
-	Wed,  5 Mar 2025 20:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0352512D6;
+	Wed,  5 Mar 2025 20:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741205404; cv=none; b=kvjs5cA6oxYWH8EbP+JOBU9wrb1nRWISjtTzb2UmCdF8ayjfTWyVlSXsPj5Z+yMkbTxe9Ls+w0IoNlj5lmpa+Y45TQqCSe7q6dTtQbkPyBZWNVdKjD/zDTTjA3+r59r8AholyVIrisR7xMQZXJMKz7sdWDW1bCCRWzW55RHpbZk=
+	t=1741205653; cv=none; b=uPzeJoeSh3/O8hQcnwtFxWDCqQJV0qLF1Urh4lpESauQrGBNTR+e9/bYcrxtHTb1uwH54bFr7zwcrj0LQi4vgAXhs/Hs+acIfrNCB+q5Qg288NOmJ1BYlozMjHC/8SnMGGAWsUJMTUSyXgYpJCplke2eusT7gcSUXt35hW9NfH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741205404; c=relaxed/simple;
-	bh=MVQzYhdHYMH5Tuq8M5PbpZZQYMj7UeFVNdHr1ME5bo0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=abwvuYuJIrBjx4Jq62c7QY5otJ8RcUst5SjsE/TDmI22FCqZMFj4XccoS6VLUMLBdBOWwGNp2qgd4Fw5qBuwyFLnyJi4Yrpnc60FTg+Ac6nz1efeTOXAcnYBEmk1oLY1S0U5VMVVb0oUAmv9zVdxbeGC66WxfylU9yE74JXIMeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSrkxgZh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741205653; c=relaxed/simple;
+	bh=HDnrB4nEnljM8RGpjYJcqggNGEbrKzMXtNEH2FuUmSM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ekOVbpLS9SUs/ZHqySAnDqG1LYjOPdFj0FZaaOYNiLnnL/gQyGWyRszSVUu5EpspDvHGZRb+I+/FiWZsEw7PZzI2RfUAqQMsXdW+xTdPYzgYkNI5OwkOfY64zURl9xXniRsX/EFJf8P4amPz2d45EfIfyObWZfRFwBWvZS4psY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=inZG2VL+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSrkxgZh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F4AC4CEE8;
-	Wed,  5 Mar 2025 20:10:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="inZG2VL+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2849DC4CED1;
+	Wed,  5 Mar 2025 20:14:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741205403;
-	bh=MVQzYhdHYMH5Tuq8M5PbpZZQYMj7UeFVNdHr1ME5bo0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SSrkxgZhKdVo4V+cb3FZtsIc/LAHvZkDRhMI+tRGyqs9pk5VNVcFNCNj5VilzgWG1
-	 NzXYoG/FxyB5p0benZfrCbfIJeW6GDxMdYijUVIxDx3zi+vqqzF+SUhpEvBP4O6mna
-	 eDlzwB/f0Ohq8hgspy55b1oIHIF5mPQo+XI3hCubBIBCNAXtdOCeHIrWEWC/ZPp7mG
-	 85SfmsYZeH9G667pi1/NzpIEpF1DqRjMKDw/fOCwmHZQob+f1wT3AyJmm4+u75mcss
-	 gEEDGtD5tc42CGe9CULSW/dZ/okawOK1NluQ1QLrhwNcSM/zf2AXfsgbPsk0wLzKFH
-	 UuDlbpF8CMjHg==
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso6749793a12.1;
-        Wed, 05 Mar 2025 12:10:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX9gCvMBWx7s2UK60dtIL7qOtHcK9/gSTgiq5oANAVbxyN3lcb0P5nyqjfO5WzIqKP+4OVZga/CSbsi5xUVEPM=@vger.kernel.org, AJvYcCXOzn4LOyGxnHibSZNgM9UIKPMsR8CPL45KvKYg9OVHUedoOOYqh4C+fwz1OcJFaBAnHh4fvyJUSmA=@vger.kernel.org, AJvYcCXXP0rqYthMdFPNfQDcK0UwlOOZTR3L5W1ZTMC10rfqs7Isj8Uj42icw7wlrIt1DYyvGspZaV7RUzZm6CgQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKp/fM125ZA41YtZg0hLSv34Z3yoRvyw/sfZL9D3AlvjoJhzLN
-	rHlbaS/6vktqhOUiSFiRGK3P3aq78ZHjx+76tVVpnVQbPc0SpYAbPCSB5GvqT47D1BMR2xorViZ
-	haJcjsg77hw6krDNbaBwLdprzCg==
-X-Google-Smtp-Source: AGHT+IE8JkbPtgQEvGcdwu3Oy8kHLnR4vi/qv5XyO2NhqlaLAfUlUjiafyfzsW3zJtBF0d5vjuOf+dRYq75NjTCrqUY=
-X-Received: by 2002:a05:6402:42cb:b0:5de:4b81:d3fd with SMTP id
- 4fb4d7f45d1cf-5e59f38a96fmr5092348a12.13.1741205402341; Wed, 05 Mar 2025
- 12:10:02 -0800 (PST)
+	s=k20201202; t=1741205652;
+	bh=HDnrB4nEnljM8RGpjYJcqggNGEbrKzMXtNEH2FuUmSM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=inZG2VL+HEY0d4yHQnh74ltWdDsiF+gOqXcWQ34MYzDzKaBOw7LFCu0UjqXIZ86h8
+	 eyQC/D0G6UxHScdilRnK6UWsQ08YINESdXUdgEWiEFMfCFt+MZGy7HTidEDsJoeCwR
+	 Y5u8yX+NhmmQImlN5HmUX66ewdI8rBL719CLwqilWsK1ANjW289nMgTzGBHO9Ep0iT
+	 6qQjR0FY/UUrXsSuGbxqQYIgwBwHEehwYCYs5LoKK9ZX/EyAL7IqczVrtTvnHjxHS5
+	 XNKvhdyfoWJbhA+sVpT2ll6ns4/QuwZ67WpHvQxFFZD/5JYBiv1BYjF2uujsBZ1Vq3
+	 xQ9WM+NNoO9rg==
+Message-ID: <0a7c72cb-4b59-4146-8438-52d13b457a18@kernel.org>
+Date: Wed, 5 Mar 2025 21:14:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740118863.git.viresh.kumar@linaro.org> <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
- <Z7iGHiQcqa-_AXli@pollux> <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
- <Z7iSHR0F2QpiNpMZ@pollux> <aoprvojsnmkbzmmpgx5wxjqtamnr3jyhyqfcqnwhxulp34gn32@aau57u4cotpe>
- <20250221215931.GA134397-robh@kernel.org> <20250224095945.xjcjwkoqlgcsd2np@vireshk-i7>
-In-Reply-To: <20250224095945.xjcjwkoqlgcsd2np@vireshk-i7>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 5 Mar 2025 14:09:51 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJFeb66pt37wsTB7esCpRD1tpvqP1bvW=Nw8MmP5LvktQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JqvsOjM_L6JzavnVJyGd40bKnZ6_QrvavlB-hVTsrLbruc9kIjQqNkfbcw
-Message-ID: <CAL_JsqJFeb66pt37wsTB7esCpRD1tpvqP1bvW=Nw8MmP5LvktQ@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] clk: samsung: add initial exynos7870 clock driver
+To: Stephen Boyd <sboyd@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>,
+ Kaustabh Chakraborty <kauschluss@disroot.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250301-exynos7870-pmu-clocks-v5-0-715b646d5206@disroot.org>
+ <20250301-exynos7870-pmu-clocks-v5-2-715b646d5206@disroot.org>
+ <b4fb36bc3970293ebdf1ac793bb3d752.sboyd@kernel.org>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <b4fb36bc3970293ebdf1ac793bb3d752.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 4:00=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> On 21-02-25, 15:59, Rob Herring wrote:
-> > It would be nice to handle the optional case from the start. Otherwise,
-> > driver writers handle optional or not optional themselves. The not
-> > optional case is typically some form of error message duplicated in
-> > every driver.
-> >
-> > Every foo_get() needs foo_get_optional(), so let's figure out the rust
-> > way to handle this once for everyone.
->
-> Are we talking about adding another field here (like below code) or
-> something else ?
+On 04/03/2025 19:16, Stephen Boyd wrote:
+> Quoting Kaustabh Chakraborty (2025-02-28 19:57:13)
+>> diff --git a/drivers/clk/samsung/clk-exynos7870.c b/drivers/clk/samsung/clk-exynos7870.c
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..2ec4a4e489be30bd1cd2e6deac006bb8ac5bdc57
+>> --- /dev/null
+>> +++ b/drivers/clk/samsung/clk-exynos7870.c
+>> @@ -0,0 +1,1830 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (C) 2015 Samsung Electronics Co., Ltd.
+>> + * Author: Kaustabh Chakraborty <kauschluss@disroot.org>
+>> + *
+>> + * Common Clock Framework support for Exynos7870.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+> 
+> Please remove this include as this is a clk provider and not a clk
+> consumer.
 
-Either way, but generally I think 2 functions are preferred over 1
-function and flags.
 
-The harder part here is in C we just return NULL and all subsequent
-functions (e.g. clk_enable()) just return with no error for a NULL
-struct clk. For rust, I think we'd need a dummy Clk returned and then
-handle comparing the passed in reference to the dummy Clk in the rust
-bindings.
+I fixed it up for all drivers.
 
->
-> impl Clk {
->         pub fn get(dev: &Device, name: Option<&CStr>, optional: bool) -> =
-Result<Self> {
->                 ...
->
->                 let clk =3D if optional {
->                         bindings::clk_get(dev.as_raw(), con_id)
->                 else {
->                         bindings::clk_get_optional(dev.as_raw(), con_id)
->                 };
->
->                 Ok(Self(from_err_ptr(clk)?))
->         }
-> }
->
-> --
-> viresh
+> 
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/platform_device.h>
+>> +
+>> +#include <dt-bindings/clock/samsung,exynos7870-cmu.h>
+>> +
+>> +#include "clk.h"
+>> +#include "clk-exynos-arm64.h"
+>> +
+>> +/*
+>> + * Register offsets for CMU_MIF (0x10460000)
+>> + */
+> [...]
+>> +
+>> +static const struct samsung_cmu_info peri_cmu_info __initconst = {
+>> +       .gate_clks              = peri_gate_clks,
+>> +       .nr_gate_clks           = ARRAY_SIZE(peri_gate_clks),
+>> +       .clk_regs               = peri_clk_regs,
+>> +       .nr_clk_regs            = ARRAY_SIZE(peri_clk_regs),
+>> +       .nr_clk_ids             = PERI_NR_CLK,
+>> +};
+>> +
+>> +static int __init exynos7870_cmu_probe(struct platform_device *pdev)
+>> +{
+>> +       const struct samsung_cmu_info *info;
+>> +       struct device *dev = &pdev->dev;
+>> +
+>> +       info = of_device_get_match_data(dev);
+> 
+> Use device APIs please: device_get_match_data()
+
+
+I expect here a follow up patch.
+
+> 
+>> +       exynos_arm64_register_cmu(dev, dev->of_node, info);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static const struct of_device_id exynos7870_cmu_of_match[] = {
+>> +       {
+>> +               .compatible = "samsung,exynos7870-cmu-mif",
+>> +               .data = &mif_cmu_info,
+>> +       }, {
+>> +               .compatible = "samsung,exynos7870-cmu-dispaud",
+>> +               .data = &dispaud_cmu_info,
+>> +       }, {
+>> +               .compatible = "samsung,exynos7870-cmu-fsys",
+>> +               .data = &fsys_cmu_info,
+>> +       }, {
+>> +               .compatible = "samsung,exynos7870-cmu-g3d",
+>> +               .data = &g3d_cmu_info,
+>> +       }, {
+>> +               .compatible = "samsung,exynos7870-cmu-isp",
+>> +               .data = &isp_cmu_info,
+>> +       }, {
+>> +               .compatible = "samsung,exynos7870-cmu-mfcmscl",
+>> +               .data = &mfcmscl_cmu_info,
+>> +       }, {
+>> +               .compatible = "samsung,exynos7870-cmu-peri",
+>> +               .data = &peri_cmu_info,
+>> +       }, {
+>> +       },
+>> +};
+>> +
+>> +static struct platform_driver exynos7870_cmu_driver __refdata = {
+> 
+> Having __refdata here looks wrong.
+> 
+>> +       .driver = {
+>> +               .name = "exynos7870-cmu",
+>> +               .of_match_table = exynos7870_cmu_of_match,
+>> +               .suppress_bind_attrs = true,
+>> +       },
+>> +       .probe = exynos7870_cmu_probe,
+>> +};
+>> +
+>> +static int __init exynos7870_cmu_init(void)
+>> +{
+>> +       return platform_driver_register(&exynos7870_cmu_driver);
+> 
+> Is this supposed to be platform_driver_probe()? All the __init markings
+> in the samsung clk driver look like potential problems if anything
+> defers or is made into a module.
+
+Indeed code is confusing but still correct. This is called from
+core_initcall and nothing referencing __init/refdata can defer nor be a
+module. There are modules but, AFAIR, they don't use __init/__refdata.
+
+The __refdata here was probably so this can reference __initconst in
+other places.
+
+As you pointed out, probably the correct solution is to use
+platform_driver_probe().
+
+
+Best regards,
+Krzysztof
