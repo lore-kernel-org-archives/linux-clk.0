@@ -1,391 +1,110 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D10255E54
-	for <linux-clk@vger.kernel.org>; Wed,  5 Mar 2025 20:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827CA253F01;
+	Wed,  5 Mar 2025 20:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741205045; cv=none; b=GAF3CqoMFBCzMpHxXtu2kertM1e8xuiMMuvppN6tu0w+YNX863SjXwAL1DuQchgITMo0TUyKCTO0mscSgvwdcgLZ/FBnp2YmuPQX2iKN/Gi53+Ix2yZA4GB0bJ/Af9KJvvKvnXpT7K+kr9m2EngQqI8jpYY0K411fh8D9KdseTs=
+	t=1741205404; cv=none; b=kvjs5cA6oxYWH8EbP+JOBU9wrb1nRWISjtTzb2UmCdF8ayjfTWyVlSXsPj5Z+yMkbTxe9Ls+w0IoNlj5lmpa+Y45TQqCSe7q6dTtQbkPyBZWNVdKjD/zDTTjA3+r59r8AholyVIrisR7xMQZXJMKz7sdWDW1bCCRWzW55RHpbZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741205045; c=relaxed/simple;
-	bh=2g1OkBnfZbKGPLNo4YYRKOXwmTCLK/NxHJr0ibJ8jWM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IJZmcCms/CQJ1q27E5pTU4kF8gdeIbR0KWvATcSjkCeP4DpgPAp3S3GkvSczQgo4XrsheNNHBMLJdEFXxXWKRxwlg7h53PcqKhAfRh9sTbTD+ub6hlJZK00g/+bGNECulQ6L5jfa9J3wuQTXdnvG5tZlQODt/orOxH+FUnW2Dtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pLQoSc54; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741205404; c=relaxed/simple;
+	bh=MVQzYhdHYMH5Tuq8M5PbpZZQYMj7UeFVNdHr1ME5bo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=abwvuYuJIrBjx4Jq62c7QY5otJ8RcUst5SjsE/TDmI22FCqZMFj4XccoS6VLUMLBdBOWwGNp2qgd4Fw5qBuwyFLnyJi4Yrpnc60FTg+Ac6nz1efeTOXAcnYBEmk1oLY1S0U5VMVVb0oUAmv9zVdxbeGC66WxfylU9yE74JXIMeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SSrkxgZh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pLQoSc54"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43ba8bbeae2so7150375e9.0
-        for <linux-clk@vger.kernel.org>; Wed, 05 Mar 2025 12:04:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741205042; x=1741809842; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u3MgUbGEWphzLuO1KH/FYjLl6raNc7Bo6ONufLSewCc=;
-        b=pLQoSc54cAb5KlR75Z0RYr7gkBEve/aNH4X2lKt7zzPKCIa1LofyZVHCLutztDgcx8
-         VMXpMDReO7E7jWftnChWigR2l7j2rQdPCaDGhcQEleHRLqeogZb+bcdwnAQMaDyqXIwg
-         /mSr4GgWMm9N9PX8oIyvJEXb9+KOrvx3CUkxZHoyOW4O4Pv8HGr9XLftrenwolTrupOS
-         KgUZgyMVWCEDolLGzTmxHYscHaRQA1Rg5R7VBJzketjY8InJZJk5ETMaVd7Ugiu5AdJC
-         HhuU0wpfOZwYTr2QAog2Xee4Gq2fv9Xe+mvQ85msS7RvcwsB+fdWA6KLmPG7HoLMHCXu
-         A7XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741205042; x=1741809842;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u3MgUbGEWphzLuO1KH/FYjLl6raNc7Bo6ONufLSewCc=;
-        b=qWltfCnub9UOm16BkZEXl5BhhtKO/uXz12o3dKezymyS5vw1b6J2i+SpYtFKV34SLu
-         UDRVu4ctnEfc+l4WkYF71bV+trhkyWoccaUfRoOQjD/vcBosrNkhfHsgwuE9dfZHywfh
-         c7rDpALXdoZMsXz3TY+NprNdN42sRmxo72rZjiLriD+TdHGigja1ZUmwv7GAOU+7Lonq
-         KWK5CxdFZ/egJSGyAZgIH4lGkm+pKr+x4K2fV2DDZlJu9/j8jDX3yz2uvnr6JNiBGZSh
-         2jK0qTLlQxP1t+maYAysdlD/WD145QVxrHD75v5Ns1kZuE/SrfnaBM1I0sYO5lBR7e6A
-         EBjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWC1d5bQjd+SJM9J2GyURzzjttQ4kn+lvQnchoIJud7SumxoewxUDeXws+QIxb6q1agIP7Tf9o9cPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywiylc9s41xJHYDWantRjNho/cIBOKdMhTVLeD6cQkIiQ2riH6m
-	g86YpkVP/K0YzKZ+pcl07jds8zRQG5OBpy/2jbPDqZ11YKhe+W0Ybg6lvgNdNgY=
-X-Gm-Gg: ASbGncuWGN23zqz37BZmobOHLoL+6tyi6XroeSwzGTNMxtev2xoMBfMlI/493NZFTLh
-	r9CtRH68NuIRMJC1goeOT61pP7aL9ksASjcHfS4hztyadrqB96e216i4VmGjrfH9FqKt04AwvGI
-	8DZ15G/0bw7eaV4KhhklWB0FpSFBp77IXHqlDFZfkUWkZ0N71r42hWUr8HvBd4GDvNiO4oBiSF7
-	oG1ZTi+qli7U4dzQdNPw4nJKzmMpHDTHpl+ijqwkDhEKcM0IjX6gjZgdF5WWCy14i/0jI1pDazo
-	mmmjaPKjbHBic3I96crUIl690FvJlkhlzfxlTbbUE7Pu//2/aTnnMc1x2k3B
-X-Google-Smtp-Source: AGHT+IHGx6QP4vIYKl0XdRxXzlcL0E27pf6UfcuPtsTF+FnoZu+zxIZfaWZRjwGrTENDWAM8REFnYw==
-X-Received: by 2002:a5d:59a4:0:b0:391:42f:7e83 with SMTP id ffacd0b85a97d-3911f7c17fdmr1308033f8f.13.1741205041638;
-        Wed, 05 Mar 2025 12:04:01 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b792asm21874027f8f.53.2025.03.05.12.03.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 12:04:00 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 05 Mar 2025 21:03:44 +0100
-Subject: [PATCH v2 2/2] clk: samsung: Drop unused clk.h and of.h headers
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSrkxgZh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F4AC4CEE8;
+	Wed,  5 Mar 2025 20:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741205403;
+	bh=MVQzYhdHYMH5Tuq8M5PbpZZQYMj7UeFVNdHr1ME5bo0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SSrkxgZhKdVo4V+cb3FZtsIc/LAHvZkDRhMI+tRGyqs9pk5VNVcFNCNj5VilzgWG1
+	 NzXYoG/FxyB5p0benZfrCbfIJeW6GDxMdYijUVIxDx3zi+vqqzF+SUhpEvBP4O6mna
+	 eDlzwB/f0Ohq8hgspy55b1oIHIF5mPQo+XI3hCubBIBCNAXtdOCeHIrWEWC/ZPp7mG
+	 85SfmsYZeH9G667pi1/NzpIEpF1DqRjMKDw/fOCwmHZQob+f1wT3AyJmm4+u75mcss
+	 gEEDGtD5tc42CGe9CULSW/dZ/okawOK1NluQ1QLrhwNcSM/zf2AXfsgbPsk0wLzKFH
+	 UuDlbpF8CMjHg==
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso6749793a12.1;
+        Wed, 05 Mar 2025 12:10:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX9gCvMBWx7s2UK60dtIL7qOtHcK9/gSTgiq5oANAVbxyN3lcb0P5nyqjfO5WzIqKP+4OVZga/CSbsi5xUVEPM=@vger.kernel.org, AJvYcCXOzn4LOyGxnHibSZNgM9UIKPMsR8CPL45KvKYg9OVHUedoOOYqh4C+fwz1OcJFaBAnHh4fvyJUSmA=@vger.kernel.org, AJvYcCXXP0rqYthMdFPNfQDcK0UwlOOZTR3L5W1ZTMC10rfqs7Isj8Uj42icw7wlrIt1DYyvGspZaV7RUzZm6CgQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKp/fM125ZA41YtZg0hLSv34Z3yoRvyw/sfZL9D3AlvjoJhzLN
+	rHlbaS/6vktqhOUiSFiRGK3P3aq78ZHjx+76tVVpnVQbPc0SpYAbPCSB5GvqT47D1BMR2xorViZ
+	haJcjsg77hw6krDNbaBwLdprzCg==
+X-Google-Smtp-Source: AGHT+IE8JkbPtgQEvGcdwu3Oy8kHLnR4vi/qv5XyO2NhqlaLAfUlUjiafyfzsW3zJtBF0d5vjuOf+dRYq75NjTCrqUY=
+X-Received: by 2002:a05:6402:42cb:b0:5de:4b81:d3fd with SMTP id
+ 4fb4d7f45d1cf-5e59f38a96fmr5092348a12.13.1741205402341; Wed, 05 Mar 2025
+ 12:10:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-clk-samsung-headers-cleanup-v2-2-ea1ae8e9e2bf@linaro.org>
-References: <20250305-clk-samsung-headers-cleanup-v2-0-ea1ae8e9e2bf@linaro.org>
-In-Reply-To: <20250305-clk-samsung-headers-cleanup-v2-0-ea1ae8e9e2bf@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11121;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=2g1OkBnfZbKGPLNo4YYRKOXwmTCLK/NxHJr0ibJ8jWM=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnyK4j5wW2zO1NYFsFkd1skeQ8VtQNlrCT3Pf4k
- rpRgLb4X5+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ8iuIwAKCRDBN2bmhouD
- 1+Z0D/9rCmjJmJ2ib2+s5ncVueP5O98zT6ZkIVjrKPGIb20psOyTtLrmJaFRWmfE2kOUACzmIPF
- rWZxDG+lXA1n8LfD8TpKk2K34fy7TjqmPBF32vDJ3LA6CJYvRGQptyNDiWVMwJgt1/Op/PLE/jS
- zq+alblFLC6FRlssX3Lwq8aXE5aWb70HorDJWzoCjOheEkQWGhl4AAQq0wbJDksDn30pwCxmaTo
- HKzCc1+ZzAD/54CJ/vWx31xlYBrlp3oOpvuqDAq4bpKwR5AmDnGQ75UGgCi1QtWUuWhVYBwjmAa
- nz0Zcze0eIvc6UjIPDEVd26eqoYoRU1NIWb+SmVrz7R40spJN168rr414A00/54xSA7IYRuTLA6
- VKtOiMXJ+sRPX1iIexUbYR/winSisYDK5Kf5OsL9GtIsNnchdr8Hvz/Fy/lYWT6YD6zVpwbGJWa
- +ssfuOFo0mfig1rfYaPUvd8k6QzqTDEpD3IGPQ0bKige24fIjmCjDuJ4rQeoYck6QxSY5UIqlaj
- Nxat+NGdsR/u/aNdiCMSI/bO7QR6YU2nzrDdiosCWNF7i24EN/q5i2CPRrAlzRDgxSNTOlEyYY+
- SzIG6QFqZW81GIF7gs7z+B9qV0i8CfBVO5zksXVyTJqJPz5DD1KtG0DxvX65LBxxpxw4luVvryJ
- yFU3A7UtkxoxuFA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+References: <cover.1740118863.git.viresh.kumar@linaro.org> <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
+ <Z7iGHiQcqa-_AXli@pollux> <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
+ <Z7iSHR0F2QpiNpMZ@pollux> <aoprvojsnmkbzmmpgx5wxjqtamnr3jyhyqfcqnwhxulp34gn32@aau57u4cotpe>
+ <20250221215931.GA134397-robh@kernel.org> <20250224095945.xjcjwkoqlgcsd2np@vireshk-i7>
+In-Reply-To: <20250224095945.xjcjwkoqlgcsd2np@vireshk-i7>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 5 Mar 2025 14:09:51 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJFeb66pt37wsTB7esCpRD1tpvqP1bvW=Nw8MmP5LvktQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JqvsOjM_L6JzavnVJyGd40bKnZ6_QrvavlB-hVTsrLbruc9kIjQqNkfbcw
+Message-ID: <CAL_JsqJFeb66pt37wsTB7esCpRD1tpvqP1bvW=Nw8MmP5LvktQ@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Daniel Almeida <daniel.almeida@collabora.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-<clk.h> header is for clock consumers, so drop its include from the
-Samsung clock controller drivers which do not use the consumer API
-(there are few which do, so leave it there).
+On Mon, Feb 24, 2025 at 4:00=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> On 21-02-25, 15:59, Rob Herring wrote:
+> > It would be nice to handle the optional case from the start. Otherwise,
+> > driver writers handle optional or not optional themselves. The not
+> > optional case is typically some form of error message duplicated in
+> > every driver.
+> >
+> > Every foo_get() needs foo_get_optional(), so let's figure out the rust
+> > way to handle this once for everyone.
+>
+> Are we talking about adding another field here (like below code) or
+> something else ?
 
-Drop including of <of.h> and <of_address.h> headers for all drivers
-which do not use anything from generic OF API or of_iomap().
+Either way, but generally I think 2 functions are preferred over 1
+function and flags.
 
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/samsung/clk-exynos2200.c     | 1 -
- drivers/clk/samsung/clk-exynos3250.c     | 2 --
- drivers/clk/samsung/clk-exynos4.c        | 1 -
- drivers/clk/samsung/clk-exynos4412-isp.c | 1 -
- drivers/clk/samsung/clk-exynos5260.c     | 3 ---
- drivers/clk/samsung/clk-exynos5410.c     | 2 --
- drivers/clk/samsung/clk-exynos5433.c     | 3 ---
- drivers/clk/samsung/clk-exynos7.c        | 1 -
- drivers/clk/samsung/clk-exynos7870.c     | 2 --
- drivers/clk/samsung/clk-exynos7885.c     | 1 -
- drivers/clk/samsung/clk-exynos850.c      | 1 -
- drivers/clk/samsung/clk-exynos8895.c     | 1 -
- drivers/clk/samsung/clk-exynos990.c      | 1 -
- drivers/clk/samsung/clk-exynosautov9.c   | 1 -
- drivers/clk/samsung/clk-exynosautov920.c | 1 -
- drivers/clk/samsung/clk-fsd.c            | 1 -
- drivers/clk/samsung/clk-gs101.c          | 1 -
- drivers/clk/samsung/clk-s3c64xx.c        | 1 -
- drivers/clk/samsung/clk-s5pv210.c        | 1 -
- drivers/clk/samsung/clk.c                | 1 -
- 20 files changed, 27 deletions(-)
+The harder part here is in C we just return NULL and all subsequent
+functions (e.g. clk_enable()) just return with no error for a NULL
+struct clk. For rust, I think we'd need a dummy Clk returned and then
+handle comparing the passed in reference to the dummy Clk in the rust
+bindings.
 
-diff --git a/drivers/clk/samsung/clk-exynos2200.c b/drivers/clk/samsung/clk-exynos2200.c
-index c7ee0fb58fca52ed711b12f1b729a5b732ebb20b..eab9f5eecfa3de742560591c0e122096bfae3bcf 100644
---- a/drivers/clk/samsung/clk-exynos2200.c
-+++ b/drivers/clk/samsung/clk-exynos2200.c
-@@ -6,7 +6,6 @@
-  * Common Clock Framework support for Exynos2200 SoC.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index 62ae5d845853e6fed2498cecb1151c8cf99bcae4..84564ec4c8ecfa012743d3fa9826daeab4bb0f75 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -8,8 +8,6 @@
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/mod_devicetable.h>
--#include <linux/of.h>
--#include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <dt-bindings/clock/exynos3250.h>
- 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index be5882e5c160f42154cb4472bbe54eb986d91637..374c26e5d9fda631cc5360eb73b3de498249cc49 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -9,7 +9,6 @@
- 
- #include <dt-bindings/clock/exynos4.h>
- #include <linux/slab.h>
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/mod_devicetable.h>
-diff --git a/drivers/clk/samsung/clk-exynos4412-isp.c b/drivers/clk/samsung/clk-exynos4412-isp.c
-index a6595b8d918b972208ba0b61d4c0d7f13bccaa3d..fa915057e109e0008ebe0b1b5d1652fd5804e82b 100644
---- a/drivers/clk/samsung/clk-exynos4412-isp.c
-+++ b/drivers/clk/samsung/clk-exynos4412-isp.c
-@@ -8,7 +8,6 @@
- 
- #include <dt-bindings/clock/exynos4.h>
- #include <linux/slab.h>
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
-index fd0520d204dc7e993b443fa1811c81f0a2e16a3f..0a59598233704b201ea97e907286f761152f54aa 100644
---- a/drivers/clk/samsung/clk-exynos5260.c
-+++ b/drivers/clk/samsung/clk-exynos5260.c
-@@ -6,9 +6,6 @@
-  * Common Clock Framework support for Exynos5260 SoC.
-  */
- 
--#include <linux/of.h>
--#include <linux/of_address.h>
--
- #include "clk-exynos5260.h"
- #include "clk.h"
- #include "clk-pll.h"
-diff --git a/drivers/clk/samsung/clk-exynos5410.c b/drivers/clk/samsung/clk-exynos5410.c
-index 99b1bb4539fd0f08da61814887af7a40da06b002..baa9988c7bb717cd87fa3c340062afa784985090 100644
---- a/drivers/clk/samsung/clk-exynos5410.c
-+++ b/drivers/clk/samsung/clk-exynos5410.c
-@@ -9,8 +9,6 @@
- #include <dt-bindings/clock/exynos5410.h>
- 
- #include <linux/clk-provider.h>
--#include <linux/of.h>
--#include <linux/of_address.h>
- #include <linux/clk.h>
- 
- #include "clk.h"
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 61e7e7ce1f60aba005018054aa2155455dece6bb..4b2a861e7d573213e92666033893c44ae286b78a 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -6,11 +6,8 @@
-  * Common Clock Framework support for Exynos5433 SoC.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
--#include <linux/of.h>
--#include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index e6c938effa29bc067fa4cf864fe721cce37d9fda..fe0fa5bdbd4bca6921d07403637f93ba5c92208d 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -5,7 +5,6 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/of.h>
- 
- #include "clk.h"
- #include <dt-bindings/clock/exynos7-clk.h>
-diff --git a/drivers/clk/samsung/clk-exynos7870.c b/drivers/clk/samsung/clk-exynos7870.c
-index c0c8dc4aae746034b9d822ea11812ba1341abaa7..b3bcf3a1d0b7b1f66263c7ce135e7be758c95d72 100644
---- a/drivers/clk/samsung/clk-exynos7870.c
-+++ b/drivers/clk/samsung/clk-exynos7870.c
-@@ -6,11 +6,9 @@
-  * Common Clock Framework support for Exynos7870.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- 
- #include <dt-bindings/clock/samsung,exynos7870-cmu.h>
-diff --git a/drivers/clk/samsung/clk-exynos7885.c b/drivers/clk/samsung/clk-exynos7885.c
-index 79613affe8ab99d78cc677e688dbb03a2dc7cbb0..ba7cf79bc300112d01cc0f81e1d74f65309707eb 100644
---- a/drivers/clk/samsung/clk-exynos7885.c
-+++ b/drivers/clk/samsung/clk-exynos7885.c
-@@ -6,7 +6,6 @@
-  * Common Clock Framework support for Exynos7885 SoC.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-index dfbb00312b03eea362f90149bfe36129a0d29285..cf7e08cca78e04e496703b565881bf64dcf979c8 100644
---- a/drivers/clk/samsung/clk-exynos850.c
-+++ b/drivers/clk/samsung/clk-exynos850.c
-@@ -6,7 +6,6 @@
-  * Common Clock Framework support for Exynos850 SoC.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/samsung/clk-exynos8895.c b/drivers/clk/samsung/clk-exynos8895.c
-index 66f9b735e3818cc993f1f61acaef4c38bf2a3285..e6980a8f026fc33645e72a3bdfd3b5eb3a64fa84 100644
---- a/drivers/clk/samsung/clk-exynos8895.c
-+++ b/drivers/clk/samsung/clk-exynos8895.c
-@@ -6,7 +6,6 @@
-  * Common Clock Framework support for Exynos8895 SoC.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/samsung/clk-exynos990.c b/drivers/clk/samsung/clk-exynos990.c
-index 2cb77a7c3e7830163e8337fd035b5fa426480be5..8d3f193d2b4d4c2146d9b8b57d76605b88dc9bbb 100644
---- a/drivers/clk/samsung/clk-exynos990.c
-+++ b/drivers/clk/samsung/clk-exynos990.c
-@@ -5,7 +5,6 @@
-  * Common Clock Framework support for Exynos990.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/samsung/clk-exynosautov9.c b/drivers/clk/samsung/clk-exynosautov9.c
-index 1834751650df82a4a89a1a50de4c68d985a0cb60..e4d7c7b96aa89be3677890102dd68f514a28aa08 100644
---- a/drivers/clk/samsung/clk-exynosautov9.c
-+++ b/drivers/clk/samsung/clk-exynosautov9.c
-@@ -6,7 +6,6 @@
-  * Common Clock Framework support for ExynosAuto V9 SoC.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
-index f9b4e9f09bcd0e77ecf99e72273776454b302f31..dc8d4240f6defc623cc2e075923556747c98a59d 100644
---- a/drivers/clk/samsung/clk-exynosautov920.c
-+++ b/drivers/clk/samsung/clk-exynosautov920.c
-@@ -6,7 +6,6 @@
-  * Common Clock Framework support for ExynosAuto v920 SoC.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/samsung/clk-fsd.c b/drivers/clk/samsung/clk-fsd.c
-index 079d3f4eda3f7acec84cc866b0ea7623104fa257..594931334574eba949af92095d2408f7a8f56933 100644
---- a/drivers/clk/samsung/clk-fsd.c
-+++ b/drivers/clk/samsung/clk-fsd.c
-@@ -8,7 +8,6 @@
-  * Common Clock Framework support for FSD SoC.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index 97a4ccc103f62199cfd7d0d8d4b38bd2e127bfc3..b58b8e1c272d594c2855a043cedcce5a3f293b84 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -6,7 +6,6 @@
-  * Common Clock Framework support for GS101.
-  */
- 
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/mod_devicetable.h>
- #include <linux/of.h>
-diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
-index e2ec8fe32e392844a85c63d837f10d3331d646f4..397a057af5d1e704e7ead7ba04b477fdc28c45bf 100644
---- a/drivers/clk/samsung/clk-s3c64xx.c
-+++ b/drivers/clk/samsung/clk-s3c64xx.c
-@@ -8,7 +8,6 @@
- #include <linux/slab.h>
- #include <linux/clk-provider.h>
- #include <linux/clk/samsung.h>
--#include <linux/of.h>
- #include <linux/of_address.h>
- 
- #include <dt-bindings/clock/samsung,s3c64xx-clock.h>
-diff --git a/drivers/clk/samsung/clk-s5pv210.c b/drivers/clk/samsung/clk-s5pv210.c
-index cd85342e4ddbe28538d9f30e88c490089adc5e2c..9a4217cc1908aa60ebbe51b2b5c841138cc46ef3 100644
---- a/drivers/clk/samsung/clk-s5pv210.c
-+++ b/drivers/clk/samsung/clk-s5pv210.c
-@@ -9,7 +9,6 @@
-  */
- 
- #include <linux/clk-provider.h>
--#include <linux/of.h>
- #include <linux/of_address.h>
- 
- #include "clk.h"
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 1ec00b06fe9151eb367344025e236961fa9db04f..dbc9925ca8f46e951dfb5d391c0e744ca370abcc 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -10,7 +10,6 @@
- 
- #include <linux/slab.h>
- #include <linux/clkdev.h>
--#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/mod_devicetable.h>
-
--- 
-2.43.0
-
+>
+> impl Clk {
+>         pub fn get(dev: &Device, name: Option<&CStr>, optional: bool) -> =
+Result<Self> {
+>                 ...
+>
+>                 let clk =3D if optional {
+>                         bindings::clk_get(dev.as_raw(), con_id)
+>                 else {
+>                         bindings::clk_get_optional(dev.as_raw(), con_id)
+>                 };
+>
+>                 Ok(Self(from_err_ptr(clk)?))
+>         }
+> }
+>
+> --
+> viresh
