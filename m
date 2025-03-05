@@ -1,136 +1,254 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968AF1FECB8
-	for <linux-clk@vger.kernel.org>; Wed,  5 Mar 2025 08:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F801FC7D1;
+	Wed,  5 Mar 2025 09:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741165114; cv=none; b=Rzm2hm2+pGYHqFmbngbF2NqCG7MErrvlKj12ZcmUoCg5/fEENkDAw8nTOoq0BB67LQO0qkBOBZSMVtTynNFUmYnuC6+aEZox/r31cnDplKKSLKgVioFgq+O+YV5WV5h6XOspkXkMo53oI4ElOHElv+bbuIRnMnZGqGYhnvnQedo=
+	t=1741165348; cv=none; b=t5ULx4n6ZcTSlo0zH5myketOKdmO64TMObgGSonG+LepUGXRNJBxDD6SJcytoJrhvO7D02ayCasNYvZBb5p1BTI5hVdA17kbHTE/UOgstzX/TnSzyynPlro7ngoD6da95P/Mwbp54gpjfP3KyRRNNiGYWVKD25c3CL6pLszjmz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741165114; c=relaxed/simple;
-	bh=PNhskAE8Hw6NT1lxJLEmtkJRKWfn63/vyOBjmtkEi6M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SDwU2wxDFId7Qtf9XUs2Hag4VJOkytsadl45opugBykCIKuVq61fhtx7wjnWV28Tmdwo1w9B9vxUakuePQxok9t2ev18A22nTAkP6cOXmQsTgFf4Nx38nhaLaIydshc3rMiVUy1Jpk+DcpbxE8t4lnnSA89JqAdjQbKV5QOsedg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gvgGLMrv; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741165348; c=relaxed/simple;
+	bh=7BZUuY0NVXBKg5hilWvkKI6gUrRsdS6N+7BHvgE6STY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LOQhZYf9zer4jky7LpeJtklNWuuK7NBDBp/F3Zs7YqpPZsZs2Kc8HyaCg2NOd3DPJT0j4AaVLq6p4/QYS1QLaHY7RxsTEVVk3xCQMdHrlTR2IXQkStlZ4PgAHYImnyHoC7AUEOPcGVXhc4MKwUHHyYOEruPUPhpw/r6UL5akVuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=FGEdSHsJ; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=qzcWgjDG reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gvgGLMrv"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54953b2c112so457482e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 05 Mar 2025 00:58:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="FGEdSHsJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="qzcWgjDG"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741165111; x=1741769911; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WY5vuVhs6pBFMntJgEjYvG2DSltfmIip5HvFcUhCgso=;
-        b=gvgGLMrvm4TezDWk4WPh00LMkMgv/qGmfku7r0kO6LqQiZqWPlyIG1HL5zzfOpH8Qb
-         UQe0Zo5b+MQxTqNi2iwhhDhlwxKuzFxb7pbgLCljcBxWUN1pTUjGJeqqpRSDgsFx53bC
-         r7tdyVQX81dkU63de67cAeOd0xYv/6byQfxrUWul98bU4eHCCHIV/usl9IRUpH1COY6m
-         UiRvQlmoBc9T7Hsp8UTOiCUPqY2XJnv781QrF0wD2Fs5eE7mkKnd61VZTa1iqYL1ytZZ
-         wm5/PMgqi4mKgANWsLzQSrhWmX478c3tqxfXYLWUzKNiCv7IiOAvtlD5z92sX8cHY+ij
-         +dEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741165111; x=1741769911;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WY5vuVhs6pBFMntJgEjYvG2DSltfmIip5HvFcUhCgso=;
-        b=F77sAu4qkoXB2QOUuYMYc2NdUIzvbhb9e/QgrY0Kpy/vw+kbj70Bl2izjUWXs0nDwK
-         KXfASAeXQDv/Qv13Oi+FSzA1f9KIcjVtXjk2NP4i3I6LTea/hjdMtIm05OkwiMlmxZXU
-         3AthuPQarg2Mk7l9ZvN736FsE3FTcc3NsFDeO5V3rjChpR+ZoZ3LyItmkjqnISvcJ+8M
-         36HeZCexYP5FvODAjUvoYOAdxqO112u7MR2nF6dO7dFtubyJAF2dwcZbN9Hb9XKJAfRY
-         slc+bNQya3WU9/HZ8x/pZuQerUu3xyB3XaARfRO5eb1ni4NMYywpr2XB3X37HUNWI0fL
-         4Jwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrY7PTyEoYG6/fpt9+5y6WGxDGeIUtOYX9aZ5K8ZznQccUptBH41kg0pZbkLOxn35FBNfUZrCkHuk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJrUI29hJow8AmJJMnlUVgcx7PplqY8Vq8z1hjsT2gJ7tAI13w
-	olSBwzRBEBNJYq/OCTK9f7G51B8gkB92axGE1g452bqQpP5s39eKcYxGvm1Lz/4=
-X-Gm-Gg: ASbGncsw1Gn3z1l7fciYkp8Wr3sZTbUa+RUGvSx5XmvNka/oeaCp+k25mwqRc1UMhVt
-	tNVHwrLAU3OdjldvVO5e+8SjSQhRzK7u9sjFnlLhPpDwtf7p9PR0DVQv8GM8GJ+wfPeQkxTD5Nm
-	FAmzE/5Ev8BxGRNE4ncPLhePeHApAKhenNyX4EtmUo4ny0txuj0TIvDN/gu8+1ABvPl6Vq8XiSu
-	WW21OxXcPMn62RPudAF9/Qg2luDast4dCzZ8D8UAEYbz/bjmIjuCZSLPTr/uiqd6GTTsxOOra/F
-	0WwdHW5uN89aI6MSX+nMRnfOZwRrukYT7pkcBiId0qjbQFXd5YpFgp2NtS4wohsaeKOX7nflxtE
-	l2PWErn/cHGkii1etnDjRHDE=
-X-Google-Smtp-Source: AGHT+IFru+CnoO/K8BouBY87L2tjCxv0I44B8TgnGQhueATpKA6i0oswVIJN7d54HfLg412IUkDTmA==
-X-Received: by 2002:a05:6512:6cd:b0:546:2ea9:665e with SMTP id 2adb3069b0e04-5497d336cffmr332895e87.5.1741165110566;
-        Wed, 05 Mar 2025 00:58:30 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495ba676a7sm1137946e87.39.2025.03.05.00.58.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 00:58:28 -0800 (PST)
-Message-ID: <19393198-75ad-48bf-b21a-3d9cc1848499@linaro.org>
-Date: Wed, 5 Mar 2025 10:58:06 +0200
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1741165346; x=1772701346;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=vqA7WR0bg0u4G+HAomrK/aLC9+18x4n+S7IKkNThfiM=;
+  b=FGEdSHsJUzdScXTdYhZDaxdAawHc2qDZosoNyGgeUVrIIunht89aqQqJ
+   HbUFHh48AM65l+XSXqsGhMG9kuBuNclOfyJOb6cJVCMoEll6EDKETj/OH
+   jbdIelhBCxMNFMdTse2GCSiSzcYRvC/ukcGFFmT1KzbJ6SScr756bTxD2
+   4X2TT9k8TUoH3/Vf7vAgXx/kMNl3nO1ma7HamU/roKjhhF4f1fOGyc5nE
+   th+OlHdXuqXo5zwZGT4noy59M1frVRKYYf5yCSt4SJuqEP+v66pLAvPVr
+   +39vEol0TS7h4+Txq3T3sL3fkuax/hlRo99rFeytb+WN0uJz7CaxMlNDK
+   g==;
+X-CSE-ConnectionGUID: IH657TY3Tl23yR3Vv1dR/A==
+X-CSE-MsgGUID: cgkFUMvxRU6w9KHMn9F1ow==
+X-IronPort-AV: E=Sophos;i="6.14,222,1736809200"; 
+   d="scan'208";a="42301885"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 05 Mar 2025 10:02:22 +0100
+X-CheckPoint: {67C8131E-23-7141A0B0-E6EDEC14}
+X-MAIL-CPID: 0BDC1C9894ABA85FF037DCAB1A11A9B5_3
+X-Control-Analysis: str=0001.0A00636C.67C8131F.010A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A72F3170EA5;
+	Wed,  5 Mar 2025 10:02:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1741165338;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vqA7WR0bg0u4G+HAomrK/aLC9+18x4n+S7IKkNThfiM=;
+	b=qzcWgjDGS6jWPY+RITIk8yBviKpMKL0y16KSXMlshqTDttq6zKFd8uRh0rjbusm21alLLO
+	0zncE1o54zqa2PkjSbvWyACMubP8NqizUU7F39NtdEyf8B7h5zWhZ3ivT6X25sqtCFjSSc
+	Bq3JpoZAEKG0N2u2vqMbhZJRAtcHkfgPLIvm7R5McponzskDZSRi22nXnOhJg1CUW3KHx/
+	aVeSFRyy4/ATHnHp/9XUjp3UP5VCYqp6++6rG5zw1KmH82cgRaFpKEHzJKR3F3q1GHoDJc
+	hgimR61srqwk7i5wU9S6wvO15O4FIatNLRGINZRrOvbwgrcOGQlB24ojz6hXxA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux@ew.tq-group.com, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Subject:
+ Re: [PATCH v3 2/6] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB subnode
+ into schema and example
+Date: Wed, 05 Mar 2025 10:02:16 +0100
+Message-ID: <4414669.ejJDZkT8p0@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250305-dandelion-axolotl-of-excitement-05fa70@krzk-bin>
+References:
+ <20250304154929.1785200-1-alexander.stein@ew.tq-group.com>
+ <20250304154929.1785200-3-alexander.stein@ew.tq-group.com>
+ <20250305-dandelion-axolotl-of-excitement-05fa70@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: qcom,x1e80100-camcc: Fix the list of
- required-opps
-Content-Language: ru-RU
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250304143152.1799966-1-vladimir.zapolskiy@linaro.org>
- <20250305-little-frigatebird-of-calibration-244f79@krzk-bin>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20250305-little-frigatebird-of-calibration-244f79@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 3/5/25 09:56, Krzysztof Kozlowski wrote:
-> On Tue, Mar 04, 2025 at 04:31:52PM +0200, Vladimir Zapolskiy wrote:
->> The switch to multiple power domains implies that the required-opps
->> property shall be updated accordingly, a record in one property
->> corresponds to a record in another one.
->>
->> Fixes: 7ec95ff9abf4 ("dt-bindings: clock: move qcom,x1e80100-camcc to its own file")
->> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
->> ---
->>   .../devicetree/bindings/clock/qcom,x1e80100-camcc.yaml   | 9 +++++----
->>   1 file changed, 5 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml
->> index 5bbbaa15a260..938a2f1ff3fc 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml
->> @@ -40,9 +40,9 @@ properties:
->>         - description: A phandle to the MMCX power-domain
->>   
->>     required-opps:
->> -    maxItems: 1
->> -    description:
->> -      A phandle to an OPP node describing MMCX performance points.
->> +    items:
->> +      - description: A phandle to an OPP node describing MXC performance points
->> +      - description: A phandle to an OPP node describing MMCX performance points
-> 
-> If rewriting this, then:
-> s/A phandle to an OPP node describing//
-> because it is redundant (this cannot be anything else).
-> 
-> But more important is that you introduced ABI break, without actual
-> reason. Switch to multiple power domains does not look like fix so
-> neither should this be. Reverse the items to keep the ABI intact...
+Hi,
 
-To the best of my knowledge there is no users of this compatible in the
-Linux kernel, so likely there is no ABI break.
+Am Mittwoch, 5. M=E4rz 2025, 08:13:04 CET schrieb Krzysztof Kozlowski:
+> On Tue, Mar 04, 2025 at 04:49:21PM +0100, Alexander Stein wrote:
+> > Document the LDB bridge subnode and add the subnode into the example.
+> > For the subnode to work, the block control must scan its subnodes and
+>=20
+> Don't describe drivers, but describe the hardware.
 
-> unless ABI was broken earlier and this just keeps doing it to make code
-> consistent. But then please explain it in commit msg why we need to
-> break it second time.
-> 
+Thanks, I'll rephrase to describe the hardware better regarding LVDS.
 
-https://lore.kernel.org/all/CAA8EJprP9Z181VDCT=xfyrBipzgiB0tfb8M_XZ4H=yOrvEnB0w@mail.gmail.com/
+>=20
+> > bind drivers to them, do not misuse either simple-bus or simple-mfd
+> > here.
+>=20
+> I don't understand that simple-bus or simple-mfd statement. There are no
+> such compatibles here.
 
---
-Best wishes,
-Vladimir
+Same as above, the wording stems from 1cb0c87d27dcc ("dt-bindings: soc:
+imx8mp-media-blk-ctrl: Add LDB subnode into schema and example").
+I'll drop it to avoid confusion.
+
+>=20
+> >=20
+> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > ---
+> >  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 51 +++++++++++++++++++
+> >  1 file changed, 51 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-=
+blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-b=
+lk-ctrl.yaml
+> > index b3554e7f9e76d..cd785111928bf 100644
+> > --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctr=
+l.yaml
+> > +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctr=
+l.yaml
+> > @@ -24,6 +24,14 @@ properties:
+> >    reg:
+> >      maxItems: 1
+> > =20
+> > +  ranges: true
+> > +
+> > +  '#address-cells':
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 1
+> > +
+> >    '#power-domain-cells':
+> >      const: 1
+> > =20
+> > @@ -46,9 +54,20 @@ properties:
+> >        - const: csi
+> >        - const: dsi
+> > =20
+> > +  bridge@20:
+>=20
+> @20 looks wrong. Use 'ranges;' and try again your DTS...
+>=20
+> Binding is supposed to be complete. We have several examples when people
+> added children one-by-one, everytime with different reasoning about
+> child addressing.
+>=20
+> So please confirm: this is complete and no other children will ever be
+> added here... or you are 100% sure that all future children will be
+> unit-addressable (will have unit address and appropriate properties).
+
+This block control is a collection of registers for different purposes:
+* MIPI-DSI
+* MIPI-CSI
+* Parallel camera
+* LVDS
+* CAMERA_MUX
+
+At lease for parallel camera, another subnode is expected ([1]).
+
+[1] https://lore.kernel.org/all/20240819024001.850065-1-victor.liu@nxp.com/
+
+> BTW, I don't quite get why this is both syscon and has translation for
+> child addresses. Does it mean your child does not use the same MMIO as
+> parent, thus leading to unsynchronized reg access?
+
+I'm not sure what the best practices are. This LDB has two registers
+inside this block. So it seems reasonable to me to indicate this using
+a reg property. On the other hand, access is solely done by accessing
+via syscon, so unsynchronized reg access is not an issue.
+
+What I am getting from your comments this node should not have 'reg'
+property, as it uses syscon anyway.
+
+> > +    type: object
+> > +    additionalProperties: true
+> > +    properties:
+> > +      compatible:
+> > +        contains:
+> > +          const: fsl,imx93-ldb
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > +  - ranges
+> > +  - '#address-cells'
+> > +  - '#size-cells'
+> >    - power-domains
+> >    - clocks
+> >    - clock-names
+> > @@ -77,4 +96,36 @@ examples:
+> >                 clock-names =3D "apb", "axi", "nic", "disp", "cam",
+> >                               "pxp", "lcdif", "isi", "csi", "dsi";
+> >        #power-domain-cells =3D <1>;
+> > +      #address-cells =3D <1>;
+> > +      #size-cells =3D <1>;
+> > +      ranges =3D <0x0 0x4ac10000 0x10000>;
+> > +
+> > +      bridge@20 {
+> > +          compatible =3D "fsl,imx93-ldb";
+> > +          reg =3D <0x20 0x4>, <0x24 0x4>;
+> > +          reg-names =3D "ldb", "lvds";
+> > +          clocks =3D <&clk IMX93_CLK_LVDS_GATE>;
+> > +          clock-names =3D "ldb";
+> > +
+> > +          ports {
+> > +              #address-cells =3D <1>;
+> > +              #size-cells =3D <0>;
+> > +
+> > +              port@0 {
+> > +                  reg =3D <0>;
+> > +
+> > +                  ldb_from_lcdif2: endpoint {
+> > +                      remote-endpoint =3D <&lcdif2_to_ldb>;
+> > +                  };
+> > +              };
+> > +
+> > +              port@1 {
+> > +                  reg =3D <1>;
+> > +
+> > +                  ldb_lvds: endpoint {
+> > +                      remote-endpoint =3D <&ldb_to_panel>;
+> > +                  };
+> > +              };
+> > +          };
+>=20
+> Messed indentation.
+
+This is already from the original binding. I'll fix in a separate commit.
+
+Best regards,
+Alexander
+
+>=20
+> > +        };
+>=20
+> Best regards,
+> Krzysztof
+>=20
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
