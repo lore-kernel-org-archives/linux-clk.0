@@ -1,77 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A161F4185;
-	Thu,  6 Mar 2025 22:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B1627CCE3
+	for <linux-clk@vger.kernel.org>; Thu,  6 Mar 2025 23:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741300603; cv=none; b=WHccKXGoBOabVao1PIN4Yn0wCGhJGiKAyDK5DQy/qsGCbCwFc+HX4Y+cV3xyeW4rPjeWJmo/wQ+6B6QhVVKZRI6zox+L8Pjr4OoJLAIkBcsEUzJJPq+UWKNplcKL8j6j0X3cmGvaneTwOzH41J9LBT+UYaYD+xRuTW65Rtu4egs=
+	t=1741302326; cv=none; b=CrH5gc7tOB+H+eMU0VWwBDw4SwBiJTA+Pbw/ozEo4TJl1QxZCTH1yrvNxFwZ8Zz3EHbdBMVX6r0l4YXZde2bfMIOAxYT0YNb1oPvzxOvave8KZRVxiVzfp/UFbVJoDx72xClqaPtxZ1rJTdCSkqG3GUjxpQnIRiZ61GCLrjuykA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741300603; c=relaxed/simple;
-	bh=Ato4boEnWCd84rJGUkCXyj1rsGt2ocMrcSgyrAz+xoY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=eP5ZsLkzfaUs1L5VC42dWAdxb6bbUsuAYCo1j3Vsq2k/sSg2MHdtm4sjTpdExR+4MhTM339pfMlNO6px7B1PgUVAaCeXC6IjwGRR+02JMjGbrzJumlD6Jc3O+lFNMxMaUvDyf1JLT/z8h7ngu0D67YIqy4Y4t5f7FFhCEAPotIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9ytwqXU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741302326; c=relaxed/simple;
+	bh=EZGzd3T+RgSTpfJaTVDNflKItXooQ8kT+ZR71uJB8Ck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xif8M02e8+SR/CC5QEHb0Ue6KHjd2R+ipghsOYcjXY+Q1doix5DSM5lKmgolGHlT8DDmZkApPxAfSorTExpyAS+1f2JOTWjlEAdIFKKgrgQbox8cfP23OOMQmHeg/rN72BYnPVse7wWfy+xCnLmk60OOrPFfwk6j3ZuzOZnz7Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=WA/pWion; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9ytwqXU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01C46C4CEE0;
-	Thu,  6 Mar 2025 22:36:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741300603;
-	bh=Ato4boEnWCd84rJGUkCXyj1rsGt2ocMrcSgyrAz+xoY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=A9ytwqXUAxQtt4eMZ8LunxK940zADb5sgyFzUwk3xvQfvCDI9lUpliVArL/Ye/YXC
-	 7l51kQJJw68KwSm/shJDysCUKCfayiakzGLIp1Yz791buiumLzOgHtTblR2YwOdNzB
-	 8myuLWRlMf/X556u/mBroAROZygTVGTpCgzFPlOAojkdAHSc0beTMMQBBwBEfmA1/H
-	 i1pWwvV2yYz9XiFXi2itf4/UuOObym1bVFYN90UNT2F5Hfaajl4K3jGPK2lyC9glMi
-	 kM8pZSH0tGmI7MJIJ76OiZSCp4FpUbIsaV5aiPzjrkaOujIBuTM3MRrhS0Ri11YLrm
-	 uZ0JxEmOLm7Rg==
-Message-ID: <98c8c1eab30fc333974bd1ad88791356.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="WA/pWion"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741302323;
+ bh=KZTIdA/6vSHu0RdazPPShQ5lrtgQuHNfhrr/whN+ZAg=;
+ b=WA/pWionz1F1FHSIz+dfv7jmomL1Y/AkWtp9mh/gaPWC/H40hwFc9SHWJ2NYRDAiSE78r5Sja
+ +k5qhHCuW2UUoOiGSzbxOAWymtkA7UQ9mjC3rLzXNZwBHtQEtgUZAb1NQdJd3/qkwqAAm6XoB+5
+ b4gr/lkJsOeLm19ckvAMBiaDEBctShvkiW9ih7pkggq+1ycTFlsG9Gyj4D+XC8eJGb9mGA9U/eO
+ UrgTH7A1djoAsVHfzmfKkJA7qm7jwnm4mUxPrH4LoFCR7PwzdoRlEIDbb5SIz01N8rF3932nl9o
+ Tt67MpJa58qTK6JPVm5Lu5rFBBJPwUgPGwwqzkZlaOfQ==
+X-Forward-Email-ID: 67ca2a31c1763851c065cd4d
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <3d3db030-26e6-4fe1-9158-85f8cebef89c@kwiboo.se>
+Date: Fri, 7 Mar 2025 00:05:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <TY3PR01MB11346C31C2533FD074D87BBD286CA2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250303110433.76576-1-biju.das.jz@bp.renesas.com> <20250303110433.76576-2-biju.das.jz@bp.renesas.com> <1347ee4d678ce81c33917b3802601aee.sboyd@kernel.org> <TY3PR01MB11346C31C2533FD074D87BBD286CA2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Subject: RE: [PATCH 1/4] clk: renesas: rzv2h-cpg: Add support for coupled clock
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org <linux-renesas-soc@vger.kernel.org>, linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, biju.das.au <biju.das.au@gmail.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Thu, 06 Mar 2025 14:36:40 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers
+ for RK3528
+To: Yao Zi <ziyao@disroot.org>, Chukun Pan <amadeus@jmu.edu.cn>
+Cc: conor+dt@kernel.org, cristian.ciocaltea@collabora.com,
+ detlev.casanova@collabora.com, devicetree@vger.kernel.org, heiko@sntech.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250305194612.47171-1-ziyao@disroot.org>
+ <20250306140009.384469-1-amadeus@jmu.edu.cn> <Z8nPjjbZvpRJ2R5B@pie.lan>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <Z8nPjjbZvpRJ2R5B@pie.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Biju Das (2025-03-06 02:10:50)
-> > From: Stephen Boyd <sboyd@kernel.org>
-> > Quoting Biju Das (2025-03-03 03:04:19)
-> > > The spi and spix2 clk share same bit for clock gating. Add support for
-> > > coupled clock with checking the monitor bit for both the clocks.
-> >=20
-> > Could you add an intermediate parent clk of both spi and spix2 that onl=
-y handles the enable bit for
-> > clock gating? Then the enable count handling would be in the core clk c=
-ode.
->=20
-> The parent clock rate of spi and spix2 are different. If we use an interm=
-ediate parent clk,
-> What clk rate the parent will use??
+On 2025-03-06 17:43, Yao Zi wrote:
+> On Thu, Mar 06, 2025 at 10:00:09PM +0800, Chukun Pan wrote:
+>> Hi,
+>>
+>>> +		sdio0: mmc@ffc10000 {
+>>> +			compatible = "rockchip,rk3528-dw-mshc",
+>>> +				     "rockchip,rk3288-dw-mshc";
+>>> +			reg = <0x0 0xffc10000 0x0 0x4000>;
+>>> +			clocks = <&cru HCLK_SDIO0>,
+>>> +				 <&cru CCLK_SRC_SDIO0>,
+>>> +				 <&cru SCLK_SDIO0_DRV>,
+>>> +				 <&cru SCLK_SDIO0_SAMPLE>;
+>>> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+>>> +			fifo-depth = <0x100>;
+>>> +			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
+>>> +			max-frequency = <150000000>;
+>>> +			pinctrl-names = "default";
+>>> +			pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>,
+>>> +				    <&sdio0_det>, <&sdio0_pwren>;
+>>
+>> The sdio module is usually "non-removable", no need det,
+>> and pwren may be other gpio (use mmc-pwrseq). So it should
+>> be `pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>;`
+> 
+> This doesn't affect the fact that these two pins are assigned as
+> functional pins for SDIO0, as pointed out by the datasheet[1].
+> 
+> But with more digging, I found the reference design[2] of Rockchip
+> actually uses the two pins as normal GPIOs. This is more obvious in
+> downstream devicetree of an EVB[3]. Most of the existing boards (Radxa
+> 2A, ArmSOM Sige 1) follow the reference design.
+> 
+> For me, it's kind of surprising that the SDIO IP functions with two
+> functional pins assigned as different modes. I'm not sure whether we
+> should apply pin configuration for these two pins in the SoC devicetree.
+> Jonas, what do you think about it?
 
-Alright, got it. Does the consumer care about the difference between the
-two clks for the gating part? Presumably it's all the same SPI driver
-here, so could it ignore the second clk and do something like
-clk_bulk_enable()?
+I think it make sense to match the pins used by reference boards, i.e.
+the pinconf most likely to be used by majority of boards that will use
+the sdio interface.
 
-Put another way, why does the consumer care that there are two clks? The
-hardware seems to want them to be the same thing for gating.
+Of my RK3528 boards, only ArmSoM Sige1 use sdio for onboard wifi and
+there I currently have following in my work-in-progress board DT [4]:
 
->=20
-> The parent of spix2 and grand parent of spi are same. It is a mux.
->=20
-> Mux->spix2->clk gating
-> Mux->divider->spi->clk gating=20
+  pinctrl-names = "default";
+  pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>, <&clkm1_32k_out>;
 
-Is the divider fixed div-2? Are they supposed to be at some ratio with
-respect to each other?
+The Radxa ROCK 2A/2F seem to use USB for wifi/bt.
+
+[4] https://github.com/Kwiboo/linux-rockchip/blob/next-20250305-rk3528/arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
+
+Regards,
+Jonas
+
+> 
+>>> +			resets = <&cru SRST_H_SDIO0>;
+>>> +			reset-names = "reset";
+>>> +			status = "disabled";
+>>> +		};
+>>> +
+>>> +		sdio1: mmc@ffc20000 {
+>>> +			compatible = "rockchip,rk3528-dw-mshc",
+>>> +				     "rockchip,rk3288-dw-mshc";
+>>> +			reg = <0x0 0xffc20000 0x0 0x4000>;
+>>> +			clocks = <&cru HCLK_SDIO1>,
+>>> +				 <&cru CCLK_SRC_SDIO1>,
+>>> +				 <&cru SCLK_SDIO1_DRV>,
+>>> +				 <&cru SCLK_SDIO1_SAMPLE>;
+>>> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+>>> +			fifo-depth = <0x100>;
+>>> +			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
+>>> +			max-frequency = <150000000>;
+>>> +			pinctrl-names = "default";
+>>> +			pinctrl-0 = <&sdio1_bus4>, <&sdio1_clk>, <&sdio1_cmd>,
+>>> +				    <&sdio1_det>, <&sdio1_pwren>;
+>>
+>> Same here.
+>>
+>>> +			resets = <&cru SRST_H_SDIO1>;
+>>> +			reset-names = "reset";
+>>> +			status = "disabled";
+>>> +		};
+>>
+>> Thanks,
+>> Chukun
+>>
+>> -- 
+>> 2.25.1
+>>
+> 
+> Best regards,
+> Yao Zi
+> 
+> [1]: https://github.com/DeciHD/rockchip_docs/blob/main/rk3528/Rockchip%C2%A0RK3528%C2%A0Datasheet%C2%A0V1.0-20230522.pdf
+> [2]: https://github.com/DeciHD/rockchip_docs/blob/main/rk3528/RK3528_BOX_REF_V10_20230525.pdf
+> [3]: https://github.com/rockchip-linux/kernel/blob/604cec4004abe5a96c734f2fab7b74809d2d742f/arch/arm64/boot/dts/rockchip/rk3528-evb1-ddr4-v10.dtsi#L128
+
