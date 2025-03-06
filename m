@@ -1,231 +1,191 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B96481CD;
-	Thu,  6 Mar 2025 13:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741266850; cv=pass; b=aM+4PQ8c+MdsmQVTcuW+dm5KRwTgX1madNCFteCk8ot6pF5rrK8xVFBModz6mVfMG7IzBTTLPim6fhE2HoK9wI0uTap7FaTO1SNKbQK9/EYmhvFSM8zoKS5G3Ae6SAFrzvWO/PzLcLhUtry3VbQoSrSCYBsqBCkQ9IRkGzppisI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741266850; c=relaxed/simple;
-	bh=qC1sceAvf4HSV+PgAQjk9PSnSGXQBhmv0v7HGXQXzXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rhd3qa5I9gfJucLoSbjX0QC69dNN1/TGeRICr8QgdbqvHCJ+6YpnH3hvNQXAmAPdu5+8jtiRa8FeDdhrEFyysR9gLjTA90dVtlQnw5djaRGypZBA75njjbLI5F+pquNOnsIs0BRdRnF/Op20hbL797AgbxCuHCwPlYM3oN0y3Wo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=jLTo6eWu; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="jLTo6eWu"
-ARC-Seal: i=1; a=rsa-sha256; t=1741266806; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Ln67D7B8R/emwNovVLhkaz7xbVh04EGL2fSTkLDhliu0yFF5HPOStn0Fyk7RGUSm6kz3daWv2CrhBsEXy5NJydyy2CaaXI30XHo8uo38Ng0OYX1igVJcmSzIsV3OL1w4E/4RfOr0qKK6iJs+ZrcRuTffIcpmK0FAp0SAVAEM4YQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741266806; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=R/l3297Aly6n/qBAueWz12hEPxnEHvfm6GKPejWJ/Vw=; 
-	b=MMm0eR+LmbNeSFSuObeLJGIE34hmTdHHG+dO6tTDWE1hVzlgVjE9tnZIEqsZbRWhIdFXkx/nPiRl+PTGYUaqS22megAsU4oUjwdDdVt9zrkcXLANi2CANfUR3Gl8dxw14v2w/5zlrF3Qc5vLy8dmkkS2IHvEtTwDHQGaMpvi4Vg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741266806;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=R/l3297Aly6n/qBAueWz12hEPxnEHvfm6GKPejWJ/Vw=;
-	b=jLTo6eWuwglmC71EtgyEJQ8kL0bFRLESM9jvJbnBxLKoc4vQBGYlIU3eCrW82lcq
-	VVceuFNVewMSvTKT54YH8U8WN8NraGIPvbNxZ0XrB47XCseCv3JRCN2U7fAQVMb90wI
-	M0/ZAU/gqUDRQ3YvHFtJeQdvnxMJgFKwn+UZxeV0=
-Received: by mx.zohomail.com with SMTPS id 1741266806086596.4769996246168;
-	Thu, 6 Mar 2025 05:13:26 -0800 (PST)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Sugar Zhang <sugar.zhang@rock-chips.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-Subject:
- Re: [PATCH 3/7] ASoC: dt-bindings: add schema for rockchip SAI controllers
-Date: Thu, 06 Mar 2025 14:13:18 +0100
-Message-ID: <2376575.ElGaqSPkdT@workhorse>
-In-Reply-To: <ffd6287c-cbfd-4ba8-9332-45bad4e60583@kernel.org>
-References:
- <20250305-rk3576-sai-v1-0-64e6cf863e9a@collabora.com>
- <20250305-rk3576-sai-v1-3-64e6cf863e9a@collabora.com>
- <ffd6287c-cbfd-4ba8-9332-45bad4e60583@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F63E20CCF3;
+	Thu,  6 Mar 2025 13:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741267004; cv=none; b=Lh4cidm4pFd/fW6SeVhB1aiHKLUgPK17gqqjexAuwl6Q4xCuaP3uYJvfmmYfOXs+l8xEIAYlyrnpJPstH2TjYm41bS35Sfg9uD/XSbVvmFJ9apZIcK2wn+DYCT6AVDwwAq7TUxKVdpU2U0ylNJm5XZt33aRdmXoNV5NAONUv230=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741267004; c=relaxed/simple;
+	bh=geJfl6Tjs0ZMZDhgGE556UpvYRQdcEBtOMPHxo+Ic0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K/XqBCJcIg+xDVqgnAU4GV0skzAj67GrcFEv2pqKh5DuMEb/shsUhBml8HfxF4ZGaRBFISxoly+EhYljb5KFjliR5tTvQExvnyborjfA7+I/RrzFushhMcCShRJlaz70J5qGsHlpFfVPLYGJ0PO8p4jTotZS8g3Gak679bF9bOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-523658b61a5so252742e0c.2;
+        Thu, 06 Mar 2025 05:16:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741267001; x=1741871801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZNeHtAW9iePLKHd5cZPEWpcAxe2OAsXb5VCz3ALcxDA=;
+        b=e9BFNz+PtUtb6Dwp4X9z0tyVzwjI7URq88te0Jann9JIqJLC4+ky1/d0ObmjvLxpul
+         migJMF+DsfMNwXavqTpof1Dbky58Fb5bOPa4I8l3SpLzxDG7bg7Ze5zfdUH5FumIrR3a
+         Ru6GMzZk50WuqYNRSM7XKwILyUERrj+tVc9j+7Rmy2NBA+OwMBZkGMtOiv/xSoqUR7oE
+         U3RV2Qq5vvxCQSogx3fKDK50DB4iiLvouWA64QQjOgm6aTmlOFza+33gSPkKJFv2rn5+
+         Fn8/r1Z00shvBDKUd28Pfv0mql3PpB62OAyYGsDtefqEbomnMf10mw26o8Cvpd/G41Bd
+         NZEA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4r+kbZ3Oj5AQDZcgiWVsWuUyqjVocQXgB0UrP3p9G8F4a1rZgMpjNAVeQxAsMtxzGBQtBCAA1q08=@vger.kernel.org, AJvYcCWibSA+Zy2l6pi5Ej/GAEvIFeE09jhzWnWHvKggoGj9EP1RCxFMw/HcHwUeLLu6fQW7RLsuE7NJAU4oSL7/KwjFUqE=@vger.kernel.org, AJvYcCWtodKDDgJzZQFUt3E7U9+62K2sQRpp2K1sfukXRUjslt2/papYAyG0Vm3xLzcskcpaDYRJZh4LSO/WbBeJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBL1dEgvjRyC2fU8vP0qBgvjPS0e6kr141gWU5so1FUH3vYpln
+	DpfQ+UHskHlE2BKW3iZj4QZ6d8aygQ3nw8ffeWQ3GM4azei1Sd3R7kfn7u+H
+X-Gm-Gg: ASbGncvFX3CiS3sUQ03mxaZ464ELxxncx48s5bUugFR9O06d03CthUESL3G92FWfxl4
+	sfsxYt25j5UWjWvh/GeNxCkfl8aanLnDy2sgx3QOjFS/iAuFpcaaHCBN1fG6etSg0ECJ/BkgbqI
+	io9VFzvih6uVDz1Ltt2oDZK7o0mFzwg8fA2MLtWN+HFzloVttfpQIbxMLq6O7fi1wwdc/5FUZXQ
+	PV1w5IdUBazYEB9U6ZMW2y4zO08P9K8+IB/LozFiTTH24TtTqYhqg6dCtsIepzfPi4Nh8gP1GDj
+	BizM6/JtWAJJosWg5IcF4iqLKmcfUVm7aiObETTMYNPeU3SEOWzsSDZVhDHsbahpQRq0sOUXTpm
+	CDfNJVEuE2Jo=
+X-Google-Smtp-Source: AGHT+IGELfb/Y4vdVdihDGYTOy2cV5i9WIQa/lkI4pfi/bWAl1AP8lHizqJeneckaU6tNBmobAQLlA==
+X-Received: by 2002:a05:6122:904:b0:520:5185:1c77 with SMTP id 71dfb90a1353d-523c6262259mr4262457e0c.7.1741267001379;
+        Thu, 06 Mar 2025 05:16:41 -0800 (PST)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8af8d66sm173087e0c.21.2025.03.06.05.16.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 05:16:41 -0800 (PST)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-523a6fbf025so258822e0c.0;
+        Thu, 06 Mar 2025 05:16:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUHH2fu/OsJfHDjp0sEUKhPT3qQCKaQMv5zY8TYagasNQja/fSDjSKJr5he9v/Up/mfe2IbjCfogwU=@vger.kernel.org, AJvYcCUYZ8W2ljqjilVSUzDlv5Y9IIq9MTpqi1KAQaIaOlHkMebXmzmqK6hthtnFPA81z7tVanid1XI9FM9dkxYsV0hn1qI=@vger.kernel.org, AJvYcCVtXfu8MUM6Eg5ZX8jZTROqTgpRedC8FMoT/isTjXKyutteFDfyWLI7i95NPnekYq4y92cSNe7b/bphrGM3@vger.kernel.org
+X-Received: by 2002:a05:6122:793:b0:523:dd87:fe86 with SMTP id
+ 71dfb90a1353d-523dd88050fmr469336e0c.6.1741267000695; Thu, 06 Mar 2025
+ 05:16:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20250218114353.406684-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250218114353.406684-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdUhZ_qV=16jnWD6cPfuMmZpDUeRMTUgbqy=Mkzp-29=bA@mail.gmail.com> <CA+V-a8uvfb=a=K1YzGNeZdiAzeXWMpdbxj=6UuL_xQfxKmOBZA@mail.gmail.com>
+In-Reply-To: <CA+V-a8uvfb=a=K1YzGNeZdiAzeXWMpdbxj=6UuL_xQfxKmOBZA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Mar 2025 14:16:28 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXermXD2yCJxYjw-bmWKiazF5LVJ8PHoELKEdp_q2UnfQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JptUoAeUXz4mTgK7gXoOQkLHMd-qd9V8kXJ1S2BLhS2F8KlZRac5gEhngQ
+Message-ID: <CAMuHMdXermXD2yCJxYjw-bmWKiazF5LVJ8PHoELKEdp_q2UnfQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: rzv2h-cpg: Add support for enabling PLLs
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thursday, 6 March 2025 08:42:54 Central European Standard Time Krzysztof 
-Kozlowski wrote:
-> On 05/03/2025 22:24, Nicolas Frattaroli wrote:
-> > Rockchip introduced a new audio controller called the "Serial Audio
-> > Interface", or "SAI" for short, on some of their newer SoCs. In
-> > particular, this controller is used several times on the RK3576 SoC.
-> > 
-> > Add a schema for it, with only an RK3576 compatible for now. Other SoCs
-> > may follow as mainline support for them lands.
-> > 
-> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > ---
-> > 
-> >  .../devicetree/bindings/sound/rockchip,sai.yaml    | 151
-> >  +++++++++++++++++++++
-> Filename based on compatible.
+Hi Prabhakar,
 
-Sure, but more compatibles will follow. Are you certain you want a file named 
-rockchip,rk3576-sai.yaml to then contain rockchip,rk3528-sai? If so then I do 
-not understand the reason behind this policy.
+On Thu, 6 Mar 2025 at 14:04, Lad, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> On Wed, Mar 5, 2025 at 4:42=E2=80=AFPM Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+> > On Tue, 18 Feb 2025 at 12:44, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Some RZ/V2H(P) SoC variants do not have a GPU, resulting in PLLGPU be=
+ing
+> > > disabled by default in TF-A. Add support for enabling PLL clocks in t=
+he
+> > > RZ/V2H(P) CPG driver to manage this.
+> >
+> > Does it make sense to enable the GPU PLL if no GPU is present?
+> >
+> No it doesn't,  PLLGPU is enabled on needs basis ie if GPU node is
+> enabled the PLLGPU is enabled, if GPU is disabled the PLLGPU will be
+> untouched and will remain OFF. Note I also have a patch which does
+> disable the PLL's but I have not added as this isn't tested with the
+> full system running and I'm not sure if there will be any radiation if
+> we turn ON/OFF PLLs (Im discussing this internally once approved I
+> will add support to disable PLLs too).
 
-> 
-> >  MAINTAINERS                                        |   6 +
-> >  2 files changed, 157 insertions(+)
-> 
-> ...
-> 
-> > +
-> > +  dma-names:
-> > +    minItems: 1
-> > +    maxItems: 2
-> > +    oneOf:
-> > +      - const: tx
-> > +      - const: rx
-> > +      - items:
-> > +          - const: tx
-> > +          - const: rx
-> 
-> Why all combinations are possible?
+OK. It just sounded a bit strange in the patch description,
 
-Because they are. sai5 in rk3576 is rx only. sai7 is tx only. Others are both 
-tx and rx. Do you want me to enforce that those with both are always tx 
-followed by rx?
+> > > Introduce `is_enabled` and `enable` callbacks to handle PLL state
+> > > transitions. With the `enable` callback, PLLGPU will be turned ON onl=
+y
+> > > when the GPU node is enabled; otherwise, it will remain off. Define n=
+ew
+> > > macros for PLL standby and monitor registers to facilitate this proce=
+ss.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> > > ---
+> > >  drivers/clk/renesas/rzv2h-cpg.c | 57 +++++++++++++++++++++++++++++++=
+++
+> > >  1 file changed, 57 insertions(+)
+> > >
+> > > diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rz=
+v2h-cpg.c
+> > > index 1ebaefb36133..d7230a7e285c 100644
+> > > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
 
-> 
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: master audio clock
-> > +      - description: AHB clock driving the interface
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: mclk
-> > +      - const: hclk
-> > +
-> > +  resets:
-> > +    minItems: 1
-> > +    maxItems: 2
-> > +    description: resets for the mclk domain and ahb domain
-> 
-> List the items instead with description and minItems: 1.
+> > >  #define PLL_CLK_ACCESS(n)      (!!((n) & BIT(31)))
+> > >  #define PLL_CLK1_OFFSET(n)     FIELD_GET(GENMASK(15, 0), (n))
+> > >  #define PLL_CLK2_OFFSET(n)     (PLL_CLK1_OFFSET(n) + (0x4))
+> > > +#define PLL_STBY_OFFSET(n)     (PLL_CLK1_OFFSET(n) - (0x4))
+> >
+> > Let's subtract 4...
+> >
+> > > +#define PLL_MON_OFFSET(n)      (PLL_STBY_OFFSET(n) + (0x10))
+> >
+> > ... and add 0x10. Where are we now? ;-)
+> >
+> > I think it would be better to store the PLL base offset instead of the
+> > PLL CLK1 offset in cpg_core_clk.cfg.conf, and define offsets
+> > relative to that:
+> >
+> You mean PLL_STBY offset in cpg_core_clk.cfg.conf and have the below
+> CPG_PLL_XX macros.
 
-Will do
+Exactly, the PLL_STBY offset is the "base offset" of the various
+CPG_PLL_* registers.
 
-> 
-> > +
-> > +  reset-names:
-> > +    minItems: 1
-> > +    items:
-> > +      - const: m
-> > +      - const: h
-> > +
-> > +  port:
-> > +    $ref: audio-graph-port.yaml#
-> > +    unevaluatedProperties: false
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> > +  "#sound-dai-cells":
-> > +    const: 0
-> > +
-> > +  rockchip,sai-rx-route:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +    description:
-> > +      Defines the mapping of the controller's SDI ports to actual input
-> > lanes, +      as well as the number of input lanes.
-> > +      rockchip,sai-rx-route = <3> would mean sdi3 is receiving from
-> > data0, and +      that there is only one receiving lane.
-> > +      This property's absence is to be understood as only one receiving
-> > lane +      being used if the controller has capture capabilities.
-> > +    maxItems: 4
-> > +    items:
-> > +      enum: [0, 1, 2, 3]
-> > +
-> > +  rockchip,sai-tx-route:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +    description:
-> > +      Defines the mapping of the controller's SDO ports to actual output
-> > lanes, +      as well as the number of output lanes.
-> > +      rockchip,sai-tx-route = <3> would mean sdo3 is sending to data0,
-> > and
-> 
-> I understand this is only example because = <3> would not be allowed
-> (test it).
+> Or maybe instead of using a conf can I add the below?
 
-I'll have to look into that, I was fairly certain I tested it, but maybe I 
-forgot to run a CHECK_DTBS with it in.
+Sure, sounds fine!
 
-> 
-> > +      that there is only one transmitting lane.
-> > +      This property's absence is to be understood as only one
-> > transmitting lane +      being used if the controller has playback
-> > capabilities.
-> > +    maxItems: 4
-> > +    items:
-> > +      enum: [0, 1, 2, 3]
-> > +
-> > +  rockchip,always-on:
-> > +    type: boolean
-> > +    description:
-> > +      The hardware requires this controller to remain turned on.
-> 
-> How hardware requires this? You rather miss proper PM domain handling or
-> some other resources.
+> +/**
+> + * struct pll - Structure for PLL configuration
+> + *
+> + * @offset: STBY register offset
+> + * @clk: Flag to indicate if CLK1/2 are accessible or not
+> + * @sscen: Flag to indicate if SSCEN bit needs enabling/disabling
+> + */
+> +struct pll {
+> +    unsigned int offset:8;
+> +    unsigned int clk:1;
+> +    unsigned int sscen:1;
 
-This isn't about power domains. It's about the FS/SCLK generator inside the 
-IP. I'll remove it in the next revision since downstream only uses it for a 
-different IP on the RK3588, and I'd rather not get bogged down by discussions 
-as to whether SAI should be modelled as a clock provider.
+This is a new flag?
 
-> 
-> > +
-> > +
-> 
-> Just one blank line.
+> +};
+> +
+> +#define PLL_PACK(_offset, _clk, _sscen) \
+> +    ((struct pll){ \
+> +        .offset =3D _offset, \
+> +        .clk =3D _clk \
+> +        .sscen =3D _sscen \
+> +    })
+> +
+> +#define PLLCA55        PLL_PACK(0x64, 1, 0)
 
-Will do
+0x60
 
-> 
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - dmas
-> > +  - dma-names
-> > +  - clocks
-> > +  - clock-names
-> > +  - "#sound-dai-cells"
-> > +
-> > +unevaluatedProperties: false
-> 
-> Best regards,
-> Krzysztof
+Gr{oetje,eeting}s,
 
-Cheers,
-Nicolas Frattaroli
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
