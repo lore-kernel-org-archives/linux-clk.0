@@ -1,178 +1,313 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6C915E96
-	for <linux-clk@vger.kernel.org>; Thu,  6 Mar 2025 12:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB254BA4A;
+	Thu,  6 Mar 2025 13:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741265160; cv=none; b=rapuEFLofeyUQb4o0G5bSB+a99ZENRdNmK0HkisSzqVjihZ4qOg53o8r3rSTjlAxBJvp6whrGsFPB1UkffOzDxjHgmCh0o/HnyYwNNb/YRfAEPK+RC7K+2l9sQlb8tpYULM+AcBGd9hlykATJdpLaBNmSho3A/J1nUAY4Mi2i4c=
+	t=1741266293; cv=none; b=uZd/N8f10ht+vnsWex80zZgrkZMVazgZr3V8gpkky6V78bPiPiqY6ied1m0jFcCU5kaM9ZhyjA5A12YFnQEaqxeLiBibRXfa1GRlh8WcY4ohRN3I23sUcMzBkKxo+l9mS19u2QqqKmin/sbw+LausoAdPSDQ25+DLjop+726YUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741265160; c=relaxed/simple;
-	bh=BsuZfBy0o27rEroxO2CuiDchs3Er752NKZpUyYkv714=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZNY6OGbu48zMjAWmc7AtYNDE3HnHsTgOm46pS+iDbh8uoeduZ0cKCfOMBwEziHIzVZutqm0XXmPwl7cIk29rZerVGEGI2Y6PaX4hL9lDE/gLNsf1qNb4xl/f4gR0TxiontlDoRwwmY8Ncm/XaRAoP3Qh6aNN0qpgfhjCu6SZFsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AO/VPoA/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1741266293; c=relaxed/simple;
+	bh=qCDKpADemGDDYCfhI/N5KOQxe8pDvVbHCSJnDL6GYtc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aj2Dv0OYam2+6dGWlqwWGg2HUryNqPnC4kHBPyjX6OUavxYXHuPfPNCv5RamFPkK/YRk8odRJ2M38w8y1ehyMbt/fZBdPt9Qo995K+Xd6yi8PVWPiCsfwdQ4UbsH1p21mUD+TiM5oXnEe+WReAp05U2E/5rFei7DADrm3v9mtqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=djNdtBsD; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AO/VPoA/"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5267mBI8005348
-	for <linux-clk@vger.kernel.org>; Thu, 6 Mar 2025 12:45:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FK/RHL8Gonc2grMn8KNItFyJCXiEsAQ2Rp7C6pvjJfo=; b=AO/VPoA/n4MpLdaF
-	2W90/k/egkeQpg6kVjPmfdjnnvJ9rgyF+P/Br+kZ5/MBpWxjjt9EYbR5fbTj8aYN
-	gspxQxFntaXVOaj2a300Lt1JYBQwUa3hRBfBdRHwb7uDiLCM3nfVah46j7aVuTgk
-	WadBUa44+Wq0jtN/SGhuqsoD2ceKDb+g0WkkXcR2aHDW9lp/GOjPE0ME8ZAOTevI
-	yWsoQkGxfXVHujT0sZnWQb8sRd+2Kw/YvMGSzYpmHsbLcX2vkFq101KvCMDxkD1u
-	w6BoL+PR2wYUJNGk75TsZF/2XLjYVZIHABy+tcS0eZXxPu58FG4MvwZYdflXhoVt
-	X2EuXA==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4577mx8wk3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 06 Mar 2025 12:45:56 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c3c5833b58so18320285a.3
-        for <linux-clk@vger.kernel.org>; Thu, 06 Mar 2025 04:45:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="djNdtBsD"
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e1b11859a7so2134236d6.1;
+        Thu, 06 Mar 2025 05:04:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741266290; x=1741871090; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fwtQbo4c/+0nP1ZBh3OcW9J/EfLuZOrEvjWNhxSbfx0=;
+        b=djNdtBsDZeGelXkr0YzAo3M2IVLv9Zt3/E48okoyqsqiOwdpL3QphGUqszIUv7srTf
+         Ph6OLgPgCjgci9aGEGRJW0dn/lWvHKtn0bQMd5A8MTp4IeOddN+Pj4B3AMbkHKCSElE9
+         PUAANKR/YJc7D9cShz54V/qqGkUIS8rfsYG8+G2UkVdTIs/6oJ3vucDkOWGqkYmYOecG
+         O891CA0Aq5dGtu6LWiehB1/ci/RhVhBdavxRgesgptF5KYMStUR2TV8IeZN2TDFyuaJc
+         GnutF/Bk2a9aynwx6iY/vfKGOxJSOgQV6EVNmB7MIuptaE2wmrrFAUxLRXkywfaQ8qNx
+         x23w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741265156; x=1741869956;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FK/RHL8Gonc2grMn8KNItFyJCXiEsAQ2Rp7C6pvjJfo=;
-        b=b9hnVJ7s+CeBn7W3fpgi1Rlsc8jMUNXcaOGiQrthiBG6yleWg0hfvOxlQrjCPtBaFo
-         WXlSA0Y1KNNRnSz6YbseIJ5X+GEcL00eZlACq4giLPQ6YK+5jtAVICE/AAIvPUE66bK5
-         FxHs55XhZpWywmoBiQH7kGEj6dd+X+YS9QaEgdklG0+HZdj5lLOePERWiHpvoCRTmOG0
-         vfMJM62ggqGD/HuIA63U1JDzYc3Yq83tcDKXEFW5wAT9llLARJbUF8kbF36k54IrzJtn
-         l1QVApvqXHwhApHwCOPhjif77L/muRfytXENSOBxDDEU2CQazD6y8z/ycYS2IWWzSIoj
-         mh5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXUOu++prgxRP6N7fXwLdryZyUbni04EBHpTOXR4OBVp1ZeN7UiGuOm6of8pqqE5qLc22+OBKShrlc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsNvuLpLWQF6Qvhif1ehvmL+h7Uy9NRUOkPCnxSHCjRi6zTpzA
-	biiKt2OcSSpN6+FNt9qEeP/3J8+QXcWlSwKj+qNK53TX9N+F7pzTI1n5MEyeoUnKG60c14JAiMu
-	iNMpDaBmCHYlqCQkyvQsNnP98nkKkz6kKAU30enSdNmJQdLR8xCPL+Q+dheM=
-X-Gm-Gg: ASbGncuD/1l2J+K6tNjysXIXB7yAk423BW+1mxX8HJE91+IQNdhYFTFpOs3olGXIGGv
-	KxYZ3cnHvwaN8RYoa0WfPcOBmwnCbFRUqB+6tuUtC3g/Y4ybqPyoEgzT19b6sVGPIPT2W/FTbgc
-	HlpRQjmV1af5mRnRtGe7LcAg1GThobZFuadhjKGDo+n61wgnxnRKjq/yJulvaCoqiVOu5rFCgGZ
-	pMdBhz9Ijtc8dL5mVBDcRFouvEXwTc+ch+EBQ9i228yxxzVOxh78a7OGe0sOTNhBUAy7B3lxw8+
-	N8+UrFHbMAcjSZdavMT83WFu7KtaXGMlqpXslShE41qUlGxKeCDT3j12d0R1A3DJSYgXtg==
-X-Received: by 2002:a05:620a:400a:b0:7c0:a898:92fd with SMTP id af79cd13be357-7c3d8ed6b93mr383224985a.13.1741265155832;
-        Thu, 06 Mar 2025 04:45:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGwnifr+rtFdEJ8n5ks+Pxlxph16AhZEdlNsHmeChu9nXmI4OJIKeebQYhCU0Lvokc2XaQP+A==
-X-Received: by 2002:a05:620a:400a:b0:7c0:a898:92fd with SMTP id af79cd13be357-7c3d8ed6b93mr383221885a.13.1741265155393;
-        Thu, 06 Mar 2025 04:45:55 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae57a84sm169205e87.62.2025.03.06.04.45.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 04:45:54 -0800 (PST)
-Message-ID: <1aa77e2e-6bb0-425c-9b5a-64092f8df9a5@oss.qualcomm.com>
-Date: Thu, 6 Mar 2025 13:45:50 +0100
+        d=1e100.net; s=20230601; t=1741266290; x=1741871090;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fwtQbo4c/+0nP1ZBh3OcW9J/EfLuZOrEvjWNhxSbfx0=;
+        b=ObvESyLWqzAjeZ76Epy5Bibvoi4W7yxpqNbZp6eFK4MXk1Oaqzcs965cHFuCVZlZ1X
+         fB6+xZSlHtTYHkmwOt9+OwsN2aJBI61o+LsNUGBF1GiSPsj6TkOKukTh0F35R9v7B3TT
+         msGKBBenYQc5w+ms4KeSWU1CkEsc2fvAM8JE5yiBiIhCK/458VAlwg1d/0eD9/DDpf3T
+         LyGqaqisivNhciTSZdxdi2tbCKjXXEFhlOU2QZ1rvYrbmayJ7hI5zED8DM6b8IRd2adl
+         daeI6Bha11zkhXKHQH98xGGFQBATFx+DrJxOvIuGgS/QyVQk5SAY7MN/vPVa/C3Tu46m
+         ExSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtrNwLZNXwhxlEBQgiWrxhG0D2qLaUg+A/gh8rfVGurpx+2sPkPIhQHfrwwEsxDBAXTs7ciB/IBIPmGXKD@vger.kernel.org, AJvYcCW+YfBZiY+Gfu6ySSk3It4FGZZ8LGdYHLy6yE4f4+BUppy7tMCBT8N+GIw+C5yUlnAglKtdrixZoAgHnFjSKMVeK/g=@vger.kernel.org, AJvYcCX53tUdc9KjE8ShifM13CTjo9E5lu07MXZU18uV9Goz1FuEMqFc+CucOBLY2i7xdTw6D6CydDp0gas=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrLLNtvDWmCbkF1zSFzAvC0FYaahHrPb4FsEhreAZv33RmCoGx
+	y11ZnTy6IrNjxPrCS4NIiPDmbDo4obI2jPM9w+18p8YoPek8t0QL7q0MOgMpi1UDkD7eCzKNiIV
+	seq3kTFk4e+UXAzAfWjljJ6whQTI=
+X-Gm-Gg: ASbGncu9NmkqgfG0IMXLQ7XGuUNupfieruJ1uQh9phdc+Ie5q5J9XC03sGYZ5ysyZnH
+	rTFj7UOJAx61iAM5quMW4cEfMAcixUoI6UEEJcuS4T1h2l175FrEDybC4JDBsLgkSTAQo1q7XeN
+	5osqVgtH0uOz73Ra+OD+I/iIlJ3FYboMsDlrrCzuHYIT3/PnHSjFwzHTxOsQ==
+X-Google-Smtp-Source: AGHT+IG3jsf38OT7KWRRfxdlMxgW5pX91fPtiKVDYvVnc1lux9uapmuHdKZS92YY6eWhXtrSE5hdsgHhdFYuxrlr/gI=
+X-Received: by 2002:a05:6214:3002:b0:6e8:91fd:cfc0 with SMTP id
+ 6a1803df08f44-6e8e6cdd70fmr104063636d6.16.1741266290454; Thu, 06 Mar 2025
+ 05:04:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] clk: qcom: common: Manage rpm, configure PLLs &
- AON clks in really probe
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
- <20250306-videocc-pll-multi-pd-voting-v2-3-0cd00612bc0e@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250306-videocc-pll-multi-pd-voting-v2-3-0cd00612bc0e@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: BhpdrylImrq8K53MLMA4TiitStqnVESw
-X-Authority-Analysis: v=2.4 cv=cOIaskeN c=1 sm=1 tr=0 ts=67c99904 cx=c_pps a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=yHIa6xKSslqa2ziMgBoA:9 a=QEXdDO2ut3YA:10
- a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: BhpdrylImrq8K53MLMA4TiitStqnVESw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 suspectscore=0 adultscore=0 phishscore=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503060097
+References: <20250218114353.406684-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250218114353.406684-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUhZ_qV=16jnWD6cPfuMmZpDUeRMTUgbqy=Mkzp-29=bA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUhZ_qV=16jnWD6cPfuMmZpDUeRMTUgbqy=Mkzp-29=bA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 6 Mar 2025 13:04:24 +0000
+X-Gm-Features: AQ5f1JrimiJhSM8I2aViC79LpPFgUNwzAcs3MANZ_cWJOmq-VxT3mgANqF6Vgl0
+Message-ID: <CA+V-a8uvfb=a=K1YzGNeZdiAzeXWMpdbxj=6UuL_xQfxKmOBZA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: rzv2h-cpg: Add support for enabling PLLs
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6.03.2025 9:55 AM, Jagadeesh Kona wrote:
-> Add support for runtime power management, PLL configuration and enabling
-> critical clocks in qcom_cc_really_probe() to commonize the clock
-> controller probe.
-> 
-> The runtime power management is not required for all clock controllers,
-> hence handle the rpm based on use_rpm flag in clock controller descriptor.
-> Also the power domains need to be kept enabled during pll configuration,
-> hence attach all required power domains prior to calling get_sync() on the
-> device.
-> 
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> ---
+Hi Geert,
 
-[...]
+Thank you for the review.
 
-> + * struct qcom_clk_cfg - To maintain list of clocks that needs to be
-> + *                       kept ON or misc clock register settings
+On Wed, Mar 5, 2025 at 4:42=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> Thanks for your patch!
+>
+> On Tue, 18 Feb 2025 at 12:44, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Some RZ/V2H(P) SoC variants do not have a GPU, resulting in PLLGPU bein=
+g
+> > disabled by default in TF-A. Add support for enabling PLL clocks in the
+> > RZ/V2H(P) CPG driver to manage this.
+>
+> Does it make sense to enable the GPU PLL if no GPU is present?
+>
+No it doesn't,  PLLGPU is enabled on needs basis ie if GPU node is
+enabled the PLLGPU is enabled, if GPU is disabled the PLLGPU will be
+untouched and will remain OFF. Note I also have a patch which does
+disable the PLL's but I have not added as this isn't tested with the
+full system running and I'm not sure if there will be any radiation if
+we turn ON/OFF PLLs (Im discussing this internally once approved I
+will add support to disable PLLs too).
 
-I have some reservations about this name, particularly since 'clk_cfg'
-has already been used in the msmbus/interconnect space..
+GPU node enabled in board DTS:
+---------------------------------------------
+root@rzv2h-evk-alpha:~# cat /sys/kernel/debug/clk/clk_summary | grep gpu
+    .pllgpu                          1       1        0
+1260000000  0          0     50000      Y      deviceless
+        no_connection_id
+       .pllgpu_gear                  1       1        0
+630000000   0          0     50000      Y         deviceless
+           no_connection_id
+          gpu_0_clk                  1       2        0
+630000000   0          0     50000      Y            14850000.gpu
+              no_connection_id
 
-Perhaps qcom_clk_reg_settings?
+                                             14850000.gpu
+      no_connection_id
+             gpu_0_ace_clk           0       1        0
+400000000   0          0     50000      N               deviceless
+                 of_clk_get_from_provider
+             gpu_0_axi_clk           1       2        0
+400000000   0          0     50000      Y               14850000.gpu
+                 bus
+root@rzv2h-evk-alpha:~#
 
-> + * @offset: address offset for clock register
-> + * @mask: bit mask to indicate the bits to update
-> + */
-> +struct qcom_clk_cfg {
-> +	unsigned int offset;
-> +	unsigned int mask;
-
-"u32"
-
-also, to expand it, we probably want "field" and "val" to replace the
-calls to regmap_update_bits in some drivers
-
-I think we may keep this /\ struct for things like:
-
-/* Enable clock gating for MDP clocks */
-regmap_update_bits(regmap, DISP_CC_MISC_CMD, 0x10, 0x10);
-
-while keeping a separate u32 array of branch clocks to call
-qcom_branch_set_clk_en() on - we would then use 3x less memory
-
-
-> +};
-
-> +
->  struct qcom_cc_desc {
->  	const struct regmap_config *config;
->  	struct clk_regmap **clks;
-> @@ -39,6 +50,11 @@ struct qcom_cc_desc {
->  	const struct qcom_icc_hws_data *icc_hws;
->  	size_t num_icc_hws;
->  	unsigned int icc_first_node_id;
-> +	struct qcom_clk_cfg *clks_cfg;
-> +	size_t num_clks_cfg;
-> +	struct clk_alpha_pll **plls;
-
-Some ancient or "non-standard" SoCs have non-alpha PLLs, please rename
-this to something like alpha_plls
+GPU node disabled in board DTS:
+---------------------------------------------
+root@rzv2h-evk-alpha:~# cat /sys/kernel/debug/clk/clk_summary | grep gpu
+    .pllgpu                          0       0        0
+1260000000  0          0     50000      N      deviceless
+        no_connection_id
+       .pllgpu_gear                  0       0        0
+630000000   0          0     50000      Y         deviceless
+           no_connection_id
+          gpu_0_clk                  0       0        0
+630000000   0          0     50000      N            deviceless
+              no_connection_id
+             gpu_0_ace_clk           0       0        0
+400000000   0          0     50000      N               deviceless
+                 no_connection_id
+             gpu_0_axi_clk           0       0        0
+400000000   0          0     50000      N               deviceless
+                 no_connection_id
+root@rzv2h-evk-alpha:~#
 
 
-Konrad
+> > Introduce `is_enabled` and `enable` callbacks to handle PLL state
+> > transitions. With the `enable` callback, PLLGPU will be turned ON only
+> > when the GPU node is enabled; otherwise, it will remain off. Define new
+> > macros for PLL standby and monitor registers to facilitate this process=
+.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/clk/renesas/rzv2h-cpg.c | 57 +++++++++++++++++++++++++++++++++
+> >  1 file changed, 57 insertions(+)
+> >
+> > diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2=
+h-cpg.c
+> > index 1ebaefb36133..d7230a7e285c 100644
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> > @@ -56,9 +56,16 @@
+> >
+> >  #define CPG_CLKSTATUS0         (0x700)
+> >
+> > +#define PLL_STBY_RESETB                BIT(0)
+> > +#define PLL_STBY_RESETB_WEN    BIT(16)
+>
+> Please move these just below the definition of PLL_STBY_OFFSET().
+> (Hmm, [KMP]DIV() should be below PLL_CLK1_OFFSET(), and
+>  SDIV() below PLL_CLK2_OFFSET()).
+>
+OK.
+
+> > +#define PLL_MON_RESETB         BIT(0)
+> > +#define PLL_MON_LOCK           BIT(4)
+>
+> Please move these just below the definition of PLL_MON_OFFSET().
+>
+OK.
+
+> > +
+> >  #define PLL_CLK_ACCESS(n)      (!!((n) & BIT(31)))
+> >  #define PLL_CLK1_OFFSET(n)     FIELD_GET(GENMASK(15, 0), (n))
+> >  #define PLL_CLK2_OFFSET(n)     (PLL_CLK1_OFFSET(n) + (0x4))
+> > +#define PLL_STBY_OFFSET(n)     (PLL_CLK1_OFFSET(n) - (0x4))
+>
+> Let's subtract 4...
+>
+> > +#define PLL_MON_OFFSET(n)      (PLL_STBY_OFFSET(n) + (0x10))
+>
+> ... and add 0x10. Where are we now? ;-)
+>
+> I think it would be better to store the PLL base offset instead of the
+> PLL CLK1 offset in cpg_core_clk.cfg.conf, and define offsets
+> relative to that:
+>
+You mean PLL_STBY offset in cpg_core_clk.cfg.conf and have the below
+CPG_PLL_XX macros.
+
+Or maybe instead of using a conf can I add the below?
+
++/**
++ * struct pll - Structure for PLL configuration
++ *
++ * @offset: STBY register offset
++ * @clk: Flag to indicate if CLK1/2 are accessible or not
++ * @sscen: Flag to indicate if SSCEN bit needs enabling/disabling
++ */
++struct pll {
++    unsigned int offset:8;
++    unsigned int clk:1;
++    unsigned int sscen:1;
++};
++
++#define PLL_PACK(_offset, _clk, _sscen) \
++    ((struct pll){ \
++        .offset =3D _offset, \
++        .clk =3D _clk \
++        .sscen =3D _sscen \
++    })
++
++#define PLLCA55        PLL_PACK(0x64, 1, 0)
+
+
+>     #define CPG_PLL_STBY    0x000
+>     #define CPG_PLL_CLK1    0x004
+>     #define CPG_PLL_CLK2    0x008
+>     #define CPG_PLL_MON     0x010
+>
+> >
+> >  /**
+> >   * struct rzv2h_cpg_priv - Clock Pulse Generator Private Data
+> > @@ -144,6 +151,54 @@ struct ddiv_clk {
+> >
+> >  #define to_ddiv_clock(_div) container_of(_div, struct ddiv_clk, div)
+> >
+> > +static int rzv2h_cpg_pll_clk_is_enabled(struct clk_hw *hw)
+> > +{
+> > +       struct pll_clk *pll_clk =3D to_pll(hw);
+> > +       struct rzv2h_cpg_priv *priv =3D pll_clk->priv;
+> > +       u32 mon_offset =3D PLL_MON_OFFSET(pll_clk->conf);
+> > +       u32 val;
+> > +
+> > +       val =3D readl(priv->base + mon_offset);
+>
+> As mon_offset is used only once, you can combine the above 4 lines
+> into a single line.
+>
+OK.
+
+> > +
+> > +       /* Ensure both RESETB and LOCK bits are set */
+> > +       return (val & (PLL_MON_RESETB | PLL_MON_LOCK)) =3D=3D
+> > +              (PLL_MON_RESETB | PLL_MON_LOCK);
+> > +}
+> > +
+> > +static int rzv2h_cpg_pll_clk_enable(struct clk_hw *hw)
+> > +{
+> > +       bool enabled =3D rzv2h_cpg_pll_clk_is_enabled(hw);
+> > +       struct pll_clk *pll_clk =3D to_pll(hw);
+> > +       struct rzv2h_cpg_priv *priv =3D pll_clk->priv;
+> > +       u32 conf =3D pll_clk->conf;
+> > +       unsigned long flags =3D 0;
+> > +       u32 stby_offset;
+> > +       u32 mon_offset;
+> > +       u32 val;
+> > +       int ret;
+> > +
+> > +       if (enabled)
+>
+>     if (!rzv2h_cpg_pll_clk_is_enabled(hw))
+>
+> for brevity.
+>
+OK.
+
+> > +               return 0;
+> > +
+> > +       stby_offset =3D PLL_STBY_OFFSET(conf);
+> > +       mon_offset =3D PLL_MON_OFFSET(conf);
+> > +
+> > +       val =3D PLL_STBY_RESETB_WEN | PLL_STBY_RESETB;
+> > +       spin_lock_irqsave(&priv->rmw_lock, flags);
+> > +       writel(val, priv->base + stby_offset);
+> > +       spin_unlock_irqrestore(&priv->rmw_lock, flags);
+>
+> A single writel does not need protection by a spinlock.
+>
+OK, I will drop it.
+
+> > +
+> > +       /* ensure PLL is in normal mode */
+> > +       ret =3D readl_poll_timeout(priv->base + mon_offset, val,
+> > +                                (val & (PLL_MON_RESETB | PLL_MON_LOCK)=
+) =3D=3D
+> > +                                (PLL_MON_RESETB | PLL_MON_LOCK), 0, 25=
+0000);
+>
+> How long does this typically take?
+> I.e. would it make sense to use a non-zero delay_us()?
+>
+I'll rework on timeout value.
+
+Cheers,
+Prabhakar
