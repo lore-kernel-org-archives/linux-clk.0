@@ -1,207 +1,243 @@
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B14326D5B6;
-	Thu,  6 Mar 2025 18:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F58E274264;
+	Thu,  6 Mar 2025 18:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741284014; cv=none; b=bBHTBHIaRXzT4kVIGOOfHdnBWp9445+S2Ptlu/Z/uXch6ECpWFMnSJTLwWYf2TAhj8tjZKbAcvsaqpeqYoqlxJuhzOqhTdwIElfvuB2V62oJ7YO2NG8PW9QTkxBYnHkxuTkVKMWPbyHG4CqmWb04opA4H1JaMsoRcLn2rigT9nI=
+	t=1741284133; cv=none; b=aguiGCMQ7fGuTSRsPZU59WME6BmeqrPQXk0lp9vaJ58mihln1GKgumM2OV7c6BI3ILmmClufzwJG8mGOZgl85hXYtvhV9gw7XBC/lHYdF3nvFbgFT2orOvnK9jtpRPJEE9ERtei68ojoFnN/q3dLB7NP87hC+Q1S638OCATy884=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741284014; c=relaxed/simple;
-	bh=JPr5THma9S5EoKLt/y71Ozii0SHYauExya2FtBG0v2E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yw/cJdvtwWOUSrsNva0iNbpAs9+VpPESuaLdQM9kKnkDWLxEt6czul4ZSiRMf7sYEkbE+FYMgcPsAhb2XXdF8BHbC1YNGje9g4T1kXh+nXrSk4XIl/7lxPVFImveUFSvXy4bQViXD1OrBBMKUDdDStX9yfjmGztcpolOxWL+H0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=gnbmC2kM; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=iM7ureVS; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+	s=arc-20240116; t=1741284133; c=relaxed/simple;
+	bh=aS4+MiTQzEhxzLiPX4aqCukgIbUCu3ZfrqEOUCUr7XI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BT6unvJLiOYcb48923vdT1kTUxC7ljtIY77krjfXcfUX7GSn/Jsot+bkiu4+z55Neegr6rJ8Kc0iyTkPtLNo8J+ssqfzdhP3SGheM4+V3d7HbcZDo9bHHUfPtiX6bC0TUhKqMoxZeyNzELHzsoR0o5VwpJdf2zrDdq8bjd0sJn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MKnwTg9X; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="gnbmC2kM";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="iM7ureVS"
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id D6BE5EC59F2;
-	Thu, 06 Mar 2025 10:00:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1741284012; bh=JPr5THma9S5EoKLt/y71Ozii0SHYauExya2FtBG0v2E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gnbmC2kMymAn7C0iu8thUpB82K7QC/5WbbLZzrKwvGPlUxc96W/0AuYeSv3O8ZSZ5
-	 KrutYX98iNSc0bUq0hF5i8y90d6baNdPMjZ9vDjPOF7vFLZbPI1nKTDPgva2cov4qd
-	 Jo6EsSH/YMlPDTJulTHbyL9AI+vPRellq+tNbmuCOrZH5co059HxnoT+giVo6hInqy
-	 zD1Uv2VjN9SZht2EyBwm+Vl2eufM5Pj5SLT16+WUiDBvNwYKENcdQG6zUrDoW0sjgq
-	 W6y1pC24nPmQgrpjH4Noiy1XUHn+zlocctj9ugpSJAqNIL1qJFBOqBQ7hR57PCDddl
-	 85YI7cNb7g26g==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Authentication-Results: bayard.4d2.org (amavisd-new); dkim=pass (2048-bit key)
- header.d=4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id kxjIPGOlARPg; Thu,  6 Mar 2025 10:00:11 -0800 (PST)
-Received: from localhost.localdomain (unknown [183.217.80.218])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id B3236EC59F5;
-	Thu, 06 Mar 2025 10:00:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1741284011; bh=JPr5THma9S5EoKLt/y71Ozii0SHYauExya2FtBG0v2E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iM7ureVSa/S+7YUL3tB5xtVqkBhMyJqfdx9HDE0dvLZU4RHu/Jvph1InoCn00+FoF
-	 swBVcrDvNcWdDR/1ML4rc5lCMtlXUxaTn+pdFHUr+tmtriZgHSxTVdTZdrl/V4vxYh
-	 wIoAGDF9WuaCc0kyFFUa8CdAB1OjoaA8NbBc/GQYUjNjMDm87pxeaG8k1E19NWgqaP
-	 It1BZZBizokamqsTNNlwZ37jdJGRMbLSMhb62FPRnL8vlh9aE3QAaKJIsffzsVFqkw
-	 4dn4mImqEAaqnjdHtsEN+Dd1j6CunU0fU6djssw/H130M3VZLGURr1e+Oz52DwwSIg
-	 X/+D3MS841SPg==
-From: Haylen Chu <heylenay@4d2.org>
-To: Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MKnwTg9X"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741284132; x=1772820132;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aS4+MiTQzEhxzLiPX4aqCukgIbUCu3ZfrqEOUCUr7XI=;
+  b=MKnwTg9XfCk6OiNaEjttE9+DTjc85JWsvokG+p046iUSrJhUSD5a6Z83
+   XFiedEPYQjJ3OStqDUpgpu/KJrSbwV9W1xGXuiiZJBlr7PqQkGPRGaxrN
+   Jb9xDmw2xEdn88dQc2mRaQYvWoa3+V68oim6+kCAyyu2sziTd1dtkusXk
+   ilnYRNrk5PpiIvHAGgSXJsS8+DnzPPZo1sKpyFDoIBJyQUbppfcNVeC9l
+   hz45HsOzWy1gUJiDakGqtBSP5dz9nDEJ7ewzJ1I9choVsPoIlEuMt3oq/
+   bHMh0afnIrmVN6BDcaAnoZX+MNtLII1E+pnr0GU+M3bKJ4HsrZkrKwU9h
+   w==;
+X-CSE-ConnectionGUID: wT9EdGW1TxK7BDKySn/TOg==
+X-CSE-MsgGUID: UNvUsp7QRb+Lpq14g28BLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42447282"
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="42447282"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 10:01:54 -0800
+X-CSE-ConnectionGUID: gNpnIM6CT4yTMEC2oo0i5w==
+X-CSE-MsgGUID: 7bbIzenPRDe7V8jlIyKzsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="119280835"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 06 Mar 2025 10:01:51 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tqFXY-000NQI-0V;
+	Thu, 06 Mar 2025 18:01:48 +0000
+Date: Fri, 7 Mar 2025 02:01:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>,
+	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
 	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>,
-	Yixun Lan <dlan@gentoo.org>
-Cc: linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	Haylen Chu <heylenay@4d2.org>
-Subject: [PATCH v5 5/5] riscv: dts: spacemit: Add clock tree for Spacemit K1
-Date: Thu,  6 Mar 2025 17:57:51 +0000
-Message-ID: <20250306175750.22480-7-heylenay@4d2.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250306175750.22480-2-heylenay@4d2.org>
-References: <20250306175750.22480-2-heylenay@4d2.org>
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v9 3/3] clk: aspeed: add AST2700 clock driver
+Message-ID: <202503070117.mMjnpop8-lkp@intel.com>
+References: <20250224095506.2047064-4-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224095506.2047064-4-ryan_chen@aspeedtech.com>
 
-Describe the PLL and system controllers that're capable of generating
-clock signals in the devicetree.
+Hi Ryan,
 
-Signed-off-by: Haylen Chu <heylenay@4d2.org>
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 79 ++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+kernel test robot noticed the following build warnings:
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index c670ebf8fa12..09a9100986b1 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -3,6 +3,8 @@
-  * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-  */
- 
-+#include <dt-bindings/clock/spacemit,k1-ccu.h>
-+
- /dts-v1/;
- / {
- 	#address-cells = <2>;
-@@ -306,6 +308,40 @@ cluster1_l2_cache: l2-cache1 {
- 		};
- 	};
- 
-+	clocks {
-+		#address-cells = <0x2>;
-+		#size-cells = <0x2>;
-+		ranges;
-+
-+		vctcxo_1m: clock-1m {
-+			compatible = "fixed-clock";
-+			clock-frequency = <1000000>;
-+			clock-output-names = "vctcxo_1m";
-+			#clock-cells = <0>;
-+		};
-+
-+		vctcxo_24m: clock-24m {
-+			compatible = "fixed-clock";
-+			clock-frequency = <24000000>;
-+			clock-output-names = "vctcxo_24m";
-+			#clock-cells = <0>;
-+		};
-+
-+		vctcxo_3m: clock-3m {
-+			compatible = "fixed-clock";
-+			clock-frequency = <3000000>;
-+			clock-output-names = "vctcxo_3m";
-+			#clock-cells = <0>;
-+		};
-+
-+		osc_32k: clock-32k {
-+			compatible = "fixed-clock";
-+			clock-frequency = <32000>;
-+			clock-output-names = "osc_32k";
-+			#clock-cells = <0>;
-+		};
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&plic>;
-@@ -314,6 +350,17 @@ soc {
- 		dma-noncoherent;
- 		ranges;
- 
-+		syscon_apbc: system-control@d4015000 {
-+			compatible = "spacemit,k1-syscon-apbc";
-+			reg = <0x0 0xd4015000 0x0 0x1000>;
-+			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
-+				 <&vctcxo_24m>;
-+			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
-+				      "vctcxo_24m";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		uart0: serial@d4017000 {
- 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
- 			reg = <0x0 0xd4017000 0x0 0x100>;
-@@ -409,6 +456,38 @@ pinctrl: pinctrl@d401e000 {
- 			reg = <0x0 0xd401e000 0x0 0x400>;
- 		};
- 
-+		syscon_mpmu: system-controller@d4050000 {
-+			compatible = "spacemit,k1-syscon-mpmu";
-+			reg = <0x0 0xd4050000 0x0 0x209c>;
-+			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
-+				 <&vctcxo_24m>;
-+			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
-+				      "vctcxo_24m";
-+			#clock-cells = <1>;
-+			#power-domain-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
-+		pll: system-control@d4090000 {
-+			compatible = "spacemit,k1-pll";
-+			reg = <0x0 0xd4090000 0x0 0x1000>;
-+			clocks = <&vctcxo_24m>;
-+			spacemit,mpmu = <&syscon_mpmu>;
-+			#clock-cells = <1>;
-+		};
-+
-+		syscon_apmu: system-control@d4282800 {
-+			compatible = "spacemit,k1-syscon-apmu";
-+			reg = <0x0 0xd4282800 0x0 0x400>;
-+			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
-+				 <&vctcxo_24m>;
-+			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
-+				      "vctcxo_24m";
-+			#clock-cells = <1>;
-+			#power-domain-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		plic: interrupt-controller@e0000000 {
- 			compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
- 			reg = <0x0 0xe0000000 0x0 0x4000000>;
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.14-rc5 next-20250306]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-binding-clock-ast2700-modify-soc0-1-clock-define/20250224-175830
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250224095506.2047064-4-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v9 3/3] clk: aspeed: add AST2700 clock driver
+config: powerpc64-randconfig-r121-20250306 (https://download.01.org/0day-ci/archive/20250307/202503070117.mMjnpop8-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250307/202503070117.mMjnpop8-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503070117.mMjnpop8-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/clk/clk-ast2700.c:1066:92: sparse: sparse: Using plain integer as NULL pointer
+
+vim +1066 drivers/clk/clk-ast2700.c
+
+   952	
+   953	static int ast2700_soc_clk_probe(struct platform_device *pdev)
+   954	{
+   955		const struct ast2700_clk_data *clk_data;
+   956		struct ast2700_clk_ctrl *clk_ctrl;
+   957		struct clk_hw_onecell_data *clk_hw_data;
+   958		struct device *dev = &pdev->dev;
+   959		void __iomem *clk_base;
+   960		struct clk_hw **hws;
+   961		char *reset_name;
+   962		int ret;
+   963		int i;
+   964	
+   965		clk_ctrl = devm_kzalloc(dev, sizeof(*clk_ctrl), GFP_KERNEL);
+   966		if (!clk_ctrl)
+   967			return -ENOMEM;
+   968		clk_ctrl->dev = dev;
+   969		dev_set_drvdata(&pdev->dev, clk_ctrl);
+   970	
+   971		spin_lock_init(&clk_ctrl->lock);
+   972	
+   973		clk_base = devm_platform_ioremap_resource(pdev, 0);
+   974		if (IS_ERR(clk_base))
+   975			return PTR_ERR(clk_base);
+   976	
+   977		clk_ctrl->base = clk_base;
+   978	
+   979		clk_data = device_get_match_data(dev);
+   980		if (!clk_data)
+   981			return -ENODEV;
+   982	
+   983		clk_ctrl->clk_data = clk_data;
+   984		reset_name = devm_kasprintf(dev, GFP_KERNEL, "reset%d", clk_data->scu);
+   985	
+   986		clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, clk_data->nr_clks),
+   987					   GFP_KERNEL);
+   988		if (!clk_hw_data)
+   989			return -ENOMEM;
+   990	
+   991		clk_hw_data->num = clk_data->nr_clks;
+   992		hws = clk_hw_data->hws;
+   993	
+   994		if (clk_data->scu)
+   995			ast2700_soc1_configure_i3c_clk(clk_ctrl);
+   996	
+   997		for (i = 0; i < clk_data->nr_clks; i++) {
+   998			const struct ast2700_clk_info *clk = &clk_data->clk_info[i];
+   999			void __iomem *reg;
+  1000	
+  1001			if (clk->type == CLK_FIXED) {
+  1002				const struct ast2700_clk_fixed_rate_data *fixed_rate = &clk->data.rate;
+  1003	
+  1004				hws[i] = devm_clk_hw_register_fixed_rate(dev, clk->name, NULL, 0,
+  1005									 fixed_rate->fixed_rate);
+  1006			} else if (clk->type == CLK_FIXED_FACTOR) {
+  1007				const struct ast2700_clk_fixed_factor_data *factor = &clk->data.factor;
+  1008	
+  1009				hws[i] = devm_clk_hw_register_fixed_factor(dev, clk->name,
+  1010									   factor->parent->name,
+  1011									   0, factor->mult, factor->div);
+  1012			} else if (clk->type == DCLK_FIXED) {
+  1013				const struct ast2700_clk_pll_data *pll = &clk->data.pll;
+  1014	
+  1015				reg = clk_ctrl->base + pll->reg;
+  1016				hws[i] = ast2700_clk_hw_register_dclk(reg, clk->name, clk_ctrl);
+  1017			} else if (clk->type == CLK_HPLL) {
+  1018				const struct ast2700_clk_pll_data *pll = &clk->data.pll;
+  1019	
+  1020				reg = clk_ctrl->base + pll->reg;
+  1021				hws[i] = ast2700_clk_hw_register_hpll(reg, clk->name,
+  1022								      pll->parent->name, clk_ctrl);
+  1023			} else if (clk->type == CLK_PLL) {
+  1024				const struct ast2700_clk_pll_data *pll = &clk->data.pll;
+  1025	
+  1026				reg = clk_ctrl->base + pll->reg;
+  1027				hws[i] = ast2700_clk_hw_register_pll(i, reg, clk->name,
+  1028								     pll->parent->name, clk_ctrl);
+  1029			} else if (clk->type == CLK_UART_PLL) {
+  1030				const struct ast2700_clk_pll_data *pll = &clk->data.pll;
+  1031	
+  1032				reg = clk_ctrl->base + pll->reg;
+  1033				hws[i] = ast2700_clk_hw_register_uartpll(reg, clk->name,
+  1034									 pll->parent->name, clk_ctrl);
+  1035			} else if (clk->type == CLK_MUX) {
+  1036				const struct ast2700_clk_mux_data *mux = &clk->data.mux;
+  1037	
+  1038				reg = clk_ctrl->base + mux->reg;
+  1039				hws[i] = devm_clk_hw_register_mux_parent_data_table(dev, clk->name,
+  1040										    mux->parents,
+  1041										    mux->num_parents, 0,
+  1042										    reg, mux->bit_shift,
+  1043										    mux->bit_width, 0,
+  1044										    NULL, &clk_ctrl->lock);
+  1045			} else if (clk->type == CLK_MISC) {
+  1046				const struct ast2700_clk_pll_data *misc = &clk->data.pll;
+  1047	
+  1048				reg = clk_ctrl->base + misc->reg;
+  1049				hws[i] = ast2700_clk_hw_register_misc(i, reg, clk->name,
+  1050								      misc->parent->name, clk_ctrl);
+  1051			} else if (clk->type == CLK_DIVIDER) {
+  1052				const struct ast2700_clk_div_data *div = &clk->data.div;
+  1053	
+  1054				reg = clk_ctrl->base + div->reg;
+  1055				hws[i] = devm_clk_hw_register_divider_table(dev, clk->name,
+  1056									    div->parent->name, 0,
+  1057									    reg, div->bit_shift,
+  1058									    div->bit_width, 0,
+  1059									    div->div_table,
+  1060									    &clk_ctrl->lock);
+  1061			} else if (clk->type == CLK_GATE_ASPEED) {
+  1062				const struct ast2700_clk_gate_data *gate = &clk->data.gate;
+  1063	
+  1064				reg = clk_ctrl->base + gate->reg;
+  1065				hws[i] = ast2700_clk_hw_register_gate(dev, clk->name, gate->parent,
+> 1066								      reg, gate->bit, gate->flags, 0);
+  1067	
+  1068			} else {
+  1069				const struct ast2700_clk_gate_data *gate = &clk->data.gate;
+  1070	
+  1071				reg = clk_ctrl->base + gate->reg;
+  1072				hws[i] = devm_clk_hw_register_gate_parent_data(dev, clk->name, gate->parent,
+  1073									       0, reg, clk->clk_idx, 0,
+  1074									       &clk_ctrl->lock);
+  1075			}
+  1076	
+  1077			if (IS_ERR(hws[i]))
+  1078				return PTR_ERR(hws[i]);
+  1079		}
+  1080	
+  1081		ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_hw_data);
+  1082		if (ret)
+  1083			return ret;
+  1084	
+  1085		return aspeed_reset_controller_register(dev, clk_base, reset_name);
+  1086	}
+  1087	
+
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
