@@ -1,108 +1,120 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425A674059;
-	Thu,  6 Mar 2025 14:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DEC502BE;
+	Thu,  6 Mar 2025 14:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741272262; cv=none; b=kLPs/wHQevBxAFaqEcwjl1DD5ns9u/TGmIOGrAGyFdLGkEqspMQEbOHeZ6S96cl4gzopGXJAgp453rq981/tfgNYqYMh85iIB923kARV7F0VqfjUXRuSj6IeYiZ2A8uNc23+iKkmxlGOvP7Jl8C+tKNT2N4MFh6cVzwOeUm3srg=
+	t=1741272838; cv=none; b=Nt1pJlW4MhTmvXyqUgFWq67FziJDaRn45ZxIUBPTwrXYh1FjRiCMt4c5+RLt5UXHm6xU6owAyp653z/e/7fh081nNMaYyFWXJSQjkjm8fOG2H1vZUrWXg2KdvNINqo7HW2JPu2V080siRgBexNK+tBb5yz+Hdx09mR6g/Rg/GCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741272262; c=relaxed/simple;
-	bh=1I6vLfdtxaGJIXvx++ATG0mvb6UtdNlhF8b32gWF0pI=;
+	s=arc-20240116; t=1741272838; c=relaxed/simple;
+	bh=L43l5L0aKGMhRPcDQJ0/CC8lI+T8jjg5nrt/2iFPsvQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SvNjT3cXkVv69ElLxx26OljZS2BYSUeVi0+WuDjbMOGcP0Nozs0z3hMI3qPVZ90buwPng3Z1b7UYQqexLzBtYw9fA6MNRte/I16zsyg3j78JrTCFDLf2u6yKcS42n40m5HFvrZO9Dip714qc8YxWqGNRHDfCzxiLMJ6HYGyHYCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=Sk0FLAOBubSALc4Mhk3vhzVQSUGaBcgDaz8d7x0bJlh8yEJM09oqvsl7+m9c1XwP4Dh7422QwJRTfWCSoKNpbJprpF9/tJiSYkrtnXsBkaKFap9kL/JGnVuF7ssWzoXP3BPlpmAna1JPI7N1aDzwT9j5CUZhx7WZfz1/x1f9Qi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IbEWhMXn; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-51eb1818d4fso767408e0c.1;
-        Thu, 06 Mar 2025 06:44:20 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IbEWhMXn"
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-867129fdb0aso660683241.1;
+        Thu, 06 Mar 2025 06:53:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741272836; x=1741877636; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L43l5L0aKGMhRPcDQJ0/CC8lI+T8jjg5nrt/2iFPsvQ=;
+        b=IbEWhMXnK07h9WJ8Mk86Z6h3jBUTJrwZLJOTYflq8cUzvz+v8gnuMCnofG8vQYLj8a
+         ZsWt1MKqPR1CpvmLJwWO/IFJ7i1C98pYGlB9p9RMZtSphPj3Aq0H9da4wvwOrnlP3WU2
+         687Ol+GslPf04FHDBdZmkUUqHdgfMUWhfKzUPTfKVDI3G9TZXoa3BzFWY3/9gQ4rtkdW
+         8eR0DeQG9Kf3AgcBsQuu/xDG2hAexR6G2jDPsz4lBQNUzx1Fu4r+v1/dP9cEOEZWybLE
+         nSz2uT2R9yjvTpM0O7rGnO0v0EoadK4k2vP0gN6Fa0GFJAFwyy7TVG3elaT8/AKcBOgj
+         yf+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741272260; x=1741877060;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zuP9xwthdogS6nkkgxPKen4G3Hlo5Jw8Nr1FiijMZqg=;
-        b=TcdJ1azykqKO9CMwmK1PPGbmZrwjP53v3GdOD14nfah7Lrttb+fu0y4kP2dJ9oTyou
-         Tf+Nj37hnZOazPOaYQ5g/GkGcvWIrpovRzzZYDrFh3m1kFWaUQldsSGFjj0pN3UAE7HZ
-         VaFwD/RcpeXIoPWXFjET64S/r+xesYKvwHtV409tczaTnVj3k5Qv2vpuPsHP7s58q5tk
-         J4zOjfjF370HMap9EvKT6Td7vNUxokoNl/AspxxtF/C6T/l32vN+e01Rb9dL7ImFRUt3
-         qywhp6QwaTgah2hV0yO4uGcYJeUz+s8tmT3HXpVHJtIr5mQ99D/ovuoc4JMuHWZXPfki
-         aobQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIDvdJN88nipEVrcuJYLG2c8DYyp8D3UVyCTr6Y7E9hPiCaNUOIC5xD9VhnQSMUgMFVKH1FJ29PLw=@vger.kernel.org, AJvYcCXdDup6/O9zFVXGs4wtHnW02+Q5AyQJk4TrCBBAVbTCg0g51Eja/ZcUK4m6RrGtzZNazijiwLGvBU07oT7E2lEiQ7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAzkIZ0MQs7IgNqgFRgDb8A7OX9FzekL31T26tlgU4p0BPQtbP
-	9vmw0eFtjvgn5c4YUAlkO8OPMzxGcDvbirluKwlOl/KrJMh0vZM21esXFG4V/0A=
-X-Gm-Gg: ASbGnctR7egsEIZ4NqODTugPVC+/LkO+ngcwYqjFQPjB28qvtjyQPpDMaKb20jcvFqx
-	LNFWmbvNj0H2FGgvVCxgFz7Y0B/cuxsiLjPPACNd6B/zzEnTJdUB4Pk11NLZ1kSikldGf3B3OVU
-	Cggeu+3rKd69GhdUheeh7Hi+3kT93hfIsiELtC2sbE6WtckomQe0diiVeHHOQ3ZEPXQg3L62T6+
-	kYWCD2lyX7sIeOypatJCcRBoCTlCvO8pik4bl5OQ5zXrRE2SeCtZLKZiVP7TsglEi9Oquriko/u
-	XLaFzRbolL+LrW4G+bjQ8CK3up0NCgXB3LBzOS9Nur3EUUqDRnKyr0POF+tkmReT2trH8s+VX8N
-	Vzw7oUeg=
-X-Google-Smtp-Source: AGHT+IFxQnllTRHwGByrqx1g2YVn4J2qkbYVUu3panFmbn3SLpU90yHSQnXHyM2TE1JgFCTaLkO1bA==
-X-Received: by 2002:a05:6122:179b:b0:523:91e8:324c with SMTP id 71dfb90a1353d-523c6286259mr3849004e0c.8.1741272259670;
-        Thu, 06 Mar 2025 06:44:19 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8a84f79sm196031e0c.7.2025.03.06.06.44.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 06:44:19 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-86ba07fe7a4so574318241.2;
-        Thu, 06 Mar 2025 06:44:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWasBU7XTpf9zcII/vz431/uxMZOJNvCVTIAkzHMpXyqO1mfEa3neOivdWxN9FoKn6kkOoRFvqgyiZsBg+85YqWdwk=@vger.kernel.org, AJvYcCWiaShqBgMnijJcxSWvM3KHSyehe/+C+NoCEx29HgS/B1Vm8zbEYv2JM9fX5omKsTYNVhmybK8jGok=@vger.kernel.org
-X-Received: by 2002:a05:6102:c8e:b0:4c1:7be4:eb61 with SMTP id
- ada2fe7eead31-4c2e2971c5fmr4743310137.25.1741272259334; Thu, 06 Mar 2025
- 06:44:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741272836; x=1741877636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L43l5L0aKGMhRPcDQJ0/CC8lI+T8jjg5nrt/2iFPsvQ=;
+        b=hvanAqEKEcF16/CCcr92YMrcnWA4qoypDHTD2AOzjYiCAyBwTrALBdZFe4GJONS46D
+         9kwgTdeCRuopQnzq4DLl++6Ckvrn3yY+NvXjMP+TLymzmuMI6qPy0EkcGB10Avt6GIhq
+         CRwKt7wPmmGPRTDiCMtRRRNnyRovS1dCN+dlXp34BdCSSDik0BzEwUyXg3x/jtr10TSY
+         WObjgWSZNyFmXaSQ9fXvf2M8c4H5rZG1QUhF5/zpn/gy9eUpYp7HEcgynj2qZ3iUbtGd
+         VIjO7/GhCHKf8doiJLoDofz6TY6GB5q4C6MpteKTU6oAwx9a+/kGJF4wxg6w8KW3qlZv
+         xPVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4EWqoeUDiFJvz82SsBgdYfwlpeXe+fBiNYaLG/boja/hZhodDKBGSmMDI8Y6I/s+jF4QxSvk5SsQuISJ0@vger.kernel.org, AJvYcCUknWd0smsoUS1HE5PDGiBGsNErPlTEfbN/LqGcJvpWdSWSdkmRXVBOw+urNQWJmnse+7stNsNpzluAQj2E5r7Kxjs=@vger.kernel.org, AJvYcCVvNPDK2tLLF91MzbrwtS3aZKFwScC682+0iDfkXXHMTv1VZGfkR5Xp1Sh4/H8jFEFl6HvpMV72i7I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWfMqn18vfn5a+yybF/iEZ22qFgAYuHjCRb4CZyA3devWdlIDl
+	nDG9Y5MHdnnpGjFRxADNQcJl7wW9o6GhzvUTRJp4+BBktoEgxvtZrqQ1xQuPpbG2JfjswOxMvzo
+	pClC1ePs56ECDbnmBr+gJ483YF28=
+X-Gm-Gg: ASbGncvmjhNTsGOQxVcRsclXl6EZnF7ftpe8XS8YvqHos4Z/mCVayl8UV4ULTGKmxiJ
+	jlpvGOGM61v09TIe8wkO2/pLDZgzAsz5kFdpVAVcyvVlpI3M8SbykfRQPDbPp5h6m6Isn3dmHS2
+	bQZD8/pChbQVfFwVNQBQfMqHiX/D/Gdlj0fiAH1PZzpPjwdviw4+dvgAyosw==
+X-Google-Smtp-Source: AGHT+IGqmLokJ3KJDo31L30El0w7xded9vOtZlXOa/9XYifoKLV65yNuKzrYpJ7pN5kz/xSTPRyXyI2MgwWh37bvkws=
+X-Received: by 2002:a05:6102:3711:b0:4bb:9b46:3f6f with SMTP id
+ ada2fe7eead31-4c2e27505femr4829705137.1.1741272834716; Thu, 06 Mar 2025
+ 06:53:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303110433.76576-1-biju.das.jz@bp.renesas.com> <20250303110433.76576-5-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250303110433.76576-5-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Mar 2025 15:44:06 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWof-HMkNjLM-a3VsToUQk5aBULLQBkdkMXq3djoBct+w@mail.gmail.com>
-X-Gm-Features: AQ5f1JrWE1EtOoQp9PfqXLrqZPKVXDFb5iyjEMeH-quZA9EHfx3pqPewY05jvPg
-Message-ID: <CAMuHMdWof-HMkNjLM-a3VsToUQk5aBULLQBkdkMXq3djoBct+w@mail.gmail.com>
-Subject: Re: [PATCH 4/4] clk: renesas: r9a09g047: Add XSPI clock/reset
-To: Biju Das <biju.das.jz@bp.renesas.com>
+References: <20250228202655.491035-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250228202655.491035-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWHpSiVzTeGKZ6tQiHp=6qdzeS6yc9inhQENwVEcSt=eQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdWHpSiVzTeGKZ6tQiHp=6qdzeS6yc9inhQENwVEcSt=eQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 6 Mar 2025 14:53:13 +0000
+X-Gm-Features: AQ5f1JquiS-A84gEKB4DV-1EHIFUYxRrS7q3p-iSDtPm8un50mh2qquePY6jixs
+Message-ID: <CA+V-a8uvLbmhngzAXC5Y-onQ3UEOR9jXDYrPtT0GFMRan2bnLw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: rzv2h-cpg: Add macro for defining
+ static dividers
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
 	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Biju,
+Hi Geert,
 
-On Mon, 3 Mar 2025 at 12:04, Biju Das <biju.das.jz@bp.renesas.com> wrote:
+On Thu, Mar 6, 2025 at 2:43=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
 >
-> Add XSPI clock and reset entries.
+> Hi Prabhakar,
 >
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/rzv2h-cpg.h
-> +++ b/drivers/clk/renesas/rzv2h-cpg.h
-> @@ -68,6 +68,7 @@ struct smuxed {
->  #define CPG_CDDIV4             (0x410)
->  #define CPG_CSDIV0             (0x500)
+> On Fri, 28 Feb 2025 at 21:27, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Unlike dynamic dividers, static dividers do not have a monitor bit.
+> > Introduce the `DEF_CSDIV()` macro for defining static dividers, ensurin=
+g
+> > consistency with existing dynamic divider macros.
+> >
+> > Additionally, introduce the `CSDIV_NO_MON` macro to indicate the absenc=
+e
+> > of a monitor bit, allowing the monitoring step to be skipped when
+> > `mon` is set to `CSDIV_NO_MON`.
+> >
+> > Note, `rzv2h_cpg_ddiv_clk_register()` will be re-used instead of generi=
+c
+> > `clk_hw_register_divider_table()` for registering satic dividers
+> > as some of the static dividers require RMW operations.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> +#define CDDIV0_DIVCTL1 DDIV_PACK(CPG_CDDIV0, 4, 3, 1)
->  #define CDDIV0_DIVCTL2 DDIV_PACK(CPG_CDDIV0, 8, 3, 2)
->  #define CDDIV1_DIVCTL0 DDIV_PACK(CPG_CDDIV1, 0, 2, 4)
->  #define CDDIV1_DIVCTL1 DDIV_PACK(CPG_CDDIV1, 4, 2, 5)
+> Thanks for your patch!
+>
+> I understand this is in preparation of adding GBETH/XSPI clocks, and
+> thus related to "[PATCH 2/4] clk: renesas: rzv2h-cpg: Add support for
+> static dividers"[1]?
+>
+I will send out patches for GBETH clocks which will use the
+DEF_CSDIV() macro. Basically DEF_CSDIV() macro will be used IPs which
+require RMW operations whereas in case Biju's patch DEF_SDIV() macro
+will be used IP's which do not need RMW operations.
 
-This hunk is already queued as part of commit 4d6952981244d1e4
-("clk: renesas: r9a09g057: Add entries for the DMACs") in
-renesas-clk-for-v6.15.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+Prabhakar
