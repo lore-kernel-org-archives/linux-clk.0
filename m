@@ -1,113 +1,97 @@
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1726D28F1;
-	Thu,  6 Mar 2025 14:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BC28F5E;
+	Thu,  6 Mar 2025 14:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741269625; cv=none; b=rstG7GrnyRpmo9UxYRtXcMnXkvBlBJU8DLt79U2nkcMpMpYH9jyv8cNSDJWUWfqSx2q+jGbzak4URbCxB8lD7vZk6ULMyNukd66eUnEQtUqRUedleJsZlSCUkbpnX8jBJIIoCBWRv4x+PJ1gJaw4n/GnpTr8GDwGQMmpiBnzZvg=
+	t=1741270755; cv=none; b=n3yj/3RAlLWvkAaduM6Znn2HkedZelBBee7yQHMT5+Fa7cZ5S6dEIt+bvSXIvOU/PpZgPc5uy1eYJSJN35HvYvFU1+Gs542wQbKlyMSpc4lUHGNRFG26dX6zYalkHi4jIIqbn2GAuBlPcrn7AJrlV1l87zJbQojfHJejMOeTLxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741269625; c=relaxed/simple;
-	bh=MX91utLsuHl/Mi5AdWERdY/2ktfYjHMbQfX9saG1XSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=H6Fw3GTWZ/iQnBAR3BHIvWdbhTAaKRW45aXsjuu8iFP1d0MhlWs8/24KnPf+6eK1hV1CqyvAXgMJt5k1weRaCIU09o8PVEnr0FFTllQSWTxRBM7re+w75BHAM+a+ytfLU3sBXARL9DCscOnwe0CU9f4ezderpEKGaEshf0FntJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [119.122.215.89])
-	by smtp.qiye.163.com (Hmail) with ESMTP id d2ca3002;
-	Thu, 6 Mar 2025 22:00:14 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: ziyao@disroot.org
-Cc: amadeus@jmu.edu.cn,
-	conor+dt@kernel.org,
-	cristian.ciocaltea@collabora.com,
-	detlev.casanova@collabora.com,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	jonas@kwiboo.se,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers for RK3528
-Date: Thu,  6 Mar 2025 22:00:09 +0800
-Message-Id: <20250306140009.384469-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250305194612.47171-1-ziyao@disroot.org>
-References: <20250305194612.47171-1-ziyao@disroot.org>
+	s=arc-20240116; t=1741270755; c=relaxed/simple;
+	bh=Q1j8gHpbri1CxFrvKlgL6l/RLbYkeNcBavgftpIbKpo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Chr0tDjkezYOt8+vGqi3Ow+Sfg9aXe9aY5MSbSMy+Nvmh25kkSTmA7/9snyfoP1nZsCHfKIPKmWXcoZMOUdpnNTLq6mZxCV+lcaHozbx3U2LLlhucQRuolX0m4fUM9whN+oYDmZh7M2kcBjUaQzlQyU4dNj8+6s2KGJ8dmPXaMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abf518748cbso131696766b.2;
+        Thu, 06 Mar 2025 06:19:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741270749; x=1741875549;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/nVfiSll248rUsfwTdZE7ebVgcWytnodaotzGSUKaQ4=;
+        b=ClCZ+PBsxy7Rqlx39kJ/zSsVeRarWNo37tfZCOlwSb8q9msh8/B2TH2UM9rE/qF1wO
+         C7ipWiAqkUa/LcG+hZMJtXqH6eWJg4OP0tqFZWRObwv6LM3ivdg7DCCQgJXFjN+a0fiP
+         QSL5Wje7TS+af6JNQN2bpxwAYdzQtadrb7PVppfSZbJ0TVKFu5HwWIw+fW2nFPKMKG3b
+         zqBA/l1ismH1Ub1TdkcflnIwnMIz5z8CUayzE6EnvhLJCguJ/HYsnynvLFkl36Qm0Jm7
+         brHobEBl2q7WgdhzXcMLEzOIoVBMU3mkpH+M3V85L6JgUFQStYGfy1o2IR0utboCXMZo
+         cdNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCxvidpILSqd+oqi3k7oAmH1WKSINiK0NS/9A9yhZ5fMw9AQjWxaDfPSHKyy9CInAwqdEktkIQdE8=@vger.kernel.org, AJvYcCVgA9p8+jaNxITD+3ORC22RAuXOMAb95fIXi5P250nTtu2aSDGywTnKLwyUCF/qD7a3C2GJBOMQ1/Rj@vger.kernel.org, AJvYcCVuhGNksJEPcRSYS1RLmt7zuiPuJvlgwGY+Lfa4hFRE9G3UIwq7ClJI1hnzhG+9lCb193cYT4PD1c+SXArJYX15X1M=@vger.kernel.org, AJvYcCWN6CaZ1y5qBteXMfb+1j+CfNKw+B19eYL26WgyYwmGNskwFsxpLat5Yh3Drz45IgsYV2S8a+p1c6j4b9Mr@vger.kernel.org, AJvYcCX3z75FDRao5tgoDGk+e11kYLxn0U/aWvjryPCcU6QbUrfU+fybj+lFs5dJpPfh6jR+hJOF2Xarfx9Z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8r/lfztxhruQymMT7h6aTk7bYK9BogLcRXf+mWpbuJSStkHpX
+	ActfCyFTgGF7/iJw0JV4gFgG3JZSDjEzcXVmzgZALhwGFwuC/coGHo/ExbUX7Ho=
+X-Gm-Gg: ASbGnctMW0ywuAzdkIq7bX/JAuvB6yhI7cQXBClmcfczANW8wG87ZWTGHaCMIP+eAf8
+	FbUnQt1cgNGtZxAPYhy80pMvGq1ozT+c0MDgoXJH6PpwAzxzyOnlz1AjMSC0KtdI4OiguSkAWiw
+	vGwWbQ4+iasUsNrVgRT31+1/2lAPmux9Lq29JJaD3isu448sjf/HBkv/JG97Zr8l8MUriC1VKIz
+	yzOF3Ss9AsQpFXmWXsm8lS4BSvKi0IctuKxqeE1ylq8C2ue4tbXsq4OW91jZdLf7z9lH5I8SFKM
+	JzeBdIIetLC0kL6pfpEcuA9v/QFH5Bgls/sL3Mo1nENgkYgT6adIBTanawqyKJn3CavBf+0+7nW
+	6kyab+Uc=
+X-Google-Smtp-Source: AGHT+IHc53ajEExPLTmKtS4CSNRVGzQJulovXInObWfYQzjzXRe3tdupsM3v1I1o8ziklEj11TVPpA==
+X-Received: by 2002:a17:907:940d:b0:ac1:e7a2:f5e8 with SMTP id a640c23a62f3a-ac20da87bb6mr831742666b.35.1741270749148;
+        Thu, 06 Mar 2025 06:19:09 -0800 (PST)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2397366b0sm103690766b.95.2025.03.06.06.19.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 06:19:06 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abf538f7be0so137019566b.3;
+        Thu, 06 Mar 2025 06:19:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU3oScEQtf/dRxo5zlJDup1sCGlySalLmywSCvVjwee2z/6yg5+EinUZR7LzWA95YmX4wAMBr3cCgsC@vger.kernel.org, AJvYcCWCw4ffZBLzFZUePHVWj9YbSDauw9NW8Wh2YlWSoY9XBnHkQQDUjBYlou8fQR8cmFkrV+Xkqh6fAm2q@vger.kernel.org, AJvYcCWPBw01Ne78wM5e/A2V292n9S7q1LqtEWuNzIecysJGIia7H4ot1r+pXo9+g0+TOA+hxFDULPLmlwtlvYq3GQpZcT0=@vger.kernel.org, AJvYcCWZ0JA1nyA8sQc3KnRJfnxzAtb4ZK72W9T2atuaHtYqjZ+mXx48OYfA7fTo+ijqJEJFKP6kMYM9av0=@vger.kernel.org, AJvYcCXLDYTknwEqBKxNJZNyB4dXK6xAKuI7ZI+o6oEt3uwnwub7s5KdBWJedw8DKIlWGQOkOQtbJtHNe33m8qd0@vger.kernel.org
+X-Received: by 2002:a17:907:c27:b0:abc:c34:4130 with SMTP id
+ a640c23a62f3a-ac20d8bf8c7mr709557766b.18.1741270746647; Thu, 06 Mar 2025
+ 06:19:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGEhMVktMQhodSkhOQx1OQ1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKTlVDQllXWRYaDxIVHRRZQVlPS0hVSktISk5MTlVKS0tVSk
-	JLS1kG
-X-HM-Tid: 0a956bc1c0ea03a2kunmd2ca3002
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ODo6Cyo4STIDNjM9N0JRDTwZ
-	LB8wChpVSlVKTE9KSU1CTUpOTEJOVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
-	QlVKSUlVSUpOVUNCWVdZCAFZQUpNTEw3Bg++
+References: <20250227122453.30480-1-john.madieu.xa@bp.renesas.com> <20250227122453.30480-3-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20250227122453.30480-3-john.madieu.xa@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Mar 2025 15:18:51 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUoXSerYfb2L_tLmC2-5w9mhoZHc20LSYQgCHxB+bJOtw@mail.gmail.com>
+X-Gm-Features: AQ5f1JpSCkfow0oWUCpHHLfYKAm9cW04YyVX-MUYgns8UbS1cnyHUBvgSNPUv8M
+Message-ID: <CAMuHMdUoXSerYfb2L_tLmC2-5w9mhoZHc20LSYQgCHxB+bJOtw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] clk: renesas: r9a09g047: Add clock and reset
+ signals for the TSU IP
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	p.zabel@pengutronix.de, catalin.marinas@arm.com, will@kernel.org, 
+	john.madieu@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, biju.das.jz@bp.renesas.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Thu, 27 Feb 2025 at 13:25, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> Add required clocks and resets signals for the TSU IP available on the
+> Renesas RZ/G3E SoC
+>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
 
-> +		sdio0: mmc@ffc10000 {
-> +			compatible = "rockchip,rk3528-dw-mshc",
-> +				     "rockchip,rk3288-dw-mshc";
-> +			reg = <0x0 0xffc10000 0x0 0x4000>;
-> +			clocks = <&cru HCLK_SDIO0>,
-> +				 <&cru CCLK_SRC_SDIO0>,
-> +				 <&cru SCLK_SDIO0_DRV>,
-> +				 <&cru SCLK_SDIO0_SAMPLE>;
-> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> +			fifo-depth = <0x100>;
-> +			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-> +			max-frequency = <150000000>;
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>,
-> +				    <&sdio0_det>, <&sdio0_pwren>;
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.15.
 
-The sdio module is usually "non-removable", no need det,
-and pwren may be other gpio (use mmc-pwrseq). So it should
-be `pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>;`
+Gr{oetje,eeting}s,
 
-> +			resets = <&cru SRST_H_SDIO0>;
-> +			reset-names = "reset";
-> +			status = "disabled";
-> +		};
-> +
-> +		sdio1: mmc@ffc20000 {
-> +			compatible = "rockchip,rk3528-dw-mshc",
-> +				     "rockchip,rk3288-dw-mshc";
-> +			reg = <0x0 0xffc20000 0x0 0x4000>;
-> +			clocks = <&cru HCLK_SDIO1>,
-> +				 <&cru CCLK_SRC_SDIO1>,
-> +				 <&cru SCLK_SDIO1_DRV>,
-> +				 <&cru SCLK_SDIO1_SAMPLE>;
-> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> +			fifo-depth = <0x100>;
-> +			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-> +			max-frequency = <150000000>;
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&sdio1_bus4>, <&sdio1_clk>, <&sdio1_cmd>,
-> +				    <&sdio1_det>, <&sdio1_pwren>;
-
-Same here.
-
-> +			resets = <&cru SRST_H_SDIO1>;
-> +			reset-names = "reset";
-> +			status = "disabled";
-> +		};
-
-Thanks,
-Chukun
+                        Geert
 
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
