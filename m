@@ -1,152 +1,142 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475F4DF71;
-	Thu,  6 Mar 2025 14:39:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741271989; cv=pass; b=tkSGiZt/t2jmr8gmCn0nTtVt6sVJLEWTVQs8O9K7lJJNE9FjMAfurrU9VFq4O8RPe11ZlBTM3wZAgjr4UFm+/Af4bpXQvgDghm616YIHqodGC5Aem18kfXq/vbKribrJ8KJpLharBE3XyoIZUlkolNhbiImXKg7+HcwH/8SgQPg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741271989; c=relaxed/simple;
-	bh=WwQuaLVdpGWctaHJJ2OorTeu2KK/SiSnnjYicksgVYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XbysQ4X2eDFyEgK5v4YY0OR1TLNcsDqyVVyXD/JxKd0vINpurKv+NL58+fpEjaj9wWnnvHV12tTXdq8Il93LrPyTbiEoNKSiikTIH83QIla5WMFJ43Ojb0WjkL3IgRihV2UNEs6ftkvcjk7E7SHKVt2mSZw/nnpl4Rw5X8IIDsM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=DlU/j4Al; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="DlU/j4Al"
-ARC-Seal: i=1; a=rsa-sha256; t=1741271947; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=f189TiqKaVtBiJW/aJ8g/VLuBqrAnVJqp8Mg2EopEtKZc26oVpxnjy3yehtmCDoo7D4qpSuK2NmEzpCweb7fR1vqnggfZN0noKIBt+yfDGOcC1uhUZIAGA8yZYx74hhwrwaZEpjp2bGyadbSpMw4YHKVmfZ+Gi9AdEMXyu/pQIY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741271947; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+//d8YaKM1HPYqDbAwn6xqi0NfBlNp/hPbdkEog/gtk=; 
-	b=e8b6+txvoTW3oZGE3zpaG4sgldvr/Ox9KnpAFU2TXac4jwwo/mjAZbNI+bNsUgjOd3YcBTHybdb6vyfZmkaJ1/kuSSRfTTPwO5nMKIh+iLpycP8XGJudZZ2S17xn37AE4HiodVgkij8pYRIYdnAmsIkaNN9RdO9HA63T1icpEqA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741271947;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=+//d8YaKM1HPYqDbAwn6xqi0NfBlNp/hPbdkEog/gtk=;
-	b=DlU/j4AlaxuLJoq2T4Afnf+/npcH5yCOio/5SydONGIIzFiTihflwKdetE1L4f5i
-	oU8XkhJfbAcv9FsopV7l8iiEoRqCD7Peurlo8e+86FEExWdz10aAS5tim1rjOfWdJul
-	Sln4vqPfohijJjafwzjQkBltx8lP5D19+krFhHA0=
-Received: by mx.zohomail.com with SMTPS id 174127194550959.191258083911634;
-	Thu, 6 Mar 2025 06:39:05 -0800 (PST)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Sugar Zhang <sugar.zhang@rock-chips.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-Subject:
- Re: [PATCH 3/7] ASoC: dt-bindings: add schema for rockchip SAI controllers
-Date: Thu, 06 Mar 2025 15:38:58 +0100
-Message-ID: <8514337.T7Z3S40VBb@workhorse>
-In-Reply-To: <81d60550-4929-48c1-b4d3-1473b902bf12@kernel.org>
-References:
- <20250305-rk3576-sai-v1-0-64e6cf863e9a@collabora.com>
- <2376575.ElGaqSPkdT@workhorse>
- <81d60550-4929-48c1-b4d3-1473b902bf12@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E0CDF71;
+	Thu,  6 Mar 2025 14:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741272209; cv=none; b=j7aB2QWhtTgMhC8zaLykSGMsRqFwMJGlC+o+kkP2b8MFENk4hc0KJb5sYbzGhuR3zzeKBC7nwDo2vRoZU15kemXs56+h/mW4s/qsvaCH+CMvO3pSmx3l+udPA85aHA1PPTsedY87jAi9cX1S3ELDcaEAeqCOfEN+Vm63LOJd0LQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741272209; c=relaxed/simple;
+	bh=5Z1DMv21sdf0Ne/VuvH+jXpSrvdILbGxdSvlin/45XM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gl9NG+oLdota9NJ2r16dN1aytLZfsg1ilDQ0f2BHcHDn5diF/ASjbwGLlHKb+tCZBwzWTndc3gOxyUHrTkiCUzgo+9lh7kqZ0gbMZpnsWWaYVnY+pi6f7TgbpCHdH6O7GfcmRWRL1SiM2ynag/mdvSDtKKOtvuGiJvsf1nGupvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-523cbce3fecso686387e0c.0;
+        Thu, 06 Mar 2025 06:43:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741272206; x=1741877006;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RUTS2miX6PVep9uVrOr0nGVc9hTpNXk1WYhPSxq21w8=;
+        b=JAOrzSO+11dlk6lppgZ84K0uruNNedjx9l01cSEQ3ZVwgJAXZQ34ysDIjCHq9fPT9m
+         m4Fpin3RvU7ivqzFoV6/HFNdrnVq5BBfwOZ4U6LAnD0Sp8rre3Tl949aNvYmCwTLn81+
+         yrJt1xa0LpXHa0J6xPlytIR8F2kf4oZcVxPcOgEOv9jL76AgDvrrrqvfjxkzmY19YQBt
+         2MjHWnwhy+tki3IbvWkxHS/93K8+4qKcUTiYesWyQiPL12Q+zLckBCHAxO4IvQ5i80y8
+         ko5PnSy3WDydjjTMgsHF54nF26ZiYQTKVs8XbQgpyjpsdSJzPA0Ab9TSbmHNxMVfl8FA
+         64Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0+sOo5Ba2ZQklVS8Eej9c20JzU6y0yw+M/b8b7IzDj1vqtN8ZXpmbpAKjgJau76iTAmaJOQsjmKHAm/XiCcnXgds=@vger.kernel.org, AJvYcCVQMKAT7lUm470rauYkR0HFfXmQsrN5cGAX3fitn5Z/A0KIvitsbfEIxpVBAWq97N+qlPT/zhq/CaM=@vger.kernel.org, AJvYcCWCJ75FHLmDgqa8lWUnB5RZG+1bbegRvyhBJ+thGm0tJzM+0DfyCuY4DsmsOFqG4R7iH2rXhj8wvKShVxwC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP5ytV2rT5hhtGTnEO/N7EJFyumeCYZ1KWv7pUBcEKWdq/UFyF
+	/SPQBZPuCl1XpdkZqtCVFe6oCeFAYa5XQo1iUhSApodRrRc3ZLOnwyGuVTvUTHA=
+X-Gm-Gg: ASbGncsHWDo9WEuo7E9Z3YVtdnkjUL+dymyUbGPbm14s2d9iIkfmidWrqKsYoKs9bti
+	kcmsn+/v/oNqHuyugNL3l7IUwv+oNDFZFhM5GXYoq4HbKJ8jFQ+fvQtSbuhYifSdIckX7Qjdhvu
+	lKnj+j+bAwYBbpf3P+61yRD1FgoTvyALVvN+mU2Ef8cx3ET2Zfu9KGBEoBKs58kBIxOumywk2V0
+	TwCoBT9ZVtL8SURdulHiVtxfFd7dR63xYuMU+706TPqJFBTVBmFgI7gXTxRbi3bDqlB+t306Wvp
+	c83XYtq3lmG5NGeHIO4sk/gfd8n9bTlYZzGZLnzxy3PAEXElwRVW+wvUrljsqRJrEUVSs9JaBq5
+	Jw9PIOsc2ICg=
+X-Google-Smtp-Source: AGHT+IEFTut9cn2GDd24OgwSJAM2WTxPxVzI97cvUXieVhoF3qUJxmVF8A3r+JTAuL5TrHKe7hsw3Q==
+X-Received: by 2002:a05:6122:2011:b0:520:5e9b:49b3 with SMTP id 71dfb90a1353d-523c614d999mr4981039e0c.3.1741272205794;
+        Thu, 06 Mar 2025 06:43:25 -0800 (PST)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8cbbdb3sm194312e0c.48.2025.03.06.06.43.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 06:43:25 -0800 (PST)
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51eb1a714bfso722134e0c.3;
+        Thu, 06 Mar 2025 06:43:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUZvbGAiKFWFCoPzmNLuj7SdS97ZLRNKNoNmAXQTlHlXPQfwpt7CC1hKmcQE6dfdgGSWGip/P+Mj+MijdGYXVD1zQQ=@vger.kernel.org, AJvYcCWMPoWpRX5mMGxyCUjMga9HfPdJeN8OHZj/h8MHpXPXZI9Ngwr3hmocTq+nl97DRcd4Nc8TQ8PGThm7dzH4@vger.kernel.org, AJvYcCXYsXzAWAD3en6dJMoZWs9vDdWn+zT1S07C4ObXkHK1HoGHEzxlcys3nGR7N7D7u1hIyOTle72T+vM=@vger.kernel.org
+X-Received: by 2002:a05:6102:160d:b0:4c1:869b:7db4 with SMTP id
+ ada2fe7eead31-4c2e27b2c9bmr4823796137.9.1741272203957; Thu, 06 Mar 2025
+ 06:43:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20250228202655.491035-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250228202655.491035-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250228202655.491035-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Mar 2025 15:43:12 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWHpSiVzTeGKZ6tQiHp=6qdzeS6yc9inhQENwVEcSt=eQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jql0xtkZCUNZvipqcOLg7G1CwUSQ5JTJb7udm5La-IerxFIp1PkKoR1tUY
+Message-ID: <CAMuHMdWHpSiVzTeGKZ6tQiHp=6qdzeS6yc9inhQENwVEcSt=eQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: rzv2h-cpg: Add macro for defining
+ static dividers
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thursday, 6 March 2025 14:43:21 Central European Standard Time Krzysztof 
-Kozlowski wrote:
-> On 06/03/2025 14:13, Nicolas Frattaroli wrote:
-> > On Thursday, 6 March 2025 08:42:54 Central European Standard Time
-> > Krzysztof
-> > 
-> > Kozlowski wrote:
-> >> On 05/03/2025 22:24, Nicolas Frattaroli wrote:
-> >>> Rockchip introduced a new audio controller called the "Serial Audio
-> >>> Interface", or "SAI" for short, on some of their newer SoCs. In
-> >>> particular, this controller is used several times on the RK3576 SoC.
-> >>> 
-> >>> Add a schema for it, with only an RK3576 compatible for now. Other SoCs
-> >>> may follow as mainline support for them lands.
-> >>> 
-> >>> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> >>> ---
-> >>> 
-> >>>  .../devicetree/bindings/sound/rockchip,sai.yaml    | 151
-> >>>  +++++++++++++++++++++
-> >> 
-> >> Filename based on compatible.
-> > 
-> > Sure, but more compatibles will follow. Are you certain you want a file
-> > named rockchip,rk3576-sai.yaml to then contain rockchip,rk3528-sai? If so
-> > then I do
-> Yes (or the other way around if 3528 is older)
+Hi Prabhakar,
 
-They were released at about the same time from what I know. I'll pick the 
-RK3576 though since it was the first to get upstream support.
+On Fri, 28 Feb 2025 at 21:27, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Unlike dynamic dividers, static dividers do not have a monitor bit.
+> Introduce the `DEF_CSDIV()` macro for defining static dividers, ensuring
+> consistency with existing dynamic divider macros.
+>
+> Additionally, introduce the `CSDIV_NO_MON` macro to indicate the absence
+> of a monitor bit, allowing the monitoring step to be skipped when
+> `mon` is set to `CSDIV_NO_MON`.
+>
+> Note, `rzv2h_cpg_ddiv_clk_register()` will be re-used instead of generic
+> `clk_hw_register_divider_table()` for registering satic dividers
+> as some of the static dividers require RMW operations.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> 
-> > not understand the reason behind this policy.
-> 
-> So the name will match hardware, instead of sai.yaml, sai2.yaml,
-> sai3.yaml and sai-green-frog.yaml.
+Thanks for your patch!
 
-Downstream called the compatible "sai-v1" so you're onto something here I'm 
-afraid. :)
+I understand this is in preparation of adding GBETH/XSPI clocks, and
+thus related to "[PATCH 2/4] clk: renesas: rzv2h-cpg: Add support for
+static dividers"[1]?
 
-> 
-> >>>  MAINTAINERS                                        |   6 +
-> >>>  2 files changed, 157 insertions(+)
-> >> 
-> >> ...
-> >> 
-> >>> +
-> >>> +  dma-names:
-> >>> +    minItems: 1
-> >>> +    maxItems: 2
-> >>> +    oneOf:
-> >>> +      - const: tx
-> >>> +      - const: rx
-> >>> +      - items:
-> >>> +          - const: tx
-> >>> +          - const: rx
-> >> 
-> >> Why all combinations are possible?
-> > 
-> > Because they are. sai5 in rk3576 is rx only. sai7 is tx only. Others are
-> > both
-> What is sai5 and sai7? Instances on the same chip? Does it mean some of
-> instances can only receive and some only transmit?
+> --- a/drivers/clk/renesas/rzv2h-cpg.h
+> +++ b/drivers/clk/renesas/rzv2h-cpg.h
+> @@ -25,6 +25,14 @@ struct ddiv {
+>         unsigned int monbit:5;
+>  };
+>
+> +/*
+> + * On RZ/V2H(P), the dynamic divider clock supports up to 19 monitor bits,
+> + * while on RZ/G3E, it supports up to 16 monitor bits. Use the maximum value
+> + * `0x1f` to indicate that monitor bits are not supported for static divider
+> + * clocks.
+> + */
+> +#define CSDIV_NO_MON   (0x1f)
+> +
+>  #define DDIV_PACK(_offset, _shift, _width, _monbit) \
+>         ((struct ddiv){ \
+>                 .offset = _offset, \
+> @@ -130,6 +138,8 @@ enum clk_types {
+>                 .parent = _parent, \
+>                 .dtable = _dtable, \
+>                 .flag = CLK_DIVIDER_HIWORD_MASK)
+> +#define DEF_CSDIV(_name, _id, _parent, _ddiv_packed, _dtable) \
+> +       DEF_DDIV(_name, _id, _parent, _ddiv_packed, _dtable)
+>  #define DEF_SMUX(_name, _id, _smux_packed, _parent_names) \
+>         DEF_TYPE(_name, _id, CLK_TYPE_SMUX, \
+>                  .cfg.smux = _smux_packed, \
 
-sai5 and sai7 are instances on the same chip, yes, see rk3576.dtsi changes in 
-this series. Some instances can only receive, some can only transmit. Some can 
-do both. I think the way I wrote the binding already allows for just "tx", 
-just "rx", and "tx, rx" but not "rx, tx", which is I think what we want here.
+However, Biju's patch adds a new composer DEF_SDIV(), and we end up
+with not using DEF_CSDIV() at all?
 
-> 
-> > tx and rx. Do you want me to enforce that those with both are always tx
-> > followed by rx?
-> 
-> Best regards,
-> Krzysztof
+[1] https://lore.kernel.org/20250303110433.76576-3-biju.das.jz@bp.renesas.com
 
-Cheers,
-Nicolas Frattaroli
+Gr{oetje,eeting}s,
 
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
