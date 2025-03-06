@@ -1,123 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93EBC2E3365;
-	Wed,  5 Mar 2025 23:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0391B18C035
+	for <linux-clk@vger.kernel.org>; Thu,  6 Mar 2025 04:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741218443; cv=none; b=K8/eSTBVDHIdJXKK9AUrxbL0KVSJUBK9cGxnNBO2GrUlse8xo8eTJ420KbqUvxJXC4qNVz9nNHsrVVesxWJYwwA50o7snfC7WQZb4w8quAjPtyAV1KU7lmo7zmxP12lW2KSqSKicNfQRvtpa9NkEWA2y5TlqtsLjbA7hncsX48c=
+	t=1741236033; cv=none; b=kSYLsWtxLVmVpSYyeq8QfqlZC+doqYhLO4i+Pd/8tBH4TP10l2BUsXBAzfSov2Mlau891PdL6jeKL7C6VkHQlNJFVHmvaR28jdnFQ0xaRM0gi8HJHbOsSCdw4RizR+A2Qk8EiM8LeY7PU5QG0f5n+6Srcl0VPwWB2B+1ZK9GA+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741218443; c=relaxed/simple;
-	bh=yA+mUIWACYxP3Wr1A2JYKZlm4l4xjgxWXhCe3n4HpBw=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=DWkNjWhfMaDFUjtkKJZTjuhuz2OP6B9hyisF+GhvGqFSfVFqiYFODodcLIG9nVvcXrlT0OakW2bfXPKVfFlppqQp9+Y4xd7L1vOUY6h03GNQMxZU4f146CA3bdKEiiQydYoGTLTJc/6XNwbcbX6MPN4hJkG6OlcmHuOlOCOCxg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l44AdQvF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741236033; c=relaxed/simple;
+	bh=TNmgYWlFDAMgA64pxjarHkEGTDwxdEKRi2stuvaaK3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fA7LrfLsfu0tZkrg9gISeN8WRVGxCgQJY95wP2jDhmoraHkoHBncQX2Dd+3TobR5Mfg19h6B/8tmjynn5midTz2d/OARBA76b8wxbn9BeUBEvFr45pPZa2wLmvEJi7mzeJqGl9xGBUqZ/Bg8ExBdixuc9pQvkuv9q0EriaZJN44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zlcOQw16; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l44AdQvF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D28FCC4CED1;
-	Wed,  5 Mar 2025 23:47:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741218442;
-	bh=yA+mUIWACYxP3Wr1A2JYKZlm4l4xjgxWXhCe3n4HpBw=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=l44AdQvFTlXE8ARf+BNvTDCRbaYon8o/M9LdZYejmCWWUovoprvtNhQqzc2mtMdqf
-	 u3MrpKKSG1SplcM2kQASQXt2pQdGTQv0OnyK/ZlLSaynTp/cGd7pzsxm3zhqRdvlz9
-	 iY0hMoysDkpLpa5ypgSn5c+1nmu/x6mBNtb7cMnizpkkhKJO+/XDl55ph335On0cch
-	 bzaPCrv6k1sHMTnHhZKK+AC1g1ByoOfW9aNm3ypSDDSm/T60LaFgYl2q0akHmMkB4O
-	 qKYxQRA/hvbDzKe9yImCbDGWYTlWBrHL8N6wT9IX+6X720wGg56rIxKMSYq+jFMZC7
-	 N3zX6hQSEXOOg==
-Message-ID: <de50dd55e1285726e8d5ebae73877486.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zlcOQw16"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22349bb8605so3158155ad.0
+        for <linux-clk@vger.kernel.org>; Wed, 05 Mar 2025 20:40:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741236031; x=1741840831; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9YP9oXkSaz7kqYoQl3h7VT7PIEJ2wgfc59g3M6xM54=;
+        b=zlcOQw16/QRjGvkg6iYXAaWKqSt4tLJAlqPLBUoJQ1CppdX0sVHh98ZKxxl46UoAh2
+         C4aoLbuhHV3okiB1l6XeVyspWnW8i827mEuJZdiNZsQyUjNXdsBO9ksV1qTxabjXloC+
+         ZzSMCapgEKVaaf8bxgEvw7VGKq0J1CkD017RH320wIwyjSAug6bljJBCjJ9ezAOMWDmc
+         4jOrlb5qzsnmai4WW6XWiDVcyE23aof8rjh6tVf99YMK44PtRjCilKqkB8o42+HGD0qS
+         MTuY/jYQbdRYmbIrnz6dgSlCi7VwUVeYSI5wH5ss69qNehHyJgCcA2rG//uGqvQWazrB
+         PYYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741236031; x=1741840831;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y9YP9oXkSaz7kqYoQl3h7VT7PIEJ2wgfc59g3M6xM54=;
+        b=T3msOjXEXyqnR6yyPZgPlo7dtOx5wvSmdoDNVt6WrDUmWadqxtBkGMbcFW15SNA0Ng
+         e3tHhxrel/J44K3CiGMSxO+mTUcIPTOEbRkdHNNgTr/iaInK5Oqf9Te5KaHvR4WqbwUe
+         MhVfF3HN+wRM1EioDIX8kJJm7qzwkCwhAAjH9Ukl73KJHF1drrrmMwnhVdL5ddlnOcSE
+         C23pcJn068m100PNUO6SQHtXbVC/5jaclW5altGomoSK0kLsqCeB8MSovJpmgAur0v4j
+         sfEQXVgbmN7t3JMOaaZCDzX+rzTWl34DAzqi21NW2RBmHgUtB6QvmcnQKTZ0nN5HY3G5
+         2grg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdqRLG2BzK57rWdPFt61fjTNpdvcyzA+sYgjfz8SbRfs76O0srxp/qBm1mKjxdADTeoK3KN8D+8hs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJnvsIn0SDhINQVrdz6GldeiZY1EOBBnhK6sRpg8FARjw9c3/D
+	3gGjYrQeVGKyYAzkvdoRqQ6w4AJNZgmxPqZDTbMhxqcxxdYYIgkhqZSBSfQ8Tb0=
+X-Gm-Gg: ASbGncvgGGqs6MfYVGRhAcBskPhgVPx9VZX/15vGySTnycURAVHfURWU01ZMDVW+RPS
+	4mkSAy3rx70wbBQncNDSO3K+kQDdZtLIH43pL2MeQKi+EXURgsEhM7qgcVwRdfdyDC4Hll+fSZZ
+	I0AKV7HUUKjmxRURo+StxNspFnmhaHiRzcSAhCPPn3rSYeXtz2Sp5S9avRNXoNWudb/9/1w8U8y
+	XZRKr5a7I35BkA3ITmUixNXIg4lyK6+usNrWAWC5vDYi3F8RRdmDuLowddMdX+rNt7OP/VpsM1A
+	bzTsZ3tllmjURDvCXytKdSvnjmVZ7MFZyuTZGHF/ROakyQ==
+X-Google-Smtp-Source: AGHT+IG7J6Pxt1P8Fs8iADeUT/+TxuIZLpkhrxazqlARnEVvRjqbFettsput67aKtZ+Lr4L7IRHItg==
+X-Received: by 2002:a17:903:32c2:b0:223:66bc:f1e6 with SMTP id d9443c01a7336-223f1c6afa6mr107513485ad.5.1741236031221;
+        Wed, 05 Mar 2025 20:40:31 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f75dsm2656285ad.122.2025.03.05.20.40.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 20:40:30 -0800 (PST)
+Date: Thu, 6 Mar 2025 10:10:28 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
+Message-ID: <20250306044028.5d2w4og2juclktqs@vireshk-i7>
+References: <cover.1740995194.git.viresh.kumar@linaro.org>
+ <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
+ <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
+ <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
+ <CANiq72=sU1sHvamC5REFPEC1aOVdZw9EKdxOgkUYESTR2yh3iQ@mail.gmail.com>
+ <20250305114659.k5pptszvmusblynm@vireshk-i7>
+ <2c17361891c4eb7edd947e5384cc9741.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250303143629.400583-5-m.wilczynski@samsung.com>
-References: <20250303143629.400583-1-m.wilczynski@samsung.com> <CGME20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0@eucas1p1.samsung.com> <20250303143629.400583-5-m.wilczynski@samsung.com>
-Subject: Re: [PATCH v1 4/4] clk: thead: Add GPU clock gate control with CLKGEN reset support
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Michal Wilczynski <m.wilczynski@samsung.com>
-To: Michal Wilczynski <m.wilczynski@samsung.com>, alex@ghiti.fr, aou@eecs.berkeley.edu, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, jszhang@kernel.org, krzk+dt@kernel.org, m.szyprowski@samsung.com, mturquette@baylibre.com, p.zabel@pengutronix.de, palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org, wefu@redhat.com
-Date: Wed, 05 Mar 2025 15:47:20 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2c17361891c4eb7edd947e5384cc9741.sboyd@kernel.org>
 
-Quoting Michal Wilczynski (2025-03-03 06:36:29)
-> The T-HEAD TH1520 has three GPU clocks: core, cfg, and mem. The mem
-> clock gate is marked as "Reserved" in hardware, while core and cfg are
-> configurable. In order for these clock gates to work properly, the
-> CLKGEN reset must be managed in a specific sequence.
->=20
-> Move the CLKGEN reset handling to the clock driver since it's
-> fundamentally a clock-related workaround [1]. This ensures that clk_enabl=
-ed
-> GPU clocks stay physically enabled without external interference from
-> the reset driver.  The reset is now deasserted only when both core and
-> cfg clocks are enabled, and asserted when either of them is disabled.
->=20
-> The mem clock is configured to use nop operations since it cannot be
-> controlled.
->=20
-> Link: https://lore.kernel.org/all/945fb7e913a9c3dcb40697328b7e9842b75fea5=
-c.camel@pengutronix.de [1]
->=20
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-[...]
-> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th=
-1520-ap.c
-> index ea96d007aecd..1dfcde867233 100644
-> --- a/drivers/clk/thead/clk-th1520-ap.c
-> +++ b/drivers/clk/thead/clk-th1520-ap.c
-> @@ -862,17 +863,70 @@ static CCU_GATE(CLK_SRAM1, sram1_clk, "sram1", axi_=
-aclk_pd, 0x20c, BIT(3), 0);
-[...]
-> =20
->  static CCU_GATE_CLK_OPS(CLK_GPU_MEM, gpu_mem_clk, "gpu-mem-clk",
->                         video_pll_clk_pd, 0x0, BIT(2), 0, clk_nop_ops);
-> +static CCU_GATE_CLK_OPS(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk",
-> +                       video_pll_clk_pd, 0x0, BIT(3), 0, ccu_gate_gpu_op=
-s);
-> +static CCU_GATE_CLK_OPS(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
-> +                       video_pll_clk_pd, 0x0, BIT(4), 0, ccu_gate_gpu_op=
-s);
-> +
-> +static void ccu_gpu_clk_disable(struct clk_hw *hw)
-> +{
-> +       struct ccu_gate *cg =3D hw_to_ccu_gate(hw);
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(&gpu_reset_lock, flags);
-> +
-> +       ccu_disable_helper(&cg->common, cg->enable);
-> +
-> +       if ((cg =3D=3D &gpu_core_clk &&
-> +            !clk_hw_is_enabled(&gpu_cfg_aclk.common.hw)) ||
-> +           (cg =3D=3D &gpu_cfg_aclk &&
-> +            !clk_hw_is_enabled(&gpu_core_clk.common.hw)))
-> +               reset_control_assert(gpu_reset);
+On 05-03-25, 14:31, Stephen Boyd wrote:
+> Does this mean that a clk consumer has to keep the Result returned from
+> enable() in scope until they want to disable the clk?
 
-Why can't the clk consumer control the reset itself? Doing this here is
-not ideal because we hold the clk lock when we try to grab the reset
-lock. These are all spinlocks that should be small in lines of code
-where the lock is held, but we're calling into an entire other framework
-under a spinlock. If an (unrelated) reset driver tries to grab the clk
-lock it will deadlock.
+Yes and no.
 
-I see the commit text talks about this being a workaround. I'm not sure
-what the workaround is though. I've seen designs where the reset doesn't
-work unless the clk is enabled because the flops have to be clocking for
-the reset to propagate a few cycles, or the clk has to be disabled so
-that the reset controller can do the clocking, or vice versa for the clk
-not working unless the reset is deasserted. Long story short, it's
-different between SoCs.
+> I don't see how
+> that makes sense, because most of the time a consumer will enable a clk
+> during probe and leave it enabled until system suspend or runtime PM
+> suspend time. At that point, they would disable the clk explicitly with
+> disable(), but now they would need to drop a reference to do that?
 
-Likely the reset and clk control should be coordinated in a PM domain
-for the device so that when the device is active, the clks are enabled
-and the reset is deasserted in the correct order for the SoC. Can you do
-that?
+Broadly there are two type of clk users I believe:
 
-> +
-> +       spin_unlock_irqrestore(&gpu_reset_lock, flags);
-> +}
+1. clk is enabled / disabled from same routine:
+
+   In this case the result can be kept in a local variable and the matching
+   cleanup fn will be called at exit.
+
+   fn transfer_data(...) -> Result {
+        let _guard = clk.enable()?;
+
+        ...
+        transfer-data here
+        ...
+        // clk.disable() will be called automatically as soon as _guard goes out
+        // of scope.
+   }
+
+2. clk is enabled / disabled from different routines:
+
+   In this case the caller needs to call dismiss to avoid the automatic freeing
+   of resource. Alternatively the returned value can be stored too somewhere,
+   but I am not sure if it what users will end up doing.
+
+   fn probe(...) -> Result {
+        clk.enable()?.dismiss();
+
+        ...
+   }
+
+   fn remove (...) {
+        clk.disable();
+
+        ...
+   }
+
+-- 
+viresh
