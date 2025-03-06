@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B55184E;
-	Thu,  6 Mar 2025 07:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38F9184E;
+	Thu,  6 Mar 2025 07:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741246749; cv=none; b=jqO+kPcbg3caqo9YpbJK8u00gMbL/B/yKsZuBJPXGo3HHYFdAae4nlSi2Rv8NSIKCuv6r78BVy2iQJbiwoE5HraC64Qi0fJOTFU2ngkRQzL7sUHYSZCH98KmTadnPPcPothrxJdUaXJb32ApWLwsUviQ1JIE9E1TT4YCs0vZhpI=
+	t=1741246985; cv=none; b=enTBCuLHn4H4zdBCSxiGZJvDeAdN6COcdiFvWOCcFzcwaUazjMq6+rChFysZaQQwUsHzu41o/ErlazeOEmaiWhQ7h6WEhuxC+1Gb5h/oW0IZ+jtTLbn1Atyy+CYD/A1980DZX2BdbYAuTwztVYBC8XaSOmUAfkAqEtkbo8B7+T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741246749; c=relaxed/simple;
-	bh=yd3hdP6ibVhZ0o9gpyI7jYeuazV3JKJBYYbwXbdhElQ=;
+	s=arc-20240116; t=1741246985; c=relaxed/simple;
+	bh=VCgbyCzqfls1y5Bd7zorPMjDYWw8WmCCGOmt74/Sv/E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nmkZs/nhCInREpxosgdnl0qrzsa4qHEiwX9ofDXFYbHRm4OLTBxtNEPS/9jab1aXarL1sJdgg7H6fNYhyQ6t0KGyijpzUgyUpzekfvcKIiccy1U/Pnh73RFojGtAWfpmPQ3dhOuBg+aaE3rSo2YxuW2NB4BTCqBu5E12bSLF7UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1uzu+FA; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=LIA3hCVYnCuQZgB4ufOmXInfl9FLOMJ+PyZX/RYA1JAKKn4L5dD4kYDxb0o2saXaD6dqELdyc/BQdrv3E9h2/8SCrxfiUO2BCWayGjZfIdBJInZ3hTMBHZIKZe6jwGu1ciuIgx91BZfUPML2SNLQAhWSJLL2YCO224dSnCmngXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIQkT5GY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1uzu+FA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA41C4CEE0;
-	Thu,  6 Mar 2025 07:39:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIQkT5GY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40CB9C4CEE0;
+	Thu,  6 Mar 2025 07:42:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741246749;
-	bh=yd3hdP6ibVhZ0o9gpyI7jYeuazV3JKJBYYbwXbdhElQ=;
+	s=k20201202; t=1741246985;
+	bh=VCgbyCzqfls1y5Bd7zorPMjDYWw8WmCCGOmt74/Sv/E=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S1uzu+FAiSnXxlTXQGpeLzsWUk7zlQbDkuzmCNlLvoPzLxL+qmXr4LdqcJIrQ8mF7
-	 pZIeq1whJE3PQHITv+La936/noeutrnSBbkLvbKZRV4XupZqV7c4IZXJlR9xkSzj1/
-	 78FZAoiC1/zUNJRq0ACuHdXOsLT9kSa1p1fwFVYtFBDCMwTIog+Rv9ODu/CfbNgQps
-	 4HjycScgYW2NtqizEyqrEw9bHW/XaF9+41I6S+p92aDm+88umt9/FpK27aFfzktG7Y
-	 ALBkCCIdTfvG9ZEfHEF4UwNHteXY9SoSYWJJV0+AJuQcEbgmO+LgkZfZdphimSqGio
-	 g/8hlpArIbDcQ==
-Message-ID: <295caed0-7db6-4b87-9991-e4b7e7621f38@kernel.org>
-Date: Thu, 6 Mar 2025 08:38:58 +0100
+	b=oIQkT5GYdjTm856f2+s4bNtGI2PyU8lQCFOICAeutx+q4rjfuoU7MCD4r9Pdsz8s+
+	 dVt1JCnCVK+zgMDpUhWoWe7HcDYea3GQL6Mx4D7QjMWXlrXNMJk3iXPnvep/g02w4c
+	 V4KooCVrAt/skqiniHAN5uee6IV+cEDMgxjWyzvXrrEkcJnrn2GFs2Fw/UlchHYmER
+	 NhGriQYQBGETg4rl3CucIYOT/SMq0ZXFz+CJlSI2zyS+NM4xEh3LGlnP/LApHwD+nd
+	 bJGNU24o7IrHodjMVfRrD3t8/SZA/2qHO9WTnQBNUKso5YGmWTQ5Q42mOUt0UcE9Bc
+	 w+WcwuBRZug0A==
+Message-ID: <ffd6287c-cbfd-4ba8-9332-45bad4e60583@kernel.org>
+Date: Thu, 6 Mar 2025 08:42:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] dt-bindings: clock: rk3576: add IOC gated clocks
+Subject: Re: [PATCH 3/7] ASoC: dt-bindings: add schema for rockchip SAI
+ controllers
 To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -52,9 +53,9 @@ Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
 References: <20250305-rk3576-sai-v1-0-64e6cf863e9a@collabora.com>
- <20250305-rk3576-sai-v1-1-64e6cf863e9a@collabora.com>
-Content-Language: en-US
+ <20250305-rk3576-sai-v1-3-64e6cf863e9a@collabora.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -98,18 +99,133 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250305-rk3576-sai-v1-1-64e6cf863e9a@collabora.com>
+In-Reply-To: <20250305-rk3576-sai-v1-3-64e6cf863e9a@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/03/2025 22:24, Nicolas Frattaroli wrote:
-> Certain clocks on the RK3576 are additionally essentially "gated" behind
-> some bit toggles in the IOC GRF range. Downstream ungates these by
-> adding a separate clock driver that maps over the GRF range and leaks
-> their implementation of this into the DT.
+> Rockchip introduced a new audio controller called the "Serial Audio
+> Interface", or "SAI" for short, on some of their newer SoCs. In
+> particular, this controller is used several times on the RK3576 SoC.
+> 
+> Add a schema for it, with only an RK3576 compatible for now. Other SoCs
+> may follow as mainline support for them lands.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+>  .../devicetree/bindings/sound/rockchip,sai.yaml    | 151 +++++++++++++++++++++
+
+Filename based on compatible.
+
+>  MAINTAINERS                                        |   6 +
+>  2 files changed, 157 insertions(+)
 > 
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+...
+
+> +
+> +  dma-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +    oneOf:
+> +      - const: tx
+> +      - const: rx
+> +      - items:
+> +          - const: tx
+> +          - const: rx
+
+Why all combinations are possible?
+
+> +
+> +  clocks:
+> +    items:
+> +      - description: master audio clock
+> +      - description: AHB clock driving the interface
+> +
+> +  clock-names:
+> +    items:
+> +      - const: mclk
+> +      - const: hclk
+> +
+> +  resets:
+> +    minItems: 1
+> +    maxItems: 2
+> +    description: resets for the mclk domain and ahb domain
+
+List the items instead with description and minItems: 1.
+
+> +
+> +  reset-names:
+> +    minItems: 1
+> +    items:
+> +      - const: m
+> +      - const: h
+> +
+> +  port:
+> +    $ref: audio-graph-port.yaml#
+> +    unevaluatedProperties: false
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +  "#sound-dai-cells":
+> +    const: 0
+> +
+> +  rockchip,sai-rx-route:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Defines the mapping of the controller's SDI ports to actual input lanes,
+> +      as well as the number of input lanes.
+> +      rockchip,sai-rx-route = <3> would mean sdi3 is receiving from data0, and
+> +      that there is only one receiving lane.
+> +      This property's absence is to be understood as only one receiving lane
+> +      being used if the controller has capture capabilities.
+> +    maxItems: 4
+> +    items:
+> +      enum: [0, 1, 2, 3]
+> +
+> +  rockchip,sai-tx-route:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Defines the mapping of the controller's SDO ports to actual output lanes,
+> +      as well as the number of output lanes.
+> +      rockchip,sai-tx-route = <3> would mean sdo3 is sending to data0, and
+
+I understand this is only example because = <3> would not be allowed
+(test it).
+
+> +      that there is only one transmitting lane.
+> +      This property's absence is to be understood as only one transmitting lane
+> +      being used if the controller has playback capabilities.
+> +    maxItems: 4
+> +    items:
+> +      enum: [0, 1, 2, 3]
+> +
+> +  rockchip,always-on:
+> +    type: boolean
+> +    description:
+> +      The hardware requires this controller to remain turned on.
+
+How hardware requires this? You rather miss proper PM domain handling or
+some other resources.
+
+> +
+> +
+
+Just one blank line.
+
+> +required:
+> +  - compatible
+> +  - reg
+> +  - dmas
+> +  - dma-names
+> +  - clocks
+> +  - clock-names
+> +  - "#sound-dai-cells"
+> +
+> +unevaluatedProperties: false
+
+
 
 Best regards,
 Krzysztof
