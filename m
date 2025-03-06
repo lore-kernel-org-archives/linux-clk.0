@@ -1,120 +1,205 @@
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DEC502BE;
-	Thu,  6 Mar 2025 14:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADAF20764A;
+	Thu,  6 Mar 2025 15:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741272838; cv=none; b=Nt1pJlW4MhTmvXyqUgFWq67FziJDaRn45ZxIUBPTwrXYh1FjRiCMt4c5+RLt5UXHm6xU6owAyp653z/e/7fh081nNMaYyFWXJSQjkjm8fOG2H1vZUrWXg2KdvNINqo7HW2JPu2V080siRgBexNK+tBb5yz+Hdx09mR6g/Rg/GCc=
+	t=1741274753; cv=none; b=m0Adipqi2vyE+T10MGQZ7d4ln3CPv+R8STw07c6ftBu55Idz6Z1hZgTGulY7Z7y3gu9bVBgmxR3O91PQUWk5iwWsfhCZN/ZUgvZ29gSCSZ1ngnrLKRpr96aeDIlDD1R9ezVMhdXYGYIL2GfJrynWjr1LArJYhaouOHeOOLdlaMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741272838; c=relaxed/simple;
-	bh=L43l5L0aKGMhRPcDQJ0/CC8lI+T8jjg5nrt/2iFPsvQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sk0FLAOBubSALc4Mhk3vhzVQSUGaBcgDaz8d7x0bJlh8yEJM09oqvsl7+m9c1XwP4Dh7422QwJRTfWCSoKNpbJprpF9/tJiSYkrtnXsBkaKFap9kL/JGnVuF7ssWzoXP3BPlpmAna1JPI7N1aDzwT9j5CUZhx7WZfz1/x1f9Qi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IbEWhMXn; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IbEWhMXn"
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-867129fdb0aso660683241.1;
-        Thu, 06 Mar 2025 06:53:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741272836; x=1741877636; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L43l5L0aKGMhRPcDQJ0/CC8lI+T8jjg5nrt/2iFPsvQ=;
-        b=IbEWhMXnK07h9WJ8Mk86Z6h3jBUTJrwZLJOTYflq8cUzvz+v8gnuMCnofG8vQYLj8a
-         ZsWt1MKqPR1CpvmLJwWO/IFJ7i1C98pYGlB9p9RMZtSphPj3Aq0H9da4wvwOrnlP3WU2
-         687Ol+GslPf04FHDBdZmkUUqHdgfMUWhfKzUPTfKVDI3G9TZXoa3BzFWY3/9gQ4rtkdW
-         8eR0DeQG9Kf3AgcBsQuu/xDG2hAexR6G2jDPsz4lBQNUzx1Fu4r+v1/dP9cEOEZWybLE
-         nSz2uT2R9yjvTpM0O7rGnO0v0EoadK4k2vP0gN6Fa0GFJAFwyy7TVG3elaT8/AKcBOgj
-         yf+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741272836; x=1741877636;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L43l5L0aKGMhRPcDQJ0/CC8lI+T8jjg5nrt/2iFPsvQ=;
-        b=hvanAqEKEcF16/CCcr92YMrcnWA4qoypDHTD2AOzjYiCAyBwTrALBdZFe4GJONS46D
-         9kwgTdeCRuopQnzq4DLl++6Ckvrn3yY+NvXjMP+TLymzmuMI6qPy0EkcGB10Avt6GIhq
-         CRwKt7wPmmGPRTDiCMtRRRNnyRovS1dCN+dlXp34BdCSSDik0BzEwUyXg3x/jtr10TSY
-         WObjgWSZNyFmXaSQ9fXvf2M8c4H5rZG1QUhF5/zpn/gy9eUpYp7HEcgynj2qZ3iUbtGd
-         VIjO7/GhCHKf8doiJLoDofz6TY6GB5q4C6MpteKTU6oAwx9a+/kGJF4wxg6w8KW3qlZv
-         xPVA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4EWqoeUDiFJvz82SsBgdYfwlpeXe+fBiNYaLG/boja/hZhodDKBGSmMDI8Y6I/s+jF4QxSvk5SsQuISJ0@vger.kernel.org, AJvYcCUknWd0smsoUS1HE5PDGiBGsNErPlTEfbN/LqGcJvpWdSWSdkmRXVBOw+urNQWJmnse+7stNsNpzluAQj2E5r7Kxjs=@vger.kernel.org, AJvYcCVvNPDK2tLLF91MzbrwtS3aZKFwScC682+0iDfkXXHMTv1VZGfkR5Xp1Sh4/H8jFEFl6HvpMV72i7I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWfMqn18vfn5a+yybF/iEZ22qFgAYuHjCRb4CZyA3devWdlIDl
-	nDG9Y5MHdnnpGjFRxADNQcJl7wW9o6GhzvUTRJp4+BBktoEgxvtZrqQ1xQuPpbG2JfjswOxMvzo
-	pClC1ePs56ECDbnmBr+gJ483YF28=
-X-Gm-Gg: ASbGncvmjhNTsGOQxVcRsclXl6EZnF7ftpe8XS8YvqHos4Z/mCVayl8UV4ULTGKmxiJ
-	jlpvGOGM61v09TIe8wkO2/pLDZgzAsz5kFdpVAVcyvVlpI3M8SbykfRQPDbPp5h6m6Isn3dmHS2
-	bQZD8/pChbQVfFwVNQBQfMqHiX/D/Gdlj0fiAH1PZzpPjwdviw4+dvgAyosw==
-X-Google-Smtp-Source: AGHT+IGqmLokJ3KJDo31L30El0w7xded9vOtZlXOa/9XYifoKLV65yNuKzrYpJ7pN5kz/xSTPRyXyI2MgwWh37bvkws=
-X-Received: by 2002:a05:6102:3711:b0:4bb:9b46:3f6f with SMTP id
- ada2fe7eead31-4c2e27505femr4829705137.1.1741272834716; Thu, 06 Mar 2025
- 06:53:54 -0800 (PST)
+	s=arc-20240116; t=1741274753; c=relaxed/simple;
+	bh=ek2KnULJJhIppc1iWfFpePLW9/Ovr7E5JzOQDNE+EFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u3h+zJFl8Wfc6L9eqcVoFKth79jipcziIFhuzZymWU/4oO1CGkmDHAb7hN50IM6e3NJ3mLvuBNG0q8PBcc7yWqOMhKwwdCdQJGp6731T2TEe6CVMsZXELSS8Ri1EyrdttKXxYNPAy4Y4k5BYCUBNfBMI1atiB/f5RN4O3TwWdDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: a2hzvrSvRI+wc2sssXRneA==
+X-CSE-MsgGUID: az+CKRiVT4OqA/PkeayCLw==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 07 Mar 2025 00:25:50 +0900
+Received: from superbuilder.administration.lan (unknown [10.226.93.123])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 52B2A4007213;
+	Fri,  7 Mar 2025 00:25:47 +0900 (JST)
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+To: thierry.bultel@linatsea.fr
+Cc: linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org,
+	paul.barker.ct@bp.renesas.com,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 02/13] dt-bindings: clock: Add cpg for the Renesas RZ/T2H SoC
+Date: Thu,  6 Mar 2025 16:24:36 +0100
+Message-ID: <20250306152451.2356762-3-thierry.bultel.yh@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
+References: <20250306152451.2356762-1-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228202655.491035-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250228202655.491035-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWHpSiVzTeGKZ6tQiHp=6qdzeS6yc9inhQENwVEcSt=eQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWHpSiVzTeGKZ6tQiHp=6qdzeS6yc9inhQENwVEcSt=eQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 6 Mar 2025 14:53:13 +0000
-X-Gm-Features: AQ5f1JquiS-A84gEKB4DV-1EHIFUYxRrS7q3p-iSDtPm8un50mh2qquePY6jixs
-Message-ID: <CA+V-a8uvLbmhngzAXC5Y-onQ3UEOR9jXDYrPtT0GFMRan2bnLw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: renesas: rzv2h-cpg: Add macro for defining
- static dividers
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
 
-On Thu, Mar 6, 2025 at 2:43=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, 28 Feb 2025 at 21:27, Prabhakar <prabhakar.csengg@gmail.com> wrot=
-e:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Unlike dynamic dividers, static dividers do not have a monitor bit.
-> > Introduce the `DEF_CSDIV()` macro for defining static dividers, ensurin=
-g
-> > consistency with existing dynamic divider macros.
-> >
-> > Additionally, introduce the `CSDIV_NO_MON` macro to indicate the absenc=
-e
-> > of a monitor bit, allowing the monitoring step to be skipped when
-> > `mon` is set to `CSDIV_NO_MON`.
-> >
-> > Note, `rzv2h_cpg_ddiv_clk_register()` will be re-used instead of generi=
-c
-> > `clk_hw_register_divider_table()` for registering satic dividers
-> > as some of the static dividers require RMW operations.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> I understand this is in preparation of adding GBETH/XSPI clocks, and
-> thus related to "[PATCH 2/4] clk: renesas: rzv2h-cpg: Add support for
-> static dividers"[1]?
->
-I will send out patches for GBETH clocks which will use the
-DEF_CSDIV() macro. Basically DEF_CSDIV() macro will be used IPs which
-require RMW operations whereas in case Biju's patch DEF_SDIV() macro
-will be used IP's which do not need RMW operations.
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+---
+Changes v3->v4:
+  - Handle maxItems and clocks names properly in schema. 
+---
+ .../bindings/clock/renesas,cpg-mssr.yaml      | 56 +++++++++++++------
+ .../clock/renesas,r9a09g077-cpg-mssr.h        | 49 ++++++++++++++++
+ 2 files changed, 89 insertions(+), 16 deletions(-)
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
 
-Cheers,
-Prabhakar
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+index 77ce3615c65a..acbb555a064e 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+@@ -52,9 +52,10 @@ properties:
+       - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+       - renesas,r8a779g0-cpg-mssr # R-Car V4H
+       - renesas,r8a779h0-cpg-mssr # R-Car V4M
++      - renesas,r9a09g077-cpg-mssr # RZ/T2H
+ 
+   reg:
+-    maxItems: 1
++    description: Registers base address
+ 
+   clocks:
+     minItems: 1
+@@ -63,11 +64,6 @@ properties:
+   clock-names:
+     minItems: 1
+     maxItems: 2
+-    items:
+-      enum:
+-        - extal     # All
+-        - extalr    # Most R-Car Gen3 and RZ/G2
+-        - usb_extal # Most R-Car Gen2 and RZ/G1
+ 
+   '#clock-cells':
+     description: |
+@@ -92,16 +88,6 @@ properties:
+       the datasheet.
+     const: 1
+ 
+-if:
+-  not:
+-    properties:
+-      compatible:
+-        items:
+-          enum:
+-            - renesas,r7s9210-cpg-mssr
+-then:
+-  required:
+-    - '#reset-cells'
+ 
+ required:
+   - compatible
+@@ -113,6 +99,44 @@ required:
+ 
+ additionalProperties: false
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a09g077-cpg-mssr
++    then:
++      properties:
++        reg:
++          minItems: 2
++          maxItems: 2
++        clock-names:
++          items:
++            - const: extal
++            - const: loco
++    else:
++      properties:
++        reg:
++          minItems: 1
++          maxItems: 1
++        clock-names:
++          items:
++            enum:
++              - extal     # All
++              - extalr    # Most R-Car Gen3 and RZ/G2
++              - usb_extal # Most R-Car Gen2 and RZ/G1
++
++  - if:
++      not:
++        properties:
++          compatible:
++            items:
++              enum:
++                - renesas,r7s9210-cpg-mssr
++    then:
++      required:
++        - '#reset-cells'
++
+ examples:
+   - |
+     cpg: clock-controller@e6150000 {
+diff --git a/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+new file mode 100644
+index 000000000000..27c9cdcdf7c8
+--- /dev/null
++++ b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++ *
++ * Copyright (C) 2025 Renesas Electronics Corp.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* R9A09G077 CPG Core Clocks */
++#define R9A09G077_CA55C0		0
++#define R9A09G077_CA55C1		1
++#define R9A09G077_CA55C2		2
++#define R9A09G077_CA55C3		3
++#define R9A09G077_SDHIHS		4
++#define R9A09G077_CLK_PLL1_ETH_PHY	5
++#define R9A09G077_CLK_OSC_ETH_PHY	6
++#define R9A09G077_CLK_ETHPHY		7
++#define R9A09G077_PCLKAH		8
++#define R9A09G077_PCLKAM		9
++#define R9A09G077_PCLKAL		10
++#define R9A09G077_CLK_SEL_ETH_PHY	11
++#define R9A09G077_DFI			12
++#define R9A09G077_PCLKH			13
++#define R9A09G077_PCLKM			14
++#define R9A09G077_PCLKL			15
++#define R9A09G077_PCLKGPTL		16
++#define R9A09G077_PCLKSHOST		17
++#define R9A09G077_PCLKRTC		18
++#define R9A09G077_USB			19
++#define R9A09G077_SPI0			20
++#define R9A09G077_SPI1			21
++#define R9A09G077_SPI2			22
++#define R9A09G077_SPI3			23
++#define R9A09G077_ETCLKA		24
++#define R9A09G077_ETCLKB		25
++#define R9A09G077_ETCLKC		26
++#define R9A09G077_ETCLKD		27
++#define R9A09G077_ETCLKE		28
++#define R9A09G077_ETHCLKE		29
++#define R9A09G077_ETHCLK_EXTAL		30
++#define R9A09G077_ETH_REFCLK		31
++#define R9A09G077_LCDC_CLKA		32
++#define R9A09G077_LCDC_CLKP		33
++#define R9A09G077_CA55			34
++#define R9A09G077_LCDC_CLKD		35
++
++#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
+-- 
+2.43.0
+
