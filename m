@@ -1,209 +1,238 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112601922ED
-	for <linux-clk@vger.kernel.org>; Thu,  6 Mar 2025 17:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF3125CC88;
+	Thu,  6 Mar 2025 17:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741281969; cv=none; b=k4Sviu0vEXAVYhGFqFSMskVs3sk6cW6rwLULdEICPot2SuVLRIAG5bxJOBdpZ11aumJ3uHG15e5OoO6K0QKA1mN6d5lWoFYE0FaPHe6Lla3BleFratAlYGjfIOjvryy0BTJtMlc5dwx/Xn0Yf0DQLZFb1cgyyJ4/AB23CorYAF8=
+	t=1741283999; cv=none; b=Za1JEUwAgvlqlT1RHtOngIOd2VCCYtSDgIvVL//juzJKMSW+u9g+PD3dYfvK96CO1bB3RC84w8/UzOa9vrtIapkODIgppyV9K2+V7IEQZLIvtdAXAshoOTkeN1vCFLj3x6zhBj8rfkpSh+0uKkF5TOPa1HND2D9gIEfWg2HO+i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741281969; c=relaxed/simple;
-	bh=xXfYB2PcBznFBcxQBHLNsgKgLFZe8o1fEUvFED2NRS8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KUXO1Bw1d71lrE9sEZt9i7Xw0Yx+P5kjuI7otNnxp3lEV+wQ6jkgqr3XQtV9ULhcC2scVxXvsfegwnT9SCGe7yW3LLOaVk0coi8e4mhEYw3zvMqvqEbtL49+RGw9P8pGoho72S6OhHpRoIDI5uzSNJojon474RasrZmHHn5aRpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rtJbS1ij; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1741283999; c=relaxed/simple;
+	bh=Yw1n6v5hNvDiqN1eYZkeAUubqnzwc9HWGRsVQHuzjNw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MDkRMy8c+5iWCa85qVRMdmeWvrQlvSYkPQwAy3rGnuZdV/LVMyYdGW5b5Io3j5qjzrcGz72cuD9LtNnGGztPOmN6A6cuuhDmOIm8W+cI6W/7VKJOHn9Dp3qCdvJY95tWLsolYgYmHZyMBEk26ThvGxm/1kYN4RuV5ITfDp3VgLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=YBH99TsV; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=QvFlMvlP; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rtJbS1ij"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43bc638686eso14747585e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 06 Mar 2025 09:26:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741281964; x=1741886764; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gBi13oH2YTOQlVLrmxAry8taY7YW2dmM3vhgwkXBio=;
-        b=rtJbS1ij2BRG4Ibgu+2iinHQh/P5uVxm2H4/Q6WsrJwWK11b5Y4dOZCXOzLkoLC/NZ
-         4JdJHmMphBEAFhMeVOtuv14bGEmjh+hxOMfnU9CLf37O9slx2xvjYTvjbi5atoVLDw30
-         jFsJ+7Xdzf4nsMOYhmUnP3T4D0gotlwycUiQFOcA4nrjxxTc/2w+0wNcKJ4dSNa+3GXq
-         wBhQy7w1zkNmcFZUnr7Cdh5Xi8WaFSUwFOFTC74R0mp7tXfyZ6JdjwbNO9TZK/bQSPns
-         9Oci3vRTAOAs2XdJJuk5ijkA6u8UBICQtas51VCD63PB74WUXQBQtnLE1Eojr2X0D/lV
-         Ewbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741281964; x=1741886764;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9gBi13oH2YTOQlVLrmxAry8taY7YW2dmM3vhgwkXBio=;
-        b=vOZGvsx18HsnQuMn3biDkb3VGkQlpA8Cw3+h3Fs4KiXoiywI8GF2GGFscLK4ikEwvE
-         xFfY3r4u4EDNKc4Ob5piZukqDG7vW81rvQspjIvlMxkV5GB7OgelOtk9oyRHnslFsWTI
-         QTbK4Cya+TLp6EH4OgUxBubQ/JXGNiFa4WDPEcWmfPAHAV5o0O3wVrk0rhOY9Qf+z1Hd
-         7gi6k6zFgWY/EMQ2a8T4coYP4zCNzMY1OQ3NYQvn4iYK3UqUtOq5J5+rrRLjEcORUo69
-         xMT0trhd4GPygVLkK/VB0T+TBNLyVFcMKs861pJA168J7Ws9yAxNou2cgEKXYUQ2OiPj
-         U7JA==
-X-Forwarded-Encrypted: i=1; AJvYcCVts388rdwXZ2n9OMWlQVTMB0pFAzS1eSzwL0dXeWmcee6gZU6M1OzIuSCNMFlBKcLrsOL3D3VwAcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiyfhEMvwBd2EZoZFkoP02V2UEG4ZKT0HZ1V8KkE2M6mNt+s/2
-	tyFfUyTS6oBQ4xYLqarv0HLX92U5ctElBbE5d3v6KRa2Dp2ZthczyC06tYAh8Jk=
-X-Gm-Gg: ASbGncvLEGwYdr6xYSzhBMWeoK8qRPzl94+EJjwykxse6eoFyLkgBk1YR5XBSOSjo7A
-	ArrCde6VTefDF3foWXsOsw/CXmRyQc7N2e0yhA3cgnLozys4kI1mQlN2xgQlELh81SsIF7qBfiF
-	0nvYz9qb3H32/5nwhyC4Eng3G5aNSrf7Gt7C+JVQh9oYyJuk9b+1ki/2dbi7w7Qq0wsctg5bMcB
-	GNQaNks7GvHJJ24ipqyzMKYJ7Qn6Y+fPE6A3gTw9Kch2ZD7vR+y8st9/RxGJ8Idmp9C8w6XssF5
-	ZqRP5AvmGgFaKeaw5zRh0kwCRVLgtTd3ljzxYatVQjU=
-X-Google-Smtp-Source: AGHT+IHDAt6NYWgVgdYHY+auIYwz15KHwMO0sECwAzb9Y48d4oIdn6zdb/5QFSFzH4BHnl8HwsC49Q==
-X-Received: by 2002:a5d:5985:0:b0:391:865:5a93 with SMTP id ffacd0b85a97d-3913211b64fmr247337f8f.22.1741281964164;
-        Thu, 06 Mar 2025 09:26:04 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:29d4:36d9:5043:acd])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e4065sm2703591f8f.62.2025.03.06.09.26.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 09:26:03 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: <linux@martijnvandeventer.nl>
-Cc: "'Neil Armstrong'" <neil.armstrong@linaro.org>,  "'Michael Turquette'"
- <mturquette@baylibre.com>,  "'Stephen Boyd'" <sboyd@kernel.org>,  "'Kevin
- Hilman'" <khilman@baylibre.com>,  "'Martin Blumenstingl'"
- <martin.blumenstingl@googlemail.com>,
-  <linux-amlogic@lists.infradead.org>,  <linux-clk@vger.kernel.org>,
-  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: meson: g12a: Fix kernel warnings when no display
- attached
-In-Reply-To: <004801db8eb7$99808e20$cc81aa60$@martijnvandeventer.nl>
-	(linux@martijnvandeventer.nl's message of "Thu, 6 Mar 2025 17:48:33
-	+0100")
-References: <20250213221702.606-1-linux@martijnvandeventer.nl>
-	<1jpljkzyf0.fsf@starbuckisacylon.baylibre.com>
-	<003301db888e$8ea84e90$abf8ebb0$@martijnvandeventer.nl>
-	<1jplj3g21q.fsf@starbuckisacylon.baylibre.com>
-	<004801db8eb7$99808e20$cc81aa60$@martijnvandeventer.nl>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Thu, 06 Mar 2025 18:26:03 +0100
-Message-ID: <1j4j065avo.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="YBH99TsV";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="QvFlMvlP"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 759D0EC59F8;
+	Thu, 06 Mar 2025 09:59:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1741283989; bh=Yw1n6v5hNvDiqN1eYZkeAUubqnzwc9HWGRsVQHuzjNw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YBH99TsV/YpwgAqDPHCN4SeETkt7w5iU0BzPNLS+3sP8bQQmoamfRl7jFpXV6gkO5
+	 L2SEsX+R3WBcyZdTUl6xPb9hfOd0LzK1zRg4EjNUbBrYnnCEWlT/bCDK+5ZRdp0SS8
+	 Z00OzYQPC7vZ2nkK8L9ZjixNSQDKTtvqD2wknzmisgomtQrwSKylLF2c6aJQU31eDf
+	 vvsRHKkEQAUgQ9IjhyRqKlrKoPqJm+FrfPOAq29zMWR/pp1XMQ3mneaNd8zs5XpBzj
+	 SYqsSXaPh6qqNL9OB3WWT3z8mj/o+JjN+g6PGfHF6pdW0dwR5zdd8EHMGlDvX1vXak
+	 6X3WL7Nrh21lQ==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Authentication-Results: bayard.4d2.org (amavisd-new); dkim=pass (2048-bit key)
+ header.d=4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id eabRI32M_UJV; Thu,  6 Mar 2025 09:59:47 -0800 (PST)
+Received: from localhost.localdomain (unknown [183.217.80.218])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id E9A03EC59F2;
+	Thu, 06 Mar 2025 09:59:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1741283987; bh=Yw1n6v5hNvDiqN1eYZkeAUubqnzwc9HWGRsVQHuzjNw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QvFlMvlPZ+Tcl72h1v31ByLCyEIpX9QnzhbdJm/2wnPrG1SF9BxPRDsoznyJbSFR/
+	 YtlftR4FxF/oxT52tImQPoxpoNFLboXqja6m0E9NyPalj9QLIUBkAxIt1R/wLSN8uX
+	 3zEolKr2ppHkToVmF7uA15rMl17BP3JtzsgAWpONtz3n1q7BL7QUge2AuZtc9pAztR
+	 auyVblLj7f+XNHu2zyWkcKtzUayG2+2TfZU0H5VN1sW5WwK2oLCMQYj7PR8omWt877
+	 F2RtsjNRLDTmLZerdWZoQMVdmbiZVJLNqYCwmNUVrOJBS3qMdvLwraH+fX/sgfnCJq
+	 uUYHDoDjxL3+g==
+From: Haylen Chu <heylenay@4d2.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>,
+	Yixun Lan <dlan@gentoo.org>
+Cc: linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	Haylen Chu <heylenay@4d2.org>
+Subject: [PATCH v5 0/5] Add clock controller support for SpacemiT K1
+Date: Thu,  6 Mar 2025 17:57:46 +0000
+Message-ID: <20250306175750.22480-2-heylenay@4d2.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Thu 06 Mar 2025 at 17:48, <linux@martijnvandeventer.nl> wrote:
+The clock tree of SpacemiT K1 is managed by several independent
+multifunction devices, some of them are
 
-> Hi Jerome,
->
->> >
->> > Thank you for reviewing, and apologies for my late response due to a
->> holiday.
->> >
->> >> On Thu 13 Feb 2025 at 23:17, Martijn van Deventer
->> >> <linux@martijnvandeventer.nl> wrote:
->> >>
->> >> > When booting SM1 or G12A boards without a dislay attached to HDMI,
->> >> > the kernel shows the following warning:
->> >> >
->> >> > [CRTC:46:meson_crtc] vblank wait timed out
->> >> > WARNING: CPU: 2 PID: 265 at
->> drivers/gpu/drm/drm_atomic_helper.c:1682
->> >> drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
->> >> > CPU: 2 UID: 0 PID: 265 Comm: setfont Tainted: G         C
->> >> > Tainted: [C]=CRAP
->> >> > pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> >> > pc : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
->> >> > lr : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
->> >> > Call trace:
->> >> >  drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
->> >> >  drm_atomic_helper_commit_tail_rpm+0x84/0xa0
->> >> >  commit_tail+0xa4/0x18c
->> >> >  drm_atomic_helper_commit+0x164/0x178
->> >> >  drm_atomic_commit+0xb4/0xec
->> >> >  drm_client_modeset_commit_atomic+0x210/0x270
->> >> >  drm_client_modeset_commit_locked+0x5c/0x188
->> >> >  drm_fb_helper_pan_display+0xb8/0x1d4
->> >> >  fb_pan_display+0x7c/0x120
->> >> >  bit_update_start+0x20/0x48
->> >> >  fbcon_switch+0x418/0x54c
->> >> >  el0t_64_sync+0x194/0x198
->> >> >
->> >> > This happens when the kernel disables the unused clocks.
->> >> > Sometimes this causes the boot to hang.
->> >> >
->> >> > By (re)adding the flag CLK_IGNORE_UNUSED to the VCLK2 clocks, these
->> >> > clocks will not be disabled.
->> >> >
->> >> > This partially reverts commit b70cb1a21a54 ("clk: meson: g12a:
->> >> > make VCLK2 and ENCL clock path configurable by CCF").
->> >>
->> >> It looks like DRM needs those clock enabled regardless of connection
->> >> status on HDMI. Even with this change applied, you would get the same
->> >> problem again if the bootloader does not take of turning the clock on,
->> >> which is not a given.
->> >>
->> >> CLK_IGNORE_UNUSED gives not guarantee a clock will be enabled or stay
->> >> enabled at any point.
->> >>
->> >> A proper fix to this issue should be done in DRM, IMO.
->> >
->> > I know and I totally agree. Unfortunately, I don't have access to any 
->> > vendor
->> > documentation, nor do I have any real knowledge about the DRM/HDMI
->> > subsystem to fix that.
->>
->> You have identified which clocks are not properly claimed, by what they
->> are not claimed and even when. 50% of the job is done. Thanks for this.
->
-> You're welcome, no problem.
->
->> >
->> > And I guess if it were as easy as adding a clock to the DT and calling
->> > clk_prepare_enable on it in the probe function, Neil would have done
->> that
->> > already.
->> >
->> > So, all I can do, for now, is revert to the previous situation when it 
->> > did
->> work
->> > for (probably) most boards.
->>
->> Maybe so, but it does not make this change appropriate. The problem
->> is the DRM driver which does not enable what it needs to properly
->> operate. This should be fixed.
->
-> I understand. So I guess that is the end of the line for this patch.
-> Because this patch will not be accepted and if someone else finds the 
-> time and has the knowledge to fix this the proper way, it will be a 
-> completely different patch.
->
-> Although I, of course, agree with you that it should be fixed properly, 
-> I find it a bit difficult to accept that if we accidentally break something,
-> while trying to make things better, we are not allowed to revert it 
-> because it was already somewhat broken. Resulting in a more broken
-> situation than before...
+- Application Power Manage Unit, APMU
+- Main Power Manage Unit, MPMU
+- APB Bus Clock Unit, APBC
+- APB Spare, APBS
 
-Once again, you are encouraged to fix things up ... where fixes are needed.
+These four devices provide hardware bits for three purposes: power
+management, reset signals and clocks. Not every device is capable of all
+the three functionalities,
 
-DRM is hardly immutable. If you don't feel like you can do it on your own,
-you can still engage with the other contributors who may know this
-better and help you.
+- APMU, MPMU: power, reset, clock
+- APBC: clock, reset
+- APBS: clock (PLL clocks)
 
->
-> On the other hand, I also understand that if you, as a maintainer, allow 
-> that, chances are it will never see a proper fix. :-)
->
-> Cheers!
->
->> >
->> >> >
->> >> > Fixes: b70cb1a21a54 ("clk: meson: g12a: make VCLK2 and ENCL clock
->> path
->> >> configurable by CCF").
->> >> > Signed-off-by: Martijn van Deventer <linux@martijnvandeventer.nl>
->> >> > ---
->> >> >  drivers/clk/meson/g12a.c | 12 ++++++------
->> >> >  1 file changed, 6 insertions(+), 6 deletions(-)
->> >> >
->> >> > diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
->> >> > index cfffd434e998..1651898658f5 100644
->> >> > --- a/drivers/clk/meson/g12a.c
->> >> > +++ b/drivers/clk/meson/g12a.c
->> >> > @@ -3234,7 +3234,7 @@ static struct clk_regmap g12a_vclk2_div = {
+This series adds support for clock hardwares in these four regions,
+which covers most peripherals except DDR and the realtime processor.
+
+Tested on BananaPi-F3 board. With some out-of-tree drivers, I've
+successfully brought up I2C, RTC, MMC and ethernet controllers. A clock
+tree dump could be obtained here[1].
+
+[1]: https://gist.github.com/heylenayy/4c88630454d5ad26c9336592673eb187
+
+Changed from v4
+- bindings:
+  - Drop CLK_*_NUM macros from binding headers
+  - Rename spacemit,k1-ccu.yaml to spacemit,k1-pll.yaml, change to
+    describe only the PLL in APBS region
+  - k1-syscon.yaml
+    - drop spacemit,k1-syscon-apbs, it should be the PLL device
+    - drop child nodes
+    - describe the syscons as clock, reset and power-domain controllers
+    - drop "syscon" from the compatible list, as these syscons aren't
+      compatible with the generic one
+- driver:
+  - misc style fixes and naming improvements
+  - drop unused fields from data structures
+  - drop unused clock types: CCU_DDN_GATE
+  - ddn type:
+    - improve the comments
+    - dynamically calculate appropriate rates
+    - hardcode the x2 factor
+  - mix type
+    - drop val_{disable,enable} for gate subtype
+    - drop unncessary polling when enabling a gate
+    - encode subtypes directly in struct ccu_mix
+    - generate clock names from identifiers of the data structure
+    - rename CCU_DIV2_FC_MUX_GATE_DEFINE to CCU_DIV_SPLIT_FC_MUX_GATE
+  - pll type:
+    - correctly claim the parent clock
+    - make rate tables const
+    - drop SWCR2-related fields
+    - combine fields of registers as a whole instead of working with
+      each field
+  - clock tree for k1:
+    - removed duplicated offsets
+    - drop the placeholder 1:1 factor, pll1_d7_351p8
+    - workaround the quirk of TWSI8 clocks
+    - fix the definition of ripc_clk, wdt_bus_clk, dpu_bit_clk and
+      timers_*_clk
+    - drop structure spacemit_ccu_priv and spacemit_ccu_data
+    - rework clock registration
+    - split the PCIe clocks correctly (there're three distinct clocks
+      for each PCIe port)
+- devicetree:
+  - adapt the new binding
+- Link to v4: https://lore.kernel.org/all/20250103215636.19967-2-heylenay@4d2.org/
+
+Changed from v3
+- spacemit,k1-ccu binding
+  - allow spacemit,mpmu property only for controllers requiring it
+    (spacemit,k1-ccu-apbs)
+- spacemit,k1-syscon binding
+  - drop unnecessary *-cells properties
+  - drop unrelated nodes in the example
+- driver
+  - remove unnecessary divisions during rate calucalation in ccu_ddn.c
+  - use independent clk_ops for different ddn/mix variants, drop
+    reg_type field in struct ccu_common
+  - make the register containing frequency change bit a sperate field in
+    ccu_common
+  - unify DIV_MFC_MUX_GATE and DIV_FC_MUX_GATE
+  - implement a correct determine_rate() for mix type
+  - avoid reparenting in set_rate() for mix type
+  - fix build failure when SPACEMIT_CCU and SPACEMIT_CCU_K1 are
+    configured differently
+- use "osc" instead of "osc_32k" in clock input names
+- misc style fixes
+- Link to v3: https://lore.kernel.org/all/20241126143125.9980-2-heylenay@4d2.org/
+
+Changed from v2
+- dt-binding fixes
+  - drop clocks marked as deprecated by the vendor (CLK_JPF_4KAFBC and
+    CLK_JPF_2KAFBC)
+  - add binding of missing bus clocks
+  - change input clocks to use frequency-aware and more precise names
+  - mark input clocks and their names as required
+  - move the example to the (parent) syscon node and complete it
+  - misc style fixes
+- misc improvements in code
+- drop unnecessary spinlock in the driver
+- implement missing bus clocks
+- Link to v2: https://lore.kernel.org/all/SEYPR01MB4221829A2CD4D4C1704BABD7D7602@SEYPR01MB4221.apcprd01.prod.exchangelabs.com/
+
+Changed from v1
+- add SoC prefix (k1)
+- relicense dt-binding header
+- misc fixes and style improvements for dt-binding
+- document spacemit,k1-syscon
+- implement all APBS, MPMU, APBC and APMU clocks
+- code cleanup
+- Link to v1: https://lore.kernel.org/all/SEYPR01MB4221B3178F5233EAB5149E41D7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com/
+
+Haylen Chu (5):
+  dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+  dt-bindings: clock: spacemit: Add spacemit,k1-pll
+  clk: spacemit: Add clock support for Spacemit K1 SoC
+  clk: spacemit: k1: Add TWSI8 bus and function clocks
+  riscv: dts: spacemit: Add clock tree for Spacemit K1
+
+ .../bindings/clock/spacemit,k1-pll.yaml       |   50 +
+ .../soc/spacemit/spacemit,k1-syscon.yaml      |   80 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |   79 +
+ drivers/clk/Kconfig                           |    1 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/spacemit/Kconfig                  |   20 +
+ drivers/clk/spacemit/Makefile                 |    5 +
+ drivers/clk/spacemit/ccu-k1.c                 | 1720 +++++++++++++++++
+ drivers/clk/spacemit/ccu_common.h             |   47 +
+ drivers/clk/spacemit/ccu_ddn.c                |   80 +
+ drivers/clk/spacemit/ccu_ddn.h                |   48 +
+ drivers/clk/spacemit/ccu_mix.c                |  284 +++
+ drivers/clk/spacemit/ccu_mix.h                |  246 +++
+ drivers/clk/spacemit/ccu_pll.c                |  146 ++
+ drivers/clk/spacemit/ccu_pll.h                |   76 +
+ include/dt-bindings/clock/spacemit,k1-ccu.h   |  247 +++
+ 16 files changed, 3130 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+ create mode 100644 drivers/clk/spacemit/Kconfig
+ create mode 100644 drivers/clk/spacemit/Makefile
+ create mode 100644 drivers/clk/spacemit/ccu-k1.c
+ create mode 100644 drivers/clk/spacemit/ccu_common.h
+ create mode 100644 drivers/clk/spacemit/ccu_ddn.c
+ create mode 100644 drivers/clk/spacemit/ccu_ddn.h
+ create mode 100644 drivers/clk/spacemit/ccu_mix.c
+ create mode 100644 drivers/clk/spacemit/ccu_mix.h
+ create mode 100644 drivers/clk/spacemit/ccu_pll.c
+ create mode 100644 drivers/clk/spacemit/ccu_pll.h
+ create mode 100644 include/dt-bindings/clock/spacemit,k1-ccu.h
 
 -- 
-Jerome
+2.48.1
+
