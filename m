@@ -1,175 +1,197 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F454C96;
-	Fri,  7 Mar 2025 00:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88754C96;
+	Fri,  7 Mar 2025 00:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741306694; cv=none; b=dghZ3Yy9ceMnklgBJ3rV/QcOLMQH/JBkf5LBon5iWxLL3k0sBIBaefqIbgujJTDcasw/I+My9DDOO8JBmZoBuTOx8Mey2AH6tnKrfiBYsFZjoDN/kuSJDiwM/2CycC9J3TsaAXMJTkooX0of7EWBLBbrySiq4Qq0nMQUjUzxxog=
+	t=1741307197; cv=none; b=nBbesPhpRg34ATe/EOzKE/1bgwTuV+dB5/H9dqjOFnl8lDvBsVF7PtqXZmYC/D621hS0EZDtszn4uNRbYKYqEpIKwip4IefcOgn7L7jReRJUy7R5CvbZY8C4Zj8nfd7qVUfbMAoWqJYxLtDONoZt+xtk7xn1EPJCU2xkdqVE1i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741306694; c=relaxed/simple;
-	bh=dejDcuU9K1sv2fPwxhDRh16lZKxCSGyYQuKNHFNnAlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PuOJAKFaqFu5HeNx3L+chAEGEo84ksSA8ibZMs+RB6Ys8BkHS59U8DvdX7X5eWOq5+HR/U37iK2C0mJplLgcCFNwLtcIawG4ETqupSnGPlyO3UgykVP1Zm07ppMa6b/xknkXdlr76yUJs6fG7a9FjBGYl2vDjw52Qxnq3gExIVA=
+	s=arc-20240116; t=1741307197; c=relaxed/simple;
+	bh=f9auQVySqtdSGjVOB/4U7fwpsByEq7MmCsljLOD7hro=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GIFeYz2p+Lq0IhYvmn1JOFMXVy+L6Y6XnHdk9W7L2fAPOM8gwPmgDin5q8yXCzqd735I8IH5o7hRkniNOcGtggNv7HU9i7qh4TtD2wyQ6LqdD53x2E+h3pAmHmfkV+AcvFVKPR5DW7MkoOeDPO0w5Tg4Irde20opMI3c1wifgFA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB1A1169E;
-	Thu,  6 Mar 2025 16:18:24 -0800 (PST)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 299A83F673;
-	Thu,  6 Mar 2025 16:18:10 -0800 (PST)
-Date: Fri, 7 Mar 2025 00:18:03 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE362169E;
+	Thu,  6 Mar 2025 16:26:47 -0800 (PST)
+Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 38A423F673;
+	Thu,  6 Mar 2025 16:26:33 -0800 (PST)
 From: Andre Przywara <andre.przywara@arm.com>
-To: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
- <wens@csie.org>, Samuel Holland <samuel@sholland.org>, Philipp Zabel
- <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/15] clk: sunxi-ng: Add support for update bit
-Message-ID: <20250307001803.2e4887d7@minigeek.lan>
-In-Reply-To: <3616088.iIbC2pHGDl@jernej-laptop>
-References: <20250304012805.28594-1-andre.przywara@arm.com>
-	<20250304012805.28594-4-andre.przywara@arm.com>
-	<3616088.iIbC2pHGDl@jernej-laptop>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/14] clk: sunxi-ng: add A523 clock support
+Date: Fri,  7 Mar 2025 00:26:14 +0000
+Message-ID: <20250307002628.10684-1-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.46.3
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, 04 Mar 2025 16:28:48 +0100
-Jernej =C5=A0krabec <jernej.skrabec@gmail.com> wrote:
+Content-Transfer-Encoding: 8bit
 
 Hi,
 
-> Dne torek, 4. marec 2025 ob 02:27:53 Srednjeevropski standardni =C4=8Das =
-je Andre Przywara napisal(a):
-> > Some clocks in the Allwinner A523 SoC contain an "update bit" (bit 27),
-> > which must be set to apply any register changes, namely the mux
-> > selector, the divider and the gate bit.
-> >=20
-> > Add a new CCU feature bit to mark those clocks, and set bit 27 whenever
-> > we are applying any changes.
-> >=20
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > ---
-> >  drivers/clk/sunxi-ng/ccu_common.h | 4 ++++
-> >  drivers/clk/sunxi-ng/ccu_div.c    | 2 ++
-> >  drivers/clk/sunxi-ng/ccu_gate.c   | 4 ++++
-> >  drivers/clk/sunxi-ng/ccu_mux.c    | 2 ++
-> >  4 files changed, 12 insertions(+)
-> >=20
-> > diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/c=
-cu_common.h
-> > index 50fd268329671..d41d33bdff470 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_common.h
-> > +++ b/drivers/clk/sunxi-ng/ccu_common.h
-> > @@ -20,10 +20,14 @@
-> >  #define CCU_FEATURE_KEY_FIELD		BIT(8)
-> >  #define CCU_FEATURE_CLOSEST_RATE	BIT(9)
-> >  #define CCU_FEATURE_DUAL_DIV		BIT(10)
-> > +#define CCU_FEATURE_UPDATE_BIT27	BIT(11) =20
->=20
-> There is no reason to have "BIT27" in the name of the macro. This is simi=
-lar
-> to KEY_FIELD, which is generic name and doesn't specify either key or pos=
-ition
-> of this key field. Maybe just CCU_FEATURE_UPDATE_BIT or something equaly
-> generic.
+this is the fourth drop of the series introducing basic clock support for
+the Allwinner A523 family of SoCs, comprising A523, A527, T527, H728. [1]
+This times just a small rename of a macro name, and fixing the DT
+binding, where the separate patches for the two CCUs got merged into
+one. For a more detailed changelog, see below.
 
-Sure, done. This was mostly in anticipation of the typical Allwinner
-behaviour of introducing another update bit at a different location in
-the future. But I guess we use a bitmask should that happen.
+*************
+Please note that the clock numbers changed compared to v1 and v2, (but
+not against v3) so DTs from that older era cannot be used anymore with
+this driver: you have to update the DTB. Just copying the binding header
+and recompiling the DTB should do the trick, since the symbols stayed
+mostly the same, at least as far they are used in the basic DTs we use
+today.
+*************
 
-> With that fixed:
-> Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+The SoCs contain *four* CCU components, aside from the usual main clock
+device and the PRCM clock (in the always-on-domain), there is an MCU
+clock and a CPU clock. This series just adds support for the first two,
+the other two don't seem to be required for the basic functionality.
 
-Many thanks!
+The clock tree of each SoC has always been individual, even though the
+main clock *types* mostly remain the same. This time we see three slight
+variations: There is an MP clock without the P (shift) part, there is one
+with two dividers instead of one divider and one shift field, and certain
+clocks require an "update" bit to be set to apply any changes.
+The first three patches add support for these new clock types.
+
+Patch 04 adds the DT binding description for the two CCUs, along with all
+the clock numbers already defined in the binding headers.
+Since the main CCU is massive, and contains a lot of detail, I decided
+to split this driver up into 9 patches, simply to help review. I tried
+to group them somewhat logically, although this is rather arbitrary, and
+just to make each individual patch smaller. I am happy to squash them
+all back into one patch once they have been reviewed, for the final
+merge. The PRCM CCU is comparably small, so I kept this in one patch.
+
+Interestingly the Allwinner BSP has switched to using the existing sunxi
+CCU framework for modelling the clocks (they had their own way before), so
+we could theoretically use their code. However when I started working on
+this more than a year ago, their files had a GPL-3.0-only license header,
+which, according to my research, makes them incompatible for mainline
+inclusion. I thus started from "scratch" (adjusting the D1 driver, really).
+Meanwhile they seem to have changed the license, and a quick comparison
+turned up some differences, some of which seem to be bugs on their, some
+on my side, probably. I hope having such a "reference" helps the mainline
+code quality, as people can help the review by comparing code.
+
+Given the level of detail required in CCU drivers, I am certain there are
+still some bugs in there, also many things that can be improved. But after
+starring and editing this for weeks, I feel like it's time for the
+community to have a look, so please help with the review, and also test.
+
+Based on v6.14-rc1.
 
 Cheers,
 Andre
 
->=20
-> Best regards,
-> Jernej
->=20
-> > =20
-> >  /* MMC timing mode switch bit */
-> >  #define CCU_MMC_NEW_TIMING_MODE		BIT(30)
-> > =20
-> > +/* Some clocks need this bit to actually apply register changes */
-> > +#define CCU_SUNXI_UPDATE_BIT		BIT(27)
-> > +
-> >  struct device_node;
-> > =20
-> >  struct ccu_common {
-> > diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_=
-div.c
-> > index 7f4691f09e01f..2d8b98fe4b13a 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_div.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_div.c
-> > @@ -106,6 +106,8 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsi=
-gned long rate,
-> > =20
-> >  	reg =3D readl(cd->common.base + cd->common.reg);
-> >  	reg &=3D ~GENMASK(cd->div.width + cd->div.shift - 1, cd->div.shift);
-> > +	if (cd->common.features & CCU_FEATURE_UPDATE_BIT27)
-> > +		reg |=3D CCU_SUNXI_UPDATE_BIT;
-> > =20
-> >  	writel(reg | (val << cd->div.shift),
-> >  	       cd->common.base + cd->common.reg);
-> > diff --git a/drivers/clk/sunxi-ng/ccu_gate.c b/drivers/clk/sunxi-ng/ccu=
-_gate.c
-> > index ac52fd6bff677..0490f95781361 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_gate.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_gate.c
-> > @@ -20,6 +20,8 @@ void ccu_gate_helper_disable(struct ccu_common *commo=
-n, u32 gate)
-> >  	spin_lock_irqsave(common->lock, flags);
-> > =20
-> >  	reg =3D readl(common->base + common->reg);
-> > +	if (common->features & CCU_FEATURE_UPDATE_BIT27)
-> > +		reg |=3D CCU_SUNXI_UPDATE_BIT;
-> >  	writel(reg & ~gate, common->base + common->reg);
-> > =20
-> >  	spin_unlock_irqrestore(common->lock, flags);
-> > @@ -44,6 +46,8 @@ int ccu_gate_helper_enable(struct ccu_common *common,=
- u32 gate)
-> >  	spin_lock_irqsave(common->lock, flags);
-> > =20
-> >  	reg =3D readl(common->base + common->reg);
-> > +	if (common->features & CCU_FEATURE_UPDATE_BIT27)
-> > +		reg |=3D CCU_SUNXI_UPDATE_BIT;
-> >  	writel(reg | gate, common->base + common->reg);
-> > =20
-> >  	spin_unlock_irqrestore(common->lock, flags);
-> > diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_=
-mux.c
-> > index d7ffbdeee9e04..82ee21e0d3a68 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_mux.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_mux.c
-> > @@ -197,6 +197,8 @@ int ccu_mux_helper_set_parent(struct ccu_common *co=
-mmon,
-> >  	/* The key field always reads as zero. */
-> >  	if (common->features & CCU_FEATURE_KEY_FIELD)
-> >  		reg |=3D CCU_MUX_KEY_VALUE;
-> > +	if (common->features & CCU_FEATURE_UPDATE_BIT27)
-> > +		reg |=3D CCU_SUNXI_UPDATE_BIT;
-> > =20
-> >  	reg &=3D ~GENMASK(cm->width + cm->shift - 1, cm->shift);
-> >  	writel(reg | (index << cm->shift), common->base + common->reg);
-> >  =20
->=20
->=20
->=20
->=20
->=20
+[1] https://linux-sunxi.org/A523#Family_of_sun55iw3
+
+Changelog v3 .. v4:
+- rename new update bit flag to just CCU_FEATURE_UPDATE_BIT
+- merge the two DT binding patches into one
+- describe each CCU in its own "if" clause in the DT binding
+- fix DT example in DT binding
+- add one tag
+
+Changelog v2 .. v3:
+- rename PLL_DDR0 to PLL_DDR
+- move bogus macro definition from PLL patch to an earlier patch
+- adding CLK_SET_RATE_PARENT flags where needed (GPU, eDP, ...)
+- remove CLK_SET_RATE_PARENT from clocks with only fixed parents
+- add support for clocks with the "update" bit (BIT(27))
+- flags IOMMU, MBUS and DRAM clocks as needing "update" bit
+- remove leftover comment about missing mux
+- fix TCON_TV parent list
+- add TCON_LCD2 clock
+- export PLL_GPU
+- describe MBUS clock properly (was copy&pasted wrongly from D1)
+- change MMC clocks to use better macro
+- mark SPI and CSI clocks as being dual-divider clocks
+- fix wrong DSP parent clock (480 instead of 400 MHz)
+- properly implement fanout clocks (describe both dividers)
+- fix MBUS gate clocks and add two new ones
+- rename dpss clock to display0 and add display1 clocks
+- drop non-existing bus_dsp_cfg_clk
+- mark r_timer clocks as having no divider
+- fix r_pwm mux width
+- move DT bindings into separate yaml file
+- describe different source clock sets correctly
+- add review tags
+- remove Chen-Yu's and Conor's tags from changed patches
+
+Changelog v1 .. v2:
+- rebase onto v6.14-rc1
+- split main CCU definition patch into 9 smaller patches
+- rename RST_BUS_VO1_TCONLCD0 to RST_BUS_TCON_LCD2
+- insert CLK_PLL_VIDEO3_xx clocks
+- add clock for 2nd EMAC
+- fix ISP clock definition
+- remove BSP comments from clocks now documented in the T527 manual
+- add Conor's binding ACKs (with thanks!)
+
+Andre Przywara (14):
+  clk: sunxi-ng: mp: introduce dual-divider clock
+  clk: sunxi-ng: mp: provide wrappers for setting feature flags
+  clk: sunxi-ng: Add support for update bit
+  dt-bindings: clk: sunxi-ng: document two Allwinner A523 CCUs
+  clk: sunxi-ng: Add support for the A523/T527 CCU PLLs
+  clk: sunxi-ng: a523: Add support for bus clocks
+  clk: sunxi-ng: a523: add video mod clocks
+  clk: sunxi-ng: a523: add system mod clocks
+  clk: sunxi-ng: a523: add interface mod clocks
+  clk: sunxi-ng: a523: add USB mod clocks
+  clk: sunxi-ng: a523: remaining mod clocks
+  clk: sunxi-ng: a523: add bus clock gates
+  clk: sunxi-ng: a523: add reset lines
+  clk: sunxi-ng: add support for the A523/T527 PRCM CCU
+
+ .../clock/allwinner,sun55i-a523-ccu.yaml      |  103 +
+ drivers/clk/sunxi-ng/Kconfig                  |   10 +
+ drivers/clk/sunxi-ng/Makefile                 |    4 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c      |  248 +++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523-r.h      |   14 +
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c        | 1685 +++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.h        |   14 +
+ drivers/clk/sunxi-ng/ccu_common.h             |    5 +
+ drivers/clk/sunxi-ng/ccu_div.c                |    2 +
+ drivers/clk/sunxi-ng/ccu_gate.c               |    4 +
+ drivers/clk/sunxi-ng/ccu_mp.c                 |   51 +-
+ drivers/clk/sunxi-ng/ccu_mp.h                 |   58 +-
+ drivers/clk/sunxi-ng/ccu_mux.c                |    2 +
+ include/dt-bindings/clock/sun55i-a523-ccu.h   |  189 ++
+ include/dt-bindings/clock/sun55i-a523-r-ccu.h |   37 +
+ include/dt-bindings/reset/sun55i-a523-ccu.h   |   88 +
+ include/dt-bindings/reset/sun55i-a523-r-ccu.h |   25 +
+ 17 files changed, 2524 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-r.h
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
+ create mode 100644 include/dt-bindings/clock/sun55i-a523-ccu.h
+ create mode 100644 include/dt-bindings/clock/sun55i-a523-r-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun55i-a523-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun55i-a523-r-ccu.h
+
+-- 
+2.46.3
 
