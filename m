@@ -1,53 +1,74 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEE618DB09;
-	Fri,  7 Mar 2025 05:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEB61A0731;
+	Fri,  7 Mar 2025 06:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741326896; cv=none; b=ejRbgi/pndb3JL8OmkeBuuBRu86K2Sn+wpDwkzxb+9yq7aJfBbAwV2z3YLzm5i6NDUvcG+d4KZOGIbSOL94s6akvEHklkk32cQKnLxol6haRB1YWhcJmKS/XvX+T8bnca3UbRysL3a5Q62dXBaezGqiYxyKwV8augEvigY7gsns=
+	t=1741328727; cv=none; b=DWrjMgz0p6E9TqJYJhEicdzm6s6tsHPMToyI+wdGSjjL6znbScacDKaBedKVMPEp56zD5lsIVmTqOpLfT3MKtLvKLG61tezOv7CURhwLUAeay8av6CXfOIVNz+j4JM51CrfXHGosGdJrVKvbaNB/RPWGD1OIx+z6rS4BQKvB/kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741326896; c=relaxed/simple;
-	bh=OhobIH36SElrBRrR9xlBtbM4ljdbiJGVn6a0IJ6ZmIk=;
+	s=arc-20240116; t=1741328727; c=relaxed/simple;
+	bh=IaXFjppS/IoB+IJ+M/BVXjFLMyZOrjULwzmXC5Zs3oQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dl/OwVUXNM6zLyhgS6MBb/jDvQW8p9jaK3rx5hiMPwr3o8auvsjhiUPAC+ou4GHvtxQaR528szvS3bGAV7HuNRQhzeRDse1/PaHabSnvgMlfLE/fIL7xP3UM/AcHrGkcm2ZDgjefDPsyVMS76lzPmeh3fNMU5pJ3G0usBAmPQc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=aQ1AS8QJ; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sjqq3W2KNyG+nw/1ok3nIXc08vvqlnA56TlB/fb2Q4v37a4q8Rd1kCMdLPA0WK0q0+JZhu8Y37k4TcjbOZXp7ZSjIpigSl8QeHhnxpiqYsddY/xIR78RglkL2wkSTc4sivVUBMXxMaMGcFb/zNo23Pxtox/4aZ5vJN6fpd+2K7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4vQ7two; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="aQ1AS8QJ"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 790E223CA6;
-	Fri,  7 Mar 2025 06:54:52 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id GEDfSjYbRJfd; Fri,  7 Mar 2025 06:54:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1741326882; bh=OhobIH36SElrBRrR9xlBtbM4ljdbiJGVn6a0IJ6ZmIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=aQ1AS8QJQnkqsjN6cCDhEslz1d7op9C+MUyuNcjmdwVvv9aj/jf046pMvlSwTDFLe
-	 JdjylhVLOBu5OhPar3AT7/wLW/k+O2v2ezX4Doy9ucxYQBmKe6oCf2rnARVh5pszmC
-	 KwlRCPeupk9T7U6pren2Kc7QXQ1hrvzpRe/RejNap3+4k7EcpS4FAeoOE33YSKRLjg
-	 Frh7rHwFAuCkH4m56VZYphHMJgocffkPKppGe9TDWxWEZkd17G+lwUDzOgUzsyavHp
-	 7LeOKmEqw9Cl9yWRRWDyooo9qpSVouUh0mLS9VMCebr+YQ3TLxsQa1pODij+tF7YRf
-	 EHiDkQboMaEcw==
-Date: Fri, 7 Mar 2025 05:54:27 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>
-Cc: conor+dt@kernel.org, cristian.ciocaltea@collabora.com,
-	detlev.casanova@collabora.com, devicetree@vger.kernel.org,
-	heiko@sntech.de, krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers
- for RK3528
-Message-ID: <Z8qKEzmTFxhHKApG@pie>
-References: <20250305194612.47171-1-ziyao@disroot.org>
- <20250306140009.384469-1-amadeus@jmu.edu.cn>
- <Z8nPjjbZvpRJ2R5B@pie.lan>
- <3d3db030-26e6-4fe1-9158-85f8cebef89c@kwiboo.se>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4vQ7two"
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c3d1664ed5so181489585a.2;
+        Thu, 06 Mar 2025 22:25:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741328724; x=1741933524; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DE4RgttB+ObeTGoRY2FNPNi0ZuWCnd0LsJTM8WKCSPE=;
+        b=P4vQ7twoUHQPmt+m/8VaumAE86PX0xxhzx51Yy3GLM5vqYn1D0mUjNWqiaZZ/sFBXC
+         r73r+JInHMoo1MCgSqyhTehGgAgdQagPkeGhJfPeBNn+mklWXLIOgj4Gpigi5bVZgf6S
+         W1NJbcxT3WWZ3bSb/+q/bQm0CBmUrbFtQIT6rF4R41/l4a83J1EgCiw3zFdQRYQfxtM2
+         gjcgd9vO/KBEkEsRehhyiXgv3pSBdylzFYjYgIOlo3H11gl9krdQV88mUB219G0YwatL
+         rNmSQ+c/HYkbnsL7PcG6zQHrvD/MGFIEMkafAkKql9nN6JNVWlGfaUUsTWbYWn6o78gC
+         r6VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741328724; x=1741933524;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DE4RgttB+ObeTGoRY2FNPNi0ZuWCnd0LsJTM8WKCSPE=;
+        b=lh+FsdFbGvNU2GGMqEnL2ER4ZEq2aEDbLnQKBobuO8d7MGC8Isf5pJfAcxHZHnKGEQ
+         v7L1Xw16LZXKqk4gzBWLlPsHyFyZsbszbRinDC3OhqgZjICspg/mkt+BqN+hxmeNUXoD
+         XB3Uj+I93aFSTHI5JKYr7udjsDeDsGVRwSJhl80esugeptuMT8SkgThsQIT9t0ZxH1cs
+         YDNbUORV+jmlHEIklKdM3IaG7hs9qVHbV7XTQOUV3ptYTpYnmhmnXLVHdNv34OUmZ9T7
+         3L9oJPjU2CQMKYt4MTE8VuNJmcTTSgTzgq1bSZ53iey1uxOHRsTWqjZbw93iQd6DgntP
+         73kA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnLXNowdW4ulG4TIBS5Y5xqsam+l/2ghqrGy9lVH6BZCwwtPNViEDMTXtEyOthchC0P/q+1ayE@vger.kernel.org, AJvYcCVLU76/PVR+Gl9OouQ4ARF3P4NZjH+7DgtnXXE4hZQJ03Yb0RH4qv4LoNpwRjbmsr7Rzq9lNXM+Y2Q3PMJD@vger.kernel.org, AJvYcCVfgfRMqFuYN/Hs+nxerAjsbYWgj8QsRvq2kk7xjV+dECmvJAh/pPH4joZYGwbbTVNQ0mU5m59bJ8vH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmNydzGMxm7JHhuzjHeUXooysgKS9HVlEU5+4RHlJu+ZelXHpO
+	PW6paWcrCRJ0GHG02fDMiPx5QfqVxEdd6ADPBd7/LtkmXo9cGD9t
+X-Gm-Gg: ASbGncsPgmqGiQLev/GSzOVaxO3SCCkIaoHv+2hG6TNwQ9Pn2k9FIg9vzHj9ALCTRzq
+	DYQnPmI/V279u5kLDzcJnbiroAqTksVAheSsoetPDKrcFSyNrMaIuUw7+GCG4ThlP4NRVeKl1st
+	JoDGh/SHsRSLEXFUEAKVUTv7PNs1FZmHuVP0EICHrRcE1qYt145omM5UzQPvRWBLMtCcGvjODZn
+	zG6U1xM+HSGEtrL0Abts/e9liG++mux9z0vBJ2/xRMRZaUd9bT3sMexNylCiId3GKq5T/g5+BbC
+	+mFRGZuaMsAerCA6BBF7
+X-Google-Smtp-Source: AGHT+IEvDoykmlC42OAIJsi/QLfT+x2fU7js07z1lL9fYKp71NWDuSXyrrw0QsqRokKnLcIZ4rtbYA==
+X-Received: by 2002:a05:620a:2787:b0:7c3:c199:c3b0 with SMTP id af79cd13be357-7c4e610578fmr376275485a.32.1741328724151;
+        Thu, 06 Mar 2025 22:25:24 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3e533a0e8sm200339585a.9.2025.03.06.22.25.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 22:25:23 -0800 (PST)
+Date: Fri, 7 Mar 2025 14:25:19 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	Richard Cochran <richardcochran@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v3 0/2] clk: sophgo: add SG2044 clock controller support
+Message-ID: <gyww3drj2eez2bl3y5ikxy7mqpqpif7cktd3espqs4ve5srjpk@u6h5nzmtkmrb>
+References: <20250226232320.93791-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,108 +77,44 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3d3db030-26e6-4fe1-9158-85f8cebef89c@kwiboo.se>
+In-Reply-To: <20250226232320.93791-1-inochiama@gmail.com>
 
-On Fri, Mar 07, 2025 at 12:05:16AM +0100, Jonas Karlman wrote:
-> On 2025-03-06 17:43, Yao Zi wrote:
-> > On Thu, Mar 06, 2025 at 10:00:09PM +0800, Chukun Pan wrote:
-> >> Hi,
-> >>
-> >>> +		sdio0: mmc@ffc10000 {
-> >>> +			compatible = "rockchip,rk3528-dw-mshc",
-> >>> +				     "rockchip,rk3288-dw-mshc";
-> >>> +			reg = <0x0 0xffc10000 0x0 0x4000>;
-> >>> +			clocks = <&cru HCLK_SDIO0>,
-> >>> +				 <&cru CCLK_SRC_SDIO0>,
-> >>> +				 <&cru SCLK_SDIO0_DRV>,
-> >>> +				 <&cru SCLK_SDIO0_SAMPLE>;
-> >>> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> >>> +			fifo-depth = <0x100>;
-> >>> +			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-> >>> +			max-frequency = <150000000>;
-> >>> +			pinctrl-names = "default";
-> >>> +			pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>,
-> >>> +				    <&sdio0_det>, <&sdio0_pwren>;
-> >>
-> >> The sdio module is usually "non-removable", no need det,
-> >> and pwren may be other gpio (use mmc-pwrseq). So it should
-> >> be `pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>;`
-> > 
-> > This doesn't affect the fact that these two pins are assigned as
-> > functional pins for SDIO0, as pointed out by the datasheet[1].
-> > 
-> > But with more digging, I found the reference design[2] of Rockchip
-> > actually uses the two pins as normal GPIOs. This is more obvious in
-> > downstream devicetree of an EVB[3]. Most of the existing boards (Radxa
-> > 2A, ArmSOM Sige 1) follow the reference design.
-> > 
-> > For me, it's kind of surprising that the SDIO IP functions with two
-> > functional pins assigned as different modes. I'm not sure whether we
-> > should apply pin configuration for these two pins in the SoC devicetree.
-> > Jonas, what do you think about it?
+On Thu, Feb 27, 2025 at 07:23:17AM +0800, Inochi Amaoto wrote:
+> The clock controller of SG2044 provides multiple clocks for various
+> IPs on the SoC, including PLL, mux, div and gates. As the PLL and
+> div have obvious changed and do not fit the framework of SG2042,
+> a new implement is provided to handle these.
 > 
-> I think it make sense to match the pins used by reference boards, i.e.
-> the pinconf most likely to be used by majority of boards that will use
-> the sdio interface.
-
-Thanks, will take it.
-
-> Of my RK3528 boards, only ArmSoM Sige1 use sdio for onboard wifi and
-> there I currently have following in my work-in-progress board DT [4]:
+> Changed from v2:
+> 1. Applied Chen Wang' tag
+> 2. patch 2: fix author mail infomation
 > 
->   pinctrl-names = "default";
->   pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>, <&clkm1_32k_out>;
+> Changed from v1:
+> 1. patch 1: Applied Krzysztof's tag
+> 2. patch 2: Fix the build warning from bot.
 > 
-> The Radxa ROCK 2A/2F seem to use USB for wifi/bt.
+> Inochi Amaoto (2):
+>   dt-bindings: clock: sophgo: add clock controller for SG2044
+>   clk: sophgo: Add clock controller support for SG2044 SoC
 > 
-> [4] https://github.com/Kwiboo/linux-rockchip/blob/next-20250305-rk3528/arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
+>  .../bindings/clock/sophgo,sg2044-clk.yaml     |   40 +
+>  drivers/clk/sophgo/Kconfig                    |   11 +
+>  drivers/clk/sophgo/Makefile                   |    1 +
+>  drivers/clk/sophgo/clk-sg2044.c               | 2271 +++++++++++++++++
+>  drivers/clk/sophgo/clk-sg2044.h               |   62 +
+>  include/dt-bindings/clock/sophgo,sg2044-clk.h |  170 ++
+>  6 files changed, 2555 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
+>  create mode 100644 drivers/clk/sophgo/clk-sg2044.c
+>  create mode 100644 drivers/clk/sophgo/clk-sg2044.h
+>  create mode 100644 include/dt-bindings/clock/sophgo,sg2044-clk.h
 > 
-> Regards,
-> Jonas
-> 
-> > 
-> >>> +			resets = <&cru SRST_H_SDIO0>;
-> >>> +			reset-names = "reset";
-> >>> +			status = "disabled";
-> >>> +		};
-> >>> +
-> >>> +		sdio1: mmc@ffc20000 {
-> >>> +			compatible = "rockchip,rk3528-dw-mshc",
-> >>> +				     "rockchip,rk3288-dw-mshc";
-> >>> +			reg = <0x0 0xffc20000 0x0 0x4000>;
-> >>> +			clocks = <&cru HCLK_SDIO1>,
-> >>> +				 <&cru CCLK_SRC_SDIO1>,
-> >>> +				 <&cru SCLK_SDIO1_DRV>,
-> >>> +				 <&cru SCLK_SDIO1_SAMPLE>;
-> >>> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> >>> +			fifo-depth = <0x100>;
-> >>> +			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-> >>> +			max-frequency = <150000000>;
-> >>> +			pinctrl-names = "default";
-> >>> +			pinctrl-0 = <&sdio1_bus4>, <&sdio1_clk>, <&sdio1_cmd>,
-> >>> +				    <&sdio1_det>, <&sdio1_pwren>;
-> >>
-> >> Same here.
-> >>
-> >>> +			resets = <&cru SRST_H_SDIO1>;
-> >>> +			reset-names = "reset";
-> >>> +			status = "disabled";
-> >>> +		};
-> >>
-> >> Thanks,
-> >> Chukun
-> >>
-> >> -- 
-> >> 2.25.1
-> >>
-> > 
-> > Best regards,
-> > Yao Zi
-> > 
-> > [1]: https://github.com/DeciHD/rockchip_docs/blob/main/rk3528/Rockchip%C2%A0RK3528%C2%A0Datasheet%C2%A0V1.0-20230522.pdf
-> > [2]: https://github.com/DeciHD/rockchip_docs/blob/main/rk3528/RK3528_BOX_REF_V10_20230525.pdf
-> > [3]: https://github.com/rockchip-linux/kernel/blob/604cec4004abe5a96c734f2fab7b74809d2d742f/arch/arm64/boot/dts/rockchip/rk3528-evb1-ddr4-v10.dtsi#L128
+> --
+> 2.48.1
 > 
 
-Best regards,
-Yao Zi
+If there is no comments anymore, I will collect these patch and send
+a PR to Stephen at rc6 to see whether he will accept it.
+
+Regards,
+Inochi
