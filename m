@@ -1,154 +1,108 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCF32E3361
-	for <linux-clk@vger.kernel.org>; Fri,  7 Mar 2025 15:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F7521C185
+	for <linux-clk@vger.kernel.org>; Fri,  7 Mar 2025 15:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359660; cv=none; b=GC8PkYhkFQsuULZslgm/axTajjOYHFe5JwjpgeVoOXMejpz432+ODQP0QZidNp7onXOMSONCEzcdpqZqhj2IstCGKJuk6hYIh9r06iqaI9Wm1B/9y76868XMJLXUP25R+7NqFPAo9kanp13thev/TKtWG7puQyV+iKLuQotfZ14=
+	t=1741359851; cv=none; b=j1GogfShVE7/6tZ8cpyTF1iYZOqcTX8IGMqZDmpmNJ5ftv8aSZQJ2mXX9d0I40RQpUi8XG4DJ8knoRQ8sWxqdR/E8AdsexRFlZmYzMLYHD0tAl1MEOpiHeZdnE0PTVDGYqI2WYo0GWjSJSgfZCAObQcQVN8gUpOE8BkQoPzEzf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359660; c=relaxed/simple;
-	bh=qHtTx50HpEAPQhi+oOAilwuHPWB/0cppXyBnHt6uC6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JI4gidBZHpTTfezTqxIgroZ5NG6P8+cDuupedqtoK+gn2sznPI4dv8cmzrBCVRCuHlHv6gXVsZt34TgLOZIr0jULLVf6RiiYb9JD4mvWC38ySWSxA6RSRGmCB6XF9AUhPLwhDNaaE7vIUCukOa0ruaK1BgOf+mi+jMCagRBPRHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kNKP2ifI; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1741359851; c=relaxed/simple;
+	bh=e8ChYfB2JWMNrEuzMXT2LNRFntJeGVEoJBRw50gUiNI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=FDGtN2dvPJY6afk8mVDUQwDZFHySw/demPrwtKNwUQ+vbYw8+wiktTBYTQo3q/QHZemFU8WjgLZhiIE3dn1sLf6QSGT0WxNuw1kwtODTOEaGxxJBTseJDitAzh5kENUxvowZsQzOHvBrWPuCS+RAwUYqZeCq8Vfvw9VIdPvJmxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G/twAOnT; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kNKP2ifI"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394944f161so2089675e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 07 Mar 2025 07:00:58 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G/twAOnT"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43bca8cabc8so2095205e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 07 Mar 2025 07:04:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741359657; x=1741964457; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CG/0+ifxr75o2y5vXP38zdPvnGa50K7D2JsI3Q0oVMA=;
-        b=kNKP2ifIZTrPJtohysdbB8WyvMu3Ulk8KmsoGqBrv99iWGcw11xPsUCUwobXohS16D
-         ksBTTr0+00+IVEfsFJ1syR2UHjkCH2GEyOKmyQg1jrMC7LrR5oH+uogsB45x0663czCG
-         r8qFl+6JsKgU226/Gc97a7/6TAucNPJZFTZhE9hHIr/t0/u9XtddVIsNRPWToaGMYJCo
-         h6Ht3hnm/GtdJVivO1CWm0T89ImT2geftJtf3P5LJc08wKqFupx7zBFp0v9MvWUkspm4
-         fjaCHFZhelAz7dnmbZc4hzsvy6rJdr4v+PJjlOjN+4bb/amaLHs4ovcD1BB5SCAnEr2p
-         rlSQ==
+        d=linaro.org; s=google; t=1741359848; x=1741964648; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3ELG0oVhA+BqzmcxJHQfLXvm4d36xTv4jodb57FoDL0=;
+        b=G/twAOnTT7g4uD9xrW0acvPGkyTePwmSQhe3wVuG/IckVaOy1J0SyVWQc4/dLe1zfY
+         QXV+bm2D1uIlA/iyp1Tp4BnhKrbmf4Ia64sDNlnoH4yq3hPU//BYZ3BNyzRsa4gJ4WFR
+         23EswCJ+CkM1f1FcsyDnq0iZTQFc43wFdkKcQteRgV5YRuG5M+xkwX7u9dbTfn5dHk+T
+         bNbX8JvLglBIfLCw27178Z/azg4GvuWGGa6ct+JO3QYpc3KFCHAck/tA/gFN6BPMQm9y
+         MZNpiyiNtWnPuCPoJrWuGGFMgX3jqbl/WXTH6LJPBzj0/YCo/2dizxBuKRsuVXxfW4Ks
+         CHow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741359657; x=1741964457;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CG/0+ifxr75o2y5vXP38zdPvnGa50K7D2JsI3Q0oVMA=;
-        b=lM19Ix2LZlp3/ftQG4VlPtOBv6wwHdWlZYB5Y2KVysHq45ZveT1F2uK7T0gW70OkG/
-         3DZ/sc+7m+m66qCAdkALmpl5Y8qFs5BxrkLYzesA/4uafWyhpAi1tGV34E9OAGzavUGq
-         tKtMfe15XPmUAzxZzIn+LKhJp7iw61e4vpBpC9FGVwcjOaYnoSUJIs3cx2aadlnIA0Bv
-         jkXpZsmi42hbZU18L83LFA7VXWBH33DKbgZdTxqfrq7sOkMi9UMYeUdtwajMYykAqwVD
-         Nam++9y4rwkCGlID7NYySOGwfgnTXOpqkmM14ND79JhD6xrXbJaTnyYyD7gX3xyA3sNC
-         uuiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVc68Jwbh/CtMNv4zPI2NaMl+I+4bhQtttvu0ijRMk0Q9BH/HoDhavQtGwR0+31u267Q6+fp2o+VHc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7XFqEybbHkpUQKXrUyJ1HvQ9OGsKPktI1UpE8MjmefobTGVm7
-	0XLlXCIP4byB2Cl4CeQ7MCgbpxUt4fW57fxVIbVz3a9hineO/RreObRqCNiApwI=
-X-Gm-Gg: ASbGncvsmC8WfA4ywe/a4dE7ejW9Azy+in3LB/OTFmF8thRX2Jvb90e3yGID3lySXqe
-	L+mdeBtizUNuKb1oW38+9T5XNKO+xtKTlZKeUwJbEhLf52+sMOOxIQg3pqdMUcZWF935/VfDagg
-	i5QLHcokRXQxEci1PhYWkctXIOCVBW3YCJsbHSzlDcoeDL+1OEt/gpVCN4v0OJP9kNgxaL/Vz7G
-	FoEjO4nlHlFmQi5d2KWHrTmQ7xqtLELnZyJXqwQT3/rmB08URMVMgjlmwfTYvRIWtTaktZ8ipE2
-	7I2ThmFOSffnIDGAidAj49hRj/DHQaEqYsJAAbwvA5gc+SP4Z2xubU7mo9g8RM5W
-X-Google-Smtp-Source: AGHT+IGGZYO9R1Ir9jZGE3PRQGONJFCKHQHAZ8yS9pdVo8obZtmL6fx1WKDeNC/DhwpJv1mJ7ANdZg==
-X-Received: by 2002:a05:600c:5108:b0:439:90f5:3919 with SMTP id 5b1f17b1804b1-43c5c4bb61fmr11520345e9.4.1741359656901;
-        Fri, 07 Mar 2025 07:00:56 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c11e9desm5476847f8f.101.2025.03.07.07.00.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 07:00:56 -0800 (PST)
-Message-ID: <ceb3be8e-8f5c-43a8-a4b9-3ee62e67dfd6@linaro.org>
-Date: Fri, 7 Mar 2025 16:00:53 +0100
+        d=1e100.net; s=20230601; t=1741359848; x=1741964648;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3ELG0oVhA+BqzmcxJHQfLXvm4d36xTv4jodb57FoDL0=;
+        b=JylYrBfBjN4sbcU+ycNN2FZJ5oS5N2W07LftYQX6rpIfkqx9eulMXS/TFE89SVZUeT
+         Eug0upZ1x1F4D22I6wKhJ/l9E8GzfuRycL8tQiU2yt7cQ9D7VEWBpavySAOlZTzMcFQ4
+         NmEHpkywqDxMAv3+UGaBYWrBnJ75aIIgwY3eJXu3IbjRPQiW3JKzcidylx5KeAIF10R5
+         D1GxeCSwT3ibj0IBnnhUIyZFwkJRaoZcW69Qh+v6kmIsbYm6tXvX1yrZAOmEa/rBGWfl
+         IbdAULDn7oYvaJ7RX5X0CTTU+MPRGzDBr5Co7g3vELqO4IRcNFPP4F1AGfGRARZrTn70
+         a/2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXNZJn4SX3vCwsXV+bgNK1rpxcMrflSfVjx8K7gyhxweBftIVrxoUcj+vPb8fPHx2k6VL+mwemzP6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5fC/KiZrHE9VsC5KIVKTvosNxCbPZ+PUu3/QiFHTuQwhd73Jc
+	jbTuAzbjy+WksBKTQlsFWmxygWAx9OSi1CJtK9D6AtuLLg7I5ViEXuWVlJmkFW4=
+X-Gm-Gg: ASbGncvokBZuoTjDKMp/0arV7+E2Ruf8+HxS2eC0XEnQfzD/i4UsuYls+0/Vj9WnWWk
+	fZkptDUm9ZRgizh5z43C6BSJLr9AfcM7KSoI3nXZB+aXsa0/mRyR074pwMNRMJD5kgR1T3ujpEG
+	SxT81MJa2O9V/HtdGOGSqDqqY/E/nHys4RSd5CUdYb6wYadc9tDEVwTF8bWpYT8iz+fHeGmp558
+	3HCu44xP5eK6bHI71WrJXjF8Segcz5NQklrE+c3wjbEIwyuHzNVj/Bh19WMRBhk9wsN0gkb0Re2
+	+uxaTglTLpXmVsXX5q/h7h9t93Pe8rEdV95C1hsEZ61HgcZIxaj4oy5TaiqL
+X-Google-Smtp-Source: AGHT+IGeiraKGeEqa9VGhWaeeNF9N+Kf66ORaln0VM6PqpULNSWjc+LqFVea7mhvmFHlhfc4guuJvQ==
+X-Received: by 2002:a5d:584b:0:b0:385:de67:229e with SMTP id ffacd0b85a97d-3913a8aeefbmr51698f8f.11.1741359847652;
+        Fri, 07 Mar 2025 07:04:07 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfa52sm5444573f8f.21.2025.03.07.07.04.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 07:04:07 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250305-clk-samsung-headers-cleanup-v2-0-ea1ae8e9e2bf@linaro.org>
+References: <20250305-clk-samsung-headers-cleanup-v2-0-ea1ae8e9e2bf@linaro.org>
+Subject: Re: [PATCH v2 0/2] clk: samsung: Two header cleanups
+Message-Id: <174135984582.202251.7619477733984588971.b4-ty@linaro.org>
+Date: Fri, 07 Mar 2025 16:04:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC/RFT 00/12] clk: samsung: Use platform_driver_probe()
- to avoid __refdata
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org>
- <01cdf3a68e120d30bdcf4fc225bb236dba47fdff.camel@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <01cdf3a68e120d30bdcf4fc225bb236dba47fdff.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On 07/03/2025 15:29, André Draszik wrote:
-> Hi Krzysztof,
-> 
-> Nice idea!
-> 
-> On Wed, 2025-03-05 at 22:43 +0100, Krzysztof Kozlowski wrote:
->> RFT/RFC because testing needed. I tried to do the same on exynos5-subcmu
->> and it caused weird oopses which even KASAN did not narrow. Probably
->> because of multiple exynos5-subcmu devices?
-> 
-> I've tried this on top of next-20250225, and it doesn't work on gs101
-> either and OOPSes several times during boot in different places, but
-> I can not dig deeper right now.
-> 
-> [   11.502919][   T58] Unable to handle kernel paging request at virtual address ffffbfe2ab25cc30
 
-Thanks. I'll dig more once have a bit more time. The calltrace is
-exactly what I saw with exynos5-subcmu and it puzzles me.
+On Wed, 05 Mar 2025 21:03:42 +0100, Krzysztof Kozlowski wrote:
+> Changes in v2:
+> - mod_devicetable.h: also clk.c, clk.h, clk-exynos4.c,
+>   clk-exynos5-subcmu.c, clk-exynos2200.c and clk-exynos7870.c (Tudor)
+> - cleanup: clk-exynos2200.c and clk-exynos7870.c (Tudor)
+> - Rb tags
+> - Link to v1: https://lore.kernel.org/r/20250304-clk-samsung-headers-cleanup-v1-0-81718e38246e@linaro.org
+> 
+> [...]
+
+Applied, thanks!
+
+[1/2] clk: samsung: Add missing mod_devicetable.h header
+      https://git.kernel.org/krzk/linux/c/f32f5b0ec0f6eec0186de0607ab12f9cb1ecab73
+[2/2] clk: samsung: Drop unused clk.h and of.h headers
+      https://git.kernel.org/krzk/linux/c/017bbc922a09630579ff7b5b314fb186b8c0efcf
 
 Best regards,
-Krzysztof
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
