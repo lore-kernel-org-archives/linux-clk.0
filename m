@@ -1,55 +1,55 @@
 Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D82618FDBE;
-	Fri,  7 Mar 2025 06:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF8C1925AC;
+	Fri,  7 Mar 2025 06:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741329304; cv=none; b=RRNF3mhfq2J0TJIyysrvcBcGERCa07iiUZkDntCi9BpxHw3MNxr5FXxDT0oHstj4wh1MuPzYIMqfB9EKzV5/gH4+JGG6SngVqxqT7ELjFAXqldqRVsdViquGeFsUM9Z4ZRyg0oDEwFB9ZwQXQiMpO+iRtgNlJPQFE21tCcWG8tA=
+	t=1741329739; cv=none; b=k9iyIEMKB27sALUDqsmM2OTND43lcH6/6O3zqJSsJXfXaJRt9jMg2tXXtE+AlCAUfP1B0dLz8R5DoWJzab/1v8RDiXPDmbf1weip6jeOQfFdK3BR7dpWGyYTFfLUGM8XHdP13TUA2PGDVcXluuqPNAuusP50RQzQUwCMDQrc/zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741329304; c=relaxed/simple;
-	bh=D0GUM9vwdTZADtSV9LFCdv8+sJcUQRqRldlU0zdH/Uo=;
+	s=arc-20240116; t=1741329739; c=relaxed/simple;
+	bh=nbKRa8rE0oqcLHSVyysr2VLKNWVvbQMS6EMeJYsmQrk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eOWVk8vComdqVx7g928WCqv8piuxg/4M5T0aWBcnwJ1m6hCuQOVWnJoBuyQFhrw870ztoqd6EBT9+jFpq0P1wE12CERco//EJrWRRjs5t6S/nSEZAUW9r/dpOfMKdhD9nzhaFsKDONYa0tF2x9xjhCY32m9YAaIYeM8mpmh1qi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=I7ZlE6PW; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=0oEXldot; arc=none smtp.client-ip=155.254.16.17
+	 Content-Type:Content-Disposition:In-Reply-To; b=aLFs4LytIhDEyhKgTf/zQrAyNfUGFOit47Dem4QAIDP1bWCaUWENXb7A1TQNLgn5ZmBgg8eK/CD3AlXXipPm52fC8TdOk4OwCQCWuwxjUtgbSLdDNSgYYkBk5WL2RTOMzGG1GQTyCX252Jb1i9mhDHxb/PhctWdXA0R5H7JBb2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=j9ZRzaOM; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=OjqWsuB/; arc=none smtp.client-ip=155.254.16.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="I7ZlE6PW";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="0oEXldot"
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="j9ZRzaOM";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="OjqWsuB/"
 Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id D22E4EC59F6;
-	Thu, 06 Mar 2025 22:35:00 -0800 (PST)
+	by bayard.4d2.org (Postfix) with ESMTP id 36B94EC59F8;
+	Thu, 06 Mar 2025 22:42:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1741329300; bh=D0GUM9vwdTZADtSV9LFCdv8+sJcUQRqRldlU0zdH/Uo=;
+	t=1741329737; bh=nbKRa8rE0oqcLHSVyysr2VLKNWVvbQMS6EMeJYsmQrk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I7ZlE6PWaawE93M3WiN3Ctu8ZMkfFbWmBZcco7iFTg2miH6Nb7t6zuDELQwrLhCJ/
-	 KQUC1xnD5eXMMcdGsH0BnfKU0iTikfafXQm5phKMnv8ujrxJJv2je7vgEUTLIK16i7
-	 MZ4T8ScsTeFhJ9bdjed/nGuJ14yUCIxq4hPjpq1Jk5D1hJXwCmcgUQMFI5YndozlFd
-	 iokjC9YfGJ4zXAFrykQXpdaTc7VwSpsiNLzzTdsNOd5e7pbqRJwiJCpPhmZu9Q3c2P
-	 61GykHhV9N7DDtEKqWYpNUy5cAc4I+f1aVOIHDWxQcoe5EdgrKhoHdoBfdbTDXjXYI
-	 TVWt77h5BEhPA==
+	b=j9ZRzaOMCEbuc8R6ZwloksUuFydWNEtGh15LwVoTqKx5tVnAODqyTmLZvdCvrOtgn
+	 PxHqMFMdv5beyGG/60UuYTcwI6gQvsWMqgiOq9uOY8GiXOuQ2TMQcFosDtJjzucORy
+	 kqWutUOyhmDVwNfq+yT+p+TfKnQnOo/OjdfOwh4Kxel3lnuJeNXuUVNGOUk6BvIjlP
+	 X0ej5DPgAl0hb7RdH4jrSKA0/Fnk/zXR2tqoam8f1FXIIJMe3pGcaxlWErZaFNsO8+
+	 fnJGP8iCVRbzpboiI7Yb5Qj4SGRZzZguYwUwqS0Jzz8H9WOh9lFdpcDZBGG+tuW5nK
+	 qqH0jvuT0NaLA==
 X-Virus-Scanned: amavisd-new at 4d2.org
 Received: from bayard.4d2.org ([127.0.0.1])
  by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id ZVSd8SIkaOAx; Thu,  6 Mar 2025 22:34:57 -0800 (PST)
+ with ESMTP id 0vtihhhkC7FQ; Thu,  6 Mar 2025 22:42:15 -0800 (PST)
 Received: from ketchup (unknown [183.217.80.218])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 1F74EEC59F2;
-	Thu, 06 Mar 2025 22:34:53 -0800 (PST)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 9340EEC59F2;
+	Thu, 06 Mar 2025 22:42:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1741329297; bh=D0GUM9vwdTZADtSV9LFCdv8+sJcUQRqRldlU0zdH/Uo=;
+	t=1741329735; bh=nbKRa8rE0oqcLHSVyysr2VLKNWVvbQMS6EMeJYsmQrk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0oEXldotZARGvdAvlWurLFHbM4qjHDcFLotl2vSXHITGYzNoDq/oWYl67NBfdFL5M
-	 mW7FREbGrtIrLlKHdHKTsYxw97Bi8T0R0a2q2+P4cicA5l5zl4SCMg5Y8Re6+//8t3
-	 KShp/r8nOMlFxEv09O6jNtAs+SfXb7QyUzQzV1fTwkuhdOgA3WkXJb+NFRKKNRkrPN
-	 EmKPs/0fUmUWYg1EitGOvAk9q6MdJ0nw3ccBi8eE8pzOmByj3FEEsrIB4f/vxdcG7y
-	 qPVlyWLu9zsqltQLnvs9GVst9O9IrAytpK+/Evs6AUsD6UxFgTkS0v7TpLOtdAek4Q
-	 oxDApqq2bPxJw==
-Date: Fri, 7 Mar 2025 06:34:47 +0000
+	b=OjqWsuB/gYig3SZZwnOSvRfEAlxrE6c+5OAeVJrL5TzYn0O8i0v+cZBfGjV8/eRTr
+	 ycReyAiGZyy42W8ajkOUMyRr2fSvFT0E5VlIufVI2iozFMPnRmEWvofyFaa1Bj786P
+	 pwOHWQ/2t5WqP7hB0DPIaTusuHravbH4d8+e1IRQnlJdWX8tzH5oM24AlJyfaXqTtv
+	 UQD2SwiievEOW556J+xCsRSGXKzFj3sqxHWYoeFHMU8q8HLJBKsEb9N1IlZ/Vy2llk
+	 2QYWu2Fr/yU7bCPYMBuS6x0TeSlR6pT1M0dLgQaBgRfxUzQB3L/fQ/9MOyTeq7Acyl
+	 suu6g6yGqL+Jg==
+Date: Fri, 7 Mar 2025 06:42:02 +0000
 From: Haylen Chu <heylenay@4d2.org>
 To: Yixun Lan <dlan@gentoo.org>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -63,11 +63,12 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	Chen Wang <unicornxdotw@foxmail.com>,
 	Jisheng Zhang <jszhang@kernel.org>,
 	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v5 2/5] dt-bindings: clock: spacemit: Add spacemit,k1-pll
-Message-ID: <Z8qTh1zRJTjYNCtz@ketchup>
+Subject: Re: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1
+ SoC
+Message-ID: <Z8qVOssDHaVDQmLY@ketchup>
 References: <20250306175750.22480-2-heylenay@4d2.org>
- <20250306175750.22480-4-heylenay@4d2.org>
- <20250307002943-GYA64516@gentoo>
+ <20250306175750.22480-5-heylenay@4d2.org>
+ <20250307005149-GYA66361@gentoo>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,89 +77,129 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307002943-GYA64516@gentoo>
+In-Reply-To: <20250307005149-GYA66361@gentoo>
 
-On Fri, Mar 07, 2025 at 12:29:43AM +0000, Yixun Lan wrote:
-> Hi Haylen:
-> 
+On Fri, Mar 07, 2025 at 12:51:49AM +0000, Yixun Lan wrote:
 > On 17:57 Thu 06 Mar     , Haylen Chu wrote:
-> > Add definition for the PLL found on Spacemit K1 SoC, which takes the
-> > external 24MHz oscillator as input and generates clocks in various
-> > frequencies for the system.
+> > The clock tree of K1 SoC contains three main types of clock hardware
+> > (PLL/DDN/MIX) and has control registers split into several multifunction
+> > devices: APBS (PLLs), MPMU, APBC and APMU.
+> > 
+> > All register operations are done through regmap to ensure atomiciy
+> > between concurrent operations of clock driver and reset,
+> > power-domain driver that will be introduced in the future.
 > > 
 > > Signed-off-by: Haylen Chu <heylenay@4d2.org>
 > > ---
-> >  .../bindings/clock/spacemit,k1-pll.yaml       | 50 +++++++++++++++++++
-> >  include/dt-bindings/clock/spacemit,k1-ccu.h   | 37 ++++++++++++++
-> >  2 files changed, 87 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
+> >  drivers/clk/Kconfig               |    1 +
+> >  drivers/clk/Makefile              |    1 +
+> >  drivers/clk/spacemit/Kconfig      |   20 +
+> >  drivers/clk/spacemit/Makefile     |    5 +
+> >  drivers/clk/spacemit/ccu-k1.c     | 1714 +++++++++++++++++++++++++++++
+> >  drivers/clk/spacemit/ccu_common.h |   47 +
+> >  drivers/clk/spacemit/ccu_ddn.c    |   80 ++
+> >  drivers/clk/spacemit/ccu_ddn.h    |   48 +
+> >  drivers/clk/spacemit/ccu_mix.c    |  284 +++++
+> >  drivers/clk/spacemit/ccu_mix.h    |  246 +++++
+> >  drivers/clk/spacemit/ccu_pll.c    |  146 +++
+> >  drivers/clk/spacemit/ccu_pll.h    |   76 ++
+> >  12 files changed, 2668 insertions(+)
+> >  create mode 100644 drivers/clk/spacemit/Kconfig
+> >  create mode 100644 drivers/clk/spacemit/Makefile
+> >  create mode 100644 drivers/clk/spacemit/ccu-k1.c
+> >  create mode 100644 drivers/clk/spacemit/ccu_common.h
+> >  create mode 100644 drivers/clk/spacemit/ccu_ddn.c
+> >  create mode 100644 drivers/clk/spacemit/ccu_ddn.h
+> >  create mode 100644 drivers/clk/spacemit/ccu_mix.c
+> >  create mode 100644 drivers/clk/spacemit/ccu_mix.h
+> >  create mode 100644 drivers/clk/spacemit/ccu_pll.c
+> >  create mode 100644 drivers/clk/spacemit/ccu_pll.h
 > > 
-> > diff --git a/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml b/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
-> > new file mode 100644
-> > index 000000000000..23d7aa1bc573
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
-> > @@ -0,0 +1,50 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/spacemit,k1-pll.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> ..
+> > +static int k1_ccu_probe(struct platform_device *pdev)
+> > +{
+> > +	struct regmap *base_regmap, *lock_regmap = NULL;
+> > +	struct device *dev = &pdev->dev;
+> > +	int ret;
 > > +
-> > +title: Spacemit K1 PLL
+> > +	base_regmap = device_node_to_regmap(dev->of_node);
+> > +	if (IS_ERR(base_regmap))
+> > +		return dev_err_probe(dev, PTR_ERR(base_regmap),
+> > +				     "failed to get regmap\n");
 > > +
-> > +maintainers:
-> > +  - Haylen Chu <heylenay@4d2.org>
+> > +	if (of_device_is_compatible(dev->of_node, "spacemit,k1-pll")) {
+> ..
+> > +		struct device_node *mpmu = of_parse_phandle(dev->of_node,
+> > +							    "spacemit,mpmu", 0);
+> > +		if (!mpmu)
+> > +			return dev_err_probe(dev, -ENODEV,
+> > +					     "Cannot parse MPMU region\n");
 > > +
-> > +properties:
-> > +  compatible:
-> > +    const: spacemit,k1-pll
+> > +		lock_regmap = device_node_to_regmap(mpmu);
+> > +		of_node_put(mpmu);
 > > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    description: External 24MHz oscillator
-> > +
-> > +  spacemit,mpmu:
-> how about naming it as "spacemit,mpmu-syscon" explicitly?
-> to indicate this is a syscon phandle, it's more readable
+> you can simplify above with syscon_regmap_lookup_by_phandle(), which
+> would save a few lines
+> 
+> or further, just call syscon_regmap_lookup_by_compatible()? then
+> won't be necessary to introduce the "spacemit,mpmu" property..
+> 
 
-It's okay but I'm not sure whether this helps a lot... will wait for the
-maintainer to decide the name.
+These syscon_* functions differ a little from device_node_to_regmap():
+they get and enable the first item in "clocks" property when
+instantiating a regmap, which isn't desired for a clock controller.
 
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description:
-> > +      Phandle to the "Main PMU (MPMU)" syscon. It is used to check PLL
-> > +      lock status.
+> > +		if (IS_ERR(lock_regmap))
+> > +			return dev_err_probe(dev, PTR_ERR(lock_regmap),
+> > +					     "failed to get lock regmap\n");
+> > +	}
 > > +
-> > +  "#clock-cells":
-> > +    const: 1
-> > +    description:
-> > +      See <dt-bindings/clock/spacemit,k1-ccu.h> for valid indices.
+> > +	ret = spacemit_ccu_register(dev, base_regmap, lock_regmap,
+> > +				    of_device_get_match_data(dev));
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "failed to register clocks\n");
 > > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - spacemit,mpmu
-> > +  - "#clock-cells"
+> > +	return 0;
+> > +}
 > > +
-> > +additionalProperties: false
+> > +static const struct of_device_id of_k1_ccu_match[] = {
+> > +	{
+> > +		.compatible	= "spacemit,k1-pll",
+> > +		.data		= k1_ccu_apbs_clks,
+> > +	},
+> > +	{
+> > +		.compatible	= "spacemit,k1-syscon-mpmu",
+> > +		.data		= k1_ccu_mpmu_clks,
+> > +	},
+> > +	{
+> > +		.compatible	= "spacemit,k1-syscon-apbc",
+> > +		.data		= k1_ccu_apbc_clks,
+> > +	},
+> > +	{
+> > +		.compatible	= "spacemit,k1-syscon-apmu",
+> > +		.data		= k1_ccu_apmu_clks,
+> > +	},
+> > +	{ }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, of_k1_ccu_match);
 > > +
-> > +examples:
-> > +  - |
-> > +    clock-controller@d4090000 {
-> > +        compatible = "spacemit,k1-pll";
-> > +        reg = <0xd4090000 0x1000>;
-> > +        clocks = <&vctcxo_24m>;
-> > +        spacemit,mpmu = <&sysctl_mpmu>;
-> > +        #clock-cells = <1>;
-> > +    };
-> -- 
+> > +static struct platform_driver k1_ccu_driver = {
+> > +	.driver = {
+> > +		.name		= "spacemit,k1-ccu",
+> > +		.of_match_table = of_k1_ccu_match,
+> > +	},
+> > +	.probe	= k1_ccu_probe,
+> > +};
+> > +module_platform_driver(k1_ccu_driver);
+> > +
+> > +MODULE_DESCRIPTION("Spacemit K1 CCU driver");
+> > +MODULE_AUTHOR("Haylen Chu <heylenay@4d2.org>");
+> > +MODULE_LICENSE("GPL");
+> 
 
 ...
 
+> -- 
 > Yixun Lan (dlan)
 > Gentoo Linux Developer
 > GPG Key ID AABEFD55
