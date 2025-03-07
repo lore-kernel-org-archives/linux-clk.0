@@ -1,46 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF06C1A3171;
-	Fri,  7 Mar 2025 07:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB2F1885B4;
+	Fri,  7 Mar 2025 08:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741332593; cv=none; b=Dcewxi8mTEZkqSZC3np9yJsD2rUTrgc/Zj0kAdH5oUZctQ6M1dAL8iybLBS0I+6pSdC3T48RUFXRZj7zlHS1OE2sJ3S2Yl9S66zZBIEXwuL9QqmYVgBdJnwV1iDO8g3X90d5E6t/cWAwOKqFLXSnverF3ZIXXPXXqDmvj0zLxns=
+	t=1741335402; cv=none; b=sdLtH6ilNleDpHJl21dKEMlTW2Qxx36cyOkKLOuetY+YOOmNI32KkCtDl0D+poF6wMs2wSxurOPe6V/Ql1WTQWEJOsr73+BIIxkgGRaxMY/raVWNvBL+xui0J14DoZHjjTHV4PFR68pzuPUZep2aY4prkJ1ZpJIeoAKv5qlkBf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741332593; c=relaxed/simple;
-	bh=9IM2Zi16jhQTEhlsjN0XpLrMG/R/xIXyk6ZdOXdSFl8=;
+	s=arc-20240116; t=1741335402; c=relaxed/simple;
+	bh=DEVRT3pYUTzTLAgL5CavIfRYoF9HgZxDGxwhWCp6/R4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EAXQLhO1N5ydzPg1Oo+oLn5KGwHwrNZHZCM/CAWgHxlQOHoc0DtI0B7o7O2pGTgmcuJmPkauqIzlvf16QhxrDcPpKJvncp65W72Z+G2KIsaD9basuO5kK6O6KvEUhhYnPZYlWQqCGm5dMQC2oJaK9q8e8cMdn2me4i+yiPHoWfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHXnY75k; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=qyYZJgkHvMKMoh/foiVFG/jLwTO3t1SJTSpQI4Zyo0u/0XCi1RKe+T8MdxtgjVPuIrOMcjoxeS3MtXREKMp2Pue7GCS+eZN2RUUzivoGabgxEip0ajs2lfvWtGjcMvGxHdqXo68CCIB+XTzcaiTfkdCKktXgIf/vy43m0jGsbJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ErLB7r+P; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHXnY75k"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C70C4CED1;
-	Fri,  7 Mar 2025 07:29:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ErLB7r+P"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31F7BC4CED1;
+	Fri,  7 Mar 2025 08:16:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741332593;
-	bh=9IM2Zi16jhQTEhlsjN0XpLrMG/R/xIXyk6ZdOXdSFl8=;
+	s=k20201202; t=1741335401;
+	bh=DEVRT3pYUTzTLAgL5CavIfRYoF9HgZxDGxwhWCp6/R4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lHXnY75kTGL+ySabRaVU4JEh0F1XwB17J6xFxYfo3CM1sjc1J+V/AYcH3M+kf3T1K
-	 VjM1Zk3gAU0zIvhzYNvYayA/EOUTH3C9BrPrZpWSBG7Y+HKFg2QKDrmkhzfSSEbUR3
-	 cdRtWpocD9vf9zl5tNgY9FZjFplxMUAkYMT1IplwAiFKkZIMV8nZGrwielBu8qmoNv
-	 8vYLGhKh5EvYvH/mD/5kTTeZ8TGkwTpOY/LAk9gQpQq5plXrQiHX2mvf4khhmGOqZm
-	 sS6sFyrFPlJUb+lkbje5aklcglsY5sCZOBGI7LiH525K7ZaPjPJbEOQHal+T47nUi2
-	 cuYtbsZvEUamg==
-Date: Fri, 7 Mar 2025 08:29:49 +0100
+	b=ErLB7r+PME0AvpLr3Uk77LtGmuAPKrLDCGGk0MonxsZLFZO8/gYN1aJuuVHfJMr7j
+	 ZqvX9b1HxwVz9lGKboQGqCKrsrk8Hmz+FUC2EI7HCr9p63FhHHCM8VCdKkiz6xmiwJ
+	 S11pJzDLVRMWK0f9bVmDRg0yxj1NCEnqeeL282iAd4X8D62weuS/D7eCAK+1YLmKPR
+	 jed64eIOKI6SZqvhmvK42SMkUNKwOwokWvHRzPPBWj6XhrvukYUrmaS06Ri+T+1B28
+	 4xYaas6OuVYbqrw+NWuLJZI3aUp8MwXEEgL3UgH3gGOZYh7iw8NaZaokmv257pq1U2
+	 loRCy+nPVMMiA==
+Date: Fri, 7 Mar 2025 09:16:36 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Guangjie Song <guangjie.song@mediatek.com>
+To: Haylen Chu <heylenay@4d2.org>
 Cc: Michael Turquette <mturquette@baylibre.com>, 
 	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Richard Cochran <richardcochran@gmail.com>, 
+	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org, 
 	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, netdev@vger.kernel.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH 21/26] clk: mediatek: Add MT8196 ovl0 clock support
-Message-ID: <20250307-godlike-quizzical-mayfly-dec36e@krzk-bin>
-References: <20250307032942.10447-1-guangjie.song@mediatek.com>
- <20250307032942.10447-22-guangjie.song@mediatek.com>
+	spacemit@lists.linux.dev, Inochi Amaoto <inochiama@outlook.com>, 
+	Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v5 1/5] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+Message-ID: <20250307-gay-apricot-porpoise-9b0aff@krzk-bin>
+References: <20250306175750.22480-2-heylenay@4d2.org>
+ <20250306175750.22480-3-heylenay@4d2.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,24 +49,24 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250307032942.10447-22-guangjie.song@mediatek.com>
+In-Reply-To: <20250306175750.22480-3-heylenay@4d2.org>
 
-On Fri, Mar 07, 2025 at 11:27:17AM +0800, Guangjie Song wrote:
-> +
-> +static struct platform_driver clk_mt8196_ovl0_drv = {
-> +	.probe = mtk_clk_pdev_probe,
-> +	.remove = mtk_clk_pdev_remove,
-> +	.driver = {
-> +		.name = "clk-mt8196-ovl0",
-> +	},
-> +	.id_table = clk_mt8196_ovl0_id_table,
-> +};
-> +
-> +module_platform_driver(clk_mt8196_ovl0_drv);
-> +MODULE_LICENSE("GPL");
+On Thu, Mar 06, 2025 at 05:57:47PM +0000, Haylen Chu wrote:
+> Document APMU, MPMU and APBC syscons found on Spacemit K1 SoC, which are
+> capable of generating clock and reset signals. Additionally, APMU and MPMU
+> manage power domains.
+> 
+> Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> ---
+>  .../soc/spacemit/spacemit,k1-syscon.yaml      |  80 +++++++
+>  include/dt-bindings/clock/spacemit,k1-ccu.h   | 210 ++++++++++++++++++
 
-You have warnings here about missing description. Build your code with
-W=1.
+Filename matching binding, so spacemit,k1-syscon.h
+(or vice-versa)
+
+With this fixed:
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
