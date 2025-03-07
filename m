@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08585208990;
-	Fri,  7 Mar 2025 23:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5161537A7;
+	Fri,  7 Mar 2025 23:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741390729; cv=none; b=oXndnI80Wa/ukGwLfA3a44pJmXvFgxfdu9ziuOQ6y01PZTQOAtvZwBlZe7hSuiXlIMIyKkezCqu1St/nkaLY00cQEBY3YcQgHFGevjEViVlS4+ZACB7/mMmVPZnfrHvXfnmzsNLVhHrey2FKsge7v+51vPuWBCMGcvseQwKX4i4=
+	t=1741391466; cv=none; b=Mg0oE0zlcnlbBP9+aw3wQjlAHcqOFQ37LxZaLWBGNczul+a9gswAf7osO1QFNnRFOlxRiz7684+haEulkhR4Q7zV41trSNzC4WfD8n6dCyy0pgmSAmga2RJZ9vmQf0p8dt8055lflpzUS5fv3lA7FVdZW+dchT8447LHUQvHxEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741390729; c=relaxed/simple;
-	bh=P4vyWk3reiE07secgDDnsAhYfN69/dzogtDPEgwwIbQ=;
+	s=arc-20240116; t=1741391466; c=relaxed/simple;
+	bh=HQ4++ZBWcKdzC2KL17+s3dBJ/J61Py38+YJbkNdGJPE=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=lp48wCNvQ6a2oqIQvTCzmXOg3J8HHGPBWBgj81aVxaelZGHaJODYpw5Ei1E7Ce2miQfOP6R5ZRaHitHdj9P0FfHoUxSfEFLTRrUruHikMTEy5/01vhVVY7yBwChqEEZSzzcnbDPz8rMCCEkgPV35U7wXwoknBrdKWASJh6Sv9sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XysOcXqC; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=NleUT1L5GmZWiOhlaV66F8M5okTGeT6s8BZrvcix4T+TgSGspw4uKvFeebL7v4UTDc8WsgYz8hsrRu+GjdC5j4HHA1e4aZwJmObXRFP+YQheZNlhUSX+oHxiX9eWtEwRXLwtjXHfBFvYbn/Xw9AziYXIhFjhNZ50VMOE0KNEYpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKNzLZhk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XysOcXqC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62D7BC4CED1;
-	Fri,  7 Mar 2025 23:38:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKNzLZhk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC1D0C4CED1;
+	Fri,  7 Mar 2025 23:51:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741390728;
-	bh=P4vyWk3reiE07secgDDnsAhYfN69/dzogtDPEgwwIbQ=;
+	s=k20201202; t=1741391464;
+	bh=HQ4++ZBWcKdzC2KL17+s3dBJ/J61Py38+YJbkNdGJPE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=XysOcXqCwMhS/vjHd/vkus1NSBXvMx+V20sF2wi+4D/DHzvdTO5N8cLEgm4REpjkc
-	 zszDsIMRor4cnRLho6jBpvF22DJex74YlJEan3P0ygsToJOndi4aAk7Ly1GvYj/fOi
-	 RBy4GV/oU2xKuxl0WCsiVtVfuTXtAdo0IpF5RqqymSYj4Va/7za+OMeBX8yu6Vf77U
-	 e1B/xP7+KaGYVx6dG576dsR5Ri5UjTOvY0ZiqSkSlE4BK1jTFdYULIQDwEe4lLKDT7
-	 aINNGQE45jl1Kj91ObuWnVv3B0T7yJ2lkMrLT1o0Y97L5Il4qJw0ofDIVrmto0tl24
-	 8/lypsITcWvnw==
-Message-ID: <8e6c0123099039c2f69715f57ef7ba42.sboyd@kernel.org>
+	b=SKNzLZhkYuPr4YNrItTbUHbACBfMlNIxVDKmKf+UhP+an0Bjpg2wiuAWe0T5B4ZLj
+	 Li+2USiTuwKQJyRZKTCOWTh8MB5l/YFsu5DMpdKM+D4hlljGYD8gMRtz2+gn1IXmJT
+	 f9eeL8RhFNDSYwizTr2p8lXlzo62rLFumxv0o6vB1bkH8Tx+XojshorYvzNJTVOy76
+	 ttmwCqy1VAwmYN0C7tZrIYDoNle7qnIE1uuf+g9JUYb1/Q1mJZMBCjjMYf4PyaRH1t
+	 h5RDzv7Tu69QY2Bx0nRMdSFd2NFA6QyOqLdpOe75+x9E10xeVQBSL6gN4NDdCRFXT9
+	 DgK5wb/d5f6Mg==
+Message-ID: <dbf8ce431e149c7304b2e7487cf2b197.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,30 +35,34 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250307-vsprintf-pcn-v1-2-df0b2ccf610f@bootlin.com>
-References: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com> <20250307-vsprintf-pcn-v1-2-df0b2ccf610f@bootlin.com>
-Subject: Re: [PATCH 2/2] vsprintf: remove redundant and unused %pCn format specifier
+In-Reply-To: <cover.1741362159.git.geert+renesas@glider.be>
+References: <cover.1741362159.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v6.15 (take two)
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Florian Fainelli <florian.fainelli@broadcom.com>, Jonathan Corbet <corbet@lwn.net>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Lukasz Luba <lukasz.luba@arm.com>, Petr Mladek <pmladek@suse.com>, Rafael J. Wysocki <rafael@kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, Zhang Rui <rui.zhang@intel.com>
-Date: Fri, 07 Mar 2025 15:38:46 -0800
+Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Fri, 07 Mar 2025 15:51:00 -0800
 User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Quoting Luca Ceresoli (2025-03-07 03:19:08)
-> %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprint=
-f:
-> add %pC{,n,r} format specifiers for clocks") introducing them does not
-> clarify any intended difference. It can be assumed %pC is a default for
-> %pCn as some other specifiers do, but not all are consistent with this
-> policy. Moreover there is now no other suffix other than 'n', which makes=
- a
-> default not really useful.
+Quoting Geert Uytterhoeven (2025-03-07 07:47:40)
+>         Hi Mike, Stephen,
 >=20
-> All users in the kernel were using %pC except for one which has been
-> converted. So now remove %pCn and all the unnecessary extra code and
-> documentation.
+> The following changes since commit 9b12504e8c8c2f1f7e5f16afdd829603dd0c95=
+08:
 >=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
+>   clk: renesas: r9a09g047: Add CANFD clocks and resets (2025-02-20 17:42:=
+03 +0100)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v6.15-tag2
+>=20
+> for you to fetch changes up to e1a098330ef0555ad216e549a018d99aee7752c1:
+>=20
+>   clk: renesas: r9a09g047: Add clock and reset signals for the TSU IP (20=
+25-03-06 16:39:31 +0100)
+>=20
+> ----------------------------------------------------------------
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Thanks. Pulled into clk-next
