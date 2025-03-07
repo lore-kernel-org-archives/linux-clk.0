@@ -1,70 +1,100 @@
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7391922C6;
-	Fri,  7 Mar 2025 06:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F397346F;
+	Fri,  7 Mar 2025 06:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741330047; cv=none; b=b0W2s30DVako/ix3oIwX2Nzw6yDJ8AjAG/6gKtAMJh95pbW8d3G9SzuSEV3FqBjYEUfyYcSgG0oWv8Dg3ENUCjFJQJuVmAmhB//nwpqA33XdbTaX+542M9VTqJmtr09Fa7KqghAJ1GndMnpZz0tRJmQgL412e3PZDNtkJ9124QM=
+	t=1741330696; cv=none; b=UUHAlW6zWk0PdZBEuOCGJFkZMZ8Qa7QkkmOaSPWsiOkpL+mGY5q39jLWCU8QQ7BkrFYjEtfb63HTedEarxH4s1WBAchywmzLMKwlvB8KgWZoK3FcdgspSi+8yGnxW0Wiql+xcBrsUnLCTKfn20QIm+POmn2jT77HjA5DKl3WHvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741330047; c=relaxed/simple;
-	bh=eO668JLCfJpEysgWJQQjSXlLFojaqRfazrBWsM4cyNk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TgsAi9U1YzXrWDQGFmx6Ho77GvVktZJ4lsO5Zy0C9Y1a2FkT/KOOqsLrOsRsvnMFKUqgzlYq1Dgf8TEVT1GwE3B3pGFRXz2QHOG6jEJtIV6jJgbod4okC/JaozK62OWUGfp7v8jgOZY9bUs5zk9fugzxdxpSnp0rEj7NDpREviA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201605.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202503071447099282;
-        Fri, 07 Mar 2025 14:47:09 +0800
-Received: from locahost.localdomain (10.94.18.189) by
- jtjnmail201605.home.langchao.com (10.100.2.5) with Microsoft SMTP Server id
- 15.1.2507.39; Fri, 7 Mar 2025 14:47:10 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <duje.mihanovic@skole.hr>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Charles Han
-	<hanchunchao@inspur.com>
-Subject: [PATCH] clk: mmp: Fix NULL vs IS_ERR() check
-Date: Fri, 7 Mar 2025 14:47:07 +0800
-Message-ID: <20250307064708.209511-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741330696; c=relaxed/simple;
+	bh=PiXd/45wF5pZwmRSHv2Zl90XxcOIcIo1yRbez2da2NY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e1nfOAClztz+Hzqqku7l5IvlRc6M8DNqS0csmk5XyOKKeEDvyv2XxLNolZP34qYsYZ4CPA5Iy/FU8a+S/dZLq9yhVufOweNVSKgnxJJTNg/1KHm4kI+SLsabxL4+yIXvNVqbBFaUyPvB0ehU6xshKgI/56hqc9KmYJ3GaqWjndc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SqapLK0v; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SqapLK0v"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390e88caa4dso806980f8f.1;
+        Thu, 06 Mar 2025 22:58:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741330693; x=1741935493; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=disXzokau1gUQ+hfEjMpewIrRbZ8/qNkRCbJd7tHiss=;
+        b=SqapLK0vnPzhTtZd/GlFA9XvMKIk3QYt+XrBsHDWLANPVbl0LEDg7vGhAxInmrlcdj
+         01AP8gV5lyuW4DZe1e0PQwiO7n4Aq6aGjz+RkbuXqdD0uO/IhU/zL/na37lPo35Rib9J
+         Dlo87EK16+9jkE48EC5fKqIQuAU5vfMnw28XlVNkZpis/qLBOHyzKTpBonE+HhTlJ7q1
+         z3AiMfHZ0OKeXbmYZjvMGhx5t8v9ph4HKUJ1fMcY2dT19zQAGdDl7Oe0s+FX2X6k1+f0
+         KU0527SEfGydn07oljHBu48/eIri9/y8HD5KR4OnGq7pBTFZKj0Hdagq5dPRvTwq7jsE
+         AX7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741330693; x=1741935493;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=disXzokau1gUQ+hfEjMpewIrRbZ8/qNkRCbJd7tHiss=;
+        b=dIp03v5b1WRNxVXgmUI64VxEBQBAO7NJU9TfRoLjE+R+eIbc1zpmvqAvtOBtDcQWWX
+         ODSpyyhh46XPeK3OcriO1kh66kDj7zP5hPADRQUAaMBKAsdIUogf64N+32eJH02M0qsq
+         z5CK6axV2aEs4ARemlWrXMxDrNZGX5tmGmKUCOpn2en4JaCEinKFv3+jxo1YK1Lrh2o0
+         YizoCqPSR6AwNr3X/RMDdtoS0fQTKbWMECQJpNbu8alLZPBzUjcgX9GfWVEKGV3P1jWG
+         0IQtGMj+0u6pntsiNHb8iHTsJOYqQ29zbpmL1VTab4K2MMtJQZrXLxjZCBKye7nUT7nT
+         Kb5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUDI5LxYSCuqdH2sMxnodIHnY4w9RLsBtQrZ6UUeeUt3aN9v4MoZ+LuI8TJTBKvz34KzgrBT1bqR3k3tBw=@vger.kernel.org, AJvYcCVJxns86zlC2LDv9sC1o3enuUIo4lC8xFJh1cuYjdtq/MJXRfOiYJN+vpLT9Ka7qI/AV1G0tDAYhw9J@vger.kernel.org, AJvYcCWj5iZNTCERBG2Lt3eiKn6C8y0bvM9rJ+u1FMwQeW8MUI4znht7SatS9swHtBpKI1ij0hnM7LUV0NbgRc8e@vger.kernel.org, AJvYcCXY0I+A2WY4urPJNU/Qr7xojT0KnWlEzlbFFpZ9my1SxK9lXdQ1emiRnFQau/A67zsz6iU4a3dz2byG@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEiMVB1rrnP/x+E2j2FwNopvD0FbDyOImQTkKqQhm9g1OEJFra
+	RIbpOR9nOrXOyHWRSH3zHbIyxvUWB+S6+1ddt2Ho52M28f0QsgUVHuecoRXIA6pTLQHS6jFxD+L
+	WhQFLLvx2pi/PQf7BdgcrOczkYuw=
+X-Gm-Gg: ASbGnctsolgQyo4WWP2irOy5sG2lL0OwzEkyrcv2jClG6sVyEJ4V3Sv4q9aX3L9mn9v
+	qjHOgpQQAm1OC90NL32Z9JNUeuGXJrxqZHqnf2QaKE8/mnbNTgNzNp+i9LmltU520Acr8Qg27w2
+	Yb+ROBa2HXSYdROKGUeD5lgfChZSo=
+X-Google-Smtp-Source: AGHT+IG1Kf4GDRiX3+bXqKFTJ7wPU+tbu1U0QznMuTGnfavR7i0imOCxuT5vQOwR5UpE6/+tyRPUNF9Ucmq4PfQqNtA=
+X-Received: by 2002:a05:6000:2ac:b0:391:2f2f:818 with SMTP id
+ ffacd0b85a97d-39132d78446mr981403f8f.9.1741330693076; Thu, 06 Mar 2025
+ 22:58:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 2025307144709e6bed258d99392093fb99a7af2477bb7
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+References: <20250225143501.68966-1-clamor95@gmail.com> <20250225143501.68966-8-clamor95@gmail.com>
+ <04be5106-0d93-449c-b8a9-d8b3dc15ef24@gmail.com> <CAPVz0n1ZTDZnZHu6R_YVfhDqkjcMV0xH1UHVih=bgv9DGoZ2nw@mail.gmail.com>
+ <a2170519-ec9d-4453-a2ee-0cd46d94d52b@gmail.com>
+In-Reply-To: <a2170519-ec9d-4453-a2ee-0cd46d94d52b@gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 7 Mar 2025 08:58:01 +0200
+X-Gm-Features: AQ5f1Jp8kv9xn3VaS_UorhKcaXLUiDZXcb4wlrrq9us8IIWVA8fVhdhXxb2AG9E
+Message-ID: <CAPVz0n36onhJ2fRP+RotE5LTufphuuNtL91Rywqvv1jqta=s-g@mail.gmail.com>
+Subject: Re: [PATCH v1 7/9] memory: tegra: Add Tegra114 EMC driver
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Georgi Djakov <djakov@kernel.org>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The devm_kzalloc() function returns NULL on error, not error pointers.
-Fix the check.
+=D1=87=D1=82, 6 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 22:06 Dmitr=
+y Osipenko <digetx@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> 06.03.2025 22:48, Svyatoslav Ryhel =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > =D1=87=D1=82, 6 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 21:42 D=
+mitry Osipenko <digetx@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >>
+> >> 25.02.2025 17:34, Svyatoslav Ryhel =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> +     /* Read register to wait until programming has settled */
+> >>> +     readl(emc->regs + EMC_INTSTATUS);
+> >>
+> >> Tegra4 TRM says this must be MC register and not EMC
+> >>
+> >
+> > Are you sure? Tegra4 has no MC_INTSTATUS but it has EMC_INTSTATUS
+>
+> Can be any MC register, downstream driver reads MC_EMEM_ADR_CFG.
 
-Fixes: 03437e857b0a ("clk: mmp: Add Marvell PXA1908 APMU driver")
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/clk/mmp/clk-pxa1908-apmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/mmp/clk-pxa1908-apmu.c b/drivers/clk/mmp/clk-pxa1908-apmu.c
-index 8cfb1258202f..d3a070687fc5 100644
---- a/drivers/clk/mmp/clk-pxa1908-apmu.c
-+++ b/drivers/clk/mmp/clk-pxa1908-apmu.c
-@@ -87,8 +87,8 @@ static int pxa1908_apmu_probe(struct platform_device *pdev)
- 	struct pxa1908_clk_unit *pxa_unit;
- 
- 	pxa_unit = devm_kzalloc(&pdev->dev, sizeof(*pxa_unit), GFP_KERNEL);
--	if (IS_ERR(pxa_unit))
--		return PTR_ERR(pxa_unit);
-+	if (!pxa_unit)
-+		return -ENOMEM;
- 
- 	pxa_unit->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pxa_unit->base))
--- 
-2.43.0
-
+I can confirm this, thank you for pointing out.
