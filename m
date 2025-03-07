@@ -1,97 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F32249E5;
-	Fri,  7 Mar 2025 04:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDFFDDC1;
+	Fri,  7 Mar 2025 04:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741320988; cv=none; b=rh4yFSmFY82VlB4cB+OHaWxtcQM0/phWXMljiKy/xm0Y8ZOqSM9OG2TFE23z+OsGdTYWqUi+0wCf6ANtg4BvMFlZ80pL+L52q4AasEaemgqG38SQdQeCeXrypH15bp+cgeNol+B6rQdhIaQ4nAqv8JlM84ydnwl2tz8Nitfaebw=
+	t=1741321758; cv=none; b=qo4PE0WkbBvYzCh2qk0QZCT/ta0X56/zvBW3Grw+ncPG9/Rrnf03qF3VupQbzV1TxbeHnA56VwMGalGFGh7xIKCHWEa1Ja/TBbjuahBLS7hExvc4+wzOsxQOGCd3FO4C18M0YONZBm4XNYLmruu0zMc7rNZ7tgpnFd8IZu7Tqns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741320988; c=relaxed/simple;
-	bh=ajKfc7gigb87SKdIwwoyRysY03B56hMMZRp8G59YjxI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ntDnhxfhW2t/sIFdQCv4g67DFtT55lUEbra9pjYPDmSv3JhKeDjZ3QAT4UMqrolOP3ECm27TYZ7cU3DMHjJcUVW2kXXvEcHQAnAK6PwN5yHmWICfMM5HHKPN/nG0BCuo88tNqeMoLWNDuWfk+ywWX0knwjVvRIyBt5Cv4C//MA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CL8qtgn4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741321758; c=relaxed/simple;
+	bh=zq99OLrs6v7GQld3xy+GtdFAWCh3tj+Uy7CeSu4omdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SV1vryo9cNJVacdZWlObxwbjHQZLwOfq+ew0nuQJyR8D2OnSEG4yT+bYbT3RlXpJqvC8PXhk8NdB69Qm0PJujJTriMPqpdz8ZWHQ45tmCm9mvvyUoW8yAgaubkPVJKrrmpAtUeGoMOicKSsIVukGPrSSlDu0FRk8mqm4xg169K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=LTtN1jNC; arc=none smtp.client-ip=74.50.62.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=atomide.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CL8qtgn4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DFD3C4CED1;
-	Fri,  7 Mar 2025 04:16:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741320987;
-	bh=ajKfc7gigb87SKdIwwoyRysY03B56hMMZRp8G59YjxI=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=CL8qtgn4sJhzjtBviEMGu4ppipSMtJP1w4YUcCjeddS/TRxWje5+TJIy3dXVaUI6A
-	 u5aFCJGR3DzAofl6XVgrJDurLXP0fkkO5TTHU8VlztHuKM3SnugeseRfiprGsKPt1F
-	 eCHE+DV/OdEbO0DNd0r4S0wjHRkpL2+J66I0jkFNx35ap50y+r1uZTWtaVKHQCuMp/
-	 q0K9I1KC1M0XV2CIWBY9Rx8yXkC18p9jUmC8GgN88p8mByq379KjmUD35A/7QVupeb
-	 iLJ7UW5iJEAlTK3uebsBOKmYokopK1R3yHgo7M2n3WZJD/HSLz3aifEIMGKMQZ5oLT
-	 0jFmn7DGsrUlg==
-Date: Thu, 06 Mar 2025 22:16:26 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="LTtN1jNC"
+Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
+	by mail5.25mail.st (Postfix) with ESMTPSA id 212BA604D8;
+	Fri,  7 Mar 2025 04:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
+	s=25mailst; t=1741321315;
+	bh=zq99OLrs6v7GQld3xy+GtdFAWCh3tj+Uy7CeSu4omdU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LTtN1jNCjnMxVUrfzmj8FjpAVY8mhp0KZpGQI8qr0nzdGBt4wFoWvw4yPNeM1rJWL
+	 GxGK9QYQ1bAFdYm5TTCxzQekrl62mec5Jv+rsbaEYhkybOCnsiLNg1KVvFLtcsdAiA
+	 e5mYXt41o0sLNILXKClup4tQHcry2HXEMXhaDJR4r9aHPJ+qXEsi1qbYMLj+3sMYcz
+	 e0Mk8Ewwxz/20iQ9SiZEfr11Q0cgfF2/Dk0k2zr29r1MI8QBTApHeZHUcw63XotDpm
+	 InfXy8a3k+/2eMFGkd7s6nGiaXwhI8xhGehQ7YK2sNBk4bV+cCPoyvFcEEsPY68JFz
+	 NaCdm9FFETDHw==
+Date: Fri, 7 Mar 2025 06:21:31 +0200
+From: Tony Lindgren <tony@atomide.com>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: ti: Convert ti-clkctrl.txt to
+ json-schema
+Message-ID: <20250307042131.GD23206@atomide.com>
+References: <20250305224722.66360-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Project_Global_Chrome_Upstream_Group@mediatek.com, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, 
- netdev@vger.kernel.org, devicetree@vger.kernel.org
-To: Guangjie Song <guangjie.song@mediatek.com>
-In-Reply-To: <20250307032942.10447-7-guangjie.song@mediatek.com>
-References: <20250307032942.10447-1-guangjie.song@mediatek.com>
- <20250307032942.10447-7-guangjie.song@mediatek.com>
-Message-Id: <174132098632.2770289.10803747794522136743.robh@kernel.org>
-Subject: Re: [PATCH 06/26] dt-bindings: clock: mediatek: Add new MT8196
- clock
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305224722.66360-1-andreas@kemnade.info>
 
+* Andreas Kemnade <andreas@kemnade.info> [250305 22:47]:
+> Convert the TI clkctrl clock device tree binding to json-schema.
+> Specify the creator of the original binding as a maintainer.
 
-On Fri, 07 Mar 2025 11:27:02 +0800, Guangjie Song wrote:
-> Add the new binding documentation for system clock and functional clock
-> on Mediatek MT8196.
-> 
-> Signed-off-by: Guangjie Song <guangjie.song@mediatek.com>
-> ---
->  .../bindings/clock/mediatek,mt8196-clock.yaml |   66 +
->  .../clock/mediatek,mt8196-sys-clock.yaml      |   63 +
->  include/dt-bindings/clock/mt8196-clk.h        | 1503 +++++++++++++++++
->  3 files changed, 1632 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8196-clock.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clock.yaml
->  create mode 100644 include/dt-bindings/clock/mt8196-clk.h
-> 
+Good to see this happening :)
 
-My bot found errors running 'make dt_binding_check' on your patch:
+> @Tony: you seem to be the only contributor to the txt binding,
+> so we could go with dual-licensing if you agree.
 
-yamllint warnings/errors:
+Yes I agree dual-licensing makes sense for the binding.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clock.example.dtb: clock-controller@10000800: reg: [[0, 268437504], [0, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
+> @@ -0,0 +1,64 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti,clkctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments clkctrl clock
+> +
+> +maintainers:
+> +  - Tony Lindgren <tony@atomide.com>
 
-doc reference errors (make refcheckdocs):
+Please add yourself as a maintainer too for the binding.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250307032942.10447-7-guangjie.song@mediatek.com
+Regards,
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+Tony
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
 
