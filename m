@@ -1,208 +1,134 @@
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF8C1925AC;
-	Fri,  7 Mar 2025 06:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E381A01B9
+	for <linux-clk@vger.kernel.org>; Fri,  7 Mar 2025 06:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741329739; cv=none; b=k9iyIEMKB27sALUDqsmM2OTND43lcH6/6O3zqJSsJXfXaJRt9jMg2tXXtE+AlCAUfP1B0dLz8R5DoWJzab/1v8RDiXPDmbf1weip6jeOQfFdK3BR7dpWGyYTFfLUGM8XHdP13TUA2PGDVcXluuqPNAuusP50RQzQUwCMDQrc/zI=
+	t=1741329918; cv=none; b=Gdp2CnwN0qzb+S5F6HMEg2mn6mRTaLtAPyjslH47NHyrQjUpJH69jXV0KUEYKnY2Dlz5dSTIVN1NVZVYtVGU3cwyuMDSwd7ZN0dvoNYStWifkZUM5cVTQizq/ZXoz8AJjaGySRA+0PBmCNS5u1Z3DqtVIIIljoaN9SlJe2jVm0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741329739; c=relaxed/simple;
-	bh=nbKRa8rE0oqcLHSVyysr2VLKNWVvbQMS6EMeJYsmQrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLFs4LytIhDEyhKgTf/zQrAyNfUGFOit47Dem4QAIDP1bWCaUWENXb7A1TQNLgn5ZmBgg8eK/CD3AlXXipPm52fC8TdOk4OwCQCWuwxjUtgbSLdDNSgYYkBk5WL2RTOMzGG1GQTyCX252Jb1i9mhDHxb/PhctWdXA0R5H7JBb2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=j9ZRzaOM; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=OjqWsuB/; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+	s=arc-20240116; t=1741329918; c=relaxed/simple;
+	bh=NHKBjrh1dCf5Ik9zbFcVqwD1Ifih8fZMuBnNW+lLYhI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oahuz0qbcKtlWFRri9PDFyKeOj3zfRew6d4cPvY0KI0tScOlmCdWcyF5yMb3Ch3C+lHD3SjTuEXNfFIV2xkArgAFQuo+qVfl4//x+sL4Bcvh11dXSX0wIL1ilODFOjriF9Iqlri0kwhbhv8ePdr5wi1r4soYp3c9k3XxFpOi+LQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=XSq9Ki3k; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="j9ZRzaOM";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="OjqWsuB/"
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 36B94EC59F8;
-	Thu, 06 Mar 2025 22:42:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1741329737; bh=nbKRa8rE0oqcLHSVyysr2VLKNWVvbQMS6EMeJYsmQrk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j9ZRzaOMCEbuc8R6ZwloksUuFydWNEtGh15LwVoTqKx5tVnAODqyTmLZvdCvrOtgn
-	 PxHqMFMdv5beyGG/60UuYTcwI6gQvsWMqgiOq9uOY8GiXOuQ2TMQcFosDtJjzucORy
-	 kqWutUOyhmDVwNfq+yT+p+TfKnQnOo/OjdfOwh4Kxel3lnuJeNXuUVNGOUk6BvIjlP
-	 X0ej5DPgAl0hb7RdH4jrSKA0/Fnk/zXR2tqoam8f1FXIIJMe3pGcaxlWErZaFNsO8+
-	 fnJGP8iCVRbzpboiI7Yb5Qj4SGRZzZguYwUwqS0Jzz8H9WOh9lFdpcDZBGG+tuW5nK
-	 qqH0jvuT0NaLA==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id 0vtihhhkC7FQ; Thu,  6 Mar 2025 22:42:15 -0800 (PST)
-Received: from ketchup (unknown [183.217.80.218])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 9340EEC59F2;
-	Thu, 06 Mar 2025 22:42:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1741329735; bh=nbKRa8rE0oqcLHSVyysr2VLKNWVvbQMS6EMeJYsmQrk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OjqWsuB/gYig3SZZwnOSvRfEAlxrE6c+5OAeVJrL5TzYn0O8i0v+cZBfGjV8/eRTr
-	 ycReyAiGZyy42W8ajkOUMyRr2fSvFT0E5VlIufVI2iozFMPnRmEWvofyFaa1Bj786P
-	 pwOHWQ/2t5WqP7hB0DPIaTusuHravbH4d8+e1IRQnlJdWX8tzH5oM24AlJyfaXqTtv
-	 UQD2SwiievEOW556J+xCsRSGXKzFj3sqxHWYoeFHMU8q8HLJBKsEb9N1IlZ/Vy2llk
-	 2QYWu2Fr/yU7bCPYMBuS6x0TeSlR6pT1M0dLgQaBgRfxUzQB3L/fQ/9MOyTeq7Acyl
-	 suu6g6yGqL+Jg==
-Date: Fri, 7 Mar 2025 06:42:02 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1
- SoC
-Message-ID: <Z8qVOssDHaVDQmLY@ketchup>
-References: <20250306175750.22480-2-heylenay@4d2.org>
- <20250306175750.22480-5-heylenay@4d2.org>
- <20250307005149-GYA66361@gentoo>
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="XSq9Ki3k"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741329915;
+ bh=xrrqReRVP8vJeyg5PfphNvWCkrOXLcDZ4zm3kNo2Lt8=;
+ b=XSq9Ki3k18V7OtXjkFG9+uPHM/C5/izMxl5WK5tZWTqsXA1v/XfhWEdN8ROziRmQB6degbcql
+ GHcDYDeXCgoKbSK3x875N6oqwqIDT6UZai2cFt00ZDH1lbBcjGyuXi0WLWElkG4q+teT3dLZLzb
+ yrkhfl23SFEINO2LOHHrHQ0DwflyXNbTny2JR4UJ53NZbqUsPkCd4Ub+ZtqOlQnXrru0h3MNw8Y
+ 92H0EtgI6MzZCkSHdI/Epm7KSDmUL+TODvcf2BcZgaoZWu2WErM0HAmvZJ/rco5bCJHT08oGhAb
+ W/qBzRxkBWK/rjn+SlKCuB+uOmx3iU7iE0JHI5iUmvBQ==
+X-Forward-Email-ID: 67ca95f1d992817a57e34193
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <5a0a7ce1-1dfb-4d19-8a1e-0d89d177f5b8@kwiboo.se>
+Date: Fri, 7 Mar 2025 07:45:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307005149-GYA66361@gentoo>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/8] arm64: dts: rockchip: Enable SD-card interface on
+ Radxa E20C
+To: Yao Zi <ziyao@disroot.org>, Chukun Pan <amadeus@jmu.edu.cn>
+Cc: conor+dt@kernel.org, cristian.ciocaltea@collabora.com,
+ detlev.casanova@collabora.com, devicetree@vger.kernel.org, heiko@sntech.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+References: <20250305194638.47187-1-ziyao@disroot.org>
+ <20250307033508.656479-1-amadeus@jmu.edu.cn> <Z8qJqpUwi7VV8tJk@pie>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <Z8qJqpUwi7VV8tJk@pie>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 07, 2025 at 12:51:49AM +0000, Yixun Lan wrote:
-> On 17:57 Thu 06 Mar     , Haylen Chu wrote:
-> > The clock tree of K1 SoC contains three main types of clock hardware
-> > (PLL/DDN/MIX) and has control registers split into several multifunction
-> > devices: APBS (PLLs), MPMU, APBC and APMU.
-> > 
-> > All register operations are done through regmap to ensure atomiciy
-> > between concurrent operations of clock driver and reset,
-> > power-domain driver that will be introduced in the future.
-> > 
-> > Signed-off-by: Haylen Chu <heylenay@4d2.org>
-> > ---
-> >  drivers/clk/Kconfig               |    1 +
-> >  drivers/clk/Makefile              |    1 +
-> >  drivers/clk/spacemit/Kconfig      |   20 +
-> >  drivers/clk/spacemit/Makefile     |    5 +
-> >  drivers/clk/spacemit/ccu-k1.c     | 1714 +++++++++++++++++++++++++++++
-> >  drivers/clk/spacemit/ccu_common.h |   47 +
-> >  drivers/clk/spacemit/ccu_ddn.c    |   80 ++
-> >  drivers/clk/spacemit/ccu_ddn.h    |   48 +
-> >  drivers/clk/spacemit/ccu_mix.c    |  284 +++++
-> >  drivers/clk/spacemit/ccu_mix.h    |  246 +++++
-> >  drivers/clk/spacemit/ccu_pll.c    |  146 +++
-> >  drivers/clk/spacemit/ccu_pll.h    |   76 ++
-> >  12 files changed, 2668 insertions(+)
-> >  create mode 100644 drivers/clk/spacemit/Kconfig
-> >  create mode 100644 drivers/clk/spacemit/Makefile
-> >  create mode 100644 drivers/clk/spacemit/ccu-k1.c
-> >  create mode 100644 drivers/clk/spacemit/ccu_common.h
-> >  create mode 100644 drivers/clk/spacemit/ccu_ddn.c
-> >  create mode 100644 drivers/clk/spacemit/ccu_ddn.h
-> >  create mode 100644 drivers/clk/spacemit/ccu_mix.c
-> >  create mode 100644 drivers/clk/spacemit/ccu_mix.h
-> >  create mode 100644 drivers/clk/spacemit/ccu_pll.c
-> >  create mode 100644 drivers/clk/spacemit/ccu_pll.h
-> > 
-> ..
-> > +static int k1_ccu_probe(struct platform_device *pdev)
-> > +{
-> > +	struct regmap *base_regmap, *lock_regmap = NULL;
-> > +	struct device *dev = &pdev->dev;
-> > +	int ret;
-> > +
-> > +	base_regmap = device_node_to_regmap(dev->of_node);
-> > +	if (IS_ERR(base_regmap))
-> > +		return dev_err_probe(dev, PTR_ERR(base_regmap),
-> > +				     "failed to get regmap\n");
-> > +
-> > +	if (of_device_is_compatible(dev->of_node, "spacemit,k1-pll")) {
-> ..
-> > +		struct device_node *mpmu = of_parse_phandle(dev->of_node,
-> > +							    "spacemit,mpmu", 0);
-> > +		if (!mpmu)
-> > +			return dev_err_probe(dev, -ENODEV,
-> > +					     "Cannot parse MPMU region\n");
-> > +
-> > +		lock_regmap = device_node_to_regmap(mpmu);
-> > +		of_node_put(mpmu);
-> > +
-> you can simplify above with syscon_regmap_lookup_by_phandle(), which
-> would save a few lines
+Hi Chukun,
+
+On 2025-03-07 06:52, Yao Zi wrote:
+> On Fri, Mar 07, 2025 at 11:35:08AM +0800, Chukun Pan wrote:
+>> Hi,
+>>
+>>> +&sdmmc {
+>>> +	bus-width = <4>;
+>>> +	cap-mmc-highspeed;
+>>> +	cap-sd-highspeed;
+>>> +	disable-wp;
+>>> +	no-sdio;
+>>
+>> With 'no-sdio' property:
+>> [  129.608986] mmc_host mmc1: Bus speed (slot 0) = 400000Hz (slot req 400000Hz, actual 400000HZ div = 0)
+>> [  130.711168] mmc1: Card stuck being busy! __mmc_poll_for_busy
+>> [  130.725536] mmc_host mmc1: Bus speed (slot 0) = 300000Hz (slot req 300000Hz, actual 300000HZ div = 0)
+>> [  131.751240] mmc1: Card stuck being busy! __mmc_poll_for_busy
+>> [  131.765608] mmc_host mmc1: Bus speed (slot 0) = 200000Hz (slot req 200000Hz, actual 200000HZ div = 0)
+>> [  132.825083] mmc1: Card stuck being busy! __mmc_poll_for_busy
+>> [  132.839413] mmc_host mmc1: Bus speed (slot 0) = 187500Hz (slot req 187500Hz, actual 187500HZ div = 0)
+>> [  133.960141] mmc1: Card stuck being busy! __mmc_poll_for_busy
+>>
+>> Without 'no-sdio' property:
+>> [  105.224019] mmc1: error -22 whilst initialising SDIO card
+>> [  106.290838] mmc1: Card stuck being busy! __mmc_poll_for_busy
+>> [  106.801931] dwmmc_rockchip ffc30000.mmc: Busy; trying anyway
+>> [  107.385835] mmc_host mmc1: Timeou sending command (cmd 0x202000 arg 0x0 status 0x80202000)
+>> [  107.400425] mmc_host mmc1: Bus speed (slot 0) = 300000Hz (slot req 300000Hz, actual 300000HZ div = 0)
+>> [  107.431561] mmc_host mmc1: Bus speed (slot 0) = 49800000Hz (slot req 50000000Hz, actual 49800000HZ div = 0)
+>> [  107.433107] mmc1: new high speed SDIO card at address 0001
 > 
-> or further, just call syscon_regmap_lookup_by_compatible()? then
-> won't be necessary to introduce the "spacemit,mpmu" property..
+> So it seems the sdmmc controller actually works with SDIO commands as
+> well? I don't expect that since the datasheet says RK3528 has only two
+> SDIO 3.0 controllers.
 > 
+> We could remove the "no-sdio" property if SDIO actually works. Will
+> apply it in the next version if there's no objection against this.
 
-These syscon_* functions differ a little from device_node_to_regmap():
-they get and enable the first item in "clocks" property when
-instantiating a regmap, which isn't desired for a clock controller.
+On the E20C the sdmmc controller is routed to a microSD card slot mainly
+intended for use with microSD-cards and should normally not need SDIO.
 
-> > +		if (IS_ERR(lock_regmap))
-> > +			return dev_err_probe(dev, PTR_ERR(lock_regmap),
-> > +					     "failed to get lock regmap\n");
-> > +	}
-> > +
-> > +	ret = spacemit_ccu_register(dev, base_regmap, lock_regmap,
-> > +				    of_device_get_match_data(dev));
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "failed to register clocks\n");
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct of_device_id of_k1_ccu_match[] = {
-> > +	{
-> > +		.compatible	= "spacemit,k1-pll",
-> > +		.data		= k1_ccu_apbs_clks,
-> > +	},
-> > +	{
-> > +		.compatible	= "spacemit,k1-syscon-mpmu",
-> > +		.data		= k1_ccu_mpmu_clks,
-> > +	},
-> > +	{
-> > +		.compatible	= "spacemit,k1-syscon-apbc",
-> > +		.data		= k1_ccu_apbc_clks,
-> > +	},
-> > +	{
-> > +		.compatible	= "spacemit,k1-syscon-apmu",
-> > +		.data		= k1_ccu_apmu_clks,
-> > +	},
-> > +	{ }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, of_k1_ccu_match);
-> > +
-> > +static struct platform_driver k1_ccu_driver = {
-> > +	.driver = {
-> > +		.name		= "spacemit,k1-ccu",
-> > +		.of_match_table = of_k1_ccu_match,
-> > +	},
-> > +	.probe	= k1_ccu_probe,
-> > +};
-> > +module_platform_driver(k1_ccu_driver);
-> > +
-> > +MODULE_DESCRIPTION("Spacemit K1 CCU driver");
-> > +MODULE_AUTHOR("Haylen Chu <heylenay@4d2.org>");
-> > +MODULE_LICENSE("GPL");
+What card/adapter do you have inserted in the microSD card slot that
+requires use of SDIO instead of just SD or MMC? What is the use case you
+have that requires removal of no-sdio on E20C?
+
+Regards,
+Jonas
+
 > 
+> Further tests about the capabilities of the controller are welcome.
+> 
+>> # cat /sys/kernel/debug/mmc1/ios
+>> clock:          50000000 Hz
+>> vdd:            21 (3.3 ~ 3.4 V)
+>> bus mode:       2 (push-pull)
+>> chip select:    0 (don't care)
+>> power mode:     2 (on)
+>> bus width:      2 (4 bits)
+>> timing spec:    2 (sd high-speed)
+>> signal voltage: 0 (3.30 V)
+>> driver type:    0 (driver type B)
+>>
+>> Thanks,
+>> Chukun
+>>
+>> -- 
+>> 2.25.1
+>>
+> 
+> Best regards,
+> Yao Zi
 
-...
-
-> -- 
-> Yixun Lan (dlan)
-> Gentoo Linux Developer
-> GPG Key ID AABEFD55
-
-Best regards,
-Haylen Chu
