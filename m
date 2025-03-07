@@ -1,179 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A392206B6;
-	Fri,  7 Mar 2025 16:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5907618A92D;
+	Fri,  7 Mar 2025 17:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741363433; cv=none; b=WXiNDRn9K1pS7lUAboCjc2B8NYoCUL8Z27GXexTBxT/1xgolah0C6MemTRvtz75hYl+qthwGq3zoWDh0662dj4rCHmtvSaBvBcAPC5TKE1DwbdAHiEjQTuR+OByDvnIpcEky45+43iA8ziK+drKXVqsuyFwDOiW+vQ+Bxmxl2Vg=
+	t=1741367857; cv=none; b=bdIC0kf3w/RJo11eMy88f4UcznnIO83YtMfzXh7CNMXsdUARcmgYbJEHCq/274cVb3XLdUZ6ztOWVUoj6c+uM6RcdyrYyuKgkojg0MdKFPg9SKZH3x+OdbLJFNHOmtBAlH+3IdmuDxsnz/UhPlkEuA//HHMFFZBjronay4hpiWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741363433; c=relaxed/simple;
-	bh=jKcE6LBMQIEZD2siLfa8qIZAQzMXrOFejG9YW9TQFCA=;
+	s=arc-20240116; t=1741367857; c=relaxed/simple;
+	bh=ayzf6oEExh0PtPYBdOQ9otAoW9YyMP1K3uyxhu94de4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=muoYEIAZG9HmRGJAlrl1PjmwbEwAt0TWI7xVn9j8u1dpz3nlg8qOl35TN7Ort4o51zXmWLtIfB2I5aM4H0kHhZgY6n7EHIse+GMVuq5q9rUkNk7HNxdSybfVC7A6615ROjVLLLibTJd3Ohlet5wJGYaCp1JZ5/TS3B4W+MPq4Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqtpgJxM; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=qJ21vrwfoye5sZiSvlp0LWYxLB9h5iDuiC2Fy4buo4GviPvRBgkucGPxq57qJPBYAfFK6o/nPP05qhaP+MmM5rO1A5GwAPVcRKYbq7mpDtUnrPF6xkHOkjJxUsuS9UuN8ALNUL/jwj9nXOf10qxsCHET6Ylo1GJl9N4T9VtNcQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XID4B6m7; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqtpgJxM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65FF8C4CEE3;
-	Fri,  7 Mar 2025 16:03:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741363433;
-	bh=jKcE6LBMQIEZD2siLfa8qIZAQzMXrOFejG9YW9TQFCA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uqtpgJxM+FeMrOrrVjR4r9cUjgMcwN9iUIv+6+iR8KBfhyMfBbVmAMm+VSjWprAou
-	 Hbymjq5Syj6JTZBa8Xjni9057HvoMx9qOQLbtsVRXcgEAHwb5dogZFSDMmyBGLqPUT
-	 AtOU81kinqiCYTA+fCx98rXK7uz5ZXzgoooO5oYNjrkNQZXgZak8KAnZhlAVdCk3Bc
-	 X2zpr2dmAZ8FE+P4BinuR9nTL4qyGZJXZGapTjFcAXfpoIaTMPinysbS6k/eZP5Zbl
-	 vlvqKNeR4VPnGk7kmjAYk1FuHqrgxWTPWcTzqZYHzfkgUWJkXty0GgdyQO5oY/9Zpm
-	 fQ7VtAswFxmfg==
-Date: Fri, 7 Mar 2025 16:03:46 +0000
-From: Conor Dooley <conor@kernel.org>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: "robh@kernel.org" <robh@kernel.org>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"rui.zhang@intel.com" <rui.zhang@intel.com>,
-	"lukasz.luba@arm.com" <lukasz.luba@arm.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"john.madieu@gmail.com" <john.madieu@gmail.com>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v2 3/7] dt-bindings: thermal: r9a09g047-tsu: Document the
- TSU unit
-Message-ID: <20250307-barbell-pretzel-368d6a4d1336@spud>
-References: <20250227122453.30480-1-john.madieu.xa@bp.renesas.com>
- <20250227122453.30480-4-john.madieu.xa@bp.renesas.com>
- <20250228-shampoo-uprising-44ae0d3bd68b@spud>
- <OSBPR01MB2775DFC184F78E9FB50F28FFFFD52@OSBPR01MB2775.jpnprd01.prod.outlook.com>
- <20250307-everyone-ragweed-e05a10a9646b@spud>
- <OSBPR01MB277531D7C872C9EB0B287069FFD52@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XID4B6m7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741367856; x=1772903856;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ayzf6oEExh0PtPYBdOQ9otAoW9YyMP1K3uyxhu94de4=;
+  b=XID4B6m7/p57qenkzi84NCW1cmVX4HOs2HWsPEB792VvcXhXb30JtZCh
+   tIcwuV76F1V1Bg1YqRNdmEfzf9mJ/VBzgqrcwALdEed7EamIGNZ2a6M9r
+   dZjM0HZLoIBNCru5SRsWrBlZf0FPmdR5SicSH8H1r+YUPV91jq+4MK3WM
+   gYWMnZisCavS33mXNjRW6+/LZZws1tPsGpmGQ1PknR+3yZhM3eHk3hdRP
+   XyJM5Ysu/2PI7xc2HIIRQaTl5bT6oUNgTqHUXJNCUJ03gbwCRaH2C7okA
+   T8nZwniScknRLSdxKfYODr6U4J8SIclOd0Xnat0uwlNVpocE2x6wlxuKz
+   Q==;
+X-CSE-ConnectionGUID: +BECUutUSReoKZxEpt71Gg==
+X-CSE-MsgGUID: hrT4S4GRR76dm+JFeeWwUA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="53414609"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="53414609"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:17:35 -0800
+X-CSE-ConnectionGUID: aQOK4EGdTBuEwbKEaJD8SQ==
+X-CSE-MsgGUID: 9gRU9mptSOCxD63e8cCy+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="124402684"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:17:31 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tqbKA-00000000T8j-2Fr2;
+	Fri, 07 Mar 2025 19:17:26 +0200
+Date: Fri, 7 Mar 2025 19:17:26 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/2] vsprintf: remove redundant and unused %pCn format
+ specifier
+Message-ID: <Z8sqJhbqEBla_Ch7@smile.fi.intel.com>
+References: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com>
+ <20250307-vsprintf-pcn-v1-2-df0b2ccf610f@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FptXTXAIhD0gPfos"
-Content-Disposition: inline
-In-Reply-To: <OSBPR01MB277531D7C872C9EB0B287069FFD52@OSBPR01MB2775.jpnprd01.prod.outlook.com>
-
-
---FptXTXAIhD0gPfos
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250307-vsprintf-pcn-v1-2-df0b2ccf610f@bootlin.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Mar 07, 2025 at 03:55:27PM +0000, John Madieu wrote:
-> Hi Conor,
->=20
-> > -----Original Message-----
-> > From: Conor Dooley <conor@kernel.org>
-> > Sent: Friday, March 7, 2025 4:33 PM
-> > To: John Madieu <john.madieu.xa@bp.renesas.com>
-> > Subject: Re: [PATCH v2 3/7] dt-bindings: thermal: r9a09g047-tsu: Docume=
-nt
-> > the TSU unit
-> >=20
-> > On Fri, Mar 07, 2025 at 03:14:05PM +0000, John Madieu wrote:
-> > > Hi Conor,
-> > >
-> > > Thanks for your review!
-> > >
-> > > > -----Original Message-----
-> > > > From: Conor Dooley <conor@kernel.org>
-> > > > Sent: Friday, February 28, 2025 8:03 PM
-> > > > To: John Madieu <john.madieu.xa@bp.renesas.com>
-> > > > Subject: Re: [PATCH v2 3/7] dt-bindings: thermal: r9a09g047-tsu:
-> > > > Document the TSU unit
-> > > >
-> > > > On Thu, Feb 27, 2025 at 01:24:39PM +0100, John Madieu wrote:
-> > > > > The Renesas RZ/G3E SoC includes a Thermal Sensor Unit (TSU) block
-> > > > > designed to measure the junction temperature. The device provides
-> > > > > real-time temperature measurements for thermal management,
-> > > > > utilizing a single dedicated channel (channel 1) for temperature
-> > sensing.
-> > > > >
-> > > > > Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> > > > > ---
-> > > > > v1 -> v2:
-> > > > >  * Fix reg property specifier to get rid of yamlint warnings
-> > > > >  * Fix IRQ name to reflect TSU expectations
-> > > > >
-> > > > > +    enum: [0, 1]
-> > > > > +    description: |
-> > > > > +      TSU operating mode:
-> > > > > +      0: Mode 0 - Conversion started by software
-> > > > > +      1: Mode 1 - Conversion started by ELC trigger
-> > > >
-> > > > Can you make this "software" and "elc" or something please, unless
-> > > > people will genuinely find "0" and 1" to be more informative.
-> > > > And why doesn't the property have a default?
-> > >
-> > > Sorry for miss-specifying.
-> > > ELC is an external event trigger. May be should I specify it like tha=
-t ?
-> >=20
-> > If "elc trigger" is meaningful to people using hte device (IOW, it matc=
-hes
-> > datasheet wording) then that's fine I think.
->=20
-> "elc trigger" matches datasheet wording.
->=20
-> >=20
-> > > To make sure I got your point, do you mean specifying a default value
-> > > in bindings ?
-> >=20
-> > The property doesn't actually need to be required, it could easily have=
- a
-> > default (say software) and only be set in the case of using the elc
-> > trigger - which brings you to Rob's comment that it can just be a boole=
-an,
-> > setting the property if elc and leaving it out of software.
->=20
-> Got the point now. I can make it default to software trigger, and add opt=
-ional
-> Boolean property to ELC trigger. Let's say "renesas,elc-trigger;"
+On Fri, Mar 07, 2025 at 12:19:08PM +0100, Luca Ceresoli wrote:
+> %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
+> add %pC{,n,r} format specifiers for clocks") introducing them does not
+> clarify any intended difference. It can be assumed %pC is a default for
+> %pCn as some other specifiers do, but not all are consistent with this
+> policy. Moreover there is now no other suffix other than 'n', which makes a
+> default not really useful.
+> 
+> All users in the kernel were using %pC except for one which has been
+> converted. So now remove %pCn and all the unnecessary extra code and
+> documentation.
 
-Yah, that works.
+You seem forgot to update translation(s) of the documentation.
 
->=20
-> >=20
-> > Rob's other comment was
-> >=20
-> > | Who/what decides the mode? If a user is going to want to change this,
-> > | then it should be a runtime control, not a DT property.
->=20
-> Changes are not possible at runtime. Some customers may want software,
-> while other may want the external trigger, and this is immutable=20
-> configuration.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-What makes it immutable? Set by some wiring on the board? I couldn't
-find the user in your driver patches to better understand how you were
-using it.
 
---FptXTXAIhD0gPfos
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8sY4gAKCRB4tDGHoIJi
-0ut/APj8ly7agJVBfsuReMJT8RtHUn7mZHkeTYHpMWJm/lYEAQDHM+aoQ7IZhrsm
-zco87OB941IsVq/iRfFQNx78HSNvAQ==
-=kAfv
------END PGP SIGNATURE-----
-
---FptXTXAIhD0gPfos--
