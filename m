@@ -1,184 +1,117 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633C01B425C;
-	Sat,  8 Mar 2025 07:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0769F7482;
+	Sat,  8 Mar 2025 14:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741420263; cv=none; b=AeTRsoX11YOIZP2os9n100cOEXtb7ATTh8BIradDrbEioBKYK86xNOwVCWwCmVvUhTLj+F8mhD1h3B2x2EHY/NAJGS0WjmxnJdqdRtF6sNSbhyvGRJ5lY7zU2yiIbwo9KlUXeATam2x6oXw4b2P1QGoTaok8OY4/naws9o8z0Lg=
+	t=1741442786; cv=none; b=oWk9ez8MKSWYH4BoinUpuJRpnQhrB9ftJC/MHfzGpVuxoZlfPgOfWZfH6gD/myACd8pAKSC8eWS06TolExxYd5J9QlGDGKCE25g2P1jNyA2t+e8g3wFkOOhtuuIsVgX3h2Z4bvK+mQQVKYAA3jiuQDEG0TK+JlSpGKo/2Ud1oWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741420263; c=relaxed/simple;
-	bh=6WL3+gww7pwy7HeSxhHT435XK+Ky7XngeaLYGMY0ueU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RFC9muVIb2NcnF6ph2KF7HlHk7wZewxSB0mI5ReUffpZRWDLntQmZWlcha7DT5r7LtoReHyWzmw5jRBXyoqoTRHpwUTScX/L48CMBHFOzPxhIrH1+gmaSNXoZ/VOQ5vqhEbyn3oKvf64NvJfsya7FRGwZ/IsqGlKEcod6VXjdB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TuB2/1+U; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741442786; c=relaxed/simple;
+	bh=kGemAZ9EVDuCpSfW33snc8SJJJ1dseQQAUsecXVAtcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X3dPn6QH4fjeIRnLFTtWay+mMMWVAbnNSXh4FAzNXD6zy86bWv+GPIuwWHtmE4aCLH5Y5UMYEEsaY/6Gbb3gw4HGU2pgQG2UEXiUH95Uqc0enkEd4rbwSkkv/BoJCm3wG0GTS75tZJtTYxOjxzdC+cV+f0p0gDBLW89+8gmvSRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Ng0E9bDJ; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuB2/1+U"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaedd529ba1so311473266b.1;
-        Fri, 07 Mar 2025 23:51:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741420260; x=1742025060; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5mUS3JAucq16wAF6W5pFtM5mAxXgdUK4IDJ6WzSb7Xo=;
-        b=TuB2/1+UTXUTnTepWshJ19WMZozFhuvXSwzEmzvkpo7E+aymgraz4ZfhiOoN5vgC7m
-         gtidjo3mBx0aIR3KmYa/Mo35BUhFFLAKq7yqPfhRkq3tlRz1DlZylXFjaVxdFHQWCg6z
-         TAIKkgr6EbdezYwXMzQ7t2eCuY1Zw/tM3A9cbTVETirpV9pqANclqF0IWRjLuy1DHvTq
-         xAf3l6W8ft8F/HJqxS3IvItCjgnezlczztXQGF1U6wVZ1RdbyBcxAV9DhEebzooMx0nN
-         +lmTRl4C321s+3Uo4UmEoOlu+dxh4Ges8fcKY//EnJSedVyZwF1APtbfS3Iz+EFik+Gp
-         KPVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741420260; x=1742025060;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5mUS3JAucq16wAF6W5pFtM5mAxXgdUK4IDJ6WzSb7Xo=;
-        b=luvoo2vnv8QZzSlGdNo0a3yE3+ue8EEx0Gqt9N2z4UTJGLN/LSZTB7VkJezU6Cri+k
-         UPNltwMwLzbJ42cPamzVZ/tMAJ/9lBNYydNV7MOHyfFmf0zswrlGeJqa07CiwZj+Zehi
-         g1QLv1GIIEQHmrjjpvl4Dms5M7DavfKxv5kmUGUcA/MWiLIKUb5nfXTsT33ov1lXl/Rz
-         MCk5WNIpGYshEyPhQIPbaa2CRlDtbD+WxF1G9MOV4Q8T3Q0lF2VGYP/Wfvv1w5b9o3FD
-         i0t+4ScnRyW8qsOXQnuPpgiko2UjklTV5e++kmtbjnfmPl0TcddEvymbEkptGyTD81Ku
-         LmoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlTv7x64dX3s/SLuYA+/QuV0GvLLLGsdGJZPB4efoksg7DvgLXD4b/YqaZbprO7A3TmEhSKFTRwEcc@vger.kernel.org, AJvYcCXK2DwBFEdCiOF7UOnwUakE9PMFKlXVwz5m7MzuPcVUGchW0NXJUl+v0UfykvYscEnYCQ+U6EejrMtbgD8j@vger.kernel.org, AJvYcCXKxknLDRWT43GKQ8hFG6KaH4jZ8nq5wgYOY8/xL2GiJRnKYJg2I6zkbC5rhykka6BdEekNks1ZOTF5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0iQrKXu9eO27f0rqLG2XRISZA7VMzJiyznqznHO3sVkuRGcMV
-	VIOoEeZ3E5xV7TKotL+lxo79/E8+THirGMmbnwZiAJ6B90oRgHLI
-X-Gm-Gg: ASbGncuOAkeRHQrwSL6GOEEnaJpJGmHYfTl88cKexBa6mEz5/j4XHKUVnSxDMLkhr87
-	sqOfAbYjlhJlwUbCchBbLpoug3WaVo6ujlWdTKEZN3Y5rzD4VCmzM4NcHmOpx0ZC8HOwOJx4wt1
-	bKite8IAc7KvgtJz1irfMtfrLLZvIec/88T+xq8kMWVwYnt72Wu4NHrZGj2VPPcxGI0NBssvpkU
-	qij1ZK3RgejCNsQva08/ZxzoTZrECaabexj2RC0KmmSTML9HwLOrbZtU7X2slD6e7Ngjv5ym0oL
-	f8aPjVwRYh6JZJ8R0nj07jdcHDJiHu2w6Wy/xaTgV1EdJW0HWWps0ugWBplffA2sA8oQlDQb09p
-	29YXrS53lQiUkxymZJw==
-X-Google-Smtp-Source: AGHT+IGpzlej2+Z3SXODAEzFJm8VdCZDsdM7lfDewREwNsE0MaBEO6TMznf73Bfd6qCYOF6NnQCOog==
-X-Received: by 2002:a05:6402:34c7:b0:5e5:ba77:6f24 with SMTP id 4fb4d7f45d1cf-5e5e22d4c66mr15989484a12.16.1741420259465;
-        Fri, 07 Mar 2025 23:50:59 -0800 (PST)
-Received: from hex.my.domain (83.11.221.132.ipv4.supernova.orange.pl. [83.11.221.132])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac25d376342sm213104766b.106.2025.03.07.23.50.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 23:50:59 -0800 (PST)
-From: Artur Weber <aweber.kernel@gmail.com>
-Date: Sat, 08 Mar 2025 08:50:47 +0100
-Subject: [PATCH v3 9/9] ARM: dts: bcm11351: Add corresponding bus clocks
- for peripheral clocks
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Ng0E9bDJ"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 211B825D93;
+	Sat,  8 Mar 2025 15:06:22 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id preILQABPQVZ; Sat,  8 Mar 2025 15:06:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1741442777; bh=kGemAZ9EVDuCpSfW33snc8SJJJ1dseQQAUsecXVAtcY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Ng0E9bDJucpkyJhzo+6yIzH66iSp0oNsv9ZSg44P/KyxctIGSs9wnhL2rp+IwWsRZ
+	 WjkB0pK7LqQxgnt7AgzYku0wiM3bXJIs40NPXJvOyvQd9+0WoeM3Y9FZM7T/foMIJ1
+	 RnQGVuXdJpeu5jQULN0gIixh9PFqdOkgC8Nm1Jdd4DTEZ4kPaJZlubQLcSnmRatsXp
+	 ZIrM+UHeucNDRvoEqTN27oS7sSEfpJzO6S2j5somCX80RMpci0UnF1vU7StNghauPr
+	 4qE7T4/kcmEA2adZg5y0BeH+MtD9exyyXQrYwI3yVigIBd5vToyuAce+4a4WxVmie8
+	 LqmTuoIAN7Yvg==
+Date: Sat, 8 Mar 2025 14:05:53 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Chukun Pan <amadeus@jmu.edu.cn>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers
+ for RK3528
+Message-ID: <Z8xOwbfNqBfkRAi6@pie>
+References: <20250305194217.47052-1-ziyao@disroot.org>
+ <20250305194612.47171-1-ziyao@disroot.org>
+ <56181131-3e48-4c76-87c7-2388a9964727@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250308-kona-bus-clock-v3-9-d6fb5bfc3b67@gmail.com>
-References: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
-In-Reply-To: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Alex Elder <elder@kernel.org>, 
- Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- Artur Weber <aweber.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741420241; l=2485;
- i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
- bh=6WL3+gww7pwy7HeSxhHT435XK+Ky7XngeaLYGMY0ueU=;
- b=S+ne26yjaEAziJt6Hen4F5vs7TSLH7eYElTQDr9fk1DZftrPd+kqW3L5pMCzrsr7+4mX6a+sn
- 7X4Fa9Wk3wgAlInT+5Ko+cdi5XYnJ27HGfnFrlL3Q8a41p3JG+Xn7BS
-X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
- pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <56181131-3e48-4c76-87c7-2388a9964727@kwiboo.se>
 
-Following changes in the clock driver, add matching bus clocks for
-existing peripheral clocks. Replace the usb_otg_ahb fixed clock with
-the real bus clock.
+On Sat, Mar 08, 2025 at 12:22:48AM +0100, Jonas Karlman wrote:
+> Hi Yao Zi,
+> 
+> On 2025-03-05 20:46, Yao Zi wrote:
+> > RK3528 features two SDIO controllers and one SD/MMC controller, describe
+> > them in devicetree. Since their sample and drive clocks are located in
+> > the VO and VPU GRFs, corresponding syscons are added to make these
+> > clocks available.
+> > 
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 70 ++++++++++++++++++++++++
+> >  1 file changed, 70 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > index d3e2a64ff2d5..363023314e9c 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > @@ -130,6 +130,16 @@ gic: interrupt-controller@fed01000 {
+> >  			#interrupt-cells = <3>;
+> >  		};
+> >  
+> > +		vpu_grf: syscon@ff340000 {
+> > +			compatible = "rockchip,rk3528-vpu-grf", "syscon";
+> > +			reg = <0x0 0xff340000 0x0 0x8000>;
+> > +		};
+> > +
+> > +		vo_grf: syscon@ff360000 {
+> > +			compatible = "rockchip,rk3528-vo-grf", "syscon";
+> > +			reg = <0x0 0xff360000 0x0 0x10000>;
+> > +		};
+> > +
+> >  		cru: clock-controller@ff4a0000 {
+> >  			compatible = "rockchip,rk3528-cru";
+> >  			reg = <0x0 0xff4a0000 0x0 0x30000>;
+> > @@ -274,6 +284,66 @@ saradc: adc@ffae0000 {
+> >  			resets = <&cru SRST_P_SARADC>;
+> >  			reset-names = "saradc-apb";
+> >  			#io-channel-cells = <1>;
+> > +		};
+> 
+> Look like this patch accidentally drops status = "disabled" from the
+> adc@ffae0000 node.
 
-Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
----
-Changes in v2:
-- Add this patch (BCM281xx bus clocks)
----
- arch/arm/boot/dts/broadcom/bcm11351.dtsi | 33 ++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+It's a mistake during rebasing, I'll fix it in v3.
 
-diff --git a/arch/arm/boot/dts/broadcom/bcm11351.dtsi b/arch/arm/boot/dts/broadcom/bcm11351.dtsi
-index 53857e572080d752732c512ed27f942756d59c46..fac5cf5a46bd9a4b7e09a2e65c3e807d1b4ef960 100644
---- a/arch/arm/boot/dts/broadcom/bcm11351.dtsi
-+++ b/arch/arm/boot/dts/broadcom/bcm11351.dtsi
-@@ -233,7 +233,9 @@ aon_ccu: aon_ccu@35002000 {
- 			#clock-cells = <1>;
- 			clock-output-names = "hub_timer",
- 					     "pmu_bsc",
--					     "pmu_bsc_var";
-+					     "pmu_bsc_var",
-+					     "hub_timer_apb",
-+					     "pmu_bsc_apb";
- 		};
- 
- 		master_ccu: master_ccu@3f001000 {
-@@ -246,7 +248,14 @@ master_ccu: master_ccu@3f001000 {
- 					     "sdio4",
- 					     "usb_ic",
- 					     "hsic2_48m",
--					     "hsic2_12m";
-+					     "hsic2_12m",
-+					     "sdio1_ahb",
-+					     "sdio2_ahb",
-+					     "sdio3_ahb",
-+					     "sdio4_ahb",
-+					     "usb_ic_ahb",
-+					     "hsic2_ahb",
-+					     "usb_otg_ahb";
- 		};
- 
- 		slave_ccu: slave_ccu@3e011000 {
-@@ -262,7 +271,17 @@ slave_ccu: slave_ccu@3e011000 {
- 					     "bsc1",
- 					     "bsc2",
- 					     "bsc3",
--					     "pwm";
-+					     "pwm",
-+					     "uartb_apb",
-+					     "uartb2_apb",
-+					     "uartb3_apb",
-+					     "uartb4_apb",
-+					     "ssp0_apb",
-+					     "ssp2_apb",
-+					     "bsc1_apb",
-+					     "bsc2_apb",
-+					     "bsc3_apb",
-+					     "pwm_apb";
- 		};
- 
- 		ref_1m_clk: ref_1m {
-@@ -325,12 +344,6 @@ var_52m_clk: var_52m {
- 			clock-frequency = <52000000>;
- 		};
- 
--		usb_otg_ahb_clk: usb_otg_ahb {
--			compatible = "fixed-clock";
--			clock-frequency = <52000000>;
--			#clock-cells = <0>;
--		};
--
- 		ref_96m_clk: ref_96m {
- 			#clock-cells = <0>;
- 			compatible = "fixed-clock";
-@@ -396,7 +409,7 @@ usbotg: usb@3f120000 {
- 		compatible = "snps,dwc2";
- 		reg = <0x3f120000 0x10000>;
- 		interrupts = <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&usb_otg_ahb_clk>;
-+		clocks = <&master_ccu BCM281XX_MASTER_CCU_USB_OTG_AHB>;
- 		clock-names = "otg";
- 		phys = <&usbphy>;
- 		phy-names = "usb2-phy";
+> Regards,
+> Jonas
 
--- 
-2.48.1
-
+Thanks,
+Yao Zi
