@@ -1,227 +1,238 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29BB1C84B7
-	for <linux-clk@vger.kernel.org>; Sat,  8 Mar 2025 15:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E605EBA49
+	for <linux-clk@vger.kernel.org>; Sat,  8 Mar 2025 17:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741449250; cv=none; b=DJOa9kZ58J78oRnDC9mcvxGMiL1OuVqsHTGtEoBgR7H3G4N+NxTP0kV+NC7fOV+fZinfJ1pBogal0DZxIbsv+Ac80ZidF9NVwBt7MuQ4xOHCVHKqz4FJVkTBZpsClTzxIU6A8k4pf6XS+imxpj1w2d8Oryn41nZmaO//dAGkuAQ=
+	t=1741454638; cv=none; b=GLjt5vumuaKfRP2yVum/yrhTu2+KpQkBmuOoIkMCXnOfSOrrL02zZD7GC2xDjuIN9BXxqsAT6+wxWw6+9todmJ+cvWoyan/r84Fi0egMXmrmMtQFuyOpx0cOesB/1+hWVCseanApLvZYcoEpjA2W1mdI7EsRAAJByMVzt9uEMyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741449250; c=relaxed/simple;
-	bh=rMuV6nHCFntzsYto5y3wh+iRvpqtsKuycOOrbtN0JmE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=InugYtiGLirRXRqJlh7RD3TLBts1ubVAfcHgdGWjONBW4bvwbgM7O38FjHuA2g8YCEbWgJCtwaMYg2L/kOoGr/2FOCsHuHmPfZem6UZeSAgIrOdwH9ETtC1tAfKMQ7b1q5avej5N7zomLS34UZe5esBC6yVY69C5hbBMIc74mt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ppHVffR8; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1741454638; c=relaxed/simple;
+	bh=rphzLWt8qRKS8I5IQKDSTFV4IenJ2J85dPuChCgbMhk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DPdodc5+ngEqE7aHOPPsR4qTUZc6Cnsn+KMSCArUTfrhgOvoLtmy6u8QO0DvvsRhUhMeHGmzFGd9Z962JGtBBr0/PpFYLOGQoqc+L7F7UeJDFJ22CkNyGD4yrAeLDRhdHYBv/gfs9A39M4CUYmZggbNCGTJ3YX4r6HEks/dp7Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=n8FJNvpW; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ppHVffR8"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250308155359epoutp03b65e33efde6cf5f21e8d77b30c8f8b58~q3ts6JZbX1072510725epoutp03Y
-	for <linux-clk@vger.kernel.org>; Sat,  8 Mar 2025 15:53:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250308155359epoutp03b65e33efde6cf5f21e8d77b30c8f8b58~q3ts6JZbX1072510725epoutp03Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1741449239;
-	bh=KqFr1VhT2FTQnSr3LaaqWnUOVNuACS2W7zCBsK/XyWg=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=ppHVffR8fnb/BCswaIXVwhi13kROZlDPhwqyAu3iatGKZR6X+rvwBkkWSv1OHPVXK
-	 G9Pa9D8tbHnMJoFztCK4J/B6kogUyjp4XHjwJoVTnnWAdNwhlQ2gGPpzIkNO7BsvqX
-	 Pf4Ao6U/xPNmRve0uslePSWRXm91l0VchiwPQxyU=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20250308155358epcas5p164f2e579cd86ce471b82119a926eb1ee~q3tsaFtGe1115911159epcas5p1p;
-	Sat,  8 Mar 2025 15:53:58 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Z974N5YC7z4x9Pp; Sat,  8 Mar
-	2025 15:53:56 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F7.AD.29212.4186CC76; Sun,  9 Mar 2025 00:53:56 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250307093024epcas5p1e0be921d3f3445c67daf399e451bb203~qe1gjIIBT2800428004epcas5p1Z;
-	Fri,  7 Mar 2025 09:30:24 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250307093024epsmtrp12309fd6dc4c83031d7095f2e2625ec8d~qe1ghSaSe3067930679epsmtrp1C;
-	Fri,  7 Mar 2025 09:30:24 +0000 (GMT)
-X-AuditID: b6c32a50-801fa7000000721c-b7-67cc68143370
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	B8.DE.23488.0BCBAC76; Fri,  7 Mar 2025 18:30:24 +0900 (KST)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250307093022epsmtip26314520fbe088f38ce7c9fb84b185828~qe1eigaFn2162621626epsmtip2G;
-	Fri,  7 Mar 2025 09:30:22 +0000 (GMT)
-From: Varada Pavani <v.pavani@samsung.com>
-To: krzk@kernel.org, aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: gost.dev@samsung.com, Varada Pavani <v.pavani@samsung.com>
-Subject: [PATCH v3] clk: samsung: Use samsung CCF common function
-Date: Fri,  7 Mar 2025 14:54:03 +0530
-Message-Id: <20250307092403.19742-1-v.pavani@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAKsWRmVeSWpSXmKPExsWy7bCmlq5Ixpl0g22rtS0ezNvGZnFo81Z2
-	i+tfnrNa3Dywk8ni/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrVYtHWL+wWh9+0s1r8
-	u7aRxWJD7yt2Bz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKOybTJSE1NSixRS85LzUzLz
-	0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA7lRSKEvMKQUKBSQWFyvp29kU5ZeW
-	pCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGcsmb2HuWChWkXD7seMDYzb
-	FbsYOTkkBEwkDv2/wNLFyMUhJLCHUaL35B92COcTo8TVGQfYQKqEBL4xSux5kgLT8fXvTqii
-	vYwSXZsmMUI4Xxglnvz4zghSxSagJbF66nJWEFtE4AiTxJ8TqSA2s4CdxPqpc5lBbGEBR4mL
-	H2ayg9gsAqoSu49NBIpzcPAKWEpcuFUDsUxeYvWGA8wg8yUE7rFLLL/QzQ6RcJGYseoUE4Qt
-	LPHq+BaouJTEy/42dpA5EgLJEu2fuCHCORKXdq+CKreXOHBlDgtICbOApsT6XfoQYVmJqafW
-	MUFcySfR+/sJVDmvxI55MLaSxM4dE6BsCYmnq9cAw4cdyPaQeB4EMlBIIFbi5/SsCYyysxDG
-	L2BkXMUolVpQnJuemmxaYKibl1oOj6Tk/NxNjOCkpxWwg3H1hr96hxiZOBgPMUpwMCuJ8Kpt
-	P5UuxJuSWFmVWpQfX1Sak1p8iNEUGF4TmaVEk/OBaTevJN7QxNLAxMzMzMTS2MxQSZy3eWdL
-	upBAemJJanZqakFqEUwfEwenVAOT/kqVOT98NP4uDkm4/2Fz2sPOlTm3Xy9XOvHwr7mRfeyL
-	58/vLb0wtfZXrYLMlCLGdVqKS2b7VjbuvnyD80yHnnt0dFrkUlcl5k3OU73srigZq1W81t8+
-	6dOenAtmvbEXFxVteq/0LXX2ZreF9oUu897JVJeLMoqH/fb6/8Nu96kH14xXr/3FW/lj0kmd
-	dt+49kNM19Yqzmqt9FoadvbozOftu9lYOx3MRb4/s7fXK04vfabi/LtTMnUar++e9Z9PXJ9+
-	TyHu59OOIJuNmdtr5x+6xTd/crn5xLcnxDfP9RBoMerPP3eo82D4cbP1DLPXsmuqiLOzRNo3
-	SstFNRWbHJc4Xf69lLP4CcNOpo1aSizFGYmGWsxFxYkA3Nan4gMEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPLMWRmVeSWpSXmKPExsWy7bCSvO6GPafSDY5NE7B4MG8bm8WhzVvZ
-	La5/ec5qcfPATiaL8+c3sFtsenyN1eJjzz1Wi8u75rBZzDi/j8ni4ilXi0Vbv7BbHH7Tzmrx
-	79pGFosNva/YHfg83t9oZffYtKqTzWPzknqPvi2rGD0+b5ILYI3isklJzcksSy3St0vgylgy
-	ew9zwUK1iobdjxkbGLcrdjFyckgImEh8/buTHcQWEtjNKDHpaiJEXEJi57dWZghbWGLlv+dA
-	NVxANZ8YJXoXrwRLsAloSayeupwVJCEicIlJ4sCRJ2CTmAUcJC6efcICYgsLOEpc/DATLM4i
-	oCqx+9hEoGYODl4BS4kLt2ogFshLrN5wgHkCI88CRoZVjJKpBcW56bnJhgWGeanlesWJucWl
-	eel6yfm5mxjBYailsYPx3bcm/UOMTByMhxglOJiVRHjVtp9KF+JNSaysSi3Kjy8qzUktPsQo
-	zcGiJM670jAiXUggPbEkNTs1tSC1CCbLxMEp1cDUUqsuJ+m3MfPq4S+M3z1vnwywvvo/3tRE
-	l9HgYq7y5Z87fi6fPV1XecaVq128gtEuV8zTQydFG/JqMa3v6PoWV6Z0RNE2zrR0HpPO3hvX
-	3vidVz+4+Ff8gldTBfJVs55ePisdIPbcdOb8dzJVUZdtnFIWH29tvHot5Lqj6E/tY7ZfbP98
-	mbavNzFklk9JwQ1Rfcm30hqmRiFLte6d9wq7dOOVdHVBY8mBTenX/lxmPlH4cpI1l4ZAdGfS
-	jsUei6Y9m+CwxTF07cuJG59nZTAu9ZjBf9zqUpgAh4zxs2kH2pc0m7hEv3J6yVzUsXxfw2Hv
-	Kcv85U+smrnK0ob7stGqGfX7pU3jPUTt5psUvLqlxFKckWioxVxUnAgAnn1atbICAAA=
-X-CMS-MailID: 20250307093024epcas5p1e0be921d3f3445c67daf399e451bb203
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250307093024epcas5p1e0be921d3f3445c67daf399e451bb203
-References: <CGME20250307093024epcas5p1e0be921d3f3445c67daf399e451bb203@epcas5p1.samsung.com>
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="n8FJNvpW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741454629;
+ bh=rdKpkKhc5DWF4kJy316aJ1WXtNP0Vx9DhX/sV/rVTxg=;
+ b=n8FJNvpWe/wH14w7kuqQ5JU306orY2YJcoPTY4VmMZLE+4457aot5Zsb4DoY3k1ysBbEsfiRV
+ c9swIV7FDSRlST85CEw4BNxxCsEJbKcLZ41aTLQ34DJjD+YG+/U/9RhJjlJ2yPppl53U3d1XI51
+ hnmfL8s/mkDW3GWp1GT8jomO4zHj3VZFUagZ9eGTD96524lYOkF+AnC/e9eCsobINpvMgkr8Vm2
+ Tk2TmRwk8GTCcPjRTxEfGnHtIDZP6IG6up9gI3TqollHwTqIDD4/ACToABmotJaj6nr3hHKa1DO
+ ivctsJ0iA9FYksLfXUzDv2W1J5eilHoHJ62zzaHVlygQ==
+X-Forward-Email-ID: 67cc7d1891daabb65c1b483f
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <8af199e4-90bb-4ad9-b0d3-84cf443b04bb@kwiboo.se>
+Date: Sat, 8 Mar 2025 18:23:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/8] arm64: dts: rockchip: Enable SD-card interface on
+ Radxa E20C
+To: Yao Zi <ziyao@disroot.org>, Chukun Pan <amadeus@jmu.edu.cn>
+Cc: conor+dt@kernel.org, cristian.ciocaltea@collabora.com,
+ detlev.casanova@collabora.com, devicetree@vger.kernel.org, heiko@sntech.de,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+References: <20250305194638.47187-1-ziyao@disroot.org>
+ <20250307033508.656479-1-amadeus@jmu.edu.cn> <Z8qJqpUwi7VV8tJk@pie>
+ <5a0a7ce1-1dfb-4d19-8a1e-0d89d177f5b8@kwiboo.se> <Z8xh2mE1BTE4co43@pie>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <Z8xh2mE1BTE4co43@pie>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Use samsung CCF function which registers multiple clock providers using
-single function call samsung_cmu_register_clocks().
+On 2025-03-08 16:27, Yao Zi wrote:
+> Hi Jonas,
+> 
+> On Fri, Mar 07, 2025 at 07:45:00AM +0100, Jonas Karlman wrote:
+>> Hi Chukun,
+>>
+>> On 2025-03-07 06:52, Yao Zi wrote:
+>>> On Fri, Mar 07, 2025 at 11:35:08AM +0800, Chukun Pan wrote:
+>>>> Hi,
+>>>>
+>>>>> +&sdmmc {
+>>>>> +	bus-width = <4>;
+>>>>> +	cap-mmc-highspeed;
+>>>>> +	cap-sd-highspeed;
+>>>>> +	disable-wp;
+>>>>> +	no-sdio;
+>>>>
+>>>> With 'no-sdio' property:
+>>>> [  129.608986] mmc_host mmc1: Bus speed (slot 0) = 400000Hz (slot req 400000Hz, actual 400000HZ div = 0)
+>>>> [  130.711168] mmc1: Card stuck being busy! __mmc_poll_for_busy
+>>>> [  130.725536] mmc_host mmc1: Bus speed (slot 0) = 300000Hz (slot req 300000Hz, actual 300000HZ div = 0)
+>>>> [  131.751240] mmc1: Card stuck being busy! __mmc_poll_for_busy
+>>>> [  131.765608] mmc_host mmc1: Bus speed (slot 0) = 200000Hz (slot req 200000Hz, actual 200000HZ div = 0)
+>>>> [  132.825083] mmc1: Card stuck being busy! __mmc_poll_for_busy
+>>>> [  132.839413] mmc_host mmc1: Bus speed (slot 0) = 187500Hz (slot req 187500Hz, actual 187500HZ div = 0)
+>>>> [  133.960141] mmc1: Card stuck being busy! __mmc_poll_for_busy
+>>>>
+>>>> Without 'no-sdio' property:
+>>>> [  105.224019] mmc1: error -22 whilst initialising SDIO card
+>>>> [  106.290838] mmc1: Card stuck being busy! __mmc_poll_for_busy
+>>>> [  106.801931] dwmmc_rockchip ffc30000.mmc: Busy; trying anyway
+>>>> [  107.385835] mmc_host mmc1: Timeou sending command (cmd 0x202000 arg 0x0 status 0x80202000)
+>>>> [  107.400425] mmc_host mmc1: Bus speed (slot 0) = 300000Hz (slot req 300000Hz, actual 300000HZ div = 0)
+>>>> [  107.431561] mmc_host mmc1: Bus speed (slot 0) = 49800000Hz (slot req 50000000Hz, actual 49800000HZ div = 0)
+>>>> [  107.433107] mmc1: new high speed SDIO card at address 0001
+>>>
+>>> So it seems the sdmmc controller actually works with SDIO commands as
+>>> well? I don't expect that since the datasheet says RK3528 has only two
+>>> SDIO 3.0 controllers.
+>>>
+>>> We could remove the "no-sdio" property if SDIO actually works. Will
+>>> apply it in the next version if there's no objection against this.
+>>
+>> On the E20C the sdmmc controller is routed to a microSD card slot mainly
+>> intended for use with microSD-cards and should normally not need SDIO.
+> 
+> As pointed out by Chukun, I found the hardware design guide for
+> RK3528[1] (in Chinese) does claim that SDIO 3.0 is supported on all
+> these three controllers in Chapter 2.3.1 (SDMMC/SDIO),
+> 
+>   RK3528 集成了 1 个 SDMMC 控制器和 2 个 SDIO 控制器，均可支持 SDIO3.0 协
+>   议，以及 MMC V4.51 协议。其中 SDIO0 和 SDIO1 最高可支持 200MHz，SDMMC
+>   最高只支持到 150MHz
+> 
+> translated to English,
+> 
+>   RK3528 integrates one SDMMC controller and two SDIO controllers, all
+>   support SDIO3.0 protocol and MMC V4.51 protocol. Among them SDIO0 and
+>   SDIO1 support 200MHz frequency at maximum, and SDMMC supports up to
+>   150MHz.
+> 
+> So I think there's no reason to explicitly deny SDIO initialization
+> sequence for the controller on Radxa E20C. imho this won't break
+> anything even for a sdcard slot, will it?
 
-Signed-off-by: Varada Pavani <v.pavani@samsung.com>
----
+I have no strong opinion on this, just something I have done on a few
+boards recently.
 
-Changes in V3:
--Addressed checkpatch warning identified when run with --strict option, as per
-review comment from Krzysztof. Below is the warning from checkpatch.
-"CHECK: Unbalanced braces around else statement"
--Here is the link for V2 https://patchwork.kernel.org/project/linux-clk/patch/20250225131918.50925-2-v.pavani@samsung.com/
+When sd/sdio/mmc controller is attached to a microSD card slot I add
+no-sdio, when my uSD to eMMC adapter is not working I also add no-mmc.
 
-Changes in V2:
--No review comments in V1.
+Similar if the controller is attached to emmc, I add no-sd and no-sdio,
+and if used for sdio wifi, I add no-sd and no-mmc.
 
- drivers/clk/samsung/clk-exynos4.c | 74 ++++++++++++++++++-------------
- 1 file changed, 42 insertions(+), 32 deletions(-)
+Mostly to minimize initialization time when slot is unpopulated or card
+or module is faulty.
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 16be0c53903c..8fc89bde0d24 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1269,6 +1269,45 @@ static const struct samsung_cpu_clock exynos4412_cpu_clks[] __initconst = {
- 		CPUCLK_LAYOUT_E4210, e4412_armclk_d),
- };
- 
-+static const struct samsung_cmu_info cmu_info_exynos4 __initconst = {
-+	.mux_clks		= exynos4_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(exynos4_mux_clks),
-+	.div_clks		= exynos4_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(exynos4_div_clks),
-+	.gate_clks		= exynos4_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(exynos4_gate_clks),
-+	.fixed_factor_clks	= exynos4_fixed_factor_clks,
-+	.nr_fixed_factor_clks	= ARRAY_SIZE(exynos4_fixed_factor_clks),
-+	.fixed_clks	= exynos4_fixed_rate_clks,
-+	.nr_fixed_clks	= ARRAY_SIZE(exynos4_fixed_rate_clks),
-+};
-+
-+static const struct samsung_cmu_info cmu_info_exynos4210 __initconst = {
-+	.mux_clks		= exynos4210_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(exynos4210_mux_clks),
-+	.div_clks		= exynos4210_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(exynos4210_div_clks),
-+	.gate_clks		= exynos4210_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(exynos4210_gate_clks),
-+	.fixed_factor_clks	= exynos4210_fixed_factor_clks,
-+	.nr_fixed_factor_clks	= ARRAY_SIZE(exynos4210_fixed_factor_clks),
-+	.fixed_clks	= exynos4210_fixed_rate_clks,
-+	.nr_fixed_clks	= ARRAY_SIZE(exynos4210_fixed_rate_clks),
-+	.cpu_clks		= exynos4210_cpu_clks,
-+	.nr_cpu_clks		= ARRAY_SIZE(exynos4210_cpu_clks),
-+};
-+
-+static const struct samsung_cmu_info cmu_info_exynos4x12 __initconst = {
-+	.mux_clks		= exynos4x12_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(exynos4x12_mux_clks),
-+	.div_clks		= exynos4x12_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(exynos4x12_div_clks),
-+	.gate_clks		= exynos4x12_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(exynos4x12_gate_clks),
-+	.fixed_factor_clks	= exynos4x12_fixed_factor_clks,
-+	.nr_fixed_factor_clks	= ARRAY_SIZE(exynos4x12_fixed_factor_clks),
-+};
-+
- /* register exynos4 clocks */
- static void __init exynos4_clk_init(struct device_node *np,
- 				    enum exynos4_soc soc)
-@@ -1322,41 +1361,12 @@ static void __init exynos4_clk_init(struct device_node *np,
- 					ARRAY_SIZE(exynos4x12_plls));
- 	}
- 
--	samsung_clk_register_fixed_rate(ctx, exynos4_fixed_rate_clks,
--			ARRAY_SIZE(exynos4_fixed_rate_clks));
--	samsung_clk_register_mux(ctx, exynos4_mux_clks,
--			ARRAY_SIZE(exynos4_mux_clks));
--	samsung_clk_register_div(ctx, exynos4_div_clks,
--			ARRAY_SIZE(exynos4_div_clks));
--	samsung_clk_register_gate(ctx, exynos4_gate_clks,
--			ARRAY_SIZE(exynos4_gate_clks));
--	samsung_clk_register_fixed_factor(ctx, exynos4_fixed_factor_clks,
--			ARRAY_SIZE(exynos4_fixed_factor_clks));
-+	samsung_cmu_register_clocks(ctx, &cmu_info_exynos4);
- 
- 	if (exynos4_soc == EXYNOS4210) {
--		samsung_clk_register_fixed_rate(ctx, exynos4210_fixed_rate_clks,
--			ARRAY_SIZE(exynos4210_fixed_rate_clks));
--		samsung_clk_register_mux(ctx, exynos4210_mux_clks,
--			ARRAY_SIZE(exynos4210_mux_clks));
--		samsung_clk_register_div(ctx, exynos4210_div_clks,
--			ARRAY_SIZE(exynos4210_div_clks));
--		samsung_clk_register_gate(ctx, exynos4210_gate_clks,
--			ARRAY_SIZE(exynos4210_gate_clks));
--		samsung_clk_register_fixed_factor(ctx,
--			exynos4210_fixed_factor_clks,
--			ARRAY_SIZE(exynos4210_fixed_factor_clks));
--		samsung_clk_register_cpu(ctx, exynos4210_cpu_clks,
--				ARRAY_SIZE(exynos4210_cpu_clks));
-+		samsung_cmu_register_clocks(ctx, &cmu_info_exynos4210);
- 	} else {
--		samsung_clk_register_mux(ctx, exynos4x12_mux_clks,
--			ARRAY_SIZE(exynos4x12_mux_clks));
--		samsung_clk_register_div(ctx, exynos4x12_div_clks,
--			ARRAY_SIZE(exynos4x12_div_clks));
--		samsung_clk_register_gate(ctx, exynos4x12_gate_clks,
--			ARRAY_SIZE(exynos4x12_gate_clks));
--		samsung_clk_register_fixed_factor(ctx,
--			exynos4x12_fixed_factor_clks,
--			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
-+		samsung_cmu_register_clocks(ctx, &cmu_info_exynos4x12);
- 		if (soc == EXYNOS4412)
- 			samsung_clk_register_cpu(ctx, exynos4412_cpu_clks,
- 					ARRAY_SIZE(exynos4412_cpu_clks));
--- 
-2.17.1
+Not sure how common it is to use a microSD to SDIO adapter, sound like
+an uncommon edge case, possible by someone who would know how to create
+and use a dt-overlay. I also do not think there will be a common use
+case with a uSD to eMMC adapter, however that is something this board
+vendor sell themself [3], so may be a slightly more likely use case.
+
+[3] https://radxa.com/products/accessories/emmc-to-usd
+
+Use of these no- props could possible be considered configuration
+and not information about the board hw design, so I am torn and as
+mentioned above, I have no strong opinion about keeping no-sdio or not.
+
+> 
+> Additionally, this piece of information points out that wrong
+> max-frequency is set for SDIO{0,1}. Rockchip overrides the frequency in
+> devicetrees for the demo boards[2], I'm not sure whether it's for some
+> speical reason or not.
+> 
+> Since I don't have a SDIO-capable board on hand, could you please test
+> whether 200MHz actually works? If so I'll correct the SoC devicetree in
+> v3.
+
+I would change to use default 200MHz as stated in the HW design guide.
+
+Did a short boot test on my Sige1 board and the SDIO module can at
+least be identified using 200 MHz:
+
+  dwmmc_rockchip ffc10000.mmc: IDMAC supports 32-bit address mode.
+  dwmmc_rockchip ffc10000.mmc: Using internal DMA controller.
+  dwmmc_rockchip ffc10000.mmc: Version ID is 270a
+  dwmmc_rockchip ffc10000.mmc: DW MMC controller at irq 35,32 bit host data width,256 deep fifo
+  mmc_host mmc2: card is non-removable.
+  mmc_host mmc2: Bus speed (slot 0) = 400000Hz (slot req 400000Hz, actual 400000HZ div = 0)
+  mmc_host mmc2: Bus speed (slot 0) = 198000000Hz (slot req 200000000Hz, actual 198000000HZ div = 0)
+  dwmmc_rockchip ffc10000.mmc: Successfully tuned phase to 30
+  mmc2: new UHS-I speed SDR104 SDIO card at address 0001
+  brcmfmac: brcmf_fw_alloc_request: using brcm/brcmfmac43752-sdio for chip BCM43752/2
+  brcmfmac mmc2:0001:1: Direct firmware load for brcm/brcmfmac43752-sdio.armsom,sige1.bin failed with error -2
+  brcmfmac mmc2:0001:1: Direct firmware load for brcm/brcmfmac43752-sdio.bin failed with error -2
+  brcmfmac: brcmf_sdio_htclk: HT Avail timeout (1000000): clkctl 0x50
+
+  ~ # cat /sys/kernel/debug/mmc2/ios
+  clock:          200000000 Hz
+  actual clock:   198000000 Hz
+  vdd:            21 (3.3 ~ 3.4 V)
+  bus mode:       2 (push-pull)
+  chip select:    0 (don't care)
+  power mode:     2 (on)
+  bus width:      2 (4 bits)
+  timing spec:    6 (sd uhs SDR104)
+  signal voltage: 1 (1.80 V)
+  driver type:    0 (driver type B)
+
+If it turns out to be any instability issues for a specific board using
+default 200 MHz, such board can always define a lower max-frequency in
+its board .dts-file.
+
+Regards,
+Jonas
+
+> 
+>> What card/adapter do you have inserted in the microSD card slot that
+>> requires use of SDIO instead of just SD or MMC? What is the use case you
+>> have that requires removal of no-sdio on E20C?
+>>
+>> Regards,
+>> Jonas
+>>
+>>>
+>>> Further tests about the capabilities of the controller are welcome.
+>>>
+>>>> # cat /sys/kernel/debug/mmc1/ios
+>>>> clock:          50000000 Hz
+>>>> vdd:            21 (3.3 ~ 3.4 V)
+>>>> bus mode:       2 (push-pull)
+>>>> chip select:    0 (don't care)
+>>>> power mode:     2 (on)
+>>>> bus width:      2 (4 bits)
+>>>> timing spec:    2 (sd high-speed)
+>>>> signal voltage: 0 (3.30 V)
+>>>> driver type:    0 (driver type B)
+>>>>
+>>>> Thanks,
+>>>> Chukun
+>>>>
+>>>> -- 
+>>>> 2.25.1
+>>>>
+>>>
+>>> Best regards,
+>>> Yao Zi
+>>
+> 
+> Thanks,
+> Yao Zi
+> 
+> [1]: https://github.com/DeciHD/rockchip_docs/blob/main/rk3528/RK3528%20Hardware%20Design%20Guide-CN-V1.0-20230525.pdf
+> [2]: https://github.com/rockchip-linux/kernel/blob/604cec4004abe5a96c734f2fab7b74809d2d742f/arch/arm64/boot/dts/rockchip/rk3528-demo1-lp4-v10.dtsi#L47
 
