@@ -1,62 +1,62 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A036BE65;
-	Sun,  9 Mar 2025 06:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838FD14EC60;
+	Sun,  9 Mar 2025 07:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741503472; cv=none; b=P5kb8fvP4hD+umvCzozDEeG4UAJVr6vWUcmu/TkfMT3nF3VuBLwdsLgaYw7FjcbBhoOVepz8YqEQe2iWA4vel80JrILPHmGIV+EP/FaxwvSan8EDqISAv2NqZHcUDWQsQNp+P9/XhbjNUbuhWwGKw+3lIZQVvLz7sa7ZsHDyNAI=
+	t=1741503626; cv=none; b=s6hYIRUz02+Z9nA85Tw+qfKClOOWP11KVo64a1ZnOGbpGmGLNfAVAdDVn9YnXqC65EWZ2rciGEdiHO9wYinu5WgmPQysdvUUB3eIKj1wwGeboGV6093bPAYDafYo32IfA3OPzar4D2/dFCSjx6px00Agh5nlGjuwIWTsqPF8pkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741503472; c=relaxed/simple;
-	bh=rz99WKtoBL/5O0++DpAUVdioGN7NnvwM+hKPSLxc750=;
+	s=arc-20240116; t=1741503626; c=relaxed/simple;
+	bh=rOXmjlR5Rk5KRf6rwJVBLM/R3Wk88g6lM6HYMKYo1vc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lgr01nnuyybD6vTWklH8yaC3zwR8kX6dvmKx+vBnmOj6BkPUhgNoLonQH4vMHY/n6K1A86P+pQQVuRmiR6yG9pB0TTmQVQM8NIQoCnvHz5+yDowiJnwcUqMXG+sXJQOToJ/NKi9a4KMEOF/2Jr46uVKSOUvJNpBVv73AGMfA+/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=me7J/PuS; arc=none smtp.client-ip=209.85.208.45
+	 MIME-Version:Content-Type; b=EPaaizeyVXno11gm91jqfF/IQ6oQs00z2Qs+kNAZpah5L8baWW8jJnWWqt9CfwD6aN8yIPv7m8/uvvgXKTtM3U7MIllPF1Gtj5/OtBkEGQhUfrUpntTv25k3as4cF45I9pTHdovOq1iqnnDnjDORCxGXE2nw1yqoPQQjUzkwqvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OivxfR8V; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="me7J/PuS"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e6167d0536so2158613a12.1;
-        Sat, 08 Mar 2025 22:57:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OivxfR8V"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac286d4ed05so69452166b.3;
+        Sat, 08 Mar 2025 23:00:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741503470; x=1742108270; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741503623; x=1742108423; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rz99WKtoBL/5O0++DpAUVdioGN7NnvwM+hKPSLxc750=;
-        b=me7J/PuS+TiCgbOR5LI1kh97UuMncWS6c85KX/Yp7xHpB4rPhrlt7tpRCXb6kqs4uf
-         ZFQ+XK9A1rEzPpPgkBVPSxCUVjnGOjnU8bZ6jGWjhb5gDwatHRCsAJ308Cg4qL//tuW2
-         cgP7rZKjhK278YdV4eK/9Ps1HOLhA7bjfq58HdOARlMHgDhny6aBa8dTYXryDMen8Vq6
-         zTM6lcHeZuzkvp4vlO4UcmjXM86pABfTBq/+qA/aAGIhPThneZquDhrRYGaYjW9ob2B4
-         BrMlVEVrokJgsy2PAcRlNJIlJT3ziGWs9mQDYGW9kxHlQ2EL5HTVs1yTlo43E9LNl7uA
-         aeUA==
+        bh=rOXmjlR5Rk5KRf6rwJVBLM/R3Wk88g6lM6HYMKYo1vc=;
+        b=OivxfR8VZ5XR8G77NtRLleFptoKasQXkSyJKpSLlZxf3AFUUKRo4NFb8tnEgcBNvOy
+         cR7gW1dxB+1akXWuJqyGix1IiLsIfy0I5Am5SlPVeWjQ0/sPQoaKfp92PNe6J/1sJGJl
+         VSiNt5ik9cFviAjB/xkQ7E2QkpY1TbFu37Ju8WwZbX4+iAMatlKKYIlwzteijzSkSG9r
+         vAvP8yeVlKLLqSAYjyTyJpPA6U/zKn1H9fwMSOSWyLkTUzrQPc9Xgi2dozvzCSxr1hU9
+         0ncFrBqQbfaTG21rlusRcArneeogS3UQjktn5xtXqCUvG6lJ2XLhWu6B1sCxY1LT1RnT
+         m+SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741503470; x=1742108270;
+        d=1e100.net; s=20230601; t=1741503623; x=1742108423;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rz99WKtoBL/5O0++DpAUVdioGN7NnvwM+hKPSLxc750=;
-        b=s9AA3vFSk/+noIuNZucGURLaJvaO2wWGZvK4uKsh9/0hgOgcxcX5+FABZIIV/Ojd/u
-         BQKKuVNKjha0Q47hXG9JJ7iTHz+6zKbwZhkDkMOg/PiY8BgMZcAJfUcXYa8puzc/gEY0
-         eOMI5sFzPmRPeGGC+By6mMCY1jnZHWLJYFOl/Rn7MqNh8RrplVQR1I+YgAClxsEmVfKg
-         1/LpZ4tKG0a2YVr+QK/yxB/f2EexD1i4DBC1183fhYQHMqHM0/dFSzJTLh3+FSY+caKu
-         Szzc3DCgfkWYkqrgZOvHbFfzFlimyRK1m/OSPzC6AcisJTtWd73h+aBrfpLMF1n4rw4e
-         2zCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGDQOnjCqXSZhSZ1LKU9AA6miLETYtkkE2bvSo7rCaETkRfqEhAJ2JxlGEvCfIbhy6i0clGepCW9zL@vger.kernel.org, AJvYcCWDKnzizHuGMmWo//vZ8j8IyVXPWKIO2W6wNLiVbOnd5iGzHj3b+m250XcQRMkaHy3InxN3YInVpGYbOIGI@vger.kernel.org, AJvYcCX/isk2nCsNfT21LkbEN5fK0NnVMPiN7Bi8xdVnJ20n6P+U9ws2KmlYyIi+ZXEj2hBnvWxbWuqBeLwX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxensQDndrMNpiD7jy70hgbZr0HLXi/C+S7C1GkcWoy7Ld+SmJw
-	hlrr4T5jmOUdP2KRU2n0HaojsuxT4KS/ARVnmWp5Go/tsiIbC/kK
-X-Gm-Gg: ASbGncsNy/MQms0ydroL17rC5QCaYsiI6ty0fJvUQNlGqyQP1gHA4rSnNPPUDI8AH1F
-	AtdDgOugDH7PROaGnIaI43CzHoHf10oTttnzmoTm+QGsHbh9S607R9ZMSNcCDQMmmU05M6Q6RLZ
-	lWvW5pg41g6U6YkcYZpv/8LfZrFVR3CYrqUAkwF8dJw16tcuBi3NCpG07PGkQ+9uRQhFh5QQFLX
-	qbkqkkM7vWTGI8IBEwg7Pq/zXEn4xNf07KjT1VUTp5pYqPQp8t5vSSy5o82AApzY3NxD0rc2F+z
-	j7tolDmtglmHJTsruMWplx63dubCoVETRmbhZHpVB3tM6ROYeixv2pN5uU8HgzA34w==
-X-Google-Smtp-Source: AGHT+IG6jGggHPNd0SVG+UZn0rvjVy5AUuO8FA/RbV267G+XhAkHX+wbIy3z+igqgRZsFBMzaObGag==
-X-Received: by 2002:a17:906:4fc7:b0:abf:6c2d:f469 with SMTP id a640c23a62f3a-ac252a883d3mr1107863966b.20.1741503469598;
-        Sat, 08 Mar 2025 22:57:49 -0800 (PST)
+        bh=rOXmjlR5Rk5KRf6rwJVBLM/R3Wk88g6lM6HYMKYo1vc=;
+        b=oAyLtl/ZkjVwgMwicVccu2fF/DC4NpNmotPVgDk9DUTMIh5raauHgoiP5iZQqobL+x
+         kKnrwvs16Yky0UBNyFUtshP4HpQvjcN9SDADT6UuOK/Hc/smsmeUo6Lm4XyLRXLiYEhx
+         Jinwl0HAmip02KVb7jpVee2eCmMWyhqGzT4CkzAsJP7TfQJN/kaJhEv1Vce5LSVwr3X3
+         SJ8TVOUUA1oIRxrQLgqSGaoVwrQQAWYs7CqCE5n2ywGvQFTMZdnMNGRODcZ67y8kBcpr
+         Cr9rS1wrhWlLXYq169WUb52BW2YJLDBjZ3aGORo3FMtvpHH0g1v/4MX35kn3pyOl+Z/9
+         B+ww==
+X-Forwarded-Encrypted: i=1; AJvYcCW8P1LhDBb3HDvsIQHm2rWYdpgjfDDcO5ZcSwkiqGkbtRH+JT6FHbFNOz6ikXyIdVHcZC78uPvTskUA@vger.kernel.org, AJvYcCWMwxB6t+7doB8KxkBONHSvpK+4eAxOI9d4BXJP6bXiOQtpC0TzfLlT8LieV9iKLBTjia2jkQZ3ps4ETYt5@vger.kernel.org, AJvYcCWlh4teTddDfxn1E9v2S9iiJHQ5dxfelNM71A405NvCb3OrGDX0JlSdxl+ER0nQCggdLut+vMRDPVc6@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlfGoRjHbeaURsX+UfNWME0KDB512pRwk4y89SIzlROnjEEHqA
+	+pSsyqZ8rAYfxHHSEFZFzQZRtDlbxzf2qrctd6MhFSYE08K/5j9b
+X-Gm-Gg: ASbGncsdO8Bjg2B5lqEUtTCUZtvrceqRjw2oWLhE+/1mO3Incayhg237K2kjPyUNfGI
+	LaThPTp43DHKTrfORj/bAhSKVt87aMjyCKrf/27y3sk/ewj6G6ZTMah4vjESHTDY9zR/dylOQUI
+	esGGA3ehJVcRXgIO1cWKHsii/wULi1AKTsy6B+Wo566JT6msKU6yQJ+zG+KWSQF4Qpl+H+V7YRv
+	0GNV4tl6MCvt6Td6RJUhNDDnsTnblhsI9tagshOtnmyjghRJEAMiqHc2pddAkPE3GyKtWrQUZY9
+	3aVeUkLhfDBpLXI2MihAQYR0bvYpo9sZEpPIkCyQTNmS3LYN6RMUzYrhz2DBuxVFzg==
+X-Google-Smtp-Source: AGHT+IHYSxE3dHIHTEa8uoEGGMpuf/AZ9EL0n7GTLf/jTzfr1egAgB9Y7RFOLIp+NZliiikRziEP0A==
+X-Received: by 2002:a17:907:94c8:b0:abf:45d9:2607 with SMTP id a640c23a62f3a-ac252598005mr1084558066b.3.1741503622721;
+        Sat, 08 Mar 2025 23:00:22 -0800 (PST)
 Received: from jernej-laptop.localnet ([188.159.248.16])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23973a0aasm543242466b.89.2025.03.08.22.57.48
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac299a025c7sm14713966b.51.2025.03.08.23.00.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Mar 2025 22:57:49 -0800 (PST)
+        Sat, 08 Mar 2025 23:00:22 -0800 (PST)
 From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -66,13 +66,13 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 12/14] clk: sunxi-ng: a523: add bus clock gates
-Date: Sun, 09 Mar 2025 07:57:47 +0100
-Message-ID: <10620511.nUPlyArG6x@jernej-laptop>
-In-Reply-To: <20250307002628.10684-13-andre.przywara@arm.com>
+Subject: Re: [PATCH v4 13/14] clk: sunxi-ng: a523: add reset lines
+Date: Sun, 09 Mar 2025 08:00:20 +0100
+Message-ID: <1994155.PYKUYFuaPT@jernej-laptop>
+In-Reply-To: <20250307002628.10684-14-andre.przywara@arm.com>
 References:
  <20250307002628.10684-1-andre.przywara@arm.com>
- <20250307002628.10684-13-andre.przywara@arm.com>
+ <20250307002628.10684-14-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,13 +82,19 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 
-Dne petek, 7. marec 2025 ob 01:26:26 Srednjeevropski standardni =C4=8Das je=
+Dne petek, 7. marec 2025 ob 01:26:27 Srednjeevropski standardni =C4=8Das je=
  Andre Przywara napisal(a):
-> Add the various bus clock gates that control access to the devices'
-> register interface.
-> These clocks are each just one bit, typically the lower bits in some "BGR"
-> (Bus Gate / Reset) registers, for each device group: one for all UARTs,
-> one for all SPI interfaces, and so on.
+> Allwinner SoCs do not contain a separate reset controller, instead the
+> reset lines for the various devices are integrated into the "BGR" (Bus
+> Gate / Reset) registers, for each device group: one for all UARTs, one
+> for all SPI interfaces, and so on.
+> The Allwinner CCU driver also doubles as a reset provider, and since the
+> reset lines are indeed just single bits in those BGR register, we can
+> represent them easily in an array of structs, just containing the
+> register offset and the bit number.
+>=20
+> Add the location of the reset bits for all devices in the A523/T527
+> SoCs, using the existing sunxi CCU infrastructure.
 >=20
 > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
