@@ -1,62 +1,62 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151C1C2FD;
-	Sun,  9 Mar 2025 06:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9AA1EA6F;
+	Sun,  9 Mar 2025 06:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741503056; cv=none; b=CtLnUQVF4Oa9Bghj/m9kni5RQHPOL+DEFfgHad7F7CooEeAmZped6Dbr3Hdd9tQNOeudJw0WqWYYpCWo8tTdSO6g39uDCA+y7L/htasUGJYXqOKOgvLU0U2OBSJN2j3YyfSW8Cydg1L+LhQG3oPCVrwe35HA1gISc4GVecs1DP8=
+	t=1741503190; cv=none; b=P6dZ9zL9cc0a4GOK0vDiibmFeEVVHsXLbxb+ZCdHoIobLa2DyIC/k+POeRCJMe2BxmIWRwfS2qOdDbRxnKOmNGioVKRVjNQQx/vDf2VqtAXohpRLBflKH2KXZVvt08If+X/ybFiPPrL0CvcpsEtWGi484vcpfXlNONN6ZrWAQ+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741503056; c=relaxed/simple;
-	bh=XXrGeMKEDMltcTZOnuSwc6OZdvzBmHyoGR0fdEWW+BE=;
+	s=arc-20240116; t=1741503190; c=relaxed/simple;
+	bh=8FLOytRST1b7cBgnwTPUTHSCubeWY65ELvAASAoo8K8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BBhsHzevqDMTs+ur9o9R3scuXqY7xmHxksyu2Wlz/fW3uspZqGWRO7bSv0INitWSZcujy6wp8OpnnQ9dpT1X/KzgF6WF/XRZ961FGCebFcw8OGje8pYg878V3+blqvWnEA3+crsgnZsu+VBExfzVXyjKjGaG9FV/HHHHjjpGxSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbUzP61E; arc=none smtp.client-ip=209.85.218.42
+	 MIME-Version:Content-Type; b=Vp3N3qSdveK2X968X8iulvWmUbo42PRulWj3lKmpmso3wL+6s/CATxNuXitQus8MRWC33+rVgnRtPsvj6W4bcR5/B8ptOVE8bKIaQN1l2GRwmh+UZN7w2nbOv2jUxsCq7uqVyMgB55O86e+RRpguk9nhjWk7Ip0qBSveCu4mQHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N6+vtyDa; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbUzP61E"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aaecf50578eso575385266b.2;
-        Sat, 08 Mar 2025 22:50:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N6+vtyDa"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e64700a38cso883028a12.1;
+        Sat, 08 Mar 2025 22:53:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741503052; x=1742107852; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741503187; x=1742107987; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XXrGeMKEDMltcTZOnuSwc6OZdvzBmHyoGR0fdEWW+BE=;
-        b=CbUzP61ECY+iTbNpLudDISWzCX83M4Qbpkg0fVFH+UqxoEsiIKIVGtrkh1VL60Dbgh
-         xmBblD69OAZR7iFLsiOJjiJVoIiX4TO3yzmVpbQQ40PTJR9qzou4BbIb6hrC4hCWLwH9
-         hKpir2ygr7u/rxaKDbrQcN7Tb+d4k/C7Vo4HtKRwAzKD8YEmDX4aBmtfsSgXtIcC5QDm
-         HWiYd0A22PYtWx1TIDv9AyrN8aP+mkI4bOvICnHXqSAuBHVZst/ym49K0LPIumzdCaws
-         zuGgitkohBoHiUiWgrxfdeh+ytvFVlFn7oxOgbBrVJFWiLS6zVANjjwI1PQWyUz2m0/0
-         RGpg==
+        bh=8FLOytRST1b7cBgnwTPUTHSCubeWY65ELvAASAoo8K8=;
+        b=N6+vtyDadsK1mYiJ4rdCnGzzwqtn0mtuR9awLNHs0r7jKivtbgkOTBGknS707iXDpT
+         5nksaiwuw/36jkQFE+8B1rwWC07/RjjnGmI1hhC3R8Qs58GiUH62B8hMHFVHiPG2Nrdk
+         7SBjoyDEtx3rvti9oZjkfToo8PeA4JBPD6yqkkw/nzZ4Wg7PikPA4auVSEvLmAdXAFay
+         AjkAKsTISPO6cAwGHG/+QbKqKB8sKWL3ybW8XBvYgSRAAW8xoM11Nfdj1qYh0kb5wqus
+         QS8XHimDryzl7XSbcoNbFcP6MeDgpEK/amGMyGwlJ4wy5SOYhrhgD8N+3KtCEpSSPdgC
+         OGZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741503052; x=1742107852;
+        d=1e100.net; s=20230601; t=1741503187; x=1742107987;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XXrGeMKEDMltcTZOnuSwc6OZdvzBmHyoGR0fdEWW+BE=;
-        b=Wi6+oeNnmmf80L/N4hExp9X8eo3MmsLQIk5Ww3oCtcZJUbwLvHs+tXw4FHP/CC2k5C
-         nfyh0v48Ahq04OcmQNkgEuI7kZOGVQ3vTkUJDMXXDEw6SvPbpw2J4eOtFBTcU7qnYzxO
-         trWJN6tzSombf/uBadYXRgLD6Gcq6O+HRu9jE9cKr3Dgsia1tQCycugGZhknqY9O+Oq4
-         fexYmuNo5i7XnJnA101TPWC11oLCBYOicOobqa8OJJtMnfuvVuByjwYf4JEGAwlCEbCL
-         R5JASNF0NwgHG/RLx/vZxQ5gEkn8YZobO1kuDOutQuiia8u4DdjeAGvYnuNonfE3Dukd
-         JrWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUM2WFLRBcW0eABej9gqJbRUbS/v0FBKB73ecPzEfcvaKOUfjGxb6yAl759TTAbNHwbELYgpKSkoDjo@vger.kernel.org, AJvYcCVlHnrB7DV+EDX1JZPjUHDEZsZ5trWypNH7LueQ9Sw7hMCOP9IBpVTrP2rWrsFT6uevlNay0XYiA0p5i3hs@vger.kernel.org, AJvYcCWsKXCYYmUA6eFtYZBkgdn9uOIRRDKJku17IPlKMDKoplB2N97INWuiOvNzyt/NDIFw93U15tM3l1M9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj+Mz/3gWSPqS/Ze2o2ZPLm+IE4xtdjOzvX0Wv/3uNcmYDUDIz
-	LOgjGoC7fVilAoT0Es++WCtngOGTbC69FyY5g10gqFcpwDosCLfRSI8hsA==
-X-Gm-Gg: ASbGncs9iLQhXas0zDg8tpbmydb4GGDM0NpPULJd6Ox3PVeheADiu1I+zyQvIrQniLN
-	l6lCKJe3BOybWqVSXxTtdL0q4tlSpVKefF6gBGvsiuHPr9mDYfM/GwgOyAEqPE5zBIbCBvTEbwi
-	ycnM1RiDmu4Yq71qIlaicH7XEchWiLLQJDWTLJ7JUzl3P9iGKJ/F/mKZ0hA2OtliAcjjsO7zrmR
-	I9zZGRcscyzgUntW8We+h0dsJpjhatBIxCd6SKfmOuXX2s7+MI98wX4JXrB5cWKTkFVlXRCyGa9
-	gF213DkdxK5cQLVBL8abfu+i5/0jjOpoz0AZ5F1NPvjAijikmDRaxVrE14G2xa9eRA==
-X-Google-Smtp-Source: AGHT+IFXyBjwKS8n+FEnVkJuV0T3jFruhFE2A6vtlJI4jqzFnqL4g16+EpSl4SMNWytxbOSvgcDIjA==
-X-Received: by 2002:a17:907:9490:b0:ab7:9df1:e562 with SMTP id a640c23a62f3a-ac252fe7196mr919864166b.48.1741503052319;
-        Sat, 08 Mar 2025 22:50:52 -0800 (PST)
+        bh=8FLOytRST1b7cBgnwTPUTHSCubeWY65ELvAASAoo8K8=;
+        b=xUvimwQqiMKw25vSFq5/vgivkLkN7Jmqxrt5jw8T8k21EoPJG3y3NgE7NftC9k/NEe
+         22tQJS3AA1J4pcWtM3343NgHCO5iBUerKWZM+QoaNYs/JaJMyXXv5YfxGFJF4CPKb6fw
+         FYtue9Jg4t5RWVyxgYrwMIsj0oEuKtbe92ByFx7c6IIM7B6xAbYlluwqDdjogyQsSnez
+         1tfODh3JzjAYvb0eCF0M2KVh+Qu3HBbF/xvgAufc5bABlCjMyRRqIB+ocS4Plru2zy29
+         v3q8sOmPfE/3IoQhWSzAgYAi4vlh6PO3mt6c4P285KZxsUmDqs+4BJxMC86h2i2qOJ4R
+         rGVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcYi/IrZknHwE5bRjvLz5f80ZB6XXfrthfEoETNzmWrKjAQDaLjlJQaNpsEkuvDuiIOY90PP9qCiJnGMcz@vger.kernel.org, AJvYcCVrrvNXVN1lHiALQvczaJMYkwDBfwC0zONGzjgyKZp7HCcF1murJzZ7r0l3vLVMUA3qkB2OLQPSlYNj@vger.kernel.org, AJvYcCWMewI2uQSfH5hfogGTIP33ps65XAllEOu0T85p8WLfi5TLsq4dzNU4YdYVe4mHsn0bw8uxR0fDXMUL@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAwHlYcltK/dJZoRjBlgNLRd+0lux+newf47yQvgBhc+DLj2oo
+	8w5VIiwOQlsGdjtQh2EYeo1jniz1lQTHOulaaxj6fVBFCjbQHtHZ
+X-Gm-Gg: ASbGnctVQxElCTHN6q8qSPqr79OUL9GO7ODdUFivlR1lZfmk9rF1HEkXcWM5+GPYcjp
+	3yL1lqrKYTB7QLZihPVMGHh2zAd2GnFLn/VS+jko2tju+x5kCIRGkqTD1s3m1nYNF4Zc607ZWUq
+	Vw1W452oNGb05xNP8K6qQ1TcQKonn2Hr8MN34IPH71fcroylVhFBmPHbnhNyNWj35KhvNQui/WQ
+	T0/PkhSDHX3h6hoiMiubLlsulflKTau49F7HHXywZAmYOzToW4FqXU9HXuZOIKkMERrohqNmH0n
+	QnItOBpd7Ih1QICNlY7Tzc6SElOjS0x3Cy8M7AkE5Z8fL+7lpDXDWrWg+SzM0EcguA==
+X-Google-Smtp-Source: AGHT+IEozQjXyjRcOAbnbhkCB/GeONnnBAob1GnncFL/WgIvYzJGUOAd/PvSRjZxlM/Y0ifrf89/uw==
+X-Received: by 2002:a05:6402:5387:b0:5e0:9254:c10e with SMTP id 4fb4d7f45d1cf-5e5e22dbbf6mr10635788a12.11.1741503187497;
+        Sat, 08 Mar 2025 22:53:07 -0800 (PST)
 Received: from jernej-laptop.localnet ([188.159.248.16])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23943c476sm544681966b.3.2025.03.08.22.50.51
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c74a7176sm4845027a12.35.2025.03.08.22.53.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Mar 2025 22:50:51 -0800 (PST)
+        Sat, 08 Mar 2025 22:53:06 -0800 (PST)
 From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 To: Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -66,13 +66,13 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 08/14] clk: sunxi-ng: a523: add system mod clocks
-Date: Sun, 09 Mar 2025 07:50:50 +0100
-Message-ID: <2214425.irdbgypaU6@jernej-laptop>
-In-Reply-To: <20250307002628.10684-9-andre.przywara@arm.com>
+Subject: Re: [PATCH v4 09/14] clk: sunxi-ng: a523: add interface mod clocks
+Date: Sun, 09 Mar 2025 07:53:05 +0100
+Message-ID: <2978516.e9J7NaK4W3@jernej-laptop>
+In-Reply-To: <20250307002628.10684-10-andre.przywara@arm.com>
 References:
  <20250307002628.10684-1-andre.przywara@arm.com>
- <20250307002628.10684-9-andre.przywara@arm.com>
+ <20250307002628.10684-10-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -82,11 +82,11 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 
-Dne petek, 7. marec 2025 ob 01:26:22 Srednjeevropski standardni =C4=8Das je=
+Dne petek, 7. marec 2025 ob 01:26:23 Srednjeevropski standardni =C4=8Das je=
  Andre Przywara napisal(a):
-> Add the clocks driving some core system related subsystems of the SoC:
-> the "CE" crypto engine, the high speed timers, the DRAM and the associated
-> MBUS clock, and the PCIe clock.
+> Add the clocks driving what the user manual summarises under "interface"
+> devices: raw NAND flash, MMC, SPI, EMAC, "IR" infrared, and the "GPADC"
+> general purpose analogue/digital converter.
 >=20
 > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
