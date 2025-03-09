@@ -1,125 +1,147 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177998836;
-	Sun,  9 Mar 2025 15:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E06E1C5D78;
+	Sun,  9 Mar 2025 17:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741535483; cv=none; b=DjEBm23BiSGJmntLzWnUzKWwtQ33IICSH9tYYOfFgTmdM0OtkBdbvMnHGvvOnda3sWjmXXUw7dJ6GDNn4Cq6ZdnJhJsqfELu79jfVNEfIh5d9jML1v2zuIa8Nb2rdt3OfxyYpSGzfCvRFbFht7DklKs44Pi1nWetz7kTqdDMbeI=
+	t=1741542573; cv=none; b=ZwsWuzJRGWCQ4ZLZ5B6Cr8E4chUbXHce+yQVwTFErrTQSQcn4IorfukoMIlmpLNAvAbMaO0cjXF3L49reOHF73grO5jC2oHUNYHawdEVg4iBKx9BO7R3mFMiTe87ohiKSebG3Y5PV39OtVJhBt0MZUV7H8hUHWpfmsAerKh/mcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741535483; c=relaxed/simple;
-	bh=z26VWBNMz80YyF/hRHm8Hl23tDMXIjOJUiY/5dcLl2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=exl1hRMGcwmrJyeu4ajzJjJBH26/DBA2hS1Hs3qdPSy9CK2TBQpDW3H9NTkypydUOxNYJpgCypC0Jv5CNchgKB76HW+nV+niHewJasoKIcx7G2qBLUvh56wdfg8qDuNmuP4R8SNGFbAsx/KH2nPciTRGrYZ/hERrOEF3vaNMSy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mQkgWgI5; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1741542573; c=relaxed/simple;
+	bh=0jA0jE1d3VZYRFj2dEWSaC1XvTehPnfNraI7FcCBe0A=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bUbxZ4HWlsDpNusCNEfi12Hlz6ZEnrXAnUZ25BqCLYIoW1AthqKNUHh5LtiVJtdUvDKTFwNi/6yw46U3DTqFeaPoAHGA9izoM2F3vhzK0ZHITdL+UCXDBr9mYfhslYIeFqVmUvYy18PqrTFz5gmxHGbGVUeXom6qeFl2+lMQuo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=kBT2v4Ni; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mQkgWgI5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741535481; x=1773071481;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z26VWBNMz80YyF/hRHm8Hl23tDMXIjOJUiY/5dcLl2Q=;
-  b=mQkgWgI5eKCkAx7WYOKVlMXw1aQj8+lLLsJ2kk3aCdEwfOURLsVyzGVT
-   E/fx1O0o+k8kfFTAmojXYer8cYYnJH7mZIguepPfAjzl8iDfwvKJO5dT1
-   qQxdKs7Tz8+p8pNW0AYWmPBDtOXcu0OUNK6F9utsLs5rN6DloRRFf6APk
-   6eU/S/BVZXqOQmQM2ruxdXR86MTIVNCOB7sSl7kFdGB8PbQex/Wi8S13I
-   pxgrTaeS+CGKM1xjEQDLKZUztZOHbt3n6CtaWVTOEgZljYRbe2gfjOEq7
-   YjliK+yM5we2f2NOPGtxDOSwbtZhL7C2on9A32IkLbh6aJ9PrUFjZVhtx
-   Q==;
-X-CSE-ConnectionGUID: XrGUtreURlCZqK0P8ujtqw==
-X-CSE-MsgGUID: AlAosqvpSFyoCBNLcbDcpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42670980"
-X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
-   d="scan'208";a="42670980"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 08:51:20 -0700
-X-CSE-ConnectionGUID: aMKZlXlkRZmvTo3hOOJy6g==
-X-CSE-MsgGUID: elAGiMi7SmG61Nx2Z1eQnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
-   d="scan'208";a="124782869"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 09 Mar 2025 08:51:13 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trIvi-0003Ey-22;
-	Sun, 09 Mar 2025 15:51:07 +0000
-Date: Sun, 9 Mar 2025 23:50:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	Guo Ren <guoren@kernel.org>, Yangyu Chen <cyy@cyyself.name>,
-	Ben Hutchings <bwh@kernel.org>, Felix Fietkau <nbd@nbd.name>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org, linux-mediatek@lists.infradead.org,
-	linux-usb@vger.kernel.org, upstream@airoha.com
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH 09/13] dt-bindings: phy: Add documentation for Airoha
- AN7581 USB PHY
-Message-ID: <202503092318.xReLDuUG-lkp@intel.com>
-References: <20250309132959.19045-10-ansuelsmth@gmail.com>
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="kBT2v4Ni"
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 9F05E100002;
+	Sun,  9 Mar 2025 20:43:47 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 9F05E100002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1741542227;
+	bh=GrOqXh07i7N0ySZW77DG1Gd9b3sEB1loXlmnzaagEgc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=kBT2v4NiGr2uN1XxQGXDawKdR83CBuFr8XbrHnis/gXRMCafPD9f5oUi0PyzXlZTZ
+	 US9RXHF0zY0PgHPwOcOFAw/JOnCjFncciXovVJgW76N2rx4BI88t5JsU5vXgCL5WzV
+	 MDx2+i4SCN0l7ycLBqbOHihDKWQoe/GnzA9P3FBm7a09KCYphGQLa2xIPPsfTuqGEi
+	 66Pwo1JVAl3MU55y0FyXXA0I3BAtJ0r4DEfRgjoXh+knAYVmO9HmsMgTxnhn9R+wg6
+	 hAsPi6KclBNhiOH2kcnj1mwBQ91C6Z1SnlI2j1gg1tb72EPHzBahVDlVuSOPCto6+S
+	 sw+fh8zXF9oOA==
+Received: from smtp.sberdevices.ru (p-exch-cas-a-m1.sberdevices.ru [172.24.201.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Sun,  9 Mar 2025 20:43:47 +0300 (MSK)
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome Brunet
+	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Martin Blumenstingl
+	<martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Rob
+ Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH v6 0/4] Add A1 Soc audio clock controller driver
+Date: Sun, 9 Mar 2025 20:43:18 +0300
+Message-ID: <20250309174322.1321201-1-jan.dakinevich@salutedevices.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309132959.19045-10-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-exch-cas-a-m1.sberdevices.ru (172.24.201.216)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 191599 [Mar 09 2025]
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;lore.kernel.org:7.1.1;sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2025/03/09 17:18:00
+X-KSMG-LinksScanning: Clean, bases: 2025/03/09 17:18:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2025/03/09 15:22:00 #27687174
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi Christian,
+This series adds support for audio clock and reset controllers on A1 SoC family.
 
-kernel test robot noticed the following build warnings:
+Depends on [7]
 
-[auto build test WARNING on next-20250307]
-[also build test WARNING on v6.14-rc5]
-[cannot apply to clk/clk-next robh/for-next usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.14-rc5 v6.14-rc4 v6.14-rc3]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Changes v5 [5] -> v6
+ - use __devm_auxiliary_device_create() helper that is being introduced in [7]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/clk-en7523-convert-driver-to-regmap-API/20250309-213623
-base:   next-20250307
-patch link:    https://lore.kernel.org/r/20250309132959.19045-10-ansuelsmth%40gmail.com
-patch subject: [PATCH 09/13] dt-bindings: phy: Add documentation for Airoha AN7581 USB PHY
-reproduce: (https://download.01.org/0day-ci/archive/20250309/202503092318.xReLDuUG-lkp@intel.com/reproduce)
+Changes v4 [4] -> v5
+ - moved changes of aux reset driver to series [6]
+ - added reset controller on top of audio-vad
+ - merged into single file
+ - reworked variables/defines naming
+ - added clk81 clock hierarchy
+ - added TDMIN_VAD-related clocks
+ - excluded DT patch (it will submitted separately)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503092318.xReLDuUG-lkp@intel.com/
+Changes v3 [3] -> v4
+ - Use auxiliary reset device implemented in [4]
+ - Split the driver into files
+ - Use common with axg-audio yaml schema
+ - Unify clock-names with axg-audio
 
-All warnings (new ones prefixed by >>):
+Changes v2 [2] -> v3
+ - reset:
+   * added auxiliary device
+ - yaml:
+   * added declaration of optional clocks
+   * fixed names in example and another cosmetics
+ - clocks:
+   * reworked naming
+   * stop using of "core" clock name
+   * fixed wrong parenting
 
-   Warning: Documentation/translations/ja_JP/process/submit-checklist.rst references a file that doesn't exist: Documentation/translations/ja_JP/SubmitChecklist
-   Warning: Documentation/translations/zh_CN/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
-   Warning: Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
-   Warning: Documentation/translations/zh_TW/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
-   Warning: Documentation/translations/zh_TW/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yam
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/leds/backlight/ti,lp8864.yaml
-   Can't build as 1 mandatory dependency is missing at ./scripts/sphinx-pre-install line 984.
-   make[2]: *** [Documentation/Makefile:121: htmldocs] Error 255
-   make[1]: *** [Makefile:1792: htmldocs] Error 2
+Changes v1 [1] -> v2:
+ - Detached from v1's series (patch 2, 3, 4, 25)
+ - Reuse some of defines from axg-audio
+ - Split the controller into two memory regions
+
+Links:
+ [1] https://lore.kernel.org/lkml/20240314232201.2102178-1-jan.dakinevich@salutedevices.com/
+ [2] https://lore.kernel.org/lkml/20240328010831.884487-1-jan.dakinevich@salutedevices.com/
+ [3] https://lore.kernel.org/lkml/20240419125812.983409-1-jan.dakinevich@salutedevices.com/
+ [4] https://lore.kernel.org/all/20240913121152.817575-1-jan.dakinevich@salutedevices.com/
+ [5] https://lore.kernel.org/all/20241112230443.1406460-1-jan.dakinevich@salutedevices.com/
+ [6] https://lore.kernel.org/all/20241112230056.1406222-1-jan.dakinevich@salutedevices.com/
+ [7] https://lore.kernel.org/all/20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com/
+
+Jan Dakinevich (4):
+  clk: meson: axg: share the set of audio helper macros
+  dt-bindings: clock: axg-audio: document A1 SoC audio clock controller
+    driver
+  clk: meson: a1: add the audio clock controller driver
+  arm64: dts: meson: a1: add the audio clock controller
+
+ .../clock/amlogic,axg-audio-clkc.yaml         |   4 +
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |  49 +
+ drivers/clk/meson/Kconfig                     |  14 +
+ drivers/clk/meson/Makefile                    |   1 +
+ drivers/clk/meson/a1-audio.c                  | 856 ++++++++++++++++++
+ drivers/clk/meson/axg-audio.c                 | 215 +----
+ drivers/clk/meson/meson-audio.h               | 156 ++++
+ .../dt-bindings/clock/amlogic,a1-audio-clkc.h | 139 +++
+ 8 files changed, 1254 insertions(+), 180 deletions(-)
+ create mode 100644 drivers/clk/meson/a1-audio.c
+ create mode 100644 drivers/clk/meson/meson-audio.h
+ create mode 100644 include/dt-bindings/clock/amlogic,a1-audio-clkc.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
