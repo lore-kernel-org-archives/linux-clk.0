@@ -1,142 +1,104 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBEE14D43D;
-	Sun,  9 Mar 2025 05:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77997383A2;
+	Sun,  9 Mar 2025 06:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741499756; cv=none; b=E1XjmeCWfKsQNBRR4TmlDHWmMYq+Xi0nCFaAL+rh9eCQ3FPU4mX2Srv/eQTNDyY8Ojlwt6ahil6YETCSYaYelY8o/RKGhVqeEjOGpPQmpvLrUTtzuQXQRJvtwQeaf84EjVqJRhhqIvI3QO4/HNWLKqTnTZiGuRDsuPw9lQom1aM=
+	t=1741502289; cv=none; b=ONuC2Zl0qHYtlhrPCSj2yFTH+54PcOcnJlyCxFTkl/fNhTLBHvJQ9ytHcKGYU7FQAJ0XONtuxk1hfKK2HWlhNRX6AHVgCjAk8UuLP1MliLSLA/51bFXafLhROXMeu64sD1hcIHBUGbpkwVeWEBzI8AQ1iNC5YWP1GcvBK2SEVpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741499756; c=relaxed/simple;
-	bh=3qTQkAzeUoh3oNqUFdtbtTzzFSJJIvUXF74/y5YGolM=;
+	s=arc-20240116; t=1741502289; c=relaxed/simple;
+	bh=Fz6Jf36xcTh8dqFosjtzLD6W+gVvPK4QQTcyeflwbf0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IG2IdTdrXm+Il/BAMa9KOTzHNz6vBHhZBCKuJuP+F/1zv8cza8LxqC9N6aURy1t43mKamsmuWgaeWO6E8qtk6OD+RpyBW5aPWOodP+JtTAFkMaU6PPwOBhzqAHdKZcaZ4LC8WWxt2SIGCV9UhQXJJVEyIR7zHHzcQmYxPeTzauk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=PfAKY4VH; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	 MIME-Version:Content-Type; b=mp42AnEY3npcm4v1z3AAv2hZZJKISNl+Yx8Nrt94HzzdhBdS57423LJTx+J1F6VnfOK2vxcE9JPdEXpmeFSDVj52rC1AziOlpvw/NaLuFFSBWr7sTZIaKltvfWta/x00i5Xj14mYIJ+WrLHU7YifAIgzAlKmggMuKUinN8J2YTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K2GA3mzl; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="PfAKY4VH"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 2527C25984;
-	Sun,  9 Mar 2025 06:55:53 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id P3wYOcYVPzHa; Sun,  9 Mar 2025 06:55:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1741499748; bh=3qTQkAzeUoh3oNqUFdtbtTzzFSJJIvUXF74/y5YGolM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=PfAKY4VHipG6G6gka230q/QsrnX0i7Q4UoW7rjOa8VcWVp3mv0r8IsB3QIQOdBd5r
-	 2AQOeXyqj/C/gsVjfFQZDRN5lXe3tTIijjFMabK/ZVrEYIA7mxFkyzurwoco+d21Yh
-	 cHFexQaURxMNWqDuD/cw4IyIHDj934FBzdaatpnJihmOeKRNKJu+lyOLrQNR75OMQ3
-	 XXg3p+PbnQPkkUJned7eoon4KWExCcF8mwWMExADcSqI5T+7CCuGVVI5wqjYEVgHs9
-	 o3zg/esH3WeWIIbaHdGU//TP/SoTPKLu5k4h0jlgqpEGWqpuAHbDkjWILqHWyFyPHw
-	 UucodzMqZB0PA==
-From: Yao Zi <ziyao@disroot.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Cc: linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH v3 6/6] arm64: dts: rockchip: Enable SD-card interface on Radxa E20C
-Date: Sun,  9 Mar 2025 05:53:48 +0000
-Message-ID: <20250309055348.9299-7-ziyao@disroot.org>
-In-Reply-To: <20250309055348.9299-1-ziyao@disroot.org>
-References: <20250309055348.9299-1-ziyao@disroot.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K2GA3mzl"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5b572e45cso5525273a12.0;
+        Sat, 08 Mar 2025 22:38:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741502286; x=1742107086; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fz6Jf36xcTh8dqFosjtzLD6W+gVvPK4QQTcyeflwbf0=;
+        b=K2GA3mzlHo/abNU9LwtHCZS2k6G7hBssOIrRu4iSuRl0bnnh11EuL1auxh0fBiBM8r
+         mPNsLHXl7vUMLvu2Wfy5aCAezZrfUuPWNOK6Uq39M+6VtLTuFPDyPtsRo+yijtmA9Xjz
+         ZUPtfNWmUXinfQSK0Z4/fNPYUB1aa4XW4BoBZXT4tvbfw5/ZGA899ExJ7+Z/x4m3YEvs
+         JnSlacoseDILbD12UV2kNOXwVrbFGIagzSxpeUsZP797RMPmQrtam7nuZSqho7V4cfeT
+         GAud17bKwvKA3nMIQOWmywLjyGmybqXLIF1wDC5Af+x4SWGVw6xeANFGiWnVNAaWuuJz
+         Yfrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741502286; x=1742107086;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fz6Jf36xcTh8dqFosjtzLD6W+gVvPK4QQTcyeflwbf0=;
+        b=kqOxlSL17KIQIaeT4EuKk5jKdP1pAW8mrminPlK67e6jaaiOhNlTrWPXOp4osrq2w1
+         OHtsL3P5iwOAM8ey/lttUQpA6TX6zSw26gEiyNC4zfn1nSQmTcWWxNItZhHPimpew24d
+         Wp973yqESY2GlTs/YhfHL5N2G6oYjW66y2bXpnhqpHc1SOcX1zvbj/iLaWQxJFQGzF0w
+         RfMX8cHxOcOZOiWXojUThDGRlkbVvPCdkICajSzzFO+QkZz5GezMcagtPoYQPTa4Gz6W
+         d2ht7lHy3VRkvaYExNPZKiQx+cbvDmR1SKi6820gP2PEuO1uDBmELsGkOqZ6txeruwOQ
+         sBRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjJJCBDzwBpSoIw8I4+B/h66ZBzx2mHOCHGfqkekXZuRI/rBbi2eCl9h7b/3j57cBTWAhsEomgfBsK@vger.kernel.org, AJvYcCW5eMLZ9Zjwcjug3pB9n7a+yzNiBJOKzrwkBp0gowRjFbRC6szxFMj7Pts3nzx1CZzh12oBn1syVrP7GE0L@vger.kernel.org, AJvYcCWdUarCMn+H1OeQgcKiydyRaF4y4+oJpJYUWjLhQAYfUanAd0zretD120SPFcsaPIP8UDd7XZMtOfl0@vger.kernel.org
+X-Gm-Message-State: AOJu0YyykWd+iCeiApHUPoPBKC0j3CzTAtNP1jEeVtbOQUJ2Eny9b5sV
+	Ag/VabJxUKcNxPGwxHVL2ce8DLNoI7NEeMuzRgPKRnGhdDMmoN0wNg46sg==
+X-Gm-Gg: ASbGncvMTIuBDRaW4n1zyPE38KHRNK5SRcNjNW9WBKSJ0SHpEk2NaIfrUf4lzVjO0wN
+	tevOyT9OZ1wRqhdrwL2PjjijAK6rjSRb15hF72qKspCb6QF0v5I9akA2QNMmR7DaTe1YNlLE2vb
+	j9xNVIX1vF82tp/5oG19ByIAyaenKBVZdhgKvkH6dwAQu0DXXbfqZpoM/SfDTZGHA68/YNCu1Dm
+	jMbFE2ulh5zC7UhfE/1We8detcwJfpkL5LQHQk+O9Lu7yfWXjDXRTNS5gEXVc8m3RsrdbhtkOOh
+	Xd3Fbms3T8F2sF0pyj+ekazO+aib0pMBa6etYUNNZ10cTPUZIWeV4vJaPpUHJep7ew==
+X-Google-Smtp-Source: AGHT+IHhG0nyJSWhRdWZlqSDCjjx4E4luGYWfPo00aAv/HBDZfhIYjAS5k26NpukDfuKeycSfkBWmw==
+X-Received: by 2002:a17:907:97c6:b0:abf:4c82:22b1 with SMTP id a640c23a62f3a-ac252738126mr1024070266b.32.1741502285623;
+        Sat, 08 Mar 2025 22:38:05 -0800 (PST)
+Received: from jernej-laptop.localnet ([188.159.248.16])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23943945asm538979266b.22.2025.03.08.22.38.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Mar 2025 22:38:05 -0800 (PST)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+ Andre Przywara <andre.przywara@arm.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v4 02/14] clk: sunxi-ng: mp: provide wrappers for setting feature
+ flags
+Date: Sun, 09 Mar 2025 07:38:04 +0100
+Message-ID: <5865232.DvuYhMxLoT@jernej-laptop>
+In-Reply-To: <20250307002628.10684-3-andre.przywara@arm.com>
+References:
+ <20250307002628.10684-1-andre.przywara@arm.com>
+ <20250307002628.10684-3-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-SD-card is available on Radxa E20C board.
+Dne petek, 7. marec 2025 ob 01:26:16 Srednjeevropski standardni =C4=8Das je=
+ Andre Przywara napisal(a):
+> So far our sunxi clock instantiation macros set the required clock
+> features depending on the clock type, but the new "dual divider MP
+> clock" requires us to pass that piece of information in by the user.
+>=20
+> Add new wrapper macros that allow to specify a "features" field, to
+> allow marking those dual-divider clocks accordingly. Also add two
+> convenience macros that deal with the most common cases.
+>=20
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
-Signed-off-by: Yao Zi <ziyao@disroot.org>
----
- .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 33 +++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-index 5346ef457c2a..b74e605a5a82 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-@@ -15,6 +15,10 @@ / {
- 	model = "Radxa E20C";
- 	compatible = "radxa,e20c", "rockchip,rk3528";
- 
-+	aliases {
-+		mmc1 = &sdmmc;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:1500000n8";
- 	};
-@@ -104,6 +108,18 @@ vcc5v0_sys: regulator-5v0-vcc-sys {
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
- 	};
-+
-+	vccio_sd: regulator-vccio-sd {
-+		compatible = "regulator-gpio";
-+		gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sdmmc_vol_ctrl_h>;
-+		regulator-name = "vccio_sd";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		states = <1800000 0x0>, <3300000 0x1>;
-+		vin-supply = <&vcc5v0_sys>;
-+	};
- };
- 
- &pinctrl {
-@@ -126,6 +142,12 @@ wan_led_g: wan-led-g {
- 			rockchip,pins = <4 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
-+
-+	sdmmc {
-+		sdmmc_vol_ctrl_h: sdmmc-vol-ctrl-h {
-+			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
- };
- 
- &saradc {
-@@ -133,6 +155,17 @@ &saradc {
- 	status = "okay";
- };
- 
-+&sdmmc {
-+	bus-width = <4>;
-+	cap-mmc-highspeed;
-+	cap-sd-highspeed;
-+	disable-wp;
-+	sd-uhs-sdr104;
-+	vmmc-supply = <&vcc_3v3>;
-+	vqmmc-supply = <&vccio_sd>;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0m0_xfer>;
--- 
-2.48.1
+Best regards,
+Jernej
+
 
