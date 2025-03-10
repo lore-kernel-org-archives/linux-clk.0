@@ -1,65 +1,65 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A641E1DEFF1;
-	Mon, 10 Mar 2025 20:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E2C1E25EB;
+	Mon, 10 Mar 2025 20:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741637594; cv=none; b=SslX9icg3amVAhX+njqaoJ6UYhCy/bmOFjg72d6cmnRxDMJArtaprysFt2AEAh7F1Vo7FwIZiPB9DCJfW0AxIO4m+YHU7+gWqHkaZaATuOogt5GD/vukKekT0q/AH2/Zdb/fJbZ89fkfrYolVArK4+D6My2E0rGppZDZNFo3vVk=
+	t=1741638015; cv=none; b=dB0eak1vV9fBKa6jPrBZU7PRQzsrry5UWAqfjxsW9aSSpibt/VVuCIYBYHWPEr9tBSCw4ZUvKO8IAosHZl+pdw31gb92UCSeVpp9mqOWgbfmHR8MTXHtH2tRHTFsNfaFpKuBDqumh9qX/HEWB73QuZsUyc4Ja51c0XF6VJqUd0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741637594; c=relaxed/simple;
-	bh=djGQzPDRHihBhVF2Xb3tODY9B+9AzijudFGky+2x574=;
+	s=arc-20240116; t=1741638015; c=relaxed/simple;
+	bh=rmnxlTh4+9Xr1jUFAwTyqD9+2QaJ00Nmegk4SkJR/WI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dW2lb/LKTLScyA+15KASj+LYDumNEdh/HeBl9VwbsnHvkHWnlKIm2+Wqs24zw4/wSrhYh4wr9w8ubsarNdW47X/W5dCsImYtMX012wnDTakPhN5eyVLcOxHOVoo5QvPRalXQS4PFuEvyhLfldDmOgFC4D6kU7Z66Z451/u1Ef6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZNFjQJDr; arc=none smtp.client-ip=209.85.218.52
+	 In-Reply-To:Content-Type; b=jLN5iERezIEYVQETfxbPjBoqmSx5+fV0WRSkkwNiu/Af/Jw30C/lJt/72W3JzsoF7cssx6ne1vWGtRLL3SG2X6eywu1pQX9a/Fq1/JshQCdyIcpohhYdnuHb4rZYfenz+FhrbGwz1oMMs11FqODHkbGFAIYwe6lbRI0hJchOqpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fY97QoY+; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNFjQJDr"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac25520a289so592098366b.3;
-        Mon, 10 Mar 2025 13:13:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fY97QoY+"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac29af3382dso246780866b.2;
+        Mon, 10 Mar 2025 13:20:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741637591; x=1742242391; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=gmail.com; s=20230601; t=1741638012; x=1742242812; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=84eM2Dk+TJZw7p32MuoSqAq/Wf6WjYKMiu+Het+Ec0c=;
-        b=ZNFjQJDruwBZjsl+NldbLgBoJNGFbx5qfeVAAhKw/fU5gy4b/vURekr+leq2fyJYtM
-         sjZ/G6r79uJDEzEL+KcLMPWcyJEJYal1zwWku8YNB5nz49wlhJL9XI8IA08o0CoPLf5J
-         XTBalCx5UthAq9ktRbm6KFUkNReUb/qKHtInhO31CVcrjY4oJ0mLH2mzUs72E3AVEz0J
-         Tb3wce+QI3c0GOw6rjUm4K99ZscP7n+pwWiT13klGaRlxonXox4Wg4XSFk7/a4QdK0VO
-         7SUAL4Ulia6jn1iGOP+TXojquhuXX79rWyrt+CmwaV/EjPwbq5waNNPSKHk3JidNc1px
-         akYw==
+        bh=jy2tDul83DJ+TIghAv8/MHeoWO5YZd6mK9BubhK5z1A=;
+        b=fY97QoY++kTJT5F2gjsj/6zwiBk9X+nbFgwBbIm0tzTTW31uwlBQ21btj4C0Cz81Gu
+         OipccGFAt52kpHX9Zyv+Sh9KFn4bu51WZTolpn0JoXOUnjU9beGdVK40K9uXrhAIZFvT
+         H75ElTWW4dpdukguIHxQskTTg3HoKefkvIFEJq8oCrhhiOEvTwRyTgzNdJ0hzUC2Re79
+         5iOhgmChC4fmt97bKuAyGLENx4VVzPjzVKtb8ffps1vOpnfza25HKas1C76Hg7FVYdgC
+         bQGcQdpk7BYuUrY34Nep6YRcTIqIbqE1OdMdKLBZl6qRwbrtkupizVXUygksgBd6cu85
+         TLzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741637591; x=1742242391;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1741638012; x=1742242812;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=84eM2Dk+TJZw7p32MuoSqAq/Wf6WjYKMiu+Het+Ec0c=;
-        b=kwtm9Oi2KS5QYYeMjEjkL4JBdcv5o7SbOUCBYN853QMxfVJUApJufCYhHfKR5aLkTS
-         no8hEVq0OYQHS3Xs+pYYiw9JKusPz26/U1BNRzwvHgOs6tBrRWT9JFVm1kw16jtE2Fb0
-         XNO1vzOEZwIZ8ddteByUidufafLRnT1oujlrThO6dvdEdjsWqUeASUbVKn3Fqpr10UEK
-         EYm9swfkdhLDn37XUM/yN/rbMMgi4MggH6gaw8SzpK0N8Cufn6/bs6Aom8BHFtdrJp2+
-         c0cQM3hrMmPvf5UuCSTJslX/fK2c8gWlVBIkWx9r3KQacdQEhJgK4aT73UXb4Gj1A0FY
-         ybfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTa27kbidrQFoNfFP7HHpuXEPwYowMYKH6qP+Kj+t/c5MVppv031jB95mgTC2CkrfQpjasOaLl5XTS@vger.kernel.org, AJvYcCWhQW0UQK6Z79dhMmycVqf8PpIScqIFwnXi6YdYe40OpFciJWxecdE5S6x74FvUixUggh64+MSzzB3t@vger.kernel.org, AJvYcCWxNjBSZrUV4RlAThe3Mu92iV8ecMM4G3ZNfRbv3kFb/kh1Y4SSRhPibTNfYp/MwRFLAycGvjhzDGuZPB+D@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0fZq6/QeGviJtYD0oUe9vinKopvMe7gGwyLlMK3H9uFJqtNSV
-	/3817JrkuKYk+uY0tb3su+8g5NNfgh3hpiTEJ+XYq0cHsIeYFy+l
-X-Gm-Gg: ASbGncvsL3f9z2zRVBEtRWTetBNVCqQ7SQSjOeDPbqJRPI+YIeHpKu9z4RD9Ev444dP
-	kt0EMblTRkAjoE8twDF51rE3+eD9lHbIaWlMopt0tD3JvOUkGH87xMbFGG//gCIb/s+CoAIVlrl
-	jkjANvj34JKw1GHsi2htZ1eRlxLUZON8pkKry8xOsDyesjqIInln/FGcgX4GjZvaJMzFnGlnJ/T
-	U5wWBKdJHY32Cv4VliOsaIhdM+dzm7Roedps5VuJD2z6JhNXpOyG0Y6z2KkyirjSfuzbVIM7X6y
-	HRbFc2mMJiZLLlsMG8KebpjYbyUpp6zWMb2bnoCqEdLd2jhZCq36H5/Lx/EkD9f3TxtU+Hpq9Nu
-	4qEGjt20Q1atlkZv5BF76mA==
-X-Google-Smtp-Source: AGHT+IG2vqiPQWzIE4Xso7GgDIyQfIUK5LXugs0CoXSWts52ndkzePNhOoEa8Wr3fgDWQugNCpxHUA==
-X-Received: by 2002:a17:906:d283:b0:ac2:7dee:cb15 with SMTP id a640c23a62f3a-ac27deed088mr1040493466b.33.1741637590560;
-        Mon, 10 Mar 2025 13:13:10 -0700 (PDT)
+        bh=jy2tDul83DJ+TIghAv8/MHeoWO5YZd6mK9BubhK5z1A=;
+        b=tF/vg0lgNYpP13FjO1VfM0My23D3BTNMXT+b4ziKOkCcgnTF33UaSsr4jwhV2To+H6
+         qRcFJohZVDbE78/GIi85DAkRqwwiH4RSWUspthfSKAfMUPkOil43vUbHO+Uol8k6yUCt
+         7xdabp1wwVrnoDHV9xNV/Majtbpj8x/f94QmIF7p7d6G5yEasjN6dwbGfqQ6oovhuwZQ
+         ZyLJ1PVLuIR9jLealygvoy/faiP0NKy+6PRgAL9lhVIVi96/TEahd5U3Abyph9SaG8ny
+         u84BspCjHtSOfkfI3AuQ5hj9SFCHNJWWEEA8B20x/BOAysg/ZE/Vi61nqx/Mz7IUCLc4
+         ziJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWURyQdiY27ATcLO3AuP6ah5E09AKFOy6RM9ms6RdO6ugSGHawAmzMnX5yMNSRtYuuvPvGU2EBYzGQp@vger.kernel.org, AJvYcCXIJ4gGchpVhM5HUwznlyQ499xnmDpH9FqtLJapJ9ISEAlWHurlrUBYtWTxhf58emipeEF7Gzy6mMGW@vger.kernel.org, AJvYcCXkMbN17ucWOhVbMVs0AIs4IFWb/2ghWfxbdTndZ0oIRFmKqRsdKpX19Lr2hISZMK78bDn4qx9lKPnDOGmG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5EVhVkDIZ33WsKeJk5WrUXGIGjL8XTMaiRfB06dvds2W4ZbVn
+	GR9sli7vxlRVqDxdAAuG1i+KmhzkXWsgqbG1sHeWeOFAVuIqj4ujiYG+QQ==
+X-Gm-Gg: ASbGncuV04+68WSnZnzS2vCQM4DMCn2WtzFkDiYNZSdx7Mh0t6En7Iq3Zetn9eqDATe
+	OunMO7A5FO+j76UpqWq446KinD1/3lwSDvhHRdhGwYUK4lfpQIgjySyk8tgZApqYBiLjdtz8D3X
+	resQBXdrkvSmGiSIlrcg4+PmYon5vrZvcGWlIlnPrZ8le9hPzpScSWCuPHGj2FYSBQrEzmjpj1j
+	srRyyHDwAMzXWdQ7r0RKfvopoWPr+UjbZLlK2MeA3wrb5cG3A6DimwLsVnmyRb+rRH1vNHqt5PL
+	DUBAMyf9FYahaZRHH5awixTlwO3/ayUeC8CURsUys6j2AK8UCn+VW2KvmvfPBduZlOnk5JqUGYl
+	7qjnZSWYfrz8Kbi/un/nMoA==
+X-Google-Smtp-Source: AGHT+IGQteszZhsq2RbLp1UONM0XOnkXmRpFq2A6OnfT+EbxvSn6pk1KtSYROrheSGMmLUq5o8HTwQ==
+X-Received: by 2002:a17:907:94c5:b0:abf:6d24:10bb with SMTP id a640c23a62f3a-ac252f5b0c6mr1602253266b.44.1741638011746;
+        Mon, 10 Mar 2025 13:20:11 -0700 (PDT)
 Received: from [192.168.50.244] (83.11.221.132.ipv4.supernova.orange.pl. [83.11.221.132])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac289a79b33sm359260966b.65.2025.03.10.13.13.09
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac29c95862dsm255417066b.164.2025.03.10.13.20.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 13:13:10 -0700 (PDT)
-Message-ID: <145c65bf-fbb1-4256-aa36-2079fe42e1a3@gmail.com>
-Date: Mon, 10 Mar 2025 21:13:08 +0100
+        Mon, 10 Mar 2025 13:20:11 -0700 (PDT)
+Message-ID: <2b120341-0026-4a9c-9ad1-b14adfac50c8@gmail.com>
+Date: Mon, 10 Mar 2025 21:20:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -84,8 +84,8 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 References: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
  <20250308-kona-bus-clock-v3-4-d6fb5bfc3b67@gmail.com>
  <20250310-orange-frog-of-abundance-af80f3@krzk-bin>
-From: Artur Weber <aweber.kernel@gmail.com>
 Content-Language: en-US
+From: Artur Weber <aweber.kernel@gmail.com>
 In-Reply-To: <20250310-orange-frog-of-abundance-af80f3@krzk-bin>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
@@ -98,82 +98,13 @@ On 10.03.2025 10:43, Krzysztof Kozlowski wrote:
 > 
 > Please squash the patch so we see complete change.
 
-> 
->>
->> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
->> ---
->> Changes in v3:
->> - Add more clock output names to example
->> - Drop CLOCK_COUNT defines from the DT binding header
->>
->> Changes in v2:
->> - Add this commit (BCM281xx bus clocks)
->> ---
->>   .../devicetree/bindings/clock/brcm,kona-ccu.yaml   | 33 ++++++++++++++++++++--
->>   include/dt-bindings/clock/bcm281xx.h               | 19 +++++++++++++
->>   2 files changed, 50 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
->> index dff04e24e92829b890bf7cd336f0e083bdb30fa6..d00dcf916b45904177614c6f19a5df02abdf42f7 100644
->> --- a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
->> +++ b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
->> @@ -40,7 +40,7 @@ properties:
->>   
->>     clock-output-names:
->>       minItems: 1
->> -    maxItems: 14
->> +    maxItems: 20
->>   
->>   required:
->>     - compatible
->> @@ -61,6 +61,8 @@ allOf:
->>               - const: hub_timer
->>               - const: pmu_bsc
->>               - const: pmu_bsc_var
->> +            - const: hub_timer_apb
->> +            - const: pmu_bsc_apb
->>     - if:
->>         properties:
->>           compatible:
->> @@ -86,6 +88,13 @@ allOf:
->>               - const: usb_ic
->>               - const: hsic2_48m
->>               - const: hsic2_12m
->> +            - const: sdio1_ahb
->> +            - const: sdio2_ahb
->> +            - const: sdio3_ahb
->> +            - const: sdio4_ahb
->> +            - const: usb_ic_ahb
->> +            - const: hsic2_ahb
->> +            - const: usb_otg_ahb
->>     - if:
->>         properties:
->>           compatible:
->> @@ -116,6 +125,16 @@ allOf:
->>               - const: bsc2
->>               - const: bsc3
->>               - const: pwm
->> +            - const: uartb_apb
->> +            - const: uartb2_apb
->> +            - const: uartb3_apb
->> +            - const: uartb4_apb
->> +            - const: ssp0_apb
->> +            - const: ssp2_apb
->> +            - const: bsc1_apb
->> +            - const: bsc2_apb
->> +            - const: bsc3_apb
->> +            - const: pwm_apb
-> 
-> Why pwm_apb cannot be after pwm? Any idea for sorting here?
+Squash which patch(-es)? Both CCU bindings and the dt-bindings header
+are modified in this patch, as outlined in the commit message (though
+now that I look at it, I could reword the first sentence to specifically
+imply "add bus clocks *to the binding*"...). What is missing?
 
-I placed all bus clocks corresponding to peripheral clocks at the end of
-the clock list (so as to not modify the IDs of previous clocks), in the
-same order as their corresponding peripheral clocks. This applies both
-to the dt-bindings/clock/bcm281xx.h header and to the clock binding
-here (I kept the same order of clock names here as clock IDs in the
-header).
-
-The same reasoning applies to the BCM21664 bus clocks patch.
+(Sorry for the separate reply, I meant to reply to this in the previous
+message but accidentally removed my reply.)
 
 Best regards
 Artur
