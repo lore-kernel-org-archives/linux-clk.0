@@ -1,191 +1,192 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19506230BD5;
-	Mon, 10 Mar 2025 17:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95772309B0;
+	Mon, 10 Mar 2025 18:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741626664; cv=none; b=qDAPqs1JX10vlAxnDdM9C2Z6Sy8C9V/K/u6m2PUO+jb2U+2rCSV9rlqk6kxTumY97SLJvWQvjBMNYkc15n/wC+bUIRcEjfRrp34X2Y8nOIQhHCG0VOdPOArHvTMFRUrPLVqAmIR7UZ3tUgI644KzKlQljiDr03gW0NRQY4dGozA=
+	t=1741630942; cv=none; b=Xtz+tdh21aymWxxQS04IIYxxS4nBOycPY9ydS064PZyVONZCnYLM6P1QbtCkpTJKrR60277Dm/EMCe9lD0Ea8cv/VfQ38MC3J770oQZYN1v0QeL/nmxZ18fMK4xvnj5eILEpHTmd2AENILGaznDTpyE0AQbOnS749UKPZ1Dy9Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741626664; c=relaxed/simple;
-	bh=voNjo21o3BJ1yoO1GHLS+0pcetuEukpGtYife/kyYB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qmGJ/6biqPPF8NUV2Mp7OHegWLXuouw2DQiYyqqPa1FwTgR3rg8D81Q6VxjdhxtqdExTXXHFhVdHU82nBon349+wS+77xHkbjOChdEvwkBB7XLc/iI4dhSaRf46abwEJ06GNB04lv80nFg0u/B2Qt1oxXqKqqtM1HaSlBI0VV8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ctmerySW; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1741630942; c=relaxed/simple;
+	bh=Dow8nikHJE8XsnkuX7AwuXTf/FlFHfui7cMftFHMses=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QCVAecfStbLqrK0/DaZ+iB5g7sfJSvqyr1q1hNFuARzsE9RRLiwJQnqVHbcpHKw2xYADGSQyUOByb89AAHHSPEIAhdBIuKONPkIN3jYrJMJH3e1l4LlDDU5hdhVHp9ccXocfpuLl5FtLma+pThs7UKRguhDIK6aYub9+iBT8QME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U+XCKo7w; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ctmerySW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741626663; x=1773162663;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=voNjo21o3BJ1yoO1GHLS+0pcetuEukpGtYife/kyYB8=;
-  b=ctmerySWfqAOXNCtX/1QgqLRv/JJ2q1M2AdIop2VcxyskJjVE7ADTbgA
-   wj4ShXt2hTS7Rq3HMFChprnBVkY2QN5WEXFIaJ2BytbjRvDto0QOiurUW
-   G5F2DZTXCl1rPCy+nIkOoGwYdx4GnBgXfEYTFklVsVRJpBlu4PhWFm/n4
-   FHGMCmjieYGyjowfOwlKqkNxAfM+IXORkZ8Pv1yXSA9QCT4uzmKgSaS++
-   xCzX/668lDzmuGFvabn5HJKz50jBuuVXlHQ4V8lLM+PFeIYMyjJFa46LY
-   PPf7BXZiEQt+2TlMHUhIKxl3R/EuaKrdKtjoIXZPkvhQ165qZTba+NJpS
-   Q==;
-X-CSE-ConnectionGUID: ETqQ2FItReCItU23gBHlqA==
-X-CSE-MsgGUID: zgTfJ9d3TcKUPIAa62W1FA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="45427063"
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="45427063"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 10:11:02 -0700
-X-CSE-ConnectionGUID: rcALvII3SWuG40FzH3koiw==
-X-CSE-MsgGUID: ZncTHJjsQEyr2ybwv6q34A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
-   d="scan'208";a="120070023"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 10 Mar 2025 10:10:59 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trgeT-0004W8-1G;
-	Mon, 10 Mar 2025 17:10:54 +0000
-Date: Tue, 11 Mar 2025 01:10:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v6 3/4] clk: meson: a1: add the audio clock controller
- driver
-Message-ID: <202503110016.L1KdYGVj-lkp@intel.com>
-References: <20250309180940.1322531-4-jan.dakinevich@salutedevices.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+XCKo7w"
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-524038ba657so1576284e0c.0;
+        Mon, 10 Mar 2025 11:22:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741630939; x=1742235739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CX5sgk1NrsSTqmDkZHWU3VI4LtlzTriqnBk+dv+I4P0=;
+        b=U+XCKo7wF5MscTUFZg26l/eyYuISi3hvCVUYBjHIFSs1RFjmyNjx/r+g18DiZV9Hc/
+         44Xmd9VjooCfsg1IfQlwo32Peo6v1bDjboyiEzkG7HAOX5gb7BEc4TQfVDZeON4MSIws
+         BStgM2zGujOh183VHTfbCG6GxkcPqnSEXwFXHN7sAlw/Gpm5Sm9M/p2RwXfJuta9rThU
+         XDr1v1Kc7dlJ42OgaPPAJKlGmoGrJlTpmtIFEZ4jDRaQGPXtlGjggb1WJnnViUa6jnoj
+         XRHJzRewc/jbCijSjaT8pw0paapuxFtoyWGiu13n69lmKZd7WEbL22xK389AFkam9ko3
+         ZlNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741630939; x=1742235739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CX5sgk1NrsSTqmDkZHWU3VI4LtlzTriqnBk+dv+I4P0=;
+        b=aBx05XpV1O0pw2EHyOff2kB7Rkt5xHUGd5Nvt4GEOyNAefXoDsLLFlA97dBCxG4Z6Z
+         xSMBCtlXwlhCK8iXTmp9TgUqbmMDpTkaq4scTZmvKoJMozPO+KgWapYZDd8ZOORG0pN8
+         5iTgGbWvoeEbWezI4YQ/YoZYH29SnhxkCbQexgJamVLlgnizH6fLt2FwSoiICHI2HDth
+         MbBRVnY4Q1gAtIg2554sqpMVC7/kIDvWKAi/mQC27ZExoZoAthvKCAYbu+dzm2K0nhwQ
+         YxrALHqKLrwSWe4P9lJN4TZ8hVhOhNj9aHSJewoiYj6+MvYa36dsItGqQwc4ut7rn5Uc
+         +Unw==
+X-Forwarded-Encrypted: i=1; AJvYcCUG6t+yrgdr6uCM7urKOV+y+/rSWOTpwIMItrL5aoeTO9Eru5tsX++Z8zZVapt18N8ZbY+fQ0G8pRi8JoY=@vger.kernel.org, AJvYcCW2Y3FXJUTmynDtT+lsHVdBCTUTzIAF18SBDTdDcPvapoh3mJIZ88Sa8/dtsZAVYrNjlnyHr1atEIRVfMN7JncCbaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdOwQbgccetJGYawkNIWGM/a3jd/YosH4e9hKqxARbOonpGCXt
+	CWsWbVHFgBO/E/FXqkn78dKl23JDwHMd3K1QY/6EesDKqF9hi8pvjK8Hw36S2bNS8aMrI9TNnTw
+	HVt6FS/La9raIUVSVt8UTHigFjrw=
+X-Gm-Gg: ASbGnctMdJSXy9GJ7qxStX4Lgn7rXq2nhGMG94reu5X+AYUgXErXIMciVL67kTO8J51
+	VWFjm2rJABQ9oexscNWOGTP3Fflonw3TIPgRniCMG6HgrRyYSPZ4ezlyOB4D2m0RvklBUFp3RS6
+	d0LrpwnH3sR9fsfDqjhuY8qthJdKfTLDoXbjfHjBYZytmpsylBjRgE1l/QPzI=
+X-Google-Smtp-Source: AGHT+IEPdZEq7coX5pTau7t6SmigM2UHhPJpEQBqoV1F/spx0U3PKqxHmTngw+7V/xU1dBEu/uWWeuytZzjMsJJxwno=
+X-Received: by 2002:a05:6122:469e:b0:520:4d63:72da with SMTP id
+ 71dfb90a1353d-524196d8362mr552754e0c.6.1741630939544; Mon, 10 Mar 2025
+ 11:22:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250309180940.1322531-4-jan.dakinevich@salutedevices.com>
+References: <20250309211402.80886-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250309211402.80886-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250309211402.80886-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 10 Mar 2025 18:21:53 +0000
+X-Gm-Features: AQ5f1Jr7XdViOvlSMZDdyZAppvrQKWrkpa5abBLYLSyis9LKmLDk6xicWFaKdXw
+Message-ID: <CA+V-a8sqJy1HJYkxZONqSEsFuCmENgbs_ofLyaUChtRJpj_ebg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] clk: renesas: rzv2h-cpg: Add support for enabling PLLs
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jan,
+Hi Geert,
 
-kernel test robot noticed the following build errors:
+On Sun, Mar 9, 2025 at 9:14=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
+m> wrote:
+>
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Some RZ/V2H(P) SoC variants do not have a GPU, resulting in PLLGPU being
+> disabled by default in TF-A. Add support for enabling PLL clocks in the
+> RZ/V2H(P) CPG driver to manage this.
+>
+> Introduce `is_enabled` and `enable` callbacks to handle PLL state
+> transitions. With the `enable` callback, PLLGPU will be turned ON only
+> when the GPU node is enabled; otherwise, it will remain off. Define new
+> macros for PLL standby and monitor registers to facilitate this process.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2
+> - Updated macros to get PLL offsets
+> - Switched to readl_poll_timeout_atomic() and updated the timeout
+> ---
+>  drivers/clk/renesas/rzv2h-cpg.c | 49 +++++++++++++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+>
+> diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-=
+cpg.c
+> index e489ce28ae63..76ad037b4361 100644
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> @@ -44,12 +44,18 @@
+>  #define CPG_BUS_1_MSTOP                (0xd00)
+>  #define CPG_BUS_MSTOP(m)       (CPG_BUS_1_MSTOP + ((m) - 1) * 4)
+>
+> +#define CPG_PLL_STBY(x)                ((x))
+> +#define CPG_PLL_STBY_RESETB    BIT(0)
+> +#define CPG_PLL_STBY_RESETB_WEN        BIT(16)
+>  #define CPG_PLL_CLK1(x)                ((x) + 0x004)
+>  #define KDIV(val)              ((s16)FIELD_GET(GENMASK(31, 16), (val)))
+>  #define MDIV(val)              FIELD_GET(GENMASK(15, 6), (val))
+>  #define PDIV(val)              FIELD_GET(GENMASK(5, 0), (val))
+>  #define CPG_PLL_CLK2(x)                ((x) + 0x008)
+>  #define SDIV(val)              FIELD_GET(GENMASK(2, 0), (val))
+> +#define CPG_PLL_MON(x)         ((x) + 0x010)
+> +#define CPG_PLL_MON_RESETB     BIT(0)
+> +#define CPG_PLL_MON_LOCK       BIT(4)
+>
+>  #define DDIV_DIVCTL_WEN(shift)         BIT((shift) + 16)
+>
+> @@ -141,6 +147,47 @@ struct ddiv_clk {
+>
+>  #define to_ddiv_clock(_div) container_of(_div, struct ddiv_clk, div)
+>
+> +static int rzv2h_cpg_pll_clk_is_enabled(struct clk_hw *hw)
+> +{
+> +       struct pll_clk *pll_clk =3D to_pll(hw);
+> +       struct rzv2h_cpg_priv *priv =3D pll_clk->priv;
+> +       u32 val =3D readl(priv->base + CPG_PLL_MON(pll_clk->pll.offset));
+> +
+> +       /* Ensure both RESETB and LOCK bits are set */
+> +       return (val & (CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK)) =3D=3D
+> +              (CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK);
+> +}
+> +
+> +static int rzv2h_cpg_pll_clk_enable(struct clk_hw *hw)
+> +{
+> +       struct pll_clk *pll_clk =3D to_pll(hw);
+> +       struct rzv2h_cpg_priv *priv =3D pll_clk->priv;
+> +       struct pll pll =3D pll_clk->pll;
+> +       u32 stby_offset;
+> +       u32 mon_offset;
+> +       u32 val;
+> +       int ret;
+> +
+> +       if (rzv2h_cpg_pll_clk_is_enabled(hw))
+> +               return 0;
+> +
+> +       stby_offset =3D CPG_PLL_STBY(pll.offset);
+> +       mon_offset =3D CPG_PLL_MON(pll.offset);
+> +
+> +       writel(CPG_PLL_STBY_RESETB_WEN | CPG_PLL_STBY_RESETB,
+> +              priv->base + stby_offset);
+> +
+> +       /* ensure PLL is in normal mode */
+> +       ret =3D readl_poll_timeout_atomic(priv->base + mon_offset, val,
+> +                                       (val & (CPG_PLL_MON_RESETB | CPG_=
+PLL_MON_LOCK)) =3D=3D
+> +                                       (CPG_PLL_MON_RESETB | CPG_PLL_MON=
+_LOCK), 10, 100);
+This timeout didnt work when I power cycled after a complete shutdown overn=
+ight.
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on robh/for-next krzk/for-next krzk-dt/for-next linus/master v6.14-rc6 next-20250307]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I will update the timeout as below, this Ive made sure the below delay
+works OK after complete shutdown.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jan-Dakinevich/clk-meson-axg-share-the-set-of-audio-helper-macros/20250310-022012
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20250309180940.1322531-4-jan.dakinevich%40salutedevices.com
-patch subject: [PATCH v6 3/4] clk: meson: a1: add the audio clock controller driver
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250311/202503110016.L1KdYGVj-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250311/202503110016.L1KdYGVj-lkp@intel.com/reproduce)
+/*
+* Ensure PLL enters into normal mode
+*
+* Note: There is no HW information about the worst case latency.
+*
+* Since this value might be dependent on external xtal rate, pll
+* rate or even the other emulation clocks rate, use 2000 as a
+* "super" safe value.
+*/
+ret =3D readl_poll_timeout_atomic(priv->base + mon_offset, val,
+                                                    (val &
+(CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK)) =3D=3D
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503110016.L1KdYGVj-lkp@intel.com/
+(CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK), 200, 2000);
 
-All errors (new ones prefixed by >>):
+Please let me know shall I send v3 with this change or wait for your review=
+.
 
->> drivers/clk/meson/a1-audio.c:807:11: error: call to undeclared function '__devm_auxiliary_device_create'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     807 |         auxdev = __devm_auxiliary_device_create(dev, dev->driver->name,
-         |                  ^
-   drivers/clk/meson/a1-audio.c:807:11: note: did you mean '__auxiliary_device_add'?
-   include/linux/auxiliary_bus.h:221:5: note: '__auxiliary_device_add' declared here
-     221 | int __auxiliary_device_add(struct auxiliary_device *auxdev, const char *modname);
-         |     ^
->> drivers/clk/meson/a1-audio.c:807:9: error: incompatible integer to pointer conversion assigning to 'struct auxiliary_device *' from 'int' [-Wint-conversion]
-     807 |         auxdev = __devm_auxiliary_device_create(dev, dev->driver->name,
-         |                ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     808 |                                                 data->rst_drvname, NULL, 0);
-         |                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   2 errors generated.
-
-
-vim +/__devm_auxiliary_device_create +807 drivers/clk/meson/a1-audio.c
-
-   748	
-   749	static int a1_audio_clkc_probe(struct platform_device *pdev)
-   750	{
-   751		struct device *dev = &pdev->dev;
-   752		const struct a1_audio_data *data;
-   753		struct auxiliary_device *auxdev;
-   754		struct regmap *map;
-   755		void __iomem *base;
-   756		struct clk *clk;
-   757		unsigned int i;
-   758		int ret;
-   759	
-   760		data = device_get_match_data(dev);
-   761		if (!data)
-   762			return -EINVAL;
-   763	
-   764		clk = devm_clk_get_enabled(dev, "pclk");
-   765		if (IS_ERR(clk))
-   766			return PTR_ERR(clk);
-   767	
-   768		base = devm_platform_ioremap_resource(pdev, 0);
-   769		if (IS_ERR(base))
-   770			return PTR_ERR(base);
-   771	
-   772		map = devm_regmap_init_mmio(dev, base, &a1_audio_regmap_cfg);
-   773		if (IS_ERR(map))
-   774			return PTR_ERR(map);
-   775	
-   776		ret = device_reset(dev);
-   777		if (ret)
-   778			return ret;
-   779	
-   780		for (i = 0; i < data->hw_clks.num; i++) {
-   781			struct clk_hw *hw = data->hw_clks.hws[i];
-   782			struct clk_regmap *clk_regmap = to_clk_regmap(hw);
-   783	
-   784			if (!hw)
-   785				continue;
-   786	
-   787			clk_regmap->map = map;
-   788		}
-   789	
-   790		for (i = 0; i < data->hw_clks.num; i++) {
-   791			struct clk_hw *hw;
-   792	
-   793			hw = data->hw_clks.hws[i];
-   794			if (!hw)
-   795				continue;
-   796	
-   797			ret = devm_clk_hw_register(dev, hw);
-   798			if (ret)
-   799				return ret;
-   800		}
-   801	
-   802		ret = devm_of_clk_add_hw_provider(dev, meson_clk_hw_get,
-   803						  (void *)&data->hw_clks);
-   804		if (ret)
-   805			return ret;
-   806	
- > 807		auxdev = __devm_auxiliary_device_create(dev, dev->driver->name,
-   808							data->rst_drvname, NULL, 0);
-   809		if (!auxdev)
-   810			return -ENODEV;
-   811	
-   812		return 0;
-   813	}
-   814	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers,
+Prabhakar
