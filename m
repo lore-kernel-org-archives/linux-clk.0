@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BE93D3B3;
-	Mon, 10 Mar 2025 08:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074F884E1C;
+	Mon, 10 Mar 2025 08:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741593702; cv=none; b=SJoWXhjpXGvK+mswMxN4YrIZCb8KFqwyoH0tn9Fuq6ZZGUHK3Ha543QZetZ33CS3PwxxqQHc1t4NsuWBL110TTu4BCyVvCheORaSA/NcKxi6qjD5V8Re/KVCnqjHSELe9mOn5pAliCW9F4kxOexaASxWY122+Rgg50FGZKIeh7k=
+	t=1741593968; cv=none; b=gdlSq/HoxCHoLTgnbBL1FYSIp04iDI7AuVbgnL1np/tWvO8EU9vqdN1deTqaCrsVN+VBErxo9CfuP4jMndCe4iy26I2hZYd7fY1VuKviLyGqnfEmFwzKl36hkv3bhIzwoZWMK32oZedDyjBt2YVfBKt3JaiFVWRP+VUg4hQSbm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741593702; c=relaxed/simple;
-	bh=SgbV9vkf5gWdeet1ixM7l/2JY/O0uXS4dGet0e+/f8I=;
+	s=arc-20240116; t=1741593968; c=relaxed/simple;
+	bh=JdNOUETRN7NU7vKZ0Jb69tYZgdK4LacoJaUSmjraB+U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YCfz+8BWEk/kkBlTc682t68/Cn8O513Ow+jVRkUpPxQif/B5VRwCmvOWmE/S2xptpS2uzP3/ZUuAHIysmVgDpKugCDGZpSMPY98XZhZim2dJsFFJ+bgC+PBfgwYZFxRLH1jQnN0F9gFSQqFKoGnUElLpngrUAY9Goqms7XJU+94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OtWd4NZP; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=N/gfdncSY4A0PZvJJs0edqXI1A7WN44eqEe0OHh1UYV5v84AF0hDPcDMTBJj4pKpn72GmKcXtW7a4APJyWwbuZr6q+7EYlFyC/rD+Als0WRRV6oddS3oG72Q6tJ80CdCLySkYlRpP0zwdr1Qm4ItBJfDIBu5t0mawr1Srzt+IW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NnHMKZDx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtWd4NZP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46415C4CEE5;
-	Mon, 10 Mar 2025 08:01:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NnHMKZDx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93EC3C4CEE5;
+	Mon, 10 Mar 2025 08:06:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741593702;
-	bh=SgbV9vkf5gWdeet1ixM7l/2JY/O0uXS4dGet0e+/f8I=;
+	s=k20201202; t=1741593967;
+	bh=JdNOUETRN7NU7vKZ0Jb69tYZgdK4LacoJaUSmjraB+U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OtWd4NZPf+ZQCKHgSKtdnYwA9r6lQF/EG0VXxntkjUKRXlqji0VpZ295K8bBUYAc9
-	 HJaHYQE5SI9Xv2mGnM/z6WgOzhMydd7bKUkSBMtXBHc7xji6ZPMDAuLgLd6TQSlsD8
-	 d9Lk6PJCHaSIXC9wKosIeE3v5ejpPqa7gZmm38Dv7+pszKhyus6HIgsIQ3QaB/if8a
-	 c35uXlM60THUXS2738WqQdsnyEr5YYpkvfmQIScGsJRmystjNVnh4bFhX/2p+cbfnO
-	 c4s+vzP4x2Ibc++SrxvoPNZTuDJJsi1ndEFVF6Vw8S3/r4MncBB4yqi9YxhCz3GmmY
-	 CT4AzO2dOi9Jw==
-Date: Mon, 10 Mar 2025 09:01:38 +0100
+	b=NnHMKZDxPk/JEEVnZ14bMVuOE4AMHF+4LK37P9FMw9W5DYYzqRIVR19INgh4GXPz7
+	 pl2DKchAu/sj2rtDAx13rXjZavd3cEB3GXA3LcZ+FeKdjQuPDFvb4QyfKfvEmPe7RT
+	 pETZrXrtodQFN42DZfV84l68R7WFUrusLOwGG9hJ8oPc6qXPUGDEM8PeHYSEZcBo+i
+	 y1QXKKIUXoqlk+E8MxSXmVLARLxeP865GnEm0pc/zd8b1V1GjcZJWn79go4cRzuLr0
+	 k6o9F6DCiBSBV8S1iz/OzfRErEq/wuye+AAGVca4oW9p5A2mF+s+xZwSxOmQOGFbQ6
+	 p/rBkUw7B3Y4w==
+Date: Mon, 10 Mar 2025 09:06:04 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Christian Marangi <ansuelsmth@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, 
@@ -42,11 +42,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org, 
 	linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org, upstream@airoha.com
-Subject: Re: [PATCH 05/13] dt-bindings: mfd: add Documentation for Airoha
- EN7581 SCU
-Message-ID: <20250310-excellent-quokka-of-abracadabra-15ad69@krzk-bin>
+Subject: Re: [PATCH 06/13] dt-bindings: clock: airoha: make reg optional for
+ Airoha EN7581
+Message-ID: <20250310-pompous-elk-of-serendipity-cfebc9@krzk-bin>
 References: <20250309132959.19045-1-ansuelsmth@gmail.com>
- <20250309132959.19045-6-ansuelsmth@gmail.com>
+ <20250309132959.19045-7-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,33 +55,23 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250309132959.19045-6-ansuelsmth@gmail.com>
+In-Reply-To: <20250309132959.19045-7-ansuelsmth@gmail.com>
 
-On Sun, Mar 09, 2025 at 02:29:36PM +0100, Christian Marangi wrote:
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/soc/airoha,scu-ssr.h>
-> +
-> +    system-controller@1fb00000 {
-> +        compatible = "airoha,en7581-scu-sysctl", "syscon", "simple-mfd";
-> +        reg = <0x1fb00000 0x970>;
-> +
-> +        clock-controller {
-> +            compatible = "airoha,en7581-scu";
-> +
+On Sun, Mar 09, 2025 at 02:29:37PM +0100, Christian Marangi wrote:
+> The Airoha EN7581 clock-controller registers are placed in the SCU
 
-No resources here, so this is part of the parent.
+I don't understand. The registers moved?
 
-> +            #clock-cells = <1>;
-> +            #reset-cells = <1>;
-> +        };
-> +
-> +        system-controller {
-> +            compatible = "airoha,an7581-scu-ssr";
+> (System Controller Unit). Now that additional pheriperals are supported
+> for the SCU, a dedicated SCU node is created and the clock-controller is
+> moved as a child of such node hence the register property is taken from
+> the parent node.
+> 
+> To support this, make the reg property optional and provide an
+> additional example for this case.
 
-No, this was told many times - you do not have resources here, so no
-chhild.
+No, post complete binding instead of adding some sort of stubs and then
+later totally reworking them to match different Linux drivers.
 
 Best regards,
 Krzysztof
