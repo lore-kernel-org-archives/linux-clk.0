@@ -1,114 +1,176 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9132322CBF5
-	for <linux-clk@vger.kernel.org>; Mon, 10 Mar 2025 15:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEFA1BCA1B;
+	Mon, 10 Mar 2025 16:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741621268; cv=none; b=aPt4/YKuDGiA08piTlRBYJEMjAVIgYdnLbUElAG0I/7+C6vjvBtt4oopMrNrYX+JMVxGIq2b8R0i5GTmDeCy3hQ1InpQxJ02L/kNqB9OPvTGoIENK44BzDJ+GrMEOQu0+il25lunsecg/0OHLJ5RgMnZgQ/UzZZPVfZrbsf/uHU=
+	t=1741623320; cv=none; b=LqU5e0l2vmVeEy82H2rCEc+/+D9+C/tdGAalq0O/bmYdyyQ9BFKi5VOHvd1SRmYyHsyr3sgTV2hSxzIaMZAYMOmpVCpHvbWI9RmNLTISz7s+3TQR4whzHFn9u56RyBeLMOBACmzr6qB20xJbCZVFPDBQrSWme0D5l/seoftx9Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741621268; c=relaxed/simple;
-	bh=SiSYBMtitncv76R++Rvdfnd/5GTxkby/K+Y+pHo4VFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VbPVdPergVPybXJZOC5KLYlAdzBIE9JHaa0gXHpRC4lce0QDW88aqHzhYa2GlKQPHnYcRYrEKv8nFK0j1m6xjm7CdQY94Z0vEUSsXSsg8J0Rd/PkaWvgnaG/hymVFYORxTew2NGaXNcUf0qQTEDPJPYbk5WjmUmyMAyJCy70H4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YQ0/P1FO; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741623320; c=relaxed/simple;
+	bh=RCE73KHSUJ50jx3NFplvsYyJfYQ1fa2jm0Y9GrKAnwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tK/QPsDucSoPRhhR6d6cq6US7YyUIClPeS51NPW2GD4RrfgbPJbw6e0X3mo9/GVSAELmovLcN3oeU1FrvQKjQ+kJqh/mrPDVqAem1Ij5ZiK40cWjnIsqUkVb/glYGx7f7NdyG/RkiFgFuerjmRZNgzwwlAPhUMlnCD9ehW0yYdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3kuO3S+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YQ0/P1FO"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-391342fc148so1969840f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 10 Mar 2025 08:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741621265; x=1742226065; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4DcQn3+I0jIkpf3ZBvexKFO6QcwbDbsZfCGjmeAilYo=;
-        b=YQ0/P1FOgLtnKJwGzKdrHdKAX4TNkcXOMSXbGeIJS1f6kzqt7pIvlGQX/PEywZ3oMz
-         yk4b5kyYSaCp7jlEt+YlaRu2fTv05yXZ49zv5hVoEzdt8EJb+vacPZics1TAHjeWaN+v
-         MfcOy1NcT0NQrdPgtVgAeh3ybjAnIH0rF8PQcYbqj3x7h4nVk3CK0Vgwx+pooDOJiB9a
-         39io3uTIc6KQ0aXvKxety5Hgfd6ssr4oaapzqJ9rXGHZe2m+1jdTRyV+10KEMao5ROgD
-         7osNuEJLqmLYqDlUs75AEz9FVQH1PJHeTCKX85Lm90PYEZWTduYxg5QVsKLvsPMrslK7
-         Be7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741621265; x=1742226065;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4DcQn3+I0jIkpf3ZBvexKFO6QcwbDbsZfCGjmeAilYo=;
-        b=c6DF33lLtsTP0CETnQXQeGiwPVZluHbve7fqEBNkHvTN3p8B1v7HomnWWvUG8YQC6p
-         y1nIWKEDL0uZkWtrG/RmXQ8hHkFjynDQ4LKn3DAQ4dou0sVJT1XVgBkX7lAOYIBYAc5r
-         O7hHN7UFdqQfvd20iWP8ud5f46gNHPxcO0yvnJJ0Vqxpaw2t1bF7FLj1Nng5JP8AHGaD
-         IBchQhWuap3VBffu5BFY2VDbaVd18EEj7GVFzg0irkGTd3aUHQsmhPq4qNM4RQGZ/p73
-         JlRAT8i1lYz1UWlysPoI3b+gd9bkchSDkc74nm4QKvLu4kY7HLMZL+RhKYNEhhvJImg0
-         V6TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFvIE3DqLU35fjY1OpPOHXPfmQCBci92cfpZl7oR2lgO+C6SLYs2r68DClFYqzmmdQqEhbwz9XL/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQglBG2wXKXyoFyFC43ULO2PyMuDstltOnzfXYoPSxzooTfLMG
-	XkZMXRxbvE3DN6FgzUm2dbUU3RojOIFn5BqlhATfUqR4GwpH7NnS2U+eRpx9h5M=
-X-Gm-Gg: ASbGncsdKDLJKb4APvOXGfXoHF2wgh1AAUPkGltfxUepo3hZSRRS5ASUXt1F58BbRxM
-	/saWrFvPyUVOLTYRu10lXmbk7mnu7D9iWooB9hgbY5YG+RHFpZoUSbOEdSn5vuyM1pb36LpKIT/
-	EVyQC61Jq2ZbrWlKkLGN3aN0tHrer2uSgwUGQCJaRv7SGOxXGO9JxFMRnGV9Md6MD8WGJ/v4tSh
-	MkRhZ+OGXWkPh6SYV9MKxCWaRGi0Avstt7qjAa5IKmV0FOAB+hgGfZvcXyX/hUmsGd783m8vg83
-	CM0qbWrjETSzy556k123bVqQHrj1y7/AxPbbpKStakUC84W5NGysVfpFLAHBLfbEMo+qE0fKY1g
-	cB6TMoMDG
-X-Google-Smtp-Source: AGHT+IFTM9dXcEZw51WkmRY68H9XVcAqrdb0vR4We3kH39AbYRJBbyFLPPSlwgwvD+LzdOV/7amBMg==
-X-Received: by 2002:a5d:648f:0:b0:38f:2b77:a9f3 with SMTP id ffacd0b85a97d-39132dd6934mr10735927f8f.43.1741621264831;
-        Mon, 10 Mar 2025 08:41:04 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912c104acesm15499409f8f.98.2025.03.10.08.41.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Mar 2025 08:41:04 -0700 (PDT)
-Message-ID: <9dc5dadc-7ff1-484c-88a8-461d505cec03@linaro.org>
-Date: Mon, 10 Mar 2025 16:41:03 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3kuO3S+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D516C4CEE5;
+	Mon, 10 Mar 2025 16:15:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741623318;
+	bh=RCE73KHSUJ50jx3NFplvsYyJfYQ1fa2jm0Y9GrKAnwM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g3kuO3S+Nx7mCzhWvx/E/uIZ2vURLJ4P2hDaJ/deXkTW5gSBPZ/iLJVR2JXwWHjUB
+	 +QryoEs3PGgZ3VFmGnP3YWKk+omEPpJalBHrodC6z5anZmuMoXxlTc+ndYdHSSa0Ow
+	 0905svS6DLYRFVfGYi2VTtnGFESX5SAVoXdRjKWyj//gNXF64A5J6arWZ78ImhY5ZF
+	 Z+RuABasjNYhtf9eI7lt+nKeTWLg2jtryY+RblgQtZmgE3JMw2cXb8hGqfbNSX1yNo
+	 9t326LigmhFb7EiFJePa+VlsNLKXHRXxuogam0HqQws4j4NmCLSnM/w1XJYOlbWsWQ
+	 TuaRFNZZuP75g==
+Date: Mon, 10 Mar 2025 16:15:12 +0000
+From: Conor Dooley <conor@kernel.org>
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: "robh@kernel.org" <robh@kernel.org>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"rui.zhang@intel.com" <rui.zhang@intel.com>,
+	"lukasz.luba@arm.com" <lukasz.luba@arm.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"john.madieu@gmail.com" <john.madieu@gmail.com>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v2 3/7] dt-bindings: thermal: r9a09g047-tsu: Document the
+ TSU unit
+Message-ID: <20250310-blurry-scam-bee8233878bc@spud>
+References: <20250227122453.30480-1-john.madieu.xa@bp.renesas.com>
+ <20250227122453.30480-4-john.madieu.xa@bp.renesas.com>
+ <20250228-shampoo-uprising-44ae0d3bd68b@spud>
+ <OSBPR01MB2775DFC184F78E9FB50F28FFFFD52@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+ <20250307-everyone-ragweed-e05a10a9646b@spud>
+ <OSBPR01MB277531D7C872C9EB0B287069FFD52@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+ <20250307-barbell-pretzel-368d6a4d1336@spud>
+ <OSBPR01MB2775D121B55A0C543F251BAEFFD72@OSBPR01MB2775.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] thermal: bcm2835: use %pC instead of %pCn
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Petr Mladek <pmladek@suse.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com>
- <20250307-vsprintf-pcn-v1-1-df0b2ccf610f@bootlin.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250307-vsprintf-pcn-v1-1-df0b2ccf610f@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Y4DhUv2VFm8QJbH+"
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB2775D121B55A0C543F251BAEFFD72@OSBPR01MB2775.jpnprd01.prod.outlook.com>
 
-On 07/03/2025 12:19, Luca Ceresoli wrote:
-> The %pC and %pCn printk format specifiers produce the exact same string. In
-> preparation for removing %pCn, use %pC.
-> 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
 
-Applied patch 1/2
+--Y4DhUv2VFm8QJbH+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+On Sun, Mar 09, 2025 at 10:39:27AM +0000, John Madieu wrote:
+> Hi Conor,
+>=20
+> > -----Original Message-----
+> > From: Conor Dooley <conor@kernel.org>
+> > Sent: Friday, March 7, 2025 5:04 PM
+> > To: John Madieu <john.madieu.xa@bp.renesas.com>
+> > Subject: Re: [PATCH v2 3/7] dt-bindings: thermal: r9a09g047-tsu: Docume=
+nt
+> > the TSU unit
+> >=20
+> > On Fri, Mar 07, 2025 at 03:55:27PM +0000, John Madieu wrote:
+> > > Hi Conor,
+> > >
+> > > > > > > Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> > > > > > > ---
+> > > > > > > v1 -> v2:
+> > > > > > >  * Fix reg property specifier to get rid of yamlint warnings
+> > > > > > >  * Fix IRQ name to reflect TSU expectations
+> > > > > > >
+> > > > > > > +    enum: [0, 1]
+> > > > > > > +    description: |
+> > > > > > > +      TSU operating mode:
+> > > > > > > +      0: Mode 0 - Conversion started by software
+> > > > > > > +      1: Mode 1 - Conversion started by ELC trigger
+> > > > > >
+> > > > > > Can you make this "software" and "elc" or something please,
+> > > > > > unless people will genuinely find "0" and 1" to be more
+> > informative.
+> > > > > > And why doesn't the property have a default?
+> > > > >
+> > > > > Sorry for miss-specifying.
+> > > > > ELC is an external event trigger. May be should I specify it like
+> > that ?
+> > > >
+> > > > If "elc trigger" is meaningful to people using hte device (IOW, it
+> > > > matches datasheet wording) then that's fine I think.
+> > >
+> > > "elc trigger" matches datasheet wording.
+> > >
+> > > >
+> > > > > To make sure I got your point, do you mean specifying a default
+> > > > > value in bindings ?
+> > > >
+> > > > The property doesn't actually need to be required, it could easily
+> > > > have a default (say software) and only be set in the case of using
+> > > > the elc trigger - which brings you to Rob's comment that it can just
+> > > > be a boolean, setting the property if elc and leaving it out of
+> > software.
+> > >
+> > > Got the point now. I can make it default to software trigger, and add
+> > > optional Boolean property to ELC trigger. Let's say "renesas,elc-
+> > trigger;"
+> >=20
+> > Yah, that works.
+> >=20
+> > >
+> > > >
+> > > > Rob's other comment was
+> > > >
+> > > > | Who/what decides the mode? If a user is going to want to change
+> > > > | this, then it should be a runtime control, not a DT property.
+> > >
+> > > Changes are not possible at runtime. Some customers may want software,
+> > > while other may want the external trigger, and this is immutable
+> > > configuration.
+> >=20
+> > What makes it immutable? Set by some wiring on the board? I couldn't fi=
+nd
+> > the user in your driver patches to better understand how you were using
+> > it.
+>=20
+> I haven't prototyped ELC trigger yet. Since the hardware manual
+> describes about ELC trigger, I have documented it in bindings. If you
+> think, it is not needed at this stage, then I can drop it now and
+> revisit later.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Ideally a binding is complete, even if the driver isn't. To me
+"immutable" would mean something like "the trigger type is determined by
+hardware or firmware configuration", but if it is determined by register
+writes (e.g. wired up for elc trigger, but you can opt for software
+trigger in the driver) then it should be a userspace control.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--Y4DhUv2VFm8QJbH+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ88QEAAKCRB4tDGHoIJi
+0vhMAQCm2Y7JfoFQzgyGUf9s0PImQnGR4b2zFgNyA8NdDDoM3QD/eDs9SL5uwZcg
+mBlbEbmXWmVrRzklDQPVrwR33fZJwQg=
+=zZHw
+-----END PGP SIGNATURE-----
+
+--Y4DhUv2VFm8QJbH+--
