@@ -1,293 +1,400 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FA522A4EA
-	for <linux-clk@vger.kernel.org>; Mon, 10 Mar 2025 13:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68BA22157A;
+	Mon, 10 Mar 2025 14:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741615115; cv=none; b=PHZdeJdlhcwKePtjNI+a+rdcXzuP3XSidMe8B3dg+iyREYOqK8cUvM65Kw+uLPW9D+bi3I/4ImwbE9oezjTUerVkBb0QC4dRgusw/ZukvMNu/gEjbG+TjNNBThi6SdYsOJm8FJF5ZVfrI8qMKTigd1MMMGnO4KY2z0CLD1/tWyk=
+	t=1741615946; cv=none; b=sCyZvoNqcVtrj0LMRspSGXpsiUkSaC4QEvN6FQf4KkkDf1nO6/i7LMDav+qArcZJpQMwoHt7hqfbja293Ll3j2GErl86Vr19Jrvy48/zKgfX1CzO/yrWq7Xok9a6+vuvy8gJLCLP6Fe9JQTuARk4oD2UeawiZKw9zxsciogRbNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741615115; c=relaxed/simple;
-	bh=i9GxyKAVB18HnH+g2lVwQvXz5I//zOKa3JmIOEbrK94=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QZbdlbybXxUS2U+RZT2WjPk9+j9w5WTaIloSxJ5yaPXDLN5ePS+qwUXP6qgUXRxwGM1dE8uU2ogjvtzrlWpmsZC8tZhE1Nj/Ys7IDHx2RaRU9Ukr+OfFMolp+D/UiyD+VPOorID/i376XN0nYNgZqTCVaosKQs8bFOQps6/h7XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AHY/c072; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1741615946; c=relaxed/simple;
+	bh=VvTbrukqJECgVTvGE9CueOWKZHry7TuKRTj4dDd5LMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AV9Onvplbnk9Sp1t4vwj2hk/5IVIX3kUDcE1WtfE7n3Q5Q5Q+Oz3F9QLdyGDkOWGu3iUlsJJCrRDFcpo7PW2CvfcOiFGNirZPDsnM+9FDM5Vcpk6Hv/rHj9TOAeEJA/X09CDxwjVorNZTG7/2ysccUrKkYYIOtxl5/Vqv8ySSCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Q7fGuGPD; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AHY/c072"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-391342fc0b5so3512474f8f.3
-        for <linux-clk@vger.kernel.org>; Mon, 10 Mar 2025 06:58:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741615112; x=1742219912; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=x6bOGmoklXRtJQxdeWHpYOOfYuKnU0zJof9I6zGwu64=;
-        b=AHY/c072S/rTv5X4B7RzTjFt+WNE6wTGVRHpxbTVLrZCFV122NhUaa1ZGl1h+d3FzJ
-         ravRkaFQp+F0YVLAa+VXB/q5BfrZFE81RLywDtCjHLejTadqpGDN6wajA7Wukj98+rlc
-         Q5f+7l+2x1a++74psGcqjOhZS2FyRYlzK7X/tgDlXL0a3yN8SPzuax81c7QvgeLKezR2
-         NI2tl2hDaLsU/nY0Yoj05y9ueF6fYS30hk+a3vbTxFzXTG1oHUM+rD454QEnSdD+iDt8
-         88yfbRVK7lMVEtvq4wqc32w19TNg3yPHi56qroS2EATt25fKgrgLqjkeJIJlBe67d92r
-         +m3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741615112; x=1742219912;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x6bOGmoklXRtJQxdeWHpYOOfYuKnU0zJof9I6zGwu64=;
-        b=nVEwmzxLvOWcXFS51JpiRAy0jfGCZFBB8kHaVdL/yd67a+BwUjIPIIt86F9+EFG7ej
-         h0HNjM+QZuGB+651SCer50Iwdin0waAbw6ulfVi9eHoAJpjFVkq0MYaPmJaDZFECNeCg
-         vnnuS2YYIuzM098P74fe4jPk/weY7Ky0367VmE3Ygcp5CgJjYlEUj1EUu+C/vY7LPZ9y
-         UDg+obk4oWGHlCpKrhfKLd1LGJ8k7RQvtfrzR+/nuNUBvTnxyJTxYUdG37H7jVSllz24
-         7Y3RdcOUMzeclr9QcdvU7MKG27yi47ggfA1KuRIqLGPawl6NpVDC62i1Cd5TXbHW9y5p
-         3hdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGy6eDNT4gKwwiBm8ux9eEn9cp1vcE4RSL9D6NI3j+eafQzCD1kNhG/3yWhu2gYoZqn5hweF//nDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfovHiQRKBrn+Cl5LGv5k6H1+uJONe4iwD/M+NThj0k4mp3P86
-	VJkOmH+c2sF8qVTELl16BoxUA8I0JgkgHNNYsNciqhBownevhvFNEMedOuIinnM=
-X-Gm-Gg: ASbGnctOuvogU2I7+/H6+2H1m3WHsxiFfdWgRI30c+O8mLUn9uB/zcr6vyx2+oCCcPC
-	3D+6ioUhZUHUu82Q+F+afWFctQqiNk/wSEGg7WfAaTnTyqZQA8fYD5C0QXVAIZarxO/i8/MbmkY
-	h64LE+8f05UDUUz+PhRFK//0zvMQTGxq3Y0rXv8Qze+B2zD0cIIxgGsSnzhIiqoCfrNP6NqN5sN
-	XOrg9Rx4NhMfz8VppWwiTDnKCLc5cYdheaIP/PG2EPwVh7dPhkViK1A+9WYTA4BmMHXYofIhmhd
-	60/rQXjxAw6jOipiyWdLqt+fQljqRPkwr5+3j92D2RH8eULq9+QXIkKo3do3CicXSgVh+Tk4TOq
-	sNuthDQYuPqNgpMLrdGOcT9o=
-X-Google-Smtp-Source: AGHT+IGyhk5+VAMcITm5rrq0aJ90sKdh4cQmUoqGgN6Meob+XW4ZpicfvmV1X3pFEScV3weEws3UqA==
-X-Received: by 2002:a05:6000:1fa4:b0:38f:577f:2f6d with SMTP id ffacd0b85a97d-39132d093demr10173742f8f.2.1741615111629;
-        Mon, 10 Mar 2025 06:58:31 -0700 (PDT)
-Received: from localhost (host-87-14-236-98.retail.telecomitalia.it. [87.14.236.98])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac299a025c7sm236754666b.51.2025.03.10.06.58.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 06:58:31 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Mon, 10 Mar 2025 14:59:41 +0100
-To: Phil Elwell <phil@raspberrypi.com>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Andrea della Porta <andrea.porta@suse.com>, andrew@lunn.ch,
-	Arnd Bergmann <arnd@arndb.de>,
-	"maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" <bcm-kernel-feedback-list@broadcom.com>,
-	bhelgaas@google.com, brgl@bgdev.pl,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>, derek.kiernan@amd.com,
-	devicetree@vger.kernel.org, dragan.cvetic@amd.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org,
-	kw@linux.com, Linus Walleij <linus.walleij@linaro.org>,
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	lpieralisi@kernel.org, luca.ceresoli@bootlin.com,
-	manivannan.sadhasivam@linaro.org, masahiroy@kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, saravanak@google.com,
-	Stephen Boyd <sboyd@kernel.org>, thomas.petazzoni@bootlin.com,
-	Stefan Wahren <wahrenst@gmx.net>, Will Deacon <will@kernel.org>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v6 00/10] Add support for RaspberryPi RP1 PCI device
- using a DT overlay
-Message-ID: <Z87wTfChRC5Ruwc0@apocalypse>
-References: <CAMEGJJ3=W8_R0xBvm8r+Q7iExZx8xPBHEWWGAT9ngpGWDSKCaQ@mail.gmail.com>
- <20250213171435.1c2ce376@bootlin.com>
- <CAMEGJJ1++aeE7WWLVVesbujME+r2WicEkK+CQgigRRp2grYf=A@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Q7fGuGPD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741615940;
+	bh=VvTbrukqJECgVTvGE9CueOWKZHry7TuKRTj4dDd5LMQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Q7fGuGPDPQQJuuvqwAmmG3YOMdB37C0ASjXgb30wy90gx7lXAsc5rwAnHkoB66KUt
+	 ez18FMdGSvq2oA1gYWklHwyoO4/Egrjat7yUr3NBwkLgh7oPvfzGzSZoGIsdr2IwgD
+	 GeYyjdFXgsk8X9J34l+eXs9DJnFyxCx9JCR0niYPBZZmEDRqIEkSdo99Q3ZxEareA0
+	 8z/bhoA7xanekNn4DVkbLtoyjzYmwGhr3pDw9Oy32aiOCbI5HcMMLzC+qa7AXSB314
+	 rq6/ia07V1BV0upd1PLbPiRk3Jhl0p5elG5jpyxm7KZ+XlnQLrLpyEtkRrNd2vKGM2
+	 BYy25HPKHu/0A==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 16B1F17E0649;
+	Mon, 10 Mar 2025 15:12:20 +0100 (CET)
+Message-ID: <cd8bd504-8d91-4420-8053-10ee814417bf@collabora.com>
+Date: Mon, 10 Mar 2025 15:12:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMEGJJ1++aeE7WWLVVesbujME+r2WicEkK+CQgigRRp2grYf=A@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/26] clk: mediatek: Support voting for mux
+To: Guangjie Song <guangjie.song@mediatek.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20250307032942.10447-1-guangjie.song@mediatek.com>
+ <20250307032942.10447-4-guangjie.song@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250307032942.10447-4-guangjie.song@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 16:27 Thu 13 Feb     , Phil Elwell wrote:
-> Hi Hervé,
+Il 07/03/25 04:26, Guangjie Song ha scritto:
+> Add data fields, defines and ops to support voting for mux.
 > 
-> On Thu, 13 Feb 2025 at 16:14, Herve Codina <herve.codina@bootlin.com> wrote:
-> >
-> > Hi Phil,
-> >
-> > On Thu, 13 Feb 2025 15:18:45 +0000
-> > Phil Elwell <phil@raspberrypi.com> wrote:
-> >
-> > > Hi Andrea,
-> > >
-> > > The problem with this approach (loading an overlay from the RP1 PCIe
-> > > driver), and it's one that I have raised with you offline, is that
-> > > (unless anyone can prove otherwise) it becomes impossible to create a
-> > > Pi 5 DTS file which makes use of the RP1's resources. How do you
-> > > declare something as simple as a button wired to an RP1 GPIO, or fan
-> > > connected to a PWM output?
-> >
-> > The driver could be improved in a second step.
-> > For instance, it could load the dtbo from user-space using request_firmare()
-> > instead of loading the embedded dtbo.
-> >
-> > >
-> > > If this is the preferred route to upstream adoption, I would prefer it
-> > > if rp1.dtso could be split in two - an rp1.dtsi similar to what we
-> > > have downstream, and an rp1.dtso that #includes it. In this way we can
-> > > keep the patching and duplication to a minimum.
-> >
-> > Indeed, having a rp1.dtsi avoid duplication but how the rp1.dtso in
-> > the the kernel sources could include user customization (button, fan, ...)
-> > without being modified ?
-> > At least we have to '#include <my_rp1_customizations.dtsi>'.
-> >
-> > Requesting the dtbo from user-space allows to let the user to create
-> > its own dtso without the need to modify the one in kernel sources.
-> >
-> > Does it make sense ?
+
+The main thing that is missing here is an answer to an obvious question....
+
+...what are the advantages of hardware voting, and why do we need to use
+HW voting instead of the refcount that is already kept by the common clock
+framework?
+
+As far as I can see here, the only difference is that the enable/disable
+is more complex, losing more time for polling after writes and nothing else?
+
+Is this to synchronize the clock voting between SCP and AP or what?!
+If this is the answer, I don't see why we should use this HW voter for all
+clocks, since it's simply more expensive (so the clock drivers are wrong as
+they enable the voter for all clocks).
+
+
+> Signed-off-by: Guangjie Song <guangjie.song@mediatek.com>
+> ---
+>   drivers/clk/mediatek/clk-mux.c | 198 ++++++++++++++++++++++++++++++++-
+>   drivers/clk/mediatek/clk-mux.h |  79 +++++++++++++
+>   2 files changed, 275 insertions(+), 2 deletions(-)
 > 
-> I think I understand what you are saying, but at this point the RP1
-> overlay would no longer be an RP1 overlay - it would be an
-> RP1-and-everything-connected-to-it overlay, which is inherently
-> board-specific. Which user-space process do you think would be
-> responsible for loading this alternative overlay, choosing carefully
-> based on the platform it is running on? Doesn't that place quite a
-> burden on all the OS maintainers who up to now have just needed a
-> kernel and a bunch of dtb files?
-> 
-> If it is considered essential that the upstream Pi 5 dts file does not
-> include RP1 and its children, then Raspberry Pi are going to have to
-> walk a different path until we've seen how that can work. By splitting
-> rp1.dtso as I suggested, and perhaps providing an alternative helper
-> function that only applies the built-in overlay if the device node
-> doesn't already exist, we get to stay as close to upstream as
-> possible.
-> 
-> Phil
+> diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+> index 60990296450b..8a2c89cb3cd5 100644
+> --- a/drivers/clk/mediatek/clk-mux.c
+> +++ b/drivers/clk/mediatek/clk-mux.c
+> @@ -15,11 +15,13 @@
+>   #include <linux/spinlock.h>
+>   #include <linux/slab.h>
+>   
+> +#include "clk-mtk.h"
+>   #include "clk-mux.h"
+>   
+>   struct mtk_clk_mux {
+>   	struct clk_hw hw;
+>   	struct regmap *regmap;
+> +	struct regmap *vote_regmap;
+>   	const struct mtk_mux *data;
+>   	spinlock_t *lock;
+>   	bool reparent;
+> @@ -30,6 +32,46 @@ static inline struct mtk_clk_mux *to_mtk_clk_mux(struct clk_hw *hw)
+>   	return container_of(hw, struct mtk_clk_mux, hw);
+>   }
+>   
+> +static int mtk_clk_mux_fenc_enable_setclr(struct clk_hw *hw)
+> +{
+> +	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +	unsigned long flags = 0;
+> +	u32 val = 0;
+> +	int i = 0;
+> +	int ret = 0;
+> +
+> +	if (mux->lock)
+> +		spin_lock_irqsave(mux->lock, flags);
+> +	else
+> +		__acquire(mux->lock);
+> +
+> +	regmap_write(mux->regmap, mux->data->clr_ofs, BIT(mux->data->gate_shift));
+> +
+> +	while (1) {
+> +		regmap_read(mux->regmap, mux->data->fenc_sta_mon_ofs, &val);
 
-So, the problem is twofold: the first is due to the fact that downstream
-expects the dtb to be fully declared at fw load time (I'll call that
-*monolithic* dtb from now on), the second is about how to represent dependencies
-between board dtb and rp1 overlay which arises only when using overlays instead
-of a monolithic dtb.
+Why are you reinventing the wheel instead of just using regmap_read_poll_timeout()?
 
-The former issue must be solved first in order for the latter to even exists
-(if we don't use overlay, the dependencies are fully exposed in the dtb since
-the beginning), so I'll concentrate on the former for now.
+> +
+> +		if ((val & BIT(mux->data->fenc_shift)) != 0)
+> +			break;
+> +
+> +		if (i < MTK_WAIT_FENC_DONE_CNT) {
+> +			udelay(MTK_WAIT_FENC_DONE_US);
+> +		} else {
+> +			pr_err("%s wait fenc done timeout\n", clk_hw_get_name(hw));
+> +			ret = -EBUSY;
+> +			break;
+> +		}
+> +
+> +		i++;
+> +	}
+> +
+> +	if (mux->lock)
+> +		spin_unlock_irqrestore(mux->lock, flags);
+> +	else
+> +		__release(mux->lock);
+> +
+> +	return ret;
+> +}
+> +
+>   static int mtk_clk_mux_enable_setclr(struct clk_hw *hw)
+>   {
+>   	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> @@ -70,6 +112,16 @@ static void mtk_clk_mux_disable_setclr(struct clk_hw *hw)
+>   			BIT(mux->data->gate_shift));
+>   }
+>   
+> +static int mtk_clk_mux_fenc_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +	u32 val = 0;
+> +
+> +	regmap_read(mux->regmap, mux->data->fenc_sta_mon_ofs, &val);
+> +
+> +	return (val & BIT(mux->data->fenc_shift)) != 0;
 
-There are 3 possible scenarios to be reconciled:
+That's just `return val & BIT(mux->data->fenc_shift);` ...
 
+> +}
+> +
+>   static int mtk_clk_mux_is_enabled(struct clk_hw *hw)
+>   {
+>   	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> @@ -80,6 +132,106 @@ static int mtk_clk_mux_is_enabled(struct clk_hw *hw)
+>   	return (val & BIT(mux->data->gate_shift)) == 0;
+>   }
+>   
+> +static int mtk_clk_vote_mux_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +	u32 val = 0;
+> +
+> +	regmap_read(mux->vote_regmap, mux->data->vote_set_ofs, &val);
+> +
+> +	return (val & BIT(mux->data->gate_shift)) != 0;
 
-1 - MONOLITHIC DTB
+same
 
-This is the downstream case, where it's advisable to have only one dtb blob
-containing everything (rp1 included) loaded by the fw. In this case the
-resulting devicetree would looks like:
+> +}
+> +
+> +static int mtk_clk_vote_mux_is_done(struct clk_hw *hw)
+> +{
+> +	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +	u32 val = 0;
+> +
+> +	regmap_read(mux->vote_regmap, mux->data->vote_sta_ofs, &val);
+> +
+> +	return (val & BIT(mux->data->gate_shift)) != 0;
 
-  axi {
-    pcie@120000 {
-      rp1_nexus {
-        pci-ep-bus@1 {
-             ...
-        }
-      }
-    }
-  }
+ditto
 
+> +}
+> +
+> +static int mtk_clk_mux_vote_fenc_enable(struct clk_hw *hw)
+> +{
+> +	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +	u32 val = 0, val2 = 0;
+> +	bool is_done = false;
+> +	int i = 0;
+> +
+> +	regmap_write(mux->vote_regmap, mux->data->vote_set_ofs, BIT(mux->data->gate_shift));
+> +
+> +	while (!mtk_clk_vote_mux_is_enabled(hw)) {
+> +		if (i < MTK_WAIT_VOTE_PREPARE_CNT) {
+> +			udelay(MTK_WAIT_VOTE_PREPARE_US);
 
-2 - RP1 LOADED FROM OVERLAY BY THE FW
+regmap_readl_poll_timeout().....
 
-In this case the rp1 dt node is loaded from overlay directly by the fw and the 
-resulting devicetree is exactly equal to the monolithic dtb scenario.
-In order for that overlay to be loaded by fw, just add 'dtoverlay=rp1' in
-'config.txt'.
+> +		} else {
+> +			pr_err("%s mux prepare timeout(%x)\n", clk_hw_get_name(hw), val);
+> +			return -EBUSY;
+> +		}
+> +
+> +		i++;
+> +	}
+> +
+> +	i = 0;
+> +
+> +	while (1) {
+> +		if (!is_done)
+> +			regmap_read(mux->vote_regmap, mux->data->vote_sta_ofs, &val);
+> +
+> +		if (((val & BIT(mux->data->gate_shift)) != 0))
+> +			is_done = true;
+> +
 
+and again - twice.
 
-3 - RP1 LOADED FROM OVERLAY AT RUNTIME
+> +		if (is_done) {
+> +			regmap_read(mux->regmap, mux->data->fenc_sta_mon_ofs, &val2);
+> +			if ((val2 & BIT(mux->data->fenc_shift)) != 0)
+> +				break;
+> +		}
+> +
+> +		if (i < MTK_WAIT_VOTE_DONE_CNT) {
+> +			udelay(MTK_WAIT_VOTE_DONE_US);
+> +		} else {
+> +			pr_err("%s mux enable timeout(%x %x)\n", clk_hw_get_name(hw), val, val2);
+> +			return -EBUSY;
+> +		}
+> +
+> +		i++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void mtk_clk_mux_vote_disable(struct clk_hw *hw)
+> +{
+> +	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> +	int i = 0;
+> +
+> +	regmap_write(mux->vote_regmap, mux->data->vote_clr_ofs, BIT(mux->data->gate_shift));
+> +
+> +	while (mtk_clk_vote_mux_is_enabled(hw)) {
+> +		if (i < MTK_WAIT_VOTE_PREPARE_CNT) {
+> +			udelay(MTK_WAIT_VOTE_PREPARE_US);
+> +		} else {
+> +			pr_err("%s mux unprepare timeout\n", clk_hw_get_name(hw));
+> +			return;
+> +		}
+> +
 
-Here it's the rp1 driver that loads the overlay at runtime, which is the case
-that this patchset originally proposed. The devicetree ends up like this:
+....and again....
 
-  axi {
-    pcie@120000 {
-      pci@0,0 {
-        dev@0,0 {
-          pci-ep-bus@1 {
-               ...
-          }
-        }
-      }
-    }
-  }
+> +		i++;
+> +	}
+> +
+> +	i = 0;
+> +
+> +	while (!mtk_clk_vote_mux_is_done(hw)) {
+> +		if (i < MTK_WAIT_VOTE_DONE_CNT) {
+> +			udelay(MTK_WAIT_VOTE_DONE_US);
+> +		} else {
+> +			pr_err("%s mux disable timeout\n", clk_hw_get_name(hw));
+> +			return;
+> +		}
+> +
+> +		i++;
+> +	}
+> +}
+> +
+>   static u8 mtk_clk_mux_get_parent(struct clk_hw *hw)
+>   {
+>   	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
+> @@ -151,6 +303,12 @@ static int mtk_clk_mux_determine_rate(struct clk_hw *hw,
+>   	return clk_mux_determine_rate_flags(hw, req, mux->data->flags);
+>   }
+>   
+> +static void mtk_clk_mux_vote_fenc_disable_unused(struct clk_hw *hw)
+> +{
+> +	mtk_clk_mux_vote_fenc_enable(hw);
+> +	mtk_clk_mux_vote_disable(hw);
 
-and this is exepcially useful to cope with the case in which there's no DT
-natively used, e.g. on ACPI systems.
+Why would you need to enable and disable?
 
+If this is not a mistake... this definitely needs a comment in the code.
 
-In order for all those 3 mentioned scenatios to work, I propose the following
-inclusion scheme for for the dts files (the arrow points to the includer):
-                   
- 
- rp1-pci.dtso         rp1.dtso
-     ^                    ^
-     |                    |
-rp1-common.dtsi ----> rp1-nexus.dtsi ----> bcm2712-rpi-5-b-MONOLITHIC.dts
-   
-   
-where those dts are defined as follows (omitting the internal properties for
-clarity sake):
+> +}
+> +
+>   const struct clk_ops mtk_mux_clr_set_upd_ops = {
+>   	.get_parent = mtk_clk_mux_get_parent,
+>   	.set_parent = mtk_clk_mux_set_parent_setclr_lock,
+> @@ -168,9 +326,31 @@ const struct clk_ops mtk_mux_gate_clr_set_upd_ops  = {
+>   };
+>   EXPORT_SYMBOL_GPL(mtk_mux_gate_clr_set_upd_ops);
+>   
+> +const struct clk_ops mtk_mux_gate_fenc_clr_set_upd_ops = {
+> +	.enable = mtk_clk_mux_fenc_enable_setclr,
+> +	.disable = mtk_clk_mux_disable_setclr,
+> +	.is_enabled = mtk_clk_mux_fenc_is_enabled,
+> +	.get_parent = mtk_clk_mux_get_parent,
+> +	.set_parent = mtk_clk_mux_set_parent_setclr_lock,
+> +	.determine_rate = mtk_clk_mux_determine_rate,
+> +};
+> +EXPORT_SYMBOL_GPL(mtk_mux_gate_fenc_clr_set_upd_ops);
+> +
+> +const struct clk_ops mtk_mux_vote_fenc_ops = {
+> +	.enable = mtk_clk_mux_vote_fenc_enable,
+> +	.disable = mtk_clk_mux_vote_disable,
+> +	.is_enabled = mtk_clk_mux_fenc_is_enabled,
+> +	.get_parent = mtk_clk_mux_get_parent,
+> +	.set_parent = mtk_clk_mux_set_parent_setclr_lock,
+> +	.determine_rate = mtk_clk_mux_determine_rate,
+> +	.disable_unused = mtk_clk_mux_vote_fenc_disable_unused,
+> +};
+> +EXPORT_SYMBOL_GPL(mtk_mux_vote_fenc_ops);
+> +
+>   static struct clk_hw *mtk_clk_register_mux(struct device *dev,
+>   					   const struct mtk_mux *mux,
+>   					   struct regmap *regmap,
+> +					   struct regmap *vote_regmap,
+>   					   spinlock_t *lock)
+>   {
+>   	struct mtk_clk_mux *clk_mux;
+> @@ -185,9 +365,17 @@ static struct clk_hw *mtk_clk_register_mux(struct device *dev,
+>   	init.flags = mux->flags;
+>   	init.parent_names = mux->parent_names;
+>   	init.num_parents = mux->num_parents;
+> -	init.ops = mux->ops;
+> +	if (mux->flags & CLK_USE_VOTE) {
+> +		if (vote_regmap)
+> +			init.ops = mux->ops;
+> +		else
+> +			init.ops = mux->dma_ops;
 
+Sorry why is this called dma_ops?!
+That's at least confusing, if not simply wrong.... please explain.
 
-- rp1-common.dtsi ------- // definition of core rp1 and its peripherals, common
-			  // for all cases
+> +	} else {
+> +		init.ops = mux->ops;
+> +	}
+>   
+>   	clk_mux->regmap = regmap;
+> +	clk_mux->vote_regmap = vote_regmap;
+>   	clk_mux->data = mux;
+>   	clk_mux->lock = lock;
+>   	clk_mux->hw.init = &init;
+> @@ -220,6 +408,7 @@ int mtk_clk_register_muxes(struct device *dev,
+>   			   struct clk_hw_onecell_data *clk_data)
+>   {
+>   	struct regmap *regmap;
+> +	struct regmap *vote_regmap = NULL;
+>   	struct clk_hw *hw;
+>   	int i;
+>   
+> @@ -238,8 +427,13 @@ int mtk_clk_register_muxes(struct device *dev,
+>   			continue;
+>   		}
+>   
+> -		hw = mtk_clk_register_mux(dev, mux, regmap, lock);
+> +		if (mux->vote_comp) {
+> +			vote_regmap = syscon_regmap_lookup_by_phandle(node, mux->vote_comp);
+> +			if (IS_ERR(vote_regmap))
+> +				vote_regmap = NULL;
+> +		}
+>   
+> +		hw = mtk_clk_register_mux(dev, mux, regmap, vote_regmap, lock);
 
-	pci_ep_bus: pci-ep-bus@1 
-	{
-		rp1_clocks { };
+...and this change just breaks each and every MediaTek SoC that is currently
+supported upstream.
 
-		rp1_gpio { };
+Please test your changes on older platforms before submitting upstream.
 
-		rp1_eth { };
-	};
+Regards,
+Angelo
 
-- rp1-pci.dtso ---------- // ovl linked in the rp1 driver code to be loaded at
-			  // runtime from rp1 driver. Only for case 3
-
-	/plugin/;
-	fragment@0 {
-                target-path="";
-                __overlay__ {
-			#include "rp1-common.dtsi"
-		};
-	}
-
-- rp1-nexus.dtsi ------- // adapter to decouple rp1 ranges for non runtime-loaded
-		         // overlay case (i.e. only for case 1 and 2)
-
-	rp1_nexus {
-		ranges = ...
-		
-		 #include "rp1-common.dtsi"
-	};
-
-- rp1.dtso ------------ // overlay to be loaded by fw (case 2)
-
-	/plugin/;
-	&pcie2 {
-		#include "rp1-nexus.dtsi"
-	};
-
-- bcm2712-rpi-5-b-MONOLITHIC.dts --- // monolithic dtb to avoid any overlay use
-				     // (case 1)
-
-	/ {
-		... all rpi5 board dts ...
-		&pcie2 {
-        		#include "rp1-nexus.dtsi"
-		};
-	};
-
-
-with only minimal changes to the rp1 driver code, I can confirm that all those
-scenarios can coexits and are working fine. Before processding with a new patchset
-I'd like to have some thoughts about that, do you think this is a viable approach?
-
-Many thanks,
-Andrea
