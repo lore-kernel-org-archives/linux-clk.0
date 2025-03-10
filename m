@@ -1,62 +1,62 @@
 Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5760A224B06;
-	Mon, 10 Mar 2025 09:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284E4224AEB;
+	Mon, 10 Mar 2025 09:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741598695; cv=none; b=a+cIO+RQEwak0vZG5KdmnxC0eLn5966gzz8DV6+KzVlvpYYNJFc9Bho0BypePwzkmismX6YqSUdnw5jx4mNv2grG5W2gqjbhy9Rw66dkiT/86Ta23gyni+4i6BiLddYlddfU3G+jfMKpA7KuT3JKCnBdqLJBEsZ7LpiJsPWOe4w=
+	t=1741598703; cv=none; b=Dy9XYPBPtEZf39I+7f+AzkhPYOAYKuh1dFl4oaGn/voLSBo4Aep/odnZIE2NRI6lnc7vH2rN299sM6VWry6eaNuBYHMSKC8OncNEEhYMguOTYIC3OyrZNkFwyOWliX+I0Vze10qPnFJ0o1StAbqP4USVLl21IFpgSfrASgK1npw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741598695; c=relaxed/simple;
-	bh=E8OYEBmP+kvO+km0Fidyq0V/UvQ7/37A0eeZu2A5fSs=;
+	s=arc-20240116; t=1741598703; c=relaxed/simple;
+	bh=ykh3akM9uFLUqUla1kes1xgcWAy9bkqWyA9nHI9GzNY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y80pMwoZX/0sBflnyorZftjBHnOz9/a+nHyNDdco0ox57BCe92kmqjz2qBsSePT2jrsYCcE8nr1uU1IV2KDyfKUKXT5Jpc2/fpOTu4hEVhE5qeGjqBf+vokQ/UjmqsXJ35H0FYz8bGEJGKUNgXoF14l3+nyDALK5DmAdUfHg7GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=AOd+e0xA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JJGyEvFS; arc=none smtp.client-ip=103.168.172.155
+	 MIME-Version; b=HSqZg8X7LdsGszrxULIQ9ZBblXMaPd5sey5xA4zrlUAqQiBndcLIfbbH56g5M7oZaNosAIaV/0n4RD+topi/u728oJNuyPcO99BCfkmoTgt9EqDGMeHwkBXGNHOzwkItVYa4jPDiqLgoUF/IgRjfLn8ooLaSwXTw+oIhr1a+eL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=HgwUrg5m; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=O1f6YZNd; arc=none smtp.client-ip=103.168.172.155
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="AOd+e0xA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JJGyEvFS"
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="HgwUrg5m";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O1f6YZNd"
 Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8FFC31140154;
-	Mon, 10 Mar 2025 05:24:52 -0400 (EDT)
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 38F0B1140122;
+	Mon, 10 Mar 2025 05:25:00 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Mon, 10 Mar 2025 05:24:52 -0400
+  by phl-compute-11.internal (MEProxy); Mon, 10 Mar 2025 05:25:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1741598692; x=
-	1741685092; bh=ph3w5BGlFyH2zwSiNWVZ5MH48BfIXv3Sx1cCe/xo8EY=; b=A
-	Od+e0xAIVpFp3fjCaPhbjFpeTc4vyInlHe22S5W+5JRrThCP6oOzgaj9ZhR/02v0
-	OioZw6koQ86di1jZq2o5xU3+Jneru1WYRshHbkMkeu9d6zPuMSWWVkwC0ygFOLuW
-	2I3/c5Fu0JcwNnz6zZd2mCpHunhip0ync2/cyz3UMm5BNw04AQr093/pLSmxfia2
-	sg2VWcTs/npkwBxh/d/+FWSu5VMxYNukL5WhW1wcG539IB9jMjfSKOZxFCMcufHU
-	KVaShs+O0s2DZ2GZAf/K6MhamhybEHOZWnCfjFIJX6+NH29TlRSYk1KBV8QyCcnp
-	jqXv41qumV6mAHL+5IqAw==
+	:reply-to:subject:subject:to:to; s=fm1; t=1741598700; x=
+	1741685100; bh=LoiPw4x9/yEnLQUi5WhZAfDONB5Hr8eHgbP2VwzzCG4=; b=H
+	gwUrg5mVEKVpF0Pwkd5kpMoPVrvrRgGwrNUQchQ3QTZHGkDY6W+lpQNf45sjwcGu
+	zYHP+Rkk2fClxEiUAjGPH8dxt6QwlmmBl4y3F5h056BjX53psroPOLyHl7e0avvr
+	LI/C58/yEn9699Ta6wojI/akGlGMOiif24tAKad/16owhBQfvVSc/kNmGECoZniB
+	HCeGamgY21EyJcDXyh2yIZHJdzXv+ElaRtevtuyEYLxCDQ5wkmgiQB6QK6QY4L0+
+	XtXAv9eri9QTqkT7cGqL/vgldcd3nt/p+hU/I0W4BqAIZRYzOavBDXdt1dB1ICnx
+	RpQsk+ypA6EdT4hmUhS4w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1741598692; x=1741685092; bh=p
-	h3w5BGlFyH2zwSiNWVZ5MH48BfIXv3Sx1cCe/xo8EY=; b=JJGyEvFSfJ/t/rxP1
-	mcZChDEgfzmJxRA8RzE9zvpuawjgEYk9b7FnHjoQafuYM+lXTZGI/FkwF+Gs/S6+
-	9bbRXn0bpUWW6byvgROQs3O07epR3UKjfBQiBhfB4E3o+I3AOeoDDIx2cwCZmVWo
-	kSSy9qEikJg0weFvPCwyKUdK/xVjiQzAqxHWeRXzVJhtt83NP+pR/tzJP4aWNvK/
-	wnPALwWXf4joOuSyutEz3oxJDHnWGfo+8yp1Fsb1DbQ5T1M/qRP2HCjYHm2QBB1G
-	dSwjTXnU2Oo2SfAPylVCG7aAl6p4Gp+vR/knVy3pAAt9EEOydlLPg5UrVQJTkCQ8
-	88OwQ==
-X-ME-Sender: <xms:5K_OZynwi1coSuF-TGl6PG9RLvx6Z6OCj3I4nMGz0yUHM0_IUZUvGg>
-    <xme:5K_OZ50zHDw3o5jh1mpHRBwABfMRZncVUjlLk9gv2W4mGlsI1SBmLqb0oKyX9u-ig
-    xIx-nnDGyPYzCe0jw>
-X-ME-Received: <xmr:5K_OZwpgfaCGg9mkkdZjPYZ405QEC8ElKXK4TDVz6ygwm6Ew0LyGS0YzuQX5VHyOqDAT2dWRbEGJVu766YJfdSSJ3f04YRGyjqFPxJ6IJPXS>
+	:x-me-sender:x-sasl-enc; s=fm1; t=1741598700; x=1741685100; bh=L
+	oiPw4x9/yEnLQUi5WhZAfDONB5Hr8eHgbP2VwzzCG4=; b=O1f6YZNdC1+D9GxZD
+	X3HDSDcJGyIwQIJAs5NLgUqAK1AlfruRdNrsGanOyHIOILq4E9uBdtIni3/qix/6
+	ShjYSMqgyZ5tqDQK6N01n36Dt2jLLVLajS0aEKKjTNpiTJRCegtZgBxC+kegY/Xp
+	SKu9LgFSqoavS/7Wp4UkC8ufcMPBc0cGVvezlumFkJDLkN3nc/EFmUvYJWqeoeb3
+	AkkXCmrfm/FeMiiFJebqok+/8tIcFC6otW3pnwfCHY0NMfqnvfbe9URmXKi6KjC9
+	p9CaPtygoKe3DOmMcj8zPvTi0jlfuEsPgbTe4fMujGiLPUGRN0/2y/6tXeOaOzTC
+	U1cmg==
+X-ME-Sender: <xms:7K_OZ1oOl6x-eVCuaJEAZ1XNZbVqpBYZW5eA_flZLULzJRTQaP5fHA>
+    <xme:7K_OZ3oUJMLiWrKutgy_XgGdGlASO39oWi7TDyKl0AeZjXUdqmTTBuJ6toGY7Jjxz
+    ECKYEt-A7wQtwIM0Q>
+X-ME-Received: <xmr:7K_OZyOsmrfCc-idFwKLcFgxqFk9bOBxqNR49PdktqjUCap8UIfaEMkB-hHzgJT4pHfiB1wDWEKM94nA9dQcejTtaj9tF8_6gPhmnrXEo4ag>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudekleekucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
     pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
     gvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredt
     tdenucfhrhhomheptfihrghnucghrghlkhhlihhnuceorhihrghnsehtvghsthhtohgrsh
     htrdgtohhmqeenucggtffrrghtthgvrhhnpeffheeiffegtdfgffejteevgeefkeelieel
-    keevueetffetteduffevgeeiieehteenucevlhhushhtvghrufhiiigvpedunecurfgrrh
+    keevueetffetteduffevgeeiieehteenucevlhhushhtvghrufhiiigvpedvnecurfgrrh
     grmhepmhgrihhlfhhrohhmpehrhigrnhesthgvshhtthhorghsthdrtghomhdpnhgspghr
     tghpthhtohepvdehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrhhiphgrrh
     gusehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifvghnshestghsihgvrdhorhhgpdhr
@@ -66,14 +66,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudekleekucetufdote
     esfhhffihllhdrtghhpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgr
     ihhlrdgtohhmpdhrtghpthhtohepshgrmhhuvghlsehshhholhhlrghnugdrohhrghdprh
     gtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:5K_OZ2lMxnMmLX-pna7m9U8PALrKbfpq53a85HUicGlaNkYvNKiiWA>
-    <xmx:5K_OZw2jJC_e19pOp-EwDRgA2a5hZBGItRgUTH6sKxr-jlpyER9nmQ>
-    <xmx:5K_OZ9u2-ROvqGe1F57va2K9x5B5W1FalreULpTAmvxfX7tkVa6YBg>
-    <xmx:5K_OZ8UuHcrswd1V49554yz4jysHwLG87-ZluNYtnabM2hBLkTjcRg>
-    <xmx:5K_OZ9c6eZpVEZySgyLzGv_6X21W0Ga5GLIoBMOX80-1WPRJnAhN_CqR>
+X-ME-Proxy: <xmx:7K_OZw4pqnJLPsuJgkIIQpXF4Boy4LX7PVK6gn562-t2VTajlbYeCQ>
+    <xmx:7K_OZ07TgewCYTXmXRhr7KpYR45rX40L06eMCHOineeiB5vf76i3ZA>
+    <xmx:7K_OZ4io7UdlVE-ODuA76Rh-TmqcgOZ4pC_rq_dKv8KTZ8rmLZjlsQ>
+    <xmx:7K_OZ26DmOXhC89a0NVzPaHh-ALwdtJDbahA43rVcqF-AbJZ2k8Fiw>
+    <xmx:7K_OZ_xNSU_kXaFODEwTuXGfdWWSVrJGFAqfVoCz6NvmKEg9MBnwKwEm>
 Feedback-ID: idc0145fc:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 10 Mar 2025 05:24:45 -0400 (EDT)
+ 10 Mar 2025 05:24:52 -0400 (EDT)
 From: Ryan Walklin <ryan@testtoast.com>
 To: Maxime Ripard <mripard@kernel.org>,
 	Chen-Yu Tsai <wens@csie.org>,
@@ -100,9 +100,9 @@ Cc: Andre Przywara <andre.przywara@arm.com>,
 	linux-clk@vger.kernel.org,
 	Ryan Walklin <ryan@testtoast.com>,
 	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v8 06/11] dt-bindings: allwinner: add H616 DE33 clock binding
-Date: Mon, 10 Mar 2025 22:09:52 +1300
-Message-ID: <20250310092345.31708-7-ryan@testtoast.com>
+Subject: [PATCH v8 07/11] dt-bindings: allwinner: add H616 DE33 mixer binding
+Date: Mon, 10 Mar 2025 22:09:53 +1300
+Message-ID: <20250310092345.31708-8-ryan@testtoast.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250310092345.31708-1-ryan@testtoast.com>
 References: <20250310092345.31708-1-ryan@testtoast.com>
@@ -117,7 +117,11 @@ Content-Transfer-Encoding: 8bit
 The Allwinner H616 and variants have a new display engine revision
 (DE33).
 
-Add a clock binding for the DE33.
+The mixer configuration registers are significantly different to the DE3
+and DE2 revisions, being split into separate top and display blocks,
+therefore a fallback for the mixer compatible is not provided.
+
+Add a display engine mixer binding for the DE33.
 
 Signed-off-by: Ryan Walklin <ryan@testtoast.com>
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
@@ -126,22 +130,54 @@ Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 ---
 Changelog v2..v3:
 - Separate content into three patches for three separate subsystems
----
- .../devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml  | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
-index 70369bd633e4..7fcd55d468d4 100644
---- a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
-+++ b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
-@@ -25,6 +25,7 @@ properties:
-       - const: allwinner,sun50i-a64-de2-clk
-       - const: allwinner,sun50i-h5-de2-clk
-       - const: allwinner,sun50i-h6-de3-clk
-+      - const: allwinner,sun50i-h616-de33-clk
-       - items:
-           - const: allwinner,sun8i-r40-de2-clk
-           - const: allwinner,sun8i-h3-de2-clk
+Changelog v5..v6:
+- increase reg maxItems to 3 and add conditional for h616-de33
+---
+ .../allwinner,sun8i-a83t-de2-mixer.yaml       | 21 ++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
+index b75c1ec686ad..274f5e632733 100644
+--- a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
++++ b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
+@@ -24,9 +24,11 @@ properties:
+       - allwinner,sun50i-a64-de2-mixer-0
+       - allwinner,sun50i-a64-de2-mixer-1
+       - allwinner,sun50i-h6-de3-mixer-0
++      - allwinner,sun50i-h616-de33-mixer-0
+ 
+   reg:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 3
+ 
+   clocks:
+     items:
+@@ -61,6 +63,23 @@ properties:
+     required:
+       - port@1
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          enum:
++            - allwinner,sun50i-h616-de33-mixer-0
++
++    then:
++      properties:
++        reg:
++          maxItems: 3
++
++    else:
++      properties:
++        reg:
++          maxItems: 1
++
+ required:
+   - compatible
+   - reg
 -- 
 2.48.1
 
