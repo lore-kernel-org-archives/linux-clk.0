@@ -1,70 +1,179 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17A4199FBA;
-	Mon, 10 Mar 2025 19:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A641E1DEFF1;
+	Mon, 10 Mar 2025 20:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741633904; cv=none; b=LfVp9dDZYFM1CfMr4rwJl80dlTz5XdekODF72nUVhsiq5p/vN0lJRDfU/Ty7B1UX6cSUm4E3x9rWD7jvPgNGg35OGLEq6nfaTF70NW/84yIW9T6JZbugVlwIugScjX+vyu/x4COZgjB9WwSWaSROjAtVRq8DM6g5+MSem5YI+yk=
+	t=1741637594; cv=none; b=SslX9icg3amVAhX+njqaoJ6UYhCy/bmOFjg72d6cmnRxDMJArtaprysFt2AEAh7F1Vo7FwIZiPB9DCJfW0AxIO4m+YHU7+gWqHkaZaATuOogt5GD/vukKekT0q/AH2/Zdb/fJbZ89fkfrYolVArK4+D6My2E0rGppZDZNFo3vVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741633904; c=relaxed/simple;
-	bh=8Sff0TsgnZs3fX2n+0u/8tlu0wY9c+QMZDFeIB+Uf38=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZMdGDIDXPRwWl0FUiQhkOwJCJBuYBus8dtif/6GEEXq4/0qGjCNmGgoLi0Dc8CxR184QUyH3e65QWiyJ3Zp1HxGMpLET9SuwnBjws+38srJBfE24i659CVmZuFEledAkrghJA7+OOVPWw0BSpbxI6PkPjmBp4z/mUvIJMwgZPZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iK5eOERf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741637594; c=relaxed/simple;
+	bh=djGQzPDRHihBhVF2Xb3tODY9B+9AzijudFGky+2x574=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dW2lb/LKTLScyA+15KASj+LYDumNEdh/HeBl9VwbsnHvkHWnlKIm2+Wqs24zw4/wSrhYh4wr9w8ubsarNdW47X/W5dCsImYtMX012wnDTakPhN5eyVLcOxHOVoo5QvPRalXQS4PFuEvyhLfldDmOgFC4D6kU7Z66Z451/u1Ef6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZNFjQJDr; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iK5eOERf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD10C4CEE5;
-	Mon, 10 Mar 2025 19:11:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741633904;
-	bh=8Sff0TsgnZs3fX2n+0u/8tlu0wY9c+QMZDFeIB+Uf38=;
-	h=From:To:Cc:Subject:Date:From;
-	b=iK5eOERfs/lSapoXXibjJftUFpOXadzcXPs20ERHR3WtC3K8Q2vHYstozGZjhfEKt
-	 mVlQHV5X1zhpUHhhsWyvBukjEHVJlkw8nxMh0b8hcwGF3BYns4BwL1rJYmhm2Ky1nV
-	 JkCfLzv7SrFdpVXBNO49gDRBPA0lp9Uij3PHEzMf9SkIDbYnUdGaorRpzwOpTByQxa
-	 v/KS0tiMGyX9az053CwQj0yrum0S8V3hN5KpjfMofo2cIjhtsljlyyU2uSffKhufNS
-	 0HfmFANSYEqGBWhCGY7gl5uJh/POUEaNiW93F7orx1ORZmvtSoK8nlB/PeJxoLVKAA
-	 xpf8ACzboC+FQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [GIT PULL] Qualcomm clock fix for v6.14
-Date: Mon, 10 Mar 2025 14:11:41 -0500
-Message-ID: <20250310191142.1208155-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZNFjQJDr"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac25520a289so592098366b.3;
+        Mon, 10 Mar 2025 13:13:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741637591; x=1742242391; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=84eM2Dk+TJZw7p32MuoSqAq/Wf6WjYKMiu+Het+Ec0c=;
+        b=ZNFjQJDruwBZjsl+NldbLgBoJNGFbx5qfeVAAhKw/fU5gy4b/vURekr+leq2fyJYtM
+         sjZ/G6r79uJDEzEL+KcLMPWcyJEJYal1zwWku8YNB5nz49wlhJL9XI8IA08o0CoPLf5J
+         XTBalCx5UthAq9ktRbm6KFUkNReUb/qKHtInhO31CVcrjY4oJ0mLH2mzUs72E3AVEz0J
+         Tb3wce+QI3c0GOw6rjUm4K99ZscP7n+pwWiT13klGaRlxonXox4Wg4XSFk7/a4QdK0VO
+         7SUAL4Ulia6jn1iGOP+TXojquhuXX79rWyrt+CmwaV/EjPwbq5waNNPSKHk3JidNc1px
+         akYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741637591; x=1742242391;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=84eM2Dk+TJZw7p32MuoSqAq/Wf6WjYKMiu+Het+Ec0c=;
+        b=kwtm9Oi2KS5QYYeMjEjkL4JBdcv5o7SbOUCBYN853QMxfVJUApJufCYhHfKR5aLkTS
+         no8hEVq0OYQHS3Xs+pYYiw9JKusPz26/U1BNRzwvHgOs6tBrRWT9JFVm1kw16jtE2Fb0
+         XNO1vzOEZwIZ8ddteByUidufafLRnT1oujlrThO6dvdEdjsWqUeASUbVKn3Fqpr10UEK
+         EYm9swfkdhLDn37XUM/yN/rbMMgi4MggH6gaw8SzpK0N8Cufn6/bs6Aom8BHFtdrJp2+
+         c0cQM3hrMmPvf5UuCSTJslX/fK2c8gWlVBIkWx9r3KQacdQEhJgK4aT73UXb4Gj1A0FY
+         ybfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTa27kbidrQFoNfFP7HHpuXEPwYowMYKH6qP+Kj+t/c5MVppv031jB95mgTC2CkrfQpjasOaLl5XTS@vger.kernel.org, AJvYcCWhQW0UQK6Z79dhMmycVqf8PpIScqIFwnXi6YdYe40OpFciJWxecdE5S6x74FvUixUggh64+MSzzB3t@vger.kernel.org, AJvYcCWxNjBSZrUV4RlAThe3Mu92iV8ecMM4G3ZNfRbv3kFb/kh1Y4SSRhPibTNfYp/MwRFLAycGvjhzDGuZPB+D@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0fZq6/QeGviJtYD0oUe9vinKopvMe7gGwyLlMK3H9uFJqtNSV
+	/3817JrkuKYk+uY0tb3su+8g5NNfgh3hpiTEJ+XYq0cHsIeYFy+l
+X-Gm-Gg: ASbGncvsL3f9z2zRVBEtRWTetBNVCqQ7SQSjOeDPbqJRPI+YIeHpKu9z4RD9Ev444dP
+	kt0EMblTRkAjoE8twDF51rE3+eD9lHbIaWlMopt0tD3JvOUkGH87xMbFGG//gCIb/s+CoAIVlrl
+	jkjANvj34JKw1GHsi2htZ1eRlxLUZON8pkKry8xOsDyesjqIInln/FGcgX4GjZvaJMzFnGlnJ/T
+	U5wWBKdJHY32Cv4VliOsaIhdM+dzm7Roedps5VuJD2z6JhNXpOyG0Y6z2KkyirjSfuzbVIM7X6y
+	HRbFc2mMJiZLLlsMG8KebpjYbyUpp6zWMb2bnoCqEdLd2jhZCq36H5/Lx/EkD9f3TxtU+Hpq9Nu
+	4qEGjt20Q1atlkZv5BF76mA==
+X-Google-Smtp-Source: AGHT+IG2vqiPQWzIE4Xso7GgDIyQfIUK5LXugs0CoXSWts52ndkzePNhOoEa8Wr3fgDWQugNCpxHUA==
+X-Received: by 2002:a17:906:d283:b0:ac2:7dee:cb15 with SMTP id a640c23a62f3a-ac27deed088mr1040493466b.33.1741637590560;
+        Mon, 10 Mar 2025 13:13:10 -0700 (PDT)
+Received: from [192.168.50.244] (83.11.221.132.ipv4.supernova.orange.pl. [83.11.221.132])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac289a79b33sm359260966b.65.2025.03.10.13.13.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Mar 2025 13:13:10 -0700 (PDT)
+Message-ID: <145c65bf-fbb1-4256-aa36-2079fe42e1a3@gmail.com>
+Date: Mon, 10 Mar 2025 21:13:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/9] dt-bindings: clock: brcm,kona-ccu: Add BCM281xx
+ bus clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alex Elder <elder@kernel.org>,
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
+ <20250308-kona-bus-clock-v3-4-d6fb5bfc3b67@gmail.com>
+ <20250310-orange-frog-of-abundance-af80f3@krzk-bin>
+From: Artur Weber <aweber.kernel@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20250310-orange-frog-of-abundance-af80f3@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 10.03.2025 10:43, Krzysztof Kozlowski wrote:
+> On Sat, Mar 08, 2025 at 08:50:42AM +0100, Artur Weber wrote:
+>> Add bus clocks corresponding to peripheral clocks currently supported
+>> by the BCM281xx clock driver and add the relevant clock IDs to the
+>> clock/bcm281xx.h dt-bindings header.
+> 
+> Please squash the patch so we see complete change.
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+> 
+>>
+>> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+>> ---
+>> Changes in v3:
+>> - Add more clock output names to example
+>> - Drop CLOCK_COUNT defines from the DT binding header
+>>
+>> Changes in v2:
+>> - Add this commit (BCM281xx bus clocks)
+>> ---
+>>   .../devicetree/bindings/clock/brcm,kona-ccu.yaml   | 33 ++++++++++++++++++++--
+>>   include/dt-bindings/clock/bcm281xx.h               | 19 +++++++++++++
+>>   2 files changed, 50 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
+>> index dff04e24e92829b890bf7cd336f0e083bdb30fa6..d00dcf916b45904177614c6f19a5df02abdf42f7 100644
+>> --- a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
+>> @@ -40,7 +40,7 @@ properties:
+>>   
+>>     clock-output-names:
+>>       minItems: 1
+>> -    maxItems: 14
+>> +    maxItems: 20
+>>   
+>>   required:
+>>     - compatible
+>> @@ -61,6 +61,8 @@ allOf:
+>>               - const: hub_timer
+>>               - const: pmu_bsc
+>>               - const: pmu_bsc_var
+>> +            - const: hub_timer_apb
+>> +            - const: pmu_bsc_apb
+>>     - if:
+>>         properties:
+>>           compatible:
+>> @@ -86,6 +88,13 @@ allOf:
+>>               - const: usb_ic
+>>               - const: hsic2_48m
+>>               - const: hsic2_12m
+>> +            - const: sdio1_ahb
+>> +            - const: sdio2_ahb
+>> +            - const: sdio3_ahb
+>> +            - const: sdio4_ahb
+>> +            - const: usb_ic_ahb
+>> +            - const: hsic2_ahb
+>> +            - const: usb_otg_ahb
+>>     - if:
+>>         properties:
+>>           compatible:
+>> @@ -116,6 +125,16 @@ allOf:
+>>               - const: bsc2
+>>               - const: bsc3
+>>               - const: pwm
+>> +            - const: uartb_apb
+>> +            - const: uartb2_apb
+>> +            - const: uartb3_apb
+>> +            - const: uartb4_apb
+>> +            - const: ssp0_apb
+>> +            - const: ssp2_apb
+>> +            - const: bsc1_apb
+>> +            - const: bsc2_apb
+>> +            - const: bsc3_apb
+>> +            - const: pwm_apb
+> 
+> Why pwm_apb cannot be after pwm? Any idea for sorting here?
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+I placed all bus clocks corresponding to peripheral clocks at the end of
+the clock list (so as to not modify the IDs of previous clocks), in the
+same order as their corresponding peripheral clocks. This applies both
+to the dt-bindings/clock/bcm281xx.h header and to the clock binding
+here (I kept the same order of clock names here as clock IDs in the
+header).
 
-are available in the Git repository at:
+The same reasoning applies to the BCM21664 bus clocks patch.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-fixes-for-6.14
-
-for you to fetch changes up to 787289a1d13d50ff4ce0f496947f8817ef3fdea9:
-
-  clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte intf parent (2025-02-26 08:57:46 -0600)
-
-----------------------------------------------------------------
-Qualcomm clock fix for v6.14
-
-Avoid propagating rate changes for the MDSS byte intf clocks on SM8750,
-to avoid changing the already configured clocks.
-
-----------------------------------------------------------------
-Krzysztof Kozlowski (1):
-      clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte intf parent
-
- drivers/clk/qcom/dispcc-sm8750.c | 2 --
- 1 file changed, 2 deletions(-)
+Best regards
+Artur
