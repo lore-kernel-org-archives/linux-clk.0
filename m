@@ -1,150 +1,131 @@
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4A042048;
-	Mon, 10 Mar 2025 09:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FED0225415;
+	Mon, 10 Mar 2025 09:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741599060; cv=none; b=aVK1O0xsfNHGwWTn8Nv9THKydiUHkZwtf3JLd/B5y5PJm3fgOVQ2cpxmVNP+2YRYtkXHYA2GR0ZfxYONQH1pf4pAjp95Gh/OPK/CwtZUPgtftRt2rsb+bHtGpvdbAqCJdnXHtWOznde0UNI9MpqY8N80Zh2xHhqgaAixkHdApT8=
+	t=1741599842; cv=none; b=hXaZxa18c+1Tz0NFl5peiZX4cKZT1eJROH2vVa7KlmhX0an5gT/ieenHhJFUWp2UGdqvBuwBvdBavEAzA3IgiWxooAhpKRAI5QrUfpGofsxFlBGRMq3qRgjY73XHfXS6pZ62N089XfufJCcGNjD52bQ/LYCoPrH5mWJXtPIk/Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741599060; c=relaxed/simple;
-	bh=lRi5W35xGNH5dHBw89pU7IiFn3gC5KvO6PdSIKkNM34=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=QzxdDch1p0yWnVUTAL7wyOQ2MI9TDFD3R8mRJYvOMAx17T40C3yo5Oim+TG1V+kXXjrmlmus9f0B3K27HnYDOodSflL/N0BDv5HHf6a6rLBMiYnRozMSPYJ1qFduYVhHeeLpNAm+5yNb6pRtpgBES3at6NDKIcJRovlVLioEWfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=crOe3gB2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=u0EkRWlI; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
+	s=arc-20240116; t=1741599842; c=relaxed/simple;
+	bh=Y2XjENUbyeWUEbpemhn/4RvYZYeG10dijoarzvG3LHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=slAUzL9AjTqnR5QXGhtHKQ1+D5hyCh8TEOMIp1uV1oI5596yYaS6OF4uAAQqtKxh/gOeAIsLjJRDlnMlJ3Nr2f61ImquIXSpMhelwi33ie90Sa8HtVWh6czOz2YgghhEMlZ0KX7uxkxY1rgW/ejn9Q+GszXl9nC+9/vKfcDHSQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nnr9V7B6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="crOe3gB2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="u0EkRWlI"
-Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
-	by mailfout.phl.internal (Postfix) with ESMTP id 1D02C1382D1A;
-	Mon, 10 Mar 2025 05:30:58 -0400 (EDT)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-13.internal (MEProxy); Mon, 10 Mar 2025 05:30:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1741599058; x=1741685458; bh=TlfIZxwEH199yoeoqgqRaK5o2m1xiByl
-	+CXP110BFB0=; b=crOe3gB2m9g9LoW1nZ9xJ4JRKWSvgMKPhyNVaRc6CqiYaLoA
-	3U0pyvo9RVmrTPbjo4c/bdDRKkY5vVhKod+VE4309QlgDDHp59sRVK3mkj2vxiGd
-	Y3huigyNK2yXlM4VG/znms3jSLiah/7SCNG2BNLE3tUu3xmOKg8N0mQOsnFgFmB0
-	ALAP7tti1+xqy8hx4+G/Pc6QblscqXMVsOkboANEqGyS0TTFxChdeluSwazoNLXr
-	HpQ7Wn7D2O7qjpHw8ul/4hh8mhRS793lDgwzUjxPA1siH74LoROmOf64Oihrtw37
-	7EGJAoMm7VtYpBqelniC3TuvpZbUdRDYZDMHnA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741599058; x=
-	1741685458; bh=TlfIZxwEH199yoeoqgqRaK5o2m1xiByl+CXP110BFB0=; b=u
-	0EkRWlI+dB79gh3+6iouR+oWqISL8XTriiMRFPHBOE5yd+eWRSn1rNKC4EkGZ+LE
-	3tH4Jd+tiWbs/jVEauBT8EQmRkfUzzclWhw+2cjDkpyBKv0fXzXxqgcI97Imyiyb
-	FIzutPS72ft7kiH0QqYvsT4Vq+sCPjprAYEhVoW9DUtLlzP8VC3Fqbt46dZbw8Oj
-	zxQ8ZJaBVN1MPx8eCBRS7O3CG1ma0lfqeA7p1kaIkZVCRhhTyLzBaGlt3nB4Nnc0
-	YaWP9m7ZbWbsYX5DRaTK3lq6ksdletNNL/5cZ9YO64JxaCjv9HOnSQErHp8s48eE
-	BUt110looaBeZ0mrc3n3Q==
-X-ME-Sender: <xms:UbHOZ8wHmz67RttlxjK4vuG8ibl4ELp5ZmYqeioxIV-co8ABaWrfXg>
-    <xme:UbHOZwS2CVHk_NYWZDOYQhaZTXgnQUg0mNZFku3oJ3idzN4zc6cgmUgxAP7IIGNhU
-    uFEjMZOOZXCHI7D6Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudekleelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftfihrghnucghrghlkhhlihhnfdcuoehrhigrnhesthgvshhtth
-    horghsthdrtghomheqnecuggftrfgrthhtvghrnhepjefhueekjeejgfduvdffheevveej
-    hfdtuddthfduuddvveefjeffgfdvleefuefgnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomheprhihrghnsehtvghsthhtohgrshhtrdgtohhmpdhn
-    sggprhgtphhtthhopedvgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnug
-    hrvgdrphhriiihfigrrhgrsegrrhhmrdgtohhmpdhrtghpthhtohepmhhtuhhrqhhuvght
-    thgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopeifvghnshestghsihgvrdhorh
-    hgpdhrtghpthhtohepuggrnhhivghlsehffhiflhhlrdgthhdprhgtphhtthhopegrihhr
-    lhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvg
-    gtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhhikhhutghhrghnleeksehgmhgrihhl
-    rdgtohhmpdhrtghpthhtohepmhgrtghrohgrlhhphhgrkedvsehgmhgrihhlrdgtohhmpd
-    hrtghpthhtohepshhimhhonhhsrdhphhhilhhiphhpvgesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:UbHOZ-VvunW_sPPqtlJ4BobU9ozGTaPNwI7gISNyjW605kq8rsiutg>
-    <xmx:UbHOZ6jO6KL1OWVSrcVwHKnfQWL_hNjwzCti0stxgZ1la7IGZ1xd-g>
-    <xmx:UbHOZ-Cx7vVhpcqtxcRLmRLEyFb62dzxk45gt33YtUBx2HWjWMk-0w>
-    <xmx:UbHOZ7KY1-XU9dCC_z9ki8E0QLxUx5ETJ4qaVoMyAV2eEid6ajUrDg>
-    <xmx:UrHOZ_z3lUbW02xPGs-PdXpXZY7xJAo2BujQGyYXOK-S67PqbneLl-A2>
-Feedback-ID: idc0145fc:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 76AABBA006F; Mon, 10 Mar 2025 05:30:57 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nnr9V7B6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2CDC4CEE5;
+	Mon, 10 Mar 2025 09:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741599841;
+	bh=Y2XjENUbyeWUEbpemhn/4RvYZYeG10dijoarzvG3LHw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nnr9V7B6SzGa3hlxQmNqe3ju15Hy8L0jxILZAlNE19926aPKDaOLd/t8NpjldEdS7
+	 UKbwrDgSKTk5uTIXkfUPrhf+BcmowjP/rgmByGQjgAM11p/X7Gew33KOxzJnOqJSdk
+	 bMN5wdc8DDEh8v1N+HpAJQ+2YAhficDSTcJQd6GGtQRlpu8RWDCCLHIgbb3aoHtCrS
+	 DIWDNtiHQTX5G8jzyXfuLyl2jB7YtW65U+kyDvRHDFKm1hwY/PTPobBU1n7gFeothp
+	 ueCxo7hwSpkkotzNF9d7W00Z7DCLbRjcVp8EKYN+FMyw6xUz2APGuQ788cJfGw5Ipk
+	 sYL38nnLrZmuQ==
+Date: Mon, 10 Mar 2025 10:43:58 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alex Elder <elder@kernel.org>, Stanislav Jakubek <stano.jakubek@gmail.com>, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v3 4/9] dt-bindings: clock: brcm,kona-ccu: Add BCM281xx
+ bus clocks
+Message-ID: <20250310-orange-frog-of-abundance-af80f3@krzk-bin>
+References: <20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com>
+ <20250308-kona-bus-clock-v3-4-d6fb5bfc3b67@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 10 Mar 2025 22:30:36 +1300
-From: "Ryan Walklin" <ryan@testtoast.com>
-To: "Andre Przywara" <andre.przywara@arm.com>
-Cc: "Maxime Ripard" <mripard@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "David Airlie" <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>,
- "Samuel Holland" <samuel@sholland.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Chris Morgan" <macroalpha82@gmail.com>,
- "Hironori KIKUCHI" <kikuchan98@gmail.com>,
- "Philippe Simons" <simons.philippe@gmail.com>,
- "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, "Conor Dooley" <conor.dooley@microchip.com>
-Message-Id: <c8b85753-5c97-4258-a158-06a17929fad6@app.fastmail.com>
-In-Reply-To: <20250224175642.170c124e@donnerap.manchester.arm.com>
-References: <20250216183710.8443-3-ryan@testtoast.com>
- <20250216183710.8443-23-ryan@testtoast.com>
- <20250224175642.170c124e@donnerap.manchester.arm.com>
-Subject: Re: [PATCH v7 22/27] dt-bindings: allwinner: add H616 DE33 mixer binding
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250308-kona-bus-clock-v3-4-d6fb5bfc3b67@gmail.com>
 
-On Tue, 25 Feb 2025, at 6:56 AM, Andre Przywara wrote:
+On Sat, Mar 08, 2025 at 08:50:42AM +0100, Artur Weber wrote:
+> Add bus clocks corresponding to peripheral clocks currently supported
+> by the BCM281xx clock driver and add the relevant clock IDs to the
+> clock/bcm281xx.h dt-bindings header.
 
-Apologies Andre, I came to review your comments on the TCON series and realised I had missed responding to this comment before sending v8. 
+Please squash the patch so we see complete change.
 
->> +      - allwinner,sun50i-h616-de33-mixer-0
->>  
->>    reg:
->> -    maxItems: 1
->> +    minItems: 1
->> +    maxItems: 3
->
-> What are those three regions? I wonder if we should have reg-names here,
-> to fix the order, and to document them on the way?
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+> Changes in v3:
+> - Add more clock output names to example
+> - Drop CLOCK_COUNT defines from the DT binding header
+> 
+> Changes in v2:
+> - Add this commit (BCM281xx bus clocks)
+> ---
+>  .../devicetree/bindings/clock/brcm,kona-ccu.yaml   | 33 ++++++++++++++++++++--
+>  include/dt-bindings/clock/bcm281xx.h               | 19 +++++++++++++
+>  2 files changed, 50 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
+> index dff04e24e92829b890bf7cd336f0e083bdb30fa6..d00dcf916b45904177614c6f19a5df02abdf42f7 100644
+> --- a/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
+> +++ b/Documentation/devicetree/bindings/clock/brcm,kona-ccu.yaml
+> @@ -40,7 +40,7 @@ properties:
+>  
+>    clock-output-names:
+>      minItems: 1
+> -    maxItems: 14
+> +    maxItems: 20
+>  
+>  required:
+>    - compatible
+> @@ -61,6 +61,8 @@ allOf:
+>              - const: hub_timer
+>              - const: pmu_bsc
+>              - const: pmu_bsc_var
+> +            - const: hub_timer_apb
+> +            - const: pmu_bsc_apb
+>    - if:
+>        properties:
+>          compatible:
+> @@ -86,6 +88,13 @@ allOf:
+>              - const: usb_ic
+>              - const: hsic2_48m
+>              - const: hsic2_12m
+> +            - const: sdio1_ahb
+> +            - const: sdio2_ahb
+> +            - const: sdio3_ahb
+> +            - const: sdio4_ahb
+> +            - const: usb_ic_ahb
+> +            - const: hsic2_ahb
+> +            - const: usb_otg_ahb
+>    - if:
+>        properties:
+>          compatible:
+> @@ -116,6 +125,16 @@ allOf:
+>              - const: bsc2
+>              - const: bsc3
+>              - const: pwm
+> +            - const: uartb_apb
+> +            - const: uartb2_apb
+> +            - const: uartb3_apb
+> +            - const: uartb4_apb
+> +            - const: ssp0_apb
+> +            - const: ssp2_apb
+> +            - const: bsc1_apb
+> +            - const: bsc2_apb
+> +            - const: bsc3_apb
+> +            - const: pwm_apb
 
-This would be the top, display and mixer groups for the DE333, and mixer for DE3 and earlier. Can certainly add in names for these. Is there any example elsewhere in the bindings to look at?
+Why pwm_apb cannot be after pwm? Any idea for sorting here?
 
->> @@ -61,6 +63,23 @@ properties:
->>      required:
->>        - port@1
->>  
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          enum:
->> +            - allwinner,sun50i-h616-de33-mixer-0
->> +
->> +    then:
->> +      properties:
->> +        reg:
->> +          maxItems: 3
->
-> Should we override minItems here as well? I guess any driver would need
-> all three region to work?
+Best regards,
+Krzysztof
 
-This seems sensible, as you say it would always be 3 groups for the DE33.
-
-Regards,
-
-Ryan
