@@ -1,64 +1,64 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E188B22578F;
-	Mon, 10 Mar 2025 10:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595F428EA;
+	Mon, 10 Mar 2025 10:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741602657; cv=none; b=dXdWVlEWNmYkpNsptkT1DvWZFWlsROA3ZTLobUU40v/F0d+m7ylNy6A0iTGPoZ66CrQECZ3Nk6JFk1HVJ4hSnHpZoeWNgeeyebht5mTKmIVA6N81MHTHHimwniZpQYh5w8yOlD0uIn18mXMipg8zcVzjtWa5oAgqbKB+vtZq4II=
+	t=1741602828; cv=none; b=em7Gxm9NT5yp6iJqUIB/gaRugccz7+EJXppEEM9C9ty60Ubg0BnOx9U4n1GgYmxLs83uYVborpqDEgr48FNOSb9VZ5sANU3i+d1Irf31Swi9msO8LmqkKrPgFO4o9Wh10zMKEPY55fq40RcnUefH+KexC3fydArnWIb2xRLCSAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741602657; c=relaxed/simple;
-	bh=NgEc5/eyDsM2hrEW1RmGOqc9E+kFy+95H4SiztZ6Hnk=;
+	s=arc-20240116; t=1741602828; c=relaxed/simple;
+	bh=ahaHl2BOI5agTSk3/eyDZZm6SXATEKEPbXPRLvyRAJE=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eTmRmVjk7zuUqFNH5nofjHQiAc+EnPYMvfkZYsW1bqYac4h/h3dy+XRLWmz35pKtVb5n0n8/JVGd7q0PH9lGjqOpRI4BmkNseIiZGkwZk6MXqsLJedW17U/eQLxCQl9uXuwzg4Dw1Qy02NCxIxmkSLCNh9C58s0wxaq/Z/2xgX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RXuI27M1; arc=none smtp.client-ip=209.85.208.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=s5y1jxveng6q3LM+UlGPNpQdSLS9lGcF2VXp8s9axTGSUmFYbVbi/W+X4JrX9tSqblW94OqOVVziQYthel19wzAy2xLizY15SA+k6VXIHmPWe9i4UO2Gtbdi0DHLoCr1+bIFj01IfWvsTmkS8/r8Bz3GEkBc3ejKNqbBDTxl/Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MeJGNqZb; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXuI27M1"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso2235499a12.2;
-        Mon, 10 Mar 2025 03:30:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MeJGNqZb"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac2a81e41e3so107495866b.1;
+        Mon, 10 Mar 2025 03:33:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741602654; x=1742207454; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741602824; x=1742207624; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:subject:cc
          :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=kNhM/0IjcjblchV98Qq8e/1t6zgAbQVQNq8rXKMpriY=;
-        b=RXuI27M1ZZ2EDK+NwW/jLNuulYzmFql3mQ2Qk9avvK+qmcHO4LucBTvhUerCEhgG5J
-         rcIJcN8CSB3TMEd5it/uPQuV619eI8Zw2CH3TZ1VWwCj/leFbALYNmNbW4E/5fa+r5Yw
-         Va7v2YwzKU+c9VQU1yP+tRPSHiSRxLqKs0mlsxpa71iBSvSp3aBNfnq6MxAToMIm6xXH
-         jgq507Pk/yDzEUak8FqtPceMqusnsahOBO5q8DyjjNNOBGsat305Y6OF8omzNvn3a5GW
-         zneW3SbyzQRFHqS0n0w7sgUBIy6vtxLGkfE/piMFkQ/c3qh3cVDg+o07Q9s0Ly2Fn/Qj
-         fsuQ==
+        bh=MGTml7RpCjpVWP8eom9oAacKLsbRqPW94SvzBXitgHg=;
+        b=MeJGNqZbciP5JWbexu5OAMaStqvDt2jj0x9d2KIy5HePjxo1MOgHp7kYNQDV0mcQAe
+         pk5qsrwn7X3MXePo5oHXrtbT0AEUC+JkFpebwAH/Q7iBefY0Sou0KzPIoU35ADe5K0DG
+         lTBU8ZMmZZPbcSGREv5mMmpO++13fCKzCnxvUKwNVb/5SucGEixtR/Um5HRRrrBqZMCK
+         UU9t+fb2IR62zs5Co0HpW3hGtJ5B+KblzTcdM+0uaOBhQxcWJQNM3dBUsfuaoYRi5SEP
+         2H0+xhXH1p7Bu4FROHrvZlWrVZ4n/THADmhVSsLgd0wM4xN0sV9qecbuO8pOc6RBein9
+         GzTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741602654; x=1742207454;
+        d=1e100.net; s=20230601; t=1741602824; x=1742207624;
         h=in-reply-to:content-disposition:mime-version:references:subject:cc
          :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kNhM/0IjcjblchV98Qq8e/1t6zgAbQVQNq8rXKMpriY=;
-        b=lovOuE3B8mwi4r/Frrz75aH48n87ktkrwkdKkmge6enrk+PSoRtEWBGpIgEgoy3BHq
-         nCTIeYNbev7RhuP1Q6dydbQVE+XkbXXS3wcVpnv+9pWoKfY9wyEL4hqxOOnCF4QOM0iX
-         RrTxwnr2x608H/jcEI+qd0pyby9QftIbKLCBds32MZUL0Av8+E/opNnSGWhp0g177c1o
-         wjoWnFeM4Lar1NnNuZPr6GoYEJoQNNxji+bAdcpqUP3lnIUlGjxMfXMDvwQ661udAE4B
-         r7kiGFuRbngM8+SSPgBghgdOsHeXNwPk1MQ1JSzWELbbouZUvlzcbvH5tUA6NZdVoC+w
-         4A7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVaCJmVWWAZGGt7NVMikEy6+BRO4h0Rn9ZwGBaftmwn818ouy/BQOq7I/mkrgr9ujfdd0pHGxuRCNPxBAvO@vger.kernel.org, AJvYcCVqQvsvFG/dYcetrt8nWbruRixO1Is6zbIK/5mwA6avRHPbJHyoHk6W9TPqngwyFPqqRM2LT/41Zucl@vger.kernel.org, AJvYcCWRK4CHOruCOpPnw4+y0KiBW+oQ3HjAIKKJny9XiJKkeN6yR8e4jCQVe+JAQz2hqX5tO7JCkGdD89d7@vger.kernel.org, AJvYcCWTNMWcD/CbUhf//+4U2QCXm02idP8FCkhktA1nxYSR/WycLWkOUD/soyFLPI8j3cvYr5+BL4BgNakz@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeELg9YWD1sdET90gGOV80ZyT6KkM3/v1313+mzMzetCJje5IS
-	Q/kGPDC72Xn0OTnZq1o/8JqMYSukyyFm5BwIRrhN0FJqDAFErK4b
-X-Gm-Gg: ASbGncv8yBe6C8kaT2hZtXuT+so8xQ9uk7I+7arRw96IpfxzE2iCExhlnSQNeWclKs5
-	itobLAnQdx3nvnSCyzlxnBC3eZcIEAjkFpoo6Na/qSGEnanTU3V5ZN0jLpT4pyvKL7lHHeGUpXR
-	Mx3wFKiCvGfJNZNG+lQwkySqbIK5K9zgJdfcykaRYFnTFElpd54DRKaaofrhs5PJ7RCSVZA1inE
-	/EndJVCb39yDvPIKBSbzuqeBME1h7GTJPSFHdeX+99EOU77mR+RlU0pj9qFP5QASeT3ueht8jUL
-	uHGnfqYloG72B2w+T1ezLNFNj0Z+Y+nFP4PjujKd3w==
-X-Google-Smtp-Source: AGHT+IHOgY/2k2K6r8nbyooLCIqhLZNyi8g28UASQ2a6eAtRtlwzSxaLJolXF0bJ1EZNYwNFw8sjfA==
-X-Received: by 2002:a05:6402:518a:b0:5d9:82bc:ad06 with SMTP id 4fb4d7f45d1cf-5e5e22bf16amr15660909a12.3.1741602653855;
-        Mon, 10 Mar 2025 03:30:53 -0700 (PDT)
+        bh=MGTml7RpCjpVWP8eom9oAacKLsbRqPW94SvzBXitgHg=;
+        b=kbTSMHGjp0AAZMnRj08xMVVM+Oga++fG7JvPeiWqFkwKZlZoYZEGWlDIRBOk9uebV8
+         MWI6C6pxkS5dtjzCE+5LakekCu2lAft2TQFaxz8QgdjMgcl/90mpnZVBWtOcUyZf6dPn
+         CCOd+dibCh0cXpFjJ4WQFN4ZshdN2FEpktzGCWy97XoTFp7D8pty9T89LAvzuMSIXBZW
+         A/P4hrSeTy7tU7IHVXSQMcS8uuzQrMnFuXYL5gmGuInWKMwrcMh4v+fM8JPSUXeDCTyj
+         TqY477TelzeQEUN9QaAbNV/49A0GSJO1+g034zsyWZ3rZ1LTsDjcXAb7rYREJw5ZoBHc
+         iL5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUaNgy/DSuysEZhdJ07JBuIRjzxGrcLZKiPkhc+2NySmlKFDstGBZazYmxEYALN6evKcUeEnuC7dppyHFUO@vger.kernel.org, AJvYcCWMbapWUxrMhPzJahL0ZIktyVVExd4DATaHhgV7uRJVzrlPy3daZO6mH9pywUWXrLL/oe9RR3Oxvde7@vger.kernel.org, AJvYcCWcxQQ4qKS2hAWF3wexF/NG7hHwJReMq/q4I5YbsxHvngSdexVCmUvde06LIIpZYtKhobS1Zzq/VCV/@vger.kernel.org, AJvYcCWucYymK8hUKRIbMI+A1yrN8Afp3bvwWXSiDI9yseSc7j18gUzGLuMepr4i3l50mOOSRZWK9fZ31/eS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaNPWcm7scppGPXmD6A9WQUP4JVzI+t1C7kRCYJRqsoNB6jCr6
+	e9R6i/yCyow1UWU+OIC4y2JfdS+2oakn2P/fJxFwE3JoHfakm6OP
+X-Gm-Gg: ASbGnctjSthzGTxQ/TtyLr9sZvH0cirm/H/rnqp+B7Dv5srdiBqrPG3oZUdNVAPZe1d
+	PWpJPjBFWqV3TUS27Dcjhro5bWxPq5lLTGJx0kZPkyKxvIaXvtjRz3N5ysIwYBYg8vIl8OUW7xx
+	a9VqnNDxcJMbh8CpPrlVekUCq6FJ6HBrL5i/dhfRcA4dcgc8FklL0W3hUsTVoaxTn0u0CN/5g8X
+	a+vE17oB4RNVRi4Hd7T1aqoKE30hLBbVXFgt2/QCqNKBh/9aWDLvVSsgGGOU+7jD8U9sQtfpOtc
+	iN0EtT0Z3lJFF97pJtpbf8oHsRqA/l3+P5Bj1NManw==
+X-Google-Smtp-Source: AGHT+IEWMSU1qAY2ggbAzuaICqttRpwRQzqd5Fp6/64RTbush8Y1vjOdi5AqZxhsuRglYeOy1RqUkg==
+X-Received: by 2002:a17:906:9586:b0:abf:56e3:e899 with SMTP id a640c23a62f3a-ac252f8d705mr1216793066b.40.1741602824270;
+        Mon, 10 Mar 2025 03:33:44 -0700 (PDT)
 Received: from Ansuel-XPS. ([85.119.46.8])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c733f9d4sm6630840a12.10.2025.03.10.03.30.52
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2397363b7sm736352266b.121.2025.03.10.03.33.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 03:30:53 -0700 (PDT)
-Message-ID: <67cebf5d.a70a0220.fe6c9.6ad3@mx.google.com>
-X-Google-Original-Message-ID: <Z86_WkfgZk_HLWuy@Ansuel-XPS.>
-Date: Mon, 10 Mar 2025 11:30:50 +0100
+        Mon, 10 Mar 2025 03:33:43 -0700 (PDT)
+Message-ID: <67cec007.170a0220.37245a.99cd@mx.google.com>
+X-Google-Original-Message-ID: <Z87ABZwgZPU2P5-X@Ansuel-XPS.>
+Date: Mon, 10 Mar 2025 11:33:41 +0100
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Krzysztof Kozlowski <krzk@kernel.org>
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -80,11 +80,11 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-phy@lists.infradead.org, linux-mediatek@lists.infradead.org,
 	linux-usb@vger.kernel.org, upstream@airoha.com
-Subject: Re: [PATCH 03/13] dt-bindings: soc: airoha: add SCU SSR Serdes port
- binding
+Subject: Re: [PATCH 04/13] dt-bindings: soc: airoha: add Documentation for
+ Airoha AN7581 SCU SSR
 References: <20250309132959.19045-1-ansuelsmth@gmail.com>
- <20250309132959.19045-4-ansuelsmth@gmail.com>
- <20250310-ultraviolet-earthworm-of-honor-df114b@krzk-bin>
+ <20250309132959.19045-5-ansuelsmth@gmail.com>
+ <20250310-aromatic-chihuahua-of-priority-4ee73b@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -93,34 +93,93 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310-ultraviolet-earthworm-of-honor-df114b@krzk-bin>
+In-Reply-To: <20250310-aromatic-chihuahua-of-priority-4ee73b@krzk-bin>
 
-On Mon, Mar 10, 2025 at 08:54:14AM +0100, Krzysztof Kozlowski wrote:
-> On Sun, Mar 09, 2025 at 02:29:34PM +0100, Christian Marangi wrote:
-> > Add Airoha AN7581 SCU SSR Serdes port binding to define what mode is
-> > supported by each Serdes port. These special binding are needed to
-> > identify and provide the port mode from any user driver.
+On Mon, Mar 10, 2025 at 09:00:40AM +0100, Krzysztof Kozlowski wrote:
+> On Sun, Mar 09, 2025 at 02:29:35PM +0100, Christian Marangi wrote:
+> > The Airoha AN7581 SoC have in the SCU register space particular
+> > address that control how some peripheral are configured.
 > > 
-> > These modes are mutually exclusive and driver needs to correctly
-> > validate the current mode for the Serdes port in use.
+> > These are toggeled in the System Status Register and are used to
+> > toggle Serdes port for USB 3.0 mode or HSGMII, USB 3.0 mode or PCIe2
+> > or setup port for PCIe mode or Ethrnet mode (HSGMII/USXGMII).
+> > 
+> > Modes are mutually exclusive and selecting one mode cause the
+> > other feature to not work (example a mode in USB 3.0 cause PCIe
+> > port 2 to not work) This depends also on what is physically
+> > connected to the Hardware and needs to correctly reflect the
+> > System Status Register bits.
+> > 
+> > Special care is needed for PCIe port 0 in 2 line mode that
+> > requires both WiFi1 and WiFi2 Serdes port set to PCIe0 2 Line
+> > mode.
 > > 
 > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > > ---
-> >  MAINTAINERS                              |  6 ++++++
-> >  include/dt-bindings/soc/airoha,scu-ssr.h | 24 ++++++++++++++++++++++++
+> >  .../soc/airoha/airoha,an7581-scu-ssr.yaml     | 106 ++++++++++++++++++
+> >  MAINTAINERS                                   |   1 +
+> >  2 files changed, 107 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/soc/airoha/airoha,an7581-scu-ssr.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/soc/airoha/airoha,an7581-scu-ssr.yaml b/Documentation/devicetree/bindings/soc/airoha/airoha,an7581-scu-ssr.yaml
+> > new file mode 100644
+> > index 000000000000..4bbf6e3b79a4
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/soc/airoha/airoha,an7581-scu-ssr.yaml
+> > @@ -0,0 +1,106 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/soc/airoha/airoha,an7581-scu-ssr.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Airoha AN7581 SCU System Status Register
+> > +
+> > +maintainers:
+> > +  - Christian Marangi <ansuelsmth@gmail.com>
+> > +
+> > +description: >
+> > +  The Airoha AN7581 SoC have in the SCU register space particular
+> > +  address that control how some peripheral are configured.
+> > +
+> > +  These are toggeled in the System Status Register and are used to
+> > +  toggle Serdes port for USB 3.0 mode or HSGMII, USB 3.0 mode or PCIe2
+> > +  or setup port for PCIe mode or Ethrnet mode (HSGMII/USXGMII).
 > 
-> This should be squashed with the binding for the device.
+> typo, Ethernet
+> 
+> > +
+> > +  Modes are mutually exclusive and selecting one mode cause the
+> > +  other feature to not work (example a mode in USB 3.0 cause PCIe
+> > +  port 2 to not work) This depends also on what is physically
+> > +  connected to the Hardware and needs to correctly reflect the
+> > +  System Status Register bits.
+> > +
+> > +  Special care is needed for PCIe port 0 in 2 line mode that
+> > +  requires both WiFi1 and WiFi2 Serdes port set to PCIe0 2 Line
+> > +  mode.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: airoha,an7581-scu-ssr
+> 
+> That's not a separate device, but part of the SCU.
 >
 
-I split them to mute checkpatch warning
+More comments on this in the MFD patch.
 
-"DT binding docs and includes should be a separate patch. See:
-Documentation/devicetree/bindings/submitting-patches.rst"
+> But more important - such definition of choice of serial engines is
+> really not flexible, not reabable and not helping integrating into DTS.
+> Are you going to grow this for next chip airoha,serdes-wifi20, then
+> airoha,serdes-wifi21, 22... ? And then how the if:then: would look like?
+> 
+> Assuming you do not have here child-parent relationship, like usually
+> for serial engines, so then this should be somehow list of devices
+> (strings) you want to run.
+> 
 
-But I think I always took it wrong and with "docs and includes" it's
-intended in a single patch.
-
-Ok will squash!
+You are right, string is more flexible and I don't need the include
+file.
 
 -- 
 	Ansuel
