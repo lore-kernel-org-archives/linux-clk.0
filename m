@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14F11C07D9;
-	Mon, 10 Mar 2025 12:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BF722A1F1;
+	Mon, 10 Mar 2025 12:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741610418; cv=none; b=KSlOZ3EZwZPocaXhwSc5cY4C2KnJYa4qo9bhLJnmH0d127GdKcPG0X3wR586+2Aj0Rto3eo3gAoSMVpzKHSI6Luwy9YcgHwByv8HpqBq6TeKE1M/VfJpmKHWecJlK1kC4XS6fe1TJ8Faz84fb6TTnVe7oRjad4DZ6YfgKgRPHco=
+	t=1741610538; cv=none; b=aq2UMYTGKAuSm0R5wSH6ts67X+eZyuQfKWLmIHl/6uIgAii2JarEbOtDpUItb8dZQysCiM2Aw/1dlfkumEZlDf2DVKAaRZAqixvx++Ys1cr/zi1Y/ZQlRZp+kpAdN4OHSgCaDs4QggyCyJqaaGsm/HNWGt2FNWEaT1yw/3trFIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741610418; c=relaxed/simple;
-	bh=H8MkukXKrs1gXyaQdWlj/mYQZibbo5Fhpikh/80QqZk=;
+	s=arc-20240116; t=1741610538; c=relaxed/simple;
+	bh=ObpVnhp7/WvbJw/e+3sP5lgQP0HfPvs44VTr++TsRXI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bYotfuq3txNB8UJrwZygWfyR9AEs36jBVPdPk74NCn52NjuVqShqtkOcmIH+p2uVgO0ELjCvkWaYqQYenaNo1xoFiM+GRLLTDSryR/bcvq818wnlKN7dhDkSaEncl7j47C7Ek/GkbS1IFakjcvaMwWnktxO8fzcTiCY1M2VAiWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OU7eweTU; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=VPm3oFj3u+fQsdjcCgO2kv1dO5DDkMI8r4yX7+Hm9Ivdx7isIcfqfffU3SbiNJLn8ntUq3p78UrYfiitVW36VQOmucFLQ2q3IjSdP4vdQsj77EKFdFekZO/fbdDag6KORKzxj3rkeXrpkeelRRM8VAXqYxv6kJHt9BZf4FiXAvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TGfESHB/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OU7eweTU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE40BC4CEF0;
-	Mon, 10 Mar 2025 12:40:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TGfESHB/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B3FDC4CEE5;
+	Mon, 10 Mar 2025 12:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741610416;
-	bh=H8MkukXKrs1gXyaQdWlj/mYQZibbo5Fhpikh/80QqZk=;
+	s=k20201202; t=1741610536;
+	bh=ObpVnhp7/WvbJw/e+3sP5lgQP0HfPvs44VTr++TsRXI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OU7eweTUodKoVT9kzSHOX2+bCR2sRfjGewUj0AL42sokgzxf+zbLLoCvkUBRMkYHr
-	 YqnVHTLHzG8wBV9cQFVqvTFOfjOWP5vIlPsnRotGJQD5OIbBlvPQDqO7Xsuf/L0heg
-	 Frq89NR/lx7PZ39bM3gmfQgOjzXS3ZrX95CjIZn3m+32cf8DBqseFi667hvz6QONN3
-	 hVb2aCfOLeMOHgO6/Jb+ffvfv0m/foHouvTQ44LvzUaBYY1TN0f8Fls4iOUWjThlqE
-	 BgK6bUDdsTF8X3lA7uovbQc3BT/2WTsUg33dxKagtAxdQOjCUFzc1bjTfJhfdQz230
-	 mxjaGxJJgTEkw==
-Date: Mon, 10 Mar 2025 07:40:14 -0500
+	b=TGfESHB/psqrhlcOLS+OwH6t7yooA+1QYsuVQnl8Ss5VqubkcbfYsnkx6p4bCfRmI
+	 cJPbP4Q239ASJOSWlFY3vpa5YHVp1w3mCwD+HrIWQt+yc4aLNiZKLU8UPojZSCTzOc
+	 LRTs1yk2A5OsO6ZykR8Z2WlysIWaXjW/BV7SsPrPnot9b9L+ZhGa37C/fvlXcABUjJ
+	 0P4fTuROXrcaFGR5j2dsAAUWdPIYPGn3Z31Wg18FMqnQLq9pnLzgMDGktSiLGQksCG
+	 mT5oZzh5PUtZYxMJS175ePcgJ5izvqCJCHu+JO1DKKSJfM7hsmUwo69gq///20jjSv
+	 fyh7tVGiyhJ+g==
+Date: Mon, 10 Mar 2025 07:42:14 -0500
 From: Rob Herring <robh@kernel.org>
 To: Ryan Walklin <ryan@testtoast.com>
 Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
@@ -48,11 +48,11 @@ Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
 	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
 	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
 	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH v8 05/11] dt-bindings: allwinner: add H616 DE33 bus
+Subject: Re: [PATCH v8 07/11] dt-bindings: allwinner: add H616 DE33 mixer
  binding
-Message-ID: <20250310124014.GA3866055-robh@kernel.org>
+Message-ID: <20250310124214.GA3869453-robh@kernel.org>
 References: <20250310092345.31708-1-ryan@testtoast.com>
- <20250310092345.31708-6-ryan@testtoast.com>
+ <20250310092345.31708-8-ryan@testtoast.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,59 +61,76 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310092345.31708-6-ryan@testtoast.com>
+In-Reply-To: <20250310092345.31708-8-ryan@testtoast.com>
 
-On Mon, Mar 10, 2025 at 10:09:51PM +1300, Ryan Walklin wrote:
+On Mon, Mar 10, 2025 at 10:09:53PM +1300, Ryan Walklin wrote:
 > The Allwinner H616 and variants have a new display engine revision
 > (DE33).
 > 
-> Add a display engine bus binding for the DE33 and increase reg maxItems
-> to 3 to accommodate additional register blocks.
+> The mixer configuration registers are significantly different to the DE3
+> and DE2 revisions, being split into separate top and display blocks,
+> therefore a fallback for the mixer compatible is not provided.
+> 
+> Add a display engine mixer binding for the DE33.
 > 
 > Signed-off-by: Ryan Walklin <ryan@testtoast.com>
 > Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 > 
 > ---
-> Changelog v1..v2:
-> - Correct DE2 bus enum to reflect fallback devices accurately.
-> 
 > Changelog v2..v3:
 > - Separate content into three patches for three separate subsystems
 > 
 > Changelog v5..v6:
-> - Increase reg maxItems to 3.
+> - increase reg maxItems to 3 and add conditional for h616-de33
 > ---
->  .../devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml  | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+>  .../allwinner,sun8i-a83t-de2-mixer.yaml       | 21 ++++++++++++++++++-
+>  1 file changed, 20 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml b/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
-> index 9845a187bdf6..317a27cf590b 100644
-> --- a/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
-> +++ b/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
-> @@ -24,11 +24,14 @@ properties:
->      oneOf:
->        - const: allwinner,sun50i-a64-de2
->        - items:
-> -          - const: allwinner,sun50i-h6-de3
-> +          - enum:
-> +              - allwinner,sun50i-h6-de3
-> +              - allwinner,sun50i-h616-de33
->            - const: allwinner,sun50i-a64-de2
+> diff --git a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
+> index b75c1ec686ad..274f5e632733 100644
+> --- a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
+> +++ b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
+> @@ -24,9 +24,11 @@ properties:
+>        - allwinner,sun50i-a64-de2-mixer-0
+>        - allwinner,sun50i-a64-de2-mixer-1
+>        - allwinner,sun50i-h6-de3-mixer-0
+> +      - allwinner,sun50i-h616-de33-mixer-0
 >  
 >    reg:
 > -    maxItems: 1
 > +    minItems: 1
 > +    maxItems: 3
 
-You have to define what each region is and the order.
-
-And there should be constraints such that the existing cases don't 
-now allow 2-3 entries.
+What's in each region?
 
 >  
->    allwinner,sram:
->      description:
+>    clocks:
+>      items:
+> @@ -61,6 +63,23 @@ properties:
+>      required:
+>        - port@1
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - allwinner,sun50i-h616-de33-mixer-0
+> +
+> +    then:
+> +      properties:
+> +        reg:
+> +          maxItems: 3
+> +
+> +    else:
+> +      properties:
+> +        reg:
+> +          maxItems: 1
+> +
+>  required:
+>    - compatible
+>    - reg
 > -- 
 > 2.48.1
 > 
