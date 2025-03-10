@@ -1,177 +1,126 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F75B29A2;
-	Mon, 10 Mar 2025 10:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741600874; cv=pass; b=NJF1+NciMSJrHQB/UTCTURTZwJ1R+nSVhEi2bisj51f9pQiPaiXnaVHB0hn9NDDt1SRneHpNiiT6xtqVex3Z3I5mkauCH01j66jyEjmNKxh4vVRNiFKEsZbuScmOWb+heZhMxKfW9pR4UuRaVVLNnkcZltPfuJs9RNiEd/pcDME=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741600874; c=relaxed/simple;
-	bh=b76qrhBUBBQgOxNEP24/iaezZ47DqFJATqoAHC9PA6A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Rofkw5F97fyJ05StyiCFyXusbPk5IK5wKXVW1iN6y3qtbPKKuM8zursQsIEoo2aC9TfjXimFEYAw0M55E3q9CFFzgviV8CptM2neN1IEkIGQJpN7hmGjmXuYwoR63Ma7ea9dBYwe/YaJ14F7i4TwyqAANtroiwpjcD9dA2PT0WQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=IQxgjB9l; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E188B22578F;
+	Mon, 10 Mar 2025 10:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741602657; cv=none; b=dXdWVlEWNmYkpNsptkT1DvWZFWlsROA3ZTLobUU40v/F0d+m7ylNy6A0iTGPoZ66CrQECZ3Nk6JFk1HVJ4hSnHpZoeWNgeeyebht5mTKmIVA6N81MHTHHimwniZpQYh5w8yOlD0uIn18mXMipg8zcVzjtWa5oAgqbKB+vtZq4II=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741602657; c=relaxed/simple;
+	bh=NgEc5/eyDsM2hrEW1RmGOqc9E+kFy+95H4SiztZ6Hnk=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eTmRmVjk7zuUqFNH5nofjHQiAc+EnPYMvfkZYsW1bqYac4h/h3dy+XRLWmz35pKtVb5n0n8/JVGd7q0PH9lGjqOpRI4BmkNseIiZGkwZk6MXqsLJedW17U/eQLxCQl9uXuwzg4Dw1Qy02NCxIxmkSLCNh9C58s0wxaq/Z/2xgX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RXuI27M1; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="IQxgjB9l"
-ARC-Seal: i=1; a=rsa-sha256; t=1741600844; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LUAZ4AB574FF/KkzPzySh74VUqaKk7Up4geZssi+tUWNoVBPmbOXaAB0X2kT4+3Wbwj1fV/MKAEB7dANewJ33AqC8P4Oss8Iipj6Y97OwfM4KJ/c+VSRs1O1gLlaE9xuzeOnE90bxczUP5GDESSsbObyinaN12NBVrqijYEffFQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741600844; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=sG0ZptlmWh6usz+6gYzu3av5prS4D953FeG+EZTRlmE=; 
-	b=Fyv59Hi6jM+QmMMz4EVYjOWDyqSx9Tdyog8JkvORFtntRG92twzxE0N61oF1iAv7x8o4qbhLsFLqKux87Hwt7QYYOlnQ4LFMYVFMLuXhhrCucZR8+ZZWZZWFS2WthKQfmqwC4VzPjrC/HclcCnESvi9XePFtgQ1mv5zh+rcgpYQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741600844;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=sG0ZptlmWh6usz+6gYzu3av5prS4D953FeG+EZTRlmE=;
-	b=IQxgjB9lLAHcZuF00S0hPyH4P/moK4+Fc+IszQagDcah2y50VQSL1g435V4GGsjF
-	V2PW5GMQwJNtc/Xrg2fZ9rdxCtoJVRjFBeGPmQu2AdYVtZuO+U6SD0ms2XPVGWgkpwZ
-	6YCFoC8OeRm6qM5vLsMZvOGvmwcK+dGLvtsEqN6E=
-Received: by mx.zohomail.com with SMTPS id 174160084194050.598305390263135;
-	Mon, 10 Mar 2025 03:00:41 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Mon, 10 Mar 2025 10:59:57 +0100
-Subject: [PATCH 2/2] arm64: dts: rockchip: fix RK3576 SCMI clock IDs
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXuI27M1"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso2235499a12.2;
+        Mon, 10 Mar 2025 03:30:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741602654; x=1742207454; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=kNhM/0IjcjblchV98Qq8e/1t6zgAbQVQNq8rXKMpriY=;
+        b=RXuI27M1ZZ2EDK+NwW/jLNuulYzmFql3mQ2Qk9avvK+qmcHO4LucBTvhUerCEhgG5J
+         rcIJcN8CSB3TMEd5it/uPQuV619eI8Zw2CH3TZ1VWwCj/leFbALYNmNbW4E/5fa+r5Yw
+         Va7v2YwzKU+c9VQU1yP+tRPSHiSRxLqKs0mlsxpa71iBSvSp3aBNfnq6MxAToMIm6xXH
+         jgq507Pk/yDzEUak8FqtPceMqusnsahOBO5q8DyjjNNOBGsat305Y6OF8omzNvn3a5GW
+         zneW3SbyzQRFHqS0n0w7sgUBIy6vtxLGkfE/piMFkQ/c3qh3cVDg+o07Q9s0Ly2Fn/Qj
+         fsuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741602654; x=1742207454;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kNhM/0IjcjblchV98Qq8e/1t6zgAbQVQNq8rXKMpriY=;
+        b=lovOuE3B8mwi4r/Frrz75aH48n87ktkrwkdKkmge6enrk+PSoRtEWBGpIgEgoy3BHq
+         nCTIeYNbev7RhuP1Q6dydbQVE+XkbXXS3wcVpnv+9pWoKfY9wyEL4hqxOOnCF4QOM0iX
+         RrTxwnr2x608H/jcEI+qd0pyby9QftIbKLCBds32MZUL0Av8+E/opNnSGWhp0g177c1o
+         wjoWnFeM4Lar1NnNuZPr6GoYEJoQNNxji+bAdcpqUP3lnIUlGjxMfXMDvwQ661udAE4B
+         r7kiGFuRbngM8+SSPgBghgdOsHeXNwPk1MQ1JSzWELbbouZUvlzcbvH5tUA6NZdVoC+w
+         4A7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVaCJmVWWAZGGt7NVMikEy6+BRO4h0Rn9ZwGBaftmwn818ouy/BQOq7I/mkrgr9ujfdd0pHGxuRCNPxBAvO@vger.kernel.org, AJvYcCVqQvsvFG/dYcetrt8nWbruRixO1Is6zbIK/5mwA6avRHPbJHyoHk6W9TPqngwyFPqqRM2LT/41Zucl@vger.kernel.org, AJvYcCWRK4CHOruCOpPnw4+y0KiBW+oQ3HjAIKKJny9XiJKkeN6yR8e4jCQVe+JAQz2hqX5tO7JCkGdD89d7@vger.kernel.org, AJvYcCWTNMWcD/CbUhf//+4U2QCXm02idP8FCkhktA1nxYSR/WycLWkOUD/soyFLPI8j3cvYr5+BL4BgNakz@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeELg9YWD1sdET90gGOV80ZyT6KkM3/v1313+mzMzetCJje5IS
+	Q/kGPDC72Xn0OTnZq1o/8JqMYSukyyFm5BwIRrhN0FJqDAFErK4b
+X-Gm-Gg: ASbGncv8yBe6C8kaT2hZtXuT+so8xQ9uk7I+7arRw96IpfxzE2iCExhlnSQNeWclKs5
+	itobLAnQdx3nvnSCyzlxnBC3eZcIEAjkFpoo6Na/qSGEnanTU3V5ZN0jLpT4pyvKL7lHHeGUpXR
+	Mx3wFKiCvGfJNZNG+lQwkySqbIK5K9zgJdfcykaRYFnTFElpd54DRKaaofrhs5PJ7RCSVZA1inE
+	/EndJVCb39yDvPIKBSbzuqeBME1h7GTJPSFHdeX+99EOU77mR+RlU0pj9qFP5QASeT3ueht8jUL
+	uHGnfqYloG72B2w+T1ezLNFNj0Z+Y+nFP4PjujKd3w==
+X-Google-Smtp-Source: AGHT+IHOgY/2k2K6r8nbyooLCIqhLZNyi8g28UASQ2a6eAtRtlwzSxaLJolXF0bJ1EZNYwNFw8sjfA==
+X-Received: by 2002:a05:6402:518a:b0:5d9:82bc:ad06 with SMTP id 4fb4d7f45d1cf-5e5e22bf16amr15660909a12.3.1741602653855;
+        Mon, 10 Mar 2025 03:30:53 -0700 (PDT)
+Received: from Ansuel-XPS. ([85.119.46.8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c733f9d4sm6630840a12.10.2025.03.10.03.30.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 03:30:53 -0700 (PDT)
+Message-ID: <67cebf5d.a70a0220.fe6c9.6ad3@mx.google.com>
+X-Google-Original-Message-ID: <Z86_WkfgZk_HLWuy@Ansuel-XPS.>
+Date: Mon, 10 Mar 2025 11:30:50 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Guo Ren <guoren@kernel.org>, Yangyu Chen <cyy@cyyself.name>,
+	Ben Hutchings <ben@decadent.org.uk>, Felix Fietkau <nbd@nbd.name>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org, linux-mediatek@lists.infradead.org,
+	linux-usb@vger.kernel.org, upstream@airoha.com
+Subject: Re: [PATCH 03/13] dt-bindings: soc: airoha: add SCU SSR Serdes port
+ binding
+References: <20250309132959.19045-1-ansuelsmth@gmail.com>
+ <20250309132959.19045-4-ansuelsmth@gmail.com>
+ <20250310-ultraviolet-earthworm-of-honor-df114b@krzk-bin>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250310-rk3576-scmi-clocks-v1-2-e165deb034e8@collabora.com>
-References: <20250310-rk3576-scmi-clocks-v1-0-e165deb034e8@collabora.com>
-In-Reply-To: <20250310-rk3576-scmi-clocks-v1-0-e165deb034e8@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Heiko Stuebner <heiko@sntech.de>, 
- Detlev Casanova <detlev.casanova@collabora.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liang Chen <cl@rock-chips.com>, 
- Elaine Zhang <zhangqing@rock-chips.com>, 
- Finley Xiao <finley.xiao@rock-chips.com>, 
- Yifeng Zhao <yifeng.zhao@rock-chips.com>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250310-ultraviolet-earthworm-of-honor-df114b@krzk-bin>
 
-Downstream Linux, and consequently both downstream and mainline TF-A,
-all use a different set of clock IDs from mainline Linux. If we want to
-fiddle with these clocks through SCMI, we'll need to use the right IDs.
-If we don't do this we'll end up changing unrelated clocks all over the
-place.
+On Mon, Mar 10, 2025 at 08:54:14AM +0100, Krzysztof Kozlowski wrote:
+> On Sun, Mar 09, 2025 at 02:29:34PM +0100, Christian Marangi wrote:
+> > Add Airoha AN7581 SCU SSR Serdes port binding to define what mode is
+> > supported by each Serdes port. These special binding are needed to
+> > identify and provide the port mode from any user driver.
+> > 
+> > These modes are mutually exclusive and driver needs to correctly
+> > validate the current mode for the Serdes port in use.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  MAINTAINERS                              |  6 ++++++
+> >  include/dt-bindings/soc/airoha,scu-ssr.h | 24 ++++++++++++++++++++++++
+> 
+> This should be squashed with the binding for the device.
+>
 
-Change the clock IDs to the newly added SCMI clock IDs for the CPU and
-GPU nodes, which are currently the only ones using SCMI clocks. This
-fixes the terrible GPU performance, as we weren't reclocking it
-properly.
+I split them to mute checkpatch warning
 
-Fixes: 57b1ce903966 ("arm64: dts: rockchip: Add rk3576 SoC base DT")
-Reported-by: Jonas Karlman <jonas@kwiboo.se>
-Closes: https://libera.irclog.whitequark.org/linux-rockchip/2025-03-09#1741542223-1741542875;
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
- arch/arm64/boot/dts/rockchip/rk3576.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+"DT binding docs and includes should be a separate patch. See:
+Documentation/devicetree/bindings/submitting-patches.rst"
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index 8591065b575223a5eb2da70f723f16969aa2ecf7..1fddf298795e5c914a76d9779b6f8563ee15c8e3 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@ -111,7 +111,7 @@ cpu_l0: cpu@0 {
- 			reg = <0x0>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <485>;
--			clocks = <&scmi_clk ARMCLK_L>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_L>;
- 			operating-points-v2 = <&cluster0_opp_table>;
- 			#cooling-cells = <2>;
- 			dynamic-power-coefficient = <120>;
-@@ -124,7 +124,7 @@ cpu_l1: cpu@1 {
- 			reg = <0x1>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <485>;
--			clocks = <&scmi_clk ARMCLK_L>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_L>;
- 			operating-points-v2 = <&cluster0_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -135,7 +135,7 @@ cpu_l2: cpu@2 {
- 			reg = <0x2>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <485>;
--			clocks = <&scmi_clk ARMCLK_L>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_L>;
- 			operating-points-v2 = <&cluster0_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -146,7 +146,7 @@ cpu_l3: cpu@3 {
- 			reg = <0x3>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <485>;
--			clocks = <&scmi_clk ARMCLK_L>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_L>;
- 			operating-points-v2 = <&cluster0_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -157,7 +157,7 @@ cpu_b0: cpu@100 {
- 			reg = <0x100>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			clocks = <&scmi_clk ARMCLK_B>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_B>;
- 			operating-points-v2 = <&cluster1_opp_table>;
- 			#cooling-cells = <2>;
- 			dynamic-power-coefficient = <320>;
-@@ -170,7 +170,7 @@ cpu_b1: cpu@101 {
- 			reg = <0x101>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			clocks = <&scmi_clk ARMCLK_B>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_B>;
- 			operating-points-v2 = <&cluster1_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -181,7 +181,7 @@ cpu_b2: cpu@102 {
- 			reg = <0x102>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			clocks = <&scmi_clk ARMCLK_B>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_B>;
- 			operating-points-v2 = <&cluster1_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -192,7 +192,7 @@ cpu_b3: cpu@103 {
- 			reg = <0x103>;
- 			enable-method = "psci";
- 			capacity-dmips-mhz = <1024>;
--			clocks = <&scmi_clk ARMCLK_B>;
-+			clocks = <&scmi_clk SCMI_ARMCLK_B>;
- 			operating-points-v2 = <&cluster1_opp_table>;
- 			cpu-idle-states = <&CPU_SLEEP>;
- 		};
-@@ -932,7 +932,7 @@ power-domain@RK3576_PD_VO1 {
- 		gpu: gpu@27800000 {
- 			compatible = "rockchip,rk3576-mali", "arm,mali-bifrost";
- 			reg = <0x0 0x27800000 0x0 0x200000>;
--			assigned-clocks = <&scmi_clk CLK_GPU>;
-+			assigned-clocks = <&scmi_clk SCMI_CLK_GPU>;
- 			assigned-clock-rates = <198000000>;
- 			clocks = <&cru CLK_GPU>;
- 			clock-names = "core";
+But I think I always took it wrong and with "docs and includes" it's
+intended in a single patch.
+
+Ok will squash!
 
 -- 
-2.48.1
-
+	Ansuel
