@@ -1,126 +1,124 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6751E2629C
-	for <linux-clk@vger.kernel.org>; Tue, 11 Mar 2025 14:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB5D25E80A;
+	Tue, 11 Mar 2025 15:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741703777; cv=none; b=cDXHYJE4h/VcRg7HrOScE61uB2wf4aWB4tXK+XpPpB1tLHav+Y+EkPiOyGq6uKHrLhLkVo2MRb3Nq2dzXMG+l4HuaOwP5VN57lH2W+tE6gMM9YIszqKt7v/9FwNdSWa1EMsWmGEA3d/BcvmLWYV9V4BS680e/vfMPGZSE7N4+j8=
+	t=1741705350; cv=none; b=klVHx/ADM+Rp+zfuVMm/8LHGO0Wz7QAUD9cl0LkpVe/BCg+Akpp1TvE9xb6c0avUgua1do+pZ6R9TyuGuNoOphfelv6kPyi9yaq6iFhKNdHiVxC5zXrvS6WJFQ/UdTF7dai1vw1LAb1zyvnksI0JmKFT1uDof7IPV64HhUTJB/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741703777; c=relaxed/simple;
-	bh=6LVHLF6PwX8YsonPvmbJwU0JO6y743wuUzDiLPWIImE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OeIzrVoyUDg8RmRyqdRLuSbMOJ6OTj8qdH+AloaFf5WdBoASQ0oUi8zKVYOgUIq53a4AGpSlRk42FDMNxUf8K+iAOMNqKy6XS88Qn36+qDT3a0aVZ5AnJaxCmUyjZs9ouLJCIPAODykpfv6oFC4884WNdeaI/alkFOcP8aZKQg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Wlxoky82; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1741705350; c=relaxed/simple;
+	bh=Cy+71VcXCOOzs/J/43059Y8THTLHNg003tEovm84ml0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NbD3o4eoDuaUBkGEXAJe5JzUbW1bvTw4T60/n28R5OMDdgnQflSv1e2D2IjAV/hyeSAAnsZ+tH9NPQZyXEfns5Qq2YKvqLHTD0mK7vzKQSt8oUlhMq12p0yOaqfkzoPBNHDkbXK2rsyv62Rdw9PGTYbL563jEgKf3BoFRdKMoiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=PFkPUa2c; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Wlxoky82"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3912fdddf8fso2842493f8f.1
-        for <linux-clk@vger.kernel.org>; Tue, 11 Mar 2025 07:36:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741703774; x=1742308574; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QVGY1YdKpatvu9ORUu7u/Y2xJ4feOuJRGzkvoJubghM=;
-        b=Wlxoky821Hdf1+HDRFQI8GSJ+xfITZnxWkrT8O8QeqG3ei/oJBc4cHDaUYBGVON96a
-         uar/T/KwZh73HwHRHToJloBV8o3YON8SeC1ab+BsqH1ujIK8rtBPjE0m23ktlGtMix9y
-         BaNdnAxqgzuiJ2rAp++0s3xAcVGsBT6Zagy0XD9gQ46MHCp7rXe3Q33K4YAhZE2/QtWg
-         jxmZaF5k8YnWO1t4nZ1xvzNIJmh/UdU7mE/TSDb1O/3rw+ZSK7NiASx5wSnQFSbw//0h
-         H47AaCZhLYe3kUV2iAz+WdshLfx/RySlwsI52QXfZsJ7nGjStV+r8YnDg4E7QkoUPNh4
-         9bOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741703774; x=1742308574;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QVGY1YdKpatvu9ORUu7u/Y2xJ4feOuJRGzkvoJubghM=;
-        b=HwTCf8f0QcOS/cxkZKRYZDnyGuHuflzAT/aX6VocRYUL7/K9GeGGRkSbtvKyrzk9RA
-         vewL4t62qmVqtDbVeC2HuLWY9Y5KUNGhK5VH9VryX3mZUf+6FxaReX0u5/mzIGhoYd+O
-         r+dzm4xbXjryebPGT/4WeH4I8pIFutZIqoskqy7zO1Cve34NAYeJp2khQRrAHHuP0RKE
-         j2rcQ7+B2xFZZf4BtpjtgRBCPyGyJQfkKoj6y2LDz50EF3UuOHsuutDG0zIzkN/bOj2S
-         4nXC+F0yx8ccmT/zgjzbPqJdElRkj1cPcVp4+q9KcwTzc1ZvMQfJxV90jhv+4V+XmzID
-         2CVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUr09IBd5oYPcgJpPP2bvLRB3lWhSzpSZCu48X1oaG9/5FBrwLd9k3v0I7CrOwAi3WrkaLm/r5N/ks=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7s0QbAg9gcMl+MAdSB10zCM4VcGguYG/2NyJpevyaedx3VtCm
-	U1ofrNyxNqTr98pz1WW94OVxzWDxhmYuWFuKSyPZ5a4hMmOizclteukwsEw/8jo=
-X-Gm-Gg: ASbGncvBTsT5Jk8V3Jdl5P+z7xt/jO9w0Ux887RqBiLH/Or0IHXzjt/2gpuvG9vFsiG
-	XYISRjI0yO67e7U/oSFHKmaKhjlQKXNmoJlDwL36IibkxfUpvFPShrn+Mj+UA+PCqYdQJl1SV0c
-	KLaFricOwujLYdOhIc9X/efhbR7/EBqBSNMDH1aeXzdc0FPLfKmqnFMN5CaLDlUXgzSklNSgmU0
-	OKFz8sK0DIiAYeF1Z/BdHTXePEcofYNzQYgeXFzMW2DAmkuw6eR4QOe1xPNd+6iCs4M2RjmSsMQ
-	B7lbEDe8giOiLiKWAz4tt3JCVqNsMYaYKVy6Iv8IBjfXzyQVPnHkRn9SwQ==
-X-Google-Smtp-Source: AGHT+IErzBNORRKa85qMLnrTIo9THTPP0FLW0fdPXNcjP60zrb0rXKoRA/K5g0/ZRtEM4ho9Q+BqZA==
-X-Received: by 2002:a05:6000:1fa6:b0:38d:fede:54f8 with SMTP id ffacd0b85a97d-3926cb664eamr5073516f8f.16.1741703773763;
-        Tue, 11 Mar 2025 07:36:13 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfba888sm18559270f8f.16.2025.03.11.07.36.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 07:36:13 -0700 (PDT)
-Date: Tue, 11 Mar 2025 15:36:11 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] vsprintf: remove redundant and unused %pCn format
- specifier
-Message-ID: <Z9BKW_06nLAOzYfY@pathway.suse.cz>
-References: <20250311-vsprintf-pcn-v2-0-0af40fc7dee4@bootlin.com>
- <20250311-vsprintf-pcn-v2-2-0af40fc7dee4@bootlin.com>
+	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="PFkPUa2c"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2JDSu/sViV6MZ1MM5jcSmv9LPOd2pZ1vqlMF0+khSII=; b=PFkPUa2cAjL/euXKcSAQ/ea5f4
+	jTbwuHDIQsOq8nqjW1tGe4UYzjzUwEBUoyKVc6WsEZ1+6IKz98Srkj1Q2896+hxxf3WWD5jB9Pe7W
+	LgueAJYCHTs9ReqtlegmZ4CYplw2BPcw1o/buozYvZ7x+HxoYLj5m5RMSM8P2WWVlhInY5kr1ZhQv
+	eY/Mfgo+xDjiYgxKNJGB6fI7DmXdNfFOP9H9Te4MNnOkDEQ3Lo38xKP3gpGJRhLP2Mir41KRl498Y
+	g1LTnLA0ocqtk2/xujshWXpxQbBV3OH+Z/neaiPxBe1ounwdT3M8NWkVS/xOmet3fTVEFN76zIFmG
+	W2wXr59w==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:55876 helo=[192.168.0.142])
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <david@lechnology.com>)
+	id 1ts0dK-0000000040E-3v2h;
+	Tue, 11 Mar 2025 10:29:29 -0400
+Message-ID: <c540bd72-0d78-4e4f-a6f9-392166cc48c4@lechnology.com>
+Date: Tue, 11 Mar 2025 09:29:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250311-vsprintf-pcn-v2-2-0af40fc7dee4@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: davinci: remove support for da830
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250304133423.100884-1-brgl@bgdev.pl>
+From: David Lechner <david@lechnology.com>
+Content-Language: en-US
+Autocrypt: addr=david@lechnology.com; keydata=
+ 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
+In-Reply-To: <20250304133423.100884-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Tue 2025-03-11 10:21:23, Luca Ceresoli wrote:
-> %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
-> add %pC{,n,r} format specifiers for clocks") introducing them does not
-> clarify any intended difference. It can be assumed %pC is a default for
-> %pCn as some other specifiers do, but not all are consistent with this
-> policy. Moreover there is now no other suffix other than 'n', which makes a
-> default not really useful.
+On 3/4/25 7:34 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> All users in the kernel were using %pC except for one which has been
-> converted. So now remove %pCn and all the unnecessary extra code and
-> documentation.
+> This SoC has some leftover code all over the kernel but no boards are
+> supported anymore. Remove support for da830 from the davinci clock
+> driver. With it: remove the ifdefs around the data structures as the
+> da850 remains the only davinci SoC supported and the only user of this
+> driver.
 > 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+Acked-by: David Lechner <david@lechnology.com>
 
-Makes sense. Looks and works well, so:
-
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Tested-by: Petr Mladek <pmladek@suse.com>
-
-Daniel, if I get it correctly, you have already taken the 1st patch.
-Would you mind to take also this patch using the same tree, please?
-Otherwise, we would need to coordinate pull requests in the upcoming
-merge window ;-)
-
-Best Regards,
-Petr
