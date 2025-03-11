@@ -1,167 +1,113 @@
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA9221B9F4
-	for <linux-clk@vger.kernel.org>; Tue, 11 Mar 2025 09:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDD822A819
+	for <linux-clk@vger.kernel.org>; Tue, 11 Mar 2025 09:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741685717; cv=none; b=Lrtyj/4nKZ8hy0Xopk6JlDex/f1cX/YQaI4ZbXg+5gP83/oLwnuSQ7xW4FSwZS9DZZj+CuU0/x2Q/Mi4WFzo3WUXBLk/fNXJedvRvFSxqxf7Uxya5QGXyGVxslPB4UnQto2SIMVQImAbesEIRNR4b7hDI0uDMdZ1P+a7XiZfl28=
+	t=1741686119; cv=none; b=hj0DVL9PJN2bmpeOfExPJ8WQJDOPLQGSoQ32T8KLu9Kl7SP4MsqH9HiHC45NOi+zI9OL9yKQTe2lbpr7rzyWEMl5Cn3mObqz3caZ4VPm34f2d2vj1tne14jukHfPyrJlnhuPdspxBIcq1GpUXl9dWihclwswMgPXakasrFlUVlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741685717; c=relaxed/simple;
-	bh=ktS716Ut5UD+HH38uMLpPTCWkHMpybJEZhiqU304vTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R1WYfnQjbKxb6PJmpgljd1axWZ1MjLW+xAiiEc3PhNKXKeNdL2xUhFuJVIwVaQyGXYQzAM+DoW4Nc+4+LmVgaLzECL3p4LWUzUrXpKCs47Hp9+jk/n/NbaK2oD9osfk4MztsGGwE9dJvkVfoNz8VFvoePRvXSImPhXcwkZu1nYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aTWqcXAz; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1741686119; c=relaxed/simple;
+	bh=03Gv4s873UjI+xmcPzGntYsW1I0NmUQapHmHTtq49bk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EcROcIj10o+iHeqiZXfCAD9o+j06+qWldgmHECQscHCvcvmA0bjx/bna+CRzUTiWd+CSvmA33dxD9423IvcKqC4dQVeWWNeG8MNPP4qzPqwZardTOe8SklUeLUAOHTwp50Ajy0dpVoj6cwtrKL0T95r1BwFbwfSal1wCpFoi2yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v6Q5ovYJ; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aTWqcXAz"
-Message-ID: <aa840586-cd70-417f-82c2-bb887f337720@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741685711;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/wVsNKg9YkEQ7KSJyQziX/Pf5MNW/2LBII724NcKRvc=;
-	b=aTWqcXAzSWTgWXO+B8RX7iWZngEyO3a1jHoDvm0k0X7XvWTj3V6GECXGR3ooUXgbororde
-	6H+mxi8YqAjgzhuqWwr4p6ti7biIiW1JvnEB5yepdDfKJZLRgaXawAOIkgWvFgZr6j//J0
-	9a1fDrz5yhnkLIvSmHodJk0bhubB2uE=
-Date: Tue, 11 Mar 2025 17:34:58 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v6Q5ovYJ"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-390e3b3d3f4so2485136f8f.2
+        for <linux-clk@vger.kernel.org>; Tue, 11 Mar 2025 02:41:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741686116; x=1742290916; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FLzoATiFKr1B8iCGXJt123FaClKzJD6A9v143qispxo=;
+        b=v6Q5ovYJzPunj8VY7wwMWFl8qhj/RaI4OuoDQg9mfPiIHThZgkRU6NB1HMmhsx5E5i
+         lFsQRp45fFGyQDvo8zrrpjlsNB9wbTaoeE0kPWefw5CpkZFiAjorwSmx1YEVqT31zjYp
+         Z9VyxR14DoYH+dfJJe8lg0yuGVZQKpTQhS7nNB+m9TcxBcDc+KfYymka5QNS0nLI4THl
+         +MfzZkczQHCwpK2aqk2J+tMJvVXM81aCCEOtk3rE0YqfjV9lTXuRdARSSf7k7uF4tIiS
+         bB/+/7S5QKh/uM16F6gAQYAC3GeMmFWnJ3ZDN+hXYxZ6RTAF51XraOCVhpsL1nMbpxKi
+         IS/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741686116; x=1742290916;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FLzoATiFKr1B8iCGXJt123FaClKzJD6A9v143qispxo=;
+        b=GbuHwCGDroEarYsbrrLumXSi6bvogo/nC4OqXylqouerMZlbkeTwpQ5LNIKzD5i5pC
+         cmflwslHDrtmIQx759m88AZc5c6+QyQiqLDGkJtVRtQLRerEH8ArFFAKKNPkB4StWOZf
+         Dnp9sS3eGQ8E/vZ7iYQWeYasSLN3DvgE310ouBRiryLplIzZxlgnApspW444Gb2+Imlo
+         7Z4lX9FwsP8hOfpi0b8qmwczfnZd651BfrkqHVUoCYEiJGx4sAffzBESoa47JXHNUq0b
+         YO04IeD8lZnOoAorpO3fEJTut+QJDvAYnibObSPnh4TbRwc6jhbNeQQ8uBTPrr5zkpye
+         CGLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKfvHxuLLMcJSN8fmccnEzaKcM8egaynQcqHLIuv5YiWkMUu2iVDKgFF1fkWe9ZQmIhPKR/+g8Gzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0Z15U7G54XhSjIe5j6Bcq36XeW9bEGI6qGLxCSa/WotceHoYw
+	W52o3dSAnjH+HGI4+3iGlMfCjTvbw64PWky4a9RYOG8ONgQIrujn656apeEhLRr1QddHdRK/HgY
+	P
+X-Gm-Gg: ASbGncv4lYE7PhoAgTdy1TBnb78vWpnPfaDIixVg6oSyX9/d/pgzcvPiXcg3Zo+n4/l
+	SSNGzQ9mkfSEyYq3OhfMfJfTFU6ciUF3gAStV0SdU2Zn5h9ikTPJuZj0WSQXSJV17IJOWB0Pwvt
+	1gQqhnsu3aqYioupOGbJfGMnSSFmUQrOZaQcLbm5r8YFqS/Q8FqmWYyG0OR8hMgFN67xe/tBQX3
+	Ik8oXu3e8pveCycUToNYshbggMKEUKwusKDbORfz/z719nNgd5l2mXUvzWsmIITZENoFJ8QCSlD
+	Qqh8pp3KdvlDoxiMyyN81HU6CTCYuLQOe/k8CA8aMNE=
+X-Google-Smtp-Source: AGHT+IEdiLqVceheU3laOr68GSrQpdRVp3WLSzOWbWgbN9P+MXJtFbu6q15juGPjGglXL1E+FUFlQQ==
+X-Received: by 2002:a05:6000:2c7:b0:38f:451b:653c with SMTP id ffacd0b85a97d-39132d77a3bmr10037297f8f.7.1741686116146;
+        Tue, 11 Mar 2025 02:41:56 -0700 (PDT)
+Received: from hackbox.lan ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfdb9sm17427957f8f.27.2025.03.11.02.41.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 02:41:55 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: imx@lists.linux.dev,
+	NXP Linux Team <linux-imx@nxp.com>,
+	linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.15
+Date: Tue, 11 Mar 2025 11:41:40 +0200
+Message-Id: <20250311094140.722154-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/2] vsprintf: remove redundant and unused %pCn format
- specifier
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Petr Mladek <pmladek@suse.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
- Alex Shi <alexs@kernel.org>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20250311-vsprintf-pcn-v2-0-0af40fc7dee4@bootlin.com>
- <20250311-vsprintf-pcn-v2-2-0af40fc7dee4@bootlin.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20250311-vsprintf-pcn-v2-2-0af40fc7dee4@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-在 3/11/25 5:21 PM, Luca Ceresoli 写道:
-> %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
-> add %pC{,n,r} format specifiers for clocks") introducing them does not
-> clarify any intended difference. It can be assumed %pC is a default for
-> %pCn as some other specifiers do, but not all are consistent with this
-> policy. Moreover there is now no other suffix other than 'n', which makes a
-> default not really useful.
->
-> All users in the kernel were using %pC except for one which has been
-> converted. So now remove %pCn and all the unnecessary extra code and
-> documentation.
->
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.15
 
-Thanks,
+for you to fetch changes up to 06a61b5cb6a8638fa8823cd09b17233b29696fa2:
 
-Yanteng
+  clk: imx8mp: inform CCF of maximum frequency of clocks (2025-03-03 19:02:15 +0200)
 
->
-> ---
->
-> Changes in v2:
-> - update Chinese documentation (change acked by Yanteng Si <si.yanteng@linux.dev>)
-> ---
->   Documentation/core-api/printk-formats.rst                    |  3 +--
->   Documentation/translations/zh_CN/core-api/printk-formats.rst |  3 +--
->   lib/vsprintf.c                                               | 10 ++--------
->   3 files changed, 4 insertions(+), 12 deletions(-)
->
-> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-> index ecccc0473da9c10f45f2464566f690472c61401e..f3009e6ec80a864c330c8812efcd82c12f4066b3 100644
-> --- a/Documentation/core-api/printk-formats.rst
-> +++ b/Documentation/core-api/printk-formats.rst
-> @@ -571,9 +571,8 @@ struct clk
->   ::
->   
->   	%pC	pll1
-> -	%pCn	pll1
->   
-> -For printing struct clk structures. %pC and %pCn print the name of the clock
-> +For printing struct clk structures. %pC prints the name of the clock
->   (Common Clock Framework) or a unique 32-bit ID (legacy clock framework).
->   
->   Passed by reference.
-> diff --git a/Documentation/translations/zh_CN/core-api/printk-formats.rst b/Documentation/translations/zh_CN/core-api/printk-formats.rst
-> index bd36d35eba4eb124be43a66227059a30429e4135..96a917ecc93f2a4872784b6d8e3f98bcb9f5f737 100644
-> --- a/Documentation/translations/zh_CN/core-api/printk-formats.rst
-> +++ b/Documentation/translations/zh_CN/core-api/printk-formats.rst
-> @@ -523,9 +523,8 @@ clk结构体
->   ::
->   
->   	%pC	pll1
-> -	%pCn	pll1
->   
-> -用于打印clk结构。%pC 和 %pCn 打印时钟的名称（通用时钟框架）或唯一的32位
-> +用于打印clk结构。%pC 打印时钟的名称（通用时钟框架）或唯一的32位
->   ID（传统时钟框架）。
->   
->   通过引用传递。
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 56fe96319292674c9f79559cf78dd0d99d1a1f06..143d55cb1c12acac21a6c6bafd255437e878f280 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -1969,15 +1969,11 @@ char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
->   	if (check_pointer(&buf, end, clk, spec))
->   		return buf;
->   
-> -	switch (fmt[1]) {
-> -	case 'n':
-> -	default:
->   #ifdef CONFIG_COMMON_CLK
-> -		return string(buf, end, __clk_get_name(clk), spec);
-> +	return string(buf, end, __clk_get_name(clk), spec);
->   #else
-> -		return ptr_to_id(buf, end, clk, spec);
-> +	return ptr_to_id(buf, end, clk, spec);
->   #endif
-> -	}
->   }
->   
->   static
-> @@ -2382,8 +2378,6 @@ char *rust_fmt_argument(char *buf, char *end, void *ptr);
->    *      T    time64_t
->    * - 'C' For a clock, it prints the name (Common Clock Framework) or address
->    *       (legacy clock framework) of the clock
-> - * - 'Cn' For a clock, it prints the name (Common Clock Framework) or address
-> - *        (legacy clock framework) of the clock
->    * - 'G' For flags to be printed as a collection of symbolic strings that would
->    *       construct the specific value. Supported flags given by option:
->    *       p page flags (see struct page) given as pointer to unsigned long
->
+----------------------------------------------------------------
+i.MX clock changes for 6.15
+
+- Add missing AXI clock to the i.MX8MP AUDIOMIX in dt-bindings schema.
+- Fix DSP and OCRAM_A parent clocks in i.MX8MP AUDIOMIX clock provider.
+- Document vendor specific operating-mode property in i.MX8M clock
+  provider dt-bindings schema.
+- Apply overdrive/nominal constraints based on DT property in i.MX8MP
+  clock provider.
+
+----------------------------------------------------------------
+Ahmad Fatoum (2):
+      dt-bindings: clock: imx8m: document nominal/overdrive properties
+      clk: imx8mp: inform CCF of maximum frequency of clocks
+
+Laurentiu Mihalcea (2):
+      dt-bindings: clock: imx8mp: add axi clock
+      clk: clk-imx8mp-audiomix: fix dsp/ocram_a clock parents
+
+ .../devicetree/bindings/clock/imx8m-clock.yaml     |   8 ++
+ .../devicetree/bindings/clock/imx8mp-audiomix.yaml |  10 +-
+ drivers/clk/imx/clk-imx8mp-audiomix.c              |   6 +-
+ drivers/clk/imx/clk-imx8mp.c                       | 151 +++++++++++++++++++++
+ 4 files changed, 168 insertions(+), 7 deletions(-)
