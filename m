@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69352620DB;
-	Tue, 11 Mar 2025 18:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362F82620C3;
+	Tue, 11 Mar 2025 18:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716813; cv=none; b=qdhg9kj1HvFGFmD+Qlk/4oRMvTAPF0Zf4Mqq+57c9sKSpndBbbEzZPvQtBFFOmLwfL9/f38sLTpUsBDim0W+fv6PyGOZ01K1RoPfOd/Q27/f4x85Uluolsbj/GodsKYlVxK4eUAl2iS9Y1cIQ/M6oIYXtkLBYTQ+YXH4a3ASdhk=
+	t=1741717109; cv=none; b=I4BLcDlRgPcKoLfLAMbNEHOxFVv2bAZ5Lmcfnbz7Nb29Np+QG9afpY3Tuv7lJrP0DwMuYlgDNbCJZijhbvnVtHd6a598JaQlWmHV0eSkC32hGi7qzx14AG3XtxLfEUBj4CVzwqh0LDaKFdvHMni7hnp17UeyBV/MfHPpimrvhvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716813; c=relaxed/simple;
-	bh=rdG4W23KcTWMvPIDmswMTtwiZrFfXZ2nz7V1UtXCIG8=;
+	s=arc-20240116; t=1741717109; c=relaxed/simple;
+	bh=022RnomY3mAc+2RTtmJ6xcrKdVXRF9n9VsGw1okq6uQ=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=BfyKaCM3a99OAYC6YnP7wP8QFWdhqJ60XTgh7mitwc7KJm1RCBxJtcFNI7lCntDX/sp7KAZKqqIQZaqrLMnqjjI29taFmCKa8gQYsNYZqE3RuTjU6wYJYDtoimf13ZfEXl7NNcLOXPteR3wT6ANvL60RFPLoX6N0OGJKH9oc4Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e7ii9Ki5; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=jQ/Nx75mKI9TnvklFkxb9FNAYIfYwBIiqFTklDHYRKMmBJAtNfzhRZPK6+bsHnDoEJoULw1GXRlZ3fpAyCnmBYP1NZOgNX4QBff2XAR/h/ddxXmy+940k4AOMsPtuTPVYTypIHZWWMyD+Cy+qpZKmsCvQVnuCC7VgIHmrEl5EFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXr6HCno; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e7ii9Ki5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC861C4CEE9;
-	Tue, 11 Mar 2025 18:13:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXr6HCno"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5856BC4CEE9;
+	Tue, 11 Mar 2025 18:18:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741716813;
-	bh=rdG4W23KcTWMvPIDmswMTtwiZrFfXZ2nz7V1UtXCIG8=;
+	s=k20201202; t=1741717108;
+	bh=022RnomY3mAc+2RTtmJ6xcrKdVXRF9n9VsGw1okq6uQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=e7ii9Ki5c/a5sFPriRR26qTfgqFvMrxCxw6ZTDScyd8KG1fbu2YTy+s3gAzZjvKHC
-	 qtUgdLOjEHxAnT/G7zpya8pJT/QjByTCQqHae7uh57ZnBnU7JCnxaXP9Pt/cvf82ql
-	 lrl9eR86Jlma6H5Z3VKq/ejXlXR/rSTI9Ab70M41Uc1bZgkbzG6wnk16/A1O3IFTK4
-	 SNJvXXyDvTTANusWeBcEWrL06ymhW+kZl7WkDqqkVw3CxGUatSvXCzg1PY6GjjYlOr
-	 SVMW2dIjlhrogSbONz3im7cs0/u8I4b2Fo73ExMR8ZUUdQuPa72H8HVVoZKvp91cfx
-	 Ezqo24W9nKw0A==
-Message-ID: <135678b71cd2853fe55c5c5c6a6d3fcb.sboyd@kernel.org>
+	b=GXr6HCnovY5hjygoUZFISGN9FPq7MIzpO0SpbkZlWMT1RjfM+I+lHuMD0RFyhBRc8
+	 UsgK7jOw4MHDpTakAz9Xb8s9WQE0CWPa9vIkl8dPIfkNSnVxeZc7rcxsVcqwxT2Y2t
+	 +NT3kLYPZci1iyF9sYSsjNjGru5h/XmS+zOV1Hc8UaKep/DAWoV7x+EdN7T8W4KioB
+	 FLyYC1kR4HSnseTeGG8aJvKDxAH40OafZ1pKVTsZxD+HwVhJj3MgXa6hG66u/O/rrW
+	 r2x9kzs1Oh/dHdnSi8fizruSwEukkdfSBPtWxYfQB9+h+61u4CUS+qfcnoGsW5cQmZ
+	 gKF2jlWmHkmpA==
+Message-ID: <c6cb66744fc8986bc997d9e9e03de12f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,36 +35,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250309175147.6672-1-krzysztof.kozlowski@linaro.org>
-References: <20250309175147.6672-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.15
+In-Reply-To: <20250311094140.722154-1-abel.vesa@linaro.org>
+References: <20250311094140.722154-1-abel.vesa@linaro.org>
+Subject: Re: [GIT PULL] clk: imx: Updates for v6.15
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 11 Mar 2025 11:13:30 -0700
+Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette <mturquette@baylibre.com>
+Date: Tue, 11 Mar 2025 11:18:26 -0700
 User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Quoting Krzysztof Kozlowski (2025-03-09 10:51:47)
-> Hi,
->=20
-> New clk drivers for Samsung SoC.  This pull includes drivers which you
-> commented later and pointed out few issues.  Pointed issues are in all Sa=
-msung
-> clk drivers and the ones here just copy existing patterns:
->=20
-> 1. Headers: I fixed it for new and existing drivers and this pull request
-> includes the fixes.
-> 2. device_get_match_data(): I still wait for contributors response. If th=
-ey do
-> not respond, I will fix it for next cycle.
-> 3. refdata and platform_driver_probe: I tried fixing it, but incomplete a=
-nd
-> need to investigate more.
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
+Quoting Abel Vesa (2025-03-11 02:41:40)
 > The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
 5b:
 >=20
@@ -72,13 +52,13 @@ nd
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.15
+>   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
+clk-imx-6.15
 >=20
-> for you to fetch changes up to 017bbc922a09630579ff7b5b314fb186b8c0efcf:
+> for you to fetch changes up to 06a61b5cb6a8638fa8823cd09b17233b29696fa2:
 >=20
->   clk: samsung: Drop unused clk.h and of.h headers (2025-03-07 16:01:22 +=
-0100)
+>   clk: imx8mp: inform CCF of maximum frequency of clocks (2025-03-03 19:0=
+2:15 +0200)
 >=20
 > ----------------------------------------------------------------
 
