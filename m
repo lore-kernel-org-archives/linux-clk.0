@@ -1,65 +1,98 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362F82620C3;
-	Tue, 11 Mar 2025 18:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6A2263C82;
+	Tue, 11 Mar 2025 18:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741717109; cv=none; b=I4BLcDlRgPcKoLfLAMbNEHOxFVv2bAZ5Lmcfnbz7Nb29Np+QG9afpY3Tuv7lJrP0DwMuYlgDNbCJZijhbvnVtHd6a598JaQlWmHV0eSkC32hGi7qzx14AG3XtxLfEUBj4CVzwqh0LDaKFdvHMni7hnp17UeyBV/MfHPpimrvhvQ=
+	t=1741717487; cv=none; b=KL0prH6uU0f19RKFH/tL9qXiR/1NvK4aat1pBEu3fESomAXsY58gB7g/bSXQSHpuND0l1DcsEGbF0usuMpkw65yqmKXAVS/FXNSNJTSvrzmBBBuncf7IpWn1szb3nPTXujf+1BCo03fsUjb7x4bAUeYk5544t0mcEXvcB2/yyQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741717109; c=relaxed/simple;
-	bh=022RnomY3mAc+2RTtmJ6xcrKdVXRF9n9VsGw1okq6uQ=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=jQ/Nx75mKI9TnvklFkxb9FNAYIfYwBIiqFTklDHYRKMmBJAtNfzhRZPK6+bsHnDoEJoULw1GXRlZ3fpAyCnmBYP1NZOgNX4QBff2XAR/h/ddxXmy+940k4AOMsPtuTPVYTypIHZWWMyD+Cy+qpZKmsCvQVnuCC7VgIHmrEl5EFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXr6HCno; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXr6HCno"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5856BC4CEE9;
-	Tue, 11 Mar 2025 18:18:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741717108;
-	bh=022RnomY3mAc+2RTtmJ6xcrKdVXRF9n9VsGw1okq6uQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GXr6HCnovY5hjygoUZFISGN9FPq7MIzpO0SpbkZlWMT1RjfM+I+lHuMD0RFyhBRc8
-	 UsgK7jOw4MHDpTakAz9Xb8s9WQE0CWPa9vIkl8dPIfkNSnVxeZc7rcxsVcqwxT2Y2t
-	 +NT3kLYPZci1iyF9sYSsjNjGru5h/XmS+zOV1Hc8UaKep/DAWoV7x+EdN7T8W4KioB
-	 FLyYC1kR4HSnseTeGG8aJvKDxAH40OafZ1pKVTsZxD+HwVhJj3MgXa6hG66u/O/rrW
-	 r2x9kzs1Oh/dHdnSi8fizruSwEukkdfSBPtWxYfQB9+h+61u4CUS+qfcnoGsW5cQmZ
-	 gKF2jlWmHkmpA==
-Message-ID: <c6cb66744fc8986bc997d9e9e03de12f.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1741717487; c=relaxed/simple;
+	bh=X/kifDF7vVOvdHV/s2HFBd/9y6wRS9DpCSIfNvNZK1I=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Egv+eUEkm4/rbKkXyiaiY9j/GkjYKrJyz5ZQ9wCsG98Y88/WeDGCWdC02c4FU6GAVM8eRViqGLzWzEILaV/VlbLolz44XgTB/j7U4p4+hfcKqq9Wkj6u10bjYndsmIFskRdzsaaoXYf2TGE89prWI6tVSv3qxa9MWfHqCR6Vm+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA252C4CEEC;
+	Tue, 11 Mar 2025 18:24:46 +0000 (UTC)
+Received: from wens.tw (localhost [127.0.0.1])
+	by wens.tw (Postfix) with ESMTP id 6624F5FA01;
+	Wed, 12 Mar 2025 02:24:43 +0800 (CST)
+From: Chen-Yu Tsai <wens@csie.org>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Andre Przywara <andre.przywara@arm.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+In-Reply-To: <20250307002628.10684-1-andre.przywara@arm.com>
+References: <20250307002628.10684-1-andre.przywara@arm.com>
+Subject: Re: [PATCH v4 00/14] clk: sunxi-ng: add A523 clock support
+Message-Id: <174171748337.1740144.15952522850275241981.b4-ty@csie.org>
+Date: Wed, 12 Mar 2025 02:24:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250311094140.722154-1-abel.vesa@linaro.org>
-References: <20250311094140.722154-1-abel.vesa@linaro.org>
-Subject: Re: [GIT PULL] clk: imx: Updates for v6.15
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette <mturquette@baylibre.com>
-Date: Tue, 11 Mar 2025 11:18:26 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Quoting Abel Vesa (2025-03-11 02:41:40)
-> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
-5b:
->=20
->   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
-clk-imx-6.15
->=20
-> for you to fetch changes up to 06a61b5cb6a8638fa8823cd09b17233b29696fa2:
->=20
->   clk: imx8mp: inform CCF of maximum frequency of clocks (2025-03-03 19:0=
-2:15 +0200)
->=20
-> ----------------------------------------------------------------
+On Fri, 07 Mar 2025 00:26:14 +0000, Andre Przywara wrote:
+> this is the fourth drop of the series introducing basic clock support for
+> the Allwinner A523 family of SoCs, comprising A523, A527, T527, H728. [1]
+> This times just a small rename of a macro name, and fixing the DT
+> binding, where the separate patches for the two CCUs got merged into
+> one. For a more detailed changelog, see below.
+> 
+> *************
+> Please note that the clock numbers changed compared to v1 and v2, (but
+> not against v3) so DTs from that older era cannot be used anymore with
+> this driver: you have to update the DTB. Just copying the binding header
+> and recompiling the DTB should do the trick, since the symbols stayed
+> mostly the same, at least as far they are used in the basic DTs we use
+> today.
+> *************
+> 
+> [...]
 
-Thanks. Pulled into clk-next
+Applied to clk-for-6.15 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
+
+[01/14] clk: sunxi-ng: mp: introduce dual-divider clock
+        commit: af7a221c12137271e8c31bc0c205ef4c57e89b4c
+[02/14] clk: sunxi-ng: mp: provide wrappers for setting feature flags
+        commit: 24ad1a7e8a3eca04dfe225b3e7935ab4ec326bb8
+[03/14] clk: sunxi-ng: Add support for update bit
+        commit: 38ea575784d3121b9c2e4c0bf425bc669e1c5e1b
+[04/14] dt-bindings: clk: sunxi-ng: document two Allwinner A523 CCUs
+        commit: 17bed1817f11b7d3c4ea0b38254f1bab78531a3d
+[05/14] clk: sunxi-ng: Add support for the A523/T527 CCU PLLs
+        commit: 04f6ff49525a8ba8ef3297de3e1a0e15ea3f5102
+[06/14] clk: sunxi-ng: a523: Add support for bus clocks
+        commit: 2d47dae9398135a48b58da9b059c23027b0e345e
+[07/14] clk: sunxi-ng: a523: add video mod clocks
+        commit: 4b759de121c46c693b61d6a22bf77d62333838e9
+[08/14] clk: sunxi-ng: a523: add system mod clocks
+        commit: 9bc061e57b4d97e187a767e45bff06b63f2a3126
+[09/14] clk: sunxi-ng: a523: add interface mod clocks
+        commit: dd19c52e686eb9f66816cd55fddfae8c7be2e6ea
+[10/14] clk: sunxi-ng: a523: add USB mod clocks
+        commit: 5fd7421770fb31a1ec35dd2400a849598466ac3b
+[11/14] clk: sunxi-ng: a523: remaining mod clocks
+        commit: 680f52d723e2ee9d97d167040eacc6a3af0b9cda
+[12/14] clk: sunxi-ng: a523: add bus clock gates
+        commit: 4548c0414839989be821e106b5128d5e7e13f2a4
+[13/14] clk: sunxi-ng: a523: add reset lines
+        commit: 9c8d960c13ab41c7e678eab5396b9258eaf8a159
+[14/14] clk: sunxi-ng: add support for the A523/T527 PRCM CCU
+        commit: 575464821eb0f72c86d93794a79900a853b256b5
+
+Best regards,
+-- 
+Chen-Yu Tsai <wens@csie.org>
+
