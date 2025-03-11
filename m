@@ -1,87 +1,70 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF672620EB;
-	Tue, 11 Mar 2025 17:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2B11D5ADC;
+	Tue, 11 Mar 2025 17:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741713666; cv=none; b=MyUm0L3+w/xTzkffXUo+iLbSuGk+W0iYyNiKWGvbNfvtEbEo5WBH0MrE6Kt+3GbfTA8IxcGfuoTCl5fTqFuMo9MjcX1AwzLYVL2hyQNoQan64+K6FWLbuGwm/4S3ofCA0joJrgcPCwr43opz6jZ3lDbGHWZWJAAruRFdWgksKi4=
+	t=1741715445; cv=none; b=eGcELU9barM16+AzOls1hzylAWDdVJFD2UYBhntAMXC3C0X+4wyENwX4wDqIN7XLsocc8lsbzpgHzDUyrXEmPntisi5v3q8gl10xplrWV0lCeTJVJPc1aUlkDFFQYt9QaOA99keSOQoOjsIUgFbbobee/lzb3P82sYBL0l1ylWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741713666; c=relaxed/simple;
-	bh=j/ih8rqykXlfvr4wDQtIJsf0OUfZm5pMBVky+N7i0ZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DsMZxQcN+JhH6CEDCPnoqZJThZRNHlHhckXzlDJSLo6se9EgKTWYFsBcLJ3gSZD/ViPa9JX5QEMPE2ZpMp/TX9mIYBhtJuV8bB6imgszhp853xvSms2oJPwK8GGbx8D+pXti9BY5kEg8EibEPjrw8FNeK/JM0h44T/9pQT+pgT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBcUTIAZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741715445; c=relaxed/simple;
+	bh=kLDi5hF86QZHs0p/61H7Td0DURnQ7im8mU8C1Zlw5zc=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=DuzSIC+6N728ri5fpQUQUKtD5M+eTL0MAGioekQ3oS3+dEXG/epiV2lUB8kG7d1xb7ELdP+5nE70Q1r0AbKZ7Ic5lZ29cosVTerjrqbbq/4+j7EBNjyyIo0BcXtglMELA7shNdUNN6/od9glHKhnH5isD6PbFZYFkjgkHKJAxO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kx3NZIpj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBcUTIAZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76502C4CEE9;
-	Tue, 11 Mar 2025 17:21:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kx3NZIpj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B995C4CEE9;
+	Tue, 11 Mar 2025 17:50:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741713665;
-	bh=j/ih8rqykXlfvr4wDQtIJsf0OUfZm5pMBVky+N7i0ZA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rBcUTIAZ2CvLD+/K/Mxe6qT1pABS8vM3u3BIG7Ywu3U5ybndu6p/hp4p5v0r6xbfP
-	 HAUH+AaL61wYeV3wf6ZJyGtVUmgFd3Wp7U9D32Iy/eSuqXBGpQ42ogzxGb07tegxzh
-	 ixEzffwd56jZflL473kvkScK7mTXDBb5xkgmDKqMuD0tVpvDGnQJ2SVqeRz6O7M3zr
-	 cIgK5m351SsE46SMQFtalG6F78ySBpzMdT5SvaOq2IsaC6KolrqmeJMPzWYeha5ZGe
-	 mqb6LimbAVrBb8kAznqC3LvTbCd3EVG/vPEde+TGMwHmP9rrd8IqFyE8wH3YVO3Eu0
-	 K6beb6flNG40w==
-Date: Tue, 11 Mar 2025 12:21:03 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-sunxi@lists.linux.dev,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 04/14] dt-bindings: clk: sunxi-ng: document two
- Allwinner A523 CCUs
-Message-ID: <174171366302.3801768.11391725958696311975.robh@kernel.org>
-References: <20250307002628.10684-1-andre.przywara@arm.com>
- <20250307002628.10684-5-andre.przywara@arm.com>
+	s=k20201202; t=1741715444;
+	bh=kLDi5hF86QZHs0p/61H7Td0DURnQ7im8mU8C1Zlw5zc=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=kx3NZIpjCvLI2hwgQQoYXNSbKXDaKKrlYc/uCkvVV7Au3BREVHUEsJCedXDxXcDQy
+	 qqBuUAmxNnlFWtF1UJCjNKqXSpCdqSbe1mJKLlMP9KNABs3NeJc1MUDm25QdgGLl4r
+	 dogi2SccbC44QbWPOC8V7MJVAaHDX+JP8AKIz/9nfGTzWMM43Go+7m20GhHEYrYjpZ
+	 0qoKTDlBOBKSuYTjK5262Dz20+vzBxL+HVq5fX5z6pjxmjMunPAO0L6NE+XLtCR2I/
+	 /px7Zu+XMgfpSrXVw4wHkMbR09nGaWFK/PgmqtMwRqb4uyWX1k9+nX9P8cvOv7LBT4
+	 n2Embdqv9zxKw==
+Message-ID: <899b71724428aaa16d424f54d5b1558b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307002628.10684-5-andre.przywara@arm.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250310191142.1208155-1-andersson@kernel.org>
+References: <20250310191142.1208155-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock fix for v6.14
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date: Tue, 11 Mar 2025 10:50:42 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
+Quoting Bjorn Andersson (2025-03-10 12:11:41)
+>=20
+> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
+5b:
+>=20
+>   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-fixes-for-6.14
+>=20
+> for you to fetch changes up to 787289a1d13d50ff4ce0f496947f8817ef3fdea9:
+>=20
+>   clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARENT on byte in=
+tf parent (2025-02-26 08:57:46 -0600)
+>=20
+> ----------------------------------------------------------------
+> Qualcomm clock fix for v6.14
+>=20
+> Avoid propagating rate changes for the MDSS byte intf clocks on SM8750,
+> to avoid changing the already configured clocks.
 
-On Fri, 07 Mar 2025 00:26:18 +0000, Andre Przywara wrote:
-> The Allwinner A523/T527 SoCs have four CCUs, this adds the binding for
-> the main and the PRCM R-CCU.
-> 
-> The source clock list differs in some annoying details, and folding this
-> into the existing Allwinner CCU clock binding document gets quite
-> unwieldy, so create a new document for these CCUs.
-> Add the new compatible string, along with the required input clock
-> lists. This conditionally describes the input clock lists, to make
-> adding support for the other two CCUs easier.
-> 
-> Also add the DT binding headers, listing all the clocks with their ID
-> numbers.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  .../clock/allwinner,sun55i-a523-ccu.yaml      | 103 ++++++++++
->  include/dt-bindings/clock/sun55i-a523-ccu.h   | 189 ++++++++++++++++++
->  include/dt-bindings/clock/sun55i-a523-r-ccu.h |  37 ++++
->  include/dt-bindings/reset/sun55i-a523-ccu.h   |  88 ++++++++
->  include/dt-bindings/reset/sun55i-a523-r-ccu.h |  25 +++
->  5 files changed, 442 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
->  create mode 100644 include/dt-bindings/clock/sun55i-a523-ccu.h
->  create mode 100644 include/dt-bindings/clock/sun55i-a523-r-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun55i-a523-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun55i-a523-r-ccu.h
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+I already picked this up to clk-fixes a couple weeks ago.
