@@ -1,215 +1,99 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A35260A32;
-	Tue, 11 Mar 2025 18:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3676A2620C3
+	for <linux-clk@vger.kernel.org>; Tue, 11 Mar 2025 18:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716164; cv=none; b=E3vNxAW9EH/j5gZAiRX0rW9TUBYssSo2aQS3ZzLaIvfkGr+MuS1CQscSl1UWkeJIt0SszcqDXlyxsdMFtvK9tJLXRdp7sUhT+61ulD7Exo8OPv+gQYv/gf16DvH6jUKtq/vYUK6krRX3/bnUrhcXNedX4SoCv2twHlSu0hSCjoY=
+	t=1741716353; cv=none; b=PZt/uTIRNwIMZ29kS7F6LO+UtEkGekd1xCZaFpquSdQ/qDdlPM9lt9u+GDFZTsLLxoM85BxEE4i0Nlv2LYAo9d18LEXbQbVb2i0DJObREBnW71m9p/ZWWcO5ahaaPkeofknX93xsVMwjtffmIwxjBJro/QIBZJ8u3wzPsKwtMMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716164; c=relaxed/simple;
-	bh=cJJ60I0voD1FU/MBcN/l1RUYb420JRiuQNZp6VwoIRw=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Dce4SfwKg1Ffm1bx/cuySC1MuZElolWEXzAyyg7ge6oWLYUgHBofMxWcY4HG0Vf4jhF3xuLacE8y+AARQ+llLn138mff4lf92Kz4iiGaRasH0vHYy9z7e2CQdudXXzLspWQLKtGFrpDYLHAqCJlPhnQaFvY7UGHj3cb6ekg50tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=Y7aVSKvC; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1741716353; c=relaxed/simple;
+	bh=UiJD4WfkyLfCbR2ZJLLU8WXPTcPUoC5Ue3GNIH9PRo8=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=NLzCQBMtd0NzKcyGPLx2qsWFUxdN/BJQpyf4Qzdf8QfXFf7TwtWdMOcc+MPkBRdguBuCdMM1lOWu5dnFs993LwniUs5yTwADMpMqIp4dj6H0C8Q1w8TaqAsuXc2wvqzThGdlUE7J/EOYsqs/+bqlfF8nC7Jaw5ha2DPy4BIVv+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjA+qXP9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Y7aVSKvC"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=From:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References;
-	bh=sfOzXF32SVgBzw0bop+7o2FnHha6RNF67mlrgAvS+p0=; b=Y7aVSKvCLCiDDigNnsoRSbI2F/
-	Id9YZtVfW86h3pv411HtwRrhGQ2AXkz3XtB2Nn9pygSPDm7xYhxaCSQamdwzB4WJLhFMUlMH8WOnY
-	THKqurYoyiHy8q1DCp+GqdiuJ9717FpsQLHg2wCSrqN/2Ow+TDOgvyMftSjnxDjQQhy1erj30WFMX
-	ONwDdyTwFTW/RTXSb/XYmxo45TLxVuh0tUgGnn6jYrm5Pyuwl/xdUjB+eZ6tJkydTrBTbYdQACbjd
-	8HjJ2fTvEQrZCYxLpBmJQsOVbe01e8bg8wNmNAJNo28gBhdUK5EKHJwy0/6QoteGfNX+gWTNtu0D6
-	wZ0gt7Pg==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	tony@atomide.com,
-	andreas@kemnade.info,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: clock: ti: Convert ti-clkctrl.txt to json-schema
-Date: Tue, 11 Mar 2025 19:02:15 +0100
-Message-Id: <20250311180215.173634-1-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjA+qXP9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 016F2C4CEE9;
+	Tue, 11 Mar 2025 18:05:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741716353;
+	bh=UiJD4WfkyLfCbR2ZJLLU8WXPTcPUoC5Ue3GNIH9PRo8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=AjA+qXP9Ju/93iEYW8zIT5GUGWy9J4D3JM44IsC5ht6nUGIvPwqPO6JJxu9ejSwpr
+	 T2A5rrRI8U0/AOHDvZmFh1hfrz1dUtjEpcXBMzphk6zEcWcoZsMLoeK9mPl9Hz9lnT
+	 9aUn/maga/AM6A31ExMIX5SNn+v8+URTXAHWc0OgggVaVhJT7kGl4AIvBtLtnyzL9q
+	 zF+OrOjIwW4L7qpMpAmWHQrR33/4uVE8I0EIBQcg2Bimb2oVaKio1eVKEknU9Xt3kW
+	 KYw5FxiEkOnMlGiP0ToOyxRstHpbdg09DkjPI9B7m+rxbGKuYnCXRyRV70zwMF6Q4m
+	 Fd3TyVdbwVqrA==
+Message-ID: <33a5e73e9c3919dd0554f9dcbee8b733.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <8574162.T7Z3S40VBb@phil>
+References: <8574162.T7Z3S40VBb@phil>
+Subject: Re: [GIT PULL] Rockchip clock changes for 6.15 #1
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+Date: Tue, 11 Mar 2025 11:05:50 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Convert the TI clkctrl clock device tree binding to json-schema.
-Specify the creator of the original binding as a maintainer.
+Quoting Heiko Stuebner (2025-03-08 10:23:39)
+> Hi Mike, Stephen,
+>=20
+> please find below a pull-request with Rockchip clock change for 6.15
+> The new year started with a flurry of activity it seems :-) .
+>=20
+>=20
+> Please pull.
+>=20
+> Thanks
+> Heiko
+>=20
+>=20
+> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
+5b:
+>=20
+>   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
+tags/v6.15-rockchip-clk1
+>=20
+> for you to fetch changes up to f863d4cc79a7e2f8c734d1fac84dc275805f41c7:
+>=20
+>   clk: rockchip: Add clock controller for the RK3562 (2025-03-02 17:51:51=
+ +0100)
+>=20
+> ----------------------------------------------------------------
 
-reg property is used mostly with one item, in am3xxx also with
-an arbitrary number of items, so divert from the original binding
-specifying two (probably meaning one address and one size).
-The consumer part of the example is left out because the full consumer
-node would be needed.
+Thanks. Pulled into clk-next
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
-Changes in V2:
-- additional maintainer
-- remove txt binding
-- dual licensing
+Did you see this warning?
 
- .../devicetree/bindings/clock/ti,clkctrl.yaml | 65 +++++++++++++++++++
- .../devicetree/bindings/clock/ti-clkctrl.txt  | 63 ------------------
- 2 files changed, 65 insertions(+), 63 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-
-diff --git a/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml b/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
-new file mode 100644
-index 0000000000000..49787550ce450
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
-@@ -0,0 +1,65 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti,clkctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Texas Instruments clkctrl clock
-+
-+maintainers:
-+  - Tony Lindgren <tony@atomide.com>
-+  - Andreas Kemnade <andreas@kemnade.info>
-+
-+description: |
-+  Texas Instruments SoCs can have a clkctrl clock controller for each
-+  interconnect target module. The clkctrl clock controller manages functional
-+  and interface clocks for each module. Each clkctrl controller can also
-+  gate one or more optional functional clocks for a module, and can have one
-+  or more clock muxes. There is a clkctrl clock controller typically for each
-+  interconnect target module on omap4 and later variants.
-+
-+  The clock consumers can specify the index of the clkctrl clock using
-+  the hardware offset from the clkctrl instance register space. The optional
-+  clocks can be specified by clkctrl hardware offset and the index of the
-+  optional clock.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,clkctrl
-+      - ti,clkctrl-l4-cfg
-+      - ti,clkctrl-l4-per
-+      - ti,clkctrl-l4-secure
-+      - ti,clkctrl-l4-wkup
-+
-+  "#clock-cells":
-+    const: 2
-+
-+  clock-output-names:
-+    maxItems: 1
-+
-+  reg:
-+    minItems: 1
-+    maxItems: 8 # arbitrary, should be enough
-+
-+required:
-+  - compatible
-+  - "#clock-cells"
-+  - clock-output-names
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    bus {
-+      #address-cells = <1>;
-+      #size-cells = <1>;
-+
-+      clock@20 {
-+        compatible = "ti,clkctrl";
-+        clock-output-names = "l4_per";
-+        reg = <0x20 0x1b0>;
-+        #clock-cells = <2>;
-+      };
-+    };
-diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-deleted file mode 100644
-index d20db7974a383..0000000000000
---- a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-+++ /dev/null
-@@ -1,63 +0,0 @@
--Texas Instruments clkctrl clock binding
--
--Texas Instruments SoCs can have a clkctrl clock controller for each
--interconnect target module. The clkctrl clock controller manages functional
--and interface clocks for each module. Each clkctrl controller can also
--gate one or more optional functional clocks for a module, and can have one
--or more clock muxes. There is a clkctrl clock controller typically for each
--interconnect target module on omap4 and later variants.
--
--The clock consumers can specify the index of the clkctrl clock using
--the hardware offset from the clkctrl instance register space. The optional
--clocks can be specified by clkctrl hardware offset and the index of the
--optional clock.
--
--For more information, please see the Linux clock framework binding at
--Documentation/devicetree/bindings/clock/clock-bindings.txt.
--
--Required properties :
--- compatible : shall be "ti,clkctrl" or a clock domain specific name:
--	       "ti,clkctrl-l4-cfg"
--	       "ti,clkctrl-l4-per"
--	       "ti,clkctrl-l4-secure"
--	       "ti,clkctrl-l4-wkup"
--- clock-output-names : from common clock binding
--- #clock-cells : shall contain 2 with the first entry being the instance
--		 offset from the clock domain base and the second being the
--		 clock index
--- reg : clock registers
--
--Example: Clock controller node on omap 4430:
--
--&cm2 {
--	l4per: cm@1400 {
--		cm_l4per@0 {
--			cm_l4per_clkctrl: clock@20 {
--				compatible = "ti,clkctrl";
--				clock-output-names = "l4_per";
--				reg = <0x20 0x1b0>;
--				#clock-cells = <2>;
--			};
--		};
--	};
--};
--
--Example: Preprocessor helper macros in dt-bindings/clock/ti-clkctrl.h
--
--#define OMAP4_CLKCTRL_OFFSET		0x20
--#define OMAP4_CLKCTRL_INDEX(offset)	((offset) - OMAP4_CLKCTRL_OFFSET)
--#define MODULEMODE_HWCTRL		1
--#define MODULEMODE_SWCTRL		2
--
--#define OMAP4_GPTIMER10_CLKTRL		OMAP4_CLKCTRL_INDEX(0x28)
--#define OMAP4_GPTIMER11_CLKTRL		OMAP4_CLKCTRL_INDEX(0x30)
--#define OMAP4_GPTIMER2_CLKTRL		OMAP4_CLKCTRL_INDEX(0x38)
--...
--#define OMAP4_GPIO2_CLKCTRL		OMAP_CLKCTRL_INDEX(0x60)
--
--Example: Clock consumer node for GPIO2:
--
--&gpio2 {
--       clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 0
--		 &cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 8>;
--};
--- 
-2.39.5
-
+drivers/clk/rockchip/rst-rk3562.c:21:57: error: initialized field overwritt=
+en [-Werror=3Doverride-init]
+   21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x20000*=
+4 + reg * 16 + bit)
+      |                                                         ^
+drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'RK356=
+2_DDRCRU_RESET_OFFSET'
+  266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/clk/rockchip/rst-rk3562.c:21:57: note: (near initialization for 'rk=
+3562_register_offset[173]')
+   21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x20000*=
+4 + reg * 16 + bit)
+      |                                                         ^
+drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'RK356=
+2_DDRCRU_RESET_OFFSET'
+  266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
