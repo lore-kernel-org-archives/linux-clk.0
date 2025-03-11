@@ -1,73 +1,215 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25045262813;
-	Tue, 11 Mar 2025 17:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A35260A32;
+	Tue, 11 Mar 2025 18:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741715730; cv=none; b=tIibUlYSGo1a9CJP9CLBjgrnbwDVKtpWzkyL+OZytJ6QOYmzZdZSJpsw3fsYR59asbpY7jesUnK/mxr/lXIcbieiXn6Qesp0EwnORvsQ/g2nNs5R2VXhwXX1feiMTDaYCA7tSim5jHETg04zgWO6e5s8WaXDls9uo45Sq/qIA+4=
+	t=1741716164; cv=none; b=E3vNxAW9EH/j5gZAiRX0rW9TUBYssSo2aQS3ZzLaIvfkGr+MuS1CQscSl1UWkeJIt0SszcqDXlyxsdMFtvK9tJLXRdp7sUhT+61ulD7Exo8OPv+gQYv/gf16DvH6jUKtq/vYUK6krRX3/bnUrhcXNedX4SoCv2twHlSu0hSCjoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741715730; c=relaxed/simple;
-	bh=Rz9lyXxmaf/uzAfEKbd8SJdVtz9OIb9oURg/10eXquA=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=NTFSiGaiU/SFMskHbQFv/L7Y8YhLwyUoKao0RNWqLwphwkBb4heu4UdjW9tDqLkhXYn5YsuQ5BeMpB8YsIXMjai6qC2QObwEmbmvJ2vaMkk6+ZMkFkRW8TZptIYRjSa/sQCtIPaYW+OD2vS29YUA/ObDL2B16vuDToCIGsZNAig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/HOHbgc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741716164; c=relaxed/simple;
+	bh=cJJ60I0voD1FU/MBcN/l1RUYb420JRiuQNZp6VwoIRw=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Dce4SfwKg1Ffm1bx/cuySC1MuZElolWEXzAyyg7ge6oWLYUgHBofMxWcY4HG0Vf4jhF3xuLacE8y+AARQ+llLn138mff4lf92Kz4iiGaRasH0vHYy9z7e2CQdudXXzLspWQLKtGFrpDYLHAqCJlPhnQaFvY7UGHj3cb6ekg50tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=Y7aVSKvC; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/HOHbgc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 824D7C4CEE9;
-	Tue, 11 Mar 2025 17:55:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741715729;
-	bh=Rz9lyXxmaf/uzAfEKbd8SJdVtz9OIb9oURg/10eXquA=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=i/HOHbgcZA3W7kQIsdjRhP5xRNu+hCUGvVBJX1Sx3YkUfVUaOgAw8KduexfZqjDU6
-	 DTpOus9iGsjyLbU2y3v9ILC/c6Wdf1/b3gtmAtq93p8SSrpT07a+x5mH0PeY18meYL
-	 qt4I38BV1GBRSCzq1Hy4xIMJA2duFRCgT2HdR+dqXUzV46k7gjFeTyolEGoNNpvMte
-	 K4gnp7Pi3gMMPSOXg89PxozYI+xWzS44J10/QNOWQhoAZKUH+zpHrNEv6KryLqGocp
-	 UBEq1ys/HMh6UlTaGj2Y34eHSfNqdusRzhz1JmM8Xi+3u9dmInC+9NvvVMOr7ZvbDR
-	 GfgOLuyV1gDCg==
-Message-ID: <3436f5e74321461507801ce5a405396b.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="Y7aVSKvC"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=From:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=sfOzXF32SVgBzw0bop+7o2FnHha6RNF67mlrgAvS+p0=; b=Y7aVSKvCLCiDDigNnsoRSbI2F/
+	Id9YZtVfW86h3pv411HtwRrhGQ2AXkz3XtB2Nn9pygSPDm7xYhxaCSQamdwzB4WJLhFMUlMH8WOnY
+	THKqurYoyiHy8q1DCp+GqdiuJ9717FpsQLHg2wCSrqN/2Ow+TDOgvyMftSjnxDjQQhy1erj30WFMX
+	ONwDdyTwFTW/RTXSb/XYmxo45TLxVuh0tUgGnn6jYrm5Pyuwl/xdUjB+eZ6tJkydTrBTbYdQACbjd
+	8HjJ2fTvEQrZCYxLpBmJQsOVbe01e8bg8wNmNAJNo28gBhdUK5EKHJwy0/6QoteGfNX+gWTNtu0D6
+	wZ0gt7Pg==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tony@atomide.com,
+	andreas@kemnade.info,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: clock: ti: Convert ti-clkctrl.txt to json-schema
+Date: Tue, 11 Mar 2025 19:02:15 +0100
+Message-Id: <20250311180215.173634-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250309175154.6701-1-krzysztof.kozlowski@linaro.org>
-References: <20250309175154.6701-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: Fixes for v6.14
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 11 Mar 2025 10:55:27 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Content-Transfer-Encoding: 8bit
 
-Quoting Krzysztof Kozlowski (2025-03-09 10:51:53)
-> Hi,
->=20
-> Fixes for current RC.
->=20
-> Best regards,
-> Krzysztof
->=20
->=20
-> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
-5b:
->=20
->   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-fixes-6.14
->=20
-> for you to fetch changes up to 53517a70873c7a91675f7244768aad5006cc45de:
->=20
->   clk: samsung: update PLL locktime for PLL142XX used on FSD platform (20=
-25-03-05 20:13:25 +0100)
->=20
-> ----------------------------------------------------------------
+Convert the TI clkctrl clock device tree binding to json-schema.
+Specify the creator of the original binding as a maintainer.
 
-Thanks. Pulled into clk-fixes
+reg property is used mostly with one item, in am3xxx also with
+an arbitrary number of items, so divert from the original binding
+specifying two (probably meaning one address and one size).
+The consumer part of the example is left out because the full consumer
+node would be needed.
+
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+Changes in V2:
+- additional maintainer
+- remove txt binding
+- dual licensing
+
+ .../devicetree/bindings/clock/ti,clkctrl.yaml | 65 +++++++++++++++++++
+ .../devicetree/bindings/clock/ti-clkctrl.txt  | 63 ------------------
+ 2 files changed, 65 insertions(+), 63 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml b/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
+new file mode 100644
+index 0000000000000..49787550ce450
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti,clkctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments clkctrl clock
++
++maintainers:
++  - Tony Lindgren <tony@atomide.com>
++  - Andreas Kemnade <andreas@kemnade.info>
++
++description: |
++  Texas Instruments SoCs can have a clkctrl clock controller for each
++  interconnect target module. The clkctrl clock controller manages functional
++  and interface clocks for each module. Each clkctrl controller can also
++  gate one or more optional functional clocks for a module, and can have one
++  or more clock muxes. There is a clkctrl clock controller typically for each
++  interconnect target module on omap4 and later variants.
++
++  The clock consumers can specify the index of the clkctrl clock using
++  the hardware offset from the clkctrl instance register space. The optional
++  clocks can be specified by clkctrl hardware offset and the index of the
++  optional clock.
++
++properties:
++  compatible:
++    enum:
++      - ti,clkctrl
++      - ti,clkctrl-l4-cfg
++      - ti,clkctrl-l4-per
++      - ti,clkctrl-l4-secure
++      - ti,clkctrl-l4-wkup
++
++  "#clock-cells":
++    const: 2
++
++  clock-output-names:
++    maxItems: 1
++
++  reg:
++    minItems: 1
++    maxItems: 8 # arbitrary, should be enough
++
++required:
++  - compatible
++  - "#clock-cells"
++  - clock-output-names
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    bus {
++      #address-cells = <1>;
++      #size-cells = <1>;
++
++      clock@20 {
++        compatible = "ti,clkctrl";
++        clock-output-names = "l4_per";
++        reg = <0x20 0x1b0>;
++        #clock-cells = <2>;
++      };
++    };
+diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+deleted file mode 100644
+index d20db7974a383..0000000000000
+--- a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
++++ /dev/null
+@@ -1,63 +0,0 @@
+-Texas Instruments clkctrl clock binding
+-
+-Texas Instruments SoCs can have a clkctrl clock controller for each
+-interconnect target module. The clkctrl clock controller manages functional
+-and interface clocks for each module. Each clkctrl controller can also
+-gate one or more optional functional clocks for a module, and can have one
+-or more clock muxes. There is a clkctrl clock controller typically for each
+-interconnect target module on omap4 and later variants.
+-
+-The clock consumers can specify the index of the clkctrl clock using
+-the hardware offset from the clkctrl instance register space. The optional
+-clocks can be specified by clkctrl hardware offset and the index of the
+-optional clock.
+-
+-For more information, please see the Linux clock framework binding at
+-Documentation/devicetree/bindings/clock/clock-bindings.txt.
+-
+-Required properties :
+-- compatible : shall be "ti,clkctrl" or a clock domain specific name:
+-	       "ti,clkctrl-l4-cfg"
+-	       "ti,clkctrl-l4-per"
+-	       "ti,clkctrl-l4-secure"
+-	       "ti,clkctrl-l4-wkup"
+-- clock-output-names : from common clock binding
+-- #clock-cells : shall contain 2 with the first entry being the instance
+-		 offset from the clock domain base and the second being the
+-		 clock index
+-- reg : clock registers
+-
+-Example: Clock controller node on omap 4430:
+-
+-&cm2 {
+-	l4per: cm@1400 {
+-		cm_l4per@0 {
+-			cm_l4per_clkctrl: clock@20 {
+-				compatible = "ti,clkctrl";
+-				clock-output-names = "l4_per";
+-				reg = <0x20 0x1b0>;
+-				#clock-cells = <2>;
+-			};
+-		};
+-	};
+-};
+-
+-Example: Preprocessor helper macros in dt-bindings/clock/ti-clkctrl.h
+-
+-#define OMAP4_CLKCTRL_OFFSET		0x20
+-#define OMAP4_CLKCTRL_INDEX(offset)	((offset) - OMAP4_CLKCTRL_OFFSET)
+-#define MODULEMODE_HWCTRL		1
+-#define MODULEMODE_SWCTRL		2
+-
+-#define OMAP4_GPTIMER10_CLKTRL		OMAP4_CLKCTRL_INDEX(0x28)
+-#define OMAP4_GPTIMER11_CLKTRL		OMAP4_CLKCTRL_INDEX(0x30)
+-#define OMAP4_GPTIMER2_CLKTRL		OMAP4_CLKCTRL_INDEX(0x38)
+-...
+-#define OMAP4_GPIO2_CLKCTRL		OMAP_CLKCTRL_INDEX(0x60)
+-
+-Example: Clock consumer node for GPIO2:
+-
+-&gpio2 {
+-       clocks = <&cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 0
+-		 &cm_l4per_clkctrl OMAP4_GPIO2_CLKCTRL 8>;
+-};
+-- 
+2.39.5
+
