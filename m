@@ -1,125 +1,115 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C93262D05;
-	Tue, 11 Mar 2025 18:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05992638BB
+	for <linux-clk@vger.kernel.org>; Tue, 11 Mar 2025 18:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716589; cv=none; b=EZ0B+uOtiFiUqwLwaNk68q2/Xj0M6Dro4jHStP34Hyqezgv2cCJhzAHc7WQ3J22VBqh3Z0RkVw5STNjA+JBFVDfsYPkYdNhJelCx7KmLv/CWlgPyy0JRkRnAuGwyV7848c8ssq5RjQPqyiUUdndSCHKepclz7vpKpFTwN0VMbDs=
+	t=1741716686; cv=none; b=HMHFGC8ZmjgQqLCYf462/bNWIxLaLWXknMC2NG99oRf2x/mAlI47H9pSz5ZZchezHX+QwsbJicQSfm9ML9PF460t/az38sPwoPI/M92MVx3YeQnHHprV0zOMjTuKJTYfs9EiGChCauGmUD1lRJin+f/fkOmk1Wdvok11koHsiPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716589; c=relaxed/simple;
-	bh=KTZ7pAewKhJGTa4+0RoIrxJXtYufuOEKjZdQOIXGxks=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gexbmw8mTH/0QAWWZZDnZ0PgcD9T9P1Rcepn8KVJfoTC4H9IqzVKDmnBvywByb65Xq5sGfa4CoMVauGrGG6STJiSsBJ4jKxI8WqPMm9qolo1hT4ijrTflD5SSxqKvr7Bck+C9U1Z4LHFsZWFA6oTFmK5M3OfVBSwKGgtvtlKSGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dI9CghDu; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741716686; c=relaxed/simple;
+	bh=BRd7+HtTtvaBFcdTTNSbCQPKzTGFFg/AS6THF+DAXJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=drD4YA4KWSsExi/ugnhKvkgwQgF08BW+mZ4zXSqglUG+fBR5aPsvQGQvu71H8hcyCr2D0Hcyi9TBrQlU9sehnSsyDVia5kAmrEChHeZcSiCEw0AnLcvOhhkbUs5UlTj/hKRzneQvFxrWSReg0khPjMhkTd5b+qu1QefOdT+SGS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IA5jojoB; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dI9CghDu"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ab7430e27b2so955888766b.3;
-        Tue, 11 Mar 2025 11:09:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IA5jojoB"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e5deb6482cso174627a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 11 Mar 2025 11:11:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741716586; x=1742321386; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=w7YliLuH4qlV/MO/+JH2L4UcYmketDeTxX5I8TCDYu0=;
-        b=dI9CghDu2e4InaN8M/wmugQ1/zPp4vRngPSnHga1b11ctv264/G5AUjrmnVSmTgswP
-         BhwwTa/pm7laravY/eYsuqnmJkowvympHtvrJVPMvlge+XFuRnfhcOMBTLeu2j3ZG9e7
-         8B9nXn21siN9hD7vcQT7NQvNxajl3kTALnITVA7qumyQrcZP0tOLmsXaWkX2kw37Ssq+
-         8VCvhmWUx0MfECKQPcjm9escWZhcP6oYlq3MedS7iNgR8LCwB/LZ9ME0Jl/wsdNFv7w2
-         WNXDZUJrjTgBoqWkfNQU2GMHurmP20H++zUvVJ2rqRgbmioUHgYk824Wp6TfOtDWmCI+
-         T7TQ==
+        d=linaro.org; s=google; t=1741716683; x=1742321483; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=imQlH5hLyEPyeFpcTG/nV9BIkwuBSyfjOhkAYwjO1MI=;
+        b=IA5jojoB7fcbxyJpLQ9DKynZhmXSr7okK0sFzTXiezwpDvYUv+LwIT9U1B/prnNhan
+         nqY2B7gF6qvo55Ra4izZ0u38iV18CQtOP5VL2ctyERrW0Q3Gbvj9AaujIHSGdir5OjSm
+         rJQZYnB1fU4Bw1fcWoBNR8iDdIR3stvXU4ZyewnzMd4A/yPAqZ830fB4xAIJzUH7L8dL
+         /pBcOn2xTOsm9fkEE1QDPLTaKEPJQAm3j9++nDwqmIlYZGOR2WBxuQ/S2RtkeJ9IZq/X
+         Rv0YeFd5sF86/d61k474QMxQ4RmtEUoRFpOs967i88nUzUmsqPdcakqb6eQ4gEZvdwY+
+         jcpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741716586; x=1742321386;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w7YliLuH4qlV/MO/+JH2L4UcYmketDeTxX5I8TCDYu0=;
-        b=TR3sgb+NY+BZZC6agEGvlwE0YwIZKSNYRbwZzuxjkj4QIrJM5RAMXIEJM9hKrrNL14
-         ZrGSK7mDnZyv5iVILiWTShC/T8vsuSmiS/V8RIXYK4bzHHmC8P/acJ/myN4+LTWVqQtV
-         AlbjB7s3RU07BtQwG7FHrdoCc1yxpqXY9Wybf8cdac/nf94vJDvRemrZlddrq0tAcqvi
-         7xjfVh5G6sL9iXJBEXJag1CvjLS7yISUQRBaeklISsKvoA0N21tBzKMf12OhskeudVCl
-         xO4f2ghFjDpe91Da+/RwWJ/dlILQlRiIzj3baSdJmFYfI4hEwYhOLBSBJeHR/3CTpF6m
-         ZlPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUivd4wqZhAGPKlGFTGArNthd1uIf1iN2S0Fzw1zApun0BGy3NPWOqJZO7UhvzVWuOQjjUZVr29EHVo3sCB@vger.kernel.org, AJvYcCVNSWQiZrkScZ8iSsLFP5bkE/hMenRuhp7QxFnbTHJek1fiWvrDhQN0pPP6o3pEsIVxVPzAV29Ph9pS@vger.kernel.org, AJvYcCVPrjFJ3M4gIoqG+wU88+ukD7W9lDHpCisvD84VjUBUXmu060tDWeqyDJZDotK6R/xIyGA6FC9JFDqr@vger.kernel.org, AJvYcCVV6bjXfRmXFoCu+1jY2xIc3Hm11tanrN2UXoH38rLZ8wi/kKhZ3n4B/qb6HgTUgbu4J161+7DQcNJQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7KedOMauYww2fQ8PeBZ7zL3sgmsekDT6YqX4O0ZvqiWckHtph
-	00KYLj55KqC+HuBIDoB2EimAxy6kZB8NqvR4SsbRYuhhHJ6lMGdFCgmtpGB2
-X-Gm-Gg: ASbGncvXLPpx/6neYgNNNZMnyUPFB1MVb1HNtlmscp6Tt9nerfqU3pBD5IU6jfJPOh0
-	w7MElJVnmjyon+zOF7MVa5sXeL9mTHZrDkQdklfiQdnHdOl9el8p6PsBJ1LWI08ZGs5hh1FYpQk
-	3dZJiUt3w4+QHJXY280WouF0uEDE5nLe1/oaykW6JBO8CEUw9o0HnXCn+cOtfMbZMWcFEEoYzs5
-	LstpK9PTDEni83bD1IBbocyN864vJa442omLiqMtLshKZb6s/nvR4QLwq1Lkbs9THLzSbLWzTWR
-	nt8twTKLZ0mLtVmYCnfoGZsYQJCaZVx1BrXklKkGzADwhd8HCUSiLuyFJWEdNOjjgw+9rPwI1sQ
-	Mt61kB6s2GxQYkZJv4Lx+NsM=
-X-Google-Smtp-Source: AGHT+IFGoeMKh+SV9Aw9aLOSeklw6RYQlLlVxQgOHzKR34XV8RHNJXBdNm+Xa03GkQRMHVbvPeRAPw==
-X-Received: by 2002:a17:906:180d:b0:ac2:5d24:1fcf with SMTP id a640c23a62f3a-ac25d2423fdmr1538965666b.26.1741716585443;
-        Tue, 11 Mar 2025 11:09:45 -0700 (PDT)
-Received: from Ansuel-XPS. (58.43.196.178.dynamic.cust.swisscom.net. [178.196.43.58])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2895e7e6asm511088166b.54.2025.03.11.11.09.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 11:09:44 -0700 (PDT)
-Message-ID: <67d07c68.170a0220.3fa05.2c8e@mx.google.com>
-X-Google-Original-Message-ID: <Z9B8Z2aA3MfCBBLG@Ansuel-XPS.>
-Date: Tue, 11 Mar 2025 19:09:43 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	Guo Ren <guoren@kernel.org>, Yangyu Chen <cyy@cyyself.name>,
-	Ben Hutchings <ben@decadent.org.uk>, Felix Fietkau <nbd@nbd.name>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org, linux-mediatek@lists.infradead.org,
-	linux-usb@vger.kernel.org, upstream@airoha.com
-Subject: Re: [PATCH 10/13] phy: airoha: Add support for Airoha AN7581 USB PHY
-References: <20250309132959.19045-1-ansuelsmth@gmail.com>
- <20250309132959.19045-11-ansuelsmth@gmail.com>
- <Z9AhN9T8s1oogCUn@vaman>
- <Z9AhkByegWQgC9YE@vaman>
+        d=1e100.net; s=20230601; t=1741716683; x=1742321483;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=imQlH5hLyEPyeFpcTG/nV9BIkwuBSyfjOhkAYwjO1MI=;
+        b=A0nZTlJBTyjwTc3lowqkMEi2U300nilNQeOXUc4oEJH5g30A9cIgETI6quXOmSxpW3
+         YlFWxyZB0qrmL+zSD6PGG2bpEZ6yF4MrEOxKT2Inx/kPimYuSYfH4m8z0dystgiWusYB
+         2c7hIVeWNuzMuhyj/CxVIVH/K09RG0M+Eh8rSgTJQYPADZS7SYIZd+FRfl6sFVDtyFee
+         Y6F3fGdLYf78hUIvnaIvXWBwycEs6g5dBdgRG3U2lOmhioXJJ5W8ThbAAE0P/01Q6I6N
+         z+WQdO46HdDPOQ7vSQgk/tfHZulUboctghcwCdO8I8qXTz+mHTlar2ODw3LRfDxv+EJl
+         f4uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULUF6LKn9txE/LbPesUSjSqZfR7xB7LYNZi3qkH8ozV5zLJRKYbYxu+zE+x3R2ReBqVc2oOYTEzSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtkeTjAq83v/pvRKmolhWYWaGo0i/xJqJWIPh6z1tFaWTjc7ub
+	7INyXLYlw30omisSfOAXXzJWtI1fa5cd5xuZlb3e4QkHCljZlCMj98zQEixuRDg=
+X-Gm-Gg: ASbGnctIYh7bb/EYe4mDpVCEExOIiVnDVTtTtignA/v2i4jSUM9J7bFXm6iRuCxkjrM
+	odY2jkbyQKoKi53ALiuLIZJ7etahXWCafdzvtkPS/wkzjAEObD62HBWyga+/7fGsCDTFoe4zBbJ
+	jIVBAKviRkdnB0KmAbqk/rCbXgmoIcqkMj6AD3hfurU9hvuJhHp8zMkOUSQiz9dWFxn+F2nvDeI
+	CCBzPfMfKksBcTGXsgDIBjBfPBthM817N7CFNdltakmoZZR2iEZT3dNL6XjoQgZ6GzvYNN7lFek
+	PaDZebkIYqLbATvB8JVz+fI142OPws5Fy2SM0jDoBSbo65g0C+gtOKe+UDo2t2Nhv3uLAyIQGpH
+	PTnhAHiW17KIMzNsrPQBb
+X-Google-Smtp-Source: AGHT+IERTZ3nFwIDF0pC/Jsa9/UMytNY/0RkyK1in1I6p0biiBCy+0RcM+HnsMyf2YSwOxxQbZ6xSQ==
+X-Received: by 2002:a17:907:2d0d:b0:abf:6e88:3a63 with SMTP id a640c23a62f3a-ac2ba4c7b97mr529724766b.9.1741716682967;
+        Tue, 11 Mar 2025 11:11:22 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac288ffe157sm509101066b.132.2025.03.11.11.11.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Mar 2025 11:11:22 -0700 (PDT)
+Message-ID: <b21b5f03-e328-4708-a854-1b3fa9c3dfa3@linaro.org>
+Date: Tue, 11 Mar 2025 18:11:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9AhkByegWQgC9YE@vaman>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/8] clk: qcom: Add support to attach multiple power
+ domains in cc probe
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <CMTYKKilQJYeHUYYKvlqnwv4Q2P-58Ic1v1ndS9HQ8Yhq2xpHuNThibFDjXDEQ1PyNbx__f9BVBr0peoTUdvPg==@protonmail.internalid>
+ <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
+ <5a45fd25-74ed-46e3-b0e3-5adf92b5e9f7@linaro.org>
+ <46d4f090-3e31-414f-abfc-3d1018913c56@linaro.org>
+ <9e6fdcfe-3c6d-44c7-95a3-7652c0650bf4@linaro.org>
+ <caa00d62-b24d-4db7-9e12-170a10c073e3@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <caa00d62-b24d-4db7-9e12-170a10c073e3@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 11, 2025 at 12:42:08PM +0100, Vinod Koul wrote:
-> On 11-03-25, 12:40, Vinod Koul wrote:
-> > On 09-03-25, 14:29, Christian Marangi wrote:
-> > > Add support for Airoha AN7581 USB PHY driver. AN7581 supports up to 2
-> > > USB port with USB 2.0 mode always supported and USB 3.0 mode available
-> > > only if the Serdes port is correctly configured for USB 3.0.
-> > > 
-> > > On xLate probe, the Serdes mode is validated and the driver return error
-> > > if the Serdes mode doesn't reflect the expected mode. This is required
-> > > as Serdes mode are controlled by the SCU SSR bits and can be either USB
-> > > 3.0 mode or HSGMII or PCIe 2. In such case USB 3.0 won't work.
-> > > 
-> > > If the USB 3.0 mode is not supported, the modes needs to be also
-> > > disabled in the xHCI node or the driver will report unsable clock and
-> > > fail probe.
+On 11/03/2025 17:55, Vladimir Zapolskiy wrote:
 > 
-> Also I dont see phy depends on rest. Please split this and post phy bits
-> separately at least..
-
-Well USB doesn't work without this driver so they are indirectly
-dependent. Will split and address all the other comments.
-
+> I kindly ask to elaborate here.
 > 
-> -- 
-> ~Vinod
+> This series does not touch CAMCC at all, and if the series touches CAMCC,
+> then it changes DT ABI, which is objected. Or is it for some reason
+> objected only for SM8550 and not for the other platforms? More information
+> is needed.
 
--- 
-	Ansuel
+No but it _should_ Vlad, that's the ask.
+
+Both of these clock controllers will require this same change to be 
+implemented, that's what I'm asking Jagadeesh to do.
+
+Certainly that's the case for x1e and asking Jagadeesh to also check 
+that for sm8650.
+
+---
+bod
