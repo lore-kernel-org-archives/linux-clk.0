@@ -1,53 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08160217719;
-	Tue, 11 Mar 2025 19:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8F01DEFF3;
+	Tue, 11 Mar 2025 20:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741722552; cv=none; b=Y1s6LpLXy8XUfSlgpY1g9mJEyIggVebeeBQO7KpJB3/tNlLryJEC9v594Uw/EgLHnfOAjnMVcnKLbxQXHAIwfM9pOERdYP4PSW2S4C8NMQrbwCfdyZuDQIyxlYyegkeZyCKCnBWNJmq9QJZ5EyJqXPwro/myUIduzFUo2+bLpsE=
+	t=1741724110; cv=none; b=ZbTHSs87Omm5TlP9GCaNHpBUR+C2VUfN0yzXft4Ynkf03tbnHsQgaBNOazQ2DU0zb7tsR+At1yafhTTEGsEbZmxcaOB/X0IR7thdpZgzfC0YfPiBZSIGtPrehky2e+Vmvczy2g/xHNRMHbfr9WL2UyULBsWPrws6LvFRw0F2qH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741722552; c=relaxed/simple;
-	bh=foDxJvYl6KBasGc4dz9ZaDGclCUqmjAtTLkdrSdETis=;
+	s=arc-20240116; t=1741724110; c=relaxed/simple;
+	bh=xr7Mg3apWFhagDi7Tib6C8T7NatN1ptZtdreOZYK0TM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LgN9vGfIgWFdkN6F589D29taskwECIA0knaNjbP9UbiNYfeK/utMoYfjrwli+W/xAyUZpomMEugfR126oxOtlvVJpJM+K9bXuAjSYmmwRDyRy5vk4awOdeysASxfkiYH5a/kc3fyq0Nr85QOBVtLE6Giq+NkyRi2JGQKTJVj6dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iSCfDhN2; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZeowMOlKD65ya/nKPgG3EVGS79oWACthrIDVpgU/xaSwQUPcm+rAlXNyV+m+afteEhuCTXXU3zGiyJ9Y+Ef3Ky8PjUuVXjlq2NU3ON4E9dpkEdJqgmaJ6fVsE8U39fHqkGfKG47d3hAoJ9jSlYUJ7Ouy80ZhxC+bbZjgqJb1cKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IiEYtc1t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iSCfDhN2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D10DC4CEE9;
-	Tue, 11 Mar 2025 19:49:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiEYtc1t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9362C4CEE9;
+	Tue, 11 Mar 2025 20:15:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741722549;
-	bh=foDxJvYl6KBasGc4dz9ZaDGclCUqmjAtTLkdrSdETis=;
+	s=k20201202; t=1741724110;
+	bh=xr7Mg3apWFhagDi7Tib6C8T7NatN1ptZtdreOZYK0TM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iSCfDhN267WTd7uP6GT6lqCzD7QWFJY8RLRlu2G8GvlIbb3i8vPXYQWARMpHgw05u
-	 +14u0y7nvmEKpMGXRvR1q9UGtpp9oW/DDyqRGF1WAFgvKJvmEZJ9UaOIrqWGLeMjCo
-	 9r9sbhYnO1uDgS1Mtt4M+Px5UiwG4C6ucMZuIC451D86zc/AMm2teed5vxjQB5fsR5
-	 jZ1jFVDmj6fhxbU3vW/NqqJmDZUzm5e0Usbbd2CnIBR5origWHzAUW4wDHuq0qbu2m
-	 aVOIjOafmp7oQABWKnZAgh3W0t9WudUcXhPV0s4HEdBOWy7E0lYlDlEWWd9f90Evlo
-	 ccW6DoFHIjCEg==
-Date: Tue, 11 Mar 2025 14:49:08 -0500
+	b=IiEYtc1trjLrbmlCBKKDFUoON0GHTHA4+DmiWZr5YPhgEahVhpNr/TQnwuhW8IfbN
+	 Mu4+NAr4jEORUO8OnZLR0WJsfsHp9tfGGOTRdYfcE4mydal+tGECQSnUKJuAlpx9C4
+	 lmIz6c8SO5kCPW8zfBr+K1xoUeF+HPx1/KJhsXPiD3PZ5erNo1+V+HIOSIl4Kt7tYd
+	 zcKoits/AYHu2bXnVxQxsvGZ4pBQUkBfVYTQxc6A11dSxswAUMk425sJSFZqrPvnz4
+	 j/L04Geea2ph+M1kmLrHN+kvmK/GzGo7NWMf7/G+zsw08CW46lXq08Qrh8M3grjO6o
+	 p6tVU+SFmYPGw==
+Date: Tue, 11 Mar 2025 15:15:08 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: linux-rockchip@lists.infradead.org,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Heiko Stuebner <heiko@sntech.de>, Liang Chen <cl@rock-chips.com>,
-	kernel@collabora.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Yifeng Zhao <yifeng.zhao@rock-chips.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jonas Karlman <jonas@kwiboo.se>, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: rk3576: add SCMI clocks
-Message-ID: <174172254786.8700.16296927950928692659.robh@kernel.org>
-References: <20250310-rk3576-scmi-clocks-v1-0-e165deb034e8@collabora.com>
- <20250310-rk3576-scmi-clocks-v1-1-e165deb034e8@collabora.com>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: linux-kernel@vger.kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
+	tony@atomide.com, conor+dt@kernel.org, krzk+dt@kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: clock: ti: Convert ti-clkctrl.txt to
+ json-schema
+Message-ID: <174172410753.54630.13201931794020216053.robh@kernel.org>
+References: <20250311180215.173634-1-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,21 +44,32 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250310-rk3576-scmi-clocks-v1-1-e165deb034e8@collabora.com>
+In-Reply-To: <20250311180215.173634-1-andreas@kemnade.info>
 
 
-On Mon, 10 Mar 2025 10:59:56 +0100, Nicolas Frattaroli wrote:
-> Mainline Linux uses different clock IDs from both downstream and
-> mainline TF-A, which both got them from downstream Linux. If we want to
-> control clocks through SCMI, we'll need to know about these IDs.
+On Tue, 11 Mar 2025 19:02:15 +0100, Andreas Kemnade wrote:
+> Convert the TI clkctrl clock device tree binding to json-schema.
+> Specify the creator of the original binding as a maintainer.
 > 
-> Add the relevant ones prefixed with SCMI_ to the header.
+> reg property is used mostly with one item, in am3xxx also with
+> an arbitrary number of items, so divert from the original binding
+> specifying two (probably meaning one address and one size).
+> The consumer part of the example is left out because the full consumer
+> node would be needed.
 > 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 > ---
->  include/dt-bindings/clock/rockchip,rk3576-cru.h | 5 +++++
->  1 file changed, 5 insertions(+)
+> Changes in V2:
+> - additional maintainer
+> - remove txt binding
+> - dual licensing
+> 
+>  .../devicetree/bindings/clock/ti,clkctrl.yaml | 65 +++++++++++++++++++
+>  .../devicetree/bindings/clock/ti-clkctrl.txt  | 63 ------------------
+>  2 files changed, 65 insertions(+), 63 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti-clkctrl.txt
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
