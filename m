@@ -1,178 +1,114 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A764422B59D;
-	Tue, 11 Mar 2025 08:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2038422CBD5;
+	Tue, 11 Mar 2025 09:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741683418; cv=none; b=hdOCiZEdQ0vJcDnPzhHb185m0pTZPONpMBU3DeJDX20HMgyAGaukSpf+c+Vfaw+3Ao2i/4xCdAwxDbVlKLxBOxQxtgmS/FtJbHqWeahu3gGYKqOiS67Uv1KrHg/kZ2oyLknvN9/PdRgqVf4gsDVdtJwYAi9HFu/6rCtZcykbCQE=
+	t=1741684896; cv=none; b=LAkgTU93YsubOAygzJuK9ACfvsalUbZWSmimHrqGcUtv01Zc2RV1VA0CCIdSSDpoZF7PNEpKeAo9AEWW1SLv4TWkn9RMWZ8gX6rErNoB0A+E5cZZ2dvByL2dqzDRokKC8lX9XBWVDYGRvUHlAEkjsMTEG/xkU+7kpwfhNKhhzKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741683418; c=relaxed/simple;
-	bh=Jo9gV2WeqEIzH0koZkOqg/dgypAdrFw4uW3AeHXDdQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=b9UUhj7cntnLj8s/NV3hIZkVf0dVncA8NgLnmjjpo1f+2pjQ6cBym4jteD2ZUNZeUIUAwzyV8WE1H9sSFw5n25DRuVGW3Gkf3Q85RqSbs3977fZnryPx8FtDhbvpxVw1TM0Am0bHq+puN5LCvGIDE5fdfbuDWyDIU2YCBVrNpSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hkxErCkd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1741684896; c=relaxed/simple;
+	bh=D3oDrA/DYZsV2ZD9WpsoFM6T5ClnWVYJe1My0WXo2Xs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CZ9GIE104jKsHTS6Qd+9E/5JbPE+MGbZLuY19cQR2CyZgVE5SfeTIT2kxdSihHOgU8KzhYQSeensQD788RUFue7Kv4kmUpjC5wAvJtMBDtemsnrukU2CO8Rd8mZWGXY47x+AVW0Tk9B/dWsBCJ3wTtVY3AHar+KF5m3/MyfEjLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o9p83flX; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hkxErCkd"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B8ixTS013127;
-	Tue, 11 Mar 2025 08:56:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hVWsZ53cfg6ylOMg435wKEaqSOis9OxShBeuIA+hITk=; b=hkxErCkdIkFi0B5v
-	ADWsZPpNEXwRGmvyLMXrPhZ9ccqKlGe1oxBPQQAt4VqOFHF9EPuVYYVfrglH38aU
-	rsZH4c8XKPmZoM52nGkpNjBubFrcFeb9fAAlyGK8ZxFS/Oumj3N9HcSZHrdJv2dO
-	JeAGvbV3zY0AHgGYaQ8GLlyOIn2BuEVkxnOkFIY0chVzcQ3ZYur7dG2A+EmUfnfw
-	jhDQdzi2Wz2iY2Eyit093FDPsayvZD5tqRvVpAgmDXIL442meF24otaVP4rGO4KO
-	4qNkii9krWighGk1QeQ7nFD3lolIuxnuwXMbNWu1zTZOJoYxO+NzsEkw8tduTEju
-	K+eP3g==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f0w7tc8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 08:56:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52B8uqae022171
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 08:56:52 GMT
-Received: from [10.218.22.7] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 11 Mar
- 2025 01:56:46 -0700
-Message-ID: <6a73a0d3-f5fb-46cf-b55b-9f8b4af9df4c@quicinc.com>
-Date: Tue, 11 Mar 2025 14:26:43 +0530
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o9p83flX"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9D8E3432FA;
+	Tue, 11 Mar 2025 09:21:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741684892;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6VTqHFVqHMv5npZuUyKgDinGie6VAE2hr7CtUFwYLSY=;
+	b=o9p83flXRMrRQuTLg6n/HGont2VUgB6/lw/4w2fAvirJUilLCqThl8RIPLmtWw9vEW95eX
+	envhk4s2MbLlzGsQ27DidxfRYMN44+3RIPG6IjBlPdfTXNQOOivGfzTqKEm6d9e+tL6QUp
+	dtDRYnr3/mG9lUC2rJD/UMAfkIh6l/+H9vQhU3fyvb4zD2QkhuytKMs3Nq2/wnfcbWBuZJ
+	SsRtZocmVaX+Juk8O43qF2q6E+QMN3fbet6gpazai6Dc4JcUXZ90pZioTpeucWr/sYw9MJ
+	LBNJAENxwSNN4bTC7qANAYjPilyUpYrUUyAvCtwKLM5hvCJ6vxwl5hU2Hh1Zfg==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH v2 0/2] vsprintf: remove redundant %pCn format specifier
+Date: Tue, 11 Mar 2025 10:21:21 +0100
+Message-Id: <20250311-vsprintf-pcn-v2-0-0af40fc7dee4@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] clk: qcom: common: Add support to configure PLL
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya
- Kakitapalli" <quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
- <20250306-videocc-pll-multi-pd-voting-v2-2-0cd00612bc0e@quicinc.com>
- <91561f37-5309-45f1-a1d7-20228ba68c2e@oss.qualcomm.com>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <91561f37-5309-45f1-a1d7-20228ba68c2e@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: hCqw_xvsas3181S8OkjThrqxvZO0LcqR
-X-Proofpoint-GUID: hCqw_xvsas3181S8OkjThrqxvZO0LcqR
-X-Authority-Analysis: v=2.4 cv=MICamNZl c=1 sm=1 tr=0 ts=67cffad4 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=KKJ9gdNFWaWt-nm7_UYA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_01,2025-03-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=820 lowpriorityscore=0 phishscore=0 spamscore=0 suspectscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 adultscore=0 bulkscore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503110060
+X-B4-Tracking: v=1; b=H4sIAJEA0GcC/3WMywrCMBBFf6XM2pFJ4gtX/od00bzsgCYlCUEp+
+ Xdj964u58I5K2SX2GW4DiskVzlzDB3kbgAzT+HhkG1nkCSPpOiMNS+JQ/G4mICX6aCc0mT7QFe
+ W5Dy/t9x97DxzLjF9tnoVv/dPqAoktJ60NMafBPmbjrE8OexNfMHYWvsC41q6JaoAAAA=
+X-Change-ID: 20250307-vsprintf-pcn-8a43e3b0d43e
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
+ Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>
+Cc: Binbin Zhou <zhoubinbin@loongson.cn>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, Liu Ying <victor.liu@nxp.com>, 
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvddukeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefgieetkeekgfdtudevueffueffveekheeiudfhfedvhfeukeeuhffhtddtvdekfeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegludelvddrudeikedrudejkedrjeehngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeftddprhgtphhtthhopehflhhorhhirghnrdhfrghinhgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhpihdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggur
+ dhorhhgpdhrtghpthhtohepiihhohhusghinhgsihhnsehlohhonhhgshhonhdrtghnpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepphhmlhgruggvkhesshhushgvrdgtohhmpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthhgvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
+There are two printk format specifiers for clocks: %pC and %pCn, and they
+print exactly the same string. Geert confirmed the intended reason for
+having two was that %pC would act as a default, like some (but not all)
+formats do. However there seem to be no advantage in having two instead of
+one, especially now that there is no other %pC specifier since commit
+666902e42fd8 ("lib/vsprintf: Remove atomic-unsafe support for %pCr").
 
+Definitely having two without properly documenting they do the same creates
+misunderstandings [0].
 
-On 3/6/2025 5:52 PM, Konrad Dybcio wrote:
-> On 6.03.2025 9:55 AM, Jagadeesh Kona wrote:
->> From: Taniya Das <quic_tdas@quicinc.com>
->>
->> Integrate PLL configuration into clk_alpha_pll structure and add support
->> for qcom_cc_clk_alpha_pll_configure() function which can be used to
->> configure the clock controller PLLs from common core code.
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->> ---
-> 
-> [...]
-> 
->> +static void qcom_cc_clk_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap)
->> +{
->> +	if (!pll->config || !pll->regs)
->> +		return;
-> 
-> This should probably throw some sort of a warning
-> 
+Since %pCn is used in a single place, replace it with %pC and remove %pCn
+to simplify such format specifiers implementation and avoid
+misunderstandings.
 
-Yes, will add a warning here and for default case in next series.
+[0] https://lore.kernel.org/dri-devel/f8df2b5e-b005-4ada-8108-159b2b94a72e@nxp.com/
 
-Thanks,
-Jagadeesh
+Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+---
+Changes in v2:
+- Add Chinese translation
+- Link to v1: https://lore.kernel.org/r/20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com
 
->> +
->> +	switch (GET_PLL_TYPE(pll)) {
->> +	case CLK_ALPHA_PLL_TYPE_LUCID_OLE:
->> +		clk_lucid_ole_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	case CLK_ALPHA_PLL_TYPE_LUCID_EVO:
->> +		clk_lucid_evo_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	case CLK_ALPHA_PLL_TYPE_TAYCAN_ELU:
->> +		clk_taycan_elu_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	case CLK_ALPHA_PLL_TYPE_RIVIAN_EVO:
->> +		clk_rivian_evo_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	case CLK_ALPHA_PLL_TYPE_TRION:
->> +		clk_trion_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	case CLK_ALPHA_PLL_TYPE_HUAYRA_2290:
->> +		clk_huayra_2290_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	case CLK_ALPHA_PLL_TYPE_FABIA:
->> +		clk_fabia_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	case CLK_ALPHA_PLL_TYPE_AGERA:
->> +		clk_agera_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	case CLK_ALPHA_PLL_TYPE_PONGO_ELU:
->> +		clk_pongo_elu_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	case CLK_ALPHA_PLL_TYPE_ZONDA:
->> +	case CLK_ALPHA_PLL_TYPE_ZONDA_OLE:
->> +		clk_zonda_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	case CLK_ALPHA_PLL_TYPE_STROMER:
->> +	case CLK_ALPHA_PLL_TYPE_STROMER_PLUS:
->> +		clk_stromer_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	case CLK_ALPHA_PLL_TYPE_DEFAULT:
->> +	case CLK_ALPHA_PLL_TYPE_DEFAULT_EVO:
->> +	case CLK_ALPHA_PLL_TYPE_HUAYRA:
->> +	case CLK_ALPHA_PLL_TYPE_HUAYRA_APSS:
->> +	case CLK_ALPHA_PLL_TYPE_BRAMMO:
->> +	case CLK_ALPHA_PLL_TYPE_BRAMMO_EVO:
->> +		clk_alpha_pll_configure(pll, regmap, pll->config);
->> +		break;
->> +	default:
->> +		break;
-> 
-> And so should the 'default' case
-> 
-> Konrad
+---
+Luca Ceresoli (2):
+      thermal: bcm2835: use %pC instead of %pCn
+      vsprintf: remove redundant and unused %pCn format specifier
+
+ Documentation/core-api/printk-formats.rst                    |  3 +--
+ Documentation/translations/zh_CN/core-api/printk-formats.rst |  3 +--
+ drivers/thermal/broadcom/bcm2835_thermal.c                   |  2 +-
+ lib/vsprintf.c                                               | 10 ++--------
+ 4 files changed, 5 insertions(+), 13 deletions(-)
+---
+base-commit: 4d872d51bc9d7b899c1f61534e3dbde72613f627
+change-id: 20250307-vsprintf-pcn-8a43e3b0d43e
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
