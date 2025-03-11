@@ -1,48 +1,47 @@
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F601DF25D;
-	Tue, 11 Mar 2025 01:39:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F131ADC83;
+	Tue, 11 Mar 2025 03:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741657190; cv=none; b=PKupW26hw/t/D6U1vTtfjcAzwkgNvn3yxSmGLyGKfWsBft420mrdhc6vnmWpftFZmQOQ+uEqgP/5s8oRFfOTNQdSlEEW1KF+++ejIB1FQlQzRm5FWzkfJ7+dGZAgAOHR0adp3MxxcWFKTja7YVIIDjyKwWO25dQwG7B/gxIKsp4=
+	t=1741662322; cv=none; b=Yp+CBXh6HMe5sagWTMV1Ze1mYE3aU2KjAs96R5YCwuwWTqVTcDikkwioPMzEE7xJWebmBuAzHAWoPYTnKy+Rfz3BpPzmCPxPoXM9NFKsScX8WfP21cYFnsTcm7BoKGYqQwk2EzFzZ9mPaQPOBQfO9hEfZWgDEouPA554AA9rJjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741657190; c=relaxed/simple;
-	bh=RqPfnh/4IjE+WtsfZvkx6YqNHsgX5Uso7lCYLf0mcyk=;
+	s=arc-20240116; t=1741662322; c=relaxed/simple;
+	bh=Tvdo/LZO1dissNuv/0SYsd1MKjzBgYB27TXwIlSgDWo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WyLkmoKJw3lYzFLdW6vcLJGeBAIKyzlw2TD1wV6yOryNgTVgq6uWOJwxDTHl4qZERmZkSmlPeBR3xW71jVpDysOO1QikvbBsy/kSSJZYWP0pwj5B+6dPcmMy4CeVqlVpK39tRFVj/EYK/pMpSegVotrRgB68n0rHMKeWSdEZXMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=O8Iu6ebB; arc=none smtp.client-ip=220.197.32.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZHNlkqiP2HJfghJ/+WOqbmYPjzGcsFxbocHIrXzkNYhrahLadPmHZrkTrk+yOT7IAARJd6/z5wPmTb62QhCAf4VV8atifuVU+mjRtZvK6HY0zMzDRyoBzZ9VJSzSu+WE4X/dVhPuD5uG+POO7FG43zY5TgGJOE9EdatCdjkG9Ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Nu4Z8q8B; arc=none smtp.client-ip=1.95.21.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="O8Iu6ebB"
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Nu4Z8q8B"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
 	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=VJT4xsqbCeKyk7dx2NmpkzCo8Yb5OL/Hrsp+1j5RBYs=;
-	b=O8Iu6ebBGznucoDxC+RfhL7A/nGyaoT5hck34WWzMoW1onI5FYl7g5NiF746J/
-	N5u/1QGZY9Zo3xcmxvwI5uph9f5XMBH1TKcCkJ/kmU4Xg2qY/0c70+cq2mBhSnBa
-	coN6uxisRc7hTlX1LziCcQNsBLPbsy4grYM2ZiULjj7o8=
+	Content-Type; bh=tPjzWEIRgrMC7GoOBG9nlVWAbgBUY/TGQT4CORiN6s4=;
+	b=Nu4Z8q8BfhcwGD/Cfdj8iKpZDOrY2WE5lT8uJsA6KpfyUxls4/rceTJeEasYV+
+	GOywZ15Kq318QEyWn+WHn5c8CnrT6OVRE8ChQE5SR/r6ySHlwIInvTem+6AadQEP
+	S6qUwhZ4PaTN+F6KjFXYbGAyFVrkTk9DG3EMsgcn1yXO4=
 Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3H27uk89ng7SzAA--.51122S3;
-	Tue, 11 Mar 2025 09:37:52 +0800 (CST)
-Date: Tue, 11 Mar 2025 09:37:50 +0800
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCXlUJGqM9nrs20AA--.48493S3;
+	Tue, 11 Mar 2025 11:04:40 +0800 (CST)
+Date: Tue, 11 Mar 2025 11:04:38 +0800
 From: Shawn Guo <shawnguo2@yeah.net>
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
 Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>, Frank Li <Frank.li@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>, Marek Vasut <marex@denx.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	Adam Ford <aford173@gmail.com>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Abel Vesa <abel.vesa@linaro.org>, Marek Vasut <marex@denx.de>,
 	linux-clk@vger.kernel.org, imx@lists.linux.dev,
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 0/6] arm64: dts: freescale: imx8mp-skov: switch to
- nominal drive mode
-Message-ID: <Z8+T7sdtIsvkJ1i2@dragon>
-References: <20250218-imx8m-clk-v4-0-b7697dc2dcd0@pengutronix.de>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] arm64: dts: imx8mp: add AUDIO_AXI_CLK_ROOT to
+ AUDIOMIX block
+Message-ID: <Z8+oRjW7YN+kw73/@dragon>
+References: <20250226164513.33822-1-laurentiumihalcea111@gmail.com>
+ <20250226164513.33822-4-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,21 +50,21 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218-imx8m-clk-v4-0-b7697dc2dcd0@pengutronix.de>
-X-CM-TRANSID:Ms8vCgD3H27uk89ng7SzAA--.51122S3
+In-Reply-To: <20250226164513.33822-4-laurentiumihalcea111@gmail.com>
+X-CM-TRANSID:Ms8vCgCXlUJGqM9nrs20AA--.48493S3
 X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVNeODUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEh0NZWfPVKmw0gAAsQ
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUI1CGUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNQgKb2fPqEj92gAA33
 
-On Tue, Feb 18, 2025 at 07:26:40PM +0100, Ahmad Fatoum wrote:
-> Ahmad Fatoum (6):
->       dt-bindings: clock: imx8m: document nominal/overdrive properties
->       arm64: dts: imx8mp: Add optional nominal drive mode DTSI
->       arm64: dts: imx8mp: add fsl,nominal-mode property into nominal.dtsi
->       arm64: dts: freescale: imx8mp-skov: configure LDB clock automatically
->       arm64: dts: freescale: imx8mp-skov: operate SoC in nominal mode
+On Wed, Feb 26, 2025 at 11:45:12AM -0500, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> 
+> Needed because the DSP and OCRAM_A components from AUDIOMIX are clocked
+> by AUDIO_AXI_CLK_ROOT instead of AUDIO_AHB_CLK_ROOT.
+> 
+> Fixes: b86c3afabb4f ("arm64: dts: imx8mp: Add SAI, SDMA, AudioMIX")
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
 
-Applied 4 DTS changes, thanks!
-
->       clk: imx8mp: inform CCF of maximum frequency of clocks
+Applied, thanks!
 
