@@ -1,99 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3676A2620C3
-	for <linux-clk@vger.kernel.org>; Tue, 11 Mar 2025 18:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C93262D05;
+	Tue, 11 Mar 2025 18:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741716353; cv=none; b=PZt/uTIRNwIMZ29kS7F6LO+UtEkGekd1xCZaFpquSdQ/qDdlPM9lt9u+GDFZTsLLxoM85BxEE4i0Nlv2LYAo9d18LEXbQbVb2i0DJObREBnW71m9p/ZWWcO5ahaaPkeofknX93xsVMwjtffmIwxjBJro/QIBZJ8u3wzPsKwtMMg=
+	t=1741716589; cv=none; b=EZ0B+uOtiFiUqwLwaNk68q2/Xj0M6Dro4jHStP34Hyqezgv2cCJhzAHc7WQ3J22VBqh3Z0RkVw5STNjA+JBFVDfsYPkYdNhJelCx7KmLv/CWlgPyy0JRkRnAuGwyV7848c8ssq5RjQPqyiUUdndSCHKepclz7vpKpFTwN0VMbDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741716353; c=relaxed/simple;
-	bh=UiJD4WfkyLfCbR2ZJLLU8WXPTcPUoC5Ue3GNIH9PRo8=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=NLzCQBMtd0NzKcyGPLx2qsWFUxdN/BJQpyf4Qzdf8QfXFf7TwtWdMOcc+MPkBRdguBuCdMM1lOWu5dnFs993LwniUs5yTwADMpMqIp4dj6H0C8Q1w8TaqAsuXc2wvqzThGdlUE7J/EOYsqs/+bqlfF8nC7Jaw5ha2DPy4BIVv+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AjA+qXP9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741716589; c=relaxed/simple;
+	bh=KTZ7pAewKhJGTa4+0RoIrxJXtYufuOEKjZdQOIXGxks=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gexbmw8mTH/0QAWWZZDnZ0PgcD9T9P1Rcepn8KVJfoTC4H9IqzVKDmnBvywByb65Xq5sGfa4CoMVauGrGG6STJiSsBJ4jKxI8WqPMm9qolo1hT4ijrTflD5SSxqKvr7Bck+C9U1Z4LHFsZWFA6oTFmK5M3OfVBSwKGgtvtlKSGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dI9CghDu; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AjA+qXP9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 016F2C4CEE9;
-	Tue, 11 Mar 2025 18:05:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741716353;
-	bh=UiJD4WfkyLfCbR2ZJLLU8WXPTcPUoC5Ue3GNIH9PRo8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=AjA+qXP9Ju/93iEYW8zIT5GUGWy9J4D3JM44IsC5ht6nUGIvPwqPO6JJxu9ejSwpr
-	 T2A5rrRI8U0/AOHDvZmFh1hfrz1dUtjEpcXBMzphk6zEcWcoZsMLoeK9mPl9Hz9lnT
-	 9aUn/maga/AM6A31ExMIX5SNn+v8+URTXAHWc0OgggVaVhJT7kGl4AIvBtLtnyzL9q
-	 zF+OrOjIwW4L7qpMpAmWHQrR33/4uVE8I0EIBQcg2Bimb2oVaKio1eVKEknU9Xt3kW
-	 KYw5FxiEkOnMlGiP0ToOyxRstHpbdg09DkjPI9B7m+rxbGKuYnCXRyRV70zwMF6Q4m
-	 Fd3TyVdbwVqrA==
-Message-ID: <33a5e73e9c3919dd0554f9dcbee8b733.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dI9CghDu"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ab7430e27b2so955888766b.3;
+        Tue, 11 Mar 2025 11:09:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741716586; x=1742321386; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=w7YliLuH4qlV/MO/+JH2L4UcYmketDeTxX5I8TCDYu0=;
+        b=dI9CghDu2e4InaN8M/wmugQ1/zPp4vRngPSnHga1b11ctv264/G5AUjrmnVSmTgswP
+         BhwwTa/pm7laravY/eYsuqnmJkowvympHtvrJVPMvlge+XFuRnfhcOMBTLeu2j3ZG9e7
+         8B9nXn21siN9hD7vcQT7NQvNxajl3kTALnITVA7qumyQrcZP0tOLmsXaWkX2kw37Ssq+
+         8VCvhmWUx0MfECKQPcjm9escWZhcP6oYlq3MedS7iNgR8LCwB/LZ9ME0Jl/wsdNFv7w2
+         WNXDZUJrjTgBoqWkfNQU2GMHurmP20H++zUvVJ2rqRgbmioUHgYk824Wp6TfOtDWmCI+
+         T7TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741716586; x=1742321386;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w7YliLuH4qlV/MO/+JH2L4UcYmketDeTxX5I8TCDYu0=;
+        b=TR3sgb+NY+BZZC6agEGvlwE0YwIZKSNYRbwZzuxjkj4QIrJM5RAMXIEJM9hKrrNL14
+         ZrGSK7mDnZyv5iVILiWTShC/T8vsuSmiS/V8RIXYK4bzHHmC8P/acJ/myN4+LTWVqQtV
+         AlbjB7s3RU07BtQwG7FHrdoCc1yxpqXY9Wybf8cdac/nf94vJDvRemrZlddrq0tAcqvi
+         7xjfVh5G6sL9iXJBEXJag1CvjLS7yISUQRBaeklISsKvoA0N21tBzKMf12OhskeudVCl
+         xO4f2ghFjDpe91Da+/RwWJ/dlILQlRiIzj3baSdJmFYfI4hEwYhOLBSBJeHR/3CTpF6m
+         ZlPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUivd4wqZhAGPKlGFTGArNthd1uIf1iN2S0Fzw1zApun0BGy3NPWOqJZO7UhvzVWuOQjjUZVr29EHVo3sCB@vger.kernel.org, AJvYcCVNSWQiZrkScZ8iSsLFP5bkE/hMenRuhp7QxFnbTHJek1fiWvrDhQN0pPP6o3pEsIVxVPzAV29Ph9pS@vger.kernel.org, AJvYcCVPrjFJ3M4gIoqG+wU88+ukD7W9lDHpCisvD84VjUBUXmu060tDWeqyDJZDotK6R/xIyGA6FC9JFDqr@vger.kernel.org, AJvYcCVV6bjXfRmXFoCu+1jY2xIc3Hm11tanrN2UXoH38rLZ8wi/kKhZ3n4B/qb6HgTUgbu4J161+7DQcNJQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7KedOMauYww2fQ8PeBZ7zL3sgmsekDT6YqX4O0ZvqiWckHtph
+	00KYLj55KqC+HuBIDoB2EimAxy6kZB8NqvR4SsbRYuhhHJ6lMGdFCgmtpGB2
+X-Gm-Gg: ASbGncvXLPpx/6neYgNNNZMnyUPFB1MVb1HNtlmscp6Tt9nerfqU3pBD5IU6jfJPOh0
+	w7MElJVnmjyon+zOF7MVa5sXeL9mTHZrDkQdklfiQdnHdOl9el8p6PsBJ1LWI08ZGs5hh1FYpQk
+	3dZJiUt3w4+QHJXY280WouF0uEDE5nLe1/oaykW6JBO8CEUw9o0HnXCn+cOtfMbZMWcFEEoYzs5
+	LstpK9PTDEni83bD1IBbocyN864vJa442omLiqMtLshKZb6s/nvR4QLwq1Lkbs9THLzSbLWzTWR
+	nt8twTKLZ0mLtVmYCnfoGZsYQJCaZVx1BrXklKkGzADwhd8HCUSiLuyFJWEdNOjjgw+9rPwI1sQ
+	Mt61kB6s2GxQYkZJv4Lx+NsM=
+X-Google-Smtp-Source: AGHT+IFGoeMKh+SV9Aw9aLOSeklw6RYQlLlVxQgOHzKR34XV8RHNJXBdNm+Xa03GkQRMHVbvPeRAPw==
+X-Received: by 2002:a17:906:180d:b0:ac2:5d24:1fcf with SMTP id a640c23a62f3a-ac25d2423fdmr1538965666b.26.1741716585443;
+        Tue, 11 Mar 2025 11:09:45 -0700 (PDT)
+Received: from Ansuel-XPS. (58.43.196.178.dynamic.cust.swisscom.net. [178.196.43.58])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2895e7e6asm511088166b.54.2025.03.11.11.09.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 11:09:44 -0700 (PDT)
+Message-ID: <67d07c68.170a0220.3fa05.2c8e@mx.google.com>
+X-Google-Original-Message-ID: <Z9B8Z2aA3MfCBBLG@Ansuel-XPS.>
+Date: Tue, 11 Mar 2025 19:09:43 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Guo Ren <guoren@kernel.org>, Yangyu Chen <cyy@cyyself.name>,
+	Ben Hutchings <ben@decadent.org.uk>, Felix Fietkau <nbd@nbd.name>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org, linux-mediatek@lists.infradead.org,
+	linux-usb@vger.kernel.org, upstream@airoha.com
+Subject: Re: [PATCH 10/13] phy: airoha: Add support for Airoha AN7581 USB PHY
+References: <20250309132959.19045-1-ansuelsmth@gmail.com>
+ <20250309132959.19045-11-ansuelsmth@gmail.com>
+ <Z9AhN9T8s1oogCUn@vaman>
+ <Z9AhkByegWQgC9YE@vaman>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <8574162.T7Z3S40VBb@phil>
-References: <8574162.T7Z3S40VBb@phil>
-Subject: Re: [GIT PULL] Rockchip clock changes for 6.15 #1
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Tue, 11 Mar 2025 11:05:50 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z9AhkByegWQgC9YE@vaman>
 
-Quoting Heiko Stuebner (2025-03-08 10:23:39)
-> Hi Mike, Stephen,
->=20
-> please find below a pull-request with Rockchip clock change for 6.15
-> The new year started with a flurry of activity it seems :-) .
->=20
->=20
-> Please pull.
->=20
-> Thanks
-> Heiko
->=20
->=20
-> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
-5b:
->=20
->   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
-tags/v6.15-rockchip-clk1
->=20
-> for you to fetch changes up to f863d4cc79a7e2f8c734d1fac84dc275805f41c7:
->=20
->   clk: rockchip: Add clock controller for the RK3562 (2025-03-02 17:51:51=
- +0100)
->=20
-> ----------------------------------------------------------------
+On Tue, Mar 11, 2025 at 12:42:08PM +0100, Vinod Koul wrote:
+> On 11-03-25, 12:40, Vinod Koul wrote:
+> > On 09-03-25, 14:29, Christian Marangi wrote:
+> > > Add support for Airoha AN7581 USB PHY driver. AN7581 supports up to 2
+> > > USB port with USB 2.0 mode always supported and USB 3.0 mode available
+> > > only if the Serdes port is correctly configured for USB 3.0.
+> > > 
+> > > On xLate probe, the Serdes mode is validated and the driver return error
+> > > if the Serdes mode doesn't reflect the expected mode. This is required
+> > > as Serdes mode are controlled by the SCU SSR bits and can be either USB
+> > > 3.0 mode or HSGMII or PCIe 2. In such case USB 3.0 won't work.
+> > > 
+> > > If the USB 3.0 mode is not supported, the modes needs to be also
+> > > disabled in the xHCI node or the driver will report unsable clock and
+> > > fail probe.
+> 
+> Also I dont see phy depends on rest. Please split this and post phy bits
+> separately at least..
 
-Thanks. Pulled into clk-next
+Well USB doesn't work without this driver so they are indirectly
+dependent. Will split and address all the other comments.
 
-Did you see this warning?
+> 
+> -- 
+> ~Vinod
 
-drivers/clk/rockchip/rst-rk3562.c:21:57: error: initialized field overwritt=
-en [-Werror=3Doverride-init]
-   21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x20000*=
-4 + reg * 16 + bit)
-      |                                                         ^
-drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'RK356=
-2_DDRCRU_RESET_OFFSET'
-  266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/clk/rockchip/rst-rk3562.c:21:57: note: (near initialization for 'rk=
-3562_register_offset[173]')
-   21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x20000*=
-4 + reg * 16 + bit)
-      |                                                         ^
-drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'RK356=
-2_DDRCRU_RESET_OFFSET'
-  266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
+-- 
+	Ansuel
