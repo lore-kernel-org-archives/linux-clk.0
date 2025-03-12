@@ -1,126 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386E41CDFCE;
-	Wed, 12 Mar 2025 16:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E111E5B9B;
+	Wed, 12 Mar 2025 20:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741797816; cv=none; b=qdLuyUv1pCf0J2kAdPiHCgieM7t3NuLEaCEAzxhifsg2Hb4gTDuBr5MTITP7kPOL0NsMEAkCT0nNoqSOIjKZ+4VGNysdkP5Iec8Au51Wmm2yOMNyZFsgMU0KiERET7KNJ/oTz0/uXZMYzXHno3SkkKChcj4ilVR6u+W51Oi8tQ4=
+	t=1741810666; cv=none; b=KjRzpRDGptzkbTD+DoUNUPDonrwdCGz24BhUSorJWBqHtFdXnSAWU5+tYN2Pfy2zbliTFHyGiGfG50G82ynQneD9cOGet/ZltOQc0qRI8BlcDd7miFdZRhUG1HUxkLUjbM74eGrrDmzsdUqC6n0NxKN2tKgwvuG78oQYX37KXfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741797816; c=relaxed/simple;
-	bh=6Nlfx24/5WyMWH+mVg/nVlAYQ94lGe7m8lLJJ4G7Slk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nf3+S1JfDfsr7Vou6JilYXtFrH2D+mowKRRk7QO+ApT1d3yMMWY4B7LSV5q6kuVKSJoD4yKVBnLU2bqSuu8IY3oCWOVFoE2GgyN6/iQxIDa3FHgsYvMA3eJEhPkOOiSU+mvnS2087WpVw0YPX46HjTlqrpzcEgGZHT4e8oPyr4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sILim1Bn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741810666; c=relaxed/simple;
+	bh=v+BY+g55F6T5NMcwLkcGpN4Z2yA59ha5GDHqdirKEVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HWnqWRxOL3QLxD3uYYhkmCvPYBvGcYYiB6g/ttMJyAccjDnSBK3AcqWUvM4/3pXKby+63MXONGPanIVGhuqZxF8JGQHkh+VRq5nmeQKVX+yvYuZTDowsGF250+7/keQVYaH8z1vaD/S5COOAobaqfvvr72nEmNOw1lSfF7daJuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cPp6tt1W; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sILim1Bn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 809CCC4CEDD;
-	Wed, 12 Mar 2025 16:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741797815;
-	bh=6Nlfx24/5WyMWH+mVg/nVlAYQ94lGe7m8lLJJ4G7Slk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sILim1BnZ9ITmiC6nb8CcNmG9QTkPLkeT5hpmzawAd9hQICLb7L6sGXuqAfgPqXHP
-	 H6ue/fML9DXKqFI/6DYvd/4mxgtBH8kYvj6uVdql+gWQJl7ssFdt3z6O6m/olh8eQ/
-	 v+dhGFeEYRF+aMSL3jytu3/pTWSOdqGNZs2mSLQMFL4mm+rBcRDDfot4xyL983+Ed8
-	 IPHK1qCntdz4S5kY9X3QtT3sjJaTlHCRNjP9BuD+JhJTJO4/g7E0qP1DfzGLcLwEzH
-	 Q9483bpienLKlDOyj0wTGPxbaXjzzpdOcZ32VxN5Lfa/YPsxPkRScq9dHo1svLDKby
-	 qSVRMOU2hNezA==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Tero Kristo <kristo@kernel.org>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cPp6tt1W"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741810664; x=1773346664;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=v+BY+g55F6T5NMcwLkcGpN4Z2yA59ha5GDHqdirKEVw=;
+  b=cPp6tt1WzSKd2MCxN8MlUTjxEmjZxzSx6uz48v1Kb0UEU0iykDHbERNn
+   TYYCqjInHnt2nu+miZrVaG28AVPR7lbhwzW7O9HeDjpEGN1CTlDwZks5z
+   kczy4suBh7LNtqIJCgfsW40VwkHfw2fmvLgZjnmCSAgRccG1OjcWEl+pk
+   qUX4wBZBmeGnMXtZwZDrJFEkY0IjcXBi2Z5m3T5QA0g3rGlD49EL0dDPy
+   fz+w5UMiTs5EjDA7FpSF+zuQnyuNXcDHYa2LFfZ1iWgtx8LtUW8jQCe+7
+   AVty6TF3NJxlsqLmzt1+BKdSc8JLFUVJPYA+M2Ypa7GYkeE/USn4n9QYT
+   g==;
+X-CSE-ConnectionGUID: Po8MfTCDTvuULi84s/lPsg==
+X-CSE-MsgGUID: iTwIkpkdSq66z/KksrHpCg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="53117508"
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="53117508"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 13:17:43 -0700
+X-CSE-ConnectionGUID: JTTkifBISISmGQpCwqs/oQ==
+X-CSE-MsgGUID: WlY3h+hsT3OFna6ZjLLUfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,242,1736841600"; 
+   d="scan'208";a="120698425"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 12 Mar 2025 13:17:39 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tsSWG-0008rs-2S;
+	Wed, 12 Mar 2025 20:17:36 +0000
+Date: Thu, 13 Mar 2025 04:17:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Haylen Chu <heylenay@4d2.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-omap@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: ti: Simplify ti_find_clock_provider()
-Date: Wed, 12 Mar 2025 11:33:30 -0500
-Message-ID: <20250312163330.865573-2-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1
+ SoC
+Message-ID: <202503130314.Y8KFKZWW-lkp@intel.com>
+References: <20250306175750.22480-5-heylenay@4d2.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306175750.22480-5-heylenay@4d2.org>
 
-Remove using for_each_of_allnodes_from() which is not safe to use
-without holding the DT spinlock. In reality that probably doesn't
-matter here. This is the only user in the whole tree, so it can be
-made private once removed here. The "from" argument is always NULL, so
-it can be dropped as well.
+Hi Haylen,
 
-There's a slight change in behavior in matching the "clock-output-names"
-value as the prior code would match if the node name matched the
-beginning of the value and the comparision was case insensitive. Now
-it must be an exact match.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
-Compiled only. I'm not sure if the the change in behavior is going to 
-matter. 
+[auto build test WARNING on spacemit/for-next]
+[also build test WARNING on spacemit/fixes clk/clk-next robh/for-next linus/master v6.14-rc6 next-20250312]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
- drivers/clk/ti/clk.c | 27 ++++++---------------------
- 1 file changed, 6 insertions(+), 21 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Haylen-Chu/dt-bindings-soc-spacemit-Add-spacemit-k1-syscon/20250307-020635
+base:   https://github.com/spacemit-com/linux for-next
+patch link:    https://lore.kernel.org/r/20250306175750.22480-5-heylenay%404d2.org
+patch subject: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1 SoC
+config: powerpc64-randconfig-r131-20250312 (https://download.01.org/0day-ci/archive/20250313/202503130314.Y8KFKZWW-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce: (https://download.01.org/0day-ci/archive/20250313/202503130314.Y8KFKZWW-lkp@intel.com/reproduce)
 
-diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
-index 9c75dcc9a534..693a4459a01b 100644
---- a/drivers/clk/ti/clk.c
-+++ b/drivers/clk/ti/clk.c
-@@ -118,13 +118,10 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
-  * Eventually we could standardize to using '_' for clk-*.c files to follow the
-  * TRM naming.
-  */
--static struct device_node *ti_find_clock_provider(struct device_node *from,
--						  const char *name)
-+static struct device_node *ti_find_clock_provider(const char *name)
- {
- 	char *tmp __free(kfree) = NULL;
- 	struct device_node *np;
--	bool found = false;
--	const char *n;
- 	char *p;
- 
- 	tmp = kstrdup_and_replace(name, '-', '_', GFP_KERNEL);
-@@ -137,25 +134,13 @@ static struct device_node *ti_find_clock_provider(struct device_node *from,
- 		*p = '\0';
- 
- 	/* Node named "clock" with "clock-output-names" */
--	for_each_of_allnodes_from(from, np) {
--		if (of_property_read_string_index(np, "clock-output-names",
--						  0, &n))
--			continue;
--
--		if (!strncmp(n, tmp, strlen(tmp))) {
--			of_node_get(np);
--			found = true;
--			break;
--		}
--	}
--
--	if (found) {
--		of_node_put(from);
--		return np;
-+	for_each_node_with_property(np, "clock-output-names") {
-+		if (of_property_match_string(np, "clock-output-names", tmp) == 0)
-+			return np;
- 	}
- 
- 	/* Fall back to using old node name base provider name */
--	return of_find_node_by_name(from, tmp);
-+	return of_find_node_by_name(NULL, tmp);
- }
- 
- /**
-@@ -208,7 +193,7 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
- 		if (num_args && clkctrl_nodes_missing)
- 			continue;
- 
--		node = ti_find_clock_provider(NULL, buf);
-+		node = ti_find_clock_provider(buf);
- 		if (num_args && compat_mode) {
- 			parent = node;
- 			child = of_get_child_by_name(parent, "clock");
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503130314.Y8KFKZWW-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/clk/spacemit/ccu_pll.c:110:9: sparse: sparse: cast truncates bits from constant value (ffffffff7fffffff becomes 7fffffff)
+
+vim +110 drivers/clk/spacemit/ccu_pll.c
+
+    85	
+    86	/*
+    87	 * PLLs must be gated before changing rate, which is ensured by
+    88	 * flag CLK_SET_RATE_GATE.
+    89	 */
+    90	static int ccu_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+    91				    unsigned long parent_rate)
+    92	{
+    93		struct ccu_pll *p = hw_to_ccu_pll(hw);
+    94		struct ccu_common *common = &p->common;
+    95		struct ccu_pll_config *params = &p->pll;
+    96		const struct ccu_pll_rate_tbl *entry = NULL;
+    97		int i;
+    98	
+    99		for (i = 0; i < params->tbl_size; i++) {
+   100			if (rate == params->rate_tbl[i].rate) {
+   101				entry = &params->rate_tbl[i];
+   102				break;
+   103			}
+   104		}
+   105	
+   106		if (WARN_ON_ONCE(!entry))
+   107			return -EINVAL;
+   108	
+   109		ccu_update(swcr1, common, entry->swcr1, entry->swcr1);
+ > 110		ccu_update(swcr3, common, (u32)~PLL_SWCR3_EN, entry->swcr3);
+   111	
+   112		return 0;
+   113	}
+   114	
+
 -- 
-2.47.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
