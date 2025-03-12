@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CCF4685;
-	Wed, 12 Mar 2025 23:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F981F12F8
+	for <linux-clk@vger.kernel.org>; Wed, 12 Mar 2025 23:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741821280; cv=none; b=fGlRsSwEZGwfLCL4bKsA5mYgXdyEPwqrNkK2G/YP/AwKB/qz0gOzkPjORK5hnV8i0RwKz+XiCQBCzywTYUo4NEUyoCkuYX/LyT3PxUA+BDdqr/ngkgxJJhRAPO8Zaeqy8FAUzHKzDH6UmYrYS9d0GqM15vtPFPlb04sNkMZYJDA=
+	t=1741821422; cv=none; b=G/4TsH8zmKujvgWa5GtalUNTan4IXwmfYwxAmA3M8uBy7QDOKdMfdZujtjffbC1iSbuNIO2Lie7STYxek2oGKhP0uDqIAQ9KLFou8/ZnaBGrOw1TSb2LdUBEUs6h+uDGdTaa0jU4X8RZb2NEyiXJkHqOjHv65XV24bo7E3hTcL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741821280; c=relaxed/simple;
-	bh=TKgowIo1WaTZUviCcRMak32azD2cFfVNTUXSGH8c1O0=;
+	s=arc-20240116; t=1741821422; c=relaxed/simple;
+	bh=wqg9zUtWmVpF6JzOb+JkHva2UgAbpiTGxmzAbHTOhuk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=syAnCL/iz5wvSZZFV6mtoXpmr7L1Nz/mtTWsRxJkE4C3ckwR3ew7KuOPmppu845lLu73UDBdTyxizsc/56OGhrNvDfl2P2V6h0V/QzZkYEFzEPbyawmGvLMgCU5vjrirhFn2shZfiID8cnrM74qgMIADGZFB5p3xNR12EcfWfgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eAfLgmNJ; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=l7SZnkbl50IiIIlbX9CiB9lPPOs3iNA1CO5vNwrxgkAPJpCuVdwZXoQlNZeLgnIhYDEkMTXFfQuU24eKY2bTkM6xG+eU3wz5N+MIlgHpJ7sO5FRvrBE1+cAh8xTQNcaAHKWhty06OK180Ig+NF94VIehtUEBbVasBE+TAK6Gelo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qLB8YGlD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eAfLgmNJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F59DC4CEDD;
-	Wed, 12 Mar 2025 23:14:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qLB8YGlD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDBFC4CEDD;
+	Wed, 12 Mar 2025 23:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741821280;
-	bh=TKgowIo1WaTZUviCcRMak32azD2cFfVNTUXSGH8c1O0=;
+	s=k20201202; t=1741821421;
+	bh=wqg9zUtWmVpF6JzOb+JkHva2UgAbpiTGxmzAbHTOhuk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=eAfLgmNJBIhrzfTbBz15W2qXyisRuA+s0m0sbZ0DR4p5Yn/gYR7lffHji1Pi6aEKz
-	 iEYjHrI0Tt4Cjp8pteJK78+OVFmkwbGZq6yWcr6QMo8exhqx3K9GefpIMExXacDNRh
-	 KURQmUBu26eABgR5+fE6nmnvffrHsyK4SWEmBdjwmGVFmfDO2zE06KJnS0vqNXK2YH
-	 VrGqoDKtTRm4MkgZrY7LhY7SgtxAK9qMGNNgHvHYQJcDqrUXQJjf9Ce2rJDiEEY4+j
-	 ZNY/I0f84t/Yi407KIEBS2V77DWKo7zqJ8QXMrTL5tL3NSHZlSvQSL0tFB8WF2pqeO
-	 KNWFA5iJpPFMQ==
-Message-ID: <f1d5dc9b8f59b00fa21e8f9f2ac3794b.sboyd@kernel.org>
+	b=qLB8YGlDoAxC9HiQ57QktFZPg3r7oWUMovsr6+YkytP5AyMV05LkV0+3FQ70vLC+6
+	 fyViw6+XuaIZgXeNBoePnB8YddiUVeEOK5eoTynIre7kP9rlPE7QEQn/HtvauAU7yo
+	 AX1mCioV8c6R4s6ZeKOKdsFqHaN3kvaQeVrAqwyG6qdbzePQ9aaKoLANzyA8AQIh6F
+	 FEZ/pj0AxRb/Zrs06996kmp7BlcS+bDHRdAjuQMHfX7im4Ep7C/uBbQnON+A46IU0j
+	 1yZPBFWDdiHzAkIWkmLC0M2Kqt7Eb0o7mOg9Ab6qMqTfNGWjD12/wO5giT65WhWcsy
+	 KLN3TGslQp3VA==
+Message-ID: <166bb0476a377d8159ce669007e49689.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,75 +35,63 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <epnv7fp3s3osyxbqa6tpgbuxdcowahda6wwvflnip65tjysjig@3at3yqp2o3vp>
-References: <20250226232320.93791-1-inochiama@gmail.com> <20250226232320.93791-2-inochiama@gmail.com> <2c00c1fba1cd8115205efe265b7f1926.sboyd@kernel.org> <epnv7fp3s3osyxbqa6tpgbuxdcowahda6wwvflnip65tjysjig@3at3yqp2o3vp>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: sophgo: add clock controller for SG2044
+In-Reply-To: <2216284.irdbgypaU6@phil>
+References: <8574162.T7Z3S40VBb@phil> <33a5e73e9c3919dd0554f9dcbee8b733.sboyd@kernel.org> <2216284.irdbgypaU6@phil>
+Subject: Re: [GIT PULL] Rockchip clock changes for 6.15 #1
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Chen Wang <unicorn_wang@outlook.com>, Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Richard Cochran <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>
-Date: Wed, 12 Mar 2025 16:14:37 -0700
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+To: Heiko Stuebner <heiko@sntech.de>, kever.yang@rock-chips.com, mturquette@baylibre.com
+Date: Wed, 12 Mar 2025 16:16:59 -0700
 User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Quoting Inochi Amaoto (2025-03-11 16:31:29)
-> On Tue, Mar 11, 2025 at 12:26:21PM -0700, Stephen Boyd wrote:
-> > Quoting Inochi Amaoto (2025-02-26 15:23:18)
-> > > diff --git a/Documentation/devicetree/bindings/clock/sophgo,sg2044-cl=
-k.yaml b/Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
-> > > new file mode 100644
-> > > index 000000000000..d55c5d32e206
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
-> > > @@ -0,0 +1,40 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/clock/sophgo,sg2044-clk.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Sophgo SG2044 Clock Controller
-> > > +
-> > > +maintainers:
-> > > +  - Inochi Amaoto <inochiama@gmail.com>
+Quoting Heiko Stuebner (2025-03-11 23:03:00)
+> Am Dienstag, 11. M=C3=A4rz 2025, 19:05:50 MEZ schrieb Stephen Boyd:
 > >=20
-> > No description?
+> > Did you see this warning?
 > >=20
+> > drivers/clk/rockchip/rst-rk3562.c:21:57: error: initialized field overw=
+ritten [-Werror=3Doverride-init]
+> >    21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x20=
+000*4 + reg * 16 + bit)
+> >       |                                                         ^
+> > drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'R=
+K3562_DDRCRU_RESET_OFFSET'
+> >   266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
+> >       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/clk/rockchip/rst-rk3562.c:21:57: note: (near initialization for=
+ 'rk3562_register_offset[173]')
+> >    21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x20=
+000*4 + reg * 16 + bit)
+> >       |                                                         ^
+> > drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'R=
+K3562_DDRCRU_RESET_OFFSET'
+> >   266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
+> >       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> > cc1: all warnings being treated as errors
 >=20
-> I am not sure the things to be described. Maybe just tell the
-> clock required and providing?
-
-Sure and point to the header file with the binding numbers?
-
-> > > +  - |
-> > > +    clock-controller@50002000 {
-> > > +      compatible =3D "sophgo,sg2044-clk";
-> > > +      reg =3D <0x50002000 0x1000>;
-> > > +      #clock-cells =3D <1>;
-> > > +      clocks =3D <&osc>;
-> >=20
-> > I think you want the syscon phandle here as another property. Doing that
-> > will cause the DT parsing logic to wait for the syscon to be probed
-> > before trying to probe this driver. It's also useful so we can see if
-> > the clock controller is overlapping withe whatever the syscon node is,
 >=20
-> It sounds like a good idea. At now, it does not seem like a good idea
-> to hidden the device dependency detail. I will add a syscon property
-> like "sophgo,pll-syscon" to identify its pll needs a syscon handle.
+> interestingly, this did not turn up in my build test.
+> But that splat is really helpful too, because it made it easy to see
+> that one of the ids is doubled in the dt-binding header.
+>=20
+> include/dt-bindings/reset/rockchip,rk3562-cru.h:
+>=20
+> #define SRST_P_DDR_HWLP         173
+> #define SRST_P_DDR_PHY                  173
+>=20
+>=20
+> I'll fix up the double id.
 
-Cool.
+Thanks.
 
 >=20
-> > or if that syscon node should just have the #clock-cells property as
-> > part of the node instead.
 >=20
-> This is not match the hardware I think. The pll area is on the middle
-> of the syscon and is hard to be separated as a subdevice of the syscon
-> or just add  "#clock-cells" to the syscon device. It is better to handle
-> them in one device/driver. So let the clock device reference it.
+> Out of curiosity, what toolchain was that?
+>=20
 
-This happens all the time. We don't need a syscon for that unless the
-registers for the pll are both inside the syscon and in the register
-space 0x50002000. Is that the case? This looks like you want there to be
-one node for clks on the system because logically that is clean, when
-the reality is that there is a PLL block exposed in the syscon (someone
-forgot to put it in the clk controller?) and a non-PLL block for the
-other clks.
+$ ~/compilers/gcc-12.2.0-nolibc/aarch64-linux/bin/aarch64-linux-gcc --versi=
+on
+aarch64-linux-gcc (GCC) 12.2.0
+Copyright (C) 2022 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
