@@ -1,132 +1,134 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2182F43
-	for <linux-clk@vger.kernel.org>; Wed, 12 Mar 2025 06:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83E91E5B89;
+	Wed, 12 Mar 2025 07:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741759401; cv=none; b=jhZTQSH6maRMZR/Ygz90XBLKFneJkC+AZ/V+Ceg7Y4oqW3kLMe+OUwbcC2RLumA1ssmsmxh+WnNaAM+djCnyzS+/zd9Ojp/xYaYTVYKnKwZCDLemi9Ykmvu4zUEQRAeG26uiMaAV41twbYibk1D8RZaYgy+OoTGaIAch5BDGmwI=
+	t=1741763505; cv=none; b=smvhNcokBgpnL+euOIKP4RRBy/Sw3gA4gXkHgSJVG26bhyg99eSy84BMchubV0fNM+qO2oQ3skJU63bRd59qeCAhg/0C/c2d+P2oXvL3YGbZDa7+lNOry8Rms55SR3OUPxMHyFGwzH20rUfBmobQt8aJQ9aOCN76XgkSrslMmfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741759401; c=relaxed/simple;
-	bh=CWWMymw37EHoOBTovRFmk98dnnKJnjT+YGur2EsZ9bA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oEFnCJK3GOuuYpJ5djrjX7n7P6by6uP+Ss7NoFrgaYb7OuItMIFiFFblzGta3ISaqUGW3NdIadm0AByQ3CRemWgEfk9Q2lwDOP75ocWXqBnrlXJpSfpWaWm8sVfkFsiItd2JKIgzOrADpT6QNpeOVz20RnSr2syF+ZPWvbMkR3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=T0+U2t3i; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1741763505; c=relaxed/simple;
+	bh=cV5x2phB6io5A1hcWRos+71eq2NS/nw+eOi9/yJjQLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VfKR8ZNOzoZ84ecdqZ709MYP35RGIJULLkVrV+6CLH5DjdUsQaZTjgCVTSf6fMi70/8MlZJ4thkA+5SpT+z4/s3uT7tntA0SFDMN7UHArfplBVJeVha922j2euX2Jo+NowPyoa7wPrfY+y0pN39AEWJ7VTrpa3CXCeUoPjXNxQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yrex1V9P; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="T0+U2t3i"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=1TX2UkdheGKH/mIHBh+0F8cDwKmjcarJeonTvtYCnbk=; b=T0+U2t3iZwWsl0jzzugcrIRWJV
-	q0Z++Vigx0eRo/joU6S5nFyqXF6ZdgEMWqPiEuxEk/efNcxGgUaCRHdzNNstqrMyKEAijN0EYwwT/
-	53LXVvVGfxdi3qvpdTvX8EZPn85rM/8ivlY89vNlw9GHLG1p6dNvGNofT2Z5/2JE7UqR8uBG7366t
-	PznC3bVqT2a3JxHBO1bcfMUmc+Dj3AwQUUXYfJcJRoFu2R5mJust9p4OUcNMe/fQBVOBcT7+qbPqd
-	PWHnSTx/AE7fi+lh8lJElYtlQXV+AGWamtXCrTjVpvKFJWTUmOSSAXqsQwigXQ27SXPCcbgE2T3AB
-	SQW6KZeg==;
-Received: from ip-185-104-138-51.ptr.icomera.net ([185.104.138.51] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tsFBG-0005Jt-SD; Wed, 12 Mar 2025 07:03:02 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>,
- kever.yang@rock-chips.com
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [GIT PULL] Rockchip clock changes for 6.15 #1
-Date: Wed, 12 Mar 2025 07:03:00 +0100
-Message-ID: <2216284.irdbgypaU6@phil>
-In-Reply-To: <33a5e73e9c3919dd0554f9dcbee8b733.sboyd@kernel.org>
-References:
- <8574162.T7Z3S40VBb@phil> <33a5e73e9c3919dd0554f9dcbee8b733.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yrex1V9P"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52BMHrsZ020069;
+	Wed, 12 Mar 2025 07:11:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PPXp+P7KdxayDRrDGIguU4QpwVn6HFUUreh4LJiEppw=; b=Yrex1V9PQqzf5Nwk
+	hMn/EiHqrLrkhsA4w/hTZ04jCu3nFKQKynMUR3J+JdXCRsg7p8+7pEB1ozFpoEke
+	Aa1JndyMCv95ApBI8B7+Rd2SNkoUfl9BY5qEX17gvQjWYZ3EtGzt91CLP+STbHqp
+	Sa08Oq/OAJYFh/7OnKw7egsos9o0r1JCBJRCkc823C/uV6Oxsd6DOmE//qyFfIIq
+	nQNW2gnfKfRT7q3MIVrZVQOAGQv6B26Q8fEWBBwYmQdg4vVLBHXXLS3XoghS4zV7
+	Kv2L3WtFRGwjqTj4y8/1sTMe/NcMqARrhqSJh7Pnl9t9L1WFKNOT/rdmoUW8bNFe
+	dNxG/w==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2p1f2t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 07:11:38 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52C7BbIf008513
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Mar 2025 07:11:37 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Mar
+ 2025 00:11:31 -0700
+Message-ID: <cd092022-cf6d-421a-a29d-69f7f4f068b6@quicinc.com>
+Date: Wed, 12 Mar 2025 12:41:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-
-Hi Stephen,
-
-Am Dienstag, 11. M=C3=A4rz 2025, 19:05:50 MEZ schrieb Stephen Boyd:
-> Quoting Heiko Stuebner (2025-03-08 10:23:39)
-> > Hi Mike, Stephen,
-> >=20
-> > please find below a pull-request with Rockchip clock change for 6.15
-> > The new year started with a flurry of activity it seems :-) .
-> >=20
-> >=20
-> > Please pull.
-> >=20
-> > Thanks
-> > Heiko
-> >=20
-> >=20
-> > The following changes since commit 2014c95afecee3e76ca4a56956a936e23283=
-f05b:
-> >=20
-> >   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
-> >=20
-> > are available in the Git repository at:
-> >=20
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.gi=
-t tags/v6.15-rockchip-clk1
-> >=20
-> > for you to fetch changes up to f863d4cc79a7e2f8c734d1fac84dc275805f41c7:
-> >=20
-> >   clk: rockchip: Add clock controller for the RK3562 (2025-03-02 17:51:=
-51 +0100)
-> >=20
-> > ----------------------------------------------------------------
->=20
-> Thanks. Pulled into clk-next
->=20
-> Did you see this warning?
->=20
-> drivers/clk/rockchip/rst-rk3562.c:21:57: error: initialized field overwri=
-tten [-Werror=3Doverride-init]
->    21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x2000=
-0*4 + reg * 16 + bit)
->       |                                                         ^
-> drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'RK3=
-562_DDRCRU_RESET_OFFSET'
->   266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/clk/rockchip/rst-rk3562.c:21:57: note: (near initialization for '=
-rk3562_register_offset[173]')
->    21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x2000=
-0*4 + reg * 16 + bit)
->       |                                                         ^
-> drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'RK3=
-562_DDRCRU_RESET_OFFSET'
->   266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> cc1: all warnings being treated as errors
-
-
-interestingly, this did not turn up in my build test.
-But that splat is really helpful too, because it made it easy to see
-that one of the ids is doubled in the dt-binding header.
-
-include/dt-bindings/reset/rockchip,rk3562-cru.h:
-
-#define SRST_P_DDR_HWLP		173
-#define SRST_P_DDR_PHY			173
-
-
-I'll fix up the double id.
-
-
-Out of curiosity, what toolchain was that?
-
-
-Thanks
-Heiko
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/8] clk: qcom: Add support to attach multiple power
+ domains in cc probe
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+References: <CMTYKKilQJYeHUYYKvlqnwv4Q2P-58Ic1v1ndS9HQ8Yhq2xpHuNThibFDjXDEQ1PyNbx__f9BVBr0peoTUdvPg==@protonmail.internalid>
+ <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
+ <5a45fd25-74ed-46e3-b0e3-5adf92b5e9f7@linaro.org>
+ <46d4f090-3e31-414f-abfc-3d1018913c56@linaro.org>
+ <9e6fdcfe-3c6d-44c7-95a3-7652c0650bf4@linaro.org>
+ <caa00d62-b24d-4db7-9e12-170a10c073e3@linaro.org>
+ <b21b5f03-e328-4708-a854-1b3fa9c3dfa3@linaro.org>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <b21b5f03-e328-4708-a854-1b3fa9c3dfa3@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=HP/DFptv c=1 sm=1 tr=0 ts=67d133aa cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=bU-rbE2s8JpbpfxL7skA:9
+ a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: akoicu-BERqGVOUIAtrrDukoc-ibhcGu
+X-Proofpoint-GUID: akoicu-BERqGVOUIAtrrDukoc-ibhcGu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-12_02,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=850
+ clxscore=1011 priorityscore=1501 adultscore=0 impostorscore=0
+ malwarescore=0 spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503120046
 
 
 
+On 3/11/2025 11:41 PM, Bryan O'Donoghue wrote:
+> On 11/03/2025 17:55, Vladimir Zapolskiy wrote:
+>>
+>> I kindly ask to elaborate here.
+>>
+>> This series does not touch CAMCC at all, and if the series touches CAMCC,
+>> then it changes DT ABI, which is objected. Or is it for some reason
+>> objected only for SM8550 and not for the other platforms? More information
+>> is needed.
+> 
+> No but it _should_ Vlad, that's the ask.
+> 
+> Both of these clock controllers will require this same change to be implemented, that's what I'm asking Jagadeesh to do.
+> 
+> Certainly that's the case for x1e and asking Jagadeesh to also check that for sm8650.
+> 
+
+Yes, similar changes are required for camcc on SM8450, SM8550, SM8650 and X1E80100. I will add them in the v3 series.
+For X1E80100 camcc, I see changes are already raised in dt-bindings[1] and DT[2] to add multi PD support, so I will just
+include the camcc driver change in v3 for X1E80100.
+
+[1]: https://lore.kernel.org/all/20250304143152.1799966-1-vladimir.zapolskiy@linaro.org/
+[2]: https://lore.kernel.org/all/20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-2-c2964504131c@linaro.org/
+
+Thanks,
+Jagadeesh
+
+> ---
+> bod
