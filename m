@@ -1,133 +1,165 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01631F1524
-	for <linux-clk@vger.kernel.org>; Wed, 12 Mar 2025 23:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BAB1EB5D5;
+	Wed, 12 Mar 2025 23:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741821936; cv=none; b=Dws93nkiS5Iza3ObtZWIOx3pqCpaK26qkD0r9pQA2mmQ+ijjV0OP7UwuveD+pFVDOLbBJC/yOkO7264bdaan3sqxNBTqeTxxx5PkIIVNXXGG5KpMh9QMkuqgzqfVUXsPZNxVMVS69y6wacNiMy6vVi+m81+GEQbqwel72m0FE30=
+	t=1741822195; cv=none; b=QBKhlJwEUlHrqw/8ZrZwNoPHmvZ4I0uzNpOjt4/JxRwQCa4sqPdjDJmuFPMn1/F1p8v5cMiFMuhsDJ5HexXQcV9seeMFAEqiN0hadlJuRIhaxwdKE1lMqdJTvrI8h5PBzsaFKvr+4JYJ4hkgHk+s5QJQRP4aiLPWMFZnm70/X4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741821936; c=relaxed/simple;
-	bh=KNOXCxB49IWpZXkEuShUxxFDdmvuAFP6JtXUlRzTWE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TJBf/JS2tVYKBjUUc6DGk4HJHw90cs99jX/BVC3KJuZIhu0hXeH4VmjQjz5Qc3WEWqKM4/tGoMZjAp07VWYPBAF/etHpdvfHeqSb6+ATsW3ZrDAl8namciXv7XIhn3lcxi4wHBtoRFG6p1eaxSc0jXKTYzn+nLp1bCTKBAXnHqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=POsKFPb3; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741822195; c=relaxed/simple;
+	bh=fspsdGz14WdzOajPJOMQzjs2D+NwwiVnmRowuuxUM58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HkVFywtgFj7NpXzG9yeAHu4eocrmn6jP8C3TbXCLscTXuIjB74ApQpR6THqvXQs8+I975nsl0I9Zgw8xW2cctnGeQsDYtyVZW5tVun/gQy8XHELVFg74+lp+A8/2NV8JC2dKaPU5mxuiPYxq/YMtoBnYLsmWwKr81m3cCX5Osrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i4FXY7du; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="POsKFPb3"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e60cfef9cfso462435a12.2
-        for <linux-clk@vger.kernel.org>; Wed, 12 Mar 2025 16:25:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i4FXY7du"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7be6fdeee35so58181785a.1;
+        Wed, 12 Mar 2025 16:29:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741821933; x=1742426733; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cbP3u4ukcH6UtAZm28jTjg95b8wU0mnB31L/HtHfr/Q=;
-        b=POsKFPb3cgKruwzgXihPs4RTCjHoXI8CqbOhsYbLezi7cB0EY3kF126c2kp7FW0Glm
-         TQvUHOGxFY8P6mhcJnv4vNI9+svwl8VBoyQWuxNlHuPduNPN4BgwZXbzoj3Fzs2jDr90
-         iMrpEfZ8DheLnb2mHVEhU2HDrDBYCsOMMtlO5d0PPYNG9KxFkRtDoS2MItq0D6ChDg3z
-         1pFVywx21U0JImeOrn7mHdTMFs7R3mt7EqyFjqLPQeKQga81Cgpc8+qSA7ON1yldeZrc
-         NgV4cDxJoU7mqbgRTEVJX3lLFJVn092ITMY4xbEUin+oA83PR+pZUNElMYsX7MwfNnto
-         3O/Q==
+        d=gmail.com; s=20230601; t=1741822193; x=1742426993; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xLfGaIgvY5ZVl4JrSGdwM0o3tslIHB1ct9yF4dQRXlI=;
+        b=i4FXY7duuyX6pN5ovYLEdff5ApcFG+PFEDiCJ/cRpAXfqaYfEN2GOagk4JYTqtt+wO
+         UL/9Dqj+3eAFlk6hAwZGloUvp2pP32JYaUqdxfDVnWVpJrR4YlXqyJTYfWQ92PiiRrrX
+         h+SbB2UYt0uStmCd2nNceKqMrdTw07/CPEdpkyFdoIG2BZEDc3fuTRJlEVUb5W+MJDkQ
+         CeWDrNyreqQfUkGXj0ALIW971k1tsPI0SMDN0Os/lKwvMYU3W/iUp7xZCZFs6W101sAd
+         Vs/v/psDntGEsYKMVhEPMRQS3pbP6ApZ2kAQgzat+0Cb0Z4CV9BDX2axA4qv8vWq/K2L
+         r0vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741821933; x=1742426733;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cbP3u4ukcH6UtAZm28jTjg95b8wU0mnB31L/HtHfr/Q=;
-        b=oCyyk9jmHCYnI14G5mVppOHOJUj9cHMEjFP8eoAalwpAGhjBxlU3a8QB0U44jtCgXD
-         y6ur68sTOJkQmbmrObfM+k31krhM7EOJPR34A+zXI1NsK1stA8w6e7Oc3aHd/QnrBc+g
-         5O+vDqkgSk2PhI6Pd79lV2CmxVHUXl/6pBU04vV/bgDuwHXvb/2pU5S9h0lAEcwptDM5
-         pLtG2EgXiyl8sE0xAyHWgn1nAKCTr8Nff8KdQF3LBUKtfiklZACZJG7tGgj1jukf+kHr
-         fjKDyFHMY2c/UP1DGmK1lL/KpZf6QjiTtAPA74q+9pw2FvebUBqRYZqu5gVSwhUZbF5r
-         POsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSyae3g/KWGekv/ur1UxwI441Ja5328nbuEZqiY0Q6RU5JqO1YrEYWfxmsvXVBMEKwfhADN40VQ0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyraH0hoBauerNKjn+ycSm9kivH7ZPBR7EeFVHGZWHJ8M5IroHF
-	DKOyFZ4uQ2lHAUKBxFwniu7QBUk2urU4PDF5Va/DbTfw81ttEOL8B+3MD5oRUqU=
-X-Gm-Gg: ASbGnctNXy9OrlUrioYfaM5SIx9Y4rgJgrrEoqRCuIwrT+e+m9CQfDslT2NpqX/m6Hd
-	bRiWbKneEuoyf5baY5tLDkEsl0JPVbGGazzsZ/5vSbLi83eKfMx+EXqEiCiJLPNsa3xy6/TxheI
-	QNrBW6U0Fyt+M2ZNhbXdh8f9rH2v29xQQ0W3hBwKyf4wooqs3gbWsme1d9opmNv/L4T0hSNRQmM
-	rDTN0OCwNL+J6+DzqHKYgxMsFwTpOUajvDdoi6EZf5k05uHP7/2hMnNZKsursI1MQobbTXrNWBA
-	JGY3b7uVxbyo3g+Gs1POCiRuIaZhnJcwBsnqVMg7j6ErgUkiIwZc8Bgedjll6tP+Msxs88FmXXP
-	5qVBzpLKkvHDo+dJ/rEyEOQQTCTIYFo8rNqGvl+CBL1BnClJU1c661StcjlfmGG2CXPfKdy8M7b
-	QZNB1nN4ctYTk849qglZwKJtpz4NY95Sc=
-X-Google-Smtp-Source: AGHT+IEQ9vjHKRKBUp2ycACrS8aKwBtnDiyRwBCDM+O3Ys0xwiBai+d7QgwA4ZAZ03T6YvvBIIvtoQ==
-X-Received: by 2002:a05:6402:4489:b0:5e7:8848:f567 with SMTP id 4fb4d7f45d1cf-5e78848f991mr10629817a12.20.1741821932981;
-        Wed, 12 Mar 2025 16:25:32 -0700 (PDT)
-Received: from ?IPV6:2001:1c06:2302:5600:7555:cca3:bbc4:648b? (2001-1c06-2302-5600-7555-cca3-bbc4-648b.cable.dynamic.v6.ziggo.nl. [2001:1c06:2302:5600:7555:cca3:bbc4:648b])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e816afe1f6sm27754a12.77.2025.03.12.16.25.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Mar 2025 16:25:32 -0700 (PDT)
-Message-ID: <4a5ace5c-728e-4ae6-90d0-94270c83db3a@linaro.org>
-Date: Wed, 12 Mar 2025 23:25:30 +0000
+        d=1e100.net; s=20230601; t=1741822193; x=1742426993;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xLfGaIgvY5ZVl4JrSGdwM0o3tslIHB1ct9yF4dQRXlI=;
+        b=I57ow0qLiliXbd9HiluUYhgAzNgdgMx509TdNWMx7hohk0J0z3ZJ98S25IhSig86zJ
+         g7pXXk81vde9F+fUIdDtZmaWLEmY4vWJ0V1D7gMumEcOgTFg2e3VyP8fmuwU/Nr/e5cq
+         xxb+wGKQdaZExf5cbvktsEsU7CXFhqCPIIcrC7tMax5I6XvA3ydHVJILY+pg9BeOZoxO
+         GVDlTqjIt8fCoi9ZBI57YMengCTdlVUThtOLo1xzLmrW1sslIc6UzBGngCPPMJtVFrjU
+         3xFAFgCD+tR+3bJVw00Onz8Wtzg0zSfVwx4FxHj+NiL0/M/jBSYWS/AYdWy1SF5nobGw
+         a9iA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5uYYh098Rg6N9A2gP1v5aO0BZ/TWcquwZD02f7/VUGUXPohzHqynWN26l+HjUupSEsij7GVbVAAQQV2mG@vger.kernel.org, AJvYcCU7WRiE+IogFm3NwqEFAXH3jXariUaJm97eAhLRsIvz5bB6uOxIc7DOUV/oKCsJJzcp9odR/LlF@vger.kernel.org, AJvYcCVVgHdWzhl1WkTLYTT5bDUBMkM+MPX6HCpdXRcchcXPjbiNr0sRE27/InKOMhbJKRFk8YNbaYlVH5nY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCRDakfWpFcs+074F5pcDNwmAf1PYW9VtYNE92JcF4bHvo/SER
+	VUVzmZIp7CphnuGgLWmrlWsexOrT8mxYTzydCJ1seabr8a+0h9Ch
+X-Gm-Gg: ASbGncsgnSt05UccCJHSL5gJkWE8aKknyWcqHIH20L/eBZR5+EE7tprRBkEKaPR0qSA
+	Y9/ydAefGCHD5klVqO6Czd0/XkjHiRo/d0yXMp3rc4X8FhyFGXMIeg8xbpLfCuDfZMkmNZR8ZeB
+	s6FaY9ny/HRXKgWpmbrypc0xpVkf8Homd3keeQz9SdhvWWb68BZUAylPeyFs4VHMtnG8ALi+1Qq
+	cH8e1w1h4g7v/vvnRuB7YF4Sgf54tL98lxdVZak1Atz9o7aBSXgyUGKjhaeSDWM5JKHdnNJIqtn
+	h//8hL97C/8grPqBfcSP
+X-Google-Smtp-Source: AGHT+IG2pfcqk2sk8gdrKSI0hu3y9BsjzCHFtgLXjVkzz57vH+f9YiHwGclAKa4AV4l6e21yRYMqxQ==
+X-Received: by 2002:a05:620a:2581:b0:7c3:d5a4:3df3 with SMTP id af79cd13be357-7c4e6112241mr2951625485a.34.1741822192828;
+        Wed, 12 Mar 2025 16:29:52 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c573d8aeebsm14867685a.103.2025.03.12.16.29.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 16:29:52 -0700 (PDT)
+Date: Thu, 13 Mar 2025 07:29:43 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: sophgo: add clock controller
+ for SG2044
+Message-ID: <x43v3wn5rp2mkhmmmyjvdo7aov4l7hnus34wjw7snd2zbtzrbh@r5wrvn3kxxwv>
+References: <20250226232320.93791-1-inochiama@gmail.com>
+ <20250226232320.93791-2-inochiama@gmail.com>
+ <2c00c1fba1cd8115205efe265b7f1926.sboyd@kernel.org>
+ <epnv7fp3s3osyxbqa6tpgbuxdcowahda6wwvflnip65tjysjig@3at3yqp2o3vp>
+ <f1d5dc9b8f59b00fa21e8f9f2ac3794b.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: qcom,x1e80100-camcc: Fix the list of
- required-opps
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250304143152.1799966-1-vladimir.zapolskiy@linaro.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250304143152.1799966-1-vladimir.zapolskiy@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1d5dc9b8f59b00fa21e8f9f2ac3794b.sboyd@kernel.org>
 
-On 04/03/2025 14:31, Vladimir Zapolskiy wrote:
-> The switch to multiple power domains implies that the required-opps
-> property shall be updated accordingly, a record in one property
-> corresponds to a record in another one.
+On Wed, Mar 12, 2025 at 04:14:37PM -0700, Stephen Boyd wrote:
+> Quoting Inochi Amaoto (2025-03-11 16:31:29)
+> > On Tue, Mar 11, 2025 at 12:26:21PM -0700, Stephen Boyd wrote:
+> > > Quoting Inochi Amaoto (2025-02-26 15:23:18)
+> > > > diff --git a/Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml b/Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..d55c5d32e206
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
+> > > > @@ -0,0 +1,40 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/clock/sophgo,sg2044-clk.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Sophgo SG2044 Clock Controller
+> > > > +
+> > > > +maintainers:
+> > > > +  - Inochi Amaoto <inochiama@gmail.com>
+> > > 
+> > > No description?
+> > > 
+> > 
+> > I am not sure the things to be described. Maybe just tell the
+> > clock required and providing?
 > 
-> Fixes: 7ec95ff9abf4 ("dt-bindings: clock: move qcom,x1e80100-camcc to its own file")
-> Signed-off-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> ---
->   .../devicetree/bindings/clock/qcom,x1e80100-camcc.yaml   | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
+> Sure and point to the header file with the binding numbers?
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml
-> index 5bbbaa15a260..938a2f1ff3fc 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,x1e80100-camcc.yaml
-> @@ -40,9 +40,9 @@ properties:
->         - description: A phandle to the MMCX power-domain
->   
->     required-opps:
-> -    maxItems: 1
-> -    description:
-> -      A phandle to an OPP node describing MMCX performance points.
-> +    items:
-> +      - description: A phandle to an OPP node describing MXC performance points
-> +      - description: A phandle to an OPP node describing MMCX performance points
->   
->   required:
->     - compatible
-> @@ -66,7 +66,8 @@ examples:
->                  <&sleep_clk>;
->         power-domains = <&rpmhpd RPMHPD_MXC>,
->                         <&rpmhpd RPMHPD_MMCX>;
-> -      required-opps = <&rpmhpd_opp_low_svs>;
-> +      required-opps = <&rpmhpd_opp_low_svs>,
-> +                      <&rpmhpd_opp_low_svs>;
->         #clock-cells = <1>;
->         #reset-cells = <1>;
->         #power-domain-cells = <1>;
 
-This patch is fine as there is no current upstream user that depends, 
-there's no ABI impact.
+Good, I will add it.
 
-I'll take this into my tree as a precursor to a V5 camss bindings but, 
-it'd be nice to get it merged ASAP.
+> > > > +  - |
+> > > > +    clock-controller@50002000 {
+> > > > +      compatible = "sophgo,sg2044-clk";
+> > > > +      reg = <0x50002000 0x1000>;
+> > > > +      #clock-cells = <1>;
+> > > > +      clocks = <&osc>;
+> > > 
+> > > I think you want the syscon phandle here as another property. Doing that
+> > > will cause the DT parsing logic to wait for the syscon to be probed
+> > > before trying to probe this driver. It's also useful so we can see if
+> > > the clock controller is overlapping withe whatever the syscon node is,
+> > 
+> > It sounds like a good idea. At now, it does not seem like a good idea
+> > to hidden the device dependency detail. I will add a syscon property
+> > like "sophgo,pll-syscon" to identify its pll needs a syscon handle.
+> 
+> Cool.
+> 
+> > 
+> > > or if that syscon node should just have the #clock-cells property as
+> > > part of the node instead.
+> > 
+> > This is not match the hardware I think. The pll area is on the middle
+> > of the syscon and is hard to be separated as a subdevice of the syscon
+> > or just add  "#clock-cells" to the syscon device. It is better to handle
+> > them in one device/driver. So let the clock device reference it.
+> 
+> This happens all the time. We don't need a syscon for that unless the
+> registers for the pll are both inside the syscon and in the register
+> space 0x50002000. Is that the case? 
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Yes, the clock has two areas, one in the clk controller and one in
+the syscon, the vendor said this design is a heritage from other SoC.
+
+> This looks like you want there to be  one node for clks on the system
+> because logically that is clean, when the reality is that there is a
+> PLL block exposed in the syscon (someone forgot to put it in the clk
+> controller?) and a non-PLL block for the other clks.
+
+That is true, I prefer to keep clean and make less mistakes. Although
+the PLL is exposed in the syscon, the pll need to be tight with other
+clocks in the space 0x50002000 (especially between the PLL and mux).
+In this view, it is more like a mistake made by the hardware design.
+And I prefer not to add a subnode for the syscon.
+
+Regards,
+Inochi
