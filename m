@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0021F3FED;
-	Thu, 13 Mar 2025 20:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167A2157E88;
+	Thu, 13 Mar 2025 20:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741897047; cv=none; b=hCpHi40Kak1lW4Nx4kMT6cXi6HnltAROKprT2+Y9RdMpeTFdtou3NgLwLLB9pEgWi3TJ6cckUUGGtnaTFjtCR6qoZrxfXv/6t0c0aJYqLjWPVtdKbAx8AlBu3zX1A3ouyDR9XCns5pc56CVEALsTh8Tf6Ow+IENM5dBxdIrQoBM=
+	t=1741897132; cv=none; b=CVTwFu/Hi6n0H4QtN5cOyLczEdrtU3J0L3dI6OSn4szDLIjT1I+Rq0MhWxe6M1MXuM80kkkQW/EbhwQCPocaJ4KNgVYR6lxNS2OFugB+lJTf5UfobIB8p2QWQT9gPTdhs2o0v7tmF7WWffaIETC/hj//CIGiMYV+scdSyYgcrZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741897047; c=relaxed/simple;
-	bh=ZRWtB3rv+AKys/z8/S91KGoR6y3uP/Y1TIBFLbBQNwg=;
+	s=arc-20240116; t=1741897132; c=relaxed/simple;
+	bh=CyQCiUlVRxKRabGRBG1oGXq8j8zbrLOWvqmEr1uQdOk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=G4SUWzqLu49x+/zO6/lGE87cUFavuJFsUb4ls9zTVSO4xoH8CMAn8Wea7pVsjUy7Wmkw21Wv77/ZoUHIXtQb4cWyCB5ZZEkeS62hh0Tn4S72/5ga8E8qmm1rjoNgJSPor1H2zaxkRpLrMiRhP7I6Pvgex7+oTBasMmV+GjiZMlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oh/hUlRD; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=A9cmNvJbi4PHsQLpRfBRobNr5XPNPzLNRuMvm8mLIxjEO+9G8MmudqpgyCRAdUbInAcza43Zn8/elgQGtH8o5BvLCqu8k//8uhFGUT+daHdGH3p6wYi4hNK2eR8OLv5dkrWxxXb+0Z/JR4QHr1HEC++scgUKit0gb+lUHKdpiys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ajUIWuLk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oh/hUlRD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54407C4CEDD;
-	Thu, 13 Mar 2025 20:17:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ajUIWuLk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80697C4CEDD;
+	Thu, 13 Mar 2025 20:18:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741897046;
-	bh=ZRWtB3rv+AKys/z8/S91KGoR6y3uP/Y1TIBFLbBQNwg=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=oh/hUlRDmMYFyWmn4VmL5tu5bi5jqC1dqBcqkJArjFHu5sH8vxz3fAmk6/Gx4cL6l
-	 DUMvyNSapxbW3AXnKyEIYHNsZGI7wdrPqFtL+gAAaExVcuAJH1rnYDEMaHAwb5EcbX
-	 Ivu1Mfg5u0rXOMiTpBUyULt374cgbf++C3oP/o+8xovzy73Jm3kQzKK7zlpqFk2mPA
-	 +7NIQ5yPyWDj7LnC4pJB6xKivmMmdX9XI/qbhayVQ1WCn/syRGo0J59SoYWP8v2re2
-	 fLd5F88vnGgVHjJkivUun96P/ALb3ZNHHbX4uLkLFo/CqVHmYko9hOetHF2kjh9Dwr
-	 2JSF64C6qrwvQ==
-Message-ID: <76a8bb40aa94465aa54233d191d142ef.sboyd@kernel.org>
+	s=k20201202; t=1741897131;
+	bh=CyQCiUlVRxKRabGRBG1oGXq8j8zbrLOWvqmEr1uQdOk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ajUIWuLkMvear16wZe/tTht16PW/72ThSdd9bPAhydg/5eTmtahMrwNOIxJWUe96c
+	 XlWmxL3oNNcpu6RH9yVElNpKBTzejsXvpLrabzDehZLM+IaNj3y2bV+fb4nsVuEr7W
+	 dfasTMh/RRhWyRpT8F0uKzqgOgMVQP9BPyDPlEXRzdbk45T3NUX3dYq6U85d+2EPpF
+	 IuZOpFftLH+4ZB6l37PlL9ZNdre5PUDKNsCGYfd+Yqr97mK9M/OJ+AtPLo4eENFDnP
+	 yJEmcgn/oEcfJ6Z+QbFlEJFBZgZKgPSRyYfSx3uTONWsupsaXKy2Gb354AJX5SjlVC
+	 d5aX38HXRIPsA==
+Message-ID: <8a701f5bbc3cd3ef2fcd29137e33112c.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,25 +35,25 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250311180215.173634-1-andreas@kemnade.info>
-References: <20250311180215.173634-1-andreas@kemnade.info>
-Subject: Re: [PATCH v2] dt-bindings: clock: ti: Convert ti-clkctrl.txt to json-schema
+In-Reply-To: <20250304133423.100884-1-brgl@bgdev.pl>
+References: <20250304133423.100884-1-brgl@bgdev.pl>
+Subject: Re: [PATCH] clk: davinci: remove support for da830
 From: Stephen Boyd <sboyd@kernel.org>
-To: andreas@kemnade.info, conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com, robh@kernel.org, tony@atomide.com
-Date: Thu, 13 Mar 2025 13:17:24 -0700
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>
+Date: Thu, 13 Mar 2025 13:18:49 -0700
 User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Quoting Andreas Kemnade (2025-03-11 11:02:15)
-> Convert the TI clkctrl clock device tree binding to json-schema.
-> Specify the creator of the original binding as a maintainer.
+Quoting Bartosz Golaszewski (2025-03-04 05:34:23)
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >=20
-> reg property is used mostly with one item, in am3xxx also with
-> an arbitrary number of items, so divert from the original binding
-> specifying two (probably meaning one address and one size).
-> The consumer part of the example is left out because the full consumer
-> node would be needed.
+> This SoC has some leftover code all over the kernel but no boards are
+> supported anymore. Remove support for da830 from the davinci clock
+> driver. With it: remove the ifdefs around the data structures as the
+> da850 remains the only davinci SoC supported and the only user of this
+> driver.
 >=20
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > ---
 
 Applied to clk-next
