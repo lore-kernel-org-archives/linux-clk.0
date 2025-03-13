@@ -1,210 +1,196 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2061.outbound.protection.outlook.com [40.107.94.61])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61E078F37;
-	Thu, 13 Mar 2025 06:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741847803; cv=fail; b=t7Ym+DQ211CoIyQ+UCtZpiTJGwbw0x0Q8W6rbtYfS32i4PekRqNLh93FXUE5ZMlodsItdo9V9+0gyjLEAjjXL47/1WSh7KQ5NiOw6nf2yksEv50WMlkRYNaQgGj4VJTSZle9I7SQODlcuTWW+S81Na/Urrpof/jOCObYJBzC7SU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741847803; c=relaxed/simple;
-	bh=6ZVbTBK6l8M/5ylv2yMAEfoUbHuBs+YEd5L6Oz6QkN4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=R2Myg9L7YgDkfp6DSfrQhc+kzEWhI5MsR5SSVSrxIAUr/aE8sX0WUXTaDGWzT4V+Eq1gmyFE282Feqn/kTpXD41UOfYZThCruqNL6vNfuKByZDWji3dLGOiE/suMnT95SOLXsQIxY8D81OIWE3OwFoyvb/w/iFjzA7GmsoIGgDA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Zk0uPES1; arc=fail smtp.client-ip=40.107.94.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0834D1FBCB1;
+	Thu, 13 Mar 2025 07:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741849211; cv=none; b=VCwSEe3QrztCQAyVg4jnAumy7CcWgmV9BwBGIhbCg71FxF/aIybIiJik8cYnf3M6ItNHA+YBCaxoX7qHd5YvFMVcf9Zr5HnXU8aZ9kaDMsSt+hR2y8m+OmmGw06lMvtNbxnH+UdbPTeuQ9bphape5NRJDtjIBeVsdkZPhWhHq84=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741849211; c=relaxed/simple;
+	bh=ZWu7yEmYDtCiCJ92mO+ZjNEmu6CsBl2tJ1BCQ1nkDBA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=c7bGAK8f94OUTy0yQ8df54Xt8bDauy/rBi/J3fMYPNEfd2ySv+HRHhZIjVsvTeERArzUEhzEV6UENV25rnqIHNnfFqogZ24FVQwpTrObNGc/xoEP1IJYYc8hz5Q8my4UR2FWlUQVANv+mKjz2/ZUeR88B7fNnfTSIWAbm7K1cSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OU9jz2Qe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Zk0uPES1"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lg/xDL6sRh1mEYuzKOBGxp7iYGHkBWB0z7f6Lz+bzQ6bAUQDxQMwOE0FjlrMgBPoQwzFXlQRc9hc6VTT8o111imb04Xgrqkh+9nukveeWMkUTsQPSSXMbnDzvdVYTK7gfKZrJgi39Ul149gtCN4YCX4NpwK6uCjGbwcigfM/ttpziuaV5vtMll174dZefX8K7xDlF8czCciAQ0rFnW0NHPTASiVBnozHsYYe+OwKqth4wEpzqWn1u7MpqcO5bBdMnTMhP/xt85Ur7Jlqpb4CpRwAuUz/zU5l5Gk72BjsG7gEEsbXPxljcFNos1OhZCzKHEZrTmpP5Htf91GDuHmlrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u9GQvN6eAq5O0guwPtkuvhhGOk5JuU0nmo5VNi6oETg=;
- b=ehoZS4JAph2rgkzPyz1KYpqcQsngCINXfmtBL7VL9b0r/U2Mw21h0xKFfeFthOo/mm3ycskMFgPme0NDE8rZdvuy0IWWESLW3gS5Es9mf2/T6S1I7zx7/nkQVvqGscu37MQjkx43uXfLjRFTPAUc/d2rUan4O85WhQVgqMWPtHgyWxyypSWJApNL7/vNk+OT4dyHxjOFllHu9lxjT9dxiBHdItVzDalU3usA7cniqmCvObVCwmhkIh9/LkEYPR0jkJYP/Vgs95CGrDlGv5aV8wXHELdmtqIG9QdVahjaccUVUzQsMFoHzJjS6IqX0lUnXuDHekpTl7UdqFQMI4mhLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u9GQvN6eAq5O0guwPtkuvhhGOk5JuU0nmo5VNi6oETg=;
- b=Zk0uPES1WgvV9IeUHWhL2KuBVBkTbuG/6myLsQ448bJmnnaGQ6PK7YY2pWjhAkIHdhuk4h1UgeOFahjJIE4YzByxCGkG1MoRr8qF5wOeloTUNA/JyMO+FF/KBYBYJeT9AZR85uJlH++bKD3yh1akmfFTjRiNgHhSu+46UBk+Vl8=
-Received: from DM6PR12MB4877.namprd12.prod.outlook.com (2603:10b6:5:1bb::24)
- by PH7PR12MB8178.namprd12.prod.outlook.com (2603:10b6:510:2b3::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
- 2025 06:36:37 +0000
-Received: from DM6PR12MB4877.namprd12.prod.outlook.com
- ([fe80::92ad:22ff:bff2:d475]) by DM6PR12MB4877.namprd12.prod.outlook.com
- ([fe80::92ad:22ff:bff2:d475%3]) with mapi id 15.20.8511.026; Thu, 13 Mar 2025
- 06:36:36 +0000
-From: "Visavalia, Rohit" <rohit.visavalia@amd.com>
-To: "Visavalia, Rohit" <rohit.visavalia@amd.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>, "Simek,
- Michal" <michal.simek@amd.com>, "Sagar, Vishal" <vishal.sagar@amd.com>
-CC: "javier.carrasco.cruz@gmail.com" <javier.carrasco.cruz@gmail.com>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"u.kleine-koenig@baylibre.com" <u.kleine-koenig@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 0/2] clk: xilinx: vcu: Sequence update and call trace
- fix
-Thread-Topic: [PATCH v3 0/2] clk: xilinx: vcu: Sequence update and call trace
- fix
-Thread-Index: AQHbe7AMf9305KtbS027DZl22Wzb/7NwzORw
-Date: Thu, 13 Mar 2025 06:36:35 +0000
-Message-ID:
- <DM6PR12MB48770D3D5731EA5ED4DCCA6DE5D32@DM6PR12MB4877.namprd12.prod.outlook.com>
-References: <20250210113614.4149050-1-rohit.visavalia@amd.com>
-In-Reply-To: <20250210113614.4149050-1-rohit.visavalia@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=ea9f7b2a-afb5-4793-8892-00a36fb27681;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-03-13T06:35:38Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR12MB4877:EE_|PH7PR12MB8178:EE_
-x-ms-office365-filtering-correlation-id: 2b54472e-47cb-4002-10ba-08dd61f96700
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|376014|1800799024|38070700018|7053199007;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?3wzyrKqAimS3H1odk4rxLRBKKBXn6UQVIrUMQ16D+Wu2y4yzt5vO8onswfC2?=
- =?us-ascii?Q?d57Y8GfgF0mOY+Eg/4slfvnXS3pbzsSNlt54xWJ04tm5p3G8x8enLoAEVEXf?=
- =?us-ascii?Q?oNNCZu5L7h4HHyivoYZf7YQj9KeWawVKTIFfOmq1e9oI+3MDtx2ojKO1ZBu/?=
- =?us-ascii?Q?2HskeZq+O6ElMfbpF5MszUmVx0YxWnExO6zb40Y/pAlhIjf9vjS/1htItRh+?=
- =?us-ascii?Q?6GC5JGL63Xaol7mdmOX6r0xIZhUJ9l7HC9wQ2GH3X3xOq9hcfDqZOhPGMeUd?=
- =?us-ascii?Q?dW7PahU7l3LmuyEjMwn61+KmAWqGQ5cbgozvCVTS1WLkkKowLC/sRQwLW+X3?=
- =?us-ascii?Q?Zs0DNtHJs2/t3PogYeugfs8zyBqOzbZzKg0hI8UCibLLZsG6vg12R7NLZwyM?=
- =?us-ascii?Q?DK2E0ayiJ9niZ65K26qtnB4zW6PjUBDSga+adLgLGYWEpiTf73t9mpRqARJv?=
- =?us-ascii?Q?4AFQhMJobwjALkebG4a/SVtF4ujowwWwK8KqKHPYseR9g4WjQfPkt9WNN2lw?=
- =?us-ascii?Q?jlJVPJM1goxT7mrNhUTdTiK7ZX8o5ODseQGa0meQq8xWQv1H2xyD2pxW0mwz?=
- =?us-ascii?Q?duD/dM0mjwEp2JYEYTrnWGy7SdOF7UBSB99KHV8P5sLN7TKDV9TkUgrT1WuL?=
- =?us-ascii?Q?czEaMJAzNgq6QKtpIX1VreHRKlkHEm5HivUZIZNEQB6sa4G4CBkBeOnWi0rG?=
- =?us-ascii?Q?3DmH0ytJgQ53iYRUNlPhM/77VK1D5Kl43LK6Lfd2I/9hjGB5bdl79FeUjVod?=
- =?us-ascii?Q?8+CjY5PGOhm5KsUaT7wc6sD+FyA8+Lhrf7kOgPGU9t95BhDaVWCVmWC/k5wX?=
- =?us-ascii?Q?FmcPSE4M4VZ+dZ/v+so+m9qZkK7sduC8nLQnbATXGMysibMZ2Rh/XHvYzs+u?=
- =?us-ascii?Q?eYamfzDQLShX9etM1QA7HJVUOLByorx05VRpe/7DIwzho2I6BT1L30UmscH2?=
- =?us-ascii?Q?a9KX0TJwOT1/p62p+21eKiQtD0bgcNdKGpxwp/10zJnhcjnSoXjwpbOOO2pY?=
- =?us-ascii?Q?9x74FPoEY9hAI0LImkmYg2iDI5aDqLYFxUsCkcWFDbOq2E8NJhE+apPQ4X5n?=
- =?us-ascii?Q?iDXZj/ayp831vWoslJW3kGhiEw3ca0sIlkxAOdfQdQeTnq/9s8IGB1dKZWvn?=
- =?us-ascii?Q?WXXZlMHIkHXO/yLS8dXAbTnjcbJQRZyQN13+vtdyscHV5jfRSlp7mjZSSN6U?=
- =?us-ascii?Q?NSsRCy1SNNZFFCQFMbhXx2ZwcP4f6lb6VTOD3hF6iPy3bqfRU65xv+VERsfJ?=
- =?us-ascii?Q?VuNoCIN9TT3ng6IqH2iR80kFoyfSeskjCVYHjGZZmCzJD0czLiVnZM2iMx42?=
- =?us-ascii?Q?IBd06FZW+2zNm64T96Z13rYe8ZVD5f+BE7D11UGqCRPMVtGsq4/MzkEx7+cb?=
- =?us-ascii?Q?po5RMIW+D+3VxEhj/uT/GZ2sKrpemBHsX28sVcE8Tvmp6pOVAodLxnkOEg4X?=
- =?us-ascii?Q?Q9RBTQLFbypr3jCNIPVzew6AnxfwrxIB?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4877.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018)(7053199007);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?4wpwLmQK2OaMhHhhZFNWLntoE9nodt7TJGU/WPwcLyQsoNe8ej+lRTlQMl4I?=
- =?us-ascii?Q?2eSb8H0o+KIXWUXtRfl27PJc06NfFgNTuaEZmujD7rrzNkf1OHgw+GrWiqEL?=
- =?us-ascii?Q?uJzteNoM2MPQe9qhfGjZRBsWJvF1XiEXa936o3fAcWeoacd2VsgO1H+kNSl1?=
- =?us-ascii?Q?DBDvrG3s+j28NzovoqYyoNKLO5TE2A6pkHS74rpTQvUQPYHhYRodVrqdmbAF?=
- =?us-ascii?Q?7aUK8CSbSeV3OyB2inJz/qTB+9z45nv3UMqdiBNMiynxr+BH1avKpQn5FM3L?=
- =?us-ascii?Q?0erAWRlAluq42XMyQNoFRepmahyhFBfcBYUPve8y43ECUwosa7KSXCd+xZss?=
- =?us-ascii?Q?R9KT07S06GFWQQhjF5nI6RHM2YWoVH19OSQO594HqWOOVWW33KhwvSFtRq86?=
- =?us-ascii?Q?W2qy1Y+mJAluIF9ZNZ2sGsxeGhJpuOov+KCHnjgsEL/talINhNQJlJEsy9K5?=
- =?us-ascii?Q?MKl0GvguFM//AaIP8i+PWJO/v22pPDQkEQjHHeRa+pq8JCKWrwmDmQt+Vkwj?=
- =?us-ascii?Q?4mw6H99BnL8aI09ihvGCRFEDOYdeVFVwwNyhO8QhW/l6U7d9KIDcaACl+OVi?=
- =?us-ascii?Q?vhe+EsZZUhs/zs/8m0TyaCFLia1JSs3VMkzFCVcjfg+Imqyc2LpPlIQZh3EK?=
- =?us-ascii?Q?ScUtzXFofForOl8zcN5+KakhEuP5W0+w5/QJSJ0hLRx6x7pvT9Oh2qP4ZfpR?=
- =?us-ascii?Q?fW8MTNGV5FTlJFRlf0IZ8TnXgmR0KaBKQ60i8TJ5Ee+g2HqX3C4EixYih24D?=
- =?us-ascii?Q?0NcCOJ+AfiA5uGKeTTNSUHC3wxgaN2Ud0bdaoluRgRl5mUtdMNriM9A+OCRm?=
- =?us-ascii?Q?KeZAHI/YjnhOjdk53KVnmnLOHCORHYOeHsYbJ6OgFbdnzHGJUzfY9M+SrMRV?=
- =?us-ascii?Q?cHfriodLykbdKTzH8lWVCBQFg+y4gP6zX5OLQZXLxzkr9JJUKnXnIHK2kEvZ?=
- =?us-ascii?Q?Mfl6IdYWSF9xxoCepexyCcDVq25mJodRQRL2BAKQr7vyRRv7bIfh/IVJb3yi?=
- =?us-ascii?Q?LqoZIiapjrem/awsYCvXRRQqNPGU8KTcAbxi6mpeAlhp8ErMUUPSvcoCTn0p?=
- =?us-ascii?Q?/kYov8R8vw6QeXJjqzb7odifu5757oua9QlXGaUhea2sxmrNxpZJex/mYYYK?=
- =?us-ascii?Q?U2axVfM+yljyrAAXUl6EFUs60tUQIhwZ52noA9kUc3pOOEsTOWzwhAD5N8qy?=
- =?us-ascii?Q?Ky/CEMzYuch9m6Dw1Nt0JSb6jcM+qYBNpuaYi+IXNSV+wTb/YPcR8DxN6IjE?=
- =?us-ascii?Q?NpA75LoQpKjrbtGuVoWxY0ZNQlc2vzdtvuSf6fZCTP9z4MJxK3WxT6pvuCEQ?=
- =?us-ascii?Q?WJOcpaWVJH9/XWDJZNL3N7OZrsi5jV8m9pUHAZDnoVm2bQmIjqABXIysJFS+?=
- =?us-ascii?Q?VaHvTrKnQmo3GQjBRpvWxQGTPF0jLb0DoGqzyu9GEDiOE2Nn/eDpi4tCGUwH?=
- =?us-ascii?Q?2Bz3R55zGdcPiHVaP02QZTWgTZXmHFnHYDJ4XHcieYJ4QyYxNGQoDMvZiWis?=
- =?us-ascii?Q?KlVCLkvFpOabl/GtPcALIOw26eXrfy31V1jJ0tYQ7KXwP20lDdJlCvZtmbK0?=
- =?us-ascii?Q?yeiVoj+TN/thJmrepus=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OU9jz2Qe"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CNoRx2008907;
+	Thu, 13 Mar 2025 06:59:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=yxn8b4CHhcz1mQvwWS88Lu
+	dFQd7CqZ4eIcIt3qiRtK0=; b=OU9jz2Qe9z5s9gdA5s6kABnreJygM9bFud7l6l
+	mGOc0Aa8Rbi9+UtMdCNmsn3E1YiS8vP1nFQ2+aHVxdpDU2ROkuEHyJ2xpzI0Ve4R
+	Mxp3xADecUDtPgZKTRQHgaMx5NIiI8mF3nVYiRWwga5PYH08NUvFIFc6Ru3cOYsG
+	El0vnSEFNZaq22eH4TZTWB6Fq5DoroUsOe1IKy1o2VfF1ZqHzB+Jctfbt5uTKgWG
+	RVzDnbLvdvZh5Tq2yw2+pExf53SLqxfPvIgPH6zWzY9QngR4pmZoxLcQvQLoHMya
+	DdJ88jhp4yo5be+kynBrGsxB80uSjBWMUoMljJFsJNxEPc1g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2rcvx2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 06:59:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D6xr4W032677
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 06:59:53 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 12 Mar 2025 23:59:47 -0700
+From: Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v6 00/10] Add support for videocc, camcc, dispcc and gpucc
+ on Qualcomm QCS615 platform
+Date: Thu, 13 Mar 2025 12:29:37 +0530
+Message-ID: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4877.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b54472e-47cb-4002-10ba-08dd61f96700
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Mar 2025 06:36:35.8775
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: H7lngKExtEgnR6ncVrnLsoUCZG3qXVqTvPJBswNGJ+DgbpDztgUtrygrp2fF1gj9K3aVAAfJNHxRo2AL7oD/mg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8178
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFmC0mcC/3WNwQ7CIBBEf6XZs2taIoR68j+aHtoF7B4KFpRoG
+ v5d7N3bvEnmzQ7JRrYJrs0O0WZOHHwFdWqAlsnfLbKpDKIVshWiw42S6iRmieuKRKjn/jI5mnR
+ PEurqEa3j92EcxsoLp2eIn+Mgy1/731VDi7MyvTFOOKHNbXsxsaczhRXGUsoXAVXnvbAAAAA=
+X-Change-ID: 20250221-qcs615-v5-mm-cc-8b94afca89c5
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.15-dev-aa3f6
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=D6NHKuRj c=1 sm=1 tr=0 ts=67d2826a cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=pGLkceISAAAA:8
+ a=C8cLAskXDhL-uTxbcdAA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: fPOEEW0si2gk5Z6nIwwnbpMVrXWYLzFr
+X-Proofpoint-ORIG-GUID: fPOEEW0si2gk5Z6nIwwnbpMVrXWYLzFr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 lowpriorityscore=0 phishscore=0
+ adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015 impostorscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130054
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+Add support for multimedia clock controllers on Qualcomm QCS615 platform.
+Update the defconfig to enable these clock controllers.
 
-Hi All,
+Global clock controller support
+https://lore.kernel.org/all/20241022-qcs615-clock-driver-v4-0-3d716ad0d987@quicinc.com/
 
-Just a gentle reminder regarding this patch series review.
+Changes in v6:
+- Remove wrongly RB-By tags which got introduced in v4 and was carried
+  to v5 as well.
+- Adding the reference where the tags were added and dropped.
+  -[01/10] clk: qcom: clk-alpha-pll: Add support for dynamic update for slewing PLLs
+    - RB-By from Imran (v2)
+  -[02/10] dt-bindings: clock: Add Qualcomm QCS615 Camera clock controller
+    - RB-By from Krzysztof (v2), drop wrong RB-By from Dmitry (v5)
+  -[03/10] clk: qcom: camcc-qcs615: Add QCS615 camera clock controller driver
+    - R-By from Bryan (v2)
+  -[04/10] dt-bindings: clock: Add Qualcomm QCS615 Display clock controller
+    - Drop wrong RB-By from Dmitry (v5)
+  -[05/10] clk: qcom: dispcc-qcs615: Add QCS615 display clock controller driver
+    - R-By from Dmitry (v1)
+  -[06/10] dt-bindings: clock: Add Qualcomm QCS615 Graphics clock controller
+    - Drop wrong RB-By from Dmitry(v5)
+  -[07/10] clk: qcom: gpucc-qcs615: Add QCS615 graphics clock controller driver
+    - R-By from Dmitry (v1)
+  -[08/10] dt-bindings: clock: Add Qualcomm QCS615 Video clock controller
+    - Drop wrong RB-By from Dmitry(v5)
+  -[09/10] clk: qcom: videocc-qcs615: Add QCS615 video clock controller driver
+    - R-By from Dmitry and Bryan (v3)
+  -[10/10] arm64: defconfig: Enable QCS615 clock controllers
+    - Drop wrong RB-By from Dmitry (v5)
+- Link to v5: https://lore.kernel.org/r/20250221-qcs615-v5-mm-cc-v5-0-b6d9ddf2f28d@quicinc.com
 
-Thanks & Regards
-Rohit
+Changes in v5:
+- Update ARM64 || COMPILE_TEST in all Kconfig to resolve kismet warnings.
+- Fix sparse errors in GPUCC.
+- Link to v4: https://lore.kernel.org/r/20250119-qcs615-mm-v4-clockcontroller-v4-0-5d1bdb5a140c@quicinc.com
 
->-----Original Message-----
->From: Rohit Visavalia <rohit.visavalia@amd.com>
->Sent: Monday, February 10, 2025 5:06 PM
->To: mturquette@baylibre.com; sboyd@kernel.org; Simek, Michal
-><michal.simek@amd.com>; Sagar, Vishal <vishal.sagar@amd.com>
->Cc: javier.carrasco.cruz@gmail.com; geert+renesas@glider.be; u.kleine-
->koenig@baylibre.com; linux-clk@vger.kernel.org; linux-arm-
->kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Visavalia, Rohit
-><rohit.visavalia@amd.com>
->Subject: [PATCH v3 0/2] clk: xilinx: vcu: Sequence update and call trace f=
-ix
->
->This patch series updates VCU init/reset sequence and does a driver fix.
->patch1 fixes call trace related to pll_post clk.
->Patch2 adds optional reset-gpio support.
->
->---
->Changes in v3:
->  - Removed patch https://lore.kernel.org/linux-clk/20250102170359.761670-=
-3-
->rohit.visavalia@amd.com
->    as it is not required with latest xilinx clk driver.
->  - Link to v2: https://lore.kernel.org/linux-clk/20250102170359.761670-1-
->rohit.visavalia@amd.com/
->
->Changes in v2:
->  - Changed patches sequence to have patches with "Fixes" as preceding in =
-order
->  - Used dev_err_probe()
->  - Moved warning to dev_dbg() and updated print with more detail
->  - Link to v1: https://lore.kernel.org/linux-clk/20241226122023.3439559-1=
--
->rohit.visavalia@amd.com
->
->Rohit Visavalia (2):
->  clk: xilinx: vcu: unregister pll_post only if registered correctly
->  clk: xilinx: vcu: Update vcu init/reset sequence
->
-> drivers/clk/xilinx/xlnx_vcu.c | 33 +++++++++++++++++++++++++++++++--
-> 1 file changed, 31 insertions(+), 2 deletions(-)
->
->--
->2.25.1
+Changes in v4:
+- Drop patch Update the support for alpha mode configuration as this
+  patch was picked - https://lore.kernel.org/all/20241021-fix-alpha-mode-config-v1-1-f32c254e02bc@gmail.com/
+- Update the bindings to include "qcom,gcc.yaml" [Dmitry]
+
+Changes in v3:
+- update PLL configs to use BIT and GENMASK for vco_val and vco_mask for all CCs [Bryan O'Donoghue]
+- Link to v2: https://lore.kernel.org/r/20241101-qcs615-mm-clockcontroller-v2-0-d1a4870a4aed@quicinc.com
+
+Changes in v2:
+- cleanups in clk_alpha_pll_slew_update and clk_alpha_pll_slew_enable functions [Christophe]
+- update PLL configs for "vco_val = 0x0" shift(20)  [Bryan O'Donoghue]
+- update PLL configs to use lower case for L value  [Dmitry]
+- Link parents for IFE/IPE/BPS GDSCs as Titan Top GDSC [Bryan O'Donoghue, Dmitry]
+- Remove DT_BI_TCXO_AO from camcc-qcs615           [Dmitry]
+- Remove HW_CTRL_TRIGGER from camcc-qcs615         [Bryan O'Donoghue]
+- Update platform name for default configuration   [Dmitry]
+- Link to v1: https://lore.kernel.org/r/20241019-qcs615-mm-clockcontroller-v1-0-4cfb96d779ae@quicinc.com
+
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+---
+Taniya Das (10):
+      clk: qcom: clk-alpha-pll: Add support for dynamic update for slewing PLLs
+      dt-bindings: clock: Add Qualcomm QCS615 Camera clock controller
+      clk: qcom: camcc-qcs615: Add QCS615 camera clock controller driver
+      dt-bindings: clock: Add Qualcomm QCS615 Display clock controller
+      clk: qcom: dispcc-qcs615: Add QCS615 display clock controller driver
+      dt-bindings: clock: Add Qualcomm QCS615 Graphics clock controller
+      clk: qcom: gpucc-qcs615: Add QCS615 graphics clock controller driver
+      dt-bindings: clock: Add Qualcomm QCS615 Video clock controller
+      clk: qcom: videocc-qcs615: Add QCS615 video clock controller driver
+      arm64: defconfig: Enable QCS615 clock controllers
+
+ .../bindings/clock/qcom,qcs615-camcc.yaml          |   54 +
+ .../bindings/clock/qcom,qcs615-dispcc.yaml         |   73 +
+ .../bindings/clock/qcom,qcs615-gpucc.yaml          |   66 +
+ .../bindings/clock/qcom,qcs615-videocc.yaml        |   64 +
+ arch/arm64/configs/defconfig                       |    4 +
+ drivers/clk/qcom/Kconfig                           |   38 +
+ drivers/clk/qcom/Makefile                          |    4 +
+ drivers/clk/qcom/camcc-qcs615.c                    | 1591 ++++++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c                   |  170 +++
+ drivers/clk/qcom/clk-alpha-pll.h                   |    1 +
+ drivers/clk/qcom/dispcc-qcs615.c                   |  786 ++++++++++
+ drivers/clk/qcom/gpucc-qcs615.c                    |  525 +++++++
+ drivers/clk/qcom/videocc-qcs615.c                  |  332 ++++
+ include/dt-bindings/clock/qcom,qcs615-camcc.h      |  110 ++
+ include/dt-bindings/clock/qcom,qcs615-dispcc.h     |   52 +
+ include/dt-bindings/clock/qcom,qcs615-gpucc.h      |   39 +
+ include/dt-bindings/clock/qcom,qcs615-videocc.h    |   30 +
+ 17 files changed, 3939 insertions(+)
+---
+base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
+change-id: 20250221-qcs615-v5-mm-cc-8b94afca89c5
+
+Best regards,
+-- 
+Taniya Das <quic_tdas@quicinc.com>
 
