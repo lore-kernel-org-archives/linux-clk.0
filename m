@@ -1,71 +1,81 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EF54A2D;
-	Thu, 13 Mar 2025 00:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0756610C;
+	Thu, 13 Mar 2025 01:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741825171; cv=none; b=rhMQexG5s1JwFsE+Qwu8A1K+4oMUyjGBAQ858HooAEnswrU/tuBPYWd69A1DcF22JgNE4jtMCW5J7EFWjTHdjiv3atQWaG2hSt6AGUZfb9v/ACBx2rQTw3rxpIrlFx2Ofn3xzyM3PNe2LvSpqhqehq9B3KOp3eSJMWYRBSu4srs=
+	t=1741828105; cv=none; b=kCQdHZL7i4uglo9rhvZj+Z/ttRnCjIXdIIirWK2dFB/jD7t7AbiwVuD1f0hODlWmSarhMXQh6gY/EONZm/OqkSJswNO8UI29+5G2FZEUq1hOy+9ulbii6m5SYCuvH6Ar5imAkCPSeb+2TK52U3pEwUFBtrkmRmdP57EeUY6fpCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741825171; c=relaxed/simple;
-	bh=OC2kJdO0bX1Vrlgy1KVz18BJpr1zZxwC8vQSJOOX8ws=;
+	s=arc-20240116; t=1741828105; c=relaxed/simple;
+	bh=L1B1sJ7YjsET1pMUISc3uxnEi8mM0HBOJ1+5dS36kws=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FSzq1Hlg4H2LiuuQSbhgs/6ajiXVQB8m6J5nfN7nt2Dkt8pnw6SrKjncRh7N+JDBoXPtzHXPH9NE8Dx4Q8u/7kcliRTn7NNvXixuqdx2/7A/3pBFxHV4MWBN9Xkc/S7SbVNDLr7Mh/meHeWwLFT+gUz/NiS+Ze9RdJ6gCg008bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aDSvSjIo; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=ewA6ch/bDaWzgzdUGmU/Gq9rsmgibik6JXqmaJbAi6Y508BLyLleqUSwYkOBl8XmXIy9JcZ9lWRtvW7nN8yfEVUqENdrfYy1uSuK9iYkrXKE8nHrA9YHGLMf8GLpm1PdQ6Sn7APcPIe6XJFOLFEn/sTZIyKAPyWzOICl3wwpv24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEkj/tol; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aDSvSjIo"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741825170; x=1773361170;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OC2kJdO0bX1Vrlgy1KVz18BJpr1zZxwC8vQSJOOX8ws=;
-  b=aDSvSjIoJXB5I6161vAeXjdHxa/FK9dmvWjFUbps21OvuJF/ik1n2hJk
-   x7Ss3tfQFO6UipiaE4NAddaqza1I4tkijHkDJk0D9ijgb1mIhWOcZnQyF
-   6CpTFyOxoWHrWBwyvivTBMJWrVG7Aic7IlofkRyeHdkQ+NCfNVvcHUHzU
-   di3sJBYa/fnLrsPj5GlMdRZHYv3Oer44NyelJ2p8gAPypjU2mQAG0sL/z
-   Bh16yZuK6fS/ES/a8lznWOzU4B2G6OrCJNITQCkDrHxD1zNpfDxvBf5fk
-   kjNfCg6CyKO2Ues6jr/U4es+WyUB7HhacNXPnxMZKqDyK9RoUbcySBs4F
-   A==;
-X-CSE-ConnectionGUID: Hsb3R31kQ+mbhx346WVS3w==
-X-CSE-MsgGUID: Me6u2/y6Tm2CWblJW5J6nQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11371"; a="42654588"
-X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
-   d="scan'208";a="42654588"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2025 17:19:30 -0700
-X-CSE-ConnectionGUID: s3sqfxtzSe6SU3Vj1W6z7Q==
-X-CSE-MsgGUID: nwNajwp9RgyA/BRF2hWX+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,243,1736841600"; 
-   d="scan'208";a="125870236"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 12 Mar 2025 17:19:25 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tsWIE-000908-2X;
-	Thu, 13 Mar 2025 00:19:22 +0000
-Date: Thu, 13 Mar 2025 08:19:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v6 3/4] clk: meson: a1: add the audio clock controller
- driver
-Message-ID: <202503131003.x6L69hJL-lkp@intel.com>
-References: <20250309180940.1322531-4-jan.dakinevich@salutedevices.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEkj/tol"
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e8f06e13a4so13941826d6.0;
+        Wed, 12 Mar 2025 18:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741828102; x=1742432902; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yB3aa4DZXOqG8FkpT/yFPtGsJ00G9GKgyRtQ/0BrqTg=;
+        b=CEkj/tolOH87SB9A6lBvONehnZ2RdeghXNP2ndY2+Xpwl4wySkcyvST2LBuv1/UXsJ
+         GvFjmXIre6aB0E3boblxCbAazgHFigQhdrS08AO7xlF0vQ0tV7jfm6HKJeRpODNFRaoE
+         F+ioCv3Xj2lzek4h60W5QzA27KHHimZxulZ6y4eeiQw3xcGB+doEAV9wvJkmRcjUXbAp
+         TUyz6CnHgFtCmsBqqQ2+q7KaOK/HRDMBcVQ+/HEgn+F6zYlFD8xC3c8d3AsXC7jdcq5a
+         oWPDh7v/44lyTK6Rv/ISHGCzrxdLg6eXLSby7eavnEslyuwz8mYHMAyk0Bd9BUVEIDdV
+         G+Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741828102; x=1742432902;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yB3aa4DZXOqG8FkpT/yFPtGsJ00G9GKgyRtQ/0BrqTg=;
+        b=u3BIqDO5vyt7oPHCTwTZcNiAL5zS+0E71cAV35Sy5uTuBNT910jKum1/D+Ee8Dnx4X
+         bAn/WJPbrpLgmIH5wzUym8uv+FeUqpuLwI1KpaCeGdm+jW6f1W41FO5yAbwvXg9tf+zL
+         wu+o+c+ScEhsfIWYtmKqMsEjjgb+58Egc6U6DwMLztuLMspLbMW1zyWcfb/mcjhvOzOT
+         /CmPhufgFmoAy92Wkgf4jvMBIa3kk03LoZFdMO1xOIetMzffBp/ndUsG4Nx3/WZ56pai
+         ATZ+PSCNXTkKJF842whj3t/PUUJgGG+CxipH9l51y63toh5iBxOerffdzoqlaZI7Rexd
+         zBvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0fO28+5PDfyWwkmUJaCDDR+2no4K6/LVsWIabigNlZDhY6X/C/wLoue9djhv7xWbkX4xMiR+8t2d9TC4M@vger.kernel.org, AJvYcCVW5y0fs7m7d0CultXhraa2d65ZH9gr5uNE2GjOyI2gXHKByEESAsNFWpmGYLAw4u609L96xvUL9FUg@vger.kernel.org, AJvYcCWvbyWJ/CTv4ktZT/SGb/11w00k+xT+e5lJIPRZLrgeZ8TyY5dFiZigVV+3Y07mPwpNXLKayIsQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXsJ1nvbqTvjmjdFiHEL1i4rj6axomFveFn3U0FrtdWsxpwVFM
+	vJMjseYfwrwBZch6sCM3vgeBlH89u+KY4ea1X46SvEaxRs2glezJ
+X-Gm-Gg: ASbGncs/v+x9PE6FxEbYYDNQ0dit5hSyLTfXifjMfqT12GEMnGLCijEi8vkW5jOAsJ/
+	+dO1pG6uAbDNpxqHRV/PfMHlhue4xVhbM3O4GzeU+Se6erYLDyAZym70o/OMFr8aFi4JX3myrit
+	hF2OPtj5DzyTKtfnRDd2cgtrCoP1rku315eCTqRcstgflwP+UI7IPf7ris1rwZYUGYAbJyis7ba
+	KfIGMYhDcsd3+KXhnHm33TZDOVfwwzltk1dXzBTLZWMDDXfPsFFIc0RIdqGBZ6HcFGXG81waEs5
+	g2CuupFidNcqJvQa7mKtus8MWGPJ0y4=
+X-Google-Smtp-Source: AGHT+IErHgyMMC0gxpFbF0+ltzHlALBkq84d33gqNkyZ9Lj204hZXdZSKp7DGFvJyo8iPJlxvm7WCw==
+X-Received: by 2002:a05:6214:5c47:b0:6e6:5c26:afe3 with SMTP id 6a1803df08f44-6eaddfbb91cmr8764046d6.17.1741828102495;
+        Wed, 12 Mar 2025 18:08:22 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eade34beb0sm2540506d6.105.2025.03.12.18.08.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 18:08:21 -0700 (PDT)
+Date: Thu, 13 Mar 2025 09:08:11 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Stephen Boyd <sboyd@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: clock: sophgo: add clock controller
+ for SG2044
+Message-ID: <nxvuxo7lsljsir24brvghblk2xlssxkb3mfgx6lbjahmgr4kep@fvpmciimfikg>
+References: <20250226232320.93791-1-inochiama@gmail.com>
+ <20250226232320.93791-2-inochiama@gmail.com>
+ <2c00c1fba1cd8115205efe265b7f1926.sboyd@kernel.org>
+ <epnv7fp3s3osyxbqa6tpgbuxdcowahda6wwvflnip65tjysjig@3at3yqp2o3vp>
+ <f1d5dc9b8f59b00fa21e8f9f2ac3794b.sboyd@kernel.org>
+ <x43v3wn5rp2mkhmmmyjvdo7aov4l7hnus34wjw7snd2zbtzrbh@r5wrvn3kxxwv>
+ <b816b3d1f11b4cc2ac3fa563fe5f4784.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -74,113 +84,61 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250309180940.1322531-4-jan.dakinevich@salutedevices.com>
+In-Reply-To: <b816b3d1f11b4cc2ac3fa563fe5f4784.sboyd@kernel.org>
 
-Hi Jan,
+On Wed, Mar 12, 2025 at 04:43:51PM -0700, Stephen Boyd wrote:
+> Quoting Inochi Amaoto (2025-03-12 16:29:43)
+> > On Wed, Mar 12, 2025 at 04:14:37PM -0700, Stephen Boyd wrote:
+> > > Quoting Inochi Amaoto (2025-03-11 16:31:29)
+> > > > 
+> > > > > or if that syscon node should just have the #clock-cells property as
+> > > > > part of the node instead.
+> > > > 
+> > > > This is not match the hardware I think. The pll area is on the middle
+> > > > of the syscon and is hard to be separated as a subdevice of the syscon
+> > > > or just add  "#clock-cells" to the syscon device. It is better to handle
+> > > > them in one device/driver. So let the clock device reference it.
+> > > 
+> > > This happens all the time. We don't need a syscon for that unless the
+> > > registers for the pll are both inside the syscon and in the register
+> > > space 0x50002000. Is that the case? 
+> > 
+> > Yes, the clock has two areas, one in the clk controller and one in
+> > the syscon, the vendor said this design is a heritage from other SoC.
+> 
+> My question is more if the PLL clk_ops need to access both the syscon
+> register range and the clk controller register range. What part of the
+> PLL clk_ops needs to access the clk controller at 0x50002000?
+> 
 
-kernel test robot noticed the following build errors:
+The PLL clk_ops does nothing, but there is an implicit dependency:
+When the PLL change rate, the mux attached to it must switch to 
+another source to keep the output clock stable. This is the only
+thing it needed.
 
-[auto build test ERROR on clk/clk-next]
-[also build test ERROR on robh/for-next krzk/for-next krzk-dt/for-next linus/master v6.14-rc6 next-20250312]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > 
+> > > This looks like you want there to be  one node for clks on the system
+> > > because logically that is clean, when the reality is that there is a
+> > > PLL block exposed in the syscon (someone forgot to put it in the clk
+> > > controller?) and a non-PLL block for the other clks.
+> > 
+> > That is true, I prefer to keep clean and make less mistakes. Although
+> > the PLL is exposed in the syscon, the pll need to be tight with other
+> > clocks in the space 0x50002000 (especially between the PLL and mux).
+> > In this view, it is more like a mistake made by the hardware design.
+> > And I prefer not to add a subnode for the syscon.
+> 
+> Ok. You wouldn't add a subnode for the syscon. You would just have
+> #clock-cells in that syscon node and register an auxiliary device to
+> provide the PLL(s) from there. Then in drivers/clk we would have an
+> auxiliary driver that uses a regmap or gets an iomem pointer from the
+> parent device somehow so that we can logically put the PLL code in
+> drivers/clk while having one node in DT for the "miscellaneous register
+> area" where the hardware engineer had to expose the PLL control to
+> software.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jan-Dakinevich/clk-meson-axg-share-the-set-of-audio-helper-macros/20250310-022012
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20250309180940.1322531-4-jan.dakinevich%40salutedevices.com
-patch subject: [PATCH v6 3/4] clk: meson: a1: add the audio clock controller driver
-config: arm64-randconfig-r131-20250312 (https://download.01.org/0day-ci/archive/20250313/202503131003.x6L69hJL-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250313/202503131003.x6L69hJL-lkp@intel.com/reproduce)
+Cool, I understand what you mean. It is a good idea,
+I will have a try.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503131003.x6L69hJL-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/clk/meson/a1-audio.c: In function 'a1_audio_clkc_probe':
->> drivers/clk/meson/a1-audio.c:807:18: error: implicit declaration of function '__devm_auxiliary_device_create'; did you mean '__auxiliary_device_add'? [-Wimplicit-function-declaration]
-     807 |         auxdev = __devm_auxiliary_device_create(dev, dev->driver->name,
-         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                  __auxiliary_device_add
->> drivers/clk/meson/a1-audio.c:807:16: error: assignment to 'struct auxiliary_device *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     807 |         auxdev = __devm_auxiliary_device_create(dev, dev->driver->name,
-         |                ^
-
-
-vim +807 drivers/clk/meson/a1-audio.c
-
-   748	
-   749	static int a1_audio_clkc_probe(struct platform_device *pdev)
-   750	{
-   751		struct device *dev = &pdev->dev;
-   752		const struct a1_audio_data *data;
-   753		struct auxiliary_device *auxdev;
-   754		struct regmap *map;
-   755		void __iomem *base;
-   756		struct clk *clk;
-   757		unsigned int i;
-   758		int ret;
-   759	
-   760		data = device_get_match_data(dev);
-   761		if (!data)
-   762			return -EINVAL;
-   763	
-   764		clk = devm_clk_get_enabled(dev, "pclk");
-   765		if (IS_ERR(clk))
-   766			return PTR_ERR(clk);
-   767	
-   768		base = devm_platform_ioremap_resource(pdev, 0);
-   769		if (IS_ERR(base))
-   770			return PTR_ERR(base);
-   771	
-   772		map = devm_regmap_init_mmio(dev, base, &a1_audio_regmap_cfg);
-   773		if (IS_ERR(map))
-   774			return PTR_ERR(map);
-   775	
-   776		ret = device_reset(dev);
-   777		if (ret)
-   778			return ret;
-   779	
-   780		for (i = 0; i < data->hw_clks.num; i++) {
-   781			struct clk_hw *hw = data->hw_clks.hws[i];
-   782			struct clk_regmap *clk_regmap = to_clk_regmap(hw);
-   783	
-   784			if (!hw)
-   785				continue;
-   786	
-   787			clk_regmap->map = map;
-   788		}
-   789	
-   790		for (i = 0; i < data->hw_clks.num; i++) {
-   791			struct clk_hw *hw;
-   792	
-   793			hw = data->hw_clks.hws[i];
-   794			if (!hw)
-   795				continue;
-   796	
-   797			ret = devm_clk_hw_register(dev, hw);
-   798			if (ret)
-   799				return ret;
-   800		}
-   801	
-   802		ret = devm_of_clk_add_hw_provider(dev, meson_clk_hw_get,
-   803						  (void *)&data->hw_clks);
-   804		if (ret)
-   805			return ret;
-   806	
- > 807		auxdev = __devm_auxiliary_device_create(dev, dev->driver->name,
-   808							data->rst_drvname, NULL, 0);
-   809		if (!auxdev)
-   810			return -ENODEV;
-   811	
-   812		return 0;
-   813	}
-   814	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Inochi
