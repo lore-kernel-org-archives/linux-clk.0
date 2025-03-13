@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7A425FA1A;
-	Thu, 13 Mar 2025 07:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE001EA7FC;
+	Thu, 13 Mar 2025 08:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741852443; cv=none; b=FQGMi1IvnqRY7MSSTJgjZPL9ZsdGq2C2NEH63VTpAqzI6OoWyqWRs6kX4cdGQHss3GJxb55TZhFsJPd+daCXvmhHtzzfyUcHJWYhboU2lxbbYmyZae/u//C0JKbjxrvu9BVCkejeCoY2/zPabVBmDKcrd9oWgSrmwg09PwOGj94=
+	t=1741854258; cv=none; b=hAzb/6fYNqacsp0BCngCSg4ZL29t3AuJSafsamqE3iA92iIQJhR+qDCPgcYpOS4v1FuVL1SgUMHU20bbLUSvA1LuqiyBReW5U15QB5PP/gcZw73BMMYd1q8HlDtYQ1F7htn/Q2DCTyjTy4kEzcSMvn7BrNnaRNkkhfyP3xZKxP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741852443; c=relaxed/simple;
-	bh=Oy727npOYrvDbZWrxWnM9zWO+qFg0rFlevRSA+NrZME=;
+	s=arc-20240116; t=1741854258; c=relaxed/simple;
+	bh=nzEoy2Dm6WdPm0bsSQMi/Pi0gl+x9sAMvCNvyjcf8w0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a7redYTHeEUlFFZm9BMH7dXzSzL11yLp2VmS71rg9eKSD9iqliMXSkDtVwjLM/nxdxT7vDnGXdUcpReBKQus8spUQItb9yzNVv3e3rgjj5q4cHe/95ZQS0sGEXPLdfRDJgpDiwu9+Gch6LiLsOJdVi81oeZRnRPWZO6pPjvJ8Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SxpC1gHL; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/6TvF7Prvx7SLz45keBxNpyUoBpY+WTsYjPseaMGrimpr/Ee9hHvDx9P0kpb5MLYiJqoeT1aauXdXvb5/JW/Z93zDRqt0EfWoYumiTh0+8gGm9Mpuq+nDKa4E832J2ohj9SwGS0T83snZzIV5p5hsvCO+8xTWD1A98bXZDZJas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bnlCx8r5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SxpC1gHL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC868C4CEEA;
-	Thu, 13 Mar 2025 07:54:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnlCx8r5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B9AEC4CEE9;
+	Thu, 13 Mar 2025 08:24:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741852442;
-	bh=Oy727npOYrvDbZWrxWnM9zWO+qFg0rFlevRSA+NrZME=;
+	s=k20201202; t=1741854257;
+	bh=nzEoy2Dm6WdPm0bsSQMi/Pi0gl+x9sAMvCNvyjcf8w0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SxpC1gHLTs+PecJ+hInrBRCCE9ad6XT6umULdnQR6nEsT7gW1hsq/BfMqI2JKiMQp
-	 EyqfK8Bi0Dixqyk9PM5o1EcaalTWMaDw+82hX9azT/zfTo8PPRKU6bVZza0H2zMush
-	 lhSiwKUpeYJ3UJ1RjN7jC6kC7YVIKSeHjiMQ1VY/hljnwEuFikzd7Hc8lMkMFz+bzS
-	 i3/TO82rZmgJU2oRMsHZDu9ALXvQMhUgUYoaJws4OMitVwXA4wdv8AGYOVljeQsiBf
-	 fC57gOfe3yxRqhUZmElgauWRVyCFX/Zrb3vMBfhJrzqa6FRkykAjHv/xiyCJt8LWE0
-	 L6Q+99qAXpocA==
-Date: Thu, 13 Mar 2025 08:53:58 +0100
+	b=bnlCx8r5QwZudVcnRFXkQ1/mShMlI7S9sNXIJ4mIckmfuhk7xAEPAFGfSKILwYrJR
+	 q2H3UNAsxYwuDi8A0LOMPV0du9lLjSGcePOm5ghr2wkIHFiOL/7zVi2p4L7Esi7/lY
+	 kq5DF0j/MpU5EUsSEUN/hknlvSWobgVt7qaPJgvLWWWBQ9v1x8dBioVK5p8ezZJ6A7
+	 k70YQOXiIsL4Z8ERTGw78t+MIFzSfp/DJsHBZCj+vHfZMOcyYTGgG8xIs7UOxWYdvE
+	 SPUIMMHvzqwIJ8PRGZYN7NOb/sI11IjH/oykGoVY4w1JAU+NavEA/zxKhQqYQZh3vb
+	 NbfeAfr+L8JUQ==
+Date: Thu, 13 Mar 2025 09:24:12 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Taniya Das <quic_tdas@quicinc.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -36,11 +36,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
 	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 04/10] dt-bindings: clock: Add Qualcomm QCS615 Display
- clock controller
-Message-ID: <20250313-noisy-hopping-poodle-c51ccb@krzk-bin>
+Subject: Re: [PATCH v6 06/10] dt-bindings: clock: Add Qualcomm QCS615
+ Graphics clock controller
+Message-ID: <20250313-graceful-jackdaw-of-opportunity-62996d@krzk-bin>
 References: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
- <20250313-qcs615-v5-mm-cc-v6-4-ebf4b9a5e916@quicinc.com>
+ <20250313-qcs615-v5-mm-cc-v6-6-ebf4b9a5e916@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,19 +49,29 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250313-qcs615-v5-mm-cc-v6-4-ebf4b9a5e916@quicinc.com>
+In-Reply-To: <20250313-qcs615-v5-mm-cc-v6-6-ebf4b9a5e916@quicinc.com>
 
-On Thu, Mar 13, 2025 at 12:29:41PM +0530, Taniya Das wrote:
-> Add DT bindings for the Display clock on QCS615 platforms. Add the
-> relevant DT include definitions as well.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  .../bindings/clock/qcom,qcs615-dispcc.yaml         | 73 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,qcs615-dispcc.h     | 52 +++++++++++++++
->  2 files changed, 125 insertions(+)
+On Thu, Mar 13, 2025 at 12:29:43PM +0530, Taniya Das wrote:
+ +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - '#power-domain-cells'
+> +
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I don't get why this binding is different than others and you do not
+reference qcom,gcc.yaml? Is it not applicable here? Other gpucc do
+reference.
+
 
 Best regards,
 Krzysztof
