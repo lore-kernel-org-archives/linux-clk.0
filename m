@@ -1,149 +1,72 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69EF268FDA;
-	Thu, 13 Mar 2025 15:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E2A5464E;
+	Thu, 13 Mar 2025 19:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741881546; cv=none; b=XQIXaZ6pUbVst5J5FyxkuebyXJ8GnU2brKFw9y/Lbdri+8GCKRS5NuzidIALbVXlpmpE/3z4b7TZlIv8g4YEI3M5khm7GyX0Kkk6KMiGBEBocmiSnZCYX40h1/U5UaLPGITeFj7HkBBZoDf3c0nQpJzgiiodwZXronYMeYehUsk=
+	t=1741894716; cv=none; b=KOGM3A4X474Qpdhvul1uz3y5Rn6EL05cRgmZw2KtTDbIIW5qxa/pOCymPAs47Frmydz3U9v++YlPFcuH4XOAcEDBs0ZIYJMavDHfnv46UJtBKZAs0yqNnJAU6WYUsugXR6l2cAVdyUYWgbCcCk4x6QogClOHNBCMG5hfBsSIjMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741881546; c=relaxed/simple;
-	bh=YdJP8+QDoYdAq2M2+D8RCJ3BFb0YTP9XgW1vPZERICE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CIbZCUqINNHmuMCRXao6W7GpfC6jJpMGmLWBjctPU5xg9qkjQsgg7+zWMZ4N+HzeB0sYUntNhyY+1clDvW+7ubhoAf57gvYClJ+j9ZTgfQmJKXa0lNCQ4dIgB4lS9aYSZTiUHzEKqViKYRr0h+rhD5javrtzgB8VP4hoptNlS3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwwLNNyS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741894716; c=relaxed/simple;
+	bh=PJN9kuJafuaBlwl0mjM0aRG/llBd01Ca0mxiWYCJ1xE=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=XMsCyITj6OEzBAMboM1eVHrGrnQjFqAG2MiGVFQ4DTUKsGPzUPoBHfclLNyl7cXOJxGZortzU6d3A9dZ83evU6MMWN6cfVyiL80XVkdSQM82mEKubsYeHsz3klG8DilGWddevAQ5BVucKGE7GuqVT4wlq4wm92rE0WWmqy/ad30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgePn02L; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwwLNNyS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16EFFC4CEDD;
-	Thu, 13 Mar 2025 15:59:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgePn02L"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08813C4CEDD;
+	Thu, 13 Mar 2025 19:38:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741881546;
-	bh=YdJP8+QDoYdAq2M2+D8RCJ3BFb0YTP9XgW1vPZERICE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=uwwLNNySG0cOE7KXx8jV6AJwtHR5rJCwZhfaUXUGudTfy8QAbWbD1H4oK32oJOIHp
-	 ykIzi5ExxwdzaEUg2B9rYApBopTRzwB5qsaXGeTQram6bfJVrzwMof1YmhItftH58j
-	 cVY1ssQ9pPeWGHb0cFJVVqPkPKSkTE0r4rWnzimm9hO8b4KEcfJ49ykQUdWY+jZynQ
-	 6ehL3FOPHguWw9b54IrySiAnisZXqOxwDEvr7brLvKPKiDUG3zf6ndu+wR+j9ah6Wd
-	 rLjzEnyt1piHAI3K+z9zNV39ZLAiLX1HL2eUyRTzecleAkUivIoZykrELdqhc6jTaE
-	 XRRUjWTJuMIng==
-Received: by wens.tw (Postfix, from userid 1000)
-	id 490985F99C; Thu, 13 Mar 2025 21:25:03 +0800 (CST)
-Date: Thu, 13 Mar 2025 21:25:03 +0800
-From: Chen-Yu Tsai <wens@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>,
-	Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev,
-	linux-clk@vger.kernel.org
-Subject: [GIT PULL] Allwinner clock changes for 6.15
-Message-ID: <Z9Lcr8FyJLWdbp-J@wens.tw>
+	s=k20201202; t=1741894716;
+	bh=PJN9kuJafuaBlwl0mjM0aRG/llBd01Ca0mxiWYCJ1xE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=BgePn02L7ieIWEOaT7+/eexPFW7pLTaLtdJF3ZTkBUzL2vwOwFJvLR9ARKMyfaoZS
+	 IfaOCBDlEM7pRKTB4t0kzLU/Yv1jP8MimRiq413dQIavNlrQbqQ/MjGqL9d+ouVBpi
+	 xl+ZKqfSMK6NyeZfb9Z5fpsI9pKmdqT+unXOdileCflox+Y93kiP2hCXK34kZTGxs9
+	 9u5ZyOK63DEIa0uEuyWp68kfiIQ4akwd9iZ1ekEwgl/5kZUzcmTKLHjJwIB6GozQeS
+	 T0gnGDXOj+s1fvdTcIx0WVsOCXPUFtbaS/sALs/CMm2kmHk8ZyTN6FgS7P/aruJ3mx
+	 3uW+VL+fR8oiQ==
+Message-ID: <be795c50ef61765784426b4b0fafd17b.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QOVA6zihwAqP3/dp"
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ih7hu6nyn3n4bntwljzo4suby5klxxj4vs76e57qmw65vujctw@khgo3qbgllio>
+References: <20250226232320.93791-1-inochiama@gmail.com> <20250226232320.93791-3-inochiama@gmail.com> <aab786e8c168a6cb22886e28c5805e7d.sboyd@kernel.org> <ih7hu6nyn3n4bntwljzo4suby5klxxj4vs76e57qmw65vujctw@khgo3qbgllio>
+Subject: Re: [PATCH v3 2/2] clk: sophgo: Add clock controller support for SG2044 SoC
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+To: Chen Wang <unicorn_wang@outlook.com>, Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Richard Cochran <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>
+Date: Thu, 13 Mar 2025 12:38:33 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
+Quoting Inochi Amaoto (2025-03-11 18:01:54)
+> On Tue, Mar 11, 2025 at 12:23:35PM -0700, Stephen Boyd wrote:
+> > Quoting Inochi Amaoto (2025-02-26 15:23:19)
+> > > diff --git a/drivers/clk/sophgo/clk-sg2044.c b/drivers/clk/sophgo/clk=
+-sg2044.c
+> > > new file mode 100644
+> > > index 000000000000..b4c15746de77
+> > > --- /dev/null
+> > > @@ -0,0 +1,2271 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * Sophgo SG2042 clock controller Driver
+[...]
+> > > +};
+> > > +
+> > > +static struct sg2044_clk_common *sg2044_gate_commons[] =3D {
+> >=20
+> > Can these arrays be const?
+> >=20
+>=20
+> It can not be, we need a non const clk_hw to register. It is=20
+> defined in this structure. Although these array can be set as
+> "struct sg2044_clk_common * const", but I think this is kind
+> of meaningless.
 
---QOVA6zihwAqP3/dp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
-
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git sunxi-clk-for-6.15
-
-for you to fetch changes up to 8cea339cfb81eb3354b0f27ceb27e2bb107efa6d:
-
-  clk: sunxi-ng: add support for the A523/T527 PRCM CCU (2025-03-12 11:58:11 +0800)
-
-----------------------------------------------------------------
-Allwinner clock changes for 6.15
-
-- Extend H616 clock driver to cover TCON clock and reset
-- Enable H616 GPU clock reparenting during rate change
-- Add new clock driver for A523/T527
-
-----------------------------------------------------------------
-Andre Przywara (14):
-      clk: sunxi-ng: mp: introduce dual-divider clock
-      clk: sunxi-ng: mp: provide wrappers for setting feature flags
-      clk: sunxi-ng: Add support for update bit
-      dt-bindings: clk: sunxi-ng: document two Allwinner A523 CCUs
-      clk: sunxi-ng: Add support for the A523/T527 CCU PLLs
-      clk: sunxi-ng: a523: Add support for bus clocks
-      clk: sunxi-ng: a523: add video mod clocks
-      clk: sunxi-ng: a523: add system mod clocks
-      clk: sunxi-ng: a523: add interface mod clocks
-      clk: sunxi-ng: a523: add USB mod clocks
-      clk: sunxi-ng: a523: remaining mod clocks
-      clk: sunxi-ng: a523: add bus clock gates
-      clk: sunxi-ng: a523: add reset lines
-      clk: sunxi-ng: add support for the A523/T527 PRCM CCU
-
-Chris Morgan (2):
-      dt-bindings: clock: sun50i-h616-ccu: Add LCD TCON clk and reset
-      clk: sunxi-ng: h616: Add clock/reset for LCD TCON
-
-Philippe Simons (1):
-      clk: sunxi-ng: h616: Reparent GPU clock during frequency changes
-
- .../bindings/clock/allwinner,sun55i-a523-ccu.yaml  |  103 ++
- drivers/clk/sunxi-ng/Kconfig                       |   10 +
- drivers/clk/sunxi-ng/Makefile                      |    4 +
- drivers/clk/sunxi-ng/ccu-sun50i-h616.c             |   60 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h616.h             |    2 +-
- drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c           |  248 +++
- drivers/clk/sunxi-ng/ccu-sun55i-a523-r.h           |   14 +
- drivers/clk/sunxi-ng/ccu-sun55i-a523.c             | 1685 ++++++++++++++++++++
- drivers/clk/sunxi-ng/ccu-sun55i-a523.h             |   14 +
- drivers/clk/sunxi-ng/ccu_common.h                  |    5 +
- drivers/clk/sunxi-ng/ccu_div.c                     |    2 +
- drivers/clk/sunxi-ng/ccu_gate.c                    |    4 +
- drivers/clk/sunxi-ng/ccu_mp.c                      |   51 +-
- drivers/clk/sunxi-ng/ccu_mp.h                      |   58 +-
- drivers/clk/sunxi-ng/ccu_mux.c                     |    2 +
- include/dt-bindings/clock/sun50i-h616-ccu.h        |    4 +
- include/dt-bindings/clock/sun55i-a523-ccu.h        |  189 +++
- include/dt-bindings/clock/sun55i-a523-r-ccu.h      |   37 +
- include/dt-bindings/reset/sun50i-h616-ccu.h        |    2 +
- include/dt-bindings/reset/sun55i-a523-ccu.h        |   88 +
- include/dt-bindings/reset/sun55i-a523-r-ccu.h      |   25 +
- 21 files changed, 2590 insertions(+), 17 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-r.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523-r.h
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.c
- create mode 100644 drivers/clk/sunxi-ng/ccu-sun55i-a523.h
- create mode 100644 include/dt-bindings/clock/sun55i-a523-ccu.h
- create mode 100644 include/dt-bindings/clock/sun55i-a523-r-ccu.h
- create mode 100644 include/dt-bindings/reset/sun55i-a523-ccu.h
- create mode 100644 include/dt-bindings/reset/sun55i-a523-r-ccu.h
-
---QOVA6zihwAqP3/dp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAABCgAdFiEE2nN1m/hhnkhOWjtHOJpUIZwPJDAFAmfS3K0ACgkQOJpUIZwP
-JDCVlg/1Ed/twZroOZ4PTp8VoZqnQEijolGt+zZXwlRDCdPPVNzoJBK+PxEU7pUn
-NFnMd/iBICscNSLKZTCOodgSGPiyp0McVTI25IghxUSYvFnB8Wi1ZTRKLrAFJRm6
-x4uUQPFl5nmXvlv3eTsdEqQvbqsRcDqyQKI88/Be/WLMcJ/yOTW06oHK0wKDaWhJ
-VhVcJnQEITwEHXGGRQJZmsCO24dAf2NiWXuZljd9JvO75+mpGyfsuKvRKXWY9wLE
-rki/gzL82NuMUeu2TGzQ5I6bUowgGY1IXX9zemp6HCwlNQDDlPuVfd6Z+J2cyzMu
-TwFpQin93txp6X63P8byhmXtw8t6AqsiZ8edtN+M9PhFAG5rM3ccOv32vptiblSW
-G/KUSm/Jerah7SI8+uDRuEnVxYNN03cApKf8OvvNvU4gjX+xJvSSOsL2PdvX7ReZ
-fJpLk7v8eoIVTHoicsttj72sX2iMiPBtA2jCLSCho/9aJlg/Xapbtqwl9FrmPDwo
-WbxfMvZlFWElwc7c86ylGr50ZKuj7Q/cv6SwQEKUkXj9Ricm4fCJ/8Sna7mlhJKe
-MFq/hMVpVERFn6rDFjO14DwowVvi2AzfbPdFZmivHY2Pp5U/GhB9fe7IyG1g0cyq
-7mKzPlfZgbRjmlIkhulK4d+JwJ3+MFiDQDZwU6S20j5mmsSFNg==
-=/9Mb
------END PGP SIGNATURE-----
-
---QOVA6zihwAqP3/dp--
+Can't the array of pointers can be const so that it lives in RO memory?
