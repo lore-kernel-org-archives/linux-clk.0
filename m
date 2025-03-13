@@ -1,99 +1,118 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB97261571
-	for <linux-clk@vger.kernel.org>; Thu, 13 Mar 2025 08:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5494B20EB;
+	Thu, 13 Mar 2025 08:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741855447; cv=none; b=WH62rVkC4lf3oytBqCSNRBMft9fFngoLFXSXGayw6m6PIXqPfBSaOH4k3xEKM+xEXzBapcrlWuunMzmfFr9JN64jGi51EOFmpOhH+tTWC2KnUXvEC0GS17QTxjE3J/ugXsrv10YBRpa7Sqyp/xN8ADUEqSSXbnatQR2McuFSD5U=
+	t=1741855535; cv=none; b=B6+MdOeWr1zwWIIxkysNl8vRPuO4oemcEWx3mTL6RA+iKE9c7t27gzQqhbpLie4KkAgAlekr/juZ3N1zojGHldvIrlxcDjFW6Hnd2VhNkLyQmXKfr0cTWHRPgylQMP2zf5E7GnWqZ2Wkb2bbsTAEgIWzPeFGo2jVKTek6dlkvtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741855447; c=relaxed/simple;
-	bh=B8xrWGXh47flZMBc4OynPt52HdDVE8wfQf9Ggqdg8nc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=E5dDYu/dT+IQwLWiyIMSWo3fWjnhJAkiDxAhR9pH3Kz7Ukh/DUV+HX/KNBR6oMOWQB6psuafKoqDUjr2uVF9MSp23QdiZbXAHpacQU9lfHy2J+FsQfZVWrtf+bxsWQMwlq26xG8uWLRS8+AvabfAQEsw1Q1QL6hZf7EwkTP8OA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tseAQ-0000KT-Qn; Thu, 13 Mar 2025 09:43:50 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tseAP-005VQo-17;
-	Thu, 13 Mar 2025 09:43:49 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tseAP-0003az-0x;
-	Thu, 13 Mar 2025 09:43:49 +0100
-Message-ID: <5824eaa53054cfd9886c6ba745bd5cd8914c26c0.camel@pengutronix.de>
-Subject: Re: [PATCH] dt-bindings: reset: fix double id on rk3562-cru reset
- ids
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Heiko Stuebner <heiko@sntech.de>, sboyd@kernel.org,
- mturquette@baylibre.com
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	kever.yang@rock-chips.com, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, kernel test robot
-	 <lkp@intel.com>
-Date: Thu, 13 Mar 2025 09:43:49 +0100
-In-Reply-To: <20250312215923.275625-1-heiko@sntech.de>
-References: <20250312215923.275625-1-heiko@sntech.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1741855535; c=relaxed/simple;
+	bh=dDUCrjfcCkHy+Qdllu2qarusbsI9b0jhw5izoFx1sdg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AgOneh/47EOVoUo52zohzpPD8ESwDPK/aOgyY/VPjrWt6S+rCEU+Tcj6O1DHD+nWVwlY7WlUdXud468lOa301OPTe4PSNDzEDKdEjQKRJ8NMnFF1JRpf7MeWWhA2HqxGkt6vq0xLcejjOi0pKJZzXvjNQ9NUelkYkGUgpfPAk+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gomj9xJP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gomj9xJP"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CLTIoO023249;
+	Thu, 13 Mar 2025 08:45:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	weOhNTocqMWkV4mh4HfuZvoaWYclgVYAQAFMBUCSfGw=; b=Gomj9xJPCHYtMKiJ
+	kvRw7zKf3tLe9ypJTI9T/QdNyDKCkKrNNgKPbVuX3RwQMbBl2h9cDzbUewg9VkRC
+	SG8Gw3Buoc1BFOLOPSpznCVCl7G/chmDz9ggwbkMtc6fxqeMWQswkvRwwflWFt/s
+	1mR9mvt3fJ5uIBq+utxlZuzjyTsMVXXPgrTv5/qzOf+5uY40NFORn+jlVT79dbP4
+	PRPOpZZrNhIOe0lDUDT6H4dYUfb+pFRk4+4YnlIQSv9d5vmJsM4SUQu3DWNBy6O+
+	2UT4E5srxbSnbHdfFG3giApthSu+n9gd9u1kq3fAJeW4YkAD7ZOUfkaKQH55PCd4
+	2nvCrA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2mn5ws-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 08:45:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D8jIpD024973
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Mar 2025 08:45:18 GMT
+Received: from [10.217.216.178] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
+ 2025 01:45:13 -0700
+Message-ID: <4f3161da-a11b-464f-bf78-45c830b2ea82@quicinc.com>
+Date: Thu, 13 Mar 2025 14:15:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 04/10] dt-bindings: clock: Add Qualcomm QCS615 Display
+ clock controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
+ <20250313-qcs615-v5-mm-cc-v6-4-ebf4b9a5e916@quicinc.com>
+ <20250313-mottled-quoll-of-vastness-3f3c6b@krzk-bin>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <20250313-mottled-quoll-of-vastness-3f3c6b@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cgUiPEMaa_Ew-ApOw3iL_h4kRXSyDY0B
+X-Authority-Analysis: v=2.4 cv=aKnwqa9m c=1 sm=1 tr=0 ts=67d29b1f cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=nJrBSJ152xCAXF4FcqMA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: cgUiPEMaa_Ew-ApOw3iL_h4kRXSyDY0B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-13_04,2025-03-11_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
+ adultscore=0 malwarescore=0 priorityscore=1501 phishscore=0 spamscore=0
+ bulkscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130068
 
-On Mi, 2025-03-12 at 22:59 +0100, Heiko Stuebner wrote:
-> Id 173 was accidentially used two times for SRST_P_DDR_HWLP and
-> SRST_P_DDR_PHY. This makes both resets ambiguous and also causes build
-> warnings like:
->=20
-> drivers/clk/rockchip/rst-rk3562.c:21:57: error: initialized field overwri=
-tten [-Werror=3Doverride-init]
->    21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x2000=
-0*4 + reg * 16 + bit)
->       |                                                         ^
-> drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'RK3=
-562_DDRCRU_RESET_OFFSET'
->   266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/clk/rockchip/rst-rk3562.c:21:57: note: (near initialization for '=
-rk3562_register_offset[173]')
->    21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x2000=
-0*4 + reg * 16 + bit)
->       |                                                         ^
-> drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'RK3=
-562_DDRCRU_RESET_OFFSET'
->   266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
->=20
-> To fix that issue give SRST_P_DDR_PHY a new and now unique id.
->=20
-> Reported-by: Stephen Boyd <sboyd@kernel.org>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202503121743.0zcDf6nE-lkp@i=
-ntel.com/
-> Fixes: dd113c4fefc8 ("dt-bindings: clock: Add RK3562 cru")
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> The original patch did go with the reset of the clock controller code
-> into the clock tree, so this patch should of course also go that way.
 
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-regards
-Philipp
+On 3/13/2025 1:55 PM, Krzysztof Kozlowski wrote:
+> On Thu, Mar 13, 2025 at 12:29:41PM +0530, Taniya Das wrote:
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - '#clock-cells'
+>> +  - '#reset-cells'
+>> +  - '#power-domain-cells'
+> 
+> Also no qcom,gcc.yaml. Why?
+> 
+
+Sure, will fix the bindings across and resend the patches.
+
+> Best regards,
+> Krzysztof
+> 
+
