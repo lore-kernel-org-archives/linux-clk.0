@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E2A5464E;
-	Thu, 13 Mar 2025 19:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0021F3FED;
+	Thu, 13 Mar 2025 20:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741894716; cv=none; b=KOGM3A4X474Qpdhvul1uz3y5Rn6EL05cRgmZw2KtTDbIIW5qxa/pOCymPAs47Frmydz3U9v++YlPFcuH4XOAcEDBs0ZIYJMavDHfnv46UJtBKZAs0yqNnJAU6WYUsugXR6l2cAVdyUYWgbCcCk4x6QogClOHNBCMG5hfBsSIjMI=
+	t=1741897047; cv=none; b=hCpHi40Kak1lW4Nx4kMT6cXi6HnltAROKprT2+Y9RdMpeTFdtou3NgLwLLB9pEgWi3TJ6cckUUGGtnaTFjtCR6qoZrxfXv/6t0c0aJYqLjWPVtdKbAx8AlBu3zX1A3ouyDR9XCns5pc56CVEALsTh8Tf6Ow+IENM5dBxdIrQoBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741894716; c=relaxed/simple;
-	bh=PJN9kuJafuaBlwl0mjM0aRG/llBd01Ca0mxiWYCJ1xE=;
+	s=arc-20240116; t=1741897047; c=relaxed/simple;
+	bh=ZRWtB3rv+AKys/z8/S91KGoR6y3uP/Y1TIBFLbBQNwg=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=XMsCyITj6OEzBAMboM1eVHrGrnQjFqAG2MiGVFQ4DTUKsGPzUPoBHfclLNyl7cXOJxGZortzU6d3A9dZ83evU6MMWN6cfVyiL80XVkdSQM82mEKubsYeHsz3klG8DilGWddevAQ5BVucKGE7GuqVT4wlq4wm92rE0WWmqy/ad30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgePn02L; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:To:Date; b=G4SUWzqLu49x+/zO6/lGE87cUFavuJFsUb4ls9zTVSO4xoH8CMAn8Wea7pVsjUy7Wmkw21Wv77/ZoUHIXtQb4cWyCB5ZZEkeS62hh0Tn4S72/5ga8E8qmm1rjoNgJSPor1H2zaxkRpLrMiRhP7I6Pvgex7+oTBasMmV+GjiZMlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oh/hUlRD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgePn02L"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08813C4CEDD;
-	Thu, 13 Mar 2025 19:38:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oh/hUlRD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54407C4CEDD;
+	Thu, 13 Mar 2025 20:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741894716;
-	bh=PJN9kuJafuaBlwl0mjM0aRG/llBd01Ca0mxiWYCJ1xE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=BgePn02L7ieIWEOaT7+/eexPFW7pLTaLtdJF3ZTkBUzL2vwOwFJvLR9ARKMyfaoZS
-	 IfaOCBDlEM7pRKTB4t0kzLU/Yv1jP8MimRiq413dQIavNlrQbqQ/MjGqL9d+ouVBpi
-	 xl+ZKqfSMK6NyeZfb9Z5fpsI9pKmdqT+unXOdileCflox+Y93kiP2hCXK34kZTGxs9
-	 9u5ZyOK63DEIa0uEuyWp68kfiIQ4akwd9iZ1ekEwgl/5kZUzcmTKLHjJwIB6GozQeS
-	 T0gnGDXOj+s1fvdTcIx0WVsOCXPUFtbaS/sALs/CMm2kmHk8ZyTN6FgS7P/aruJ3mx
-	 3uW+VL+fR8oiQ==
-Message-ID: <be795c50ef61765784426b4b0fafd17b.sboyd@kernel.org>
+	s=k20201202; t=1741897046;
+	bh=ZRWtB3rv+AKys/z8/S91KGoR6y3uP/Y1TIBFLbBQNwg=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=oh/hUlRDmMYFyWmn4VmL5tu5bi5jqC1dqBcqkJArjFHu5sH8vxz3fAmk6/Gx4cL6l
+	 DUMvyNSapxbW3AXnKyEIYHNsZGI7wdrPqFtL+gAAaExVcuAJH1rnYDEMaHAwb5EcbX
+	 Ivu1Mfg5u0rXOMiTpBUyULt374cgbf++C3oP/o+8xovzy73Jm3kQzKK7zlpqFk2mPA
+	 +7NIQ5yPyWDj7LnC4pJB6xKivmMmdX9XI/qbhayVQ1WCn/syRGo0J59SoYWP8v2re2
+	 fLd5F88vnGgVHjJkivUun96P/ALb3ZNHHbX4uLkLFo/CqVHmYko9hOetHF2kjh9Dwr
+	 2JSF64C6qrwvQ==
+Message-ID: <76a8bb40aa94465aa54233d191d142ef.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,38 +35,25 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ih7hu6nyn3n4bntwljzo4suby5klxxj4vs76e57qmw65vujctw@khgo3qbgllio>
-References: <20250226232320.93791-1-inochiama@gmail.com> <20250226232320.93791-3-inochiama@gmail.com> <aab786e8c168a6cb22886e28c5805e7d.sboyd@kernel.org> <ih7hu6nyn3n4bntwljzo4suby5klxxj4vs76e57qmw65vujctw@khgo3qbgllio>
-Subject: Re: [PATCH v3 2/2] clk: sophgo: Add clock controller support for SG2044 SoC
+In-Reply-To: <20250311180215.173634-1-andreas@kemnade.info>
+References: <20250311180215.173634-1-andreas@kemnade.info>
+Subject: Re: [PATCH v2] dt-bindings: clock: ti: Convert ti-clkctrl.txt to json-schema
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-To: Chen Wang <unicorn_wang@outlook.com>, Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Richard Cochran <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>
-Date: Thu, 13 Mar 2025 12:38:33 -0700
+To: andreas@kemnade.info, conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com, robh@kernel.org, tony@atomide.com
+Date: Thu, 13 Mar 2025 13:17:24 -0700
 User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Quoting Inochi Amaoto (2025-03-11 18:01:54)
-> On Tue, Mar 11, 2025 at 12:23:35PM -0700, Stephen Boyd wrote:
-> > Quoting Inochi Amaoto (2025-02-26 15:23:19)
-> > > diff --git a/drivers/clk/sophgo/clk-sg2044.c b/drivers/clk/sophgo/clk=
--sg2044.c
-> > > new file mode 100644
-> > > index 000000000000..b4c15746de77
-> > > --- /dev/null
-> > > @@ -0,0 +1,2271 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Sophgo SG2042 clock controller Driver
-[...]
-> > > +};
-> > > +
-> > > +static struct sg2044_clk_common *sg2044_gate_commons[] =3D {
-> >=20
-> > Can these arrays be const?
-> >=20
+Quoting Andreas Kemnade (2025-03-11 11:02:15)
+> Convert the TI clkctrl clock device tree binding to json-schema.
+> Specify the creator of the original binding as a maintainer.
 >=20
-> It can not be, we need a non const clk_hw to register. It is=20
-> defined in this structure. Although these array can be set as
-> "struct sg2044_clk_common * const", but I think this is kind
-> of meaningless.
+> reg property is used mostly with one item, in am3xxx also with
+> an arbitrary number of items, so divert from the original binding
+> specifying two (probably meaning one address and one size).
+> The consumer part of the example is left out because the full consumer
+> node would be needed.
+>=20
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
 
-Can't the array of pointers can be const so that it lives in RO memory?
+Applied to clk-next
