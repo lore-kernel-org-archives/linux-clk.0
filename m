@@ -1,38 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C77726869C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF09267F77;
 	Thu, 13 Mar 2025 15:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741878881; cv=none; b=MilXolD0BDE/KQ+5ZepbsbWIt1ntbu7DnrPoXyqajrF2+yK2fixjEBkVbS4+QApyEFcn9qp+nWJrYaPNfEYP0zkp4o9/zty9TX0r659WW6hI1YvKLdnlyq7e4VAP8Ftm2KO+Jh6GKIIePuCYckxfIs1EAodFrcMWn0qHhHYu5V0=
+	t=1741878881; cv=none; b=hXhblR7/hvbZWjfT+VzwJF/sqzuughvWLsBQiCxcfXKVdrpz8nk3DQKi2Kg67VDsAeLDA+H9ywejZw9+tjFrmiic2FSpxuX07FTeeZqNDRIrqyZXd0+KWXyt5+c0mNWtFYJSKV2Yc7MaWyQD1KQyP2ntezXe3M8lKScrpMI51tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741878881; c=relaxed/simple;
-	bh=gyCOn420nu33ZZ8ZpTt+CB+QBZMb4ojXZKnLb7lc8r8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EvHZJMTBvolYXxPJibHGHHxFdXvW0u5+n7gRJfo030cGXbb+KIL4/Dwr/RgJknuFrGWtiKhnrGBY3wTAQ7aq5ZCwkgin3u4032J1rtumyVCoIc7gWOMl3HyUxb7CQ1u4zNLH5igRPpNuCWpevFBvlWCTzhoBGNc42obard0aB2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nb1rEyNM; arc=none smtp.client-ip=10.30.226.201
+	bh=zcGj1uOEL8WR4UP614EhP+WDUNi3KOZTpWDDpUBnmv0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lZaUKQbkOLeImqsjGOfhORNDRIR9xepw9YlZ9ptYjoyqgTiNwh43dEa8zzN2UlWEdKZx4yVSWxvx49Afj1ERmaXGcZ5iRuRi1xAzjBUlW4g0ggImnQg4hUC/8qDkrEy5510gbOj2D053vGa3m1pSf19/noMuF3ZnZlV8PXLrflo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8mBlLuJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nb1rEyNM"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1FF45C4CEEB;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8mBlLuJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 07142C4CEDD;
 	Thu, 13 Mar 2025 15:14:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1741878881;
-	bh=gyCOn420nu33ZZ8ZpTt+CB+QBZMb4ojXZKnLb7lc8r8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=nb1rEyNMHIvNCYp000gFSp7+rj4jr6PgKv68qBPjrJtXlnfqgu4OljlKn8hOd7loy
-	 Ie933n3ALc6RbmjDU76oXVWUHAh2kiRFSrcUfqEzu0Rl/AnkBC/qbvUI0KuJidWpl2
-	 Sl+n/I9lW/0K3tVzksPvceZJWc4+ucK35qau4phCX1YLu3IRpZPiAFLfl/Opq66L0z
-	 4vVCGUxtg2ef1Ub7TlWRNi+02RYjh17rzpYh+EwUvBxLsCC8uIJu0kNQ/rLyzOwqn9
-	 CXkGzmqoOvZGMwtcpXYOlnxgKvQLgJgKoLORLqpAceMAwSjok5A/KzO6mXCj0ytdKr
-	 pjfRes77fFe/Q==
+	bh=zcGj1uOEL8WR4UP614EhP+WDUNi3KOZTpWDDpUBnmv0=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=s8mBlLuJGnQR/Yd9aio0WV727q2o2yBudAk0vbuRvEyvHWQjWEcQBLVSaTIB+6Al6
+	 SEYLnonhfqK1TbFRNzLJwxd9qx42JgykZi5u4i1sGsX38j2eQdqS6t7yimg2X3fPDm
+	 3o84Iw3VdywC2MSL+tU/qlTew6tC/MlO3pJa3fJra1CiPQCZBo/t+DXAwIeziC5weQ
+	 pzj3T2P/ooIsX/whgegHI/96WQILrEhFe2st5Rt3rFSkvtbs6B1p60Sw/g1WsoBjoL
+	 yUUY7Pdekrz/FSvgtoOdMC1NS9KXdhd+JSvCnMFj5RjTCRCY1Eqneb5kY5bPf/fl4h
+	 pyqEXWFmkdSUg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7BFC35FF4;
-	Thu, 13 Mar 2025 15:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5357C282DE;
+	Thu, 13 Mar 2025 15:14:40 +0000 (UTC)
 From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
-Date: Thu, 13 Mar 2025 15:14:44 +0000
-Subject: [PATCH v2 2/6] clk: clk-axi-clkgen: make sure to include
- mod_devicetable.h
+Subject: [PATCH v2 0/6] clk: clk-axi-clkgen: improvements and some fixes
+Date: Thu, 13 Mar 2025 15:14:42 +0000
+Message-Id: <20250313-dev-axi-clkgen-limits-v2-0-173ae2ad6311@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,20 +40,22 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250313-dev-axi-clkgen-limits-v2-2-173ae2ad6311@analog.com>
-References: <20250313-dev-axi-clkgen-limits-v2-0-173ae2ad6311@analog.com>
-In-Reply-To: <20250313-dev-axi-clkgen-limits-v2-0-173ae2ad6311@analog.com>
+X-B4-Tracking: v=1; b=H4sIAGL20mcC/3WNwQ6CMBAFf4X07Jq2CIIn/8NwKGULG6E1LWkwp
+ P9uJfHocSZ583YW0BMGdit25jFSIGczyFPB9KTsiEBDZia5rLgUDQwYQW0Een6OaGGmhdYAdWl
+ 6rivUZdOzvH15NLQd3UeXeaKwOv8+bqL42l+x/VOMAjjI2lzRiIseWn1XVs1uPGu3sC6l9AF9n
+ do9uwAAAA==
+X-Change-ID: 20250218-dev-axi-clkgen-limits-63fb0c5ec38b
 To: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org
 Cc: Stephen Boyd <sboyd@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, 
  Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741878886; l=659;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741878886; l=1074;
  i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
- bh=BGGCp0B/QWIWTXslxwf7dXWZP54vUsku9BYioWyTJhQ=;
- b=0pDqjr74YVLZgY0k3lL2nGqwvPJ+rMhG/DTcr09WvNX+swc91tKW+DRs5gSn2qLNBooMH2yA9
- ck3EeXD5nZ0DOeY7QQhVQCgtUiNOOxJWR9MwiBIkCS8BXaYkHdMDW/8
+ bh=zcGj1uOEL8WR4UP614EhP+WDUNi3KOZTpWDDpUBnmv0=;
+ b=ElfHDd6UrzzxERpEEORfL8eDB3IhstNDMUwliSk6zJ3yJiMTKaTL63/+YKLInzQ23liTiBpUQ
+ o5jYG6ac+X8BA0jv0IF+tCvzSPHPqz1C1GKSksccbnDfpImNCWM4uwz
 X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
  pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
 X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
@@ -62,30 +63,35 @@ X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
 X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
 Reply-To: nuno.sa@analog.com
 
-From: Nuno Sá <nuno.sa@analog.com>
+This series starts with a small fix and then a bunch of small
+improvements. The main change though is to allow detecting of
+struct axi_clkgen_limits during probe().
 
-The mod_devicetable header is the one to be used for struct
-of_device_id.
-
-Signed-off-by: Nuno Sá <nuno.sa@analog.com>
 ---
- drivers/clk/clk-axi-clkgen.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes in v2:
+- Patch 3
+   * Rename adi_axi_fgpa_technology -> adi_axi_fpga_technology.
 
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index 00bf799964c61a3efc042b0f3a9ec3bc8625c9da..2a95f9b220234a1245024a821c50e1eb9c104ac9 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -13,6 +13,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/module.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/err.h>
- 
- #define AXI_CLKGEN_V2_REG_RESET		0x40
+- Link to v1: https://lore.kernel.org/r/20250219-dev-axi-clkgen-limits-v1-0-26f7ef14cd9c@analog.com
 
--- 
-2.48.1
+---
+Nuno Sá (6):
+      clk: clk-axi-clkgen: fix fpfd_max frequency for zynq
+      clk: clk-axi-clkgen: make sure to include mod_devicetable.h
+      include: fpga: adi-axi-common: add new helper macros
+      clk: clk-axi-clkgen: detect axi_clkgen_limits at runtime
+      clk: clk-axi-clkgen move to min/max()
+      clk: clk-axi-clkgen: fix coding style issues
+
+ drivers/clk/clk-axi-clkgen.c        | 149 +++++++++++++++++++++++++-----------
+ include/linux/fpga/adi-axi-common.h |  35 +++++++++
+ 2 files changed, 141 insertions(+), 43 deletions(-)
+---
+base-commit: 82f69876ef45ad66c0b114b786c7c6ac0f6a4580
+change-id: 20250218-dev-axi-clkgen-limits-63fb0c5ec38b
+--
+
+Thanks!
+- Nuno Sá
 
 
