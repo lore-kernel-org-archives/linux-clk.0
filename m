@@ -1,168 +1,72 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE90B1FAC4F;
-	Thu, 13 Mar 2025 11:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC397126C1E;
+	Thu, 13 Mar 2025 14:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741867076; cv=none; b=mDbNYUJXXHlthvQlBxP77dDqUgoqXnTii9ma8rwQwO/roVQiqsBmmgLzJrn6pg6BxFgQ1j2hji6spOWdgpMiijAt5e9fczqqVLGVanT5YZ0VdkbvNwy5530NbwZ2YKtnJBVd2zu8EIP0nQ4HaosRrxJ0ep2byZc6Z35Fd0EKg6c=
+	t=1741877592; cv=none; b=EgdmLkew8yPkINVLAPKfI8XXrglktUXBKBjGqxVjTKr4XpDzyOJRn/XfH5pk6J78MYtU2Zav1ZPNLTCUmessy+JT0TFk8dTxve6oSckPPD8knEfmKqvcsO9MHI2/m7iNBHnWtYrdqbW4BX2hAmPP6YUCwtv3/R6eESbLcR5oNKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741867076; c=relaxed/simple;
-	bh=VaZGpDHXocsmDGsVUFDMwOt40aVSLOI7VseTZBWQkWs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bs7Ycfk74IxySyEhatIns40KQyJM3NcgucSaQ2xP76R7sDKmGPQW64ypAiHHIfhh9DLWE9KAbMVeIj8SwHZzHXOyJ7JFvUuNLxroNZ2S45LEF05Rns4fAcNB//nBBGHbIC0Fbc7CvidF+laknJK54hcYT94OGP+BU2L1Njvh8VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TLqsh3jt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1741877592; c=relaxed/simple;
+	bh=w52BMGEb/zNW6DRdLAa5vip7+Q6bfilfvxV8/qdG/Ak=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Mb3E5Mt2Zi0arT7cWVva/w6YOThhNxFwb8Hn4MQuJWFMVnlT3sm99ylNpsAeSbBK7LzCoasD3UwnC59ee/xIDHQlWoHYK/gR1dgMTmvtpkHkaxGxDVVz4quWnskvfOXsaQvhD3RpjI+n9DdH04ewuSH3GXVbUejwHGAhJutL3XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlk75RX4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TLqsh3jt"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DAj7Au031333;
-	Thu, 13 Mar 2025 11:57:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7tD6dwPDuG5atjXLy17A7KJWot+nURvVIM+MNsUqmK0=; b=TLqsh3jtGtvFmzTV
-	3yW0dUMVrAtCaMzmLYzXy0PO9imv1s4CfNX7bwxygLAQXmDJSifGgbbRRSFcVu3l
-	P8Ih87r7tHu+rX2nDFFrRbeXsMTB6UaQAnZKP54C8Sb17wE2+JYKcD6OGntOYpBM
-	i9rUcS4yC3pAqQpqCkBYN8dVIi5nChmjDcHg00YV0OWBzHUeCAaCe5gjfU0DOt2K
-	yKGlMb7i5E2lUJVnxj7jSURGZ+83uOSpmIjoitu7e04+cvKdJFq3WvYxtEDl7MEr
-	4JO+b7lAggitLw/CpAqSaJKxDQ+MsAY9tJeXtBPG4AufdmS7Oa0LKIyfJRCopPok
-	jkfkJA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2qnrpj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 11:57:49 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52DBvmiF028615
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 11:57:48 GMT
-Received: from [10.217.216.178] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
- 2025 04:57:44 -0700
-Message-ID: <d64c0776-0b12-42d3-aed3-4e6a13487f51@quicinc.com>
-Date: Thu, 13 Mar 2025 17:27:40 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlk75RX4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4519BC4CEDD;
+	Thu, 13 Mar 2025 14:53:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741877591;
+	bh=w52BMGEb/zNW6DRdLAa5vip7+Q6bfilfvxV8/qdG/Ak=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=dlk75RX4BJJymKAK8ib8Bfq9GxVJVC5iw3D4UtFdjm3m2z8Pg2Q0X5iVmpCQ0sOnh
+	 uCT6cH49pKZGgqc62hABR3U7O1RQ5siUeNePNUP6Rq0fBAdTqYIriSK/ZoNx4Ai4ea
+	 pXhb/F+3VhgbaATFUYtUDKS6Ma968EHvM7riUwkHra5//pnsNNS/3akhiVw7GGCOIi
+	 aL+xpG5U+UgWe8c3YYiaykJg8kZhQDlU6Mxg501HsmyBYhfpBOeQaJSNZEc+Bxt5a7
+	 tAzNeP3CJQrOG15HT62bQh47ak3koZanZsE9XgkKjU7/pDnDSC8NiiVpSAsfhq1/B3
+	 EOlmQNs44gKaw==
+From: Lee Jones <lee@kernel.org>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
+ claudiu.beznea@tuxon.dev, mturquette@baylibre.com, sboyd@kernel.org, 
+ arnd@arndb.de, Ryan.Wanner@microchip.com
+Cc: dharma.b@microchip.com, mihai.sain@microchip.com, 
+ romain.sioen@microchip.com, varshini.rajendran@microchip.com, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ linux-spi@vger.kernel.org, linux-serial@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <9656d46ee0255b9aba404d77d2d204376a9cb248.1736522006.git.Ryan.Wanner@microchip.com>
+References: <cover.1736522006.git.Ryan.Wanner@microchip.com>
+ <9656d46ee0255b9aba404d77d2d204376a9cb248.1736522006.git.Ryan.Wanner@microchip.com>
+Subject: Re: (subset) [PATCH v6 3/3] dt-bindings: mfd:
+ atmel,sama5d2-flexcom: add microchip,sama7d65-flexcom
+Message-Id: <174187758697.3701280.18234838828113464973.b4-ty@kernel.org>
+Date: Thu, 13 Mar 2025 14:53:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: sm8550: Additionally manage MXC
- power domain in camcc
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Jagadeesh Kona
-	<quic_jkona@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
- <20250303225521.1780611-3-vladimir.zapolskiy@linaro.org>
- <dbxvzgqs5slrl5edqunal3wplg5jiszqv46dr4nzgowwlhkhxa@qwtfq7nfjwfo>
- <3210a484-b9c3-4399-bee1-9f5bbc90034c@linaro.org>
- <CAA8EJprP9Z181VDCT=xfyrBipzgiB0tfb8M_XZ4H=yOrvEnB0w@mail.gmail.com>
- <f41061a2-cf45-4588-8df7-22270c936ee2@quicinc.com>
- <D8EZ47Z557OX.37FDVYA5AHET0@fairphone.com>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <D8EZ47Z557OX.37FDVYA5AHET0@fairphone.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KIMEmnqJHATUj4x8LX3ybJ73x5S5LXyH
-X-Proofpoint-GUID: KIMEmnqJHATUj4x8LX3ybJ73x5S5LXyH
-X-Authority-Analysis: v=2.4 cv=TIhFS0la c=1 sm=1 tr=0 ts=67d2c83d cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
- a=EzFUx7Xx5Uxcnu-jchQA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_05,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 mlxlogscore=595 mlxscore=0 clxscore=1011 bulkscore=0
- malwarescore=0 suspectscore=0 spamscore=0 phishscore=0 impostorscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130094
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-510f9
 
-
-
-On 3/13/2025 1:22 PM, Luca Weiss wrote:
-> Hi Taniya,
+On Fri, 10 Jan 2025 08:25:42 -0700, Ryan.Wanner@microchip.com wrote:
+> Add flexcom binding documentation for sama7d65.
 > 
-> On Thu Mar 13, 2025 at 5:39 AM CET, Taniya Das wrote:
->>
->>
->> On 3/4/2025 2:10 PM, Dmitry Baryshkov wrote:
->>> On Tue, 4 Mar 2025 at 09:37, Vladimir Zapolskiy
->>> <vladimir.zapolskiy@linaro.org> wrote:
->>>>
->>>> On 3/4/25 01:53, Dmitry Baryshkov wrote:
->>>>> On Tue, Mar 04, 2025 at 12:55:21AM +0200, Vladimir Zapolskiy wrote:
->>>>>> SM8550 Camera Clock Controller shall enable both MXC and MMCX power
->>>>>> domains.
->>>>>
->>>>> Are those really required to access the registers of the cammcc? Or is
->>>>> one of those (MXC?) required to setup PLLs? Also, is this applicable
->>>>> only to sm8550 or to other similar clock controllers?
->>>>
->>>> Due to the described problem I experience a fatal CPU stall on SM8550-QRD,
->>>> not on any SM8450 or SM8650 powered board for instance, however it does
->>>> not exclude an option that the problem has to be fixed for other clock
->>>> controllers, but it's Qualcomm to confirm any other touched platforms,
->>>
->>> Please work with Taniya to identify used power domains.
->>>
->>
->> CAMCC requires both MMCX and MXC to be functional.
+> Consolidated entries into one enum to match proper coding style.
 > 
-> Could you check whether any clock controllers on SM6350/SM7225 (Bitra)
-> need multiple power domains, or in general which clock controller uses
-> which power domain.
-> 
-> That SoC has camcc, dispcc, gcc, gpucc, npucc and videocc.
-> 
-> That'd be highly appreciated since I've been hitting weird issues there
-> that could be explained by some missing power domains.
 > 
 
-Hi Luca,
+Applied, thanks!
 
-The targets you mentioned does not have any have multiple rail
-dependency, but could you share the weird issues with respect to clock
-controller I can take a look.
+[3/3] dt-bindings: mfd: atmel,sama5d2-flexcom: add microchip,sama7d65-flexcom
+      commit: c37ee2ed38391eef476fea6af8eccd0d31f5ed98
 
-> Regards
-> Luca
-> 
->>
->>>> for instance x1e80100-camcc has it resolved right at the beginning.
->>>>
->>>> To my understanding here 'required-opps' shall also be generalized, so
->>>> the done copy from x1e80100-camcc was improper, and the latter dt-binding
->>>> should be fixed.
->>>
->>> Yes
->>>
->>
->> required-opps is not mandatory for MXC as we ensure that MxC would never
->> hit retention.
->>
->> https://lore.kernel.org/r/20240625-avoid_mxc_retention-v2-1-af9c2f549a5f@quicinc.com
->>
->>
->>>
->>>
-> 
+--
+Lee Jones [李琼斯]
 
