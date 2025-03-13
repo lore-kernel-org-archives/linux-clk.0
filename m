@@ -1,128 +1,105 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7762E1FF609;
-	Thu, 13 Mar 2025 07:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD5622422E;
+	Thu, 13 Mar 2025 07:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741849255; cv=none; b=U2VHitr8i45oeEfxs8Fu6NutfqankvjrV5DC0B/5dLM7XZQ2sPjeO6osfw7Di7DEwUa7UatXoGi3fpnDuunLb/RWXYXySdJmoXkc4YMbDy0GbLd6uySh1b9MEuqdFxuJr6RagVtduCLMkJJm8frjz2zTcLslVf8B8dQezc4aNik=
+	t=1741850775; cv=none; b=sEsXhviiNWWdCyRSnVVvrCEqAC53WPqXxD0llew/tWQ085FKv6UQFJCOBnRKMjEmf+6wyqmOg2T1cSs3ClhdNJIwEshGALAiA4fC2VqBksCuk046p6rxxP0AIXQgnewR29ZGoijVa7OyyKrHugFv9A87l1k8PNrwVxurfWOiDiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741849255; c=relaxed/simple;
-	bh=QHOp3L1T9sIWlzRmGY/11HmxDsOhavJm8Tdw4sgMY1k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=o9CCOPhTzbDECQYsCGQSQT6LTDAHFa8fGzOsIaPpxdOfFjr8ICHHB45XjCMshbEehjLenPCdTu8elop3BkqmIUQVvMsR7/DU+FKrnJ/k0AOjZVS56LzrAUuYaIArjmokXcdtqqyZ/kJ/biyzZZCBLNVA++8wbsg52zy6USQO2qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mRsg621n; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1741850775; c=relaxed/simple;
+	bh=sZaq7o/FrpqVjIEe2is9ecGfi7yAHQfNu4BMeutjnUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZK29GIXIBG+oOjqLp5t+phVsJMo9AbMaXm7Ebwkba7bY9PDtLrvPEtvjf8t5oFYBW7OoIm9/x1VClbSuft8pKoD9qyWtBi4GeRkbH51qYEJ+x3NE2g3TyYV6MPUejigjBJa7FXIIFKZkEU3AzDBD3jFeA5IRM4MKdZ64sQ4lPXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L7bJrknu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mRsg621n"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52CMvKt5020069;
-	Thu, 13 Mar 2025 07:00:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jPFBtGSXAlz4/lfCcoNkM9udX2GBFZ4aKQxUw6UsjGs=; b=mRsg621nMUg2HbSY
-	xnDv1BGHXD9kpq/C3UFeIDc1KHIG+NvEVqbnxrhXb5EN/LOGHZQ7rT/tx/dTP9MV
-	RUGBb3/Te8dH1LN1IvZYnKkUFBH7/JNW6UZuyFaDBXp3Iehxbnqnbm7DZ/DYyZN1
-	Yp+3fpYLwzpnspjFtTR0Ef3fK0iSJWIFkgUYk9Qx9v8GTRfK4Y6khFv7bS5RObNj
-	S4wWkY6jutSFXi3wwMXkLGeetE5hrCcifjDKpSP1Tkyu7q0sXiZ/cXS/Fr8iwM9e
-	nrPXpi4f9KzOdbmLtwa89wJlOQ4c6cIx4rQsgPPNpCxbWms3FfgJMUqSCFBibxrm
-	N3cOvw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2p4x01-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 07:00:45 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52D70iYZ002376
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 07:00:44 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 13 Mar 2025 00:00:39 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Thu, 13 Mar 2025 12:29:47 +0530
-Subject: [PATCH v6 10/10] arm64: defconfig: Enable QCS615 clock controllers
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L7bJrknu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E000FC4CEDD;
+	Thu, 13 Mar 2025 07:26:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741850775;
+	bh=sZaq7o/FrpqVjIEe2is9ecGfi7yAHQfNu4BMeutjnUA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L7bJrknuOulkADbDANAb1ME695KpQChnFbM7j9iQgSv0EEag5Z6kv81WC6aIzmaeL
+	 wCSQxy0J18O1ZKQwc75e+MI0qVDZK3QPPXk3yqwb4tdl5ftTMeBuoB6g2h2JSuYh1j
+	 sox9yBpJ3tqgXGwzqarl84Nwvb7mdfTfCo2vPralbrNmvNMvFYq3nzB2mi9pd4j7Kh
+	 YDlZH+NqZ5/betd1xN3Xl4Cm0MGA2xSYclMvE9fP4lxS3SCT0xKD8fbCvQ8nOzXwF5
+	 H5eCnJ+y/OFJohYQPhNeheGrJJyvsm7yBSHYMMN27pwL/tEo3AlHg+cSxPXBY/h571
+	 avmc5ecpmx2mA==
+Date: Thu, 13 Mar 2025 09:26:09 +0200
+From: Dmitry Baryshkov <lumag@kernel.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sm8550: Additionally manage MXC
+ power domain in camcc
+Message-ID: <eoqqz5hyyq6ej5uo6phijbeu5qafbpfxlnreyzzcyfw23pl2yq@ftxnasc6sr2t>
+References: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
+ <20250303225521.1780611-3-vladimir.zapolskiy@linaro.org>
+ <dbxvzgqs5slrl5edqunal3wplg5jiszqv46dr4nzgowwlhkhxa@qwtfq7nfjwfo>
+ <3210a484-b9c3-4399-bee1-9f5bbc90034c@linaro.org>
+ <CAA8EJprP9Z181VDCT=xfyrBipzgiB0tfb8M_XZ4H=yOrvEnB0w@mail.gmail.com>
+ <f41061a2-cf45-4588-8df7-22270c936ee2@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250313-qcs615-v5-mm-cc-v6-10-ebf4b9a5e916@quicinc.com>
-References: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
-In-Reply-To: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-X-Mailer: b4 0.15-dev-aa3f6
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=HP/DFptv c=1 sm=1 tr=0 ts=67d2829d cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=AElZlkIX1ip-SmTVEvQA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: M3IY-5AmGK3BMFnGuxllxqwlgxdQx8-B
-X-Proofpoint-GUID: M3IY-5AmGK3BMFnGuxllxqwlgxdQx8-B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-13_03,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=720
- clxscore=1015 priorityscore=1501 adultscore=0 impostorscore=0
- malwarescore=0 spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130054
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f41061a2-cf45-4588-8df7-22270c936ee2@quicinc.com>
 
-Enable the QCS615 display, video, camera and graphics clock controller
-for their respective functionalities on the Qualcomm QCS615 ride
-platform.
+On Thu, Mar 13, 2025 at 10:09:05AM +0530, Taniya Das wrote:
+> 
+> 
+> On 3/4/2025 2:10 PM, Dmitry Baryshkov wrote:
+> > On Tue, 4 Mar 2025 at 09:37, Vladimir Zapolskiy
+> > <vladimir.zapolskiy@linaro.org> wrote:
+> >>
+> >> On 3/4/25 01:53, Dmitry Baryshkov wrote:
+> >>> On Tue, Mar 04, 2025 at 12:55:21AM +0200, Vladimir Zapolskiy wrote:
+> >>>> SM8550 Camera Clock Controller shall enable both MXC and MMCX power
+> >>>> domains.
+> >>>
+> >>> Are those really required to access the registers of the cammcc? Or is
+> >>> one of those (MXC?) required to setup PLLs? Also, is this applicable
+> >>> only to sm8550 or to other similar clock controllers?
+> >>
+> >> Due to the described problem I experience a fatal CPU stall on SM8550-QRD,
+> >> not on any SM8450 or SM8650 powered board for instance, however it does
+> >> not exclude an option that the problem has to be fixed for other clock
+> >> controllers, but it's Qualcomm to confirm any other touched platforms,
+> > 
+> > Please work with Taniya to identify used power domains.
+> > 
+> 
+> CAMCC requires both MMCX and MXC to be functional.
+> 
+> >> for instance x1e80100-camcc has it resolved right at the beginning.
+> >>
+> >> To my understanding here 'required-opps' shall also be generalized, so
+> >> the done copy from x1e80100-camcc was improper, and the latter dt-binding
+> >> should be fixed.
+> > 
+> > Yes
+> > 
+> 
+> required-opps is not mandatory for MXC as we ensure that MxC would never
+> hit retention.
+> 
+> https://lore.kernel.org/r/20240625-avoid_mxc_retention-v2-1-af9c2f549a5f@quicinc.com
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/configs/defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index a1cc3814b09b31ee659536a64b7db704153d6fe9..14e5ae9f9562b1b2bec2fe2702dbf6647ca1daa1 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1343,11 +1343,15 @@ CONFIG_MSM_GCC_8998=y
- CONFIG_MSM_MMCC_8998=m
- CONFIG_QCM_GCC_2290=y
- CONFIG_QCM_DISPCC_2290=m
-+CONFIG_QCS_DISPCC_615=m
-+CONFIG_QCS_CAMCC_615=m
- CONFIG_QCS_GCC_404=y
- CONFIG_QCS_GCC_615=y
- CONFIG_QCS_GCC_8300=y
- CONFIG_SC_CAMCC_7280=m
- CONFIG_SA_CAMCC_8775P=m
-+CONFIG_QCS_GPUCC_615=m
-+CONFIG_QCS_VIDEOCC_615=m
- CONFIG_QDU_GCC_1000=y
- CONFIG_SC_CAMCC_8280XP=m
- CONFIG_SC_DISPCC_7280=m
+Yes. And the code in genpd_set_required_opp() tolerates not seting the
+extra opps. However I'd certainly suggest not doing that (I think
+passing <0> should work). Having different number of items in
+power-domains and required-opps makes it harder to read the DT.
 
 -- 
-2.48.1
-
+With best wishes
+Dmitry
