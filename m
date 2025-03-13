@@ -1,48 +1,48 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637AA1EF09A;
-	Thu, 13 Mar 2025 11:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE90B1FAC4F;
+	Thu, 13 Mar 2025 11:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741865931; cv=none; b=F/y4yFJIA3ZGifjLUQnZ/l3mNeogaK2I6V7dCr2B/nDi8kQdQ0zx+8TPGGt+q8jLPoDA1VSycYOMMoZ2e1rgANtLsbNwQOOLpK244ZI+HM8xq3B9hI5gIXj70bKnyv9vweGlZTQoEH0Rd2q0+6m0VGGJfrnxDKoiQygwYsb12mI=
+	t=1741867076; cv=none; b=mDbNYUJXXHlthvQlBxP77dDqUgoqXnTii9ma8rwQwO/roVQiqsBmmgLzJrn6pg6BxFgQ1j2hji6spOWdgpMiijAt5e9fczqqVLGVanT5YZ0VdkbvNwy5530NbwZ2YKtnJBVd2zu8EIP0nQ4HaosRrxJ0ep2byZc6Z35Fd0EKg6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741865931; c=relaxed/simple;
-	bh=6oTKfy/J+J6IzkSpIwcPZtbAX5OC7IG3aP//uqOWEl8=;
+	s=arc-20240116; t=1741867076; c=relaxed/simple;
+	bh=VaZGpDHXocsmDGsVUFDMwOt40aVSLOI7VseTZBWQkWs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UZulMP7cgCLZQhOmyqwNoXQPvjexoMRWE+zNTa1OvpBWW4FUYaJMDDzniu094C4BVEoOrnU/k501ib9hl1x7vWDyy4nmjJNYYowunYkZTYPhpxN77L/AwQSSlv9gjiuEzhYNj3bTE5p02a3nq4uozh9piobfMpx4r59a7brS5c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jF3NW0hy; arc=none smtp.client-ip=205.220.180.131
+	 In-Reply-To:Content-Type; b=bs7Ycfk74IxySyEhatIns40KQyJM3NcgucSaQ2xP76R7sDKmGPQW64ypAiHHIfhh9DLWE9KAbMVeIj8SwHZzHXOyJ7JFvUuNLxroNZ2S45LEF05Rns4fAcNB//nBBGHbIC0Fbc7CvidF+laknJK54hcYT94OGP+BU2L1Njvh8VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TLqsh3jt; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jF3NW0hy"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DAviKr017140;
-	Thu, 13 Mar 2025 11:38:46 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TLqsh3jt"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52DAj7Au031333;
+	Thu, 13 Mar 2025 11:57:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tpZHtsTIaIyGZpKJey1xVLdsGwoO7lR4gGew4KcOl3M=; b=jF3NW0hyXF8Gg3b1
-	d1TPHFuSyU8xw7GqVG/hFjQVn3Ykjp0zDoMf+4vcIm4/Ya9iVm4DH/H1e5Q86EeJ
-	q9TC0pQsiSnf/RlBExwQkSwxTmRuCnYAE11zq/L2h/n+nB0aGqvw7sw8XgJZ5Ami
-	KyYnEvQ0JdnzEyu3635+OyUaVWdCLOw86yHRK9UEY+I4BKWHWfd1RY23+FjI/eLJ
-	PPI0zfYS+jPSg8Ai1Yd3UpfPRLXCAz2a9x+M5wEHN9+4dTh29AX/66o8jK45INsB
-	KlF9TN+btHXWoq0tqzh4jDGBmiHeWvHroHZDUkYhGyFZDtQBbD3PquO2qO+k3Zak
-	I69fZQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2nwqyp-1
+	7tD6dwPDuG5atjXLy17A7KJWot+nURvVIM+MNsUqmK0=; b=TLqsh3jtGtvFmzTV
+	3yW0dUMVrAtCaMzmLYzXy0PO9imv1s4CfNX7bwxygLAQXmDJSifGgbbRRSFcVu3l
+	P8Ih87r7tHu+rX2nDFFrRbeXsMTB6UaQAnZKP54C8Sb17wE2+JYKcD6OGntOYpBM
+	i9rUcS4yC3pAqQpqCkBYN8dVIi5nChmjDcHg00YV0OWBzHUeCAaCe5gjfU0DOt2K
+	yKGlMb7i5E2lUJVnxj7jSURGZ+83uOSpmIjoitu7e04+cvKdJFq3WvYxtEDl7MEr
+	4JO+b7lAggitLw/CpAqSaJKxDQ+MsAY9tJeXtBPG4AufdmS7Oa0LKIyfJRCopPok
+	jkfkJA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45au2qnrpj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 11:38:45 +0000 (GMT)
+	Thu, 13 Mar 2025 11:57:49 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52DBcifs007648
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52DBvmiF028615
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 13 Mar 2025 11:38:44 GMT
+	Thu, 13 Mar 2025 11:57:48 GMT
 Received: from [10.217.216.178] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Mar
- 2025 04:38:40 -0700
-Message-ID: <da67d3a1-e3df-4d01-a052-8c906172c51c@quicinc.com>
-Date: Thu, 13 Mar 2025 17:08:38 +0530
+ 2025 04:57:44 -0700
+Message-ID: <d64c0776-0b12-42d3-aed3-4e6a13487f51@quicinc.com>
+Date: Thu, 13 Mar 2025 17:27:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,73 +50,119 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] arm64: dts: qcom: sm8550: camcc: Manage MMCX and MXC
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: sm8550: Additionally manage MXC
+ power domain in camcc
+To: Luca Weiss <luca.weiss@fairphone.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Jagadeesh Kona
+	<quic_jkona@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
         <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>
 References: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
+ <20250303225521.1780611-3-vladimir.zapolskiy@linaro.org>
+ <dbxvzgqs5slrl5edqunal3wplg5jiszqv46dr4nzgowwlhkhxa@qwtfq7nfjwfo>
+ <3210a484-b9c3-4399-bee1-9f5bbc90034c@linaro.org>
+ <CAA8EJprP9Z181VDCT=xfyrBipzgiB0tfb8M_XZ4H=yOrvEnB0w@mail.gmail.com>
+ <f41061a2-cf45-4588-8df7-22270c936ee2@quicinc.com>
+ <D8EZ47Z557OX.37FDVYA5AHET0@fairphone.com>
 Content-Language: en-US
 From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
+In-Reply-To: <D8EZ47Z557OX.37FDVYA5AHET0@fairphone.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5qIQE2Tk5-s1TETCF_of3rF44pNV0l16
-X-Authority-Analysis: v=2.4 cv=Q4XS452a c=1 sm=1 tr=0 ts=67d2c3c5 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=CqDDRk0MYutMoWn3TPMA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 5qIQE2Tk5-s1TETCF_of3rF44pNV0l16
+X-Proofpoint-ORIG-GUID: KIMEmnqJHATUj4x8LX3ybJ73x5S5LXyH
+X-Proofpoint-GUID: KIMEmnqJHATUj4x8LX3ybJ73x5S5LXyH
+X-Authority-Analysis: v=2.4 cv=TIhFS0la c=1 sm=1 tr=0 ts=67d2c83d cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
+ a=EzFUx7Xx5Uxcnu-jchQA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-13_05,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=947 adultscore=0
- lowpriorityscore=0 mlxscore=0 clxscore=1015 phishscore=0 malwarescore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503130092
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxlogscore=595 mlxscore=0 clxscore=1011 bulkscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 phishscore=0 impostorscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503130094
 
 
 
-On 3/4/2025 4:25 AM, Vladimir Zapolskiy wrote:
-> It was discovered that on SM8550 platform Camera Clock controller shall
-> manage MMCX and MXC power domains, otherwise MMIO access to CCI or CAMSS
-> breaks the execution, the problem has been discussed with Jagadeesh at
-> https://lore.kernel.org/all/a5540676-9402-45c4-b647-02fdc2b92233@quicinc.com/
+On 3/13/2025 1:22 PM, Luca Weiss wrote:
+> Hi Taniya,
 > 
-> Since 'power-domains' property becomes generalized, Rob asked to remove
-> its description, which is done in the first patch of the series, see
-> https://lore.kernel.org/all/20240927224833.GA159707-robh@kernel.org/
+> On Thu Mar 13, 2025 at 5:39 AM CET, Taniya Das wrote:
+>>
+>>
+>> On 3/4/2025 2:10 PM, Dmitry Baryshkov wrote:
+>>> On Tue, 4 Mar 2025 at 09:37, Vladimir Zapolskiy
+>>> <vladimir.zapolskiy@linaro.org> wrote:
+>>>>
+>>>> On 3/4/25 01:53, Dmitry Baryshkov wrote:
+>>>>> On Tue, Mar 04, 2025 at 12:55:21AM +0200, Vladimir Zapolskiy wrote:
+>>>>>> SM8550 Camera Clock Controller shall enable both MXC and MMCX power
+>>>>>> domains.
+>>>>>
+>>>>> Are those really required to access the registers of the cammcc? Or is
+>>>>> one of those (MXC?) required to setup PLLs? Also, is this applicable
+>>>>> only to sm8550 or to other similar clock controllers?
+>>>>
+>>>> Due to the described problem I experience a fatal CPU stall on SM8550-QRD,
+>>>> not on any SM8450 or SM8650 powered board for instance, however it does
+>>>> not exclude an option that the problem has to be fixed for other clock
+>>>> controllers, but it's Qualcomm to confirm any other touched platforms,
+>>>
+>>> Please work with Taniya to identify used power domains.
+>>>
+>>
+>> CAMCC requires both MMCX and MXC to be functional.
 > 
-> Vladimir Zapolskiy (2):
->   dt-bindings: clock: qcom: sm8450-camcc: Allow to specify two power domains
->   arm64: dts: qcom: sm8550: Additionally manage MXC power domain in camcc
+> Could you check whether any clock controllers on SM6350/SM7225 (Bitra)
+> need multiple power domains, or in general which clock controller uses
+> which power domain.
+> 
+> That SoC has camcc, dispcc, gcc, gpucc, npucc and videocc.
+> 
+> That'd be highly appreciated since I've been hitting weird issues there
+> that could be explained by some missing power domains.
 > 
 
-Hi Vladimir, as we are preparing to submit the code for multi-power
-domain support for the clock controller in our series
-(https://lore.kernel.org/all/20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com),
-there has been a request to incorporate the CAMCC-related changes as
-well. If you are okay with us including this series changes(maintaining
-your authorship) in our series, then we can integrate them and address
-any comments in our next submission.
+Hi Luca,
 
->  .../devicetree/bindings/clock/qcom,sm8450-camcc.yaml          | 4 +---
->  arch/arm64/boot/dts/qcom/sm8550.dtsi                          | 3 ++-
->  2 files changed, 3 insertions(+), 4 deletions(-)
+The targets you mentioned does not have any have multiple rail
+dependency, but could you share the weird issues with respect to clock
+controller I can take a look.
+
+> Regards
+> Luca
 > 
-
+>>
+>>>> for instance x1e80100-camcc has it resolved right at the beginning.
+>>>>
+>>>> To my understanding here 'required-opps' shall also be generalized, so
+>>>> the done copy from x1e80100-camcc was improper, and the latter dt-binding
+>>>> should be fixed.
+>>>
+>>> Yes
+>>>
+>>
+>> required-opps is not mandatory for MXC as we ensure that MxC would never
+>> hit retention.
+>>
+>> https://lore.kernel.org/r/20240625-avoid_mxc_retention-v2-1-af9c2f549a5f@quicinc.com
+>>
+>>
+>>>
+>>>
+> 
 
