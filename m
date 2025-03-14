@@ -1,47 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC4F2147FC;
-	Fri, 14 Mar 2025 20:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057E6215F6E;
+	Fri, 14 Mar 2025 20:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741982516; cv=none; b=gnK74WqZ/O6rqL0SZYzsaQfbhzGp+KhRDqniS4XBVdIO8vu4J/KU3chulu/Oa24/gxLs7uR2eEZwvEcMMJBeE3gMqOPfW4kQkTI3+vmaWHoDjKLsMqamVEDOdMp3IrEPPtapUNB4Oipa1rZoH6hM37nIGMn9hCUemX55uL0AsRE=
+	t=1741982521; cv=none; b=m/eovm3m1ujNV6y9jSF5BfO/VKDe2uJttuA/CQzijgWlfKtu2UaN5zs6i144jNuknmDCCcZ7MlMKX9rrVJKFTkHMiI0un2T6hTmYGKbYPQUV0fA2V38XsQ06NIveHwpk7yzT2wLCHowdatMO/k6E/S2Iw6+eJk2UQCFTYOq0ScU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741982516; c=relaxed/simple;
-	bh=sprYGPdPGNDfqXxgx+FFcY+6W5e0DRAJPc2xDKovcRg=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tRlA964ieiCPMlBVi4dXn1GLZj5WG/lOXsLrIe4dBK6jzA8cUPeePhfIWINzUOuMHT4XS1H4U1+XStWM3GU7CKmiG1/ZQJQhPpdIaoe1qEu/nTDoWpbOY0ABoQfp0OFzjlnVm5X8bXYTMTZY7Dykvjnc94DZEL7KjpykhyfXHls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEiWUzHm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741982521; c=relaxed/simple;
+	bh=H+lIMIida1YPLKiqGQvJnGjwP8jxGk4Ha/Ca/iVClOg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nFnOPUe0jtUIOCPpBQolDXsspQprmkuJGiKypMJ/x8rKW3QjwNV8dAlqS5sKPKB3eG2lD3uuHwjT6f0S89oMZhqt3PcMC0NMLnL3h3O6ZD5DyrxPDoBwSRFITRChScuLE5o4oBLMj+Ndnn+S0l1OlosY+pjYJxPDMJiI1Tmqpfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kv88ivhH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEiWUzHm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 853A3C4CEF0;
-	Fri, 14 Mar 2025 20:01:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kv88ivhH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A4B7C4CEF0;
+	Fri, 14 Mar 2025 20:02:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741982516;
-	bh=sprYGPdPGNDfqXxgx+FFcY+6W5e0DRAJPc2xDKovcRg=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=kEiWUzHmkwNnTISGcAn0E1qFDY6uFOlGtLrKYCyvXgQwavlNmFmRrptveO6ZO0uv1
-	 9itCT6Q74aCp8IhXqOZdtDSIVcBrjR2mldvw52O1tIkRhvq349AwdIa15/PxePZZMv
-	 92y4pvGHh/r2+OiLqf1ABqeOLfMZa3+XTRZu9/Rlw2V0KQzK92c4nlmVKNJhdBw7N+
-	 TSsGzmA5gMVMrAeqPlNSu1cVeqgCk1D66PWUIhLVW46LRdvcIelZjTv4J9gHgq9NC8
-	 d6C0KSlInDhtOuv9WWj82bhLCDX24hkqWiPhR3W8t/CJ3G4VVBjqqiVbTQzg5dfWTG
-	 +UIRFzkoFIfsw==
+	s=k20201202; t=1741982520;
+	bh=H+lIMIida1YPLKiqGQvJnGjwP8jxGk4Ha/Ca/iVClOg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kv88ivhHPFjDHYwRtjNzfjKe7yUyTwpl+uYOYkP3wWrSb+tjKEAeWUOhLA/U6eILh
+	 sJ+cRZC383+E1jKsNnvuRdLLXIT/JmwZMj4H/o/Q7z1/OZsF48HVu45Zgz/SGZtus1
+	 jXtnEuSFi7H0aYIC5bqUDbJBMoPP/9n2CyhVTi0LYfcTFPX13H6JW3xlGcvaG1KqYb
+	 YHxN9Zn9lhF+qMrI1+giCmplnFMOkxq6a/ik0NhpqBxE3xnYMYNCxxbmrdV+/6OO+b
+	 oJFpmhjcGvIeED4kwI3QSjot8R2yj5AVG+60VHfTDZjShyte0VCR48fC6bJSuhRM6p
+	 Khtfm0/8j+3FA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	dmitry.baryshkov@linaro.org,
-	quic_srichara@quicinc.com,
-	quic_varada@quicinc.com,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Subject: Re: [PATCH v1] drivers: clk: qcom: ipq5424: fix the freq table of sdcc1_apps clock
-Date: Fri, 14 Mar 2025 15:01:09 -0500
-Message-ID: <174198247888.1604753.880832461804374805.b4-ty@kernel.org>
+	stable@vger.kernel.org
+Subject: Re: [PATCH 0/2] clk: qcom: gdsc: Update retain_ff sequence and timeout for GDSC
+Date: Fri, 14 Mar 2025 15:01:13 -0500
+Message-ID: <174198247873.1604753.9788641578266920775.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250306112900.3319330-1-quic_mmanikan@quicinc.com>
-References: <20250306112900.3319330-1-quic_mmanikan@quicinc.com>
+In-Reply-To: <20250214-gdsc_fixes-v1-0-73e56d68a80f@quicinc.com>
+References: <20250214-gdsc_fixes-v1-0-73e56d68a80f@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,21 +53,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 06 Mar 2025 16:59:00 +0530, Manikanta Mylavarapu wrote:
-> The divider values in the sdcc1_apps frequency table were incorrectly
-> updated, assuming the frequency of gpll2_out_main to be 1152MHz.
-> However, the frequency of the gpll2_out_main clock is actually 576MHz
-> (gpll2/2).
+On Fri, 14 Feb 2025 09:56:58 +0530, Taniya Das wrote:
+> The retain_ff bit should be updated for a GDSC when it is under SW
+> control and ON. The current sequence needs to be fixed as the GDSC
+> needs to update retention and is moved to HW control which does not
+> guarantee the GDSC to be in enabled state.
 > 
-> Due to these incorrect divider values, the sdcc1_apps clock is running
-> at half of the expected frequency.
+> During the GDSC FSM state, the GDSC hardware waits for an ACK and the
+> timeout for the ACK is 2000us as per design requirements.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] drivers: clk: qcom: ipq5424: fix the freq table of sdcc1_apps clock
-      commit: e9ed0ac3ccba65c17ed0d59c77a340a75abc317b
+[1/2] clk: qcom: gdsc: Set retain_ff before moving to HW CTRL
+      commit: 25708f73ff171bb4171950c9f4be5aa8504b8459
+[2/2] clk: qcom: gdsc: Update the status poll timeout for GDSC
+      commit: 172320f5ead5d1a0eed14472ce84146221c75675
 
 Best regards,
 -- 
