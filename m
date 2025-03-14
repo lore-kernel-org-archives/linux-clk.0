@@ -1,180 +1,92 @@
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B5712FF6F;
-	Fri, 14 Mar 2025 13:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D47A200119
+	for <linux-clk@vger.kernel.org>; Fri, 14 Mar 2025 15:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741960108; cv=none; b=Uur4ZQRM27SK3BuOgMaLRN/TthiSmjLGnm+pf61HT3Lb1aXYnCxqIo8vubSwFxzgLv4a6O8phruPMptr9/pAjJfMLurRWOfCMu2V+ODPIp25ANmGWD1h4ZWoI2MndC7HzGJcMBDheaIcfAwJYeHGhWnRbBBoXSZX9bJpZi04fC8=
+	t=1741966342; cv=none; b=gZfqL37mo9ZC6N+HVsyp50yptqIUcpnJaysGf+3bORJ4rthYADyy49N5/VJcw7M5NDh0x9+AM7iNza+jhYWS0TqAdchDRTT/wmH7j+liH4Pa8Nrorg1lqCMxtoDezEq8FPzawkjgRM9Hbf4F8yQzf/LfSHS1dj9sqKl0YBw9b5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741960108; c=relaxed/simple;
-	bh=DcJpMLavxXBrbWP63jqdWzrdPHQX6uw//phd4NHELV8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rWgrSUutQvbBX+XYvOsV7y9Y9PNn7s5QlRz08BP0fDDspicTDjM6SgGraNf970Rsi2Ny1PLMIFZjf+0esh5sbk18YV6oXcDnjRozcQPUUVIGAgpQkANO3YhjXvdlTy421wYDQcgnE/PYj9aQAPFvbXDY8BPA98kKDQ64ICYAwb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VNs2ne0T; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741966342; c=relaxed/simple;
+	bh=mjckCbx8V8lajM1SPpyowxlZbZf9qWy1YA+QL/9g9as=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ckw7MsKlClW0Jb337zMHi1jcBHa2qFZUNwrweS6/2FGfBbUsT8RMUBx4bgMpZrc3cf6tUj7SkctqcGSoX5+zRWFyN3mTTGNdWjPpeyoBJ2C8OCIkQ6YYdsvA8oJyH8/2khbxhDv1gW3mvIvyVWoUBp3zWmG1ZtP9bvGu8za2Mbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LKuWq4zf; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VNs2ne0T"
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-523efb24fb9so866166e0c.3;
-        Fri, 14 Mar 2025 06:48:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LKuWq4zf"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3912e96c8e8so1473519f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 14 Mar 2025 08:32:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741960105; x=1742564905; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741966338; x=1742571138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ecTqySc0MfIGymwKrRWSQDioKot3rlYA9RsO/r+ZVQA=;
-        b=VNs2ne0TLlIJgGmDxnlxhn3im7LGx4iXtQBIiR+BftpJLsptvGP4U08wJkNsiET4Ff
-         ESew01DXBH87F1ae8Z2hZdVmGcfYnDbqNagDbIQsOQwhg+q23OHtDEZ6uE4L+EVrWDwu
-         zg7FnjQCZnRPHsEPpptI7RpK8MSQt8cXNKwJT5MDok+4fHFGYzpSj5YkpDMo4EPxBBmg
-         /optfKi8Gckt4f37zufhSaGJMWDncJ5GJb6IAKeqvLBfZ6mN7dAOlmI3IivNeZpnu9rc
-         xodD2EnFCM8oZFOSpiWPokjSGA7RUXyJe63wI569IfwstgwDAPpMDtsSGc65uvFyoh8z
-         gx/w==
+        bh=9N6fTM6SFDsTbt/1MZG+/5cRZlKHEghdhbe8yHn1vL0=;
+        b=LKuWq4zfvLXjklAYuCVcDYSRCCtj0W1Lq243Y2AXP/K0ajgBCCih1ZcLbayOmCDDi0
+         RgMyt6l+g+no7qwnj2g1SHkr9TxGrecAYppJlGgQrr+PH8K1rbBouWqNvxfPHQTUqON9
+         opv35RrZu2x+DUXCXRh6fs5EDXD7KxAZJVFkNPDBCIzUIDr7FvzCc6EsO5jI5OM7k+6u
+         mkdaXvqRyHd+x6LxDIyM6/lhDmm7lzF19+RfuADhzaXdDZzOJ62K3mKpuXq4/FLc9sxz
+         yzyEC2DKHBYdZF0js6f1AnjssmfbZ1REoUj1R/SHtREW1KLoWITpDQSm/KR2FtMSt2G+
+         JH8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741960105; x=1742564905;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741966338; x=1742571138;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ecTqySc0MfIGymwKrRWSQDioKot3rlYA9RsO/r+ZVQA=;
-        b=Yac/zPY2lGfyNuznj4/1KZ42EA0iEoLSitt5AOuyvWyamxS/RXwhKWlvgt451i9BAL
-         1J8iB1pz35ULWHU7Qk7S+2uEnjrOwwTAJgVRsv7ULgSLJTs2YeJg4q204Nnq3yBtRwoM
-         aQbuWG7ZefutqJfgjCrqGEMbZ5lXV5NDls4cyGUDOXbsD1CRGZzonIu+v97/howSNc3k
-         aLZbTWWAzgERDUXokGloFubQTckSGkPo7V5rW96KvylnqfnKu/Us9Ge7Hc1QbyZo6oLE
-         tRAnCADHhbGEtbGqPZVN9RONbZpd0O7C97Ya3GwqUW834xQGgTFVlFKbSzEQYQ5zVlZF
-         c6dg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwNQ3McUoPVtKWDhgKnk/Tkzc7EM8/M3Yxar8Y2fDpozxn+CSO+g30bOkHdaw8bPdOrXVMlfGq2uM=@vger.kernel.org, AJvYcCV+TZ3kE0RuCOH6KTmpKwAcUpqCoHV7dwe9stX+ITchmHfLfgdAx1vxbOu0ORo3PTTQ5+3K3Ox88AzmWq64DDIXSEc=@vger.kernel.org, AJvYcCVNVoqXzK3SXpXwtyupz3AoRXjyv9XwUZ2AImyj+Y022vRVY/aLf2nPsy/rbWsR3pqzwDI4Wb74e3dNBPwJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTLUmjErhrhDyttXl/t43GVVFuINmIooFwQ0HGmr0EyaHicWZj
-	amBWI6Y8OdZfS8nh0M+7ph909u92993aure5LoQKGO90Svb1TLUO17CHGSx9SPvuoH0eGNU2pMT
-	6RptR+xoqk9wGDA/mVtd8zEtC7PU=
-X-Gm-Gg: ASbGncvC5vXmyfuL5zt+tNYrbaQRRtM91EinpIyL42p3n3lTCUtq+ENoc0o26rlnpOs
-	9m5TpD7BZr6Tk0dFLeO4vSYZ8EVrJViXVwTSf8/J7Z75Ul+PyIv4XO2QLBMhC1XL6vnJG4pEFJM
-	mxAU2NuvygQX1hxlj2mGKCpTkkyA==
-X-Google-Smtp-Source: AGHT+IFUxWa24oSLt6X5iPrPFl8XNSeRTGltOaDZSPlLElE/bpgdT7c7FT43YLQGQ7+Q2i6NTpqb6xalSzXXDy9lIZA=
-X-Received: by 2002:a05:6122:3221:b0:520:5a87:66ed with SMTP id
- 71dfb90a1353d-52449919aecmr1656975e0c.5.1741960105518; Fri, 14 Mar 2025
- 06:48:25 -0700 (PDT)
+        bh=9N6fTM6SFDsTbt/1MZG+/5cRZlKHEghdhbe8yHn1vL0=;
+        b=MC7t7OnPXdUd88yrpyAXJeENR5N4vaU4TuHfVFcbWuzJbm5Qha/AOIfnVnv09kTQPc
+         sJ4WKX3AxWeZVSQz/Fue//aBZFR2XTd26GEp8MpdICzmRTg+CKbJC9LFgPRegfAvQV7J
+         Bg3MWsRH8R6alryKCCc+9eQ6J6mWceUnDsqZ9crLO5Ce/ovyne+KusDj/Yl9MYEYcfnR
+         yibQK7enNqeGcBxqf5uwHTxxOuUqfUOGK+legatAvhBzgFKRrQEpvWeOMilYp2/8mjus
+         DM4DeowPCb01TbhhSiY+wUtLCGqb4IaaV657D9IxAzeSQS5SPPqlfPWUwhDyD+CJk5wa
+         61xg==
+X-Gm-Message-State: AOJu0YyjcSEkEU3Uy3ZvcnYzsjIW4dwjd0xx3VY6ktiPcSG6iBLJmhFh
+	vWoMYf6Gp6V6QCizLFbWlitdwsmZVq2h8umuRMzMQMr5bacCgmlx0+77B9/f+hk=
+X-Gm-Gg: ASbGncs3+SaTGcmUuGgBFbgqkUsaBgEXkXefVmDufJFwp5wt5qcneK+H6488KoDPKo2
+	y7UNagOgPs80s+VpBwFRAxdCdzA25n9oCCYj+j5mm8ci+elNvkEZ/v9zFxdErhTqWdcUWytFL+9
+	/767gQtjJyITGLaRlAq/cwJfxWzV5gvEezdKOodMq4nynGlCMqIQnWT/f6ADeWPCm9BG+EJ0S3J
+	PWRE6fndXBBRKJ58xFe7YoCmQQXwdiTheq/XoPrGjpW1MnHyKswKYf1P4Qt6jWpY+FiCPm24EeP
+	2PntCXD+FTT1Li2F7cLA921mQ90WLZ81OHmCGPiuCkeZhsEEQbE6z49tIa8oYGUmY7HDyw==
+X-Google-Smtp-Source: AGHT+IElbbi8SqUshMCl/+GUOzbAuMlg/4w/X9x5Rezrz6ar2Vdo2Qvg6tqIZ2ip3uemwQDmNf/X3g==
+X-Received: by 2002:a5d:64e3:0:b0:391:2f2f:836 with SMTP id ffacd0b85a97d-3971d336b00mr3512774f8f.17.1741966338308;
+        Fri, 14 Mar 2025 08:32:18 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:6eea:2dc0:eafb:9b35])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-395cb318acfsm6036005f8f.70.2025.03.14.08.32.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Mar 2025 08:32:17 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Chuan Liu <chuan.liu@amlogic.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Dmitry Rokosov <ddrokosov@sberdevices.ru>, Jian Hu <jian.hu@amlogic.com>
+Cc: linux-clk <linux-clk@vger.kernel.org>, 
+ linux-amlogic <linux-amlogic@lists.infradead.org>, 
+ linux-kernel <linux-kernel@vger.kernel.org>, 
+ linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <20241231062552.2982266-1-jian.hu@amlogic.com>
+References: <20241231062552.2982266-1-jian.hu@amlogic.com>
+Subject: Re: [PATCH] clk: amlogic: a1: fix a typo
+Message-Id: <174196633722.1526311.3272915728848116488.b4-ty@baylibre.com>
+Date: Fri, 14 Mar 2025 16:32:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250309211402.80886-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250309211402.80886-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CA+V-a8sqJy1HJYkxZONqSEsFuCmENgbs_ofLyaUChtRJpj_ebg@mail.gmail.com> <CAMuHMdXkwUXn0tVVg6BzUbtnSzENGokSY7oXPQW2fuX9QiZz0w@mail.gmail.com>
-In-Reply-To: <CAMuHMdXkwUXn0tVVg6BzUbtnSzENGokSY7oXPQW2fuX9QiZz0w@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 14 Mar 2025 13:47:59 +0000
-X-Gm-Features: AQ5f1JpUNF2L-fj2KIf8O_J9i451Mk6ntzmoe-XbZYNGI4nU5kLPcRLmKA4EZpI
-Message-ID: <CA+V-a8vM+jcs3j6MYfM1tUK7USvSrCBYqh+hRFnaPq9d_jRdwQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] clk: renesas: rzv2h-cpg: Add support for enabling PLLs
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi Geert,
+Applied to clk-meson (clk-meson-next), thanks!
 
-Thank you for the review.
+[1/1] clk: amlogic: a1: fix a typo
+      https://github.com/BayLibre/clk-meson/commit/b3c221e752c4
 
-On Fri, Mar 14, 2025 at 1:04=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, 10 Mar 2025 at 19:22, Lad, Prabhakar <prabhakar.csengg@gmail.com>=
- wrote:
-> > On Sun, Mar 9, 2025 at 9:14=E2=80=AFPM Prabhakar <prabhakar.csengg@gmai=
-l.com> wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Some RZ/V2H(P) SoC variants do not have a GPU, resulting in PLLGPU be=
-ing
-> > > disabled by default in TF-A. Add support for enabling PLL clocks in t=
-he
-> > > RZ/V2H(P) CPG driver to manage this.
-> > >
-> > > Introduce `is_enabled` and `enable` callbacks to handle PLL state
-> > > transitions. With the `enable` callback, PLLGPU will be turned ON onl=
-y
-> > > when the GPU node is enabled; otherwise, it will remain off. Define n=
-ew
-> > > macros for PLL standby and monitor registers to facilitate this proce=
-ss.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
-> > > ---
-> > > v1->v2
-> > > - Updated macros to get PLL offsets
-> > > - Switched to readl_poll_timeout_atomic() and updated the timeout
->
-> Thanks for the update!
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> > > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
->
-> > > +static int rzv2h_cpg_pll_clk_enable(struct clk_hw *hw)
-> > > +{
-> > > +       struct pll_clk *pll_clk =3D to_pll(hw);
-> > > +       struct rzv2h_cpg_priv *priv =3D pll_clk->priv;
-> > > +       struct pll pll =3D pll_clk->pll;
-> > > +       u32 stby_offset;
-> > > +       u32 mon_offset;
-> > > +       u32 val;
-> > > +       int ret;
-> > > +
-> > > +       if (rzv2h_cpg_pll_clk_is_enabled(hw))
-> > > +               return 0;
-> > > +
-> > > +       stby_offset =3D CPG_PLL_STBY(pll.offset);
-> > > +       mon_offset =3D CPG_PLL_MON(pll.offset);
-> > > +
-> > > +       writel(CPG_PLL_STBY_RESETB_WEN | CPG_PLL_STBY_RESETB,
-> > > +              priv->base + stby_offset);
-> > > +
-> > > +       /* ensure PLL is in normal mode */
-> > > +       ret =3D readl_poll_timeout_atomic(priv->base + mon_offset, va=
-l,
-> > > +                                       (val & (CPG_PLL_MON_RESETB | =
-CPG_PLL_MON_LOCK)) =3D=3D
-> > > +                                       (CPG_PLL_MON_RESETB | CPG_PLL=
-_MON_LOCK), 10, 100);
-> > This timeout didnt work when I power cycled after a complete shutdown o=
-vernight.
-> >
-> > I will update the timeout as below, this Ive made sure the below delay
-> > works OK after complete shutdown.
-> >
-> > /*
-> > * Ensure PLL enters into normal mode
-> > *
-> > * Note: There is no HW information about the worst case latency.
-> > *
-> > * Since this value might be dependent on external xtal rate, pll
-> > * rate or even the other emulation clocks rate, use 2000 as a
-> > * "super" safe value.
-> > */
-> > ret =3D readl_poll_timeout_atomic(priv->base + mon_offset, val,
-> >                                                     (val &
-> > (CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK)) =3D=3D
-> >
-> > (CPG_PLL_MON_RESETB | CPG_PLL_MON_LOCK), 200, 2000);
-> >
-> > Please let me know shall I send v3 with this change or wait for your re=
-view.
->
-> I can incorporate this fix while queuing in renesas-clk for v6.16.
-> But, please explain what is "the other emulation clocks rate"?
->
-I got carried away referring to R-Car code, let's drop the `or even
-the other emulation clocks rate`. Thank you for taking care of it.
+Best regards,
+--
+Jerome
 
-Cheers,
-Prabhakar
