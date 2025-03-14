@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF32B2F3B;
-	Fri, 14 Mar 2025 00:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4003D530;
+	Fri, 14 Mar 2025 00:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741913642; cv=none; b=QssEzBxly6d7NPRzxni89Y0dGIGouwz6nXISwGcwjuqCjtYrDF5AdRfxO12T6hbAXChkpx5OxrEuy+ea/wq7Rk7FFlBFXCrf1l1qn+9ikwT94DxRcO1gmvwwlFb3LlRt8xJdOqsdp58B0xLMbinlbCVZHqt7QzKoMDtT5/sP6BQ=
+	t=1741913687; cv=none; b=C3HJTgaspB7z9yN9FMipYRDRLP1zgHdfT5Yuo2VxTjBkc7Q76F8f54LzDWpx7Pg+haRomQZD3TkNGjDT40JArQllS2LaqxErelJ8Amdmz8uuVXl17Dy5hM4ysP8oBZ2vYkmDfP5N9Vk4SMoPiPj4hgLODyyhvipk0ioO2V2gYVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741913642; c=relaxed/simple;
-	bh=jRPWshw6Gy6OZX27WaXXe+x7hDHge+5pOKY1D1mRWEo=;
+	s=arc-20240116; t=1741913687; c=relaxed/simple;
+	bh=KCYIbCrQZwsu+PQS1yLr2L5sQDC2z1fQCiKH9QPI7NM=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=AO1UqYCAw+/ZI+mR2aZkzhwS9ewcPbIGc2A0xgIdds/UKzytShKhlro/HBpK+rz3hoREgj9RS25s7jINSA0KlYomEvWbJNbdXmyIROO8hxNTh0JQ6YXK03nBHP6e8a1CHhc2r0wRJRIWS+7ssD010gNSUgLIKmf70j90mkmlzPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ltqEFm0H; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=uQkgcrYswVcEuvTrmjCxMk/bhGe0a6Uk2G15e6GPF3erDogHGRRk9vQhCO1ATqStmgqR/0ZzGOZyohzA8QgFpukTsORMJrD6aun4udFSjr5l62EZwHNRvg+Xa1HHwHi1sBgCIP7ScWJmqY3yYOr7mW4ZONgBsQiAuBI2eNn7B8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OC9Y0ae0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ltqEFm0H"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39D9FC4CEDD;
-	Fri, 14 Mar 2025 00:54:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OC9Y0ae0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85E79C4CEDD;
+	Fri, 14 Mar 2025 00:54:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741913641;
-	bh=jRPWshw6Gy6OZX27WaXXe+x7hDHge+5pOKY1D1mRWEo=;
+	s=k20201202; t=1741913687;
+	bh=KCYIbCrQZwsu+PQS1yLr2L5sQDC2z1fQCiKH9QPI7NM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ltqEFm0H/qyunkAvuYINa4+Z2I9msgdaZDAIleRwCvElntVIu3x5DvllP/qDWsP4s
-	 6tsPwXRMp6wJJoMNHL7pRbdnx8mFb7NsJZDLMqwEt0b0d0pAmtlLTTDK+j0+0/mxvH
-	 QVfPzzlrfKV9F0/9Ln9v+zUdduzKgilp80ZypxzUFZ6hsXa0oJISpT2yrkhgNGL58x
-	 /4+ke3zcZZdXdKzHcKqTG/Gw2cGpX4C3rtoVGMJoIIPU/SKILagvDtYYKyxSufv+JN
-	 f/3/oj9WjbG32kXsF02sleEmIgRE/5FLtK6h5/YAizzMPyPrB8zMPKEwmDeoa4cA14
-	 vCmGTZcIrcfhA==
-Message-ID: <c9ceb8c6751e41a623eca3b8b102431a.sboyd@kernel.org>
+	b=OC9Y0ae0Cm9jR/tBzJ0LsYm4QsrDgPchHMdCYc6mO9rTPaeTMwMmQ8RA9Ulkp9QXm
+	 NNdRiuYmFtndrQ/QG6ntfLfctDLlhLFzNnDOkDXLsdeSqcsI6rRyAftdsLTeKuyjMD
+	 lMHUKqY/pJxI1VvKg+48uWjZsVUx1TblZ9FvmaGw1ZfVP/BJFWI5pmeoghM8QLKLKw
+	 5u9z6ZiNSV/5r8rEoMyd2MBk97ZARe1kRX/2VloV/bGaIn2kOUcu86ElI7pvpw0LD1
+	 MA7MzgtxKhZow5SyK8PkxP8B6UPShhV8tf74CAVHawAvZKeKA6Y//3CtQqggaWsBe6
+	 cew9Uuyz+VJVQ==
+Message-ID: <843824c0ef2e4cfc5307931c9a8aba2f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,31 +35,47 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Z9Lcr8FyJLWdbp-J@wens.tw>
-References: <Z9Lcr8FyJLWdbp-J@wens.tw>
-Subject: Re: [GIT PULL] Allwinner clock changes for 6.15
+In-Reply-To: <20250312215923.275625-1-heiko@sntech.de>
+References: <20250312215923.275625-1-heiko@sntech.de>
+Subject: Re: [PATCH] dt-bindings: reset: fix double id on rk3562-cru reset ids
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org
-To: Chen-Yu Tsai <wens@kernel.org>
-Date: Thu, 13 Mar 2025 17:53:58 -0700
+Cc: robh@kernel.org, p.zabel@pengutronix.de, krzk+dt@kernel.org, conor+dt@kernel.org, kever.yang@rock-chips.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, kernel test robot <lkp@intel.com>
+To: heiko@sntech.de, mturquette@baylibre.com
+Date: Thu, 13 Mar 2025 17:54:45 -0700
 User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Quoting Chen-Yu Tsai (2025-03-13 06:25:03)
-> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
-5b:
+Quoting Heiko Stuebner (2025-03-12 14:59:23)
+> Id 173 was accidentially used two times for SRST_P_DDR_HWLP and
+> SRST_P_DDR_PHY. This makes both resets ambiguous and also causes build
+> warnings like:
 >=20
->   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+> drivers/clk/rockchip/rst-rk3562.c:21:57: error: initialized field overwri=
+tten [-Werror=3Doverride-init]
+>    21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x2000=
+0*4 + reg * 16 + bit)
+>       |                                                         ^
+> drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'RK3=
+562_DDRCRU_RESET_OFFSET'
+>   266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/clk/rockchip/rst-rk3562.c:21:57: note: (near initialization for '=
+rk3562_register_offset[173]')
+>    21 | #define RK3562_DDRCRU_RESET_OFFSET(id, reg, bit) [id] =3D (0x2000=
+0*4 + reg * 16 + bit)
+>       |                                                         ^
+> drivers/clk/rockchip/rst-rk3562.c:266:9: note: in expansion of macro 'RK3=
+562_DDRCRU_RESET_OFFSET'
+>   266 |         RK3562_DDRCRU_RESET_OFFSET(SRST_P_DDR_PHY, 0, 8),
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
 >=20
-> are available in the Git repository at:
+> To fix that issue give SRST_P_DDR_PHY a new and now unique id.
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git sunxi-c=
-lk-for-6.15
->=20
-> for you to fetch changes up to 8cea339cfb81eb3354b0f27ceb27e2bb107efa6d:
->=20
->   clk: sunxi-ng: add support for the A523/T527 PRCM CCU (2025-03-12 11:58=
-:11 +0800)
->=20
-> ----------------------------------------------------------------
+> Reported-by: Stephen Boyd <sboyd@kernel.org>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202503121743.0zcDf6nE-lkp@i=
+ntel.com/
+> Fixes: dd113c4fefc8 ("dt-bindings: clock: Add RK3562 cru")
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
