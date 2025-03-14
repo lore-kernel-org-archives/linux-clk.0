@@ -1,142 +1,108 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405B41DFD83;
-	Fri, 14 Mar 2025 09:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AFB1FECD0
+	for <linux-clk@vger.kernel.org>; Fri, 14 Mar 2025 12:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741944240; cv=none; b=DmpLfUqLCM5qxNr//OofsBW8F73JQBGUVDTJHzXi4VrnEEUdMyd7XiT77CXPtMtud5xWzUhhjXefriX0IKmJFUMYfdEIsSbyE2gfLpo/x21C2I4fonQyQHK8OeffttHdQJ+bp72xU/7rQKtoO/d6Ar5GuuwNgNjrNoHsn8rSPUk=
+	t=1741955912; cv=none; b=oaD2YeLAUf6eB4czSY8ISlqVJo7ULqf2BEsTf4W/HmMBhQphXGQZw9MHH33CtihzycFXu5EkqlbNGoQa1eOIdFpsGnrchdV0rciTCSzaNq5ZsexFnwezP/kQvKOScDaPXOFj64rGz//Fsal7/OtSWIm1ZwTkmqZuofi34F6443A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741944240; c=relaxed/simple;
-	bh=TU43wqA/8dbhWA9scGNatwoVqQof5AVD2D/WCmQyh3c=;
+	s=arc-20240116; t=1741955912; c=relaxed/simple;
+	bh=6md49y5PF98TaNdg3CmnRQhmN9p3RUvTuQz5FN8C3Qk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpfKrwcFBLCKiN/m6lGDw9WmrgIwfyDkvekpC83EyP1nLBSGzGOZOiOzs3+MwWPOFQwJe5AjUmGoXU+38eYCh0Q2duz2EHyzUW583FW64Nb2uIgdLv6BMQQzL72fdz/3wDIFyqyW4gDbksnOpf1+aVMUMLJv26Nex3GqZIRS+MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YnqSazN9; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YnqSazN9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741944237; x=1773480237;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TU43wqA/8dbhWA9scGNatwoVqQof5AVD2D/WCmQyh3c=;
-  b=YnqSazN9McEn0adfOsHUlN1p3rBo5QKKbjEhuylCBa/mSGByy8FX3EnQ
-   0wOWLZuDriD4jt+O9miG59/xbEFLluOFVsXpx913CU3RKZbGvY/n3Fj1y
-   ex1xB4UFDz292v1N1ZHu/GBrAJfoD1FRW71ljVBmbnq2QvoRUj3VbFWfo
-   rr/gV9G2GUWwilxDtlHYLrGARSUVd3AwCQ5RapB0VO+ZrvYH+9dxr6t1w
-   TidUIYPmPKIrR17zepWTIle7wf3I7cWuF3PhasVyAf495kF/utsUVHcS6
-   CjeoqyTo5TNK4jgPC7qFtN7wuYBx2WVz/sL++uEX/39Q1C5xQHsmsyC5o
-   A==;
-X-CSE-ConnectionGUID: 7ttRWp6sSgKWke17DpT1uw==
-X-CSE-MsgGUID: In8a+m2XRyOhdxArNVQA6Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="65547237"
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="65547237"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 02:23:57 -0700
-X-CSE-ConnectionGUID: TNVymWu0Sd62m3Efu0MvMg==
-X-CSE-MsgGUID: ueA2IGZpScuFaNA+Qj2oEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
-   d="scan'208";a="152071766"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 14 Mar 2025 02:23:53 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tt1Gh-000AIA-1y;
-	Fri, 14 Mar 2025 09:23:51 +0000
-Date: Fri, 14 Mar 2025 17:23:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nuno =?iso-8859-1?Q?S=E1?= via B4 Relay <devnull+nuno.sa.analog.com@kernel.org>,
-	linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>
-Subject: Re: [PATCH v2 6/6] clk: clk-axi-clkgen: fix coding style issues
-Message-ID: <202503141741.UAwRQuuG-lkp@intel.com>
-References: <20250313-dev-axi-clkgen-limits-v2-6-173ae2ad6311@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ceNnhFukzjSqCl6+st5ZQocRSKWAu1AfMGNFclN0a/tV42/jL6IqtCmSoiUHfFsFGo2vUJnmuwaG6Fwm1N7q6bgWwJYvc0arUtsAfegbAzw2ki2uqrL93LuB9gGMRA39yaFcft7y2OKW932CUsgirBHtGQJ73Yqx3c8Iz1ob0m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tt4Io-0002LW-3X; Fri, 14 Mar 2025 13:38:14 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tt4In-005hf9-0c;
+	Fri, 14 Mar 2025 13:38:13 +0100
+Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id D05603DBB04;
+	Fri, 14 Mar 2025 12:38:12 +0000 (UTC)
+Date: Fri, 14 Mar 2025 13:38:12 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-can@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Biju Das <biju.das.au@gmail.com>
+Subject: Re: [PATCH v4 00/11] Add support for RZ/G3E CANFD
+Message-ID: <20250314-meticulous-daring-loon-bf86f6-mkl@pengutronix.de>
+References: <20250306124256.93033-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r6da444pe2xmwoiu"
 Content-Disposition: inline
-In-Reply-To: <20250313-dev-axi-clkgen-limits-v2-6-173ae2ad6311@analog.com>
-
-Hi Nuno,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 82f69876ef45ad66c0b114b786c7c6ac0f6a4580]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Nuno-S-via-B4-Relay/clk-clk-axi-clkgen-fix-fpfd_max-frequency-for-zynq/20250313-231624
-base:   82f69876ef45ad66c0b114b786c7c6ac0f6a4580
-patch link:    https://lore.kernel.org/r/20250313-dev-axi-clkgen-limits-v2-6-173ae2ad6311%40analog.com
-patch subject: [PATCH v2 6/6] clk: clk-axi-clkgen: fix coding style issues
-config: riscv-randconfig-002-20250314 (https://download.01.org/0day-ci/archive/20250314/202503141741.UAwRQuuG-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250314/202503141741.UAwRQuuG-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503141741.UAwRQuuG-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/clk/clk-axi-clkgen.c: In function 'axi_clkgen_calc_clk_params':
->> drivers/clk/clk-axi-clkgen.c:229:35: warning: suggest parentheses around comparison in operand of '^' [-Wparentheses]
-     229 |                 if ((params->edge == 0 ^ frac_divider == 1) ||
-         |                      ~~~~~~~~~~~~~^~~~
+In-Reply-To: <20250306124256.93033-1-biju.das.jz@bp.renesas.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
 
-vim +229 drivers/clk/clk-axi-clkgen.c
+--r6da444pe2xmwoiu
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 00/11] Add support for RZ/G3E CANFD
+MIME-Version: 1.0
 
-   198	
-   199	static void axi_clkgen_calc_clk_params(unsigned int divider,
-   200					       unsigned int frac_divider,
-   201					       struct axi_clkgen_div_params *params)
-   202	{
-   203		memset(params, 0x0, sizeof(*params));
-   204	
-   205		if (divider == 1) {
-   206			params->nocount = 1;
-   207			return;
-   208		}
-   209	
-   210		if (frac_divider == 0) {
-   211			params->high = divider / 2;
-   212			params->edge = divider % 2;
-   213			params->low = divider - params->high;
-   214		} else {
-   215			params->frac_en = 1;
-   216			params->frac = frac_divider;
-   217	
-   218			params->high = divider / 2;
-   219			params->edge = divider % 2;
-   220			params->low = params->high;
-   221	
-   222			if (params->edge == 0) {
-   223				params->high--;
-   224				params->frac_wf_r = 1;
-   225			}
-   226	
-   227			if (params->edge == 0 || frac_divider == 1)
-   228				params->low--;
- > 229			if ((params->edge == 0 ^ frac_divider == 1) ||
-   230			    (divider == 2 && frac_divider == 1))
-   231				params->frac_wf_f = 1;
-   232	
-   233			params->frac_phase = params->edge * 4 + frac_divider / 2;
-   234		}
-   235	}
-   236	
+On 06.03.2025 12:42:39, Biju Das wrote:
+> The CAN-FD module on RZ/G3E is very similar to the one on both R-Car V4H
+> and RZ/G2L, but differs in some hardware parameters:
+>  * No external clock, but instead has ram clock.
+>  * Support up to 6 channels.
+>  * 20 interrupts.
+>=20
+> This patch series depend upon [1]
+> [1] https://lore.kernel.org/all/20250220094516.126598-1-biju.das.jz@bp.re=
+nesas.com/
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I'll send a PR for linux-can today. Ping me after net is merged to
+net-next, so I can take this series.
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--r6da444pe2xmwoiu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmfUIzEACgkQDHRl3/mQ
+kZwemgf/d01wB2CtulciMJxoqCj2gYYoRhWEHkNOC43q70dAJKarKpdFpXR9uVHx
+5oKYBmSMndXJHerslrEv9n8NiCG7mh+hQJBwuWwt6uhHxGO+haKQ+v3ztcsPaVHy
+Vh1FiHLUQU0Pdry+bz2H/Dt/4OURNWq46KPEwKki+xi6P4UE0a58KkqjOtHtBz+n
+NmOaral/J41nZmC354T6pCEVinFZpf9/Vp39MRJ8CCmVB8HWmRFbiwpntnnMf1JC
+KUfsCzvn4JeHezfAkRkWfCfLg4S/NsHRVYrpBmsR9vC/rfHCwwou6HEx5bjImePY
+B41jF3aixyPjIiDEUeDzEGqPr02mOg==
+=00Cy
+-----END PGP SIGNATURE-----
+
+--r6da444pe2xmwoiu--
