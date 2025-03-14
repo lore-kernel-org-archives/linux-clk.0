@@ -1,82 +1,63 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021051A5BBF;
-	Fri, 14 Mar 2025 08:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405B41DFD83;
+	Fri, 14 Mar 2025 09:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741941455; cv=none; b=XiS+ybfgMnp+g7Wak057o4wD2R3hQ04n2GFP+FPHJaucPCZWrYZxzjW03WfQtyYmGZmDbpBdM2iL7iG6a0iLJQ2TczqN8IfP2OuYOXyXbM93FQw822d/3xh3EVmvuyPdX/vocVk8xmI2Vj/5RHoSS93icBboy841uu+pm577axk=
+	t=1741944240; cv=none; b=DmpLfUqLCM5qxNr//OofsBW8F73JQBGUVDTJHzXi4VrnEEUdMyd7XiT77CXPtMtud5xWzUhhjXefriX0IKmJFUMYfdEIsSbyE2gfLpo/x21C2I4fonQyQHK8OeffttHdQJ+bp72xU/7rQKtoO/d6Ar5GuuwNgNjrNoHsn8rSPUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741941455; c=relaxed/simple;
-	bh=zklAdkbt1AGLi6dnH9rR5aH5Uq4X81OHDSMkvSuG5qM=;
+	s=arc-20240116; t=1741944240; c=relaxed/simple;
+	bh=TU43wqA/8dbhWA9scGNatwoVqQof5AVD2D/WCmQyh3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S+lbHsRzPWOwFR17X1wwVayHBOoavQkAgiA8xtmIaNc0fyuvxzR0p+I3QPI3jY9dnvGVrH4Njstk+eB2zDp7hrlixAPU63JmBR4Jz/OcZNtberGzjNlvBk6fshpYrSqzBMjtt4TGQBLDIlHe9ZQwZimaONahc3Xv2b0b2KqagzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2254e0b4b79so49462435ad.2;
-        Fri, 14 Mar 2025 01:37:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741941453; x=1742546253;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BkyX6SSYfheLZc0I8Te+XAXX22QoX47uyuXFCY8mX8g=;
-        b=On/eC+0P63qz6BUbhadp1a74Se2qIUzDufuqT8osgPbNGgeCAkryBz+PGUwkdopuK2
-         AbyukJAtXXpCauULe4BUgDD2/lXtbAg2Lxjw7NmDXsIUMXXLT2SA3LXdW1Va/Byvv0o+
-         1kPY054qc/4y3KZX4asqtGM1P2YGKmyBN9NrtGEzlMtPDECuwmcxGHSFyqz98P95lCKj
-         6NN/p6wwhAY3cRpNzN0bB8hiSxfiSzRjP4DL6E/gCm1TcIfBJ13XmPQFuceLFQ+Aod+R
-         YNLyi5q1y6mSVvYLkEjEX36YM1RKv3oPnyev1OGAqq5/B+joo8IsgAsx8MIkQPjdS/2O
-         qXpA==
-X-Forwarded-Encrypted: i=1; AJvYcCU21O6EnvwncoipYmTFSI8He3uAwRXOCZkTHPnywevi/TFWy9Y67suAHSmuDvskZAotirm9GLxwR5Rf@vger.kernel.org, AJvYcCVKzhWsfg2hEaOlnMp0Ffuf4hn0O/syrBJfxiNbhQQiZQ3d4htPzJoKkvUFs5UjoAdQvXfG72CSGj8APg==@vger.kernel.org, AJvYcCVTjIhE1W9X6OreWJFCDBHDJKEC73HXnLk3uJEgzs66azP/qYPNgcs8Ms4JUa/11pOgOwBsXDGlvboJ@vger.kernel.org, AJvYcCWbEAoTqi1gcMCTm+ayyOLcCQ1JPjuHxVA7FxOMY1k+qaVVcjvS6h2dI8V11atq2cMSNpMn27jSzl8vSoK8@vger.kernel.org, AJvYcCXnwi9LtU5Mu3c2J9he1oCay4ZnGvjLDBdY3RfbrIwZfsuV5GQn3mj2jPC48qX/eFxtPItcBfQAx9oa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5Vq8kV6+ZIZhE5PNw7Z+aLxBloIsa3oEtA/LRf/P8BCmu5LjE
-	SYfINZlu2tAu2AwqOBNWHU+VDoBU5JpO0cg/KtzWbMm94wruKuWoZ7xegRGWDaA=
-X-Gm-Gg: ASbGncswuHJA7XLs5IW0XRXia6g6kiDWNAAPRWmZ2UzN1g2RUu4jXn8hMX/QQObTKZ9
-	faqNsKo3tWZ1uluNanTKPXpF7gDiUh5K7/6CNXKNAwStNkkq9xOezHMEzscRJaupUEFR5CX21yx
-	cyhGuszHWTzzxxzqaBT4l4ZsE52HajUp4WhIk18kX5b07+TiA7HoVOQEvBRu7r6WptdRavkiARG
-	FKx6bWn/RhR1qRbB538ViUmVs0g3AiUioEozthZIwfwy2cTMYG4RovrlUuvOPfA8CYjYyXlvt8D
-	Qd072PsM0lUCfQ/5VlqihrtPVDTQrANzzSNPo6A52EfkuFRWeq+kLpxT7XXrWQAUWpEmpAFPjXX
-	Vayk=
-X-Google-Smtp-Source: AGHT+IG918SBQhjvMeRBJOnKfiU6p+a6y3ckJ/PqZfGFBhVlcJayE1fO2bgYIBBQYyK+PXqeApqP3w==
-X-Received: by 2002:a17:903:2b0f:b0:220:e5be:29c8 with SMTP id d9443c01a7336-225e0aee8f9mr28139165ad.32.1741941452931;
-        Fri, 14 Mar 2025 01:37:32 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-225c6bbe884sm24780695ad.185.2025.03.14.01.37.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Mar 2025 01:37:32 -0700 (PDT)
-Date: Fri, 14 Mar 2025 17:37:30 +0900
-From: Krzysztof Wilczynski <kw@linux.com>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v7 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <20250314083730.GC234496@rocinante>
-References: <cover.1738963156.git.andrea.porta@suse.com>
- <d1362766e3e966f78591129de918046a4b892c18.1738963156.git.andrea.porta@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XpfKrwcFBLCKiN/m6lGDw9WmrgIwfyDkvekpC83EyP1nLBSGzGOZOiOzs3+MwWPOFQwJe5AjUmGoXU+38eYCh0Q2duz2EHyzUW583FW64Nb2uIgdLv6BMQQzL72fdz/3wDIFyqyW4gDbksnOpf1+aVMUMLJv26Nex3GqZIRS+MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YnqSazN9; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YnqSazN9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741944237; x=1773480237;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TU43wqA/8dbhWA9scGNatwoVqQof5AVD2D/WCmQyh3c=;
+  b=YnqSazN9McEn0adfOsHUlN1p3rBo5QKKbjEhuylCBa/mSGByy8FX3EnQ
+   0wOWLZuDriD4jt+O9miG59/xbEFLluOFVsXpx913CU3RKZbGvY/n3Fj1y
+   ex1xB4UFDz292v1N1ZHu/GBrAJfoD1FRW71ljVBmbnq2QvoRUj3VbFWfo
+   rr/gV9G2GUWwilxDtlHYLrGARSUVd3AwCQ5RapB0VO+ZrvYH+9dxr6t1w
+   TidUIYPmPKIrR17zepWTIle7wf3I7cWuF3PhasVyAf495kF/utsUVHcS6
+   CjeoqyTo5TNK4jgPC7qFtN7wuYBx2WVz/sL++uEX/39Q1C5xQHsmsyC5o
+   A==;
+X-CSE-ConnectionGUID: 7ttRWp6sSgKWke17DpT1uw==
+X-CSE-MsgGUID: In8a+m2XRyOhdxArNVQA6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11372"; a="65547237"
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="65547237"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2025 02:23:57 -0700
+X-CSE-ConnectionGUID: TNVymWu0Sd62m3Efu0MvMg==
+X-CSE-MsgGUID: ueA2IGZpScuFaNA+Qj2oEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,246,1736841600"; 
+   d="scan'208";a="152071766"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 14 Mar 2025 02:23:53 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tt1Gh-000AIA-1y;
+	Fri, 14 Mar 2025 09:23:51 +0000
+Date: Fri, 14 Mar 2025 17:23:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nuno =?iso-8859-1?Q?S=E1?= via B4 Relay <devnull+nuno.sa.analog.com@kernel.org>,
+	linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>
+Subject: Re: [PATCH v2 6/6] clk: clk-axi-clkgen: fix coding style issues
+Message-ID: <202503141741.UAwRQuuG-lkp@intel.com>
+References: <20250313-dev-axi-clkgen-limits-v2-6-173ae2ad6311@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,107 +66,77 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d1362766e3e966f78591129de918046a4b892c18.1738963156.git.andrea.porta@suse.com>
+In-Reply-To: <20250313-dev-axi-clkgen-limits-v2-6-173ae2ad6311@analog.com>
 
-Hello,
+Hi Nuno,
 
-Even though this is not for the PCI sub-system directly, I had a very brief
-look over the code.  I hope you don't mind.
+kernel test robot noticed the following build warnings:
 
-As such, a few nit picks, nothing blocking.
+[auto build test WARNING on 82f69876ef45ad66c0b114b786c7c6ac0f6a4580]
 
-> +# RaspberryPi RP1 misc device
+url:    https://github.com/intel-lab-lkp/linux/commits/Nuno-S-via-B4-Relay/clk-clk-axi-clkgen-fix-fpfd_max-frequency-for-zynq/20250313-231624
+base:   82f69876ef45ad66c0b114b786c7c6ac0f6a4580
+patch link:    https://lore.kernel.org/r/20250313-dev-axi-clkgen-limits-v2-6-173ae2ad6311%40analog.com
+patch subject: [PATCH v2 6/6] clk: clk-axi-clkgen: fix coding style issues
+config: riscv-randconfig-002-20250314 (https://download.01.org/0day-ci/archive/20250314/202503141741.UAwRQuuG-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250314/202503141741.UAwRQuuG-lkp@intel.com/reproduce)
 
-Would this be better if it matched the "tristate" description below?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503141741.UAwRQuuG-lkp@intel.com/
 
-> +config MISC_RP1
-> +	tristate "RaspberryPi RP1 PCIe support"
-> +	depends on OF_IRQ && OF_OVERLAY && PCI_MSI && PCI_QUIRKS
-> +	select PCI_DYNAMIC_OF_NODES
-> +	help
-> +	  Support the RP1 peripheral chip found on Raspberry Pi 5 board.
-> +
-> +	  This device supports several sub-devices including e.g. Ethernet
-> +	  controller, USB controller, I2C, SPI and UART.
-> +
-> +	  The driver is responsible for enabling the DT node once the PCIe
-> +	  endpoint has been configured, and handling interrupts.
-> +
-> +	  This driver uses an overlay to load other drivers to support for
-> +	  RP1 internal sub-devices.
+All warnings (new ones prefixed by >>):
 
-> +/* the dts overlay is included from the dts directory so
+   drivers/clk/clk-axi-clkgen.c: In function 'axi_clkgen_calc_clk_params':
+>> drivers/clk/clk-axi-clkgen.c:229:35: warning: suggest parentheses around comparison in operand of '^' [-Wparentheses]
+     229 |                 if ((params->edge == 0 ^ frac_divider == 1) ||
+         |                      ~~~~~~~~~~~~~^~~~
 
-  /*
-   * The dts overlay is included from the dts directory so
 
-To make the code comment match rest of the style.
+vim +229 drivers/clk/clk-axi-clkgen.c
 
-> +/*
-> + * Copyright (c) 2018-24 Raspberry Pi Ltd.
-> + * All rights reserved.
+   198	
+   199	static void axi_clkgen_calc_clk_params(unsigned int divider,
+   200					       unsigned int frac_divider,
+   201					       struct axi_clkgen_div_params *params)
+   202	{
+   203		memset(params, 0x0, sizeof(*params));
+   204	
+   205		if (divider == 1) {
+   206			params->nocount = 1;
+   207			return;
+   208		}
+   209	
+   210		if (frac_divider == 0) {
+   211			params->high = divider / 2;
+   212			params->edge = divider % 2;
+   213			params->low = divider - params->high;
+   214		} else {
+   215			params->frac_en = 1;
+   216			params->frac = frac_divider;
+   217	
+   218			params->high = divider / 2;
+   219			params->edge = divider % 2;
+   220			params->low = params->high;
+   221	
+   222			if (params->edge == 0) {
+   223				params->high--;
+   224				params->frac_wf_r = 1;
+   225			}
+   226	
+   227			if (params->edge == 0 || frac_divider == 1)
+   228				params->low--;
+ > 229			if ((params->edge == 0 ^ frac_divider == 1) ||
+   230			    (divider == 2 && frac_divider == 1))
+   231				params->frac_wf_f = 1;
+   232	
+   233			params->frac_phase = params->edge * 4 + frac_divider / 2;
+   234		}
+   235	}
+   236	
 
-  Copyright (c) 2018-2025 Raspberry Pi Ltd.
-
-To spell the current year fully, plus update it to 2025 already.
-
-I would also add an extra newline here to split the two apart a bit.
-
-> +	if (pci_resource_len(pdev, 1) <= 0x10000) {
-> +		dev_err(&pdev->dev,
-> +			"Not initialised - is the firmware running?\n");
-> +		return -EINVAL;
-> +	}
-
-The American spelling in the above might be better.  But I don't have
-strong opinions here.  It seems more popular in error messages.
-
-> +	err = pci_alloc_irq_vectors(pdev, RP1_INT_END, RP1_INT_END,
-> +				    PCI_IRQ_MSIX);
-> +	if (err < 0) {
-> +		return dev_err_probe(&pdev->dev, err,
-> +				     "pci_alloc_irq_vectors failed");
-
-Missing a new line at the end, but also...
-
-  return dev_err_probe(&pdev->dev, err,
-		       "Failed to allocate MSI-X vectors\n");
-
-Or, something like this over this the function name.  Perhaps exposing
-error code could be useful to the end user? If so then something like this:
-
-  return dev_err_probe(&pdev->dev, err,
-		       "Failed to allocate MSI-X vectors, err=%d\n", err);
-
-Here and other errors where appropriate.
-
-> +	for (i = 0; i < RP1_INT_END; i++) {
-> +		unsigned int irq = irq_create_mapping(rp1->domain, i);
-> +
-> +		if (!irq) {
-> +			dev_err(&pdev->dev, "failed to create irq mapping\n");
-
-  dev_err(&pdev->dev, "Failed to create IRQ mapping\n");
-
-To make the error message capitalisation consistent.
-
-> +static const struct pci_device_id dev_id_table[] = {
-> +	{ PCI_DEVICE(PCI_VENDOR_ID_RPI, PCI_DEVICE_ID_RPI_RP1_C0), },
-> +	{ 0, }
-
-  { }
-
-Would probably be sufficient.
-
-> +MODULE_AUTHOR("Phil Elwell <phil@raspberrypi.com>");
-> +MODULE_AUTHOR("Andrea della Porta <andrea.porta@suse.com>");
-> +MODULE_DESCRIPTION("RP1 wrapper");
-
-  RaspberryPi RP1 misc device
-
-To match the Kconfig comment in the above description or the one from the
-"tristate" also in Kconfig.
-
-Thank you for all the work here!
-
-	Krzysztof
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
