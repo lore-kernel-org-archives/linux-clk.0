@@ -1,53 +1,38 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5724B219A7C;
-	Fri, 14 Mar 2025 20:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C536B1FFC55;
+	Sat, 15 Mar 2025 14:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741982522; cv=none; b=k0tw2VSmSgGaaNfSnAMb5BT8XJXYVS73qWZGEDuh+2dbZAI9Up8fePVTkrHKMaU1ppjJQ9y1tr3KOQw1NdSr1u9WMfoxYokMGXHqeeJwqkCUJAVag+aUg3LLQ+8c9FACJMzjqtiAk82Ayg9QZeW6nLuItsZFhkL3fRcVe/MXab0=
+	t=1742050697; cv=none; b=i2/5vqPrJSRaXZKpkX+9UrHlng5E9LzVvfD4xNMPGCx0qBfAp7DY5APjwg8Tl5sAF7e1FVNiZtb6p4PW22KbRxI7UACvlTbpWf+wtNvtgCiSSeiKS3g8h3lxDaJ/I/d/8801O2YX4Yek3gOY2MZt2nP74Isu46UZNsITb/TRSVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741982522; c=relaxed/simple;
-	bh=L/wNrfJujNo0e7Nq92yVylYHZ64YwSHHEk2YnsPk8kE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Junx+OtsayhVAiA71mLuaEorcR3vd+oT5S4R52IlzqDe6gFRKXsUbM89/iOM8qDLuI6ryxjhLHntQu+PPz9EE2lD9r6K3DVadT444Od0qFyDVVtT2qvHMutllDjD2aDuxFcHQ89ZEK5qsJzmmgolC1K/56dJRcHh+s7wMsYWe1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSgEBaN9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742050697; c=relaxed/simple;
+	bh=9nYzGQvmx6WFgfbqPRmrGyA1FvxrIDEuq6WTjGtHIBE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=R8sOiGVZuWPYF6Lnla3dGqYUwmSN/fItJWmORECBFmAMEQxcrYu9gitON3Zug7eqoE8QhBIQVl5MHb2wOQFnatho/pl7853rD3jQxUyWjqkIjK3FbyIHiI01JTEPUzvKtEUVGCxkvJFlWqfZjkp4VRWDZbBJ6DCHWIaPuoWihEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=fnlhe2CB; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSgEBaN9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A608C4CEE3;
-	Fri, 14 Mar 2025 20:02:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741982522;
-	bh=L/wNrfJujNo0e7Nq92yVylYHZ64YwSHHEk2YnsPk8kE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QSgEBaN9xKsnGqAq4Nk0fTXBAf90ToyjqS+gHV+Wn4rKcGCyTUbXa+rQCC3Ikj7Qv
-	 vqm5kXuFIHdhAynsyaGDfYOpxxdUuUY4TUs1xG9ZBp10I4GDzRje51sNCgB6Xy4qbi
-	 5r/5B79IXZOn/zgFWmdgMTEvU5cJWLXusWUsC9DWTtq3OslftDM85G/+a/1e9FKM3S
-	 5FUhyob0Fa5IJMER4VLi5l+NLbLRsxmFGM3IqDs7jtwIzwahKXOH2eyF8PxCFrP9Ys
-	 Rbgid0gfIGEjij3kVwzziN3cGP167a+mv5EyBIa69+pX7VMBpBxPyipRa7eFSFK2nf
-	 KDZGTNVsnmsYg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: (subset) [PATCH v5 0/4] Update LPASS Audio clock driver for QCM6490 board
-Date: Fri, 14 Mar 2025 15:01:14 -0500
-Message-ID: <174198247876.1604753.8724721598084629596.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250221-lpass_qcm6490_resets-v5-0-6be0c0949a83@quicinc.com>
-References: <20250221-lpass_qcm6490_resets-v5-0-6be0c0949a83@quicinc.com>
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="fnlhe2CB"
+Received: from [192.168.183.162] (254C339A.nat.pool.telekom.hu [37.76.51.154])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 2311EBBAC0;
+	Sat, 15 Mar 2025 14:58:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1742050687;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FmVx/4AyGD/aMwlNSJd9Y627FtpqEeVAICF+Holg0IU=;
+	b=fnlhe2CBIIfxzBLBDbt3DeYxtaaa9Y18Du5dMDU1Ihuj65nOiJWEqwNq0Gzkx4GYOFc1Ut
+	IZZBBYpeOqn7C0OQRjuiYFfABij97cmMDWYkND9DFW1MX2pUCuTYnfwmB4icMSQUu9i06d
+	YtZwRLZiFD6zuN1x838hKWg/V1OnqBbs9ieU0wfyxblAo8yMIEx9iiJF4PmrkEKB2BQedX
+	Ym+jdsVwZ+1lQzwiEKj0IpCGGiBTCJRyNOreQFe8Fo8WTynkNUYUaI/KBsVkclqqcKC6LT
+	+qnRo1sYoowii16qub41zcNXhXvNebSoWbNFDB7c86jn76RswifhmEccFxQiBQ==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH v4 0/6] Initial support of MSM8937 and Xiaomi Redmi 3S
+Date: Sat, 15 Mar 2025 15:57:34 +0100
+Message-Id: <20250315-msm8937-v4-0-1f132e870a49@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,26 +41,113 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAF6V1WcC/23MQQ6CMBCF4auYrq1pp0jBlfcwLqAdYBIppjWNh
+ nB3C4lCoss3me8fWUBPGNhpNzKPkQINLo1sv2Omq1yLnGzaDAQcBUjB+9AXpdIcoMBGWKPQlCx
+ 93z029FxKl2vaHYXH4F9LOMr5+mnIbyNKLri2oNHmutGiOPcVuRs5cu1h8C2bQxE2GNSKIeG6L
+ HU65gqt+ovVFmcrVgnbymojCzDG1D94mqY3ApD/bB0BAAA=
+X-Change-ID: 20250210-msm8937-228ef0dc3ec9
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Dmitry Baryshkov <lumag@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux@mainlining.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Daniil Titov <daniilt971@gmail.com>, Adam Skladowski <a39.skl@gmail.com>, 
+ Dang Huynh <danct12@riseup.net>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742050684; l=2644;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=9nYzGQvmx6WFgfbqPRmrGyA1FvxrIDEuq6WTjGtHIBE=;
+ b=sM5mQ+PXxva7V8jC6E7KlV8VS02TfuWk836AaRTgvfi10SrkvBAz8iGZBunm6IJ8fCv+BXLjq
+ s8ibCMaPiPyCbCPGrCS6Y6vPrX+ETPOgD6/3eYjJve/2BjjHhkXE0Hw
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
+This patch series add initial support for MSM8937 SoC
+and Xiaomi Redmi 3S (land).
 
-On Fri, 21 Feb 2025 15:04:53 +0530, Taniya Das wrote:
-> This series updates the low pass audio clock controller driver for reset
-> functionality. The patches are split from the below series.
-> https://lore.kernel.org/all/20240318053555.20405-1-quic_tdas@quicinc.com/
-> 
-> The QCM6490 board requires only the reset functionality from the LPASS
-> subsystem. Thus separate out the driver probe to provide the same on the
-> QCM6490 boards.
-> 
-> [...]
+The series is extending the MSM8917 gcc and pinctrl drivers
+because they are sibling SoCs.
+MSM8937 have 4 more A53 cores and have one more dsi port then
+MSM8917.
+It implements little-big architecture and uses Adreno 505.
 
-Applied, thanks!
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+Changes in v4:
+- Add missing rpmcc include for qcom,gcc-msm8937 dtbinding exmaple.
+- msm8937: add missing space after s9-p1@230
+- msm8937-xiaomi-land: replace LED_FUNCTION_INDICATOR to LED_FUNCTION_STATUS
+- Remove applied patches
+- Link to v3: https://lore.kernel.org/r/20250224-msm8937-v3-0-dad7c182cccb@mainlining.org
 
-[1/4] dt-bindings: clock: qcom: Add compatible for QCM6490 boards
-      commit: c16e576b8aea9fe985ee9e368ea5fd37eae47b2f
-[2/4] clk: qcom: lpassaudiocc-sc7280: Add support for LPASS resets for QCM6490
-      commit: cdbbc480f4146cb659af97f4020601fde5fb65a7
+Changes in v3:
+- Fix qcom,gcc-msm8937 dtbinding example 
+- Link to v2: https://lore.kernel.org/r/20250223-msm8937-v2-0-b99722363ed3@mainlining.org
+
+Changes in v2:
+- drop applied patches
+- drop gcc schema commits infavor of a new schema for gcc-msm8937
+- document always on clock for adreno 505/506/510
+- msm8937:
+  - set cache size
+  - rename cpu labels
+  - fix style issues addressed by review
+- msm8937-xiaom-land:
+  - remove unused serial0 alias
+  - remove regulator-always-on from pm8937_l6
+  - add blue indicator led for aw2013
+- Link to v1: https://lore.kernel.org/r/20250211-msm8937-v1-0-7d27ed67f708@mainlining.org
+
+---
+Adam Skladowski (1):
+      dt-bindings: drm/msm/gpu: Document AON clock for A505/A506/A510
+
+Barnabás Czémán (3):
+      dt-bindings: clock: qcom: Add MSM8937 Global Clock Controller
+      dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
+      arm64: dts: qcom: Add Xiaomi Redmi 3S
+
+Dang Huynh (1):
+      arm64: dts: qcom: Add initial support for MSM8937
+
+Daniil Titov (1):
+      clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+ .../bindings/clock/qcom,gcc-msm8937.yaml           |   75 +
+ .../devicetree/bindings/display/msm/gpu.yaml       |    6 +-
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts   |  408 ++++
+ arch/arm64/boot/dts/qcom/msm8937.dtsi              | 2149 ++++++++++++++++++++
+ drivers/clk/qcom/Kconfig                           |    6 +-
+ drivers/clk/qcom/gcc-msm8917.c                     |  617 +++++-
+ include/dt-bindings/clock/qcom,gcc-msm8917.h       |   17 +
+ 9 files changed, 3277 insertions(+), 9 deletions(-)
+---
+base-commit: da920b7df701770e006928053672147075587fb2
+change-id: 20250210-msm8937-228ef0dc3ec9
 
 Best regards,
 -- 
-Bjorn Andersson <andersson@kernel.org>
+Barnabás Czémán <barnabas.czeman@mainlining.org>
+
