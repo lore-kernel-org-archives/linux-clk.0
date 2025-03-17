@@ -1,81 +1,107 @@
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5742F1A3163;
-	Mon, 17 Mar 2025 17:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60457176ADB;
+	Mon, 17 Mar 2025 18:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742231492; cv=none; b=EnxJFj7enoR9YExa/VYei8msdAVyRip4Xtq4r7fIGTcDlE7XAVoDM25sSpbTnORLO0jC/lwLDLCEuIAHdR66QpUmIlyK+NYQgNoE3fBu+zFMeNuv8QmS4opLTPHmFACjhr4oeHffhvNae4xgUvcJcuXeepg8LPrpPGnzpoiyB4I=
+	t=1742236698; cv=none; b=KRQGP7dQVzLTljbStIO+CL7MmsiyxzSmzKYnabxgJA+cJVF+3lWrrAE5SYgZo6Waw3lRpB0KY7yl55fkp5XuP1q5HFf68VqDGWF/9r/UYdmA/ukpnOK4/CbcGEWQb5ne5ntn+Spv3mMxBBTPAyjuqCxAyyOEuifr0yCG0Ye7leY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742231492; c=relaxed/simple;
-	bh=ql3BNZNoZ6lCMjPIVaKAHFDnwQ4YjwOtyGLg0W57xL4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YS9waF2mD+qfANiSa7DpQivVFXIqhCJP1yjh9cykUEQ09U1pfBkURjyuv26UNCmlcj4VYTIidp4bKXd7dhNbP79Ais5XaOmHC95Is91Ds9LzXrWBuZFXQQw5TNB1RY5cQzrIl0/Aq7Zat36HMFaNQD7KhSF4tptfU8pK8Q4L1Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=iYuN7RWt; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="iYuN7RWt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1742231050; bh=ql3BNZNoZ6lCMjPIVaKAHFDnwQ4YjwOtyGLg0W57xL4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=iYuN7RWtR7xkVp/Oaez2Phtb2ec5XJp8Bc3yk5cxNtfKk/Td6OQKFAsbuY+oERIp2
-	 Tj3dgLdvJdLbbXggpi/mijUD0qQif9fOSq8bvRwpL/zEn7mx1510Xt3qA+poAEQVuj
-	 Xeq09prGXz7lgfLNv6ofUhClPHRCF8Yxg3C7V3+w=
-Message-ID: <d605e4df-594d-49e0-a8fc-5992e36d6310@lucaweiss.eu>
-Date: Mon, 17 Mar 2025 18:04:09 +0100
+	s=arc-20240116; t=1742236698; c=relaxed/simple;
+	bh=x8VzNlnfyxrbj98l+2sMkUMZwVMQl42R9kHvQVPYs+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L8TCpwvAnqX/xWaXVn3GNPIxnV4MuiS88d170d3qG0pW2eG/7kNO+5TIlOFR6I2NyZ7CTMqCA/aKsQ5xgw65nQhkWMxODOeC7bLu7QvayAtzh1HeJSleTMAgi+rItZMJQd25NyD89ZKOslkchsaMEgK7VtkNlPX8D84Z5Z+JBGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1tuFLa-000000007G3-0hL0;
+	Mon, 17 Mar 2025 18:37:58 +0000
+Date: Mon, 17 Mar 2025 18:37:54 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: "Lucien.Jheng" <lucienx123@gmail.com>
+Cc: linux-clk@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, kuba@kernel.org, davem@davemloft.net,
+	edumazet@google.com, pabeni@redhat.com, ericwouds@gmail.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	joseph.lin@airoha.com, wenshin.chung@airoha.com
+Subject: Re: [PATCH v4 net-next PATCH 1/1] net: phy: air_en8811h: Add clk
+ provider for CKO pin
+Message-ID: <Z9hsAmiD9sZ_NAR-@makrotopia.org>
+References: <20250317143111.28824-1-lucienX123@gmail.com>
+ <20250317143111.28824-2-lucienX123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/7] dt-bindings: mailbox: qcom: add compatible for
- MSM8226 SoC
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
- <20240619-msm8226-cpufreq-v1-1-85143f5291d1@lucaweiss.eu>
-Content-Language: en-US
-From: Luca Weiss <luca@lucaweiss.eu>
-In-Reply-To: <20240619-msm8226-cpufreq-v1-1-85143f5291d1@lucaweiss.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250317143111.28824-2-lucienX123@gmail.com>
 
-On 6/19/24 11:02 PM, Luca Weiss wrote:
-> Add the mailbox compatible for MSM8226 SoC.
+On Mon, Mar 17, 2025 at 10:31:11PM +0800, Lucien.Jheng wrote:
+> EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
+> CKO clock activates on power-up and continues through md32 firmware loading.
 
-Hi all,
+Maybe add here:
+"Implement clk provider driver so we can disable the clock output in case
+it isn't needed, which also helps to reduce EMF noise"
 
-This patch is still pending.
+Ie. the description you had was fine and good to have, just the lines had to
+be shorter (ie. just insert linebreaks at 70~75 chars).
 
-Regards
-Luca
+See more comments inline below:
 
-> 
-> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
-> ---
->   Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-> index 982c741e6225..dc75ea2383f1 100644
-> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
-> @@ -25,6 +25,7 @@ properties:
->             - const: qcom,ipq6018-apcs-apps-global
->         - items:
->             - enum:
-> +              - qcom,msm8226-apcs-kpss-global
->                 - qcom,qcs404-apcs-apps-global
->             - const: qcom,msm8916-apcs-kpss-global
->             - const: syscon
-> 
+> ...
+> @@ -806,6 +817,84 @@ static int en8811h_led_hw_is_supported(struct phy_device *phydev, u8 index,
+>  	return 0;
+>  };
+>  
+> +static unsigned long en8811h_recalc_rate(struct clk_hw *hw, unsigned long parent)
 
+calling this en8811h_clk_recalc_rate() would be better imho.
+
+> +{
+> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
+> +	struct phy_device *phydev = priv->phydev;
+> +	u32 pbus_value;
+> +	int ret;
+> +
+> +	ret = air_buckpbus_reg_read(phydev, EN8811H_HWTRAP1, &pbus_value);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return (pbus_value & EN8811H_HWTRAP1_CKO) ? 50000000 : 25000000;
+> +}
+> +
+> +static int en8811h_enable(struct clk_hw *hw)
+
+call this en8811h_clk_enable()
+
+> +{
+> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
+> +	struct phy_device *phydev = priv->phydev;
+> +
+> +	return air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
+> +				EN8811H_CLK_CGM_CKO, EN8811H_CLK_CGM_CKO);
+> +}
+> +
+> +static void en8811h_disable(struct clk_hw *hw)
+
+call this en8811h_clk_disable()
+
+> +{
+> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
+> +	struct phy_device *phydev = priv->phydev;
+> +
+> +	air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
+> +				EN8811H_CLK_CGM_CKO, 0);
+> +}
+> +
+> +static int en8811h_is_enabled(struct clk_hw *hw)
+
+call this en8811h_clk_is_enabled()
