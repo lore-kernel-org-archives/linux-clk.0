@@ -1,97 +1,148 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C21B8634E
-	for <linux-clk@vger.kernel.org>; Mon, 17 Mar 2025 05:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB735440C;
+	Mon, 17 Mar 2025 06:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742189218; cv=none; b=I3ps0eH3qu6iJEbz/58WbJfGBt1KK2fWWgFIMGdbRelOZwIovRaw+rKNf8BQ5zp5aCCMRKkMExw0YznznVTTpFTnf2ALxOLWmQzP6/bIcrIfzWUCDesN2KryIOYK/Ac2TVWP9RvSgIEI5K6HY4oWT8bgWkY/UYM/MQ6HQqwKCVo=
+	t=1742193278; cv=none; b=hmyYAPlWSaaYUaf1dwC+TcOyeICIAzw1QYnXu1E0w4nSVV4nL80Z21HtgyEQefC575tRU4e9nyL1yb5LF6fB3I4hL8i6LYduCYck3T2kGoUG4YVYlAC5pPL6D86NBXai+YoPc0pWfWLB0L7nEOl3YQz6Y9nGp9mWEkQBOaOq/J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742189218; c=relaxed/simple;
-	bh=7DHN5cVmz+pDkRxVTmBkDg2nk5LJ8wBCI4oxq/FHDIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r11TfsNDnayXH8D/rKuavZZulFNBS3LtJqxT7ZDXXGKyp6ThzC7BRO3FMIpdYAYSsVhy0map4LQDFWROSn1O5uj6LUhKWdVFCwq2jeW5K19R+3jUUmZ9+5toFxNKYTsioXe19NxFtybiKK2YKav7hf7VNuvuoLHkH4skUgiYkrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gxfY+ljv; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1742193278; c=relaxed/simple;
+	bh=8bl1fdhcwD/dVZ5EcUQdcukqKMmksj+ktzznu7ARv7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cx6HA5pL5iWn8IkVIBkAk29woRPVZOVPEZOsPeDP54Zjp9cvTGrpeCZWiQGnClrWQMoNkq/sFcD/+vITLfL53FnOZT8gV3T50jyLpbf2ZhQQXck5wld5zjcH/Zml06W5aLyYPb/oss+3sc6pme1m3U1zWFsPjx9tBc/BbkdPmyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fpe4yHxi; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gxfY+ljv"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so10503685e9.1
-        for <linux-clk@vger.kernel.org>; Sun, 16 Mar 2025 22:26:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742189214; x=1742794014; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2uXXvocDuD+66rt+lg39ttZUegKOYcDjUjA+UXfDUD4=;
-        b=gxfY+ljvKh2ZWe4Hejdd0d4G4ILLXtYmxB5l7H4i1HcJJGLcyeGNdt+kQ6Z/s/sKJv
-         W5D/GRaI9jDVTpxtDXDMTyhuQ2fTE+0BR7PNcl6MLz0mUrRAgN5TShSgUMjZYdJ7d0En
-         KHSD6qKrN332OyO/giWjsBovsGFAcwLErEE/WPDLihaFIAONbZHSXUkXw9Q/Pk0I3hW1
-         HO6+FVQUgIGcRcXy3ir2t7A5oDWxpEBaMR4Y+sYFUf2pLpTQZ9tPLk/CPqpcn/uVHksl
-         w9AGjHRxKNNRblaUSfVVSfulBGxSqvcGXe/gQg5ZOVtNfR+qVDi7n6QEq2YsrMuWVMRt
-         vI+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742189214; x=1742794014;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2uXXvocDuD+66rt+lg39ttZUegKOYcDjUjA+UXfDUD4=;
-        b=eRDAeQrxLUuJkR5/5vbvK8Jet2Mw4buQfqa3KQBDWayy4lZa/656wdmQnFCbbO3s0z
-         JefEzqEOSb2btMP2WptBJTR7zHNc++Qw0ptWHCEqn3Hrdmp13Zmr/0d0MVStL4UgIaDw
-         P8WIyjkwMFr4WW/FGZhAgUBJemBLrxB3GAJzRQcB6xacPxwg4LxwJzBGKK7F38kVm+yz
-         mYssPClOX5GxdeZt9n+lyyV/ICTaX0sDtExG8qQTUCTxEOj+TCfpwv18mRR3nXn7HEmH
-         stCrj2vqEjnxkgpj1+Zjn2mIsyRHNCIbr/sAihdDnYDDKwnXvpFAzVPVsmwcLupU4TLr
-         WElw==
-X-Gm-Message-State: AOJu0Yw2jc8AUyxzpD8BNQN5EdTkFW3N5VoKNy7TBAraHsTeWee+eCbr
-	Q44S6PdObxsllZXUvwSbiK6aVvtfQftBrOTbMML2xLK2Aw3Xu1ysSlpPWyW9Gc8=
-X-Gm-Gg: ASbGnctcU84bw6RScXKUK3OYP94AihUR+1vIW4H89uqiGY5w09cS49095RZv3xCyw3c
-	CiOpIhhiG8NnFjpsIbe4LFmRq9wTI8EsFZhxmZ/zgRAmsf04EkrOpSaQKfWOfa8ENJzdhreFxWH
-	7juQX+ecnCYdos40IoxZ+o4tphKKrP+GJnlVeydvTinq1czNRx5MyfHrGu4e8W8lI6ApfE5tcbV
-	BshweW+CUHkOxqhfSGdP5POlXsLQdmijfoaRhZgrELIRjW+sTB+E/OB1HS8XdCOQQDorYWsfmLH
-	JEIkDltR0Ek4iDK7AQ7c63lfJma6p8ogQore2qpbxupNSzQVlw==
-X-Google-Smtp-Source: AGHT+IHlSqR/SRDikVnKXDQ6JSQA1h4tlec7oNPPwqTDiIJRTQIqJhGODEAwWWCxkkVC/qZiyiG4Lg==
-X-Received: by 2002:a05:600c:4511:b0:43b:c857:e9c8 with SMTP id 5b1f17b1804b1-43d1ece1af3mr114703135e9.31.1742189214587;
-        Sun, 16 Mar 2025 22:26:54 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d200facfcsm93932215e9.32.2025.03.16.22.26.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Mar 2025 22:26:54 -0700 (PDT)
-Date: Mon, 17 Mar 2025 08:26:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>
-Cc: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
-	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>
-Subject: Re: [PATCH v2 6/6] clk: clk-axi-clkgen: fix coding style issues
-Message-ID: <402a575c-5bfc-4dac-bac6-d7f4e7ee5462@stanley.mountain>
-References: <20250313-dev-axi-clkgen-limits-v2-0-173ae2ad6311@analog.com>
- <20250313-dev-axi-clkgen-limits-v2-6-173ae2ad6311@analog.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fpe4yHxi"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52GNo2R6018547;
+	Mon, 17 Mar 2025 06:34:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	96ROlff/PtcRVbTkV8vw4wdxvl391eyvZo8++Lqhbjg=; b=fpe4yHxiPWYYR45R
+	+u9qstlUkzLJdg0piHxVKZVlR2B94B3pb9TWgi7T7ctTowWcDhQR4mniRWyOeUfK
+	8ephRtGUVnIB+17F+zmVKZNa8euqoGZL6endydYt79Gzh0mCd2qbZ4rny+OkWk3I
+	R8vlQ0wnPKJH3whjumCAkdcVoRITEzgflce0sq+7cIS3o03NlDOFip3NV2NFNNpb
+	pCo27PGcny8t6nzeWpEjOtn0YJe07cNx2tYr+XsMMlRyVz2rULmeb7URA+9zbITV
+	vg4eIag8L9EK5BwPDkbRY8i6AJYaE1wMuiL6dBZvWIzHBZ0yNncgJjxkIG9sX3aB
+	98FGBw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1r13npj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 06:34:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52H6YP31025506
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Mar 2025 06:34:25 GMT
+Received: from [10.217.216.178] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Mar
+ 2025 23:34:20 -0700
+Message-ID: <523b6f39-41b7-41cd-b793-7b768cc71064@quicinc.com>
+Date: Mon, 17 Mar 2025 12:04:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250313-dev-axi-clkgen-limits-v2-6-173ae2ad6311@analog.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 06/10] dt-bindings: clock: Add Qualcomm QCS615 Graphics
+ clock controller
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20250313-qcs615-v5-mm-cc-v6-0-ebf4b9a5e916@quicinc.com>
+ <20250313-qcs615-v5-mm-cc-v6-6-ebf4b9a5e916@quicinc.com>
+ <20250313-graceful-jackdaw-of-opportunity-62996d@krzk-bin>
+ <d1814cd9-5c73-4ac5-a4ed-4cc2aae410d0@quicinc.com>
+ <5tt4wli2yodoet2l6r7ksq3o743nmi75hfksakqaxre3gmyr2a@zdotamju5ndp>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <5tt4wli2yodoet2l6r7ksq3o743nmi75hfksakqaxre3gmyr2a@zdotamju5ndp>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=LuaSymdc c=1 sm=1 tr=0 ts=67d7c272 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=o4nIivdWQW5RE0qCd0YA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: xcHUOX4X7SA2cw_6MLoREY3gaeoz2rGA
+X-Proofpoint-ORIG-GUID: xcHUOX4X7SA2cw_6MLoREY3gaeoz2rGA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-17_02,2025-03-17_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ mlxscore=0 suspectscore=0 priorityscore=1501 phishscore=0 adultscore=0
+ clxscore=1015 lowpriorityscore=0 spamscore=0 mlxlogscore=999
+ malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503170046
 
-On Thu, Mar 13, 2025 at 03:14:48PM +0000, Nuno Sá wrote:
-> @@ -224,8 +226,8 @@ static void axi_clkgen_calc_clk_params(unsigned int divider,
->  
->  		if (params->edge == 0 || frac_divider == 1)
->  			params->low--;
-> -		if (((params->edge == 0) ^ (frac_divider == 1)) ||
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-> -			(divider == 2 && frac_divider == 1))
-> +		if ((params->edge == 0 ^ frac_divider == 1) ||
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-This works, but the code was a lot easier to read with parentheses.
 
-regards,
-dan carpenter
+On 3/14/2025 4:47 AM, Bjorn Andersson wrote:
+> On Thu, Mar 13, 2025 at 02:18:57PM +0530, Taniya Das wrote:
+>>
+>>
+>> On 3/13/2025 1:54 PM, Krzysztof Kozlowski wrote:
+>>> On Thu, Mar 13, 2025 at 12:29:43PM +0530, Taniya Das wrote:
+>>>  +
+>>>> +  '#reset-cells':
+>>>> +    const: 1
+>>>> +
+>>>> +  '#power-domain-cells':
+>>>> +    const: 1
+>>>> +
+>>>> +required:
+>>>> +  - compatible
+>>>> +  - reg
+>>>> +  - clocks
+>>>> +  - '#clock-cells'
+>>>> +  - '#reset-cells'
+>>>> +  - '#power-domain-cells'
+>>>> +
+>>>
+>>> I don't get why this binding is different than others and you do not
+>>> reference qcom,gcc.yaml? Is it not applicable here? Other gpucc do
+>>> reference.
+>>>
+>>
+>> Yes, I will fix them and resend.
+>>
+> 
+> What is it that you will fix and resend? This patch or all other cases?
+> 
+> Please stop just throwing stuff at the list and until something sticks,
+> talk with the people who review your patches.
+> 
+
+Bjorn, I will fix all of them in the series and send out.
+
+> Regards,
+> Bjorn
+> 
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>
 
