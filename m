@@ -1,135 +1,80 @@
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A86C238D32;
-	Mon, 17 Mar 2025 12:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DE423E35D;
+	Mon, 17 Mar 2025 14:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742214998; cv=none; b=ZulFDYSZvVXxkV+Ew/uJS3s53L2cWP7kU+aa8cddPuy5rOFJu12kg0bnaDgBcXAwuQbMWnCnwH1upl5SDDjyHXM6YCBV2WO8lTC4a79XBdCQBEMcW33ULRNaJ9KxEQ69wuhz/j4HBtHp2F8h7NfBRX267zKqWauxgD4Y8G26la8=
+	t=1742220506; cv=none; b=q8ZSzoBA5y61CVLj3FJf63oNmLOszV+kHiEqaxN9Pm1djHW1k1ZP35+x3t+a2RwNC7EG9fOR44sWfbp/B+FKUZphtXLRK6Ok7ZYquKZ5yzW9Wq3F6knGsTbbJ8wjb0xgADqFOnRAipWOOvwxApwesEYxHikDAZlmbrhjZSpEXWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742214998; c=relaxed/simple;
-	bh=EgtAe31rU6EZ+Q8IPVD7kFBC1h3C26sTl48yIObSk58=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n9Z3XYO+U4gA9PQzQCqwGCTUp/dUJ/mfKpVUdenjGR+VFfs2aPe0Cmm0b3M+FCLueowlKOccA8fYMGmf2YblrTJX6I8VvMpy4iWM2AmuiNrSbTE7nOXqdQaLXcKlryNDZqn9E5zaftXCBRTh56XRV7jLBEYdeg5qEZT2Led15kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: SEv4VgHyTQ6wsA1xAcLkBg==
-X-CSE-MsgGUID: YrRJvmPTSoSyH3ccC30VnQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Mar 2025 21:36:28 +0900
-Received: from localhost.localdomain (unknown [10.226.92.84])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A0470400262C;
-	Mon, 17 Mar 2025 21:36:23 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-can@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v5 00/16] Add support for RZ/G3E CANFD
-Date: Mon, 17 Mar 2025 12:35:54 +0000
-Message-ID: <20250317123619.70988-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1742220506; c=relaxed/simple;
+	bh=FEPHIwDyK7Tr4mXhiKsjBTrxFWaEJhWGW9kE0joAnEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z4dUaTOVLO8E3VMxGEjuRKH32XsfAS59J3dt+cvc2kzzP42enH5Zx/KKwYCpf+LTgyLn9GYNqRfmHs+qPiin99ZPLaRLdzaDpqYkaRudLeVh049gjeA7Lw4cfj4shBR7wj0Z7XGfuK1vUxVlMuXrq7YxKmMYfsxzmKUHIWrQ2Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IHDA0cUy; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IHDA0cUy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CEBFC4CEE3;
+	Mon, 17 Mar 2025 14:08:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742220505;
+	bh=FEPHIwDyK7Tr4mXhiKsjBTrxFWaEJhWGW9kE0joAnEk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IHDA0cUyq4XAc4DX4FKFkAV+J5U7Vgze+OeF+RN+Rt9t8HKtTLr0usCZiG7B9lUX2
+	 78RL7UkwQ6Ov8pRrumSCoWar33zkK0eKVIfpnJ/4M++v9DTmAF1beUrmZr4Y9hnmIj
+	 j2Fo9wQGCb78kV7p4a+OOqe2+ZIoEj2A/B2+8zsoMReBtSGZBGTuB8WxOPz9wJ8T+n
+	 eIvkXDMfzs613KUYOSzoh7/89JTYJIpZCcOZXtXcdeLfDZ/ggfSCiH2j+Il1Ly62of
+	 ewmP9do4wnTyN2jHObK3NFFuhC1bYIpfo7uZhnHmNTgMZhXCwQfxB46a/k91jsq+IU
+	 VunRAG9oVd/AQ==
+Date: Mon, 17 Mar 2025 15:08:16 +0100
+From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de, 
+	richardcochran@gmail.com, geert+renesas@glider.be, lumag@kernel.org, heiko@sntech.de, 
+	biju.das.jz@bp.renesas.com, quic_tdas@quicinc.com, nfraprado@collabora.com, 
+	elinor.montmasson@savoirfairelinux.com, ross.burton@arm.com, javier.carrasco@wolfvision.net, 
+	ebiggers@google.com, quic_anusha@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, quic_varada@quicinc.com, 
+	quic_srichara@quicinc.com
+Subject: Re: [PATCH v12 4/6] clk: qcom: Add NSS clock Controller driver for
+ IPQ9574
+Message-ID: <65gl7d6qd55xrdm3as3pnqevpmakin3k4jzyocehq7wq7565jj@x35t2inlykop>
+References: <20250313110359.242491-1-quic_mmanikan@quicinc.com>
+ <20250313110359.242491-5-quic_mmanikan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313110359.242491-5-quic_mmanikan@quicinc.com>
 
-The CAN-FD module on RZ/G3E is very similar to the one on both R-Car V4H
-and RZ/G2L, but differs in some hardware parameters:
- * No external clock, but instead has ram clock.
- * Support up to 6 channels.
- * 20 interrupts.
+On Thu, Mar 13, 2025 at 04:33:57PM +0530, Manikanta Mylavarapu wrote:
 
-This patch series depend upon [1]
-[1] https://lore.kernel.org/all/20250220094516.126598-1-biju.das.jz@bp.renesas.com/
+> +static struct clk_rcg2 nss_cc_clc_clk_src = {
+> +	.cmd_rcgr = 0x28604,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = nss_cc_parent_map_6,
+> +	.freq_tbl = ftbl_nss_cc_clc_clk_src,
+> +	.clkr.hw.init = &(const struct clk_init_data) {
+> +		.name = "nss_cc_clc_clk_src",
+> +		.parent_data = nss_cc_parent_data_6,
+> +		.num_parents = ARRAY_SIZE(nss_cc_parent_data_6),
+> +		.ops = &clk_rcg2_ops,
+> +	},
+> +};
 
-v4->v5:
- * Collected tag from Geert.
- * The rules for R-Car Gen3/4 could be kept together, reducing the number
-   of lines. Similar change for rzg2l-canfd aswell.
- * Keeping interrupts and resets together allows to keep a clear
-   separation between RZ/G2L and RZ/G3E, at the expense of only
-   a single line.
- * Retained the tags for binding patches as it is trivial changes.
- * Dropped the unused macro RCANFD_GAFLCFG_GETRNC.
- * Updated macro RCANFD_GERFL_ERR by using gpriv->channels_mask and
-   dropped unused macro RCANFD_GERFL_EEF0_7.
- * Replaced RNC mask in RCANFD_GAFLCFG_SETRNC macro by using
-   info->num_supported_rules variable.
- * Updated the macro RCANFD_GAFLCFG by using info->rnc_field_width
-   variable.
- * Updated shift value in RCANFD_GAFLCFG_SETRNC macro by using a formula
-   (32 - (n % rnc_per_reg + 1) * field_width).
- * Replaced the variable name shared_can_reg->shared_can_regs.
- * Improved commit description for patch{#11,#12}by replacing has->have.
- * Dropped RCANFD_EEF_MASK and RCANFD_RNC_MASK as it is taken
-   care by gpriv->channels_mask and info->num_supported_rules.
- * Dropped RCANFD_FIRST_RNC_SH and RCANFD_SECOND_RNC_SH by using a
-   formula (32 - (n % rnc_per_reg + 1) * rnc_field_width.
- * Improved commit description by "All SoCs supports extenal clock"->
-   "All existing SoCs support an external clock".
- * Updated error description in probe as "cannot get enabled ram clock"
- * Updated r9a09g047_hw_info table.
-v3->v4:
- * Added Rb tag from Rob for patch#2.
- * Added prefix RCANFD_* to enum rcar_canfd_reg_offset_id.
- * Added prefix RCANFD_* to enum rcar_canfd_mask_id.
- * Added prefix RCANFD_* to enum rcar_canfd_shift_id.
-v2->v3:
- * Collected tags.
- * Dropped reg_gen4() and is_gen4() by adding mask_table, shift_table,
-   regs, ch_interface_mode and shared_can_reg variables to
-   struct rcar_canfd_hw_info.
-v1->v2:
- * Split the series with fixes patch separately.
- * Added patch for Simplify rcar_canfd_probe() using
-   of_get_available_child_by_name() as dependency patch hit on can-next.
- * Added Rb tag from Vincent Mailhol.
- * Dropped redundant comment from commit description for patch#3.
+This structure definition gets repeated many times in this driver,
+with only slight changes. (This also happens in other qualcomm clock
+drivers.)
 
+Would it be possible to refactor it into a macro, to avoid the
+insane code repetition?
 
-Biju Das (16):
-  dt-bindings: can: renesas,rcar-canfd: Simplify the conditional schema
-  dt-bindings: can: renesas,rcar-canfd: Document RZ/G3E support
-  can: rcar_canfd: Use of_get_available_child_by_name()
-  can: rcar_canfd: Drop RCANFD_GAFLCFG_GETRNC macro
-  can: rcar_canfd: Drop RCANFD_GERFL_EEF* macros in RCANFD_GERFL_ERR
-  can: rcar_canfd: Add num_supported_rules variable to struct
-    rcar_canfd_hw_info
-  can: rcar_canfd: Add rnc_field_width variable to struct
-    rcar_canfd_hw_info
-  can: rcar_canfd: Simplify RCANFD_GAFLCFG_SETRNC macro
-  can: rcar_canfd: Add ch_interface_mode variable to struct
-    rcar_canfd_hw_info
-  can: rcar_canfd: Add shared_can_regs variable to struct
-    rcar_canfd_hw_info
-  can: rcar_canfd: Add register mapping table to struct
-    rcar_canfd_hw_info
-  can: rcar_canfd: Add mask table to struct rcar_canfd_hw_info
-  can: rcar_canfd: Add shift table to struct rcar_canfd_hw_info
-  can: rcar_canfd: Add only_internal_clks variable to struct
-    rcar_canfd_hw_info
-  can: rcar_canfd: Enhance multi_channel_irqs handling
-  can: rcar_canfd: Add RZ/G3E support
-
- .../bindings/net/can/renesas,rcar-canfd.yaml  | 171 +++++++++----
- drivers/net/can/rcar/rcar_canfd.c             | 238 ++++++++++++++----
- 2 files changed, 314 insertions(+), 95 deletions(-)
-
--- 
-2.43.0
-
+Marek
