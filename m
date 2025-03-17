@@ -1,120 +1,206 @@
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFA1231CAE;
-	Mon, 17 Mar 2025 10:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3F723315F;
+	Mon, 17 Mar 2025 10:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742206117; cv=none; b=KOykb2Kr9dCU+HefuI9bllXEhO+L8CvTYOLipHHXC/1sUa1+8MjegfHzR7MWyxG/9mC9tkbHpL2F8gDIkBaZp6ch7/FD8E3e8oUmEV1Ew/pyNT7VPsE+Ve46fDibYrfctqi0FDK5n2X0/f+cOYZgvpdcylAygNZh0x8D+b4/QRU=
+	t=1742207974; cv=none; b=n9buwfptBlQDdf7krYzSUSh/haZEXm8YmTBOpxv5e1NEqzIl8RtFfiuelsGTORH9c/p0/faAz8viSCJfovScbtfI3y1QIGDDosMjOPkAZQ8PYDfUuDhh2aGc53/QSR2O3FezRcdveroYc4TefJ4XrT9VXGdKKmPEriUyf3OO7/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742206117; c=relaxed/simple;
-	bh=LYQnVVghqHNBeBZC9M3qcSQzc999kxd9dUjJydn7Zzs=;
+	s=arc-20240116; t=1742207974; c=relaxed/simple;
+	bh=TfpfaeLI4S6m1v+uddZe93RivyyarsvruxbycvEgKas=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kn7zHJywVDPW8R/n+zcN7GioVgzu22IWME1bMWnlSXJHoCfCsxpDXPF9xvD/52rJ3LrjT5DbGSuCjkQB8f8pwId5bKAQOU+jNxS1Zhoagt00R9ZrsO5oiLdXSjfBvHeW46RT0kSaGgxWkKZFVlNGJicGvYkNCEFf4m4EQ6Q4BJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=bhivIXWcQZHmonM4dJb1FoHsDICirEW4n4a/92KemCgzk9s3/Ezn4NqrXdVP3iS9UY2hrFkbz15gv+GDtgB2ofwm5UbJACPDan6Y2dJ9+za8NQRfidZx0M7AO1CKLx3KUh7pbz5IYhnp2Uija5Y2aA34PJVcX9yHb4Pn+dJq+yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a5Xfnf3C; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-523f1b31cf8so1680433e0c.0;
-        Mon, 17 Mar 2025 03:08:34 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a5Xfnf3C"
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e5dc299dee9so3872350276.3;
+        Mon, 17 Mar 2025 03:39:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742207972; x=1742812772; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=IoGBlbe9Czmc/JKLBj0F16RNsymqq1dJ1tqyI1v1Ytg=;
+        b=a5Xfnf3Ciqz7oqMk15UVEWLqMLB/mSoOu+Rd0RHYnuJ1LV6glpYu0flheE9LAERkaV
+         HtNA3Da5wCrtTEsI3IlHW1Fo6g1VkgXlRxoktTpTIUtbQ6u84Cr5LoZz4l/+OE9wyUz1
+         cqvdsXJjKkPunL6ajUNDrSqhvJEi66dFmQPtsAJd4ygSFOuqrY7yhaD7jg1ezvfRv5GP
+         HPYKLarBQIssxTecEjRCEhTIPjWwPyUt2IlZJ3YPm48zqMdE+iOlftIliRrcRT7pwJCI
+         DPYCnSodApaHcgSJxGfXU+02s1xbHR0FjNiaP7Q9D9mgV5afhj7U9/hUk0xaFupBA7w0
+         vniQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742206113; x=1742810913;
+        d=1e100.net; s=20230601; t=1742207972; x=1742812772;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nV0APjSl3A+QsJgQqRhAxvwjeltjb78Ah9QdJdDOGkI=;
-        b=vYIL5iXMs59uI4v1sk9gCg3tRg2VXx1el+RO3A+SauUD/dJMdr+lU268aRGNuXDbQt
-         Y8UZk0ONjmCjt/p/ZkKLYIDPI/jB1MHX0ElW5U9lCaslfWZKXki8wWm7sTRWCoCfo5kP
-         rhxO/n1/81dL0IATbhrhRyP1vw3BThBPtnKdQFanNKat7pnlDe/aLFQlpJmIxx8WiQf7
-         48h7A4d22JVVpVjtEtH2vBdqqRDzkhUnFCoX9sDIpKm/zgap7qDUgCqMzX8QoSMrBM7J
-         T1ftPzLWBebUuOv/ELVAjszk3dQDJHxG0w/4ewjQvz+YKuJ77c7wsI9tRzWSGuJCObWZ
-         1KqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFOsaGquIdxZTDkwavDFhc9BKuo+ER/u4vL7gczo+I6bTS+feGqhPbbm/54+DbDbxS9/TPOp2otEkl@vger.kernel.org, AJvYcCUv/4p3M7YXNbcP1BE4cbu+9GZ8OhBe7HcZC+u8Q9wd5OeAB9YZBuMxbckZfe8Ot0x3p9LsCU2mdnDeNsSu@vger.kernel.org, AJvYcCXXX9UoDbP7UcBk9lrrtvDPAIYO3bPQ8fzrkxdDVI813yLNuAxhTK7uZ/M82CK+nCbeG0ZBHBtA76yzPFdJGr4qPHg=@vger.kernel.org, AJvYcCXjdMlkm3wBLoItMsPl/w0LNHTJXz+Wg0DXvEaycP1t3zDBnOeSbZ4xhJjFvtZflg4KKUQ/lfy7OKjr@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3ZmE10ODAD9WlyKNyf7jSGy6kKqYUnZgMOlfOKJ4Sb28am+9+
-	hctv91VJ/rnFpOXhdRcL8PP6InjLzTNSBEkOCZswH9ArncWL3iM3fM7uf6FT
-X-Gm-Gg: ASbGnctlRz4P3J+BgggOQJgxQYL8+XifuK57+dG/+AwH5NbeCDpzlmZl2fRmTFsKjWM
-	Z9QTu98hYqq2wD52ODV8HlXkE+aTzD6QiVMr8sNKr+aZKAzjyYTNxtmBdXqqYgcPN0WIUnmAvao
-	lC+6Hf/0S/8/CST2WZnV3rv58BVuiu0dGDs2wCnaE8W55CB7U//4q0vEkvZHGJbk6BhLigZH9g5
-	zXh4x+qTe3KBS0etDLKc/5DUvoBBZMRp9MqfvqDkXHvl0YymTnE6NH9V2vgpHo2zSvfsBkxHIjN
-	ZrVFr1ktLA/RCRZMEAWlMIC8Hrf1XvMKmoMi1FGbGSBnC6MRjliMVpzW427yQa+G4XnaxnBEQM7
-	wZvFIo80=
-X-Google-Smtp-Source: AGHT+IFN+LqCGUuC3TWRqYuo4aCnCNZO3sAsS8uQsurlmemoSaLoPVKu1He9xV9RB8djRMfvcrG5fA==
-X-Received: by 2002:a05:6122:3d13:b0:520:42d3:91c1 with SMTP id 71dfb90a1353d-52449a48ccdmr5687552e0c.10.1742206112800;
-        Mon, 17 Mar 2025 03:08:32 -0700 (PDT)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5243a581473sm1548661e0c.3.2025.03.17.03.08.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Mar 2025 03:08:32 -0700 (PDT)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86b68e51af4so1603642241.1;
-        Mon, 17 Mar 2025 03:08:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgCQpKjgdkaV8d1Tl5XwnUwN7p5u979l59bB/HZHDu307NdJGDhA8caLajA79PQiO+U5lx3WQjPEbVEZJ6NVJ/80o=@vger.kernel.org, AJvYcCWSKu3hRUsUi6ygWJEPNjONENakq0aj+P0lnxWNz6g+rylP14J7mEE0dPd+SPUVMeB+oSLYM4HbdpqB7nN4@vger.kernel.org, AJvYcCWT6mVDlOrgURUag2WDpjfrcxeYVFYULTIh3se0sxowgCAvXxM/jFfcZUsW+q8Hq8IkUBMwzS14etvE@vger.kernel.org, AJvYcCX7lGqVcPxfZJ3tXy7S+CtPNE/aKIaGWiMmxv0Fbs35YyqQOMva9C39Fh6u8gNDUbE9qFSA/diE25ad@vger.kernel.org
-X-Received: by 2002:a05:6102:3c96:b0:4b1:1eb5:8ee3 with SMTP id
- ada2fe7eead31-4c38322a633mr7665016137.22.1742206112108; Mon, 17 Mar 2025
- 03:08:32 -0700 (PDT)
+        bh=IoGBlbe9Czmc/JKLBj0F16RNsymqq1dJ1tqyI1v1Ytg=;
+        b=MWxDxcfcnaDk9Z0hFTnCU+OLqBNS8fIkKowmo0zY8i7AtaxFJIc09nEHn3/j3q3P8N
+         fJHFQE9V1QYAJPuCfJCCN9ig1ZFCO2UnBHivOtic/A1zV/0q///vS1+dRdyPOVHx0uul
+         4ZNBqAxc7rgJNkPqc9+gia4lQVJINPwlImHJ9DwftRrTI8vPkRqH5PMwqN569emACu+L
+         csJ9pT7q/wb2JafNNWg5KibN78GQAQed1CyFcA30107bnXkDauCRPnR9n7OI6ebS6ibP
+         9pDhhP+vDrQylXb9DUEcIL+g3keFB9yzi90zHX3JrU956qseEdGSLJoPAP7IXWzgEDGR
+         CS4A==
+X-Forwarded-Encrypted: i=1; AJvYcCX7eB2GKkKXS5JKu822lYBHhf4COcL5pBLgVx33+T9/Jf4tchqqBiVTuJjKGw/SnJbfoccIbk5sobmf@vger.kernel.org, AJvYcCXA4rsuV5a7nZ5alTWowKjvc6cBS+5VjR0JYwYZse4R3jQS7eVXg5qkEpH+WAy2Td45I0ARQXJCN+kBKAte@vger.kernel.org, AJvYcCXvFflsz4yAHJLcDj2vFxJCnoceR/ZQDB1MEQ7cuxuivGpqlr5t7C3ZgCDComyXsez+KCG3KVYVcKOG@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXbnCQub/E6+6Rsxp/I4m2WlXiEXDDapjEsTk4kUdwz4URRP42
+	snCmS/2scp2syUrsgES6bD4xx2KY6lku/gz6/oxQx5Ji6bQNPjvZAA6U7FK2LE8yCIdNbH5JAPS
+	2nZMOqbQNxHFPBdcnq9mAPKvT9LM=
+X-Gm-Gg: ASbGncsaybJhhl/VkOMjr0kMZw4D3MeRsuxcJEtZoz3649AUKSwYxgM/mJ/DrswtERR
+	Y1ormk0ePRbf/rGPSMbTFKc6Dj+HTguZlTyqV6xkyUWUS1S198dBELHP6Bd4Z6e3EZ0jtkMFPVR
+	CtnO7CZp8c5qvXXN1kN21xuGj0Occ=
+X-Google-Smtp-Source: AGHT+IHy+RO89nDi9FmYtvf/yESHna7TilFKwweegOO/mX3S8jWkfc8ZcfeV/QYwVZlEKxwfn3Yq7ZH5aj8lCxwN4uE=
+X-Received: by 2002:a05:6902:2191:b0:e61:1c18:3f36 with SMTP id
+ 3f1490d57ef6-e63f65e5ea6mr14903162276.44.1742207971658; Mon, 17 Mar 2025
+ 03:39:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250317083213.371614-1-tommaso.merciai.xr@bp.renesas.com> <20250317083213.371614-2-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20250317083213.371614-2-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 17 Mar 2025 11:08:19 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
-X-Gm-Features: AQ5f1JpGenG55qVJIf1KTw9AQgufZanrRWkQNAtQMcFuCWyLnmEnMBpT-qpGwzw
-Message-ID: <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: clock: renesas: Fix description section
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Pavel Machek <pavel@denx.de>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240912191038.981105-1-tmaimon77@gmail.com> <20240912191038.981105-3-tmaimon77@gmail.com>
+ <536f5393-478c-4a50-b25f-180e221ef7a3@roeck-us.net>
+In-Reply-To: <536f5393-478c-4a50-b25f-180e221ef7a3@roeck-us.net>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Mon, 17 Mar 2025 12:39:20 +0200
+X-Gm-Features: AQ5f1Jq_X-0lZX7kkWxOU1PNLphKdtirYmAhXmqFll0JeXRXfeWOSuOpsLz0fxM
+Message-ID: <CAP6Zq1ioebnqgJB1B8AqD9UtMZRy5CDT8+_dXF_aBZEjjj_B-A@mail.gmail.com>
+Subject: Re: [PATCH v28 2/3] reset: npcm: register npcm8xx clock auxiliary bus device
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, 
+	joel@jms.id.au, venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Tommaso,
+Hi Guenter,
 
-On Mon, 17 Mar 2025 at 09:32, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> Remove not needed "and" into description section.
+Yes, of course, it works in real hardware.
+The modification was made since the reset and clock share the same
+register memory region.
+
+To enable the clock change needs to be done in the device tree as
+follows (we are planning to send these change patches soon):
+
+diff -Naur a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+--- a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+2025-02-26 16:20:39.000000000 +0200
++++ b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+2025-03-17 12:29:17.876551537 +0200
+@@ -47,19 +47,16 @@
+                interrupt-parent = <&gic>;
+                ranges;
+
+-               rstc: reset-controller@f0801000 {
++               clk: rstc: reset-controller@f0801000 {
+                        compatible = "nuvoton,npcm845-reset";
+-                       reg = <0x0 0xf0801000 0x0 0x78>;
+-                       #reset-cells = <2>;
++                       reg = <0x0 0xf0801000 0x0 0xC4>;
+                        nuvoton,sysgcr = <&gcr>;
+-               };
+-
+-               clk: clock-controller@f0801000 {
+-                       compatible = "nuvoton,npcm845-clk";
++                       #reset-cells = <2>;
++                       clocks = <&refclk>;
+                        #clock-cells = <1>;
+-                       reg = <0x0 0xf0801000 0x0 0x1000>;
+                };
+
++
+                apb {
+                        #address-cells = <1>;
+                        #size-cells = <1>;
+diff -Naur a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+--- a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+2025-02-26 16:20:39.000000000 +0200
++++ b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
+2025-03-17 12:24:52.293171764 +0200
+@@ -19,6 +19,13 @@
+        memory@0 {
+                reg = <0x0 0x0 0x0 0x40000000>;
+        };
++
++       refclk: refclk-25mhz {
++               compatible = "fixed-clock";
++               clock-output-names = "ref";
++               clock-frequency = <25000000>;
++               #clock-cells = <0>;
++       };
+ };
+
+ &serial0 {
+
+Is it better to modify the reset driver with your suggestion or change
+the device tree?
+
+Thanks,
+
+Tomer
+
+
+On Sun, 16 Mar 2025 at 17:22, Guenter Roeck <linux@roeck-us.net> wrote:
 >
-> Reported-by: Pavel Machek <pavel@denx.de>
-> Closes: https://lore.kernel.org/cip-dev/Z9P%2F51qOlq2B46FK@duo.ucw.cz/
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
-> @@ -12,7 +12,7 @@ maintainers:
->  description:
->    On Renesas RZ/{G3E,V2H(P)} SoCs, the CPG (Clock Pulse Generator) handles
->    generation and control of clock signals for the IP modules, generation and
-> -  control of resets, and control over booting, low power consumption and power
-> +  control of resets, control over booting, low power consumption and power
->    supply domains.
+> Hi,
 >
->  properties:
-
-I think the original is fine.  When emphasizing the structure:
-
-    The CPG handles:
-      A. generation and control of clock signals for the IP modules,
-      B. generation and control of resets, and
-      C. control over booting, low power consumption and power supply domains.
-
-i.e. the "and" is part of the typical "A, B, and C" construct?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> On Thu, Sep 12, 2024 at 10:10:37PM +0300, Tomer Maimon wrote:
+> > Add NPCM8xx clock controller auxiliary bus device registration.
+> >
+> > The NPCM8xx clock controller is registered as an aux device because the
+> > reset and the clock controller share the same register region.
+> >
+> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> > Tested-by: Benjamin Fair <benjaminfair@google.com>
+> > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>
+> Does this work with real hardware ? I tried with the new qemu emulation,
+> but that gets stuck in the serial driver initialization. I found that the clock
+> device instantiates but does not register as clock provider because it does
+> not have a device node. I needed something like the patch below to get beyond
+> that point.
+>
+> Thanks,
+> Guenter
+>
+> ---
+> From: Guenter Roeck <linux@roeck-us.net>
+> Subject: [PATCH] reset: npcm: Provide device node to clock driver
+>
+> Without device node, the clock driver can not register itself as clock
+> provider. With debugging enabled, this manifests itself with
+>
+>  of_serial f0000000.serial: error -EPROBE_DEFER: failed to get clock
+>  of_serial f0000000.serial: Driver of_serial requests probe deferral
+>  platform f0000000.serial: Added to deferred list
+> ...
+>  Warning: unable to open an initial console.
+>
+> Look up the device node and attach it to the clock device to solve the
+> problem.
+>
+> Fixes: 22823157d90c ("reset: npcm: register npcm8xx clock auxiliary bus device")
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  drivers/reset/reset-npcm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
+> index e5b6127783a7..43bc46755e82 100644
+> --- a/drivers/reset/reset-npcm.c
+> +++ b/drivers/reset/reset-npcm.c
+> @@ -409,6 +409,8 @@ static struct auxiliary_device *npcm_clock_adev_alloc(struct npcm_rc_data *rst_d
+>         adev->name = clk_name;
+>         adev->dev.parent = rst_data->dev;
+>         adev->dev.release = npcm_clock_adev_release;
+> +       adev->dev.of_node = of_find_compatible_node(rst_data->dev->parent->of_node,
+> +                                                   NULL, "nuvoton,npcm845-clk");
+>         adev->id = 555u;
+>
+>         ret = auxiliary_device_init(adev);
+> --
+> 2.45.2
+>
