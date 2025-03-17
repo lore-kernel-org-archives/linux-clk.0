@@ -1,206 +1,120 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAD222C355;
-	Mon, 17 Mar 2025 09:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFA1231CAE;
+	Mon, 17 Mar 2025 10:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742205472; cv=none; b=FrZWCa8Cwch7FvcDfJfD91j+Bso3TiMpzzO2DfaeIIU9yMLACNcHpBcOy20dj9QJ6goVTVeYDvrIwa99jfWOu9oqbEuP8DLMZz0BpJLIo95AGYQhL+ND8L9hQyv62L7kkamSHrgptkYXNzm7gy+xQdW+aSEgbm2+XIqeGA0hkUA=
+	t=1742206117; cv=none; b=KOykb2Kr9dCU+HefuI9bllXEhO+L8CvTYOLipHHXC/1sUa1+8MjegfHzR7MWyxG/9mC9tkbHpL2F8gDIkBaZp6ch7/FD8E3e8oUmEV1Ew/pyNT7VPsE+Ve46fDibYrfctqi0FDK5n2X0/f+cOYZgvpdcylAygNZh0x8D+b4/QRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742205472; c=relaxed/simple;
-	bh=u4gGQHQyXKmcD/n4B9Coibe/2rVi6aB/7qBpOdGg5FU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=p+ZW75W3IcAYoJRGo5xf9XtG3h9Osvhg0cWTNh3BxbquXXvmnJWhdgaR1kiFx95sDgUC3jyv7k8NC8/9YOaKPjckRn7n/nJuPPqjeKHAViWzC5cV5px8lzQVTIbKZPlvYOObXlEpzwIXsv7/PLqVbqwiTzWOOjwALu3KFVuRaEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=nkfwHgNI; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="nkfwHgNI"
-Received: from [127.0.0.1] (254C1C5A.nat.pool.telekom.hu [37.76.28.90])
-	by mail.mainlining.org (Postfix) with ESMTPSA id B53F0BBAC4;
-	Mon, 17 Mar 2025 09:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1742205468;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FhlrRtgQ29uAkg57Izvory2SkjADGQMOEcn3oIaEafg=;
-	b=nkfwHgNIkMw6drNJf+qwgVofGWU+RQr5cydxMVJUZvLcx3uT/yiIjF68d2I6B9d2H1DydP
-	AmymPLAI6g2lw7kEDLY+0D3uDkoP9QAUPFh6TEeG/dpXpr6lEisnrxIYknRRnEID3jHCtQ
-	N7MZ+vsQz5FHOYKqC1J89V2skPUC++82H33O3InzwoQO5ZmDaFg0uwmVqxqTsBqmeJG1AS
-	lcvUWqbfk29XZM0NjItqztSvwYQH6wtwYVBMjOYLAuZB8fFOHSsD/BKYZpMHFwGxb8SSof
-	8QBPprrFFrZjZ6wirsgCU+OShkqiFfLOD11BURS2ICwXmBXo27u7e81uiLmRvw==
-Date: Mon, 17 Mar 2025 10:57:45 +0100
-From: =?ISO-8859-1?Q?Barnab=E1s_Cz=E9m=E1n?= <barnabas.czeman@mainlining.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
- =?ISO-8859-1?Q?Otto_Pfl=FCger?= <otto.pflueger@abscue.de>,
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>,
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v4_1/6=5D_dt-bindings=3A_clock=3A_q?=
- =?US-ASCII?Q?com=3A_Add_MSM8937_Global_Clock_Controller?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <20250317-hot-obedient-sturgeon-394cb8@krzk-bin>
-References: <20250315-msm8937-v4-0-1f132e870a49@mainlining.org> <20250315-msm8937-v4-1-1f132e870a49@mainlining.org> <20250317-hot-obedient-sturgeon-394cb8@krzk-bin>
-Message-ID: <11695D76-7CBE-41CE-A8DD-D6845D01670C@mainlining.org>
+	s=arc-20240116; t=1742206117; c=relaxed/simple;
+	bh=LYQnVVghqHNBeBZC9M3qcSQzc999kxd9dUjJydn7Zzs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kn7zHJywVDPW8R/n+zcN7GioVgzu22IWME1bMWnlSXJHoCfCsxpDXPF9xvD/52rJ3LrjT5DbGSuCjkQB8f8pwId5bKAQOU+jNxS1Zhoagt00R9ZrsO5oiLdXSjfBvHeW46RT0kSaGgxWkKZFVlNGJicGvYkNCEFf4m4EQ6Q4BJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-523f1b31cf8so1680433e0c.0;
+        Mon, 17 Mar 2025 03:08:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742206113; x=1742810913;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nV0APjSl3A+QsJgQqRhAxvwjeltjb78Ah9QdJdDOGkI=;
+        b=vYIL5iXMs59uI4v1sk9gCg3tRg2VXx1el+RO3A+SauUD/dJMdr+lU268aRGNuXDbQt
+         Y8UZk0ONjmCjt/p/ZkKLYIDPI/jB1MHX0ElW5U9lCaslfWZKXki8wWm7sTRWCoCfo5kP
+         rhxO/n1/81dL0IATbhrhRyP1vw3BThBPtnKdQFanNKat7pnlDe/aLFQlpJmIxx8WiQf7
+         48h7A4d22JVVpVjtEtH2vBdqqRDzkhUnFCoX9sDIpKm/zgap7qDUgCqMzX8QoSMrBM7J
+         T1ftPzLWBebUuOv/ELVAjszk3dQDJHxG0w/4ewjQvz+YKuJ77c7wsI9tRzWSGuJCObWZ
+         1KqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFOsaGquIdxZTDkwavDFhc9BKuo+ER/u4vL7gczo+I6bTS+feGqhPbbm/54+DbDbxS9/TPOp2otEkl@vger.kernel.org, AJvYcCUv/4p3M7YXNbcP1BE4cbu+9GZ8OhBe7HcZC+u8Q9wd5OeAB9YZBuMxbckZfe8Ot0x3p9LsCU2mdnDeNsSu@vger.kernel.org, AJvYcCXXX9UoDbP7UcBk9lrrtvDPAIYO3bPQ8fzrkxdDVI813yLNuAxhTK7uZ/M82CK+nCbeG0ZBHBtA76yzPFdJGr4qPHg=@vger.kernel.org, AJvYcCXjdMlkm3wBLoItMsPl/w0LNHTJXz+Wg0DXvEaycP1t3zDBnOeSbZ4xhJjFvtZflg4KKUQ/lfy7OKjr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3ZmE10ODAD9WlyKNyf7jSGy6kKqYUnZgMOlfOKJ4Sb28am+9+
+	hctv91VJ/rnFpOXhdRcL8PP6InjLzTNSBEkOCZswH9ArncWL3iM3fM7uf6FT
+X-Gm-Gg: ASbGnctlRz4P3J+BgggOQJgxQYL8+XifuK57+dG/+AwH5NbeCDpzlmZl2fRmTFsKjWM
+	Z9QTu98hYqq2wD52ODV8HlXkE+aTzD6QiVMr8sNKr+aZKAzjyYTNxtmBdXqqYgcPN0WIUnmAvao
+	lC+6Hf/0S/8/CST2WZnV3rv58BVuiu0dGDs2wCnaE8W55CB7U//4q0vEkvZHGJbk6BhLigZH9g5
+	zXh4x+qTe3KBS0etDLKc/5DUvoBBZMRp9MqfvqDkXHvl0YymTnE6NH9V2vgpHo2zSvfsBkxHIjN
+	ZrVFr1ktLA/RCRZMEAWlMIC8Hrf1XvMKmoMi1FGbGSBnC6MRjliMVpzW427yQa+G4XnaxnBEQM7
+	wZvFIo80=
+X-Google-Smtp-Source: AGHT+IFN+LqCGUuC3TWRqYuo4aCnCNZO3sAsS8uQsurlmemoSaLoPVKu1He9xV9RB8djRMfvcrG5fA==
+X-Received: by 2002:a05:6122:3d13:b0:520:42d3:91c1 with SMTP id 71dfb90a1353d-52449a48ccdmr5687552e0c.10.1742206112800;
+        Mon, 17 Mar 2025 03:08:32 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5243a581473sm1548661e0c.3.2025.03.17.03.08.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Mar 2025 03:08:32 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86b68e51af4so1603642241.1;
+        Mon, 17 Mar 2025 03:08:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUgCQpKjgdkaV8d1Tl5XwnUwN7p5u979l59bB/HZHDu307NdJGDhA8caLajA79PQiO+U5lx3WQjPEbVEZJ6NVJ/80o=@vger.kernel.org, AJvYcCWSKu3hRUsUi6ygWJEPNjONENakq0aj+P0lnxWNz6g+rylP14J7mEE0dPd+SPUVMeB+oSLYM4HbdpqB7nN4@vger.kernel.org, AJvYcCWT6mVDlOrgURUag2WDpjfrcxeYVFYULTIh3se0sxowgCAvXxM/jFfcZUsW+q8Hq8IkUBMwzS14etvE@vger.kernel.org, AJvYcCX7lGqVcPxfZJ3tXy7S+CtPNE/aKIaGWiMmxv0Fbs35YyqQOMva9C39Fh6u8gNDUbE9qFSA/diE25ad@vger.kernel.org
+X-Received: by 2002:a05:6102:3c96:b0:4b1:1eb5:8ee3 with SMTP id
+ ada2fe7eead31-4c38322a633mr7665016137.22.1742206112108; Mon, 17 Mar 2025
+ 03:08:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20250317083213.371614-1-tommaso.merciai.xr@bp.renesas.com> <20250317083213.371614-2-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20250317083213.371614-2-tommaso.merciai.xr@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 17 Mar 2025 11:08:19 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
+X-Gm-Features: AQ5f1JpGenG55qVJIf1KTw9AQgufZanrRWkQNAtQMcFuCWyLnmEnMBpT-qpGwzw
+Message-ID: <CAMuHMdV4SyviVU0+WhgFD_vCO43BQ31tx8az-JihWDAB9EJS+g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: renesas: Fix description section
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, Pavel Machek <pavel@denx.de>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Tommaso,
 
+On Mon, 17 Mar 2025 at 09:32, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> Remove not needed "and" into description section.
+>
+> Reported-by: Pavel Machek <pavel@denx.de>
+> Closes: https://lore.kernel.org/cip-dev/Z9P%2F51qOlq2B46FK@duo.ucw.cz/
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-On March 17, 2025 10:17:46 AM GMT+01:00, Krzysztof Kozlowski <krzk@kernel=
-=2Eorg> wrote:
->On Sat, Mar 15, 2025 at 03:57:35PM +0100, Barnab=C3=A1s Cz=C3=A9m=C3=A1n =
-wrote:
->> Add device tree bindings for the global clock controller on Qualcomm
->> MSM8937 platform=2E
->>=20
->> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas=2Eczeman@mainli=
-ning=2Eorg>
->> ---
->>  =2E=2E=2E/bindings/clock/qcom,gcc-msm8937=2Eyaml           | 75 ++++++=
-++++++++++++++++
->>  include/dt-bindings/clock/qcom,gcc-msm8917=2Eh       | 17 +++++
->>  2 files changed, 92 insertions(+)
->>=20
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8937=
-=2Eyaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8937=2Eyaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000=2E=2E3c3f6756048e195671f=
-542b3a6cd09057558eafa
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8937=2Eyaml
->> @@ -0,0 +1,75 @@
->> +# SPDX-License-Identifier: (GPL-2=2E0-only OR BSD-2-Clause)
->> +%YAML 1=2E2
->> +---
->> +$id: http://devicetree=2Eorg/schemas/clock/qcom,gcc-msm8937=2Eyaml#
->> +$schema: http://devicetree=2Eorg/meta-schemas/core=2Eyaml#
->> +
->> +title: Qualcomm Global Clock & Reset Controller on MSM8937
->> +
->> +maintainers:
->> +  - Barnabas Czeman <barnabas=2Eczeman@mainlining=2Eorg>
->> +
->> +description: |
->> +  Qualcomm global clock control module provides the clocks, resets and=
- power
->> +  domains on MSM8937=2E
+Thanks for your patch!
+
+> --- a/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+> @@ -12,7 +12,7 @@ maintainers:
+>  description:
+>    On Renesas RZ/{G3E,V2H(P)} SoCs, the CPG (Clock Pulse Generator) handles
+>    generation and control of clock signals for the IP modules, generation and
+> -  control of resets, and control over booting, low power consumption and power
+> +  control of resets, control over booting, low power consumption and power
+>    supply domains.
 >
->This is exactly like msm8953, so why it cannot be there?
->
-Not exactly clock names are different, msm8953 have sleep msm8937 have sle=
-ep_clk=2E
->> +
->> +  See also::
->> +    include/dt-bindings/clock/qcom,gcc-msm8917=2Eh
->
->typo, 8937
->
-No
->> +
->> +properties:
->> +  compatible:
->> +    const: qcom,gcc-msm8937
->> +
->> +  clocks:
->> +    items:
->> +      - description: XO source
->> +      - description: Sleep clock source
->> +      - description: DSI phy instance 0 dsi clock
->> +      - description: DSI phy instance 0 byte clock
->> +      - description: DSI phy instance 1 dsi clock
->> +      - description: DSI phy instance 1 byte clock
->> +
->> +  clock-names:
->> +    items:
->> +      - const: xo
->> +      - const: sleep_clk
->> +      - const: dsi0pll
->> +      - const: dsi0pllbyte
->> +      - const: dsi1pll
->> +      - const: dsi1pllbyte
->> +
->> +required:
->> +  - compatible
->> +  - clocks
->> +  - clock-names
->> +  - '#power-domain-cells'
->> +
->> +allOf:
->> +  - $ref: qcom,gcc=2Eyaml#
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/qcom,rpmcc=2Eh>
->> +
->> +    clock-controller@1800000 {
->> +      compatible =3D "qcom,gcc-msm8937";
->> +      reg =3D <0x01800000 0x80000>;
->> +      #clock-cells =3D <1>;
->> +      #reset-cells =3D <1>;
->> +      #power-domain-cells =3D <1>;
->> +      clocks =3D <&rpmcc RPM_SMD_XO_CLK_SRC>,
->> +               <&sleep_clk>,
->> +               <&dsi0_phy 1>,
->> +               <&dsi0_phy 0>,
->> +               <&dsi1_phy 1>,
->> +               <&dsi1_phy 0>;
->> +      clock-names =3D "xo",
->> +                    "sleep_clk",
->> +                    "dsi0pll",
->> +                    "dsi0pllbyte",
->> +                    "dsi1pll",
->> +                    "dsi1pllbyte";
->> +    };
->> +=2E=2E=2E
->> diff --git a/include/dt-bindings/clock/qcom,gcc-msm8917=2Eh b/include/d=
-t-bindings/clock/qcom,gcc-msm8917=2Eh
->> index 4b421e7414b50bef2e2400f868ae5b7212a427bb=2E=2Eec1f0b261dd5ccfe489=
-6a00ffa9cf86de98b9cb3 100644
->> --- a/include/dt-bindings/clock/qcom,gcc-msm8917=2Eh
->> +++ b/include/dt-bindings/clock/qcom,gcc-msm8917=2Eh
->> @@ -170,6 +170,22 @@
->>  #define VFE1_CLK_SRC				163
->>  #define VSYNC_CLK_SRC				164
->>  #define GPLL0_SLEEP_CLK_SRC			165
->> +#define BLSP1_QUP1_I2C_APPS_CLK_SRC		166
->> +#define BLSP1_QUP1_SPI_APPS_CLK_SRC		167
->> +#define BLSP2_QUP4_I2C_APPS_CLK_SRC		168
->> +#define BLSP2_QUP4_SPI_APPS_CLK_SRC		169
->
->Why are you adding bindings to 8917? Nothing in commit msg explains
->that=2E
-Because msm8917 driver was expanded with 8937 bits, i will expand the comm=
-it message=2E
->
->Best regards,
->Krzysztof
->
+>  properties:
+
+I think the original is fine.  When emphasizing the structure:
+
+    The CPG handles:
+      A. generation and control of clock signals for the IP modules,
+      B. generation and control of resets, and
+      C. control over booting, low power consumption and power supply domains.
+
+i.e. the "and" is part of the typical "A, B, and C" construct?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
