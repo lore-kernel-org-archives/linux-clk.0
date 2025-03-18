@@ -1,172 +1,232 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405C54C6D;
-	Tue, 18 Mar 2025 06:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CDA7E1;
+	Tue, 18 Mar 2025 07:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742279637; cv=none; b=QCKHwSp2aAncObXIMro+UZ6jtVw6fbAZXAREVwfuT/4KUcqvRIDx09XByuY3vlMNott4zYpgUiTb+/lJVByDAuLO86OjEKMceeBTUbZhNoPbt1196OdmGEIkXBGMJv8t3Q5TOfU/AmzCTDPZFQyWcxXQyCSPTJm7xhDgOZxoGDA=
+	t=1742282507; cv=none; b=N/DERHf96m4N479dXJ0+Vyz0Ig4OYwsS3ssvsItCXw6ejIpKI3I5bG0bzGmPGhXgObVZn9PDrX3NCt8ePgT/N5STVpFLebdPKrJryvqs9F5zfu7TbIob6AEYwPpKz7DJFKInQZ1F2OQwAgffgPQB+JbR+bNnqDM0RB4HjIPu6Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742279637; c=relaxed/simple;
-	bh=2YLVdjrDzSnHGCr9S9cjxJix9o2Sp6XYctDLThUToCE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FCeOhOLDaPdeLdpAxcalU0/HrxZWDRuQz6sa+d04m/JHH0lUzpME4YTdo7YXB7q2EO1CXUSuznPxskN98viqur5QqGQB500uFHmnEZ+/gKmKQ4HlMiC4OOHDxeZ2OitwXZK4YDGKBbBpO/hk4jUJE+Bf59JQeKGJm7rntAT4w6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G/RSRj6e; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1742282507; c=relaxed/simple;
+	bh=nLiUrkSEAtV4YFJNW+wAuqzsKoD6bIiGGwewymLXb4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cJTtDyK3EL1ExYZ3h3uQC5/V02+xEbq7ZBOZeiPXXjoQpZleBctEGJRpB0zL8ZeBajMMeTQ2yDpJtQte6288U2g8ES3easGobiQC/M44LsXXdFua1ZnKXpNn7AF8buprSp4kt2q4RtTPOLEOLyn9rKtzxW6LPXIbWqA7o1UEB1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HfTMyk4a; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/RSRj6e"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e5dc299dee9so4876543276.3;
-        Mon, 17 Mar 2025 23:33:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742279634; x=1742884434; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jh/c4R4dsLwT0KHsmAXe2nYKu7hkZRhQrjMuRdUu63o=;
-        b=G/RSRj6eT5xatxhUDhGfQ1sYJCXnvyPUABmX2b0ILQO5KhbDNVdALRigLdRbWt/YXD
-         1sK0NoTNMT3zZBKXDNOvtRVKTtmnFfVxBlB6B8mDIYa/4GOyuFIvOSzNzwb9hhLxA0Xr
-         RqDf2WBl8zbPdzfI9lk+UO5/Vqi3NrhrjTN078DDvGWck9JbtoeU1UNk9x0u25fPWho0
-         JpuTuNusRklWALw7KkyhPV7IP6q778YZ6hucV+fo3zPOGWK7PkJ7c8aen1X0hb/0fPkE
-         RzM20jU+GxKMevrecmgkY7hlv0hYZ+jI3mFbLLphSV8hB6nJpEalqlf21xE9z2cQAKRl
-         MujQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742279634; x=1742884434;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jh/c4R4dsLwT0KHsmAXe2nYKu7hkZRhQrjMuRdUu63o=;
-        b=TkYyrfZjzXPGGYqqG+mAVonzTuKqtNlbl/TSuE8DFoLpwEVZsQ06jFinVit846V8rH
-         360vzIKOyv0NsnD4OihfSAm9zMvtgUVnr/eQgDU32vHFbjHuJUzb2qm6uJJM6lPyRFUi
-         F7Tnm7T+Ccn85X6XbtvpUa9GnYixLqgA/UIY//7XsOb2AISEsHLinCCrKSVtYP2lI6KK
-         nmjaCcmBT1GGYpEGi3RNZ93wDAaB6ywFR0qfYc57d4Lst26fQ+SBZ64r7bgyfIivIUBO
-         IDanhcN0BZjkkCWQ8Tqcy7Zr40Tvl3yMnLdbkegCsU1Ynf+wQgpOHy2BOrMbd/5fprzq
-         Lg7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVGjU8+qCJNj1EjXIg6UUGHyNMsV9U49R8xpBecjC1GuijfB+YurSf04sn7252QLIWw11ytoDtdaLOfrefc@vger.kernel.org, AJvYcCVusxV006q58+uaH9dnLukO4ru1DZAj0tYwL6eKfN2YWv7kja59t2y6uMuv8CwDqSp84GqLFZLDhz4A@vger.kernel.org, AJvYcCX5tb5npgsUmvlQcng+1bLGhZvzqSWOlEOcIPIsdKBQeEhzVWRKC+Wp8t/rhraeWlL5FCYTQ3/jKtnA@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm/cP17u+ggY+lr/m/hzxfUhfUz0KUg4h3+ODEwQxBkljcoCKO
-	KmLEMjp8QyK+RPyvYe5KCRI/1vAmXVFcwAviXW116vwkbT7dl07gVc5s866tNXT2saciZGkEGBC
-	vJXJGaRDNDY7NKs2uVGm3OBdwc4k=
-X-Gm-Gg: ASbGnctf9BFYw2YsuL0cL4N+zQoGRpTovNIaTsWt4dXQRjnMrmFTsu45eJckTit7Z00
-	c/Ykdb81CbGnDi2y+WgQ10LmDLDKi5kVqo+JXrjMLY0p6HBHWwTLHPfQnYnOAjxXTbFXZP78ZhV
-	tEk6BMJdEsVbD09gJmqnlBA9wSNRc=
-X-Google-Smtp-Source: AGHT+IELSIn5/BuHvlZqcoULDSggaDltMS8PE14gaoXkQgvkbGeEGMS2YRahcu5an6hVdQQfVhHyYYKUOx5w2IzK28E=
-X-Received: by 2002:a05:6902:118f:b0:e5e:14d4:e63d with SMTP id
- 3f1490d57ef6-e64af0eb437mr3891751276.9.1742279634060; Mon, 17 Mar 2025
- 23:33:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HfTMyk4a"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52HLpQsp026106;
+	Tue, 18 Mar 2025 07:21:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Li0MNn7ZrEOOD0vThX+KqWitMZLUv/ZYpvkQwGchqQE=; b=HfTMyk4aNUMqCD3Z
+	wGqkrBsuw0DMj/7/zUZgN0FHZvJb6JH+ZFCPHH3BkyVpK8k2lhCzcL9yCFIVL4Cp
+	ds0od3pkVgpc8GzYeeSphAJV6YmB20lhRXO2hx7OvImqH1GeVDJ1gdEcIOu0QajO
+	PsnAhA5Zlw9Umk759dbzEWQBM0N+UD6SanqPD4r2dNX+myybIPbMO5RzazeXDhoW
+	tMoWSb+7Hq/CGxhNkVN6VqUSutIefenkdxEM8mmI2TToYxGk8689PljMD4PYZITy
+	IoBL4G+muf4APhFg4ZFdjSUROCfMKjbmjTDPyfWWPaC9r9nmit9BnQn3LMyozs+L
+	NcCeZA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45d1x7y8wf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 07:21:40 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52I7Ldh9025028
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Mar 2025 07:21:39 GMT
+Received: from [10.204.100.69] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Mar
+ 2025 00:21:36 -0700
+Message-ID: <120b4f09-9145-b9c5-14b9-927086d44e71@quicinc.com>
+Date: Tue, 18 Mar 2025 12:51:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912191038.981105-1-tmaimon77@gmail.com> <20240912191038.981105-3-tmaimon77@gmail.com>
- <536f5393-478c-4a50-b25f-180e221ef7a3@roeck-us.net> <CAP6Zq1ioebnqgJB1B8AqD9UtMZRy5CDT8+_dXF_aBZEjjj_B-A@mail.gmail.com>
- <9a9de8bd-d864-4e29-89b2-91db8aea8ce5@roeck-us.net>
-In-Reply-To: <9a9de8bd-d864-4e29-89b2-91db8aea8ce5@roeck-us.net>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Tue, 18 Mar 2025 08:33:43 +0200
-X-Gm-Features: AQ5f1JoL-dTyRxBEx8xKcjtrgVDVRemqDFE0mk_w3MNt2XunFXr57UTJfuPgstA
-Message-ID: <CAP6Zq1h2bsODnSR6kiVmtueqbjOtEShu_=EYHtw65SPGaX+bgA@mail.gmail.com>
-Subject: Re: [PATCH v28 2/3] reset: npcm: register npcm8xx clock auxiliary bus device
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, 
-	joel@jms.id.au, venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 1/2] venus: pm_helpers: add compatibility for
+ dev_pm_genpd_set_hwmode on V4
+Content-Language: en-US
+To: Renjiang Han <quic_renjiang@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>
+References: <20250218-switch_gdsc_mode-v4-0-546f6c925ae0@quicinc.com>
+ <20250218-switch_gdsc_mode-v4-1-546f6c925ae0@quicinc.com>
+From: Vikash Garodia <quic_vgarodia@quicinc.com>
+In-Reply-To: <20250218-switch_gdsc_mode-v4-1-546f6c925ae0@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: eyVkrTMd7AIUWpOyAyRF4wfzcW2przSd
+X-Proofpoint-ORIG-GUID: eyVkrTMd7AIUWpOyAyRF4wfzcW2przSd
+X-Authority-Analysis: v=2.4 cv=Jem8rVKV c=1 sm=1 tr=0 ts=67d91f04 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=gF5d3Xu8TQ-Je0CE9tcA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-18_03,2025-03-17_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 malwarescore=0 adultscore=0
+ phishscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503180051
 
-Hi Guenter,
 
-Thanks a lot for your recommendations and sorry for the inconvenience.
+On 2/18/2025 4:03 PM, Renjiang Han wrote:
+> There are two ways to switch GDSC mode. One is to write the POWER_CONTROL
+> register and the other is to use dev_pm_genpd_set_hwmode(). However, they
+> rely on different clock driver flags. dev_pm_genpd_set_hwmode() depends on
+> the HW_CTRL_TRIGGER flag and POWER_CONTROL register depends on the HW_CTRL
+> flag.
+> 
+> By default, the dev_pm_genpd_set_hwmode() is used to switch the GDSC mode.
+> If it fails and dev_pm_genpd_set_hwmode() returns -EOPNOTSUPP, it means
+> that the clock driver uses the HW_CTRL flag. At this time, the GDSC mode
+> is switched to write the POWER_CONTROL register.
+> 
+> Clock driver is using HW_CTRL_TRIGGER flag with V6. So hwmode_dev is
+> always true on using V6 platform. Conversely, if hwmode_dev is false, this
+> platform must be not using V6. Therefore, replace IS_V6 in poweroff_coreid
+> with hwmode_dev. Also, with HW_CTRL_TRIGGER flag, the vcodec gdsc gets
+> enabled in SW mode by default. Therefore, before disabling the GDSC, GDSC
+> should be switched to SW mode so that GDSC gets enabled in SW mode in the
+> next enable.
+> 
+> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/venus/core.h       |  2 ++
+>  drivers/media/platform/qcom/venus/pm_helpers.c | 38 ++++++++++++++------------
+>  2 files changed, 23 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> index 43532543292280be15adf688fc0c30f44e207c7f..0ccce89d3f54cf685ecce5b339a51e44f6ea3704 100644
+> --- a/drivers/media/platform/qcom/venus/core.h
+> +++ b/drivers/media/platform/qcom/venus/core.h
+> @@ -168,6 +168,7 @@ struct venus_format {
+>   * @root:	debugfs root directory
+>   * @venus_ver:	the venus firmware version
+>   * @dump_core:	a flag indicating that a core dump is required
+> + * @hwmode_dev:	a flag indicating that HW_CTRL_TRIGGER is used in clock driver
+>   */
+>  struct venus_core {
+>  	void __iomem *base;
+> @@ -230,6 +231,7 @@ struct venus_core {
+>  		u32 rev;
+>  	} venus_ver;
+>  	unsigned long dump_core;
+> +	bool hwmode_dev;
+>  };
+>  
+>  struct vdec_controls {
+> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
+> index 33a5a659c0ada0ca97eebb5522c5f349f95c49c7..409aa9bd0b5d099c993eedb03177ec5ed918b4a0 100644
+> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
+> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
+> @@ -412,9 +412,17 @@ static int vcodec_control_v4(struct venus_core *core, u32 coreid, bool enable)
+>  	u32 val;
+>  	int ret;
+>  
+> -	if (IS_V6(core))
+> -		return dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid], !enable);
+> -	else if (coreid == VIDC_CORE_ID_1) {
+> +	ret = dev_pm_genpd_set_hwmode(core->pmdomains->pd_devs[coreid], !enable);
+> +	if (ret == -EOPNOTSUPP) {
+> +		core->hwmode_dev = false;
+> +		goto legacy;
+> +	}
+> +
+> +	core->hwmode_dev = true;
+> +	return ret;
+> +
+> +legacy:
+> +	if (coreid == VIDC_CORE_ID_1) {
+>  		ctrl = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_CONTROL;
+>  		stat = core->wrapper_base + WRAPPER_VCODEC0_MMCC_POWER_STATUS;
+>  	} else {
+> @@ -450,7 +458,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
+>  
+>  		vcodec_clks_disable(core, core->vcodec0_clks);
+>  
+> -		if (!IS_V6(core)) {
+> +		if (!core->hwmode_dev) {
+>  			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
+>  			if (ret)
+>  				return ret;
+> @@ -468,7 +476,7 @@ static int poweroff_coreid(struct venus_core *core, unsigned int coreid_mask)
+>  
+>  		vcodec_clks_disable(core, core->vcodec1_clks);
+>  
+> -		if (!IS_V6(core)) {
+> +		if (!core->hwmode_dev) {
+>  			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
+>  			if (ret)
+>  				return ret;
+> @@ -491,11 +499,9 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
+>  		if (ret < 0)
+>  			return ret;
+>  
+> -		if (!IS_V6(core)) {
+> -			ret = vcodec_control_v4(core, VIDC_CORE_ID_1, true);
+> -			if (ret)
+> -				return ret;
+> -		}
+> +		ret = vcodec_control_v4(core, VIDC_CORE_ID_1, true);
+> +		if (ret)
+> +			return ret;
+>  
+>  		ret = vcodec_clks_enable(core, core->vcodec0_clks);
+>  		if (ret)
+> @@ -511,11 +517,9 @@ static int poweron_coreid(struct venus_core *core, unsigned int coreid_mask)
+>  		if (ret < 0)
+>  			return ret;
+>  
+> -		if (!IS_V6(core)) {
+> -			ret = vcodec_control_v4(core, VIDC_CORE_ID_2, true);
+> -			if (ret)
+> -				return ret;
+> -		}
+> +		ret = vcodec_control_v4(core, VIDC_CORE_ID_2, true);
+> +		if (ret)
+> +			return ret;
+>  
+>  		ret = vcodec_clks_enable(core, core->vcodec1_clks);
+>  		if (ret)
+> @@ -811,7 +815,7 @@ static int vdec_power_v4(struct device *dev, int on)
+>  	else
+>  		vcodec_clks_disable(core, core->vcodec0_clks);
+>  
+> -	vcodec_control_v4(core, VIDC_CORE_ID_1, false);
+> +	ret = vcodec_control_v4(core, VIDC_CORE_ID_1, false);
+>  
+>  	return ret;
+>  }
+> @@ -856,7 +860,7 @@ static int venc_power_v4(struct device *dev, int on)
+>  	else
+>  		vcodec_clks_disable(core, core->vcodec1_clks);
+>  
+> -	vcodec_control_v4(core, VIDC_CORE_ID_2, false);
+> +	ret = vcodec_control_v4(core, VIDC_CORE_ID_2, false);
+>  
+>  	return ret;
+>  }
 
-We will fix the device tree and send the patch soon.
-
-Best regards,
-
-Tomer
-
-On Mon, 17 Mar 2025 at 16:09, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> Hi Tomer,
->
-> On 3/17/25 03:39, Tomer Maimon wrote:
-> > Hi Guenter,
-> >
-> > Yes, of course, it works in real hardware.
-> > The modification was made since the reset and clock share the same
-> > register memory region.
-> >
-> > To enable the clock change needs to be done in the device tree as
-> > follows (we are planning to send these change patches soon):
-> >
-> > diff -Naur a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> > b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> > --- a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> > 2025-02-26 16:20:39.000000000 +0200
-> > +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
-> > 2025-03-17 12:29:17.876551537 +0200
-> > @@ -47,19 +47,16 @@
-> >                  interrupt-parent = <&gic>;
-> >                  ranges;
-> >
-> > -               rstc: reset-controller@f0801000 {
-> > +               clk: rstc: reset-controller@f0801000 {
-> >                          compatible = "nuvoton,npcm845-reset";
-> > -                       reg = <0x0 0xf0801000 0x0 0x78>;
-> > -                       #reset-cells = <2>;
-> > +                       reg = <0x0 0xf0801000 0x0 0xC4>;
-> >                          nuvoton,sysgcr = <&gcr>;
-> > -               };
-> > -
-> > -               clk: clock-controller@f0801000 {
-> > -                       compatible = "nuvoton,npcm845-clk";
-> > +                       #reset-cells = <2>;
-> > +                       clocks = <&refclk>;
-> >                          #clock-cells = <1>;
-> > -                       reg = <0x0 0xf0801000 0x0 0x1000>;
-> >                  };
-> >
-> > +
-> >                  apb {
-> >                          #address-cells = <1>;
-> >                          #size-cells = <1>;
-> > diff -Naur a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
-> > b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
-> > --- a/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
-> > 2025-02-26 16:20:39.000000000 +0200
-> > +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dts
-> > 2025-03-17 12:24:52.293171764 +0200
-> > @@ -19,6 +19,13 @@
-> >          memory@0 {
-> >                  reg = <0x0 0x0 0x0 0x40000000>;
-> >          };
-> > +
-> > +       refclk: refclk-25mhz {
-> > +               compatible = "fixed-clock";
-> > +               clock-output-names = "ref";
-> > +               clock-frequency = <25000000>;
-> > +               #clock-cells = <0>;
-> > +       };
-> >   };
-> >
-> >   &serial0 {
-> >
-> > Is it better to modify the reset driver with your suggestion or change
-> > the device tree?
-> >
->
-> My assumption was that the devicetree file is correct, and that it would match
-> the devicetree file in the actual devices. I since noticed that the file is
-> widely incomplete when comparing it with the various downstream versions,
-> so that was obviously wrong. Also, my change seemed odd, but then I did
-> not know how such situations are supposed to be handled.
->
-> Also, it looks like the devicetree file needs to be changed anyway unless something
-> else is wrong, because booting Linux still stalls later. Presumably that is because
-> the reference clock is missing in the upstream devicetree file (the serial port clock
-> frequency is reported as 0). Given this, fixing the devicetree files seems to be the
-> way to go.
->
-> Thanks,
-> Guenter
->
+Reviewed-by: Vikash Garodia <quic_vgarodia@quicinc.com>
