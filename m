@@ -1,99 +1,93 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D29B1F3B85
-	for <linux-clk@vger.kernel.org>; Tue, 18 Mar 2025 11:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DA620B1FE;
+	Tue, 18 Mar 2025 11:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742295844; cv=none; b=QNv8EP66mKI2VR8TXSfkspLKz2Srfh4U78UkLA8yj9PXZV3zZsrG+6hauFrcjyhUG9wvhwqN+5tDFDWA4sKi7Cwzc/PQCj58Ue0NVHLpyAuw6Qdwt4JpQdTqeDbaqesAJLOzk/x1PwODFT2WmpWr5jBo6hTYW7Fdm0doGeweric=
+	t=1742297469; cv=none; b=dCzi95LZHSLqWG28/KJhy7qjwD4PKu4M7KOKelvPq0myjGFO0QD0QWsegA1DexCB3T6N2Lc4dJDOvrKXApMRwL+b8hPSaLdoglkwY0xulp5MwHgvKAqzJLPTIkW1id+RKtiR/boKetKb4xk4eFuQy4iGQkUgsG63rIklemBdUes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742295844; c=relaxed/simple;
-	bh=4v+Fsi08Fwv3zu1k13Ka+W1n8gTUPuWDc5vnbr4NK+k=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n3oWMGlFvw4JnDIn/e9ZWlSTitnnAIWaPCtod07TpksASmXp6JIvRM6D/gxQJ8s+3Is6tKEore3ZTvJZVWB9NhxafWeSZjS4uRT22Tfl96ZAwyAUo7QRTMaH8zCtbT6hwPIKjnTmr+8UbAyzcv2jNI5tuPrs7jweOaI0fct1jjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KCHl1uMi; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1742297469; c=relaxed/simple;
+	bh=kxndd+gmt8x5LRoL0YBDmYnHkE5/msuSYIUck6xVs8w=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HBVOe/A+rMnZOigEFOq/PXyWADg1LC8XyZJmtVJk/97OT2rZEVUKZKAAiHmsPF6dT1Rf6D1U83zg8L+naUYpV1hplu4SuiO1XvsEL+3c9SV3OML/tysClWeWwQ4k4cY6PaLNvOZhfBZnWntE28aKqB7rt0mIOXrqf1PO6OcSkEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dxctdvia; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KCHl1uMi"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac298c8fa50so1021269966b.1
-        for <linux-clk@vger.kernel.org>; Tue, 18 Mar 2025 04:04:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dxctdvia"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso33685215e9.1;
+        Tue, 18 Mar 2025 04:31:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742295840; x=1742900640; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=is8WhR9m8WQE+4k9i/DT+FdMHQKk7RaZk/UQmejRp3g=;
-        b=KCHl1uMi40c8cwKLuGWZ5TZVwXh8ppfgC3SmGQWDrjap53sf3ZBnVC7f9rd8KPckIC
-         VXg/JL7lXs/3ABH+E+t5ZkN9vwCq/lAmp7CJnRfLWws2n9Ud49DkDEmn/tghKpc2pEc4
-         WFdgcMO1JBzddJVqsFNKpmvNhqpY1YmzN3gbs76ZujwSGV6/4E9omSKS0/svpJhjygxd
-         t/YUmPNytteNxWUN9GPBg5nzRkL+xemTGfjUvR/lUgMMnwCHpVciN6xSmNJOApA5FGp3
-         CzykRdcrEFeBMsPjjsGlYwLC3/KjJgQ/ho+hYdT86w/CWynWved48KD0lrsXDibYWvu4
-         9siQ==
+        d=gmail.com; s=20230601; t=1742297466; x=1742902266; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=oeWK8KnE02poaU2apmgZYe7NYIk2mK6ZRM9x7EecA0A=;
+        b=DxctdviapLtKOOdP9WKNGbFyejFU8zj4Sn0zxgIJindQ5N+5RbpTfcrAs/IXlHbQGU
+         Zg1Nh59UzIQUG6j7L8WGeHm7AqDbCcFT3nzyk2csme1De8Hqvw5Lujd4cX8Rc0GUOflC
+         xatTKIto9ZNMU96haoolJ6QWAr0u4tqWRwG4+2eBMEv5+y3Q9KolfXn9tFZ8qA5KZytp
+         q3+GoYdBxG5FklDUI2eY/lULKvgoazNri5nCtYOScrjxDQXRGblNv/0MTo4KjOHoNzFC
+         pJOby53NmJTPqJtANBjGAltyEMlxchczOJSv1m4smjdsAxhzydHw/rk8YRKd+WwUM4zC
+         eP+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742295840; x=1742900640;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1742297466; x=1742902266;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=is8WhR9m8WQE+4k9i/DT+FdMHQKk7RaZk/UQmejRp3g=;
-        b=xDcHha0aw7HCk6ZIpBE6g5nstfh12Tbv8q7saOV4z3Eej2heahSJsFJBvVux38MGAf
-         daMekeYe00x5UrTHruc6dHvVbQRsuW17LshPCzgSk9KIEXzZnHgYISIUFsg5KG5FH4TS
-         Sys/zf6rqxl1BDcWi8mvJ20EQ/UiROo6suXw0xJjFXTAY1JrmOPFM7J2JgsJJLFsn5Zw
-         e8ghOc5rWpXK8/jKaq2HM+STh9+zunl78beQjpNV829DIqmVO9ZvuzibioD7agU2+z1G
-         WK0WjjtMKiWxxH88kxGWMdbDMLTSOR+IswINNJg3L3l9Jmj17sUqiCc0T+g2KYSCWqTK
-         I3nA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqKB9ApKjCYhoLGfq+iw5/BroH6w2NcEH3048b3BMMWkPS1dCXOSbmvJV6OvtKGXAH1COlJNH2j0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Kr0aYulNAwL7Wdx3Ru3OD6iJGXDmfjhPKgy01/sSuOMvO13K
-	R1H4LAjPvRkiGOuAmF9V40Sv68BcJimSklYh4ofMbvWPuaiU+8WTUIyawcyo03c=
-X-Gm-Gg: ASbGncs02a4O1ZEC2ctb+oD/lrI6b9Wk1RFEgjKzL+harCYN+AIcZ3TW/eWrGzMTJ++
-	DoTSVW3MO71wbVNP3zRN57mdTtpC08SzpG7GbYbJ1PAjCbEhdLI3yzBaeTOM3QIUOVoQTzG2x3y
-	IfV5f6QLFSQl55VyzBxghrDAbQfK05K79Vj1cwQ9KE35L4lsHp1EMewWFNyY76IyJUCbMnQJznD
-	xdGm8uFgFgGumbQcBoe9e7sBHGlJ0khDVyL4oawCINLiJdMQBtl//+opjwWFwloGZGy3cOvdI6j
-	vAxhVkow/hKuMebsxrUurcjQmdt6eSPpONR1mC315ipXtNNnQBrToxJU+VJhDc6B5qWkar5XAGl
-	B5sqFgVjYydyvjJ4=
-X-Google-Smtp-Source: AGHT+IHSFIas9nSr0GTvP8XDNoyPypRdkL0u01Zf6bNvQk2jQCXUoByUBqIy6f605R78yLU5u1JN+Q==
-X-Received: by 2002:a17:907:3e0d:b0:ac1:de84:dec0 with SMTP id a640c23a62f3a-ac3302d3694mr1426644966b.26.1742295840401;
-        Tue, 18 Mar 2025 04:04:00 -0700 (PDT)
-Received: from localhost (host-80-117-53-131.retail.telecomitalia.it. [80.117.53.131])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aea4csm828388566b.33.2025.03.18.04.03.59
+        bh=oeWK8KnE02poaU2apmgZYe7NYIk2mK6ZRM9x7EecA0A=;
+        b=TuiMaxQmoupfnxJQTugCC5D3+V7ieKOQDmh3umhZuij4sxBnRfYArWe6+tl9jPASNB
+         kAUP5Cm757qJ30XWl3k/o5qqlkBNKOy90/chEZQds0y45jpy+1ibZ/WMCz6Z61XU1vPh
+         SeqOcdKsl/wjAXHpcuswGqWPeIyA//yBmHLS828K3tIbXusyrasrJEPlCB+GHGiAy9Ab
+         uj0r0TAiC96w23lOssB6KuBsPCPp529g+ILlo0RXaeuBQTFpQ9hSXua7RMwGlBLXO8AM
+         /Qer6cnAb7+xzw5wLZJWO3hppN4xmkraKrLY0TdO4QrpQkp0fej1FQS29tdr0AJsm/eA
+         OsPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVen/nmAXAUhdW+t53y9HFYcaL0j+t7CdLGRp166OSS9UofAUZQSsvK14Hwe/sAIbDWH0pd6UnXP3tJ@vger.kernel.org, AJvYcCVl8dahB6SG02KE4HO5lrPdsFdcPLrazbx2Dkn9FYer1T/8zDpEzuU/7ZVp7Zk8LY45wnXUpNMsm4jvkxTu@vger.kernel.org, AJvYcCWZjje2qsmBLCh1Z8SSuEZqilwBIiTwV/49NZMAEOBMbQDg6VYoiZvjxkdh5PPz6+qGI36CKYZbRr4X@vger.kernel.org, AJvYcCXV/cBr9F4KYPCDDeizW294PJPElCtHwB/Gic9iFqsQWj3z9RTYBkkd6Hkbfh26RfMcmFJr+tmhH2/+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw87Iemf0/PUvUT+W5si0RZrsDtLzZtoif59MRYVg32KuvbFLOP
+	PnX3nA/HWZYOK4AVDiRxwdtctgZ4ZQlJhmKWRL5LESZFJVxWebD9
+X-Gm-Gg: ASbGncv6ozNEVyRgSKxtGtt8SrdsPRo+r0dCy3q8u17E4je7YfLXwUb6wSU5Ym9I9hs
+	QwevAeATG286EpUST12tMVjOy5BMzOYVL9UeVuvXbauGkeAcKdS3n1IqpZYrcknew/ORSNow7bu
+	ftL43spUiPpScEcoE8tJE3a2nGe/EPZOLE/5bik2cdk1v0RiqtUoBB8TgU9Z1wiA7ZP9l9eRUG8
+	BHwhjBYWkgJYq1inyJJcuw4KIHEO1FF7U6tuCktTB2WU6vcT1oJxGXWke4BrqCistaxC80y7W7+
+	uDUPPkcqk8D/iqkqCFKO6v0IqrW6BwakoZWgvdpiIcKFONkf4E2066spgg//WZRC3wC+hj9hymF
+	h
+X-Google-Smtp-Source: AGHT+IFpi+zFuJ8XXOnGn4TOSQKOE+/3yFEH37sz6LbTqTOZGYuC+54cInlqBrHl+fxwxahe/rNImA==
+X-Received: by 2002:a5d:47c9:0:b0:390:e311:a8c7 with SMTP id ffacd0b85a97d-3971cd57eb0mr15913025f8f.5.1742297465853;
+        Tue, 18 Mar 2025 04:31:05 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8881187sm17594872f8f.41.2025.03.18.04.31.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 04:03:59 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 18 Mar 2025 12:05:12 +0100
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Stefan Wahren <wahrenst@gmx.net>,
-	Michael Turquette <mturquette@baylibre.com>,
+        Tue, 18 Mar 2025 04:31:05 -0700 (PDT)
+Message-ID: <67d95979.050a0220.166852.25e6@mx.google.com>
+X-Google-Original-Message-ID: <Z9lZdFMUpqWwpsA2@Ansuel-XPS.>
+Date: Tue, 18 Mar 2025 12:31:00 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v7 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <Z9lTaKsbLND4i3Ir@apocalypse>
-References: <cover.1738963156.git.andrea.porta@suse.com>
- <d1362766e3e966f78591129de918046a4b892c18.1738963156.git.andrea.porta@suse.com>
- <87525350-b432-40b3-927c-60cd74228ea4@gmx.net>
- <Z7dnnW4npJmfOVE0@apocalypse>
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Guo Ren <guoren@kernel.org>, Yangyu Chen <cyy@cyyself.name>,
+	Ben Hutchings <ben@decadent.org.uk>, Felix Fietkau <nbd@nbd.name>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org, linux-mediatek@lists.infradead.org,
+	linux-usb@vger.kernel.org, upstream@airoha.com
+Subject: Re: [PATCH 09/13] dt-bindings: phy: Add documentation for Airoha
+ AN7581 USB PHY
+References: <20250309132959.19045-1-ansuelsmth@gmail.com>
+ <20250309132959.19045-10-ansuelsmth@gmail.com>
+ <4f16d239-f540-45d5-b67a-767b09f1c70c@kernel.org>
+ <67d0862f.df0a0220.375bd.6b15@mx.google.com>
+ <4a9ac302-dfbe-4d76-a634-a445957c313c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -102,36 +96,81 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7dnnW4npJmfOVE0@apocalypse>
+In-Reply-To: <4a9ac302-dfbe-4d76-a634-a445957c313c@kernel.org>
 
-Hi Stefan,
-
-On 18:34 Thu 20 Feb     , Andrea della Porta wrote:
-> Hi Stefan,
-> 
-> On 15:21 Sat 08 Feb     , Stefan Wahren wrote:
-> > Hi Andrea,
+On Sun, Mar 16, 2025 at 06:01:02PM +0100, Krzysztof Kozlowski wrote:
+> On 11/03/2025 19:51, Christian Marangi wrote:
+> >>
+> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
+> >>> +    enum: [0, 1]
+> >>
+> >> I don't understand why do you need index property here (which are
+> >> usually not allowed).
+> >>
 > > 
-> > Am 07.02.25 um 22:31 schrieb Andrea della Porta:
-> > > +		msix_cfg_set(rp1, hwirq, MSIX_CFG_IACK_EN);
-> > > +		rp1->level_triggered_irq[hwirq] = true;
-> > > +	break;
-> > > +	case IRQ_TYPE_EDGE_RISING:
-> > > +		msix_cfg_clr(rp1, hwirq, MSIX_CFG_IACK_EN);
-> > > +		rp1->level_triggered_irq[hwirq] = false;
-> > > +		break;
-> > > +	default:
-> > > +		return -EINVAL;
-> > It would be nice to document why only IRQ_TYPE_LEVEL_HIGH and
-> > IRQ_TYPE_EDGE_RISING are supported. In case it's a software limitation,
-> > this function would be a good place. In case this is a hardware
-> > limitation this should be in the binding.
+> > Eh... As said in the description this is really to differentiate the 2
+> > different physical port...
+> > 
+> > Each port have a dedicated oscillator for calibration and these
+> > calibration are identified by an offset (all placed one after another in
+> > a separate register space).
 > 
-> All ints are level-triggered. I guess I should add a short comment in
-> the bindings.
+> So different oscillators? Then describe the oscillator and its differences.
 > 
+> Different programing model? Different compatible.
+> 
+> Other difference? Depending what is the difference.
+> 
+> But there is no such thing as "different port ID" based on your
+> description above. You just claimed that they are different, but you do
+> not put that difference to hardware description. Instead you encode that
+> difference in the drivers and it should be opposite. The DTS, so the
+> hardware description, should tell you the difference. And I am sorry,
+> but in 99% of cases "I am the first phy" and "I am the second" is not
+> the actual difference we are interested in.
+>
 
-Quick errata: s/level-triggered/active high/
+Ok to make it as clear as possible. (hope I don't contraddict with the
+previous statement) (actually yes the "separate register space statement
+was wrong and sorry for the confusion")
 
-Thanks,
-Andrea
+- 2 USB port
+- USB 2.0 needs to be calibrated with an oscillator
+- Each USB port have his own dedicated oscillator somewhere in the HW
+- Each USB port have at the same offset a register to SELECT the
+  oscillator. This register refer to the same oscillator selection in
+  the HW.
+  
+  Example:
+  reg 0x1fac0100 MASK 27:26 can be set to source out of oscillator 0,1,2
+  reg 0x1fae0100 MASK 27:26 can be set to source out of oscillator 0,1,2
+
+  Both register refer to the same oscillators in hardware (hence each
+  port should select the correct one)
+  Selecting oscillator 0 for both USB port is problematic.
+
+With this in mind is it ok if I describe this with something like
+
+airoha,usb2-monitor-clk-sel = <AIROHA_USB2_MONCLK_SEL0>;
+
+and some dt-bindings include
+
+#define AIROHA_USB2_MONCLK_SEL0 0
+#define AIROHA_USB2_MONCLK_SEL1 1
+#define AIROHA_USB2_MONCLK_SEL2 2
+#define AIROHA_USB2_MONCLK_SEL3 3
+
+Or an enum of string like "osc0", "osc1", "osc2"...?
+
+> > 
+> > Oscillator 0 for physical port 0
+> > Oscillator 1 for physcial port 1
+> > 
+> > And model this is a bit problematic without an additional property, any
+> > hint for this?
+> > 
+> Best regards,
+> Krzysztof
+
+-- 
+	Ansuel
