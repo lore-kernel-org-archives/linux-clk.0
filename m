@@ -1,176 +1,107 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DA620B1FE;
-	Tue, 18 Mar 2025 11:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578771EF377;
+	Tue, 18 Mar 2025 13:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297469; cv=none; b=dCzi95LZHSLqWG28/KJhy7qjwD4PKu4M7KOKelvPq0myjGFO0QD0QWsegA1DexCB3T6N2Lc4dJDOvrKXApMRwL+b8hPSaLdoglkwY0xulp5MwHgvKAqzJLPTIkW1id+RKtiR/boKetKb4xk4eFuQy4iGQkUgsG63rIklemBdUes=
+	t=1742304748; cv=none; b=sJ7vyeO4H8CG5u2fRVcMPkCC14bs23ChHlxOu/y6o2iE05E/WlsocvLWzVJXCnILPJwSQWfbFwuP6/Zgm7dBeTzvixS/HVFNZA0CrbDC6xTbEbgh+1wTYkm/6iLhmJ+0rEWRRED5Vb67ZS3wuizDuOEbx6rri6RcrRo9iZehzSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297469; c=relaxed/simple;
-	bh=kxndd+gmt8x5LRoL0YBDmYnHkE5/msuSYIUck6xVs8w=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBVOe/A+rMnZOigEFOq/PXyWADg1LC8XyZJmtVJk/97OT2rZEVUKZKAAiHmsPF6dT1Rf6D1U83zg8L+naUYpV1hplu4SuiO1XvsEL+3c9SV3OML/tysClWeWwQ4k4cY6PaLNvOZhfBZnWntE28aKqB7rt0mIOXrqf1PO6OcSkEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dxctdvia; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1742304748; c=relaxed/simple;
+	bh=gMgxgRbslohhsFZuyb8dMe+FIib4ebd/RyPojhyt6Ig=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Se0OSrQwg898OehHrYu5T7EmlOLFD6XyWmvFjEMa+6EBkcBpKzzzcugep5LPJ5mSvIfd1k/2fsTK0TkUH3t8JjUbgWrrA9Cf2Jv7lVDeMeAJ7n09Tdsk5wMpL+suzw1iH3zsvhd+BA0h9kL14dHgYW1qzu153iGJSL0RFE75nRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mnajrIG2; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dxctdvia"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso33685215e9.1;
-        Tue, 18 Mar 2025 04:31:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mnajrIG2"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22622ddcc35so40696115ad.2;
+        Tue, 18 Mar 2025 06:32:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742297466; x=1742902266; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=oeWK8KnE02poaU2apmgZYe7NYIk2mK6ZRM9x7EecA0A=;
-        b=DxctdviapLtKOOdP9WKNGbFyejFU8zj4Sn0zxgIJindQ5N+5RbpTfcrAs/IXlHbQGU
-         Zg1Nh59UzIQUG6j7L8WGeHm7AqDbCcFT3nzyk2csme1De8Hqvw5Lujd4cX8Rc0GUOflC
-         xatTKIto9ZNMU96haoolJ6QWAr0u4tqWRwG4+2eBMEv5+y3Q9KolfXn9tFZ8qA5KZytp
-         q3+GoYdBxG5FklDUI2eY/lULKvgoazNri5nCtYOScrjxDQXRGblNv/0MTo4KjOHoNzFC
-         pJOby53NmJTPqJtANBjGAltyEMlxchczOJSv1m4smjdsAxhzydHw/rk8YRKd+WwUM4zC
-         eP+Q==
+        d=gmail.com; s=20230601; t=1742304746; x=1742909546; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nt3h3eZFR+eRJEk19j/lLIhgGCCFMxAIOUPYw3t5xUs=;
+        b=mnajrIG29ZbAQlxxMJKQbQ6se6bZOKovH43YUx7L+93oyF6+EhRYanR6+wfQ/+vwbT
+         zqxuefS0Q2gkKbzLWp3oHFPP3a6EX7ZPOTqfWF8AnyaV1li8DwWDyKpTgKLuAaQ/q1M4
+         30NbA+MiPOrLAtPdXW7+4dk+1cbtlVhtQOHkNCoCt8ND7GajN8lZVSmctEGUR9nyeCiv
+         gjDbaOmPNYrZfHw34wQ/LukaI9kD0wvCYPv9FIpmKGx2EcfJj6kMN7RIl+KPEDquWwd9
+         VfYybIn5ecv9vh90eNChyC0NktCIeR4tbyzMfJwsqSzS+PkSnAUBqGHb9v3VI82v6Y8K
+         OIbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742297466; x=1742902266;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oeWK8KnE02poaU2apmgZYe7NYIk2mK6ZRM9x7EecA0A=;
-        b=TuiMaxQmoupfnxJQTugCC5D3+V7ieKOQDmh3umhZuij4sxBnRfYArWe6+tl9jPASNB
-         kAUP5Cm757qJ30XWl3k/o5qqlkBNKOy90/chEZQds0y45jpy+1ibZ/WMCz6Z61XU1vPh
-         SeqOcdKsl/wjAXHpcuswGqWPeIyA//yBmHLS828K3tIbXusyrasrJEPlCB+GHGiAy9Ab
-         uj0r0TAiC96w23lOssB6KuBsPCPp529g+ILlo0RXaeuBQTFpQ9hSXua7RMwGlBLXO8AM
-         /Qer6cnAb7+xzw5wLZJWO3hppN4xmkraKrLY0TdO4QrpQkp0fej1FQS29tdr0AJsm/eA
-         OsPg==
-X-Forwarded-Encrypted: i=1; AJvYcCVen/nmAXAUhdW+t53y9HFYcaL0j+t7CdLGRp166OSS9UofAUZQSsvK14Hwe/sAIbDWH0pd6UnXP3tJ@vger.kernel.org, AJvYcCVl8dahB6SG02KE4HO5lrPdsFdcPLrazbx2Dkn9FYer1T/8zDpEzuU/7ZVp7Zk8LY45wnXUpNMsm4jvkxTu@vger.kernel.org, AJvYcCWZjje2qsmBLCh1Z8SSuEZqilwBIiTwV/49NZMAEOBMbQDg6VYoiZvjxkdh5PPz6+qGI36CKYZbRr4X@vger.kernel.org, AJvYcCXV/cBr9F4KYPCDDeizW294PJPElCtHwB/Gic9iFqsQWj3z9RTYBkkd6Hkbfh26RfMcmFJr+tmhH2/+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw87Iemf0/PUvUT+W5si0RZrsDtLzZtoif59MRYVg32KuvbFLOP
-	PnX3nA/HWZYOK4AVDiRxwdtctgZ4ZQlJhmKWRL5LESZFJVxWebD9
-X-Gm-Gg: ASbGncv6ozNEVyRgSKxtGtt8SrdsPRo+r0dCy3q8u17E4je7YfLXwUb6wSU5Ym9I9hs
-	QwevAeATG286EpUST12tMVjOy5BMzOYVL9UeVuvXbauGkeAcKdS3n1IqpZYrcknew/ORSNow7bu
-	ftL43spUiPpScEcoE8tJE3a2nGe/EPZOLE/5bik2cdk1v0RiqtUoBB8TgU9Z1wiA7ZP9l9eRUG8
-	BHwhjBYWkgJYq1inyJJcuw4KIHEO1FF7U6tuCktTB2WU6vcT1oJxGXWke4BrqCistaxC80y7W7+
-	uDUPPkcqk8D/iqkqCFKO6v0IqrW6BwakoZWgvdpiIcKFONkf4E2066spgg//WZRC3wC+hj9hymF
-	h
-X-Google-Smtp-Source: AGHT+IFpi+zFuJ8XXOnGn4TOSQKOE+/3yFEH37sz6LbTqTOZGYuC+54cInlqBrHl+fxwxahe/rNImA==
-X-Received: by 2002:a5d:47c9:0:b0:390:e311:a8c7 with SMTP id ffacd0b85a97d-3971cd57eb0mr15913025f8f.5.1742297465853;
-        Tue, 18 Mar 2025 04:31:05 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8881187sm17594872f8f.41.2025.03.18.04.31.04
+        d=1e100.net; s=20230601; t=1742304746; x=1742909546;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nt3h3eZFR+eRJEk19j/lLIhgGCCFMxAIOUPYw3t5xUs=;
+        b=VAkygIkxS3y/isCxINfbddKvdAIhDcqpl56jmtJyaNYnp3nqv5aQqFMaXtedEs4ttx
+         UOC5zZP3KPXw3eaTnbHzi56imWMH9Z95CFTCCvvhwVnEtNfUudLmbVU8cu6ASDn3hbO9
+         qMksOybnK1LnR7KkR4QCc/QZQwbOTPBJN+rzmZP1K7n1F2TfmRDNIF9SQUgTlHQPFsZR
+         EsWFAI4H7NQM+b/1Sb/VhQA3CgdzJHZ4/iCMMvm9IeCH88dgUhXk6+68W9nCbpKlN30z
+         4sa3+bW9JqTqMcy1k+XkF8d0ZdO7uBfAtELYstN27tO+jqv1O8txh01JN+vtHVXaGfCy
+         wt9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXspVe9JBKoHJFNIGHhEMpSLFNLanpIgMFbTQP9H0dK0a8/mLQlm8ev9i0RfqQ99z8siIo6QNDURhneue0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0TwIbxEEQmllRpbPJ6lIujRwSmMsFlBculTnElpXrGHndhvfR
+	wtNs+HiZf97liF7n62D3t0oPFcdzxsTI7H98gVnO0BMSTOBNGxmpKn5sw8A=
+X-Gm-Gg: ASbGnct88hro6V5d1cYH6PjFz+QaVyXu1NQK9u9ir5qEdkWWgy2vHzY4DywfZvb/ecf
+	YLmJL4PEqV0KpBecixO3sVBeBCyC3XWUZFrDyTGLkfImNbgiomZA6WgfmIcb90LqMHyhrM9oXOO
+	vCSg/ExFFbCNBmXkAdGzh90ucJ9ZJA5ilfBTadvFSLKGXA7/8pgIOWhIorA1UNGE5rKdeagWL9u
+	7DtoC13jsLjXXAgpW2zG8AEMoEROcmygD9+AhO6RljNhKR5DCcSQA6yfhdPqGCSbvvp5na9tu2H
+	tTH7tp/66UoBhe/CyOSL4sy4TsnoKcZnMieRkW3OOKIdLh++zXcG2ZzB5oFOaUEhZ8jmObPM84j
+	+UwaSoGX4PhaRY67dz/giDXXy3NvuCUZYkPalLg==
+X-Google-Smtp-Source: AGHT+IFrRw5q9M2JJsWfGtCnYhWqhEN152WZIUDpkfxeTaQDFCXOEY97CVF6Uw8zOja41ZFvg5hMkw==
+X-Received: by 2002:a05:6a20:9f92:b0:1f5:8748:76b0 with SMTP id adf61e73a8af0-1fa45a6a3b4mr6202243637.29.1742304746327;
+        Tue, 18 Mar 2025 06:32:26 -0700 (PDT)
+Received: from localhost.localdomain (124-218-201-66.cm.dynamic.apol.com.tw. [124.218.201.66])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af56ea94891sm8936161a12.67.2025.03.18.06.32.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 04:31:05 -0700 (PDT)
-Message-ID: <67d95979.050a0220.166852.25e6@mx.google.com>
-X-Google-Original-Message-ID: <Z9lZdFMUpqWwpsA2@Ansuel-XPS.>
-Date: Tue, 18 Mar 2025 12:31:00 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	Guo Ren <guoren@kernel.org>, Yangyu Chen <cyy@cyyself.name>,
-	Ben Hutchings <ben@decadent.org.uk>, Felix Fietkau <nbd@nbd.name>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org, linux-mediatek@lists.infradead.org,
-	linux-usb@vger.kernel.org, upstream@airoha.com
-Subject: Re: [PATCH 09/13] dt-bindings: phy: Add documentation for Airoha
- AN7581 USB PHY
-References: <20250309132959.19045-1-ansuelsmth@gmail.com>
- <20250309132959.19045-10-ansuelsmth@gmail.com>
- <4f16d239-f540-45d5-b67a-767b09f1c70c@kernel.org>
- <67d0862f.df0a0220.375bd.6b15@mx.google.com>
- <4a9ac302-dfbe-4d76-a634-a445957c313c@kernel.org>
+        Tue, 18 Mar 2025 06:32:26 -0700 (PDT)
+From: "Lucien.Jheng" <lucienx123@gmail.com>
+X-Google-Original-From: "Lucien.Jheng" <lucienX123@gmail.com>
+To: linux-clk@vger.kernel.org,
+	andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	daniel@makrotopia.org,
+	ericwouds@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	joseph.lin@airoha.com,
+	wenshin.chung@airoha.com,
+	lucien.jheng@airoha.com,
+	"Lucien.Jheng" <lucienX123@gmail.com>
+Subject: [PATCH v5 net-next 0/1 ] net: phy: air_en8811h: Add clk provider for CKO pin 
+Date: Tue, 18 Mar 2025 21:31:04 +0800
+Message-Id: <20250318133105.28801-1-lucienX123@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4a9ac302-dfbe-4d76-a634-a445957c313c@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Mar 16, 2025 at 06:01:02PM +0100, Krzysztof Kozlowski wrote:
-> On 11/03/2025 19:51, Christian Marangi wrote:
-> >>
-> >>> +    $ref: /schemas/types.yaml#/definitions/uint32
-> >>> +    enum: [0, 1]
-> >>
-> >> I don't understand why do you need index property here (which are
-> >> usually not allowed).
-> >>
-> > 
-> > Eh... As said in the description this is really to differentiate the 2
-> > different physical port...
-> > 
-> > Each port have a dedicated oscillator for calibration and these
-> > calibration are identified by an offset (all placed one after another in
-> > a separate register space).
-> 
-> So different oscillators? Then describe the oscillator and its differences.
-> 
-> Different programing model? Different compatible.
-> 
-> Other difference? Depending what is the difference.
-> 
-> But there is no such thing as "different port ID" based on your
-> description above. You just claimed that they are different, but you do
-> not put that difference to hardware description. Instead you encode that
-> difference in the drivers and it should be opposite. The DTS, so the
-> hardware description, should tell you the difference. And I am sorry,
-> but in 99% of cases "I am the first phy" and "I am the second" is not
-> the actual difference we are interested in.
->
+This patch adds clk provider for the CKO pin of the Airoha en8811h PHY.
 
-Ok to make it as clear as possible. (hope I don't contraddict with the
-previous statement) (actually yes the "separate register space statement
-was wrong and sorry for the confusion")
+Change in PATCH v5:
+air_en8811h.c:
+ * Add commit message
+ * Rename en8811h_recalc_rate to en8811h_clk_recalc_rate
+ * Rename en8811h_enable to en8811h_clk_enable
+ * Rename en8811h_disable to en8811h_clk_disable
+ * Rename en8811h_is_enabled to en8811h_clk_is_enabled
 
-- 2 USB port
-- USB 2.0 needs to be calibrated with an oscillator
-- Each USB port have his own dedicated oscillator somewhere in the HW
-- Each USB port have at the same offset a register to SELECT the
-  oscillator. This register refer to the same oscillator selection in
-  the HW.
-  
-  Example:
-  reg 0x1fac0100 MASK 27:26 can be set to source out of oscillator 0,1,2
-  reg 0x1fae0100 MASK 27:26 can be set to source out of oscillator 0,1,2
+Lucien.Jheng (1):
+  net: phy: air_en8811h: Add clk provider for CKO pin
 
-  Both register refer to the same oscillators in hardware (hence each
-  port should select the correct one)
-  Selecting oscillator 0 for both USB port is problematic.
-
-With this in mind is it ok if I describe this with something like
-
-airoha,usb2-monitor-clk-sel = <AIROHA_USB2_MONCLK_SEL0>;
-
-and some dt-bindings include
-
-#define AIROHA_USB2_MONCLK_SEL0 0
-#define AIROHA_USB2_MONCLK_SEL1 1
-#define AIROHA_USB2_MONCLK_SEL2 2
-#define AIROHA_USB2_MONCLK_SEL3 3
-
-Or an enum of string like "osc0", "osc1", "osc2"...?
-
-> > 
-> > Oscillator 0 for physical port 0
-> > Oscillator 1 for physcial port 1
-> > 
-> > And model this is a bit problematic without an additional property, any
-> > hint for this?
-> > 
-> Best regards,
-> Krzysztof
+ drivers/net/phy/air_en8811h.c | 95 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 95 insertions(+)
 
 -- 
-	Ansuel
+2.34.1
+
