@@ -1,67 +1,67 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABAE9207A25
-	for <linux-clk@vger.kernel.org>; Tue, 18 Mar 2025 09:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D29B1F3B85
+	for <linux-clk@vger.kernel.org>; Tue, 18 Mar 2025 11:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742291099; cv=none; b=uEy0zG0FP8kg4IWpMx/fa6Yrf9WbUp2YQ1TrDpjBNP9qfOU7bf4DDpuz/g1Y+X0VNBpJUR7eEYxeLHIV2EwmlzJrO0NbeWcbPhUUCYZytx2p9muY37ddMMeMEKLS7S6HKqlEDQuUasd6xBR3rJGRsbIYdLH4Picu4R/QPUMf2cM=
+	t=1742295844; cv=none; b=QNv8EP66mKI2VR8TXSfkspLKz2Srfh4U78UkLA8yj9PXZV3zZsrG+6hauFrcjyhUG9wvhwqN+5tDFDWA4sKi7Cwzc/PQCj58Ue0NVHLpyAuw6Qdwt4JpQdTqeDbaqesAJLOzk/x1PwODFT2WmpWr5jBo6hTYW7Fdm0doGeweric=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742291099; c=relaxed/simple;
-	bh=raGUllWJomob8pRySrj7Qf7XmWKdYOqMKi7Hn0TQG+c=;
+	s=arc-20240116; t=1742295844; c=relaxed/simple;
+	bh=4v+Fsi08Fwv3zu1k13Ka+W1n8gTUPuWDc5vnbr4NK+k=;
 	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pBVLdSAB21st0LL89lTwmI1CwhdYqxVniHt8palQiP0vk03M8n0ozC5V+TeNXTOqXVxk+trgJ2Z72L2KQQB6iq/LcL0GsBqc1njjX15MXzyjeddR8awVuhoyFwGyjrvHYfYGCw0JnRpyfinixSx74D7BRM1RWWUmx0/rJW/nyS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZMO59ay9; arc=none smtp.client-ip=209.85.208.52
+	 Content-Type:Content-Disposition:In-Reply-To; b=n3oWMGlFvw4JnDIn/e9ZWlSTitnnAIWaPCtod07TpksASmXp6JIvRM6D/gxQJ8s+3Is6tKEore3ZTvJZVWB9NhxafWeSZjS4uRT22Tfl96ZAwyAUo7QRTMaH8zCtbT6hwPIKjnTmr+8UbAyzcv2jNI5tuPrs7jweOaI0fct1jjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KCHl1uMi; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZMO59ay9"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e614da8615so10463609a12.1
-        for <linux-clk@vger.kernel.org>; Tue, 18 Mar 2025 02:44:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KCHl1uMi"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac298c8fa50so1021269966b.1
+        for <linux-clk@vger.kernel.org>; Tue, 18 Mar 2025 04:04:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1742291095; x=1742895895; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1742295840; x=1742900640; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4eInU4xGBu0Mt8Lm17X6zPVhTvmNik5PGbnkQOxA+YU=;
-        b=ZMO59ay9fHfT96rInwKCEFW4JQm/ORR0iYosd/bJf9B50nRRSVn2nAWtctgPxWH44J
-         06TJT4+3Bd0BZ8vRURy5KhTkv5nCTBYgdDakZI9ZaDOJ+vYhpIpIcdnSh82cryEbpFaG
-         MCe0Pj2ZZxOK6GGxk5MZWfKmIKYFNz7ui8fVynMOB0z4zZVMQlQMRvAGEGOYaEkxjKbl
-         2iWp4r0grH4J7gVzIPAhZa6gfy+cSsK7cURSC5mivNmgOas8EWvF4qYog2vAx35EF3aF
-         Z/hUxzPO3AuBb224graHCQNSxcypA0Db+ALdEsqHf6FzVfus9071ar58oks8O4pGS2pE
-         9VWQ==
+        bh=is8WhR9m8WQE+4k9i/DT+FdMHQKk7RaZk/UQmejRp3g=;
+        b=KCHl1uMi40c8cwKLuGWZ5TZVwXh8ppfgC3SmGQWDrjap53sf3ZBnVC7f9rd8KPckIC
+         VXg/JL7lXs/3ABH+E+t5ZkN9vwCq/lAmp7CJnRfLWws2n9Ud49DkDEmn/tghKpc2pEc4
+         WFdgcMO1JBzddJVqsFNKpmvNhqpY1YmzN3gbs76ZujwSGV6/4E9omSKS0/svpJhjygxd
+         t/YUmPNytteNxWUN9GPBg5nzRkL+xemTGfjUvR/lUgMMnwCHpVciN6xSmNJOApA5FGp3
+         CzykRdcrEFeBMsPjjsGlYwLC3/KjJgQ/ho+hYdT86w/CWynWved48KD0lrsXDibYWvu4
+         9siQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742291095; x=1742895895;
+        d=1e100.net; s=20230601; t=1742295840; x=1742900640;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4eInU4xGBu0Mt8Lm17X6zPVhTvmNik5PGbnkQOxA+YU=;
-        b=eOmEvqi3blUSvsg06WX0qlbCTckDW0W0W7IOB9Zkw+t+SJTouFug8F+Kl5lM/5+0GX
-         3vmSPTwNtl1dswhqjLZH33Ej1UkmMCJ7QLJbVWyoTwLHMc90DZBJVCI89zsJYqqGxwFb
-         tNIMT1TeY0Ubf8e47cK/hi5fB54dN3KRs+U46hR4vjdGwfFG7Tj1acTxjsgjq0DGLU7Z
-         KGQ9q62dp/1fwtSgri0DevHP7tLpKMWM3AjiyKQs1x4GJk/cXCuoqaJo8jsH1F0MpAgF
-         sOAgcmYSXdTlY+ha9Num6519Sdi0D/jofb/TZ7kbTxPTjBWJ4ybt21kZknzTWsxwnR5+
-         RRcA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMsBfGuGlfndVVH3nseFiGvtYG5+IizONl0g4YuSgW/Pv3Wi/DRKlcGp19z27O/yXXt0pka0rmiC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztF9zvclijfuhknxsqowAVASXs8kfdTDLmOcr4rpC8zjAP00aC
-	TzK94ByAwFpXdSSfU8H9acwAjPBXVtpdgipVLLezdkO/7X1kUd7jBai/re7zJvg=
-X-Gm-Gg: ASbGncvtvt9fau5fwL30a3H5hlXiuejw4mMnHVbbqaO5JoyauCrgcWjJI5haP9L3z+s
-	MmM8IDprA4/wXoSpGl5JZI92NbsRjHdFiN0QmYTMyja4vNjTovZL6F14e+Dsr0ufwypsGvaWsb2
-	wwWeqZLhtnIIC59PR3ZJ5tJ3FMY3fPQd0RJcwo6kKCWB5tJ1pXdUYpMp6rdTpGoIc+Fdfn0aDi6
-	9AIRwgS6BpeLrzQs8ywTwzy3n16K9W22PlYX5JgbKb8A0uIq1wNBcxDmHCgkShVtOo0+VG5C5DB
-	LT/sDrp75by2nlqdjancAfhP7CG9PnZjCWr94WXq9yh/dTMqQfvhKh5TaUZtOJGJF/GmQUeIGzj
-	nzElgh3QPvs4Pl5I=
-X-Google-Smtp-Source: AGHT+IF5nVWbdkGdXhT8Rbx0xwnOfVzY2zNtg2VYzomJ4pLfS9zkgHWMH1EzA7usUUR4N2OG/B9QfA==
-X-Received: by 2002:a05:6402:3491:b0:5e6:102a:c30 with SMTP id 4fb4d7f45d1cf-5eb1efcbee0mr3044112a12.2.1742291094785;
-        Tue, 18 Mar 2025 02:44:54 -0700 (PDT)
+        bh=is8WhR9m8WQE+4k9i/DT+FdMHQKk7RaZk/UQmejRp3g=;
+        b=xDcHha0aw7HCk6ZIpBE6g5nstfh12Tbv8q7saOV4z3Eej2heahSJsFJBvVux38MGAf
+         daMekeYe00x5UrTHruc6dHvVbQRsuW17LshPCzgSk9KIEXzZnHgYISIUFsg5KG5FH4TS
+         Sys/zf6rqxl1BDcWi8mvJ20EQ/UiROo6suXw0xJjFXTAY1JrmOPFM7J2JgsJJLFsn5Zw
+         e8ghOc5rWpXK8/jKaq2HM+STh9+zunl78beQjpNV829DIqmVO9ZvuzibioD7agU2+z1G
+         WK0WjjtMKiWxxH88kxGWMdbDMLTSOR+IswINNJg3L3l9Jmj17sUqiCc0T+g2KYSCWqTK
+         I3nA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqKB9ApKjCYhoLGfq+iw5/BroH6w2NcEH3048b3BMMWkPS1dCXOSbmvJV6OvtKGXAH1COlJNH2j0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Kr0aYulNAwL7Wdx3Ru3OD6iJGXDmfjhPKgy01/sSuOMvO13K
+	R1H4LAjPvRkiGOuAmF9V40Sv68BcJimSklYh4ofMbvWPuaiU+8WTUIyawcyo03c=
+X-Gm-Gg: ASbGncs02a4O1ZEC2ctb+oD/lrI6b9Wk1RFEgjKzL+harCYN+AIcZ3TW/eWrGzMTJ++
+	DoTSVW3MO71wbVNP3zRN57mdTtpC08SzpG7GbYbJ1PAjCbEhdLI3yzBaeTOM3QIUOVoQTzG2x3y
+	IfV5f6QLFSQl55VyzBxghrDAbQfK05K79Vj1cwQ9KE35L4lsHp1EMewWFNyY76IyJUCbMnQJznD
+	xdGm8uFgFgGumbQcBoe9e7sBHGlJ0khDVyL4oawCINLiJdMQBtl//+opjwWFwloGZGy3cOvdI6j
+	vAxhVkow/hKuMebsxrUurcjQmdt6eSPpONR1mC315ipXtNNnQBrToxJU+VJhDc6B5qWkar5XAGl
+	B5sqFgVjYydyvjJ4=
+X-Google-Smtp-Source: AGHT+IHSFIas9nSr0GTvP8XDNoyPypRdkL0u01Zf6bNvQk2jQCXUoByUBqIy6f605R78yLU5u1JN+Q==
+X-Received: by 2002:a17:907:3e0d:b0:ac1:de84:dec0 with SMTP id a640c23a62f3a-ac3302d3694mr1426644966b.26.1742295840401;
+        Tue, 18 Mar 2025 04:04:00 -0700 (PDT)
 Received: from localhost (host-80-117-53-131.retail.telecomitalia.it. [80.117.53.131])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e8169bca53sm7562109a12.46.2025.03.18.02.44.54
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3146aea4csm828388566b.33.2025.03.18.04.03.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 02:44:54 -0700 (PDT)
+        Tue, 18 Mar 2025 04:03:59 -0700 (PDT)
 From: Andrea della Porta <andrea.porta@suse.com>
 X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 18 Mar 2025 10:46:07 +0100
-To: Krzysztof Wilczynski <kw@linux.com>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
+Date: Tue, 18 Mar 2025 12:05:12 +0100
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Stefan Wahren <wahrenst@gmx.net>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -69,6 +69,7 @@ Cc: Andrea della Porta <andrea.porta@suse.com>,
 	Florian Fainelli <florian.fainelli@broadcom.com>,
 	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
 	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
 	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Linus Walleij <linus.walleij@linaro.org>,
@@ -83,16 +84,16 @@ Cc: Andrea della Porta <andrea.porta@suse.com>,
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
 	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
 	Herve Codina <herve.codina@bootlin.com>,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 	Andrew Lunn <andrew@lunn.ch>
 Subject: Re: [PATCH v7 08/11] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <Z9lA31gBjpIRHm6y@apocalypse>
+Message-ID: <Z9lTaKsbLND4i3Ir@apocalypse>
 References: <cover.1738963156.git.andrea.porta@suse.com>
  <d1362766e3e966f78591129de918046a4b892c18.1738963156.git.andrea.porta@suse.com>
- <20250314083730.GC234496@rocinante>
+ <87525350-b432-40b3-927c-60cd74228ea4@gmx.net>
+ <Z7dnnW4npJmfOVE0@apocalypse>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -101,149 +102,36 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250314083730.GC234496@rocinante>
+In-Reply-To: <Z7dnnW4npJmfOVE0@apocalypse>
 
-Hi Krzysztof,
+Hi Stefan,
 
-On 17:37 Fri 14 Mar     , Krzysztof Wilczynski wrote:
-> Hello,
+On 18:34 Thu 20 Feb     , Andrea della Porta wrote:
+> Hi Stefan,
 > 
-> Even though this is not for the PCI sub-system directly, I had a very brief
-> look over the code.  I hope you don't mind.
+> On 15:21 Sat 08 Feb     , Stefan Wahren wrote:
+> > Hi Andrea,
+> > 
+> > Am 07.02.25 um 22:31 schrieb Andrea della Porta:
+> > > +		msix_cfg_set(rp1, hwirq, MSIX_CFG_IACK_EN);
+> > > +		rp1->level_triggered_irq[hwirq] = true;
+> > > +	break;
+> > > +	case IRQ_TYPE_EDGE_RISING:
+> > > +		msix_cfg_clr(rp1, hwirq, MSIX_CFG_IACK_EN);
+> > > +		rp1->level_triggered_irq[hwirq] = false;
+> > > +		break;
+> > > +	default:
+> > > +		return -EINVAL;
+> > It would be nice to document why only IRQ_TYPE_LEVEL_HIGH and
+> > IRQ_TYPE_EDGE_RISING are supported. In case it's a software limitation,
+> > this function would be a good place. In case this is a hardware
+> > limitation this should be in the binding.
+> 
+> All ints are level-triggered. I guess I should add a short comment in
+> the bindings.
+> 
 
-Highly appreciated, thanks!
+Quick errata: s/level-triggered/active high/
 
-> 
-> As such, a few nit picks, nothing blocking.
-> 
-> > +# RaspberryPi RP1 misc device
-> 
-> Would this be better if it matched the "tristate" description below?
-
-Ack.
-
-> 
-> > +config MISC_RP1
-> > +	tristate "RaspberryPi RP1 PCIe support"
-> > +	depends on OF_IRQ && OF_OVERLAY && PCI_MSI && PCI_QUIRKS
-> > +	select PCI_DYNAMIC_OF_NODES
-> > +	help
-> > +	  Support the RP1 peripheral chip found on Raspberry Pi 5 board.
-> > +
-> > +	  This device supports several sub-devices including e.g. Ethernet
-> > +	  controller, USB controller, I2C, SPI and UART.
-> > +
-> > +	  The driver is responsible for enabling the DT node once the PCIe
-> > +	  endpoint has been configured, and handling interrupts.
-> > +
-> > +	  This driver uses an overlay to load other drivers to support for
-> > +	  RP1 internal sub-devices.
-> 
-> > +/* the dts overlay is included from the dts directory so
-> 
->   /*
->    * The dts overlay is included from the dts directory so
-> 
-> To make the code comment match rest of the style.
-
-Ack.
-
-> 
-> > +/*
-> > + * Copyright (c) 2018-24 Raspberry Pi Ltd.
-> > + * All rights reserved.
-> 
->   Copyright (c) 2018-2025 Raspberry Pi Ltd.
-> 
-> To spell the current year fully, plus update it to 2025 already.
-> 
-> I would also add an extra newline here to split the two apart a bit.
-
-Ack.
-
-> 
-> > +	if (pci_resource_len(pdev, 1) <= 0x10000) {
-> > +		dev_err(&pdev->dev,
-> > +			"Not initialised - is the firmware running?\n");
-> > +		return -EINVAL;
-> > +	}
-> 
-> The American spelling in the above might be better.  But I don't have
-> strong opinions here.  It seems more popular in error messages.
-
-I agree.
-
-> 
-> > +	err = pci_alloc_irq_vectors(pdev, RP1_INT_END, RP1_INT_END,
-> > +				    PCI_IRQ_MSIX);
-> > +	if (err < 0) {
-> > +		return dev_err_probe(&pdev->dev, err,
-> > +				     "pci_alloc_irq_vectors failed");
-> 
-> Missing a new line at the end, but also...
-> 
->   return dev_err_probe(&pdev->dev, err,
-> 		       "Failed to allocate MSI-X vectors\n");
-
-Ack.
-
-> 
-> Or, something like this over this the function name.  Perhaps exposing
-> error code could be useful to the end user? If so then something like this:
-> 
->   return dev_err_probe(&pdev->dev, err,
-> 		       "Failed to allocate MSI-X vectors, err=%d\n", err);
-
-dev_err_probe() should already print the err code, no need to add it.
-
-> 
-> Here and other errors where appropriate.
-
-I've changed dev_err() to dev_err_probe() in cases where the error code
-is not evident (i.e. hardcoded) from the source.
-
-> 
-> > +	for (i = 0; i < RP1_INT_END; i++) {
-> > +		unsigned int irq = irq_create_mapping(rp1->domain, i);
-> > +
-> > +		if (!irq) {
-> > +			dev_err(&pdev->dev, "failed to create irq mapping\n");
-> 
->   dev_err(&pdev->dev, "Failed to create IRQ mapping\n");
-> 
-> To make the error message capitalisation consistent.
-
-Ack.
-
-> 
-> > +static const struct pci_device_id dev_id_table[] = {
-> > +	{ PCI_DEVICE(PCI_VENDOR_ID_RPI, PCI_DEVICE_ID_RPI_RP1_C0), },
-> > +	{ 0, }
-> 
->   { }
-> 
-> Would probably be sufficient.
-
-Ack.
-
-> 
-> > +MODULE_AUTHOR("Phil Elwell <phil@raspberrypi.com>");
-> > +MODULE_AUTHOR("Andrea della Porta <andrea.porta@suse.com>");
-> > +MODULE_DESCRIPTION("RP1 wrapper");
-> 
->   RaspberryPi RP1 misc device
-> 
-> To match the Kconfig comment in the above description or the one from the
-> "tristate" also in Kconfig.
-
-Ack.
-
-> 
-> Thank you for all the work here!
-
-Thank you so much for your review!
-
+Thanks,
 Andrea
-
-> 
-> 	Krzysztof
