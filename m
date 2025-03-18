@@ -1,38 +1,45 @@
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60457176ADB;
-	Mon, 17 Mar 2025 18:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADAA1A5BAD;
+	Tue, 18 Mar 2025 05:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742236698; cv=none; b=KRQGP7dQVzLTljbStIO+CL7MmsiyxzSmzKYnabxgJA+cJVF+3lWrrAE5SYgZo6Waw3lRpB0KY7yl55fkp5XuP1q5HFf68VqDGWF/9r/UYdmA/ukpnOK4/CbcGEWQb5ne5ntn+Spv3mMxBBTPAyjuqCxAyyOEuifr0yCG0Ye7leY=
+	t=1742276263; cv=none; b=b2fm2zxMIAMp+iDYfC4GN6953Ir6RPCqkh02OUfORnCxzMFL28iY6IyYvlSGcwnTWjQJrD99D3bvC416dr2RqVFcTYU/DKBnj/rkTCBW9WJeGE4Z3BNjlIiBEDjaF49NVyvC7mXbGXTIV3sRePJtyu4mxYx/y5uERyBu2EzWxDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742236698; c=relaxed/simple;
-	bh=x8VzNlnfyxrbj98l+2sMkUMZwVMQl42R9kHvQVPYs+k=;
+	s=arc-20240116; t=1742276263; c=relaxed/simple;
+	bh=JTmHdxsNNUIH9RV/Wyqp6pcODy1rC6YQQYJmkliAxmU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L8TCpwvAnqX/xWaXVn3GNPIxnV4MuiS88d170d3qG0pW2eG/7kNO+5TIlOFR6I2NyZ7CTMqCA/aKsQ5xgw65nQhkWMxODOeC7bLu7QvayAtzh1HeJSleTMAgi+rItZMJQd25NyD89ZKOslkchsaMEgK7VtkNlPX8D84Z5Z+JBGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1tuFLa-000000007G3-0hL0;
-	Mon, 17 Mar 2025 18:37:58 +0000
-Date: Mon, 17 Mar 2025 18:37:54 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: "Lucien.Jheng" <lucienx123@gmail.com>
-Cc: linux-clk@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
-	linux@armlinux.org.uk, kuba@kernel.org, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, ericwouds@gmail.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	joseph.lin@airoha.com, wenshin.chung@airoha.com
-Subject: Re: [PATCH v4 net-next PATCH 1/1] net: phy: air_en8811h: Add clk
- provider for CKO pin
-Message-ID: <Z9hsAmiD9sZ_NAR-@makrotopia.org>
-References: <20250317143111.28824-1-lucienX123@gmail.com>
- <20250317143111.28824-2-lucienX123@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gzDE2033xS/exjUCI41EV9en7X448lygPxpoOSlh2SmSdYneqTqL3Kp4HpefQ7sQo5zHfHEczRsD1rxpzLHykqI9EQux8PSVFb+ymhuNtg7guOBlLAwEBgkaJUt6QZCzv9CmRNGPkzOvOFFIrH46IUUSxDepPdB9BLHBqcRIvS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.18.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 07985343249;
+	Tue, 18 Mar 2025 05:37:40 +0000 (UTC)
+Date: Tue, 18 Mar 2025 05:37:36 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Haylen Chu <heylenay@4d2.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1
+ SoC
+Message-ID: <20250318053736-GYA2516@gentoo>
+References: <20250306175750.22480-2-heylenay@4d2.org>
+ <20250306175750.22480-5-heylenay@4d2.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,67 +48,104 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250317143111.28824-2-lucienX123@gmail.com>
+In-Reply-To: <20250306175750.22480-5-heylenay@4d2.org>
 
-On Mon, Mar 17, 2025 at 10:31:11PM +0800, Lucien.Jheng wrote:
-> EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
-> CKO clock activates on power-up and continues through md32 firmware loading.
+Hi Haylen Chu:
 
-Maybe add here:
-"Implement clk provider driver so we can disable the clock output in case
-it isn't needed, which also helps to reduce EMF noise"
-
-Ie. the description you had was fine and good to have, just the lines had to
-be shorter (ie. just insert linebreaks at 70~75 chars).
-
-See more comments inline below:
-
-> ...
-> @@ -806,6 +817,84 @@ static int en8811h_led_hw_is_supported(struct phy_device *phydev, u8 index,
->  	return 0;
->  };
->  
-> +static unsigned long en8811h_recalc_rate(struct clk_hw *hw, unsigned long parent)
-
-calling this en8811h_clk_recalc_rate() would be better imho.
-
-> +{
-> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
-> +	struct phy_device *phydev = priv->phydev;
-> +	u32 pbus_value;
-> +	int ret;
+On 17:57 Thu 06 Mar     , Haylen Chu wrote:
+> The clock tree of K1 SoC contains three main types of clock hardware
+> (PLL/DDN/MIX) and has control registers split into several multifunction
+> devices: APBS (PLLs), MPMU, APBC and APMU.
+> 
+> All register operations are done through regmap to ensure atomiciy
+> between concurrent operations of clock driver and reset,
+> power-domain driver that will be introduced in the future.
+> 
+> Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> ---
+>  drivers/clk/Kconfig               |    1 +
+>  drivers/clk/Makefile              |    1 +
+>  drivers/clk/spacemit/Kconfig      |   20 +
+>  drivers/clk/spacemit/Makefile     |    5 +
+>  drivers/clk/spacemit/ccu-k1.c     | 1714 +++++++++++++++++++++++++++++
+>  drivers/clk/spacemit/ccu_common.h |   47 +
+>  drivers/clk/spacemit/ccu_ddn.c    |   80 ++
+>  drivers/clk/spacemit/ccu_ddn.h    |   48 +
+>  drivers/clk/spacemit/ccu_mix.c    |  284 +++++
+>  drivers/clk/spacemit/ccu_mix.h    |  246 +++++
+>  drivers/clk/spacemit/ccu_pll.c    |  146 +++
+>  drivers/clk/spacemit/ccu_pll.h    |   76 ++
+>  12 files changed, 2668 insertions(+)
+>  create mode 100644 drivers/clk/spacemit/Kconfig
+>  create mode 100644 drivers/clk/spacemit/Makefile
+>  create mode 100644 drivers/clk/spacemit/ccu-k1.c
+>  create mode 100644 drivers/clk/spacemit/ccu_common.h
+>  create mode 100644 drivers/clk/spacemit/ccu_ddn.c
+>  create mode 100644 drivers/clk/spacemit/ccu_ddn.h
+>  create mode 100644 drivers/clk/spacemit/ccu_mix.c
+>  create mode 100644 drivers/clk/spacemit/ccu_mix.h
+>  create mode 100644 drivers/clk/spacemit/ccu_pll.c
+>  create mode 100644 drivers/clk/spacemit/ccu_pll.h
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 713573b6c86c..19c1ed280fd7 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -517,6 +517,7 @@ source "drivers/clk/samsung/Kconfig"
+>  source "drivers/clk/sifive/Kconfig"
+>  source "drivers/clk/socfpga/Kconfig"
+>  source "drivers/clk/sophgo/Kconfig"
+> +source "drivers/clk/spacemit/Kconfig"
+>  source "drivers/clk/sprd/Kconfig"
+>  source "drivers/clk/starfive/Kconfig"
+>  source "drivers/clk/sunxi/Kconfig"
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index bf4bd45adc3a..42867cd37c33 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -145,6 +145,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+>  obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
+>  obj-y					+= socfpga/
+>  obj-y					+= sophgo/
+> +obj-y					+= spacemit/
+>  obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+>  obj-y					+= sprd/
+>  obj-$(CONFIG_ARCH_STI)			+= st/
+> diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
+> new file mode 100644
+> index 000000000000..76090cd85668
+> --- /dev/null
+> +++ b/drivers/clk/spacemit/Kconfig
+> @@ -0,0 +1,20 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
 > +
-> +	ret = air_buckpbus_reg_read(phydev, EN8811H_HWTRAP1, &pbus_value);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return (pbus_value & EN8811H_HWTRAP1_CKO) ? 50000000 : 25000000;
-> +}
-> +
-> +static int en8811h_enable(struct clk_hw *hw)
+> +config SPACEMIT_CCU
+> +	tristate "Clock support for Spacemit SoCs"
+> +	default y
+similar reason to pinctrl with these patches [1], [2]
+I'd suggest switch to "bool + default ARCH_SPACEMIT" 
 
-call this en8811h_clk_enable()
+Link: https://lore.kernel.org/all/20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org [1]
+Link: https://lore.kernel.org/all/6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be [2]
 
-> +{
-> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
-> +	struct phy_device *phydev = priv->phydev;
+> +	depends on ARCH_SPACEMIT || COMPILE_TEST
+> +	select MFD_SYSCON
+> +	help
+> +	  Say Y to enable clock controller unit support for Spacemit SoCs.
 > +
-> +	return air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
-> +				EN8811H_CLK_CGM_CKO, EN8811H_CLK_CGM_CKO);
-> +}
+> +if SPACEMIT_CCU
 > +
-> +static void en8811h_disable(struct clk_hw *hw)
+> +config SPACEMIT_K1_CCU
+> +	tristate "Support for Spacemit K1 SoC"
+> +	default y
+ditto
+> +	depends on ARCH_SPACEMIT || COMPILE_TEST
+> +	help
+> +	  Support for clock controller unit in Spacemit K1 SoC.
+> +
+> +endif
 
-call this en8811h_clk_disable()
-
-> +{
-> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
-> +	struct phy_device *phydev = priv->phydev;
-> +
-> +	air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
-> +				EN8811H_CLK_CGM_CKO, 0);
-> +}
-> +
-> +static int en8811h_is_enabled(struct clk_hw *hw)
-
-call this en8811h_clk_is_enabled()
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
