@@ -1,346 +1,336 @@
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2107.outbound.protection.outlook.com [40.107.215.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AABA8F5A;
-	Wed, 19 Mar 2025 10:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742380735; cv=fail; b=hyvWZ7braFobyswBzcLFPYvGxmiVbGXEbIz3c0uX1xWaHYYGbso2zxpMJkrRT0KCYpt2VgphDbWctcnXIeo7ErpvpFZ3NdDFJKRupULkSKL5bP7G/iiHfLG5aK6Q5ehK+EbbPIsECvWU0700RWLY5sSleiEw0ZjOcEwL3kH55Rc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742380735; c=relaxed/simple;
-	bh=ictapU8VdWGhAJhjqK4pHdvHDfE8MJWI8UWfjTLbX3g=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IfQb72ufhMjeFOvP3YjCR80F5ef0su71/6baewS/yUi4mPdTrwwg4VAHG/HqwyfobWwTrjiZtStbPmZTIQoRRZC9+trLmfDZQsRtYzGmyXu4Xa69/h6eC1HYpE+ytSebFWwakpDyXq8EltQteV8eb5aAcXAXXIQccvzDZeB3lW0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=t1l14D+b; arc=fail smtp.client-ip=40.107.215.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326C51E231F
+	for <linux-clk@vger.kernel.org>; Wed, 19 Mar 2025 17:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742406616; cv=none; b=pMq0mWXo5Y+k8x7Ko3haNBYanDPLKGtlRNJOZ6ajZNMl0vnL+ag6X0lh9zQb8uEiHGFsWI9V/ydH7gNDYtQyhSboW2qsdsrVK9hYM0AaTaJvA+32WmqVp1PZDlNxmcCB67UIydks1pYhE1/XSAvO/FKUZFiLckHRaBpOpIXkzL4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742406616; c=relaxed/simple;
+	bh=f/yMDYAa73vfPZgPqc83Owg0H9MukLUAaZrm0rRx2YQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mAld5+ec3lWjUaPb6M83umSdTEWxSKjTXe8b8ICriLbjVW3zTjyV7jRJmXb/HadiCKuMhby7M2WQZ3kyeqd5z1xHRglIMJOkV4Mpchpp1ZIjLwcRJRGDwnZAivPSsain/jNZEVEvWvCT41IHBYosWSnIE0l1BTRreqCe+DTKF7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=dwa8e7r3; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="t1l14D+b"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CAoDHkizOag5LS+L9Zx+4NKEOIa/BMUIVnBl8wB0tj3Qt8OcGj8uxegNs53AV4nYbUaI4GTzltoXWFq0lNJaYfwo4dONqsaLsJ1AJ7i+rfbfV01csQpIpH++8HOZdODmFzKx7J8/SSIgZdkMAdXrQZxfGT0yduicjKu7czkfCPCGLrOcyBefeWD5zACd4bfuD/tNZC+SDS823mKtb44xlHGGmJajEUVD3FrrDmKRLUK1HcbTlS28FCS54pk5gn6mH2/3jvQfLzzLs1oYBex50rDdz8F3yWvcbJ8zdotZoiYviZGyvDayAiqq/jIyuoFqJRW4788CwH2FYzzOFGQutw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A5b3igubDhuU5HR1um3nzESUfEmedLO5VGNPmNXB81I=;
- b=LYWK2gKivdsSwY84cOKPzqeewh4r01RFySoosEoIStzmRG7ZWkrDkeQWNXM+oDdERFZIW2iUDLnCE4bVnBQeI1/bhqnYOTyTzy0WCVI0wl9TPAJJa4F9EqsNhvfNYZWxA40eSOEHUdk+bUSxXI87a9f/V4HMtDxrXGlwSuh8XSub7BcWKi7zR0AfyeaM414e1aMklpZSWTVxzr+AMCrIlnSdohPKPNNktvOfZGCOnyXh8W2XXhx5mYpJPhbM8QZAR6Ixnt2C+9a0swsLnpcNjJ9W3VyRP2C7fzjubwL6IfudqfXSfbyGjjLu7wBT3M0dMHneWM0NdwChsQZveb/cVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A5b3igubDhuU5HR1um3nzESUfEmedLO5VGNPmNXB81I=;
- b=t1l14D+blt5yim1SdmDetXj9Wkm9EwxxUE3PC66iMBh56lFSFEJ58PbpuoStC54NzelnSm1TH8PQA5rkpdk3fiX2CYnRQnq7MmqAkii2EgEtkIjvjcYm7dr79UQVMH8SEYA8tqObk/mrsfkqvZSlhsoDM4SxQ64/vMWC/aarlXW0eA+2K9b4YC9Aq9RzqbF1GxgBxBtt5wvzcNrQULiZ9l2RFo3AXASezskuRsh/WY8SN3knXUmvawBIlTVqwaYy5SU+tB4S8HtIREY4/7mLP307WRiyqEnrhLeUSJI/zD8/KUzGUHShNBdzlSS0ICZc9vQMzs78utQVYZByBwS0Lg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from PUZPR03MB7135.apcprd03.prod.outlook.com (2603:1096:301:113::15)
- by TYZPR03MB7518.apcprd03.prod.outlook.com (2603:1096:400:419::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
- 2025 10:38:50 +0000
-Received: from PUZPR03MB7135.apcprd03.prod.outlook.com
- ([fe80::ecac:a387:36d8:144d]) by PUZPR03MB7135.apcprd03.prod.outlook.com
- ([fe80::ecac:a387:36d8:144d%7]) with mapi id 15.20.8534.031; Wed, 19 Mar 2025
- 10:38:49 +0000
-Message-ID: <9397d6d5-518d-4bd0-a34a-7a5f5e1201f1@amlogic.com>
-Date: Wed, 19 Mar 2025 18:38:44 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] arm64: dts: amlogic: Add Amlogic S4 Audio
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
-References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
- <20250319-audio_drvier-v4-6-686867fad719@amlogic.com>
- <20250319-quizzical-coyote-of-assurance-d4c91d@krzk-bin>
-From: Jiebing Chen <jiebing.chen@amlogic.com>
-In-Reply-To: <20250319-quizzical-coyote-of-assurance-d4c91d@krzk-bin>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: KL1PR0401CA0013.apcprd04.prod.outlook.com
- (2603:1096:820:f::18) To PUZPR03MB7135.apcprd03.prod.outlook.com
- (2603:1096:301:113::15)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="dwa8e7r3"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so53715645e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 19 Mar 2025 10:50:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1742406611; x=1743011411; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mNLkuMKAcT4YaVVYhtRuJted8xsFpFk+cz6Juc9e1Wo=;
+        b=dwa8e7r3DxRXyw5ibUtSB/XYo1BzdsmZVVp2l5vluH9txNWD7eUznUr+MlTTg7EjSK
+         ccqscI7Jhsot8HuLS/TVmxPAUeZTjsm0bRaGYvbIoi6Nf9OD7aAzc4UcfdpKUseFIbMG
+         k16sf809g4Ee5J7D2c/ryJTEiZ2L4poVY69mc5PwoY3TMWdDgIgWzMEV6fVqxu+7Nm9D
+         89zdt8yNBy0g9u8DGmY14zdTMeX9iLa8unggN9HiIF4HYAeutLw6NWY6jHtQFJk6t4KI
+         tnwncsjvyUu16o4oIk/9nmgE2omFPlSMJ431pdtu1cyd2/uX0Oyg+JUlNXxRZfDYJG8Q
+         mfwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742406611; x=1743011411;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mNLkuMKAcT4YaVVYhtRuJted8xsFpFk+cz6Juc9e1Wo=;
+        b=X29+wVyRbttutH1jteYRfGG9XLosK0xxLMlRTOwBVhhB2sjgQqb7PkbuYu/CuObZYf
+         VU+k6ruba/YDLMUbKNvMmjj7hhKKxdiPNtxCfahUlo5OUa6EZBg8S8g507tDuAqP2/s5
+         k9EuylFDk4E0iZYcGTWfmUIB0dvB6jio8cQLigU+kuQlno6m/NoAPC8wVtcU5PBT6vMQ
+         cCX3pFZ8AvXt/IHGv9/Ws2aD72tq1XceXRawTMRdr5cF+SzEsKiz3Y2j8l9Nq2Y2lpB2
+         NN/rmV2ty9Cg9jKOg0dIPaA4QPmwAWfGcreBF7TTdOjEwxETesxc08Ld0vXmAKo3Ah2D
+         GhpA==
+X-Gm-Message-State: AOJu0YwOjjQSGw6NUAFnz1FCxuf5LCswRiYiNM4nvIKqMLjSowuReCSG
+	cQceEG1piG2phNmCcnnRiLB0yyVjcyNJLUf0YlJKpHJtQoomuCkLaCk5GUnQO6hIVcb/SOnaUg/
+	T5/E=
+X-Gm-Gg: ASbGncvFllfa4yG0hsCCxDKEsi1gVeEbXksWzQdE0GHH7+RCH4LjoSrf3NnJGHdglMj
+	ayXZFH+ab4jmwVaIf+/yvANoielyQjRi+acd88hdRqLKko5aG8DyinzyBRcnthPeCUt8TSQxM3i
+	vkaFRy5Eu0IIZK6F6EkoejjK0uksxActTA3MvWHZ/uJQ9EUyIn9Wf+DECSxN0qOjxkqS9EcwJr9
+	Sy26xGVu0IqjiZK+agB7j/DuXfqNHT9TVBObvlRT4oaimb+d4Bbt5YtTo8fPgg+QBnWhjIZBoGF
+	kwvd7w/VLP71gATp+6wJen3Nq6U16ACKA7CBoN5b7CIe601XKphsXg==
+X-Google-Smtp-Source: AGHT+IHN/F8q1TDMDTnlfUvAMQr48HuqUF+SZeudM6TT4xmZ2rJ3secN4Mpid9w0Xls8OHciPt0JCQ==
+X-Received: by 2002:a05:600c:35d1:b0:43c:f64c:447f with SMTP id 5b1f17b1804b1-43d495bda3fmr525615e9.29.1742406611096;
+        Wed, 19 Mar 2025 10:50:11 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.160])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d440ed5e0sm24507995e9.37.2025.03.19.10.50.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Mar 2025 10:50:10 -0700 (PDT)
+Message-ID: <3935c980-3802-48f0-8f02-7222db0f3fd5@tuxon.dev>
+Date: Wed, 19 Mar 2025 19:50:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR03MB7135:EE_|TYZPR03MB7518:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85fec6d1-9b74-4a82-deea-08dd66d23c11
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d1FMYzRCaFVWY1VneStGa0RrTFpYenpPQm5JdU9RWStpWDlTbHU3TlZIeCth?=
- =?utf-8?B?bG5aZkkwUWFZS1FzMUpZSlUwUGFEc012aGl6Vnk3VWFRM2hlTUhTQlFUWW4y?=
- =?utf-8?B?UFhUcm9IditGaG12MW5FT2hiK2EwOENjM1JjcmVqMzhDZkNXUjJ6MVNhU2kv?=
- =?utf-8?B?RUNCelpLQlBXdnlhaDNKV0hXa0FhaU4vcE9pdUlNNk13RzczM0RPM3R0NnQr?=
- =?utf-8?B?ZFdscXZ2TGw4WWl4Nisrdk9INTYvOFBzL0d0c3JZMDViNnlaNFFGTUY5cXJt?=
- =?utf-8?B?LzZRUStJVmR3Q3Zmc09YRCt2RlZrcUtsUTdpUlZXU2ZjZitHSzFkNGNwWC9S?=
- =?utf-8?B?V0FGWWV0OUxUdjU2TUY5WTZ4b21YbUR2b01Pc00yNE9icTJlSXlPdVNzcEZ1?=
- =?utf-8?B?d1UrNTVxa00xYWF0VUpOcjZKTGR4RlpqNTZ4T3FzYloxZ0cxdm5wSkJvbGd4?=
- =?utf-8?B?cE8yQitxYXFOeWlFeThrMzJuaFJUd2FPcy9nRm11aGxaM01Ea1BBQkZYbERz?=
- =?utf-8?B?L3BVcUtNWks5Kzk1bTFvZ3psZDBsM1ZxeDRGVmcvYThqdHdVWkp0RkxtV1lZ?=
- =?utf-8?B?MzcrSFdlM0Y0SXhNWGNuWkNBYm9nektidDQ0Z25iQS9VZ2s3ZDBwbUc1aTkz?=
- =?utf-8?B?bnpKcmJNaGlMd05kdVdxVW52aHJDZklOQkVJM2pmQ215aWhtdXh3K3ZBSmIv?=
- =?utf-8?B?WGExTFNpQkhYWjFxSTlaYzUxMnY4dk50UEl3cEJ0SU4xS3M5YWg2Mi96RHlu?=
- =?utf-8?B?WmdlYmFGU3RINkpYeXZNdkJsQU9GYlVhcXZ6bXhZaEtnWjFja3ZuYmVOS01K?=
- =?utf-8?B?RUxDU1RhQTBFZGJwQW55cnUwcDYrRDN4dzNoQm9TMWZlL3NSVGhFQkZvQ3V6?=
- =?utf-8?B?aExGbFJPUUVOK3dodWlEZE5rQWNUUEJTWDVmdUdDMWV2MExPS095SStGZ05z?=
- =?utf-8?B?cGlGenB1anFDZWhQSE5heWJRa0JmbmhrTXRUR0NzMDdISk5KWklvM0pUZlBI?=
- =?utf-8?B?bUtoenhJdDVQMjI4QU9GeEMrZ2tUaXlseGFDc1U5WmVmV3FmVVA3VkpFYXor?=
- =?utf-8?B?Nm92cmlEOW5Va1JHTFpXQ0VadXg0SENrM2VyT09iT2N0RTRXeTNyQSt5U3ZN?=
- =?utf-8?B?anZjbXdmN290alhTVm55Y1ZMb1dGYjU0SXoyQ2pNektXWUd5aGFFaldLL1lk?=
- =?utf-8?B?SEhTSG9LS0ZHelpjUUtxemhBK3luR3BYYlNhK29NYUEyWlRTL2hDNmlYNTYx?=
- =?utf-8?B?M2prdDE1dE9jVyt1bEdXc0RBU1dTR1JsdWhSRHYwc1QvUmd1RnIwbTFEYlNl?=
- =?utf-8?B?SmgydGdtMk9adGN6RGNJbE9JekV4VEFNQUNLSmdMaTRjT1dNWFpWQnhJb3Bs?=
- =?utf-8?B?R0hoM1ErODZjNXU5UkFhbEJ5YzU1OUNDZWNxNTA4YlgxR3Jwb204eHZITjcr?=
- =?utf-8?B?aWdJR2lmdDEwRHB0a0N6OHBBM0ZoRXkwSC9DclVQTXdSc3p5YkpBdU1mUUs3?=
- =?utf-8?B?eitQR3o2UTRtWkIrSEtXelJEVDFBNWUrYmRtRkVGZTM4NGJrMTArQzBOVVpz?=
- =?utf-8?B?OUVUNDJvWldZeGQrUWZxME9wNStESjNIbWdpL2pBOW5nWHdWdmF3Q00wbW5I?=
- =?utf-8?B?VWVYOWR5ZDl0WGxQZFR2OWozNnlUVmU0aGs0Q3JzNDM0c3lyUmtPZ244TEtD?=
- =?utf-8?B?S1dWV00yLzlwRzZtQ0NLblpGbVV1UVlRNWs5cER3b240eU50dng1bGRCaGNW?=
- =?utf-8?B?ajNLdS96L2F6anpqa21laFJ5WHdVTEwxNDUySHF5T1IwWk8yd2h5YTg2NUtB?=
- =?utf-8?B?S3grYlNwWUROWm1UanRqUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB7135.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eDBjbC9GekZ4RUxFZ1ptNEc1dEloeVdVbms2RE5LdUlWMzhTQ1BLcDBtcVU0?=
- =?utf-8?B?VTE4bldsNUdYL01TaWlWYUlOQS9lOGtON21BRS83WEwrK09sWFNqelV2QytE?=
- =?utf-8?B?RjZiTnJiVFQ2KysxempFaVcvSkpZTFdMVGJ3SWdrenpkS050bEgzaDY5NVVT?=
- =?utf-8?B?SWRlNFg2M1lHZktFOVloTy90NzdvNUtWU3ZaYlJwODRYRU1UNnltMk0zUFFE?=
- =?utf-8?B?UDVjcENLQjUvOVN5UTZ4dk5lSVpHOW82eVlDcUtYMitHOW9sSi84SmtEN2lI?=
- =?utf-8?B?a3RiVmVPM3VQVkxDUE93dk5VTm1HSTZUMEk0cVlqL3BXN3l4clhGSHptZExH?=
- =?utf-8?B?bjNqRGJuVW1OV1pyVTgxSkxNb2hjOFQwYm9TZGc3NlpPTGw1ZE1IeEZlUUZY?=
- =?utf-8?B?OHhlNXQ5cDZvN1NLdHhDQ09nclI5UWdLVGFCYjhYdDNDV2pNVVhTeHlQTXMz?=
- =?utf-8?B?V2llUDBWUE1GOUorM2YvZ2RhUXRWMHE4V2lCbk9mSlVsNDd4MVNqNGNHY0Y3?=
- =?utf-8?B?V2ZVcyt3UXVXMTZ0OENGTHVZMk1BZmRCYU5iZ21BdDJDd1NFMUZ4T3kvV2JM?=
- =?utf-8?B?SmZmTTdVRUo3TDZqa3c5L2Rpb3FMSHUzV3ZLN1hiTnUrdVp2NWV4WWtZQmdZ?=
- =?utf-8?B?cXE5UFVzbmxwYTMwSjdXeFJsRUErOTZoZXZCbGV5VWVneWVOdEEzOTBtNVFW?=
- =?utf-8?B?TUpsb0RZMnE2RWdNeWNaYzFRTmxWVVJhbzZZcUtKTDBQcHc5V0VFdGhPZXk3?=
- =?utf-8?B?NEJZcklvRHJLMGNjR3QvY2NDQWUySU9zRm9hT1o1eWRSMktPVFBoL0hBV2hT?=
- =?utf-8?B?YXBZWm1YL1Y4bTBVMkF2NXBjakk2YzhSQUZCTkdzbkIrS0lRaTlYcFErMExS?=
- =?utf-8?B?TzNvQnVGY0lGT1VqUGFlWlJRcTd2enBlR2l1bVcrM3lNQldKUHdSa0g3QklY?=
- =?utf-8?B?YmFzMTNLY2o1VGg4NjhmUjFDUlNKZjlqZW81TjEwMVZMOXJhOEdoVnkwbWZL?=
- =?utf-8?B?WGxQNC9DbDAxUUlWSGdiV2h0am1oa3p0QTM4WnJVUnl0VmdWYjFSaFJBVDRN?=
- =?utf-8?B?MlVGY1ZQUTZmTmorVVRuc29Oa1k3VWRMUTZzdU1BTlJoQmZZQTEwdDdkbzIy?=
- =?utf-8?B?blR3UG9EZUxpR1ZROEZ2VUw4aFFYUkt0SWcyL1hVcUdKWWE1aXRkejg5UjVr?=
- =?utf-8?B?SmRIMXNtckwxeUZMdjlXSXdWY1NmelNOLzlSb1hER2Nja2NyNGdmSU1BUDBs?=
- =?utf-8?B?UFdYNDRscU9jNENLZGw3Y055QnF4VXpBY2pwcHY1YmdybFBGZk9RRHpCbk55?=
- =?utf-8?B?ejZkS2ZrY2JyRUpEeVcxbkJ2bWx4SW5mWWdwdllBOG0yWHFIbDl0c2k0WEQ1?=
- =?utf-8?B?RThscjc2eUJJZnFUM08ydDJ4SlJuZ0U0cWp2aXdCdTQ5UW9GRUMzaDJzaFNM?=
- =?utf-8?B?RVNlbVJJREV2SmxHT1AyRklmSUl5QnRvT2VDd2NFQkt4UXVhNGhiMXozbzgv?=
- =?utf-8?B?WjZ0NjRDaTZIZm5wS1REYVl0bk8zY0l3NU5kWWxnNTVUa1hBYTh0QUtlbUlo?=
- =?utf-8?B?RnQ2L29kYnJ3dE9GY09QeHEybjJVcStRNnIwU05mUUkrbkZwdVZKSnBMWXU3?=
- =?utf-8?B?MHZOT0tPVVRINHFiMy9EWDFrVzlEdEhyeHZUejgrbmZjZ0FHeDg4Zkw5eVRp?=
- =?utf-8?B?ajBOb1lVWUhZZWZTVUZCQ0F2LzFhS0N3MHpuODFabmxJLzErZGkrTVJ3dXlu?=
- =?utf-8?B?cWs2SGlFeXEvYWJUNmlLOGtJaE5ZZDBTZ0xZMFlzWGdMSThmWXcycjRnZVRV?=
- =?utf-8?B?QzFxSGE1RVVPT0pvSTRPTS9JWkZEZ01oR1FnZ2JPQkJ2T2JqUEdoWXJqL0FP?=
- =?utf-8?B?K1BzM1dkZStveSticXh4dmE4UklUcFQ3SVVELzYwWEw1ZndScCtFWW82bUd0?=
- =?utf-8?B?SFpSZThab3hSQ1lGMVpNL3E3aFZ6c21Ld1lMYW9aWUpNM1RzNm1DcWRNQW9i?=
- =?utf-8?B?dnhwZFZyQU91RSsrVnhwMCs5N2pwZW1jTVY1ZDNldzlYeFd0OTRFZnA5ZUc5?=
- =?utf-8?B?NW5YSnZzMlVmdXdzdUt1U2JLZWhXYlRVK1dSbi9aUVBLeEwzbG5RTnkwVk04?=
- =?utf-8?B?M0laWXFOL3lnUlc3RDR2UXFiNTgwWFlhNWxQYlJuZ0liSDhyN1k2ZlJvTUZS?=
- =?utf-8?B?OEE9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85fec6d1-9b74-4a82-deea-08dd66d23c11
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB7135.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 10:38:49.6841
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MFvRUUvkoRjDdT03rqysWDAqamTwMe1yVhdu80775CZrJn6cNGco2IYLDf1iXsYghMXXDnNh1dM0tPLWUK6SLFV3BFBQE/FZfcXj+gZM54A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB7518
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] AT91 Clock Adjustments
+To: Ryan Wanner <ryan.wanner@microchip.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, mripard@kernel.org
+References: <cover.1738864727.git.Ryan.Wanner@microchip.com>
+ <7dd5a0a2-4f56-48b4-8861-c7d75754faab@tuxon.dev>
+ <b76108c1-3282-4b98-a210-b350e8ec0ec2@microchip.com>
+ <7512d7fb-30dd-41f6-8936-45ff0d949876@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <7512d7fb-30dd-41f6-8936-45ff0d949876@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-在 2025/3/19 16:26, Krzysztof Kozlowski 写道:
-> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->
-> [ EXTERNAL EMAIL ]
->
-> On Wed, Mar 19, 2025 at 03:04:49PM +0800, jiebing chen wrote:
->> Add basic audio driver support for the Amlogic S4 based
->> Amlogic AQ222 board. use hifipll pll (1179648000) to
->> support 768k sample rate and 24 bit (s24_le), 24bit sclk
->> is 48fs, use mpll0 (270950400) to support 705.6k sample
->> rate and 32bit, use mpll1 (338688000) to support 705.6k
->> and 24bit.
-> Please wrap commit message according to Linux coding style / submission
-> process (neither too early nor over the limit):
-> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-ok, thanaks
->> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
-> ...
->
->> +
->> +             dai-link-12 {
->> +                     sound-dai = <&toacodec TOACODEC_OUT>;
->> +
->> +                     codec {
->> +                             sound-dai = <&acodec>;
->> +                     };
->> +             };
->> +     };
->> +
-> Do not add stray blank lines.
->
->>   };
+
+On 18.03.2025 19:33, Ryan Wanner wrote:
+> On 2/26/25 08:36, Ryan wrote:
+>> On 2/26/25 02:06, Claudiu Beznea wrote:
+>>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+>>>
+>>> On 06.02.2025 20:14, Ryan.Wanner@microchip.com wrote:
+>>>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+>>>>
+>>>> This set has clock system adjustments for the AT91 clock system.
+>>>>
+>>>> The first is to adjust the slow clock driver to account for the updated
+>>>> DT node-naming for clocks and xtals and ensuring the driver is still
+>>>> backwards compatible.
+>>>>
+>>>> The second is a adding a missing clk_hw struct that is not added into
+>>>> parent_data struct causing a incorrect parent for main_osc.
+>>>>
+>>>> Ryan Wanner (2):
+>>>>   clk: at91: sckc: Fix parent_data struct for slow osc
+>>>>   clk: at91: sama7d65: Add missing clk_hw to parent_data
+>>>>
+>>>>  drivers/clk/at91/sama7d65.c |  1 +
+>>>>  drivers/clk/at91/sckc.c     | 12 ++++++------
+>>>>  2 files changed, 7 insertions(+), 6 deletions(-)
+>>>>
+>>>
+>>> There are boot failures on sama7g5 with this series on top of at91-next and
+>>> the following diff on sama7g5 dts to mimic the sama7d65 use case:
+>>>
+>>> diff --git a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
+>>> b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
+>>> index 0f5e6ad438dd..1bce9f999431 100644
+>>> --- a/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
+>>> +++ b/arch/arm/boot/dts/microchip/at91-sama7g5ek.dts
+>>> @@ -35,16 +35,6 @@ aliases {
+>>>                 i2c2 = &i2c9;
+>>>         };
+>>>
+>>> -       clocks {
+>>> -               slow_xtal {
+>>> -                       clock-frequency = <32768>;
+>>> -               };
+>>> -
+>>> -               main_xtal {
+>>> -                       clock-frequency = <24000000>;
+>>> -               };
+>>> -       };
+>>> -
+>>>         gpio-keys {
+>>>                 compatible = "gpio-keys";
+>>>
+>>> @@ -132,6 +122,15 @@ spdif_out: spdif-out {
+>>>         };
+>>>  };
+>>>
+>>> +&slow_xtal {
+>>> +       clock-frequency = <32768>;
+>>> +};
+>>> +
+>>> +&main_xtal {
+>>> +       clock-frequency = <24000000>;
+>>> +};
+>>> +
+>>> +
+>>>  &adc {
+>>>         vddana-supply = <&vddout25>;
+>>>         vref-supply = <&vddout25>;
+>>> diff --git a/arch/arm/boot/dts/microchip/sama7g5.dtsi
+>>> b/arch/arm/boot/dts/microchip/sama7g5.dtsi
+>>> index 17bcdcf0cf4a..3158c2f0b4c0 100644
+>>> --- a/arch/arm/boot/dts/microchip/sama7g5.dtsi
+>>> +++ b/arch/arm/boot/dts/microchip/sama7g5.dtsi
+>>> @@ -117,12 +117,12 @@ map1 {
+>>>         };
+>>>
+>>>         clocks {
+>>> -               slow_xtal: slow_xtal {
+>>> +               slow_xtal: clk-slowxtal {
+>>>                         compatible = "fixed-clock";
+>>>                         #clock-cells = <0>;
+>>>                 };
+>>>
+>>> -               main_xtal: main_xtal {
+>>> +               main_xtal: clk-mainxtal {
+>>>                         compatible = "fixed-clock";
+>>>                         #clock-cells = <0>;
+>>>                 };
+>>>
+>>> I've identified the following:
+>>>
+>>>
+>>> cpu cpu0: _opp_config_clk_single: failed to set clock rate: -22
+>>> cpufreq: __target_index: Failed to change cpu frequency: -22
+>>> ------------[ cut here ]------------
+>>> kernel BUG at drivers/cpufreq/cpufreq.c:1523!
+>>> Internal error: Oops - BUG: 0 [#1] ARM
+>>> Modules linked in:
+>>> CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.14.0-rc1+ #11
+>>> Hardware name: Microchip SAMA7
+>>> PC is at cpufreq_online+0x8d8/0xa30
+>>> LR is at __wake_up+0x20/0x30
+>>> pc : [<c063cca0>]    lr : [<c0151254>]    psr: a0000013
+>>> sp : e0821d30  ip : 00000000  fp : c0e50508
+>>> r10: c434830c  r9 : c4348204  r8 : c0e97230
+>>> r7 : c4348264  r6 : 00000000  r5 : 000ca511  r4 : c4348200
+>>> r3 : 047e0d67  r2 : 047e0d67  r1 : 00000003  r0 : ffffffea
+>>> Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+>>> Control: 10c53c7d  Table: 60004059  DAC: 00000051
+>>> Register r0 information: non-paged memory
+>>> Register r1 information: non-paged memory
+>>> Register r2 information: non-paged memory
+>>> Register r3 information: non-paged memory
+>>> Register r4 information: slab kmalloc-512 start c4348200 pointer offset 0
+>>> size 512
+>>> Register r5 information: non-paged memory
+>>> Register r6 information: NULL pointer
+>>> Register r7 information: slab kmalloc-512 start c4348200 pointer offset 100
+>>> size 512
+>>> Register r8 information: non-slab/vmalloc memory
+>>> Register r9 information: slab kmalloc-512 start c4348200 pointer offset 4
+>>> size 512
+>>> Register r10 information: slab kmalloc-512 start c4348200 pointer offset
+>>> 268 size 512
+>>> Register r11 information: non-slab/vmalloc memory
+>>> Register r12 information: NULL pointer
+>>> Process swapper (pid: 1, stack limit = 0x08d7ca6b)
+>>> Stack: (0xe0821d30 to 0xe0822000)
+>>> 1d20:                                     00000000 e0821d98 c4348208 c0c00250
+>>> 1d40: 00000001 00000000 e0821d98 c0e50508 c4048000 00000000 c406f480 c4048000
+>>> 1d60: c4341ec0 c0e50508 c4341ec8 c063ce8c c0e593a8 c4048000 c406f4bc c406f480
+>>> 1d80: c4048000 c04c8bb0 c406f4cc c40704b0 00000000 047e0d67 3b9aca03 c0e5986c
+>>> 1da0: c0e5931c c0e97230 00000000 c063a618 00000000 c4048000 c0e59858 c40d0a10
+>>> 1dc0: c0e597f0 c063f80c c0d31830 00000000 00000000 00000000 00000000 00000000
+>>> 1de0: 00000000 00000000 e0821df4 00000000 00000000 c0ba32fc 00000000 047e0d67
+>>> 1e00: c40d75d8 00000000 c40d0a10 c0e59804 00000000 00000000 c0d31830 c0c2b5a0
+>>> 1e20: c0c776b0 c04cc8dc c40d0a10 00000000 c0e59804 c04ca1f4 c40d0a10 c0e59804
+>>> 1e40: c40d0a10 00000000 00000000 c04ca47c 00000000 c0be8598 c0e94b28 c0e59804
+>>> 1e60: c40d0a10 00000000 00000000 c04ca658 c40d0a10 c0e59804 c40d0a54 c4048000
+>>> 1e80: 00000000 c04ca8c4 c0e59804 c04ca834 c406f3c0 c04c8494 c4048000 c406f40c
+>>> 1ea0: c4070d30 047e0d67 c0e59804 c4341e00 00000000 c406f3c0 c4341e34 c04c959c
+>>> 1ec0: c0c00c14 c0e6c000 c0e59804 c0d2113c c4070800 00000000 c0e6c000 c04cb598
+>>> 1ee0: c4048000 c0d2113c c4070800 c010d21c 000003c0 00000000 c407084e c4070800
+>>> 1f00: c407084d c013e9e0 c0bee764 000000c0 00000000 00000000 c0d004d0 c4048000
+>>> 1f20: 00000006 00000006 373126cc c407086a 00000000 047e0d67 00000012 047e0d67
+>>> 1f40: 00000007 c0d42bd8 00000007 c4070800 000000c0 c0d31850 c0d31830 c0d011f4
+>>> 1f60: 00000006 00000006 00000000 c0d004d0 e0821f6c c0d004d0 00000000 c0e03380
+>>> 1f80: c0905828 00000000 00000000 00000000 00000000 00000000 00000000 c0905844
+>>> 1fa0: 00000000 c0905828 00000000 c010014c 00000000 00000000 00000000 00000000
+>>> 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>>> 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+>>> Call trace:
+>>>  cpufreq_online from cpufreq_add_dev+0x84/0x94
+>>>  cpufreq_add_dev from subsys_interface_register+0xf0/0x108
+>>>  subsys_interface_register from cpufreq_register_driver+0x13c/0x2e4
+>>>  cpufreq_register_driver from dt_cpufreq_probe+0xb4/0x380
+>>>  dt_cpufreq_probe from platform_probe+0x5c/0xb8
+>>>  platform_probe from really_probe+0xc8/0x2c8
+>>>  really_probe from __driver_probe_device+0x88/0x19c
+>>>  __driver_probe_device from driver_probe_device+0x30/0x104
+>>>  driver_probe_device from __driver_attach+0x90/0x178
+>>>  __driver_attach from bus_for_each_dev+0x6c/0xb4
+>>>  bus_for_each_dev from bus_add_driver+0xcc/0x1ec
+>>>  bus_add_driver from driver_register+0x7c/0x114
+>>>  driver_register from do_one_initcall+0x40/0x21c
+>>>  do_one_initcall from kernel_init_freeable+0x194/0x1f8
+>>>  kernel_init_freeable from kernel_init+0x1c/0x128
+>>>  kernel_init from ret_from_fork+0x14/0x28
+>>> Exception stack(0xe0821fb0 to 0xe0821ff8)
+>>> 1fa0:                                     00000000 00000000 00000000 00000000
+>>> 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>>> 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>>> Code: e3a02000 ebfff87e e3500000 0a000043 (e7f001f2)
+>>> ---[ end trace 0000000000000000 ]---
+>>> note: swapper[1] exited with irqs disabled
+>>> Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
+>>> ---[ end Kernel panic - not syncing: Attempted to kill init!
+>>> exitcode=0x0000000b ]---
+>>>
+>>>
+>>> And this one:
+>>>
+>>> Starting kernel ...
+>>>
+>>> Booting Linux on physical CPU 0x0
+>>> Linux version 6.14.0-rc1+ (claudiu@claudiu-X670E-Pro-RS)
+>>> (arm-none-linux-gnueabihf-gcc (GNU Toolchain for the A-profile Architecture
+>>> 10.3-2021.07 (arm-10.29)) 10.3.1 20210621, GNU ld (GNU Toolchain for the
+>>> A-profile Architecture 10.3-2021.07 (arm-10.29)) 2.36.1.20210621) #11 Wed
+>>> Feb 26 11:01:10 EET 2025
+>>> CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7), cr=10c53c7d
+>>> CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+>>> OF: fdt: Machine model: Microchip SAMA7G5-EK
+>>> printk: legacy bootconsole [earlycon0] enabled
+>>> Memory policy: Data cache writeback
+>>> cma: Reserved 192 MiB at 0x70000000 on node -1
+>>> Zone ranges:
+>>>   Normal   [mem 0x0000000060000000-0x000000007fffffff]
+>>> Movable zone start for each node
+>>> Early memory node ranges
+>>>   node   0: [mem 0x0000000060000000-0x000000007fffffff]
+>>> Initmem setup node 0 [mem 0x0000000060000000-0x000000007fffffff]
+>>> OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+>>> CPU: All CPU(s) started in SVC mode.
+>>> Kernel command line: console=ttyS0,115200 root=/dev/mmcblk1p2
+>>> rootfstype=ext4 rw rootwait cma=192m atmel.pm_modes=standby,ulp0 earlyprintk
+>>> printk: log buffer data + meta data: 65536 + 204800 = 270336 bytes
+>>> Dentry cache hash table entries: 65536 (order: 6, 262144 bytes, linear)
+>>> Inode-cache hash table entries: 32768 (order: 5, 131072 bytes, linear)
+>>> Built 1 zonelists, mobility grouping on.  Total pages: 131072
+>>> mem auto-init: stack:off, heap alloc:off, heap free:off
+>>> SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+>>> NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
+>>> Main crystal frequency not set, using approximate value
+>>> timer_probe: no matching timers found
+>>> Console: colour dummy device 80x30
+>>> sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every
+>>> 21474836475000000ns
+>>>
+>>>
+>>> I suspect parent_data in sama7g5_pmc_setup() need to be initialized with zero.
 >>
->>   &pwm_ef {
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> index 957577d986c0675a503115e1ccbc4387c2051620..83edafc2646438e3e6b1945fa1c4b327254a4131 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->> @@ -11,7 +11,11 @@
->>   #include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
->>   #include <dt-bindings/power/meson-s4-power.h>
->>   #include <dt-bindings/reset/amlogic,meson-s4-reset.h>
->> -
-> Why?
-
-The following files are included that the audio driver depends on
-
-it is same as sm1 chip
-
->> +#include <dt-bindings/clock/axg-audio-clkc.h>
->> +#include <dt-bindings/reset/amlogic,meson-axg-audio-arb.h>
->> +#include <dt-bindings/reset/amlogic,meson-g12a-audio-reset.h>
->> +#include <dt-bindings/sound/meson-g12a-toacodec.h>
->> +#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
-> Old style was correct.
-
-I didn't understand where you were referring to, I'm guessing that's 
-what it was about
-
-the following changes to tdmif_a
-
-old:
-
-clock-names = "mclk", "sclk", "lrclk";
-
-new:
-clock-names = "sclk", "lrclk","mclk";
-it fix warning
-
-it showhttp://devicetree.org/schemas/sound/amlogic,axg-tdm-iface.yaml#
-examples:
-   - |
-     #include <dt-bindings/clock/axg-audio-clkc.h>
-
-     audio-controller {
-         compatible = "amlogic,axg-tdm-iface";
-         #sound-dai-cells = <0>;
-         clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
-                  <&clkc_audio AUD_CLKID_MST_A_LRCLK>,
-                  <&clkc_audio AUD_CLKID_MST_A_MCLK>;
-         clock-names = "sclk", "lrclk", "mclk";
-     };
-
->
->>   / {
->>        cpus {
->>                #address-cells = <2>;
->> @@ -46,6 +50,36 @@ cpu3: cpu@3 {
->>                };
->>        };
+>> With this series I did not see any boot issues with the sama7g54. But
+>> when doing the DTS and DTSI changes that you made above I did see boot
+>> issues with the sama7g54.
 >>
->> +     tdmif_a: audio-controller-0 {
->> +             compatible = "amlogic,axg-tdm-iface";
->> +             #sound-dai-cells = <0>;
->> +             sound-name-prefix = "TDM_A";
->> +             clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_A_LRCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_A_MCLK>;
->> +             clock-names = "sclk", "lrclk","mclk";
->> +     };
->> +
->> +     tdmif_b: audio-controller-1 {
->> +             compatible = "amlogic,axg-tdm-iface";
->> +             #sound-dai-cells = <0>;
->> +             sound-name-prefix = "TDM_B";
->> +             clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_B_LRCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_B_MCLK>;
->> +             clock-names = "sclk", "lrclk","mclk";
->> +     };
->> +
->> +     tdmif_c: audio-controller-2 {
->> +             compatible = "amlogic,axg-tdm-iface";
->> +             #sound-dai-cells = <0>;
->> +             sound-name-prefix = "TDM_C";
->> +             clocks = <&clkc_audio AUD_CLKID_MST_C_SCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_C_LRCLK>,
->> +                      <&clkc_audio AUD_CLKID_MST_C_MCLK>;
->> +             clock-names = "sclk", "lrclk","mclk";
->> +     };
->> +
->>        timer {
->>                compatible = "arm,armv8-timer";
->>                interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->> @@ -101,7 +135,6 @@ apb4: bus@fe000000 {
->>                        #address-cells = <2>;
->>                        #size-cells = <2>;
->>                        ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
->> -
-> Why? What is happening in this patch - why are you changing so many
-> other pieces?
->
->>                        clkc_periphs: clock-controller@0 {
->>                                compatible = "amlogic,s4-peripherals-clkc";
->>                                reg = <0x0 0x0 0x0 0x49c>;
->> @@ -134,6 +167,17 @@ clkc_pll: clock-controller@8000 {
->>                                #clock-cells = <1>;
->>                        };
+>> It seems that the 2/2 patch also needs to have a similar patch for the
+>> sama7g54 clock driver.
+> 
+> Would it be better to have this change to all the SoCs and their clock
+> drivers to match the correct naming? 
+
+That would be good.
+
+Thank you,
+Claudiu
+
+> Since this set is mainly to adjust
+> for sama7d65 and a separate change to sama7g5.c clock driver would be
+> needed to fix the error that you are seeing above.
 >>
->> +                     acodec: audio-controller@1a000 {
->> +                             compatible = "amlogic,t9015";
->> +                             reg = <0x0 0x1A000 0x0 0x14>;
->> +                             #sound-dai-cells = <0>;
->> +                             sound-name-prefix = "ACODEC";
->> +                             clocks = <&clkc_periphs CLKID_ACODEC>;
->> +                             clock-names = "pclk";
->> +                             resets = <&reset RESET_ACODEC>;
->> +                             AVDD-supply = <&vddio_ao1v8>;
->> +                     };
->> +
->>                        watchdog@2100 {
->>                                compatible = "amlogic,s4-wdt", "amlogic,t7-wdt";
->>                                reg = <0x0 0x2100 0x0 0x10>;
->> @@ -850,3 +894,327 @@ emmc: mmc@fe08c000 {
->>                };
->>        };
->>   };
->> +
->> +&apb4 {
->> +     audio: bus@330000 {
->> +             compatible = "simple-bus";
->> +             reg = <0x0 0x330000 0x0 0x1000>;
-> That's not a simple bus in such case.
+>> Best,
+>> Ryan
+>>>
+>>> Thank you,
+>>> Claudiu
+>>>
+>>>
+>>>
+>>
+> 
 
-these code base on old dts like sm1/g12a, we didn't easily change any of 
-the relevant properties
-
-To be consistent with the previous one
-
->
-> NAK
->
->
-> Best regards,
-> Krzysztof
->
