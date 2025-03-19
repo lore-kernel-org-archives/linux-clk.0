@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE44213E78;
-	Wed, 19 Mar 2025 19:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109EA21481E;
+	Wed, 19 Mar 2025 19:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742412680; cv=none; b=C0y7sUwXacl5/icAL6OmpOKqzR2E6qRyNq+D26fmtxG3XTHS+9+aHLH2oAzl6lGLnGz4uzdILKd3Y3+jxwhITKifZ5q+G3BSnr5EmPwBe2fbGVbUQiA/yNV+5GNgrfaE/PY2Q6BJuHQcBmSBV31FCdc2FFVRoQZ3AdcGDGbyR+Q=
+	t=1742412706; cv=none; b=dXfG9v6mAg1tmBCGpe8Vrax0/ZCmkIOq0YxmTRniEaQACv/hmHLpfPxJ+dtT6zKDyUIY8EVUEMiA2fdP7Sd3BcQKDvwGtxUS5maPnKHceq/99/Jgn5EJ52xSC4ucqG1Eg9DQJjPfmhVXYJnD4Ld1g+jejG1FLltOgJKl5uLckio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742412680; c=relaxed/simple;
-	bh=CpfCtBcbiwBJ0pvVDr2LOLoj2GpLAXY2Jc7T3aqYATE=;
+	s=arc-20240116; t=1742412706; c=relaxed/simple;
+	bh=VODwfrt3KkmAokRohu16X/E2z/gn8CoM6Tx6tZBecgQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FJrGFU+s8nEfxbW7ux4DUoXMGlfxa05qZpK5UW0rfilJdrV6C1HExqYvVK2VFMtjkI96usHo7cdhrhgAEvnGpxGOc+J2ADW+UUnejr1B4XhuGcg1r9EHDz/MCIx6Q3MzQa40iBANAHKe4wBiyw9Xwcl2Sb/r8z7SvZKJ0+Ig7aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tLHA5bCE; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=S4AW/0sj+JPeZbt/Cb+XVXCbyurpGEwuNZQdLE3grUUyKfMbVkx3nxmlm4hdvnI8OpQjBQe9byEUNivqr6cSYh3evKjjeXQhNfR0Z9O7VuYcq/2LrA9fu4otuewlCzt1COFwPZn3SEWYt3eKNlp1fWVwqt7N4HIbc0cjwZwHqbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FRcNIWSb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tLHA5bCE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE7C2C4CEE4;
-	Wed, 19 Mar 2025 19:31:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FRcNIWSb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABC9CC4CEE9;
+	Wed, 19 Mar 2025 19:31:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742412680;
-	bh=CpfCtBcbiwBJ0pvVDr2LOLoj2GpLAXY2Jc7T3aqYATE=;
+	s=k20201202; t=1742412705;
+	bh=VODwfrt3KkmAokRohu16X/E2z/gn8CoM6Tx6tZBecgQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tLHA5bCEYAzsmdCwwKaCf6fUHZHdQpJrc4VNB9NQAPsckqR+KBod/BYx3UfCzJp5m
-	 cyIzLKyONGdzVgL355P6tEPJVDhG7wq2ja6eX66of4xmEolBgDiLzQ5pS6r3NAzjBw
-	 Dnj86XvJ2VqkY0wWFCjF/FfbjQgbPtaoPowbK/zYaRC0LAAiy0UWbAzrWqTMV+Gb3e
-	 Kiic1porYOBgID5Hw14r2Xm/kuGR/BkrylPKfwviCAIClMwC/UkJhWuBOAqUwgq0uv
-	 lHAO8kSc3ImQa6QoUb3dVQSgFQH9wE16XLtk/vu8o0DJiwaWxBgEgDQuPHshX+BhJK
-	 d5OetRRdl4yCg==
-Message-ID: <37f65ad0-69fa-4031-86da-8b07828aff34@kernel.org>
-Date: Wed, 19 Mar 2025 20:31:09 +0100
+	b=FRcNIWSbdFL6ogJKYQrak6++QXliKtGGMtBDVpGiltFURLpOVSvomSH3a+ZRn17vL
+	 exSOA9FVCudmB9omE2RjE8n+4/mbB0lrZkX/NpEiYH7awxdfpZZntktdXINEhoSYSO
+	 yuLTmyBrCSdva9QtFhkI8K15tyc1UmXhnNY77RjEFtEifY0HADzfchJQCxwZHWRJee
+	 kiJtwy/6PZP1wNEDPcW2xi9ffpJh2az7ftbPwSZ4ins6nlZ+ydZNAiaUPF2nkIS8Se
+	 6LqJSUCjPqvYdmQqqf7qFsZNl8M7xNB42I7YlKaS5THpGK8T+iT2/LH2ZUEXzKSdnB
+	 Oujpr5hTY7z1g==
+Message-ID: <7084e271-8546-4a49-9eb8-ee3f647c529a@kernel.org>
+Date: Wed, 19 Mar 2025 20:31:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/6] arm64: dts: amlogic: Add Amlogic S4 Audio
+Subject: Re: [PATCH v4 2/6] dt-bindings: clock: axg-audio: Add mclk and sclk
+ pad clock ids
 To: Jiebing Chen <jiebing.chen@amlogic.com>
 Cc: Jerome Brunet <jbrunet@baylibre.com>, Liam Girdwood
  <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
@@ -50,9 +51,9 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>, Liam Girdwood
  linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
 References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
- <20250319-audio_drvier-v4-6-686867fad719@amlogic.com>
- <20250319-quizzical-coyote-of-assurance-d4c91d@krzk-bin>
- <9397d6d5-518d-4bd0-a34a-7a5f5e1201f1@amlogic.com>
+ <20250319-audio_drvier-v4-2-686867fad719@amlogic.com>
+ <20250319-daffy-classy-kangaroo-023e1f@krzk-bin>
+ <9ae73d75-9c59-4255-8924-b456c86cbc01@amlogic.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,120 +99,50 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <9397d6d5-518d-4bd0-a34a-7a5f5e1201f1@amlogic.com>
+In-Reply-To: <9ae73d75-9c59-4255-8924-b456c86cbc01@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 19/03/2025 11:38, Jiebing Chen wrote:
->>>   };
->>>
->>>   &pwm_ef {
->>> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>> index 957577d986c0675a503115e1ccbc4387c2051620..83edafc2646438e3e6b1945fa1c4b327254a4131 100644
->>> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
->>> @@ -11,7 +11,11 @@
->>>   #include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
->>>   #include <dt-bindings/power/meson-s4-power.h>
->>>   #include <dt-bindings/reset/amlogic,meson-s4-reset.h>
->>> -
->> Why?
+On 19/03/2025 11:09, Jiebing Chen wrote:
 > 
-> The following files are included that the audio driver depends on
-
-Do you understand how emails work and patch review? I commented under
-your change, not unrelated code being there already.
-
-> 
-> it is same as sm1 chip
-> 
->>> +#include <dt-bindings/clock/axg-audio-clkc.h>
->>> +#include <dt-bindings/reset/amlogic,meson-axg-audio-arb.h>
->>> +#include <dt-bindings/reset/amlogic,meson-g12a-audio-reset.h>
->>> +#include <dt-bindings/sound/meson-g12a-toacodec.h>
->>> +#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
->> Old style was correct.
-> 
-> I didn't understand where you were referring to, I'm guessing that's 
-> what it was about
-
-Read your patch.
-
-
-> 
-> the following changes to tdmif_a
-> 
-> old:
-> 
-> clock-names = "mclk", "sclk", "lrclk";
-> 
-> new:
-> clock-names = "sclk", "lrclk","mclk";
-> it fix warning
-
-How is this related to the patch hunk?
-
-Do you understand how patch format works?
-
-
-...
-
->>>        timer {
->>>                compatible = "arm,armv8-timer";
->>>                interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
->>> @@ -101,7 +135,6 @@ apb4: bus@fe000000 {
->>>                        #address-cells = <2>;
->>>                        #size-cells = <2>;
->>>                        ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
->>> -
->> Why? What is happening in this patch - why are you changing so many
->> other pieces?
-
-You did not respond here, so I assume you will fix this and do intensive
-review before posting next version.
-
+> 在 2025/3/19 16:22, Krzysztof Kozlowski 写道:
+>> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
 >>
->>>                        clkc_periphs: clock-controller@0 {
->>>                                compatible = "amlogic,s4-peripherals-clkc";
->>>                                reg = <0x0 0x0 0x0 0x49c>;
->>> @@ -134,6 +167,17 @@ clkc_pll: clock-controller@8000 {
->>>                                #clock-cells = <1>;
->>>                        };
+>> [ EXTERNAL EMAIL ]
+>>
+>> On Wed, Mar 19, 2025 at 03:04:45PM +0800, jiebing chen wrote:
+>>> Add clock IDs for the mclk pads found on s4 SoCs
 >>>
->>> +                     acodec: audio-controller@1a000 {
->>> +                             compatible = "amlogic,t9015";
->>> +                             reg = <0x0 0x1A000 0x0 0x14>;
->>> +                             #sound-dai-cells = <0>;
->>> +                             sound-name-prefix = "ACODEC";
->>> +                             clocks = <&clkc_periphs CLKID_ACODEC>;
->>> +                             clock-names = "pclk";
->>> +                             resets = <&reset RESET_ACODEC>;
->>> +                             AVDD-supply = <&vddio_ao1v8>;
->>> +                     };
->>> +
->>>                        watchdog@2100 {
->>>                                compatible = "amlogic,s4-wdt", "amlogic,t7-wdt";
->>>                                reg = <0x0 0x2100 0x0 0x10>;
->>> @@ -850,3 +894,327 @@ emmc: mmc@fe08c000 {
->>>                };
->>>        };
->>>   };
->>> +
->>> +&apb4 {
->>> +     audio: bus@330000 {
->>> +             compatible = "simple-bus";
->>> +             reg = <0x0 0x330000 0x0 0x1000>;
->> That's not a simple bus in such case.
+>>> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+>>> ---
+>>>   include/dt-bindings/clock/axg-audio-clkc.h | 11 +++++++++++
+>> This belongs to the binding patch, usually.
+>>
+>> Anyway - do not ask us to do the work twice.
+>>
+>> <form letter>
+>> This is a friendly reminder during the review process.
+>>
+>> It looks like you received a tag and forgot to add it.
+>>
+>> If you do not know the process, here is a short explanation:
+>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+>> versions of patchset, under or above your Signed-off-by tag, unless
+>> patch changed significantly (e.g. new properties added to the DT
+>> bindings). Tag is "received", when provided in a message replied to you
+>> on the mailing list. Tools like b4 can help here. However, there's no
+>> need to repost patches *only* to add the tags. The upstream maintainer
+>> will do that for tags received on the version they apply.
+>>
+>> Please read:
+>> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+>>
+>> If a tag was not added on purpose, please state why and what changed.
+>> </form letter>
 > 
-> these code base on old dts like sm1/g12a, we didn't easily change any of 
-> the relevant properties
-> 
-> To be consistent with the previous one
+> thanks for your remind
 
-Still NAK.
-
-You cannot add bugs just to be consistent.
-
+Are you going to do anything or you are going to ignore us?
 
 Best regards,
 Krzysztof
