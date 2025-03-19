@@ -1,94 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205328F4A;
-	Wed, 19 Mar 2025 08:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D843615A85A;
+	Wed, 19 Mar 2025 08:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742373511; cv=none; b=JvKFbdQ+M6QGcO3a4fJB5cNTh3MGKZIw7c2kXQmuWH9FWcadLlPpM4VvqLVDgyziIIdeFDKQxZRDd8bFeMXAJ3yDYOc3IpC7KuRtMVymlcvxz7fLcIxU15ccObgxh9nfOljzOi/u5Qs+bI+uOio2kDEOnI/3NghUEq6J5/tRXKQ=
+	t=1742373593; cv=none; b=YRwKJVvL17Ve+GXwbfsV+JH1IZrODy6dKBHXQuZ5zkcoNP8ZO6JQiOX0/6WSXlT3j4Qx44OqhzYj1WFnhZC/1IsqqjEDF1NxkbhEX6YjhB+T/ZqCGWSMNEpllpJ6Tu8GGf8UCK/A20NRkK9OyWKVeYOCfVVzaQkSAcZReqJbHS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742373511; c=relaxed/simple;
-	bh=pMf/64E0I6+rFdDaTCFrvk/ro7kn43RkXMkXNOOl2KE=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=pK+HeCNmguOZuvdAYQ7+gmhv/xKMipVvBmO9KaSBk1jIMPzfLUTRTXYuQIt+XN7tODFTuSkFSY10I1g5QZjlc/1cQyW3UJJYec8U3mZ9a0TW9+xAO7S0HEbg7dN+/HLVpUCvN76CgtjY7RDxzCJxGCwZKU7MzY7ILFg2aczUIpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vl29zLb1; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742373593; c=relaxed/simple;
+	bh=gr9n+K/DMQiaNIfWEJjpc4Rm/fdyAPYWwEfd3TplAWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMuqS6NXQkbDhUm+gGPB9DDx79mOw7wqpg9Iaxlsb5ngx47wKgHBrObeakIomDiPzwCHRykHNZkdZPQu4NRpcISR5teUjMgW4gCfRr8n3d9HTJ6REwJ4cqLeYSF0PMA5d/TIv5j6pVL1VSyevj8p/mLePeWtcGOJyAH2Lv6Joio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FgDISaV4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vl29zLb1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F28FCC4CEE9;
-	Wed, 19 Mar 2025 08:38:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FgDISaV4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68160C4CEE9;
+	Wed, 19 Mar 2025 08:39:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742373510;
-	bh=pMf/64E0I6+rFdDaTCFrvk/ro7kn43RkXMkXNOOl2KE=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Vl29zLb1ktQPGIFpaNCNSePzZ1tgJ5hKdd5I92dGYAvusEMf8SCjPdQgubq4Ms0t9
-	 7SKID+5erdpQG2UtW90kjWUfnXo0vJDKavGDxGxR0hlAxI1Gn+dxBUfVhRALKaAKyg
-	 Ot8ENmOEA63ZqhoPlid0lTt3Jr5qNoxH0bRgksNlTy24NAm3Hekae761xiCb0JjP+S
-	 eQWRaEJ+T32XrfF59cyYkfJdyI0yYFxgL0wZx66chMPEg04AjlvTUpyoAMRQE+47tr
-	 RPd6YRGhnY93+EsgNcdEdtRSZJZxBVEc17kWLzwP1mf24t+Ob98BRT3kfjItJnoe07
-	 SmPwDMODRObEw==
-Date: Wed, 19 Mar 2025 03:38:28 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1742373592;
+	bh=gr9n+K/DMQiaNIfWEJjpc4Rm/fdyAPYWwEfd3TplAWI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FgDISaV4Ij5Oy0XOmSduT+ZeUJa7iw4Wf+JWqHoJQpp5Bv1TD742urZPit29yGzBN
+	 07SeEzlEoo2uoVYtzwtj/gnAaen/SiRwVmtqkiyd+4t69tqDnaxpYTenoiQn7gvEkF
+	 fDsnHafZHtQbSaS7DPWqxY4PGVszAiUgXVqByDI5/qayAqy4QJI/PaDbJYWdGY/orR
+	 PmY1OiHUeH6g8iq0R6XHHg9V8An8N9dKJMs6MuvBkz+51TWHIUjx8XmX2WzLTTzqbF
+	 oLN1WU3H+r/5y4edS+/epG3Bq3BwDllScbINC8ID3ukD9ozX8QHQzBAIGSkfs/uxI8
+	 y8ZtT2BKe1PBA==
+Date: Wed, 19 Mar 2025 09:39:48 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alex Elder <elder@kernel.org>, Stanislav Jakubek <stano.jakubek@gmail.com>, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH v4 3/8] dt-bindings: clock: brcm,kona-ccu: Add BCM21664
+ and BCM281xx bus clocks
+Message-ID: <20250319-dazzling-industrious-gharial-db45a3@krzk-bin>
+References: <20250318-kona-bus-clock-v4-0-f54416e8328f@gmail.com>
+ <20250318-kona-bus-clock-v4-3-f54416e8328f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: shuai.li@amlogic.com, devicetree@vger.kernel.org, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- linux-amlogic@lists.infradead.org, Takashi Iwai <tiwai@suse.com>, 
- linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, 
- linux-kernel@vger.kernel.org, zhe.wang@amlogic.com, 
- Jerome Brunet <jbrunet@baylibre.com>, Mark Brown <broonie@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, jian.xu@amlogic.com, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: jiebing chen <jiebing.chen@amlogic.com>
-In-Reply-To: <20250319-audio_drvier-v4-1-686867fad719@amlogic.com>
-References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
- <20250319-audio_drvier-v4-1-686867fad719@amlogic.com>
-Message-Id: <174237350819.971004.1098115771430334211.robh@kernel.org>
-Subject: Re: [PATCH v4 1/6] dt-bindings: clock: meson: Add audio power
- domain for s4 soc
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250318-kona-bus-clock-v4-3-f54416e8328f@gmail.com>
 
-
-On Wed, 19 Mar 2025 15:04:44 +0800, jiebing chen wrote:
-> Audio power domain found on S4 device.it need to enable before audio work.
+On Tue, Mar 18, 2025 at 09:13:25AM +0100, Artur Weber wrote:
+> Add bus clocks corresponding to peripheral clocks currently supported
+> by the BCM21664 and BCM281xx clock drivers and add the relevant clock
+> IDs to the dt-bindings headers (bcm21664.h, bcm281xx.h).
 > 
-> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
 > ---
->  .../bindings/clock/amlogic,axg-audio-clkc.yaml       | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
-> 
+> Changes in v4:
+> - Squash BCM21664 and BCM281xx bus clock bindings commits
+> ---
+>  .../devicetree/bindings/clock/brcm,kona-ccu.yaml   | 49 ++++++++++++++++++++--
+>  include/dt-bindings/clock/bcm21664.h               | 13 ++++++
+>  include/dt-bindings/clock/bcm281xx.h               | 19 +++++++++
+>  3 files changed, 78 insertions(+), 3 deletions(-)
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml:105:7: [warning] wrong indentation: expected 4 but found 6 (indentation)
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.example.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250319-audio_drvier-v4-1-686867fad719@amlogic.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+Krzysztof
 
