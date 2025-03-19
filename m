@@ -1,96 +1,145 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142D72080CD;
-	Tue, 18 Mar 2025 22:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8728B24EF7D;
+	Wed, 19 Mar 2025 07:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742338234; cv=none; b=WCgFR0J6UG9ZlLalBXBqwfSFNBiDm0MEPzDVz5DuDmqhzciLnIDG0ls/kmo/nZWyvQqZsOj2us5GsCPyS0+i5DDE6IMUtaqgQ4zSW1QhvA+PMZtqg7Nd4wwNE2QgehOgQHsFDHDdFQ52CHwp0N51q9fXO/eEM318qQDJPUR19XM=
+	t=1742368000; cv=none; b=u7CNaxq9boIDlXuRHui2RSHbEVflzTEym9dsvnxmwxWalRofa7SCrpT4g0lC2CBGLu9zf3Ly0pvMUkin+3Dg+s8/eIyd0O1K7HyUEywjfPIXSmLZIp26EEIm90V+XsNxS18UFkZ6Pyaab2P5GI7phOMGNEjQekqRPEZUH9leYXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742338234; c=relaxed/simple;
-	bh=c4bsVe+5uL9D6uBKzHJO71coGq992rq3ehHjhbm4ZO4=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ocIrDb8aF8ZCGdO+t/8tqiyf1+mSDx5MU5upmhZuew+EEiCDxMQFEfLsimLcdSPlWRayS6QPonFNoA6lyizCArfB09egPIwBjfrLGmAFMZoyiea9ks+FL/cPnv7MQnSUYysKjLiLqpFmNH4WOV5+QviuUyQ6G0FlGdpw8zJo3jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxRsJ2Nw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742368000; c=relaxed/simple;
+	bh=tvgPwCRWbi/ALkXQMLlct6LyeXt6Qqe+tJZSRrxXF0I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=l3kJnJ7RsMPAKn4V33p2t+KWQRM5wlL+LJZbMHbH5fwpDPhK8KQ2yh3CMMf5pk4ZG+IbLyx3sE7Vx0q8958Z2nA9lzQYHz3BneCs1Zg8ZTh3+9H+L/YvELNZjHMPRuHlmBkXqJPWxQKxsNBgzm4iz01s/LPf9/eSVqg3ILCjx7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8JXI4ps; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxRsJ2Nw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 601FBC4CEE9;
-	Tue, 18 Mar 2025 22:50:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8JXI4ps"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 17C15C4CEEA;
+	Wed, 19 Mar 2025 07:06:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742338233;
-	bh=c4bsVe+5uL9D6uBKzHJO71coGq992rq3ehHjhbm4ZO4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=TxRsJ2Nwag6309asbOZC3fzbTIIkz6FiBRP5612KDJkVMfcmjUHRFhiHSoGe63NzB
-	 QnSrAHR5WTT6/rOSny96TnP0KVrS7HKtcABULGkvLuzBdwT9uzPxJFZ1kgI3SIFY+l
-	 B/pfSUjPIHl+ZKU6IdwM+Ly/o0bZoAJKtwH5l21igPdgXR2NLP1B1+G633bGdCas3a
-	 +I4DYgOhHcSFrKWf7TZYKXZ39Woimk6n9VsO46V2APqdm37McEA8Mv1tM/FX5Qz90d
-	 lzsquBJaVkX5O5WB/gBHf/qFK5Y4Z3imxIXMpmIJq3fIHDjm8AXkAEoIlPE1cb5nIp
-	 MeB2r2YbGnUsw==
-Message-ID: <ef86ccad056bc03af7f01d5696787766.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1742368000;
+	bh=tvgPwCRWbi/ALkXQMLlct6LyeXt6Qqe+tJZSRrxXF0I=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=W8JXI4ps/GpodZ9fu7N4s22fdmV9+leBQrvBov4qjUUvvZ7JzgZIEMcPGcLSxUavI
+	 bhO8Z05FLZAzpMKLWq9tazy0NcrsHvb5dA0C41XggqZWbV2TdlKyAOy9nDYzD4Ltw9
+	 LUVXlxbDnaz9aKjZDLStMOcsHL8T6c8pvwqBsIQ7YXYX79cIQRywWiDFBGXqA1r80w
+	 vJ3Xuzlwq9Y0RAXrS0PtE7RTLPJPCMaz6nvdH02L5I9n50ooRcHrNUJtvmIk2RpoUy
+	 jHYJ+3YXxotJafv9eVK/Z7AsZ2oNd22AhtvM283Y5IYM5uY0g2qQV+Wd+GvPanE410
+	 GTquB86c6Sueg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0E8C35FFC;
+	Wed, 19 Mar 2025 07:06:39 +0000 (UTC)
+From: jiebing chen via B4 Relay <devnull+jiebing.chen.amlogic.com@kernel.org>
+Date: Wed, 19 Mar 2025 15:04:44 +0800
+Subject: [PATCH v4 1/6] dt-bindings: clock: meson: Add audio power domain
+ for s4 soc
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <65gl7d6qd55xrdm3as3pnqevpmakin3k4jzyocehq7wq7565jj@x35t2inlykop>
-References: <20250313110359.242491-1-quic_mmanikan@quicinc.com> <20250313110359.242491-5-quic_mmanikan@quicinc.com> <65gl7d6qd55xrdm3as3pnqevpmakin3k4jzyocehq7wq7565jj@x35t2inlykop>
-Subject: Re: [PATCH v12 4/6] clk: qcom: Add NSS clock Controller driver for IPQ9574
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: andersson@kernel.org, mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de, richardcochran@gmail.com, geert+renesas@glider.be, lumag@kernel.org, heiko@sntech.de, biju.das.jz@bp.renesas.com, quic_tdas@quicinc.com, nfraprado@collabora.com, elinor.montmasson@savoirfairelinux.com, ross.burton@arm.com, javier.carrasco@wolfvision.net, ebiggers@google.com, quic_anusha@quicinc.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, quic_varada@quicinc.com, quic_srichara@quicinc.com
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, Marek =?utf-8?q?Beh=C3=BAn?= <kabel@kernel.org>
-Date: Tue, 18 Mar 2025 15:50:31 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250319-audio_drvier-v4-1-686867fad719@amlogic.com>
+References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
+In-Reply-To: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
+To: Jerome Brunet <jbrunet@baylibre.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com, 
+ jiebing chen <jiebing.chen@amlogic.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742367997; l=1779;
+ i=jiebing.chen@amlogic.com; s=20250110; h=from:subject:message-id;
+ bh=LILue2hV/0RBI1wyR/+9esvdXN1gHROx+an1AXnFBQ0=;
+ b=5p4uPDUvvHQ9UwyB7WW54kKulEkuralm/Z3oOIisosXjHg1ryW9BuqvlnKrqjlbFOTuCyxTtp
+ ZB7idtOCV1MAQgWuF9mAAU56S+UpnvWu8ImxLz9HLy4nvtUq8rlKrrr
+X-Developer-Key: i=jiebing.chen@amlogic.com; a=ed25519;
+ pk=6rFvvF45A84pLNRy03hfUHeROxHCnZ+1KAGw/DoqKic=
+X-Endpoint-Received: by B4 Relay for jiebing.chen@amlogic.com/20250110 with
+ auth_id=316
+X-Original-From: jiebing chen <jiebing.chen@amlogic.com>
+Reply-To: jiebing.chen@amlogic.com
 
-Quoting Marek Beh=C3=BAn (2025-03-17 07:08:16)
-> On Thu, Mar 13, 2025 at 04:33:57PM +0530, Manikanta Mylavarapu wrote:
->=20
-> > +static struct clk_rcg2 nss_cc_clc_clk_src =3D {
-> > +     .cmd_rcgr =3D 0x28604,
-> > +     .mnd_width =3D 0,
-> > +     .hid_width =3D 5,
-> > +     .parent_map =3D nss_cc_parent_map_6,
-> > +     .freq_tbl =3D ftbl_nss_cc_clc_clk_src,
-> > +     .clkr.hw.init =3D &(const struct clk_init_data) {
-> > +             .name =3D "nss_cc_clc_clk_src",
-> > +             .parent_data =3D nss_cc_parent_data_6,
-> > +             .num_parents =3D ARRAY_SIZE(nss_cc_parent_data_6),
-> > +             .ops =3D &clk_rcg2_ops,
-> > +     },
-> > +};
->=20
-> This structure definition gets repeated many times in this driver,
-> with only slight changes. (This also happens in other qualcomm clock
-> drivers.)
->=20
-> Would it be possible to refactor it into a macro, to avoid the
-> insane code repetition?
->=20
+From: jiebing chen <jiebing.chen@amlogic.com>
 
-We have this discussion every couple years or so. The short answer is
-no. The long answer is that it makes it harder to read because we don't
-know what argument to the macro corresponds to the struct members.
+Audio power domain found on S4 device.it need to enable before audio work.
 
-It could probably use the CLK_HW_INIT_PARENTS_DATA macro though.
+Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+---
+ .../bindings/clock/amlogic,axg-audio-clkc.yaml       | 20 +++++++++++++++++++-
+ 1 file changed, 19 insertions(+), 1 deletion(-)
 
-static struct clk_rcg2 nss_cc_clc_clk_src =3D {
-     .cmd_rcgr =3D 0x28604,
-     .mnd_width =3D 0,
-     .hid_width =3D 5,
-     .parent_map =3D nss_cc_parent_map_6,
-     .freq_tbl =3D ftbl_nss_cc_clc_clk_src,
-     .clkr.hw.init =3D CLK_HW_INIT_PARENTS_DATA("nss_cc_clc_clk_src",
-                                              nss_cc_parent_data_6,
-					      &clk_rcg2_ops, 0),
-     },
-};
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+index fd7982dd4ceab82389167079c2258a9acff51a76..50a5cbb6eb64873dd5aa55f6f1a63e9e97542760 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
++++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+@@ -21,6 +21,7 @@ properties:
+       - amlogic,axg-audio-clkc
+       - amlogic,g12a-audio-clkc
+       - amlogic,sm1-audio-clkc
++      - amlogic,s4-audio-clkc
+ 
+   '#clock-cells':
+     const: 1
+@@ -29,7 +30,7 @@ properties:
+     const: 1
+ 
+   reg:
+-    maxItems: 1
++    maxItems: 2
+ 
+   clocks:
+     minItems: 1
+@@ -100,6 +101,9 @@ properties:
+   resets:
+     description: internal reset line
+ 
++  power-domains:
++      maxItems: 1
++
+ required:
+   - compatible
+   - '#clock-cells'
+@@ -116,12 +120,26 @@ allOf:
+             enum:
+               - amlogic,g12a-audio-clkc
+               - amlogic,sm1-audio-clkc
++              - amlogic,s4-audio-clkc
+     then:
+       required:
+         - '#reset-cells'
+     else:
+       properties:
+         '#reset-cells': false
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - amlogic,s4-audio-clkc
++    then:
++      required:
++        - power-domains
++
++    else:
++      properties:
++        power-domains: false
+ 
+ additionalProperties: false
+ 
 
-but then we lose the const. Oh well.
+-- 
+2.43.0
 
-The whole qcom clk driver probably needs an overhaul to just have
-descriptors that populate a bunch of clks that are allocated at probe
-time so that the memory footprint is smaller if you have multiple clk
-drivers loaded and so that we can probe the driver again without
-unloading the whole kernel module.
+
