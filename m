@@ -1,263 +1,211 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2119.outbound.protection.outlook.com [40.107.215.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADF02517A8
-	for <linux-clk@vger.kernel.org>; Wed, 19 Mar 2025 09:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742376143; cv=none; b=Mmba9hRyRoqVumVrbFHKjWIvbL6tkYcL8nnjsiHaoh7XzZiv76AzJH6HfYiU+65UTRNXpO/ecTVDF8AHdnCZQr3ey+zF4tAh//YOiz3k01Fhheh3XEIxSFrF0XRMg3ZVFh6P1MGjhvsmU7uxsN1SYknjm9uuHMJC5sBuBhkl1Hc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742376143; c=relaxed/simple;
-	bh=MJurp/n35hBvHIMiQuoAEo93QaKfh1JOkc1u3IvRhkw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=bCdPvDouN+KXqQX0xUtsDSZOzPi2BRTR0wsg/eABlyACx0HDoKwfcxjsBNN1xf1QrAb3z5xG67dXJy+mUdtIJrjwXYfER39xeIDH6ZtlFUJUvM2ucA25OlPNfQ9tLfiaLto5sK/l1BzZ1FSL0JnK8cT3bAyaRT9cO1E0MdDqhGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=IyIyCsOM; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7F41F4CBE;
+	Wed, 19 Mar 2025 10:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.119
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742378963; cv=fail; b=QRHaxeGs9Zy9TgwV/qFqgOSO6d1a3CA64kBKwyvhHLYCWzaj/FmwJk72GjqQ27TRWNsf0I+wb+AVIGUCP9TmBdvSblvjkIh7Cll9Lvq3PbWxJW42icSZSuFfucB/NyLjHd1cJnum1Yo9UCjPWZDZ6f/DTYjLYVh9ekIzl4aUWK0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742378963; c=relaxed/simple;
+	bh=h84SW/8oOsKaPOsjORyn9n7sRIfNzdmM9+UoEv0lYMo=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GbyJgqx3VkRbK/sEr4IHLCGBCmzrRHyGRg/Cztu+SM8/1EpygRGRvYuOP8Z6SYwF4/JIatUGbbPjw4+vimhk1oaImuKocNmQjaCd00ZJH/xxV0/p7lTkDODu9z6UmYUSBm2xlAscDfn8njB4qnagGQhN6GmD1jSO8uTwD1cokSg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=kFi/Fb8X; arc=fail smtp.client-ip=40.107.215.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IyIyCsOM"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250319092214euoutp0150beaa21198f5b40f76c122a10e6f73b~uKdzfZk6Q2527825278euoutp01G
-	for <linux-clk@vger.kernel.org>; Wed, 19 Mar 2025 09:22:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250319092214euoutp0150beaa21198f5b40f76c122a10e6f73b~uKdzfZk6Q2527825278euoutp01G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1742376134;
-	bh=xziCeePU8VJH3HPvHWkmHqvN/zw2drIJZnyVPgks6DM=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=IyIyCsOM4YrF0U4Ki51TGDxHSXSSvgjqYO4MD68nMNP8sAiMxl/41PSGx9Ok2eLpO
-	 gogrb4tEp4G/hE8SyR5nTS2+mXSwtiJBcXhZTdJbJ9vu4rvA2sN7Qkyf65Q5to2Ugf
-	 rWrHEIL1c2yRz7SAw7hD3yBg9fzb4JH7ieCSRT5w=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250319092213eucas1p1afea36ec858edac801d86b9fe4df0d19~uKdyzAxs_2948529485eucas1p1v;
-	Wed, 19 Mar 2025 09:22:13 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 4E.60.20397.5CC8AD76; Wed, 19
-	Mar 2025 09:22:13 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250319092213eucas1p159ec41756a40a4139a0c222e65a7a05b~uKdyP6lOr2951729517eucas1p1L;
-	Wed, 19 Mar 2025 09:22:13 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250319092213eusmtrp1cbe8c083bbe4d0478d70d8413b02d2a5~uKdyPLt9D1884918849eusmtrp1F;
-	Wed, 19 Mar 2025 09:22:13 +0000 (GMT)
-X-AuditID: cbfec7f5-ed1d670000004fad-40-67da8cc592da
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 3B.DA.19654.4CC8AD76; Wed, 19
-	Mar 2025 09:22:12 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250319092212eusmtip13c59f2b45dc28429110a264bc2191f47~uKdxOUuC12074820748eusmtip1I;
-	Wed, 19 Mar 2025 09:22:11 +0000 (GMT)
-Message-ID: <e90a0c77-61a0-49db-86ba-bac253f8ec53@samsung.com>
-Date: Wed, 19 Mar 2025 10:22:11 +0100
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="kFi/Fb8X"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eIxLrl5UNk6KpyP/izYuH2iJRFJ4na3qvFX/QT3GSLldVWjqk+/6GeDYd8vXC4OXxZDEf2DhV8aISVsxH6jID4Jurwn9GdurrGr+DKwdBx380GK1hmCQ+OQNzAckAUmN4+DLK8l/c5o7xGb/xzfqv7gosZB7Jh/tGf88+ui7lXHyVQJ9Y8IU9DDhq4sJwNNNCSpe0a5cYswHB3oLyqAeOdEPX6XA2QZI8pdo7Jg2YGznQK5P3jMFkl81bvq4VEPUhNc96d1iFUWcTD6KUwqycaYmLQEsfaD1BbgfOt4GiN3oDQDvZVlOfUbXMuWoISlx74WhzQXsxn6LvIdJ7v57jw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q4nmJGWACEX4QHrJ4YB55NqtCTr30uojMrDIBp0En4E=;
+ b=GTXaE5LUwcQQ5EMQ1kId7EwQ4o3NQOMLi2D12O/5y0ZpOn6efpTxWc3kE1TCzWdTn3PAYOLm6S+jbbQwRsHymvtTtdtqkSJNCfhNaf49Q3H1ft0Y2lhTi9BfjSqIAcixCAbWrvC0wN1WAO+C6/9Exv8fJ/4oz4G0/EXriCKqPLYEv2kPrgQb7sUlS9E5/6QalnlmcnhINu9Ry/4AgkaUeMrDKFRZSvE+lvpMlTllK6Fm0vOJCzQj5sG35DAg/RTGQFnHgcoKwKVuDTvTQZmQxgvCW4qVrVgudCdMPbXO2R3V+qjWrBA4zEm0lvbR+FalYxUS5C+REeIUGXVxtvoMDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Q4nmJGWACEX4QHrJ4YB55NqtCTr30uojMrDIBp0En4E=;
+ b=kFi/Fb8XN5fVXQrb0H4wie2Y7ceT11SSTTClWpSxDVusA7myMEsLpFZYK/XvLDmmLGPr14ULvRINZeyBC9TWzE7FYszI6dWvhaa2uyW2yV61YzfL7a8CBDZjrgsOS/+hB8JSIbhGQkl/7TzB2SaERqFMRC3BFZY3bjKsIuIRsmtOJ6oFJO9/nR8+lnNEldl7HgOTist266dYj+8tmmN9IpzVTkUZka4F7S55OKji3YnaVZCn/f/wyHplERCBcJNZwYtydxz27S4jZOxtotkjfoFjibOtBH2FqYw7h20zbfcMqcZQ05/kvTGQffAAW+5bNfvSY2eoNVJH/Wpw+NQP8w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from PUZPR03MB7135.apcprd03.prod.outlook.com (2603:1096:301:113::15)
+ by SEYPR03MB8029.apcprd03.prod.outlook.com (2603:1096:101:16e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Wed, 19 Mar
+ 2025 10:09:11 +0000
+Received: from PUZPR03MB7135.apcprd03.prod.outlook.com
+ ([fe80::ecac:a387:36d8:144d]) by PUZPR03MB7135.apcprd03.prod.outlook.com
+ ([fe80::ecac:a387:36d8:144d%7]) with mapi id 15.20.8534.031; Wed, 19 Mar 2025
+ 10:09:10 +0000
+Message-ID: <9ae73d75-9c59-4255-8924-b456c86cbc01@amlogic.com>
+Date: Wed, 19 Mar 2025 18:09:04 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/6] dt-bindings: clock: axg-audio: Add mclk and sclk
+ pad clock ids
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
+References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
+ <20250319-audio_drvier-v4-2-686867fad719@amlogic.com>
+ <20250319-daffy-classy-kangaroo-023e1f@krzk-bin>
+From: Jiebing Chen <jiebing.chen@amlogic.com>
+In-Reply-To: <20250319-daffy-classy-kangaroo-023e1f@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2P153CA0021.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::20) To PUZPR03MB7135.apcprd03.prod.outlook.com
+ (2603:1096:301:113::15)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/4] clk: thead: Add GPU clock gate control with
- CLKGEN reset support
-To: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>,
-	alex@ghiti.fr, aou@eecs.berkeley.edu, conor+dt@kernel.org, drew@pdp7.com,
-	guoren@kernel.org, jszhang@kernel.org, krzk+dt@kernel.org,
-	m.szyprowski@samsung.com, mturquette@baylibre.com, palmer@dabbelt.com,
-	paul.walmsley@sifive.com, robh@kernel.org, wefu@redhat.com
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <aacd03a071dce7b340d7170eae59d662d58f23b1.camel@pengutronix.de>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOKsWRmVeSWpSXmKPExsWy7djPc7pHe26lGyz8q2bx7M5XVoutv2ex
-	W6zZe47JYv6Rc6wW9y5tYbJ4sbeRxaL52Ho2i5ez7rFZfOy5x2pxedccNottn1vYLNYeuctu
-	cfGUq8XdeydYLF5e7mG2aJvFb/F/zw52i3/XNrJYtOyfwuIg7PH+Riu7x5uXL1k8Dnd8Yfe4
-	d2Iaq8emVZ1sHpuX1Hu0rD3G5NH/18Dj/b6rbB59W1Yxelxqvs7u8XmTXABPFJdNSmpOZllq
-	kb5dAlfGj9OHWQruG1dcufaIrYHxuGYXIyeHhICJxLope1m6GLk4hARWMEr073zABuF8YZTY
-	ceUWM4TzmVFixq8DTDAt515vYgSxhQSWM0rMO5sOUfSWUeLN1tPMIAleATuJQ5+OsHcxcnCw
-	CKhKvD1dCREWlDg58wkLiC0qIC9x/9YMdhBbWCBO4sa2k0wgc0QEbjNJ/OrdyAaSYBaokthx
-	/wY7hC0ucevJfLAj2ASMJB4sn88KYnMK+Eh8WfiXBaJGXqJ562ywqyUEnnFK7NzwhRHiaheJ
-	pysXs0DYwhKvjm9hh7BlJE5P7oGK50s82PqJGcKukdjZcxzKtpa4c+4XG8gzzAKaEut36UOE
-	HSUev97PCBKWEOCTuPFWEOIEPolJ26YzQ4R5JTrahCCq1SSm9vTCLT23YhvTBEalWUihMgvJ
-	k7OQPDMLYe8CRpZVjOKppcW56anFxnmp5XrFibnFpXnpesn5uZsYgWnz9L/jX3cwrnj1Ue8Q
-	IxMH4yFGCQ5mJRFe9yfX04V4UxIrq1KL8uOLSnNSiw8xSnOwKInzLtrfmi4kkJ5YkpqdmlqQ
-	WgSTZeLglGpgkvreY2Rr81iJjeFIsqD6ZNk2v9hFL2W/ZLbveNGTxZ/FLBP3OUzup+FSz4n6
-	oZGKJn1f/4Y3nD9TWhY+IZAjt+Nn+9T9jcqH76naObwU1noQJnNzj4G+5pF+u7KNIbMdDU+G
-	mCbdPZWwfp3eLrH5ncq36y1XlVjm1HsHsORzbbIOmxkrYKwR6DyTjeeRVeHrvfLnNzNKrY9f
-	0rck9unTCJvcwvmXxGU+29aWns25vUdIRf34r6mJE3ac/109ecXKdN0VfK3tiuePBEV6y+rF
-	LRE2y6zwv6BtYj/77iZdcTejlphFlbvNjsWlrxFfLR2/m081aaW61Xf283vOPO/OabFRlW6P
-	27HsZJrXEiWW4oxEQy3mouJEANRis3AKBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42I5/e/4Xd0jPbfSDWY3WVk8u/OV1WLr71ns
-	Fmv2nmOymH/kHKvFvUtbmCxe7G1ksWg+tp7N4uWse2wWH3vusVpc3jWHzWLb5xY2i7VH7rJb
-	XDzlanH33gkWi5eXe5gt2mbxW/zfs4Pd4t+1jSwWLfunsDgIe7y/0cru8eblSxaPwx1f2D3u
-	nZjG6rFpVSebx+Yl9R4ta48xefT/NfB4v+8qm0ffllWMHpear7N7fN4kF8ATpWdTlF9akqqQ
-	kV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJfx4/RhloL7xhVXrj1i
-	a2A8rtnFyMkhIWAice71JsYuRi4OIYGljBKfzzWwQCRkJK51v4SyhSX+XOtigyh6zSjxeF4P
-	WIJXwE7i0Kcj7F2MHBwsAqoSb09XQoQFJU7OfAJWIiogL3H/1gx2EFtYIE7i/K5VrCBzRARu
-	M0lse74ArIhZoEri/N4rrBALvjBJzP+2gxkiIS5x68l8JhCbTcBI4sHy+awgNqeAj8SXhX9Z
-	QBYzC6hLrJ8nBFEuL9G8dTbzBEahWUjumIVk0iyEjllIOhYwsqxiFEktLc5Nzy020itOzC0u
-	zUvXS87P3cQITBTbjv3csoNx5auPeocYmTgYDzFKcDArifC6P7meLsSbklhZlVqUH19UmpNa
-	fIjRFBgUE5mlRJPzgakqryTe0MzA1NDEzNLA1NLMWEmcl+3K+TQhgfTEktTs1NSC1CKYPiYO
-	TqkGpvV/ZEOrz+9TTKiUSPesXC0VMMnsyNf6lUuDfB6crWeLLNs3z03o2S3eLQ0m7y05/Die
-	LCuU3umSd3KBatY36RSn64eMV52IttvjO5FPL1vmyZ17k61Y59059nbKSaXesMgfDxK+7MkU
-	qf5aJfsu32L71QPruGqW/2U48+uKldrqhvNHlCSazS++vcO76lz7Xa7uqK2BDB1sO55u0A5u
-	lpytcqslpzhWx/j70hlu/+9HbnHLNEzlj3efVRZRUG7EwzR57aray5EZMdlm5gmXEnYopTGt
-	is9fc80mcnuR7XL+l596/1ivljjrc51r1sGC0HhlsQtnP9p7mdW95DhY6HOjZIPPambxgwoi
-	ifpySizFGYmGWsxFxYkA2lC6eJ0DAAA=
-X-CMS-MailID: 20250319092213eucas1p159ec41756a40a4139a0c222e65a7a05b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0
-References: <20250303143629.400583-1-m.wilczynski@samsung.com>
-	<CGME20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0@eucas1p1.samsung.com>
-	<20250303143629.400583-5-m.wilczynski@samsung.com>
-	<de50dd55e1285726e8d5ebae73877486.sboyd@kernel.org>
-	<4c035603-4c11-4e71-8ef3-b857a81bf5ef@samsung.com>
-	<aacd03a071dce7b340d7170eae59d662d58f23b1.camel@pengutronix.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR03MB7135:EE_|SEYPR03MB8029:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2cb8e641-32c7-48a4-cfb4-08dd66ce17c7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aTFRVW1OakpTUWxhQlB1WmdoRzEyUmhKNlZ0bFdDL0RrSk05aDRRbnJkdDFU?=
+ =?utf-8?B?SmdwS3BTN3NTRFNybmIvaXM4d2dDN0M2czJNNGdDRjV2SHByODhtZ2hFWmxE?=
+ =?utf-8?B?TnRCU0xxU1IwbHg3Wmd1dWpycEdqMzlPOFcxeWt1RjhoMWFxK1cxUVRDVFFQ?=
+ =?utf-8?B?bklrbDNkei8zOW8yeGZrTzYrMUhsd1BMMkgzWThFZWZZcmFJNTBQZmI3eklR?=
+ =?utf-8?B?NUNjajUxdFp5NnlRT0VHUW4xZWxCbFk1NGhjSk1UdUJTWnozaVhhSDcrZlVr?=
+ =?utf-8?B?bVZVbXl4QlNiMFFBb0M3SlBlWTNVL1BSMWc1bXJLNThPQXZPQ1NmR3Z0TlBD?=
+ =?utf-8?B?NENpLzBnYmdiaERlT2p3RTFwL2ZSRnBNd1kxVTdScmRuM3pOc3BYZkxxMmxh?=
+ =?utf-8?B?amVYUUNMVUxHV2N5SmM1d1V6YkdWSlBjWnRTSHBNUFVWY2V2TGRmV05kRlB0?=
+ =?utf-8?B?N2Z1SHRpbSt5RmdMZnBPZTRIUXFUNXhpNHZXT1dKZWEzQlJ1QTB2WjlUQ1Nq?=
+ =?utf-8?B?SVR5c2tnS3NyS1dEL1VGZU9oSE1WK3ZmSDh0MWUwa0oyNGNRTWJaZkU5OVFT?=
+ =?utf-8?B?VzJYSVpVMkZTTCszODlBaDYzeHZwTHJlejZ3WFRTTlNsbXh4Vk5EcTdoR3Js?=
+ =?utf-8?B?VXJ0Nzc1MDFaV1FBdjB2SnIxb1JyUnN1QTdGejg2OWZ0aXBibkJhczNlcDJB?=
+ =?utf-8?B?SGIzTmdNUHBXRFRlMStUSUt2ckZoOXhISXMvc0pMc2ZFSXpPK3ZDaU45bWxK?=
+ =?utf-8?B?eWN3YmxJc0UzV2xST3VucVNVczdyMEp4VUtSRU4rbUVkcmZXaFJqMzc4VmU3?=
+ =?utf-8?B?MUJBSUJrb0oxSk5NK0xEUTZSaGtRaTdia2VaMUluMmtJSTk2bld3K3NDbVk0?=
+ =?utf-8?B?UFdtOHFsSWgxOUswcERlVlFoKzN1WXpLRW5jYS9TZEZmbUVFWXF3RFFNN2wx?=
+ =?utf-8?B?anA0MjlGVUVITjhac0lkcVFJTmh1RGF2OXBiUDhOUDlRN2pCS1NaZWVidkxz?=
+ =?utf-8?B?emZQZDFSTXkwMEl4NnBnYXgwNVVaaDk0Y2ZsTUp1KzRLYmlZWFU4Unk1aVdu?=
+ =?utf-8?B?WDk2aXFhaFJvUExFdlZYQk12dGFyVFlxRHlYRWxmSHpEUHJ5enZHMFlrN0xk?=
+ =?utf-8?B?UGExbXhweDRHZmFYeDNMazRhUHplendXY2duY2ZxVW95bmcvRXljb2hkcWQy?=
+ =?utf-8?B?VVI2bWFWZmhmUU5TbXRnbFFjYUtXbHNLNFJkeFJCVmY4Q0srb1hWbkZRdUNT?=
+ =?utf-8?B?dFV4U3g5OWFySmx0eGErT1lQeFE0QXZBaUJNSjZBSERrQklaZmxqejhVVVBt?=
+ =?utf-8?B?eVRhQ3JFTUVBTmg4S096MUlDRUJBQTk1UjdJaTVOcUI2OGM1VThFbDdoMUJZ?=
+ =?utf-8?B?aC9LOHl0ZENFakU2a0hRc3NmV0wrVkFTSXpVVS9obkRla1lqUFgwSWhmbk1r?=
+ =?utf-8?B?QTJtWlAvZjI2WlBvUjRwOUU0b3VmcThncXduWldOM25XT2ZHTThwQnVGd1pO?=
+ =?utf-8?B?SVlsemY1b3hxTmJBa3pyOXJaR1V6TENMdDZZYXQ5V1l5UlJlSHZ6Rm1IQ2M2?=
+ =?utf-8?B?eURoNVR0SHhIbzhwVUpxbWgxR2pDQzdiOEJKK0s4Q2ZsZTJVSlAzbmlNQzNJ?=
+ =?utf-8?B?Z2U4bFd6VXBSMjNoRGliSi9RNWNHZ2NXa2owNGVDZmNhUTlhQk5iNjgxNzBI?=
+ =?utf-8?B?WHM0Lyt0MmR3eHZIVWhhWm8vWXoyUEVQMFhVYU5BQTR1ZnhQOXJQcUltY3By?=
+ =?utf-8?B?NUgxR05zNkZad09VMW5IMjF2aFdadXgrZU95SGxkT0llTWhQQ0N3bTV5OHRQ?=
+ =?utf-8?B?ZHV3OU1TWndmTUdtRDY0UT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB7135.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UW9Kb2oxcDJkYWxYOUQwRHJhdzZJZ2h2Zy9oalBJTXV2R1VOVkNNdU82akky?=
+ =?utf-8?B?SWxPTkE4S2ZEcyszSXZaUDl5dHVBblJ1QmF2RTJBNUVkVWxBZTQ5QzBEQmR5?=
+ =?utf-8?B?dGVtZWRVbG8vRzJKWUxkT21HejNNVWk0RVZ5QUovY2I5SDJIdVVRY3ZjNE9Q?=
+ =?utf-8?B?Ny9YL3BvSVh6K0tHRmhYK05qQXlMQ1Nwc1dPbVFPdkVxdFc0ZFg2blVZNnVl?=
+ =?utf-8?B?Snh0YzE3R1E2RTdnVXJqNUdZQlNxWmNqUUdWM3VsVkxqMHkzaEVOc1FHaFEw?=
+ =?utf-8?B?ZlF1Ny9qS0JWUHRNK3ZDdnByRlV3Z1hHRWtoTWl0ZVA4cUhOQndhcXJSUjAw?=
+ =?utf-8?B?d1JKMXd2Sm1zSlVHeU44VUs4cHQyWHkrVFU1ZWtjeVRFT056MnNqOUpubTBr?=
+ =?utf-8?B?anEvMzlsdkx2N1Z1bDVPajlYWUMxK2Rma1V6U3BITWtGWXlDOUp2MzQ1aWVk?=
+ =?utf-8?B?UlVGcC9TNnJhb0lnZEVxV2hkMEV0MFEwMkxzWmJPL3BhN2JrTGt2NktGYXdi?=
+ =?utf-8?B?ZkoxTlBkSE1MbXAvQVRuaXdVRkltbzhPQ3ZneXlQTzB1b2hoS09tKzcxSzcv?=
+ =?utf-8?B?eTBBVEtQRkUyS3BQbmZJZmtvb1ZHR28ra2Y0MElyQ1A0d3pHR0pyMURQWlp4?=
+ =?utf-8?B?Nng4NzFvS0FBV2JTclpsbkFiWG42SHhjSGxieE5nTFdKKzU4bG5aLytQUDdu?=
+ =?utf-8?B?cjRVaXVOdlc5cjBsWWxrbmd1bVluN1BKcEE5c2ZDZEV2dDVScGFHTk9DSDg1?=
+ =?utf-8?B?bDdvMjhZanpYcHdmdU1BMkxYa2VQalUxMTRFYy9KME4wOU9TYmV2OWMwN2xC?=
+ =?utf-8?B?czNtVGkyeFFaTkVCL21Jd0JwUEhtVEhJSzhTU1gwRFVlbVhKYlhKQ1JwaC9J?=
+ =?utf-8?B?L3NNQUR1MGJ3YmdDQ3JwZEdkRGQ5Q2t5UmVMNFdaamtrMVVQRDhWa0JRMXhO?=
+ =?utf-8?B?d0dNNklUOFV2NXZkVmdSZ1dGVWRCWE01cXV3d3ArOGJ2ampnRnd4Y1BxUWgz?=
+ =?utf-8?B?ZldwckVNMzhha2pXOHNKTnM0YUdNWnU5TFBScW5pMWtpaHFqdFVDZ3dSNlZq?=
+ =?utf-8?B?QVNDb1FpVmM0aGdTMGJMRkliNWRwVlV5ejRLRlFiYVJ4SDM1NmxFN0FTTW1L?=
+ =?utf-8?B?MmYwWFlPdWdmak5wZ09kakMrcXliRmZ4S0JCdzRyemtmQ1FqYkpFUFdybWhL?=
+ =?utf-8?B?NER3NUZsK1VUVEtEQlBBMExyVkkzZy8zaVNTY2tlUzYyRUx5WjJIWGpiRzFi?=
+ =?utf-8?B?dGNzMGkyYVB0aVdQelB6UzAvNURTaTBibkZZZTdBSTBOY250TWxnRlZHK09p?=
+ =?utf-8?B?QnpiUG5QZlVXeWNuem16R21YTzAvcy9tQVJKVW1acUU2c0dRSXZWMzM2R2hN?=
+ =?utf-8?B?TnFJQlVHQ1lpTU4zSy9nOFRNTE0vYzJLbFJpRFU2cGpQOUlidUVRMGdiZzM4?=
+ =?utf-8?B?eHMwWEgwbG00cTd5b2VOVlFIZWVkdStYOVY0VTB3WXRwVWFzSWpOd3hFZVpY?=
+ =?utf-8?B?eXMyYUNHUmFqVjBRUDFZVUN3N09Rc1JVVFFueHBzQzV4am9LdndZZFNsYkRB?=
+ =?utf-8?B?dmRWSU9CNTUxdW93djlhUDZvVjBJeUJPUVZHU20walg3emV1YjVQN0JnM2pn?=
+ =?utf-8?B?ZDRVMnBmRWZMTWlvY05seEk0YkltNTI1V3NoYXFjSytLeVlFWlFubjN6YVpl?=
+ =?utf-8?B?ajk1ektzWTFJNDBqZUlCeTJYRUwzTU1sOEF4T2hvZ3NubzdaenFMcWVTb0F2?=
+ =?utf-8?B?SGJGQWdBQStCTlA0ZFBCclNqM2QvUjEzaEZsY0FWSWx2SWw2TmFTVUdYVFZS?=
+ =?utf-8?B?ZlFRak9qN05FWDdZekVtMllhclpxcVNXNHNwczJrRHVmSDQzbktpL3JMczVv?=
+ =?utf-8?B?azVQSWFMZjYvMWZkYktEeWVEYkZBQndYVkFQMVY1QzV1NVNYK0dJQXdJUWc5?=
+ =?utf-8?B?U1VoOTJVempCZGVURVRtSnZOd09iaUpQaWhlR3pUd1d1dGMzSjUyTndEVE9F?=
+ =?utf-8?B?MFFhRUtjUWJOTzdHSGl4bVlJNWhlVXdiM2tFemh1MWNoRVRwbTE1K1RzN3ZY?=
+ =?utf-8?B?VjFjOUdvdjNSMGNmQVJmajlCcWt2enRqLzk4QUlLcnJwSXYzdHBNZnFyNFR2?=
+ =?utf-8?B?M1VtaTQ1clloUFRycmhDd3prSFNFaHNyWWpKSFZEbHZ2QjFLYmg1cDBJZXJs?=
+ =?utf-8?B?Vnc9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2cb8e641-32c7-48a4-cfb4-08dd66ce17c7
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB7135.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2025 10:09:10.7633
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: esMccDRfjIzI4wsautN8OP7bH/b078WZD2vi22hOrykQ21XpqyQ/X6A/x/C8tEg5PfHolF0KTnxTvkZsJaAnKsiNNiiJ5favpM8uEJhWTpY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB8029
 
 
+在 2025/3/19 16:22, Krzysztof Kozlowski 写道:
+> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>
+> [ EXTERNAL EMAIL ]
+>
+> On Wed, Mar 19, 2025 at 03:04:45PM +0800, jiebing chen wrote:
+>> Add clock IDs for the mclk pads found on s4 SoCs
+>>
+>> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+>> ---
+>>   include/dt-bindings/clock/axg-audio-clkc.h | 11 +++++++++++
+> This belongs to the binding patch, usually.
+>
+> Anyway - do not ask us to do the work twice.
+>
+> <form letter>
+> This is a friendly reminder during the review process.
+>
+> It looks like you received a tag and forgot to add it.
+>
+> If you do not know the process, here is a short explanation:
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+> versions of patchset, under or above your Signed-off-by tag, unless
+> patch changed significantly (e.g. new properties added to the DT
+> bindings). Tag is "received", when provided in a message replied to you
+> on the mailing list. Tools like b4 can help here. However, there's no
+> need to repost patches *only* to add the tags. The upstream maintainer
+> will do that for tags received on the version they apply.
+>
+> Please read:
+> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+>
+> If a tag was not added on purpose, please state why and what changed.
+> </form letter>
 
-On 3/13/25 10:25, Philipp Zabel wrote:
-> On Do, 2025-03-06 at 17:43 +0100, Michal Wilczynski wrote:
->>
->> On 3/6/25 00:47, Stephen Boyd wrote:
->>> Quoting Michal Wilczynski (2025-03-03 06:36:29)
->>>> The T-HEAD TH1520 has three GPU clocks: core, cfg, and mem. The mem
->>>> clock gate is marked as "Reserved" in hardware, while core and cfg are
->>>> configurable. In order for these clock gates to work properly, the
->>>> CLKGEN reset must be managed in a specific sequence.
->>>>
->>>> Move the CLKGEN reset handling to the clock driver since it's
->>>> fundamentally a clock-related workaround [1]. This ensures that clk_enabled
->>>> GPU clocks stay physically enabled without external interference from
->>>> the reset driver.  The reset is now deasserted only when both core and
->>>> cfg clocks are enabled, and asserted when either of them is disabled.
->>>>
->>>> The mem clock is configured to use nop operations since it cannot be
->>>> controlled.
->>>>
->>>> Link: https://lore.kernel.org/all/945fb7e913a9c3dcb40697328b7e9842b75fea5c.camel@pengutronix.de [1]
->>>>
->>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
->>> [...]
->>>> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
->>>> index ea96d007aecd..1dfcde867233 100644
->>>> --- a/drivers/clk/thead/clk-th1520-ap.c
->>>> +++ b/drivers/clk/thead/clk-th1520-ap.c
->>>> @@ -862,17 +863,70 @@ static CCU_GATE(CLK_SRAM1, sram1_clk, "sram1", axi_aclk_pd, 0x20c, BIT(3), 0);
->>> [...]
->>>>  
->>>>  static CCU_GATE_CLK_OPS(CLK_GPU_MEM, gpu_mem_clk, "gpu-mem-clk",
->>>>                         video_pll_clk_pd, 0x0, BIT(2), 0, clk_nop_ops);
->>>> +static CCU_GATE_CLK_OPS(CLK_GPU_CORE, gpu_core_clk, "gpu-core-clk",
->>>> +                       video_pll_clk_pd, 0x0, BIT(3), 0, ccu_gate_gpu_ops);
->>>> +static CCU_GATE_CLK_OPS(CLK_GPU_CFG_ACLK, gpu_cfg_aclk, "gpu-cfg-aclk",
->>>> +                       video_pll_clk_pd, 0x0, BIT(4), 0, ccu_gate_gpu_ops);
->>>> +
->>>> +static void ccu_gpu_clk_disable(struct clk_hw *hw)
->>>> +{
->>>> +       struct ccu_gate *cg = hw_to_ccu_gate(hw);
->>>> +       unsigned long flags;
->>>> +
->>>> +       spin_lock_irqsave(&gpu_reset_lock, flags);
->>>> +
->>>> +       ccu_disable_helper(&cg->common, cg->enable);
->>>> +
->>>> +       if ((cg == &gpu_core_clk &&
->>>> +            !clk_hw_is_enabled(&gpu_cfg_aclk.common.hw)) ||
->>>> +           (cg == &gpu_cfg_aclk &&
->>>> +            !clk_hw_is_enabled(&gpu_core_clk.common.hw)))
->>>> +               reset_control_assert(gpu_reset);
->>>
->>> Why can't the clk consumer control the reset itself? Doing this here is
->>> not ideal because we hold the clk lock when we try to grab the reset
->>> lock. These are all spinlocks that should be small in lines of code
->>> where the lock is held, but we're calling into an entire other framework
->>> under a spinlock. If an (unrelated) reset driver tries to grab the clk
->>> lock it will deadlock.
->>
->> So in our case the clk consumer is the drm/imagination driver. Here is
->> the comment from the maintainer for my previous attempt to use a reset
->> driver to abstract the GPU init sequence [1]:
->>
->> "Do you know what this resets? From our side, the GPU only has a single
->> reset line (which I assume to be GPU_RESET)."
->>
->> "I don't love that this procedure appears in the platform reset driver.
->> I appreciate it may not be clear from the SoC TRM, but this is the
->> standard reset procedure for all IMG Rogue GPUs. The currently
->> supported TI SoC handles this in silicon, when power up/down requests
->> are sent so we never needed to encode it in the driver before.
->>
->> Strictly speaking, the 32 cycle delay is required between power and
->> clocks being enabled and the reset line being deasserted. If nothing
->> here touches power or clocks (which I don't think it should), the delay
->> could potentially be lifted to the GPU driver." 
->>
->> From the drm/imagination maintainers point of view their hardware has
->> only one reset, the extra CLKGEN reset is SoC specific.
-> 
-> If I am understanding correctly, the CLKGEN reset doesn't reset
-> anything in the GPU itself, but holds the GPU clock generator block in
-> reset, effectively disabling the three GPU clocks as a workaround for
-> the always-ungated GPU_MEM clock.
-> 
->> Also the reset driver maintainer didn't like my way of abstracting two
->> resets ("GPU" and and SoC specific"CLKGEN") into one reset
-> 
-> That is one part of it. The other is that (according to my
-> understanding as laid out above), the combined GPU+CLKGEN reset would
-> effectively disable all three GPU clocks for a while, after the GPU
-> driver has already requested them to be enabled.
+thanks for your remind
 
-Thank you for your comments Philipp, it seems like we're on the same
-page here. I was wondering whether there is anything I can do to move the
-patches forward.
-
-Stephen, if the current patch is a no go from your perspective could you
-please advise whether there is a way to solve this in a clock that would
-be acceptable to you.
-
-Thanks,
-Michał
-
-> 
->> to make it
->> seem to the consumer driver drm/imagination like there is only one
->> reset and suggested and attempt to code the re-setting in the clock
->> driver [2]. Even though he suggested a different way of achieving that: 
->>
->> "In my mind it shouldn't be much: the GPU clocks could all share the
->> same refcounted implementation. The first clock to get enabled would
->> ungate both GPU_CORE and GPU_CFG_ACLK gates and deassert
->> GPU_SW_CLKGEN_RST, all in one place. The remaining enable(s) would be
->> no-ops. Would that work?"
->>
->> The above would have similar effect, but I felt like enabling both
->> clocks in single .enable callback could be confusing so I ended up with
->> the current approach. This could be easily re-done if you feel this
->> would be better.
->>
->> I agree that using spinlocks here is dangerous, but looking at the code
->> of the reset_control_deassert and reset_control_assert, it doesn't seem
->> like any spinlocks are acquired/relased in that code flow, unless the
->> driver ops would introduce that. So in this specific case deadlock
->> shouldn't happen ?
-> 
-> There are no spinlocks in the reset_control_(de)assert paths in the
-> reset framework, but in general there could be in the driver. The thead
-> driver [1], uses regmap_update_bits() on a regmap with .fast_io = true,
-> which uses the internal struct regmap::spinlock.
-> 
-> [1] https://lore.kernel.org/all/20250303152511.494405-3-m.wilczynski@samsung.com/
-> 
-> 
-> regards
-> Philipp
-> 
+> Best regards,
+> Krzysztof
+>
