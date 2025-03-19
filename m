@@ -1,196 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F1D250C06;
-	Wed, 19 Mar 2025 08:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205328F4A;
+	Wed, 19 Mar 2025 08:38:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742372796; cv=none; b=FpRAFuPCkec9lfCpCFKNySO9YJ99eTwrxJfoNmCJJ8LbeR5cNLh5xJxhlRXbBjpNAbIyC/b4tW71o0C1Hhj4PmKtnws8pqlVNrTFvg0xIWO2JsNi0XrpoJLD5nobsZEp6dCj5IEwmduxicKD/x97kelsmI0NLXEt/vM+5YHu67o=
+	t=1742373511; cv=none; b=JvKFbdQ+M6QGcO3a4fJB5cNTh3MGKZIw7c2kXQmuWH9FWcadLlPpM4VvqLVDgyziIIdeFDKQxZRDd8bFeMXAJ3yDYOc3IpC7KuRtMVymlcvxz7fLcIxU15ccObgxh9nfOljzOi/u5Qs+bI+uOio2kDEOnI/3NghUEq6J5/tRXKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742372796; c=relaxed/simple;
-	bh=rU8+WkMYfMbYGpZkfzJ96Y2lKsnKTuKpexBprl+FdL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xvh8T5LIpmlZpAqX7UP4papMtyybnYUxKpzEGchb004ispHSxWlClxaG9UXNjfUNhQTN6ErgqcgSwXFvwfhdkNdUZuddL1r87oRNHrP/8uAbTtzbYK7Vri6Yga/3L+QVZJu0+l3pP5+ZPKVkK95p4zrq0q1ADZU8fkKhPujdC7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iD1Q8F9S; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742373511; c=relaxed/simple;
+	bh=pMf/64E0I6+rFdDaTCFrvk/ro7kn43RkXMkXNOOl2KE=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=pK+HeCNmguOZuvdAYQ7+gmhv/xKMipVvBmO9KaSBk1jIMPzfLUTRTXYuQIt+XN7tODFTuSkFSY10I1g5QZjlc/1cQyW3UJJYec8U3mZ9a0TW9+xAO7S0HEbg7dN+/HLVpUCvN76CgtjY7RDxzCJxGCwZKU7MzY7ILFg2aczUIpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vl29zLb1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iD1Q8F9S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42ACEC4CEEF;
-	Wed, 19 Mar 2025 08:26:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vl29zLb1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F28FCC4CEE9;
+	Wed, 19 Mar 2025 08:38:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742372796;
-	bh=rU8+WkMYfMbYGpZkfzJ96Y2lKsnKTuKpexBprl+FdL0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iD1Q8F9SxEXHSwXQ1X2w7c3ld3gV/mL5RfjN7hAaqzoyXEImk03FucbmYTiLOF1/u
-	 g0fDh1IbMn0C8FwiWcxb/EVy9hblcEpfUSERUkgftXppqOrI26KCxrxi/f4encpSJE
-	 vVBtTaghWd6YD+YWKqSCoeI9lETXJDXCxyzYdAnXOZ0I09UGvtdtJ//Ch0jlfZb/cL
-	 VptXpjYUTop3ncVYD+Q6+AdCzFpDdTmlMGrhklmSFIIL51TDTpf7dwZGN3mIOHj4v9
-	 h6E6qIHTl4iiQ+29rBXbzKFnpGKPNtIP30R6+FpchxFascpfS0oQvCg5VleMat6kAr
-	 9tEn9ZYUSRPPw==
-Date: Wed, 19 Mar 2025 09:26:31 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: jiebing chen <jiebing.chen@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, jian.xu@amlogic.com, 
-	shuai.li@amlogic.com, zhe.wang@amlogic.com
-Subject: Re: [PATCH v4 6/6] arm64: dts: amlogic: Add Amlogic S4 Audio
-Message-ID: <20250319-quizzical-coyote-of-assurance-d4c91d@krzk-bin>
-References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
- <20250319-audio_drvier-v4-6-686867fad719@amlogic.com>
+	s=k20201202; t=1742373510;
+	bh=pMf/64E0I6+rFdDaTCFrvk/ro7kn43RkXMkXNOOl2KE=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Vl29zLb1ktQPGIFpaNCNSePzZ1tgJ5hKdd5I92dGYAvusEMf8SCjPdQgubq4Ms0t9
+	 7SKID+5erdpQG2UtW90kjWUfnXo0vJDKavGDxGxR0hlAxI1Gn+dxBUfVhRALKaAKyg
+	 Ot8ENmOEA63ZqhoPlid0lTt3Jr5qNoxH0bRgksNlTy24NAm3Hekae761xiCb0JjP+S
+	 eQWRaEJ+T32XrfF59cyYkfJdyI0yYFxgL0wZx66chMPEg04AjlvTUpyoAMRQE+47tr
+	 RPd6YRGhnY93+EsgNcdEdtRSZJZxBVEc17kWLzwP1mf24t+Ob98BRT3kfjItJnoe07
+	 SmPwDMODRObEw==
+Date: Wed, 19 Mar 2025 03:38:28 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250319-audio_drvier-v4-6-686867fad719@amlogic.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: shuai.li@amlogic.com, devicetree@vger.kernel.org, 
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ linux-amlogic@lists.infradead.org, Takashi Iwai <tiwai@suse.com>, 
+ linux-sound@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, 
+ linux-kernel@vger.kernel.org, zhe.wang@amlogic.com, 
+ Jerome Brunet <jbrunet@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, jian.xu@amlogic.com, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: jiebing chen <jiebing.chen@amlogic.com>
+In-Reply-To: <20250319-audio_drvier-v4-1-686867fad719@amlogic.com>
+References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
+ <20250319-audio_drvier-v4-1-686867fad719@amlogic.com>
+Message-Id: <174237350819.971004.1098115771430334211.robh@kernel.org>
+Subject: Re: [PATCH v4 1/6] dt-bindings: clock: meson: Add audio power
+ domain for s4 soc
 
-On Wed, Mar 19, 2025 at 03:04:49PM +0800, jiebing chen wrote:
-> Add basic audio driver support for the Amlogic S4 based
-> Amlogic AQ222 board. use hifipll pll (1179648000) to
-> support 768k sample rate and 24 bit (s24_le), 24bit sclk
-> is 48fs, use mpll0 (270950400) to support 705.6k sample
-> rate and 32bit, use mpll1 (338688000) to support 705.6k
-> and 24bit.
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-
+On Wed, 19 Mar 2025 15:04:44 +0800, jiebing chen wrote:
+> Audio power domain found on S4 device.it need to enable before audio work.
 > 
 > Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,axg-audio-clkc.yaml       | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
 
-...
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> +
-> +		dai-link-12 {
-> +			sound-dai = <&toacodec TOACODEC_OUT>;
-> +
-> +			codec {
-> +				sound-dai = <&acodec>;
-> +			};
-> +		};
-> +	};
-> +
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml:105:7: [warning] wrong indentation: expected 4 but found 6 (indentation)
 
-Do not add stray blank lines.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.example.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
+	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
 
->  };
->  
->  &pwm_ef {
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-> index 957577d986c0675a503115e1ccbc4387c2051620..83edafc2646438e3e6b1945fa1c4b327254a4131 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
-> @@ -11,7 +11,11 @@
->  #include <dt-bindings/clock/amlogic,s4-peripherals-clkc.h>
->  #include <dt-bindings/power/meson-s4-power.h>
->  #include <dt-bindings/reset/amlogic,meson-s4-reset.h>
-> -
+doc reference errors (make refcheckdocs):
 
-Why?
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250319-audio_drvier-v4-1-686867fad719@amlogic.com
 
-> +#include <dt-bindings/clock/axg-audio-clkc.h>
-> +#include <dt-bindings/reset/amlogic,meson-axg-audio-arb.h>
-> +#include <dt-bindings/reset/amlogic,meson-g12a-audio-reset.h>
-> +#include <dt-bindings/sound/meson-g12a-toacodec.h>
-> +#include <dt-bindings/sound/meson-g12a-tohdmitx.h>
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-Old style was correct.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
->  / {
->  	cpus {
->  		#address-cells = <2>;
-> @@ -46,6 +50,36 @@ cpu3: cpu@3 {
->  		};
->  	};
->  
-> +	tdmif_a: audio-controller-0 {
-> +		compatible = "amlogic,axg-tdm-iface";
-> +		#sound-dai-cells = <0>;
-> +		sound-name-prefix = "TDM_A";
-> +		clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
-> +			 <&clkc_audio AUD_CLKID_MST_A_LRCLK>,
-> +			 <&clkc_audio AUD_CLKID_MST_A_MCLK>;
-> +		clock-names = "sclk", "lrclk","mclk";
-> +	};
-> +
-> +	tdmif_b: audio-controller-1 {
-> +		compatible = "amlogic,axg-tdm-iface";
-> +		#sound-dai-cells = <0>;
-> +		sound-name-prefix = "TDM_B";
-> +		clocks = <&clkc_audio AUD_CLKID_MST_A_SCLK>,
-> +			 <&clkc_audio AUD_CLKID_MST_B_LRCLK>,
-> +			 <&clkc_audio AUD_CLKID_MST_B_MCLK>;
-> +		clock-names = "sclk", "lrclk","mclk";
-> +	};
-> +
-> +	tdmif_c: audio-controller-2 {
-> +		compatible = "amlogic,axg-tdm-iface";
-> +		#sound-dai-cells = <0>;
-> +		sound-name-prefix = "TDM_C";
-> +		clocks = <&clkc_audio AUD_CLKID_MST_C_SCLK>,
-> +			 <&clkc_audio AUD_CLKID_MST_C_LRCLK>,
-> +			 <&clkc_audio AUD_CLKID_MST_C_MCLK>;
-> +		clock-names = "sclk", "lrclk","mclk";
-> +	};
-> +
->  	timer {
->  		compatible = "arm,armv8-timer";
->  		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> @@ -101,7 +135,6 @@ apb4: bus@fe000000 {
->  			#address-cells = <2>;
->  			#size-cells = <2>;
->  			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x480000>;
-> -
+pip3 install dtschema --upgrade
 
-Why? What is happening in this patch - why are you changing so many
-other pieces?
-
->  			clkc_periphs: clock-controller@0 {
->  				compatible = "amlogic,s4-peripherals-clkc";
->  				reg = <0x0 0x0 0x0 0x49c>;
-> @@ -134,6 +167,17 @@ clkc_pll: clock-controller@8000 {
->  				#clock-cells = <1>;
->  			};
->  
-> +			acodec: audio-controller@1a000 {
-> +				compatible = "amlogic,t9015";
-> +				reg = <0x0 0x1A000 0x0 0x14>;
-> +				#sound-dai-cells = <0>;
-> +				sound-name-prefix = "ACODEC";
-> +				clocks = <&clkc_periphs CLKID_ACODEC>;
-> +				clock-names = "pclk";
-> +				resets = <&reset RESET_ACODEC>;
-> +				AVDD-supply = <&vddio_ao1v8>;
-> +			};
-> +
->  			watchdog@2100 {
->  				compatible = "amlogic,s4-wdt", "amlogic,t7-wdt";
->  				reg = <0x0 0x2100 0x0 0x10>;
-> @@ -850,3 +894,327 @@ emmc: mmc@fe08c000 {
->  		};
->  	};
->  };
-> +
-> +&apb4 {
-> +	audio: bus@330000 {
-> +		compatible = "simple-bus";
-> +		reg = <0x0 0x330000 0x0 0x1000>;
-
-That's not a simple bus in such case.
-
-NAK
-
-
-Best regards,
-Krzysztof
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
