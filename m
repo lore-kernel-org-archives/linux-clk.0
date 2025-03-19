@@ -1,184 +1,90 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF07520E31B;
-	Wed, 19 Mar 2025 07:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840F924E4C6;
+	Wed, 19 Mar 2025 08:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742370006; cv=none; b=BI3+9M4H1jxxESAfyNRmSVkjdrof6I5LcmAkAWLydMOUVvnvjGB/AdpRj81jgAykYlV2Q1Sza4HmYQp7/DW796asMycWOhScIlqUXSOVaGYpp5NuwFEsMzH6SqQTAn84BLlYWxWcjvTbG7Pi5jNPyKo0AkDW+wOH4Xa2ep6kQaY=
+	t=1742372537; cv=none; b=UDrDSndfFgyNxX/J77gJmM4zqly7kKyoeNxgURQKherE8CPnVVGnMSLdxu7khjWGrkprhym0T9fUJCmGFXyR+Qj754yjXoZvZxy4FsbBh6AdKsqxSPD4wm8pheJ7XXg7PnnKCInPzowHsZyJUOWmNY2PvLtXvWfqlOdTs/pEqeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742370006; c=relaxed/simple;
-	bh=tKIbx2+7UEC6SU/Ci8glYFwYES+rjaNTdcbdH+R6TS4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b6vOfK/30ZIbVDI36fqCtZ0xWtJz46neO5QtQ3Ij+FdpsKgz76jUMf+st4S97+oaydJYpmb8wCFRUZ2gpe48i/H+1r7TLwsBeS9PGXtgkb6ehQXNpUBLYmuVioa+nnq/vzIFuBLCeKeHXf3SbWZ1tmP1VKZCde1fArx8pxuOy0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTC2J7vI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742372537; c=relaxed/simple;
+	bh=qHottCH/UKxNQxJoU8i1IYC7DAOUxp3drrxyBkl7KQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhEsynGyscb6Sg5KCRjZdqe7vUhiQLn4PC5MgCeoQxP6OUG36MLHDfj3OkQeLuW8kbZ150IOiblm1CneFpXDhjd2mqlxuslucJxu7TAEgpYfJZwti4wqUXOOiQ9/h+VR35sV9AFmm6Lb+5g1mXqsNFmszkNeIN+0DeOb2tCnSxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLmL4vXN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTC2J7vI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B4F4C4CEE9;
-	Wed, 19 Mar 2025 07:39:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLmL4vXN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B3E5C4CEE9;
+	Wed, 19 Mar 2025 08:22:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742370005;
-	bh=tKIbx2+7UEC6SU/Ci8glYFwYES+rjaNTdcbdH+R6TS4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iTC2J7vI9gdw4qI2bdHDiMSymEqGhCe2EaCZpTpfQ2DERnFKR7kQs4qTvHQnTr7Tf
-	 Ng+DPcHm19bSxSO0miPkBpWLO9gbiq1xESNFLalNDHqTCSKQCmbd3l20qsrxk52w7E
-	 1h+0v7377B0cpcqmfluYlpWf/kC4rT5P6xGzjjlq9e/M9/O33V9w2INM76kL2Cdj/P
-	 BfD+wdg8rSDUGHcoR4q3cB/LF3zf9aViOVfjBrvSYFhbuZWGQRR9UO2pkjT8JYGzm5
-	 f2jqjFYo3VhcjJWuf2wRJ3A6viyEJjxq4lLg20lqwORpgH2hKficXCrNhSLVw+6SiB
-	 w0dToPGlDelcA==
-Message-ID: <cd445f29-ea01-4e57-b1b7-4e9c3bfbcc8f@kernel.org>
-Date: Wed, 19 Mar 2025 08:39:52 +0100
+	s=k20201202; t=1742372537;
+	bh=qHottCH/UKxNQxJoU8i1IYC7DAOUxp3drrxyBkl7KQQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pLmL4vXNYRImbsRHdoXOTASyKXTCLYTmZU1XVmzyNSJ/5wXrqRTeLkUHdN0h8FOwb
+	 wseediqt69jln1jyt6z2irAxoQHTRp9haUAPDfdqmRXzKrOe7vB2hR+eJevPfpLKfM
+	 My0Ch6CFLjFbQ9TjfqAvhegyUVtzNytaZUXKN9MF5PrQoV35Y4yMBSYAsmzEpLIaHe
+	 PKyKTYWfgjGbt7fUJCMZpP/4DeK8zH2HYZeEk3zGb/0E37UoisK09++33ln2+rqyPF
+	 10ZDQTzFz5K9uA6YVd/leQFkyaOnrvDdL1kVR8/nv1do1eJV7U39mRfZSe7RTdGWDW
+	 AukSgF2M/fLxg==
+Date: Wed, 19 Mar 2025 09:22:13 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: jiebing chen <jiebing.chen@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, jian.xu@amlogic.com, 
+	shuai.li@amlogic.com, zhe.wang@amlogic.com
+Subject: Re: [PATCH v4 2/6] dt-bindings: clock: axg-audio: Add mclk and sclk
+ pad clock ids
+Message-ID: <20250319-daffy-classy-kangaroo-023e1f@krzk-bin>
+References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
+ <20250319-audio_drvier-v4-2-686867fad719@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/13] dt-bindings: phy: Add documentation for Airoha
- AN7581 USB PHY
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Daniel Danzberger <dd@embedd.com>,
- Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>,
- Nikita Shubin <nikita.shubin@maquefel.me>, Guo Ren <guoren@kernel.org>,
- Yangyu Chen <cyy@cyyself.name>, Ben Hutchings <ben@decadent.org.uk>,
- Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
- upstream@airoha.com
-References: <20250309132959.19045-1-ansuelsmth@gmail.com>
- <20250309132959.19045-10-ansuelsmth@gmail.com>
- <4f16d239-f540-45d5-b67a-767b09f1c70c@kernel.org>
- <67d0862f.df0a0220.375bd.6b15@mx.google.com>
- <4a9ac302-dfbe-4d76-a634-a445957c313c@kernel.org>
- <67d95979.050a0220.166852.25e6@mx.google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <67d95979.050a0220.166852.25e6@mx.google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250319-audio_drvier-v4-2-686867fad719@amlogic.com>
 
-On 18/03/2025 12:31, Christian Marangi wrote:
-> On Sun, Mar 16, 2025 at 06:01:02PM +0100, Krzysztof Kozlowski wrote:
->> On 11/03/2025 19:51, Christian Marangi wrote:
->>>>
->>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>> +    enum: [0, 1]
->>>>
->>>> I don't understand why do you need index property here (which are
->>>> usually not allowed).
->>>>
->>>
->>> Eh... As said in the description this is really to differentiate the 2
->>> different physical port...
->>>
->>> Each port have a dedicated oscillator for calibration and these
->>> calibration are identified by an offset (all placed one after another in
->>> a separate register space).
->>
->> So different oscillators? Then describe the oscillator and its differences.
->>
->> Different programing model? Different compatible.
->>
->> Other difference? Depending what is the difference.
->>
->> But there is no such thing as "different port ID" based on your
->> description above. You just claimed that they are different, but you do
->> not put that difference to hardware description. Instead you encode that
->> difference in the drivers and it should be opposite. The DTS, so the
->> hardware description, should tell you the difference. And I am sorry,
->> but in 99% of cases "I am the first phy" and "I am the second" is not
->> the actual difference we are interested in.
->>
+On Wed, Mar 19, 2025 at 03:04:45PM +0800, jiebing chen wrote:
+> Add clock IDs for the mclk pads found on s4 SoCs
 > 
-> Ok to make it as clear as possible. (hope I don't contraddict with the
-> previous statement) (actually yes the "separate register space statement
-> was wrong and sorry for the confusion")
-> 
-> - 2 USB port
-> - USB 2.0 needs to be calibrated with an oscillator
-> - Each USB port have his own dedicated oscillator somewhere in the HW
-> - Each USB port have at the same offset a register to SELECT the
->   oscillator. This register refer to the same oscillator selection in
->   the HW.
->   
->   Example:
->   reg 0x1fac0100 MASK 27:26 can be set to source out of oscillator 0,1,2
->   reg 0x1fae0100 MASK 27:26 can be set to source out of oscillator 0,1,2
+> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+> ---
+>  include/dt-bindings/clock/axg-audio-clkc.h | 11 +++++++++++
 
-So that's your difference between devices - you choose the oscillator.
+This belongs to the binding patch, usually.
 
-> 
->   Both register refer to the same oscillators in hardware (hence each
->   port should select the correct one)
->   Selecting oscillator 0 for both USB port is problematic.
-> 
-> With this in mind is it ok if I describe this with something like
-> 
-> airoha,usb2-monitor-clk-sel = <AIROHA_USB2_MONCLK_SEL0>;
-> 
-> and some dt-bindings include
-> 
-> #define AIROHA_USB2_MONCLK_SEL0 0
-> #define AIROHA_USB2_MONCLK_SEL1 1
-> #define AIROHA_USB2_MONCLK_SEL2 2
-> #define AIROHA_USB2_MONCLK_SEL3 3
-> 
-> Or an enum of string like "osc0", "osc1", "osc2"...?
+Anyway - do not ask us to do the work twice.
 
-Both are fine.
+<form letter>
+This is a friendly reminder during the review process.
+
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions of patchset, under or above your Signed-off-by tag, unless
+patch changed significantly (e.g. new properties added to the DT
+bindings). Tag is "received", when provided in a message replied to you
+on the mailing list. Tools like b4 can help here. However, there's no
+need to repost patches *only* to add the tags. The upstream maintainer
+will do that for tags received on the version they apply.
+
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
 
 Best regards,
 Krzysztof
+
