@@ -1,182 +1,151 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-b2-smtp.messagingengine.com (flow-b2-smtp.messagingengine.com [202.12.124.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E461A226177;
-	Thu, 20 Mar 2025 13:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994AF2628C;
+	Thu, 20 Mar 2025 14:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742475714; cv=none; b=GCl2iFA+9KutoNBuCiKMDrm2Oo5BN9BmB1ww4uXX9GpQoyFfTeSMWA4u6/7ueM/QwYkHTpt8LGSXnrOZvDceshwQ7iModZ27tQqetdXHSDbeKVL5pFlN/MZ1J0u5+R+SAnzOyhawqcBhtilNfG4/0iTGg6Eq20z5X3Hdgq13+WU=
+	t=1742482175; cv=none; b=uleGfuZ0E0kp+XvbpTY0CluRjmgm8JdC8t2YHhLesekpZuyrAXNtktsCILKBQQtk7nPlAuEPWd0arWgoLSXm2R/Npbq3CgdpzaT0knqwNPlBhmrFkjhffEYHGGT1B2RCfK5NRAXKueIgxA0mXKEo3uA/jOLVeik5+iBa9+H4ho0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742475714; c=relaxed/simple;
-	bh=cvxqxT98F3LDty/TItoLYj8kR76vHU0PoKW3McIA5Ac=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RrdwXjN0hxFlK4v8J+JLkOKx7HSAMAbVGRR+PXrQyRSjb3Fv2/3lt/xfo1nsBUVTWXhklpuGAMIFeEdGX7hNiEGrSihC/d1nR9v8XF1TkuG9B/A7bRD0elqYCjbo4VgBmuLzEUtzz+VGZHQTl115+EBRC7LYGeeIqaMQx+QTiX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ljt8MSEa; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1742482175; c=relaxed/simple;
+	bh=bIeQ1Wu8a+Mrkgz5vApJf9zp6gXA5Aohfycah7Q3lIA=;
+	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=DowYgKgmj2Ieaj+Sc+ZM4Dfa3Xa4lTUcZMRez/Pjsd6hAC864evDLgPQg1cjbTvAHxF4yoJJSd+RkCjpmNiL85gDJ8teGkqaP19WFkKBqiIhKXGp3poE99Kb0CNcFzBVEZd88vJtOkZPYxq4TNJ+kNLZl2nmb2v40FY7n4VCof0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Bw3lXaOm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y0x9aWYb; arc=none smtp.client-ip=202.12.124.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljt8MSEa"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so352006f8f.0;
-        Thu, 20 Mar 2025 06:01:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742475711; x=1743080511; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/2i/cLqH70rFIGQEh0as4tKq9BI5pDp8ooCRLadLuPs=;
-        b=ljt8MSEaMyy1OvCf6vWom8+7dN3yEMu+vR9MVeybt0l6FSmubumyp6Gkzoauj1jAra
-         ll0Qv3hZ9QtZcfIbW9ITCZ4PmR2ndC83ss4Xtx2Olk6XCUrL5ivbumNWu+7RcNV5yO5V
-         3fL3rkrQyw2K5FfXPMB9gWyFwUTO0w670CrtmCmsv24JMD+VU9JABxKHkuyC47fItFHu
-         sViykLce6e+NyCi3WkYr98D5CInnY0ZJgr97g49J91JXTFwDwAvNzQH10bOTbkE6EBsB
-         NZosML1DY7qGo2mYtc9CA4tiV1lxXjOz2gY/iEy0rPXZjH/KHKCef3GE8J9YmXdRNxhL
-         T29w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742475711; x=1743080511;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/2i/cLqH70rFIGQEh0as4tKq9BI5pDp8ooCRLadLuPs=;
-        b=wO4OhQ57FDJiNPwyUu4EyG2izNlIgkCvh8psBh6ralmt2GuVac/uBa8gEiZ43EcMXW
-         C7xC8Y6trh2yp044Iw9NnI2dh+IUSesg4ZSjEZN7c/cpHebFpuev7mqaWffLeiVAbnB+
-         iqTrYDWIg1vI3LRuTeu7iSkWdGTN7peHdjyl56WaRba7lStSzrKWu3kwI5Q5NY5i1XU0
-         o9y86gOI65PZrdGU1cisNgX2R1O9Tu5M29uasQX0dsJXSrk9scLrebEeoJ645lzSfDft
-         SzkK2B2BHbiSK3SEPAW0f6ti+VDquyk+6NxrMvs0xeR83FyCnNpZGue0+JBKFaXzLxtB
-         hgMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUB0tgyh3bsbaTIhnPtdyQVkDxbDkSILmHddaSr4bIYdgul8Bm3EObt8ksd9atMz2duvRkIV/vV/mze@vger.kernel.org, AJvYcCV+5XuwmCAk4S7jxVFoR/RseoVm/VBmlRrFevcnR7yxztiMkkJR06Rda1cro+tJdWg0Xf1zuM7v501kXM0/@vger.kernel.org, AJvYcCV4c2bMIbwEHP3S/OtKL5vrIzQyxn3tgERVMc0Iw4Wk7LMM8UI8t2AcH9d8EiWWgLr7fBIpksWYCaJV@vger.kernel.org, AJvYcCVIWkj6E7ev1dmQyAKlM2D6o2kxGzfC2RjQPnopathNmC5/fE/h3OjdqMhwROo2/SvIChe3rm5/88aW@vger.kernel.org
-X-Gm-Message-State: AOJu0YwskSKMPox5P4Pa8ojL/R+pgnGQ63nQUUrg5DXrsv0u53gD7+m0
-	5W3aZRiX1VQEUh3NWCMOIf9zYJqoFpoGB9fpHJ7Jqqqk69FZO6N+
-X-Gm-Gg: ASbGncugVfBGOlkr8pOmx6Pqz7d6sqB6urVK1OAtN1DMste47Iwx5GVJpQ6HoPzD6o/
-	tsX+P74bTU8FgZbzMxqFWXSFh3Zoy8RTnlmFHERrtEuVSoFqZmrg22cEMib3E/oAZJwVkpv4M6W
-	Q3oMCiTvEMLF1QYHpxYaPwft563kn84Z0QBZIB592SStUo2Husqjw03e3bN5MfExMVvUM5OcUm0
-	lV/pFmz6kb1iJHSZT98DXBU3yPNoZd9jNzkYcX7oKFYbWwMc4OZXu4VyoeaKTuDgtbMm7KfC19i
-	xvocvUF6VxbxPCYptHK4NpIFxUlGc1sx9rFYotVg+JbYMOsdqCQlpn5ESeBGUHVt4182Ct0kYXh
-	ik3aeUwMB8QTzFg==
-X-Google-Smtp-Source: AGHT+IGPoVf9Gxeq+Z6YkgZOF9dLEtuHhARuJ5TNPwOSxmTqplkNjLTuQh6kUIXQk8Ui4saz4dpBhQ==
-X-Received: by 2002:a05:6000:1564:b0:391:4095:49b7 with SMTP id ffacd0b85a97d-399739c8f6dmr6626914f8f.25.1742475709979;
-        Thu, 20 Mar 2025 06:01:49 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-397f2837e61sm18492328f8f.97.2025.03.20.06.01.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 06:01:49 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Daniel Danzberger <dd@embedd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Ben Hutchings <ben@decadent.org.uk>,
-	Felix Fietkau <nbd@nbd.name>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-phy@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-usb@vger.kernel.org,
-	upstream@airoha.com
-Subject: [PATCH v2 11/11] arm64: dts: airoha: en7581: add USB nodes
-Date: Thu, 20 Mar 2025 14:00:34 +0100
-Message-ID: <20250320130054.4804-12-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250320130054.4804-1-ansuelsmth@gmail.com>
-References: <20250320130054.4804-1-ansuelsmth@gmail.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Bw3lXaOm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y0x9aWYb"
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.stl.internal (Postfix) with ESMTP id AEE401D416BB;
+	Thu, 20 Mar 2025 10:49:30 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Thu, 20 Mar 2025 10:49:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742482170;
+	 x=1742489370; bh=9DLyOHmoAVb5Kjp+6FlYdojTGuwaxjtqiw9xkYFjrks=; b=
+	Bw3lXaOmvk9EdHs1fHI4ePb/4my5fKxj/IMehz35ln/GbxTb2yfCvVNDmPag0Iyc
+	6U4DAcH8l8GGqWTL/f+oEJeQwE2vg9NLGJjKJA56zHtY+rLW7mwDSGbyr5+p5XM9
+	JCCrRvfUg8U9Ay9Equz57Dwz1WcN465IOEnw52kZ1BygBzU2OSdFKNAmAlWz1mAa
+	FCAYffC5LmTTVMZFFSQLceuZN0f5ZPmPgd+JE4ytjReoN4stZJTs7zhSBTdzr9V3
+	pPny3DzuG5icuFEqINH8fHGHXQ9PJLpj9cpXsRhS8AcpIVTbUyPQVl3J30MBzF1n
+	X7rb7bbbVqo5z/rdkGcDTg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm1; t=1742482170; x=1742489370; bh=9
+	DLyOHmoAVb5Kjp+6FlYdojTGuwaxjtqiw9xkYFjrks=; b=Y0x9aWYb2wIAQmaSl
+	Pq6kfxvFZ+vMSk4mUZVMwOCYQXFhwo4FJthV1YOsfpEAc5r56MQs00MWNWQ0JNDX
+	BeT2gaYmcUUtXFUpth1PV9wPGsIz06xj9QEOolTvT2f3WnwVVP1ZBCYav2jRKaKv
+	JGphU67eMFJd/qbRt0RbNP2aPRcqsGRMK+PLas0r1J3nRoQ21uqRPpGUL1iI2NVS
+	FebfzaJxE+l3slXKq9Zx6IGVg+a9jxn/YDtEIn7PDb/xAnScxQ2sczmw0mug+qgD
+	84PKh+sqX8mlDjlR5HIzegh2buZJErBnJqLHFtImfWvmvwlvJbFl2pDGiPe7CEeT
+	1YNkQ==
+X-ME-Sender: <xms:-CrcZyd9GW8HoH0R3IH91GtQzQt0CEr8OyRwG1O-nnJkeMuRCvK6Zg>
+    <xme:-CrcZ8NvNa45BKatbeA4B1wgGCMT93ZcGxk0DSOqDPRgKGUn0zpZUmNESobrm7HKP
+    to6wCniosQHayzwSCo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeekgeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvffkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhkeeltdfffefhgffhteetheeuhffgteeghfdt
+    ueefudeuleetgfehtdejieffhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedv
+    jedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuhhpshhtrhgvrghmsegrihhroh
+    hhrgdrtghomhdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgt
+    ohhmpdhrtghpthhtoheprghnghgvlhhoghhiohgrtggthhhinhhordguvghlrhgvghhnoh
+    estgholhhlrggsohhrrgdrtghomhdprhgtphhtthhopegthiihsegthiihshgvlhhfrdhn
+    rghmvgdprhgtphhtthhopegsvghnseguvggtrgguvghnthdrohhrghdruhhkpdhrtghpth
+    htohepuggusegvmhgsvgguugdrtghomhdprhgtphhtthhopegrlhgvgigrnhguvghrrdhs
+    vhgvrhgulhhinhesghhmrghilhdrtghomhdprhgtphhtthhopegrnhhsuhgvlhhsmhhthh
+    esghhmrghilhdrtghomhdprhgtphhtthhopehmrghtthhhihgrshdrsghgghesghhmrghi
+    lhdrtghomh
+X-ME-Proxy: <xmx:-CrcZzggTkjaKKMcIlgevkAvwlYjG5PkKJgdClNOo099WbN16OSVsA>
+    <xmx:-CrcZ_9zuYJuN_HLg3rJNKPuHPA9shltG7CLzwdMTeYtvKj7bZxlGA>
+    <xmx:-CrcZ-tBhZRJUgt6KbRsVeBxevJWA7uQVq4pldXImlnOXd_tXaUkew>
+    <xmx:-CrcZ2HPgAWXYC_-FTq__I9R22-H0xsP9vJ2kl_t3HMh2-otp4xiig>
+    <xmx:-ircZzt99E-ok_aWCfAWKBZl4vRai5AHEGnkM81fK97NzSmAflzBFw3S>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 660AA2220073; Thu, 20 Mar 2025 10:49:28 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T0b2bddcaf378cae8
+Date: Thu, 20 Mar 2025 15:49:08 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christian Marangi" <ansuelsmth@gmail.com>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
+ "Kishon Vijay Abraham I" <kishon@kernel.org>,
+ "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Lorenzo Bianconi" <lorenzo@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Daniel Danzberger" <dd@embedd.com>,
+ "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
+ "Nikita Shubin" <nikita.shubin@maquefel.me>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Yangyu Chen" <cyy@cyyself.name>, "Ben Hutchings" <ben@decadent.org.uk>,
+ "Felix Fietkau" <nbd@nbd.name>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
+ upstream@airoha.com
+Message-Id: <d6e27266-dc5b-4ef8-b708-21cedd06621e@app.fastmail.com>
+In-Reply-To: <20250320130054.4804-5-ansuelsmth@gmail.com>
+References: <20250320130054.4804-1-ansuelsmth@gmail.com>
+ <20250320130054.4804-5-ansuelsmth@gmail.com>
+Subject: Re: [PATCH v2 04/11] soc: airoha: add support for configuring SCU SSR Serdes
+ port
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Add USB nodes required for USB support of Airoha EN7581 with the correct
-define of Serdes Port and Monitor Clock for USB 2.0 calibration.
+On Thu, Mar 20, 2025, at 14:00, Christian Marangi wrote:
+> Add support for configuring SCU SSR Serdes port. Airoha AN7581 SoC can
+> configure the different Serdes port by toggling bits in the SCU register
+> space.
+>
+> Port Serdes mode are mutually exclusive, force example the USB2 Serdes port
+> can either used for USB 3.0 or PCIe 2 port. Enabling USB 3.0 makes the
+> PCIe 2 to not work.
+>
+> The current supported Serdes port are:
+> - WiFi 1 and defaults to PCIe0 1 line mode
+> - Wifi 2 and defaults to PCIe1 1 line mode
+> - USB 1 and defaults to USB 3.0 mode
+> - USB 2 and defaults to USB 3.0 mode
+>
+> WiFi 1, WiFi 2 and USB 1 also support a particular Ethernet mode that
+> can toggle between USXGMII or HSGMII mode (USB 1 only to HSGMII)
+> Such mode doesn't configure bits as specific Ethernet PCS driver will
+> take care of configuring the Serdes mode based on what is required.
+>
+> This driver is to correctly setup these bits.
+> Single driver can't independently set the Serdes port mode as that
+> would cause a conflict if someone declare, for example, in DT
+> (and enable) PCIe 2 port and USB2 3.0 port.
+>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- arch/arm64/boot/dts/airoha/en7581.dtsi | 49 ++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+I think serdes drivers are usually implement in the drivers/phy
+layer, and I see there is already a drivers/phy/phy-airoha-pcie.c,
+which may or may not overlap with this one (I have not looked at
+the details).
 
-diff --git a/arch/arm64/boot/dts/airoha/en7581.dtsi b/arch/arm64/boot/dts/airoha/en7581.dtsi
-index 26b136940917..d1cec63bb77f 100644
---- a/arch/arm64/boot/dts/airoha/en7581.dtsi
-+++ b/arch/arm64/boot/dts/airoha/en7581.dtsi
-@@ -3,7 +3,10 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/en7523-clk.h>
-+#include <dt-bindings/phy/phy.h>
-+#include <dt-bindings/phy/airoha,an7581-usb-phy.h>
- #include <dt-bindings/reset/airoha,en7581-reset.h>
-+#include <dt-bindings/soc/airoha,scu-ssr.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -195,6 +198,52 @@ rng@1faa1000 {
- 			interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		usb0: usb@1fab0000 {
-+			compatible = "mediatek,mtk-xhci";
-+			reg = <0x0 0x1fab0000 0x0 0x3e00>,
-+				<0x0 0x1fab3e00 0x0 0x100>;
-+			reg-names = "mac", "ippc";
-+			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			phys = <&usb0_phy PHY_TYPE_USB2>, <&usb0_phy PHY_TYPE_USB3>;
-+
-+			status = "disabled";
-+		};
-+
-+		usb0_phy: phy@1fac0000 {
-+			compatible = "airoha,an7581-usb-phy";
-+			reg = <0x0 0x1fac0000 0x0 0x10000>;
-+
-+			airoha,scu = <&scuclk>;
-+			airoha,usb2-monitor-clk-sel = <AIROHA_USB2_MONCLK_SEL1>;
-+			airoha,serdes-port = <AIROHA_SCU_SERDES_USB1>;
-+
-+			#phy-cells = <1>;
-+		};
-+
-+		usb1: usb@1fad0000 {
-+			compatible = "mediatek,mtk-xhci";
-+			reg = <0x0 0x1fad0000 0x0 0x3e00>,
-+				<0x0 0x1fad3e00 0x0 0x100>;
-+			reg-names = "mac", "ippc";
-+			interrupts = <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			phys = <&usb1_phy PHY_TYPE_USB2>, <&usb1_phy PHY_TYPE_USB3>;
-+
-+			status = "disabled";
-+		};
-+
-+		usb1_phy: phy@1fae0000 {
-+			compatible = "airoha,an7581-usb-phy";
-+			reg = <0x0 0x1fae0000 0x0 0x10000>;
-+
-+			airoha,scu = <&scuclk>;
-+			airoha,usb2-monitor-clk-sel = <AIROHA_USB2_MONCLK_SEL2>;
-+			airoha,serdes-port = <AIROHA_SCU_SERDES_USB2>;
-+
-+			#phy-cells = <1>;
-+		};
-+
- 		system-controller@1fbf0200 {
- 			compatible = "airoha,en7581-gpio-sysctl", "syscon",
- 				     "simple-mfd";
--- 
-2.48.1
+Have you tried to use the phy subsystem interface here instead
+of creating a custom in-kernel interface?
 
+      Arnd
