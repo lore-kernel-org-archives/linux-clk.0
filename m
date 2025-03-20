@@ -1,164 +1,601 @@
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E793A1EB9F9;
-	Thu, 20 Mar 2025 03:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742441254; cv=pass; b=FMYsliuTWy5jgiOOsAQWsKGbErKserTSvgH2wHRtB0INF9Z2Y4M23zUKlK34tFjrsBUwBWC02GzCeejOTqulPYvHqYyyGG/ery0JHAU/Bp+8uBEmwf2D4ysrGMFqEMWImeTDpV8hu/jpiYJgy+sR1LU0Wummk/QpUMHh+Rtn50U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742441254; c=relaxed/simple;
-	bh=IudflqImdm+ZwbpvNjpoNoGi2CoQwHJjQFVz8r3/Sj8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=myFIrJapjIs2Sw5NKj57Sb/XvgPOVVK5gsoCvaEoO++FA9M410qJzoOcChQvWHK7dYwzcfuAHRDfBkJ+Zeh70cc6P1cN5D5CtJx7Fa7JVMVnBqvV9g05Z17fRLD20cD2qtZdkF/eupaxysvUxpZfP0R9xQV3pSiV4cRI2pBGEtY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=T7hkPuyh; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B861C3F02;
+	Thu, 20 Mar 2025 07:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742454591; cv=none; b=CIMS1Kgx2kqnLN/JYhDrgW8lF8HiLXDeb3vDOPZ0G6ZAXzVCid+3/rPfuFpixHDIJr/0CgGGCWWgY9NiNK6f8HYxOaF8hJ+f8iefjXlA44LqzdndaLSJt0OsjunCrEagnZC7FakZjX7eYVMANj36wloztSWuYI2eZKijKWuYJdI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742454591; c=relaxed/simple;
+	bh=l54Me8SQYtRJpOJzuEZvDZASIL9r7/2qgJpC4Wv8qBs=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jbfezDi43fo2BsXy9JmupPWW7dqkIa4Gb7JzNs1Er2mIFBae9aFwofayPVLVIOlGYe4kpWUUgF64V40XlnfyTUroYMahKxAqKwC2z6k1qxFGSHaxSf7srvrHlSpImZptwI3qXeLqGgYqs0VhzjlYg0s1P2AzP61oZmEOaQeQTHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bBvdVqAP; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="T7hkPuyh"
-ARC-Seal: i=1; a=rsa-sha256; t=1742441208; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=M91RKGSr9GXPeJUclI97wDiY6yuewKNBZJ/uQcEt3B0fjCpYT7eQe68tVQ62r3cVgFecF21+BVLY3Kck0U8OxhbQ+2nUBrawqrYFf+PDO3RFLC5+pGIbRAuwjyUwCeTTSSQSkTnzWm/i+ZbCfH7FzBByJc6MA6MgSPougyovLzk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1742441208; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=EPlebBCWRgSBAYpdwC7xAZIbyevkA4TQGmd5kkCqttQ=; 
-	b=lRSRF0hZo71iCETweHM3XeI6qDZFQux317+c0IvYaOJ6NBLvH7u86bbz7aasmWGDB7bJSYdHJkziwDbuvSjlAh9o9XOkDX+OV9igot+srQBrA40U+xNLYR9b5S8x3RkrIvHyjc3cJnTF+HA/DLSNnBPLoNfaF6ah2jBkem65sK4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1742441208;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Feedback-ID:Reply-To;
-	bh=EPlebBCWRgSBAYpdwC7xAZIbyevkA4TQGmd5kkCqttQ=;
-	b=T7hkPuyhJzgvyBBmI2oBTHhWxzKiwaZT0hYPLlrG+Haac5wc7QRs7Db8a8lZ74Wk
-	0Ueh8MHyaIz1RHnlU+hHoJLdMdsIpY/c2iPOMQZd+ErRe4iNExeSxO+r/fv1MeKR4vY
-	Cf9qOZjbyKW+4hEb3RUzTLtEX9MKftoyQAs/PZ7k=
-Received: by mx.zohomail.com with SMTPS id 1742441205785629.6303235866446;
-	Wed, 19 Mar 2025 20:26:45 -0700 (PDT)
-From: Xukai Wang <kingxukai@zohomail.com>
-Date: Thu, 20 Mar 2025 11:25:37 +0800
-Subject: [PATCH RESEND v5 3/3] riscv: dts: canaan: Add clock definition for
- K230
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBvdVqAP"
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-22435603572so5792475ad.1;
+        Thu, 20 Mar 2025 00:09:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742454588; x=1743059388; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:cc:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4nAhjK9y3Zh+il9eKutxRFA5s28HksmXJM2UbJ9s7NY=;
+        b=bBvdVqAPtIUe+1YgMlbSmdMuTSlJFt6PXt33RfU58SMLEDn496amNfD02aA7bFdOHv
+         uoRTjy8sApQog7tACPfprrfIhmKDqtrjxtVA5B01ZlfMoVx3N8mzqtcFejmLbAkiTrTl
+         anNAqMa+7Nw6U2hnyXdCnQK6SGSb+gtxeoRMIdpBSsS3+ofjuNqekDR5+sMZrBWvY+WN
+         gF7ndbQSo0aG1MpncCM2xi9onNB4dKY+hGml0DslLy7I/H70y1NxJjoAgMvSnEdl5HUy
+         0Ae9oyAwuyMcTmh/xvMTG8FOovb/R9itskavxtE6jx0hevCvC5f3B9WC0rmUjsyDzWEr
+         tLXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742454588; x=1743059388;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:cc:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4nAhjK9y3Zh+il9eKutxRFA5s28HksmXJM2UbJ9s7NY=;
+        b=uYtJp5lYiVXkDSZwjRPNxFrRlW1mMM3/iSzXn1o2qWbdf5tgL0rjB8hLW6WHExmMZv
+         EH3xpiE14R3cjnb3CeRq2/BM31+g7tEYk9z3o+a7LkHEzQ566uRwy3eM6ZiM6uT3OwNM
+         YSb1seOYSg2xp00ejPxmzDFaFlNX8bcyRAimDrzOBrleU5XkLb8PNXbPwPFw2l539pgb
+         qDVkVzcwxlmpCQcN3X+H1pLXKzPCxxmlJEzK92yFjUHZxfs2hHlAlR6/IbmkEWgYyW4k
+         jCrcRUwyRorl1Yf1ToyizvV1tpHnRhDESHfgemZCp23Eztf1jgU1Z06KZv1CiRIBS0aY
+         wjOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmRyp+NvWrqTTA3qf3cSGAu08tvw6e4tO7Yasr4PLUhsfMIBkmcQBZeESybE/UlCn/nsIahkhsNhUq@vger.kernel.org, AJvYcCXNvNMyLqfVZ4gDv0f4oG03E8SWZk6/QRm7RMa+Y2jJSLC32m60IQU8H9vZeGjNTvjvQXwbTAxsFaAP@vger.kernel.org, AJvYcCXxhAkDeZDcVB13RRH3olGtpXnZUdhPw2RwZMAC5gHaDsgSkOnKx6br/Gim3P5XQtW9kDliExDi4MqPuTFn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3vWmzW0bxdgdNqDR8HBanl1TR0Dx7qH9nNZ6wpM36ApQ/KR/g
+	mxGi0RHBsq7zyvI51b1Sn9XctQWweMaUdSc2AXA1RgsUm/MRgOy2
+X-Gm-Gg: ASbGncu9gIANFmHGpb4frWqkgUmTIjdCKWy87JERfhLJ1XrTC1sjTxhO4cZRgb+X03d
+	dyribQVLrTzklOxyu+/8p0SYJs1QLIyOC8DPDt3XckpZJGs0Giwz6iQ0SIs8YC8d8YnkA0kZe4X
+	MVfCqjoMlpwT6CmYh5xgKwj1WDAx+fkFZ6/ZfW3N9Tar0t/ZnlSoFm0kggzO5nEwH5KIQ24PNuh
+	EmTuTQUTQBx8TGW/qxO3d5sF9becNoL+fyIHXHlPOlX4HU9Fcm3MAWvo9aCqMZ3zsiHNgDG2sgg
+	APgFiBy16cIbkrkImdL02grmdxUTMw==
+X-Google-Smtp-Source: AGHT+IGE5LYsYMAutyot9CUzHw9f/eayOhashOgX28tKi4FuPJBcL2K77OwhQcox15wTLrQtWywGNQ==
+X-Received: by 2002:a17:902:e841:b0:220:e63c:5aff with SMTP id d9443c01a7336-2265ee904c0mr30968485ad.47.1742454588075;
+        Thu, 20 Mar 2025 00:09:48 -0700 (PDT)
+Received: from [172.29.0.1] ([2a0d:2683:c100::bf])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c688856fsm128073435ad.14.2025.03.20.00.09.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 20 Mar 2025 00:09:47 -0700 (PDT)
+Message-ID: <fb9dba11-5a23-48a2-8b11-a544580eeaca@gmail.com>
+Date: Thu, 20 Mar 2025 15:09:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250320-b4-k230-clk-v5-3-0e9d089c5488@zohomail.com>
-References: <20250320-b4-k230-clk-v5-0-0e9d089c5488@zohomail.com>
-In-Reply-To: <20250320-b4-k230-clk-v5-0-0e9d089c5488@zohomail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Xukai Wang <kingxukai@zohomail.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+User-Agent: Mozilla Thunderbird
+Cc: troymitchell988@gmail.com, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>
+Subject: Re: [PATCH RESEND v5 2/3] clk: canaan: Add clock driver for Canaan
+ K230
+To: Xukai Wang <kingxukai@zohomail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
  Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Troy Mitchell <TroyMitchell988@gmail.com>
-X-Mailer: b4 0.14.2
-Feedback-ID: rr0801122750c07efbc0a0d500ba86f7f700009de018deec3b634dd7bbbbc91f3130829b1bda353269100654:zu08011227a8c7ad2a9b20f474ba12b64a00003f8a2c278a596cfb77449d647b6335dee01f06aa7350edb7cb:rf0801122c1a6d4852bdbff4e658c1f51d00003571b754f5174b768c1ac33936a8c1ed0c6331da4e991fd4a7d03d7d25ed:ZohoMail
-X-ZohoMailClient: External
+References: <20250320-b4-k230-clk-v5-0-0e9d089c5488@zohomail.com>
+ <20250320-b4-k230-clk-v5-2-0e9d089c5488@zohomail.com>
+Content-Language: en-US
+From: Troy Mitchell <troymitchell988@gmail.com>
+In-Reply-To: <20250320-b4-k230-clk-v5-2-0e9d089c5488@zohomail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch describes the clock controller integrated in K230 SoC
-and replace dummy clocks with the real ones for UARTs.
+On 2025/3/20 11:25, Xukai Wang wrote:
+> This patch provides basic support for the K230 clock, which does not
+> cover all clocks.
+> 
+> The clock tree of the K230 SoC consists of OSC24M, PLLs and sysclk.
+> 
+> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+> ---
+>  drivers/clk/Kconfig    |    6 +
+>  drivers/clk/Makefile   |    1 +
+>  drivers/clk/clk-k230.c | 1711 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 1718 insertions(+)
+> 
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 299bc678ed1b9fcd9110bb8c5937a1bd1ea60e23..1817b8883af9a3d00ac7af2cb88496274b591001 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -464,6 +464,12 @@ config COMMON_CLK_K210
+>  	help
+>  	  Support for the Canaan Kendryte K210 RISC-V SoC clocks.
+>  
+> +config COMMON_CLK_K230
+> +	bool "Clock driver for the Canaan Kendryte K230 SoC"
+> +	depends on ARCH_CANAAN || COMPILE_TEST
+> +        help
+> +          Support for the Canaan Kendryte K230 RISC-V SoC clocks.
+> +
+>  config COMMON_CLK_SP7021
+>  	tristate "Clock driver for Sunplus SP7021 SoC"
+>  	depends on SOC_SP7021 || COMPILE_TEST
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index fb8878a5d7d93da6bec487460cdf63f1f764a431..5df50b1e14c701ed38397bfb257db26e8dd278b8 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -51,6 +51,7 @@ obj-$(CONFIG_MACH_ASPEED_G6)		+= clk-ast2600.o
+>  obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+>  obj-$(CONFIG_CLK_HSDK)			+= clk-hsdk-pll.o
+>  obj-$(CONFIG_COMMON_CLK_K210)		+= clk-k210.o
+> +obj-$(CONFIG_COMMON_CLK_K230)		+= clk-k230.o
+>  obj-$(CONFIG_LMK04832)			+= clk-lmk04832.o
+>  obj-$(CONFIG_COMMON_CLK_LAN966X)	+= clk-lan966x.o
+>  obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)	+= clk-lochnagar.o
+> diff --git a/drivers/clk/clk-k230.c b/drivers/clk/clk-k230.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..96e2a83830c1b69f0ed70ef2b6267e9f05fc505b
+> --- /dev/null
+> +++ b/drivers/clk/clk-k230.c
+> @@ -0,0 +1,1711 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Kendryte Canaan K230 Clock Drivers
+> + *
+> + * Author: Xukai Wang <kingxukai@zohomail.com>
+> + * Author: Troy Mitchell <troymitchell988@gmail.com>
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clkdev.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +#include <dt-bindings/clock/canaan,k230-clk.h>
+> +
+> +/* PLL control register bits. */
+> +#define K230_PLL_BYPASS_ENABLE				BIT(19)
+> +#define K230_PLL_GATE_ENABLE				BIT(2)
+> +#define K230_PLL_GATE_WRITE_ENABLE			BIT(18)
+> +#define K230_PLL_OD_SHIFT				24
+> +#define K230_PLL_OD_MASK				0xF
+> +#define K230_PLL_R_SHIFT				16
+> +#define K230_PLL_R_MASK					0x3F
+> +#define K230_PLL_F_SHIFT				0
+> +#define K230_PLL_F_MASK					0x1FFFF
+> +#define K230_PLL0_OFFSET_BASE				0x00
+> +#define K230_PLL1_OFFSET_BASE				0x10
+> +#define K230_PLL2_OFFSET_BASE				0x20
+> +#define K230_PLL3_OFFSET_BASE				0x30
+> +#define K230_PLL_DIV_REG_OFFSET				0x00
+> +#define K230_PLL_BYPASS_REG_OFFSET			0x04
+> +#define K230_PLL_GATE_REG_OFFSET			0x08
+> +#define K230_PLL_LOCK_REG_OFFSET			0x0C
+> +
+> +/* PLL lock register bits.  */
+> +#define K230_PLL_STATUS_MASK				BIT(0)
+> +
+> +/* K230 CLK registers offset */
+> +#define K230_CLK_AUDIO_CLKDIV_OFFSET			0x34
+> +#define K230_CLK_PDM_CLKDIV_OFFSET			0x40
+> +#define K230_CLK_CODEC_ADC_MCLKDIV_OFFSET		0x38
+> +#define K230_CLK_CODEC_DAC_MCLKDIV_OFFSET		0x3c
+> +
+> +/* K230 CLK OPS. */
+> +#define K230_CLK_OPS_GATE				\
+> +	.enable		= k230_clk_enable,		\
+> +	.disable	= k230_clk_disable,		\
+> +	.is_enabled	= k230_clk_is_enabled
+> +
+> +#define K230_CLK_OPS_RATE				\
+> +	.set_rate	= k230_clk_set_rate,		\
+> +	.round_rate	= k230_clk_round_rate,		\
+> +	.recalc_rate	= k230_clk_get_rate
+> +
+> +#define K230_CLK_OPS_MUX				\
+> +	.set_parent	= k230_clk_set_parent,		\
+> +	.get_parent	= k230_clk_get_parent,		\
+> +	.determine_rate	= clk_hw_determine_rate_no_reparent
+> +
+> +#define K230_CLK_OPS_ID_NONE				0
+> +#define K230_CLK_OPS_ID_GATE_ONLY			1
+> +#define K230_CLK_OPS_ID_RATE_ONLY			2
+> +#define K230_CLK_OPS_ID_RATE_GATE			3
+> +#define K230_CLK_OPS_ID_MUX_ONLY			4
+> +#define K230_CLK_OPS_ID_MUX_GATE			5
+> +#define K230_CLK_OPS_ID_MUX_RATE			6
+> +#define K230_CLK_OPS_ID_ALL				7
+> +#define K230_CLK_OPS_ID_NUM				8
+> +
+> +/* K230 CLK MACROS */why all caps?
 
-Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
-Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
----
- arch/riscv/boot/dts/canaan/k230.dtsi | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+> +#define K230_CLK_MAX_PARENT_NUM				6
+> +
+> +#define K230_GATE_FORMAT(_reg, _bit, _reverse)					\
+> +	.gate_reg_off = (_reg),							\
+> +	.gate_bit_enable = (_bit),						\
+> +	.gate_bit_reverse = (_reverse)
+> +
+> +#define K230_RATE_FORMAT(_mul_min, _mul_max, _mul_shift, _mul_mask,		\
+> +			_div_min, _div_max, _div_shift, _div_mask,		\
+> +			_reg, _bit, _method)					\
+> +	.rate_mul_min = (_mul_min),						\
+> +	.rate_mul_max = (_mul_max),						\
+> +	.rate_mul_shift = (_mul_shift),						\
+> +	.rate_mul_mask = (_mul_mask),						\
+> +	.rate_div_min = (_div_min),						\
+> +	.rate_div_max = (_div_max),						\
+> +	.rate_div_shift = (_div_shift),						\
+> +	.rate_div_mask = (_div_mask),						\
+> +	.rate_reg_off = (_reg),							\
+> +	.rate_write_enable_bit = (_bit),					\
+> +	.method = (_method)
+> +
+> +#define K230_RATE_C_FORMAT(_mul_min, _mul_max, _mul_shift, _mul_mask,		\
+> +			   _reg, _bit)						\
+> +	.rate_mul_min_c = (_mul_min),						\
+> +	.rate_mul_max_c = (_mul_max),						\
+> +	.rate_mul_shift_c = (_mul_shift),					\
+> +	.rate_mul_mask_c = (_mul_mask),						\
+> +	.rate_reg_off_c = (_reg),						\
+> +	.rate_write_enable_bit_c = (_bit)
+> +
+> +#define K230_MUX_FORMAT(_reg, _shift, _mask)					\
+> +	.mux_reg_off = (_reg),							\
+> +	.mux_reg_shift = (_shift),						\
+> +	.mux_reg_mask = (_mask)
+> +
+> +struct k230_sysclk;
+> +
+> +/* K230 PLLs. */
+Consider dropping this comment?
+It's already clear enough
 
-diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/canaan/k230.dtsi
-index 95c1a3d8fb1192e30113d96d3e96329545bc6ae7..e688633acbbf2cee36354220c557252111f56ff5 100644
---- a/arch/riscv/boot/dts/canaan/k230.dtsi
-+++ b/arch/riscv/boot/dts/canaan/k230.dtsi
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-  */
- 
-+#include <dt-bindings/clock/canaan,k230-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- 
- /dts-v1/;
-@@ -58,10 +59,10 @@ l2_cache: l2-cache {
- 		};
- 	};
- 
--	apb_clk: apb-clk-clock {
-+	osc24m: clock-24m {
- 		compatible = "fixed-clock";
--		clock-frequency = <50000000>;
--		clock-output-names = "apb_clk";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "osc24m";
- 		#clock-cells = <0>;
- 	};
- 
-@@ -89,10 +90,18 @@ clint: timer@f04000000 {
- 			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>;
- 		};
- 
-+		sysclk: clock-controller@91102000 {
-+			compatible = "canaan,k230-clk";
-+			reg = <0x0 0x91102000 0x0 0x1000>,
-+			      <0x0 0x91100000 0x0 0x1000>;
-+			clocks = <&osc24m>;
-+			#clock-cells = <1>;
-+		};
-+
- 		uart0: serial@91400000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91400000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART0>;
- 			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -102,7 +111,7 @@ uart0: serial@91400000 {
- 		uart1: serial@91401000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91401000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART1>;
- 			interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -112,7 +121,7 @@ uart1: serial@91401000 {
- 		uart2: serial@91402000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91402000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART2>;
- 			interrupts = <18 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -122,7 +131,7 @@ uart2: serial@91402000 {
- 		uart3: serial@91403000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91403000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART3>;
- 			interrupts = <19 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -132,7 +141,7 @@ uart3: serial@91403000 {
- 		uart4: serial@91404000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91404000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART4>;
- 			interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
+> +enum k230_pll_id {
+> +	K230_PLL0,
+> +	K230_PLL1,
+> +	K230_PLL2,
+> +	K230_PLL3,
+> +	K230_PLL_NUM
+> +};
+> +
+> +struct k230_pll {
+> +	enum k230_pll_id id;
+> +	struct k230_sysclk *ksc;
+> +	void __iomem *div, *bypass, *gate, *lock;
+> +	struct clk_hw hw;
+> +};
+> +
+> +#define to_k230_pll(_hw)	container_of(_hw, struct k230_pll, hw)
+> +
+> +struct k230_pll_cfg {
+> +	u32 reg;
+> +	const char *name;
+> +	struct k230_pll *pll;
+> +};
+> +
+> +/* K230 PLL_DIVS. */
+same
+
+> +struct k230_pll_div {
+> +	struct k230_sysclk *ksc;
+> +	struct clk_hw *hw;
+> +};
+> +
+> +struct k230_pll_div_cfg {
+> +	const char *parent_name, *name;
+> +	int div;
+> +	struct k230_pll_div *pll_div;
+> +};
+> +
+> +enum k230_pll_div_id {
+> +	K230_PLL0_DIV2,
+> +	K230_PLL0_DIV3,
+> +	K230_PLL0_DIV4,
+> +	K230_PLL0_DIV16,
+> +	K230_PLL1_DIV2,
+> +	K230_PLL1_DIV3,
+> +	K230_PLL1_DIV4,
+> +	K230_PLL2_DIV2,
+> +	K230_PLL2_DIV3,
+> +	K230_PLL2_DIV4,
+> +	K230_PLL3_DIV2,
+> +	K230_PLL3_DIV3,
+> +	K230_PLL3_DIV4,
+> +	K230_PLL_DIV_NUM
+> +};
+> +
+> +enum k230_clk_div_type {
+> +	K230_MUL,
+> +	K230_DIV,
+> +	K230_MUL_DIV,
+> +};
+> +
+> +/* K230 CLKS. */
+same
+
+> +struct k230_clk {
+> +	int id;
+> +	struct k230_sysclk *ksc;
+> +	struct clk_hw hw;
+> +};
+> +
+> +#define to_k230_clk(_hw)	container_of(_hw, struct k230_clk, hw)
+> +
+> +/* K230 SYSCLK. */
+Check other places and remove unnecessary comments.
+
+> +struct k230_sysclk {
+> +	struct platform_device *pdev;
+> +	void __iomem	       *pll_regs, *regs;
+> +	spinlock_t	       pll_lock, clk_lock;
+> +	struct k230_pll	       *plls;
+> +	struct k230_clk	       *clks;
+> +	struct k230_pll_div    *dclks;
+> +};
+> +
+> +struct k230_clk_rate_cfg {
+> +	/* rate reg */
+> +	u32 rate_reg_off;
+> +	void __iomem *rate_reg;
+> +	/* rate info*/
+> +	u32 rate_write_enable_bit;
+> +	enum k230_clk_div_type method;
+> +	/* rate mul */
+> +	u32 rate_mul_min;
+> +	u32 rate_mul_max;
+> +	u32 rate_mul_shift;
+> +	u32 rate_mul_mask;
+> +	/* rate div */
+> +	u32 rate_div_min;
+> +	u32 rate_div_max;
+> +	u32 rate_div_shift;
+> +	u32 rate_div_mask;
+> +};
+> +
+> +struct k230_clk_rate_cfg_c {
+> +	/* rate_c reg */
+> +	u32 rate_reg_off_c;
+> +	void __iomem *rate_reg_c;
+> +	/* rate_c info */
+> +	u32 rate_write_enable_bit_c;
+> +	/* rate mul-changable */
+> +	u32 rate_mul_min_c;
+> +	u32 rate_mul_max_c;
+> +	u32 rate_mul_shift_c;
+> +	u32 rate_mul_mask_c;
+> +};
+> +
+> +struct k230_clk_gate_cfg {
+> +	/* gate reg */
+> +	u32 gate_reg_off;
+> +	void __iomem *gate_reg;
+> +	/* gate info*/
+> +	u32 gate_bit_enable;
+> +	bool gate_bit_reverse;
+> +};
+> +
+> +struct k230_clk_mux_cfg {
+> +	/* mux reg */
+> +	u32 mux_reg_off;
+> +	void __iomem *mux_reg;
+> +	/* mux info */
+> +	u32 mux_reg_shift;
+> +	u32 mux_reg_mask;
+> +};
+How about leaving a blank line between different categories in each structure.
+
+> +
+> +enum k230_clk_parent_type {
+> +	K230_OSC24M,
+> +	K230_PLL,
+> +	K230_PLL_DIV,
+> +	K230_CLK_COMPOSITE,
+> +};
+> +
+> +struct k230_clk_cfg;
+> +
+> +struct k230_clk_parent {
+> +	enum k230_clk_parent_type type;
+> +	union {
+> +		struct k230_pll_cfg	*pll_cfg;
+> +		struct k230_pll_div_cfg	*pll_div_cfg;
+> +		struct k230_clk_cfg	*clk_cfg;
+> +	};
+> +};
+> +
+> +struct k230_clk_cfg {
+> +	/* attr */
+> +	const char *name;
+> +	/* 0-read & write; 1-read only */
+The meaning of the variable name is already clear enough.
+
+> +	bool read_only;
+> +	int num_parent;
+> +	struct k230_clk_parent parent[K230_CLK_MAX_PARENT_NUM];
+> +	struct k230_clk *clk;
+> +	int flags;
+> +
+> +	/* cfgs */
+unnecessary comment
+> +	struct k230_clk_rate_cfg	*rate_cfg;
+> +	struct k230_clk_rate_cfg_c	*rate_cfg_c;
+> +	struct k230_clk_gate_cfg	*gate_cfg;
+> +	struct k230_clk_mux_cfg		*mux_cfg;
+> +};
+
+...
+
+> +
+> +static void k230_init_pll(void __iomem *regs, enum k230_pll_id pll_id,
+> +			  struct k230_pll *pll)
+> +{
+> +	void __iomem *base;
+> +
+> +	pll->id = pll_id;
+> +	base = regs + k230_pll_cfgs[pll_id].reg;
+> +	pll->div = base + K230_PLL_DIV_REG_OFFSET;
+> +	pll->bypass = base + K230_PLL_BYPASS_REG_OFFSET;
+> +	pll->gate = base + K230_PLL_GATE_REG_OFFSET;
+> +	pll->lock = base + K230_PLL_LOCK_REG_OFFSET;
+> +}
+> +
+> +static int k230_pll_prepare(struct clk_hw *hw)
+> +{
+> +	struct k230_pll *pll = to_k230_pll(hw);
+> +	u32 reg;
+> +
+> +	/* wait for PLL lock until it reaches lock status */
+> +	return readl_poll_timeout(pll->lock, reg,
+> +				  (reg & K230_PLL_STATUS_MASK) == K230_PLL_STATUS_MASK,
+> +				  400, 0);
+> +}
+> +
+> +static bool k230_pll_hw_is_enabled(struct k230_pll *pll)
+> +{
+> +	return (readl(pll->gate) & K230_PLL_GATE_ENABLE) == K230_PLL_GATE_ENABLE;
+> +}
+> +
+> +static void k230_pll_enable_hw(void __iomem *regs, struct k230_pll *pll)
+> +{
+> +	u32 reg;
+> +
+> +	if (k230_pll_hw_is_enabled(pll))
+> +		return;
+> +
+> +	/* Set PLL factors */
+> +	reg = readl(pll->gate);
+> +	reg |= (K230_PLL_GATE_ENABLE | K230_PLL_GATE_WRITE_ENABLE);
+> +	writel(reg, pll->gate);
+> +}
+> +
+> +static int k230_pll_enable(struct clk_hw *hw)
+> +{
+> +	struct k230_pll *pll = to_k230_pll(hw);
+> +	struct k230_sysclk *ksc = pll->ksc;
+> +
+> +	guard(spinlock)(&ksc->pll_lock);
+> +	k230_pll_enable_hw(ksc->regs, pll);
+> +
+> +	return 0;
+> +}
+> +
+> +static void k230_pll_disable(struct clk_hw *hw)
+> +{
+> +	struct k230_pll *pll = to_k230_pll(hw);
+> +	struct k230_sysclk *ksc = pll->ksc;
+> +	u32 reg;
+> +
+> +	guard(spinlock)(&ksc->pll_lock);
+> +	reg = readl(pll->gate);
+> +
+drop blank line
+> +	reg &= ~(K230_PLL_GATE_ENABLE);
+> +	reg |= (K230_PLL_GATE_WRITE_ENABLE);
+> +
+drop blank line
+> +	writel(reg, pll->gate);
+> +}
+> +
+> +static int k230_pll_is_enabled(struct clk_hw *hw)
+> +{
+> +	return k230_pll_hw_is_enabled(to_k230_pll(hw));
+> +}
+> +
+> +static int k230_pll_init(struct clk_hw *hw)
+> +{
+> +	if (k230_pll_is_enabled(hw))
+> +		return clk_prepare_enable(hw->clk);
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned long k230_pll_get_rate(struct clk_hw *hw, unsigned long parent_rate)
+> +{
+> +	struct k230_pll *pll = to_k230_pll(hw);
+> +	struct k230_sysclk *ksc = pll->ksc;
+> +	u32 reg;
+> +	u32 r, f, od;
+> +
+> +	reg = readl(pll->bypass);
+> +	if (reg & K230_PLL_BYPASS_ENABLE)
+> +		return parent_rate;
+> +
+> +	reg = readl(pll->lock);
+> +	if (!(reg & (K230_PLL_STATUS_MASK))) { /* unlocked */
+unnecessary comment and wrong position.
+
+> +		dev_err(&ksc->pdev->dev, "%s is unlock.\n", clk_hw_get_name(hw));
+> +		return 0;
+> +	}
+> +
+> +	reg = readl(pll->div);
+> +	r = ((reg >> K230_PLL_R_SHIFT) & K230_PLL_R_MASK) + 1;
+> +	f = ((reg >> K230_PLL_F_SHIFT) & K230_PLL_F_MASK) + 1;
+> +	od = ((reg >> K230_PLL_OD_SHIFT) & K230_PLL_OD_MASK) + 1;
+> +
+> +	return mul_u64_u32_div(parent_rate, f, r * od);
+> +}
+> +
+
+...
+
+> +
+> +static int k230_clk_probe(struct platform_device *pdev)
+> +{
+> +	int ret;
+> +	struct k230_sysclk *ksc;
+> +
+> +	ksc = devm_kzalloc(&pdev->dev, sizeof(struct k230_sysclk), GFP_KERNEL);
+you can use `sizeof(*ksc)` instead. same below.
+
+> +	if (!ksc)
+> +		return -ENOMEM;
+> +
+> +	ksc->plls = devm_kcalloc(&pdev->dev, K230_PLL_NUM,
+> +				 sizeof(struct k230_pll), GFP_KERNEL);
+> +	if (!ksc->plls)
+> +		return -ENOMEM;
+> +
+> +	ksc->dclks = devm_kcalloc(&pdev->dev, K230_PLL_DIV_NUM,
+> +				  sizeof(struct k230_pll_div), GFP_KERNEL);
+> +	if (!ksc->dclks)
+> +		return -ENOMEM;
+> +
+> +	ksc->clks = devm_kcalloc(&pdev->dev, K230_CLK_NUM,
+> +				 sizeof(struct k230_clk), GFP_KERNEL);
+> +	if (!ksc->clks)
+> +		return -ENOMEM;
+> +
+> +	ksc->pdev = pdev;
+> +	platform_set_drvdata(pdev, ksc);
+> +
+> +	ret = k230_clk_init_plls(pdev);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "init plls failed\n");
+> +
+> +	ret = k230_clk_init_clks(pdev);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "init clks failed\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id k230_clk_ids[] = {
+> +	{ .compatible = "canaan,k230-clk" },
+> +	{ /* Sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, k230_clk_ids);
+> +
+> +static struct platform_driver k230_clk_driver = {
+> +	.driver = {
+> +		.name  = "k230_clock_controller",
+> +		.of_match_table = k230_clk_ids,
+> +	},
+> +	.probe = k230_clk_probe,
+> +};
+> +builtin_platform_driver(k230_clk_driver);
+> 
 
 -- 
-2.34.1
-
+Troy Mitchell
