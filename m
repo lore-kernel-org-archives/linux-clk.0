@@ -1,158 +1,252 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9683C2F;
-	Thu, 20 Mar 2025 14:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71609223326;
+	Thu, 20 Mar 2025 16:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742482754; cv=none; b=ce628IwdBlwuaDMGuqAe2BzkpQJesX7rALx7tCJ8KYd01nqpsQUlqMKF8R/Ta9lVCqYdebsB2xpbwIrsMaEjPwy5nV8xadgehh4/NrLmBxztyUDBxVC4z7gtNnaCTjN0NUa87bT567HfQYtjkOJaPk29EpTOlVe0QBD0Pe0TDDk=
+	t=1742488208; cv=none; b=U1aZUGGzx4iYQdHPqpW5ttB3HWO2XcOmeMN6SNveTyg6vqDybGSOJs3gIzE0KWS0/luBed/8N08cC4FP43VSuQMIoCaJbsvskhoYjjP20qyAAp6MIdS35qBD76CsKPsKnh+LLaomnG54fPYzp/BBVvGrftAF34fnbeGlO4irjbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742482754; c=relaxed/simple;
-	bh=gvvve4bfA2xN7CqM1D0GuF35FojJxC50q/W6Ep0Q37Q=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nowkeJ0uMqb6KgwCwhWHym14otzUtATGJTcJe77AnKDmK1dOEJnuFzRsXQQ2Ac2xqr8LejwaN9p9pPYQkpT2hMHYHBZav6ex6IjYOzkup2N0I9Lh5HWdXoSKAKMHDfV1kIZG2HV8X6tC2g9JZOOkUrfOJ4yi8mIspGwIlF2mD8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lquIPGPn; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1742488208; c=relaxed/simple;
+	bh=+ktbBaPhcuzYClxjzv3gb0emfQ9G4X+Qef9YofBQeYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=C+6Hlu2vV+77Qw6YkMf+xNNpqboZCCX7Z/w7iDe3tggJmGwxMnn+wVHNdTBRzMvN+4W+fGFzrD3lfgZJTIcVQ6UBqZFnN0ZoH/JM1g/mDcl+i0ZwAGUAj8oVIo/6AvxrE3Y5Jf91k4y8f7km7RL5h2fQbUZUBTmFIyfK9UEc30M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZZr7APeB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lquIPGPn"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so13832675e9.1;
-        Thu, 20 Mar 2025 07:59:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742482751; x=1743087551; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=9MXWVPiHsl/ybfeX0fVWWFkRY/xYzUHOKzudQkSQFpg=;
-        b=lquIPGPnXBWgHdFe147D9WAdZXoPrrDtO6qzwdY7Y21oNbiTX2KyDscgaHSP/1k6p5
-         F3p2srZ7kaViz7/fR9PLw8F2zEtsLseaDx2hVpfrpFH8EPGeypztdl9SfpibPFnbkuKV
-         DRxkHk4MfyDkQcjPoRgsPtPPxd4pbAclbjOjTscw/en1CaO3h8KFrW8SgJQUjbdY3DEW
-         tGdCTHFcVGq5ONMKhl8eUHL3QohTD1HEZO9w+6QXLZdsdZ4qr3mUlLEn09o5UyKqLH1R
-         vkuf5kDc5hOqUJA9OFRQuoLs32b+z05WZn93WDGkf5ychbezCuvQGIxj2SYXGT2urwWA
-         P+tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742482751; x=1743087551;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9MXWVPiHsl/ybfeX0fVWWFkRY/xYzUHOKzudQkSQFpg=;
-        b=PM89XItoHs6OZeXybrmfR2aCHHNNr0WG+uajCj2AtBdMFA/NFlyVW+eyoK2w6Jb1QH
-         Wxk+eJIUKJZh/Ubq6VQ2Oe/pKlxDNQ9GBmikefvMR3TOQEFrUfsTvXKug8xnSSZ3gaf8
-         D4vmcNIMcOB/Wmg0k0d+I0lcfY4a8YOzrcOT4/Vl0bCw/QEuCDpQ5c+QLQpNyoZ5IqsL
-         2wDMAKIpr98EjqAssQIR3t8iomvzjAr7McJu3XVdK2wGUtFXQ5977zuXnH1R1UZb4wHf
-         uNTBibg3S3WgO331tKtme3PUyP83+XwJEozpQYmHqIv6QBY9E9E/a7/IXGjZecizE/Jz
-         6TjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIcVicuJU7hVd2F4QqvqxpA9T8uJaDNSHweGelYKcdU/1iJj4fQ3JkFqXSyyJLLP793vpdsBnZcAk8@vger.kernel.org, AJvYcCULsoB8P8BYNWyGANJtryZWO/Iwj2Em3zFuwgYPTfhZTXSzK9bHdcfi2vxHAu5N99PUN6Z3GKKsWN7OEqaB@vger.kernel.org, AJvYcCUwj+y6qDVYQ08fdS8wyRx4Wl8GlUV+sfBKejcsOnKp/46i+VvX04FTwa9A0QB9WMn71b1CM2+dDqhs@vger.kernel.org, AJvYcCWJpVSZp7RnY37oIN92NhVU8/6j/GEKcH4apVgAVsmmG5uWoO53d6GE6nc4r+2fo0uKKZHWJ0ANAk07@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpaJMzheb7FsAbCBjR1idPViZiqx8eKTi8s8wIMbdNMJ9Fd8bv
-	nz0cJx6ElKuLwONxyQYTR+H+8d4GNmOKhUKRFLi8limErM3ded1+
-X-Gm-Gg: ASbGnct9J0LOLl60xg+1FlqL5hyVAmeuOYxRuKQubdCd1su9Od9BbD9DdKhNvtMmeuS
-	RvWk4qTi3UzKTl2Wyz2ySXcW+igwc4OycTFzWuefrIm5q8DpgFLetnUV4HPqJesMRaJ8zj+A0mX
-	YWhMu19XVkFqEqd+7oT6E73jSIXBgTfcGh2jcbDB672NMYAeZ+jkKQMqq9wek9w7At3M9iGQkEM
-	iv48HzaoaHGdIStG2dcaCFDDq1/4ynmz3HZaPKQLLSeak7QGAX30qP7mAD2Pjtjp2HtQ7jRvvCJ
-	0olN4KYeOETP1ld6enXBgQ0QJEdRyX4x45ysdNrwwX/YJ6es+iovmLPifEGWaxU+jn5cxGZelPx
-	N
-X-Google-Smtp-Source: AGHT+IFSmo8fFuEqajq9aZA55RF0/kNYRGkGPQelDDCd7p8x/2z2TYhPjj6gPq4JZPeYBBnh3Gq1Ag==
-X-Received: by 2002:a5d:64a8:0:b0:390:ff84:532b with SMTP id ffacd0b85a97d-3997955cc22mr2933292f8f.7.1742482750791;
-        Thu, 20 Mar 2025 07:59:10 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-129.ip49.fastwebnet.it. [93.34.90.129])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f43e35sm51134405e9.14.2025.03.20.07.59.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 07:59:10 -0700 (PDT)
-Message-ID: <67dc2d3e.050a0220.2e39a4.c3f0@mx.google.com>
-X-Google-Original-Message-ID: <Z9wtOv-ttPCY-Lpg@Ansuel-XPS.>
-Date: Thu, 20 Mar 2025 15:59:06 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Daniel Danzberger <dd@embedd.com>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Yangyu Chen <cyy@cyyself.name>, Ben Hutchings <ben@decadent.org.uk>,
-	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH v2 04/11] soc: airoha: add support for configuring SCU
- SSR Serdes port
-References: <20250320130054.4804-1-ansuelsmth@gmail.com>
- <20250320130054.4804-5-ansuelsmth@gmail.com>
- <d6e27266-dc5b-4ef8-b708-21cedd06621e@app.fastmail.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZZr7APeB"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52KDvhnL025028;
+	Thu, 20 Mar 2025 16:30:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZCTnMxiSq0WJEgt+zY9JZCeoeskD0a8m1HyqUgBUgk8=; b=ZZr7APeBraxE5tQJ
+	Z08mg/mVIUPtm2ZabytZ2XuarHTtbtBC7TDziHz9f0arJUSvVqkMQNl23ImjPfvI
+	biiH6u1z30di/624S4Z1b4n4vMPyjfhDUj2oOQbMP/4G3gtflxI/ayMDwwU9VY2A
+	oXCVuY5+kL3y8Uky+BODMucvVIyK3h/1ei7FWgDiMdmlPqorJVspp2m5wjSuH9k+
+	qoGFNAiGcWjJeEbCpWDyNbjnz2lC1GdA4aPbpgar2rFCxxdXpz1Kmx2l3QsGQ+ha
+	wkd35cD+4ym3a0oO1j0cRUjkFcPN01YGxnaomWaLXqWeEl7SwdvBEyJDs7tpWl/U
+	0MXNYg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45gbngj6a9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 16:30:02 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52KGU1Hn002162
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Mar 2025 16:30:01 GMT
+Received: from [10.216.52.115] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 20 Mar
+ 2025 09:29:56 -0700
+Message-ID: <d815584d-96f7-4ff3-8374-7b141afe91d6@quicinc.com>
+Date: Thu, 20 Mar 2025 21:59:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d6e27266-dc5b-4ef8-b708-21cedd06621e@app.fastmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] clk: qcom: common: Add support to configure PLL
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
+ <20250306-videocc-pll-multi-pd-voting-v2-2-0cd00612bc0e@quicinc.com>
+ <enbhxe2ewhguebg7hvjadzqajftfff6whd27smkdwfzz4hbvwm@go72ix5c4d6k>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <enbhxe2ewhguebg7hvjadzqajftfff6whd27smkdwfzz4hbvwm@go72ix5c4d6k>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: It6BhY4bK3QXtizPlqt_O2lb7eLEnuTv
+X-Authority-Analysis: v=2.4 cv=MJ5gmNZl c=1 sm=1 tr=0 ts=67dc428a cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=a-Ujm2vb0zWFPRAAoKoA:9
+ a=QEXdDO2ut3YA:10 a=-_B0kFfA75AA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: It6BhY4bK3QXtizPlqt_O2lb7eLEnuTv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-20_04,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
+ spamscore=0 priorityscore=1501 mlxscore=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 bulkscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503200104
 
-On Thu, Mar 20, 2025 at 03:49:08PM +0100, Arnd Bergmann wrote:
-> On Thu, Mar 20, 2025, at 14:00, Christian Marangi wrote:
-> > Add support for configuring SCU SSR Serdes port. Airoha AN7581 SoC can
-> > configure the different Serdes port by toggling bits in the SCU register
-> > space.
-> >
-> > Port Serdes mode are mutually exclusive, force example the USB2 Serdes port
-> > can either used for USB 3.0 or PCIe 2 port. Enabling USB 3.0 makes the
-> > PCIe 2 to not work.
-> >
-> > The current supported Serdes port are:
-> > - WiFi 1 and defaults to PCIe0 1 line mode
-> > - Wifi 2 and defaults to PCIe1 1 line mode
-> > - USB 1 and defaults to USB 3.0 mode
-> > - USB 2 and defaults to USB 3.0 mode
-> >
-> > WiFi 1, WiFi 2 and USB 1 also support a particular Ethernet mode that
-> > can toggle between USXGMII or HSGMII mode (USB 1 only to HSGMII)
-> > Such mode doesn't configure bits as specific Ethernet PCS driver will
-> > take care of configuring the Serdes mode based on what is required.
-> >
-> > This driver is to correctly setup these bits.
-> > Single driver can't independently set the Serdes port mode as that
-> > would cause a conflict if someone declare, for example, in DT
-> > (and enable) PCIe 2 port and USB2 3.0 port.
-> >
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+
+
+On 3/14/2025 4:09 AM, Bjorn Andersson wrote:
+> On Thu, Mar 06, 2025 at 02:25:34PM +0530, Jagadeesh Kona wrote:
+>> From: Taniya Das <quic_tdas@quicinc.com>
+>>
+>> Integrate PLL configuration into clk_alpha_pll structure and add support
+>> for qcom_cc_clk_alpha_pll_configure() function which can be used to
+>> configure the clock controller PLLs from common core code.
 > 
-> I think serdes drivers are usually implement in the drivers/phy
-> layer, and I see there is already a drivers/phy/phy-airoha-pcie.c,
-> which may or may not overlap with this one (I have not looked at
-> the details).
+> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+> starts with "Describe your problem."
 > 
-> Have you tried to use the phy subsystem interface here instead
-> of creating a custom in-kernel interface?
->
+> I don't see a problem description here.
+> 
 
-These really set 1-2 bit and I think PHY can't describe PCIe in x2 mode
-or in x1. Also I think PHY is used for more advanced stuff and usually
-have dedicated register/maps. This is really to configure 1-2 bit and
-provide the mode, nothing else... no enable, no power up.
+Yes, I will update the commit text with problem description in next series.
 
-Do you think a it's possible to implement a ""read-only"" PHY driver?
+>>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> ---
+>>  drivers/clk/qcom/clk-alpha-pll.h |  2 ++
+>>  drivers/clk/qcom/common.c        | 55 ++++++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/qcom/common.h        |  1 +
+>>  3 files changed, 58 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+>> index 79aca8525262211ae5295245427d4540abf1e09a..943320cdcd10a6c07fcd74dccb88be847dc086c2 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.h
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.h
+>> @@ -81,6 +81,7 @@ struct pll_vco {
+>>   * struct clk_alpha_pll - phase locked loop (PLL)
+>>   * @offset: base address of registers
+>>   * @regs: alpha pll register map (see @clk_alpha_pll_regs)
+>> + * @config: array of pll settings
+>>   * @vco_table: array of VCO settings
+>>   * @num_vco: number of VCO settings in @vco_table
+>>   * @flags: bitmask to indicate features supported by the hardware
+>> @@ -90,6 +91,7 @@ struct clk_alpha_pll {
+>>  	u32 offset;
+>>  	const u8 *regs;
+>>  
+>> +	const struct alpha_pll_config *config;
+>>  	const struct pll_vco *vco_table;
+>>  	size_t num_vco;
+>>  #define SUPPORTS_OFFLINE_REQ		BIT(0)
+>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+>> index 9e3380fd718198c9fe63d7361615a91c3ecb3d60..74d062b5da0647f7f2bd8fd7a004ffdb1116c1ea 100644
+>> --- a/drivers/clk/qcom/common.c
+>> +++ b/drivers/clk/qcom/common.c
+>> @@ -13,6 +13,7 @@
+>>  #include <linux/of.h>
+>>  
+>>  #include "common.h"
+>> +#include "clk-alpha-pll.h"
+>>  #include "clk-rcg.h"
+>>  #include "clk-regmap.h"
+>>  #include "reset.h"
+>> @@ -284,6 +285,60 @@ static int qcom_cc_icc_register(struct device *dev,
+>>  						     desc->num_icc_hws, icd);
+>>  }
+>>  
+>> +static void qcom_cc_clk_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap)
+>> +{
+>> +	if (!pll->config || !pll->regs)
+>> +		return;
+>> +
+>> +	switch (GET_PLL_TYPE(pll)) {
+>> +	case CLK_ALPHA_PLL_TYPE_LUCID_OLE:
+>> +		clk_lucid_ole_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	case CLK_ALPHA_PLL_TYPE_LUCID_EVO:
+>> +		clk_lucid_evo_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	case CLK_ALPHA_PLL_TYPE_TAYCAN_ELU:
+>> +		clk_taycan_elu_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	case CLK_ALPHA_PLL_TYPE_RIVIAN_EVO:
+>> +		clk_rivian_evo_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	case CLK_ALPHA_PLL_TYPE_TRION:
+>> +		clk_trion_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	case CLK_ALPHA_PLL_TYPE_HUAYRA_2290:
+>> +		clk_huayra_2290_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	case CLK_ALPHA_PLL_TYPE_FABIA:
+>> +		clk_fabia_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	case CLK_ALPHA_PLL_TYPE_AGERA:
+>> +		clk_agera_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	case CLK_ALPHA_PLL_TYPE_PONGO_ELU:
+>> +		clk_pongo_elu_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	case CLK_ALPHA_PLL_TYPE_ZONDA:
+>> +	case CLK_ALPHA_PLL_TYPE_ZONDA_OLE:
+>> +		clk_zonda_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	case CLK_ALPHA_PLL_TYPE_STROMER:
+>> +	case CLK_ALPHA_PLL_TYPE_STROMER_PLUS:
+>> +		clk_stromer_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	case CLK_ALPHA_PLL_TYPE_DEFAULT:
+>> +	case CLK_ALPHA_PLL_TYPE_DEFAULT_EVO:
+>> +	case CLK_ALPHA_PLL_TYPE_HUAYRA:
+>> +	case CLK_ALPHA_PLL_TYPE_HUAYRA_APSS:
+>> +	case CLK_ALPHA_PLL_TYPE_BRAMMO:
+>> +	case CLK_ALPHA_PLL_TYPE_BRAMMO_EVO:
+>> +		clk_alpha_pll_configure(pll, regmap, pll->config);
+>> +		break;
+>> +	default:
+> 
+> This would be annoying to hit when adding a new PLL type, a BUG(); would
+> be useful here.
+> 
 
-The PCIe x2 mode maybe can be modelled with
-phy-cells = <2> and adding a extra entry to enforce x2 line mode?
+Yes, will add BUG() here in next series.
 
-But I feel it would be wrong to say that the SCU expose PHY as it won't
-be true.
+>> +		break;
+>> +	}
+>> +}
+>> +
+>>  int qcom_cc_really_probe(struct device *dev,
+>>  			 const struct qcom_cc_desc *desc, struct regmap *regmap)
+>>  {
+>> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+>> index 7ace5d7f5836aa81431153ba92d8f14f2ffe8147..2066c8937936235d7bd03ab3225d4b3f4fb08dd0 100644
+>> --- a/drivers/clk/qcom/common.h
+>> +++ b/drivers/clk/qcom/common.h
+>> @@ -18,6 +18,7 @@ struct clk_hw;
+>>  #define PLL_BIAS_COUNT_MASK	0x3f
+>>  #define PLL_VOTE_FSM_ENA	BIT(20)
+>>  #define PLL_VOTE_FSM_RESET	BIT(21)
+>> +#define GET_PLL_TYPE(pll)	((pll->regs - clk_alpha_pll_regs[0]) / PLL_OFF_MAX_REGS)
+> 
+> Why would this go in qcom/common.h, when clk_alpha_pll_regs is defined
+> in clk-alpha-pll.h?
+> 
 
-Honestly we should really consider starting to implement a generic
-provider for these stuff... it's not the first time we have bit that
-configure part of the entire system.
+Will move the macro to clk alpha pll code in next series.
 
-For example this is very common for QCOM with TCSR and also for Mediatek
-with the TPHY. (but TPHY is at least more realistic as it can enable and
-disable serdes port... here it's just 1 bit)
+Thanks,
+Jagadeesh
 
--- 
-	Ansuel
+> Regards,
+> Bjorn
+> 
+>>  
+>>  struct qcom_icc_hws_data {
+>>  	int master_id;
+>>
+>> -- 
+>> 2.34.1
+>>
