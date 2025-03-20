@@ -1,180 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EF41F5F6;
-	Thu, 20 Mar 2025 18:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EEE228CBE
+	for <linux-clk@vger.kernel.org>; Thu, 20 Mar 2025 19:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742495176; cv=none; b=BMGePlvlwFAsY8a89k8Px2G7RPY4D8OiaEuq36Gznx6LU7LBczxA4yfbtBIN307eFHN04aXMzwGPmQZE87YjrqMKGyH9xv/kdCsOwi6sxS5XHrI++NGfFe+O/CVjQ2uluAW5FaEk9sQE7p8vL1z87z/BbUr3164QEl9X8B4d0NM=
+	t=1742499896; cv=none; b=Xr0Kmt01KXaysG66hgqS8EB/EVwAxK+aTp4Ub8V8vCfi+ms6g9V2DRklsZHNN0R2f21p5QbWwOpVP+J7JFq6zMSdjXg/J4lTYn6Pg1quwR76bOI0tZbypsGXuzG2mC0KMDlSzD8pCuWqbFZX8uT+S3/ymB63M8uyu7LmVrUrvLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742495176; c=relaxed/simple;
-	bh=WqjD83gS59KXnxcWN0xrv2Qy66XqwIZlhcsvnHNzlD0=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=WF6TKdFX9CryfeLy1CMFVUYBYwPpsvSxHSRBX0s3yDcptrL7cw+HCw+d0r7iS7mDHCXg/d95EM44Y/oQDIU84zlI3Sps8rfjXmnJp+V3oDDBOfsUM5fedii6frWLxJ8f7AcTcc2dC8BK57xPdFPOx/saOOCgzf1/V1GYNY1qdEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JYloGAYR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742499896; c=relaxed/simple;
+	bh=zrHP/gmG47t4vvKq7gzmaxI06hPKcdUhZERfPB/kMcc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Legdrq8qjWNUTqJL3i/X5cOceCk2ucihRRnrz9P6nuWicR1n9C6uoGcu+cyAL7w2FhaGh0eMJEuNsatqJFFKH7OIldE5h99KoSFCn/D+va9jEMZB+DExKfmSnxWOcOc6s9zi6q2V6bSnHiAb1xRJuGhMUF+alZ+TkVo8Wz7ZLnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=WigfZVxa; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JYloGAYR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 691C4C4CEDD;
-	Thu, 20 Mar 2025 18:26:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742495174;
-	bh=WqjD83gS59KXnxcWN0xrv2Qy66XqwIZlhcsvnHNzlD0=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=JYloGAYRUHZ9s4ndZMNiZ/YXTnxxxYiyDHj0Hp2VzGq3o+btOYbamd9ZiuFhWFMet
-	 ie3338Y/XRLdUCpjJyC3jborHQ/CXIIcVuOUVVK9U/rgIm5/VFx7Y1YS4wkFLVCDtw
-	 NxtFT5PZepI7IN/DrIOQSmiiHzyZN6y4L/goZn/FeHhICSNh+acqedzYpPcX+zCvRz
-	 zhiyJ8Z6cpsyttti+B/CqOcRvhgWw3QnIpYjK0Go3Z+AU3KMHdGzRyH2j6HzO8MXH/
-	 AjBZ8JDhSha0K3F92CqtjR4pU4dQ8OkZTVExZRrdd4MLrd7BZtl3cpcRusyzQ7ISi7
-	 Mu66NbJSYYULA==
-Date: Thu, 20 Mar 2025 13:26:13 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="WigfZVxa"
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-854a68f5a9cso90186739f.0
+        for <linux-clk@vger.kernel.org>; Thu, 20 Mar 2025 12:44:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742499893; x=1743104693; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AW49rekhn13ov0fYjoV+6+dgXQ3GIdWnPfM3LeEAqlk=;
+        b=WigfZVxa+Sc2C6oPQnyhmefRACIjgmVqwXmNJkP/WM6DR3pZx+dOBi66PcaL9reWZn
+         Mdb+iOSMW10iLZ/2ZX/oTHU/oeoto9bmWOsv0Im0gaPpgLYfceZs4SxD1a/plAxR2bpt
+         amz9FLyqlw36EVZxbkS4OwyCNHf8Tv9C/x4CSIHrlv11p8OHN7CLNdGUCPB7ZWivSNqI
+         nmxja7/cQ4Z9eXvxEdyus4Ei+49JnAbczdnzoXknEjqodCHp9YHF8h17F6gplYvRteHv
+         OaJT4i/230EI/fzmYsHdE7tALvLYo9xBkr29UuNY5NDRtg78TeT6eYp39SoP/AAvjIEl
+         Dmjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742499893; x=1743104693;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AW49rekhn13ov0fYjoV+6+dgXQ3GIdWnPfM3LeEAqlk=;
+        b=QcmaneBcAmU/HMwEZZsLrr2JB6iS3eTbhRFkNNKYQS2+DDZJ8du61Oyngeruc/252v
+         CUQYTgU4OeADA+jfcUSwQSXiSB+3ToZ06AMc+d+u4FbBxXuPETstRg5//rfi1gTe9Huf
+         LfE5vMmJXY2Z+JSo5eIu1nfs2gdnTFVJhVlWD27wPYurRH8iToJ7yXFAfygFygC2Z6EC
+         Bj5N8SLlPiCdLH6OVYVXuekhJUJTZf4BerJLBRUZ8TdtUtmJ/QQ2pRAvrCKnvMoqKIgN
+         C18j6/BG9XbCMaFNk4V5FlTj7MveLiSHo/Daak6+Fq82qgDB6PUBl/mVXoms1y3rjAlT
+         13Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCVH5CV/381Kn9fCPlj8xL579ST7qWLxyPpmWf5uCfVtvZb+cNvsiaq3IloGDCY1N+oLVje6E5t0qi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxatExw8dv/SFFo0cyYjQKmvLKjrR03ljWGcgcvKC9h+nwuDU/O
+	RuLI0uCkn9Lwk+e5P1iWOBSEAkxxkG7w2s5wDX9sy+APoqweteYJsqvmEvd0jIk=
+X-Gm-Gg: ASbGncvsJtzvtr2M5E+j781tJRpFjFz+2DozPPgS5eoQK+kW8K8eK/XJvU+y9PtzIrV
+	+BwUUw2AFZQKTeLABF4jg5VLdkZ+8DjsMfD9SVHgUGO0vGeHWR3UoPqpbY2lPLfntZcCcjNl8l9
+	lEYo3i3h+GH4BAGX0U/oHrIogy+SJSjX5pyGgqLyudwtfndsH0//I4aohHootjCvwW3aJV/SEj2
+	L06jmD18Oc3Ms9O53kVYqLR9JhbUitIwWJy7R9QcbPRIusXJ/oHPRXg/Lypf/lbWHAMz/rXnif1
+	GT9BqwB3P9Yicx6yDfA5YiD3v16UxrPfrkiP0XVCG7U8YIiB2EcGJGnmouYhYaD3MkD4PNjjL3F
+	kF4tkoVE3eQD+JJrqSQAT3h7m
+X-Google-Smtp-Source: AGHT+IFltPpVI0ACnzJTqj+VKPKw57T57QohZSAekfF3yS1ZRlpAvC4mmTtGWHjmmF2YmyCcadc1NQ==
+X-Received: by 2002:a05:6602:4c83:b0:85b:3827:ecef with SMTP id ca18e2360f4ac-85e2cc5ebefmr62134439f.12.1742499893623;
+        Thu, 20 Mar 2025 12:44:53 -0700 (PDT)
+Received: from zoltan.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85e2bd8c40fsm8341439f.32.2025.03.20.12.44.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Mar 2025 12:44:53 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dlan@gentoo.org
+Cc: heylenay@4d2.org,
+	guodong@riscstar.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] clk: spacemit: add K1 reset support
+Date: Thu, 20 Mar 2025 14:44:41 -0500
+Message-ID: <20250320194449.510569-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Yangyu Chen <cyy@cyyself.name>, Conor Dooley <conor+dt@kernel.org>, 
- Lorenzo Bianconi <lorenzo@kernel.org>, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
- Felix Fietkau <nbd@nbd.name>, devicetree@vger.kernel.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Michael Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>, 
- linux-arm-kernel@lists.infradead.org, Vinod Koul <vkoul@kernel.org>, 
- linux-clk@vger.kernel.org, Nikita Shubin <nikita.shubin@maquefel.me>, 
- upstream@airoha.com, linux-mediatek@lists.infradead.org, 
- Ben Hutchings <ben@decadent.org.uk>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Daniel Danzberger <dd@embedd.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-usb@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- linux-phy@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>, 
- linux-kernel@vger.kernel.org
-To: Christian Marangi <ansuelsmth@gmail.com>
-In-Reply-To: <20250320130054.4804-1-ansuelsmth@gmail.com>
-References: <20250320130054.4804-1-ansuelsmth@gmail.com>
-Message-Id: <174249492019.658064.14719387276656076364.robh@kernel.org>
-Subject: Re: [PATCH v2 00/11] airoha: en7581: clk cleanup + USB support
+Content-Transfer-Encoding: 8bit
 
+This series adds reset controller support for the SpacemiT K1 SoC.
+It is based on Linux v6.14-rc1.
 
-On Thu, 20 Mar 2025 14:00:23 +0100, Christian Marangi wrote:
-> This series implement all the changes required to correctly handle
-> USB support for the Airoha EN7581 SoC.
-> 
-> The first few patch are cleanup for the clock driver and the
-> introduction of the SCU SSR SoC driver.
-> 
-> The SoC always support USB 2.0 but for USB 3.0 it needs additional
-> configuration for the Serdes port. Such port can be either configured
-> for USB usage or for PCIe lines or HSGMII and these are configured
-> in the SCU space.
-> 
-> The xHCI USB is based on the Mediatek implementation but the PHY
-> handling although conceptually similar, is indded different compared
-> to Mediatek due to SSR checks and different port power up.
-> 
-> The SSR driver expose an API to poll the current status of the Serdes
-> port and the USB PHY driver validates it. Refer to the specific commit
-> for additional info.
-> 
-> Consider that there is currently an inconsistency as AN7581 and
-> EN7581 refer to the same thing. This is due to the fact that
-> the SoC born under EcoNet but then was acquired by Airoha.
-> 
-> Changes v2:
-> - Drop changes for simple-mfd
-> - Rework PHY node structure to single node
-> - Drop port-id property in favor of serdes-port and
->   usb2-monitor-clock-sel
-> - Make the SSR driver probe from the clock driver
-> 
-> Christian Marangi (11):
->   clk: en7523: convert driver to regmap API
->   clk: en7523: generalize register clocks function
->   dt-bindings: clock: en7523: add Documentation for Airoha AN7581 SCU
->     SSR
->   soc: airoha: add support for configuring SCU SSR Serdes port
->   clk: en7523: define and register SoC SCU SSR driver for EN7581
->   soc: airoha: scu-ssr: expose API to read current Serdes Port mode
->   dt-bindings: phy: Add documentation for Airoha AN7581 USB PHY
->   phy: move Airoha PCIe PHY driver to dedicated directory
->   phy: airoha: Add support for Airoha AN7581 USB PHY
->   usb: host: add ARCH_AIROHA in XHCI MTK dependency
->   arm64: dts: airoha: en7581: add USB nodes
-> 
->  .../bindings/clock/airoha,en7523-scu.yaml     |  101 +-
->  .../bindings/phy/airoha,an7581-usb-phy.yaml   |   83 ++
->  MAINTAINERS                                   |   21 +-
->  arch/arm64/boot/dts/airoha/en7581.dtsi        |   49 +
->  drivers/clk/clk-en7523.c                      |  340 +++--
->  drivers/phy/Kconfig                           |   11 +-
->  drivers/phy/Makefile                          |    5 +-
->  drivers/phy/airoha/Kconfig                    |   23 +
->  drivers/phy/airoha/Makefile                   |    4 +
->  drivers/phy/airoha/phy-airoha-pcie-regs.h     |  494 +++++++
->  drivers/phy/airoha/phy-airoha-pcie.c          | 1290 +++++++++++++++++
->  drivers/phy/airoha/phy-airoha-usb.c           |  571 ++++++++
->  drivers/soc/Kconfig                           |    1 +
->  drivers/soc/Makefile                          |    1 +
->  drivers/soc/airoha/Kconfig                    |   18 +
->  drivers/soc/airoha/Makefile                   |    3 +
->  drivers/soc/airoha/airoha-scu-ssr.c           |  271 ++++
->  drivers/usb/host/Kconfig                      |    2 +-
->  .../dt-bindings/phy/airoha,an7581-usb-phy.h   |   11 +
->  include/dt-bindings/soc/airoha,scu-ssr.h      |   11 +
->  include/linux/clk/clk-en7523.h                |   10 +
->  include/linux/soc/airoha/airoha-scu-ssr.h     |   34 +
->  22 files changed, 3202 insertions(+), 152 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
->  create mode 100644 drivers/phy/airoha/Kconfig
->  create mode 100644 drivers/phy/airoha/Makefile
->  create mode 100644 drivers/phy/airoha/phy-airoha-pcie-regs.h
->  create mode 100644 drivers/phy/airoha/phy-airoha-pcie.c
->  create mode 100644 drivers/phy/airoha/phy-airoha-usb.c
->  create mode 100644 drivers/soc/airoha/Kconfig
->  create mode 100644 drivers/soc/airoha/Makefile
->  create mode 100644 drivers/soc/airoha/airoha-scu-ssr.c
->  create mode 100644 include/dt-bindings/phy/airoha,an7581-usb-phy.h
->  create mode 100644 include/dt-bindings/soc/airoha,scu-ssr.h
->  create mode 100644 include/linux/clk/clk-en7523.h
->  create mode 100644 include/linux/soc/airoha/airoha-scu-ssr.h
-> 
-> --
-> 2.48.1
-> 
-> 
-> 
+It is built upon the clock controller driver that Haylen Chu
+currently has out for review (currently at v5):
+  https://lore.kernel.org/lkml/20250306175750.22480-2-heylenay@4d2.org/
 
+It also depends on two commits that will land in v6.15: 5728c92ae1123
+("mfd: syscon: Restore device_node_to_regmap() for non-syscon nodes")
+and 7ff4faba63571 ("pinctrl: spacemit: enable config option").
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+The first patch adds three more system controller CCU nodes to those
+implemented by the SpacemiT K1.  The second updates the existing clock
+driver with a structure used for OF match data, allowing both clocks
+and resets to be specified.  The third provides code that implements
+reset functionality.  The fourth defines groups of reset controls
+implemented by the CCUs that have alraady been defined.  The fifth
+makes it possible for a CCU to be defined with resets but no clocks.
+The sixth defines three new CCUs which define only resets.  And the
+last patch defines these additional syscon nodes in "k1.dtsi".
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+All of these patches are available here:
+  https://github.com/riscstar/linux/tree/outgoing/reset-v1
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+					-Alex
 
-  pip3 install dtschema --upgrade
+Alex Elder (7):
+  dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
+  clk: spacemit: define struct k1_ccu_data
+  clk: spacemit: add reset controller support
+  clk: spacemit: define existing syscon resets
+  clk: spacemit: make clocks optional
+  clk: spacemit: define new syscons with only resets
+  riscv: dts: spacemit: add reset support for the K1 SoC
 
+ .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  18 +
+ drivers/clk/spacemit/ccu-k1.c                 | 393 +++++++++++++++++-
+ include/dt-bindings/clock/spacemit,k1-ccu.h   | 134 ++++++
+ 4 files changed, 539 insertions(+), 19 deletions(-)
 
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/airoha/' for 20250320130054.4804-1-ansuelsmth@gmail.com:
-
-arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fab0000: compatible:0: 'mediatek,mtk-xhci' is not one of ['mediatek,mt2701-xhci', 'mediatek,mt2712-xhci', 'mediatek,mt7622-xhci', 'mediatek,mt7623-xhci', 'mediatek,mt7629-xhci', 'mediatek,mt7986-xhci', 'mediatek,mt7988-xhci', 'mediatek,mt8173-xhci', 'mediatek,mt8183-xhci', 'mediatek,mt8186-xhci', 'mediatek,mt8188-xhci', 'mediatek,mt8192-xhci', 'mediatek,mt8195-xhci', 'mediatek,mt8365-xhci']
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
-arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fab0000: compatible: ['mediatek,mtk-xhci'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
-arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fad0000: compatible:0: 'mediatek,mtk-xhci' is not one of ['mediatek,mt2701-xhci', 'mediatek,mt2712-xhci', 'mediatek,mt7622-xhci', 'mediatek,mt7623-xhci', 'mediatek,mt7629-xhci', 'mediatek,mt7986-xhci', 'mediatek,mt7988-xhci', 'mediatek,mt8173-xhci', 'mediatek,mt8183-xhci', 'mediatek,mt8186-xhci', 'mediatek,mt8188-xhci', 'mediatek,mt8192-xhci', 'mediatek,mt8195-xhci', 'mediatek,mt8365-xhci']
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
-arch/arm64/boot/dts/airoha/en7581-evb.dtb: usb@1fad0000: compatible: ['mediatek,mtk-xhci'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtk-xhci.yaml#
-
-
-
-
+-- 
+2.43.0
 
