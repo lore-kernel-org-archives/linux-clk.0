@@ -1,138 +1,99 @@
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6CD22CBF9
-	for <linux-clk@vger.kernel.org>; Thu, 20 Mar 2025 19:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7966190072;
+	Thu, 20 Mar 2025 21:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742499907; cv=none; b=S2eCiRhVvQlIYaQflkkzEucRvnOFI9nRr5hEerqn8lzq4Fy9v3u3Um57KUTTVfqRh3KcESBADX5DZreCdrrPm5TCay+I+k/6gas0vK6GCv6Rw+w22DGBYtK2HmyNRiLJuklhjvsiUKDCb7bZrnCS13Vlh079WJrcLmdW3sSR0ys=
+	t=1742507819; cv=none; b=LA1EwBjM2jSR5fT5cw8S7AKo/N2qIctLDlUMKfBsvqClcAEBXDzm+k+mb+ikpg/ymoYlHOZ2R6Gu90p5Ix4nzGWZJlKXpYzXNskzzbNnZpFZORlRHb7wZ7PdPIUY6/wcCTZki9FWCwK1WnvgeCH6lVF2Wbx42suIGMKUPWDBQTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742499907; c=relaxed/simple;
-	bh=KwRmEv3W3EtqBDLfbMtwfsqs1joXJAuCfqCxq5Hb990=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ruwJhKMD9sGYN2m4oGchUfRmK0pEp5bbK42WGUzmcfZw9fE1HktjYNmxFHSQKdtXpZa3gOEdll0dvt1tKPDo3N+oQRcTaOZehCpEb0s1IxmU3KCEE1//TaCoCCTlqxwpwrGkWXUpuSgiR/zlgUXHz9d5XPE/bJnJpvYNGA2yvFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=etZ7FVHf; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1742507819; c=relaxed/simple;
+	bh=yvyJEB9EXfAAkC1ilk4/0tKZ5NC+WqsaLqZ167Krv+w=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=GWKmh702b9YKALedadisAI/zaTfS1dOP0/jTtfnlmIC3z+5eB+ca4iln6gfPL7lE6/UswtCleyOoaXdXH8y/IQRzogEBjlOXtLQngwkOknDfda38EcXEVew+7tQoGuzQshMZQFIFD+PxerwdYCpoGHUo3g1Er59qhf1rV/RLaQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W7WMQ+5s; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="etZ7FVHf"
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-85db7a3da71so84693539f.1
-        for <linux-clk@vger.kernel.org>; Thu, 20 Mar 2025 12:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742499904; x=1743104704; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nY3+cr8LwPrnwPUbr8ZQVdT4sW06Crewhjj4AmYBWuU=;
-        b=etZ7FVHf/t4RCwsZTTGfwWYqlZhphkFp4QJIBL3GOOpZxDQ9nbLGQH9PJ2cgyAePPl
-         bYBE024SQRI60ILNL3ugxJxPKrw33j6D6RWL66JWKJ2NeSMqTs1kL4u3sJ3d40NYR4YL
-         5rnSJ9qDaGNIot2I5KBU/nAke7YKPyks0NGYmYP/H2SHzVncbUVMsYVcZUeYZx/yUT90
-         9eQM6gWaGkF1YvfK6cP8s/onN/Y661U8ITUlq1UXBVT/6327J/s5tDoZXbx8OSMG9nv1
-         zpfytJN8xdBueBPlJBrevoNz9+S+eix7ujXtXaH24Rm5lTfMjL6CoqI+KZlqhbl9OAn0
-         kWPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742499904; x=1743104704;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nY3+cr8LwPrnwPUbr8ZQVdT4sW06Crewhjj4AmYBWuU=;
-        b=PZ4gzybZC8UEYicWzefyO6stBMdYFcK9vdQEpNNHRzXMTDgBeKwTWjGApiu1U2h84C
-         tO2D8hN1FIT/73kqYtkq/ukcXAezSP/+W8K3ddu6T/DXwssDYG8sZm2Mf0CRMdGTC2KY
-         GcdVe8Dg1jSN/UeGQec0m5vs7utxaCZuNIa05v103GzvQevXtY8Klw3Q9A0NZ8gXSfco
-         6wO6ZREITsgwDInFSU0pbTP2sqAWE5h4g7GqGrBUJ8qsJ9s4jpdZMJCEZEotUv5E9bFd
-         2yraaQ+fqjCiOdrF5amHY/a2wSfncbKmLRwvJhppxXTZu6856yzKyyxjhMYSjEAcweXV
-         n58w==
-X-Forwarded-Encrypted: i=1; AJvYcCW4xcl5dADcOzp++t9dsjB6Bnp4IXUQq2rnXoYhLZWo34Zv2YJcwKGgRgvODmwSwze3Du/L5Lbv8I0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6c8YHLXUnxSPDs6IRhIqVjw4clyYhE4uVni2LhqWxIpa/nlhA
-	gPrVD6cSv+9g9/5XOV2yAfrP/DDgKRS1fDixpwYAnUqU4sX+8ppEDoNCOmaH/NU=
-X-Gm-Gg: ASbGnctBBcFAjkm/ygxWItgvwZgzyha4zRNbhgku20uDDg94Cha8FbXFXkCedt0gjwD
-	CLYJVQBL0ogXvjQnZQzKY9EbQqCpNbIoccPPXA6hWfzDNNr33Ckt7Wbe3MGs0pQN7zbYqnAxbPh
-	IrHb8MYL68DwUzSVM+mtMkTSxVw4V3nF51BlUI6WlXWak2SDvHntf6aEcMqhkxJSMbTYWjntsfl
-	j0esTqlDxjN6b+94rdh2C2B7j6aLOUkvv5Ex6vG6giarUrlpNhtPK3yf9a9xJfUg3wyifrfzDyi
-	WLPHW73D2Kewm0JuTJVPGaLtIc0Nd6SC53U0k7gHJA/m6pV5iuFLeLX6/mz5+/ifmmj9gvxR6ox
-	zfhiGAU5pWzlzh0ytpfILdgCc
-X-Google-Smtp-Source: AGHT+IHW4ltSCaG93SoWDansawq4DbhKwVMoGQNM/OgukHjVy68CtBuW9QNsRfgK8upO/XwMcw3t4w==
-X-Received: by 2002:a05:6602:36c4:b0:85b:5494:5519 with SMTP id ca18e2360f4ac-85e2ca6fff3mr65533439f.5.1742499904534;
-        Thu, 20 Mar 2025 12:45:04 -0700 (PDT)
-Received: from zoltan.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85e2bd8c40fsm8341439f.32.2025.03.20.12.45.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Mar 2025 12:45:04 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: p.zabel@pengutronix.de,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	dlan@gentoo.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heylenay@4d2.org,
-	guodong@riscstar.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] riscv: dts: spacemit: add reset support for the K1 SoC
-Date: Thu, 20 Mar 2025 14:44:48 -0500
-Message-ID: <20250320194449.510569-8-elder@riscstar.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250320194449.510569-1-elder@riscstar.com>
-References: <20250320194449.510569-1-elder@riscstar.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7WMQ+5s"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38BD7C4CEDD;
+	Thu, 20 Mar 2025 21:56:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742507819;
+	bh=yvyJEB9EXfAAkC1ilk4/0tKZ5NC+WqsaLqZ167Krv+w=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=W7WMQ+5suxcsBMdsRP1pwaPaeQFjZ8NdX8Wif1WF6csaZyEse4V9yZh5GpRQrTtHj
+	 pjeePOUW1jLK7ZQzsjAfYSEe+PF1FWyegd/hZuqNIk04D9sDZiN8Th2z2hA4dZir0a
+	 MfpoMLajsNjmRJHdRwW498pLjrbRUQkR0OnExoSabdEhrjEq8nZAfJkbBKxDbcEHWd
+	 gZlNLmiqC0BvRZXWVX3MHcTjnTZDyaORnX4WUWL+abYEoFjuHVFU7IaF0fbX+eRnu2
+	 oYQ9wWFY4s2FA0bSh5LfvZa+SYlWdhwi+eqx0st5VumisLKN46DFm8R8QnEQZnt1Ri
+	 eetTlc74ob84w==
+Message-ID: <983e0e616d62f236dcbc3eecbeab5ab4.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <TY3PR01MB11346D2881A8CC9C3019C978386D22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20250303110433.76576-1-biju.das.jz@bp.renesas.com> <20250303110433.76576-2-biju.das.jz@bp.renesas.com> <1347ee4d678ce81c33917b3802601aee.sboyd@kernel.org> <TY3PR01MB11346C31C2533FD074D87BBD286CA2@TY3PR01MB11346.jpnprd01.prod.outlook.com> <98c8c1eab30fc333974bd1ad88791356.sboyd@kernel.org> <TY3PR01MB113469E04E10E3D14FB3F69F186D52@TY3PR01MB11346.jpnprd01.prod.outlook.com> <TY3PR01MB11346D2881A8CC9C3019C978386D22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Subject: RE: [PATCH 1/4] clk: renesas: rzv2h-cpg: Add support for coupled clock
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org <linux-renesas-soc@vger.kernel.org>, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, biju.das.au <biju.das.au@gmail.com>, linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Thu, 20 Mar 2025 14:56:56 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Define syscon nodes for the RCPU, RCPU2, and APBC2 SpacemiT CCUS, which
-currently support resets but not clocks in the SpacemiT K1.
+Quoting Biju Das (2025-03-14 00:18:33)
+> Hi Stephen,
+>=20
+> > -----Original Message-----
+> > From: Biju Das
+> > Sent: 07 March 2025 07:02
+> > Subject: RE: [PATCH 1/4] clk: renesas: rzv2h-cpg: Add support for coupl=
+ed clock
+> >=20
+> > Hi Stephen,
+> >=20
+> > > -----Original Message-----
+> > > From: Stephen Boyd <sboyd@kernel.org>
+> > > Sent: 06 March 2025 22:37
+> > > Subject: RE: [PATCH 1/4] clk: renesas: rzv2h-cpg: Add support for
+> > > coupled clock
+> > >
+> > > Quoting Biju Das (2025-03-06 02:10:50)
+> > > > > From: Stephen Boyd <sboyd@kernel.org> Quoting Biju Das (2025-03-03
+> > > > > 03:04:19)
+> > > > > > The spi and spix2 clk share same bit for clock gating. Add
+> > > > > > support for coupled clock with checking the monitor bit for bot=
+h the clocks.
+> > > > >
+> > > > > Could you add an intermediate parent clk of both spi and spix2
+> > > > > that only handles the enable bit for clock gating? Then the enable
+> > > > > count handling would be in the core
+> > > clk code.
+> > > >
+> > > > The parent clock rate of spi and spix2 are different. If we use an
+> > > > intermediate parent clk, What clk rate the parent will use??
+> > >
+> > > Alright, got it. Does the consumer care about the difference between =
+the two clks for the gating
+> > part?
+> >=20
+> > Although gating bit is same, for some reason their monitor bit is diffe=
+rent. So, to confirm clk on
+> > status we need to check respective monitor bits. Parallelly, I will che=
+ck with hardware team, does it
+> > need to monitor both these bits??
+>=20
+> According to hardware team, the spix2 clock is twice the frequency of the=
+ spi clock, and the clock ON/OFF
+> period displayed for each bit in the monitor register varies slightly due=
+ to the difference in frequency.
+>=20
+> So to check the status after changing the clock ON/OFF register setting,
+> please check the two monitor register bits together
+>=20
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index 09a9100986b19..f86d1b58c6d35 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -350,6 +350,18 @@ soc {
- 		dma-noncoherent;
- 		ranges;
- 
-+		syscon_rcpu: system-controller@c0880000 {
-+			compatible = "spacemit,k1-syscon-rcpu";
-+			reg = <0x0 0xc0880000 0x0 0x2048>;
-+			#reset-cells = <1>;
-+		};
-+
-+		syscon_rcpu2: system-controller@c0888000 {
-+			compatible = "spacemit,k1-syscon-rcpu2";
-+			reg = <0x0 0xc0888000 0x0 0x28>;
-+			#reset-cells = <1>;
-+		};
-+
- 		syscon_apbc: system-control@d4015000 {
- 			compatible = "spacemit,k1-syscon-apbc";
- 			reg = <0x0 0xd4015000 0x0 0x1000>;
-@@ -518,6 +530,12 @@ clint: timer@e4000000 {
- 					      <&cpu7_intc 3>, <&cpu7_intc 7>;
- 		};
- 
-+		syscon_apbc2: system-controller@f0610000 {
-+			compatible = "spacemit,k1-syscon-apbc2";
-+			reg = <0x0 0xf0610000 0x0 0x20>;
-+			#reset-cells = <1>;
-+		};
-+
- 		sec_uart1: serial@f0612000 {
- 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
- 			reg = <0x0 0xf0612000 0x0 0x100>;
--- 
-2.43.0
-
+That answers the hardware side of the question. Why does software need
+to care that they're two different things vs. one clk?
