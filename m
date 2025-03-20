@@ -1,213 +1,222 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2107.outbound.protection.outlook.com [40.107.255.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8EF22331B;
-	Wed, 19 Mar 2025 23:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742425846; cv=none; b=i+JS6HT0B7ttmVGPlb2BQHpv/SZZ+kNshnyf+ueZpaFQkODfGNhgBoB4Qsq+nZRXhZJXeOMgnAiwN674l5Xp8eVI5vCyaA8WAnJk+0wK34hJXDTjpSni+4+qqpuEnWd9jMZBhZLG6tbjztfeeJffXUAlPy/bf4je78yPICID/yE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742425846; c=relaxed/simple;
-	bh=hpem3UEpjL9zg0df1KCgbi91SjPixiAmgIzpZt1KUJg=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=bFROOFisWYqiiKH6bs6SpM+FZjidj4SA1yZgnXUn99NhCgb0NgNHyXqwugzYJn1IL1v4eBYhElVQ/1roJnixNDDf1stMZLp6dfMn6fldzmXvZmLwfyM6K784xT07ZT5DIgX+IZsIC0LSinja2WoqSHtVm7Mvl3QuuA0AuSNl8xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wrgt/+Cu; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4106F1C5F39;
+	Thu, 20 Mar 2025 02:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.107
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742437603; cv=fail; b=NGkRcYhab9rBQkbRcqgOTCkqDoD8T38B+F/7bc1XgbB3rgqbj1Pv8GQOfC/G5JBoaxpmAlEMtNCT4oxxcYn+WaBNq/T6GeOuRLJT90puNL9VnviOmtd2QVWhNB/3IKULKMmlXNd/1oyyF8hMwb2O7v1Rnl2jgqE2MQCQlBgLgTE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742437603; c=relaxed/simple;
+	bh=hDo/+nvLYjkmj8ZUqLFxLz45XuhJveM3010OAhXQhP8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=mLuIjDXQFF1yJ2iwFdN6OvxwT48QlaVZN5UK79zd+LRqwoj3gVK+AoVXT4DJXgL378b1MBU5UfynvaNlkQLxW7qQhXKLuZpbwlGhnRLBBzKxZeBBeKIWJTn0BBnQ56Lpama1sAxPcQLzRyiwUtY+FJgYRn+FhC2pC6wn7PYsgWI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=YrRaen8l; arc=fail smtp.client-ip=40.107.255.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wrgt/+Cu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89E28C4CEE4;
-	Wed, 19 Mar 2025 23:10:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742425845;
-	bh=hpem3UEpjL9zg0df1KCgbi91SjPixiAmgIzpZt1KUJg=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Wrgt/+Cu7qJjwLfGyMrE5m390d+gbteLAjKaxp7899EkxuXYaUzs3o357/afeEo2I
-	 sNea93qPS9XMTYzjNX16xtSCWnp1IZD9m0e+1f9kSTvJa79v3D8D5EQmpYVnHP6xeg
-	 leFvxd9RuBzF+zGHCXZ07MdrJ4hgrp00T4UPMq49J2AGybnTVxfCfWbMdvcKbUUqBu
-	 OozrPjc5+2ug9gvQRSzzHV0z5Uu9AA/2se8ukJ5/lnkwrZ9AQmO/dAY20iEz4q0ChP
-	 /R5CXDqRTYNXAAbsw/KF0Xcnko/nK1bTni/lrIMM0NVFvEZJc/kxjA10AXYjzUP+v3
-	 V12O2lP/89qUA==
-Date: Wed, 19 Mar 2025 18:10:44 -0500
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="YrRaen8l"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NCBaLRMxx++otNvnHwqPYRNm7y5zuIEhyLekK7PkyrvqW6R7uA6z/WBv5hKa4io5+tX+9jMyKXdmx/MX0TGktI/7MYi1pVLj2MjNUs7P0uEA7xVZI5Ch3ac/hc21PFOF1Iwesw6DkwsG3pnzFwG9PDNaTauM7BUyxGTRJ6xoIA9RyYAwOfLXzXO2jKObshimMfWBayu0zf7yGoVaF5GWq4TdbG/ShkBPvF5XuSpB6iJ29EiO8a3P7eLVcr1ONPDhKOMC25q6G6oliBQd7FlXUOAnyCOWr2FsvFO7Ss7voTnsWoJ3LCwRAi6d/rLGLrejENOhVH+19P/zTLcZ2DSL9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PAnkaj5atPsTpRiIYkv7uGsik4OTl7GHkdS1a9UOhpo=;
+ b=FwjMjLzBM1hAALTM1bvVqFGJbSh4HJL3z5m9hZJh0gwo8u6Zv7yyAAjeAlbEkKwpseHCWPsJfutI55T/ynxByqnf9LvdyIC02nsvHzg+9dbdIbOMI/uxEajfYpUg9SUm8vmguKw1cwsShLprpB3lvJNCl6vXlYwwrzC2aHBvPMcMmpVNGupos6UUf3WdGOlg+kY/PrgYHtDnvyedYExoNlSuahd9gyvfVwuc/Ik303V7+eWwoJFIA7LVi5QM58nzaPPF28YREIbTa/nJsP9KQbiIGjKitQNf2yWSwHSWB6Kp80+AXN01+PgezGdBF7i6EW94AwvKWhgAkMZWPXLhKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
+ dkim=pass header.d=amlogic.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PAnkaj5atPsTpRiIYkv7uGsik4OTl7GHkdS1a9UOhpo=;
+ b=YrRaen8lUGGgHAqpoeUOIF6aNNvZZxQUQ4X3ABppuxiOzi8FxjN6oPLSIMEbzR+TypnlWpFhPF/99qEpmtknYHbAwi4uhbCcMkO/fJgzTzE3Mc+BY/q65/6d6czpOl5b5X0V8qadTzHB5we8yY+9qG1PtFFm1U4AMl4QCUgT4z6Hbos5kSmIYUX9goBzzhvTJlCGGJ1XpGezqBV+7Ml9wWgFxmeFtwfO8PRjU56HyJ65AN7RfWtd/P+Ld7kvrTSERRC1txUECn0/i7187Az7uyVxnMYeapgW5xA+jQIPoam7Y4IdNbTvxr/fX+zU9/aRIX2JYyMzyEPqAWZEcKdgZQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amlogic.com;
+Received: from PUZPR03MB7135.apcprd03.prod.outlook.com (2603:1096:301:113::15)
+ by SEYPR03MB8479.apcprd03.prod.outlook.com (2603:1096:101:20b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Thu, 20 Mar
+ 2025 02:26:37 +0000
+Received: from PUZPR03MB7135.apcprd03.prod.outlook.com
+ ([fe80::ecac:a387:36d8:144d]) by PUZPR03MB7135.apcprd03.prod.outlook.com
+ ([fe80::ecac:a387:36d8:144d%7]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
+ 02:26:36 +0000
+Message-ID: <e5d3741d-0f4e-4f92-9b1c-04b114892330@amlogic.com>
+Date: Thu, 20 Mar 2025 10:26:31 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/6] dt-bindings: clock: axg-audio: Add mclk and sclk
+ pad clock ids
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ jian.xu@amlogic.com, shuai.li@amlogic.com, zhe.wang@amlogic.com
+References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
+ <20250319-audio_drvier-v4-2-686867fad719@amlogic.com>
+ <20250319-daffy-classy-kangaroo-023e1f@krzk-bin>
+ <9ae73d75-9c59-4255-8924-b456c86cbc01@amlogic.com>
+ <7084e271-8546-4a49-9eb8-ee3f647c529a@kernel.org>
+From: Jiebing Chen <jiebing.chen@amlogic.com>
+In-Reply-To: <7084e271-8546-4a49-9eb8-ee3f647c529a@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2P153CA0005.APCP153.PROD.OUTLOOK.COM (2603:1096::15) To
+ PUZPR03MB7135.apcprd03.prod.outlook.com (2603:1096:301:113::15)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>, jian.xu@amlogic.com, zhe.wang@amlogic.com, 
- Michael Turquette <mturquette@baylibre.com>, 
- Kevin Hilman <khilman@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
- devicetree@vger.kernel.org, linux-sound@vger.kernel.org, 
- shuai.li@amlogic.com, linux-arm-kernel@lists.infradead.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, linux-clk@vger.kernel.org, 
- Liam Girdwood <lgirdwood@gmail.com>, linux-amlogic@lists.infradead.org, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: jiebing chen <jiebing.chen@amlogic.com>
-In-Reply-To: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
-References: <20250319-audio_drvier-v4-0-686867fad719@amlogic.com>
-Message-Id: <174242564271.2499930.16784872359354582008.robh@kernel.org>
-Subject: Re: [PATCH v4 0/6] Add support for S4 audio
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR03MB7135:EE_|SEYPR03MB8479:EE_
+X-MS-Office365-Filtering-Correlation-Id: d6ed80bd-4864-406c-049f-08dd6756a374
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N1FwSGtlaHdULzRCRDh6MFJpTHBxWDFXOTZib1NDczI4Y0dUUm5zVWxxYTNp?=
+ =?utf-8?B?b0V1Z01Bdm9CdlBIR002YmJJOTdES0pVRnZGdVRDVi9DWkY2ZTd2ajM1amxB?=
+ =?utf-8?B?YlBmNlJwczZGYTcrNXJkbklUdDVzNWhvZkhDQ09zN3c2bGJuVXRsNHFsOVBN?=
+ =?utf-8?B?ZXRna25DdFJ1RGpyMjEwUktlN2JHREdDU0FJVmNNMWhhaGhDQmZLdWlCYWNq?=
+ =?utf-8?B?emRxR3JobitCZzdHQ2Nma056R2JFNDBYSTJOVkFNNzRYUERPVmhRc05kS3Rv?=
+ =?utf-8?B?alZzd2hwV0xyM2Fabjg5NU1yR2IwVTltQ3YycFUvNzYvVDB0dFlIcS9MVWZD?=
+ =?utf-8?B?NGpzdldqc2xrZHcrakt1VGd3NnZZVUJSSzdDdTdZNm1uRU9uak82MEpkWWZB?=
+ =?utf-8?B?SXdqSkpvRWVYM0svcDVUNWc1MTN1OHczRWhjSGNNM1B5MEZZcmUrbDZ4QVRC?=
+ =?utf-8?B?YXBuRCtuMjJQdXNjb1B1WDVIVTZJeEVoZTRIdnU3ZCtEL1ovUVVKZlY5VUFW?=
+ =?utf-8?B?c2FLamFvOE9LR1NDRWJ6ak5JOVVlTEZmYUNBY0FGM1lWTzVrRFV0OExDRUhS?=
+ =?utf-8?B?SDVnNHhKdkpnQlpWcjFEMHl6MTcyOFJCTFJMbGpuNGFnVUQzcnRKZk1LR1FC?=
+ =?utf-8?B?YkFGS0JKKzFnejQ5K0RncmNWMXZ0bnR1bnZSYmJTdWJsNnZFVEhMVmIyNG8y?=
+ =?utf-8?B?VGZpRFYyd3cySy9TM1Qxb2I0N1ZWSEd6K2ZxTGsyaktEVmExWlgvWUZ5QW5C?=
+ =?utf-8?B?Y2FrRS9HSmZSM0pxenlYZFhuTTNkT0ZNaGVpT1BMbWVXWWdib2c5Vk1NcWo2?=
+ =?utf-8?B?VFIzZGdDTnk2c3pXbTVXUDNxRkQycG9yVEk3NDlXckIwZGNwcWlnWUZ2NDli?=
+ =?utf-8?B?MGw2R3U1UDZpR2YrQnpKZlNBNmF5d1JsY0ZvUnFodjhtdVBPKzl0Mnc2TWZj?=
+ =?utf-8?B?YVEyZ09jTlFmR0xkQUJuWjJBKzVaRUQ2YVVaQlczMlpvSEhYVUV5RzIrb2w0?=
+ =?utf-8?B?Rld4ckNPWVV5SEQyNVY1Q0JSanN6MndnZ0JTdFFpbDdocm9lMnJNOXNYWXRJ?=
+ =?utf-8?B?N0JwaHg5ZjdZVCt6TjRDMjZyVVp0U1BFOU9xRXhOaUNpQ1loM3RmTHRxZEE4?=
+ =?utf-8?B?SDB2TE9wRVpVeWZuN2NXZlFONmk5ckxiaUV6WEVyQlppOFRiNEFZSSs4NGI0?=
+ =?utf-8?B?clpNQkJveFBSbXJIbXZQTzlzdzlFSm50TmJCVEdKUXE0UHRhVnN0eFRDdHdV?=
+ =?utf-8?B?SGNaVjZlUnhCWFpNTm5VbElZdEVwcUhranpmcThoREt4dmZuRGFyN0NRN2VZ?=
+ =?utf-8?B?VkxTNXU2R3gvNXpVdStCdkxodnhkUnB2S2RsTiszQUNjc3RDTGhtY2V6QmZt?=
+ =?utf-8?B?TERHNFF6dkdqSEdkbHpaT0FqS0pDY2grMEVVMEZSMEtuTUNDZDViSlQ0RURN?=
+ =?utf-8?B?SGEyQXZJOHp3aEZmVFQyRlA2Q3dkclBlK2d5UHQ2RGltVkticWZKQy9ZZGpq?=
+ =?utf-8?B?dzUvNzV5QWpVV0haOUg2UTlzaHUrcWlMOExTaGRmbWJpYkQzMUxtV2NrMFJ6?=
+ =?utf-8?B?YnlJMEx3NE9abmR4bHpZcU01cml3Ri9yS1pGU0dKd0NtL01kMWoxUW1FbXFs?=
+ =?utf-8?B?Qm1hTGpKR1QvZjJEZ2QzbzEzQTZxd1A3Rk1laWxEYnJHWFNEdmlZcWZ5Znpm?=
+ =?utf-8?B?TUFvYjVURkNsbldkYi9Dc2tLVndldThyZ2tGYm9JRTZlWlZyOWZsclB1OG14?=
+ =?utf-8?B?b2IvYkZzLzg0aDc4UU9nNk1lZ1dPWHBuNmVVQlVVeEJ3bEREUVdNc2szbEd5?=
+ =?utf-8?B?ZlpOdUJrc0hZc1dQR0tFZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB7135.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WW44eVFiS1hsQ2RhalJKNC9ZcU5wdnBaTGpscUxTWUlhYkx2czY2ZjBnTWNE?=
+ =?utf-8?B?MjVXOTRVRW5Cb2dGNmVSRSszTFhJVXlGZzBGcm1XaGJmLzBJT2dNdFRWckZS?=
+ =?utf-8?B?Sis0VW5TT3FWTWEwekhGUkVCVm1qNi93U3RBMjkwZ0dBQlBUUHlLV3RhWWx3?=
+ =?utf-8?B?MWpFQ3BpTm5qS1RVVUR0dW84UjhRNVBsVGVPMVN6R2FWaHJzSUhUNURHMWQ4?=
+ =?utf-8?B?VzVHTU5tbnJMU2dMMjBmK0xUOHpJaDU4SVdiRFpjRDlGM0NqMlNDVlNGVTVV?=
+ =?utf-8?B?SzZOQWorY3luWDhGTW1oOTk3Z3Z0RmpCS3oxa0FmQWgvUG5vMi9jTEhwZVp6?=
+ =?utf-8?B?UWozLzNrUHhDT3U1N2tBdFdNbUtCTkdNMG1UMnNWME1GSEZDSVlQUE5WaDFV?=
+ =?utf-8?B?Y1lhenVIT0NEOFZXRjNKejEyMGNFbWFKVGczNXVoZnFGSENSR0Y2bzhmUUhM?=
+ =?utf-8?B?RkkvY0J0dzhuZWF3dzJXbXV2WlhVNDBGL0tQTnlHK3VGV0wrQ2J2RVIyamFD?=
+ =?utf-8?B?TzB3K0pxTnJvRjlKRGVXcmdXczgyV013Wm1VRy92R1ErSHZhRHM1blpyTDRj?=
+ =?utf-8?B?VG9NWXBpLzhJWXczZHRQRTJXK2EvTnJ5UmpGTzBxSUROZXdZYURvZEVDWkFZ?=
+ =?utf-8?B?MDV0L1lRelRTVWJFV05OQnFKNDFkTDdEdCtCZHdocUdpOVpKdms2bVg4T1Jr?=
+ =?utf-8?B?RnpqZjZWTW1QOXhucUdGV1ZpT1NaR3E1QjZpUmR0Nzk5UjNlMVFqWUpBa29J?=
+ =?utf-8?B?S0RrZ0pkOE83ZFdLSzBGM0t3c2NEaHI0ZjJuaCthbURZNzRUVk4wRXg2eWU0?=
+ =?utf-8?B?LzM0T3lOb05MK3RHN3BQMFpGY2FtVENCdVJmcG1aNDNGOFhqckQ1RUxZdDFl?=
+ =?utf-8?B?L2hRNmUyT0tWY2F4dWNQVTJQRmtQbEhNWFlmRWoxcTI5OURzOGlCV0M2UEZY?=
+ =?utf-8?B?NzVYaGl1SkZGRDlMOG12SlprM1NSWS9QYnQ5QUZ4dGlNQ0tiSkNZYW4zM3k4?=
+ =?utf-8?B?ZGgzVHZuOGsvL3hqQk9mcW5VNE5Ccng0UHcwaEUxZ24za3VITVZ0VkE1UFRW?=
+ =?utf-8?B?VFUyWS82NU5QK2hUblNpV3YxOTI4SHBpYUF6SXpocFdhT1NvRjRXa2NRYUkx?=
+ =?utf-8?B?QXFnZmhxY3NoVkwrL2FJRkJheU5FSUhXN0RCcERTUzQ1eGVOcmIwTWphRURV?=
+ =?utf-8?B?ZFkrcVJCVG4zQjFpUWRoZXdmQ0hNT2lMRWpyaWJ0NDZiOFlWR21hT1l2ZXZX?=
+ =?utf-8?B?YlMyOXpyVUU1RHhpTW1sZ2d1YmJyU1U5amM2elZNUER5enF1c3BzQmc4NUZS?=
+ =?utf-8?B?SkE2SngwLy96U1ZRUHFzQ3gvOEhCbU9JSSs3WDBJR2tudWh6MmkxWm5SY3Ba?=
+ =?utf-8?B?T0hoQnJycXhVUzRIN3JmdllsOElHY2duMCtGNzU1aGphcHFHMlF5U3c0aGZs?=
+ =?utf-8?B?czJBaE41eW4zVXNObzUvajZhZWQ2bDQ0Tkt0ZjB6SkM5RjhBUk1OVDZtN1lZ?=
+ =?utf-8?B?bXE2TWxzMVA4RjFkUDhJMnIzc3FDRnVZRTRZZGNNRlg1MnJ1NEpTOVhEOGpI?=
+ =?utf-8?B?eTk2QllFZFJMY3NXOU96OElWM3lXaCtMNmFaT3dwSmJjRVZEYUJZSisyd29a?=
+ =?utf-8?B?WktkdEU5OUpxWkZZd0p5b0FMZU9VLytKREhKb2ZlNlVMVDdSaU12TkgvZDU1?=
+ =?utf-8?B?V3VJdUVRMGtpdStzdzczUFhmbThnRitnQktBTm5ZYllxWVk3eFNiVVp5QnRF?=
+ =?utf-8?B?bUUxanZXVzVGL0NGYkxYUmFwZXNnZG1WdnV1VDFEcFQwdGhVNmJ1RnVzY3M3?=
+ =?utf-8?B?ZTlUeWtHS1hYcUppaFY0VGRyZXljM241aFhTQ0lwM1pPZHArOCtxRWlwN3lS?=
+ =?utf-8?B?VVZ5elJCWnUzM3dFZ093bjloZUNMTmNpUzVzVTV6N0hmakowckd5YndiTytj?=
+ =?utf-8?B?VUdEY0VZZlRZL3VlSEFSaC84QlpGdWs3ME5uQnloUit4SjhOdHJFRDhRS0Zm?=
+ =?utf-8?B?L28wbGhYK1BmOHEwdVR3TytaZ3JnK1A5TFJoVGp5cmtyWThrcXF0Q0w4N3Jl?=
+ =?utf-8?B?c3B1UzlmZDdNT2l2eWRQZFBwbTkrQXBmNUlXVExxaWx1b01ZNTBPSU1Hc1o4?=
+ =?utf-8?B?UTl2cjF4THgwcG1pL3N6cnFqNmRvR3dDSm0vZjBvU2Y2K1lTSWVHM211UDBv?=
+ =?utf-8?B?alE9PQ==?=
+X-OriginatorOrg: amlogic.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6ed80bd-4864-406c-049f-08dd6756a374
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB7135.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 02:26:36.6208
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0KHBVz0gms/DhytItGSqOmAlT6MhBcmCTqiYPjBHz742gTaywtU9yg6/1g+Su/s5yA5IxSituhYP8wkAxSAv9wMh3sucKnQ8RHMzchZKO5M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB8479
 
 
-On Wed, 19 Mar 2025 15:04:43 +0800, jiebing chen wrote:
-> Add s4 audio base driver.
-> 
-> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
-> ---
-> Changes in v4:
-> - fix dtb check warning
-> - add maxItems of power domain for dt-bindings
-> - fixed audio clock pads regmap base and reg offset
-> - use dapm widget to control tocodec bclk and mclk enable
-> - Link to v3: https://lore.kernel.org/r/20250228-audio_drvier-v3-0-dbfd30507e4c@amlogic.com
-> 
-> Changes in v3:
-> - remove g12a tocodec switch event
-> - Modify the incorrect title for dt-bindings
-> - Link to v2: https://lore.kernel.org/r/20250214-audio_drvier-v2-0-37881fa37c9e@amlogic.com
-> 
-> Changes in v2:
-> - remove tdm pad control and change tocodec base on g12a
-> - change hifipll rate to support 24bit
-> - add s4 audio clock
-> - Link to v1: https://lore.kernel.org/r/20250113-audio_drvier-v1-0-8c14770f38a0@amlogic.com
-> 
-> ---
-> jiebing chen (6):
->       dt-bindings: clock: meson: Add audio power domain for s4 soc
->       dt-bindings: clock: axg-audio: Add mclk and sclk pad clock ids
->       dt-bindings: Asoc: axg-audio: Add s4 audio tocodec
->       ASoC: meson: g12a-toacodec: Add s4 tocodec driver
->       clk: meson: axg-audio: Add the mclk pad div for s4 chip
->       arm64: dts: amlogic: Add Amlogic S4 Audio
-> 
->  .../bindings/clock/amlogic,axg-audio-clkc.yaml     |  20 +-
->  .../bindings/sound/amlogic,g12a-toacodec.yaml      |   1 +
->  .../boot/dts/amlogic/meson-s4-s805x2-aq222.dts     | 219 ++++++++++
->  arch/arm64/boot/dts/amlogic/meson-s4.dtsi          | 372 ++++++++++++++++-
->  drivers/clk/meson/axg-audio.c                      | 441 ++++++++++++++++++++-
->  drivers/clk/meson/axg-audio.h                      |   6 +
->  include/dt-bindings/clock/axg-audio-clkc.h         |  11 +
->  sound/soc/meson/g12a-toacodec.c                    |  46 +++
->  8 files changed, 1111 insertions(+), 5 deletions(-)
-> ---
-> base-commit: 6ecd20965bdc21b265a0671ccf36d9ad8043f5ab
-> change-id: 20250110-audio_drvier-07a5381c494b
-> 
+在 2025/3/20 3:31, Krzysztof Kozlowski 写道:
+> [ EXTERNAL EMAIL ]
+>
+> On 19/03/2025 11:09, Jiebing Chen wrote:
+>> 在 2025/3/19 16:22, Krzysztof Kozlowski 写道:
+>>> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>>>
+>>> [ EXTERNAL EMAIL ]
+>>>
+>>> On Wed, Mar 19, 2025 at 03:04:45PM +0800, jiebing chen wrote:
+>>>> Add clock IDs for the mclk pads found on s4 SoCs
+>>>>
+>>>> Signed-off-by: jiebing chen <jiebing.chen@amlogic.com>
+>>>> ---
+>>>>    include/dt-bindings/clock/axg-audio-clkc.h | 11 +++++++++++
+>>> This belongs to the binding patch, usually.
+>>>
+>>> Anyway - do not ask us to do the work twice.
+>>>
+>>> <form letter>
+>>> This is a friendly reminder during the review process.
+>>>
+>>> It looks like you received a tag and forgot to add it.
+>>>
+>>> If you do not know the process, here is a short explanation:
+>>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+>>> versions of patchset, under or above your Signed-off-by tag, unless
+>>> patch changed significantly (e.g. new properties added to the DT
+>>> bindings). Tag is "received", when provided in a message replied to you
+>>> on the mailing list. Tools like b4 can help here. However, there's no
+>>> need to repost patches *only* to add the tags. The upstream maintainer
+>>> will do that for tags received on the version they apply.
+>>>
+>>> Please read:
+>>> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+>>>
+>>> If a tag was not added on purpose, please state why and what changed.
+>>> </form letter>
+>> thanks for your remind
+> Are you going to do anything or you are going to ignore us?
+
+sorry, i forget to use the b4 trailers -u to check the tag, you are 
+great, we should check any message in https://lore.kernel.org/
+
+some email might not received, fix it in another version, I will check 
+all the missing comments, Thank you again
+
+>
 > Best regards,
-> --
-> jiebing chen <jiebing.chen@amlogic.com>
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/amlogic/' for 20250319-audio_drvier-v4-0-686867fad719@amlogic.com:
-
-arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-s4-s805x2-aq222.dtb: sound: 'anyOf' conditional failed, one must be fixed:
-	'clocks' is a required property
-	'#clock-cells' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/clock.yaml#
-arch/arm64/boot/dts/amlogic/meson-axg-s400.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12a-fbx8am.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-cm4io.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-one.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12a-radxa-zero.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-a311d-khadas-vim3.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-axg-jethome-jethub-j100.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-gsking-x.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-a311d-bananapi-m2s.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-axg-jethome-jethub-j110-rev-2.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-x96-air.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air-gbit.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-bananapi-cm4-mnt-reform2.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-h96-max.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-odroid-go-ultra.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-x96-air-gbit.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-radxa-zero2.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-dreambox-two.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m5.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-a95xf3-air.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12a-u200.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-bananapi-m2-pro.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-odroid-c4.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-s922x-bananapi-m2s.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2l.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-odroid-hc4.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-a311d-libretech-cc.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-s922x-khadas-vim3.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-sm1-s905d3-libretech-cc.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-axg-jethome-jethub-j110-rev-3.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-gtking-pro.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2-plus.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-gtking.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-arch/arm64/boot/dts/amlogic/meson-g12b-ugoos-am6.dtb: clock-controller@0: reg: [[0, 0, 0, 180]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
-
-
-
-
-
+> Krzysztof
