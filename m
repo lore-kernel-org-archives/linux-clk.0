@@ -1,158 +1,129 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BE01F4616;
-	Fri, 21 Mar 2025 09:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF8B225387;
+	Fri, 21 Mar 2025 12:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742550983; cv=none; b=SBqwK1XTS9+BTl2iMo9Tv6kYAhfuPm55seFav7zAD5EfRIUVpVpVUnCM8dxLriP/E0A9pmtc9RKW6RHgOQ4RVI3/UGYbb1kxGdEUQMuN9xrHo2IQisTIUSVUhZwuPhp9dLaj3AN+zp4CQom0D4chGHnlvwdVaLaWJCQmXlOFoH8=
+	t=1742561411; cv=none; b=reBPa0oAJZyU1vW7GMHIEfmCUEeU11Q7xdBNz+5mL094M7diIArsLlZvXI56H1YtFEjOjqQgTBLOTWPIp5wCZr/a4ThR7FTHQweMC+ojV5dXMPyQX6zzdXI2L0swbblxhUsIN3/HYVdqc38iesi1M+jUubMms05zwvTxhYVBYEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742550983; c=relaxed/simple;
-	bh=yenB81RFTTQVZzOuKrtKURDLchhy5hYMxQgAe625KOw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PWhuHD2DZfr0pmx+8Zl1/o1Ds4+OabkgmRmnj2+3Hbm2l8R5bouX15TRJFNnWdsEUf4ARwRyUVWfhKQB4qW/zF6Fo2JA38ovqlOLdzZshapUn6eYCR21tcYzicRFOsy1QiBqvN3cqtdtzAWyh1Et5zCASAGRQmwYsDdpXhwYT9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z1s/t4jh; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1742561411; c=relaxed/simple;
+	bh=0ZVglako6mV/vVYiHs4jlcbA2K3ASzOGKl1R3WwjJlA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=J4LC35uBlsR7P68UWNtn34eiGpgSNPgYzJiskwO62Y/JycyMgu3PDYrDiYmqIqlHfvqD8PrMMAZJn9EEGfwuw9uv4Y71i1lqeBCNlc/58wi3pymC9KNUlgAPzTzTfVo6xnZFBKiNYAXr4sEH2PJ1JM/+Lz6cackvWs+ye5QPhco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DtNYX6dR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z1s/t4jh"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2a9a74d9cso366954966b.1;
-        Fri, 21 Mar 2025 02:56:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742550980; x=1743155780; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4ROs3p4d9jnnyN4eUO0PMHx9QqYizb1PZN92H3mvS00=;
-        b=Z1s/t4jh3D4TzG0ZK1hbdmsEIJjEYLqllUmuY9h/lBiIMkU20/3VlEwJ6aJJQLKEak
-         13ZSygN3649jPYPr1PYI94jfIGPF8UAo6tmUhWbYjccBv3HT+BRDwE/00P8n6wvACBR0
-         BCi6oZ6TBSZNXuyMzCUhkOtClNRKFvGxhDFUYCh+j9Lg0ogQ3GA9go7oWHsYRuJoFqDo
-         7OoIObByk2q09zInhaH3KNfPpDe6zOXrU0p+tmzGPzbs5Dwku7aCY013NSsTFFQdX+0C
-         XD5GRmNFneGZuKvAqa9gJzIJMI8LcxjAWdbFzSE7hKp3bql0kVO/UtwfgaaTipa9JTno
-         6PKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742550980; x=1743155780;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4ROs3p4d9jnnyN4eUO0PMHx9QqYizb1PZN92H3mvS00=;
-        b=GPHtHsK9tpVTQ6TyTELSqvQMHr6L+cJLHi4xxGo5DUwwiYrVPkBvY9sNrQ1nf/0fnV
-         3aghTUV3rb/Iuu+UpM1l3UI/2t6Aka8FoKnjrbswm3/0YPIUCvDnU1RdrBkhC0RrZeAZ
-         VAMBE/AHRd6KErbQFKrLzY4K05zmZiLPMnLMvZ28EgiTMDrrXfKoeT2RjMCv0zhiHktJ
-         ss6nNMztSBfZnN6dyB+2f1MrzaRWvMEIUE8FFKrohXUqP1zAoK7dGEL0fxLfocwxZcCD
-         Pc+pjQzfVt/831uvuwa87PuQWP05OdXwVE7BO1PURQr2lc88q/wzjVLj7PXVr0nK1O4/
-         YvYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNmq3q5PaP02YjT5TQGFm7sqBoOj2ZPUbqVXR99Kl3zTGAs9H2AStMkV+quQlYK6E+zWwxKxlZ0FY=@vger.kernel.org, AJvYcCWfWOl/7cTM7NWNQaQRFVoxh2xxUC1QrgKC4XHzcxRrSbWfVEark99TUmPncLHFu59hE+Eo6xQUY/k=@vger.kernel.org, AJvYcCXwgy518s+wsbp7BcozE2L0IKvMUcTlsOfoIAMZywOtPNwGf365x9tkxr+2Oyj+FxLlBJ9x1GwQ1Rgsyhbi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTypfrg9T1i57XJ2u2xCa5EZEy3rfMRng//LOru/5jD2AJYiU7
-	5Iwx3zp6QtPMLSwmZSCWaUjKHLCwKFRV1vPtuZDEkd5f7Q+ijR5m
-X-Gm-Gg: ASbGncubmUoaq97wFv2qCU2aCV7js5v+bClNtaVa15+7P1ztB6EdLnCDk5TwuP69sUI
-	FKdPz+XcBTYfCYfHWIGfkxA/X+HFAGYmk6P9sMs9gMc1C+vEASG6hAQzLyw1egQCaTWq9qC68IA
-	yrr/tWrMhfMGJuxcE8eJTwv6mGc3R3ephHFfv3h2ggyVQvAGOWiEdOnqidfei6OXo9AnJInu+pt
-	Ty9D/5/ab6Yn5mj10u4/PvjyiKQduJfMVEK3s8LTcnpvb00oXArMNyWgEcBtpIrX1QvNWoOB4s4
-	7vnaxY4QCSAwmWHcnn7mgvysYWvsIzFYIADd
-X-Google-Smtp-Source: AGHT+IH+4wAaY50C8bL7aK9Ptp4xkCMlAxpcm/+zXUd2CW2A4362UChdfR33GSZUd9xYi+PVzxtxOg==
-X-Received: by 2002:a17:907:6ea2:b0:ac2:7a3b:31e2 with SMTP id a640c23a62f3a-ac3f251f286mr226334166b.45.1742550979800;
-        Fri, 21 Mar 2025 02:56:19 -0700 (PDT)
-Received: from xeon.. ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3ef869f19sm122300866b.33.2025.03.21.02.56.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 02:56:19 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Peter De Schrijver <pdeschrijver@nvidia.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH v1 3/3] ARM: tegra: Add DFLL clock support on Tegra 4
-Date: Fri, 21 Mar 2025 11:55:56 +0200
-Message-ID: <20250321095556.91425-4-clamor95@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250321095556.91425-1-clamor95@gmail.com>
-References: <20250321095556.91425-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DtNYX6dR"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATBLk016515;
+	Fri, 21 Mar 2025 12:50:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=TitFcPuis8TVshv4HlpE1v
+	FhGFNZpDl0U57A6S3xs/8=; b=DtNYX6dRA8IJpZHGB5m0QOahFkAsbwHEV+9MKB
+	R/ORpVQuDdFVJvbwzhbslAdmmPdqtbtFgA7q51FB+gSmOEroJOJIp+9x9KxbqmUl
+	1BA8o9RuOYu24rEzs4ve20gVvoKDRyU/5ZqMTE105HraEvIz1ajG6Ec9NhiRAekZ
+	4xusY4el16E50a+OaFKkGvbtnHkmJlFncmzN7Itql9b6CG3IobVxvhCkB0Ktlvha
+	FAvFg8mih5e6heyjm946AA82+MtaAjzl4eD3ntxLN/SgWUL3ijiusbwDNVJFduKw
+	I2SDVyLOvydBKMnZ6WEUFg2V3/zbmD0PJMDz1zIA8hLZHDDQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45gcd1cven-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 12:50:05 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52LCo495003196
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Mar 2025 12:50:04 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 21 Mar 2025 05:50:00 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Subject: [PATCH 0/4] Add CMN PLL clock controller support for IPQ5424
+Date: Fri, 21 Mar 2025 20:49:51 +0800
+Message-ID: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG9g3WcC/x3MQQqAIBBA0avErBN0sqSuEhFhYw2UmUIE0d2Tl
+ m/x/wOJIlOCrngg0sWJD5+hygLsOvmFBM/ZgBJrWaESpz32kcNZa9Sj3X3YNqFV44yRDl1rIJc
+ hkuP7v/bD+34HBzuDZQAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_suruchia@quicinc.com>,
+        <quic_pavir@quicinc.com>, <quic_linchen@quicinc.com>,
+        <quic_leiwei@quicinc.com>, Luo Jie <quic_luoj@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1742561400; l=1417;
+ i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
+ bh=0ZVglako6mV/vVYiHs4jlcbA2K3ASzOGKl1R3WwjJlA=;
+ b=+42wJz8yxMmf8CMqbMXdNWLFuqjiDSyzosSj+FhPNqtOg4vzerdUODRloRFWwzGMjCIJCbYcI
+ SXaHqWqPzTtDTSOObc4BuIFL2ER1GJjKArYmPwVT28ZJUzYQtg59OzJ
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=bfFrUPPB c=1 sm=1 tr=0 ts=67dd607d cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EfkPgQgNU6_W6T37c40A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: efskeJMflzcz4NDvhTcPG3EdfuVTDOH9
+X-Proofpoint-ORIG-GUID: efskeJMflzcz4NDvhTcPG3EdfuVTDOH9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_05,2025-03-20_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ clxscore=1015 suspectscore=0 malwarescore=0 bulkscore=0 mlxlogscore=948
+ priorityscore=1501 lowpriorityscore=0 mlxscore=0 adultscore=0 phishscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503210094
 
-Add DFLL clock node to common Tegra114 device tree along with clocks
-property to cpu node.
+The CMN PLL block of IPQ5424 is almost same as that of IPQ9574
+which is currently supported by the driver. The only difference
+is that the fixed output clocks to NSS and PPE from CMN PLL have
+a different clock rate. In IPQ5424, the output clocks are supplied
+to NSS at 300 MHZ and to PPE at 375 MHZ.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+Two related clock identifiers NSS_300MHZ_CLK and PPE_375MHZ_CLK
+are added for IPQ5424. The new table of output clocks is added
+for the CMN PLL of IPQ5424, which is acquired from the device
+according to the compatible.
+
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 ---
- arch/arm/boot/dts/nvidia/tegra114.dtsi | 34 ++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Luo Jie (4):
+      dt-bindings: clock: qcom: Add CMN PLL support for IPQ5424 SoC
+      clk: qcom: cmnpll: Add IPQ5424 SoC support
+      arm64: dts: ipq5424: Add CMN PLL node
+      arm64: dts: qcom: Update IPQ5424 xo_board to use fixed factor clock
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-index 341ec0962460..25d063a47ca5 100644
---- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/memory/tegra114-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/reset/tegra114-car.h>
- #include <dt-bindings/soc/tegra-pmc.h>
- 
- #include "tegra114-peripherals-opp.dtsi"
-@@ -710,6 +711,30 @@ mipi: mipi@700e3000 {
- 		#nvidia,mipi-calibrate-cells = <1>;
- 	};
- 
-+	dfll: clock@70110000 {
-+		compatible = "nvidia,tegra114-dfll";
-+		reg = <0x70110000 0x100>, /* DFLL control */
-+		      <0x70110000 0x100>, /* I2C output control */
-+		      <0x70110100 0x100>, /* Integrated I2C controller */
-+		      <0x70110200 0x100>; /* Look-up table RAM */
-+		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA114_CLK_DFLL_SOC>,
-+			 <&tegra_car TEGRA114_CLK_DFLL_REF>,
-+			 <&tegra_car TEGRA114_CLK_I2C5>;
-+		clock-names = "soc", "ref", "i2c";
-+		resets = <&tegra_car TEGRA114_RST_DFLL_DVCO>;
-+		reset-names = "dvco";
-+		#clock-cells = <0>;
-+		clock-output-names = "dfllCPU_out";
-+		nvidia,sample-rate = <11500>;
-+		nvidia,droop-ctrl = <0x00000f00>;
-+		nvidia,force-mode = <1>;
-+		nvidia,cf = <10>;
-+		nvidia,ci = <0>;
-+		nvidia,cg = <2>;
-+		status = "disabled";
-+	};
-+
- 	mmc@78000000 {
- 		compatible = "nvidia,tegra114-sdhci";
- 		reg = <0x78000000 0x200>;
-@@ -841,6 +866,15 @@ cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
-+
-+			clocks = <&tegra_car TEGRA114_CLK_CCLK_G>,
-+				 <&tegra_car TEGRA114_CLK_CCLK_LP>,
-+				 <&tegra_car TEGRA114_CLK_PLL_X>,
-+				 <&tegra_car TEGRA114_CLK_PLL_P>,
-+				 <&dfll>;
-+			clock-names = "cpu_g", "cpu_lp", "pll_x", "pll_p", "dfll";
-+			/* FIXME: what's the actual transition time? */
-+			clock-latency = <300000>;
- 		};
- 
- 		cpu@1 {
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  1 +
+ arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts        | 23 +++++++++++++--
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi              | 27 ++++++++++++++++-
+ drivers/clk/qcom/ipq-cmn-pll.c                     | 34 ++++++++++++++++++----
+ include/dt-bindings/clock/qcom,ipq-cmn-pll.h       | 10 ++++++-
+ 5 files changed, 86 insertions(+), 9 deletions(-)
+---
+base-commit: 9388ec571cb1adba59d1cded2300eeb11827679c
+change-id: 20250321-qcom_ipq5424_cmnpll-416f770f2f97
+
+Best regards,
 -- 
-2.43.0
+Luo Jie <quic_luoj@quicinc.com>
 
