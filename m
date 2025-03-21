@@ -1,357 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7EA2309B6;
-	Fri, 21 Mar 2025 17:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C26722A4C9
+	for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 17:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742577827; cv=none; b=cJguSKXXKbQx9XDWaVyk26YOq8+gYKUCi8QzzEJzp0FJ+B3HtY/ihAb4fAbigrWGUo0ctiNo7PpLrry7I7Jt/LkNa65DWRGIQ5at9qcqSp6erJ3xZntm3TBhtp4/W0Kr1KsSNGjJsYNZ0bpOip0B2HwLFWcdkFI4fBe4wVEljNo=
+	t=1742579634; cv=none; b=dGuak9kaPqCTPd5CIGXPpUQ69UhDAuLgeWmMGjcBI42W0jpf8jPV/DP9jw4qziUyeULnIL0ZluWhpNdTn9UosZF/mmTREDLi/vbdo2/lE4Lm/nLAzHleEc0iaVnBqTlsptD/RroJx6xCbEty5NYU14euwnj4iB4S5hoZedk/hVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742577827; c=relaxed/simple;
-	bh=RIaLytEA1lVSh28yAE2eOkonTtXe8DgddLseiGsgHsg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cj78cPjwC4WRjfSCdk9pFgUk4jOUeqlb7764oAjmOsorOCIUHUfgWDS7UE3fIA2hRz61F/78UWj/IyIvmZ3jJVI54o1w0qSsAIuf981eoMTDXw7p6/KT8iTRaGW8Y8ZtUGhG2fcgcXPsk47Urf/iASqjbm1HSZDgLQw2OIBURBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSi2QU4C; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742579634; c=relaxed/simple;
+	bh=cHCUYkglDqNg2FuGOj+/CWfW4NUnhGwmo8XW8BumtK8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NhyYxuMkvjEeaCYfgAyLOO3nIVe2uoYh1gSahdcGA0NIt2juPJS56bE2w3wnxL4ogN1+dEMhd4E+6PNaqwHZNiqiCbLcgD+EPUvOXK20t92b4kT80y+JjtY2z6ugX4o+1YE68ZOzMZOJFmdIE4c01me+TNDQ2Mm2qnSixwA/AIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JSWPP1OW; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSi2QU4C"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47C6FC4CEE8;
-	Fri, 21 Mar 2025 17:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742577825;
-	bh=RIaLytEA1lVSh28yAE2eOkonTtXe8DgddLseiGsgHsg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KSi2QU4C4MkwyZp7XLlZbfQXkHggO3qye8NVPCwfuNYmq1QeCAh47TT1N89laedQp
-	 TRcGvK2mO++wGxY7KIaXPiiHMX0QQQlfHF4k8SBVuS9sN1t90g1TB2FmsUsRmMSXtl
-	 DfhbCrVRsoOqfZj21KzPEoaFey8qEfZZtsYO7ZpliykaOESKR9RhKKv6w35VVFaokU
-	 abo6nd+zzoErGgcGK8IObWPswZCkVJ4/CTxBp49mZv4daMzfrAlSFMn/p/4DAf7hrj
-	 mrl2eZEjOL6IR9I8Nly42dVkRCTGseLZVnOwJz0wD6qHDoW5JBcGHwywjkukFi7WFB
-	 OXIRo5WsxYwbg==
-From: Conor Dooley <conor@kernel.org>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JSWPP1OW"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-391342fc1f6so1879291f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 10:53:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742579630; x=1743184430; darn=vger.kernel.org;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GNqD8PyJLQnJQLvnULZ+vanw9dMkZAzGyI1k4rO3/oY=;
+        b=JSWPP1OWCNSwL1+HWtEt3dmKEMwn5sER+T7MQKrdL+7FljOVciFGa/bTdSJppAJlA4
+         YUCTgi+a/calz1yyGPf6O6n7kLNddubdEc4Fe4mUW8ckFG0EOpjx7RTs/GE3kQo30vus
+         bp46qCPAfLGLPs+wk8qNP1NKx2L01EBC3LhZ8Wg3fJVkb6r5X5oR310xdF3msC6QV6w9
+         k3RxTmMTeVnYx1MOE/jH4M0CQRMhYfxXkD3NdguAao/Q9TcdAmftIxRCckaOMC+h0liY
+         5PxQerQtfG0htkFdBR76T7mmpwJHsVHp7fIYIlftlYy8RzLMOpxAwU5xz+G45R7TJ6Hi
+         VoLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742579630; x=1743184430;
+        h=mime-version:message-id:date:user-agent:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GNqD8PyJLQnJQLvnULZ+vanw9dMkZAzGyI1k4rO3/oY=;
+        b=g1/we4ZHVh+PLLVuq9UgVWAMfT4FBdeBilMdKovQvXsLkVyyk44ye6xEfDtlf3DR6m
+         WXF9IsGWV0/+Ha1TT+Q+6NGeKZcw4hxg1R+Xv7Td1lMVM5QG2WlgGSjBmSOIRUCYFll3
+         7yuLAXdOQDysF2fwA0tY9cHI2AZ6d9Dyzll4mMiUZOUti0jvYvMIZw62Rd4TPBu1tkjp
+         YJZEn4UNKzyn3MzBicHUJp62mw3i2TCHUNQtAhJWaqkYrM4SedRj1KcVkHjZSjmHAjdZ
+         WwG4SovHjVSoLo2VyGmeQVDgZ4ePB9FbzjrBNL6DSabGQPXQf3YBxAepCckN+TF0yN38
+         YZxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOkJBNZUFEgW3BwYNFZGDX3hFlrktVORG+Ob61qNWS066EC/dKBvgtmGyg3sNrqWlFicRVlYV1inA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJJo2eBq892fD+SBbSPyFuMBzDo1sLx+yfr/CdDU14oM1k0XR8
+	hNGrx1RngaVl2nsKTNE0tGugg/3rVa6/MMUNbUBMuLNwnd4s3KRmHi/cn7t4Su8=
+X-Gm-Gg: ASbGnctl9uq+SvoddgMdyXgeqw5LuL0tSm4Oj71iDz65wzmqwAliITqeOlH+d1+TsUo
+	BZmBrYjONzdxgAqNcywcrRMdL6yXhc/sWaBQjli4FtaB6hAb/UYWkMjedphCuhJfSxVln71/WfH
+	44H0WFu5GAJOKBvg2OymDukDpAL/TzDXo3iOyF2LL1vb7Qz6MfWr/s+K+bzJpyQgHXlHFo4xbfy
+	VPPm/s2BdcrVH0EbpxnTNW/nmEnz5Io5EYI4kjPwihV6aBNpOSnpqGF7s89TJY66Y5P8F0v8Qr2
+	unfLz0ZsKl96tn+zrzteyQOt3RpKFKpqRQ2p4i68XIgI
+X-Google-Smtp-Source: AGHT+IGw/k1s3UhG3nO2rFtVFyriyvE9zSGonoM40r54Hxa67x+rs2qU6DUJGZCT59Otrl8jKGhlwA==
+X-Received: by 2002:a5d:6482:0:b0:391:2da8:6e26 with SMTP id ffacd0b85a97d-3997f94083fmr4523621f8f.52.1742579630502;
+        Fri, 21 Mar 2025 10:53:50 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:c5a7:dfd4:9ad8:1ea0])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3997f9a31a7sm2929623f8f.23.2025.03.21.10.53.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Mar 2025 10:53:50 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
 To: Stephen Boyd <sboyd@kernel.org>
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Lee Jones <lee@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v2 9/9] clk: microchip: mpfs: use regmap clock types
-Date: Fri, 21 Mar 2025 17:22:42 +0000
-Message-ID: <20250321-aflutter-unearned-1d6078241fb3@spud>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
-References: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
+Cc: Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>,  Michael Turquette
+ <mturquette@baylibre.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
+  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 1/4] clk: add a clk_hw helpers to get the clock
+ device or device_node
+In-Reply-To: <508a5ee6c6b365e8d9cdefd5a9eec769.sboyd@kernel.org> (Stephen
+	Boyd's message of "Wed, 26 Feb 2025 17:01:05 -0800")
+References: <20250120-amlogic-clk-drop-clk-regmap-tables-v3-0-126244146947@baylibre.com>
+	<20250120-amlogic-clk-drop-clk-regmap-tables-v3-1-126244146947@baylibre.com>
+	<508a5ee6c6b365e8d9cdefd5a9eec769.sboyd@kernel.org>
+User-Agent: mu4e 1.12.8; emacs 29.4
+Date: Fri, 21 Mar 2025 18:53:49 +0100
+Message-ID: <1jv7s21d8y.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10027; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=pQhEwkt5Ys1X5PbTe/h5CRH87bs0UPsQSVu7EETaHAE=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOl3F0SvNG+oPOHvtGWXacUPnZTnqyffSfgaa2f3O+dTT soU39uRHaUsDGIcDLJiiiyJt/tapNb/cdnh3PMWZg4rE8gQBi5OAZjIw10M/2ObZeJlZjz02yDv eVN427PvX4rDnXwfdtp8Sz0cvezTg90M/7PLjvWvSWjt0jI/sbJCS1+me6trSbD8++WadW/Y/v7 awgoA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On Wed 26 Feb 2025 at 17:01, Stephen Boyd <sboyd@kernel.org> wrote:
 
-Convert the PolarFire SoC clock driver to use regmap clock types as a
-preparatory work for supporting the new binding for this device that
-will only provide the second of the two register regions, and will
-require the use of syscon regmap to access the "cfg" and "periph" clocks
-currently supported by the driver.
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- drivers/clk/microchip/Kconfig    |   4 +
- drivers/clk/microchip/clk-mpfs.c | 151 ++++++++++++++++++++-----------
- 2 files changed, 101 insertions(+), 54 deletions(-)
+>> +static void clk_hw_get_of_node_test(struct kunit *test)
+>> +{
+>> +       struct device_node *np;
+>> +       struct clk_hw *hw;
+>> +
+>> +       hw = kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
+>> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
+>> +
+>> +       np = of_find_compatible_node(NULL, NULL, "test,clk-dummy-device");
+>> +       hw->init = CLK_HW_INIT_NO_PARENT("test_get_of_node",
+>> +                                        &clk_dummy_rate_ops, 0);
+>> +       of_node_put_kunit(test, np);
+>> +
+>> +       KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, np, hw));
+>
+> The stuff before the expectation should likely go to the init function.
+> Or it can use the genparams stuff so we can set some struct members to
+> indicate if the pointer should be NULL or not and then twist through the
+> code a couple times.
+>
 
-diff --git a/drivers/clk/microchip/Kconfig b/drivers/clk/microchip/Kconfig
-index 0724ce65898f..cab9a909893b 100644
---- a/drivers/clk/microchip/Kconfig
-+++ b/drivers/clk/microchip/Kconfig
-@@ -7,6 +7,10 @@ config MCHP_CLK_MPFS
- 	bool "Clk driver for PolarFire SoC"
- 	depends on ARCH_MICROCHIP_POLARFIRE || COMPILE_TEST
- 	default ARCH_MICROCHIP_POLARFIRE
-+	depends on MFD_SYSCON
- 	select AUXILIARY_BUS
-+	select COMMON_CLK_DIVIDER_REGMAP
-+	select COMMON_CLK_GATE_REGMAP
-+	select REGMAP_MMIO
- 	help
- 	  Supports Clock Configuration for PolarFire SoC
-diff --git a/drivers/clk/microchip/clk-mpfs.c b/drivers/clk/microchip/clk-mpfs.c
-index c22632a7439c..c7fec0fcbe37 100644
---- a/drivers/clk/microchip/clk-mpfs.c
-+++ b/drivers/clk/microchip/clk-mpfs.c
-@@ -6,8 +6,10 @@
-  */
- #include <linux/clk-provider.h>
- #include <linux/io.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
- #include <dt-bindings/clock/microchip,mpfs-clock.h>
- #include <soc/microchip/mpfs.h>
- 
-@@ -30,6 +32,14 @@
- #define MSSPLL_POSTDIV_WIDTH	0x07u
- #define MSSPLL_FIXED_DIV	4u
- 
-+static const struct regmap_config clk_mpfs_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.val_format_endian = REGMAP_ENDIAN_LITTLE,
-+	.max_register = REG_SUBBLK_CLOCK_CR,
-+};
-+
- /*
-  * This clock ID is defined here, rather than the binding headers, as it is an
-  * internal clock only, and therefore has no consumers in other peripheral
-@@ -39,6 +49,7 @@
- 
- struct mpfs_clock_data {
- 	struct device *dev;
-+	struct regmap *regmap;
- 	void __iomem *base;
- 	void __iomem *msspll_base;
- 	struct clk_hw_onecell_data hw_data;
-@@ -68,14 +79,12 @@ struct mpfs_msspll_out_hw_clock {
- #define to_mpfs_msspll_out_clk(_hw) container_of(_hw, struct mpfs_msspll_out_hw_clock, hw)
- 
- struct mpfs_cfg_hw_clock {
--	struct clk_divider cfg;
--	struct clk_init_data init;
-+	struct clk_divider_regmap divider;
- 	unsigned int id;
--	u32 reg_offset;
- };
- 
- struct mpfs_periph_hw_clock {
--	struct clk_gate periph;
-+	struct clk_gate_regmap gate;
- 	unsigned int id;
- };
- 
-@@ -172,15 +181,15 @@ static int mpfs_clk_register_mssplls(struct device *dev, struct mpfs_msspll_hw_c
-  * MSS PLL output clocks
-  */
- 
--#define CLK_PLL_OUT(_id, _name, _parent, _flags, _shift, _width, _offset) {	\
--	.id = _id,								\
--	.output.shift = _shift,							\
--	.output.width = _width,							\
--	.output.table = NULL,							\
--	.reg_offset = _offset,							\
--	.output.flags = _flags,							\
--	.output.hw.init = CLK_HW_INIT(_name, _parent, &clk_divider_ops, 0),	\
--	.output.lock = &mpfs_clk_lock,						\
-+#define CLK_PLL_OUT(_id, _name, _parent, _flags, _shift, _width, _offset) {		\
-+	.id = _id,									\
-+	.output.shift = _shift,								\
-+	.output.width = _width,								\
-+	.output.table = NULL,								\
-+	.reg_offset = _offset,								\
-+	.output.flags = _flags,								\
-+	.output.hw.init = CLK_HW_INIT(_name, _parent, &clk_divider_regmap_ops, 0),	\
-+	.output.lock = &mpfs_clk_lock,							\
- }
- 
- static struct mpfs_msspll_out_hw_clock mpfs_msspll_out_clks[] = {
-@@ -220,15 +229,14 @@ static int mpfs_clk_register_msspll_outs(struct device *dev,
-  * "CFG" clocks
-  */
- 
--#define CLK_CFG(_id, _name, _parent, _shift, _width, _table, _flags, _offset) {		\
--	.id = _id,									\
--	.cfg.shift = _shift,								\
--	.cfg.width = _width,								\
--	.cfg.table = _table,								\
--	.reg_offset = _offset,								\
--	.cfg.flags = _flags,								\
--	.cfg.hw.init = CLK_HW_INIT(_name, _parent, &clk_divider_ops, 0),		\
--	.cfg.lock = &mpfs_clk_lock,							\
-+#define CLK_CFG(_id, _name, _parent, _shift, _width, _table, _flags, _offset) {	\
-+	.id = _id,								\
-+	.divider.shift = _shift,						\
-+	.divider.width = _width,						\
-+	.divider.table = _table,						\
-+	.divider.map_offset = _offset,						\
-+	.divider.flags = _flags,						\
-+	.divider.hw.init = CLK_HW_INIT(_name, _parent, &clk_divider_regmap_ops, 0),	\
- }
- 
- #define CLK_CPU_OFFSET		0u
-@@ -245,13 +253,13 @@ static struct mpfs_cfg_hw_clock mpfs_cfg_clks[] = {
- 		REG_CLOCK_CONFIG_CR),
- 	{
- 		.id = CLK_RTCREF,
--		.cfg.shift = 0,
--		.cfg.width = 12,
--		.cfg.table = mpfs_div_rtcref_table,
--		.reg_offset = REG_RTC_CLOCK_CR,
--		.cfg.flags = CLK_DIVIDER_ONE_BASED,
--		.cfg.hw.init =
--			CLK_HW_INIT_PARENTS_DATA("clk_rtcref", mpfs_ext_ref, &clk_divider_ops, 0),
-+		.divider.shift = 0,
-+		.divider.width = 12,
-+		.divider.table = mpfs_div_rtcref_table,
-+		.divider.map_offset = REG_RTC_CLOCK_CR,
-+		.divider.flags = CLK_DIVIDER_ONE_BASED,
-+		.divider.hw.init =
-+			CLK_HW_INIT_PARENTS_DATA("clk_rtcref", mpfs_ext_ref, &clk_divider_regmap_ops, 0),
- 	}
- };
- 
-@@ -264,14 +272,14 @@ static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *
- 	for (i = 0; i < num_clks; i++) {
- 		struct mpfs_cfg_hw_clock *cfg_hw = &cfg_hws[i];
- 
--		cfg_hw->cfg.reg = data->base + cfg_hw->reg_offset;
--		ret = devm_clk_hw_register(dev, &cfg_hw->cfg.hw);
-+		cfg_hw->divider.regmap = data->regmap;
-+		ret = devm_clk_hw_register(dev, &cfg_hw->divider.hw);
- 		if (ret)
- 			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
- 					     cfg_hw->id);
- 
- 		id = cfg_hw->id;
--		data->hw_data.hws[id] = &cfg_hw->cfg.hw;
-+		data->hw_data.hws[id] = &cfg_hw->divider.hw;
- 	}
- 
- 	return 0;
-@@ -281,15 +289,14 @@ static int mpfs_clk_register_cfgs(struct device *dev, struct mpfs_cfg_hw_clock *
-  * peripheral clocks - devices connected to axi or ahb buses.
-  */
- 
--#define CLK_PERIPH(_id, _name, _parent, _shift, _flags) {			\
--	.id = _id,								\
--	.periph.bit_idx = _shift,						\
--	.periph.hw.init = CLK_HW_INIT_HW(_name, _parent, &clk_gate_ops,		\
--				  _flags),					\
--	.periph.lock = &mpfs_clk_lock,						\
-+#define CLK_PERIPH(_id, _name, _parent, _shift, _flags) {				\
-+	.id = _id,									\
-+	.gate.map_offset = REG_SUBBLK_CLOCK_CR,						\
-+	.gate.bit_idx = _shift,								\
-+	.gate.hw.init = CLK_HW_INIT_HW(_name, _parent, &clk_gate_regmap_ops, _flags),	\
- }
- 
--#define PARENT_CLK(PARENT) (&mpfs_cfg_clks[CLK_##PARENT##_OFFSET].cfg.hw)
-+#define PARENT_CLK(PARENT) (&mpfs_cfg_clks[CLK_##PARENT##_OFFSET].divider.hw)
- 
- /*
-  * Critical clocks:
-@@ -346,19 +353,60 @@ static int mpfs_clk_register_periphs(struct device *dev, struct mpfs_periph_hw_c
- 	for (i = 0; i < num_clks; i++) {
- 		struct mpfs_periph_hw_clock *periph_hw = &periph_hws[i];
- 
--		periph_hw->periph.reg = data->base + REG_SUBBLK_CLOCK_CR;
--		ret = devm_clk_hw_register(dev, &periph_hw->periph.hw);
-+		periph_hw->gate.map = data->regmap;
-+		ret = devm_clk_hw_register(dev, &periph_hw->gate.hw);
- 		if (ret)
- 			return dev_err_probe(dev, ret, "failed to register clock id: %d\n",
- 					     periph_hw->id);
- 
- 		id = periph_hws[i].id;
--		data->hw_data.hws[id] = &periph_hw->periph.hw;
-+		data->hw_data.hws[id] = &periph_hw->gate.hw;
- 	}
- 
- 	return 0;
- }
- 
-+static inline int mpfs_clk_syscon_probe(struct mpfs_clock_data *clk_data,
-+					struct platform_device *pdev)
-+{
-+	clk_data->regmap = syscon_regmap_lookup_by_compatible("microchip,mpfs-mss-top-sysreg");
-+	if (IS_ERR(clk_data->regmap))
-+		return PTR_ERR(clk_data->regmap);
-+
-+	clk_data->msspll_base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(clk_data->msspll_base))
-+		return PTR_ERR(clk_data->msspll_base);
-+
-+	return 0;
-+}
-+
-+static inline int mpfs_clk_old_format_probe(struct mpfs_clock_data *clk_data,
-+					    struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	dev_warn(&pdev->dev, "falling back to old devicetree format");
-+
-+	clk_data->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(clk_data->base))
-+		return PTR_ERR(clk_data->base);
-+
-+	clk_data->msspll_base = devm_platform_ioremap_resource(pdev, 1);
-+	if (IS_ERR(clk_data->msspll_base))
-+		return PTR_ERR(clk_data->msspll_base);
-+
-+	clk_data->regmap = devm_regmap_init_mmio(dev, clk_data->base, &clk_mpfs_regmap_config);
-+	if (IS_ERR(clk_data->regmap))
-+		return PTR_ERR(clk_data->regmap);
-+
-+	ret = mpfs_reset_controller_register(dev, clk_data->base + REG_SUBBLK_RESET_CR);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static int mpfs_clk_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -374,13 +422,12 @@ static int mpfs_clk_probe(struct platform_device *pdev)
- 	if (!clk_data)
- 		return -ENOMEM;
- 
--	clk_data->base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(clk_data->base))
--		return PTR_ERR(clk_data->base);
--
--	clk_data->msspll_base = devm_platform_ioremap_resource(pdev, 1);
--	if (IS_ERR(clk_data->msspll_base))
--		return PTR_ERR(clk_data->msspll_base);
-+	ret = mpfs_clk_syscon_probe(clk_data, pdev);
-+	if (ret) {
-+		ret = mpfs_clk_old_format_probe(clk_data, pdev);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	clk_data->hw_data.num = num_clks;
- 	clk_data->dev = dev;
-@@ -406,11 +453,7 @@ static int mpfs_clk_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, &clk_data->hw_data);
--	if (ret)
--		return ret;
--
--	return mpfs_reset_controller_register(dev, clk_data->base + REG_SUBBLK_RESET_CR);
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, &clk_data->hw_data);
- }
- 
- static const struct of_device_id mpfs_clk_of_match_table[] = {
+I'm trying to address all your comments but I'm starting to wonder if
+this isn't going a bit too far ? The functions tested are one line
+returns. Is it really worth all this ?
+
+I do understand the idea for things that actually do something, such as
+reparenting, setting rates or what not ... But this ? It feels like a
+lot of test code for very little added value, don't you think ?
+
 -- 
-2.45.2
-
+Jerome
