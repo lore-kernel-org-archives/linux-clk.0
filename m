@@ -1,118 +1,147 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D27D1E98ED
-	for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 15:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E904A227BAD
+	for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 15:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742572519; cv=none; b=sFOCW/rxnSoADOD9ZbU9XdcBirnPF/n/AaPj7jfYnZ6DVAlhYmr5SRXMIXvYb5Qv+6L79TUVoz+lO04bfKHRVYHbBGtBt+KNd5zhKB0TxGaYnzfoUgZBnKpQH5q2YZyZiP9k67gWOsQFTVgfNiN6r1SfFyLwoLMs/Whjjfp5V6A=
+	t=1742572562; cv=none; b=bSGiiMUNsQVllkibD8ja7T3M7/Ep07iemVRwky+MXSrQNbYnr0E/YTVH2BeKrBxaS2GH+Te/SUECaCfLABjxU+K2RADctQj1HqAB5hRM7muWqGBC9PX6dyaHtErzphmb0TPvwqNjbexQYQB5hJAh1fLZvTD+OigWKR6ITaW/aRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742572519; c=relaxed/simple;
-	bh=1wNtXhel12/P9++f5zzCWHX9NzteKr/42/osDVNIPRs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QprxMgk69S10Zxc0OPwlcrdhh1VdOZlI/E+0lhmEh5RMdZ0LM7y6kN2v3dT9sG7A4m0IlX3bVVH0+AoZTGXDelUocACa78cKXilnJ6zUMnEk1lkj6Q/bx9C0Pm8zG+k7MZOlN0+Dk7AGR9i20Sb7PMfWs4r487vjOJg6LAqtcmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=TBNxRapp; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1742572562; c=relaxed/simple;
+	bh=Jq89ASxO+RlQoZ0gTVY7HIGXZ3XESEER/rt4tTQsbOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eorZTKAak45km8BfIoFUpOAkPq2NRXbedNrAwhI5i7vc63uE6m2QPe6bUdXNKbKuZKyYLSJ/M7MRxv1r8CkGol3lY7cTe4T5mtfGM/+GmBk8ljmX21aKac0OLpRrvzCDDt5vOe1rAOfiYSxYJlX/ftQttBzsuysBh7VTNdiSUiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=paawdqxI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="TBNxRapp"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso15957805e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 08:55:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1742572516; x=1743177316; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=keE5UAE8I7WQVpj+EG1JG1WPFCAgkdvUmiHSr+M5kNk=;
-        b=TBNxRappCOi0ACvBXxjn5U2IBBHAuGlU1bWnqocxQFM3u7ck/pq9twTGJyayywwNBV
-         XTdYLYdpEC3J0/9I2ilxeFpVobkOe1Nvj6FgwRtd9Tdeacjbm4O/uwYUKbdXE1oXkx+T
-         ArD7IDUcz3KxadmoKFANu+mSZ+20lixUXTJ4/tJb43RnY3S6m0KDkF1OwDsYn9iSfUc2
-         kZgGzZj5vSjGMJ029vb5sc1n3FU8abrE9hZavgwX32UKHJk2aITP/es3cZe+fJL669Q6
-         G//pHczpmOEiI5xbAYQSw+DsKNG6vO6PClKE2P7DHuvlr1Dgx+ZQ/uBg0+47JMZL9rQH
-         C0SQ==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="paawdqxI"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52LATAGh022096
+	for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 15:55:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=04I2GyzdKmUJhCQaYtdGLGSe
+	ZPL6vjPt7nnOQuXCnAc=; b=paawdqxI0c2X/qEkfKLkv8o2JkWb8utkyFdpIKoX
+	e+QU9xFk0jb7j4zUIMf5Ks/YlxvUK3b12oF07grUJcoqT9vOfQlQtl6QKopesiDE
+	spp5neDhNK9gldpZrsRpeLafeIO6xfTMz1awA/H+7czQW8mcZhcxNHa5K25jaFQc
+	g9da/dvwdZeluENvmV8d2Sg63NL5Kmnk8rxZn1R9QKtprzi9UzXEuSBhoLSP5lA+
+	pe9DZRuc/2oUcq6GJgRLzDmtBb17U62CwKV9ankW9VAK85oPP+dsDfose1I1D1Dz
+	G30NVTqMFg20O2tWEHCrEEu/Yxy3XgcullJRmmW5b/T6Hg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45h4wph6jc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 15:55:59 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4769273691dso40465471cf.1
+        for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 08:55:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742572516; x=1743177316;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1742572559; x=1743177359;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=keE5UAE8I7WQVpj+EG1JG1WPFCAgkdvUmiHSr+M5kNk=;
-        b=ls+gZEvcF3q3+PlSZDh2yPST3egAcmZLlynevHMee5RdlN9kfw6NSzowKcbMy/4k5m
-         fkwS6T8csFak+htInEhR+JiGwSTr7Z9kafNlgm+kmblVmiyNwN6vKDA8Mn0uZbVf9v++
-         gI61874P3pIXObMNYFYVxIjt8PtI/fddAtv8obgHrfoGVJNPDeA9zTiYpz2GIZ+Tws9b
-         lI8nXnG+HqcldRzboRCEAtD2JHFhmuLu6XdCOvFXV4eR7qJc3tjPIYxTdXNNpG4nnWlF
-         9jabDZHvUx5fPNxU93zmOzW53YJ+l28VjUpMx97Kb0vqzBFuiQSnTbZl/Eohk0sd0sxs
-         qgNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbLE3XJA6YVCrrq40vCme4fmpzq6FkuEAZ2kmskaTYX+kWf6dJEp9d0NMBBi5sWJrVTHZTk6D470g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsWo5PTnb1won7j5gfv3aWW2c11huPftyKpurNVD55dgWl7+4Q
-	brWgfXypPvqTLq3cwJwOKpUZa76zjcVkdEvH8O4WzgXsOP+hZbVuJeKBhERN078=
-X-Gm-Gg: ASbGncv3AjvDa3AuoF8eUZXveSZ04m8XoJh3XH8sl2YATbLEtCvJcZ3dtmgP75l65B9
-	/lMgLdAAL7efFrFlIYXSftc/koxQO807VE9IyTgx4wrpzPuWPxLzyZXDHTbZs2S8ptLtlpGMtHl
-	SivhIRmWOSgmFN65uZGY+maEzwfWoJuu8D6NDulbtfkk8O1GK8kxtfIBBjPryWZ1RYmKviMxUtN
-	Izkcd4sFcqciYsSaHYKAiX0+0qBoDf9srCRUa5DFMO/jhwUbXAuzINInTPLAs8bEbDBKqpexF2M
-	OTgHIVK8rK3GxTdqxxt9Him65393YgDdwHUqOeot7w2gL56lZelzQ6g=
-X-Google-Smtp-Source: AGHT+IGf7f6p3B2QWzXbSlTw1NK0pPjUROlEz/T5BuJywHA6Cp2/lY5juGyE3geEn0WI2gDMWjaauQ==
-X-Received: by 2002:a05:600c:198a:b0:43c:fd27:a216 with SMTP id 5b1f17b1804b1-43d52376b88mr29455795e9.23.1742572515585;
-        Fri, 21 Mar 2025 08:55:15 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:2102:ce42:30c0:9b40])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d43f3328bsm81162415e9.1.2025.03.21.08.55.14
+        bh=04I2GyzdKmUJhCQaYtdGLGSeZPL6vjPt7nnOQuXCnAc=;
+        b=wX+NidqOTpKEBUwmEY/s/JoeYOlChrhzXWbcEb4eaHVunY+rTKScEON7KjmINHFSZW
+         9YNhZlKc0z75321PdXoq0MVti7HQluxfplfkAZ+T0pef/KSar8PENccCIBVw2KMzvW1P
+         YNsCYARqCBjJnakWhrKRjKJPsALaynBA/wBnHlKhzWHAGKeeKgz8iExYqlFrsCwU8aqV
+         cZVZFAIfX380EkCu7mEoKNJylMldIbyHTG241Cb7/AOVV3fYwtLUhQDzqy1qmErGw0sn
+         uJHuhSEGo7k7b3mv0QQkd+k0g6c1aEj3Vzn9wQSE3EBoauaVtb2j54lv4wdnTyk4Phfj
+         GZ4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXOReVjTAl5oPDBxhipwz7vQNM7I/NR1TuXmxdMYejd1NwsO5ltcH2o8gYlj5wy84x8JLFO6mupB94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHqVH5hFxphenPW1FfOswFjNH6BQiSGEZPuA9cH6CRJjZymA2U
+	x01fqeHaLynhP2s4XlGywieLJYUXF6/a3G7cEwMBj0enanlDi1A9pet3JZOXo/GMtejMKuVYxlj
+	uml2DVKpVhVV1NdcNigd7rwAYHtDXBZU8tFJ/88xfFT2CND4xFvq3F79IqI0=
+X-Gm-Gg: ASbGnctj9pFilD38anfepclqS9IzzMvEW2Z80JgkASYMbT+FIk0LEvN0q9kD7dUg4aV
+	Rrons8FOIaYcGxSSSGy2y/vU/bFo5rjjEda0a68LIF13CU283oYuxnPfau3cnGEtTYEcAArMMzU
+	hnzBuAGvn8k/kylaiB/3dXB6ViVMwcKWKcf+vvBjFRQcXkgOsFQWxVCAJV/yREoZ3CjyTf44vR1
+	/Pco8axsV4PlEq28Nn07SNq/yb21z97gsyTlShm4sizj8HBk11OEkPWw7ZkjEtlgJx30JW14BiU
+	A+v58kgoV5wkDhHgMaiO9RBu1PdgxiLOzCbegN3YQKPwRrX7YQjoV2WyiWlKkxP45+N19ykL216
+	YliI=
+X-Received: by 2002:a05:622a:4188:b0:474:fe6c:be44 with SMTP id d75a77b69052e-4771dd79997mr61852281cf.14.1742572558626;
+        Fri, 21 Mar 2025 08:55:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF07+SUkMs8VSdxuN5uNzjGJeTfpHG0ykEhaRVsi5AnxzE/ifh8qn7JCa0nZawf12AcsfFBAQ==
+X-Received: by 2002:a05:622a:4188:b0:474:fe6c:be44 with SMTP id d75a77b69052e-4771dd79997mr61851351cf.14.1742572557858;
+        Fri, 21 Mar 2025 08:55:57 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad6512aeesm207340e87.244.2025.03.21.08.55.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 08:55:15 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/3] clk: amlogic: drop clk_regmap tables
-In-Reply-To: <1j7c4i2xq5.fsf@starbuckisacylon.baylibre.com> (Jerome Brunet's
-	message of "Fri, 21 Mar 2025 16:46:10 +0100")
-References: <20241220-amlogic-clk-drop-clk-regmap-tables-v1-0-96dd657cbfbd@baylibre.com>
-	<20241220-amlogic-clk-drop-clk-regmap-tables-v1-2-96dd657cbfbd@baylibre.com>
-	<9f1d69ebe1ddce5dfc170e986c9213f2.sboyd@kernel.org>
-	<1ja5cp8f87.fsf@starbuckisacylon.baylibre.com>
-	<88fe909ab182d1f17f6ef18161c7f064.sboyd@kernel.org>
-	<1jfrlwb69r.fsf@starbuckisacylon.baylibre.com>
-	<ed20c67e7d1a91d7fd8b921f156f56fb.sboyd@kernel.org>
-	<1jmsg2adgu.fsf@starbuckisacylon.baylibre.com>
-	<697b634770d789ef8ff0e05cec9465f5.sboyd@kernel.org>
-	<1j4j205ark.fsf@starbuckisacylon.baylibre.com>
-	<5109de7fe1a1a8467118daf80c7b7f8a.sboyd@kernel.org>
-	<1j7c4i2xq5.fsf@starbuckisacylon.baylibre.com>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Fri, 21 Mar 2025 16:55:14 +0100
-Message-ID: <1j1puq2xb1.fsf@starbuckisacylon.baylibre.com>
+        Fri, 21 Mar 2025 08:55:56 -0700 (PDT)
+Date: Fri, 21 Mar 2025 17:55:53 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] clk: qcom: Add video clock controller driver for
+ SM6350
+Message-ID: <pzevgib37fgdupythk3mawmeuki6dflpw5bze4ujb6jcjvj7ar@jmjuzeabvq7y>
+References: <20250321-sm6350-videocc-v1-0-c5ce1f1483ee@fairphone.com>
+ <20250321-sm6350-videocc-v1-2-c5ce1f1483ee@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321-sm6350-videocc-v1-2-c5ce1f1483ee@fairphone.com>
+X-Proofpoint-ORIG-GUID: zJODX51fB6Z_qS-QGGyz5B43fgyNxVo8
+X-Proofpoint-GUID: zJODX51fB6Z_qS-QGGyz5B43fgyNxVo8
+X-Authority-Analysis: v=2.4 cv=ZN3XmW7b c=1 sm=1 tr=0 ts=67dd8c0f cx=c_pps a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=qohHCxWBmeq9gVc9HfwA:9 a=CjuIK1q_8ugA:10
+ a=a_PwQJl-kcHnX1M80qC6:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-21_05,2025-03-21_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 clxscore=1011 phishscore=0 adultscore=0 lowpriorityscore=0
+ malwarescore=0 impostorscore=0 spamscore=0 mlxscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503210117
 
-On Fri 21 Mar 2025 at 16:46, Jerome Brunet <jbrunet@baylibre.com> wrote:
+On Fri, Mar 21, 2025 at 03:45:00PM +0100, Luca Weiss wrote:
+> From: Konrad Dybcio <konradybcio@kernel.org>
+> 
+> Add support for the video clock controller found on SM6350 based
+> devices.
+> 
+> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+> Co-developed-by: Luca Weiss <luca.weiss@fairphone.com>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  drivers/clk/qcom/Kconfig          |   9 +
+>  drivers/clk/qcom/Makefile         |   1 +
+>  drivers/clk/qcom/videocc-sm6350.c | 355 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 365 insertions(+)
+> 
+> +
+> +/* 600 MHz */
+> +static const struct alpha_pll_config video_pll0_config = {
+> +	.l = 0x1F,
 
->>> 
->>> I admit this is heavily inspired by how devres works :) but it does solve
->>> the early clock controller problem and does not scale with the number of
->>> clock registered.
->>> 
->>
->> I don't know if devres is a good model. It's about tracking allocations
->> and things to undo later, not really to track things to do when called
->> initially.
->
-> My point was more the decoupling it allows.
-> Maybe it is me being too picky, but what I'm trying to do is related to the
-> clock type, so it bothers me when it scales with the number of instances
-> instead of the type.
->
-> More generally, something devres-like allows to register an attribute
-> and link it to a group. Then the group members come and just pick what
-> they need. Whatever manages the attribute does not have to track
-> them. That is pretty much aligned with what I'm trying to do.
+Nit: lowercase hex please. No need to repost just for the sake of this
+single line.
 
-Just to be clear, this idea is meant to live in /drivers/clk/meson, for
-a start a least, not as something generic.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+> +	.alpha = 0x4000,
+> +	.config_ctl_val = 0x20485699,
+> +	.config_ctl_hi_val = 0x00002067,
+> +	.test_ctl_val = 0x40000000,
+> +	.test_ctl_hi_val = 0x00000002,
+> +	.user_ctl_val = 0x00000101,
+> +	.user_ctl_hi_val = 0x00004005,
+> +};
+> +
+> 
 
 -- 
-Jerome
+With best wishes
+Dmitry
