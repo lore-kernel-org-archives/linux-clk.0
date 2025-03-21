@@ -1,498 +1,135 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51C11D6DDC
-	for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 14:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466BC1D90AD
+	for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 15:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742568354; cv=none; b=gXvC0tmQdrfSb3/YsDK3u0yveda1XQNyvESyNVyRptBumFL7lmCLf/Da5JtcSCvjWWLd/hZ2KuCsclTtjrdMSrK2nXgwp4BxafwEZwSOtNk6f6Smmq0KVFVqZLHotH9CGxYQ/vaOD4JMFL6tTBVaa/sWX7gJUbVE68NylA7DWXE=
+	t=1742570318; cv=none; b=ED1S/6v1f3EJlYuY6dulDjhX2yHgVOo9Ya0/dydgwMooceZR49zpW1AFX77Kc3uModtSP9WTGsFeW3comTK62Tn3+bDGtRt2GRcntm0lh//SLE/t/wVf0hrWawCvaBcsfj3Hsz2Jcv87lg1BAsKaxrY9vEJR+XhYfso3i4lUGOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742568354; c=relaxed/simple;
-	bh=99G49dkoZSZQFtgmII/LjMIbJkGbkmS/bObST0HFOSU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ia3dSqH4zdQ0oqSgP8Js15x608ZOcgLLrewN53QKgbO30u8IGKfjxWmDUjQeXw5+E/RgQSToR0CZNJV/6XUEj4O8virtplhlweIoBUVBevUEGMRj5GkO9gXzgbBMUie/hee/SZTGBg4209oggsD0HxV1IpBNtrHw+ObBsjrRJtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=BNCy71rN; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+	s=arc-20240116; t=1742570318; c=relaxed/simple;
+	bh=zhaML4Pm1m+KgXGzKB1u6T1c5KY484O/gyZwJl4YL/E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ckveQNHeeiph5mZSsRgMSWR2Q6uBs7w49YvQ14WFB1Iw7R4jMD8J60chEligRtLwCn8251x/NsYOe3hq+pIKfk3Dwx/fpv/hK6WbxQ9OHRgUzNGswDMnV4IZYLtJGMPWXyzXqDCHUgFrwV2ete75BUqDX8M8irleTrPlqsQt6mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=hXkiOk/i; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="BNCy71rN"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e56b229d60so5444168a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 07:45:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="hXkiOk/i"
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-85b4277d0fbso78027239f.0
+        for <linux-clk@vger.kernel.org>; Fri, 21 Mar 2025 08:18:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1742568350; x=1743173150; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MvrvjYKlry3UyNlBPCynCwB30edCALp4QLZm7pVO9ww=;
-        b=BNCy71rNAlXMytI4QW1uhfjC4BnSFUfEiPkXWo6ZZ75EOtouy4sb+owi+fF2PHplxK
-         HkIXrPFlGMF+kXzbiaBdcndgR+QXDxOy6kFutmIKityMfGCjUhVLrG84UiZ75nofsM/M
-         izk009aQ6Lln9T2oyff9e7+sB3gC4mtM0F1pykoQsJL/kKwe03bp3YIN17YH4vgo6giy
-         kO5qzLaON0fPDcjAk1RLz7UQ+XTbSz+WMHfQA3+lTBS3rl+n2nRBF/Fui8tdXAhuNG79
-         SVHj5htvIVRDjGwpKVPBW9hDUm7X6V1CgKeiH8fmCnuOgwAB6dBwueP1d0RvIBgRjalV
-         XmGQ==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742570315; x=1743175115; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UTantLRj2g1pI/nv2rQCu8piWojTNSsUaDvPh+ZcZxc=;
+        b=hXkiOk/ihh6uAQp8bV1d4GUG0/Shih91SHUOWa3E+gxKndxMWJT7xTfkhqDVlypUiw
+         QFI/Kmdi4a0DnbOBkeql/WVhXSrhT8rjeW9OljzsVNWuETVUVVbNn2YfL0PDoQ4/IaE0
+         qiCrzO7QBiOdYWiDPNGnORRmaN04WvUOQ8EFN8d2Lez1uxcahG2pgXOL3HdsLdb6IZ5w
+         pJBOzZlGZ6c2bZ//x7S0fzXICfi1EAtY56Ec7tPYew9UkLq87oY5L2te/Az5bkCR5grI
+         4xQkyOge3+qq1ryui2DbbG0vX3jJ9vJxDaz3JDCK4HgZY6FHjAmZJwuQqWf6YhZd9vcf
+         ABHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742568350; x=1743173150;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MvrvjYKlry3UyNlBPCynCwB30edCALp4QLZm7pVO9ww=;
-        b=Hj5bAbTgJzTTvAo5SVfZlLCsFfLs68OiLSulClWRoUj7OCH+93d+dvofRsKksbSIFG
-         Mqsyf22n6NuuIHObK81YGAhOnQx2k6waKUvNoTwZETjLYq0BjZLvf5wGDiUqBss7kvlS
-         DV2X2jNiLPDGPO10AJUC2lJNJoeihn5pegtLDn0BoEJreAJVTH2NpzEr1t+3fdpXm3v+
-         Z0V4+shAg1zcZqhNh/xm08BgnOsQR8YqoTOKIuXT0cMN/cKs+AVkiYoXWBhVKYGZMvXu
-         qeYWaukvd3DA0FRNdbkLWhnwuu7Bja9rkUhCVSeIBIhrdQ55F81uFYB3M45mBPapel51
-         Ls9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXzYWcbDTxIgBjCCdkNFrcns3ElnSQkKh92xXwHT/ITiiP9CWdQ+9Y9/bjbsxMXeFqPsAn4nxWW3x8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN8WLXbYYOG7kW5rV9ylGOledu0zUucLLNGjmSxbHnAy2N5rcl
-	VDQbooMaQ89OfqHLzn2Eoivy4QVQLss6aeKxyIKSrZv865oGUHOqN3d8heaZiMo=
-X-Gm-Gg: ASbGncu9yqj3AxNXoLqaMxiwmfTAhUaUIsQeOEhsCGZO9M9VtKp5eSEV9Qi/CijA1mo
-	HvOIpH9GXtTqofvMmwWAU0coHOdw62il9H9GWdZ2Fyvb/2Xhq7VkWjPy5bwTwmnfQZF+9XHYQ//
-	QXEbxxXVYd5sAutUaWprfXNJSM2pMkdJVL1xpyTk2Mj4PG+wXLG2ZdiCyANYquW47cTDSHvshtU
-	Q8sHurJmStvkN0KzYSFu8eUke8gZavBhJGOcSnO0HD8cZOttUjcCj2Nh7NXLeTrmaiqLyUeOrg8
-	IgocqhPUnFZtyWSEMEIl7IYUcF/09GrQQX9vG+JY/B8dJYBPT2AWCVUPxlbsMDverq0T82bR1HU
-	4V3EcDqKp9PaKaOEYDQ==
-X-Google-Smtp-Source: AGHT+IHTo3aTKgYEFSRJ/LG3CdMT1yPGsBn0sVYJoJIbR0YMFLusvWwtXUz+aR5W6GW/p9vc5eAbdg==
-X-Received: by 2002:a17:907:f50a:b0:ac2:d5d3:2b77 with SMTP id a640c23a62f3a-ac3f0119e55mr408997566b.8.1742568349698;
-        Fri, 21 Mar 2025 07:45:49 -0700 (PDT)
-Received: from [100.64.0.4] (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efb648acsm168092466b.98.2025.03.21.07.45.49
+        d=1e100.net; s=20230601; t=1742570315; x=1743175115;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UTantLRj2g1pI/nv2rQCu8piWojTNSsUaDvPh+ZcZxc=;
+        b=nyI51GEls07W27im9pieuC0owfGzD1HtGJsxeXG4Z69BUs2TjZEYcwA/d9gXsFlyh3
+         2xqmrsGs65fkvE0ldwgnZ1gCaMb6Fx3mR8d2zbU9+yNBeXvhTU8fsDa3+hjll0fyLzo/
+         4dpCaEoW2D3Kg8PrP0SYbRW7nz3sADbzWUMO7v8Ymvxnif4yeFBdZzbFMsDyDa9pjrPV
+         haT7eNmM11mgAM+RL1holfQBP1Ev81XMvT8aj0RmgQAOWQKziLQwN+U3WrXmSmm81oG4
+         CL0QWoyFtrj4zU23eFMVmhdyQjgzxJXSv95PptgGRwLS7Z5q6JDOjQpmJC9FtzTIXiEZ
+         OOYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXWzWq2LrzkLgiVr1jockfxUzkcWrD29W7iTH770MihWuquW8UqKcsOUi0WoF6ldv1p6FfJsYZjCZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxuT0VPAw2G7fMhh5z1gvwqz54VmrGwM6ujZkL0qES8EqcCazn
+	9NCxtVBKqTCtuC7CKjYAFPfJk5YABVzKN/k0pMITjIIidw2qVZxNk9Z8u5K6uDE=
+X-Gm-Gg: ASbGncthkiPKUrroJfmRUd9wIx4qcTaF0G93nVcAOm1QjKYmT4PZshq6wA+qRsxvArg
+	cJrNQM8AfkjgF3Q5mMGiDY4m+2TrqKLndifS3YAzXedprKn2+OZOPzM55IWTl4VOoN5MtIGMGY9
+	9735eqJTdT8yFjinvQLPnllUZUxAnKX7VR666Swpaf0PXb34qIhFxrHe3KzMdAC8MDGWK+x3bBS
+	yQAMHlVRQqLRgU/okXL7xe4j+NRLNaDVyZ9ZztN0SC3tKIMsZJDS2XWMM6j1CRDWlSQE1Y6SZgB
+	Sow+LRNbW9dt4pDk0+SFFUnJjw5m/aD3ycqrEA1Eu+eGFMxPHqnSvf68O/+F4o29RA+ZzdAphXP
+	ErmHvnLi87gOHEBhzWvtWnhRQUk2csX82myg=
+X-Google-Smtp-Source: AGHT+IGSab75MXOOp0j710KIm4LrkQU9r7YtJUQHaFEL9MotB5UuhKhBeVLzh5RSsEP9NerpL6ljFQ==
+X-Received: by 2002:a05:6602:3998:b0:85b:46d7:1892 with SMTP id ca18e2360f4ac-85e2ca1895amr415643939f.2.1742570315183;
+        Fri, 21 Mar 2025 08:18:35 -0700 (PDT)
+Received: from zoltan.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbdd0a21sm475553173.41.2025.03.21.08.18.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 07:45:49 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Fri, 21 Mar 2025 15:45:00 +0100
-Subject: [PATCH 2/3] clk: qcom: Add video clock controller driver for
- SM6350
+        Fri, 21 Mar 2025 08:18:34 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: p.zabel@pengutronix.de,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	dlan@gentoo.org
+Cc: heylenay@4d2.org,
+	guodong@riscstar.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	spacemit@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND 0/7] clk: spacemit: add K1 reset support
+Date: Fri, 21 Mar 2025 10:18:23 -0500
+Message-ID: <20250321151831.623575-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250321-sm6350-videocc-v1-2-c5ce1f1483ee@fairphone.com>
-References: <20250321-sm6350-videocc-v1-0-c5ce1f1483ee@fairphone.com>
-In-Reply-To: <20250321-sm6350-videocc-v1-0-c5ce1f1483ee@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-From: Konrad Dybcio <konradybcio@kernel.org>
+(Resending as requested by Yixun, this timing adding the SpacemiT
+mailing list to the CC list.)
 
-Add support for the video clock controller found on SM6350 based
-devices.
+This series adds reset controller support for the SpacemiT K1 SoC.
+It is based on Linux v6.14-rc1.
 
-Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
-Co-developed-by: Luca Weiss <luca.weiss@fairphone.com>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/clk/qcom/Kconfig          |   9 +
- drivers/clk/qcom/Makefile         |   1 +
- drivers/clk/qcom/videocc-sm6350.c | 355 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 365 insertions(+)
+It is built upon the clock controller driver that Haylen Chu
+currently has out for review (currently at v5):
+  https://lore.kernel.org/lkml/20250306175750.22480-2-heylenay@4d2.org/
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 7d5dac26b244bfe785370033ad8ba49876d6627d..602e35d3d6c5b3b76947d892bb705fe742daf081 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -1329,6 +1329,15 @@ config SA_VIDEOCC_8775P
- 	  Say Y if you want to support video devices and functionality such as
- 	  video encode/decode.
- 
-+config SM_VIDEOCC_6350
-+	tristate "SM6350 Video Clock Controller"
-+	select SM_GCC_6350
-+	select QCOM_GDSC
-+	help
-+	  Support for the video clock controller on SM6350 devices.
-+	  Say Y if you want to support video devices and functionality such as
-+	  video encode and decode.
-+
- config SM_VIDEOCC_7150
- 	tristate "SM7150 Video Clock Controller"
- 	depends on ARM64 || COMPILE_TEST
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 96862e99e5d432bbfba193c961d59ec5e601f10a..70895bc465549b87c7c7a8dc6f8ac84c223a85d6 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -164,6 +164,7 @@ obj-$(CONFIG_SM_LPASSCC_6115) += lpasscc-sm6115.o
- obj-$(CONFIG_SM_TCSRCC_8550) += tcsrcc-sm8550.o
- obj-$(CONFIG_SM_TCSRCC_8650) += tcsrcc-sm8650.o
- obj-$(CONFIG_SM_TCSRCC_8750) += tcsrcc-sm8750.o
-+obj-$(CONFIG_SM_VIDEOCC_6350) += videocc-sm6350.o
- obj-$(CONFIG_SM_VIDEOCC_7150) += videocc-sm7150.o
- obj-$(CONFIG_SM_VIDEOCC_8150) += videocc-sm8150.o
- obj-$(CONFIG_SM_VIDEOCC_8250) += videocc-sm8250.o
-diff --git a/drivers/clk/qcom/videocc-sm6350.c b/drivers/clk/qcom/videocc-sm6350.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..1427a783d9bc6f7473704cd935035b16b831fa1f
---- /dev/null
-+++ b/drivers/clk/qcom/videocc-sm6350.c
-@@ -0,0 +1,355 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2021, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2021, Konrad Dybcio <konrad.dybcio@somainline.org>
-+ * Copyright (c) 2025, Luca Weiss <luca.weiss@fairphone.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,sm6350-videocc.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "common.h"
-+#include "gdsc.h"
-+
-+enum {
-+	DT_IFACE,
-+	DT_BI_TCXO,
-+	DT_SLEEP_CLK,
-+};
-+
-+enum {
-+	P_BI_TCXO,
-+	P_CHIP_SLEEP_CLK,
-+	P_VIDEO_PLL0_OUT_EVEN,
-+};
-+
-+static const struct pll_vco fabia_vco[] = {
-+	{ 125000000, 1000000000, 1 },
-+};
-+
-+/* 600 MHz */
-+static const struct alpha_pll_config video_pll0_config = {
-+	.l = 0x1F,
-+	.alpha = 0x4000,
-+	.config_ctl_val = 0x20485699,
-+	.config_ctl_hi_val = 0x00002067,
-+	.test_ctl_val = 0x40000000,
-+	.test_ctl_hi_val = 0x00000002,
-+	.user_ctl_val = 0x00000101,
-+	.user_ctl_hi_val = 0x00004005,
-+};
-+
-+static struct clk_alpha_pll video_pll0 = {
-+	.offset = 0x0,
-+	.vco_table = fabia_vco,
-+	.num_vco = ARRAY_SIZE(fabia_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-+	.clkr = {
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_pll0",
-+			.parent_data = &(const struct clk_parent_data) {
-+				.index = DT_BI_TCXO,
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_fabia_ops,
-+		},
-+	},
-+};
-+
-+static const struct clk_div_table post_div_table_video_pll0_out_even[] = {
-+	{ 0x1, 2 },
-+	{ }
-+};
-+
-+static struct clk_alpha_pll_postdiv video_pll0_out_even = {
-+	.offset = 0x0,
-+	.post_div_shift = 8,
-+	.post_div_table = post_div_table_video_pll0_out_even,
-+	.num_post_div = ARRAY_SIZE(post_div_table_video_pll0_out_even),
-+	.width = 4,
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "video_pll0_out_even",
-+		.parent_hws = (const struct clk_hw*[]) {
-+			&video_pll0.clkr.hw,
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_alpha_pll_postdiv_fabia_ops,
-+	},
-+};
-+
-+static const struct parent_map video_cc_parent_map_0[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_VIDEO_PLL0_OUT_EVEN, 3 },
-+};
-+
-+static const struct clk_parent_data video_cc_parent_data_0[] = {
-+	{ .index = DT_BI_TCXO },
-+	{ .hw = &video_pll0_out_even.clkr.hw },
-+};
-+
-+static const struct parent_map video_cc_parent_map_1[] = {
-+	{ P_CHIP_SLEEP_CLK, 0 },
-+};
-+
-+static const struct clk_parent_data video_cc_parent_data_1[] = {
-+	{ .index = DT_SLEEP_CLK },
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_iris_clk_src[] = {
-+	F(133250000, P_VIDEO_PLL0_OUT_EVEN, 2, 0, 0),
-+	F(240000000, P_VIDEO_PLL0_OUT_EVEN, 1.5, 0, 0),
-+	F(300000000, P_VIDEO_PLL0_OUT_EVEN, 1, 0, 0),
-+	F(380000000, P_VIDEO_PLL0_OUT_EVEN, 1, 0, 0),
-+	F(460000000, P_VIDEO_PLL0_OUT_EVEN, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_iris_clk_src = {
-+	.cmd_rcgr = 0x1000,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_0,
-+	.freq_tbl = ftbl_video_cc_iris_clk_src,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "video_cc_iris_clk_src",
-+		.parent_data = video_cc_parent_data_0,
-+		.num_parents = ARRAY_SIZE(video_cc_parent_data_0),
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_sleep_clk_src[] = {
-+	F(32764, P_CHIP_SLEEP_CLK, 1, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_sleep_clk_src = {
-+	.cmd_rcgr = 0x701c,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_1,
-+	.freq_tbl = ftbl_video_cc_sleep_clk_src,
-+	.clkr.hw.init = &(const struct clk_init_data) {
-+		.name = "video_cc_sleep_clk_src",
-+		.parent_data = video_cc_parent_data_1,
-+		.num_parents = ARRAY_SIZE(video_cc_parent_data_1),
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
-+static struct clk_branch video_cc_iris_ahb_clk = {
-+	.halt_reg = 0x5004,
-+	.halt_check = BRANCH_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x5004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_iris_ahb_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&video_cc_iris_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvs0_axi_clk = {
-+	.halt_reg = 0x800c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x800c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_mvs0_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvs0_core_clk = {
-+	.halt_reg = 0x3010,
-+	.halt_check = BRANCH_VOTED,
-+	.hwcg_reg = 0x3010,
-+	.hwcg_bit = 1,
-+	.clkr = {
-+		.enable_reg = 0x3010,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_mvs0_core_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&video_cc_iris_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvsc_core_clk = {
-+	.halt_reg = 0x2014,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x2014,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_mvsc_core_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&video_cc_iris_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_mvsc_ctl_axi_clk = {
-+	.halt_reg = 0x8004,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_mvsc_ctl_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_sleep_clk = {
-+	.halt_reg = 0x7034,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x7034,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_sleep_clk",
-+			.parent_hws = (const struct clk_hw*[]) {
-+				&video_cc_sleep_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ahb_clk = {
-+	.halt_reg = 0x801c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x801c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(const struct clk_init_data) {
-+			.name = "video_cc_venus_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct gdsc mvsc_gdsc = {
-+	.gdscr = 0x2004,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0x6,
-+	.pd = {
-+		.name = "mvsc_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc mvs0_gdsc = {
-+	.gdscr = 0x3004,
-+	.en_rest_wait_val = 0x2,
-+	.en_few_wait_val = 0x2,
-+	.clk_dis_wait_val = 0x6,
-+	.pd = {
-+		.name = "mvs0_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = HW_CTRL_TRIGGER,
-+};
-+
-+static struct gdsc *video_cc_sm6350_gdscs[] = {
-+	[MVSC_GDSC] = &mvsc_gdsc,
-+	[MVS0_GDSC] = &mvs0_gdsc,
-+};
-+
-+static struct clk_regmap *video_cc_sm6350_clocks[] = {
-+	[VIDEO_CC_IRIS_AHB_CLK] = &video_cc_iris_ahb_clk.clkr,
-+	[VIDEO_CC_IRIS_CLK_SRC] = &video_cc_iris_clk_src.clkr,
-+	[VIDEO_CC_MVS0_AXI_CLK] = &video_cc_mvs0_axi_clk.clkr,
-+	[VIDEO_CC_MVS0_CORE_CLK] = &video_cc_mvs0_core_clk.clkr,
-+	[VIDEO_CC_MVSC_CORE_CLK] = &video_cc_mvsc_core_clk.clkr,
-+	[VIDEO_CC_MVSC_CTL_AXI_CLK] = &video_cc_mvsc_ctl_axi_clk.clkr,
-+	[VIDEO_CC_SLEEP_CLK] = &video_cc_sleep_clk.clkr,
-+	[VIDEO_CC_SLEEP_CLK_SRC] = &video_cc_sleep_clk_src.clkr,
-+	[VIDEO_CC_VENUS_AHB_CLK] = &video_cc_venus_ahb_clk.clkr,
-+	[VIDEO_PLL0] = &video_pll0.clkr,
-+	[VIDEO_PLL0_OUT_EVEN] = &video_pll0_out_even.clkr,
-+};
-+
-+static const struct regmap_config video_cc_sm6350_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0xb000,
-+	.fast_io = true,
-+};
-+
-+static const struct qcom_cc_desc video_cc_sm6350_desc = {
-+	.config = &video_cc_sm6350_regmap_config,
-+	.clks = video_cc_sm6350_clocks,
-+	.num_clks = ARRAY_SIZE(video_cc_sm6350_clocks),
-+	.gdscs = video_cc_sm6350_gdscs,
-+	.num_gdscs = ARRAY_SIZE(video_cc_sm6350_gdscs),
-+};
-+
-+static const struct of_device_id video_cc_sm6350_match_table[] = {
-+	{ .compatible = "qcom,sm6350-videocc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, video_cc_sm6350_match_table);
-+
-+static int video_cc_sm6350_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+
-+	regmap = qcom_cc_map(pdev, &video_cc_sm6350_desc);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	clk_fabia_pll_configure(&video_pll0, regmap, &video_pll0_config);
-+
-+	/* Keep some clocks always-on */
-+	qcom_branch_set_clk_en(regmap, 0x7018); /* VIDEO_CC_XO_CLK */
-+
-+	return qcom_cc_really_probe(&pdev->dev, &video_cc_sm6350_desc, regmap);
-+}
-+
-+static struct platform_driver video_cc_sm6350_driver = {
-+	.probe = video_cc_sm6350_probe,
-+	.driver = {
-+		.name = "video_cc-sm6350",
-+		.of_match_table = video_cc_sm6350_match_table,
-+	},
-+};
-+
-+module_platform_driver(video_cc_sm6350_driver);
-+
-+MODULE_DESCRIPTION("QTI VIDEO_CC SM6350 Driver");
-+MODULE_LICENSE("GPL");
+It also depends on two commits that will land in v6.15: 5728c92ae1123
+("mfd: syscon: Restore device_node_to_regmap() for non-syscon nodes")
+and 7ff4faba63571 ("pinctrl: spacemit: enable config option").
+
+The first patch adds three more system controller CCU nodes to those
+implemented by the SpacemiT K1.  The second updates the existing clock
+driver with a structure used for OF match data, allowing both clocks
+and resets to be specified.  The third provides code that implements
+reset functionality.  The fourth defines groups of reset controls
+implemented by the CCUs that have alraady been defined.  The fifth
+makes it possible for a CCU to be defined with resets but no clocks.
+The sixth defines three new CCUs which define only resets.  And the
+last patch defines these additional syscon nodes in "k1.dtsi".
+
+All of these patches are available here:
+  https://github.com/riscstar/linux/tree/outgoing/reset-v1
+
+					-Alex
+
+Alex Elder (7):
+  dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
+  clk: spacemit: define struct k1_ccu_data
+  clk: spacemit: add reset controller support
+  clk: spacemit: define existing syscon resets
+  clk: spacemit: make clocks optional
+  clk: spacemit: define new syscons with only resets
+  riscv: dts: spacemit: add reset support for the K1 SoC
+
+ .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  18 +
+ drivers/clk/spacemit/ccu-k1.c                 | 393 +++++++++++++++++-
+ include/dt-bindings/clock/spacemit,k1-ccu.h   | 134 ++++++
+ 4 files changed, 539 insertions(+), 19 deletions(-)
 
 -- 
-2.49.0
+2.43.0
 
