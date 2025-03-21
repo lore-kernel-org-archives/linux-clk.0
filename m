@@ -1,40 +1,58 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293821519BE;
-	Fri, 21 Mar 2025 22:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707B04A0C;
+	Fri, 21 Mar 2025 22:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742595960; cv=none; b=j06vw86zC/fQ6UtjmxuTT0fw5ctGgW+GRf+kI5j49xRXp4Cx4rcSZs6tKyc2XV12+4mHGYFQjFHwksKlHuSP4a7S1cxP7FXCELAxAek6OCjQbuwlFsGetXRJnORm1kD6KEWbv5ZLyX/4ar9w1/GdlpqRVzDvjHF1c4PUEh8mIJA=
+	t=1742596656; cv=none; b=CnHy5cxcQs2DpQCUKmTZ+qOiKzpt6YUR7hDr5bJBkmwjU//GmnYK9nqwd8TNgelNMRXI/0Q6wjMaoGMISQv2tMNx8KXL8MYxuwiIxwN3i5ffgI5PJz/u8PxfHD3m1SsBECH4cI2QUOG//oip/tlfRK6hXTP2qa+Jcj5GmbmNAHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742595960; c=relaxed/simple;
-	bh=vYmiiL+JAp1wGAkVFDCwFvS+vkrR9HpnBuY5stT1Bsc=;
+	s=arc-20240116; t=1742596656; c=relaxed/simple;
+	bh=ramSATIM6Gfyw9DQk/rIg5hUgUc4Aq61YIxEdbWpWAc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CGUwkudF2a1IGQfJm7uudH6DHtmY1m1YmmSR61ZlLMkOcYj2tAhlY+mwGFsVuDI1QloD3/NwjEPkelVkwbcPYUJ/hruRMT+tFQMNsis3VonXkB8ctcv40paHQC8DVOuZO3uI83Agkq+xLB3niJZ0J48XMJcJA1ZPJ50ht0dX7oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.233])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 17D023430C5;
-	Fri, 21 Mar 2025 22:25:56 +0000 (UTC)
-Date: Fri, 21 Mar 2025 22:25:46 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-	heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 1/7] dt-bindings: soc: spacemit: define
- spacemit,k1-ccu resets
-Message-ID: <20250321222546-GYA11633@gentoo>
-References: <20250321151831.623575-1-elder@riscstar.com>
- <20250321151831.623575-2-elder@riscstar.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kbhvrZ1heUvoJRqXueUHhxPyAg18caQg5qoIe2QP6yJe+sGehLySt5eISC1KBqUzNKao1eufYh24Lp1qaUH8HWhEjHFJJfVsyv725SP6/Fgx2tp9Pr/eCLkzEJrK3qH9/RdxtbVAQ3zzgWb1sjExzTH5uqieiJOfKeVKLroZdes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/b5e3Xw; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/b5e3Xw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD08C4CEE3;
+	Fri, 21 Mar 2025 22:37:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742596655;
+	bh=ramSATIM6Gfyw9DQk/rIg5hUgUc4Aq61YIxEdbWpWAc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u/b5e3XwA10wQ0+gzZsAmrh+PYEPBTqOTPwQCOEJmGQ72ZsBAs4AUVs6sGkyH/oCm
+	 OWh72S7LLTL5DxzFvdSVgJM05lo4MiYSGkdaANNFI7HR/8FtIQh08BqBmmYhZP/ldO
+	 U3oL9HVf6BXs+eapmm7aKRLfGJQhcMI2zTLB7ahA4kLIvR71WujKLPNXhhxJ09PWNH
+	 dLlWWMcr/3JOadEK6bvLKreEPEgWRHTlPVHQKyqypBDzcPN1PYgvavIhgMIqlbIe4a
+	 Y26LDPTZ5wsqjo3Tn2S6/fmAZ82NZi6oHL8CNGEyRnkbS2KBvmAFiFSMTSn7PLiEhS
+	 6vAgxK49Xc4wA==
+Date: Fri, 21 Mar 2025 17:37:34 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Yangyu Chen <cyy@cyyself.name>, Ben Hutchings <ben@decadent.org.uk>,
+	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [PATCH v2 03/11] dt-bindings: clock: en7523: add Documentation
+ for Airoha AN7581 SCU SSR
+Message-ID: <20250321223734.GA6837-robh@kernel.org>
+References: <20250320130054.4804-1-ansuelsmth@gmail.com>
+ <20250320130054.4804-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,234 +61,155 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250321151831.623575-2-elder@riscstar.com>
+In-Reply-To: <20250320130054.4804-4-ansuelsmth@gmail.com>
 
-hi Alex:
-
-On 10:18 Fri 21 Mar     , Alex Elder wrote:
-> There are additional SpacemiT syscon CCUs whose registers control both
-> clocks and resets:  RCPU, RCPU2, and APBC2. Unlike those defined
-> previously, these will initially support only resets.  They do not
-> incorporate power domain functionality.
+On Thu, Mar 20, 2025 at 02:00:26PM +0100, Christian Marangi wrote:
+> The Airoha AN7581 SoC have in the SCU register space particular
+> address that control how some peripheral are configured.
 > 
-> Define the index values for resets associated with all SpacemiT K1
-> syscon nodes, including those with clocks already defined, as well as
-> the new ones (without clocks).
+> These are toggeled in the System Status Register and are used to
+> toggle Serdes port for USB 3.0 mode or HSGMII, USB 3.0 mode or PCIe2
+> or setup port for PCIe mode or Ethrnet mode (HSGMII/USXGMII).
 > 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
+> Modes are mutually exclusive and selecting one mode cause the
+> other feature to not work (example a mode in USB 3.0 cause PCIe
+> port 2 to not work) This depends also on what is physically
+> connected to the Hardware and needs to correctly reflect the
+> System Status Register bits.
+> 
+> Special care is needed for PCIe port 0 in 2 line mode that
+> requires both WiFi1 and WiFi2 Serdes port set to PCIe0 2 Line
+> mode.
+> 
+> Expose these configuration as an enum of strings in the SCU node and
+> also add dt-bindings header to reference each serdes port in DT.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
->  include/dt-bindings/clock/spacemit,k1-ccu.h   | 134 ++++++++++++++++++
->  2 files changed, 143 insertions(+), 4 deletions(-)
+>  .../bindings/clock/airoha,en7523-scu.yaml     | 101 ++++++++++++++++--
+>  MAINTAINERS                                   |   7 ++
+>  include/dt-bindings/soc/airoha,scu-ssr.h      |  11 ++
+>  3 files changed, 110 insertions(+), 9 deletions(-)
+>  create mode 100644 include/dt-bindings/soc/airoha,scu-ssr.h
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> index 07a6728e6f864..333c28e075b6c 100644
-> --- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> @@ -19,6 +19,9 @@ properties:
->        - spacemit,k1-syscon-apbc
->        - spacemit,k1-syscon-apmu
->        - spacemit,k1-syscon-mpmu
-> +      - spacemit,k1-syscon-rcpu
-> +      - spacemit,k1-syscon-rcpu2
-> +      - spacemit,k1-syscon-apbc2
+> diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> index fe2c5c1baf43..637ce0e06619 100644
+> --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
+> @@ -9,6 +9,7 @@ title: EN7523 Clock
+>  maintainers:
+>    - Felix Fietkau <nbd@nbd.name>
+>    - John Crispin <nbd@nbd.name>
+> +  - Christian Marangi <ansuelsmth@gmail.com>
 >  
->    reg:
->      maxItems: 1
-> @@ -57,13 +60,15 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: spacemit,k1-syscon-apbc
-> +            enum:
-> +              - spacemit,k1-syscon-apmu
-> +              - spacemit,k1-syscon-mpmu
->      then:
-> -      properties:
-> -        "#power-domain-cells": false
-> -    else:
->        required:
->          - "#power-domain-cells"
-> +    else:
+>  description: |
+>    This node defines the System Control Unit of the EN7523 SoC,
+> @@ -26,6 +27,23 @@ description: |
+>  
+>    The clocks are provided inside a system controller node.
+>  
+> +  The System Control Unit may also set different mode for the Serdes ports
+> +  present on the SoC.
+> +
+> +  These are toggeled in the System Status Register and are used to
+> +  toggle Serdes port for USB 3.0 mode or HSGMII, USB 3.0 mode or PCIe2
+> +  or setup port for PCIe mode or Ethernet mode (HSGMII/USXGMII).
+> +
+> +  Modes are mutually exclusive and selecting one mode cause the
+> +  other feature to not work (example a mode in USB 3.0 cause PCIe
+> +  port 2 to not work) This depends also on what is physically
+> +  connected to the Hardware and needs to correctly reflect the
+> +  System Status Register bits.
+> +
+> +  Special care is needed for PCIe port 0 in 2 line mode that
+> +  requires both WiFi1 and WiFi2 Serdes port set to PCIe0 2 Line
+> +  mode.
+> +
+>  properties:
+>    compatible:
+>      items:
+> @@ -49,6 +67,40 @@ properties:
+>      description: ID of the controller reset line
+>      const: 1
+>  
+> +  airoha,serdes-wifi1:
+> +    description: Configure the WiFi1 Serdes port
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum:
+> +      - pcie0_x2
+> +      - pcie0_x1
+> +      - ethernet
+> +    default: pcie0_x1
+> +
+> +  airoha,serdes-wifi2:
+> +    description: Configure the WiFi2 Serdes port
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum:
+> +      - pcie0_x2
+> +      - pcie1_x1
+> +      - ethernet
+> +    default: pcie1_x1
+> +
+> +  airoha,serdes-usb1:
+> +    description: Configure the USB1 Serdes port
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum:
+> +      - usb3
+> +      - ethernet
+> +    default: usb3
+> +
+> +  airoha,serdes-usb2:
+> +    description: Configure the USB2 Serdes port
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    enum:
+> +      - usb3
+> +      - pcie2_x1
+> +    default: usb3
+
+Couldn't you make this a phy provider and use the mode flags in the 
+phy cells?
+
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -64,6 +116,12 @@ allOf:
+>          reg:
+>            minItems: 2
+>  
+> +        airoha,serdes-wifi1: false
+> +        airoha,serdes-wifi2: false
+> +
+> +        airoha,serdes-usb1: false
+> +        airoha,serdes-usb2: false
+> +
+>          '#reset-cells': false
+>  
+>    - if:
+> @@ -75,6 +133,24 @@ allOf:
+>          reg:
+>            maxItems: 1
+>  
+> +  - if:
 > +      properties:
-> +        "#power-domain-cells": false
->  
+> +        airoha,serdes-wifi1:
+> +          const: pcie0_x2
+
+This is also true if airoha,serdes-wifi1 is not present. Probably not 
+what you intended.
+
+> +    then:
+> +      properties:
+> +        airoha,serdes-wifi2:
+> +          const: pcie0_x2
+> +
+> +  - if:
+> +      properties:
+> +        airoha,serdes-wifi2:
+> +          const: pcie0_x2
+> +    then:
+> +      properties:
+> +        airoha,serdes-wifi1:
+> +          const: pcie0_x2
+> +
 >  additionalProperties: false
->  
-> diff --git a/include/dt-bindings/clock/spacemit,k1-ccu.h b/include/dt-bindings/clock/spacemit,k1-ccu.h
-> index 4a0c7163257e3..a1e1b1fe714ce 100644
-> --- a/include/dt-bindings/clock/spacemit,k1-ccu.h
-> +++ b/include/dt-bindings/clock/spacemit,k1-ccu.h
-> @@ -78,6 +78,9 @@
->  #define CLK_APB			31
->  #define CLK_WDT_BUS		32
->  
-> +/*	MPMU resets	*/
-> +#define RST_WDT			0
-> +
->  /*	APBC clocks	*/
->  #define CLK_UART0		0
->  #define CLK_UART2		1
-> @@ -109,6 +112,7 @@
->  #define CLK_PWM17		27
->  #define CLK_PWM18		28
->  #define CLK_PWM19		29
-> +
-as Rob point out, this isn't necessary, not related to reset
-
->  #define CLK_SSP3		30
->  #define CLK_RTC			31
->  #define CLK_TWSI0		32
-> @@ -180,6 +184,60 @@
->  #define CLK_TSEN_BUS		98
->  #define CLK_IPC_AP2AUD_BUS	99
->  
-> +/*	APBC resets	*/
-> +
-I'd also suggest to drop above blank line, keep style consistent
-with others in this file, some same below that I won't comment
-> +#define RST_UART0		0
-> +#define RST_UART2		1
-> +#define RST_UART3		2
-> +#define RST_UART4		3
-> +#define RST_UART5		4
-> +#define RST_UART6		5
-> +#define RST_UART7		6
-> +#define RST_UART8		7
-> +#define RST_UART9		8
-> +#define RST_GPIO		9
-> +#define RST_PWM0		10
-> +#define RST_PWM1		11
-> +#define RST_PWM2		12
-> +#define RST_PWM3		13
-> +#define RST_PWM4		14
-> +#define RST_PWM5		15
-> +#define RST_PWM6		16
-> +#define RST_PWM7		17
-> +#define RST_PWM8		18
-> +#define RST_PWM9		19
-> +#define RST_PWM10		20
-> +#define RST_PWM11		21
-> +#define RST_PWM12		22
-> +#define RST_PWM13		23
-> +#define RST_PWM14		24
-> +#define RST_PWM15		25
-> +#define RST_PWM16		26
-> +#define RST_PWM17		27
-> +#define RST_PWM18		28
-> +#define RST_PWM19		29
-> +#define RST_SSP3		30
-> +#define RST_RTC			31
-> +#define RST_TWSI0		32
-> +#define RST_TWSI1		33
-> +#define RST_TWSI2		34
-> +#define RST_TWSI4		35
-> +#define RST_TWSI5		36
-> +#define RST_TWSI6		37
-> +#define RST_TWSI7		38
-> +#define RST_TWSI8		39
-> +#define RST_TIMERS1		40
-> +#define RST_TIMERS2		41
-> +#define RST_AIB			42
-> +#define RST_ONEWIRE		43
-> +#define RST_SSPA0		44
-> +#define RST_SSPA1		45
-> +#define RST_DRO			46
-> +#define RST_IR			47
-> +#define RST_TSEN		48
-> +#define RST_IPC_AP2AUD		49
-> +#define RST_CAN0		50
-> +
->  /*	APMU clocks	*/
->  #define CLK_CCI550		0
->  #define CLK_CPU_C0_HI		1
-> @@ -244,4 +302,80 @@
->  #define CLK_V2D			60
->  #define CLK_EMMC_BUS		61
->  
-> +/*	APMU resets	*/
-> +
-> +#define RST_CCIC_4X		0
-> +#define RST_CCIC1_PHY		1
-> +#define RST_SDH_AXI		2
-> +#define RST_SDH0		3
-> +#define RST_SDH1		4
-> +#define RST_SDH2		5
-> +#define RST_USBP1_AXI		6
-> +#define RST_USB_AXI		7
-> +#define RST_USB3_0		8
-> +#define RST_QSPI		9
-> +#define RST_QSPI_BUS		10
-> +#define RST_DMA			11
-> +#define RST_AES			12
-> +#define RST_VPU			13
-> +#define RST_GPU			14
-> +#define RST_EMMC		15
-> +#define RST_EMMC_X		16
-> +#define RST_AUDIO		17
-> +#define RST_HDMI		18
-> +#define RST_PCIE0		19
-> +#define RST_PCIE1		20
-> +#define RST_PCIE2		21
-> +#define RST_EMAC0		22
-> +#define RST_EMAC1		23
-> +#define RST_JPG			24
-> +#define RST_CCIC2PHY		25
-> +#define RST_CCIC3PHY		26
-> +#define RST_CSI			27
-> +#define RST_ISP_CPP		28
-> +#define RST_ISP_BUS		29
-> +#define RST_ISP			30
-> +#define RST_ISP_CI		31
-> +#define RST_DPU_MCLK		32
-> +#define RST_DPU_ESC		33
-> +#define RST_DPU_HCLK		34
-> +#define RST_DPU_SPIBUS		35
-> +#define RST_DPU_SPI_HBUS	36
-> +#define RST_V2D			37
-> +#define RST_MIPI		38
-> +#define RST_MC			39
-> +
-> +/*	RCPU resets	*/
-> +
-> +#define RST_RCPU_SSP0		0
-> +#define RST_RCPU_I2C0		1
-> +#define RST_RCPU_UART1		2
-> +#define RST_RCPU_IR		3
-> +#define RST_RCPU_CAN		4
-> +#define RST_RCPU_UART0		5
-> +#define RST_RCPU_HDMI_AUDIO	6
-> +
-> +/*	RCPU2 resets	*/
-> +
-> +#define RST_RCPU2_PWM0		0
-> +#define RST_RCPU2_PWM1		1
-> +#define RST_RCPU2_PWM2		2
-> +#define RST_RCPU2_PWM3		3
-> +#define RST_RCPU2_PWM4		4
-> +#define RST_RCPU2_PWM5		5
-> +#define RST_RCPU2_PWM6		6
-> +#define RST_RCPU2_PWM7		7
-> +#define RST_RCPU2_PWM8		8
-> +#define RST_RCPU2_PWM9		9
-> +
-> +/*	APBC2 resets	*/
-> +
-> +#define RST_APBC2_UART1		0
-> +#define RST_APBC2_SSP2		1
-> +#define RST_APBC2_TWSI3		2
-> +#define RST_APBC2_RTC		3
-> +#define RST_APBC2_TIMERS0	4
-> +#define RST_APBC2_KPC		5
-> +#define RST_APBC2_GPIO		6
-> +
->  #endif /* _DT_BINDINGS_SPACEMIT_CCU_H_ */
-> -- 
-> 2.43.0
-> 
-> 
-
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
