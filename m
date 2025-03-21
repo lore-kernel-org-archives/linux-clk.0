@@ -1,146 +1,276 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A6A233159;
-	Fri, 21 Mar 2025 20:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293821519BE;
+	Fri, 21 Mar 2025 22:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742590217; cv=none; b=C9f7g+dvL62tIny7Bj7Ne/K+yHb7sDBSwcEZrPoZksJqn//+JQIMu//PsH1Y5DTNIH4UCW/R8LHyOUBX0T21szMuvuZtcfLuvEBXmjxbD5OuXh3f4yG/k+CTH1onKaf8ojunQO2/k3WIhx3C21TL9RNyU+2U86q6b62HR8Q25f8=
+	t=1742595960; cv=none; b=j06vw86zC/fQ6UtjmxuTT0fw5ctGgW+GRf+kI5j49xRXp4Cx4rcSZs6tKyc2XV12+4mHGYFQjFHwksKlHuSP4a7S1cxP7FXCELAxAek6OCjQbuwlFsGetXRJnORm1kD6KEWbv5ZLyX/4ar9w1/GdlpqRVzDvjHF1c4PUEh8mIJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742590217; c=relaxed/simple;
-	bh=a0qLZel64/QsdIWwBiSnsOvC0cSyNrNE0QTZFd/S2qs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CwIWIhpEj1GKXc0mSDCD8Wosvcb1dxGh09wk3G+JhoCHDl7ta9+fmq3BIEhAx8xRK9bBgbb6MQ5MqVsQXbmIODXqeJrxhK3PNVuzNGmivZAQXRWyxcliIPGd7FqCh0ZFMH6B0xnI4NjhdRtONkoULbtH3BKd1L/Sr3cb8PlG5fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RYX1EHkF; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYX1EHkF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A2F2C4CEE3;
-	Fri, 21 Mar 2025 20:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742590217;
-	bh=a0qLZel64/QsdIWwBiSnsOvC0cSyNrNE0QTZFd/S2qs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RYX1EHkFPwqfraRjM9XTTcTEZelFgpYCNRkjDACcKivo1eYT6/iUcxffWaAIqd5Dh
-	 tKG/uyK6g7Y+WhS3/RPckpfUfJaE0HWnLmc45djpdEXa/dRKw9Mfg/U6COS3nHMCgU
-	 qlATulHqUWxXhJ4JM+jSEAsWRNnWkHcRwL2AktiSfCex8M52aBHurL1sMVFSWWXlUM
-	 Sut10Cw4d5ooIQWlkHz/U25GV7lBGlhaLxp6cXieUA3EzsnuWpeke1UYsLZScjMo/y
-	 LGXJN3+0TwPE/6fWhSQqmJnp5PXo/O6kpgwYBSUnC2kN7WJzN2e9kz+0va3vrdmYLd
-	 1WdDmhyZe/wSQ==
-Message-ID: <aef4574b-8167-4af3-a29c-8c962b396496@kernel.org>
-Date: Fri, 21 Mar 2025 21:50:09 +0100
+	s=arc-20240116; t=1742595960; c=relaxed/simple;
+	bh=vYmiiL+JAp1wGAkVFDCwFvS+vkrR9HpnBuY5stT1Bsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CGUwkudF2a1IGQfJm7uudH6DHtmY1m1YmmSR61ZlLMkOcYj2tAhlY+mwGFsVuDI1QloD3/NwjEPkelVkwbcPYUJ/hruRMT+tFQMNsis3VonXkB8ctcv40paHQC8DVOuZO3uI83Agkq+xLB3niJZ0J48XMJcJA1ZPJ50ht0dX7oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.233])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 17D023430C5;
+	Fri, 21 Mar 2025 22:25:56 +0000 (UTC)
+Date: Fri, 21 Mar 2025 22:25:46 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+	heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/7] dt-bindings: soc: spacemit: define
+ spacemit,k1-ccu resets
+Message-ID: <20250321222546-GYA11633@gentoo>
+References: <20250321151831.623575-1-elder@riscstar.com>
+ <20250321151831.623575-2-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] drivers: clk: tegra: add DFLL support for Tegra 4
-To: Svyatoslav Ryhel <clamor95@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250321095556.91425-1-clamor95@gmail.com>
- <20250321095556.91425-3-clamor95@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250321095556.91425-3-clamor95@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250321151831.623575-2-elder@riscstar.com>
 
-On 21/03/2025 10:55, Svyatoslav Ryhel wrote:
-> Extend the Tegra124 driver to include DFLL configuration settings required
-> for Tegra114 compatibility.
+hi Alex:
+
+On 10:18 Fri 21 Mar     , Alex Elder wrote:
+> There are additional SpacemiT syscon CCUs whose registers control both
+> clocks and resets:  RCPU, RCPU2, and APBC2. Unlike those defined
+> previously, these will initially support only resets.  They do not
+> incorporate power domain functionality.
 > 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC (and consider --no-git-fallback argument, so you will
-not CC people just because they made one commit years ago). It might
-happen, that command when run on an older kernel, gives you outdated
-entries. Therefore please be sure you base your patches on recent Linux
-kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-</form letter>
-
-
-
-> +++ b/include/dt-bindings/reset/tegra114-car.h
-
-Filename based on compatible.
-
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +/*
-> + * This header provides Tegra114-specific constants for binding
-> + * nvidia,tegra114-car.
-> + */
+> Define the index values for resets associated with all SpacemiT K1
+> syscon nodes, including those with clocks already defined, as well as
+> the new ones (without clocks).
+> 
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+>  .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
+>  include/dt-bindings/clock/spacemit,k1-ccu.h   | 134 ++++++++++++++++++
+>  2 files changed, 143 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> index 07a6728e6f864..333c28e075b6c 100644
+> --- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+> @@ -19,6 +19,9 @@ properties:
+>        - spacemit,k1-syscon-apbc
+>        - spacemit,k1-syscon-apmu
+>        - spacemit,k1-syscon-mpmu
+> +      - spacemit,k1-syscon-rcpu
+> +      - spacemit,k1-syscon-rcpu2
+> +      - spacemit,k1-syscon-apbc2
+>  
+>    reg:
+>      maxItems: 1
+> @@ -57,13 +60,15 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: spacemit,k1-syscon-apbc
+> +            enum:
+> +              - spacemit,k1-syscon-apmu
+> +              - spacemit,k1-syscon-mpmu
+>      then:
+> -      properties:
+> -        "#power-domain-cells": false
+> -    else:
+>        required:
+>          - "#power-domain-cells"
+> +    else:
+> +      properties:
+> +        "#power-domain-cells": false
+>  
+>  additionalProperties: false
+>  
+> diff --git a/include/dt-bindings/clock/spacemit,k1-ccu.h b/include/dt-bindings/clock/spacemit,k1-ccu.h
+> index 4a0c7163257e3..a1e1b1fe714ce 100644
+> --- a/include/dt-bindings/clock/spacemit,k1-ccu.h
+> +++ b/include/dt-bindings/clock/spacemit,k1-ccu.h
+> @@ -78,6 +78,9 @@
+>  #define CLK_APB			31
+>  #define CLK_WDT_BUS		32
+>  
+> +/*	MPMU resets	*/
+> +#define RST_WDT			0
 > +
-> +#ifndef _DT_BINDINGS_RESET_TEGRA114_CAR_H
-> +#define _DT_BINDINGS_RESET_TEGRA114_CAR_H
+>  /*	APBC clocks	*/
+>  #define CLK_UART0		0
+>  #define CLK_UART2		1
+> @@ -109,6 +112,7 @@
+>  #define CLK_PWM17		27
+>  #define CLK_PWM18		28
+>  #define CLK_PWM19		29
 > +
-> +#define TEGRA114_RESET(x)		(5 * 32 + (x))
+as Rob point out, this isn't necessary, not related to reset
 
+>  #define CLK_SSP3		30
+>  #define CLK_RTC			31
+>  #define CLK_TWSI0		32
+> @@ -180,6 +184,60 @@
+>  #define CLK_TSEN_BUS		98
+>  #define CLK_IPC_AP2AUD_BUS	99
+>  
+> +/*	APBC resets	*/
+> +
+I'd also suggest to drop above blank line, keep style consistent
+with others in this file, some same below that I won't comment
+> +#define RST_UART0		0
+> +#define RST_UART2		1
+> +#define RST_UART3		2
+> +#define RST_UART4		3
+> +#define RST_UART5		4
+> +#define RST_UART6		5
+> +#define RST_UART7		6
+> +#define RST_UART8		7
+> +#define RST_UART9		8
+> +#define RST_GPIO		9
+> +#define RST_PWM0		10
+> +#define RST_PWM1		11
+> +#define RST_PWM2		12
+> +#define RST_PWM3		13
+> +#define RST_PWM4		14
+> +#define RST_PWM5		15
+> +#define RST_PWM6		16
+> +#define RST_PWM7		17
+> +#define RST_PWM8		18
+> +#define RST_PWM9		19
+> +#define RST_PWM10		20
+> +#define RST_PWM11		21
+> +#define RST_PWM12		22
+> +#define RST_PWM13		23
+> +#define RST_PWM14		24
+> +#define RST_PWM15		25
+> +#define RST_PWM16		26
+> +#define RST_PWM17		27
+> +#define RST_PWM18		28
+> +#define RST_PWM19		29
+> +#define RST_SSP3		30
+> +#define RST_RTC			31
+> +#define RST_TWSI0		32
+> +#define RST_TWSI1		33
+> +#define RST_TWSI2		34
+> +#define RST_TWSI4		35
+> +#define RST_TWSI5		36
+> +#define RST_TWSI6		37
+> +#define RST_TWSI7		38
+> +#define RST_TWSI8		39
+> +#define RST_TIMERS1		40
+> +#define RST_TIMERS2		41
+> +#define RST_AIB			42
+> +#define RST_ONEWIRE		43
+> +#define RST_SSPA0		44
+> +#define RST_SSPA1		45
+> +#define RST_DRO			46
+> +#define RST_IR			47
+> +#define RST_TSEN		48
+> +#define RST_IPC_AP2AUD		49
+> +#define RST_CAN0		50
+> +
+>  /*	APMU clocks	*/
+>  #define CLK_CCI550		0
+>  #define CLK_CPU_C0_HI		1
+> @@ -244,4 +302,80 @@
+>  #define CLK_V2D			60
+>  #define CLK_EMMC_BUS		61
+>  
+> +/*	APMU resets	*/
+> +
+> +#define RST_CCIC_4X		0
+> +#define RST_CCIC1_PHY		1
+> +#define RST_SDH_AXI		2
+> +#define RST_SDH0		3
+> +#define RST_SDH1		4
+> +#define RST_SDH2		5
+> +#define RST_USBP1_AXI		6
+> +#define RST_USB_AXI		7
+> +#define RST_USB3_0		8
+> +#define RST_QSPI		9
+> +#define RST_QSPI_BUS		10
+> +#define RST_DMA			11
+> +#define RST_AES			12
+> +#define RST_VPU			13
+> +#define RST_GPU			14
+> +#define RST_EMMC		15
+> +#define RST_EMMC_X		16
+> +#define RST_AUDIO		17
+> +#define RST_HDMI		18
+> +#define RST_PCIE0		19
+> +#define RST_PCIE1		20
+> +#define RST_PCIE2		21
+> +#define RST_EMAC0		22
+> +#define RST_EMAC1		23
+> +#define RST_JPG			24
+> +#define RST_CCIC2PHY		25
+> +#define RST_CCIC3PHY		26
+> +#define RST_CSI			27
+> +#define RST_ISP_CPP		28
+> +#define RST_ISP_BUS		29
+> +#define RST_ISP			30
+> +#define RST_ISP_CI		31
+> +#define RST_DPU_MCLK		32
+> +#define RST_DPU_ESC		33
+> +#define RST_DPU_HCLK		34
+> +#define RST_DPU_SPIBUS		35
+> +#define RST_DPU_SPI_HBUS	36
+> +#define RST_V2D			37
+> +#define RST_MIPI		38
+> +#define RST_MC			39
+> +
+> +/*	RCPU resets	*/
+> +
+> +#define RST_RCPU_SSP0		0
+> +#define RST_RCPU_I2C0		1
+> +#define RST_RCPU_UART1		2
+> +#define RST_RCPU_IR		3
+> +#define RST_RCPU_CAN		4
+> +#define RST_RCPU_UART0		5
+> +#define RST_RCPU_HDMI_AUDIO	6
+> +
+> +/*	RCPU2 resets	*/
+> +
+> +#define RST_RCPU2_PWM0		0
+> +#define RST_RCPU2_PWM1		1
+> +#define RST_RCPU2_PWM2		2
+> +#define RST_RCPU2_PWM3		3
+> +#define RST_RCPU2_PWM4		4
+> +#define RST_RCPU2_PWM5		5
+> +#define RST_RCPU2_PWM6		6
+> +#define RST_RCPU2_PWM7		7
+> +#define RST_RCPU2_PWM8		8
+> +#define RST_RCPU2_PWM9		9
+> +
+> +/*	APBC2 resets	*/
+> +
+> +#define RST_APBC2_UART1		0
+> +#define RST_APBC2_SSP2		1
+> +#define RST_APBC2_TWSI3		2
+> +#define RST_APBC2_RTC		3
+> +#define RST_APBC2_TIMERS0	4
+> +#define RST_APBC2_KPC		5
+> +#define RST_APBC2_GPIO		6
+> +
+>  #endif /* _DT_BINDINGS_SPACEMIT_CCU_H_ */
+> -- 
+> 2.43.0
+> 
+> 
 
-Does not look like a binding, but some sort of register. Binding IDs
-start from 0 (or 1) and are incremented by 1.
-
-Best regards,
-Krzysztof
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
