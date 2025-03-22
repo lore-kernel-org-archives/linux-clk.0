@@ -1,284 +1,150 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340331C6BE;
-	Sat, 22 Mar 2025 13:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73627221738
+	for <linux-clk@vger.kernel.org>; Sat, 22 Mar 2025 14:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742650496; cv=none; b=jptWqTJq8/DqQsleaNX/vtVHE8lIkeQH7SB0DYrCDzTI3kvobAZ+rPKwdaasGDTOEw7JxqIr86byIVTLyhgCngZu4I1w3PVz7KhsqEhIyv1LJMA/aJfrDCcd6/kPeWtc/rohn8Vig3DsxJA4hITZjpahh1RjYUFylO3NFzncYXg=
+	t=1742653657; cv=none; b=TxT1pWh7P4CzqN1C+TCqnnN6+s/iTYmShiJSZPs1iuT7UtsQJPgBe5tVf4+bYkmUapVyDhPFjfScznOOgAUwBAffHfSodAg5tx3e+MLHzPFsKjR7FWVDeniGZqjfh5nSbCngtkn7pfUnEBVFFVkVexrMrFVsqfsPpXbM1ZTq6tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742650496; c=relaxed/simple;
-	bh=sa27Dr3nj8EtkcJIe4rcNumqN4yoVa4yO9/KIgGTsYw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mIovWHzFBQFUObAlWDmN+cBSQGETPErJqJIrSrfpjrm3Nt1QWP10Y0yt4E5NPhluB12EA2SlNQEHJI1uAKqxfk02WRhCTGJuf6DbH2fQ+1XUaNj/ipB/VDqkIQFSIrBgl3fdYs/UINyv6kqsMueHMsyrYBO0xC+sGwl1HoIFLKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSFNrSWo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742653657; c=relaxed/simple;
+	bh=wpCm+hqOG2wsbtPLPSsueiJdiduXYzbm2JN6/V7qei4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KA6+uf7P3MMc12sKihG6XLVmdMKY4KSdHglt5ky/Y1DODeaN2R81I/W0UjK0bOOj8PBsyWe46CAFfR1s1l7liVG/IBV/dDaR4Nv41VB8Eqsc8kdFk1VE9s75Qxq6VjB5vtMA7M03XgIR5Zk7pxuxH6wodY8g3np7nN0uRVyrnV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=kEHuW3fP; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSFNrSWo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A75FC4CEDD;
-	Sat, 22 Mar 2025 13:34:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742650495;
-	bh=sa27Dr3nj8EtkcJIe4rcNumqN4yoVa4yO9/KIgGTsYw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bSFNrSWoQVf0GnThmgCrx/ycC9c7Eny7DLlpThLZFwUTfHuunjBFmhNPbzfTBfkkb
-	 Dz6/3xHcx6VUBULwxJwDrLFxg6t8vr8h+3B0mRhiF9asY/XUdeDYJSTDaQ942LNHVm
-	 AcCvyS/w6unQL0+T9vHWW42X2vG5/7oT2PiZSSBaMZxrhgn6BE6LqdJuA+tRkefvXl
-	 vmh5MjTGNBUklWA5x3MoKoreEk0dtRrYJc64ez42Ec9/Ht8h7GrA+1m1I/P8hI6vpZ
-	 h7N8ieX4TdUf/8r4IP4kXFLnKZbNi6qtVFOxv+od/4KHNFGIWcJCpLLThbnwmWVyGW
-	 r6wPSEWAJTTHQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Devi Priya <quic_devipriy@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Alexey Minnekhanov <alexeymin@postmarketos.org>,
-	Daniil Titov <daniilt971@gmail.com>,
-	Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
-	Jordan Crouse <jorcrous@amazon.com>,
-	Karl Chan <exxxxkc@getgoogleoff.me>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Vladimir Lypak <vladimir.lypak@gmail.com>
-Subject: [GIT PULL] Qualcomm clock updates for v6.15
-Date: Sat, 22 Mar 2025 08:34:50 -0500
-Message-ID: <20250322133453.2723879-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="kEHuW3fP"
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3d589ed2b47so9607675ab.2
+        for <linux-clk@vger.kernel.org>; Sat, 22 Mar 2025 07:27:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742653654; x=1743258454; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZxLNYJpvB/TXLfXAqOdKhmy/q9FPbJFzYq67r8P8xbE=;
+        b=kEHuW3fPfu726en3O8HTTUvD7b2bnYxF/E6T2FNNhZEAQqq986sLpeCS8/waNy+3zG
+         i8iYZ2PYNQ9Hjh2I+ELvrGFjPj0IFPeajwjcn0HOCZKXnztsMyNGuUfW8ehxjjD9f4aT
+         Cs1AlxPFtF/C4kOhyNl6zDvjeLKqmw+AjcybgoAJrXSM6vbNh68oTvND+XAjI4OuKnHQ
+         6VIFiVJ/z0Hrq75nE72h7c/ePE/2+4XiSSfjanKyT1b7uV8QcHX7E5r27eXCXGEESv1/
+         sKEuctf/5Dqj0Q7/lYfUTH7FKD1nqhQTBwaAN4ZUygR+BTE3LzJxrkdZPt4SF37nfGfz
+         zwCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742653654; x=1743258454;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZxLNYJpvB/TXLfXAqOdKhmy/q9FPbJFzYq67r8P8xbE=;
+        b=D+RdKiv3mbbheytF9VUzniSmfUIGzrHvI566vZJRQQIhL7lFnJq0g3xo+WuWcdLMX3
+         us/idHwwXxBwjsPwrcq0URiVwD3p+75BO87IepzTm4DOoUfJEsyEA85KHdylsLPD/WBy
+         NvpaFOur1D/QkPmje4oKmRNQAD+0wJ08TyrAM/hrjrnoTnhd/GN9+VPKla4Yeb7kbXtM
+         mGfRPagK8SKFFhaLOSeJceBmNtZHt2SIFDMN8jKMYvgYq+t3MxedHKDVyia5YHM6qTHO
+         BsYR/iZ5HFUY9BNCF8Dl6kDVUk5kjqRRyJhVZM9UWuyxQTeqN6LKDkBB5Yxets0AYGQe
+         XVoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwdCDUpUyfAZYH7brkV9t14Tiie2qRTB9LJyr2bv9Ob+scaVMNTy0VGAqxfN17DdUPb2D5sxNOjus=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8oWrav+cgaWavd6CCX5Xy0IL9GfCNuACfZ+JdqiDhAwwNVEI2
+	W/nf2YcQp6QiHLA7ZW6cI0b0wU1aFRLXSwOO8SGM4SniySAiR6hSilSW5PB1SA3+zJET83z6PFA
+	r33gEEQ==
+X-Gm-Gg: ASbGnctUgl9nK9KErVjDO2S24Bg3I9tP0VexflM0pX+YxTsF9T4oIlkNJqUzLVAFs6C
+	JvYWaEfTCUgX1VMvnAFvw7s9Ly8/UbFsLII02/0uGvBV3evkBUFnWNIoMT7JsfehIeJ6Quc//V0
+	JYPww5YsqXboQcD3U2w7LHq1dqxaiuJKkOQzJNx7WARj/PhZ60fP3suI719ujvYMkfg5wbSLmd7
+	Vx/syTJh5tOxM7D0GnVbaY9jpUrqKSr/CsqAIkYBoszuF0m26b5k6V0DIWfIVUlCyMcBHMoe6gE
+	BnbH00YvSEcmlg4S1EdYLWhotbdr8OPyD0wLJBjA5ut433uFWt4DchDyi+VISuWvVYz/An/Y4G6
+	BD/hE+i1O1Ou9DQJlJg==
+X-Google-Smtp-Source: AGHT+IHxH2JRqswkpmkABiwFlVLWGLbm4QGv8PyCPkc/LYC5FudrlksXf1TKCySAHhTc+btPlG9CLg==
+X-Received: by 2002:a05:6e02:2585:b0:3d0:235b:4810 with SMTP id e9e14a558f8ab-3d5960bf9b9mr82023985ab.2.1742653654335;
+        Sat, 22 Mar 2025 07:27:34 -0700 (PDT)
+Received: from [10.211.55.5] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f2cbecb453sm908223173.142.2025.03.22.07.27.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 22 Mar 2025 07:27:33 -0700 (PDT)
+Message-ID: <1d79fb7e-4501-4c62-8379-f00515dec3e4@riscstar.com>
+Date: Sat, 22 Mar 2025 09:27:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 1/7] dt-bindings: soc: spacemit: define
+ spacemit,k1-ccu resets
+To: Yixun Lan <dlan@gentoo.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+ heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250321151831.623575-1-elder@riscstar.com>
+ <20250321151831.623575-2-elder@riscstar.com> <20250321222546-GYA11633@gentoo>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20250321222546-GYA11633@gentoo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 3/21/25 5:25 PM, Yixun Lan wrote:
+> hi Alex:
+> 
+> On 10:18 Fri 21 Mar     , Alex Elder wrote:
+>> There are additional SpacemiT syscon CCUs whose registers control both
+>> clocks and resets:  RCPU, RCPU2, and APBC2. Unlike those defined
+>> previously, these will initially support only resets.  They do not
+>> incorporate power domain functionality.
+>>
+>> Define the index values for resets associated with all SpacemiT K1
+>> syscon nodes, including those with clocks already defined, as well as
+>> the new ones (without clocks).
+>>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> ---
+>>   .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
+>>   include/dt-bindings/clock/spacemit,k1-ccu.h   | 134 ++++++++++++++++++
+>>   2 files changed, 143 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+>> index 07a6728e6f864..333c28e075b6c 100644
+>> --- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+>> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+>> @@ -19,6 +19,9 @@ properties:
+>>         - spacemit,k1-syscon-apbc
+>>         - spacemit,k1-syscon-apmu
+>>         - spacemit,k1-syscon-mpmu
+>> +      - spacemit,k1-syscon-rcpu
+>> +      - spacemit,k1-syscon-rcpu2
+>> +      - spacemit,k1-syscon-apbc2
+>>   
+>>     reg:
+>>       maxItems: 1
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+. . .
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+32
+>> @@ -180,6 +184,60 @@
+>>   #define CLK_TSEN_BUS		98
+>>   #define CLK_IPC_AP2AUD_BUS	99
+>>   
+>> +/*	APBC resets	*/
+>> +
+> I'd also suggest to drop above blank line, keep style consistent
+> with others in this file, some same below that I won't comment
 
-are available in the Git repository at:
+OK, I'll fix the weird extra line and will drop these blank
+lines as you suggest in v2.  I'll post another version after
+Sunday.  I recognize the merge window means I can't expect
+reviews during that time, but this code is waiting for the
+clock code to get accepted anyway.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-6.15
+Thanks a lot.
 
-for you to fetch changes up to 9bf3684e0f7e65298ff844fd81e6dc5105c67354:
+					-Alex
 
-  clk: qcom: Add NSS clock Controller driver for IPQ9574 (2025-03-17 10:11:45 -0500)
+>> +#define RST_UART0		0
+>> +#define RST_UART2		1
+>> +#define RST_UART3		2
+>> +#define RST_UART4		3
+>> +#define RST_UART5		4
 
-----------------------------------------------------------------
-Qualcomm clock updates for v6.15
-
-Support is introduced for associating GDSCs with multiple power-domains,
-in order to handle the cases where both (some form of) CX and MX needs
-to be voted for.
-
-New support for IPQ9574 NSS clock controller, QCS8300 GPU and video
-clock controllers are added, as is RPM clocks for SDM429. LPASS resets
-are added for QCM6490.
-
-Branch clock halt halt check is corrected for clocks with voted halt
-state.
-
-SM8250 camera clocks are moved to rcg2_shared_ops, to make sure they are
-parked when disabled. Missing SDCC resets are added for SDM660. SM8750
-global clock controller regmap is adjusted to not trigger a security
-violation if the regmap is dumped.
-
-On SM8650 USB GDSCs are moved to retain the state during power down.
-
-The GPU AHB clock and display XO clock are removed from Linux's control
-for X Elite, as they shouldn't be managed by the OS.
-
-A few smaller improvements and corrections to the GDSC implementation.
-
-UART frequencies for IPQ5424 are corrected to fix issues with UART flow
-control, SDCC apps frequency table is corrected to make the SDCC clock
-tick at the expected frequency. IPQ5018 global clock controller is being
-allowed to be built on Arm32 as well.
-
-----------------------------------------------------------------
-Ajit Pandey (1):
-      clk: qcom: clk-branch: Fix invert halt status bit check for votable clocks
-
-Alexey Minnekhanov (3):
-      dt-bindings: clock: gcc-sdm660: Add missing SDCC resets
-      dt-bindings: clock: gcc-sdm660: Add missing SDCC resets
-      clk: qcom: gcc-sdm660: Add missing SDCC block resets
-
-Barnabás Czémán (1):
-      clk: qcom: mmcc-sdm660: fix stuck video_subcore0 clock
-
-Bjorn Andersson (4):
-      Merge branch '20250212-sdm429-rpm-v1-1-0a24ac19a478@mainlining.org' into clk-for-6.15
-      Merge branch '20250203063427.358327-2-alexeymin@postmarketos.org' into clk-for-6.15
-      Merge branch '20250109-qcs8300-mm-patches-new-v4-0-63e8ac268b02@quicinc.com' into clk-for-6.15
-      Merge branch '20250313110359.242491-1-quic_mmanikan@quicinc.com' into clk-for-6.15
-
-Bryan O'Donoghue (4):
-      clk: qcom: gdsc: Release pm subdomains in reverse add order
-      clk: qcom: gdsc: Capture pm_genpd_add_subdomain result code
-      clk: qcom: common: Add support for power-domain attachment
-      clk: qcom: Support attaching GDSCs to multiple parents
-
-Daniil Titov (2):
-      dt-bindings: clock: qcom,rpmcc: Add SDM429
-      clk: qcom: smd-rpm: Add clocks for SDM429
-
-Devi Priya (4):
-      dt-bindings: clock: gcc-ipq9574: Add definition for GPLL0_OUT_AUX
-      dt-bindings: clock: Add ipq9574 NSSCC clock and reset definitions
-      clk: qcom: gcc-ipq9574: Add support for gpll0_out_aux clock
-      clk: qcom: Add NSS clock Controller driver for IPQ9574
-
-Imran Shaik (5):
-      dt-bindings: clock: qcom: Add GPU clocks for QCS8300
-      dt-bindings: clock: qcom: Add CAMCC clocks for QCS8300
-      dt-bindings: clock: qcom: Add QCS8300 video clock controller
-      clk: qcom: Add support for GPU Clock Controller on QCS8300
-      clk: qcom: Add support for Video Clock Controller on QCS8300
-
-Jordan Crouse (1):
-      clk: qcom: camcc-sm8250: Use clk_rcg2_shared_ops for some RCGs
-
-Karl Chan (1):
-      clk: qcom: ipq5018: allow it to be bulid on arm32
-
-Konrad Dybcio (1):
-      clk: qcom: gcc-x1e80100: Unregister GCC_GPU_CFG_AHB_CLK/GCC_DISP_XO_CLK
-
-Krzysztof Kozlowski (8):
-      clk: qcom: clk-alpha-pll: Do not use random stack value for recalc rate
-      clk: qcom: Drop unused header includes
-      clk: qcom: Add missing header includes
-      clk: qcom: dispcc-sm8750: Allow dumping regmap
-      clk: qcom: camcc: Constify 'struct qcom_cc_desc'
-      clk: qcom: dispcc: Constify 'struct qcom_cc_desc'
-      clk: qcom: gpucc: Constify 'struct qcom_cc_desc'
-      clk: qcom: videocc: Constify 'struct qcom_cc_desc'
-
-Manikanta Mylavarapu (2):
-      clk: qcom: ipq5424: fix software and hardware flow control error of UART
-      drivers: clk: qcom: ipq5424: fix the freq table of sdcc1_apps clock
-
-Neil Armstrong (1):
-      clk: qcom: gcc-sm8650: Do not turn off USB GDSCs during gdsc_disable()
-
-Taniya Das (4):
-      clk: qcom: gdsc: Set retain_ff before moving to HW CTRL
-      clk: qcom: gdsc: Update the status poll timeout for GDSC
-      dt-bindings: clock: qcom: Add compatible for QCM6490 boards
-      clk: qcom: lpassaudiocc-sc7280: Add support for LPASS resets for QCM6490
-
-Vladimir Lypak (1):
-      clk: qcom: gcc-msm8953: fix stuck venus0_core0 clock
-
-Vladimir Zapolskiy (2):
-      dt-bindings: clock: qcom: sm8450-camcc: Remove qcom,x1e80100-camcc leftover
-      dt-bindings: clock: qcom,x1e80100-camcc: Fix the list of required-opps
-
- .../devicetree/bindings/clock/qcom,gpucc.yaml      |    3 +
- .../bindings/clock/qcom,ipq9574-nsscc.yaml         |   98 +
- .../devicetree/bindings/clock/qcom,rpmcc.yaml      |    2 +
- .../bindings/clock/qcom,sa8775p-camcc.yaml         |    6 +-
- .../bindings/clock/qcom,sa8775p-videocc.yaml       |    1 +
- .../bindings/clock/qcom,sc7280-lpasscorecc.yaml    |    5 +-
- .../bindings/clock/qcom,sm8450-camcc.yaml          |    1 -
- .../bindings/clock/qcom,x1e80100-camcc.yaml        |    9 +-
- drivers/clk/qcom/Kconfig                           |    9 +-
- drivers/clk/qcom/Makefile                          |    1 +
- drivers/clk/qcom/camcc-sa8775p.c                   |    3 +-
- drivers/clk/qcom/camcc-sc7180.c                    |    2 +-
- drivers/clk/qcom/camcc-sc7280.c                    |    2 +-
- drivers/clk/qcom/camcc-sc8280xp.c                  |    2 +-
- drivers/clk/qcom/camcc-sdm845.c                    |    1 +
- drivers/clk/qcom/camcc-sm4450.c                    |    3 +-
- drivers/clk/qcom/camcc-sm6350.c                    |    1 +
- drivers/clk/qcom/camcc-sm7150.c                    |    1 -
- drivers/clk/qcom/camcc-sm8150.c                    |    4 +-
- drivers/clk/qcom/camcc-sm8250.c                    |   58 +-
- drivers/clk/qcom/camcc-sm8550.c                    |    2 +-
- drivers/clk/qcom/camcc-sm8650.c                    |    2 +-
- drivers/clk/qcom/clk-alpha-pll.c                   |   52 +-
- drivers/clk/qcom/clk-branch.c                      |    4 +-
- drivers/clk/qcom/clk-smd-rpm.c                     |   32 +
- drivers/clk/qcom/common.c                          |    6 +
- drivers/clk/qcom/dispcc-qcm2290.c                  |    3 +-
- drivers/clk/qcom/dispcc-sc7180.c                   |    1 +
- drivers/clk/qcom/dispcc-sc7280.c                   |    1 +
- drivers/clk/qcom/dispcc-sc8280xp.c                 |    7 +-
- drivers/clk/qcom/dispcc-sdm845.c                   |    2 +-
- drivers/clk/qcom/dispcc-sm4450.c                   |    3 +-
- drivers/clk/qcom/dispcc-sm6115.c                   |    3 +-
- drivers/clk/qcom/dispcc-sm6125.c                   |    1 +
- drivers/clk/qcom/dispcc-sm6350.c                   |    1 +
- drivers/clk/qcom/dispcc-sm6375.c                   |    1 +
- drivers/clk/qcom/dispcc-sm7150.c                   |    1 -
- drivers/clk/qcom/dispcc-sm8250.c                   |    2 +-
- drivers/clk/qcom/dispcc-sm8450.c                   |    5 +-
- drivers/clk/qcom/dispcc-sm8550.c                   |    5 +-
- drivers/clk/qcom/dispcc-sm8750.c                   |    4 +-
- drivers/clk/qcom/dispcc0-sa8775p.c                 |    3 +-
- drivers/clk/qcom/dispcc1-sa8775p.c                 |    3 +-
- drivers/clk/qcom/gcc-ipq5424.c                     |   24 +-
- drivers/clk/qcom/gcc-ipq9574.c                     |   15 +
- drivers/clk/qcom/gcc-msm8953.c                     |    2 +-
- drivers/clk/qcom/gcc-msm8960.c                     |    1 -
- drivers/clk/qcom/gcc-msm8974.c                     |    1 -
- drivers/clk/qcom/gcc-sdm660.c                      |    2 +
- drivers/clk/qcom/gcc-sm8650.c                      |    4 +-
- drivers/clk/qcom/gcc-x1e80100.c                    |   30 -
- drivers/clk/qcom/gdsc.c                            |   98 +-
- drivers/clk/qcom/gdsc.h                            |    1 +
- drivers/clk/qcom/gpucc-msm8998.c                   |    3 +-
- drivers/clk/qcom/gpucc-sa8775p.c                   |   49 +-
- drivers/clk/qcom/gpucc-sar2130p.c                  |    1 +
- drivers/clk/qcom/gpucc-sc7180.c                    |    1 +
- drivers/clk/qcom/gpucc-sc7280.c                    |    1 +
- drivers/clk/qcom/gpucc-sc8280xp.c                  |    3 +-
- drivers/clk/qcom/gpucc-sdm660.c                    |    5 +-
- drivers/clk/qcom/gpucc-sdm845.c                    |    1 +
- drivers/clk/qcom/gpucc-sm4450.c                    |    1 -
- drivers/clk/qcom/gpucc-sm6350.c                    |    1 +
- drivers/clk/qcom/gpucc-sm8150.c                    |    1 +
- drivers/clk/qcom/gpucc-sm8250.c                    |    1 +
- drivers/clk/qcom/gpucc-sm8350.c                    |    2 +-
- drivers/clk/qcom/gpucc-x1p42100.c                  |    2 +-
- drivers/clk/qcom/kpss-xcc.c                        |    1 -
- drivers/clk/qcom/krait-cc.c                        |    1 -
- drivers/clk/qcom/lpassaudiocc-sc7280.c             |   23 +-
- drivers/clk/qcom/lpasscc-sdm845.c                  |    1 -
- drivers/clk/qcom/lpasscorecc-sc7180.c              |    1 -
- drivers/clk/qcom/lpasscorecc-sc7280.c              |    1 -
- drivers/clk/qcom/mmcc-apq8084.c                    |    2 +-
- drivers/clk/qcom/mmcc-msm8960.c                    |    4 +-
- drivers/clk/qcom/mmcc-msm8974.c                    |    2 +-
- drivers/clk/qcom/mmcc-msm8994.c                    |    3 +-
- drivers/clk/qcom/mmcc-msm8996.c                    |    4 +-
- drivers/clk/qcom/mmcc-msm8998.c                    |    3 +-
- drivers/clk/qcom/mmcc-sdm660.c                     |    8 +-
- drivers/clk/qcom/nsscc-ipq9574.c                   | 3110 ++++++++++++++++++++
- drivers/clk/qcom/videocc-sa8775p.c                 |   10 +-
- drivers/clk/qcom/videocc-sm8350.c                  |    2 +-
- drivers/clk/qcom/videocc-sm8450.c                  |    2 +-
- drivers/clk/qcom/videocc-sm8550.c                  |    2 +-
- include/dt-bindings/clock/qcom,gcc-sdm660.h        |    2 +
- include/dt-bindings/clock/qcom,ipq9574-gcc.h       |    1 +
- include/dt-bindings/clock/qcom,ipq9574-nsscc.h     |  152 +
- include/dt-bindings/clock/qcom,qcs8300-camcc.h     |   16 +
- include/dt-bindings/clock/qcom,qcs8300-gpucc.h     |   17 +
- include/dt-bindings/clock/qcom,rpmcc.h             |    4 +
- include/dt-bindings/reset/qcom,ipq9574-nsscc.h     |  134 +
- 92 files changed, 3913 insertions(+), 199 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
- create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
- create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
- create mode 100644 include/dt-bindings/clock/qcom,qcs8300-camcc.h
- create mode 100644 include/dt-bindings/clock/qcom,qcs8300-gpucc.h
- create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+. . .
