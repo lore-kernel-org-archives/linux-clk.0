@@ -1,42 +1,75 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5852F2E;
-	Sat, 22 Mar 2025 16:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F7113AA20;
+	Sun, 23 Mar 2025 09:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742662309; cv=none; b=e5LWC6sqLFgFzHgybBCi8OjZZAGxTXYuToDKz0ZkF/94vKO/9+3gXxDz9GPmHL8vFAWj90OfUqWh5y8MNP3xWy0DkqYgWv+8Tr5LWcuLeFRaGlUhCAX22aDlnTblE3CoVpczewOBhley2nOesUwDFVQv5swV/u/QC9SVD9n3Nes=
+	t=1742721266; cv=none; b=AeXCZ0akPDnE0zC39bPqALr/r8tNVkRnlwWnklssEadoVfy9GBBxDs04WlyiQSQcVts9aTBQg/xVk6mtn2e/BvRbIOKnFimQ3V6PoIvOb8G1WgXyyRO3CPZE+0yOBxKhOTG5bYHZZS5MViJUEx1amKF3qP5RePlu0kuTi/oqSP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742662309; c=relaxed/simple;
-	bh=YY0zwQFccafI0e+UieGhfuVrKOH9vs96kL6/Y4+N8aw=;
+	s=arc-20240116; t=1742721266; c=relaxed/simple;
+	bh=42KjRZG4Ec7xBTXyyzIFb+83EFkreEJzD1byDRrYTvU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nw67nqLUPpevfIGzG8E+FneICwIBZGYZgvQlP/505EcSmRI88bK/yF4vzWB65Xg9htGsqYmPJo1TMhO+iKosMWd/SdK1GyF/jp3qCeROGNt4yXHIUuk9YqpMyvtfBY4kIuPW2n9rt9HYnGrraAJG1SNS6Rdk7E6wP5VEeuMzMIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.233])
+	 Content-Type:Content-Disposition:In-Reply-To; b=O0hOl+XMybScDYl9F3qb9YsjrnE+0K9Y2XgvIEsQEsFvttr2dfY9+Q6K0fkdeBHizgOF/NvhLMxeJ86N+Yct9fTfStxW/gToYtL3YT9pJA6MhPiqE31kZxssBfFXbPjzj8CJM9gvUqe6qJI3dIIiCCD6JJn24JrSDlgw5kd/5x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=YB0GOurS; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=NCQDlCUc; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="YB0GOurS";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="NCQDlCUc"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 67FEEEC59F1;
+	Sun, 23 Mar 2025 01:55:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1742720143; bh=42KjRZG4Ec7xBTXyyzIFb+83EFkreEJzD1byDRrYTvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YB0GOurS6e7ntM1c3szslhrVmNfTs29qW3DmV+4LusNNm/ZbyPsW22qezs41sbOmi
+	 Ny4wYzkogpnaK/lDgdomhH262gh1l0gCMIKIeH9v/0zD3Eq7NTZ9XbIUi9i3vB5wvt
+	 UYbntCXgGgr/w2Y4lkeATFRgAD/zQr9PbYURbHuZO66z8MQwrfluHDwgzqis3RLRb9
+	 FdsrvWv6O9MSbWvEO8y1YS/kTw4A+T7UDqVWlM+7krZn8dYOPd9R7DCnGN9Ct/rtfo
+	 scuWnLfZ1ycbhEbCyyZFHKC7Jb44vmqFqKcpyUlw6HPaEjZGuFzNkOpP2XXX7L5ZS3
+	 hnHNxcqmvj/Dw==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id cxXVrxWgCf42; Sun, 23 Mar 2025 01:55:40 -0700 (PDT)
+Received: from ketchup (unknown [183.217.80.115])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id C4C90343231;
-	Sat, 22 Mar 2025 16:51:45 +0000 (UTC)
-Date: Sat, 22 Mar 2025 16:51:40 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-	heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 1/7] dt-bindings: soc: spacemit: define
- spacemit,k1-ccu resets
-Message-ID: <20250322165140-GYF11633@gentoo>
-References: <20250321151831.623575-1-elder@riscstar.com>
- <20250321151831.623575-2-elder@riscstar.com>
- <20250321222546-GYA11633@gentoo>
- <1d79fb7e-4501-4c62-8379-f00515dec3e4@riscstar.com>
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 58C7DEC59EE;
+	Sun, 23 Mar 2025 01:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1742720140; bh=42KjRZG4Ec7xBTXyyzIFb+83EFkreEJzD1byDRrYTvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NCQDlCUcrc4vhN8OBM1cEf/Rw4Catjgu4eGkIeUvAN8bFaEzI8TBhnHzzvDGmYclf
+	 PPhmMpX7zIrmDfxICl/VQ0B2nMb+X4LzAEslEZga5vKaLZoHyMXO5ivn3K+UgTpiTN
+	 kGiit+2e9HxwtIs4sXD8doRmPzhC9bWR7jfIF/yjCiJLaGHOh+JGH7FYHuwPv9xeBO
+	 4st5JpY68yfbJuljaEgSgQYJ4okfB/DfuMO5QpKLrXt5DgkFh+6tfS6RtAcoL30Sz4
+	 TN6tvJ1SYgWkY0fOb88bQy/kPUo7mj/nO2rxj0xpcIVKRM+IaOAxEkX9968uLu0Oq8
+	 sWkVC4OpSoTEQ==
+Date: Sun, 23 Mar 2025 08:55:28 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Inochi Amaoto <inochiama@gmail.com>, Yixun Lan <dlan@gentoo.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1
+ SoC
+Message-ID: <Z9_MgAZE53eQ-FV8@ketchup>
+References: <20250306175750.22480-2-heylenay@4d2.org>
+ <20250306175750.22480-5-heylenay@4d2.org>
+ <20250318053736-GYA2516@gentoo>
+ <xwo2jjqy634z4rimgyrbjmxlgzxzauxmqzl57qr5oasph74qwj@7we45fnhwfzh>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,67 +78,100 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1d79fb7e-4501-4c62-8379-f00515dec3e4@riscstar.com>
+In-Reply-To: <xwo2jjqy634z4rimgyrbjmxlgzxzauxmqzl57qr5oasph74qwj@7we45fnhwfzh>
 
-Hi Alex:
-
-On 09:27 Sat 22 Mar     , Alex Elder wrote:
-> On 3/21/25 5:25 PM, Yixun Lan wrote:
-> > hi Alex:
+On Tue, Mar 18, 2025 at 01:43:52PM +0800, Inochi Amaoto wrote:
+> On Tue, Mar 18, 2025 at 05:37:36AM +0000, Yixun Lan wrote:
+> > Hi Haylen Chu:
 > > 
-> > On 10:18 Fri 21 Mar     , Alex Elder wrote:
-> >> There are additional SpacemiT syscon CCUs whose registers control both
-> >> clocks and resets:  RCPU, RCPU2, and APBC2. Unlike those defined
-> >> previously, these will initially support only resets.  They do not
-> >> incorporate power domain functionality.
-> >>
-> >> Define the index values for resets associated with all SpacemiT K1
-> >> syscon nodes, including those with clocks already defined, as well as
-> >> the new ones (without clocks).
-> >>
-> >> Signed-off-by: Alex Elder <elder@riscstar.com>
-> >> ---
-> >>   .../soc/spacemit/spacemit,k1-syscon.yaml      |  13 +-
-> >>   include/dt-bindings/clock/spacemit,k1-ccu.h   | 134 ++++++++++++++++++
-> >>   2 files changed, 143 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> >> index 07a6728e6f864..333c28e075b6c 100644
-> >> --- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> >> +++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
-> >> @@ -19,6 +19,9 @@ properties:
-> >>         - spacemit,k1-syscon-apbc
-> >>         - spacemit,k1-syscon-apmu
-> >>         - spacemit,k1-syscon-mpmu
-> >> +      - spacemit,k1-syscon-rcpu
-> >> +      - spacemit,k1-syscon-rcpu2
-> >> +      - spacemit,k1-syscon-apbc2
-> >>   
-> >>     reg:
-> >>       maxItems: 1
-> 
-> . . .
-> 
-> 32
-> >> @@ -180,6 +184,60 @@
-> >>   #define CLK_TSEN_BUS		98
-> >>   #define CLK_IPC_AP2AUD_BUS	99
-> >>   
-> >> +/*	APBC resets	*/
-> >> +
-> > I'd also suggest to drop above blank line, keep style consistent
-> > with others in this file, some same below that I won't comment
-> 
-> OK, I'll fix the weird extra line and will drop these blank
-> lines as you suggest in v2.  I'll post another version after
-> Sunday.  I recognize the merge window means I can't expect
-> reviews during that time, but this code is waiting for the
-> clock code to get accepted anyway.
-> 
-no need to hurry, we will postpone clock to next merge window,
-let's give more time for people to review, thanks
+> > On 17:57 Thu 06 Mar     , Haylen Chu wrote:
+> > > The clock tree of K1 SoC contains three main types of clock hardware
+> > > (PLL/DDN/MIX) and has control registers split into several multifunction
+> > > devices: APBS (PLLs), MPMU, APBC and APMU.
+> > > 
+> > > All register operations are done through regmap to ensure atomiciy
+> > > between concurrent operations of clock driver and reset,
+> > > power-domain driver that will be introduced in the future.
+> > > 
+> > > Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> > > ---
+> > >  drivers/clk/Kconfig               |    1 +
+> > >  drivers/clk/Makefile              |    1 +
+> > >  drivers/clk/spacemit/Kconfig      |   20 +
+> > >  drivers/clk/spacemit/Makefile     |    5 +
+> > >  drivers/clk/spacemit/ccu-k1.c     | 1714 +++++++++++++++++++++++++++++
+> > >  drivers/clk/spacemit/ccu_common.h |   47 +
+> > >  drivers/clk/spacemit/ccu_ddn.c    |   80 ++
+> > >  drivers/clk/spacemit/ccu_ddn.h    |   48 +
+> > >  drivers/clk/spacemit/ccu_mix.c    |  284 +++++
+> > >  drivers/clk/spacemit/ccu_mix.h    |  246 +++++
+> > >  drivers/clk/spacemit/ccu_pll.c    |  146 +++
+> > >  drivers/clk/spacemit/ccu_pll.h    |   76 ++
+> > >  12 files changed, 2668 insertions(+)
+> > >  create mode 100644 drivers/clk/spacemit/Kconfig
+> > >  create mode 100644 drivers/clk/spacemit/Makefile
+> > >  create mode 100644 drivers/clk/spacemit/ccu-k1.c
+> > >  create mode 100644 drivers/clk/spacemit/ccu_common.h
+> > >  create mode 100644 drivers/clk/spacemit/ccu_ddn.c
+> > >  create mode 100644 drivers/clk/spacemit/ccu_ddn.h
+> > >  create mode 100644 drivers/clk/spacemit/ccu_mix.c
+> > >  create mode 100644 drivers/clk/spacemit/ccu_mix.h
+> > >  create mode 100644 drivers/clk/spacemit/ccu_pll.c
+> > >  create mode 100644 drivers/clk/spacemit/ccu_pll.h
+> > > 
+> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > > index 713573b6c86c..19c1ed280fd7 100644
+> > > --- a/drivers/clk/Kconfig
+> > > +++ b/drivers/clk/Kconfig
+> > > @@ -517,6 +517,7 @@ source "drivers/clk/samsung/Kconfig"
+> > >  source "drivers/clk/sifive/Kconfig"
+> > >  source "drivers/clk/socfpga/Kconfig"
+> > >  source "drivers/clk/sophgo/Kconfig"
+> > > +source "drivers/clk/spacemit/Kconfig"
+> > >  source "drivers/clk/sprd/Kconfig"
+> > >  source "drivers/clk/starfive/Kconfig"
+> > >  source "drivers/clk/sunxi/Kconfig"
+> > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > > index bf4bd45adc3a..42867cd37c33 100644
+> > > --- a/drivers/clk/Makefile
+> > > +++ b/drivers/clk/Makefile
+> > > @@ -145,6 +145,7 @@ obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
+> > >  obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
+> > >  obj-y					+= socfpga/
+> > >  obj-y					+= sophgo/
+> > > +obj-y					+= spacemit/
+> > >  obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+> > >  obj-y					+= sprd/
+> > >  obj-$(CONFIG_ARCH_STI)			+= st/
+> > > diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
+> > > new file mode 100644
+> > > index 000000000000..76090cd85668
+> > > --- /dev/null
+> > > +++ b/drivers/clk/spacemit/Kconfig
+> > > @@ -0,0 +1,20 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > +
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+Hi Inochi, Yixun,
+
+> > > +config SPACEMIT_CCU
+> > > +	tristate "Clock support for Spacemit SoCs"
+> > > +	default y
+> > similar reason to pinctrl with these patches [1], [2]
+> > I'd suggest switch to "bool + default ARCH_SPACEMIT" 
+> > 
+> > Link: https://lore.kernel.org/all/20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org [1]
+> > Link: https://lore.kernel.org/all/6881b8d1ad74ac780af8a974e604b5ef3f5d4aad.1742198691.git.geert+renesas@glider.be [2]
+> > 
+> 
+> Clk subsystem prefers no defalt and set it in defconfig,
+> so should no default there.
+
+Thanks for these hints, I will drop default and set the configuration in
+defconfig, in which case it seems okay to keep it as bool.
+
+> Regards,
+> Inochi
+
+Thanks,
+Haylen Chu
