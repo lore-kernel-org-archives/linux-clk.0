@@ -1,71 +1,71 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F5125D91D
-	for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 10:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7A825D91D
+	for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 10:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742813809; cv=none; b=sfzn4GLxungUs6lW7rHH4TY0CNMtrsm9LLDV8G5UGohE3l0aKsUig1IPO73UuivADB8ZQzcDV1YhM31JEx1lX81T0ICZ68UB94jBQApoBE+ZsAsRRWMQ7awzCUb+IoCuu+cV4FojN6Sav7juKsBEHZcLGWu8H9QF0bE+hBx3ang=
+	t=1742813823; cv=none; b=oAE2zaKeklOhgGCRqtW4Lmms2lucKyAajL500twaaWi+r/8HKO+VcMauXHlPpNCrsiwcM2ui3q6HGD7EXem1FuX//Y8QDxyw+Fy2EL+7sjiofC+4Be3QV8wrwKuumbAp29PgD9CeitFMVHBD7QSqyMvD+u8Q4uNaBEyUTzAPuEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742813809; c=relaxed/simple;
-	bh=kPYx8cgyNK+kHSQtkC7ctNP4NXMxSAtiBwiPNiHZre4=;
+	s=arc-20240116; t=1742813823; c=relaxed/simple;
+	bh=w6aPWy+Qhwe/Y2L6UoLVJWUQwbIVm3ZGC63aKmxOKVU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l91xw5yKJ1aTSYXeJTTNFxe44m5izEBW1k1UsPvzSNl4KGXH0EleKdzE8mf5v8IcWXeIbSZqBLlR4h16EP0W6WEiHqwUHzTc2v6+ymqZn01hiaIQ5hhFWZOfLCA2/++HopNjSSlvYPXfypgqvw36kUyC1F+MFsUVoEjhmE9V0vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pxAL2vnt; arc=none smtp.client-ip=205.220.180.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=YQ/1eiUSgrk0kyC7B/rgljvhQV2FajM2Q/qr///clxSEUKNmCoVNU//TRZyojqOHIfPLR5GWVsZzdIwajkAnGf9LpMYCrpm2WMbWi7/r0Uuph/3YxG9ivxs7XRFrjzUCiROTc2b9N38FTwf3f+Srjxv/NVR4q4hLuEXGqa4Znbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WMUjG97C; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pxAL2vnt"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WMUjG97C"
 Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9PLKV025871
-	for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 10:56:45 GMT
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52O9PMQs025925
+	for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 10:57:01 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=XDqyeQYxCMC6oQIBhg40FWZB
-	5CKH/Iz5ri1KriEvBUk=; b=pxAL2vntZ2ENa/lRMqDeJIm5Ivg5QAmnxGSio22r
-	5sOGbVMTzcqXFdhF512KImGQx03mXpemZRkiF+80QRdW1IEcRGhpBosjhyNbSOz6
-	noIV2sKbm5pFbdJ8p4KeWXupsbn0LF7n8DZiTvJQzVybinFlL8RvrWsTH/8WhCNO
-	tVXvQlyZTutDGpgwPhN9x08XHjWoUDI0PkyH4ghZGyNtTpBgu64VKw2cKnuQYC7Y
-	Tchli7YC3VzAmZfTCyF3mFUHGWn2TX018/Y/EAVCDzSJBppZf7BUm83DrNfLtjxG
-	3CGSzw1FwB39OZxiqKV2b1R8QpuRdbQrdoJmIbbENRpkyQ==
+	:references:subject:to; s=qcppdkim1; bh=e4iq5ZmzgG7lLxopw43AFxoI
+	iRiSXqSMGZij+vqFUSc=; b=WMUjG97CfkjZxoEaKgZvO/dE/9TejQ/XF/zAx5wS
+	JOYy1QykJ5hriIcNX9mP4zYoYtCrTRvYJjOnGoGJl1ttAYm/OKdsZtPLXNLAseAR
+	WPiSXc1ix9qHCn4IRAPPDxWMq51e7BtjneVfwW9tT3EhCMzH5J5IFnVj2IVdLvzJ
+	M/HZL/A5UDX4bohIg9npfRnYdoAY/sDkioV0MkJvHisdxkgU93YcqSL7VR2AF3SK
+	M2LdZmYxJiFhDdma840K99rgWtMLUoFh1OpOaaawpdmx1h2yY3TwVRCAptni0qn9
+	E/gfYMvbR3BGnoREMkVuHvE2RCmCKmvrkJYcrX6cDQx09w==
 Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hjjnmaae-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45hjjnmab7-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 10:56:45 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5cd0f8961so194218885a.1
-        for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 03:56:45 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 10:57:00 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5c9abdbd3so101915785a.1
+        for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 03:57:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742813804; x=1743418604;
+        d=1e100.net; s=20230601; t=1742813820; x=1743418620;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XDqyeQYxCMC6oQIBhg40FWZB5CKH/Iz5ri1KriEvBUk=;
-        b=rGb7WlW+ecdHu2o+8Ja+Qf5fsh1tP9GoZQxn1H4BpuGogwxpmjTZLnuXT0eZQJH/BN
-         xk4ioRujiswY/wZIAnBiMYsuowfrlFnXcDDPYDG3KyHz1b0KQaJse70gKoRPMNVfUOlG
-         YIs8/iOk0N1Bg+1n72AD/5Cg/LcvusShZUD7xmjGpK+l+Ys3EbttYUgqJZyHfHBalO+6
-         ki4hNmPCmSSDeqSM2bdcONC7ccN0XC/PzmdYh13CIiIg6SFPW8AyX9U7uOKnxk4wgOCY
-         fjcUlCtCKkQ/JyJkuTZKexgreGZifWZysdY0TF/uuiAmmrT4DKjY1jZpzpxcrFKMiZHQ
-         v5JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuS+b4rfvSshU+2RojAXF6+uOeIQFPB9Uk4uuCP4xTpSaJlsB47uJvt/uyQVwuXhrTe09TlKvfkZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRw6hOd2BTguI/TaxfPdeqE9JdVI7NQfs2PK4XsBeG1R4R+o30
-	68PaTHKFGgTcWduKjjvVOFrRW0QXm5ryN7Wt0ZTVGtHz1KY05ophdCd9ZWYplDJh7QFcYMDYvRZ
-	Ugj5ghAXqhdCPzkLz3Fo9zQSjoQaYuNyJlHuuRiIe3jmIhmvWphaiZpuBnPY=
-X-Gm-Gg: ASbGncsxlOO6TZs2QLSR70pVJC4reeJX52+qSg/D7/X9X39n80iaYS0VM1Z2clJBjvx
-	hiidc1g6XoLGFW6lp5KzUtijpyb1fpLI7pz++aAamtVbQk87FvDaeyAbTSvNXyYjprk8NAix6pW
-	B0DhSi8z+yzB4yH5ZpQOuA/D5Y53itHkBo5CCMdlMfZWNZg+0s8vSnGOoroxiDd44FZEUd0gdJQ
-	2qHZ4oXtDGjOzGIadGaIJChoi6ttkBeHLzKh7OUoopDYdDeAOpfT4uNQli4UyffNbNQ++J8Wz+Y
-	jiK4SWFQS4vKlEPslygPRjjxO/8Qs9zAo1bE3LXbNg+/DQz8L+a8seeouZ0PKvjeUh+lxxiT4Ww
-	TLJ0=
-X-Received: by 2002:a05:620a:269a:b0:7c5:3c0a:ab78 with SMTP id af79cd13be357-7c5ba14428dmr1425653885a.14.1742813804451;
-        Mon, 24 Mar 2025 03:56:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHr0zZwwEN0C3pwdFAW2oW4ST3woWsczcIVhfpohhK/s4eaR0iSzFfgzBbIorwxbfn/58dsFA==
-X-Received: by 2002:a05:620a:269a:b0:7c5:3c0a:ab78 with SMTP id af79cd13be357-7c5ba14428dmr1425651885a.14.1742813804016;
-        Mon, 24 Mar 2025 03:56:44 -0700 (PDT)
+        bh=e4iq5ZmzgG7lLxopw43AFxoIiRiSXqSMGZij+vqFUSc=;
+        b=EDIJxG1MWolBPRs3Flq+7BzDUKJITV1itlXVzO1uz3L6bwkdvz/SzUMy26/s+D1aQy
+         mYSgQhwp44b+2VT8GadYKmnNQQLaPCFUWh/RjyWfsFqfOFzBYlyX/P9gIlg+yXVs94j2
+         APkGiyWnMY0dUaPfWN6jNQI620/HWIfmJtp6ja3nDQAps4zEigF06i7hV9raRDxcpjUf
+         euJlM2qVhaLe/OXsZSAwaqu1BsNmHKdnEAsasAxsrPoAz5/REki1xBMElZYYHkv5rzaU
+         XwG3tm5FfZOZ8eLLSO8rBeUGQy9RMo6ysOIS8mljXgew9EMKH9dqd4fuYRQqqa3B26qU
+         KKuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCgZVzN7ng4EDZq3i7qPxqKni2AQtOh8DnS39ChJQe7KsMoZor6S4kpImVil8p83OgoWMrubb1p3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3snAal8JjxKZ5eS0E8QCFvfMNhBHaeIjd0guTob8zjuvw87Gm
+	dnb9ADvvvGTBpVyIb+13SXq33WYjah5xlpppy0i5bcas3nj/u8q/OFfiqnKUgd4gQJpnYedWH/T
+	UaAE6MKGMf9svWxxH0l0Yo+W1W98Poc9iytvnfizJYGW6Y1wl6YvMebIEysQ=
+X-Gm-Gg: ASbGncuR9poaBDUZYMyHgwIR/a23ZXkrHxxUiLurABBqyWYfqMSR+6rYvbzxRjn+Xsq
+	dPbN/xTlCx21em9ae0N69E66kxnYP31NDfoIJki69mO5UifxM6R8eOPl1tF0X+IQZQt3qFVrEQN
+	yLEGiIwNid6cfVebT/TbGCDwT0Hz1hkond9vqJxWTX2JZVI/5GUs8u56D1etYzo8yoYQlvItWqh
+	DWRwolsN1zTlzQE84bSMLixxTgeoIa1SUCs7RxDvmSXtQ5Muu0FTrDWJY43sYu3yZA7cwoqv5KM
+	XAn20eqdeLSiJEgjDuwgW0Ty3sl3h5/A0OYvcm/yCJFaeoAR2v7oN3reuZICw24kTAmu0bPf/x3
+	sYMg=
+X-Received: by 2002:a05:620a:2946:b0:7c5:a441:f440 with SMTP id af79cd13be357-7c5ba134078mr1404877685a.12.1742813819878;
+        Mon, 24 Mar 2025 03:56:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGT85bm2iUMTANL530hIieoil1fUEuIlPX9t3T5XtetsmXWHkoxzeE/XwgtI5CCHjlOMTf57Q==
+X-Received: by 2002:a05:620a:2946:b0:7c5:a441:f440 with SMTP id af79cd13be357-7c5ba134078mr1404875485a.12.1742813819419;
+        Mon, 24 Mar 2025 03:56:59 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad651243bsm1078937e87.249.2025.03.24.03.56.41
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30d7d7e0baesm13193461fa.38.2025.03.24.03.56.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 03:56:41 -0700 (PDT)
-Date: Mon, 24 Mar 2025 12:56:39 +0200
+        Mon, 24 Mar 2025 03:56:58 -0700 (PDT)
+Date: Mon, 24 Mar 2025 12:56:56 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 To: Luca Weiss <luca.weiss@fairphone.com>
 Cc: Bjorn Andersson <andersson@kernel.org>,
@@ -77,11 +77,11 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
         ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: sm6350: Add video clock
- controller
-Message-ID: <2dt3oescrflodyud7mnnji5enj66slgte3cynrqp5bbmnie2vl@sjb2fv73xbnv>
+Subject: Re: [PATCH v2 1/4] arm64: dts: qcom: sm6350: Align reg properties
+ with latest style
+Message-ID: <yrxpfsh26ymo74olbgglrgb7d35nj6owkzndfnrbmjorb7tg3k@maccic4kvlwn>
 References: <20250324-sm6350-videocc-v2-0-cc22386433f4@fairphone.com>
- <20250324-sm6350-videocc-v2-4-cc22386433f4@fairphone.com>
+ <20250324-sm6350-videocc-v2-1-cc22386433f4@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -90,28 +90,33 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250324-sm6350-videocc-v2-4-cc22386433f4@fairphone.com>
-X-Authority-Analysis: v=2.4 cv=fNc53Yae c=1 sm=1 tr=0 ts=67e13a6d cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=1crZ-aHStTAuZ86CvOAA:9 a=CjuIK1q_8ugA:10
+In-Reply-To: <20250324-sm6350-videocc-v2-1-cc22386433f4@fairphone.com>
+X-Authority-Analysis: v=2.4 cv=fNc53Yae c=1 sm=1 tr=0 ts=67e13a7c cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=YQ0UDAJD0Z16suNoM6kA:9 a=CjuIK1q_8ugA:10
  a=PEH46H7Ffwr30OY-TuGO:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-ORIG-GUID: KgoJ3cu7co8bYVpHHnS0C0-lz0lfLZH-
-X-Proofpoint-GUID: KgoJ3cu7co8bYVpHHnS0C0-lz0lfLZH-
+X-Proofpoint-ORIG-GUID: o6LesqaYPME3IuteACldH0FA1dtpDCW2
+X-Proofpoint-GUID: o6LesqaYPME3IuteACldH0FA1dtpDCW2
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-24_04,2025-03-21_01,2024-11-22_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- lowpriorityscore=0 mlxlogscore=911 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=694 priorityscore=1501 mlxscore=0
  adultscore=0 spamscore=0 bulkscore=0 suspectscore=0 phishscore=0
  malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
  definitions=main-2503240079
 
-On Mon, Mar 24, 2025 at 09:41:04AM +0100, Luca Weiss wrote:
-> Add a node for the videocc found on the SM6350 SoC.
+On Mon, Mar 24, 2025 at 09:41:01AM +0100, Luca Weiss wrote:
+> While in the past the 'reg' properties were often written using decimal
+> '0' for #address-cells = <2> & #size-cells = <2>, nowadays the style is
+> to use hexadecimal '0x0' instead.
+> 
+> Align this dtsi file to the new style to make it consistent, and don't
+> use mixed 0x0 and 0 anymore.
 > 
 > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 > ---
->  arch/arm64/boot/dts/qcom/sm6350.dtsi | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  arch/arm64/boot/dts/qcom/sm6350.dtsi | 204 +++++++++++++++++------------------
+>  1 file changed, 102 insertions(+), 102 deletions(-)
 > 
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
