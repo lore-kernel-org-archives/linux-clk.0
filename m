@@ -1,76 +1,71 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B253F79F5;
-	Mon, 24 Mar 2025 17:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E8910F1;
+	Mon, 24 Mar 2025 17:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742835686; cv=none; b=c+C8FK6fqi6z+XiF260QbR5JtR4+0hMSz3yROg0fbQo6in6DmlLD+xjm8KjiP48gVj54fq317E+xiIAqhW19DEVH4Awx2xTzBBZlxJ/LpBe8fYzfNm4/Ui5MogT4dBqqnsfSRss6i3uvj2NdrE1P5FvO/OmEzHaKtlPX23X6b50=
+	t=1742836573; cv=none; b=siUWLXBCCLcN4xBsM5YqjmYYCTsFGJM+ck0F/qrMtMJsdRRlluKFAdB+RhYK2HYUVx3VhC83h9PYVk4u2bvfHIMldFLHDCDzJ9XsYPssrXBMBfH/zRWFSo9yvFah7scJsw80vP6joN3sSUsbc70J4TcwBFRRHEYRKxnxv3w2Izk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742835686; c=relaxed/simple;
-	bh=uWJNLYuWvKSvpsPRw892gm1JEBoBmwCB/Kop1T7r8K0=;
+	s=arc-20240116; t=1742836573; c=relaxed/simple;
+	bh=AkOY3OgFCEWlwpwEncqQoSIVnZQVS9uLbLd0AE0qH4k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPBUBtMbYVQDipPyI6Vjaa7WvlW+/VallFdvQkEEkliS9L2Pi+FZMYS7HiqkQd4T+wortxWeOlR9l834dwsI0sH9hY3RVTLCbNIhh7hyqB90q/PrhB9K0sPHK442U+RNnmKdgtH5F3kZlkyudtVupBB6/LAS2kuNmplAwEcTyo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhxwBWqP; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=iSR4P+D0o5wJ9m0mTFoy5QoRT9VVAXH4Xw78BMNdb2pbWfWMxSQOUwoWuVKHy1vIumZTitAQlcp74661yjWtOqbdsRcj2GBbE3ZQAiyHA7/sWEY3Eo46HradJdgAz0aqEENQ6enyQ+y9PJN2vknovagZoKgzUh3xLMPMBQVPkW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JvG7V7Y+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhxwBWqP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E69D1C4CEDD;
-	Mon, 24 Mar 2025 17:01:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvG7V7Y+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B746FC4CEDD;
+	Mon, 24 Mar 2025 17:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742835686;
-	bh=uWJNLYuWvKSvpsPRw892gm1JEBoBmwCB/Kop1T7r8K0=;
+	s=k20201202; t=1742836573;
+	bh=AkOY3OgFCEWlwpwEncqQoSIVnZQVS9uLbLd0AE0qH4k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dhxwBWqPsnqc/FF3Vh2Uq4XV7t5y8Ng7wB30cTge8lrbx9tO9gHSCqN3gBtdWPs03
-	 EpxpBwBLmPm3ahwXAOUOplvw1bcj3RZyMZw1tFz6+dEnObr48te3KjBa52QkvhNTBp
-	 MGEQ96c9nbqodOF5YsDbVx8YZepknuJjjkw5Mf5O5TtPEjUdeMZr8HvZ0cRsJuHzdv
-	 udbLUFCDFV9rSFStSJMKni8cpM7WHPHrsL/H4cr4jyewMzPJK5DJJzsHqhYQg9olHH
-	 9//4CbGTsTu/bB7IyIJcK88r5+O9BZheTpqmTHM5CP1UMBeASsvm0UdBBlg6DgtLBP
-	 MZ8ngxjMamstQ==
-Date: Mon, 24 Mar 2025 12:01:25 -0500
+	b=JvG7V7Y++6F/Yg+Z4O0LkLrO+Vmc7bRjut7Be4IkF7qQ0jCGnz3CLcK013XWzKE13
+	 vK9eHYlC30m0bSLozm50RTSbqObGZFqBsw124e3f/M6K63E8SlyfBgHz0YaPDJJ4dU
+	 p7dziWaYyuUBf/1ynZgdjyURfPIqv+TA0tZFMjJMZTaSGA4roLQKKp7oIt13waM/xr
+	 SLkiUPLI3Yi1pqcYJri8F4VtH67RSEvvf9YrTHYLLdSpHTlgcyZycb3usGXSlOoAij
+	 Pq71bQnTS1H9Ia9xxMPXNaio1k6uSbzxldcCM1TKqNN9PlThriXmmfaDiNl90vmKjb
+	 ED2G1zpRPe/ug==
+Date: Mon, 24 Mar 2025 12:16:11 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Lee Jones <lee@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	linux-rtc@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	linux-samsung-soc@vger.kernel.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, kernel-team@android.com,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Will Deacon <will@kernel.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 02/34] dt-bindings: clock: samsung,s2mps11: add s2mpg10
-Message-ID: <174283568389.583762.1651160249139720114.robh@kernel.org>
-References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
- <20250323-s2mpg10-v1-2-d08943702707@linaro.org>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht, devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v2 2/4] dt-bindings: clock: add SM6350 QCOM video clock
+ bindings
+Message-ID: <174283657138.689866.626962804194568549.robh@kernel.org>
+References: <20250324-sm6350-videocc-v2-0-cc22386433f4@fairphone.com>
+ <20250324-sm6350-videocc-v2-2-cc22386433f4@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250323-s2mpg10-v1-2-d08943702707@linaro.org>
+In-Reply-To: <20250324-sm6350-videocc-v2-2-cc22386433f4@fairphone.com>
 
 
-On Sun, 23 Mar 2025 22:39:18 +0000, André Draszik wrote:
-> The Samsung S2MPG10 clock controller is similar to the existing clock
-> controllers supported by this binding. Register offsets / layout are
-> slightly different, so it needs its own compatible.
+On Mon, 24 Mar 2025 09:41:02 +0100, Luca Weiss wrote:
+> From: Konrad Dybcio <konradybcio@kernel.org>
 > 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> Add device tree bindings for video clock controller for SM6350 SoCs.
+> 
+> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+> Co-developed-by: Luca Weiss <luca.weiss@fairphone.com>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 > ---
->  Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  .../devicetree/bindings/clock/qcom,videocc.yaml    | 20 ++++++++++++++++
+>  include/dt-bindings/clock/qcom,sm6350-videocc.h    | 27 ++++++++++++++++++++++
+>  2 files changed, 47 insertions(+)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
