@@ -1,281 +1,160 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864132E338E;
-	Mon, 24 Mar 2025 06:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4C425D526
+	for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 08:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742798466; cv=none; b=Q9a2r3DOGmyNm8ys25fxRiOwlkmvHXAUT4ikX12XY0hF6+4eZIC8dF07z/AY6PCRFbrxgrhIDe41nHTNHFnBQXjiWGCSFN98gaTEDeXzw8XLWm+Ox/DOtZhYi37Ha2YwTbhSWDc1VMfSak6RKDNZMU+IDkxaNZ9FAMifbv2IICE=
+	t=1742805305; cv=none; b=G41dvIGjqMAWmaWdtOmc45wSsQS523ys695SXI9Leh/KphGuT8DEbQFWYht8/+9BmVaTqZatYqd20qzzdvuJkDegMit+P7iHLd7atqiy2aif+cHixeARYBb1ktRjCG5gxH+S961/8oTKCVoh1nX+34fS/8210q0olPCPYLoNeDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742798466; c=relaxed/simple;
-	bh=2WdQju5s4FY7ClwWSmkQEoXwH0Wx/18/xbj1Hfo4YkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lKq4+kjzVWGBDpfqp7yZiGgztJT3kZ48QUdkKScXoUiVBaDL1bm9y6sUgGyGfQyhzHanBuDosxHya2TB6nlU/PXrjuY67O3jQTJfLf1wQKS+EUp4qsBjqpCtLHaHoF/RTJqMt07G+fV/IbmEesLrZ21jxZJ25TXXAGRpNSu2EvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.233])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 4F9F034308A;
-	Mon, 24 Mar 2025 06:41:03 +0000 (UTC)
-Date: Mon, 24 Mar 2025 06:40:58 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 3/7] clk: spacemit: add reset controller support
-Message-ID: <20250324064058-GYC18687@gentoo>
-References: <20250321151831.623575-1-elder@riscstar.com>
- <20250321151831.623575-4-elder@riscstar.com>
- <20250322161945-GYC11633@gentoo>
- <4ad5dc64-c6e5-476f-8674-bbedb8df5f8d@riscstar.com>
+	s=arc-20240116; t=1742805305; c=relaxed/simple;
+	bh=K3YpedOgsq+C31b7tTZPOvr8kmsx7aRuaqrW18HIxhw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Cx7tpkePg2TycPqcyzxcmt/S9AkaUkq9cNN5DVMtwqr3IdYaaGLo8wzCrnfiXl2s2OA3SEfEYFCO6Su+ohjE5TjNZAVkO2/gQCz2dLc6xhM41cDi0x6FfXgetsKkAjNWYhEs/SWGjqjS0/F0U1QofJM70KULH6LU+UPFl08i/YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=g3nnqUVa; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="g3nnqUVa"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac25d2b2354so686188466b.1
+        for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 01:35:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1742805302; x=1743410102; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MtM2jPewpBB1GtxH9hLs2BIeUeV4rFif5sXTsAELetg=;
+        b=g3nnqUVayA+f7NYeLW4hAiJ6sS4fK2KZa2bpyAoDXBkba+jQIKQUUEDXz0ESBMSWcM
+         iWza+ATFopkHY5JcRWdt8zXpxCYU1gFaiinP6lHr2xTe+lY37Lb/77hCsBVLsJwx58N9
+         TjgxXO95Z+vb0DX1z865cDKAE8MWlhrvSxJmINVv10KIaXQB/fw/B2TDhvC7cc+MuFtj
+         MIw9a9YhKpcpLOTGKiC4xodgN3K3AOcvtbGx6WLLbV22kld7Uv5EbyH4zp1dBWOLN15o
+         vyaBFZeufh9eZIbOm4TwBctTezPT6Xb099svTmaDB/j7e56g5Uc62cJ76AAIwI0sNnmz
+         ZMqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742805302; x=1743410102;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MtM2jPewpBB1GtxH9hLs2BIeUeV4rFif5sXTsAELetg=;
+        b=Y6PAoEMsk2seVyWPEtXh9WZ+rrdO6n4vz1FC7DVhSZepkGVB8hNrCXzkl3fCUGOmrC
+         eHw19DyqgJ+Snw+qRM75ZOmfCbu/qi3HtYc33sUaFrxN6+z92/YRwqrP1mmeLOvg/jX0
+         Yxq34aP2Oie6qz4miC8F02cbTCuJkiNbffJdMB+BZ5yU6MjXJPHs4OrpbifOrzDBe3jc
+         qGRRTl8vTjriXdu+ODKM87dfH6WUKDZuecKtu8RJEV5RZP56RwK5mb9VhTM9AHG+exI3
+         aEvdM559dnk/CEu539pA+c8pAxSECgr6iShcMHax4U2GrSmRyjxO5yjFkhI8zoxQxvZ0
+         x/jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXG63MCtf1Mk+6zKQDdpC4XpPFOdzCCZXzxIo2fsGLZyr/v9K3/siY8pR2Y/Eej3X5prHrqu6BHyHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLmnm9naRuF45cLNGCvr7iserOmftp9wvAI27VuFrlyH4296qO
+	sHsS/QCByd0POZlmeXgbKmXhRDtMi5hh5IXldulvGcKLAfMzVrgqsZKACyI0P0x5yUiOIgU71fV
+	y
+X-Gm-Gg: ASbGncs3WYxh7MdVIT8ZNf0Ox2YxmqZCYvxJVOdXbbxvWOFAQ0zjn0QnyPaajs0WznG
+	sbwgYNeZODzFr3DXWH+3Rt0K69QbLdVYQe+AUps4eJmQWGKBQr5HRnVYMtYASkH2p0v9nIfHYuY
+	oShPq0NohTNslU3DRibY1Jw5LXYF3vx+MELQqPnuj9Df5zGXQ3wLqIVLKmlXCKlBwDCt+bnm8MH
+	APP+tEsUbAp5xFQFwPGe91uJR9wDfmTm7PI3DHGuuFeImhZjlIaXhyymrbGd37XqkYUb8mpAPlP
+	sX+F81iE2rbDxkfo0RZv753MOA/dBaAPiPrMeB206bTn0pr9B49fMFSd9AjSCF3raCGe9j3ysRf
+	lWPnEAa8mxBTfKy23NOmva8lQ
+X-Google-Smtp-Source: AGHT+IGB5qcChPuaAQdfX+14ZggTxmYRK+LL7JdV3Pt+9T+i1b9nMe6nfbPAb3Nqpg2BGHGLPaSOUw==
+X-Received: by 2002:a17:907:971e:b0:ac2:622f:39c1 with SMTP id a640c23a62f3a-ac3f20f3e88mr932569966b.22.1742805301737;
+        Mon, 24 Mar 2025 01:35:01 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd8f37asm645336266b.179.2025.03.24.01.35.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Mar 2025 01:35:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4ad5dc64-c6e5-476f-8674-bbedb8df5f8d@riscstar.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 24 Mar 2025 09:35:00 +0100
+Message-Id: <D8OCX2BM20CX.J365MYKB5ECZ@fairphone.com>
+Cc: "Bjorn Andersson" <andersson@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Taniya Das" <quic_tdas@quicinc.com>,
+ "Konrad Dybcio" <konradybcio@kernel.org>,
+ <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sm6350: Add video clock
+ controller
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250321-sm6350-videocc-v1-0-c5ce1f1483ee@fairphone.com>
+ <20250321-sm6350-videocc-v1-3-c5ce1f1483ee@fairphone.com>
+ <wjq7sxdc5enfu6zhp4d53mpyevzbuwm6qc73kwiu2v3v5p4zkk@mevxbzosjai5>
+ <D8M2U2EUF169.MWRPXFYRBXMM@fairphone.com>
+ <dbdc13ec-13ca-4d80-8c96-26e5e7b4ab3e@oss.qualcomm.com>
+In-Reply-To: <dbdc13ec-13ca-4d80-8c96-26e5e7b4ab3e@oss.qualcomm.com>
 
-Hi Alex:
+On Fri Mar 21, 2025 at 5:23 PM CET, Dmitry Baryshkov wrote:
+> On 21/03/2025 18:15, Luca Weiss wrote:
+>> Hi Dmitry,
+>>=20
+>> On Fri Mar 21, 2025 at 4:56 PM CET, Dmitry Baryshkov wrote:
+>>> On Fri, Mar 21, 2025 at 03:45:01PM +0100, Luca Weiss wrote:
+>>>> Add a node for the videocc found on the SM6350 SoC.
+>>>>
+>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>>>> ---
+>>>>   arch/arm64/boot/dts/qcom/sm6350.dtsi | 14 ++++++++++++++
+>>>>   1 file changed, 14 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dt=
+s/qcom/sm6350.dtsi
+>>>> index 00ad1d09a19558d9e2bc61f1a81a36d466adc88e..ab7118b4f8f8cea56a3957=
+e9df67ee1cd74820a6 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
+>>>> +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
+>>>> @@ -1952,6 +1952,20 @@ usb_1_dwc3_ss_out: endpoint {
+>>>>   			};
+>>>>   		};
+>>>>  =20
+>>>> +		videocc: clock-controller@aaf0000 {
+>>>> +			compatible =3D "qcom,sm6350-videocc";
+>>>> +			reg =3D <0 0x0aaf0000 0 0x10000>;
+>>>
+>>> 0x0, please.
+>>=20
+>> There's currently 80 cases of 0 and 20 of 0x0 in this file, is 0x0
+>> the preferred way nowadays?
+>>=20
+>> If so, shall I also change 0 to 0x0 for reg in a separate patch?
+>
+> I'd say, yes, please, if Bjorn / Konrad do not object.
 
-On 08:23 Sun 23 Mar     , Alex Elder wrote:
-> On 3/22/25 11:19 AM, Yixun Lan wrote:
-> > Hi Alex:
-> > 
-> > On 10:18 Fri 21 Mar     , Alex Elder wrote:
-> >> Define ccu_reset_data as a structure that contains the constant
-> >> register offset and bitmasks used to assert and deassert a reset
-> >> control on a SpacemiT K1 CCU. Define ccu_reset_controller_data as
-> >> a structure that contains the address of an array of those structures
-> >> and a count of the number of elements in the array.
-> >>
-> >> Add a pointer to a ccu_reset_controller_data structure to the
-> >> k1_ccu_data structure.  Reset support is optional for SpacemiT CCUs;
-> >> the new pointer field will be null for CCUs without any resets.
-> >>
-> >> Finally, define a new ccu_reset_controller structure, which (for
-> >> a CCU with resets) contains a pointer to the constant reset data,
-> >> the regmap to be used for the controller, and an embedded a reset
-> >> controller structure.
-> >>
-> >> Each reset control is asserted or deasserted by updating bits in
-> >> a register.  The bits used are defined by an assert mask and a
-> >> deassert mask.  In some cases, one (non-zero) mask asserts reset
-> >> and a different (non-zero) mask deasserts it.  Otherwise one mask
-> >> is nonzero, and the other is zero.  Either way, the bits in
-> >> both masks are cleared, then either the assert mask or the deassert
-> >> mask is set in a register to affect the state of a reset control.
-> >>
-> >> Signed-off-by: Alex Elder <elder@riscstar.com>
-> >> ---
-> >>   drivers/clk/spacemit/ccu-k1.c | 93 +++++++++++++++++++++++++++++++++++
-> >>   1 file changed, 93 insertions(+)
-> >>
-> >> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> >> index f7367271396a0..6d879411c6c05 100644
-> >> --- a/drivers/clk/spacemit/ccu-k1.c
-> >> +++ b/drivers/clk/spacemit/ccu-k1.c
-> >> @@ -10,6 +10,7 @@
-> >>   #include <linux/minmax.h>
-> >>   #include <linux/module.h>
-> >>   #include <linux/platform_device.h>
-> >> +#include <linux/reset-controller.h>
-> >>   
-> >>   #include "ccu_common.h"
-> >>   #include "ccu_pll.h"
-> >> @@ -134,8 +135,26 @@ struct spacemit_ccu_clk {
-> >>   	struct clk_hw *hw;
-> >>   };
-> >>   
-> >> +struct ccu_reset_data {
-> >> +	u32 offset;
-> >> +	u32 assert_mask;
-> >> +	u32 deassert_mask;
-> >> +};
-> >> +
-> >> +struct ccu_reset_controller_data {
-> >> +	u32 count;
-> >> +	const struct ccu_reset_data *data;	/* array */
-> >> +};
-> >> +
-> >>   struct k1_ccu_data {
-> >>   	struct spacemit_ccu_clk *clk;		/* array with sentinel */
-> >> +	const struct ccu_reset_controller_data *rst_data;
-> >> +};
-> >> +
-> >> +struct ccu_reset_controller {
-> >> +	struct regmap *regmap;
-> >> +	const struct ccu_reset_controller_data *data;
-> >> +	struct reset_controller_dev rcdev;
-> >>   };
-> >>   
-> >>   /*	APBS clocks start	*/
-> >> @@ -1630,6 +1649,48 @@ static const struct k1_ccu_data k1_ccu_apmu_data = {
-> >>   	.clk		= k1_ccu_apmu_clks,
-> >>   };
-> >>   
-> >> +static struct ccu_reset_controller *
-> >> +rcdev_to_controller(struct reset_controller_dev *rcdev)
-> > I'd suggest to avoid the line break to make it slightly more readable, intuitive
-> > as the 80 column limit isn't hard rule
-> > 
-> > there are maybe more place similar to this, I won't add more comments
-> > https://github.com/torvalds/linux/commit/bdc48fa11e46f867ea4d75fa59ee87a7f48be144
-> 
-> I disagree with this suggestion.  I personally find this
-> more readable.  As the first line of the patch you link to,
-> "80 columns is still preferred".  And regardless, it is my
-> (strong) preference to work within 80 columns in almost all
-> cases.
-> 
+Sure, I'll just send a patch as part of v2, there's no explicit
+dependency of the series on it, so it can also just be NACKed and
+ignored if so desired.
 
-I can understand this isn't *hard* rule, and even subsystem maintainer
-may has their own preference, but for contributing SpacemiT, 
-I'd hope we could reach certain consensus, so will have sorts of consistent
-coding style, I've been requested several times to extend to 100
-columns (see link below), and I do agree it will end at less lines which
-makes the code more readable..
+Regards
+Luca
 
-https://lore.kernel.org/all/20250302-04-gpio-irq-threecell-v2-1-34f13ad37ea4@gentoo.org
-> >> +{
-> >> +	return container_of(rcdev, struct ccu_reset_controller, rcdev);
-> >> +}
-> > since this function is only used once, open-code it?
-> > but I'd fine with either way if you prefer to keep it
-> 
-> The "to_<containing_type>()" function pattern is extremely
-> common, but I like this suggestion, given it's used only
-> once.  I'll implement it in v2.
-> 
-> > 
-> >> +
-> >> +static int
-> >> +k1_rst_update(struct reset_controller_dev *rcdev, unsigned long id, bool assert)
-> > s/k1_rst_update/k1_reset_update/g
-> > this is a taste change, but I found more people follow this when grep driver/reset
-> 
-> I actually had reset (not rst) before, throughout.  But it made
-> a few lines too long, leading to line wraps, so I did this.
-> 
-> In addition, there was a sort of consistency with the use of
-> "clk" instead of "clock", though I do recognize that abbreviation
-> goes way back to when Mike implemented the common clock framework.
-> 
-> I'll switch back to "reset" (and "RESET") in names, but be warned
-> I'll add some line breaks to fit within 80 columns.
-> 
-> >> +{
-> >> +	struct ccu_reset_controller *controller = rcdev_to_controller(rcdev);
-> >> +	struct regmap *regmap = controller->regmap;
-> >> +	const struct ccu_reset_data *data;
-> >> +	u32 val;
-> >> +	int ret;
-> >> +
-> >> +	data = &controller->data->data[id];
-> >> +
-> >> +	ret = regmap_read(regmap, data->offset, &val);
-> >> +	if (ret)
-> >> +		return ret;
-> >> +
-> >> +	val &= ~(data->assert_mask | data->deassert_mask);
-> >> +	val |= assert ? data->assert_mask : data->deassert_mask;
-> >> +
-> >> +	return regmap_write(regmap, data->offset, val);
-> >> +}
-> >> +
-> >> +static int k1_rst_assert(struct reset_controller_dev *rcdev, unsigned long id)
-> > same reason, rst -> reset, more below
-> >> +{
-> >> +	return k1_rst_update(rcdev, id, true);
-> >> +}
-> >> +
-> >> +static int k1_rst_deassert(struct reset_controller_dev *rcdev, unsigned long id)
-> >> +{
-> >> +	return k1_rst_update(rcdev, id, false);
-> >> +}
-> >> +
-> >> +static const struct reset_control_ops k1_reset_control_ops = {
-> >> +	.assert		= k1_rst_assert,
-> >> +	.deassert	= k1_rst_deassert,
-> >> +};
-> >> +
-> >>   static int k1_ccu_register(struct device *dev, struct regmap *regmap,
-> >>   			   struct regmap *lock_regmap,
-> >>   			   struct spacemit_ccu_clk *clks)
-> >> @@ -1675,6 +1736,33 @@ static int k1_ccu_register(struct device *dev, struct regmap *regmap,
-> >>   	return ret;
-> >>   }
-> >>   
-> >> +static int
-> >> +k1_reset_controller_register(struct device *dev, struct regmap *regmap,
-> >> +			     const struct ccu_reset_controller_data *data)
-> >> +{
-> >> +	struct ccu_reset_controller *controller;
-> >> +	struct reset_controller_dev *rcdev;
-> >> +
-> >> +	/* Resets are optional */
-> >> +	if (!data)
-> >> +		return 0;
-> >> +
-> >> +	controller = devm_kzalloc(dev, sizeof(*controller), GFP_KERNEL);
-> >> +	if (!controller)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	controller->regmap = regmap;
-> >> +	controller->data = data;
-> >> +
-> >> +	rcdev = &controller->rcdev;
-> > ..
-> >> +	rcdev->owner = THIS_MODULE;
-> > move to last?
-> 
-> You mean move nr_resets to last?  I'll do that.  I'll
-> order the assignments in the order they're defined in
-> "reset-controller.h".
-> 
-I mean after rcdev->of_node, suggested based on alphabet letter,
-but I do see people group them based on functionality..
-so whatever you decide, fine by me
+>
+>>=20
+>> Regards
+>> Luca
+>>=20
+>>>
+>>>> +			clocks =3D <&gcc GCC_VIDEO_AHB_CLK>,
+>>>> +				 <&rpmhcc RPMH_CXO_CLK>,
+>>>> +				 <&sleep_clk>;
+>>>> +			clock-names =3D "iface",
+>>>> +				      "bi_tcxo",
+>>>> +				      "sleep_clk";
+>>>> +			#clock-cells =3D <1>;
+>>>> +			#reset-cells =3D <1>;
+>>>> +			#power-domain-cells =3D <1>;
+>>>> +		};
+>>>> +
+>>>>   		cci0: cci@ac4a000 {
+>>>>   			compatible =3D "qcom,sm6350-cci", "qcom,msm8996-cci";
+>>>>   			reg =3D <0 0x0ac4a000 0 0x1000>;
+>>>>
+>>>> --=20
+>>>> 2.49.0
+>>>>
+>>=20
 
-> >> +	rcdev->nr_resets = data->count;
-> >> +	rcdev->ops = &k1_reset_control_ops;
-> >> +	rcdev->of_node = dev->of_node;
-> >> +
-> >> +	return devm_reset_controller_register(dev, rcdev);
-> >> +}
-> >> +
-> >>   static int k1_ccu_probe(struct platform_device *pdev)
-> >>   {
-> >>   	struct regmap *base_regmap, *lock_regmap = NULL;
-> >> @@ -1710,6 +1798,11 @@ static int k1_ccu_probe(struct platform_device *pdev)
-> >>   	if (ret)
-> >>   		return dev_err_probe(dev, ret, "failed to register clocks\n");
-> >>   
-> >> +	ret = k1_reset_controller_register(dev, base_regmap, data->rst_data);
-> > ..
-> >> +	if (ret)
-> >> +		return dev_err_probe(dev, ret,
-> >> +				     "failed to register reset controller\n");
-> > same 100 column reason
-> 
-> This one I might go beyond columns, because it's only a few characters.
-> 
-yes, we have rules not to break strings, but sometimes, I found even
-better when not breaking the whole line (better to do grep)
- 
-thanks for your work!
-
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
