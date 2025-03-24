@@ -1,214 +1,66 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA992638A6
-	for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 17:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3268D199EA2;
+	Mon, 24 Mar 2025 23:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742836988; cv=none; b=OqoeJwMulxDuICCBNb8PV38IL6QkVh8LGXEYkjpKbD2WAWRUgWJOuUqECagMeMyb9VF3QXGNP9D8t24HNuq7pwtLHsgW6qdZ4qVOP23ypKX3v2dED6ElDtuAHG5g9/K/6KNTW0obasat1Xa/jvae1lHeDoeWDlCBsUgyxL8cc70=
+	t=1742859359; cv=none; b=jTf9Y/dPUriGH44jIuVarWQyaeD6anlloTfSLzlLeOghs44kDJJRLE1RDqEwNodjUxLrOyj2AEu3BV2DakGlHRIDsU4VaUc8iHyR0sZ+3H8Btfat9lhyDKeTsQOWWywaVbhF94Ge8/M1RFe+hw+osOZRt5i/YXIExRwaK/z+0NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742836988; c=relaxed/simple;
-	bh=WzeJaaOIY3qOgasgq2SbP7NzsZnSi26UTmzBlBZdbZQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jGqNXpaMKvrnpj97wc3F90X8Y+x1X2CKTA4M2RtWfJDJ7kP+uFdyJIz1M8KnjVMtcClfC6bcBE+NM4bl6T5lGFHjf10TKhQJODHHQT5HRAo2k7RsYripIV9I3MPJ46zHJHohaYckGinh5kJvER0H2Fn4Bl32uJt1VGFQErRSQMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U+VDPyKA; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1742859359; c=relaxed/simple;
+	bh=Rg0bhVS7IXPeDUaqm6jbmcJoYDANFRraWn+5Ga0k1X0=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=iqrtDwAIpTVqFku1kAO28K79u8kaNKmjnlixWHgQoPoTp38Vqj2to25lu0FE6WAOAwoUof8pqQaAEXtixEFx9vT8bPfHB4vydvtWj32GsSMbn2XtBqdrYYlIHQL0tP9IfLnkBlCSVqiO9Yj2wlFMN2pKHmBko1/wAwHzUXt1X/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZtxInX6y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U+VDPyKA"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43d0618746bso31733585e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 10:23:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1742836984; x=1743441784; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WzeJaaOIY3qOgasgq2SbP7NzsZnSi26UTmzBlBZdbZQ=;
-        b=U+VDPyKAxA/0uYzrU73vVChQ2bgZFoGLlSC3ukE7xR+054kYpMfJuiNnw6LzqrhHP5
-         lo2DvoQ32J94Wb6dqXInz0eXuIOWhFHt2bMPS525/imujMmOTW2DgwZswdjNSew98NvG
-         G51LxM86maSbXZdDqM46uezP9NhyRVH8y/iDfjUzxu8jqCHqFqJCyKaAFHWvU7D6cU1o
-         g0iir9uXWVaF2egHeAzRsGLkIZ4DyIMEWFw/dXv+UVXizRQi+uZGO405YHMIZVc6oo0T
-         MHvNOnvD7KyOU6BbTNx3pXIk7/NaF8dT8aUnD6JwhH1pXYwl380L4Kb8O8r9Y+D9w1kh
-         vy/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742836984; x=1743441784;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WzeJaaOIY3qOgasgq2SbP7NzsZnSi26UTmzBlBZdbZQ=;
-        b=V/sPr9wwWRCLlDjKeFXfhm1JvWNuH2upjLIVX8bhMZXscP5glxceueEbZ4o64ua2q7
-         GZtCb2Dpw7D5PkOdCvmaub3NZBsgN2AVycIZ5901o3XizKY4IfDniN4KG2WpDycwrBf0
-         xdIcAQqTxq8T+TQ5of/KJATBd/69SDpCI5Jdcqn8rK+wl9appCrvYUUbJynqIeU5Ncwt
-         IIJY8D0pkZaHWVKPwgRu83mvaAbllVBjFvFZq6cTgaUcZPjLcT35EFHJ67UesiqUY4+l
-         ciz9b9xaj1b48bBB8b2sSOIQM994J9kFTriC914b2e49XR4t+AMQa/f5TuiT2J6llf+A
-         zE8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV8fNgLcZ/j9q0R1Ec/Dn5JUz864Uo15rlRVeqqwuSI+8XZoeVHrM1T4r+prh+ob8eI4NsVBBCE8bs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8eUlh09rJydU/EQ4NwmWNW0rAmplAWWJwfuC88NgDGwRO1n8w
-	sPW/Np0Q7ZoDhOmpQx/8YtPPz8qdE+xJ6hFd340QVLuLG4Fm2OrUMYM9eemSK/s=
-X-Gm-Gg: ASbGncuEy/JbdRWelAGjjXQxXCdgFGsTxfKJS9YWmupeeQvvg03Pg7sI886wzbaE8ty
-	a2eagxL77taeRGcpcabmCPuhugHVtTc9VXkyxljtPU0KqwwN9dvm6PmnMuXXHb+MI3j2VlXrt6S
-	uEDmDuDQXZ2QLHDxHrDJcKjt3ZfqnwuUeh/WaS9O3qM8WkLZbL7Wb0uUlxqshhBLDKYSEjsTGSW
-	mwnH1GhKuPxO1E0+ZiolNQtQc2ZGNLT9VfDmh6HRu9tSi0SUSHzRzKogtfL2rHMkyLxi151vdyS
-	AXpNAs+i7y0WoRCiIjSisapEUYA2iADcdKNEs1kxmC0RmtE=
-X-Google-Smtp-Source: AGHT+IHfEsqVrCp9uQuTAuS3ap1nR417rILjVAh7N1JNOE8t++oFUPwfBJvs4SjxnMYZNeDOSpPNtQ==
-X-Received: by 2002:a05:6000:18a2:b0:391:3028:c779 with SMTP id ffacd0b85a97d-3997f95956cmr12682045f8f.45.1742836983616;
-        Mon, 24 Mar 2025 10:23:03 -0700 (PDT)
-Received: from salami.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d43f556a4sm177445795e9.22.2025.03.24.10.23.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 10:23:03 -0700 (PDT)
-Message-ID: <26037d49069309915d6ac3dc4d0aff90175754de.camel@linaro.org>
-Subject: Re: [PATCH 01/34] dt-bindings: mfd: samsung,s2mps11: add s2mpg10
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi	 <cw00.choi@samsung.com>, Alim Akhtar
- <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Russell King	 <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon	 <will@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, Peter Griffin
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
- McVicker	 <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Date: Mon, 24 Mar 2025 17:23:01 +0000
-In-Reply-To: <20250324165533.GA521455-robh@kernel.org>
-References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
-	 <20250323-s2mpg10-v1-1-d08943702707@linaro.org>
-	 <20250324165533.GA521455-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.55.3-1 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZtxInX6y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8727EC4CEDD;
+	Mon, 24 Mar 2025 23:35:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742859358;
+	bh=Rg0bhVS7IXPeDUaqm6jbmcJoYDANFRraWn+5Ga0k1X0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=ZtxInX6yQsCPOx57XwUDwrJN69cDO7Lt9T41YjfV4VNQPRBLyucbLttuvCe4KPALu
+	 WBqyIz5pQRbjrwTq9fUG3+fX2yv0rltUdaDhT8hIp/gGfrinKFEgGSberA4J67hWqd
+	 rehYjqNsFZzo/ZgjZDeFXTa7mj9jDCkwQPn5q4A0M3M3JiTUhS6XhQF+DJVyvZjQp6
+	 lOYR3bEkeraKmYXrBlyNi/WpclKCTepgwCAGBGOT42LTisTGMewROxOYbGaLBLhJ8j
+	 3S1WoX9H0iVECSyEDYWp9A9uAzs5rdkPuLvfAwH45Z1U9AYMfZifXoxGvgQtQtSOth
+	 5UI4DFUZRNinw==
+Message-ID: <756e17f75d314afc8ce68b727fe2b115@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250322133453.2723879-1-andersson@kernel.org>
+References: <20250322133453.2723879-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock updates for v6.15
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Imran Shaik <quic_imrashai@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Devi Priya <quic_devipriy@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, Alexey Minnekhanov <alexeymin@postmarketos.org>, Daniil Titov <daniilt971@gmail.com>, Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Ajit Pandey <quic_ajipan@quicinc.com>, =?utf-8?b?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>, Jordan Crouse <jorcrous@amazon.com>, Karl Chan <exxxxkc@getgoogleoff.me>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>, Vladimir Lypak <vladimir.lypak@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date: Mon, 24 Mar 2025 16:35:56 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Hi Rob,
-
-Thanks for your review!
-
-On Mon, 2025-03-24 at 11:55 -0500, Rob Herring wrote:
-> On Sun, Mar 23, 2025 at 10:39:17PM +0000, Andr=C3=A9 Draszik wrote:
-> > The Samsung S2MPG10 PMIC is similar to the existing PMICs supported by
-> > this binding.
-> >=20
-> > It is a Power Management IC for mobile applications with buck
-> > converters, various LDOs, power meters, RTC, clock outputs, and
-> > additional GPIOs interfaces.
-> >=20
-> > Unlike other Samsung PMICs, communication is not via I2C, but via the
-> > Samsung ACPM firmware, it therefore doesn't need a 'reg' property but a
-> > handle to the ACPM firmware node instead.
+Quoting Bjorn Andersson (2025-03-22 06:34:50)
 >=20
-> Can it be a child node of the ACPM node instead?
-
-That should work, I'll do that instead so.
-
-> >=20
-> > S2MPG10 can also act as a system power controller allowing
-> > implementation of a true cold-reset of the system.
-> >=20
-> > Support for the other components will be added in subsequent future
-> > patches.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0.../devicetree/bindings/mfd/samsung,s2mps11.yaml=C2=A0=C2=A0 | 34=
- ++++++++++++++++++++--
-> > =C2=A01 file changed, 32 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml=
- b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> > index ac5d0c149796b6a4034b5d4245bfa8be0433cfab..ae8adb80b3af7ec3722c2a5=
-718ad8fddf0a5df34 100644
-> > --- a/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> > +++ b/Documentation/devicetree/bindings/mfd/samsung,s2mps11.yaml
-> > @@ -20,6 +20,7 @@ description: |
-> > =C2=A0properties:
-> > =C2=A0=C2=A0 compatible:
-> > =C2=A0=C2=A0=C2=A0=C2=A0 enum:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,s2mpg10-pmic
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,s2mps11-pmic
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,s2mps13-pmic
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,s2mps14-pmic
-> > @@ -43,6 +44,12 @@ properties:
-> > =C2=A0=C2=A0=C2=A0=C2=A0 description:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 List of child nodes that specify t=
-he regulators.
-> > =C2=A0
-> > +=C2=A0 exynos,acpm-ipc:
-> > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/phandle
-> > +=C2=A0=C2=A0=C2=A0 description: |
+> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
+5b:
 >=20
-> Don't need '|' if no formatting to preserve.
-
-Oops, yes, sorry.
-
-Cheers,
-Andre'
-
+>   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 >=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Phandle to the ACPM node for when ACPM =
-is used to communicate with the
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PMIC, rather than I2C.
-> > +
-> > =C2=A0=C2=A0 samsung,s2mps11-acokb-ground:
-> > =C2=A0=C2=A0=C2=A0=C2=A0 description: |
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Indicates that ACOKB pin of S2MPS1=
-1 PMIC is connected to the ground so
-> > @@ -58,16 +65,39 @@ properties:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reset (setting buck voltages to de=
-fault values).
-> > =C2=A0=C2=A0=C2=A0=C2=A0 type: boolean
-> > =C2=A0
-> > +=C2=A0 system-power-controller: true
-> > +
-> > =C2=A0=C2=A0 wakeup-source: true
-> > =C2=A0
-> > =C2=A0required:
-> > =C2=A0=C2=A0 - compatible
-> > -=C2=A0 - reg
-> > -=C2=A0 - regulators
-> > =C2=A0
-> > =C2=A0additionalProperties: false
-> > =C2=A0
-> > =C2=A0allOf:
-> > +=C2=A0 - if:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 contains:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 con=
-st: samsung,s2mpg10-pmic
-> > +=C2=A0=C2=A0=C2=A0 then:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regulators: false
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,s2mps11-acokb-groun=
-d: false
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 samsung,s2mps11-wrstbi-grou=
-nd: false
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 required:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - exynos,acpm-ipc
-> > +
-> > +=C2=A0=C2=A0=C2=A0 else:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 exynos,acpm-ipc: false
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 system-power-controller: fa=
-lse
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 required:
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - reg
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - regulators
-> > +
-> > =C2=A0=C2=A0 - if:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible:
-> >=20
-> > --=20
-> > 2.49.0.395.g12beb8f557-goog
-> >=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-for-6.15
+>=20
+> for you to fetch changes up to 9bf3684e0f7e65298ff844fd81e6dc5105c67354:
+>=20
+>   clk: qcom: Add NSS clock Controller driver for IPQ9574 (2025-03-17 10:1=
+1:45 -0500)
+>=20
+> ----------------------------------------------------------------
+
+Thanks. Pulled into clk-next
