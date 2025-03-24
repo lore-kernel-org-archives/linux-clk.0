@@ -1,96 +1,256 @@
-Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CD62A1CA;
-	Mon, 24 Mar 2025 06:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A28D189919;
+	Mon, 24 Mar 2025 06:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742796998; cv=none; b=BA1bHO7KVOl+FCoIfF72fIlYMFZwWuvPWfhhzqkkgxKU+5zv7BCxje91pzFjZrtqo50RU2gYZ+D0idaJZwuyZbC1ckLoby0MT+aim9TTX2heXmOe9MbMpRpu1pmeQGly9db6ITD85Dj8eWF3VKhMLm33h3apwEa4lFSRxq9JmB0=
+	t=1742797296; cv=none; b=RvDkLHtBYeTVj1nOPRSAB0Ug8puZfWNAWMWXlMiTppg7lvcFtlLpgnoFFEvvYZOv78b2xgGT5yQcMrjMEYtR0orc+g4lHg1e4X/VhqlJ45YStGYx0nUq6wyErO/VZCOQKmFcPN06fnNq8ULyV3FS97QG6Ns4SJXaRm77Uy8EDxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742796998; c=relaxed/simple;
-	bh=9eSSfttpcw0lJBajJNCu7ORS5sYa5GsLsfivP46rMak=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=N7SdqVpFsxU0t+9+cWch6pww6EHz+5EDEBH5x5XoUxpAI81MJ7pKkL/xTjunXsk6SuZp1Rs3ZySYOo5wXLAaSPBC75YyRxPb7wOYoP5dIooQrn2ieqfQ36+yf82POWRbtVFG33OW4kznM3JaSTF5SXoj2Rg71EY9xAYZMn7uiD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=ITGIpFyp; arc=none smtp.client-ip=91.236.205.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="ITGIpFyp"
-Received: from mail.crpt.ru ([192.168.60.3])
-	by mail.crpt.ru  with ESMTP id 52O6FoPN018457-52O6FoPP018457
-	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
-	Mon, 24 Mar 2025 09:15:50 +0300
-Received: from EX2.crpt.local (192.168.60.4) by ex1.crpt.local (192.168.60.3)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 24 Mar
- 2025 09:15:50 +0300
-Received: from EX2.crpt.local ([192.168.60.4]) by EX2.crpt.local
- ([192.168.60.4]) with mapi id 15.01.2507.044; Mon, 24 Mar 2025 09:15:50 +0300
-From: =?utf-8?B?0JLQsNGC0L7RgNC+0L/QuNC9INCQ0L3QtNGA0LXQuQ==?=
-	<a.vatoropin@crpt.ru>
-To: Michael Turquette <mturquette@baylibre.com>
-CC: =?utf-8?B?0JLQsNGC0L7RgNC+0L/QuNC9INCQ0L3QtNGA0LXQuQ==?=
-	<a.vatoropin@crpt.ru>, Stephen Boyd <sboyd@kernel.org>, Michal Simek
-	<michal.simek@amd.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	=?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@baylibre.com>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] soc: xilinx: vcu: modify the order of devices unregistration
-Thread-Topic: [PATCH] soc: xilinx: vcu: modify the order of devices
- unregistration
-Thread-Index: AQHbnIQwE54gprkZdUqVTZP34SoMOg==
-Date: Mon, 24 Mar 2025 06:15:49 +0000
-Message-ID: <20250324061543.15150-1-a.vatoropin@crpt.ru>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-kse-serverinfo: EX1.crpt.local, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 2/17/2025 9:52:00 AM
-x-kse-attachment-filter-triggered-rules: Clean
-x-kse-attachment-filter-triggered-filters: Clean
-x-kse-bulkmessagesfiltering-scan-result: protection disabled
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1742797296; c=relaxed/simple;
+	bh=Tlj9VvXILtWn+p7on4L5BkMzIkf6ETB+uWCXF9joqrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rq9C7lncFG1UMwspJ5Au802SO7t0UZYxD06SerD3Db0cZmshK+ZUkO8sKwq3ULdqhGEs5+0z2NfoCfjXY7DBxJeExU5zS6IaihXu76kzr59msZfeXrOQKjqXT0xzNIbAFIfDGsTtS5NMNvxboyqC7GGuU4DadQcpzff2CsIXRpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.48.233])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id DB3C83432B0;
+	Mon, 24 Mar 2025 06:21:33 +0000 (UTC)
+Date: Mon, 24 Mar 2025 06:21:29 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	heylenay@4d2.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 6/7] clk: spacemit: define new syscons with only
+ resets
+Message-ID: <20250324062129-GYA19363@gentoo>
+References: <20250321151831.623575-1-elder@riscstar.com>
+ <20250321151831.623575-7-elder@riscstar.com>
+ <20250322164247-GYD11633@gentoo>
+ <c080eb55-943e-4564-8dcc-dd5f27b296a9@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 192.168.60.3
-X-FE-Policy-ID: 2:4:0:SYSTEM
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
- h=from:to:cc:subject:date:message-id:content-type:mime-version;
- bh=9eSSfttpcw0lJBajJNCu7ORS5sYa5GsLsfivP46rMak=;
- b=ITGIpFypKaB6RSoCLt1/wetbTrDJMw+CmjIoqPiHBS5QO/3pp4Mcdri1sahof3hzEDt7wquw5fAR
-	AYRSdBTgKbOoargnFt83PAPCT6GqQMCnUP/xR4vPs9qwtcy6/OTD/PkFacUgxbUdjjv4wyK7CKmA
-	cAAMRaZsrW1WS2np15fSBSK5ENdFaxVMBROJ8spJPKbXAVHwcukg3hLj4POA+hokV1wnJsS3/EJN
-	XF+LhWtB7gjKeO1fY2o4Q3C3ZYYEyHXBAtSRPyqjohsQARiT9YsEaAk4fo9eqkpJn18rKwMuoMnE
-	3W0oVQo7l55qoSkufvQwwKUQA/1Ppoc5+9yBNg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c080eb55-943e-4564-8dcc-dd5f27b296a9@riscstar.com>
 
-RnJvbTogQW5kcmV5IFZhdG9yb3BpbiA8YS52YXRvcm9waW5AY3JwdC5ydT4NCg0KVGhlIG9yZGVy
-IG9mIHJlZ2lzdHJhdGlvbiBvZiAnc3RydWN0IGNsa19odycgaGFuZGxlcyBpbg0KeHZjdV9jbGtf
-aHdfcmVnaXN0ZXJfbGVhZigpIGRvZXMgbm90IGNvcnJlc3BvbmQgdGhlIG9yZGVyIG9mDQp1bnJl
-Z2lzdHJhdGlvbiBwZXJmb3JtZWQgaW4geHZjdV9jbGtfaHdfdW5yZWdpc3Rlcl9sZWFmKCkuDQoN
-CkNsZWFuIHVwIHRoZSBvcmRlciBhbmQgcmVwbGFjZSB0aGUgZHVwbGljYXRlICFkaXZpZGVyIGNo
-ZWNrIHdpdGggYSBtb3JlDQphcHByb3ByaWF0ZSBvbmUuDQoNCkZvdW5kIGJ5IExpbnV4IFZlcmlm
-aWNhdGlvbiBDZW50ZXIgKGxpbnV4dGVzdGluZy5vcmcpIHdpdGggU1ZBQ0UuDQoNClNpZ25lZC1v
-ZmYtYnk6IEFuZHJleSBWYXRvcm9waW4gPGEudmF0b3JvcGluQGNycHQucnU+DQotLS0NCiBkcml2
-ZXJzL2Nsay94aWxpbngveGxueF92Y3UuYyB8IDYgKysrLS0tDQogMSBmaWxlIGNoYW5nZWQsIDMg
-aW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xr
-L3hpbGlueC94bG54X3ZjdS5jIGIvZHJpdmVycy9jbGsveGlsaW54L3hsbnhfdmN1LmMNCmluZGV4
-IDgxNTAxYjQ4NDEyZS4uZTRiMDhmNTAxOTU4IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9jbGsveGls
-aW54L3hsbnhfdmN1LmMNCisrKyBiL2RyaXZlcnMvY2xrL3hpbGlueC94bG54X3ZjdS5jDQpAQCAt
-NTExLDExICs1MTEsMTEgQEAgc3RhdGljIHZvaWQgeHZjdV9jbGtfaHdfdW5yZWdpc3Rlcl9sZWFm
-KHN0cnVjdCBjbGtfaHcgKmh3KQ0KIAkJcmV0dXJuOw0KIA0KIAltdXggPSBjbGtfaHdfZ2V0X3Bh
-cmVudChkaXZpZGVyKTsNCi0JY2xrX2h3X3VucmVnaXN0ZXJfbXV4KG11eCk7DQotCWlmICghZGl2
-aWRlcikNCisJY2xrX2h3X3VucmVnaXN0ZXJfZGl2aWRlcihkaXZpZGVyKTsNCisJaWYgKCFtdXgp
-DQogCQlyZXR1cm47DQogDQotCWNsa19od191bnJlZ2lzdGVyX2RpdmlkZXIoZGl2aWRlcik7DQor
-CWNsa19od191bnJlZ2lzdGVyX211eChtdXgpOw0KIH0NCiANCiBzdGF0aWMgaW50IHh2Y3VfcmVn
-aXN0ZXJfY2xvY2tfcHJvdmlkZXIoc3RydWN0IHh2Y3VfZGV2aWNlICp4dmN1KQ0KLS0gDQoyLjQz
-LjANCg==
+Hi Alex:
+
+On 08:23 Sun 23 Mar     , Alex Elder wrote:
+> On 3/22/25 11:42 AM, Yixun Lan wrote:
+> > Hi Alex:
+> > 
+> > It occur to me it's a little odd to implemnt reset driver
+> > for RCPU block, but after check with vendor the RCPU region can
+> > be accessed both by ACPU and RCPU, then I'm fine with this.
+> 
+> I implemented just the resets that were found in the downstream
+> code.
+> 
+> I first implemented a separate reset driver, very simple, which
+> only implemented the resets.  I had a separate DTS binding (like
+> was done for the PLLs).  I was ready to post it for review, then
+> noticed that the registers used were shared with clocks.  So I
+> merged all of that separate code into the clock driver, as you
+> see here.
+> 
+ok
+
+> > ACPU - RISC-V Main CPU, with mmu, running Linux
+> > RCPU - real time CPU, without mmu, running RT-OS
+> 
+> I didn't realize there was a separate CPU running its
+> own OS.  Is this managed as a remoteproc by the RISC-V AP?
+> The reset signals, I hope, are only touched by the AP
+> and not the real-time CPU.  Can you provide any further
+> information about this?
+> 
+As far as I know, the RCPU region can be acccesed via AP and real-time CPU
+from hardware perspective, there is no guarantee of isolation,
+so maybe software should take care of this in case only one side can touch
+
+for remoteproc, I haven't checked, and it's unrelated to this discussion
+(doesn't change shared resource fact whether remoteproc supported or not)
+
+> > On 10:18 Fri 21 Mar     , Alex Elder wrote:
+> >> Enable support for three additional syscon CCUs which support reset
+> >> controls but no clocks:  ARCPU, RCPU2, and APBC2.
+> >>
+> >> Signed-off-by: Alex Elder <elder@riscstar.com>
+> >> ---
+> >>   drivers/clk/spacemit/ccu-k1.c | 106 ++++++++++++++++++++++++++++++++++
+> >>   1 file changed, 106 insertions(+)
+> >>
+> >> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+> >> index 17e321c25959a..bf5a3e2048619 100644
+> >> --- a/drivers/clk/spacemit/ccu-k1.c
+> >> +++ b/drivers/clk/spacemit/ccu-k1.c
+> >> @@ -130,6 +130,37 @@
+> >>   #define APMU_EMAC0_CLK_RES_CTRL		0x3e4
+> >>   #define APMU_EMAC1_CLK_RES_CTRL		0x3ec
+> >>   
+> >> +/* RCPU register offsets */
+> >> +#define RCPU_SSP0_CLK_RST		0x0028
+> >> +#define RCPU_I2C0_CLK_RST		0x0030
+> >> +#define RCPU_UART1_CLK_RST		0x003c
+> >> +#define RCPU_CAN_CLK_RST		0x0048
+> >> +#define RCPU_IR_CLK_RST			0x004c
+> >> +#define RCPU_UART0_CLK_RST		0x00d8
+> >> +/* XXX Next one is part of the AUD_AUDCLOCK region @ 0xc0882000 */
+> > this comment looks odd, XXX?
+> 
+> Yeah, I meant to remove that before sending but I forgot.
+> 
+> The downstream code treats this one register as being
+> part of the RCPU memory region, and extends that region
+> to be 0x2048 bytes to "fit" it.
+> 
+> The hardware documentation actually defines a different
+> "RCPU Audio Clock" memory region, and it might be more
+> correct (though less convenient) to define that as a
+> distinct region of memory.
+> 
+> What do you think?
+> 
+I'm not sure, but from DT perspective, is it an independent device?
+if yes, then need to describe as a distinct region..
+> 					-Alex
+> 
+> >> +#define AUDIO_HDMI_CLK_CTRL		0x2044
+> >> +
+> >> +/* RCPU2 register offsets */
+> >> +#define RCPU2_PWM0_CLK_RST		0x0000
+> >> +#define RCPU2_PWM1_CLK_RST		0x0004
+> >> +#define RCPU2_PWM2_CLK_RST		0x0008
+> >> +#define RCPU2_PWM3_CLK_RST		0x000c
+> >> +#define RCPU2_PWM4_CLK_RST		0x0010
+> >> +#define RCPU2_PWM5_CLK_RST		0x0014
+> >> +#define RCPU2_PWM6_CLK_RST		0x0018
+> >> +#define RCPU2_PWM7_CLK_RST		0x001c
+> >> +#define RCPU2_PWM8_CLK_RST		0x0020
+> >> +#define RCPU2_PWM9_CLK_RST		0x0024
+> >> +
+> >> +/* APBC2 register offsets */
+> >> +#define APBC2_UART1_CLK_RST		0x0000
+> >> +#define APBC2_SSP2_CLK_RST		0x0004
+> >> +#define APBC2_TWSI3_CLK_RST		0x0008
+> >> +#define APBC2_RTC_CLK_RST		0x000c
+> >> +#define APBC2_TIMERS0_CLK_RST		0x0010
+> >> +#define APBC2_KPC_CLK_RST		0x0014
+> >> +#define APBC2_GPIO_CLK_RST		0x001c
+> >> +
+> >>   struct spacemit_ccu_clk {
+> >>   	int id;
+> >>   	struct clk_hw *hw;
+> >> @@ -1781,6 +1812,69 @@ static const struct k1_ccu_data k1_ccu_apmu_data = {
+> >>   	.rst_data	= &apmu_reset_controller_data,
+> >>   };
+> >>   
+> >> +static const struct ccu_reset_data rcpu_reset_data[] = {
+> >> +	[RST_RCPU_SSP0]		= RST_DATA(RCPU_SSP0_CLK_RST,	0, BIT(0)),
+> >> +	[RST_RCPU_I2C0]		= RST_DATA(RCPU_I2C0_CLK_RST,	0, BIT(0)),
+> >> +	[RST_RCPU_UART1]	= RST_DATA(RCPU_UART1_CLK_RST,	0, BIT(0)),
+> >> +	[RST_RCPU_IR]		= RST_DATA(RCPU_CAN_CLK_RST,	0, BIT(0)),
+> >> +	[RST_RCPU_CAN]		= RST_DATA(RCPU_IR_CLK_RST,	0, BIT(0)),
+> >> +	[RST_RCPU_UART0]	= RST_DATA(RCPU_UART0_CLK_RST,	0, BIT(0)),
+> >> +	[RST_RCPU_HDMI_AUDIO]	= RST_DATA(AUDIO_HDMI_CLK_CTRL,	0, BIT(0)),
+> >> +};
+> >> +
+> >> +static const struct ccu_reset_controller_data rcpu_reset_controller_data = {
+> >> +	.count		= ARRAY_SIZE(rcpu_reset_data),
+> >> +	.data		= rcpu_reset_data,
+> >> +};
+> >> +
+> >> +static struct k1_ccu_data k1_ccu_rcpu_data = {
+> >> +	/* No clocks in the RCPU CCU */
+> >> +	.rst_data	= &rcpu_reset_controller_data,
+> >> +};
+> >> +
+> >> +static const struct ccu_reset_data rcpu2_reset_data[] = {
+> >> +	[RST_RCPU2_PWM0]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
+> >> +	[RST_RCPU2_PWM1]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
+> >> +	[RST_RCPU2_PWM2]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
+> >> +	[RST_RCPU2_PWM3]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
+> >> +	[RST_RCPU2_PWM4]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
+> >> +	[RST_RCPU2_PWM5]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
+> >> +	[RST_RCPU2_PWM6]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
+> >> +	[RST_RCPU2_PWM7]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
+> >> +	[RST_RCPU2_PWM8]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
+> >> +	[RST_RCPU2_PWM9]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
+> >> +};
+> >> +
+> >> +static const struct ccu_reset_controller_data rcpu2_reset_controller_data = {
+> >> +	.count		= ARRAY_SIZE(rcpu2_reset_data),
+> >> +	.data		= rcpu2_reset_data,
+> >> +};
+> >> +
+> >> +static struct k1_ccu_data k1_ccu_rcpu2_data = {
+> >> +	/* No clocks in the RCPU2 CCU */
+> >> +	.rst_data	= &rcpu2_reset_controller_data,
+> >> +};
+> >> +
+> >> +static const struct ccu_reset_data apbc2_reset_data[] = {
+> >> +	[RST_APBC2_UART1]	= RST_DATA(APBC2_UART1_CLK_RST,	BIT(2), (0)),
+> >> +	[RST_APBC2_SSP2]	= RST_DATA(APBC2_SSP2_CLK_RST,	BIT(2), (0)),
+> >> +	[RST_APBC2_TWSI3]	= RST_DATA(APBC2_TWSI3_CLK_RST,	BIT(2), (0)),
+> >> +	[RST_APBC2_RTC]		= RST_DATA(APBC2_RTC_CLK_RST,	BIT(2), (0)),
+> >> +	[RST_APBC2_TIMERS0]	= RST_DATA(APBC2_TIMERS0_CLK_RST, BIT(2), (0)),
+> >> +	[RST_APBC2_KPC]		= RST_DATA(APBC2_KPC_CLK_RST,	BIT(2), (0)),
+> >> +	[RST_APBC2_GPIO]	= RST_DATA(APBC2_GPIO_CLK_RST,	BIT(2), (0)),
+> >> +};
+> >> +
+> >> +static const struct ccu_reset_controller_data apbc2_reset_controller_data = {
+> >> +	.count		= ARRAY_SIZE(apbc2_reset_data),
+> >> +	.data		= apbc2_reset_data,
+> >> +};
+> >> +
+> >> +static struct k1_ccu_data k1_ccu_apbc2_data = {
+> >> +	/* No clocks in the RCPU2 CCU */
+> >> +	.rst_data	= &apbc2_reset_controller_data,
+> >> +};
+> >> +
+> >>   static struct ccu_reset_controller *
+> >>   rcdev_to_controller(struct reset_controller_dev *rcdev)
+> >>   {
+> >> @@ -1959,6 +2053,18 @@ static const struct of_device_id of_k1_ccu_match[] = {
+> >>   		.compatible	= "spacemit,k1-syscon-apmu",
+> >>   		.data		= &k1_ccu_apmu_data,
+> >>   	},
+> >> +	{
+> >> +		.compatible	= "spacemit,k1-syscon-rcpu",
+> >> +		.data		= &k1_ccu_rcpu_data,
+> >> +	},
+> >> +	{
+> >> +		.compatible	= "spacemit,k1-syscon-rcpu2",
+> >> +		.data		= &k1_ccu_rcpu2_data,
+> >> +	},
+> >> +	{
+> >> +		.compatible	= "spacemit,k1-syscon-apbc2",
+> >> +		.data		= &k1_ccu_apbc2_data,
+> >> +	},
+> >>   	{ }
+> >>   };
+> >>   MODULE_DEVICE_TABLE(of, of_k1_ccu_match);
+> >> -- 
+> >> 2.43.0
+> >>
+> > 
+> 
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
