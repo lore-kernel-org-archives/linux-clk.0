@@ -1,159 +1,244 @@
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB8E25FA3D
-	for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 12:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC8625FA19;
+	Mon, 24 Mar 2025 14:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742820773; cv=none; b=pe0tjIbtT5TDPMOuxC5+bFvbgh5N2AS1RChDCA+wQX8xwOAH552r+6Mh0W0UHYGcmCBMlSwHXgrErbpzPqzVFrYR6mfXGVO4eGRJvQ7q4Ym38LQ43OTLD8ZnrcxpqfQhpcb6UMMXD8Ei/b2Eh0eU5a4yIM1ZZEP8fLHnChiwwqc=
+	t=1742826541; cv=none; b=AGJWAH5JTbt2Ng2Ja3KD0CiDcmSJ5uvBCHCwB4dXAuIGZAfZhq2T52F2QKZvQ+U06HnKAXom+8d90ebYEDzUbkY3LfhY81p/Mfx4NRib/UiikNuoqQ5gWE7UPM6RNUIhKqHcU9PDEtoAQwI9bAJzT/WluS7BYpc1jhQfuLFnWdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742820773; c=relaxed/simple;
-	bh=tZeyOMnQsNvDDiIiuNWxW+4BJjKY29h3V6qQ1S2MzuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PwJJiLUjWKmpZFaI+0uazPjI9LEyIPzpM1EMHM76AT/CnOQDpzXagnKhCnKYlLBqwpb3T33lDypL6qDG7XJsDOQqV+72lSrveSK+tS83jTVEuhy/KfCsjZVP4GRUPAR+HYSByxLSLPcdzegz3r9ENRIEqXWUcOHxP/vjYKsg7vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=vjU8xqVm; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1742826541; c=relaxed/simple;
+	bh=U4fxdp7fkGpc3gIlH2FlKiwelKAw+dKySiCd7cmcnNU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HD72Mo99rZJoM9faumpO1492NeqjpuPu/52JAR6Avu7B/jS5DPuNs5FqacSUwqfHLL3e+goBzHt2t3UwAOVgc+V7jJHYAnZ3mTmRzNV6Z0ZnEvLUliovNrCx+H3E3e2Skn9hlLNmlkDE1U5PduZWfoJa8zKtZqOo0dXgxFZs80s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NB3TF04q; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="vjU8xqVm"
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-85de3e8d0adso42256039f.1
-        for <linux-clk@vger.kernel.org>; Mon, 24 Mar 2025 05:52:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NB3TF04q"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2264aefc45dso70572195ad.0;
+        Mon, 24 Mar 2025 07:28:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1742820770; x=1743425570; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6X0oWdoPDnrM5Ggl2vFdtnlylP4PXBXYERzQLRD3cjM=;
-        b=vjU8xqVm7P9aEIttQLH1JZaK9V0to65sg7HxnSxEZKjfdo7ivK3oZp2UmKf3ldhJr7
-         9iQlceHvEOPrGsLOfuhvj8oUmrQIjEvDlVQYIMOBPjE16qiBZx76un5t0EGumIsZbdib
-         m3wygBA0RwENO2UH18JBIIZMNr2/JxszZSKCzKTCQOHwpNeGGiKe8TqGDNxzLktAZPbT
-         KtpDds1J7+XCXVycUUlZvYjHh1RAmcK0susywZzTZGXf6PH6aHGiCsGZ3AWqfGeMOxx1
-         CglPjRj4lRY59hoUS63RQ8l5Tf59Y7LXO1Mpztu07VJj55wOBL/tT26+8qXhO8lltMY0
-         Nx7g==
+        d=gmail.com; s=20230601; t=1742826539; x=1743431339; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J37tNKeei1lAfZGOWmkRB72kDfk/O1Aubeqn9Iov+6s=;
+        b=NB3TF04qbkJfB/N+64T3d4OkNJXrSsPPcnFLJDgXW1EhAZyvCT950CbOQGF3VJI6Lp
+         1ZsZZ6kMibM5YjPjLDIBWBeUqPE7ALEdLDvBt+vLuKVx3NYr8/CKsUj6c6slCKiZFZyD
+         lQsw6Xxkm2zv6JG/1bvfxuONYB/AuJC/irSqVeLHV5bprQTSC3l4oreUkOSNlI7uMsg8
+         y8issfM4ZaUWvsfvsctwgtUCV3/1m63c0VDNp3AlFoL40Ie/JPkjpcELmQs6sI4NRzcF
+         4QnvWSQo8rlOBum2KHozykZETxZVze4vs6Sb4Xd/n8aV1V6/mCNHtKGQDJ3WQmSunVtP
+         UOAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742820770; x=1743425570;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6X0oWdoPDnrM5Ggl2vFdtnlylP4PXBXYERzQLRD3cjM=;
-        b=S6DqE2BhjyO5gSUeIkRP68eRAsjz+cRaq5dnJO4k8di11+KCXC1s2WgQYr6mYwYmcP
-         75Bwd5WWFIlnh7aghA2ktyroYi6SU+vxBp0JM18A8ZwftIXH5iQcFw1LBt3ZMqT0ymCa
-         zqCuT9VNhb24EJj82QbGt1SBNTh/MHRoFBjdxSTibL/xU50nmwe4qAq0NrpqsvsBHx1C
-         Mu3KGvj4Z4xWujXIYTL4F21NwnV718OzqcOF7yDvEvzMVjrYVNuzginVXfQ8F3RohLyg
-         srr0AoE9tbU2zVuJqNZEXD0LpQpeA4vPIht9UmTaGJFJkU5I+Eu6Ll2yS9C/dRFKJkLz
-         8pTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVzpjevkM4PoXKlIVrylHuDdLduD4U20Afb6nG0wzuARicG4sAReC/qC42CKkSmhR9o4Orht9Y930=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8IWzBJtASuFN2r8u/dFufDlmr+SpKUdh07ZKtvKl+7egt350x
-	XRxWGHbDgcp/JIoSqYcedmu1aT3R4/b10TypIxyzEBJrxJAsz7kZjYleLanlrE0=
-X-Gm-Gg: ASbGncsvb9AytfJIWra19zjn7Kf1ZtFoSTxmNRpW0OsBHK41c0S2BOJelVv9c0MQqs9
-	ly9KNzxmf52S1OUZZgA4O2IQxB25knmK2xr7Frlcea6bgTD/UvpfwSCNjtXh8DkK14tG297OTts
-	+hdmHe3ii4DyZCy+ALcGR318mWOoUDLuzrH6NaBn32WkD+5QNTu2ZNyTLQY5bB2H5rCEUo7hxk5
-	xsOS14WfjYfqdRhzFhLFeICNWLx54/iKhqHPsIbUFo0FLReNCQIFu74pfASxrq6tlR09nVP4nD9
-	h/vRePH/2gcm5lTRh7rvbnClLn+e4TK5aryBjWAZCmo8c4UMwYKSl4owcFeGwJD1AcO0m88wyxu
-	77JHZo8cf
-X-Google-Smtp-Source: AGHT+IGosqVsP6xD9EOhI7VXXnx9Y+44HitNgUDbYxTirUwdX5Z/bTtbV3lrW2oS8n5r7ikaiZEZ7g==
-X-Received: by 2002:a05:6602:488b:b0:85b:505a:7e01 with SMTP id ca18e2360f4ac-85e2ca364aamr1471217539f.5.1742820769907;
-        Mon, 24 Mar 2025 05:52:49 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85e2bc273b7sm164604339f.19.2025.03.24.05.52.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Mar 2025 05:52:49 -0700 (PDT)
-Message-ID: <b9af5eec-db85-4465-895f-d7781ebe9dd9@riscstar.com>
-Date: Mon, 24 Mar 2025 07:52:47 -0500
+        d=1e100.net; s=20230601; t=1742826539; x=1743431339;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J37tNKeei1lAfZGOWmkRB72kDfk/O1Aubeqn9Iov+6s=;
+        b=B43aP8UHKZm6ulh5f20BuV1m7u5H/cu3Hpf9bjRo1+u4T5zk5ZV72roRJsA3jBA+7M
+         jVYoxp8YHYqfzS129prTmNFt+8b9MpjD23x52q3Pm+OcKseRH5ZFjeCZEPTQql+5BPa5
+         eGei742CJRUEQePGzfZQhwydF0xGviTuG6Z/Isu04S1vzPrkaHPgi2hz70Db9DZb5UVa
+         1jLQpVfzRhKMcVBOKfy7Jmxr9TtVOIzDNtpamYi1Q4/Tb+b7QcdQTzPD6Pw2RPpHvzs+
+         77cJ4qJBXc6+EOq3Pwx6ZnxABaGW84LXwt7K0JvsFAjqXniTTlDgqYepKmyVLt2bOc1h
+         a6eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNa3AEc43XimSiEbhEKKHPEOhChqOVfmPUmHXRMpzDdGEa8q2QLVT58D8uxv2HPkdNNmHOtwjqS0a0TpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydJPEReDs7E4A6gyA/Tlj4C+CSyhusiQ1rHE/P2G9eaeyFmMHb
+	GWXoww0THQZkPmTEKpB8we89oNdBngUHrs9vz4o5dwpsf0ZGFVcIl2+yJvo=
+X-Gm-Gg: ASbGncs2MOsLO8sDebtfZ6x0LtQpDz44Iqvsz08c+jsVA+tI9AU6yDsbqbY8zGzpj2P
+	dJfwZlnGiUvs4NhYzyf6ijM93gUleX5T37Vw08OuZq9BgJ+NYLzUfdSsTlLCFp52h0cZ2d08U11
+	YUKFv38mbqTdHVg1HL8GRg4mXYUCxILwBTECOb27bQIkD+SpPPMN6Va5FpTz34z8/1LDH5eSbvB
+	t83dF2xyxb+ApWswMkaXo2D0G8Bycs7dub2knUdZN+wxRjtGt5qSJsCyp54soG4Vr4VDy7grh9g
+	u/DHBMdAT/ogCIiTkTmehfHlkOMSBku5RGylDXOVqzYCLarQJYOCB8hIibGvKhIce17SZiFxR/h
+	vPk9NZa2O9bbA1r5ijqUAYsyvkBLz+RFePa1V5A==
+X-Google-Smtp-Source: AGHT+IEe75MycBECfIae4/6dHjUL9F5p5LkYV50FC7MSq5/jGwZp4hjjauRFN8gODeMfiJXKuhjviw==
+X-Received: by 2002:a17:903:32ca:b0:223:4b88:780f with SMTP id d9443c01a7336-22780c7ceeemr184345305ad.17.1742826538594;
+        Mon, 24 Mar 2025 07:28:58 -0700 (PDT)
+Received: from localhost.localdomain (124-218-201-66.cm.dynamic.apol.com.tw. [124.218.201.66])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811da97esm70978815ad.192.2025.03.24.07.28.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Mar 2025 07:28:58 -0700 (PDT)
+From: "Lucien.Jheng" <lucienx123@gmail.com>
+To: linux-clk@vger.kernel.org,
+	andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	daniel@makrotopia.org,
+	ericwouds@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	joseph.lin@airoha.com,
+	wenshin.chung@airoha.com,
+	lucien.jheng@airoha.com,
+	"Lucien.Jheng" <lucienx123@gmail.com>
+Subject: [PATCH v6 net-next PATCH 1/1] net: phy: air_en8811h: Add clk provider for CKO pin
+Date: Mon, 24 Mar 2025 22:27:59 +0800
+Message-Id: <20250324142759.35141-1-lucienx123@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 3/7] clk: spacemit: add reset controller support
-To: Haylen Chu <heylenay@4d2.org>, p.zabel@pengutronix.de,
- mturquette@baylibre.com, sboyd@kernel.org, dlan@gentoo.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- guodong@riscstar.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, spacemit@lists.linux.dev, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250321151831.623575-1-elder@riscstar.com>
- <20250321151831.623575-4-elder@riscstar.com> <Z-FOJFHOsU_dLkmS@ketchup>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <Z-FOJFHOsU_dLkmS@ketchup>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/24/25 7:20 AM, Haylen Chu wrote:
-> On Fri, Mar 21, 2025 at 10:18:26AM -0500, Alex Elder wrote:
->> Define ccu_reset_data as a structure that contains the constant
->> register offset and bitmasks used to assert and deassert a reset
->> control on a SpacemiT K1 CCU. Define ccu_reset_controller_data as
->> a structure that contains the address of an array of those structures
->> and a count of the number of elements in the array.
->>
->> Add a pointer to a ccu_reset_controller_data structure to the
->> k1_ccu_data structure.  Reset support is optional for SpacemiT CCUs;
->> the new pointer field will be null for CCUs without any resets.
->>
->> Finally, define a new ccu_reset_controller structure, which (for
->> a CCU with resets) contains a pointer to the constant reset data,
->> the regmap to be used for the controller, and an embedded a reset
->> controller structure.
->>
->> Each reset control is asserted or deasserted by updating bits in
->> a register.  The bits used are defined by an assert mask and a
->> deassert mask.  In some cases, one (non-zero) mask asserts reset
->> and a different (non-zero) mask deasserts it.  Otherwise one mask
->> is nonzero, and the other is zero.  Either way, the bits in
->> both masks are cleared, then either the assert mask or the deassert
->> mask is set in a register to affect the state of a reset control.
->>
->> Signed-off-by: Alex Elder <elder@riscstar.com>
->> ---
->>   drivers/clk/spacemit/ccu-k1.c | 93 +++++++++++++++++++++++++++++++++++
->>   1 file changed, 93 insertions(+)
->>
->> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
->> index f7367271396a0..6d879411c6c05 100644
->> --- a/drivers/clk/spacemit/ccu-k1.c
->> +++ b/drivers/clk/spacemit/ccu-k1.c
-> 
-> ...
-> 
->> +static int
->> +k1_rst_update(struct reset_controller_dev *rcdev, unsigned long id, bool assert)
->> +{
->> +	struct ccu_reset_controller *controller = rcdev_to_controller(rcdev);
->> +	struct regmap *regmap = controller->regmap;
->> +	const struct ccu_reset_data *data;
->> +	u32 val;
->> +	int ret;
->> +
->> +	data = &controller->data->data[id];
->> +
->> +	ret = regmap_read(regmap, data->offset, &val);
->> +	if (ret)
->> +		return ret;
->> +
->> +	val &= ~(data->assert_mask | data->deassert_mask);
->> +	val |= assert ? data->assert_mask : data->deassert_mask;
->> +
->> +	return regmap_write(regmap, data->offset, val);
->> +}
-> 
-> I don't think it's safe to write the regmap based on a value read
-> earlier without the regmap's inner lock held: it's totally fine for the
-> clock part to issue an update of the register at the same time. Without
-> knowledge on it, reset code may rollback the clock bits written by clock
-> code earlier to the original value. That's why I keep using ccu_update()
-> everywhere and dropped ccu_write().
+EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
+CKO clock operates continuously from power-up through md32 loading.
+Implement clk provider driver so we can disable the clock output in case
+it isn't needed, which also helps to reduce EMF noise
 
-That's a great point, thank you.  I'll modify it to use
-regmap_update_bits(), which is better anyway.
+Signed-off-by: Lucien.Jheng <lucienx123@gmail.com>
+---
+Change in PATCH v6:
+air_en8811h.c:
+ * Adjust space indentation to tab stops.
 
-					-Alex
+ drivers/net/phy/air_en8811h.c | 97 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 97 insertions(+)
 
-> 
-> Thanks,
-> Haylen Chu
+diff --git a/drivers/net/phy/air_en8811h.c b/drivers/net/phy/air_en8811h.c
+index e9fd24cb7270..de49bb200926 100644
+--- a/drivers/net/phy/air_en8811h.c
++++ b/drivers/net/phy/air_en8811h.c
+@@ -16,6 +16,7 @@
+ #include <linux/property.h>
+ #include <linux/wordpart.h>
+ #include <linux/unaligned.h>
++#include <linux/clk-provider.h>
+
+ #define EN8811H_PHY_ID		0x03a2a411
+
+@@ -112,6 +113,11 @@
+ #define   EN8811H_POLARITY_TX_NORMAL		BIT(0)
+ #define   EN8811H_POLARITY_RX_REVERSE		BIT(1)
+
++#define EN8811H_CLK_CGM		0xcf958
++#define   EN8811H_CLK_CGM_CKO		BIT(26)
++#define EN8811H_HWTRAP1		0xcf914
++#define   EN8811H_HWTRAP1_CKO		BIT(12)
++
+ #define EN8811H_GPIO_OUTPUT		0xcf8b8
+ #define   EN8811H_GPIO_OUTPUT_345		(BIT(3) | BIT(4) | BIT(5))
+
+@@ -142,10 +148,15 @@ struct led {
+ 	unsigned long state;
+ };
+
++#define clk_hw_to_en8811h_priv(_hw)			\
++	container_of(_hw, struct en8811h_priv, hw)
++
+ struct en8811h_priv {
+ 	u32		firmware_version;
+ 	bool		mcu_needs_restart;
+ 	struct led	led[EN8811H_LED_COUNT];
++	struct clk_hw		hw;
++	struct phy_device	*phydev;
+ };
+
+ enum {
+@@ -806,6 +817,86 @@ static int en8811h_led_hw_is_supported(struct phy_device *phydev, u8 index,
+ 	return 0;
+ };
+
++static unsigned long en8811h_clk_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++	u32 pbus_value;
++	int ret;
++
++	ret = air_buckpbus_reg_read(phydev, EN8811H_HWTRAP1, &pbus_value);
++	if (ret < 0)
++		return ret;
++
++	return (pbus_value & EN8811H_HWTRAP1_CKO) ? 50000000 : 25000000;
++}
++
++static int en8811h_clk_enable(struct clk_hw *hw)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++
++	return air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
++				EN8811H_CLK_CGM_CKO, EN8811H_CLK_CGM_CKO);
++}
++
++static void en8811h_clk_disable(struct clk_hw *hw)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++
++	air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
++				EN8811H_CLK_CGM_CKO, 0);
++}
++
++static int en8811h_clk_is_enabled(struct clk_hw *hw)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++	int ret = 0;
++	u32 pbus_value;
++
++	ret = air_buckpbus_reg_read(phydev, EN8811H_CLK_CGM, &pbus_value);
++	if (ret < 0)
++		return ret;
++
++	return (pbus_value & EN8811H_CLK_CGM_CKO);
++}
++
++static const struct clk_ops en8811h_clk_ops = {
++	.recalc_rate = en8811h_clk_recalc_rate,
++	.enable = en8811h_clk_enable,
++	.disable = en8811h_clk_disable,
++	.is_enabled	= en8811h_clk_is_enabled,
++};
++
++static int en8811h_clk_provider_setup(struct device *dev,
++				      struct clk_hw *hw)
++{
++	struct clk_init_data init;
++	int ret;
++
++	if (!IS_ENABLED(CONFIG_COMMON_CLK))
++		return 0;
++
++	init.name =  devm_kasprintf(dev, GFP_KERNEL, "%s-cko",
++				    fwnode_get_name(dev_fwnode(dev)));
++	if (!init.name)
++		return -ENOMEM;
++
++	init.ops = &en8811h_clk_ops;
++	init.flags = 0;
++	init.num_parents = 0;
++	hw->init = &init;
++
++	ret = devm_clk_hw_register(dev, hw);
++	if (ret)
++		return ret;
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
++}
++
+ static int en8811h_probe(struct phy_device *phydev)
+ {
+ 	struct en8811h_priv *priv;
+@@ -838,6 +929,12 @@ static int en8811h_probe(struct phy_device *phydev)
+ 		return ret;
+ 	}
+
++	priv->phydev = phydev;
++	/* Co-Clock Output */
++	ret = en8811h_clk_provider_setup(&phydev->mdio.dev, &priv->hw);
++	if (ret)
++		return ret;
++
+ 	/* Configure led gpio pins as output */
+ 	ret = air_buckpbus_reg_modify(phydev, EN8811H_GPIO_OUTPUT,
+ 				      EN8811H_GPIO_OUTPUT_345,
+--
+2.34.1
 
