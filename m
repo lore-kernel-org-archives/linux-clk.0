@@ -1,144 +1,96 @@
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.crpt.ru (mail.crpt.ru [91.236.205.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E05130AC8;
-	Mon, 24 Mar 2025 06:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CD62A1CA;
+	Mon, 24 Mar 2025 06:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.236.205.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742796423; cv=none; b=jVmGHnMWISt8g+8JcmTpX7sncuyq2Ueg2EJh6yikRTo6xpQo/gmb2vAHdk5ddFK447NeyzgvjcRhibxVheiKxN1ai2GB0uD0rp5EIPfockyqr1yOGVYeXKSx6vo6kQn+MMW6G+Ki3G2hNo4Y63QE5ujlGUxv2YBuVhrE1GUeEwg=
+	t=1742796998; cv=none; b=BA1bHO7KVOl+FCoIfF72fIlYMFZwWuvPWfhhzqkkgxKU+5zv7BCxje91pzFjZrtqo50RU2gYZ+D0idaJZwuyZbC1ckLoby0MT+aim9TTX2heXmOe9MbMpRpu1pmeQGly9db6ITD85Dj8eWF3VKhMLm33h3apwEa4lFSRxq9JmB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742796423; c=relaxed/simple;
-	bh=Qo1ZzOp+qIGtCdYkQjGaL8gkmFFkTlO4yGdZmiKINGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cXlqx6wq19btwiSXEgxB5xoVrthbJP32s7s5kScYvV6PvlxXbpxKchG5VxDoyPNKWgc21rj1+NFf2QJxv0wr0/4D5bk7UCHICzNERRjz34F1WHH1cjRs7G9aR9/diesdLD4/gIsuu9dx0zQBoxGZkca71dkInh9Oc7VSAVKIMhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.48.233])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 247763432FE;
-	Mon, 24 Mar 2025 06:06:57 +0000 (UTC)
-Date: Mon, 24 Mar 2025 06:06:53 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heylenay@4d2.org, guodong@riscstar.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, spacemit@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 7/7] riscv: dts: spacemit: add reset support for
- the K1 SoC
-Message-ID: <20250324060653-GYA18687@gentoo>
-References: <20250321151831.623575-1-elder@riscstar.com>
- <20250321151831.623575-8-elder@riscstar.com>
- <20250322164830-GYE11633@gentoo>
- <b5af3a7a-c5da-497a-ad67-c99edfdf665e@riscstar.com>
+	s=arc-20240116; t=1742796998; c=relaxed/simple;
+	bh=9eSSfttpcw0lJBajJNCu7ORS5sYa5GsLsfivP46rMak=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=N7SdqVpFsxU0t+9+cWch6pww6EHz+5EDEBH5x5XoUxpAI81MJ7pKkL/xTjunXsk6SuZp1Rs3ZySYOo5wXLAaSPBC75YyRxPb7wOYoP5dIooQrn2ieqfQ36+yf82POWRbtVFG33OW4kznM3JaSTF5SXoj2Rg71EY9xAYZMn7uiD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru; spf=pass smtp.mailfrom=crpt.ru; dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b=ITGIpFyp; arc=none smtp.client-ip=91.236.205.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crpt.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crpt.ru
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=crpt.ru header.i=@crpt.ru header.b="ITGIpFyp"
+Received: from mail.crpt.ru ([192.168.60.3])
+	by mail.crpt.ru  with ESMTP id 52O6FoPN018457-52O6FoPP018457
+	(version=TLSv1.2 cipher=AES256-SHA256 bits=256 verify=OK);
+	Mon, 24 Mar 2025 09:15:50 +0300
+Received: from EX2.crpt.local (192.168.60.4) by ex1.crpt.local (192.168.60.3)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Mon, 24 Mar
+ 2025 09:15:50 +0300
+Received: from EX2.crpt.local ([192.168.60.4]) by EX2.crpt.local
+ ([192.168.60.4]) with mapi id 15.01.2507.044; Mon, 24 Mar 2025 09:15:50 +0300
+From: =?utf-8?B?0JLQsNGC0L7RgNC+0L/QuNC9INCQ0L3QtNGA0LXQuQ==?=
+	<a.vatoropin@crpt.ru>
+To: Michael Turquette <mturquette@baylibre.com>
+CC: =?utf-8?B?0JLQsNGC0L7RgNC+0L/QuNC9INCQ0L3QtNGA0LXQuQ==?=
+	<a.vatoropin@crpt.ru>, Stephen Boyd <sboyd@kernel.org>, Michal Simek
+	<michal.simek@amd.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	=?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@baylibre.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] soc: xilinx: vcu: modify the order of devices unregistration
+Thread-Topic: [PATCH] soc: xilinx: vcu: modify the order of devices
+ unregistration
+Thread-Index: AQHbnIQwE54gprkZdUqVTZP34SoMOg==
+Date: Mon, 24 Mar 2025 06:15:49 +0000
+Message-ID: <20250324061543.15150-1-a.vatoropin@crpt.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-kse-serverinfo: EX1.crpt.local, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 2/17/2025 9:52:00 AM
+x-kse-attachment-filter-triggered-rules: Clean
+x-kse-attachment-filter-triggered-filters: Clean
+x-kse-bulkmessagesfiltering-scan-result: protection disabled
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5af3a7a-c5da-497a-ad67-c99edfdf665e@riscstar.com>
+X-FEAS-Client-IP: 192.168.60.3
+X-FE-Policy-ID: 2:4:0:SYSTEM
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; d=crpt.ru; s=crpt.ru; c=relaxed/relaxed;
+ h=from:to:cc:subject:date:message-id:content-type:mime-version;
+ bh=9eSSfttpcw0lJBajJNCu7ORS5sYa5GsLsfivP46rMak=;
+ b=ITGIpFypKaB6RSoCLt1/wetbTrDJMw+CmjIoqPiHBS5QO/3pp4Mcdri1sahof3hzEDt7wquw5fAR
+	AYRSdBTgKbOoargnFt83PAPCT6GqQMCnUP/xR4vPs9qwtcy6/OTD/PkFacUgxbUdjjv4wyK7CKmA
+	cAAMRaZsrW1WS2np15fSBSK5ENdFaxVMBROJ8spJPKbXAVHwcukg3hLj4POA+hokV1wnJsS3/EJN
+	XF+LhWtB7gjKeO1fY2o4Q3C3ZYYEyHXBAtSRPyqjohsQARiT9YsEaAk4fo9eqkpJn18rKwMuoMnE
+	3W0oVQo7l55qoSkufvQwwKUQA/1Ppoc5+9yBNg==
 
-Hi Alex:
-
-On 08:23 Sun 23 Mar     , Alex Elder wrote:
-> On 3/22/25 11:48 AM, Yixun Lan wrote:
-> > On 10:18 Fri 21 Mar     , Alex Elder wrote:
-> >> Define syscon nodes for the RCPU, RCPU2, and APBC2 SpacemiT CCUS, which
-> >> currently support resets but not clocks in the SpacemiT K1.
-> >>
-> >> Signed-off-by: Alex Elder <elder@riscstar.com>
-> >> ---
-> >>   arch/riscv/boot/dts/spacemit/k1.dtsi | 18 ++++++++++++++++++
-> >>   1 file changed, 18 insertions(+)
-> >>
-> >> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> >> index 09a9100986b19..f86d1b58c6d35 100644
-> >> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-> >> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-> >> @@ -350,6 +350,18 @@ soc {
-> >>   		dma-noncoherent;
-> >>   		ranges;
-> >>   
-> >> +		syscon_rcpu: system-controller@c0880000 {
-> > I'm not sure if syscon_rcpu is good name to go, it's AUDIO Peripherals
-> > in docs, see
-> > 
-> > 7.2 Main CPU Domain Address Mapping
-> > https://developer.spacemit.com/documentation?token=LzJyw97BCipK1dkUygrcbT0NnMg
-> 
-> They call it "AUD_MCUSYSCTRL section <RCPU(0xC0880000)>",
-> where the registers layouts are defined, and the register
-> names use the "RCPU" prefix by convention.
-> 
-> I guess I could use "AUDIO" instead, but I think it's
-> "RCPU" is a little better because of the way things in
-> the region are named.  It's a little like how "pll" is
-> used for the DT node name for things in the "APBS" region.
-> I don't really like that, because the connection between
-> the two isn't very clear.
-> 
-ok, by whatever you choose, I'd be fine
-in case you go with RCPU, can you put a comment above? explain
-there is slightly a devergence with docs from SpacemiT's web
-
-also I noticed the io size you written here is smaller than described in
-docs which I think usually it's fine (docs may give larger number - 0x80000)
-just make sure you checked? so all real io region will be covered, same
-for rcpu2
-
-> >> +			compatible = "spacemit,k1-syscon-rcpu";
-> >> +			reg = <0x0 0xc0880000 0x0 0x2048>;
-> >> +			#reset-cells = <1>;
-> >> +		};
-> >> +
-> >> +		syscon_rcpu2: system-controller@c0888000 {
-> > not found this address mapping in above docs link
-> 
-> You're right.  I was following what the downstream code did.
-> I'll gladly just include this in the main "RCPU" node.
-> 
-> Thank you very much for the review Yixun.
-> 
-> 					-Alex
-> 
-> >> +			compatible = "spacemit,k1-syscon-rcpu2";
-> >> +			reg = <0x0 0xc0888000 0x0 0x28>;
-> >> +			#reset-cells = <1>;
-> >> +		};
-> >> +
-> >>   		syscon_apbc: system-control@d4015000 {
-> >>   			compatible = "spacemit,k1-syscon-apbc";
-> >>   			reg = <0x0 0xd4015000 0x0 0x1000>;
-> >> @@ -518,6 +530,12 @@ clint: timer@e4000000 {
-> >>   					      <&cpu7_intc 3>, <&cpu7_intc 7>;
-> >>   		};
-> >>   
-> >> +		syscon_apbc2: system-controller@f0610000 {
-> >> +			compatible = "spacemit,k1-syscon-apbc2";
-> >> +			reg = <0x0 0xf0610000 0x0 0x20>;
-> >> +			#reset-cells = <1>;
-> >> +		};
-> >> +
-> >>   		sec_uart1: serial@f0612000 {
-> >>   			compatible = "spacemit,k1-uart", "intel,xscale-uart";
-> >>   			reg = <0x0 0xf0612000 0x0 0x100>;
-> >> -- 
-> >> 2.43.0
-> >>
-> > 
-> 
-> 
-
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+RnJvbTogQW5kcmV5IFZhdG9yb3BpbiA8YS52YXRvcm9waW5AY3JwdC5ydT4NCg0KVGhlIG9yZGVy
+IG9mIHJlZ2lzdHJhdGlvbiBvZiAnc3RydWN0IGNsa19odycgaGFuZGxlcyBpbg0KeHZjdV9jbGtf
+aHdfcmVnaXN0ZXJfbGVhZigpIGRvZXMgbm90IGNvcnJlc3BvbmQgdGhlIG9yZGVyIG9mDQp1bnJl
+Z2lzdHJhdGlvbiBwZXJmb3JtZWQgaW4geHZjdV9jbGtfaHdfdW5yZWdpc3Rlcl9sZWFmKCkuDQoN
+CkNsZWFuIHVwIHRoZSBvcmRlciBhbmQgcmVwbGFjZSB0aGUgZHVwbGljYXRlICFkaXZpZGVyIGNo
+ZWNrIHdpdGggYSBtb3JlDQphcHByb3ByaWF0ZSBvbmUuDQoNCkZvdW5kIGJ5IExpbnV4IFZlcmlm
+aWNhdGlvbiBDZW50ZXIgKGxpbnV4dGVzdGluZy5vcmcpIHdpdGggU1ZBQ0UuDQoNClNpZ25lZC1v
+ZmYtYnk6IEFuZHJleSBWYXRvcm9waW4gPGEudmF0b3JvcGluQGNycHQucnU+DQotLS0NCiBkcml2
+ZXJzL2Nsay94aWxpbngveGxueF92Y3UuYyB8IDYgKysrLS0tDQogMSBmaWxlIGNoYW5nZWQsIDMg
+aW5zZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xr
+L3hpbGlueC94bG54X3ZjdS5jIGIvZHJpdmVycy9jbGsveGlsaW54L3hsbnhfdmN1LmMNCmluZGV4
+IDgxNTAxYjQ4NDEyZS4uZTRiMDhmNTAxOTU4IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9jbGsveGls
+aW54L3hsbnhfdmN1LmMNCisrKyBiL2RyaXZlcnMvY2xrL3hpbGlueC94bG54X3ZjdS5jDQpAQCAt
+NTExLDExICs1MTEsMTEgQEAgc3RhdGljIHZvaWQgeHZjdV9jbGtfaHdfdW5yZWdpc3Rlcl9sZWFm
+KHN0cnVjdCBjbGtfaHcgKmh3KQ0KIAkJcmV0dXJuOw0KIA0KIAltdXggPSBjbGtfaHdfZ2V0X3Bh
+cmVudChkaXZpZGVyKTsNCi0JY2xrX2h3X3VucmVnaXN0ZXJfbXV4KG11eCk7DQotCWlmICghZGl2
+aWRlcikNCisJY2xrX2h3X3VucmVnaXN0ZXJfZGl2aWRlcihkaXZpZGVyKTsNCisJaWYgKCFtdXgp
+DQogCQlyZXR1cm47DQogDQotCWNsa19od191bnJlZ2lzdGVyX2RpdmlkZXIoZGl2aWRlcik7DQor
+CWNsa19od191bnJlZ2lzdGVyX211eChtdXgpOw0KIH0NCiANCiBzdGF0aWMgaW50IHh2Y3VfcmVn
+aXN0ZXJfY2xvY2tfcHJvdmlkZXIoc3RydWN0IHh2Y3VfZGV2aWNlICp4dmN1KQ0KLS0gDQoyLjQz
+LjANCg==
