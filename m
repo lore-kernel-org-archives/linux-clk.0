@@ -1,244 +1,188 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC8625FA19;
-	Mon, 24 Mar 2025 14:28:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61FA1DDE9;
+	Mon, 24 Mar 2025 15:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742826541; cv=none; b=AGJWAH5JTbt2Ng2Ja3KD0CiDcmSJ5uvBCHCwB4dXAuIGZAfZhq2T52F2QKZvQ+U06HnKAXom+8d90ebYEDzUbkY3LfhY81p/Mfx4NRib/UiikNuoqQ5gWE7UPM6RNUIhKqHcU9PDEtoAQwI9bAJzT/WluS7BYpc1jhQfuLFnWdY=
+	t=1742831360; cv=none; b=V5bOMAYFq6oOVmqQ2FA98bjO9lGKkYfHSvoeR3S70fu0gYhaMqeGk+hPhUnA9SOfgN/t6Nca40bTqnJfQ57BqKPC78ckOzAwSo05OAbFKOInqkhE0FiOPSrOYPOgZJ/d5KlNusEkH6UMkIsmrlVsO9iMe77S1ZVmbyVcAtZ/ca4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742826541; c=relaxed/simple;
-	bh=U4fxdp7fkGpc3gIlH2FlKiwelKAw+dKySiCd7cmcnNU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HD72Mo99rZJoM9faumpO1492NeqjpuPu/52JAR6Avu7B/jS5DPuNs5FqacSUwqfHLL3e+goBzHt2t3UwAOVgc+V7jJHYAnZ3mTmRzNV6Z0ZnEvLUliovNrCx+H3E3e2Skn9hlLNmlkDE1U5PduZWfoJa8zKtZqOo0dXgxFZs80s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NB3TF04q; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1742831360; c=relaxed/simple;
+	bh=mTbzGdF585SBjs9qPph8XaC8lrk++6aRMnH/YTASE/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tsUW/vUKbLe6RHJBjakcpO5lEjHYWKZm1mO9DflfyrYAoWGczUf4Rg3UfDgFpO6aUDD04ilMAehGRtVV6q8mWI3DqNIJJikeim3HFHZk10eJzAqxJRhyosdpsc51Yobif2L33kQIEqmpSgeeYiuZp9eoZE1UDCPw3I6K46CZ65A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wxhn0Z9z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NB3TF04q"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2264aefc45dso70572195ad.0;
-        Mon, 24 Mar 2025 07:28:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742826539; x=1743431339; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J37tNKeei1lAfZGOWmkRB72kDfk/O1Aubeqn9Iov+6s=;
-        b=NB3TF04qbkJfB/N+64T3d4OkNJXrSsPPcnFLJDgXW1EhAZyvCT950CbOQGF3VJI6Lp
-         1ZsZZ6kMibM5YjPjLDIBWBeUqPE7ALEdLDvBt+vLuKVx3NYr8/CKsUj6c6slCKiZFZyD
-         lQsw6Xxkm2zv6JG/1bvfxuONYB/AuJC/irSqVeLHV5bprQTSC3l4oreUkOSNlI7uMsg8
-         y8issfM4ZaUWvsfvsctwgtUCV3/1m63c0VDNp3AlFoL40Ie/JPkjpcELmQs6sI4NRzcF
-         4QnvWSQo8rlOBum2KHozykZETxZVze4vs6Sb4Xd/n8aV1V6/mCNHtKGQDJ3WQmSunVtP
-         UOAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742826539; x=1743431339;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J37tNKeei1lAfZGOWmkRB72kDfk/O1Aubeqn9Iov+6s=;
-        b=B43aP8UHKZm6ulh5f20BuV1m7u5H/cu3Hpf9bjRo1+u4T5zk5ZV72roRJsA3jBA+7M
-         jVYoxp8YHYqfzS129prTmNFt+8b9MpjD23x52q3Pm+OcKseRH5ZFjeCZEPTQql+5BPa5
-         eGei742CJRUEQePGzfZQhwydF0xGviTuG6Z/Isu04S1vzPrkaHPgi2hz70Db9DZb5UVa
-         1jLQpVfzRhKMcVBOKfy7Jmxr9TtVOIzDNtpamYi1Q4/Tb+b7QcdQTzPD6Pw2RPpHvzs+
-         77cJ4qJBXc6+EOq3Pwx6ZnxABaGW84LXwt7K0JvsFAjqXniTTlDgqYepKmyVLt2bOc1h
-         a6eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNa3AEc43XimSiEbhEKKHPEOhChqOVfmPUmHXRMpzDdGEa8q2QLVT58D8uxv2HPkdNNmHOtwjqS0a0TpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydJPEReDs7E4A6gyA/Tlj4C+CSyhusiQ1rHE/P2G9eaeyFmMHb
-	GWXoww0THQZkPmTEKpB8we89oNdBngUHrs9vz4o5dwpsf0ZGFVcIl2+yJvo=
-X-Gm-Gg: ASbGncs2MOsLO8sDebtfZ6x0LtQpDz44Iqvsz08c+jsVA+tI9AU6yDsbqbY8zGzpj2P
-	dJfwZlnGiUvs4NhYzyf6ijM93gUleX5T37Vw08OuZq9BgJ+NYLzUfdSsTlLCFp52h0cZ2d08U11
-	YUKFv38mbqTdHVg1HL8GRg4mXYUCxILwBTECOb27bQIkD+SpPPMN6Va5FpTz34z8/1LDH5eSbvB
-	t83dF2xyxb+ApWswMkaXo2D0G8Bycs7dub2knUdZN+wxRjtGt5qSJsCyp54soG4Vr4VDy7grh9g
-	u/DHBMdAT/ogCIiTkTmehfHlkOMSBku5RGylDXOVqzYCLarQJYOCB8hIibGvKhIce17SZiFxR/h
-	vPk9NZa2O9bbA1r5ijqUAYsyvkBLz+RFePa1V5A==
-X-Google-Smtp-Source: AGHT+IEe75MycBECfIae4/6dHjUL9F5p5LkYV50FC7MSq5/jGwZp4hjjauRFN8gODeMfiJXKuhjviw==
-X-Received: by 2002:a17:903:32ca:b0:223:4b88:780f with SMTP id d9443c01a7336-22780c7ceeemr184345305ad.17.1742826538594;
-        Mon, 24 Mar 2025 07:28:58 -0700 (PDT)
-Received: from localhost.localdomain (124-218-201-66.cm.dynamic.apol.com.tw. [124.218.201.66])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-227811da97esm70978815ad.192.2025.03.24.07.28.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Mar 2025 07:28:58 -0700 (PDT)
-From: "Lucien.Jheng" <lucienx123@gmail.com>
-To: linux-clk@vger.kernel.org,
-	andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	linux@armlinux.org.uk,
-	kuba@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	daniel@makrotopia.org,
-	ericwouds@gmail.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	joseph.lin@airoha.com,
-	wenshin.chung@airoha.com,
-	lucien.jheng@airoha.com,
-	"Lucien.Jheng" <lucienx123@gmail.com>
-Subject: [PATCH v6 net-next PATCH 1/1] net: phy: air_en8811h: Add clk provider for CKO pin
-Date: Mon, 24 Mar 2025 22:27:59 +0800
-Message-Id: <20250324142759.35141-1-lucienx123@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wxhn0Z9z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09D86C4CEDD;
+	Mon, 24 Mar 2025 15:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742831360;
+	bh=mTbzGdF585SBjs9qPph8XaC8lrk++6aRMnH/YTASE/0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wxhn0Z9z3nh/2wuc6gVgU5ZwFdAmyHEABI9c/8nJRe+t6Dq7cGxBiYHE2vOpYwF7r
+	 kRU5ydtcI91sDHKqlW/e6G6qPs9OwF8Cclr3X3CexKDR8Tv7ddkISF3S4aAKEs4GXL
+	 f52tEdkI/RTCG1iQ9jcKj2ThSWq1sxi1qITtC0eDbbXOmdLqnEG18WXxJEoHaEaQMr
+	 Aaz8RHgWJ3PvYJayX1I4CULlm5YHWjJ3aeb5GtJNMhhyknUdv5xVlYF67UN6nluWcQ
+	 JNi5Dy/1JWSwgOK1gXUo/kEC/u9tmXqoaUxhqdZi5PokB5tDeg+yUfqJlHS8zCbHkX
+	 j1WFmI+6TM55A==
+Date: Mon, 24 Mar 2025 10:49:19 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Daniel Danzberger <dd@embedd.com>, Arnd Bergmann <arnd@arndb.de>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Yangyu Chen <cyy@cyyself.name>, Ben Hutchings <ben@decadent.org.uk>,
+	Felix Fietkau <nbd@nbd.name>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-usb@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [PATCH v2 07/11] dt-bindings: phy: Add documentation for Airoha
+ AN7581 USB PHY
+Message-ID: <20250324154919.GA101272-robh@kernel.org>
+References: <20250320130054.4804-1-ansuelsmth@gmail.com>
+ <20250320130054.4804-8-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250320130054.4804-8-ansuelsmth@gmail.com>
 
-EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
-CKO clock operates continuously from power-up through md32 loading.
-Implement clk provider driver so we can disable the clock output in case
-it isn't needed, which also helps to reduce EMF noise
+On Thu, Mar 20, 2025 at 02:00:30PM +0100, Christian Marangi wrote:
+> Add documentation for Airoha AN7581 USB PHY that describe the USB PHY
+> for the USB controller.
+> 
+> Airoha AN7581 SoC support a maximum of 2 USB port. The USB 2.0 mode is
+> always supported. The USB 3.0 mode is optional and depends on the Serdes
+> mode currently configured on the system for the USB port.
+> 
+> If the airoha,serdes-port property is not declared, it's assumed USB 3.0
+> mode is not supported, as the Serdes mode can't be validated.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/phy/airoha,an7581-usb-phy.yaml   | 83 +++++++++++++++++++
+>  MAINTAINERS                                   |  7 ++
+>  .../dt-bindings/phy/airoha,an7581-usb-phy.h   | 11 +++
+>  3 files changed, 101 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
+>  create mode 100644 include/dt-bindings/phy/airoha,an7581-usb-phy.h
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml b/Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
+> new file mode 100644
+> index 000000000000..39ceaded5d0e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
+> @@ -0,0 +1,83 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/airoha,an7581-usb-phy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Airoha AN7581 SoC USB PHY
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +description: >
+> +  The Airoha AN7581 SoC USB PHY describes the USB PHY for the USB controller.
+> +
+> +  Airoha AN7581 SoC support a maximum of 2 USB port. The USB 2.0 mode is
+> +  always supported. The USB 3.0 mode is optional and depends on the Serdes
+> +  mode currently configured on the system for the USB port.
+> +
+> +  If the airoha,serdes-port property is not declared, it's assumed USB 3.0
+> +  mode is not supported, as the Serdes mode can't be validated.
+> +
+> +properties:
+> +  compatible:
+> +    const: airoha,an7581-usb-phy
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +
+> +  airoha,usb2-monitor-clk-sel:
+> +    description: Describe what oscillator across the available 4
+> +      should be selected for USB 2.0 Slew Rate calibration.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3]
+> +
+> +  airoha,serdes-port:
+> +    description: Describe what Serdes Port is attached to the USB 3.0 port.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3]
 
-Signed-off-by: Lucien.Jheng <lucienx123@gmail.com>
----
-Change in PATCH v6:
-air_en8811h.c:
- * Adjust space indentation to tab stops.
+Since you only have a single value here, does that mean only only one of 
+the 2 ports/phys supports USB3?
 
- drivers/net/phy/air_en8811h.c | 97 +++++++++++++++++++++++++++++++++++
- 1 file changed, 97 insertions(+)
+> +
+> +  airoha,scu:
+> +    description: Phandle to the SCU node for USB 3.0 Serdes mode validation.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
 
-diff --git a/drivers/net/phy/air_en8811h.c b/drivers/net/phy/air_en8811h.c
-index e9fd24cb7270..de49bb200926 100644
---- a/drivers/net/phy/air_en8811h.c
-+++ b/drivers/net/phy/air_en8811h.c
-@@ -16,6 +16,7 @@
- #include <linux/property.h>
- #include <linux/wordpart.h>
- #include <linux/unaligned.h>
-+#include <linux/clk-provider.h>
+A bit unusual, but you could use the phys binding here instead of these 
+2 properties. The phy for the phy...
 
- #define EN8811H_PHY_ID		0x03a2a411
+> +
+> +  '#phy-cells':
+> +    const: 1
 
-@@ -112,6 +113,11 @@
- #define   EN8811H_POLARITY_TX_NORMAL		BIT(0)
- #define   EN8811H_POLARITY_RX_REVERSE		BIT(1)
+Please add a description of what's in the cell.
 
-+#define EN8811H_CLK_CGM		0xcf958
-+#define   EN8811H_CLK_CGM_CKO		BIT(26)
-+#define EN8811H_HWTRAP1		0xcf914
-+#define   EN8811H_HWTRAP1_CKO		BIT(12)
-+
- #define EN8811H_GPIO_OUTPUT		0xcf8b8
- #define   EN8811H_GPIO_OUTPUT_345		(BIT(3) | BIT(4) | BIT(5))
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - airoha,usb2-monitor-clk-sel
+> +  - '#phy-cells'
+> +
+> +dependentRequired:
+> +  airoha,serdes-port: [ 'airoha,scu' ]
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/phy/airoha,an7581-usb-phy.h>
+> +    #include <dt-bindings/soc/airoha,scu-ssr.h>
+> +
+> +    phy@1fac0000 {
+> +        compatible = "airoha,an7581-usb-phy";
+> +        reg = <0x1fac0000 0x10000>;
+> +
+> +        airoha,usb2-monitor-clk-sel = <AIROHA_USB2_MONCLK_SEL1>;
+> +        airoha,scu = <&scu>;
+> +        airoha,serdes-port = <AIROHA_SCU_SERDES_USB1>;
+> +
+> +        #phy-cells = <1>;
+> +    };
+> +
+> +    phy@1fae0000 {
+> +        compatible = "airoha,an7581-usb-phy";
+> +        reg = <0x1fae0000 0x10000>;
+> +
+> +        airoha,usb2-monitor-clk-sel = <AIROHA_USB2_MONCLK_SEL2>;
+> +
+> +        #phy-cells = <1>;
+> +    };
 
-@@ -142,10 +148,15 @@ struct led {
- 	unsigned long state;
- };
+Drop the 2nd example.
 
-+#define clk_hw_to_en8811h_priv(_hw)			\
-+	container_of(_hw, struct en8811h_priv, hw)
-+
- struct en8811h_priv {
- 	u32		firmware_version;
- 	bool		mcu_needs_restart;
- 	struct led	led[EN8811H_LED_COUNT];
-+	struct clk_hw		hw;
-+	struct phy_device	*phydev;
- };
-
- enum {
-@@ -806,6 +817,86 @@ static int en8811h_led_hw_is_supported(struct phy_device *phydev, u8 index,
- 	return 0;
- };
-
-+static unsigned long en8811h_clk_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent)
-+{
-+	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
-+	struct phy_device *phydev = priv->phydev;
-+	u32 pbus_value;
-+	int ret;
-+
-+	ret = air_buckpbus_reg_read(phydev, EN8811H_HWTRAP1, &pbus_value);
-+	if (ret < 0)
-+		return ret;
-+
-+	return (pbus_value & EN8811H_HWTRAP1_CKO) ? 50000000 : 25000000;
-+}
-+
-+static int en8811h_clk_enable(struct clk_hw *hw)
-+{
-+	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
-+	struct phy_device *phydev = priv->phydev;
-+
-+	return air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
-+				EN8811H_CLK_CGM_CKO, EN8811H_CLK_CGM_CKO);
-+}
-+
-+static void en8811h_clk_disable(struct clk_hw *hw)
-+{
-+	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
-+	struct phy_device *phydev = priv->phydev;
-+
-+	air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
-+				EN8811H_CLK_CGM_CKO, 0);
-+}
-+
-+static int en8811h_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
-+	struct phy_device *phydev = priv->phydev;
-+	int ret = 0;
-+	u32 pbus_value;
-+
-+	ret = air_buckpbus_reg_read(phydev, EN8811H_CLK_CGM, &pbus_value);
-+	if (ret < 0)
-+		return ret;
-+
-+	return (pbus_value & EN8811H_CLK_CGM_CKO);
-+}
-+
-+static const struct clk_ops en8811h_clk_ops = {
-+	.recalc_rate = en8811h_clk_recalc_rate,
-+	.enable = en8811h_clk_enable,
-+	.disable = en8811h_clk_disable,
-+	.is_enabled	= en8811h_clk_is_enabled,
-+};
-+
-+static int en8811h_clk_provider_setup(struct device *dev,
-+				      struct clk_hw *hw)
-+{
-+	struct clk_init_data init;
-+	int ret;
-+
-+	if (!IS_ENABLED(CONFIG_COMMON_CLK))
-+		return 0;
-+
-+	init.name =  devm_kasprintf(dev, GFP_KERNEL, "%s-cko",
-+				    fwnode_get_name(dev_fwnode(dev)));
-+	if (!init.name)
-+		return -ENOMEM;
-+
-+	init.ops = &en8811h_clk_ops;
-+	init.flags = 0;
-+	init.num_parents = 0;
-+	hw->init = &init;
-+
-+	ret = devm_clk_hw_register(dev, hw);
-+	if (ret)
-+		return ret;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
-+}
-+
- static int en8811h_probe(struct phy_device *phydev)
- {
- 	struct en8811h_priv *priv;
-@@ -838,6 +929,12 @@ static int en8811h_probe(struct phy_device *phydev)
- 		return ret;
- 	}
-
-+	priv->phydev = phydev;
-+	/* Co-Clock Output */
-+	ret = en8811h_clk_provider_setup(&phydev->mdio.dev, &priv->hw);
-+	if (ret)
-+		return ret;
-+
- 	/* Configure led gpio pins as output */
- 	ret = air_buckpbus_reg_modify(phydev, EN8811H_GPIO_OUTPUT,
- 				      EN8811H_GPIO_OUTPUT_345,
---
-2.34.1
-
+Rob
