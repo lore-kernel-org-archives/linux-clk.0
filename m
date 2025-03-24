@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577EE1EA7D8;
-	Mon, 24 Mar 2025 23:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33A71F1314;
+	Mon, 24 Mar 2025 23:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742859734; cv=none; b=ICztIKeUa72qB4qrt8nBzq71txESBJtXw3k5NxoCeDrqJO68VQBM1K9sGdIoe8o8Ea5paJx441BEnRAoXJVOSBbEPFMm6OdKytjUvsP9f8RuT49BsfxjdQvsFsQttkDOLdEGuPvcZmA4sAJ7izy/yWHFvQMhikYwOJYXv6eowhU=
+	t=1742860087; cv=none; b=r9Y8sPxyAgk/Se/G4VqfBC2EJhGV0lboF+JL7eAx7RY26kkAqNsMjKX0p3C7fzMrPxdaa7dfIbW3rjNprKURHq1qck/0JJ3FKA0kcM5zZCQrbTtD5rHeREtzX0WlQMBIsRZVGeLAXZktsCakmcVjwh59MfSnQf9plZRb51zBiFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742859734; c=relaxed/simple;
-	bh=WxBKiPw/1+Q6+SWg/jrm3YstJrgcchdbsKnl0favTJY=;
+	s=arc-20240116; t=1742860087; c=relaxed/simple;
+	bh=9pbvWGuCUC/lSizIPrL6Lycw2q6fYbAE1Krp64S+MJo=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=h9kftEliI4ny9KJ1xVL2S6EPgaf46RZbInBjz+lV3ckr9w2XtMMKosi6FzjblnHcsUxNctnkvF59XRiUW4wn0wGUVBdrhsSngh/iWukZkydZKZeII2zOTBjSFlVsbrAQcC6SC24sKgqbjFiU8pMEWV4dW5hLzIjJncL2ir87wno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ma6dzGi7; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=MJaLvGWzXKW7KrV4Wd0r80PpIAn4JJZqIVOh8iKz7t0ts7bxWNdBWVNrjUsnp05tiN3paW/mVcPfCBTa17QAg3U9z0OcGxLu+dzOBvqgauQVKXCmkMRwm7rYNLKQss1hAklolv1xhDvaJs8sTNV5+RggiFRWFNMHeHIlK3sjIFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9pVbmml; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ma6dzGi7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB70CC4CEDD;
-	Mon, 24 Mar 2025 23:42:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9pVbmml"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22F55C4CEDD;
+	Mon, 24 Mar 2025 23:48:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742859733;
-	bh=WxBKiPw/1+Q6+SWg/jrm3YstJrgcchdbsKnl0favTJY=;
+	s=k20201202; t=1742860087;
+	bh=9pbvWGuCUC/lSizIPrL6Lycw2q6fYbAE1Krp64S+MJo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ma6dzGi7j79oG9lt2NQQrKuGb97bxY6guutPRzgwyaFzb5p4FH/IQnAzyK0wsZKqD
-	 urYY0b+49YU8xinqkaoLVEvgXNuGi6esmPmSEMHuBj6pdAgRwZ0wbzkK0SagNlE/I5
-	 Ycw+WOikUeTM2FBV0wYOItO1okqgOKDg+36gExaIHTS2iQqr6cRsEVt302M/TXYOGv
-	 fDcxRzsG/gfT5cj+ZmbZt9gq4GZ2tPP+EY+lxTz2Yq5cS61p2964JoY+VUlKoazbdX
-	 +ssM0z/8LPNW05vVRWQYmqNIh5lbV/Y65UbAC8ghttE7dE4i1Gncgp42tsIElM5pBH
-	 NLFAv2fu4ZAqQ==
-Message-ID: <f1e7566e4004e3f7228961df0b5152c4@kernel.org>
+	b=j9pVbmmlVIUqQUkkqSkobpwM1ZeV3sh1BMk6UQAUlp8QKxB0dtOAkrqVgirLcerbf
+	 zOTPM4W+kMukxC9iHTAJxraW49m8B90wX+mmuzYw2YPaLUKPpPLOn8mT7s/GpUt7Ka
+	 fljz9TwV1rwEdqVVVbKzhPvR1Bnca6prTzsVlXBjb5C3iovNeJJPmMMHAtbuMHO/BF
+	 R2ZYfEQLrq6wTXNnC3RuWwPBYGERcRGRtMdLFYNXnWKrdDBZ/4wq4zGDSJ9zfz+lqM
+	 zoU7OChiU28GKj2jODtURLhTDIxk30LdLR8/gQG9bQRyYi9IrrpgUIK9Qj46vtx/7u
+	 CeFxr+jjJJBvA==
+Message-ID: <a6bd517263b66bc69a72d74aeb88cbf5@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,70 +35,79 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250321-qcom_ipq5424_cmnpll-v1-2-3ea8e5262da4@quicinc.com>
-References: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com> <20250321-qcom_ipq5424_cmnpll-v1-2-3ea8e5262da4@quicinc.com>
-Subject: Re: [PATCH 2/4] clk: qcom: cmnpll: Add IPQ5424 SoC support
+In-Reply-To: <TY3PR01MB113461FA9BBF036D285AAC8F386DB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20250303110433.76576-1-biju.das.jz@bp.renesas.com> <20250303110433.76576-2-biju.das.jz@bp.renesas.com> <1347ee4d678ce81c33917b3802601aee.sboyd@kernel.org> <TY3PR01MB11346C31C2533FD074D87BBD286CA2@TY3PR01MB11346.jpnprd01.prod.outlook.com> <98c8c1eab30fc333974bd1ad88791356.sboyd@kernel.org> <TY3PR01MB113469E04E10E3D14FB3F69F186D52@TY3PR01MB11346.jpnprd01.prod.outlook.com> <TY3PR01MB11346D2881A8CC9C3019C978386D22@TY3PR01MB11346.jpnprd01.prod.outlook.com> <983e0e616d62f236dcbc3eecbeab5ab4.sboyd@kernel.org> <TY3PR01MB113461FA9BBF036D285AAC8F386DB2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Subject: RE: [PATCH 1/4] clk: renesas: rzv2h-cpg: Add support for coupled clock
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, Luo Jie <quic_luoj@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>
-Date: Mon, 24 Mar 2025 16:42:11 -0700
+Cc: linux-renesas-soc@vger.kernel.org <linux-renesas-soc@vger.kernel.org>, Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, biju.das.au <biju.das.au@gmail.com>, linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Mon, 24 Mar 2025 16:48:04 -0700
 User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Quoting Luo Jie (2025-03-21 05:49:53)
-> diff --git a/drivers/clk/qcom/ipq-cmn-pll.c b/drivers/clk/qcom/ipq-cmn-pl=
-l.c
-> index 432d4c4b7aa6..ce5e83124c6d 100644
-> --- a/drivers/clk/qcom/ipq-cmn-pll.c
-> +++ b/drivers/clk/qcom/ipq-cmn-pll.c
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
-> - * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserv=
-ed.
-> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights r=
-eserved.
->   */
-> =20
->  /*
-> @@ -16,6 +16,10 @@
->   * are supplied to GCC (24 MHZ as XO and 32 KHZ as sleep clock), and to =
-PCS
->   * with 31.25 MHZ.
->   *
-> + * On the IPQ5424 SoC, there is an output clock from CMN PLL to PPE at 3=
-75 MHZ,
-> + * and an output clock to NSS at 300 MHZ. The other output clocks from C=
-MN PLL
-> + * on IPQ5424 are the same as IPQ9574.
-> + *
->   *               +---------+
->   *               |   GCC   |
->   *               +--+---+--+
-> @@ -115,6 +119,20 @@ static const struct cmn_pll_fixed_output_clk ipq9574=
-_output_clks[] =3D {
->         CLK_PLL_OUTPUT(ETH1_50MHZ_CLK, "eth1-50mhz", 50000000UL),
->         CLK_PLL_OUTPUT(ETH2_50MHZ_CLK, "eth2-50mhz", 50000000UL),
->         CLK_PLL_OUTPUT(ETH_25MHZ_CLK, "eth-25mhz", 25000000UL),
-> +       { /* Sentinel */ },
+Quoting Biju Das (2025-03-21 07:21:24)
+> > -----Original Message-----
+> > From: Stephen Boyd <sboyd@kernel.org>
+> > > > > >
+> > > > > > The parent clock rate of spi and spix2 are different. If we use
+> > > > > > an intermediate parent clk, What clk rate the parent will use??
+> > > > >
+> > > > > Alright, got it. Does the consumer care about the difference
+> > > > > between the two clks for the gating
+> > > > part?
+> > > >
+> > > > Although gating bit is same, for some reason their monitor bit is
+> > > > different. So, to confirm clk on status we need to check respective
+> > > > monitor bits. Parallelly, I will check with hardware team, does it =
+need to monitor both these
+> > bits??
+> > >
+> > > According to hardware team, the spix2 clock is twice the frequency of
+> > > the spi clock, and the clock ON/OFF period displayed for each bit in =
+the monitor register varies
+> > slightly due to the difference in frequency.
+> > >
+> > > So to check the status after changing the clock ON/OFF register
+> > > setting, please check the two monitor register bits together
+> > >
+> >=20
+> > That answers the hardware side of the question. Why does software need =
+to care that they're two
+> > different things vs. one clk?
+>=20
+> From software point, Consumer driver bother only about spi_clk.
+>=20
+> So, treating as one clk(spi_clk) should be OK and we should drop
+> handling spi_x2 module clk in the clk driver instead treat this as an int=
+ernal clock
+> (".spi_clk_x2")??
+>=20
+> Then we should update the binding to have only 3 module clks instead of 4=
+ by dropping
+> the spi_x2 module clk.
 
-Nitpick: Drop the comma here so nothing can come after the sentinel.
+I don't see why the binding has to be updated. Can't we return a NULL
+clk pointer when the driver calls clk_get() on the specifier for the
+spi_x2 clk? Then nothing will happen for that clk. I guess we may need
+to return the rate of the spi clk multiplied by 2 or something, but that
+is far simpler to implement than arbitrating the hardware with custom
+logic and meets the same result.
 
-> +};
-> +
-> +static const struct cmn_pll_fixed_output_clk ipq5424_output_clks[] =3D {
-> +       CLK_PLL_OUTPUT(XO_24MHZ_CLK, "xo-24mhz", 24000000UL),
-> +       CLK_PLL_OUTPUT(SLEEP_32KHZ_CLK, "sleep-32khz", 32000UL),
-> +       CLK_PLL_OUTPUT(PCS_31P25MHZ_CLK, "pcs-31p25mhz", 31250000UL),
-> +       CLK_PLL_OUTPUT(NSS_300MHZ_CLK, "nss-300mhz", 300000000UL),
-> +       CLK_PLL_OUTPUT(PPE_375MHZ_CLK, "ppe-375mhz", 375000000UL),
-> +       CLK_PLL_OUTPUT(ETH0_50MHZ_CLK, "eth0-50mhz", 50000000UL),
-> +       CLK_PLL_OUTPUT(ETH1_50MHZ_CLK, "eth1-50mhz", 50000000UL),
-> +       CLK_PLL_OUTPUT(ETH2_50MHZ_CLK, "eth2-50mhz", 50000000UL),
-> +       CLK_PLL_OUTPUT(ETH_25MHZ_CLK, "eth-25mhz", 25000000UL),
-> +       { /* Sentinel */ },
-
-Nitpick: Drop the comma here so nothing can come after the sentinel.
-
->  };
-> =20
->  /*
+>=20
+> Geert, what is your opinion on this?
+>=20
+> Example:
+>         DEF_SDIV(".spi_clk_x2", CLK_PLLCM33_XSPI, CLK_SMUX2_XSPI_CLK1, CS=
+DIV0_DIVCTL3,
+>                  dtable_2_16),
+>         DEF_FIXED(".pllcm33_xspi_div2", CLK_PLLCM33_XSPI_DIV2, CLK_PLLCM3=
+3_XSPI, 1, 2),
+>=20
+>=20
+>         DEF_MOD("spi_clk_spi",                CLK_PLLCM33_XSPI_DIV2, 10, =
+1, 5, 1,
+>                                                 BUS_MSTOP(4, BIT(5))),
+>=20
+> Note:
+> Currently I am facing an issue which is popped up using single clock,
+> If I use spi clock for rpm, then flash write is failing. If it is turned
+> on permanently then there is no issue.
