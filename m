@@ -1,131 +1,206 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F8B1BD9C8;
-	Tue, 25 Mar 2025 16:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90D618A6AB;
+	Tue, 25 Mar 2025 16:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742918617; cv=none; b=PaaCjx7gs8fH8E9cDkLLqV2/gUPKMNNbuRKPg4Fdv+aRmhKMvCtCRIalz6Luuet1/uahOrtGIZOC38LYySBLAjg54aN+r43etfWO7s1WbxIe4r+JC37ymd6E7dVNY39pc5/e2c4jJrhJn5KhtZ6Kf02cIQ4PrQJA1dj1C7Ye68g=
+	t=1742918972; cv=none; b=ONwy2IpoY8XbdEy8YQVtJ19scll8cDHHQOy6mrDtjP5TzumCMErVVkzFVWrcz2yemvqttFYqOUBB1AI5ypM25LR3fwVBLGjA5W9xwrv4PmPB3eCFA4sqy0dgqhZyl8MrHesCbOjW/SmXr6BSPX1xdTSUBNBMpz+WAeiOG9OJCuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742918617; c=relaxed/simple;
-	bh=Uv1XF8v9S9z8FOJgIj6yPF0v787n7/slgtL5peSFUV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T54WErdLRPsK83mFZfT5/ZoS2xTNN80bH6K7YMFn3K1ckh2x0WPGa/6JGMoSLoTbhAlRNoEalYQR/NeuL2oleHGf7AmQvgaBFIHg1kyPDlmAcu8h7OSD+s/B44CcjCUw/wKIT5IeOmLPdZWv23Z6+jE3KDlSprKZOakvwqQvUL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lFQFl3oU; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lFQFl3oU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E514C4CEED;
-	Tue, 25 Mar 2025 16:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742918616;
-	bh=Uv1XF8v9S9z8FOJgIj6yPF0v787n7/slgtL5peSFUV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lFQFl3oUGhZFZYbVJ6KTPzRZPcHuVzGRpvTwThMVO2ZdvvT5w6taPLBd61GiIxpOo
-	 KVMELhfKXQuiDcMd9SGOpd88skWUWldK3GwwUDAPexBYEknxs9VNJMEXSNxEh9r2mo
-	 1r5FzSqbpH2OP1YVlLTHZA/vhohcW7YACW+z9nWjVY8yoFzOhDMMvn6RFxk0BjOOZN
-	 fDf5S5SwrMDBJvogOA+t9XhjuaJEkm9nUJL1AUEx5wtce4g/f8BGOCeTnaEfVLkj05
-	 UArXGGPbXIGq4oVKwsAovg31pLmWiQMfqTdOxUZwD8JPlRFC9l2mJWXKtiui89EHX8
-	 g4V1KsBRaPXoQ==
-Date: Tue, 25 Mar 2025 16:03:30 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 2/9] dt-bindings: soc: microchip: document the
- simple-mfd syscon on PolarFire SoC
-Message-ID: <20250325-feline-roundworm-dc391b755673@spud>
-References: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
- <20250321-ramrod-scabby-a1869f9979b6@spud>
- <20250325-quiet-waxbill-of-realization-675469@krzk-bin>
+	s=arc-20240116; t=1742918972; c=relaxed/simple;
+	bh=4eXIi2kgBhgN0k1BKTcHbW1ONuQ2JcVenHs6g9LMWJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lT4HNfFOCDtQQyD3Dk8Sk4wysFIbf75VpJJcAG04L2ChYg6Rmp0sTiRHHQGDlD9i61vXtlQe65Y4dtPheuJOnCLYWLqs+QmdTaJC4lb4v262/f4IqQmhM4pLixGsQkLCJVu0hv+z5loS2k5CZ+pOtNgxow0f5bIedRH2m5fzL8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: +rF65xnBRb6WivbF1fGtCg==
+X-CSE-MsgGUID: 2ypNRJh3SYON/RkEf6HmFA==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 26 Mar 2025 01:09:29 +0900
+Received: from superbuilder.administration.lan (unknown [10.226.93.92])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5EED14013742;
+	Wed, 26 Mar 2025 01:09:26 +0900 (JST)
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+To: thierry.bultel@linatsea.fr
+Cc: linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org,
+	paul.barker.ct@bp.renesas.com,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 02/13] dt-bindings: clock: Add cpg for the Renesas RZ/T2H SoC
+Date: Tue, 25 Mar 2025 17:08:50 +0100
+Message-ID: <20250325160904.2688858-3-thierry.bultel.yh@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250325160904.2688858-1-thierry.bultel.yh@bp.renesas.com>
+References: <20250325160904.2688858-1-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="RsVPJiZ0GmQKz8rg"
-Content-Disposition: inline
-In-Reply-To: <20250325-quiet-waxbill-of-realization-675469@krzk-bin>
+Content-Transfer-Encoding: 8bit
 
+Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
 
---RsVPJiZ0GmQKz8rg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+---
+Changes v4->v5:
+  - Set reg minItems and maxItems defaults at top level
+Changes v3->v4:
+  - Handle maxItems and clocks names properly in schema. 
+---
+ .../bindings/clock/renesas,cpg-mssr.yaml      | 55 +++++++++++++------
+ .../clock/renesas,r9a09g077-cpg-mssr.h        | 49 +++++++++++++++++
+ 2 files changed, 88 insertions(+), 16 deletions(-)
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
 
-On Tue, Mar 25, 2025 at 09:13:22AM +0100, Krzysztof Kozlowski wrote:
-> On Fri, Mar 21, 2025 at 05:22:35PM +0000, Conor Dooley wrote:
-> > +title: Microchip PolarFire SoC Microprocessor Subsystem (MSS) sysreg r=
-egister region
-> > +
-> > +maintainers:
-> > +  - Conor Dooley <conor.dooley@microchip.com>
-> > +
-> > +description:
-> > +  An wide assortment of registers that control elements of the MSS on =
-PolarFire
-> > +  SoC, including pinmuxing, resets and clocks among others.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - const: microchip,mpfs-mss-top-sysreg
-> > +      - const: syscon
-> > +      - const: simple-mfd
->=20
-> You need to list the children if you use simple-mfd. Commit msg
-> mentioned clock controller, so where is it?
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+index 77ce3615c65a..5181ff826dbe 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+@@ -52,9 +52,11 @@ properties:
+       - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+       - renesas,r8a779g0-cpg-mssr # R-Car V4H
+       - renesas,r8a779h0-cpg-mssr # R-Car V4M
++      - renesas,r9a09g077-cpg-mssr # RZ/T2H
+ 
+   reg:
+-    maxItems: 1
++    minItems: 1
++    maxItems: 2
+ 
+   clocks:
+     minItems: 1
+@@ -63,11 +65,6 @@ properties:
+   clock-names:
+     minItems: 1
+     maxItems: 2
+-    items:
+-      enum:
+-        - extal     # All
+-        - extalr    # Most R-Car Gen3 and RZ/G2
+-        - usb_extal # Most R-Car Gen2 and RZ/G1
+ 
+   '#clock-cells':
+     description: |
+@@ -92,16 +89,6 @@ properties:
+       the datasheet.
+     const: 1
+ 
+-if:
+-  not:
+-    properties:
+-      compatible:
+-        items:
+-          enum:
+-            - renesas,r7s9210-cpg-mssr
+-then:
+-  required:
+-    - '#reset-cells'
+ 
+ required:
+   - compatible
+@@ -113,6 +100,42 @@ required:
+ 
+ additionalProperties: false
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a09g077-cpg-mssr
++    then:
++      properties:
++        reg:
++          minItems: 2
++        clock-names:
++          items:
++            - const: extal
++            - const: loco
++    else:
++      properties:
++        reg:
++          maxItems: 1
++        clock-names:
++          items:
++            enum:
++              - extal     # All
++              - extalr    # Most R-Car Gen3 and RZ/G2
++              - usb_extal # Most R-Car Gen2 and RZ/G1
++
++  - if:
++      not:
++        properties:
++          compatible:
++            items:
++              enum:
++                - renesas,r7s9210-cpg-mssr
++    then:
++      required:
++        - '#reset-cells'
++
+ examples:
+   - |
+     cpg: clock-controller@e6150000 {
+diff --git a/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+new file mode 100644
+index 000000000000..27c9cdcdf7c8
+--- /dev/null
++++ b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++ *
++ * Copyright (C) 2025 Renesas Electronics Corp.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* R9A09G077 CPG Core Clocks */
++#define R9A09G077_CA55C0		0
++#define R9A09G077_CA55C1		1
++#define R9A09G077_CA55C2		2
++#define R9A09G077_CA55C3		3
++#define R9A09G077_SDHIHS		4
++#define R9A09G077_CLK_PLL1_ETH_PHY	5
++#define R9A09G077_CLK_OSC_ETH_PHY	6
++#define R9A09G077_CLK_ETHPHY		7
++#define R9A09G077_PCLKAH		8
++#define R9A09G077_PCLKAM		9
++#define R9A09G077_PCLKAL		10
++#define R9A09G077_CLK_SEL_ETH_PHY	11
++#define R9A09G077_DFI			12
++#define R9A09G077_PCLKH			13
++#define R9A09G077_PCLKM			14
++#define R9A09G077_PCLKL			15
++#define R9A09G077_PCLKGPTL		16
++#define R9A09G077_PCLKSHOST		17
++#define R9A09G077_PCLKRTC		18
++#define R9A09G077_USB			19
++#define R9A09G077_SPI0			20
++#define R9A09G077_SPI1			21
++#define R9A09G077_SPI2			22
++#define R9A09G077_SPI3			23
++#define R9A09G077_ETCLKA		24
++#define R9A09G077_ETCLKB		25
++#define R9A09G077_ETCLKC		26
++#define R9A09G077_ETCLKD		27
++#define R9A09G077_ETCLKE		28
++#define R9A09G077_ETHCLKE		29
++#define R9A09G077_ETHCLK_EXTAL		30
++#define R9A09G077_ETH_REFCLK		31
++#define R9A09G077_LCDC_CLKA		32
++#define R9A09G077_LCDC_CLKP		33
++#define R9A09G077_CA55			34
++#define R9A09G077_LCDC_CLKD		35
++
++#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
+-- 
+2.43.0
 
-I don't think a child node is required here, there's not enough
-clock-related properties for it to require one. However, I think you're
-correct about missing properties in a general sense - there should be a
-#clock-cells here and a clocks/clock-names too.
-The reason there aren't is because the existing driver (that binds to
-microchip,mpfs-clkcfg) looks this node up by compatible, and implements
-the clock parent for this node etc. Obviously that's not an excuse to
-leave the properties out, so I'll add them even though they're going to
-end up ignored.
-
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  '#reset-cells':
-> > +    description:
-> > +      The AHB/AXI peripherals on the PolarFire SoC have reset support,=
- so
-> > +      from CLK_ENVM to CLK_CFM. The reset consumer should specify the
-> > +      desired peripheral via the clock ID in its "resets" phandle cell.
-> > +      See include/dt-bindings/clock/microchip,mpfs-clock.h for the ful=
-l list
-> > +      of PolarFire clock/reset IDs.
-> > +    const: 1
->=20
-> Best regards,
-> Krzysztof
->=20
-
---RsVPJiZ0GmQKz8rg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ+LT0gAKCRB4tDGHoIJi
-0vN+AP4t8YJUz+gmpo9mQKUTUBdHoSDi7e3nBrvIm/mCF/we4wEA1jBDbRKUs6Ny
-zoe8o2WcUJLVSpT03NVcKTxFiD46Sw0=
-=9sfG
------END PGP SIGNATURE-----
-
---RsVPJiZ0GmQKz8rg--
