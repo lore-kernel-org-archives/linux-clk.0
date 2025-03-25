@@ -1,48 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC0B481C4;
-	Tue, 25 Mar 2025 08:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE732E3367;
+	Tue, 25 Mar 2025 08:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742890406; cv=none; b=rTWm1z6zb/OU9J2cuTdBYtIAOwplb5zDo3LG2M8BiGDnJssMswbbkc0VZ0FSaFgECmEsHLCpFGUEaH9XHlcd1ep8GXq3x3+rlJGUQ5CiflWD+wnBzeQmr6s2NR+LLCYRUHYxZbNYF9+Y4qIBHRHpJIpori+O1YH2Y44+VZJ5BFA=
+	t=1742890803; cv=none; b=QZnS4JO01r0tsaMbXTIVMLCMvMu+YYPMwFJ80wwFoq9lbBLcc1MNMSNq9eYzhg9t4TuNVC51SqVOWMFR+HUlnsoQWbiHmimfxXTtfHo5lEXkfGopNzvMDYdLTcFHYdWrkdxEFGZSRY9lw2avnKi1LlCG1O4JcGDLzJJjsZq+9kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742890406; c=relaxed/simple;
-	bh=f6XJAegToS0M5tfF5z+5zMcVYoym5F06kRgni6qPdOA=;
+	s=arc-20240116; t=1742890803; c=relaxed/simple;
+	bh=65J1Y1jSFMd8igm1QVIoq+zLF9Z+4+XgAc0a1xWvHnM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GQ+/zidwAYNvyE1juDaub3ba0S5e1P5A0sJEHPupMoYH5lp07cE6QeSLseD/a+P2LNt0uJWQYYrSO9ZbkfaAG9LEoOymBV9ORSQaMwb7aWE0Fjro0FNMWMpQkeco1ogTTGiBptQu4reYAhr8jBymTtHATssxCY3r8x5rhwhbmhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baEVxmc3; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=LpLZsII/70LzcLEnwWwb+r+CtFzSnxsaONo7RaxMiyiqSqKS30bB8bam0mkpi+ICfmyqR4BwCPMM1lRi1eaJf5tL3MCrhF/J0BlSVpnoNmLAcGmHfggXhxtsXr8oxCnbiih3+pwKGdjoGc6Z6foxjn027WSSF0KXrFbWGAhmEME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6jf3yMo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baEVxmc3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB913C4CEE4;
-	Tue, 25 Mar 2025 08:13:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6jf3yMo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68236C4CEE4;
+	Tue, 25 Mar 2025 08:20:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742890405;
-	bh=f6XJAegToS0M5tfF5z+5zMcVYoym5F06kRgni6qPdOA=;
+	s=k20201202; t=1742890802;
+	bh=65J1Y1jSFMd8igm1QVIoq+zLF9Z+4+XgAc0a1xWvHnM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=baEVxmc3M4Wz1Zex6nUZ6qxP+swaMOjHIO3FB4/csR5/EO+pEs+wJiHME3ZnE1fSa
-	 D7wpUsUNVxOFeyCtB0DT4hcxGOHEF4tHVYaCVN9fIq3bmd6FUPMXcbY7u7gZw5xEd4
-	 QMd/uIbZSH4vmVvEj7vq9wu77t/i7XUBAJsMxIOofygKG9Q1Klsi8zveL878QqYVK0
-	 l++w4HGhe8xpU2Sl65wzo/lBvI9pkiFXERmljUUq6vecU+hn3XmFbdkhYfGzMdDmVc
-	 uWBe7eNddDEEDIJurJvEIQ5yFRquLENP+JbXs35afdO6OAJzQAoCCwGNwnSqcbN58w
-	 jve2gNPx5FYag==
-Date: Tue, 25 Mar 2025 09:13:22 +0100
+	b=l6jf3yMoj4H50aEmmsFF1RqWOzeqOM2AF3SVjbAL/zbpeSG+fy4J3hpSv5Df5THWB
+	 b1CvSC7uhXXQXVIGGWa7DQPyUgzYNaxlLFE3X11nO009NFS1v5vxOCbcz2q5HQLO47
+	 jGyWvFLf3zFsfPYKyEY3BW0P640l7+z0tOKD9RL+E8odECvzljhAJ3UMhBMubDM21A
+	 NRdHpwY3ocx+Rn8DBStXxkvplcvW5kopp77si+B6K+jbGY2mWLs6HnBFnYoGaqTfZY
+	 cm+Z8HbHeV0Lt5s2ZwalZlMifl0Gm1+Sga/s9MhwJ2iNA1eyK7Wrf0eWd8w4gzoiuK
+	 yjMB81eHND6+Q==
+Date: Tue, 25 Mar 2025 09:19:58 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, 
-	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
-	pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com, 
-	Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Lee Jones <lee@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 2/9] dt-bindings: soc: microchip: document the
- simple-mfd syscon on PolarFire SoC
-Message-ID: <20250325-quiet-waxbill-of-realization-675469@krzk-bin>
-References: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
- <20250321-ramrod-scabby-a1869f9979b6@spud>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_kkumarcs@quicinc.com, 
+	quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, 
+	quic_leiwei@quicinc.com
+Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add CMN PLL support for
+ IPQ5424 SoC
+Message-ID: <20250325-imposing-wine-jackdaw-fb0af2@krzk-bin>
+References: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com>
+ <20250321-qcom_ipq5424_cmnpll-v1-1-3ea8e5262da4@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,41 +49,60 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250321-ramrod-scabby-a1869f9979b6@spud>
+In-Reply-To: <20250321-qcom_ipq5424_cmnpll-v1-1-3ea8e5262da4@quicinc.com>
 
-On Fri, Mar 21, 2025 at 05:22:35PM +0000, Conor Dooley wrote:
-> +title: Microchip PolarFire SoC Microprocessor Subsystem (MSS) sysreg register region
-> +
-> +maintainers:
-> +  - Conor Dooley <conor.dooley@microchip.com>
-> +
-> +description:
-> +  An wide assortment of registers that control elements of the MSS on PolarFire
-> +  SoC, including pinmuxing, resets and clocks among others.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: microchip,mpfs-mss-top-sysreg
-> +      - const: syscon
-> +      - const: simple-mfd
+On Fri, Mar 21, 2025 at 08:49:52PM +0800, Luo Jie wrote:
+> The CMN PLL block in the IPQ5424 SoC takes 48 MHZ as the reference
+> input clock. The output clocks are the same as IPQ9574 SoC, except
+> for the clock rate of output clocks to PPE and NSS.
+> 
+> Also, add macros for clock rates that are applicable specifically
+> only for IPQ5424.
+> 
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml        |  1 +
+>  include/dt-bindings/clock/qcom,ipq-cmn-pll.h                   | 10 +++++++++-
+>  2 files changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+> index f869b3739be8..bbaf896ae908 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+> @@ -25,6 +25,7 @@ properties:
+>    compatible:
+>      enum:
+>        - qcom,ipq9574-cmn-pll
+> +      - qcom,ipq5424-cmn-pll
 
-You need to list the children if you use simple-mfd. Commit msg
-mentioned clock controller, so where is it?
+Same comments as before... keep the order.
 
+>  
+>    reg:
+>      maxItems: 1
+> diff --git a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+> index 936e92b3b62c..e30d57001c38 100644
+> --- a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+> +++ b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+> @@ -1,6 +1,6 @@
+>  /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>  /*
+> - * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+>  #ifndef _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
+> @@ -19,4 +19,12 @@
+>  #define ETH1_50MHZ_CLK			7
+>  #define ETH2_50MHZ_CLK			8
+>  #define ETH_25MHZ_CLK			9
+> +
+> +/*
+> + * The CMN PLL output clock rates that are specifically applicable for IPQ5424
+> + * SoC. For IPQ5424, the other output clocks and their rates are same as IPQ9574.
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#reset-cells':
-> +    description:
-> +      The AHB/AXI peripherals on the PolarFire SoC have reset support, so
-> +      from CLK_ENVM to CLK_CFM. The reset consumer should specify the
-> +      desired peripheral via the clock ID in its "resets" phandle cell.
-> +      See include/dt-bindings/clock/microchip,mpfs-clock.h for the full list
-> +      of PolarFire clock/reset IDs.
-> +    const: 1
+Just come with different header. Why was this called in generic way,
+since we ask to name the headers based on compatible?
 
 Best regards,
 Krzysztof
