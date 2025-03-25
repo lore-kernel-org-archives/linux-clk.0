@@ -1,94 +1,108 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1610E15E96;
-	Tue, 25 Mar 2025 19:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C03D1A725A;
+	Tue, 25 Mar 2025 21:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742929244; cv=none; b=UoS/3DtahV6BJZC2VVuzgy60+2nA19gA4cfLMRwUeGAC3zkBiqsTM3XH+4Aha7mCj1KGvsHfFIdDSzJ5uFFeQ19UoN9NeAU25wHoZu/Fgp0VrzupQ898V/0l5YvnlzaZoWgDhpxiuzRJPARUAnZx3nqCbrmUk9v9VY1FVvoHsC0=
+	t=1742939824; cv=none; b=ckjpLRxvYZQXo2LC2Uq/VsoSafJHWnjo7J9KSM4mlVdX25S9zMCzQy1nA7drVfMQVFp3Oqy7uoyY5EO4OqcmUf4i/KL6tvNskH0twm5qd8DC8jOTVELpWgEO22w7AC7E+stqKl69I+PNY10i61iSEmBzuK2OgIjz7mZqQkH9Kp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742929244; c=relaxed/simple;
-	bh=ZpoJko3p4m03qrok6iCtBZzPC7kUT0DPMT6jgwjpz+M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ks5LW3vVQwCw3n938KdsIFYId1eqeRSMTX+E8cG0CysG79CX/ac8hEL1oPqR40zjB92due1vmy6EInEB5qYuddEPw8J9SWbxGf2Y7OOTeIf3Fwcm0Xh1uV6C8JHo+C83dMY8zwwO2ySJFzZ8YZpPsuj+O+H+9GqMf5c1ZNBgaW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gv68XKRw; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1742939824; c=relaxed/simple;
+	bh=dVbKSNw9IpYPnjB4Ud3V8KshkTL7MxnrLDQsyEYyjgs=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=s90kHz72AXhnfl+Vg/qcjEnndEWFxXM/ZjD4j4OA6uiBpnGPDvy1OZ7jjeaY4D5+GQh7DlzOOHTyf2IfrEmhprj05fDqskGy+Qx59OKD9jg7r7QTEftNlqiloQOetcf7YXfXeH8wnNDUw1o99Ui2DrNuKoYx+fGLA7zP0WcU3yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U1XyMEmN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gv68XKRw"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso54157255e9.1;
-        Tue, 25 Mar 2025 12:00:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742929241; x=1743534041; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZpoJko3p4m03qrok6iCtBZzPC7kUT0DPMT6jgwjpz+M=;
-        b=Gv68XKRwqop4pzkKc9JlRdw2HwgjCUxJ728IdtYxiSaWSufWez/xjOYXbhyAo2RBe6
-         oQ6tMm8pEfuhEf+ax1Jt7XH3ujtp5GGElDpyZdfdXMHHSPnUTTQF6TsNarDOpN98WXTg
-         3Mne9WpBulGgNDgiRkKdIhUd7E9dlW6dEYXMbo47mQFVzspYHn8a/R8/4+M7ZdTa5PWR
-         oWCRG4esW6kxtRFg5NxTIic2TSL1KqevjabugPH5NFMoEM0ba6Ov5yvi7DnCH6bll/qD
-         0H3jxv3wIoVw2bIHgEs1DthGHpqlqaTzvM4YQGX5BY47bkWHv8h/meUNE4GoyANDvoqL
-         OuAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742929241; x=1743534041;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZpoJko3p4m03qrok6iCtBZzPC7kUT0DPMT6jgwjpz+M=;
-        b=bBPvM/fS+Xqacy5/Zvb76+WH//nfRisti/UWKFki/PT9GZh5CyAnXqqKK9ul2pQGTx
-         n7JODJwOeVptrKnZ5KdkXmXU0JsXBli2xJx9enncwt/VisCynd8d72om23ObF7PnPEvS
-         FPan5OTyiq0wGxDt4HFnMdzskO0bGFxkO/2bJ8vbNZNlC7/7BVldruRVN4pZf9JxUMQt
-         dd0t3ahHxtuusu5MMUXiKDXC+2u4bjv5VUNp+y+jxaW61fhtCo941UXUSi0xwdZKOKL/
-         Q6T69ya3gQZhBZepmCk/scIVOxYUwXuI9HhlS6oevZtgMQpYQY0msWvnjbFkQ0tKfkd+
-         ouPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOkVSC6OJP1ivCNAESf3dyoTleIlp46V0Lz2OIjjCRWMjCmdo/KPz/v75xiwxZjwPJJYCuHUvq+24=@vger.kernel.org, AJvYcCUzX/PBpbxXEgp3RKo5LO6qkXsRaZS54TT8oMgSA/G6tqZueVFvfdf6mv5ssb9Ntt41qYtmvRg379I=@vger.kernel.org, AJvYcCVV46X4hUPHiG/G4suGxIbgp2RZ995/PGCnjVl+FCHtwYDdG/SKfThM6wpoKDgm/9ymlDcunNxfpMNIIfo=@vger.kernel.org, AJvYcCXkTvagOqLh6s0PEryWSIm4bDfph7XKE0k3VylNt+1mnM7u0BhyTRqB/veyherNsvocttvWJSOravMd9+pt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD0mACV3RbNGziLreMlxAclIpvBBu3JWERAKQGOYtn14q5844e
-	G8KXpPxGocuOG7xRT4c0Ih9D/r++bt4z6r2HewU0A/+Rd8F0diaJG0d+niyHOpNPV5vBU8Tg08h
-	Sjfs2YuhOfQFR8TSKLkTTUXy4WGs=
-X-Gm-Gg: ASbGncsnVJqfs18Kc3D5W0t/eJoAxNZWznyxwzul/7d+TCiwn981Gsgob0sloT4FwCB
-	q60EYOjhtwIMd8PMTVI+R0RJOmhHuqlOqoOYtip3YDFmCqukAjjkwJ234j/004+NzW3AjDab/J8
-	puOC6mGqWsPhou0q+O6+pxTpRng5k=
-X-Google-Smtp-Source: AGHT+IEDc3tyF/hFbw4j068/Le/2Xa4I49R2ihKwn1SilHlKBN8C9u6EyQgv8p1bCiDJ+HvE0ISRQn0HPEZ6zk620RE=
-X-Received: by 2002:a5d:6d0a:0:b0:391:306f:57de with SMTP id
- ffacd0b85a97d-3997f9405c4mr17108463f8f.45.1742929241148; Tue, 25 Mar 2025
- 12:00:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1XyMEmN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09B47C4CEE4;
+	Tue, 25 Mar 2025 21:57:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742939824;
+	bh=dVbKSNw9IpYPnjB4Ud3V8KshkTL7MxnrLDQsyEYyjgs=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=U1XyMEmNYZIlwYioOLPxclfPhiC+yUspDrhkZq+hTqghQwVjwS0zv2BVZbh2GVg89
+	 9otj4z/5i+7itFygyS8sD2cfaHriu6bLgJ+l2P2O8hQcSU07nLPDrKt6M4tqEiyvTN
+	 ZztdVM9vFRbExjb0NzQBvOzxk1yXRP+VN0G1BYdUBCQSyPbstgBzS2TUHuWaR50a3y
+	 K+QkC1xQ9k0hM3kXBkBIHNSQwO3eKsLYojZ/rXqJ47GtUh8Vp5DMdu+XGaOkqmjQ5Z
+	 M+w1s7PRQfeXZQDUQ/oAR4FiAcUtlN+24cCvCuOOSvJv6Tf8GZYWBI4h/atfb8K5aF
+	 KzDUpJTwDMq2g==
+Message-ID: <4db0bf5937c6c2a480b89b11e841782c@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250321095556.91425-1-clamor95@gmail.com> <20250321095556.91425-3-clamor95@gmail.com>
- <69024f13d296cf2127e7f4229d1e6ece@kernel.org>
-In-Reply-To: <69024f13d296cf2127e7f4229d1e6ece@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 25 Mar 2025 21:00:30 +0200
-X-Gm-Features: AQ5f1JoHj-5VGdi3sDjJ-Kr3rNBl5Ntlplq3pMlWWE5QBTFl7BLAfEiK3RB3B3s
-Message-ID: <CAPVz0n2GYUjV_LojZKMzAGC5P8APC5G-A_ApinV=-_K5YoO0wA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] drivers: clk: tegra: add DFLL support for Tegra 4
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1jv7s21d8y.fsf@starbuckisacylon.baylibre.com>
+References: <20250120-amlogic-clk-drop-clk-regmap-tables-v3-0-126244146947@baylibre.com> <20250120-amlogic-clk-drop-clk-regmap-tables-v3-1-126244146947@baylibre.com> <508a5ee6c6b365e8d9cdefd5a9eec769.sboyd@kernel.org> <1jv7s21d8y.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH v3 1/4] clk: add a clk_hw helpers to get the clock device or device_node
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 25 Mar 2025 14:57:01 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-=D0=B2=D1=82, 25 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 20:56 Step=
-hen Boyd <sboyd@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Quoting Svyatoslav Ryhel (2025-03-21 02:55:55)
-> > Extend the Tegra124 driver to include DFLL configuration settings requi=
-red
-> > for Tegra114 compatibility.
+Quoting Jerome Brunet (2025-03-21 10:53:49)
+> On Wed 26 Feb 2025 at 17:01, Stephen Boyd <sboyd@kernel.org> wrote:
+>=20
+>=20
+> >> +static void clk_hw_get_of_node_test(struct kunit *test)
+> >> +{
+> >> +       struct device_node *np;
+> >> +       struct clk_hw *hw;
+> >> +
+> >> +       hw =3D kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
+> >> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
+> >> +
+> >> +       np =3D of_find_compatible_node(NULL, NULL, "test,clk-dummy-dev=
+ice");
+> >> +       hw->init =3D CLK_HW_INIT_NO_PARENT("test_get_of_node",
+> >> +                                        &clk_dummy_rate_ops, 0);
+> >> +       of_node_put_kunit(test, np);
+> >> +
+> >> +       KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, np, hw=
+));
 > >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
->
-> Drive by nitpick. The subject should drop "drivers: " because it's
-> implicit from "clk:".
+> > The stuff before the expectation should likely go to the init function.
+> > Or it can use the genparams stuff so we can set some struct members to
+> > indicate if the pointer should be NULL or not and then twist through the
+> > code a couple times.
+> >
+>=20
+> I'm trying to address all your comments but I'm starting to wonder if
+> this isn't going a bit too far ? The functions tested are one line
+> returns. Is it really worth all this ?
+>=20
+> I do understand the idea for things that actually do something, such as
+> reparenting, setting rates or what not ... But this ? It feels like a
+> lot of test code for very little added value, don't you think ?
+>=20
 
-If this is the only remark you have to this commit, I am happy to fix it ;)
+Just so I understand, you're saying that this is always going to be a
+simple "getter" API that doesn't do much else? We're not _only_ testing
+the getter API, we're also testing the registration path that actually
+sets the device or of_node pointers for a clk. I'm not really thinking
+about the one line return functions here.
+
+Writing tests is definitely a balancing act. I'd say we want to test the
+behavior of the API in relation to how a clk is registered and writing
+tests to show the intended usage is helpful to understand if we've
+thought of corner cases like the clk was registered with a device
+pointer that also has an of_node associated with it. (Did we remember to
+stash that of_node pointer too?) We have a bunch of clk registration
+APIs, and we want to make sure this getter API works with all of them.
+Note that we don't care about the clk flags or parent relation chains
+here, just that the device or of_node passed in to registration comes
+out the other side with the getter API.
+
+A little code duplication is OK, as long as the test is easy to
+understand. Maybe genparams stuff is going too far, I don't know, but at
+the least we want to make sure the clk registration APIs behave as
+expected when the getter API is used to get the device or of_node later.
+
+I've found this google chapter[1] useful for unit testing best
+practices. I recommend reading it if you haven't already.
+
+[1] https://abseil.io/resources/swe-book/html/ch12.html
