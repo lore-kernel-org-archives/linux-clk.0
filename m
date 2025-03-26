@@ -1,201 +1,198 @@
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EB825D524;
-	Wed, 26 Mar 2025 18:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85216254855;
+	Wed, 26 Mar 2025 19:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743013602; cv=none; b=B+lfBENgT2i0m0j9XCMJUrrFx3sp1z9up6o6nPZjRToas81YhbKhR9n3ObH5vWgPEuMHL0QkeEWwHz2vq89ZEccT6+FhFI7JgpD6gcrpeXnc9xYN9cGcX+ENg47XjF5z6JSnh0/d8BU59P+o6BzG9rcCOdBo9sIb/TzQsqLbeco=
+	t=1743016300; cv=none; b=tPKAXO0CttZp05fJQEvPUed2y5yib6VjxC9+6mROqGy8ZjupgEeF64l2GFWaNCbW4znD5KY2k/NVuMX+yvtq1S4xFLT2Ku5dMbYN5rZtu3H7qATlb90Jdmafm4+KHLxniEITz6+BzWOkt1qqwARVy1LLgbibu2rdTXq63JIJBD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743013602; c=relaxed/simple;
-	bh=2hOOkKfJ2O24FeBerSRc7TzBcA7RAdNIvqDCbUOqPBs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bIMeYPny+SRWPFKI0XKfB8Q9o3AFAU43srAyHanFMTgfVnNj4Fg+2paIFXEhfZ3GS59BC9pZtNpidXgfGteCTJPMSuPLvemvG7il5/3zQ0feBXLBGbpW8p5FG5AAwaXLpXq53cEtgGoa1NvxkMqp/jJ+4BBIt2xDiIxEZxHsRWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WQBePKR6; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1743016300; c=relaxed/simple;
+	bh=p6PSDcM/+zJCZa2wx8tmkawqFwv4c4wkJ/mcRtrEBxI=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=q5BZqHlF/nO19LfLsv2XMENX2OJB46Gs1igpUTRuq9wBrS9TZHF/XqQRo1refHXqmEZYql1bcHkx9PsUkXkcfholXuyhkCvc93w2iOZppUOq9AIEQd8forkdV1gY80E411Gdnbap2SzayAkg7JEcmcXXoqi0L00V1rjHcIOVOlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGQQ9Zom; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WQBePKR6"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BD6F844447;
-	Wed, 26 Mar 2025 18:26:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743013598;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G6fDJAgeivWwEjOlUOt+sxMAv2+TjUSgdeW6xREfgQ4=;
-	b=WQBePKR6H4Qi0pPpju+j0GA4z4uw2abs39R6ZvrmXUT7QQXG06s56xvKtQtO4KjWqdF7Df
-	dpT/YQ+1W6kwCwSyqW5+tjpfVHHzIO7tqSJA6+/0WUtzbpDlMCnHdEw8jMrzTPnlmIObSK
-	8vUfxrXsB+MtbES6OucJb75vs1SRo8cWbcHk/7m5OzXaD2pqSNWeIsg6oDca6m9kLRw2CD
-	PQZUTQsucwmimu2Yl3CYP0VIZrfNDvNJr398UMc4+x4Iu5MIlwJD2F6CQW3d2ZYKzF2Tv6
-	0mbek6lj9SZIX133MF4YJtQ33N8t8yElehLWVozJtTLRsqIvOfycZjMwUxP2Vw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Wed, 26 Mar 2025 19:26:25 +0100
-Subject: [PATCH RFC 10/10] clk: Fix the ABBA locking issue with runtime PM
- subcalls
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGQQ9Zom"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3F24C4CEE9;
+	Wed, 26 Mar 2025 19:11:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743016300;
+	bh=p6PSDcM/+zJCZa2wx8tmkawqFwv4c4wkJ/mcRtrEBxI=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=JGQQ9ZomZKQogiTpjeGHckH5smUSR+7wFLv4N79DIZm07XHJYBpXvSVZbaLkNOIrH
+	 DQ7S9g80Ura84vXqY5ONaTulbDruyvFFO2znj/Cpoa8jqaDBFgr8wGhwX/rrYOE1bu
+	 x45OJfdbx9RAGgK6Qu6hry8DnhwcnWyOpWIvdjHJyKrQgcupegZ3D8VOUECsAj2It/
+	 Si1tDFBtFHBWFKbnVVT33KYLSWtpx/WE8CbziQW7MjpAHzyMH2ou+k0+tnNtAZKrwZ
+	 yL7GhFeRqKYBFamcQzf74VImcnIYSV7RAW+xzja2OJgojUtt7yKhBbo1Vx2NVg0wkL
+	 iTdzl4aMQfwKQ==
+Date: Wed, 26 Mar 2025 14:11:39 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250326-cross-lock-dep-v1-10-3199e49e8652@bootlin.com>
-References: <20250326-cross-lock-dep-v1-0-3199e49e8652@bootlin.com>
-In-Reply-To: <20250326-cross-lock-dep-v1-0-3199e49e8652@bootlin.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
- Len Brown <len.brown@intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Danilo Krummrich <dakr@kernel.org>, 
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Magnus Damm <magnus.damm@gmail.com>, linux-serial@vger.kernel.org, 
  Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>, 
- Lucas Stach <l.stach@pengutronix.de>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Marek Vasut <marex@denx.de>, Ulf Hansson <ulf.hansson@linaro.org>, 
- Kevin Hilman <khilman@kernel.org>, Fabio Estevam <festevam@denx.de>, 
- Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
- Shawn Guo <shawnguo@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
- linux-imx@nxp.com, Ian Ray <ian.ray@gehealthcare.com>, 
- =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Saravana Kannan <saravanak@google.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieeivdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelgfehvdduieefieeikeffgffggfdttdeugeffieetheeuleelfeehffdtffetveenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpeeknecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrdegvddrgeeingdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvkedprhgtphhtthhopehmrghrvgigseguvghngidruggvpdhrtghpthhtoheplhhinhhugidqihhmgiesnhigphdrtghomhdprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihgrnhdrrhgrhiesghgvhhgvrghlthhhtggrrhgvrdgtohhmpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdpr
- hgtphhtthhopehssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkhhhilhhmrghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomh
-X-GND-Sasl: miquel.raynal@bootlin.com
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Conor Dooley <conor+dt@kernel.org>, Will Deacon <will@kernel.org>, 
+ Biju Das <biju.das.jz@bp.renesas.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+ linux-renesas-soc@vger.kernel.org, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ linux-kernel@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+In-Reply-To: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Message-Id: <174301523991.2716417.14351851624098585706.robh@kernel.org>
+Subject: Re: [PATCH 00/15] Add support for Renesas RZ/V2N SoC and EVK
 
-The clock subsystem is calling runtime PM callbacks after having
-acquired its own lock, which is in general problematic, especially
-because when PM callbacks enter the power domain subsystem, we have the
-following scenario:
-mutex_lock(prepare_lock)
-mutex_lock(genpd_lock)
-But on the other side, devices may enable power domains, which
-themselves might require clocks, forcing the following path:
-mutex_lock(genpd_lock)
-mutex_lock(prepare_lock)
 
-The clk core has been modified in order to avoid the need for "late"
-runtime PM calls (ie. inside the clk prepare_lock), so what remains to
-be done is to simply remove these inner runtime calls.
+On Wed, 26 Mar 2025 14:39:30 +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> This patch series adds initial support for the Renesas RZ/V2N (R9A09G056)
+> SoC and its evaluation board (EVK). The Renesas RZ/V2N is a vision AI
+> microprocessor (MPU) designed for power-efficient AI inference and
+> real-time vision processing. It features Renesas' proprietary AI
+> accelerator (DRP-AI3), delivering up to 15 TOPS AI performance, making
+> it ideal for applications such as Driver Monitoring Systems (DMS),
+> industrial monitoring cameras, and mobile robots.
+> 
+> Key features of the RZ/V2N SoC:
+>   Processing Power:
+>     - Quad Arm Cortex-A55 cores at 1.8GHz for high-performance computing
+>     - Single Arm Cortex-M33 core at 200MHz for real-time processing
+>     - 1.5MB on-chip SRAM for fast data access
+>     - LPDDR4/LPDDR4X memory interface for high-speed RAM access
+> 
+>   AI and Vision Processing:
+>     - DRP-AI3 accelerator for low-power, high-efficiency AI inference
+>     - Arm Mali-C55 ISP (optional) for image signal processing
+>     - Dual MIPI CSI-2 camera interfaces for multi-camera support
+> 
+>   High-Speed Interfaces:
+>     - PCIe Gen3 (2-lane) 1ch for external device expansion
+>     - USB 3.2 (Gen2) 1ch (Host-only) for high-speed data transfer
+>     - USB 2.0 (Host/Function) 1ch for legacy connectivity
+>     - Gigabit Ethernet (2 channels) for network communication
+> 
+>   Industrial and Automotive Features:
+>     - 6x CAN FD channels for automotive and industrial networking
+>     - 24-channel ADC for sensor data acquisition
+> 
+> LINK: https://tinyurl.com/renesas-rz-v2n-soc
+> 
+> The series introduces:
+> - Device tree bindings for various subsystems (SYS, SCIF, SDHI, CPG, pinctrl).
+> - RZ/V2N SoC identification support.
+> - Clock and pinctrl driver updates for RZ/V2N.
+> - Initial DTSI and device tree for the RZ/V2N SoC and EVK.
+> - Enabling RZ/V2N SoC support in `arm64 defconfig`.
+> 
+> These patches have been tested on the RZ/V2N EVK with v6.14,
+> logs can be found here https://pastebin.com/8i3jgVby
+> 
+> Cheers,
+> Prabhakar
+> 
+> Lad Prabhakar (15):
+>   dt-bindings: soc: renesas: Document Renesas RZ/V2N SoC variants
+>   dt-bindings: soc: renesas: Document RZ/V2N EVK board
+>   soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
+>   dt-bindings: soc: renesas: Document SYS for RZ/V2N SoC
+>   soc: renesas: sysc: Add SoC identification for RZ/V2N SoC
+>   dt-bindings: serial: renesas: Document RZ/V2N SCIF
+>   dt-bindings: mmc: renesas,sdhi: Document RZ/V2N support
+>   dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
+>   clk: renesas: rzv2h-cpg: Sort compatible list based on SoC part number
+>   clk: renesas: rzv2h: Add support for RZ/V2N SoC
+>   dt-bindings: pinctrl: renesas: Document RZ/V2N SoC
+>   pinctrl: renesas: rzg2l: Add support for RZ/V2N SoC
+>   arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
+>   arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
+>   arm64: defconfig: Enable Renesas RZ/V2N SoC
+> 
+>  .../bindings/clock/renesas,rzv2h-cpg.yaml     |   5 +-
+>  .../devicetree/bindings/mmc/renesas,sdhi.yaml |   4 +-
+>  .../pinctrl/renesas,rzg2l-pinctrl.yaml        |   2 +
+>  .../bindings/serial/renesas,scif.yaml         |   1 +
+>  .../soc/renesas/renesas,r9a09g057-sys.yaml    |   1 +
+>  .../bindings/soc/renesas/renesas.yaml         |  15 +
+>  arch/arm64/boot/dts/renesas/Makefile          |   2 +
+>  arch/arm64/boot/dts/renesas/r9a09g056.dtsi    | 264 ++++++++++++++++++
+>  .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 115 ++++++++
+>  arch/arm64/configs/defconfig                  |   1 +
+>  drivers/clk/renesas/Kconfig                   |   5 +
+>  drivers/clk/renesas/Makefile                  |   1 +
+>  drivers/clk/renesas/r9a09g056-cpg.c           | 152 ++++++++++
+>  drivers/clk/renesas/rzv2h-cpg.c               |  18 +-
+>  drivers/clk/renesas/rzv2h-cpg.h               |   1 +
+>  drivers/pinctrl/renesas/Kconfig               |   1 +
+>  drivers/pinctrl/renesas/pinctrl-rzg2l.c       |  36 ++-
+>  drivers/soc/renesas/Kconfig                   |  10 +
+>  drivers/soc/renesas/Makefile                  |   1 +
+>  drivers/soc/renesas/r9a09g056-sys.c           | 107 +++++++
+>  drivers/soc/renesas/rz-sysc.c                 |   3 +
+>  drivers/soc/renesas/rz-sysc.h                 |   1 +
+>  .../dt-bindings/clock/renesas,r9a09g056-cpg.h |  24 ++
+>  .../pinctrl/renesas,r9a09g056-pinctrl.h       |  30 ++
+>  24 files changed, 790 insertions(+), 10 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+>  create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+>  create mode 100644 drivers/clk/renesas/r9a09g056-cpg.c
+>  create mode 100644 drivers/soc/renesas/r9a09g056-sys.c
+>  create mode 100644 include/dt-bindings/clock/renesas,r9a09g056-cpg.h
+>  create mode 100644 include/dt-bindings/pinctrl/renesas,r9a09g056-pinctrl.h
+> 
+> --
+> 2.49.0
+> 
+> 
+> 
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- drivers/clk/clk.c | 31 +++++--------------------------
- 1 file changed, 5 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 26af3a134fa7b9d7f4a77ff473df7e79fd465789..652551860201f2d4ed606c55079dc4fb655d9fa0 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1961,10 +1961,9 @@ static unsigned long clk_recalc(struct clk_core *core,
- {
- 	unsigned long rate = parent_rate;
- 
--	if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
-+	if (core->ops->recalc_rate)
- 		rate = core->ops->recalc_rate(core->hw, parent_rate);
--		clk_pm_runtime_put(core);
--	}
-+
- 	return rate;
- }
- 
-@@ -2458,9 +2457,6 @@ static void clk_change_rate(struct clk_core *core)
- 		best_parent_rate = core->parent->rate;
- 	}
- 
--	if (clk_pm_runtime_get(core))
--		return;
--
- 	if (core->flags & CLK_SET_RATE_UNGATE) {
- 		clk_core_prepare(core);
- 		clk_core_enable_lock(core);
-@@ -2523,8 +2519,6 @@ static void clk_change_rate(struct clk_core *core)
- 	/* handle the new child who might not be in core->children yet */
- 	if (core->new_child)
- 		clk_change_rate(core->new_child);
--
--	clk_pm_runtime_put(core);
- }
- 
- static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
-@@ -2562,7 +2556,6 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- {
- 	struct clk_core *top, *fail_clk;
- 	unsigned long rate;
--	int ret;
- 
- 	if (!core)
- 		return 0;
-@@ -2582,28 +2575,21 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	if (!top)
- 		return -EINVAL;
- 
--	ret = clk_pm_runtime_get(core);
--	if (ret)
--		return ret;
--
- 	/* notify that we are about to change rates */
- 	fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
- 	if (fail_clk) {
- 		pr_debug("%s: failed to set %s rate\n", __func__,
- 				fail_clk->name);
- 		clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
--		ret = -EBUSY;
--		goto err;
-+		return -EBUSY;
- 	}
- 
- 	/* change the rates */
- 	clk_change_rate(top);
- 
- 	core->req_rate = req_rate;
--err:
--	clk_pm_runtime_put(core);
- 
--	return ret;
-+	return 0;
- }
- 
- /**
-@@ -2953,16 +2939,12 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
- 		p_rate = parent->rate;
- 	}
- 
--	ret = clk_pm_runtime_get(core);
--	if (ret)
--		return ret;
--
- 	/* propagate PRE_RATE_CHANGE notifications */
- 	ret = __clk_speculate_rates(core, p_rate);
- 
- 	/* abort if a driver objects */
- 	if (ret & NOTIFY_STOP_MASK)
--		goto runtime_put;
-+		return ret;
- 
- 	/* do the re-parent */
- 	ret = __clk_set_parent(core, parent, p_index);
-@@ -2975,9 +2957,6 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
- 		__clk_recalc_accuracies(core);
- 	}
- 
--runtime_put:
--	clk_pm_runtime_put(core);
--
- 	return ret;
- }
- 
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
--- 
-2.48.1
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: attempting to guess base-commit...
+ Base: tags/next-20250326 (best guess, 15/18 blobs matched)
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/renesas/' for 20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com:
+
+arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000: 'interrupt-controller' is a required property
+	from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rzg2l-pinctrl.yaml#
+arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000: '#interrupt-cells' is a required property
+	from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rzg2l-pinctrl.yaml#
+
+
+
+
 
