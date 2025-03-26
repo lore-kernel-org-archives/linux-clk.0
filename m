@@ -1,141 +1,141 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C211C84BE;
-	Wed, 26 Mar 2025 11:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C623A15199A
+	for <linux-clk@vger.kernel.org>; Wed, 26 Mar 2025 12:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742989664; cv=none; b=SCV5JwWfeKbpG1n7Ne1vibKdh8jAMgWOLn7rYgtg/mrk4cOzneA6RJYb3+TEm0ryVXPleg6TABaEZXWdJ9zJvsVytRgn+QibHpD3uddnX/4onWJ//uU/RsIuh8M5P6fPSQzPww6qX2mU3cnfFZwi8Lrv/J1LiLDseqOTGRbwNMo=
+	t=1742990886; cv=none; b=oEYKpo2mto12Z3AujN/Lfm5G21Fl0/QAt0Bo3rv6x94Vh4W0yC06Utee2AjgCE4P+04LeyxzZluFXZtBn4WidcH0qtdgPNqGsM3azVCKo9FnrwHb4tSbG0u7UiKlANQm+Wk0NXAFxZayClI5TEOCmk3dURNAdCA1KFIPCgzviDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742989664; c=relaxed/simple;
-	bh=yXnOq9vvX2myssUlHThAdK9+azKlcpRfbusLFgvFH/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EaSoYen7zNLd2GRlxAvUQXIlW4mm4fR2vvgK5XJaEiYBZHl/3q1UynFpXTgqSz3+bcMuoq3KQPqvZ4RN2X0Hx55M1XEWMVVzloa2ZIPGXCJp1CGWSanYmxK/Zfo3627ASl702uxbTyA2vjFau4pNUCY8ENp4xM5Ss7lReOAuias=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j354QDOg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1742990886; c=relaxed/simple;
+	bh=jjnSTG3I90Mn5Ca9Xyv++q9P6Z4yvrzjERBIMNIYWYg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lNior5O/rQjmOhPI55zgJN1AQ7UErTiUTGv0FnHQqc6E+ysWVF7yDGIQ37/gyucmSO2vU9kDB8aiSiz44Si6QZBmhIXh8BqmWKB/JBUTkCC5VNZOJJkx3C6HX2aIQpjyZYt9RJ2U6qcgBPWCCVlvVHqnnxgjNsjsU+jm1X0Pk84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b7mlnSxa; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j354QDOg"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q739Rc006151;
-	Wed, 26 Mar 2025 11:47:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	B5EUL/sSDolc5synG2E/Iw45NhUC4E1HoerhiqfKyE0=; b=j354QDOgIdTylBTT
-	1mUi2OMzS5My513DseIfZlPcBjOElGUvenk1M6Z7OabK3duA3vA6Cb/D9hG6zI7R
-	uk4w5Fv85LxB7Rx0s2vI3ZqZ6G00JD9NyTZFxHgTQhFXs5vaQmfVJ/0wzPcubYoa
-	8U2FC2bZFRzNmbjqDwQ6hnZ9LLTry202tHZWuFqSIEDaHsOVHpYopv5yfPdGqUvZ
-	2HpDY3SyAltr+lz4158apIVEc798kI5yGkGtojGun05gZCBq8OVVjvem/qwqcrAT
-	jLUQueBZSUmZMtXnFi5Olu2DObHAm+rWChK1VKnTsI4Dh3Mc7/EKpaxDsAotCyFG
-	PWaWjQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45manj16xc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 11:47:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52QBlSjx006881
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 11:47:28 GMT
-Received: from [10.218.22.7] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Mar
- 2025 04:47:23 -0700
-Message-ID: <5dac9f3e-731f-482f-98ff-10b521231001@quicinc.com>
-Date: Wed, 26 Mar 2025 17:16:11 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7mlnSxa"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abec8b750ebso1220657566b.0
+        for <linux-clk@vger.kernel.org>; Wed, 26 Mar 2025 05:08:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742990882; x=1743595682; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6EOvw4ltGt39X6cSYI+P/xxRhDM+qmj120OFm+7gNRo=;
+        b=b7mlnSxacG68Yn+Zs3UdGrkbG3EXspdbFsoFxpILRuE109HxFjaaUvjlDsZAPvZpxL
+         9yPtCF7AITdD3DEwz/V08f+7QVex/xwXrbN7mf5yIQRz2ILabI+EFPJ7ZXw+++XQpzVw
+         x0j4jVH4jxQQH0JwvRNf+NBEwvPd/hmGVNKs7NAjrgPNgjiGFOQf/FLpIb2GBl6wwbru
+         e+yEzpPdjaprSk8pYbGFAv84sAPlO1w3zplKw9RKD/UGQFoN6TtNWlEevvFBobitftDU
+         WcYW/O7/kmT9qr52UQvHyc2ELtssW7XNZCBSWTbFWkTm8K+Kc8i53BBZjyDsNBiEzlcp
+         g1JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742990882; x=1743595682;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6EOvw4ltGt39X6cSYI+P/xxRhDM+qmj120OFm+7gNRo=;
+        b=pm2NHas6yNeOtEmDi+uCWbXzW4obgk6IB9nTKME6mdHixCpOlrHXji75oqXo/rLaiL
+         QWRxiJwJeJtm7HdakWgwiJUaaHW3jbN7tmwZ4+YGFnWnGFVIRUj4NxtSHR8/P73gxlrA
+         zClnoaGqzegGT2IB/aXIgJN08RLglQBY3krv4fby1ESFQhw5nlpwGb2V6UouBP1pd7W5
+         tcARzhsMsU+HsgekIt6mGtvesPif3l59Yrdc0aRqF4n+5bKC2H8jQsXDrah4a0iv3/BW
+         hqtNgUmshRJIlvsM37pAG9QFcgFgMCdE1wq+BwiujljSa2iNkttn4Gd6Jvg7o6h+piHD
+         G23Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVmH+uYI7GjIeY3hmaNALWr56gHyx/FKwFK5baovT51tdcddx02Yi9Em4jvapg6x3rBO/c3CpZT2X0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9pK8A98z5nIgQtuK9DoHXnCBiXNFqhQUg7y2hhz6ZQ2uebfbl
+	reXg/N9NGG9h3abc41ouClBKtwJa9UO4laWSJUZ87ZPrjg3RQ3AKagCmH7fCsNE=
+X-Gm-Gg: ASbGncsDe0nKmt1h/VVyxtdLEjZkf0mNXpB6PE/zH4/3DGLQbcZMxV4uKRRs5ZUwnC6
+	aAyPU2rwZbIPyW3Sw3hKO2L6LyEV0n5vxs6aXh0M4gXeDUKfQIfxy27bGTB1xYzpwo69Z+31pOW
+	UG6t6cVluhXcDZ03aNa+28qHwCMlfAPsVVcOWeGxRWh9mtGWz8ijtH6j70P6cQr+UiPDya15rvY
+	5BWaIgDji9q47sTF7iqteC89kMzPHrYq4yFG/udf4rXqkiY7fp+9wdpl5hf1AHO1aKkPDQ95mL5
+	zxi4570gIHuj5YE7zeq/vsFhzDICVKWA2t5we/yGgLJ/dYRm6JRoza82GJnyRpDneSI//PwgbwX
+	uZbc0VZDW6EDfsTA9CpxByvuP5gkRadb5mK1dYqI=
+X-Google-Smtp-Source: AGHT+IFpDQ47OkR0lnhRuhDWvB2zczsji7a4MYoKTE4Oj7Ls7vmFXhE9PL8k1vAEh0QTa7oPWlII7w==
+X-Received: by 2002:a17:907:9694:b0:ac4:5ff:cef6 with SMTP id a640c23a62f3a-ac405ffd0f5mr1438770566b.31.1742990881985;
+        Wed, 26 Mar 2025 05:08:01 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac6ef561e4csm59334466b.119.2025.03.26.05.08.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Mar 2025 05:08:01 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Wed, 26 Mar 2025 12:08:00 +0000
+Subject: [PATCH] clk: s2mps11: initialise clk_hw_onecell_data::num before
+ accessing ::hws[] in probe()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] arm64: dts: qcom: sm8550: camcc: Manage MMCX and MXC
-To: Taniya Das <quic_tdas@quicinc.com>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>
-CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-References: <20250303225521.1780611-1-vladimir.zapolskiy@linaro.org>
- <da67d3a1-e3df-4d01-a052-8c906172c51c@quicinc.com>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <da67d3a1-e3df-4d01-a052-8c906172c51c@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: N_Ts1wu_nczpSKeK2RMGqAXcBjU7RF8H
-X-Proofpoint-ORIG-GUID: N_Ts1wu_nczpSKeK2RMGqAXcBjU7RF8H
-X-Authority-Analysis: v=2.4 cv=KvJN2XWN c=1 sm=1 tr=0 ts=67e3e952 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=IJleAqfMLjfyVNOtvW4A:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_03,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- malwarescore=0 priorityscore=1501 clxscore=1015 mlxscore=0 spamscore=0
- impostorscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503260072
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250326-s2mps11-ubsan-v1-1-fcc6fce5c8a9@linaro.org>
+X-B4-Tracking: v=1; b=H4sIACDu42cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYyMz3WKj3IJiQ0Pd0qTixDzdZEsDS3OLVPOkZAMTJaCegqLUtMwKsHn
+ RsbW1AHqshmBfAAAA
+X-Change-ID: 20250326-s2mps11-ubsan-c90978e7bc04
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-hardening@vger.kernel.org, 
+ stable@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
+With UBSAN enabled, we're getting the following trace:
 
+    UBSAN: array-index-out-of-bounds in .../drivers/clk/clk-s2mps11.c:186:3
+    index 0 is out of range for type 'struct clk_hw *[] __counted_by(num)' (aka 'struct clk_hw *[]')
 
-On 3/13/2025 5:08 PM, Taniya Das wrote:
-> 
-> 
-> On 3/4/2025 4:25 AM, Vladimir Zapolskiy wrote:
->> It was discovered that on SM8550 platform Camera Clock controller shall
->> manage MMCX and MXC power domains, otherwise MMIO access to CCI or CAMSS
->> breaks the execution, the problem has been discussed with Jagadeesh at
->> https://lore.kernel.org/all/a5540676-9402-45c4-b647-02fdc2b92233@quicinc.com/
->>
->> Since 'power-domains' property becomes generalized, Rob asked to remove
->> its description, which is done in the first patch of the series, see
->> https://lore.kernel.org/all/20240927224833.GA159707-robh@kernel.org/
->>
->> Vladimir Zapolskiy (2):
->>   dt-bindings: clock: qcom: sm8450-camcc: Allow to specify two power domains
->>   arm64: dts: qcom: sm8550: Additionally manage MXC power domain in camcc
->>
-> 
-> Hi Vladimir, as we are preparing to submit the code for multi-power
-> domain support for the clock controller in our series
-> (https://lore.kernel.org/all/20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com),
-> there has been a request to incorporate the CAMCC-related changes as
-> well. If you are okay with us including this series changes(maintaining
-> your authorship) in our series, then we can integrate them and address
-> any comments in our next submission.
-> 
+This is because commit f316cdff8d67 ("clk: Annotate struct
+clk_hw_onecell_data with __counted_by") annotated the hws member of
+that struct with __counted_by, which informs the bounds sanitizer about
+the number of elements in hws, so that it can warn when hws is accessed
+out of bounds.
 
-Hi Vladimir,
+As noted in that change, the __counted_by member must be initialised
+with the number of elements before the first array access happens,
+otherwise there will be a warning from each access prior to the
+initialisation because the number of elements is zero. This occurs in
+s2mps11_clk_probe() due to ::num being assigned after ::hws access.
 
-I will be including your above 2 patches in the next version of my series[1] which adds
-MXC PD support for SM8450, SM8650 camcc DT nodes since my series is dependent on above
-bindings change. Doing so will fix the bot warnings reported[2] in this series as well
-and I will fix if there are still any more warnings left and post.
+Move the assignment to satisfy the requirement of assign-before-access.
 
-[1] https://lore.kernel.org/all/cd092022-cf6d-421a-a29d-69f7f4f068b6@quicinc.com/
-[2] https://lore.kernel.org/all/174105227313.195955.8409784191665720030.robh@kernel.org/
+Cc: stable@vger.kernel.org
+Fixes: f316cdff8d67 ("clk: Annotate struct clk_hw_onecell_data with __counted_by")
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ drivers/clk/clk-s2mps11.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
-Jagadeesh
+diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
+index 014db6386624071e173b5b940466301d2596400a..8ddf3a9a53dfd5bb52a05a3e02788a357ea77ad3 100644
+--- a/drivers/clk/clk-s2mps11.c
++++ b/drivers/clk/clk-s2mps11.c
+@@ -137,6 +137,8 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 	if (!clk_data)
+ 		return -ENOMEM;
+ 
++	clk_data->num = S2MPS11_CLKS_NUM;
++
+ 	switch (hwid) {
+ 	case S2MPS11X:
+ 		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
+@@ -186,7 +188,6 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
+ 		clk_data->hws[i] = &s2mps11_clks[i].hw;
+ 	}
+ 
+-	clk_data->num = S2MPS11_CLKS_NUM;
+ 	of_clk_add_hw_provider(s2mps11_clks->clk_np, of_clk_hw_onecell_get,
+ 			       clk_data);
+ 
 
->>  .../devicetree/bindings/clock/qcom,sm8450-camcc.yaml          | 4 +---
->>  arch/arm64/boot/dts/qcom/sm8550.dtsi                          | 3 ++-
->>  2 files changed, 3 insertions(+), 4 deletions(-)
->>
-> 
-> 
+---
+base-commit: 9388ec571cb1adba59d1cded2300eeb11827679c
+change-id: 20250326-s2mps11-ubsan-c90978e7bc04
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
