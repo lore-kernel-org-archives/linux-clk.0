@@ -1,119 +1,131 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011051EFF98;
-	Tue, 25 Mar 2025 22:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715A04A29;
+	Wed, 26 Mar 2025 06:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742943144; cv=none; b=fC6qGS/1CLGt3letAGhaR/POe72PeJ3g3RiTMA58DmHp4w7QNl+/IM+P93/AvUvaoGOieKI0VuPztGXJA3b1ep+s7a9NfmVdKvCoo+WmMuxpfwqqz3T3duXV+PGh11QzP1JZyEbQZ2oou7dKfQnYLLyjafx/ZKM3euEmDn/FjtU=
+	t=1742972046; cv=none; b=lNoOQR7OcQqxyoQ4CHfCCYFN6PAv6PF6sqmfvjGMx1+aBbp3cc5sXLrlOF/5JsRAoZQ+IZ7CCaC1n57Xd5KLrUsp/9w2bM3SNgfFiv1eshseut2Z63TRqK5+nD42nrNfcJaoYRKAtC7c3e8c4df0jevWFEqE5y6o5Z7/V17GLvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742943144; c=relaxed/simple;
-	bh=s5q9+6fIiVBPUE+BCuIyJBoQUMY7xMb7Hz+fIrOUrpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gqUM5nBGpmyceZkUc2Khx3WkcrKQ1nP6IdKEgQ5HN5jS8tbNuD7TfoRPd4eRaCQPRbVoV1njzMxTWvmeHy2j5wRmhPMafe1XjoajgvBxbSgvyVzcXPYr05kpPecZSHAN+PKhZaXq/D/09B0njJamaqfLF8PVfChs7VeyygRVYT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tybl/GdL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742972046; c=relaxed/simple;
+	bh=7zwoyPdNuSVZVKiHsKqqG73eThecfXF83qgiVSIJ2U4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mEcFUcVJydlfA+b4MUFobOVzFPvQh5NmNVPEPVnvMobBZf3L8oUdXczPvlaLYMetNbTjozvmEDK+qqFt3k0c+qMl5THxPEeEHARvrPIRMEaXM8Es3JCkxDkPN3Rzze6zjOtxHj6zSEAP+iPgk4MtRwhFOQF1+bQqRdf34ZKBVnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1yoyuRT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tybl/GdL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E030C4CEE9;
-	Tue, 25 Mar 2025 22:52:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1yoyuRT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D562DC4CEE2;
+	Wed, 26 Mar 2025 06:53:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742943143;
-	bh=s5q9+6fIiVBPUE+BCuIyJBoQUMY7xMb7Hz+fIrOUrpE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Tybl/GdLK10TBJU+VIc63abkA175F4g9CqD7Yl8FNGtk93qpc55VSIRzKlHvaEwrX
-	 ari8G50MwUaLxk0NjspvoPcMabur7H9rISJ44mGnkDV9TK+w36m1o9lzgFkPAhUkX4
-	 WirUjY7EDj3HE5TBvRdV2IXrK0QelCesepX4yoZBZ++SOcb3aSOL9QTja+Ab0Wukdj
-	 kPDZiiH3QkQb0igc4O+Da/3J5dYR2Zw20G5omsdNCwUvmohmJjTfbCbmLUGeO7YYb8
-	 puxYp5FMOrwa8OdmVVFHcIsfQ/oRXl7FnCjpUoTzVAVBFugB2bvVkIHPdc/vzUMhY7
-	 kTJl1vN5uDk+A==
-Date: Tue, 25 Mar 2025 15:52:14 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Lucien.Jheng" <lucienx123@gmail.com>
-Cc: linux-clk@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, daniel@makrotopia.org, ericwouds@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- joseph.lin@airoha.com, wenshin.chung@airoha.com, lucien.jheng@airoha.com
-Subject: Re: [PATCH v6 net-next PATCH 1/1] net: phy: air_en8811h: Add clk
- provider for CKO pin
-Message-ID: <20250325155214.44a65306@kernel.org>
-In-Reply-To: <20250324142759.35141-1-lucienx123@gmail.com>
-References: <20250324142759.35141-1-lucienx123@gmail.com>
+	s=k20201202; t=1742972045;
+	bh=7zwoyPdNuSVZVKiHsKqqG73eThecfXF83qgiVSIJ2U4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I1yoyuRTZPYV+8QANl6Hc+Tw0BUQ9tvDhKCElr9TXtHQrMPD5vJM3eq62OiGFazBD
+	 R9FMd6nzLbhowCjQzMTsO+yJOuISqMdYMKO+NOhmEXqyabxKGK/KXHBnfEONTDo7mL
+	 ikicBP8MAdHVQxpFhEQwCNsT3KB0ZhlotpRDL3koQaIprPByu3HdvfHzMGamM3juqc
+	 hWDTYpd/f4JRsDHHTQ/Td3Rzzzz5lwgfO9d+G6pmV56oQu2dAQAUAIcdMRMedzEPsb
+	 WWm7S1ZHj16CcZ8wgqTWltrydfwqiHigsM2OoVOG1/OCacCow/AI5RF6BIEAWYw0pD
+	 E1/EIY3TA2Kxg==
+Message-ID: <58bb1186-08ee-41cf-8593-a6664bd874e6@kernel.org>
+Date: Wed, 26 Mar 2025 07:53:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 2/9] dt-bindings: soc: microchip: document the
+ simple-mfd syscon on PolarFire SoC
+To: Conor Dooley <conor@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Conor Dooley
+ <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>,
+ pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
+ <20250321-ramrod-scabby-a1869f9979b6@spud>
+ <20250325-quiet-waxbill-of-realization-675469@krzk-bin>
+ <20250325-feline-roundworm-dc391b755673@spud>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250325-feline-roundworm-dc391b755673@spud>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Mon, 24 Mar 2025 22:27:59 +0800 Lucien.Jheng wrote:
-> EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
-> CKO clock operates continuously from power-up through md32 loading.
-> Implement clk provider driver so we can disable the clock output in case
-> it isn't needed, which also helps to reduce EMF noise
+On 25/03/2025 17:03, Conor Dooley wrote:
+> On Tue, Mar 25, 2025 at 09:13:22AM +0100, Krzysztof Kozlowski wrote:
+>> On Fri, Mar 21, 2025 at 05:22:35PM +0000, Conor Dooley wrote:
+>>> +title: Microchip PolarFire SoC Microprocessor Subsystem (MSS) sysreg register region
+>>> +
+>>> +maintainers:
+>>> +  - Conor Dooley <conor.dooley@microchip.com>
+>>> +
+>>> +description:
+>>> +  An wide assortment of registers that control elements of the MSS on PolarFire
+>>> +  SoC, including pinmuxing, resets and clocks among others.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - const: microchip,mpfs-mss-top-sysreg
+>>> +      - const: syscon
+>>> +      - const: simple-mfd
+>>
+>> You need to list the children if you use simple-mfd. Commit msg
+>> mentioned clock controller, so where is it?
 > 
-> Signed-off-by: Lucien.Jheng <lucienx123@gmail.com>
+> I don't think a child node is required here, there's not enough
 
-This was posted after merge window started, so let me give you some
-extra nit picks and please repost after April 7th.
+Then this is not a simple-mfd.
 
-> +static int en8811h_clk_enable(struct clk_hw *hw)
-> +{
-> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
-> +	struct phy_device *phydev = priv->phydev;
-> +
-> +	return air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
-> +				EN8811H_CLK_CGM_CKO, EN8811H_CLK_CGM_CKO);
-
-misaligned, continuation should align to opening bracket
-
-> +static int en8811h_clk_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
-> +	struct phy_device *phydev = priv->phydev;
-> +	int ret = 0;
-
-unnecessary init
-
-> +	u32 pbus_value;
-> +
-> +	ret = air_buckpbus_reg_read(phydev, EN8811H_CLK_CGM, &pbus_value);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return (pbus_value & EN8811H_CLK_CGM_CKO);
-> +}
-> +
-> +static const struct clk_ops en8811h_clk_ops = {
-> +	.recalc_rate = en8811h_clk_recalc_rate,
-> +	.enable = en8811h_clk_enable,
-> +	.disable = en8811h_clk_disable,
-
-these are not tab-aligned
-
-> +	.is_enabled	= en8811h_clk_is_enabled,
-
-this one is
-
-> +};
-> +
-> +static int en8811h_clk_provider_setup(struct device *dev,
-> +				      struct clk_hw *hw)
-
-no need to wrap this line
-
-> +{
-> +	struct clk_init_data init;
-> +	int ret;
-> +
-> +	if (!IS_ENABLED(CONFIG_COMMON_CLK))
-> +		return 0;
-> +
-> +	init.name =  devm_kasprintf(dev, GFP_KERNEL, "%s-cko",
-> +				    fwnode_get_name(dev_fwnode(dev)));
-
-double space
--- 
-pw-bot: cr
+Best regards,
+Krzysztof
