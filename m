@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944C018EB0;
-	Wed, 26 Mar 2025 14:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BAF54652;
+	Wed, 26 Mar 2025 14:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742998353; cv=none; b=JeunvFaNe+okY9rMhc4vRn0lSeKfQYi8QdH3ivbhToe6Z9PXPj0XE2b0aVH2xa9rfPxXttNKO5AbnyRdJTNO+LgWCje1H87WmqJkH+88DVM87xMPAi3slCJmrNZfIR205yO9/gHpKHciJmWNvAgH3QXC5cGGGCQ7cTZ2BI0oCjc=
+	t=1742998639; cv=none; b=Vond3QPWxeCZjbQDtSOtQK7B/1F80r9MBVCZ72QfylacAMQ4otAKAeXwIUWC1/pDdHyUPONqH7qrF7kO0xibIqEkgUwmRxzMgjq3zsfcWJPckfNUTaOGQUdcvyoJFSiO+3qs3gHc9qsw9x2IumTMbvvFtx0KN9J478I7yBqEJMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742998353; c=relaxed/simple;
-	bh=NKKFR0KgiRnmrxDD2Mlb/uWpUSSQjkxtzvuAILx2bbY=;
+	s=arc-20240116; t=1742998639; c=relaxed/simple;
+	bh=HPPma/sz3Bshew6p5UOmYAxgSUqPUy/fDmusBpt5nxQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h6D6oICdxgJCERUnnvC5RpB9ioDqozBVuhnMM/QhCyn2oDVEApaeop1WrO5WVTrBN2hzdTrChA5pVYvfu8nrBU4pv4eAabaDSEIlVXnOICRYOTdjfhoHWFiKYvCmg2aqibUVxQRQzX/hsvS9cuJZs75J/J6bKiHjR56TbffN7qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKABfhct; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=EW0sNBnx0Uk6AXsGI/U8TzKU3mdPbzO+/YHNUdMmRsyfCOkuq251HrYAWpwRYq7KfVOvuYDD5mlBorr/wZgfdqgT+hCY+PxCot5GtQEePfTu4+uYGAobFggwgoRXhq8Agi5vpFyaIfZjinPU8w5rMwTmmXtLUO0Glzk/slV3uP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KqoKp+dK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKABfhct"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7141C4CEE2;
-	Wed, 26 Mar 2025 14:12:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KqoKp+dK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DEC4C4CEE2;
+	Wed, 26 Mar 2025 14:17:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742998353;
-	bh=NKKFR0KgiRnmrxDD2Mlb/uWpUSSQjkxtzvuAILx2bbY=;
+	s=k20201202; t=1742998636;
+	bh=HPPma/sz3Bshew6p5UOmYAxgSUqPUy/fDmusBpt5nxQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CKABfhctp9RkWeycV6li1QBPsIcjaYadrPGg7X6d052msqvdJddCXOo4ae8/jHXPq
-	 IdAAOIYgCF09DPH8f+gcfVeOtcx9QWKQHGBxthWN1VGOb25SGPoShAYmclCszsSycp
-	 yILPvYj3eCGPzuaEiB+rbYZq427YXxOdgBLWlhOcjo1d0k/D5dH8zdl00sq+6BaKqF
-	 igYUCSmctKnQh2fhoDRnp1ySn4Zc4a3Q6xBch5CQp4B3kMWPgTW9k1RndiQ9ImD3HM
-	 RWFoVgXHOfav9CF4QYRKhzE9Hzwas+bQ2VZ+lFJfQ+hlkkah+EIYYU29Huj7BmVxDt
-	 lTWODQ7ZvZ5jA==
-Message-ID: <6073eb68-560c-4864-92d7-c6f61b187f6d@kernel.org>
-Date: Wed, 26 Mar 2025 15:12:25 +0100
+	b=KqoKp+dKtuMHnjn/bytxmpa17DsmXAQzSrvcYpEyVkMqOkmmGq04Tlx7tNfXx1EGj
+	 3sUQg5RUaZLIlua1r14SCdEQcFMYVJj9AIlt62Se+oa15YNaNHedBiFPqRftrGB51/
+	 GXTrryLKkknM44G9UVrN7IDFQoUtgPwTByGv3uKkHCNPJsGBLQDP5C+gcq72amk06z
+	 39g1uE9BpdNs7Cfnr1EuzgpTex3uZrMgiCFMizJegk0C1GvhpzbZcJHuEU62d5IY1i
+	 bYRVfqPj0ZR73InLul7LigAv/f8pxUadHrMF0+iuOeAoaScse6RtDWB7sYYp96gabC
+	 O3XXKC7aHCCOw==
+Message-ID: <845d620b-9d5b-49bd-8f36-6376ecf14249@kernel.org>
+Date: Wed, 26 Mar 2025 15:17:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,16 +35,25 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: s2mps11: initialise clk_hw_onecell_data::num before
- accessing ::hws[] in probe()
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-hardening@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250326-s2mps11-ubsan-v1-1-fcc6fce5c8a9@linaro.org>
+Subject: Re: [RFC PATCH v2 2/9] dt-bindings: soc: microchip: document the
+ simple-mfd syscon on PolarFire SoC
+To: Conor Dooley <conor@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Conor Dooley
+ <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>,
+ pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
+ <20250321-ramrod-scabby-a1869f9979b6@spud>
+ <20250325-quiet-waxbill-of-realization-675469@krzk-bin>
+ <20250325-feline-roundworm-dc391b755673@spud>
+ <58bb1186-08ee-41cf-8593-a6664bd874e6@kernel.org>
+ <20250326-tricycle-hesitate-e58633e62545@spud>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,32 +99,46 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250326-s2mps11-ubsan-v1-1-fcc6fce5c8a9@linaro.org>
+In-Reply-To: <20250326-tricycle-hesitate-e58633e62545@spud>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 26/03/2025 13:08, André Draszik wrote:
-> With UBSAN enabled, we're getting the following trace:
+On 26/03/2025 12:00, Conor Dooley wrote:
+> On Wed, Mar 26, 2025 at 07:53:55AM +0100, Krzysztof Kozlowski wrote:
+>> On 25/03/2025 17:03, Conor Dooley wrote:
+>>> On Tue, Mar 25, 2025 at 09:13:22AM +0100, Krzysztof Kozlowski wrote:
+>>>> On Fri, Mar 21, 2025 at 05:22:35PM +0000, Conor Dooley wrote:
+>>>>> +title: Microchip PolarFire SoC Microprocessor Subsystem (MSS) sysreg register region
+>>>>> +
+>>>>> +maintainers:
+>>>>> +  - Conor Dooley <conor.dooley@microchip.com>
+>>>>> +
+>>>>> +description:
+>>>>> +  An wide assortment of registers that control elements of the MSS on PolarFire
+>>>>> +  SoC, including pinmuxing, resets and clocks among others.
+>>>>> +
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    items:
+>>>>> +      - const: microchip,mpfs-mss-top-sysreg
+>>>>> +      - const: syscon
+>>>>> +      - const: simple-mfd
+>>>>
+>>>> You need to list the children if you use simple-mfd. Commit msg
+>>>> mentioned clock controller, so where is it?
+>>>
+>>> I don't think a child node is required here, there's not enough
+>>
+>> Then this is not a simple-mfd.
 > 
->     UBSAN: array-index-out-of-bounds in .../drivers/clk/clk-s2mps11.c:186:3
->     index 0 is out of range for type 'struct clk_hw *[] __counted_by(num)' (aka 'struct clk_hw *[]')
-> 
-> This is because commit f316cdff8d67 ("clk: Annotate struct
-> clk_hw_onecell_data with __counted_by") annotated the hws member of
-> that struct with __counted_by, which informs the bounds sanitizer about
-> the number of elements in hws, so that it can warn when hws is accessed
-> out of bounds.
-> 
-> As noted in that change, the __counted_by member must be initialised
-> with the number of elements before the first array access happens,
-> otherwise there will be a warning from each access prior to the
-> initialisation because the number of elements is zero. This occurs in
-> s2mps11_clk_probe() due to ::num being assigned after ::hws access.
-> 
-> Move the assignment to satisfy the requirement of assign-before-access.
-> 
+> The pinctrl will have one, whenever I get around to actually working on
+> that. I can leave the simple-mfd out until I establish exactly what
+> that's going to look like if that's what you want?
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+I want complete hardware, so simple-mfd with children, but if that is
+not possible for some reason then at least accurate picture, thus drop
+simple-mfd for now.
 
 Best regards,
 Krzysztof
