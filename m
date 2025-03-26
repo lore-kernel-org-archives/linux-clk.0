@@ -1,33 +1,48 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6465819755B;
-	Wed, 26 Mar 2025 07:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50661C8FE;
+	Wed, 26 Mar 2025 07:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742972821; cv=none; b=lsWexe/VkfGi0nF3NwbBVt7i7CfXfHYSq9Aa89LfitBLQQMSL+TStyvfNG89OCuk+N5TQQXjNW25uHpF0K6XXYHqID1PsMP1crRqdN6h8B7EM+hi75GGhN7qXw4HLUw4el7bt0G3y9K5zEEB57LcLL1UjBhahcONkYsx00dlzEI=
+	t=1742973036; cv=none; b=Pum87A8YySTH/X8NcjZO0nFKQdMR3w2XRcJVr2AfJSbgiEKDptHZLa77+/A19Xz+6i1HyCLaT27fn7XE50eNiYCCvex0ZwPzxmRJDPWSwnLPNEuQ+IRJZ5xCAKY2xSbBsHir/Gl6EB3+M96osfQZU+vjppRr/Hxx6EcyMDzXJD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742972821; c=relaxed/simple;
-	bh=DQSksbNd3/Q+zlJhSPULUC+Oc8sDej4F0+fpwmMZY5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gbFgEwrW4PUNsEvXws4v9lzhT0ugj5cDbDjrZZtRYScl4jEGcMM6DLpUW3QtFVAT9LC0AIvuk7/UkvfQJZMj7moS6QITSePchaVzmGPBybzB8l2Sni+AR7wB61BRZCBI1BaYTwDb+U0tjOhJB+dxwxBQDjCkSYvttzT0YR9ofcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAdnDQzt; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742973036; c=relaxed/simple;
+	bh=eVOuDLsGbzGfXXNLVoe91/fIxbJ86kKBaQL/DLx1KYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g1sU6jCn8eZCrLAeKU29meSwSEIYGdM12nrwTLSjus9xFar/l+Phee097f3+noC/z2HA+OYlu//2//HY1TeIWHDoZ7I1LtoXdXLJ5feV1ZGuGS7dltYIjEAqtLeSa0qzTEIm06NieuOI3SFFxXNOKLzK2UPAJjbrvEdiC5ADmLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mhkpZlNx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAdnDQzt"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1333EC4CEE2;
-	Wed, 26 Mar 2025 07:06:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742972821;
-	bh=DQSksbNd3/Q+zlJhSPULUC+Oc8sDej4F0+fpwmMZY5A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FAdnDQztQFuGxvzDnWpD143+KfMigy4Qxwucp80zqMNK5oer+yZm4SFxjX6IyP7dZ
-	 fLKHcvBbleyNWKKGkf9b8tOfI9MEakpcW3jJvTzTi2FqyZjjyowzTy+9sTHcfJuyCS
-	 sv9xcVXAErpDw6CilKm12Y8D3jzqbrWX36xmMtQFM0RUNeFXQKRWKm/WPFYS1KrwtR
-	 Qkpqb2ZLLsKILNZy6O34mEQuhg/kS0cbPmCcnQNqySunJvyDBHN+jDcZH9z+EY7Djf
-	 njtyTCiPbGyTfa14sPHm6mDRByFrxf5B2cw/q2zLQ0vaqWaCpk2MVAsB58ao5f99xh
-	 kzG7XZB64lxiw==
-Message-ID: <dff94c54-2bb8-4eea-b8bf-deacd6197007@kernel.org>
-Date: Wed, 26 Mar 2025 08:06:49 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mhkpZlNx"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52Q73H4O026884;
+	Wed, 26 Mar 2025 07:10:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Lp+AanYNpBXVQJd/FYZc8LhN+GUrk+Zl95cszDC493I=; b=mhkpZlNxXqYq727w
+	PVcLGLMgk+bgmcSbHHtLHXFdiPHhpj+kWa9vuFluEgZ3CHi1dHyQ8KQoMIjnjZi3
+	0ReVa1N4jGXgb6AOXG+XR34WbfiaGyzBVqfvvCMlzk2YHezafzuVzTBPO5upIqDv
+	l/QNjp3IHgJVpXpUZghE/V/4FxOjOTVqDwRiSnpklaJIMWfDL+K2ABtQNfsGNmRU
+	zpxKQRlAQ+Nf69+7YK294JTc1VoTThurx8CKPix/d8AnG/V1xnksukt9vRGrscYK
+	5NfFSPzg4rKPe9DbE0YdWPLiGN/Kn7dWgn7CLDr1IkrgOQ06DHn4NA+WcIdkSQbO
+	i/jhbQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45m0xdshcb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 07:10:29 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52Q7ASm4004973
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 07:10:28 GMT
+Received: from [10.253.12.41] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Mar
+ 2025 00:10:24 -0700
+Message-ID: <08874014-3685-4446-82c0-e14ab57d304e@quicinc.com>
+Date: Wed, 26 Mar 2025 15:10:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,93 +50,93 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/34] mfd: sec: slightly rework runtime platform data
- allocation
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
- <20250323-s2mpg10-v1-9-d08943702707@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add CMN PLL support for
+ IPQ5424 SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_kkumarcs@quicinc.com>, <quic_suruchia@quicinc.com>,
+        <quic_pavir@quicinc.com>, <quic_linchen@quicinc.com>,
+        <quic_leiwei@quicinc.com>
+References: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com>
+ <20250321-qcom_ipq5424_cmnpll-v1-1-3ea8e5262da4@quicinc.com>
+ <55eada15-222e-4b97-a519-95b5e3aa7c23@oss.qualcomm.com>
+ <ba6cbf94-3e78-4c77-8c4f-908d3d90a1b1@oss.qualcomm.com>
+ <20250325-victorious-flamingo-of-destiny-c778a3@krzk-bin>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250323-s2mpg10-v1-9-d08943702707@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On 23/03/2025 23:39, André Draszik wrote:
-> As a preparation for adding support for Samsung's S2MPG10, which is
-> connected via SPEEDY / ACPM rather than I2C, we're going to split out
-> (move) all I2C-specific driver code into its own kernel module, and
-> create a (common) core transport-agnostic kernel module.
-> 
-> Transport drivers will have to do device tree parsing, and the core
-> driver will allocate its own additional memory as needed.
-> 
-> In preparation for that change, separate out runtime platform data
-> allocation from device tree parsing.
-> 
-> Having this change will create less churn in the upcoming split of the
-> transport-specific parts.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <20250325-victorious-flamingo-of-destiny-c778a3@krzk-bin>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: OZaeH7oXE_p9PnmCxB5ub83L0K5hUB5R
+X-Proofpoint-GUID: OZaeH7oXE_p9PnmCxB5ub83L0K5hUB5R
+X-Authority-Analysis: v=2.4 cv=Q43S452a c=1 sm=1 tr=0 ts=67e3a865 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=4zMwUWS1HWHBw9p5HkkA:9 a=QEXdDO2ut3YA:10 a=RVmHIydaz68A:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_10,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 suspectscore=0 adultscore=0
+ mlxlogscore=887 malwarescore=0 mlxscore=0 priorityscore=1501 clxscore=1015
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503260041
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+On 3/25/2025 4:22 PM, Krzysztof Kozlowski wrote:
+>>>> --- a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+>>>> +++ b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+>>>> @@ -1,6 +1,6 @@
+>>>>   /* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>>>>   /*
+>>>> - * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>>> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>    */
+>>>>   
+>>>>   #ifndef _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
+>>>> @@ -19,4 +19,12 @@
+>>>>   #define ETH1_50MHZ_CLK			7
+>>>>   #define ETH2_50MHZ_CLK			8
+>>>>   #define ETH_25MHZ_CLK			9
+>>>> +
+>>>> +/*
+>>>> + * The CMN PLL output clock rates that are specifically applicable for IPQ5424
+>>>> + * SoC. For IPQ5424, the other output clocks and their rates are same as IPQ9574.
+>>>> + */
+>>>> +#define NSS_300MHZ_CLK			4
+>>>> +#define PPE_375MHZ_CLK			5
+>>> Not a huge fan of this, such differences are only relevant to the driver
+>>> part in my view - bindings only let a consumer reference a specific piece
+>>> of hardware
+>> Oh I the bindings are stepping into the frequency department already,
+>> hmm.. Then I suppose it's fine if the dt-bindings maintainers don't have any
+>> concerns
+> 
+> Nooooo, it was said these are output clocks, not rates. If these are
+> rates, then NAK.
+> 
+> Best regards,
+> Krzysztof
+
+Yes, rates themselves are not defined here, they are defined in the
+driver data structure.
+
+The output clocks of CMN PLL are always fixed clock rate, so the clock
+frequency was added into the clock specifier macro names defined in
+this header file for clarity.
+
