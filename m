@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715A04A29;
-	Wed, 26 Mar 2025 06:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A83B2AF0A;
+	Wed, 26 Mar 2025 07:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742972046; cv=none; b=lNoOQR7OcQqxyoQ4CHfCCYFN6PAv6PF6sqmfvjGMx1+aBbp3cc5sXLrlOF/5JsRAoZQ+IZ7CCaC1n57Xd5KLrUsp/9w2bM3SNgfFiv1eshseut2Z63TRqK5+nD42nrNfcJaoYRKAtC7c3e8c4df0jevWFEqE5y6o5Z7/V17GLvQ=
+	t=1742972598; cv=none; b=gEaMTfE3HAFLtmWmv8csfgUwwA8qkdO1JEFNURcxNgPFHGBOuIT6Vs2BQlA3iZLcgfzdqfD2ABDimKicwOJTIm+NNV4sWh+BERcRSMntpgFXmdDOmR4rZsrlhnTkkyStI81tWXXNL8r3VC9eG3TcZyTVn37vexK98kfzw6DOmYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742972046; c=relaxed/simple;
-	bh=7zwoyPdNuSVZVKiHsKqqG73eThecfXF83qgiVSIJ2U4=;
+	s=arc-20240116; t=1742972598; c=relaxed/simple;
+	bh=/fi76B5UtUwuwMA1yexCDk8ZTpcHFFnF0aLg1Y/cQUg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mEcFUcVJydlfA+b4MUFobOVzFPvQh5NmNVPEPVnvMobBZf3L8oUdXczPvlaLYMetNbTjozvmEDK+qqFt3k0c+qMl5THxPEeEHARvrPIRMEaXM8Es3JCkxDkPN3Rzze6zjOtxHj6zSEAP+iPgk4MtRwhFOQF1+bQqRdf34ZKBVnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I1yoyuRT; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=TSpbATYWLad9E1zUPWuy+h/jtG1GCNsBFSdvUcDfZNnfCPzkm8ffObaGluYI4ER4RsgiKr3O9ZLNbWiXkYVN0wZQqAt3kIJQcVPW2X9lXFUEGF1uMemljKX3oExfJWy0EQKS/jxHLwcqBqUkn+dcMctBRTKu5ruYGMtwJ7C01ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GfzrFpVU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I1yoyuRT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D562DC4CEE2;
-	Wed, 26 Mar 2025 06:53:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GfzrFpVU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F2FBC4CEE2;
+	Wed, 26 Mar 2025 07:03:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742972045;
-	bh=7zwoyPdNuSVZVKiHsKqqG73eThecfXF83qgiVSIJ2U4=;
+	s=k20201202; t=1742972596;
+	bh=/fi76B5UtUwuwMA1yexCDk8ZTpcHFFnF0aLg1Y/cQUg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I1yoyuRTZPYV+8QANl6Hc+Tw0BUQ9tvDhKCElr9TXtHQrMPD5vJM3eq62OiGFazBD
-	 R9FMd6nzLbhowCjQzMTsO+yJOuISqMdYMKO+NOhmEXqyabxKGK/KXHBnfEONTDo7mL
-	 ikicBP8MAdHVQxpFhEQwCNsT3KB0ZhlotpRDL3koQaIprPByu3HdvfHzMGamM3juqc
-	 hWDTYpd/f4JRsDHHTQ/Td3Rzzzz5lwgfO9d+G6pmV56oQu2dAQAUAIcdMRMedzEPsb
-	 WWm7S1ZHj16CcZ8wgqTWltrydfwqiHigsM2OoVOG1/OCacCow/AI5RF6BIEAWYw0pD
-	 E1/EIY3TA2Kxg==
-Message-ID: <58bb1186-08ee-41cf-8593-a6664bd874e6@kernel.org>
-Date: Wed, 26 Mar 2025 07:53:55 +0100
+	b=GfzrFpVUxkChqlw79NMqvwzC4dVc5hJYOr/oeX7CD4pEWYqs8qVivKvvANfKrbtz3
+	 6XiA0M/wWJ8T8c/F1zEIu+NIKBY2X5FfYJJjVxfF4opH44do+Wn0zzg/I/HQDymLBB
+	 5JCo47b22IFmtyyGdY48HWCkhMNZS+2x8sNT68J8Uf8R77M/roVZNg6jXRDztl397Q
+	 319AZfKFr6K5lJBS20WN/Y0uBDDdUi9VKk557hJevSnaplWTGA8vRX53Uygdh8RsGc
+	 bPo/eqQAKrPwL0FO5L/ZZFiB45FuiRzVD5x8fu65ECgLQqm479w/sFgZNcFgTIx2/V
+	 ojcwzAZo5nPQw==
+Message-ID: <f1e24507-7cf3-4e0d-8989-05ef3aaa2708@kernel.org>
+Date: Wed, 26 Mar 2025 08:03:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,25 +35,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 2/9] dt-bindings: soc: microchip: document the
- simple-mfd syscon on PolarFire SoC
-To: Conor Dooley <conor@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Conor Dooley
- <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>,
- pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Jassi Brar <jassisinghbrar@gmail.com>, Lee Jones <lee@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250321-cuddly-hazily-d0ab1e1747b5@spud>
- <20250321-ramrod-scabby-a1869f9979b6@spud>
- <20250325-quiet-waxbill-of-realization-675469@krzk-bin>
- <20250325-feline-roundworm-dc391b755673@spud>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 03/34] firmware: exynos-acpm: export
+ devm_acpm_get_by_phandle()
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+References: <20250323-s2mpg10-v1-0-d08943702707@linaro.org>
+ <20250323-s2mpg10-v1-3-d08943702707@linaro.org>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -97,35 +99,32 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250325-feline-roundworm-dc391b755673@spud>
+In-Reply-To: <20250323-s2mpg10-v1-3-d08943702707@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/03/2025 17:03, Conor Dooley wrote:
-> On Tue, Mar 25, 2025 at 09:13:22AM +0100, Krzysztof Kozlowski wrote:
->> On Fri, Mar 21, 2025 at 05:22:35PM +0000, Conor Dooley wrote:
->>> +title: Microchip PolarFire SoC Microprocessor Subsystem (MSS) sysreg register region
->>> +
->>> +maintainers:
->>> +  - Conor Dooley <conor.dooley@microchip.com>
->>> +
->>> +description:
->>> +  An wide assortment of registers that control elements of the MSS on PolarFire
->>> +  SoC, including pinmuxing, resets and clocks among others.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - const: microchip,mpfs-mss-top-sysreg
->>> +      - const: syscon
->>> +      - const: simple-mfd
->>
->> You need to list the children if you use simple-mfd. Commit msg
->> mentioned clock controller, so where is it?
+On 23/03/2025 23:39, André Draszik wrote:
+> The upcoming Samsung S2MPG10 PMIC driver will need this symbol to
+> communicate with the IC.
 > 
-> I don't think a child node is required here, there's not enough
+> Export it.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  drivers/firmware/samsung/exynos-acpm.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
+> index a85b2dbdd9f0d7b1f327f54a0a283e4f32587a98..7525bee4c6715edb964fc770ac9d8b3dd2be2172 100644
+> --- a/drivers/firmware/samsung/exynos-acpm.c
+> +++ b/drivers/firmware/samsung/exynos-acpm.c
+> @@ -741,6 +741,7 @@ const struct acpm_handle *devm_acpm_get_by_phandle(struct device *dev,
+>  
+>  	return handle;
+>  }
+> +EXPORT_SYMBOL_GPL(devm_acpm_get_by_phandle);
 
-Then this is not a simple-mfd.
+If binding changes to parent-child relationship, this might not be needed.
 
 Best regards,
 Krzysztof
