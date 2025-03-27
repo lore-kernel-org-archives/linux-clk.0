@@ -1,105 +1,148 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E461917FB
-	for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 16:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022AC1FC7F4
+	for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 16:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743091399; cv=none; b=Tp9sSTFY745/nLjDVqNYLSY8dpPvaie/oLM8FgOMNLyXhtqMn6i0kGWySh/a4oDy+gn5W3qSBXY7yhT6kyoW0T3pvQ+BHnMmE+eO+DMxtcJcMsAPrCuHnW1MAMP3fK2+cnzxR6H3VtKVpSx06dAKgSqa0V4aQiXEJ4lrDB5Gj64=
+	t=1743093875; cv=none; b=ch9inntstK1FCgJWcfXoRAwwG9xLXLaNXcyBCtk/zRBOLORRfhsV4UFD6+/MfZgrSeiLmQ+vgRQnIlw7DxwQBgwxJ3iCMe7VylK9KHTX2eV5wOk7iZt19zu1lD/sOy6XmiOY0DNF7Cp9CFVLQFNl92lAb3N5ry6o4jxFfvF1CS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743091399; c=relaxed/simple;
-	bh=81QR6vZ1/3dHfg19CnDyBrh+7J9IpGW7HgshSplRzy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gQ905sxcLehwCZ3Wyo1lb+EwhpBQqVBpwlBHeLxI00oqE1eZAqlUe9Z5w6ElAOuh5SvP+vE3909IGRzACt9/GN2NkyDCIYpBBljj4uNemfImtILHk0J/bT2/VTPlxBlOgqGxIdGnA5XGbpXJA53Y8Ca/d8wPgzlCt0Nq7CoWtCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mrf1bEQR; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1743093875; c=relaxed/simple;
+	bh=zvcbSyO9PwWfz46UMsJf4c401+BJRbxXhYnxCIV0uZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ViiAWJ10NVHmbFqNKjkh6mwKpY5ZaeefVUSLmF00Jj7gvQ2kJhuMGFD3NQFwZgiGuTzHSvKuEM4oqCq6gDCUr5ZXp1BU0N+71oFehuWfBQ0lRHrlXl9FnSWnHFchk9SwynGoGtHwMeZCHARA8745fLi/Fv9/6dGWaBemGjKRdTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=PibiQl0U; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mrf1bEQR"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so9212435e9.1
-        for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 09:03:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743091396; x=1743696196; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=81QR6vZ1/3dHfg19CnDyBrh+7J9IpGW7HgshSplRzy4=;
-        b=Mrf1bEQR6394+stuB5J3/mCriRbuwaTINQqx7lqaEaUvCmuAf8u7j8c7EBCzL78tVl
-         XApjcVjPV3fKemEwO+64ZG33my5Kuj9FbANbov3gxBWp0jl/2LokeOst48q85QjQyARA
-         1gXwkasFHGcxXg1ZDCaaah3ksD2afOtJcDxfcMhDwGGmaLpIvcuRJcv1E/+PiGEP5dPs
-         UF0L2lFb3Q5ETCpiVEP9YVxsrnGg49BNq7vmAov35/GGeMOPfO2NmX01ZPXfEEmnPMHJ
-         ZUt8MRGGJZhxj0Np2QOalONkIljhEaggciiaNbmstDlJXoZ02jJEl9HRVNGQBsBJ5890
-         rApQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743091396; x=1743696196;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=81QR6vZ1/3dHfg19CnDyBrh+7J9IpGW7HgshSplRzy4=;
-        b=EqQhNvL0mEpLbpJT9889hQJDkAeO3+DZeDP2kS5LMyRKeB0GF2V2lBbE3DFunTMDpD
-         nyLkxnZAC0oVdbzrIh3IZTrQTGyolDyRAPp2XYcXOaJpXkhBkV36zI/DAkFqFQXah9Sy
-         U4GK9vDOBuGdkm9PUZtboBNvI3eWwr147aSU/xi1ZeJgRFYti9jUIhGprtXgjllf4a3Z
-         4o2FdKG2S/VPMgjMJLSS0uZ1U83Gax6CvTXYFPuPYydPGWRetDH/oW4SZHrnT/7amCck
-         dQNTQyYgJIaNAkQM1zaHhNG29fwLynOsHLOG92ycUaJZaWOgwA1L4oamghzFuNbiCkpj
-         eXPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZXNhfNYfprwj2Bw0gGSsUm0DFRSCcWqiRxEeO159MFJK5T3eflxj10z+lZWBvah7hWNpHMuz56z0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwykOpw9qVrfPTpeLfrHayj3Axl7uwwaTlcvuxW+Nt8jo4SYbZu
-	18rX7q2Q7rwFJ1wCkei4N80rnKPzkmFQ5uPhZM+4+/kCjZbTPGt8NJYB9OmZkQA=
-X-Gm-Gg: ASbGncv7AaAzEeGNpvirRiuuQ+nSdZlGaKUyG0L6tgMFBf7F/V42kQL8gHOCwn4shlc
-	GAg6hVhqzYYsN6Dv5KiOfukqdnXSeekkXjFaTIDUd2r4wtxewha5ru+shg/AQLwv6T8KOL7obpT
-	fh4HfGKRPOs2aRxve2Pm5+y+y+3zbqLWxhDY+Proj797qYT9cgfv5nCAQ5gyWceabcWEN862qBu
-	eFOOhZuugrgLNucv+boAPuWqqXE8TYoZ0stj2dmSQ7Tv7QfZF8p6ZX3RIN/3CTtuqGokkIAVeK0
-	1c2lWpu3OOmYdg2MSqirMGGjcVutTmrEGB3et78s8qOMkGhpMa5ZVG6gBpTw+KyLDrfq+qzffr8
-	chBG9j8gv2A==
-X-Google-Smtp-Source: AGHT+IH0JdzqVvGdTYUoLn8HEZhsvGhRyL19/EW44GliMFz0RsNCHi1bdJHTLqu2hnfMAiUqwGBreg==
-X-Received: by 2002:a05:600c:4f10:b0:43c:fc04:6d48 with SMTP id 5b1f17b1804b1-43d8a32c74bmr25755085e9.0.1743091395532;
-        Thu, 27 Mar 2025 09:03:15 -0700 (PDT)
-Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e6445sm20395820f8f.71.2025.03.27.09.03.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Mar 2025 09:03:15 -0700 (PDT)
-Message-ID: <6063c030-f96d-4950-9ce0-473368988a07@linaro.org>
-Date: Thu, 27 Mar 2025 16:03:13 +0000
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="PibiQl0U"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=hbwx
+	FimHjuyQqZmQbnUDmSjTT9QuBUrE9kGrrCegsl8=; b=PibiQl0UGvs02bQfzYYI
+	pkF7He1ovGQgWonPfhrXuPMoW8iOuyZLOUpnHNzzREGLMqHvW9XP70wFtIvAEX5e
+	cFMngdPs6iBpu2m3iNe0EQf14Dm/7XsPgTFm/9PzHVh0zJukwfDvxasKDPupxuS7
+	OshgLMyM9K0/YzNRomYpV2u/njpqUVhCNLZLcW048GCFkMNU9gMgxytwmKBfQP3u
+	f11qEJsnNOOOEEJI/HwrQrzrM57urM8B6hdwZbHXWxcmbpiLJzpKkSMkGJPonHLd
+	p8GwEP7/Wg1nVPgGGjJWuwq7xGWLheHbOmzrTo6QTZO17nrAkPe8w1Grbzwf1Vab
+	YA==
+Received: (qmail 4083466 invoked from network); 27 Mar 2025 17:44:24 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Mar 2025 17:44:24 +0100
+X-UD-Smtp-Session: l3s3148p1@gtWOqlUxgJEujnsv
+Date: Thu, 27 Mar 2025 17:44:23 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Prabhakar <prabhakar.csengg@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 15/15] arm64: defconfig: Enable Renesas RZ/V2N SoC
+Message-ID: <Z-WAZ_IlMBB3XbTN@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250326143945.82142-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <41c6f512-47a5-4723-bbdc-64ed85ae8391@kernel.org>
+ <Z-VETFWFT5NksD7J@ninjato>
+ <6fa375d2-5ba8-4b2b-8a54-f28b3cbedcfb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 16/18] arm64: dts: qcom: Add MXC power domain to camcc
- node on SM8450
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Dmitry Baryshkov <lumag@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com>
- <20250327-videocc-pll-multi-pd-voting-v3-16-895fafd62627@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250327-videocc-pll-multi-pd-voting-v3-16-895fafd62627@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="c/EJiR+H9xTHY3mL"
+Content-Disposition: inline
+In-Reply-To: <6fa375d2-5ba8-4b2b-8a54-f28b3cbedcfb@kernel.org>
 
 
-Your patch titles are in some places missing the soc:
+--c/EJiR+H9xTHY3mL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-arm64: dts: qcom: In this patch
 
-arm64: dts: qcom: sm8550: In the next patch
+> You did not object to last discussion about this (a month ago) - neither
+> to my comments nor to resolution - so this patchset repeating the same
 
-Please add the SoC names to the patch titles in your next version
+Because I cannot follow every Renesas patch series there is. You are
+long enough around to know that large companies have different entities,
+groups whatsoever. It is quite a challenge to streamline this via one
+group, we need to share work. We do try hard, though, and have a
+ARM/RISC-V/RENESAS ARCHITECTURE maintainer. Geert does a *hell of a job*
+getting all these submission into shape, and he surely does not accept
+code thrown over the wall. And geez, the patch series was just sent
+yesterday, you didn't give us even time to raise the issue internally.
 
----
-bod
+> pattern from the same folks while ignoring previous talk is
+> contradicting "not too bad at fixing stuff".
 
+First, being a maintainer myself, I do understand the frustration of
+patch review not being honored. I can also agree that this series did
+not work out perfectly. But that does not mean that we don't care, in
+general.  Despite all imperfection and possibly different opinions, we
+try hard to be a good citizen and spend considerable time on doing
+things right. Accusing us of throwing just "code over the wall" because
+there is an issue somewhere which hasn't been worked on in one month is
+plain unfair.
+
+That all being said, we will fix it eventually.
+
+
+--c/EJiR+H9xTHY3mL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmflgGMACgkQFA3kzBSg
+KbZxSA/9Gqszzc/JQdPg5lFILYUjNMR2rLsA7Uc53vk3WyEcVSWmUaBjeGLU+ZkO
+2OkaPe6x+ULk1vXzpJYmHK8J93cMHK7/tXR8YBFXno9cL1s+/XdwWuLWq0xlMfc5
+weFwNN/e3mz8emxJWhi8AJ0sMhC6OTBL4qghprYH6ElZfxgpliuGWw59ei1gKnsX
+/p5mOmGEETy4DIbiJEYth/Jypl4NrhfZdMmTUWBTqAj7/HuaBvY1psifuwDtAe5F
+mY3FY3ES+6Hfzl76tsBQ6JEmRW9E+rZFR4Dv3M8XXaEYsZZ8fR1cwgQ1WXNbdmz/
+1QOmex7GF5ceEJWdhEqAVJhz+aN6+Ot0Zxv0BCpxJzEoIGg7SXYpfkVBrTSL66a5
+1trcWPmelNgqCRc65t+mvUmAfsELLXUE7h96hKtqDCQ0GNokdbqS0PuRCief56/b
+VwXftmqvTstdTB7zMf9qfg9uTCeQycuzAsZQOdNynvDKML9olp6di/+curLvv5BW
+M45znbdpzss7Ilwj3qbgIkFT2O0v8PGdqsn+1gQ8mgahnCe9OAtZl1hd8o0WDmnJ
+2sbZcCcYMLgZVa+bI8/20Vba8uOnMMLVWZ/jk8c8LiRu8mqtYNAFGM8ClHFfh31u
+hLSV0vYp+GarLkjMqXezTYhnugy344QNVLOm2atmMGI69u8dtWA=
+=0lVg
+-----END PGP SIGNATURE-----
+
+--c/EJiR+H9xTHY3mL--
