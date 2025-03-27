@@ -1,65 +1,65 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF57F19ABAB
-	for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 15:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F136C19E7FA
+	for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 15:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743090698; cv=none; b=RUuwi00LvB2M62ORsiu7T63JkNPYEUNWzSGlY33LjtHURwdwugpdPNtFQLTzjucpuX6Hf+JOzxXHtpMTnCX1rC1ccbWMfsz/y/pdgZVlQ3HMorDioxL45n5Ay+IeY2qM0lVEVM/+yTmtog3KsjYirorf5t4dnoyqS+QkzxnxfKQ=
+	t=1743091096; cv=none; b=U3vZvBm0+tll2jpIxOTPpuc0QhL4uVvnSd2potzyUIMVpkQxdxS06LZMa+R4AgY3v+3SUhPv9axsuZz38QYeUSHbq2Lymii/YQxwgCB3L0i2Bqtj5KsTY0jgpRuJJG7bvCZ6yJ+P2kkLk0O1AVTmr6gindbmZY2yehLgY9vPyes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743090698; c=relaxed/simple;
-	bh=vAe2BAzY2N92NxfakxIQcqxIPERdP0ngW1a3+ysyFHM=;
+	s=arc-20240116; t=1743091096; c=relaxed/simple;
+	bh=62dvcPos5ihceHF+L4p/AkidVrabWcrJTC+kLST021w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cvbRFSmiZm3MyEoNniskQKDGuvFTxD3nQBvtb2Q0cPMuV8Hps+vXhhDz1Edtqe5RUyl499BlCIZqmIJELA7k1SXc5nP/ecbrYKvkXlaOOMEgJ3Ar1mz8ltNoncAPcvNi8Dw6Qi1s+XbZP56MMUz6IjtDbrw3M1SphKBV0Xvl2+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XMJqGF0X; arc=none smtp.client-ip=209.85.221.50
+	 In-Reply-To:Content-Type; b=osfacM8PpHdPmGy0CfNhDuShq/8QvE3wXuYb1aVFwjd7baXPJZG0QFxbLRG+ciGTiiOQJqX/j9RLPpBy9/ngAgvWhbr0pog8k07Sc15BhR6hjuDSRjguZ6FE9xpyp9IhA4odwNmToeiDtC09R83M8g6I2pWI0rGEw2VZWpDUEQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bdCtqeDj; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XMJqGF0X"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39bf44be22fso400909f8f.0
-        for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 08:51:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bdCtqeDj"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-399744f74e9so804032f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 08:58:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743090695; x=1743695495; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1743091093; x=1743695893; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kvLQrI2Qd2ZzqbCiSE0lDUusdYHeIhg6Scc6MGNUp1U=;
-        b=XMJqGF0X9ra/xTBrzOGtSLuJm+2hemfK5eZr+B8fyPlGyrzEwONnwP4LJ/fJnTFgJY
-         8/pGEutXpZtf2PUVlzSPeUj1wBh3p1eFYnoLeUwp+Zg8lfnUdjevztx6G2Lf3Sd8wvRo
-         INRq0n1UOeYMfTd3BxA+6C2uQfIyCbhKNGjZ+/XNvjnYe6KQOZrPsBdHpzhD7cmblQjW
-         8Eo1GIowjsgluks5XtB2ox+GAqsWMVl8FH3vQkmqmQ8ZdSWaauFPM7GCzLdADR4X9dFa
-         J4okn7qkDMjpWb4D19wye058vyC97j5GWZ1mlg4mkhCNvws6APHl2VPDwWx0g72wpT4R
-         o2ow==
+        bh=6HKdTwdl8TGxIL8t8Lj0CMiRVJonmqGWdrgR8+tODvE=;
+        b=bdCtqeDj2cv9y5psk3g1GMfu/YBw3rOO7/P9q0lFTo3pqEgH/5g0tFC4fDPkjGQR5b
+         +P9OY+yFU9pRdi4SolgFPUnaXRSik5z22pJwuyg6VTn6pb64FkSi4rChq5sVVupXo9Pt
+         Z1w/V+cQij4GIEzuKF9NBIIJv2lSfxJWTFyWeEfD8C5OSUF3r1A/59mEnoknYMnJMBXt
+         SBOZG35K06fo/JjOLtGk90hMRgZbOSqZ+li9va2HS+7KZrn1V6uSZDpuurDCsPPk14w0
+         KP8HOW0/Y1ElFbOnsbyv/ia10QjuZXgGD4wkvRwOXz/Ajda+CO2xjt2vBePYFn87WvGr
+         sR6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743090695; x=1743695495;
+        d=1e100.net; s=20230601; t=1743091093; x=1743695893;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kvLQrI2Qd2ZzqbCiSE0lDUusdYHeIhg6Scc6MGNUp1U=;
-        b=GZPMcfBXUNiQRjaJz2SYFXr+ZhLvRORuOZfam7iUxxlDN6m2qZ0PCAJr62yu8gvxEz
-         z3xDkBRWDBUSorIjq5CcmpBcDfjlzjaWantNeAA08oJ7i7igOoVbFJPoKVDtJk6xAZYb
-         F1ndun8bhz0/gCeQWPXsq35OJ4J2J0P3U9h/ECxqwZlBBOADn++Y7MW57JSYr8gmaW+R
-         3LFNfIzj7ice6f6rMAJzTd7pv4gpS5kREk4w8zB+LjHPXZecywwEAkCnnYGpBvF6A0tJ
-         f4d5RavIMd9yJv7TQydvZ38sIY5Ty+g6Czw0lUK2kJXxl8T6gCS+KRxr+4bcjWi9/2mi
-         I+OA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHWMbdP+3iE09oOdEq+z+4N0ixhrQgDag4ptaK8HDYc7c7quXzXGUmdihrxAYg/Eq2z9TXNgOTtM8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwNv04ocl6nTI1kgjKwmJBfCct0pVBaNCN119Y8CZr7cvqjvEY
-	9A+GwNX+yJN6dYC4EhGbG+Vgad5rskaLG2dvJBZ8/wwTZjAk/0PBLqcvVGhJ/aQ=
-X-Gm-Gg: ASbGnctu5+2C0RixjbVCNRHL+HHZNZ7EC+gW+1j3XMDgp7ZARA3V+8QVHTBKT3CKMYm
-	WWKnmKp9X3GDSYuAE/TLqVFeqANWPahJvO6HmCyotMniPMVLQIWwroy8ACBCjn4X55exS8Kgi37
-	wcRMlNaQt7gGAMDddBM/OpR9Nkx3ypSK526/CQ3tZ5eFX/laPmvjPySrCQfibDAcGe5zpgNFqQp
-	Nx0ah2Y1A2xK1HgvIJpGU6cybfDFfBdsYGDT0R1zQR+Qt2j6l0sO51wUefmgiyhmU0cRJh9WQbU
-	xsypMl60i8LlKuRKqLH28PEzt7ZYX3dRfO1BgMUGXSZONm1Gb0Ym20fEICF81PBXDb05NnnG3d+
-	O9h2S/ABmHQ==
-X-Google-Smtp-Source: AGHT+IGEOPuBwOnlQZwn7egIILmy4OvFd8oBZAN1W6IrnJklr7xjZZaKwIAxHQnmoX4bC4rGyQDzNQ==
-X-Received: by 2002:a05:6000:2a7:b0:391:bed:ec9e with SMTP id ffacd0b85a97d-39ad1718621mr3637240f8f.0.1743090695191;
-        Thu, 27 Mar 2025 08:51:35 -0700 (PDT)
+        bh=6HKdTwdl8TGxIL8t8Lj0CMiRVJonmqGWdrgR8+tODvE=;
+        b=GSkyNDDiQGY9cCN641Iwi3WKJvS8n4jnfuHWlO5f98nZD+DflgcawlZVl+7YoIIWi2
+         TEUi7xFFXOvWKdVUVwRRFTDj3XOqVN8Oiv1UsNGs4go/DXftqfH0nkrbXrYTNtZgKPF1
+         GyJ3rLa3AEHKbUcHuidx1S+g639zi9WTO/mz2E5/Qidit42IrUFXgg/io1awE0TcE6j8
+         C03SZ2GsOn5Z76mMtTccm349e02XJ5RcgrleLYRIS8W7D1rRiDxXGkg0ARtJCX75P5A7
+         ThaQffxVp+ol6ar7JtiFs5DCTJUn0LSX6Shg9GxeSNCPLgk8hAMekPLh28oGBcPWoE4+
+         NRrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXB95rH+UzFv4VXRSrxf5lMW7W2XqRyt0pXqL6eHgaRd2LUZRagmGtJgbUB+Ndw3EGZ4iQiNjeHcvo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEOc+Pv6gSEX4RweqVrkzYI2QSGaZ9G4GkBBk6o81TN7ST5PxC
+	4BxCYInTRKD+dJg/+A+nYQp2evZqdD8nT9Tg1W55Xlm8UuQym7c5nSs0djiNa80=
+X-Gm-Gg: ASbGncttGetrGz50oBqQEQqK4JumsyDm+X3YLuejJD9PkHk9NGo8cmHKBAwhyeRJRuT
+	N9LZ6uR128urYkBrFxvAi1sRPcuyKiXN5/jX7TGpGFxlacbLFd0dlkvKyKnRXX47akd5QGQ5z1K
+	bEYN4BYB65dNGzzog3bQo3AAhonavwUC4yhU1qesWGdIp2KoYK+RI6gofij7WXy/jNUp+xYhZM8
+	yyDoiIDaRGcxS6qq3MtCRubM4rRbAg8uWYozQVArLGM5xu7f2XKS8w517benVj59lWtRshrLVnT
+	eX3q7+82pgG386p9/O/wRao6CyEMB50TRl3cjOHu0awExUXixKR+LEF+9iQRkdf0e/jbPn3o6fr
+	LEr7H+KmByA==
+X-Google-Smtp-Source: AGHT+IFkFyIJlToRG/+HBeQSZWc6JEkWWRkbsOVXttweEBRHe7pfRt7UyfAjtF97SdSKZ7a2YDySMQ==
+X-Received: by 2002:a5d:5847:0:b0:390:d6ab:6c49 with SMTP id ffacd0b85a97d-39ad176bc4emr5053689f8f.35.1743091093192;
+        Thu, 27 Mar 2025 08:58:13 -0700 (PDT)
 Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39ad0c6bae8sm4191678f8f.68.2025.03.27.08.51.33
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d830f5708sm43269915e9.32.2025.03.27.08.58.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Mar 2025 08:51:34 -0700 (PDT)
-Message-ID: <ddcaa5e5-b5c5-4d78-b44a-4cea75ec6a77@linaro.org>
-Date: Thu, 27 Mar 2025 15:51:33 +0000
+        Thu, 27 Mar 2025 08:58:12 -0700 (PDT)
+Message-ID: <db2566c3-d9e4-4c16-9389-0406de288d7d@linaro.org>
+Date: Thu, 27 Mar 2025 15:58:11 +0000
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,8 +67,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/18] clk: qcom: clk-alpha-pll: Add support for common
- PLL configuration function
+Subject: Re: [PATCH v3 05/18] clk: qcom: common: Handle runtime power
+ management in qcom_cc_really_probe
 To: Jagadeesh Kona <quic_jkona@quicinc.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -84,148 +84,39 @@ Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 References: <20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com>
- <20250327-videocc-pll-multi-pd-voting-v3-4-895fafd62627@quicinc.com>
+ <20250327-videocc-pll-multi-pd-voting-v3-5-895fafd62627@quicinc.com>
 Content-Language: en-US
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250327-videocc-pll-multi-pd-voting-v3-4-895fafd62627@quicinc.com>
+In-Reply-To: <20250327-videocc-pll-multi-pd-voting-v3-5-895fafd62627@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 27/03/2025 09:52, Jagadeesh Kona wrote:
-> From: Taniya Das <quic_tdas@quicinc.com>
-> 
-> To properly configure the PLLs on recent chipsets, it often requires more
-> than one power domain to be kept ON. The support to enable multiple power
-> domains is being added in qcom_cc_really_probe() and PLLs should be
-> configured post all the required power domains are enabled.
-> 
-> Hence integrate PLL configuration into clk_alpha_pll structure and add
-> support for qcom_clk_alpha_pll_configure() function which can be called
-> from qcom_cc_really_probe() to configure the clock controller PLLs after
-> all required power domains are enabled.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> ---
->   drivers/clk/qcom/clk-alpha-pll.c | 63 ++++++++++++++++++++++++++++++++++++++++
->   drivers/clk/qcom/clk-alpha-pll.h |  3 ++
->   2 files changed, 66 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index cec0afea8e446010f0d4140d4ef63121706dde47..8ee842254e6690e24469053cdbd99a9953987e40 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -63,6 +63,8 @@
->   #define PLL_OPMODE(p)		((p)->offset + (p)->regs[PLL_OFF_OPMODE])
->   #define PLL_FRAC(p)		((p)->offset + (p)->regs[PLL_OFF_FRAC])
+> -		return ret;
+> +		goto put_rpm;
+> +
+> +	ret = qcom_cc_icc_register(dev, desc);
+> +
+> +put_rpm:
+> +	if (desc->use_rpm)
+> +		pm_runtime_put(dev);
 >   
-> +#define GET_PLL_TYPE(pll)	(((pll)->regs - clk_alpha_pll_regs[0]) / PLL_OFF_MAX_REGS)
-> +
->   const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
->   	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
->   		[PLL_OFF_L_VAL] = 0x04,
-> @@ -2960,3 +2962,64 @@ const struct clk_ops clk_alpha_pll_regera_ops = {
->   	.set_rate = clk_zonda_pll_set_rate,
->   };
->   EXPORT_SYMBOL_GPL(clk_alpha_pll_regera_ops);
-> +
-> +void qcom_clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap)
-> +{
-> +	const struct clk_init_data *init = pll->clkr.hw.init;
-> +	const char *name = init->name;
-> +
-> +	if (!pll->config || !pll->regs) {
-> +		pr_err("%s: missing pll config or regs\n", name);
-> +		return;
-> +	}
+> -	return qcom_cc_icc_register(dev, desc);
+> +	return ret;
+>   }
+>   EXPORT_SYMBOL_GPL(qcom_cc_really_probe);
 
-Seems like a strange check - you are calling this function in a loop 
-which looks like
+Doesn't look right you're missing the put if register goes wrong
 
-for (i = 0; i < desc->num_alpha_plls; i++)
-	qcom_clk_alpha_pll_configure(desc->alpha_plls[i], regmap);
+	ret = qcom_cc_icc_register(dev, desc);
 
-Can num_alpha_plls be true but alpha_plls be NULL and why is regmap 
-considered valid ?
+	if (ret)
+		goto put_rpm;
 
-I think you can drop this check.
+	return 0;
 
-> +
-> +	switch (GET_PLL_TYPE(pll)) {
-> +	case CLK_ALPHA_PLL_TYPE_LUCID_OLE:
-> +		clk_lucid_ole_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	case CLK_ALPHA_PLL_TYPE_LUCID_EVO:
-> +		clk_lucid_evo_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	case CLK_ALPHA_PLL_TYPE_TAYCAN_ELU:
-> +		clk_taycan_elu_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	case CLK_ALPHA_PLL_TYPE_RIVIAN_EVO:
-> +		clk_rivian_evo_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	case CLK_ALPHA_PLL_TYPE_TRION:
-> +		clk_trion_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	case CLK_ALPHA_PLL_TYPE_HUAYRA_2290:
-> +		clk_huayra_2290_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	case CLK_ALPHA_PLL_TYPE_FABIA:
-> +		clk_fabia_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	case CLK_ALPHA_PLL_TYPE_AGERA:
-> +		clk_agera_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	case CLK_ALPHA_PLL_TYPE_PONGO_ELU:
-> +		clk_pongo_elu_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	case CLK_ALPHA_PLL_TYPE_ZONDA:
-> +	case CLK_ALPHA_PLL_TYPE_ZONDA_OLE:
-> +		clk_zonda_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	case CLK_ALPHA_PLL_TYPE_STROMER:
-> +	case CLK_ALPHA_PLL_TYPE_STROMER_PLUS:
-> +		clk_stromer_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	case CLK_ALPHA_PLL_TYPE_DEFAULT:
-> +	case CLK_ALPHA_PLL_TYPE_DEFAULT_EVO:
-> +	case CLK_ALPHA_PLL_TYPE_HUAYRA:
-> +	case CLK_ALPHA_PLL_TYPE_HUAYRA_APSS:
-> +	case CLK_ALPHA_PLL_TYPE_BRAMMO:
-> +	case CLK_ALPHA_PLL_TYPE_BRAMMO_EVO:
-> +		clk_alpha_pll_configure(pll, regmap, pll->config);
-> +		break;
-> +	default:
-> +		WARN(1, "%s: invalid pll type\n", name);
-> +		break;
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_clk_alpha_pll_configure);
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-> index 79aca8525262211ae5295245427d4540abf1e09a..7f35aaa7a35d88411beb11fd2be5d5dd5bfbe066 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.h
-> +++ b/drivers/clk/qcom/clk-alpha-pll.h
-> @@ -81,6 +81,7 @@ struct pll_vco {
->    * struct clk_alpha_pll - phase locked loop (PLL)
->    * @offset: base address of registers
->    * @regs: alpha pll register map (see @clk_alpha_pll_regs)
-> + * @config: array of pll settings
->    * @vco_table: array of VCO settings
->    * @num_vco: number of VCO settings in @vco_table
->    * @flags: bitmask to indicate features supported by the hardware
-> @@ -90,6 +91,7 @@ struct clk_alpha_pll {
->   	u32 offset;
->   	const u8 *regs;
->   
-> +	const struct alpha_pll_config *config;
->   	const struct pll_vco *vco_table;
->   	size_t num_vco;
->   #define SUPPORTS_OFFLINE_REQ		BIT(0)
-> @@ -237,5 +239,6 @@ void clk_stromer_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->   			       const struct alpha_pll_config *config);
->   void clk_regera_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->   			     const struct alpha_pll_config *config);
-> +void qcom_clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap);
->   
->   #endif
-> 
+put_rpm:
+	if (desc->us_rpm)
+		pm_runtime_put();
+
+	return ret;
