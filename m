@@ -1,128 +1,132 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CD12139A6
-	for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 12:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7645214237
+	for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 12:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743078484; cv=none; b=k+R/Xp4/o7y5vA0h0zRRE8SitMrTGSFTAb4KFI6NzQ898+MZGv60QWwdhHl7fY9tb4e9rpUc5P5fbtyvAzUSUGi8U+MbCo98gxoI964xyhFa2Fu5exxaQdUBa5nwqnV5pw643ietBeK034CurUCDb3u5PtgroqCi2woxBJL0X7I=
+	t=1743079503; cv=none; b=bgU58x5omumaTvW7I/QlNLb7Donz/edkVkBrRwzMfUiiVDMG8qeavOx8HK9WBqZojsXw1Wl4uWXeyeBRNcBrnT6H+x/2qPMRehDnrMwcr3vHwk75747t9+m8sjKJuNsUjysrTBeO//rQuVH6z/dkAB2cjP47xEuciYEdpdXl6nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743078484; c=relaxed/simple;
-	bh=AaGkFZpautOPtNIWBgWQGF7TfFJYejda7uBwkLDZ2zU=;
+	s=arc-20240116; t=1743079503; c=relaxed/simple;
+	bh=/e3zytaAp4B3Bi5NEKovC7YiZIBoqxK6PObe0Ho2l+c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oLGBkQVQRdJ6hhZzMCNJoWjC0EiMWYr+IvT0u55YDVP0dEkPI3B9IMHCYAIf1M62Yw/T2j/NqWxVU2PAu+hqGHVDIEhgFVEEYi3R06X12prtwxQ1QXReKGJiyFzf3FStsmUEbM2cviIF6q8VLWKEKEzX4Qh1PXNe3I34VB2+0mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cQKVds6D; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=mysmxJtkLJRUbo1BqD+15H40y2K9uuo9aRrlp6I6PjdYk02jf+86A5PyqeQNXnzM4Kc58GvJqajbBqNA9mGR/BOzM4AO85LZLjRwZ4O6xxyvAbxTx3qZkVlhRtnAbFsUBjzDT/Ih7mmfkPVv9fLQBdtG0Mm+SD+psw//1KlMocQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jHGvL8m9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cQKVds6D"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=AaGk
-	FZpautOPtNIWBgWQGF7TfFJYejda7uBwkLDZ2zU=; b=cQKVds6D4OuSoXyoO/dh
-	Yocs56ryHH59lTHWPlamSchITa3MvdPq/qIRCIAfUp08h0k4mFAOcjDcqAaru7Ht
-	n8uUY5kDqMXnpqnFrYazLcispEBbUxE2J5f/EnE1uSVFta+lQ1Oz8XkCUMkMwzuH
-	uwwUPS+FMHRBCcQZB+N/rWRSk1sSe4kYn8jgzgpie42Tvi8eZy94GG+to1rWlmnD
-	y/R4rf0lb6w1KdGlPdpQKvxyrUd4uf3EK0lqeptf4IquuqFAxKUKJzypu0l5d46g
-	D6hC9bJfk6brv99nBxJsI1u2yq/SgK6X0eZ/GTQiq8CbkwCjoMhRNjKbiQ8KeHrR
-	sw==
-Received: (qmail 3987990 invoked from network); 27 Mar 2025 13:27:57 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Mar 2025 13:27:57 +0100
-X-UD-Smtp-Session: l3s3148p1@lRR0FVIxZqsujnsv
-Date: Thu, 27 Mar 2025 13:27:56 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Prabhakar <prabhakar.csengg@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 15/15] arm64: defconfig: Enable Renesas RZ/V2N SoC
-Message-ID: <Z-VETFWFT5NksD7J@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250326143945.82142-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <41c6f512-47a5-4723-bbdc-64ed85ae8391@kernel.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jHGvL8m9"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52R5jeI1011112
+	for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 12:45:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=iTWYq5AdnAs47H3SzxP5M9xN
+	x8rCWKHzlbp9acZHpf4=; b=jHGvL8m91b3znyth69j7clRrt6YMeooGnHhHLxqr
+	108GLUUlBMBojdwxrZhN07PFJCF3ArWF+JVLPaDiyKBG9XCv9y7snRIdU5AJnIt7
+	/Rh5NKSZXXG+5tunxaXPM3Nc+r7z3W68D0nhp7fe2Ux4CQIk+3iI5QTGodTpK3RN
+	gaT8MyzwL4ol3uALBV7CbNBfzxBj49bMUQFRIl1IYH6GybqC6G291DxdLzxAmJxs
+	uwVHYEKwuHrLYOlpHkqL7pe/wOxLRxzZXEYHLYhWUXUf0OE6WcK2JZdbQiHumcOh
+	II36QarzOUSaUz59hlvTwFrKpZ/wS9zCrgEF1c8Sqa5quA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45n0kqh535-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 12:44:59 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c3c5e92d41so154031685a.1
+        for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 05:44:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743079499; x=1743684299;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iTWYq5AdnAs47H3SzxP5M9xNx8rCWKHzlbp9acZHpf4=;
+        b=ozeHqzItdmT8DOzLeu1ziKLlUvl+rjLATk+BFuyB9uCmS9Uibd5zUBQd9Au3wF5ucw
+         Da/cXHhEtDzmPXUkKvoeJm+WVjqz/jCjGXf8oMTIDchSMhUC5Eabm2FEoWzikvwJQ51e
+         a2m3/0GfSqHp4ma3KoUWxvrRP0Y29lRlYvxH2uJSo4G1qXEyR3Z8BMKH73xEMZNg3km3
+         UE2R0I9jiJ2xt+/LT3SVNk+Xlf4OR3kAO8XQAtvEnnjgNId4f13GN6P/EZe34qJfGh5o
+         SQ2GmceSDHMBl+2AnrZ/mR/Qcbu3muDsVvhSVQTEI63CiMjiHpXoXm+b83I1nHusKEbD
+         6CLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFDomnSZF6ooTCollwdl1WLepic+F8QyOSewfZ1NDqWx40wZad8snsIsG2/xAPqmNwGcHj6swL2Mk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6KNrCa7Lj79HpUXzWQNJoHbYp9WX8xrCK/lXwdDMlgM40db7Q
+	ckhY0YWctpBK8uJbMEJDdMXCiDey3j1i8TGA0s8zLUQWGLMgqWyfs9TryTxIgF6929bU2ap45AX
+	eT86HJjHCW7+Vq7DbcsxD5eArtfvPJnokjy/a6pttutN2Eff4e5Hc4g2U+kQ=
+X-Gm-Gg: ASbGncszsKrS6Q1Vc1mxBcRJ7y/JyaxHK8zdM8hotrO7ByO2KzpvZIU1E0wIN4YEpMr
+	iiXoKJXmzEEYmoKZcLMJbJ4PHMy1xP9qLRx/n55tmESTFytfwNcpS7rouJP1Fe03WNSiB6KVJqG
+	qJ+VvsNPR768FfsvM02ujVVROBiQ9quFnHxp9OSp4iegroW6R5BcfKIZ6So6XsrjEZBwCrd4Tit
+	F1UJGx2Zz6Ipa8HOGTsmSJBk60gSCsOxHrbFb5jCRR9A84K29c/YsFOuhwaRgfzOHz+QkM98ocX
+	rskewQyWY4amWLWSvggia0TtDGh2/w12GYAwDCLkvHxIG1m1tWSpz/cEW3VM1dCRwUQpQ6OwFV2
+	QELM=
+X-Received: by 2002:a05:620a:471f:b0:7c5:5d13:f188 with SMTP id af79cd13be357-7c5eda0c5f9mr466683685a.26.1743079498567;
+        Thu, 27 Mar 2025 05:44:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3dfY3x0bdj6tB5sjdegn50OeuwdU7NRXUEUCKAXCf4eOxYNQbMoUjzG7hB4EuvuWYiKzTEw==
+X-Received: by 2002:a05:620a:471f:b0:7c5:5d13:f188 with SMTP id af79cd13be357-7c5eda0c5f9mr466678385a.26.1743079498069;
+        Thu, 27 Mar 2025 05:44:58 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ad6509690sm2082148e87.201.2025.03.27.05.44.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Mar 2025 05:44:57 -0700 (PDT)
+Date: Thu, 27 Mar 2025 14:44:55 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v3 05/18] clk: qcom: common: Handle runtime power
+ management in qcom_cc_really_probe
+Message-ID: <l5h2lsw6ujys5plfmsaw5yv7pupjnz6fcl5yehxucul2le24vs@qbxkdbmknyap>
+References: <20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com>
+ <20250327-videocc-pll-multi-pd-voting-v3-5-895fafd62627@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KizQkLAOEp/210C2"
-Content-Disposition: inline
-In-Reply-To: <41c6f512-47a5-4723-bbdc-64ed85ae8391@kernel.org>
-
-
---KizQkLAOEp/210C2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250327-videocc-pll-multi-pd-voting-v3-5-895fafd62627@quicinc.com>
+X-Proofpoint-ORIG-GUID: Sh5hv6jZDyAt48A69hEjjOJUpAWX1SnJ
+X-Authority-Analysis: v=2.4 cv=FrcF/3rq c=1 sm=1 tr=0 ts=67e5484c cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=mx-Q9tutXSnSn-y_4VoA:9 a=CjuIK1q_8ugA:10
+ a=IoWCM6iH3mJn3m4BftBB:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: Sh5hv6jZDyAt48A69hEjjOJUpAWX1SnJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-27_01,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=763
+ clxscore=1015 suspectscore=0 malwarescore=0 adultscore=0 impostorscore=0
+ mlxscore=0 phishscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503270088
 
+On Thu, Mar 27, 2025 at 03:22:25PM +0530, Jagadeesh Kona wrote:
+> Add support for runtime power management in qcom_cc_really_probe() to
+> commonize it across all the clock controllers. The runtime power management
+> is not required for all clock controllers, hence handle the rpm based on
+> use_rpm flag in clock controller descriptor.
+> 
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> ---
+>  drivers/clk/qcom/common.c | 37 ++++++++++++++++++++++++++++---------
+>  drivers/clk/qcom/common.h |  1 +
+>  2 files changed, 29 insertions(+), 9 deletions(-)
+> 
 
-> So the pattern will keep growing and none of you will ever bother to fix
-> it, because you have your patchset to throw over the wall.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-I dare to say us Renesas people are not too bad at fixing stuff. In this
-particular case, I don't see a wide consensus that the above stuff is
-considered broken? Please point me to it if there is such. We are happy
-to discuss.
-
-
---KizQkLAOEp/210C2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmflREgACgkQFA3kzBSg
-KbZr/g//TelLcMOOIS9o8lq5TK9vmeyE5CGHg7W0oBugLs+o1YietMaOgMmPload
-EIrIbMkKfNULW7EO2Or1V91Q9RmsjhlFBZKZ9B7n0VCogzfKe82UO4wzmqbVyta0
-762BIRFYHnKMrH+YSNe5voWIBoy20Tf3vqGIuDdi/G7feHmkogAsJQ9klyU3QU/S
-hDMgHtDa5amsVteTic6S55SnWy7VSk69q5JSM/BIjoYSxAdPRQI67pUOjDs4lCAk
-NChC8OKZaASyPJgkbveu8C9OxSRaVHO+yvVVHkVISIVfXIGBDEEAZoChYtW8ABE0
-wcIR7w1u0GulTnI8fdLOET1E+7bQYkxaY7cVTQs1yt5iqa5kBh5+fIAqLR8JEJEW
-WHre3BNwkt4TPt4uGPublOrGwDpq5nnPztFBGJAilnersV9dvxOI0+ZMVcZ1LxAi
-NcQHe/h+FF7RjAuq+Ho+/4jkQtX+3oJuUXjILIXOjat8JRyJNbD7GUf9BVtO8Oq+
-MMWRVWmWUmQNGeb34TYjBt88b6HWvr/qUTi3dweFNJD3i2Sq6xEctt+sU0K214SL
-BzES5xCL52LnyR886e1/Wx10E5ITl7Er7+hq4ct1wEHCQUA90xO248jbXgqsDjl+
-oIgHCjTHUjt93rzQmKdBCrAouvvIqNi9GwI3K15H/3zmTEDOlZU=
-=WWXu
------END PGP SIGNATURE-----
-
---KizQkLAOEp/210C2--
+-- 
+With best wishes
+Dmitry
