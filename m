@@ -1,168 +1,128 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFB1158553
-	for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 10:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CD12139A6
+	for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 12:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743070077; cv=none; b=AAa8pygf33PRhpI6Vezsl7GOtJWhZCXHRGIdCkiGYND2ao5ZwDtoQ3D0y3l+CuwZ+frGQSyAJQcb9JcTVJeAfbxrkYhWne4bjRJqYp/aeoTs4OdzHtzc97kCeOb7JmYzzJv7h2PZu3bjetQWqdP+kDC5hlx/l8Cr81sqijO+6N4=
+	t=1743078484; cv=none; b=k+R/Xp4/o7y5vA0h0zRRE8SitMrTGSFTAb4KFI6NzQ898+MZGv60QWwdhHl7fY9tb4e9rpUc5P5fbtyvAzUSUGi8U+MbCo98gxoI964xyhFa2Fu5exxaQdUBa5nwqnV5pw643ietBeK034CurUCDb3u5PtgroqCi2woxBJL0X7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743070077; c=relaxed/simple;
-	bh=+VDQxqDVTwSC88WpzKDGggf7YvBj5O99RXKWmTw+D4g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rnBFMwkZwh+pIIsWFomfkN6XCDB3U2VoxnEuNSmpKuSSLwnByfeFBSCVDtYw2meAepcp5Gy4a1bmzEI45kLyrsHQ2BwmWKI/xIFbxjZDydBgTJRTmf7x27uw6BATNE8Pi9SCseCzMFUYwmjj67yVm5OiSU/8Mglg1Jvz8XNe81Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ojq5GRNT; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1743078484; c=relaxed/simple;
+	bh=AaGkFZpautOPtNIWBgWQGF7TfFJYejda7uBwkLDZ2zU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oLGBkQVQRdJ6hhZzMCNJoWjC0EiMWYr+IvT0u55YDVP0dEkPI3B9IMHCYAIf1M62Yw/T2j/NqWxVU2PAu+hqGHVDIEhgFVEEYi3R06X12prtwxQ1QXReKGJiyFzf3FStsmUEbM2cviIF6q8VLWKEKEzX4Qh1PXNe3I34VB2+0mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cQKVds6D; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ojq5GRNT"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d04ea9d9aso3389855e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 27 Mar 2025 03:07:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743070073; x=1743674873; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2DA/Y2SrhYvb8JIGN8I8VFPVZFKVt4XN6zoT9arPV9I=;
-        b=ojq5GRNTzTQkCtNXrfBd1LsWwvhDWcEy5kvETwH4omlxg8WNNlD9i3zvR63ii3jpYZ
-         My/o/RYz8Rr3aWv8n+TpHPVsLqABJlggHYPCbZJnZv06xJLUjgb9yknbkyfWCMA1EWf5
-         2vvSOiIqwdx6PnHjaA6cCD0vzlL/r6BPLp4FQPyrxD9cbX07tKC19LMKOBF0xo8G7NqV
-         NmtxeS0TSeIbox0MoVj+JlTgCGkJbaV4OsOMHPApMpODgbrVhCALAqVN35nZ0n8Js32M
-         efGMckIJf4AnhzGS9mRq7Z4UqIe5NKdNPpIQBapl9clb6ejUNi9qil6WtfNYrSbfVxDI
-         r/iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743070073; x=1743674873;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2DA/Y2SrhYvb8JIGN8I8VFPVZFKVt4XN6zoT9arPV9I=;
-        b=k7lWSKPaN/EEwhhoXwrEgFokBmSOz0RxRPw3UJMNzH/PWkjtPww4FpoPsalaVoD2oL
-         M363XjB24k3DAQLXMf8EcQPmL8p43Ce7tEf++rFF1C/aWM35t7rRdyF89vAtY04wXeyg
-         PDmygsGuQc73EjU0OGhNNSwQFhcwysqRIBn4Tl0Akty6aa5OVuJrS/BK4NqQLoV4XCB5
-         6CBlyqaQIUIMhF1i35OL4BKTYcZwneWOCPeN9vkc0kCbCBa0oyWsRYYGxbXowuti4Du9
-         t1mWaqoh4LQmwMudA+4XsLEsOF4IPno+EQRLvpNk5+mx4sPygZElYGw6RkMV6W8sT3wi
-         duiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdl6Th0r1AKp1KxXIu/t7iryiudjfQ5HkfaKkkLpLvjVWcLB8mX4vDzkkrQUHyn6jIx9uZ78Z+WFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3sX04GtYXNFPfe+hSq2KV+Uhprq7dQ22DM8+yFFyDEE8UQ1Zh
-	5rR2AKuqieJtQ6OByIuFVIPyoNSMtzZUDgJjmMYW3/TVV3a3R8WGhXw0uYiQIos=
-X-Gm-Gg: ASbGncuUGIOwNZ4QJbancFz+8QJGT0OMBjT941ITFxCdsdl3eZOx61+T+fNCsQWl+xa
-	Ok+LDpwHQNOC/q1gmBfmokg8MlsVKC4WBLIDmgpWpNLuuPdTqB2nJGt/5cRv813tMiUwqwyfFRw
-	IeU6RdUj9tbwlQatm9hoFEcaGinc5WJCvo7BfcTCG8WOmIvB0Y22W3D+FWvxJrmViYDB3cZuVSX
-	P4quErcTtnulQ47wyJmRllRFKcNMnVkbl9ePTcC/iHH0nowb6S4U7SIPfBNgoKqaB2JMJDXoAT0
-	ZqtG7dkv9o0XR1+bM142inNdFUGPjSB/jmBd4nmaU6pw2aqVIRQHs58=
-X-Google-Smtp-Source: AGHT+IFSA/Q3nPbkXJU+wAh3bQb1BmYag2bXoUf1GCR7HVRK1VC002s/eBPHjEc50vV5ysPbU7o5kA==
-X-Received: by 2002:a05:600c:198b:b0:43d:47e:3205 with SMTP id 5b1f17b1804b1-43d850a78d6mr28318015e9.11.1743070073134;
-        Thu, 27 Mar 2025 03:07:53 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:e348:e265:be1a:2d30])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d830f5f56sm32976245e9.26.2025.03.27.03.07.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 03:07:52 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Kevin Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  Michael Turquette
- <mturquette@baylibre.com>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  linux-clk@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/4] clk: add a clk_hw helpers to get the clock
- device or device_node
-In-Reply-To: <4db0bf5937c6c2a480b89b11e841782c@kernel.org> (Stephen Boyd's
-	message of "Tue, 25 Mar 2025 14:57:01 -0700")
-References: <20250120-amlogic-clk-drop-clk-regmap-tables-v3-0-126244146947@baylibre.com>
-	<20250120-amlogic-clk-drop-clk-regmap-tables-v3-1-126244146947@baylibre.com>
-	<508a5ee6c6b365e8d9cdefd5a9eec769.sboyd@kernel.org>
-	<1jv7s21d8y.fsf@starbuckisacylon.baylibre.com>
-	<4db0bf5937c6c2a480b89b11e841782c@kernel.org>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Thu, 27 Mar 2025 11:07:51 +0100
-Message-ID: <1jpli223d4.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cQKVds6D"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=AaGk
+	FZpautOPtNIWBgWQGF7TfFJYejda7uBwkLDZ2zU=; b=cQKVds6D4OuSoXyoO/dh
+	Yocs56ryHH59lTHWPlamSchITa3MvdPq/qIRCIAfUp08h0k4mFAOcjDcqAaru7Ht
+	n8uUY5kDqMXnpqnFrYazLcispEBbUxE2J5f/EnE1uSVFta+lQ1Oz8XkCUMkMwzuH
+	uwwUPS+FMHRBCcQZB+N/rWRSk1sSe4kYn8jgzgpie42Tvi8eZy94GG+to1rWlmnD
+	y/R4rf0lb6w1KdGlPdpQKvxyrUd4uf3EK0lqeptf4IquuqFAxKUKJzypu0l5d46g
+	D6hC9bJfk6brv99nBxJsI1u2yq/SgK6X0eZ/GTQiq8CbkwCjoMhRNjKbiQ8KeHrR
+	sw==
+Received: (qmail 3987990 invoked from network); 27 Mar 2025 13:27:57 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Mar 2025 13:27:57 +0100
+X-UD-Smtp-Session: l3s3148p1@lRR0FVIxZqsujnsv
+Date: Thu, 27 Mar 2025 13:27:56 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Prabhakar <prabhakar.csengg@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 15/15] arm64: defconfig: Enable Renesas RZ/V2N SoC
+Message-ID: <Z-VETFWFT5NksD7J@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250326143945.82142-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <41c6f512-47a5-4723-bbdc-64ed85ae8391@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KizQkLAOEp/210C2"
+Content-Disposition: inline
+In-Reply-To: <41c6f512-47a5-4723-bbdc-64ed85ae8391@kernel.org>
 
-On Tue 25 Mar 2025 at 14:57, Stephen Boyd <sboyd@kernel.org> wrote:
 
-> Quoting Jerome Brunet (2025-03-21 10:53:49)
->> On Wed 26 Feb 2025 at 17:01, Stephen Boyd <sboyd@kernel.org> wrote:
->> 
->> 
->> >> +static void clk_hw_get_of_node_test(struct kunit *test)
->> >> +{
->> >> +       struct device_node *np;
->> >> +       struct clk_hw *hw;
->> >> +
->> >> +       hw = kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
->> >> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
->> >> +
->> >> +       np = of_find_compatible_node(NULL, NULL, "test,clk-dummy-device");
->> >> +       hw->init = CLK_HW_INIT_NO_PARENT("test_get_of_node",
->> >> +                                        &clk_dummy_rate_ops, 0);
->> >> +       of_node_put_kunit(test, np);
->> >> +
->> >> +       KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, np, hw));
->> >
->> > The stuff before the expectation should likely go to the init function.
->> > Or it can use the genparams stuff so we can set some struct members to
->> > indicate if the pointer should be NULL or not and then twist through the
->> > code a couple times.
->> >
->> 
->> I'm trying to address all your comments but I'm starting to wonder if
->> this isn't going a bit too far ? The functions tested are one line
->> returns. Is it really worth all this ?
->> 
->> I do understand the idea for things that actually do something, such as
->> reparenting, setting rates or what not ... But this ? It feels like a
->> lot of test code for very little added value, don't you think ?
->> 
->
-> Just so I understand, you're saying that this is always going to be a
-> simple "getter" API that doesn't do much else? We're not _only_ testing
-> the getter API, we're also testing the registration path that actually
-> sets the device or of_node pointers for a clk. I'm not really thinking
-> about the one line return functions here.
+--KizQkLAOEp/210C2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Oh, that was not clear to me. I assumed the registration path was
-already tested to an appropriate level, so I did not consider this.
-Makes sense.
 
->
-> Writing tests is definitely a balancing act.
+> So the pattern will keep growing and none of you will ever bother to fix
+> it, because you have your patchset to throw over the wall.
 
-That's where my question came from actually. We are aligned on this :)
+I dare to say us Renesas people are not too bad at fixing stuff. In this
+particular case, I don't see a wide consensus that the above stuff is
+considered broken? Please point me to it if there is such. We are happy
+to discuss.
 
-> I'd say we want to test the
-> behavior of the API in relation to how a clk is registered and writing
-> tests to show the intended usage is helpful to understand if we've
-> thought of corner cases like the clk was registered with a device
-> pointer that also has an of_node associated with it. (Did we remember to
-> stash that of_node pointer too?) We have a bunch of clk registration
-> APIs, and we want to make sure this getter API works with all of them.
-> Note that we don't care about the clk flags or parent relation chains
-> here, just that the device or of_node passed in to registration comes
-> out the other side with the getter API.
->
-> A little code duplication is OK, as long as the test is easy to
-> understand. Maybe genparams stuff is going too far, I don't know, but at
-> the least we want to make sure the clk registration APIs behave as
-> expected when the getter API is used to get the device or of_node
-> later.
 
-Now that the goal is more clear (to me), I'll try to find a good balance.
-I'll also split the helper from the tests, so I can progress on the driver
-front while we refine the tests, if that's OK with you ? It is not overly
-critical for both to land at the same time, is it ?
+--KizQkLAOEp/210C2
+Content-Type: application/pgp-signature; name="signature.asc"
 
->
-> I've found this google chapter[1] useful for unit testing best
-> practices. I recommend reading it if you haven't already.
->
-> [1] https://abseil.io/resources/swe-book/html/ch12.html
+-----BEGIN PGP SIGNATURE-----
 
-I will, thanks
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmflREgACgkQFA3kzBSg
+KbZr/g//TelLcMOOIS9o8lq5TK9vmeyE5CGHg7W0oBugLs+o1YietMaOgMmPload
+EIrIbMkKfNULW7EO2Or1V91Q9RmsjhlFBZKZ9B7n0VCogzfKe82UO4wzmqbVyta0
+762BIRFYHnKMrH+YSNe5voWIBoy20Tf3vqGIuDdi/G7feHmkogAsJQ9klyU3QU/S
+hDMgHtDa5amsVteTic6S55SnWy7VSk69q5JSM/BIjoYSxAdPRQI67pUOjDs4lCAk
+NChC8OKZaASyPJgkbveu8C9OxSRaVHO+yvVVHkVISIVfXIGBDEEAZoChYtW8ABE0
+wcIR7w1u0GulTnI8fdLOET1E+7bQYkxaY7cVTQs1yt5iqa5kBh5+fIAqLR8JEJEW
+WHre3BNwkt4TPt4uGPublOrGwDpq5nnPztFBGJAilnersV9dvxOI0+ZMVcZ1LxAi
+NcQHe/h+FF7RjAuq+Ho+/4jkQtX+3oJuUXjILIXOjat8JRyJNbD7GUf9BVtO8Oq+
+MMWRVWmWUmQNGeb34TYjBt88b6HWvr/qUTi3dweFNJD3i2Sq6xEctt+sU0K214SL
+BzES5xCL52LnyR886e1/Wx10E5ITl7Er7+hq4ct1wEHCQUA90xO248jbXgqsDjl+
+oIgHCjTHUjt93rzQmKdBCrAouvvIqNi9GwI3K15H/3zmTEDOlZU=
+=WWXu
+-----END PGP SIGNATURE-----
 
--- 
-Jerome
+--KizQkLAOEp/210C2--
