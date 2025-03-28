@@ -1,155 +1,159 @@
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D8F1B6D08;
-	Thu, 27 Mar 2025 22:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61250211A21;
+	Fri, 28 Mar 2025 07:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743115804; cv=none; b=jgj+e9amiDPfQH52d65k5AMMN/pA/ItCl50W3USzJEzPR7C6j5B9vHsdDNLlWEdHDuC2EclT4/T1OQPcGjWu8ZwfumvAMYTDVziH87kfE7UlnkKQ00dHrAezSdcVhHDCGxWLZsXaFIQzKVkLT4U7+Hc1SmjFd/AUufe5/Q2ivQc=
+	t=1743147876; cv=none; b=U9KDvrqKVRfwxl4s+mAzjjeRKWWyfixFss6H28j1z0umRq5oKiTJnLqL2UTe8DzcdeuNkhJE80eXxn+sAmaFOk65OmaRBN96TLnEjqeZxFjq7qAziPuGmpuJrl6R0YUsUEjS93RMqEfvFzB7JY66OYLvYKPRcyakLcddm942GbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743115804; c=relaxed/simple;
-	bh=aNgKSZOvnwquGNkjEd+Rl/oUTq2Kr+uyVduD5vXxrtk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dQ9ch8vr4dyw6g/5JeLGHs7dzyrcYXOOON5yGu659JaORl+pF4nrkF3RC3Gl1APzwVoLT8BXu0xnnDzm8FwZugujqDUFgYvAK/3ggCi4PHOMX0rhfasc29bY681cuCk4XHvwbOmiQMEgwiE45NB/1RkCJelcnffd9htDGOVnDPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ig9SoCK0; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1743147876; c=relaxed/simple;
+	bh=DrhY9Gh1OreY+2yKI5o/Ho68C4hcLAcK8qj33JiXDdk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pLenurIAVuhZTMRkxozBM7nP8zhbFJm3E1q1tqOrc8A+Vj655bG5YkX9D0yB+ml78NRSklWkbBOsmO7S2/Bd0geuJva6f/X//BJ7kUZ62c+q5EpAYmVy2vzVJcWy3K40WYarcnn/rJL/frSBzU0uwqC7twYr8Ng/LXIpF8V9NY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lr7wUDwG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ig9SoCK0"
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6e8f4c50a8fso12829406d6.1;
-        Thu, 27 Mar 2025 15:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743115801; x=1743720601; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/lgInEmn9kAXfLfJ08wUUe6niWuQHdC4fBten3a0reo=;
-        b=Ig9SoCK0IqTVM9guRAxSuPCth9bBehAxhtT6Pn9VgPGtdbBguTUhQA+bvIGjqHHOvT
-         V39pdO3MTqzGt8mu8FoxAOBsAVO054auzS2vVOReLGIP19hRQhuM7PmZp2w/eAkSUTs8
-         ovSaitXgSSmkHZHOtou59Gjsy3uuMhxMFXR7WguYGwuUuj4wZZM5djnnwHuW3E5C2XvF
-         9HwpfD3unMXX05C6wKd9Lc7HrOJoypvhb1seyUB7T1WwRuk96RFeatCGApYBhm8+r5fh
-         RPwBoKpP+RvbcCs6jfSz2bL68b2RF3TsbOhTk5DxV9Rq6EnwQdfakudux+ir7BYsuKkP
-         a8mQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743115801; x=1743720601;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/lgInEmn9kAXfLfJ08wUUe6niWuQHdC4fBten3a0reo=;
-        b=AAa8NutMwXWyIW8FpzVZ6fXfyL8/dzCDizbQQ7J7bfZupBOB9lzRucSL25Ssvor1it
-         3umJq8aaTzBkqPug/Sww/aeVpv1dhYwD2OurGrN1tXWRUFz639QF3ZVttQOhW7IeAsEM
-         +7ySFfSwWcBEjaXFOi8uGARVl3kUlm7OJHPDuMdvwmgGS5wkcmVLMv9pJZdHIqGzIVsF
-         PCKaFn3pTggLyNhLb1OLE1QGkgywO+/KRDrkgPadyq+VRxxqpKmAh7VqavnVoRozYZK6
-         xQRiH60oKwoIKUoUa+JWzseDF7BNhzKztWXe/2nP+fU1cdnGRMgzY1OiPvkeKJwGvm+j
-         EM1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUjmxrrKnxCV6MUp1WmaVTppVAUilMXxO/B7MiZ2rvqla4kgCi9X3OmRSLfKMEmGgyAxLsc7Eor@vger.kernel.org, AJvYcCX0WxkaUsz/hFbb2J8FSEJD+Khz3v761GiSE9DBnFzZq4t05fa+/X2fb9S8Fhz9irSpHPI3k025wZovfz3u@vger.kernel.org, AJvYcCXa48VSkh9TRs3upUh7wSVyMwVdvrW9OKCuibueGP/yU09pvRqSyHQ9srqnloNNrQbIQcve8gnBhWOF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgIZHzeEjyycT4fpgHtQwL07OBKJWZPpCOwqXR+oBYYmxcmXwL
-	4L2THW5A2/i+yHWekIpstIPSWVrmG4jDAzz9ZFYKymtIJmE68dVC
-X-Gm-Gg: ASbGncvijBbNCjZYxOpbX1aNsVB8FS/vMTMWCzMuIxi1bPqgs+tDMWhHlWjsZ4BQ1Ro
-	rGzzIwJSHswjc8pd8CPDRBw3MNrEnBhotmewnYCRSI4sYUzT9GyPy/f3eun85eNvY4T2tsAPw/n
-	neQVyIFSNcje4xGaKDUVsPNzOfjHPT6VoBui9h8G8VgZFryc6RO+WJYh5itQ4ER0NN7l79URJGl
-	RT6Ft59ZE2wzM/EuSjlaktAFcXNnND/Tq9ilZfLsCGdXxWS6Lvxy5D0Mh4Sg4MpxG0JO+/hj599
-	ZbjY6CcnDZ4l9dwV1QC+
-X-Google-Smtp-Source: AGHT+IFGejPOWFa2kBeHBJnYYEtxpzTLMl4bpzMZ4nBGvC5E46HMYYnjk1nRZveE5zQwgNH6S+BLxA==
-X-Received: by 2002:a05:6214:4002:b0:6e6:61a5:aa57 with SMTP id 6a1803df08f44-6ed23877f15mr84640566d6.14.1743115801133;
-        Thu, 27 Mar 2025 15:50:01 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c5f7682d9fsm41761185a.36.2025.03.27.15.50.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Mar 2025 15:50:00 -0700 (PDT)
-Date: Fri, 28 Mar 2025 06:49:35 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Stephen Boyd <sboyd@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: sophgo: add clock controller
- for SG2044
-Message-ID: <an3mkqgwpq32bfab7i4bmbrwejluzbxnfiygjxt3rkxmow456v@5kz6qltekbia>
-References: <20250226232320.93791-2-inochiama@gmail.com>
- <2c00c1fba1cd8115205efe265b7f1926.sboyd@kernel.org>
- <epnv7fp3s3osyxbqa6tpgbuxdcowahda6wwvflnip65tjysjig@3at3yqp2o3vp>
- <f1d5dc9b8f59b00fa21e8f9f2ac3794b.sboyd@kernel.org>
- <x43v3wn5rp2mkhmmmyjvdo7aov4l7hnus34wjw7snd2zbtzrbh@r5wrvn3kxxwv>
- <b816b3d1f11b4cc2ac3fa563fe5f4784.sboyd@kernel.org>
- <nxvuxo7lsljsir24brvghblk2xlssxkb3mfgx6lbjahmgr4kep@fvpmciimfikg>
- <f5228d559599f0670e6cbf26352bd1f1.sboyd@kernel.org>
- <txuujicelz5kbcnn3qyihwaspqrdc42z4kmijpwftkxlbofg2w@jsqmwj4lz662>
- <a9626bfa7a481cee3178f3aa80721520@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lr7wUDwG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32566C4CEE4;
+	Fri, 28 Mar 2025 07:44:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743147874;
+	bh=DrhY9Gh1OreY+2yKI5o/Ho68C4hcLAcK8qj33JiXDdk=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Lr7wUDwGlPHNPo3QKBOXasr59CeJwgZmw1U40lyquMd2yw7lWyVDHJBBgJg0ZJJok
+	 r2NPVj7PAQWQvcpAZTuyyVSO1vFCKdlM7CCrXmD8/LVPgNL7JUADqmjflCjdbMQxXo
+	 8o1+KoFE0j4kxdGGa/gqQe6g5s9ucXSLLOZFDNObP08S7FkOi8mFVIuVUngLKNUTlT
+	 Hz7O+UKmZyl8aVCWy/CEr5FP/RqNm0ws83VCHVybt01xESLq36X9cWVA+MQM+80IaL
+	 SLtqPcgY7fLyGklTOKwW2IrIJV4ky286gURtZDEqi/51+KO92vVy3XTgb/Y3Ietfpy
+	 Yc9ws2nCZ3tVg==
+Message-ID: <de0f7848-1fe7-451f-b48b-e20fbf3d0c2b@kernel.org>
+Date: Fri, 28 Mar 2025 08:44:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9626bfa7a481cee3178f3aa80721520@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 15/15] arm64: defconfig: Enable Renesas RZ/V2N SoC
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Prabhakar <prabhakar.csengg@gmail.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250326143945.82142-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <41c6f512-47a5-4723-bbdc-64ed85ae8391@kernel.org> <Z-VETFWFT5NksD7J@ninjato>
+ <6fa375d2-5ba8-4b2b-8a54-f28b3cbedcfb@kernel.org> <Z-WAZ_IlMBB3XbTN@ninjato>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z-WAZ_IlMBB3XbTN@ninjato>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 27, 2025 at 02:21:55PM -0700, Stephen Boyd wrote:
-> Quoting Inochi Amaoto (2025-03-13 15:46:22)
-> > On Thu, Mar 13, 2025 at 01:22:28PM -0700, Stephen Boyd wrote:
-> > > Quoting Inochi Amaoto (2025-03-12 18:08:11)
-> > > > On Wed, Mar 12, 2025 at 04:43:51PM -0700, Stephen Boyd wrote:
-> > > > > Quoting Inochi Amaoto (2025-03-12 16:29:43)
-> > > > > > On Wed, Mar 12, 2025 at 04:14:37PM -0700, Stephen Boyd wrote:
-> > > > > > > Quoting Inochi Amaoto (2025-03-11 16:31:29)
-> > > > > > > > 
-> > > > > > > > > or if that syscon node should just have the #clock-cells property as
-> > > > > > > > > part of the node instead.
-> > > > > > > > 
-> > > > > > > > This is not match the hardware I think. The pll area is on the middle
-> > > > > > > > of the syscon and is hard to be separated as a subdevice of the syscon
-> > > > > > > > or just add  "#clock-cells" to the syscon device. It is better to handle
-> > > > > > > > them in one device/driver. So let the clock device reference it.
-> > > > > > > 
-> > > > > > > This happens all the time. We don't need a syscon for that unless the
-> > > > > > > registers for the pll are both inside the syscon and in the register
-> > > > > > > space 0x50002000. Is that the case? 
-> > > > > > 
-> > > > > > Yes, the clock has two areas, one in the clk controller and one in
-> > > > > > the syscon, the vendor said this design is a heritage from other SoC.
-> > > > > 
-> > > > > My question is more if the PLL clk_ops need to access both the syscon
-> > > > > register range and the clk controller register range. What part of the
-> > > > > PLL clk_ops needs to access the clk controller at 0x50002000?
-> > > > > 
-> > > > 
-> > > > The PLL clk_ops does nothing, but there is an implicit dependency:
-> > > > When the PLL change rate, the mux attached to it must switch to 
-> > > > another source to keep the output clock stable. This is the only
-> > > > thing it needed.
-> > > 
-> > > I haven't looked at the clk_ops in detail (surprise! :) but that sounds
-> > > a lot like the parent of the mux is the PLL and there's some "safe"
-> > > source that is needed temporarily while the PLL is reprogrammed for a
-> > > new rate. Is that right? I recall the notifier is in the driver so this
-> > > sounds like that sort of design.
-> > 
-> > You are right, this design is like what you say. And this design is 
-> > the reason that I prefer to just reference the syscon node but not
-> > setting the syscon with "#clock-cell".
-> > 
+On 27/03/2025 17:44, Wolfram Sang wrote:
 > 
-> I don't see why a syscon phandle is preferred over #clock-cells. This
-> temporary parent is still a clk, right? 
+>> You did not object to last discussion about this (a month ago) - neither
+>> to my comments nor to resolution - so this patchset repeating the same
+> 
+> Because I cannot follow every Renesas patch series there is. You are
+> long enough around to know that large companies have different entities,
+> groups whatsoever. It is quite a challenge to streamline this via one
+> group, we need to share work. We do try hard, though, and have a
+> ARM/RISC-V/RENESAS ARCHITECTURE maintainer. Geert does a *hell of a job*
+> getting all these submission into shape, and he surely does not accept
+> code thrown over the wall. And geez, the patch series was just sent
+> yesterday, you didn't give us even time to raise the issue internally.
+> 
+>> pattern from the same folks while ignoring previous talk is
+>> contradicting "not too bad at fixing stuff".
+> 
+> First, being a maintainer myself, I do understand the frustration of
+> patch review not being honored. I can also agree that this series did
+> not work out perfectly. But that does not mean that we don't care, in
+> general.  Despite all imperfection and possibly different opinions, we
+> try hard to be a good citizen and spend considerable time on doing
+> things right. Accusing us of throwing just "code over the wall" because
+> there is an issue somewhere which hasn't been worked on in one month is
+> plain unfair.
+We do not speak about same things. I speak of review being ignored for
+multiple revisions in one patchset and then another patchset sending
+exactly the same pattern.
 
-Yeah, it is true.
+Previous patchset receive my review about this. Thierry ignored it and
+send v2 with same code. Then v3 with exactly the same code, but with a
+remark in cover letter "but such a change is out of
+scope for this patchset."
 
-> In my opinion syscon should never be used. It signals that we lack a 
-> proper framework in the kernel to handle something. Even in the 
-> "miscellaneous" register range sort of design, we can say that this
-> grab bag of registers is exposing resources like clks or gpios, etc. 
-> as a one off sort of thing because it was too late to change other
-> hardware blocks.
+And now Pabhakar sends the same pattern.
 
-This is right, the syscon is not very good to be added. And I found
-mfd framework is used in most case to provide multi-function. So I
-think I make a mistake in design. I will try your advice and submit
-a new version for it. Thanks for your kindly explanation.
+Each of these contributors were not changing here anything, it's like
+not their job. It looks like this will never get fixed, because each
+person wants to just get their stuff merged, so let's ignore the
+reviewers comments.
 
-Regards,
-Inochi
+That's not how upstreaming works - you need to change some things, fix
+some stuff, add more code, if you want to add your independent features.
+That is how upstream was always. The easiest example is - one new driver
+for some completely new feature is fine. Second new driver for similar
+new feature receives feedback: please create subsystem to have common
+set/handling of that new thingies.
+
+Best regards,
+Krzysztof
