@@ -1,333 +1,123 @@
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A661DC99E
-	for <linux-clk@vger.kernel.org>; Fri, 28 Mar 2025 17:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B2D38DD1;
+	Fri, 28 Mar 2025 20:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743182681; cv=none; b=S6LR6QMCboX/MyZzdyJCbX1q636BaSI0/PjKlh9XNyT3jeMmLry9Tk27pKoKIEB3fv5iiNZR7Qvqd1X2ITR5wC9MdN60eRjnRFejfG996i6hhVUmaI/0V4xqNRfOhNMqZ43rrKpg3TkPYCusXe8Wb5SBOj0aPbGvWCC/cX71JxQ=
+	t=1743192086; cv=none; b=lvlQ6VRmtfT6xkfCYGRmr6hYaUfxhNNkZlNVJTJdbIqLemJzGBAKRyj0eNMNbvfWx+2Hdn8vIGRQo7hr4NBodvOroyPKikk2wcY+ZAlLPupahxN+dq5omCQMcvO04RwMAvYJPuqrrgycPHXicfBy5RIzPn0Cc5Zk1uS7M/q6lOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743182681; c=relaxed/simple;
-	bh=A2iV1R4x78HPNIt4Yh0n/qz71rAxVerxDRYyntJ5mIA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bx1JbhDR+/sb4p8PwZQaadEClm3w+Vwzg3npNnRSGHiycbkQLhKMu0bY4isNl2Kt+6ObKPTi37PA+4Tk0N3hAA3BToH6u4eusmAqvcVV0+92HOlQqI2daArZno1AjHkeb5ossfga6xPjFjBQqyGwsIQoyL1tUDtz5IYia/ZFjfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=rkmijI6e; arc=none smtp.client-ip=209.85.161.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1743192086; c=relaxed/simple;
+	bh=F9lG5VQiBqijdc1BsSIAl5jdTQjId2FOU05kNe/eQ10=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fefDTTtcj8D8iy7PWstwHSgjNoIxdxCKYF1DosqwLr37+M1QNkTM41aNvBwWZRXiaeIyOy6+KI2XLNBY0Va5ZAW2ut4FdIOOxr/XkSxIF9n2H3d7/alpMVEZSqUUFM6XbKmCAn4ipmNLbSL40upI/eYcDsGn1IuKLq2E5nBLnbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m5gvcytu; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="rkmijI6e"
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-601a891ab8fso1316704eaf.1
-        for <linux-clk@vger.kernel.org>; Fri, 28 Mar 2025 10:24:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5gvcytu"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so25677415e9.1;
+        Fri, 28 Mar 2025 13:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1743182678; x=1743787478; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HLrzm/zQ4gwThho8YYqEd980PysyFD6/Tw5SCyS4qEg=;
-        b=rkmijI6eKH3mq3S+u/VNyht0Ya8YEYCjbvDn8TWH4bQpVC5bWwZUKzx/nBG1SzweC1
-         /lHQEBhjBJpDF03nd9Vo/69oTv6R+7N+xS1xzbA0KpYwg3NC2/gklmPgg6ygW5T/eH1M
-         tfVFXAXrzSeOPDG14/um23J0AbB4DcACoi80IljMDdUQKjjN8zZVUw9/HlJZGAIZLJNk
-         83dbfP94/NhRceKfKUNovaz400wONkstxrdGM1/xQBiz2KbxtWSD8jzGbSGbfpTQV1Qv
-         35M+wn34sMNle0/emwK/Kggy7ZN6WZhmR5nKt0Kf+fjj6dQeX+pUpPX4YUHe65vY+dXv
-         QMoQ==
+        d=gmail.com; s=20230601; t=1743192083; x=1743796883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CWlDjObtNCMAig2x0XE/n+rj8AXxIshTECeaANEV/mU=;
+        b=m5gvcytuTzb+6WEl9rBqN7TlXQQglWNfiz9c3YrTAOxhUXS+mReAaGzRZ6uuGoyqNT
+         qGc8eQjPpGjaaj3tR4qdsZ2wJWANNZvP5icWV6Dnti0dwaae53UL5QJFLfEllLAjg29q
+         XrIQQfD32wu6JngbrN6W37clpEiNhdGdURVsX3Usr7WBr5sgfyO/OGYdFVLPlQTdoRga
+         0lTxw2I5/83UYwnH74sVsTMn7lo2TJ8YxvbEO87Tcpl2rnlQc8CyNN8IIdOY6FnxhI9g
+         vdnhm9Ofx9Cy4jAZOLK40M3JGwkR/EYrAsRLjhEVH+mmxssDMDP3DNykC70XNYLeiXTS
+         8/nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743182678; x=1743787478;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HLrzm/zQ4gwThho8YYqEd980PysyFD6/Tw5SCyS4qEg=;
-        b=oAg8IbKFSSjK6MMBu7DjXHRkaIYM/6Ks/XhTvcTHNJnbtS7pcWVK13DcLr5lI9Zv8M
-         c4RfUJriRwjBCEf7BsG8Z7Z8TsamsudYFr6/3B3wh1y2auUyNt45fBWCOMTic8JfJvQc
-         2/tIyZoYHBPltJmIe2mrbYKugd6ymxEeW5rThtwTSfZ9uJ9sId4ZYHPUPH9HFPZPsJUd
-         SgkMpeeoBB+cYW1l85xkoxKU3W8c58ccbSkiduxDpWFacDOytzSgYb8GQMElSomQ1ExR
-         i6gvsRanG4aYVktIe48a2G94hVRTTGd/pEjFVkgBJGn+fkiUuaXMuAHnJowVOpcI93V5
-         zp/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXUrYc/IO5P8v8BkYUT59Vn40njhuir6dOoJ4eJQNvX1gt9G2TOV+I9xMHG/eRtzzebdR3MArVgSuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7+et5CVegVQEWusrcMw2sXTIT9OXb2VeO/GxzmfFgo7bWJYBM
-	lSnnB7PUDiy0PepaOMAprTAhebrshyp+6mgBUxxu/PTyynJOKW6en+U9fJ7i1k4=
-X-Gm-Gg: ASbGnctnT+0pVWnKe+/azLAlMUzuK86EcIxWQ4hOd3DiOU5P2gP7hV3ylCoRzqt8R28
-	mdiDgv88vFW6kInx05xIDWsbBBYFY7rIdbKfEPVp7dO0y/GId+9qDAuqjgxnQ7CPjoCS8plbwWc
-	vHgBxzLghHpMIBsVNPLdJq98ckvgwlG8pu6o70fRUzhw1r6W7Tfdvlqlt/XPKMG3DCypGACdejf
-	CrPqcfqSISh3wNtxbuQsAITHAZXqQe1vf0soQIISr4kw06UU5mssLiESpAdYBSZE2Sd+gH3MNGx
-	HyJhMA+Qe052jKl1V6G/pb8+VWYgz5/ojDKXrVhIkiMjRC0upVcOBlDIvPGEOTCKm65+ADZgP4e
-	ED/l7JOtU
-X-Google-Smtp-Source: AGHT+IGsEzLTxyMqQfC/rhlkp/3Yy0FWpMm5miVCQoyz9/uttGUbad/c15R9zzLWjxbYr4ZawMaYsw==
-X-Received: by 2002:a05:6820:1885:b0:601:d595:3b08 with SMTP id 006d021491bc7-60290414a86mr192697eaf.2.1743182678377;
-        Fri, 28 Mar 2025 10:24:38 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-602844e6574sm401475eaf.2.2025.03.28.10.24.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Mar 2025 10:24:37 -0700 (PDT)
-Message-ID: <8211eca2-c768-4472-a849-17208848d361@riscstar.com>
-Date: Fri, 28 Mar 2025 12:24:36 -0500
+        d=1e100.net; s=20230601; t=1743192083; x=1743796883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CWlDjObtNCMAig2x0XE/n+rj8AXxIshTECeaANEV/mU=;
+        b=tCOqTDpCem5UHHOi97KHMxbqjoxrhKDvqgMSRki4xoSl/ynoMvxXihebS2+Yw/pNBS
+         l+GOWk6N72Ehe1SJJoDj+DigzComEr2686bBy2Wx7tF4ZVKSV0HFEv1ufADuzfqCBCjV
+         ihKpeLP9i5dUZAT66UM0cVpKjpyGcbCeOf/OHSJAM4ALLL3rcR+MGvhJj7/EWaGmiKdq
+         dM52kIfLONqnzr3G6RLknby/nCMMxQFTxoXXCeCxsuMMNtw9pd7uHooEisU2m7MZsa/x
+         NpD9mC2GQ+XBmsaK0c/Tv1MkDiSvzYSzHUVa7z7ZnncM2VEleFoTB90k92RybUh+Q2DD
+         PewA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0P9x9pVGw1R7aqFX/oBFNd9/RCA9khsgevcUHP/otjf59NrIWCU6Y5FFruEiY+1THfDk0djzV73db@vger.kernel.org, AJvYcCUad1xjAwqAYlyP7bzMktRQvGZ5S5J9jajYEbwj4p5BqyNKKoMzdc+W3bUk0oafE9DvZ4nWIY0ztffB@vger.kernel.org, AJvYcCUgfsTHhmIhwZvItRV/DRKhyIZoZXVgyAJ7Sln+JC16LGwt//KfnKeilzKBsWb2WwAmBq79+loqqVyvfUl4@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfFJnwzvPtLNP3HoXRMd61b4U5PWU07RIeaR8yiCGdCyk2XtQT
+	dvy2OSvWj2JtbbZXVdj3ybaUmEne41wENiwEVP90AoXaAt3w/VZ3
+X-Gm-Gg: ASbGncvyL170rAMPF9RzjcpBz3Obu4p4Q5bYmQWDRqBktHDvyX6ck1X668bXEqc0EL/
+	RZ3FBafaGF/rrpo6QMv9hNoqZXKbOgi7CgTXob6syPnMR1lcDX0gy4g8UAxcN/TiWM+a11IVzsm
+	fTkjkcU1XGp2CJDHZg8+RJ0yRSn86a1IhmUvYd9Kg9/R56wMkol11fBTMCWHlstn2RIJb8UgUSp
+	GTSq0HjZzcXW+Onp8QcM6IgvVKR0/lwaKc5FGPkQ1mMxiauPU+qeH5CARPnX24Eb4qnh8SKzF2r
+	iVVIOwtRBGIWCx0UMJJvdzR0GT9rpWvoOoDnNEiWpoh2qPqNphx2JgaNbxYg9lx6drg=
+X-Google-Smtp-Source: AGHT+IG8hqXIrn97tmW/uHBB5qDdkcyinu5eWQt92U1S5xKjZO1U+G4x3Wv5X8+GrwnTs7rlRRWhZQ==
+X-Received: by 2002:a05:600c:c08:b0:439:8e95:796a with SMTP id 5b1f17b1804b1-43db62bda6cmr6056355e9.13.1743192082378;
+        Fri, 28 Mar 2025 13:01:22 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:b400:d08:873:badd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d8fcceaaasm37930955e9.18.2025.03.28.13.01.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Mar 2025 13:01:21 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/6] clk: renesas: rzv2h: Add clock and reset entries for USB2 and GBETH
+Date: Fri, 28 Mar 2025 20:00:59 +0000
+Message-ID: <20250328200105.176129-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 6/7] clk: spacemit: define new syscons with only
- resets
-To: Yixun Lan <dlan@gentoo.org>
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heylenay@4d2.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- spacemit@lists.linux.dev, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250321151831.623575-1-elder@riscstar.com>
- <20250321151831.623575-7-elder@riscstar.com> <20250322164247-GYD11633@gentoo>
- <c080eb55-943e-4564-8dcc-dd5f27b296a9@riscstar.com>
- <20250324062129-GYA19363@gentoo>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250324062129-GYA19363@gentoo>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/24/25 1:21 AM, Yixun Lan wrote:
-> Hi Alex:
-> 
-> On 08:23 Sun 23 Mar     , Alex Elder wrote:
->> On 3/22/25 11:42 AM, Yixun Lan wrote:
->>> Hi Alex:
->>>
->>> It occur to me it's a little odd to implemnt reset driver
->>> for RCPU block, but after check with vendor the RCPU region can
->>> be accessed both by ACPU and RCPU, then I'm fine with this.
->>
->> I implemented just the resets that were found in the downstream
->> code.
->>
->> I first implemented a separate reset driver, very simple, which
->> only implemented the resets.  I had a separate DTS binding (like
->> was done for the PLLs).  I was ready to post it for review, then
->> noticed that the registers used were shared with clocks.  So I
->> merged all of that separate code into the clock driver, as you
->> see here.
->>
-> ok
-> 
->>> ACPU - RISC-V Main CPU, with mmu, running Linux
->>> RCPU - real time CPU, without mmu, running RT-OS
->>
->> I didn't realize there was a separate CPU running its
->> own OS.  Is this managed as a remoteproc by the RISC-V AP?
->> The reset signals, I hope, are only touched by the AP
->> and not the real-time CPU.  Can you provide any further
->> information about this?
->>
-> As far as I know, the RCPU region can be acccesed via AP and real-time CPU
-> from hardware perspective, there is no guarantee of isolation,
-> so maybe software should take care of this in case only one side can touch
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The downstream code implements clocks and resets that are
-apparently associated with that real-time CPU.  Now that
-you've pointed this out, I investigated a little further.
+Hi All,
 
-In "k1-x.dtsi" I see these used (in downstram):
-   CLK_RCPU_UART1 and RESET_RCPU_UART1
-   CLK_RCPU_I2C0 and RESET_RCPU_I2C0
-   CLK_RCPU_IR and RESET_RCPU_IR
-   CLK_RCPU_CAN, CLK_RCPU_CAN_BUS, and RESET_RCPU_CAN
-   CLK_RCPU2_PWM0 through CLK_RCPU2_PWM9 and
-   RESET_RCPU2_PWM0 through RESET_RCPU2_PWM9
+This patch series adds clock and reset entries for USB2 and GBETH in the
+R9A09G057 SoC. Support for ignoring the monitoring of CLK_MON bits for
+external clocks is also added and the logic to ensure that module clock
+is ON now checks both CLK_ON and CLK_MON bits. Also the core clocks for
+USB2 and GBETH are added in the device tree bindings.
 
-In "k1-x-hdmi.dtsi" I see these used:
-   CLK_RCPU_HDMIAUDIO and RESET_RCPU_HDMIAUDIO
+Note, these patch apply on top of the following patch series:
+https://lore.kernel.org/all/20250228202655.491035-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-Also, the memory region associated with the "RCPU2"
-really is 0xc0888000 in the downstream code, even though
-that isn't seen in the documentation.
+Cheers,
+Prabhakar
 
-Yixun, do you think we should remove code that supports
-RCPU resets *and* clocks, until we really need it (and
-we understand better how/why they're used)?
+Lad Prabhakar (6):
+  clk: renesas: rzv2h-cpg: Use str_on_off() helper in
+    rzv2h_mod_clock_endisable()
+  clk: renesas: rzv2h-cpg: Use both CLK_ON and CLK_MON bits for clock
+    state validation
+  clk: renesas: rzv2h-cpg: Ignore monitoring CLK_MON bits for external
+    clocks
+  dt-bindings: clock: renesas,r9a09g057-cpg: Add USB2 PHY and GBETH PTP
+    core clocks
+  clk: renesas: r9a09g057: Add clock and reset entries for USB2
+  clk: renesas: r9a09g057: Add clock and reset entries for GBETH0/1
 
+ drivers/clk/renesas/r9a09g057-cpg.c           | 92 ++++++++++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.c               | 36 +++++++-
+ drivers/clk/renesas/rzv2h-cpg.h               | 39 +++++++-
+ .../dt-bindings/clock/renesas,r9a09g057-cpg.h |  4 +
+ 4 files changed, 162 insertions(+), 9 deletions(-)
 
-In the next version of my reset series (which I plan to
-send today) I will keep the RCPU resets.
-
-> for remoteproc, I haven't checked, and it's unrelated to this discussion
-> (doesn't change shared resource fact whether remoteproc supported or not)
-
-I don't understand why the AP would manage multiple
-clocks and resets for a separate processor.  I'm not
-going to look at that now though.
-
->>> On 10:18 Fri 21 Mar     , Alex Elder wrote:
->>>> Enable support for three additional syscon CCUs which support reset
->>>> controls but no clocks:  ARCPU, RCPU2, and APBC2.
->>>>
->>>> Signed-off-by: Alex Elder <elder@riscstar.com>
->>>> ---
->>>>    drivers/clk/spacemit/ccu-k1.c | 106 ++++++++++++++++++++++++++++++++++
->>>>    1 file changed, 106 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
->>>> index 17e321c25959a..bf5a3e2048619 100644
->>>> --- a/drivers/clk/spacemit/ccu-k1.c
->>>> +++ b/drivers/clk/spacemit/ccu-k1.c
->>>> @@ -130,6 +130,37 @@
->>>>    #define APMU_EMAC0_CLK_RES_CTRL		0x3e4
->>>>    #define APMU_EMAC1_CLK_RES_CTRL		0x3ec
->>>>    
->>>> +/* RCPU register offsets */
->>>> +#define RCPU_SSP0_CLK_RST		0x0028
->>>> +#define RCPU_I2C0_CLK_RST		0x0030
->>>> +#define RCPU_UART1_CLK_RST		0x003c
->>>> +#define RCPU_CAN_CLK_RST		0x0048
->>>> +#define RCPU_IR_CLK_RST			0x004c
->>>> +#define RCPU_UART0_CLK_RST		0x00d8
->>>> +/* XXX Next one is part of the AUD_AUDCLOCK region @ 0xc0882000 */
->>> this comment looks odd, XXX?
->>
->> Yeah, I meant to remove that before sending but I forgot.
->>
->> The downstream code treats this one register as being
->> part of the RCPU memory region, and extends that region
->> to be 0x2048 bytes to "fit" it.
->>
->> The hardware documentation actually defines a different
->> "RCPU Audio Clock" memory region, and it might be more
->> correct (though less convenient) to define that as a
->> distinct region of memory.
->>
->> What do you think?
->>
-> I'm not sure, but from DT perspective, is it an independent device?
-> if yes, then need to describe as a distinct region..
-
-I think we should just remove these definitions.  And
-because of that, I'm going to leave this as-is (included
-with the existing RCPU memory region and device) in the
-next version of my code.  If we decide to keep them, I
-can separate them later.
-
-					-Alex
-
->> 					-Alex
->>
->>>> +#define AUDIO_HDMI_CLK_CTRL		0x2044
->>>> +
->>>> +/* RCPU2 register offsets */
->>>> +#define RCPU2_PWM0_CLK_RST		0x0000
->>>> +#define RCPU2_PWM1_CLK_RST		0x0004
->>>> +#define RCPU2_PWM2_CLK_RST		0x0008
->>>> +#define RCPU2_PWM3_CLK_RST		0x000c
->>>> +#define RCPU2_PWM4_CLK_RST		0x0010
->>>> +#define RCPU2_PWM5_CLK_RST		0x0014
->>>> +#define RCPU2_PWM6_CLK_RST		0x0018
->>>> +#define RCPU2_PWM7_CLK_RST		0x001c
->>>> +#define RCPU2_PWM8_CLK_RST		0x0020
->>>> +#define RCPU2_PWM9_CLK_RST		0x0024
->>>> +
->>>> +/* APBC2 register offsets */
->>>> +#define APBC2_UART1_CLK_RST		0x0000
->>>> +#define APBC2_SSP2_CLK_RST		0x0004
->>>> +#define APBC2_TWSI3_CLK_RST		0x0008
->>>> +#define APBC2_RTC_CLK_RST		0x000c
->>>> +#define APBC2_TIMERS0_CLK_RST		0x0010
->>>> +#define APBC2_KPC_CLK_RST		0x0014
->>>> +#define APBC2_GPIO_CLK_RST		0x001c
->>>> +
->>>>    struct spacemit_ccu_clk {
->>>>    	int id;
->>>>    	struct clk_hw *hw;
->>>> @@ -1781,6 +1812,69 @@ static const struct k1_ccu_data k1_ccu_apmu_data = {
->>>>    	.rst_data	= &apmu_reset_controller_data,
->>>>    };
->>>>    
->>>> +static const struct ccu_reset_data rcpu_reset_data[] = {
->>>> +	[RST_RCPU_SSP0]		= RST_DATA(RCPU_SSP0_CLK_RST,	0, BIT(0)),
->>>> +	[RST_RCPU_I2C0]		= RST_DATA(RCPU_I2C0_CLK_RST,	0, BIT(0)),
->>>> +	[RST_RCPU_UART1]	= RST_DATA(RCPU_UART1_CLK_RST,	0, BIT(0)),
->>>> +	[RST_RCPU_IR]		= RST_DATA(RCPU_CAN_CLK_RST,	0, BIT(0)),
->>>> +	[RST_RCPU_CAN]		= RST_DATA(RCPU_IR_CLK_RST,	0, BIT(0)),
->>>> +	[RST_RCPU_UART0]	= RST_DATA(RCPU_UART0_CLK_RST,	0, BIT(0)),
->>>> +	[RST_RCPU_HDMI_AUDIO]	= RST_DATA(AUDIO_HDMI_CLK_CTRL,	0, BIT(0)),
->>>> +};
->>>> +
->>>> +static const struct ccu_reset_controller_data rcpu_reset_controller_data = {
->>>> +	.count		= ARRAY_SIZE(rcpu_reset_data),
->>>> +	.data		= rcpu_reset_data,
->>>> +};
->>>> +
->>>> +static struct k1_ccu_data k1_ccu_rcpu_data = {
->>>> +	/* No clocks in the RCPU CCU */
->>>> +	.rst_data	= &rcpu_reset_controller_data,
->>>> +};
->>>> +
->>>> +static const struct ccu_reset_data rcpu2_reset_data[] = {
->>>> +	[RST_RCPU2_PWM0]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
->>>> +	[RST_RCPU2_PWM1]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
->>>> +	[RST_RCPU2_PWM2]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
->>>> +	[RST_RCPU2_PWM3]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
->>>> +	[RST_RCPU2_PWM4]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
->>>> +	[RST_RCPU2_PWM5]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
->>>> +	[RST_RCPU2_PWM6]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
->>>> +	[RST_RCPU2_PWM7]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
->>>> +	[RST_RCPU2_PWM8]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
->>>> +	[RST_RCPU2_PWM9]	= RST_DATA(RCPU2_PWM9_CLK_RST,	BIT(2), BIT(0)),
->>>> +};
->>>> +
->>>> +static const struct ccu_reset_controller_data rcpu2_reset_controller_data = {
->>>> +	.count		= ARRAY_SIZE(rcpu2_reset_data),
->>>> +	.data		= rcpu2_reset_data,
->>>> +};
->>>> +
->>>> +static struct k1_ccu_data k1_ccu_rcpu2_data = {
->>>> +	/* No clocks in the RCPU2 CCU */
->>>> +	.rst_data	= &rcpu2_reset_controller_data,
->>>> +};
->>>> +
->>>> +static const struct ccu_reset_data apbc2_reset_data[] = {
->>>> +	[RST_APBC2_UART1]	= RST_DATA(APBC2_UART1_CLK_RST,	BIT(2), (0)),
->>>> +	[RST_APBC2_SSP2]	= RST_DATA(APBC2_SSP2_CLK_RST,	BIT(2), (0)),
->>>> +	[RST_APBC2_TWSI3]	= RST_DATA(APBC2_TWSI3_CLK_RST,	BIT(2), (0)),
->>>> +	[RST_APBC2_RTC]		= RST_DATA(APBC2_RTC_CLK_RST,	BIT(2), (0)),
->>>> +	[RST_APBC2_TIMERS0]	= RST_DATA(APBC2_TIMERS0_CLK_RST, BIT(2), (0)),
->>>> +	[RST_APBC2_KPC]		= RST_DATA(APBC2_KPC_CLK_RST,	BIT(2), (0)),
->>>> +	[RST_APBC2_GPIO]	= RST_DATA(APBC2_GPIO_CLK_RST,	BIT(2), (0)),
->>>> +};
->>>> +
->>>> +static const struct ccu_reset_controller_data apbc2_reset_controller_data = {
->>>> +	.count		= ARRAY_SIZE(apbc2_reset_data),
->>>> +	.data		= apbc2_reset_data,
->>>> +};
->>>> +
->>>> +static struct k1_ccu_data k1_ccu_apbc2_data = {
->>>> +	/* No clocks in the RCPU2 CCU */
->>>> +	.rst_data	= &apbc2_reset_controller_data,
->>>> +};
->>>> +
->>>>    static struct ccu_reset_controller *
->>>>    rcdev_to_controller(struct reset_controller_dev *rcdev)
->>>>    {
->>>> @@ -1959,6 +2053,18 @@ static const struct of_device_id of_k1_ccu_match[] = {
->>>>    		.compatible	= "spacemit,k1-syscon-apmu",
->>>>    		.data		= &k1_ccu_apmu_data,
->>>>    	},
->>>> +	{
->>>> +		.compatible	= "spacemit,k1-syscon-rcpu",
->>>> +		.data		= &k1_ccu_rcpu_data,
->>>> +	},
->>>> +	{
->>>> +		.compatible	= "spacemit,k1-syscon-rcpu2",
->>>> +		.data		= &k1_ccu_rcpu2_data,
->>>> +	},
->>>> +	{
->>>> +		.compatible	= "spacemit,k1-syscon-apbc2",
->>>> +		.data		= &k1_ccu_apbc2_data,
->>>> +	},
->>>>    	{ }
->>>>    };
->>>>    MODULE_DEVICE_TABLE(of, of_k1_ccu_match);
->>>> -- 
->>>> 2.43.0
->>>>
->>>
->>
-> 
+-- 
+2.49.0
 
