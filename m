@@ -1,177 +1,128 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1937E42A97;
-	Fri, 28 Mar 2025 09:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAE41C174E;
+	Fri, 28 Mar 2025 10:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743155979; cv=none; b=HW8+vXFPzkGQ+LxuMgf8wrRv0MOAobU981t3pVes/FRu5Wh9y57k3k2IYnmNJU1CNzvLnz3eG/ImcX4E+KpSHdSynyvZpyrufunxQ4ZYZOoqdBqeLIBB6WEp5K+X1qHZapqqxuMSed2Xzyj2y4pT3BMt9BPZZrjVa/X5tmcaHjw=
+	t=1743158474; cv=none; b=Ow/kV+3+AjgWQ1gn6T0JNzOnNZbIMldPPI4TKG5lNfRvqX9bIJdWZuN4l059iAd4LpTziWHVcH9GetbxIY/zLFIge+XyTksmU2U4pDj7F+L6QvP5otk7tc70sybAsKbDo9T1qSbcHEynkV1IHjNrVc3tJc4p/VYv0JASi8r9Kdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743155979; c=relaxed/simple;
-	bh=hNNA/d/v3lN7oYWEV0sFTmuJdeaOkQ/iC+Hv1NB56PI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=l9cqXMvu5coiOPcLV0djzIS0d5RJZ6wuT+J5sy5zpL+SwISeELBvT+xpNvSVD39TEP03nFd8kFNJdS035CDaIG4HrIYay7c31v4YQcOkZ4BdLI2EmvIVtzaYwHJos4N3iPdund1gYBMXOk5SrEXOPW/M1tYkKAf8r1N2/xxtX/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CyNQntcA; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1743158474; c=relaxed/simple;
+	bh=+Cr53Mv5cVCxK2AEW2QgAI5641P4VOCPUL4p240FVn0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RtHpgKmC7/bO+tGJGmZ7Fvc1HjneGK2RnLeW3TPhegSZ/tIERBnBl2mglbnT1opsMSR2l/vmDxucD4/cezLYov7fXHYfw4OfMLXaoq3p/VSIIiEX8A5ZNu1gEBAdnHH8oFAb42CfKoaRUPf4sGdbbzCf/QFTRj5sVE4cmf+cXn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fnDoUv7x; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CyNQntcA"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DF75D441FE;
-	Fri, 28 Mar 2025 09:59:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1743155975;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZzPCpChQK+Tk3U5esg1UPETkUAwKsnZ9Cr/dBBfydlo=;
-	b=CyNQntcAaPHSO6/SH4mvZIv2j+Y0AZCWZ4upqISbI94iBXhOM6/N7ZPqagBLP9011ua/Bu
-	HTfuhW1nWTzjiBwhxYTsXo+5tRT7+Hwk8RhwPDqim0i9bdh4/A96CUHU9fGFmawL4da1ZJ
-	91vS+vnD6cc79baEy0NbSDO61LLP5bBbTDsyhKmKeebRBEx7cBPw+E71ge0zgqqWUButef
-	K4SCrhavecisuxkOmPDsh0sk3XsdPL71P8id3WRYodKfU+wW4x4mValg4JyEh/r65czOTq
-	DlCN4vMTl4o13Y27JPV4W0wJlUjuVoW1QGXHX0YijQ9C+p3r5k7WbntjY+mG0g==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>,  Len Brown <len.brown@intel.com>,  Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,  Danilo Krummrich
- <dakr@kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Stephen
- Boyd <sboyd@kernel.org>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-  linux-pm@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-clk@vger.kernel.org,  Chen-Yu Tsai <wenst@chromium.org>,  Lucas
- Stach <l.stach@pengutronix.de>,  Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,  Marek Vasut <marex@denx.de>,  Ulf
- Hansson <ulf.hansson@linaro.org>,  Kevin Hilman <khilman@kernel.org>,
-  Fabio Estevam <festevam@denx.de>,  Jacky Bai <ping.bai@nxp.com>,  Peng
- Fan <peng.fan@nxp.com>,  Shawn Guo <shawnguo@kernel.org>,  Shengjiu Wang
- <shengjiu.wang@nxp.com>,  linux-imx@nxp.com,  Ian Ray
- <ian.ray@gehealthcare.com>,  =?utf-8?Q?Herv=C3=A9?= Codina
- <herve.codina@bootlin.com>,
-  Luca Ceresoli <luca.ceresoli@bootlin.com>,  Saravana Kannan
- <saravanak@google.com>
-Subject: Re: [PATCH RFC 01/10] PM: runtime: Add helpers to resume consumers
-In-Reply-To: <CAJZ5v0gFER-nbWpZK6FMDJCXA+iPQUm5DZDAiRY3ahugR2MM=g@mail.gmail.com>
-	(Rafael J. Wysocki's message of "Wed, 26 Mar 2025 20:18:03 +0100")
-References: <20250326-cross-lock-dep-v1-0-3199e49e8652@bootlin.com>
-	<20250326-cross-lock-dep-v1-1-3199e49e8652@bootlin.com>
-	<CAJZ5v0gFER-nbWpZK6FMDJCXA+iPQUm5DZDAiRY3ahugR2MM=g@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 28 Mar 2025 10:59:33 +0100
-Message-ID: <874izdlblm.fsf@bootlin.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fnDoUv7x"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52S853YL011141;
+	Fri, 28 Mar 2025 10:41:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9iwwtYnFPmLMO4Z6C59FXnTyRLkIi5qrCDGvyDBIlMM=; b=fnDoUv7xmWhLszKE
+	A/rasxif8J23znv+w1KdvgFyfL3Z4iBfux8/7ok0wz1T4uwC5ensxf4K30OMvxhx
+	QK9OfOP8nPSJFEmBikJBDzrv42+Rq1fiiGzxG5c1TdVPdyxApdvj8t5VwqDYTAxC
+	keejGPiyBTlncdtoDhttnTFrslSthLWssDzCu6mF952BdxgCOyvCRHsc3FuHWgMe
+	iUSqgFV6By4x90Bs3d2VWGmfvVTFLmcsRati7DahEqqJIG3t5PAIbyTOSji3IrE3
+	Odkku51jfHXrUF22KtTWUE5w+EVDPkMey2Ak2V/kBor3gt3szp9sTaTHCSo9uQMi
+	AIxirA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45nqxugfmt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Mar 2025 10:41:08 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52SAf70L007015
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Mar 2025 10:41:07 GMT
+Received: from [10.218.22.7] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 28 Mar
+ 2025 03:41:01 -0700
+Message-ID: <98bf09d2-0ad4-4499-b020-88107c115c01@quicinc.com>
+Date: Fri, 28 Mar 2025 16:09:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddujedtleelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeejgeeftdefledvieegvdejlefgleegjefhgfeuleevgfdtjeehudffhedvheegueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprghvvghlsehutgifrdgtiidprhgtphhtthhopehlvghnrdgsrhhofihnsehinhhtvghlrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdpr
- hgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhm
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/18] dt-bindings: clock: qcom: sm8450-camcc: Allow to
+ specify two power domains
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Dmitry Baryshkov <lumag@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+References: <20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com>
+ <20250327-videocc-pll-multi-pd-voting-v3-3-895fafd62627@quicinc.com>
+ <c58b129c-1c83-44f3-bd52-13cc24e50cbb@linaro.org>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <c58b129c-1c83-44f3-bd52-13cc24e50cbb@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: jXzdg-JTLd6aqric1QWOXm2CB2Aj13W6
+X-Authority-Analysis: v=2.4 cv=e7QGSbp/ c=1 sm=1 tr=0 ts=67e67cc4 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=SowLGM7tv_KyZWzOVrUA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: jXzdg-JTLd6aqric1QWOXm2CB2Aj13W6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-28_05,2025-03-27_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 bulkscore=0 mlxlogscore=795 lowpriorityscore=0
+ priorityscore=1501 adultscore=0 impostorscore=0 suspectscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2503280073
 
-Hello Rafael,
 
->> The runtime PM core currently allows to runtime resume/suspend a device,
->> or its suppliers.
->>
->> Let's make it also possible to runtime resume/suspend consumers.
->>
->> Consumers and suppliers are seen here through the description made by
->> device_links.
->
-> It would be good to explain why all of this is needed.
->
-> I gather that it is used for resolving some synchronization issues in
-> the clk framework, but neither the cover letter nor this changelog
-> explains how it is used.
 
-The explanation is quite long, there have been already 3 full threads
-from people attempting to fix a problem that resides in the clock
-subsystem (but that may also be probably problematic in others, just
-uncovered so far). I don't know if you took the time to read the cover
-letter:
-https://lore.kernel.org/linux-clk/20250326-cross-lock-dep-v1-0-3199e49e8652=
-@bootlin.com/
-It tries to explain the problem and the approach to fix this problem,
-but let me try to give a runtime PM focused view of it here.
+On 3/27/2025 8:58 PM, Bryan O'Donoghue wrote:
+> On 27/03/2025 09:52, Jagadeesh Kona wrote:
+>> -      A phandle to an OPP node describing required MMCX performance point.
+>> +      Phandles to OPP nodes that describe required performance point on power domains
+> 
+> I believe we are dropping "Phandle to" generally as this is a redundant statement.
+> 
+> You should also pluralise performance-points.
+> 
+> .. required performance-points on power-domains
+> 
+> Other than that
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
 
-[Problem]
-
-We do have an ABBA locking situation between clk and any other subsystem
-that might be in use during runtime_resume() operations, provided that
-these subsystems also make clk calls at some point. The usual suspect
-here are power domains.
-
-There are different approaches that can be taken but the one that felt
-the most promising when we discussed it during last LPC (and also the
-one that was partially implemented in the clk subsystem already for a
-tiny portion of it) is the rule that "subsystem locks should not be kept
-acquired while calling in some other subsystems".
-
-Typically in the clk subsystem the logic is:
-
-func() {
-        mutex_lock(clk);
-        runtime_resume(clk);
-        ...
-}
-
-Whereas what would definitely work without locking issues is the
-opposite:
-
-func() {
-        runtime_resume(clk);
-        mutex_lock(clk);
-        ...
-}
-
-Of course life is not so simple, and the clock core is highly
-recursive, which means inverting the two calls like I hinted above
-simply does not work as we go deeper in the subcalls. As a result, we
-need to runtime resume *all* the relevant clocks in advance, before
-calling functions recursively (the lock itself is allowed to re-enter
-and is not blocking in this case).
-
-I followed all possible paths in the clock subsystem and identified 3
-main categories. The list of clocks we need to runtime resume in advance
-can either be:
-1- the parent clocks
-2- the child clocks
-3- the parent and child clocks
-4- all the clocks (typically for debugfs/sysfs purposes).
-
-[Solution 1: discarded]
-
-The first approach to do that was do to some guessing based on the clock
-tree topology. Unfortunately this approach does not stand because it is
-virtually unbounded. In order to know the clock topology we must acquire
-the clock main lock. In order to runtime resume we must release it. As a
-result, this logic is virtually unbounded (even though in practice we
-would converge at some point). So this approach was discarded by Steven.
-
-[Solution 2: this proposal]
-
-After the LPC discussion with Steven, I also discussed with Saravana
-about this and he pointed that since we were using fw_devlink=3Drpm by
-default now, all providers -including clock controllers of course- would
-already be runtime resumed the first time we would make a
-runtime_resume(clk), and thus all the nested calls were no longer
-needed. This native solution was already addressing point #1 above (and
-partially point #3) and all I had to do was to make a similar function
-for point #2.
-
-And here we are, trying to resume all consumers (from a device link
-perspective) which include, but is not limited to, consumer clocks.
-
-I hope this explanation will help understanding this patch and why it is
-needed for this series. As stated in the cover letter, I've tried to
-keep the changes here to their minimum. Maybe there are other/better
-ways to do that and we can discuss them. My priority is however to get
-this possible ABBA deadlock situation sorted out.
-
-I can further expand the commit log with these details if you want.
+Yes, I will fix above in the next series.
 
 Thanks,
-Miqu=C3=A8l
+Jagadeesh
+
+> ---
+> bod
