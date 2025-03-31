@@ -1,227 +1,86 @@
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF49217654;
-	Mon, 31 Mar 2025 15:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B40B8472;
+	Mon, 31 Mar 2025 23:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743434871; cv=none; b=smaXMOrQyMueOuQ3HbOjBQRPshbxqGjvUYBp4N0ztiLkwbYLQERgqjrRiCsghjW8H2PhDeXLQEoEHtIsZ8Gjm3hPK9HRtwxmWyaw5QWbeHcc/vyHE4p5SI1O3aGKUkxKryCC3eV8XdhLs020kcrlGsZ9lDN2V/UoyO2e46ak+kk=
+	t=1743465575; cv=none; b=FYdRp2hGjzwI8SjgStNkhXK1J4Vt8mcYNTsZjxcFySlTnoQFgmjO1HvIUJrRsAcp1d5sUgohU67AWlPPJhxymGkBF/LkKLq8woOFa3lN+urFDmMf1e434rweo0kqiywZHRq5CezYIjle74lIlfDQUpGOLbpjVuDWyWUHOOXpVpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743434871; c=relaxed/simple;
-	bh=zcSxldy4tZU7YfrKElgKAUBlHkircEvdrhseClZd4cA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OFkwUAhR7yLosR6AwXUYxq3q9qBjGBZSa/ZALMRKOanZX74rrroJeP16OHgud3RIbaCws41LPbAYonpwD2NhXzEKy+hITt6Ci9U6/lOjJXk7R9IFPMw/mAoDW/46cWxv8Wr/yUXX7QNR9Nw8UMiSXNSWlBrAs4E+5gvdtha3uGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkNoj1h4; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1743465575; c=relaxed/simple;
+	bh=2rq9HGTV9LJ6Wk1RQxNQBqHOXLKVMLBUyTX+63XeGNE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E13F/NSWKbz7d+G2xYYa1erosNJ6EAac2z4R2O9UNvcikNxkUiBoxGY4SDgmaV2pE9j2JelxgorBu9H2wTNY3a2ElD+wTz9eEM6UaYXwHthZsiTXilVVdl6onke+SWEonxDBPCUZmGHwTaWZqUCx5Vnw+VTzCGXDrYf5xNE/ZW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WLhUPBJT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkNoj1h4"
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5259327a93bso1980807e0c.2;
-        Mon, 31 Mar 2025 08:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743434868; x=1744039668; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AJLE1nyFkXIStchbJmUYwAf5Y0djUvjW8TujtP3j8yU=;
-        b=DkNoj1h4r+LJi38WrELGOy/eSInyRan3u+YN/ziVo43HVPsql033S2njcMogS7eGRV
-         eH7RuL0C1xWF78AwNPeKg4LxInDkJMBx+MkXUoWePWj9Vms+4+pFTBnGh2EkRQVuv9Jn
-         2HCqDK+MT9TiJw6/YwAaJeFOfH9Pm5zqvavqv/ITucQvW5MBi/H/0GfX6wTVgzJrJhRB
-         Gqo2EK6T5SQlOmXSPZI/CpgeE/keDy0nP8MpYd4GT/r1LYbUoTd1kIf5eI0Nm703LYDv
-         zuW/JYfSVzaW/3QXvt44/hKA8OpoPF/az2rlQ795yscWxrgOmIploVF5pUiaWrTeObjK
-         vZ1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743434868; x=1744039668;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AJLE1nyFkXIStchbJmUYwAf5Y0djUvjW8TujtP3j8yU=;
-        b=owDlLDUs1I1pPw+Q+moF48vvQBiUAAvY7zkIuxINEi5TvnRwYYYYOLmLbSE1Dzgcof
-         LUFxzWEXWR5paB++dO6LuEnH5cr14uYzBlv+rtL9SkjadOL72uXc1bl8bjs37hpn07my
-         FLSydJvNJwo0z7ZreVX3xK4qy6pLYxaj353ENSjZ2BJ8p5gsHwNo9zDbkcXs9JX1FSm0
-         0MHCa1MccvvrcwudgNSZXzCxvwqaWqAtxYkzEcBjjKDkcZtxWyP/H4ylhWDGJZ7lyTH2
-         ym4SuKoabkZgXSkhRNNdSnjsmwa5+X/ScBKIcy9js/B3Aa7oCk3AYbWNCSgnYfzGvk5r
-         4J1A==
-X-Forwarded-Encrypted: i=1; AJvYcCU8622wKOTfX2zklgM2mDrHjT+XkCWRYwaq49z25sUUxjd2VbwvJeY1+NAKyNiPHcYDThgIqqw2skoDmYY=@vger.kernel.org, AJvYcCVL+g1IAGZS36swLHcyiJ8TfxV400fQnNZlbKgo0fzI4pGL3kyrxF9OsSME1etN4Bam6Hq2xq7p7QD4@vger.kernel.org, AJvYcCVj4t7PQ56bspUKbTI9LGoNdOhpk7FDJNlsOROOal0U+FFMN6VQrsYaL71HXznWxysn3yyqlmb0TJVXEif2/hlBPU8=@vger.kernel.org, AJvYcCVnRBkJpQUMfDgoRRwgAxKDi0jszoKQbf9ICk+aN1ptzERPy1hGHy+LI/snVMaL4P9Se7+3etCavP6D@vger.kernel.org, AJvYcCWgopVe+BbdGj/Q4GPIUZDQVGT4VovIodPP/lbqOVft+tQLJZEhqhZGIuFEt5m2YgIoIFy5HoVLGxBeCvmx@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYNh0F2gGrq3AR9VfMQK90ksLV7RmPMcJe3Tt8TBGuzdf6Z5Kd
-	sw8YrFxDszbWi/RIxW1PzOapIfL4eRirF2noeCQY4YwlYqP3PmSgshocgaHC0pT5qw/7sv/f6xb
-	4FkicHb5m4qzcV9YR4E/1jMlaFTQ=
-X-Gm-Gg: ASbGncvzUZQit1TnmPdiJtiewzmDa3PrT4YaSmZB+YCrm//0Kqbu2WlqLjDUb5agiM9
-	URLWqUxLyzS9mpGzdcm79jswEp1tsVdxeLiGgAVDMLEa/YbZNFuMt5w6F78xg2v4BPf4M8nYjc0
-	kWC3t+G8SmYJC/kaFqySlyzvAFBt/FNPCugPrEC3JMvdFCvcTWOBOx5XA2P3Y=
-X-Google-Smtp-Source: AGHT+IHt9arRYtbTiWA3a1qC4COLXXXBtiSB4ldzFyRPQHHbGdLcelunUNrve5R2ts6bPGCsAQ1tFbamLH6ltA8kfs8=
-X-Received: by 2002:a05:6122:2021:b0:516:230b:eec with SMTP id
- 71dfb90a1353d-5261d3c9f51mr5111452e0c.5.1743434868285; Mon, 31 Mar 2025
- 08:27:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WLhUPBJT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65D1CC4CEE3;
+	Mon, 31 Mar 2025 23:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743465574;
+	bh=2rq9HGTV9LJ6Wk1RQxNQBqHOXLKVMLBUyTX+63XeGNE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WLhUPBJTkfLnk0JAgD+xqEwUNwq0mImtqwUUAlahAuqRju9fnI+oqQjBBBLMoIvMR
+	 s2VlimfVqV7CbTFmMUThAMcqkuO1az1+aZSUuJwKhsFb7AfGvWCTPjnTbNYwYNseJP
+	 kMjL/2M6+RiNbzXhrifdpcI6sGr76DZ1vo64JzirVtvMG30x2vWiXgjTLXUBZAu0Pw
+	 HkE3DrcnMtQj2vdgHW3R+fWNEH2cPW2//BoLLC0kK3OAhuPg3G8iNKAGACvTAhJh0P
+	 qXUy7XZ5VSRjLEcYNXwdCk1AEoCqup4pkJGpHkh/lbKLAuKAu7s9rOCYfCDgu3Ieyr
+	 TP6TrK72ZKjtQ==
+Date: Mon, 31 Mar 2025 18:59:33 -0500
+From: Rob Herring <robh@kernel.org>
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org, paul.barker.ct@bp.renesas.com,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 02/13] dt-bindings: clock: Add cpg for the Renesas
+ RZ/T2H SoC
+Message-ID: <20250331235933.GA2857038-robh@kernel.org>
+References: <20250331122657.3390355-1-thierry.bultel.yh@bp.renesas.com>
+ <20250331122657.3390355-3-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250330210717.46080-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250330210717.46080-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <TY3PR01MB113463B37FE6B1AAE8CF0F51F86AD2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CA+V-a8v0K_tWA=LnyHDptoBjtgPHSbgwpJp4L1rw4Uv6KC+-JA@mail.gmail.com>
- <TYCPR01MB11332F548F3770F0C70C9051A86AD2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
- <CA+V-a8tVQaDBzLXVJUonmV6eW3i_KLTTjVm3L0Kf2A1xrMoUHQ@mail.gmail.com> <TYCPR01MB11332EB9F2552938B490E62F886AD2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYCPR01MB11332EB9F2552938B490E62F886AD2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 31 Mar 2025 16:27:22 +0100
-X-Gm-Features: AQ5f1JqriXw8-7MBvStm3Uj9LY3nQv7H2_O7UWqukRvxQWRVF12UvsymQ4KnIQs
-Message-ID: <CA+V-a8uh-LUmLEs_85dXwuiYecJTyLt3zd06vyGE749Ye+9moQ@mail.gmail.com>
-Subject: Re: [PATCH 11/17] drm: renesas: rz-du: mipi_dsi: Add OF data support
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250331122657.3390355-3-thierry.bultel.yh@bp.renesas.com>
 
-Hi Biju,
+On Mon, Mar 31, 2025 at 02:26:43PM +0200, Thierry Bultel wrote:
+> Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
+> 
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> ---
+> Changes v5->v6:
+>   - Set clock minItem constraint
+>   - Moved additionalProperties after 'allOf' section
+> Changes v4->v5:
+>   - Set reg minItems and maxItems defaults at top level
+> Changes v3->v4:
+>   - Handle maxItems and clocks names properly in schema. 
+> ---
+>  .../bindings/clock/renesas,cpg-mssr.yaml      | 57 +++++++++++++------
+>  .../clock/renesas,r9a09g077-cpg-mssr.h        | 49 ++++++++++++++++
+>  2 files changed, 90 insertions(+), 16 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> index 77ce3615c65a..dee4c44ef025 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> @@ -52,9 +52,11 @@ properties:
+>        - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+>        - renesas,r8a779g0-cpg-mssr # R-Car V4H
+>        - renesas,r8a779h0-cpg-mssr # R-Car V4M
+> +      - renesas,r9a09g077-cpg-mssr # RZ/T2H
+>  
+>    reg:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 2
 
-On Mon, Mar 31, 2025 at 4:04=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
->
-> Hi Prabhakar,
->
-> > -----Original Message-----
-> > From: Lad, Prabhakar <prabhakar.csengg@gmail.com>
-> > Sent: 31 March 2025 15:44
-> > Subject: Re: [PATCH 11/17] drm: renesas: rz-du: mipi_dsi: Add OF data s=
-upport
-> >
-> > Hi Biju,
-> >
-> > On Mon, Mar 31, 2025 at 3:14=E2=80=AFPM Biju Das <biju.das.jz@bp.renesa=
-s.com> wrote:
-> > >
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Lad, Prabhakar <prabhakar.csengg@gmail.com>
-> > > > Sent: 31 March 2025 14:59
-> > > > To: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > Cc: Geert Uytterhoeven <geert+renesas@glider.be>; Andrzej Hajda
-> > > > <andrzej.hajda@intel.com>; Neil Armstrong
-> > > > <neil.armstrong@linaro.org>; Robert Foss <rfoss@kernel.org>;
-> > > > laurent.pinchart <laurent.pinchart@ideasonboard.com>; Jonas Karlman
-> > > > <jonas@kwiboo.se>; Jernej Skrabec <jernej.skrabec@gmail.com>; David
-> > > > Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; Maarte=
-n
-> > > > Lankhorst <maarten.lankhorst@linux.intel.com>; Maxime Ripard
-> > > > <mripard@kernel.org>; Thomas Zimmermann <tzimmermann@suse.de>; Rob
-> > > > Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>=
-;
-> > > > Conor Dooley <conor+dt@kernel.org>; Mauro Carvalho Chehab
-> > > > <mchehab@kernel.org>; Kieran Bingham
-> > > > <kieran.bingham+renesas@ideasonboard.com>; Stephen Boyd
-> > > > <sboyd@kernel.org>; Philipp Zabel <p.zabel@pengutronix.de>;
-> > > > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > > > linux-renesas- soc@vger.kernel.org; linux-media@vger.kernel.org;
-> > > > linux-clk@vger.kernel.org; Fabrizio Castro
-> > > > <fabrizio.castro.jz@renesas.com>; Prabhakar Mahadev Lad
-> > > > <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > Subject: Re: [PATCH 11/17] drm: renesas: rz-du: mipi_dsi: Add OF
-> > > > data support
-> > > >
-> > > > Hi Biju,
-> > > >
-> > > > Thank you for the review.
-> > > >
-> > > > On Mon, Mar 31, 2025 at 1:38=E2=80=AFPM Biju Das <biju.das.jz@bp.re=
-nesas.com> wrote:
-> > > > >
-> > > > > Hi Prabhakar,
-> > > > >
-> > > > > Thanks for the patch.
-> > > > >
-> > > > > > -----Original Message-----
-> > > > > > From: Prabhakar <prabhakar.csengg@gmail.com>
-> > > > > > Sent: 30 March 2025 22:07
-> > > > > > Subject: [PATCH 11/17] drm: renesas: rz-du: mipi_dsi: Add OF
-> > > > > > data support
-> > > > > >
-> > > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > >
-> > > > > > In preparation for adding support for the Renesas RZ/V2H(P) SoC=
-,
-> > > > > > this patch introduces a mechanism to pass SoC-specific
-> > > > > > information via OF data in the DSI driver. This enables the
-> > > > > > driver to adapt dynamically to various SoC-
-> > > > specific requirements without hardcoding configurations.
-> > > > > >
-> > > > > > The MIPI DSI interface on the RZ/V2H(P) SoC is nearly identical
-> > > > > > to the one on the RZ/G2L SoC. While the LINK registers are
-> > > > > > shared between the two SoCs, the D-PHY registers differ. Also
-> > > > > > the VCLK range differs on both these SoCs. To accommodate these
-> > > > > > differences `struct rzg2l_mipi_dsi_hw_info`
-> > > > is introduced and as now passed as OF data.
-> > > > > >
-> > > > > > These changes lay the groundwork for the upcoming RZ/V2H(P) SoC
-> > > > > > support by allowing SoC-specific data to be passed through OF.
-> > > > > >
-> > > > <snip>
-> > > > > > +
-> > > > > >       ret =3D drm_of_get_data_lanes_count_ep(dsi->dev->of_node,=
- 1, 0, 1, 4);
-> > > > > >       if (ret < 0)
-> > > > > >               return dev_err_probe(dsi->dev, ret, @@ -729,10
-> > > > > > +750,12 @@ static int rzg2l_mipi_dsi_probe(struct platform_devi=
-ce *pdev)
-> > > > > >       if (IS_ERR(dsi->vclk))
-> > > > > >               return PTR_ERR(dsi->vclk);
-> > > > > >
-> > > > > > -     dsi->rstc =3D devm_reset_control_get_exclusive(dsi->dev, =
-"rst");
-> > > > > > -     if (IS_ERR(dsi->rstc))
-> > > > > > -             return dev_err_probe(dsi->dev, PTR_ERR(dsi->rstc)=
-,
-> > > > > > -                                  "failed to get rst\n");
-> > > > > > +     if (dsi->info->has_dphy_rstc) {
-> > > > > > +             dsi->rstc =3D
-> > > > > > + devm_reset_control_get_exclusive(dsi->dev,
-> > > > > > + "rst");
-> > > > >
-> > > > > Maybe use devm_reset_control_get_optional_exclusive by dropping h=
-as_dphy_rstc.
-> > > > >
-> > > > As the dtbs_check doesn't enforce this,  `has_dphy_rstc` flag was
-> > > > added. Recently the same was done for the CRU [0] based on the rece=
-nt comment received.
-> > > >
-> > >
-> > > RZ/V2H has "arst" and "prst". So, If you add "rst" for RZ/V2H then yo=
-u should get dtbs warning,
-> > right?
-> > >
-> > No we dont [0], note DT binding is written based on the recent feedback=
- received.
->
-> That is strange. It is triggering warning for me, if I just update the ex=
-ample.
->
-Ahh right I missed that. The current implementation is based on this
-comment received [0] (same being applied for reset). Please let me
-know if you still want me to use
-devm_reset_control_get_optional_exclusive() (and same for the clk).
-
-[0] https://lore.kernel.org/lkml/20250223181955.GD8330@pendragon.ideasonboa=
-rd.com/
-
-Cheers,
-Prabhakar
+You need to define what each entry is. And do that here assuming the 
+first entry is the same in either case.
