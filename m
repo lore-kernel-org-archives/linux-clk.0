@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E260156237;
-	Mon, 31 Mar 2025 08:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEC31DE3D6;
+	Mon, 31 Mar 2025 08:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743409324; cv=none; b=lkWIOQLdcka3CUXFnvH1BRUTP8b//hu5QvmoSqKudHhep55h11OgT76FlUgqFCxqBXWGsDimDSE0H6poyV2Eoe12byRxC/h3iDlYeylzSNvm07Fe1h6jJIvPR4zaL6okNZakvrXUZ7SPD7gJG9hhv6TfCi9rBtkGyGPsFvKhLFc=
+	t=1743409465; cv=none; b=duU+o99ObVR3ppUTWKydaxCdl4KB3e0ArDaH9Y6ZjeAupyR8LmbB4qsmeGvtXzJ0YmU9VAqjcpbHykhmXFTtFipOPiDIb0w5EXbCRUA6pe2SvRFMjOfzaBAdSWIVw2N/N6UmhJfiOeGuzM20+RIAXv4r13lTdx8YrkLJ80ih54E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743409324; c=relaxed/simple;
-	bh=MWVjrIBlTej9T8symaIg5s2lPrrfvJCfKyZBNUS1gTo=;
+	s=arc-20240116; t=1743409465; c=relaxed/simple;
+	bh=fh801EUr5W0nJg6lJwAd46r4+NeqMdqOyfLq8d9tPGg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BOZwLCi0mTInDo8FcWunFBQie2CfyShp6MCNN+dFdX5+XFyWAB4Fel9ZiogMSMzEVA+YY8dOM2Flsi8PJFtam6KSwgT3XlfMDEd2rdss7we9ywPqtLBrrsZwDYKK2494RwHk23TlRnhJrUXjFKxGlpbqS8XYLC68OvO0vQeasxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iMxOopYx; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=hVIpHDf0dMkebtI9TWp1cmPX8S733D7Wyo9TEWYqHxiyNbucsrYu9j/1gIuUQX85+4AG0cp2q17Py0HMzW7BosfvgWf2EU9iQLzUGlhkyHaljEn1GAtXw/rYsxYffFO8FqUq4jsYEyaVJrvzOe5l3rQbMBmggxE7NsY+CxH1ImE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WP+q0ABs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMxOopYx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 145DBC4CEE5;
-	Mon, 31 Mar 2025 08:22:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WP+q0ABs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 025D6C4CEE3;
+	Mon, 31 Mar 2025 08:24:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743409323;
-	bh=MWVjrIBlTej9T8symaIg5s2lPrrfvJCfKyZBNUS1gTo=;
+	s=k20201202; t=1743409464;
+	bh=fh801EUr5W0nJg6lJwAd46r4+NeqMdqOyfLq8d9tPGg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iMxOopYxw01saXSK01yN9wtVj069LF6kPwXgDVC923F8qkzDlZa2I6tXAuwhixZro
-	 jLSvpVCFxI92dBx0zh4HbJCtPVX3WjfvE5qbHh8yKwFlQZQ/adSXBp/3k3dGO5iMqY
-	 FZIkcdwgFPBLMUJb2KsWjEkFsCQpgu6IFnLomePCclP62qt00c5xBnmCDmLo/15Gi5
-	 ntp6Utg2rmL/OwlR6X/t9bLyLxEfi653I2gCayGUV2nuo44QlPMS42cHKxz48QTv4d
-	 h1m8cQg3iHuomoNMczG4KiUUbpWHxrCump888oajDJozSaSoYQp0BhRJD9lCrFQymM
-	 vxnxBLr+KVS0g==
-Date: Mon, 31 Mar 2025 10:22:00 +0200
+	b=WP+q0ABswBFIiTCRSuWtBFHeO9HmjDQj4SJWl4GwU+P6PGWcvr44g9Fvfu2DwFkfU
+	 yM9uQtKEKJTS1lN2zOIxlnnRpNnX2kkqKuE+1bPGcFCkN7tl6QLziiWYep6iwO1Nqa
+	 8ZYQnrnZpiliDNBoWgNORNeNzAynUPdq1mPT45Q4o4s6H2VzIV5GH7mXYpE34e+/mf
+	 k8rDcPLEVG0qpQ4xk0izblYshJxywPy9a9bQBm28E+nyMB+coSZBSDoN9ZmWAyCjN2
+	 8vBGz0vOsZqOiSwvVDWrx9POVETUCNqJTsIo/0SNpW+J7NgfiYwwSrMmHhr5BQVfLu
+	 yVfwlukDc3FHQ==
+Date: Mon, 31 Mar 2025 10:24:21 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Prabhakar <prabhakar.csengg@gmail.com>
 Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
@@ -42,11 +42,11 @@ Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
 	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 04/17] media: dt-bindings: media: renesas,fcp: Document
- RZ/V2H(P) SoC
-Message-ID: <20250331-ebony-taipan-from-uranus-a832a9@krzk-bin>
+Subject: Re: [PATCH 05/17] dt-bindings: display: renesas,rzg2l-du: Add
+ support for RZ/V2H(P) SoC
+Message-ID: <20250331-magic-buzzard-from-valhalla-af88e3@krzk-bin>
 References: <20250330210717.46080-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250330210717.46080-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250330210717.46080-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,23 +55,52 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250330210717.46080-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250330210717.46080-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Sun, Mar 30, 2025 at 10:07:00PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> The FCPVD block on the RZ/V2H(P) SoC is identical to the one found on the
-> RZ/G2L SoC.
-> 
-> No driver changes are required, as `renesas,fcpv` will be used as a
-> fallback compatible string on the RZ/V2H(P) SoC.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/media/renesas,fcp.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+On Sun, Mar 30, 2025 at 10:07:01PM +0100, Prabhakar wrote:
+>  allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a07g044-du
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This goes probably after the if: block for renesas,r9a07g043u-du to keep
+sorting (if I get numbers correctly).
+
+> +    then:
+> +      properties:
+> +        ports:
+> +          properties:
+> +            port@0:
+> +              description: DSI
+> +            port@1:
+> +              description: DPI
+> +
+> +          required:
+> +            - port@0
+> +            - port@1
+>    - if:
+>        properties:
+>          compatible:
+> @@ -101,18 +119,20 @@ allOf:
+>  
+>            required:
+>              - port@0
+> -    else:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a09g057-du
+> +    then:
+>        properties:
+>          ports:
+>            properties:
+>              port@0:
+>                description: DSI
+
+port@1: false
 
 Best regards,
 Krzysztof
