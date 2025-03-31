@@ -1,49 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436F318CBE1;
-	Mon, 31 Mar 2025 07:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4891537C8;
+	Mon, 31 Mar 2025 08:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743406536; cv=none; b=PMGxLC3g/Q9aW5/t9NAsXHHTJS4TfYkCKkXyy7c+AU7ttTBpmv5r80v7XsAp0XbfLqI5yRnMyxP1Cb6Xmzr8f5gTNHaMmamSy7+zt3QD+sZHshCQ1m25nBVtwVsGmfAntJXtfegWZ1QpCst+mDG7LZ2CXcfS83LtR97UqSMRQug=
+	t=1743409030; cv=none; b=XpIiiObCOMagNS9nE0FPeHxYoaD+kgpCBxh0/mZ/Iv+dyvESZDmWDEp3jspK2LZXaaOrI3GwnNXPbGvAPj+yWA3mRicieXYONB9qp0A2O30nRnMMkMNiRf7zNjPH9vWSQGGjA9xIJ0AXYaxLeNtLhZiOR0w8TUdTaO2x54Co3G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743406536; c=relaxed/simple;
-	bh=A9Gk5MXC1bSvKeS45s1VhPpZ/lnbaWeef++2Cj5TGAI=;
+	s=arc-20240116; t=1743409030; c=relaxed/simple;
+	bh=SfzKmBFWQ3kxOKjW2mvjOvt8bJIQNsNfG5QQqF206v0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZmxELzayAT9HwZN3k22UHBh8tBLwZ3TrIGBeBd8OEiWZ01CZpnBZC41Vz5zOHqYWc9E8z/13B6qgmRVmGC0nFBrW3QyXfxM/9mPLoEKhM2HEw2pErPPa2nLJRM2QvtblzQs6OWde6ZlGumXO2FB1RagWjxdVMTrtL4//EPcF08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pilpS5yB; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9TFtk4ttwCZQLsTx6NrtIfRKt1/ut2JI+1tkUiF6RXgDit61ZOoy0Vaxqk84VXVzThPByr6rtTfMn9pa89WUCljoeKiwHnVYourefIYDHpXGjEZEP/XxR2Zny34hJmuMH7gsGRKhvU0I4PfuawY3bRHQ2/v2cfsqWVMNKAoF4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKZ9WLOI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pilpS5yB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCBB2C4CEE3;
-	Mon, 31 Mar 2025 07:35:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKZ9WLOI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A5DDC4CEE3;
+	Mon, 31 Mar 2025 08:17:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743406535;
-	bh=A9Gk5MXC1bSvKeS45s1VhPpZ/lnbaWeef++2Cj5TGAI=;
+	s=k20201202; t=1743409029;
+	bh=SfzKmBFWQ3kxOKjW2mvjOvt8bJIQNsNfG5QQqF206v0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pilpS5yB/toibhVDR8rY0m7ycyfC5hawxGsTGDW/VPp0f1Xd6BKxY29kHD/DvmCYU
-	 dl/xdf0J5NUGnUy2vgBGU+5ggVuvsJNmRIltssUaNxPpa2576LurQgH766ty9dK6re
-	 vi9L7PFdeQy0uoon7VQQrgw6uIJuEIVETMXoGTiAPreGmDr19lUNY7MCVkTf0amHfk
-	 7eUmO703he7zl/995od8Qe/sqSJAn5WKM6XP3ylOxWa5vb3YrpWtPNim6evjS8sxuJ
-	 6jvitXsd411vVm+0fGLlsT/ZyCjycmWTgmUfyScux49+i5TYl1lqeN6PWwejHha3Yj
-	 tgqxnHr1lczdQ==
-Date: Mon, 31 Mar 2025 09:35:32 +0200
+	b=PKZ9WLOI9kQ87StxoYLmLkWED3DkITsNbTD2m8P67V3Z0cip/u0vmXRButJ8mErH+
+	 YnOgFDOPjheQ1vtzN6u1rCd5dNE9OXz3PKWQ88CgOPZw0evOnGtRxh+0ztV4g87r96
+	 xkOxNwPDGAtlY4uFdDmvQZJVMoi3Yoos64D4FjuuCQeI2A40TVh5IY1m6b/FN93iKI
+	 7Vm0F5pe9cSIneZRXuhznBhujefsDJUwbLbMFFmYi91tDge8Nbd2LMQ6Wtf4pFhAxR
+	 NIQ+GDt1Ew5w4kxiAjs44SPeZa4E9eDKyrGUzjD407IIVIeOep2YhbwS4RPoYaNP4K
+	 F76bh+CMxWmpw==
+Date: Mon, 31 Mar 2025 10:17:05 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 03/32] dt-bindings: firmware: google,gs101-acpm-ipc:
- add PMIC child node
-Message-ID: <20250331-shaggy-mutant-scallop-cb4866@krzk-bin>
-References: <20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org>
- <20250328-s2mpg10-v2-3-b54dee33fb6b@linaro.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 4/6] dt-bindings: clock: renesas,r9a09g057-cpg: Add USB2
+ PHY and GBETH PTP core clocks
+Message-ID: <20250331-radical-hyena-of-atheism-e9ba72@krzk-bin>
+References: <20250328200105.176129-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250328200105.176129-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,43 +49,17 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250328-s2mpg10-v2-3-b54dee33fb6b@linaro.org>
+In-Reply-To: <20250328200105.176129-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Fri, Mar 28, 2025 at 01:28:49PM +0000, Andr=C3=A9 Draszik wrote:
-> The PMIC is supposed to be a child of ACPM, add it here to describe the
-> connection.
->=20
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
->  .../bindings/firmware/google,gs101-acpm-ipc.yaml        | 17 +++++++++++=
-++++++
->  1 file changed, 17 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/firmware/google,gs101-acpm=
--ipc.yaml b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ip=
-c.yaml
-> index 2cdad1bbae73bb1795eccf47e1a58e270acd022c..5524f2af5bda2d29b5113f8fe=
-14ece7f02366a60 100644
-> --- a/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/firmware/google,gs101-acpm-ipc.ya=
-ml
-> @@ -27,6 +27,16 @@ properties:
->    mboxes:
->      maxItems: 1
-> =20
-> +  pmic:
-> +    description: Child node describing the main PMIC.
-> +    type: object
-> +    $ref: /schemas/mfd/samsung,s2mps11.yaml
-> +    unevaluatedProperties: false
+On Fri, Mar 28, 2025 at 08:01:03PM +0000, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Add definitions for USB2 PHY core clocks and Gigabit Ethernet PTP
+> reference core clocks in the R9A09G057 CPG bindings header file.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Drop these two and use "additionalProperties: true".
-> +
-> +    properties:
-> +      compatible:
-> +        const: samsung,s2mpg10-pmic
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
