@@ -1,112 +1,125 @@
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267FB202C5A;
-	Tue,  1 Apr 2025 13:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79605189F56;
+	Tue,  1 Apr 2025 14:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743513825; cv=none; b=nxIllqLDjizd9nEvs6tbvMmwNdqhj/s2TVQIBLeA74XtJmo33dEoOPaPP1EMYjjk9Z+Xl/2Yc1OAHuvL8Vb1A3kCJXEnDl5WuXcW+4LsbsA6MExQCH4mlT/xRWBqFXhGM3d8MB4cFLqEP4BVkFKNWhorRI7kzm5RM9ayMvxNGBE=
+	t=1743517486; cv=none; b=jJExMM8uo+CagnVkOADaK0EQ8zuy+HU44BV4qkRy+kphEEcVMEy0uRDRiUmboWXeF9OKRBGn+GT8p7VNPi3NMk0b6kcwSsWJFpFGp5cOrrJEsefOGf1V3NlDPEp/YFQk/BhjlGEQV6iJVgHQxOXaDf8QHT0pVaqTHeOmMB+VddU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743513825; c=relaxed/simple;
-	bh=BiuPqRJRr57nRty/a6n8RR+DLkyTMZh3A6tDfFtIG9I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NA1cd2JJ9tV4hnz5iVBfMupyfpXgLttgRWWFNfOoeiU0bhRKpYbsWswWAcXs9OwuCqYLw5rJXwVSUApZXgY+/0Lp6g1HbJSvpfvnbYlMxT9PV13XQyq7MyFsAQryMtTewq+UbPh9o77XT5jEVWZpw246r86SyTwcsutpRESzZhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJZLZtgM; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1743517486; c=relaxed/simple;
+	bh=UEwhfsnRmdNrlpCAYZKSnEloif6NrMNWguTi4XBkR/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UdqlDMd8v9XqI0ztqokosRXvsVOL7GsLQjlqhazw7RUEpnUTZ5OwbPtqoU5YT+++e0KaPyqCD1iDpUfIEyWY88NKgSBKKV90Pc17WqmbBSGNEmTJYmkmQLX1N5ULzF8YGQ3F9rQZiUBI5vyab+g1ZTyeo2KF8zC8xehwHAQUXjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=Hj5njTlZ; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJZLZtgM"
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-224191d92e4so102513995ad.3;
-        Tue, 01 Apr 2025 06:23:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743513822; x=1744118622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EyDNMW9IBuY8jRB69DY3fJHCsQyLv/GHW0iXNqQGDTc=;
-        b=XJZLZtgMcRE6lp18VzRYlHOVLudn8tNXUjVtSam4lnv+D9/fQcaeqy+298qsPryAxb
-         00bhR4t7w/Pg+ch0xyz3noUitgk04+eb9AVpNUe21pzPS/6A7MMC5j2nk93Ebll4/jYd
-         4fuR+5YmVnkcqjz8JfS7UVQX+c3kvQCX7Q2Y9aSQh1Y5NWK/7XEFtNQr5JMRp0EuCAFY
-         BnlQw9tefPdW/3j5TBGxSk9hL73JEDEgX/uOQNZOdTe+qyUezSeqtEYYkIYdiOejKOsU
-         HFO0A+tpMrUygZ80hr0BWjxEgA2m4xo46y6apVUattE5IWrAXGuYtHfBeCr7Oq5RVfsj
-         XtNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743513822; x=1744118622;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EyDNMW9IBuY8jRB69DY3fJHCsQyLv/GHW0iXNqQGDTc=;
-        b=P9rpHDGRLLeFnvTuLeRXtbFYBlOk3C69Dxq2UGY4LWGCYIhv2T5UhA4b3KeJ7LjvtZ
-         GnMIb6oePFHQCbD69T3vVvb+tvym154fJ8m9x92Va9w7Ryc9vFQkgmBCc3uMwagYiP2o
-         ewja8dPbm8GmNkImYEy0YSOHj/hmvo5K8xZmErvwRsNJ194k12k/CAchOpB92RSRcxdi
-         1knd48/PKXu8VRWigGQ+N0W2e2xBIGElYjSvT/d3Cao5upILixCxchTIU8Jhl7rnIz5m
-         eBHSOGNwg6944VVDeWNORDqT1SmXRcr/+ecCcnr8ielItkw7/x+LJ6Y3swr+qxaKOtvD
-         UyuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZxJqHzUh3qc4iDcpY4QpH3HBsCuIlCtV1vEnfuvv0hKuaMCxvLH0aYrOM5iNPoDYv4nGVf0a4YZk=@vger.kernel.org, AJvYcCXtAOwKvTlIfgcxUSBpj8lEb8qoh8s4seG9x5rKysH2vp+JuFgOFjiKgoawBZrOa20OUE5Feu31mZf8mb02@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7IqU+wq2yjJbMb3WIBPOBGU+yLbX3OZ8qdqULgFKODZtTBekx
-	knRj1EHGJYEHfhICqvba0Fh+7X7Bno3e6islI9KGEI/QPmHp9csp
-X-Gm-Gg: ASbGncsZOiETYDvQnFuuD3Gf7bwh3k3lW7wePcP4V16NrEfKzMhPycNSyt++oO29KLK
-	dmn408ZvlkA0tksVQCDS9E+YznOmZ8s68be33BtkWMG+VAQb5UvsyX1ey3R2cnKT+XX+Nwxzu/3
-	N5CKg786eqJYaIMOqrOWh37Z2YO8U1o7f7FWpJineZ/znQBZ6tYsAK929XI1akJgS9JFekqV+sK
-	s8K3M02Pj3AJk+8RzwNUnr+6MQ7tG20muGwKxmH032IfVQjXInBi/KxcAjH1NLnXTHC3D4KnJcF
-	hz0KL7tNJYbIpCHuNZylhbpYVNcFLo/SLrQgkLq+ythZTS0zEt1O9fY2G2+bV2zF9BEfYfo=
-X-Google-Smtp-Source: AGHT+IEd9GQsC4GBsA6T7gbOkBVQnrLNIkIyEnQBb/RXdcexhSvAxnX9gO7Xk2mjUWmPOHqdw1MCaw==
-X-Received: by 2002:a17:902:db01:b0:215:8809:b3b7 with SMTP id d9443c01a7336-2292f946440mr203250275ad.7.1743513822231;
-        Tue, 01 Apr 2025 06:23:42 -0700 (PDT)
-Received: from henry.localdomain ([111.202.148.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291eeca1e1sm87901995ad.2.2025.04.01.06.23.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 06:23:41 -0700 (PDT)
-From: Henry Martin <bsdhenrymartin@gmail.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	florian.fainelli@broadcom.com
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	dave.stevenson@raspberrypi.com,
-	popcornmix@gmail.com,
-	mripard@kernel.org,
-	u.kleine-koenig@baylibre.com,
-	nathan@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Henry Martin <bsdhenrymartin@gmail.com>
-Subject: [PATCH v1] clk: bcm: Add NULL check in raspberrypi_clk_register()
-Date: Tue,  1 Apr 2025 21:23:24 +0800
-Message-Id: <20250401132324.27312-1-bsdhenrymartin@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="Hj5njTlZ"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=nyoNBGkZ/SvbWg6/7VkY8tnH5nK8aXreynxludftxRs=; b=Hj5njTlZyw29UjEq9ufWY6IQqS
+	+BTPdR9qp5fBzzyZxLjb5cnfuYsX/kq2s9+7/0VqSTY0rgH/KYykvZDGILggKPSYXqKJMkRGvF6kH
+	Az0rHZ2EPh+H5kaL8aUBDIDJYa9bhvJx3zcACLs5StNJvYF1z9DrQ1t0nJWdyXnhxYxgo7b+X2z1s
+	rGOlnou6COwSzW0igrksph46ghfws3puz3jumymQPfrZatjvQV40YZcmDvVzitk+9V1C+KA/ABrFL
+	SoOD514rjslnw5xcQHVp9Sx8IEls5hmzOGSVG7KvSvAMclWQ9Lf38ztUbxN351nxJWsHfQNW1Q29y
+	EbrGGzFg==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:42244 helo=[192.168.0.113])
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <david@lechnology.com>)
+	id 1tzcGf-000000006K1-3v06;
+	Tue, 01 Apr 2025 10:05:34 -0400
+Message-ID: <b79bda63-79bf-47b6-8ac1-1444ed101423@lechnology.com>
+Date: Tue, 1 Apr 2025 09:05:34 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] clk: davinci: Add NULL check in
+ davinci_lpsc_clk_register()
+To: Henry Martin <bsdhenrymartin@gmail.com>, mturquette@baylibre.com,
+ sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250401131341.26800-1-bsdhenrymartin@gmail.com>
+Content-Language: en-US
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ xsFNBFFxkZ8BEADXzbnj9t8XSZYxKJGHdHqYgEBVzRElb3+f11qhDZKzVCMsn1+AN+PlHqC7
+ VrCWLsWTSY7WsHB2fW3aXaoidtac5FYoX2IXAun1Sbv15NcBdapImkMv6zxhAyWz6LqPfdCp
+ QV+3x6qwUPFeLHdmew8mkSq56qTFgDQr9oQhsrXKHkXFD7aIAf5bM6janQCHgGTVDraRDfEO
+ rV9rj7Wu/SfjUCVSCvW/SuWBa3IXTLNgbrNwBfo7Pl/tHuto0jxkVCIJ6J3xa85BKMw1WjA+
+ jKzh12S6KWrLUfhEUt64G9WJHiZOnVAjxgCR7TUahVM2OQHcp49ouG/JZsGNniulXH4ErA2O
+ Wt6seUEx8XQIm48H96RWgKrwKJ+1WoLEmUcYOJDZUcguMZVc3Astx8aSaRjf6IRBO8XlJSJV
+ OorkguvrTQBZJfjoicuFx7VlpdMggMZayv0cqEvzZMSHUt8DCUG74rLhtab9LCg/9wdCwqyE
+ JEi/8jaV7JWxwiCmzVpw0mHn1DiUlp5kapZT+Hart0Gc1WW915psA4G6KneisFM5DJe+S5mn
+ dUJb5IttTOx37jQQi2igwlSBdSC/M+Zy3sb+DXYJUVjVxK56RGAnlSvjHUx/TkID6Vb6HXvm
+ Fgm9vQamTEf+C3XzlY2v1YaMMX8yQjfrzQSoGfB0+9zaD9J/cwARAQABzSREYXZpZCBMZWNo
+ bmVyIDxkYXZpZEBsZWNobm9sb2d5LmNvbT7CwdIEEwEIAIYFgmeVPmMECwkIBwkQH4r4jIL3
+ fANHFAAAAAAAHgAgc2FsdEBub3RhdGlvbnMuc2VxdW9pYS1wZ3Aub3JnDM6jI9LThow7adCF
+ tC3vi3zrklAc6o/kt42Hifhjwk8DFQgKBBYCAwECF4ACGwMCHgEWIQSKc9gqah9QmQfzc4gf
+ iviMgvd8AwAAEm4P/04Ou1k+zfSz2Di+wzFiIzz7c3zyU+R04sj0rFx4KRKIBYQQxgQOTkM/
+ zbKLMlggKMsbgICjDlWLp6ANCH0A22gGZQx5PJBDfjIl05G+GnK6XilpLyd3U18Xj/7PbB/t
+ GHER2Llpf/ePe1YgZPqUuI7fTtFz5QLdIjr/ygb+HWJI/H/IydaJfFDWxQWU6quGi852oKv8
+ KMhmhGjgahPF+am6p0iPjkm+PfhHchxgKIneBixpwxFaOlikODcNuo0E+wp3gGLkaDIoGv15
+ H3BMZklu96EOKeKQYctpCj8RvTKzjEbn6JxGyXhVGoPMnic2Mwc0TNrXccqDqlQh48FEK6+L
+ zAbQrPE3wWl1PFxSUvUc6b3jZ1JAjcVU2GfqhzHC0U1cjJX/XKA3jn60jl9vBgU+DkvT6Gq6
+ +pzj2nQszEx+N0+71I2v/vgoB8+kRKlibh2ydDRXfpipn2r4qR5imONrbW7OkLCEJ8nHmpmK
+ N8iZKJjjTFmktLesE1s2L0hb9eoWz7i4YGCcIMOZISRTv/w860ebOrH787Bg3JNRz+edvKU8
+ TM3twZrCedbi+wBZcgGUBpPkWLH9dUTgpycjRcCOPqOzuHQIOqCMXWFq2cQ9Oy5szMdwsEzh
+ Zf1Ys7e2++tAuALI/HXJNk4/BuddZYoorLyw7MV2mVEV91ERPIx4zsFNBFFxkZ8BEADSVjyc
+ eG8Up24FFXwv5YmV7yX520kM97N11e1RJVMI1RSU+Na3Xo9J1BW6EFMAdibD6hH8PiMmToKx
+ BrfYSLStLh2MbHA2T/3zqicU1nuk376LMyrAuoV/fl8/7Jldwh1c9AADaYXNQfZ84R6nyaTR
+ jy4fqcc/dG2kw5ZMln909SMKZc3HdVynmo9pLT2HBOnXu2d3bIGmzuDnDXzh1X8+ods4gViu
+ vB31xU1WiANr4TbhaNU+/LmEVfvhS+34Cmz3U5Xs5x7nWdpM6fFfDOSz2sIYXOGAcaV3oJ12
+ 1Uul2U2bMTsXxiwdbjmZP9jrzEfvhD5KIOutX+0OzdtM9QVB70QQOEh3maW/FwGdL5stYcad
+ sBiEEI6Y2ymVpBgzrPS6HzC+UZLUShOE+aLx+SYBYAuypikMPvG9W3MqWHCsXXEfyp2mCeor
+ Kb7PafyaBO/E5REjPmYUpkGMNZH1lGV3jegE9WdOBfXW9xvCwf0UefoFaVhjsjtzvl8lMQnd
+ rDBdKPpJ7zIIG6FGSsUYmCtvE+JAk83tfpUpSZKDSzsqtLTI8GE2fQzEuZcBqm6Yk2V1+u6r
+ jUjmqEBIzunyeUupaUc+p00JiwNE8v/wcx7UbD5m+PGOkNoLMLe0ti0O7nFlY8avZzy3eLBQ
+ enu4WsJjPVYeQGeGB3oLvCGIhT9/WwARAQABwsFfBBgBAgAJBQJRcZGfAhsMAAoJEB+K+IyC
+ 93wDC44P/0bAjHgFUPHl7jG5CrWGwgdTNN8NrjpmIxSk37kIuKMzcwP9BWhFF0mx6mCUEaxv
+ GdAQ9Va/uXB2TOyhLCGXhlf8uCwxcIyrOlhi2bK6ZIwwovyjjh7GCRnm8cP8ohDCJlDUpHkO
+ pmU4tcapbZiBrFaFAahxPMjwK9GJ3JY0lx63McgCEIwm6txNcMnVX5Y3HeW5Wo8DtmeM3Xaj
+ JLFaBXIhEfoNHMfDON6UGiXFeR8S9W8dpaX8XEwzPUjZyOG2LvOMAEPXx+kB9mZPTogong8L
+ ekL1HZHSY4OYffzQy5fVE+woHAMADkrmuosGkTRCP4IQHXOagoax/Dox01lKTLnlUL1iWWQj
+ fRaFXVKxEc2PF1RZUpoO/IQYFB1twcaF2ibT3TlGolbmb3qUYBo/Apl5GJUj/xOWwrbikD+C
+ i+vx8yuFUlulbS9Ht+3z1dFjBUDbtZ4Bdy/1heNpA9xORiRs+M4GyTil33pnBXEZp29nh7ev
+ 4VJ96sVvnQFzls3motvG+pq/c37Ms1gYayeCzA2iCDuKx6ZkybHg7IzNEduqZQ4bkaBpnEt+
+ vwE3Gg5l4dAUFWAs9qY13nyBANQ282FNctziEHCUJZ/Map6TdzHWO6hU1HuvmlwcJSFCOey8
+ yhkt386E6KfVYzrIhwTtabg+DLyMZK40Rop1VcU7Nx0M
+In-Reply-To: <20250401131341.26800-1-bsdhenrymartin@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-devm_kasprintf() returns NULL when memory allocation fails. Currently,
-raspberrypi_clk_register() does not check for this case, which results
-in a NULL pointer dereference.
+On 4/1/25 8:13 AM, Henry Martin wrote:
+> devm_kasprintf() returns NULL when memory allocation fails. Currently,
+> davinci_lpsc_clk_register() does not check for this case, which results
+> in a NULL pointer dereference.
+> 
+> Add NULL check after devm_kasprintf() to prevent this issue and ensuring
+> no resources are left allocated.
+> 
+> Fixes: c6ed4d734bc7 ("clk: davinci: New driver for davinci PSC clocks")
+> Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+> ---
 
-Add NULL check after devm_kasprintf() to prevent this issue.
-
-Fixes: 7dad8a613185 ("clk: bcm: rpi: Give firmware clocks a name")
-Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
----
- drivers/clk/bcm/clk-raspberrypi.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index 0e1fe3759530..720acc10f8aa 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -286,6 +286,8 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
- 	init.name = devm_kasprintf(rpi->dev, GFP_KERNEL,
- 				   "fw-clk-%s",
- 				   rpi_firmware_clk_names[id]);
-+	if (!init.name)
-+		return ERR_PTR(-ENOMEM);
- 	init.ops = &raspberrypi_firmware_clk_ops;
- 	init.flags = CLK_GET_RATE_NOCACHE;
- 
--- 
-2.34.1
+Reviewed-by: David Lechner <david@lechnology.com>
 
