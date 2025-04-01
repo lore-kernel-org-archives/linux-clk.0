@@ -1,40 +1,41 @@
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A913F1FBE83;
-	Tue,  1 Apr 2025 16:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C561C8612;
+	Tue,  1 Apr 2025 17:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743526029; cv=none; b=SkfCgro2+5OkhJ3Yy/DWfGkMjoXkyobepEe+WpPl+1iAE/M8f6RJ64HjZ/4qKwKLJBWRTJOxo5E6qHvt/Bye1n+conuNaReZLBb2VG1xrYwC2qkxKGq7RwK5wVtFSFXcietWc27OC7EP8XDkVn4tj0K45y+b1oTO+v8KtAuWndg=
+	t=1743528101; cv=none; b=Nv3t34ITdTUltGuezdTPIpdVJBarmwKSpixxzfiBxT+VDTNN1AJAwFjWe1Si7bpOzq645Xm88lHP9JMZ4p40wKY8oAY6/+uFi1+Qc8hw2YOKPymZgzD4zoD/TPvHDgMgPSC8xIu/OOhCMKEfeAJ1A3LnIz9PsE3sw9PeYyBO3L4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743526029; c=relaxed/simple;
-	bh=a6MFPOblanBjv8HejQd+RDyGK+ufnxyTPj6oKXkPptE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=L4Q5Ajcy2kQD31F5XmIXwyFI0LloOHO0ZCtXNQ/IUWP/D9ZMgPAvwxShKCVJ+DW+MnU08+/YLtsGl2v9hMRZfP2vOAPXjd73fXVNUi38EDENz11wSZln5/7wwUat0DuFeeMrwCEKr2MPPJdIo/hUg/gtbqfVle9NbRzi6qDTRDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=r0lN0vQd; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1743528101; c=relaxed/simple;
+	bh=w11IGACrChvN5h9qvFXuxbYJFturzczFTb0ewPiQf8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KpIBnQ/gaaQSczB2fg/ubLHGgMqty+fJe1Rb9UyEc+TBrOTAjln7Pept7W8qG96Exm9KpjM5/cNwABupmlOem6sutfuXoW9hWF6fEhlkjV8BqJdsNvsjhKRG5ELJqOHkar+APdWoBx29y5I8Gd7SnBk/UASg6mOGBWA+LMf36Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=WFJURWel; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="r0lN0vQd"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1743525973; x=1744130773; i=markus.elfring@web.de;
-	bh=WKBH7ZnN/oJER/hjnFN7pP/Ka1YrlQ/HQDnv3BjczOI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=r0lN0vQdvYzOxPxQhC5hkIb0SjSUjXVUNgqEPEi0rPpr1sWGFE+LkWS8oWcn2BND
-	 wQheoEdHPJBz0y+izX3vM/j3Mgzchh54PvRWHy77gAs20SHz1HJAxOACPdswe9VUp
-	 Y+Dsh+7tI09s0+ft5n2FXEXjKolsegcXL2oGvAPzLBNudUmDPUsSzjtBviuS+chnI
-	 rbOTBP3CHFVxscI9g7pNLlJZcvICK/uVAuvoJWUIomXgfgWnJOHbhCMDVpVsdy14e
-	 1apYUAdMYfhL7tKGCIE9RYv5rNcm50yRP5d7/vv63HvR6LGKqlBOsiewPxE5LLSmV
-	 BUZSg2Is58rYu3Xrjw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.54]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mcpuw-1tR9HT1k3O-00bcaG; Tue, 01
- Apr 2025 18:46:13 +0200
-Message-ID: <57fac291-6d7b-40e8-a4bf-8b8704662b9f@web.de>
-Date: Tue, 1 Apr 2025 18:46:12 +0200
+	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="WFJURWel"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=vsU7s/UMazXBgdqWSRo/9CWN1D/POxYAe2IXD6Jx6pI=; b=WFJURWel1LzhHk0lTeDkSkFar5
+	htLUUBzf7Yh7dQppa3LZG0Yvjp7BnT6O9AUBT3B430jZP0Tpll/lKlnXkXxDNF5Dr3K4N7xaKdnuL
+	1HOjSxX0W+nOwT+fS5RRMiOCD0wX3IjsXKZHGsf2cFd9LjcGlV9hf9yxWwHQXK0CZQfRsHIwRHC2W
+	bphiy80p3tnvs22r0xtECfnHW2K4+++phIhqeC1LfD310Z/yeBWmL4FCsHKKurqGd4cKI7SmcFwGn
+	VCYq07BPbX3YbsOSiJNoMQX32LiNNYOsvdtrd5LAbpaSKb3xK2uR5FKMtKU32zwWosr2atJZCxVID
+	C60dngmA==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:56528 helo=[192.168.0.113])
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <david@lechnology.com>)
+	id 1tzfKT-000000006yD-2DyG;
+	Tue, 01 Apr 2025 13:21:37 -0400
+Message-ID: <7513fb2c-3abe-4c29-aa94-42f0efe93396@lechnology.com>
+Date: Tue, 1 Apr 2025 12:21:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,67 +43,101 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Henry Martin <bsdhenrymartin@gmail.com>, linux-clk@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, David Lechner
- <david@lechnology.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-References: <20250401131341.26800-1-bsdhenrymartin@gmail.com>
 Subject: Re: [PATCH] clk: davinci: Add NULL check in
  davinci_lpsc_clk_register()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250401131341.26800-1-bsdhenrymartin@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Henry Martin <bsdhenrymartin@gmail.com>, linux-clk@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+References: <20250401131341.26800-1-bsdhenrymartin@gmail.com>
+ <57fac291-6d7b-40e8-a4bf-8b8704662b9f@web.de>
+Content-Language: en-US
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ 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
+In-Reply-To: <57fac291-6d7b-40e8-a4bf-8b8704662b9f@web.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:VQroEZlMDoo+6n6ZIzp+RndEXyP93F7SoRr6HX6AQElj6DSOcr6
- 5yCw4l07ZSHLXeckkiFrafshqWQQwR9QoL50TWll9c/28opPI1d7MbAS6eLdJ2jLw0Ncb1D
- ED56d92ljqKd+CYv8vrsZmSNR3eadPiE8Dg9ulb77WNkphmooaogMg4WqCJBlKxlsvdFXpp
- ZhwQ2sqvk0fWSpqAoXTbQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:syYlzGPsx1c=;QDvmaDAIUJWsuRymyp11PrjalKa
- VDkY5lj3KMABx1XZvDtgSKdqb6lkuwaD3zpCHcmXzYzoOrmt+akjj+odatC+bATWuSdWZ6suL
- JF9cwkWtGda/Yvxm8CvKhGfOhq7Fycl4GJNzA1/mUnSYPXBWWL5UBdoDJNLtGl2iI9zCala7q
- VYDFJbGIXpa5jlETQV/7Qo7Qs2pKVxFKdcU2zf3+Cn6Q9jgxJfl0kPDdDhwn7ftqQOcluRwpk
- jzIOlSbCxE1S1VTGkE/0L9jUvW4OR/xR4eXPr1aDVKOFkropDGVlvcPFRRpEBIYZJ67MIMkL4
- FHkxt96Oh3dt0kY0GcNVmZQRhkeLNRJelYAt0VRKMpEtPYj8XwDuLLIqFBsghl3iHlgr2t9H6
- 1uQwWxlXHDVOLjxy6cMg/VbVUGOEv3m1BfRq8ceLc/vK8VNS4jj9/NecxZbKr1celVeS1s2XN
- uFIBFOGIn0e/+SPD934bbaMR2+x+fIixGnAeyhyqx6YwnG8PvQ9OpQcEHndH93t1e3fdwhgJm
- iS3o9+P+Lv1r2ZZCvr8SU9C4I9mGSvAlswVbySVQ+d1498hjqdzvveSYzcFzcow/wc0KAgRLt
- 7N69P3C0q4ZIX1pgmK6sPD7nf+9++VV7+iS4unO/FAQpODmeMRokguA+2LvjZjQ/6Gzd7L36C
- Nia8DkTzwarFq6uLAzQSYKVK2+Lc+7tbwxIO/E02A3EI9vIpPvqZj8EJexpGHLOI23ahEAOWf
- OzI+Ao5RUGBPSsuZQ6tuTBCoVURU72MPfnuQcFBhffZRZhH3YeHK+dAlQrVJCsaFCzmt+hkH6
- 7zEYDlmdqtStdsbtG3fvZ8RHqnq886UT003f89Yxdy3kXM7SIO/1dAShSJqpx9xfOvRgm91V6
- Jy3jgM0DwtHlldHmMiZxqfbnf6gXrLwe6PQpTiXlIgUyA2Kc0Dpd2PG3Ex0rf1ZbJy+4pQlr4
- wL79HF9H3jxFG6yHgs8c6ufb48KYralrk5cLSVvwLzEuhL7f1BlRNaqPVsUKJzP96byZHNwqa
- 9Y6q6TklmTVTPAshrvJO99tPSupo094kUlZYePhmPBYfwE6vpvTX5k6Rk6cVtUhduwnsp18a7
- 9M/T0qYMZuW9p3NBLOsjIDsAQXn0vtyLoIOmvRxzWx9mrL/VRmqxrcHPr3Bw13Rx1aKS/xJsl
- D5SsXX5lBiMuKsBXNwmTy7F9hkywle8472qpFhc22wItaDICLBZbkOZJRpHcXMV+yp7VEmR3Z
- BRIpcLXU6pDEvQZDWj1OKF9EfJSnUxxtzxCy4agtqgC0rNP7NGv2I6blbhA2tWHlq+Jn56/KC
- HFLKrLyRj67LP2sb6AjCvEbOkY0TN+ZqSntBJqV0Y+S87wKELrT+Q6b4K1J7XmvkqJqYn1HAU
- WjUAbkBZ5d8oNZfMEyDcSSSFZkWG9kh8n23ewRiHB6T+idUZ+MX1ExlRsOdWm6Vncoumcx0RR
- mMX0/Hh70JSm0nSqJVrHXhVIobSHEpHvNZUNmNy+Ee+70I7+J
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-> devm_kasprintf() return NULL if memory allocation fails. Currently,
-=E2=80=A6
-                call?                               failed?
+On 4/1/25 11:46 AM, Markus Elfring wrote:
+>> devm_kasprintf() return NULL if memory allocation fails. Currently,
+> …
+>                 call?                               failed?
+> 
+> 
+>> Add NULL check after devm_kasprintf() to prevent this issue.
+> 
+> I propose to avoid duplicate source code also for the completion of
+> the corresponding exception handling.
+> 
+> * You may avoid repeated function calls by using another label instead.
+>   https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resources#MEM12C.Considerusingagotochainwhenleavingafunctiononerrorwhenusingandreleasingresources-CompliantSolution(copy_process()fromLinuxkernel)
 
+That would be OK too. I didn't worry about it in this case though
+since we are only duplicating 1 very short line of code. And the
+smaller diff has a better chance of successfully backporting to older
+stable kernels that will also pick up this patch.
 
-> Add NULL check after devm_kasprintf() to prevent this issue.
+> 
+> * How do you think about to benefit any more from the application of the attribute “__free”?
+>   https://elixir.bootlin.com/linux/v6.14-rc6/source/include/linux/slab.h#L472
 
-I propose to avoid duplicate source code also for the completion of
-the corresponding exception handling.
+Not a good fit for this specific use case.
 
-* You may avoid repeated function calls by using another label instead.
-  https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a+=
-goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+resou=
-rces#MEM12C.Considerusingagotochainwhenleavingafunctiononerrorwhenusingand=
-releasingresources-CompliantSolution(copy_process()fromLinuxkernel)
+> 
+> 
+> Regards,
+> Markus
 
-* How do you think about to benefit any more from the application of the a=
-ttribute =E2=80=9C__free=E2=80=9D?
-  https://elixir.bootlin.com/linux/v6.14-rc6/source/include/linux/slab.h#L=
-472
-
-
-Regards,
-Markus
