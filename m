@@ -1,23 +1,23 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEB921ABC3;
-	Wed,  2 Apr 2025 10:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391E3236A8B;
+	Wed,  2 Apr 2025 10:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743589260; cv=none; b=XXpuoLrgFIhKqYCfXnEKWs7rUE2Qht11/jyk5Lif1Y/2KGouLVRYz6XAH1hebREkOht3jjaXuLWz5NBuAx7JsuELc0BjVackEUMBmjpt6mv/TY9yH1ky+OSZWClpPH/ziE4Q7aEeHES5mBlVCUQTXkGT5lSi1iII9M+uHyBdlbo=
+	t=1743589356; cv=none; b=EN0gY8zjijH4LnqBFIYXydrgzWGnxqMRnEHmoZYOKAuwRF1glgZBsLxoJTJ40fGvwDdSy1dm8iwhEIJiFnVxmm9lz7AAUKnsR2b4h9wvYydOmpC6s+ojNCXhm+UONKoNGeIm6fePurvs6+M8AQzR5eYh2oZCrcBLj/pmFjwDmS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743589260; c=relaxed/simple;
+	s=arc-20240116; t=1743589356; c=relaxed/simple;
 	bh=Me7OUgOVepAtrtHTCUw4eo0nvqbAbb3ZE9zGuNAYJRk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PL/AXttojipeOtGEhOvYfPWeV4+0cHt7iigC3gNy6Xeii4wBzbTNgxyPRb9HDkmAy3KAs1uNIzVpwch7/Z5L92f8BzmUzXu39Nyjav8s7kMBxppDOAouL/+uDPX4uMqzz+VMdtR8ANkWtCaHssSjURbKHCiPixrQRARYlDTLjyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=outVgw3GfE7XtO3GSiiYSIoCjz0GABA3vDs1YtE/wzNWXyvPjL6pT0/e1mQdOaPePix4zIjYy5HsDkiEYcN0J320g4xFQN297W8X2Kp44oexxlDySvucxhnc0248MLWUm7PErYfXZNKFwPMJO1BrRjCyArPm03/KXm7HeZAASqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: tseEOo8pRLGQbD9fj8R1gg==
-X-CSE-MsgGUID: J4lDgruCRBKn5dUdFySnBw==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Apr 2025 19:20:55 +0900
+X-CSE-ConnectionGUID: EslSP0D4SA27IK6Tgej+hg==
+X-CSE-MsgGUID: spP6QAFWQgeOvhFwBXcWkA==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 02 Apr 2025 19:22:33 +0900
 Received: from localhost.localdomain (unknown [10.226.93.220])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2B0A4401C75A;
-	Wed,  2 Apr 2025 19:20:50 +0900 (JST)
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9728B42203FA;
+	Wed,  2 Apr 2025 19:22:28 +0900 (JST)
 From: Biju Das <biju.das.jz@bp.renesas.com>
 To: Marc Kleine-Budde <mkl@pengutronix.de>,
 	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
@@ -37,8 +37,8 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
 	Biju Das <biju.das.au@gmail.com>
 Subject: [PATCH v8 00/19] Add support for RZ/G3E CANFD
-Date: Wed,  2 Apr 2025 11:20:20 +0100
-Message-ID: <20250402102047.27943-1-biju.das.jz@bp.renesas.com>
+Date: Wed,  2 Apr 2025 11:21:52 +0100
+Message-ID: <20250402102226.28032-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
