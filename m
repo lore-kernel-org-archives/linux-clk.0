@@ -1,126 +1,217 @@
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F91425776;
-	Thu,  3 Apr 2025 13:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEF216CD33;
+	Thu,  3 Apr 2025 21:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743685564; cv=none; b=p0UEQEFAxRg9X7bywVc02CEGqWgzAORg7oG2DTti/Qg8klGpZ+x8HjvSjacb9arx/KqA4PNMayDrinodUJOGbzW3JcS04KUxgPVrdYzYt9Q3yLhlyzOBrM5Nz5dd9/O36JL+KRNlJStH+ZPK4aMIS9d+i3o0ZDMay6InD/96u0s=
+	t=1743715800; cv=none; b=kYR8CrVGIR82WgB7MUPmquq1Pm9ZvSbonYNJLexit2gRvYvpbJbZYhKJpnZ+0R9Ft3k3BHrbSAbswIEVuYGk1CQQO7rCo2+EWm3+771BU+0O9AfKvCdNGaMiZlYQy6GmsnktB477MnWVqRi0OSouzPBp4TArH/C2q60iZZmK3b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743685564; c=relaxed/simple;
-	bh=lsJeZZZY/2URMCsjtrIPjM8KEvccXHmoZdYqAmsM62o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FZSs6zqByylJkocrCp6FgwLOzOHQPLxDXXpaYB2lfi7ZxCvH2MlJB7JYHlGZJtbQsCvojLIptubkQMz0BQymr+TYZcwiu12mH06OgAB4VWvwPYwX5ccFj45R/zBjydMbPhk6xOfNbBq500kbfVTmxvQOFfqX0JVDObHMTGoJpew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QbO8ZoUg; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbO8ZoUg"
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86feb84877aso414474241.3;
-        Thu, 03 Apr 2025 06:06:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743685562; x=1744290362; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lsJeZZZY/2URMCsjtrIPjM8KEvccXHmoZdYqAmsM62o=;
-        b=QbO8ZoUgyWjiul967SmErDlE55XLGMpg++wYws+DKbqbc805ZcJfEO1sFdxAJNA/HG
-         WQmIoBlWuvBkyuRXsa5jQTsROKkmlvKq5GT1XgdcsIe35XJEmrI3RK37zY6g63LZO3Vq
-         +2EquwSUU5Zq2/C5gKCErh6/R/+sLwmOdEKdYYCXQHX/1gmE7v26wleCIeW0h+YGOpl0
-         Kugiz0RWtMY0PJzOIFo93LYKTJ5FzUJgj2o3xlwdGQc3zrBMhqHy4yE8UrI0/TpDfEpj
-         PZA/EWCDbzHc2HysIKD2E/m9rReuQX86/57V5Wxlts66d17y8bePDYBUbYkplt4PlbZv
-         ARgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743685562; x=1744290362;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lsJeZZZY/2URMCsjtrIPjM8KEvccXHmoZdYqAmsM62o=;
-        b=WqhFTKf7qWy8Y58gapIhusBMzdoWiZhoQTUAtiFFTQtW9WMOApRNSUSYzfVfm7bl2i
-         mMkRFZ5oYGwDeU+IiH1FPu7DCJLVXkvhhIYnJDBLznqa9l3ZA5drOSI+rh8N75cPBLDC
-         XHk+RQXN+cDHN8qaNpt3HVMVHmU3k+t7MgKdkzykZyl544H8TiGsMkCnuFB76Wkc1bl6
-         03Gu9VoOl0XmYybxXpDc/DQKmFHcMPAZhmzKgwRNQbGFwsv0D2YNtKSB3LeAqY4NLFmO
-         B3O2n/gmPyTCNYmoLJyFMQNnUCqaBUlJvDiYnhOQEEJMl4ykwTCGOTER1LKfwsw7tm7J
-         fGAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0MpY33EHPwxKB8ufzzPqy2uU14FhF0Vh/xM5iOJGNNqWTVpq7nsCIURl+PFZYiUIzFbC9DQEjVJC0Y27p@vger.kernel.org, AJvYcCV1jQ2c9ByItYNAyi7UcX1B9Yalztir7ZtHMZFWAXq5+Mzqjl6JZIgOA/GSdTJyxIdaSRm8KSlUlzEkVck=@vger.kernel.org, AJvYcCVTcCP5ZjYVFTnRlJbZXmwP+x7OgvgiffBhggP4wDga8qJ+m9NgmP6isiDu8CkJv32rgyKS+TBTDSY=@vger.kernel.org, AJvYcCWkM545kr+u4ePkBHTbMPNXcDSsLCNWYyTneR6Xzz+uXMZA7Z4+ZlUnJiNwpEIoIiQe9tzG0SQwTMa3Vwl6Ug67mmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybgLmHSz3F9sEhHAvOYCByA+W8+OReJp5qqab+82aDxX8W0+qb
-	Me6Hg9s4KqZDd5/PUNQPKeXP75FhE7G+N4MM2OemRBzCJZF1JNnXdGC75r5jNEpwCLDgh1WxgdY
-	A6X3o2/jptOlmLzMOOovX9Hc+ego=
-X-Gm-Gg: ASbGncuWBVN4S9UU4z4qF1VHzkh1qOBW0jpDYhEgGM6eEGRNp4A3gIM423fIQPEs0z0
-	tC5TA4+xUnr1talaXDiJ4neertAl/r+fXrqk4xJbo5pABOxxsIDl6bcDKZOAaNSU3YVJno0jLSI
-	pOh/AaGfLDr/J8xfTSII2NO+rrLg==
-X-Google-Smtp-Source: AGHT+IEzDE80EE6cbpeTM2EC/NmVx7bAKo2MiBYm9Z2gGy1h1pAWOHdYS27tRyPRKUwbhW2DvGquTwMOzOZsv1SPcGw=
-X-Received: by 2002:a05:6122:91a:b0:50b:e9a5:cd7b with SMTP id
- 71dfb90a1353d-52758ecb40emr1666317e0c.9.1743685561913; Thu, 03 Apr 2025
- 06:06:01 -0700 (PDT)
+	s=arc-20240116; t=1743715800; c=relaxed/simple;
+	bh=4UgEX2iXpq/hQ7VNduG/VorFw50QB2z5yQ3Tzb/nsHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bq9lOTM1B4BpseuXAnz8Q+mgo5MGccJ4hCsPdBbP/V5E6eGOs4k0L+vV1F/eHYCI73V7jNEbxYdh2kp3J3MvL3mNO6tTp/DnBzow4pQ+B6gOxEn04CG/JILh6pxZMZYT80mYDJfrLswWGlhku9z8uXBTORB3OLL+6Cm8a7M01uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: bfyd+sPRR/u8CuV+6Gw2sQ==
+X-CSE-MsgGUID: nEJ7kJwoRfC6Fr/HWGvkcg==
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 04 Apr 2025 06:29:49 +0900
+Received: from superbuilder.administration.lan (unknown [10.226.92.33])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id A3F7E40B446A;
+	Fri,  4 Apr 2025 06:29:46 +0900 (JST)
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+To: thierry.bultel@linatsea.fr
+Cc: linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org,
+	paul.barker.ct@bp.renesas.com,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 02/13] dt-bindings: clock: Add cpg for the Renesas RZ/T2H SoC
+Date: Thu,  3 Apr 2025 23:29:04 +0200
+Message-ID: <20250403212919.1137670-3-thierry.bultel.yh@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com>
+References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250330210717.46080-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <49b12329-87d8-4f6f-8498-0ff7430e31e6@ideasonboard.com>
-In-Reply-To: <49b12329-87d8-4f6f-8498-0ff7430e31e6@ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 3 Apr 2025 13:05:35 +0000
-X-Gm-Features: ATxdqUGr8IaAK5c_xkyz_zr7rT2-bUSRn-Mh8kf-15JIdRrzS-lrWmVXghuwU2A
-Message-ID: <CA+V-a8uW0sqOCqwpK2J3P9_MOaonpz8uA_CbOjqUiBxwPuXFEQ@mail.gmail.com>
-Subject: Re: [PATCH 00/17] Add support for DU and DSI on the Renesas RZ/V2H(P) SoC
-To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Tomi,
+Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
 
-On Thu, Apr 3, 2025 at 12:52=E2=80=AFPM Tomi Valkeinen
-<tomi.valkeinen+renesas@ideasonboard.com> wrote:
->
-> Hi,
->
-> On 31/03/2025 00:06, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Hi All,
-> >
-> > This patch series adds support for the Display Unit (DU) and MIPI DSI
-> > interface on the Renesas RZ/V2H(P) SoC. The inital patches add PLLDSI
-> > clocks and reset entries for the DSI and LCDC and the later patches add
-> > support for the DU and DSI drivers. The DU block is similar to the
-> > RZ/G2L SoC, but the DSI interface is slightly different. The patches
-> > include updates to the device tree bindings, clock and reset
-> > controllers, and the DU driver to accommodate these changes.
-> >
-> > Note, my initail intention was to split the clock patches and the DU/DS=
-I
-> > driver patches into two separate series. However, I found that sending
-> > them together will make it easier for the reviewers to understand clock
-> > related changes.
-> >
-> > Note, the clock patches aplly on top of the following patch series:
-> > - https://lore.kernel.org/all/20250228202655.491035-1-prabhakar.mahadev=
--lad.rj@bp.renesas.com/
-> > - https://lore.kernel.org/all/20250328200105.176129-1-prabhakar.mahadev=
--lad.rj@bp.renesas.com/
->
-> This is missing dri-devel list from the to/cc. Did you use
-> scripts/get_maintainer.pl?
->
-Apologies, I did use get_maintainer.pl but must have missed dri-devel.
-Thanks for pointing this out.
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+---
+Changes v6->v7:
+  - Add description for reg property
+Changes v5->v6:
+  - Set clock minItem constraint
+  - Moved additionalProperties after 'allOf' section
+Changes v4->v5:
+  - Set reg minItems and maxItems defaults at top level
+Changes v3->v4:
+  - Handle maxItems and clocks names properly in schema. 
+---
+ .../bindings/clock/renesas,cpg-mssr.yaml      | 61 ++++++++++++++-----
+ .../clock/renesas,r9a09g077-cpg-mssr.h        | 49 +++++++++++++++
+ 2 files changed, 94 insertions(+), 16 deletions(-)
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
 
-Cheers,
-Prabhakar
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+index 77ce3615c65a..483440ad0e3f 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+@@ -52,9 +52,15 @@ properties:
+       - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+       - renesas,r8a779g0-cpg-mssr # R-Car V4H
+       - renesas,r8a779h0-cpg-mssr # R-Car V4M
++      - renesas,r9a09g077-cpg-mssr # RZ/T2H
+ 
+   reg:
+-    maxItems: 1
++    minItems: 1
++    items:
++      - description: base address of register block 0
++      - description: base address of register block 1
++    description: base addresses of clock controller. Some controllers
++      (like r9a09g077) use two blocks instead of a single one).
+ 
+   clocks:
+     minItems: 1
+@@ -63,11 +69,6 @@ properties:
+   clock-names:
+     minItems: 1
+     maxItems: 2
+-    items:
+-      enum:
+-        - extal     # All
+-        - extalr    # Most R-Car Gen3 and RZ/G2
+-        - usb_extal # Most R-Car Gen2 and RZ/G1
+ 
+   '#clock-cells':
+     description: |
+@@ -92,16 +93,6 @@ properties:
+       the datasheet.
+     const: 1
+ 
+-if:
+-  not:
+-    properties:
+-      compatible:
+-        items:
+-          enum:
+-            - renesas,r7s9210-cpg-mssr
+-then:
+-  required:
+-    - '#reset-cells'
+ 
+ required:
+   - compatible
+@@ -111,6 +102,44 @@ required:
+   - '#clock-cells'
+   - '#power-domain-cells'
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a09g077-cpg-mssr
++    then:
++      properties:
++        reg:
++          minItems: 2
++        clocks:
++          minItems: 2
++        clock-names:
++          items:
++            - const: extal
++            - const: loco
++    else:
++      properties:
++        reg:
++          maxItems: 1
++        clock-names:
++          items:
++            enum:
++              - extal     # All
++              - extalr    # Most R-Car Gen3 and RZ/G2
++              - usb_extal # Most R-Car Gen2 and RZ/G1
++
++  - if:
++      not:
++        properties:
++          compatible:
++            items:
++              enum:
++                - renesas,r7s9210-cpg-mssr
++    then:
++      required:
++        - '#reset-cells'
++
+ additionalProperties: false
+ 
+ examples:
+diff --git a/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+new file mode 100644
+index 000000000000..27c9cdcdf7c8
+--- /dev/null
++++ b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++ *
++ * Copyright (C) 2025 Renesas Electronics Corp.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* R9A09G077 CPG Core Clocks */
++#define R9A09G077_CA55C0		0
++#define R9A09G077_CA55C1		1
++#define R9A09G077_CA55C2		2
++#define R9A09G077_CA55C3		3
++#define R9A09G077_SDHIHS		4
++#define R9A09G077_CLK_PLL1_ETH_PHY	5
++#define R9A09G077_CLK_OSC_ETH_PHY	6
++#define R9A09G077_CLK_ETHPHY		7
++#define R9A09G077_PCLKAH		8
++#define R9A09G077_PCLKAM		9
++#define R9A09G077_PCLKAL		10
++#define R9A09G077_CLK_SEL_ETH_PHY	11
++#define R9A09G077_DFI			12
++#define R9A09G077_PCLKH			13
++#define R9A09G077_PCLKM			14
++#define R9A09G077_PCLKL			15
++#define R9A09G077_PCLKGPTL		16
++#define R9A09G077_PCLKSHOST		17
++#define R9A09G077_PCLKRTC		18
++#define R9A09G077_USB			19
++#define R9A09G077_SPI0			20
++#define R9A09G077_SPI1			21
++#define R9A09G077_SPI2			22
++#define R9A09G077_SPI3			23
++#define R9A09G077_ETCLKA		24
++#define R9A09G077_ETCLKB		25
++#define R9A09G077_ETCLKC		26
++#define R9A09G077_ETCLKD		27
++#define R9A09G077_ETCLKE		28
++#define R9A09G077_ETHCLKE		29
++#define R9A09G077_ETHCLK_EXTAL		30
++#define R9A09G077_ETH_REFCLK		31
++#define R9A09G077_LCDC_CLKA		32
++#define R9A09G077_LCDC_CLKP		33
++#define R9A09G077_CA55			34
++#define R9A09G077_LCDC_CLKD		35
++
++#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
+-- 
+2.43.0
+
