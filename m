@@ -1,153 +1,188 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1281F427D;
-	Fri,  4 Apr 2025 15:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240B42101AE
+	for <linux-clk@vger.kernel.org>; Fri,  4 Apr 2025 16:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743780866; cv=none; b=poE8vjgEGjyfhl3+1Dp0QpDhxYcDrSLOLGLv9sryqT5Kyzy5chevo7qchnuauVElLAi05tLzhyjNHzUj0szsgFoTlfGFHcJAiX0cB9qvOgWavuFtv1H1fFbMhJARkHjoHpQojqO+NhmROKvdhEmc/q0Rn8FPTumuiHxpus8W4RY=
+	t=1743784994; cv=none; b=jVfsmdTPgTnu8ZSG5ToQiJ8oT6h6QfGlgLRK1s93XozbkyGEBJC+WQG6fJ3CHeRqReJKg/9YwYZ+zl8KPJLd/CltKLjcl5RkboBZQ8jYG1fM8yAjWs6FwrGCGm3fuoLEQgG57/gf884oUg6xso6N5KC/vl6cfRB23fY2ZJup74M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743780866; c=relaxed/simple;
-	bh=NV23c45qwybc9Xll89xfd7CaxSceSF6PVMzijUt0RPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O2t+vJjxKoBPTKpq/KfDtPFZKqn0XgiysFWapE+O1HKcJ5wiEHzfCkacTZf7qD8IbVmruzXYEf6yLbE183zGzdJodZwNuObNQTVaakBrh2UGnjcF/OjuQbECccoLv1QJ9nHg/yIpGy+fhisHoxf28U2lzI0zm1D17OP+KG8zc3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lUc8WQ9s; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1743784994; c=relaxed/simple;
+	bh=4h/h5Ey4YkMehMG/YIdYL0cH70WRN3xek869zn7JOjs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QJcL0dk3Rjvpk7TxYb57zX6x0Shvi4j3DTZcWu9jWNyZyuar5EW/MQHDVhCLniFBg5CV2RW288ALvAng/biv7goNghTXSWgsJxzSyno31c3D95INoUu/V34iQZMTw4QYCNwx3iASjyrfhv9LQUkwh62oa1zWqxW1NobZmD7LA+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uPWgwOWg; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUc8WQ9s"
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-5241abb9761so978741e0c.1;
-        Fri, 04 Apr 2025 08:34:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uPWgwOWg"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3912a28e629so221197f8f.1
+        for <linux-clk@vger.kernel.org>; Fri, 04 Apr 2025 09:43:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1743780864; x=1744385664; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W+NmuFTrUmLDbYncW/g9n/YL+hb6L+9MTuP8llxtZWc=;
-        b=lUc8WQ9sVhJS+8XR8/tUi5/evz27ou863zVY4V/DTh2sMKO3oDDZFFoXbQw4gkdxnt
-         A1XJq0PVJlALHWjkiJ2UC7GYpS3fDiqTECav63tXLfg8X3PsjBswoxDRU6e3gMiH8yp4
-         6upzJW7Co/jdQOrsne4Y2qFi8wMlO/iC8Hpq91upHJbHd0QD61lml7pTlmWloJsrcPyJ
-         rlh295TmDotM9S/ELEKUsk3zAPCQZcdXrKfWdLIT5KgPWYBBK73Jc3KKfl9MDEbUCaKH
-         kZDA7LJJoXZr7ljzCV875XgwFwnaMImPkqMI/4Id0D4WXm+wQ7qvhqQTfeMSPYbxY9kw
-         pbjQ==
+        d=linaro.org; s=google; t=1743784990; x=1744389790; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=xAGsnLdrspAycxCBxeKM44JqaHnIQt6B7n8T1zYYWxs=;
+        b=uPWgwOWgsk3o0w/ihhuR9MqF/8M6stdY6HHoCyuAEq7bzhUmtpSXdP2MkN115kSzOC
+         aBlDICzHLvmo50VNn1V07ebwppM1zq78KQ/gyVN0ChWLauzzz/Hs5W7bFsYJmVhmwIH7
+         egKtNoz2SRCdQnM9kGymiKDkUKeHxlJTCQ3Wxx0oD8M6XfcPh42/bUD0AxG/81cTnSWJ
+         2z6/eO4i3dU9f70cCMgnS2JN1cFfAQZVmEChOyhFGuW7twcH0sv2mY468SycVp49+3XG
+         kLQSX10xPVfeugsx4iDjFtiAGW+3LbdavUaJMs+Jpa/dargniEI5ND7xYvKZOpbeajhI
+         4dAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743780864; x=1744385664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W+NmuFTrUmLDbYncW/g9n/YL+hb6L+9MTuP8llxtZWc=;
-        b=oaComxsm3ZOYa7GR6hvg5bw+UvNeDPBV0XCZI1fM58xHKBoB2Bgy3ZPN4ocNuiQnW6
-         JWWo93kgPLiZ+/BHUf4hWcOGmDTaush/eYYX4NIh6wFcQ7RO365etqCX+/nS75gj5+Bk
-         tShT0AySjrgnbY8+q0ZL7npkjD6JyrYReZV5R000GhEsKrwa+iPgLpJmokclQTP6Zag9
-         8jRZu4Bh+oVSTq9tFHAZJyH7AoI6XHgcLy0H5V6ROluBCJ0yf/pbf8WVEbGWKB83L4+Y
-         bC/DVxyCtIr5lRQAUCHJlzNV8WFPn2PSIRv1Vjcj5TNcAil+I0x/fW5vCG2nLb3NgsNk
-         J69g==
-X-Forwarded-Encrypted: i=1; AJvYcCUmIjvKbzAA51qqrancPnC49ShPa9ypg5sY82zDXeYaE/dxqIOh53q1UaiDbGj/kDW2MBlp5Yl0RSd1@vger.kernel.org, AJvYcCUqOL/b/k2BqAOVMwBQrWASPhuPgrKjogw1qTn/2Z9VTXzY/X+V2IA2c1XyeqhXH2Eh+TgBT/59E1Sf8jcY@vger.kernel.org, AJvYcCW0/ncI+ZRH2A+zZVnkB8d8181ExxL08ITK/NrOFUT2+8LupSmF5GPcN+SpMM6aqJTjc1yz6GdxvP8d@vger.kernel.org, AJvYcCW1qeAkZX9z0d9oYLHGsGriHNqpqh8IyWqYafm9JSM/ogtDyHlnqdL/HPblc3tqgvrGKf8xZvb/F6ykebg=@vger.kernel.org, AJvYcCXEMI9YtbdZDAXQT/tEMjMLk2sTh8OCpRqzCS5cvOa8GTBGij29me+S2TFGESlWtlXFh6GvvFo3MsZiY9ZliJlcEtk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8cLsnrvC8PYSuIyoY3PNdaqmjiyH7gaKo6IsvpueWWSL4lSzH
-	fnOYqDclRzlvJXQAE148B3Unzju0IDNOpkeBB3UZ6iS4/LkNhvyTxALTnA7QKJSQKiNK8n+ZZUy
-	mcQWZCD3sp8EtddsQqH3XGf/1Zok=
-X-Gm-Gg: ASbGnct9EwemT9uiGC8SQ2/ZOcif0Dhy7eT6bXgTyV7RHhbJszfqnCaZWw3/A4qKasC
-	FWXDeztvvITkno1cVqGn9nSvnAqZPInI1a4zkN5fnnrATsHZUtF2ZJzb4Q9j4ugzdQjahti8LZo
-	kQlSWVDYTWYz2tAVq3EG2TcYvTYWm9r6dtl1sZjsqqytZ+D/lezjugrjeV7MB8vx6XJF7g
-X-Google-Smtp-Source: AGHT+IFeqBqPEc1fp5ZyqfbLTgIUGz0qzg+AQ6B0MuW9jh8JpKEs8+/8y5BBVclZGqon6NMK7qZD7gYVyPMB63icxus=
-X-Received: by 2002:a05:6122:da7:b0:520:61ee:c814 with SMTP id
- 71dfb90a1353d-52765c28c97mr1917972e0c.1.1743780863970; Fri, 04 Apr 2025
- 08:34:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743784990; x=1744389790;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xAGsnLdrspAycxCBxeKM44JqaHnIQt6B7n8T1zYYWxs=;
+        b=MOrQDwjiPnnMzSdpc332krLNopXiERzsjtzN4nAVXDXxdgtlP1mauDq91Hu/vcNgA9
+         EDZjVYRxF9b14uzzkPabp7J0MXXRrEPtZ8PtqsZuYbexLBeN4p735F7gWQcnKzTcSn2z
+         IAtT3AyavDUm7HMp5HaXkoLu+0ocGJOkba7lUuYpJdYVmHnyBnoYYFLCPYEP6bkK6PC2
+         oW1+sPIbfHbPkqCX1wEpuQpdYQDJA8o4jlEpOYYfiozT5nKWZlTDupMWylLc2vWpkn+A
+         Wdd1JTA/12TKUE+7aIkZcbsNOW4ESJOMex+XKoXU62KWr5MY7zEOQaXW4E03La+uzYvV
+         bEDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWavba+xsGsSLztXnMaxe1MzId+I3AGQanEAgfdBJNuWZ1HS7Dd99VtWyj/DODj8aoBn1GgOTNdDP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1VFtdz6f8E0+NOrmoavrFKqJ5BbsHlOY112sMUoowBkcRl9zC
+	BjFksGsRf//lbvFfuyQxiZkJajnghOW0GlSjS4ygne3sjftdD3i+TPChCoE0ftY=
+X-Gm-Gg: ASbGncsC74Ft6aJ7yLSFUFM8q1Wrn/mtRUWXkATM/RMPsTgl1IJIuURqiiZsQ+WEIoz
+	6NqmGFd3dgl+/9CEJmRRRrQdhSackzmvuzNxZXv8MpHUTkETHKc0C8jgT5di3LeaxWGbwUzBOvE
+	SJWXD1QFgRvcvXAO+ISlzZylXVpeLt0bdEiQBOPgw+ms5n4wFXV0wfO+H73ptLI/WxT7vjMCcvC
+	FTDkzlTXCgu8cP9a5mDmcLMTmvcbmVjDYIZthepI5/6/2u2TKPvPZ1J/XZRin4bE4adHaCEBvnA
+	V6Eph9918L9PhUQSTbzARJnVwc7Tv8dOn71B4xTtYy3M/ADsFeFSyHzkEf128sVV
+X-Google-Smtp-Source: AGHT+IG2IbUlYSnGQ6rLAHHC6qjUasnOVdNNxP1zU9JNrvGwlwZmuhSUx3coIjZGTA3VjYqWTFYtwQ==
+X-Received: by 2002:a05:600c:1d05:b0:43b:c0fa:f9c4 with SMTP id 5b1f17b1804b1-43ecfa03395mr12662335e9.4.1743784990341;
+        Fri, 04 Apr 2025 09:43:10 -0700 (PDT)
+Received: from [192.168.1.106] ([178.197.198.86])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34bf258sm50009095e9.23.2025.04.04.09.43.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Apr 2025 09:43:09 -0700 (PDT)
+Message-ID: <c5319e0f-6388-4f9a-82dd-526fdeb4ae26@linaro.org>
+Date: Fri, 4 Apr 2025 18:43:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250330210717.46080-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250330210717.46080-7-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250331-unselfish-spiffy-cobra-a36c7f@krzk-bin>
-In-Reply-To: <20250331-unselfish-spiffy-cobra-a36c7f@krzk-bin>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 4 Apr 2025 16:33:58 +0100
-X-Gm-Features: ATxdqUFvust2OaYqBoVIflJyaJCXaNLn9_iNCUx025do8GMxEHueuBJr5hhTMRw
-Message-ID: <CA+V-a8v4zEDxcR1t8u4A6W6+Ux9ihhFuGbgTM1G00PP9rOSmhw@mail.gmail.com>
-Subject: Re: [PATCH 06/17] dt-bindings: display: bridge: renesas,dsi: Add
- support for RZ/V2H(P) SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] clk: sunxi-ng: Do not enable by default during
+ compile testing
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>, =?UTF-8?Q?Emilio_L=C3=B3pez?=
+ <emilio@elopez.com.ar>, linux-amlogic@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-sunxi@lists.linux.dev
+References: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org>
+ <20250404-kconfig-defaults-clk-v1-4-4d2df5603332@linaro.org>
+ <20250404151320.53c4698b@donnerap.manchester.arm.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20250404151320.53c4698b@donnerap.manchester.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+On 04/04/2025 16:13, Andre Przywara wrote:
+> On Fri, 04 Apr 2025 13:57:00 +0200
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+> 
+> Hi 
+>> Enabling the compile test should not cause automatic enabling of all
+>> drivers.  Restrict the default to ARCH also for individual drivers, even
+>> though their choice is not visible without selecting parent Kconfig
+>> symbol, because otherwise selecting parent would select the child during
+>> compile testing.
+> 
+> so I remember we changed this to "default y", because there were some
+> tricky problems with regards to RISC-V and ARM. See commits:
+> 
+> commit 0ff347db4c97cc16b4e428dc1db550ba3628f1e2
+> Author: Samuel Holland <samuel@sholland.org>
+> Date:   Sat Dec 31 17:14:25 2022 -0600
+>     clk: sunxi-ng: Move SoC driver conditions to dependencies
+> 
+> and 
+> 
+> commit a26dc096f683ca27ac5e68703bfd3098b4212abd
+> Author: Samuel Holland <samuel@sholland.org>
+> Date:   Sat Dec 31 17:14:24 2022 -0600
+>     clk: sunxi-ng: Remove duplicate ARCH_SUNXI dependencies
+> 
+> Don't remember what broke, exactly, but just wanted to give a heads up.
+> 
+Hm, I missed that. Quite unexpected commits.
 
-Thank you for the review.
+I would expect they to change default to match exact case but apparently
+for simplicity they became default for everyone? No clue...
 
-On Mon, Mar 31, 2025 at 9:26=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On Sun, Mar 30, 2025 at 10:07:02PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > The MIPI DSI interface on the RZ/V2H(P) SoC is nearly identical to that=
- of
-> > the RZ/G2L SoC. While the LINK registers are the same for both SoCs, th=
-e
-> > D-PHY registers differ. Additionally, the number of resets for DSI on
-> > RZ/V2H(P) is two compared to three on the RZ/G2L.
-> >
-> > To accommodate these differences, a SoC-specific
-> > `renesas,r9a09g057-mipi-dsi` compatible string has been added for the
-> > RZ/V2H(P) SoC.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  .../bindings/display/bridge/renesas,dsi.yaml  | 117 +++++++++++++-----
-> >  1 file changed, 87 insertions(+), 30 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,d=
-si.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> > index e08c24633926..501239f7adab 100644
-> > --- a/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi.yaml
-> > @@ -14,16 +14,16 @@ description: |
-> >    RZ/G2L alike family of SoC's. The encoder can operate in DSI mode, w=
-ith
-> >    up to four data lanes.
-> >
-> > -allOf:
-> > -  - $ref: /schemas/display/dsi-controller.yaml#
-> > -
-> >  properties:
-> >    compatible:
-> > -    items:
-> > -      - enum:
-> > -          - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
-> > -          - renesas,r9a07g054-mipi-dsi # RZ/V2L
-> > -      - const: renesas,rzg2l-mipi-dsi
-> > +    oneOf:
-> > +      - items:
-> > +          - enum:
-> > +              - renesas,r9a07g044-mipi-dsi # RZ/G2{L,LC}
-> > +              - renesas,r9a07g054-mipi-dsi # RZ/V2L
-> > +          - const: renesas,rzg2l-mipi-dsi
-> > +
-> > +      - const: renesas,r9a09g057-mipi-dsi # RZ/V2H(P)
->
-> I guess this will grow, so just use enum here. Otherwise people keep
-> adding const every time they add new model.
->
-Agreed, I will add it as an enum here as RZ/V2N will follow this where
-the IP blocks are identical.
+Commit says:
+" Do not duplicate the same expression on the `default` line, so the two
+lines do not need to be kept in sync."
+what it did, but not WHY.
 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
-Cheers,
-Prabhakar
+Why is the most important thing...
+
+The rest of the commit msg:
+"Drivers stay disabled under COMPILE_TEST because of the `default
+ARCH_SUNXI` applied to SUNXI_CCU."
+
+is true, until you enable SUNXI_CCU. Then all of them became enabled by
+default, which is not necessary and in general not welcomed. You should
+compile test only things which you want, not everything.
+
+Best regards,
+Krzysztof
