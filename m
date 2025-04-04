@@ -1,110 +1,144 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4771533FD;
-	Fri,  4 Apr 2025 05:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4222E62B6;
+	Fri,  4 Apr 2025 07:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743745912; cv=none; b=GIxxRrlFjLsM7g0TVkFLREFOHl+Hsr/oWuyVw5rcMXT6N5QEFd5l7Jbi7PYcFFQt2J/+wG/A9nZvMIC5AHm/UQMoLOTbqZ06dN6lX024CoLg7f6UfrkIWK1SBvPZXo0kxcKlISF2cBHxW21RomQXgNUF8J0DP9k5VNZT32eHyzQ=
+	t=1743751324; cv=none; b=suDmX9eVIY9SThkYYnyusYNXGQvlIvJU/DkrrrBTdhWIoe2s9ZcuzFyFEJA73xeg6VmxflFlMbPUt5Umn55X6dTzxYLKsaOXtjcnaU7ZrS1lfCMWDxczUX+qYVBpUcrkrbuv4DWhQWEEr5Q1bl92rbDqPwASIZfTLgL35j7BdjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743745912; c=relaxed/simple;
-	bh=duAYRq244lKghXLjwlUPtR96qqOm7CqC4g55tLgHcK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lH6aTHNnCgv44frErvaQ+eVNVQ50H6odJ+AsyZ7RZO+HmscEtEOPxA4Vvug7ZMmMGjBA0VXQJl1FzJ+PN/GHTXIHyXvm1+i+SRatS/kc90ofcB13Hup2OHoqK8wFT5OKmkcOmO1yH8efXQt2V/eHhX86SvwPBM0iKJWrhEG5fOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SMlXbCGP; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1743751324; c=relaxed/simple;
+	bh=wyyCNEg2XaAgHt+MpKO9cro/bi3gmE6YO23StBPm5yI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nnSR+spO3mbqseaQ6HTc7RU2KwrQTu5P6/C4MW99RklhTpZeELSBPQJLVyRlyDeycHHDhC9FHDxYChOw16qOymfzJsIT27rgK2d0XW0L/DESymyvjv2wrejihuwjNT7gTLA6AO31z8O7k6gYuROXl6W3pM4ranXAQV9J6vVrG9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RaXzu39b; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SMlXbCGP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1743745909; x=1775281909;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=duAYRq244lKghXLjwlUPtR96qqOm7CqC4g55tLgHcK8=;
-  b=SMlXbCGPqsUrLySXhR+WYCM/yf7kaNp6eqw8Dq8arIKOt97VJLuuYWQt
-   lwuTtsVDngPqAJCz28h7FxbfpZoZMyLtt4edMyUm87pvAopmREAzsT1eQ
-   X/uHpjO8SGcb73G1aT9hjZTE3Z/BCqjN8OwADS5UL1Y4HuTxtkjHP9AIO
-   ls88fpp84+SbmP1rwjECF9k6C1TUIagfR0vW+ZnEK3nYR8276uNEyLjEh
-   nI2MXpdkLqdW8tqDwc8rqs+/Qz7Hzo+YlQJHGwfT/0xPC/obMRLHkVPL/
-   ygI3kJ9Ef/tUrkJXGlS/LCclV4UDc39cfZOhqX4f1xUapA6fOSp8ghL+4
-   g==;
-X-CSE-ConnectionGUID: 6jxuR0oHRweD/zMHd1Vh7w==
-X-CSE-MsgGUID: zrDmQElyT5e/XecKU/NjUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11393"; a="49036173"
-X-IronPort-AV: E=Sophos;i="6.15,187,1739865600"; 
-   d="scan'208";a="49036173"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Apr 2025 22:51:49 -0700
-X-CSE-ConnectionGUID: EPim8gilRX2xDSLhfsQhCw==
-X-CSE-MsgGUID: j56jmjC5TESUcP4qGnnCUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,187,1739865600"; 
-   d="scan'208";a="127025444"
-Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 03 Apr 2025 22:51:46 -0700
-Received: from kbuild by b207828170a5 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u0Zxv-00011n-2A;
-	Fri, 04 Apr 2025 05:51:43 +0000
-Date: Fri, 4 Apr 2025 13:51:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sukrut Bellary <sbellary@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RaXzu39b"
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-736c062b1f5so1448106b3a.0;
+        Fri, 04 Apr 2025 00:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743751322; x=1744356122; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hjbjq84OY+V2VTQE3ONIBsyDtOPoNqTXO3fKwxhNopY=;
+        b=RaXzu39bjYAmakLJbuVp1rw33EDKSNVE3Cc9n2TfspWge8UI0leGGf6PfVSdbkPUFT
+         MRAh6HJTC2pFHhdflrHsXco5aPp/id0ye3KhCLgIl9PMUfZHh8Xzs3MvRqX/djXMcJnE
+         GVb8hnNfFR44QTlOeCCArghNQrYJldLFMpnGKy5+C2iFa5Fx0n72X5eBuoUD61nmIU4x
+         F6UJRCKq3qgNBhNy61AM/FBAfjuCkZSBYMBERVxc8B4wQ/cc3ZIk6e0oRtri85BR4z7q
+         7+c6aNqebmrZeAShk53/GHYBW5HpHcleomRAVw4RXmdaw8dAR2Y+tcz0PB2WgEk4ARgV
+         9lww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743751322; x=1744356122;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hjbjq84OY+V2VTQE3ONIBsyDtOPoNqTXO3fKwxhNopY=;
+        b=liMexDps1jkfhUVG9CgeuV5bBjoaeJWF+HH3B6aPa9atCFmejM6gWAprj2E0KkvqRJ
+         +sobFpLYQJuhXzgsC4UgN5dU8qh9PFtEFjKipZ7G0O0yCaiiu79bbKLRmnoGNiP8B4Lf
+         S70nuMAGZCEsAakljaoNGdVkrvjHMPq4IqSxcT4OU/HnE63+7tEUCMQoRtggzpBKvEHn
+         JoezEgbNoUgBeRV7iK+kEGSByk5sGTeF9mqUxlb6G3eQRvGYnu+0SKcoyVsX96mSSLAe
+         GTUMWCN6g0QGdKL+L2+f8blrWcGsn8STQRigae0GviTvGE5Z9HAJbXz69whRL52wzBaZ
+         8KFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKA9ww438SRu++xSeO80vEVGB2EzdDg0Q4Cw3xp3RrhFudYf2lCNn4DmPv4QI7SIClKQGa1KqvwxWM@vger.kernel.org, AJvYcCUzxvp38ycbsO3CNC1tTILssiHdZyoezyULAYdCLNTKKWjRDTUMKZbk1JzVMtLdBpCdDrSEVSz7f4JdpVu3@vger.kernel.org, AJvYcCWD9mbM5oJY/0YeY21tlnA+vmTosYDqihHRU6kh52L7OCpqZARcMpY6nk3YlBFspDvZJhvGvv+QULNCUUJ3@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH0ZCoLqFP/jV/y1r+EoUxd2T37kcJdNYmmITD+Lgo3CsSAakU
+	pyCO+QZKe3cDmVeKpwg4o04YPi/nDN2/CxKNSx8JMnx3d3UU2ViQWo0UTxgA1oE=
+X-Gm-Gg: ASbGncsVafu2IFa1ixQlHD2m8+O9EEQcrwoD9tEcBh625K0f10eei2O891E8tHi2NzR
+	b8ISg+1P2JUwuDMN3/tlgGoQUjxXhm4gZp0MbMdSHp+Nb9dfqGJAyAGA/UqgPKjcTErSRqvrLFY
+	pg21kB2mAsBnlNNzfoWJGNBHd+gbOMOvkNfTn24Ib8ptU5TMdKwds++Ywd/kWEqkRmqLSYJzYFW
+	Y1v3NgDS9PjeFVWfo+QuEpt8rVlvYWv8xnGA8S5/BB42IXCm5Bp20TZ8jB02rffUyQicjSKQkmX
+	8Ontl5PQMBZnCMEaFaB5e0luU6caBgsJq6Etkx0wm3l19/WKkDN9xQ==
+X-Google-Smtp-Source: AGHT+IHz52iM0Ut+nIzEPwr7kHc6kYrM80hwVYpXhsX4Ng9bdBpZGSHbEcuYewXJUL8+qRD62QptZA==
+X-Received: by 2002:a05:6a20:3953:b0:1f5:7f45:7f95 with SMTP id adf61e73a8af0-201081897bbmr2516743637.27.1743751322434;
+        Fri, 04 Apr 2025 00:22:02 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739da0e3184sm2674547b3a.160.2025.04.04.00.21.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Apr 2025 00:22:01 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Sukrut Bellary <sbellary@baylibre.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Andreas Kemnade <andreas@kemnade.info>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: clock: ti: Convert to yaml
-Message-ID: <202504041306.Dxlb0inM-lkp@intel.com>
-References: <20250404014500.2789830-3-sbellary@baylibre.com>
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Pengyu Luo <mitltlatltl@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: rpmh: make clkaN optional
+Date: Fri,  4 Apr 2025 15:20:02 +0800
+Message-ID: <20250404072003.515796-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250404014500.2789830-3-sbellary@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Sukrut,
+On sm8650, clkaN are missing in cmd-db for some specific devices. This
+caused a boot failure. Printing log during initramfs phase, I found
 
-kernel test robot noticed the following build warnings:
+[    0.053281] clk-rpmh 17a00000.rsc:clock-controller: missing RPMh resource address for clka1
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on robh/for-next linus/master v6.14 next-20250403]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Adding the optional property to avoid probing failure which causes
+countless deferred probe. In the downstream tree,similar workarounds
+are introduced for sm7635, sm8550, sm8635, sm8650, sm8750.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sukrut-Bellary/dt-bindings-clock-ti-Convert-to-yaml/20250404-094647
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20250404014500.2789830-3-sbellary%40baylibre.com
-patch subject: [PATCH 2/4] dt-bindings: clock: ti: Convert to yaml
-reproduce: (https://download.01.org/0day-ci/archive/20250404/202504041306.Dxlb0inM-lkp@intel.com/reproduce)
+Tested-by: Pengyu Luo <mitltlatltl@gmail.com> # Oneplus Pad Pro / Oneplus Pad 2
+Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+---
+ drivers/clk/qcom/clk-rpmh.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504041306.Dxlb0inM-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   Warning: Documentation/arch/powerpc/cxl.rst references a file that doesn't exist: Documentation/ABI/testing/sysfs-class-cxl
-   Warning: Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/autoidle.txt
-   Warning: Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/autoidle.txt
->> Warning: Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/clockdomain.txt
-   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
-   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
-   Warning: Documentation/translations/ja_JP/SubmittingPatches references a file that doesn't exist: linux-2.6.12-vanilla/Documentation/dontdiff
-   Warning: Documentation/translations/zh_CN/admin-guide/README.rst references a file that doesn't exist: Documentation/dev-tools/kgdb.rst
-   Warning: Documentation/translations/zh_CN/dev-tools/gdb-kernel-debugging.rst references a file that doesn't exist: Documentation/dev-tools/gdb-kernel-debugging.rst
-
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index c7675930f..68704c4f0 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -66,6 +66,8 @@ struct clk_rpmh {
+ struct clk_rpmh_desc {
+ 	struct clk_hw **clks;
+ 	size_t num_clks;
++	/* rpmh clock clkaN are optional for this latform */
++	bool clka_optional;
+ };
+ 
+ static DEFINE_MUTEX(rpmh_clk_lock);
+@@ -648,6 +650,7 @@ static struct clk_hw *sm8550_rpmh_clocks[] = {
+ static const struct clk_rpmh_desc clk_rpmh_sm8550 = {
+ 	.clks = sm8550_rpmh_clocks,
+ 	.num_clks = ARRAY_SIZE(sm8550_rpmh_clocks),
++	.clka_optional = true,
+ };
+ 
+ static struct clk_hw *sm8650_rpmh_clocks[] = {
+@@ -679,6 +682,7 @@ static struct clk_hw *sm8650_rpmh_clocks[] = {
+ static const struct clk_rpmh_desc clk_rpmh_sm8650 = {
+ 	.clks = sm8650_rpmh_clocks,
+ 	.num_clks = ARRAY_SIZE(sm8650_rpmh_clocks),
++	.clka_optional = true,
+ };
+ 
+ static struct clk_hw *sc7280_rpmh_clocks[] = {
+@@ -847,6 +851,7 @@ static struct clk_hw *sm8750_rpmh_clocks[] = {
+ static const struct clk_rpmh_desc clk_rpmh_sm8750 = {
+ 	.clks = sm8750_rpmh_clocks,
+ 	.num_clks = ARRAY_SIZE(sm8750_rpmh_clocks),
++	.clka_optional = true,
+ };
+ 
+ static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+@@ -890,6 +895,11 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+ 		rpmh_clk = to_clk_rpmh(hw_clks[i]);
+ 		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
+ 		if (!res_addr) {
++			hw_clks[i] = NULL;
++
++			if (desc->clka_optional && !strncmp(rpmh_clk->res_name, "clka", sizeof("clka") - 1))
++				continue;
++
+ 			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
+ 				rpmh_clk->res_name);
+ 			return -ENODEV;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1
+
