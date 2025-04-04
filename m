@@ -1,241 +1,105 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6391F37D4;
-	Fri,  4 Apr 2025 14:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D771624C9;
+	Fri,  4 Apr 2025 14:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743776008; cv=none; b=CyXiZL1fezaxl8AbEiL8MtQyOYg/qz3JIR7B9JsvklVfVY6Yi24ZAYiBeKSg9dPgmGxJi5hHgPLsMKfpfVTCNm1QOBH7qeWGqLDH7ydrUCMc+WiS7G92RRV3O4I94uK8TZkBl/mIeKjKG50i8MF/+jfNr7IrzGqw0Gmu+PutdH4=
+	t=1743778564; cv=none; b=ikXIQBN7igLQTOxjkTAe23K84yMI/wpEje9cf18nMEa/XNtKeaahu2aWu8A/RqyB3+3ga/vom9ELldZyHF6RLgTTHXovJ2DHrCNh4N7eXn5jS2W6mnd4cjXItxdGpEpYyliePendZj3211jKy/EiLc6JxEwvr6woiYgTPyLg0dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743776008; c=relaxed/simple;
-	bh=6/ZliiFeJpRlMUpP4YFEsGIx2O3ziIJndM7oADHVj34=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fe1dksq8wB5+0Rtnb5ppmyE2j/ZyDAaEgS4GWDsfmSEJqq08NAHEubdrrZgv/+pYgalhOKcuN0m3bUD9bN3Van4CZruaTiEE+LTReDPIi1NcfWHFc7AUHxmoIKVQbPFufD0tPvzHsiZfDR6yO3ZKcfDS7Z+/Ujw2dNsDDjdNCUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAE311515;
-	Fri,  4 Apr 2025 07:13:27 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 909073F63F;
-	Fri,  4 Apr 2025 07:13:22 -0700 (PDT)
-Date: Fri, 4 Apr 2025 15:13:20 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
- <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Chen-Yu Tsai <wens@csie.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 4/5] clk: sunxi-ng: Do not enable by default during
- compile testing
-Message-ID: <20250404151320.53c4698b@donnerap.manchester.arm.com>
-In-Reply-To: <20250404-kconfig-defaults-clk-v1-4-4d2df5603332@linaro.org>
-References: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org>
-	<20250404-kconfig-defaults-clk-v1-4-4d2df5603332@linaro.org>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1743778564; c=relaxed/simple;
+	bh=bsmW9y+0W+KUxx34ofruUlBo0xOvw2rXR++TeDi3AKA=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=WPDd3Sh0lhpx4BEgHmL0chy8vKpymZgBwn9WpmADN+T3Buf+QgJZw8mE5OQy+wWc7Bd6cpxr564SmTtRNmRBr1lmz3mGr7qYol5BtZ/kWbnRDgKvBdvX66ScAyYMENTXxPKni7F+qG096Hgz8FcWNxs+2amRZ5Et9szFJTSh9Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rzZ8msxb; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rzZ8msxb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E06CC4CEDD;
+	Fri,  4 Apr 2025 14:56:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743778563;
+	bh=bsmW9y+0W+KUxx34ofruUlBo0xOvw2rXR++TeDi3AKA=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=rzZ8msxb+/87y0OctRs5tOxOR6tE9h/KjZci7JmdyMbsLYl923ZVvR8wlqmckWIcm
+	 AG1QlHYsthO0au0/hChQLhy8gOzM9fw3c1F0qusmYKdvqb9U8zQpvj8bBIkFENqWbl
+	 8lBZRlX6JKPwiWazZloNOU53X50y4s00DY2MROrSpE/TF8T/hQrafuwTxpc8WWxvku
+	 YowoHFp9YHOAKDFCaqrWFTK9b9pGXoVobpR/TN/xgmNWuXFZKLalvSK7Bm6rzig2xF
+	 nd8CoY+0BnWvoEIhPgy8jUUE5Q6Ftadlo4feiT5exPfQpsVoFVkoZbZvyHED3yasvs
+	 dEHi3HN5tGQAQ==
+Date: Fri, 04 Apr 2025 09:56:01 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Andreas Kemnade <andreas@kemnade.info>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org, 
+ Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org
+To: Sukrut Bellary <sbellary@baylibre.com>
+In-Reply-To: <20250404014500.2789830-3-sbellary@baylibre.com>
+References: <20250404014500.2789830-1-sbellary@baylibre.com>
+ <20250404014500.2789830-3-sbellary@baylibre.com>
+Message-Id: <174377855887.1313159.8477749895324191477.robh@kernel.org>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: ti: Convert to yaml
 
-On Fri, 04 Apr 2025 13:57:00 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-Hi 
-> Enabling the compile test should not cause automatic enabling of all
-> drivers.  Restrict the default to ARCH also for individual drivers, even
-> though their choice is not visible without selecting parent Kconfig
-> symbol, because otherwise selecting parent would select the child during
-> compile testing.
-
-so I remember we changed this to "default y", because there were some
-tricky problems with regards to RISC-V and ARM. See commits:
-
-commit 0ff347db4c97cc16b4e428dc1db550ba3628f1e2
-Author: Samuel Holland <samuel@sholland.org>
-Date:   Sat Dec 31 17:14:25 2022 -0600
-    clk: sunxi-ng: Move SoC driver conditions to dependencies
-
-and 
-
-commit a26dc096f683ca27ac5e68703bfd3098b4212abd
-Author: Samuel Holland <samuel@sholland.org>
-Date:   Sat Dec 31 17:14:24 2022 -0600
-    clk: sunxi-ng: Remove duplicate ARCH_SUNXI dependencies
-
-Don't remember what broke, exactly, but just wanted to give a heads up.
-
-Cheers,
-Andre
-
+On Thu, 03 Apr 2025 18:44:58 -0700, Sukrut Bellary wrote:
+> This binding doesn't define a new clock binding type,
+> it is used to group the existing clock nodes under the hardware hierarchy.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> As this is not a provider clock, remove #clock-cells and
+> clock-output-names properties.
+> Though few clockdomain nodes in the dts use these properties,
+> we are not fixing dts here.
+> Clean up the example to meet the current standards.
+> 
+> Add the creator of the original binding as a maintainer.
+> 
+> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
 > ---
->  drivers/clk/sunxi-ng/Kconfig | 48 ++++++++++++++++++++++----------------------
->  1 file changed, 24 insertions(+), 24 deletions(-)
+>  .../bindings/clock/ti/clockdomain.txt         | 25 ------------
+>  .../bindings/clock/ti/ti,clockdomain.yaml     | 38 +++++++++++++++++++
+>  2 files changed, 38 insertions(+), 25 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti/clockdomain.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,clockdomain.yaml
 > 
-> diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-> index 5830a9d87bf25d536ac787fe83669c64c8214952..8896fd052ef1784d60d488ab1498737c1405deb2 100644
-> --- a/drivers/clk/sunxi-ng/Kconfig
-> +++ b/drivers/clk/sunxi-ng/Kconfig
-> @@ -9,123 +9,123 @@ if SUNXI_CCU
->  
->  config SUNIV_F1C100S_CCU
->  	tristate "Support for the Allwinner newer F1C100s CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUNIV || COMPILE_TEST
->  
->  config SUN20I_D1_CCU
->  	tristate "Support for the Allwinner D1/R528/T113 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN8I || RISCV || COMPILE_TEST
->  
->  config SUN20I_D1_R_CCU
->  	tristate "Support for the Allwinner D1/R528/T113 PRCM CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN8I || RISCV || COMPILE_TEST
->  
->  config SUN50I_A64_CCU
->  	tristate "Support for the Allwinner A64 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on ARM64 || COMPILE_TEST
->  
->  config SUN50I_A100_CCU
->  	tristate "Support for the Allwinner A100 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on ARM64 || COMPILE_TEST
->  
->  config SUN50I_A100_R_CCU
->  	tristate "Support for the Allwinner A100 PRCM CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on ARM64 || COMPILE_TEST
->  
->  config SUN50I_H6_CCU
->  	tristate "Support for the Allwinner H6 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on ARM64 || COMPILE_TEST
->  
->  config SUN50I_H616_CCU
->  	tristate "Support for the Allwinner H616 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on ARM64 || COMPILE_TEST
->  
->  config SUN50I_H6_R_CCU
->  	tristate "Support for the Allwinner H6 and H616 PRCM CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on ARM64 || COMPILE_TEST
->  
->  config SUN55I_A523_CCU
->  	tristate "Support for the Allwinner A523/T527 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on ARM64 || COMPILE_TEST
->  
->  config SUN55I_A523_R_CCU
->  	tristate "Support for the Allwinner A523/T527 PRCM CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on ARM64 || COMPILE_TEST
->  
->  config SUN4I_A10_CCU
->  	tristate "Support for the Allwinner A10/A20 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
->  
->  config SUN5I_CCU
->  	bool "Support for the Allwinner sun5i family CCM"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN5I || COMPILE_TEST
->  	depends on SUNXI_CCU=y
->  
->  config SUN6I_A31_CCU
->  	tristate "Support for the Allwinner A31/A31s CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN6I || COMPILE_TEST
->  
->  config SUN6I_RTC_CCU
->  	tristate "Support for the Allwinner H616/R329 RTC CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN8I || ARM64 || RISCV || COMPILE_TEST
->  
->  config SUN8I_A23_CCU
->  	tristate "Support for the Allwinner A23 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN8I || COMPILE_TEST
->  
->  config SUN8I_A33_CCU
->  	tristate "Support for the Allwinner A33 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN8I || COMPILE_TEST
->  
->  config SUN8I_A83T_CCU
->  	tristate "Support for the Allwinner A83T CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN8I || COMPILE_TEST
->  
->  config SUN8I_H3_CCU
->  	tristate "Support for the Allwinner H3 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN8I || ARM64 || COMPILE_TEST
->  
->  config SUN8I_V3S_CCU
->  	tristate "Support for the Allwinner V3s CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN8I || COMPILE_TEST
->  
->  config SUN8I_DE2_CCU
->  	tristate "Support for the Allwinner SoCs DE2 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN8I || ARM64 || RISCV || COMPILE_TEST
->  
->  config SUN8I_R40_CCU
->  	tristate "Support for the Allwinner R40 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN8I || COMPILE_TEST
->  
->  config SUN9I_A80_CCU
->  	tristate "Support for the Allwinner A80 CCU"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN9I || COMPILE_TEST
->  
->  config SUN8I_R_CCU
->  	tristate "Support for Allwinner SoCs' PRCM CCUs"
-> -	default y
-> +	default ARCH_SUNXI
->  	depends on MACH_SUN8I || ARM64 || COMPILE_TEST
->  
->  endif
-> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Warning: Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Warning: Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml references a file that doesn't exist: Documentation/devicetree/bindings/clock/ti/clockdomain.txt
+Warning: Documentation/translations/ja_JP/process/submit-checklist.rst references a file that doesn't exist: Documentation/translations/ja_JP/SubmitChecklist
+Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml: Documentation/devicetree/bindings/clock/ti/autoidle.txt
+Documentation/devicetree/bindings/clock/ti/ti,gate-clock.yaml: Documentation/devicetree/bindings/clock/ti/clockdomain.txt
+Documentation/translations/ja_JP/process/submit-checklist.rst: Documentation/translations/ja_JP/SubmitChecklist
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250404014500.2789830-3-sbellary@baylibre.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
