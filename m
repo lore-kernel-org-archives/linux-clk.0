@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D522066F3;
-	Fri,  4 Apr 2025 00:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2492208960;
+	Fri,  4 Apr 2025 00:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743725239; cv=none; b=KODqsAbVrD8/qOe4c0aQUuDtgCJ8njrtlfUDvp1RPuGtuBbOBk62Bup3Ygu5c7GgK+HkbFvkEwL2sa8KZcNroTZmSuiK/6/p/5F/qpr2w6qVnYs12sebaWmSQMGrHT9YZru/JdlrvIOyiABjR89sx/mHe3Og67VgWOPKAV3pT2Q=
+	t=1743725260; cv=none; b=NMWAGbrTCdzWY224IH/vmEEwvGo4skGbUSHrIfOm5CLv6qy6Fm88EjkrW/OpArcW+mXmKd3SV5s3S8klJWMqFdGEcUr4SNOt43bpjjSx8m187N/TZbg9VtTv1lMZHNuEbP9ybfDRhyHFD3/tFIohd+qqDfSGdq33pwyOs4ZW7pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743725239; c=relaxed/simple;
-	bh=6H51TRq+4b6VBaT6ZCYfYPIOtcNrp00Og6veSVLaOEk=;
+	s=arc-20240116; t=1743725260; c=relaxed/simple;
+	bh=F2cN1MgTS/MjxH5XVh/WnmOD1mzoQk4bMwQN5DGdgtY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nEBOHzfXKIDiSFw3hsjba5qwBPhtF+Ndt/NFgQ2BOeGOokh82qmiAHtFhqykpZd0TpgWwk1uVX64m8E23VnsfJSxMRIsiTuG70/ZJPMkTFUEexTDzzIlqPIih132xKAjoc3wnwLbsFpOtK8PYHT90mYwfn6Tiy5pY3Ax8LVtzxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IxEltcQF; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=NYqQnHbdBfkcJbdJghXp/Eils3uVTYdA/fUMaS127tIhWurYzQ5Oqjz9G/jSGGFt4n6eQ2xN4xeykVQfNHZbIZPBj7cevtZfjgmd0Fz0OlSHe9DCUsl2Zblqo7YeRfDnAPT7OBO/ikjroXerAyKWv54IyU2ko1uzDZ4PjoDmMqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ef4fgmtk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxEltcQF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B8DDC4CEE3;
-	Fri,  4 Apr 2025 00:07:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ef4fgmtk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 575F9C4CEE9;
+	Fri,  4 Apr 2025 00:07:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743725236;
-	bh=6H51TRq+4b6VBaT6ZCYfYPIOtcNrp00Og6veSVLaOEk=;
+	s=k20201202; t=1743725259;
+	bh=F2cN1MgTS/MjxH5XVh/WnmOD1mzoQk4bMwQN5DGdgtY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IxEltcQFvWSVbQuRnOA8YrNqiQvD3u3BPwDEHxCtYNdI3Nt5Jr77BPegEWSLllLbw
-	 Ht4G+PycpaYjxJ1rgoEwijI/QFhGvvd5ZkpmjjAmtsv7E4xzfm7u35862FJsR3GTEz
-	 Mhj0xa83SjILmYHZYmYpL9OF6yqPIWc6hIWEgBX4ewgqsctseJSCV4Jk/4O4glX74l
-	 CmDurQdUsztFDRaWJo02LCspup7VwA9fCEj/st1/1TxDrs11pJUjZGUN4y2d7cdX2B
-	 KDlCGXBp/5Sg1a0eULi5GP3tgfGSjtQwP8HTbApL3/TdRF0+XERyc0tl3rw9eLGxz/
-	 dtNXwBvECnJAw==
+	b=ef4fgmtkqv/7jZpwWlgbtJ4rq6GQ+SMFS5P3KDloRNW4H0LTQZ6FxltkaMgjDMvYY
+	 5V6hgssDbenC71y8bcg2uaSLWa0m754Ny3EJ+AqDwry7uONFkShaMI6zl8PYGZ46qv
+	 mQQBU3Tr+k+Co4Le7DEspoH12h0uD9Wljx83XQEvCp57vnpdT2vmi2Jgp9NZWI8ySo
+	 kzvkbni2MJt0v2v/sRddFaOb3x9t3ZripU548WxKgdYrF6eDhZT8Tcmwtb8lsDkvMK
+	 5zvSbp8MPTa42WBn+AV1y0dshC32m5SIh6Hxq+nVyrJxEqSBnTIThDYCuS8bT0ZUcO
+	 d3qYiBpJgsZKg==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -36,12 +36,12 @@ Cc: Heiko Stuebner <heiko@sntech.de>,
 	Sasha Levin <sashal@kernel.org>,
 	mturquette@baylibre.com,
 	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 06/10] clk: check for disabled clock-provider in of_clk_get_hw_from_clkspec()
-Date: Thu,  3 Apr 2025 20:06:56 -0400
-Message-Id: <20250404000700.2689158-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 4/8] clk: check for disabled clock-provider in of_clk_get_hw_from_clkspec()
+Date: Thu,  3 Apr 2025 20:07:22 -0400
+Message-Id: <20250404000728.2689305-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250404000700.2689158-1-sashal@kernel.org>
-References: <20250404000700.2689158-1-sashal@kernel.org>
+In-Reply-To: <20250404000728.2689305-1-sashal@kernel.org>
+References: <20250404000728.2689305-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.132
+X-stable-base: Linux 5.15.179
 Content-Transfer-Encoding: 8bit
 
 From: Heiko Stuebner <heiko@sntech.de>
@@ -91,10 +91,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8ecbb8f494655..5a01ba04e47cf 100644
+index dc2bcf58fc107..13f7e2ea644d9 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -5128,6 +5128,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
+@@ -4993,6 +4993,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
  	if (!clkspec)
  		return ERR_PTR(-EINVAL);
  
