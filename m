@@ -1,110 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FA121CC5F;
-	Fri,  4 Apr 2025 00:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C5E1862A
+	for <linux-clk@vger.kernel.org>; Fri,  4 Apr 2025 01:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743725300; cv=none; b=YI6OJUWEQfVq9z+j1KZRAeMPhGkg9sONDGYnqOrvNbr1c5hcgyrK+YLTdsZ2KjWMSqrdFEQyY3Z8BVtS1uSN/YxbCdVlE8291FBh7vjd2x3k6ZifEeBas+bErOuhj+u4hIf0EUJrplqzVM/6KIynmpj35EKLAShTmn4P84E59AI=
+	t=1743731108; cv=none; b=aHx/MAY8U7iMbODw1c72Im7oaTaPG1Q7iH01aqWgYCRELTUMJEDwg2GsBhqeOGUFp9AWyyDxlrKHTFBZ9Imjmc6TG2/Aj2LsTk0vLvwLxozilQkCP3NNpPfvJtwxGyhXJefroqc0aR/+25KTKBnf1FzvADdMvf8X5Zese0oWf68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743725300; c=relaxed/simple;
-	bh=33HMVPuk/lOrNcVuJK/s1l/HE5LH4t7VwHK418H+oA0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V1+OhN301xaI2RQqScDSC4yCNzFDvM6Yb2PkLvOGPiVPW0iIX8RecmKAjBsRt7RyeYGrizzBl4T5goyojTi8S7IgyE9Wbqqqh+u86JWFr2XaAtfNuHej2bs4mf9gfsNNVXh4qPtm9J9At8ACBFN6w21saAvu+3ONEYEOFe8NRoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUtHOAF3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1743731108; c=relaxed/simple;
+	bh=3VZyd7qeqqdU+fU+qG6or5DrTUYgsIUuffWMNMB8H3g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LemGNLARGrKBI7sNw3ND8tSBEYsddFm2gpQdrFR7IqAnAvzbfKMT4+Qgx+EyGV3JSU7qv7NZpfDBAiVQnI6EzVJOrwFkPUFFbj5zuKq6ixUwEteKjIeXSCFVcMajwizN+eFE/u3vkbefOT0gj5zkVYMkh4AP02X3kRZpPDEdQc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kPTwadx5; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUtHOAF3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D610C4CEE9;
-	Fri,  4 Apr 2025 00:08:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743725300;
-	bh=33HMVPuk/lOrNcVuJK/s1l/HE5LH4t7VwHK418H+oA0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hUtHOAF3p/fn0ujJVw8ABM3Lp2HiiWH5QXqUaGm+WG8kr0EiTIS6e2vV9ctL65arL
-	 /OtpGf6B0UsX2UuoRoxGocCZBbc/08vq0QthDdTDr3oHW7Qwcu2YuFrAKJem8N/874
-	 uJ35s8gM+4iqwf5pWIJcBN8eg2yLteXiuOL5y9O3tLBDjxUyPZJ83FkLAmoxSh/YRF
-	 5/KBLyhH+e1qRn//dIw/cMbEBZ+P6OZ20O36TZ1+iJWGUDoHoEglAcOimUTCigQAJ+
-	 7j60ixaQYNNNb2pMFaDDsJH86ypjURCQOmSTLK2kAfW9RDQtlfdFI/OW23Xr/+DQ7X
-	 ve0oyiOm6zcDQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kPTwadx5"
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso1548427b3a.2
+        for <linux-clk@vger.kernel.org>; Thu, 03 Apr 2025 18:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1743731105; x=1744335905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjiXd/lJykaxGlMVtDJ8cu8A9Kx6Lj/fnArm1Z9o5jQ=;
+        b=kPTwadx5dz5hHRsonexrFKaXmuenq838Cfl+62MEEx1/mj5cez3xen59FfPpDK8evm
+         lrY9OCCMMspEGfd0wd9+4YLX/Vn+dB1CFV/womAuhkOoH0YrF8CdWcUQ96zPM/V49eUn
+         vg25t5BftxOHlrKqbsGERO41VjC+GuFaBmCPYaY6Xbf8CjAljsc4DBrDO8gvKeXMCJri
+         TCOP9Rv4oJuiTirUMEIUHeUosfTRfOqNZs+DJVEkLD+RpNHAQsBFAiEUFKSrM9hrY1GX
+         yhlsePJJ66gRZ3QJJShQKaHYmmJaIcAaim2uxi9UTS/jhFIsGT2LVS4O70WlRlPxTlRs
+         EX/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743731105; x=1744335905;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bjiXd/lJykaxGlMVtDJ8cu8A9Kx6Lj/fnArm1Z9o5jQ=;
+        b=tcs5KoeZyWEjXNS2h9yPzL/asB7rCu59WYgOlynv2BmbGL2bKSckl2mZEWHZRl7Zq9
+         H/QyM9FJO4lF15qLBnZeRhAcdK+UrToCGEMovaVkTiWSbvn3vIolxPNuZ4V6N2Ax03jO
+         ZQ9Mwm5QBortdn+uhpB6CHq3MoaOGo0wxF2TSmqaIbrmm1c88Mq6rmy9Qehc5vu3r1pC
+         2CSbuVMKP70vqo2d1R/4QxbPKwEL+jgq/V4uD1bTzIVLjS6Lh1KSzDd+pQzdKXZvCWaB
+         be1xIwzb7lWwDuX5TFcYubKPSJ2mP66CsK4uuKlCCePIclb70Q2Ka3h79Jd0//ObrgDV
+         FF6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVlU40kHYLFVtQK+uOpmnZZ32XIzkZ99x9tC6MRpwW6Gu7J39GJKadi28BEqK/dWTF2iXHljx9aZ/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYTeC09CRECx1lKteOR1mebAZU6EwLpNgaKYMsEoufBmggMQDG
+	hsODRAq147/9ZQzbZuYeo+4iKSqqRpPW1wkOPlKjefha2GDCH84PVmnXmaUdkpY=
+X-Gm-Gg: ASbGncsjr1sMczcqdfO/KilITXshf6ws7O6fEGqF+sYUnlMNAqmj2/mzt3NsdSXTgX6
+	3my1E4T6eqffOZStOROc22fyOscQF76uHnE0k2tGBNnZ+joQ9C/j1VhV03+tDCDhuWnsEJ66RPh
+	X/S9wo2GvFuWW513sophOG88Iwud3Cdozg3lptl1LdEKYQwKwBMnUs3fFzXnJ9NT3cdGnSj9gvq
+	ZlICA8x8SquBH8YR3pzzghyHLhGrNrXtauS38ONX1MvufRikIaPy/XzVlIbcHfxWkH2SgVCu5Pc
+	5WOMU9ChO5MEvlE7wKyKH2DymJTegRdXZ7Nb7PyojEvNZcWpmZHyvIZgCChaxax6/rMmSYGBQRa
+	WBm+IzJZJIw20A5Z6kg==
+X-Google-Smtp-Source: AGHT+IGZdc5ayPV8h3jLG26Fb3Kc7t8JCxjxP14CJnyWZUDnMeJLYlf0ChW7M7ptwKjPLxd1mWNs0g==
+X-Received: by 2002:a05:6a21:1643:b0:1f5:8a03:ea22 with SMTP id adf61e73a8af0-2010472e135mr2027506637.33.1743731105128;
+        Thu, 03 Apr 2025 18:45:05 -0700 (PDT)
+Received: from dev-linux.. (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-739da0e3184sm2195304b3a.160.2025.04.03.18.45.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Apr 2025 18:45:04 -0700 (PDT)
+From: Sukrut Bellary <sbellary@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	mturquette@baylibre.com,
-	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 4/6] clk: check for disabled clock-provider in of_clk_get_hw_from_clkspec()
-Date: Thu,  3 Apr 2025 20:08:05 -0400
-Message-Id: <20250404000809.2689525-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250404000809.2689525-1-sashal@kernel.org>
-References: <20250404000809.2689525-1-sashal@kernel.org>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Sukrut Bellary <sbellary@baylibre.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] dt-bindings: clock: ti: convert to yaml
+Date: Thu,  3 Apr 2025 18:44:56 -0700
+Message-Id: <20250404014500.2789830-1-sbellary@baylibre.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.291
 Content-Transfer-Encoding: 8bit
 
-From: Heiko Stuebner <heiko@sntech.de>
+Convert TI autoidle, fixed-factor-clock, and clockdoamin bindings to yaml.
+We are fixing bindings warnings only. No change in existing dts.
 
-[ Upstream commit b20150d499b3ee5c2d632fbc5ac94f98dd33accf ]
+Sukrut Bellary (4):
+  dt-bindings: clock: ti: Convert to yaml
+  dt-bindings: clock: ti: Convert to yaml
+  dt-bindings: clock: ti: Convert fixed-factor-clock to yaml
+  dt-bindings: clock: ti: add ti,autoidle.yaml reference
 
-of_clk_get_hw_from_clkspec() checks all available clock-providers by
-comparing their of nodes to the one from the clkspec. If no matching
-clock provider is found, the function returns -EPROBE_DEFER to cause a
-re-check at a later date. If a matching clock provider is found, an
-authoritative answer can be retrieved from it whether the clock exists
-or not.
+ .../devicetree/bindings/clock/ti/autoidle.txt | 37 ---------
+ .../bindings/clock/ti/clockdomain.txt         | 25 ------
+ .../bindings/clock/ti/fixed-factor-clock.txt  | 42 ----------
+ .../bindings/clock/ti/ti,autoidle.yaml        | 49 ++++++++++++
+ .../bindings/clock/ti/ti,clockdomain.yaml     | 38 +++++++++
+ .../bindings/clock/ti/ti,divider-clock.yaml   | 24 ++----
+ .../clock/ti/ti,fixed-factor-clock.yaml       | 77 +++++++++++++++++++
+ 7 files changed, 169 insertions(+), 123 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/autoidle.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/clockdomain.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/ti/fixed-factor-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,autoidle.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,clockdomain.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,fixed-factor-clock.yaml
 
-This does not take into account that the clock-provider may never
-appear, because it's node is disabled. This can happen when a clock is
-optional, provided by a separate block which never gets enabled.
-
-One example of this happening is the rk3588's VOP, which has optional
-additional display clocks coming from PLLs inside the hdmiphy blocks.
-These can be used for better rates, but the system will also work
-without them.
-
-The problem around that is described in the followups to[1]. As we
-already know the of node of the presumed clock provider, add a check via
-of_device_is_available() whether this is a "valid" device node. This
-prevents eternal defer loops.
-
-Link: https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com/ [1]
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://lore.kernel.org/r/20250222223733.2990179-1-heiko@sntech.de
-[sboyd@kernel.org: Reword commit text a bit]
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/clk.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 56be3f97c265a..6ef5bf61fdd47 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4727,6 +4727,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
- 	if (!clkspec)
- 		return ERR_PTR(-EINVAL);
- 
-+	/* Check if node in clkspec is in disabled/fail state */
-+	if (!of_device_is_available(clkspec->np))
-+		return ERR_PTR(-ENOENT);
-+
- 	mutex_lock(&of_clk_mutex);
- 	list_for_each_entry(provider, &of_clk_providers, link) {
- 		if (provider->node == clkspec->np) {
 -- 
-2.39.5
+2.34.1
 
