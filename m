@@ -1,126 +1,123 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC62188580
-	for <linux-clk@vger.kernel.org>; Fri,  4 Apr 2025 23:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717CC19067C
+	for <linux-clk@vger.kernel.org>; Fri,  4 Apr 2025 23:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743807773; cv=none; b=BB1TvHwaXh7eBn/rEfBj7yz7Smxm5B48QDKYPQ5AeIw/Q3FTJPKDcgwCIwQ3uwjlYMOWYmPSnO1Z5yfr2l2cnZ2sr8QsFITJv08fOIOdpboWPljymTRSuRJD4QRshl+c0da6ghzFLL9znOeT/aPdpxpwzKEuYSxFv1DFJQpD7OA=
+	t=1743808580; cv=none; b=ohGYxA8K7SBcyJDZuwstvERTUsJDwi2WqiSfpPMUDCuWakmhXZtDZ5+QAqjIKIVDul63yeAIqouxj/iRPwjz8dcmBGxDxuckx2te9QSTXQdpTSWtjSv9zULdh5hygiPftgZNvCfRgGBZDc4KJbCaE0PWJ7cfeVTd0h0ogNV+xdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743807773; c=relaxed/simple;
-	bh=/dlzUhzNunhYTNbApKqVE/hjFYpfPkh5ExgCEoMWEzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ujnnLDHK4fE1pcCLXTWWIMwrKyd9JiND47Ln1vc1UkEuqt8N+9y5CGAvm6MMYwekBJERYyDWJWEEf3qTVXW7RnVLXstAbfjO4eFl/ilsHpepxVqYedtAXsWvkBaycNv86IwOuTEoYC0fBzl16bS3saPCWliQV8PSE+2GpP5pq9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gIaWJqp0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1743808580; c=relaxed/simple;
+	bh=yNO7vWgggiE6AdvJSHy8J2QpJuEdjH5HDBasbGJJTPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LtRK9R7ctwPv5WKTFtr45GODO8GO+N7CwTnWqxEF6iBPCmbwX9dEuRfpmGxoQQZBWS/dEfrEPjlb9s7P1niyThbQ+GYZXLVGT9HHlBzFOH/jKQ2F3Fexrt7r7T1/EzuWSnaQqT9AClHoZkHC2HOIHPxLQOfsLqZyLYPztBYOFFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=ld78S7jW; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gIaWJqp0"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 534JEZYk005643
-	for <linux-clk@vger.kernel.org>; Fri, 4 Apr 2025 23:02:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LRA9/KTy8C2+7jeNa+M/5I1PVMUdhFQewhL8s+SLN4U=; b=gIaWJqp0+ubKz00p
-	aNh+FjNpK6qhmfW0Do0djfTk17b2h9FJpvj/sN6wayZcBAW3taPyPJUC23+u89Wg
-	0je86u2HdiYNBTY3Vj7CrihcB/K6sIZpBLENrmeKjAMQ/sZvQXilZfwhMjQatGNX
-	yW5zl8QmGAMoj3tAohfivL6dMN3lCBno957RvhNSHJrqsPqmb5z+A7N/4SJ+OyD6
-	kfrnKwtAJQ4CwNQZuJj147yVdbaDXZrxwVPa3/OphKm+rGsCMH36IaRecAVZUJY8
-	O1TCwqiwv20tqFGUhKdOiybn0IYae7Kzoeiujl85uxUdMBksgghI431GOcF7ehqg
-	qHEZsw==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45t2d534fs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 04 Apr 2025 23:02:51 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5841ae28eso70215985a.1
-        for <linux-clk@vger.kernel.org>; Fri, 04 Apr 2025 16:02:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="ld78S7jW"
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-aee79a0f192so1637073a12.3
+        for <linux-clk@vger.kernel.org>; Fri, 04 Apr 2025 16:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1743808578; x=1744413378; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xi0GUgnEAFI8Tq5WlnIINEkOrw3m9T6yA0HO5ypDLqM=;
+        b=ld78S7jWfq03eeAQvOvquil/IQn02ZsiGEtkqEOIgJOhAv+ZMPuQzx/NEpqpxZDtbk
+         Ni5D1Zbm/dN8pBNOzOjzEf5ixsVpgBdXVdeI5tsO39f9koTq7QbZQFmSTqk0VZ/HvrlO
+         ru1GO0qRSpC8D1jXQPtsFLlaU/XjjHdzO38TOOnLKKxj1i0VpWz9j+k6gzTMBUnSBcpK
+         mrRupWShO9+HQh0KV+6PtMJZz9e/b6IDhdr1C+WH0z3ojYKb6NdvqQ4fM+XJ0VfcKi46
+         YHcR0eeJqlbrbh7ozWn/2mzeoGJaWEhehARU7SHvg5ER1fmrkpDRVkZ1JXFH9vnPvRDc
+         u+2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743807770; x=1744412570;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LRA9/KTy8C2+7jeNa+M/5I1PVMUdhFQewhL8s+SLN4U=;
-        b=s6h2WN8xWXjZe7lYWVEA2AJXKQcVLjV2P2HBvb53iKW8xMoostvdSMrGbubs9FPqQD
-         QJzQk8TyXVyf4BnYzRmahDsmkYSxsm/nVTliNzMdlgqaCpHPYLuL4izxl64u6ao4j49z
-         27oiVrPBNqmRBugFOhs9EBuXGSw6XGMMmHqr9Mc8wR3FfmnZ5DPN4WbmiE98cSU7t+Ip
-         a5Lw2+z0+zVeslK5DANZi1ODHSgBT49rhOQzcwKiZ1WG2QtpG8Kl3sa5vnMhIMBDGLc0
-         kxSwxomaMaAynPTyNWTXZx1OlmN58HgbaRIhepq7iBGOGtFD1185sl0uHCM4ti9+4cFV
-         j+nw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ+g+Z/k5FB2jUe6n/0WYgBD3YF5A4x/FeoIzQp/nyd+71/WN+h7PieiHew9e1BcqqVX0kQMNEoMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEOrbYN1Hk7HjcC88f+zHCqfxoXGs0YNbg6mWR5MpjDiGlrnsi
-	0IEZhHg1dRrfbVJ4kCNzSadl2D+O8OxeVIyepd/8qvZFz1xEmPc0ml9PxtZ8xJsQ9pgKGEPEpOW
-	LdJZoOIH4OeN1nycTPxMvKhAgwHrfOF/p6w4VUQhSMcRnbMwGr0DBssbbRv0=
-X-Gm-Gg: ASbGncuM9tWDFV1lCYEaps9aXgjb2Ry8kb5pEZG778I/PYTjstKS6g+N3yHzK8UzQTp
-	XKCuvdd8nbjcBR6LQQJZq1GTQAT59fKQvOlwQkHprNkKXUC9Snxbzb/p7By8jHr1um0IRJtOuDR
-	2+iixLLMHZuJGmuVgc/kUOofEnlhldM5Q1t3r9Zm5keyWr3VsQqPuXeGmZf6LO7eyAp8AQUwiN+
-	DDGrjCBTYITycJX8TuoFktDS6ZexwV/8wr378c1gBjgL15fxBKYDhNqzQq0wKQ8Bm7lsWXzkV5/
-	wN9CXaxmu8B5+MbaPtA7dV71PSvZWEOvCn94CjYCxS7TYb8yzRQJhcGXYqYS3xNCmRpWWg==
-X-Received: by 2002:a05:620a:454e:b0:7c3:bcb2:f450 with SMTP id af79cd13be357-7c774deefb5mr256193285a.15.1743807769615;
-        Fri, 04 Apr 2025 16:02:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6MHU8Tgt8a8CQEhcefjPtj3ZIKu6Qtk7j4wVYGOhsJgBWQJhk02RvEJAWLOpHIAp8RfiPSA==
-X-Received: by 2002:a05:620a:454e:b0:7c3:bcb2:f450 with SMTP id af79cd13be357-7c774deefb5mr256191985a.15.1743807769258;
-        Fri, 04 Apr 2025 16:02:49 -0700 (PDT)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c013f66bsm321160766b.118.2025.04.04.16.02.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Apr 2025 16:02:48 -0700 (PDT)
-Message-ID: <4adc7b02-94d8-4ce0-a65f-6cf1532c7d28@oss.qualcomm.com>
-Date: Sat, 5 Apr 2025 01:02:46 +0200
+        d=1e100.net; s=20230601; t=1743808578; x=1744413378;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xi0GUgnEAFI8Tq5WlnIINEkOrw3m9T6yA0HO5ypDLqM=;
+        b=JBwRmwpOvGzxd9LUe+FW7zajKERf0aVz1z7P0Hgo9gN0kFCOlrh5SJfs9Fm4trhUCH
+         folB89JS4JrxoAJ5FjykCxHrc01HNdhmw1c7eq3xAIhx1gxQTmLfgdJp7eJ7OhvtGD01
+         ouvmZ6f3OJHrSOKFkAdwX8fLGFc4N51INaM3mpqWQmXEQk8WEoRUDgbVOodC7rwmNupB
+         uOepoUU+ZlZvs/ioBE0GP6bYjzlnoOzVyKlHsps/VrlOdnmdguwqMg8O/hIVgcNNrxLH
+         qfSq67Jl1j0d+GwrLJThNcQzmepW61Py9G0+763UhHidKBDnS7aTsku7aMdklM+jvgGQ
+         ZPhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIm3FVL3bSNEI0QB0oYo56TRZWau2wAYm8kXVMwQXLfw9MF3t1UBngWsEx2LVj+hp9ALJOSDqtCPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3bRR3rkvXxHt09cAPKBrweOvtjwLd5x76TAujC7RVY5d2hPJe
+	ZTGh1p4r7Rr9ZysGuoeyWyIGXtmf5ild3RKnPKLlQxOeFe8axQtXfC3rq+dy2gqnUAWe8O4/vHr
+	l
+X-Gm-Gg: ASbGncshtO9gDbkWEpdQPmDNqbHU2qF+hcRgpNsHqqvxujMw0HyYyehq/fwa2bfoQ0/
+	f7Hjq8KXc25DqxBldrnHDcc/i+KaiDybL5BOiTQS3GhMuquOlofxCTaQqrciJf2XJFJGK6GQ8oq
+	WRORY9GoEm09ntrNHDblZHcdmt/voqTX7AE1IW2UVKaZ4NDxb98PUZaIgk5E+nlSY5zJ3GA+aVE
+	QXJKz42VENIZiwKz135Sg6GUX8n7hcyFgk92f3JUsnfgNq87cNVgw6voFuHRu/w/Iwe7b59CxzG
+	NZdzrQ/ModiYXBYcO4QLQlgJ
+X-Google-Smtp-Source: AGHT+IHC31M9P+ufU9NLoFJjA+hcOFrxMJv1oldOlZ6NzGrsyiNFFvfRRMA/XiiS+ri4Zo313E4eog==
+X-Received: by 2002:a17:90a:d006:b0:305:2d68:8d39 with SMTP id 98e67ed59e1d1-306af71ce82mr1669762a91.12.1743808578500;
+        Fri, 04 Apr 2025 16:16:18 -0700 (PDT)
+Received: from x1 ([97.115.235.21])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-305841a8ae7sm4115878a91.12.2025.04.04.16.16.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Apr 2025 16:16:18 -0700 (PDT)
+Date: Fri, 4 Apr 2025 16:16:16 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, guoren@kernel.org,
+	wefu@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, alex@ghiti.fr, jszhang@kernel.org,
+	p.zabel@pengutronix.de, m.szyprowski@samsung.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 3/3] riscv: dts: thead: Add device tree VO clock
+ controller
+Message-ID: <Z/BoQIXKEhL3/q50@x1>
+References: <20250403094425.876981-1-m.wilczynski@samsung.com>
+ <CGME20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319@eucas1p2.samsung.com>
+ <20250403094425.876981-4-m.wilczynski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: ipq5424: Add CMN PLL node
-To: Luo Jie <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
-        quic_pavir@quicinc.com, quic_linchen@quicinc.com,
-        quic_leiwei@quicinc.com
-References: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com>
- <20250321-qcom_ipq5424_cmnpll-v1-3-3ea8e5262da4@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250321-qcom_ipq5424_cmnpll-v1-3-3ea8e5262da4@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: U4jrDiVzYWqb72aAi0yPusrhVsjFOR6y
-X-Proofpoint-ORIG-GUID: U4jrDiVzYWqb72aAi0yPusrhVsjFOR6y
-X-Authority-Analysis: v=2.4 cv=bZtrUPPB c=1 sm=1 tr=0 ts=67f0651b cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=FgJnXFQMKNkajvnM-RcA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-04_10,2025-04-03_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxlogscore=710
- mlxscore=0 bulkscore=0 priorityscore=1501 spamscore=0 adultscore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504040159
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250403094425.876981-4-m.wilczynski@samsung.com>
 
-On 3/21/25 1:49 PM, Luo Jie wrote:
-> Add CMN PLL node for enabling output clocks to the networking
-> hardware blocks on IPQ5424 devices.
+On Thu, Apr 03, 2025 at 11:44:25AM +0200, Michal Wilczynski wrote:
+> VO clocks reside in a different address space from the AP clocks on the
+> T-HEAD SoC. Add the device tree node of a clock-controller to handle
+> VO address space as well.
 > 
-> The reference clock of CMN PLL is routed from XO to the CMN PLL
-> through the internal WiFi block.
-> .XO (48 MHZ or 96 MHZ or 192 MHZ)-->WiFi (multiplier/divider)-->
-> 48 MHZ to CMN PLL.
-> 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 > ---
+>  arch/riscv/boot/dts/thead/th1520.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+> index 527336417765..d4cba0713cab 100644
+> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> @@ -489,6 +489,13 @@ clk: clock-controller@ffef010000 {
+>  			#clock-cells = <1>;
+>  		};
+>  
+> +		clk_vo: clock-controller@ffef528050 {
+> +			compatible = "thead,th1520-clk-vo";
+> +			reg = <0xff 0xef528050 0x0 0xfb0>;
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Thanks for your patch. It is great to have more of the clocks supported
+upstream.
 
-Konrad
+The TH1520 System User Manual shows 0xFF_EF52_8000 for VO_SUBSYS on page
+205. Is there a reason you decided to use 0xFF_EF52_8050 as the base?
+
+I see on page 213 that the first register for VO_SUBSYS starts with
+VOSYS_CLK_GATE at offset 0x50. I figure you did this to have the
+CCU_GATE macros use offset of 0x0 instead 0x50.
+
+I kind of think the reg property using the actual base address
+(0xFF_EF52_8000) makes more sense as that's a closer match to the tables
+in the manual. But I don't have a strong preference if you think think
+using 0xef528050 makes the CCU_GATE macros easier to read.
+
+-Drew
