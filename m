@@ -1,133 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E192550DC;
-	Fri,  4 Apr 2025 19:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC62188580
+	for <linux-clk@vger.kernel.org>; Fri,  4 Apr 2025 23:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743795728; cv=none; b=l/rG9q8eXKYB2loaMGveDnWdne5wDUQXASDafI8xxPnAcLHjJYWMrRlQCOJgoKF+GFyyTgVhNhYb2weJyRxgZT6a7SASzX9LHojeSg4G9y+/AuCrnnJCABNyVYNYVuunK25VlHM7mFED70fKvUiJ+wAouIaSr8fnHFVykN303gE=
+	t=1743807773; cv=none; b=BB1TvHwaXh7eBn/rEfBj7yz7Smxm5B48QDKYPQ5AeIw/Q3FTJPKDcgwCIwQ3uwjlYMOWYmPSnO1Z5yfr2l2cnZ2sr8QsFITJv08fOIOdpboWPljymTRSuRJD4QRshl+c0da6ghzFLL9znOeT/aPdpxpwzKEuYSxFv1DFJQpD7OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743795728; c=relaxed/simple;
-	bh=4bmtkJ0tkqMxxZGgS50lINazr5//yxL3K8KgkYu4BS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WffbCjyPlNy5NQfmtjGuFOydSWdAPiddFO4I4iU2+/byQ5+T8sLjgk+WAIIkKdhpFdVqaFc5DnD+yE33ntUjA1w26D4qx1TfxhVQNqDxh2i6bFx7A5ef6cicPNmhMzf/mjZwTxHNC6u1yi+w64UXxABHb2nmjMmo4X2mzqX2nqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rk4v5oqR; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1743807773; c=relaxed/simple;
+	bh=/dlzUhzNunhYTNbApKqVE/hjFYpfPkh5ExgCEoMWEzQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ujnnLDHK4fE1pcCLXTWWIMwrKyd9JiND47Ln1vc1UkEuqt8N+9y5CGAvm6MMYwekBJERYyDWJWEEf3qTVXW7RnVLXstAbfjO4eFl/ilsHpepxVqYedtAXsWvkBaycNv86IwOuTEoYC0fBzl16bS3saPCWliQV8PSE+2GpP5pq9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gIaWJqp0; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rk4v5oqR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49EB9C4CEDD;
-	Fri,  4 Apr 2025 19:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743795727;
-	bh=4bmtkJ0tkqMxxZGgS50lINazr5//yxL3K8KgkYu4BS0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rk4v5oqR6TrOKM5QrN48yy6A7HJaKuu8yhkiLIAU3aQaNRyBYcrCtGLkShsOr84DC
-	 l7TI/Vf07wyepQSag3eP3naek1Ha/K0iHRdNGisbIk1UtknuffVGz5OPBHC2KazJg+
-	 q4hIlOLXPsrMezNfRo+bSzx62nUR8AXRWodAxyuQhD/qUXO348YFd8xBmpI4HXqU53
-	 Yip1Pyz99n007p7H+EGI12RAC5eXVZBz59JoTyWMACZ+EpPMIqLjQ4Qrw8wcX4SJQk
-	 xYAnsdEi0OaFYuRUqjEZxYlXLJ2jZm+gGeSDix5HpKAz5nndflI6tOO4oFowaHpW4e
-	 b07cl89H7o22Q==
-Date: Fri, 4 Apr 2025 14:42:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sukrut Bellary <sbellary@baylibre.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Andreas Kemnade <andreas@kemnade.info>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] dt-bindings: clock: ti: add ti,autoidle.yaml
- reference
-Message-ID: <20250404194206.GA171263-robh@kernel.org>
-References: <20250404014500.2789830-1-sbellary@baylibre.com>
- <20250404014500.2789830-5-sbellary@baylibre.com>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gIaWJqp0"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 534JEZYk005643
+	for <linux-clk@vger.kernel.org>; Fri, 4 Apr 2025 23:02:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LRA9/KTy8C2+7jeNa+M/5I1PVMUdhFQewhL8s+SLN4U=; b=gIaWJqp0+ubKz00p
+	aNh+FjNpK6qhmfW0Do0djfTk17b2h9FJpvj/sN6wayZcBAW3taPyPJUC23+u89Wg
+	0je86u2HdiYNBTY3Vj7CrihcB/K6sIZpBLENrmeKjAMQ/sZvQXilZfwhMjQatGNX
+	yW5zl8QmGAMoj3tAohfivL6dMN3lCBno957RvhNSHJrqsPqmb5z+A7N/4SJ+OyD6
+	kfrnKwtAJQ4CwNQZuJj147yVdbaDXZrxwVPa3/OphKm+rGsCMH36IaRecAVZUJY8
+	O1TCwqiwv20tqFGUhKdOiybn0IYae7Kzoeiujl85uxUdMBksgghI431GOcF7ehqg
+	qHEZsw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45t2d534fs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 04 Apr 2025 23:02:51 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5841ae28eso70215985a.1
+        for <linux-clk@vger.kernel.org>; Fri, 04 Apr 2025 16:02:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743807770; x=1744412570;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LRA9/KTy8C2+7jeNa+M/5I1PVMUdhFQewhL8s+SLN4U=;
+        b=s6h2WN8xWXjZe7lYWVEA2AJXKQcVLjV2P2HBvb53iKW8xMoostvdSMrGbubs9FPqQD
+         QJzQk8TyXVyf4BnYzRmahDsmkYSxsm/nVTliNzMdlgqaCpHPYLuL4izxl64u6ao4j49z
+         27oiVrPBNqmRBugFOhs9EBuXGSw6XGMMmHqr9Mc8wR3FfmnZ5DPN4WbmiE98cSU7t+Ip
+         a5Lw2+z0+zVeslK5DANZi1ODHSgBT49rhOQzcwKiZ1WG2QtpG8Kl3sa5vnMhIMBDGLc0
+         kxSwxomaMaAynPTyNWTXZx1OlmN58HgbaRIhepq7iBGOGtFD1185sl0uHCM4ti9+4cFV
+         j+nw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ+g+Z/k5FB2jUe6n/0WYgBD3YF5A4x/FeoIzQp/nyd+71/WN+h7PieiHew9e1BcqqVX0kQMNEoMw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEOrbYN1Hk7HjcC88f+zHCqfxoXGs0YNbg6mWR5MpjDiGlrnsi
+	0IEZhHg1dRrfbVJ4kCNzSadl2D+O8OxeVIyepd/8qvZFz1xEmPc0ml9PxtZ8xJsQ9pgKGEPEpOW
+	LdJZoOIH4OeN1nycTPxMvKhAgwHrfOF/p6w4VUQhSMcRnbMwGr0DBssbbRv0=
+X-Gm-Gg: ASbGncuM9tWDFV1lCYEaps9aXgjb2Ry8kb5pEZG778I/PYTjstKS6g+N3yHzK8UzQTp
+	XKCuvdd8nbjcBR6LQQJZq1GTQAT59fKQvOlwQkHprNkKXUC9Snxbzb/p7By8jHr1um0IRJtOuDR
+	2+iixLLMHZuJGmuVgc/kUOofEnlhldM5Q1t3r9Zm5keyWr3VsQqPuXeGmZf6LO7eyAp8AQUwiN+
+	DDGrjCBTYITycJX8TuoFktDS6ZexwV/8wr378c1gBjgL15fxBKYDhNqzQq0wKQ8Bm7lsWXzkV5/
+	wN9CXaxmu8B5+MbaPtA7dV71PSvZWEOvCn94CjYCxS7TYb8yzRQJhcGXYqYS3xNCmRpWWg==
+X-Received: by 2002:a05:620a:454e:b0:7c3:bcb2:f450 with SMTP id af79cd13be357-7c774deefb5mr256193285a.15.1743807769615;
+        Fri, 04 Apr 2025 16:02:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6MHU8Tgt8a8CQEhcefjPtj3ZIKu6Qtk7j4wVYGOhsJgBWQJhk02RvEJAWLOpHIAp8RfiPSA==
+X-Received: by 2002:a05:620a:454e:b0:7c3:bcb2:f450 with SMTP id af79cd13be357-7c774deefb5mr256191985a.15.1743807769258;
+        Fri, 04 Apr 2025 16:02:49 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7c013f66bsm321160766b.118.2025.04.04.16.02.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Apr 2025 16:02:48 -0700 (PDT)
+Message-ID: <4adc7b02-94d8-4ce0-a65f-6cf1532c7d28@oss.qualcomm.com>
+Date: Sat, 5 Apr 2025 01:02:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250404014500.2789830-5-sbellary@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: ipq5424: Add CMN PLL node
+To: Luo Jie <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
+        quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+        quic_leiwei@quicinc.com
+References: <20250321-qcom_ipq5424_cmnpll-v1-0-3ea8e5262da4@quicinc.com>
+ <20250321-qcom_ipq5424_cmnpll-v1-3-3ea8e5262da4@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250321-qcom_ipq5424_cmnpll-v1-3-3ea8e5262da4@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: U4jrDiVzYWqb72aAi0yPusrhVsjFOR6y
+X-Proofpoint-ORIG-GUID: U4jrDiVzYWqb72aAi0yPusrhVsjFOR6y
+X-Authority-Analysis: v=2.4 cv=bZtrUPPB c=1 sm=1 tr=0 ts=67f0651b cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=FgJnXFQMKNkajvnM-RcA:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-04_10,2025-04-03_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxlogscore=710
+ mlxscore=0 bulkscore=0 priorityscore=1501 spamscore=0 adultscore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504040159
 
-On Thu, Apr 03, 2025 at 06:45:00PM -0700, Sukrut Bellary wrote:
-> ti,divider-clock uses properties from ti,autoidle.
+On 3/21/25 1:49 PM, Luo Jie wrote:
+> Add CMN PLL node for enabling output clocks to the networking
+> hardware blocks on IPQ5424 devices.
 > 
-> As we are converting autoidle binding to ti,autoidle.yaml,
-> fix the reference here.
+> The reference clock of CMN PLL is routed from XO to the CMN PLL
+> through the internal WiFi block.
+> .XO (48 MHZ or 96 MHZ or 192 MHZ)-->WiFi (multiplier/divider)-->
+> 48 MHZ to CMN PLL.
 > 
-> Add dual license.
-
-Do you have rights to do so?
-
-> 
-> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 > ---
->  .../bindings/clock/ti/ti,divider-clock.yaml   | 24 ++++---------------
->  1 file changed, 5 insertions(+), 19 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> index 3fbe236eb565..aba879ae302d 100644
-> --- a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> @@ -1,4 +1,4 @@
-> -# SPDX-License-Identifier: GPL-2.0-only
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->  %YAML 1.2
->  ---
->  $id: http://devicetree.org/schemas/clock/ti/ti,divider-clock.yaml#
-> @@ -55,9 +55,10 @@ description: |
->    is missing it is the same as supplying a zero shift.
->  
->    This binding can also optionally provide support to the hardware autoidle
-> -  feature, see [1].
-> +  feature.
->  
-> -  [1] Documentation/devicetree/bindings/clock/ti/autoidle.txt
-> +allOf:
-> +  - $ref: /schemas/clock/ti/ti,autoidle.yaml#
->  
->  properties:
->    compatible:
-> @@ -97,7 +98,6 @@ properties:
->      minimum: 1
->      default: 1
->  
-> -
->    ti,max-div:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      description:
-> @@ -116,20 +116,6 @@ properties:
->        valid divisor programming must be a power of two,
->        only valid if ti,dividers is not defined.
->  
-> -  ti,autoidle-shift:
-> -    $ref: /schemas/types.yaml#/definitions/uint32
-> -    description:
-> -      bit shift of the autoidle enable bit for the clock,
-> -      see [1].
-> -    maximum: 31
-> -    default: 0
-> -
-> -  ti,invert-autoidle-bit:
-> -    type: boolean
-> -    description:
-> -      autoidle is enabled by setting the bit to 0,
-> -      see [1]
-> -
->    ti,set-rate-parent:
->      type: boolean
->      description:
-> @@ -156,7 +142,7 @@ required:
->    - clocks
->    - reg
->  
-> -additionalProperties: false
-> +unevaluatedProperties: false
->  
->  examples:
->    - |
-> -- 
-> 2.34.1
-> 
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Konrad
