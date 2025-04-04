@@ -1,64 +1,67 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FAC1E9B04
-	for <linux-clk@vger.kernel.org>; Fri,  4 Apr 2025 11:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37A51E9B04
+	for <linux-clk@vger.kernel.org>; Fri,  4 Apr 2025 11:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743767823; cv=none; b=YUOSYkdda58fmZKh1lDB0kEjfioD/G+F1UmxUR5L9PWQaRFr0RwRRjmgA3ZefPBrhEN6IsczdWc1Nh5qkeEUfAFLZde/U2N0hX2TUfLQ29s2GQOl7KiEDsEDFZ3Co9zKWv151F9t1UnvkN1qZBFGOeXUfBebBg519kOdnarZGcQ=
+	t=1743767825; cv=none; b=shaGXS3Ie8ntEia9VToTUNoQG047YsJLEqY6bdyM2k4ApOw9Ge+XZXw9itKgqrwqbBl9r4qgO3IirXSu5ZvxkteY9FEYNSeFid1RG1MxE9v46J2gxjP8aPbwVsy1XsB9pxsmuu9fkz3nRSLSL2rnB2B6doBQOe3rachJHsBbxa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743767823; c=relaxed/simple;
-	bh=zsqexfN3olOy8cznO5MQ/mSDVYhWtEHBp8RW8IswWus=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XM8QA1py9P7XgjlhJ6QQSDvBE8mvYDnQhU18U/9cTSOUzGQIlWqIbBl7PdjYd/okDKna9R3iA5QJd4R2bMyDhR285sGmPrXPkj5/dvYuBUMTJW5/B3o0lhiWM6XkVM1LzdLHuRKrgqdjuVXBSz7PDF3R9ZNIRzQTuRu7OLUVHFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e+OMxxRK; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1743767825; c=relaxed/simple;
+	bh=ZIlp12gUJ3TOZlm4LUJ6yds6K8SvLpJOolQ3dHPZQgA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qAws3QmfRMzt6XVTBc9VKKob37YJ5O98ERTlNjEEnGjHlL/3x5KUW1UkTaZFsa9KuWhOm1XOIqcwKFJcKobWRz71r/QqVjTtfW5gDMIHGMtIf/B2y90FOHwYfCMsHNQzw5FW/XhXjc4f2iAE7uoq94YJDOqF+ACTxbbP/gz+Skg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ASlxhWIm; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e+OMxxRK"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf861f936so2720635e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 04 Apr 2025 04:57:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ASlxhWIm"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cfe99f2a7so1410985e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 04 Apr 2025 04:57:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743767820; x=1744372620; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9y9jtm3UdXwtwABizUC1WU+17uEhYP0YGv4IThPOMns=;
-        b=e+OMxxRKy/g2uN7leyfObciSAUKmNOxxbi2U5KH6KKQSXBy89Fv2EW6Y0xSquM0uXu
-         fTX79pMaFihoj+cmeCNXlbJ6I0nAp5okizWugzQRFTyDIuWQLkr3RGKIz8zq2QRUnyx6
-         Yp9wj3JBiXc4Q1P3mYsph0xzLrX0YGQ8GvP/X+PnudYBoYLIkr944w8AiNomHnKwXkhE
-         J1qJ1/JQ6Rfi93veVX7VtataD5uf155YAuEQvynF5xUewYcJnk91XNaIGYiHP6JJ7Czm
-         QOUvqOpXGwq1grvtjEt6B2HRFLen3zpqadR+oNeu2zb/485p28RRwBVfJoHvwYTDT/I6
-         QGKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743767820; x=1744372620;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1743767822; x=1744372622; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9y9jtm3UdXwtwABizUC1WU+17uEhYP0YGv4IThPOMns=;
-        b=HRny4NsO83uS+cj91bN9aHSd74U2Ie0EwID3hWL9bG+1RE5IIcA52mpDTQOVyfWThU
-         apm1cICpvQEFm+/lz+Yf9CGc1YwlmWTaoO3tid4QlWJ5GQCTR7NWJ3/LJG5WXQ+R5/5U
-         lNrGXBO7UD2pSczjITqpFwGdUGnxtXHMRBFEgdyz7uHRnwzS4kJT3Pp2Cvf3vVtANtHs
-         a67do/zbPUYShc5cGAQRQzUV3OUW2mY0D4Qic6DTknoVnq30POvlpYpaErV4JSPI2qps
-         z91WcZ2WCDLphFdv9U9LJ5kNgBMGUVuH727gUz5k5W7ovpPGF9EYn0X62RzatM9T96/A
-         cn3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUsT4XGYhDoZxTVwIjDaXdB++rhapdk+ZkjXZTVsN1jkHl39uL+0jRSuiYffi3/9qDudY+bcVuf/X8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS4uXFM8j6pwsSKTU82eEpMk/C3TASpjcZOEVAmpwevaiB99r2
-	o8g33TbFB1JMQKppGkMQazZB5WFlzo06Zlm7KrJEiW1uCGOerOZ72CQ2OOSsQP8=
-X-Gm-Gg: ASbGncunp4NnAZi8UzTpq80Mfyw/fkcd6xkJU1eF1Ja9yt/Bhod7UcdaJAdPDNjT3Kh
-	bYAjLmGI/dxfM4ffUw2YVZVb807sWoz+cdvLz+mSnVIy0Y1ElQfNn/QbiWKjWc4V0DFVjkoKmL1
-	VXJIbU8QVOTCvoSo5Rj0sVSFLFCMFqJh3V7TWDBAbaHhid5lCuLuN64f2ATvBcHbEY3qY5UfdHB
-	gFlE0TJN7RKMOheOWNRu4IXHUZc7M11TidT3AR0NNxiVlPt9KiGBMfwH9+/bufZtzluNcQg3hxU
-	5bWblaqs3mGeudZPb08oVRglKn9ahazyn29V3NhLot2cuROs/MkQ5ojLTDhMqMQ=
-X-Google-Smtp-Source: AGHT+IE3YMdROfy4Pz/lL2bVAErbCHUi9OQZGeJfx60uexq6ErgRMWHK+iTZDQBEUem01jamr5n43g==
-X-Received: by 2002:a05:600c:3ba2:b0:43b:cab3:1fd1 with SMTP id 5b1f17b1804b1-43ecf81ce08mr9264575e9.1.1743767819747;
-        Fri, 04 Apr 2025 04:56:59 -0700 (PDT)
+        bh=V2NzIbuLVsOaJahdT641xBUsFIJNpkjAwbl7cZpldXQ=;
+        b=ASlxhWImZK2hH7Y1juiH0Lq542fUdKquujjxAk8LIIq2edILSa6FE8sC2xWgYETQvU
+         Ra5nKksOD7WqDGRrJ1c0gsYZ5zmtwgxeDr50uwlZ+u9Z2Edm+Z6lvdq1gWBPiw5igpk8
+         xxyqRhArTFU0tyRBw40P8JtClkOB5jusEKyWUuBwHedIoKDteWBrwX3h2EGJ/ruIsYfd
+         Jj93Gs0Xo4n3R3/yiSA3cHtRvRnhhtnIIF1htCf9oKa7+XFJfpCL659fbA01eZWvGIjj
+         20GnMMj+/o8GyKyJPyTV2qThokT4uGxJnQ/LpG7+w2tOU5NJAFKbcW+nWctUylfY9FCm
+         4pQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743767822; x=1744372622;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V2NzIbuLVsOaJahdT641xBUsFIJNpkjAwbl7cZpldXQ=;
+        b=mYkk7/aadfhY4xgp0CvBrwLWWmmkl+yirfdpM6LwAxRDS7goij5RkGnxdKtNW8FFX4
+         yF550b0srW37qXmUklrL7XJsxXxvqeTJR0GZZp2TNHR7zFGlOOan5UW+2eAIAjXzHZtZ
+         PdUAPblnxniTCFqtFYZg/Og7vEeXBT6IBIO1dZ8YirxmCtKb80DQizUYEvcd+SJSuANO
+         vF+eSEz406mNorl8OHIiD6mHc3bDMOvYgMbsorhVr4GaQdyjZLHlLZZ9P0Vq3we7XWZl
+         keAlaNLxDgS73BuU9PCAqH9zMS5kq2jlyFKh6ZMz64nqNDD7ZkXgG4bKyt7WInMprInU
+         HRQA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/4SK+9lmY4TuJFFgv8LC98tE+dzEzlW2rvcPoMoNrNbBBWcSa8QUCQWh8FiYBNZZEBf+pFEmX1X0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw8rrpk2Izbmk4AP8fvdEMb3K4b/jaDZOKoK1P7mN5fkB3HuED
+	UIhsH1cVsBTfSU11PcEihQT6RQA0I5f44cvZGv9KKzdM5EXc9LKPGZJPcwPfHTQ=
+X-Gm-Gg: ASbGnctXBFWWZINPPThtbSEmolY6SIrEf8C+0c4JNdIW1U7T+5xc8SbAP7Nn6rxfnG6
+	ZhC+Nfcdwanht+SoYge/c+zezAjrQEtbqPxar2BrCMkI42ARop8i0DZ9xppckkzHLrIQAQhFBRX
+	+k5Ovy9dwr99gx+PrdPyT70tfVmOxKLkV2JTFqMBXxqkCur43oU2jW0fxViJJUc8yD+8YjryqXd
+	kHppgKUtrLJAYVMOrlkYWrm3gORq/qUvry5w8D1KDb5diz8sMINdVr6NXawrAKVlDelaZJY50QU
+	QMHmJpD1xHLnjBPP+ZphOcNcOpvRMIjqhnsba/HPgyIUCbE/ibSYWiG9wDSm/slqT3O3UZwpqQ=
+	=
+X-Google-Smtp-Source: AGHT+IFxuBP0nmnZWUjwXivSZyFM5R5EOm7OqMfFckNVWAgHA5LCnGmvvIDCOlE0EShLntnYXKvpnQ==
+X-Received: by 2002:a05:600c:348b:b0:439:8c80:6aee with SMTP id 5b1f17b1804b1-43ecf9c2b5emr11378355e9.4.1743767821387;
+        Fri, 04 Apr 2025 04:57:01 -0700 (PDT)
 Received: from [192.168.1.26] ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec364cb9asm43842815e9.31.2025.04.04.04.56.58
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec364cb9asm43842815e9.31.2025.04.04.04.56.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 04:56:59 -0700 (PDT)
+        Fri, 04 Apr 2025 04:57:00 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 0/5] clk: Do not enable by default during compile testing
-Date: Fri, 04 Apr 2025 13:56:56 +0200
-Message-Id: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org>
+Date: Fri, 04 Apr 2025 13:56:57 +0200
+Subject: [PATCH 1/5] clk: meson: Do not enable by default during compile
+ testing
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,10 +70,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAjJ72cC/x3MQQqAIBBA0avErBsws4iuEi1EZ2ooLLQiiO6et
- HyL/x9IFIUS9MUDkS5JsoWMqizAzTZMhOKzQSvdKKMMLm4LLBN6YnuuR0K3LshWG+68aytTQ07
- 3SCz3vx3G9/0AHeSjdWYAAAA=
-X-Change-ID: 20250404-kconfig-defaults-clk-fa24f8dc6143
+Message-Id: <20250404-kconfig-defaults-clk-v1-1-4d2df5603332@linaro.org>
+References: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org>
+In-Reply-To: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
  Jerome Brunet <jbrunet@baylibre.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
@@ -90,30 +92,88 @@ X-Mailer: b4 0.14.2
 Enabling the compile test should not cause automatic enabling of all
 drivers.
 
-No dependencies, can be picked by individual maintainers.
-
-Best regards,
-Krzysztof
-
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Krzysztof Kozlowski (5):
-      clk: meson: Do not enable by default during compile testing
-      clk: nuvoton: Do not enable by default during compile testing
-      clk: stm32: Do not enable by default during compile testing
-      clk: sunxi-ng: Do not enable by default during compile testing
-      clk: sunxi: Do not enable by default during compile testing
+ drivers/clk/meson/Kconfig | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
- drivers/clk/meson/Kconfig    | 16 +++++++--------
- drivers/clk/nuvoton/Kconfig  |  4 ++--
- drivers/clk/stm32/Kconfig    |  8 ++++----
- drivers/clk/sunxi-ng/Kconfig | 48 ++++++++++++++++++++++----------------------
- drivers/clk/sunxi/Kconfig    | 10 ++++-----
- 5 files changed, 43 insertions(+), 43 deletions(-)
----
-base-commit: 07951d09335e96138e0595208fcc66c35ce0447e
-change-id: 20250404-kconfig-defaults-clk-fa24f8dc6143
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index be2e3a5f83363b07cdcec2601acf15780ff24892..ff003dc5ab20d904c91fc34c701ba499a11d0b63 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -55,7 +55,7 @@ config COMMON_CLK_MESON_CPU_DYNDIV
+ config COMMON_CLK_MESON8B
+ 	bool "Meson8 SoC Clock controller support"
+ 	depends on ARM
+-	default y
++	default ARCH_MESON
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select COMMON_CLK_MESON_MPLL
+@@ -70,7 +70,7 @@ config COMMON_CLK_MESON8B
+ config COMMON_CLK_GXBB
+ 	tristate "GXBB and GXL SoC clock controllers support"
+ 	depends on ARM64
+-	default y
++	default ARCH_MESON
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_VID_PLL_DIV
+@@ -86,7 +86,7 @@ config COMMON_CLK_GXBB
+ config COMMON_CLK_AXG
+ 	tristate "AXG SoC clock controllers support"
+ 	depends on ARM64
+-	default y
++	default ARCH_MESON
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_MPLL
+@@ -136,7 +136,7 @@ config COMMON_CLK_A1_PERIPHERALS
+ config COMMON_CLK_C3_PLL
+ 	tristate "Amlogic C3 PLL clock controller"
+ 	depends on ARM64
+-	default y
++	default ARCH_MESON
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_PLL
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+@@ -149,7 +149,7 @@ config COMMON_CLK_C3_PLL
+ config COMMON_CLK_C3_PERIPHERALS
+ 	tristate "Amlogic C3 peripherals clock controller"
+ 	depends on ARM64
+-	default y
++	default ARCH_MESON
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+@@ -163,7 +163,7 @@ config COMMON_CLK_C3_PERIPHERALS
+ config COMMON_CLK_G12A
+ 	tristate "G12 and SM1 SoC clock controllers support"
+ 	depends on ARM64
+-	default y
++	default ARCH_MESON
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
+ 	select COMMON_CLK_MESON_MPLL
+@@ -181,7 +181,7 @@ config COMMON_CLK_G12A
+ config COMMON_CLK_S4_PLL
+ 	tristate "S4 SoC PLL clock controllers support"
+ 	depends on ARM64
+-	default y
++	default ARCH_MESON
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select COMMON_CLK_MESON_MPLL
+ 	select COMMON_CLK_MESON_PLL
+@@ -194,7 +194,7 @@ config COMMON_CLK_S4_PLL
+ config COMMON_CLK_S4_PERIPHERALS
+ 	tristate "S4 SoC peripherals clock controllers support"
+ 	depends on ARM64
+-	default y
++	default ARCH_MESON
+ 	select COMMON_CLK_MESON_CLKC_UTILS
+ 	select COMMON_CLK_MESON_REGMAP
+ 	select COMMON_CLK_MESON_DUALDIV
 
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.45.2
 
