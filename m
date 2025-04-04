@@ -1,65 +1,65 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8ADC1F4607
-	for <linux-clk@vger.kernel.org>; Fri,  4 Apr 2025 11:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6E51F4722
+	for <linux-clk@vger.kernel.org>; Fri,  4 Apr 2025 11:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743767830; cv=none; b=mksyQIaAFbTJscg/sGnOPWQWIqFlYatMPG1b9Yhf0Udaoa10vyAjhU3Qf8FwuerIGJyq0/VD8eoH2mnHqi9975dN7gjXvNgrLLnBtnd1UZ76cjy79T4KDkDRWUpGl2yybtRWGMwknwy8+/dDMTQYLmRZrj+HR2kRUJ7I0Fjv6qE=
+	t=1743767832; cv=none; b=PSZfG2KJu9NZVb69veQXqq4LZcT1JnZ3iXBdHzOr4Pg0nRTe2EU+Ec77sysAihmTmYFLZCvAYFPN/mp/ySuGeK4W6HlguQqDacjwcheYX5KzzlSlVvJnRXLeVruJ0V0MjYja5hK9v8SnhUEsnP2Jdj8cztTBHsiNNRr6K0xiLiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743767830; c=relaxed/simple;
-	bh=uxxC2+rJC3Z2VSNCxxoKI1uj53Ey55YFQVhXgUJlMmI=;
+	s=arc-20240116; t=1743767832; c=relaxed/simple;
+	bh=bQj/x/W9Ry/V3hdmp39LWSNOcVVmkCtarcvTt5OTXVM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iIHxJyhPJs7sm1qZvdHKgMMcN/9pGxOYmnb2R4pOromYqvHu9QmhXJNfnxabG/CgDHIJeqg56j2lVnBqi2zPxo7hab0oYpSJqumzX/uJtbAUm0pfA3hITHTT8rE1S5dFTwYe4o5yy9BTaVoe8nomcsLS4mso/Mdqef9HBs51dCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KE0oJY8K; arc=none smtp.client-ip=209.85.128.52
+	 In-Reply-To:To:Cc; b=LLdZFV7LWhL+9IsFBk4uiM7zlHiStutYOT7Pbi1fcowqhAI4rr9RCBSV57IgnaL2HLJc3LnGbJZEp6THnoz4no1ooRYDOOvJsvAGcRmibHrLuHijqeXTcNJ8BzMCIe3cRlaqXxwLDhYfEcztgPCQMs1OJOlp9hMdogogLaVATQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hZNiA06b; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KE0oJY8K"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cee550af2so1880855e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 04 Apr 2025 04:57:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hZNiA06b"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43d16a01deaso1615715e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 04 Apr 2025 04:57:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743767827; x=1744372627; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1743767829; x=1744372629; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dWTh0iUxbFDZj1OSxB2YpSs0Atj06C+ykZmPKxNCsxA=;
-        b=KE0oJY8Ko+uG4iv2WCdHr2Gz0AO0ftR+YrN9X6gnkJ7tXit85VfVvhiNuD1WFHrlfq
-         52rIIqZAdJnQay9rnheQspL4GTZXqJUpdG99JD7W9xLjySHrEaU35VhZ0aQJVRtZC5M/
-         Xu2sg4mZoCo8SvJZzWqGRxioi0VlR/8jMh4tVziF44PyPb/UaJYaMRHCOptkTMUaaTkb
-         l2B8MPHz0LLVcr3JiHlvqsaICvZv8sey3QKN3IwetYnofuIeWV1+Bc3+R0gyCdwI+RCN
-         Remnt121HcJztRmineUjJ/aPC9vAc9h3YUm6e7/zMSPVgpiIjqth5zmLm8P1mojfXBIy
-         WPJw==
+        bh=d106TqNSzkY12ISczNEwfjZ5zhpWhqK85bfmJ3moKtE=;
+        b=hZNiA06beLwy8+fLoWXZekNTymYZOmLlPAaajLxN9YPDRFXGdEpMIpv3PUiGgUglHU
+         EnzM1JWSGx4a2C515kKtGhvX3HO50C5YyGiPKpAc1U5Udx29H2hLE3gKMPOAVN8jmzlD
+         Lpkv0VW9mWxZjjW97aOOsteFUvCm7Bo/eg1luM7ObMR799sJtlf0PxAeHkNciVqjAMsT
+         JmLEH3zZzY0+XRhnb64yvnbNSnsTsWXgRijhwT6olGTDlzHm3GwxFC3KaeluQd1NJV9K
+         nEHWgMyYIaTncs+ZXBAqFcWACltH0dDSMf6P+Hi1NG00JLMvt6WJLhfz7F8y/EELFuX0
+         we6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743767827; x=1744372627;
+        d=1e100.net; s=20230601; t=1743767829; x=1744372629;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dWTh0iUxbFDZj1OSxB2YpSs0Atj06C+ykZmPKxNCsxA=;
-        b=EZENXEGQIejIdyKc7DCWOIMvctFxm3IXs4Weeqcri9oGjub2t0l5rypiIItJEiZTGS
-         NvdletdlGvG4CfkEWSCZpIhY90Ga86+S1JGSGfbB+ABxhrW3xKp5XLyf2IT/2qczxThA
-         XiNkj9fySfY33hVgtzD3KdymX62Qs9fDmGk/vwszG624BW6+sPde7D7Dr0xxYnJzgWVW
-         wqLTsQ0USKwLWrJDVsNsmzPhLSTexR1KfzqGlZI5QOx8uumzEPXMbGlDbfD8gqz2+C8N
-         bVBRTHwgoFKvXDE5TKlo8Z3HzAWI3Lq1buNd/cwOYbLRmb+Ns6JEoNA+C2gSxspuEvhJ
-         4HIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWHwgwMI/u8vhYV+kS+RaX/b6+hTDgKRZF3gZY9xVYF17Q59Lmed8uDaCK7hw03Emxzs0D5+61sx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG1/25555kvqKdQuPve5PSAIg87H+kGjI1DuIDGUgL+ppan+vh
-	ycNE79CGBjIg5ZMlhew5mpqe8c8bioShCgXTLIrABDSD8h5Ueee8rzK54/f2tPE=
-X-Gm-Gg: ASbGncss7V2EAmelGECjy5kNYkOpYEMdDEup0Pyp/2juyzZpyCbronopxDMc32DU5Cx
-	DLM+/AnvI3GJtT2yjITcQiRmL2KPDMrxx0p59dS3B9ttO3VPuo91dw0a+RMQ94GceH5e6pcjko3
-	sMAbuFDcKijQTV0HLlC50W9MkL5LIxMHKoXUPb4KXl25qM0Q6SHLmuDS8rn5IBic+kGEmmG6VmT
-	Q1ttyVAzPUYE9okWxmpD3Ho3dmdP1W1pScoIOtzUc1fIyYasgaLIqkZ2t4dvtH+Boedao7W+nuf
-	owzaCgLV0P2565+iU/ndVutQGTJuO56pFT1OfzAoD/rpXHxI1d44OS+kMOxNjYI=
-X-Google-Smtp-Source: AGHT+IHHD7HuendpPytpQj7rstsIi+Mc3ng61xMnf8Qu66Hus393p51dcdiyAL39bcJzERvr8KKSjw==
-X-Received: by 2002:a05:600c:848d:b0:439:a3df:66f3 with SMTP id 5b1f17b1804b1-43ecfa18ba7mr9352835e9.6.1743767827420;
-        Fri, 04 Apr 2025 04:57:07 -0700 (PDT)
+        bh=d106TqNSzkY12ISczNEwfjZ5zhpWhqK85bfmJ3moKtE=;
+        b=gMJrq/txxeonOv19OJeVpgBSZZkMhW+tOscCM+VU5ZnajIu0RHK2tkMO+1d0F2F4wM
+         X3XDS2JfXFZgOi347BJZxV59XpX4V+sOd+vMPIRlUUqwTorarb2ivj4AHGINyWiXWzic
+         FR6UROmXpxLPgrarB+F98IlJ1SUAo4YVDyH3jVPzDgosbrHG6GYcHL7JPDxX/2YS0KKS
+         74GVpcAOKe6coH2gVj8QjTsZq4RgN5m373tbk2N5lwxpojkYRaPHhbrNm99g3uoHpgqD
+         c96q4bNipjLRcZBw71IL6Yy9JJloGoq8RR9HV0SsQ8w6D5rfX2fJ1zfIlnsr13SjNXXp
+         4eWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwIQmHdcZdE2jeukgGmUaO1yC26AixSLxeZrupi+r5TBkWasNuEZGfUN8kx/rhVogzz72HDgele/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2sYc6K4oek4r6QUJAn/I6gGNPmaHJKj4WPVGAwNUzslmRKWU0
+	wEorsjfkZE8Qw+STnikwjqy24iWeLw99bHanVeo+IEz5asmbWNNsjITFrZe4n3M=
+X-Gm-Gg: ASbGncuEZmciXo9A+G9b69ohWtVocmth1tEr0KQjS7UB+lA5L4erL4yX+dbaz0ovD0b
+	xGNMHIGxp7cNDibvQkjxbDmzlGCq51SEzNzf3w3vMM5HZZVWe724XLfNgMQXqomHBTVDyaZ0ORV
+	D2Tgc1H/yLo+8ekOTGGNhaBhxkqHGzq7KK+2SzAJbxoEZoTUI0AWhV45nlcv9XdGuCiuLNzjI2l
+	Dq2DQhqpswdLNanZwt9GMo1ymMS3lvgUfdmmrEcJTCaWix8sccVpZLrfeG6aHMwxka9sTFL0ekW
+	w2KgkZd1c6udlLc/hU3m3GOCY24YjZdoeuDwukoGKDWgUXo+bLxbyJEoNDdUGb0=
+X-Google-Smtp-Source: AGHT+IFUn3Ncq3UJFAd17WQ9Pi1CnRMlttoznJGCzpSMvyRtLW9B9mLaVZY4lCtohUQhqeiWfvicpw==
+X-Received: by 2002:a05:600c:3592:b0:439:9ec5:dfa with SMTP id 5b1f17b1804b1-43ecfa18f83mr8121025e9.7.1743767829072;
+        Fri, 04 Apr 2025 04:57:09 -0700 (PDT)
 Received: from [192.168.1.26] ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec364cb9asm43842815e9.31.2025.04.04.04.57.04
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec364cb9asm43842815e9.31.2025.04.04.04.57.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 04:57:06 -0700 (PDT)
+        Fri, 04 Apr 2025 04:57:08 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 04 Apr 2025 13:57:00 +0200
-Subject: [PATCH 4/5] clk: sunxi-ng: Do not enable by default during compile
+Date: Fri, 04 Apr 2025 13:57:01 +0200
+Subject: [PATCH 5/5] clk: sunxi: Do not enable by default during compile
  testing
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250404-kconfig-defaults-clk-v1-4-4d2df5603332@linaro.org>
+Message-Id: <20250404-kconfig-defaults-clk-v1-5-4d2df5603332@linaro.org>
 References: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org>
 In-Reply-To: <20250404-kconfig-defaults-clk-v1-0-4d2df5603332@linaro.org>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -96,161 +96,55 @@ compile testing.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/clk/sunxi-ng/Kconfig | 48 ++++++++++++++++++++++----------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+ drivers/clk/sunxi/Kconfig | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
-index 5830a9d87bf25d536ac787fe83669c64c8214952..8896fd052ef1784d60d488ab1498737c1405deb2 100644
---- a/drivers/clk/sunxi-ng/Kconfig
-+++ b/drivers/clk/sunxi-ng/Kconfig
-@@ -9,123 +9,123 @@ if SUNXI_CCU
+diff --git a/drivers/clk/sunxi/Kconfig b/drivers/clk/sunxi/Kconfig
+index 1c4e543366ddb76c1669b577c1ac337dc1be616f..5e2f92bfe4120981ab68b175dce798ac8b3268b0 100644
+--- a/drivers/clk/sunxi/Kconfig
++++ b/drivers/clk/sunxi/Kconfig
+@@ -2,13 +2,13 @@
+ menuconfig CLK_SUNXI
+ 	bool "Legacy clock support for Allwinner SoCs"
+ 	depends on (ARM && ARCH_SUNXI) || COMPILE_TEST
+-	default y
++	default (ARM && ARCH_SUNXI)
  
- config SUNIV_F1C100S_CCU
- 	tristate "Support for the Allwinner newer F1C100s CCU"
+ if CLK_SUNXI
+ 
+ config CLK_SUNXI_CLOCKS
+ 	bool "Legacy clock drivers"
 -	default y
 +	default ARCH_SUNXI
- 	depends on MACH_SUNIV || COMPILE_TEST
+ 	help
+ 	  Legacy clock drivers being used on older (A10, A13, A20,
+ 	  A23, A31, A80) SoCs. These drivers are kept around for
+@@ -19,14 +19,14 @@ config CLK_SUNXI_CLOCKS
  
- config SUN20I_D1_CCU
- 	tristate "Support for the Allwinner D1/R528/T113 CCU"
+ config CLK_SUNXI_PRCM_SUN6I
+ 	bool "Legacy A31 PRCM driver"
 -	default y
 +	default ARCH_SUNXI
- 	depends on MACH_SUN8I || RISCV || COMPILE_TEST
+ 	help
+ 	  Legacy clock driver for the A31 PRCM clocks. Those are
+ 	  usually needed for the PMIC communication, mostly.
  
- config SUN20I_D1_R_CCU
- 	tristate "Support for the Allwinner D1/R528/T113 PRCM CCU"
+ config CLK_SUNXI_PRCM_SUN8I
+ 	bool "Legacy sun8i PRCM driver"
 -	default y
 +	default ARCH_SUNXI
- 	depends on MACH_SUN8I || RISCV || COMPILE_TEST
+ 	help
+ 	  Legacy clock driver for the sun8i family PRCM clocks.
+ 	  Those are usually needed for the PMIC communication,
+@@ -34,7 +34,7 @@ config CLK_SUNXI_PRCM_SUN8I
  
- config SUN50I_A64_CCU
- 	tristate "Support for the Allwinner A64 CCU"
+ config CLK_SUNXI_PRCM_SUN9I
+ 	bool "Legacy A80 PRCM driver"
 -	default y
 +	default ARCH_SUNXI
- 	depends on ARM64 || COMPILE_TEST
- 
- config SUN50I_A100_CCU
- 	tristate "Support for the Allwinner A100 CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on ARM64 || COMPILE_TEST
- 
- config SUN50I_A100_R_CCU
- 	tristate "Support for the Allwinner A100 PRCM CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on ARM64 || COMPILE_TEST
- 
- config SUN50I_H6_CCU
- 	tristate "Support for the Allwinner H6 CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on ARM64 || COMPILE_TEST
- 
- config SUN50I_H616_CCU
- 	tristate "Support for the Allwinner H616 CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on ARM64 || COMPILE_TEST
- 
- config SUN50I_H6_R_CCU
- 	tristate "Support for the Allwinner H6 and H616 PRCM CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on ARM64 || COMPILE_TEST
- 
- config SUN55I_A523_CCU
- 	tristate "Support for the Allwinner A523/T527 CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on ARM64 || COMPILE_TEST
- 
- config SUN55I_A523_R_CCU
- 	tristate "Support for the Allwinner A523/T527 PRCM CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on ARM64 || COMPILE_TEST
- 
- config SUN4I_A10_CCU
- 	tristate "Support for the Allwinner A10/A20 CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN4I || MACH_SUN7I || COMPILE_TEST
- 
- config SUN5I_CCU
- 	bool "Support for the Allwinner sun5i family CCM"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN5I || COMPILE_TEST
- 	depends on SUNXI_CCU=y
- 
- config SUN6I_A31_CCU
- 	tristate "Support for the Allwinner A31/A31s CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN6I || COMPILE_TEST
- 
- config SUN6I_RTC_CCU
- 	tristate "Support for the Allwinner H616/R329 RTC CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN8I || ARM64 || RISCV || COMPILE_TEST
- 
- config SUN8I_A23_CCU
- 	tristate "Support for the Allwinner A23 CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN8I || COMPILE_TEST
- 
- config SUN8I_A33_CCU
- 	tristate "Support for the Allwinner A33 CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN8I || COMPILE_TEST
- 
- config SUN8I_A83T_CCU
- 	tristate "Support for the Allwinner A83T CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN8I || COMPILE_TEST
- 
- config SUN8I_H3_CCU
- 	tristate "Support for the Allwinner H3 CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN8I || ARM64 || COMPILE_TEST
- 
- config SUN8I_V3S_CCU
- 	tristate "Support for the Allwinner V3s CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN8I || COMPILE_TEST
- 
- config SUN8I_DE2_CCU
- 	tristate "Support for the Allwinner SoCs DE2 CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN8I || ARM64 || RISCV || COMPILE_TEST
- 
- config SUN8I_R40_CCU
- 	tristate "Support for the Allwinner R40 CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN8I || COMPILE_TEST
- 
- config SUN9I_A80_CCU
- 	tristate "Support for the Allwinner A80 CCU"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN9I || COMPILE_TEST
- 
- config SUN8I_R_CCU
- 	tristate "Support for Allwinner SoCs' PRCM CCUs"
--	default y
-+	default ARCH_SUNXI
- 	depends on MACH_SUN8I || ARM64 || COMPILE_TEST
- 
- endif
+ 	help
+ 	  Legacy clock driver for the A80 PRCM clocks. Those are
+ 	  usually needed for the PMIC communication, mostly.
 
 -- 
 2.45.2
