@@ -1,64 +1,64 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21BD2E62CA
-	for <linux-clk@vger.kernel.org>; Sat,  5 Apr 2025 13:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91291E5B81
+	for <linux-clk@vger.kernel.org>; Sat,  5 Apr 2025 13:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743861003; cv=none; b=tnUoP4FFSsOrqHHrGq+vURFkVUJoGS3NW5bOKqOYQvrKu2GoKsQNXAJxlQwHseUQlPRDFULa5Ihqvbi+04KJJbNtt70aaTo47xFGOKWLL1+MIKRA1fyOYWcrXwyGyBWfuCC3ONbKsHNpyi/fM22JX76qwfeiwh8fUjoets4M+rI=
+	t=1743861089; cv=none; b=p4kdQLGEDa2emwldz4L4hRq8HZxuM+yufgXVrikQYWPKmRii2U/bYiDezHINn0ImoNhsWrP8ndFzmo/SE3YB9td5d32y8eipuKpfCgQy6OSzlP50LxS8im2oaHYP3QumJXQavhtbG0LdM5G90VeZI9SdPEAHCMOs9y3DLa96gWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743861003; c=relaxed/simple;
-	bh=+aUz9xevIHtQ5HcguqoQTB6cntYV4+ru80uxVrIvvK0=;
+	s=arc-20240116; t=1743861089; c=relaxed/simple;
+	bh=JeyhOisvFTXUdAkk7e1xdxJ99H2lpRMgdiRUA+fOjh0=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oa6836g6FXdn3Kiy2BJafRtLqoM2E2EIDHC5LGnpujKPdkoT8xtmXmmG7v1TaKOAcFKhZEYq+cNaptJtwoSPpLXUizpAATWhR1PLzJepm7woq370BVEwqAjIguY9E/wOna/8zC5/JZ78B7Pt3kKPLaJV30V5F873swyxcLuZr70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TOTdj5Iu; arc=none smtp.client-ip=209.85.128.42
+	 Content-Type:MIME-Version; b=OHOZVlWnvvuAdYHBCB3jLcuu4NXwlWEUGHyWu+f/yDV/5RZBs1DVKyQcU8GZyjRsfF+jkqaYeYE4+rSN3qnYYHXK0YpfdAGlPpTKIzBYNNIrV6hUUcoTmjfnImfgMiwi/ZTJZNo1t2BVDzn9LQ71X8je9ffvU9x/ngXpD6g6V3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vzEeBrdL; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TOTdj5Iu"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf848528aso23679825e9.2
-        for <linux-clk@vger.kernel.org>; Sat, 05 Apr 2025 06:50:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vzEeBrdL"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso19381915e9.1
+        for <linux-clk@vger.kernel.org>; Sat, 05 Apr 2025 06:51:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743860999; x=1744465799; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1743861086; x=1744465886; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=+aUz9xevIHtQ5HcguqoQTB6cntYV4+ru80uxVrIvvK0=;
-        b=TOTdj5IuSNrPV2Vr7vPxTkVcu7vcFvoXtbQTTX6oVDF97u3cUaojL7CzU9Wtx5K603
-         5ToOZnLPG+iLubjPooHjtMCDrmOn4aZD9SOkHzKlTfrgX3rumvYs21VfhSk3E94jlZ4x
-         aXewctMBVKSyLEb2GF+VXVNcG0Li26u1X0AAW6S2fsSaPVlYvhMB9hqXDoyjEZayrmp3
-         7iEMLIyH5l6aNnF7syChCInkgjfCOG0KpKsMuYE2zlOYyETtHqbm8tPodgcwa6uplHtV
-         2raoAEdPas7uCMsuD5kJk1jyOnqTFFtDNU0Jjyu5faqTks/D6H6a2zANSUuYBRBpBImg
-         szNw==
+        bh=JeyhOisvFTXUdAkk7e1xdxJ99H2lpRMgdiRUA+fOjh0=;
+        b=vzEeBrdLdQoy4GXttK+LKOJe9OmaOsMCveq3Gp1n/idKT9ZlHNBw9/Ypr0VpC9M88Y
+         Xx4qjePjuSUAlVC1cj7BZC226Tpg71c+20gzBspJb0lH3nzvRS23hTHxPLnJDOvg43H0
+         hxLaEiskqiPqjgozm8dccQ8dfkLPfIwX0lzyYjLiH2ZM01ilDg8w6lvvqzyK71cvBGby
+         J7G5LH1I93gBIz4qZB7628EsuLaD9prfRrOMVUZdbT97SB5s7mOU5iJwgArsfF5Jx49L
+         igyHPn5Aw2C1nE9/VLk6w2QVdjUrBRHfSiHyGFKLv8KtDuIxAs1MGAijLav9f/EfENrn
+         bUVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743860999; x=1744465799;
+        d=1e100.net; s=20230601; t=1743861086; x=1744465886;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+aUz9xevIHtQ5HcguqoQTB6cntYV4+ru80uxVrIvvK0=;
-        b=TYkbxEDFK8cPX5UJqM07dfW49MUHYQZfMngwcsONyoqybj2Vs7uoYBlU8TGQlYB/Hk
-         cSmn470sOwq+T5O0gK92/hBsNw9umJro7WUxFTec68705Z7lXPXEYGOPUcJuK8mYA3Hk
-         P9YbiyuerDZ5eoIFXnrQHpOg94NoH4Clc0JWew/U0H3wFJf8EjB91T4waVq3n68h81Ps
-         BMCLpMwscihOzRx0GJbZAGCHrZ/EsjFno8bldxawpfyytL4ZW2G9udFXq9JkY/0HVaPo
-         ErDaAlNxcMh1mxji90Cjx1asBMbQLphI2HODQKdkpGeaJPcwiyJL+RmTBV4nxcU8muxN
-         ndmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKxRmZEzB+Gphp6WN8uQPeJnmew/nhSKn0j6rZ4sA+jwTDIjOK6tYCjLQ+Xn9wdHTplib96fITUhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRaee4tn/9/iGKV/yMNsOoZXyOeb7emvktEbehE4akd32nz6Zw
-	CBZnvjnisWr8jFNYAgWFERb3DtfWz8rnmsjDSPcMBaVUB19VFz/qm5qi7goTrSM=
-X-Gm-Gg: ASbGncvA1e/kfc4BQYWObert7Xf1sbfz+nOqSYhPn3IANIw+IfN82LmrlRbN3wYiRED
-	NdaezkTDlKWTsWm3x3VEPb7lW4gBSHiTU96lrOURCdOL4sRciumRHMqyylw2DgXMFavTrodehp5
-	0x71525Wqi5YIPc5eEFKpzsP5km26sdm8blpSu5DGXhrG5Hd2q4GnSrM6wuxv6nv8Gwj6D1YEPb
-	d0rhz80eh+r38Zv1yTu4Pb8eUWX6M5T7/6KdrIShVlX2gdKhjML7TGCeaUibBGeAgSvNK2bWnrt
-	3vSrxpn6kW5bZG6HzDbzDFn7hHl0rFRytxWhc4Vruifjeiqj
-X-Google-Smtp-Source: AGHT+IGEMTPUEjKXv72J87fcLD9Q/jwVNzAqgI5y+bsn5JH5gR2xHN4lAAplyWAjbnnOZ73qIK0SCQ==
-X-Received: by 2002:a05:600c:4754:b0:43c:eec7:eab7 with SMTP id 5b1f17b1804b1-43ee0640054mr27782485e9.11.1743860999041;
-        Sat, 05 Apr 2025 06:49:59 -0700 (PDT)
+        bh=JeyhOisvFTXUdAkk7e1xdxJ99H2lpRMgdiRUA+fOjh0=;
+        b=MYvPJsoZitx2DgEzYNGE5PxLKZ5MaNcemTtffJImBW/MY7e2xMlIvqVPH1perpVc56
+         GJXXKbAWzIB+eY+UfDTuMe+BXop/YAqr+nXwZOEv0vaw5AeZRAepx9JKMLbvsbrPjJXV
+         TdfRzmKwvouLQA1hpRX92FtbNXulmqP0iP6LdUhT8ZpZevoF/gBtDxf2GKXn00eb7zrG
+         SDYYGc8mGSKaQrtVCv2tpwcvF+HUoQuWxUt99HknQIQtt59r9t/AHTNPa2XNdEtsk9tJ
+         ySpw8NUIrLPxAa1i8yV5svOJG9cJQARvEhQKam7xR2xlZQxSseJ4AmEIcDioAbTvm6gf
+         8dMw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9lAoo4sdchhcczQczGniliAz87cWNDRtAJGWZBa81z0YJqWQcoweSgpp8iLTD8hMyDdnFOfwj61I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtSqpZWB2B5xFmZ6pds5R6YRbuS/0LNJYmpFI68BDV5BcPiVcr
+	SssCMw6vO5LukPpCDkDQo8g6HaJZLwr4STOvMAudaOwjSc8+V60lsOB/GHDGkZI=
+X-Gm-Gg: ASbGncuyejvjUB1GpN8mHCCc6qL30OaZnZYRzlWGQMxsvRdKL9wH0a0QI+Bdmrha0WB
+	hfPIQlUhI2V/EPaHf2IMtuu4JKUlWkKC6ZjrmdPznjWEAeo2FBUGX4bIwVyUgrsZlFEi6y/+5+x
+	JuYj8vVhQ5ETx72JEDyGeovrM82g9EbR9ZY3EK8pSCALZ6B3V/kMOUkIh5HKHNj/P5b9lLAyq3g
+	5gm7+n2ZzVpJSdr8WjIOQUtMKf8en4TWEWf0reGNj3xsCSbpYFtFiSotlFzvvPeyVr+IMtmfw83
+	k6EkjBdFmAGDkJj7CXOAlWp19jG9Mm3wVI8d4w2cdrVrmg3p
+X-Google-Smtp-Source: AGHT+IE02LC/xEXo48knWnsG4VHZcnXuNsYnZ3C2c3XXP9CR527du7gAFHHDdb3MD7dDyrR4ZPrhVA==
+X-Received: by 2002:a05:600c:224c:b0:43c:f61e:6ea8 with SMTP id 5b1f17b1804b1-43ed382b5d7mr37310605e9.2.1743861086018;
+        Sat, 05 Apr 2025 06:51:26 -0700 (PDT)
 Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30226f2bsm7018626f8f.96.2025.04.05.06.49.57
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec364a0c7sm73335975e9.29.2025.04.05.06.51.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Apr 2025 06:49:58 -0700 (PDT)
-Message-ID: <3d688dbd2f88ce8db854f6972ce9105202ed4c06.camel@linaro.org>
-Subject: Re: [PATCH v3 23/32] mfd: sec: add myself as module author
+        Sat, 05 Apr 2025 06:51:25 -0700 (PDT)
+Message-ID: <75f5948d8a34f20d70050c938bff5422b08e37c8.camel@linaro.org>
+Subject: Re: [PATCH v3 00/32] Samsung S2MPG10 PMIC MFD-based drivers
 From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
 To: Lee Jones <lee@kernel.org>
 Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -73,12 +73,12 @@ Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
  <willmcvicker@google.com>, kernel-team@android.com, 
 	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Date: Sat, 05 Apr 2025 14:49:59 +0100
-In-Reply-To: <20250404094229.GF43241@google.com>
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, Krzysztof
+ Kozlowski <krzysztof.kozlowski@linaro.org>
+Date: Sat, 05 Apr 2025 14:51:26 +0100
+In-Reply-To: <20250404094354.GG43241@google.com>
 References: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
-	 <20250403-s2mpg10-v3-23-b542b3505e68@linaro.org>
-	 <20250404094229.GF43241@google.com>
+	 <20250404094354.GG43241@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.54.2-1 
@@ -89,51 +89,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Fri, 2025-04-04 at 10:42 +0100, Lee Jones wrote:
+On Fri, 2025-04-04 at 10:43 +0100, Lee Jones wrote:
 > On Thu, 03 Apr 2025, Andr=C3=A9 Draszik wrote:
 >=20
-> > Add myself as module author, so people know whom to complain to about
-> > after the recent updates :-)
+> > This series adds initial support for the Samsung S2MPG10 PMIC using the
+> > MFD framework. This is a PMIC for mobile applications and is used on
+> > the Google Pixel 6 and 6 Pro (oriole / raven).
 >=20
-> Full-stop.
+> Okay, review complete.
 >=20
-> Smiley faces might be okay on the list, but not sure we want them in
-> commit messages.
+> If I didn't comment on a patch, it means I didn't see any issues with it.
+>=20
+> However, saying that, it doesn't mean I won't spot something next time.=
+=C2=A0 :)
 
-OK.
-
->=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0drivers/mfd/sec-common.c | 1 +
-> > =C2=A0drivers/mfd/sec-i2c.c=C2=A0=C2=A0=C2=A0 | 1 +
-> > =C2=A02 files changed, 2 insertions(+)
-> >=20
-> > diff --git a/drivers/mfd/sec-common.c b/drivers/mfd/sec-common.c
-> > index 448300ab547c10d81f9f2b2798d54c8a03c714d8..05658f05cb857a784c7d01b=
-1cf25de4870e1a95e 100644
-> > --- a/drivers/mfd/sec-common.c
-> > +++ b/drivers/mfd/sec-common.c
-> > @@ -293,6 +293,7 @@ static int sec_pmic_resume(struct device *dev)
-> > =C2=A0DEFINE_SIMPLE_DEV_PM_OPS(sec_pmic_pm_ops, sec_pmic_suspend, sec_p=
-mic_resume);
-> > =C2=A0EXPORT_SYMBOL_GPL(sec_pmic_pm_ops);
-> > =C2=A0
-> > +MODULE_AUTHOR("Andr=C3=A9 Draszik <andre.draszik@linaro.org>");
->=20
-> Might be more polite to put yourself at the bottom.
->=20
-> Not sure these are ordered alphabetically on purpose.
-
-Yes, I wanted to keep the alphabetical order (by first name), no ill intent=
-ion
-here. Will do.
+Thanks Lee, I appreciate the time you took to look at these!
 
 Cheers,
-A.
-
->=20
-> > =C2=A0MODULE_AUTHOR("Chanwoo Choi <cw00.choi@samsung.com>");
-> > =C2=A0MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
-> > =C2=A0MODULE_AUTHOR("Sangbeom Kim <sbkim73@samsung.com>");
+Andre'
 
