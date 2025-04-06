@@ -1,94 +1,115 @@
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90061335BA;
-	Sat,  5 Apr 2025 19:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32F2C8CE;
+	Sun,  6 Apr 2025 18:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743882936; cv=none; b=n7A9zZIwVIWg1ZMYvZ8BydVccijgJWHGFwQ5H7LRSxHCTvJnyWPwv6MhkG++cfz+ywDywpYAab/cLbb9ZUY3MmzjTDi+WEwWjmU4Rnv+6AdjIsyZFXjHZTIsQFYfME55M0ZW5qzmgb1X/5TpaXbx8+ct25A+7+XGKYINT5SpwaA=
+	t=1743963262; cv=none; b=ZPWVaWxotmG4IARfch3Y6Mkmkr7B0PDgnOUjtTDJx8Sg2qiyD0SFK2aPbHbMxbvAnMSNxzKVNE3XeAqyFJd8gGafn2turkk1MM914jo2j0UuCWUvsam5PFZgFe2XOtC3ctzpqfRJ9W/XduTcmzgeetN3pxwlpNF3YLkBc17NwTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743882936; c=relaxed/simple;
-	bh=mA62SvgnY0e1J30LBflKoeGcr5R1xE9ehUM6YaHUWRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SSIo5M7P0z/ZewuMuUE5Y9sGjQGnWnV0BRAGZ+P5av9oEXCVS+KLqdSr1TUg23kKdc0j3FMgxoWdC4QTFcM0576dbfi7/gL9hjIkEiKcOrxc4DAk88fhRVsC1g5PLeBeTZBkk6+fGsIGKLwZHKPFNKYvobfpJaCvfb+Mawsj3P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=2FAF61Fy; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+	s=arc-20240116; t=1743963262; c=relaxed/simple;
+	bh=kqgb/u7hwCpsg1gF7Akwy1ectvg3NU7wvnTRIu0kXyU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L1ROqdkLYcHnriqwSuP/VYkthyTFSIubR2dKoCNr0ztysrHF4jrKH88O7CX/NBWq/D667/BWMq+gYV5EbShdv7y2RLOcN8Ca+lQjO5n2aXFJ88n/khYpiAPfv6O5CLIAnAmv6TVo+9iltl3d37D4Zeujf0tTl0HeonH4FAgkFsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhbBmwjf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="2FAF61Fy"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=VIlpE3NxkylOLZaGankjQvG+NCkJiZ7fNj2FI1yhm0Y=; b=2FAF61FyTtP9ub/wAHnTdE20Xz
-	MFLUxx9b73VUxOAJ/MkepZz9slP+ifXJ7fsq/3tYTdQF4W8iLUuKq/zkOxi7zpASUu20L+rBXWFon
-	h6OYn8ttxDe3ChVRKVju3mpJQVQ3n/QdI8GSmvd+XyditedcWSBP4c40o7fk6nJLtI7sPGWuuHHW2
-	eqwHrm1odRr9Xr0qyBWXwU6FMpsXEo4aHp52tW3C+3KapFR3HmnphZGP56iGECUlNwrxC0xCqCHm8
-	DqEK9ka/w1ALOpB1RwB5rB2u+ufFkC6BN2qIRh+TtR1LjnOJfi/CAjZPKZ7Nyc0sL2LiIBU33R9GU
-	H4ZARX4g==;
-Date: Sat, 5 Apr 2025 21:55:29 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sukrut Bellary <sbellary@baylibre.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>, Kevin Hilman
- <khilman@baylibre.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: clock: ti: Convert to yaml
-Message-ID: <20250405215529.7f3f3253@akair>
-In-Reply-To: <20250404-famous-rottweiler-of-perspective-e5dcbc@shite>
-References: <20250404014500.2789830-1-sbellary@baylibre.com>
-	<20250404014500.2789830-2-sbellary@baylibre.com>
-	<20250404-famous-rottweiler-of-perspective-e5dcbc@shite>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhbBmwjf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E58F9C4CEE3;
+	Sun,  6 Apr 2025 18:14:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743963262;
+	bh=kqgb/u7hwCpsg1gF7Akwy1ectvg3NU7wvnTRIu0kXyU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BhbBmwjf//VRbwcN8qgI71+IKmyvb1aNNbsR9+3oR+vwd9ntvS7cMXbhYJF4s/cdU
+	 UQ9EYPNt++r85uSE8JAy3PVtWnb7R7a2K5UeTOSqRMnjQBn7k1J/+LrjSy97gS2E1m
+	 JvP31fimvWVlZXfxyhDYj+6GqThpSyaVy384Ur3N+6INNo0IJUsN8xHNlF2qaIDBPU
+	 KIl1NdZ4JFXLx33GTcXOWxyfmCTAw3xOO0N3pnFsnRnEoVjZAMPIhU2oTd77OUXbH+
+	 iJmOGEx5PKnl7iyqZWaRbzGnMBog05MpmY2pVH+a+sKkAQwNdHmUEa90ZlzkN9zyB1
+	 k5p9w1gXlU8Mg==
+Message-ID: <1ff1a5b5-72b7-44bc-8a70-7281cb58785c@kernel.org>
+Date: Sun, 6 Apr 2025 20:14:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/32] mfd: sec: sort includes alphabetically
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+References: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
+ <20250403-s2mpg10-v3-5-b542b3505e68@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250403-s2mpg10-v3-5-b542b3505e68@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Am Fri, 4 Apr 2025 12:44:39 +0200
-schrieb Krzysztof Kozlowski <krzk@kernel.org>:
-
-> On Thu, Apr 03, 2025 at 06:44:57PM GMT, Sukrut Bellary wrote:
-> > +properties:
-> > +  reg:
-> > +    maxItems: 1  
+On 03/04/2025 10:58, André Draszik wrote:
+> Sorting headers alphabetically helps locating duplicates, and makes it
+> easier to figure out where to insert new headers.
 > 
-> How reg is part of this? Every clock has reg, doesn't it? Otherwise how
-> do you control it? Drop.
-> 
-> > +
-> > +  ti,autoidle-shift:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description:
-> > +      bit shift of the autoidle enable bit for the clock
-> > +    maximum: 31
-> > +    default: 0
-> > +
-> > +  ti,invert-autoidle-bit:
-> > +    type: boolean
-> > +    description:
-> > +      autoidle is enabled by setting the bit to 0  
-> 
-> required:
->   - ti,autoidle-shift
->   - ti,invert-autoidle-bit - although this makes no sense, so probably
-> old binding was not correct here
-> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
 
-well, the more informal definition in the txt file can be read as: if
-the clock supports autoidle, then ti,autoidle-shift is required. But
-that does not
-translate to the formal definition in the yaml file.
-So we have nothing required here.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I am a bit wondering whether we should just drop the autoidle.txt. The
-only thing worth there is the description.
-
-Regards,
-Andreas
+Best regards,
+Krzysztof
