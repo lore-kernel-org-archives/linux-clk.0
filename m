@@ -1,255 +1,158 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA1F258CF3;
-	Mon,  7 Apr 2025 19:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6FF1EE032;
+	Mon,  7 Apr 2025 20:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744053419; cv=none; b=A/XXD0XMC5R3VNXuaEv5pYrdj/ocjgVoG1B7SZwQH0W0RWtFIIt00J/DP0kk8WXYpNRCBGn8f/TZDe+DjHdLqo0JENr4yuUMhdaJ4I7PSyPDcenDWvTHbzkn/5m6z6kb7VVq3h25c2qLoddJISUvxkIx1WHdkIPeFqOfVt8msMQ=
+	t=1744056354; cv=none; b=qrFN0xdCegD7r9WFtw4XDuM5D/8imAggVKK7ORTXFIQOfWofzBdc3AE4ZcbECByz6Sm2nnSYJ7dN80sdXZ4oqNVbmCeTFtU049MyMn5iXusDIOteFG98N1LRF3jykcW5QsdRImLSX/qgbb5hJhIekJ6LD7b70pVZd2RIasn3Ljk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744053419; c=relaxed/simple;
-	bh=naUjUisOyjlWOOpdHq+axpmjXsW6FuxI9hzLn5+iEpk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O6RR6NSfGfN3nqXiFdF7Dqosy9ctGLC0uda64R0uON+p8ltH/K6wdCcYDq9d8QXXkrmAb/FcxkUuF/XFiSLyUz1bcwi0Y6GgKVpKLvs3efZAxmY61GLAGpmCzUGxep+ajbawu4hLqkT9ycpgSU0d/SRJmLe6eawwA8U74C4iumA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mga0pkUz; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1744056354; c=relaxed/simple;
+	bh=sOI/Ws0aQosMDdWy0Ov4bIs+PItfPMvkWap9D35EHWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BzzQEDRVSV1sMnjLKS9mt7m+8eRTvD4tfM0YaB6DxWhpeBAcpEsnkG9fCVcuZBcQC7uH8Zfn/dKCZ6UM8D75BNn7cvVv51vh2mI1cWdTbVRhDZN1tQEA/iqcroueF7gd2FeR35NXDf9erCOQ7jz1i8SMT54PaBfinlslxACpJHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qxWeMnez; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mga0pkUz"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43ce71582e9so32620095e9.1;
-        Mon, 07 Apr 2025 12:16:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744053415; x=1744658215; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=slVHo0owJS6MAx4PpzF19Vk9iA82FPjThq35k4/DBek=;
-        b=Mga0pkUzBkL4epgjjGdw0a8GI7v3SqYlv8m6SGnujbJ06uQ/Uil30TQRdCpldm/yCh
-         Y4VKsmL1VwPEXGRQxmE7gwzRYR1NpKEdo1vmEgopc16pDIA4kLJjerNESOp+ZjVBsRKj
-         iBYyvvu1Y9L5eyUCZBsmL8+pD83yHJGe0/vvSAmPmdK2It9RqSfohoa/n+KKicX09k2S
-         mVjZ5Lm04cJ1ZsyeKZovUFaGo0yac8/+McIH0PhNtyevQjbU30BaldDqEWS9QCGHfTCf
-         KMQ1DQe6h6zGmtS5o4olce0qG0XBFNtrDkMkK/yN9El2zIwmIs9uWyq/oWpiEI1xLqrj
-         ah4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744053415; x=1744658215;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=slVHo0owJS6MAx4PpzF19Vk9iA82FPjThq35k4/DBek=;
-        b=V+oO8XlKZR23lEOSPXYSgakP2wuMcJDJARDQZhT4tWWRLhk306jGcvEE7iiMxlsjx7
-         ExqqyqM3u/aISde3UtxkCq3aTvENJL1ggC2brIguVB2NBdzSH2NB9zcHBWfzI58dRYMS
-         H2dmJmdVckAo2xJbCz74TZMsLZx0Fj0+9wnYyIRM/j6GU3trVBReGNEJQ/2g//ZiaTeF
-         tmXHjIxx8NGU6wRxJ/xqjswOzPZpsAeY5wr9EU9tYSzRqGFlUL0+Ugut9Hp9daD9tfRw
-         lgf1YoAyzdghChJVmDKHQ8Bsbhzs26ULOuvgRV6EM5kNQlmr32WiqEdvDEbGJn9SJsk8
-         0nKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUL8HVmFBFZ9zuhmYGyh/AU5TXixObokxnXukUxRPpZe/Ct75rBBtA7KSgcSn4o2Lb5IsbCJzm1/sNNeF45@vger.kernel.org, AJvYcCWBiuWMIg0sP5UFJ0VUbsRU1QAQAsZcSbtgcjwBbDl5LXJhT1CGY4hQJdIVhMirBwC7duZpd0MLe+OF@vger.kernel.org, AJvYcCWKsPZ7A5mG4Xh+4AfuVVTXj32sSdwIQZbqCyGs6EIP+CL9EOTiLgH2ZGvUwCHD1CJoLtfhAFMMvUeKfw==@vger.kernel.org, AJvYcCWpYWecdP7+7OTU37mdRhwwsxWoGYFk/A/r5LJu8tklxs7ffZAWDTkaspFwFIxylRPktrLd5cepRNHa@vger.kernel.org, AJvYcCXffxzjHUpdylwFOHkwbtkI9GQk9FzLGHaT5/N85XsCWtaCkVh927dWLKYfFN93DjEGQSLVS6EHAamSWLYb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6DUocqvWpbWDlx6McZpnpWvk6KFnfqNX3OL8QRfPMyfKCLM4Q
-	vgww7UopwSH/tvVnQJDrE2lJep5hYQzOEZpzbdpqioLRFttdmO04
-X-Gm-Gg: ASbGncuaf17PxtwvaDHHUC89nHVMXpYMLN8EF1COxnDgj4hOHTYqf/Ipp3JhOP0J39/
-	ByCYSZam3PKfbXw0ToyINFd0wvGKeScEpU402xu6df9F39Q4l4XSlj6pL0HZ+Vn0TcKBzGkMG5S
-	8KiioZiUC/DTDR4zaS8jxZJa6mChbyAL7Wzg0VaffWM3AiurAJaT2WIQdj0NIiYxtAaoWR1reg3
-	yidZQAzGfew6mqcBGOMYn2LmNdxLLNTT31XdzFaj0OTSa8D+YEzUwmgfsmf9GW5xbe5wpcjqTum
-	2XNgEz8hWCRvOvwL/OiwAeLxeIHMJKyZvwTO/uGg8XWhM02hy+kC431rgjBV1YCtBjTIe2fH6Fi
-	xuB4c
-X-Google-Smtp-Source: AGHT+IEL42x7uF/NnsyHco9mxLN/kOyCWb/fw3/RZjhZSxcdSaQMTmnkfH2XrV/JBAeMjiDzVqMyiw==
-X-Received: by 2002:a05:6000:18af:b0:391:2ab1:d4c2 with SMTP id ffacd0b85a97d-39d0de62221mr9684236f8f.37.1744053415480;
-        Mon, 07 Apr 2025 12:16:55 -0700 (PDT)
-Received: from iku.Home ([2a06:5906:61b:2d00:78b9:80c2:5373:1b49])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30096bb2sm12994453f8f.12.2025.04.07.12.16.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 12:16:54 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qxWeMnez"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=nl5JULT9PoC4C0/72HEzW8Mzovg/wHI2O7mxt7leeac=; b=qxWeMnezbVGyFUZ5BOqEZBMjTK
+	4viXQQ3adWeVMFtj8DWC62nPkKxNP3JRzHmTYRUWNXDWfiC9zspf3TzS6xn3/qt+/aH7SogayZXAf
+	9FfUvh72FV/sVaQ9VxcIoxpCx6DEvrtYWOUpWwVcdeWwajTvujFf2v2Ta/AVHazNifO0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u1sip-008Igt-Tz; Mon, 07 Apr 2025 22:05:31 +0200
+Date: Mon, 7 Apr 2025 22:05:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 12/12] arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
-Date: Mon,  7 Apr 2025 20:16:28 +0100
-Message-ID: <20250407191628.323613-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
+ support SFPs
+Message-ID: <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
+References: <20250407145546.270683-1-herve.codina@bootlin.com>
+ <20250407145546.270683-16-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407145546.270683-16-herve.codina@bootlin.com>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Mon, Apr 07, 2025 at 04:55:44PM +0200, Herve Codina wrote:
+> Add device-tree nodes needed to support SFPs.
+> Those nodes are:
+>  - the clock controller
+>  - the i2c controller
+>  - the i2c mux
+>  - the SFPs themselves and their related ports in the switch
+> 
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  drivers/misc/lan966x_pci.dtso | 111 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 111 insertions(+)
+> 
+> diff --git a/drivers/misc/lan966x_pci.dtso b/drivers/misc/lan966x_pci.dtso
+> index 94a967b384f3..a2015b46cd44 100644
+> --- a/drivers/misc/lan966x_pci.dtso
+> +++ b/drivers/misc/lan966x_pci.dtso
 
-Add the initial device tree for the Renesas RZ/V2N EVK board, based on
-the R9A09G056N48 SoC. Enable basic board functionality, including:
+What exactly does this DTSO file represent?
 
-- Memory mapping (reserve the first 128MB for the secure area)
-- Clock inputs (QEXTAL, RTXIN, AUDIO_EXTAL)
-- PINCTRL configurations for peripherals
-- Serial console (SCIF)
-- SDHI1 with power control and UHS modes
 
-Update the Makefile to include the new DTB.
+> @@ -47,6 +47,47 @@ sys_clk: clock-15625000 {
+>  				clock-frequency = <15625000>;  /* System clock = 15.625MHz */
+>  			};
+>  
+> +			i2c0_emux: i2c0-emux {
+> +				compatible = "i2c-mux-pinctrl";
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +				i2c-parent = <&i2c0>;
+> +				pinctrl-names = "i2c102", "i2c103", "idle";
+> +				pinctrl-0 = <&i2cmux_0>;
+> +				pinctrl-1 = <&i2cmux_1>;
+> +				pinctrl-2 = <&i2cmux_pins>;
+> +
+> +				i2c102: i2c@0 {
+> +					reg = <0>;
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +				};
+> +
+> +				i2c103: i2c@1 {
+> +					reg = <1>;
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +				};
+> +			};
+> +
+> +			sfp2: sfp2 {
+> +				compatible = "sff,sfp";
+> +				i2c-bus = <&i2c102>;
+> +				tx-disable-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
+> +				los-gpios = <&gpio 25 GPIO_ACTIVE_HIGH>;
+> +				mod-def0-gpios = <&gpio 18 GPIO_ACTIVE_LOW>;
+> +				tx-fault-gpios = <&gpio 2 GPIO_ACTIVE_HIGH>;
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2
-- Followed DTS coding style guidelines
----
- arch/arm64/boot/dts/renesas/Makefile          |   2 +
- .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    | 114 ++++++++++++++++++
- 2 files changed, 116 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+DT files are generally hierarchical. There is a soc .dtsi file which
+describes everything internal to the SoC.  And then we have .dts file
+which describes the board the SoC is placed on.
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 5b99c337763a..ea7f93b7d2b3 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -152,6 +152,8 @@ dtb-$(CONFIG_ARCH_R9A09G011) += r9a09g011-v2mevk2.dtb
- 
- dtb-$(CONFIG_ARCH_R9A09G047) += r9a09g047e57-smarc.dtb
- 
-+dtb-$(CONFIG_ARCH_R9A09G056) += r9a09g056n48-rzv2n-evk.dtb
-+
- dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h44-rzv2h-evk.dtb
- dtb-$(CONFIG_ARCH_R9A09G057) += r9a09g057h48-kakip.dtb
- 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-new file mode 100644
-index 000000000000..f379871c39cc
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
-@@ -0,0 +1,114 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/V2N EVK board
-+ *
-+ * Copyright (C) 2025 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include "r9a09g056.dtsi"
-+
-+/ {
-+	model = "Renesas RZ/V2N EVK Board based on r9a09g056n48";
-+	compatible = "renesas,rzv2n-evk", "renesas,r9a09g056n48", "renesas,r9a09g056";
-+
-+	aliases {
-+		mmc1 = &sdhi1;
-+		serial0 = &scif;
-+	};
-+
-+	chosen {
-+		bootargs = "ignore_loglevel";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x1 0xf8000000>;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vqmmc_sdhi1: regulator-vqmmc-sdhi1 {
-+		compatible = "regulator-gpio";
-+		regulator-name = "SDHI1 VqmmC";
-+		gpios = <&pinctrl RZV2N_GPIO(A, 2) GPIO_ACTIVE_HIGH>;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios-states = <0>;
-+		states = <3300000 0>, <1800000 1>;
-+	};
-+};
-+
-+&audio_extal_clk {
-+	clock-frequency = <22579200>;
-+};
-+
-+&pinctrl {
-+	scif_pins: scif {
-+		pins = "SCIF_TXD", "SCIF_RXD";
-+		renesas,output-impedance = <1>;
-+	};
-+
-+	sd1-pwr-en-hog {
-+		gpio-hog;
-+		gpios = <RZV2N_GPIO(A, 3) GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "sd1_pwr_en";
-+	};
-+
-+	sdhi1_pins: sd1 {
-+		sd1-dat-cmd {
-+			pins = "SD1DAT0", "SD1DAT1", "SD1DAT2", "SD1DAT3", "SD1CMD";
-+			input-enable;
-+			renesas,output-impedance = <3>;
-+			slew-rate = <0>;
-+		};
-+
-+		sd1-clk {
-+			pins = "SD1CLK";
-+			renesas,output-impedance = <3>;
-+			slew-rate = <0>;
-+		};
-+
-+		sd1-cd {
-+			pinmux = <RZV2N_PORT_PINMUX(9, 4, 14)>; /* SD1_CD */
-+		};
-+	};
-+};
-+
-+&qextal_clk {
-+	clock-frequency = <24000000>;
-+};
-+
-+&rtxin_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&scif {
-+	pinctrl-0 = <&scif_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&sdhi1 {
-+	pinctrl-0 = <&sdhi1_pins>;
-+	pinctrl-1 = <&sdhi1_pins>;
-+	pinctrl-names = "default", "state_uhs";
-+	vmmc-supply = <&reg_3p3v>;
-+	vqmmc-supply = <&vqmmc_sdhi1>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
-+	status = "okay";
-+};
--- 
-2.49.0
+We have a slightly different setup here. A PCI chip instead of a SoC.
+And a PCI card in a slot, which could be seen as the board.
 
+The SFP cage is on the board. How the GPIOs and i2c busses are wired
+to the SFP cage is a board property, not a SoC/PCI chip
+property. Different boards could wire them up differently. So to me,
+it seems wrong these nodes are here. They should be in a dtso file
+which represents the PCIe board in the slot, and that .dtso file
+imports the .dtso file which represents the PCIe chip.
+
+I suppose this comes down to, what do the PCIe IDs represent, since
+that is what is used for probing? The PCIe chip, or the board as a
+whole. When somebody purchases the chips from Microchip, and builds
+their own board, are they required to have their own PCIe IDs, and a
+.dtso file representing their board design? The PCIe chip part should
+be reusable, so we are talking about stacked dtso files, or at least
+included .dtso files.
+
+      Andrew
