@@ -1,121 +1,104 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B136B3C0B;
-	Mon,  7 Apr 2025 09:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B167A920;
+	Mon,  7 Apr 2025 10:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744018598; cv=none; b=r+cgwzlMn1u77bujuHFKRZE/KR0EinxVekJmNC9gJydMLbRqXR7NApvS2hlU2k//ZFqPWgE/zcyQFgJg5MNsn5kW0XQmnt9URb6+WOOBZcQw0+cDHUsN0yzTtosPwHwZ3OP0pJmwLsHhdmdyerSumOBWyTfHz3K9X63jEDrA0gc=
+	t=1744021699; cv=none; b=OKK1SQ9Q5c1JVVZbP/5bVeru3pvpL04yvna41IGqrgOp+bOz3utzedKFG3pEsRsW4kcW/zb30e1VGZF8RavcwUCkE7pedybZ7SZypNhzNHlF15h8f91YuqyidnQ926PaHY7j7DfdsJuu9+klJC00WnpjNFRVKDmW5fS+kMS310w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744018598; c=relaxed/simple;
-	bh=rzAcUDgONKP1ow3vJytvas8sEzpl4GIfU4xoBZWuE+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O0GoA7TzkWG8om3eqXBJM9AgK150XMQEKtrk9SZf3BihaKnbbhuCKbkg8+4NEupPwlDC6KwlT+8QBnW6syxAB6OwvFfc/fFwWiHCP4slqw8KG+cZEuolJg0oz8IYbf5AiRBSgnhFFQo+f+HPHCy1od1iRMRoUE+9uqqAr+N9c4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-CSE-ConnectionGUID: dXUJW/BBTAODBd/mnQ/kPA==
-X-CSE-MsgGUID: sjZW0fgtTQKxGLyIYcKm8g==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 07 Apr 2025 18:36:28 +0900
-Received: from localhost.localdomain (unknown [10.226.92.133])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2E2F2400B534;
-	Mon,  7 Apr 2025 18:36:25 +0900 (JST)
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] clk: davinci: Use of_get_available_child_by_name()
-Date: Mon,  7 Apr 2025 10:36:17 +0100
-Message-ID: <20250407093623.36974-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1744021699; c=relaxed/simple;
+	bh=DtKEQ7AKPSModph2Km+mV9LVY9fsLpdZjnc0srYg814=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ug4BD39QR9s56ryXHtpkU6BS/sV/so/mHYPrmUqaW3lgFDqCgB8k3Lhpxp5v697ums+cN3T7Y8CRMbcmIQ/HuhGU8N+ttNPku6ewaOeD/aQ+P5KYaYs4enDfkC6joBu/AIBA1oPS23w25DXwWS60auVwiSUso4rEPTmpiCMBgZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5VR2Vkw; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5VR2Vkw"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DE658C4CEE9;
+	Mon,  7 Apr 2025 10:28:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744021699;
+	bh=DtKEQ7AKPSModph2Km+mV9LVY9fsLpdZjnc0srYg814=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=M5VR2VkwbFI8EgWcqA/WGTYaXTJ/vvAhVYOgNYR068uHGHwhjgPz9EX1/Ma9lEnFc
+	 sTqGyz6cyFqKhV/iBrB/9nt2NFyJZ8HPTRZjGKbP0kAWF24la1ik71f4nbuEtL9yaS
+	 +9lm6+mHjED+V+lMa0trFnPQ/xpj8sO3cOKO92vRB6mqoUlj1lvjbZW+7rkQqBgQO9
+	 4zmeSbB5jcvQlOnzgEsXhf6b+TBc5LbCh7LJ7cOwATI6LzZCBiN5DHCaSt+QIagXIL
+	 //dUnC/6FUbzbQrlXy4zOyPW3HyqdE7QGqX552KlErAGZs+sMClaGIgTFVWAZ6ANJu
+	 P5AZfmmpaw0FQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D52D8C3601A;
+	Mon,  7 Apr 2025 10:28:18 +0000 (UTC)
+From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
+Subject: [PATCH v3 0/6] clk: clk-axi-clkgen: improvements and some fixes
+Date: Mon, 07 Apr 2025 11:28:14 +0100
+Message-Id: <20250407-dev-axi-clkgen-limits-v3-0-33c7f27c9d69@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAL+o82cC/3XNTQ6DIBCG4asY1qURqH9d9R5NFwiDTqrQgCE2x
+ rsXTZqmC5fvl8wzCwngEQK5ZgvxEDGgsynEKSOql7YDijo14Tkvcs5qqiFSOSNVw7MDSwcccQq
+ 0FKbNVQFK1C1Jty8PBufdvT9S9xgm59/7m8i29Ss2B2JkNKe8NBUYdlG6UTdp5eC6s3Ij2cjIf
+ 4xg4ojhiWGVkMClLgVjf8y6rh9ox3O7AgEAAA==
+X-Change-ID: 20250218-dev-axi-clkgen-limits-63fb0c5ec38b
+To: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, 
+ Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744021698; l=1425;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=DtKEQ7AKPSModph2Km+mV9LVY9fsLpdZjnc0srYg814=;
+ b=jo9XcmxOLCAjs6V8XW5LEWb1woSRPM3xAM89MZhmfgX4wrOc4Q9+ACAWoeecVktuFWmiJKA/T
+ h4ifHOOCv+sB0xvqQQI7uIdrhG3VqV+4ZoY9sKy2jUCrXmb+YTI2vTj
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
+ auth_id=100
+X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Reply-To: nuno.sa@analog.com
 
-Simplify of_davinci_pll_init() by using of_get_available_child_by_name().
+This series starts with a small fix and then a bunch of small
+improvements. The main change though is to allow detecting of
+struct axi_clkgen_limits during probe().
 
-While at it, move of_node_put(child) inside the if block to avoid
-additional check if of_child is NULL.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v1->v2:
- * Rebased to next as the dependency patch hits on 6.15-rc1.
----
- drivers/clk/davinci/pll.c | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+Changes in v3:
+- Patch 6:
+    * Revert change and parenthesis back on 'if (((params->edge == 0) ^
+      (frac_divider == 1))'. While checkpatch complains, it's more
+      readable like this and in some configs we might even get -Wparentheses.
+- Link to v2: https://lore.kernel.org/r/20250313-dev-axi-clkgen-limits-v2-0-173ae2ad6311@analog.com
 
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index 6807a2efa93b..a236dfeccdb1 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -763,13 +763,13 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
- 		return PTR_ERR(clk);
- 	}
- 
--	child = of_get_child_by_name(node, "pllout");
--	if (of_device_is_available(child))
-+	child = of_get_available_child_by_name(node, "pllout");
-+	if (child)
- 		of_clk_add_provider(child, of_clk_src_simple_get, clk);
- 	of_node_put(child);
- 
--	child = of_get_child_by_name(node, "sysclk");
--	if (of_device_is_available(child)) {
-+	child = of_get_available_child_by_name(node, "sysclk");
-+	if (child) {
- 		struct clk_onecell_data *clk_data;
- 		struct clk **clks;
- 		int n_clks =  max_sysclk_id + 1;
-@@ -803,11 +803,11 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
- 				clks[(*div_info)->id] = clk;
- 		}
- 		of_clk_add_provider(child, of_clk_src_onecell_get, clk_data);
-+		of_node_put(child);
- 	}
--	of_node_put(child);
- 
--	child = of_get_child_by_name(node, "auxclk");
--	if (of_device_is_available(child)) {
-+	child = of_get_available_child_by_name(node, "auxclk");
-+	if (child) {
- 		char child_name[MAX_NAME_SIZE];
- 
- 		snprintf(child_name, MAX_NAME_SIZE, "%s_auxclk", info->name);
-@@ -818,11 +818,12 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
- 				 child_name, PTR_ERR(clk));
- 		else
- 			of_clk_add_provider(child, of_clk_src_simple_get, clk);
-+
-+		of_node_put(child);
- 	}
--	of_node_put(child);
- 
--	child = of_get_child_by_name(node, "obsclk");
--	if (of_device_is_available(child)) {
-+	child = of_get_available_child_by_name(node, "obsclk");
-+	if (child) {
- 		if (obsclk_info)
- 			clk = davinci_pll_obsclk_register(dev, obsclk_info, base);
- 		else
-@@ -833,8 +834,8 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
- 				 PTR_ERR(clk));
- 		else
- 			of_clk_add_provider(child, of_clk_src_simple_get, clk);
-+		of_node_put(child);
- 	}
--	of_node_put(child);
- 
- 	return 0;
- }
--- 
-2.43.0
+Changes in v2:
+- Patch 3
+   * Rename adi_axi_fgpa_technology -> adi_axi_fpga_technology.
+
+- Link to v1: https://lore.kernel.org/r/20250219-dev-axi-clkgen-limits-v1-0-26f7ef14cd9c@analog.com
+
+---
+Nuno Sá (6):
+      clk: clk-axi-clkgen: fix fpfd_max frequency for zynq
+      clk: clk-axi-clkgen: make sure to include mod_devicetable.h
+      include: fpga: adi-axi-common: add new helper macros
+      clk: clk-axi-clkgen: detect axi_clkgen_limits at runtime
+      clk: clk-axi-clkgen move to min/max()
+      clk: clk-axi-clkgen: fix coding style issues
+
+ drivers/clk/clk-axi-clkgen.c        | 147 +++++++++++++++++++++++++-----------
+ include/linux/fpga/adi-axi-common.h |  35 +++++++++
+ 2 files changed, 140 insertions(+), 42 deletions(-)
+---
+base-commit: 82f69876ef45ad66c0b114b786c7c6ac0f6a4580
+change-id: 20250218-dev-axi-clkgen-limits-63fb0c5ec38b
+--
+
+Thanks!
+- Nuno Sá
+
 
