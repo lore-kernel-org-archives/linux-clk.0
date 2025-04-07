@@ -1,141 +1,203 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5092254AFC
-	for <linux-clk@vger.kernel.org>; Mon,  7 Apr 2025 13:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E88A1EFF9E;
+	Mon,  7 Apr 2025 14:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744031765; cv=none; b=RzrcNuLojYHYEGo432tDYZf8gJD6bs54AFPsn8aDndgVZLVLvWhydW1FEhqYDwWACi9NsqY2Tyy11NZSjZIvBUhcD1BDPgp/gmFoqibY/vHx0wJNXkVeveQDZIyiznu6kIikFh26kMHJHq5nEUJVl8HpeXR16bIMKVSQbOkSmiA=
+	t=1744037764; cv=none; b=EAjjI02sn+wG7l+5fCpEoyWoVeGwYIn6v87wyz8KaNBe07j+ott7JOX/WeYVAlWBoAeHGV/9vCeuYvV7Y/XdS7/59JkhFzbz0tyEqpUw8vpywGqKAKdzCnKI6PmK5McfWQD+3gNC14JJMUO1LbMp5dFtiMyi56HF6rKrAODpF8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744031765; c=relaxed/simple;
-	bh=Ga2K09VmKsNU+0mnEVhgO1+H24/PI+fT+YcdrRb2qEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-type; b=hYk5KUUFzRI9uQnHEl/AbQs9AlLlEbn2Vwx0+3CTPWUrlSLzqOQUPLQuGq3Q6MQ4wMShSzmrQNhni9a9IYoHtYYXqKHutDS1aQvrAzEEmtYFOMMl714EM/DZI3SKKvFFFMfP3xXWEZwCbjSrQuc2jCfm7Z6/TWtUltU5OzgHbr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UzmDZLp/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1744037764; c=relaxed/simple;
+	bh=3dIv9KA8LuHWus0/gPfXpZGDmk0o22eeLSJ/w1PnhmM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RlXX/oZFtMc7OYLwpzWaZay3wwz/twg5Xn09WmPke12HkAbR15sDvAE1tx+r0B+39UQAf5nWfY++myCsA3zOmFMHNoc3c/Qa09cdZ7MU1UPiD7BQT1LXjCHcKk3RdWBcijKSctaI4ZwH81VG7K9KuiXh5gAjeIeciDyJ5sO9rnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AEfocUA/; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UzmDZLp/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744031762;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AEfocUA/"
+Received: by mail.gandi.net (Postfix) with ESMTPA id C7B0644333;
+	Mon,  7 Apr 2025 14:55:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744037759;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vCiYE/HbpALtWNARoJxya1tjWc8KeYYpYFoVh2t216c=;
-	b=UzmDZLp/2wGjxpzcsZDSylnzhFfu4i9HTqaFTAjzYOfkk3PsID5+C3hj39AQqlnorsQ6Qf
-	/38Mf7K30IeHHrLGqcVUYfSRaVa5myOTzlDZ0vThnrIgI1uI/yGCcrOwhff0VvjxK5nHuH
-	F4Baxw/t75nalRd3OrIhFuEE7HIyH3g=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-553-I3wsxK99OTqLdUBZGOD5Bg-1; Mon, 07 Apr 2025 09:13:19 -0400
-X-MC-Unique: I3wsxK99OTqLdUBZGOD5Bg-1
-X-Mimecast-MFC-AGG-ID: I3wsxK99OTqLdUBZGOD5Bg_1744031599
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c548e16909so395127785a.2
-        for <linux-clk@vger.kernel.org>; Mon, 07 Apr 2025 06:13:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744031598; x=1744636398;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vCiYE/HbpALtWNARoJxya1tjWc8KeYYpYFoVh2t216c=;
-        b=AtMQKl0q2gJTtQJVwNhiQitM4iNV31/RVNVMjWhVlfwRwnh/L3O/dqRbRHKOaHpe9T
-         TFhCbnQ9RO3WinMeG7F+LtLdIwcpsYWy24AFPEUarB6SoJsR9joKr//WugTcqfN/dCRp
-         GwayT6BsVgVKIw5Az99H/J3yM3kXhsf+g6NoOCi7yyS1lpzlL5omJBSUYWvy9AmLXyDW
-         oyQVTXEuPNdAE8mWh3JRPl6Y5/wCHRVXC0yU2MpY/iCdJA++owTPRSUYM+AOF24gObmR
-         yOi2H2KL3HGSI+L66BGi0N/fW5EUfN8uvQCrHiU8nW/RPRc9WLZ2KQdZyl0KVi5c+3LJ
-         Cq8Q==
-X-Gm-Message-State: AOJu0YzFRBJqkW6dXNbf6pAKpZDWWldpz7qWVmQzzqHNPgKax247KDG4
-	EUPgbvwRnmJJdv9rnoadl/OLyyLM7ZVLAl6cG620Qgub/3db1YHHOqK5/1FYLZd1huSOrmPIpKD
-	SKlq/VGHuWzo5VCwJg+/aO4DZe/bn8jAnR5REcsD2xOcQx7ohbCQ5Qh2u5smoHXhezA==
-X-Gm-Gg: ASbGncuezKrvr+RDe1omCeXhu/nZFeSOOIYfilihw6mM0vh+ieBHe0Lrs2CVHWdSpLr
-	OSed8h/wgo7OpFb09akHRaCZajRN2YVLj3gw0baHnj7uutiJ+oyPsFnZChhY3lYj6Ojhu3o8RJ/
-	FobARlkUZRI9m/tLB/V8XXW0Sns9g0/W1ztfaTVsst9IDmN8eTs+Eh18FJIot1PaBU3j0vkgmE9
-	0WhgSQO1ZygO4TQaDloVqc+qPz8Uj45wipzAYQ29GJ0gK3uoX9am9AhJE5N3dntD+CbzJRc3jrj
-	uzA7KWOB6yMSIMr0ndc+oZzQynyb4UtyCicDusu/wg==
-X-Received: by 2002:a05:6214:2a8c:b0:6e8:f568:22e8 with SMTP id 6a1803df08f44-6f0584e7218mr192571016d6.15.1744031597899;
-        Mon, 07 Apr 2025 06:13:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFockwKyOARh1pqCe+ax8s85aAbuAeIui04lL9zrBZU1ZDa7xBuA5q5m9Vib49h98pfLr3qNw==
-X-Received: by 2002:a05:6214:2a8c:b0:6e8:f568:22e8 with SMTP id 6a1803df08f44-6f0584e7218mr192570576d6.15.1744031597548;
-        Mon, 07 Apr 2025 06:13:17 -0700 (PDT)
-Received: from x1.. (c-98-219-206-88.hsd1.pa.comcast.net. [98.219.206.88])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ef0f138e15sm57662556d6.82.2025.04.07.06.13.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 06:13:15 -0700 (PDT)
-From: Brian Masney <bmasney@redhat.com>
-To: sboyd@kernel.org,
-	mturquette@baylibre.com
-Cc: linux-clk@vger.kernel.org,
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=BVPT0CFkqtX/ZcwT+Cc/lDNZWWWi2vq+Tcz4vrmiE6g=;
+	b=AEfocUA/21kPxWHKfw8jxdyA1UpdsBAP2ARoRqUIV44X1+NtGaOs+mvc5hbx7lGRON38EG
+	8EdRiyVXfjngizQzKPYdcaoIkLVFz70gC8PVdJCxKkx7FgLTqC3sd/CrhJaI+Xp52nJqj+
+	ydQYj8PltIX9XZVYmYg3meK3XegIY2trYNfqr3z81pTiQbi8IjUTml8T3avDvXlvrMbQBL
+	G9X7PgxgRXA2igkfN4KsY8oCmQz6/dG3FxctKN1x/XkM4eBr4N6QB5WZaA8Jw7c5Qppqnt
+	jW0ctNrXD66wH0yXieSqK0E8TaJhuS+4xX6VZuluZQQkb9Q9IvUCOgGdnAYhBg==
+From: Herve Codina <herve.codina@bootlin.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Peter Rosin <peda@axentia.se>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mark Brown <broonie@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
 	linux-kernel@vger.kernel.org,
-	mripard@redhat.com
-Subject: [PATCH 4/8] clk: test: introduce clk_dummy_gate for a mock gate
-Date: Mon,  7 Apr 2025 09:12:54 -0400
-Message-ID: <20250407131258.70638-5-bmasney@redhat.com>
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	Allan Nielsen <allan.nielsen@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH 00/16] lan966x pci device: Add support for SFPs
+Date: Mon,  7 Apr 2025 16:55:29 +0200
+Message-ID: <20250407145546.270683-1-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250407131258.70638-1-bmasney@redhat.com>
-References: <20250407131258.70638-1-bmasney@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtgeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelteduffeltddvtdffgedugfejffeggeekheejiefggfeivefhkeffheehheeiueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeguddprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvr
+ hesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomhdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhm
+X-GND-Sasl: herve.codina@bootlin.com
 
-This is used to mock up a gate in the clk kunit tests.
+Hi,
 
-Signed-off-by: Brian Masney <bmasney@redhat.com>
----
- drivers/clk/clk_test.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+This series add support for SFPs ports available on the LAN966x PCI
+device. In order to have the SFPs supported, additional devices are
+needed such as clock controller and I2C.
 
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 7d4dd1a559db..14ae88df5389 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -181,6 +181,40 @@ static const struct clk_ops clk_dummy_div_ops = {
- 	.set_rate = clk_dummy_div_set_rate,
- };
- 
-+struct clk_dummy_gate {
-+	struct clk_hw hw;
-+	bool enabled;
-+};
-+
-+static int clk_dummy_gate_enable(struct clk_hw *hw)
-+{
-+	struct clk_dummy_gate *gate = container_of(hw, struct clk_dummy_gate, hw);
-+
-+	gate->enabled = true;
-+
-+	return 0;
-+}
-+
-+static void clk_dummy_gate_disable(struct clk_hw *hw)
-+{
-+	struct clk_dummy_gate *gate = container_of(hw, struct clk_dummy_gate, hw);
-+
-+	gate->enabled = false;
-+}
-+
-+static int clk_dummy_gate_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_dummy_gate *gate = container_of(hw, struct clk_dummy_gate, hw);
-+
-+	return gate->enabled;
-+}
-+
-+static const struct clk_ops clk_dummy_gate_ops = {
-+	.enable = clk_dummy_gate_enable,
-+	.disable = clk_dummy_gate_disable,
-+	.is_enabled = clk_dummy_gate_is_enabled,
-+};
-+
- struct clk_multiple_parent_ctx {
- 	struct clk_dummy_context parents_ctx[2];
- 	struct clk_hw hw;
+As a reminder, the LAN966x PCI device driver use a device-tree overlay
+to describe devices available on the PCI board. Adding support for SFPs
+ports consists in adding more devices in the already existing
+device-tree overlay.
+
+With those devices added, the device-tree overlay is more complex and
+some consumer/supplier relationship are needed in order to remove
+devices in correct order when the LAN966x PCI driver is removed.
+
+Those links are typically provided by fw_devlink and we faced some
+issues with fw_devlink and overlays.
+
+This series gives the big picture related to the SFPs support from
+fixing issues to adding new devices. Of course, it can be split if
+needed.
+
+The first part of the series (patch 1, 2 and 3) fixes fw_devlink when it
+is used with overlay. Patches 1 and 3 were previously sent by Saravana
+[0]. I just rebased them on top of v6.15-rc1 and added patch 2 in order
+to take into account feedback received on the series sent by Saravana.
+
+Those modification were not sufficient in our case and so, on top of
+that, patch 4 and 5 fix some more issues related to fw_devlink.
+
+Patches 6 and 7 are related also to fw_devlink but specific to PCI and
+the device-tree nodes created during enumeration.
+
+Patches 8, 9 and 10 are related fw_devlink too but specific to I2C
+muxes. Patches purpose is to correctly set a link between an adapter
+supplier and its consumer. Indeed, an i2c mux adapter's parent is not
+the i2c mux supplier but the adapter the i2c mux is connected to. Adding
+a new link between the adapter supplier involved when i2c muxes are used
+avoid a freeze observed during device removal.
+
+Patch 11 adds support for fw_delink on x86. fw_devlink is needed to have
+the consumer/supplier relationship between devices in order to ensure a
+correct device removal order. Adding fw_devlink support for x86 has been
+tried in the past but was reverted [1] because it broke some systems.
+Instead of disabling fw_devlink on *all* x86 system, use a finer grain
+and disable it only on system which could be broken.
+
+Patches 12 and 13 allow to build clock and i2c controller used by the
+LAN966x PCI device when the LAN966x PCI device is enabled.
+
+The next 2 patches (patches 14 and 15) update the LAN966x device-tree
+overlay itself to have the SPF ports and devices they depends on
+described.
+
+The last patch (patch 16) adds new drivers in the needed driver list
+available in the Kconfig help to keep this list up to date with the
+devices described in the device-tree overlay.
+
+Once again, this series gives the big picture and can be split if
+needed. Let me know.
+
+[0] https://lore.kernel.org/lkml/20240411235623.1260061-1-saravanak@google.com/
+[1] https://lore.kernel.org/lkml/3c1f2473-92ad-bfc4-258e-a5a08ad73dd0@web.de/
+
+Best regards,
+Hervé
+
+Herve Codina (14):
+  driver core: Rename get_dev_from_fwnode() wrapper to
+    get_device_from_fwnode()
+  driver core: Avoid warning when removing a device while its supplier
+    is unbinding
+  bus: simple-pm-bus: Populate child nodes at probe
+  PCI: of: Set fwnode.dev of newly created PCI device nodes
+  PCI: of: Remove fwnode_dev_initialized() call for a PCI root bridge
+    node
+  i2c: core: Introduce i2c_get_adapter_supplier()
+  i2c: mux: Set adapter supplier
+  i2c: mux: Create missing devlink between mux and adapter supplier
+  of: property: Allow fw_devlink device-tree support for x86
+  clk: lan966x: Add MCHP_LAN966X_PCI dependency
+  i2c: busses: at91: Add MCHP_LAN966X_PCI dependency
+  misc: lan966x_pci: Fix dtso nodes ordering
+  misc: lan966x_pci: Add dtso nodes in order to support SFPs
+  misc: lan966x_pci: Add drivers needed to support SFPs in Kconfig help
+
+Saravana Kannan (2):
+  Revert "treewide: Fix probing of devices in DT overlays"
+  of: dynamic: Fix overlayed devices not probing because of fw_devlink
+
+ drivers/base/core.c           |  93 ++++++++++++---
+ drivers/bus/imx-weim.c        |   6 -
+ drivers/bus/simple-pm-bus.c   |  23 ++--
+ drivers/clk/Kconfig           |   2 +-
+ drivers/i2c/busses/Kconfig    |   2 +-
+ drivers/i2c/i2c-core-base.c   |  16 +++
+ drivers/i2c/i2c-core-of.c     |   5 -
+ drivers/i2c/i2c-mux.c         |  21 ++++
+ drivers/misc/Kconfig          |   5 +
+ drivers/misc/lan966x_pci.dtso | 206 ++++++++++++++++++++++++++--------
+ drivers/of/dynamic.c          |   1 -
+ drivers/of/overlay.c          |  15 +++
+ drivers/of/platform.c         |   5 -
+ drivers/of/property.c         |   2 +-
+ drivers/pci/of.c              |   8 +-
+ drivers/spi/spi.c             |   5 -
+ include/linux/fwnode.h        |   1 +
+ include/linux/i2c.h           |   3 +
+ 18 files changed, 318 insertions(+), 101 deletions(-)
+
 -- 
 2.49.0
 
