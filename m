@@ -1,127 +1,125 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48702230BCA
-	for <linux-clk@vger.kernel.org>; Mon,  7 Apr 2025 11:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879F5253B45
+	for <linux-clk@vger.kernel.org>; Mon,  7 Apr 2025 13:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744023865; cv=none; b=fF1SsNQXIlPRuza1ZIpp6Qvsuhe4Ti1SJjyNrv9x8lFaDiXEd+E9WV9+4GY0VhQgseEcabNHG0G+oRsFU70LtL71w1a9ZZmV6J6N4pdN3wSPauLfbJrFmsmHCW4EyBrR2joLFWmg2EgLxem1WO2ApZMmQtJPZUA4mJRRHy4M8KU=
+	t=1744031593; cv=none; b=Osv5AqmRX1n6xnugIjg0BoVHqrgaQyVdX/MkwtDf68+u0J5YKaTsNMS7btywrONkugz1d5xBaw8hZyWSbGaJyMYhJ91/Cg8MooGQms1RcPJIBjma9sfungZZJau+R094DHF+CNfWTcVAB9ajPI0/GpirTM1xaJfI7FRIpqfLMcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744023865; c=relaxed/simple;
-	bh=vPMacaXyS5RgOarFCrFya7CXDPzYxrmSCGIk7I3/RlA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EwNE5i6cQULvwhJdBhLZMvRNwq6ZY/5neEDGFySHZoUphuA1SpVhfKJ4aQLOgxC61+hhZDQwFCD1oRx+GVuGXl23VjbSkQsQKl+4Yza7FmxW7r6LttlxZpom4QDmzYk1Wz4aX/8cz4bUN+UcvhHCAV/2RfEeC0WM7IgjjsmFBFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MAiDXL25; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1744031593; c=relaxed/simple;
+	bh=e6qZfNXFV9KHcehcp9uEWUrK8S0Xj92UaYp1vjRpE1w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=OSvVoEPNWvNgmxMBuQwcUoVCDrJWwyv1AR7tFysPVBpWKpHBmjAYtHQgaQGUofbgLGkKbC5Zr5TWx0wFMOPn9gQhKVj98RQMZ4wOmUioHwn2xjXwyrzrvdxxFBFnd4r+g0cNKdUDZzcSplR6UPb8fbM84hYhjkDKLuXCwz3KMsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UQvPoIvD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MAiDXL25"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so42019865e9.3
-        for <linux-clk@vger.kernel.org>; Mon, 07 Apr 2025 04:04:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744023861; x=1744628661; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bjNP63G+fAyAyGQb7WUecVf9CDYMikWqHRq+/UjXZxI=;
-        b=MAiDXL251S5WQDA+rh0txJ7+K+1M4uYzBDuOyg+IXEnYVn8AJaWFWILk2UyiiRRlzf
-         lhSBpN+9g3cVuRJlIHjnrrmPIrZ/p5XZL0q9DgLyntFrIqGtw8FIXR1T5EA+t42mwQuA
-         k/k5BaaA8hjJ5vM+9+hQ53Qvf3nIH3WqOFI0NCHObKCzNWhwJQu0+nbgfZALruuxrmFM
-         ZgHPRa1xJpJXBLIc4bAGSMw8w80Kqzja48PnCKGoRE95pHvAmWHJNBJSxbGpVZVodgV/
-         1h8iEZCg2IcTD1PliedDxrwMSQ81CdxGJEXtwXf0b6WImLT1nYcPl+1Fo/0kbsY+Rvfw
-         w3hg==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UQvPoIvD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744031590;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rgznpyMWyyNl1d6TDrUHzLlVmDIGh6R0MoIe4PNIF4Y=;
+	b=UQvPoIvDVxSPlZ/+/a+BYemgdd9u0UN6/DGTcWKiNMPp5dQ/KojBtHxLrBhcHV3AaMZ1rX
+	FHc8BmRpcXZxH27pM/+dI/TCC7qNXC4EZJBXywrM4+vb1Xumhk6roRmCQ4/qrK7oHXkVuL
+	T+01NcFutdui4qODS4ZiuGr22KQ4GjM=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-657-8w5jmQQFOESzICfVH48sqA-1; Mon, 07 Apr 2025 09:13:09 -0400
+X-MC-Unique: 8w5jmQQFOESzICfVH48sqA-1
+X-Mimecast-MFC-AGG-ID: 8w5jmQQFOESzICfVH48sqA_1744031589
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c572339444so706191985a.3
+        for <linux-clk@vger.kernel.org>; Mon, 07 Apr 2025 06:13:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744023861; x=1744628661;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bjNP63G+fAyAyGQb7WUecVf9CDYMikWqHRq+/UjXZxI=;
-        b=gYqILH0p0N8JDb8lerXVMFginEN/mTpzvcIA2OAa/vT/CTlsgF2DU897nHDcRiGHLw
-         rDqWFbuG1ZCIBthzIYMBCWby4J0TiqUPd7suadWcgAfclY83eClHfjnOYkEMp/EeryZE
-         G4fabn4LQ7Pq0b88/kxS8NceiGoT+WcNgZwOL2GETuYjrzvfT1Pb96SGxj5bsduCwrjV
-         7xZ0HkOm651Qp1R0zPU/Rn0XzmoLL7i7cl8LlEnp+ljO9YoHXTPDkXAuXO1tpzfesKTb
-         6CdX6jSQwXTvwEQb40+GDVy9BgYQz3rngFvXRvgrUAUl0U2k+2bztW8d/X4IXY5qCI3v
-         gLGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBtSaIYfqQcU5EKR2b5WS1iMczTsa5FcTFTRe5u7/RHxmyHYtkAGczHm6OZh8X7iqE/hl9+lud+1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx83Cej3/9fu0fa56OKEbkNnFd69Ff9rzytIOwoHVaHS5G6joWY
-	fhhtxKIpBoaBEf6rpHnCi3DEjWRvRTs1qLviRHsVVqBODg8PWRGqQVmBV9rVSEQ=
-X-Gm-Gg: ASbGncuSlI9guHfyKkBhc63vYSR0hweKv3ZaelDAuFQq7ytv5YSnzEApcXKNwjnn0wM
-	9XozQ+mQP573VxnaNmWy0dgrkT3U4l3GFlnvYgA7fH4o+yaR7ftEaCgZ0utCOip0tGnB9Q1CPti
-	1AKiqarcR+Htmj0FViz/5s0Stgg3PODWImOT2oogWuvAUHBZNy/qfKBrUY/peiwM2Jw195hD9el
-	8LWahHZBe4xPZVPDf+0B8NJZjHiudafQxIJ16fekuK+whWmI7odxUU9nyDAxhhdcJ9zqPZGTp9H
-	bHNFYTSNrnJdxgn2Mylo4THcjd0NWSqpjQRgRApZeQN1vgwxkg==
-X-Google-Smtp-Source: AGHT+IE98q/exAYcbXtaZDbUrx+IuA1N3tIoGfV9NOXz2xzrCG0lt2xc3oN4y/3w/IH6VurA5lmsRg==
-X-Received: by 2002:a05:6000:430c:b0:391:47d8:de2d with SMTP id ffacd0b85a97d-39cba93382fmr10043977f8f.23.1744023861560;
-        Mon, 07 Apr 2025 04:04:21 -0700 (PDT)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec1795205sm130230235e9.30.2025.04.07.04.04.20
+        d=1e100.net; s=20230601; t=1744031589; x=1744636389;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rgznpyMWyyNl1d6TDrUHzLlVmDIGh6R0MoIe4PNIF4Y=;
+        b=dPqLZZ+XkV6dD45Gy2uGPQsObJCGdGM2wWsNGLfEB/v7KTHlsxczZ5VyjdUe3b88Ui
+         1fQqz+uz8KAvJq/cN0O4rDyAAx180Qtr/ZVvkDESQkHUADZYt3EAq+wr0msWZx179btP
+         LzATkGT/7O/VZtcHNbtDq9llTqhzr6TzVFV36yPP5XOuAMAg8dkAYy68DpnQCt5T0a4u
+         GEBkYnelv81CJIbpKgudmhrAGlZL6yIIBQncJ/CVI4VdjrwlAwDP7gR/ujXSOM5+JWE/
+         DlkVf0jHeJIGkt9l85D26YojivLMjP/EJU+a5rwC4RYlgJU1xLK1BJfWchA6aZk8eRuk
+         htuw==
+X-Gm-Message-State: AOJu0YxU2TA8U55ZGOaICLseJAPHtHfRPkvSff/D2HbyX4VLqnkSAZzZ
+	cS5CBqC5jqM7JC+A/Vrz5VWNAJuDTaqEVkGDQDFi86nWNg0ZWeomb0FOG+F6hqBNobmotZOjmTZ
+	HLMauM6bcZmIni1NoeBbhlPwr3zHhtv2ytpq7U31as1cdWodOqvF61rWO5g==
+X-Gm-Gg: ASbGncvo6Yyl/+9/P38ugnFWq0dD5pZIz3/R7BX9FF94mnzEmXVHEpE0h5TbyxrH99w
+	VJfB3X4VDkbC7KDCjh1Lo70UwHZtMF93UWEnDvxN8Yggo007/q/ALoK08ofKBmZ6BUqNp2bZys+
+	urWhb23KPAfSOXo7+JlI6Xm/FVYmrmPw2WiPQhu7TfO3CeuZCwbzQK6povs18+l3Ltkq4Ck+Qus
+	Qm/uyUxYWjTaT9VOp8y0ty/3fRJeZVrEtM2fM2vA+uvPs1GtSgHoUjA5Dx5YHxpMxziUSKV8sdN
+	fXpR1rHkrul8poEMNYyBYoidQGNpR4fbf+R6J6Inag==
+X-Received: by 2002:a05:620a:4310:b0:7c5:3e2c:8e96 with SMTP id af79cd13be357-7c77dc86307mr1184828585a.0.1744031588815;
+        Mon, 07 Apr 2025 06:13:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUyE+ItAa90VvpOU1RkokCmvm1NRb66YGJ2muPLWlF9I82IhCdaEzjXLo4bO/wFecOUiIHuA==
+X-Received: by 2002:a05:620a:4310:b0:7c5:3e2c:8e96 with SMTP id af79cd13be357-7c77dc86307mr1184826285a.0.1744031588521;
+        Mon, 07 Apr 2025 06:13:08 -0700 (PDT)
+Received: from x1.. (c-98-219-206-88.hsd1.pa.comcast.net. [98.219.206.88])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ef0f138e15sm57662556d6.82.2025.04.07.06.13.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Apr 2025 04:04:21 -0700 (PDT)
-Message-ID: <819718d731bc1496a75ebd0a4076d88273b21229.camel@linaro.org>
-Subject: Re: [PATCH v3 25/32] rtc: s5m: cache value of
- platform_get_device_id() during probe
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Rob
- Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sylwester
- Nawrocki	 <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Alim Akhtar	 <alim.akhtar@samsung.com>, Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Russell King
- <linux@armlinux.org.uk>, Catalin Marinas	 <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Alexandre Belloni	 <alexandre.belloni@bootlin.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rtc@vger.kernel.org
-Date: Mon, 07 Apr 2025 12:04:19 +0100
-In-Reply-To: <b68110b8-fd16-454f-9b59-a89c028ff92d@kernel.org>
-References: <20250403-s2mpg10-v3-0-b542b3505e68@linaro.org>
-	 <20250403-s2mpg10-v3-25-b542b3505e68@linaro.org>
-	 <b68110b8-fd16-454f-9b59-a89c028ff92d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2-1 
+        Mon, 07 Apr 2025 06:13:07 -0700 (PDT)
+From: Brian Masney <bmasney@redhat.com>
+To: sboyd@kernel.org,
+	mturquette@baylibre.com
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mripard@redhat.com
+Subject: [PATCH 0/8] clk: test: add tests for inconsistencies and limitations in the framework
+Date: Mon,  7 Apr 2025 09:12:50 -0400
+Message-ID: <20250407131258.70638-1-bmasney@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Sun, 2025-04-06 at 20:29 +0200, Krzysztof Kozlowski wrote:
-> On 03/04/2025 10:59, Andr=C3=A9 Draszik wrote:
-> > platform_get_device_id() is called mulitple times during probe. This
-> > makes the code harder to read than necessary.
-> >=20
-> > Just get the ID once, which also trims the lengths of the lines
-> > involved.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0drivers/rtc/rtc-s5m.c | 8 +++++---
-> > =C2=A01 file changed, 5 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/drivers/rtc/rtc-s5m.c b/drivers/rtc/rtc-s5m.c
-> > index db5c9b641277213aa1371776c63e2eda3f223465..53c76b0e4253a9ba225c3c7=
-23d35d9182d071607 100644
-> > --- a/drivers/rtc/rtc-s5m.c
-> > +++ b/drivers/rtc/rtc-s5m.c
-> > @@ -637,6 +637,8 @@ static int s5m8767_rtc_init_reg(struct s5m_rtc_info=
- *info)
-> > =C2=A0static int s5m_rtc_probe(struct platform_device *pdev)
-> > =C2=A0{
-> > =C2=A0	struct sec_pmic_dev *s5m87xx =3D dev_get_drvdata(pdev->dev.paren=
-t);
-> > +	const struct platform_device_id	* const id =3D
-> > +		platform_get_device_id(pdev);
->=20
->=20
-> If doing this, why not storing here driver data, so the enum type?
+Here's a series that introduces some clock provider kunit tests. These
+tests are centered around inconsistencies and limitations in the clock
+framework that may lead to some clocks unknowingly changing rates during
+a rate change of their siblings.
 
-Good point, thanks Krzysztof
+The intent of the clock framework is to keep the siblings clock rate
+stable during such an operation:
 
-Cheers,
-Andr=C3=A9
+    clk_set_rate(clk, MY_NEW_RATE);
 
+However, it assumes that the sibling can generate that rate in the first
+place. In many situations, it can't, and it leads to numerous bugs and
+solutions over the years.
+
+https://lore.kernel.org/lkml/20230825-pll-mipi_keep_rate-v1-0-35bc43570730@oltmanns.dev/
+https://lore.kernel.org/linux-kernel/20230807-pll-mipi_set_rate_parent-v6-0-f173239a4b59@oltmanns.dev/
+https://lore.kernel.org/all/20241114065759.3341908-1-victor.liu@nxp.com/
+https://lore.kernel.org/linux-clk/20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com/
+
+We intend to fix these issues, but first we need to agree and document
+what these shortcomings are. These patches are meant to do that, even
+though some will be skipped as they are currently broken.
+
+Special thanks to Maxime Ripard for the guidance and feedback on this
+project so far.
+
+Brian Masney (8):
+  clk: test: introduce a few specific rate constants for mock testing
+  clk: test: introduce clk_dummy_div for a mock divider
+  clk: test: introduce test suite for sibling rate changes on a divider
+  clk: test: introduce clk_dummy_gate for a mock gate
+  clk: test: introduce test suite for sibling rate changes on a gate
+  clk: test: introduce helper to create a mock mux
+  clk: test: introduce test variation for sibling rate changes on a mux
+  clk: test: introduce test variation for sibling rate changes on a
+    gate/mux
+
+ drivers/clk/clk_test.c | 601 +++++++++++++++++++++++++++++++++++------
+ 1 file changed, 513 insertions(+), 88 deletions(-)
+
+-- 
+2.49.0
 
