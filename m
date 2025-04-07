@@ -1,117 +1,140 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4474221149C;
-	Mon,  7 Apr 2025 16:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FC0F2135A9;
+	Mon,  7 Apr 2025 16:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744044416; cv=none; b=ExFq455bAEWr3ZiExy6B8C3QkGaIK+iAhN4O9DnvwTjnb5huGKOnIh8V5/3lhegtlfG9km+J6+2t0SjyM3oDxI3e2IoS9K3J1R6gZg9twUCcCK1V7uUQAH7r0CASFlp16m9pG0TionFfadEsVrhPHGZXzvrVZKYSJHxxDpNKEj4=
+	t=1744044740; cv=none; b=iSDd+KWZzsjykj/ytRsFxylJLPTZWC0JZRXpOHa7kcPQUzP0eWjjtBlSjbDfkKKIPKIusSQ/er9GaNU3v3c4CeSBIZxVqF9HkT6Aq9CMejqG9HbreXInkCPJ6lRjlRhDoAJNWLfhSKVPxLRsZ66+ZxCqF74fUfN3lYZbiFwv4Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744044416; c=relaxed/simple;
-	bh=c4KBYqPr3jTX/BN6Q4aT5hyNkfv7vvC3t8calp633Ug=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JkroASAhsAByIznWNK5M0UWXm88/kupCKukHAwmm3DwABqPYWwOuBUSRyGesAKjJF8lqxn+TJHnMalCpIskprFcIGGoaoSJCAJR2egz1EaGcUMaHLh2q4ww0sSDXgvfz9w5xpsGn7ro2E9eGO1znV55tQd+LIAh9iuqO2Ts6dxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Nuh6OFc3; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1744044740; c=relaxed/simple;
+	bh=41RAK/PzbSJJDlWMcrK4yXqZH/pZPx1BSbQRA1MhZF0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FDG4zN77dQb2QOdWGJHnHdFT10Cr2zbHIqTzcMkGipY5cmFEXT9DVe13tua1iJ9SFM6/2Nud3xkDPNpibKP0NuvIwk1SkaxgfzqnSC+5pCBqUZjbceE9DlxQiZWTr+1BySAkxMhyvVoa5ZinESqwALP2/YijPqO+d/Nn2U/aGds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDaKsgmF; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Nuh6OFc3"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 910F543137;
-	Mon,  7 Apr 2025 16:46:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744044412;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RXJpfmhZ+8yM3mjrwdmbYrVV3J33ZSlFaLXrj0slIbA=;
-	b=Nuh6OFc3/kXzo6DFhHDNjBix1k6eSZDM8GdsMsXmsU0V3T4vccLEgUCC4EgQeWaqxdDd+m
-	6iDycLP0ZRwOMlRdIP55ClDsYY3RRZggJjGc57Tbk0t12a7NIkAiyOyEKWjVYYGcYtB8cY
-	LSF3wv/M4lhju7DTiyJXQ8Vfvi1s2OBuTch5r0lwm/s2X3bqq+j8hq+NI1nantxL2od+tP
-	b5oVECDGuEQqoTNn/1N8Bm58s4JuR7NFVdrwxCIpRF2xGRCvUw2WN9uKmJ98U/NeGEgPJo
-	E8lKL1tTsWOpYcW6n8W0UST7oX+rytoqLVzC9dA4uDFH/LG6/2QHCJ7BxnoDoA==
-Date: Mon, 7 Apr 2025 18:46:47 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Petr Mladek <pmladek@suse.com>, Daniel Lezcano
- <daniel.lezcano@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui
- <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
- <sbranden@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Steven Rostedt
- <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky
- <senozhatsky@chromium.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Morton
- <akpm@linux-foundation.org>, Alex Shi <alexs@kernel.org>, Yanteng Si
- <si.yanteng@linux.dev>, Binbin Zhou <zhoubinbin@loongson.cn>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Liu Ying <victor.liu@nxp.com>,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] vsprintf: remove redundant and unused %pCn
- format specifier
-Message-ID: <20250407184647.3b72de47@booty>
-In-Reply-To: <Z9BKW_06nLAOzYfY@pathway.suse.cz>
-References: <20250311-vsprintf-pcn-v2-0-0af40fc7dee4@bootlin.com>
-	<20250311-vsprintf-pcn-v2-2-0af40fc7dee4@bootlin.com>
-	<Z9BKW_06nLAOzYfY@pathway.suse.cz>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDaKsgmF"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43ea40a6e98so40673315e9.1;
+        Mon, 07 Apr 2025 09:52:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744044737; x=1744649537; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JIpSqr2uu8JlBAGebwei967jEMi50JhkF9JCVtklwJI=;
+        b=SDaKsgmFReYniO4eVcGKmYzjoCxFt0d/UELNVy6r6kyCTFgW7VDjbHCPMVsgMCOlYN
+         YnPaFYdxVu/LJ7HddhLReUy2xGZ9bTGS2eCb9OAMB9p7gKW0vbqEYUcbh/TXJ0EF0Zu9
+         obounfC+qmauQLYdOXR0Kn/m/oE0SaTrcAFujlOPoAWWZGOSdOwMxMpdrozvh4BuPexg
+         7ZsyG54tl4WaaU9TOrabNiML0quGIV7YHsISpDJ3Dx1T6ZmdtZdgRYjpdABTvls2nU0E
+         yyC4Y7sV0VtpVrRie6dUac2RWMCVanerD6IdpBNod6fSWfzcxnM32VkC4egltJh6zV9B
+         698w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744044737; x=1744649537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JIpSqr2uu8JlBAGebwei967jEMi50JhkF9JCVtklwJI=;
+        b=miaJy/AW45iBNXFs79/QWdv2IyqyNC3iHjAgSdzlsTMn3xKsz43eSq7uPGUvvWLkvL
+         fjLwlSmFMCT6vNjrh38LyK6qslDhlz8E/7G73dmjZeDDYuA3Kvh5nc2GlcwcDsoVuSXH
+         poUlTwpnG2skUv36NzvFSQuBnuKgA19kW9p44Go5WyG4A1E2brj0XNeShQsLxR0BZBxT
+         hrIPsctZmwFPhjfgXZQd38c3TJuDSfbP+i+MxbFlvao2aC6nm/QRWBrQafDdHnXMig/o
+         BTD12qHGQkW0TjWKi0txwRMI9H3Q1OErk41VUb4mQNtyqFc2u7NAdS16mBq7HP5IPpim
+         yYwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOFbjvj7ia0l5giRz5oebogCwSklhAnedPvrfimHnLtxYbT/Lk0BPSFfoRGeFigC2wmOuHZIWSH3Ko@vger.kernel.org, AJvYcCWR1WBH0uRo9EVWUBftv3Ss6U1pBzE3CEciU16GdYOghnSOyLe6jSkBoQmPYlYn8tLgF2d3qV0ZvEXXXX0Y@vger.kernel.org, AJvYcCXN8qi59y2jlnUZeSr5mso6wu9R5+wi4Y6fyx9Z6ZpuEKe2i9mx3GwvQCc0AtKLHfyj8L7opQu2pvHh@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsVIQkxlRyOIDPZm8bB4YczyAg8qadX6pizoAA3t6ohD261328
+	NlFhEfJ+PkoRX7wXwzy4JhT5Q8zlNxcZFLVCCbPUwPgfjeeQ/mKk
+X-Gm-Gg: ASbGncuzmgpGu6pgqJ+XVR1iLs8/9wCZLEMiEfjzTa1MvAaLHwU57nhUZKSx9ozwq0j
+	2mLDrhugYAcqgI8DOed1F7C5hwfc4j/in+hE/l3Z+mO2ZoglHotmiI+d+gvKbKnp5SBK1JjwDsj
+	wG50L42IWa7Q5txT5wT6g8lEssc88PAbE7AeAGk/s/d9a6g3QnFnXVqJVCklk+ZN57eqMfx61ZZ
+	ioSBmJSRMqlK0bUXU35Xh5TXRQ+3iZU/NDidawYnh3ToOrFaIVoLQHV4AysyLEMx2uInzT7wJVR
+	W5LZGiUHD8BzXxu9GBv9mK74VrmguXf/lBy85yk1XBeqhUPh6jvHsxCkXSy8NIOFt94kiw==
+X-Google-Smtp-Source: AGHT+IF8WJpz44fOAIgAweLBW1W/MoUv5/v464NZGGVPtrubj96U87xoaQ34hl35kZVEtxeSlX87Fw==
+X-Received: by 2002:a05:600c:4fc6:b0:43c:f8fc:f6a6 with SMTP id 5b1f17b1804b1-43ee064009amr73363125e9.9.1744044736398;
+        Mon, 07 Apr 2025 09:52:16 -0700 (PDT)
+Received: from iku.Home ([2a06:5906:61b:2d00:78b9:80c2:5373:1b49])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec16ba978sm139272305e9.23.2025.04.07.09.52.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 09:52:15 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/9] clk: renesas: rzv2h: Add clock and reset entries for USB2 and GBETH
+Date: Mon,  7 Apr 2025 17:51:53 +0100
+Message-ID: <20250407165202.197570-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddtjeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdelpdhrtghpthhtohepphhmlhgruggvkhesshhushgvrdgtohhmpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrt
- ghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopehrjhhuihessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepshgsrhgrnhguvghnsegsrhhorggutghomhdrtghomh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hello Petr, Daniel,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Tue, 11 Mar 2025 15:36:11 +0100
-Petr Mladek <pmladek@suse.com> wrote:
+Hi All,
 
-> On Tue 2025-03-11 10:21:23, Luca Ceresoli wrote:
-> > %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
-> > add %pC{,n,r} format specifiers for clocks") introducing them does not
-> > clarify any intended difference. It can be assumed %pC is a default for
-> > %pCn as some other specifiers do, but not all are consistent with this
-> > policy. Moreover there is now no other suffix other than 'n', which makes a
-> > default not really useful.
-> > 
-> > All users in the kernel were using %pC except for one which has been
-> > converted. So now remove %pCn and all the unnecessary extra code and
-> > documentation.
-> > 
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>  
-> 
-> Makes sense. Looks and works well, so:
-> 
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
-> Tested-by: Petr Mladek <pmladek@suse.com>
-> 
-> Daniel, if I get it correctly, you have already taken the 1st patch.
-> Would you mind to take also this patch using the same tree, please?
-> Otherwise, we would need to coordinate pull requests in the upcoming
-> merge window ;-)
+This patch series introduces enhancements and new features for the
+Renesas RZ/V2H(P) family driver and R9A09G057 SoC specific clock drivers.
+The changes include support for static mux clocks, static dividers,
+support for ignoring monitoring bits for external clocks, and improved clock
+state validation. Additionally, the series includes updates to device tree
+bindings for USB2 PHY and GBETH PTP core clocks, as well as the
+addition of clock and reset entries for USB2 and GBETH peripherals.
 
-I see none of these two patches in linux-next.
+@Geert, Note I've squashed the below patch series [0] and [1] into a single
+patch series to avoid conflicts. Patch [2] will be dropped from Biju's
+patch series as this is now patch 3/9. Patches are based on the v6.15-rc1 +
+renesas-drivers/renesas-clk-for-v6.16 branch.
+[0] https://lore.kernel.org/all/20250328200105.176129-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+[1] https://lore.kernel.org/all/20250228202655.491035-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+[2] https://lore.kernel.org/all/20250303110433.76576-3-biju.das.jz@bp.renesas.com/
 
-Anything I should do? Resend? Or just wait a bit more?
+v1->v2
+- Added ack from Krzysztof for the dt-bindings patch.
+- Merged the series into a single patch series
+- Introduced DDIV_PACK_NO_RMW macro to support static dividers
 
-Best regards,
-Luca
+Cheers,
+Prabhakar
+
+Biju Das (1):
+  clk: renesas: rzv2h-cpg: Support static dividers without RMW
+
+Lad Prabhakar (8):
+  clk: renesas: rzv2h-cpg: Add support for static mux clocks
+  clk: renesas: rzv2h-cpg: Add macro for defining static dividers
+  clk: renesas: rzv2h-cpg: Use str_on_off() helper in
+    rzv2h_mod_clock_endisable()
+  clk: renesas: rzv2h-cpg: Use both CLK_ON and CLK_MON bits for clock
+    state validation
+  clk: renesas: rzv2h-cpg: Ignore monitoring CLK_MON bits for external
+    clocks
+  dt-bindings: clock: renesas,r9a09g057-cpg: Add USB2 PHY and GBETH PTP
+    core clocks
+  clk: renesas: r9a09g057: Add clock and reset entries for USB2
+  clk: renesas: r9a09g057: Add clock and reset entries for GBETH0/1
+
+ drivers/clk/renesas/r9a09g057-cpg.c           | 92 +++++++++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.c               | 65 ++++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.h               | 93 ++++++++++++++++++-
+ .../dt-bindings/clock/renesas,r9a09g057-cpg.h |  4 +
+ 4 files changed, 244 insertions(+), 10 deletions(-)
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.49.0
+
