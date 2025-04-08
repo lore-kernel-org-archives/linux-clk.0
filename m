@@ -1,123 +1,87 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442F61862BB;
-	Tue,  8 Apr 2025 15:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F7D2629C
+	for <linux-clk@vger.kernel.org>; Tue,  8 Apr 2025 17:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744126720; cv=none; b=uGeTMt6Qu1eWt/ttSzX5bIDcCZAlxQCPZpe/gdWeDztaoXdHRg5+3H/iCypTnDBBv7cEvO5NrzyoaFtLXwoi8bnvK0vYeI1cfX9bmdHAk5q3DytfC3+xftBVbITb1FMrsH4QzhmSUEPcb25Ke3CKKG4c+stzgkZg1WWZSfVP8X4=
+	t=1744134382; cv=none; b=fbfgSqbz9Iakg1DFOi8Oa/2XQUltK5pBYaBHvbu2nH93JlMPBP4n9ZggWEs1kgHYH/jVB7pdhwwBRZ6ZAC3B5ILRARhQqTXKLpzwJ3kj2LEfhEfTZr8qCoLcPzN5M1gOHs8cCuradIhngG8A088fdsNBcXNtEx9pypjxekE5o4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744126720; c=relaxed/simple;
-	bh=ZFOFE/Iq5703lNvYzWC6MljENWk+R9HDSLK4Uz7noEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZ6uZ7KmyJ6g+XfpEavtkV+fX6rupqmTO6Msx4PsbA+eZutYe8b4WOSy+fMxjq7bwqMScKTf82PSBgW9NY+hn4nAWurM4BVLjSyMhuOwipKbQhu6MeTZywXPguBHE1CVRTWOn4AGmbG9CCwXPE+/c2eT5lSDJ2QRnEr+3wFtz/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=axRaKRvM; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1744134382; c=relaxed/simple;
+	bh=oR6aUQl+nSafZvY0ZHb62+mRj2uN33CxwfAA/zVoYdE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=A5p0gKCLDqizQDoepbzzEPbUm4q3UVhfVxveg01YYu76fSsuTWC4xG1ZMGqz477+XMr4ZelKpSaU4xi7kHveoz8vSj2L1lK+mL2huu6H/YrpHz+rQE54pcj11IPo5TzW/z+9gUE4eE7ACgEOldB10AGITmTMsLE7f6vCOVGQYwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pfKcb4GP; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="axRaKRvM"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=0AxXXCyGehUeIEBMKM+/UdgR6pywaI6NfyB/Hg4NGkk=; b=ax
-	RaKRvMxLNy1nBRskzmrWJqy7SKbGNVN5ztU5caLqrvQKZZPlHkHy104KGZfqfMnbtPn6mJ2MdUynW
-	bSlFnNxpbCZGbL9L+rBQrRBde2BHYdR68UaRU610uhMDkZyCerFWvPcuXpriSsBVfUt5PPjdGGus8
-	+qhrEZY1NPDNudE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u2B1l-008PrO-KZ; Tue, 08 Apr 2025 17:38:17 +0200
-Date: Tue, 8 Apr 2025 17:38:17 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
- support SFPs
-Message-ID: <c14dd5c6-2dae-4398-89a9-342e7a25bb30@lunn.ch>
-References: <20250407145546.270683-1-herve.codina@bootlin.com>
- <20250407145546.270683-16-herve.codina@bootlin.com>
- <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
- <20250408162603.02d6c3a1@bootlin.com>
- <D91CSNC07NYM.3KC467K0OZ4GG@bootlin.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pfKcb4GP"
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744134368;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8KkZ5puVFvHum4NZ3BR0xi8SXzKqPvyQcsjyZbJS6BA=;
+	b=pfKcb4GPY//7CR7W8L12OHNSryo53vQrlh0Hdsd8HTl7yfM3xVC+DkWVIOQtMczMCbJ7yU
+	ITwd4U0+ycDF/eaV1PKu3PgoPvDS0Ydnjp8us8uzy5ad04bXyW1xJNVum+aYdmVNJ7abry
+	ho//FnpxHgOl1yicdDGePaYw03TKrDs=
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D91CSNC07NYM.3KC467K0OZ4GG@bootlin.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.2\))
+Subject: Re: [RESEND PATCH] clk: socfpga: clk-pll: Optimize local variables
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <d7df3b86-c3ff-48af-ad72-428e105976b9@kernel.org>
+Date: Tue, 8 Apr 2025 19:45:55 +0200
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0BD7D71D-6F6B-4864-BEA7-E13563908D62@linux.dev>
+References: <20250219104224.1265-2-thorsten.blum@linux.dev>
+ <d7df3b86-c3ff-48af-ad72-428e105976b9@kernel.org>
+To: Dinh Nguyen <dinguyen@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Apr 08, 2025 at 05:13:54PM +0200, Thomas Petazzoni wrote:
-> Andrew, Hervé,
-> 
-> On Tue Apr 8, 2025 at 4:26 PM CEST, Herve Codina wrote:
-> 
-> >> What exactly does this DTSO file represent?
-> >
-> > The dsto represents de board connected to the PCI slot and identified
-> > by its PCI vendor/device IDs.
-> 
-> If I may extend on that by providing what I believe is a more
-> accurate/precise definition.
-> 
-> The DTSO doesn't represent the board, rather it describes the HW
-> topology of the devices inside the PCI endpoint. Indeed, the PCI
-> endpoint is a full-blown SoC with lots of different HW blocks that
-> already have drivers in the kernel (because the same chip can be used
-> with Linux running on an ARM core embedded in the SoC, rather than
-> access as a PCI endpoint). So the DTSO describes the full topology of
-> the HW blocks inside this complex PCI endpoint, just like the DTS
-> describes the full topology of the HW blocks inside an SoC.
+Hi Dinh,
 
-"HW blocks inside an SoC." That would be the SoC .dtsi file. Anything
-outside of the SoC is in the .dts file. OEM vendors take the SoC,
-build a board around it, and name there .dts file after the board,
-describing how the board components are connected to the SoC.
+On 19. Feb 2025, at 13:42, Dinh Nguyen wrote:
+> On 2/19/25 04:42, Thorsten Blum wrote:
+>> Since readl() returns a u32, the local variables reg and bypass can =
+also
+>> have the data type u32. Furthermore, divf and divq are derived from =
+reg
+>> and can also be a u32.
+>> Since do_div() casts the divisor to u32 anyway, changing the data =
+type
+>> of divq to u32 removes the following Coccinelle/coccicheck warning
+>> reported by do_div.cocci:
+>>  WARNING: do_div() does a 64-by-32 division, please consider using =
+div64_ul instead
+>> Compile-tested only.
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+>> ---
+>> drivers/clk/socfpga/clk-pll.c | 4 ++--
+>=20
+> Applied!
 
-So..
+Did this patch and [*] get lost somehow?
 
-So by PCI endpoint, you mean the PCIe chip? So it sounds like there
-should be a .dtsi file describing the chip.
+They aren't in -next and also didn't make it into the last merge window.
 
-Everything outside of the chip, like the SFP cages, are up to the
-vendor building the board. I would say that should be described in a
-.dtso file, which describes how the board components are connected to
-the PCIe chip? And that .dtso file should be named after the board,
-since there are going to many of them, from different OEM vendors.
+Thanks,
+Thorsten
 
-	Andrew
+[*] =
+https://lore.kernel.org/lkml/20250219104435.1525-2-thorsten.blum@linux.dev=
+/
+
