@@ -1,98 +1,188 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0214F26B2CF
-	for <linux-clk@vger.kernel.org>; Tue,  8 Apr 2025 12:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E8726981F
+	for <linux-clk@vger.kernel.org>; Tue,  8 Apr 2025 12:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744113658; cv=none; b=pTtdvU1g54R7np68Lwg0qUMDsFT4z7Oa68m+l99jU7hjG+pESPHP4RkW78nbgUSvWVZQD3fq0DLNvht0of9kZ+2Rvyvth0HznD0R9bQCeeD+aNhDqbRT0Ka3l8Y7b66we/MYhmN9uJUUPeAxCNiHOf4yr34Uq4X2MSt+wBRmI4A=
+	t=1744115266; cv=none; b=Zo4JPLIaY80yTS+oVgRe4vR0ZqMNtzvfMSW1EoC+4JdDF8p3s05Z0C7+zIuLXeRZIsFdgs+P6SmN6yZYaTSyYsqdEzTQHzqBoLb3jCIcUUZAUnl9Uy0iBVLoPJmVJQTk2zbjeyFQuE1LZb4MarhluNME9CYQTVaRIZSMbKOV/QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744113658; c=relaxed/simple;
-	bh=WCYcLaPyaKFiwHds0BySkvFmWYNWbayrnTdk6SHycB0=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AHvBn3h2P7nhkP3zLDhk3Txv3CKRqIEXT4dINyw2lDd4lY+HZ5a0WJFL5vNcE8MtsledCDrRLin54DgNl0qYQoRrc5dGnN01MKV+5shCE6LtGDIvchAOKhHzuq13M1sjyOBpG5nMgdSkzf9fkzqa6tAdbnqmZY7Z5eMNqjY6t98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u27d0-0000jo-Eg; Tue, 08 Apr 2025 14:00:30 +0200
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u27d0-003vPz-09;
-	Tue, 08 Apr 2025 14:00:30 +0200
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u27cz-00GJS1-33;
-	Tue, 08 Apr 2025 14:00:29 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH 0/3] clk: add support for TI CDCE6214
-Date: Tue, 08 Apr 2025 14:00:21 +0200
-Message-Id: <20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de>
+	s=arc-20240116; t=1744115266; c=relaxed/simple;
+	bh=IDQ1GUBQnBf8rB+j8B4YQyr6pwORfkpzRHAeXl4MJdI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=solo0UNmMRiCoCZlmPzG6DsakQqZ1MgdC36wwSfj9pK8q94vzqd8Ml7DCsYimrvj86AwEpUYrQ9xk3oxyVyeucD7ReX2D8CGDU4We9yzOrJd/rPEqh3IKKc+D6nkT+AEwvc2uNQZ41MYr+wfF/M5EMqlY0XS65iiEhzu17l/c48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VMrI9nxB; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VMrI9nxB"
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-703cd93820fso50897297b3.2
+        for <linux-clk@vger.kernel.org>; Tue, 08 Apr 2025 05:27:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744115264; x=1744720064; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gB1seewdxiTr2VW07A3+uDKCe37V8ksv4C8EdOhGRy0=;
+        b=VMrI9nxB0s0Z99TUT7AT9OOLUGMyfuRHfG+aR+L2o2WS1Z8C76iRCy3CPMgS/R5JLQ
+         odPaDbDCDYb7ccEua9sI2sRWmDF7/XAMGe0GC+Hsqnp0Be5p9Ev8elj55TnkGpif/EwD
+         1GGhlNxIHGcccvmpxI26h4pfN4xAz4E6Asihf39+/Xzfg4Oey99U3Wx9cJTdiKo3lbML
+         Hz9fJY/HIeHdMEi1N3rcoGoO+y3LHC6QqxkXEItDV1LIVPQEhpKpdqMcbHt67xT1W+E3
+         4xul1M1L4/cAzkmQQflunjOP55QuoHwAp+7oBcTVy9a2aLB3gfRbJVH2UDV692i544d3
+         CMgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744115264; x=1744720064;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gB1seewdxiTr2VW07A3+uDKCe37V8ksv4C8EdOhGRy0=;
+        b=JoDOHYBW5nQy6aiSU9D+1b3Cgo6b9EVfMKsZU6TIHdvDZeYqxv4q4n0JELAVHyVWUf
+         VKpJ1xoUhL09Vbd3tZG7wb6PEjZo99ythlYTl3TgFf4dXbmyv47gsTqB7p7SoI/4dzIY
+         F+1byVKXj12MUU0fxmYqT962k4BrckzXLoqfa7Cq1fSpvAdWDoeYS1UzabcMne3Rgrga
+         g8N8j/5L4FZIs46jAIfk1DSVdEfBrRNkWbFlqn6x4QuhSm+xrx/31J91WrM19eQtO3im
+         DEMtAKxkCiFMxMpGj2y888gKTRX/L0pCGERglm9lzevXtKXLToY4WR9WYRUQVnD7SA/m
+         geyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURzsSC1XawVasZy/+U2+NO2+p3eR+CW60uwSbQcKMppnXl756IrzE5e+h1FI7HtH2ot3v+Rj6djYI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2Y+ShKPk69A9dEzslD5Kg7uKUXz+YLPYMpAShw6kTEYM5zlc8
+	FWH1ZB5+n7Z6Suz+bUJWmlsInoJaP4R9B/moU7C+mIJgWYg9ooR1H+h2yyoS/XJiPRbLa+AWf7o
+	u7Qknor/DXArYfT2VqP+HxGV9AZEkD05mY0UZEQ==
+X-Gm-Gg: ASbGncv2KbxKf1Z7g8ZqfRK/rLgc+9750KPopLaFFqkrI7QqX0+NITeleuKxoigNNeq
+	JBSnKgffwwZUyee46szRZpAXpk3HFDK2sfKFsKxSShe2opzrn2xz9VW0iafZyOa4mO/RI9yGe4w
+	orFdx/4NscoSEptqaxQPDLDFg9DuU=
+X-Google-Smtp-Source: AGHT+IHPTBP1/MTjSrc/I/MptAtnciiKhGr+WPv5BjoVAvGTZrpvXVXjRqBEPOIQ+IqwWxaW3A1IyTTYeV/ni7FYYsI=
+X-Received: by 2002:a05:690c:4b06:b0:6f9:af1f:53a4 with SMTP id
+ 00721157ae682-703e16636afmr292316087b3.32.1744115263719; Tue, 08 Apr 2025
+ 05:27:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANUP9WcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDEwML3eScbN3klORUMyNDE12DZHMTAxPjlGQjM3MloJaCotS0zAqwcdG
- xtbUAAE0jal4AAAA=
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, kernel@pengutronix.de, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
- Sascha Hauer <s.hauer@pengutronix.de>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744113629; l=1148;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=WCYcLaPyaKFiwHds0BySkvFmWYNWbayrnTdk6SHycB0=;
- b=Zje8+eOrxhjpIVlEv8nwHadcM1kKFZpWgwF1ZgMzi44aVx7s92t0kJTdrNW4Ggoz87xV8Gs4H
- 7HMHsL1bGXPBgEf02f3UHwouEccVPEZOfh8a1yax5zBfVFQMsvJxr4C
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20250303143629.400583-1-m.wilczynski@samsung.com>
+ <CGME20250303143637eucas1p1a3abdea520ab88688de1263a5f07bba0@eucas1p1.samsung.com>
+ <20250303143629.400583-5-m.wilczynski@samsung.com> <de50dd55e1285726e8d5ebae73877486.sboyd@kernel.org>
+ <4c035603-4c11-4e71-8ef3-b857a81bf5ef@samsung.com> <aacd03a071dce7b340d7170eae59d662d58f23b1.camel@pengutronix.de>
+ <e90a0c77-61a0-49db-86ba-bac253f8ec53@samsung.com> <38d9650fc11a674c8b689d6bab937acf@kernel.org>
+ <CAPDyKFqsJaTrF0tBSY-TjpqdVt5=6aPQHYfnDebtphfRZSU=-Q@mail.gmail.com>
+ <ef17e5d1-b364-41e1-ab8b-86140cbe69b2@samsung.com> <21983f8d-681d-4fed-ae44-42eee44c7f14@samsung.com>
+In-Reply-To: <21983f8d-681d-4fed-ae44-42eee44c7f14@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 8 Apr 2025 14:27:07 +0200
+X-Gm-Features: ATxdqUHjCmHHXOL_8iuBi_mjDxdVOZW28WwVm4E83fRcaHrvrprcU7GgL8K7Wwo
+Message-ID: <CAPDyKFofVfrK04OVmJ2aX_0uMV0b+f8dCpoezpA9LJbnSOf-9Q@mail.gmail.com>
+Subject: Re: [PATCH v1 4/4] clk: thead: Add GPU clock gate control with CLKGEN
+ reset support
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, alex@ghiti.fr, 
+	aou@eecs.berkeley.edu, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org, 
+	jszhang@kernel.org, krzk+dt@kernel.org, m.szyprowski@samsung.com, 
+	mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+	robh@kernel.org, wefu@redhat.com, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
-Differential Outputs, Two Inputs, and Internal EEPROM.
+[...]
 
-This series adds a common clk framework driver for this chip along with
-the dt-bindings document and a small fix needed for the common clk
-framework.
+> >>>
+> >>> It looks like the SoC glue makes the interactions between the clk and
+> >>> reset frameworks complicated because GPU clks don't work if a reset i=
+s
+> >>> asserted. You're trying to find a place to coordinate the clk and res=
+et.
+> >>> Am I right?
+> >>>
+> >>> I'd advise managing the clks and resets in a generic power domain tha=
+t
+> >>> is attached to the GPU device. In that power domain, coordinate the c=
+lk
+> >>> and reset sequencing so that the reset is deasserted before the clks =
+are
+> >>> enabled (or whatever the actual requirement is). If the GPU driver
+> >>> _must_ have a clk and reset pointer to use, implement one that either
+> >>> does nothing or flag to the GPU driver that the power domain is manag=
+ing
+> >>> all this for it so it should just use runtime PM and system PM hooks =
+to
+> >>> turn on the clks and take the GPU out of reset.
+> >>>
+> >>> From what I can tell, the GPU driver maintainer doesn't want to think
+> >>> about the wrapper that likely got placed around the hardware block
+> >>> shipped by IMG. This wrapper is the SoC glue that needs to go into a
+> >>> generic power domain so that the different PM resources, reset, clk,
+> >>> etc. can be coordinated based on the GPU device's power state. It's
+> >>> either that, or go the dwc3 route and have SoC glue platform drivers
+> >>> that manage this stuff and create a child device to represent the har=
+d
+> >>> macro shipped by the vendor like Synopsys/Imagination. Doing the pare=
+nt
+> >>> device design isn't as flexible as PM domains because you can only ha=
+ve
+> >>> one parent device and the child device state can be ignored vs. many =
+PM
+> >>> domains attached in a graph to a device that are more directly
+> >>> influenced by the device using runtime PM.
+> >>>
+> >>> Maybe you'll be heartened to know this problem isn't unique and has
+> >>> existed for decades :) I don't know what state the graphics driver is=
+ in
+> >>> but they'll likely be interested in solving this problem in a way tha=
+t
+> >>> doesn't "pollute" their driver with SoC specific details. It's all a
+> >>> question of where you put the code. The reset framework wants to focu=
+s
+> >>> on resets, the clk framework wants to focus on clks, and the graphics
+> >>> driver wants to focus on graphics. BTW, we went through a similar
+> >>> discussion with regulators and clks years ago and ended up handling t=
+hat
+> >>> with OPPs and power domains.
+> >>
+> >> Right, power-domain providers are mostly implementing SoC specific cod=
+e.
+> >>
+> >> In some cases, power-domain providers also handle per device SoC
+> >> specific constraints/sequences, which seems what you are discussing
+> >> here. For that, genpd has a couple of callbacks that could be
+> >> interesting to have a look at, such as:
+> >>
+> >> genpd->attach|detach_dev() - for probe/remove
+> >> genpd.dev_ops->start|stop() - for runtime/system PM
+> >>
+> >> That said, maybe just using the regular genpd->power_on|off() callback
+> >> is sufficient here, depending on how you decide to model things.
+> >
+> >
+> > Thanks Stephen, Ulf !
+> >
+> > So the way forward I see:
+> >
+> > 1) The reset driver can be merged as-is, if Philipp is fine with this
+> > code [2].
+> > 2) I will cook up the update to the thead power-domain driver which wil=
+l
+> > handle reset and clock management.
+>
+> Hi Ulf,
+> I'm working on the series right now and I wanted to ask you how you
+> prefer versioning to be handled. Would you like me to send a series as a
+> v1, or treat is as a continuation of this series [1] and send as a v9.
+> Would like to avoid any confusion.
 
-Sascha
+I would suggest starting over with v1, but don't forget to refer to
+some of the previous attempts/discussion in the cover-letter.  At
+least I would be fine by this.
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
-Sascha Hauer (3):
-      clk: make determine_rate optional for non reparenting clocks
-      clk: add TI CDCE6214 clock driver
-      dt-bindings: clock: add TI CDCE6214 binding
+>
+> Thanks,
+> Micha=C5=82
+>
+> [1] - https://lore.kernel.org/all/20250311171900.1549916-1-m.wilczynski@s=
+amsung.com/
+>
 
- .../devicetree/bindings/clock/ti,cdce6214.yaml     |  157 +++
- drivers/clk/Kconfig                                |    7 +
- drivers/clk/Makefile                               |    1 +
- drivers/clk/clk-cdce6214.c                         | 1105 ++++++++++++++++++++
- drivers/clk/clk.c                                  |    3 +-
- include/dt-bindings/clock/ti,cdce6214.h            |   24 +
- 6 files changed, 1296 insertions(+), 1 deletion(-)
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250408-clk-cdce6214-0c74043dc267
+[...]
 
-Best regards,
--- 
-Sascha Hauer <s.hauer@pengutronix.de>
-
+Kind regards
+Uffe
