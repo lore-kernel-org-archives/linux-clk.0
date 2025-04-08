@@ -1,198 +1,250 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B751E9B16;
-	Tue,  8 Apr 2025 14:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65E31E1DEB;
+	Tue,  8 Apr 2025 14:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744122378; cv=none; b=OO0pz+nKbUPNjVEHjSz0wIihiERqFHs5iHQCaVOwBnb0CmjMAZg3MuvAPhjKEFQ66sSojdEaNianBHQeTXxIApRnxtGjKjSNKW+qQCfpeoTI1mNpxL81/JyzTFAPO5Wxd+q1Xeu19MW1zuDP6/0iekLG1e1G/Ybj3EoBdTkcZKU=
+	t=1744122449; cv=none; b=HBdNEVoiqvm6GvgilxWdOIsldTv4jdoJs+IMIsd2iljIXdaF76OY1YBwPkmAAWPHVIR3hpiT1avF5L0YpHXZ+bpSZ2Rlrn7g4AZWlgozimgFKcWTW3xqISfiwIClC8CcFtypiSY0uhwr3zJfRexYyTDJJa7fd6yJY6cC8wh1Ucg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744122378; c=relaxed/simple;
-	bh=Q8kG5YWNNyJvLfphoBOBXwTMIflX0uzldOomWr9w70w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rc/ArfStq4wkQRWRICbMbU6wP7eZcDBTxIKSXWt/QDf1iXGaQ9+qXb7PX9xG2hrNOvYaH8cU/ZyzsQXlWXZlvK4YWTucKDrNoVmulNqUbR37smddHHvo9g0xgf4MHSpjZfUtTYM3KI721g4zqtzwVDhb+N9i98VHQmqI7qA/4Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=G3cBy/zC; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1744122449; c=relaxed/simple;
+	bh=HaCdujLpcs1ViV4+soV1n8EIjCN7TY5Kpzu/24ehm0o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iIs04YrQnlj20/uQ2CzFZjNqhba/hr8rJCm08L3STEfW/9U2wY7a8c7pvQpWMhB7fn/HwMjiLbySAwyo+8XcJkLLeSlGbl5dA4RhpzZs80YCIlXcpZWYktkGgqsVozcm7X+s513SF8lSz/qS8NrjFPptHqeMpTEwfaAmtmVEOxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9Lhw1GW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="G3cBy/zC"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 89BA8442A2;
-	Tue,  8 Apr 2025 14:26:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744122368;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wWC1t5C7Psv+WkhU4vEeLTJB5SiU/U5h01ZyvIxqatY=;
-	b=G3cBy/zC21TopTZxsSm3Hm56tKYPMHyF3UnKgpMl87ahvIrG/PTDf1B88csRkMHc8tNK3d
-	g1mXIvcrZtRIp1lcQFGenQXx3nOQ38o7Ze1Lq0GKYoBLYJEnMhRw9mKdZ90dV7TG0NHl0p
-	c/mXwowQAoVeLJ/Ip6VxqiXyOYCJgtzR+n2yfcHPIYoMm7dwckguem0ir/jl3VU+0a/rTM
-	VrHq1w8wPVMN80rnY/I7B+ErA2xHbUonBWik26u6aR2l+iXgIfgDtPK+xq204VkoHeJpJK
-	5SWnj30FdxKPC68R1qOEm/mUoB/A+dWmLkGEnruusrKLgvo41ZX6VkN3legqAQ==
-Date: Tue, 8 Apr 2025 16:26:03 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
- Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
- Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana
- Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark
- Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
- support SFPs
-Message-ID: <20250408162603.02d6c3a1@bootlin.com>
-In-Reply-To: <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
-References: <20250407145546.270683-1-herve.codina@bootlin.com>
-	<20250407145546.270683-16-herve.codina@bootlin.com>
-	<19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9Lhw1GW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85289C4CEE5;
+	Tue,  8 Apr 2025 14:27:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744122448;
+	bh=HaCdujLpcs1ViV4+soV1n8EIjCN7TY5Kpzu/24ehm0o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=d9Lhw1GWzL1hq7Tac6TpQDxSyuxSCUe/63q9gLH56qRDISIT6CnuH8hwZ2uqCvbOO
+	 S3/SS/WOdjAIT4YVrreVrImDGPG8EG/gSGjkBqmKaf4KP4Fd+cjsKVeEFF59SQBdKC
+	 7Jy8G/5URU+iGuhqf6BhJr25yt70II0jIWHQK1USc+W151dpVHwzdD39FIHYGOnhq4
+	 59Bu69pmOlMvHTjF+9bNzP1GblotdqvC+ahlurGd4Hqv5MTRG3Wrlxk8tp8sBjAogu
+	 46Vdq0In02ETa3XlY5KXcaGQoc6Lk0J0mNgOudqyoJLkTTTn9CWiPK3+L94iREAFUf
+	 m1vZzbmiyj9fg==
+Message-ID: <5766d152-51e7-42f5-864f-5cb1798606a3@kernel.org>
+Date: Tue, 8 Apr 2025 16:27:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] dt-bindings: clock: add TI CDCE6214 binding
+To: Sascha Hauer <s.hauer@pengutronix.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, kernel@pengutronix.de,
+ =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>
+References: <20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de>
+ <20250408-clk-cdce6214-v1-3-bd4e7092a91f@pengutronix.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250408-clk-cdce6214-v1-3-bd4e7092a91f@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeffedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeguddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtp
- hhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomh
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-Hi Andrew,
+On 08/04/2025 14:00, Sascha Hauer wrote:
+> +
 
-On Mon, 7 Apr 2025 22:05:31 +0200
-Andrew Lunn <andrew@lunn.ch> wrote:
+A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
+prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-> On Mon, Apr 07, 2025 at 04:55:44PM +0200, Herve Codina wrote:
-> > Add device-tree nodes needed to support SFPs.
-> > Those nodes are:
-> >  - the clock controller
-> >  - the i2c controller
-> >  - the i2c mux
-> >  - the SFPs themselves and their related ports in the switch
-> > 
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > ---
-> >  drivers/misc/lan966x_pci.dtso | 111 ++++++++++++++++++++++++++++++++++
-> >  1 file changed, 111 insertions(+)
-> > 
-> > diff --git a/drivers/misc/lan966x_pci.dtso b/drivers/misc/lan966x_pci.dtso
-> > index 94a967b384f3..a2015b46cd44 100644
-> > --- a/drivers/misc/lan966x_pci.dtso
-> > +++ b/drivers/misc/lan966x_pci.dtso  
-> 
-> What exactly does this DTSO file represent?
 
-The dsto represents de board connected to the PCI slot and identified
-by its PCI vendor/device IDs.
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,cdce6214
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    items:
+> +      - const: priref
+> +      - const: secref
 
-> 
-> 
-> > @@ -47,6 +47,47 @@ sys_clk: clock-15625000 {
-> >  				clock-frequency = <15625000>;  /* System clock = 15.625MHz */
-> >  			};
-> >  
-> > +			i2c0_emux: i2c0-emux {
-> > +				compatible = "i2c-mux-pinctrl";
-> > +				#address-cells = <1>;
-> > +				#size-cells = <0>;
-> > +				i2c-parent = <&i2c0>;
-> > +				pinctrl-names = "i2c102", "i2c103", "idle";
-> > +				pinctrl-0 = <&i2cmux_0>;
-> > +				pinctrl-1 = <&i2cmux_1>;
-> > +				pinctrl-2 = <&i2cmux_pins>;
-> > +
-> > +				i2c102: i2c@0 {
-> > +					reg = <0>;
-> > +					#address-cells = <1>;
-> > +					#size-cells = <0>;
-> > +				};
-> > +
-> > +				i2c103: i2c@1 {
-> > +					reg = <1>;
-> > +					#address-cells = <1>;
-> > +					#size-cells = <0>;
-> > +				};
-> > +			};
-> > +
-> > +			sfp2: sfp2 {
-> > +				compatible = "sff,sfp";
-> > +				i2c-bus = <&i2c102>;
-> > +				tx-disable-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
-> > +				los-gpios = <&gpio 25 GPIO_ACTIVE_HIGH>;
-> > +				mod-def0-gpios = <&gpio 18 GPIO_ACTIVE_LOW>;
-> > +				tx-fault-gpios = <&gpio 2 GPIO_ACTIVE_HIGH>;  
-> 
-> DT files are generally hierarchical. There is a soc .dtsi file which
-> describes everything internal to the SoC.  And then we have .dts file
-> which describes the board the SoC is placed on.
-> 
-> We have a slightly different setup here. A PCI chip instead of a SoC.
-> And a PCI card in a slot, which could be seen as the board.
-> 
-> The SFP cage is on the board. How the GPIOs and i2c busses are wired
-> to the SFP cage is a board property, not a SoC/PCI chip
-> property. Different boards could wire them up differently. So to me,
-> it seems wrong these nodes are here. They should be in a dtso file
-> which represents the PCIe board in the slot, and that .dtso file
-> imports the .dtso file which represents the PCIe chip.
+So one input is optional?
 
-The PCI vendor/device ID identifies the board. This is the PCI
-peripheral connected to the PCI slot and enumerated. This dtso
-describes the board.
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  "#clock-cells":
 
-The dtso in that case is the equivalent of the dts.
+Use consistent quotes, either ' or "
 
-We can move the PCI chip in a dtsi included by this dtso but in the
-end this leads to the exact same representation. Further more, moving
-out the PCI chip description in its own dtsi out of this dtso can be
-done in a second step when an other dtso uses the same chip.
+> +    const: 1
+> +
+> +patternProperties:
+> +  "^clk@[0-1]$":
+> +    type: object
+> +    description: |
 
-This dtso, describing the board, is applied on the PCI device node.
-SDP, i2c mux, ... are described at the same level as the fixed-clock
-component for instance.
+Do not need '|' unless you need to preserve formatting.
 
-> 
-> I suppose this comes down to, what do the PCIe IDs represent, since
-> that is what is used for probing? The PCIe chip, or the board as a
-> whole. When somebody purchases the chips from Microchip, and builds
-> their own board, are they required to have their own PCIe IDs, and a
-> .dtso file representing their board design? The PCIe chip part should
-> be reusable, so we are talking about stacked dtso files, or at least
-> included .dtso files.
-> 
+> +      optional child node that can be used to specify input pin parameters. The reg
+> +      properties match the CDCE6214_CLK_* defines.
+> +
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        description:
+> +          clock input identifier.
+> +        minimum: 0
+> +        maximum: 1
+> +
+> +      ti,ref-xtal:
+> +        type: boolean
+> +        description: |
+> +          If true use input as XTAL input
+> +
+> +      ti,ref-lvcmos:
+> +        type: boolean
+> +        description: |
+> +          If true use input as LVCMOS input
+> +
+> +      ti,ref-diff:
+> +        type: boolean
+> +        description: |
+> +          If true use input as differential input
 
-Staked dtso implies stacked overlays and I think is is not a correct
-description. There is only one piece of hardware that can be plugged or
-un-plugged: the PCI board. This piece of hardware should be fully
-described by only one overlay (one dtso).
+So these three are an enum string.
 
-IMHO, the only reason I can see to have multiple overlay is to apply a
-first overlay which help to identify the board connected. For instance,
-an eeprom description where some ids are stored and needed to identify
-the board. In the PCI case, this is not needed, the PCI vendor/device
-IDs are here to identify the board.
+> +
+> +  "^clk@[2-9]$":
+> +    type: object
+> +    description: |
+> +      optional child node that can be used to specify output pin parameters.  The reg
+> +      properties match the CDCE6214_CLK_* defines.
+> +
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        description:
+> +          clock output identifier.
+> +        minimum: 2
+> +        maximum: 9
+> +
+> +      ti,lphcsl:
+> +        type: boolean
+> +        description: |
+> +          If true enable LP-HCSL output mode for this clock
+> +
+> +      ti,lvds:
+> +        type: boolean
+> +        description: |
+> +          If true enable LVDS output mode for this clock
+> +
+> +      ti,cmosp:
+> +        type: boolean
+> +        description: |
+> +          If true enable CMOSP output for this clock
+> +
+> +      ti,cmosn:
+> +        type: boolean
+> +        description: |
+> +          If true enable CMOSN output for this clock
+
+Looks the same here. Anyway having these as subnodes is too much. You
+have fixed number of clocks, so you need one or two array properties in
+top-level.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - "#clock-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/ti,cdce6214.h>
+
+This file does not exist. Something is odd in this example.
+
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        clock-generator@67 {
+> +            compatible = "ti,cdce6214";
+> +            reg = <0x67>;
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +            #clock-cells = <1>;
+> +            clocks = <&clock_ref25m>;
+> +            clock-names = "priref";
+> +
+> +            clk@CDCE6214_CLK_SECREF {
+
+That's not a valid unit address. Use simple numbers, see DT spec and DTS
+coding style.
+
 
 Best regards,
-Hervé
+Krzysztof
