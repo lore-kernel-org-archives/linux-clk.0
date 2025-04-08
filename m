@@ -1,145 +1,143 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A30A267AF0;
-	Tue,  8 Apr 2025 10:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7808F1B87CF
+	for <linux-clk@vger.kernel.org>; Tue,  8 Apr 2025 10:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744108598; cv=none; b=gf/L5v1G09z58Cy49F9vj9ZgRIwB+FWzoyUe2zjNOb5cvieRUDnMMrTAw02tzyIRQHvauz6jGVe5NENlVvHXVW4H6uShIzVqMhCeZYfMswg9amjA72NWdZRsHs8RKiQJ+K7RIFJX2s8+DDJY/wZnuxCBRmCWf1iz5thZVBSIXrE=
+	t=1744109427; cv=none; b=B/d3dzWmtv29kP2hGD2K9fsg50sHfVwNRdockoSLR49miQDTAPlgtC8BM5Mu/dPirH54UL+gsqEyfDJnFdQwzE3O1s2fkM8CnWbM38a9+8QaXHKRP/S/Ujr0AXNGLvBooZfYdl0+D8ZTSrWwVenBaEkXRnZXU4WieYuUZPlG/kA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744108598; c=relaxed/simple;
-	bh=/UphR4APFcK/PozCoAhhjfIcAkajuJZKr5WV2+8cQPc=;
+	s=arc-20240116; t=1744109427; c=relaxed/simple;
+	bh=y+KHax0lQX0Y05q/AyLMQamMUjKyw5ewXJJKxNUOLf4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bCWiZrwrGg3Dh3INCILuxfIApQdDtgX6CoFOhxl5wXU3Qpafv0dfrR7o0raL8yzmcsQ9lVqqQvPj7cKE/JFVBYmdi9gur5D3avodO460YdTrAFEJjLj5S8XHc8r+IxPFMD3EtKyAiaKaO7jXZVwL+JqsEPxf10cppi0Dqhg004Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OmPziao6; arc=none smtp.client-ip=209.85.221.176
+	 To:Cc:Content-Type; b=D2AwP0iq0vPs0ZoGeViCODvqoOKsI+knc16eXwZxjh+fJZtDaj4iqAqhV8TZqzf2uab1pfos9vTPTyy4Ot2S2JOg/avFvfemY72k8xcVlEYXauSHJAGoZetf0A9EJ1nBtW6lzB0rYVVDDwEZgirBaHGKiVLW3Qkkd2s7uHTxFOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RoYQ4/FB; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OmPziao6"
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-523f721bc63so5611863e0c.0;
-        Tue, 08 Apr 2025 03:36:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RoYQ4/FB"
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3031354f134so4011800a91.3
+        for <linux-clk@vger.kernel.org>; Tue, 08 Apr 2025 03:50:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744108595; x=1744713395; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744109426; x=1744714226; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KgmG0wqQuAR9ll3NJT03Os1B09ohhoP7nPRoSHR6bKo=;
-        b=OmPziao6wFNS8qvNYI7EMNZG9Ih1bHKoMPQos8gV1JtViB01pBRmD+AFOOGIqOemsz
-         qIy79u6sgNuUoP8ENcxQclcCXHaU4s19utH9kzdu8N6v08SMBq2TRT/VZCgFZr9tvLZL
-         /NH/j4tgEkNRd7URdCy3iZkY+hyBHjaV0L8oZv6zhf69GHTvz+3VOJ/btQ2JLtuyyfyW
-         ONWy0yx51KXuh5w6qlNjiSoNyqF/Kk6N3fT7cjxvLX4bBBI2Bz38Z77hgAAiqo4JN2Yc
-         li5g8lnIuarYhKYhqEO/S+6NDtWxqf6XUe8vKi7vFdmYLNiveUZ2oypxLtkdNpllZWW0
-         6NGg==
+        bh=f3Q51sZ60y2IRit4uwnvdvwQuRZcBvSxnxMj6vQGFPQ=;
+        b=RoYQ4/FB9WsKrbOJNapuyYaeUXOaqpYKAPkRLAXDztsMYcuV4KKCxbn//5drclbLeJ
+         K8xZ10fG8qn7J/3Jl7yfU9qcANmolTybzGhOX/F5/PmogvRCs9oujXuwVzfeX2knCyIO
+         oNfHXkus1tQWj/8yHh0/WuZyQE9CPF8fxsYFUtDd6p7qzh6m2p8D8Qib7g+peklHMEDn
+         UV1fq43xPi7hEGfNVr1S75Z552Rat0bNF7A4vvR23k6UqnOw4BGENVDFGfnVZB+LdxzV
+         Vkvw5npHC0SECDa54quPn+M3Z3VsQ8mHHemdk945bhznRe0qWuSTXK8uNuRP+xzvkedi
+         A49A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744108595; x=1744713395;
+        d=1e100.net; s=20230601; t=1744109426; x=1744714226;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KgmG0wqQuAR9ll3NJT03Os1B09ohhoP7nPRoSHR6bKo=;
-        b=PIlKiVCZDoV8otHO1MLelt+fZUK0x/mJubWOCH/P3FcADiUE+4IiesALH1IXZLx9AX
-         tCozZ1K5GVLnJTcG8iPoba+l2ha8c5FRMziMX2M7IpFL4zOUdg6F0CItBH/itXOf8ETL
-         XhYCg1k5hCc644QUfhpcCGuMZp3s0gHHhperZxN3yqk582qCyL4LkwvkeKFltG8X19rR
-         5RIkvVZ1gBh5XZ9vyNyCYDEav+lhJygsWHAc0RcNe6h4TUK/yzsm7k+eSgviiA2m0Vvi
-         AICnSyxRmQnlu3bXhYbr44xG38yWq7khOoeMTPsd+Ggeo9iD1pmLmNsTtr+mLIZ5cGN9
-         T7sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQOSTFXSXQbvs77ls8j1bm4ECaa4aAtU3bTYnHQcGFtq4HxUh7VPcdb2coRAkG+I/loUI6dibLoEoy@vger.kernel.org, AJvYcCUmNX1uKanDenIl0pp4Gxku2x/0Aexgg4wCUBtWUXodUVnXlEiavMbQ6u29VIHJMXdf/3Mr5kUlW1F9pLQR@vger.kernel.org, AJvYcCV8pnbZRpj1vF4oTEbynCTopve3416J3DfcobahdRllzrsvOeIfy027+BtTrYd4ebBcvinoww5cZ/ky@vger.kernel.org, AJvYcCVeSxDUksHXQHyEml1ojnATRGzjOIJjzp+oQEj+BNDCehNmoOd0Odw9PpRa3i+6+zIo6/F1CttbtbDgTq8=@vger.kernel.org, AJvYcCXkTsgIyFTV4X2LK0WMC8XpX/hcaDN8ndYhRXiw5PSXjxyywEAIDwFH1LPHXpXKQwl4sJk+zPALgQ4CjLCYtiWnRPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykvkwR3kGIJtwXxBmdFs24lOputP351v4/MkIXgKjiYZXqdI1C
-	ckD6MubN+dIsb9+wDlnqYv0l7UNvxpKVxgxYT4fZS0dWJj9Z5oXA5JSdt0Aaq1E0KvfHvkgSqKo
-	Q6Q9ss3ic6V2w9VY9hhlBlILg8MQ=
-X-Gm-Gg: ASbGncuR+/3BcGkKScHseBn8k4S8oFo+ouAFsfcWJgI5OYv/ESoelKWOOiqC5wzVd6z
-	GEv4HInEHq9Dz91xPcgQIITmPacdxyl/SKl9sJQ0yrObN4LVhmafRCdJnxa3MRkmGpf1ljBz3Eo
-	RIIT4EYvlFMJlqZ3Wa3pBLOC3eIfog9Olw38pklyaz7udy3J/sQKoRt7G2Fw==
-X-Google-Smtp-Source: AGHT+IGMyNP2No7AuI19CdTtXFJE8koZoGDmQoARojlwrt1NccfGqz2JVp+QE7meuv23NLp5JcjsnmRCoc4VHK/gGxk=
-X-Received: by 2002:a05:6122:894:b0:523:771e:8b81 with SMTP id
- 71dfb90a1353d-5279acd553cmr1706106e0c.7.1744108595413; Tue, 08 Apr 2025
- 03:36:35 -0700 (PDT)
+        bh=f3Q51sZ60y2IRit4uwnvdvwQuRZcBvSxnxMj6vQGFPQ=;
+        b=TFPWCz7OlVQn9OX0JivKsxuxo9yMc6sQnxIR88RF+xAiPkET2puJtY5BIbHqt7/PXU
+         KEmGWvVUEEbpZAC/RuYfG47w/rd8SnBpbifVvhKCFmMpKJpTmhjg+6EOoHz+SamDVtUm
+         XzL1G24OsgoRcVSkAispWqpMQWwVeWL1QoSAgfSgkZWWvaM7zzRqH1nUy9t3sUpfGHyC
+         YmLUGc8QIz/xLPBEB99Vg4ocFxFd3FepxwAqZiRwfy2fCNBNNcKUhXMb8jAdIhteAtMw
+         LM/irOayrBuvQigoaAc2GwAYQB4KiPS54d3pudCuupcpaPmLBAGKkWyrodUdtWLHelIZ
+         r16g==
+X-Forwarded-Encrypted: i=1; AJvYcCVW3w2wnIEgyvRq/pShtl6TG96maH2HypS+XvJpKy+zn/I95npDacb5vNOLM9c+jXpRutEzEHnO0ds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO5AAwoxxyEiyDyc+GSYbsnJybK6LYzJmn/2shmFTs0GEKH+T4
+	yia7redjukSCMAoiNcssB/Ohnz+jEje4+6oXTmDlhvvM/C/UcBhV5XV+fdnJqzQych22Xv/50bX
+	2SMmLaF7PwZNNl/cJDCRVw3t07ls=
+X-Gm-Gg: ASbGncuVMi5n7jsRnxu2X0yq1H4njWX/pG14npUKh0n94ejtPF3h9tIB5RdpnjnLuDA
+	7e8ldRJD69m7B8kon2Kinf5jZOnhCzVCWqrAcHuiqd8n+5f2rHL3jneBVLfVvDVc/q0J+PLa9oU
+	WAlItxO9C2Mj6tsYzOz6thMuCKgoMXSN0NCMUogQ==
+X-Google-Smtp-Source: AGHT+IFSFb+27H971KbXVzz4EA/pQ4KZ6RM/00kknTpi6QdSo41B8akPVUKL+TDvHdXUVTdc2mjINkgXv5Uk3yDpFHE=
+X-Received: by 2002:a17:90b:350f:b0:2fc:ec7c:d371 with SMTP id
+ 98e67ed59e1d1-306a60e4acbmr19761690a91.3.1744109425696; Tue, 08 Apr 2025
+ 03:50:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250330210717.46080-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250330210717.46080-6-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250331-magic-buzzard-from-valhalla-af88e3@krzk-bin>
-In-Reply-To: <20250331-magic-buzzard-from-valhalla-af88e3@krzk-bin>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 8 Apr 2025 11:36:09 +0100
-X-Gm-Features: ATxdqUEzNQOXPjrLjLavlNGBXC7oKKUbhfJS_OUOhwmcc79SQzhslZo05twijCQ
-Message-ID: <CA+V-a8tDfqH_utn7k0j=6s8HkjkLFrAanwZD8m8LpBxpWXO1QA@mail.gmail.com>
-Subject: Re: [PATCH 05/17] dt-bindings: display: renesas,rzg2l-du: Add support
- for RZ/V2H(P) SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250408063126.38904-1-eagle.alexander923@gmail.com> <3871892.kQq0lBPeGt@diego>
+In-Reply-To: <3871892.kQq0lBPeGt@diego>
+From: Alexander Shiyan <eagle.alexander923@gmail.com>
+Date: Tue, 8 Apr 2025 13:50:12 +0300
+X-Gm-Features: ATxdqUFHAHiaqii7LVTJPA3SVoeUA4jgiLCR4gVUptoIYcrxzRz4O4py-gVNqIc
+Message-ID: <CAP1tNvQtNY2GZ3HKUtaqKeMY-g7ie2CejDhbTZNYuipgXwif8Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: rockchip: clk-pll: Fix CRU_xx_CON2 register usage
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: linux-rockchip@lists.infradead.org, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Kever Yang <kever.yang@rock-chips.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+Hello.
 
-Thank you for the review.
+Yes, everything works as expected:
 
-On Mon, Mar 31, 2025 at 9:24=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On Sun, Mar 30, 2025 at 10:07:01PM +0100, Prabhakar wrote:
-> >  allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: renesas,r9a07g044-du
->
-> This goes probably after the if: block for renesas,r9a07g043u-du to keep
-> sorting (if I get numbers correctly).
->
-Agreed, I'll maintain the sort order here.
+# mw 0xfd7c01a8 0x00001234
+# md 0xfd7c01a8+4
+fd7c01a8: 00001234
+# mw 0xfd7c01a8 0x00005678
+# md 0xfd7c01a8+4
+fd7c01a8: 00005678
 
-> > +    then:
-> > +      properties:
-> > +        ports:
-> > +          properties:
-> > +            port@0:
-> > +              description: DSI
-> > +            port@1:
-> > +              description: DPI
-> > +
-> > +          required:
-> > +            - port@0
-> > +            - port@1
-> >    - if:
-> >        properties:
-> >          compatible:
-> > @@ -101,18 +119,20 @@ allOf:
+=D0=B2=D1=82, 8 =D0=B0=D0=BF=D1=80. 2025=E2=80=AF=D0=B3. =D0=B2 10:31, Heik=
+o St=C3=BCbner <heiko@sntech.de>:
+>
+> Hi Alexander,
+>
+> Am Dienstag, 8. April 2025, 08:31:25 Mitteleurop=C3=A4ische Sommerzeit sc=
+hrieb Alexander Shiyan:
+> > According to RK3588 TRM, CRU_(CPLL/GPLL/etc)_CON2 register
+> > (rate-k value) does not use highword write enable mask.
+> > Lets fix this.
 > >
-> >            required:
-> >              - port@0
-> > -    else:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: renesas,r9a09g057-du
-> > +    then:
-> >        properties:
-> >          ports:
-> >            properties:
-> >              port@0:
-> >                description: DSI
+> > Signed-off-by: Alexander Shiyan <eagle.alexander923@gmail.com>
 >
-> port@1: false
-Agreed, more validation.
-
-Cheers,
-Prabhakar
+> The commit message doesn't say, but did you check this on actual
+> hardware too?
+>
+> Sometimes there is a disconnect between the TRM and actual hardware,
+> so the actual real-life situation should be checked.
+>
+>
+> As for a test-case, any write without write-mask to a register that
+> would require a write-mask would not come through.
+> So with your patch applied, does the register value change after
+> the write below when reading it back again?
+>
+>
+> Thanks
+> Heiko
+>
+>
+> > ---
+> >  drivers/clk/rockchip/clk-pll.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-=
+pll.c
+> > index 2c2abb3b4210..77ba4d6e7b5f 100644
+> > --- a/drivers/clk/rockchip/clk-pll.c
+> > +++ b/drivers/clk/rockchip/clk-pll.c
+> > @@ -959,7 +959,7 @@ static int rockchip_rk3588_pll_set_params(struct ro=
+ckchip_clk_pll *pll,
+> >                      HIWORD_UPDATE(rate->s, RK3588_PLLCON1_S_MASK, RK35=
+88_PLLCON1_S_SHIFT),
+> >                      pll->reg_base + RK3399_PLLCON(1));
+> >
+> > -     writel_relaxed(HIWORD_UPDATE(rate->k, RK3588_PLLCON2_K_MASK, RK35=
+88_PLLCON2_K_SHIFT),
+> > +     writel_relaxed((rate->k & RK3588_PLLCON2_K_MASK) << RK3588_PLLCON=
+2_K_SHIFT,
+> >                      pll->reg_base + RK3399_PLLCON(2));
+> >
+> >       /* set pll power up */
+> >
+>
+>
+>
+>
