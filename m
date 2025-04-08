@@ -1,120 +1,93 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800091F098D;
-	Tue,  8 Apr 2025 15:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D961C22A4D6;
+	Tue,  8 Apr 2025 15:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744125243; cv=none; b=YZpPgX34K1okvZ6EitRJ7B24uk99YVu8yINzvZuytcZO+ChYVh5rMhgEh+6RHgR/HH3zFRlXCB4aUvliqDE+t2nio0ATfLVOTek8AMXyZMOEcCHUCdbryj8LXnTgdfz/TWMeuAdvZi+g5UyYXI5der6p0L1yhzi6lR7t4h9i4Pc=
+	t=1744125544; cv=none; b=jn3X+HXsKYKj50oairkaBU/S7iIK9Iq/0p7UYrCEbm/uaqwZRP/6j+a9csLWjGnrOt2H1PXjGoceZ/q67hX3SwQmWtzioOZJXBB2jZJZXavxHlELdau8GTQ6v+MeQuCztNTMTRmZWinxRcG2f/g16flJ/6ZFAGrjOQqNnpgSydg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744125243; c=relaxed/simple;
-	bh=8p3t0lkqP6MY+gt6AiZADjhwdZ+1gjcjLL6bW89DHiY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=JmoiNPr4Gmv7j17tl6HFjKvWaGWm+xKn7q56N6qJe1qGYqKkAE3JLV6HI26sFzcj1zRjuDxyqDGvRygUMkL2CBi4ptxVGBWyIJN5VY7njz9RzxQiyCdU46m/b8yU8631AqdvRfTiOCM1NlpjJ7DJXDdIXdvbylZaC3GBkeKpjac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=e0UNBGod; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1744125544; c=relaxed/simple;
+	bh=muzGjO6WVJ7RFBCN3eTmJV8m55muVdlhk1Ebh/yVj5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4OScmpF3GJ3cOQS+H9kLZpP1XTe4PvlH3qpnWsMM2IAJJ6Ok7hcnHoW+IcG0hsTztVHZHJNqzLTnty0o9GVOEnp+9GMyv/9azzFfMo+yiq70+1+w7a681/2ozKxR7TewmOUqCM0YZ10ui6IiaP/BWyuo+Qr0lkrvqbECzwgh1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=i77/t7ZE; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="e0UNBGod"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9081E44304;
-	Tue,  8 Apr 2025 15:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744125238;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ABDY6poh0HThAHrjisqjJxeh621Yt7h0FayEtDXs8a4=;
-	b=e0UNBGodg2EZ86zi6OaGzuuF6bdNAYXjeXAwUVqzhoUgJk2DB2OMM6UbxH+GaL6AF+S6TE
-	WkhDhb3vRWVzj8KS2Vo3uRT9UIX6UrANzHhaZRDIsbJjlyA9j5yw6aIO07XYDvRx3OD9Or
-	++LdKi+50MW2olNWpkpYdKOgu5xHjzLp7FoMmdqO6uRWLkJtd4DE88vXIZKS8nFNgH1eo3
-	cow28PW5jz2i+yrtMIr3ZuGX1iHJFoPmPLgeNBgvsMGdsnS53/bJEG5ob1SoFUe4v5Jplj
-	pwubq7Ej8hXCwX4zDyec0KJ0k9PEgTFo7RNt8rel/Ra1V7jxu6MZmM4zscARAg==
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="i77/t7ZE"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+vt9+VZDiPwgZiCaktIzImIK5YgSg2O6izIQtC6HzeY=; b=i77/t7ZEtZtab+fE0SvLKoYiBY
+	cIQe0n5eHBmEaS+eBHGSsieAtJVc06yqZqGXOdZrroshp0+D+GdK+mY2/v+0gFTxj/dcakyj/Q9zn
+	CgTxXoWUnXUT1Tg+IXwpvi1V/lQdArGz4S09lXqjtQrn3sFMZxfg/duxsdgdrLJvhl20=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1u2Ais-008PgN-Vu; Tue, 08 Apr 2025 17:18:46 +0200
+Date: Tue, 8 Apr 2025 17:18:46 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Lucien.Jheng" <lucienx123@gmail.com>
+Cc: linux-clk@vger.kernel.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, daniel@makrotopia.org, ericwouds@gmail.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	joseph.lin@airoha.com, wenshin.chung@airoha.com,
+	lucien.jheng@airoha.com
+Subject: Re: [PATCH v7 net-next PATCH 1/1] net: phy: air_en8811h: Add clk
+ provider for CKO pin
+Message-ID: <29710c4e-b106-4922-8278-c19159c16756@lunn.ch>
+References: <20250408150118.54478-1-lucienx123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 08 Apr 2025 17:13:54 +0200
-Message-Id: <D91CSNC07NYM.3KC467K0OZ4GG@bootlin.com>
-Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
- support SFPs
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>, "Shawn Guo"
- <shawnguo@kernel.org>, "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Fabio Estevam"
- <festevam@gmail.com>, "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Andi Shyti" <andi.shyti@kernel.org>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>, "Peter Rosin"
- <peda@axentia.se>, "Derek Kiernan" <derek.kiernan@amd.com>, "Dragan Cvetic"
- <dragan.cvetic@amd.com>, "Arnd Bergmann" <arnd@arndb.de>, "Rob Herring"
- <robh@kernel.org>, "Saravana Kannan" <saravanak@google.com>, "Bjorn
- Helgaas" <bhelgaas@google.com>, "Mark Brown" <broonie@kernel.org>, "Len
- Brown" <lenb@kernel.org>, "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>, "Daniel Scally" <djrscally@gmail.com>,
- "Heikki Krogerus" <heikki.krogerus@linux.intel.com>, "Sakari Ailus"
- <sakari.ailus@linux.intel.com>, "Wolfram Sang" <wsa@kernel.org>, "Geert
- Uytterhoeven" <geert+renesas@glider.be>, <linux-kernel@vger.kernel.org>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
- <linux-spi@vger.kernel.org>, <linux-acpi@vger.kernel.org>, "Allan Nielsen"
- <allan.nielsen@microchip.com>, "Horatiu Vultur"
- <horatiu.vultur@microchip.com>, "Steen Hegelund"
- <steen.hegelund@microchip.com>, "Luca Ceresoli"
- <luca.ceresoli@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>
-From: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
-To: "Herve Codina" <herve.codina@bootlin.com>, "Andrew Lunn"
- <andrew@lunn.ch>
-X-Mailer: aerc
-References: <20250407145546.270683-1-herve.codina@bootlin.com>
- <20250407145546.270683-16-herve.codina@bootlin.com>
- <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
- <20250408162603.02d6c3a1@bootlin.com>
-In-Reply-To: <20250408162603.02d6c3a1@bootlin.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdefgedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkufevhffvofhfjgesthhqredtredtjeenucfhrhhomhepfdfvhhhomhgrshcurfgvthgriiiiohhnihdfuceothhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhgfeijeduheejtdduteffleeggeejieffiedvteefjeefudekvdeggfeihfeivdenucffohhmrghinheplhhptgdrvghvvghnthhspdgsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeegvddprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnv
- ghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvg
-X-GND-Sasl: thomas.petazzoni@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250408150118.54478-1-lucienx123@gmail.com>
 
-Andrew, Herv=C3=A9,
+On Tue, Apr 08, 2025 at 11:01:18PM +0800, Lucien.Jheng wrote:
+> EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
+> CKO clock operates continuously from power-up through md32 loading.
+> Implement clk provider driver so we can disable the clock output in case
+> it isn't needed, which also helps to reduce EMF noise
+> 
+> Signed-off-by: Lucien.Jheng <lucienx123@gmail.com>
+>  #include <linux/property.h>
+>  #include <linux/wordpart.h>
+>  #include <linux/unaligned.h>
+> +#include <linux/clk-provider.h>
 
-On Tue Apr 8, 2025 at 4:26 PM CEST, Herve Codina wrote:
+We try to keep thinks sorted in order. The includes are not quite
+correct, but still clk-provider.h should be first.
 
->> What exactly does this DTSO file represent?
->
-> The dsto represents de board connected to the PCI slot and identified
-> by its PCI vendor/device IDs.
+>  #define EN8811H_PHY_ID		0x03a2a411
+> 
+> @@ -112,6 +113,11 @@
+>  #define   EN8811H_POLARITY_TX_NORMAL		BIT(0)
+>  #define   EN8811H_POLARITY_RX_REVERSE		BIT(1)
+> 
+> +#define EN8811H_CLK_CGM		0xcf958
+> +#define   EN8811H_CLK_CGM_CKO		BIT(26)
+> +#define EN8811H_HWTRAP1		0xcf914
+> +#define   EN8811H_HWTRAP1_CKO		BIT(12)
+> +
+>  #define EN8811H_GPIO_OUTPUT		0xcf8b8
+>  #define   EN8811H_GPIO_OUTPUT_345		(BIT(3) | BIT(4) | BIT(5))
 
-If I may extend on that by providing what I believe is a more
-accurate/precise definition.
+and registers should be in order, so 0xcf958 goes after 0xcf8b8.
 
-The DTSO doesn't represent the board, rather it describes the HW
-topology of the devices inside the PCI endpoint. Indeed, the PCI
-endpoint is a full-blown SoC with lots of different HW blocks that
-already have drivers in the kernel (because the same chip can be used
-with Linux running on an ARM core embedded in the SoC, rather than
-access as a PCI endpoint). So the DTSO describes the full topology of
-the HW blocks inside this complex PCI endpoint, just like the DTS
-describes the full topology of the HW blocks inside an SoC.
+> +static int en8811h_clk_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
+> +	struct phy_device *phydev = priv->phydev;
+> +	int ret;
+> +	u32 pbus_value;
 
-Please see:
+Reverse Christmas tree please. Sort them longest to shortest.
 
-  https://lpc.events/event/17/contributions/1421/attachments/1337/2680/LPC2=
-023%20Non-discoverable%20devices%20in%20PCI.pdf
-
-And most notably slide 6.
-
-Best regards,
-
-Thomas
---=20
-Thomas Petazzoni, co-owner and CEO, Bootlin
-Embedded Linux and Kernel engineering and training
-https://bootlin.com
-
+	Andrew
