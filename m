@@ -1,126 +1,247 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90BEF1C5D61;
-	Tue,  8 Apr 2025 14:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B0F22A4CD;
+	Tue,  8 Apr 2025 15:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744123543; cv=none; b=COryo1jWpcVmTaM390ngMOR/tWoLC4ug+m8/SDRtcoNg+e67JAUoXjNZa41eNOH8d5nVolrWGOygN6lmOshp85nxcImsKOQNOuUbB4BTJWcfeRYOu5poiIDjtUPq+LLPGvcgWdA7k7T2WZ9xDMeX5ojD0ugSS1mSY3pkAtHMlU8=
+	t=1744124529; cv=none; b=aQ3H5W2N3o+YlbHTobP8N0we7SYmMMaWlolAmypzpVr143SPSdpaPXpOii/JT9tlsmQRDdIkCwHSvDB0H04rUf8tKiltvpKszxVUZIPeF1u/WANVgaVDMs1t+AYa+VALcLoxFCUHJCEQ6Lh+su5+0eiQH4a5Gp9SUki6vlSBGtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744123543; c=relaxed/simple;
-	bh=7T4CpB6DGc+gXmXeKE+QAVK5wOG1xBkOti6BP2/W8Ow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DLZgpcM71DsPuNZsDIc5qsB8tdQ0KoOMnQ7FyDzsFY1tRuSol9rHPYKyikFqRoTAJfTLmaQJHAJFMOi7dPWgOcFNCWrnrQC3rZvYQKvw0dR9a/aAyCdTmAkDtZACmyrQPzmX0ibMp3u8iXTf93y0C+1XFB2a9Bd6gzP+Jahh8zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TLs5lB9Q; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1744124529; c=relaxed/simple;
+	bh=1V5LM9FxXrHI2YXdgpBEILLpN6lC29GjKLDmdnWD7xg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WMrPq6x/f12wzRy7j6tUT4GJO1zD4+zTKPP5lvQ4ZKPRAd8vrHW71KzTPSpBzPkXtx0Sr4hkjMovTPviC8c+qrd7KqCSRppoHktJN2BRnhX3fHnSWRfA/NyPZPvbGZkQBKUareW4ErycMOBYjRB4HGyve9gpfbYEddjVVF4nLpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f3qLX6E1; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TLs5lB9Q"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ZU8AgxcMgNb7+V6IhjT3po2+emT09ZzOnp6Z/8jLn6c=; b=TLs5lB9Q6k6NOM0ejAiZKSUmbw
-	Dj+iAfTAAhm+Ug5dOAXdaCUR0ebD73P/pVGjYFtKaTG8ZV+/atjxB8tqHRg7WBYsJwW5Vwwr7EF9c
-	EXg2eTLofm8UMCn7fjXC4Ewz5LuW28/Ib8u6LPJzVd95vL9xcZUe0UdgFLyk1LVTAELk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u2ACU-008PSe-Gy; Tue, 08 Apr 2025 16:45:18 +0200
-Date: Tue, 8 Apr 2025 16:45:18 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
- support SFPs
-Message-ID: <e370fcd3-bd58-47d1-bc0c-c0abeebbefdc@lunn.ch>
-References: <20250407145546.270683-1-herve.codina@bootlin.com>
- <20250407145546.270683-16-herve.codina@bootlin.com>
- <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
- <20250408162603.02d6c3a1@bootlin.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f3qLX6E1"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-224341bbc1dso50523355ad.3;
+        Tue, 08 Apr 2025 08:02:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744124527; x=1744729327; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lanYKRHOAVQmad7jWC9R3BwXl4xuzrXPK59buSE8nEg=;
+        b=f3qLX6E1QGYZCsp88hOUx9ZT+pi0JQx8Uldqk/iEhVZkdTt114ZED5vJBVvi53Opbl
+         GZjRGZO0z11moHP7NuXTAlu8xCa3YNUO8GSLVieyQIFpiU2/CNQWRrFl1dOhHB3x56qz
+         tHC3q6wbmpkOKWTUektsCpvl25A/XU4iWCK2jG7dcyCd4F2r7x742iYKGJu2rCrwbtLj
+         ib8Dy6kiszifQAPa32hmeNyEn5PIp2ha/mCbASjV1+AiuiojgXxtDcg4ccN1ihBBNSQo
+         n4u+WiUySDmMpRlbC7pbBx9sQCZDMJ9AlWK8kXrZKA7gsbKqmgC2inxFrEqYQdght2Rc
+         j2uA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744124527; x=1744729327;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lanYKRHOAVQmad7jWC9R3BwXl4xuzrXPK59buSE8nEg=;
+        b=jj0v82aZL/oPO3l+bsJPeoMSOdGgCHlMq0K/Zszu31RetOAN57Eg4OMD2HOckHkQzV
+         4FZGlTne+fDXFtesaW1NzrkBEpL0UJaNoWQalz6M/93RMnPkiaGBC2PLv9uzjVy5xshj
+         NIz2fQD/b2f+th4aNVq8GYJne/mj+CKmN+dMmOHGrThavPknKlBhMy+FD6Rkn4G9bM1Q
+         Wlv8IM3urTpbuRZdzUN3R2tbbsF0plw/LEYlzuEW932DtSkt7FRFIvhhCdn9WpRv8LNG
+         TF3hPwJeDDkFdPOjBkmKO9AW/+sww17d/BYHi6FZfncnX/M4woOewYvAUWLVm4NEJT3J
+         8vxg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5VDq/5C2FR7ZBP3QauTj8lGKFTEtw/+QyeW8unVFxnVCMt30pzgkVFX4AvrnTffNepiLt7ejAdwaWs2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOYeZ8VmDmM8YKjNQ/sR7pXpgUOrrFL19b4mW+Ztjxs8b76azg
+	lCEs1xNWZtCGMW6EdtE5Kmlh+cezLJB4Q0TmHAUaJuHVvX1lizOOx64cpUA=
+X-Gm-Gg: ASbGncum6nYFC+Xs0tUfKTh7BKPNI8HuPUXYo0ZoC5Mv81HT3mhEz/tcxHrS3YfLwOA
+	DfSo6tqtAFetD2hbRpYhknXPCqcuoWr9gyrNbRDg0sVHsZqVYnF+QAO/dJORJTRkl6gXUFkUaw7
+	64CG8/uhIcwTLn9NqeI3a43GptOCxVqOW0pSUH8vjgHbMRLzuFJMYPHiokyDAPy1/zhm5kppU1j
+	VlKdbP08KHljtWxtbU/g6n5sfBrxd3o9u7VmcuR5hur26uGnDT7FCx+N2xCqVfDLdZGv0gOK8hz
+	X4X2NVQml5uTMdU5bn705g6OgAPk29AtIsK6hXmEmjs9U5NOWZqTgEhSwqaJFRbAgUi+XKSAwlS
+	rd7Bq40dLTmDeXxIEvT8zdZjemN3hBsdXwcRR2g==
+X-Google-Smtp-Source: AGHT+IFimZU9V8rdI+tpXInlH/fG10dMMdd9u4/e8prqHcREMC6o2Lmc33zvP2/ddotsXlYb4KuXmg==
+X-Received: by 2002:a17:902:d485:b0:223:3bf6:7e6a with SMTP id d9443c01a7336-22a95529550mr210976505ad.12.1744124526610;
+        Tue, 08 Apr 2025 08:02:06 -0700 (PDT)
+Received: from localhost.localdomain (124-218-201-66.cm.dynamic.apol.com.tw. [124.218.201.66])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22978777259sm101092365ad.251.2025.04.08.08.02.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 08:02:06 -0700 (PDT)
+From: "Lucien.Jheng" <lucienx123@gmail.com>
+To: linux-clk@vger.kernel.org,
+	andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	kuba@kernel.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	daniel@makrotopia.org,
+	ericwouds@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	joseph.lin@airoha.com,
+	wenshin.chung@airoha.com,
+	lucien.jheng@airoha.com,
+	"Lucien.Jheng" <lucienx123@gmail.com>
+Subject: [PATCH v7 net-next PATCH 1/1] net: phy: air_en8811h: Add clk provider for CKO pin
+Date: Tue,  8 Apr 2025 23:01:18 +0800
+Message-Id: <20250408150118.54478-1-lucienx123@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250408162603.02d6c3a1@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 08, 2025 at 04:26:03PM +0200, Herve Codina wrote:
-> Hi Andrew,
-> 
-> On Mon, 7 Apr 2025 22:05:31 +0200
-> Andrew Lunn <andrew@lunn.ch> wrote:
-> 
-> > On Mon, Apr 07, 2025 at 04:55:44PM +0200, Herve Codina wrote:
-> > > Add device-tree nodes needed to support SFPs.
-> > > Those nodes are:
-> > >  - the clock controller
-> > >  - the i2c controller
-> > >  - the i2c mux
-> > >  - the SFPs themselves and their related ports in the switch
-> > > 
-> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > > ---
-> > >  drivers/misc/lan966x_pci.dtso | 111 ++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 111 insertions(+)
-> > > 
-> > > diff --git a/drivers/misc/lan966x_pci.dtso b/drivers/misc/lan966x_pci.dtso
-> > > index 94a967b384f3..a2015b46cd44 100644
-> > > --- a/drivers/misc/lan966x_pci.dtso
-> > > +++ b/drivers/misc/lan966x_pci.dtso  
-> > 
-> > What exactly does this DTSO file represent?
-> 
-> The dsto represents de board connected to the PCI slot and identified
-> by its PCI vendor/device IDs.
+EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
+CKO clock operates continuously from power-up through md32 loading.
+Implement clk provider driver so we can disable the clock output in case
+it isn't needed, which also helps to reduce EMF noise
 
-Then i think the name lan966x_pci.dtso is too generic. It should be
-named after whatever microchip calls the RDK.
+Signed-off-by: Lucien.Jheng <lucienx123@gmail.com>
+---
+Change in PATCH v7:
+air_en8811h.c:
+ * Fix: Correct various code style inconsistencies and remove unnecessary initialization.
 
-> We can move the PCI chip in a dtsi included by this dtso but in the
-> end this leads to the exact same representation. Further more, moving
-> out the PCI chip description in its own dtsi out of this dtso can be
-> done in a second step when an other dtso uses the same chip.
+ drivers/net/phy/air_en8811h.c | 103 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 100 insertions(+), 3 deletions(-)
 
-And what would you call this pulled out dtsi file? lan966x_pci.dtsi?
-That is going to be confusing.
+diff --git a/drivers/net/phy/air_en8811h.c b/drivers/net/phy/air_en8811h.c
+index e9fd24cb7270..4eebc6e24ce5 100644
+--- a/drivers/net/phy/air_en8811h.c
++++ b/drivers/net/phy/air_en8811h.c
+@@ -16,6 +16,7 @@
+ #include <linux/property.h>
+ #include <linux/wordpart.h>
+ #include <linux/unaligned.h>
++#include <linux/clk-provider.h>
 
-Naming is hard, but we should assume this PCIe device is going to be
-successful, and a number of OEMs will build cards around it, so there
-needs to be space within the naming scheme for them.
+ #define EN8811H_PHY_ID		0x03a2a411
 
-	Andrew
+@@ -112,6 +113,11 @@
+ #define   EN8811H_POLARITY_TX_NORMAL		BIT(0)
+ #define   EN8811H_POLARITY_RX_REVERSE		BIT(1)
+
++#define EN8811H_CLK_CGM		0xcf958
++#define   EN8811H_CLK_CGM_CKO		BIT(26)
++#define EN8811H_HWTRAP1		0xcf914
++#define   EN8811H_HWTRAP1_CKO		BIT(12)
++
+ #define EN8811H_GPIO_OUTPUT		0xcf8b8
+ #define   EN8811H_GPIO_OUTPUT_345		(BIT(3) | BIT(4) | BIT(5))
+
+@@ -142,10 +148,15 @@ struct led {
+ 	unsigned long state;
+ };
+
++#define clk_hw_to_en8811h_priv(_hw)			\
++	container_of(_hw, struct en8811h_priv, hw)
++
+ struct en8811h_priv {
+-	u32		firmware_version;
+-	bool		mcu_needs_restart;
+-	struct led	led[EN8811H_LED_COUNT];
++	u32			firmware_version;
++	bool			mcu_needs_restart;
++	struct led		led[EN8811H_LED_COUNT];
++	struct clk_hw		hw;
++	struct phy_device	*phydev;
+ };
+
+ enum {
+@@ -806,6 +817,86 @@ static int en8811h_led_hw_is_supported(struct phy_device *phydev, u8 index,
+ 	return 0;
+ };
+
++static unsigned long en8811h_clk_recalc_rate(struct clk_hw *hw,
++					     unsigned long parent)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++	u32 pbus_value;
++	int ret;
++
++	ret = air_buckpbus_reg_read(phydev, EN8811H_HWTRAP1, &pbus_value);
++	if (ret < 0)
++		return ret;
++
++	return (pbus_value & EN8811H_HWTRAP1_CKO) ? 50000000 : 25000000;
++}
++
++static int en8811h_clk_enable(struct clk_hw *hw)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++
++	return air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
++				       EN8811H_CLK_CGM_CKO,
++				       EN8811H_CLK_CGM_CKO);
++}
++
++static void en8811h_clk_disable(struct clk_hw *hw)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++
++	air_buckpbus_reg_modify(phydev, EN8811H_CLK_CGM,
++				EN8811H_CLK_CGM_CKO, 0);
++}
++
++static int en8811h_clk_is_enabled(struct clk_hw *hw)
++{
++	struct en8811h_priv *priv = clk_hw_to_en8811h_priv(hw);
++	struct phy_device *phydev = priv->phydev;
++	int ret;
++	u32 pbus_value;
++
++	ret = air_buckpbus_reg_read(phydev, EN8811H_CLK_CGM, &pbus_value);
++	if (ret < 0)
++		return ret;
++
++	return (pbus_value & EN8811H_CLK_CGM_CKO);
++}
++
++static const struct clk_ops en8811h_clk_ops = {
++	.recalc_rate	= en8811h_clk_recalc_rate,
++	.enable		= en8811h_clk_enable,
++	.disable	= en8811h_clk_disable,
++	.is_enabled	= en8811h_clk_is_enabled,
++};
++
++static int en8811h_clk_provider_setup(struct device *dev, struct clk_hw *hw)
++{
++	struct clk_init_data init;
++	int ret;
++
++	if (!IS_ENABLED(CONFIG_COMMON_CLK))
++		return 0;
++
++	init.name = devm_kasprintf(dev, GFP_KERNEL, "%s-cko",
++				   fwnode_get_name(dev_fwnode(dev)));
++	if (!init.name)
++		return -ENOMEM;
++
++	init.ops = &en8811h_clk_ops;
++	init.flags = 0;
++	init.num_parents = 0;
++	hw->init = &init;
++
++	ret = devm_clk_hw_register(dev, hw);
++	if (ret)
++		return ret;
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, hw);
++}
++
+ static int en8811h_probe(struct phy_device *phydev)
+ {
+ 	struct en8811h_priv *priv;
+@@ -838,6 +929,12 @@ static int en8811h_probe(struct phy_device *phydev)
+ 		return ret;
+ 	}
+
++	priv->phydev = phydev;
++	/* Co-Clock Output */
++	ret = en8811h_clk_provider_setup(&phydev->mdio.dev, &priv->hw);
++	if (ret)
++		return ret;
++
+ 	/* Configure led gpio pins as output */
+ 	ret = air_buckpbus_reg_modify(phydev, EN8811H_GPIO_OUTPUT,
+ 				      EN8811H_GPIO_OUTPUT_345,
+--
+2.34.1
+
