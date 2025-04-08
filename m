@@ -1,146 +1,99 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACB8263C83
-	for <linux-clk@vger.kernel.org>; Tue,  8 Apr 2025 07:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04C126A0AF;
+	Tue,  8 Apr 2025 10:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744097644; cv=none; b=KMjUnGpm48ZeQp4PdIkwiu1j7W2XbgKIKUJkslK09QSQkqABYHSOF4WgIxZ7bnKKeKk7kGZHDfgh7LSQRPjZyxU+GJPjnL5M0nBWcidhsP+O7YzwRZFjNSM4HCx/xMNgYu2mHQCypKitiU7PCnm2wKmnAhzV8AnJPBNP0I3W1Rw=
+	t=1744107440; cv=none; b=fjJGibVG0B9vFwR8IUwPtuZ36I5x7dLh9HfTE07zYujXJjKVtDiYldI6rs9cjd8YokfNz/m7f/OeWLlxrQQSQALWEUj4uKyEebd21Jv3NXmoVPsLZ+2XImRVKzazF0UHf2r7XmEqotKtOi8kxW7D/ab0dntCq6tZHQbCUEsIVt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744097644; c=relaxed/simple;
-	bh=+jZrueS3bdTwyiNJBuV89/uZubp/GRCAmixpmEl+VtY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DJzxiOCaaOOOZwr4otgtqsV+H489k1HEdTWfQRSLSiCselIlANZ9PWV2MeF82POwBRd9EnwLLLqtWlkZ6VPvtRFR6XVXID50T9Yqx6PsTbByTP0Y+YywmrbzuNlSwPZhcJ9x7YLQDoa/j3c29p3Y2rj4Y062vnXh8ePWxSWe1+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cIUXVNy5; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1744107440; c=relaxed/simple;
+	bh=UBGYZav1sanbx9q68R4VI0oFmTxYxEmCfw0AJTso0aI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ozLab6txOyokJNHPQo1GHENgGNoFcAdM+KmqoFOIgxraXhpsCBwBTeP0bVNYiEzVmNFFWpA7SGP3f2nJh4bS/+TtpMXyCRr3Thz0M4fdQqsguKxkGlnSQVOZnVM2yuhWHBWVx4TGZsvdfanj6fmDCiZAYaE4VDojrAsRG8UaZeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GI0V/SKA; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cIUXVNy5"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf680d351so36369275e9.0
-        for <linux-clk@vger.kernel.org>; Tue, 08 Apr 2025 00:34:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744097640; x=1744702440; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IlfwFDH+X8G+NwPj7Vy2IIvOezxV6eu9OtIzRCGvuLs=;
-        b=cIUXVNy5frg2xXz55t926pqT3udjeQXh7/c91WAtXAzDnROI/Zz9izM0fes3emg02O
-         HQDamcjzmQBqOEXhfaO3xJ7rh7uIxdND/0/9Ki8Jre9ZWmM1G2/d2ZBhM3csh4MLVdOd
-         9J71nD6XexKEnPRm2yXJaK3rALstuhKoMnO5Hl8ToFiOfiMmg0QFowKUVEpWMTDbX33T
-         4U6RQvX3grvvMcjMlzp7tfU2anpsWI32rmKoLZEqzuMv9aavt1DyB290yxryFN53FIi3
-         ZIZHh3gD+QYJsDZc2EcqRDr211M0i5JLNKRZm58PKzlF5TKTEsHaq0kWIlkbv5U9l0Q9
-         09bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744097640; x=1744702440;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IlfwFDH+X8G+NwPj7Vy2IIvOezxV6eu9OtIzRCGvuLs=;
-        b=Fc51sdroYsnCrU9RHp3SRd6EeJNTREDi0kup2S8Br6HAsrIKYUfzcBvl9FSpD6olzt
-         YRomyyKb6KvdfFqkNZSBUWVJWq+xvSXlKyWTReafDiSwAtwt+u1yveoZT52TBhnsgxQU
-         y1lT9GxWv3BXxWeZTyXpdM47yfuW6XLCdjkBESJnanpye4/cxMu1RiGFzExlE8ZX/pdP
-         awzsY449wbBEvFXSBr4ax9XMH02uhk0dgBNLYxpXW+uPAtgcrEcQoVG7uDP2Lg4p7uEl
-         S/brH8PdLVL+bMYWvKQwlVscnfl+ru075YwfpXyLIvM7pFdosooZ3A+TNPl3VZEcH9Ob
-         Mxsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmjsimyg85tUUcEtHWmHKfL2kfm2/eesPaBd4dRNXn2XX3MKZSbAfd2bQYa3CgzCDhfT5s3YjWSyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx19c5M8aKc9OzqK9+EaFDqWq4Q58eEgC3r1nAMbEnwx4S7m578
-	mTAvlXOtdEGzMivz2oboIW82bQQjPU1HpzTloFbDIzP/WVpREyR7ggNTTQfdFuU=
-X-Gm-Gg: ASbGncs/kwMZXD08LN2GCBLhnea1ZTH1loD21tmYDLJtyhrlxqDR2s9jk50tQESgwQ9
-	J8ppYq9DvxKE5DB0EwygexkHF8srWeIIShqSrJpNd4mazFKq3Gq0H8TatC7YqyaKD/pjavkNzVg
-	5VzuI6Uwx7xfd42JmA9ZwNZUaiUgxNrE+yRw76Qwcz4JhpUdYKzY3OyurCxC680oPhkkYkgmtjD
-	QQFDKJJXAy87QPvmNN8nzTT0qK00oHEsl4Hi4jm4npCgev/2PaAMfD/84nzR+Pu3jrn4TaioPRJ
-	IOcI4fWdS6JlOeQKLiMTyKQCULVuDmEGJCpHfDJU3UZRTO4=
-X-Google-Smtp-Source: AGHT+IH/VksFsEyoBKI9nFdRHY5jYoHhuOC/STuFedynMg/f/yUaVw5RUYHsEjKD7l2EEe/Jqd89dA==
-X-Received: by 2002:a05:6000:4616:b0:39b:f44b:e176 with SMTP id ffacd0b85a97d-39d821116bemr1896403f8f.24.1744097639781;
-        Tue, 08 Apr 2025 00:33:59 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34a8952sm151781455e9.10.2025.04.08.00.33.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Apr 2025 00:33:59 -0700 (PDT)
-Date: Tue, 8 Apr 2025 09:33:57 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Binbin Zhou <zhoubinbin@loongson.cn>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] vsprintf: remove redundant and unused %pCn format
- specifier
-Message-ID: <Z_TRZSxwzfAZ9u6I@pathway.suse.cz>
-References: <20250311-vsprintf-pcn-v2-0-0af40fc7dee4@bootlin.com>
- <20250311-vsprintf-pcn-v2-2-0af40fc7dee4@bootlin.com>
- <Z9BKW_06nLAOzYfY@pathway.suse.cz>
- <20250407184647.3b72de47@booty>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GI0V/SKA"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 56B6F441FE;
+	Tue,  8 Apr 2025 10:17:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744107434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7EJi+ZuhZowHiCbZufnU+eePBnn+fZT6fo+kvEqiL/s=;
+	b=GI0V/SKAsO35ZWDwGAfhEesNMakWysFGWJ4QTbZxAqAJJ0b1kNMghx58bk8Gl0z+1VY1wU
+	kJfKX7aMWiGs51h+rkpopeRcFN+hTylkpy0WOSbm9Z+BSpwSi6Tne1W1Ev/otmPSiOzr2a
+	QrO7UMWkNGTMxUGh0LHFoO/+n5n3CWQjxZqGV7wJ+IMldDefYyDPetl7dvz9yDj2e9Vomp
+	OT9diWAl2mg2dnFtADrgHVXNhxzQKk/YVtGCMZVztHstkQpk7WUrDunFsaBhnalLVvQ095
+	V/6g8QLaq+MmjdstxHuqSQmuW3X1dC6u0u112TYwnZy6qLgowk5oLq65LcVDQw==
+Date: Tue, 8 Apr 2025 12:17:08 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
+ Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana
+ Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark
+ Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 02/16] driver core: Rename get_dev_from_fwnode() wrapper
+ to get_device_from_fwnode()
+Message-ID: <20250408121708.6b436b2c@booty>
+In-Reply-To: <20250407145546.270683-3-herve.codina@bootlin.com>
+References: <20250407145546.270683-1-herve.codina@bootlin.com>
+	<20250407145546.270683-3-herve.codina@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250407184647.3b72de47@booty>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddvkedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdeljeejuddvudetffdtudelfedugfduledtueffuedufefgudegkeegtdeihedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeegtddprhgtphhtthhopehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhop
+ ehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehshhgrfihnghhuoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshdrhhgruhgvrhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehfvghsthgvvhgrmhesghhmrghilhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Mon 2025-04-07 18:46:47, Luca Ceresoli wrote:
-> Hello Petr, Daniel,
+On Mon,  7 Apr 2025 16:55:31 +0200
+Herve Codina <herve.codina@bootlin.com> wrote:
+
+> get_dev_from_fwnode() calls get_device() and so it acquires a reference
+> on the device returned.
 > 
-> On Tue, 11 Mar 2025 15:36:11 +0100
-> Petr Mladek <pmladek@suse.com> wrote:
+> In order to be more obvious that this wrapper is a get_device() variant,
+> rename it to get_device_from_fwnode().
 > 
-> > On Tue 2025-03-11 10:21:23, Luca Ceresoli wrote:
-> > > %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
-> > > add %pC{,n,r} format specifiers for clocks") introducing them does not
-> > > clarify any intended difference. It can be assumed %pC is a default for
-> > > %pCn as some other specifiers do, but not all are consistent with this
-> > > policy. Moreover there is now no other suffix other than 'n', which makes a
-> > > default not really useful.
-> > > 
-> > > All users in the kernel were using %pC except for one which has been
-> > > converted. So now remove %pCn and all the unnecessary extra code and
-> > > documentation.
-> > > 
-> > > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>  
-> > 
-> > Makes sense. Looks and works well, so:
-> > 
-> > Reviewed-by: Petr Mladek <pmladek@suse.com>
-> > Tested-by: Petr Mladek <pmladek@suse.com>
-> > 
-> > Daniel, if I get it correctly, you have already taken the 1st patch.
-> > Would you mind to take also this patch using the same tree, please?
-> > Otherwise, we would need to coordinate pull requests in the upcoming
-> > merge window ;-)
-> 
-> I see none of these two patches in linux-next.
+> Suggested-by: Mark Brown <broonie@kernel.org>
+> Link: https://lore.kernel.org/lkml/CAGETcx97QjnjVR8Z5g0ndLHpK96hLd4aYSV=iEkKPNbNOccYmA@mail.gmail.com/
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-I see.
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-> Anything I should do? Resend? Or just wait a bit more?
-
-Daniel,	Rafael, Zhang, Lukasz,
-
-would you like to take both patches via the linux-pm.git thermal tree?
-Or should I take both patches via the printk tree?
-Both ways work for me.
-
-Best Regards,
-Petr
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
