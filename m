@@ -1,102 +1,102 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9AD92144B9;
-	Tue,  8 Apr 2025 05:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBD14A02
+	for <linux-clk@vger.kernel.org>; Tue,  8 Apr 2025 06:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744091357; cv=none; b=WOudLksvQu6nCGmfAdILNVRNgFcKmwUdMJZODemnbyUXIZB61Urm4HS45BhPTnjyo2nuC2vny3N4FGLq6CwamHovBOfU0/4CMFVXZZJ+yRGEQ4u5WRs22ad671z0/AkndzyFT/EgdSkd7Mm0h04Kyv9txLaVmNePKbQOb7etUu4=
+	t=1744093907; cv=none; b=Ci0RZHVwMbM4wC8YTESAxae02Ji8hoNimHTBfVxgDeL7dH0cQPXHEAqc99Wg9Kna5LwqTWtYiJtNuPZH+X02rlvvVqBoIiFQKFHUjXjLVxbxSEv22Kku0+jN4h2vFhIlg96STXMyx4hZ931+Eaer0AV1tF0MgyKJ3k/jkSqZ3LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744091357; c=relaxed/simple;
-	bh=QDAOU3+1YPCyYINXq8T7zByLuyUyaKA/5mhVWuZRgsQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k8k8xw85AFl6xEioqoR2pSH2Xd8k+H+ABHCatjCKYTfqpYKZQYcuj6TYV/IrkDKMT5skXKzV6VHYGciv4RsGcQejP+u1SMNn8puR9w7lWq6DWZd+APi8kW+qIsZd/9d4MfAXhC38bJeZSdPc6nWTnfCiiNsTOBV22Ytx2QJ4vx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JxM0ilkw; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1744093907; c=relaxed/simple;
+	bh=LDWixMiieb1woTIF67um7GW6klgK8GFDQr9+HrDmrCQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dvn4n/JwNqBWKETw0/Qhisw3puFIs8blwY+9UiotgHI5DIi4nySpPzeiGtnLI5MwcMATpZ1jPK+HGJYKWpqYczpehhLm69quH1y6GxJ1tKdOqavXyZtjypLI6bk1ocLMulpz24pq7/yHTnML51s30F3NS1mBKuO/WXhd966OXWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=di2XA9Yy; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxM0ilkw"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39c1ef4acf2so3018236f8f.0;
-        Mon, 07 Apr 2025 22:49:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="di2XA9Yy"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30db3f3c907so47256331fa.1
+        for <linux-clk@vger.kernel.org>; Mon, 07 Apr 2025 23:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744091354; x=1744696154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QDAOU3+1YPCyYINXq8T7zByLuyUyaKA/5mhVWuZRgsQ=;
-        b=JxM0ilkwPW+cEr5zh8kEiHZpHcm9/CpQE0rHAjp26ngJegpAI4s3aL8T96CnY7qP4c
-         SCbSduPkfRK9pi1RrwK5qw1z1pR/5Q6c3gBU2TJa02scgwhhi1sYRW+/qE7wHxsd47Fv
-         n+Nz+7ys46ljSsOzZ0aHNwZBg+EQF46wub+uiVbgC9P51uxmP4N1jj7bnIrZTJZ9ZeaQ
-         rEIsKMLnD+RIVc1VrvE0J3KksTkTxxb8WGpD5DRZLl0LQEpUC77+/YJl8KuuyBVzCfUr
-         z1uD4XCIsqF6NSHijd+p4AenO9D61CUOhzQJwUd4GkxVEmk3wESwqkcc/lkmRU/08raa
-         Bgtw==
+        d=gmail.com; s=20230601; t=1744093903; x=1744698703; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ORX98YSk1SNy2hJueg/F5TqpKLL+TPlVQ1FPNGGwME4=;
+        b=di2XA9YyJ/JAMnksbFzpD0Zv/AmKwOzOX+r1gdAdsHh16HZVLoosiAhc7jZZWu1Ewy
+         GSLTFl7IjD9q97b6Td2zlYCXk3Tg7ksb5CFM4S6H9pUTq0ooLjfxwZwpew1TXR58KOwo
+         SuF9W3CjHCNg/X3cLxxLgEa1R2jUeGjHyuwDDAdDyTuB6CiwhnP14paIGofsoQDRs1Zz
+         OlL9LvJ8KPXynpykj+eszRCXoqow29KUOFgMwIVgFxOTBE7H1+AjqZhmCQyQsVzeKtlv
+         N6147qifPyJd8gD1n+pPhzNL0QfaYE6I0UoO6csia9+F4kWFRUeO4FK55pjp5aLhFZf6
+         tqxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744091354; x=1744696154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QDAOU3+1YPCyYINXq8T7zByLuyUyaKA/5mhVWuZRgsQ=;
-        b=tbQ0IzK/8Ud4DnhQ1YjnU1m11+e3z9dB6SanbhFHrow9BdgAoKYLXMN43XWTNTvFht
-         IY4lphO9v1tlHIlb6atiWyh/Q2tpmzVC/4Zzt7TtVgQj5oLGXkMw7Gq6IMLxsmIT2x+g
-         vDE9UcFaZv2rzEtDToY5rGGLC0X9r/L8mfzE3EX7wrwqN/VCOOHMxM1kjEFbrIB+ct4b
-         pF79fz05+XtFA6+o0vdvXlPwLVQ5T1nCm+e5y7hadv+DBflxPDnluM+o1w4oS/soDpoB
-         8dC7B+rw1DctVtlcio7jeDCYo1ewqSOvxn66AT8fJ1rZo6x/i1o+0+hDg3CXXZq1tj3H
-         ciKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjqYn9+wFBbo7UIqa1SqcEy3qRjGVjZhRTgrv8ebfAHamrdHJbDnM+gaECPmH7M1tzZkNkHltMLxJ/C0Vk@vger.kernel.org, AJvYcCUmU8U2spsr6npQXSHfz2gAThJA6uuVIyJUfcMxMuD4x1eH+6mLpvs6fsNQaULsfbBHUqyb4ebh2vRs@vger.kernel.org, AJvYcCVUQlJAUalJ9OiyQrqqmjbLFt5S/XC+X2BLbDPakrOBr1C+CCZTJJ8CE+7DQLppJ/eK40j7V3IEjlUYrxQ=@vger.kernel.org, AJvYcCWlYV/K2zahSGKkK273YqIjY/5wm3MLFkdMw7/OpIAn6b2la5Er8fM3V29v/CDLmap1D0iHmUxG8+Q0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNQowHi9p+GcuU6zzw0VAexxLgyFbeqyjwGTGMxIuaRYSHnV59
-	dBclBYrFWHdSoEacFU9mlCI20sJ31Bp+RSoC9VOwC4rYG/3PC0ztAW4avj/FX9H/Cyr4xqOGRfp
-	BMXZzrvbACg1POGOGbi2o96Rzom4=
-X-Gm-Gg: ASbGncssvJ8B28XNtbQtnQcVx9pk8KJO8qVTEod8czDv91AgaXS+tF+pRtVUHcm30Za
-	B4kfwcocUH+Q3Oq3xT8i48ZAZW5lgrKF/CNEHEJrGui3uEEN8dpVx2phMwiQafrInsZPdObKLoS
-	juCzGuDZdpeSyXRrO1iCXjOC/9oQI=
-X-Google-Smtp-Source: AGHT+IHIminUi+Nj1fO9kBwePvxNB6j/mIgIBiaCvcyNIAd+9AXFIl8Gxy/bJzMpdOf336tTiicf+18vVnfGI5W0eLI=
-X-Received: by 2002:a05:6000:1a8d:b0:391:3b70:2dab with SMTP id
- ffacd0b85a97d-39d0de16c11mr12691797f8f.17.1744091353870; Mon, 07 Apr 2025
- 22:49:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744093903; x=1744698703;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ORX98YSk1SNy2hJueg/F5TqpKLL+TPlVQ1FPNGGwME4=;
+        b=JDIkpOHduN3Y+vgcbd5dETzzM+O3QUjCL8tnR715kQddE3o71UmitD6v3h3F4Y/B0t
+         kvqTK0721TSQkhRPp4hA3lc/BK+qFkBeWOd0x+d9vGaFm27yrceCxpQslzgZlw4hvfK0
+         SqEDdc+jLALeWaMqBGrVMarp/nCcUkMu4cHdOrcEdFMi5IGXF+BU+pnd1PJkvG7RsFTR
+         fDxt77KB3pwIqgEwkgb+vX5wWi+S3B+nfLPiPNEag7UlfpXoPObvtkNeK/QbTsoTm91g
+         fBWjMRrRmqS9MRn48lcht9STL0/RW+qg+EXiXrgBwxEQGjSJSOo5U0E/et+9s0VWbzaY
+         Yofw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLQzeMx4zQrOXWujD8dqcEKZ8Xfnict49srFiZqRCtYcWC9HpxU3LIJwI7Gb2EQPoKvlrqcfc7PK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjUdR5STttzXpRRI/SilYt0fMChTeB0+NbJGXZrpWwT2+y//qq
+	FrxuQNXm/nVJbMntDLc8m+6JmNSmdL6DeSR0k5UZ0J/fvhGg+1pt
+X-Gm-Gg: ASbGnctyqRObR6bf+h+Tdod6CrjoMxVyvrkIKDxhOEpVFnSt1nLCW68Wahqj6NDcZB6
+	adVwhGxd+LWi5jdSTVu8q9MN8wmSOATFb6pvuQmYg6Y3Blhh/V+RsdgMa/lFOi+SASAEqLM8E1g
+	/ybiLCPG851S18D37ew1kmoCbtaZ6acOPcQxYwHOW5iXVc4bnpCEu/eAcLHH+9xAWvpuXtcVWFQ
+	56oCuYEvytrOftyjN0CMTO9YHB9t0kY1G4b8/WP2OJOT2P67Vu7sIDJWrEJQNqRla4O+xZ7H864
+	iUqjEtDcTD9VbT1aYl1tcaiEPeKlUqwkFO9wRfXwmizKo4/OGXp7lsiWhkdDR1ECVGE=
+X-Google-Smtp-Source: AGHT+IGVMk4G7cBj7vxqRy8K2XvNzy6mPoK2OkwsHGUDZkSEYRt9KAqJNzY8PIdw+o5TykPCy55P3A==
+X-Received: by 2002:a05:651c:1442:b0:30c:1002:faa8 with SMTP id 38308e7fff4ca-30f0a0f0a65mr45654541fa.7.1744093902472;
+        Mon, 07 Apr 2025 23:31:42 -0700 (PDT)
+Received: from localhost.localdomain ([188.243.23.53])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f03125862sm19141801fa.3.2025.04.07.23.31.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Apr 2025 23:31:41 -0700 (PDT)
+From: Alexander Shiyan <eagle.alexander923@gmail.com>
+To: linux-rockchip@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Alexander Shiyan <eagle.alexander923@gmail.com>
+Subject: [PATCH 1/2] clk: rockchip: clk-pll: Fix CRU_xx_CON2 register usage
+Date: Tue,  8 Apr 2025 09:31:25 +0300
+Message-Id: <20250408063126.38904-1-eagle.alexander923@gmail.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225143501.68966-1-clamor95@gmail.com> <CAPVz0n29m5CrKMW_j8Q0Zz2pCBdYLmMn-3waSZx7ooJZG6ZTOQ@mail.gmail.com>
- <5241e944-18ae-4100-9c08-e3ef4de306ab@kernel.org>
-In-Reply-To: <5241e944-18ae-4100-9c08-e3ef4de306ab@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 8 Apr 2025 08:49:02 +0300
-X-Gm-Features: ATxdqUFH8Hf69UjuFkXZ3QY-DTt1tJENdgBXOESHLqyEAZrs20TN1CNYJKeb-N4
-Message-ID: <CAPVz0n1rY3_0DPMQDX92UBpGnagwy7B8NAqbZGmpFrZ-FsA30w@mail.gmail.com>
-Subject: Re: [PATCH v1 0/9] Tegra114: implement EMC support
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Georgi Djakov <djakov@kernel.org>, 
-	Dmitry Osipenko <digetx@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-=D0=B2=D1=82, 8 =D0=BA=D0=B2=D1=96=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 08:47=
- Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On 08/04/2025 07:43, Svyatoslav Ryhel wrote:
-> >>
-> >
-> > These patches had no activity/feedback from tegra maintainers for a
-> > while, so, in case they got lost in the depths of email box, this is a
-> > friendly reminder that they are still relevant and I would like them
-> > to move on.
-> Huh? So you just ignore the review?
->
-> I am not going to consider picking these up if you are not going to
-> implement the review. What's more, your waiting 1.5 months after the
-> review to ping is just inappropriate.
->
+According to RK3588 TRM, CRU_(CPLL/GPLL/etc)_CON2 register
+(rate-k value) does not use highword write enable mask.
+Lets fix this.
 
-Don't get me wrong, I would like to hear feedback from Tegra
-maintainers and I have specified that in my message. Don't be so mean.
+Signed-off-by: Alexander Shiyan <eagle.alexander923@gmail.com>
+---
+ drivers/clk/rockchip/clk-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Best regards,
-> Krzysztof
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 2c2abb3b4210..77ba4d6e7b5f 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -959,7 +959,7 @@ static int rockchip_rk3588_pll_set_params(struct rockchip_clk_pll *pll,
+ 		       HIWORD_UPDATE(rate->s, RK3588_PLLCON1_S_MASK, RK3588_PLLCON1_S_SHIFT),
+ 		       pll->reg_base + RK3399_PLLCON(1));
+ 
+-	writel_relaxed(HIWORD_UPDATE(rate->k, RK3588_PLLCON2_K_MASK, RK3588_PLLCON2_K_SHIFT),
++	writel_relaxed((rate->k & RK3588_PLLCON2_K_MASK) << RK3588_PLLCON2_K_SHIFT,
+ 		       pll->reg_base + RK3399_PLLCON(2));
+ 
+ 	/* set pll power up */
+-- 
+2.39.1
+
