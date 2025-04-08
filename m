@@ -1,111 +1,146 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D132263F36
-	for <linux-clk@vger.kernel.org>; Tue,  8 Apr 2025 07:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACB8263C83
+	for <linux-clk@vger.kernel.org>; Tue,  8 Apr 2025 07:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744097510; cv=none; b=HvIbjujK7ynpwj9rRMJ8r78h/ZCFSTRO0C/0Vr0OUrC/Hk5ruZb8sJHCbriPmSD4UREO0BngOrv1lwVqTqsDze9sYi6p8LrxZNLAxXXtUz6RF/DsRDKWfKEHFUP3+3VWFS4DIPe1Mv6WrOeUf3juvAfiaJQ/XBZfX4tMN1xOSBM=
+	t=1744097644; cv=none; b=KMjUnGpm48ZeQp4PdIkwiu1j7W2XbgKIKUJkslK09QSQkqABYHSOF4WgIxZ7bnKKeKk7kGZHDfgh7LSQRPjZyxU+GJPjnL5M0nBWcidhsP+O7YzwRZFjNSM4HCx/xMNgYu2mHQCypKitiU7PCnm2wKmnAhzV8AnJPBNP0I3W1Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744097510; c=relaxed/simple;
-	bh=LEuZgY0jhuQ4FL/v/uZ3J63ZdTX215qikKnl6T6j8YE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SdTzE8KvYI9t0xYU0OZ+76uBec/dnfgBFAWfaBGxUP2F1We+ieCs5rsCfppZyRapo/UadbC5CzD6jxXTZvXjaqRuWKM3R5AaFiSAcr6ir/KdL5eiEgyIFKZZmr30kpEImbY4kuznIZSqHDRSUAYzXNT3+g4GFV1+vydSrRWaG0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0t+ePt6z; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1744097644; c=relaxed/simple;
+	bh=+jZrueS3bdTwyiNJBuV89/uZubp/GRCAmixpmEl+VtY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJzxiOCaaOOOZwr4otgtqsV+H489k1HEdTWfQRSLSiCselIlANZ9PWV2MeF82POwBRd9EnwLLLqtWlkZ6VPvtRFR6XVXID50T9Yqx6PsTbByTP0Y+YywmrbzuNlSwPZhcJ9x7YLQDoa/j3c29p3Y2rj4Y062vnXh8ePWxSWe1+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cIUXVNy5; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0t+ePt6z"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=y2C+uRo2fVHUKx/+iSBSrq317XScpLFo+rXN012kNqs=; b=0t+ePt6z+QxWnu8TYx2heg9Wol
-	NRgQcKJR9WRPerFtM6YFYBDdWjiek8EV+Tg2n647qjfHDFVetKcnnXvW4V37ZifW/m9+4/EWHIYJw
-	8iycksI2i8YAx73B29Z/lTXwTo8lv5MRxSEQfRu8YDGdgUb8dlBiFOMPhOuPGZtv+X3F/hSLDS05Z
-	yXrPln7nDPLG4E809r++H5+p4Vs4qZF3XOWMpCRGMQcQ5eFgehaTO3JhyloeXkcPKtc3jhGiqzWPk
-	15mKTOjJBdaN4Jh9dMHoN9N2bB7g6Ptjg3a0cffvNPhn5+8Vvxeq5NwWsnwJ2v3ot9PcTqArGDLLx
-	CTbOrqVw==;
-Received: from i53875b95.versanet.de ([83.135.91.149] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1u23Qn-0005H9-MJ; Tue, 08 Apr 2025 09:31:37 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: linux-rockchip@lists.infradead.org,
- Alexander Shiyan <eagle.alexander923@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Alexander Shiyan <eagle.alexander923@gmail.com>,
- Kever Yang <kever.yang@rock-chips.com>
-Subject:
- Re: [PATCH 1/2] clk: rockchip: clk-pll: Fix CRU_xx_CON2 register usage
-Date: Tue, 08 Apr 2025 09:31:36 +0200
-Message-ID: <3871892.kQq0lBPeGt@diego>
-In-Reply-To: <20250408063126.38904-1-eagle.alexander923@gmail.com>
-References: <20250408063126.38904-1-eagle.alexander923@gmail.com>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cIUXVNy5"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43cf680d351so36369275e9.0
+        for <linux-clk@vger.kernel.org>; Tue, 08 Apr 2025 00:34:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1744097640; x=1744702440; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IlfwFDH+X8G+NwPj7Vy2IIvOezxV6eu9OtIzRCGvuLs=;
+        b=cIUXVNy5frg2xXz55t926pqT3udjeQXh7/c91WAtXAzDnROI/Zz9izM0fes3emg02O
+         HQDamcjzmQBqOEXhfaO3xJ7rh7uIxdND/0/9Ki8Jre9ZWmM1G2/d2ZBhM3csh4MLVdOd
+         9J71nD6XexKEnPRm2yXJaK3rALstuhKoMnO5Hl8ToFiOfiMmg0QFowKUVEpWMTDbX33T
+         4U6RQvX3grvvMcjMlzp7tfU2anpsWI32rmKoLZEqzuMv9aavt1DyB290yxryFN53FIi3
+         ZIZHh3gD+QYJsDZc2EcqRDr211M0i5JLNKRZm58PKzlF5TKTEsHaq0kWIlkbv5U9l0Q9
+         09bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744097640; x=1744702440;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IlfwFDH+X8G+NwPj7Vy2IIvOezxV6eu9OtIzRCGvuLs=;
+        b=Fc51sdroYsnCrU9RHp3SRd6EeJNTREDi0kup2S8Br6HAsrIKYUfzcBvl9FSpD6olzt
+         YRomyyKb6KvdfFqkNZSBUWVJWq+xvSXlKyWTReafDiSwAtwt+u1yveoZT52TBhnsgxQU
+         y1lT9GxWv3BXxWeZTyXpdM47yfuW6XLCdjkBESJnanpye4/cxMu1RiGFzExlE8ZX/pdP
+         awzsY449wbBEvFXSBr4ax9XMH02uhk0dgBNLYxpXW+uPAtgcrEcQoVG7uDP2Lg4p7uEl
+         S/brH8PdLVL+bMYWvKQwlVscnfl+ru075YwfpXyLIvM7pFdosooZ3A+TNPl3VZEcH9Ob
+         Mxsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmjsimyg85tUUcEtHWmHKfL2kfm2/eesPaBd4dRNXn2XX3MKZSbAfd2bQYa3CgzCDhfT5s3YjWSyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx19c5M8aKc9OzqK9+EaFDqWq4Q58eEgC3r1nAMbEnwx4S7m578
+	mTAvlXOtdEGzMivz2oboIW82bQQjPU1HpzTloFbDIzP/WVpREyR7ggNTTQfdFuU=
+X-Gm-Gg: ASbGncs/kwMZXD08LN2GCBLhnea1ZTH1loD21tmYDLJtyhrlxqDR2s9jk50tQESgwQ9
+	J8ppYq9DvxKE5DB0EwygexkHF8srWeIIShqSrJpNd4mazFKq3Gq0H8TatC7YqyaKD/pjavkNzVg
+	5VzuI6Uwx7xfd42JmA9ZwNZUaiUgxNrE+yRw76Qwcz4JhpUdYKzY3OyurCxC680oPhkkYkgmtjD
+	QQFDKJJXAy87QPvmNN8nzTT0qK00oHEsl4Hi4jm4npCgev/2PaAMfD/84nzR+Pu3jrn4TaioPRJ
+	IOcI4fWdS6JlOeQKLiMTyKQCULVuDmEGJCpHfDJU3UZRTO4=
+X-Google-Smtp-Source: AGHT+IH/VksFsEyoBKI9nFdRHY5jYoHhuOC/STuFedynMg/f/yUaVw5RUYHsEjKD7l2EEe/Jqd89dA==
+X-Received: by 2002:a05:6000:4616:b0:39b:f44b:e176 with SMTP id ffacd0b85a97d-39d821116bemr1896403f8f.24.1744097639781;
+        Tue, 08 Apr 2025 00:33:59 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ec34a8952sm151781455e9.10.2025.04.08.00.33.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Apr 2025 00:33:59 -0700 (PDT)
+Date: Tue, 8 Apr 2025 09:33:57 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
+	Binbin Zhou <zhoubinbin@loongson.cn>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] vsprintf: remove redundant and unused %pCn format
+ specifier
+Message-ID: <Z_TRZSxwzfAZ9u6I@pathway.suse.cz>
+References: <20250311-vsprintf-pcn-v2-0-0af40fc7dee4@bootlin.com>
+ <20250311-vsprintf-pcn-v2-2-0af40fc7dee4@bootlin.com>
+ <Z9BKW_06nLAOzYfY@pathway.suse.cz>
+ <20250407184647.3b72de47@booty>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250407184647.3b72de47@booty>
 
-Hi Alexander,
+On Mon 2025-04-07 18:46:47, Luca Ceresoli wrote:
+> Hello Petr, Daniel,
+> 
+> On Tue, 11 Mar 2025 15:36:11 +0100
+> Petr Mladek <pmladek@suse.com> wrote:
+> 
+> > On Tue 2025-03-11 10:21:23, Luca Ceresoli wrote:
+> > > %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
+> > > add %pC{,n,r} format specifiers for clocks") introducing them does not
+> > > clarify any intended difference. It can be assumed %pC is a default for
+> > > %pCn as some other specifiers do, but not all are consistent with this
+> > > policy. Moreover there is now no other suffix other than 'n', which makes a
+> > > default not really useful.
+> > > 
+> > > All users in the kernel were using %pC except for one which has been
+> > > converted. So now remove %pCn and all the unnecessary extra code and
+> > > documentation.
+> > > 
+> > > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>  
+> > 
+> > Makes sense. Looks and works well, so:
+> > 
+> > Reviewed-by: Petr Mladek <pmladek@suse.com>
+> > Tested-by: Petr Mladek <pmladek@suse.com>
+> > 
+> > Daniel, if I get it correctly, you have already taken the 1st patch.
+> > Would you mind to take also this patch using the same tree, please?
+> > Otherwise, we would need to coordinate pull requests in the upcoming
+> > merge window ;-)
+> 
+> I see none of these two patches in linux-next.
 
-Am Dienstag, 8. April 2025, 08:31:25 Mitteleurop=C3=A4ische Sommerzeit schr=
-ieb Alexander Shiyan:
-> According to RK3588 TRM, CRU_(CPLL/GPLL/etc)_CON2 register
-> (rate-k value) does not use highword write enable mask.
-> Lets fix this.
->=20
-> Signed-off-by: Alexander Shiyan <eagle.alexander923@gmail.com>
+I see.
 
-The commit message doesn't say, but did you check this on actual
-hardware too?
+> Anything I should do? Resend? Or just wait a bit more?
 
-Sometimes there is a disconnect between the TRM and actual hardware,
-so the actual real-life situation should be checked.
+Daniel,	Rafael, Zhang, Lukasz,
 
+would you like to take both patches via the linux-pm.git thermal tree?
+Or should I take both patches via the printk tree?
+Both ways work for me.
 
-As for a test-case, any write without write-mask to a register that
-would require a write-mask would not come through.
-So with your patch applied, does the register value change after
-the write below when reading it back again?
-
-
-Thanks
-Heiko
-
-
-> ---
->  drivers/clk/rockchip/clk-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pl=
-l.c
-> index 2c2abb3b4210..77ba4d6e7b5f 100644
-> --- a/drivers/clk/rockchip/clk-pll.c
-> +++ b/drivers/clk/rockchip/clk-pll.c
-> @@ -959,7 +959,7 @@ static int rockchip_rk3588_pll_set_params(struct rock=
-chip_clk_pll *pll,
->  		       HIWORD_UPDATE(rate->s, RK3588_PLLCON1_S_MASK, RK3588_PLLCON1_S_=
-SHIFT),
->  		       pll->reg_base + RK3399_PLLCON(1));
-> =20
-> -	writel_relaxed(HIWORD_UPDATE(rate->k, RK3588_PLLCON2_K_MASK, RK3588_PLL=
-CON2_K_SHIFT),
-> +	writel_relaxed((rate->k & RK3588_PLLCON2_K_MASK) << RK3588_PLLCON2_K_SH=
-IFT,
->  		       pll->reg_base + RK3399_PLLCON(2));
-> =20
->  	/* set pll power up */
->=20
-
-
-
-
+Best Regards,
+Petr
