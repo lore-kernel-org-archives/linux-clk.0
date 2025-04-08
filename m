@@ -1,188 +1,129 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45CA22DF85
-	for <linux-clk@vger.kernel.org>; Mon,  7 Apr 2025 22:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8012063FA;
+	Tue,  8 Apr 2025 05:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744066321; cv=none; b=UqqgAA+U5jPO9fGHYlIdhiU+Lx5n6seCSUPeN8xMW8EBAObYBFZPYjgVSifLBkUhJ81cIGQnU1yKxJ9G7aSTAaBszkE5jvaHLQ/kv0BrvD3131RSnXi4vniCBb1BC/SRXtXdDjslmzCokoGTOZz6Wj5c2k89pK+Xfx5a501EBi0=
+	t=1744091030; cv=none; b=QW6nKXywgxV9KwcBIKNIKjDPE0Ao69pn+5pIsQPuiRI8YXERDbxWab2JcFfkijtybUeFllPoL/DWLeSs6NVOcdm4PoNklw6FGQQ3Pxz5iNDeP900z4h5X1DCBT0h1LGmxAN3t3aCeitbaYFc4ZXFkKh3QRk2m9GHEToRSaKSnZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744066321; c=relaxed/simple;
-	bh=xk6+GuIlJyPcOF97rvioGdrmfsj08TuNFKPTnNBPVcU=;
+	s=arc-20240116; t=1744091030; c=relaxed/simple;
+	bh=sCHT8GHC31TuiceCAaOvubizgy6yRJ5sEi7ftPp0xPQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h1w1LTK1o3OhxXhhxAe3u3HewR22bS9l2AH3ydXVH/SHItrRn/O4v38LY0yT37N3h7Nkr9HMzN/dvNVlRXMamjjEIjb7Tf+4oUXq6LuBAVx2jtfTBVENm38CxhAt263uGMMTRm2yuMoDcWlUGMbEUCgdoRPc7mlzwAGgCGkq1og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aRWrO/4Q; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 To:Cc:Content-Type; b=fKbqIennghA6HsrNVQVQKpy4+JPrDx0mKR8uzfp3IH5JZOJgydNoz990kZleBDWL4b4OhielS5ST2EaioAOq3bSYRni6i43mTGhuQCtGbgnXwqm9JMtJLTIqFvSGYFK5XT3zg4e/672Gj7SXYfbfuqRNo3D7QZAKlXCjtOAzPsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jFDLXr2J; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aRWrO/4Q"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54ac9b3ddf6so4599554e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 07 Apr 2025 15:51:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jFDLXr2J"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so50486185e9.3;
+        Mon, 07 Apr 2025 22:43:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744066317; x=1744671117; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744091027; x=1744695827; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9T1LuFxtlhisA25vk0GSN9ZyiZy+KSvd4XC01LmHfFI=;
-        b=aRWrO/4Q9E4B0MNV+tJKgfo9c9heW7lRog8Dc85lAt5PytYH9yVgaLSJ+2qDRt4KGm
-         8OHXremBWnjJ1+157nNns7Ss+EVGQWY51xx6+cpN3mmrrsyi4Wa8zRov9sMH2Hf0aAFh
-         VOFxk+MX7NWBjG7VjxFwyY1CbBAN/ECmx48JoYc24LvN+FKVg0Z3fg9NGh2pa69rTMd7
-         2YYWAzjIZTEHwxkaGfYgYKO0KMoS6els9B8aI8cNAIutbOs+/ki5kbnZ+TWununInGzP
-         TPQ67+bHOaw5ApwHDMSxJ39IfblFdPzcpcjbfEOQNwpYYDeIYJCv57ss741AaAU+XHF2
-         3RaQ==
+        bh=kAuwdSEHLwB691PFl03qxzJ1K9Zrc8A7QXS5gXOWExk=;
+        b=jFDLXr2JTcGrwXknM7GoG5IwPaQ7P2uxXIAQl55ZKvoCEE8Vp1Ompr7tjtWqvyDT/N
+         y8MPaGwHwpGvCRqxRUH0CQ7GLJtbwktK6GQR+N1TnBimOSko0zBiPBLw4ZZDSy6E6fuQ
+         FZu6vnCMY+pfaICNZilFn1rAyHLA9LxwW6A11/uj7Wf3Xpv8/2P1aBqdYGiarlg+8+R4
+         wcpADjO/BQvwFXQWT0q2CPc6PJWLaOlEoDSvUUNZSocyVu05Rz9V85qspZKdlWdLuy/i
+         uaVaXhdeJFtSFMYqgOtjYhmquEJ0J2mIpxfqI5v5J8zxbUibEd3N4w/ICOFLH8HOufrb
+         73fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744066317; x=1744671117;
+        d=1e100.net; s=20230601; t=1744091027; x=1744695827;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9T1LuFxtlhisA25vk0GSN9ZyiZy+KSvd4XC01LmHfFI=;
-        b=Cc6huVHXmWTwVATcOYdaG7SvflTlIVsbIl86G3NPpcvKIMX1+1RXIrSBEtv3L67ZLo
-         XW6UgaNg+zuq+urBbLD3TMpxyuaoUF+/Z7PYO8F4G8c5Co8YsyIGd5l3z/gqqpSndOrL
-         8KdP6iWh23AYwlKJ0Jt+YXnF1Gv/iiPKZJ+gSIBC7j8JehbRckMDTEr/dGxg/kEMFo+p
-         4pd6H7qOdYgEtDk3Po7eq0bU8mRh9MnA4zk1bZup9zWSBhO4iOlkd4i5ENHLB6lb0cTJ
-         WdGNEsvWeEL0BAx2uLCrv5tWRb6JAqNLuNtjwvQ5DhxVLmsDd/1sVur0ZfrwH5pBvm8W
-         3UJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYeNvRIF+KOHuk2SjeOWOdTULfKklGhMnXOOp4gr6qq8bZvE/d7btnCN5FrXtWyb9jwH2CCW0RXxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/CMtGa0B2o8ptHWNV5tkfuk+1+c0HAc/yRpwOhiVfPG81Cm7+
-	xHbElxd7SvfpcE6yhRKQFu1+2U4fi/MT7dLXGbQDWxNfqx07W0W/0ukqXvOP2epw/g761BD87/d
-	4mkju8u5KjYFLRYfo0HsIi7Yd2JnRKmbKR5an
-X-Gm-Gg: ASbGncvYYMzFyWVig/q+q2m3YbNfcxw99AuYwkvKAcKHEy7BMQtFnkI0jgY9Dh2/0+O
-	kOyCWzuSH9FZ07Q94EWQ6Y+UvyZMdBfzhYe4eEna1BpW92OPMYhd74aePGmhZThsG9p/ZYXxm9X
-	kt2Mp4xa1SyQuRdEGNLUeAcrv3GdNbwmdhnLE=
-X-Google-Smtp-Source: AGHT+IGZy1cH5XFvxf4qYN6nMiZKkGDS0+s79ElF1xv6IXDDdsnr740VlwJkyiHI3RPM0cEI5hC/q03/uRkTb7Y8OD0=
-X-Received: by 2002:a05:6512:2341:b0:549:86c8:113a with SMTP id
- 2adb3069b0e04-54c297d0929mr2593762e87.15.1744066316436; Mon, 07 Apr 2025
- 15:51:56 -0700 (PDT)
+        bh=kAuwdSEHLwB691PFl03qxzJ1K9Zrc8A7QXS5gXOWExk=;
+        b=KUGaZmjmoLLnaajoIncWrHfObgnJMLw+T0so1BLWRaC1sgv6LSmt+ax1x6aBy7/8gh
+         /lZXw0121sqoczsq4DEmUHojs1Lld/TvOdE0V7qGvJ6uJxqtjS5aeYd6JB42V+GAbQif
+         zxDo4i29Q3YUKnwkPkZKLGZ0Cvz+qYJhCFfKmzqd0tpsSFwd9c6TkO62uIGjP3StYDqp
+         wM5zvogAUFS9CpoyDqPCwjIRlKQq3061kyFuoMSqWhGgAtfnRAtuUGjy2tWmxSmy0vGP
+         fCxNqv7FMTODQ9nCL+B5ZMqTFg3uZ1Yp6CqTEvx5FS9d3AWrVUi4nDwWUboJq0xjDBqI
+         oVMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQiX7ym7NXnoziQaUucLcjAZEb63+k2aWRTDjzhj3+GFcQZhoCNhFkxAIbEdPzEf5QOXPbZNzfTtf+@vger.kernel.org, AJvYcCUU+oHjtbuQfiLMt8O/JDYSxCgOWYeDLXH/pVWHKSSkVNeIvi8VV31ALvbZdZ/L0GTvbnxocub+adFy@vger.kernel.org, AJvYcCWyOXK1Ojlzq60QU8STDToOu3lB+UzFELOb2sxsOaYSsqPHu61ZvGPA9+3QXQVFCiQ6x8gjd34YhZI1P/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyubvdR9rLV78Tl/u4qXRKY+/d55LXO4jc+OysnqJZneNh3pSyA
+	M/iZy2JEVL7UlhcDri8LdmZLGtsci4UUm+VajTUUkxjzRlACdpPEwAIngXchoI0Ik/ZmTB4dZqz
+	91DgIqI0dbgzbIbsKbg3ieYbdHcM=
+X-Gm-Gg: ASbGncv7D4FEk9rLGF+nmy8ghjP3RDUiDeezX+VL6oDLTElzjRx4SmQP37FgAhKnLeV
+	Q48sB9XN/C3ru1bYejfiM9HsdoDFw1fdbSiPVEHTJZWT4daESCzp0VM/KTYlAUbZZJMa/xTbb5l
+	tjV6MBKjwP+DSpHxqjg+uA8/1pRqQ=
+X-Google-Smtp-Source: AGHT+IGsPU4TjoAJ3iqho3vhlE0M3rrsyKyjPDbuj1pIel6bfcogzkpm7d9GOd0CHj1Cgh8n5qjmdFjPyPiZ7ndgLYk=
+X-Received: by 2002:a5d:6d88:0:b0:39c:3122:ad0c with SMTP id
+ ffacd0b85a97d-39cb36b2a5fmr14601478f8f.11.1744091027563; Mon, 07 Apr 2025
+ 22:43:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407145546.270683-1-herve.codina@bootlin.com> <20250407145546.270683-3-herve.codina@bootlin.com>
-In-Reply-To: <20250407145546.270683-3-herve.codina@bootlin.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Mon, 7 Apr 2025 15:51:20 -0700
-X-Gm-Features: ATxdqUHzf_3trxjbd35DyDptpEJ-bBNCqGhzKGi2OGpUI_J2cUir_Gap-o-BFA4
-Message-ID: <CAGETcx81G7Bk3AswqGu1hoybuGL1znN7gvX5+baJurfWFx+xuA@mail.gmail.com>
-Subject: Re: [PATCH 02/16] driver core: Rename get_dev_from_fwnode() wrapper
- to get_device_from_fwnode()
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20250225143501.68966-1-clamor95@gmail.com>
+In-Reply-To: <20250225143501.68966-1-clamor95@gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Tue, 8 Apr 2025 08:43:35 +0300
+X-Gm-Features: ATxdqUFmqygoZjQ1jPRy8xHAhI0P-Gqy0pNvzclHkp020md1cOggnjWtfe0KuS4
+Message-ID: <CAPVz0n29m5CrKMW_j8Q0Zz2pCBdYLmMn-3waSZx7ooJZG6ZTOQ@mail.gmail.com>
+Subject: Re: [PATCH v1 0/9] Tegra114: implement EMC support
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Svyatoslav Ryhel <clamor95@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Georgi Djakov <djakov@kernel.org>, Dmitry Osipenko <digetx@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 7, 2025 at 7:56=E2=80=AFAM Herve Codina <herve.codina@bootlin.c=
-om> wrote:
+=D0=B2=D1=82, 25 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:35 Svya=
+toslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> get_dev_from_fwnode() calls get_device() and so it acquires a reference
-> on the device returned.
+> Add support for External Memory Controller found in Tegra 4 SoC along
+> with adjustments required for it to work properly.
 >
-> In order to be more obvious that this wrapper is a get_device() variant,
-> rename it to get_device_from_fwnode().
+> Tested on ASUS TF701T (T40X) and Nvidia Tegratab (T40S). Both work fine.
 >
-> Suggested-by: Mark Brown <broonie@kernel.org>
-> Link: https://lore.kernel.org/lkml/CAGETcx97QjnjVR8Z5g0ndLHpK96hLd4aYSV=
-=3DiEkKPNbNOccYmA@mail.gmail.com/
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-
-Thank you!
-
-Reviewed-by: Saravana Kannan <saravanak@google.com>
-
-> ---
->  drivers/base/core.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> Svyatoslav Ryhel (9):
+>   ARM: tegra: Add ACTMON support on Tegra114
+>   dt-bindings: memory: Document Tegra114 Memory Controller
+>   drivers: memory: tegra: implement EMEM regs and ICC ops for T114
+>   dt-bindings: memory: tegra114: Add memory client IDs
+>   clk: tegra114: remove emc to mc clock mux
+>   dt-bindings: memory: Document Tegra114 External Memory Controller
+>   memory: tegra: Add Tegra114 EMC driver
+>   ARM: tegra: Add External Memory Controller node on Tegra114
+>   ARM: tegra: Add EMC OPP and ICC properties to Tegra114 EMC and ACTMON
+>     device-tree nodes
 >
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index d2f9d3a59d6b..f30260fd3031 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -1881,7 +1881,7 @@ static void fw_devlink_unblock_consumers(struct dev=
-ice *dev)
->         device_links_write_unlock();
->  }
+>  .../nvidia,tegra114-emc.yaml                  |  431 +++++
+>  .../nvidia,tegra114-mc.yaml                   |  154 ++
+>  .../dts/nvidia/tegra114-peripherals-opp.dtsi  |  151 ++
+>  arch/arm/boot/dts/nvidia/tegra114.dtsi        |   32 +
+>  drivers/clk/tegra/clk-tegra114.c              |   48 +-
+>  drivers/memory/tegra/Kconfig                  |   12 +
+>  drivers/memory/tegra/Makefile                 |    1 +
+>  drivers/memory/tegra/tegra114-emc.c           | 1487 +++++++++++++++++
+>  drivers/memory/tegra/tegra114.c               |  193 +++
+>  include/dt-bindings/memory/tegra114-mc.h      |   67 +
+>  10 files changed, 2561 insertions(+), 15 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/=
+nvidia,tegra114-emc.yaml
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/=
+nvidia,tegra114-mc.yaml
+>  create mode 100644 arch/arm/boot/dts/nvidia/tegra114-peripherals-opp.dts=
+i
+>  create mode 100644 drivers/memory/tegra/tegra114-emc.c
 >
-> -#define get_dev_from_fwnode(fwnode)    get_device((fwnode)->dev)
-> +#define get_device_from_fwnode(fwnode) get_device((fwnode)->dev)
->
->  static bool fwnode_init_without_drv(struct fwnode_handle *fwnode)
->  {
-> @@ -1891,7 +1891,7 @@ static bool fwnode_init_without_drv(struct fwnode_h=
-andle *fwnode)
->         if (!(fwnode->flags & FWNODE_FLAG_INITIALIZED))
->                 return false;
->
-> -       dev =3D get_dev_from_fwnode(fwnode);
-> +       dev =3D get_device_from_fwnode(fwnode);
->         ret =3D !dev || dev->links.status =3D=3D DL_DEV_NO_DRIVER;
->         put_device(dev);
->
-> @@ -1960,7 +1960,7 @@ static struct device *fwnode_get_next_parent_dev(co=
-nst struct fwnode_handle *fwn
->         struct device *dev;
->
->         fwnode_for_each_parent_node(fwnode, parent) {
-> -               dev =3D get_dev_from_fwnode(parent);
-> +               dev =3D get_device_from_fwnode(parent);
->                 if (dev) {
->                         fwnode_handle_put(parent);
->                         return dev;
-> @@ -2016,8 +2016,8 @@ static bool __fw_devlink_relax_cycles(struct fwnode=
-_handle *con_handle,
->                 goto out;
->         }
->
-> -       sup_dev =3D get_dev_from_fwnode(sup_handle);
-> -       con_dev =3D get_dev_from_fwnode(con_handle);
-> +       sup_dev =3D get_device_from_fwnode(sup_handle);
-> +       con_dev =3D get_device_from_fwnode(con_handle);
->         /*
->          * If sup_dev is bound to a driver and @con hasn't started bindin=
-g to a
->          * driver, sup_dev can't be a consumer of @con. So, no need to ch=
-eck
-> @@ -2156,7 +2156,7 @@ static int fw_devlink_create_devlink(struct device =
-*con,
->         if (sup_handle->flags & FWNODE_FLAG_NOT_DEVICE)
->                 sup_dev =3D fwnode_get_next_parent_dev(sup_handle);
->         else
-> -               sup_dev =3D get_dev_from_fwnode(sup_handle);
-> +               sup_dev =3D get_device_from_fwnode(sup_handle);
->
->         if (sup_dev) {
->                 /*
-> @@ -2225,7 +2225,7 @@ static void __fw_devlink_link_to_consumers(struct d=
-evice *dev)
->                 bool own_link =3D true;
->                 int ret;
->
-> -               con_dev =3D get_dev_from_fwnode(link->consumer);
-> +               con_dev =3D get_device_from_fwnode(link->consumer);
->                 /*
->                  * If consumer device is not available yet, make a "proxy=
-"
->                  * SYNC_STATE_ONLY link from the consumer's parent device=
- to
 > --
-> 2.49.0
+> 2.43.0
 >
+
+These patches had no activity/feedback from tegra maintainers for a
+while, so, in case they got lost in the depths of email box, this is a
+friendly reminder that they are still relevant and I would like them
+to move on.
+
+Best regards,
+Svyatoslav R.
