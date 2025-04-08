@@ -1,250 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65E31E1DEB;
-	Tue,  8 Apr 2025 14:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27ED71E32C3;
+	Tue,  8 Apr 2025 14:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744122449; cv=none; b=HBdNEVoiqvm6GvgilxWdOIsldTv4jdoJs+IMIsd2iljIXdaF76OY1YBwPkmAAWPHVIR3hpiT1avF5L0YpHXZ+bpSZ2Rlrn7g4AZWlgozimgFKcWTW3xqISfiwIClC8CcFtypiSY0uhwr3zJfRexYyTDJJa7fd6yJY6cC8wh1Ucg=
+	t=1744122548; cv=none; b=PYGyt/ECQ9sJRbT9Z9StzeMyygTsFkVpmNkxwxRycYFwX+AXtcZZ9oqqM8Lo8YFgFl6eglB8mOFYpU8yq6ycWJmQG8qQ00Z5TetJYo0VhZ69wDUDbUKBIQmsJswkCsaVKjiirk/3zqyveTFICrD4t+Yd15s+vdxwYW/TR7tk3SM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744122449; c=relaxed/simple;
-	bh=HaCdujLpcs1ViV4+soV1n8EIjCN7TY5Kpzu/24ehm0o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iIs04YrQnlj20/uQ2CzFZjNqhba/hr8rJCm08L3STEfW/9U2wY7a8c7pvQpWMhB7fn/HwMjiLbySAwyo+8XcJkLLeSlGbl5dA4RhpzZs80YCIlXcpZWYktkGgqsVozcm7X+s513SF8lSz/qS8NrjFPptHqeMpTEwfaAmtmVEOxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9Lhw1GW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744122548; c=relaxed/simple;
+	bh=E+sux4jgwb2zA9NM20uBp55k+dzLb2YrMqfaeXyO4/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hNqp1vBbMXLFMtT8MLyHGYL7S0PsdB3fOSZZD7Hd+h93EWCWeYPnzWYt6K3DN7KThc6vQdOVYHaxIIZiF/8/6wIZTve70xwNIpWlPNDlMy5cPZeYqoGUOHqs8e4LdMC/gtaPOi48C0O3FsPPVCIZWzvMtG1+LcohV342OTTLN4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gxVrnn/J; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9Lhw1GW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85289C4CEE5;
-	Tue,  8 Apr 2025 14:27:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744122448;
-	bh=HaCdujLpcs1ViV4+soV1n8EIjCN7TY5Kpzu/24ehm0o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d9Lhw1GWzL1hq7Tac6TpQDxSyuxSCUe/63q9gLH56qRDISIT6CnuH8hwZ2uqCvbOO
-	 S3/SS/WOdjAIT4YVrreVrImDGPG8EG/gSGjkBqmKaf4KP4Fd+cjsKVeEFF59SQBdKC
-	 7Jy8G/5URU+iGuhqf6BhJr25yt70II0jIWHQK1USc+W151dpVHwzdD39FIHYGOnhq4
-	 59Bu69pmOlMvHTjF+9bNzP1GblotdqvC+ahlurGd4Hqv5MTRG3Wrlxk8tp8sBjAogu
-	 46Vdq0In02ETa3XlY5KXcaGQoc6Lk0J0mNgOudqyoJLkTTTn9CWiPK3+L94iREAFUf
-	 m1vZzbmiyj9fg==
-Message-ID: <5766d152-51e7-42f5-864f-5cb1798606a3@kernel.org>
-Date: Tue, 8 Apr 2025 16:27:23 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gxVrnn/J"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 74EF144351;
+	Tue,  8 Apr 2025 14:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744122543;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wy3Km0AVXCTI4DrQJkFCQiFPROUoaPoc5lNFfKuzy6A=;
+	b=gxVrnn/JVh0iC4BPAsAridJn4qT7FAvRDSKdNs6dH7buDlSemR54nzZAPf3tIIgziWPivZ
+	owfGzS3t8eTMAXID8Ioi7sBsZdU89YTITi0SEbf8OqVFObyYjO+ht1vLjc5sY+ZyvqoT1K
+	XbseKEUk2rLd/GRjaBGXXD4ZWxucg5+n12Wvsu4S5CSPYu5QmT6BNMavIW1w1SbZQReccT
+	qUUpAhhXYCUUmyEmRSVEe1j6vwK02/srrDJfFTL7lpFtxTtMFeLk14cSsFkAKRvzUyYHkM
+	gSlm2nGbIp2xmGhocUyVGi1ZV+VblO56FfmKtmdd8n0wwK2H7ES6ZJo6/49MhQ==
+Date: Tue, 8 Apr 2025 16:29:00 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
+ Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana
+ Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark
+ Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Daniel Scally
+ <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 08/16] i2c: core: Introduce i2c_get_adapter_supplier()
+Message-ID: <20250408162900.41b6bc08@bootlin.com>
+In-Reply-To: <Z_UpB1cgU_99JHdF@smile.fi.intel.com>
+References: <20250407145546.270683-1-herve.codina@bootlin.com>
+	<20250407145546.270683-9-herve.codina@bootlin.com>
+	<Z_Puy8eEBc6tubEx@smile.fi.intel.com>
+	<20250408150836.327a337d@bootlin.com>
+	<Z_UpB1cgU_99JHdF@smile.fi.intel.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: clock: add TI CDCE6214 binding
-To: Sascha Hauer <s.hauer@pengutronix.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, kernel@pengutronix.de,
- =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-References: <20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de>
- <20250408-clk-cdce6214-v1-3-bd4e7092a91f@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250408-clk-cdce6214-v1-3-bd4e7092a91f@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeffeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeertdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveeiffefgeeitdelleeigefhjeelueeuveekveetgeffheeltdekgeduiefggfdvnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeegtddprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhop
+ egurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepfhgvshhtvghvrghmsehgmhgrihhlrdgtohhm
+X-GND-Sasl: herve.codina@bootlin.com
 
-On 08/04/2025 14:00, Sascha Hauer wrote:
-> +
+On Tue, 8 Apr 2025 16:47:51 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
-prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> On Tue, Apr 08, 2025 at 03:08:36PM +0200, Herve Codina wrote:
+> > On Mon, 7 Apr 2025 18:27:07 +0300
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:  
+> > > On Mon, Apr 07, 2025 at 04:55:37PM +0200, Herve Codina wrote:  
+> 
+> ...
+> 
+> > > > +	return get_device(adapter->supplier ?: adapter->dev.parent);    
+> > > 
+> > > What will be the meaning when both are set? Why dev.parent is not the same
+> > > as supplier in this case?  Looking at the commit message example, it seems
+> > > like you want to provide a physdev or sysdev (as term supplier seems more
+> > > devlink:ish), like it's done elsewhere. And in the same way _always_ initialise
+> > > it. In such a case, the ambiguity will be gone.  
+> > 
+> > When both are set (this is case for i2c muxes), the adapter->supplier the
+> > device that register the I2C adapter using i2c_add_adapter() or variant.
+> > In other word, the device that creates the I2C adapter.
+> > 
+> > The adapter->dev.parent is most of the time the device that register the
+> > I2C adapter except for i2c muxes. For I2C muxes, this adapter->dev.parent
+> > is the adapter the i2c mux is connected to.
+> > 
+> > Between physdev and sysdev, I really prefer physdev and, if renaming from
+> > supplier to physdev is still needed (and wanted), I will rename it. Let me
+> > know.  
+> 
+> The terms supplier/consumer are widely used in terms of power and devlink.
+> I think here should not be used the term supplier.
 
+physdev seems good.
+I will use that.
 
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,cdce6214
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    items:
-> +      - const: priref
-> +      - const: secref
+> 
+> > For initialization, I don't want to modify all the I2C controller drivers.
+> > What I can do is to initialize adapter->supplier using adapter->dev.parent
+> > during the i2c_register_adapter() call if it was not already initialize by
+> > the caller (i.e. the I2C controller driver).  
+> 
+> This can be done in the I²C core, but I'm not insisting on this part.
+> We can start from your function only and then decide later on how to
+> proceed (depending on how many users of that field appear and what
+> they want to do with it).
+> 
 
-So one input is optional?
+Right I think I can keep my function as it.
 
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  "#clock-cells":
-
-Use consistent quotes, either ' or "
-
-> +    const: 1
-> +
-> +patternProperties:
-> +  "^clk@[0-1]$":
-> +    type: object
-> +    description: |
-
-Do not need '|' unless you need to preserve formatting.
-
-> +      optional child node that can be used to specify input pin parameters. The reg
-> +      properties match the CDCE6214_CLK_* defines.
-> +
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        description:
-> +          clock input identifier.
-> +        minimum: 0
-> +        maximum: 1
-> +
-> +      ti,ref-xtal:
-> +        type: boolean
-> +        description: |
-> +          If true use input as XTAL input
-> +
-> +      ti,ref-lvcmos:
-> +        type: boolean
-> +        description: |
-> +          If true use input as LVCMOS input
-> +
-> +      ti,ref-diff:
-> +        type: boolean
-> +        description: |
-> +          If true use input as differential input
-
-So these three are an enum string.
-
-> +
-> +  "^clk@[2-9]$":
-> +    type: object
-> +    description: |
-> +      optional child node that can be used to specify output pin parameters.  The reg
-> +      properties match the CDCE6214_CLK_* defines.
-> +
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      reg:
-> +        description:
-> +          clock output identifier.
-> +        minimum: 2
-> +        maximum: 9
-> +
-> +      ti,lphcsl:
-> +        type: boolean
-> +        description: |
-> +          If true enable LP-HCSL output mode for this clock
-> +
-> +      ti,lvds:
-> +        type: boolean
-> +        description: |
-> +          If true enable LVDS output mode for this clock
-> +
-> +      ti,cmosp:
-> +        type: boolean
-> +        description: |
-> +          If true enable CMOSP output for this clock
-> +
-> +      ti,cmosn:
-> +        type: boolean
-> +        description: |
-> +          If true enable CMOSN output for this clock
-
-Looks the same here. Anyway having these as subnodes is too much. You
-have fixed number of clocks, so you need one or two array properties in
-top-level.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - "#clock-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/ti,cdce6214.h>
-
-This file does not exist. Something is odd in this example.
-
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        clock-generator@67 {
-> +            compatible = "ti,cdce6214";
-> +            reg = <0x67>;
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +            #clock-cells = <1>;
-> +            clocks = <&clock_ref25m>;
-> +            clock-names = "priref";
-> +
-> +            clk@CDCE6214_CLK_SECREF {
-
-That's not a valid unit address. Use simple numbers, see DT spec and DTS
-coding style.
-
+Wolfram any opinion?
 
 Best regards,
-Krzysztof
+Hervé
