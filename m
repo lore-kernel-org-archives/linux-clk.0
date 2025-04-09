@@ -1,139 +1,136 @@
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB4F253F0D
-	for <linux-clk@vger.kernel.org>; Wed,  9 Apr 2025 08:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA30B3D76;
+	Wed,  9 Apr 2025 08:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744187002; cv=none; b=Cyxn6B7U/mdwIMOpqmYL4SP+ZVhEe7D4TIOWCbVvWgj4y1+Zco47iiHwbY6DHuxK/0Gzvk4NntW4LMizuDt/efiU3dzzLX1uO4/g/wm9NoA5IQdce/QQgzMmdMixtTy2gNwZ3hBziOmONFUeRsoO5GGLz54eH1B+I9KGIZkFWgs=
+	t=1744187248; cv=none; b=hg6t3ZfpKcS9jdPwH624ixTK94kz205k3uNeXlAMfIENVG+qHohtJ1MJZeuw9GP1NOTEIxBDQsk4wK7ffPCgb+kVRhKoegU/ZQ8CdNNSyyYAkFXuGfqL7xfvioSyjOHObNplfjV/NYCZP/GioOmIE6H5usGkvTC5LqrFNzAdWxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744187002; c=relaxed/simple;
-	bh=BC22B58ebf6orl7qqDiyHa7iwd/DmKy9U31GLWFWWvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aMaoXOzc3faKErpE+pgIdQxlBSkko6uG8VHMcBgURcAVxi+UoRwJBdBQi5pG/rj1eJADzYRrr3gY0FHQ+ukHOgPiQdJvO6Rd2XMyR2tEK0MZeK5tVEWUDpkaxYho6zVIDDxRpnwasERvVsTXR22WX7JCMhdGqa8dvQFvrYogoYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Kf++T9IY; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Kf++T9IY"
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-739b3fe7ce8so5708857b3a.0
-        for <linux-clk@vger.kernel.org>; Wed, 09 Apr 2025 01:23:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744187000; x=1744791800; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N8Uxcp65AEN2lXG7OunlJf+FIxnQApjkFfx8Dt72lEU=;
-        b=Kf++T9IYB1narSlux9I8VwS55DtKxov/GEKO+sXLP8bb9yKWWkLkXcev+rsxcxh/PD
-         OmvrZG+grNaJNz1mpXWKtNVA2/Ox1iCefG58TkuYY77Tujn2qRtsjCaQxpow0ZkHcT66
-         TU93FxhtGEkWvbW/ZUrZkXkRDAr23LCgCemiu613OsOoxGE13G6zCXniwYFirFhcbMX4
-         +DYZKJFkrqMDYED9L8j3p6NJdoQ59eo+X1buY4ZJh7A8mRVDqHtLLUK44wLvxJE19KOI
-         Aab44NkvxTg8BCwGfsyQrcGMcqZUmEoTLm8+TkccvpoOLnTnXWOfwsf5arx0AB2gFlL5
-         VC2g==
+	s=arc-20240116; t=1744187248; c=relaxed/simple;
+	bh=wEowYpxBCkDlmNfLtfV7R7h7B7J60vMLNj1+hOWh9KI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N6j+I58/FSqDeHvILMLE1Ar5uzTXomkePntUcfJAQARRSjnDGI4qDlH9ZtJFtxh9WfhYTxwMdrwA0nFwdyxwqtAGB1pAEHWhr317NRdIJ9R5tOvPIuWqEIBb96i69k5IVN0VG/5C7KuF0+ApgLrlx2vYNOxQZzb6cxmPKANKm3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-52413efd0d3so2815586e0c.2;
+        Wed, 09 Apr 2025 01:27:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744187000; x=1744791800;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N8Uxcp65AEN2lXG7OunlJf+FIxnQApjkFfx8Dt72lEU=;
-        b=LFCWH500J+cYH396yrPeiaR/r15OAo1Gtohbs9syf0BNo8x95/qk8XykoXxU0SlzB+
-         MMALQ60hF/V7/6RS1jlDOSzlgGYhNNKJEP/PX33+oyaaWHBB1aem3RAtL0Z+C/zUoQdH
-         d6tNHYlUfrsphOJdVwYqSIowDAoCTRe4a1K/f0SKaGfN5cOYApzbuIV1XuGPG9lCw5BC
-         lpaJ6fFvnR9IpBkSOVxlZk8ISNrCsEnbKGmfJtYxQg2LRJ6NReTtiwmbSvPcolfkgsjo
-         x9oOJkMRmc58xIPaVy13DlHX24jUtYk+YmHXE/ylklIcdGcYf+qMwPdMWBAC1aqKKmdz
-         V5kg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEeHcKtydFMyTXtfq3Lp5eUlEzWBvDpYfP+o3K78xDMfZNe2FSTrljm7VcJMw3bY9ueevj9P+9NxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygfvROrWDhZ32FI8ttcDcPBQ3k6KDoV9NKhiJzKS0msMt1AMWf
-	2Pn/d09RMCeE/0cjQkakZ6Tbbf2UJNJ85+48aycpJvbmiSELIVa5JYEhp8KLlV0=
-X-Gm-Gg: ASbGncuoaqI4cWQQx0HjAB/dAajP1db2AENzzMW28aEnHlCub+6YQ6NXUmGx23BA6Sx
-	0P+Zo6F2IvJx3dFtjEgmCYWhrwdG/gMD31LAkj2VYuvUSISyoqyipd1Ra65JcHVz4XKrznUjOXP
-	QnZxHmXp7Fx7gFSdwqMg5fFMDt28nKk7dOnbnzsRraGAssY/HgtqLutl2vlhPFiCuETEGxujmrR
-	8lr9J3598W2r1ls7K4yqjnd9UELGMEHKyRsS0Qnwy2Drxz6COw1emrFKBZM+aXsHqbwJVzpi9QA
-	jrVQNRb6O7tADhAFd8LFTae8HW1lSptB4zfXhW6689+EAVCs+6u+lgxSBH1+Mv/sBDD+WLs0JES
-	0
-X-Google-Smtp-Source: AGHT+IELAFHnf6NcURJ7YwZpI3uONM/cHB108XuMeGlHH0Z4VyN7IgVNBUS39Fs8l1da/2JGxOqo6w==
-X-Received: by 2002:a05:6a00:10d2:b0:736:8c0f:774f with SMTP id d2e1a72fcca58-73bae5512d5mr2408875b3a.22.1744187000327;
-        Wed, 09 Apr 2025 01:23:20 -0700 (PDT)
-Received: from dev-linux (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1d464c9sm739894b3a.58.2025.04.09.01.23.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 01:23:19 -0700 (PDT)
-Date: Wed, 9 Apr 2025 01:23:17 -0700
-From: Sukrut Bellary <sbellary@baylibre.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Andreas Kemnade <andreas@kemnade.info>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: clock: ti: Convert to yaml
-Message-ID: <Z/YudZ0c2SBA+NMD@dev-linux>
-References: <20250404014500.2789830-1-sbellary@baylibre.com>
- <20250404014500.2789830-3-sbellary@baylibre.com>
- <20250404-tangible-reindeer-of-penetration-ae9ca3@shite>
+        d=1e100.net; s=20230601; t=1744187245; x=1744792045;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GV/VIz9Dal9GidNfi3rZQigxcHcKa0Red1OY/otJy2Q=;
+        b=L3uFeBOxi/5xqwWopNdmj1OJ1ddmPKvJGo1jAZ2eKIMPHY7Lo2wI9YSWzSqbKQ1CfI
+         uejMT0w2+rrlnVZTkOq1TgeWl/4U68oXkIAMnV+E2qPoU+Nu7fGTlFPoY7j0dJWk1wn2
+         r/5/nkYPOVDy4JO0spsl6XuUOGRgN08GLnMUv3A0mc9fo3fkMABpy2iri/AbQ6fWyGOa
+         Kk7uC+8wgN1/jfi4bwoCIkx9SfKENxfpJq+KSjtejS/4Ee5NiTGTlUeAy31hTobGLuIp
+         IP5vE/6992JWRjdAOC5lLnmM0V5howOjw1A0xSGTsgJxYKBPHLDQHtHnWISZ82hCkKgC
+         1Kjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSy8cuXAa7zMSJdUkBj6M3f2wYEI8U97cguX4tpZ2v5sm8RbT+ICiptVp0QBLHCwxFd7cLemecfhBY5g==@vger.kernel.org, AJvYcCV5adHYsPQRYSXOKPGGXYpd32R8tIEhRbrIcXUAD0j7h6dNcnyHs3hYBJLsQy1/T/fzGn+8k2tRSvr6@vger.kernel.org, AJvYcCW+KQRIPxKlLv3Li+L6Dj/4GhS1gb2KFyzmO6g1VJi53nvvEC5oPh9UwkoYZ06r6ND+QUdbQbHdUkxD@vger.kernel.org, AJvYcCWOWzWpx/FRGT1b7yi4kVp/w00x6Y0j35I2GUmNQZfWzTCAsKurqTNVmbzdet0bBj7UR2pFeXluTY+lrPL1@vger.kernel.org, AJvYcCXXXjXLu1FIwF5TxFG+Hit9KvrM44gLWml1JSOVIUnQqekVdljecJGp4xbiJMh0XUqo9pKc/RHVPcKz@vger.kernel.org, AJvYcCXreR/KjnL3ySd7ycsz87Hu6e90Q1CEci6aGKH0EYDRjCe3xBoOnXuX/1/8c5TYeBy9tgKuuq1u+GO0@vger.kernel.org, AJvYcCXz2Mi7cwAlsviSJ15Qvzhsusy0zQWtLYqDehOCFBqPZbaO+B75ayE1MjkyRbqOwxJmnTBS6GwMqFKg@vger.kernel.org
+X-Gm-Message-State: AOJu0YyljY27lcdpJ7/+JeRVkSVYJSBbE1U44uqzKni/JW/XdCZ0TfyY
+	c1H+klqZ4fefuRUtXNRLgaorGuhd3/J+TkozNmaeION1jlOXumtvgXkKSB8z0TM=
+X-Gm-Gg: ASbGncvRhgg1+y4hGXRwWgCTaWVthYLws4ls2mTT1CjPsuDTarVGbTAVzRoGVMEMCWn
+	s+GbHpDujH4BbqbmUo6zKaKYBUr4S9tqNvRy/ER2vGIpynNXVuc/f3CE65ir4x49z+YY6CiL9aX
+	VOBcgJjuedFbmWwOIUA5csf46EJLocsBHxa+2FUWP5NZtNGy7ZQmfdlWTEx3dEQhJDLZYaBi/H9
+	PTa1EZhxHuQKrduieJ+SeppkUFFvmebGqs0cCm9h14yJaN3wy53V8TVLnAnrgwj8/aSq/53GWVt
+	hks3TIETyh1edGYhUadYaGFLWi6RLY4+Mc41ylQRaqsU27sg8rTZ5szWy5bWtcblnvh7VYKOStC
+	4lwY=
+X-Google-Smtp-Source: AGHT+IFcVZXyiP8/B1rVIrSkcRv8mQj8RHwtry4BOiWLiJp1mSvg6aS1Oeor/8p0rEeWJI315N9y+Q==
+X-Received: by 2002:a05:6102:5249:b0:4c4:dead:2f36 with SMTP id ada2fe7eead31-4c9c641cf68mr808049137.0.1744187245562;
+        Wed, 09 Apr 2025 01:27:25 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c9738360sm99445137.2.2025.04.09.01.27.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Apr 2025 01:27:21 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-86b9d9b02cbso2741933241.1;
+        Wed, 09 Apr 2025 01:27:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUqv5G+L8AuIm7B3hOp02/d1qa1unsVZT6svjMg13B/yK4F1EfugF10fP8hBsVsdlmspfchuWPygDIag==@vger.kernel.org, AJvYcCViGBnC27dEbVyuW61xF97FOBtX171KKU4AEceRg4GBDf+CmNn9YI+BxkOv9T30my19gfgA+PQSNV+G@vger.kernel.org, AJvYcCVnEW+0p5VXhDbUAjsLdE3WsclbLuXwn1I+Z7Fh3GIUmWr57+n3PaQbkNhOzy+1ZavuwdGeaXk82pjo@vger.kernel.org, AJvYcCWO2WPL14v4JQVubQtnk4dHVPZEbpmFu9I83V+SYyyjbl6vRqiDb2e2dRYAzrL2Z5AOUXGf/N6iqUTb@vger.kernel.org, AJvYcCWeM9tppTjo5uzswjIdYbk2Yd9+JjPxy+yNmJ+7ETyiekCeL7jLGq0y4yjNx5TrVckdmJHfA6excUqx@vger.kernel.org, AJvYcCWphhYNjzQqje5ZC4+S0JIjpzmLw+TUaDkzI9UnZEiBq3M8OSjZWO1foDgeaGowMBTMxPKoBHDstmPogaO8@vger.kernel.org, AJvYcCXbT/zobJgoXRTY/J7KJrhrsqyzIr1kHXOQ09hnosRQkyXnP8EIsIiM1+j2xHBqNsACoBDZzG8wd5S1@vger.kernel.org
+X-Received: by 2002:a05:6102:801b:b0:4bb:e8c5:b149 with SMTP id
+ ada2fe7eead31-4c9c6a728e2mr725401137.7.1744187236860; Wed, 09 Apr 2025
+ 01:27:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250404-tangible-reindeer-of-penetration-ae9ca3@shite>
+References: <20250407145546.270683-1-herve.codina@bootlin.com>
+ <20250407145546.270683-16-herve.codina@bootlin.com> <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
+ <20250408162603.02d6c3a1@bootlin.com> <D91CSNC07NYM.3KC467K0OZ4GG@bootlin.com>
+ <c14dd5c6-2dae-4398-89a9-342e7a25bb30@lunn.ch> <D91XV1I4CY37.20T12FMZ5QLQ5@bootlin.com>
+In-Reply-To: <D91XV1I4CY37.20T12FMZ5QLQ5@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 9 Apr 2025 10:27:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVtrmh207usW45c0v5EmxgM+JgfQ=m55tXXNT0m4o5aGg@mail.gmail.com>
+X-Gm-Features: ATxdqUFWOu-H2GpmZpjc1_rOXM2aP80PMBbJa2DlVS33R9lalUc2jSOHZ1dg-j8
+Message-ID: <CAMuHMdVtrmh207usW45c0v5EmxgM+JgfQ=m55tXXNT0m4o5aGg@mail.gmail.com>
+Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
+ support SFPs
+To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Herve Codina <herve.codina@bootlin.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
+	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Apr 04, 2025 at 12:46:28PM +0200, Krzysztof Kozlowski wrote:
-> On Thu, Apr 03, 2025 at 06:44:58PM GMT, Sukrut Bellary wrote:
-> > +maintainers:
-> > +  - Tero Kristo <kristo@kernel.org>
-> > +  - Sukrut Bellary <sbellary@baylibre.com>
-> > +
-> > +description: |
-> 
-> Do not need '|' unless you need to preserve formatting.
+On Wed, 9 Apr 2025 at 09:44, Thomas Petazzoni
+<thomas.petazzoni@bootlin.com> wrote:
+> On Tue Apr 8, 2025 at 5:38 PM CEST, Andrew Lunn wrote:
+> > "HW blocks inside an SoC." That would be the SoC .dtsi file. Anything
+> > outside of the SoC is in the .dts file. OEM vendors take the SoC,
+> > build a board around it, and name there .dts file after the board,
+> > describing how the board components are connected to the SoC.
+> >
+> > So..
+> >
+> > So by PCI endpoint, you mean the PCIe chip? So it sounds like there
+> > should be a .dtsi file describing the chip.
+> >
+> > Everything outside of the chip, like the SFP cages, are up to the
+> > vendor building the board. I would say that should be described in a
+> > .dtso file, which describes how the board components are connected to
+> > the PCIe chip? And that .dtso file should be named after the board,
+> > since there are going to many of them, from different OEM vendors.
+>
+> Indeed, that makes sense. So if I get correctly your suggestion,
+> instead of having a .dtso that describes everything, it should be
+> split between:
+>
+>  - A .dtsi that describes what's inside the LAN996x when used in PCI
+>    endpoint mode
+>
+>  - A .dtso that includes the above .dtsi, and that describes what on
+>    the PCI board around the LAN966x.
+>
+> Correct?
 
-Thanks for the review.
-I will fix this.
+Sounds good to me!
 
-> > +  Every clock on TI SoC belongs to one clockdomain. For specific clocks, the
-> > +  parent clockdomain has to be controlled when the clock is enabled/disabled.
-> > +  This binding doesn't define a new clock binding type, it is used to group
-> > +  the existing clock nodes under hardware hierarchy.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: ti,clockdomain
-> > +
-> > +  clocks:
-> > +    description:
-> > +      Clocks within this domain
-> 
-> Missing constraints.
+Gr{oetje,eeting}s,
 
-I will add it.
+                        Geert
 
-> > +
-> > +required:
-> > +  - compatible
-> > +  - clocks
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    l3init_clkdm: l3init_clkdm {
-> 
-> Follow DTS coding style. Also drop unused label.
-> 
-> Node names should be generic. See also an explanation and list of
-> examples (not exhaustive) in DT specification:
-> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Sure, will fix this.
-
-> > +        compatible = "ti,clockdomain";
-> > +        clocks = <&dpll_usb_ck>;
-> > +    };
-> > -- 
-> > 2.34.1
-> > 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
