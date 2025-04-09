@@ -1,127 +1,234 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBA41D61AA;
-	Wed,  9 Apr 2025 08:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE7825B69E
+	for <linux-clk@vger.kernel.org>; Wed,  9 Apr 2025 08:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744186566; cv=none; b=gbtDOWb+D8mLMFu/s5USs34rBxxvi8Aurc66rBFp2LBmTeAoYsxEx/gUPPi/zdQHqiaxwjVFJ5S8XF/6GWJlNhPo0Uty2ty6M4StYXQUmNRUYrFx0Quji+gfJgjge3XX/a1vObkJUHAsIMFEmsZ+TtblaAiHxlaEvhTp7qJUFGk=
+	t=1744186871; cv=none; b=g7FN1lhoyTGoO1Mk7WgkhfK3Zh+I+QPBh0/QTVeTqeHlaKkkxLCICAeWHYNgJhCJr0GmVHonMnPW4OTSbDwoRJufvoZrjwPJ6SLK3Qyg3iDiIstDOf/gMx8rDDUTPuk2hhcA34v/ARbVmvB5okMVsQPaGdSYkKtctlrht4kuIDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744186566; c=relaxed/simple;
-	bh=4+jfWnsULLYPjAiJ9BsWu1PAB8C8puLtn3FhdNTOHOw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oD0wlMhgG5jB7H0Z9ii7Cdy7jj3/GFuzcoKch2lBXFwWd5HroraDa5h+qtgjUAVsn73cWwHnhgZnNgJUlheWaze1snfZ5ZDZPJcHVv4kxVLI4iLqPANlGs0+buuP/vLZ3e0Mz+guOBWiElHoS37ish34RUBpamxBZVVf1nQdbHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac3b12e8518so1179470366b.0;
-        Wed, 09 Apr 2025 01:16:04 -0700 (PDT)
+	s=arc-20240116; t=1744186871; c=relaxed/simple;
+	bh=lY346YN8/ftAPxrjMWKe1kO4XAMA9tNWSlODmFWWgJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CztenDP8kU2iTcRXQ+3vIVM9ZuyemkSLB0k6IwhScdZUX/SXi031vVpeoA2vAbLEZjlKLpykZAZnBYQNVioVrAr38nLA3+k/FuT+ueGgG28ozws7KTIWvQ0pvntDAEyyFaRDVaScVwRQKVvu21sVYOy2MJrIdb/dwM3Fopy4IxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jWwA6Giw; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jWwA6Giw"
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-306bf444ba2so2990495a91.1
+        for <linux-clk@vger.kernel.org>; Wed, 09 Apr 2025 01:21:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744186867; x=1744791667; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0BN9L1ivl4Owb8rDJmuxjb5tZrPmIZbv9Fx4W2U4h1Q=;
+        b=jWwA6GiwwhD/VqTpXbprDmpbEn+7Au1UWXbKujmNr/lsdeVMtXYk6FDj6m6Xuhvq8N
+         FVm3l9fiJa+1Q5kE9MVhACWz2HP3DNpUeoePB+BN/Gb5VmYxYmW488nHmt0SiupjsPSm
+         KHfCAuSWKY1urbRTp3rjlfjhMzXcHXjqbEpx8m6bi78Y8Zw13eJGTsanHp72dm4yt+SV
+         HW9MtXB+yMJDUvtYmuI7XyeuswK+2olEYMu1D582M3dsm4gDAW7scrkZJDsFqFQHfAKD
+         dijYFuKIBKGfR0KJrgBjNTVvNKZDpmtn/glUt4OUgvwA3cTVnUCGxfVQ6Vaprmoo5R1s
+         hJYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744186562; x=1744791362;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g8wlwAvEfKUmPWwXyFA3bJ/dUP5Ua3CH+QEIQ4JbmjA=;
-        b=GgLlVFN1HAcNk+MESrTNkw36LRjNEvfML0h8sNKpJzHJxvvjAeiuVYBs7+Vy6Miymj
-         mW0Qb2CnQToBV7erfPYDGSfj41q3KD1p+sdSFaq1b3yvz5XAmznfTBnbOYYLnyxtXmdb
-         jMfArH3CnX6jnjFQJdXvIj7MCJl4QYEEqX34oj9T1YtT4E0gg/eAhouqnmU8+PioCkcn
-         DhJ37A+O1X+BaED6lKY/qkExfRV+Fcwf3t5m7OXWhvDOvl8H4jxIC4xMPtSHZ2Rw/t2y
-         j3d0gE1OcchgbW2shtVMmtyvkZLlC9DLyQyuWYkrDf/6ouOd0U0bg6mfdbzpUhVY0U2n
-         Hmjw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6a+CRJM86/wI8xqbMercdoMzhdPRf+sQt+N57umpXGM4xy40ggKFZO+0gU1bhX1au/7/2W/3E89LX@vger.kernel.org, AJvYcCVO32k96ikAK70DQB/rWg9sDQhPDiKQEIeQNMVkhPBzMkMBq0bYaQP839Zu+gHypFSwFBmpq9ZmyM/iQUkkSR+mGJY=@vger.kernel.org, AJvYcCW3xbcNFy0mSwJtE0AKWJgStJyYAHPrJxuWXgS1+XpxDNPpRQD4qNC1I8lGCP3iUGuJIk+yXL0ZBG4A/vDc@vger.kernel.org, AJvYcCX/kpE4eI2VsBZw11oG1BuzKSwEmHp2brUzWOWt3b27Z/jxLPzU6HG5F3HukJGRdnIXBSc4IQJPB8YZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp1t4ToewxSJG2cevarTljSUJqX2O+Sb0o76Z1NDj8prrXUctr
-	eXoVwh+g3MU6NWP3MeeA29jX1k1+VYaUdPiiYKYqMnantgCLk9CE7c8m9C6bqjE=
-X-Gm-Gg: ASbGnctEV7viDZNGyCDEXG269awRB5PEBdCwZhXeMcCizKskP0E+QhUv+hg5ss30L54
-	cNJ2AbPdV2Pp/ro8cozZv1uqs0S5crCj6jrPArhjaKJ9knVQ37WimNQDP7nLdU5FdOcHN4sLax8
-	lOD6m0mYM77LZ8HUd/db0qz+cfoM8zhw2IgLZ3fHXK4JGEGBNhnLInQHHoJWOtlOQhysUwT0kRn
-	QBIG77y4wH4ylYSTlkaRIQnyaGk54GkwQNR5V80mU9kx0rPeuUixzcuPOtFTCzbOO6CSZ/RllkV
-	I75UnK43ry2LSvL7ccdg1Dh7R5psDCZF+AntB2Eh0OKBX0hlLfT9rn3DYHBAdbUvmO0ng4qUpcz
-	LA6A=
-X-Google-Smtp-Source: AGHT+IGt0R0EScqdOKJJjJcV0FS7JWTTJAiVN+6Vem403eidfIru3K8b51O21lhGygkiV9IMcMOWpw==
-X-Received: by 2002:a17:906:184b:b0:aca:a162:8707 with SMTP id a640c23a62f3a-acaa1628733mr114702566b.7.1744186561496;
-        Wed, 09 Apr 2025 01:16:01 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1cb4158sm54538066b.90.2025.04.09.01.15.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 01:15:55 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac3b12e8518so1179439466b.0;
-        Wed, 09 Apr 2025 01:15:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGEJD0AheT1zSLMzYXNWFzciMWxkYQhAn0RARAdbjgGdRhINLON5pZ7qsJ2UKzasOnUWWXKCn1+HeV@vger.kernel.org, AJvYcCUIj/KKVoQ/4ODSEjWDVz2Ia0cyij06mhcJxIe9p21aoJ7SGtcBXzOUkDqaGHDApWThq5RuKBJyXwxjwD9R@vger.kernel.org, AJvYcCVbHgqjOUJKZru1T0tpx59/jwgQHXsphSQF+QnF/nzod5xx7LfWWoRRlW0Ya0t97xKUXIk+Xwjb2iO1@vger.kernel.org, AJvYcCWZlku7gblLWc9MpuN7k35dCr/KxDe7NIXd6r5hcxR8ijRaADnhtFML78LQLkOL7Vvmcg5OStHoqWk8Na2udJjdPiU=@vger.kernel.org
-X-Received: by 2002:a17:907:2ce2:b0:ac3:878d:662 with SMTP id
- a640c23a62f3a-aca9d5d9738mr124075466b.9.1744186554430; Wed, 09 Apr 2025
- 01:15:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744186867; x=1744791667;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0BN9L1ivl4Owb8rDJmuxjb5tZrPmIZbv9Fx4W2U4h1Q=;
+        b=JldS9sP0YpdYJTJeZ9jlfaQrRqvDupwCOWpXiLHhoqvK2YB9o72Y4q0xpcL0RLX9uR
+         oDAdWGeGdI/Vm0gNfTYH9Sd8rU/wuZH4MCPvs3IsQW0XJ+jrDa5pY6/98t5U0SUuBY9l
+         EjbA7pefzZU0mKe4qweCNKobfaAhPSjSvej//TuR18DuDm5CqjeTqz1EDQMUi+3fN3vM
+         qXhX4N8Lq+HbVG2mUb5+PV4L+a4gApCRtXCl+NSRFzXgDaf01jrjg+uNA8PDDO6yo0x7
+         hGM5HWEDNZOp0SPFUbWS4UPf0J3AOWJvt4pzF82OTL/GHxplXYkCaVux+uB8JbzVh9VE
+         6TNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdJlXjDt42Xs+VJFY1n6d8C9bk2+r6K7A5n+Leb0sOq8F4k9IXCEbUNy642IoMu18eFn3yfdW12pM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAvw4/Y9zCBZLbNzgjW21cSFGi8s1V0NBaa5XXWeVrBpUxja3m
+	cEO0v2mX1Pbp7Gow09Q9B7Tx/u4dV3ulQf/ILOZmaVq/VRfaiV3mv8iS8qZsA+g=
+X-Gm-Gg: ASbGnctRHC3GrFeckVO1Sa1WJs9kIOG/lYhXjDXFDMiJmIOBqhcCOjl4vmn0KLn5PCm
+	8oMOSP1UG4fZmTkU63isg0m1uRxU+vTTX9oT2C690mz/9G/rGCCEG3Tr33HhU/Qa0NXtDkzRxxJ
+	s6dCTpgarfKLzDkdezc+Syuuvc+a7k0bYHN+/2HRCrRqCO0azD3CYyzI1aixXobCrJCsXxgAXeK
+	aQV8XgQrjtjplsZa26ndDybeqMDotC5sxWPi3UVJSrpnFR8zso7cVtxwsLVq4BThww4d67YeZq/
+	7sZerKFi84Nl025bgjHmGucpTamr6f7MDKVwQhOdU0M7iyeVqmkQ+HhBTzO/L9QYbyxFZP1Jygd
+	/gpWCKioBCOI=
+X-Google-Smtp-Source: AGHT+IH95FvxGLeZVX0cNOnex4XGDZkBHnNj8B1Hd4xGfIr80ro2XgEYcvOXA0ELIPCYqKdN/9ZcFQ==
+X-Received: by 2002:a17:90b:5488:b0:2fa:15ab:4dff with SMTP id 98e67ed59e1d1-306dbc3ac90mr2982470a91.31.1744186867486;
+        Wed, 09 Apr 2025 01:21:07 -0700 (PDT)
+Received: from dev-linux (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd185acasm943943a91.48.2025.04.09.01.21.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 01:21:06 -0700 (PDT)
+Date: Wed, 9 Apr 2025 01:21:03 -0700
+From: Sukrut Bellary <sbellary@baylibre.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Andreas Kemnade <andreas@kemnade.info>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: clock: ti: Convert to yaml
+Message-ID: <Z/Yt75wCl5rl8JKP@dev-linux>
+References: <20250404014500.2789830-1-sbellary@baylibre.com>
+ <20250404014500.2789830-2-sbellary@baylibre.com>
+ <20250404151902.GA1400262-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250408200916.93793-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250408200916.93793-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 Apr 2025 10:15:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVAxaLZJ4y0AWKrLobp55n5NPqQgEtHK_d1DDUM1LAkDw@mail.gmail.com>
-X-Gm-Features: ATxdqUFduY_Nysj8xnNB1omwilrHwMeJqiWwK4ZmMj1fQC_W_1_6CC0mYuD3HIA
-Message-ID: <CAMuHMdVAxaLZJ4y0AWKrLobp55n5NPqQgEtHK_d1DDUM1LAkDw@mail.gmail.com>
-Subject: Re: [PATCH v2 10/15] drm: renesas: rz-du: mipi_dsi: Use mHz for D-PHY
- frequency calculations
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250404151902.GA1400262-robh@kernel.org>
 
-Hi Prabhakar,
+On Fri, Apr 04, 2025 at 10:19:02AM -0500, Rob Herring wrote:
+> On Thu, Apr 03, 2025 at 06:44:57PM -0700, Sukrut Bellary wrote:
+> > Covert TI autoidle clock txt binding to yaml.
+> 
+> Convert
+> 
+> 2 patches in the series have the exact same subject. Really, nothing in 
+> all of the git history should ever repeat a subject. After all, you 
+> can't make the same change twice.
 
-On Tue, 8 Apr 2025 at 22:09, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Pass the HSFREQ in milli-Hz to the `dphy_init()` callback to improve
-> precision, especially for the RZ/V2H(P) SoC, where PLL dividers require
-> high accuracy.
->
-> These changes prepare the driver for upcoming RZ/V2H(P) SoC support.
->
-> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Thanks for the review.
+I will fix this.
 
-Thanks for your patch!
+> > 
+> > AutoIdle clock is not an individual clock; it is always a
+> > derivate of some basic clock like a gate, divider, or fixed-factor.
+> > This binding will be referred in ti,divider-clock.yaml, and
+> > ti,fixed-factor-clock.yaml.
+> > 
+> > As all clocks don't support the autoidle feature e.g.,
+> > in DRA77xx/AM57xx[1], dpll_abe_x2* and dpll_per_x2 don't have
+> > autoidle, remove required properties from the binding.
+> > Clean up the example to meet the current standards.
+> > 
+> > Add the creator of the original binding as a maintainer.
+> > 
+> > [1] https://www.ti.com/lit/ug/spruhz6l/spruhz6l.pdf
+> > 
+> > Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
+> > ---
+> >  .../devicetree/bindings/clock/ti/autoidle.txt | 37 --------------
+> >  .../bindings/clock/ti/ti,autoidle.yaml        | 49 +++++++++++++++++++
+> >  2 files changed, 49 insertions(+), 37 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/clock/ti/autoidle.txt
+> >  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,autoidle.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/ti/autoidle.txt b/Documentation/devicetree/bindings/clock/ti/autoidle.txt
+> > deleted file mode 100644
+> > index 05645a10a9e3..000000000000
+> > --- a/Documentation/devicetree/bindings/clock/ti/autoidle.txt
+> > +++ /dev/null
+> > @@ -1,37 +0,0 @@
+> > -Binding for Texas Instruments autoidle clock.
+> > -
+> > -This binding uses the common clock binding[1]. It assumes a register mapped
+> > -clock which can be put to idle automatically by hardware based on the usage
+> > -and a configuration bit setting. Autoidle clock is never an individual
+> > -clock, it is always a derivative of some basic clock like a gate, divider,
+> > -or fixed-factor.
+> > -
+> > -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > -
+> > -Required properties:
+> > -- reg : offset for the register controlling the autoidle
+> > -- ti,autoidle-shift : bit shift of the autoidle enable bit
+> > -- ti,invert-autoidle-bit : autoidle is enabled by setting the bit to 0
+> > -
+> > -Examples:
+> > -	dpll_core_m4_ck: dpll_core_m4_ck {
+> > -		#clock-cells = <0>;
+> > -		compatible = "ti,divider-clock";
+> > -		clocks = <&dpll_core_x2_ck>;
+> > -		ti,max-div = <31>;
+> > -		ti,autoidle-shift = <8>;
+> > -		reg = <0x2d38>;
+> > -		ti,index-starts-at-one;
+> > -		ti,invert-autoidle-bit;
+> > -	};
+> > -
+> > -	dpll_usb_clkdcoldo_ck: dpll_usb_clkdcoldo_ck {
+> > -		#clock-cells = <0>;
+> > -		compatible = "ti,fixed-factor-clock";
+> > -		clocks = <&dpll_usb_ck>;
+> > -		ti,clock-div = <1>;
+> > -		ti,autoidle-shift = <8>;
+> > -		reg = <0x01b4>;
+> > -		ti,clock-mult = <1>;
+> > -		ti,invert-autoidle-bit;
+> > -	};
+> > diff --git a/Documentation/devicetree/bindings/clock/ti/ti,autoidle.yaml b/Documentation/devicetree/bindings/clock/ti/ti,autoidle.yaml
+> > new file mode 100644
+> > index 000000000000..c995dae65cd6
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/ti/ti,autoidle.yaml
+> > @@ -0,0 +1,49 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/ti/ti,autoidle.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: TI autoidle clock
+> > +
+> > +maintainers:
+> > +  - Tero Kristo <kristo@kernel.org>
+> > +  - Sukrut Bellary <sbellary@baylibre.com>
+> > +
+> > +description: |
+> 
+> Don't need '|' if no formatting to preserve.
+ 
+I will fix this.
 
-> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> @@ -33,7 +33,7 @@
->  struct rzg2l_mipi_dsi;
->
->  struct rzg2l_mipi_dsi_hw_info {
-> -       int (*dphy_init)(struct rzg2l_mipi_dsi *dsi, unsigned long hsfreq);
-> +       int (*dphy_init)(struct rzg2l_mipi_dsi *dsi, unsigned long long hsfreq_mhz);
+> > +  In TI SoC, some of the clocks support autoidle feature.
+> > +  It assumes a register mapped clock which can be put to idle automatically
+> > +  by hardware based on the usage and a configuration bit setting.
+> > +  Autoidle clock is never an individual clock, it is always a derivative
+> > +  of some basic clock like a gate, divider or fixed-factor.
+> 
+> Is this 3 1 sentence paragraphs or 1 paragraph with odd line wrapping? 
+> Blank line between paragraphs or re-wrap at 80 char. I prefer the latter 
+> as 1 sentence paragraphs doesn't make much sense.
 
-Due to the lack of capitalization of the "hz" part, it is not clear
-that the "m" stands for "milli" instead of "mega".
-Perhaps hsfreq_mHz or hsfreq_millihz?
+It's odd line wrapping.
+I will fix this.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> > +
+> > +properties:
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  ti,autoidle-shift:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description:
+> > +      bit shift of the autoidle enable bit for the clock
+> > +    maximum: 31
+> > +    default: 0
+> > +
+> > +  ti,invert-autoidle-bit:
+> > +    type: boolean
+> > +    description:
+> > +      autoidle is enabled by setting the bit to 0
+> > +
+> > +additionalProperties: true
+> > +
+> > +examples:
+> > +  - |
+> > +    bus {
+> > +      #address-cells = <1>;
+> > +      #size-cells = <0>;
+> > +
+> > +      clock@1b4 {
+> > +        reg = <0x01b4>;
+> > +        ti,autoidle-shift = <8>;
+> > +        ti,invert-autoidle-bit;
+> > +      };
+> > +    };
+> > -- 
+> > 2.34.1
+> > 
