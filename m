@@ -1,136 +1,212 @@
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA30B3D76;
-	Wed,  9 Apr 2025 08:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DDE3D76;
+	Wed,  9 Apr 2025 08:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744187248; cv=none; b=hg6t3ZfpKcS9jdPwH624ixTK94kz205k3uNeXlAMfIENVG+qHohtJ1MJZeuw9GP1NOTEIxBDQsk4wK7ffPCgb+kVRhKoegU/ZQ8CdNNSyyYAkFXuGfqL7xfvioSyjOHObNplfjV/NYCZP/GioOmIE6H5usGkvTC5LqrFNzAdWxE=
+	t=1744187565; cv=none; b=M7wpbdYxSAnru2hSSK9V8EFT7XjqhUyTFC7kdoTms+WOzRbCZhktHlINe9g/jN5JmRU5gY6Gq4DFd6fXtBKFS9WZAB/E3sygEtx7nUhUQ6IvFs6PNSnTIjDrWxP8w5JnI0AlgtysWPnljcjA9r2eyR+R3FZNPGtEUeKTT5HOHpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744187248; c=relaxed/simple;
-	bh=wEowYpxBCkDlmNfLtfV7R7h7B7J60vMLNj1+hOWh9KI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N6j+I58/FSqDeHvILMLE1Ar5uzTXomkePntUcfJAQARRSjnDGI4qDlH9ZtJFtxh9WfhYTxwMdrwA0nFwdyxwqtAGB1pAEHWhr317NRdIJ9R5tOvPIuWqEIBb96i69k5IVN0VG/5C7KuF0+ApgLrlx2vYNOxQZzb6cxmPKANKm3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-52413efd0d3so2815586e0c.2;
-        Wed, 09 Apr 2025 01:27:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744187245; x=1744792045;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GV/VIz9Dal9GidNfi3rZQigxcHcKa0Red1OY/otJy2Q=;
-        b=L3uFeBOxi/5xqwWopNdmj1OJ1ddmPKvJGo1jAZ2eKIMPHY7Lo2wI9YSWzSqbKQ1CfI
-         uejMT0w2+rrlnVZTkOq1TgeWl/4U68oXkIAMnV+E2qPoU+Nu7fGTlFPoY7j0dJWk1wn2
-         r/5/nkYPOVDy4JO0spsl6XuUOGRgN08GLnMUv3A0mc9fo3fkMABpy2iri/AbQ6fWyGOa
-         Kk7uC+8wgN1/jfi4bwoCIkx9SfKENxfpJq+KSjtejS/4Ee5NiTGTlUeAy31hTobGLuIp
-         IP5vE/6992JWRjdAOC5lLnmM0V5howOjw1A0xSGTsgJxYKBPHLDQHtHnWISZ82hCkKgC
-         1Kjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSy8cuXAa7zMSJdUkBj6M3f2wYEI8U97cguX4tpZ2v5sm8RbT+ICiptVp0QBLHCwxFd7cLemecfhBY5g==@vger.kernel.org, AJvYcCV5adHYsPQRYSXOKPGGXYpd32R8tIEhRbrIcXUAD0j7h6dNcnyHs3hYBJLsQy1/T/fzGn+8k2tRSvr6@vger.kernel.org, AJvYcCW+KQRIPxKlLv3Li+L6Dj/4GhS1gb2KFyzmO6g1VJi53nvvEC5oPh9UwkoYZ06r6ND+QUdbQbHdUkxD@vger.kernel.org, AJvYcCWOWzWpx/FRGT1b7yi4kVp/w00x6Y0j35I2GUmNQZfWzTCAsKurqTNVmbzdet0bBj7UR2pFeXluTY+lrPL1@vger.kernel.org, AJvYcCXXXjXLu1FIwF5TxFG+Hit9KvrM44gLWml1JSOVIUnQqekVdljecJGp4xbiJMh0XUqo9pKc/RHVPcKz@vger.kernel.org, AJvYcCXreR/KjnL3ySd7ycsz87Hu6e90Q1CEci6aGKH0EYDRjCe3xBoOnXuX/1/8c5TYeBy9tgKuuq1u+GO0@vger.kernel.org, AJvYcCXz2Mi7cwAlsviSJ15Qvzhsusy0zQWtLYqDehOCFBqPZbaO+B75ayE1MjkyRbqOwxJmnTBS6GwMqFKg@vger.kernel.org
-X-Gm-Message-State: AOJu0YyljY27lcdpJ7/+JeRVkSVYJSBbE1U44uqzKni/JW/XdCZ0TfyY
-	c1H+klqZ4fefuRUtXNRLgaorGuhd3/J+TkozNmaeION1jlOXumtvgXkKSB8z0TM=
-X-Gm-Gg: ASbGncvRhgg1+y4hGXRwWgCTaWVthYLws4ls2mTT1CjPsuDTarVGbTAVzRoGVMEMCWn
-	s+GbHpDujH4BbqbmUo6zKaKYBUr4S9tqNvRy/ER2vGIpynNXVuc/f3CE65ir4x49z+YY6CiL9aX
-	VOBcgJjuedFbmWwOIUA5csf46EJLocsBHxa+2FUWP5NZtNGy7ZQmfdlWTEx3dEQhJDLZYaBi/H9
-	PTa1EZhxHuQKrduieJ+SeppkUFFvmebGqs0cCm9h14yJaN3wy53V8TVLnAnrgwj8/aSq/53GWVt
-	hks3TIETyh1edGYhUadYaGFLWi6RLY4+Mc41ylQRaqsU27sg8rTZ5szWy5bWtcblnvh7VYKOStC
-	4lwY=
-X-Google-Smtp-Source: AGHT+IFcVZXyiP8/B1rVIrSkcRv8mQj8RHwtry4BOiWLiJp1mSvg6aS1Oeor/8p0rEeWJI315N9y+Q==
-X-Received: by 2002:a05:6102:5249:b0:4c4:dead:2f36 with SMTP id ada2fe7eead31-4c9c641cf68mr808049137.0.1744187245562;
-        Wed, 09 Apr 2025 01:27:25 -0700 (PDT)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c9738360sm99445137.2.2025.04.09.01.27.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 01:27:21 -0700 (PDT)
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-86b9d9b02cbso2741933241.1;
-        Wed, 09 Apr 2025 01:27:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUUqv5G+L8AuIm7B3hOp02/d1qa1unsVZT6svjMg13B/yK4F1EfugF10fP8hBsVsdlmspfchuWPygDIag==@vger.kernel.org, AJvYcCViGBnC27dEbVyuW61xF97FOBtX171KKU4AEceRg4GBDf+CmNn9YI+BxkOv9T30my19gfgA+PQSNV+G@vger.kernel.org, AJvYcCVnEW+0p5VXhDbUAjsLdE3WsclbLuXwn1I+Z7Fh3GIUmWr57+n3PaQbkNhOzy+1ZavuwdGeaXk82pjo@vger.kernel.org, AJvYcCWO2WPL14v4JQVubQtnk4dHVPZEbpmFu9I83V+SYyyjbl6vRqiDb2e2dRYAzrL2Z5AOUXGf/N6iqUTb@vger.kernel.org, AJvYcCWeM9tppTjo5uzswjIdYbk2Yd9+JjPxy+yNmJ+7ETyiekCeL7jLGq0y4yjNx5TrVckdmJHfA6excUqx@vger.kernel.org, AJvYcCWphhYNjzQqje5ZC4+S0JIjpzmLw+TUaDkzI9UnZEiBq3M8OSjZWO1foDgeaGowMBTMxPKoBHDstmPogaO8@vger.kernel.org, AJvYcCXbT/zobJgoXRTY/J7KJrhrsqyzIr1kHXOQ09hnosRQkyXnP8EIsIiM1+j2xHBqNsACoBDZzG8wd5S1@vger.kernel.org
-X-Received: by 2002:a05:6102:801b:b0:4bb:e8c5:b149 with SMTP id
- ada2fe7eead31-4c9c6a728e2mr725401137.7.1744187236860; Wed, 09 Apr 2025
- 01:27:16 -0700 (PDT)
+	s=arc-20240116; t=1744187565; c=relaxed/simple;
+	bh=06i03/eW88kNMSyIQpnLFojEQBRVBRiIZ5NKVcOuDbQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b2qM1u3K1xf2XBr663HwvV0oRHMqv8pAfzF9Kbz75BUBYXdyiP4UIcrWYWqP1k7XwxoXn0K3zM08wmPzE0GRWQwC5Nqf8Kdkv4sbKzP2ZdU8Gx5HulsIpS9Xqw7tepiGHP9Wbs5kwg5praLN5MNIYMg62xGVbNTR8IPCJrAX6aA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53960GmG025473;
+	Wed, 9 Apr 2025 01:32:32 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45tyt4cxqa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 09 Apr 2025 01:32:31 -0700 (PDT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Wed, 9 Apr 2025 01:32:30 -0700
+Received: from pek-lpd-ccm5.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Wed, 9 Apr 2025 01:32:29 -0700
+From: Yun Zhou <yun.zhou@windriver.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <dianders@chromium.org>
+CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: fix slab-use-after-free when clk_core_populate_parent_map failed
+Date: Wed, 9 Apr 2025 16:32:28 +0800
+Message-ID: <20250409083228.2944917-1-yun.zhou@windriver.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407145546.270683-1-herve.codina@bootlin.com>
- <20250407145546.270683-16-herve.codina@bootlin.com> <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
- <20250408162603.02d6c3a1@bootlin.com> <D91CSNC07NYM.3KC467K0OZ4GG@bootlin.com>
- <c14dd5c6-2dae-4398-89a9-342e7a25bb30@lunn.ch> <D91XV1I4CY37.20T12FMZ5QLQ5@bootlin.com>
-In-Reply-To: <D91XV1I4CY37.20T12FMZ5QLQ5@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 9 Apr 2025 10:27:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVtrmh207usW45c0v5EmxgM+JgfQ=m55tXXNT0m4o5aGg@mail.gmail.com>
-X-Gm-Features: ATxdqUFWOu-H2GpmZpjc1_rOXM2aP80PMBbJa2DlVS33R9lalUc2jSOHZ1dg-j8
-Message-ID: <CAMuHMdVtrmh207usW45c0v5EmxgM+JgfQ=m55tXXNT0m4o5aGg@mail.gmail.com>
-Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
- support SFPs
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Herve Codina <herve.codina@bootlin.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: coc-3x-werZjsYlDDhKWyece3W9ZaQKf
+X-Authority-Analysis: v=2.4 cv=RMSzH5i+ c=1 sm=1 tr=0 ts=67f6309f cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=XR8D0OoHHMoA:10 a=t7CeM3EgAAAA:8 a=eLMzZ2F9_icGV3DWmJ0A:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: coc-3x-werZjsYlDDhKWyece3W9ZaQKf
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-09_03,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ lowpriorityscore=0 mlxscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 priorityscore=1501 adultscore=0 clxscore=1011
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2504090042
 
-On Wed, 9 Apr 2025 at 09:44, Thomas Petazzoni
-<thomas.petazzoni@bootlin.com> wrote:
-> On Tue Apr 8, 2025 at 5:38 PM CEST, Andrew Lunn wrote:
-> > "HW blocks inside an SoC." That would be the SoC .dtsi file. Anything
-> > outside of the SoC is in the .dts file. OEM vendors take the SoC,
-> > build a board around it, and name there .dts file after the board,
-> > describing how the board components are connected to the SoC.
-> >
-> > So..
-> >
-> > So by PCI endpoint, you mean the PCIe chip? So it sounds like there
-> > should be a .dtsi file describing the chip.
-> >
-> > Everything outside of the chip, like the SFP cages, are up to the
-> > vendor building the board. I would say that should be described in a
-> > .dtso file, which describes how the board components are connected to
-> > the PCIe chip? And that .dtso file should be named after the board,
-> > since there are going to many of them, from different OEM vendors.
->
-> Indeed, that makes sense. So if I get correctly your suggestion,
-> instead of having a .dtso that describes everything, it should be
-> split between:
->
->  - A .dtsi that describes what's inside the LAN996x when used in PCI
->    endpoint mode
->
->  - A .dtso that includes the above .dtsi, and that describes what on
->    the PCI board around the LAN966x.
->
-> Correct?
+If clk_core_populate_parent_map() fails, core->parents will be immediately
+released within clk_core_populate_parent_map(). Therefore it is can't be
+released in __clk_release() again.
 
-Sounds good to me!
+This fixes the following KASAN reported issue:
 
-Gr{oetje,eeting}s,
+==================================================================
+BUG: KASAN: slab-use-after-free in __clk_release+0x80/0x160
+Read of size 8 at addr ffffff8043fd0980 by task kworker/u6:0/27
 
-                        Geert
+CPU: 1 PID: 27 Comm: kworker/u6:0 Tainted: G        W          6.6.69-yocto-standard+ #7
+Hardware name: Raspberry Pi 4 Model B (DT)
+Workqueue: events_unbound deferred_probe_work_func
+Call trace:
+ dump_backtrace+0x98/0xf8
+ show_stack+0x20/0x38
+ dump_stack_lvl+0x48/0x60
+ print_report+0xf8/0x5d8
+ kasan_report+0xb4/0x100
+ __asan_load8+0x9c/0xc0
+ __clk_release+0x80/0x160
+ __clk_register+0x6dc/0xfb8
+ devm_clk_hw_register+0x70/0x108
+ bcm2835_register_clock+0x284/0x358
+ bcm2835_clk_probe+0x2c4/0x438
+ platform_probe+0x98/0x110
+ really_probe+0x1e4/0x3e8
+ __driver_probe_device+0xc0/0x1a0
+ driver_probe_device+0x110/0x1e8
+ __device_attach_driver+0xf0/0x1a8
+ bus_for_each_drv+0xf8/0x178
+ __device_attach+0x120/0x240
+ device_initial_probe+0x1c/0x30
+ bus_probe_device+0xdc/0xe8
+ deferred_probe_work_func+0xe8/0x130
+ process_one_work+0x2a4/0x698
+ worker_thread+0x53c/0x708
+ kthread+0x1b4/0x1c8
+ ret_from_fork+0x10/0x20
 
+Allocated by task 27:
+ kasan_save_stack+0x3c/0x68
+ kasan_set_track+0x2c/0x40
+ kasan_save_alloc_info+0x24/0x38
+ __kasan_kmalloc+0xd4/0xd8
+ __kmalloc+0x74/0x238
+ __clk_register+0x718/0xfb8
+ devm_clk_hw_register+0x70/0x108
+ bcm2835_register_clock+0x284/0x358
+ bcm2835_clk_probe+0x2c4/0x438
+ platform_probe+0x98/0x110
+ really_probe+0x1e4/0x3e8
+ __driver_probe_device+0xc0/0x1a0
+ driver_probe_device+0x110/0x1e8
+ __device_attach_driver+0xf0/0x1a8
+ bus_for_each_drv+0xf8/0x178
+ __device_attach+0x120/0x240
+ device_initial_probe+0x1c/0x30
+ bus_probe_device+0xdc/0xe8
+ deferred_probe_work_func+0xe8/0x130
+ process_one_work+0x2a4/0x698
+ worker_thread+0x53c/0x708
+ kthread+0x1b4/0x1c8
+ ret_from_fork+0x10/0x20
+
+Freed by task 27:
+ kasan_save_stack+0x3c/0x68
+ kasan_set_track+0x2c/0x40
+ kasan_save_free_info+0x38/0x60
+ __kasan_slab_free+0x100/0x170
+ slab_free_freelist_hook+0xcc/0x218
+ __kmem_cache_free+0x158/0x210
+ kfree+0x88/0x140
+ __clk_register+0x9d0/0xfb8
+ devm_clk_hw_register+0x70/0x108
+ bcm2835_register_clock+0x284/0x358
+ bcm2835_clk_probe+0x2c4/0x438
+ platform_probe+0x98/0x110
+ really_probe+0x1e4/0x3e8
+ __driver_probe_device+0xc0/0x1a0
+ driver_probe_device+0x110/0x1e8
+ __device_attach_driver+0xf0/0x1a8
+ bus_for_each_drv+0xf8/0x178
+ __device_attach+0x120/0x240
+ device_initial_probe+0x1c/0x30
+ bus_probe_device+0xdc/0xe8
+ deferred_probe_work_func+0xe8/0x130
+ process_one_work+0x2a4/0x698
+ worker_thread+0x53c/0x708
+ kthread+0x1b4/0x1c8
+ ret_from_fork+0x10/0x20
+
+The buggy address belongs to the object at ffffff8043fd0800
+ which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 384 bytes inside of
+ freed 512-byte region [ffffff8043fd0800, ffffff8043fd0a00)
+
+The buggy address belongs to the physical page:
+page:fffffffe010ff400 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffffff8043fd0e00 pfn:0x43fd0
+head:fffffffe010ff400 order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x4000000000000840(slab|head|zone=1)
+page_type: 0xffffffff()
+raw: 4000000000000840 ffffff8040002f40 ffffff8040000a50 ffffff8040000a50
+raw: ffffff8043fd0e00 0000000000150002 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffffff8043fd0880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffffff8043fd0900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffffff8043fd0980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffffff8043fd0a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffffff8043fd0a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+Fixes: 9d05ae531c2c ("clk: Initialize struct clk_core kref earlier")
+Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
+---
+ drivers/clk/clk.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0565c87656cf..3f89ed51d4a4 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4242,7 +4242,6 @@ static int clk_core_populate_parent_map(struct clk_core *core,
+ 	 * having a cache of names/clk_hw pointers to clk_core pointers.
+ 	 */
+ 	parents = kcalloc(num_parents, sizeof(*parents), GFP_KERNEL);
+-	core->parents = parents;
+ 	if (!parents)
+ 		return -ENOMEM;
+ 
+@@ -4283,6 +4282,8 @@ static int clk_core_populate_parent_map(struct clk_core *core,
+ 		}
+ 	}
+ 
++	core->parents = parents;
++
+ 	return 0;
+ }
+ 
+@@ -4290,7 +4291,7 @@ static void clk_core_free_parent_map(struct clk_core *core)
+ {
+ 	int i = core->num_parents;
+ 
+-	if (!core->num_parents)
++	if (!core->parents)
+ 		return;
+ 
+ 	while (--i >= 0) {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.27.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
