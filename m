@@ -1,67 +1,69 @@
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D088620299B
-	for <linux-clk@vger.kernel.org>; Wed,  9 Apr 2025 21:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9952214201
+	for <linux-clk@vger.kernel.org>; Wed,  9 Apr 2025 21:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744233468; cv=none; b=OeZNGDjAlSceRWdinD1P0McNi+muU5KD6wm398g2+4EpQP03BYwwdlGpZP+OpB97NhOJneYcp8965yHAUvPbmU1AxSMmmjWC0XTyTf9Bna3e94UuRqyr8ih+6rFRRPzIcOg3D6LWtBXhQKd/sIEHpLfvfdQP78S0E8A4SBIqjrE=
+	t=1744233470; cv=none; b=a8YiqqSPm2iB6bHcBpNXfbfN2NtqzsZvCOp+1nycET68O+KSNTIScIOU4xUN31AM2dqswHbxyTVqt/ZOLvym9g6jAa85lnqxy3jbjo9+ZudFcMCEPB1WfA0spMa3hpAJ7ijNyn7Hxlh8RXrR0waYWZgR9EFltuFCV9tG3hFQUQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744233468; c=relaxed/simple;
-	bh=VMdYZrLAD8DMV1DpO50jqiz0vFY6aFjrLaJXiBM7mvI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MeDY1zfuF2i/ckgT7DHHxlZZJsyRDrjSuPsx8vg0SFurJIgZxF/HrBRE8GcMq8i2nGneOCeAh/0Hv3YU+kqz53uIlstHyPRXwOGETF9A7EaHyv4NTUt7TfxwiXm+U0dafdQP8dozLyUP449TpVSlVWgh463dOLqLswBVGgxDwfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=bVPY8moo; arc=none smtp.client-ip=209.85.166.50
+	s=arc-20240116; t=1744233470; c=relaxed/simple;
+	bh=MbCdEMU6mcfi5DUiGc5qT4xrhg/pjSeF3S++e48tF4A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QmpQ7W386FBZS4Mbilcrsuu/x/ZNDxo86nw5FcLuCPXVOIkD7wYD2QCWNLVy7cwrJSog2YmioVS0aXbGTsWudB0UlNVf9tLkjly4OtJ5bQB5NOg/D6fJauhwK//0pFkicpcBtuTirr817fJSEVh1t5BuxOw2Bud6njdTTFh526Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=xlziR6zn; arc=none smtp.client-ip=209.85.166.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="bVPY8moo"
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85dac9728cdso5052139f.0
-        for <linux-clk@vger.kernel.org>; Wed, 09 Apr 2025 14:17:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="xlziR6zn"
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-86117e5adb3so6777439f.2
+        for <linux-clk@vger.kernel.org>; Wed, 09 Apr 2025 14:17:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744233466; x=1744838266; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rrV5UlJLrK5aj5lTpRQRYMaHqlL0u3EBGUfh4HcWOG4=;
-        b=bVPY8mooGRXZnFbyiZgysvh7XZ+c1nIRhkLwk9qtWfFI/KTkPZW5d/QjeUO0H6Jhqj
-         FeoyiT/0JUaPh2f+2pzBaJsW40YRETM9N7jMIfQhD4Xfstc9JiqGWLMC3xome1KsaN0/
-         BzJpScvxyL+8joBKnnHnXZJTbEbfT5MglkcwPsBGXCFqT+nr7KQuHgpifT5mrYNcFFR0
-         1Kc9qpqRn0xhcmzcqCGCXNLVzv57aLhpkrZgX6LFVmnwrtfPtfmK4IxganXVQDydYbxK
-         XuURMpGoF56af+0HiNYJbRpULycS1SUrxGBaGsbGf0IhzTure6XfuD+gdWc2m+fKICeF
-         VGsA==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744233467; x=1744838267; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2uckU6cSrVb4mv3XjrpocuI6fDt+drUK+mGcGqyhezA=;
+        b=xlziR6znxZucMUdkzKnYvJOnvARrk/Ps0AxYtJ9/lB/YlHbIHIafm02WzUx+upP2mA
+         jz+uh4Q0ZGMh7zOUsGyXLYEx4yqYIoDGQOSiLXnV5cZQ+gNZzeGPCwP3o3UaYNPkC7bn
+         kUHU9R9z4s8VOtAuBACaPiQS0JT/U2HMSjKf9DVTs6V9pEtOKUFNrpE/nIEVr+H3V3n3
+         aV+VhOky2vZUJmpVXi8vQgAvFA8s0HD6A1lfHItrKt7P1mVMC0DqUattjx+Aszlw9m4c
+         5N6NqwD1QbDekWhxhjgxmljp98Tn5y6O3u6eGalg4niwZDWrNrzSe0GgFtuW6MWFoSHW
+         FdCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744233466; x=1744838266;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rrV5UlJLrK5aj5lTpRQRYMaHqlL0u3EBGUfh4HcWOG4=;
-        b=U8WsnvxAOnsC0+OEhVcQzwWHkbKLaBw5McxkZwgdPTsHiLYC5i1fzi8BjFiuzRTE2o
-         zipNyOvi0tFFcOWTOynJvOW8wMoOjZ8O2usVno/BnmjovrMWQJVBltdr+HiU5bTCw9wh
-         wIDj7E2NYkZCd4jaQidhSmYukR38Cj8gZb7C+L7HLfmUAOEH4do0cliAqOIvapdsVLCJ
-         BnXYFlAQ8Feo44trYl3vBzRFWX6rc60Pqojc7BPHrIRvKKaaQg7o5ES2ykqbS4n9srUD
-         RlRFKr8+u5XND3wzcnTEo/jdBmA5qE5XMPg/QxG8Ox1ppJWkvFFVGMb9HZna8u/+efRE
-         RFhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqbda2geuG+I3v71ZZ516VkZ5KRIfC/nB0E6K6mN/lVuBuhJfzMwVXyybdIxL1ITHiMuduAWPEZDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfJvWvwNxkTuwYK9aPzf26pgB5McJOhgD4zmC37nO+aLh4qYO4
-	D6xHgBn6Md9/ZJsbIqQuPEOJBuKPJjpnU580j3OBgf9OCpoh+C4NPVs+rAxDFcg=
-X-Gm-Gg: ASbGncvWmSYSYzQ5qILafOkZYrWmqi/hVuB8OU6Qn3FpzWBeCyLgGlNwpDh/r+j6clE
-	Hyaj5ZyK+5K1xVcWXtJ/PD4krwHEhM6BokoYYy+bF9WGTN248LBNIiOd2AC32zNYXUqW2ZeWRxP
-	H699aSuTBHvyApF9fLcgNIGLIvl9fpbCv3NOnT83yq8AE+J9fA0xcTjBcwBMmyoToH6Cj7MpSQy
-	Hr0ZQ0zJ6AQZW3qZb3RiUruMVGxW88hyOZyNYs5NRquuZZM37GKEf4oaKSnXLq1vdqQVIzgWHMG
-	MhFqP7w1VRlX84RTeFh9TuCa5QthGp7X61l2pKFzJyWP8foc6ndAfrzrq1HF8LTEQMT3z03szdU
-	aao6B4e3ImTsgLg==
-X-Google-Smtp-Source: AGHT+IG6Fs0mDXRYU2o6Td0yWxwYb8N9uHgcDDzyd75KPdUxyiPuO9N5OH70dXQk1TVcz0gCoG5PKQ==
-X-Received: by 2002:a05:6e02:1887:b0:3d2:6768:c4fa with SMTP id e9e14a558f8ab-3d7e4780824mr6626785ab.21.1744233465833;
-        Wed, 09 Apr 2025 14:17:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744233467; x=1744838267;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2uckU6cSrVb4mv3XjrpocuI6fDt+drUK+mGcGqyhezA=;
+        b=AwaO4oldDueq1eGkGqQZctNonloMzYk0KbpgzJFOLkIqP/2sk8pPfPjwZUJIJFuqPh
+         x04jHyquvmn10X4wvmOYEifv1znkQoJ29+558wdg2wiInBgmSZtsLIrab1CG/xnh4PDQ
+         K59tFV0SYzMecf+tdWkw5pKO51292vxICubwYwmHoXDrPVLgeaK+jfZJHwleGQ4H/gDd
+         rL0fLxTEqlmm5BmchywOZqgY9o19UEXcO4fsViNQ5/GxFqpa6bEjSCY/SGHkeEsorLSd
+         fK3z3dVnAvdiKndeF9p5ynMfFBQaS6+tDK6BbbxqWcTSWlwd6lxvXr5PTIyc6n6y2jiL
+         M9uA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlgqXFD/Lyr2VM/dSApAT2FRnwApBdmTdHhynvm7sISdE/9AY99H4e4yAHhu3xXg+X8xhnS79dBek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+UNrqbw+xQ2lxOhr8FsdyOg2VJkEXqN+rLJ1EopMuNOfg16mY
+	g9IaU4epFSd5aOswtQ+EmdYcnTdbxC3CQFuFErNzRaJvUmJEMynKUfwLL5DAiNU=
+X-Gm-Gg: ASbGnct4jjpIjwJbZ8FSuztuxSPYPm7jTqPmda+tae7dbsXJz4WavQJZdjUJkT5xMta
+	KFnBA5BT/SBGOqzcNzspLeefdBVEQ6RUh8Q2+KkB8zStkc0eUvsHrl6tfKijLh9r8LO9OdSQKNq
+	LqDVJyS3YtRyU5R3xz4hr/24wtaySf6r+4XTFMXaoVcpD/ORzjMnL13k+rfaY23/nn9rS1WtnC/
+	Pme+p52ccsf326+YvVU1y14OpkWquYNMbFzPGZMwPfhbukZqqaU17uZYImb/F8vDWYsDcZGdt2C
+	3KMMCka6jo2WpqhhCBeT3SHBsKUiK0GcSihLcuOdWFY35UMSKWaP8Uc+j0rTszVPCo64L6SqvIX
+	2c6WJlr6ZfdFd8g==
+X-Google-Smtp-Source: AGHT+IHqLMOAFTB52Fyo9zxahFjl2RnMnWeOq9211jTTHoADDLr0M+XinXubk6HrztJffoyUE6f5tA==
+X-Received: by 2002:a05:6e02:3807:b0:3d5:890b:d9df with SMTP id e9e14a558f8ab-3d7e475e4admr6578655ab.15.1744233467018;
+        Wed, 09 Apr 2025 14:17:47 -0700 (PDT)
 Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505cf8e91sm420735173.6.2025.04.09.14.17.44
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505cf8e91sm420735173.6.2025.04.09.14.17.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 14:17:45 -0700 (PDT)
+        Wed, 09 Apr 2025 14:17:46 -0700 (PDT)
 From: Alex Elder <elder@riscstar.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
+To: robh@kernel.org,
 	krzk+dt@kernel.org,
-	conor+dt@kernel.org
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
 Cc: p.zabel@pengutronix.de,
 	dlan@gentoo.org,
 	heylenay@4d2.org,
@@ -74,10 +76,12 @@ Cc: p.zabel@pengutronix.de,
 	linux-clk@vger.kernel.org,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/7] clk: spacemit: add K1 reset support
-Date: Wed,  9 Apr 2025 16:17:33 -0500
-Message-ID: <20250409211741.1171584-1-elder@riscstar.com>
+Subject: [PATCH v3 1/7] dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
+Date: Wed,  9 Apr 2025 16:17:34 -0500
+Message-ID: <20250409211741.1171584-2-elder@riscstar.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250409211741.1171584-1-elder@riscstar.com>
+References: <20250409211741.1171584-1-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -86,62 +90,236 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series adds reset controller support for the SpacemiT K1 SoC.
+There are additional SpacemiT syscon CCUs whose registers control both
+clocks and resets:  RCPU, RCPU2, and APBC2. Unlike those defined
+previously, these will (initially) support only resets.  They do not
+incorporate power domain functionality.
 
-As before, this version is built upon the clock controller driver that
-Haylen Chu has out for review (currently at v6):
-  https://lore.kernel.org/lkml/20250401172434.6774-1-heylenay@4d2.org/
+Previously the clock properties were required for all compatible nodes.
+Make that requirement only apply to the three existing CCUs (APBC, APMU,
+and MPMU), so that the new reset-only CCUs can go without specifying them.
 
-All of these patches are available here:
-  https://github.com/riscstar/linux/tree/outgoing/reset-v3
+Define the index values for resets associated with all SpacemiT K1
+syscon nodes, including those with clocks already defined, as well as
+the new ones (without clocks).
 
-Between version 2 and version 3 there was no feedback, however:
-  - Haylen posted v6 of the clock series, and it included some changes
-    that affected the logic in this reset code.
-  - I was informed that defining CCU nodes without any clocks led to
-    warnings about "clocks" being a required property when running
-    "make dtbs_check".  For that reason, I made clock properties
-    optional for reset-only CCU nodes.
-  - This code is now based on v6.15-rc1, which includes a few commits
-    that were listed as dependencies previously.
+Signed-off-by: Alex Elder <elder@riscstar.com>
+---
+v3: - Made clock properties optional for reset-only CCUs
+    - Removed Rob Herring's reviewed-by tag (because of this change)
 
-Here is version 2 of this series.
-  https://lore.kernel.org/lkml/20250328210233.1077035-1-elder@riscstar.com/
+ .../soc/spacemit/spacemit,k1-syscon.yaml      |  29 +++-
+ .../dt-bindings/clock/spacemit,k1-syscon.h    | 128 ++++++++++++++++++
+ 2 files changed, 150 insertions(+), 7 deletions(-)
 
-Between version 1 and version 2:
-  - Added Rob's Reviewed-by tag on the first patch
-  - Renamed the of_match_data data type (and one or two other symbols) to
-    use "spacemit" rather than "k1".
-  - Replaced the abbreviated "rst" or "RST" in names of newly-defined
-    sympols with "reset" or "RESET" respectively.
-  - Eliminated rcdev_to_controller(), which was only used once.
-  - Changed a function that unsafely did a read/modify/write of a register
-    to use regmap_update_bits() instead as suggested by Haylen.
-  - Eliminated a null check for a pointer known to be non-null.
-  - Reordered the assignment of reset controller device fields.
-  - Added a "sentinel" comment as requested by Yixun.
-  - Updated to be based on Linux v6.14 final.
-
-Here is the first version of this series.
-  https://lore.kernel.org/lkml/20250321151831.623575-1-elder@riscstar.com/
-
-					-Alex
-
-Alex Elder (7):
-  dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
-  clk: spacemit: rename spacemit_ccu_data fields
-  clk: spacemit: add reset controller support
-  clk: spacemit: define existing syscon resets
-  clk: spacemit: make clocks optional
-  clk: spacemit: define new syscons with only resets
-  riscv: dts: spacemit: add reset support for the K1 SoC
-
- .../soc/spacemit/spacemit,k1-syscon.yaml      |  29 +-
- arch/riscv/boot/dts/spacemit/k1.dtsi          |  18 +
- drivers/clk/spacemit/ccu-k1.c                 | 340 ++++++++++++++++--
- .../dt-bindings/clock/spacemit,k1-syscon.h    | 128 +++++++
- 4 files changed, 488 insertions(+), 27 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+index 30aaf49da03d3..133a391ee68cd 100644
+--- a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
++++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+@@ -19,6 +19,9 @@ properties:
+       - spacemit,k1-syscon-apbc
+       - spacemit,k1-syscon-apmu
+       - spacemit,k1-syscon-mpmu
++      - spacemit,k1-syscon-rcpu
++      - spacemit,k1-syscon-rcpu2
++      - spacemit,k1-syscon-apbc2
+ 
+   reg:
+     maxItems: 1
+@@ -47,9 +50,6 @@ properties:
+ required:
+   - compatible
+   - reg
+-  - clocks
+-  - clock-names
+-  - "#clock-cells"
+   - "#reset-cells"
+ 
+ allOf:
+@@ -57,13 +57,28 @@ allOf:
+       properties:
+         compatible:
+           contains:
+-            const: spacemit,k1-syscon-apbc
++            enum:
++              - spacemit,k1-syscon-apmu
++              - spacemit,k1-syscon-mpmu
+     then:
+-      properties:
+-        "#power-domain-cells": false
+-    else:
+       required:
+         - "#power-domain-cells"
++    else:
++      properties:
++        "#power-domain-cells": false
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - spacemit,k1-syscon-apbc
++              - spacemit,k1-syscon-apmu
++              - spacemit,k1-syscon-mpmu
++    then:
++      required:
++        - clocks
++        - clock-names
++        - "#clock-cells"
+ 
+ additionalProperties: false
+ 
+diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
+index efe29c976a01b..8733f59422fb6 100644
+--- a/include/dt-bindings/clock/spacemit,k1-syscon.h
++++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
+@@ -78,6 +78,9 @@
+ #define CLK_APB			31
+ #define CLK_WDT_BUS		32
+ 
++/* MPMU resets */
++#define RESET_WDT		0
++
+ /* APBC clocks */
+ #define CLK_UART0		0
+ #define CLK_UART2		1
+@@ -180,6 +183,59 @@
+ #define CLK_TSEN_BUS		98
+ #define CLK_IPC_AP2AUD_BUS	99
+ 
++/* APBC resets */
++#define RESET_UART0		0
++#define RESET_UART2		1
++#define RESET_UART3		2
++#define RESET_UART4		3
++#define RESET_UART5		4
++#define RESET_UART6		5
++#define RESET_UART7		6
++#define RESET_UART8		7
++#define RESET_UART9		8
++#define RESET_GPIO		9
++#define RESET_PWM0		10
++#define RESET_PWM1		11
++#define RESET_PWM2		12
++#define RESET_PWM3		13
++#define RESET_PWM4		14
++#define RESET_PWM5		15
++#define RESET_PWM6		16
++#define RESET_PWM7		17
++#define RESET_PWM8		18
++#define RESET_PWM9		19
++#define RESET_PWM10		20
++#define RESET_PWM11		21
++#define RESET_PWM12		22
++#define RESET_PWM13		23
++#define RESET_PWM14		24
++#define RESET_PWM15		25
++#define RESET_PWM16		26
++#define RESET_PWM17		27
++#define RESET_PWM18		28
++#define RESET_PWM19		29
++#define RESET_SSP3		30
++#define RESET_RTC		31
++#define RESET_TWSI0		32
++#define RESET_TWSI1		33
++#define RESET_TWSI2		34
++#define RESET_TWSI4		35
++#define RESET_TWSI5		36
++#define RESET_TWSI6		37
++#define RESET_TWSI7		38
++#define RESET_TWSI8		39
++#define RESET_TIMERS1		40
++#define RESET_TIMERS2		41
++#define RESET_AIB		42
++#define RESET_ONEWIRE		43
++#define RESET_SSPA0		44
++#define RESET_SSPA1		45
++#define RESET_DRO		46
++#define RESET_IR		47
++#define RESET_TSEN		48
++#define RESET_IPC_AP2AUD	49
++#define RESET_CAN0		50
++
+ /* APMU clocks */
+ #define CLK_CCI550		0
+ #define CLK_CPU_C0_HI		1
+@@ -244,4 +300,76 @@
+ #define CLK_V2D			60
+ #define CLK_EMMC_BUS		61
+ 
++/* APMU resets */
++#define RESET_CCIC_4X		0
++#define RESET_CCIC1_PHY		1
++#define RESET_SDH_AXI		2
++#define RESET_SDH0		3
++#define RESET_SDH1		4
++#define RESET_SDH2		5
++#define RESET_USBP1_AXI		6
++#define RESET_USB_AXI		7
++#define RESET_USB3_0		8
++#define RESET_QSPI		9
++#define RESET_QSPI_BUS		10
++#define RESET_DMA		11
++#define RESET_AES		12
++#define RESET_VPU		13
++#define RESET_GPU		14
++#define RESET_EMMC		15
++#define RESET_EMMC_X		16
++#define RESET_AUDIO		17
++#define RESET_HDMI		18
++#define RESET_PCIE0		19
++#define RESET_PCIE1		20
++#define RESET_PCIE2		21
++#define RESET_EMAC0		22
++#define RESET_EMAC1		23
++#define RESET_JPG		24
++#define RESET_CCIC2PHY		25
++#define RESET_CCIC3PHY		26
++#define RESET_CSI		27
++#define RESET_ISP_CPP		28
++#define RESET_ISP_BUS		29
++#define RESET_ISP		30
++#define RESET_ISP_CI		31
++#define RESET_DPU_MCLK		32
++#define RESET_DPU_ESC		33
++#define RESET_DPU_HCLK		34
++#define RESET_DPU_SPIBUS	35
++#define RESET_DPU_SPI_HBUS	36
++#define RESET_V2D		37
++#define RESET_MIPI		38
++#define RESET_MC		39
++
++/*	RCPU resets	*/
++#define RESET_RCPU_SSP0		0
++#define RESET_RCPU_I2C0		1
++#define RESET_RCPU_UART1		2
++#define RESET_RCPU_IR		3
++#define RESET_RCPU_CAN		4
++#define RESET_RCPU_UART0		5
++#define RESET_RCPU_HDMI_AUDIO	6
++
++/*	RCPU2 resets	*/
++#define RESET_RCPU2_PWM0		0
++#define RESET_RCPU2_PWM1		1
++#define RESET_RCPU2_PWM2		2
++#define RESET_RCPU2_PWM3		3
++#define RESET_RCPU2_PWM4		4
++#define RESET_RCPU2_PWM5		5
++#define RESET_RCPU2_PWM6		6
++#define RESET_RCPU2_PWM7		7
++#define RESET_RCPU2_PWM8		8
++#define RESET_RCPU2_PWM9		9
++
++/*	APBC2 resets	*/
++#define RESET_APBC2_UART1	0
++#define RESET_APBC2_SSP2	1
++#define RESET_APBC2_TWSI3	2
++#define RESET_APBC2_RTC		3
++#define RESET_APBC2_TIMERS0	4
++#define RESET_APBC2_KPC		5
++#define RESET_APBC2_GPIO	6
++
+ #endif /* _DT_BINDINGS_SPACEMIT_CCU_H_ */
 -- 
 2.45.2
 
