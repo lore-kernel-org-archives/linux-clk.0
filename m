@@ -1,127 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20C41DF754;
-	Wed,  9 Apr 2025 06:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6085E25A2DC;
+	Wed,  9 Apr 2025 07:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744181080; cv=none; b=E9r/W+R3qlE+jQehYpVk9DjqAWuIqDLd+MGk07rnellV+EJ/Kdn59rR+ZKNQsYfYU0RIWfJL0G+Hd8b2Opfc0vLGqSMdwILjMjya6PQpfs//Vlmkrdn0OWoV+AVMaYt5kLfcRVxt28TFMXvmfAmenj1xsAAOTYAdltj/keY3/4E=
+	t=1744184674; cv=none; b=MeOlfvnEvZ9oXQo7rYg3ntuZLppV1rrWdD1JlN2giiIsict2R2HN5wT9RzsFyKjFbQpJDemKr5n4h+1hoCTy6CzQlf0Wq1DlRmuKT2pPOlPQdpSti0NrhDW0BcnDR/+QQCtxDmBojKQ/B1DayJq11GElnMxNUIHsDUehH6G+QxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744181080; c=relaxed/simple;
-	bh=lx79xXxH6GOrl4WzKVzUy96oNnBRN75bro9H4eKfU24=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ISyuV1+GystQnc0VIztTRkSPwQOJjzYZ+D+0PtoRJfhIoVdVsMlQPnSTJecfPVrjaaWfKsMglY8VaUe7D1MHFDcgfF1Wh0owPJCJaUyfdvWufUWg0T14nq18YQ2qVhDNH2DiDurnHbxWKZhx6UvnDOUeixWvqKxhB2ytBbECKwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BIrP9QB2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744184674; c=relaxed/simple;
+	bh=6/lISzTq668qQ7uGuyXccltwj34lZyxstw5bOAhTdQo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
+	 References:In-Reply-To; b=jomILgyHf1fGLTuEkKoMVmXGMPw7nXsioO8YOjpoeArrtyrOJL7O2dBJo9fqNGuAq805+GO8+JhCc5uiIF7Yr2sayuxxeE3kqDi0NCtUtAbbzm2qtSgwXXeAdl+UNoMUTwUJ7sCXbuMkUr0zo6IqLNljo25TT8f1s8Ke4iTE5FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KBN4MtLm; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BIrP9QB2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52CBC4CEE3;
-	Wed,  9 Apr 2025 06:44:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744181080;
-	bh=lx79xXxH6GOrl4WzKVzUy96oNnBRN75bro9H4eKfU24=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BIrP9QB2EHhgMf/6UGeMoMlrLGzM4f39k39GxdrLNWcJbFQ+hTFt1q1FQNyWjQs6V
-	 1nn6inn293FLaj+W0GuoFbst48hsqTNi2gA+DArFuJqhaiFczcy3RIbXz3JaP/kwc+
-	 j4aJ4crKwNk4lA2V+OSKHVRT/unFFfYoobf8jUUak6xxNgopoxt41jniFjN5Hilw7G
-	 v/q8JYht4njbputwYek2S4Rd/tTFtWg7TbdBBYJgThlsJ2rrWfd3y60qEPpbLnqmTT
-	 4dcCgL4Yu8Pi6Yxp62gywCtB2NgbBc6N4oODNoNftOiToJO/6TUqv5LPaXCIginm7L
-	 yM8lTZbfzZioA==
-Message-ID: <40b87fa6-52b2-435c-9ddc-69585d8ae89d@kernel.org>
-Date: Wed, 9 Apr 2025 08:44:31 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KBN4MtLm"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D4BAF44385;
+	Wed,  9 Apr 2025 07:44:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744184669;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=my7uBvqECB/sOAyowfZ/THu4bYXk54wQNm2Isuf7bmI=;
+	b=KBN4MtLmPlhJT8jyUC4btDJo3IEAdZK//JQBMi7WbMu/B+rCd/e6Jjtu4cHLo5Kvj0EdSK
+	cugph51E69gQ0bAP5GT4BfMviEgNRyDv+6Q2i207sMKEQ+GV5sawf6B9HJSK+Qsyn4X/PN
+	4yPiF1OBscq24kUYPPVXW4w9d9VlbVXMqxUF0yNfYdo4rFZEZPVtEzqgkoHwrl0JJm7BzJ
+	TSpA6RdHpamm5Yoj9OBR39bhxgTZKO8wDuumRem3GtazowyfpJjclvaPQM/0K9m+EiGHjT
+	RDa4wOKHabrkyze9/YPiVgxCjo8zBIFHrKoSUYE+jAcFRe4jajvaKNcasMBX5g==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/15] dt-bindings: display: renesas,rzg2l-du: Add
- support for RZ/V2H(P) SoC
-To: Prabhakar <prabhakar.csengg@gmail.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250408200916.93793-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250408200916.93793-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Wed, 09 Apr 2025 09:44:25 +0200
+Message-Id: <D91XV1I4CY37.20T12FMZ5QLQ5@bootlin.com>
+Cc: "Herve Codina" <herve.codina@bootlin.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Danilo Krummrich" <dakr@kernel.org>, "Shawn Guo" <shawnguo@kernel.org>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
+ <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ "Andi Shyti" <andi.shyti@kernel.org>, "Wolfram Sang"
+ <wsa+renesas@sang-engineering.com>, "Peter Rosin" <peda@axentia.se>, "Derek
+ Kiernan" <derek.kiernan@amd.com>, "Dragan Cvetic" <dragan.cvetic@amd.com>,
+ "Arnd Bergmann" <arnd@arndb.de>, "Rob Herring" <robh@kernel.org>, "Saravana
+ Kannan" <saravanak@google.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Mark Brown" <broonie@kernel.org>, "Len Brown" <lenb@kernel.org>, "Andy
+ Shevchenko" <andriy.shevchenko@linux.intel.com>, "Daniel Scally"
+ <djrscally@gmail.com>, "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
+ "Sakari Ailus" <sakari.ailus@linux.intel.com>, "Wolfram Sang"
+ <wsa@kernel.org>, "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+ <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+ <linux-acpi@vger.kernel.org>, "Allan Nielsen"
+ <allan.nielsen@microchip.com>, "Horatiu Vultur"
+ <horatiu.vultur@microchip.com>, "Steen Hegelund"
+ <steen.hegelund@microchip.com>, "Luca Ceresoli" <luca.ceresoli@bootlin.com>
+From: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
+To: "Andrew Lunn" <andrew@lunn.ch>
+Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
+ support SFPs
+X-Mailer: aerc
+References: <20250407145546.270683-1-herve.codina@bootlin.com>
+ <20250407145546.270683-16-herve.codina@bootlin.com>
+ <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
+ <20250408162603.02d6c3a1@bootlin.com>
+ <D91CSNC07NYM.3KC467K0OZ4GG@bootlin.com>
+ <c14dd5c6-2dae-4398-89a9-342e7a25bb30@lunn.ch>
+In-Reply-To: <c14dd5c6-2dae-4398-89a9-342e7a25bb30@lunn.ch>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdehgeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefhvffuofhfjgesthhqredtredtjeenucfhrhhomhepfdfvhhhomhgrshcurfgvthgriiiiohhnihdfuceothhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeijeevledvgedtgfekgffffeefgfegieegffeivdekheejgfffueduvdehgeegveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedupdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtt
+ hhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
+X-GND-Sasl: thomas.petazzoni@bootlin.com
 
-On 08/04/2025 22:09, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> The DU block on the RZ/V2H(P) SoC is identical to the one found on the
-> RZ/G2L SoC. However, it only supports the DSI interface, whereas the
-> RZ/G2L supports both DSI and DPI interfaces.
-> 
-> Due to this difference, a SoC-specific compatible string
-> 'renesas,r9a09g057-du' is added for the RZ/V2H(P) SoC.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue Apr 8, 2025 at 5:38 PM CEST, Andrew Lunn wrote:
 
+> "HW blocks inside an SoC." That would be the SoC .dtsi file. Anything
+> outside of the SoC is in the .dts file. OEM vendors take the SoC,
+> build a board around it, and name there .dts file after the board,
+> describing how the board components are connected to the SoC.
+>
+> So..
+>
+> So by PCI endpoint, you mean the PCIe chip? So it sounds like there
+> should be a .dtsi file describing the chip.
+>
+> Everything outside of the chip, like the SFP cages, are up to the
+> vendor building the board. I would say that should be described in a
+> .dtso file, which describes how the board components are connected to
+> the PCIe chip? And that .dtso file should be named after the board,
+> since there are going to many of them, from different OEM vendors.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Indeed, that makes sense. So if I get correctly your suggestion,
+instead of having a .dtso that describes everything, it should be
+split between:
 
-Best regards,
-Krzysztof
+ - A .dtsi that describes what's inside the LAN996x when used in PCI
+   endpoint mode
+
+ - A .dtso that includes the above .dtsi, and that describes what on
+   the PCI board around the LAN966x.
+
+Correct?
+
+Thomas
+--=20
+Thomas Petazzoni, co-owner and CEO, Bootlin
+Embedded Linux and Kernel engineering and training
+https://bootlin.com
+
