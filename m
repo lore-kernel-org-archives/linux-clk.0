@@ -1,78 +1,77 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A5818B46E
-	for <linux-clk@vger.kernel.org>; Wed,  9 Apr 2025 08:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4695925C6E3
+	for <linux-clk@vger.kernel.org>; Wed,  9 Apr 2025 08:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744188032; cv=none; b=fcGOkXctHOMcA/0kFOstPMrzSF+phFGvhoyDFGjEPTh2pgGFNifvBg2rFuPDk1sAzraaxpZuuiAYwVPWstFVfjdei65iEwRWFySi/kfDuAF6easPk/3ApGTYuo5RqJqu4X7ssCb6w0MXXdA8qlqzPJPS3D4jxRPaSUrBwwvpcbw=
+	t=1744188226; cv=none; b=ULYbuA/hsB4iJAT/LurZ6Y+7cVzZO/rmCKLvDF2ufnFotMN3PdcEAN30ZhKcdxR8uFwmvwELp+IQiSoCJdjwaMXKh6qz+DNiRbF61xdp3Kh0KRiDhRqeAnVsgd4iTtieeM6Ty5vntPAjhNGHHhTdjdQNXQ97Ckbh633dc8wBCdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744188032; c=relaxed/simple;
-	bh=q54ISzeguJ9lPIJtvtdQyT1rx08b8j76Hf0WHg/XzKM=;
+	s=arc-20240116; t=1744188226; c=relaxed/simple;
+	bh=NQnrWxqFEYqyf2ImZyom1w6HZbF5aoK8E0yfrdJWcic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s5G5Fgpxw/kr16mbkqJxCvDrlmM2QLtLVpFT6uaoqRgk1pISqEk0Az+cQ+hVbbczKLRM5Nt8mQJUsMoFV+fJrxuzLGU8cs0cq3QzMxdu6prK9+o8x3YgLogh0xvmvXihVa2aTFphkoT+XLBRBzQo5SaJcORaGSw6KYjdbG69fr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O3lOgIBA; arc=none smtp.client-ip=209.85.215.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kv9EP7Hvs82+Nf3KMGdujYtc2WOypP1uMYiJ98vah+4wz0yRWr1qwgcZZ6bvKqGond5z7PJvUDAxzpVe/rP1lMYJuK4kVaDfNaFMPNk1xQQvjIW2UkJlg+mm3O8C04CpTPLEb8WqrJbff4ZhhMUUkOyMa772JybOTJuVFqTpFK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bDhHhRjU; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O3lOgIBA"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-af908bb32fdso412015a12.1
-        for <linux-clk@vger.kernel.org>; Wed, 09 Apr 2025 01:40:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bDhHhRjU"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-227c7e57da2so56022695ad.0
+        for <linux-clk@vger.kernel.org>; Wed, 09 Apr 2025 01:43:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744188030; x=1744792830; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744188222; x=1744793022; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QmKa4CWZYpgoBno9ey2ENQmH1yn8Vca6Nt7aqMHaMwA=;
-        b=O3lOgIBAWJ7/0zAqurjvRFegHs6R+gaxfxoL29AzBr9jn1WLBgWJuwvA+FwOs7Ipm6
-         HRA4ZR3DlI7JCIFjDLbh7rG/qP2wxU0e4wcc1sZp9/aXSd82ZtKP6G19ZcCKmx/0QfZi
-         etusL+ld3JazZNpKve/w6c5W1TneOnwKxAhD6Rkr9AZfZ5DjgUFQEqi1lrgZtzvHfdol
-         GuWcfu+ke5ysllj6iGVRUOtZCGWlyLJV0Yiav4MLPkXnnnZOOwUo7yth0I657sZEvFeF
-         p+SYNaUIJ2d5QlZvWtLGSCiy+HARi/Fro/OjsOaUWi5oPlVDpzORdF1nI7mwTsQYgSRa
-         TqvA==
+        bh=APlPY4uZJpZya0nV6nrk4xTTTYVm9sn3CRO5bhFqGdw=;
+        b=bDhHhRjUxxNhsKR7PLZUVEpSG7df7lFXo8C2oja6Yljc/15LvR+BgrNMVTZabyKE4v
+         J5Tvx64P0Y1fbAHksGV91mp1E68/w7ajH1pizgxyJkaySE2Br2CoNQjPpHNPCqtzvZnb
+         Vq/PWX8oH0oJgmrEpyZe8JUjIcydgrMzu+ha+A/GuYm5XefW2oCVZ0uuRAG/aJ6UVVP7
+         xM5zDWiIMpIv4e93B2wY/RcCIg8HM82uWrWy3ouIqv+OzyEKVNXm5vFU2hDY/lKXtZ0f
+         EEpP8U60H+9PwG/aQUfFLLRLCTpJYVaSNx6bA1ip7Ogd2EFn3hvm0kteEir9VZfHwxWr
+         Ok1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744188030; x=1744792830;
+        d=1e100.net; s=20230601; t=1744188222; x=1744793022;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QmKa4CWZYpgoBno9ey2ENQmH1yn8Vca6Nt7aqMHaMwA=;
-        b=nsKBHas6hiPHindvlze/4kCkYwMcekC0Ox/JCOo72igOYFzL6DTMT8h7jkjK7b5WVV
-         +otAcf4vsgMODB9N8+PERoVTGtML/frDeXCzL/mYfWDWulRq70zxyoywWbVa/cR5OLtn
-         ClW4CPNDtAuwzshSvKBPJlZxxA+2lsCnyCKApafi98GwLqjV3far7SNZfyT++vONCFUV
-         3RMA9dLCpDX5Wb5lI2U/cdUuIQWytJx31Lb8q6dmrOHVNBrrQO3VXuNTyrKl+67Gjvak
-         hHTtHpE2+3FcLZwwj1tIoD1wh2GbjvU5vEA0VJw+HmaiCa+UeP72KIIZPxMI+uFBShK7
-         X0mw==
-X-Forwarded-Encrypted: i=1; AJvYcCXyPOzKm8kxc300ZRhLeJH76Y9d5MvXp0sNfKkJx01hKtEPlNPXW8Gt0RO7o+rrEalpmhz+HLJhJYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4TDvIXsljnr3QLnOgSLJO/ytfr22/R3rjaDmOy/+U9Vr1pGvz
-	TiXT3F1to8CZ3zMepFr2q2NCe2v9dZj4UWLbm0MhTizu4scuCpX3BS97W6R87ko=
-X-Gm-Gg: ASbGnct77vfGgW4tk5MCVillAr+TXWjTceAq7vEzYH7G19vIP5ikzqwxmfvPzvETr7u
-	JVgkBjHJPGCMf7XTQI5IhhFeYqhZSCNSdUHEbxz7EjQA8/pjtQX4sv9h7UFBldg7XStT2CYnRT6
-	91MmcTbdICZy4vpgR6tpi9ANMMx1DDTf1occChCxurTeT2zxRK9OGRVnpkiv7eDX7FbayIB2yiJ
-	7FD6fABLa5jil4UJORsgZ4XxwJL/FEQhfCjtqtHLXZOGJEhso9fPotGtoW/QU2Z3TAP9GP7zNZ+
-	OXXW/Kxy3KduVZWtVFZNY7QdXccsfiWsP8G5JGDLAvaFdlhqLnE6N5demwfluLR9a3rtnVw2Cxo
-	3
-X-Google-Smtp-Source: AGHT+IGsjauNZ+5/GC/nZjSunHRmkAUzg5IoFGDp2f/2A4+hPimavOQXB5e0AQHxXFkAnu0UzdWshg==
-X-Received: by 2002:a05:6a21:2d0a:b0:1f2:f1a8:70ca with SMTP id adf61e73a8af0-20143921c85mr8989716637.5.1744188030229;
-        Wed, 09 Apr 2025 01:40:30 -0700 (PDT)
+        bh=APlPY4uZJpZya0nV6nrk4xTTTYVm9sn3CRO5bhFqGdw=;
+        b=EEN243CXHwoa4NBRG4VdzxIQJ3CUA0+7y7DAM8NVUq9r+cMR4CAOS7EBlIxbo3vt3m
+         HCBxgxZ2hES68DGJuHdJQcHs4KOiHNLJ+PbyP+7KSfwcMQioBw7mZW1m6iN2VX/CiDuM
+         Cx3Y7G30/gP/dbxYbK/AqkZ6Rv/B/YKHq2uVgvCbW4xOtImoRNBeb5VJ99HIykXLqe5g
+         5a4V5P1JOnfTjV3AWQmUf653Z+wyAdAWKkJW1V7BXuwEOYv7cvFQNk2rDgIQA7gu0qHQ
+         lMncOCY3aoIqvipTey7Zwm3cmFDUPlFzhaKC4Dn0ONuxV17r1dHydqK+CO3CMfdEfgq+
+         Kq9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUgmfElUme7t0G6SxgUqF7Nu6sbQ5Wvz/2VOoztPNqfzlu7u/kQPW8FY18UtjD900JgppKtNWUB8Xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIzvyrhfSM+8c2QlOY9cREuiBRrlPJU5mhwb82c7EOoGaKeOk4
+	NyH+0sQVw4NlBpazbdAeoxySh3wa8/IAt9156VRqEc8kKAU4RPTZiOsS+TmQPqk=
+X-Gm-Gg: ASbGnctkg7U/BvJthZWs472uK0Zz++p3Zj35PFwZ/YgypWadho/6QUadVDIsKuw2OT7
+	oCn0DrTNPR3lCVGZVZ8fdhoYevUXNH9J+annyL0vHrqOTpP9QHSPcAMRpmEqpRvaE4VA+iZAFkb
+	qKzLN2m7h4VypP/9hUv8xhUy3LQ9DWPhnaBu6l+76j6oJ+E2AVXXj6XOmXsXgG/nNmhriE71w2X
+	97IgU8QNbIAZ8yT9++R1P9cKNGlFGiGYuVqnTSySLBbfxCKDIFITWEOjhlkARlV+/5Z8t6QWgGw
+	1KU7O6Uq1jk9+SSsARbc81+qrjDPzawafbgKe2IB3ngJdk/t97LlwzU/oqxAJV4XKN9pEXY89C9
+	Q
+X-Google-Smtp-Source: AGHT+IHi1LGSSSpMeFzIdX5goYy1eceYxuwOGowfNQqBnGHVqOjiuDdrIg19B2sb+9bme7Rpg5PDWA==
+X-Received: by 2002:a17:902:8548:b0:220:fe51:1aab with SMTP id d9443c01a7336-22ac3fefd47mr23583495ad.38.1744188222535;
+        Wed, 09 Apr 2025 01:43:42 -0700 (PDT)
 Received: from dev-linux (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a0dee30asm691019a12.32.2025.04.09.01.40.28
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7cb548fsm6337125ad.188.2025.04.09.01.43.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 01:40:29 -0700 (PDT)
-Date: Wed, 9 Apr 2025 01:40:27 -0700
+        Wed, 09 Apr 2025 01:43:41 -0700 (PDT)
+Date: Wed, 9 Apr 2025 01:43:39 -0700
 From: Sukrut Bellary <sbellary@baylibre.com>
-To: Rob Herring <robh@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
 Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Andreas Kemnade <andreas@kemnade.info>, linux-clk@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH 4/4] dt-bindings: clock: ti: add ti,autoidle.yaml
  reference
-Message-ID: <Z/Yye/z+g5CZJRzg@dev-linux>
+Message-ID: <Z/YzO2MfhK3HeIXA@dev-linux>
 References: <20250404014500.2789830-1-sbellary@baylibre.com>
  <20250404014500.2789830-5-sbellary@baylibre.com>
- <20250404194206.GA171263-robh@kernel.org>
+ <20250405214904.0b07b26f@akair>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -81,22 +80,18 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250404194206.GA171263-robh@kernel.org>
+In-Reply-To: <20250405214904.0b07b26f@akair>
 
-On Fri, Apr 04, 2025 at 02:42:06PM -0500, Rob Herring wrote:
-> On Thu, Apr 03, 2025 at 06:45:00PM -0700, Sukrut Bellary wrote:
+On Sat, Apr 05, 2025 at 09:49:04PM +0200, Andreas Kemnade wrote:
+> Am Thu,  3 Apr 2025 18:45:00 -0700
+> schrieb Sukrut Bellary <sbellary@baylibre.com>:
+> 
 > > ti,divider-clock uses properties from ti,autoidle.
 > > 
 > > As we are converting autoidle binding to ti,autoidle.yaml,
 > > fix the reference here.
 > > 
 > > Add dual license.
-> 
-> Do you have rights to do so?
-
-I will keep it as is.
-May be Andreas can take care of this.
-
 > > 
 > > Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
 > > ---
@@ -146,24 +141,13 @@ May be Andreas can take care of this.
 > > -    maximum: 31
 > > -    default: 0
 > > -
-> > -  ti,invert-autoidle-bit:
-> > -    type: boolean
-> > -    description:
-> > -      autoidle is enabled by setting the bit to 0,
-> > -      see [1]
-> > -
-> >    ti,set-rate-parent:
-> >      type: boolean
-> >      description:
-> > @@ -156,7 +142,7 @@ required:
-> >    - clocks
-> >    - reg
-> >  
-> > -additionalProperties: false
-> > +unevaluatedProperties: false
-> >  
-> >  examples:
-> >    - |
-> > -- 
-> > 2.34.1
-> > 
+> now you make ti,autoidle-shift required. That makes so sense. A clock
+> does not necessarily support autoidle.
+
+Thanks for the review.
+No, we are removing the required from yaml bindings and keeping it as
+one of the properties. As all clock don't support autoidle, required is
+not applicable here.
+
+> Regards,
+> Andreas
