@@ -1,136 +1,78 @@
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BA525C70A;
-	Wed,  9 Apr 2025 08:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF001DE3AA;
+	Wed,  9 Apr 2025 09:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744188948; cv=none; b=czuvhH/VTS2cTU0Fmh44y7QpAOieuJlg26s0yR5Vr1Nqvles1tVXth8vMUDG9wr8sdOE0ZHXjS/AjowAKtvKHP9J1l0L7ho22hcGtRXkuy72zIeQ7MI1kq+3AJ80u5MUt7DdZFoi6IdJHodCbmTj+GjEtrmIZjuHLow+jz3D0Oc=
+	t=1744189815; cv=none; b=lgOpQHViVqDJvios5E7zhMBXF6PxOJj6/mWFTjAcutwwBH7ZPQ1KrAdWXyojLOCkRjPI7mltqddY1y0/XujWHj/XsfaXUVweZrKGQrLOprY2rd8pD5LHPZR25W9xH5uhAxL1gBC/FcpXS3O9mJsRZiTEsrzAB5BzDYKh5oUgHBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744188948; c=relaxed/simple;
-	bh=FkYGG/blNPkE+YJlD1UdzBjF3QbM1eptOxdUmwF+Lag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UFKP+YSs0dOSve6F0kyt80F2rK/WBosBpwY1o5rHow5JtC4kC51TXgBiKG6ZC87Dx5hI8qBXQgST0ZsJ8xMa/siH8R8+Hnj7El29y3iv3XcKK4uw3QMRNlUOPZTx7iR4fnt8S3yS+cSuioXsDksTh9f6P4UipNFBthhKwWNk5QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GBuVltAO; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1744189815; c=relaxed/simple;
+	bh=1BErre+1YrsgvpSOm70ydSSZiRCm4uZbh9W8B+UV/tw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ajNRgu45UF6mk0HDvP1F9FS71g93w+duzPiZyGAaLz696RX2eZQq3Go5biYhZp7lNUR7amnJ01o6myoaOdJt5scA6rwQysmCRzmt5JT+Q1HkjGcZ/koFfIwO4uFh5RpmhzO4AeKtG4oX0m5mngtjGkooX6rjNSay72rBuQQTqRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=o/wJaXjG; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GBuVltAO"
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5240a432462so483359e0c.1;
-        Wed, 09 Apr 2025 01:55:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744188946; x=1744793746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xKkhSratOE8FhNwto8msCYe3EaTscTslbqKejN9e03g=;
-        b=GBuVltAOASHPZMHs0R//UippvcXFM+APF0GXC2G6z/71eAQlmcTeGBFqALFsXwsqEk
-         FVxhKuEVaHHuGGlArpEbE1g94ZZ/LoSOWvO55NSHIlhx8S6iLEgQ6XtpXc2Xkm96Cc3k
-         sAZmRPLixk6ie6T06fmPGyr6xkAaarMv1AXcktq2VgV+lrS8aak6ihjRHY2PDGENsNEY
-         pnB4Q/lW61O/V37zxtgl11v7kt/l/Wh629k2/c35shB116T4XpnjzRI+AgZHjNQyHJs8
-         k+2wAABErJ+SNfYGWvW0ELdPf1r6B1ye1IPCwo3Py0vdqqBqBrDAXSiofKJdosmmTo4l
-         BWHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744188946; x=1744793746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xKkhSratOE8FhNwto8msCYe3EaTscTslbqKejN9e03g=;
-        b=rHSzgBRkHlV88sNiHPnMSsAfaAcRWOpNLUhocSdgp2AEjqZFVd3MMUiz1JUaalAxv5
-         aldFUpXGXGbknr8dP5lZ7m+yFWZilq4ydtE5U4HNssPgK954w0Cnya1JbQNRHkgnm8jW
-         O3ey483dYj6QFZJSKJpnJD3Qnn5fii4uHn1xdlboFhXtVS49VvxE2oD0O0yBYYTPdMDx
-         pw+L6lWM20xeQwsBuAYrmhdRe5YVBurdB+KhZdbEsVUNCpwYKbsMfu/LckOU9UhxURO4
-         l0MSEVeL/sIzIpPhcPxFkuqQah+tj64+xzuoeZntnXDzIggrHQPamZFaHfF7iZWpk+Ws
-         Jvcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGwVrh0c3PJiT5VesenV3dUCJuCSiP7A6QiEHTdeSaW54rNvEQ+gmzWSMNY8ndT5zkfGXNV7kh5up67cmW@vger.kernel.org, AJvYcCVTbtkd+KYV8hRYGnEn0XHYuXc826hqllwLaGdkYw6JPeF2K6WF7TSlA8ZB80zNezQ0FOFkvHPnOuK3@vger.kernel.org, AJvYcCVcmtoGYTeRVPMtfXm7YrV9vnbtaOs7SJeUZf8FTU6FZGfAKuu1Jf/IpaqFqAupcjTa3E9dFZIFlkt1BWeh4F3WxPQ=@vger.kernel.org, AJvYcCWaCQe0Bk6LlQQhEunenz6K1+qjEP94dLeK2ZPoxED8KWVWkW6JRoTQIQ8vxb86tpEczaUhMqCJqKZl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQjTGFdTpUlr72ztZSxf0OwakpQIp8LOpnp8MOzkbBD+pxmB3f
-	orhbl6K/rKBaYdWWGhMQap0EcYYgcyteCuIF19HyfGpkiS4FP3IA47EnLqaYnO++FgvdpYotD6e
-	koBwDxrp1t3s4zWdzTNgRFOskOCw=
-X-Gm-Gg: ASbGncsoeyrxDdRg7sLMeStvtir25exOQfhJ0Vhg7F05F8DMVNzSvFNvRSSkUZ0Re2Q
-	cGLFlNMgM4UdpMABtiil4oBYQR/Vts2IYd3H7MjK48am+AuJadnUDiXo79s80+rAuFzfcy5zZuh
-	+1dj5yBypJIpbVYK9yFDD5GZOo++EK96EA/0TteHy4aOk1TXzDbzaoDCA=
-X-Google-Smtp-Source: AGHT+IFkvSJE5U/9fmVpXSs+iaoY5nuY5+IWwlLNMnF2gNZkr5kIoflvPEnL4H4NBK6FHRKQDcdNNrDvBUNiQdI3bio=
-X-Received: by 2002:a05:6122:d89:b0:50d:39aa:7881 with SMTP id
- 71dfb90a1353d-527a8beff21mr1371744e0c.0.1744188946056; Wed, 09 Apr 2025
- 01:55:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="o/wJaXjG"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=Chcrrmltg8lJD6q+d1jGSA/zsPM8icsB5uVp0MwIi8s=; b=o/wJaXjG5d8IUQuvtcEqHA53sU
+	PKJeR02EsUor5c3I/mm3nC2+R0sKaKucxEKUONrzxfwHN31qGEcQEH8rvVI/n09mNsXHhffqSVxdO
+	/Kbi8fPV40I9FwNUKtmAh3A0gQKSIYSrVrqQJP/LSvKgsI8Qn5z6MQ1kw5uIzOy0B8QdCCUXEmr0i
+	h943DBM+NPNI9V7VUnU9TOg6sGlSYvNUXtraYN0y+DTvwZilhby/mRJy9GDtnIqRkueIETIk8AlYx
+	ZYoY/HGkilj/u0WKYFqLYI1cAZOWrZACbPqpkQ+kz+3A0AtCSSUBItJUt9kn/H3vHvwwdYjG5BZdc
+	Q/VMkWgg==;
+Date: Wed, 9 Apr 2025 11:10:02 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Sukrut Bellary <sbellary@baylibre.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Tero Kristo
+ <kristo@kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] dt-bindings: clock: ti: Convert to yaml
+Message-ID: <20250409111002.5b88a127@akair>
+In-Reply-To: <20250404014500.2789830-3-sbellary@baylibre.com>
+References: <20250404014500.2789830-1-sbellary@baylibre.com>
+	<20250404014500.2789830-3-sbellary@baylibre.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250408200916.93793-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVAxaLZJ4y0AWKrLobp55n5NPqQgEtHK_d1DDUM1LAkDw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVAxaLZJ4y0AWKrLobp55n5NPqQgEtHK_d1DDUM1LAkDw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 9 Apr 2025 09:55:20 +0100
-X-Gm-Features: ATxdqUF6pkX8g8cSssT4x6HUE0uVbLtqiF0Qca_2kkdcVwxXzZnsXvGx2QnlRqk
-Message-ID: <CA+V-a8uc22sYFwfB7CJK9gSmT7ibv5MxTPyTBJtJMijKcgbW5g@mail.gmail.com>
-Subject: Re: [PATCH v2 10/15] drm: renesas: rz-du: mipi_dsi: Use mHz for D-PHY
- frequency calculations
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Geert,
+Am Thu,  3 Apr 2025 18:44:58 -0700
+schrieb Sukrut Bellary <sbellary@baylibre.com>:
 
-Thank you for the review.
+> This binding doesn't define a new clock binding type,
+> it is used to group the existing clock nodes under the hardware hierarchy.
+> 
+> As this is not a provider clock, remove #clock-cells and
+> clock-output-names properties.
+> Though few clockdomain nodes in the dts use these properties,
+> we are not fixing dts here.
+> Clean up the example to meet the current standards.
+> 
+> Add the creator of the original binding as a maintainer.
+> 
+> Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
+> ---
+>  .../bindings/clock/ti/clockdomain.txt         | 25 ------------
+>  .../bindings/clock/ti/ti,clockdomain.yaml     | 38 +++++++++++++++++++
 
-On Wed, Apr 9, 2025 at 9:16=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Tue, 8 Apr 2025 at 22:09, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Pass the HSFREQ in milli-Hz to the `dphy_init()` callback to improve
-> > precision, especially for the RZ/V2H(P) SoC, where PLL dividers require
-> > high accuracy.
-> >
-> > These changes prepare the driver for upcoming RZ/V2H(P) SoC support.
-> >
-> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> > @@ -33,7 +33,7 @@
-> >  struct rzg2l_mipi_dsi;
-> >
-> >  struct rzg2l_mipi_dsi_hw_info {
-> > -       int (*dphy_init)(struct rzg2l_mipi_dsi *dsi, unsigned long hsfr=
-eq);
-> > +       int (*dphy_init)(struct rzg2l_mipi_dsi *dsi, unsigned long long=
- hsfreq_mhz);
->
-> Due to the lack of capitalization of the "hz" part, it is not clear
-> that the "m" stands for "milli" instead of "mega".
-> Perhaps hsfreq_mHz or hsfreq_millihz?
->
-Agreed, I will use `hsfreq_millihz`. Shall I respin a new version as
-the initial patches do the same (i.e. use mhz).
+I am wondering whether this should just be part of a converted version
+of Documentation/devicetree/bindings/arm/omap/prcm.txt. I doubt there
+is any other usage for this compatible.
 
-Cheers,
-Prabhakar
+Regards,
+Andreas
+
