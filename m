@@ -1,120 +1,142 @@
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6085E25A2DC;
-	Wed,  9 Apr 2025 07:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97F582899
+	for <linux-clk@vger.kernel.org>; Wed,  9 Apr 2025 07:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744184674; cv=none; b=MeOlfvnEvZ9oXQo7rYg3ntuZLppV1rrWdD1JlN2giiIsict2R2HN5wT9RzsFyKjFbQpJDemKr5n4h+1hoCTy6CzQlf0Wq1DlRmuKT2pPOlPQdpSti0NrhDW0BcnDR/+QQCtxDmBojKQ/B1DayJq11GElnMxNUIHsDUehH6G+QxE=
+	t=1744184814; cv=none; b=ZanSehedpdjBcyrlRaHlKWtnEEYbWkBW2due7Ggq5TdHS+E3boky/lGrzML+hvgM4LhRhIEsB4MbkJDJ9dDoWcnCpGhfiKZwp5K9FfZp2srVy2R5Jwk3kFB3HM7A1l4vhw6WDZFR/YsWFk74K2tcDgaNHvMhkVo00g/O5m2rM1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744184674; c=relaxed/simple;
-	bh=6/lISzTq668qQ7uGuyXccltwj34lZyxstw5bOAhTdQo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:From:To:Subject:
-	 References:In-Reply-To; b=jomILgyHf1fGLTuEkKoMVmXGMPw7nXsioO8YOjpoeArrtyrOJL7O2dBJo9fqNGuAq805+GO8+JhCc5uiIF7Yr2sayuxxeE3kqDi0NCtUtAbbzm2qtSgwXXeAdl+UNoMUTwUJ7sCXbuMkUr0zo6IqLNljo25TT8f1s8Ke4iTE5FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KBN4MtLm; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1744184814; c=relaxed/simple;
+	bh=8pXvC8saaovmNYWD6LB2NpHiAdgmwvzHy3vNJ/rR0r0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iNxYlEumK7A3r4ZHW/dcX8shf+vcKCEs7Jv5uPaVujw7NkqeQq8xG7VY2F+paGF1BYcVCDfRtdT66uX/tciOxNI5al7C3NX7n/g7/sKjz0CgtCiXFo05lKfsZ/GOPKPwx/2XC/sXZ2saopuaeM0p9WtnpOkDL18OXtnHszieBkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=M6I3P3n6; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KBN4MtLm"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D4BAF44385;
-	Wed,  9 Apr 2025 07:44:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744184669;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=my7uBvqECB/sOAyowfZ/THu4bYXk54wQNm2Isuf7bmI=;
-	b=KBN4MtLmPlhJT8jyUC4btDJo3IEAdZK//JQBMi7WbMu/B+rCd/e6Jjtu4cHLo5Kvj0EdSK
-	cugph51E69gQ0bAP5GT4BfMviEgNRyDv+6Q2i207sMKEQ+GV5sawf6B9HJSK+Qsyn4X/PN
-	4yPiF1OBscq24kUYPPVXW4w9d9VlbVXMqxUF0yNfYdo4rFZEZPVtEzqgkoHwrl0JJm7BzJ
-	TSpA6RdHpamm5Yoj9OBR39bhxgTZKO8wDuumRem3GtazowyfpJjclvaPQM/0K9m+EiGHjT
-	RDa4wOKHabrkyze9/YPiVgxCjo8zBIFHrKoSUYE+jAcFRe4jajvaKNcasMBX5g==
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="M6I3P3n6"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-30185d00446so401172a91.0
+        for <linux-clk@vger.kernel.org>; Wed, 09 Apr 2025 00:46:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744184812; x=1744789612; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uPe5EFIk2JAls1hezPuV2MYzcMhxRkzu+28tJeOhpVU=;
+        b=M6I3P3n6maq1tXoPvrqkl5A+iLIfsf2HTf09lfMjFwcuIVHbhSsvNQ+963hauJz4pq
+         TDIbgAcg1U1C0v87XFRLAJWnuqeuRvJKtPZ9NNK8KWkq6rd5mRzmUy4VVxIuOuMpsQ98
+         8UDyAi/gPWuq1h/DX9YUVlxFyYcT/Dp1zqXrn64G4ZC9H3JXU4LUXNdrzhhpQPchq1ex
+         KW46y776YXJyVK+1uwM8E5qewYdxUFk9MadY6Q/vkzoofsIz8eA8HQYpY6RcQZiiAl8g
+         ypE8AvaS0iUCjlM9YR1VrAdt+NhAcIWAC/hMXkLPYlft7ksiaqniHtfeegvMWq7A7GBE
+         ZU8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744184812; x=1744789612;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uPe5EFIk2JAls1hezPuV2MYzcMhxRkzu+28tJeOhpVU=;
+        b=w+Ir55A2X1UKcPjfc/YG9JGaY2UUqEAARdlyG1GlbkzN0AhpB6jyOUe56szg7wQhWj
+         w/05ZiLBKdxcZ2IlB9vYjV+VQtI0/146HcADo3eypLFvFoNyKfDedVZ004gxlRNl9Fhl
+         KG45CsFdNObbRC+5Nw8j0pDUnXbpYlJrpPmLbyzhwPuQl3lHabHeM2tB6YuSfOTHsSSV
+         BvpPnOiCmCX4Qiq7ZBIjwKPxDwjSVWY6htL5lyAlZPQmzCW2ytnZgo/Arr0m4twjrk1x
+         Gd1P7Ef8V16Sa0t+/rhA4HQXG3eervwyqeTYBGjRtvR73GX7aNmnAa1SYbO526KrvJzM
+         0RJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNHYTyYt8WS6/YaEAhW87Cl/1l2+Y5Zc4CTi7bJfBSD/UdosorUcUZ+YY928wXwygXPC72NBlgjNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym44g/lDgc+JD0zlWxTloT3Aa8nGk5ZipUBVXQk9sVmJpBp5a7
+	YOgF/AwcuYuKwb66Z1OFcafapgov21g5h4Zk1wSFOw5wvfxbYBf6QXdzHOejMnhdrikeg+2Rpda
+	2
+X-Gm-Gg: ASbGncu8F968XxaAhPL9EqOctO42ikkyCQWkeEsKuG6InVmz1BinJThZ1PbUEYUCn+C
+	zNDd/pxLU19KP7ShEsJMrSlsDqr4Y3/7TxDihRJKXlkH3tB77rLMxDjRRc6Lrzl0IkF1Gc6RVVM
+	u0IeQsidWzVl8Q1IcKziNRH6270FyH6L7obu2ui/cwbxD7Ti6+UB0Zfe0mT/BMz18waNOI4ybWB
+	DwYzdDl56gCRnMNLwRyjV4PLsvDKVcAg/Lsv6io1KY4pBUvuO72Ks4TpyckER1yix1OzrKgvMM2
+	QAsY7CoTbNwsVRUkjmiMvQ9x+S9Zwyu/HCJdHAIFWb32Q505ouqzsFuihH8NT3rPRp6OQsLFW7e
+	J
+X-Google-Smtp-Source: AGHT+IGeWFAmHsxFBBGDibBbsDrhNmr+0jD0MhdR2n98VfY5WnHP5Tsxjn8/Be23AVtU2AtbXgk7BA==
+X-Received: by 2002:a17:90a:d64d:b0:2ff:4a8d:74f9 with SMTP id 98e67ed59e1d1-306dc054d59mr2731761a91.10.1744184811953;
+        Wed, 09 Apr 2025 00:46:51 -0700 (PDT)
+Received: from dev-linux (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306df07dc59sm728781a91.13.2025.04.09.00.46.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Apr 2025 00:46:51 -0700 (PDT)
+Date: Wed, 9 Apr 2025 00:46:33 -0700
+From: Sukrut Bellary <sbellary@baylibre.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Andreas Kemnade <andreas@kemnade.info>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: clock: ti: Convert to yaml
+Message-ID: <Z/Yl2cvTEhM7y9Dz@dev-linux>
+References: <20250404014500.2789830-1-sbellary@baylibre.com>
+ <20250404014500.2789830-2-sbellary@baylibre.com>
+ <20250404-famous-rottweiler-of-perspective-e5dcbc@shite>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 09 Apr 2025 09:44:25 +0200
-Message-Id: <D91XV1I4CY37.20T12FMZ5QLQ5@bootlin.com>
-Cc: "Herve Codina" <herve.codina@bootlin.com>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>, "Shawn Guo" <shawnguo@kernel.org>,
- "Sascha Hauer" <s.hauer@pengutronix.de>, "Pengutronix Kernel Team"
- <kernel@pengutronix.de>, "Fabio Estevam" <festevam@gmail.com>, "Michael
- Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "Andi Shyti" <andi.shyti@kernel.org>, "Wolfram Sang"
- <wsa+renesas@sang-engineering.com>, "Peter Rosin" <peda@axentia.se>, "Derek
- Kiernan" <derek.kiernan@amd.com>, "Dragan Cvetic" <dragan.cvetic@amd.com>,
- "Arnd Bergmann" <arnd@arndb.de>, "Rob Herring" <robh@kernel.org>, "Saravana
- Kannan" <saravanak@google.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
- "Mark Brown" <broonie@kernel.org>, "Len Brown" <lenb@kernel.org>, "Andy
- Shevchenko" <andriy.shevchenko@linux.intel.com>, "Daniel Scally"
- <djrscally@gmail.com>, "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
- "Sakari Ailus" <sakari.ailus@linux.intel.com>, "Wolfram Sang"
- <wsa@kernel.org>, "Geert Uytterhoeven" <geert+renesas@glider.be>,
- <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
- <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
- <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <linux-spi@vger.kernel.org>,
- <linux-acpi@vger.kernel.org>, "Allan Nielsen"
- <allan.nielsen@microchip.com>, "Horatiu Vultur"
- <horatiu.vultur@microchip.com>, "Steen Hegelund"
- <steen.hegelund@microchip.com>, "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-From: "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
-To: "Andrew Lunn" <andrew@lunn.ch>
-Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
- support SFPs
-X-Mailer: aerc
-References: <20250407145546.270683-1-herve.codina@bootlin.com>
- <20250407145546.270683-16-herve.codina@bootlin.com>
- <19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
- <20250408162603.02d6c3a1@bootlin.com>
- <D91CSNC07NYM.3KC467K0OZ4GG@bootlin.com>
- <c14dd5c6-2dae-4398-89a9-342e7a25bb30@lunn.ch>
-In-Reply-To: <c14dd5c6-2dae-4398-89a9-342e7a25bb30@lunn.ch>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdehgeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvefhvffuofhfjgesthhqredtredtjeenucfhrhhomhepfdfvhhhomhgrshcurfgvthgriiiiohhnihdfuceothhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeijeevledvgedtgfekgffffeefgfegieegffeivdekheejgfffueduvdehgeegveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedupdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtt
- hhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
-X-GND-Sasl: thomas.petazzoni@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250404-famous-rottweiler-of-perspective-e5dcbc@shite>
 
-On Tue Apr 8, 2025 at 5:38 PM CEST, Andrew Lunn wrote:
+On Fri, Apr 04, 2025 at 12:44:39PM +0200, Krzysztof Kozlowski wrote:
+> On Thu, Apr 03, 2025 at 06:44:57PM GMT, Sukrut Bellary wrote:
+> > +properties:
+> > +  reg:
+> > +    maxItems: 1
+> 
+> How reg is part of this? Every clock has reg, doesn't it? Otherwise how
+> do you control it? Drop.
 
-> "HW blocks inside an SoC." That would be the SoC .dtsi file. Anything
-> outside of the SoC is in the .dts file. OEM vendors take the SoC,
-> build a board around it, and name there .dts file after the board,
-> describing how the board components are connected to the SoC.
->
-> So..
->
-> So by PCI endpoint, you mean the PCIe chip? So it sounds like there
-> should be a .dtsi file describing the chip.
->
-> Everything outside of the chip, like the SFP cages, are up to the
-> vendor building the board. I would say that should be described in a
-> .dtso file, which describes how the board components are connected to
-> the PCIe chip? And that .dtso file should be named after the board,
-> since there are going to many of them, from different OEM vendors.
+Thanks for the review.
+I will drop.
 
-Indeed, that makes sense. So if I get correctly your suggestion,
-instead of having a .dtso that describes everything, it should be
-split between:
+> > +
+> > +  ti,autoidle-shift:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    description:
+> > +      bit shift of the autoidle enable bit for the clock
+> > +    maximum: 31
+> > +    default: 0
+> > +
+> > +  ti,invert-autoidle-bit:
+> > +    type: boolean
+> > +    description:
+> > +      autoidle is enabled by setting the bit to 0
+> 
+> required:
+>   - ti,autoidle-shift
+>   - ti,invert-autoidle-bit - although this makes no sense, so probably
+> old binding was not correct here
 
- - A .dtsi that describes what's inside the LAN996x when used in PCI
-   endpoint mode
+Yes, all clocks don't support autoidle. So, required is not applicable
+here.
 
- - A .dtso that includes the above .dtsi, and that describes what on
-   the PCI board around the LAN966x.
+> > +
+> > +additionalProperties: true
+> > +
+> > +examples:
+> > +  - |
+> > +    bus {
+> > +      #address-cells = <1>;
+> > +      #size-cells = <0>;
+> > +
+> > +      clock@1b4 {
+> > +        reg = <0x01b4>;
+> > +        ti,autoidle-shift = <8>;
+> > +        ti,invert-autoidle-bit;
+> > +      };
+> 
+> Drop example, pointless here - noop due to lack of compatible. Instead
+> provide complete examples in schemas referencing this.
 
-Correct?
+Ok, will remove from here.
 
-Thomas
---=20
-Thomas Petazzoni, co-owner and CEO, Bootlin
-Embedded Linux and Kernel engineering and training
-https://bootlin.com
-
+> > +    };
+> > -- 
+> > 2.34.1
+> > 
