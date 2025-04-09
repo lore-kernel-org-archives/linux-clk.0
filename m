@@ -1,153 +1,136 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4695925C6E3
-	for <linux-clk@vger.kernel.org>; Wed,  9 Apr 2025 08:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BA525C70A;
+	Wed,  9 Apr 2025 08:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744188226; cv=none; b=ULYbuA/hsB4iJAT/LurZ6Y+7cVzZO/rmCKLvDF2ufnFotMN3PdcEAN30ZhKcdxR8uFwmvwELp+IQiSoCJdjwaMXKh6qz+DNiRbF61xdp3Kh0KRiDhRqeAnVsgd4iTtieeM6Ty5vntPAjhNGHHhTdjdQNXQ97Ckbh633dc8wBCdQ=
+	t=1744188948; cv=none; b=czuvhH/VTS2cTU0Fmh44y7QpAOieuJlg26s0yR5Vr1Nqvles1tVXth8vMUDG9wr8sdOE0ZHXjS/AjowAKtvKHP9J1l0L7ho22hcGtRXkuy72zIeQ7MI1kq+3AJ80u5MUt7DdZFoi6IdJHodCbmTj+GjEtrmIZjuHLow+jz3D0Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744188226; c=relaxed/simple;
-	bh=NQnrWxqFEYqyf2ImZyom1w6HZbF5aoK8E0yfrdJWcic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kv9EP7Hvs82+Nf3KMGdujYtc2WOypP1uMYiJ98vah+4wz0yRWr1qwgcZZ6bvKqGond5z7PJvUDAxzpVe/rP1lMYJuK4kVaDfNaFMPNk1xQQvjIW2UkJlg+mm3O8C04CpTPLEb8WqrJbff4ZhhMUUkOyMa772JybOTJuVFqTpFK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bDhHhRjU; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1744188948; c=relaxed/simple;
+	bh=FkYGG/blNPkE+YJlD1UdzBjF3QbM1eptOxdUmwF+Lag=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UFKP+YSs0dOSve6F0kyt80F2rK/WBosBpwY1o5rHow5JtC4kC51TXgBiKG6ZC87Dx5hI8qBXQgST0ZsJ8xMa/siH8R8+Hnj7El29y3iv3XcKK4uw3QMRNlUOPZTx7iR4fnt8S3yS+cSuioXsDksTh9f6P4UipNFBthhKwWNk5QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GBuVltAO; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bDhHhRjU"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-227c7e57da2so56022695ad.0
-        for <linux-clk@vger.kernel.org>; Wed, 09 Apr 2025 01:43:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GBuVltAO"
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5240a432462so483359e0c.1;
+        Wed, 09 Apr 2025 01:55:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744188222; x=1744793022; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=APlPY4uZJpZya0nV6nrk4xTTTYVm9sn3CRO5bhFqGdw=;
-        b=bDhHhRjUxxNhsKR7PLZUVEpSG7df7lFXo8C2oja6Yljc/15LvR+BgrNMVTZabyKE4v
-         J5Tvx64P0Y1fbAHksGV91mp1E68/w7ajH1pizgxyJkaySE2Br2CoNQjPpHNPCqtzvZnb
-         Vq/PWX8oH0oJgmrEpyZe8JUjIcydgrMzu+ha+A/GuYm5XefW2oCVZ0uuRAG/aJ6UVVP7
-         xM5zDWiIMpIv4e93B2wY/RcCIg8HM82uWrWy3ouIqv+OzyEKVNXm5vFU2hDY/lKXtZ0f
-         EEpP8U60H+9PwG/aQUfFLLRLCTpJYVaSNx6bA1ip7Ogd2EFn3hvm0kteEir9VZfHwxWr
-         Ok1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744188222; x=1744793022;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744188946; x=1744793746; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=APlPY4uZJpZya0nV6nrk4xTTTYVm9sn3CRO5bhFqGdw=;
-        b=EEN243CXHwoa4NBRG4VdzxIQJ3CUA0+7y7DAM8NVUq9r+cMR4CAOS7EBlIxbo3vt3m
-         HCBxgxZ2hES68DGJuHdJQcHs4KOiHNLJ+PbyP+7KSfwcMQioBw7mZW1m6iN2VX/CiDuM
-         Cx3Y7G30/gP/dbxYbK/AqkZ6Rv/B/YKHq2uVgvCbW4xOtImoRNBeb5VJ99HIykXLqe5g
-         5a4V5P1JOnfTjV3AWQmUf653Z+wyAdAWKkJW1V7BXuwEOYv7cvFQNk2rDgIQA7gu0qHQ
-         lMncOCY3aoIqvipTey7Zwm3cmFDUPlFzhaKC4Dn0ONuxV17r1dHydqK+CO3CMfdEfgq+
-         Kq9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUgmfElUme7t0G6SxgUqF7Nu6sbQ5Wvz/2VOoztPNqfzlu7u/kQPW8FY18UtjD900JgppKtNWUB8Xw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIzvyrhfSM+8c2QlOY9cREuiBRrlPJU5mhwb82c7EOoGaKeOk4
-	NyH+0sQVw4NlBpazbdAeoxySh3wa8/IAt9156VRqEc8kKAU4RPTZiOsS+TmQPqk=
-X-Gm-Gg: ASbGnctkg7U/BvJthZWs472uK0Zz++p3Zj35PFwZ/YgypWadho/6QUadVDIsKuw2OT7
-	oCn0DrTNPR3lCVGZVZ8fdhoYevUXNH9J+annyL0vHrqOTpP9QHSPcAMRpmEqpRvaE4VA+iZAFkb
-	qKzLN2m7h4VypP/9hUv8xhUy3LQ9DWPhnaBu6l+76j6oJ+E2AVXXj6XOmXsXgG/nNmhriE71w2X
-	97IgU8QNbIAZ8yT9++R1P9cKNGlFGiGYuVqnTSySLBbfxCKDIFITWEOjhlkARlV+/5Z8t6QWgGw
-	1KU7O6Uq1jk9+SSsARbc81+qrjDPzawafbgKe2IB3ngJdk/t97LlwzU/oqxAJV4XKN9pEXY89C9
-	Q
-X-Google-Smtp-Source: AGHT+IHi1LGSSSpMeFzIdX5goYy1eceYxuwOGowfNQqBnGHVqOjiuDdrIg19B2sb+9bme7Rpg5PDWA==
-X-Received: by 2002:a17:902:8548:b0:220:fe51:1aab with SMTP id d9443c01a7336-22ac3fefd47mr23583495ad.38.1744188222535;
-        Wed, 09 Apr 2025 01:43:42 -0700 (PDT)
-Received: from dev-linux (syn-076-088-115-008.res.spectrum.com. [76.88.115.8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7cb548fsm6337125ad.188.2025.04.09.01.43.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 01:43:41 -0700 (PDT)
-Date: Wed, 9 Apr 2025 01:43:39 -0700
-From: Sukrut Bellary <sbellary@baylibre.com>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Tero Kristo <kristo@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] dt-bindings: clock: ti: add ti,autoidle.yaml
- reference
-Message-ID: <Z/YzO2MfhK3HeIXA@dev-linux>
-References: <20250404014500.2789830-1-sbellary@baylibre.com>
- <20250404014500.2789830-5-sbellary@baylibre.com>
- <20250405214904.0b07b26f@akair>
+        bh=xKkhSratOE8FhNwto8msCYe3EaTscTslbqKejN9e03g=;
+        b=GBuVltAOASHPZMHs0R//UippvcXFM+APF0GXC2G6z/71eAQlmcTeGBFqALFsXwsqEk
+         FVxhKuEVaHHuGGlArpEbE1g94ZZ/LoSOWvO55NSHIlhx8S6iLEgQ6XtpXc2Xkm96Cc3k
+         sAZmRPLixk6ie6T06fmPGyr6xkAaarMv1AXcktq2VgV+lrS8aak6ihjRHY2PDGENsNEY
+         pnB4Q/lW61O/V37zxtgl11v7kt/l/Wh629k2/c35shB116T4XpnjzRI+AgZHjNQyHJs8
+         k+2wAABErJ+SNfYGWvW0ELdPf1r6B1ye1IPCwo3Py0vdqqBqBrDAXSiofKJdosmmTo4l
+         BWHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744188946; x=1744793746;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xKkhSratOE8FhNwto8msCYe3EaTscTslbqKejN9e03g=;
+        b=rHSzgBRkHlV88sNiHPnMSsAfaAcRWOpNLUhocSdgp2AEjqZFVd3MMUiz1JUaalAxv5
+         aldFUpXGXGbknr8dP5lZ7m+yFWZilq4ydtE5U4HNssPgK954w0Cnya1JbQNRHkgnm8jW
+         O3ey483dYj6QFZJSKJpnJD3Qnn5fii4uHn1xdlboFhXtVS49VvxE2oD0O0yBYYTPdMDx
+         pw+L6lWM20xeQwsBuAYrmhdRe5YVBurdB+KhZdbEsVUNCpwYKbsMfu/LckOU9UhxURO4
+         l0MSEVeL/sIzIpPhcPxFkuqQah+tj64+xzuoeZntnXDzIggrHQPamZFaHfF7iZWpk+Ws
+         Jvcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGwVrh0c3PJiT5VesenV3dUCJuCSiP7A6QiEHTdeSaW54rNvEQ+gmzWSMNY8ndT5zkfGXNV7kh5up67cmW@vger.kernel.org, AJvYcCVTbtkd+KYV8hRYGnEn0XHYuXc826hqllwLaGdkYw6JPeF2K6WF7TSlA8ZB80zNezQ0FOFkvHPnOuK3@vger.kernel.org, AJvYcCVcmtoGYTeRVPMtfXm7YrV9vnbtaOs7SJeUZf8FTU6FZGfAKuu1Jf/IpaqFqAupcjTa3E9dFZIFlkt1BWeh4F3WxPQ=@vger.kernel.org, AJvYcCWaCQe0Bk6LlQQhEunenz6K1+qjEP94dLeK2ZPoxED8KWVWkW6JRoTQIQ8vxb86tpEczaUhMqCJqKZl@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQjTGFdTpUlr72ztZSxf0OwakpQIp8LOpnp8MOzkbBD+pxmB3f
+	orhbl6K/rKBaYdWWGhMQap0EcYYgcyteCuIF19HyfGpkiS4FP3IA47EnLqaYnO++FgvdpYotD6e
+	koBwDxrp1t3s4zWdzTNgRFOskOCw=
+X-Gm-Gg: ASbGncsoeyrxDdRg7sLMeStvtir25exOQfhJ0Vhg7F05F8DMVNzSvFNvRSSkUZ0Re2Q
+	cGLFlNMgM4UdpMABtiil4oBYQR/Vts2IYd3H7MjK48am+AuJadnUDiXo79s80+rAuFzfcy5zZuh
+	+1dj5yBypJIpbVYK9yFDD5GZOo++EK96EA/0TteHy4aOk1TXzDbzaoDCA=
+X-Google-Smtp-Source: AGHT+IFkvSJE5U/9fmVpXSs+iaoY5nuY5+IWwlLNMnF2gNZkr5kIoflvPEnL4H4NBK6FHRKQDcdNNrDvBUNiQdI3bio=
+X-Received: by 2002:a05:6122:d89:b0:50d:39aa:7881 with SMTP id
+ 71dfb90a1353d-527a8beff21mr1371744e0c.0.1744188946056; Wed, 09 Apr 2025
+ 01:55:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250405214904.0b07b26f@akair>
+References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250408200916.93793-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVAxaLZJ4y0AWKrLobp55n5NPqQgEtHK_d1DDUM1LAkDw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVAxaLZJ4y0AWKrLobp55n5NPqQgEtHK_d1DDUM1LAkDw@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 9 Apr 2025 09:55:20 +0100
+X-Gm-Features: ATxdqUF6pkX8g8cSssT4x6HUE0uVbLtqiF0Qca_2kkdcVwxXzZnsXvGx2QnlRqk
+Message-ID: <CA+V-a8uc22sYFwfB7CJK9gSmT7ibv5MxTPyTBJtJMijKcgbW5g@mail.gmail.com>
+Subject: Re: [PATCH v2 10/15] drm: renesas: rz-du: mipi_dsi: Use mHz for D-PHY
+ frequency calculations
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 05, 2025 at 09:49:04PM +0200, Andreas Kemnade wrote:
-> Am Thu,  3 Apr 2025 18:45:00 -0700
-> schrieb Sukrut Bellary <sbellary@baylibre.com>:
-> 
-> > ti,divider-clock uses properties from ti,autoidle.
-> > 
-> > As we are converting autoidle binding to ti,autoidle.yaml,
-> > fix the reference here.
-> > 
-> > Add dual license.
-> > 
-> > Signed-off-by: Sukrut Bellary <sbellary@baylibre.com>
-> > ---
-> >  .../bindings/clock/ti/ti,divider-clock.yaml   | 24 ++++---------------
-> >  1 file changed, 5 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> > index 3fbe236eb565..aba879ae302d 100644
-> > --- a/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/ti/ti,divider-clock.yaml
-> > @@ -1,4 +1,4 @@
-> > -# SPDX-License-Identifier: GPL-2.0-only
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> >  %YAML 1.2
-> >  ---
-> >  $id: http://devicetree.org/schemas/clock/ti/ti,divider-clock.yaml#
-> > @@ -55,9 +55,10 @@ description: |
-> >    is missing it is the same as supplying a zero shift.
-> >  
-> >    This binding can also optionally provide support to the hardware autoidle
-> > -  feature, see [1].
-> > +  feature.
-> >  
-> > -  [1] Documentation/devicetree/bindings/clock/ti/autoidle.txt
-> > +allOf:
-> > +  - $ref: /schemas/clock/ti/ti,autoidle.yaml#
-> >  
-> >  properties:
-> >    compatible:
-> > @@ -97,7 +98,6 @@ properties:
-> >      minimum: 1
-> >      default: 1
-> >  
-> > -
-> >    ti,max-div:
-> >      $ref: /schemas/types.yaml#/definitions/uint32
-> >      description:
-> > @@ -116,20 +116,6 @@ properties:
-> >        valid divisor programming must be a power of two,
-> >        only valid if ti,dividers is not defined.
-> >  
-> > -  ti,autoidle-shift:
-> > -    $ref: /schemas/types.yaml#/definitions/uint32
-> > -    description:
-> > -      bit shift of the autoidle enable bit for the clock,
-> > -      see [1].
-> > -    maximum: 31
-> > -    default: 0
-> > -
-> now you make ti,autoidle-shift required. That makes so sense. A clock
-> does not necessarily support autoidle.
+Hi Geert,
 
-Thanks for the review.
-No, we are removing the required from yaml bindings and keeping it as
-one of the properties. As all clock don't support autoidle, required is
-not applicable here.
+Thank you for the review.
 
-> Regards,
-> Andreas
+On Wed, Apr 9, 2025 at 9:16=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Tue, 8 Apr 2025 at 22:09, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Pass the HSFREQ in milli-Hz to the `dphy_init()` callback to improve
+> > precision, especially for the RZ/V2H(P) SoC, where PLL dividers require
+> > high accuracy.
+> >
+> > These changes prepare the driver for upcoming RZ/V2H(P) SoC support.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -33,7 +33,7 @@
+> >  struct rzg2l_mipi_dsi;
+> >
+> >  struct rzg2l_mipi_dsi_hw_info {
+> > -       int (*dphy_init)(struct rzg2l_mipi_dsi *dsi, unsigned long hsfr=
+eq);
+> > +       int (*dphy_init)(struct rzg2l_mipi_dsi *dsi, unsigned long long=
+ hsfreq_mhz);
+>
+> Due to the lack of capitalization of the "hz" part, it is not clear
+> that the "m" stands for "milli" instead of "mega".
+> Perhaps hsfreq_mHz or hsfreq_millihz?
+>
+Agreed, I will use `hsfreq_millihz`. Shall I respin a new version as
+the initial patches do the same (i.e. use mhz).
+
+Cheers,
+Prabhakar
