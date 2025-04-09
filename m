@@ -1,63 +1,172 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BB625D908;
-	Wed,  9 Apr 2025 15:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4343B1CF8B;
+	Wed,  9 Apr 2025 17:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744212528; cv=none; b=TLDpdAHuYHutCrPzAqUC3k8HUx4krtz7nRTbx/LCJaFsNUM+bAAJvN1JF3Xw/xyjIUvg9+RNkeFFg4O2BQri5oor23BVejwi+/lGpHDkCkt0TSmNTUefyy4p8Km1r/xNCt42stvGdoxYAAMr/vxgtgcGj5R8hO2e68zLNCSzUxw=
+	t=1744221332; cv=none; b=t4f3tdd+TVRSStjWbPsiMkshLr+fvXW/8uCLDVwf8OFlTtIH8Cg8dIxSsFwqPfp2Wk8N3/q3+/K1fxQIPTPOYUUxOiiHM7ExAzRPMeRioLcWBXzbY2MJuLMx1nPCzhtZ4/wM/h46ng1ppPBai6WU9Ll1eSr/lqmtZOUBiaQmFmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744212528; c=relaxed/simple;
-	bh=9e4D7tu8NpiZEjh0zjN7AOEJmEjmxGVQQpxC3EDMjGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVYy66bWBOvbhe/C0a1RU0t4WbDbE/8eGkXIjZwPFMMaW1D/vF2DGRJwD3bDQ5ysMdqBbrlHYa4FOREDve47fjpWFK/I6SH8CzbkmmsgT/rVvL6z8RcD9iydDYKrLhkUhbBvVNVgv06Oy/uJuYhrlD3zqYiY6Z9AXqr8KjkS1kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qGJ+Qcgd; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1744221332; c=relaxed/simple;
+	bh=9r66Wfrha929p07ng1Y/KZsuo0v815X+zoxiuQrI03o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OIS5an8wpY6lzO50cUFbz2cVxv77fMXAod8PXhPguIigkmgDBKZ+Bl5I+8rv8IDKh26DzxTuGV/DUrmmlIcVO2wrGawvdkTfZ4KGjQpKOz97k2wWa4Qh0uQ3+j4E3+gkmBDBqTA+EDul71HZI2xdb/0B0QHuDW8OAkbCoUeTVQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mt6RI8WY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qGJ+Qcgd"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=GVms8sZy6YVwer8huqwdL535e2d50tSk6udp7SjsHpk=; b=qGJ+QcgdKd4LJA67qLXYZsIQBD
-	ymHrSKgC+FhlSm3H9jhw1TJt/JTJElPeI3AVMc2zG+VNsbQzSKkaDwa2hs7YnBLzYddTM2061/aKq
-	rdCKx0uxpXOpAJkRD3yKX9Zo7s/MJalDZK3D6GFtrEe+e2aIRJKTKklWlHdwbnIZ+iCo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1u2XLs-008Z3N-Sg; Wed, 09 Apr 2025 17:28:32 +0200
-Date: Wed, 9 Apr 2025 17:28:32 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Lucien.Jheng" <lucienx123@gmail.com>
-Cc: linux-clk@vger.kernel.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, daniel@makrotopia.org, ericwouds@gmail.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	joseph.lin@airoha.com, wenshin.chung@airoha.com,
-	lucien.jheng@airoha.com
-Subject: Re: [PATCH v8 net-next PATCH 1/1] net: phy: air_en8811h: Add clk
- provider for CKO pin
-Message-ID: <b8f9732e-bc33-4e73-b7bb-8513d8343983@lunn.ch>
-References: <20250409150902.3596-1-lucienx123@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mt6RI8WY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B872AC4CEEB;
+	Wed,  9 Apr 2025 17:55:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744221331;
+	bh=9r66Wfrha929p07ng1Y/KZsuo0v815X+zoxiuQrI03o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mt6RI8WYF1RIawWkad3srN7T8VU/vt/myELopiUs0eBBUmkcBoOq90TTHhnROJ8lH
+	 t8uWG3zKo2cWM1uYWdKLs/LOFrEN8Va5WMiR4Ua7CYlfhClmCxdF9nwATag4hcW/Rl
+	 9oABDKiZK663k62mzvJGZ7u0CxB2/ZVoU6askowRpALcrW6DEO348AShabngMRBbx1
+	 UvdIBTGYTzt5QGWbZigQ0Lb6+vPMRuhNNub7hnpQgaGrjlyqthPQSUwnflKtWwIOec
+	 oKQGJepLDN9F0Zm4FfaHb2r+gLxjEjGlsBml0HfQ3MSesypjLgYq8M5xxKjX5BIMJ8
+	 ZVQOUJnqzpMSw==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2c12b7af278so5789fac.0;
+        Wed, 09 Apr 2025 10:55:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW5Ed2DQOWL/SFoMbRWXspLmER/jTa0adbycK30xOTjUuuIK1LawZnmlCYzqV5MRtVy/OTP7sdxmP8=@vger.kernel.org, AJvYcCXQD1hrxUCjWoDbFerHJgVKeeUWzBdAVuWKCwafZyR9D7KDIE2B5lbUSqplCA3gKB5eUc4HSx8qcBNdnM8t@vger.kernel.org, AJvYcCXhQPwRVLg2t8+iTUzcw61bklgpOTTJgQHyWiyLYfGIsELjYoh63itoFsESSLSm8fbzz4Vm/f+UIGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPGBcCCRPZfSmubVNF39deAfa5+tdmMIzUKR2Qp+4EgGNmmI6R
+	NfF6twzQ9I6p+QuE4o9Ag8ysiD7BONqNk+W+xhg77LoVgcY8APxOM2c+jFEa04fZePG3KguSe2p
+	qNlRwacUUESDlBqD04MUeCdG03qc=
+X-Google-Smtp-Source: AGHT+IGO+jjqHSBXWjTWnVsJIN7eK1oOONxiSCBMknxBMzVZk3syrHLRphRe2sQeYc6PCuzK/Vi72uVzOo1BrkBsC1Q=
+X-Received: by 2002:a05:6871:a594:b0:2b8:41ef:2ca with SMTP id
+ 586e51a60fabf-2d0ad053dddmr312843fac.6.1744221331026; Wed, 09 Apr 2025
+ 10:55:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250409150902.3596-1-lucienx123@gmail.com>
+References: <20250326-cross-lock-dep-v1-0-3199e49e8652@bootlin.com>
+ <20250326-cross-lock-dep-v1-1-3199e49e8652@bootlin.com> <CAJZ5v0gFER-nbWpZK6FMDJCXA+iPQUm5DZDAiRY3ahugR2MM=g@mail.gmail.com>
+ <874izdlblm.fsf@bootlin.com>
+In-Reply-To: <874izdlblm.fsf@bootlin.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 9 Apr 2025 19:55:19 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0irZj7ttvUqb-iENQS6BX+KTGuTqyVh0DxgKmsoKrBcbA@mail.gmail.com>
+X-Gm-Features: ATxdqUEhvTKg_Dm0U4wlDBZsG6FgRkNszoP9ogCJEM3XAr3NbaLY303rrxWg228
+Message-ID: <CAJZ5v0irZj7ttvUqb-iENQS6BX+KTGuTqyVh0DxgKmsoKrBcbA@mail.gmail.com>
+Subject: Re: [PATCH RFC 01/10] PM: runtime: Add helpers to resume consumers
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Chen-Yu Tsai <wenst@chromium.org>, Lucas Stach <l.stach@pengutronix.de>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Vasut <marex@denx.de>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, 
+	Fabio Estevam <festevam@denx.de>, Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, linux-imx@nxp.com, 
+	Ian Ray <ian.ray@gehealthcare.com>, =?UTF-8?Q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Saravana Kannan <saravanak@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 09, 2025 at 11:09:02PM +0800, Lucien.Jheng wrote:
-> EN8811H outputs 25MHz or 50MHz clocks on CKO, selected by GPIO3.
-> CKO clock operates continuously from power-up through md32 loading.
-> Implement clk provider driver so we can disable the clock output in case
-> it isn't needed, which also helps to reduce EMF noise
-> 
-> Signed-off-by: Lucien.Jheng <lucienx123@gmail.com>
+Hi,
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+On Fri, Mar 28, 2025 at 10:59=E2=80=AFAM Miquel Raynal
+<miquel.raynal@bootlin.com> wrote:
+>
+> Hello Rafael,
+>
+> >> The runtime PM core currently allows to runtime resume/suspend a devic=
+e,
+> >> or its suppliers.
+> >>
+> >> Let's make it also possible to runtime resume/suspend consumers.
+> >>
+> >> Consumers and suppliers are seen here through the description made by
+> >> device_links.
+> >
+> > It would be good to explain why all of this is needed.
+> >
+> > I gather that it is used for resolving some synchronization issues in
+> > the clk framework, but neither the cover letter nor this changelog
+> > explains how it is used.
+>
+> The explanation is quite long, there have been already 3 full threads
+> from people attempting to fix a problem that resides in the clock
+> subsystem (but that may also be probably problematic in others, just
+> uncovered so far). I don't know if you took the time to read the cover
+> letter:
+> https://lore.kernel.org/linux-clk/20250326-cross-lock-dep-v1-0-3199e49e86=
+52@bootlin.com/
+> It tries to explain the problem and the approach to fix this problem,
+> but let me try to give a runtime PM focused view of it here.
+>
+> [Problem]
+>
+> We do have an ABBA locking situation between clk and any other subsystem
+> that might be in use during runtime_resume() operations, provided that
+> these subsystems also make clk calls at some point. The usual suspect
+> here are power domains.
+>
+> There are different approaches that can be taken but the one that felt
+> the most promising when we discussed it during last LPC (and also the
+> one that was partially implemented in the clk subsystem already for a
+> tiny portion of it) is the rule that "subsystem locks should not be kept
+> acquired while calling in some other subsystems".
+>
+> Typically in the clk subsystem the logic is:
+>
+> func() {
+>         mutex_lock(clk);
+>         runtime_resume(clk);
+>         ...
+> }
+>
+> Whereas what would definitely work without locking issues is the
+> opposite:
+>
+> func() {
+>         runtime_resume(clk);
+>         mutex_lock(clk);
+>         ...
+> }
+>
+> Of course life is not so simple, and the clock core is highly
+> recursive, which means inverting the two calls like I hinted above
+> simply does not work as we go deeper in the subcalls. As a result, we
+> need to runtime resume *all* the relevant clocks in advance, before
+> calling functions recursively (the lock itself is allowed to re-enter
+> and is not blocking in this case).
+>
+> I followed all possible paths in the clock subsystem and identified 3
+> main categories. The list of clocks we need to runtime resume in advance
+> can either be:
+> 1- the parent clocks
+> 2- the child clocks
+> 3- the parent and child clocks
+> 4- all the clocks (typically for debugfs/sysfs purposes).
+>
+> [Solution 1: discarded]
+>
+> The first approach to do that was do to some guessing based on the clock
+> tree topology. Unfortunately this approach does not stand because it is
+> virtually unbounded. In order to know the clock topology we must acquire
+> the clock main lock. In order to runtime resume we must release it. As a
+> result, this logic is virtually unbounded (even though in practice we
+> would converge at some point). So this approach was discarded by Steven.
+>
+> [Solution 2: this proposal]
+>
+> After the LPC discussion with Steven, I also discussed with Saravana
+> about this and he pointed that since we were using fw_devlink=3Drpm by
+> default now, all providers -including clock controllers of course- would
+> already be runtime resumed the first time we would make a
+> runtime_resume(clk), and thus all the nested calls were no longer
+> needed. This native solution was already addressing point #1 above (and
+> partially point #3) and all I had to do was to make a similar function
+> for point #2.
 
-    Andrew
+So this depends on DT being used and fw_devlink=3Drpm being used, doesn't i=
+t?
+
+You cannot really assume in general that there will be device links
+between parents and children.
