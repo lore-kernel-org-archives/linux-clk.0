@@ -1,108 +1,121 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9431B85F8;
-	Thu, 10 Apr 2025 07:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9791D5143;
+	Thu, 10 Apr 2025 09:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744271678; cv=none; b=iWMv9a0tnFPpRV2hfIxQSQZjpim23qU+HD9U7h5aGoN6JiFtA2Uk3T2zhBQSox5htryjpHiisnDrRxbBPQGv0Au2cONyN/5xihdXkF4d3/Oiuih9xabfdlsXXgOohVRtNs74Tobnt15qpopnZmtNvd045ZERfF3pathuP/UARko=
+	t=1744276058; cv=none; b=nsgNV7djS+dzAJY6trq28i+jjYSOLWl5JFP5E6CccqnDYnrGuu1NxDRyDyV0SS8JKf0fwVQfWshlCSrOYp2T4cjRUUmIRVi8+uuITJKX+bxXP+girV6chCHbMcyy0/zdYjrQ9MBK0rvEcIyoKDGlMIhEvmi4C6JmJ7YXZz9Oo8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744271678; c=relaxed/simple;
-	bh=ZIf2LBI9LMMVbcsNUcHJc26fy6z7q0wIldUNiVXvb2M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KSeaziU20sBUpRgm6uodmH/R1YuYX/bf4JD4XHkSbic0dHSCsZkMbsvKtkRkbFNhTMjWDNbYYlTpoEfEjEhPMp27gimZ7EcDjKN3371p3Acn+MRLMyjVAr4YPUt6IkKHVZ5J+jELMD4IxDWMjE5viW63BE++npLhMFFpo9GcqMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lPD8fPdh; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lPD8fPdh"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D902044365;
-	Thu, 10 Apr 2025 07:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1744271673;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZIf2LBI9LMMVbcsNUcHJc26fy6z7q0wIldUNiVXvb2M=;
-	b=lPD8fPdhQZD9qE/YgTYf8FfFhxu7P56+YtbCxm4gsFXE5E6AdIUTS2d9fFRrLgzyhxdC8/
-	vG/DO6Anp/ffLGmZjeGlSdyPWJ02zZbTJOlOvzCYI1zP+9dqlhoK8ftN4Az95hOuHgnO+/
-	SSvNnJZPET/UCofxVwhwtMg1xT63cnOz5tnhQV4MRwurrh7MOg1AWOaV00zqhcNOowLx+t
-	wQK0q2gPORz9r9QDbOVQJpoQ10zIkSdsx0sOaTIIinUFR1+S4l3dqINFhbwWqR9GOmqlJl
-	GxrBU4SaxxKz+8JAaBE5xYiZFj4m6AwOVaEoQWqqAlD0w46zE7UaoubQ4fClXw==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>,  Len Brown <len.brown@intel.com>,  Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>,  Danilo Krummrich
- <dakr@kernel.org>,  Michael Turquette <mturquette@baylibre.com>,  Stephen
- Boyd <sboyd@kernel.org>,  Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-  linux-pm@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-clk@vger.kernel.org,  Chen-Yu Tsai <wenst@chromium.org>,  Lucas
- Stach <l.stach@pengutronix.de>,  Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,  Marek Vasut <marex@denx.de>,  Ulf
- Hansson <ulf.hansson@linaro.org>,  Kevin Hilman <khilman@kernel.org>,
-  Fabio Estevam <festevam@denx.de>,  Jacky Bai <ping.bai@nxp.com>,  Peng
- Fan <peng.fan@nxp.com>,  Shawn Guo <shawnguo@kernel.org>,  Shengjiu Wang
- <shengjiu.wang@nxp.com>,  linux-imx@nxp.com,  Ian Ray
- <ian.ray@gehealthcare.com>,  =?utf-8?Q?Herv=C3=A9?= Codina
- <herve.codina@bootlin.com>,
-  Luca Ceresoli <luca.ceresoli@bootlin.com>,  Saravana Kannan
- <saravanak@google.com>
-Subject: Re: [PATCH RFC 01/10] PM: runtime: Add helpers to resume consumers
-In-Reply-To: <CAJZ5v0irZj7ttvUqb-iENQS6BX+KTGuTqyVh0DxgKmsoKrBcbA@mail.gmail.com>
-	(Rafael J. Wysocki's message of "Wed, 9 Apr 2025 19:55:19 +0200")
-References: <20250326-cross-lock-dep-v1-0-3199e49e8652@bootlin.com>
-	<20250326-cross-lock-dep-v1-1-3199e49e8652@bootlin.com>
-	<CAJZ5v0gFER-nbWpZK6FMDJCXA+iPQUm5DZDAiRY3ahugR2MM=g@mail.gmail.com>
-	<874izdlblm.fsf@bootlin.com>
-	<CAJZ5v0irZj7ttvUqb-iENQS6BX+KTGuTqyVh0DxgKmsoKrBcbA@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 10 Apr 2025 09:54:30 +0200
-Message-ID: <875xjccuyx.fsf@bootlin.com>
+	s=arc-20240116; t=1744276058; c=relaxed/simple;
+	bh=8OCzwr89gfo3EPpB6MxJdzvOIhhvCt/3FusABEzsj8M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=abycAcErPh5naNvURxzDXWBTJMJOsTI/BTwjG5Zq/2fCtPHf/SCToqe8WRau/qmB4TrnU3MZuTOqProFjp3b8tiwbBCnYEpZGJWvby3oP4nDpl1ib2JHon7SqkYCzBKcUiYeq7isF+GonbgFctwBVQaKAOIh8ryrTpfyKHeLEH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-86fab198f8eso228071241.1;
+        Thu, 10 Apr 2025 02:07:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744276054; x=1744880854;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4Hj5jMU+hKHWCk6ITEuBX7mFwQOOBkyiGAOFy/et6jU=;
+        b=GI6RlZUhzfgOvA06iSngnQazhohlguTsNAT16UXSfT5Hs0KNRW3MZpbsC4lBZGw0l7
+         68mdf13R8upwwviJLCefODBIeXrQK2nX8oecB0UCLTSsVRTtNGemFMEgKgkgwRhzAxzB
+         77mMxagVyTpDyYCZWwfE17e2qXUYm9XJA6ae+0l8sPG5KV05pz9YUuQaX2FkxQf+bpCv
+         3TIzCSJmIbJQIfiBlI7YlOLmI7yZE7MXKR2ZK7bFBhArs6IfZyp5RCeb7h35jGndjQox
+         SNgRkppviF9EnZseU7k7SJQcACoVW5L0U2sDI87ScrseytW05T6V0bbKPPlQg2mbkFuQ
+         Cayg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl3IYPUQJsdtFvaALwQM+0PbyxTT21+AQQYb39BwbPWF/JwSJPqZYodUllNQu95ykXPvnxLeq4Yv7i@vger.kernel.org, AJvYcCVETYp1xdf4RcJ1ttFxx8JhEBzyxlB0CdDvg3K7PWpyV5wTFe90JAOvtSlzCwGFtUsGE0kDPVOuVomZ1W8K@vger.kernel.org, AJvYcCVLNKUo58XTOus+OLKw8ioGpTjdeyfp0txU8eE8ZgMJk0dbuQ4jqA0rKA4pryIgTIi3cA09wnZTMGQm@vger.kernel.org, AJvYcCVhe8NZ7CSmmalHhUqc6dPSV+UOtXxpenD9R3e1fouOYjZIUwNPdserBQS3RTBpzgCtqX3UgBkxY85VrGzLznWVelY=@vger.kernel.org, AJvYcCWVpNdRmGgy0qR3DtTENcYirWbTA2qRxXpuU0exdpPxeR903+IkHBEo8JaE9WqCAj4aA5SAf1uwY1NY4Q0Y@vger.kernel.org, AJvYcCX2Kq1IDbvIrpciwEUUxmGMd5XKSvoHuxDVCcAntdrEeKz+E8CYzk+eL9u7oZoRZsiJqEyL+/ZI1sapfg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiIgmW7106Yj755v1asmD1RDoaJp8/kykP+5S4xcMg0JzEOi4U
+	m25GjQkHfQZOyvKJDTVHh/4JpOrBhzHmCiruYtlPXNJuHuM7Nwn+ZK4+ZBn0
+X-Gm-Gg: ASbGncvTrYBhlhkoBwqO6/OXWb+EQeT3yC3GzJUExx1uKj5YxG4BWwoW+ed+CFsDi13
+	lurp/b+K8YstCdScuwUZkffPGoJgw32NICYeUmpxAIHGI2jN2prPz+Bl+py4LUr6ueUi/e9DX9y
+	9D+HdR4h47Q4Wyc+7ptmjnqWSmmcZKFZuKrQ+clC81gv5jyF7vrbjmwM0qfQKRSlIDlDC9WxBSE
+	MpStA/k2pEsq3pl4v8Y393zp0U0Lz886l/Cw9wO5MNnfEvyYd9OEWq2ZJduudM3w20Bj8k02ykL
+	lJLMQlNntuRMOYDwE7/icy5ep6jJVSjrsfgG6FW929BtqpCB0k2aQbWAYOaJlhoqoN2kcxlmxBp
+	hOuc06hBrUBmsnA==
+X-Google-Smtp-Source: AGHT+IHYqoNcj6rYHdWGPokVMu9omeQp3si9hu9JptlkE5pOYGL5jL/TkmrRRwQ94vE6xmjvWhRhdg==
+X-Received: by 2002:a05:6102:149a:b0:4c3:b0:46fd with SMTP id ada2fe7eead31-4c9d362e440mr1234664137.24.1744276054300;
+        Thu, 10 Apr 2025 02:07:34 -0700 (PDT)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c97a54e2sm515625137.18.2025.04.10.02.07.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 02:07:33 -0700 (PDT)
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-86d69774081so233713241.0;
+        Thu, 10 Apr 2025 02:07:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWNNZfOsKrJyDy7gC6sNiREyk5xqvVxWSesD/0/G/P4dIz65Q55gLv7lQYP9tR6R54CAk975osxuEKh4Q==@vger.kernel.org, AJvYcCWb693UoBiXNsYNex0qL6nC6BGAcLoT9evsHyyjY9m+g0y8U+Z6zFwsUkLFLecsN5tUVgBTgPbeP0iC@vger.kernel.org, AJvYcCWq63iFr2APawO9TkhXsjVWHn+e9yd6G5JMOjS/hwfn10qdTyTTRk0cWayFwGXyZGlv5AHyKWySPTDgzOZW@vger.kernel.org, AJvYcCX2zgxVOkmC8Io6MDXGBRROrtchX6YrzeaPgOEAL1jmhwAnBy27lIvBk3AY6eLAIwErUeZhyCvUvN4J@vger.kernel.org, AJvYcCXDKWVjRP82wOZRt8Td/Fag/EVtAC2j/oH3OZ/8FRntaG2k22mFQ8lnzN+lnaHV9xgpUdv8+vupqkZlotu7@vger.kernel.org, AJvYcCXFEDK7fOpFaUwY0VsPT/djW+kgs8+n9aiiaGMzmLDjPnfY+6hy9fXRkcIjXSwSKUaeQrflyhKEHEb86lziopo3hLQ=@vger.kernel.org
+X-Received: by 2002:a05:6102:2b86:b0:4bb:ecb9:b34d with SMTP id
+ ada2fe7eead31-4c9d35de416mr1363043137.18.1744276053277; Thu, 10 Apr 2025
+ 02:07:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdekfeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepvdgrtddumegtsgdtleemkedtgeehmeguudelrgemjeegudhfmeelfegrugemtggtieehmeejieejleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggstdelmeektdegheemugdulegrmeejgedufhemleefrggumegttgeiheemjeeijeelpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvjedprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrvhgvlhesuhgtfidrtgiipdhrtghpthhtoheplhgvnhdrsghrohifnhesihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgur
- ghtihhonhdrohhrghdprhgtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomh
-X-GND-Sasl: miquel.raynal@bootlin.com
+References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250407191628.323613-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250407191628.323613-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Apr 2025 11:07:20 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU0ee30MCXSdW=hho42qFHeT5fpNv0_aNSAv-5wXk2g2A@mail.gmail.com>
+X-Gm-Features: ATxdqUHSkDF5MA2fJWWYG6tz7UFqEDBhjsZgOhDasE7MOZZMXst_J_b_svx43vA
+Message-ID: <CAMuHMdU0ee30MCXSdW=hho42qFHeT5fpNv0_aNSAv-5wXk2g2A@mail.gmail.com>
+Subject: Re: [PATCH v2 01/12] dt-bindings: soc: renesas: Document Renesas
+ RZ/V2N SoC variants and EVK
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Rafael,
+Hi Prabhakar,
 
-Thanks for taking the time to read all that.
-
->> After the LPC discussion with Steven, I also discussed with Saravana
->> about this and he pointed that since we were using fw_devlink=3Drpm by
->> default now, all providers -including clock controllers of course- would
->> already be runtime resumed the first time we would make a
->> runtime_resume(clk), and thus all the nested calls were no longer
->> needed. This native solution was already addressing point #1 above (and
->> partially point #3) and all I had to do was to make a similar function
->> for point #2.
+On Mon, 7 Apr 2025 at 21:16, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> So this depends on DT being used and fw_devlink=3Drpm being used,
-> doesn't it?
+> Document the Renesas RZ/V2N (R9A09G056) SoC variants, distinguishing
+> between configurations with and without specific hardware features such
+> as GPU, ISP, and cryptographic extensions. Also, document the
+> "renesas,rzv2n-evk" compatible string for the RZ/V2N EVK board.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-DT, not really. fw_devlink=3Drpm however, yes.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.16.
 
-> You cannot really assume in general that there will be device links
-> between parents and children.
+> --- a/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas.yaml
+> @@ -551,6 +551,21 @@ properties:
+>                - renesas,r9a09g047e58 # Quad Cortex-A55 + Cortex-M33 + Ethos-U55 (21mm BGA)
+>            - const: renesas,r9a09g047
+>
+> +      - description: RZ/V2N (R9A09G056)
+> +        items:
+> +          - enum:
+> +              - renesas,rzv2n-evk # RZ/V2N EVK
 
-But if runtime PM already mandates fw_devlink to be the information
-source (which, IIRC is the case since fw_devlink=3Drpm), then why wouldn't
-this approach work? For sure there may be holes in fw_devlink, but
-what is the reason for it if we cannot use it?
+Shall I add the board part number while applying?
 
-In other words, are you suggesting that this approach is invalid? If yes
-could you elaborate a bit? For this approach to work we do not need all
-the parenting to be perfectly described, just relationships between
-clock consumers and providers, which are in general rather basic.
+-              - renesas,rzv2n-evk # RZ/V2N EVK
++              - renesas,rzv2n-evk # RZ/V2N EVK (RTK0EF0186C03000BJ)
 
-Thanks,
-Miqu=C3=A8l
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
