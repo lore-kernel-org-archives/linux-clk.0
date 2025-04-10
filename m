@@ -1,108 +1,110 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F95202F8D
-	for <linux-clk@vger.kernel.org>; Thu, 10 Apr 2025 06:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E091D5143;
+	Thu, 10 Apr 2025 06:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744266441; cv=none; b=sGE0yhz1qQECg6siap5+3qKd0NYCYiaOHCG3xpJBinl1/APJLlgV53t3UbKeMaFOBw7c1TH6Ox5b+Y//vnrSBM9us/Y+bJ6GtKYSA+2DxnN7xFqunU3e1xD2pqCWEu7QI3A0ikjxYFxg6nrsL7JcAtooVZ4PzU7uoDaR+wCnqPs=
+	t=1744267700; cv=none; b=hFZTa/11fbXZqL3QFkUf69uy7rL7JUtCNL4Ct5JfaYvH37kQ9ewgFEZG8S982sYrrE53X3iracGqHJTZa/NcTau1eL1dHLfTbmodoenjfLjR9VOjucIO7audFXAgRX9pu8Pau/A1C3+rqywu4csddqiNUDHo9CdKiBclDqeZN2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744266441; c=relaxed/simple;
-	bh=DbAUYbu5Va2xJQiy7VvKkV4e/4jPiHlqCkXhEFbYoL0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=taPdmm9u+TSY+nsWwTVzvZW+J02Khk+q8a4R8bPWetbwyZgsEzrIq8xnvFQNOAjkuTT7IJInBQlbPV/pTJy2UhanIikCNB4RCBAsyy322bNsTmVkGz03DaFQ74pCEcQNWxm8gttfztJYTDUo72iCwGrtlzlsQwYjYSBS+LnzWB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=diOq5bPQ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1744267700; c=relaxed/simple;
+	bh=C5ec5lNyuqtEj/fcsCGEIrivAFsHAGSQ3zeL0mFILag=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GxjtAqlMAAn5MOfDQGZPcaYT1i2wQ2HFh0ncDhgfr64NFi4Wt5pzdaUQLD/l3xsUGm91LxbSgsMFyvDkGXlryyrO5MbgHe8Uuw46uVz8vZdP/kCNmTpSemZakJ8CZhJVziLiFmhEEA47vMeP6rf6PdU5CPDfTzdSKazaWSSOP/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Mwkv66tx; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="diOq5bPQ"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43cf861f936so756225e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 09 Apr 2025 23:27:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744266438; x=1744871238; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VvT2Gppf3uxd/yxNywWCnYiGlORidfrwioHAQ0OTxgU=;
-        b=diOq5bPQ41tWsiC7hQG9OTkhh5pHHEMaAnADGSF/ewK7twX/K/8M4iV+MSyqXKM7fd
-         UESkRuyOxvcKWybN6KtU9tR309fUL53knl4hJ5oDUrpdKr8JWPLqIj3iSL/ChhbV13Xl
-         vFoFpj4m+sut8p8h6HmV+EYnnS5nDvuSp+iRZpHPUog0pooI/ZJdfgcwW4HCud+y5q6x
-         Vv0/3Iz6/gZoO87oUhU1eUd14DfdSRcEup/Sj67qpeEDbI8B/W599isJosvoAgul0wqm
-         ksRfFe9iNLvGKGUg3pYFCJoLqws7QFpIjz0bFfqT7Q2vyYtKv66Qgz1CvfozWqHYL5WF
-         V3vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744266438; x=1744871238;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VvT2Gppf3uxd/yxNywWCnYiGlORidfrwioHAQ0OTxgU=;
-        b=rZ9XClyb3qFAjoDUgM0F7FYPr/S2geKPaIYM+Co4Xiu+hJNriK7TYOGiMJ5gQko4Dm
-         dm3wL22p9dncAs4DEYBsht2VHFwUo6x6x15vMDPyD5Ws5DtGORr0pqNP+5fEb5XfWECN
-         sMAMXn+Dd9ffIEYBlfZDy/d4DiJt+ApwfprREwjS5y4fc196thwMEfrCKyJSopkpPlMS
-         9IV+MTMHhCWHTBNSJLWWGZrqJlzFucjGlgqK5T/wcs01IdQ4jNaDOA6pLGJuNSmDRC5u
-         Xi/m0k5gHF24LFNeUew0PbNnMWyw+pLLHgCVx6PciPutyFKapEEAfazeDJFp6cvrCxHG
-         pAtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbn1rvEiG00Ohfy7m2oKhhn3DWNwOMZkWIsuXs0aKHW8CcGqh8oQPQOPSYIXlC041zN6gUFNxJvS0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwHDUqlmGdwqreFphvGlFcMmyL88K7sAuu/E+y4NfF6dj+nTdT
-	9FawtOYA+7bkTO9CMLxNEMl+gJ33rzDtPNJCIpmQi9/yrVH3EsH+U4m06iXToG8=
-X-Gm-Gg: ASbGncvRklyEYhtWF4AdJrfTdrV6JSCHrWRcNzk7xdemHknjM4OXBXommXxdkThTiwP
-	X+C7XhKCCGAGfAi546a/jRo8rPuVtjvxtkgGtZcd9tFv/twYnHlK//aF+IAD93Msg5lm4if8WEd
-	h+q0GDu2qmCq+HH8s61UnYKpe7t6fdcJP+v5zAl4WdKOWLw6xkjdXWla2IWgmErWDD/mvwGjIe7
-	hgaai23LaciKc40RjJRUz+j5A5zZ6jY80eAeFFSWGQRgU+VZqklIiks7eA232AYMN1mCvdRrjVg
-	JR5T2lOTtbHBbT4cs8ZVxo1EsfgRgSlzXcTeztulzSzjxeYJUiOgALx0I0U=
-X-Google-Smtp-Source: AGHT+IFVRI+eHYzRePN86bPROJmtppmFeI/4qAEBjgxUHImff0Q+A3BjR9d8MWHmWJZEinQXV/yX6g==
-X-Received: by 2002:a05:600c:c87:b0:439:94f8:fc7b with SMTP id 5b1f17b1804b1-43f1eae40f4mr18061085e9.0.1744266437939;
-        Wed, 09 Apr 2025 23:27:17 -0700 (PDT)
-Received: from [192.168.1.26] ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f233c8219sm39520695e9.21.2025.04.09.23.27.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 23:27:17 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-In-Reply-To: <20250409-s2mpg10-v4-3-d66d5f39b6bf@linaro.org>
-References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
- <20250409-s2mpg10-v4-3-d66d5f39b6bf@linaro.org>
-Subject: Re: (subset) [PATCH v4 03/32] dt-bindings: firmware:
- google,gs101-acpm-ipc: add PMIC child node
-Message-Id: <174426643614.15856.3555538804191184531.b4-ty@linaro.org>
-Date: Thu, 10 Apr 2025 08:27:16 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Mwkv66tx"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8B5F4433F1;
+	Thu, 10 Apr 2025 06:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1744267694;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cb7IK28fqEaigcH00aeaSLMccq7nNJere64F79CGyO8=;
+	b=Mwkv66txch40E6HcDevxLYZTrvLuTp8ktqfEwmvtNg/7fATJe9Enq5Pl4FboeK0VzIrNA3
+	42gz3ZOndZbTsKbnCSq9uIQNaf0wt0lEtOkGJWkO2fqBLqrFyxDvS5GD2FBLfCZxj0URQD
+	gZ1QyODj5QmRHH1WQ/OwA+1UyCoY/MWGdd/wsd3BLh5Lobmsbs58f3VQJD1YnOtJGrhnvB
+	pqQC/Y6BGqq4QwCrX1TEUNCgimIX/wdjzqN4xOcBC+NWqijh5yLav3QVqI8VrZCYAJFaxu
+	bCUFbybtq2gwlHLAz0eU1h7vuZ+O3zuLe8GkHZMakPNnWzfnozRO/3gROFUD8w==
+Date: Thu, 10 Apr 2025 08:48:09 +0200
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Herve Codina <herve.codina@bootlin.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
+ Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Derek
+ Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>,
+ Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana
+ Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, Mark
+ Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-acpi@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: Re: [PATCH 15/16] misc: lan966x_pci: Add dtso nodes in order to
+ support SFPs
+Message-ID: <20250410084809.1829dc65@windsurf>
+In-Reply-To: <c6257afe-36bb-46d8-8c22-da3b85028105@lunn.ch>
+References: <20250407145546.270683-1-herve.codina@bootlin.com>
+	<20250407145546.270683-16-herve.codina@bootlin.com>
+	<19f1a382-1b6b-42bd-a548-a1a5644c9a1b@lunn.ch>
+	<20250408162603.02d6c3a1@bootlin.com>
+	<D91CSNC07NYM.3KC467K0OZ4GG@bootlin.com>
+	<c14dd5c6-2dae-4398-89a9-342e7a25bb30@lunn.ch>
+	<D91XV1I4CY37.20T12FMZ5QLQ5@bootlin.com>
+	<b1b33000-4c10-43cd-bcf4-d24fc73902b1@lunn.ch>
+	<20250409161444.6158d388@windsurf>
+	<c6257afe-36bb-46d8-8c22-da3b85028105@lunn.ch>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdekvdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefvhhhomhgrshcurfgvthgriiiiohhnihcuoehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepledtgedvjeehgeetgfeufffglefhkedvfeduveeiieelteeliedtfefguefggffhnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopeifihhnughsuhhrfhdpmhgrihhlfhhrohhmpehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedupdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhop
+ egurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
+X-GND-Sasl: thomas.petazzoni@bootlin.com
 
+On Wed, 9 Apr 2025 17:03:45 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-On Wed, 09 Apr 2025 21:37:24 +0100, André Draszik wrote:
-> The PMIC is supposed to be a child of ACPM, add it here to describe the
-> connection.
+> So it only supports a single .dtbo. In its current form it does not
+> scale to multiple .dtso files for multiple different boards built
+> around the PCIe chip.
 > 
-> 
+> At the moment, that is not really an issue, but when the second board
+> comes along, some refactoring will be needed.
 
-Applied, thanks!
-
-[03/32] dt-bindings: firmware: google,gs101-acpm-ipc: add PMIC child node
-        https://git.kernel.org/krzk/linux/c/935e5bd95df2c79404630a691caf42c3d7bc3a93
+Indeed, but that's really an implementation detail. It doesn't change
+anything to the overall approach. The only thing that would have to
+change is how the driver gets the .dtbo. We could bundle several .dtbos
+in the driver, we could fall back to request_firmware(), etc.
 
 Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
+Thomas
+-- 
+Thomas Petazzoni, co-owner and CEO, Bootlin
+Embedded Linux and Kernel engineering and training
+https://bootlin.com
