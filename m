@@ -1,105 +1,98 @@
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8CE281351;
-	Thu, 10 Apr 2025 10:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B025D130A54
+	for <linux-clk@vger.kernel.org>; Thu, 10 Apr 2025 10:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744280637; cv=none; b=ss3CBHt/8uAT6EnECJac1ASis2MSnSUXlhnJdKvdu/lGZW2+Ejjmk3so1ZuKqQenaRgAinDoY7EtlzYubGYzHQitl9qmJg44VgRxqc8pukMOf2UNqbZHntThofAFFzmdPnD98JVXE0BucxJY49Fke4kvdIfgzzbGN+FL3sWaemA=
+	t=1744281310; cv=none; b=SXJOjplBftUJ90WFIt0Lbu7RzKtGIOu+6pDJXxHnVPMUugWNanf7qPxOTjWDtA4NxyDE0w3aKz0KNF5zLg4HIdCDmdtTZaUGhNNiabpCUXvENGajbNBLu5lOnBhkxtc/MRazA+JV2qAhpM6Ec2Dy1HCbHirwHO/6fMRIKKMcU1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744280637; c=relaxed/simple;
-	bh=lH8sNp8HpBJeRN7YlG0k90bwTE4mkEU6hE3Rl7ug34Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qKm/jS0i10LLyEg4V3e3R1hDsMuf1q8EUUu8Olg3+SVT67sNYsut9bmJlr/8T7Bz71IInWbE9W9MTYkI2t27I9UEzXyfij3uk06oxC1p52rBFY5G4tlonuBgWMRSQ/c4W7br+hBJh9SdVWPdHvz90QWZDwRzYcUfiQUOFogM4Zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-86dc3482b3dso1723606241.0;
-        Thu, 10 Apr 2025 03:23:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744280632; x=1744885432;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=du50G3lIjNxLx6W3pkF9CbKUDTzcKCdeCv4Naa5/YUs=;
-        b=L2PCkRfuor4x+GVHlN0w1mObi9q2wTwtjfHMn5lM4mU4FZ73uWFzQbIpD95QVuWcgf
-         Pu3lmvX7FpAdTrWebvH54S92LmeoLk7T3i1NoVT/OahkdCK2gOAb82gfGNrTSZQs6reN
-         RFBwsYOpc/vCOiMxk+WQlFxYk+rcUKFT238+d9Ts3S1qm8OCu4zvlyNtLy/tXJo5Cbqo
-         zcycqXEY3I6LhJ/ufU1SG103PaYFL2vdUoh0eOwuf+HQuCULHfS7tRmHsZSXJ5S4ZTZU
-         wR8++DGo4IeHZZzITXNiRlz7zBZw+94eEwJoMNdEo6PEKzLYtIEBLXOOwF4pmFOjPstZ
-         Wl2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU8ucHSV8BOqldm3hX/a7E/cr2slOJu4Dc260g0f0Vr+2YQMs1FN8KYPsNglhrjZf6nqqZFJd6kz8UYxpzu@vger.kernel.org, AJvYcCVP9rYzeBdhdxA2Og2O7TzIg82N64nPM9H9GN6VfP861EKdbfdxfvltXuJkDcvQsOyvHhbmU+4E1nPG@vger.kernel.org, AJvYcCWLRLLkMzc1gYomipsbSbe0w/FBE2O646p7AvgdrW7tPR4bIan2VSbQzV1HoFlb4TBWtkqHg+KkQb0P@vger.kernel.org, AJvYcCWPf2lRUPKq+OBN4LdZVTlvesp3lM0HoJHu/RSFVgr0elMWEuoNG3nKpQIAVaJn2A09rKqo4kbYGNLw/KnB@vger.kernel.org, AJvYcCWVYLKwyfhh9dIAv3YRJAgK1aZhZNU6667sLjtgsW4THQUsyfoLqEaqQi5yjx9wQUAwG9ufw8pLRVwX@vger.kernel.org, AJvYcCWxMRZaff0OHry2uxmvJwp6fyR0sYfNhu6SReQg2jbpT7E7WAYixhT2ViDH2HNn7dA9b3rBGDTQV2VI9EfZ10+N3V8=@vger.kernel.org, AJvYcCX7bx+iAZMssGRJdwkr2pw8jrfcTKPDPqN0YBPzsCAYtfmuxjy66lKPf2/k/hKeKzA3333fc4+TQwfpAw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoUJyImApm+49KfSWLKMxs23biSVvWuOlzBm+OIsDmzNEucjoS
-	eSStcRTf3IulZmzhzIgxV/28+DFSGBsXffZEphr3Pebh6pI4oKSxKrQh2IP2oac=
-X-Gm-Gg: ASbGncvIHo8/jifl2J4NZMNCLFxNcrih+XzohdjZQvvQSRjFxeQFw5ocfR/UpGX0BCq
-	saZaebU3iiWie/bEP492dHA0scYKbqGTJ6w8bbOqjUGwczrEhgxN1MgoeIaFRQdG4glP8sZJTxB
-	lIYciKPUaBCvUYCfUeurE/Z20NX0BBukueaCMn/H5t6LLKQR0KgoGSP2e6iEGahcIl+fEZYYJqf
-	ycUxlS411f9mmZXvftFGa2j9QxB4vH9DFBncVErvhD6CrrNe6+x10ejHXx4wfvoU/3F0Qwb2S9U
-	+3KqY3G15HK2hDCzvOAbHdRc9QwWz8rlun/TuoFdFH+w/t8EzsO6O8lWnOXaq76dSDlCay3G92w
-	sY0dJYDQ=
-X-Google-Smtp-Source: AGHT+IFlmPNBgH/fbxo94LAfY524vLnHQycXUDhBB6glwqW9iCYstTqjhHghkEq5EG0qo/OULlE5TA==
-X-Received: by 2002:a05:6102:4601:b0:4c5:2e31:8818 with SMTP id ada2fe7eead31-4c9d3eac9c3mr843625137.4.1744280632375;
-        Thu, 10 Apr 2025 03:23:52 -0700 (PDT)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-875572b6989sm592393241.32.2025.04.10.03.23.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 03:23:52 -0700 (PDT)
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5240a432462so640467e0c.1;
-        Thu, 10 Apr 2025 03:23:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCMRmmihY7bYe2KXEN2DtLBZb7K7se1c27EVrf4xVe4ApumzbcT41jMt0qdC8YCN5Hv4e7S+X7w9XmHQ==@vger.kernel.org, AJvYcCURpxtUYbL1DoV8qoJqJ1fJFi/tuOmeaNm6yG1+1Kkf0mb24+lmOvdoAipIojs8cxXFfgJS2GhO3irhqayh@vger.kernel.org, AJvYcCUrUKGqO0DeGPEeAusGggfuyZiUFcMJGHAi4g3RmKrVmzJa4AU00goOuzgHJE/KsDGqF+MG0lzKq73C@vger.kernel.org, AJvYcCV4eIiTk5SB16M7Yb04TdA2Ee/qvK9qCabYcKODskBuqbVpaw1Z88MlizWVYZVnFESQL8haxLd36G6Gqy/Y@vger.kernel.org, AJvYcCW8HCsbA9wTI7e6nab++yuY+6Sj9iQv+pRv87Z1L4lrpzJruNysK6bEVeVr+75M6KjCnIGTLcEfTleD@vger.kernel.org, AJvYcCXeRqPLA6OjvNmZXrByUF0hIfCffE+ulrBXoCPaoMd8dVxRY6rEx51cQmzbJXm3KS1MSg9RS54D9WPG7GlEZ2wf9OM=@vger.kernel.org, AJvYcCXfbos4qdgzSf5hxXRNQpEnPKjDTPKOqzeMKQIWhDmnl8wglOeASndPys7pDvwHWrb9A52ZDSRG9gBC@vger.kernel.org
-X-Received: by 2002:a05:6122:2202:b0:524:2fe0:3898 with SMTP id
- 71dfb90a1353d-527b5ecab7cmr1028303e0c.5.1744280631864; Thu, 10 Apr 2025
- 03:23:51 -0700 (PDT)
+	s=arc-20240116; t=1744281310; c=relaxed/simple;
+	bh=N2EUklR/z9JFHYu0b2d1/TXgABpe7LjJhfgZXh/GMyc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=PhWQOkPXVFF7bALFhblEhF+YTzMz8QNgck8mq38sXOZEl6PjT4Ve/WtRwvRXN/wStSMADNVkpJoqeKRlzkGUqzUnamQZEXcMBGZyRdUFmvmL87CQFJZhHM02VZ/L/fqZQLXc8T5Cb1sKZNd4Cci2vWfPDQMM1HT2wkyY9zox9sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u2pFS-0004gV-AC; Thu, 10 Apr 2025 12:35:06 +0200
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u2pFR-004Ftr-2i;
+	Thu, 10 Apr 2025 12:35:05 +0200
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1u2pFR-002dX6-2S;
+	Thu, 10 Apr 2025 12:35:05 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Date: Thu, 10 Apr 2025 12:34:56 +0200
+Subject: [PATCH v3 1/3] clk: make determine_rate optional for non
+ reparenting clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250326143945.82142-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250326143945.82142-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250326143945.82142-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 10 Apr 2025 12:23:40 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWG5gPs0u-E+Q0ipigU-qXwNLt3jGE3bLP0AiYU4Po-Yg@mail.gmail.com>
-X-Gm-Features: ATxdqUHYP0k90KOlJEk8_KKWCI_v7YKprTDnlrpYy60dvQGy6IKe5uQi4lW1XhI
-Message-ID: <CAMuHMdWG5gPs0u-E+Q0ipigU-qXwNLt3jGE3bLP0AiYU4Po-Yg@mail.gmail.com>
-Subject: Re: [PATCH 07/15] dt-bindings: mmc: renesas,sdhi: Document RZ/V2N support
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250410-clk-cdce6214-v3-1-d73cf9ff3d80@pengutronix.de>
+References: <20250410-clk-cdce6214-v3-0-d73cf9ff3d80@pengutronix.de>
+In-Reply-To: <20250410-clk-cdce6214-v3-0-d73cf9ff3d80@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, kernel@pengutronix.de, 
+ =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
+ Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1744281305; l=1101;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=N2EUklR/z9JFHYu0b2d1/TXgABpe7LjJhfgZXh/GMyc=;
+ b=xoyIU0D+nTICp7dPf2on/am/N80Yvsb/UhUHllnpsRJ7u2GJjDhU55mo/TJJ6meGVq/YqmMcl
+ InizkW3CHypDozNamFk65XE9v/X8utCAQyBLX0rC4AzIsmtD3uKh+0E
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Wed, 26 Mar 2025 at 15:40, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add SDHI bindings for the Renesas RZ/V2N (a.k.a R9A09G056) SoC. Use
-> `renesas,sdhi-r9a09g057` as a fallback since the SD/MMC block on
-> RZ/V2N is identical to the one on RZ/V2H(P), allowing reuse of the
-> existing driver without modifications.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+With 326cc42f9fdc ("clk: Forbid to register a mux without determine_rate")
+it became mandatory to provide a determine_rate hook once a set_parent
+hook is provided. The determine_rate hook is only needed though when the
+clock reparents to set its rate. Clocks which do not reparent during
+set_rate do not need a determine_rate hook, so make the hook optional
+for clocks with the CLK_SET_RATE_NO_REPARENT flag.
 
-JFTR
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+---
+ drivers/clk/clk.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0565c87656cf5..07ae3652df6c1 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3937,7 +3937,8 @@ static int __clk_core_init(struct clk_core *core)
+ 		goto out;
+ 	}
+ 
+-	if (core->ops->set_parent && !core->ops->determine_rate) {
++	if (!(core->flags & CLK_SET_RATE_NO_REPARENT) &&
++	    core->ops->set_parent && !core->ops->determine_rate) {
+ 		pr_err("%s: %s must implement .set_parent & .determine_rate\n",
+ 			__func__, core->name);
+ 		ret = -EINVAL;
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.39.5
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
