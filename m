@@ -1,99 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258861D9A54;
-	Thu, 10 Apr 2025 06:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB970202C53;
+	Thu, 10 Apr 2025 06:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744265916; cv=none; b=QDADwOVoYL26Ih6f2ygIqjST0CDlSxUsrCZS/JTpJO/07EgOhBiVe8oVH0Uf2b808VkW+4lPH+RDfwLVVoYOU2GORC7QOSyZKiy+dvhfFr8Ozolc5pSrUFMPL7M6Kqcfz0pRQKahgHRxe9jWvwZwN2CeKKltGKIdwkBi5WjxMNw=
+	t=1744266050; cv=none; b=g0cHulUBFHJYxV+VDahJzGw6wBGxnNll4hR9wznc1gMMOQewbMyQ8Gh9wV+y5gWLJbZObHGynG1RwlhlcXATr1Xi7Z0NXEAgA8HEBDskzKcKqOQIxrPCJcA1HAe5jWgURpMozgFdgTaPV/gLdTqOxSE4gtQsHsDdmqHZrhpnoE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744265916; c=relaxed/simple;
-	bh=N/Eq3oO6cAKqd4CF4xM3K5jQF+XUdMLxEdRDr+rjO6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kkm8Ishd46sm9PWR4xCcpvK6FCtu3w3j7/yMQ6crfavA7uv5JmRe6oHR7rrVulR/y3IniyEUnGMFg3wVve/OvwIV9EbkOcrMOewv4PK7T3Vmqu2tVDuofHCFO2XVE7Eu6DrP3mC+14BDZq3VBtZt0XL/HTXQAjVcWGftehRcqAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgzaIHlH; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgzaIHlH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF988C4CEDD;
-	Thu, 10 Apr 2025 06:18:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744265914;
-	bh=N/Eq3oO6cAKqd4CF4xM3K5jQF+XUdMLxEdRDr+rjO6Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OgzaIHlHHtE0k8XMPIzNNeKxfWMEWFu7Fb7zdKLcQserP3WkyzcrpRmhCueuk2Rlv
-	 M7RQlkWqOlBxJl/Okb0KGD1CfZyFjcANp0maFk15EgzE94lmCUe8QW6syR9i6rP/fs
-	 19IBb8kqDrFCAE4RnLNRegJp45caw01cAbwgibsXB8BlIEfE4i8QAmr/Pisxur8TqH
-	 c6ct+7hdJVB7RhLaqvRTePLViGfRT44QLIAY0bCnSGkedQ0vjy9MNTGiFeFWVkNZfD
-	 jCMG+6SVA/KaBUrW41KOowuiwPqc8AamB4drQgT1T2I0rnBUEY9YFuh68hERIRpzbt
-	 d9I4YXgKYqkkg==
-Date: Thu, 10 Apr 2025 08:18:31 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
-Message-ID: <20250410-dancing-free-peacock-536c24@shite>
-References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
+	s=arc-20240116; t=1744266050; c=relaxed/simple;
+	bh=wZHT3uWcUIEVv3uvaO4nFM7/R27wFwB01cKTmzP4plw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OdEuu5JdIW3eK2T5rgIQyQ75ZYh0veoKxoCjMzZK/V5BL1IyZRRSoa72iHbNN/HzqFlQHQmoTj1oW3Gqyf6QZesZXTVGayqSCm7CdvKZ/x5CrgSlXxAAGp7GR8ULzDcNtidv2fIHkIxeKre3DKFnj61qwLrlGn+9fZBcDU988r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: igkLLXlTSzmzqSH3YMHKiA==
+X-CSE-MsgGUID: J0tUDzl/SSeORbj0OlziWw==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 10 Apr 2025 15:20:46 +0900
+Received: from localhost.localdomain (unknown [10.226.92.117])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id BA251401BEE1;
+	Thu, 10 Apr 2025 15:20:43 +0900 (JST)
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v3] clk: davinci: Use of_get_available_child_by_name()
+Date: Thu, 10 Apr 2025 07:20:38 +0100
+Message-ID: <20250410062040.6346-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 09, 2025 at 09:37:21PM GMT, Andr=C3=A9 Draszik wrote:
-> This series adds initial support for the Samsung S2MPG10 PMIC using the
-> MFD framework. This is a PMIC for mobile applications and is used on
-> the Google Pixel 6 and 6 Pro (oriole / raven).
->=20
-> *** dependency note ***
->=20
-> To compile, this depends on the Samsung ACPM driver in Linux next with
+Simplify of_davinci_pll_init() by using of_get_available_child_by_name().
 
-Are you sure these are build time dependencies? Do not look like. Also,
-if they are, the patchset will wait for quite some time.
+While at it, move of_node_put(child) inside the if block to avoid
+additional check if of_child is NULL.
 
-> the following additional patches:
-> https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@linaro=
-=2Eorg/
-> https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.=
-org/
-> https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@lina=
-ro.org/
->=20
-> *** dependency note end ***
->=20
-> +++ Kconfig update +++
->=20
-> There is a Kconfig symbol update in this series, because the existing
-> Samsung S2M driver has been split into core and transport (I2C & ACPM)
-> parts. CONFIG_MFD_SEC_CORE is now truly a core driver, and
-> the I2C code that was part of it is now enabled via CONFIG_MFD_SEC_I2C.
->=20
-> This was necessary because unlike the other S2M PMICs, S2MPG10 doesn't
-> talk via I2C, but via the Samsung ACPM firmware.
->=20
-> +++ Kconfig update end +++
->=20
-> This series must be applied in-order, due to interdependencies of some
-> of the patches. There are also various cleanup patches to the S2M
-> drivers. I've kept them ordered as:
+Reviewed-by: David Lechner <david@lechnology.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+v2->v3:
+ * Collected tag
+ * Moved of_node_put() inside if.
+v1->v2:
+ * Rebased to next as the dependency patch hits on 6.15-rc1.
+---
+ drivers/clk/davinci/pll.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-They should not depend... although actually not my trees, except the
-firmware.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 6807a2efa93b..bfb6bbdc036c 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -763,13 +763,14 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
+ 		return PTR_ERR(clk);
+ 	}
+ 
+-	child = of_get_child_by_name(node, "pllout");
+-	if (of_device_is_available(child))
++	child = of_get_available_child_by_name(node, "pllout");
++	if (child) {
+ 		of_clk_add_provider(child, of_clk_src_simple_get, clk);
+-	of_node_put(child);
++		of_node_put(child);
++	}
+ 
+-	child = of_get_child_by_name(node, "sysclk");
+-	if (of_device_is_available(child)) {
++	child = of_get_available_child_by_name(node, "sysclk");
++	if (child) {
+ 		struct clk_onecell_data *clk_data;
+ 		struct clk **clks;
+ 		int n_clks =  max_sysclk_id + 1;
+@@ -803,11 +804,11 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
+ 				clks[(*div_info)->id] = clk;
+ 		}
+ 		of_clk_add_provider(child, of_clk_src_onecell_get, clk_data);
++		of_node_put(child);
+ 	}
+-	of_node_put(child);
+ 
+-	child = of_get_child_by_name(node, "auxclk");
+-	if (of_device_is_available(child)) {
++	child = of_get_available_child_by_name(node, "auxclk");
++	if (child) {
+ 		char child_name[MAX_NAME_SIZE];
+ 
+ 		snprintf(child_name, MAX_NAME_SIZE, "%s_auxclk", info->name);
+@@ -818,11 +819,12 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
+ 				 child_name, PTR_ERR(clk));
+ 		else
+ 			of_clk_add_provider(child, of_clk_src_simple_get, clk);
++
++		of_node_put(child);
+ 	}
+-	of_node_put(child);
+ 
+-	child = of_get_child_by_name(node, "obsclk");
+-	if (of_device_is_available(child)) {
++	child = of_get_available_child_by_name(node, "obsclk");
++	if (child) {
+ 		if (obsclk_info)
+ 			clk = davinci_pll_obsclk_register(dev, obsclk_info, base);
+ 		else
+@@ -833,8 +835,8 @@ int of_davinci_pll_init(struct device *dev, struct device_node *node,
+ 				 PTR_ERR(clk));
+ 		else
+ 			of_clk_add_provider(child, of_clk_src_simple_get, clk);
++		of_node_put(child);
+ 	}
+-	of_node_put(child);
+ 
+ 	return 0;
+ }
+-- 
+2.43.0
 
