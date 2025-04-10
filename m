@@ -1,65 +1,65 @@
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27451204594
-	for <linux-clk@vger.kernel.org>; Thu, 10 Apr 2025 12:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB464283C82
+	for <linux-clk@vger.kernel.org>; Thu, 10 Apr 2025 12:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744288243; cv=none; b=pMtbo9wV2Qa7gGRUAbcYgAmFKoUVYROmOmbREYA/PsVYl81RCN1KYDR6Fp5X/9LyMN62MXwVNOsem8Ygly4Zr+9U+fN9AlMpQPPjy/zCyWVVbyixg79QkfxNOWxwKWU37NWGlf3EjJ+hJCORm4d8jzgxWdC7P5Sa8VqRhNTiruA=
+	t=1744288361; cv=none; b=qCj+OMG1lyYM1LG+HIE6RcFE8LRzYOKuK2xL/iPpuFL8XypBH97K5T7uIds8EvfzBUV8SefZfmOKFpCi8CtI7bW+dxbz1wcaQxpwqYtbZ+Q9VGryOHiWQMlyGDgzGMpy0qpm7s/LJom1FXrNwvk3bW0a5fzAcJI8UqBWYeiV8O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744288243; c=relaxed/simple;
-	bh=Ar3ZBvZN6mZyMVGZXLTT80lyCZ3F7mSknQ9gkm0hGxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XLYnpFnxY+33G2I1zB4dTC36go6otLn3ma8GSYM6ErKmV5oFx4JYs7zfBdplr+RhMjB77NPNFKSPSJ8MTl/xJ3KRG+d5k2QTo3ZEtacKUnuD5ZYVBziCKgVifcGK1TbDAyr6exJXKmdYwylQaAWU2GcNEK3ZM/n8YnF2yRuHq6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=UyhZWIiI; arc=none smtp.client-ip=209.85.160.45
+	s=arc-20240116; t=1744288361; c=relaxed/simple;
+	bh=vaduyXSktTjHWIM6mMUVuzB/JU/7o9Vgbb4ojf5mTUE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LMbhJ2WjPQ4k4k2W1G3XO/7RdR1q2IpKaaCOvAco9wgeK0lrG330rU7MdggwKgiPvxOOLftad9OmsQRYdApjQsxLxzNr9Xf82VRTyNA8UteVfArRyOjiH7+nWfluJaKx913L/MtR1BMliuU1Rjc47gH4qGDacNONEpCAqYRQILI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=wAcr0Kz7; arc=none smtp.client-ip=209.85.167.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="UyhZWIiI"
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2d0a742df27so572672fac.1
-        for <linux-clk@vger.kernel.org>; Thu, 10 Apr 2025 05:30:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="wAcr0Kz7"
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3f556b90790so211319b6e.0
+        for <linux-clk@vger.kernel.org>; Thu, 10 Apr 2025 05:32:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744288240; x=1744893040; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U/G4fjR0f0RuM2AdZptF0W+MlLl3MtRw3oBT35Ehy4g=;
-        b=UyhZWIiIJXOLwazPkOCxru1ENH7sC/Ii7B4xcl98iaVbFYPFahsZalIpMqd2Q2j02g
-         K11Xw4ogSz164I9mBAUHbDNnn30PWHLqZwJ0EkVrdW0GSLIJy1aycibLQ8h+rRXRot26
-         tznw3Ay/oYoPotftOrCmsO7HJ+8yMdIbcKnAxkVUdWU74L00EDhRwZjNVtEDjrx7+R+u
-         4wL3lNM+fMsoo9AxBmDp2pCktWVh8ywboTmLWG201p8d3qIVaRAY0BxTZBNwsW8sQTE5
-         bWxvLiqR+ikPXezgN7viQAAMhJcu2bZ59QkGV78EHMDEFDyestKVuaqUNBBfxXY/XbFD
-         RGLw==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744288359; x=1744893159; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GvSNTACO1SZCY31F0gRrZZq+wvkmlB8UFBxIZ9DVjtE=;
+        b=wAcr0Kz7P6zFsFwt5BfIPOsSF+2tNShxV8aRC1lu6GJ4Og3+aB0bcFOUrzv/M3dhKv
+         FIebYKdLbbqWlwVw8ZejZFvl15rw2avJp2inoI7GNJAGz+iGp9Y++3ZWu3yqGmpB0Itk
+         FPYHH7KjpeZ3jx0R+tVjcTJushdG4J4JpDy0yUEGNvMS/JAZQabieAIVeKExMqqt3WkO
+         nVO3vw2anuWnBVpq591W/UqcgkpGisHHFiRi5prN9Gk8PbeNpCkjvuNgcisQKMYT7uH2
+         /FYTnyTIMLfyipjnKmdZM2sGCjyJKEK+ParzF+zONIfNGoDuDVJCri61PuOZv+SQRF9z
+         QZnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744288240; x=1744893040;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1744288359; x=1744893159;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/G4fjR0f0RuM2AdZptF0W+MlLl3MtRw3oBT35Ehy4g=;
-        b=r0p7ysGWDqUuIxz9aSyrVnZyyC4+ugJGfcOIFuJi3fKiHvfHFygSXmTUw268AcHGBj
-         yJDxLSkbs6ktLN3IumVjMJZEq4WIEmSUsC02cyouexDGAx07xPPfWDhkGrugEKCgozSG
-         NjAkRONK180CftKtYd4fh/gGCoAR49DW7n5I4E7JKSwiqyB3zbNLeEg8+jqQB0ZGLKHK
-         9URxjoDf6N0diwdLIUUyVnx3ZwRRPwXP9VxlXij8TFZ7lo7DOw+12L2zUA8PDPX6lgTa
-         LLPePdpdEynHVv5f9yoFOhmS1RFLgpCb6ZE6/Q7nHVHOzIwGyKZz8C0l21sd3Clgp9An
-         LbVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbH6er+y0/Jo/LYgxFtBtsqrqU+Q8tUeXR9F7hhNCfiavqcA/HmG39+5cbxTZNnzb/J6nW9VA4w0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ48dJOZx3VG/S746+AG8v2R+9FawRptElEJb2MHFE69DdhXC/
-	bwFB6AUk4Rz9WmnuGtVAv6N3klK0FX/aML6PuzR+u1RPK3Ks+ahaBGgjK5NPmss=
-X-Gm-Gg: ASbGncsfJmm/7Baeu0+ztIxrvTPH0r4XJxzi0urbjX/kCWp4NUnKa9EO9NRxJAtNHZ1
-	nZ6npZd5LQjt+BlmdVa0YI40SGl898nalqJhuwggQR74rN6I1h8OCBuvEbOC4xGlvJBybkouDZW
-	Wk8bqjXuXS77w940lQO3zE8vVeVdx+RoqAyE3D81lBpyaU/cdv7y7tIL0bCnYfsL/R+BIlzo6g9
-	oFWWnq/CZP7YxTNrIYtYYVPfsv4LPQe2V1e2I7MLvY1pXwPLffugpt1HQ8pbwdcAV3D6ODL7ZeW
-	J7dgVqL4ynO7/LQouxlOxThiV851K5+lcOuGtvvuw5PIfnNjbkqSZgh47SXYm/GfsZO6WyfY6vB
-	DI7+N
-X-Google-Smtp-Source: AGHT+IH3iL915yIdq/TZ3SghSzjHBrA67YTlPNlTvW0UwQg5lhydaAftA1GOGK6dP0WnlAE0+IgdvA==
-X-Received: by 2002:a05:6871:d109:b0:29e:5152:dab1 with SMTP id 586e51a60fabf-2d0b3ab64d2mr1280859fac.13.1744288240021;
-        Thu, 10 Apr 2025 05:30:40 -0700 (PDT)
+        bh=GvSNTACO1SZCY31F0gRrZZq+wvkmlB8UFBxIZ9DVjtE=;
+        b=IoTHPrWVx1PKDBEcLiCYXS+fCIPLllUISmt+Owk5Skm41dtSLWAkqFJi+gfpLbUo1B
+         wSwywfZMD0PH4w6lhAGhTtGz3hJHl9+cFVZF97aeQyl9oWlnralXaFsx3vDvx2lZPXB7
+         ++YtwLNtsSm1UR/QwMruc7kYblEOp/Fr0rP6TAS4WvcKjalQv4tMgTeqRk4C7oVVGFU8
+         VAwt+KcbNMT6/O5DcqCkx6AZu8CrVsKI3W8EiSc85hRD37fkm3sNKlqEvtXCLRm2/4fj
+         rfNh6WhCK9WhRR6XzwRzzACjjj63+SXVtqR1uIuG9K9X1HMMCeaXhCU2UcFq/HlZGuSB
+         9iPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVk/QKJQV/nQXb2J+ub7PgQ7HTVC4utZFGpSAyuvrW9WZLJ7aT0MGNq9PT1VrbEXT/cy+tcxNRInUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVbfogTXm3MX4x/slJdpFRHHSXpwDtOL6sJ/eqpbU66vvZS+DD
+	FayBUlAbTagjqu8OYC3Y2FWy1QRguWmHJ9+tNHiSGsqT7t0CoLDwmID8KlCOSC4=
+X-Gm-Gg: ASbGncstYUdWWwf9pimJEjij6JSMilHgQHBA56A3fZV5Io19sAhznzqtMHeSBhcZE51
+	f9EHrDf1ZV2jOJBpejdWxgFdGZO29gVs5IP5rUn/fGYfveVKvYT5Xv3IkQi5c4dHoyk/0pkAHDQ
+	P5CNB2DvjDAO/G77vSHpwpEo0mp1aZIkUb2WthmLpRFXoQurvGOK6uLd8GCZWgcToehAmX1Bh+k
+	XIxccrdd/BQtaJGECAA2KZT+qdkfcvKtqnOIPXmEVBfyrBI2sliJLM2ClYjxds4GB7TGpBQ5y8X
+	cQFX/RpWK3aDQYQcA7Bbzrxv8MjCqVXFHCeGTzGF9dcHm0Yk8iOP5fWcnLrEM8ZDj2aedbRM1g2
+	aIQM6
+X-Google-Smtp-Source: AGHT+IEJuAZEVXhBtSWrNjlEQvBiq7KT4K1Km9MSzZyjIkHUjkvVril1VSVFFBGM/J31v9xCTSVpWA==
+X-Received: by 2002:a05:6808:7004:b0:3f7:f7b7:88b with SMTP id 5614622812f47-4007bcdc348mr1582330b6e.21.1744288358751;
+        Thu, 10 Apr 2025 05:32:38 -0700 (PDT)
 Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72e73d717c1sm548726a34.25.2025.04.10.05.30.38
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-6045f5b28basm505694eaf.36.2025.04.10.05.32.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 05:30:39 -0700 (PDT)
-Message-ID: <cb13c955-3994-4950-9c28-37703f749b0e@riscstar.com>
-Date: Thu, 10 Apr 2025 07:30:37 -0500
+        Thu, 10 Apr 2025 05:32:38 -0700 (PDT)
+Message-ID: <0ed3ce4c-9be0-485b-a1ea-6a34931179db@riscstar.com>
+Date: Thu, 10 Apr 2025 07:32:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,6 +69,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v6 3/6] clk: spacemit: Add clock support for SpacemiT K1
  SoC
+From: Alex Elder <elder@riscstar.com>
 To: Inochi Amaoto <inochiama@gmail.com>, Yixun Lan <dlan@gentoo.org>
 Cc: Haylen Chu <heylenay@4d2.org>, Michael Turquette
  <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
@@ -92,106 +93,29 @@ References: <20250401172434.6774-1-heylenay@4d2.org>
  <sl752im2sn5sz6yzc23ctprh3rwryuhgtggsaauxixn3b267ag@6sf5fahu6b5i>
  <20250410015549-GYA19471@gentoo>
  <f7cun6vh6lv7q2qdgba4a55wjv3v2pldl22xnrqxnurj3jlyk7@mvafnye3wv7m>
+ <cb13c955-3994-4950-9c28-37703f749b0e@riscstar.com>
 Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <f7cun6vh6lv7q2qdgba4a55wjv3v2pldl22xnrqxnurj3jlyk7@mvafnye3wv7m>
+In-Reply-To: <cb13c955-3994-4950-9c28-37703f749b0e@riscstar.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/9/25 10:47 PM, Inochi Amaoto wrote:
-> On Thu, Apr 10, 2025 at 01:55:49AM +0000, Yixun Lan wrote:
->> Hi Inochi,
->>
->> On 09:20 Thu 10 Apr     , Inochi Amaoto wrote:
->>> On Wed, Apr 09, 2025 at 08:10:53PM -0500, Alex Elder wrote:
->>>> On 4/9/25 7:57 PM, Inochi Amaoto wrote:
->>>>>>>>> diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
->>>>>>>>> new file mode 100644
->>>>>>>>> index 000000000000..4c4df845b3cb
->>>>>>>>> --- /dev/null
->>>>>>>>> +++ b/drivers/clk/spacemit/Kconfig
->>>>>>>>> @@ -0,0 +1,18 @@
->>>>>>>>> +# SPDX-License-Identifier: GPL-2.0-only
->>>>>>>>> +
->>>>>>>>> +config SPACEMIT_CCU
->>>>>>>>> +	tristate "Clock support for SpacemiT SoCs"
->>>>>>>> I don't know the answer to this, but...  Should this be a Boolean
->>>>>>>> rather than tristate?  Can a SpacemiT K1 SoC function without the
->>>>>>>> clock driver built in to the kernel?
->>>>>>>>
->>>>>>> I agree to make it a Boolean, we've already made pinctrl driver Boolean
->>>>>>> and pinctrl depend on clk, besides, the SoC is unlikely functional
->>>>>>> without clock built in as it's such critical..
->>>>>>>
->>>>>> I disagree. The kernel is only for spacemit only, and the pinctrl
->>>>> Sorry for a mistake, this first "only" should be "not".
->>>>
->>>> This is a general problem.  You can't make a bootable
->>>> SpacemiT kernel unless you define this as built-in (at
->>>> least, that's what Yixun is saying).
->>>
->>> Why not putting the module in the initramfs? I have tested
->>> this in quite a lot of boards (Allwinner, rockchip, sophgo,
->>> starfive and etc.), all of them work well.
->>>
->> it works, but not optimal, why delay clk initialzation at modules load stage?
->> IMO, it brings more overhead for using initramfs..
->>
->> but there is always tradeoff and bikeshedding..
->>
->>>> But we'd really rather *only* build it in to the kernel
->>>> for SpacemiT builds. You clearly want to minimize what
->>>> must be built in, but what if this is indeed required?
->>>> What goes in defconfig?
->>>>
->>>
->>> As defconfig is more like for a minimum example system. It
->>> is OK to put a y in the defconfig. But for a custom system,
->>> you do give a choice for the builder to remove your module
->>> in non spacemit system.
->>
->> I get your meaning here to remove/disable at run time stage, while
->> we do provide compile time option, if don't want spacemit system
->> just disable CONFIG_ARCH_SPACEMIT I mentioned, clk/pinctrl will be gone
->>
+On 4/10/25 7:30 AM, Alex Elder wrote:
 > 
-> I think this is not suitable for the most generic case, Especially
-> for distribution kernel. They prefer to set almost everything as
-> module, and load necessary module in initramfs, but the thing is as
-> you said, it is a tradeoff. So I will wait and see whether there
-> is any new voice for it.
+> I'd like to see that be the only thing there, and have
+> various SpacemiT modules define default values that
+> depend on ARCH_SPACEMIT (or _K1) in their Kconfig
+> file.  Like:
+> 
+>      config SPACEMIT_K1_CCU
+>          tristate "Support for SpacemiT K1 SoC"
+>          depends on ARCH_SPACEMIT || COMPILE_TEST
+>          default m if ARCH_SPACEMIT
+> 
+> I *think* Haylen said that's what he's going to do.  You
+> could make it "default ARCH_SPACEMIT" too, though that
+> builds it in to the kernel.
 
-I was the one who suggested it might be made Boolean, *if*
-this code was actually required for a defconfig kernel on
-a SpacemiT K1 platform.  Yes I know needed modules can be
-placed in the initramfs image, but I guess it's almost a
-philosophical question of what exactly a defconfig kernel
-is supposed to do:  boot successfully on all supported
-platforms without an initramdisk; or with one that includes
-required modules.
-
-I don't honestly care that much, so leaving it as a
-tristate is fine.
-
-That begs the question of what goes into the defconfig
-file, which currently includes CONFIG_ARCH_SPACEMIT=y.
-
-I'd like to see that be the only thing there, and have
-various SpacemiT modules define default values that
-depend on ARCH_SPACEMIT (or _K1) in their Kconfig
-file.  Like:
-
-     config SPACEMIT_K1_CCU
-         tristate "Support for SpacemiT K1 SoC"
-         depends on ARCH_SPACEMIT || COMPILE_TEST
-         default m if ARCH_SPACEMIT
-
-I *think* Haylen said that's what he's going to do.  You
-could make it "default ARCH_SPACEMIT" too, though that
-builds it in to the kernel.
+Nope, I just reread what he said, and I'm mistaken.  Go
+with what's preferred by the clock maintainers.
 
 					-Alex
-
-> Regards,
-> Inochi
-
