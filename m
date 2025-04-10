@@ -1,141 +1,197 @@
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720C9280CFF;
-	Thu, 10 Apr 2025 12:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27451204594
+	for <linux-clk@vger.kernel.org>; Thu, 10 Apr 2025 12:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744286828; cv=none; b=sCwXMl56rR1V4hbAyYZUf3sjq8saW4aw6jM/2pXGXujSIqwGEKsIw7F8yKoFwQAIQ7Tn8y/HN3jH2fifNUQRS/1KfXwJzagzakeXkri+UiPJiB44leOKTZxjtKDcTiz9EuE6qUN9VlcLiVem3OHQ/RMboe2SDJneH8fvudOCpsI=
+	t=1744288243; cv=none; b=pMtbo9wV2Qa7gGRUAbcYgAmFKoUVYROmOmbREYA/PsVYl81RCN1KYDR6Fp5X/9LyMN62MXwVNOsem8Ygly4Zr+9U+fN9AlMpQPPjy/zCyWVVbyixg79QkfxNOWxwKWU37NWGlf3EjJ+hJCORm4d8jzgxWdC7P5Sa8VqRhNTiruA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744286828; c=relaxed/simple;
-	bh=FsHvlmClM0GMqX9no6wWpUpR5lKtX5Iqyq8UgL37wdA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KvSr3tVi6oXaOx1hiO3fo/Q9a9qe7EfbMJ8i9dMdxloq6h7q1ld/lKB8fMDFLhH1nytKl0h2Z1DJN2fugIb8d0VT97I/EcVKToQRC6teslvfix7vf7T4gROG7390KOZkOSvcinjIlCrcc2HOUBhIarlnzdK7wRChP8hYE5p9X44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-86d3ac0fec0so689141241.1;
-        Thu, 10 Apr 2025 05:07:06 -0700 (PDT)
+	s=arc-20240116; t=1744288243; c=relaxed/simple;
+	bh=Ar3ZBvZN6mZyMVGZXLTT80lyCZ3F7mSknQ9gkm0hGxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XLYnpFnxY+33G2I1zB4dTC36go6otLn3ma8GSYM6ErKmV5oFx4JYs7zfBdplr+RhMjB77NPNFKSPSJ8MTl/xJ3KRG+d5k2QTo3ZEtacKUnuD5ZYVBziCKgVifcGK1TbDAyr6exJXKmdYwylQaAWU2GcNEK3ZM/n8YnF2yRuHq6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=UyhZWIiI; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="UyhZWIiI"
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2d0a742df27so572672fac.1
+        for <linux-clk@vger.kernel.org>; Thu, 10 Apr 2025 05:30:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744288240; x=1744893040; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U/G4fjR0f0RuM2AdZptF0W+MlLl3MtRw3oBT35Ehy4g=;
+        b=UyhZWIiIJXOLwazPkOCxru1ENH7sC/Ii7B4xcl98iaVbFYPFahsZalIpMqd2Q2j02g
+         K11Xw4ogSz164I9mBAUHbDNnn30PWHLqZwJ0EkVrdW0GSLIJy1aycibLQ8h+rRXRot26
+         tznw3Ay/oYoPotftOrCmsO7HJ+8yMdIbcKnAxkVUdWU74L00EDhRwZjNVtEDjrx7+R+u
+         4wL3lNM+fMsoo9AxBmDp2pCktWVh8ywboTmLWG201p8d3qIVaRAY0BxTZBNwsW8sQTE5
+         bWxvLiqR+ikPXezgN7viQAAMhJcu2bZ59QkGV78EHMDEFDyestKVuaqUNBBfxXY/XbFD
+         RGLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744286824; x=1744891624;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nfcdHlJ2PMoCxR66t/GSWsV/takeL5uVdDX1C1wdF9k=;
-        b=NgCbZkEfS21bpIqdRx8w8ZiQhxLjnVd6/UeDoEUZKbgs70AtohmLAaBS0HjX0zbDs5
-         SxlWwq2m7iU8qTtwdgnGUrQn/G1dQzKQZIYnHeAIdiq5P0ZJ0H7GwzjH+T68W/ejdf2j
-         9sPPkgJ0cBZtCA6HHfkp0ZwbhShY4y4oPvzWk6aAc2qze+vEq0t+8yuowQXeTA9goPs1
-         ON+f6UWS6BUI98GaliZaHDTK5LnRcwSed9h8SxR+w3iSwYVSZ//juScCQa8WBIsIylYG
-         eXyLjnIPWNDnhUchvzX4oRWcnnJaVj295OHa+QoEpVaG5uMy7+22uNm//3oIPRMtOmdN
-         2EDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBmLRaMIa6yB+Aslv0xv4qpS2yavmd8gT5Z6jwb/qdC2csd5vXMZjX30sHIUFeqpxHqglSKBGZAdPjbkFYKzNGm4w=@vger.kernel.org, AJvYcCV/WN7RJodCz3rrvmfMzFYTCJyjl41vE3cmvRvt2+YYiPRkU8vMPWzUHksWijHu8wbLv9DJ0IZLKM77@vger.kernel.org, AJvYcCVNh6vibCk/iMd+k+xayTimemg5oSOyzFkQuYYhXJ8U6d9WQQYc/lfmV2DhrngtOk3Mc/4G23i/LThj@vger.kernel.org, AJvYcCWww0gkIwJVb03CMoi9a3opSDO1POYFYgIZnZViNkWxmG3lIxPt47VBElzVWjyzc+liiW9vLPv7Zz4K/g==@vger.kernel.org, AJvYcCX4XIXz1XV/jEXtysGDJcTt5T7zyWXAX19VW2kaSFBMQot7h8QmV9Nb0Z12dDW3clHDwpSlNlNDe4F6zaBF@vger.kernel.org, AJvYcCXY81wYWg12i98HPcI37THJ9S4D3YinOALvEt6qJjEG7r60j/U9NThn8WUmTKkNpCScWkWSuQkRMF3B3m0P@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjQoLvsFvqtXBD6DGkdelW9ksHwnwCbC1d7ysuyxec/SNBlmeO
-	AcD3mAH9htVYIQOno+B6fEtnIZKqySYVVecebY5+b1Imo+6laaq67AxJZMTFVb8=
-X-Gm-Gg: ASbGncshIC5F0Vb5b5yVxa9lwYG/HwLRSzhTCgEz9+eFutuv257H781q/NMfbL5/Go2
-	FrsF0u7XzHmz4qSnbiGxRhjpOg3n0S4tdABj1Ic/4/ZiG1eNSn/WAYC5P+1WFypO/C11U1OSSSZ
-	obemsC5bWOBSSWLFcJjK30RzTxgbqZEVrlGu+VXIrkRhHW2n6HANEMDZl+3RuEKdwx3e4BE++rm
-	SHVPJ209ijphz15ONDt/2+A1WoeiJdYpSgVeomgY5Cc0svSwGkxWywTbrQSvZ60C+CG+QozLbTs
-	95CioiknMNDdoD2UYKeE1BfBxwmBP+jOBGgNLy1qsm6rH+7hSsJRomCd5GfcpgBZlmFS32wCZBe
-	xdZg=
-X-Google-Smtp-Source: AGHT+IG72Y/9XubavCVGulTQleGDJuPaNQQLIm5s9ZmgPwgZq9cOF9NZ3VXwuwg8q0LqfySIQgH3bg==
-X-Received: by 2002:a05:6102:5615:b0:4c1:83c4:8562 with SMTP id ada2fe7eead31-4c9d629409bmr848750137.13.1744286824487;
-        Thu, 10 Apr 2025 05:07:04 -0700 (PDT)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c97a2b38sm546308137.15.2025.04.10.05.07.04
+        d=1e100.net; s=20230601; t=1744288240; x=1744893040;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U/G4fjR0f0RuM2AdZptF0W+MlLl3MtRw3oBT35Ehy4g=;
+        b=r0p7ysGWDqUuIxz9aSyrVnZyyC4+ugJGfcOIFuJi3fKiHvfHFygSXmTUw268AcHGBj
+         yJDxLSkbs6ktLN3IumVjMJZEq4WIEmSUsC02cyouexDGAx07xPPfWDhkGrugEKCgozSG
+         NjAkRONK180CftKtYd4fh/gGCoAR49DW7n5I4E7JKSwiqyB3zbNLeEg8+jqQB0ZGLKHK
+         9URxjoDf6N0diwdLIUUyVnx3ZwRRPwXP9VxlXij8TFZ7lo7DOw+12L2zUA8PDPX6lgTa
+         LLPePdpdEynHVv5f9yoFOhmS1RFLgpCb6ZE6/Q7nHVHOzIwGyKZz8C0l21sd3Clgp9An
+         LbVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbH6er+y0/Jo/LYgxFtBtsqrqU+Q8tUeXR9F7hhNCfiavqcA/HmG39+5cbxTZNnzb/J6nW9VA4w0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ48dJOZx3VG/S746+AG8v2R+9FawRptElEJb2MHFE69DdhXC/
+	bwFB6AUk4Rz9WmnuGtVAv6N3klK0FX/aML6PuzR+u1RPK3Ks+ahaBGgjK5NPmss=
+X-Gm-Gg: ASbGncsfJmm/7Baeu0+ztIxrvTPH0r4XJxzi0urbjX/kCWp4NUnKa9EO9NRxJAtNHZ1
+	nZ6npZd5LQjt+BlmdVa0YI40SGl898nalqJhuwggQR74rN6I1h8OCBuvEbOC4xGlvJBybkouDZW
+	Wk8bqjXuXS77w940lQO3zE8vVeVdx+RoqAyE3D81lBpyaU/cdv7y7tIL0bCnYfsL/R+BIlzo6g9
+	oFWWnq/CZP7YxTNrIYtYYVPfsv4LPQe2V1e2I7MLvY1pXwPLffugpt1HQ8pbwdcAV3D6ODL7ZeW
+	J7dgVqL4ynO7/LQouxlOxThiV851K5+lcOuGtvvuw5PIfnNjbkqSZgh47SXYm/GfsZO6WyfY6vB
+	DI7+N
+X-Google-Smtp-Source: AGHT+IH3iL915yIdq/TZ3SghSzjHBrA67YTlPNlTvW0UwQg5lhydaAftA1GOGK6dP0WnlAE0+IgdvA==
+X-Received: by 2002:a05:6871:d109:b0:29e:5152:dab1 with SMTP id 586e51a60fabf-2d0b3ab64d2mr1280859fac.13.1744288240021;
+        Thu, 10 Apr 2025 05:30:40 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72e73d717c1sm548726a34.25.2025.04.10.05.30.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 05:07:04 -0700 (PDT)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-86d5e42c924so621235241.3;
-        Thu, 10 Apr 2025 05:07:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUC6OuHm1X9jUiCI6OvorxOo37Ao4sLNXezP3C94AWcNCs3OiMkuAuJOxeX4HK0vtsMHl42Jv06ekztge+F@vger.kernel.org, AJvYcCV2jUrsMkXmyt5IZTaC8vo9UDlXLoBOKL9isVoawF3sVS+b0LGsHcUeH9FQwO0PkPeDidy++DH9CRxNFAKDTBxEZbI=@vger.kernel.org, AJvYcCVhONVDvTgbUe3R9uXwEPi8VfA+XsanbYZP/998rpwsaCyD47avO9ExeVWhN27q/7IQILdMB9M9DgS0Ww==@vger.kernel.org, AJvYcCVrNZ23cVNXIpRJ5B34oO/c8sGSbCYKSkTc+zY0TwhdbF5LVPb9g7wX+sV/ibiEr3Y9UFMVtxpL6hkBB4K9@vger.kernel.org, AJvYcCWK7ZmgAlqs+WSBuoUPJ5a/Kqrk7XBL0x1QPmtXJTtO81IYVajaCVYz0oe+5MeAQKWo61vUlcr5PppY@vger.kernel.org, AJvYcCXJCuUoBYGARaCDRj1kmxBAucC29BF94FPckFp1QSND9e5AR07Uxx3751S1LKty1AGcV4iwRAhR1GIc@vger.kernel.org
-X-Received: by 2002:a05:6102:3ca8:b0:4c1:9526:a636 with SMTP id
- ada2fe7eead31-4c9d62c8d5amr914699137.15.1744286823794; Thu, 10 Apr 2025
- 05:07:03 -0700 (PDT)
+        Thu, 10 Apr 2025 05:30:39 -0700 (PDT)
+Message-ID: <cb13c955-3994-4950-9c28-37703f749b0e@riscstar.com>
+Date: Thu, 10 Apr 2025 07:30:37 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250407191628.323613-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250407191628.323613-13-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 10 Apr 2025 14:06:52 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVYfe7oUp+2QiHbBqxb3zKUYufpZHJQWmbzD1cu3TuRxg@mail.gmail.com>
-X-Gm-Features: ATxdqUEiNZxbpljvmV2Rh2j3dyixwd3mbyXsNxgjOyX-oweSfY5v8rMCzTpccpA
-Message-ID: <CAMuHMdVYfe7oUp+2QiHbBqxb3zKUYufpZHJQWmbzD1cu3TuRxg@mail.gmail.com>
-Subject: Re: [PATCH v2 12/12] arm64: dts: renesas: Add initial device tree for
- RZ/V2N EVK
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/6] clk: spacemit: Add clock support for SpacemiT K1
+ SoC
+To: Inochi Amaoto <inochiama@gmail.com>, Yixun Lan <dlan@gentoo.org>
+Cc: Haylen Chu <heylenay@4d2.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
+ Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>,
+ Jisheng Zhang <jszhang@kernel.org>,
+ Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+References: <20250401172434.6774-1-heylenay@4d2.org>
+ <20250401172434.6774-4-heylenay@4d2.org>
+ <8fe0aaaa-b8e9-45dd-b792-c32be49cca1a@riscstar.com>
+ <20250410003756-GYA19359@gentoo>
+ <dm4lwnplwcxj3t3qx3a3bdxtziowjfoqdy4vrd3ahmzkhejrov@fa5rujatatew>
+ <z27ri5eue43ti6b2te2cbxiow66mtgbnyudoo5cs4quabgbx5r@uipzoxvfoysi>
+ <a8e5adca-8eff-4bbb-a7fa-ce4489b63fa5@riscstar.com>
+ <sl752im2sn5sz6yzc23ctprh3rwryuhgtggsaauxixn3b267ag@6sf5fahu6b5i>
+ <20250410015549-GYA19471@gentoo>
+ <f7cun6vh6lv7q2qdgba4a55wjv3v2pldl22xnrqxnurj3jlyk7@mvafnye3wv7m>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <f7cun6vh6lv7q2qdgba4a55wjv3v2pldl22xnrqxnurj3jlyk7@mvafnye3wv7m>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Prabhakar,
+On 4/9/25 10:47 PM, Inochi Amaoto wrote:
+> On Thu, Apr 10, 2025 at 01:55:49AM +0000, Yixun Lan wrote:
+>> Hi Inochi,
+>>
+>> On 09:20 Thu 10 Apr     , Inochi Amaoto wrote:
+>>> On Wed, Apr 09, 2025 at 08:10:53PM -0500, Alex Elder wrote:
+>>>> On 4/9/25 7:57 PM, Inochi Amaoto wrote:
+>>>>>>>>> diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
+>>>>>>>>> new file mode 100644
+>>>>>>>>> index 000000000000..4c4df845b3cb
+>>>>>>>>> --- /dev/null
+>>>>>>>>> +++ b/drivers/clk/spacemit/Kconfig
+>>>>>>>>> @@ -0,0 +1,18 @@
+>>>>>>>>> +# SPDX-License-Identifier: GPL-2.0-only
+>>>>>>>>> +
+>>>>>>>>> +config SPACEMIT_CCU
+>>>>>>>>> +	tristate "Clock support for SpacemiT SoCs"
+>>>>>>>> I don't know the answer to this, but...  Should this be a Boolean
+>>>>>>>> rather than tristate?  Can a SpacemiT K1 SoC function without the
+>>>>>>>> clock driver built in to the kernel?
+>>>>>>>>
+>>>>>>> I agree to make it a Boolean, we've already made pinctrl driver Boolean
+>>>>>>> and pinctrl depend on clk, besides, the SoC is unlikely functional
+>>>>>>> without clock built in as it's such critical..
+>>>>>>>
+>>>>>> I disagree. The kernel is only for spacemit only, and the pinctrl
+>>>>> Sorry for a mistake, this first "only" should be "not".
+>>>>
+>>>> This is a general problem.  You can't make a bootable
+>>>> SpacemiT kernel unless you define this as built-in (at
+>>>> least, that's what Yixun is saying).
+>>>
+>>> Why not putting the module in the initramfs? I have tested
+>>> this in quite a lot of boards (Allwinner, rockchip, sophgo,
+>>> starfive and etc.), all of them work well.
+>>>
+>> it works, but not optimal, why delay clk initialzation at modules load stage?
+>> IMO, it brings more overhead for using initramfs..
+>>
+>> but there is always tradeoff and bikeshedding..
+>>
+>>>> But we'd really rather *only* build it in to the kernel
+>>>> for SpacemiT builds. You clearly want to minimize what
+>>>> must be built in, but what if this is indeed required?
+>>>> What goes in defconfig?
+>>>>
+>>>
+>>> As defconfig is more like for a minimum example system. It
+>>> is OK to put a y in the defconfig. But for a custom system,
+>>> you do give a choice for the builder to remove your module
+>>> in non spacemit system.
+>>
+>> I get your meaning here to remove/disable at run time stage, while
+>> we do provide compile time option, if don't want spacemit system
+>> just disable CONFIG_ARCH_SPACEMIT I mentioned, clk/pinctrl will be gone
+>>
+> 
+> I think this is not suitable for the most generic case, Especially
+> for distribution kernel. They prefer to set almost everything as
+> module, and load necessary module in initramfs, but the thing is as
+> you said, it is a tradeoff. So I will wait and see whether there
+> is any new voice for it.
 
-On Mon, 7 Apr 2025 at 21:16, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add the initial device tree for the Renesas RZ/V2N EVK board, based on
-> the R9A09G056N48 SoC. Enable basic board functionality, including:
->
-> - Memory mapping (reserve the first 128MB for the secure area)
-> - Clock inputs (QEXTAL, RTXIN, AUDIO_EXTAL)
-> - PINCTRL configurations for peripherals
-> - Serial console (SCIF)
-> - SDHI1 with power control and UHS modes
->
-> Update the Makefile to include the new DTB.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2
-> - Followed DTS coding style guidelines
+I was the one who suggested it might be made Boolean, *if*
+this code was actually required for a defconfig kernel on
+a SpacemiT K1 platform.  Yes I know needed modules can be
+placed in the initramfs image, but I guess it's almost a
+philosophical question of what exactly a defconfig kernel
+is supposed to do:  boot successfully on all supported
+platforms without an initramdisk; or with one that includes
+required modules.
 
-Thanks for the update!
+I don't honestly care that much, so leaving it as a
+tristate is fine.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.16.
+That begs the question of what goes into the defconfig
+file, which currently includes CONFIG_ARCH_SPACEMIT=y.
 
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dts
+I'd like to see that be the only thing there, and have
+various SpacemiT modules define default values that
+depend on ARCH_SPACEMIT (or _K1) in their Kconfig
+file.  Like:
 
-> +&pinctrl {
+     config SPACEMIT_K1_CCU
+         tristate "Support for SpacemiT K1 SoC"
+         depends on ARCH_SPACEMIT || COMPILE_TEST
+         default m if ARCH_SPACEMIT
 
-> +       sdhi1_pins: sd1 {
-> +               sd1-dat-cmd {
-> +                       pins = "SD1DAT0", "SD1DAT1", "SD1DAT2", "SD1DAT3", "SD1CMD";
-> +                       input-enable;
-> +                       renesas,output-impedance = <3>;
-> +                       slew-rate = <0>;
-> +               };
-> +
-> +               sd1-clk {
-> +                       pins = "SD1CLK";
-> +                       renesas,output-impedance = <3>;
-> +                       slew-rate = <0>;
-> +               };
-> +
-> +               sd1-cd {
-> +                       pinmux = <RZV2N_PORT_PINMUX(9, 4, 14)>; /* SD1_CD */
-> +               };
+I *think* Haylen said that's what he's going to do.  You
+could make it "default ARCH_SPACEMIT" too, though that
+builds it in to the kernel.
 
-I will sort these subnodes while applying.
+					-Alex
 
-Gr{oetje,eeting}s,
+> Regards,
+> Inochi
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
