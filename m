@@ -1,75 +1,137 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF29014F9D6;
-	Thu, 10 Apr 2025 14:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443BB1EE031;
+	Thu, 10 Apr 2025 16:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744296767; cv=none; b=Ao4wJNVRcHlP0at46HZkoXbr5SBa7Swagv9oElBIwz0OkNsHmyh1oWPiaf4V1XwDWFFgM7/bMp10BsDWtRaARt4OxAuIqNAEC2wfHyhf95GwxW5BLXiM5Qnih25LtsE6mfxlqyCKTXXvSpL45R7blE7ZpMptdKVWtrd1HXNddns=
+	t=1744302332; cv=none; b=jpylWSqJ9vjwt2jG5cAwBrjfmedsR6lm7PC9qSGcB5Jag107iBAwbEO+MhTNNAJpjDnxurpwjxSY+fX8GL+1qUK2xQjrkOYvXo+rA0095/ZYZe+OOoiN1yhowi+HxzDLy0qM8VSsruBAt8CHPrEMFQVrXYOzWYiu1SxYLdEFfdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744296767; c=relaxed/simple;
-	bh=l73EoxNnjrJXpo0jliTZjC/NtXboSEruwOeXyFFteMM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XoYmTWzZDGroGzgfNsUfckkKurQW3gxmD5wlyvfNWTvaWOD9ytWlr7LvTNEIxdBGZOhwKt6JRASrpo3Nad9NmT+JiMPz6aDOWO4dge5eCzWn1hPpWXsl0m/KyTTzMBw4WuE6G68t6v2S7a+N7LvX2PfVT6GdxBPndZjZCvAnYo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=G77x/r+t; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="G77x/r+t"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=oPR5GZSRvxu16rwEBjKkd9y5335azxvaE/olKP0Je3U=; b=G77x/r+tt7d+nYmpy5n/BrYFGY
-	TgGYU29oQC1E1hWaWmA+t2MxVNwINUe4ii4xPrwV7p2K27aLClNlJeMqKrErTB4POSvjA3ye5hEIC
-	U1UQlKX0Zm1Az4xGoYRkiEyo++bf55XkrLpDu9CZWHoSTvPDyRwTMWFwWno6amILGuvjqXPLqlWP7
-	oSlOOJ/gabRLa7qFX92fX1AFEUEk67fmiQA18aZakQC94K4WJYDH5nOHoCxA2u3blrwZ9KQTCYiV0
-	nwONvT9uEJSN1jYJY+GX6KT6szb9C3VyaLxPQWvIdfhyevmsUJxPTc+8Q8r8S7VVDd/Z7MD1yHFx0
-	EJnIBQag==;
-Received: from i53875b95.versanet.de ([83.135.91.149] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1u2tGj-00012N-2a; Thu, 10 Apr 2025 16:52:41 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Yao Zi <ziyao@disroot.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: Drop empty init callback for rk3588 PLL type
-Date: Thu, 10 Apr 2025 16:52:29 +0200
-Message-ID: <174429674412.910874.4819823369489889838.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250326113556.21039-1-ziyao@disroot.org>
-References: <20250326113556.21039-1-ziyao@disroot.org>
+	s=arc-20240116; t=1744302332; c=relaxed/simple;
+	bh=lykLsCueFpXf3nA5FB3qabRR6p+XCyjF3DtVPfyIVz8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Xffy+SgU8tHrIPQy7OjipGTAvTGWNsfr5EmbmZxvmx4vRP7kz55+CwUQVhiFt1F7URWxrPoLRYYPfJ8NvQp00UZXCssaPDPLSBkJKt2TNwhlJR5y0bI3mj9DISpYu4WbfpX9WdICSJA7Vmx/DCpQjT7WEnfbTpQQSPxc6Uy75CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-86feb848764so406374241.0;
+        Thu, 10 Apr 2025 09:25:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744302327; x=1744907127;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=78W5qKZnlTfZQHkWBjobZ2XI6psT4APTbxKfnxPmKTg=;
+        b=YF/kyiE/XJ71egv2wmaPSFv56mRX4av9h4ssCrU/1T86eTViTyqVrWm9nHxU+IIBju
+         lAXhJhcui8+F2RVU0CjASJ4GfNgNl2HvUELdC7KfeCF0CZjWssRXdOj3KNCmZmXsRZw5
+         oP/+HYS/Rv0jQ3WqzLMgjYaNBxHw+aCHi+nk3k3AUW0LxYYopyEiqMRRIktwq/1e7Cq2
+         p1I55jCje/VNNQtS4yLj9g6l6gYN4C6QbQ26cD4fCmpMMT4KOjm3dnJM+V1kdTpmCRm+
+         8wHnmdN1SUS34h6rJDCSuLQPUIZxq68N8JCNhdFyJpfyb8lprknoB4S6t05JuQ4RR9OX
+         X6/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUNKGCGf83kYBaCjDiz4Y1/f/LmVnGMFcOF3XfrT/0bZAk3h8pihhU6tq7yoR7g1yGtxMazSgFFlPI+NyjT@vger.kernel.org, AJvYcCWmK//E5y0fw4dWVsQJ/jZpEYrvZTCsgAqoYZ49B/kgfOXZlmJd2PY0m1nvxSruTv0QyT5Ay2MDCeHd@vger.kernel.org, AJvYcCXDE0fpTlaYe31+f3CtBw7PcU61SiuAJu1RxfQTjfyPISoFMQFgl/IqPiH/RKqCQWYEAc/fTrcnjqun@vger.kernel.org, AJvYcCXnUQBWjAHs83bEt2G3B61qj/dQTNvDHo9Vc8let3iO6ouhOI++09HmT9vxndQb3Xea3iaPzI9YzARzP+chCcACHgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzgATcKdDbX1ZTFS8iXtEefLU+uTqy8w6LoL9MBnkFkX5FxH3n
+	v+C8samdB2KilEvC4yo3VHSv8PsatKTNJLyiJwY5Jjkc9lwQ53np4S8NVLnRXwA=
+X-Gm-Gg: ASbGncvExIYLK/1XkHbWXOpRFCLm//J81pbWEhPXp24SMgQ91H5ENvWyVJCaan5oQX2
+	iMGVkuESxNkGLKlRBMaD7dYWeifeDQXWfIRtluk+PJbbmOsYouVZZzWvduUBjC94hdyjLLafCBt
+	Z6rpRNC2mIPmYCD20rlLUjES69wo2/V3iZv4F7YqDvrQEfTbU2PzKI+Ji5A+am+Ar9HL4yenBnO
+	ZamqWlo/qbBHdCWu5YzZXxRENNLqEAlhTaq8mGF5lSucyLgYcxXdC/XdQ7vSVfs8CUNT3h0KykE
+	p/253vsAzTT0COCebgv3Ajtytc8/nK081dUMfIrAwd2Y3UjXShCGo/JkDJ8Y4penokuqwjw5vnG
+	B+VM=
+X-Google-Smtp-Source: AGHT+IE+UigPIYi2OHpeTgeGxruFKeQhlp3/ftbE22toZemUTKcKUJn3QdmBOx7KwWu43AASG1QWbw==
+X-Received: by 2002:a05:6102:4b0b:b0:4c1:9159:859c with SMTP id ada2fe7eead31-4c9d629a1c2mr2770331137.15.1744302327229;
+        Thu, 10 Apr 2025 09:25:27 -0700 (PDT)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c9738859sm664436137.3.2025.04.10.09.25.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 09:25:26 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-86feb848764so406346241.0;
+        Thu, 10 Apr 2025 09:25:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0NXYBbPemKC1+0zaGvVQkXHEpS8SywT9okI3gLc9X/Z1gYKimG+3lvidLiuUFL+8WiMGQalpPleD5@vger.kernel.org, AJvYcCVKqOwm/CIKcNTkWalrnegsCSqbGlzVl8lluoNtvpNfU6gMxh9uAw6rj+YZq4d8w8NbBYNwSowj2S1h@vger.kernel.org, AJvYcCVctAeC39ziWuPSYPYWplW1BgBslxYYHWKeWeg5zZBMqB4T8Y0KTkapXDUWUdeSG03hnAmLS+YWRtdTPzTm@vger.kernel.org, AJvYcCXPFXEX82yMVXU/9Qi1X29Gk3MVAEFPOy90R1CBSR4FzOYfKsOZsQzKh9vCSWxuomT4jujUQJ1trqYEi/7fdCjbeAU=@vger.kernel.org
+X-Received: by 2002:a05:6102:5690:b0:4c1:9738:820d with SMTP id
+ ada2fe7eead31-4c9d6259cd8mr2433189137.6.1744302326277; Thu, 10 Apr 2025
+ 09:25:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250317083213.371614-1-tommaso.merciai.xr@bp.renesas.com> <20250317083213.371614-4-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20250317083213.371614-4-tommaso.merciai.xr@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Apr 2025 18:25:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVJqtLKBK6hf0iGGHcPaTdZm10GiiqcBpkPrJSq=KL-cw@mail.gmail.com>
+X-Gm-Features: ATxdqUFwVh-lZqZBAQbhJWNemTgyfpBfQYsBr5BBAUZXUYi1SFARuyVahDZ8WAE
+Message-ID: <CAMuHMdVJqtLKBK6hf0iGGHcPaTdZm10GiiqcBpkPrJSq=KL-cw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: renesas: rzv2h: Simplify rzv2h_cpg_assert()/rzv2h_cpg_deassert()
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, Pavel Machek <pavel@denx.de>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Tommaso,
 
-On Wed, 26 Mar 2025 11:35:56 +0000, Yao Zi wrote:
-> Unlike PLLs in previous geneation of SoCs, PLLs in RK3588 type don't
-> require any platform-specific initialization. Drop callback
-> rockchip_rk3588_pll_init() that does nothing in fact to clean the
-> driver up.
-> 
-> 
+On Mon, 17 Mar 2025 at 09:33, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> rzv2h_cpg_assert() and rzv2h_cpg_deassert() functions are similar. Share
+> this code via __rzv2h_cpg_assert(). This avoid code duplication.
+>
+> Reported-by: Pavel Machek <pavel@denx.de>
+> Closes: https://lore.kernel.org/cip-dev/Z9QA9rwuXCuVbOXp@duo.ucw.cz/
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-Applied, thanks!
+Thanks for your patch!
 
-[1/1] clk: rockchip: Drop empty init callback for rk3588 PLL type
-      commit: 646bfc52bbe184c0579060c3919e5d70885b0dcc
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.16.
 
-Best regards,
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> @@ -652,16 +652,17 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
+>                 mod->name, PTR_ERR(clk));
+>  }
+>
+> -static int rzv2h_cpg_assert(struct reset_controller_dev *rcdev,
+> -                           unsigned long id)
+> +static int __rzv2h_cpg_assert(struct reset_controller_dev *rcdev,
+> +                             unsigned long id, bool assert)
+>  {
+>         struct rzv2h_cpg_priv *priv = rcdev_to_priv(rcdev);
+>         unsigned int reg = GET_RST_OFFSET(priv->resets[id].reset_index);
+>         u32 mask = BIT(priv->resets[id].reset_bit);
+>         u8 monbit = priv->resets[id].mon_bit;
+> -       u32 value = mask << 16;
+> +       u32 value = assert ? (mask << 16) : ((mask << 16) | mask);
+
+Do you mind if I change this to
+
+    u32 value = mask << 16;
+
+    if (!assert)
+            value |= mask;
+
+while applying?
+
+>
+> -       dev_dbg(rcdev->dev, "assert id:%ld offset:0x%x\n", id, reg);
+> +       dev_dbg(rcdev->dev, "%s id:%ld offset:0x%x\n",
+> +               assert ? "assert" : "deassert", id, reg);
+>
+>         writel(value, priv->base + reg);
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Heiko Stuebner <heiko@sntech.de>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
