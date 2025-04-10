@@ -1,272 +1,139 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C73281358
-	for <linux-clk@vger.kernel.org>; Thu, 10 Apr 2025 10:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234644690;
+	Thu, 10 Apr 2025 10:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744281334; cv=none; b=s0VOmL7QvxIfD0l8CgIbJXT39ajz/v+VhgrMOT5zshsxAcEz426tXSBiygz/FOC7QjwRcZ/3c95tQ0Sh0qVER324jhLUO07gdBkfBqrKPiYwk+4S5UiY1fMSsklqj2lSvApIKegjHwFMxDX7UQPazqVFyzUKAQW3VLIdO3Stykg=
+	t=1744282464; cv=none; b=Z68Uk6fVi2k/DRaQfNcomp/OW8fRM36BkmI8Inkj7QSdmooSzlzczZ7bH6VGT1gBpHuC5VjhdiUg64OYHau2tcwz8OShlH2ps+lont/DEnTiLiRt+ur1KygBO421+fUR2mT+5jwugZY1PYjdqeXuQkzmjWRhh2s5/Y1hVqSJRAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744281334; c=relaxed/simple;
-	bh=9tkjJL0fMWPrvpzj2MReC2OeV1F90iCH3nmqV2Hztj8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CTAyyJEGixq+OiqLDI+RuiRW09XhINzthxdiuEt/61+zFXld1/7mI36jmGzNJMqNUl8DDbZtYgUX2bjw2Gz1627DpzEwvpjn7tX57Zs7vAL+0QuLxDs62sJNlGlSVTRgPFnb3hFUYvBpLk6C8C3a5UKuopXhxB59k7ksb+EluVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u2pFS-0004gW-AC; Thu, 10 Apr 2025 12:35:06 +0200
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u2pFR-004Ftt-2l;
-	Thu, 10 Apr 2025 12:35:05 +0200
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1u2pFR-002dX6-2T;
-	Thu, 10 Apr 2025 12:35:05 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Thu, 10 Apr 2025 12:34:57 +0200
-Subject: [PATCH v3 2/3] dt-bindings: clock: add TI CDCE6214 binding
+	s=arc-20240116; t=1744282464; c=relaxed/simple;
+	bh=3ZjhVQhXgUVzl7u2Q1b7HE/KyGfPJMzUjaTDhjtJCkQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JmOIMu2yk2V9A5dw4KOQifn52bjVGHdFRUQ1sdObF3mYnGD77k/wDJKvozt37olOjyPz33BLwv6Dv+nULmhc37WZxSItjbqaUiocgT/GFcPMqI59P48aLqIz1NmOQBwUiBbW60gOU6vU1AcetqLsoOEAnIQOA0AVOAkMcCgUwng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523d8c024dfso328187e0c.3;
+        Thu, 10 Apr 2025 03:54:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744282460; x=1744887260;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PXUMzxyY/nqVjyTK6tLM93ONA5mg90DxuHmVhn37KJU=;
+        b=eO1ENlqFubPYmoYzDaxWVi6mRkK6atCFiGIPzkC7GrVNdXmX57i/jEjbwFTeEmOV9r
+         83GkWtDJ0aJELtg9nkXKuvyUOSazJeHgrQuiSqP6Nx7n39b7lUCBWnbp0ey3JeUyIC5l
+         hRNhMK70HeMBSowAG3uFOHj4Y3o2hhW9nycvou+UxUz8HDzb0Ry+n650cqb4F098dm9d
+         y+51aeXV0Xc/Q03amAWqQssS0F7hVn5K2rxHpHKaidaYkumTrFs4U3QRCEm1PmBEedlw
+         SVq7JgLd4CTJJ3m0FtRJufF+Vm7yE76uz4P0xe8PU8IISbU7PSrQOOiKnI18RTCEJAY7
+         E8xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWf9RjCZXLWFx3aEvk/YQAXWfZuZ8YprSKTzmzW/sQaQIswG4yROyH058xVbS0F2ugntt0esgOVHVZ@vger.kernel.org, AJvYcCVb5cczj7NxYv29/wqn9BRHCFuxxoR3XuAFc95qC3QfhOXqx3rojUifg3ahmFqdKjrXiYNGGjBj3nkb@vger.kernel.org, AJvYcCW352GHpY7zO65PuF91DAzvxWoiftRpdM1zJnA2pAnHmoiE11JUw8m+9gWcWcsOfYuQdWRWk46FPFC2k1+gA2PK25E=@vger.kernel.org, AJvYcCWMERGViYa/U0X/rHvFOIWBK0XZAuXNVFqf//iD9sjJAGiV6vHQSsj1jt0avUVVmwXKdOhpGhiMVaOzSw==@vger.kernel.org, AJvYcCWYOillPIO8iVsXIK2BJyyqwGlS3+aT3r7kO0XikX6cT1CsXbt5TKgUWjk4MLXZkR0iv4lIrSvjYWFPkIKg@vger.kernel.org, AJvYcCWhuY3uZyM4Da2WLi4kjdaZo/Z79H8tE1gDwstZFMw0OZu5tS9j7OUQoTGtyrkCSWRk/YSNgrlE4Nq6im3w@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxa5BGxhexXs9PqRrqCvVVV6mvQzMiZotwDNOBXYJcngZzbwNhv
+	vMthPWHpFJ0GwW5G6ZAQnVmsqALZxHK9V++ZNNY3Ttzm0e49HnCxPFIPTamAHxU=
+X-Gm-Gg: ASbGncshPvvxHbkb/lIshh9WKWkBd0VVYs1ojPe3rhkYSCKVSYdFUf9FX3mvEg4TvW7
+	opehDLDg1EHxeHfbslSo42OLg5NdH3BUogWnU2zmYa6XQ0+yYCLJwKt10LREqXvhNsQppmJzR7b
+	wtS5wCEI6KiG6ohFFXdOJp7VZug/MuAuiiA5nveh6BfCN/1okxafc90mFTWhUuvaHaqa8uoE9hu
+	nbcJTQimDEV0SCJzsmgXkfvJWZnGR1kDWJKwTn0dDu46uiaYi+arsd4syivx3z+yPh3vTZcoiw1
+	H1uIaVAXVEv8Tdjzwy7Od40cQ4u8xm+RZnR0erXBgDbVvBhhUWjP1qNZ9AYZRie+Vau6ze1ZmSr
+	J8HI=
+X-Google-Smtp-Source: AGHT+IHwz11FwEkx6cPcoDl6QKzG3ooSds31KlDSUcjiq1lKQgZFFG2dU6vl8FwJWRFsishUF6zt+w==
+X-Received: by 2002:a05:6122:2503:b0:520:61ee:c815 with SMTP id 71dfb90a1353d-527b50c5449mr1287712e0c.10.1744282459999;
+        Thu, 10 Apr 2025 03:54:19 -0700 (PDT)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-527abeaffd7sm594896e0c.40.2025.04.10.03.54.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Apr 2025 03:54:19 -0700 (PDT)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-86feb84877aso258346241.3;
+        Thu, 10 Apr 2025 03:54:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU7XeEQpGKdHTh8jntjW8Cwd+I+Htt2FO4hB+3Mdp3aIgN1tX4R+3Fs4qOscAJMuLTNGKhXuh9l6A1O3Sga@vger.kernel.org, AJvYcCV6u2LP77s08FzSHdeyimE3o8CMmk8fWTiFrMkgM58guLFMQL5jgHz/MncwqgA/9WAQhEk2rP6IwatP@vger.kernel.org, AJvYcCVbC2VkvphiMlMPI405fBggUHTlnMzEsdxDNiKnM2rbQuBzt1BocsKFBwH9sZayRme7Yb+9MEVYBcga2A==@vger.kernel.org, AJvYcCWySSeBe4NxVRjHvxlDReQJbtaaD+CxKBg32nMR7xdr1SjaMTYN3xNcxiOZDTNfuIF/eibP7kyuKd68tH9X@vger.kernel.org, AJvYcCX00r4x6GWJqcrdVot3UzqD7Nl954hUuoCJ0jYxiyMj+VhszioGKIhv80skIUymsUw/jMwcmw0CJ3FGjSos+zvbnUo=@vger.kernel.org, AJvYcCX56SN5OjXLfNwZVFum0Jvvtz8QocyNHKTQpAJw+KHpEcoblCoWjCyr7u2RqB9IG4KNCkNm1PYSN++H@vger.kernel.org
+X-Received: by 2002:a05:6102:801b:b0:4c2:d9d3:2aae with SMTP id
+ ada2fe7eead31-4c9d36198abmr1337432137.21.1744282458991; Thu, 10 Apr 2025
+ 03:54:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250410-clk-cdce6214-v3-2-d73cf9ff3d80@pengutronix.de>
-References: <20250410-clk-cdce6214-v3-0-d73cf9ff3d80@pengutronix.de>
-In-Reply-To: <20250410-clk-cdce6214-v3-0-d73cf9ff3d80@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, kernel@pengutronix.de, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
- Sascha Hauer <s.hauer@pengutronix.de>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744281305; l=5387;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=9tkjJL0fMWPrvpzj2MReC2OeV1F90iCH3nmqV2Hztj8=;
- b=p8PLX1aDz/AlTiW68nlZHfLLL5q3gaBuBMucTylY5IPFKSry5RINYZHJ/cpxxtfey8dE22gsl
- DQrcInuXXqwBzqMTrJiIpfYSizK0XrTSTkq3SM2LXJ69DzzPvw9uKv3
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250407191628.323613-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250407191628.323613-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 10 Apr 2025 12:54:06 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWV97ctfp+DbxdZ3c-X6hZBH9zapGEzcfp=tQ-hxt31Tw@mail.gmail.com>
+X-Gm-Features: ATxdqUE7PELT4Lw5P3qntvJhQDFcgQm2dlv2Lg41-N-sk1QDYGCAafq2mdBKoxw
+Message-ID: <CAMuHMdWV97ctfp+DbxdZ3c-X6hZBH9zapGEzcfp=tQ-hxt31Tw@mail.gmail.com>
+Subject: Re: [PATCH v2 11/12] arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
-Differential Outputs, Two Inputs, and Internal EEPROM. This patch adds
-the device tree binding for this chip.
+Hi Prabhakar,
 
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- .../devicetree/bindings/clock/ti,cdce6214.yaml     | 155 +++++++++++++++++++++
- include/dt-bindings/clock/ti,cdce6214.h            |  24 ++++
- 2 files changed, 179 insertions(+)
+On Mon, 7 Apr 2025 at 21:16, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add the initial Device Tree Source Include (DTSI) file for the Renesas
+> RZ/V2N (R9A09G056) SoC. Include support for the following components:
+>
+> - CPU (Cortex-A55 cores with operating points)
+> - External clocks (audio, qextal, rtxin)
+> - Pin controller (GPIO support)
+> - Clock Pulse Generator (CPG)
+> - System controller (SYS)
+> - Serial Communication Interface (SCIF)
+> - Secure Digital Host Interface (SDHI 0/1/2)
+> - Generic Interrupt Controller (GIC)
+> - ARMv8 timer
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2:
+> - Added RZV2N_Px, RZV2N_PORT_PINMUX, and RZV2N_GPIO macros in
+>   SoC DTSI as we are re-using renesas,r9a09g057-pinctrl.h
+>   in pictrl driver hence to keep the consistency with the
+>   RZ/V2H(P) SoC these macros are added.
 
-diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-new file mode 100644
-index 0000000000000..12737e67dcf2d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-@@ -0,0 +1,155 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI CDCE6214 programmable clock generator with PLL
-+
-+maintainers:
-+  - Sascha Hauer <s.hauer@pengutronix.de>
-+
-+description:
-+  Ultra-Low Power Clock Generator With One PLL, Four Differential Outputs,
-+  Two Inputs, and Internal EEPROM
-+
-+  https://www.ti.com/product/CDCE6214
-+
-+properties:
-+  compatible:
-+    enum:
-+      - ti,cdce6214
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 1
-+    items:
-+      enum: [ priref, secref ]
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+  '#clock-cells':
-+    const: 1
-+
-+patternProperties:
-+  '^clk@[0-1]$':
-+    type: object
-+    description:
-+      optional child node that can be used to specify input pin parameters. The reg
-+      properties match the CDCE6214_CLK_* defines.
-+
-+    additionalProperties: false
-+
-+    properties:
-+      reg:
-+        description:
-+          clock input identifier.
-+        minimum: 0
-+        maximum: 1
-+
-+      ti,clkin-fmt:
-+        enum: [ lvcmos, xtal, differential ]
-+        description:
-+          Clock input format.
-+
-+      ti,xo-cload-femtofarads:
-+        description:
-+          Selects load cap for XO in femto Farad (fF). Up to 9000fF
-+        minimum: 3000
-+        maximum: 9000
-+
-+      ti,xo-bias-current-microamp:
-+        description:
-+          Bias current setting of the XO.
-+        minimum: 0
-+        maximum: 1758
-+
-+  '^clk@[2-9]$':
-+    type: object
-+    description:
-+      optional child node that can be used to specify output pin parameters.  The reg
-+      properties match the CDCE6214_CLK_* defines.
-+
-+    additionalProperties: false
-+
-+    properties:
-+      reg:
-+        description:
-+          clock output identifier.
-+        minimum: 2
-+        maximum: 9
-+
-+      ti,clkout-fmt:
-+        enum: [ cmos, lvds, lp-hcsl ]
-+        description:
-+          Clock input format.
-+
-+      ti,cmosn-mode:
-+        enum: [ disabled, high, low ]
-+        description:
-+          CMOSN output mode.
-+
-+      ti,cmosp-mode:
-+        enum: [ disabled, high, low ]
-+        description:
-+          CMOSP output mode.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        clock-generator@67 {
-+            compatible = "ti,cdce6214";
-+            reg = <0x67>;
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            #clock-cells = <1>;
-+            clocks = <&clock_ref25m>;
-+            clock-names = "secref";
-+
-+            clk@1 {
-+                reg = <1>; // CDCE6214_CLK_SECREF
-+                ti,clkin-fmt = "xtal";
-+                ti,xo-cload-femtofarads = <4400>;
-+                ti,xo-bias-current-microamp = <295>;
-+            };
-+
-+            clk@3 {
-+                reg = <3>; // CDCE6214_CLK_OUT1
-+                ti,clkout-fmt = "cmos";
-+                ti,cmosp-mode = "high";
-+                ti,cmosn-mode = "low";
-+            };
-+
-+            clk@4 {
-+                reg = <4>; // CDCE6214_CLK_OUT2
-+                ti,clkout-fmt = "lvds";
-+            };
-+
-+            clk@6 {
-+                reg = <6>; // CDCE6214_CLK_OUT4
-+                ti,clkout-fmt = "lp-hcsl";
-+            };
-+        };
-+    };
-diff --git a/include/dt-bindings/clock/ti,cdce6214.h b/include/dt-bindings/clock/ti,cdce6214.h
-new file mode 100644
-index 0000000000000..1b41060896cc3
---- /dev/null
-+++ b/include/dt-bindings/clock/ti,cdce6214.h
-@@ -0,0 +1,24 @@
-+#ifndef _DT_BINDINGS_CLK_TI_CDCE6214_H
-+#define _DT_BINDINGS_CLK_TI_CDCE6214_H
-+
-+/*
-+ * primary/secondary inputs. Not registered as clocks, but used
-+ * as reg properties for the subnodes specifying the input properties
-+ */
-+#define CDCE6214_CLK_PRIREF	0
-+#define CDCE6214_CLK_SECREF	1
-+
-+/*
-+ * Clock indices for the clocks provided by the CDCE6214. Also used
-+ * as reg properties for the subnodes specifying the output properties
-+ */
-+#define CDCE6214_CLK_OUT0	2
-+#define CDCE6214_CLK_OUT1	3
-+#define CDCE6214_CLK_OUT2	4
-+#define CDCE6214_CLK_OUT3	5
-+#define CDCE6214_CLK_OUT4	6
-+#define CDCE6214_CLK_PLL	7
-+#define CDCE6214_CLK_PSA	8
-+#define CDCE6214_CLK_PSB	9
-+
-+#endif /* _DT_BINDINGS_CLK_TI_CDCE6214_H */
+Thanks for the update!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.16.
+
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
+
+> +               pinctrl: pinctrl@10410000 {
+> +                       compatible = "renesas,r9a09g056-pinctrl";
+> +                       reg = <0 0x10410000 0 0x10000>;
+> +                       clocks = <&cpg CPG_CORE R9A09G056_IOTOP_0_SHCLK>;
+> +                       gpio-controller;
+> +                       #gpio-cells = <2>;
+> +                       gpio-ranges = <&pinctrl 0 0 96>;
+> +                       power-domains = <&cpg>;
+> +                       resets = <&cpg 0xa5>, <&cpg 0xa6>;
+
+Note that support for these resets is not yet implemented in the clock
+driver (also on RZ/V2H).  This is not an issue if the pin control
+driver does not use it.
+
+> +               };
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-2.39.5
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
