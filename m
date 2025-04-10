@@ -1,101 +1,126 @@
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9C726A0FF;
-	Thu, 10 Apr 2025 09:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C8E26A1B7;
+	Thu, 10 Apr 2025 09:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744278372; cv=none; b=fiGnHJ1QyUsnGpgGYSEGHE+AT0Nej34qlsz01jcGQozGxhLYuTVeaFP9wOstosaa7kyv45RLD6ILwqsnD/DyXsjXw/KhSIanqBiV5ecUyIhwWaiBjaxXLazjG1WuyARTFMSnWbVwQc/PnZSKP6oQ6CC5e2vEzO+AgH1PwmGkh+M=
+	t=1744278942; cv=none; b=ELCR8+iUh3KWz9kydFxvJn1kitQE24TQnmKDgZFNDkoJLQjMarjDRcJQusvqv3YX0Rod2aplFaDnpTnBam8u12f9aWFc23WtZjKZRQ/In7e38CLxbEm1FhdX3jDCenhUnCWKqf9PwMeev49yNT99EiVktday7uunKnVDI3kT2mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744278372; c=relaxed/simple;
-	bh=cngY2/urcvZ0wt9wEGOapP2KnXYfjkIGmayk8KPO/Tg=;
+	s=arc-20240116; t=1744278942; c=relaxed/simple;
+	bh=8EcGJQ3GTOpysp09gNVgiLkuakkbV/LHk6mYwlMi9fU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E3wI+GtazAgAX1KmvQDUyHpDLCI2c/znSp1Km/5eS+PgQvPGP7VZmXzFLjw8byvXozXXIq1XvlPxvRqhF82sbPxVYbDeNeSM9CH/PS2I1ogh9qn2+ADX66bbjzCGEkqFCWz2C4lgj/kLljdgZcZdqUIFiGczwM67vA9hbfwl3RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-86fab198f8eso240234241.1;
-        Thu, 10 Apr 2025 02:46:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744278368; x=1744883168;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PxDHlscx+bggMtz8CWXRU6QwUOr08l3Z7PZVHbtMipk=;
-        b=C+BpGK1EfOm4Vu9Jm9xJAqJWMzx4M4K7/GJbpyheqxhjF4ryyTaehB0FbaRlgk1DLf
-         qdRFSjPGY0tB3vfXomGbjBrOYgsrAtbyo6ofpLKXVuLLk7NUl7mmnsKLaxu4YQbRx7Cx
-         uSxDCXQTfQIsWbL3keoDhakusOfVeylFkgmSFvf04Lpf2rY+PZllB5E/gV1F88JBxiQN
-         5nBBZIJEIMXjmqwCpegSPuBt/Cb+mO5PDf64/Pq2qham0xcJKtfAD9oa2GdyU29NtLbM
-         LUjiJSSao8NxSoX/1SfWwGYu1UlrCtxCLlK0i7zKGztDUtJ7dyQFlrv61Cdv2ciVaU0t
-         XdbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYaZsou/2ntW7MTtp6uyZj/qBXXHUjtSf1A7t20QGn1DvDdwIq/I4QKjU4y2eZP7Rv3UByXj+zefYC@vger.kernel.org, AJvYcCUaQjsb9toRDVnf6O4O6qCES0OFRECHO+q7ig3Dg+egtrBbLRpsSly6gnDPIFxDMxbTlGEI6MPPGeKxrAd8y2GlHBY=@vger.kernel.org, AJvYcCVEjq6WvVDyA8oaFvsQWMfjqo276V7KvQwdvM9vlVCDwl5kzbRqgkvpCiMmpBrUkTTocpyClE+lokha@vger.kernel.org, AJvYcCVv9wfDZoluYLqwSSa0HkvFKS9E4wdJXGJkcUwK21hA6s9cPsHocppddta7J6scIMeLer9ZDGlSX3k/fdwh@vger.kernel.org, AJvYcCW8kVAZafqRxOZWa92nTaCbu+OTPGWYGXwPYGAHFk/IejW0bF2G+DkMd5rK506Z0FKTABjLWgk8OwlnKQ==@vger.kernel.org, AJvYcCXsSjJ8F/zU6o1QmYrqlZnab8ghB8V3kUFd0Ay35YLR56za7HeB3pUEhwLjIzrfq3AhJMh1+cjYuAJQPcdk@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/F1bnle22o2LS4raV4LoNSwZJe5Nqol3CQGXmBXbeZRfw9bYZ
-	m5pfSdccc/yMZQhoKHbPu767ybC1lcQgdnG1tLTtHRvEGEYFDjYKUgkpQcF6
-X-Gm-Gg: ASbGncsBx/zWIeRT6Gy/XPiw9XEpnRx5HoeH+5pZFY5h8psu4yZzimBWAjIS5gHVgV3
-	PaeN9TH2jfGUivuKFqPKhHgRUKxXIJRXvefEbSRU6eGKzx76hdwstyfV0yHzUCaIcdn3DZd/Ltc
-	ZR8wU1U1PiVoO9MI97AfYgaX5Mvf/2QLBp+OlCiS/cTBi46SO/FAvJpdpPsrDhEuHN9fVC4iJZp
-	0vW53aEs9Dz7iG3EN3YCyI3kLdwDHJw3Tpo1Et/65Qu2gTPGZEUXSHj3UbZ78/6Et9XInHrUbX5
-	hbs+V88s71tLj+PSFIABHlnRu+GQyqzT9AZeL4kkP6WZLzl1td1ujqRc4wLPrFKvbwaXEebmzzK
-	MN+8=
-X-Google-Smtp-Source: AGHT+IFYjJ6UO4xqCEEQYg8LgSZ5axEngXXZ3ZKkwJBhDVsF97WE/H1sOAZSizKpt3UZMI4O+b6B3w==
-X-Received: by 2002:a05:6102:3f48:b0:4c4:e414:b4eb with SMTP id ada2fe7eead31-4c9d34d094bmr1431658137.12.1744278368429;
-        Thu, 10 Apr 2025 02:46:08 -0700 (PDT)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c98edc91sm519434137.29.2025.04.10.02.46.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Apr 2025 02:46:08 -0700 (PDT)
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-86d3805a551so262385241.3;
-        Thu, 10 Apr 2025 02:46:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUSOujFEfpUUbY77+rBpK+PuSNylD46MvCV4ccQKTNo8I3BcNKiiXtkr0qOK/f+fm1H2myICvAkYbrA@vger.kernel.org, AJvYcCVXGk9W6/3i4mcJ10Udnr/N56kQ7YeICjHYtLDCoXJQcy/jfliay6H6YPcxWykMByWW4TvpjkH0chyG@vger.kernel.org, AJvYcCW5xbHLu6Rb6ZVvQVfFPyhQ/aSwifMi7N0h018SnYozML63eUtO2tDq4HtFPni8+FqybXIQ0JY1iH8ong==@vger.kernel.org, AJvYcCWlsQjkSy+L8a0yHPCIjxchjO7CkAkzcaUtdhdGUQRAJQdVeX7EhIapoSkrlHJKt3cisZfnK/XC/H5e5Hnp@vger.kernel.org, AJvYcCXGBkK5IIhmBvkHJI/18BzlkW1tLt73/y0EJZ5N7PxBjAnTfeXz/fNFaJ3CsW8G5JXyUdwcBf3CtslaDiuoRQRNY7I=@vger.kernel.org, AJvYcCXZGCiLYXJRcrJQJ6vZEp1oFfZou7567tpZxMKRDlv9Fi4jd5Uwpz5QGmT8a9DXVWJnzNn6KfLVVWqur2+k@vger.kernel.org
-X-Received: by 2002:a05:6102:50a2:b0:4bb:c4ff:5cb9 with SMTP id
- ada2fe7eead31-4c9d34d7aabmr1176571137.15.1744278367820; Thu, 10 Apr 2025
- 02:46:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=XEDQdO8hvVWOZP/DFPOeTd1Aj8we6+wD8fwjcWf1QE3l2g4KXwOr+/dEyiES8WY3+2SlrJxWNiguumgEBucf7cX2Lz3ZtCx5aMdud5QkZrNI5n3v6h+hF8JKfkCLEHjTrlc0P4k/7GixyyS5wGLdwKXm7xwId4cJV5SPDWLa+vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8Bx41AG; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8Bx41AG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58C41C4CEDD;
+	Thu, 10 Apr 2025 09:55:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744278941;
+	bh=8EcGJQ3GTOpysp09gNVgiLkuakkbV/LHk6mYwlMi9fU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=W8Bx41AG7OpVbPjErvAMogPWDSIBK/z8os5ohWUvkRE4ds1pTyI5N77noltX8qkor
+	 UNhRtMPnyN7jWVB0nH3We6tE18tfb4tcNsFTaKoz5VMAMxUHxYVhp5o20QyselJCjN
+	 a19Q+859e8NqWBY/XLMbh1pQK9FNumLGtwI0Q8zXWf0lDPwtvsIVpuY0t4suIGtcrK
+	 kyrVDfHcYYiOjj+X9kMaOrOIE/+ieRkHt2WwpGYGTlK4Ii3UmM6sdxi1C/yIxqNi8Z
+	 53UV3vGbDt63kblo1uxnSROmr5pGGoGQ9is4TgcifFaOrWtgm6m4I89Pxz1046lIme
+	 twCnK1xi5Qinw==
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2d060c62b61so346356fac.0;
+        Thu, 10 Apr 2025 02:55:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1c+5ceZwvQuqPVf2LZoinfcbVN4EyIwiATzF32akjgg1C9xPmv2rcFCZeSqa/ymtKKoIULZY77gU=@vger.kernel.org, AJvYcCUjA1V2ddvVBoMVjqTIuukqdkSYHPe0Fln92546/Ih/Avve02gmxQRlqMKTqarwhV7iBcxGjlB6dNM=@vger.kernel.org, AJvYcCXRZg7iACP53MmFdmcJgeR4zRny7pbzHzoh3E4r8wOF8Ge2R1U+ZFLWJA/4q/wuzYtabUwvVedqbFgFK0vr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5PzhkehK8UhN4eZ3q9fIrB2WDcBNLGzIOClsVHLyAOB6SQnaA
+	kSm66KSftAQxm2Nlm2TopFrU4F9j4mAPdMelyMeftI/QzXfXRC+jBPX3/iPm4yuCCHUkjKWMWg6
+	IlxMcE3nPP+D1z8UO0sNOwmEwXFA=
+X-Google-Smtp-Source: AGHT+IEmexViKlgkEffDpeC2raagEKm0bOhC4vVnIgwdvz8rjn2fVXxuMs9t01QxOTMnRtcIjs9aKVMkp0Kikyx9UK4=
+X-Received: by 2002:a05:6871:20c1:b0:2c8:3620:f595 with SMTP id
+ 586e51a60fabf-2d0b35741c2mr1284587fac.6.1744278940407; Thu, 10 Apr 2025
+ 02:55:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250407191628.323613-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250407191628.323613-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 10 Apr 2025 11:45:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXqKga_tUS6HHovnxBNCqHQx_tkMNt=WJvAO2z+743LRg@mail.gmail.com>
-X-Gm-Features: ATxdqUHWB9OPOI4UpxDtPd26THswkWl9HKWMeZllh96mN7-b7XJ6OGyeEYXngtk
-Message-ID: <CAMuHMdXqKga_tUS6HHovnxBNCqHQx_tkMNt=WJvAO2z+743LRg@mail.gmail.com>
-Subject: Re: [PATCH v2 07/12] clk: renesas: rzv2h-cpg: Sort compatible list
- based on SoC part number
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250326-cross-lock-dep-v1-0-3199e49e8652@bootlin.com>
+ <20250326-cross-lock-dep-v1-1-3199e49e8652@bootlin.com> <CAJZ5v0gFER-nbWpZK6FMDJCXA+iPQUm5DZDAiRY3ahugR2MM=g@mail.gmail.com>
+ <874izdlblm.fsf@bootlin.com> <CAJZ5v0irZj7ttvUqb-iENQS6BX+KTGuTqyVh0DxgKmsoKrBcbA@mail.gmail.com>
+ <875xjccuyx.fsf@bootlin.com>
+In-Reply-To: <875xjccuyx.fsf@bootlin.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 10 Apr 2025 11:55:29 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jeMqmeZiVQ_EbZrR0XTMfHwg4fEdVmz1p9S-R-VOCVZw@mail.gmail.com>
+X-Gm-Features: ATxdqUEcZnNYsDm7i-WvsX8bhd5c7nQEp9AuWveDK-FjQNDtrXgZyFSE2rDz40g
+Message-ID: <CAJZ5v0jeMqmeZiVQ_EbZrR0XTMfHwg4fEdVmz1p9S-R-VOCVZw@mail.gmail.com>
+Subject: Re: [PATCH RFC 01/10] PM: runtime: Add helpers to resume consumers
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Chen-Yu Tsai <wenst@chromium.org>, Lucas Stach <l.stach@pengutronix.de>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Marek Vasut <marex@denx.de>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, 
+	Fabio Estevam <festevam@denx.de>, Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, linux-imx@nxp.com, 
+	Ian Ray <ian.ray@gehealthcare.com>, =?UTF-8?Q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Saravana Kannan <saravanak@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 7 Apr 2025 at 21:16, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi,
+
+On Thu, Apr 10, 2025 at 9:54=E2=80=AFAM Miquel Raynal <miquel.raynal@bootli=
+n.com> wrote:
 >
-> Reorder the compatible entries in `rzv2h_cpg_match[]` to follow a
-> numerical sequence based on the SoC part numbers.
+> Hi Rafael,
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Thanks for taking the time to read all that.
+>
+> >> After the LPC discussion with Steven, I also discussed with Saravana
+> >> about this and he pointed that since we were using fw_devlink=3Drpm by
+> >> default now, all providers -including clock controllers of course- wou=
+ld
+> >> already be runtime resumed the first time we would make a
+> >> runtime_resume(clk), and thus all the nested calls were no longer
+> >> needed. This native solution was already addressing point #1 above (an=
+d
+> >> partially point #3) and all I had to do was to make a similar function
+> >> for point #2.
+> >
+> > So this depends on DT being used and fw_devlink=3Drpm being used,
+> > doesn't it?
+>
+> DT, not really. fw_devlink=3Drpm however, yes.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.16.
+Which means DT because fw_devlink=3Drpm is DT-specific.  At least it is
+not used on systems where ACPI is the firmware interface.
 
-Gr{oetje,eeting}s,
+> > You cannot really assume in general that there will be device links
+> > between parents and children.
+>
+> But if runtime PM already mandates fw_devlink to be the information
+> source (which, IIRC is the case since fw_devlink=3Drpm), then why wouldn'=
+t
+> this approach work? For sure there may be holes in fw_devlink, but
+> what is the reason for it if we cannot use it?
 
-                        Geert
+Well, see above.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> In other words, are you suggesting that this approach is invalid? If yes
+> could you elaborate a bit? For this approach to work we do not need all
+> the parenting to be perfectly described, just relationships between
+> clock consumers and providers, which are in general rather basic.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+So you know which devices are parents and children without fw_devlink
+and this information can be used readily on all systems AFAICS.
+
+IIUC, the overall approach is to resume the entire hierarchy before
+making changes that may deadlock and I think that this is a good idea
+in general.
+
+However, you need to do it in a way that's usable on all systems and
+when you walk the hierarchy from top to bottom, you need to do it
+recursively I think because resuming a device doesn't cause its
+children or consumers to resume.
