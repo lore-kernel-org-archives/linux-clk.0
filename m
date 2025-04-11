@@ -1,45 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DACE22CBE6;
-	Fri, 11 Apr 2025 17:21:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE68620E026;
+	Fri, 11 Apr 2025 17:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744392111; cv=none; b=FKIfgnUfbZChTJDSh7fULWOlttFxLpSScFI53CSrhQT6gw5IlzanOhCCsSyvazYMUhJLP+SCmTSLZNkQ4KifmaA3oeBcYltY6n+TK9CkMH8/QKcYUNelBZ7j3RqwlKo5m+rE2EINKvoZpKPaWNWIA0/GDgXtCc07RuZEU21oPH8=
+	t=1744393702; cv=none; b=IhdkZGtgAflB5h6iWjTM+g36ndkvKkNq3kDRwKnEqhd7gFjGCccSbTGO3KXgJ9b15SlnY/05tliH/eUzX2Uz08isKXKuP+w/poC91oS9WhkPwkZ2SwYp1rO0XD0if4d3YHPQ00fZGaHvipHpY6A/VN4Ny8L61qfgaP942mtNp+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744392111; c=relaxed/simple;
-	bh=wTPBagsj4ElwWlYBiHEHYq9pY64izexZsXD5qh2E0TA=;
+	s=arc-20240116; t=1744393702; c=relaxed/simple;
+	bh=lfoVd2WdvvKEWN86eDOm1mDwX18E8UkAi+d0laS83N4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Szj2bH2vtqjtnEQYuJT4/azpbdtNzUO/mn9vl1AoXGw3Avksm3rUxax1uEMCOGbW/uwSZ+pL7307UVBcAonlPRkNvxkczJ7AjqWXx3I+oR1Qa7VeelsRXuc8LkRUkmYY+etJIFTnWEtPthJAwEC+9TjONAtnvp8JEvwO1zwGDlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h3Tmywx6; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=o24KdgGfLrBaqz5Bo/QxaE1GuiO83wI//ldNInoG8ouNk2+jIfdXb2LILX3CLDNYYj9lLDit+NE/mRBf2fh3FGanoKXsXILuZxPfObHOhI9P8ElqeJr9KZE3BaWtKjzG+udANE8X7x8JFJY/0X4T+f3PJqlGB21bRnAFNS5kG9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YbBL8KzL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h3Tmywx6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E362C4CEE2;
-	Fri, 11 Apr 2025 17:21:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YbBL8KzL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E94F4C4CEE2;
+	Fri, 11 Apr 2025 17:48:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744392110;
-	bh=wTPBagsj4ElwWlYBiHEHYq9pY64izexZsXD5qh2E0TA=;
+	s=k20201202; t=1744393702;
+	bh=lfoVd2WdvvKEWN86eDOm1mDwX18E8UkAi+d0laS83N4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h3Tmywx6RBQubYx+gshdwNzpLadpwLONa/JXZ2+cByAIyHimdCAf8dJgslgqK3je0
-	 wiZ17zsuRnmX1ZNz6j7kdb1HCBNTbHsPjLYeJuYeFXHIW8q8gO+War6J2CfqgmC7Dt
-	 rcJGH/ncTKw9WM0DT1lljR8q5nJgbkhdIahZ4owOZLJCXIb5dhScRmpxTx1u3Ox03P
-	 6yrl9s2Rjml+aWVC/1cCJmUQp5Z7ZXzMOXlPbak7L+NZ+yenzBRuGTa5/VXqqOrxvT
-	 xFQ5ojPvq3i0Eb+TnpErDyukPnDVxNx4rxjT3pMsCkEUqC5ONhwy8ElmAoRpmPr7Qi
-	 8spN1e4KCIXOg==
-Date: Fri, 11 Apr 2025 12:21:49 -0500
+	b=YbBL8KzLUS8f0W9icJQycy88I9hs0MoLv4zCFYgjJbtjewOghzGPPZyG6f8nJ4xDn
+	 yweLKfStxNC94+fOu7dpl/UoNWBkB+G12mOwykSjo05N6vGBG+bsDxEI/UYEDDLvjJ
+	 fvdxVoTPS+qOmLXeWWbRWwoftBL7+ymGRVUMUok4RsZZL6EfTLfnRTK41IGNS7nGNE
+	 eEgjfVwThhmuA8g6w0F4jJtgyO4I1FiiIjogT2jb6YgUo0MnN0wVChnNuHqeAHucbb
+	 5LyUPnZ1m3K0PVqJ/jngk2vNuddqthTjdejCTfa5FcauTgFGhBo/P/jXG9C/J3847t
+	 FAIF6xiMJ13Aw==
+Date: Fri, 11 Apr 2025 12:48:20 -0500
 From: Rob Herring <robh@kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@pengutronix.de,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH v3 2/3] dt-bindings: clock: add TI CDCE6214 binding
-Message-ID: <20250411172149.GA3468525-robh@kernel.org>
-References: <20250410-clk-cdce6214-v3-0-d73cf9ff3d80@pengutronix.de>
- <20250410-clk-cdce6214-v3-2-d73cf9ff3d80@pengutronix.de>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, matthias.bgg@gmail.com,
+	y.oudjana@protonmail.com, lukas.bulwahn@redhat.com,
+	u.kleine-koenig@baylibre.com, geert+renesas@glider.be,
+	amergnat@baylibre.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v1 1/3] dt-bindings: clock: mediatek: Describe MT6893
+ Clock Controllers
+Message-ID: <20250411174820.GA3602673-robh@kernel.org>
+References: <20250410144110.476197-1-angelogioacchino.delregno@collabora.com>
+ <20250410144110.476197-2-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,62 +50,95 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250410-clk-cdce6214-v3-2-d73cf9ff3d80@pengutronix.de>
+In-Reply-To: <20250410144110.476197-2-angelogioacchino.delregno@collabora.com>
 
-On Thu, Apr 10, 2025 at 12:34:57PM +0200, Sascha Hauer wrote:
-> The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
-> Differential Outputs, Two Inputs, and Internal EEPROM. This patch adds
-> the device tree binding for this chip.
+On Thu, Apr 10, 2025 at 04:41:08PM +0200, AngeloGioacchino Del Regno wrote:
+> Add bindings to describe both the System Clock Controllers,
+> providing PLLs and main clocks, and the functional clock
+> controllers, providing peripheral clocks (i2c, multimedia, etc),
+> as found in the MediaTek Dimensity 1200 (MT6893) SoC.
 > 
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > ---
->  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 155 +++++++++++++++++++++
->  include/dt-bindings/clock/ti,cdce6214.h            |  24 ++++
->  2 files changed, 179 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> new file mode 100644
-> index 0000000000000..12737e67dcf2d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> @@ -0,0 +1,155 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI CDCE6214 programmable clock generator with PLL
-> +
-> +maintainers:
-> +  - Sascha Hauer <s.hauer@pengutronix.de>
-> +
-> +description:
+>  .../bindings/clock/mediatek,mt6893-clock.yaml |  56 +++
+>  .../clock/mediatek,mt6893-sys-clock.yaml      |  68 +++
 
-Needs '>' modifier
+These just duplicate the same schema as the mt8365 bindings. Just add 
+compatibles there.
 
-> +  Ultra-Low Power Clock Generator With One PLL, Four Differential Outputs,
-> +  Two Inputs, and Internal EEPROM
-> +
-> +  https://www.ti.com/product/CDCE6214
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,cdce6214
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 1
+Or I'm open to other options. The only variation among all of these 
+seems to be whether or not they have 'syscon' compatible or 
+'#reset-cells'. And for mt8188 it seems we have that wrong (see below)
 
-How can you have 2 clocks, but only 1 name? See my reply on v2.
 
-> +    items:
-> +      enum: [ priref, secref ]
+In general, it would be nice to see more clean-ups of the existing 
+Mediatek stuff before a new SoC. It makes me sad when I appear to be the 
+only one that cares.
+
+For reference, here's the top warnings for Mediatek on arm64 (999 total, 
+182 unique (stripping the dtb name), 27 undocumented compatibles). This 
+information is available daily from my CI job
+(https://gitlab.com/robherring/linux-dt/-/jobs).
+
+Mediatek has the most warnings with 182. 
+
+arch/arm64/boot/dts/mediatek:999:182
+     29  syscon@13000000 (mediatek,mt8183-mfgcfg): 'power-domains' does not match any of the regexes: 'pinctrl-[0-9]+'
+     27  pinctrl@10005000 (mediatek,mt8183-pinctrl): panel-pins-default: 'panel-reset' does not match any of the regexes: '^pins', 'pinctrl-[0-9]+'
+     27  pinctrl@10005000 (mediatek,mt8183-pinctrl): mmc1-pins-uhs:pins-cmd-dat:mediatek,pull-up-adv: 10 is not one of [0, 1, 2, 3]
+     27  pinctrl@10005000 (mediatek,mt8183-pinctrl): mmc1-pins-uhs:pins-clk:mediatek,pull-down-adv: 10 is not one of [0, 1, 2, 3]
+     27  pinctrl@10005000 (mediatek,mt8183-pinctrl): mmc1-pins-default:pins-cmd-dat:mediatek,pull-up-adv: 10 is not one of [0, 1, 2, 3]
+     27  pinctrl@10005000 (mediatek,mt8183-pinctrl): mmc1-pins-default:pins-clk:mediatek,pull-down-adv: 10 is not one of [0, 1, 2, 3]
+     27  pinctrl@10005000 (mediatek,mt8183-pinctrl): mmc0-pins-uhs:pins-ds:mediatek,pull-down-adv: 10 is not one of [0, 1, 2, 3]
+     27  pinctrl@10005000 (mediatek,mt8183-pinctrl): mmc0-pins-uhs:pins-clk:mediatek,pull-down-adv: 10 is not one of [0, 1, 2, 3]
+     27  pinctrl@10005000 (mediatek,mt8183-pinctrl): mmc0-pins-default:pins-clk:mediatek,pull-down-adv: 10 is not one of [0, 1, 2, 3]
+     27  dsi@14014000 (mediatek,mt8183-dsi): ports: 'port@1' is a required property
+     27  dsi@14014000 (mediatek,mt8183-dsi): ports: 'port@0' is a required property
+     27  dsi@14014000 (mediatek,mt8183-dsi): Unevaluated properties are not allowed ('ports' was unexpected)
+     27  bt-sco (linux,bt-sco): '#sound-dai-cells' is a required property
+     22  pmic (mediatek,mt6359): regulators: 'compatible' is a required property
+     22  pmic (mediatek,mt6359): '#sound-dai-cells', 'mt6359rtc' do not match any of the regexes: 'pinctrl-[0-9]+'
+     17  pinctrl@10005000 (mediatek,mt8183-pinctrl): volume-button-pins: 'voldn-btn-odl', 'volup-btn-odl' do not match any of the regexes: '^pins', 'pinctrl-[0-9]+'
+     17  pinctrl@10005000 (mediatek,mt8183-pinctrl): trackpad-pins: 'trackpad-int' does not match any of the regexes: '^pins', 'pinctrl-[0-9]+'
+     17  pinctrl@10005000 (mediatek,mt8183-pinctrl): touchscreen-pins: 'touch-int-odl', 'touch-rst-l' do not match any of the regexes: '^pins', 'pinctrl-[0-9]+'
+     17  pinctrl@10005000 (mediatek,mt8183-pinctrl): pp3300-panel-pins: 'panel-3v3-enable' does not match any of the regexes: '^pins', 'pinctrl-[0-9]+'
+     12  sound (mediatek,mt8186-mt6366-rt1019-rt5682s-sound): 'model' is a required property
+     11  pinctrl@10005000 (mediatek,mt8183-pinctrl): 'audiopins', 'audiotdmoutoff', 'audiotdmouton', 'ec-ap-int-odl', 'gpio-line-names', 'h1-int-od-l', 'i2c0', 'i2c1', 'i2c2', 'i2c3', 'i2c4', 'i2c5', 'i2c6', 'pp1000-mipibrdg-en', 'pp1800-mipibrdg-en', 'pp3300-mipibrdg-en', 'ppvarn-lcd-en', 'ppvarp-lcd-en', 'pwm0-pin-default', 'scp', 'spi0', 'spi1', 'spi2', 'spi3', 'spi4', 'spi5', 'ts3a227e_pins' do not match any of the regexes: '-pins(-[a-z]+)?$', 'pinctrl-[0-9]+'
+     11  mailbox@10330000 (mediatek,mt8188-gce): 'clock-names' is a required property
+     11  mailbox@10320000 (mediatek,mt8188-gce): 'clock-names' is a required property
+     11  clock-controller@160af000 (mediatek,mt8188-camsys-yuvb): '#reset-cells' is a required property
+     11  clock-controller@1608f000 (mediatek,mt8188-camsys-rawb): '#reset-cells' is a required property
+     11  clock-controller@1606f000 (mediatek,mt8188-camsys-yuva): '#reset-cells' is a required property
+     11  clock-controller@1604f000 (mediatek,mt8188-camsys-rawa): '#reset-cells' is a required property
+     11  clock-controller@15620000 (mediatek,mt8188-imgsys-wpe3): '#reset-cells' is a required property
+     11  clock-controller@15520000 (mediatek,mt8188-imgsys-wpe2): '#reset-cells' is a required property
+     11  clock-controller@15330000 (mediatek,mt8188-ipesys): '#reset-cells' is a required property
+
+arch/arm64/boot/dts/mediatek:27
+['dlg,da9211']
+['marvell,sd8897-bt']
+['mediatek,mt2712-pcie']
+['mediatek,mt2712-scpsys', 'syscon']
+['mediatek,mt6331-regulator']
+['mediatek,mt6380-regulator']
+['mediatek,mt6779-audio', 'syscon']
+['mediatek,mt6795-timer', 'mediatek,mt6577-timer']
+['mediatek,mt6797-scpsys']
+['mediatek,mt7622-pcie']
+['mediatek,mt7622-scpsys', 'syscon']
+['mediatek,mt8173-afe-pcm']
+['mediatek,mt8173-mdp-rdma', 'mediatek,mt8173-mdp']
+['mediatek,mt8173-mdp-rdma']
+['mediatek,mt8173-mdp-rsz']
+['mediatek,mt8173-mdp-wdma']
+['mediatek,mt8173-mdp-wrot']
+['mediatek,mt8173-rt5650']
+['mediatek,mt8173-vpu']
+['mediatek,mt8183-audio']
+['mediatek,mt8183-audiosys', 'syscon']
+['mediatek,mt8183_da7219_max98357']
+['mediatek,mt8183_da7219_rt1015p']
+['mediatek,mt8183_mt6358_ts3a227_max98357']
+['mediatek,mt8183_mt6358_ts3a227_rt1015p']
+['melfas,mip4_ts']
+['winbond,w25q64jwm', 'jedec,spi-nor']
