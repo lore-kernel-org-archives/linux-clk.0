@@ -1,48 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA5910A1E;
-	Fri, 11 Apr 2025 15:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9D578F45;
+	Fri, 11 Apr 2025 15:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744384554; cv=none; b=PV9c3X1AdOVFvJP2AIyvPYzoY/b9AxNNlwxbfjpTDV1s0Lk10j1JrZ1s3xhsmqKmm9k8Euw9XLbuItFm8WKrJTdxLTvn6LcmFbqnuZKkBWy4w4vKulGHFhOo0clXh67OdpEt1ZbFiX0qOV91DKwE02KmL/zv3bR1ew0nayXTBa4=
+	t=1744384833; cv=none; b=qw9PVmuPt/Nq6AB5SCmTf3gn0bdOLDATemUw8WUhXonJV1uv7IvJoi86d+yp15PagzRA1a1hdjVDSRYKBZxeRoG8zQRH320DnAIlJc2Z9yHZdkAsxOMYn8lzW2nqfGgPnGDzABlLxop8oUASz1ieCndiDHyTlmqz2PGki0h+RA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744384554; c=relaxed/simple;
-	bh=pOzo9gl+06nuScpgNkLpBddBRrPwWPW2vetdG6X3tV0=;
+	s=arc-20240116; t=1744384833; c=relaxed/simple;
+	bh=LaqJr2LZX1gmKZMoGldQeuMsPwSCH3VwWbOMCb7vK5Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lx+3Mp3chn7/5EslFdp2ivNBu011veFqLD53Q+mkNwNUsZjd1I+5oExKpHYMAx41uPxlofZOrtv0g06tdik1uc5gTlayTifdCxe68NFlXQYIRQIWgThOjYYVQUQbKhWf4xsOFiRn/5R0Dyc1e2+NgN12NsZzhYFvoxflLjtLGI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPkeaLo/; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+5IhiDEC/wRQwxD/6PByqoX7EsSUVFIIfA44B/rLocvLFsOdOatOnJjsHvBDt5yE8o1oKMPsUSak+Io4N62EYrKwj2foKTc8go9lDxMZqqz5XY/EV8QCNXCN2uQjTpTPGqkCyp99G4rpNrNlmtkAFUCCMqXdhmIzMYzA7QJNoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DwqZEpEn; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPkeaLo/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE72C4CEE2;
-	Fri, 11 Apr 2025 15:15:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744384553;
-	bh=pOzo9gl+06nuScpgNkLpBddBRrPwWPW2vetdG6X3tV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CPkeaLo/fccnmntzxFzQxJPer3+02uVBRTbhfJZxbJ47QdMCHTrSSaNHTr8R81bQv
-	 kVcjpHF7Xi3kbIvlrKPW/vQGTYIdJWZclGrZZ+y6i+SCn2MkIUHGz7OeF4ANC/TUF6
-	 GZHFQpUuX9SGy3fM9JuYrnOQElwBrW7BDTQSwo2lf7/sc4hgE1Imzw//RIxWVRMBB4
-	 s8nFdf/w7gUXqQew8Whqy8aPvCT6BgTh2TgXigzhPOoi34xRHDG3/WBIWP5lNoNMp4
-	 SVMp9eFY1tWgDbC0/u1UF55oxt8Gv/x+fGc3XZHBLOaVNACEPL/4PN/tMunRKKBQpv
-	 835IQe/VTqg/A==
-Date: Fri, 11 Apr 2025 10:15:52 -0500
-From: Rob Herring <robh@kernel.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DwqZEpEn"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22622ddcc35so28499335ad.2;
+        Fri, 11 Apr 2025 08:20:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744384831; x=1744989631; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TozylxmD7FxlSrGmF1xw1E/SWXgnLpz0ZrqGEf5l6NY=;
+        b=DwqZEpEnMWDBQ4Q2Inygm6bymCmuHEGhRBBgu0Edii9TiA7A43UPdHYOk6wzrc8sVx
+         IVHIAVhFHIzgfY16EKaQM6szgRQuiE6a7SiJ4OcXuNyITguaPkUCmL6BuxmDGhd9k09g
+         m+4CjDzAq3SSg7B3a64IJZd6nnlyckx3DFynPHS3UOzkX/o/X1uSpN2Y0gc5IStwy7XZ
+         JFZMH7e+LYIwRcUmHOP1vfJK7sGbK87Uog+YvlM0RrdA2rQt/MkEqEB1gKzY6DMqEq3i
+         bTlU/q5MqM0oU1PfvNEcautSrWqKPqVqYJa5B6DdUj5YE8YrCb9g8yEHYzvDm9a2ud9Y
+         LADw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744384831; x=1744989631;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TozylxmD7FxlSrGmF1xw1E/SWXgnLpz0ZrqGEf5l6NY=;
+        b=oZBlT2jkURJKVQOCnEiLBPsJX9ffFY5TXhYXZMzVOsjq/a+KtDNGyBb2P00wGt7NVl
+         tr/rpjBo1pCPKX9HLi5GlhKf/zVXpp1kF4yVrpVg+7gSiCU85/8pIngo7HlAMSfk2JFu
+         JZacdPJTWqjjZCOVU94AWcmOv9TpzCwgELlSW6NvJ48dCXZSA2+ipouywVE8sOoJzbov
+         ULmhmKYPLUTyIu8x+1VGS1mBG8Izd4vD6fcnIiuoI5CCZ7yjIuaM18FtYxL4opHMWGSr
+         ABARArmKgJIG/ePR2f8MjDKJuTHjZcQa/GOuzQNIQRoqVNisQl+JdTYdZEkkUo5HcwYm
+         2S4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUmJ5hYABdwCrXDrDYiTg5U8jqlWD/zvcD299qTib3poTGZUOiCXVWH1jdZhQtnxCtMW/MU+EOz9Tw=@vger.kernel.org, AJvYcCW+FXwJzjOKfLP6TMZChbOyoVQQNCs6XejzUNbqT6530x7coRtD/UTqjlFMV9aDf5YYqWu0wxl4I+uGjmM3@vger.kernel.org, AJvYcCW6uMUzDII44DfwPAdRsQagMLbUWGYJLxpHQ2xkfHWc7LKQpOH8gQIv3DlSa6sAJc97L3+b649saIhKksuuyq8=@vger.kernel.org, AJvYcCXWQFS57BoydU3hVmJnG7wDAHmRaPm6JwnV8HjC2auMBdv1lk+YgB5/U4JcPmH7BA+J8Yr6/PFRqmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHI43EYZtYpk0N+s2DiUzY1X/TRXOjq6IMyuInevkVtfdOWuVD
+	LegGcalqwnH5J5k66ABSh+MUKUbk0QzcWngJiFJE2CGm3/lx4Vxm
+X-Gm-Gg: ASbGncsG0Uh9Nt4xh2Tl5vndY2NHUarKlDvb5EmagDjBt+VnI+FYaBtrpFze1eXfrud
+	zhlf4ymMo1qKCGeIICXRT0tNyaXBFFHq4UusXkzFfbTxHc/FXuIf0aQUeRsLnZsfFrEgnrbaSvF
+	Fwi01t6aiZqVdlveoKg8PZx2KiPbR1tzMn0KiubW8l+G6PcOBj4jnefDMg2yf4bDYJWyoB9QSa3
+	RHs9u/L0BnHGPXlV/+WuoeLKhfEfkZcyB2o8x6aLz9DeUTJjmnkX108B4BSThrJNEC82UAbi9iH
+	U5g2YBSYD3Yo1QBZkvlIWr3pHAwSnnQcXRmx+Ckq
+X-Google-Smtp-Source: AGHT+IHMyC/UR/UB3BGcCMn9fQ6p0UWutNTt1pWz3fG+YVjGta2wmyB6MBlUVCnjdbo5w5A04dTEqw==
+X-Received: by 2002:a17:903:1a05:b0:224:256e:5e3f with SMTP id d9443c01a7336-22bea4bd566mr51266385ad.25.1744384830680;
+        Fri, 11 Apr 2025 08:20:30 -0700 (PDT)
+Received: from localhost ([216.228.127.131])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd21949e5sm1648408b3a.4.2025.04.11.08.20.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Apr 2025 08:20:29 -0700 (PDT)
+Date: Fri, 11 Apr 2025 11:20:27 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Burak Emir <bqe@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@pengutronix.de,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH 3/3] dt-bindings: clock: add TI CDCE6214 binding
-Message-ID: <20250411151552.GA3258510-robh@kernel.org>
-References: <20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de>
- <20250408-clk-cdce6214-v1-3-bd4e7092a91f@pengutronix.de>
- <5766d152-51e7-42f5-864f-5cb1798606a3@kernel.org>
- <Z_U6fUGbOV2SdO_C@pengutronix.de>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V9 01/17] rust: cpumask: Use non-atomic helpers
+Message-ID: <Z_kzO0b43s4x162Y@yury>
+References: <cover.1744366571.git.viresh.kumar@linaro.org>
+ <b092bbcc23529663b1a8b381efb85566453185e1.1744366571.git.viresh.kumar@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,131 +93,37 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z_U6fUGbOV2SdO_C@pengutronix.de>
+In-Reply-To: <b092bbcc23529663b1a8b381efb85566453185e1.1744366571.git.viresh.kumar@linaro.org>
 
-On Tue, Apr 08, 2025 at 05:02:21PM +0200, Sascha Hauer wrote:
-> On Tue, Apr 08, 2025 at 04:27:23PM +0200, Krzysztof Kozlowski wrote:
-> > On 08/04/2025 14:00, Sascha Hauer wrote:
-> > > +
-> > 
-> > A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
-> > prefix is already stating that these are bindings.
-> > See also:
-> > https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-> > 
-> > 
-> > > +properties:
-> > > +  compatible:
-> > > +    enum:
-> > > +      - ti,cdce6214
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks:
-> > > +    minItems: 1
-> > > +    maxItems: 2
-> > > +
-> > > +  clock-names:
-> > > +    minItems: 1
-> > > +    items:
-> > > +      - const: priref
-> > > +      - const: secref
-> > 
-> > So one input is optional?
+On Fri, Apr 11, 2025 at 04:25:00PM +0530, Viresh Kumar wrote:
+> The cpumask Rust abstractions don't need the atomic variants of helpers
+> for now. Use the non-atomic helpers instead.
 > 
-> The chip has two clock inputs and to be operational it needs at least
-> one clock, could be priref or secref or both.
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  rust/helpers/cpumask.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> Is there a proper way to express this situation?
+> diff --git a/rust/helpers/cpumask.c b/rust/helpers/cpumask.c
+> index 2d380a86c34a..ae964cddbd41 100644
+> --- a/rust/helpers/cpumask.c
+> +++ b/rust/helpers/cpumask.c
+> @@ -2,14 +2,14 @@
+>  
+>  #include <linux/cpumask.h>
+>  
+> -void rust_helper_cpumask_set_cpu(unsigned int cpu, struct cpumask *dstp)
+> +void rust_helper___cpumask_set_cpu(unsigned int cpu, struct cpumask *dstp)
+>  {
+> -	cpumask_set_cpu(cpu, dstp);
+> +	__cpumask_set_cpu(cpu, dstp);
+>  }
+>  
+> -void rust_helper_cpumask_clear_cpu(int cpu, struct cpumask *dstp)
+> +void rust_helper___cpumask_clear_cpu(int cpu, struct cpumask *dstp)
+>  {
+> -	cpumask_clear_cpu(cpu, dstp);
+> +	__cpumask_clear_cpu(cpu, dstp);
+>  }
 
-If I understand correctly that only 'secref' is possible then you want:
-
-items:
-  - enum: [ priref, secref ]
-  - const: secref
-
-(By default, entries have to be unique, so that eliminates 'secref' in 
-both)
-
-> 
-> 
-> > > +  "^clk@[2-9]$":
-> > > +    type: object
-> > > +    description: |
-> > > +      optional child node that can be used to specify output pin parameters.  The reg
-> > > +      properties match the CDCE6214_CLK_* defines.
-> > > +
-> > > +    additionalProperties: false
-> > > +
-> > > +    properties:
-> > > +      reg:
-> > > +        description:
-> > > +          clock output identifier.
-> > > +        minimum: 2
-> > > +        maximum: 9
-> > > +
-> > > +      ti,lphcsl:
-> > > +        type: boolean
-> > > +        description: |
-> > > +          If true enable LP-HCSL output mode for this clock
-> > > +
-> > > +      ti,lvds:
-> > > +        type: boolean
-> > > +        description: |
-> > > +          If true enable LVDS output mode for this clock
-> > > +
-> > > +      ti,cmosp:
-> > > +        type: boolean
-> > > +        description: |
-> > > +          If true enable CMOSP output for this clock
-> > > +
-> > > +      ti,cmosn:
-> > > +        type: boolean
-> > > +        description: |
-> > > +          If true enable CMOSN output for this clock
-> > 
-> > Looks the same here. Anyway having these as subnodes is too much. You
-> > have fixed number of clocks, so you need one or two array properties in
-> > top-level.
-> 
-> There are several properties I haven't yet modeled, like
-> 
-> - 1.8V / 2.5V output
-> - sync_delay
-> - LVDS common-mode trim increment/decrement
-> - differential buffer BIAS trim
-> - slew rate
-> - BIAS current setting for XTAL mode
-> - load capacity for XTAL mode
-> 
-> I don't know which of them will ever be supported, but I thought having a
-> node per pin would add a natural place to add these properties. Do you
-> still think arrays would be more appropriate?
-
-Assuming they are connected to something in DT (if not, why care), you 
-could add a flags cell so the consumer side can define what they need.
-
-> 
-> > 
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - reg
-> > > +  - clocks
-> > > +  - "#clock-cells"
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    #include <dt-bindings/clock/ti,cdce6214.h>
-> > 
-> > This file does not exist. Something is odd in this example.
-> 
-> It is added in the driver patch. Should it come with the binding patch
-> instead?
-
-Yes.
-
-Rob
+Please just add non-atomic helpers after atomic ones.
