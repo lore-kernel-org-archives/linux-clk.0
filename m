@@ -1,137 +1,245 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467BB2980CD
-	for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 08:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E350C296169
+	for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 08:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744360711; cv=none; b=c3u7JHIIvek/m81tNGkacfkMsmsAzuXOiq+BMOjk+QFFF/0kbB02vwELP1aIOtEtc6G+638Z/1n6nJVMEA+U0trWqx3x9DjNeS9NpfjpelEJsdelV5Aky43EW5BUsWINw7KgWJOR5K2Zkw5XMpLArEQUMBTWg9FA26yUDLHiwkA=
+	t=1744361539; cv=none; b=oZDvvbbTveK7GFkL/F2P8IazN19PvPyZzAPpZCChhFWHTkyrY6LHz7zNoStCqgGM+BLJpgvA063YBz6zFK1bqIw/GRF1ulc6Hq5TpxZe0Hva2Tpll6HPVFgZuqNQ+qkQv1PxhOn+to0PG0EEpeh0OEOyjhuA0jp90D8FCnOc+yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744360711; c=relaxed/simple;
-	bh=D7R9oFDs5xYoXN43Ulwrouo3nLF61el6kbjtNoLpuyw=;
+	s=arc-20240116; t=1744361539; c=relaxed/simple;
+	bh=V7KSZFBtA2pNy/GOdjVOUR3ghYSmXe5GfmpGe4w2sfI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HVjbnTj4gYBQIlcx79o8xJbmEcL/JztLgMuGI2LlGWqws8QjMWy7V6HaHRjF/JjfsNhzN15t4ahd6U4h1MjzD2ARUAZx5wtjmlC7FMKxs+Ac7ji1cx/9xbZs2uPUlaD3mo2yerojC9Kwtu6oQPMdc4tDBIpiLlml4ReGt2BwTJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=UzpIvUwx; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+	 To:Cc:Content-Type; b=AqyKAUziC2cdYMPIOdRPqw51H6MCehNThfE+SJsk0hA5CKumSc0w2qPzzLTIVwuyFImi6miZVXb4advvFVsM2szFb1+jyi2HqLHVLRD0i4oDZVSWYo/T/c2UkAjoWIixCs0KXrymqtdhGlfinP89SJdks+bwej8GgEsqvXAUu2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UdEwQc6B; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="UzpIvUwx"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e6e2a303569so1341820276.0
-        for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 01:38:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1744360708; x=1744965508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RtU+pOoZbsLOnPjUI7YZ5FGGjZ40GzcCM59B/7LbYr4=;
-        b=UzpIvUwxO+k22fbZNAK9zkUFeyaa/VmpTJvs0do+/nfTjsFynHnh185YRbcfQ0rzcR
-         vB3E3/0ij478ZA+Qg2zv/OrH/0bL9efzaQzx+uXutMvMqJ6ivOQKWo6IlDs+jZsUJVrO
-         ZoAj3W/isU9utclcGyzHD/b6+qj6i5lTWwdLk=
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UdEwQc6B"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B5xrgr016337
+	for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 08:52:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=z6jrc2XmgogjjH6Q652wRy6a
+	jx90JWJC0BHTJQ8w2o4=; b=UdEwQc6BK1DiLKtmUKzQsg/8WOk/LXPUCVjADXvq
+	nzBawJ1+6OGtpWGZjt8OcG/eaz7JA+svQ61ncI3oHzt88mGt6Dgnn3sGt1FBYfxU
+	SBpVNsQXOjnw5O70FMauBR1CQs1k3T5aJNGpRD6CDagdA1GTQ8y9jSi6ElGvjtdk
+	Kxzt2OeQhx2PWc8qUEoVVViDJ+cuG2gHdLDloFOFOukUGkhEimDnusA24sqEC70Z
+	mukjsjMPsBHWpExbZ6cWt4EkUpg17xfzM4pN3u8RntTAlZ15FttDF6nblnV7D0aX
+	/si9wTK87DX2Qf23zYjUcS9mjVDbQGcBeuog3enmAQXpbQ==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twc1smqg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 08:52:15 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3055f2e1486so2612071a91.0
+        for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 01:52:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744360708; x=1744965508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RtU+pOoZbsLOnPjUI7YZ5FGGjZ40GzcCM59B/7LbYr4=;
-        b=vNej4gH9BFFtoudvWXRutRBPz7nsFB0WPxt3ugbIRQNQfZupD1BtLCRKOWPP4toI0x
-         SNRAKk8MQsigFVcfigRqHY11uQqfB9WfR9IA+cZT8TQAi5hMqPUHcEZ+NdX+Pe4tECfP
-         oUZau/BEn3p73tl6c9Xg5LHBeC2mtGgKProIPepp2qBq9+8HE1rSo0zrwRySvJ2MAcXl
-         7r/LoS1Ls23KyFXEy8Cjv3meX6dAH99A3hIhdQBcIr0dLLjYsEJfTpTftWh/RZ3Pb1vm
-         kdNixaMy/gSXlSFT0cnpl21WFSucfgXdYJ5nk3ze3yPkgFwz3/YtBIIE42iPHOOEhIll
-         +brQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOEDCe0bTLY4APsQSOrMmemZ4gSpEb8xWU8ORkGBxfUoho2iM6cWipGxpeykP1kSlfWD2OSl/UBqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgnZUcvkWWAugocK5W7ef8h8+7+jd8rQBWzlDYZ/Mt5SGXsu3m
-	uNwBdVK4KFiwffWKVnQSHEN266VV9zkbHV16lkp9ankoGrKE7G2X0LV8DoS9i6HWSdQuMa1mWP2
-	sObokWUQeOeKo0qf+hLdh37iHWQsWr0VAk850nA==
-X-Gm-Gg: ASbGncvgVM8Nd/R6DrnOcLSrM+yLZ5QvvBzaR5vvLbWkUxZK2nT/5DNXxewIfgWOQfs
-	IKBM25EkS2ixJQ10vkyVGQOnpb9ivXJ/wkt1hkQukKOp4Gpa+NPq9ySV6yUtx1fKWZwQqbiZ7+1
-	jubZTYVTxFoXhrLIQzFQI=
-X-Google-Smtp-Source: AGHT+IHCodNLsYqxPgYy8KacCIFQ8uMbF8eAgpfHHABuPW/r+cXCzHR5Dy1G6JiUbudEZgEzb8V1wt8pBrFYRs9UU4s=
-X-Received: by 2002:a05:6902:2012:b0:e6d:dfea:8f09 with SMTP id
- 3f1490d57ef6-e704decd54bmr3276455276.26.1744360708185; Fri, 11 Apr 2025
- 01:38:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744361531; x=1744966331;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z6jrc2XmgogjjH6Q652wRy6ajx90JWJC0BHTJQ8w2o4=;
+        b=YI/btJ9yLR6pqrpXPA7SpoCdgCKAWkGQ+rs6AmXz3QbBputdaDulslHUczJo83el9E
+         I3VEQ3RmoVoMUc7t4omy2xUHcLUXw5XWn5O7JDNd3WZjr2SbGyr/nfbpLP+adEg88fwb
+         ZKgXL+T25uKdy/NN0I0np9DYkaQbkITwYcfvfuWKuaWU/QkzRdHUJVTHu0a/2yRxfSsQ
+         gktAONpTQmHwcGCUJji1CADhDmp1/Y2PZ6aqicBeM1wL3ZxoTFd/NS89L4CtiKh4uVOD
+         vG1fG+MmFECq+92/2Ad+qU+f+YPVM4mAxMb318E0APG6PyaW0tJxlAyRWnscB1c5nl05
+         MkXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzYynVbY4+CLkRkPeNa6kkxmNisBLwvpOktOb3jgY0iYAj8FLZv6HfHuqCo9Cnmkb68Mq0uIixER8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa+DrL42hEk4jj8eMoc8wK9sUM32GB8rP+/w7n+huMZWaBOrYk
+	ZB63mS8YbSaICpBdDaO+SRbFMv7Y5IrXAo+p0OxIRgbImoEm1NSbR5OHAwzAiFA6npUXQeV7M8N
+	nc+9f1pmGHwGNc3R3h3BbGjm4QxDtUe/DJ2iioK/pL9PzMFcyJIh08azWTiAkt1reYQ+tRfCFKm
+	2CfWO0FBDb70LLj3i8AQ2EywrkbhZjuTAFEQ==
+X-Gm-Gg: ASbGncugXqmBtJajmtziRh9utM5rw3jEZf/RECH4u199gPz3//NoUVXNJ1flzLvGHnM
+	I42FithmX+br4mCj9BgBDbsdZDEieAtQNuWm0bGlwWG06/jvX9bZxPssE8aRv8eICUvBA
+X-Received: by 2002:a17:90b:2dd2:b0:2ff:72f8:3708 with SMTP id 98e67ed59e1d1-3082365241fmr3842157a91.17.1744361531310;
+        Fri, 11 Apr 2025 01:52:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHq8e1j3n7EBmrTV8VSjFwgnkjvrARK7lF9jn+i49uAmC3+EVD4SCW2qUF3b8oCeS9DmSewZ4/hidioLZDDQ8U=
+X-Received: by 2002:a17:90b:2dd2:b0:2ff:72f8:3708 with SMTP id
+ 98e67ed59e1d1-3082365241fmr3842135a91.17.1744361530985; Fri, 11 Apr 2025
+ 01:52:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306112959.242131-1-dario.binacchi@amarulasolutions.com> <20250314093503.GD12210@nxa18884-linux>
-In-Reply-To: <20250314093503.GD12210@nxa18884-linux>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Fri, 11 Apr 2025 10:38:17 +0200
-X-Gm-Features: ATxdqUF7idGp2hnH8dEoppZJLC3ZC9jhgwG1uStDtkKfsGzYjzpE_DfoJqtsu9k
-Message-ID: <CABGWkvq2X9L6P39K5OeQW4+c2OmSYGHN03mUW-96U5okO1CK5A@mail.gmail.com>
-Subject: Re: [PATCH v10 00/18] Support spread spectrum clocking for i.MX8M PLLs
-To: Peng Fan <peng.fan@oss.nxp.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Abel Vesa <abelvesa@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, 
-	linux-amarula@amarulasolutions.com, Conor Dooley <conor+dt@kernel.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org
+References: <20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com>
+ <20250327-videocc-pll-multi-pd-voting-v3-6-895fafd62627@quicinc.com>
+ <aidlp3iq6pxym52tp63w35tpcctw4443yihvcwsdszk62xbwfp@esqpmsc4e6qd> <f1125370-c16a-4c20-a01d-2221fb12fdcb@quicinc.com>
+In-Reply-To: <f1125370-c16a-4c20-a01d-2221fb12fdcb@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Date: Fri, 11 Apr 2025 11:51:58 +0300
+X-Gm-Features: ATxdqUFFFFcxLSxiqq4sEuhC8sxM4iqavJQpwJHVW040G1Di18g2WtFDFqnCkys
+Message-ID: <CAO9ioeWmuPhBPivthidXTFfnXRBx9rd=iX5aqjB4bMcCKueXeg@mail.gmail.com>
+Subject: Re: [PATCH v3 06/18] clk: qcom: common: Add support to configure clk
+ regs in qcom_cc_really_probe
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-ORIG-GUID: we09r0KGhaYxNGS5TBVyHM58MfqW1m1U
+X-Authority-Analysis: v=2.4 cv=KtdN2XWN c=1 sm=1 tr=0 ts=67f8d83f cx=c_pps a=RP+M6JBNLl+fLTcSJhASfg==:117 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=eAQpRAmnPJoi4zBeIeUA:9 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: we09r0KGhaYxNGS5TBVyHM58MfqW1m1U
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_03,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ priorityscore=1501 phishscore=0 bulkscore=0 suspectscore=0 spamscore=0
+ malwarescore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504110049
 
-On Fri, Mar 14, 2025 at 9:27=E2=80=AFAM Peng Fan <peng.fan@oss.nxp.com> wro=
-te:
+On Fri, 11 Apr 2025 at 10:14, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
 >
-> On Thu, Mar 06, 2025 at 12:27:49PM +0100, Dario Binacchi wrote:
-> >This version keeps the version v9 patches that can be merged and
-> >removes the patches that will need to be modified in case Peng's
-> >PR https://github.com/devicetree-org/dt-schema/pull/154 is accepted.
-> >The idea is to speed up the merging of the patches in the series
-> >that have already been reviewed and are not dependent on the
-> >introduction of the assigned-clocks-sscs property, and postpone
-> >the patches for spread spectrum to a future series once it becomes
-> >clear what needs to be done.
+>
+>
+> On 3/27/2025 6:20 PM, Dmitry Baryshkov wrote:
+> > On Thu, Mar 27, 2025 at 03:22:26PM +0530, Jagadeesh Kona wrote:
+> >> Add support to configure PLLS and clk registers in qcom_cc_really_probe().
+> >> This ensures all required power domains are enabled and kept ON by runtime
+> >> PM code in qcom_cc_really_probe() before configuring the PLLS or clock
+> >> registers.
+> >>
+> >> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> >> ---
+> >>  drivers/clk/qcom/common.c | 28 ++++++++++++++++++++++++++++
+> >>  drivers/clk/qcom/common.h | 19 +++++++++++++++++++
+> >>  2 files changed, 47 insertions(+)
+> >>
+> >> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> >> index 9cbf1c5296dad3ee5477a2f5a445488707663b9d..c4d980c6145834969fada14863360ee81c9aa251 100644
+> >> --- a/drivers/clk/qcom/common.c
+> >> +++ b/drivers/clk/qcom/common.c
+> >> @@ -14,6 +14,8 @@
+> >>  #include <linux/of.h>
+> >>
+> >>  #include "common.h"
+> >> +#include "clk-alpha-pll.h"
+> >> +#include "clk-branch.h"
+> >>  #include "clk-rcg.h"
+> >>  #include "clk-regmap.h"
+> >>  #include "reset.h"
+> >> @@ -285,6 +287,29 @@ static int qcom_cc_icc_register(struct device *dev,
+> >>                                                   desc->num_icc_hws, icd);
+> >>  }
+> >>
+> >> +static void qcom_cc_clk_pll_configure(const struct qcom_cc_desc *desc,
+> >> +                                  struct regmap *regmap)
+> >> +{
+> >> +    int i;
+> >> +
+> >> +    for (i = 0; i < desc->num_alpha_plls; i++)
+> >> +            qcom_clk_alpha_pll_configure(desc->alpha_plls[i], regmap);
+> >> +}
+> >> +
+> >> +static void qcom_cc_clk_regs_configure(const struct qcom_cc_desc *desc,
+> >> +                                   struct regmap *regmap)
+> >> +{
+> >> +    struct qcom_clk_reg_setting *clk_regs = desc->clk_regs;
+> >> +    int i;
+> >> +
+> >> +    for (i = 0; i < desc->num_clk_cbcrs; i++)
+> >> +            qcom_branch_set_clk_en(regmap, desc->clk_cbcrs[i]);
+> >> +
+> >> +    for (i = 0 ; i < desc->num_clk_regs; i++)
+> >> +            regmap_update_bits(regmap, clk_regs[i].offset,
+> >> +                               clk_regs[i].mask, clk_regs[i].val);
 > >
-> Although I give R-b, there is an idea just come out in my mind that this
-> might break OS distribution that use firmware(e.g. U-Boot) to publish
-> device tree for Linux Kernel, such as ARM System-Ready complaint OS.
-> I overlooked this point in previous patchset reviewing.
+> > I think there are other semantic functions which we don't want to
+> > convert to offset-mask-val tuples. See drivers/clk/qcom/clk-branch.h.
+> > I'd suggest to move setup steps to a driver callback. We can improve it
+> > later on if it is found to make sense, but it won't block this series
+> > from being merged.
+> >
 >
-> Since this patchset is to move anatop stuff to a new driver to reflect
-> the HW truth.  And requires new entries in CCM node, so old bootloader
-> with new kernel will not boot for OS distribution, such as Fedora/openSus=
-e.
->
-> Not sure how to keep backwards support as before. Leave to maintainers
-> to say if they are ok with this.
+> Yes, there are other wrapper functions as well but they are unused in most
+> clock controllers. We will check more on how we can improve this in a separate
+> series.
 
-Many thanks to Peng for the review, and a gentle ping to the maintainers.
-This series has been ongoing for a few months and has reached version 10,
-thanks to the reviews from Krzysztof and Peng.
-I kindly ask you to consider it as well.
-
-Thanks and regards,
-Dario
+Please do it the other way around. Implement a generic callback, then
+we can check how to sort things out.
 
 >
-> Regards,
-> Peng
+> Thanks,
+> Jagadeesh
+>
+> >> +}
+> >> +
+> >>  int qcom_cc_really_probe(struct device *dev,
+> >>                       const struct qcom_cc_desc *desc, struct regmap *regmap)
+> >>  {
+> >> @@ -315,6 +340,9 @@ int qcom_cc_really_probe(struct device *dev,
+> >>                      return ret;
+> >>      }
+> >>
+> >> +    qcom_cc_clk_pll_configure(desc, regmap);
+> >> +    qcom_cc_clk_regs_configure(desc, regmap);
+> >> +
+> >>      reset = &cc->reset;
+> >>      reset->rcdev.of_node = dev->of_node;
+> >>      reset->rcdev.ops = &qcom_reset_ops;
+> >> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+> >> index 9c10bc8c197cd7dfa25ccd245763ad6acb081523..01b1ae52f2dc580350409d6244578944cce571f0 100644
+> >> --- a/drivers/clk/qcom/common.h
+> >> +++ b/drivers/clk/qcom/common.h
+> >> @@ -25,6 +25,19 @@ struct qcom_icc_hws_data {
+> >>      int clk_id;
+> >>  };
+> >>
+> >> +/**
+> >> + * struct qcom_clk_reg_setting - Represents miscellaneous clock register settings
+> >> + * @offset: address offset for the clock register
+> >> + * @mask: bit mask indicating the bits to be updated
+> >> + * @val: Encoded value to be set within the specified bit mask
+> >> + *       (e.g., if writing 7 to bits 4-7, mask = 0xF0 and val = 0x70)
+> >> + */
+> >> +struct qcom_clk_reg_setting {
+> >> +    u32 offset;
+> >> +    u32 mask;
+> >> +    u32 val;
+> >> +};
+> >> +
+> >>  struct qcom_cc_desc {
+> >>      const struct regmap_config *config;
+> >>      struct clk_regmap **clks;
+> >> @@ -38,6 +51,12 @@ struct qcom_cc_desc {
+> >>      const struct qcom_icc_hws_data *icc_hws;
+> >>      size_t num_icc_hws;
+> >>      unsigned int icc_first_node_id;
+> >> +    u32 *clk_cbcrs;
+> >> +    size_t num_clk_cbcrs;
+> >> +    struct clk_alpha_pll **alpha_plls;
+> >> +    size_t num_alpha_plls;
+> >> +    struct qcom_clk_reg_setting *clk_regs;
+> >> +    size_t num_clk_regs;
+> >>      bool use_rpm;
+> >>  };
+> >>
+> >>
+> >> --
+> >> 2.34.1
+> >>
+> >
 
 
 
---=20
-
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+-- 
+With best wishes
+Dmitry
