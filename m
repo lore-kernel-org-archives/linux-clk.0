@@ -1,158 +1,137 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBB72036FD;
-	Fri, 11 Apr 2025 07:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467BB2980CD
+	for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 08:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744356494; cv=none; b=fLmVSADPd54XSsV/3BqDXJbozLq7/w+wFIRt3sWE0hPVaThDsk6Hy48zp0kTezQFzDbc5NHK/SlhjLgzAHySBMGJP4x4/HiUsmsqq7auQAZH4ypuLhX73/2D43rrCMgEtI2hn71vEudPAsKTBVuC+oFa1oJWkZ2UKoFEeF0zPno=
+	t=1744360711; cv=none; b=c3u7JHIIvek/m81tNGkacfkMsmsAzuXOiq+BMOjk+QFFF/0kbB02vwELP1aIOtEtc6G+638Z/1n6nJVMEA+U0trWqx3x9DjNeS9NpfjpelEJsdelV5Aky43EW5BUsWINw7KgWJOR5K2Zkw5XMpLArEQUMBTWg9FA26yUDLHiwkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744356494; c=relaxed/simple;
-	bh=ZXw7IdSYGbwpYBIfDEuJeabL5UpH+BofGjlFBgSV8gM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iWQtefmuE9xEdkkv1FTrd1tdgiOQmgl3lNiMb/8e8erACt1czPBXkZYMAQuXXaUf36r8Lcs80/mkCaKPDl2ScoqtsMnJz0K2T8JQJanP/dnTGvGtFCqoQwrD8C8Ub+T7h9PH0jyX/kQH3IJBsnFvV4j1SHlgTdX5AUTubHgunTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JhYRYeQp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1744360711; c=relaxed/simple;
+	bh=D7R9oFDs5xYoXN43Ulwrouo3nLF61el6kbjtNoLpuyw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HVjbnTj4gYBQIlcx79o8xJbmEcL/JztLgMuGI2LlGWqws8QjMWy7V6HaHRjF/JjfsNhzN15t4ahd6U4h1MjzD2ARUAZx5wtjmlC7FMKxs+Ac7ji1cx/9xbZs2uPUlaD3mo2yerojC9Kwtu6oQPMdc4tDBIpiLlml4ReGt2BwTJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=UzpIvUwx; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JhYRYeQp"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B4ubJD019687;
-	Fri, 11 Apr 2025 07:28:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	q0U0ycz0cCg1vV/Qts+Pr8Y1j1A9cbNKFfAJRKW2kBQ=; b=JhYRYeQpsVZ8enrx
-	zFGAJo+O6CWnHPF+9smpDkRJo/Q7bQchHt0cUjK2rIbYQnjW6FWkCNGZoCxhPykF
-	Sm/imqKkH/vQjBSx4ZPXJJ5rbCtfLBQIp1YnkwbsYUWE0y3cA2fjJc/VK8wic6wf
-	opfv6+8QGBmsUjo5T0RJ4yVerUx0hX/I0swhpJaZfB7/NFtBWN1xtgzWv1aL/W5t
-	H8jlZLqI4Q0LmZomhpl+6pgm/MRyL9JWMj7rl7W0UcJ+vPDVmHzRWUNMdmXrT/qn
-	rLociptGcFqcYO4eIZFyflgkCS2Zdn+Y/Wnt2Xv4A+sZRnePC+6Ze/wecHtPaxAX
-	RsXQJw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twcrsqyk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 07:28:07 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53B7S6Ph013950
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 07:28:06 GMT
-Received: from [10.218.22.7] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 11 Apr
- 2025 00:27:59 -0700
-Message-ID: <7af5a2a5-6eac-4734-aa20-3e0f2141afef@quicinc.com>
-Date: Fri, 11 Apr 2025 12:57:55 +0530
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="UzpIvUwx"
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e6e2a303569so1341820276.0
+        for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 01:38:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1744360708; x=1744965508; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RtU+pOoZbsLOnPjUI7YZ5FGGjZ40GzcCM59B/7LbYr4=;
+        b=UzpIvUwxO+k22fbZNAK9zkUFeyaa/VmpTJvs0do+/nfTjsFynHnh185YRbcfQ0rzcR
+         vB3E3/0ij478ZA+Qg2zv/OrH/0bL9efzaQzx+uXutMvMqJ6ivOQKWo6IlDs+jZsUJVrO
+         ZoAj3W/isU9utclcGyzHD/b6+qj6i5lTWwdLk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744360708; x=1744965508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RtU+pOoZbsLOnPjUI7YZ5FGGjZ40GzcCM59B/7LbYr4=;
+        b=vNej4gH9BFFtoudvWXRutRBPz7nsFB0WPxt3ugbIRQNQfZupD1BtLCRKOWPP4toI0x
+         SNRAKk8MQsigFVcfigRqHY11uQqfB9WfR9IA+cZT8TQAi5hMqPUHcEZ+NdX+Pe4tECfP
+         oUZau/BEn3p73tl6c9Xg5LHBeC2mtGgKProIPepp2qBq9+8HE1rSo0zrwRySvJ2MAcXl
+         7r/LoS1Ls23KyFXEy8Cjv3meX6dAH99A3hIhdQBcIr0dLLjYsEJfTpTftWh/RZ3Pb1vm
+         kdNixaMy/gSXlSFT0cnpl21WFSucfgXdYJ5nk3ze3yPkgFwz3/YtBIIE42iPHOOEhIll
+         +brQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOEDCe0bTLY4APsQSOrMmemZ4gSpEb8xWU8ORkGBxfUoho2iM6cWipGxpeykP1kSlfWD2OSl/UBqs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgnZUcvkWWAugocK5W7ef8h8+7+jd8rQBWzlDYZ/Mt5SGXsu3m
+	uNwBdVK4KFiwffWKVnQSHEN266VV9zkbHV16lkp9ankoGrKE7G2X0LV8DoS9i6HWSdQuMa1mWP2
+	sObokWUQeOeKo0qf+hLdh37iHWQsWr0VAk850nA==
+X-Gm-Gg: ASbGncvgVM8Nd/R6DrnOcLSrM+yLZ5QvvBzaR5vvLbWkUxZK2nT/5DNXxewIfgWOQfs
+	IKBM25EkS2ixJQ10vkyVGQOnpb9ivXJ/wkt1hkQukKOp4Gpa+NPq9ySV6yUtx1fKWZwQqbiZ7+1
+	jubZTYVTxFoXhrLIQzFQI=
+X-Google-Smtp-Source: AGHT+IHCodNLsYqxPgYy8KacCIFQ8uMbF8eAgpfHHABuPW/r+cXCzHR5Dy1G6JiUbudEZgEzb8V1wt8pBrFYRs9UU4s=
+X-Received: by 2002:a05:6902:2012:b0:e6d:dfea:8f09 with SMTP id
+ 3f1490d57ef6-e704decd54bmr3276455276.26.1744360708185; Fri, 11 Apr 2025
+ 01:38:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 15/18] arm64: dts: qcom: Add MXC power domain to
- videocc node on SM8650
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Dmitry Baryshkov <lumag@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya
- Kakitapalli" <quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>
-References: <20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com>
- <20250327-videocc-pll-multi-pd-voting-v3-15-895fafd62627@quicinc.com>
- <12986cda-99eb-4a1b-a97b-544ea01e2dbb@oss.qualcomm.com>
- <4d23b54e-93eb-4c1c-86d9-a70f29c23ec4@oss.qualcomm.com>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <4d23b54e-93eb-4c1c-86d9-a70f29c23ec4@oss.qualcomm.com>
+References: <20250306112959.242131-1-dario.binacchi@amarulasolutions.com> <20250314093503.GD12210@nxa18884-linux>
+In-Reply-To: <20250314093503.GD12210@nxa18884-linux>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Fri, 11 Apr 2025 10:38:17 +0200
+X-Gm-Features: ATxdqUF7idGp2hnH8dEoppZJLC3ZC9jhgwG1uStDtkKfsGzYjzpE_DfoJqtsu9k
+Message-ID: <CABGWkvq2X9L6P39K5OeQW4+c2OmSYGHN03mUW-96U5okO1CK5A@mail.gmail.com>
+Subject: Re: [PATCH v10 00/18] Support spread spectrum clocking for i.MX8M PLLs
+To: Peng Fan <peng.fan@oss.nxp.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Abel Vesa <abelvesa@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, 
+	linux-amarula@amarulasolutions.com, Conor Dooley <conor+dt@kernel.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YHJJPxVZWcWl_l59HymslCK1ge66uv_U
-X-Authority-Analysis: v=2.4 cv=QuVe3Uyd c=1 sm=1 tr=0 ts=67f8c487 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
- a=nKsp9sJ0S5QfW6cRe6gA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: YHJJPxVZWcWl_l59HymslCK1ge66uv_U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_02,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- spamscore=0 malwarescore=0 mlxlogscore=728 bulkscore=0 priorityscore=1501
- clxscore=1015 phishscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504110049
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 4/1/2025 9:30 PM, Konrad Dybcio wrote:
-> On 4/1/25 5:27 PM, Konrad Dybcio wrote:
->> On 3/27/25 10:52 AM, Jagadeesh Kona wrote:
->>> Videocc requires both MMCX and MXC rails to be powered ON to configure
->>> the video PLLs on SM8650 platform. Hence add MXC power domain to videocc
->>> node on SM8650.
->>>
->>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> ---
->>>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>> index 818db6ba3b3be99c187512ea4acf2004422f6a18..ad60596b71d25bb0198b26660dc41195a1210a23 100644
->>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>> @@ -4959,7 +4959,8 @@ videocc: clock-controller@aaf0000 {
->>>  			reg = <0 0x0aaf0000 0 0x10000>;
->>>  			clocks = <&bi_tcxo_div2>,
->>>  				 <&gcc GCC_VIDEO_AHB_CLK>;
->>> -			power-domains = <&rpmhpd RPMHPD_MMCX>;
->>> +			power-domains = <&rpmhpd RPMHPD_MMCX>,
->>> +					<&rpmhpd RPMHPD_MXC>;
->>
->> So all other DTs touched in this series reference low_svs in required-opps
-> 
-> actually "all" is wrong on my side, please also consider and if necessary apply
-> the same change to patch 18
-> 
-> Konrad
+On Fri, Mar 14, 2025 at 9:27=E2=80=AFAM Peng Fan <peng.fan@oss.nxp.com> wro=
+te:
 >
-It is not needed for SM8650. In the initial SM8650 videocc and camcc series,
-required-opps was added for MMCX. But it was dropped based on the review comments
-in that series, after confirming that minimum non-zero level from cmd-db on MMCX
-is > retention on SM8650. And as mentioned here[1], required-opps is not mandatory
-for MXC as well.
+> On Thu, Mar 06, 2025 at 12:27:49PM +0100, Dario Binacchi wrote:
+> >This version keeps the version v9 patches that can be merged and
+> >removes the patches that will need to be modified in case Peng's
+> >PR https://github.com/devicetree-org/dt-schema/pull/154 is accepted.
+> >The idea is to speed up the merging of the patches in the series
+> >that have already been reviewed and are not dependent on the
+> >introduction of the assigned-clocks-sscs property, and postpone
+> >the patches for spread spectrum to a future series once it becomes
+> >clear what needs to be done.
+> >
+> Although I give R-b, there is an idea just come out in my mind that this
+> might break OS distribution that use firmware(e.g. U-Boot) to publish
+> device tree for Linux Kernel, such as ARM System-Ready complaint OS.
+> I overlooked this point in previous patchset reviewing.
+>
+> Since this patchset is to move anatop stuff to a new driver to reflect
+> the HW truth.  And requires new entries in CCM node, so old bootloader
+> with new kernel will not boot for OS distribution, such as Fedora/openSus=
+e.
+>
+> Not sure how to keep backwards support as before. Leave to maintainers
+> to say if they are ok with this.
 
-[1]: https://lore.kernel.org/all/44dad3b5-ea3d-47db-8aca-8f67294fced9@quicinc.com/
+Many thanks to Peng for the review, and a gentle ping to the maintainers.
+This series has been ongoing for a few months and has reached version 10,
+thanks to the reviews from Krzysztof and Peng.
+I kindly ask you to consider it as well.
 
-Thanks,
-Jagadeesh
+Thanks and regards,
+Dario
 
->>
->> Is that an actual requirement? Otherwise since Commit e3e56c050ab6
->> ("soc: qcom: rpmhpd: Make power_on actually enable the domain") we get the
->> first nonzero state, which can be something like low_svs_d2
->>
->> Konrad
+>
+> Regards,
+> Peng
+
+
+
+--=20
+
+Dario Binacchi
+
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
