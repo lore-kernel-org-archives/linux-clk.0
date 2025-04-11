@@ -1,148 +1,181 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2CE298988;
-	Fri, 11 Apr 2025 12:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA5910A1E;
+	Fri, 11 Apr 2025 15:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744376318; cv=none; b=e7Rno9Kn9Y0s1eXi5f3s1jOUHZWU0hF/Tl2xXFpr8WqXChdoexFaJeiCjFrXCikRYEZnKNdZr6ra9afVm25eIQNaWQmHIUZDlRVJkQqRAttk4J/tKk5viAeT+1M6J0Xol5xU7HwLM6bSyIr8n0MtMZdDUqhY8FUs9XUt9hgreic=
+	t=1744384554; cv=none; b=PV9c3X1AdOVFvJP2AIyvPYzoY/b9AxNNlwxbfjpTDV1s0Lk10j1JrZ1s3xhsmqKmm9k8Euw9XLbuItFm8WKrJTdxLTvn6LcmFbqnuZKkBWy4w4vKulGHFhOo0clXh67OdpEt1ZbFiX0qOV91DKwE02KmL/zv3bR1ew0nayXTBa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744376318; c=relaxed/simple;
-	bh=hdjeCYmJEzJ02O0pAn8AiG9QH6tDAbK3oJOy36CPD9Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=sipPXD5bxbnkDoCb6S58uxE1EUzX4W+PqFUInkIH01Q1O9I5RGfahS8R5sP38jKOuz/0vwDbqncHn5PgEoD0/USAcaemAzy9b673+FcfEQwf2+Ile0CFjEJc2R4M+MbN6wQt19mWbUv6yPQZA5zN+BKvpUnWihYB+bd3GYl5geU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d7STOuy0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1744384554; c=relaxed/simple;
+	bh=pOzo9gl+06nuScpgNkLpBddBRrPwWPW2vetdG6X3tV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lx+3Mp3chn7/5EslFdp2ivNBu011veFqLD53Q+mkNwNUsZjd1I+5oExKpHYMAx41uPxlofZOrtv0g06tdik1uc5gTlayTifdCxe68NFlXQYIRQIWgThOjYYVQUQbKhWf4xsOFiRn/5R0Dyc1e2+NgN12NsZzhYFvoxflLjtLGI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPkeaLo/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d7STOuy0"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53B6Adq0032003;
-	Fri, 11 Apr 2025 12:58:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CUloUon907dgzE0n6nymjsKivieKkHXrFB3DLW2RT54=; b=d7STOuy0JFxbBRVd
-	VRXgO9DKmlyuXkUPT574LmtdhNpDkiwurltCneUirh7iGKxnsT/czbNJPjIAb0tE
-	oZruq6bu/rM+m/oeA3bTWhX6hJT4gKMhYVl6nk6fPAaiD7IURF2EePE5yY+bGXPy
-	vP/OrQtkEddl0z3HIlTKvDENeMXVZ5nfU5L0xg7+TpCn7yTM6n+tEB/nJ8X01T6l
-	nVgGcnSVF+xIEB9eZefFfwMtZpWSd7hv/e/6DdNBpSoKyPYLzOaD83tqNcynmGHN
-	eT1pMs8TXRAbZGc/xxYIYw54HfhS7YFlPWg8Zhj4MoPvr43/3nkqsHnB7sHTqsvu
-	SmQtxQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45twpmjby9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 12:58:34 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53BCwX4S014820
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Apr 2025 12:58:33 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 11 Apr 2025 05:58:29 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Fri, 11 Apr 2025 20:58:13 +0800
-Subject: [PATCH v2 4/4] arm64: dts: qcom: Update IPQ5424 xo_board to use
- fixed factor clock
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPkeaLo/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE72C4CEE2;
+	Fri, 11 Apr 2025 15:15:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744384553;
+	bh=pOzo9gl+06nuScpgNkLpBddBRrPwWPW2vetdG6X3tV0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CPkeaLo/fccnmntzxFzQxJPer3+02uVBRTbhfJZxbJ47QdMCHTrSSaNHTr8R81bQv
+	 kVcjpHF7Xi3kbIvlrKPW/vQGTYIdJWZclGrZZ+y6i+SCn2MkIUHGz7OeF4ANC/TUF6
+	 GZHFQpUuX9SGy3fM9JuYrnOQElwBrW7BDTQSwo2lf7/sc4hgE1Imzw//RIxWVRMBB4
+	 s8nFdf/w7gUXqQew8Whqy8aPvCT6BgTh2TgXigzhPOoi34xRHDG3/WBIWP5lNoNMp4
+	 SVMp9eFY1tWgDbC0/u1UF55oxt8Gv/x+fGc3XZHBLOaVNACEPL/4PN/tMunRKKBQpv
+	 835IQe/VTqg/A==
+Date: Fri, 11 Apr 2025 10:15:52 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	kernel@pengutronix.de,
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH 3/3] dt-bindings: clock: add TI CDCE6214 binding
+Message-ID: <20250411151552.GA3258510-robh@kernel.org>
+References: <20250408-clk-cdce6214-v1-0-bd4e7092a91f@pengutronix.de>
+ <20250408-clk-cdce6214-v1-3-bd4e7092a91f@pengutronix.de>
+ <5766d152-51e7-42f5-864f-5cb1798606a3@kernel.org>
+ <Z_U6fUGbOV2SdO_C@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250411-qcom_ipq5424_cmnpll-v2-4-7252c192e078@quicinc.com>
-References: <20250411-qcom_ipq5424_cmnpll-v2-0-7252c192e078@quicinc.com>
-In-Reply-To: <20250411-qcom_ipq5424_cmnpll-v2-0-7252c192e078@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_suruchia@quicinc.com>,
-        <quic_pavir@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_leiwei@quicinc.com>, Luo Jie <quic_luoj@quicinc.com>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1744376294; l=1455;
- i=quic_luoj@quicinc.com; s=20250209; h=from:subject:message-id;
- bh=hdjeCYmJEzJ02O0pAn8AiG9QH6tDAbK3oJOy36CPD9Y=;
- b=qxDIu/me3x/bHc1zJ1AzzWYPwEQwDTGeAgWbWRE94/jFNeVfA2pVje86WdkuxJuN6Gvt5To8h
- 2K+4BlYgGc0DVd0rvz1mhQaxG0YGxQYeILxIMaO9BIUnsp/tDwl5QHW
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=pzwy8bU5tJZ5UKGTv28n+QOuktaWuriznGmriA9Qkfc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BUQOyCOQeAFY-FTwX_75t0Yrg8FOCFON
-X-Proofpoint-ORIG-GUID: BUQOyCOQeAFY-FTwX_75t0Yrg8FOCFON
-X-Authority-Analysis: v=2.4 cv=MpRS63ae c=1 sm=1 tr=0 ts=67f911fa cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=CPdYy-Otk887xBsD2wUA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_04,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=904 clxscore=1015 priorityscore=1501 impostorscore=0
- spamscore=0 bulkscore=0 suspectscore=0 malwarescore=0 adultscore=0
- phishscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504110083
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_U6fUGbOV2SdO_C@pengutronix.de>
 
-xo_board is fixed to 24 MHZ, which is routed from WiFi output clock
-48 MHZ (also being the reference clock of CMN PLL) divided 2 by
-analog block routing channel.
+On Tue, Apr 08, 2025 at 05:02:21PM +0200, Sascha Hauer wrote:
+> On Tue, Apr 08, 2025 at 04:27:23PM +0200, Krzysztof Kozlowski wrote:
+> > On 08/04/2025 14:00, Sascha Hauer wrote:
+> > > +
+> > 
+> > A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
+> > prefix is already stating that these are bindings.
+> > See also:
+> > https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> > 
+> > 
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - ti,cdce6214
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks:
+> > > +    minItems: 1
+> > > +    maxItems: 2
+> > > +
+> > > +  clock-names:
+> > > +    minItems: 1
+> > > +    items:
+> > > +      - const: priref
+> > > +      - const: secref
+> > 
+> > So one input is optional?
+> 
+> The chip has two clock inputs and to be operational it needs at least
+> one clock, could be priref or secref or both.
+> 
+> Is there a proper way to express this situation?
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts | 7 ++++++-
- arch/arm64/boot/dts/qcom/ipq5424.dtsi       | 3 ++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
+If I understand correctly that only 'secref' is possible then you want:
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-index b4d1aa00c944..e503b6677a3e 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
-@@ -224,8 +224,13 @@ &ref_48mhz_clk {
- 	clock-mult = <1>;
- };
- 
-+/*
-+ * The frequency of xo_board is fixed to 24 MHZ, which is routed
-+ * from WiFi output clock 48 MHZ divided by 2.
-+ */
- &xo_board {
--	clock-frequency = <24000000>;
-+	clock-div = <2>;
-+	clock-mult = <1>;
- };
- 
- &xo_clk {
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index cd12e731c4ae..ae1b587211cb 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -30,7 +30,8 @@ sleep_clk: sleep-clk {
- 		};
- 
- 		xo_board: xo-board-clk {
--			compatible = "fixed-clock";
-+			compatible = "fixed-factor-clock";
-+			clocks = <&ref_48mhz_clk>;
- 			#clock-cells = <0>;
- 		};
- 
+items:
+  - enum: [ priref, secref ]
+  - const: secref
 
--- 
-2.34.1
+(By default, entries have to be unique, so that eliminates 'secref' in 
+both)
 
+> 
+> 
+> > > +  "^clk@[2-9]$":
+> > > +    type: object
+> > > +    description: |
+> > > +      optional child node that can be used to specify output pin parameters.  The reg
+> > > +      properties match the CDCE6214_CLK_* defines.
+> > > +
+> > > +    additionalProperties: false
+> > > +
+> > > +    properties:
+> > > +      reg:
+> > > +        description:
+> > > +          clock output identifier.
+> > > +        minimum: 2
+> > > +        maximum: 9
+> > > +
+> > > +      ti,lphcsl:
+> > > +        type: boolean
+> > > +        description: |
+> > > +          If true enable LP-HCSL output mode for this clock
+> > > +
+> > > +      ti,lvds:
+> > > +        type: boolean
+> > > +        description: |
+> > > +          If true enable LVDS output mode for this clock
+> > > +
+> > > +      ti,cmosp:
+> > > +        type: boolean
+> > > +        description: |
+> > > +          If true enable CMOSP output for this clock
+> > > +
+> > > +      ti,cmosn:
+> > > +        type: boolean
+> > > +        description: |
+> > > +          If true enable CMOSN output for this clock
+> > 
+> > Looks the same here. Anyway having these as subnodes is too much. You
+> > have fixed number of clocks, so you need one or two array properties in
+> > top-level.
+> 
+> There are several properties I haven't yet modeled, like
+> 
+> - 1.8V / 2.5V output
+> - sync_delay
+> - LVDS common-mode trim increment/decrement
+> - differential buffer BIAS trim
+> - slew rate
+> - BIAS current setting for XTAL mode
+> - load capacity for XTAL mode
+> 
+> I don't know which of them will ever be supported, but I thought having a
+> node per pin would add a natural place to add these properties. Do you
+> still think arrays would be more appropriate?
+
+Assuming they are connected to something in DT (if not, why care), you 
+could add a flags cell so the consumer side can define what they need.
+
+> 
+> > 
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - clocks
+> > > +  - "#clock-cells"
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/clock/ti,cdce6214.h>
+> > 
+> > This file does not exist. Something is odd in this example.
+> 
+> It is added in the driver patch. Should it come with the binding patch
+> instead?
+
+Yes.
+
+Rob
