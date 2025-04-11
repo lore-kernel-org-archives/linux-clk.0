@@ -1,62 +1,62 @@
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A83238C23
-	for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 10:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E4F27EC9D
+	for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 10:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744369145; cv=none; b=CnbjJJAZV7JS7rBjcrSQ6j9oiKhtaSxCqO8JrZeMYJpGDeVOOrTEXQnNHMmzz3FGkO+R3/3AQWqHbPSTwLr39YfGZaeqtSoYhAUZtDpXySX8My5RWPiCFgzl1+QtAeIS103CevUnlnPuJ2i25d1b4EZ1/v8lK4CcLhn6bdPNMd0=
+	t=1744369148; cv=none; b=H3T26OV1xOnUQd7qY5AkIsjC45zRYSqQEWgn1Cb7ulfenV2pZH06LOuMIIpDtBHG3U08JfK304tsdZWo4uK7z7xJZCC/G/Ew+tEhaLBq3k7xCshgdgtxN+dSD0ChXFiBebTgzN1Uwf/ttRDWRIIRLtBKOJ3c+TlBosamvwL1sbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744369145; c=relaxed/simple;
-	bh=yS8zzoAb1gzolyqRZtRGFelUspFvZ1+mTbeqhW4yRic=;
+	s=arc-20240116; t=1744369148; c=relaxed/simple;
+	bh=Lz8/dlHquQs8+KgJWlTHfeHGDG+b2IGK2cF/V+dR5o0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=aLuy7npchiUQ6WPRQaQe1bEC1XkzNeO7cNMK9/DT9shlThFCYRv5G+K59UiEUkYlzQ0B8vpC8g1cwTutBo0asYnRwfY+jqXq1kUSlFs3zk4HdC1mWoFX+AbShn7euSrEfo4XvlTruPCq88CfoivpJfFbrll0UtxWcYxmXPclA78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s4fL1QbZ; arc=none smtp.client-ip=209.85.210.180
+	 MIME-Version; b=ul8yJLgmIivDe/F72MkENtYCDVUnIOwIRF5jVD7NR66V5MTZw+gudGbYqHfBlRgHCpKjmFkifxe0q3BhTG/aGzBnulq00kGo4YpEFoUVsWlMnl0JohFjBXn1dxzCFFYZXVzbuKU8cQNe/rMP4vYpxwXnDqB06BaR+K/Oaq8dQG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V/nZ8B7W; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s4fL1QbZ"
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-736b0c68092so1544355b3a.0
-        for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 03:59:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V/nZ8B7W"
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-30828fc17adso261734a91.1
+        for <linux-clk@vger.kernel.org>; Fri, 11 Apr 2025 03:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744369143; x=1744973943; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1744369146; x=1744973946; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P5QmLNWlEhMlbaeU7vUP5c8vKPIyuKJozs3WjW7NYUo=;
-        b=s4fL1QbZ88rgE2W4qUliW4BBCp0K5GqKT2wjxutfN7g3pvg0G90uCcFWg7kF2M3KK4
-         gbtQ9RjfrrGq+pomf5cYrAVSimECQdsT/SqA20GQSrDEQRUCfd1yZg3lPfm19cARug06
-         m1Sg9hRV3eZyMIT4QOjlIir4OoZtWstb60/KjKcp3QL4UCk2ErJ30SWrrcJwAY5on+Fd
-         iIaVakybeOZrF3bps/shhUUl5WZFYq5c/U/P+OkF+7UcFmJGG+VNezjpKieRhlukOCzY
-         eMl/EtLbXfOC5wG6fotO3H5jDFtePU8nCeN9Hqrqu/Xg38EXOOK4JvgL7vUSFvKOwOz5
-         te1A==
+        bh=/cw314qO5OzgfErL/PQP5mXU7cjPJv+CNURyMPhNy3E=;
+        b=V/nZ8B7Wdwc5yzPo3fPLqG5IOO865KEst1zoHPUXvJ4QQlfc8rjt8umE16XlMn3Mt5
+         T9X0uLWMusDiVzg0QekAxOPUQuIcRKz/85VN6iwzKfRxo1+FwNjiy5nAldDtRltkDYoi
+         gwFldS1ra6iLBAEyOUAamPAjqyKqCKxGu+NV6eINHAyTCLjYNHXAcyu5n4EfoDDuaW1I
+         lqL1WPq6/Ek9Uo66w3uprsx6N5DTIdqN53cNBGNIXQiguIKPJs73ATFTMqmTjlV7oaYd
+         jyipxrQUrhbSsI6XAF2X9mArcIksuqUm5TXo6KFVrZiOMyXwXgIwvHtZ/XSe/RA23zAI
+         8a6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744369143; x=1744973943;
+        d=1e100.net; s=20230601; t=1744369146; x=1744973946;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P5QmLNWlEhMlbaeU7vUP5c8vKPIyuKJozs3WjW7NYUo=;
-        b=u8QQA3mxCP+VI33HXp504nXT0awHhcb+ryDJ0DjBOmApL2xG+7z05IUsjYfgq4zGtB
-         WL1MoNvl3cZuf5v/z9b8+6XESXWueY7UHMAKToDddXEMGrbWWKfkFANPYkcvQhvSPFpO
-         LFh9jsxum7HjO17pshoMm/TexlwWANYEKBxdxUj/6hNefYOZHbSMyoOauzF4h8mScwsW
-         0+2VAZqN3k2eRmRz35Dp3rOKXRu9Y3grOPiHZrn1HcJyhfgZyhaGsFmqvTPBGLnRt/DG
-         scSfjbpCVApjnut3lORsjYhOprE17xZFWHP7AInIQn4mJtbPhkCe6LKwXlTBPJ98BTVK
-         Exxg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3S8IAFcg4QwJwDrC1Eub1ODeoehZ5MMgS4vrYggyK/Ib8NsRiQG1X1RBG86JzR1plS3mLJAcuwAY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmncXJJNR7dmpq5b4prvGWroY6XibCE42gVw7L1hoV+3Ed/lv4
-	iYTxyQ6Q669pZnWgS8cWWC3WWnlkaGA+n6q70cV/SvG0IdS85wefnQzo4SGi39o=
-X-Gm-Gg: ASbGncvCzxtdSRMModeT/OQptDBQaW1I+ug/8JNLEMWqI68ExTwtl1ln7UsYQm9LfN0
-	qeu5UnVY8BsPEPyu3e37peCnAOvbXjSQWI8z71E4dQpqL6s/Jve4stPL1pkAzWkgvqjomhtb+xy
-	baGzxOZW9utNBwf1wJGeDWANZd1LLbQfo+Wl87AcruwtNZ0agE1EwH0NIW+BEOo39ct5GQnyljo
-	Cp8hUXM9MygCLGeBqCqDV/fzQz05gbGAerJ2+teHDNZ1SX4bUDttGMGtyqm95XOjzavmtOsIcKY
-	6k4kkfIsOCVABJIf9wnnR35jWr7MSTQTM5KQBtTtdw==
-X-Google-Smtp-Source: AGHT+IE2OjzWyw13U8ckU/PhF26xnq5qyW/KpQps6B6mpDc5lX3qxmzsxgHjgW2+oCee8Ta27wiyxQ==
-X-Received: by 2002:a05:6a00:1486:b0:736:5e28:cfba with SMTP id d2e1a72fcca58-73bd126b973mr3107562b3a.18.1744369143132;
-        Fri, 11 Apr 2025 03:59:03 -0700 (PDT)
+        bh=/cw314qO5OzgfErL/PQP5mXU7cjPJv+CNURyMPhNy3E=;
+        b=WpGruxaEZ79gvBtrrA9+ivaLddtdv3xWF3yNLI7GGK+rDanq3h0DLKAkKu4oaFPW63
+         6ZKvguhPbml5FlMJcaxNHnXVDSvng4B3RI1c0xi7W7ZILbPv8RTnTwsZ4DAjC+KQ+gSi
+         j5wV8ahOdice886hsNO5m50M0E62s+c/gJ5pQlMZGiAxY7lfwDwUx8A99qqy4x0FfDIc
+         GIW1Ku3qe8CZc7mimcxbZST0A/zAeqikIf168JKIh55W6B+9WSZho0iBkbpIWoKClTeX
+         M3T3lZMNyuso3CbTbthyI4wta2Qo65DabN7LH0MPUC7TLnx/CHXxJ+n2OsFch4iLSHcD
+         Ee8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWvXO1PXtKV590g1eTY8eKk4/ykoTbygJxr1pq6x8It08Xp/cnrWDSDn8mRBexZR7e0R08OmXVwgfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx19XgE4YrYWKZoFkq1GeGMb/QYEkfx7bCh9Acc8U9l5xf60aUm
+	vw0k9jsoWKyRh3VmvYXWlmAeA+I4th9TMobAvDQMk2MjKAfCG1R15CDyiYQkUs8=
+X-Gm-Gg: ASbGncsw4av2PtZHSFifJOM9FomvhdMCCkdeXEbSLy+QiQEbDtSV4WU5+xVCFSr1Nws
+	hhmSP+w09uKPptBNW9wRC0t3NxJcYtWzpzTuEYZbjhS0kQmedKFVaMYRi6+WQjg09sblnIy+oiG
+	+9yTueOGqhL6SeE4gYMGqTD6+M0PTqJ9ZDo1alf4G5M6EutNeZUj30/FWLvOvNokyDXoBAs2e0W
+	9E3D+yOdyhWQ/SDdRo22pQIbEICct4Ekw/D81LMNWY6P5LgHyVmupwu6mMHkiCIRBpvnL2IVqPI
+	2KDBuSUggA5kIYB/BYPSni+LD7JDFMwF1HGwoWkSdLOC41R+ohVg
+X-Google-Smtp-Source: AGHT+IEFxwHKqoOI4yL6xARYViMgwvtWz0BpJSZrfD87BTkTPcEYvJrbdX8FbmAvDOdGi5eq0VSwyA==
+X-Received: by 2002:a17:90b:5744:b0:2fa:1f1b:3db2 with SMTP id 98e67ed59e1d1-308236723c3mr3321753a91.25.1744369146401;
+        Fri, 11 Apr 2025 03:59:06 -0700 (PDT)
 Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd2334376sm1179973b3a.165.2025.04.11.03.59.02
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd11e79fsm5408297a91.19.2025.04.11.03.59.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 03:59:02 -0700 (PDT)
+        Fri, 11 Apr 2025 03:59:05 -0700 (PDT)
 From: Viresh Kumar <viresh.kumar@linaro.org>
 To: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
@@ -89,9 +89,9 @@ Cc: Viresh Kumar <viresh.kumar@linaro.org>,
 	linux-clk@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH V9 01/17] rust: cpumask: Use non-atomic helpers
-Date: Fri, 11 Apr 2025 16:25:00 +0530
-Message-Id: <b092bbcc23529663b1a8b381efb85566453185e1.1744366571.git.viresh.kumar@linaro.org>
+Subject: [PATCH V9 02/17] rust: cpumask: Add few more helpers
+Date: Fri, 11 Apr 2025 16:25:01 +0530
+Message-Id: <878eb11f74cd320cbb06fb04c8ef655de81dd358.1744366571.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 In-Reply-To: <cover.1744366571.git.viresh.kumar@linaro.org>
 References: <cover.1744366571.git.viresh.kumar@linaro.org>
@@ -103,37 +103,44 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The cpumask Rust abstractions don't need the atomic variants of helpers
-for now. Use the non-atomic helpers instead.
+Add few more cpumask helpers that are required by the Rust abstraction.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- rust/helpers/cpumask.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ rust/helpers/cpumask.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
 diff --git a/rust/helpers/cpumask.c b/rust/helpers/cpumask.c
-index 2d380a86c34a..ae964cddbd41 100644
+index ae964cddbd41..30fc0bc0c0e8 100644
 --- a/rust/helpers/cpumask.c
 +++ b/rust/helpers/cpumask.c
-@@ -2,14 +2,14 @@
- 
- #include <linux/cpumask.h>
- 
--void rust_helper_cpumask_set_cpu(unsigned int cpu, struct cpumask *dstp)
-+void rust_helper___cpumask_set_cpu(unsigned int cpu, struct cpumask *dstp)
- {
--	cpumask_set_cpu(cpu, dstp);
-+	__cpumask_set_cpu(cpu, dstp);
+@@ -12,11 +12,26 @@ void rust_helper___cpumask_clear_cpu(int cpu, struct cpumask *dstp)
+ 	__cpumask_clear_cpu(cpu, dstp);
  }
  
--void rust_helper_cpumask_clear_cpu(int cpu, struct cpumask *dstp)
-+void rust_helper___cpumask_clear_cpu(int cpu, struct cpumask *dstp)
- {
--	cpumask_clear_cpu(cpu, dstp);
-+	__cpumask_clear_cpu(cpu, dstp);
- }
- 
++bool rust_helper_cpumask_test_cpu(int cpu, struct cpumask *srcp)
++{
++	return cpumask_test_cpu(cpu, srcp);
++}
++
  void rust_helper_cpumask_setall(struct cpumask *dstp)
+ {
+ 	cpumask_setall(dstp);
+ }
+ 
++bool rust_helper_cpumask_empty(struct cpumask *srcp)
++{
++	return cpumask_empty(srcp);
++}
++
++bool rust_helper_cpumask_full(struct cpumask *srcp)
++{
++	return cpumask_full(srcp);
++}
++
+ unsigned int rust_helper_cpumask_weight(struct cpumask *srcp)
+ {
+ 	return cpumask_weight(srcp);
 -- 
 2.31.1.272.g89b43f80a514
 
