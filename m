@@ -1,112 +1,173 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA727221FB8;
-	Fri, 11 Apr 2025 17:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586A822127B;
+	Fri, 11 Apr 2025 17:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744391123; cv=none; b=nr8GZLKvmsh0HP1meAi2vFb/9AVF85E6O9o7PyZsOFvliRGZnvxGKysfesxtwBbFzHJiKwnNpKc+j02Oyn19ojFBi0lnAjBXOaNN+GoSV9e6dUCgkmusuDGtAYRKIBqWFJRYoCn8ZhSx76TpFGLZTpWRCEAwZNf0DxUHtC2sKIA=
+	t=1744391669; cv=none; b=uJfWjATsJZAGGHyTnGtx1sQi8IFKuOF3OucJCB3jcSRh3JwOySHATNFmkJ4ynKJghnnLJVa5zoOn5TXmkOWhHf2LicWP1+kIwi9L1v+iDy/d3Kpa5GlWX5Xxi73JbnwY9R9rzeY0t1fzvYwsS1EEc0KT8bpTHQ9lk+qH4DMFMDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744391123; c=relaxed/simple;
-	bh=buv6tJFU81bfMwxhN4X5pTfsZqKCjfGk62wzBC7Mcdc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kCLzjeG8CHv/kycPFBED8hhdEYj+AeK2ahszgpLJ+43jKrOemJCSj6ltXDQrZ8W8nnonImXLXefjWYWHO/n0LA6ZiwT9CpJjQnA4baIOy+gtC6XJ+Patw2C3kG+nveVwy7s4y0tSityj/Yk4AVMiVvvxfiM1J+vF0B7Z+iLl9sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WfUvvKxc; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1744391669; c=relaxed/simple;
+	bh=peTZfiU/FGMDTElzr14TAHqTpKsRGqP+lSXjLYFmdSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VzAnMhtScubzi11yolJIaFcEitfj7qIZRWCpN93XzyDebEBIu0rT4T/edA8R9E/9kBJjkRURkSk6EeT0WglhlduLUjqqWD65QAv0rIRrvx0LH/qKsjm9nKELhz+NPR41fmjNbQh8AZtTbH6NANukeXIlwMaJifwvfJKyoDrscWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BIoY5Z6g; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfUvvKxc"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223f7b10cbbso2149175ad.3;
-        Fri, 11 Apr 2025 10:05:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BIoY5Z6g"
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ff6cf448b8so3067192a91.3;
+        Fri, 11 Apr 2025 10:14:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744391121; x=1744995921; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=buv6tJFU81bfMwxhN4X5pTfsZqKCjfGk62wzBC7Mcdc=;
-        b=WfUvvKxcdt6TLJM82RLdPNjUmoE8/TJ6ZpJ/NU3/7L/cEOnYhQHHDQqHzysILgCSF0
-         mOYHoyPT91scseaR7//A4aBp2bbBGY86M8A2MQWOw7Vdn4y8mFI6DwHzqRj/nLUc6PXp
-         /H+pc3PUOYooCz3eNtQaEXoxC2mIoH6Y0K2LG7giuAl+NN3tOSKkQcNIeb6lRe0ZwP1I
-         +vKIMpnJIXhoei7aq1fLTZOHyGLw4GNrO6iVXDsmdP/xq13zVIXJtcs4MooSh2ikljIx
-         4kUaX/1PxwqSE3Ftq27PhRrW0GpQQANZidXgQ24/eTL6ArkDyff8WOQBsOGQUzPNtdgh
-         36Gw==
+        d=gmail.com; s=20230601; t=1744391667; x=1744996467; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8ZtmV9TuWbxyWvjRy9KTH0D/rkWddSzW49m1b9NLvBg=;
+        b=BIoY5Z6gr5Y5OnBEvNZwGJTdIHGt97rJhakbXHnOW/y/aexlcRi5pfbuay9gL8A2zT
+         Ro0MfxRrir97qWx2/Y33+1RgbavsTAK7A3zrEzPSAlun+cZLIuMeRPVmTNWNaVs2N+5o
+         6vHXEaAo94qE7mmHOax4V6JR4TMJXqmHWdFoFCdaaRdCz6/AP33Z2utKHybjy0lU/7jb
+         26Fp13GwPhANU4+LFkwCRk+//1q0sKY8KSw4QaEQ+Lww7n2LkLsxsFM2Bage1NJoLW06
+         bGidk4pxW++YszMxh+fSEy31QPNAvEYh3177oHOEX1jo3Ri87v0nCkBxCZryo1kkbW/T
+         boGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744391121; x=1744995921;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=buv6tJFU81bfMwxhN4X5pTfsZqKCjfGk62wzBC7Mcdc=;
-        b=kMFyLgTObZ1R+TcpUyrc1hirI5/2X+kcPZpTf+H0UuHlxG7nNOsTYcy67jRxKfaxC2
-         H1LKA98ti54bl1K/TvDxy0ShDttAryRJIoVFikVKog0aqegDcWYQLm5NyPZlUaQFtHO9
-         h+EjbOf8p6WZs/BQS68A91Gt5bPQZ6DTsyKFqgJxNWFPzT4TxCna0IemwqQTGa4UjlQ/
-         xvPXYCmfUDsNgtHLTSwJKiGhBscg0/LqkCPktXnCft/VlIqo7gwp0VW2lrl6kZit/FDr
-         2HodmvwdDlMC+bp0bKxmYujm4wLVwAhN56fw6+UyXv5pnA/40dZw8dv5e4yAVPE7zz6Z
-         gnJg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+wnhbUQTdjEGZAGah/0mQN5b0zsG4IyKRj2/nhNPA6KZdx0EiD5GBpiVtKucDYbkZ8YJT6RxCM+Q90XsWljM=@vger.kernel.org, AJvYcCUXoTtX3uGZn8MqSdYAB57KnaY5dFxRBxuqPrn5yh5KqGa0oRoUBpnQymphjuSRwOrVP0dZsEAMCdU=@vger.kernel.org, AJvYcCVukGN2LY8l8pbV6vV9/osh7snsxcx75swC1NQIwas3qftzOzrNgIxzPCsEzqRUa4a+eMWTtk7UvDw=@vger.kernel.org, AJvYcCXpPDiFhGGeT8GAU+dC1yftLXUMFjv7q6isAHmBPUADYt+Nc6cOu/hwsgB7z/Jyul1/xO/cUW3fWXgiH8jY@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGNrAUUsoZC+U8Ogjn6TfXz/e3XwE70DzTJsabs8AfUrZ6HaEo
-	g70Oy8o/bx/z3hc1iHvU47uI4EHdaL7SroerxtF/fnf9iyaHkR9LY7Lc+clel8dTNF0hPRbGTOB
-	YLMUWQtHWfMgme5/NX0FL8z3WqUs=
-X-Gm-Gg: ASbGnctMxpvfjiGzJZJ3ipRD2xjjXT7M6p6khVygs80aWalu5djOizRTMx6HXEGPYHR
-	RwRB2OLvQjG4+JxePH7n6eJ4mNHDGpNxEvzHUPmyLvz2fCpxfw1SXTNtYXbhhhk6doii7cjilFL
-	m0gxMr7IZDeQzV+0Kd1AhVsw==
-X-Google-Smtp-Source: AGHT+IF4aatQf3rnY6osYH3EMe4i9rbmYsDluNQrPMOtOIVHemw9VZIB+8OoMzzvtyR1YTkT45UxmOnvrh1DXifR7sI=
-X-Received: by 2002:a17:903:1b2c:b0:224:10a2:cad1 with SMTP id
- d9443c01a7336-22becc4dcddmr17546085ad.10.1744391120834; Fri, 11 Apr 2025
- 10:05:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744391667; x=1744996467;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8ZtmV9TuWbxyWvjRy9KTH0D/rkWddSzW49m1b9NLvBg=;
+        b=luEvXJ2KpZAotffbZAgr/oPLniOedqDDy+bBmvj0/VnLkkndTzghO0wVcg+rwXEEdu
+         cq5SR65HN7mV+pYUfUBXt4DBv13RWSmcA/nXxmgBM9jvmvPl/wzYZn0B0FE9p1nZuipZ
+         JkkUBdLEWJsr4Sl8YgOJFc8/uLQiWyFs8XB8eIhQb42vKlGOuOmV1yyuQGPXW+KjcQnC
+         meZlzD9sxQvhTMkdwZgvNla+39CM5YjO3po7praO7tYWoB8uinbTAY5bnLqHDnPEu8xz
+         MghPrGzUA4/ov7qauOabqwnh0pNS1UTVVhktKZvuV/ABvnYzNjxS8wlRCZtKPXgITwf5
+         RBGA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUD0tdmyEUYraYeSfu2rkKyIW90lFR9pfGclDOeJjw5mOgh5kyzOvNwvFC9q7ZVxH1M4hhh29PlnEP@vger.kernel.org, AJvYcCWgNMjrCF+/1ozilIxRF3VhOZUwwph7576vxSzUesaFFlTmvM5UVnfRoaFGbh/yhfGi15l0GyIqQA4rW2Q4@vger.kernel.org, AJvYcCXNP+xnF2mVyeUemOLUCwRMDARD8ZCLAD/jNnAuoDEzWc/41LHN26EkfcTPIv5fjwX/zl9DauPjzk4D@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrYCwiNGEBTOL4sxytllWpsClgOIZIwOgOy/ZNj6IjVTxZgQtu
+	fEMPABvf6aFkQloGiviYZkWBzHvZ0N9SKv+tHrv9CrPIg3Va78L4
+X-Gm-Gg: ASbGncvWGAkjOFSBLQ11KwGuRw4C2h4oFB6C55BZINRMCjjtdj1xyxm3H+KYrX861zf
+	cwyORBNJx4FPVf6xhu82eAYO/0UmFOT3MY06m02eIiMpfOUQOZgmCqye7KBbrdQs79MnWb6s6WA
+	G4PhMVIhMp4jqZu6ZMZla0WZZTd0DaPv+6VOkYYtfnWAXvOnUPr0v+bHtHX7hBJVnBZHYs2+Mz9
+	QXmfA6+Rjdv3lSSYtDdgh+5Ly1xfw+s3x5K5zpX18PXBPXowevS4jdriBTuXU/bBv+Ld4ja0WJQ
+	9eq4RTiqoJppjbhDVA5cBr/LgvTLTrs8DYhaj8K7
+X-Google-Smtp-Source: AGHT+IEUJgIKcaUb8JEq+V2aIJnLrL/NN4PAPW6tR0kpm23V60WZyUoVVsASzUds8R6wJCjRp3i5mA==
+X-Received: by 2002:a17:90b:2811:b0:301:1bce:c25a with SMTP id 98e67ed59e1d1-30823646472mr5126875a91.20.1744391667339;
+        Fri, 11 Apr 2025 10:14:27 -0700 (PDT)
+Received: from localhost ([5.34.220.58])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd171954sm6049259a91.38.2025.04.11.10.14.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Apr 2025 10:14:26 -0700 (PDT)
+Date: Sat, 12 Apr 2025 01:14:22 +0800
+From: Goko Son <goku.sonxin626@gmail.com>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Inochi Amaoto <inochiama@gmail.com>, Alex Elder <elder@riscstar.com>,
+	Haylen Chu <heylenay@4d2.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	spacemit@lists.linux.dev, Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	Goko Son <goku.sonxin626@gmail.com>
+Subject: Re: [PATCH v6 3/6] clk: spacemit: Add clock support for SpacemiT K1
+ SoC
+Message-ID: <Z/lN7qrISpbK6MQY@goko-w.tailce6c49.ts.net>
+References: <20250401172434.6774-1-heylenay@4d2.org>
+ <20250401172434.6774-4-heylenay@4d2.org>
+ <8fe0aaaa-b8e9-45dd-b792-c32be49cca1a@riscstar.com>
+ <20250410003756-GYA19359@gentoo>
+ <dm4lwnplwcxj3t3qx3a3bdxtziowjfoqdy4vrd3ahmzkhejrov@fa5rujatatew>
+ <z27ri5eue43ti6b2te2cbxiow66mtgbnyudoo5cs4quabgbx5r@uipzoxvfoysi>
+ <a8e5adca-8eff-4bbb-a7fa-ce4489b63fa5@riscstar.com>
+ <sl752im2sn5sz6yzc23ctprh3rwryuhgtggsaauxixn3b267ag@6sf5fahu6b5i>
+ <20250410015549-GYA19471@gentoo>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1744366571.git.viresh.kumar@linaro.org> <efbdd8212a90175c293313de961c34d13b9f4b43.1744366571.git.viresh.kumar@linaro.org>
- <Z_k-TFCkLWu9eiFt@yury>
-In-Reply-To: <Z_k-TFCkLWu9eiFt@yury>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 11 Apr 2025 19:05:07 +0200
-X-Gm-Features: ATxdqUGsS-qbRPikOYkiQqiZ2TOsQj8myZv74OnTvJYe0U7MJJlY5XaRE0u-Ujs
-Message-ID: <CANiq72=8iokcwv8zG81oxi9_+8p3_X2s8dRgrXi9DGjaSaDDMg@mail.gmail.com>
-Subject: Re: [PATCH V9 08/17] cpufreq: Use enum for cpufreq flags that use BIT()
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, 
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, Erik Schilling <erik.schilling@linaro.org>, 
-	=?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, Burak Emir <bqe@google.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>, 
-	linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250410015549-GYA19471@gentoo>
 
-On Fri, Apr 11, 2025 at 6:07=E2=80=AFPM Yury Norov <yury.norov@gmail.com> w=
-rote:
+On Thu, Apr 10, 2025 at 01:55:49AM +0000, Yixun Lan wrote:
+> Hi Inochi,
+> 
+> On 09:20 Thu 10 Apr     , Inochi Amaoto wrote:
+> > On Wed, Apr 09, 2025 at 08:10:53PM -0500, Alex Elder wrote:
+> > > On 4/9/25 7:57 PM, Inochi Amaoto wrote:
+> > > > > > > > diff --git a/drivers/clk/spacemit/Kconfig b/drivers/clk/spacemit/Kconfig
+> > > > > > > > new file mode 100644
+> > > > > > > > index 000000000000..4c4df845b3cb
+> > > > > > > > --- /dev/null
+> > > > > > > > +++ b/drivers/clk/spacemit/Kconfig
+> > > > > > > > @@ -0,0 +1,18 @@
+> > > > > > > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > > > > > > +
+> > > > > > > > +config SPACEMIT_CCU
+> > > > > > > > +	tristate "Clock support for SpacemiT SoCs"
+> > > > > > > I don't know the answer to this, but...  Should this be a Boolean
+> > > > > > > rather than tristate?  Can a SpacemiT K1 SoC function without the
+> > > > > > > clock driver built in to the kernel?
+> > > > > > > 
+> > > > > > I agree to make it a Boolean, we've already made pinctrl driver Boolean
+> > > > > > and pinctrl depend on clk, besides, the SoC is unlikely functional
+> > > > > > without clock built in as it's such critical..
+> > > > > > 
+> > > > > I disagree. The kernel is only for spacemit only, and the pinctrl
+> > > > Sorry for a mistake, this first "only" should be "not".
+> > > 
+> > > This is a general problem.  You can't make a bootable
+> > > SpacemiT kernel unless you define this as built-in (at
+> > > least, that's what Yixun is saying). 
+> > 
+> > Why not putting the module in the initramfs? I have tested
+> > this in quite a lot of boards (Allwinner, rockchip, sophgo,
+> > starfive and etc.), all of them work well.
+> > 
+> it works, but not optimal, why delay clk initialzation at modules load stage?
+> IMO, it brings more overhead for using initramfs..
+> 
+> but there is always tradeoff and bikeshedding..
+> 
+> > > But we'd really rather *only* build it in to the kernel
+> > > for SpacemiT builds. You clearly want to minimize what
+> > > must be built in, but what if this is indeed required?
+> > > What goes in defconfig?
+> > > 
+> > 
+> > As defconfig is more like for a minimum example system. It
+> > is OK to put a y in the defconfig. But for a custom system,
+> > you do give a choice for the builder to remove your module
+> > in non spacemit system.
+> 
+> I get your meaning here to remove/disable at run time stage, while
+> we do provide compile time option, if don't want spacemit system
+> just disable CONFIG_ARCH_SPACEMIT I mentioned, clk/pinctrl will be gone
+> 
+> anyway, I'm open for this, make it tristate do provide more choices,
+> and it's probably better leave users to decide..
+> 
+> Ok, I'm fine with leave clk as tristate with proper default deconfig,
+> but if people want to pursue more to make more driver(pinctrl) modulized
+> feel free to test and send patches, I just won't put efforts myself.
+> 
+> thanks
 >
-> The BIT() is as simple as '1 << nr'. How that it's so complex for that
-> tool to realize that '1 << 2' is the constant?
+Hi Inochi, Yixun
 
-It is a C macro which requires evaluating a C expression as the C
-compiler would.
-
-A solution (a workaround, really) in `bindgen` is coming, that
-essentially forces `libclang` to evaluate it for us, but even if it
-works perfectly fine already, it will require upgrading the minimum
-version and so on, so it will take time.
-
-For the moment, either we do something like this (a similar approach
-was used for some `enum`s in Binder) or the values can be replicated
-on the Rust side (ideally with a test somewhere to ensure they are in
-sync). The latter may be best if the values have not changed much over
-time, i.e. if there is low maintenance required.
-
-I hope that helps.
-
-Cheers,
-Miguel
+I'd like to volunteer to test if building pinctrl along with clock
+as module is a feasible way, and will send a follow-up patch if it
+works, thanks
+> -- 
+> Yixun Lan (dlan)
+> Gentoo Linux Developer
+> GPG Key ID AABEFD55
