@@ -1,78 +1,77 @@
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EBB78F45;
-	Fri, 11 Apr 2025 16:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2C521B9D5;
+	Fri, 11 Apr 2025 16:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744388312; cv=none; b=aQIwMUFn0r6EDpuLmaz9O7EJWOI36OXn7rbVghWZWIUIheODrzU6eXiHHqcaZx7Yx/dDRIePhRmtVzb8POiMax8nhRtI7uM/de3cpy27Gz9HXyY6uqNQsgeuqw6UqVZ4DzDrMY/6v1mWfhRPCMbJvVC1ROfBnf6kGxf2/Q1fYJ0=
+	t=1744389003; cv=none; b=eHy74sw6/v7oMZOS3Qk2tcmaKIvNh1xNNwU23ws8j03q/cN5nvGd//V5VBTK9NYlFFPnlNro0/DFQmvXXZGmq/ArzXKpwsYRyGqEJddx3xWqKaxw4ESznSRPp2OKurZg4N2iVqr0LV1b+83br0zVbwz6r2NuPba0VOM9SBOAZ6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744388312; c=relaxed/simple;
-	bh=SvaNemzQY2y4UIJFFeYr/Yr4xA1TUx3BaNQgdVWLbjA=;
+	s=arc-20240116; t=1744389003; c=relaxed/simple;
+	bh=e7ZwJA55c/npdtPDslO1iqSD1aHZ4rGTpX9tTTfC4YM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OpI7OQ/ZVrCBCGN0p73qlrA8zR262T6BqwAksmGE/IQk1cciEGq/7O7Nnqm25wtEfevnin2MwJpknNpuCelc0F/DxYL3c083kvJfEj1GoQqobE3HCWYxsYGi2pu3Xb6NR0NhAmG9cGmsOXjv0+pjmvfn/IRc5V8kQy5NOv5u3Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j8wjrxW9; arc=none smtp.client-ip=209.85.210.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=GDI9Cg4kZOS/TqcZCsG5F+3L0wxhDg3Q7VCy925b+gXYkqdyh190JVat6ysDNkpxSGc4eUwXueeAOS1+VDLO8UuqqSNXCiOipuokANnQ0zsXBGDclGf0tED9NyeS9l3HCONvgdWkhp5kfgt7VUJcp/9w/UCnByM77zGwpDYXhy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d9ovCvNh; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8wjrxW9"
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-736bfa487c3so2054402b3a.1;
-        Fri, 11 Apr 2025 09:18:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9ovCvNh"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223f4c06e9fso23013335ad.1;
+        Fri, 11 Apr 2025 09:30:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744388309; x=1744993109; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744389001; x=1744993801; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vmSMTuOGeDwYliAbWoaRYQt4Fshr4TF8P/B1kWAdHYw=;
-        b=j8wjrxW9Rlmv9IqOyYsT/jJh96x+VW775Zbmsz51pQb3D5+8U/X5lAcDHh+05yQgp+
-         8qnXy2x+7spTsdQ1pVmfhU0R2eYV2PS/+YXRbP0+VYgbnhCCBO8r2Hn4gCcbb3q41PPu
-         aobseWYrSxX0UuLPcoMUePYWcqTNRqSy33Iy2prw+EBL04iA0vUOrXeEwSUggQ/JFUnr
-         YdCq+5tf3HtxdzSPQkCOZNttKYwxjr1kpfEofQuXglt6LEhPluZuHWyQHdnBUT0Rocq/
-         QstycKqL6FolKhUCgZjo8sWnXpYJ2jn4+PbDcbRqxJUCouln66Z0muObSUFc0H3OEGhs
-         ipkA==
+        bh=IMZKyOnvktAqQlS8qRlGyleKT7MiuM/55PSnX/QGDRA=;
+        b=d9ovCvNhkmDJ0gPC8ORNfyXHqAbP42BZ7Uxc+BKc9lS0z9hap3fbVCjuqCr2JmO+mp
+         FrfvlViA05wXbRkzXro/FH/S6SCRVKHAE6SvRRx7W7MSxKWL8sGrwrW2xvaLsMVDULs7
+         K1QqkH5LVkLgUjPc+FMqRd4Vk34dU9OSOzXsPNEgR36QQNSd2u2VOXn0w7tmSnH528pR
+         9Y+N4VvFwZ3oniaY7Y3koOXJZtUsS6kl5j0EiQKpIhfLfxW8KReStrWvNWy+8WpP6ae3
+         nlOe7gaD39XoK9qM6QP0TcPV4H0nXdz1LW0Dw+lWy/No4Yw3xU114boYOSbgvncku7gH
+         cgZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744388309; x=1744993109;
+        d=1e100.net; s=20230601; t=1744389001; x=1744993801;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vmSMTuOGeDwYliAbWoaRYQt4Fshr4TF8P/B1kWAdHYw=;
-        b=rqzo+ekbKnB+DMTWPyzwhBGf5pKZ45jOp6TCOYpiySjO4ziM10rXo70f64ZhtZLsdx
-         p8SpQ84p8sVzwLVlS3RJtEC9Sarn2qhMFjn4WxWearpI6149bopOH8bTNpSbt0S8Is/R
-         pl5W7yXrlyd+yljaBm5j27NUt2UHyoK/vQDPPLpeGVjzFVQGB8ujX2cLpXlhKSBJWUzI
-         anduSp3/mq3JoALghbtGHmYgMaL7Wx12Ggb8S3hfYSwmv44MUnkE7HElNOnyrZJfk+34
-         hMKX/5xSFT+boAMvHHJf2fzK2UlPP49V2PYxodHeiBcAaUulK+kWbzGCR7EsuhlsAHKA
-         Z/XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHEfArRqpuy9Vmq+oG5/VivOuat2RxqYCT0Et1k1CtZ85sHcKR0HBYexRMbNgO/OXD3ps8OCx1S4nx2OMBOLo=@vger.kernel.org, AJvYcCVUZ7rxG3VmEwf1vpIQJFg5ljTnbSAiHcwuGEgphJ2+BQ07WhfYMQ3fXLwSKyYTISdI/kVNaPstuBM=@vger.kernel.org, AJvYcCW0CNHZ52fftd6o0z0xS+OisgBUTvtfGfMaidsgbLBwXaMCZCGAD+OGsGhsS9wZlJM1s6fDc6Cxb1rO7GTV@vger.kernel.org, AJvYcCW8lf5Ww/LBRpbAAqlmabB3gDFQfAAWc8N6x68peucCU6pg9Yj3GcVk7jj7aKGYf7lVSpZo4FpRaZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh711SXNoAP11ovE00VSHRC11qVD5ZGT1SPZMOkW0O8kdDOAfE
-	lmVISr3ie2t5RCa0ne2CZY96s8NukrMf05D73SqknoMTxAhSO1CP
-X-Gm-Gg: ASbGncslJWLhJejBYfUWBsVJ/AspFxh4NYd6tPmjevOzhRYjyFwtFfEX+rsFAc05fsj
-	jQgZZb6kjl1Zjx1ZVyBkdlDL8p2QtFO7nTpWkCGHf0HFAktLRh3df/3azRptEffgpWXXqHfI27m
-	5cxKa/l+ihkz9Y0QdTzg2NTl7ObS+XrS0ra72fNxFAeeBIk5xZgoSZulx15z8wca8XVNPPeB761
-	fZWFVKTX/RW9oo24xBnWR+6elbMiQYDzrjA91uzCXXlxDvGvNoUX5E8KpT+zkbn8x1vHv8OyymF
-	TNWOC0CgeB7j0xOij3ThCkweIx5hLXHT+W/n3qhy
-X-Google-Smtp-Source: AGHT+IGw2fiNYM9934HOe7la8L3lAkwItX1sAP6xzLO1pfZrJGFJPsi7DJGl2RdlLlv1bN92Vx7M1A==
-X-Received: by 2002:a05:6a00:179d:b0:736:51ab:7aed with SMTP id d2e1a72fcca58-73bd129b2aemr4602848b3a.16.1744388309457;
-        Fri, 11 Apr 2025 09:18:29 -0700 (PDT)
+        bh=IMZKyOnvktAqQlS8qRlGyleKT7MiuM/55PSnX/QGDRA=;
+        b=iDyU9XbUmIfd6hZbRvaFKF0B54pUiUUJNRg+bv+Lywqq9sc/TPvTdBphGKRcbC0KRu
+         Rvx1QyXcwZLRN0IUxhsoNt6QJE9lNrIIFZVASPaHSvb97f7zriQANgHUDE3dzTS4fBt+
+         fJEY8WnIhcPEqJqRWI/3t6h5N0Xj+wzNNVA3zT1pUlhZh14ekEPzmb7M/8TOmGgX8FsD
+         GQAGiifxIzk5F51a09g+EHubBfLDQCmaxFQ+aAUJTGO4BM/YIHiafM1bBVTPOHEhAaMD
+         QMts7EDeLsCg+rNg6vLk4Tv4XCiNyb6UzhjHjdBPss1uSRVX+0lMBT3Dkq5rGKNpJmPa
+         6FKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/QxF8G2fUeMK69vvlC306bqtIwSWv8mz6xp5MkC4/HOw290l3mTBDXy/OKuFkoomJN3bHm2TnmH0=@vger.kernel.org, AJvYcCVK1rP1kTdkbGD+9//RkewKSDHH7lKAiVhlKDg7L8GpsbnBoWCGyveH0vETWVnUEn7bfLkJVoG+Jks=@vger.kernel.org, AJvYcCXJKMRFxL3io1Wgy5KLobKlNyD1fV91eTe0GHpywm2xgQLUwP0gkLGfEwYiLOMeA2XCTuTr6gAnB1/ZS60KRoM=@vger.kernel.org, AJvYcCXTAtKCbRY83bMMMGf9T9SA5Hithuq1U+8jn7aPSihSP4W2kzUhLWyQJ70KHypBfNjuccEPSVGMYs2iDaiQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUkDEvH6K3hV+xUMmGBfkT2v+Jnn2n8O2Bfm8TLKFcRciY+gwT
+	q66AU5c3q1JO7GVkFEWSlqhuiMOA2n4Yusmxg04BIlIW2L8c7WCY
+X-Gm-Gg: ASbGncvb50a+g8n5Uje4xGsm+oGJt05EpFmwAgLVGLGLo43qyu+coFWRngWvSPv3PP9
+	9sVFQ5zKjHUn6TSAhxKj9WhxfMS/Px0ynp7wYPvkfEHt1sklpZWyLipdcA8ZUopThAZkWSWfOZz
+	cXCnngmwTg0lMIxulJouqb08Tmik19cJu/31JTMURv5DeGu9q6gMEGm9xcGuWHquCR6ImGM/aA8
+	L0O6OnN4cCVrx4M3SZuZfX+jqR8OYbhFDUOtBQLZMnIz/56qatWH8nKUiDsM12bClDHy2vihc+r
+	iupPGQv8oqd45MZnp5UeMyThoyYj5NLoTQ6nJRFr
+X-Google-Smtp-Source: AGHT+IHYqKEouQcXgj1T3/DfjRBjlCbDtZJH1LHU2hA3j2xglmTTnB83Kz84DDxSmeWOxKuK+9g3tg==
+X-Received: by 2002:a17:902:e745:b0:21f:2e:4e4e with SMTP id d9443c01a7336-22bea0252a3mr50679375ad.5.1744389001229;
+        Fri, 11 Apr 2025 09:30:01 -0700 (PDT)
 Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd22f10a8sm1787772b3a.101.2025.04.11.09.18.28
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac75ce2f8sm51929705ad.0.2025.04.11.09.30.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 09:18:28 -0700 (PDT)
-Date: Fri, 11 Apr 2025 12:18:26 -0400
+        Fri, 11 Apr 2025 09:30:00 -0700 (PDT)
+Date: Fri, 11 Apr 2025 12:29:58 -0400
 From: Yury Norov <yury.norov@gmail.com>
 To: Viresh Kumar <viresh.kumar@linaro.org>
 Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
 	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
 	Benno Lossin <benno.lossin@proton.me>,
 	Andreas Hindborg <a.hindborg@kernel.org>,
 	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>, linux-pm@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org,
 	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
 	rust-for-linux@vger.kernel.org,
 	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
 	Erik Schilling <erik.schilling@linaro.org>,
@@ -83,10 +82,10 @@ Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
 	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V9 09/17] rust: cpu: Add from_cpu()
-Message-ID: <Z_lAyGy1o80MPVOC@yury>
+Subject: Re: [PATCH V9 11/17] rust: opp: Add abstractions for the OPP table
+Message-ID: <Z_lDhj220aqU44P4@yury>
 References: <cover.1744366571.git.viresh.kumar@linaro.org>
- <475bc73d8d11290446a4135af76aea123c6d80ee.1744366571.git.viresh.kumar@linaro.org>
+ <1961fd9a4ef44dbda18a63eb832dc3a3176c2314.1744366571.git.viresh.kumar@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -95,100 +94,115 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <475bc73d8d11290446a4135af76aea123c6d80ee.1744366571.git.viresh.kumar@linaro.org>
+In-Reply-To: <1961fd9a4ef44dbda18a63eb832dc3a3176c2314.1744366571.git.viresh.kumar@linaro.org>
 
-On Fri, Apr 11, 2025 at 04:25:08PM +0530, Viresh Kumar wrote:
-> This implements cpu::from_cpu(), which returns a reference to
-> Device for a CPU. The C struct is created at initialization time for
-> CPUs and is never freed and so ARef isn't returned from this function.
-> 
-> The new helper will be used by Rust based cpufreq drivers.
+On Fri, Apr 11, 2025 at 04:25:10PM +0530, Viresh Kumar wrote:
+> Introduce Rust abstractions for `struct opp_table`, enabling access to
+> OPP tables from Rust.
 > 
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 > ---
->  MAINTAINERS                     |  1 +
->  rust/bindings/bindings_helper.h |  1 +
->  rust/kernel/cpu.rs              | 31 +++++++++++++++++++++++++++++++
->  rust/kernel/lib.rs              |  1 +
->  4 files changed, 34 insertions(+)
->  create mode 100644 rust/kernel/cpu.rs
+>  rust/kernel/opp.rs | 495 ++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 494 insertions(+), 1 deletion(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 12cde55579a0..475abf72869c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6155,6 +6155,7 @@ F:	include/linux/cpuhotplug.h
->  F:	include/linux/smpboot.h
->  F:	kernel/cpu.c
->  F:	kernel/smpboot.*
-> +F:	rust/kernel/cpu.rs
+> diff --git a/rust/kernel/opp.rs b/rust/kernel/opp.rs
+> index e4780b41664f..e074009e4b7a 100644
+> --- a/rust/kernel/opp.rs
+> +++ b/rust/kernel/opp.rs
+> @@ -11,8 +11,9 @@
+>  use crate::{
+>      bindings,
+>      clk::Hertz,
+> +    cpumask::{Cpumask, CpumaskVar},
+>      device::Device,
+> -    error::{code::*, to_result, Result},
+> +    error::{code::*, from_err_ptr, to_result, Error, Result},
+>      ffi::c_ulong,
+>      types::{ARef, AlwaysRefCounted, Opaque},
+>  };
+> @@ -172,6 +173,477 @@ fn freq(&self) -> Hertz {
+>      }
+>  }
 >  
->  CPU IDLE TIME MANAGEMENT FRAMEWORK
->  M:	"Rafael J. Wysocki" <rafael@kernel.org>
-> diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> index f53d6e1a21f2..ac92c67d2c38 100644
-> --- a/rust/bindings/bindings_helper.h
-> +++ b/rust/bindings/bindings_helper.h
-> @@ -11,6 +11,7 @@
->  #include <linux/blk_types.h>
->  #include <linux/blkdev.h>
->  #include <linux/clk.h>
-> +#include <linux/cpu.h>
->  #include <linux/cpumask.h>
->  #include <linux/cred.h>
->  #include <linux/device/faux.h>
-> diff --git a/rust/kernel/cpu.rs b/rust/kernel/cpu.rs
-> new file mode 100644
-> index 000000000000..3054165d3818
-> --- /dev/null
-> +++ b/rust/kernel/cpu.rs
-> @@ -0,0 +1,31 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Generic CPU definitions.
-> +//!
-> +//! C header: [`include/linux/cpu.h`](srctree/include/linux/cpu.h)
-> +
-> +use crate::{bindings, device::Device, error::Result, prelude::ENODEV};
-> +
-> +/// Creates a new instance of CPU's device.
+> +/// [`OPP`] search options.
 > +///
-> +/// # Safety
+> +/// ## Examples
 > +///
-> +/// Reference counting is not implemented for the CPU device in the C code. When a CPU is
-> +/// hot-unplugged, the corresponding CPU device is unregistered, but its associated memory
-> +/// is not freed.
+> +/// Defines how to search for an [`OPP`] in a [`Table`] relative to a frequency.
 > +///
-> +/// Callers must ensure that the CPU device is not used after it has been unregistered.
-> +/// This can be achieved, for example, by registering a CPU hotplug notifier and removing
-> +/// any references to the CPU device within the notifier's callback.
-> +pub unsafe fn from_cpu(cpu: u32) -> Result<&'static Device> {
-> +    // SAFETY: The pointer returned by `get_cpu_device()`, if not `NULL`, is a valid pointer to
-> +    // a `struct device` and is never freed by the C code.
-> +    let ptr = unsafe { bindings::get_cpu_device(cpu) };
-> +    if ptr.is_null() {
-> +        return Err(ENODEV);
-> +    }
-> +
-> +    // SAFETY: The pointer returned by `get_cpu_device()`, if not `NULL`, is a valid pointer to
-> +    // a `struct device` and is never freed by the C code.
-
-If you think that writing the same thing twice would help in SAFETY
-department, I'd recommend you to write it for a couple more times.
-
-> +    Ok(unsafe { Device::as_ref(ptr) })
+> +/// ```
+> +/// use kernel::clk::Hertz;
+> +/// use kernel::error::Result;
+> +/// use kernel::opp::{OPP, SearchType, Table};
+> +/// use kernel::types::ARef;
+> +///
+> +/// fn find_opp(table: &Table, freq: Hertz) -> Result<ARef<OPP>> {
+> +///     let opp = table.opp_from_freq(freq, Some(true), None, SearchType::Exact)?;
+> +///
+> +///     pr_info!("OPP frequency is: {:?}\n", opp.freq(None));
+> +///     pr_info!("OPP voltage is: {:?}\n", opp.voltage());
+> +///     pr_info!("OPP level is: {}\n", opp.level());
+> +///     pr_info!("OPP power is: {:?}\n", opp.power());
+> +///
+> +///     Ok(opp)
+> +/// }
+> +/// ```
+> +#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+> +pub enum SearchType {
+> +    /// Match the exact frequency.
+> +    Exact,
+> +    /// Find the highest frequency less than or equal to the given value.
+> +    Floor,
+> +    /// Find the lowest frequency greater than or equal to the given value.
+> +    Ceil,
 > +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index f4dcfefe94be..db372f806875 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -44,6 +44,7 @@
->  pub mod build_assert;
->  #[cfg(CONFIG_COMMON_CLK)]
->  pub mod clk;
-> +pub mod cpu;
->  pub mod cpumask;
->  pub mod cred;
->  pub mod device;
-> -- 
-> 2.31.1.272.g89b43f80a514
+> +
+> +/// A reference-counted OPP table.
+> +///
+> +/// Rust abstraction for the C `struct opp_table`.
+> +///
+> +/// # Invariants
+> +///
+> +/// The pointer stored in `Self` is non-null and valid for the lifetime of the [`Table`].
+> +///
+> +/// Instances of this type are reference-counted.
+> +///
+> +/// ## Examples
+> +///
+> +/// The following example demonstrates how to get OPP [`Table`] for a [`Cpumask`] and set its
+> +/// frequency.
+> +///
+> +/// ```
+> +/// use kernel::clk::Hertz;
+> +/// use kernel::cpumask::Cpumask;
+> +/// use kernel::device::Device;
+> +/// use kernel::error::Result;
+> +/// use kernel::opp::Table;
+> +/// use kernel::types::ARef;
+> +///
+> +/// fn get_table(dev: &ARef<Device>, mask: &mut Cpumask, freq: Hertz) -> Result<Table> {
+> +///     let mut opp_table = Table::from_of_cpumask(dev, mask)?;
+> +///
+> +///     if opp_table.opp_count()? == 0 {
+> +///         return Err(EINVAL);
+> +///     }
+> +///
+> +///     pr_info!("Max transition latency is: {} ns\n", opp_table.max_transition_latency_ns());
+> +///     pr_info!("Suspend frequency is: {:?}\n", opp_table.suspend_freq());
+> +///
+> +///     opp_table.set_rate(freq)?;
+> +///     Ok(opp_table)
+> +/// }
+> +/// ```
+> +pub struct Table {
+> +    ptr: *mut bindings::opp_table,
+> +    dev: ARef<Device>,
+> +    em: bool,
+> +    of: bool,
+> +    cpumask_box: Option<CpumaskVar>,
+
+The other fields have short names. Maybe just 'cpus' instead of
+cpumask_box? If you want to put the type of variable into the name, it
+should be a cpumask_var.
+
+> +}
