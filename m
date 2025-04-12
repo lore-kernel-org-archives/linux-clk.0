@@ -1,271 +1,410 @@
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2071.outbound.protection.outlook.com [40.107.20.71])
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458C526F44A;
-	Fri, 11 Apr 2025 21:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744406643; cv=fail; b=os9He+uygCeJos58NDTlAQS8fU2vnceaulfJTPXK3BNwVK6pmXvcCpI1Q/0qnVdS1j/3WMRKTbY3pqWoFbtjBPC3GKUxJ91ENXzgQdfckQjsVNGS/EQcbvB8iHLbAONtNPPqvZ5XW3EILt/TYrexoM44GzykNb4ekKpMAPF+J7w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744406643; c=relaxed/simple;
-	bh=EWZDHpYoN914Q+mL+PGPJ4G20yl9kzHuXt1Q2rkSkYM=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=gPm0j4Nz+114mpiVu0GilE1y0KOoxSSzp6nkYh+j6yjHo1tJUnrTVJzNYDm0u0h0y3S/6YLXYON1aRcwvFtHn9uZOvVnhdaD1VUPPXwGK3HJpj1HjRbzQiwYpZFknNhTNmKA0cDicx5PSlxeDMBYGOMTqM6BCceTYlAwysyBhTU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RNGK8vj4; arc=fail smtp.client-ip=40.107.20.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C45197558;
+	Sat, 12 Apr 2025 07:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744443908; cv=none; b=h2q/EBR3zYHFN+0iZ869lbOYwErhU0RVO6XGwh7f87b5y7WmQ/CdI7Y7WOhrPAJuZGuRj3SCHC2m4j0kfo2YelvHplZtguUbJhKDbgE3HVeMDBKXGUv6n4R8+xp2kOaynHdtYJY2BTbtyreh4i5twjf/3vLqF8xiAinbB7jny40=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744443908; c=relaxed/simple;
+	bh=SGIM25NOudR+p3aL82mDtCch63ifeG19YxpLY6Pofys=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=amqhzh1+6R776f/ITQO6eXnEdN4jbVaLVg0NVc4yDQU5bXQXKOuUob+UwDbHA2NNKR6KuZX8PgjhI8LWjeJ2U7IucICH86+rtjf+ZqRZTB0j571eIPPP3JZQ4dAT01Atu2aECGOT2+N0xQbpo3ALmVaEWnPJg6TvZDsSCl9k/Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=O75fOP/V; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=q5EVawdE; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RNGK8vj4"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lj8SOwYnnyYddMsW+EaRcczmznEQRmdOslhP3OFEaSleAXT5C+pXOT/NNB/iGyGXefX2QDK8bxUa6iMqCfKqCkZpK6Q2dn72ZBC9wJBY6PAag7aqTbWHP9xs+PkqrTefObVewl3v4ZCH7TYjRFt7KF70rH4pW7R8SYL4QKVEQdqYupHogrhnqCYNsQNcM5ggBahAFxHZDxQhq8X255RpbYqyALf7URTrLG5vbmqFUYM8Fh01MSmi4/FqzV8Z5lPGBMthsEYj1BTu5dXcw5Ml0iCuKt7KeOA6HiRrQSD8w2VKR+IjZgbjNQSAV3IYpR/O+l1DDbFrhubgaFJ7R9MkjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RkU+DzXGJYV+I09MCnhKZkDKbhO9q03Q7OQCBOLVPCw=;
- b=VH6ttKnkWdQ1PHrPfcRRhImrfkU0pvsOXOKu5UkI6VqcdD3omMQTzCvlkE83D7caQ1zwWutrj9vTtOYraMdGmU0bWOlgaN+ymnoJ1wDXAftN0yrtSKjGtaxqeNNOFevMU7IgAz6mjl9qA48TMvjVdBfKk9DfRcjoc/WN/kbcUk9Rvqts4CsG6DaXSzE90x6DnN0KRAkHseHwNNRvyoSEUy56xYibOQiT0+vkZo4vGcm2yzlh0P47+ftHper8Kvv6EuP2HVyBvUpP9XgZVjrFFghW8hJ1uesIMouvYlzBChSJhdbacL3tVzYyUO1NjOcdmiHJsWxctHlSnFyn4CWu1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RkU+DzXGJYV+I09MCnhKZkDKbhO9q03Q7OQCBOLVPCw=;
- b=RNGK8vj43XXvW1S5h/Kf8TrslfCajwhMHwNcOlnHqoJqirF/4jfUyfl3I5zBSG4kgxHz2S3OmXw6Q4k47GTBlX6b55j9U9ieJTQ+cohPhB4EeqGXZeunuv8z4pdJSuCEg8MWky7C5PjoIlhYmth0mXbFWSmEqZ08YqbcBU/Qmtm+BbcWR1Esz4kjFXgLJWIdkiJbvV/bizFVWN9UZ9WMFMU3qwKusoyPqiJWHEgJkQZcppRT9dLuk8E1n0iU2bHTsVE/0r5ztVK+N/EeMdErhUvclSqov8H+XIVsaMnhawLwsHYifJ9yQ35jpHPbeae4IBUgTJH5+EQpcrnOsSnDFQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU2PR04MB8983.eurprd04.prod.outlook.com (2603:10a6:10:2e2::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.27; Fri, 11 Apr
- 2025 21:23:58 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.8632.025; Fri, 11 Apr 2025
- 21:23:58 +0000
-From: Frank Li <Frank.Li@nxp.com>
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="O75fOP/V";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="q5EVawdE"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 2CBE412FB450;
+	Sat, 12 Apr 2025 00:45:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1744443905; bh=SGIM25NOudR+p3aL82mDtCch63ifeG19YxpLY6Pofys=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=O75fOP/VjQJP2r5B1ETwJlrtvpB79+n+BQZ9xxoAInmufEMr6TddprDbiw6yvuWYH
+	 OPg8xKxn7cBsYAGEH2/Zs4SYJr069dkVy0A+v8y0habbRY6q7qkpEEr42vYyOVvSbA
+	 nTJjin1JN0F4c1KPI2YUUKb/Ltk9DdVxyynPlOCk2+0ddOHsGXkOqsB79w/mWOpDFK
+	 W1mlUNz5dCLL0HyUFgKEdeA/dLKMKOnjbQdthz4b6ABxdeCI8iGVomLWUMa8kV7LrN
+	 meXGul2HFNoKRX4q/296UUn6/CeG8biD4k+mi6AmV7AXLyqFn215BateSinsI1NlkC
+	 87YF4CtFaF8Tg==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Authentication-Results: bayard.4d2.org (amavisd-new); dkim=pass (2048-bit key)
+ header.d=4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id KtGfYnSlwM87; Sat, 12 Apr 2025 00:45:02 -0700 (PDT)
+Received: from localhost.localdomain (unknown [183.217.81.239])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 3996912FB432;
+	Sat, 12 Apr 2025 00:44:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1744443902; bh=SGIM25NOudR+p3aL82mDtCch63ifeG19YxpLY6Pofys=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=q5EVawdE6m733+IA0nbx4uXV8ChwXQ4rNM1PtquvXeNhs6Yp4iY3OgdmS3hvWmYVo
+	 SNdyYYW86LHNDxEdvboe8xLlSxdWeZu6+0gsUsujGcwC2uXni7J9TIls2TO/kTNh/B
+	 hDoaYhVYSgkhpSapW+GgL0eRe3o3gGo4hoPCA1TN/abbXj9FavVxMl7C+Qp0BGjN+w
+	 Cj6+mE5fdNaA+f8Tf4W8A74tNYI/NQ5H65dlZo5ixlEzAsIw2yuqd/FThpIsHAG4Lf
+	 bRTDhxouzel7zjVj4s+DyxWieXSLiuCc7KgeDxudIlfJ9JN9/Q4Nkt1yTJMfes30ZU
+	 NcDuy9a9fozLQ==
+From: Haylen Chu <heylenay@4d2.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] dt-bindings: clock: convert vf610-clock.txt to yaml format
-Date: Fri, 11 Apr 2025 17:23:38 -0400
-Message-Id: <20250411212339.3273202-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AM0PR10CA0131.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:e6::48) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	Haylen Chu <heylenay@outlook.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	Haylen Chu <heylenay@4d2.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Alex Elder <elder@riscstar.com>
+Subject: [PATCH v7 1/6] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+Date: Sat, 12 Apr 2025 07:44:19 +0000
+Message-ID: <20250412074423.38517-3-heylenay@4d2.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250412074423.38517-2-heylenay@4d2.org>
+References: <20250412074423.38517-2-heylenay@4d2.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU2PR04MB8983:EE_
-X-MS-Office365-Filtering-Correlation-Id: be6042ed-9148-43a0-701f-08dd793f289f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?x1dnXM7wNanAKEUvzKfskMXIgAIjxq96JOWNXt24Ii6Lge5qJE4jXPEy7/5+?=
- =?us-ascii?Q?YSBvnSYiQuqX3Uy6E/jOKJmfDEV8M5nKa9NNdrLwxDUYJLdkfzpZTtSSSqWQ?=
- =?us-ascii?Q?7++1dY4vROHBJUOYRcsZXuLaLTihtxhFIzNgJtEyUgKFiVFTC2qErPXXMfaT?=
- =?us-ascii?Q?eXIwcvdXY9dG3UZqP0gn5x0veUbyPIY9Mgzy1X5szlGYyiTtvVit6CawmRy6?=
- =?us-ascii?Q?cb/Rp4enzHjeZI9SqLlQHy/0zTSy8rjGECb0FyA2fD4xL1s+YbrS6SXNb1QW?=
- =?us-ascii?Q?moFIoyVqR96Onw54jZ4LLdUgOTSuQSkR1rqY/hPoKTWnjQs+efnwWCG8CvcA?=
- =?us-ascii?Q?Dd0mt3YyqV5rCX5laHMnKaEwag2BuHUCSb9E+rkADJ/KRJ/E388s01p3ZITm?=
- =?us-ascii?Q?kvtk2lA3RbJS1ijHAC0sgHn3Q+GwAu0Roj+kMd80Uj8drQD07pHv3qjdCVZd?=
- =?us-ascii?Q?t71VrhUpk6vUTsyG3VbekYE4q7Lg/9amhpvyKUZKK2TLzAfQXxLZBYAMoPUc?=
- =?us-ascii?Q?bE6lD+XwpMFG+s4ZSka3kMSQLLxtKf8SnIMAfL4P31PmDBA5UJJVlcA5+QWH?=
- =?us-ascii?Q?bTufvW/TKItkzlAoeBmFhLpi+xqB4WFBJywZC7z8aHAZEGRfVULwcsAWI501?=
- =?us-ascii?Q?YtUyoFHgIKL3pEp46N+1uZF28Vt9TLn0zfE/2v2k9/pqqm5dHUvtaa875gSs?=
- =?us-ascii?Q?cmKalz4pFLD3z9AiR78sQ4rqR9+WVylk8qhFaxwAUiQR6fBKjo5VTreX3VQV?=
- =?us-ascii?Q?DVJqZvV4Iyp23qEFYf/U/VT1UozDOdpm72tB+37mLV/E6J/U+5BIiy9DQTg0?=
- =?us-ascii?Q?+kcEbDBnXkNAluih8JKC7WRugIssIZYf3ZCx4jXRkPFH1h6vP6UjgnaSw6qE?=
- =?us-ascii?Q?Sh4FvKAWWoXiOWf12+oAWz8woO0UAkBVXaRBgAxErLLuCTTnH8I/D+GMgSB4?=
- =?us-ascii?Q?Q/i19I5voum+/77Iz/0xmQFVqis0TrtbXDZb/6qmBaUl4rqibLPvzDedVjqt?=
- =?us-ascii?Q?TP+93nITO//Y8jWLC8dyk91q4qhRpj/KCS9CL3v54YMxzNWE6tzuND05LRig?=
- =?us-ascii?Q?hbQqvim7J+Nsn6DmtEKJ1+XUYVJMerAVfPPJJyXMod986kJjJkLZ+hsZ33gz?=
- =?us-ascii?Q?3RA6EkaL43lLBFQg+7K9+Dmxz4GVQAiwht33daFdrzq8t1Cga20zlbjfPZsR?=
- =?us-ascii?Q?2EmP5JHAFZ1ipD+qqzKwcraBttmOasEYdNFtIYqRMipxGKovjx8EegugHzfu?=
- =?us-ascii?Q?4UqbOM5VccOIqunxeudMODT71FbLCXg8BmiA2Xwlfr22+Da5N2c3VNU2oy4M?=
- =?us-ascii?Q?OM+lOlRQVRVvzfWAk7F9BhKjZIhTF7BU8LGIowOo/TFi1I/YLpQdhSduO7Sm?=
- =?us-ascii?Q?PpsDOK8Klukpb5KtFDROQPjMUWvZ0dgIUXSxBarWN7vcyKXkrcR97pWP+467?=
- =?us-ascii?Q?pviDmCE75mI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?T6Tcdxg8wXsAPkBBlX6PNXAKUJnzNn3xKoyMoIhfOM8taplW2OZiIfEyjMP5?=
- =?us-ascii?Q?SVtYb65bsD+VQ0+tgg4vVHHbE35n1wfYvaCY4m2iv6uor5T+wNeBWXhwE3LE?=
- =?us-ascii?Q?hiR4vXe/OzoCX2wGVbXwCZ1vDdbJCI9XyoI+nMqgpuoe84mVDpSWda2uYpjO?=
- =?us-ascii?Q?B7UIkdYl7Vqfa8xFtIXLwuN1tGV0rrxpTfJvG+6hCc/Dphj/V0x51wDLLED8?=
- =?us-ascii?Q?krxR5AubVSqn4Rc8qP4hZQAX4ED0gIjrb8hFYPFlgYyKXZlWQQ+wNSkhbpBE?=
- =?us-ascii?Q?ZsYD40An4G7igLX8liNa9vv/dqkbhy7t77Xd5SHaemPj50FFw9DjoKysBpI8?=
- =?us-ascii?Q?JJEApbCa9aB4Ezi+MReEogb/lgxe0dgDiENrZjpMnRgif/XC45be/oGJpNZT?=
- =?us-ascii?Q?DFCAmoS2yq189dgzukd3GaHFbiHr3cnPK1kH7v0BEUN/YR4+wSJkAYT0ynay?=
- =?us-ascii?Q?W/jf+Vu84t+SW4nNo+zukfI9vTe5YkORZK1pQtvM3UZlMnwoNXnfKazscnJ0?=
- =?us-ascii?Q?z5byJrMmXGQW17ATQ0p888eGO+ONZw4DmLyKy3AE6x5ffOiLXanFD8UMyDTr?=
- =?us-ascii?Q?iXF4+HHWOffA8OYtlWWfikXAsGasyjEF4ASKYXaE3YjA0Di4JSGj2POjwtfU?=
- =?us-ascii?Q?RKoE77vl5aTTRfvAu2d1JE4St577b64oH8WGKo/PLM82lzPCTG+68IBz73l4?=
- =?us-ascii?Q?mRitH/X9O/VUcS+K4bRiRxMeJ3X6LdFNg8Jw7zIG3GwIYtvyh9zaAnlA7mh8?=
- =?us-ascii?Q?SkYJ+7ZLnmWCRyF3MsWN3cLNwwrOD5O8j5tniAuivb2CFhXyf5Vmn7BO4GPc?=
- =?us-ascii?Q?LSbNa4uew8d147PnDPMIZIrHhPG8HY9Cp/xcOCdaVeNLgCYTHZ1zbHtYQlSZ?=
- =?us-ascii?Q?WE/pMzLy9q4uZu5uZHp8Qx/cs7hOvK6GDIduQyVObD7WNHlE3sHwjKj6SG+j?=
- =?us-ascii?Q?+3yfkFdmnMLoBHT/oe7cmZLqSpSXUzsgJ+rLMwTSIjIJUnbPeuKmdlq3MbtQ?=
- =?us-ascii?Q?1kv/eIbqr/FRkqsp/8USTmHegj9aiEyKGld+Y9HZneYzGiIJxR1vm9O0XYxq?=
- =?us-ascii?Q?rOEGaQsZ716WMgA43Txi4Y81Mc/EUuW6DSYrde3574vc8g/g+vz96c3Q0BQ0?=
- =?us-ascii?Q?GDOnsMYiGggwjHe3zky8A8tKHByDPMz8pTVflVMcrKNl5umZhseAbxElQZ0E?=
- =?us-ascii?Q?WCqFCb8PbLM3bkxg5neIfn9qL/VRGTo4EuacYtnuYusiwvrchVeJ4n/24V0U?=
- =?us-ascii?Q?Cgcljzg1JUO8nBAJZjRgKBQeMwrS9MgKwISA3XblHsCxtMxgXMHrWDFt/Uuy?=
- =?us-ascii?Q?5B2hxoCquxOY9drmMXMOUYVjJdUYYC0aazFlfDabXFzgKycXoiSrBavNMsDM?=
- =?us-ascii?Q?TfGhE49SQpGRtbesXqeA3/ezUgChnpCTljypI2Fq4Tka8SJTfSCfqVAeu1eb?=
- =?us-ascii?Q?KVXMsiAtEqFDpXtZtF/I8Nd9FYHa0hVsA3FYgXTdZqWS/uk0uNrN+sV8zl51?=
- =?us-ascii?Q?57wuwAHjAl90EsR7WCAeT8vPfKTbEn5XVEi+z/LAoFXik+vAEOTO7qgoByA6?=
- =?us-ascii?Q?pTa++8Dcs0jZOvTHGSSMYC1OGo/mzlQIVm0tDJgt?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: be6042ed-9148-43a0-701f-08dd793f289f
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Apr 2025 21:23:58.6183
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RbFIj38W00xsQHWRmkz2MQNLjmzLs26oqSu5dt1CG8gRr6G0+c/UyqOxjUxH8dFfXWmE8JFHL3eSQOFaT9kGHw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8983
+Content-Transfer-Encoding: 8bit
 
-Convert vf610-clock.txt to yaml format.
+Document APMU, MPMU and APBC syscons found on SpacemiT K1 SoC, which are
+capable of generating clock and reset signals. Additionally, APMU and MPMU
+manage power domains.
 
-Additional changes:
-- swap audio_ext and enet_ext to match existed dts order
-- remove clock consumer in example
-
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Signed-off-by: Haylen Chu <heylenay@4d2.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Alex Elder <elder@riscstar.com>
 ---
- .../bindings/clock/fsl,vf610-ccm.yaml         | 58 +++++++++++++++++++
- .../devicetree/bindings/clock/vf610-clock.txt | 41 -------------
- 2 files changed, 58 insertions(+), 41 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/fsl,vf610-ccm.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/vf610-clock.txt
+ .../soc/spacemit/spacemit,k1-syscon.yaml      |  80 +++++++
+ .../dt-bindings/clock/spacemit,k1-syscon.h    | 210 ++++++++++++++++++
+ 2 files changed, 290 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+ create mode 100644 include/dt-bindings/clock/spacemit,k1-syscon.h
 
-diff --git a/Documentation/devicetree/bindings/clock/fsl,vf610-ccm.yaml b/Documentation/devicetree/bindings/clock/fsl,vf610-ccm.yaml
+diff --git a/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
 new file mode 100644
-index 0000000000000..29ae5be51acf8
+index 000000000000..30aaf49da03d
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/fsl,vf610-ccm.yaml
-@@ -0,0 +1,58 @@
++++ b/Documentation/devicetree/bindings/soc/spacemit/spacemit,k1-syscon.yaml
+@@ -0,0 +1,80 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/fsl,vf610-ccm.yaml#
++$id: http://devicetree.org/schemas/soc/spacemit/spacemit,k1-syscon.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Clock for Freescale Vybrid VF610 SOC
-+
-+description:
-+  The clock consumer should specify the desired clock by having the clock
-+  ID in its "clocks" phandle cell. See include/dt-bindings/clock/vf610-clock.h
-+  for the full list of VF610 clock IDs
++title: SpacemiT K1 SoC System Controller
 +
 +maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
++  - Haylen Chu <heylenay@4d2.org>
++
++description:
++  System controllers found on SpacemiT K1 SoC, which are capable of
++  clock, reset and power-management functions.
 +
 +properties:
 +  compatible:
-+    const: fsl,vf610-ccm
++    enum:
++      - spacemit,k1-syscon-apbc
++      - spacemit,k1-syscon-apmu
++      - spacemit,k1-syscon-mpmu
 +
 +  reg:
 +    maxItems: 1
 +
-+  '#clock-cells':
-+    const: 1
-+
 +  clocks:
-+    items:
-+      - description: external crystal oscillator 32KHz, recommended
-+      - description: external crystal oscillator 24MHz, recommended
-+      - description: audio
-+      - description: enet
-+    minItems: 2
++    maxItems: 4
 +
 +  clock-names:
 +    items:
-+      - const: sxosc
-+      - const: fxosc
-+      - const: enet_ext
-+      - const: audio_ext
-+    minItems: 2
++      - const: osc
++      - const: vctcxo_1m
++      - const: vctcxo_3m
++      - const: vctcxo_24m
++
++  "#clock-cells":
++    const: 1
++    description:
++      See <dt-bindings/clock/spacemit,k1-syscon.h> for valid indices.
++
++  "#power-domain-cells":
++    const: 1
++
++  "#reset-cells":
++    const: 1
 +
 +required:
 +  - compatible
 +  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++  - "#reset-cells"
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: spacemit,k1-syscon-apbc
++    then:
++      properties:
++        "#power-domain-cells": false
++    else:
++      required:
++        - "#power-domain-cells"
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    clock-controller@4006b000 {
-+        compatible = "fsl,vf610-ccm";
-+        reg = <0x4006b000 0x1000>;
++    system-controller@d4050000 {
++        compatible = "spacemit,k1-syscon-mpmu";
++        reg = <0xd4050000 0x209c>;
++        clocks = <&osc>, <&vctcxo_1m>, <&vctcxo_3m>, <&vctcxo_24m>;
++        clock-names = "osc", "vctcxo_1m", "vctcxo_3m", "vctcxo_24m";
 +        #clock-cells = <1>;
-+        clocks = <&sxosc>, <&fxosc>;
-+        clock-names = "sxosc", "fxosc";
++        #power-domain-cells = <1>;
++        #reset-cells = <1>;
 +    };
+diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
+new file mode 100644
+index 000000000000..0c5b9b5f6073
+--- /dev/null
++++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
+@@ -0,0 +1,210 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2024-2025 Haylen Chu <heylenay@outlook.com>
++ */
 +
-diff --git a/Documentation/devicetree/bindings/clock/vf610-clock.txt b/Documentation/devicetree/bindings/clock/vf610-clock.txt
-deleted file mode 100644
-index 109ffa3a5b661..0000000000000
---- a/Documentation/devicetree/bindings/clock/vf610-clock.txt
-+++ /dev/null
-@@ -1,41 +0,0 @@
--* Clock bindings for Freescale Vybrid VF610 SOC
--
--Required properties:
--- compatible: Should be "fsl,vf610-ccm"
--- reg: Address and length of the register set
--- #clock-cells: Should be <1>
--
--Optional properties:
--- clocks: list of clock identifiers which are external input clocks to the
--	given clock controller. Please refer the next section to find
--	the input clocks for a given controller.
--- clock-names: list of names of clocks which are external input clocks to the
--	given clock controller.
--
--Input clocks for top clock controller:
--	- sxosc (external crystal oscillator 32KHz, recommended)
--	- fxosc (external crystal oscillator 24MHz, recommended)
--	- audio_ext
--	- enet_ext
--
--The clock consumer should specify the desired clock by having the clock
--ID in its "clocks" phandle cell. See include/dt-bindings/clock/vf610-clock.h
--for the full list of VF610 clock IDs.
--
--Examples:
--
--clks: ccm@4006b000 {
--	compatible = "fsl,vf610-ccm";
--	reg = <0x4006b000 0x1000>;
--	#clock-cells = <1>;
--	clocks = <&sxosc>, <&fxosc>;
--	clock-names = "sxosc", "fxosc";
--};
--
--uart1: serial@40028000 {
--	compatible = "fsl,vf610-uart";
--	reg = <0x40028000 0x1000>;
--	interrupts = <0 62 0x04>;
--	clocks = <&clks VF610_CLK_UART1>;
--	clock-names = "ipg";
--};
++#ifndef _DT_BINDINGS_SPACEMIT_CCU_H_
++#define _DT_BINDINGS_SPACEMIT_CCU_H_
++
++/* MPMU clocks */
++#define CLK_PLL1_307P2		0
++#define CLK_PLL1_76P8		1
++#define CLK_PLL1_61P44		2
++#define CLK_PLL1_153P6		3
++#define CLK_PLL1_102P4		4
++#define CLK_PLL1_51P2		5
++#define CLK_PLL1_51P2_AP	6
++#define CLK_PLL1_57P6		7
++#define CLK_PLL1_25P6		8
++#define CLK_PLL1_12P8		9
++#define CLK_PLL1_12P8_WDT	10
++#define CLK_PLL1_6P4		11
++#define CLK_PLL1_3P2		12
++#define CLK_PLL1_1P6		13
++#define CLK_PLL1_0P8		14
++#define CLK_PLL1_409P6		15
++#define CLK_PLL1_204P8		16
++#define CLK_PLL1_491		17
++#define CLK_PLL1_245P76		18
++#define CLK_PLL1_614		19
++#define CLK_PLL1_47P26		20
++#define CLK_PLL1_31P5		21
++#define CLK_PLL1_819		22
++#define CLK_PLL1_1228		23
++#define CLK_SLOW_UART		24
++#define CLK_SLOW_UART1		25
++#define CLK_SLOW_UART2		26
++#define CLK_WDT			27
++#define CLK_RIPC		28
++#define CLK_I2S_SYSCLK		29
++#define CLK_I2S_BCLK		30
++#define CLK_APB			31
++#define CLK_WDT_BUS		32
++
++/* APBC clocks */
++#define CLK_UART0		0
++#define CLK_UART2		1
++#define CLK_UART3		2
++#define CLK_UART4		3
++#define CLK_UART5		4
++#define CLK_UART6		5
++#define CLK_UART7		6
++#define CLK_UART8		7
++#define CLK_UART9		8
++#define CLK_GPIO		9
++#define CLK_PWM0		10
++#define CLK_PWM1		11
++#define CLK_PWM2		12
++#define CLK_PWM3		13
++#define CLK_PWM4		14
++#define CLK_PWM5		15
++#define CLK_PWM6		16
++#define CLK_PWM7		17
++#define CLK_PWM8		18
++#define CLK_PWM9		19
++#define CLK_PWM10		20
++#define CLK_PWM11		21
++#define CLK_PWM12		22
++#define CLK_PWM13		23
++#define CLK_PWM14		24
++#define CLK_PWM15		25
++#define CLK_PWM16		26
++#define CLK_PWM17		27
++#define CLK_PWM18		28
++#define CLK_PWM19		29
++#define CLK_SSP3		30
++#define CLK_RTC			31
++#define CLK_TWSI0		32
++#define CLK_TWSI1		33
++#define CLK_TWSI2		34
++#define CLK_TWSI4		35
++#define CLK_TWSI5		36
++#define CLK_TWSI6		37
++#define CLK_TWSI7		38
++#define CLK_TWSI8		39
++#define CLK_TIMERS1		40
++#define CLK_TIMERS2		41
++#define CLK_AIB			42
++#define CLK_ONEWIRE		43
++#define CLK_SSPA0		44
++#define CLK_SSPA1		45
++#define CLK_DRO			46
++#define CLK_IR			47
++#define CLK_TSEN		48
++#define CLK_IPC_AP2AUD		49
++#define CLK_CAN0		50
++#define CLK_CAN0_BUS		51
++#define CLK_UART0_BUS		52
++#define CLK_UART2_BUS		53
++#define CLK_UART3_BUS		54
++#define CLK_UART4_BUS		55
++#define CLK_UART5_BUS		56
++#define CLK_UART6_BUS		57
++#define CLK_UART7_BUS		58
++#define CLK_UART8_BUS		59
++#define CLK_UART9_BUS		60
++#define CLK_GPIO_BUS		61
++#define CLK_PWM0_BUS		62
++#define CLK_PWM1_BUS		63
++#define CLK_PWM2_BUS		64
++#define CLK_PWM3_BUS		65
++#define CLK_PWM4_BUS		66
++#define CLK_PWM5_BUS		67
++#define CLK_PWM6_BUS		68
++#define CLK_PWM7_BUS		69
++#define CLK_PWM8_BUS		70
++#define CLK_PWM9_BUS		71
++#define CLK_PWM10_BUS		72
++#define CLK_PWM11_BUS		73
++#define CLK_PWM12_BUS		74
++#define CLK_PWM13_BUS		75
++#define CLK_PWM14_BUS		76
++#define CLK_PWM15_BUS		77
++#define CLK_PWM16_BUS		78
++#define CLK_PWM17_BUS		79
++#define CLK_PWM18_BUS		80
++#define CLK_PWM19_BUS		81
++#define CLK_SSP3_BUS		82
++#define CLK_RTC_BUS		83
++#define CLK_TWSI0_BUS		84
++#define CLK_TWSI1_BUS		85
++#define CLK_TWSI2_BUS		86
++#define CLK_TWSI4_BUS		87
++#define CLK_TWSI5_BUS		88
++#define CLK_TWSI6_BUS		89
++#define CLK_TWSI7_BUS		90
++#define CLK_TWSI8_BUS		91
++#define CLK_TIMERS1_BUS		92
++#define CLK_TIMERS2_BUS		93
++#define CLK_AIB_BUS		94
++#define CLK_ONEWIRE_BUS		95
++#define CLK_SSPA0_BUS		96
++#define CLK_SSPA1_BUS		97
++#define CLK_TSEN_BUS		98
++#define CLK_IPC_AP2AUD_BUS	99
++
++/* APMU clocks */
++#define CLK_CCI550		0
++#define CLK_CPU_C0_HI		1
++#define CLK_CPU_C0_CORE		2
++#define CLK_CPU_C0_ACE		3
++#define CLK_CPU_C0_TCM		4
++#define CLK_CPU_C1_HI		5
++#define CLK_CPU_C1_CORE		6
++#define CLK_CPU_C1_ACE		7
++#define CLK_CCIC_4X		8
++#define CLK_CCIC1PHY		9
++#define CLK_SDH_AXI		10
++#define CLK_SDH0		11
++#define CLK_SDH1		12
++#define CLK_SDH2		13
++#define CLK_USB_P1		14
++#define CLK_USB_AXI		15
++#define CLK_USB30		16
++#define CLK_QSPI		17
++#define CLK_QSPI_BUS		18
++#define CLK_DMA			19
++#define CLK_AES			20
++#define CLK_VPU			21
++#define CLK_GPU			22
++#define CLK_EMMC		23
++#define CLK_EMMC_X		24
++#define CLK_AUDIO		25
++#define CLK_HDMI		26
++#define CLK_PMUA_ACLK		27
++#define CLK_PCIE0_MASTER	28
++#define CLK_PCIE0_SLAVE		29
++#define CLK_PCIE0_DBI		30
++#define CLK_PCIE1_MASTER	31
++#define CLK_PCIE1_SLAVE		32
++#define CLK_PCIE1_DBI		33
++#define CLK_PCIE2_MASTER	34
++#define CLK_PCIE2_SLAVE		35
++#define CLK_PCIE2_DBI		36
++#define CLK_EMAC0_BUS		37
++#define CLK_EMAC0_PTP		38
++#define CLK_EMAC1_BUS		39
++#define CLK_EMAC1_PTP		40
++#define CLK_JPG			41
++#define CLK_CCIC2PHY		42
++#define CLK_CCIC3PHY		43
++#define CLK_CSI			44
++#define CLK_CAMM0		45
++#define CLK_CAMM1		46
++#define CLK_CAMM2		47
++#define CLK_ISP_CPP		48
++#define CLK_ISP_BUS		49
++#define CLK_ISP			50
++#define CLK_DPU_MCLK		51
++#define CLK_DPU_ESC		52
++#define CLK_DPU_BIT		53
++#define CLK_DPU_PXCLK		54
++#define CLK_DPU_HCLK		55
++#define CLK_DPU_SPI		56
++#define CLK_DPU_SPI_HBUS	57
++#define CLK_DPU_SPIBUS		58
++#define CLK_DPU_SPI_ACLK	59
++#define CLK_V2D			60
++#define CLK_EMMC_BUS		61
++
++#endif /* _DT_BINDINGS_SPACEMIT_CCU_H_ */
 -- 
-2.34.1
+2.49.0
 
