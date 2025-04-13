@@ -1,69 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2A4204C2E;
-	Sat, 12 Apr 2025 18:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7231625776;
+	Sun, 13 Apr 2025 17:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744481026; cv=none; b=KtFOK1/DkjHqUf4EDOX9voc/GfEVIGHuNNDDZoniiLpv/TTsQjy1pcYvlbfan4SZFic1xJ8xbPlh9ZlXQEaP/OqK+vq5oOXNYF0Yzd4HQ55rBG+BFC7F7vOIQ5sBLn6exehEZdUjrsaEaDD56dmjW4IeSYaCdvrEQw6LSj2bXqk=
+	t=1744565060; cv=none; b=nvIuY2vRLtR/KTvoCJhDvIRu07hTKP/kLJB4GTJoiHXzXtvU0qTM0s2DxDNimBbVfrQyPymXct66FNpDBZpmV0jxxc0jiV9BUfA/iCoAMm/AnjF15pU47x09yRVqhy7Xax0q4/08kucX4WPNTwOWfc5TLxDYB25i/j7ySAE7bSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744481026; c=relaxed/simple;
-	bh=1AUMW9p2rIBFD6BguK3C9owmSBdUU41XGSu13NVq6cM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvHCIKmNOnl+3zMB2lGfRNRla/J8tyrWYfdRDPIpf/TU+lCptnYtJBiDBPF5NX4cVOJuPJspMZCFin538HFbXSouW0hXSHb579zx/8AxDpD6XK2/LFCnlDdT+lfKnwS77ALQf8+4/NBGbfw1CrBfSxEkGtmILvx1Ez5AruMmeFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4KT3su+; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744565060; c=relaxed/simple;
+	bh=B0lZVmtJX6R2pQDZ1FDI1ncIUlIzvBvjZUMD1zliFR0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cn9VCOL44UWuTz41OtdQWkmDFNwiIAr0USddxE/mTKKXuGGhHxWu3piLSQ376fBql3hNKquyoUrzGfGmHVXvHCYV5uNFX52OglpbMf4GVoykZWBVCC6ht/fhtPGzG5KEq9E7MYdRwT3Gqo0bdf80UmVLeIvLqXElDtmzu8GDXTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kjj2tDfc; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4KT3su+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B4A3C4CEE3;
-	Sat, 12 Apr 2025 18:03:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744481024;
-	bh=1AUMW9p2rIBFD6BguK3C9owmSBdUU41XGSu13NVq6cM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c4KT3su+5+9E+s+sPOXj0mNLmgsawjS+tTAYXNLAIXRmHyJTZb7tk9t2niSFY4SxC
-	 ug22xkcMhk4SKuj1cszRFtAgPXn6DQRkJALaT1ln6QJw+z98bkMasZyYcor+hPBreu
-	 Fap+KZnQOUJ820yKUtI+RTKiWst0dYts74Vf9pZkxUpp3zOJoQBdkPEWR4Cc0+KVJ8
-	 USJLUyiZW6IUzSSXSRYACJ5lC3HvayAYyyCU/UTIMAUdezXGMopCUInDMKXo/Fs275
-	 S1zUOmyTGwwc4QP24znAnQsFoiySQVaxfutKfgmY1jB1SuaAWWwuw0xcoM01CWJR/3
-	 UDo7dELIz7kbw==
-Date: Sat, 12 Apr 2025 13:03:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/1] dt-bindings: clock: convert vf610-clock.txt to yaml
- format
-Message-ID: <174448102270.1415062.15572681322070189263.robh@kernel.org>
-References: <20250411212339.3273202-1-Frank.Li@nxp.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kjj2tDfc"
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-af93cd64ef3so2449875a12.2;
+        Sun, 13 Apr 2025 10:24:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744565058; x=1745169858; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GQzOnhmj39ccEfRo0gYtUZqATjFu0/HR0pPxsBGgL7I=;
+        b=Kjj2tDfcZb6pHXGvrxfhRluDGOInodqHjRg8xTJU361YQsS4slosSnTe9is5VQnTri
+         eAEbV5BaMPQ7kpg03Us/m1c3JpN7vLv38ScdEJxjv0kgzXSx1SIyVX50ZQAe7Z5Dn75Z
+         fhbg53yqMGByV/0f21cZnKj+baojHdIS1VvDOdyxjM5ifpffuMeyVXT13DadpFy0hf3B
+         XkmDZbOiLxx7ads89jBqSL2tNIjyznoB5lM//rkHxgcyHvgAk+Sxv4m+CCKVax0gKNqr
+         XvzMwh5Ay84XtyN6XcNF2el9HTIRyei14EDO2Bep537bs/aTkbWbKnoaO7KAX/7DVheW
+         q27Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744565059; x=1745169859;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GQzOnhmj39ccEfRo0gYtUZqATjFu0/HR0pPxsBGgL7I=;
+        b=r96y5bO48S/IqZGbN/xHYiOZskLylP+bhETbXMUsqAHOzjZkuk0RASUpSVhRFISVb0
+         1e+maM0IDdlaotkK2p76hFdGFxoJFXfF85Dk+WwH3GSfXs61MBlZC3LzdMK9sbZSXvYg
+         YAdttKtjxP82daog3qMd58LQU1grw461St0gJgTLRtU+lxOSM3hbh2NLggYn+yNAWh/p
+         zHIDkS7XxWSXFAc/C0X0M69evyRFYjrNzqyxflpFWT2ZEA+GnWeXxHOHxtiybYiL5uDc
+         UE1y7nTxWtrpMx8Y3qZA0B4wg+iqJEtoZRyCzjI7ymegNwmmv/lh7n0jIgo/c/de0MAN
+         OTxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUorRlOY1j4ToEA5SKdQH5s4RU1dKWqPRMEiza6TmhIPI6ZtHYGX6dJo48n6J8BriVSYN0ufQBL4KFBt+ga@vger.kernel.org, AJvYcCUpgYAYvguYiJ4iSXMtihiV4Ej28QBUBAwRtLM8/o+6bTtAAIL7rLvW0CLhau0FPtoD/Qmw3Vzg0d0sPabu@vger.kernel.org, AJvYcCWyYAvZUvmkkNi4Ufsb1wfM9Oy53uW2E9rZG79WuRQgzuWl1HQYRmpC09j6kGCla3AoR7VPmyrJ4ThQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhD2eoN79+UiPlZ7v5uQIUuLk4UhORtz3d0sLUAkBQjb4cfwuk
+	wL6cibTaaTJO/bgeb3/EtPpMTT4C7DXJD5SxVIIhWRrc6mqKa5rRQL9hI+IOW0hmqw==
+X-Gm-Gg: ASbGncuzt8t1rIUjCE/KNNMzKieodwk1jJOwjXOoiuFCbCWhxgj9WKSatbzolLVcx5z
+	ZaY4YyIRXj1VyZLFLsgoQ9IRbhsj1WyG4upnYPwZmtjWQWI3vzSPzUgWfiuahPMardHmfaDIEzY
+	oO+Akjjtj4pCutKMy29Q6299JK/r0f+L36oTECQtxM+CrfqvlkYoQI8wgALnkmjXTXjvT/6d7ej
+	Ylsja8yicaqGJde8WhAn8NKaB4yvTV9bpNpdgUDWiU3BN7fO5UncVnKw8me82XpiWItKg54Uznc
+	Ia0lJ2HSSypiPxwfkbtOvfa+S/AT1myY1z3si+0=
+X-Google-Smtp-Source: AGHT+IH5/9WyTYEfEuGmbLjgtRz8cZ6K/96p4jvqiT7FjoLDWP7BHZ0rL749oiPM5uogUB12gFX56A==
+X-Received: by 2002:a17:90b:17ce:b0:2fe:a336:fe63 with SMTP id 98e67ed59e1d1-308237a833emr15798291a91.24.1744565058526;
+        Sun, 13 Apr 2025 10:24:18 -0700 (PDT)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd04e9a8sm9739654a91.0.2025.04.13.10.24.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Apr 2025 10:24:17 -0700 (PDT)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Pengyu Luo <mitltlatltl@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: qcom: rpmh: make clkaN optional
+Date: Mon, 14 Apr 2025 01:22:04 +0800
+Message-ID: <20250413172205.175789-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250411212339.3273202-1-Frank.Li@nxp.com>
+Content-Transfer-Encoding: 8bit
 
+On SM8650, clkaN are missing in cmd-db for some specific devices. This
+caused a boot failure. Printing log during initramfs phase, I found
 
-On Fri, 11 Apr 2025 17:23:38 -0400, Frank Li wrote:
-> Convert vf610-clock.txt to yaml format.
-> 
-> Additional changes:
-> - swap audio_ext and enet_ext to match existed dts order
-> - remove clock consumer in example
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/clock/fsl,vf610-ccm.yaml         | 58 +++++++++++++++++++
->  .../devicetree/bindings/clock/vf610-clock.txt | 41 -------------
->  2 files changed, 58 insertions(+), 41 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,vf610-ccm.yaml
->  delete mode 100644 Documentation/devicetree/bindings/clock/vf610-clock.txt
-> 
+[    0.053281] clk-rpmh 17a00000.rsc:clock-controller: missing RPMh resource address for clka1
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Adding the optional property to avoid probing failure which causes
+countless deferred probe. In the downstream tree,similar workarounds
+are introduced for SM7635, SM8550, SM8635, SM8650, SM8750.
+
+Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+---
+Changes in v2:
+- using capital letters, sm[0-9]+ => SM[0-9]+, rpmh => RPMh (Dmitry)
+- correct typo, alform => plaform (Dmitry)
+- remove tested-by tag from myself (Dmitry)
+- line break to keep 80 characters per line (Dmitry)
+- Link to v1: https://lore.kernel.org/all/20250404072003.515796-1-mitltlatltl@gmail.com
+---
+ drivers/clk/qcom/clk-rpmh.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index c7675930f..0aea8e1b7 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -66,6 +66,8 @@ struct clk_rpmh {
+ struct clk_rpmh_desc {
+ 	struct clk_hw **clks;
+ 	size_t num_clks;
++	/* RPMh clock clkaN are optional for this platform */
++	bool clka_optional;
+ };
+ 
+ static DEFINE_MUTEX(rpmh_clk_lock);
+@@ -648,6 +650,7 @@ static struct clk_hw *sm8550_rpmh_clocks[] = {
+ static const struct clk_rpmh_desc clk_rpmh_sm8550 = {
+ 	.clks = sm8550_rpmh_clocks,
+ 	.num_clks = ARRAY_SIZE(sm8550_rpmh_clocks),
++	.clka_optional = true,
+ };
+ 
+ static struct clk_hw *sm8650_rpmh_clocks[] = {
+@@ -679,6 +682,7 @@ static struct clk_hw *sm8650_rpmh_clocks[] = {
+ static const struct clk_rpmh_desc clk_rpmh_sm8650 = {
+ 	.clks = sm8650_rpmh_clocks,
+ 	.num_clks = ARRAY_SIZE(sm8650_rpmh_clocks),
++	.clka_optional = true,
+ };
+ 
+ static struct clk_hw *sc7280_rpmh_clocks[] = {
+@@ -847,6 +851,7 @@ static struct clk_hw *sm8750_rpmh_clocks[] = {
+ static const struct clk_rpmh_desc clk_rpmh_sm8750 = {
+ 	.clks = sm8750_rpmh_clocks,
+ 	.num_clks = ARRAY_SIZE(sm8750_rpmh_clocks),
++	.clka_optional = true,
+ };
+ 
+ static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
+@@ -890,6 +895,13 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+ 		rpmh_clk = to_clk_rpmh(hw_clks[i]);
+ 		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
+ 		if (!res_addr) {
++			hw_clks[i] = NULL;
++
++			if (desc->clka_optional &&
++			    !strncmp(rpmh_clk->res_name, "clka",
++				     sizeof("clka") - 1))
++				continue;
++
+ 			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
+ 				rpmh_clk->res_name);
+ 			return -ENODEV;
+-- 
+2.49.0
 
