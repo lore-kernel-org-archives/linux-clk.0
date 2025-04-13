@@ -1,71 +1,84 @@
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7231625776;
-	Sun, 13 Apr 2025 17:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873DF2367B7;
+	Sun, 13 Apr 2025 22:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744565060; cv=none; b=nvIuY2vRLtR/KTvoCJhDvIRu07hTKP/kLJB4GTJoiHXzXtvU0qTM0s2DxDNimBbVfrQyPymXct66FNpDBZpmV0jxxc0jiV9BUfA/iCoAMm/AnjF15pU47x09yRVqhy7Xax0q4/08kucX4WPNTwOWfc5TLxDYB25i/j7ySAE7bSQ=
+	t=1744584336; cv=none; b=LcAVEB9+6F7uGtaOd/l3ltiqU0Nj34a4kdc2NvyhLf83ldvxSKfBEvBxOO3VeufERkQA6yquBokOPTRErQ0vHXymSJoEqKknhQeGmjpS2silDKjIhV1nVY2LgkzoqeZDG+ZhhyKAOhVpy40aDG9TRx12UDyd+agtitq2wBj9Zz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744565060; c=relaxed/simple;
-	bh=B0lZVmtJX6R2pQDZ1FDI1ncIUlIzvBvjZUMD1zliFR0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cn9VCOL44UWuTz41OtdQWkmDFNwiIAr0USddxE/mTKKXuGGhHxWu3piLSQ376fBql3hNKquyoUrzGfGmHVXvHCYV5uNFX52OglpbMf4GVoykZWBVCC6ht/fhtPGzG5KEq9E7MYdRwT3Gqo0bdf80UmVLeIvLqXElDtmzu8GDXTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kjj2tDfc; arc=none smtp.client-ip=209.85.215.178
+	s=arc-20240116; t=1744584336; c=relaxed/simple;
+	bh=SdLZZ1h9MOoJBEvmI+iW761zRJgaR89JWkPra8d1nsA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=thbjE1zV3nU1U/5qdpDlncdto8vRzFsJV0B1tyNQyiBQ49u/RUWmOTkEV4ONygCYYvxHa6ZX2ku/ZWkWdECMXCQqg1FiMX1VKe36NTVFU0WEH8yEWZp2BlK494X8DA04sNhRT6q1fvqxRpoJ+95qPs5v1GlzH30F7GhXkheOLSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WqpS2TL1; arc=none smtp.client-ip=209.85.222.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kjj2tDfc"
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-af93cd64ef3so2449875a12.2;
-        Sun, 13 Apr 2025 10:24:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WqpS2TL1"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c5b8d13f73so401123485a.0;
+        Sun, 13 Apr 2025 15:45:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744565058; x=1745169858; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744584333; x=1745189133; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GQzOnhmj39ccEfRo0gYtUZqATjFu0/HR0pPxsBGgL7I=;
-        b=Kjj2tDfcZb6pHXGvrxfhRluDGOInodqHjRg8xTJU361YQsS4slosSnTe9is5VQnTri
-         eAEbV5BaMPQ7kpg03Us/m1c3JpN7vLv38ScdEJxjv0kgzXSx1SIyVX50ZQAe7Z5Dn75Z
-         fhbg53yqMGByV/0f21cZnKj+baojHdIS1VvDOdyxjM5ifpffuMeyVXT13DadpFy0hf3B
-         XkmDZbOiLxx7ads89jBqSL2tNIjyznoB5lM//rkHxgcyHvgAk+Sxv4m+CCKVax0gKNqr
-         XvzMwh5Ay84XtyN6XcNF2el9HTIRyei14EDO2Bep537bs/aTkbWbKnoaO7KAX/7DVheW
-         q27Q==
+        bh=1yEG8Rwh4CvxK6iCp6DxsJEufqiqUGIzvjMR5YWVKIw=;
+        b=WqpS2TL1panoWIiYxp+svNW1RjgrPW8AgIBWFLRK3z7HtuygrEiBvdWup/0rac5X63
+         O7n7WbLe2Q2OQGLfdeqQcgZue8eHIBZICpTPnJTwOmf58PICBoSsiFC5FM0hdA/mgx9w
+         kEoOj+3jwBuhae9TaxwPdCGFnpWGmFEGMMbhuMR6NzgqhnplGFQ8LHNUKCWeUq1ujzjJ
+         xMmY2XtufKQK9YOoUkB4kT/HCcHfJtlw0GGGFtiTiYuI42miwzNuaHaZzw++0PtsogRX
+         S/el2vXNfb6umaQBXhkQbC66dSPmP/QAMpT91mmKUI9iUSR5DOHmGtu3mql47A1tJitE
+         XxdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744565059; x=1745169859;
+        d=1e100.net; s=20230601; t=1744584333; x=1745189133;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GQzOnhmj39ccEfRo0gYtUZqATjFu0/HR0pPxsBGgL7I=;
-        b=r96y5bO48S/IqZGbN/xHYiOZskLylP+bhETbXMUsqAHOzjZkuk0RASUpSVhRFISVb0
-         1e+maM0IDdlaotkK2p76hFdGFxoJFXfF85Dk+WwH3GSfXs61MBlZC3LzdMK9sbZSXvYg
-         YAdttKtjxP82daog3qMd58LQU1grw461St0gJgTLRtU+lxOSM3hbh2NLggYn+yNAWh/p
-         zHIDkS7XxWSXFAc/C0X0M69evyRFYjrNzqyxflpFWT2ZEA+GnWeXxHOHxtiybYiL5uDc
-         UE1y7nTxWtrpMx8Y3qZA0B4wg+iqJEtoZRyCzjI7ymegNwmmv/lh7n0jIgo/c/de0MAN
-         OTxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUorRlOY1j4ToEA5SKdQH5s4RU1dKWqPRMEiza6TmhIPI6ZtHYGX6dJo48n6J8BriVSYN0ufQBL4KFBt+ga@vger.kernel.org, AJvYcCUpgYAYvguYiJ4iSXMtihiV4Ej28QBUBAwRtLM8/o+6bTtAAIL7rLvW0CLhau0FPtoD/Qmw3Vzg0d0sPabu@vger.kernel.org, AJvYcCWyYAvZUvmkkNi4Ufsb1wfM9Oy53uW2E9rZG79WuRQgzuWl1HQYRmpC09j6kGCla3AoR7VPmyrJ4ThQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhD2eoN79+UiPlZ7v5uQIUuLk4UhORtz3d0sLUAkBQjb4cfwuk
-	wL6cibTaaTJO/bgeb3/EtPpMTT4C7DXJD5SxVIIhWRrc6mqKa5rRQL9hI+IOW0hmqw==
-X-Gm-Gg: ASbGncuzt8t1rIUjCE/KNNMzKieodwk1jJOwjXOoiuFCbCWhxgj9WKSatbzolLVcx5z
-	ZaY4YyIRXj1VyZLFLsgoQ9IRbhsj1WyG4upnYPwZmtjWQWI3vzSPzUgWfiuahPMardHmfaDIEzY
-	oO+Akjjtj4pCutKMy29Q6299JK/r0f+L36oTECQtxM+CrfqvlkYoQI8wgALnkmjXTXjvT/6d7ej
-	Ylsja8yicaqGJde8WhAn8NKaB4yvTV9bpNpdgUDWiU3BN7fO5UncVnKw8me82XpiWItKg54Uznc
-	Ia0lJ2HSSypiPxwfkbtOvfa+S/AT1myY1z3si+0=
-X-Google-Smtp-Source: AGHT+IH5/9WyTYEfEuGmbLjgtRz8cZ6K/96p4jvqiT7FjoLDWP7BHZ0rL749oiPM5uogUB12gFX56A==
-X-Received: by 2002:a17:90b:17ce:b0:2fe:a336:fe63 with SMTP id 98e67ed59e1d1-308237a833emr15798291a91.24.1744565058526;
-        Sun, 13 Apr 2025 10:24:18 -0700 (PDT)
-Received: from nuvole.. ([144.202.86.13])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd04e9a8sm9739654a91.0.2025.04.13.10.24.13
+        bh=1yEG8Rwh4CvxK6iCp6DxsJEufqiqUGIzvjMR5YWVKIw=;
+        b=njHxC9RgW5hs1qw7Sh/m9+LIkFzJoaZET4aSMzczUWLyqTpIcwvHDhUv+qmdbqpWRZ
+         fYE+xoiwMM3UQdSWfYW6YGMFbITm/6HXDmm4fvupI25ol3iwDshNRiSauGGje3WIo2pV
+         cYDbqr1j83LDSw6q1v0TkpsE29dxxF2Kef/TAGjDsaQRaxy2EfS5tkHxqX1I1mqlaqcY
+         F4Rk7IJnsSJIaXUPM2z7VtDnoV5CorbLTiYiHF/gzePkIu5b4tvJs9Vlpin7+yvl01Ph
+         x+Ldc2Rpma1qzMVzBzmZIqoePax2K0gT6MS7SxLjCnEClOaXLR+7y4l2/k7NbvklwN03
+         Oj3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV6Np69rccFmXjZw566XzVOdsNi2+kHDxi6W6L4iTLOpUsU3KZxHkPvPGN5bqfD7w1x7onEsP+ZPZ+D@vger.kernel.org, AJvYcCVDatB4YG3NRtKRewXI/Rqz5hf/+wk7vKtTyw/Z+eZemxt2R8cwLxRKOZyYb1zalwCI9m189q3D@vger.kernel.org, AJvYcCXeMg3N/JVgZoc5luX59/TC4AEVRIIQGROYjbzAcggGwQi5pRvVUeNyYdfDQfmOJLe2iGaKpuc28KioA9j6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBDRYsgIWkapioFHa6Jix9vMiDhSe1RzpuXCHOIFc2I43c7HmP
+	l1XRtdJIr+Ej8UyOw8poQRbtGmbE8Z+kBI8QdZpeQZ2PJmG5jghU
+X-Gm-Gg: ASbGncuIIaPJoxiw8+yK0o2MO45Bi7EI0Xpg0qL1kAey5NKiJTkqQzZ6jdKbL6SaiYZ
+	OeqNQdzbOAXWlsuVESYpzNMh+YJKLUvPpRnxeB+JXDSwLBDkDgjfgMHH1T7e6RdqJFKzPGfdbS8
+	Iw4dNz98mlk0YX7B7r0GIuo0hBNVFlh2zqaqr1hEKrbzZGNaRbo9EV+nryHoBKqECwSEoboiA4i
+	AhQJ9BObrFE9hdkgq7GS1Wyu0mmcS3/w4hbyqNdLZOm7uqzNYk5XxUge7FXeyhpPz1D++IGlsvu
+	puCehPOB0BrI9/9E
+X-Google-Smtp-Source: AGHT+IFfZqLMdcGt4A1VgkvuhAuM9F2UXKgD0vPQ/x3qJW4kCkL5FkA1cOoFIYdzUiOewxsp1srBgQ==
+X-Received: by 2002:a05:620a:4141:b0:7c5:b0b4:2cea with SMTP id af79cd13be357-7c7af1137f6mr1512437485a.38.1744584333493;
+        Sun, 13 Apr 2025 15:45:33 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4796eb15c24sm62806241cf.21.2025.04.13.15.45.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Apr 2025 10:24:17 -0700 (PDT)
-From: Pengyu Luo <mitltlatltl@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Pengyu Luo <mitltlatltl@gmail.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: qcom: rpmh: make clkaN optional
-Date: Mon, 14 Apr 2025 01:22:04 +0800
-Message-ID: <20250413172205.175789-1-mitltlatltl@gmail.com>
+        Sun, 13 Apr 2025 15:45:33 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Nikita Shubin <nikita.shubin@maquefel.me>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH v4 0/5] clk: sophgo: add SG2044 clock controller support
+Date: Mon, 14 Apr 2025 06:44:44 +0800
+Message-ID: <20250413224450.67244-1-inochiama@gmail.com>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -75,78 +88,62 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On SM8650, clkaN are missing in cmd-db for some specific devices. This
-caused a boot failure. Printing log during initramfs phase, I found
+The clock controller of SG2044 provides multiple clocks for various
+IPs on the SoC, including PLL, mux, div and gates. As the PLL and
+div have obvious changed and do not fit the framework of SG2042,
+a new implement is provided to handle these.
 
-[    0.053281] clk-rpmh 17a00000.rsc:clock-controller: missing RPMh resource address for clka1
+Changed from v3:
+- https://lore.kernel.org/all/20250226232320.93791-1-inochiama@gmail.com
+1. patch 1,2: Add top syscon binding and aux driver.
+2. patch 4: Separate the syscon pll driver to a standalone one.
+3. patch 4: use abs_diff to compare pll clock.
+4. patch 4: remove unnecessary else
+5. patch 5: use clk_hw for parent clocks if possible.
+6. patch 5: inline the header which is necessary.
+7. patch 5: make common array as const.
 
-Adding the optional property to avoid probing failure which causes
-countless deferred probe. In the downstream tree,similar workarounds
-are introduced for SM7635, SM8550, SM8635, SM8650, SM8750.
+Changed from v2:
+- https://lore.kernel.org/all/20250204084439.1602440-1-inochiama@gmail.com/
+1. Applied Chen Wang's tag
+2. patch 2: fix author mail infomation
 
-Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
----
-Changes in v2:
-- using capital letters, sm[0-9]+ => SM[0-9]+, rpmh => RPMh (Dmitry)
-- correct typo, alform => plaform (Dmitry)
-- remove tested-by tag from myself (Dmitry)
-- line break to keep 80 characters per line (Dmitry)
-- Link to v1: https://lore.kernel.org/all/20250404072003.515796-1-mitltlatltl@gmail.com
----
- drivers/clk/qcom/clk-rpmh.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Changed from v1:
+- https://lore.kernel.org/all/20241209082132.752775-1-inochiama@gmail.com/
+1. patch 1: Applied Krzysztof's tag
+2. patch 2: Fix the build warning from bot.
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index c7675930f..0aea8e1b7 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -66,6 +66,8 @@ struct clk_rpmh {
- struct clk_rpmh_desc {
- 	struct clk_hw **clks;
- 	size_t num_clks;
-+	/* RPMh clock clkaN are optional for this platform */
-+	bool clka_optional;
- };
- 
- static DEFINE_MUTEX(rpmh_clk_lock);
-@@ -648,6 +650,7 @@ static struct clk_hw *sm8550_rpmh_clocks[] = {
- static const struct clk_rpmh_desc clk_rpmh_sm8550 = {
- 	.clks = sm8550_rpmh_clocks,
- 	.num_clks = ARRAY_SIZE(sm8550_rpmh_clocks),
-+	.clka_optional = true,
- };
- 
- static struct clk_hw *sm8650_rpmh_clocks[] = {
-@@ -679,6 +682,7 @@ static struct clk_hw *sm8650_rpmh_clocks[] = {
- static const struct clk_rpmh_desc clk_rpmh_sm8650 = {
- 	.clks = sm8650_rpmh_clocks,
- 	.num_clks = ARRAY_SIZE(sm8650_rpmh_clocks),
-+	.clka_optional = true,
- };
- 
- static struct clk_hw *sc7280_rpmh_clocks[] = {
-@@ -847,6 +851,7 @@ static struct clk_hw *sm8750_rpmh_clocks[] = {
- static const struct clk_rpmh_desc clk_rpmh_sm8750 = {
- 	.clks = sm8750_rpmh_clocks,
- 	.num_clks = ARRAY_SIZE(sm8750_rpmh_clocks),
-+	.clka_optional = true,
- };
- 
- static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
-@@ -890,6 +895,13 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- 		rpmh_clk = to_clk_rpmh(hw_clks[i]);
- 		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
- 		if (!res_addr) {
-+			hw_clks[i] = NULL;
-+
-+			if (desc->clka_optional &&
-+			    !strncmp(rpmh_clk->res_name, "clka",
-+				     sizeof("clka") - 1))
-+				continue;
-+
- 			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
- 				rpmh_clk->res_name);
- 			return -ENODEV;
--- 
+Inochi Amaoto (5):
+  dt-bindings: soc: sophgo: Add SG2044 top syscon device
+  soc: sophgo: sg2044: Add support for SG2044 TOP syscon device
+  dt-bindings: clock: sophgo: add clock controller for SG2044
+  clk: sophgo: Add PLL clock controller support for SG2044 SoC
+  clk: sophgo: Add clock controller support for SG2044 SoC
+
+ .../bindings/clock/sophgo,sg2044-clk.yaml     |   99 +
+ .../soc/sophgo/sophgo,sg2044-top-syscon.yaml  |   49 +
+ drivers/clk/sophgo/Kconfig                    |   19 +
+ drivers/clk/sophgo/Makefile                   |    2 +
+ drivers/clk/sophgo/clk-sg2044-pll.c           |  629 ++++++
+ drivers/clk/sophgo/clk-sg2044.c               | 1812 +++++++++++++++++
+ drivers/soc/Kconfig                           |    1 +
+ drivers/soc/Makefile                          |    1 +
+ drivers/soc/sophgo/Kconfig                    |   21 +
+ drivers/soc/sophgo/Makefile                   |    3 +
+ drivers/soc/sophgo/sg2044-topsys.c            |   45 +
+ include/dt-bindings/clock/sophgo,sg2044-clk.h |  153 ++
+ include/dt-bindings/clock/sophgo,sg2044-pll.h |   27 +
+ 13 files changed, 2861 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
+ create mode 100644 Documentation/devicetree/bindings/soc/sophgo/sophgo,sg2044-top-syscon.yaml
+ create mode 100644 drivers/clk/sophgo/clk-sg2044-pll.c
+ create mode 100644 drivers/clk/sophgo/clk-sg2044.c
+ create mode 100644 drivers/soc/sophgo/Kconfig
+ create mode 100644 drivers/soc/sophgo/Makefile
+ create mode 100644 drivers/soc/sophgo/sg2044-topsys.c
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2044-clk.h
+ create mode 100644 include/dt-bindings/clock/sophgo,sg2044-pll.h
+
+--
 2.49.0
 
