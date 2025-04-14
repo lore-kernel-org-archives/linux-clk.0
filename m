@@ -1,196 +1,230 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB0025D8E0;
-	Mon, 14 Apr 2025 11:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BDB270EB1
+	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 11:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744629586; cv=none; b=nJ3K4YXaGKnfbYQasC7/4dFLdTB1ZftTgsfYr1Ced8cZDDbc6KvnuBvsz6ocNW8pQ3SFGMl97j9MUq3nCr9qYU/NgwTljTLJAFvThH2tpa8enDJHtyVhu+wLGCHRqC4Hs74/4Ufk44zvWlueRhhLb5b4vjj4rl3PFBNBJnkuDJw=
+	t=1744630190; cv=none; b=UmEO3+66DlmIpBM/X65Xmdb4sCUFGT01q4osNiVeRkG3NQLdjybCL7gwreYY+A4+We04rM45k+LHOgnKdHbC24sQcpII/wgomO/VbZbOHBW/cA6VNyc5juqwHChay977OcV8o8V5GcooDTYGSAj2gKVlQfqSPQMOv3DyPU0iGyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744629586; c=relaxed/simple;
-	bh=BKzGtY0m29Mf6TkuRUUflwug+d15q5+nqop+AkHVYkQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hqgjieHN15DanqzKtNM+AnlVSc2dOC97jAmUlrQJDy+GbzT/pxUciGINsSamQYm5X4mx+SJ14QJ8U+31SglGpzcjktGIswYZi0n4wALZ+PFHt0vW1Tyb/TaPvPpHq+J+PcvaI0nU32WJb4R2lHU4RTu/d+ycQQc6JbhRZomuO+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ec3pTnbu; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1744630190; c=relaxed/simple;
+	bh=OId65vYG4iChVP7s+ep0NmfGVOgkQkETuAsaQF/JGAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZI2CydKYo+bBWfkjjuEk6WMZoSvBvuFrVCw97ITgsORsFfdY+E9Qf7kT/KLtP58nkjH6uxEPX6PfaZ5UX7x1O7/KD10HORcxBF+KZ1OiP7SPafLRfKcX9WHclGTwLkU7wTbNw+6eQgPj2i5XtAuJSPW9PhNg8w2QH2o732XMiJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aLSMqNTm; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ec3pTnbu"
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523f1b31cf8so1480674e0c.0;
-        Mon, 14 Apr 2025 04:19:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aLSMqNTm"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2295d78b45cso57718675ad.0
+        for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 04:29:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744629583; x=1745234383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VEqhZeC/SxQPEFxYDopllibBPq2tN/nqOZR4I+9eMe4=;
-        b=ec3pTnbuSLPB7kJy/d8ZbIX9BwWvom36JE4F3maMqa1CDxCirSOeTTj1ha1R8wmKcs
-         Nsd7fIbPybU10ZUXdMtZg/ZNmWTS/N1boPvr9VTACMMIaHw1C6Fw0EYjSyeWB7NJvClW
-         /8Aqi8LuZnaSsQw4TWBEAD+246TYmAN6veYJPCxqtsTOcVWNvakyK9cfi7gArsHvDRs9
-         L1+YK48aS+3rGeIePfk6qxbR4LFoX+wHvu0ru+fYo6EzYvrLhBrSpcCaogB3QQ/HGfJQ
-         vv9yvcKf4UQDAwFyptbf1087eUUfgV5ApnBLVOm+vByl6TfkVGkyN2X/CsTyLCjPwWp1
-         9kPw==
+        d=linaro.org; s=google; t=1744630187; x=1745234987; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=O6+sNIyO8JzbVU9H6WY1PZualMiTtrIWYxB95T2aKKg=;
+        b=aLSMqNTmz41GrHp26HLeqezmtfrsjDxmMQIcAABezKLFe96hlbVkNUl92pj1yPyYWe
+         wxfKyNvI1P/ID5roBtHIHz9J7NuZZIQe9tI/7eT+D1is04Qu32vMhJrrKKbonBSQ9/hR
+         AbC2YEdSj6zu+u6QPwmoAMKQbtOzGzOyFlCJydosAOvG46/1nIn4usbvNopkI0c4dExI
+         GdL2uO1SRXCXsNxsvhwqBckjxjrdiM8zNaGxpCylg1h7DnzOWRPcs2cLikwHKb07mVf5
+         9HGyw6SB9nusv23J1JDE2ZqbSANGOCnTLGiLwQuGLIBT5UcICZ74BrnjPLf1uybLVUKT
+         sE0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744629583; x=1745234383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VEqhZeC/SxQPEFxYDopllibBPq2tN/nqOZR4I+9eMe4=;
-        b=hgymS6lMnCu1u4BSEMCQJDWqxUuVlEnWtN2SfBVK+oTHDvAthn0WaF78VAZ+wwKhOo
-         BMYsXgdI0Ae1470B0+pNDjY3OZCF99Ai2sh4ezNYUGd71VvArmG5SP8a02hNTtLHXqON
-         vgarPPMY4tyFJkCjMKVJoJur0fMWjtE5lb++88XFdxUHYe1z6c+8EiFRdJMxZoNgGZYW
-         PZ7JPMWDWU9IGYD2n806PxGhraxgpQiR5NB/rSp3+QJOpFOYmJJixOfLni66Tuhptrlb
-         Yoe84UADOVJScc2UjHMYoMEJ+v7goH8Q3222rIYkHMFGh7OLo4/FuA7CrbWZekfuiRL9
-         KkcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2JDKU+n3m5EFHTcjqO1MI5jYSPPiAA2TJPk+01jyHdHN13EMN8qcKbn+AvG6kVL8aFHzq0nPzbqnH@vger.kernel.org, AJvYcCVAic2+cW9OYt3H/I2+lxAcy/gdSOIPtQIep2f2kfuNMPHm3ViGA8yJpPRRfsut/7Nla+2HMsOGlRlfX+OhdqCpAPw=@vger.kernel.org, AJvYcCVSzTXRF/pI1ntmYNdSsPz2EOs2cmTWYpL5JBi9TSaBSNxZTdVkXWsU6Uzmz3W0g0hP5CDuhLLZwi4C3RBn@vger.kernel.org, AJvYcCVw0khGCl0N94Iq7CLJfYys7rhlLUcyHesDaP4EHVRRrgRbfw+rsEnoXafQnCD6ZWa4g1bIwsDGyjd+3lwe@vger.kernel.org, AJvYcCWbE3piOOMi2AcEb7Xytj1/FLox/T2Efn+23vpE+9sTzjZAyECfDgsn11cP0IDy3Fs8hpbCVFvXxDh2vA==@vger.kernel.org, AJvYcCWy8Hn5GLSXC3q4l5BdBWmozfYdtjg2Mm80FSsdxoBdUG9TKKyDbBL+8cfaMaAN+ue1qso21j/fdmX7@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTNNNzsPmgqbj9IzsLa47CZaahd1iRCbybWYiBxLarzbiDUYw+
-	9k5PsYgRGnsER9iNu4UYtZbUy4DDniu+/ilT6dc8VU3iqxOlDps8NoW0f5DGmc19Eq85hjyByXL
-	RIHli8wZ+wCCGsNkgOUoqMCIq+P0=
-X-Gm-Gg: ASbGncs6yX+0kyQZDkILIGly0oKuDtHJ1e4L/g10KY8ZTSdTjFbDHdcGUt/qJYfb4eK
-	YBSCqzXidGnpamOecHrZTXxSCl3S6CUErGz3UUk3wi+nVAIpLMS2bA2aBiCNwLciT8sWlT3s702
-	hGfm5iMfU0NZ279PJnTSRv97ViKz3HmPSL5DlbT3W1L7LBeK1Dq6KLEA==
-X-Google-Smtp-Source: AGHT+IHBThT2zEj4KJtUm3PS9DNJ79HJu09faPsTCT7kPgy8QzXrty9/2BnAr01/9b/AIEkrW8flUc10uUA4F5iz66s=
-X-Received: by 2002:a05:6122:1d89:b0:518:a0ac:1f42 with SMTP id
- 71dfb90a1353d-527c3464832mr5207743e0c.1.1744629582771; Mon, 14 Apr 2025
- 04:19:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744630187; x=1745234987;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O6+sNIyO8JzbVU9H6WY1PZualMiTtrIWYxB95T2aKKg=;
+        b=eid4oL4H/9UNQRV7pQ7j6GRoG2FXomlcUTeDBW+kW0ry2v5Et2pKV0+NK/ApY6MGQg
+         wv4M8VB3Ss+4YVprOk/0nwJTLH30Y0EI4+XWGATJCWPB3rRMTVCIW5yWoPuSyUKObtCL
+         rUdcBxMq3qC4H53HHW6IxKZ3yVYGG5mGNUcHNnS4J20TD6R+i7m2pVzMkBljru8GPQsx
+         tEiXpNAA5UdUgbR9mjDWd3FDoMOxYS2RU31CixRKHkzmwKKm5MZLBFHyxRMC4EV9W+JK
+         q58CZrL1PnejDxwCbjlZmmVMyy+G4+pSgDampg7JeN5gps1vH6qk1myVANGLhS2qTFOg
+         DrQg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+dzeP6OXR0p7wcIEBTs5r6uW0atoCj95MBpmxZwZlgCXB1k1GqnlCEHQpMrJ5XhjFhdSBti6L2lk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5A+Fg9xqKGqtDw26lgE/uKngMvEnAiiyVF41GxSzriQZKWb0O
+	31muFb59lfxJMbCChtiGtTqmt174AQheuzI2VqSXQFUiKL9Mp8/eXzfLqUqZm5M=
+X-Gm-Gg: ASbGncsC3zHz7IuRl3jLTj4ZViWFrfi0Ax1/KCoM2479m5powH52sXJbpdsVK+GBy+3
+	syafx58u7pciTzUr7id3MBJ22wIwhGdBl43PSY+V4Ft5O0hUo9LyRaY3SawTThmwHWV0I6+SDOu
+	DFZaEMPkioisPC1amjUJO5r+J63y4D6+Z6ne4hrj/gAvU3CkkxjvPY96h0NUvHYslsJJymQU8Us
+	iMGhVodDhy7HONuks8d0QEDq/ZRKZoyHLt+iZtJf15o/b7TPJvTTNVoyfGn/UQfFnCaDG6/7CNS
+	6jygSfT1pAWArKgqXJ6mptQapAGf+wNoUzlUabeD+w==
+X-Google-Smtp-Source: AGHT+IE2yePppLq/70OKRdNpVINOxCz29KaYhLiwBomV/BOoxtq3utngiXMthhUwoFkXpZSNMWS9Gg==
+X-Received: by 2002:a17:903:1d1:b0:21f:f3d:d533 with SMTP id d9443c01a7336-22bea4a17fdmr134579745ad.2.1744630186633;
+        Mon, 14 Apr 2025 04:29:46 -0700 (PDT)
+Received: from localhost ([122.172.83.32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b628desm96556265ad.20.2025.04.14.04.29.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 04:29:46 -0700 (PDT)
+Date: Mon, 14 Apr 2025 16:59:43 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Yury Norov <yury.norov@gmail.com>, Danilo Krummrich <dakr@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Burak Emir <bqe@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V9 03/17] rust: cpumask: Add initial abstractions
+Message-ID: <20250414112943.r2h3a54r2jm4iana@vireshk-i7>
+References: <cover.1744366571.git.viresh.kumar@linaro.org>
+ <9a004e3dff5321dae3b96df2817799daa699ce01.1744366571.git.viresh.kumar@linaro.org>
+ <Z_k7HtIZaSWeJvM4@yury>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 14 Apr 2025 12:19:16 +0100
-X-Gm-Features: ATxdqUFod-By5skQwut9E6OLv-Y-Yr-c2MfufCYZft6F7eFLNq3WA8NWjWHZnLY
-Message-ID: <CA+V-a8useBh5m+MqGXQwQJhuemehm=bPidL6XydR-FOmVN9QNQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/12] Add support for Renesas RZ/V2N SoC and EVK
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Jiri Slaby <jirislaby@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-serial@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z_k7HtIZaSWeJvM4@yury>
 
-Hi Geert,
+On 11-04-25, 11:54, Yury Norov wrote:
+> On Fri, Apr 11, 2025 at 04:25:02PM +0530, Viresh Kumar wrote:
+> > +    unsafe fn new_uninit(_flags: Flags) -> Result<Self, AllocError> {
+> > +        Ok(Self {
+> > +            #[cfg(CONFIG_CPUMASK_OFFSTACK)]
+> > +            ptr: {
+> > +                let mut ptr: *mut bindings::cpumask = ptr::null_mut();
+> > +
+> > +                // SAFETY: Depending on the value of `_flags`, this call may sleep. Other than
+> > +                // that, it is always safe to call this method.
+> 
+> I'm not sure I understand this sentence. What's wrong with safety when
+> the alloc() function sleeps? Even if something is wrong. If you really
+> want to protect your users, you'd introduce new_sync() version that
+> returns error if user provides sleeping flags.
 
-Thank you for the review.
+I borrowed this SAFETY comment from similar allocation done in
+page.rs, I think we can skip it though. Here is the delta so far:
 
-On Mon, Apr 7, 2025 at 8:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
->
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> This patch series adds initial support for the Renesas RZ/V2N (R9A09G056)
-> SoC and its evaluation board (EVK). The Renesas RZ/V2N is a vision AI
-> microprocessor (MPU) designed for power-efficient AI inference and
-> real-time vision processing. It features Renesas' proprietary AI
-> accelerator (DRP-AI3), delivering up to 15 TOPS AI performance, making
-> it ideal for applications such as Driver Monitoring Systems (DMS),
-> industrial monitoring cameras, and mobile robots.
->
-> Key features of the RZ/V2N SoC:
->   Processing Power:
->     - Quad Arm Cortex-A55 cores at 1.8GHz for high-performance computing
->     - Single Arm Cortex-M33 core at 200MHz for real-time processing
->     - 1.5MB on-chip SRAM for fast data access
->     - LPDDR4/LPDDR4X memory interface for high-speed RAM access
->
->   AI and Vision Processing:
->     - DRP-AI3 accelerator for low-power, high-efficiency AI inference
->     - Arm Mali-C55 ISP (optional) for image signal processing
->     - Dual MIPI CSI-2 camera interfaces for multi-camera support
->
->   High-Speed Interfaces:
->     - PCIe Gen3 (2-lane) 1ch for external device expansion
->     - USB 3.2 (Gen2) 1ch (Host-only) for high-speed data transfer
->     - USB 2.0 (Host/Function) 1ch for legacy connectivity
->     - Gigabit Ethernet (2 channels) for network communication
->
->   Industrial and Automotive Features:
->     - 6x CAN FD channels for automotive and industrial networking
->     - 24-channel ADC for sensor data acquisition
->
-> LINK: https://tinyurl.com/renesas-rz-v2n-soc
->
-> The series introduces:
-> - Device tree bindings for various subsystems (SYS, SCIF, SDHI, CPG, pinc=
-trl).
-> - RZ/V2N SoC identification support.
-> - Clock and pinctrl driver updates for RZ/V2N.
-> - Initial DTSI and device tree for the RZ/V2N SoC and EVK.
->
-> These patches have been tested on the RZ/V2N EVK with v6.15-rc1 kernel,
-> logs can be found here:
-> https://gist.github.com/prabhakarlad/aa3da7558d007aab8a288550005565d3
->
-> @Geert, Ive rebased the patches on top of v6.15-rc1 + renesas-dts-for-v6.=
-16
-> + renesas-clk-for-v6.16 branches. Also these patches apply on top of the =
-below
-> series [1] and [2]. I had to sort the order in Makefile for patch [3] to
-> avoid conflicts.
-> [1] https://lore.kernel.org/all/20250401090133.68146-1-prabhakar.mahadev-=
-lad.rj@bp.renesas.com/
-> [2] https://lore.kernel.org/all/20250403212919.1137670-1-thierry.bultel.y=
-h@bp.renesas.com/#t
-> [3] https://lore.kernel.org/all/20250403212919.1137670-13-thierry.bultel.=
-yh@bp.renesas.com/
->
-> Note, dtbs_check will generate the below warnings this is due to missing
-> ICU support as part of initial series. I will be sending a follow-up patc=
-h
-> series to add ICU support which will fix these warnings.
-> arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000 =
-(renesas,r9a09g056-pinctrl): 'interrupt-controller' is a required property
->         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rz=
-g2l-pinctrl.yaml#
-> arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000 =
-(renesas,r9a09g056-pinctrl): '#interrupt-cells' is a required property
->         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rz=
-g2l-pinctrl.yaml#
->
-> v1->v2:
-> - Added acks from Rob.
-> - Squashed the RZ/V2N EVK and SoC variant documentation into a single
->   commit.
-> - Updated the commit messages.
-> - Added RZV2N_Px, RZV2N_PORT_PINMUX, and RZV2N_GPIO macros in
->   SoC DTSI as we are re-using renesas,r9a09g057-pinctrl.h
->   in pictrl driver hence to keep the consistency with the
->   RZ/V2H(P) SoC these macros are added.
-> - Dropped `renesas,r9a09g056-pinctrl.h` header file.
-> - Followed DTS coding style guidelines
-> - Dropped defconfig changes from the series.
-> - Dropped SDHI dt-binding patch as its already applied to mmc -next tree.
->
-> Cheers,
-> Prabhakar
->
-> Lad Prabhakar (12):
->   dt-bindings: soc: renesas: Document Renesas RZ/V2N SoC variants and
->     EVK
->   soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
->   dt-bindings: soc: renesas: Document SYS for RZ/V2N SoC
->   soc: renesas: sysc: Add SoC identification for RZ/V2N SoC
->   dt-bindings: serial: renesas: Document RZ/V2N SCIF
->   dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
->   clk: renesas: rzv2h-cpg: Sort compatible list based on SoC part number
->   clk: renesas: rzv2h: Add support for RZ/V2N SoC
->   dt-bindings: pinctrl: renesas: Document RZ/V2N SoC
->   pinctrl: renesas: rzg2l: Add support for RZ/V2N SoC
->   arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
->   arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
->
-Would it be OK if I send version 3 containing only patches 4/12 and 10/12?
+@@ -27,8 +27,8 @@
+ ///
+ /// A [`Cpumask`] instance always corresponds to a valid C `struct cpumask`.
+ ///
+-/// The callers must ensure that the `struct cpumask` is valid for access and remains valid for the
+-/// lifetime of the returned reference.
++/// The callers must ensure that the `struct cpumask` is valid for access and
++/// remains valid for the lifetime of the returned reference.
+ ///
+ /// ## Examples
+ ///
+@@ -86,7 +86,9 @@ pub fn as_raw(&self) -> *mut bindings::cpumask {
+ 
+     /// Set `cpu` in the cpumask.
+     ///
+-    /// Equivalent to the kernel's `__cpumask_set_cpu` API.
++    /// ATTENTION: Contrary to C, this Rust `set()` method is non-atomic.
++    /// This mismatches kernel naming convention and corresponds to the C
++    /// function `__cpumask_set_cpu()`.
+     #[inline]
+     pub fn set(&mut self, cpu: u32) {
+         // SAFETY: By the type invariant, `self.as_raw` is a valid argument to `__cpumask_set_cpu`.
+@@ -95,7 +97,9 @@ pub fn set(&mut self, cpu: u32) {
+ 
+     /// Clear `cpu` in the cpumask.
+     ///
+-    /// Equivalent to the kernel's `__cpumask_clear_cpu` API.
++    /// ATTENTION: Contrary to C, this Rust `clear()` method is non-atomic.
++    /// This mismatches kernel naming convention and corresponds to the C
++    /// function `__cpumask_clear_cpu()`.
+     #[inline]
+     pub fn clear(&mut self, cpu: i32) {
+         // SAFETY: By the type invariant, `self.as_raw` is a valid argument to
+@@ -198,15 +202,14 @@ pub struct CpumaskVar {
+ }
+ 
+ impl CpumaskVar {
+-    /// Creates an initialized instance of the [`CpumaskVar`].
+-    pub fn new(_flags: Flags) -> Result<Self, AllocError> {
++    /// Creates a zero-initialized instance of the [`CpumaskVar`].
++    pub fn new_zero(_flags: Flags) -> Result<Self, AllocError> {
+         Ok(Self {
+             #[cfg(CONFIG_CPUMASK_OFFSTACK)]
+             ptr: {
+                 let mut ptr: *mut bindings::cpumask = ptr::null_mut();
+ 
+-                // SAFETY: Depending on the value of `_flags`, this call may sleep. Other than
+-                // that, it is always safe to call this method.
++                // SAFETY: It is safe to call this method as the reference to `ptr` is valid.
+                 //
+                 // INVARIANT: The associated memory is freed when the `CpumaskVar` goes out of
+                 // scope.
+@@ -222,20 +225,19 @@ pub fn new(_flags: Flags) -> Result<Self, AllocError> {
+         })
+     }
+ 
+-    /// Creates an uninitialized instance of the [`CpumaskVar`].
++    /// Creates an instance of the [`CpumaskVar`].
+     ///
+     /// # Safety
+     ///
+     /// The caller must ensure that the returned [`CpumaskVar`] is properly initialized before
+     /// getting used.
+-    unsafe fn new_uninit(_flags: Flags) -> Result<Self, AllocError> {
++    unsafe fn new(_flags: Flags) -> Result<Self, AllocError> {
+         Ok(Self {
+             #[cfg(CONFIG_CPUMASK_OFFSTACK)]
+             ptr: {
+                 let mut ptr: *mut bindings::cpumask = ptr::null_mut();
+ 
+-                // SAFETY: Depending on the value of `_flags`, this call may sleep. Other than
+-                // that, it is always safe to call this method.
++                // SAFETY: It is safe to call this method as the reference to `ptr` is valid.
+                 //
+                 // INVARIANT: The associated memory is freed when the `CpumaskVar` goes out of
+                 // scope.
 
-Cheers,
-Prabhakar
+> > +    /// Creates a mutable reference to an existing `struct cpumask_var_t` pointer.
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// The caller must ensure that `ptr` is valid for writing and remains valid for the lifetime
+> > +    /// of the returned reference.
+> > +    pub unsafe fn from_raw_mut<'a>(ptr: *mut bindings::cpumask_var_t) -> &'a mut Self {
+> 
+> The 'from' (wrt cpumasks) has a special meaning: search for a cpu
+> starting from a given one. This 'from_raw' may confuse readers. Have
+> you any other name for it in mind?
+
+'from_raw' is widely used in Rust for similar methods, though I do
+understand your concerns.
+
+Danilo / Miguel, what do you suggest I rename these to ?
+
+> > +        // SAFETY: Guaranteed by the safety requirements of the function.
+> > +        //
+> > +        // INVARIANT: The caller ensures that `ptr` is valid for writing and remains valid for the
+> > +        // lifetime of the returned reference.
+> > +        unsafe { &mut *ptr.cast() }
+> > +    }
+> > +    /// Clones cpumask.
+> > +    pub fn try_clone(cpumask: &Cpumask) -> Result<Self> {
+> 
+> Just clone(), I think.
+
+The method 'clone()' is already used by the 'Clone' trait [1], and
+that's what I wanted to use initially. But 'clone' doesn't return a
+'Result'.
+
+-- 
+viresh
+
+[1] https://doc.rust-lang.org/std/clone/trait.Clone.html
