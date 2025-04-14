@@ -1,274 +1,240 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6E82676D2
-	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 10:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCF333997;
+	Mon, 14 Apr 2025 10:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744625609; cv=none; b=RuOtXDoLi84YTNmo15p9MaEAIMubPOnWAxqxcBcZjwTepJaoxfyerHIS8dQBlbh29lGvCJkOLy474JPZBGNb1F1fggaUpvCD1kr92grKYWSy3EAorqnyvcXVz+n92DdwIa6KzX2BtNu0+aLmbcSMa6xWwvy8Eqvi6p5R3i/XFwg=
+	t=1744626128; cv=none; b=Icg92PfUkPGFPOjDckyvTg9E49ZCurhFPkeO1TFRMNpclVJ20StHcymwUeEdRnrvyioOdFtYPqLrAp6LXw//k0nECZbcYM2aQUQMCs0mGIJemBOZAfn2ffXDcMKgdX4FI4aGzFA2JTZ5+P3BviOVI4q0vDlZKafy1mQIOGpWd9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744625609; c=relaxed/simple;
-	bh=JyWeZEpKoFJ2MTnGd7zb0bEz198j7FjVbkRh4IEcWZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njnDH49HO8g2bt8XrS/J2dssIQ+HInWmjAMvQZNjnwaN9BreoliidbLeTom0Gkz32xckSy7N4+L3FfiPjij3t63C4nbm6mC8OGBYHIZ/ioDCRFig0J8gwKnBaRfq1XJXCa7MX5zJWalymAORlU4QLlW1Rmzz4STx2clZvWWZohw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WS4iXlHb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1744626128; c=relaxed/simple;
+	bh=KtqC2iditidJC2eSLn3KMSnoD5wXk8uVxjE6xg2dVhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qMBhey+hKxDDJAGm5htJSdoYUrG+QKSMHrsKSvXF4oGLKr6HSVFNyq9qRgQBWuh9spcWVGcjlAfaqYuAOKAuBHZW7JLBt8w9RjDo6hvDdV6n+OCKPkqLhWRlETiYnWuEQ/y1j+7uYSM2R3aTu/UeyvJl0Cf13qRFrLlqHVLFOxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RJIcbyEC; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WS4iXlHb"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53E99qPe030625
-	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 10:13:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=KOk2FJOKln1h9f40tHitRpBq
-	43JW0qQMBy6iSTVf1/0=; b=WS4iXlHbTYtaJSM3MUAtdKvZ5Zx+1FCSrjlluP2c
-	OCI68f2HbGwYmmUwhQ16MY4Vj/4zF0Q8NCYx24E/PJZec9ydkyBLEUaOJYNsOpCV
-	Pp4rdFhaKR4J9EAaeGUDOhC46Wi4iIa32uz72YIq56xj9iDEISc46Ln8GrpXNzRC
-	BB6n8Tjzph+ivmmVM02+Uws113tFhW9tm+2PPoS0sUqRmH0YuSJcaW10sKwEITz8
-	BX1vmX5bai0K51JeB6DY3+etvqQJ0F2EJAHeBldQ4CBFgZAssAQYJE9VCLZKf8RN
-	/zJtQ20MxWGPur6l3FQSE/MLdfZ3L6/CQfv2zY/ToA+Mww==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ydvj4bak-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 10:13:26 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c5c9abdbd3so388984385a.1
-        for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 03:13:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744625602; x=1745230402;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJIcbyEC"
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-524125f6cadso3449459e0c.2;
+        Mon, 14 Apr 2025 03:22:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744626125; x=1745230925; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KOk2FJOKln1h9f40tHitRpBq43JW0qQMBy6iSTVf1/0=;
-        b=ejhFUsZhsLR1CiV21z/5PEEw+J4Ce5gUt+hwhIQE62XG07UUAaF581F6rXknV6tJWX
-         bJN/yKcJx/bbDtRuXWkzc7TdVTHUZDFJD3AwM3o31jb4416IYBwK0L2Pr6ByZooiinCn
-         PpluL+xlQRsb7rt1dSC6/CzcshQl1VOxvaknL+o64AZsDsFm1VL2mRkQJX9OldH0ZZJO
-         rtaHGiVXOw6RP07zeqQZA1ErLN6kQmQrLSLiNZJlgQ1jmgnyeOaQGzovr4pA+tCqJdP1
-         g3roTKhEYgcoZG7WFgOfW4A9EAUw01TssusU0KvpjI8uEN+VSH5mmvcewC0owu56IyYT
-         /zuw==
-X-Forwarded-Encrypted: i=1; AJvYcCURIYrNaI4dNgXv39xsEDDQXx86iWrER87DdIM7wY6IAuD6FWfTT7k3NRorUSMFF1NgXhDS77fURDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8RYQ1LQO3JlbYxJfTwcaZUx9yHOGnKelCvs8mUUEiPnqLNMZY
-	LFX0t4EwMS04FKd9Eo+Qi7NJVUCZc0OLfGhYgA3mTsPQOoxRBvR7PT+YoCkAVMvJwI4oqj/14Qa
-	KupcmRKjxkfGA6M4tB79sf81uB5uixdSDpROxqyjUYt+CxEfy2kDFxfsCpjg=
-X-Gm-Gg: ASbGncvogWdhAvMd8lWcK4x0uicJa5xSvw9+yejJWsziofMy3mdZlNiod70RyvsM0un
-	HLFz8YKSU2fHxb/ISJLP17VUP7g6UWHCicWDBrJpE+n+tRJkRqc10l/KIC2OKFQti39ZVTUsoNQ
-	ounM9av9wXUUnpOyruKEIh+9MPx6lj1Vq4JHh/lw+3g9hj/yd4N/dkJxkSrha+AO3m28rkOHn0T
-	7ldIhbNd2e1gNtzykxppCdI0X39pKSWjtRNBYGIqrkM4xj9H1DqMJ8uWgi8dAmikTUtQslaygxu
-	Afh8E4qO1asvIXlN2cykTOKvNFrYxViWK8pSHS3tIx9m7oPDQ2oyVrW5w4RwLcEfYNsNGyQ53HQ
-	=
-X-Received: by 2002:a05:620a:424b:b0:7c5:49ee:86aa with SMTP id af79cd13be357-7c7af0b97b6mr1407520885a.4.1744625602357;
-        Mon, 14 Apr 2025 03:13:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHzDsIFNCfCc1ZoeycTbDTNBesY22eIKmB83BOMthLAJTRiIc4E97bghFBGk6bi4e5QAPBjNQ==
-X-Received: by 2002:a05:620a:424b:b0:7c5:49ee:86aa with SMTP id af79cd13be357-7c7af0b97b6mr1407516585a.4.1744625601749;
-        Mon, 14 Apr 2025 03:13:21 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30f4649d604sm16122111fa.19.2025.04.14.03.13.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 03:13:20 -0700 (PDT)
-Date: Mon, 14 Apr 2025 13:13:19 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v3 06/18] clk: qcom: common: Add support to configure clk
- regs in qcom_cc_really_probe
-Message-ID: <r5okekuiv4jdocho47ytmf3aiprdby6mqvdeg63fr2uzs4edwa@rk3mhscdhc2p>
-References: <20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com>
- <20250327-videocc-pll-multi-pd-voting-v3-6-895fafd62627@quicinc.com>
- <aidlp3iq6pxym52tp63w35tpcctw4443yihvcwsdszk62xbwfp@esqpmsc4e6qd>
- <f1125370-c16a-4c20-a01d-2221fb12fdcb@quicinc.com>
- <CAO9ioeWmuPhBPivthidXTFfnXRBx9rd=iX5aqjB4bMcCKueXeg@mail.gmail.com>
- <efe91d3f-a2e3-4bee-a7e5-36ea4fc0968a@quicinc.com>
+        bh=7k7jOxUiHWycKnZAs1fHyoctI9n8TH4eQ7bIdVfdT2Q=;
+        b=RJIcbyECyj2SxzILyTGR/ubLtHeBLY5kTyQC8cL3DkrouuBHhQdrDQ+FMObQPgpAhN
+         iiaTsF13HbF2PRL9fdICbaUtHDQpThYo54RUbEooGkDyL8dSccp/mE5d2TS+UKwsXc2q
+         iiy0VMtWrNY+zSg2lOtD7aQa8qplyJsLLutM7UJMcRNKjTaa8EivmqCpyFJfTPbAHoQJ
+         OgFnz52Yt1ZBBdD8YwV8LLH4TyyYxa4abvueXPCEnAN6yNwDIYv9ReK/25eOaFZTZlT7
+         NSZP9hrDMOn02RfaeI1xXUtLIWhdK93MTNt0D0QM1Nk0eyus7JqMqqpxLgVW6ScPUpne
+         K/Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744626125; x=1745230925;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7k7jOxUiHWycKnZAs1fHyoctI9n8TH4eQ7bIdVfdT2Q=;
+        b=P7CxnGT/XN/si1cRz622IaajCWSoC4i238wO4gTVdBiKCXae01yv+AlKgr6OOpigiq
+         ByRs7yuByS5/EvRjEr5JpC1C/MtyYssMP5Y3qdG/dfB52G834H0HyWdW4EqmdhTepDhG
+         eCB6gcQWeVvC0OySD3hO3lUSUaeD1PUUIkqDlrefmN/6Rco+mDa4Fsd5eZlcZ1Xd7388
+         Du6hmZaUk+Xtqy2iDhImxyodBf69+9uayw+rkkqxhlcyCPahutVMccdmsTDpnl7HXs91
+         iG5BIul//sDS2LKuSUmznmV6DBbwIn0aKrJaTd5NxhKTtbr1lQkz7jTpLxxmRGg64CG8
+         eMgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnAko+01/ipj10ovQYFkalt1zt08fk94DT1OOKTwpKvie501RlNHmEwWaDeo/n2YJo/uxsynemrfGaa+9k@vger.kernel.org, AJvYcCVnIRkP+K1yTwz+d0N0BoECiJY8wTU6xcWx3mzaw6nh2/B/qrtFICNpPubz/lXodWQcVHVMnPUE5A9Q@vger.kernel.org, AJvYcCWHt+xQKYFgFqVtmzQtJ3HU/rtvhDs5mdLPnG4/JxB2QUg4yriHHrU15Ecrdmqkkvj0RLK0+9mNdyRUkg==@vger.kernel.org, AJvYcCWRnIR+aqbPZPMmlZNoAUnQTb/HimYkEujKUVQI4i1pBVJ3nyIh0LWPUWpA+UGCNGH7IA36xxi99R8g2F5w@vger.kernel.org, AJvYcCWrW/IUI5dYNavJqcHM62cOsBStfSBunBJ9upsWH87mte+mnreSdZ1lEhMMspzqZ8oZCgoi0vxm80y52jF9FdX04oA=@vger.kernel.org, AJvYcCXUoDnoJ1HKkCLAdwkhk5/nms1emyhms4fuJ5ZBOcu0IJ9RxClewRPqtqGa8VFpRiBmEAGknDVXs2DB@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrSJvsu9Ii+nT65lA/uZ1D2ufeILx0OEua4fauOkZI6UVv4CHB
+	/z9rJ5gomgaThxpnN5afjIkjIknMAOwR/DNjOmVILcRHpWd0ippdep2n9BAx0WKKowbmXr2W2ns
+	19gW1NXBZWQjHoFa7DqKqzqpcjLI=
+X-Gm-Gg: ASbGncsWRtyjuVRRK1LyIQzw03lH7NeJJZya9nNPFiYzhm0f1lPjI02nVF6BuhHBEjX
+	7rB8EZnnvOKU2U/kGJMaFio6rcx2n5msSz/h/PahKpAOEVBqmfjIfdbOQ/xwwAptGTsDhxntNtd
+	Z+D/2/8K7A5dYypR2LeQ5BgCoDdZwRN1fyoBAZQc0ScjeGmTBeiZSbyA==
+X-Google-Smtp-Source: AGHT+IFSeOGA2alvM6QeKWz4GkE6DGO1ZrCPg1gcKCQ11FxwYR0XiZJAS4I8ijlIiqbfKsOobnAycg3lAGA3S6FUZm0=
+X-Received: by 2002:a05:6122:889:b0:520:4996:7cf2 with SMTP id
+ 71dfb90a1353d-527c35f89c5mr7652543e0c.10.1744626125325; Mon, 14 Apr 2025
+ 03:22:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <efe91d3f-a2e3-4bee-a7e5-36ea4fc0968a@quicinc.com>
-X-Authority-Analysis: v=2.4 cv=ZIrXmW7b c=1 sm=1 tr=0 ts=67fcdfc6 cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=rqxffTeNWxrA2CmQLHoA:9 a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: H9nZ_6rcqNmUesG9qYGXhXojdjcy7bdf
-X-Proofpoint-ORIG-GUID: H9nZ_6rcqNmUesG9qYGXhXojdjcy7bdf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-14_03,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- clxscore=1015 priorityscore=1501 bulkscore=0 phishscore=0 mlxlogscore=999
- spamscore=0 impostorscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504140074
+References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250407191628.323613-5-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVjrHN8e-yWTFWE1BLfnQKDeYsvuGepkoqcgxrR+CK5+w@mail.gmail.com>
+In-Reply-To: <CAMuHMdVjrHN8e-yWTFWE1BLfnQKDeYsvuGepkoqcgxrR+CK5+w@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 14 Apr 2025 11:21:39 +0100
+X-Gm-Features: ATxdqUFuOQmoL7ZTIiCRaOJodzbfgENtFmE4ZyvW6KnP_pB8NrLn_eb62g4E32I
+Message-ID: <CA+V-a8s0RbgEB2kHDtv35jOtSNw2ThMB_GEgX1SLdOdiRtiPfQ@mail.gmail.com>
+Subject: Re: [PATCH v2 04/12] soc: renesas: sysc: Add SoC identification for
+ RZ/V2N SoC
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 14, 2025 at 03:39:04PM +0530, Jagadeesh Kona wrote:
-> 
-> 
-> On 4/11/2025 2:21 PM, Dmitry Baryshkov wrote:
-> > On Fri, 11 Apr 2025 at 10:14, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
-> >>
-> >>
-> >>
-> >> On 3/27/2025 6:20 PM, Dmitry Baryshkov wrote:
-> >>> On Thu, Mar 27, 2025 at 03:22:26PM +0530, Jagadeesh Kona wrote:
-> >>>> Add support to configure PLLS and clk registers in qcom_cc_really_probe().
-> >>>> This ensures all required power domains are enabled and kept ON by runtime
-> >>>> PM code in qcom_cc_really_probe() before configuring the PLLS or clock
-> >>>> registers.
-> >>>>
-> >>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> >>>> ---
-> >>>>  drivers/clk/qcom/common.c | 28 ++++++++++++++++++++++++++++
-> >>>>  drivers/clk/qcom/common.h | 19 +++++++++++++++++++
-> >>>>  2 files changed, 47 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> >>>> index 9cbf1c5296dad3ee5477a2f5a445488707663b9d..c4d980c6145834969fada14863360ee81c9aa251 100644
-> >>>> --- a/drivers/clk/qcom/common.c
-> >>>> +++ b/drivers/clk/qcom/common.c
-> >>>> @@ -14,6 +14,8 @@
-> >>>>  #include <linux/of.h>
-> >>>>
-> >>>>  #include "common.h"
-> >>>> +#include "clk-alpha-pll.h"
-> >>>> +#include "clk-branch.h"
-> >>>>  #include "clk-rcg.h"
-> >>>>  #include "clk-regmap.h"
-> >>>>  #include "reset.h"
-> >>>> @@ -285,6 +287,29 @@ static int qcom_cc_icc_register(struct device *dev,
-> >>>>                                                   desc->num_icc_hws, icd);
-> >>>>  }
-> >>>>
-> >>>> +static void qcom_cc_clk_pll_configure(const struct qcom_cc_desc *desc,
-> >>>> +                                  struct regmap *regmap)
-> >>>> +{
-> >>>> +    int i;
-> >>>> +
-> >>>> +    for (i = 0; i < desc->num_alpha_plls; i++)
-> >>>> +            qcom_clk_alpha_pll_configure(desc->alpha_plls[i], regmap);
-> >>>> +}
-> >>>> +
-> >>>> +static void qcom_cc_clk_regs_configure(const struct qcom_cc_desc *desc,
-> >>>> +                                   struct regmap *regmap)
-> >>>> +{
-> >>>> +    struct qcom_clk_reg_setting *clk_regs = desc->clk_regs;
-> >>>> +    int i;
-> >>>> +
-> >>>> +    for (i = 0; i < desc->num_clk_cbcrs; i++)
-> >>>> +            qcom_branch_set_clk_en(regmap, desc->clk_cbcrs[i]);
-> >>>> +
-> >>>> +    for (i = 0 ; i < desc->num_clk_regs; i++)
-> >>>> +            regmap_update_bits(regmap, clk_regs[i].offset,
-> >>>> +                               clk_regs[i].mask, clk_regs[i].val);
-> >>>
-> >>> I think there are other semantic functions which we don't want to
-> >>> convert to offset-mask-val tuples. See drivers/clk/qcom/clk-branch.h.
-> >>> I'd suggest to move setup steps to a driver callback. We can improve it
-> >>> later on if it is found to make sense, but it won't block this series
-> >>> from being merged.
-> >>>
-> >>
-> >> Yes, there are other wrapper functions as well but they are unused in most
-> >> clock controllers. We will check more on how we can improve this in a separate
-> >> series.
-> > 
-> > Please do it the other way around. Implement a generic callback, then
-> > we can check how to sort things out.
-> > 
-> 
-> Yeah, but since this series doesn't require any misc register settings update, I
-> will remove the above regmap_update_bits() code for now. I will check further on
-> this and post a separate series for it.
+Hi Geert,
 
-This way we end up with a non-generic solution with no proposed path.
-I'd really suggest using a callback for now to configure all
-platform-specific and then post a separte series adding clk_cbcrs and
-related functionality.
+Thank you for the review.
 
-> 
-> Thanks,
-> Jagadeesh
-> 
-> >>
-> >> Thanks,
-> >> Jagadeesh
-> >>
-> >>>> +}
-> >>>> +
-> >>>>  int qcom_cc_really_probe(struct device *dev,
-> >>>>                       const struct qcom_cc_desc *desc, struct regmap *regmap)
-> >>>>  {
-> >>>> @@ -315,6 +340,9 @@ int qcom_cc_really_probe(struct device *dev,
-> >>>>                      return ret;
-> >>>>      }
-> >>>>
-> >>>> +    qcom_cc_clk_pll_configure(desc, regmap);
-> >>>> +    qcom_cc_clk_regs_configure(desc, regmap);
-> >>>> +
-> >>>>      reset = &cc->reset;
-> >>>>      reset->rcdev.of_node = dev->of_node;
-> >>>>      reset->rcdev.ops = &qcom_reset_ops;
-> >>>> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
-> >>>> index 9c10bc8c197cd7dfa25ccd245763ad6acb081523..01b1ae52f2dc580350409d6244578944cce571f0 100644
-> >>>> --- a/drivers/clk/qcom/common.h
-> >>>> +++ b/drivers/clk/qcom/common.h
-> >>>> @@ -25,6 +25,19 @@ struct qcom_icc_hws_data {
-> >>>>      int clk_id;
-> >>>>  };
-> >>>>
-> >>>> +/**
-> >>>> + * struct qcom_clk_reg_setting - Represents miscellaneous clock register settings
-> >>>> + * @offset: address offset for the clock register
-> >>>> + * @mask: bit mask indicating the bits to be updated
-> >>>> + * @val: Encoded value to be set within the specified bit mask
-> >>>> + *       (e.g., if writing 7 to bits 4-7, mask = 0xF0 and val = 0x70)
-> >>>> + */
-> >>>> +struct qcom_clk_reg_setting {
-> >>>> +    u32 offset;
-> >>>> +    u32 mask;
-> >>>> +    u32 val;
-> >>>> +};
-> >>>> +
-> >>>>  struct qcom_cc_desc {
-> >>>>      const struct regmap_config *config;
-> >>>>      struct clk_regmap **clks;
-> >>>> @@ -38,6 +51,12 @@ struct qcom_cc_desc {
-> >>>>      const struct qcom_icc_hws_data *icc_hws;
-> >>>>      size_t num_icc_hws;
-> >>>>      unsigned int icc_first_node_id;
-> >>>> +    u32 *clk_cbcrs;
-> >>>> +    size_t num_clk_cbcrs;
-> >>>> +    struct clk_alpha_pll **alpha_plls;
-> >>>> +    size_t num_alpha_plls;
-> >>>> +    struct qcom_clk_reg_setting *clk_regs;
-> >>>> +    size_t num_clk_regs;
-> >>>>      bool use_rpm;
-> >>>>  };
-> >>>>
-> >>>>
-> >>>> --
-> >>>> 2.34.1
-> >>>>
-> >>>
-> > 
-> > 
-> > 
+On Thu, Apr 10, 2025 at 10:28=E2=80=AFAM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, 7 Apr 2025 at 21:16, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add SoC identification for the RZ/V2N SoC using the System Controller
+> > (SYS) block.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- /dev/null
+> > +++ b/drivers/soc/renesas/r9a09g056-sys.c
+> > @@ -0,0 +1,107 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * RZ/V2N System controller (SYS) driver
+> > + *
+> > + * Copyright (C) 2025 Renesas Electronics Corp.
+> > + */
+> > +
+> > +#include <linux/bitfield.h>
+> > +#include <linux/bits.h>
+> > +#include <linux/device.h>
+> > +#include <linux/init.h>
+> > +#include <linux/io.h>
+> > +#include <linux/string.h>
+> > +
+> > +#include "rz-sysc.h"
+> > +
+> > +/* Register Offsets */
+> > +#define SYS_LSI_MODE           0x300
+> > +#define SYS_LSI_MODE_SEC_EN    BIT(16)
+> > +/*
+> > + * BOOTPLLCA[1:0]
+> > + *         [0,0] =3D> 1.1GHZ
+> > + *         [0,1] =3D> 1.5GHZ
+> > + *         [1,0] =3D> 1.6GHZ
+> > + *         [1,1] =3D> 1.7GHZ
+> > + */
+> > +#define SYS_LSI_MODE_STAT_BOOTPLLCA55  GENMASK(12, 11)
+> > +#define SYS_LSI_MODE_CA55_1_7GHZ       0x3
+> > +
+> > +#define SYS_LSI_PRR                    0x308
+> > +#define SYS_LSI_PRR_GPU_DIS            BIT(0)
+> > +#define SYS_LSI_PRR_ISP_DIS            BIT(4)
+> > +
+> > +#define SYS_RZV2N_FEATURE_G31          BIT(0)
+> > +#define SYS_RZV2N_FEATURE_C55          BIT(1)
+> > +#define SYS_RZV2N_FEATURE_SEC          BIT(2)
+> > +
+> > +static void rzv2n_sys_print_id(struct device *dev,
+> > +                              void __iomem *sysc_base,
+> > +                              struct soc_device_attribute *soc_dev_att=
+r)
+> > +{
+> > +       unsigned int part_number;
+> > +       char features[75] =3D "";
+> > +       u32 prr_val, mode_val;
+> > +       u8 feature_flags;
+> > +
+> > +       prr_val =3D readl(sysc_base + SYS_LSI_PRR);
+> > +       mode_val =3D readl(sysc_base + SYS_LSI_MODE);
+> > +
+> > +       /* Check GPU, ISP and Cryptographic configuration */
+> > +       feature_flags =3D !(prr_val & SYS_LSI_PRR_GPU_DIS) ? SYS_RZV2N_=
+FEATURE_G31 : 0;
+> > +       feature_flags |=3D !(prr_val & SYS_LSI_PRR_ISP_DIS) ? SYS_RZV2N=
+_FEATURE_C55 : 0;
+> > +       feature_flags |=3D (mode_val & SYS_LSI_MODE_SEC_EN) ? SYS_RZV2N=
+_FEATURE_SEC : 0;
+> > +
+> > +       part_number =3D 41;
+> > +       if (feature_flags & SYS_RZV2N_FEATURE_G31)
+> > +               part_number++;
+> > +       if (feature_flags & SYS_RZV2N_FEATURE_C55)
+> > +               part_number +=3D 2;
+> > +       if (feature_flags & SYS_RZV2N_FEATURE_SEC)
+> > +               part_number +=3D 4;
+>
+> The above construct can be simplified to
+>
+>     part_number =3D 41 + feature_flags;
+>
+Agreed.
 
--- 
-With best wishes
-Dmitry
+> > +       if (feature_flags) {
+> > +               unsigned int features_len =3D sizeof(features);
+> > +
+> > +               strscpy(features, "with ");
+> > +               if (feature_flags & SYS_RZV2N_FEATURE_G31)
+> > +                       strlcat(features, "GE3D (Mali-G31)", features_l=
+en);
+> > +
+> > +               if (feature_flags =3D=3D (SYS_RZV2N_FEATURE_G31 |
+> > +                                     SYS_RZV2N_FEATURE_C55 |
+> > +                                     SYS_RZV2N_FEATURE_SEC))
+> > +                       strlcat(features, ", ", features_len);
+> > +               else if ((feature_flags & SYS_RZV2N_FEATURE_G31) &&
+> > +                        (feature_flags & (SYS_RZV2N_FEATURE_C55 | SYS_=
+RZV2N_FEATURE_SEC)))
+> > +                       strlcat(features, " and ", features_len);
+> > +
+> > +               if (feature_flags & SYS_RZV2N_FEATURE_SEC)
+> > +                       strlcat(features, "Cryptographic engine", featu=
+res_len);
+> > +
+> > +               if ((feature_flags & SYS_RZV2N_FEATURE_SEC) &&
+> > +                   (feature_flags & SYS_RZV2N_FEATURE_C55))
+> > +                       strlcat(features, " and ", features_len);
+> > +
+> > +               if (feature_flags & SYS_RZV2N_FEATURE_C55)
+> > +                       strlcat(features, "ISP (Mali-C55)", features_le=
+n);
+> > +       }
+>
+> The above looks overly complicated to me.  What about handling it
+> like on RZ/V2H?  I agree having 3x "with" doesn't look nice, but you
+> could just drop all "with"s.
+>
+Ok, I will switch like below:
+
+part_number =3D 41 + feature_flags;
+
+dev_info(dev, "Detected Renesas %s %sn%d Rev %s%s%s%s%s\n",
+soc_dev_attr->family,
+               soc_dev_attr->soc_id, part_number,
+soc_dev_attr->revision, feature_flags ?
+               " with" : "", feature_flags & SYS_RZV2N_FEATURE_G31 ? "
+GE3D (Mali-G31)" : "",
+               feature_flags & SYS_RZV2N_FEATURE_SEC ? " Cryptographic
+engine" : "",
+               feature_flags & SYS_RZV2N_FEATURE_C55 ? " ISP (Mali-C55)" : =
+"");
+
+
+> > +       dev_info(dev, "Detected Renesas %s %sn%d Rev %s %s\n", soc_dev_=
+attr->family,
+> > +                soc_dev_attr->soc_id, part_number, soc_dev_attr->revis=
+ion, features);
+>
+> This prints a trailing space if features is empty.
+>
+Agreed.
+
+Cheers,
+Prabhakar
