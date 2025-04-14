@@ -1,132 +1,73 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC1B1AD403
-	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 06:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7942580ED;
+	Mon, 14 Apr 2025 07:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744613376; cv=none; b=P28Q+mKwNAkHPzGZ9k7hKt+iSW46ChX5Cghal//GjGwAXnh7JxL9I/SGDiYL7HY3QrYa5reTc2lGUxYX46/MvDAp+aCREvpUgGqboRQ2W24bH9tTwZ3uSyZnojaH0/ElFEwTmfhDTivPIUj24C2P/OXaXFIVnq6dinNebHyzaGU=
+	t=1744615429; cv=none; b=GvXnL3wkePr9Ard8Gc3/11WYylOlStez8OwK6NVgFM1xSS9AmlqPFpyOA5zvT13HxCFif+J/phfsjgF4rMp9AeFLp0CzvsegLlGm0q8VwolhsZXZewe2LdGSpfzfHRJqgdjXyWoQGsz9Ik33e3d7yvBXEfdnTQjo3xDnHYIW+Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744613376; c=relaxed/simple;
-	bh=HszDIsDDdPi+LLqbGeL2rwAlUkU1fiYytm1bZ60r5cA=;
+	s=arc-20240116; t=1744615429; c=relaxed/simple;
+	bh=G2oIFEzK6mj2r/1QbMhHoZ9M5B89hRoZaffofIX9Xgo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CchdTr/jWMQzeLx0WQXgiu2trSjDTCB+JHNm7r97N+672sExBzNyJp10ShjpWIIamQzOPUt4tUdON3RkxXxJoYtgK2i/sW+msaG2fYHslpwzxhj8Mt1gD0KRkIB5SFDW0ruvgn6n6xyrGwioS1dV7EBYiLhiVtO1NHb7/2Q3W0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1u4Dd7-0006Bf-4K; Mon, 14 Apr 2025 08:49:17 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1u4Dd6-000CoZ-2M;
-	Mon, 14 Apr 2025 08:49:16 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1u4Dd6-000Aoc-1x;
-	Mon, 14 Apr 2025 08:49:16 +0200
-Date: Mon, 14 Apr 2025 08:49:16 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Rob Herring <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@pengutronix.de,
-	Alvin =?iso-8859-15?Q?=A6ipraga?= <alsi@bang-olufsen.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RsPsJa/tIlHL9XexsATYhNg3Ao1VCR0O8e+TBg9b3BR+k4KTJUfw0bAezqJG4jtg2eSFM6Mn0TU8fqvKVWu3uYQl7R5m7goGqD4KvP7pmuxke/HXg3EWSct5YSQmUtArOVAzOs1Jzj9CxEtddyfMJRS/d/Y+S/sBEBpmkfVJamY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWYAl3mV; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWYAl3mV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AD94C4CEEC;
+	Mon, 14 Apr 2025 07:23:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744615428;
+	bh=G2oIFEzK6mj2r/1QbMhHoZ9M5B89hRoZaffofIX9Xgo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VWYAl3mV7DIXxxUEpAc1SaZaLNosxof8IsmQphzeLhc39H49noHqUeEN4mtI2EzT2
+	 HtwhZXTYoXXV8ymqzl6puUZICTT8oAMoDVaXTBrTsQ+wIY3YG7BJvkgiDUO46hnS2f
+	 5Or/GseHd8P1unnlT4/9EVUzDkxdj6pWLqqY3Djt/Mb7sLqBhv284Wsmc6u2ePbRA+
+	 C4wf8Dmn2aND+rNTK4Rp0HgRbbhpPVRk7LJAS1QX+10uZDz/foSGM6OXHaJXzRfdhX
+	 kXGB2h/EnFgf/LiomUk4/DugMWIm3hMpkOYpnnq+rjX3RCHTODhVZcfF3okvwaU/Al
+	 p1GF5S88MKH0w==
+Date: Mon, 14 Apr 2025 09:23:43 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, 
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
 Subject: Re: [PATCH v3 2/3] dt-bindings: clock: add TI CDCE6214 binding
-Message-ID: <Z_yv7NKXs-JlmV63@pengutronix.de>
+Message-ID: <20250414-beige-guillemot-of-purring-52d5b7@shite>
 References: <20250410-clk-cdce6214-v3-0-d73cf9ff3d80@pengutronix.de>
  <20250410-clk-cdce6214-v3-2-d73cf9ff3d80@pengutronix.de>
- <20250411172149.GA3468525-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250411172149.GA3468525-robh@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <20250410-clk-cdce6214-v3-2-d73cf9ff3d80@pengutronix.de>
 
-On Fri, Apr 11, 2025 at 12:21:49PM -0500, Rob Herring wrote:
-> On Thu, Apr 10, 2025 at 12:34:57PM +0200, Sascha Hauer wrote:
-> > The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
-> > Differential Outputs, Two Inputs, and Internal EEPROM. This patch adds
-> > the device tree binding for this chip.
-> > 
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > ---
-> >  .../devicetree/bindings/clock/ti,cdce6214.yaml     | 155 +++++++++++++++++++++
-> >  include/dt-bindings/clock/ti,cdce6214.h            |  24 ++++
-> >  2 files changed, 179 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> > new file mode 100644
-> > index 0000000000000..12737e67dcf2d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> > @@ -0,0 +1,155 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: TI CDCE6214 programmable clock generator with PLL
-> > +
-> > +maintainers:
-> > +  - Sascha Hauer <s.hauer@pengutronix.de>
-> > +
-> > +description:
-> 
-> Needs '>' modifier
+On Thu, Apr 10, 2025 at 12:34:57PM GMT, Sascha Hauer wrote:
+> +        };
+> +    };
+> diff --git a/include/dt-bindings/clock/ti,cdce6214.h b/include/dt-bindings/clock/ti,cdce6214.h
+> new file mode 100644
+> index 0000000000000..1b41060896cc3
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/ti,cdce6214.h
+> @@ -0,0 +1,24 @@
+> +#ifndef _DT_BINDINGS_CLK_TI_CDCE6214_H
+> +#define _DT_BINDINGS_CLK_TI_CDCE6214_H
 
-Ok.
+Missing license.
 
-> 
-> > +  Ultra-Low Power Clock Generator With One PLL, Four Differential Outputs,
-> > +  Two Inputs, and Internal EEPROM
-> > +
-> > +  https://www.ti.com/product/CDCE6214
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - ti,cdce6214
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    minItems: 1
-> > +    maxItems: 2
-> > +
-> > +  clock-names:
-> > +    minItems: 1
-> > +    maxItems: 1
-> 
-> How can you have 2 clocks, but only 1 name? See my reply on v2.
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
 
-maxItems: 1 is wrong. Should be 2.
+Best regards,
+Krzysztof
 
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
