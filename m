@@ -1,172 +1,253 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63384257AFA
-	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 09:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DBE266B42;
+	Mon, 14 Apr 2025 10:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744624566; cv=none; b=BAm5ClI4atRZULoK8ZDqAEsZ6GB09emqzI96Fm6wtxapDNgnOKbNMb550U0eGD5A24g4x3FbDtmyGZKHcdMELyfjeiuSy5/hnWfWn22voQRcc+JeypxxXjoZmwxlK+6q9vYr7FksENucNzq0PNCKX6WjqPMW6nZuY59p+yg38oQ=
+	t=1744625363; cv=none; b=joNNXwV9UbGnyin0bphUUm8q6MAqhGQVHXqfn5kyILcXKBagIhPmLvSHMluyKUZW0eDPcf23EyYOFcXIpKLJ7KsoRtiFyQa/h3xXoaAfvyjirQv1L3+jO1bklWavtmUrmQZ+ZFl8eSKGkgS61V5lPZFwY0YSQ8bBvD8jmTcGSQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744624566; c=relaxed/simple;
-	bh=OV1EzzxU6BT+4RXWgFZVQIO7++2gzfwNYAlmrRPG1S8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SLmtR/Xm13VcqdHWvPQXlW+1Tk2Itfw5HZXuRiYX7y3qKaV2ctltTjEwLtFY1UVutVJFiJpHVlf3EgUhIZvvk8mAK5+DYYm3oSRHPtHC6RAPLKwmdi5QKtjnenq5wpvLQYVY+Dj6NTCincx69Di8n9lkPLFPm9R8i4m6IpRyrWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1u4GXS-0007bO-1c; Mon, 14 Apr 2025 11:55:38 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1u4GXQ-000EF7-1a;
-	Mon, 14 Apr 2025 11:55:36 +0200
-Received: from pengutronix.de (p5b1645f7.dip0.t-ipconnect.de [91.22.69.247])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 1E13C3F82E7;
-	Mon, 14 Apr 2025 09:55:36 +0000 (UTC)
-Date: Mon, 14 Apr 2025 11:55:34 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>, 
-	Maxime Ripard <mripard@kernel.org>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, NXP S32 Linux Team <s32@nxp.com>, 
-	imx@lists.linux.dev, Christophe Lizzi <clizzi@redhat.com>, 
-	Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>, 
-	Eric Chanudet <echanude@redhat.com>, Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	kernel@pengutronix.de
-Subject: Re: [PATCH] can: flexcan: enable PER clock before obtaining its rate
-Message-ID: <20250414-camouflaged-silver-dodo-d0c000-mkl@pengutronix.de>
-References: <20250414073646.1473157-1-ciprianmarian.costea@oss.nxp.com>
+	s=arc-20240116; t=1744625363; c=relaxed/simple;
+	bh=aUq8W3G9onRt3bSXFhEouZArmCCiY8IhU0Kx/aGl0Wo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=d7vbnfM0T+6bfjbLAIJCtNaOEDXBLeHna3aFQn2SO/W+rN7E57qz4U2IGPEIngxj8v7bYMu8o0uVkhhSs5QafvkRohJb+pUJ7e9QiEnJviRYX6SY+fU0pmnkoWiCJ+VImv8ufwrem0W5jsNCp6RMKiG77OtmUhwkQFSNKMtwNFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TT1h/IjK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TT1h/IjK"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53E99rZB016340;
+	Mon, 14 Apr 2025 10:09:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dWPDlV0aqyLqi0ktAVzjEBr7Msw8l78IaAlVD9PFxiY=; b=TT1h/IjKHMqUlljX
+	+6unZDH3zP3QfJXQAvRWDRmvjc7P4aBw/ju84Jx3lEAfA2D6NAAjvdrp17CmlTfs
+	VePq3rZDINXxTfCSflQnrbA/G0WyVKxWxfQ+ynov26U3XSfY1VhWoVYTy+hmxTqj
+	Oy/Akebe2L9tSLwSLBHAIFzvcUdTaOmkZnvcf0t7BfPjRta4WgFhkd0dIrU7gk7D
+	6UWQwJcRppPZQhkelRmIsLr1+vkixMsOGjqmKk7aa2UvoSouVRDdhBlP6fFdI0hP
+	HbrTUOLW6p2j7dTeUPFFf4Mlq9nOm/r5lHd7/N9xAqEg84A9a9n6tXBsa7f+IZvV
+	XtTHXw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yfgjc5b1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Apr 2025 10:09:14 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53EA9DnE012261
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Apr 2025 10:09:13 GMT
+Received: from [10.218.22.7] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Apr
+ 2025 03:09:07 -0700
+Message-ID: <efe91d3f-a2e3-4bee-a7e5-36ea4fc0968a@quicinc.com>
+Date: Mon, 14 Apr 2025 15:39:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="emwb45a7ubtws4mt"
-Content-Disposition: inline
-In-Reply-To: <20250414073646.1473157-1-ciprianmarian.costea@oss.nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/18] clk: qcom: common: Add support to configure clk
+ regs in qcom_cc_really_probe
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Vladimir
+ Zapolskiy" <vladimir.zapolskiy@linaro.org>,
+        Dmitry Baryshkov
+	<lumag@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>
+References: <20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com>
+ <20250327-videocc-pll-multi-pd-voting-v3-6-895fafd62627@quicinc.com>
+ <aidlp3iq6pxym52tp63w35tpcctw4443yihvcwsdszk62xbwfp@esqpmsc4e6qd>
+ <f1125370-c16a-4c20-a01d-2221fb12fdcb@quicinc.com>
+ <CAO9ioeWmuPhBPivthidXTFfnXRBx9rd=iX5aqjB4bMcCKueXeg@mail.gmail.com>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <CAO9ioeWmuPhBPivthidXTFfnXRBx9rd=iX5aqjB4bMcCKueXeg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: X9NEYt8utD8CHYrA1nJQiVSqsh-Msqn2
+X-Proofpoint-ORIG-GUID: X9NEYt8utD8CHYrA1nJQiVSqsh-Msqn2
+X-Authority-Analysis: v=2.4 cv=Cve/cm4D c=1 sm=1 tr=0 ts=67fcdeca cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=x0jix2-gbSxKepSfYNQA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-14_03,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504140072
 
 
---emwb45a7ubtws4mt
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: flexcan: enable PER clock before obtaining its rate
-MIME-Version: 1.0
 
-On 14.04.2025 10:36:46, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->=20
-> The FlexCan driver assumes that the frequency of the 'per' clock can be
-> obtained even on disabled clocks, which is not always true.
->=20
-> According to 'clk_get_rate' documentation, it is only valid once the clock
-> source has been enabled.
+On 4/11/2025 2:21 PM, Dmitry Baryshkov wrote:
+> On Fri, 11 Apr 2025 at 10:14, Jagadeesh Kona <quic_jkona@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 3/27/2025 6:20 PM, Dmitry Baryshkov wrote:
+>>> On Thu, Mar 27, 2025 at 03:22:26PM +0530, Jagadeesh Kona wrote:
+>>>> Add support to configure PLLS and clk registers in qcom_cc_really_probe().
+>>>> This ensures all required power domains are enabled and kept ON by runtime
+>>>> PM code in qcom_cc_really_probe() before configuring the PLLS or clock
+>>>> registers.
+>>>>
+>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>>> ---
+>>>>  drivers/clk/qcom/common.c | 28 ++++++++++++++++++++++++++++
+>>>>  drivers/clk/qcom/common.h | 19 +++++++++++++++++++
+>>>>  2 files changed, 47 insertions(+)
+>>>>
+>>>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+>>>> index 9cbf1c5296dad3ee5477a2f5a445488707663b9d..c4d980c6145834969fada14863360ee81c9aa251 100644
+>>>> --- a/drivers/clk/qcom/common.c
+>>>> +++ b/drivers/clk/qcom/common.c
+>>>> @@ -14,6 +14,8 @@
+>>>>  #include <linux/of.h>
+>>>>
+>>>>  #include "common.h"
+>>>> +#include "clk-alpha-pll.h"
+>>>> +#include "clk-branch.h"
+>>>>  #include "clk-rcg.h"
+>>>>  #include "clk-regmap.h"
+>>>>  #include "reset.h"
+>>>> @@ -285,6 +287,29 @@ static int qcom_cc_icc_register(struct device *dev,
+>>>>                                                   desc->num_icc_hws, icd);
+>>>>  }
+>>>>
+>>>> +static void qcom_cc_clk_pll_configure(const struct qcom_cc_desc *desc,
+>>>> +                                  struct regmap *regmap)
+>>>> +{
+>>>> +    int i;
+>>>> +
+>>>> +    for (i = 0; i < desc->num_alpha_plls; i++)
+>>>> +            qcom_clk_alpha_pll_configure(desc->alpha_plls[i], regmap);
+>>>> +}
+>>>> +
+>>>> +static void qcom_cc_clk_regs_configure(const struct qcom_cc_desc *desc,
+>>>> +                                   struct regmap *regmap)
+>>>> +{
+>>>> +    struct qcom_clk_reg_setting *clk_regs = desc->clk_regs;
+>>>> +    int i;
+>>>> +
+>>>> +    for (i = 0; i < desc->num_clk_cbcrs; i++)
+>>>> +            qcom_branch_set_clk_en(regmap, desc->clk_cbcrs[i]);
+>>>> +
+>>>> +    for (i = 0 ; i < desc->num_clk_regs; i++)
+>>>> +            regmap_update_bits(regmap, clk_regs[i].offset,
+>>>> +                               clk_regs[i].mask, clk_regs[i].val);
+>>>
+>>> I think there are other semantic functions which we don't want to
+>>> convert to offset-mask-val tuples. See drivers/clk/qcom/clk-branch.h.
+>>> I'd suggest to move setup steps to a driver callback. We can improve it
+>>> later on if it is found to make sense, but it won't block this series
+>>> from being merged.
+>>>
+>>
+>> Yes, there are other wrapper functions as well but they are unused in most
+>> clock controllers. We will check more on how we can improve this in a separate
+>> series.
+> 
+> Please do it the other way around. Implement a generic callback, then
+> we can check how to sort things out.
+> 
 
-In commit bde8870cd8c3 ("clk: Clarify clk_get_rate() expectations")
-Maxime Ripard changed the documentation of the of the function in clk.c
-to say it's allowed. However clk.h states "This is only valid once the
-clock source has been enabled.".
+Yeah, but since this series doesn't require any misc register settings update, I
+will remove the above regmap_update_bits() code for now. I will check further on
+this and post a separate series for it.
 
-I've added the common clock maintainers to Cc.
+Thanks,
+Jagadeesh
 
-Which documentation is correct? Is the clk.h correct for archs not using
-the common clock framework?
-
-regards,
-Marc
-
-> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> ---
->  drivers/net/can/flexcan/flexcan-core.c | 22 +++++++++++++++++++++-
->  1 file changed, 21 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/fle=
-xcan/flexcan-core.c
-> index 6d80c341b26f..b142aa60620e 100644
-> --- a/drivers/net/can/flexcan/flexcan-core.c
-> +++ b/drivers/net/can/flexcan/flexcan-core.c
-> @@ -2056,6 +2056,26 @@ static int flexcan_setup_stop_mode(struct platform=
-_device *pdev)
->  	return 0;
->  }
-> =20
-> +static unsigned long get_per_clk_rate(struct clk *clk)
-> +{
-> +	unsigned long rate;
-> +	int err;
-> +
-> +	rate =3D clk_get_rate(clk);
-> +	if (rate)
-> +		return rate;
-> +
-> +	/* Just in case this clock is disabled by default */
-> +	err =3D clk_prepare_enable(clk);
-> +	if (err)
-> +		return 0;
-> +
-> +	rate =3D clk_get_rate(clk);
-> +	clk_disable_unprepare(clk);
-> +
-> +	return rate;
-> +}
-> +
->  static const struct of_device_id flexcan_of_match[] =3D {
->  	{ .compatible =3D "fsl,imx8qm-flexcan", .data =3D &fsl_imx8qm_devtype_d=
-ata, },
->  	{ .compatible =3D "fsl,imx8mp-flexcan", .data =3D &fsl_imx8mp_devtype_d=
-ata, },
-> @@ -2137,7 +2157,7 @@ static int flexcan_probe(struct platform_device *pd=
-ev)
->  			dev_err(&pdev->dev, "no per clock defined\n");
->  			return PTR_ERR(clk_per);
->  		}
-> -		clock_freq =3D clk_get_rate(clk_per);
-> +		clock_freq =3D get_per_clk_rate(clk_per);
->  	}
-> =20
->  	irq =3D platform_get_irq(pdev, 0);
-> --=20
-> 2.45.2
->=20
->=20
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---emwb45a7ubtws4mt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmf825MACgkQDHRl3/mQ
-kZyPOgf/ZK/dctPrRanQ8cESl0HysD5WUyHjOnGz8QheSqA3FaUsQ5v4t1bvSEyL
-f0iPY0c9UoUe2aDDRppY4lSMjeiXg3YVaJLd1nBBOwUsF+SZ/WySZ3UaWGdYV+sN
-jQk+Hok8HJ4zeW2teZ03GMUJBfgmKDhiil/xmls0arclzXxoFe1vwcuvKObVoqAg
-s/6gspWKEoKBul0N+M2LkFOO2hUg7W1q/yYqZzs5PPnkHXWo28eTLLUIzenzhShW
-B3J9GopR7Q5Bphv31Djkt3afp2h8iqoQgv1Dql9XejSNG37kUbpP9b9TXltrVKDN
-OVjasVrqFdBKezzIqAF77aB9ZdzYaw==
-=PwcY
------END PGP SIGNATURE-----
-
---emwb45a7ubtws4mt--
+>>
+>> Thanks,
+>> Jagadeesh
+>>
+>>>> +}
+>>>> +
+>>>>  int qcom_cc_really_probe(struct device *dev,
+>>>>                       const struct qcom_cc_desc *desc, struct regmap *regmap)
+>>>>  {
+>>>> @@ -315,6 +340,9 @@ int qcom_cc_really_probe(struct device *dev,
+>>>>                      return ret;
+>>>>      }
+>>>>
+>>>> +    qcom_cc_clk_pll_configure(desc, regmap);
+>>>> +    qcom_cc_clk_regs_configure(desc, regmap);
+>>>> +
+>>>>      reset = &cc->reset;
+>>>>      reset->rcdev.of_node = dev->of_node;
+>>>>      reset->rcdev.ops = &qcom_reset_ops;
+>>>> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+>>>> index 9c10bc8c197cd7dfa25ccd245763ad6acb081523..01b1ae52f2dc580350409d6244578944cce571f0 100644
+>>>> --- a/drivers/clk/qcom/common.h
+>>>> +++ b/drivers/clk/qcom/common.h
+>>>> @@ -25,6 +25,19 @@ struct qcom_icc_hws_data {
+>>>>      int clk_id;
+>>>>  };
+>>>>
+>>>> +/**
+>>>> + * struct qcom_clk_reg_setting - Represents miscellaneous clock register settings
+>>>> + * @offset: address offset for the clock register
+>>>> + * @mask: bit mask indicating the bits to be updated
+>>>> + * @val: Encoded value to be set within the specified bit mask
+>>>> + *       (e.g., if writing 7 to bits 4-7, mask = 0xF0 and val = 0x70)
+>>>> + */
+>>>> +struct qcom_clk_reg_setting {
+>>>> +    u32 offset;
+>>>> +    u32 mask;
+>>>> +    u32 val;
+>>>> +};
+>>>> +
+>>>>  struct qcom_cc_desc {
+>>>>      const struct regmap_config *config;
+>>>>      struct clk_regmap **clks;
+>>>> @@ -38,6 +51,12 @@ struct qcom_cc_desc {
+>>>>      const struct qcom_icc_hws_data *icc_hws;
+>>>>      size_t num_icc_hws;
+>>>>      unsigned int icc_first_node_id;
+>>>> +    u32 *clk_cbcrs;
+>>>> +    size_t num_clk_cbcrs;
+>>>> +    struct clk_alpha_pll **alpha_plls;
+>>>> +    size_t num_alpha_plls;
+>>>> +    struct qcom_clk_reg_setting *clk_regs;
+>>>> +    size_t num_clk_regs;
+>>>>      bool use_rpm;
+>>>>  };
+>>>>
+>>>>
+>>>> --
+>>>> 2.34.1
+>>>>
+>>>
+> 
+> 
+> 
