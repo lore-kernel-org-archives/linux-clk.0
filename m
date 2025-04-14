@@ -1,383 +1,196 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2C527BF6A
-	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 10:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB0025D8E0;
+	Mon, 14 Apr 2025 11:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744627938; cv=none; b=AFo/26KJfwyfSlcI11k9MdQ97mEfuuYwHMOTwaCq7FRgqafiiBswQ2+5QWnlKzTa6EoVkAFSm1DStmZ7YvmiSDN+lUU35FZGtlCo2UGYPZ2nEpdiZaJxC008e65t2BZUJ/L3Nut3MkF1NCAm9gvKwkwnrIpCCOIuEX/n4+dN1yY=
+	t=1744629586; cv=none; b=nJ3K4YXaGKnfbYQasC7/4dFLdTB1ZftTgsfYr1Ced8cZDDbc6KvnuBvsz6ocNW8pQ3SFGMl97j9MUq3nCr9qYU/NgwTljTLJAFvThH2tpa8enDJHtyVhu+wLGCHRqC4Hs74/4Ufk44zvWlueRhhLb5b4vjj4rl3PFBNBJnkuDJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744627938; c=relaxed/simple;
-	bh=OfXWzcASFdHkw+rQrReNFmKefWqB2Yv7RRdxhucvLis=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mH23v1sadlt4uUFTFN6/2OuRU538SPimaBQE752GADLvo0rf6dsoEqzPrTpFxh0+XzQ55Xy4VciMxZIBEyHJn7C7hxRY99TJCqtFuudgZRenSAh/S+oTyFskipW8PWqg+2vhakgJIV5saAPdfSWT/FDlMVWEXi4YEcCxl98jC14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FQTD9NRo; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1744629586; c=relaxed/simple;
+	bh=BKzGtY0m29Mf6TkuRUUflwug+d15q5+nqop+AkHVYkQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hqgjieHN15DanqzKtNM+AnlVSc2dOC97jAmUlrQJDy+GbzT/pxUciGINsSamQYm5X4mx+SJ14QJ8U+31SglGpzcjktGIswYZi0n4wALZ+PFHt0vW1Tyb/TaPvPpHq+J+PcvaI0nU32WJb4R2lHU4RTu/d+ycQQc6JbhRZomuO+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ec3pTnbu; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FQTD9NRo"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-736b350a22cso3375851b3a.1
-        for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 03:52:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ec3pTnbu"
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523f1b31cf8so1480674e0c.0;
+        Mon, 14 Apr 2025 04:19:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744627936; x=1745232736; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lK+fUhBepKMqw6zHBM4g47enyu9DAO43HLamRknec80=;
-        b=FQTD9NRocJbqRIX+JwfKqeU+eZ3LyKe7ulsBwyen37iYJfmSfYKpGIik+SKxxDXTu3
-         RUMCd7T5ULVxC/Z0JN12wtVLmoqVQ7Zi6cKdNdQfy4br8w7kHC+f0vKad6DOnFdamrZP
-         /cyIAqfPxYY5YVVvXfEDvEo53uoy1gGNgRHOjlQioHTmyX7isiCn3n/rGvUTLlyHiy7L
-         UAhaBMQFVrLK+7JUe/QiXSJZfs1MftC5ubhyCMyULhTswExkpJ/qnU8ogKX8BSAAygkX
-         4AW6/y8p94CHv0+ovJlkxmr0gn5x0VqhxgOTiKsKFjJLST8AJgBBhceEXVVTPr8ak0zi
-         oWOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744627936; x=1745232736;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744629583; x=1745234383; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lK+fUhBepKMqw6zHBM4g47enyu9DAO43HLamRknec80=;
-        b=iHRR+WYPeLAEJyx1antNNBR1T3wJi07JrIFJyBwbjhp+77JZROek8NYbAdvH68SZ08
-         xT+jIzLqzE8HLYkR7OuDOUoNXQImguLepy17nYTzzdaUNWG2wcrmpeVfX5NsorKKgqZh
-         dpXHhpSb2N45yp3AFYyNIvkLBN3Owrt4tcbD1MgtgERXThWicbnk4TcP99k1FMCflLLm
-         Mu3GMO8LJpn8Nx4QpYxq5vAcqyi2japWBi70k5NslUOWEIK7YgCwHpXSveq8WnmT14fO
-         CldP2bJI46zQbGv99knr+kUBi4S9N9T2iclxB06sbmccpzZS2axvhKUQ9BP1naDwsjPd
-         +mkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlGubExvQboS+Gb5rn8+StUTFJQ075I06BQLRg7vHE+EdeqGUWzZFFUpyL+aMZV7JfX4vpHSsvZPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/ujXYMQowvE/ey0geGPgPdV57LgwzVHlT8ieXuUm2pI8Y3pcE
-	D0zlrvrTi6uzlIcQgA2vaQ8p5GIP+1KzhK5217QT2HWVjdCfh26fYN5q3tvOByo=
-X-Gm-Gg: ASbGnctqeVYBERe2SLx1NpJRaBYWHUEBxT110He7qdzB1s2GC8EgvRuCgVPf5YWqLkN
-	ICrVj5Y3r8REwwXlz89a9JeSxh59aEOo41BYWQJl84FuK5KqMFpglGLNJW15Sfu4mi087J0nFgG
-	/DR3psM74ZivpukEDt1CVd+wEgiH+Ep/gkFaQISZB9h83Y2qtapxupFIZJHrsoEFL4XwyXgR+E1
-	XniLu/Gu26RcErNd4+RxryhxNiSaSDWp7ZAWvnL9QR6iOSzywyhIxmipXp9UwnGnm50HgdgxuQr
-	RLO3cr+3oZ1KNYTlWjHkUfeSwthsBza2lFwZ/qHRr5EyLJiiDg2A
-X-Google-Smtp-Source: AGHT+IGf76/JgRAw8wNgwqBKu4NDlC8JrtbtBDopdoD5Xs6AJphS7tnkVXQ5d2l1i97zuQqjxDVevg==
-X-Received: by 2002:a05:6a20:cfa1:b0:1fd:f56f:1cbe with SMTP id adf61e73a8af0-201797a192fmr17645570637.13.1744627935875;
-        Mon, 14 Apr 2025 03:52:15 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd22f82a3sm6516216b3a.90.2025.04.14.03.52.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 03:52:15 -0700 (PDT)
-Date: Mon, 14 Apr 2025 16:22:12 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Erik Schilling <erik.schilling@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V9 15/17] rust: cpufreq: Extend abstractions for driver
- registration
-Message-ID: <20250414105212.glxkrto4ybvxgx3y@vireshk-i7>
-References: <cover.1744366571.git.viresh.kumar@linaro.org>
- <2f7a1331ad513b94fb47c05bf1d0f5c3fa803858.1744366572.git.viresh.kumar@linaro.org>
- <Z_kD5G3WhcYlgqmr@cassiopeiae>
- <20250414084706.rjsdaoxmug4p4e7l@vireshk-i7>
- <Z_zX22N9cFmVpC_5@pollux>
+        bh=VEqhZeC/SxQPEFxYDopllibBPq2tN/nqOZR4I+9eMe4=;
+        b=ec3pTnbuSLPB7kJy/d8ZbIX9BwWvom36JE4F3maMqa1CDxCirSOeTTj1ha1R8wmKcs
+         Nsd7fIbPybU10ZUXdMtZg/ZNmWTS/N1boPvr9VTACMMIaHw1C6Fw0EYjSyeWB7NJvClW
+         /8Aqi8LuZnaSsQw4TWBEAD+246TYmAN6veYJPCxqtsTOcVWNvakyK9cfi7gArsHvDRs9
+         L1+YK48aS+3rGeIePfk6qxbR4LFoX+wHvu0ru+fYo6EzYvrLhBrSpcCaogB3QQ/HGfJQ
+         vv9yvcKf4UQDAwFyptbf1087eUUfgV5ApnBLVOm+vByl6TfkVGkyN2X/CsTyLCjPwWp1
+         9kPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744629583; x=1745234383;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VEqhZeC/SxQPEFxYDopllibBPq2tN/nqOZR4I+9eMe4=;
+        b=hgymS6lMnCu1u4BSEMCQJDWqxUuVlEnWtN2SfBVK+oTHDvAthn0WaF78VAZ+wwKhOo
+         BMYsXgdI0Ae1470B0+pNDjY3OZCF99Ai2sh4ezNYUGd71VvArmG5SP8a02hNTtLHXqON
+         vgarPPMY4tyFJkCjMKVJoJur0fMWjtE5lb++88XFdxUHYe1z6c+8EiFRdJMxZoNgGZYW
+         PZ7JPMWDWU9IGYD2n806PxGhraxgpQiR5NB/rSp3+QJOpFOYmJJixOfLni66Tuhptrlb
+         Yoe84UADOVJScc2UjHMYoMEJ+v7goH8Q3222rIYkHMFGh7OLo4/FuA7CrbWZekfuiRL9
+         KkcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2JDKU+n3m5EFHTcjqO1MI5jYSPPiAA2TJPk+01jyHdHN13EMN8qcKbn+AvG6kVL8aFHzq0nPzbqnH@vger.kernel.org, AJvYcCVAic2+cW9OYt3H/I2+lxAcy/gdSOIPtQIep2f2kfuNMPHm3ViGA8yJpPRRfsut/7Nla+2HMsOGlRlfX+OhdqCpAPw=@vger.kernel.org, AJvYcCVSzTXRF/pI1ntmYNdSsPz2EOs2cmTWYpL5JBi9TSaBSNxZTdVkXWsU6Uzmz3W0g0hP5CDuhLLZwi4C3RBn@vger.kernel.org, AJvYcCVw0khGCl0N94Iq7CLJfYys7rhlLUcyHesDaP4EHVRRrgRbfw+rsEnoXafQnCD6ZWa4g1bIwsDGyjd+3lwe@vger.kernel.org, AJvYcCWbE3piOOMi2AcEb7Xytj1/FLox/T2Efn+23vpE+9sTzjZAyECfDgsn11cP0IDy3Fs8hpbCVFvXxDh2vA==@vger.kernel.org, AJvYcCWy8Hn5GLSXC3q4l5BdBWmozfYdtjg2Mm80FSsdxoBdUG9TKKyDbBL+8cfaMaAN+ue1qso21j/fdmX7@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTNNNzsPmgqbj9IzsLa47CZaahd1iRCbybWYiBxLarzbiDUYw+
+	9k5PsYgRGnsER9iNu4UYtZbUy4DDniu+/ilT6dc8VU3iqxOlDps8NoW0f5DGmc19Eq85hjyByXL
+	RIHli8wZ+wCCGsNkgOUoqMCIq+P0=
+X-Gm-Gg: ASbGncs6yX+0kyQZDkILIGly0oKuDtHJ1e4L/g10KY8ZTSdTjFbDHdcGUt/qJYfb4eK
+	YBSCqzXidGnpamOecHrZTXxSCl3S6CUErGz3UUk3wi+nVAIpLMS2bA2aBiCNwLciT8sWlT3s702
+	hGfm5iMfU0NZ279PJnTSRv97ViKz3HmPSL5DlbT3W1L7LBeK1Dq6KLEA==
+X-Google-Smtp-Source: AGHT+IHBThT2zEj4KJtUm3PS9DNJ79HJu09faPsTCT7kPgy8QzXrty9/2BnAr01/9b/AIEkrW8flUc10uUA4F5iz66s=
+X-Received: by 2002:a05:6122:1d89:b0:518:a0ac:1f42 with SMTP id
+ 71dfb90a1353d-527c3464832mr5207743e0c.1.1744629582771; Mon, 14 Apr 2025
+ 04:19:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_zX22N9cFmVpC_5@pollux>
+References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 14 Apr 2025 12:19:16 +0100
+X-Gm-Features: ATxdqUFod-By5skQwut9E6OLv-Y-Yr-c2MfufCYZft6F7eFLNq3WA8NWjWHZnLY
+Message-ID: <CA+V-a8useBh5m+MqGXQwQJhuemehm=bPidL6XydR-FOmVN9QNQ@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] Add support for Renesas RZ/V2N SoC and EVK
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14-04-25, 11:39, Danilo Krummrich wrote:
-> 	const VTABLE: bindings::cpufreq_driver = bindings::cpufreq_driver {
-> 	   name: Self::copy_name(T::NAME),
-> 	   boost_enabled: T::BOOST_ENABLED,
-> 	   flags: T::FLAGS,
-> 	   [...]
-> 	}
+Hi Geert,
 
-Ahh, thanks for this.
+Thank you for the review.
 
--- 
-viresh
+On Mon, Apr 7, 2025 at 8:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
+m> wrote:
+>
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> This patch series adds initial support for the Renesas RZ/V2N (R9A09G056)
+> SoC and its evaluation board (EVK). The Renesas RZ/V2N is a vision AI
+> microprocessor (MPU) designed for power-efficient AI inference and
+> real-time vision processing. It features Renesas' proprietary AI
+> accelerator (DRP-AI3), delivering up to 15 TOPS AI performance, making
+> it ideal for applications such as Driver Monitoring Systems (DMS),
+> industrial monitoring cameras, and mobile robots.
+>
+> Key features of the RZ/V2N SoC:
+>   Processing Power:
+>     - Quad Arm Cortex-A55 cores at 1.8GHz for high-performance computing
+>     - Single Arm Cortex-M33 core at 200MHz for real-time processing
+>     - 1.5MB on-chip SRAM for fast data access
+>     - LPDDR4/LPDDR4X memory interface for high-speed RAM access
+>
+>   AI and Vision Processing:
+>     - DRP-AI3 accelerator for low-power, high-efficiency AI inference
+>     - Arm Mali-C55 ISP (optional) for image signal processing
+>     - Dual MIPI CSI-2 camera interfaces for multi-camera support
+>
+>   High-Speed Interfaces:
+>     - PCIe Gen3 (2-lane) 1ch for external device expansion
+>     - USB 3.2 (Gen2) 1ch (Host-only) for high-speed data transfer
+>     - USB 2.0 (Host/Function) 1ch for legacy connectivity
+>     - Gigabit Ethernet (2 channels) for network communication
+>
+>   Industrial and Automotive Features:
+>     - 6x CAN FD channels for automotive and industrial networking
+>     - 24-channel ADC for sensor data acquisition
+>
+> LINK: https://tinyurl.com/renesas-rz-v2n-soc
+>
+> The series introduces:
+> - Device tree bindings for various subsystems (SYS, SCIF, SDHI, CPG, pinc=
+trl).
+> - RZ/V2N SoC identification support.
+> - Clock and pinctrl driver updates for RZ/V2N.
+> - Initial DTSI and device tree for the RZ/V2N SoC and EVK.
+>
+> These patches have been tested on the RZ/V2N EVK with v6.15-rc1 kernel,
+> logs can be found here:
+> https://gist.github.com/prabhakarlad/aa3da7558d007aab8a288550005565d3
+>
+> @Geert, Ive rebased the patches on top of v6.15-rc1 + renesas-dts-for-v6.=
+16
+> + renesas-clk-for-v6.16 branches. Also these patches apply on top of the =
+below
+> series [1] and [2]. I had to sort the order in Makefile for patch [3] to
+> avoid conflicts.
+> [1] https://lore.kernel.org/all/20250401090133.68146-1-prabhakar.mahadev-=
+lad.rj@bp.renesas.com/
+> [2] https://lore.kernel.org/all/20250403212919.1137670-1-thierry.bultel.y=
+h@bp.renesas.com/#t
+> [3] https://lore.kernel.org/all/20250403212919.1137670-13-thierry.bultel.=
+yh@bp.renesas.com/
+>
+> Note, dtbs_check will generate the below warnings this is due to missing
+> ICU support as part of initial series. I will be sending a follow-up patc=
+h
+> series to add ICU support which will fix these warnings.
+> arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000 =
+(renesas,r9a09g056-pinctrl): 'interrupt-controller' is a required property
+>         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rz=
+g2l-pinctrl.yaml#
+> arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@10410000 =
+(renesas,r9a09g056-pinctrl): '#interrupt-cells' is a required property
+>         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,rz=
+g2l-pinctrl.yaml#
+>
+> v1->v2:
+> - Added acks from Rob.
+> - Squashed the RZ/V2N EVK and SoC variant documentation into a single
+>   commit.
+> - Updated the commit messages.
+> - Added RZV2N_Px, RZV2N_PORT_PINMUX, and RZV2N_GPIO macros in
+>   SoC DTSI as we are re-using renesas,r9a09g057-pinctrl.h
+>   in pictrl driver hence to keep the consistency with the
+>   RZ/V2H(P) SoC these macros are added.
+> - Dropped `renesas,r9a09g056-pinctrl.h` header file.
+> - Followed DTS coding style guidelines
+> - Dropped defconfig changes from the series.
+> - Dropped SDHI dt-binding patch as its already applied to mmc -next tree.
+>
+> Cheers,
+> Prabhakar
+>
+> Lad Prabhakar (12):
+>   dt-bindings: soc: renesas: Document Renesas RZ/V2N SoC variants and
+>     EVK
+>   soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
+>   dt-bindings: soc: renesas: Document SYS for RZ/V2N SoC
+>   soc: renesas: sysc: Add SoC identification for RZ/V2N SoC
+>   dt-bindings: serial: renesas: Document RZ/V2N SCIF
+>   dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
+>   clk: renesas: rzv2h-cpg: Sort compatible list based on SoC part number
+>   clk: renesas: rzv2h: Add support for RZ/V2N SoC
+>   dt-bindings: pinctrl: renesas: Document RZ/V2N SoC
+>   pinctrl: renesas: rzg2l: Add support for RZ/V2N SoC
+>   arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
+>   arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
+>
+Would it be OK if I send version 3 containing only patches 4/12 and 10/12?
 
-diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-index 9b275d4d3eb6..a6e660d46304 100644
---- a/rust/kernel/cpufreq.rs
-+++ b/rust/kernel/cpufreq.rs
-@@ -9,28 +9,32 @@
- //! Reference: <https://docs.kernel.org/admin-guide/pm/cpufreq.html>
- 
- use crate::{
-+    alloc::AllocError,
-     bindings,
-     clk::{Clk, Hertz},
-     cpumask,
-     device::Device,
-     devres::Devres,
-     error::{code::*, from_err_ptr, from_result, to_result, Result, VTABLE_DEFAULT_ERROR},
--    ffi::c_ulong,
-+    ffi::{c_char, c_ulong},
-     prelude::*,
-     types::ForeignOwnable,
-     types::Opaque,
- };
- 
- use core::{
--    cell::UnsafeCell,
-     marker::PhantomData,
-+    mem::MaybeUninit,
-     ops::{Deref, DerefMut},
-     pin::Pin,
--    ptr,
-+    ptr::{self, NonNull},
- };
- 
- use macros::vtable;
- 
-+// Maximum length of CPU frequency driver's name.
-+const CPUFREQ_NAME_LEN: usize = bindings::CPUFREQ_NAME_LEN as usize;
-+
- /// Default transition latency value in nanoseconds.
- pub const ETERNAL_LATENCY_NS: u32 = bindings::CPUFREQ_ETERNAL as u32;
- 
-@@ -855,10 +859,8 @@ fn register_em(_policy: &mut Policy) {
- ///     cpufreq::Registration::<FooDriver>::new_foreign_owned(dev).unwrap();
- /// }
- /// ```
--pub struct Registration<T: Driver> {
--    drv: KBox<UnsafeCell<bindings::cpufreq_driver>>,
--    _p: PhantomData<T>,
--}
-+#[repr(transparent)]
-+pub struct Registration<T: Driver>(NonNull<bindings::cpufreq_driver>, PhantomData<T>);
- 
- // SAFETY: `Registration` doesn't offer any methods or access to fields when shared between threads
- // or CPUs, so it is safe to share it.
-@@ -870,135 +872,136 @@ unsafe impl<T: Driver> Sync for Registration<T> {}
- unsafe impl<T: Driver> Send for Registration<T> {}
- 
- impl<T: Driver> Registration<T> {
--    /// Registers a CPU frequency driver with the cpufreq core.
--    pub fn new() -> Result<Self> {
--        // Required due to Rust 1.82's stricter handling of `unsafe` in mutable statics. The
--        // `unsafe` blocks aren't required anymore with later versions.
--        #![allow(unused_unsafe)]
--
--        let mut drv = KBox::new(
--            UnsafeCell::new(bindings::cpufreq_driver::default()),
--            GFP_KERNEL,
--        )?;
--        let drv_ref = drv.get_mut();
--
--        // Account for the trailing null byte.
--        let len = T::NAME.len() + 1;
--        if len > drv_ref.name.len() {
--            return Err(EINVAL);
--        };
--
--        // SAFETY: `T::NAME` is a valid `CStr`, and we are copying it to an array of equal or
--        // larger size.
--        let name = unsafe { &*(T::NAME.as_bytes_with_nul() as *const [u8]) };
--        drv_ref.name[..len].copy_from_slice(name);
--
--        drv_ref.boost_enabled = T::BOOST_ENABLED;
--        drv_ref.flags = T::FLAGS;
-+    const VTABLE: bindings::cpufreq_driver = bindings::cpufreq_driver {
-+        name: Self::copy_name(T::NAME),
-+        boost_enabled: T::BOOST_ENABLED,
-+        flags: T::FLAGS,
- 
-         // Initialize mandatory callbacks.
--        drv_ref.init = Some(Self::init_callback);
--        drv_ref.verify = Some(Self::verify_callback);
-+        init: Some(Self::init_callback),
-+        verify: Some(Self::verify_callback),
- 
-         // Initialize optional callbacks based on the traits of `T`.
--        drv_ref.setpolicy = if T::HAS_SETPOLICY {
-+        setpolicy: if T::HAS_SETPOLICY {
-             Some(Self::setpolicy_callback)
-         } else {
-             None
--        };
--        drv_ref.target = if T::HAS_TARGET {
-+        },
-+        target: if T::HAS_TARGET {
-             Some(Self::target_callback)
-         } else {
-             None
--        };
--        drv_ref.target_index = if T::HAS_TARGET_INDEX {
-+        },
-+        target_index: if T::HAS_TARGET_INDEX {
-             Some(Self::target_index_callback)
-         } else {
-             None
--        };
--        drv_ref.fast_switch = if T::HAS_FAST_SWITCH {
-+        },
-+        fast_switch: if T::HAS_FAST_SWITCH {
-             Some(Self::fast_switch_callback)
-         } else {
-             None
--        };
--        drv_ref.adjust_perf = if T::HAS_ADJUST_PERF {
-+        },
-+        adjust_perf: if T::HAS_ADJUST_PERF {
-             Some(Self::adjust_perf_callback)
-         } else {
-             None
--        };
--        drv_ref.get_intermediate = if T::HAS_GET_INTERMEDIATE {
-+        },
-+        get_intermediate: if T::HAS_GET_INTERMEDIATE {
-             Some(Self::get_intermediate_callback)
-         } else {
-             None
--        };
--        drv_ref.target_intermediate = if T::HAS_TARGET_INTERMEDIATE {
-+        },
-+        target_intermediate: if T::HAS_TARGET_INTERMEDIATE {
-             Some(Self::target_intermediate_callback)
-         } else {
-             None
--        };
--        drv_ref.get = if T::HAS_GET {
-+        },
-+        get: if T::HAS_GET {
-             Some(Self::get_callback)
-         } else {
-             None
--        };
--        drv_ref.update_limits = if T::HAS_UPDATE_LIMITS {
-+        },
-+        update_limits: if T::HAS_UPDATE_LIMITS {
-             Some(Self::update_limits_callback)
-         } else {
-             None
--        };
--        drv_ref.bios_limit = if T::HAS_BIOS_LIMIT {
-+        },
-+        bios_limit: if T::HAS_BIOS_LIMIT {
-             Some(Self::bios_limit_callback)
-         } else {
-             None
--        };
--        drv_ref.online = if T::HAS_ONLINE {
-+        },
-+        online: if T::HAS_ONLINE {
-             Some(Self::online_callback)
-         } else {
-             None
--        };
--        drv_ref.offline = if T::HAS_OFFLINE {
-+        },
-+        offline: if T::HAS_OFFLINE {
-             Some(Self::offline_callback)
-         } else {
-             None
--        };
--        drv_ref.exit = if T::HAS_EXIT {
-+        },
-+        exit: if T::HAS_EXIT {
-             Some(Self::exit_callback)
-         } else {
-             None
--        };
--        drv_ref.suspend = if T::HAS_SUSPEND {
-+        },
-+        suspend: if T::HAS_SUSPEND {
-             Some(Self::suspend_callback)
-         } else {
-             None
--        };
--        drv_ref.resume = if T::HAS_RESUME {
-+        },
-+        resume: if T::HAS_RESUME {
-             Some(Self::resume_callback)
-         } else {
-             None
--        };
--        drv_ref.ready = if T::HAS_READY {
-+        },
-+        ready: if T::HAS_READY {
-             Some(Self::ready_callback)
-         } else {
-             None
--        };
--        drv_ref.set_boost = if T::HAS_SET_BOOST {
-+        },
-+        set_boost: if T::HAS_SET_BOOST {
-             Some(Self::set_boost_callback)
-         } else {
-             None
--        };
--        drv_ref.register_em = if T::HAS_REGISTER_EM {
-+        },
-+        register_em: if T::HAS_REGISTER_EM {
-             Some(Self::register_em_callback)
-         } else {
-             None
--        };
-+        },
-+        // SAFETY: All zeros is a valid value for `bindings::cpufreq_driver`.
-+        ..unsafe { MaybeUninit::zeroed().assume_init() }
-+    };
-+
-+    const fn copy_name(name: &'static CStr) -> [c_char; CPUFREQ_NAME_LEN] {
-+        let src = name.as_bytes_with_nul();
-+        let mut dst = [0; CPUFREQ_NAME_LEN];
-+
-+        build_assert!(src.len() <= CPUFREQ_NAME_LEN);
-+
-+        let mut i = 0;
-+        while i < src.len() {
-+            dst[i] = src[i];
-+            i += 1;
-+        }
-+
-+        dst
-+    }
-+
-+    /// Registers a CPU frequency driver with the cpufreq core.
-+    pub fn new() -> Result<Self> {
-+        let drv = &Self::VTABLE as *const _ as *mut _;
- 
-         // SAFETY: It is safe to register the driver with the cpufreq core in the kernel C code.
--        to_result(unsafe { bindings::cpufreq_register_driver(drv_ref) })?;
-+        to_result(unsafe { bindings::cpufreq_register_driver(drv) })?;
- 
--        Ok(Self {
--            drv,
--            _p: PhantomData,
--        })
-+        Ok(Self(
-+            NonNull::new(drv.cast()).ok_or(AllocError)?,
-+            PhantomData,
-+        ))
-     }
- 
-     /// Same as [`Registration::new`], but does not return a [`Registration`] instance.
-@@ -1259,9 +1262,7 @@ extern "C" fn register_em_callback(ptr: *mut bindings::cpufreq_policy) {
- impl<T: Driver> Drop for Registration<T> {
-     // Removes the `Registration` from the kernel, if it has initialized successfully earlier.
-     fn drop(&mut self) {
--        let drv = self.drv.get_mut();
--
-         // SAFETY: The driver was earlier registered from `new`.
--        unsafe { bindings::cpufreq_unregister_driver(drv) };
-+        unsafe { bindings::cpufreq_unregister_driver(self.0.as_ptr()) };
-     }
- }
+Cheers,
+Prabhakar
