@@ -1,230 +1,178 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BDB270EB1
-	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 11:29:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91731A9B4A;
+	Mon, 14 Apr 2025 11:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744630190; cv=none; b=UmEO3+66DlmIpBM/X65Xmdb4sCUFGT01q4osNiVeRkG3NQLdjybCL7gwreYY+A4+We04rM45k+LHOgnKdHbC24sQcpII/wgomO/VbZbOHBW/cA6VNyc5juqwHChay977OcV8o8V5GcooDTYGSAj2gKVlQfqSPQMOv3DyPU0iGyw=
+	t=1744630732; cv=none; b=m3wH0s99TFfqUGhrgmKNb27R9ALMPS4/jaY9XSuFtmWtJYre/7A8kkJX7nlrj2DV5dvLyI6CEgHJzP4CCh3hO6+xDLTFG7q40rKdOHSmETENQ9oS0mf14/wbpzFSdz2T2JJ+bsKvIgsp0DfDd6BZgu+RU7zG69YfMBMxDS7fNm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744630190; c=relaxed/simple;
-	bh=OId65vYG4iChVP7s+ep0NmfGVOgkQkETuAsaQF/JGAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZI2CydKYo+bBWfkjjuEk6WMZoSvBvuFrVCw97ITgsORsFfdY+E9Qf7kT/KLtP58nkjH6uxEPX6PfaZ5UX7x1O7/KD10HORcxBF+KZ1OiP7SPafLRfKcX9WHclGTwLkU7wTbNw+6eQgPj2i5XtAuJSPW9PhNg8w2QH2o732XMiJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aLSMqNTm; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1744630732; c=relaxed/simple;
+	bh=tw8NicR85wtZWn7+Of5iPSQ4ltvwsaFU5yYg/jkmpFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OB4ZKpkdozPf0cc8Jq7ehoZ1lNtgveD5kGX1GS2UiomOebP3vyB2iKqFQCqSeD4v2yu54SpAh/X/uBxv7HL6neGRaSItUPqaGh58Tw4L/7Mfv9BdZa0wi+QnaUiJkUPFSwFnI0XrFZ2BpsrgunG2+ToPXARIk66MpKucuCuS0+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=H0sFDIZs; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aLSMqNTm"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2295d78b45cso57718675ad.0
-        for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 04:29:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1744630187; x=1745234987; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O6+sNIyO8JzbVU9H6WY1PZualMiTtrIWYxB95T2aKKg=;
-        b=aLSMqNTmz41GrHp26HLeqezmtfrsjDxmMQIcAABezKLFe96hlbVkNUl92pj1yPyYWe
-         wxfKyNvI1P/ID5roBtHIHz9J7NuZZIQe9tI/7eT+D1is04Qu32vMhJrrKKbonBSQ9/hR
-         AbC2YEdSj6zu+u6QPwmoAMKQbtOzGzOyFlCJydosAOvG46/1nIn4usbvNopkI0c4dExI
-         GdL2uO1SRXCXsNxsvhwqBckjxjrdiM8zNaGxpCylg1h7DnzOWRPcs2cLikwHKb07mVf5
-         9HGyw6SB9nusv23J1JDE2ZqbSANGOCnTLGiLwQuGLIBT5UcICZ74BrnjPLf1uybLVUKT
-         sE0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744630187; x=1745234987;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O6+sNIyO8JzbVU9H6WY1PZualMiTtrIWYxB95T2aKKg=;
-        b=eid4oL4H/9UNQRV7pQ7j6GRoG2FXomlcUTeDBW+kW0ry2v5Et2pKV0+NK/ApY6MGQg
-         wv4M8VB3Ss+4YVprOk/0nwJTLH30Y0EI4+XWGATJCWPB3rRMTVCIW5yWoPuSyUKObtCL
-         rUdcBxMq3qC4H53HHW6IxKZ3yVYGG5mGNUcHNnS4J20TD6R+i7m2pVzMkBljru8GPQsx
-         tEiXpNAA5UdUgbR9mjDWd3FDoMOxYS2RU31CixRKHkzmwKKm5MZLBFHyxRMC4EV9W+JK
-         q58CZrL1PnejDxwCbjlZmmVMyy+G4+pSgDampg7JeN5gps1vH6qk1myVANGLhS2qTFOg
-         DrQg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+dzeP6OXR0p7wcIEBTs5r6uW0atoCj95MBpmxZwZlgCXB1k1GqnlCEHQpMrJ5XhjFhdSBti6L2lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5A+Fg9xqKGqtDw26lgE/uKngMvEnAiiyVF41GxSzriQZKWb0O
-	31muFb59lfxJMbCChtiGtTqmt174AQheuzI2VqSXQFUiKL9Mp8/eXzfLqUqZm5M=
-X-Gm-Gg: ASbGncsC3zHz7IuRl3jLTj4ZViWFrfi0Ax1/KCoM2479m5powH52sXJbpdsVK+GBy+3
-	syafx58u7pciTzUr7id3MBJ22wIwhGdBl43PSY+V4Ft5O0hUo9LyRaY3SawTThmwHWV0I6+SDOu
-	DFZaEMPkioisPC1amjUJO5r+J63y4D6+Z6ne4hrj/gAvU3CkkxjvPY96h0NUvHYslsJJymQU8Us
-	iMGhVodDhy7HONuks8d0QEDq/ZRKZoyHLt+iZtJf15o/b7TPJvTTNVoyfGn/UQfFnCaDG6/7CNS
-	6jygSfT1pAWArKgqXJ6mptQapAGf+wNoUzlUabeD+w==
-X-Google-Smtp-Source: AGHT+IE2yePppLq/70OKRdNpVINOxCz29KaYhLiwBomV/BOoxtq3utngiXMthhUwoFkXpZSNMWS9Gg==
-X-Received: by 2002:a17:903:1d1:b0:21f:f3d:d533 with SMTP id d9443c01a7336-22bea4a17fdmr134579745ad.2.1744630186633;
-        Mon, 14 Apr 2025 04:29:46 -0700 (PDT)
-Received: from localhost ([122.172.83.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7b628desm96556265ad.20.2025.04.14.04.29.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 04:29:46 -0700 (PDT)
-Date: Mon, 14 Apr 2025 16:59:43 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Yury Norov <yury.norov@gmail.com>, Danilo Krummrich <dakr@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Erik Schilling <erik.schilling@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	Burak Emir <bqe@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V9 03/17] rust: cpumask: Add initial abstractions
-Message-ID: <20250414112943.r2h3a54r2jm4iana@vireshk-i7>
-References: <cover.1744366571.git.viresh.kumar@linaro.org>
- <9a004e3dff5321dae3b96df2817799daa699ce01.1744366571.git.viresh.kumar@linaro.org>
- <Z_k7HtIZaSWeJvM4@yury>
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="H0sFDIZs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1744630711; x=1745235511; i=wahrenst@gmx.net;
+	bh=5Yqz6YDLmosCf4LwVIBid/uZpaNuifGBNUOWF1Ok3z8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=H0sFDIZsvbu7eadEOfhvpsig557h5T4fVsdqhIrBvDjjyxf+kw5m2dYClZv3FATR
+	 rpATfe2E5LMuvoZL8B+aKpyj9Bwg6//OnkxVxgdoXrv68ycU9zOh7uIVb8CLp9w0I
+	 VzBOxdVZvAvqby0MLfPVA7ztYVMQijJ3rtzDfCXt0Hh/vgaU0FltcFkW1Z+af9u2C
+	 913J6HX7dOF21eWTKxsYC4hwGs4yvnVHVXlNnef9DAy+MGPXvImJzcJgNKeOk03oB
+	 zO6aC/1IhSLQgshoySKcyTB1EBJzg6aItmds8ZWWjpkWREKzfjphWDQDJ1/7TzqjH
+	 pZEyJzAGIDZaxAaRqg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.107] ([37.4.251.153]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M1poA-1u26Hv1PB2-00DKvJ; Mon, 14
+ Apr 2025 13:38:31 +0200
+Message-ID: <abb3405a-45fb-4425-a817-89a03b0c16c4@gmx.net>
+Date: Mon, 14 Apr 2025 13:38:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z_k7HtIZaSWeJvM4@yury>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 10/13] arm64: dts: Add overlay for RP1 device
+To: Andrea della Porta <andrea.porta@suse.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Krzysztof Wilczynski <kw@linux.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+ <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn
+ <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, kernel-list@raspberrypi.com
+References: <cover.1742418429.git.andrea.porta@suse.com>
+ <ab9ab3536baf5fdf6016f2a01044f00034189291.1742418429.git.andrea.porta@suse.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+Autocrypt: addr=wahrenst@gmx.net; keydata=
+ xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
+ IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
+ NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
+ JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
+ TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
+ f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
+ V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
+ aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
+In-Reply-To: <ab9ab3536baf5fdf6016f2a01044f00034189291.1742418429.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:m8JLxCwdInGWwVIBpPbWU85afGcQak8XuDSiAyyOP0EmeklFBz0
+ hl4x34oAp+KNiLjDCLAoxHrznsBPvcnDWCFB193V4upZYpMs40GI2TqwkaQ6gaacflG7bOQ
+ EMPaxpr1mFixC81q0mbv+LRK8wc44QYFoCnKnP6uT1vlasOa6ZQCCtek/T2Kz9SKVqA1bFJ
+ wdUbubZcymN48TQHDXT0w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:EhsPipdgz2M=;g3X/9zeu8NWjQ6d/rmQ0irfcxJ/
+ XzlBaf60rX/TLoFVsn5MVtvPRLvOEiKdfGSUC2bX2UBW0EpJOJWfagXAKhkfoBkCMlwm+tZpw
+ yYaJ+bIiqADOU/+GZ3dSVaQMzLVKMESLZJorEtoqtT49HEFCVfMAVFrcxlr/FnodYVTuvqBLI
+ 2jd+2LK6QUd6RMo3b5S1tiP3NkJTLX65UIGJb+EX3QKlzcBbuDtqET0D5edbUxhgiK+1aEPao
+ RqNr7IiJFI9AP4Yk5T3RjT5KsrBN+BJ7kt5Z9V/lQvOqwL9RDiMH94pi/6xu9MCZ3TeN8n4Lk
+ WC0tILwnOgBUzD2ZYLdI1yjpGzRSOYNN3y5NGaK1kYHJ29X2kyN+H0HZD1em6uskGWU3v5B6o
+ +Jsi+HUlsphsvY9OM8lubZC9dqQ2DzWvUZkKS7dzSO1ugQcH3nt/UXxzAyh7xKYClx0WUgFvh
+ QJ1a4rI4nl43TZ4E7uoLMWHAwn+cdy+iFFUQcCSC0J/WYgvhm9NtLaloCHypcu4DECk/EN1KM
+ yf57bYcS92ZavxWNGeoNMOSwd/zp0hMQPBF1BSPVPWOZZ5z1iBaK9k4o36xnLrDNZrVJeD4OP
+ IcLtxlUtrRE5KH/+F9jWouP9eNhK+hesGmYyvY/P7RnDdBeGfdXjPc9oKEk1OJqHN4wLXFzik
+ roe44AAeU5YSHd3NZ8j/5tDyKiRklQYpjlqVbAnd4jIVpXZK/o6DZWiyZRmhcCtPP0ZMgeUro
+ ytiZQqeQMCDdYBupYDfclhA+Zgh72EYTt8OUImEIdiDMILHbUtZk/RyXn39oY+cRiKa2LBUK/
+ 0ElUSPw4u++83Pu+kOYpXRuf0lmJ3obBHSgkdKbNh6AVWlbHuvnEKXRaAbhROt1b2c1a5S2/H
+ JvrGHvmGwapmXSL/y7bKIZRbIwEsnff8fsyKRBQyRd6w1smn1gK2A9UEuuIvWQ7egeQo1i4PL
+ l+fDr4/1GbDzkXXDlHHg5d6eBEAIJMIhKWs8eaIt/Fa9wOTDj0xUF8Dr6gvAhrqJ0ZEkZ9oF0
+ mtD2MCFsFlpijH8E3NeRoJCAI0wuEbGPD5dvv6K+vIo+LyQpKjdUNw5PZVWNFR3smQdC4u7oh
+ XYu9Zv4PO6cu+8A6HIJ6KvmYj0GCVxzUkXkZsE3ZdmlA/W09eZmJzNG3b/vQOQdGY18GoJsZw
+ 3TRjhx1bvUtr/jUtoSSaTPJ1iJAtK2nfLkrv8i/rJqBko+T7nDfLx1KIqKoOGZWkks1r8f5zU
+ aqN2d+8ChDTNSFENFKtnofG/2w/7U7vnkncD134pe6x9S/0xaZwBIsGyAQD2G5oSsHR+Wr3/o
+ yiC8Jdj9mo1q/5fKhnM4RLVQNrUfWocUhqMig2BqR8ovSxtNEInnV/QlaAxcPG8+iKRqjnIak
+ HpFb5XQquykn9MQLQx6/9+vrpAyceuUW9Tx1hEBYooWafXQerd482sXlUw1Riuw8zk3NuYQ7a
+ 3wMVDcCP5dcHNixEAYB82cPXEpmg=
 
-On 11-04-25, 11:54, Yury Norov wrote:
-> On Fri, Apr 11, 2025 at 04:25:02PM +0530, Viresh Kumar wrote:
-> > +    unsafe fn new_uninit(_flags: Flags) -> Result<Self, AllocError> {
-> > +        Ok(Self {
-> > +            #[cfg(CONFIG_CPUMASK_OFFSTACK)]
-> > +            ptr: {
-> > +                let mut ptr: *mut bindings::cpumask = ptr::null_mut();
-> > +
-> > +                // SAFETY: Depending on the value of `_flags`, this call may sleep. Other than
-> > +                // that, it is always safe to call this method.
-> 
-> I'm not sure I understand this sentence. What's wrong with safety when
-> the alloc() function sleeps? Even if something is wrong. If you really
-> want to protect your users, you'd introduce new_sync() version that
-> returns error if user provides sleeping flags.
+Hi Andrea,
 
-I borrowed this SAFETY comment from similar allocation done in
-page.rs, I think we can skip it though. Here is the delta so far:
+just a nit. Could you please add "broadcom:" to the subject?
 
-@@ -27,8 +27,8 @@
- ///
- /// A [`Cpumask`] instance always corresponds to a valid C `struct cpumask`.
- ///
--/// The callers must ensure that the `struct cpumask` is valid for access and remains valid for the
--/// lifetime of the returned reference.
-+/// The callers must ensure that the `struct cpumask` is valid for access and
-+/// remains valid for the lifetime of the returned reference.
- ///
- /// ## Examples
- ///
-@@ -86,7 +86,9 @@ pub fn as_raw(&self) -> *mut bindings::cpumask {
- 
-     /// Set `cpu` in the cpumask.
-     ///
--    /// Equivalent to the kernel's `__cpumask_set_cpu` API.
-+    /// ATTENTION: Contrary to C, this Rust `set()` method is non-atomic.
-+    /// This mismatches kernel naming convention and corresponds to the C
-+    /// function `__cpumask_set_cpu()`.
-     #[inline]
-     pub fn set(&mut self, cpu: u32) {
-         // SAFETY: By the type invariant, `self.as_raw` is a valid argument to `__cpumask_set_cpu`.
-@@ -95,7 +97,9 @@ pub fn set(&mut self, cpu: u32) {
- 
-     /// Clear `cpu` in the cpumask.
-     ///
--    /// Equivalent to the kernel's `__cpumask_clear_cpu` API.
-+    /// ATTENTION: Contrary to C, this Rust `clear()` method is non-atomic.
-+    /// This mismatches kernel naming convention and corresponds to the C
-+    /// function `__cpumask_clear_cpu()`.
-     #[inline]
-     pub fn clear(&mut self, cpu: i32) {
-         // SAFETY: By the type invariant, `self.as_raw` is a valid argument to
-@@ -198,15 +202,14 @@ pub struct CpumaskVar {
- }
- 
- impl CpumaskVar {
--    /// Creates an initialized instance of the [`CpumaskVar`].
--    pub fn new(_flags: Flags) -> Result<Self, AllocError> {
-+    /// Creates a zero-initialized instance of the [`CpumaskVar`].
-+    pub fn new_zero(_flags: Flags) -> Result<Self, AllocError> {
-         Ok(Self {
-             #[cfg(CONFIG_CPUMASK_OFFSTACK)]
-             ptr: {
-                 let mut ptr: *mut bindings::cpumask = ptr::null_mut();
- 
--                // SAFETY: Depending on the value of `_flags`, this call may sleep. Other than
--                // that, it is always safe to call this method.
-+                // SAFETY: It is safe to call this method as the reference to `ptr` is valid.
-                 //
-                 // INVARIANT: The associated memory is freed when the `CpumaskVar` goes out of
-                 // scope.
-@@ -222,20 +225,19 @@ pub fn new(_flags: Flags) -> Result<Self, AllocError> {
-         })
-     }
- 
--    /// Creates an uninitialized instance of the [`CpumaskVar`].
-+    /// Creates an instance of the [`CpumaskVar`].
-     ///
-     /// # Safety
-     ///
-     /// The caller must ensure that the returned [`CpumaskVar`] is properly initialized before
-     /// getting used.
--    unsafe fn new_uninit(_flags: Flags) -> Result<Self, AllocError> {
-+    unsafe fn new(_flags: Flags) -> Result<Self, AllocError> {
-         Ok(Self {
-             #[cfg(CONFIG_CPUMASK_OFFSTACK)]
-             ptr: {
-                 let mut ptr: *mut bindings::cpumask = ptr::null_mut();
- 
--                // SAFETY: Depending on the value of `_flags`, this call may sleep. Other than
--                // that, it is always safe to call this method.
-+                // SAFETY: It is safe to call this method as the reference to `ptr` is valid.
-                 //
-                 // INVARIANT: The associated memory is freed when the `CpumaskVar` goes out of
-                 // scope.
+Am 19.03.25 um 22:52 schrieb Andrea della Porta:
+> Define the RP1 node in an overlay. The inclusion tree is
+> as follow (the arrow points to the includer):
+>
+>                        rp1.dtso
+>                            ^
+>                            |
+> rp1-common.dtsi ----> rp1-nexus.dtsi
+>
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+> This patch can be considered optional, since it fills just the second
+> scenario as detailed in [1], which is the RP1 DT node loaded from a dtb
+> overlay by the FW at early boot stage.
+> This may be useful for debug purpose, but as such not strictly necessary=
+.
+>
+> [1] https://lore.kernel.org/all/CAMEGJJ0f4YUgdWBhxvQ_dquZHztve9KO7pvQjoD=
+WJ3=3Dzd3cgcg@mail.gmail.com/#t
+> ---
+>   arch/arm64/boot/dts/broadcom/Makefile |  3 ++-
+>   arch/arm64/boot/dts/broadcom/rp1.dtso | 11 +++++++++++
+>   2 files changed, 13 insertions(+), 1 deletion(-)
+>   create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
+>
+> diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts=
+/broadcom/Makefile
+> index 4836c6da5bee..58293f9c16ab 100644
+> --- a/arch/arm64/boot/dts/broadcom/Makefile
+> +++ b/arch/arm64/boot/dts/broadcom/Makefile
+> @@ -13,7 +13,8 @@ dtb-$(CONFIG_ARCH_BCM2835) +=3D bcm2711-rpi-400.dtb \
+>   			      bcm2837-rpi-3-b.dtb \
+>   			      bcm2837-rpi-3-b-plus.dtb \
+>   			      bcm2837-rpi-cm3-io3.dtb \
+> -			      bcm2837-rpi-zero-2-w.dtb
+> +			      bcm2837-rpi-zero-2-w.dtb \
+> +			      rp1.dtbo
+>  =20
+>   subdir-y	+=3D bcmbca
+>   subdir-y	+=3D northstar2
+> diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts=
+/broadcom/rp1.dtso
+> new file mode 100644
+> index 000000000000..ab4f146d22c0
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
+> @@ -0,0 +1,11 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +&pcie2 {
+> +	#address-cells =3D <3>;
+> +	#size-cells =3D <2>;
+> +
+> +	#include "rp1-nexus.dtsi"
+> +};
 
-> > +    /// Creates a mutable reference to an existing `struct cpumask_var_t` pointer.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// The caller must ensure that `ptr` is valid for writing and remains valid for the lifetime
-> > +    /// of the returned reference.
-> > +    pub unsafe fn from_raw_mut<'a>(ptr: *mut bindings::cpumask_var_t) -> &'a mut Self {
-> 
-> The 'from' (wrt cpumasks) has a special meaning: search for a cpu
-> starting from a given one. This 'from_raw' may confuse readers. Have
-> you any other name for it in mind?
-
-'from_raw' is widely used in Rust for similar methods, though I do
-understand your concerns.
-
-Danilo / Miguel, what do you suggest I rename these to ?
-
-> > +        // SAFETY: Guaranteed by the safety requirements of the function.
-> > +        //
-> > +        // INVARIANT: The caller ensures that `ptr` is valid for writing and remains valid for the
-> > +        // lifetime of the returned reference.
-> > +        unsafe { &mut *ptr.cast() }
-> > +    }
-> > +    /// Clones cpumask.
-> > +    pub fn try_clone(cpumask: &Cpumask) -> Result<Self> {
-> 
-> Just clone(), I think.
-
-The method 'clone()' is already used by the 'Clone' trait [1], and
-that's what I wanted to use initially. But 'clone' doesn't return a
-'Result'.
-
--- 
-viresh
-
-[1] https://doc.rust-lang.org/std/clone/trait.Clone.html
