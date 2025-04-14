@@ -1,139 +1,153 @@
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E797828DEEC
-	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 19:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045CD1E1E1D
+	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 20:36:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744658252; cv=none; b=Ld9vUIDSEiHYLAyuJbB1aMrmumDzbDE6n+rIdZdkDyUd++REwD7OXmziyyBnp9U9zei7pitahRdMFfNnv+Zn5fonb+5V7bDkqlEuGuBkBqnj4Kbe/FgiUV6hVhosBewFx6mRa48GX4zV8p2hwgN/Z1Mcf4zXSiB0jL3d6Q3erlk=
+	t=1744662968; cv=none; b=LZkGpIeLhI+91vtRn5mYN/0SXiREr832r8RGNShAsM2+RYdeZTxyRXmVcnFbAgCf9lTiB6qTZ22Vbu2bddzjFqjN3KpXYBQJCnn7MlUWQltLh2JzwlJVd7/Y3ZxRhvLsWPUu79qfeUKUKXL5aZ3JCawXhFN2e5IIBwoUys75Ozk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744658252; c=relaxed/simple;
-	bh=2wkF3pIspsBICKC2HLHsuT/AUDwllqmRkvg4pojS36g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qLrXD3dpRw2W3yGdpF7wUeKUcLJ2VbKOFPVQvKcLH2EDKsLJ2YwPweIa4yEKWhrTVpoGtRQ3A9SRgXJJ7wOUY9UF/Q2tJ2ntaHbCMX/U/x/nS3Jn7vA9IVhsewkjhP8DxuU6M2g2QX66nAhAAgKq1WKZPob6ncQHLnlt074Nm0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=XGvpJDGl; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1744662968; c=relaxed/simple;
+	bh=treTBaIxZoc3jdxAPHMCYgFICz5n9kyVrC8UeP9/WSA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OPN5RTW6qr4TYpUgBEyP8sei7BYqMBUbWqweFcumhQ8B8nRH4fz+NM5ri/C3MV5Qafvh82+CjZbSYK6wYAijMGGVtRcXhAwZQzgSJGo2RNKkgaKHz75/pXF2gYH0LBfbFfwDWxhOVXJ460eOf1uta0ulFtPDGmPfbxVenomXzUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ikVxrvTU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="XGvpJDGl"
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3d46ef71b6cso39949695ab.3
-        for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 12:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744658250; x=1745263050; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eoPF+bCrpMBavT+34w02cPZ0ktfHw7A1w/wlErW18/c=;
-        b=XGvpJDGlUOuOcwFU6L0ajuTRJz3pbX13JRfyZgt5xQiPGERRE2dO2mldeUGmP1h8H/
-         HEP/fSUu562TBf/gqJN21KMBKREzeVDozKgJNGbAd+rEaiVd02/Qg93HpcH8T7pP9dQs
-         fq3jkEwAh7p93NPkyhTp58fxk+lm7XYp3uKZB25f8AYltN55X4qY76hhrm2xgXmDU6gE
-         VuxapUg86L+VDodfqz+YLEw+3oUTci5dK7wM/CCFf/LCxSfeq7pFu+lmgXbRiDjBE5++
-         xOreBNP1YHQ05Gao8wBt6ga1LcZoHq9hh8MMyvnAGZjYZC4eQn5OUFjqUFxZl3AmIVXA
-         16/w==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ikVxrvTU"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53EJIaSs016341
+	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 20:36:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TcfeZVOyedKWdzur922HOzg3A7r2ZIv8dN0aYlvohuY=; b=ikVxrvTU13ys9n6N
+	jaLLgH1FaPL+nIYUpFJPW7Q409nPG1nghVHIT6Cx2I1bRUnGTqQYaYpcknUVlAZW
+	Qd515P9l5wS0CXUIXBha6uLcHrCyNbrn1gg+cn8BqUsMIPb2arDJOAuU/ED9u1Co
+	ornb1tJSAxhEU4uRJZ3pHG2Ct4p/LS22YDGHOu1dsBCUam9Znu1hp3Fg6EJ+T4JT
+	S4P5Ph/luMP/LjxzNt27frSZMeHtEOMRCC61liIXC+rmIW3wYIjF3n4+/6s5nYHz
+	KE2ouncoT/DaqRlTIPQJu3RNpP9ykc51eXyvXr72x9Fr/aFf4Qf/bwrLUgihG2Wq
+	jRfY0A==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yfgjdra5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 20:36:04 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e906c7cd2bso10241026d6.3
+        for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 13:36:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744658250; x=1745263050;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eoPF+bCrpMBavT+34w02cPZ0ktfHw7A1w/wlErW18/c=;
-        b=LdptMv2oqOFprEEqIoDCjh8wjUanLncScQUCxOo4wP5hLoLBHjdwmUi9P+Py9YE+dy
-         75S0H83t0SfwbuJeRLxnSdCE1c8IcMkCWToGnIwC2dldAZpNy48MNCdIQ0jFxosGkwvv
-         a42A4ucBCbznaiRe59cH/8vr6fOM+gyi7Stqx7KZ08sKObeh3E+SHyZDbEvFXlbmLLNW
-         DDT8AXkPTSjuvBib5GIZpzlt43n7WyS1nd55wRxWApnAf1JQ0YkLkE6dpem+Z637xOen
-         7mKWhhtRCJvX5SvUKo401MFUk0MCCB3lB1RJuwvvfNWlgJrInQIAW0IM0sSetJGsCeer
-         wqlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzri9LCEFSr+yrDBcFExaUuinsp1b9MPKURBvcoXjhs89Ww9GH6zQmlWIWIq1hhymAn3r9S+jCbLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwABthoJ5XtUyhzcEwEPCpEoP8tJ/h8bWVXqYQHLGvm/y0VU21K
-	ZGKwu/9Hfnb2A7vHoX/bBGTo+zhMkr28cJMuKJwkCdcXZVqhtUZye7aSrYHqxKY=
-X-Gm-Gg: ASbGncvm1RhHWCa3XgfMk5GkTByIJi7bErkSSxRyblB5TxlfcP6T33sUz0+jcBDb9En
-	1WCDUw2qzmfwNqefVsGRRuF9Sf+yJ6jTfjKAjK6rckfe6n4dkTcdQqjJM1gQ8IIUfNVrDR+xGz6
-	laRfGCdChMQf9P+X1W1AeOtGRpAAblku7WbAVx58gBWIne7V8OBwsZKfJ/nrwdql/CDBkOA5ZXo
-	A4iBozWkowR2Qru3lZoyiYOzrYsvc48b7u8Vx4QcXNhE4k1M0t/gIEqKu0J0i8VPTtSK4irwkn5
-	QR4rcOBVAYZLIeCDBg3dRsefvGTKuAduAsDDvQ/teVrw9SWNkpOaCTmwr3+mzLxRr1AqXV+Ja1I
-	wfpsBKQZYW3UUoA==
-X-Google-Smtp-Source: AGHT+IEU6Rd4B2MJE8zIB8lmAeawMSoY6sk0rn3tiUuI43W7gRnclnskoSuyT6dVIrc85c9v5hVyDg==
-X-Received: by 2002:a05:6e02:304a:b0:3d4:70ab:f96f with SMTP id e9e14a558f8ab-3d7ec20237fmr158153915ab.8.1744658249848;
-        Mon, 14 Apr 2025 12:17:29 -0700 (PDT)
-Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505e026d1sm2715662173.94.2025.04.14.12.17.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 12:17:29 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: p.zabel@pengutronix.de,
-	dlan@gentoo.org,
-	heylenay@4d2.org,
-	guodong@riscstar.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	spacemit@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 7/7] riscv: dts: spacemit: add reset support for the K1 SoC
-Date: Mon, 14 Apr 2025 14:17:14 -0500
-Message-ID: <20250414191715.2264758-8-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250414191715.2264758-1-elder@riscstar.com>
-References: <20250414191715.2264758-1-elder@riscstar.com>
+        d=1e100.net; s=20230601; t=1744662940; x=1745267740;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TcfeZVOyedKWdzur922HOzg3A7r2ZIv8dN0aYlvohuY=;
+        b=ibNKLb34Zm7T2cDU7tr9VQnxwK6BC77RGqhJFPgFnZTJ98I50w8th3rIkPHfIELOrB
+         kroFMJSzuHOiD9bbvtwJmmpDcRZFRYYMldfWRcgV4Hfwf1M8dghrNSZnppiVUlSb06WG
+         htQtg/Ev3I9M84Y0tGP74H30SS4g97r38cVyWr6Eas87JEPRpN2OiRusgNsRUUaGbcbx
+         Aok12KW4W4tEWE4ON+9JIj20mzqByoIR85/f8aQSMW/HZz5JhvZjYGcLtS/KKTmNvvZe
+         95XomCGyjLUuAoSWcb5aSfRyISHKiRJ/DQvNMTjuFSb+wjv9cEwp7DG9eYr6CdNzIJLm
+         Umww==
+X-Forwarded-Encrypted: i=1; AJvYcCUhSxeo4DpO4FmnHVWWfGjMP1YReqQsCsMC+iV/K2oxuKZtbDt+3YIBD+qVQBCvjKFB7FbGQygjRUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL/DbtD5YmrUeEyrMbI7Oc2RuDTB384hOr/raHXzJVsq6tYtmp
+	h3E+XyPUP0gpRTNyAqEiwwmVgFuFpB0Ptm1n1mFt8LAaJEQjh1S0di9l1iJwUgFdUl8gLNS4NOl
+	xiFq4VjC2V2ncRkkiG+gNL5P6HqnwC19lT2DtYpWMHqv725RvoAMKK9N5w10=
+X-Gm-Gg: ASbGncuixX0G545s7J70tiXpXfmS+MzcuStbLx+wk+y3a8l9AOmmtdJep5b0ipkax92
+	CDpC8LzsyNQfKcJ6FCoQKiRjMHscX2f9BywTYwm3ua64JmknZiPamR2OtGlRc30YgWoW8u6fnTP
+	eQI8YcuLmS0iqnNQeKIp8tI0OVpxJ7E83ud/rNBSaDp1meUEod919uJRWkSgJOe29TBrI9IWOik
+	4Rr8iRb8OBpPoWPptLbdA+Jf6fA93WSRZRdgkgOYOKV+YUSrjMFAL7c7mHXBvo4CUV1pdCR6T6D
+	9BJEEHqdkunjdbqG46x9xYvVEiZrpeBGqSpFQ4LDN/coA/N79mRUDrKFGaiF4D8KLw==
+X-Received: by 2002:a05:620a:4405:b0:7c3:c406:ec10 with SMTP id af79cd13be357-7c7af1d0611mr694925085a.14.1744662940200;
+        Mon, 14 Apr 2025 13:35:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IES94yre95taymhy/asOVTUHtSDJQP8JMi6CuPlrYL55wGW9j9JqYzSQvw7vL4wpMWwbjEpGw==
+X-Received: by 2002:a05:620a:4405:b0:7c3:c406:ec10 with SMTP id af79cd13be357-7c7af1d0611mr694923685a.14.1744662939794;
+        Mon, 14 Apr 2025 13:35:39 -0700 (PDT)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ccc195sm993479766b.143.2025.04.14.13.35.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Apr 2025 13:35:39 -0700 (PDT)
+Message-ID: <9c21f321-1aec-4b36-9e3b-026ea9a810fd@oss.qualcomm.com>
+Date: Mon, 14 Apr 2025 22:35:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/6] clk: qcom: gcc: Add support for Global Clock
+ controller found on MSM8937
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
+        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, iommu@lists.linux.dev,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        linux@mainlining.org, Daniil Titov <daniilt971@gmail.com>
+References: <20250315-msm8937-v4-0-1f132e870a49@mainlining.org>
+ <20250315-msm8937-v4-2-1f132e870a49@mainlining.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250315-msm8937-v4-2-1f132e870a49@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: S20UAg_SbhJt3YhseS-Tgbe3g4e7Y1UX
+X-Proofpoint-ORIG-GUID: S20UAg_SbhJt3YhseS-Tgbe3g4e7Y1UX
+X-Authority-Analysis: v=2.4 cv=Cve/cm4D c=1 sm=1 tr=0 ts=67fd71b4 cx=c_pps a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=pGLkceISAAAA:8 a=OuZLqq7tAAAA:8 a=XF3jJdBvCvMoejL92xsA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22 a=AKGiAy9iJ-JzxKVHQNES:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-14_07,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=999 mlxscore=0
+ priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504140150
 
-Define syscon nodes for the RCPU, RCPU2, and APBC2 SpacemiT CCUS, which
-currently support resets but not clocks in the SpacemiT K1.
+On 3/15/25 3:57 PM, Barnabás Czémán wrote:
+> From: Daniil Titov <daniilt971@gmail.com>
+> 
+> Modify existing MSM8917 driver to support MSM8937 SoC. Override frequencies
+> which are different in this chip. Register all the clocks to the framework
+> for the clients to be able to request for them. Add new variant of GDSC for
+> new chip.
+> 
+> Signed-off-by: Daniil Titov <daniilt971@gmail.com>
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+[...]
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index 584f0dbc60f5b..491ab891788b8 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -346,6 +346,18 @@ soc {
- 		dma-noncoherent;
- 		ranges;
- 
-+		syscon_rcpu: system-controller@c0880000 {
-+			compatible = "spacemit,k1-syscon-rcpu";
-+			reg = <0x0 0xc0880000 0x0 0x2048>;
-+			#reset-cells = <1>;
-+		};
-+
-+		syscon_rcpu2: system-controller@c0888000 {
-+			compatible = "spacemit,k1-syscon-rcpu2";
-+			reg = <0x0 0xc0888000 0x0 0x28>;
-+			#reset-cells = <1>;
-+		};
-+
- 		syscon_apbc: system-control@d4015000 {
- 			compatible = "spacemit,k1-syscon-apbc";
- 			reg = <0x0 0xd4015000 0x0 0x1000>;
-@@ -514,6 +526,12 @@ clint: timer@e4000000 {
- 					      <&cpu7_intc 3>, <&cpu7_intc 7>;
- 		};
- 
-+		syscon_apbc2: system-controller@f0610000 {
-+			compatible = "spacemit,k1-syscon-apbc2";
-+			reg = <0x0 0xf0610000 0x0 0x20>;
-+			#reset-cells = <1>;
-+		};
-+
- 		sec_uart1: serial@f0612000 {
- 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
- 			reg = <0x0 0xf0612000 0x0 0x100>;
--- 
-2.45.2
+> +static void msm8937_clock_override(void)
+> +{
+> +	/* GPLL3 750MHz configuration */
 
+So this is a variable rate PLL, I'm not sure how it plays out
+with your frequency table - it looks a little different to the
+3.18 version
+
+The patch looks good otherwise
+
+Konrad
