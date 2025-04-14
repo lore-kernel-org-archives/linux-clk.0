@@ -1,198 +1,215 @@
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2064.outbound.protection.outlook.com [40.107.21.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1E8190057;
-	Mon, 14 Apr 2025 12:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744634151; cv=fail; b=sPUTORTT/xYVBa0n+s7m/0A+/u73e1JQuh5T9UTNZPVOFkRkRAZkdyc9u0Y7F2x8fsF4/KFl4I9fMC459eMnLTPGPquwgNMYjhen2VnUDtH51osisCfUZlJezIO3BLz3XmPdP/782qBFliw5V1C6zMjRi2wU07NKr581y0IS464=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744634151; c=relaxed/simple;
-	bh=kyZe/1SNz6L8DOVl/Z0EX/kqnW7gLFI5bwEQ6EWWYxg=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=h4e6hOhhX46+OTNWepj9xUVwuFavC+4A5hsHiNTgruxvVqPIYvdGQzPbeQRu/92IiVHp90+ogo5YkcJn8d107ORSgOafub/bTnot0qGzpSKrgFvyss2SR7FzQkKaEBojWkL/Hk0nnLZZbNbe3McQmbaP94yX8DH7Okr9viGDo4A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=HWiraRkF; arc=fail smtp.client-ip=40.107.21.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="HWiraRkF"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=taqn0uti1m2pLLf7ptY3GMwU7d4RkIUqee2d3ULy3TGlDmATeitXXhYT9pcLovVcC4ASrbXzFNJjyDCVbwehUYCV3CkdP2sPWtwepYWcfJlYUgjv0bNIfDwcHVaShNS6R/7P6B6EZ8JwztrBdR+xOevRyFSB4CdYzgrBjw0iXsxLoJuz7BqaK0bvADHWVqRVmbdVI/28+PCEH+SnhUm6eIQSezHaedKH19/FWv2JU1Vd94LB/lPc6TjbIUr6eFkjLbl3Pc0+aElgyYGEzMxQj67jn2ojvTCZz7s7OxNPjz1ePNKs5e2CWxb1sVbL7XBJl9VMNnI3MxWP/jPYQjtbGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Afgn00Z1czRLXMMU0tcPvwOMCz4rgfqO9u93WpD3DDY=;
- b=hOo0ZB1oC/GfHPxDGE7tR/MDDvfQT8L860CMPwBU+hRsIPrEEo6VdC6lADkzvU6xJCMcJOb+n68MagRh+L6pUpk7o8QbGKpFngG73lQDq0L50GBAtMBOMPx+i0cIqsVcoqzQ90CfFaCG35Jcbg9xYUCdGx4eO2XkU5uwnwNDJa3yGAHLbqhXhTIgN4jHzW+OCfouBpwvCF1dFu0eoSThLL4qMKHKbiwrS5M2tkjR3oM/aM4JBKJNXN/Xxi3/t6VydLobizIwIEjndxF4m8e9F3RykdW75J+fNwyf+ei7I5y//VwLucCBFaiwzFEsNrGzDPgN8yddbXeY6cr76N+hjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Afgn00Z1czRLXMMU0tcPvwOMCz4rgfqO9u93WpD3DDY=;
- b=HWiraRkFglSRwJYU162iClio4by4mLEE03uk58PXJNZJxQe5v0CGbMXFxLJLYUFfjGuv6rUBb2KC88FFV92TKuhk7Ze+Vi0xAWBc/Yzz/3Z/8zyh5jxdK/AGmxFiXQuXQ9yItGlUEg+cd5G51LIU0mYx8ZAUC11y69hbQaDFYHD9Fcu1TQvP+K18qlrKB9eymp84BF+fxbq2HiQdNmjv7Ov67wN1tMJPQ8tsMPwLF7frvHgqTHoYdNXpqj0+xUcu8tcInYTXEcOuaFsy3ZAZCmR3RojN+8XoZ0DS4No+nbSbI+clzBYytfIknsPiwE+sAXF5hadp1zeg0/qDhcMTYg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
- by VI0PR04MB10420.eurprd04.prod.outlook.com (2603:10a6:800:21a::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.34; Mon, 14 Apr
- 2025 12:35:43 +0000
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd%4]) with mapi id 15.20.8632.030; Mon, 14 Apr 2025
- 12:35:43 +0000
-From: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	imx@lists.linux.dev,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Eric Chanudet <echanude@redhat.com>,
-	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-Subject: [PATCH] clk: correct clk_set_rate for clocks with CLK_GET_RATE_NOCACHE
-Date: Mon, 14 Apr 2025 15:35:40 +0300
-Message-ID: <20250414123540.1774593-1-ciprianmarian.costea@oss.nxp.com>
-X-Mailer: git-send-email 2.45.2
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AS4P191CA0010.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d5::13) To DU0PR04MB9251.eurprd04.prod.outlook.com
- (2603:10a6:10:352::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBAC23D2AA;
+	Mon, 14 Apr 2025 13:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744638054; cv=none; b=CqazVWiTynEuH7LcS8a1r7S6RTdDXUQFGAaKlR/zqursK1Hr98d0WnwYy8IKIfbSUQd4jp6EZTSug3Epr0c3b2hlglaUL4un0SM1onhUzcxjdNwNRQQ4xBSgB63fRUbSAF/MqWbRioQL7O9rCjX1JLB+v8XMCXJnik2otjdxbZs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744638054; c=relaxed/simple;
+	bh=1eCbuWm8dVGaoYTLm0vad9ErxPZVwWfXk5roSAc9z6U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VyTN2PSYwLIevnYFDmNUOQfyaXdATC2//15sDwUhnaCDmdCS0FULuTKeyEOzxY5OWTj7vDU5L2nxyd1BAcASaX2r4p6i7uqSjt9ZIxIF3v4E/Jd8yYCNn605MpUYVDcs8i8BM/n+R/HWXA9SXEM3sFK3D7CtMr8uzvhYFpcR1Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-523fa0df55dso4895453e0c.1;
+        Mon, 14 Apr 2025 06:40:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744638050; x=1745242850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dxFVREXOrkgNS43wycobvJ4oCa9KVGBm5xx9A69fAqQ=;
+        b=rv8NOquA8LD6c3Oqyg94G1Ys6fK2eC9LO3qs+jouP9AIjmhjDrGeN/2nD5jnEAFC8G
+         736zDTr/mwCzBcxBsaw7d0/ZRv7//wdcjVGBCwABuGEcPPxgUj0DwPNoW/oCkVFT63f1
+         odz8CZC9n3M6lkHHDn86IuiT+qVD/On27c8rxKlu8DWD5PG2EfCdjaDiV00P5bFQ32XT
+         KGFhra9O4U2HnV0k9jnLqGnxn9N3obAKqpXrk0c7nkQPMmZWXWK+TALWrMq9QiGMiTDN
+         sVoUEXjtIoxQpL3YPT4+Uo9YRDN1tJiiEu9WEapMYrbV/bqLDglPPZOKKUlQwIN0BiIm
+         tEYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKjHTQRVQoOD4RN+OII/Cxs9jhIg29X96GS8e2p1XsRS5BMWFaHytUj/R+OfAeUwQkKouc2n1paiZ+OVZE@vger.kernel.org, AJvYcCUpLhgn2+l0Y38+4sl4l7iwo+Pwy0Tzxq+p/mMKsBPUIpw9a3VpXIdjfNit0XaBy9373k22r3R8i5ld@vger.kernel.org, AJvYcCVCmWfXqo/Aq5iQ3J4V57LgMc6RiDGfq3yQJdMeMQr9w6P0gR4+1t/LxC2KksCWBc2kcXkUAafClZhZ@vger.kernel.org, AJvYcCVl5/XYESOuKi1dqpwPFc2mRfPp5TnF9H8UfNmqU1i1VwDZWtTc1aqaeR7glXkHCAV/N4Kzsls6ZUBQ0dB6@vger.kernel.org, AJvYcCWY7gFFIsPL8s2armxZTjp7RJwZfQm+Qz0YWaZT4oyMfsNPOw47xenY64A0EfnOyP6+M70Gd7llBTX0XQ==@vger.kernel.org, AJvYcCWug5Y6fi0xbWpBkGrFmPNIxr9bu4h/Jhr0U7rMCQ66mT9JkDM+5NPFBrM01OYRINyilBUIvf5TxCnyseLbgI5mmVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+wl2dCcETJIDrHXcNj/7T3Gl4J1eS2zG40v4T7EgovNfnQl8q
+	3AW2oaAoRur4VuSjsSwlZB46M4nTZk4nc9AtPCcvzZyEXFyCSicFxXxAHcRD
+X-Gm-Gg: ASbGncsTO24g4CX+8bGYcuEvFq5Z/fHfhqaXkQH8QivfyzaS3IEWlc2iZK/kz//gXaW
+	zQCM2fI3D3SmPXFsr0ZeZDCpMRzfbJwvM/m92X7VkbI6Q3zBA27N28Nd+puw8U/wZNJqEQj4utj
+	0IGdFVsEqTBixb9o++EF/WuCs8ukZxRyZmn3DPOuXsmfwOU/eCUZxK83Ubl3oAHrHmuG8YzmJz8
+	WjigRKNVUyQhNUXz+ZH1TqorQv8yoJjnvO8IYpOdl5LUrrbPi9d1/tArVRv38WOSZHUhe30NLWI
+	7cDrPfm9pyrk9hvMqi7xGTR4yg8BlBacRe6azWHY17lj+hZs5rdU8erT9IPoZ7U+G72diGZC7se
+	b90ULyZM=
+X-Google-Smtp-Source: AGHT+IEPgHG1D7Dy5FoauPMAno7o5t7gB+FO9wBlka1sEgE6+I+oz6cHGCZ1pQlWovGSNPESRVEIkw==
+X-Received: by 2002:a05:6122:336:b0:523:6eef:af62 with SMTP id 71dfb90a1353d-527b5ea09eamr9485321e0c.4.1744638049960;
+        Mon, 14 Apr 2025 06:40:49 -0700 (PDT)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-527abd4cb93sm2193603e0c.1.2025.04.14.06.40.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Apr 2025 06:40:49 -0700 (PDT)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-523f721bc63so4954291e0c.0;
+        Mon, 14 Apr 2025 06:40:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUTnzrhLlPXbSQXpE+7ZRXqOiJp8eApSKqrZ3cWk2xl+MENSZL0HO1fs78uETM/wmFUeKUBgXxgns/7JZlk@vger.kernel.org, AJvYcCVH6RwGZRSpM0HibuxFpwzFQ7mY3kJf/KO6fJlcHbCS9QP4mbOdJWhFBvWi1ZdY4SfKBT5TwqO1/bJFKw==@vger.kernel.org, AJvYcCWBDi5DTZQ4fnAbszA2vj/2cPnji+nGH/lmsTefTgr4iK3cGDahXM3rsMZBzzi80EmYg2IkDmxdouC9@vger.kernel.org, AJvYcCWVK3CEpMf5mak7bEbBvmfk8+sFGv7JpyCY90G0BLpQlbF9unvMpc9Tj2sB6pob241e/xyWXw3cLb0h@vger.kernel.org, AJvYcCWgvp3fZm0iLvooENaowNr1dq6Bx199daEvc/remGgbeycz0d3W0dFn8tSgjf1ClaOi2ukkKHyZ9/BKKx2s@vger.kernel.org, AJvYcCXsMPA9a2+SczrcmEIn7q6H6LdLraPcJjt+sLok0OMaly5DXuhl346r+z1l5O5me1qzuXdQWcB2zT9vrK4qAq8pas0=@vger.kernel.org
+X-Received: by 2002:a05:6122:336:b0:523:6eef:af62 with SMTP id
+ 71dfb90a1353d-527b5ea09eamr9485274e0c.4.1744638049070; Mon, 14 Apr 2025
+ 06:40:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|VI0PR04MB10420:EE_
-X-MS-Office365-Filtering-Correlation-Id: 732594f7-34da-4b86-e0e2-08dd7b50df71
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?elZpa3NCK0YwMldLdHk2TDd1S1BaVUtNUkVqbUtpenNxUHR6YVA0OGU3TkMy?=
- =?utf-8?B?Q1c2WFQvT1FJM2taTXJJWmhSdVFBenRxTUtScXNIWXBWVzJtZ1FVbE1nV0xz?=
- =?utf-8?B?ZWFTTWovbXloOW1pY21Kcmp0eTBWZ29EU1Z3cXZvSGJhSEREemg0ak5xNHZX?=
- =?utf-8?B?ckxlVkxKMDlKT0d4SStnamJHRmlqNHZENlplYVYrUlQwdmxZT0JXR3FOYVZP?=
- =?utf-8?B?ekFaTVcvaUt5Z29vQlFzVEk3Wm5RTGtXdThocldUMWVta3lKZEljaDRRd1BU?=
- =?utf-8?B?eDkxK2N3K1BQUHVjVUFaWEdhOVR5WmtydDdscmRyQ1ZtaEVIbU84bUV2bEwy?=
- =?utf-8?B?VDRNVlNuc0pqSHB6akpiY1pEcVd6aFRPOFVvRGVvQVprLzRydFd5bGpEWHRu?=
- =?utf-8?B?cU5PdFJGamVOVUU4T2VtWWZNREttZmJCWVFCMEt1SnJINlU0WWdOSGM0clBR?=
- =?utf-8?B?MHllTnFjdWRCcGFZci93SngvbFFvbDhGSE1UU0JXUUx3QWhZRm4wOVpVRDZn?=
- =?utf-8?B?aWpKRGhZU3cvdy96NEJEa05VajVVVVk3eVZTWEpJSVZnTGJpWU5STHo4ejBU?=
- =?utf-8?B?b2RQUW1rQkFuU3Izeks4dXBDU2ZKTkNuT3ZzTHZPUzZpTXlLNDBEVmNxUTdH?=
- =?utf-8?B?ZEJ5cVFISUJMMW0vdXRGanZRcXV4RktqL3k5Ty8rTlJ0d1JRSXh0Q3F5Sy9G?=
- =?utf-8?B?M0NHVThuK3hwU2tiRnBPRXhZR0dTL1B1YUtsSmhDTFcxQVB1WFpiWFlOVEln?=
- =?utf-8?B?anovT3lEOFVmMDBXd1YxYlNZMHlRUjEydzQ4RUlUakZnVXJNWWxObktTbTlk?=
- =?utf-8?B?S3BIY0pZYkNwNG1IVEV1OGNCQnIwM3gvWlpGVGtISHdGTTR1bU54SHJFWjBH?=
- =?utf-8?B?b3F0UkJCeHJOb0NwN1NNUUNTTXJPVzRSNVExanZFL1ZzeDZzYVlmc3dKL0Zo?=
- =?utf-8?B?OFVvNmtQOHU1UHVyMWwwWnRIN0p2cGtRTWorRllWdGcySW5OMmMvVzJ3aEl5?=
- =?utf-8?B?bWlWQkprV2IwcmVIZ0lBTTdERWIvdk5WV29BRUNTVnRoRnhNbVpzdGgvNmZi?=
- =?utf-8?B?YVJTaWxhdDJWZ2V1QmZSNUFzTWJ0L0piUjdjVmxIWGJPeVFpVTczNUJVOEs2?=
- =?utf-8?B?VnlEa2d1TXltL0Jud05Oa2VHRHRYZ2d1TUhMQmRXUC93cjN2Yk5nY3pDeTBy?=
- =?utf-8?B?d0hkNGtjQ0lOQ2o0MTBlWDFJR2xsSFIxTHN0eEdXcTN1bzgvKzVoNHhOY3BL?=
- =?utf-8?B?ZlJ2aGQ5TXp3enh0bWZkNGdhbXd1Q2tpamsxWDc3ZXpmRzZ0OTR6T3ZUVXkr?=
- =?utf-8?B?K3l4bmpCeDVtcHFrQTkvZk9HK3NZd3ZHckFhNU9hZWljZHc5WURPSmJMVWhF?=
- =?utf-8?B?YndkR0RneHNQVkZMdHNPZEdwNHJiUlZHSkRTeTAxVFdJNEJmeC85ODFLYkRB?=
- =?utf-8?B?N21XekhHSFBCN3k3ZHhHdlBSbG1JQTJVTTgyMHp1cTg3VTlGN1VvL3RabGFI?=
- =?utf-8?B?Qk5pVVV1Sm5DVURDbjQ4SlpuRndYMlBud05oMXF6OHdmRDY4YkV2ck1XWTZX?=
- =?utf-8?B?dFQvWHhSWGJaZnF6NVlPM0liZk9Vc0xYWkF1WnlreThsRzg1cnR0ZlB2eEFw?=
- =?utf-8?B?Q3Mxc05ZelRSUFluTC81ekxxL2U4NFVrT3JjN1pyeVpIbGx3NVNvTHZYY1A4?=
- =?utf-8?B?ZmxYQXBjdERkRzVkbUtnZ1RQQ0p1OThhVHVIelBHUXFpOGFGem9UcERYZWZv?=
- =?utf-8?B?N3V4dklPUlROemhGTjlOZVNMTVFsVDYyQlBVd3R2M0haRXNOL3B6bUlXQ2o0?=
- =?utf-8?B?TlowaWdNS2tWSnlIckUyaFZKMzFxV3BXL0FlOGczZ29yRWZhK1A1SE90QUNo?=
- =?utf-8?B?Snp1amNNQ0wraVZFTWJkOThlRG9MOGM0OCtzZnlmRk55ekF1eXh5OUd2ajZ5?=
- =?utf-8?Q?VyQzio4ElZA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aE4wYWV1L3FYaUhPNEZ5cGd2N3BGbWxDVS80b0tTb2xtaWNBemloVGpVNEEx?=
- =?utf-8?B?UDRQS1RFWGpwcFpLTjlidFhEWFdWeFgyZ281SUNNSjdVd05ndXlDN3JEenBT?=
- =?utf-8?B?SSs4M1lmcEhMb2tyZ1N2MDYraldPTmh2a21MOU1LcmM3cXd6QTZKSEljaHk4?=
- =?utf-8?B?akFJZk1HS25ib3o0ZFE4Y3JxZUhoRVFGUy9PdTlQRW5oNVJQaklUSGVvZURY?=
- =?utf-8?B?WVdxUXU5VWdxL3pDOE5ueG5uVlplSkQ3Y2czemJINzF2enBHaldRWldkSGhk?=
- =?utf-8?B?YVlhNEx6dkgzY0lIeDB0Qy9HcTJWVWozRklPU0JVTjJybi9TMDVZK0lHVGZw?=
- =?utf-8?B?ZnYyQ1lIRXMwenhmdnJpR00vMnc0dmVYTndNaWdmTkc0bWFVWlExVXpEZko4?=
- =?utf-8?B?K2dNVHJRa08vQXlhekZoZ3orSzAybGVwQ2dDcDFvTll5UXhWa0xUOHlONGM5?=
- =?utf-8?B?bE5MSW5RUjUvZjZTbHV3akhkeEtvdkNIcVNSQ25oOU1ENUp1Wit5NU80TnJB?=
- =?utf-8?B?TUdmRjlGb3ZJdG8vcndwUW1iUnBvbWEzdjlyeWRxR0Qva0lkWmsxQmFIRTRv?=
- =?utf-8?B?dHdwNXIxNDBtUi9rWjRhbkx5QkNlWUdYZmFaNTJpUlIxc3k1MlN2N2p2OUhY?=
- =?utf-8?B?dGJ4bk5nT3RqTzNyRlpjZVcrbXNiZVVaVHJVbURyTFJhc1lwV3ZIdTNpNFd4?=
- =?utf-8?B?eHh5YzNOSEd6Q09ZdzJXZTU1Y3R3Ui84aEgwTTVwMTdGVk5yb3BPRmY2N1By?=
- =?utf-8?B?M3I0Q1BiYjFRUlVyVVlZTUZaSFVMVWl1SDI5MkdIQU9SMkJnRndWWTNQRStG?=
- =?utf-8?B?aktvc0RRTmVheVpJbkIrNk1sa0JzZEk5T0VyVXlqOXdhSEVVbVFzWFROa3pJ?=
- =?utf-8?B?eHR5eFd4RUNZYlhzajRpM1ZHTE5aZWNYRUNPQ1p3N0Rkc0dnS2tpZDA1dy85?=
- =?utf-8?B?bzJLUGNBNlpXclIzcEJnWE1nV2lSL0prRkhvd2dlZXhyM2JISVpzckVVUk5H?=
- =?utf-8?B?cFR2YWFVUGZXWlgveEFFcTVwNzFQbDFiNCsvSnN5VG1HaG9sd1RJd1BHVzlZ?=
- =?utf-8?B?ZENOSnNSM0huQVZ0WWRzVWIxRlhlWjJhQ3Y2amgrejN0T0NaNW1DcTJjMjRa?=
- =?utf-8?B?OGs5T2pGWWhEYkdYcmIzRTI2MHZvcTBmcWRidWNGTEF3YVA2NVdob0NRc3R6?=
- =?utf-8?B?dkljVUU0Rk56MzdNbjA5czNsOVRLRXFrZkh0dHlxNFJOUUlIVDZ6V3FremZU?=
- =?utf-8?B?MXd6ZGRqT3V0M1VhcGF6MWdDVkh2UWNrRUxyYnVYamRIZisrZEZRWTdvZHBa?=
- =?utf-8?B?Rk1tL0V0SXYwK1pJRk5XbE1xZ1NtaC85d1lpQkxFVUU3VFNZRkZYemsvRVZC?=
- =?utf-8?B?NmM3RzROZTRMUWZmdW1SQ1FLamZFbWZIYVMzMGRKTy84UWFVN3VMSHZFQ3Fw?=
- =?utf-8?B?VEdmNnpsNTg1T3hBT3ZZenN3RWlyd042aEQ1MEk4ZDEwY082VDh0MWhEdWpW?=
- =?utf-8?B?WEpBcVhHWkpFSTlsc2tiYWVUNEErQWlDWGQ2N3A4a2lwZU5nVjdNT0xvSWxP?=
- =?utf-8?B?T3RDNjJ3NTk4aC9QTGRQZFJSbnpHNC81RlB2UGNSeUkzcks2Q1pEcUMyeW9H?=
- =?utf-8?B?U0ZBVFI4aUdnZm81ZDQzdElPTmZjVGgyQUF4U2dCb3ZNa09scHhHYkNCN01k?=
- =?utf-8?B?UVF0cHBCMFEwLzFVemJjN3dPcjhWek10di9RODZSVTBYcWl3VGcyOGgvMUda?=
- =?utf-8?B?a3NaQjNBL0Zydkh2T3FFT0QrNHByNFZYWUF3SDlXRTBYNXZjdldocjhnTFox?=
- =?utf-8?B?V3kwVHhFZUM0cHdFZkFzaENEVDZiOERONzZTTEg5UFIvWFlncEtNS1FhS3lI?=
- =?utf-8?B?clZLU0YzZWtDOTBpNDRvMGVDRWVpQkxYSVdxejNIQXJNR1V2NmxPcENNdGZy?=
- =?utf-8?B?QmErbUQwVGJOb1JHdDZnNURPci9PaVQ4VVJzcmh0UGI3bEFjUS9POVZUZHJx?=
- =?utf-8?B?ZVQyeTJvd01FNlFITTRDRGRQTzNxb1hBZHNEVW9qMXZDMUgwZGNXUTNMTHJa?=
- =?utf-8?B?SmhhQjhySEJpUGtnOUJzS01aWTNJa0hXUmNUU2pkTG1VYkZWREswejlqTjJO?=
- =?utf-8?B?Z0dud3FzK3pwSC9VdU1zN3ZoQ2RmalovQWpkVnZtVjV6V1Y2Um0xZWNXY0Uz?=
- =?utf-8?B?MGc9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 732594f7-34da-4b86-e0e2-08dd7b50df71
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 12:35:43.6839
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oXUJIq/i0u46lvUxYw6NGdnU2OYZK1sWZKFNLhbrlCH440AnB1NDyWX7WnyF0Dw3fbY93x+A/jOa/mw87eDEJzf7bdOCS9Ygzy8QRPpSzmU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10420
+References: <20250407191628.323613-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CA+V-a8useBh5m+MqGXQwQJhuemehm=bPidL6XydR-FOmVN9QNQ@mail.gmail.com>
+In-Reply-To: <CA+V-a8useBh5m+MqGXQwQJhuemehm=bPidL6XydR-FOmVN9QNQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 14 Apr 2025 15:40:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU+U8D8iQdks72=Kki2HL+bo8tw9gA1S4D3c4hOphLTuA@mail.gmail.com>
+X-Gm-Features: ATxdqUFKkMO3BbQqjnr_4N17M_FpT_VBDPVT_ExrXL2YuenRJWHQK8qxSnAps2k
+Message-ID: <CAMuHMdU+U8D8iQdks72=Kki2HL+bo8tw9gA1S4D3c4hOphLTuA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] Add support for Renesas RZ/V2N SoC and EVK
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-serial@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Hi Prabhakar,
 
-According to CLK_GET_RATE_NOCACHE documentation, when this flag is
-present, the framework shouldn't use the cached rate of a clock. However,
-this doesn't happen during clk_core_set_rate_nolock, part of the
-clk_set_rate flow. clk_core_get_rate_nolock was called instead of
-clk_core_get_rate_recalc, which should be used to consider the presence of
-the CLK_GET_RATE_NOCACHE flag when setting the clock rate.
+On Mon, 14 Apr 2025 at 13:19, Lad, Prabhakar <prabhakar.csengg@gmail.com> w=
+rote:
+> On Mon, Apr 7, 2025 at 8:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > This patch series adds initial support for the Renesas RZ/V2N (R9A09G05=
+6)
+> > SoC and its evaluation board (EVK). The Renesas RZ/V2N is a vision AI
+> > microprocessor (MPU) designed for power-efficient AI inference and
+> > real-time vision processing. It features Renesas' proprietary AI
+> > accelerator (DRP-AI3), delivering up to 15 TOPS AI performance, making
+> > it ideal for applications such as Driver Monitoring Systems (DMS),
+> > industrial monitoring cameras, and mobile robots.
+> >
+> > Key features of the RZ/V2N SoC:
+> >   Processing Power:
+> >     - Quad Arm Cortex-A55 cores at 1.8GHz for high-performance computin=
+g
+> >     - Single Arm Cortex-M33 core at 200MHz for real-time processing
+> >     - 1.5MB on-chip SRAM for fast data access
+> >     - LPDDR4/LPDDR4X memory interface for high-speed RAM access
+> >
+> >   AI and Vision Processing:
+> >     - DRP-AI3 accelerator for low-power, high-efficiency AI inference
+> >     - Arm Mali-C55 ISP (optional) for image signal processing
+> >     - Dual MIPI CSI-2 camera interfaces for multi-camera support
+> >
+> >   High-Speed Interfaces:
+> >     - PCIe Gen3 (2-lane) 1ch for external device expansion
+> >     - USB 3.2 (Gen2) 1ch (Host-only) for high-speed data transfer
+> >     - USB 2.0 (Host/Function) 1ch for legacy connectivity
+> >     - Gigabit Ethernet (2 channels) for network communication
+> >
+> >   Industrial and Automotive Features:
+> >     - 6x CAN FD channels for automotive and industrial networking
+> >     - 24-channel ADC for sensor data acquisition
+> >
+> > LINK: https://tinyurl.com/renesas-rz-v2n-soc
+> >
+> > The series introduces:
+> > - Device tree bindings for various subsystems (SYS, SCIF, SDHI, CPG, pi=
+nctrl).
+> > - RZ/V2N SoC identification support.
+> > - Clock and pinctrl driver updates for RZ/V2N.
+> > - Initial DTSI and device tree for the RZ/V2N SoC and EVK.
+> >
+> > These patches have been tested on the RZ/V2N EVK with v6.15-rc1 kernel,
+> > logs can be found here:
+> > https://gist.github.com/prabhakarlad/aa3da7558d007aab8a288550005565d3
+> >
+> > @Geert, Ive rebased the patches on top of v6.15-rc1 + renesas-dts-for-v=
+6.16
+> > + renesas-clk-for-v6.16 branches. Also these patches apply on top of th=
+e below
+> > series [1] and [2]. I had to sort the order in Makefile for patch [3] t=
+o
+> > avoid conflicts.
+> > [1] https://lore.kernel.org/all/20250401090133.68146-1-prabhakar.mahade=
+v-lad.rj@bp.renesas.com/
+> > [2] https://lore.kernel.org/all/20250403212919.1137670-1-thierry.bultel=
+.yh@bp.renesas.com/#t
+> > [3] https://lore.kernel.org/all/20250403212919.1137670-13-thierry.bulte=
+l.yh@bp.renesas.com/
+> >
+> > Note, dtbs_check will generate the below warnings this is due to missin=
+g
+> > ICU support as part of initial series. I will be sending a follow-up pa=
+tch
+> > series to add ICU support which will fix these warnings.
+> > arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@1041000=
+0 (renesas,r9a09g056-pinctrl): 'interrupt-controller' is a required propert=
+y
+> >         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,=
+rzg2l-pinctrl.yaml#
+> > arch/arm64/boot/dts/renesas/r9a09g056n48-rzv2n-evk.dtb: pinctrl@1041000=
+0 (renesas,r9a09g056-pinctrl): '#interrupt-cells' is a required property
+> >         from schema $id: http://devicetree.org/schemas/pinctrl/renesas,=
+rzg2l-pinctrl.yaml#
+> >
+> > v1->v2:
+> > - Added acks from Rob.
+> > - Squashed the RZ/V2N EVK and SoC variant documentation into a single
+> >   commit.
+> > - Updated the commit messages.
+> > - Added RZV2N_Px, RZV2N_PORT_PINMUX, and RZV2N_GPIO macros in
+> >   SoC DTSI as we are re-using renesas,r9a09g057-pinctrl.h
+> >   in pictrl driver hence to keep the consistency with the
+> >   RZ/V2H(P) SoC these macros are added.
+> > - Dropped `renesas,r9a09g056-pinctrl.h` header file.
+> > - Followed DTS coding style guidelines
+> > - Dropped defconfig changes from the series.
+> > - Dropped SDHI dt-binding patch as its already applied to mmc -next tre=
+e.
+> >
+> > Cheers,
+> > Prabhakar
+> >
+> > Lad Prabhakar (12):
+> >   dt-bindings: soc: renesas: Document Renesas RZ/V2N SoC variants and
+> >     EVK
+> >   soc: renesas: Add config option for RZ/V2N (R9A09G056) SoC
+> >   dt-bindings: soc: renesas: Document SYS for RZ/V2N SoC
+> >   soc: renesas: sysc: Add SoC identification for RZ/V2N SoC
+> >   dt-bindings: serial: renesas: Document RZ/V2N SCIF
+> >   dt-bindings: clock: renesas: Document RZ/V2N SoC CPG
+> >   clk: renesas: rzv2h-cpg: Sort compatible list based on SoC part numbe=
+r
+> >   clk: renesas: rzv2h: Add support for RZ/V2N SoC
+> >   dt-bindings: pinctrl: renesas: Document RZ/V2N SoC
+> >   pinctrl: renesas: rzg2l: Add support for RZ/V2N SoC
+> >   arm64: dts: renesas: Add initial SoC DTSI for RZ/V2N
+> >   arm64: dts: renesas: Add initial device tree for RZ/V2N EVK
+> >
+> Would it be OK if I send version 3 containing only patches 4/12 and 10/12=
+?
 
-Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
----
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For patch 4/12: yes, that is fine. Thx!
+For patch 10/12: I have already applied it.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0565c87656cf..d85a6aac0f3c 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2530,7 +2530,7 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 	rate = clk_core_req_round_rate_nolock(core, req_rate);
- 
- 	/* bail early if nothing to do */
--	if (rate == clk_core_get_rate_nolock(core))
-+	if (rate == clk_core_get_rate_recalc(core))
- 		return 0;
- 
- 	/* fail on a direct rate set of a protected provider */
--- 
-2.45.2
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
