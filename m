@@ -1,98 +1,119 @@
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A7E2820B0;
-	Tue, 15 Apr 2025 13:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D70297A68;
+	Tue, 15 Apr 2025 13:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744722779; cv=none; b=Tvqzvwbh+iHeKgsPVVyH8GLRjLg6LrJ9uOgXco1nEFJOqxwa7ccLyspTaGgTkqOpQaTGp93Id5HUFTVR5fKrmEB2nj6LYtzVskNYETMHgNWPulCgqBcxyhHEyP2dCbM7sve6f8mfplZn6PzKhpwhIlrIkqY6Qm/+etVwtslMCdo=
+	t=1744723347; cv=none; b=J5GHL28e4ymcdM8auiDlKsPJXq4lWljdZ8fiE6f4kKunYUhrX4ehUb8RaDiZyVR6c6jDtAQbMKvGgu60poCbLXU9bvi14Mb+8dtUD2NGrHBmg5JDsQGH64p6GhQRi8Mi37OQF9qBx8AkoPEE5miLzKSWfH/KArO84iJEmBkpFXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744722779; c=relaxed/simple;
-	bh=II8WfqWmBa0u/1Ud+4A6+S3+jfYeVrIHrFaibEYV3WA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V6Sx5wRZaAZpPqz33ug/IkSw3Yzh1OzfJMtqL0xe07wchxGlN0dj2BCTobElQ36DG5hRlqqntX1wWOPa3jj+kDEHmvitXjm1I3IsOAQURCOoKdnrJoCRlej+F8gHZLiZGCHmmg7ULHI+RSaZsV/2pq5VynEtY3IPpf/HIig4CwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c59e7039eeso772681985a.2;
-        Tue, 15 Apr 2025 06:12:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744722776; x=1745327576;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K6O/BJeErtsOvgZOv8LjuIOrFRcKVVensh0XWZV1Eoo=;
-        b=QsCqxN/iJmypdaRloWlEsDE4mLeN+0/aTyY+ura3HzB92xJ2v/Z97vkiYJz1M7LRGg
-         rW20Poe+QltopwOZ86vfao2PUYcOoOTPJS828mhoVMfsfwyBn4BXl3jYfOMedfv/qhSc
-         6Ii2SQkxMwZ5K1ZKcNn8gMEBwUIMLAbg6+i7Gfa92vPAcEOYacpWAwUeH0cXfAR5SmSA
-         t+TJqhXq6P1LXhkApwo/RfcmnsQKsTypMav5ugJ0hqB0z9UVAsDq1+8vYlxMmzft7sd3
-         ATY8Ga1ofEN+OGZ3275HzGEM3t8wpYvyvwsYokNYEuDy9TacJJM1OO50aPYZU1IbDwgW
-         r42A==
-X-Forwarded-Encrypted: i=1; AJvYcCUPMv+oaYgL3umTQYIx1hNxhIfllxYgH2SqqRa5bB9xbljXfJxsrqLdxs7EzRx6+F5kii6N5ghdbOF0hm01@vger.kernel.org, AJvYcCUjjP6rRB7ciPJDCvS0t6pjJ32b3lxynPZ3w106Q1JNhhfd6+wmIbwZEqc/4gKMlvl+G8R/lSOgDTUB@vger.kernel.org, AJvYcCUzGUvJKQ5Zkbe4ejg1ScSyqoUUJz2g8cbw3l4jiBomVt2IrciJx4cLYJkc7oodXTkKEHucq1wtxWVI@vger.kernel.org, AJvYcCV/oNmG7FnkRaoQxS4028BtkVoOwTtN/AIxk1pTufLXDgHwVFZMXRKAnzqkGxvMPcmbsdXHSqBGYuoCJJ+EB6/+DZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFMvA6L06btrQpcm6JojQ3CmZdDDunOAchKCSH3idIsEspOyhA
-	0hF4bNbbdQIIuBhicf4bEWJcu9CJnn5JeNvx0W9Jq6qg3cYjgRc2xblCWWWM
-X-Gm-Gg: ASbGncvbXZMHL24vGOoR4SdoBzOSWhr3UKxr1MFfQrY1Rma8AUOHoPGJmf+d14x86fP
-	NuVs9T1uvPanNtdOjP+P2gw4Vc0/ZCMX6Kix4o08WujftUQX0GQHtThvev7qOKeEpEVnoSwUbSt
-	CMHy2kKW29zY96NVteaAV+98IU2bLF2o+sAtRTUH9xAg6jnIeuSp2gNUamiFdedoqZiHuZYk14P
-	u6vCegScZitR10DGbnMnMvpBe5u+KKjcvHYuhwg5RVv6iMgliE1vRa177A3vQosxtZ9HhYJuN5u
-	dDqaRMrXz57ic9YBJcEf+8MlAwdxz2Dmsl0Fvkutjuquw62751XPYU3Wm075WKn0omjMKd3vMM7
-	K05CXZ00=
-X-Google-Smtp-Source: AGHT+IFvEbtlcTy7OAGj3TbDr6+RilAwJ+Rkk6nifb8AOWeiki61CW7bB2Rywi+TF5zZVT1bTRYkVA==
-X-Received: by 2002:a05:620a:d93:b0:7c5:674c:eecc with SMTP id af79cd13be357-7c7af12dc43mr2364564485a.32.1744722775802;
-        Tue, 15 Apr 2025 06:12:55 -0700 (PDT)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com. [209.85.222.174])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c7a8a0dc9fsm906115285a.96.2025.04.15.06.12.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 06:12:55 -0700 (PDT)
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c081915cf3so693192485a.1;
-        Tue, 15 Apr 2025 06:12:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUPOfXtL+tD03krDWy5tjwhIfEVsKAjtcadpDcZ9/SsBpuEVRkLpnnytJFlhJIwSqb4rfdut+pNE03l@vger.kernel.org, AJvYcCVUI2HKfYJKRwUyVn2OF/Sz6qtSG0mElOjYhZHHkKfsb5cbh97g0iwDw3egj7Kui5GLWCcCm5Ut+ai2WjkQ@vger.kernel.org, AJvYcCWaxDWIwDMWiXMTAFZBYMlRWoUflIm1OjA1RhLFW0AWOOuYXAILGKoMGt4rTZTySh13NLITFmoN7K0Na2P4SdwFayo=@vger.kernel.org, AJvYcCXz7m9upCdlzuvtWp0xmWI60bxWtSvCLP6mNt0wsAakxmnmoNfNVGzgWFZyk0Fe/JRANtAoZuhW00ig@vger.kernel.org
-X-Received: by 2002:a05:620a:f0b:b0:7c7:5ad8:aece with SMTP id
- af79cd13be357-7c7af126989mr2643432285a.25.1744722775107; Tue, 15 Apr 2025
- 06:12:55 -0700 (PDT)
+	s=arc-20240116; t=1744723347; c=relaxed/simple;
+	bh=RRW47R1L7/5mlFWx4w8Iz2jOualfmecSBafClG5oO7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o53wxbpHFQKcssLJibyC6ypMGvidzUKtvOnvJE4lTkIyHRy0no3Lw/hIkq2AjaSrqrgEPUh5n8Z2gPRm3Vao+el1M1BmTcPFMoFtN3XlQV1t3Lo459y4sLhUNsmoLIaTSQ/ImD2RjmhdQAO0z97GJin5XD6C7RzV8ZdFuR/m4yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EZ43ARME; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EZ43ARME"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF09C4CEDD;
+	Tue, 15 Apr 2025 13:22:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744723346;
+	bh=RRW47R1L7/5mlFWx4w8Iz2jOualfmecSBafClG5oO7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EZ43ARME0oN0cZwYNSw0w8v/oqZQVtsnKvLPa+61dXAl0xfbNV5WsjKmuwtYuqoWa
+	 l70CaLBbqw3lS1d6ftYnd0AdLEFRyxwRR+DBeVImrTw1HKryvX9nWAHdx2PRVrekSU
+	 0xPfp3YvGyuZ8Toq9mhyEA90JZvkFS5z9EL1gm1Y=
+Date: Tue, 15 Apr 2025 15:22:24 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Douglas Anderson <dianders@chromium.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v4 1/8] driver core: auxiliary bus: add device creation
+ helpers
+Message-ID: <2025041506-unrented-props-6226@gregkh>
+References: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com>
+ <20250218-aux-device-create-helper-v4-1-c3d7dfdea2e6@baylibre.com>
+ <2025021938-swan-facedown-e96a@gregkh>
+ <1jecxtwpr4.fsf@starbuckisacylon.baylibre.com>
+ <2025041508-remix-plasma-cd47@gregkh>
+ <1j8qo1woxd.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407165202.197570-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250407165202.197570-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250407165202.197570-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 Apr 2025 15:12:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXr76BBXJJ-EHf3rCEAknsDCesn0AhnRcSHHSzpLk-6Ng@mail.gmail.com>
-X-Gm-Features: ATxdqUH9HUes13_WK517nkwq-HYNdrkhCnl7W9u-lJtD6AwpRvVE_3bTSo20vsk
-Message-ID: <CAMuHMdXr76BBXJJ-EHf3rCEAknsDCesn0AhnRcSHHSzpLk-6Ng@mail.gmail.com>
-Subject: Re: [PATCH v2 4/9] clk: renesas: rzv2h-cpg: Use str_on_off() helper
- in rzv2h_mod_clock_endisable()
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1j8qo1woxd.fsf@starbuckisacylon.baylibre.com>
 
-On Mon, 7 Apr 2025 at 18:52, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Replace hard-coded "ON"/"OFF" strings with the `str_on_off()` helper in
-> `rzv2h_mod_clock_endisable()`.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue, Apr 15, 2025 at 03:10:38PM +0200, Jerome Brunet wrote:
+> On Tue 15 Apr 2025 at 14:59, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> 
+> > On Tue, Apr 15, 2025 at 02:52:47PM +0200, Jerome Brunet wrote:
+> >> On Wed 19 Feb 2025 at 15:20, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> >> 
+> >> > On Tue, Feb 18, 2025 at 08:29:46PM +0100, Jerome Brunet wrote:
+> >> >> Add helper functions to create a device on the auxiliary bus.
+> >> >> 
+> >> >> This is meant for fairly simple usage of the auxiliary bus, to avoid having
+> >> >> the same code repeated in the different drivers.
+> >> >> 
+> >> >> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> >> >> Cc: Arnd Bergmann <arnd@arndb.de>
+> >> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> >> >
+> >> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >> 
+> >> Hey Greg,
+> >> 
+> >> Do you need me to do something else on this topic ?
+> >
+> > I don't know what tree it is going through, do you?  If you want me to
+> > take in the driver-core tree, just let me know.
+> 
+> For patch #1, I think driver-core would be appropriate, unless there is
+> something more specific for the auxiliary device support ?
+> 
+> I'll wait for this sink into an rc1, then resubmit the different driver
+> changes to the appropriate tree, no rush.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.16.
+Ok, will take just the first one then, thanks.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h
