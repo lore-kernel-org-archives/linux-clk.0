@@ -1,136 +1,105 @@
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A9229A3C7;
-	Tue, 15 Apr 2025 14:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB16F2DFA37;
+	Tue, 15 Apr 2025 15:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744729108; cv=none; b=gr+szJ9ubUOMN6m7Kuy1zNvzIRFnglHudt/pDfnypydy3R5qzhycijBnUOzaIMWwCSsd1+psZLZXIiR/jRTNekfx/Y6ZoTKKaZnwEIN4GN/oUoSBDJhdxmUw5CfE0qvMwTe9bOR0nAOGyVTzsbZC9QR0QUb1dRuYZG2m2auDW5o=
+	t=1744730083; cv=none; b=aj/MiXUZySsTtFaMW+VKU3mK2WSDpXjZBEK9Q/bOS0HEWSut7QnN5eV8LjpYTBYbm0F5fM52AVSSKerHqNvgVveML7jI318I3M3+bVejzdLnMaX+WNvxlOFzuqFcS3YCX0MvHrPsaM7o5RKq1zSYQJORwdwUTzoFQMU9rT8e+H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744729108; c=relaxed/simple;
-	bh=yj24jdntq7KtOcQz/LewZwXTbNubrVvLzcvOkoHp5D4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QAGfL30+Q83ZbsZhjijvBJVHW+OWgW8LOHnTls9Le9oF5jZCSsNpJ5tqnTzGTTPTZrTtB1BoxA/9Z3vpmIPA23ZGmLaBYXXX6EWCLXEIl7ApDDcknoRE5/hD20nfnopF+Oi3gS59Jdk+fUBSBGLjpjVD+Cr2llxpIe/BRabIaAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5262475372eso2351508e0c.2;
-        Tue, 15 Apr 2025 07:58:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744729105; x=1745333905;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q4a6j47dvp+eA1P3zGtnscPx3AJ8IAar6Kj7Z5zUOvU=;
-        b=XMfMXg+JvY1Ll4Tj5KLIjGDukLADUmB6l98ciybsFvkOfa9aGLJU2QJ9nG5JKvs7G6
-         lHpRu57R3MzkqLm8yS1+NIM5LdByEj03EL01E44OtJBcMI1g//6xp6+nwiO1S2kJ23s5
-         uPWpiQoAyqyxNRYsKZ7ZZPx6i2OQbHTu+lZFUFH6Pz4uuRvKA621iwvRvCXgG4P8NGt6
-         pw6v7U7LBcAAdzHAAsSs7kkFYQ4dWx3TTxcxa+Z00SDjHvdOSHW3ynWbqY5SkhVPBn0b
-         1dHH8rKTTusVVimM/n4lBNJ0v5ct5kYLWJLysgbyduyb1iJK6RRxo0wXRzwuSOHjLMRG
-         Be3g==
-X-Forwarded-Encrypted: i=1; AJvYcCU9g/WPjtNZqgHaX7QZxPXsZMR9WjQK1x0SzmBHDW1HoAlCt/N7rvw51kD6odCSPKhqNZR8DwR4rdST@vger.kernel.org, AJvYcCVHJ65A5yr2G1OqddL3d2h/l0Ih29P44wuk3Jt16nOckgsbcguV7QNkVCUECJLQ/h4P6RtdzNkcKylnRpZSyfqVbcM=@vger.kernel.org, AJvYcCVPpIxsQx33oEFu+fgyKkSzwEfwBCqTt5zj0snYjS7ryDsuOOSuiuMPHIn+FvHsaHAtEs5RcrvYiRF9m9WZ@vger.kernel.org, AJvYcCXZcUrmtmovuch6Rf/C0LTyFp4fv34DOXb/yu7x/39hQbjJkVo9coTwllqS0QrkHEvUIs5uT5bnFrsy@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN+d+MX5DesxpT5Abi4nnc1AFkbwUK3Z6PNIyMKTX22NPpPycr
-	ZySc6lL4/RUCmOCLlbyanMshI8Chb5ztd+TS1FAknrAl/Rq+X0EZJsiElE3t
-X-Gm-Gg: ASbGncu8X8DRcD1+4A37XieqghLgCryIyvGRHWulZP5l4N5AFltrCiQW91lgypHlc/3
-	F9gimWEh9du2qLkhjg18AuvrHTqpVuocj6UvhT8mq83CXgykw3VblW/aGHrD2bX1Zc8WL/dFtHp
-	7eeqlM7q4fA3DjamkWWmuxl9OreIFtiZcIyugtzqSq2sZ+5L1TxFyGTv86Gonfrq/5KjWrMdUvc
-	3f+JPqXcO/P0NFmlHs9ocm9+RTOnar6mnVqIbucnqEtnRCnmz85liBvKUm5oZrbTTwLckERCAWP
-	pqK1DKoZu5QuLH/V34vDOcyuDCSjBJUdM2sLM+Vdd8mMCYd60DBZXHaV6cppn1jIC7bXB/B1U6U
-	TVYY=
-X-Google-Smtp-Source: AGHT+IHYIpc6eXTwxqg2OTiCpS87O/yX0GXyVfcp5WPoZ/HlG3JXR6eXSpHI1fn7HvrahjhfOzmSIg==
-X-Received: by 2002:a05:6122:2221:b0:519:fcf2:ef51 with SMTP id 71dfb90a1353d-527c34cac1fmr11330912e0c.5.1744729105366;
-        Tue, 15 Apr 2025 07:58:25 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-527abd77f82sm2692998e0c.17.2025.04.15.07.58.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 07:58:25 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4c30a4bcceeso257796137.3;
-        Tue, 15 Apr 2025 07:58:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1EoIjQvNAv9hxy7XPegaT6ZeOaR+7ytZNpiPl8EPKkd8h4rzBCMDXyCEHwmhndhkav8u2dLvd8ZbFxWpe90uQor8=@vger.kernel.org, AJvYcCUR76D28iITHQT9P4+vMtJu56JhNbDgmHWtWs+z3GSwUCfKyOUPJ5bBWlNFDECt0X7Mez3m0rJjq4np@vger.kernel.org, AJvYcCUT4GeMaF3dC8z6FNCfGlTH9Zkt/8IpV0zg6SJ7zXYeI8wW8yJ/KaqlLW1n/g+9LVddtNPxalGwgH5Wn2pG@vger.kernel.org, AJvYcCWgFvlwxqiqX9J5ZEUx3greebUJLJvor7kxigiFBdZUQQApqc29koXQBR3QWE7tGIvfprNimSdIJrnw@vger.kernel.org
-X-Received: by 2002:a05:6102:160a:b0:4c4:f128:3abb with SMTP id
- ada2fe7eead31-4c9e504d016mr10205575137.25.1744729104858; Tue, 15 Apr 2025
- 07:58:24 -0700 (PDT)
+	s=arc-20240116; t=1744730083; c=relaxed/simple;
+	bh=NNkg4KBG1XF1rTXXMic0/x6nqkOh+W1QMwlkngBnbt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BmH4Cewb1XJFmDw1YDzB6BIScR0O4rKeQWUH6NCOMgj+tNCdFWOhbfhxij+qY1eBBHE7jRvMNGEsiqisXbp5MxUo4pkANUqQTPGE9WSoumGcGpKpMXp3Mt4dcP6TRiJ8z1fSFNL67MdQuVtyMjp6KBGbTGWSMxbzuedS2fPyroI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=W/pMlr3U; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="W/pMlr3U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BADF4C4CEEB;
+	Tue, 15 Apr 2025 15:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1744730081;
+	bh=NNkg4KBG1XF1rTXXMic0/x6nqkOh+W1QMwlkngBnbt4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W/pMlr3UVFCYWBcvpZLOuCoJgy02g1s9zvI/HbBU0IB5Ekwz/NQIU4hYUtuS7/kGp
+	 gQPoFcHfZNCkuUntHqGxew5OAMaa9ofiCoclWpcBNC9IhsaNt1Ch6dIe9a1idXXebt
+	 8X55QOY5Pi2zPWt2+UtyT/8B724qof+ccML8BPh0=
+Date: Tue, 15 Apr 2025 17:14:38 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com
+Subject: Re: [PATCH v8 08/13] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <2025041531-dubiously-duchess-276a@gregkh>
+References: <cover.1742418429.git.andrea.porta@suse.com>
+ <3fbc487bc0e4b855ffbee8ed62cfb6bf3b0592e8.1742418429.git.andrea.porta@suse.com>
+ <2025041557-masculine-abrasive-c372@gregkh>
+ <20250415165505.0c05bc61@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407165202.197570-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250407165202.197570-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250407165202.197570-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 15 Apr 2025 16:58:12 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWZisqxyGL32Y-AD1UgQD9fWKG+a-o71R+KeuSqn=U6gQ@mail.gmail.com>
-X-Gm-Features: ATxdqUF7uCq3d6TZFmW1hFAcHR_xum_PX4q7kLPsABlFSFkCIzYc0BA79FKRuvQ
-Message-ID: <CAMuHMdWZisqxyGL32Y-AD1UgQD9fWKG+a-o71R+KeuSqn=U6gQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/9] clk: renesas: rzv2h-cpg: Ignore monitoring CLK_MON
- bits for external clocks
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415165505.0c05bc61@bootlin.com>
 
-Hi Prabhakar,
+On Tue, Apr 15, 2025 at 04:55:05PM +0200, Herve Codina wrote:
+> Hi Greg,
+> 
+> On Tue, 15 Apr 2025 16:06:43 +0200
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> 
+> > On Wed, Mar 19, 2025 at 10:52:29PM +0100, Andrea della Porta wrote:
+> > > The RaspberryPi RP1 is a PCI multi function device containing
+> > > peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > > and others.  
+> > 
+> > So shouldn't this be using the auxbus code?  That's designed to "split
+> > up" PCI devices such that you can share them this way.
+> > 
+> > Or did that get rejected somewhere previously?
+> > 
+> 
+> It doesn't use auxbus probably for the exact same reason that the
+> one given for the LAN966x PCI device driver [0] and [1].
+> 
+> Avoid all boiler plate needed with auxbus whereas drivers already exist
+> as platform drivers. Internal devices are handled by those platform drivers.
+> Those devi just need to be described as platform devices and device-tree is
+> fully relevant for that description.
+> 
+> [0] https://lore.kernel.org/all/CAL_Jsq+1r3SSaXupdNAcXO-4rcV-_3_hwh0XJaBsB9fuX5nBCQ@mail.gmail.com/
+> [1] https://lore.kernel.org/all/Y9kuxrL3XaCG+blk@kroah.com/
 
-On Mon, 7 Apr 2025 at 18:52, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Ignore CLK_MON bits when turning on/off module clocks that use an external
-> clock source.
->
-> Introduce the `DEF_MOD_EXTERNAL()` macro for defining module clocks that
-> may have an external clock source. Update `rzv2h_cpg_register_mod_clk()`
-> to update mon_index.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+I really hate creating platform devices below a PCI device, so I'll keep
+complaining about this every time people try to do it.
 
-> --- a/drivers/clk/renesas/rzv2h-cpg.c
-> +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> @@ -569,6 +569,25 @@ static void rzv2h_mod_clock_mstop_disable(struct rzv2h_cpg_priv *priv,
->         spin_unlock_irqrestore(&priv->rmw_lock, flags);
->  }
->
-> +static bool rzv2h_mod_clock_is_external(struct rzv2h_cpg_priv *priv,
-> +                                       u16 ext_clk_offset,
-> +                                       u8 ext_clk_bit,
-> +                                       u8 ext_cond)
-> +{
-> +       u32 value;
-> +
-> +       if (!ext_clk_offset)
-> +               return false;
-> +
-> +       value = readl(priv->base + ext_clk_offset) & BIT(ext_clk_bit);
+thanks,
 
-As ext_clk_offset is actually the offset of the Static Mux Control
-Registers (CPG_SSELm), this reads the current state of the mux.
-However, can't the state be changed at runtime (despite it being named
-a "static mux")?
-
-> +       value >>= ext_clk_bit;
-> +
-> +       if (value == ext_cond)
-> +               return true;
-> +
-> +       return false;
-> +}
-> +
->  static int rzv2h_mod_clock_is_enabled(struct clk_hw *hw)
->  {
->         struct mod_clock *clock = to_mod_clock(hw);
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h
