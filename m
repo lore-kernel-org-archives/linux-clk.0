@@ -1,136 +1,147 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A591422AB;
-	Tue, 15 Apr 2025 17:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D13C22F14C
+	for <linux-clk@vger.kernel.org>; Tue, 15 Apr 2025 18:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744737568; cv=none; b=In09srHnd/4eUigDvbhQCX4zuPFvBlpNElXbXfFPNr6CqBo5A548eaStV0M4/EgpK2hXfnkjGQHZJnLFOLacNJkksvI73TlM4csH531P8teAgrizfVwsfyDRo40pLG7v454e1a9sRKWux/9628qNojNXCRI0Ehl3Sg9+krZShTg=
+	t=1744742895; cv=none; b=aX4lLsEcg0vZEr3mzRrmYetHqDalUX2iGgF34Ns9I9g8o+fvF0KmaNR1DIvGirMLzMwRHiFletBgYhyievuL3WC3h5nmIC/QBdUkdO1XMsQdRjI+F9Kcqdts6R4fjYTwWLQ95Yrb2oX3HYrWX6SZw3yJV0qbcillgFem4CK+9mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744737568; c=relaxed/simple;
-	bh=8yka/gQeBhrlYJl1t7qkx70DxA7hHJaBmLjr/ZBHYqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BcIB565tbTTck1/yUCxMsjoRQZd+PoSwpEnZSWHwoBcglAeiV6uSxn3Jm7q1ScXL807IXUnx0e5unV+f4ikkpaNw7PbBnI5A4wLVsT5Y6nQLcGNLFtTnHOM3POkHVO3ak6JtBVzUb+QmINe0dp4jO/8GhRyHYq2a4VRwrk07LFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhw7DW3V; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744742895; c=relaxed/simple;
+	bh=jyspZm5GDyE8V8MqM0DVGyy+s9l/GwhLFwsgaQQGonw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D2dVbj2Ft451RM8o0H1Jxvxo5GtTt5klCQhPkDkprK5Q2zmZ/HQi0QaQsha2ztUIl4kFYWzo4NMgCo34eH4IOZRdDtcw6HMLpFmCa/OAG75MNSdG3yC0Gs2lgz57Ojl+vJrUxWg/Vo0tZIH/tGuf5dhut+bx8K9qtiHQlMW8+fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=1+MwscUe; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhw7DW3V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F6EC4AF09;
-	Tue, 15 Apr 2025 17:19:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744737567;
-	bh=8yka/gQeBhrlYJl1t7qkx70DxA7hHJaBmLjr/ZBHYqk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jhw7DW3VqHIP3oCC9zZ5B2min/ozWe4z3fTBJFePlfJBXw1PL3lvj0ebqpk47Xo1j
-	 fHsMk4C7B7Nz5Z74s2p6+lz16LQGmL5KIsMKFUeVCxUr0NFUR4t0h7FtxYVzjzUYyc
-	 GC8GcJxioY+WzXChQpvR+goTqMq9c/gvEsj4sa+ouSXG4WWdjFbrrOzFiwY+MSyfu6
-	 1vjNOH6wflfV7QvVtylAfwhJrHe0nqdRvrjBgb2z2FAIeluoRru+P40JGUGOAXrZPq
-	 SEHgAcq10VwKaQQG8nNKnKvPrdgiIQgYo43gx6PMzMgPxo3YSzCOisLK/vofeHF4dk
-	 LxllEjABcYLrA==
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5edc07c777eso7528145a12.3;
-        Tue, 15 Apr 2025 10:19:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUdUv+7CK1iDP0ExWC6AVzzlOmbkYBNI4cAa/QfducYs3rWhbEmx9CEkpClIpj4PL0SP0CPUvCfoCAo@vger.kernel.org, AJvYcCVxjUKMR0UWiN6XEkqaMheyrONJ4YdDsaEUFBCWGiqIrry6Vsoe7o9DG8GsRYEHjkloXeqp+n04TBzG@vger.kernel.org, AJvYcCWjU18CYUy+fTgqvv0LW0t4Ee1OFtjxXVIMauLuAth6+PJ3TrEiZMa2yszXmm4enTyke79KnnMuiEKJ@vger.kernel.org, AJvYcCWnjnDwq8jhC6NGV5k4lr/PP6O46HXO5kiXHKXhNacVyNPKHjFrBWdW1dV6Ufr0lQAVV+gZFK1gIRqAIIBy@vger.kernel.org, AJvYcCXmQfqd9EVTU3inv2NLJyzym4Zz4MKA+XlhQtGWzBHtIU8E62boUkIUsmw1SEu6px/3+pdNsMA/cukPQA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeDny2ugsASXlGS8OxcehHXWiMANC+KYuYpmgB6XifP8UohcQp
-	YfFPWvXelpCk58KfYTauxxsDe36Qkh0bkXv1leg+dHs28sv4xrvV9boz6z23+Iejo/Zm+NSEl4m
-	b6hDgKJrdSFaR11+5JWHM0SzucQ==
-X-Google-Smtp-Source: AGHT+IFg/mg5Nw4gYKzUIV+g5HCy+mWdlEB6aIaPRaMh7pw+ii1aBxtkyH5Y0FGsRMWegnVV9LP1TH52Q9jz/Bmp/K4=
-X-Received: by 2002:a05:6402:84d:b0:5e5:c3bc:f4e0 with SMTP id
- 4fb4d7f45d1cf-5f370118051mr12498419a12.29.1744737566354; Tue, 15 Apr 2025
- 10:19:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="1+MwscUe"
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7369ce5d323so4747391b3a.1
+        for <linux-clk@vger.kernel.org>; Tue, 15 Apr 2025 11:48:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1744742892; x=1745347692; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=glUhvdbg6jDxSzyhesIM3rd1JyjGcrsNSGuSqUFVHug=;
+        b=1+MwscUeTVfBM7bjPdLu6bUneloOL81f/Yya/cT52SsUTCY15XkjAkbKP9kJVSn6pG
+         wM47IBzFbvRklbgrnGDSEnHY0APRUns77kG9QBm/lFehrbl4dvpFKQjhFVvMoa/EVlDZ
+         W5IEz0GRUuIvoUmLHgQre9ifjnI8Oil1YZGGd3TPD02qm6aSOzsefOt7UvFLcqICue3z
+         ZvFN6NJaDsf476XVogolYLzskAMkulEZuSeblXHi9JIePHQ5q9dcsugiq+c9XSEQ36Mh
+         V3Uc4P6QXEhXFxSCEleM2ra5orNvvE11i/VaOIKrkBNcUwffOpwNGiFIhbFslHZczUFy
+         xPbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744742892; x=1745347692;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=glUhvdbg6jDxSzyhesIM3rd1JyjGcrsNSGuSqUFVHug=;
+        b=KeBDukID8TSs9cLfDS1nWz4CN2IZrBIZM0cvyj/ZRQv4P1SXugscIO8GdPJPXkgNy8
+         eOfORnFwHM8m+ww5mwbWcQd4HAcqFtCgGBVfV20NE5rONbKmZzqDQpWEU/0YjRrgZrWf
+         gU45oUf/aQkNCckMM38MYapPxCKnBjTd0zCQzOy2ltkXk5w3rkPMFlBUBmWndL1/9BT+
+         S1mTr4rnqmfRcgsyh35QX3cQ4/MxJTG+qdZ6JlldQbdPFhbPq5xctlB8OMiP0lCkshP6
+         aS14b+xx0zNge23aXM9v7Y+ZDuI7vlQLOVcgW5ADP6ff0VWQh633zlFke2yDqmt3jOWJ
+         gs9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUr7dEPfdQll9R+hm35HfVuDiEXdQBpaZdKnv7Rzt2tnilY49CLt4sMAnVn9XdxDSR9dQ0sVvk/T/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY8y7hRy6ALBBCH7KPeK3NsMm/aWphfejQc97Oa1Sltnf0JSZ5
+	zvwbxz5gRJkp/Hfpk7empX7OgUw8Ii7wBNncIg1rD8DjW0rWd4ez2ARPnp98nsc=
+X-Gm-Gg: ASbGnctCoa8Dcf5VQmp4wSWj5NehQfEaKswD6V6ZlsgQAPBPuwi4PN3zYPECw/0UlPy
+	YTnqko+0E1D+nMnGBpckSKxVGNHai7LaIZqIE95Lo8ZYhRewlkus7BRgL8gnh74igWnEUs5QGZ2
+	yLn3ehoJC6IUv9l7nGMeY6bvbBHs/1/0k40dqRrFrbHZT7/mIbis6ruRklQgRDMMGflad99ZKrj
+	IZEjn9OfbT/fIzX2XYMZAZFhj8KqcaqFCd1UKMWsUwtgQr9BQgF3x2NsFXj2KYGyKLyMV2o9Z4j
+	XSTfleDrGUpiOHxW87JW40/9pSMPbXXWGNdfns8V3mWrl9E=
+X-Google-Smtp-Source: AGHT+IFU1A6IgDtbE+ayph1nkrk/Xkmje9tzi2mXCLVIUeRmrboHqr3jd6su6fZeet5H41nBKRVWlQ==
+X-Received: by 2002:a05:6a00:a26:b0:736:3979:369e with SMTP id d2e1a72fcca58-73c1f8f742emr628913b3a.9.1744742891991;
+        Tue, 15 Apr 2025 11:48:11 -0700 (PDT)
+Received: from x1 (97-120-122-6.ptld.qwest.net. [97.120.122.6])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a2d3a4ddsm9578290a12.49.2025.04.15.11.48.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 11:48:10 -0700 (PDT)
+Date: Tue, 15 Apr 2025 11:48:08 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, guoren@kernel.org,
+	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
+	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	simona@ffwll.ch, ulf.hansson@linaro.org, jszhang@kernel.org,
+	p.zabel@pengutronix.de, m.szyprowski@samsung.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v5 19/21] riscv: dts: thead: Introduce power domain nodes
+ with aon firmware
+Message-ID: <Z/6p6MQDS8ZlQv5r@x1>
+References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
+ <CGME20250219140315eucas1p10f08d297580edd114f4c487c1fbffa8d@eucas1p1.samsung.com>
+ <20250219140239.1378758-20-m.wilczynski@samsung.com>
+ <Z/2+rbhsaBP0DQop@x1>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1742418429.git.andrea.porta@suse.com> <3fbc487bc0e4b855ffbee8ed62cfb6bf3b0592e8.1742418429.git.andrea.porta@suse.com>
- <2025041557-masculine-abrasive-c372@gregkh> <20250415165505.0c05bc61@bootlin.com>
- <2025041531-dubiously-duchess-276a@gregkh> <Z_5-Jjbu6XoHGmxN@apocalypse> <2025041530-random-cheek-125d@gregkh>
-In-Reply-To: <2025041530-random-cheek-125d@gregkh>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 15 Apr 2025 12:19:14 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJbdvMrUEVwp4_yC4efhwuK4eCLYWFpGdvrVcbr213aqg@mail.gmail.com>
-X-Gm-Features: ATxdqUHTw0_CVItdYBRikaW5EF3D0YJ32XibO0ClmZMuosKXRosNhnaQkfoIVa4
-Message-ID: <CAL_JsqJbdvMrUEVwp4_yC4efhwuK4eCLYWFpGdvrVcbr213aqg@mail.gmail.com>
-Subject: Re: [PATCH v8 08/13] misc: rp1: RaspberryPi RP1 misc driver
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>, Herve Codina <herve.codina@bootlin.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof Wilczynski <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
-	Stefan Wahren <wahrenst@gmx.net>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Phil Elwell <phil@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	kernel-list@raspberrypi.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z/2+rbhsaBP0DQop@x1>
 
-On Tue, Apr 15, 2025 at 11:14=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Tue, Apr 15, 2025 at 05:41:26PM +0200, Andrea della Porta wrote:
-> > Hi Greg,
-> >
-> > On 17:14 Tue 15 Apr     , Greg Kroah-Hartman wrote:
-> > > On Tue, Apr 15, 2025 at 04:55:05PM +0200, Herve Codina wrote:
-> > > > Hi Greg,
-> > > >
-> > > > On Tue, 15 Apr 2025 16:06:43 +0200
-> > > > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > > On Wed, Mar 19, 2025 at 10:52:29PM +0100, Andrea della Porta wrot=
-e:
-> > > > > > The RaspberryPi RP1 is a PCI multi function device containing
-> > > > > > peripherals ranging from Ethernet to USB controller, I2C, SPI
-> > > > > > and others.
-> > > > >
-> > > > > So shouldn't this be using the auxbus code?  That's designed to "=
-split
-> > > > > up" PCI devices such that you can share them this way.
-> > > > >
-> > > > > Or did that get rejected somewhere previously?
-> > > > >
-> > > >
-> > > > It doesn't use auxbus probably for the exact same reason that the
-> > > > one given for the LAN966x PCI device driver [0] and [1].
-> > > >
-> > > > Avoid all boiler plate needed with auxbus whereas drivers already e=
-xist
-> > > > as platform drivers. Internal devices are handled by those platform=
- drivers.
-> > > > Those devi just need to be described as platform devices and device=
--tree is
-> > > > fully relevant for that description.
-> > > >
-> > > > [0] https://lore.kernel.org/all/CAL_Jsq+1r3SSaXupdNAcXO-4rcV-_3_hwh=
-0XJaBsB9fuX5nBCQ@mail.gmail.com/
-> > > > [1] https://lore.kernel.org/all/Y9kuxrL3XaCG+blk@kroah.com/
-> > >
-> > > I really hate creating platform devices below a PCI device, so I'll k=
-eep
-> > > complaining about this every time people try to do it.
-> >
-> > I agree with you, but as Herve has already pointed out this would mean =
-incurring
-> > in significant work to adapt drivers for all the peripherals (there are=
- quite a
-> > few), while with this approach they would be left untouched.
->
-> We have no problem with reworking existing drivers, especially if they
-> will be doing the correct thing.  Don't let that be an excuse, it
-> doesn't work with me, sorry :)
+On Mon, Apr 14, 2025 at 07:04:29PM -0700, Drew Fustini wrote:
+> On Wed, Feb 19, 2025 at 03:02:37PM +0100, Michal Wilczynski wrote:
+> > The DRM Imagination GPU requires a power-domain driver. In the T-HEAD
+> > TH1520 SoC implements power management capabilities through the E902
+> > core, which can be communicated with through the mailbox, using firmware
+> > protocol.
+> > 
+> > Add AON node, which servers as a power-domain controller.
+> > 
+> > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> > ---
+> >  arch/riscv/boot/dts/thead/th1520.dtsi | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+> > index 197df1f32b25..474f31576a1b 100644
+> > --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> > +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> > @@ -6,6 +6,7 @@
+> >  
+> >  #include <dt-bindings/interrupt-controller/irq.h>
+> >  #include <dt-bindings/clock/thead,th1520-clk-ap.h>
+> > +#include <dt-bindings/power/thead,th1520-power.h>
+> >  
+> >  / {
+> >  	compatible = "thead,th1520";
+> > @@ -229,6 +230,13 @@ stmmac_axi_config: stmmac-axi-config {
+> >  		snps,blen = <0 0 64 32 0 0 0>;
+> >  	};
+> >  
+> > +	aon: aon {
+> > +		compatible = "thead,th1520-aon";
+> > +		mboxes = <&mbox_910t 1>;
+> > +		mbox-names = "aon";
+> > +		#power-domain-cells = <1>;
+> > +	};
+> > +
+> >  	soc {
+> >  		compatible = "simple-bus";
+> >  		interrupt-parent = <&plic>;
+> > -- 
+> > 2.34.1
+> > 
+> 
+> Reviewed-by: Drew Fustini <drew@pdp7.com>
+> 
+> I tested this on top of 6.15-rc1 and found no issues.
+> 
+> -Drew
 
-Let me resurrect of_platform_bus so we can stop repeating the same
-conversation... MMIO based devices using DT (and ACPI) are platform
-devices. There is no other answer in the kernel today.
+I've applied to thead-dt-for-next:
+https://github.com/pdp7/linux/commit/2bae46e3de2a64fe3a619d61b16da0c01b8df2a1
 
-Rob
+Michal - are there any other dts patches that I should consider for 6.16
+PR?  I would probably send to Arnd around 6.15-rc3 or 6.15-rc4.
+
+Thanks,
+Drew
