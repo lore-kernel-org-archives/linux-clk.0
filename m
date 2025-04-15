@@ -1,238 +1,234 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2258F5E;
-	Tue, 15 Apr 2025 16:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88482DFA2D;
+	Tue, 15 Apr 2025 16:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744732940; cv=none; b=t0t5vTqfNAy4eOrJ+LZiqStyGqp7z5fEzYjAIMVx9t441cCSU9sbc0awlsvXGEbC1l8Q/dtU2gTW1Fyci7CUAhfpcu181J6S1gQsNgNsFCiQZJsL0ZpAG0xznmmcvfAcfNPpkJTQimBSQwe++LsI97rmZnAWycmRnsXtcgqCrS4=
+	t=1744732989; cv=none; b=CGC1Gcof32UxAPIny54TJuf55uinW0rx0zLcUDRkFsq4Skoz3ZM97jA8hOb3eumC8oVi6iG4U4/3xTElydS2Mgda+3YRGhbCPSHg5OAx/jKEb4btnPCjxHpsBmAtU90AGmtUOcg8P76L63/IWZyGosnc9UYdEkCvMLZ8oK8rpgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744732940; c=relaxed/simple;
-	bh=7Rmh8vV6GpjW8tGOLmzMipD5iUxBweVFlC56ryJ2b3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jvx2vWv49ptr+vthDshvcYaPY0YEz3NfZ4gtKQcKPCCC97UrPO2r9lVBAs2gEHpMaNqvzgY8ftg/N6eeYlRM9oVc/RsC0eaKv1Tiu6sWAQzBENrlGm/tpyvoR9fcyK/3wo9dfUBIGcT6jkCuUW6qAglQ35CwORchl/XQqiWuoUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aANLp776; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aANLp776"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86DCFC4CEEB;
-	Tue, 15 Apr 2025 16:02:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744732939;
-	bh=7Rmh8vV6GpjW8tGOLmzMipD5iUxBweVFlC56ryJ2b3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aANLp776GKPJr5pXAnfPCvusHmJYG8nzy62olk0fqthF3OToJIaIlkaCECG05ghZ8
-	 Un00ln3T/UclXpdbp+IwVgad5hUelMoCgjZ3JLblQuDGZosgZlH/w+UmFazy/FcEQe
-	 QKCKWF0mFzEG9r2zEcWuheOQPeBVknSgquyecaSIgfO+nu2Oopa/Afub5Z31RQXzl9
-	 SYCRm9kl1WT275bzi0f487LXy0Kb8n2F2RLBY9uAq23ZrZqlQDGdMNBpTkhr2yFx+T
-	 mO2GEdOLLSGBD0mgsJFep3vPLvT29DE/BOI1TWKCvdyOagM0TqAo+QPFE2K9xRtJLj
-	 HXdR/+0rgoqvQ==
-Date: Tue, 15 Apr 2025 17:02:12 +0100
-From: Lee Jones <lee@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
-Message-ID: <20250415160212.GA372032@google.com>
-References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
+	s=arc-20240116; t=1744732989; c=relaxed/simple;
+	bh=Hzmc5byleNFyCDdpw7V0x8g7q/DvdasFY7cNHTnX7hY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MZ6eRhRX7lcI+iCockbolgvMAg19N9IlP8rp4+XUVfYU8u5TQAw02u4rW5EcTpedBcUeRsp773dAWJIq7f4cn5pOXnt6h4tHH/GCirzPK20QdEEwlYU19hxGszZkW77iGxT6ODtKUfygkVyPxZdd1+4OO8yui4Rkq84Ff9xjn2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-70576d2faa1so22148637b3.3;
+        Tue, 15 Apr 2025 09:03:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744732985; x=1745337785;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TuEbYlZMiJuO8E2YPXwmbMAltImu0P0byOBQlAv2mMo=;
+        b=DCOpTiSQxOgJUZ4TaDngHCBuPEu35Xvep5Xkp47hseyXbRzGZyJBqrdcyCr1qbjIK4
+         KvP1MvAcN0NUW9thVfKSJwLxVBPY2Ro0S4jOlNhU5nBh6O6WjY93+qFmjGqdZp6D2weV
+         nIowrTELWFiYiJUlgRKMdn15D3mzmlhmsw8bcdgRUtG4MjQHT6VlUtoyZwPlHo1N5XFv
+         atlNmwtr9bRilTf+UTh2BT6m9zEQNeJRYuUEqeyx2tefrq5iQ12DpWcrvLIoYfQ9yjnq
+         2rPR7j3rUJ3fHJYDpfwhP9V2akGja8iHha8h8AXl7DvyZjb1ctU11T2w+WI4bHQRqa+6
+         u/sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcC/TtfqAZap6hidit/mEof9387fd6B5GcM5Ej7leW+wJKkM+BH/8+/SamypHXoU0h3TsPCwtvEBky@vger.kernel.org, AJvYcCVohkvj1d2K+pk3INd0lZBcNuTP5yatRWDcptAaa6g4MP8qFIZvt2aAunax+fiJ0eAIldCOcfw7Pf7d8bpt6QdW1Po=@vger.kernel.org, AJvYcCWR7OW7kaGNiP07aXO6uqsfh/Rdu8Ub6JAJUpZ3Gbf9578cO/qHxz5AEN6W/5zokK1eoNqA+xVCA+lL542K@vger.kernel.org, AJvYcCWv63EB0YtsmBeYzLbqm+gp17/9yMrWWmhfvFnPOVL05pcmyKTKBiQNENkEx4Awfnr6H1UVrhEZKjeH@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz1xqRdn50pX9yia3OXVCKnKhRrPsRbCJQA9RiKPL8u7yLRdKd
+	TlP6Am2uxoNQQqmh+u1PVDxjNZZpT5Fvcn1fhTR9yM4N8r/yZSe0w7PqZ5Dg
+X-Gm-Gg: ASbGncuWIkUhZ1wqa8gXUPRIUM2BJ+lncWI6pmx5l5Pp46KHj/CWqvhRGVDMzORAIh9
+	N069b7g4INrWPXckLftSTRg9CmoRgn2S3AUHEm7swF0cvaX2YIzIdg7Uz3C2lkNKLQMhmIQJnVC
+	h8pfAagjOWGrGBDELUpQa2mO73OWqSdJ76Wy10qk+q9Qyj4QDGCfFMTUrwanU0Fwozv3TIn1J/I
+	Vttk2MKxJyU8RVZ67xI0fRTC+Lzork/8xhIW5NAuuoliQlU9h9KFGiZjyMbd9oIRaYiPKhNyER/
+	AxlZ407hTjiegoGw7WgukvOuAHGo7c5/LdMY3DXujDQL4QFnhZr2qu2YxoVi3TZ/iadh9QbIo37
+	+iFdXtYI=
+X-Google-Smtp-Source: AGHT+IEQjeguuj3kW49E0aLJcog5tbt6WB7qvI5MYHzzjd27grqxYE+yakeUXAde4gMhNxmDrMaHGQ==
+X-Received: by 2002:a05:690c:25c4:b0:6fd:42ed:c90 with SMTP id 00721157ae682-705599c9cc1mr273759707b3.16.1744732985109;
+        Tue, 15 Apr 2025 09:03:05 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7053e372b6dsm36993467b3.88.2025.04.15.09.03.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 09:03:04 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e6582542952so4590660276.3;
+        Tue, 15 Apr 2025 09:03:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVhF9LbkD2oXNG+aWFcw9BEw/H1v6uoXe2b1OWcIUSSWQyTgvLLSEBiJb4W3YND15LDCf/AFxYP1dFp@vger.kernel.org, AJvYcCXSDtM4Fsr7Gr3b/HO/iSm8LPgFKHn+UvnVeMuMfRBEQ4mcSvKsA+AfZwb6Xrg2/Gnl7o7NHNXYgAoYWsK5@vger.kernel.org, AJvYcCXiCwv5tlRmvmln6oDwlnZNCSRgATtkMPLD0V4gflMkvmbi4Doo+V3o7W/sXprWonvZy4ts7jHAAhGUNHMSnzIC4mA=@vger.kernel.org, AJvYcCXvdaP77L/wwYSamDhKZJRNTROmdSZ4oEusXy1xEOBxQp/jeE9ekUn2y1A1SmffzFor1JpVcpMDl5l2@vger.kernel.org
+X-Received: by 2002:a05:6122:1d0a:b0:525:9dd5:d55a with SMTP id
+ 71dfb90a1353d-527c35e7a47mr11730397e0c.8.1744732671704; Tue, 15 Apr 2025
+ 08:57:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
+References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250408200916.93793-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250408200916.93793-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Apr 2025 17:57:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW9WhKeMyKfdiLWmLC8mabNe-4ROW5uCZhx6z503GE0Ug@mail.gmail.com>
+X-Gm-Features: ATxdqUHtuz_A-xS1tTTRA3AiVheg582GK6_Rn09grQ8w2iOfDNKRllrwvo1MBQw
+Message-ID: <CAMuHMdW9WhKeMyKfdiLWmLC8mabNe-4ROW5uCZhx6z503GE0Ug@mail.gmail.com>
+Subject: Re: [PATCH v2 01/15] clk: renesas: rzv2h-cpg: Add support for DSI clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 09 Apr 2025, André Draszik wrote:
+Hi Prabhakar,
 
-> This series adds initial support for the Samsung S2MPG10 PMIC using the
-> MFD framework. This is a PMIC for mobile applications and is used on
-> the Google Pixel 6 and 6 Pro (oriole / raven).
-> 
-> *** dependency note ***
-> 
-> To compile, this depends on the Samsung ACPM driver in Linux next with
-> the following additional patches:
-> https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org/
-> https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org/
-> https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org/
-> 
-> *** dependency note end ***
-> 
-> +++ Kconfig update +++
-> 
-> There is a Kconfig symbol update in this series, because the existing
-> Samsung S2M driver has been split into core and transport (I2C & ACPM)
-> parts. CONFIG_MFD_SEC_CORE is now truly a core driver, and
-> the I2C code that was part of it is now enabled via CONFIG_MFD_SEC_I2C.
-> 
-> This was necessary because unlike the other S2M PMICs, S2MPG10 doesn't
-> talk via I2C, but via the Samsung ACPM firmware.
-> 
-> +++ Kconfig update end +++
-> 
-> This series must be applied in-order, due to interdependencies of some
-> of the patches. There are also various cleanup patches to the S2M
-> drivers. I've kept them ordered as:
->   * DT bindings (patches 1 ... 3)
->   * s2m mfd prep for adding S2MPG10 support (patches 4 ... 7)
->   * split S2M mfd driver into s2m-core and s2m-i2c, including the
->     kconfig symbol update (patch 8)
->   * S2MPG10 core driver (patch 9)
->   * s2m mfd driver cleanup patches (patches 10 ... 23)
->   * S2MPG10 clock driver (patch 24)
->   * s2m RTC prep for adding S2MPG10 (patch 25 ... 26)
->   * S2MPG10 RTC driver (patch 27)
->   * s2m RTC cleanup patches (patches 28 ... 31)
-> 
-> I realise these are many, but since some prep-work was required to be
-> able to add S2MPG anyway, I wanted to get the cleanup patches in as
-> well :-) Let me know if I should postpone them to a later date instead.
-> 
-> The S2MPG10 includes buck converters, various LDOs, power meters, RTC,
-> clock outputs, and additional GPIOs interfaces.
-> 
-> This series adds support in the top-level device driver, and for the
-> RTC and clock. Importantly, having the RTC driver allows to do a proper
-> reset of the system. Drivers or driver updates for the other components
-> will be added in future patches.
-> 
-> This will need a DT update for Oriole / Raven to enable this device. I
-> will send that out separately.
-> 
-> Cheers,
-> Andre'
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
-> Changes in v4:
-> - various updates to sec-acpm (patch 9, Lee)
-> - cache enum type in patch 25 (Krzysztof)
-> - collect tags
-> - Link to v3: https://lore.kernel.org/r/20250403-s2mpg10-v3-0-b542b3505e68@linaro.org
-> 
-> Changes in v3:
-> - Krzysztof:
->   - keep 'regulators' subnode required even for s2mpg10
->   - drop '$ref' and 'unevaluatedProperties' from pmic subnode, use
->     'additionalProperties' instead
->   - add some regulators to examples since s2mpg10 requires them as of
->     v3
-> - sec-acpm:
->   - use an enum for struct sec_acpm_bus_context::type
->   - consistent name space for all functions sec_pmic_acpm_... to be
->     similar to i2c and consistent in this file
-> - Link to v2: https://lore.kernel.org/r/20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org
-> 
-> Changes in v2:
-> - Rob:
->   - make PMIC node a child of ACPM, and all related changes (binding,
->     driver)
-> - Krzysztof:
->   - merge defconfig updates into patch changing the symbols (patch 8)
->   - split MODULE_AUTHOR update into a separate patch
->   - better alignment fix (patch 11)
->   - merge two s2dos05/s2mpu05 related patches into one (patch 14)
-> - myself:
->   - keep PMIC DT parsing in core, not in transport driver
->   - several updates in sec-acpm.c, see separate entries in patch 9
->   - fix typo in patch 17
->   - collect tags
-> - Link to v1: https://lore.kernel.org/r/20250323-s2mpg10-v1-0-d08943702707@linaro.org
-> 
-> ---
-> André Draszik (32):
->       dt-bindings: mfd: samsung,s2mps11: add s2mpg10
->       dt-bindings: clock: samsung,s2mps11: add s2mpg10
->       dt-bindings: firmware: google,gs101-acpm-ipc: add PMIC child node
->       mfd: sec-core: Drop non-existing forward declarations
->       mfd: sec: Sort includes alphabetically
->       mfd: sec: Update includes to add missing and remove superfluous ones
->       mfd: sec: Move private internal API to internal header
->       mfd: sec: Split into core and transport (i2c) drivers
->       mfd: sec: Add support for S2MPG10 PMIC
->       mfd: sec: Merge separate core and irq modules
->       mfd: sec-common: Fix multiple trivial whitespace issues
->       mfd: sec-i2c: Sort struct of_device_id entries and the device type switch
->       mfd: sec: Use dev_err_probe() where appropriate
->       mfd: sec-i2c: s2dos05/s2mpu05: Use explicit regmap config and drop default
->       mfd: sec-irq: s2dos05 doesn't support interrupts
->       mfd: sec-common: Don't ignore errors from sec_irq_init()
->       mfd: sec-i2c: Rework platform data and regmap instantiating
->       mfd: sec: Change device_type to int
->       mfd: sec: Don't compare against NULL / 0 for errors, use !
->       mfd: sec-common: Use sizeof(*var), not sizeof(struct type_of_var)
->       mfd: sec-common: Convert to using MFD_CELL macros
->       mfd: sec-irq: Convert to using REGMAP_IRQ_REG() macros
->       mfd: sec: Add myself as module author
->       clk: s2mps11: add support for S2MPG10 PMIC clock
->       rtc: s5m: cache device type during probe
->       rtc: s5m: prepare for external regmap
->       rtc: s5m: add support for S2MPG10 RTC
->       rtc: s5m: fix a typo: peding -> pending
->       rtc: s5m: switch to devm_device_init_wakeup
->       rtc: s5m: replace regmap_update_bits with regmap_clear/set_bits
->       rtc: s5m: replace open-coded read/modify/write registers with regmap helpers
->       MAINTAINERS: add myself as reviewer for Samsung S2M MFD
-> 
->  .../devicetree/bindings/clock/samsung,s2mps11.yaml |   1 +
->  .../bindings/firmware/google,gs101-acpm-ipc.yaml   |  35 ++
->  .../devicetree/bindings/mfd/samsung,s2mps11.yaml   |  26 +-
->  MAINTAINERS                                        |   3 +-
->  arch/arm/configs/exynos_defconfig                  |   2 +-
->  arch/arm/configs/multi_v7_defconfig                |   2 +-
->  arch/arm/configs/pxa_defconfig                     |   2 +-
->  arch/arm64/configs/defconfig                       |   2 +-
+On Tue, 8 Apr 2025 at 22:09, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support for PLLDSI and PLLDSI divider clocks.
+>
+> The `renesas-rzv2h-dsi.h` header file is added to share the PLL divider
+> algorithm between the CPG and DSI drivers.
+>
+> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
->  drivers/clk/clk-s2mps11.c                          |   8 +
+Thanks for your patch!
 
->  drivers/mfd/Kconfig                                |  35 +-
->  drivers/mfd/Makefile                               |   5 +-
->  drivers/mfd/sec-acpm.c                             | 442 +++++++++++++++++++
->  drivers/mfd/sec-common.c                           | 301 +++++++++++++
->  drivers/mfd/sec-core.c                             | 481 ---------------------
->  drivers/mfd/sec-core.h                             |  23 +
->  drivers/mfd/sec-i2c.c                              | 239 ++++++++++
->  drivers/mfd/sec-irq.c                              | 460 +++++++-------------
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> @@ -196,6 +225,253 @@ static int rzv2h_cpg_pll_clk_enable(struct clk_hw *hw)
+>         return ret;
+>  }
+>
+> +static unsigned long rzv2h_cpg_plldsi_div_recalc_rate(struct clk_hw *hw,
+> +                                                     unsigned long parent_rate)
+> +{
+> +       struct rzv2h_plldsi_div_clk *dsi_div = to_plldsi_div_clk(hw);
+> +       struct rzv2h_cpg_priv *priv = dsi_div->priv;
+> +       struct ddiv ddiv = dsi_div->ddiv;
+> +       u32 div;
+> +
+> +       div = readl(priv->base + ddiv.offset);
+> +       div >>= ddiv.shift;
+> +       div &= ((2 << ddiv.width) - 1);
+> +
+> +       div = dsi_div->dtable[div].div;
+> +
+> +       return DIV_ROUND_CLOSEST_ULL(parent_rate, div);
+> +}
+> +
+> +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
+> +                                              struct clk_rate_request *req)
+> +{
+> +       struct rzv2h_plldsi_div_clk *dsi_div = to_plldsi_div_clk(hw);
+> +       struct rzv2h_cpg_priv *priv = dsi_div->priv;
+> +       struct rzv2h_plldsi_parameters *dsi_dividers = &priv->plldsi_div_parameters;
+> +       unsigned long long rate_mhz;
+> +
+> +       /*
+> +        * Adjust the requested clock rate (`req->rate`) to ensure it falls within
+> +        * the supported range of 5.44 MHz to 187.5 MHz.
+> +        */
+> +       req->rate = clamp(req->rate, 5440000UL, 187500000UL);
+> +
+> +       rate_mhz = req->rate * MILLI * 1ULL;
 
->  drivers/rtc/rtc-s5m.c                              | 197 ++++++---
+The first multiplication overflows on 32-bit systems.
+Probably you wanted to use mul_u32_u32() instead?
 
-MFD parts look okay to me now.
+More review later, I fell too deep in the wrong rabbit hole ("mhz !=
+megaHertz"), again...
 
-With Acks from the Clk and RTC maintainers, I can merge all of the
-driver stuff together and submit a PR for others to pull from.
+> --- /dev/null
+> +++ b/include/linux/clk/renesas-rzv2h-dsi.h
+> @@ -0,0 +1,207 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Renesas RZ/V2H(P) DSI CPG helper
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corp.
+> + */
+> +
+> +#include <linux/limits.h>
+> +#include <linux/math.h>
+> +#include <linux/math64.h>
+> +#include <linux/units.h>
+> +
+> +#define OSC_CLK_IN_MEGA                (24 * MEGA)
+> +
+> +struct rzv2h_plldsi_div_limits {
+> +       struct {
+> +               u64 min;
+> +               u64 max;
 
->  include/linux/mfd/samsung/core.h                   |   7 +-
->  include/linux/mfd/samsung/irq.h                    | 103 +++++
->  include/linux/mfd/samsung/rtc.h                    |  37 ++
->  include/linux/mfd/samsung/s2mpg10.h                | 454 +++++++++++++++++++
->  22 files changed, 2001 insertions(+), 864 deletions(-)
-> ---
-> base-commit: f58dd835f82a5dda6c9d3895ee6f15016431fb1f
-> change-id: 20250321-s2mpg10-ef5d1ebd3043
-> 
-> Best regards,
-> -- 
-> André Draszik <andre.draszik@linaro.org>
-> 
+u32 should be sufficient?
 
--- 
-Lee Jones [李琼斯]
+> +       } fvco;
+> +
+> +       struct {
+> +               u16 min;
+> +               u16 max;
+> +       } m;
+> +
+> +       struct {
+> +               u8 min;
+> +               u8 max;
+> +       } p;
+> +
+> +       struct {
+> +               u8 min;
+> +               u8 max;
+> +       } s;
+> +
+> +       struct {
+> +               s16 min;
+> +               s16 max;
+> +       } k;
+> +
+> +       struct {
+> +               u8 min;
+> +               u8 max;
+> +       } csdiv;
+> +};
+> +
+> +struct rzv2h_plldsi_parameters {
+> +       u64 freq_mhz;
+> +       s64 error_mhz;
+> +       u16 m;
+> +       s16 k;
+> +       u8 csdiv;
+> +       u8 p;
+> +       u8 s;
+> +};
+> +
+> +#define RZV2H_CPG_PLL_DSI_LIMITS(name)                                 \
+> +       static const struct rzv2h_plldsi_div_limits (name) = {          \
+> +               .m = { .min = 64, .max = 533 },                         \
+> +               .p = { .min = 1, .max = 4 },                            \
+> +               .s = { .min = 0, .max = 6 },                            \
+> +               .k = { .min = -32768, .max = 32767 },                   \
+> +               .csdiv = { .min = 2, .max = 32 },                       \
+> +               .fvco = { .min = 1600 * MEGA, .max = 3200 * MEGA }      \
+
+Please initialize the members in declaration order.
+
+
+> +       }                                                               \
+> +
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
