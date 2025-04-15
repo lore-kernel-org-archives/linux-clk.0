@@ -1,136 +1,170 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B14161310
-	for <linux-clk@vger.kernel.org>; Tue, 15 Apr 2025 02:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F212DFA5B;
+	Tue, 15 Apr 2025 04:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744682674; cv=none; b=IBWkBXjBOI6YS7x4TTEKzqlbFDeqOKdjm9ExQQmoP7SNz1WEnb6AqquAPRLGKGzhIJi/IrtW0Iv+dniJ3wgP9vVZL0bGvbuqsxMOYaG72o7AXVl32+yMcOWT3513Of2YFslW+/UlZ3g6gP/xfg5gDSz0owEOfIKupdiYIOCHKbE=
+	t=1744689926; cv=none; b=uE/tXPN71vETBhxSGorRa6zTMwmnZIBxNnrD9AQ/ljp9gbG5Z7PSwp+Cj6NFkmiF7jDi1QknX26p6BO3IFhMZjGzLISemFzXces+vARkT8zVGZ3/T7O9hG1B/cemfJBQMt4yaJyU5sx11SVrdrZ5vo/L2rqqvvk2RvMLvIonsiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744682674; c=relaxed/simple;
-	bh=tEDXzDkWlHgvvbX/JljUt2UxkVPnnZQtkQIAfB5Q7M8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lfHYtCwmjYkpGaoGcqMF4avoSZm1EgQopE0yILY2YOgUn2PAk8JWPNvTMLv0Y1wyarxqIO6bQ0xwK3VjffYaBnAuHFkCthGoY1JKQSsWtG2+RRnNVARBX/Ep+Bt0FsbVyrsq6Ya7FSku9pex8O7ZfC6+m/ozbKwfCH7em8rXRsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=v7IVIRgi; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+	s=arc-20240116; t=1744689926; c=relaxed/simple;
+	bh=5onrEStEUDN1ilDvDavwzaUS7EYoBW9R6M/pH0wIpFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=byzYWUw99xTYXPt0SkYbXcGg/teOAynPVBdiuON1eY/ZYZQc+8SQL3IlgV5FCm8Cp+5Ft7qlJO76Dd/4qbwQXE9UL2+38Bb/NwDL8zvWc0iHaUwZp4R04r9BrqzSz8ctZj9jfqaJ8xJ3ds8RMoNQHl3lniIeJUairp6EuUD9TyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kyJ4FqAx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="v7IVIRgi"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-af59c920d32so3667969a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 14 Apr 2025 19:04:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1744682672; x=1745287472; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vVKNwOsV5XMrSrMJnf19rxwG/iaJAJwZinmx64BUP7k=;
-        b=v7IVIRgiEm06f5Sl1Ma+KA1tWciebQ/fDrAGee/jEludo/aWshcp+MAoUaXs0iL+qZ
-         30kgwwr1ZxNS/fqcNP3IpW06bYrHW/q/4yeFRsO83bbi36t0YOnkwP8DbwPG/VsWd9Zk
-         pY197cus+iTFVu8j6vM2XV0j38nZ3thbMBn+jMLL+Ey5vR/MmbQaCTTXCiJ+NYweXWPi
-         r0BtIVbEDQjWa0dyeyv4+Lewf4QOZMVb+l9DQFhfgm+yxwb1qNM7973/RkPL2JULbUa2
-         23XmYrMMMbzxa5IGhZvaxx1YmkK2bMU0ZNE071W/yY9OMkshH1ojP7IJTUlYxZIUwhdZ
-         n9ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744682672; x=1745287472;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vVKNwOsV5XMrSrMJnf19rxwG/iaJAJwZinmx64BUP7k=;
-        b=CQEKqTRTecewQykehhJvxjPBlbYA0ye2L7cM1WhKyejSz4dTs9chIOYrttk3OGrq7u
-         rmwoTBSNdgV8X/7hfhDDvBwuUuqssd690lzv7xxpf4lapcH4TpKTAD8mtZTxXJrTAwA9
-         JdnEqdyWbCOiBoukl86qLvTwyPr/HMaVEyXtDd5PZbqWmwDJxzDYmIyAVxYskmc/UIeO
-         Wid51+bwuxuEQrkRobKIdwfRDnhWvCRyK//abI6/D/j8nVs2Lt5s9cZqQYluE1oRPljd
-         8AGhZmAITDyoh3Y434reGEc11ZZTgb9iu2TiJjcROmvW5mXVlWS0DI92qkTLTfyLuD7Z
-         71dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPMRy4OopAjv8AgWJqVSUFfgp7NBWdlr/AjGm5ompmTKFI+MXqLGzQqMYypD6FR7FQpqe/u8p1lAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyKZNVW4/rugJp+Pcf4hzyqWonIVexRL9xtld95zeb9zf19JiY
-	Cv9Z88W9rZG+IzMFgDT4ZL/KdUV84IXLrUig7/j4bn8qSc7fr14oG8XrHbdRnGs=
-X-Gm-Gg: ASbGncsgDKb/QWmLVmfpgjiD6kxAzf16MO8sJdQtDfIYqxmPhWyDpN3rJWz8NYtpQsG
-	CBhi7jU7luYj8Zyk/3kBKyFBwojEf63zVJsZpy+uWu13UeGJnqWU/ZxlJgLh2CJFSNGsfSQo2Q8
-	Du2iQ9VsCdjI0UQz11mpsUHM84jsP3vIAJgV4ac3WreR2Aujr68PaDpF8Uhp9cAkgaFSwnsX+jX
-	bdo2cFYutnhRZ2DKemtKK/ASOzOjdnU9GEYc6q5AQieB9Q+UyUzlr0zuk6PQK9ONtS8qRKzV8xY
-	65/zB0Z828l1hUuOUuoqfM/76PH8HTNzAE6CTGyhfwWl+84=
-X-Google-Smtp-Source: AGHT+IEGINtwuIIvAG2vOyy+05/hzxGzcyCN3rLg9V0W9dc2TsjoIN0MbhxjBGLcyWirEoR5Ps2qpQ==
-X-Received: by 2002:a17:90a:d64d:b0:2f9:c144:9d13 with SMTP id 98e67ed59e1d1-308237b9f43mr17682243a91.24.1744682672433;
-        Mon, 14 Apr 2025 19:04:32 -0700 (PDT)
-Received: from x1 (97-120-122-6.ptld.qwest.net. [97.120.122.6])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-306dd12b4d5sm13372486a91.25.2025.04.14.19.04.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 19:04:31 -0700 (PDT)
-Date: Mon, 14 Apr 2025 19:04:29 -0700
-From: Drew Fustini <drew@pdp7.com>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, guoren@kernel.org,
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, ulf.hansson@linaro.org, jszhang@kernel.org,
-	p.zabel@pengutronix.de, m.szyprowski@samsung.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 19/21] riscv: dts: thead: Introduce power domain nodes
- with aon firmware
-Message-ID: <Z/2+rbhsaBP0DQop@x1>
-References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
- <CGME20250219140315eucas1p10f08d297580edd114f4c487c1fbffa8d@eucas1p1.samsung.com>
- <20250219140239.1378758-20-m.wilczynski@samsung.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kyJ4FqAx"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F15qKk016117;
+	Tue, 15 Apr 2025 04:05:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4Z/ubR0bHVlEbalLwcZhfcjQS1Ooe1tunvKxpZnMAE0=; b=kyJ4FqAxG0wxTqIZ
+	+RRcGPR4dcthiw6HhEIaZ58fyuN+1AQkzp0JaGFboD9TpJYz1bURj+pWg+rK9B0N
+	FZw9xv1dfTD54a0iIVk2ZKVRqOQtBQO1TfBasjEqLaG6DAMmY51wlw+DDPTnojUI
+	zq72wrXwWLkFE75QIjpFBCk0OHeGQc3EL+4Go9ec8YG6Nhc3gmrYJMK8m6uH1Wpf
+	+WZA/OFsxgKGq0A4yxNgA13+KuiDraNH7vXI1bbJR7t9FsjiwPdFb85gGuQHsc4x
+	Guky79WjFYh18FX66O53j8iovFDmny3SWNH8Ct2ResxpHCTIV4stLQrO5YSOmiZC
+	O2VLgg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yhfcxfwf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Apr 2025 04:05:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53F45FUG018011
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 15 Apr 2025 04:05:15 GMT
+Received: from [10.217.216.178] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Apr
+ 2025 21:05:10 -0700
+Message-ID: <0db798bf-04b3-40b5-af90-7dda5b606727@quicinc.com>
+Date: Tue, 15 Apr 2025 09:35:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219140239.1378758-20-m.wilczynski@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: sm6350: Add video clock
+ controller
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Jagadeesh Kona
+	<quic_jkona@quicinc.com>,
+        Luca Weiss <luca.weiss@fairphone.com>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250324-sm6350-videocc-v2-0-cc22386433f4@fairphone.com>
+ <20250324-sm6350-videocc-v2-4-cc22386433f4@fairphone.com>
+ <1c09fee5-9626-4540-83fb-6d90db2ce595@oss.qualcomm.com>
+ <9eb6dfd7-2716-4150-9392-98e26892d82d@quicinc.com>
+ <e3dda8bf-e19e-4dde-83a4-7876ca81e5e6@oss.qualcomm.com>
+ <69fba227-ed47-4004-9451-777ca19b687f@quicinc.com>
+ <cfa4003c-e8b0-40f6-821d-07f8d44752af@oss.qualcomm.com>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <cfa4003c-e8b0-40f6-821d-07f8d44752af@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=CfUI5Krl c=1 sm=1 tr=0 ts=67fddafb cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=6H0WHjuAAAAA:8
+ a=hCl-885K2BfM0JJyIxAA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-GUID: _tEFsNCWhbbuowJCJmuc1XYFWd2n2vik
+X-Proofpoint-ORIG-GUID: _tEFsNCWhbbuowJCJmuc1XYFWd2n2vik
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-15_01,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 malwarescore=0 impostorscore=0 spamscore=0 phishscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0 clxscore=1011
+ adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504150024
 
-On Wed, Feb 19, 2025 at 03:02:37PM +0100, Michal Wilczynski wrote:
-> The DRM Imagination GPU requires a power-domain driver. In the T-HEAD
-> TH1520 SoC implements power management capabilities through the E902
-> core, which can be communicated with through the mailbox, using firmware
-> protocol.
+
+
+On 4/12/2025 12:56 AM, Konrad Dybcio wrote:
+> On 4/11/25 1:37 PM, Jagadeesh Kona wrote:
+>>
+>>
+>> On 4/11/2025 2:42 PM, Konrad Dybcio wrote:
+>>> On 4/11/25 9:15 AM, Jagadeesh Kona wrote:
+>>>>
+>>>>
+>>>> On 4/1/2025 10:03 PM, Konrad Dybcio wrote:
+>>>>> On 3/24/25 9:41 AM, Luca Weiss wrote:
+>>>>>> Add a node for the videocc found on the SM6350 SoC.
+>>>>>>
+>>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>>>>>> ---
+>>>>>>  arch/arm64/boot/dts/qcom/sm6350.dtsi | 14 ++++++++++++++
+>>>>>>  1 file changed, 14 insertions(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
+>>>>>> index 42f9d16c2fa6da66a8bb524a33c2687a1e4b40e0..4498d6dfd61a7e30a050a8654d54dae2d06c220c 100644
+>>>>>> --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
+>>>>>> @@ -1952,6 +1952,20 @@ usb_1_dwc3_ss_out: endpoint {
+>>>>>>  			};
+>>>>>>  		};
+>>>>>>  
+>>>>>> +		videocc: clock-controller@aaf0000 {
+>>>>>> +			compatible = "qcom,sm6350-videocc";
+>>>>>> +			reg = <0x0 0x0aaf0000 0x0 0x10000>;
+>>>>>> +			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
+>>>>>> +				 <&rpmhcc RPMH_CXO_CLK>,
+>>>>>> +				 <&sleep_clk>;
+>>>>>> +			clock-names = "iface",
+>>>>>> +				      "bi_tcxo",
+>>>>>> +				      "sleep_clk";
+>>>>>> +			#clock-cells = <1>;
+>>>>>> +			#reset-cells = <1>;
+>>>>>> +			#power-domain-cells = <1>;
+>>>>>> +		};
+>>>>>
+>>>>> You'll probably want to hook up some additional power domains here, see
+>>>>>
+>>>>> https://lore.kernel.org/linux-arm-msm/20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com/
+>>>>>
+>>>>
+>>>> On SM6350, videocc doesn't need multiple power domains at HW level, it is only on CX rail which would be ON
+>>>> when system is active, hence power-domains are not mandatory here.
+>>>
+>>> 6350 doesn't have either MMCX nor a split MX - shouldn't both normal
+>>> CX and MX be in there?
+>>>
+>>
+>> All clocks & GDSC's of SM6350 videocc are only on CX rail, so it requires only CX power domain. But when HLOS
+>> is active, CX rail will be ON and operate at a level above retention, which is sufficient for videocc to operate.
+>> Hence clock driver don't need to explicitly vote on CX rail.
+>>
+>> The same is not true for other rails like MMCX and Split MX(MXC), hence clock drivers had to explicitly vote on
+>> those rails.
 > 
-> Add AON node, which servers as a power-domain controller.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  arch/riscv/boot/dts/thead/th1520.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-> index 197df1f32b25..474f31576a1b 100644
-> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> @@ -6,6 +6,7 @@
->  
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/clock/thead,th1520-clk-ap.h>
-> +#include <dt-bindings/power/thead,th1520-power.h>
->  
->  / {
->  	compatible = "thead,th1520";
-> @@ -229,6 +230,13 @@ stmmac_axi_config: stmmac-axi-config {
->  		snps,blen = <0 0 64 32 0 0 0>;
->  	};
->  
-> +	aon: aon {
-> +		compatible = "thead,th1520-aon";
-> +		mboxes = <&mbox_910t 1>;
-> +		mbox-names = "aon";
-> +		#power-domain-cells = <1>;
-> +	};
-> +
->  	soc {
->  		compatible = "simple-bus";
->  		interrupt-parent = <&plic>;
-> -- 
-> 2.34.1
+> I'm worried about MX being undervolted for higher OPPs
 > 
 
-Reviewed-by: Drew Fustini <drew@pdp7.com>
+From a videocc PoV there is no requirement of Mx on SM6350. The CX
+levels would be taken care by Video SW driver from their defined OPP. Mx
+at system level would be catered via the BW votes.
 
-I tested this on top of 6.15-rc1 and found no issues.
+> Konrad
 
--Drew
