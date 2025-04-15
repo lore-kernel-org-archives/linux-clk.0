@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F43527EC7A
-	for <linux-clk@vger.kernel.org>; Tue, 15 Apr 2025 08:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195042820BD
+	for <linux-clk@vger.kernel.org>; Tue, 15 Apr 2025 08:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744705388; cv=none; b=mXZTNu/h8y9jc5/gIEPI7Vkcrk4+1lGvoIN1BOHckygKi6bs0v+P5h0vMKre0/+93pmXt2835X/Xj7Cmj3tfq7t6t7/XZAwYsxR3lY90g9rRt90US5tyS6lOsFW3T8C0SZn/un6yCx4feNCCrQBPKTCmbRHYqzzxeOsgf3QW8oU=
+	t=1744705495; cv=none; b=ZJSnVAC8LPtwlx+mi3Gjt+D5drkJ8DTeQHWMe8rPjPLnmXMeeQ6693RBEzqaN3zFE13wHZV8BiIVQIZMZW05YwyyGK5478TiHUlY6FhnbrRvnWiEEdYYQGEfAAq5tTvXPa/2FQ9nOs1s2lID6i4q1Lz3OetHALXyasPsiICGejk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744705388; c=relaxed/simple;
-	bh=JpGjNbvJ68b1+c8DHkGd85uMGGsQlUTSW2ospchYelE=;
+	s=arc-20240116; t=1744705495; c=relaxed/simple;
+	bh=sFGMekDjeVuOQRwXezlB0hJR41CNbYrITZjFMlKUWVA=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=N5aV4dwApvassNCktR/NPgbppOzOJUwzNnghsy9iAvOz3C7Jr72VyGXCMXp+BC1mfjV+S1c0Fs/VL6XbXr9zqgrhIt0yL6PcKST+WHOFM2Mhaaj9Ae5OeymNH3vbw9hAA8mRlIQfFbZGhEp5F08Ba3GhwjbC1nz9uGpcBvnDwDo=
+	 Content-Type:MIME-Version; b=JaGkqIh87OZRUMIG6gNWJwSV7NVYq4eA6i0L/ei+Gd3BIRrrQWBs7u5Q55/TIkSzDaWU9S5k2jo/kIqWJwRg3hgoXAzDO0RW6eQomYc/oXlxd88bil/uj9IeZNcciNDBQIp4raMWBvto8/P3+szMIh7ZrgXdCIC+9xKnn6QGAQo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,20 +18,19 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1u4bYu-0001z5-0U; Tue, 15 Apr 2025 10:22:32 +0200
+	id 1u4bay-0002GN-5b; Tue, 15 Apr 2025 10:24:40 +0200
 Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1u4bYs-000O14-3C;
-	Tue, 15 Apr 2025 10:22:31 +0200
+	id 1u4bax-000O1M-2z;
+	Tue, 15 Apr 2025 10:24:39 +0200
 Received: from pza by lupine with local (Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1u4bYs-0003Kq-2s;
-	Tue, 15 Apr 2025 10:22:30 +0200
-Message-ID: <eee41968ecb0c16da214819b9a43e9dd881fcf13.camel@pengutronix.de>
-Subject: Re: [PATCH v4 6/7] clk: spacemit: define new syscons with only
- resets
+	id 1u4bax-0003O6-2l;
+	Tue, 15 Apr 2025 10:24:39 +0200
+Message-ID: <dbd81c1b07f65edc77329ff479bdf9c790c78120.camel@pengutronix.de>
+Subject: Re: [PATCH v4 3/7] clk: spacemit: add reset controller support
 From: Philipp Zabel <p.zabel@pengutronix.de>
 To: Alex Elder <elder@riscstar.com>, mturquette@baylibre.com,
  sboyd@kernel.org,  robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
@@ -40,10 +39,10 @@ Cc: dlan@gentoo.org, heylenay@4d2.org, guodong@riscstar.com,
  spacemit@lists.linux.dev, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org,  linux-riscv@lists.infradead.org,
  linux-kernel@vger.kernel.org
-Date: Tue, 15 Apr 2025 10:22:30 +0200
-In-Reply-To: <20250414191715.2264758-7-elder@riscstar.com>
+Date: Tue, 15 Apr 2025 10:24:39 +0200
+In-Reply-To: <20250414191715.2264758-4-elder@riscstar.com>
 References: <20250414191715.2264758-1-elder@riscstar.com>
-	 <20250414191715.2264758-7-elder@riscstar.com>
+	 <20250414191715.2264758-4-elder@riscstar.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.4-2 
@@ -59,148 +58,30 @@ X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expand
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
 On Mo, 2025-04-14 at 14:17 -0500, Alex Elder wrote:
-> Enable support for three additional syscon CCUs which support reset
-> controls but no clocks:  ARCPU, RCPU2, and APBC2.
+> Define ccu_reset_data as a structure that contains the constant
+> register offset and bitmasks used to assert and deassert a reset
+> control on a SpacemiT K1 CCU. Add a pointer to an array of those
+> structures to the spacemit_ccu_data structure, along with a field
+> indicating how many elements are in that array.  Resets will be
+> optional, and if none are defined the reset array pointer will be
+> null.
+>=20
+> Define a new ccu_reset_controller structure, which (for a CCU with
+> resets) contains a pointer to the constant reset data, the regmap
+> to be used for the controller, and an embedded a reset controller
+> structure.
+>=20
+> Each reset control is asserted or deasserted by updating bits in
+> a register.  The bits used are defined by an assert mask and a
+> deassert mask.  In some cases, one (non-zero) mask asserts reset
+> and a different (non-zero) mask deasserts it.  Otherwise one mask
+> is nonzero, and the other is zero.  Either way, the bits in
+> both masks are cleared, then either the assert mask or the deassert
+> mask is set in a register to affect the state of a reset control.
 >=20
 > Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  drivers/clk/spacemit/ccu-k1.c | 93 +++++++++++++++++++++++++++++++++++
->  1 file changed, 93 insertions(+)
->=20
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.=
-c
-> index 7494c97c3c7ec..cd1a0668bd203 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -130,6 +130,36 @@
->  #define APMU_EMAC0_CLK_RES_CTRL		0x3e4
->  #define APMU_EMAC1_CLK_RES_CTRL		0x3ec
-> =20
-> +/* RCPU register offsets */
-> +#define RCPU_SSP0_CLK_RST		0x0028
-> +#define RCPU_I2C0_CLK_RST		0x0030
-> +#define RCPU_UART1_CLK_RST		0x003c
-> +#define RCPU_CAN_CLK_RST		0x0048
-> +#define RCPU_IR_CLK_RST			0x004c
-> +#define RCPU_UART0_CLK_RST		0x00d8
-> +#define AUDIO_HDMI_CLK_CTRL		0x2044
-> +
-> +/* RCPU2 register offsets */
-> +#define RCPU2_PWM0_CLK_RST		0x0000
-> +#define RCPU2_PWM1_CLK_RST		0x0004
-> +#define RCPU2_PWM2_CLK_RST		0x0008
-> +#define RCPU2_PWM3_CLK_RST		0x000c
-> +#define RCPU2_PWM4_CLK_RST		0x0010
-> +#define RCPU2_PWM5_CLK_RST		0x0014
-> +#define RCPU2_PWM6_CLK_RST		0x0018
-> +#define RCPU2_PWM7_CLK_RST		0x001c
-> +#define RCPU2_PWM8_CLK_RST		0x0020
-> +#define RCPU2_PWM9_CLK_RST		0x0024
-> +
-> +/* APBC2 register offsets */
-> +#define APBC2_UART1_CLK_RST		0x0000
-> +#define APBC2_SSP2_CLK_RST		0x0004
-> +#define APBC2_TWSI3_CLK_RST		0x0008
-> +#define APBC2_RTC_CLK_RST		0x000c
-> +#define APBC2_TIMERS0_CLK_RST		0x0010
-> +#define APBC2_KPC_CLK_RST		0x0014
-> +#define APBC2_GPIO_CLK_RST		0x001c
-> +
->  struct ccu_reset_data {
->  	u32 offset;
->  	u32 assert_mask;
-> @@ -1177,6 +1207,57 @@ static const struct spacemit_ccu_data k1_ccu_apmu_=
-data =3D {
->  	.reset_num	=3D ARRAY_SIZE(apmu_reset_data),
->  };
-> =20
-> +static const struct ccu_reset_data rcpu_reset_data[] =3D {
-> +	[RESET_RCPU_SSP0]	=3D RESET_DATA(RCPU_SSP0_CLK_RST,	0, BIT(0)),
-> +	[RESET_RCPU_I2C0]	=3D RESET_DATA(RCPU_I2C0_CLK_RST,	0, BIT(0)),
-> +	[RESET_RCPU_UART1]	=3D RESET_DATA(RCPU_UART1_CLK_RST, 0, BIT(0)),
-> +	[RESET_RCPU_IR]		=3D RESET_DATA(RCPU_CAN_CLK_RST,	0, BIT(0)),
-> +	[RESET_RCPU_CAN]	=3D RESET_DATA(RCPU_IR_CLK_RST,	0, BIT(0)),
-> +	[RESET_RCPU_UART0]	=3D RESET_DATA(RCPU_UART0_CLK_RST, 0, BIT(0)),
-> +	[RESET_RCPU_HDMI_AUDIO]	=3D RESET_DATA(AUDIO_HDMI_CLK_CTRL, 0, BIT(0)),
-> +};
-> +
-> +static struct spacemit_ccu_data k1_ccu_rcpu_data =3D {
 
-Could be const.
-
-> +	/* No clocks in the RCPU CCU */
-> +	.reset_data	=3D rcpu_reset_data,
-> +	.reset_num	=3D ARRAY_SIZE(rcpu_reset_data),
-> +};
-> +
-> +static const struct ccu_reset_data rcpu2_reset_data[] =3D {
-> +	[RESET_RCPU2_PWM0]	=3D RESET_DATA(RCPU2_PWM9_CLK_RST, BIT(2), BIT(0)),
-> +	[RESET_RCPU2_PWM1]	=3D RESET_DATA(RCPU2_PWM9_CLK_RST, BIT(2), BIT(0)),
-> +	[RESET_RCPU2_PWM2]	=3D RESET_DATA(RCPU2_PWM9_CLK_RST, BIT(2), BIT(0)),
-> +	[RESET_RCPU2_PWM3]	=3D RESET_DATA(RCPU2_PWM9_CLK_RST, BIT(2), BIT(0)),
-> +	[RESET_RCPU2_PWM4]	=3D RESET_DATA(RCPU2_PWM9_CLK_RST, BIT(2), BIT(0)),
-> +	[RESET_RCPU2_PWM5]	=3D RESET_DATA(RCPU2_PWM9_CLK_RST, BIT(2), BIT(0)),
-> +	[RESET_RCPU2_PWM6]	=3D RESET_DATA(RCPU2_PWM9_CLK_RST, BIT(2), BIT(0)),
-> +	[RESET_RCPU2_PWM7]	=3D RESET_DATA(RCPU2_PWM9_CLK_RST, BIT(2), BIT(0)),
-> +	[RESET_RCPU2_PWM8]	=3D RESET_DATA(RCPU2_PWM9_CLK_RST, BIT(2), BIT(0)),
-> +	[RESET_RCPU2_PWM9]	=3D RESET_DATA(RCPU2_PWM9_CLK_RST, BIT(2), BIT(0)),
-> +};
-> +
-> +static struct spacemit_ccu_data k1_ccu_rcpu2_data =3D {
-
-const
-
-> +	/* No clocks in the RCPU2 CCU */
-> +	.reset_data	=3D rcpu2_reset_data,
-> +	.reset_num	=3D ARRAY_SIZE(rcpu2_reset_data),
-> +};
-> +
-> +static const struct ccu_reset_data apbc2_reset_data[] =3D {
-> +	[RESET_APBC2_UART1]	=3D RESET_DATA(APBC2_UART1_CLK_RST, BIT(2), (0)),
-> +	[RESET_APBC2_SSP2]	=3D RESET_DATA(APBC2_SSP2_CLK_RST, BIT(2), (0)),
-> +	[RESET_APBC2_TWSI3]	=3D RESET_DATA(APBC2_TWSI3_CLK_RST, BIT(2), (0)),
-> +	[RESET_APBC2_RTC]	=3D RESET_DATA(APBC2_RTC_CLK_RST,	BIT(2), (0)),
-> +	[RESET_APBC2_TIMERS0]	=3D RESET_DATA(APBC2_TIMERS0_CLK_RST, BIT(2), (0)=
-),
-> +	[RESET_APBC2_KPC]	=3D RESET_DATA(APBC2_KPC_CLK_RST,	BIT(2), (0)),
-> +	[RESET_APBC2_GPIO]	=3D RESET_DATA(APBC2_GPIO_CLK_RST, BIT(2), (0)),
-
-Superfluous parentheses.
-
-> +};
-> +
-> +static struct spacemit_ccu_data k1_ccu_apbc2_data =3D {
-
-const
-
-> +	/* No clocks in the APBC2 CCU */
-> +	.reset_data	=3D apbc2_reset_data,
-> +	.reset_num	=3D ARRAY_SIZE(apbc2_reset_data),
-> +};
-> +
->  static int spacemit_reset_update(struct reset_controller_dev *rcdev,
->  				 unsigned long id, bool assert)
->  {
-> @@ -1351,6 +1432,18 @@ static const struct of_device_id of_k1_ccu_match[]=
- =3D {
->  		.compatible	=3D "spacemit,k1-syscon-apmu",
->  		.data		=3D &k1_ccu_apmu_data,
->  	},
-> +	{
-> +		.compatible	=3D "spacemit,k1-syscon-rcpu",
-> +		.data		=3D &k1_ccu_rcpu_data,
-> +	},
-> +	{
-> +		.compatible	=3D "spacemit,k1-syscon-rcpu2",
-> +		.data		=3D &k1_ccu_rcpu2_data,
-> +	},
-> +	{
-> +		.compatible	=3D "spacemit,k1-syscon-apbc2",
-> +		.data		=3D &k1_ccu_apbc2_data,
-> +	},
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, of_k1_ccu_match);
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
 regards
 Philipp
