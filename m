@@ -1,163 +1,217 @@
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1D428BA93;
-	Tue, 15 Apr 2025 14:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744727219; cv=pass; b=K/88thkJ4sAmzmTvSWkQCh1ISERb22lRi26PnTlK/nS5jDLbxwDza9g4FM5DRJxqzPWXvCgxGw2htIMDQ3VPsE7r6x/Z6Kg4877lCjLW+FQYwOEhEnMBBjIqSsy7Nk9Q+BUXiMb9HBZvwf/sT9ABHu87q/vMSWwApBzoaPXyclA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744727219; c=relaxed/simple;
-	bh=IudflqImdm+ZwbpvNjpoNoGi2CoQwHJjQFVz8r3/Sj8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mnbs0c8AEHGmOOWismvGN9KvizHa7jTEmxt+msof7c2imN2fF6jQMwFJQvo4jh0exeiJBc9glYGGLiZiz9J4zi4D4kRwxMkksS0p5bp8Gpf3Mc1aO0GpsZM0DC5D9ZRoI0lp4fx/GxdEmvlQzHQQYQeBnGH+MJcD4xdQ2/qo0iE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=PZ36VKr/; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="PZ36VKr/"
-ARC-Seal: i=1; a=rsa-sha256; t=1744727170; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ML/45lXZs42EehsX2v4/xhy31k5chYIL1I61DDmvrR+eT8Q2vkiDTJMXAJ0kPlenepRfJSxuZwMLTZkQuw+boz0SsxuNBNKuFscALKjNTxV14089OhsthYU5Y5jxVIyKI/kRQVBEytcEBetWwPYMZoGf295swrrufGvs2dlsOkY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1744727170; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=EPlebBCWRgSBAYpdwC7xAZIbyevkA4TQGmd5kkCqttQ=; 
-	b=c76ehCo4qHib/xIhLuKkuafsGf1H2nIX0Ac+K4+Q5NliVO6m7qlIDoow1Iq7UL6Ln3KE25vq+CNP+VrpxgN6CyR+tV1iyFWWxT3lL24dgqLRZEEPrIZRWE5XpF/iASeMw0bYDCV1dTrCsPC6IeYZRd0jklkSM8opsYfA+LcaZjM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744727170;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Feedback-ID:Reply-To;
-	bh=EPlebBCWRgSBAYpdwC7xAZIbyevkA4TQGmd5kkCqttQ=;
-	b=PZ36VKr/6FrfcWiuBhLOaWaypMMcjfveFeSws1iiaG3j0pNH+T7zepjQYtLuG0XP
-	IunIi6IViWwsBSkjUw9n3mF+iqyELB9EDGPpM8Pne69ZVyI+7AAU6aWNAEsBUbA6lLO
-	b0SS2akl2L4BHr6edyUENrYVgPO+L2utwTKUp4xc=
-Received: by mx.zohomail.com with SMTPS id 1744727168155994.4408975901637;
-	Tue, 15 Apr 2025 07:26:08 -0700 (PDT)
-From: Xukai Wang <kingxukai@zohomail.com>
-Date: Tue, 15 Apr 2025 22:25:13 +0800
-Subject: [PATCH v6 3/3] riscv: dts: canaan: Add clock definition for K230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8E8198823;
+	Tue, 15 Apr 2025 14:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744727659; cv=none; b=jD8P1BIHMg8mNo0QhDduvWpNeAlvf2CD689MvkZCg/4UTqhUfmWj6FO+D44hc8UG8fYm1VC0Bdv3UPW6iDSKBZ+ZP+YV3odYfZ4Afyn6BbCbe4xIXQhhZExUSU4uxvOIiF/TGpD7UisQwd7lF2Hav7ryWWFcO/Ba3PvTm1ECWVE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744727659; c=relaxed/simple;
+	bh=0ho7LkAw5exAV2fASQLJiJ6zKiogLTEOEBo9ma+MBz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SSYpXwI3tQgB7R7fD3WXooOgPrS+UNA9ktwwwXvG3OZi6DUY61p8Try5nA/bJ2bAmILYLe/H8MEZ6YrU1aak8aIBdUmpoSc4mxcpL10l+HKCPKnDQ1v9ycBmvNakEO/cZseXM3Vcg0GqD6z/pVZij5uJ8eCiugDZelVmzIm2gvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6f0c30a1ca3so60239936d6.1;
+        Tue, 15 Apr 2025 07:34:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744727656; x=1745332456;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YFPVcEEiobdT+1OcIUxsmQr7Ur44l0CAmSvwXzoKSWk=;
+        b=onAd4Msko/Sv+53q+pXwuF8T2QGlHuxK0imhPN7HO42HhnocBhngFMIDhZDToNXgWt
+         wFzE3n8AwTFdJKwpRDMJT6UD7zNPIvwxgXZB0IDZyV/zVKpHOAEWaXFNSibpAtpEePOp
+         WXhlKIfojV1af0MPTWJqHoQ+X50qmYdJTxZzFf0HkgtYTNktZ0T3h1RaW72I97hPbFy7
+         5KXvQFE2kZhLSX+2SN2AJLiDs9cItimibnNnE7cX4JNbSa4ynniBSBnBms3ancZNBt3O
+         dBiKlhEkoc2xDR42umuZaPh/B42B4atWrZtQLnkXo8Cn4r5wEaAgFW8yq+K+gsrDMY4L
+         pSSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUH1rvTMm2ZK6guDHc2p4dcSmwHenepNfP7qAJRQ85/ftwuLQR7PnUmnQrYmPFKe7QRWLuYH9nXw/c0@vger.kernel.org, AJvYcCUVv5/naxHzjMF2tHbNbIZTUUs2UzxesT3KY/S9vwK5vffyr4QMigN+3YABIy6QwNnBqbUBE5Y1uU/uxEjrlmvFmdU=@vger.kernel.org, AJvYcCVGAv8FG1u8U//hffWQyv7nwIujFisxy+TEZNBhRLiP/ADX5M2jX6q9QPrRYBVXNy623XWViRUNn1p4@vger.kernel.org, AJvYcCXf+f+D4PZ6vmugdblvGUaklhMS5hywxAkoBLCgLwJ64fT0Q5kAhuai3e2iMU1vtbnbG8mSaCPZinG7KSyY@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyykkGnCM+Aakm1SRrt+CaNYY7+JnymJjfrSgw7XcZ148INujz
+	BFXpreoWfje80xirzNXoVPcH4MD2TZ77htbvUGzbClMpGavoL7brmUKMmonQ
+X-Gm-Gg: ASbGnctDBcpObexMHeM4A8ToGwPzxvAFR88Nw7Tt40EpVTKaO3CBSTnjhxKa0VUN6ig
+	PV+PkvJnw21Y8J4wkV6bZeddye6RxYyl9gvJEn3Yze52c7q8r6xZ1pIAuEmqtaZt5ZR+DBMLidz
+	2zKHDQ7qSUhwbdeNJJLTdmwACTMdG7ikztQlMGofx9nKTIpUl/IUFvNkd2h8/A4cp0EOQEN2u5I
+	+qmpoOX1t6JyDsUUdtzONtVSvU83CHi+cM6yFLjsgf2HVE74uLQrGjrW6GhB4oEdw+aC96Qhxkx
+	9cftH7UQu5AxM6628/2XyIBoy1CEyU7xnwbNE0DM4xFK252wpFXSmcCau2yOCofI/HBLk4kIxfU
+	NmDL9dQo=
+X-Google-Smtp-Source: AGHT+IFPGH87UvKLPtcsS+0ChZc0vSXakJkusasnxnIuLcbUigE5VUVXp9gDO71AyOWRGLX6+TwZWQ==
+X-Received: by 2002:a05:6214:e89:b0:6ef:3de:5ff7 with SMTP id 6a1803df08f44-6f230dc788fmr217939096d6.15.1744727655677;
+        Tue, 15 Apr 2025 07:34:15 -0700 (PDT)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com. [209.85.222.173])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f0de980872sm102100126d6.56.2025.04.15.07.34.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 07:34:15 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c560c55bc1so568270385a.1;
+        Tue, 15 Apr 2025 07:34:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU3OTMaDhhFpIPhP4S0ods1zEArFIF4LePY/blP+bFS+IOaRqrxzUXmzYEsKPaOEFxDcGZNJyPz+5ES7i1qCE7ExCw=@vger.kernel.org, AJvYcCV8C86ZXpGPmFWkGuRxkkvaW17zlgCdW1mD2kSFQyJ2CvqKfvUvIFxkizkIhPRWdOxZX5t0C/6syKwg@vger.kernel.org, AJvYcCX62nzufXhVrrkubfzFeVoKkLoV2hRRnUAg0KNKlrXufbumjkFqGnduDfCi7tlsT/Pf59G/rsmAevup@vger.kernel.org, AJvYcCXSIXnnReMk9g46AWCG5I+dLB3CrZblX4dVvRhf386qyeb2x55DezdoAXzZFiDgwQE53mVxgtXQpdXm+EP+@vger.kernel.org
+X-Received: by 2002:a05:620a:47d4:b0:7c7:b4de:12f0 with SMTP id
+ af79cd13be357-7c7b4de12fbmr1765094085a.32.1744727655101; Tue, 15 Apr 2025
+ 07:34:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250415-b4-k230-clk-v6-3-7fd89f427250@zohomail.com>
-References: <20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com>
-In-Reply-To: <20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Xukai Wang <kingxukai@zohomail.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Samuel Holland <samuel.holland@sifive.com>, 
- Troy Mitchell <TroyMitchell988@gmail.com>
-X-Mailer: b4 0.14.2
-Feedback-ID: rr080112276280ef7c906a309989db09cc0000530d331676b406d85d4d23d5b0524e752c5822bf618f965ce5:zu0801122732c0758bb82e4d424ccfd56d0000b94ad08532ddcaf05e1de0ce69ee13526c34b2178a5076253f:rf0801122cbe35ff99dc05f2511c12cb8900003999233cd3c7ad6a05229b3d7aa9f65f1dfee119a7e933251ec33cf1406f:ZohoMail
-X-ZohoMailClient: External
+References: <20250407165202.197570-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250407165202.197570-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250407165202.197570-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Apr 2025 16:34:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVdw1fRitLhtnLVtndyMMTofPu86Jeo9Gi+jN9JBvp8gA@mail.gmail.com>
+X-Gm-Features: ATxdqUE8ACu1iJO5kseLLN5xUAKGwC10AYneSDKQpjFfffR_bcDoB9ebuNmS9yA
+Message-ID: <CAMuHMdVdw1fRitLhtnLVtndyMMTofPu86Jeo9Gi+jN9JBvp8gA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/9] clk: renesas: rzv2h-cpg: Add support for static
+ mux clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-This patch describes the clock controller integrated in K230 SoC
-and replace dummy clocks with the real ones for UARTs.
+On Mon, 7 Apr 2025 at 18:52, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support for `CLK_TYPE_SMUX` to register static muxed clocks on the
+> Renesas RZ/V2H(P) SoC. Extend `cpg_core_clk` to include parent names,
+> mux flags, and a new `smuxed` struct. Update clock registration to
+> handle static mux clocks.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
-Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
----
- arch/riscv/boot/dts/canaan/k230.dtsi | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.16.
 
-diff --git a/arch/riscv/boot/dts/canaan/k230.dtsi b/arch/riscv/boot/dts/canaan/k230.dtsi
-index 95c1a3d8fb1192e30113d96d3e96329545bc6ae7..e688633acbbf2cee36354220c557252111f56ff5 100644
---- a/arch/riscv/boot/dts/canaan/k230.dtsi
-+++ b/arch/riscv/boot/dts/canaan/k230.dtsi
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
-  */
- 
-+#include <dt-bindings/clock/canaan,k230-clk.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- 
- /dts-v1/;
-@@ -58,10 +59,10 @@ l2_cache: l2-cache {
- 		};
- 	};
- 
--	apb_clk: apb-clk-clock {
-+	osc24m: clock-24m {
- 		compatible = "fixed-clock";
--		clock-frequency = <50000000>;
--		clock-output-names = "apb_clk";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "osc24m";
- 		#clock-cells = <0>;
- 	};
- 
-@@ -89,10 +90,18 @@ clint: timer@f04000000 {
- 			interrupts-extended = <&cpu0_intc 3>, <&cpu0_intc 7>;
- 		};
- 
-+		sysclk: clock-controller@91102000 {
-+			compatible = "canaan,k230-clk";
-+			reg = <0x0 0x91102000 0x0 0x1000>,
-+			      <0x0 0x91100000 0x0 0x1000>;
-+			clocks = <&osc24m>;
-+			#clock-cells = <1>;
-+		};
-+
- 		uart0: serial@91400000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91400000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART0>;
- 			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -102,7 +111,7 @@ uart0: serial@91400000 {
- 		uart1: serial@91401000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91401000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART1>;
- 			interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -112,7 +121,7 @@ uart1: serial@91401000 {
- 		uart2: serial@91402000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91402000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART2>;
- 			interrupts = <18 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -122,7 +131,7 @@ uart2: serial@91402000 {
- 		uart3: serial@91403000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91403000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART3>;
- 			interrupts = <19 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
-@@ -132,7 +141,7 @@ uart3: serial@91403000 {
- 		uart4: serial@91404000 {
- 			compatible = "snps,dw-apb-uart";
- 			reg = <0x0 0x91404000 0x0 0x1000>;
--			clocks = <&apb_clk>;
-+			clocks = <&sysclk K230_LS_UART4>;
- 			interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
- 			reg-io-width = <4>;
- 			reg-shift = <2>;
 
--- 
-2.34.1
+> ---
+>  drivers/clk/renesas/rzv2h-cpg.c | 21 +++++++++++++++++++++
+>  drivers/clk/renesas/rzv2h-cpg.h | 32 ++++++++++++++++++++++++++++++++
+>  2 files changed, 53 insertions(+)
+>
+> diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
+> index b8bed0c1d918..4cda36d7f0a7 100644
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> @@ -399,6 +399,24 @@ rzv2h_cpg_ddiv_clk_register(const struct cpg_core_clk *core,
+>         return div->hw.clk;
+>  }
+>
+> +static struct clk * __init
+> +rzv2h_cpg_mux_clk_register(const struct cpg_core_clk *core,
+> +                          struct rzv2h_cpg_priv *priv)
+> +{
+> +       struct smuxed mux = core->cfg.smux;
+> +       const struct clk_hw *clk_hw;
+> +
+> +       clk_hw = devm_clk_hw_register_mux(priv->dev, core->name,
+> +                                         core->parent_names, core->num_parents,
+> +                                         core->flag, priv->base + mux.offset,
+> +                                         mux.shift, mux.width,
+> +                                         core->mux_flags, &priv->rmw_lock);
+> +       if (IS_ERR(clk_hw))
+> +               return ERR_CAST(clk_hw);
+> +
+> +       return clk_hw->clk;
+> +}
+> +
+>  static struct clk
+>  *rzv2h_cpg_clk_src_twocell_get(struct of_phandle_args *clkspec,
+>                                void *data)
+> @@ -483,6 +501,9 @@ rzv2h_cpg_register_core_clk(const struct cpg_core_clk *core,
+>         case CLK_TYPE_DDIV:
+>                 clk = rzv2h_cpg_ddiv_clk_register(core, priv);
+>                 break;
+> +       case CLK_TYPE_SMUX:
+> +               clk = rzv2h_cpg_mux_clk_register(core, priv);
+> +               break;
+>         default:
+>                 goto fail;
+>         }
+> diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
+> index 59f72fbed133..03e602d70f69 100644
+> --- a/drivers/clk/renesas/rzv2h-cpg.h
+> +++ b/drivers/clk/renesas/rzv2h-cpg.h
+> @@ -53,6 +53,26 @@ struct ddiv {
+>                 .monbit = _monbit \
+>         })
+>
+> +/**
+> + * struct smuxed - Structure for static muxed clocks
+> + *
+> + * @offset: register offset
+> + * @shift: position of the divider field
+> + * @width: width of the divider field
+> + */
+> +struct smuxed {
+> +       unsigned int offset:11;
+> +       unsigned int shift:4;
+> +       unsigned int width:4;
+> +};
+> +
+> +#define SMUX_PACK(_offset, _shift, _width) \
+> +       ((struct smuxed){ \
+> +               .offset = (_offset), \
+> +               .shift = (_shift), \
+> +               .width = (_width), \
+> +       })
+> +
+>  #define CPG_CDDIV0             (0x400)
+>  #define CPG_CDDIV1             (0x404)
+>  #define CPG_CDDIV3             (0x40C)
+> @@ -96,8 +116,12 @@ struct cpg_core_clk {
+>                 unsigned int conf;
+>                 struct ddiv ddiv;
+>                 struct pll pll;
+> +               struct smuxed smux;
+>         } cfg;
+>         const struct clk_div_table *dtable;
+> +       const char * const *parent_names;
+> +       unsigned int num_parents;
+> +       u8 mux_flags;
+>         u32 flag;
+>  };
+>
+> @@ -107,6 +131,7 @@ enum clk_types {
+>         CLK_TYPE_FF,            /* Fixed Factor Clock */
+>         CLK_TYPE_PLL,
+>         CLK_TYPE_DDIV,          /* Dynamic Switching Divider */
+> +       CLK_TYPE_SMUX,          /* Static Mux */
+>  };
+>
+>  #define DEF_TYPE(_name, _id, _type...) \
+> @@ -125,6 +150,13 @@ enum clk_types {
+>                 .parent = _parent, \
+>                 .dtable = _dtable, \
+>                 .flag = CLK_DIVIDER_HIWORD_MASK)
+> +#define DEF_SMUX(_name, _id, _smux_packed, _parent_names) \
+> +       DEF_TYPE(_name, _id, CLK_TYPE_SMUX, \
+> +                .cfg.smux = _smux_packed, \
+> +                .parent_names = _parent_names, \
+> +                .num_parents = ARRAY_SIZE(_parent_names), \
+> +                .flag = CLK_SET_RATE_PARENT, \
+> +                .mux_flags = CLK_MUX_HIWORD_MASK)
+>
+>  /**
+>   * struct rzv2h_mod_clk - Module Clocks definitions
+> --
+> 2.49.0
+>
 
+
+--
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
