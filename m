@@ -1,125 +1,213 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E9021E08D
-	for <linux-clk@vger.kernel.org>; Tue, 15 Apr 2025 18:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E92823E350;
+	Tue, 15 Apr 2025 19:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744743393; cv=none; b=R5ht1hCvPc7ZBA3Io34dZBEN3uzCAwRS9hgiLwexDHYMt3Y5R8Z44PY4hqRWn4dDfJD+XWB4xImMIvBGYFwCkC/Zb9bi92wqJAgc5Rw/h0/dspYaqbc7uiiYAHa4PLkb0Owpv1dQ6lscIwZ6Q2gTsVM9u86MuW1grQvlffqYmq0=
+	t=1744744246; cv=none; b=oAXcCeKOXdZ1ixrQxI9sqpmmef+OjLwawFqgxb3tb9e+ivv59QjOuIs72ujlyE/SXP9bZxIB2F7cbGi4cNK/fksxeLETH5e9AqLD5LSktZvdRuDtkCpVbTsdSNcuoA2jBwlEgBtB4s1cYDrrR7Xz5cRaHxvV1dvZDoab9AUv5XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744743393; c=relaxed/simple;
-	bh=UYMWLzFZgQHSVYk4FL4YUyO+pfgGdExXCbPW+ik3y+4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GNcXaewRqshtHYuZMAwxOw6dNfw4dU4ihIZFqldbtlAVbh/eVe+tAlU1LcsN7Mhh44UhnvSxgQjuhn7lV3yKQdgQHHgWT+Ds068ivBS7q8mWO34L1+dL8FMs7iXOc5b3kdlX2MAoanpn2sfXvXiqmnz+zIlRRynfAGar6TIMF8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=EyqweYdv; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+	s=arc-20240116; t=1744744246; c=relaxed/simple;
+	bh=xqSl63bG3wfUthwLLIvQVxaqRLmukng8C2baTvHd8Xc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KZUTtVJzZi6Uz0HxMgigGQKPXy8FpH61RC5VTux0vZeznHgI17sCOz+cRqD6/JTwAaUmJNcPyMX2JFWOdQt/2jsJLeXjcIIx921OPnJGU2JhF9JPzHqjaQTKq1Krp8VihY0vir4FWiaCKViIdiaJdzJB8+TS+0meJYbXc/ap78o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UDwlTMTa; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="EyqweYdv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1744743381; x=1745348181; i=wahrenst@gmx.net;
-	bh=UYMWLzFZgQHSVYk4FL4YUyO+pfgGdExXCbPW+ik3y+4=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EyqweYdvnmxrRmHLibc86QyBjdp029oUW78vZhD/MzZe2bzw3CriN+nmjMqoaKHG
-	 rz3yQznj7qE8Sszz7xtPUZ87pxt83Wtpgup9m05kDPT8/DXVi6a9U5jU4TDFZyWdP
-	 XMu6JmebElAJPaHmJlzWEBs+7bBly10+kp9/9vU9ZxI5YDZDEiERDwYrLsxZOVYiP
-	 dRc0tDDc3eqfzKVxeg0X2C4i+dGxPbZhBPb2KlSrf6pt5VRQs6YSTS3X4zTJOnTMf
-	 Q77/euqtONiuN/WDeFtS5/ZViFuZdYUZr5ed6ASKTyhenhhZLzqGHjuzb809RYC6X
-	 IwKQ5YqzaOMBYL3EAw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from stefanw-SCHENKER ([37.4.251.153]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N8XPn-1t0xKG2usD-00tJjh; Tue, 15
- Apr 2025 20:56:21 +0200
-From: Stefan Wahren <wahrenst@gmx.net>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	bcm-kernel-feedback-list@broadcom.com,
-	kernel-list@raspberrypi.com,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH] clk: bcm: rpi: Drop module alias
-Date: Tue, 15 Apr 2025 20:56:14 +0200
-Message-Id: <20250415185614.16292-1-wahrenst@gmx.net>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UDwlTMTa"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so60041125e9.3;
+        Tue, 15 Apr 2025 12:10:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744744242; x=1745349042; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G+9R6i97eout8tyqOO5go7P8BM8D8c4sbrQg7SeKd3k=;
+        b=UDwlTMTaOBWa9aTAVQ+IeTum3xmgXX70oOs7rQxUl/C7NzbpfWm0LgF/mAUgcnJPa5
+         7wuVVH43xk8sM/m7D1MbQ3pyJm+yT9Un2eW1JNZr7cfcuK56u0lkKTRZc2mAn0TMtz5O
+         KXvzUYrbh231kFspNl4EkJHO0hDECuVkycDwwsaLzmd5OW3McAzqQm+GUdN51KnBFKLq
+         CtxH7dvW65x4QU7hyjLrVRTDDD/bTCMnFazaDog+1VOCorpTl2zWwhEhIhsNku9Od6hw
+         vjPMKEOr0aHKkHV/uGVSRga31Nf/VlGY3WkGDuB34aFg54i856xdXSUT8FreNwMvr96q
+         L9Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744744242; x=1745349042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G+9R6i97eout8tyqOO5go7P8BM8D8c4sbrQg7SeKd3k=;
+        b=J+koQoH5ze6EizIDtbLLY6kVi1zW4i8izuLTg8wl6g9Op3aK0yxU+gBU71/XI3Z1ED
+         USDmgfJjq8aAWF9GbvtebL+D2FBC5ClmhUkVU5QecEcoDrtBlYzbJA8Tm0EC5c123zDC
+         LuVSo4HcRXA9BAHFDFOqYIgbfwihujzKfLfh1QOBfObDmHYxthpqChmH7FVFlPyhcSkC
+         qvDJ8nixmaPhW9M7rXw5CVZ5z7Jmlx5zkJFO7zki1R9NzrVZ3w1npcasKbUhz8D6YZuc
+         izIQvQ9To0V+sjQIxCGJo4DLD3yWB7DIUC5W7dpzrcsPZOiqsOcIFbph+7fRrbUrFs3q
+         tkKw==
+X-Forwarded-Encrypted: i=1; AJvYcCVlI3yknE79aHlzmd+cyaq4XclqaCwh5BWeHxzdqDveWX8RmTF++dJ9cVagy1Gk4PscoNh2dOP24glv@vger.kernel.org, AJvYcCVqDn5kPjFEnxK8huqnukHLAJbzLJCJfGCEI0zdHdVialjgU7UwHw4EKT9/+pE6BNVpbuQuULccZV/8@vger.kernel.org, AJvYcCWLy5YBGNMQwX0ygkt23AScj8ub3Nd2vt1bTsyEHfb+Z3ypX27rK9VOliiQ+pUo243oMPZDVZ3Q7AffW5Hl@vger.kernel.org, AJvYcCXYhv5mMAkBLdNNj7wRTFWNZXxWBJDD7WQfcRX9VF1iKtkfM3I1Via7x6aPcHdH4zXrvGexUqYrvizTA+lISVwaVqI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS6MlQ4yVbzfPJs3SleT4oYhNstftP/3O38w27PjO3PAPxwXkz
+	kINvYKjPYpYfEnnzyzIOeldaPk7/aieeP1oS1YVRg/Es9mqVuFcMgaRlaywtvFDLiDrnfvt+Nv4
+	10LJyGZUhf5FwtSpw2qYerIjzv/s=
+X-Gm-Gg: ASbGnctOi1Pnx9hZIPUVcQuyTLTqYMcPKhTv02PaSYI5DPhKa2ITumstiJ7TUfo6oDQ
+	+ft9bR09BjB3d3UrQqEKoUw4cO1QtvJQJrb/AHRBvI/C0OqgWJkhzoj/qPMA1bFa0vZgOmDHCrI
+	YZDIKUOeS09iDQMLlfCfcE3w==
+X-Google-Smtp-Source: AGHT+IHMiFiS0nsHL73AzzRu+tHqp2edVjNZRkXI+hMQ4GgBBmlNNmVX9ETLW6Y2JCWbDEc24ttLPk2CDXSMeLCHEQU=
+X-Received: by 2002:a05:600c:1e0e:b0:43d:47b7:b32d with SMTP id
+ 5b1f17b1804b1-4405a0a4334mr2589315e9.25.1744744242305; Tue, 15 Apr 2025
+ 12:10:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250407165202.197570-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250407165202.197570-7-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXuqYHAv+yyOJxC3kre1vaspuXmTMev0ZBixEiEo+4saQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXuqYHAv+yyOJxC3kre1vaspuXmTMev0ZBixEiEo+4saQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 15 Apr 2025 20:10:16 +0100
+X-Gm-Features: ATxdqUEF-cysVy0kHHQfaLVGmLBzVY6Pt4SqgW51HY8AGLA2rfeWDdpmyMio_Ps
+Message-ID: <CA+V-a8sbqj5LQvsfwJyO8gM+0HL5bzW4KLmzZz5YKO5tG6nbfQ@mail.gmail.com>
+Subject: Re: [PATCH v2 6/9] clk: renesas: rzv2h-cpg: Ignore monitoring CLK_MON
+ bits for external clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9XpCaveuznyPGNgtnucqnGlX95StybJoBKOBjgoWG0DGePBQKYd
- lAwmzfKUVVRd3ZQ0v7Nk/09Jp/xLLGUYs5F/wra26xttk3E713PynzCFwDoEq2kxre9oS8r
- wzit504Id8vwcD9qbnyujPDGtxM27oCTXia7s1QCOFy8fm1qI1UAzajIQJrCorm6xpvfTqb
- x1MElVx8u0fx6QJ7w/aZQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:heA76azIid8=;G9ygqNvqNP3GPV5EPaWH8KsBIZ8
- 8DiO8FkT9w7zQTATVpJNu55hk2KMHEOYibLoLfHNibIW+tQpKyorBiI7taqz9UrB2g7vrMKqs
- GS0LPZwC1ct4aZZtYbIRDVzc0IXlZ15SdqZhFEDYxxTvmRyaVc2ot4728IQGAHT394VWenaPG
- y85AstNnzY01TWyXJj9ris9q/vJvepd5R45vVC2r4IyHUAeeme/Db3qYSA3cBAs5iVqvLW5jB
- 4DnwQS2yMNynsqinkyU0C3P2cNjm3LOirERIuO7TuaI/N7+uz5ue3g9/mFhNOo9UXTABkFOCQ
- D9UGn0oU4JmHLInsDXpzTrGwD9odZm+G/HvNJOoOLKC8l5Ljuq21bGuVlOnyp/1KlbVHfgzF3
- U6KhMjy08D+GSVP6XMKo0/UJxbqYk1O/h0VN/Nls/6AKZDvqoRBK2rUEolT3U/f5NP9TfBA2w
- e34grGhxbKQQWBBz9pnRRUn1gCAHhEdM8fGJH9Ikr2U7frVDpQGwJml3/sM/rRw6Cta50SPaP
- i6rdJ1FOB+0RW5oY7MTBv1QZKMh85RrTjlTx4xGSqeoV+GEc9WQh++lqtZXni0TOdwtyKboi5
- LQCiRBm4ZOsP4uMiKKmez3SnUte6y5fyHwxsk4iz4OV14wv8ynp3gIY3Vcfq/OCpxkxMJ4kfs
- HQl8UlMfi2EV40VKGY2cIiojhdJAIvHXn23FX0S26TAkYlyVvzSkJXLx8/d09uC7a8O6TmD6P
- zFORj6h3P8ZzYvzsKfVlie36honSZVHTtNZX+5CiTMBkccYBEBmqZyWpVUwGs/02eoq4ApD5+
- AAA2hAqzo+tLgEandQl1AeqeXkuXuI0w3uCWj3BGL6CvrOw+8BvZftTIgJM5BKoGyGSJNochE
- dG/wjFA7fUyAh56jhFKwKlt1OdqZl610jqNfv2Du73wfbZAum4uG8Yf2YnTJqZnzERaQI+1Ic
- hESxosnD5SfS2VfQV8ZheQNxiLqva+0sjz1lnNa4hzD9ZoKGocrdHY1klemYp/A1YmQNrvnbD
- tstD/YWhLtkXAInGIZag5C38MBDH6UxiLc1BfHlByDPWPQRNrS5Ex+uWaWoQr7SCldECc4b6d
- uOyA0RSIp87ZaoClI0ajSaU+TACcOPD3mBhnGQgeUeyIU5g0CgE/RF4fDLCerK2ZvuKSUxQfW
- dUOBa21OOwszXnCbuvFt6ELNIoz3xxl8hlvldf3EsQ4B7ERwvziW5rBQ95FkBbUarIeyxjkcp
- JA8O3B0jgmG88dPngGVO5CiV8xsysT32TexjHOQPsmgyektJZE9chppxa5KZC9gu6CwsMu3My
- 2WIX7O++9XXDpxXOVDXJwxQLHF27XeaJpGUv9SU+Qt1bRwS0gL28U4xBhPmPs8JQ+kzXQ69OO
- KBU2QfHRzqtL87zWEhWhy+P1gUlj/Duky9IIhmuwv0Ta/Ye34XrLwHDW2GGGb3Y4imlJCfR33
- 3TmJFKyzEqsdrExkwYjCgflnIHROnhun7UcE4IB5i20O8HAKApkbTmTah60gHJfczo5/uf6D/
- Ct8UPkjMWXzO+CxRkNv9LZ8Vy83jCko6IpnPxXIax+1hn4bziH9nY1kAktqmbKiG4eXRJOF8F
- GMvDKCU06LnCliwgTFUz/9qyR9Dgt6LtOOOt/pjrZkaS4Tsx6A2XkrA8NXuIp5aczCf3n0J9y
- 1Mi3ZAix80p9gjpm92SXYuXut1oTSpPUqhwzYI75Y+yEi8oAoKQvvE/iGcmz5ReetqYd6Kd58
- nQo6yo/7APmA1seyjpKjs7tFK3fbG7MoAqYtMOHxaLBTvnfjd+FZgCiwMOHMvhP74XhqeoXcx
- xIXFdeu6A1yPCDOAH5wK4r7agLEHgjFNnJ3L53GftOjwby//lQGC2xWnhUCRp1trW6hxyugNF
- QFvKjrjf4aWnnQR3XLMmR6adinADMrS/Lf67muv0tvlftaxSAld1E+ZlG0nXP4j2Gb8iMtrsq
- WarTa9AV7kJYDoOHAYxjeCM+bcFsKQQSlQLBLeRrthU77dmGonNF1VYig9mtrqxo3rdPy6LEn
- PcqoaKfj0ZDKEZde/m3/MzHL3wThSeEEnfd8JUkMCYAFfNoMdvQSmUgq7rBkJrz567JsplHYb
- 5ea5MUe2iTG40+cezD+HrzsRKFdYVpSvJ4eW+3lfAhLFOhvOeVLR++GQ86LCaa82pfVaFofw6
- v1ut3TlZm4n8hDL7sokbalqjObmiMPF+SMN/r7VualK229hG3v9jRXHkgOlXizhKAE3ewUXxm
- Sc/AmyU2pbk9YCblsIfUaEEqWIjg18mkYsvWG/Ug3T2tHNl1mIIqZaictWWJqAuMnPUk01LUg
- btboGMp4KL13ZSKu7B5f/YuEX+q+zH62E8qNpJI8HKXGU51guNckcNMNgANUjcFr/MjIMinok
- OQNetZOhslkbGDesF+1iaXoqSLdC8NVVuUXz3Q5jE21SgrwD74XGp9HEQ2vUv6Ry5ZBezvzzx
- +Rzwwd/V+zBTmGPRXJWFL37nOiwlO/Bm4FDAsC7b5MrblPUSXWPXRxSD/urVI7FizHHhusZia
- uoW6mgYqvEJhDo43I9iN7So0p8YA3bAsZPDvu3a7bZ4hIaL3am5pHZVax71Sgh641K2G4pL4b
- p6/dIwWyeGJWWOWIJeyxRq2Z2TwV9W95LfdBjiy+iLspa6mlkangl1x61eGuFB1JPmpzYgGmY
- TSp4Zp+GIq4A1P+oCwqcV33hBz7TPPVyRGyKUSwZ03qPMaCQ35VHedLRsMB2cghvVvHlNCxMJ
- nnAbI5ba4Zo4IB+QyBROFJUNYNAnYz4v8fpvG44l8k9q9LZsbtOBeOloM2Ceptv2wKi3kQyDY
- smAlHpuO6pu9ouHB2ccYdnBwLoV8cpavkybn0DHZv1sbGmDO4Vqi5ktedyvzroX6+UCsNcHfl
- ziXcbTK2yudYXU7iyMU8BV4YBuBypVoad+eokesF4ZqqRY6Hc6IwBFofGOROsK9WfxA/dSKsT
- W96Ur1Vmlw==
 
-Since commit fbac2e7787ac ("clk: bcm: rpi: Allow the driver to
-be probed by DT") the module alias isn't necessary anymore. So
-we can drop it.
+Hi Geert,
 
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-=2D--
- drivers/clk/bcm/clk-raspberrypi.c | 1 -
- 1 file changed, 1 deletion(-)
+Thank you for the review.
 
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspb=
-errypi.c
-index 0e1fe3759530..9bc11bafa41a 100644
-=2D-- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -480,4 +480,3 @@ module_platform_driver(raspberrypi_clk_driver);
- MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de>");
- MODULE_DESCRIPTION("Raspberry Pi firmware clock driver");
- MODULE_LICENSE("GPL");
--MODULE_ALIAS("platform:raspberrypi-clk");
-=2D-=20
-2.34.1
+On Tue, Apr 15, 2025 at 3:36=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> Thanks for your patch!
+>
+> On Mon, 7 Apr 2025 at 18:52, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Ignore CLK_MON bits when turning on/off module clocks that use an exter=
+nal
+> > clock source.
+> >
+> > Introduce the `DEF_MOD_EXTERNAL()` macro for defining module clocks tha=
+t
+> > may have an external clock source. Update `rzv2h_cpg_register_mod_clk()=
+`
+> > to update mon_index.
+>
+> So I guess you implemented this because the external clock was not
+> running, and you got into an infinite loop?
+>
+Yes, partially right but we didn't enter an infinite loop as we have a time=
+out.
 
+For the CLK_MON, the HW manual for RZ/V2H section 4.4.4.8 CGC Control
+Registers and 4.4.4.10 CGC Monitor Registers will be updated to below
+in the next version.
+ "The clock gating cells require source clocks to operate correctly.
+If the source clocks are stopped, these registers cannot be used."
+
+Currently without the series when we turn ON the clock the CLK_ON bit
+gets set and to make sure it's turned ON the corresponding CLK_MON bit
+is checked to ensure it's ON. When a request is made to turn ON the
+clock first we check the CLK_MON bit and if it's being set we return
+early as the clock was ON. This worked OK up until now where the
+clocks used were internally generated.
+
+In the case of RGMII interface where the Rx/Rx-180 clock was coming
+from an PHY on an external pin the above didn't work as expected. When
+we issued an unbind request on the glue driver all the clocks were
+gated to OFF state i.e CLK_ON bits were set to '0'. Now when the bind
+operation was requested  the clocks were requested to be turned ON, ie
+when CLK_MON bits for RX/Rx-180 reported to be '1'  that is because
+PHY was providing the clock and due to which the CLK_ON bit was unset
+(and not gated to ON state)  due to which the DMA reset operation
+failed in dwmac-core  driver.
+
+Below is the thread,
+[0] https://lore.kernel.org/all/CA+V-a8uWY1Av8eS1k9C6Td=3DRuB4PbCnQyXbNLzmh=
+ao0nr8Spbg@mail.gmail.com/
+
+> This looks rather fragile to me. How do you know when the clock
+> is actually running, and thus usable?
+>
+I was thinking the consumer driver would request the external device
+to turn it ON/OFF.
+
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> > @@ -569,6 +569,25 @@ static void rzv2h_mod_clock_mstop_disable(struct r=
+zv2h_cpg_priv *priv,
+> >         spin_unlock_irqrestore(&priv->rmw_lock, flags);
+> >  }
+> >
+> > +static bool rzv2h_mod_clock_is_external(struct rzv2h_cpg_priv *priv,
+> > +                                       u16 ext_clk_offset,
+>
+> unsigned int
+>
+> > +                                       u8 ext_clk_bit,
+>
+> unsigned int
+>
+> > +                                       u8 ext_cond)
+>
+> bool
+>
+Agreed I 'll change to the above.
+
+> > +{
+> > +       u32 value;
+> > +
+> > +       if (!ext_clk_offset)
+> > +               return false;
+> > +
+> > +       value =3D readl(priv->base + ext_clk_offset) & BIT(ext_clk_bit)=
+;
+> > +       value >>=3D ext_clk_bit;
+>
+> No need to shift:
+>
+>     return !!value =3D=3D ext_cond;
+>
+OK.
+
+> > +
+> > +       if (value =3D=3D ext_cond)
+> > +               return true;
+> > +
+> > +       return false;
+> > +}
+> > +
+> >  static int rzv2h_mod_clock_is_enabled(struct clk_hw *hw)
+> >  {
+> >         struct mod_clock *clock =3D to_mod_clock(hw);
+> > @@ -691,6 +710,11 @@ rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_=
+clk *mod,
+> >         clock->on_index =3D mod->on_index;
+> >         clock->on_bit =3D mod->on_bit;
+> >         clock->mon_index =3D mod->mon_index;
+> > +       /* If clock is coming from external source ignore the monitor b=
+it for it */
+> > +       if (rzv2h_mod_clock_is_external(priv, mod->external_clk_offset,
+> > +                                       mod->external_clk_bit,
+> > +                                       mod->external_cond))
+>
+> Perhaps just pass "mod" instead of three of its members, to fully
+> hide the logic inside the helper function?
+>
+Agreed.
+
+Cheers,
+Prabhakar
