@@ -1,147 +1,125 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D13C22F14C
-	for <linux-clk@vger.kernel.org>; Tue, 15 Apr 2025 18:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E9021E08D
+	for <linux-clk@vger.kernel.org>; Tue, 15 Apr 2025 18:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744742895; cv=none; b=aX4lLsEcg0vZEr3mzRrmYetHqDalUX2iGgF34Ns9I9g8o+fvF0KmaNR1DIvGirMLzMwRHiFletBgYhyievuL3WC3h5nmIC/QBdUkdO1XMsQdRjI+F9Kcqdts6R4fjYTwWLQ95Yrb2oX3HYrWX6SZw3yJV0qbcillgFem4CK+9mc=
+	t=1744743393; cv=none; b=R5ht1hCvPc7ZBA3Io34dZBEN3uzCAwRS9hgiLwexDHYMt3Y5R8Z44PY4hqRWn4dDfJD+XWB4xImMIvBGYFwCkC/Zb9bi92wqJAgc5Rw/h0/dspYaqbc7uiiYAHa4PLkb0Owpv1dQ6lscIwZ6Q2gTsVM9u86MuW1grQvlffqYmq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744742895; c=relaxed/simple;
-	bh=jyspZm5GDyE8V8MqM0DVGyy+s9l/GwhLFwsgaQQGonw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D2dVbj2Ft451RM8o0H1Jxvxo5GtTt5klCQhPkDkprK5Q2zmZ/HQi0QaQsha2ztUIl4kFYWzo4NMgCo34eH4IOZRdDtcw6HMLpFmCa/OAG75MNSdG3yC0Gs2lgz57Ojl+vJrUxWg/Vo0tZIH/tGuf5dhut+bx8K9qtiHQlMW8+fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=1+MwscUe; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+	s=arc-20240116; t=1744743393; c=relaxed/simple;
+	bh=UYMWLzFZgQHSVYk4FL4YUyO+pfgGdExXCbPW+ik3y+4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GNcXaewRqshtHYuZMAwxOw6dNfw4dU4ihIZFqldbtlAVbh/eVe+tAlU1LcsN7Mhh44UhnvSxgQjuhn7lV3yKQdgQHHgWT+Ds068ivBS7q8mWO34L1+dL8FMs7iXOc5b3kdlX2MAoanpn2sfXvXiqmnz+zIlRRynfAGar6TIMF8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=EyqweYdv; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="1+MwscUe"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7369ce5d323so4747391b3a.1
-        for <linux-clk@vger.kernel.org>; Tue, 15 Apr 2025 11:48:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1744742892; x=1745347692; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=glUhvdbg6jDxSzyhesIM3rd1JyjGcrsNSGuSqUFVHug=;
-        b=1+MwscUeTVfBM7bjPdLu6bUneloOL81f/Yya/cT52SsUTCY15XkjAkbKP9kJVSn6pG
-         wM47IBzFbvRklbgrnGDSEnHY0APRUns77kG9QBm/lFehrbl4dvpFKQjhFVvMoa/EVlDZ
-         W5IEz0GRUuIvoUmLHgQre9ifjnI8Oil1YZGGd3TPD02qm6aSOzsefOt7UvFLcqICue3z
-         ZvFN6NJaDsf476XVogolYLzskAMkulEZuSeblXHi9JIePHQ5q9dcsugiq+c9XSEQ36Mh
-         V3Uc4P6QXEhXFxSCEleM2ra5orNvvE11i/VaOIKrkBNcUwffOpwNGiFIhbFslHZczUFy
-         xPbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744742892; x=1745347692;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=glUhvdbg6jDxSzyhesIM3rd1JyjGcrsNSGuSqUFVHug=;
-        b=KeBDukID8TSs9cLfDS1nWz4CN2IZrBIZM0cvyj/ZRQv4P1SXugscIO8GdPJPXkgNy8
-         eOfORnFwHM8m+ww5mwbWcQd4HAcqFtCgGBVfV20NE5rONbKmZzqDQpWEU/0YjRrgZrWf
-         gU45oUf/aQkNCckMM38MYapPxCKnBjTd0zCQzOy2ltkXk5w3rkPMFlBUBmWndL1/9BT+
-         S1mTr4rnqmfRcgsyh35QX3cQ4/MxJTG+qdZ6JlldQbdPFhbPq5xctlB8OMiP0lCkshP6
-         aS14b+xx0zNge23aXM9v7Y+ZDuI7vlQLOVcgW5ADP6ff0VWQh633zlFke2yDqmt3jOWJ
-         gs9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUr7dEPfdQll9R+hm35HfVuDiEXdQBpaZdKnv7Rzt2tnilY49CLt4sMAnVn9XdxDSR9dQ0sVvk/T/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY8y7hRy6ALBBCH7KPeK3NsMm/aWphfejQc97Oa1Sltnf0JSZ5
-	zvwbxz5gRJkp/Hfpk7empX7OgUw8Ii7wBNncIg1rD8DjW0rWd4ez2ARPnp98nsc=
-X-Gm-Gg: ASbGnctCoa8Dcf5VQmp4wSWj5NehQfEaKswD6V6ZlsgQAPBPuwi4PN3zYPECw/0UlPy
-	YTnqko+0E1D+nMnGBpckSKxVGNHai7LaIZqIE95Lo8ZYhRewlkus7BRgL8gnh74igWnEUs5QGZ2
-	yLn3ehoJC6IUv9l7nGMeY6bvbBHs/1/0k40dqRrFrbHZT7/mIbis6ruRklQgRDMMGflad99ZKrj
-	IZEjn9OfbT/fIzX2XYMZAZFhj8KqcaqFCd1UKMWsUwtgQr9BQgF3x2NsFXj2KYGyKLyMV2o9Z4j
-	XSTfleDrGUpiOHxW87JW40/9pSMPbXXWGNdfns8V3mWrl9E=
-X-Google-Smtp-Source: AGHT+IFU1A6IgDtbE+ayph1nkrk/Xkmje9tzi2mXCLVIUeRmrboHqr3jd6su6fZeet5H41nBKRVWlQ==
-X-Received: by 2002:a05:6a00:a26:b0:736:3979:369e with SMTP id d2e1a72fcca58-73c1f8f742emr628913b3a.9.1744742891991;
-        Tue, 15 Apr 2025 11:48:11 -0700 (PDT)
-Received: from x1 (97-120-122-6.ptld.qwest.net. [97.120.122.6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a2d3a4ddsm9578290a12.49.2025.04.15.11.48.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 11:48:10 -0700 (PDT)
-Date: Tue, 15 Apr 2025 11:48:08 -0700
-From: Drew Fustini <drew@pdp7.com>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, guoren@kernel.org,
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, ulf.hansson@linaro.org, jszhang@kernel.org,
-	p.zabel@pengutronix.de, m.szyprowski@samsung.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 19/21] riscv: dts: thead: Introduce power domain nodes
- with aon firmware
-Message-ID: <Z/6p6MQDS8ZlQv5r@x1>
-References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
- <CGME20250219140315eucas1p10f08d297580edd114f4c487c1fbffa8d@eucas1p1.samsung.com>
- <20250219140239.1378758-20-m.wilczynski@samsung.com>
- <Z/2+rbhsaBP0DQop@x1>
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="EyqweYdv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1744743381; x=1745348181; i=wahrenst@gmx.net;
+	bh=UYMWLzFZgQHSVYk4FL4YUyO+pfgGdExXCbPW+ik3y+4=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=EyqweYdvnmxrRmHLibc86QyBjdp029oUW78vZhD/MzZe2bzw3CriN+nmjMqoaKHG
+	 rz3yQznj7qE8Sszz7xtPUZ87pxt83Wtpgup9m05kDPT8/DXVi6a9U5jU4TDFZyWdP
+	 XMu6JmebElAJPaHmJlzWEBs+7bBly10+kp9/9vU9ZxI5YDZDEiERDwYrLsxZOVYiP
+	 dRc0tDDc3eqfzKVxeg0X2C4i+dGxPbZhBPb2KlSrf6pt5VRQs6YSTS3X4zTJOnTMf
+	 Q77/euqtONiuN/WDeFtS5/ZViFuZdYUZr5ed6ASKTyhenhhZLzqGHjuzb809RYC6X
+	 IwKQ5YqzaOMBYL3EAw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from stefanw-SCHENKER ([37.4.251.153]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N8XPn-1t0xKG2usD-00tJjh; Tue, 15
+ Apr 2025 20:56:21 +0200
+From: Stefan Wahren <wahrenst@gmx.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	kernel-list@raspberrypi.com,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH] clk: bcm: rpi: Drop module alias
+Date: Tue, 15 Apr 2025 20:56:14 +0200
+Message-Id: <20250415185614.16292-1-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z/2+rbhsaBP0DQop@x1>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:9XpCaveuznyPGNgtnucqnGlX95StybJoBKOBjgoWG0DGePBQKYd
+ lAwmzfKUVVRd3ZQ0v7Nk/09Jp/xLLGUYs5F/wra26xttk3E713PynzCFwDoEq2kxre9oS8r
+ wzit504Id8vwcD9qbnyujPDGtxM27oCTXia7s1QCOFy8fm1qI1UAzajIQJrCorm6xpvfTqb
+ x1MElVx8u0fx6QJ7w/aZQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:heA76azIid8=;G9ygqNvqNP3GPV5EPaWH8KsBIZ8
+ 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
+ W96Ur1Vmlw==
 
-On Mon, Apr 14, 2025 at 07:04:29PM -0700, Drew Fustini wrote:
-> On Wed, Feb 19, 2025 at 03:02:37PM +0100, Michal Wilczynski wrote:
-> > The DRM Imagination GPU requires a power-domain driver. In the T-HEAD
-> > TH1520 SoC implements power management capabilities through the E902
-> > core, which can be communicated with through the mailbox, using firmware
-> > protocol.
-> > 
-> > Add AON node, which servers as a power-domain controller.
-> > 
-> > Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> > ---
-> >  arch/riscv/boot/dts/thead/th1520.dtsi | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-> > index 197df1f32b25..474f31576a1b 100644
-> > --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> > +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> > @@ -6,6 +6,7 @@
-> >  
-> >  #include <dt-bindings/interrupt-controller/irq.h>
-> >  #include <dt-bindings/clock/thead,th1520-clk-ap.h>
-> > +#include <dt-bindings/power/thead,th1520-power.h>
-> >  
-> >  / {
-> >  	compatible = "thead,th1520";
-> > @@ -229,6 +230,13 @@ stmmac_axi_config: stmmac-axi-config {
-> >  		snps,blen = <0 0 64 32 0 0 0>;
-> >  	};
-> >  
-> > +	aon: aon {
-> > +		compatible = "thead,th1520-aon";
-> > +		mboxes = <&mbox_910t 1>;
-> > +		mbox-names = "aon";
-> > +		#power-domain-cells = <1>;
-> > +	};
-> > +
-> >  	soc {
-> >  		compatible = "simple-bus";
-> >  		interrupt-parent = <&plic>;
-> > -- 
-> > 2.34.1
-> > 
-> 
-> Reviewed-by: Drew Fustini <drew@pdp7.com>
-> 
-> I tested this on top of 6.15-rc1 and found no issues.
-> 
-> -Drew
+Since commit fbac2e7787ac ("clk: bcm: rpi: Allow the driver to
+be probed by DT") the module alias isn't necessary anymore. So
+we can drop it.
 
-I've applied to thead-dt-for-next:
-https://github.com/pdp7/linux/commit/2bae46e3de2a64fe3a619d61b16da0c01b8df2a1
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+=2D--
+ drivers/clk/bcm/clk-raspberrypi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Michal - are there any other dts patches that I should consider for 6.16
-PR?  I would probably send to Arnd around 6.15-rc3 or 6.15-rc4.
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspb=
+errypi.c
+index 0e1fe3759530..9bc11bafa41a 100644
+=2D-- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -480,4 +480,3 @@ module_platform_driver(raspberrypi_clk_driver);
+ MODULE_AUTHOR("Nicolas Saenz Julienne <nsaenzjulienne@suse.de>");
+ MODULE_DESCRIPTION("Raspberry Pi firmware clock driver");
+ MODULE_LICENSE("GPL");
+-MODULE_ALIAS("platform:raspberrypi-clk");
+=2D-=20
+2.34.1
 
-Thanks,
-Drew
