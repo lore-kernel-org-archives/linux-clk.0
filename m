@@ -1,153 +1,155 @@
-Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984E12951C5
-	for <linux-clk@vger.kernel.org>; Tue, 15 Apr 2025 15:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10654315C;
+	Tue, 15 Apr 2025 15:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744731608; cv=none; b=F2XSPO+Xdr7+eMeYyDzXdyw9MhDnx8PN7bPnRX7ZuoHtjL8K83yAjCOpCEiZIdJ2mw+qyjTnHlPbnDcksPIkhqLcSNuV3mq1sUiJ1w5k+IDDTr5aGtjmxCtfdHQfqYtPOEIjIKqhOMwz2a0+3TQT3XGT4MwoR8+R1gRfbXWpAA0=
+	t=1744732281; cv=none; b=bpZtupQu1YXlW8BISfJpFrpUU6iknp5ulr3ZCNq2FpyxA2FIF/42NhFNb0p7ln0rMk+qmpt2woFdwjryjMEPHXVuEo2qHniVlYpkU/xnj0CfXN1NFVUOhGXSPEjaIe066UNyLMEIk0maLdvUQW8DSKKXQXivWXTaMlqVbH2KBDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744731608; c=relaxed/simple;
-	bh=VSA6hdeaoADvOUXacUyO/p5DGOSeT1IneqbdsN7HL3c=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUFuHkxs8UaA7DP4vqNHzqz8iyOA3lUFx8LCwkBfyhn5BjFnfOaagjgpkG9epvt/QalSJu5UvGfBlcoVcK44U6YwX08M8IcQ0TIDteXX2qu1sMAj+hZsacX7wLBz4ch1yy2qrwm2BmEmWuQT+Cjl9DRusmzqGJY5qREmVEok0ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KGVOhW4g; arc=none smtp.client-ip=209.85.208.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KGVOhW4g"
-Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so9361062a12.0
-        for <linux-clk@vger.kernel.org>; Tue, 15 Apr 2025 08:40:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744731604; x=1745336404; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pHLj/Q/sOaFpLIs3FEe17J8/SRfhLs+hrL+m95dT2SQ=;
-        b=KGVOhW4gy7ht+DxhjLj2UeKGe6fbRozU+4RxOQmbbGgMF+50b5PPXJ0vF0Jxuz93BQ
-         gHXOspWXV4BUMbtsDFQ7RWn/aYkqcU1112GatH1RXLa0sjOAlaJhYNf6m1QsaO8HLNR/
-         WmiSziEQZeEDn6Ky9uXnBj7P+aQhymtD34Q55zjzBDEeSNyf8DRTQcxkdaAUE/cw6tR9
-         fQja2UNhAY46CvqbdErOIkXv0y/t3vc1KFfTQHPyTHO5Kbzxn+SXKw3gyhNKklTdMqBB
-         1sekWRJahzkzx5hURe2Y+6O9To00StBgskmAv2iFID6tBpuu0YGo4PT3wDby5AAD9i0g
-         ZAvQ==
+	s=arc-20240116; t=1744732281; c=relaxed/simple;
+	bh=h8pYCryFTyz3ogsg8CjJtivghY5nNbY3fs8XAmTefAw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ky6mrXNYtS6EaTFbysALQe2CeNeZaKSLxMEaPCwY/obF3StyPxCueNW4FwL3nK5RCYPhGsGNQ9GBjOyqYBs4DzoRIOlXwoedK+R9ZOCPWt2jYcDVgUnTNmyTsALDziTFtYRZBiRwb9HLr4s7qgxkW+Sx0DkZvMw1Io4TDkpd6j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-86d75f4e9a1so2183782241.3;
+        Tue, 15 Apr 2025 08:51:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744731604; x=1745336404;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pHLj/Q/sOaFpLIs3FEe17J8/SRfhLs+hrL+m95dT2SQ=;
-        b=sg/7YW7ysdB5hRi9d6D/d8fYPJpDaTYiKFptWxg6QsO2W2rHf0mBsOHYUFCAwlP4IJ
-         CGQBSIsKkHG7bflKJkGqrD5XK6OIzmqgEBY0i+kca6XFEMSiOnpTzj1Lo1UxndK+QODu
-         S6jRTMLzfNgDyulq5eFcVPwxdTP1mfJjnkyHvpXcR/n0kUBR+ymRr1+wnW7kBP94y/wS
-         FX9DydjWhQedtdr3ASnfW5oziXw3RPDWFEYyi/hN+PR16YjYWAQIMp+Ah8a/GZ/S3L1C
-         lCjcfdCWtRbp/wcgW/XBChDCEELTjoE5Rh9p1sdxjlbKEwf8x3Si3/TxZxmdiSrsBmfQ
-         tvCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU43E7Hvb5RjqJJ/CtKzqQ3hlksykEGf5tamYSnyugUpTkYTVVTcnT6xWqYwYkZQGUoNZpIHcmjJxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqXdgC5P3KSXJ+vZEn7j6Ce20Qo1VdWGwvRddp/6evSVmhSy1y
-	sqzdqmFK46eeVWuOI9PpdQs23HVEsvKF/D9ilP9EQrdQGVL3RVdjJYuO0oQnGyc=
-X-Gm-Gg: ASbGnctyhKhMr3OIVDHalL4g92vajp7J9/av5aC1OgEMFVKTsHPr5n7fUpNYp6RSnro
-	nvAgih88+SjBIaeHak5gMXAOcGjl4lhiCHRoo4/VrZZcEAcmXVkXK9KevsApLZqplSElt6ia5CG
-	2asQmNsZdGnT5ZY1UkYTUyIaeTOfEOy7bWz/tn0L0n1oASpfLZeKjYPgbPPI3xDzhoj58dw5zNb
-	2yJDAhY3dWuzzWGsqVO38u4KVgpW2UkMQsJ4VkjBSnjLVH7ZVCD92SCqGbsi/7xdaN0hpGB4jEe
-	pBDlAEsGimQR03qA9HFhFs6+/7JuFtz4k9zgUg0/SJNJ83oKSKUtLwK48ipM81YzasrOS85lsd/
-	9IRdtAQ==
-X-Google-Smtp-Source: AGHT+IH7EkpxnEGrVDPA/wXcjxUS3uvn0zUd7xAOXnljoK+P5iXt632rg6oTgD9CrBhQ3HtW1Xsnmg==
-X-Received: by 2002:a17:907:3f11:b0:ac2:7a6d:c927 with SMTP id a640c23a62f3a-acad36c7212mr1222248466b.50.1744731603735;
-        Tue, 15 Apr 2025 08:40:03 -0700 (PDT)
-Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1be8fcdsm1099687566b.46.2025.04.15.08.40.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 08:40:03 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 15 Apr 2025 17:41:26 +0200
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com
-Subject: Re: [PATCH v8 08/13] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <Z_5-Jjbu6XoHGmxN@apocalypse>
-References: <cover.1742418429.git.andrea.porta@suse.com>
- <3fbc487bc0e4b855ffbee8ed62cfb6bf3b0592e8.1742418429.git.andrea.porta@suse.com>
- <2025041557-masculine-abrasive-c372@gregkh>
- <20250415165505.0c05bc61@bootlin.com>
- <2025041531-dubiously-duchess-276a@gregkh>
+        d=1e100.net; s=20230601; t=1744732273; x=1745337073;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VQOaA84/gJX5YcmA1yI2UrffzTTDGmIxxE06BR+8a5Q=;
+        b=GvuaecnYUyp5NRqywkySyYs91mVAzaLNan/VqrKgJ+/l+VP/iZksfZUpX1m+VQ9k/Z
+         W/A2Wx1N13rQeMk2mCgvXPWkuE1duuDJiubpvqcFxO61E0aDjHkZ3JNDUCpDtSwhL6qR
+         77r4+B/WhXlCmxkLimlcTzlEg6fG60BPhPwS9V023hGXchLF9jYOyfF+RN3Q+tZw1P4U
+         O7MDee8WLzfzp3aSlv+Zn7yEXLcwB8RMj/NfJMByIPBxqe1q3ilM6bxuAGnjC0sbGeDF
+         3IB9jUmlzXJTne+GaZpG9s+m85KOAeNYynKVmVshIUQAYg4xnXMaxP7qWAuUKIkkOaZi
+         gDdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUo8kLC6Y6+BMlBTMhR1C+MAASYZAAZ2WZM1DONIjtdBZhfFd/GO0E49RT5LtHoOExCbfGFSTm+epZc@vger.kernel.org, AJvYcCV+NTbFm3HN79BaEbjRVZWY1781hK5HB7TQxnTMd083i4Z/kH70WdKOcc4F5hgPxOIbB1dn+RxPGEHb8x8n@vger.kernel.org, AJvYcCVqjNUONnEFIkF9nKIEvmWlfjDNyqOpNLI8CB407AI0UitLKikNaEUacOmtQPRmyYdxnv3Sw+qMDCEKaK0xOYXg+L8=@vger.kernel.org, AJvYcCX8gcHuM931Sl9+wbJogeYfAwaPLYAsRnhXeqSm4DbPFfS9cOkNZWlVF+zUnlbxOc3rOFSfvYJtOnGM@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG2ssW/jCV1frT4xSZs4rVM4Eikm5mSDd2HtJocN8yD95aoWEU
+	xeQTCxp3xSHQjdbRxfFNePdmgcyPInSJPnTSYhZROzIea/PhMmUrFvDd/iA/
+X-Gm-Gg: ASbGncuyuPzWKbsU40dRmFMMo6GHugTkKc23CUoyhouEEf60p5kDXKSLOsGWS2EFaX7
+	8mR4G0QT5O9zZdYLQJXOIAqlYqQBK8rioYcze0wN+fQ0Vc/5Pcr1q79kZUpNYO1NREsetj8Mz+z
+	4jWBYZzgf9gQ3XZ9/Mi4WS5ZiGmlx2C3StDqiMM/ynpm5Dx1/cURZ7tq07dGwBHIMtCrMcA5kPi
+	OV7+7B8k5E8aLv249H/K5KQi8YwcwD+KmPhxdPDAxhjMbi+wcy8eWMWZZT190jKqWViEjoiWkJV
+	uNM6vNUkdtoMpeSVr942cwE5Orgrd8YG8/IYdN6ViJDfigBkSYLTqKwC5OFJXIEaLMSQi2MizFQ
+	j0Tw=
+X-Google-Smtp-Source: AGHT+IGYm29SA0ta3+Nwv6yv8KhX8nXsE95hHyFYJ2IqxbBzl85keeoOy3oHLK5c9YeIwEBcUzeFXw==
+X-Received: by 2002:a05:6102:2ad3:b0:4c3:6568:3e18 with SMTP id ada2fe7eead31-4c9e4f1f1a5mr12426613137.15.1744732273403;
+        Tue, 15 Apr 2025 08:51:13 -0700 (PDT)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c9c98ee49csm2585306137.26.2025.04.15.08.51.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 08:51:11 -0700 (PDT)
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4c3183ec801so197087137.1;
+        Tue, 15 Apr 2025 08:51:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUEFUm8AOCY9eqowOPSW7hT4RmM3xgG/+vr5RD49z3DnHsmnd8Nv6zFBVXZtp8poSyK6rC91ns6U7sJ@vger.kernel.org, AJvYcCVB2n2bJP2RGKFUP5UU3lIt07UMzETHsj1xt7xXS3ZYU54MgwaL7qaBRq8Tumm8FwFo0Or2ymaHEVL65WLK4xjPpLI=@vger.kernel.org, AJvYcCVsG7Kvb6QBkEii/C75r9lIJ+u33AYdZmFgkJDIeMUCZYJ8UeA3tz3zOanIkPFlbi81S5NLgQO8/kla@vger.kernel.org, AJvYcCWthxuQMya7V16yYqaEkK3NfV7CT4uj7t8IzjXRKu5aSDOgdu+4Xe/oLypybb1pC+rNRlofiEHI8PCveopU@vger.kernel.org
+X-Received: by 2002:a05:6102:c05:b0:4c1:6feb:83aa with SMTP id
+ ada2fe7eead31-4c9e4ee9fe6mr12739669137.9.1744732271060; Tue, 15 Apr 2025
+ 08:51:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025041531-dubiously-duchess-276a@gregkh>
+References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250408200916.93793-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250408200916.93793-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 15 Apr 2025 17:50:59 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWj91VbxRbb_pZ23ySbvjzzgfTgy83GXTEtC9CAS=d5Sg@mail.gmail.com>
+X-Gm-Features: ATxdqUGU1HbZIqRGMDrZbhA-dxUGjQxgUi_EpOym7TmGQkaFVWVIrulXG2lf2bU
+Message-ID: <CAMuHMdWj91VbxRbb_pZ23ySbvjzzgfTgy83GXTEtC9CAS=d5Sg@mail.gmail.com>
+Subject: Re: [PATCH v2 02/15] clk: renesas: r9a09g057: Add clock and reset
+ entries for DSI and LCDC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Greg,
+Hi Prabhakar,
 
-On 17:14 Tue 15 Apr     , Greg Kroah-Hartman wrote:
-> On Tue, Apr 15, 2025 at 04:55:05PM +0200, Herve Codina wrote:
-> > Hi Greg,
-> > 
-> > On Tue, 15 Apr 2025 16:06:43 +0200
-> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > 
-> > > On Wed, Mar 19, 2025 at 10:52:29PM +0100, Andrea della Porta wrote:
-> > > > The RaspberryPi RP1 is a PCI multi function device containing
-> > > > peripherals ranging from Ethernet to USB controller, I2C, SPI
-> > > > and others.  
-> > > 
-> > > So shouldn't this be using the auxbus code?  That's designed to "split
-> > > up" PCI devices such that you can share them this way.
-> > > 
-> > > Or did that get rejected somewhere previously?
-> > > 
-> > 
-> > It doesn't use auxbus probably for the exact same reason that the
-> > one given for the LAN966x PCI device driver [0] and [1].
-> > 
-> > Avoid all boiler plate needed with auxbus whereas drivers already exist
-> > as platform drivers. Internal devices are handled by those platform drivers.
-> > Those devi just need to be described as platform devices and device-tree is
-> > fully relevant for that description.
-> > 
-> > [0] https://lore.kernel.org/all/CAL_Jsq+1r3SSaXupdNAcXO-4rcV-_3_hwh0XJaBsB9fuX5nBCQ@mail.gmail.com/
-> > [1] https://lore.kernel.org/all/Y9kuxrL3XaCG+blk@kroah.com/
-> 
-> I really hate creating platform devices below a PCI device, so I'll keep
-> complaining about this every time people try to do it.
+On Tue, 8 Apr 2025 at 22:09, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add clock and reset entries for the DSI and LCDC peripherals.
+>
+> Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2:
+> - No changes
 
-I agree with you, but as Herve has already pointed out this would mean incurring
-in significant work to adapt drivers for all the peripherals (there are quite a
-few), while with this approach they would be left untouched.
+You did change CSDIV0_DIVCTL2 to the NO_RMW-variant...
 
-Many thanks,
-Andrea
+> --- a/drivers/clk/renesas/r9a09g057-cpg.c
+> +++ b/drivers/clk/renesas/r9a09g057-cpg.c
 
-> 
-> thanks,
-> 
-> greg k-h
+> @@ -148,6 +182,12 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
+>         DEF_SMUX(".smux2_gbe0_rxclk", CLK_SMUX2_GBE0_RXCLK, SSEL0_SELCTL3, smux2_gbe0_rxclk),
+>         DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_SELCTL0, smux2_gbe1_txclk),
+>         DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_SELCTL1, smux2_gbe1_rxclk),
+> +       DEF_FIXED(".plleth_lpclk_div4", CLK_DIV_PLLETH_LPCLK, CLK_PLLETH, 1, 4),
+> +       DEF_CSDIV(".plleth_lpclk", CLK_CSDIV_PLLETH_LPCLK, CLK_DIV_PLLETH_LPCLK,
+> +                 CSDIV0_DIVCTL2, dtable_16_128),
+
+The clock names look strange to me: "plleth_lpclk_div4" sounds like it is
+"plleth_lpclk" divided by four, but that is not the case here.
+
+> +
+> +       DEF_PLLDSI_DIV(".plldsi_sdiv2", CLK_PLLDSI_SDIV2, CLK_PLLDSI,
+> +                      CSDIV1_DIVCTL2, dtable_2_32),
+>
+>         DEF_DDIV(".pllgpu_gear", CLK_PLLGPU_GEAR, CLK_PLLGPU, CDDIV3_DIVCTL1, dtable_2_64),
+>
+
+> --- a/drivers/clk/renesas/rzv2h-cpg.h
+> +++ b/drivers/clk/renesas/rzv2h-cpg.h
+
+> @@ -117,6 +118,8 @@ struct smuxed {
+>
+>  #define CSDIV0_DIVCTL0 DDIV_PACK(CPG_CSDIV0, 0, 2, CSDIV_NO_MON)
+>  #define CSDIV0_DIVCTL1 DDIV_PACK(CPG_CSDIV0, 4, 2, CSDIV_NO_MON)
+> +#define CSDIV0_DIVCTL2 DDIV_PACK_NO_RMW(CPG_CSDIV0, 8, 2, CSDIV_NO_MON)
+
+The documentation says:
+
+    DIVCTL2[3:2] is reserved.
+    When writing, read modify write is needed.
+
+So the NO_RMW-logic seems to be inverted?
+
+> +#define CSDIV1_DIVCTL2 DDIV_PACK(CPG_CSDIV1, 8, 4, CSDIV_NO_MON)
+>
+>  #define SSEL0_SELCTL2  SMUX_PACK(CPG_SSEL0, 8, 1)
+>  #define SSEL0_SELCTL3  SMUX_PACK(CPG_SSEL0, 12, 1)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
