@@ -1,170 +1,176 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F212DFA5B;
-	Tue, 15 Apr 2025 04:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6212DFA51;
+	Tue, 15 Apr 2025 04:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744689926; cv=none; b=uE/tXPN71vETBhxSGorRa6zTMwmnZIBxNnrD9AQ/ljp9gbG5Z7PSwp+Cj6NFkmiF7jDi1QknX26p6BO3IFhMZjGzLISemFzXces+vARkT8zVGZ3/T7O9hG1B/cemfJBQMt4yaJyU5sx11SVrdrZ5vo/L2rqqvvk2RvMLvIonsiI=
+	t=1744690718; cv=none; b=YQ9TuIwSUJIiTBLOK8TbtrQZmTJg4EFoEe1Si5LzPS1ZXDLzleCfl3px9vALVpzIhwtyk4O/4FduXuz45F4XMUHzLuQHvkk8+TfOFzmCKVAFGr72k9jm8wcaK+vi5W/d1MmIWCoOesK+hIXGALLTlJdd9KihhhZ2c+XbAvT+gFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744689926; c=relaxed/simple;
-	bh=5onrEStEUDN1ilDvDavwzaUS7EYoBW9R6M/pH0wIpFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=byzYWUw99xTYXPt0SkYbXcGg/teOAynPVBdiuON1eY/ZYZQc+8SQL3IlgV5FCm8Cp+5Ft7qlJO76Dd/4qbwQXE9UL2+38Bb/NwDL8zvWc0iHaUwZp4R04r9BrqzSz8ctZj9jfqaJ8xJ3ds8RMoNQHl3lniIeJUairp6EuUD9TyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kyJ4FqAx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1744690718; c=relaxed/simple;
+	bh=TDeHh2JSFt6MEQZxnJI2IRXRZvejReOK447qRDNW6iM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtPBGEqodO/FbkUKmd0TK4yjLIwbfSwPYQxyr8sHTFDMllPpldUN69cOfq8hT4aE4NSvt1oRES2xmAF4VOIKlVU50LDMVlrJuwOIyJrrCStGDae+N2okMqRxB1varRgPK+FCRMm1W9HGr3++ND9jpYK1i9DQtcL7jnoS97pvljk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=wjs57W1t; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=myfhKdLa; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kyJ4FqAx"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F15qKk016117;
-	Tue, 15 Apr 2025 04:05:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4Z/ubR0bHVlEbalLwcZhfcjQS1Ooe1tunvKxpZnMAE0=; b=kyJ4FqAxG0wxTqIZ
-	+RRcGPR4dcthiw6HhEIaZ58fyuN+1AQkzp0JaGFboD9TpJYz1bURj+pWg+rK9B0N
-	FZw9xv1dfTD54a0iIVk2ZKVRqOQtBQO1TfBasjEqLaG6DAMmY51wlw+DDPTnojUI
-	zq72wrXwWLkFE75QIjpFBCk0OHeGQc3EL+4Go9ec8YG6Nhc3gmrYJMK8m6uH1Wpf
-	+WZA/OFsxgKGq0A4yxNgA13+KuiDraNH7vXI1bbJR7t9FsjiwPdFb85gGuQHsc4x
-	Guky79WjFYh18FX66O53j8iovFDmny3SWNH8Ct2ResxpHCTIV4stLQrO5YSOmiZC
-	O2VLgg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45yhfcxfwf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Apr 2025 04:05:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53F45FUG018011
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 15 Apr 2025 04:05:15 GMT
-Received: from [10.217.216.178] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Apr
- 2025 21:05:10 -0700
-Message-ID: <0db798bf-04b3-40b5-af90-7dda5b606727@quicinc.com>
-Date: Tue, 15 Apr 2025 09:35:07 +0530
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="wjs57W1t";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="myfhKdLa"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 3C72912FB450;
+	Mon, 14 Apr 2025 21:18:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1744690708; bh=TDeHh2JSFt6MEQZxnJI2IRXRZvejReOK447qRDNW6iM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=wjs57W1tjaXVmsESwCjIK8NREbtHC/9TrdkRIbwE4mH79A8bdAsVzli1zBNdXkyE5
+	 Ta4R7pWX3tLHk7QRaTkJNhLGx0Qt/FXWROpk/R8LhIK4q4QNkl6ry9khuvbDv6Kcjf
+	 uzBUxghvQx458VKMexNT1JmO4UPbskk1V6r/xrWZ3sOKgEm/8JD/6b4IvawIgHJgpf
+	 NgqWvGlhSRBG4QrOtTA3N6JDrnJ08Ktdevx8lXAAmtRWf9//d+8Y3w0P+ow2G5kXWd
+	 o15WDmOXHsAmt4Wn/amsVxJutdtdnl32FYrwlvfm4G//tZnsWg7eZibXC/rhStL1mH
+	 C1WF1c+vsMt4g==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id g7BIZzpgvdqr; Mon, 14 Apr 2025 21:18:23 -0700 (PDT)
+Received: from ketchup (unknown [183.217.81.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id 7475512FB435;
+	Mon, 14 Apr 2025 21:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1744690703; bh=TDeHh2JSFt6MEQZxnJI2IRXRZvejReOK447qRDNW6iM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=myfhKdLaoMsUau7EDgnyILiXRboxXeqVE6R3kjSTbGRL3L8TRaga3togeTnOtrySp
+	 YcZqRmwST0ku7jtqnrjGVW+VnvnUz+3t8fHXPypkxTIs/pFDakD0g0UG8YuvGMbw2J
+	 AxsSBxTTA7eERGNKB3zlxBTNq7g1G/xLt4yWsvwtBIFE3w1gl2J0TzY5ky1HSntTNn
+	 uHTRpSQamGepVW2zKtbaGV8X8BDPlkPa4hrwhHjT0cgVGMD+Pha6vS+tJG7VxTkX8+
+	 9BgiNdmTV8Wxmrwwn7X4Rs7+HorIyI61doDKOEuEoOOwl+WqO1AZJpxow1qiXfk2RY
+	 hEe2BfmlTiYVg==
+Date: Tue, 15 Apr 2025 04:18:16 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Alex Elder <elder@riscstar.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: p.zabel@pengutronix.de, dlan@gentoo.org, guodong@riscstar.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	spacemit@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/7] clk: spacemit: rename spacemit_ccu_data fields
+Message-ID: <Z_3eCDmh_vnkpcFC@ketchup>
+References: <20250414191715.2264758-1-elder@riscstar.com>
+ <20250414191715.2264758-3-elder@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] arm64: dts: qcom: sm6350: Add video clock
- controller
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Jagadeesh Kona
-	<quic_jkona@quicinc.com>,
-        Luca Weiss <luca.weiss@fairphone.com>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250324-sm6350-videocc-v2-0-cc22386433f4@fairphone.com>
- <20250324-sm6350-videocc-v2-4-cc22386433f4@fairphone.com>
- <1c09fee5-9626-4540-83fb-6d90db2ce595@oss.qualcomm.com>
- <9eb6dfd7-2716-4150-9392-98e26892d82d@quicinc.com>
- <e3dda8bf-e19e-4dde-83a4-7876ca81e5e6@oss.qualcomm.com>
- <69fba227-ed47-4004-9451-777ca19b687f@quicinc.com>
- <cfa4003c-e8b0-40f6-821d-07f8d44752af@oss.qualcomm.com>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <cfa4003c-e8b0-40f6-821d-07f8d44752af@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=CfUI5Krl c=1 sm=1 tr=0 ts=67fddafb cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=6H0WHjuAAAAA:8
- a=hCl-885K2BfM0JJyIxAA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-GUID: _tEFsNCWhbbuowJCJmuc1XYFWd2n2vik
-X-Proofpoint-ORIG-GUID: _tEFsNCWhbbuowJCJmuc1XYFWd2n2vik
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-15_01,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 malwarescore=0 impostorscore=0 spamscore=0 phishscore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0 clxscore=1011
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504150024
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414191715.2264758-3-elder@riscstar.com>
 
-
-
-On 4/12/2025 12:56 AM, Konrad Dybcio wrote:
-> On 4/11/25 1:37 PM, Jagadeesh Kona wrote:
->>
->>
->> On 4/11/2025 2:42 PM, Konrad Dybcio wrote:
->>> On 4/11/25 9:15 AM, Jagadeesh Kona wrote:
->>>>
->>>>
->>>> On 4/1/2025 10:03 PM, Konrad Dybcio wrote:
->>>>> On 3/24/25 9:41 AM, Luca Weiss wrote:
->>>>>> Add a node for the videocc found on the SM6350 SoC.
->>>>>>
->>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>>>>> ---
->>>>>>  arch/arm64/boot/dts/qcom/sm6350.dtsi | 14 ++++++++++++++
->>>>>>  1 file changed, 14 insertions(+)
->>>>>>
->>>>>> diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
->>>>>> index 42f9d16c2fa6da66a8bb524a33c2687a1e4b40e0..4498d6dfd61a7e30a050a8654d54dae2d06c220c 100644
->>>>>> --- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
->>>>>> +++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
->>>>>> @@ -1952,6 +1952,20 @@ usb_1_dwc3_ss_out: endpoint {
->>>>>>  			};
->>>>>>  		};
->>>>>>  
->>>>>> +		videocc: clock-controller@aaf0000 {
->>>>>> +			compatible = "qcom,sm6350-videocc";
->>>>>> +			reg = <0x0 0x0aaf0000 0x0 0x10000>;
->>>>>> +			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
->>>>>> +				 <&rpmhcc RPMH_CXO_CLK>,
->>>>>> +				 <&sleep_clk>;
->>>>>> +			clock-names = "iface",
->>>>>> +				      "bi_tcxo",
->>>>>> +				      "sleep_clk";
->>>>>> +			#clock-cells = <1>;
->>>>>> +			#reset-cells = <1>;
->>>>>> +			#power-domain-cells = <1>;
->>>>>> +		};
->>>>>
->>>>> You'll probably want to hook up some additional power domains here, see
->>>>>
->>>>> https://lore.kernel.org/linux-arm-msm/20250327-videocc-pll-multi-pd-voting-v3-0-895fafd62627@quicinc.com/
->>>>>
->>>>
->>>> On SM6350, videocc doesn't need multiple power domains at HW level, it is only on CX rail which would be ON
->>>> when system is active, hence power-domains are not mandatory here.
->>>
->>> 6350 doesn't have either MMCX nor a split MX - shouldn't both normal
->>> CX and MX be in there?
->>>
->>
->> All clocks & GDSC's of SM6350 videocc are only on CX rail, so it requires only CX power domain. But when HLOS
->> is active, CX rail will be ON and operate at a level above retention, which is sufficient for videocc to operate.
->> Hence clock driver don't need to explicitly vote on CX rail.
->>
->> The same is not true for other rails like MMCX and Split MX(MXC), hence clock drivers had to explicitly vote on
->> those rails.
+On Mon, Apr 14, 2025 at 02:17:09PM -0500, Alex Elder wrote:
+> Add "clk_" to the names of the fields in the spacemit_ccu_data structure
+> type.  This prepares it for the addition of two similar fields dedicated
+> to resets.
 > 
-> I'm worried about MX being undervolted for higher OPPs
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+
+Reviewed-by: Haylen Chu <heylenay@4d2.org>
+
+> ---
+>  drivers/clk/spacemit/ccu-k1.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
 > 
-
-From a videocc PoV there is no requirement of Mx on SM6350. The CX
-levels would be taken care by Video SW driver from their defined OPP. Mx
-at system level would be catered via the BW votes.
-
-> Konrad
-
+> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
+> index a55957806db31..4db91c1b1d280 100644
+> --- a/drivers/clk/spacemit/ccu-k1.c
+> +++ b/drivers/clk/spacemit/ccu-k1.c
+> @@ -130,8 +130,8 @@
+>  #define APMU_EMAC1_CLK_RES_CTRL		0x3ec
+>  
+>  struct spacemit_ccu_data {
+> -	struct clk_hw **hws;
+> -	size_t num;
+> +	struct clk_hw **clk_hws;
+> +	size_t clk_num;
+>  };
+>  
+>  /* APBS clocks start, APBS region contains and only contains all PLL clocks */
+> @@ -819,8 +819,8 @@ static struct clk_hw *k1_ccu_pll_hws[] = {
+>  };
+>  
+>  static const struct spacemit_ccu_data k1_ccu_pll_data = {
+> -	.hws	= k1_ccu_pll_hws,
+> -	.num	= ARRAY_SIZE(k1_ccu_pll_hws),
+> +	.clk_hws	= k1_ccu_pll_hws,
+> +	.clk_num	= ARRAY_SIZE(k1_ccu_pll_hws),
+>  };
+>  
+>  static struct clk_hw *k1_ccu_mpmu_hws[] = {
+> @@ -860,8 +860,8 @@ static struct clk_hw *k1_ccu_mpmu_hws[] = {
+>  };
+>  
+>  static const struct spacemit_ccu_data k1_ccu_mpmu_data = {
+> -	.hws	= k1_ccu_mpmu_hws,
+> -	.num	= ARRAY_SIZE(k1_ccu_mpmu_hws),
+> +	.clk_hws	= k1_ccu_mpmu_hws,
+> +	.clk_num	= ARRAY_SIZE(k1_ccu_mpmu_hws),
+>  };
+>  
+>  static struct clk_hw *k1_ccu_apbc_hws[] = {
+> @@ -968,8 +968,8 @@ static struct clk_hw *k1_ccu_apbc_hws[] = {
+>  };
+>  
+>  static const struct spacemit_ccu_data k1_ccu_apbc_data = {
+> -	.hws	= k1_ccu_apbc_hws,
+> -	.num	= ARRAY_SIZE(k1_ccu_apbc_hws),
+> +	.clk_hws	= k1_ccu_apbc_hws,
+> +	.clk_num	= ARRAY_SIZE(k1_ccu_apbc_hws),
+>  };
+>  
+>  static struct clk_hw *k1_ccu_apmu_hws[] = {
+> @@ -1038,8 +1038,8 @@ static struct clk_hw *k1_ccu_apmu_hws[] = {
+>  };
+>  
+>  static const struct spacemit_ccu_data k1_ccu_apmu_data = {
+> -	.hws	= k1_ccu_apmu_hws,
+> -	.num	= ARRAY_SIZE(k1_ccu_apmu_hws),
+> +	.clk_hws	= k1_ccu_apmu_hws,
+> +	.clk_num	= ARRAY_SIZE(k1_ccu_apmu_hws),
+>  };
+>  
+>  static int spacemit_ccu_register(struct device *dev,
+> @@ -1050,13 +1050,13 @@ static int spacemit_ccu_register(struct device *dev,
+>  	struct clk_hw_onecell_data *clk_data;
+>  	int i, ret;
+>  
+> -	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, data->num),
+> +	clk_data = devm_kzalloc(dev, struct_size(clk_data, hws, data->clk_num),
+>  				GFP_KERNEL);
+>  	if (!clk_data)
+>  		return -ENOMEM;
+>  
+> -	for (i = 0; i < data->num; i++) {
+> -		struct clk_hw *hw = data->hws[i];
+> +	for (i = 0; i < data->clk_num; i++) {
+> +		struct clk_hw *hw = data->clk_hws[i];
+>  		struct ccu_common *common;
+>  		const char *name;
+>  
+> @@ -1081,7 +1081,7 @@ static int spacemit_ccu_register(struct device *dev,
+>  		clk_data->hws[i] = hw;
+>  	}
+>  
+> -	clk_data->num = data->num;
+> +	clk_data->num = data->clk_num;
+>  
+>  	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_data);
+>  	if (ret)
+> -- 
+> 2.45.2
+> 
