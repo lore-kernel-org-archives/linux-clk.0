@@ -1,94 +1,209 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B6F207643;
-	Wed, 16 Apr 2025 10:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7947323E32E
+	for <linux-clk@vger.kernel.org>; Wed, 16 Apr 2025 11:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744801168; cv=none; b=FFx+2YVqM4eTRNFXSkWa+P3ac/hUEz7Ct5PvWu6Lg4zEePu1wvzvz3RgpDrEQ7Jv9dJWmWDtBgBX2I/gq5/TVYPhM7VHKqPfeNPmnULqMZkpNBufIrz6dVOuwkWnQ0f4CdDQJkUC5IHf7ueVmCwhWp64GS1aJGKSmYIUoTR5j3w=
+	t=1744802564; cv=none; b=kVrTHiYhQ+AL6zhAAKyveNjJv7jlNkAvgog9U8Te4rpj7NOyn/PvvEuGwZmsx0s+F2+HqJt9qSMcwKz0JfCPadEmmmNad1imubYWwd/D0TdrYu5RaWkoEkx5bAS/0uVRZkmOjKYmQFosPQCj/Jcytu+lft22v7xeOaGcD0cx07M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744801168; c=relaxed/simple;
-	bh=uMHGiZr/NxEIl4Dgh6kI7RFnOoEF1YTOBJysxCM4848=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ar2/SjxTJASTvANrUB9s7qd+Yr03QOevTXTfN/HOYVRvce9gewHi1rKi8YYfT1C8dfTN2xnZ1l4kH+6X7LWEb4/LU+2e5zTlE/sX9IVqeN0wd4fZpjoO09eP/yPrGCLvZJKw0HNLATgkybYqlctz2VB3yXYWHEzDZCWMhGvBr/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UNbPAASA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744802564; c=relaxed/simple;
+	bh=u9+J56ZVO8d3RgBpDR2plZVRI891RyFTxFeHAW8KyPU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=F6syX0y3/Qw0H4fSVC4wuKV9iY7ZLt75vCQM4jmLGwgc8vU2lXAN/QDFm83/t6xX+PMltSC+05IzgjkbWBkcD4vaRaXtTw3BeoRAqHegc8/4BgAueu0xB31q0I7wr0WHYOKl3X9VOIn2yMti+mZMDw0NJ44aJHZQ+xCasSt8j+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AxZYzZ9Y; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UNbPAASA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A935C4CEE2;
-	Wed, 16 Apr 2025 10:59:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744801167;
-	bh=uMHGiZr/NxEIl4Dgh6kI7RFnOoEF1YTOBJysxCM4848=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UNbPAASAdV4gXY/qLJKWOIhLqBd/aIHlj9hlvyjZm1qooedQRcuiFBLiGKWuuXa0E
-	 qlPl5ThPLK3jzUT0esH99LT3Mz41Igeviw1emQOl83eIpCFblyUKs2UE0HNlfrdIbp
-	 YQctoRcHp8hDxk+O1ZuM9LcHOiNJsWVWCvC5bOR9b10cyO+Vw7CcW7J+PWLsOy604B
-	 IXoBfMCa1HfnE/AxemfOE2pOI+pCrET/AYBYlwBeZnanoXwUcb8dTye8L1RjOLhhJT
-	 wUff6iyUrrMV1CmBZTvq0JKbiT7BptMpKWgfyuv2yEI9n/FPUUT/WO5ItsnQwjapvG
-	 fvxiRDA+7341g==
-Date: Wed, 16 Apr 2025 12:59:19 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	rust-for-linux@vger.kernel.org,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V10 13/15] rust: cpufreq: Extend abstractions for driver
- registration
-Message-ID: <Z_-Nh_dDifS1lvOD@pollux>
-References: <cover.1744783509.git.viresh.kumar@linaro.org>
- <8d04ef19d7a16610dbf0dfb5c9a611c6e1e3e318.1744783509.git.viresh.kumar@linaro.org>
- <Z_9ysHFmvZvaoe8H@pollux>
- <20250416101726.g5jm6wnbbsmuskxl@vireshk-i7>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AxZYzZ9Y"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250416112234euoutp016ac528bc37de33652cc499d138efcfd4~2yK3gy0PH0354203542euoutp012
+	for <linux-clk@vger.kernel.org>; Wed, 16 Apr 2025 11:22:34 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250416112234euoutp016ac528bc37de33652cc499d138efcfd4~2yK3gy0PH0354203542euoutp012
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1744802554;
+	bh=o/JZlQdMxe3Mo96yx/aJSrBGKnbJT9wWiAHIxzblxxQ=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=AxZYzZ9YXRriyj+u6GV4T3daSjhmA0EkHr+2pGi+tfWsfBsq2pZhGIK/ULw+DhMq6
+	 WelXZ4Yw6GGYMWhiB+3LytLiq05iA/y9IQNJkbmT8/ZuYC+azzKxiU8uE+Ivy5ZqM/
+	 Z50NBO+4FcKoxg26bq8P2y3ZX0/8RqwKEIy7s9Dc=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250416112234eucas1p208c7db55a031e7309e207c39b3fd2822~2yK2-DgQC2586025860eucas1p2f;
+	Wed, 16 Apr 2025 11:22:34 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id F4.96.20821.AF29FF76; Wed, 16
+	Apr 2025 12:22:34 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250416112233eucas1p10bb8e43a0c391392501d48c7dace23b6~2yK2YMxp11951519515eucas1p1y;
+	Wed, 16 Apr 2025 11:22:33 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250416112233eusmtrp10af3df9bf1f76b1c37a2f539cc012007~2yK2XMO-p2331123311eusmtrp1F;
+	Wed, 16 Apr 2025 11:22:33 +0000 (GMT)
+X-AuditID: cbfec7f2-b11c470000005155-43-67ff92fa36dd
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id E0.19.19920.9F29FF76; Wed, 16
+	Apr 2025 12:22:33 +0100 (BST)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250416112232eusmtip2f05b1e8bb84da2e08f38a19a071633bc~2yK1D-LF52910429104eusmtip2i;
+	Wed, 16 Apr 2025 11:22:32 +0000 (GMT)
+Message-ID: <02e21251-5c02-420d-81f2-d6f241e0212d@samsung.com>
+Date: Wed, 16 Apr 2025 13:22:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416101726.g5jm6wnbbsmuskxl@vireshk-i7>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 19/21] riscv: dts: thead: Introduce power domain
+ nodes with aon firmware
+To: Drew Fustini <drew@pdp7.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, guoren@kernel.org, wefu@redhat.com,
+	jassisinghbrar@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, frank.binns@imgtec.com, matt.coster@imgtec.com,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+	airlied@gmail.com, simona@ffwll.ch, ulf.hansson@linaro.org,
+	jszhang@kernel.org, p.zabel@pengutronix.de, m.szyprowski@samsung.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <Z/6p6MQDS8ZlQv5r@x1>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHOffe3luaFa7F0TOHkVwdiW4DBBNOtsXANrJrTDaIkiUmTBu5
+	KQYKrhVRgwECdODKUB5xa+d4zEnHBgRWKq08HFTKa50C41EeugQXS3jIq51s0tFet/Hf5/s7
+	3/N75RwhLmkjdwnPpJ3jlGmyVIYUEcaeZ7Y3N0rd8nDXHRL1jtVgqOUvLYV+bLdhqNJiE6CZ
+	IQOGRtaXSNTw+D6FnrTnEmhUf4NCeT2NJHJoZ0i0rJkRoGHz1yRaLbYAZFzNJ1G9ZZpC1cst
+	BLrZagZIXXRLgB70x6LpmV4COYY1OFJr/ZG7rZVCm6NNBNItdlLIMH9NgKz1H6P8znIieje7
+	NF5AsfMOB8F2F65RbLuzimBN2mmK1ZgGAdtcV0SyU6NtJPtNXzz78HMrxv50M5vNr+/B2JLn
+	4exSx28k+4WhDrBDeWNUnOSE6J0kLvXMeU4ZdviUKHmu4Hf8bI30woIrOQc0BVwBQiGkD0HL
+	vb1XgEgoofUA6tXrJC/WAJyf68B5sQrgqDpvS/h6b2wOfUfwB7UAfrtupXixAKDLfg/zuMT0
+	Ydi7VEp5mKBfg39OVgn4+A7Y99Us4eGX6T3wof1LryeAlsEJg4n08E46GNr0Q5gnKU7/IICW
+	u6vepDgthfbZSi+TdAR8VFvpTepLM/CXTTfJe/bAvBadt29I94mgursI4/t+H9YuLJA8B8A5
+	q4HiOQgOlGkIntPho5aVF3NmQZPG+oLfhlO2DdKzMZzeDxvNYXw4Bo4NPCb4RfrB8YUdfAt+
+	sNR4HefDYliolvDuEFihKf6vqE1vxK4CRrttK9ptQ2q3DaP9v24VIOqAlMtQKeSc6mAalxmq
+	kilUGWny0NPpimaw9cAHNq0rreDG3HJoF8CEoAtAIc7sFNuiNuUScZLs4iVOmX5SmZHKqbrA
+	q0KCkYprOgvkElouO8elcNxZTvnvKSb03ZWD7dtdduF0QnD0XZFuv2ImMFxbOYjr4sP8EtOY
+	TyNDxvVqc4zoiN45uH75wfNjny0fr451RpX02liyIcZdPet71d2peK980hEi8LmYUozFJdzO
+	ynMpExXR5pSJA1zy1leCU9mZ6r8DmWlpU8do1NGRjhMoN+kD86EPHR8FWqqC/hg2hV5/K9M/
+	y9n/bqBPiU+b72JN+RP7MZ1fd9ea4RpTXTZZsXIprux25J37G8m/Vmh/jjipiMb2EgmvvNEo
+	72WEOcEN3z81jlS5LrsI/2ehT4+IFhW1roSIyET7J68XCir7T0XFjsXPBzXlDkz0NQ/1hMe5
+	fc47bXZ1Rja1cuslhlAlyw4ewJUq2T8MHt+WTwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPKsWRmVeSWpSXmKPExsVy+t/xe7o/J/1PN7iyW9LixPVFTBZbf89i
+	t1iz9xyTxfwj51gt7l3awmRx5et7Not1Ty+wW7zY28hicW3FXHaL5mPr2SxezrrHZvGx5x6r
+	xeVdc9gsPvceYbTY9rmFzWLtkbvsFgs/bmWxWLJjF6NFW+cyVouLp1wt7t47wWLx8nIPs0Xb
+	LH6L/3t2sFv8u7aRxWL2u/3sFlveTGS1OL423KJl/xQWB1mP9zda2T3evHzJ4nG44wu7x95v
+	C1g8ds66y+7Rs/MMo8emVZ1sHneu7WHzmHcy0ON+93Emj81L6j1a1h5j8uj/a+Dxft9VNo++
+	LasYPS41X2cPEIrSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcks
+	Sy3St0vQy3jV+pC5YJF4xdvvGQ2MG4W7GDk5JARMJP5dWsrSxcjFISSwlFHi4cHr7BAJGYlr
+	3S9ZIGxhiT/Xutggil4zStyc+o0RJMErYCdx4v0ksAYWAVWJH7cXsELEBSVOznwC1iwqIC9x
+	/9YMsBphgUSJaWsgFogIKEicW3GJCWQos8BqVonlX+8yQmz4wSixbMNFJpAqZgFxiVtP5oPZ
+	bAJGEg+WzwfbwCmgJHH233+gkziAatQl1s8TgiiXl2jeOpt5AqPQLCR3zEIyaRZCxywkHQsY
+	WVYxiqSWFuem5xYb6hUn5haX5qXrJefnbmIEpqxtx35u3sE479VHvUOMTByMhxglOJiVRHjP
+	mf9LF+JNSaysSi3Kjy8qzUktPsRoCgyLicxSosn5wKSZVxJvaGZgamhiZmlgamlmrCTO63b5
+	fJqQQHpiSWp2ampBahFMHxMHp1QDU0yFxBpPd1M2P87bZtd0FQ/M7J0y6WHS4T6e8DSV630v
+	98e8v6f+cOWxs79Y7u1tWPBpcmVsXs2lhfIvzBtmbQm+EDLJMS+2+RV31qTLLc8uv2i8rjzH
+	VjQydgrLWqlFb2cf2S0poHlBVuBtlO5PkR/nDzXZJax8vFdt2ZnzlgFaL8p/MGnFaj75z9Zo
+	W/JBtjLk8T+Lk9+eLuP/GuKap1S17HT0G+bO0+1fuw9tKxcwm8JhMtlPR1rwE49uyppiG1nD
+	I9GaAYmnTJsZnNZWf/ix+cR6hi270tbHd6i3/WOeIhq3USb/yJc9rcnSbFXzNykeM9Nme9no
+	b13ZO7t0to7eUqZVbWV7ZK2XSOelKbEUZyQaajEXFScCAHoYScPiAwAA
+X-CMS-MailID: 20250416112233eucas1p10bb8e43a0c391392501d48c7dace23b6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250219140315eucas1p10f08d297580edd114f4c487c1fbffa8d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250219140315eucas1p10f08d297580edd114f4c487c1fbffa8d
+References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
+	<CGME20250219140315eucas1p10f08d297580edd114f4c487c1fbffa8d@eucas1p1.samsung.com>
+	<20250219140239.1378758-20-m.wilczynski@samsung.com> <Z/2+rbhsaBP0DQop@x1>
+	<Z/6p6MQDS8ZlQv5r@x1>
 
-On Wed, Apr 16, 2025 at 03:47:26PM +0530, Viresh Kumar wrote:
-> On 16-04-25, 11:04, Danilo Krummrich wrote:
-> > You need to justify why drv is a valid pointer to be passed to
-> > cpufreq_register_driver(), i.e. something like
-> > 
-> > 	// SAFETY:
-> > 	// - `drv` comes from Self::VTABLE and hence is a valid pointer to a `struct cpufreq_driver`,
-> > 	// - `cpufreq_register_driver()` never attempts to modify the data `drv` points to
+
+
+On 4/15/25 20:48, Drew Fustini wrote:
+> On Mon, Apr 14, 2025 at 07:04:29PM -0700, Drew Fustini wrote:
+>> On Wed, Feb 19, 2025 at 03:02:37PM +0100, Michal Wilczynski wrote:
+>>> The DRM Imagination GPU requires a power-domain driver. In the T-HEAD
+>>> TH1520 SoC implements power management capabilities through the E902
+>>> core, which can be communicated with through the mailbox, using firmware
+>>> protocol.
+>>>
+>>> Add AON node, which servers as a power-domain controller.
+>>>
+>>> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+>>> ---
+>>>  arch/riscv/boot/dts/thead/th1520.dtsi | 8 ++++++++
+>>>  1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+>>> index 197df1f32b25..474f31576a1b 100644
+>>> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+>>> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+>>> @@ -6,6 +6,7 @@
+>>>  
+>>>  #include <dt-bindings/interrupt-controller/irq.h>
+>>>  #include <dt-bindings/clock/thead,th1520-clk-ap.h>
+>>> +#include <dt-bindings/power/thead,th1520-power.h>
+>>>  
+>>>  / {
+>>>  	compatible = "thead,th1520";
+>>> @@ -229,6 +230,13 @@ stmmac_axi_config: stmmac-axi-config {
+>>>  		snps,blen = <0 0 64 32 0 0 0>;
+>>>  	};
+>>>  
+>>> +	aon: aon {
+>>> +		compatible = "thead,th1520-aon";
+>>> +		mboxes = <&mbox_910t 1>;
+>>> +		mbox-names = "aon";
+>>> +		#power-domain-cells = <1>;
+>>> +	};
+>>> +
+>>>  	soc {
+>>>  		compatible = "simple-bus";
+>>>  		interrupt-parent = <&plic>;
+>>> -- 
+>>> 2.34.1
+>>>
+>>
+>> Reviewed-by: Drew Fustini <drew@pdp7.com>
+>>
+>> I tested this on top of 6.15-rc1 and found no issues.
+>>
+>> -Drew
 > 
-> The cpufreq core can try to change the data pointed by `drv`. For now
-> it updates the `cpufreq_driver->boost_enabled` flag.
+> I've applied to thead-dt-for-next:
+> https://protect2.fireeye.com/v1/url?k=2f3b741b-4eb0613b-2f3aff54-74fe485fb347-beeac007773a982c&q=1&e=eb6b4dda-c02a-4e0a-831a-a28d0489f6c3&u=https%3A%2F%2Fgithub.com%2Fpdp7%2Flinux%2Fcommit%2F2bae46e3de2a64fe3a619d61b16da0c01b8df2a1
+> 
+> Michal - are there any other dts patches that I should consider for 6.16
+> PR?  I would probably send to Arnd around 6.15-rc3 or 6.15-rc4.
 
-VTABLE is const and hence ends up in the read-only section of the binary.
+Thanks for the heads-up.
 
-I assumed that struct cpufreq_driver (like most driver structures) is const.
-Actually, I think it should be.
+I think the reset DT node would be a good candidate for inclusion [1].
+Depending on how the clock series evolves, we might also consider this
+commit without the reset part [2]. Similarly, if the PM series lands in
+time, we may want to update the aon node to include the reset [3].
 
-Anyways, that doesn't help for now. Unfortunately, I think you actually need to
-dynamically allocate it. There's no need to revert everything though. You can
-just allocate a new KBox from VTABLE, i.e.
+To avoid any last-minute issues, I can send a separate DT-only series
+that includes all relevant patches targeting the next release. Just give
+me a heads-up a few days before your PR, and I’ll make sure everything
+is ready.
 
-	let vtable = KBox::new(Self::VTABLE, GFP_KERNEL)?;
+Best regards,
+Michał
 
-This makes it easy for you to remove the dynamic allocation once (or if) cpufreq
-is ever reworked to allow a static const struct cpufreq_driver.
+[1] - https://lore.kernel.org/all/20250219140239.1378758-21-m.wilczynski@samsung.com/
+[2] - https://lore.kernel.org/all/20250219140239.1378758-19-m.wilczynski@samsung.com/
+[3] - https://lore.kernel.org/all/20250414-apr_14_for_sending-v2-2-70c5af2af96c@samsung.com/
+
+> 
+> Thanks,
+> Drew
+> 
