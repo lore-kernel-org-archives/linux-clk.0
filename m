@@ -1,163 +1,224 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3F11B4132
-	for <linux-clk@vger.kernel.org>; Wed, 16 Apr 2025 14:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A803211706
+	for <linux-clk@vger.kernel.org>; Wed, 16 Apr 2025 16:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744813512; cv=none; b=jTpb5GHcB/C7SopMAsPuCoZYfE4l40Wn/AV/FlVYPnFojYCLEDkvd6Y1oQR7fpkW9WIZ5Pd8xIPmyJasG4X9c+adJ4b0wZJoWGP64euk6x2ymNcrAiuks0eDaRqooY0Lqinf4TnmOnA3qhJuZ/J9cvB3aX7s8zF+pVjczU2SKAE=
+	t=1744820806; cv=none; b=MRf5sOSwgGASV+PIarttpqBc3XW6KlHcR1tarkJSpjG8szAN6FsFBmg0JMfjz5p4BOzdKbiPJA5tOQJahFl4HzNG+maD/srXtLHsXGqUy8JJ6j8ssgbY6eTgN9WgMy0L/dVu9uDothjmjHxcsTP8EubWR4yqroq8ltKT0gnKcrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744813512; c=relaxed/simple;
-	bh=aofn8mOguoH/olcy6EB2Cgtv0peBzYexyfebvYP16xY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=uN7n4OC/pR0DbMUJOJN6ucbCma473KB+Idp0bUClI+GOEbguaUcziJP+Dkdb89lztQFuR7AMTCGEoD5VfxbJeH+itMqqYKtVpBwn9lXx1jEFwxNAHD1e1chlDdYrPItvpxrC8I8z1ajvRcFfvRt8vHgrBu3WWcTCGY3SoWs5gUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BpubTfbn; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1744820806; c=relaxed/simple;
+	bh=IgVUPVmeENy0Uzuoi0wDjp+mUTJq74C5LbxA0jQcmRU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GSk5zbni2o5lkeHzlpuqAS/dApAAmEAvGZX1QiNRQuFGPuiUk7WyloOPYovrDANoJtDIbgwX2tyT+TCNESrTemClQFd9/7TNT16NWaBLI8UNCNFrdc+Q2dosHgbRvl06Kh8yJJfcT54rJb8Ys0vHh/GVnFypVsoocT5P47bPml4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Zbk9V2mz; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BpubTfbn"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250416142506euoutp01a8ca53cb6102ce73e4e06d8f4cba9292~20qPadxBa1837218372euoutp01Y
-	for <linux-clk@vger.kernel.org>; Wed, 16 Apr 2025 14:25:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250416142506euoutp01a8ca53cb6102ce73e4e06d8f4cba9292~20qPadxBa1837218372euoutp01Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744813506;
-	bh=shUz1heMGc/0v/n7nVwvI1VZPkVH2FhMEMQCajNspuE=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=BpubTfbnQgjjSza7H4yjO/XIeP8cXOxKjl0xBMHGiUDLBUbzqldxyeSmsHvLIMiq2
-	 Zstd/bo4e6yO78TwiJ5P+KRPHgxU81vlaVylfS0g/1XaD4Fc1vIpekKmV9s2jXubY5
-	 R2bPCt4tkJHYCvgSjOoQH78oAb3MAAOxCqagHmTA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20250416142506eucas1p19fe6562f1fa472d4cdf730e6001208f4~20qOyJNCI0172801728eucas1p16;
-	Wed, 16 Apr 2025 14:25:06 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id C1.88.20409.1CDBFF76; Wed, 16
-	Apr 2025 15:25:06 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250416142505eucas1p2fffb9ed80d3741d3f8f0c32fa47d1b82~20qOTfI982575125751eucas1p2H;
-	Wed, 16 Apr 2025 14:25:05 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250416142505eusmtrp1a1daf89c1b4ba691b759c376629cb1b0~20qOSm5Po0635206352eusmtrp1r;
-	Wed, 16 Apr 2025 14:25:05 +0000 (GMT)
-X-AuditID: cbfec7f4-c0df970000004fb9-e3-67ffbdc124c3
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id CD.B1.19654.1CDBFF76; Wed, 16
-	Apr 2025 15:25:05 +0100 (BST)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250416142504eusmtip179c28fc737df25cb9be21b56335766a6~20qNAXxzq1603616036eusmtip1y;
-	Wed, 16 Apr 2025 14:25:04 +0000 (GMT)
-Message-ID: <60914de9-f507-4099-be53-ea1fc282c537@samsung.com>
-Date: Wed, 16 Apr 2025 16:25:04 +0200
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Zbk9V2mz"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac41514a734so1144863066b.2
+        for <linux-clk@vger.kernel.org>; Wed, 16 Apr 2025 09:26:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1744820802; x=1745425602; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9FlZ3978PiTGhVSgh9hGMx7P3nOMDWWhOsbZtxjmYRo=;
+        b=Zbk9V2mzhvYatYTUOlXlO837M+Gz8+Hde2DMQCNpqHmfAXowQx43KtI8Fcn54XHz5A
+         4S04TNsffSUSK3qDocq8M8dd4EuM2JJlsWxvnG5UTulUD7qGwNHD4HGSMo5bgvZdQuiZ
+         o5EdZYA+J66smISdM4BYTjwZESdVpwxHfOiQfC4DnKidSfmf1jYZY6DIJ5b8fc37pDPe
+         nkq1GrBQ+HYunIBXFGhxiOJTyB0d9YNCoeeLvCpKBoVJ27fTdyCdi/yUZJP+MAqeG6Yx
+         BM5ntIRGHA0WQHTBkpoOxJZ2g8wOW29GQpHZGeM+E1z+N6D4MlFFlKdQBaI9XdxwDlmW
+         /iMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744820802; x=1745425602;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9FlZ3978PiTGhVSgh9hGMx7P3nOMDWWhOsbZtxjmYRo=;
+        b=Sa29YDWT8xfHmDU+T9g7CdPUWHXjerFufV5gptvxJFAtPj2KAk5neTWfl+7VagOP92
+         nH+ZPyHk6GnmzY6RMY1PnF/7XO+O3vsmWUsjGVRZos4fvTdBOqgRrU1wodh00iKsXSsm
+         gCSzKO8Yjnj+GdEfSg+DpvoTiZYGJaCdbUpHk7rLZxjEAvTxYCSuB8pRpErcSFqHFNzU
+         nNH37k7HaRR9Jgz3WWMCf9afLAcHAZs7jFlVq0iE7N0fKsF0c5fzed0EIuyxqO9ZHTji
+         2aIUq0J0Mp/EGe/4FrDVol4x7XPZtwfZT0XT2tOdOZqkTRiGtZvGSPamdf2kgH12VXBL
+         Rn5g==
+X-Forwarded-Encrypted: i=1; AJvYcCW+SPg7lfz8GGCcq1SJBZycCiAfDgMMCmi9gaabg+zigsv0qevyz+UJqh7g28HGQ58EyFiLtK/wm28=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9DyWOo3+R14OC0F4Byi9DKQiC1g7nQmxRzJ75X4XKagyM8sjR
+	eCWa3zRo1GlWBONmabRwrNkyxOizDHwcH55Afz2ltHaRV5rnT4fUVAK8gpRWsGw=
+X-Gm-Gg: ASbGncujttnR0P6DRLMSu7eyFj4TSKgtAdw9EA+/6UDaopncb/wsPOvlHeUjozKBALL
+	Ltdw5rKc+TE3J3GmRct7oQvmDQ18+tqb34L/f+fOW+M6aWVEusRiXY3AEYiCWtB+curWQZlrTiV
+	eFEjpexIFJepzw3bXhSa+wNc1YOhBXO3ozY96EswvEVoLTaJqUZaFMIouiYEjf1rXdWuS3oIhcU
+	C/sRQL5QWPNJ3j7RI5fNhayLD53g7exL65+O44lADSph8z/1dqyFEI0pr4mwjjfwhQu5CIXTawv
+	k4KFu9IsSjCTtpC2PMztfad0tGzgu3PYW5t03hf5aRxOV/kybpKB3ogc3U7q8KmiuV5scWWy6RD
+	8tA4IZQ==
+X-Google-Smtp-Source: AGHT+IHS1EQoXBYosStv1ftcoY5+W8c3n7WjQIALsG6rcu4q9LYmbRt8Y9GVkdutMbrKBeFufo1cQw==
+X-Received: by 2002:a17:907:2d9e:b0:aca:c441:e861 with SMTP id a640c23a62f3a-acb42890585mr270946866b.7.1744820802220;
+        Wed, 16 Apr 2025 09:26:42 -0700 (PDT)
+Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3d1ccd75sm155050366b.142.2025.04.16.09.26.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 09:26:41 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Wed, 16 Apr 2025 18:28:05 +0200
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof Wilczynski <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	kernel-list@raspberrypi.com
+Subject: Re: [PATCH v8 05/13] clk: rp1: Add support for clocks provided by RP1
+Message-ID: <Z__alTyVJOwu_1gR@apocalypse>
+References: <cover.1742418429.git.andrea.porta@suse.com>
+ <370137263691f4fc14928e4b378b27f75bfd0826.1742418429.git.andrea.porta@suse.com>
+ <23ac3d05-5fb7-4cd8-bb87-cf1f3eab521d@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 13/21] drm/imagination: Add reset controller support
- for GPU initialization
-To: frank.binns@imgtec.com, matt.coster@imgtec.com
-Cc: p.zabel@pengutronix.de, m.szyprowski@samsung.com,
-	linux-clk@vger.kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	mripard@kernel.org, linux-kernel@vger.kernel.org, tzimmermann@suse.de,
-	linux-riscv@lists.infradead.org, airlied@gmail.com, simona@ffwll.ch,
-	aou@eecs.berkeley.edu, dri-devel@lists.freedesktop.org,
-	ulf.hansson@linaro.org, linux-pm@vger.kernel.org, jszhang@kernel.org,
-	palmer@dabbelt.com, guoren@kernel.org, maarten.lankhorst@linux.intel.com,
-	wefu@redhat.com, paul.walmsley@sifive.com, jassisinghbrar@gmail.com,
-	drew@pdp7.com, robh@kernel.org, sboyd@kernel.org, mturquette@baylibre.com,
-	krzk+dt@kernel.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20250219140239.1378758-14-m.wilczynski@samsung.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTVxjHd+69vbd0K7sWNo5MR1K3ZRsTGWHxiMZh4rL7ZTr8AMZl2Gpv
-	KpEW1sLGHAnMAiqUQXEKlg6Yc0IIHeN1wKiM2lHkpYrKi4QWiDVQxstqAccQGOXOjW+/83/+
-	z/k/z8nh46JfyUB+nDKJVSml8WJSQDR2LNl2mk1r8tD7Ghx1Dl7FUMOynkJVJhuGSi02HnLc
-	rcfQ/YU5Ev306A6FJk1fE2ig4jsKaTqqSeTSO0jk1jp46F6LgUSeXAtAjZ4MEhktdgp9724g
-	0LWmFoCyLlznob6uD5Dd0Ukg1z0tjrL0L6K11iYKrQ7UEKh4to1C9dM6HrIaY1BG27dE5HZm
-	biiTYqZdLoK5eX6eYkyLZQTTrLdTjLa5BzC1lRdIZmSglWRKbkUxozlWjKm7lsZkGDswJm8l
-	lJm70U8y39RXAuauZpD6WHRMsE/Gxsd9zqp27ZcITuVop8hE4wspmjs/gnSgE2QDHz6kw6F1
-	ScfzsoiuANDSfiQbCNZ5HsDf+h9TXMEDoLY86lnD5eUiHmcqXzedHQfcYQbAh08XMK9LSO+H
-	cw7DBhP063BqwkZy+hZ464qT8PJLdBAcHS7aSPCjZXBwbRR42Z8OgznpGYT3UpzO5kFTS/VG
-	AacD4LCzdONSct00Vl66Pgaf70MfgFdqYzlLENQ0FOPeXkj3CmDh9Zs8buyD8E+XBnDsB6es
-	9RTH22D3RS3BcQIca3iMc5wKm7XWf3kvHLH9TXqzcPotWN2yi5MPwPTZPswrQ9oXDs1s4Ubw
-	hQWNhTgnC+H5LBHnfgNe0ub+F2qraMTygVi/6VH0m3bUb1pG/39uGSAqQQCbrFbIWXWYkv0i
-	RC1VqJOV8pCTCYpasP6/u1et802gfModYgYYH5gB5ONif6Ft96pcJJRJvzzDqhKOq5LjWbUZ
-	vMInxAHCq22ZchEtlyaxp1k2kVU9q2J8n8B0LLJQKIt+P9gjyOIfeijBHvQk1Sk+2arbcbvb
-	/fS1Avt8TVFY3YSfaWDnZxMpsZRlz+HQ3DbXV2eqfkbsSpDnyavFEl2MIF9RdvbNscXdCrt4
-	bU/CDVnmovFJQ7T9r99jpiMkk+UDNQcvnavk/dI1XoWUXZOBNTNbH7zcviNvqUjtLH5HdzHC
-	VlG3fTjV0Os5asxxrj5K7ZuMPLZymddaGJE1Hjx9Ynnwo5K05xbjJO7Skfay8NgTf5j3OmaP
-	FCQesoQP5UTJbB/6LzkzJUc7e94zLEyc7Ld+6ru2+MO59pLT+Z2hjpZKezRIsVdvG+/1Sdt3
-	2JB3O/J5hcifDQk+3tcfLibUp6Tvvo2r1NJ/AMaqa21OBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sf1CTdRjvu71738Gx42WM4z2uRHdy3Vm+bIOx7zwk7drdm16X/lFdFtmE
-	143cGO2HaXclNWbIKEQ9nBMZKJoQk6QxkRzImiCosFSGURteUroFLcLsZMYa23Xx3+eez6/n
-	nnvYTO4YK4tdVq6nteVyFR9NRq4tDvnXDriiCsHlqWx4deIkA3ZHrBjscI0yoM0zyoKBmw4G
-	vP1XGIXnfvFi8IHrEwT6zp7AoHGwE4VBawCFc7UBFrzV24jC+c89ADrnq1Bo9/gx2DLXjcDW
-	nl4A9x84w4Lfj8igP3AVgcFbtUy435oKo5d6MLjoO4/A47/3Y9AxU8+CQ/Y3YFX/EWTDM1T4
-	jgmjZoJBhPqu+iFGuR41I9RFqx+jai9eB1RX+wGU+sl3CaWahrdSU+YhBvVN6z6qyj7IoOr+
-	EVDhvnGU+sLRDqibxglsC3cbWajVGPT0SqVGp1/Pf0sIRaRQCklRvpQU5kmK14nE/NyiwlJa
-	Vbab1uYWvUsqzbUhtMKessfoPQ0qQX1yDUhiE3g+0RCxsGpAMpuLnwZEzY0QSBBPEz5zEEng
-	dOKJrwZNiH4DxLDVHSc4eBERDjQyljCC5xCh+6NoYp5GDB+bjmsy8GxiatKCLeF0vJSYiE7F
-	C3i4iDBXViFLoUy8hkVM986ARMMIIFofm+IqJp5JTE7b4g1ozHH3S1tsVzY7Cd9IHOt6Zwky
-	8WeJziZuQp1NGLuPMw8CrnXZGtZlQdb/HdZljmaAtAMebdCpFWqdiNTJ1TpDuYIs0ai7QOyz
-	nIOPHT2gLTRHugGDDdyAYDP5PM6oZFHB5ZTK935IazXbtQYVrXMDcewU9cysjBJN7DXL9duF
-	BQKxML9AKhBLC/L4mRz09thOLq6Q6+ldNF1Ba//zMdhJWZUMBe/RhRu1Ty1+fXj2R62gEvS5
-	nKslppSo4H2Kfv0DR15K6uTz69X3VXV/SNddf+9BGJmrJv9Ene49TEvftcD5wc41/W92HLqL
-	oNTagVNve3wl3isPF7ZFGzc7J8dsfY0tfnuhbNVXv86zHRRd3XnH/Gqyvvijww2Zr/2wcOiM
-	TGLyXvlsc1rGt+KBFQt9nLKNxgrZuaNP+G2Wv2eP0htcz6168VOTR5W9e4f1ZEPW+I6ijoOp
-	FwwFL4w0paWckpxAc/faxiI5ZBGxRRk5+/J4pE6TuikHbl2Z3nvZ8jMv9NKmthWzO8eR1cWv
-	fHykZVq4Sylr2Fd/L83v9jbfG5FIOWGSj+iUcuEaplYn/xdqyz204gMAAA==
-X-CMS-MailID: 20250416142505eucas1p2fffb9ed80d3741d3f8f0c32fa47d1b82
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250219140306eucas1p19ba425ddb1e499ef1014b1665be9de8e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250219140306eucas1p19ba425ddb1e499ef1014b1665be9de8e
-References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
-	<CGME20250219140306eucas1p19ba425ddb1e499ef1014b1665be9de8e@eucas1p1.samsung.com>
-	<20250219140239.1378758-14-m.wilczynski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <23ac3d05-5fb7-4cd8-bb87-cf1f3eab521d@gmx.net>
 
+Hi Stefan,
 
-
-On 2/19/25 15:02, Michal Wilczynski wrote:
-> All IMG Rogue GPUs include a reset line that participates in the
-> power-up sequence. On some SoCs (e.g., T-Head TH1520 and Banana Pi
-> BPI-F3), this reset line is exposed and must be driven explicitly to
-> ensure proper initialization.  On others, such as the currently
-> supported TI SoC, the reset logic is handled in hardware or firmware
-> without exposing the line directly. In platforms where the reset line is
-> externally accessible, if it is not driven correctly, the GPU may remain
-> in an undefined state, leading to instability or performance issues.
+On 14:09 Mon 14 Apr     , Stefan Wahren wrote:
+> Hi Andrea,
 > 
-> This commit adds a dedicated reset controller to the drm/imagination
-> driver.  By managing the reset line (where applicable) as part of normal
-> GPU bring-up, the driver ensures reliable initialization across
-> platforms regardless of whether the reset is controlled externally or
-> handled internally.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  drivers/gpu/drm/imagination/pvr_device.c | 21 +++++++++++++++++++++
->  drivers/gpu/drm/imagination/pvr_device.h |  9 +++++++++
->  drivers/gpu/drm/imagination/pvr_power.c  | 22 +++++++++++++++++++++-
->  3 files changed, 51 insertions(+), 1 deletion(-)
-> 
+> Am 19.03.25 um 22:52 schrieb Andrea della Porta:
+> > RaspberryPi RP1 is an MFD providing, among other peripherals, several
+> > clock generators and PLLs that drives the sub-peripherals.
+> > Add the driver to support the clock providers.
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >   MAINTAINERS           |    5 +
+> >   drivers/clk/Kconfig   |    9 +
+> >   drivers/clk/Makefile  |    1 +
+> >   drivers/clk/clk-rp1.c | 1512 +++++++++++++++++++++++++++++++++++++++++
+> >   4 files changed, 1527 insertions(+)
+> >   create mode 100644 drivers/clk/clk-rp1.c
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 896a307fa065..75263700370d 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19748,6 +19748,11 @@ S:	Maintained
+> >   F:	Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml
+> >   F:	drivers/media/platform/raspberrypi/rp1-cfe/
+> > 
+> > +RASPBERRY PI RP1 PCI DRIVER
+> > +M:	Andrea della Porta <andrea.porta@suse.com>
+> > +S:	Maintained
+> > +F:	drivers/clk/clk-rp1.c
+> > +
+> >   RC-CORE / LIRC FRAMEWORK
+> >   M:	Sean Young <sean@mess.org>
+> >   L:	linux-media@vger.kernel.org
+> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > index 713573b6c86c..cff90de71409 100644
+> > --- a/drivers/clk/Kconfig
+> > +++ b/drivers/clk/Kconfig
+> > @@ -88,6 +88,15 @@ config COMMON_CLK_RK808
+> >   	  These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
+> >   	  Clkout1 is always on, Clkout2 can off by control register.
+> > 
+> > +config COMMON_CLK_RP1
+> > +	tristate "Raspberry Pi RP1-based clock support"
+> > +	depends on MISC_RP1 || COMPILE_TEST
+> > +	default MISC_RP1
+> > +	help
+> > +	  Enable common clock framework support for Raspberry Pi RP1.
+> > +	  This multi-function device has 3 main PLLs and several clock
+> > +	  generators to drive the internal sub-peripherals.
+> > +
+> >   config COMMON_CLK_HI655X
+> >   	tristate "Clock driver for Hi655x" if EXPERT
+> >   	depends on (MFD_HI655X_PMIC || COMPILE_TEST)
+> > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> > index bf4bd45adc3a..ff3993ed7e09 100644
+> > --- a/drivers/clk/Makefile
+> > +++ b/drivers/clk/Makefile
+> > @@ -84,6 +84,7 @@ obj-$(CONFIG_CLK_LS1028A_PLLDIG)	+= clk-plldig.o
+> >   obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
+> >   obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
+> >   obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
+> > +obj-$(CONFIG_COMMON_CLK_RP1)            += clk-rp1.o
+> >   obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
+> >   obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
+> >   obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o
+> > diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
+> > new file mode 100644
+> > index 000000000000..72c74e344c1d
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-rp1.c
+> > @@ -0,0 +1,1512 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> ...
+> > +
+> > +static int rp1_pll_divider_set_rate(struct clk_hw *hw,
+> > +				    unsigned long rate,
+> > +				    unsigned long parent_rate)
+> > +{
+> > +	struct rp1_clk_desc *divider = container_of(hw, struct rp1_clk_desc, div.hw);
+> > +	struct rp1_clockman *clockman = divider->clockman;
+> > +	const struct rp1_pll_data *data = divider->data;
+> > +	u32 div, sec;
+> > +
+> > +	div = DIV_ROUND_UP_ULL(parent_rate, rate);
+> > +	div = clamp(div, 8u, 19u);
+> > +
+> > +	spin_lock(&clockman->regs_lock);
+> > +	sec = clockman_read(clockman, data->ctrl_reg);
+> > +	sec &= ~PLL_SEC_DIV_MASK;
+> > +	sec |= FIELD_PREP(PLL_SEC_DIV_MASK, div);
+> > +
+> > +	/* Must keep the divider in reset to change the value. */
+> > +	sec |= PLL_SEC_RST;
+> > +	clockman_write(clockman, data->ctrl_reg, sec);
+> > +
+> > +	/* TODO: must sleep 10 pll vco cycles */
+> Is it possible to implement this with some kind of xsleep or xdelay?
 
-Hi Matt,
+I guess so... unless anyone knows a better method such as checking
+for some undocumented register flag which reveals when the clock is stable
+so it can be enabled (Phil, Dave, please feel free to step in with advice
+if you have any), I think this line could solve the issue:
 
-This commit, along with the corresponding change in the DT bindings,
-doesn’t appear to conflict with the work you're doing for Rogue series
-enablement.
+ndelay (10 * div * NSEC_PER_SEC / parent_rate);
 
-Would you prefer if I re-send them as a mini-series so you can consider
-picking them up for the next kernel release?
+Many thanks,
+Andrea
 
-Regards,
-Michał
+> > +	sec &= ~PLL_SEC_RST;
+> > +	clockman_write(clockman, data->ctrl_reg, sec);
+> > +	spin_unlock(&clockman->regs_lock);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > 
