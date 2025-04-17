@@ -1,263 +1,124 @@
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E409B1624DC;
-	Thu, 17 Apr 2025 14:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F6315A868;
+	Thu, 17 Apr 2025 14:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744899354; cv=none; b=ohiicU47n+lBH3SMzKKRjSto/QC7doe2+SUbUvNzR87lIP9oKeSJ9DQkTc7x4Qv4L0m5cB2PNSE3Y0yJ0egheSWMzL7BiLcblEMu16rmi6WXZBVa5CZdtQmL/xmws5EDiMoJyS5etQp8IgadZWBGvtmJ9psSgxO6BK8ZQR8h0Qc=
+	t=1744900633; cv=none; b=bEZaB4QOdgbxQORLejGLWJGQwakkvSlOuJupERW9slDswbbF5S07jx+yWJgRl8DMbORX2eiPAC0RdWJ8zHSWIEOT4NqFh7+jqQpFLIJyQdrapUnWcO74Dc+hBQRKxv1y4BSWM0EJLiPlsQA1oz5GXdL+7jI3/om5bIqrQ5HyKoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744899354; c=relaxed/simple;
-	bh=vazE/OzKBBSg2rjIggOk4OJ14N/Lt5458VFxQiSnZsY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PP2iFpxMEbrxuETNw/f86DTyT3Wcm2PVSPvtsSg+P8L5cOgWaRlyyaAu042gG0IXtukmkVamJ2NN1mrtsbldnP/og/6N0tjJN0EyrVW6wkAw4+7NMkASI5y5Avkh7qM/LafZ7gDrv+YZJALH+yae90M29fPSWb+wMdl8nqmCSf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c5c815f8efso68376385a.2;
-        Thu, 17 Apr 2025 07:15:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744899350; x=1745504150;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6ozcptRYeKioDAf1+hL3+/Kh+TNtMmTVxXgs8Vkwsgs=;
-        b=q50mrEJ04CkN/du6CgvgHy0rtam/w/7A5nKGxKPJTz7yUiluY8Rt3VEZp9NVY0Lw7p
-         i7TndtmW74qUuzbI0nHLUjBj8ZAUAgGX34kp9o4mm46PRfVC+HhVAyDHXGbcd3ixwSpl
-         SpWmOXCayoQj3y+5VpWpvoMoMKh5lPSFl+FM2F9+d8AEVaFyOP0fwN0HiuPZxsRP1C3y
-         30qBkrDFR4KgEUWTtS/nXCxcErx4uA36JlQDuar9mYi4YpeotY4BU9k7gU8yHmQcB4tX
-         GVPzpjvZ/XEjeQiQq1hEDlWPGHiJpkstVgq+NtgyL4iYwI3Hd0ItedrLSq4EJptBiYGX
-         FGaA==
-X-Forwarded-Encrypted: i=1; AJvYcCV55mOsaJkHDAcrRc3JdE7lX54x0lq5/zNQkPQ9dzyky4GLpXSv9qkWVEL4pVEzUgsdPJR7HW5CW3CCgOel@vger.kernel.org, AJvYcCVySVkcudgTuqWHRHti2weKPBco7+elNap9u/2opOlk+8XgdliI0WP3k7hK07sJCnN1lYmwje40lFNZph1iCNkrKMo=@vger.kernel.org, AJvYcCXFwS1OUMBKfkJclY+ZAZ9QuQwFA/U+Jb7CCoHliWywd6CHzkU/nEwAme9MZzgdua/dahPrkn2SGMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIsGaG6R89fFDjJ1FOa5v56uw5wQo/TK8++WU4o+S4r1KTmWIW
-	+exZvefRz0jt9R8RoMWBnE2gQSWA1/3EPKY3DSiSfz9QBPFP1EnJdE0tNmR9
-X-Gm-Gg: ASbGnctVQGbmXqx1l2O4TKU33iF/riNjOQMEkhLGvXvDxgdJEi7sxyJ+hqSH+zNnlE0
-	ziAp/LdHv6Q0OSWFVM4EWoSjCbVxlDxDfEnZGPrms12Bi889GumFUX/PfqC+lVidWBPsQcD9hYG
-	3Z0EGzaVKE21x6C7WqZHXx7zVeVJ1ITsYyRhtmKMB3I6ctOvjOzUcswuWv9GcTV6kik4rNYPx5V
-	Pg1RVh6x4DZieYzk5QKerXfu6wuRG18W85dTYKdwtp/vyz+uPVBZZGd1MHc55z/koKNgC85R7o7
-	kuw/1noSMVICWZyIPuGJIP3dTtpYhInjv8tPGjD4+AR1P+T16uZLDjejV7Pl4Hm/uSyxCjINpLe
-	3uW8=
-X-Google-Smtp-Source: AGHT+IFJH1AzXuc5IZhd3k9hgLRCWGGutWbYC2A54S0nnZLrcEDWkGjbfg1nvWP/innDXRdFlm0/Og==
-X-Received: by 2002:a05:620a:424b:b0:7c5:55be:7bff with SMTP id af79cd13be357-7c9190652c6mr770883185a.43.1744899349835;
-        Thu, 17 Apr 2025 07:15:49 -0700 (PDT)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com. [209.85.219.49])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c7a8969143sm1178126085a.50.2025.04.17.07.15.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Apr 2025 07:15:49 -0700 (PDT)
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6e8f4c50a8fso7818786d6.1;
-        Thu, 17 Apr 2025 07:15:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfG3O5gFYP/wzDsg6+DU3TwjdYGv4jUsFTOYKT4jlHOH2VcsxCm0OF85qi2gYPOlDZWrF219U//4Y=@vger.kernel.org, AJvYcCUh+W2t/TyVEPWBSvA5e8ScLVwodDrv/XyOrZbf65AGuHSvLVGgaBulEvJnCKtnmAjvRQI+of0JGS/r8mEzqYPFCtw=@vger.kernel.org, AJvYcCXEWi3D9sfMsNy4jHi1VvXLI1LBBK2Zm4CLZFgzu6WaD+/gYBWPSbeUG3k0zoPs+uOMi3ralU4sR+eCQdaV@vger.kernel.org
-X-Received: by 2002:a05:6214:410e:b0:6e6:68e3:8d84 with SMTP id
- 6a1803df08f44-6f2b2f8c378mr94221856d6.18.1744899349400; Thu, 17 Apr 2025
- 07:15:49 -0700 (PDT)
+	s=arc-20240116; t=1744900633; c=relaxed/simple;
+	bh=sYtHglBTVqXwt7DqWYSQlT7eDYzzYmQoAxAuuz6prkY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uRhFVX/ip4fnDGdKM8QHGK/dFW9fSpZD+CnjcUgHaLZeUO+dIL4dPtQjNq+df58ztabxmO22LXqSWAGuArbJpcSRESuMfSorP1FMGy6Op189vtv/zyBVY3o2otyRdBNjYVPg6j4WH9MF+GRI857ClmaI4AIRHgaRJSGntNU1Myw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=CtFTaMrS; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="CtFTaMrS"
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 79C0F2023B;
+	Thu, 17 Apr 2025 16:37:07 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 5kFlxYkdvA7D; Thu, 17 Apr 2025 16:37:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1744900626; bh=sYtHglBTVqXwt7DqWYSQlT7eDYzzYmQoAxAuuz6prkY=;
+	h=From:To:Cc:Subject:Date;
+	b=CtFTaMrS9Q+TSxO0qI73LNZSjfy2Si13/GMGsEFMoe+/mbx6pkaJ4d7SQW1fH/MiM
+	 8eo6JtCxzDkmC7Yte3Imi8kjGbp0cE4ModoLDgaG2oCSKAyuaWnX6SP05y8mNHlvxn
+	 dDQPBNp83KXEqMK3ETDBlmz9i3oEAQ4DAqcm6rhg8eBjfX20HYjYhoEs0zKezUgaOK
+	 raFIThbYXrOOgl1zf/Ct5aMuNNm/1eG6JwtGJ6J3//yN0eKjp2sDvQXDRVxfoEQmZx
+	 zKMcAbvX+41WNYubZCIIx+HHNoy8A9gb/G6Ugh8v5oIHn3d48QS2Sgv/tsFLxIKmzp
+	 BmBrZEj1P1Ymw==
+From: Yao Zi <ziyao@disroot.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Cc: linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v4 0/5] Support SD/SDIO controllers on RK3528
+Date: Thu, 17 Apr 2025 14:36:42 +0000
+Message-ID: <20250417143647.43860-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com> <20250403212919.1137670-6-thierry.bultel.yh@bp.renesas.com>
-In-Reply-To: <20250403212919.1137670-6-thierry.bultel.yh@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 Apr 2025 16:15:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUu4o5VU9Sd1CW5QyEZewKLj--2yMPYCfcwVMut5FiVyg@mail.gmail.com>
-X-Gm-Features: ATxdqUGdJarQQ-GgVZlFhU6ALz5FSk5JmuyCNTEwOSgp5rihxYznS7cN1STNyRI
-Message-ID: <CAMuHMdUu4o5VU9Sd1CW5QyEZewKLj--2yMPYCfcwVMut5FiVyg@mail.gmail.com>
-Subject: Re: [PATCH v7 05/13] clk: renesas: Pass sub struct of cpg_mssr_priv
- to cpg_clk_register
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
-	paul.barker.ct@bp.renesas.com, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Thierry,
+RK3528 features two SDIO controllers and one SD/MMC controller. This
+series adds essential support for their tuning clocks and brings the
+SD/MMC one up on Radxa E20C board. Both HS and SDR104 mode are verified.
 
-On Thu, 3 Apr 2025 at 23:30, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
-> In a subsequent patch, the registration callback will need more parameters
-> from cpg_mssr_priv (like another base address with clock controllers
-> with double register block, and also, notifiers and rmw_lock).
-> Instead of adding more parameters, move the needed parameters to a public
-> sub-struct.
-> Instead moving clks to this structure, which would have implied to add
-> an allocation (and cleanup) for it, keep the way the allocation is done
-> and just have a copy of the pointer in the public structure.
->
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+- Changed from v3
+  - Drop applied binding patch of MMC controller
+  - Rebase on top of linux-rockchip/for-next
+  - Link to v3: https://lore.kernel.org/all/20250309055348.9299-1-ziyao@disroot.org/
+- Changed from v2
+  - Apply review tags
+  - Rebase on top of linux-rockchip/for-next and drop applied patches
+  - RK3528 devicetree
+    - Fix accidentally dropped status property of saradc node
+    - drop det and pwren pinctrls for SDIO{0,1} according to the
+      reference design
+    - Correct max-frequency for SDIO{0,1}
+  - rk3528-radxa-e20c devicetree
+    - Don't disable sdio for sdmmc as claimed in the hw design guide
+  - Link to v2: https://lore.kernel.org/all/20250305194217.47052-1-ziyao@disroot.org/
+- Changed from v1
+  - Apply review tags
+  - Rebase on top of linux-rockchip/for-next and saradc v2 series
+  - rk3528 clock driver:
+    - explicitly include minmax.h, replace MAX() with more robust max()
+    - readability improvements
+    - fix error checks: ERR_PTR(-ENODEV), instead of ERR_PTR(ENODEV), is
+      returned when syscon_regmap_lookup_by_compatible() fails for missing
+      such syscon
+  - RK3528 devicetree
+    - Add default pinctrl
+    - Move the per-SoC property, rockchip,default-sample-phase, into the
+      SoC devicetree
+  - rk3528-radxa-e20c devicetree
+    - Assign sdcard to mmc1
+    - Add missing regulators
+    - Apply no-sdio for the sdmmc controller
+    - Sort nodes
+  - Link to v1: https://lore.kernel.org/all/20250301104250.36295-1-ziyao@disroot.org/
 
-Thanks for your patch!
+Thanks for your time and review.
 
-> --- a/drivers/clk/renesas/r8a77970-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a77970-cpg-mssr.c
-> @@ -218,11 +218,13 @@ static int __init r8a77970_cpg_mssr_init(struct device *dev)
->  }
->
->  static struct clk * __init r8a77970_cpg_clk_register(struct device *dev,
-> -       const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-> -       struct clk **clks, void __iomem *base,
-> -       struct raw_notifier_head *notifiers)
-> +       const struct cpg_core_clk *core,
-> +       const struct cpg_mssr_info *info,
+Yao Zi (5):
+  dt-bindings: clock: Add GRF clock definition for RK3528
+  clk: rockchip: Support MMC clocks in GRF region
+  clk: rockchip: rk3528: Add SD/SDIO tuning clocks in GRF region
+  arm64: dts: rockchip: Add SDMMC/SDIO controllers for RK3528
+  arm64: dts: rockchip: Enable SD-card interface on Radxa E20C
 
-These two still fit on a single line, like before.
-
-> +       struct cpg_mssr_pub *pub)
->  {
->         const struct clk_div_table *table;
-> +       void __iomem *base = pub->base0;
-> +       struct clk **clks = pub->clks;
->         const struct clk *parent;
->         unsigned int shift;
->
-
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.h
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.h
-> @@ -80,9 +80,9 @@ struct rcar_gen3_cpg_pll_config {
->  #define CPG_RCKCR      0x240
->
->  struct clk *rcar_gen3_cpg_clk_register(struct device *dev,
-> -       const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-> -       struct clk **clks, void __iomem *base,
-> -       struct raw_notifier_head *notifiers);
-> +       const struct cpg_core_clk *core,
-> +       const struct cpg_mssr_info *info,
-
-Likewise.
-
-> +       struct cpg_mssr_pub *pub);
->  int rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
->                        unsigned int clk_extalr, u32 mode);
->
-
-> --- a/drivers/clk/renesas/rcar-gen4-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-> @@ -418,9 +418,11 @@ static const struct clk_div_table cpg_rpcsrc_div_table[] = {
->
->  struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
->         const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
-> -       struct clk **clks, void __iomem *base,
-> -       struct raw_notifier_head *notifiers)
-> +       struct cpg_mssr_pub *pub)
->  {
-> +       struct raw_notifier_head *notifiers = &pub->notifiers;
-> +       void __iomem *base = pub->base0;
-> +       struct clk **clks = pub->clks;
->         const struct clk *parent;
->         unsigned int mult = 1;
->         unsigned int div = 1;
-> @@ -517,7 +519,7 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
->
->         case CLK_TYPE_GEN4_RPC:
->                 return cpg_rpc_clk_register(core->name, base + CPG_RPCCKCR,
-> -                                           __clk_get_name(parent), notifiers);
-> +                                           __clk_get_name(parent), &pub->notifiers);
-
-Please drop this unneeded change.
-
->
->         case CLK_TYPE_GEN4_RPCD2:
->                 return cpg_rpcd2_clk_register(core->name, base + CPG_RPCCKCR,
-
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-> @@ -127,14 +127,12 @@ static const u16 srstclr_for_gen4[] = {
->   *
->   * @rcdev: Optional reset controller entity
->   * @dev: CPG/MSSR device
-> - * @base: CPG/MSSR register block base address
->   * @reg_layout: CPG/MSSR register layout
->   * @rmw_lock: protects RMW register accesses
-
-rmw_lock is removed below.
-
->   * @np: Device node in DT for this CPG/MSSR module
->   * @num_core_clks: Number of Core Clocks in clks[]
->   * @num_mod_clks: Number of Module Clocks in clks[]
->   * @last_dt_core_clk: ID of the last Core Clock exported to DT
-> - * @notifiers: Notifier chain to save/restore clock state for system resume
->   * @status_regs: Pointer to status registers array
->   * @control_regs: Pointer to control registers array
->   * @reset_regs: Pointer to reset registers array
-> @@ -143,6 +141,7 @@ static const u16 srstclr_for_gen4[] = {
->   *                 [].val: Saved values of SMSTPCR[]
->   * @reserved_ids: Temporary used, reserved id list
->   * @num_reserved_ids: Temporary used, number of reserved id list
-> + * @pub: Data passed to clock registration callback
->   * @clks: Array containing all Core and Module Clocks
->   */
->  struct cpg_mssr_priv {
-> @@ -150,16 +149,13 @@ struct cpg_mssr_priv {
->         struct reset_controller_dev rcdev;
->  #endif
->         struct device *dev;
-> -       void __iomem *base;
->         enum clk_reg_layout reg_layout;
-> -       spinlock_t rmw_lock;
->         struct device_node *np;
->
->         unsigned int num_core_clks;
->         unsigned int num_mod_clks;
->         unsigned int last_dt_core_clk;
->
-> -       struct raw_notifier_head notifiers;
->         const u16 *status_regs;
->         const u16 *control_regs;
->         const u16 *reset_regs;
-> @@ -172,6 +168,7 @@ struct cpg_mssr_priv {
->         unsigned int *reserved_ids;
->         unsigned int num_reserved_ids;
->
-> +       struct cpg_mssr_pub pub;
-
-Perhaps insert this at the top of the structure, so &priv->pub needs
-no calculation?
-
->         struct clk *clks[];
->  };
-
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.h
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-
-> @@ -27,6 +29,21 @@ struct cpg_core_clk {
->         unsigned int div;
->         unsigned int mult;
->         unsigned int offset;
-> +
-> +/**
-> + * struct cpg_mssr_pub - Private data shared with
-
-The "private" sounds a bit weird here, so please just drop it.
-
-> + * device-specific clk registration code
-> + *
-> + * @base0: CPG/MSSR register block base0 address
-> + * @rmw_lock: protects RMW register accesses
-> + * @notifiers: Notifier chain to save/restore clock state for system resume
-
-These two lines should be exchanged, to match the declaration order
-below.
-
-> + * @clks: pointer to clocks
-> + */
-> +struct cpg_mssr_pub {
-> +       void __iomem *base0;
-> +       struct raw_notifier_head notifiers;
-> +       spinlock_t rmw_lock;
-> +       struct clk **clks;
->  };
->
->  enum clk_types {
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+ .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 30 ++++++++
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 69 +++++++++++++++++++
+ drivers/clk/rockchip/clk-mmc-phase.c          | 24 +++++--
+ drivers/clk/rockchip/clk-rk3528.c             | 61 ++++++++++++++--
+ drivers/clk/rockchip/clk.c                    | 42 +++++++++++
+ drivers/clk/rockchip/clk.h                    | 23 ++++++-
+ .../dt-bindings/clock/rockchip,rk3528-cru.h   |  6 ++
+ 7 files changed, 244 insertions(+), 11 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.49.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
