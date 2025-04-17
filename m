@@ -1,69 +1,108 @@
-Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586A822B8A0
-	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 08:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C6D21ADDB
+	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 08:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744876850; cv=none; b=rqVJwMs5sp6ozbbbaTy62Lz2NKH8G+9vd3la0p5jAWA2yuQUktT1A+UEO9mbt+uSKu6wjdP0EQUQdfJw79oKpUB5IUiHV9iK0LRtZ3RcUlckHOeTOahgEb7nXzWDqUKq8rvfPI7Hl96ppug8VeVfaeE6zeT4lSyGBs5PcM077I8=
+	t=1744877305; cv=none; b=N2ESJAiJvj6IhyBjKAKweCnil2LAyldZwQRzeWHmhltrNQWt40vLwZEUQmILcvvS+YzYWLozwQhrSslykLARi6esJFBnlk9FY08YAzrB7icoOz6XrAYGEQlKWNiVnEI76j2CzKsa0Gtvv+bp15+TfSrMyQseC3kehUho0/BMlug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744876850; c=relaxed/simple;
-	bh=h3M8nRjVuDVmfNgSsps3kLl6ltkWfwPgNKiJY+3KBX4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TCDm7imsxDJhpD9yKXG8Jbm4w44fLijNNw1Us89khWqKwD57Vlz0rBtBrmrP2YfpQyQeYxRarYNVBQUf6lseWCFYjfR+UrC/EnZdpKidb32C3GFEg88XHzXKR+llBWGADpWHFobWy8pksbdBay87CgDCeGBQ6jmqKsu0zaRmyI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cKHTtMp6; arc=none smtp.client-ip=109.224.244.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+	s=arc-20240116; t=1744877305; c=relaxed/simple;
+	bh=4cF367okumOtMyrY+/1TraFd2LxC9LrQ9zF2MGTBNSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lFYKS74sOEi4mY08sdeqWunEdVLBA+1w7csIvMRgTlK/zroz2yfiAAmNhgePDfzNzABROvYvsETq5lr0KH2RvLdgVQA986Cb/vLUqIBDD1Y3sBsL2E+t++qRrXSRF6LYy+CcGabr94bLY7lgMOkRrZGhokCpOvNk4VitGsfNtOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XIW1+F8c; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cKHTtMp6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=mo5kiaaxzzbulfrq7t524gy3u4.protonmail; t=1744876839; x=1745136039;
-	bh=h3M8nRjVuDVmfNgSsps3kLl6ltkWfwPgNKiJY+3KBX4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=cKHTtMp6Nl4+wN4xDfq6H98VrQLHDVlci6//HiRQ8BHNReXmvAtYVxy6OehvofENJ
-	 XTeujO7jO+x96iupXZRLSVnoKBT/Hg67LA5vJs7qZqlvyNeQpQmaUgPLni4pEJjuZS
-	 QqjkQV3np8Xffo2/rGJLQ5EzAINzQajp/MMx+Wef+3lgsygugsi6OMPXXsO/v5LJEv
-	 AMWyFlkS9bfbDfjNmUradbjMR4FZ49pqH5MzHxjsIN+OwpQGcPfGjhMfOURgf8SHFK
-	 65ijvFFbLOPZFmDolRsjMSBf8v+83Jr5J/4uTfTfdW2dP+qdb3wbu/8XhM/4aOk7pf
-	 ZDjlJxev5jWng==
-Date: Thu, 17 Apr 2025 08:00:33 +0000
-To: Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>, Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XIW1+F8c"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-224019ad9edso8144185ad.1
+        for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 01:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744877303; x=1745482103; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QEswYqyGTpfH/GkJDbyZKkriSMlUpRORadm4MA53jxA=;
+        b=XIW1+F8c/RmcAocej3ZzD/IboDijfcNsukkc252fAakXKYywZFa/q2sUDPMMo6QGsW
+         hfY8sCcvw6b2ucsIWaiHuM7pL7zLTqhIigZW3ic20aeAP8X7/HA9DRCcXqApUgkSaWgP
+         Nx38T7la54YWktmAKPRLyuRgDpxzmUu3foag4V/T7HSYau/Gm2OoeeB6j9UPZhWYTT/8
+         Pu3ftnaOKwX3T3VOvxP6fKutbHCIIw244Rp48wf+FDmNZpxLkHsJgZ2N2qbxUi9me+/U
+         gETu6hHk//hz5i8ZsDoQKVZ5Q4biGenvnIfWiQ+RKFtWxc7h78dYdJYO4CONmPsaMlWN
+         l/Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744877303; x=1745482103;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QEswYqyGTpfH/GkJDbyZKkriSMlUpRORadm4MA53jxA=;
+        b=EPtV/6kk8aEpuABiJduYI4I1MbnOtbXUHTfNqUsgKlI3zBJz0+SANBdqSBDPc3yvtK
+         fAtDfP9reJKlGQh/GXtSe6Leo2i4HjMWOpm3TdQzweF7wu16vQm5oVV535vTzBBNbxe/
+         ++kqivFV8CNAsEHYxdo67cr+MpFgt5SSpyEhSgvFGXOztOdvWLqDLLS/xH/Km9/zEc3F
+         crEhOlVWSibyE/U2QmbsUMrS70es7EKcvhlD+KeNlwHq1wNwX5kahXjwcwAexNGYixKu
+         Bu3F8Ttp2iSC1Ym+RhusEyOX6OwacnLAmUARlAZj1PqWc59JlPz+R4SXtIve0B2T/3Gq
+         InIg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9YWyROZ7JEhHovDeCl5RR4eOOBeyni8XLVYYyreylLgflhbGECY/E0IV5IR8rCsLipwVB1rlxnBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzofXZHGgINkA1r6YEvz5aSnAo0FaRVShH0TZ0/pTJaLjO93LFp
+	pMC1FUFYIjwITOkuXUdc34d9QyaUIVdh8C2PYV4cQqgdx2mcNLukwWZjg8Ly/2A=
+X-Gm-Gg: ASbGncuWjuE1MfSlcZlyWeKIJszh+1XEUo68r25PuxVp4kppk43qF1Ad4c0VcxTUWKJ
+	1cRd38l4R8jIwqzJUOzhyaDl49yAizlwJX6PkifOSyihmL5d9/GPhIQIv9bXGFDvtNbhgNG/dlf
+	zdaULLj/w+Xk3JyanSoiABKO6uj3dIjUvtPlPaauj74MifeUt5sdzwVZvMfWYjLn1KjJGJdbPvw
+	TEG2Tqp6xkQCLsiaasstgqb/doygOHzcorD7Dw4tZjqMCrJCxi8DRA0MauxYgXhG09Qt2TAHUJg
+	hj3DXW8p4RClxSGD/U2v/UOdjxFJ9sqK3Ia/lWiZ/A==
+X-Google-Smtp-Source: AGHT+IGbQUi7VXIrD1diQICyOW/Hg7ynTMZy+UxNRxvbnJKiuF+BWnPMCK+kOiADSqf+l9bWIgL3Uw==
+X-Received: by 2002:a17:903:3d06:b0:220:c164:6ee1 with SMTP id d9443c01a7336-22c3596beebmr89236705ad.32.1744877303213;
+        Thu, 17 Apr 2025 01:08:23 -0700 (PDT)
+Received: from localhost ([122.172.83.32])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33fe98d9sm27413715ad.250.2025.04.17.01.08.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 01:08:22 -0700 (PDT)
+Date: Thu, 17 Apr 2025 13:38:20 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V10 11/15] rust: cpufreq: Add initial abstractions for cpufreq framework
-Message-ID: <D98R7PHH6TYX.2DUASKIXS5F8W@proton.me>
-In-Reply-To: <20250416093720.5nigxsirbvyiumcv@vireshk-i7>
-References: <cover.1744783509.git.viresh.kumar@linaro.org> <ac6854885277b23f100c6033fab51a080cdb70eb.1744783509.git.viresh.kumar@linaro.org> <Z_904KuBhKbO738_@pollux> <20250416093720.5nigxsirbvyiumcv@vireshk-i7>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: ae30b957bfe6b8526ed7c4f59e8cc1d7dfe15a54
+Subject: Re: [PATCH V10 11/15] rust: cpufreq: Add initial abstractions for
+ cpufreq framework
+Message-ID: <20250417080820.zl4354gsmlmup4lv@vireshk-i7>
+References: <cover.1744783509.git.viresh.kumar@linaro.org>
+ <ac6854885277b23f100c6033fab51a080cdb70eb.1744783509.git.viresh.kumar@linaro.org>
+ <Z_904KuBhKbO738_@pollux>
+ <20250416093720.5nigxsirbvyiumcv@vireshk-i7>
+ <D98R7PHH6TYX.2DUASKIXS5F8W@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D98R7PHH6TYX.2DUASKIXS5F8W@proton.me>
 
-On Wed Apr 16, 2025 at 11:37 AM CEST, Viresh Kumar wrote:
-> On 16-04-25, 11:14, Danilo Krummrich wrote:
->> On Wed, Apr 16, 2025 at 12:09:28PM +0530, Viresh Kumar wrote:
->> > +#[allow(dead_code)]
->>=20
->> Why is this needed?
->
-> Looks like leftover from a previous version. Same for the other one.
->
-> I have also made a change to the cpufreq driver now to remove
-> `dead_code`, hope that is fine:
+On 17-04-25, 08:00, Benno Lossin wrote:
+> In the future, instead of using `allow`, you can try to use `expect`. It
+> will warn, when the code is used.
 
-In the future, instead of using `allow`, you can try to use `expect`. It
-will warn, when the code is used.
+Sure. Thanks.
 
----
-Cheers,
-Benno
-
+-- 
+viresh
