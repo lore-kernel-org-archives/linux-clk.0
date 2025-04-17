@@ -1,255 +1,252 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E56118BC36
-	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 12:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C19024C096;
+	Thu, 17 Apr 2025 13:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744894403; cv=none; b=q5HTKn/UYTAhoPmp6Cz5l/eIrmVpR6zroQ8nYV17FEW7JUEJGgXqCeuyJDJJSs7FYkm42fA2CbxM1QYzZ/MeWvEj+83inVUhKtutCB5WrZW0D1ldMioIsb0zQtooNcF9e5xMu12MJLjCWyisznXR6josk4pts0hrUtXmsajry7U=
+	t=1744897295; cv=none; b=OkRcLfFv853sDMLBNH206RhZKWHcaoBiqmjLl6adAkhWC1IsUt+jkCc8BNegcH6WQovyRghvNaVScl85w+eYaaLY7VnNUqdDnX6LplhCteeP1Efx9u8EixFY5A5TJNapGH0M7uLh5D6Bm0TUxxJ3APyQJDe3ORkb9B0LtSkPyaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744894403; c=relaxed/simple;
-	bh=v8LtHKR8VDn4kPK84X0FXJ6nB0e+9YdOgZbGZtUwquw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HcKJfyIj93vojTDUeqnQa6UDhAMtsonSxyzsdcE1PrzGNTv1+z+/Rxlbexe6Jy0UrVEbYL17qx3sCMpE6fqO5ohh/vnmdeivkohEU9ahOJUKn++jTqHb0uvfVyfDXaz7CYcD1vYa4c4mhf0ZQxrUfwVhFme0p2aaQhpRL7UxDs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=G2XWn26E; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="G2XWn26E"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39c1ef4ae3aso480313f8f.1
-        for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 05:53:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744894399; x=1745499199; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zjC36ZPf50aHqfa2Se7VHPLUpGAe6Mh0Hz/kXCMF/9A=;
-        b=G2XWn26EqLH50fNBd1W7q9+CB2rGh9Z6gL2BcTlPPg3VIboifASmLxcPtnvqvowk8+
-         ijqcakHn5Givk4+4Jz4ITTaKEsfVdW2TmXXhplepkmuxZw+6rBiUNWQcUPOiY5Z5dJEJ
-         kkv6ZWym61zXcno06dKSs4OH6Q+GmhOs6PWr0TazSTV0s8GELltaNHCYnoJDM+a5PV1x
-         SRSYoaUGyL0T5figz7B9CSMFFj5v2Bhuyi94PnmxK8p/8DYcAtnohfQMU5f/9yybuwZe
-         WIuLq3ytl60JolwqwDsX5AJhRlgFVWYwLJzumypeAStFjxXGFKV0DBe3Ex569LfoI/dE
-         j5Rw==
+	s=arc-20240116; t=1744897295; c=relaxed/simple;
+	bh=Eni2uQ1QUtIxJVKCl7zv1dn47Ml3VtbcK6525VGkFzk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BjbYRSj7IrXKqwrwSW+U/4Wb0y98Nv3ZYZ8LsS0ELTl2cBZzCKw/8dEJhK14EAw/0k5by+fnDHuR+frTf/if96gC+ZztwtN0on4H/cECpVFDmcxR80t4KDSfGAtlLM+Vx9tH92b3FUk9ogPuWGhhTnpC+1EoCYivntVhIMigS6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6ecf0e07954so11815296d6.1;
+        Thu, 17 Apr 2025 06:41:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744894399; x=1745499199;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zjC36ZPf50aHqfa2Se7VHPLUpGAe6Mh0Hz/kXCMF/9A=;
-        b=jT18SimqxHgutvd8uVe78QAOXvF3B9R4j6qUmkvLW89VaNV3kFP0QldmJTjTDrdPhZ
-         qZgrJOCJIBVyifx5XrBoW5/+czn5bP9pJ6+lohjpp2TRzIG0pHIffSiLteT0uRkmHcjl
-         rhgBVGHWU2GcWuK47GrIdd6Hg8mIvdXgxTtOxIUNoCjfeVnmUeKsxOXs0tXPL25pzF8X
-         77nQdYc7GPYdoxxznDsSy5uYgimSBvnqd+dtX3Oo5MmPvZ+Gy+OkIZUPiYGcNt+UVori
-         W/1Wyt5Z5HFJl4MG4JNKnnTS77lRcWJzP0UnNnCATlz6VXMgz9dzIMggR4Vj6u/DF6Wz
-         VkHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSxuDITUDj7j6zp+GzHFRWk21hZalmshfO+Gs9igwJQKgTPFYX89oIGK3bvrR7oSYFiWJM4HIwsIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP9Mu6tYb+fe0rvcwFGIi3NOB7kO1cqIsac4N6QDzvsz/pzDK+
-	8pGbbEURf7CUl4a0TGmSNLBSoaBWcFDZsZ/jgMbcpoYgiKhYqKvEec7K8g/ov0Y=
-X-Gm-Gg: ASbGncsRuUkOCEhYX4pu4hEcNF3Zf+Z3oenBCSDqgTHpKxT9WwL7Xrzizaerw1Sxbou
-	zEVWfC+4zlY6i+/LDk3+bvmwGTcxVrNUv5nJly0hgrj3Y02BpLxsYYZpu7IA3OEnDMGbuf+tYfy
-	qBZwnCM8v2nz94hqPzU7qyv7j8hoN58pRYZbi1bba65UQz/O7CaYzy3PF8NGgXIYBET8jPlMzJu
-	Dl+l5sazqcYuHQUZiRptdgJjII+2LSqvaVKcQ0FuZkFJ3EMQsvUVptqpr7WlNMqBJQUeHUbs2rc
-	FGVlC8Fwn04ys8xynKlwPDW6nBrh5lGPbHl8gbnryoyHo5ezyTEW9ObML9EUW6SKhpwPt9U=
-X-Google-Smtp-Source: AGHT+IHj3kvQNQuwygBClqqZbgOyKaiMJWyTf63buy+7wpnebSi6rnr/xD4tdoeaaLdERbXgJbSGpw==
-X-Received: by 2002:a5d:47a9:0:b0:39c:30d8:32a4 with SMTP id ffacd0b85a97d-39eea30b9e0mr2135444f8f.26.1744894398838;
-        Thu, 17 Apr 2025 05:53:18 -0700 (PDT)
-Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf447914sm20097393f8f.97.2025.04.17.05.53.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 05:53:18 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 17 Apr 2025 14:54:41 +0200
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
-	kernel-list@raspberrypi.com
-Subject: Re: [PATCH v8 05/13] clk: rp1: Add support for clocks provided by RP1
-Message-ID: <aAD6EXrav161J0vS@apocalypse>
-References: <cover.1742418429.git.andrea.porta@suse.com>
- <370137263691f4fc14928e4b378b27f75bfd0826.1742418429.git.andrea.porta@suse.com>
- <23ac3d05-5fb7-4cd8-bb87-cf1f3eab521d@gmx.net>
- <Z__alTyVJOwu_1gR@apocalypse>
- <CAPY8ntD2W5xAHGCD+uBL-0QgyYNj6k9MExns=DFvxU1WGYtO5g@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1744897290; x=1745502090;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K89yvXZcAA4UpJdbQP9LuA0mSQ0pNAEq8BrQ6+A2U/Q=;
+        b=mLkYMtdMtfetfHdiy6/kwj8b9cfPj+UCQ2t1OFpsVoJMHFLgnfgd72rqEoeQlPw9k/
+         oF3qksC+vh4m9BmmVPlkMMvETKDKEDJySz6bbIOCLDuD3hBeejbaijOSIIxAg8C7mERu
+         jVTAyN27BCuEdVwAKWOHZnZsF+mAX0vFqiHSVpph2Dmr/qkpQbUWVstb4xTpKq/anwBO
+         tGy7QcJ1By1H7WV8Hm++De93GeihSmz/eiicFTcLa0hxXLzP0WYuWafJhkY54fXT4EBc
+         8iAZOmiOscLuUzhdFZlqy5ZGjscaZ6G8L0ViSY/vICcaFQpO7yaxVfJC4fKdnr3UEEJu
+         3Hqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBMK0WaeUkGKuoKdLbCQsvTytDavgxK4h2nBEXVpxxn6Fuhp+buIkhUjQ5g2501kfaiCAvec02j4IojP8KUX7y3ck=@vger.kernel.org, AJvYcCWmVyOgGVH2THJupKUT9ZMA+VgiOoZIIAwDnHyLNPYbK/oAQjSrHmNdIaFwsLBfQ60TSLn1RIvl2NUx/S0/@vger.kernel.org, AJvYcCWsFvaNk+ZRp5iB7pAIYfw6hRWCNg6abMyZDkuj51j21vVZwW7i47AX2CsNGQWW2WbP6J3P+85+fDzy@vger.kernel.org, AJvYcCXvPzg1/lZj/qDz9hW7FLbw55rMyBcX/W0RlUio4h2alvJnA5iQ+GSdHLBYqxdJjEaJSZXXhaKsAV14@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/Fulf4BueyQBa+DQ4W+a5enuPOLLU+wt+w81Rcr0aGQEqkE9J
+	FiSQ4tcki3Gt+5HC3+gDXlME//4srDEGs9/ez51cbdeMgIVm9qBZR6LXZFJS
+X-Gm-Gg: ASbGncs2FlWkz2+P0ayaXEyp6BYiZY/QCMOPRi5mfFKDIj2TJ83ci+USLd/YwWha7qP
+	a7rViBIYUofbFKd5UbVFppYTCLfKG1HOpkWiOw8S4bvyYIfpcVnYzUsMKfUjTzPrQTryRxYTkN/
+	6EKZTWtnulyyH9kR53yMAJPaf8hFfoNA6P5ezXPBSwl3LLyj/6bg2R60cg5NetRgJelMrQ5jT6T
+	49gc2ZcnFmVrbs98knp4phgyg5XB/Avn71F0B/CDzCNqHeYxDhy6YotxBcr2BYvXseGP194ZfNu
+	LYWTfhN62g9DTInXZKsqioGwGTY9GUXOyR9BtiMO2XGYAmOquEQMNRBjWqB8EkYeIp/C1LhIcXN
+	uJedib0w=
+X-Google-Smtp-Source: AGHT+IFlTZkE7nmPdGjjticqoOBSRa9Q+dT1RWI/LhhrmqoIc05bMlsYOWgRZ/1+qyOX7J003ofE1Q==
+X-Received: by 2002:ad4:5dcb:0:b0:6e8:f470:2b0d with SMTP id 6a1803df08f44-6f2b2f5750bmr87863906d6.19.1744897290599;
+        Thu, 17 Apr 2025 06:41:30 -0700 (PDT)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com. [209.85.222.175])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f0de9734e4sm126855426d6.39.2025.04.17.06.41.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Apr 2025 06:41:30 -0700 (PDT)
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c5aecec8f3so119147185a.1;
+        Thu, 17 Apr 2025 06:41:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVvsxyzrtd/EEvY1bWKNXJ8evbMIStcTx1pqrvQrA51wMgUGc7y5mhiLLfjdIravEWfWkEUcqzqoSDP@vger.kernel.org, AJvYcCWCIVuSaHBkmKzO1TVdKhBtp6XgbMooH3ZFfJWHa6Xs5tSwzdlXjUCVePNsFqT8yhPaQ6W1gKl8RKxHlOri5nuwu+Y=@vger.kernel.org, AJvYcCXOG5ljZaaXkZaghkS9jWEe/O7a2SVVzRYxoV+gWJci7hO618leNYT/35GI2At/gRHNQF6ktRorPZKK@vger.kernel.org, AJvYcCXSiOdOZNN1YuYqt9ZuOrGtne4OvxK4wvKVZLumDIoJpBsl50TKdmWb9cUwCJny0vdVwqjKdMVAfdOqgm/2@vger.kernel.org
+X-Received: by 2002:a05:620a:1a92:b0:7c5:4adb:781b with SMTP id
+ af79cd13be357-7c918fcec52mr962526785a.7.1744897290119; Thu, 17 Apr 2025
+ 06:41:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPY8ntD2W5xAHGCD+uBL-0QgyYNj6k9MExns=DFvxU1WGYtO5g@mail.gmail.com>
+References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com> <20250403212919.1137670-3-thierry.bultel.yh@bp.renesas.com>
+In-Reply-To: <20250403212919.1137670-3-thierry.bultel.yh@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 17 Apr 2025 15:41:17 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV9p9uwMUR59F+_fJiSU0b5vJWr4hHJmc4geos=48TndQ@mail.gmail.com>
+X-Gm-Features: ATxdqUG-OT1eml1q2F61Eo10MAgqcchO8vfALF9gYmY508UbfRhkgJcSX3QHkl0
+Message-ID: <CAMuHMdV9p9uwMUR59F+_fJiSU0b5vJWr4hHJmc4geos=48TndQ@mail.gmail.com>
+Subject: Re: [PATCH v7 02/13] dt-bindings: clock: Add cpg for the Renesas
+ RZ/T2H SoC
+To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
+	paul.barker.ct@bp.renesas.com, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dave,
+Hi Thierry,
 
-On 11:48 Thu 17 Apr     , Dave Stevenson wrote:
-> Hi Andrea & Stefan.
-> 
-> On Wed, 16 Apr 2025 at 17:26, Andrea della Porta <andrea.porta@suse.com> wrote:
-> >
-> > Hi Stefan,
-> >
-> > On 14:09 Mon 14 Apr     , Stefan Wahren wrote:
-> > > Hi Andrea,
-> > >
-> > > Am 19.03.25 um 22:52 schrieb Andrea della Porta:
-> > > > RaspberryPi RP1 is an MFD providing, among other peripherals, several
-> > > > clock generators and PLLs that drives the sub-peripherals.
-> > > > Add the driver to support the clock providers.
-> > > >
-> > > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > > > ---
-> > > >   MAINTAINERS           |    5 +
-> > > >   drivers/clk/Kconfig   |    9 +
-> > > >   drivers/clk/Makefile  |    1 +
-> > > >   drivers/clk/clk-rp1.c | 1512 +++++++++++++++++++++++++++++++++++++++++
-> > > >   4 files changed, 1527 insertions(+)
-> > > >   create mode 100644 drivers/clk/clk-rp1.c
-> > > >
-> > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > index 896a307fa065..75263700370d 100644
-> > > > --- a/MAINTAINERS
-> > > > +++ b/MAINTAINERS
-> > > > @@ -19748,6 +19748,11 @@ S: Maintained
-> > > >   F:        Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml
-> > > >   F:        drivers/media/platform/raspberrypi/rp1-cfe/
-> > > >
-> > > > +RASPBERRY PI RP1 PCI DRIVER
-> > > > +M: Andrea della Porta <andrea.porta@suse.com>
-> > > > +S: Maintained
-> > > > +F: drivers/clk/clk-rp1.c
-> > > > +
-> > > >   RC-CORE / LIRC FRAMEWORK
-> > > >   M:        Sean Young <sean@mess.org>
-> > > >   L:        linux-media@vger.kernel.org
-> > > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > > > index 713573b6c86c..cff90de71409 100644
-> > > > --- a/drivers/clk/Kconfig
-> > > > +++ b/drivers/clk/Kconfig
-> > > > @@ -88,6 +88,15 @@ config COMMON_CLK_RK808
-> > > >       These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
-> > > >       Clkout1 is always on, Clkout2 can off by control register.
-> > > >
-> > > > +config COMMON_CLK_RP1
-> > > > +   tristate "Raspberry Pi RP1-based clock support"
-> > > > +   depends on MISC_RP1 || COMPILE_TEST
-> > > > +   default MISC_RP1
-> > > > +   help
-> > > > +     Enable common clock framework support for Raspberry Pi RP1.
-> > > > +     This multi-function device has 3 main PLLs and several clock
-> > > > +     generators to drive the internal sub-peripherals.
-> > > > +
-> > > >   config COMMON_CLK_HI655X
-> > > >     tristate "Clock driver for Hi655x" if EXPERT
-> > > >     depends on (MFD_HI655X_PMIC || COMPILE_TEST)
-> > > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > > > index bf4bd45adc3a..ff3993ed7e09 100644
-> > > > --- a/drivers/clk/Makefile
-> > > > +++ b/drivers/clk/Makefile
-> > > > @@ -84,6 +84,7 @@ obj-$(CONFIG_CLK_LS1028A_PLLDIG)  += clk-plldig.o
-> > > >   obj-$(CONFIG_COMMON_CLK_PWM)              += clk-pwm.o
-> > > >   obj-$(CONFIG_CLK_QORIQ)                   += clk-qoriq.o
-> > > >   obj-$(CONFIG_COMMON_CLK_RK808)            += clk-rk808.o
-> > > > +obj-$(CONFIG_COMMON_CLK_RP1)            += clk-rp1.o
-> > > >   obj-$(CONFIG_COMMON_CLK_HI655X)           += clk-hi655x.o
-> > > >   obj-$(CONFIG_COMMON_CLK_S2MPS11)  += clk-s2mps11.o
-> > > >   obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o
-> > > > diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
-> > > > new file mode 100644
-> > > > index 000000000000..72c74e344c1d
-> > > > --- /dev/null
-> > > > +++ b/drivers/clk/clk-rp1.c
-> > > > @@ -0,0 +1,1512 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > > ...
-> > > > +
-> > > > +static int rp1_pll_divider_set_rate(struct clk_hw *hw,
-> > > > +                               unsigned long rate,
-> > > > +                               unsigned long parent_rate)
-> > > > +{
-> > > > +   struct rp1_clk_desc *divider = container_of(hw, struct rp1_clk_desc, div.hw);
-> > > > +   struct rp1_clockman *clockman = divider->clockman;
-> > > > +   const struct rp1_pll_data *data = divider->data;
-> > > > +   u32 div, sec;
-> > > > +
-> > > > +   div = DIV_ROUND_UP_ULL(parent_rate, rate);
-> > > > +   div = clamp(div, 8u, 19u);
-> > > > +
-> > > > +   spin_lock(&clockman->regs_lock);
-> > > > +   sec = clockman_read(clockman, data->ctrl_reg);
-> > > > +   sec &= ~PLL_SEC_DIV_MASK;
-> > > > +   sec |= FIELD_PREP(PLL_SEC_DIV_MASK, div);
-> > > > +
-> > > > +   /* Must keep the divider in reset to change the value. */
-> > > > +   sec |= PLL_SEC_RST;
-> > > > +   clockman_write(clockman, data->ctrl_reg, sec);
-> > > > +
-> > > > +   /* TODO: must sleep 10 pll vco cycles */
-> > > Is it possible to implement this with some kind of xsleep or xdelay?
-> >
-> > I guess so... unless anyone knows a better method such as checking
-> > for some undocumented register flag which reveals when the clock is stable
-> > so it can be enabled (Phil, Dave, please feel free to step in with advice
-> > if you have any), I think this line could solve the issue:
-> >
-> > ndelay (10 * div * NSEC_PER_SEC / parent_rate);
-> 
-> I've checked with those involved in the hardware side.
-> There's no hardware flag that the clock is stable, so the ndelay is
-> probably the best option. The VCO can go as low as 600MHz, so the max
-> delay would be 166ns.
+On Thu, 3 Apr 2025 at 23:29, Thierry Bultel
+<thierry.bultel.yh@bp.renesas.com> wrote:
+> Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
+>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
 
-Perfect, I'll use ndelay then. However, shouldn't this be 16ns max?
-I think this formula should give a good estimate:
+Thanks for your patch!
 
-10ULL * div * NSEC_PER_SEC / parent_rate
+> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> @@ -52,9 +52,15 @@ properties:
+>        - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+>        - renesas,r8a779g0-cpg-mssr # R-Car V4H
+>        - renesas,r8a779h0-cpg-mssr # R-Car V4M
+> +      - renesas,r9a09g077-cpg-mssr # RZ/T2H
+>
+>    reg:
+> -    maxItems: 1
+> +    minItems: 1
+> +    items:
+> +      - description: base address of register block 0
+> +      - description: base address of register block 1
+> +    description: base addresses of clock controller. Some controllers
+> +      (like r9a09g077) use two blocks instead of a single one).
 
-and has the advantage of not depending on hard coded values.
+Non-matching closing parenthesis at the end of the line.
 
-> 
-> Thanks for your continuing work on this.
+> @@ -111,6 +102,44 @@ required:
+>    - '#clock-cells'
+>    - '#power-domain-cells'
+>
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a09g077-cpg-mssr
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 2
+> +        clocks:
+> +          minItems: 2
+> +        clock-names:
+> +          items:
+> +            - const: extal
 
-Thank you for checking.
+There are actually two external clock inputs:
+  1. Crystal resonator between XTAL and EXTAL pins,
+  2. Clock signal input to the EXTCLKIN pin.
+Given they are mutually-exclusive, and the choice is made by an
+external input signal (XTALSEL) which cannot be read from software,
+I think it is fine to model this as a single "extal" input clock.
 
-Regards,
-Andrea
+> +            - const: loco
 
-> 
->   Dave
-> 
-> > Many thanks,
-> > Andrea
-> >
-> > > > +   sec &= ~PLL_SEC_RST;
-> > > > +   clockman_write(clockman, data->ctrl_reg, sec);
-> > > > +   spin_unlock(&clockman->regs_lock);
-> > > > +
-> > > > +   return 0;
-> > > > +}
-> > > > +
-> > > >
+LOCO is the Low-Speed On-Chip Oscillator, i.e. on-chip, and thus
+not an external clock input.
+
+> +    else:
+> +      properties:
+> +        reg:
+> +          maxItems: 1
+> +        clock-names:
+> +          items:
+> +            enum:
+> +              - extal     # All
+> +              - extalr    # Most R-Car Gen3 and RZ/G2
+> +              - usb_extal # Most R-Car Gen2 and RZ/G1
+> +
+> +  - if:
+> +      not:
+> +        properties:
+> +          compatible:
+> +            items:
+> +              enum:
+> +                - renesas,r7s9210-cpg-mssr
+> +    then:
+> +      required:
+> +        - '#reset-cells'
+> +
+>  additionalProperties: false
+>
+>  examples:
+
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+> @@ -0,0 +1,49 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> + *
+> + * Copyright (C) 2025 Renesas Electronics Corp.
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
+> +#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* R9A09G077 CPG Core Clocks */
+> +#define R9A09G077_CA55C0               0
+> +#define R9A09G077_CA55C1               1
+> +#define R9A09G077_CA55C2               2
+> +#define R9A09G077_CA55C3               3
+> +#define R9A09G077_SDHIHS               4
+> +#define R9A09G077_CLK_PLL1_ETH_PHY     5
+> +#define R9A09G077_CLK_OSC_ETH_PHY      6
+> +#define R9A09G077_CLK_ETHPHY           7
+
+I can't find these 3 clocks?
+
+Table 7.2 "Specifications of Clock Generation Circuit (internal clock)"
+Figure 7.1" Block diagram of clock generation circuit"
+
+> +#define R9A09G077_PCLKAH               8
+> +#define R9A09G077_PCLKAM               9
+> +#define R9A09G077_PCLKAL               10
+> +#define R9A09G077_CLK_SEL_ETH_PHY      11
+
+I can't find this clock?
+
+> +#define R9A09G077_DFI                  12
+> +#define R9A09G077_PCLKH                        13
+> +#define R9A09G077_PCLKM                        14
+> +#define R9A09G077_PCLKL                        15
+> +#define R9A09G077_PCLKGPTL             16
+> +#define R9A09G077_PCLKSHOST            17
+> +#define R9A09G077_PCLKRTC              18
+> +#define R9A09G077_USB                  19
+> +#define R9A09G077_SPI0                 20
+> +#define R9A09G077_SPI1                 21
+> +#define R9A09G077_SPI2                 22
+> +#define R9A09G077_SPI3                 23
+
+R9A09G077_XSPI[0-3]?
+
+> +#define R9A09G077_ETCLKA               24
+> +#define R9A09G077_ETCLKB               25
+> +#define R9A09G077_ETCLKC               26
+> +#define R9A09G077_ETCLKD               27
+> +#define R9A09G077_ETCLKE               28
+> +#define R9A09G077_ETHCLKE              29
+
+I can't find this clock?
+
+> +#define R9A09G077_ETHCLK_EXTAL         30
+> +#define R9A09G077_ETH_REFCLK           31
+
+There are four of these? R9A09G077_ETH[0-3]_REFCLK?
+
+> +#define R9A09G077_LCDC_CLKA            32
+> +#define R9A09G077_LCDC_CLKP            33
+
+I can't find these 2 clocks?
+
+> +#define R9A09G077_CA55                 34
+
+R9A09G077_CA55S?
+
+> +#define R9A09G077_LCDC_CLKD            35
+
+Some clocks seem to be missing, but you can always add them later
+(this file is an ABI, i.e. append-only).
+
+> +
+> +#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
