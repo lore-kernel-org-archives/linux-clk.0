@@ -1,252 +1,165 @@
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C19024C096;
-	Thu, 17 Apr 2025 13:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6B424E008
+	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 13:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744897295; cv=none; b=OkRcLfFv853sDMLBNH206RhZKWHcaoBiqmjLl6adAkhWC1IsUt+jkCc8BNegcH6WQovyRghvNaVScl85w+eYaaLY7VnNUqdDnX6LplhCteeP1Efx9u8EixFY5A5TJNapGH0M7uLh5D6Bm0TUxxJ3APyQJDe3ORkb9B0LtSkPyaw=
+	t=1744897478; cv=none; b=RN0R0QmbioU/+n4iIujNyVHdl2qsi6PM/cs8P3BMdM8xIAtCv8CM2Gp4/LM5JGeUc5haeNkLEXqKn48w/lWlLG0on4HJFJnOCbY4mcxLQqcdqRAI6Wd1o03Rd5QzsUpkY7zVR1XsR/ybSd5BQJLopsGRdUmMi2/5CQMR0KE8CSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744897295; c=relaxed/simple;
-	bh=Eni2uQ1QUtIxJVKCl7zv1dn47Ml3VtbcK6525VGkFzk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BjbYRSj7IrXKqwrwSW+U/4Wb0y98Nv3ZYZ8LsS0ELTl2cBZzCKw/8dEJhK14EAw/0k5by+fnDHuR+frTf/if96gC+ZztwtN0on4H/cECpVFDmcxR80t4KDSfGAtlLM+Vx9tH92b3FUk9ogPuWGhhTnpC+1EoCYivntVhIMigS6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6ecf0e07954so11815296d6.1;
-        Thu, 17 Apr 2025 06:41:31 -0700 (PDT)
+	s=arc-20240116; t=1744897478; c=relaxed/simple;
+	bh=/kYwMkMO7gnkCMvJ018+NoeSWWL7Svbm4MBqPlwzJ8k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XKmL6DcjAFH/SZN/HAckX85xMFFHn9Mjb/ipSyPqOAttTgNzppnyUVaStrzRQ61qVjL/hPD8PV0DhtETqQ4K3w835u4/QseUUGBQas48vIcQ82+1UAUwOmD/gc0UMBLX1brY3vi0HpATzBY6BEG5n22OtD1N5gVbybbGeW1elEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1v7LHwrp; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1v7LHwrp"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43edecbfb46so5916675e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 06:44:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744897474; x=1745502274; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8X0xT2F7/EkSVS65Ebk7avzorpujsrjUKh5VwdeOUik=;
+        b=1v7LHwrpDQfBhc8Iq3I4PtBaF0Lrh9fuSaRhGKPj3quearBx0la4FN4g6baOnrkZtC
+         OifCGk0EqqBehCP98l2n0ziMNPn14ODDfnbQ5WHuYOyalcBrCR8NtOlEIY2gKrkwF+q7
+         1cCfNWrTKu8mqv9ljUKSmVdTFS9UxB3BA4rPdr2PvKHebh/QEcfkvIGylcjG5Ru/v8/1
+         S4qO6wrfrMsDDiSriH7uQxETdvTr5stqQboOaiFm+ibCR5uQzxVQorIKwliIPvb25HUa
+         70OoP5mcX7RL8YwMzUR3nqvkRdkFINehy/0TGd3rEibAlqJDlnFY7H55ZD2oCs1tNalE
+         NXIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744897290; x=1745502090;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1744897474; x=1745502274;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=K89yvXZcAA4UpJdbQP9LuA0mSQ0pNAEq8BrQ6+A2U/Q=;
-        b=mLkYMtdMtfetfHdiy6/kwj8b9cfPj+UCQ2t1OFpsVoJMHFLgnfgd72rqEoeQlPw9k/
-         oF3qksC+vh4m9BmmVPlkMMvETKDKEDJySz6bbIOCLDuD3hBeejbaijOSIIxAg8C7mERu
-         jVTAyN27BCuEdVwAKWOHZnZsF+mAX0vFqiHSVpph2Dmr/qkpQbUWVstb4xTpKq/anwBO
-         tGy7QcJ1By1H7WV8Hm++De93GeihSmz/eiicFTcLa0hxXLzP0WYuWafJhkY54fXT4EBc
-         8iAZOmiOscLuUzhdFZlqy5ZGjscaZ6G8L0ViSY/vICcaFQpO7yaxVfJC4fKdnr3UEEJu
-         3Hqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBMK0WaeUkGKuoKdLbCQsvTytDavgxK4h2nBEXVpxxn6Fuhp+buIkhUjQ5g2501kfaiCAvec02j4IojP8KUX7y3ck=@vger.kernel.org, AJvYcCWmVyOgGVH2THJupKUT9ZMA+VgiOoZIIAwDnHyLNPYbK/oAQjSrHmNdIaFwsLBfQ60TSLn1RIvl2NUx/S0/@vger.kernel.org, AJvYcCWsFvaNk+ZRp5iB7pAIYfw6hRWCNg6abMyZDkuj51j21vVZwW7i47AX2CsNGQWW2WbP6J3P+85+fDzy@vger.kernel.org, AJvYcCXvPzg1/lZj/qDz9hW7FLbw55rMyBcX/W0RlUio4h2alvJnA5iQ+GSdHLBYqxdJjEaJSZXXhaKsAV14@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/Fulf4BueyQBa+DQ4W+a5enuPOLLU+wt+w81Rcr0aGQEqkE9J
-	FiSQ4tcki3Gt+5HC3+gDXlME//4srDEGs9/ez51cbdeMgIVm9qBZR6LXZFJS
-X-Gm-Gg: ASbGncs2FlWkz2+P0ayaXEyp6BYiZY/QCMOPRi5mfFKDIj2TJ83ci+USLd/YwWha7qP
-	a7rViBIYUofbFKd5UbVFppYTCLfKG1HOpkWiOw8S4bvyYIfpcVnYzUsMKfUjTzPrQTryRxYTkN/
-	6EKZTWtnulyyH9kR53yMAJPaf8hFfoNA6P5ezXPBSwl3LLyj/6bg2R60cg5NetRgJelMrQ5jT6T
-	49gc2ZcnFmVrbs98knp4phgyg5XB/Avn71F0B/CDzCNqHeYxDhy6YotxBcr2BYvXseGP194ZfNu
-	LYWTfhN62g9DTInXZKsqioGwGTY9GUXOyR9BtiMO2XGYAmOquEQMNRBjWqB8EkYeIp/C1LhIcXN
-	uJedib0w=
-X-Google-Smtp-Source: AGHT+IFlTZkE7nmPdGjjticqoOBSRa9Q+dT1RWI/LhhrmqoIc05bMlsYOWgRZ/1+qyOX7J003ofE1Q==
-X-Received: by 2002:ad4:5dcb:0:b0:6e8:f470:2b0d with SMTP id 6a1803df08f44-6f2b2f5750bmr87863906d6.19.1744897290599;
-        Thu, 17 Apr 2025 06:41:30 -0700 (PDT)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com. [209.85.222.175])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f0de9734e4sm126855426d6.39.2025.04.17.06.41.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Apr 2025 06:41:30 -0700 (PDT)
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c5aecec8f3so119147185a.1;
-        Thu, 17 Apr 2025 06:41:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVvsxyzrtd/EEvY1bWKNXJ8evbMIStcTx1pqrvQrA51wMgUGc7y5mhiLLfjdIravEWfWkEUcqzqoSDP@vger.kernel.org, AJvYcCWCIVuSaHBkmKzO1TVdKhBtp6XgbMooH3ZFfJWHa6Xs5tSwzdlXjUCVePNsFqT8yhPaQ6W1gKl8RKxHlOri5nuwu+Y=@vger.kernel.org, AJvYcCXOG5ljZaaXkZaghkS9jWEe/O7a2SVVzRYxoV+gWJci7hO618leNYT/35GI2At/gRHNQF6ktRorPZKK@vger.kernel.org, AJvYcCXSiOdOZNN1YuYqt9ZuOrGtne4OvxK4wvKVZLumDIoJpBsl50TKdmWb9cUwCJny0vdVwqjKdMVAfdOqgm/2@vger.kernel.org
-X-Received: by 2002:a05:620a:1a92:b0:7c5:4adb:781b with SMTP id
- af79cd13be357-7c918fcec52mr962526785a.7.1744897290119; Thu, 17 Apr 2025
- 06:41:30 -0700 (PDT)
+        bh=8X0xT2F7/EkSVS65Ebk7avzorpujsrjUKh5VwdeOUik=;
+        b=elGQEpEDe3bUsUB44wjIJ0n0day7vqSYcuOOnTECu7lHtqhQb3Ah5B6HjAS/HissvH
+         /uHdDAI1xVrN2ol/traya7GPIZz+fu+ARORUKJDQHFqz4o4lcqVen4tC36pcviQdERCd
+         yM5uI3KWEiesaJOPMG3X97HG2r4BkPRWq2NcOWmmYvgfkfR+VIX2eq13vVL3sEE/xcYC
+         b3Tu35eEPx1iQa1/8fQMZf9POV5hkigeGkt5yTJEIHgMUadQt4WAL5VBydTrvF1WFHYV
+         mecE3t3DexZnwdhDkI/F+JgPi6C5MuFhRhlhNOjLXN+ievr1D+K+SMi1QsOCrF4K8JSY
+         dMkw==
+X-Gm-Message-State: AOJu0YwabDpCpSsB0944lqPAm0OiyqW/1afvKMgc/k2BuL1/yd4kBOHL
+	RMKNtpYRTHn+PDNZEJs2skrG7VfmVs0Tvk4LgatRLvPa2GhlhrwloK3IW5gh6W/3Zxpma0IHXdq
+	6
+X-Gm-Gg: ASbGncsq7p8eakHKfvgQzXoMFFSZ9CFm11HDwJ+q2IAeCDj8J5gQMKV3+Zv/UJX63QA
+	MR7GXUgQVxqnwTYLtDQCmaBlAl+QYsCcs04u4lsjyEmOYrHHPrQ6z5KemxLgGKiMpoDWtg5sChW
+	KjIXLqxV/hGQKZKLvLLxWZWHpO8oVh/dFVhGNhemkmGtVXT3LQvEJKh3W+lydH2rCIzI1FR9Zob
+	3Yo4hBMk9sCs/PjGiFOKtuI4sgk50WeCEj8MKn88T1GRQtVzecAgbc7ueIo80CjESEn4CNTdyZu
+	m6QDxySEwCS0clggcu4KBmF87c7aAJwl7CB+DoxkcB5VY/rAjnJCPZQ=
+X-Google-Smtp-Source: AGHT+IE39P5qSh/sHu5PSRb5LN3Kn9/c0ri1uUrIa+zwmGg6WTKdoUUZpNFcB6I3Ih9udrZJtKkY9Q==
+X-Received: by 2002:a05:600c:a378:b0:43c:ea1a:720a with SMTP id 5b1f17b1804b1-4405d5fcd39mr54553685e9.1.1744897474366;
+        Thu, 17 Apr 2025 06:44:34 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:2167:2c91:1c64:6619])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4405b4f3227sm54667495e9.20.2025.04.17.06.44.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 06:44:33 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH 0/2] clk: add a clk_hw helpers to get the clock device or
+ device_node
+Date: Thu, 17 Apr 2025 15:44:21 +0200
+Message-Id: <20250417-clk-hw-get-helpers-v1-0-7743e509612a@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com> <20250403212919.1137670-3-thierry.bultel.yh@bp.renesas.com>
-In-Reply-To: <20250403212919.1137670-3-thierry.bultel.yh@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 17 Apr 2025 15:41:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV9p9uwMUR59F+_fJiSU0b5vJWr4hHJmc4geos=48TndQ@mail.gmail.com>
-X-Gm-Features: ATxdqUG-OT1eml1q2F61Eo10MAgqcchO8vfALF9gYmY508UbfRhkgJcSX3QHkl0
-Message-ID: <CAMuHMdV9p9uwMUR59F+_fJiSU0b5vJWr4hHJmc4geos=48TndQ@mail.gmail.com>
-Subject: Re: [PATCH v7 02/13] dt-bindings: clock: Add cpg for the Renesas
- RZ/T2H SoC
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
-	paul.barker.ct@bp.renesas.com, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALUFAWgC/x3MQQqAIBBA0avErBswHTddJVqEjTkkFRoVSHdPW
+ r7F/wUyJ+EMfVMg8SVZ9q2iaxtwYdoWRpmrQSttFXUWXVwx3LjwiYHjwSmj04ZoJkXeOKjhkdj
+ L80+H8X0/r/SV42QAAAA=
+X-Change-ID: 20250415-clk-hw-get-helpers-c2344d404f3c
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jerome Brunet <jbrunet@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2963; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=/kYwMkMO7gnkCMvJ018+NoeSWWL7Svbm4MBqPlwzJ8k=;
+ b=kA0DAAoB5vwPHDfy2oUByyZiAGgBBbfIdEykO99A0aDKhO0+y7lWF7nQj4YM60P7658ST6pk+
+ IkCMwQAAQoAHRYhBPThWa4Y8/VtXxu3G+b8Dxw38tqFBQJoAQW3AAoJEOb8Dxw38tqF/xoP/j4L
+ rtver3gxmoZkS4nA04PLJO6STpxlIC9GOKmFIaQTxaqJkoDdaCOAlD0jWMOCv2MdCzrmWfDGwu9
+ Oyp8ds7gUvf+LlNK/IuKOFCFSRuIjHpizvagTpHrZSRak+C+TxyEAX/OlDAhUc+6ShqkUJoSzZe
+ /bgW6rgWPzrN//fvcQglC8TUZcK2kHirnec1AlFU3HNq4nw+vhceH50E3CwTL48oDxZu5AWByoB
+ j5/VBkzmHu5GRLRc/VN2SFwYZu9kKK67vWinynaLk/dlz9/eMTKe9QdHXDJM4PyDrxmgZVqS5m5
+ h7XkGkMumXR/uATpl4yG0rQ2RWDzXtl3jbjMtNIAKCAV+t8rkuyoFHT6CDHh+THhxtiONQymoFP
+ AtyF4hFtiE9Vd+Nq2ULexD7rIrrwzdWSUhLzkmci7GwBnqjDAbKV5xxpD2Ohnb+1MSvs6fKcqM6
+ CAe1Ogb5zPjQ/KfdXxNJ8hcxxmucSqYLlGNM5HAWHtoDrJpC02IAPqXmIbdmEgyAj1dy10Nf1m9
+ Lq0sG3EAZ9ha2xXuAM4xCerZJA/uTteHIEcGe7ttzibYZBfuRb51zJyh2E6nugNtAfy6UIJtRf8
+ p43pgTj7IEdoBwt7vDcGloBP8w/rIkOW4ix641/aXKPWr8vz1ntqDOZo8YCLBuD5sXw0MpfcbRC
+ F+SqY
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Hi Thierry,
+This patchset adds helpers to get the device or device_node associated with
+clk_hw. This can be used by clock drivers to access various device related
+functionality. The 2nd changes adds kunit test coverage for the new helpers
 
-On Thu, 3 Apr 2025 at 23:29, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
-> Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
->
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+This patchset is the v4 of the series previously sent here [1], with the
+amlogic patches dropped for now. I'll resume the work on the amlogic
+changes when the helpers are available in CCF core.
 
-Thanks for your patch!
+Added tests run example:
+     KTAP version 1
+     # Subtest: clk_hw_register_get_dev_of_node_test_suite
+     # module: clk_test
+     1..2
+         KTAP version 1
+         # Subtest: clk_hw_register_get_dev_test
+         ok 1 clock with device reference
+         ok 2 clock missing device reference
+     # clk_hw_register_get_dev_test: pass:2 fail:0 skip:0 total:2
+     ok 1 clk_hw_register_get_dev_test
+         KTAP version 1
+         # Subtest: clk_hw_register_get_of_node_test
+         ok 1 clock with device reference
+         ok 2 clock missing device reference
+     # clk_hw_register_get_of_node_test: pass:2 fail:0 skip:0 total:2
+     ok 2 clk_hw_register_get_of_node_test
+ # clk_hw_register_get_dev_of_node_test_suite: pass:2 fail:0 skip:0 total:2
+ # Totals: pass:4 fail:0 skip:0 total:4
+ ok 17 clk_hw_register_get_dev_of_node_test_suite
+     KTAP version 1
+     # Subtest: of_clk_hw_register_get_dev_of_node_test_suite
+     # module: clk_test
+     1..2
+         KTAP version 1
+         # Subtest: of_clk_hw_register_get_dev_test
+         ok 1 clock with of_node reference
+         ok 2 clock missing of_node reference
+     # of_clk_hw_register_get_dev_test: pass:2 fail:0 skip:0 total:2
+     ok 1 of_clk_hw_register_get_dev_test
+         KTAP version 1
+         # Subtest: of_clk_hw_register_get_of_node_test
+         ok 1 clock with of_node reference
+         ok 2 clock missing of_node reference
+     # of_clk_hw_register_get_of_node_test: pass:2 fail:0 skip:0 total:2
+     ok 2 of_clk_hw_register_get_of_node_test
+ # of_clk_hw_register_get_dev_of_node_test_suite: pass:2 fail:0 skip:0 total:2
+ # Totals: pass:4 fail:0 skip:0 total:4
 
-> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-> @@ -52,9 +52,15 @@ properties:
->        - renesas,r8a779f0-cpg-mssr # R-Car S4-8
->        - renesas,r8a779g0-cpg-mssr # R-Car V4H
->        - renesas,r8a779h0-cpg-mssr # R-Car V4M
-> +      - renesas,r9a09g077-cpg-mssr # RZ/T2H
->
->    reg:
-> -    maxItems: 1
-> +    minItems: 1
-> +    items:
-> +      - description: base address of register block 0
-> +      - description: base address of register block 1
-> +    description: base addresses of clock controller. Some controllers
-> +      (like r9a09g077) use two blocks instead of a single one).
+[1]: https://lore.kernel.org/linux-clk/20250120-amlogic-clk-drop-clk-regmap-tables-v3-0-126244146947@baylibre.com
 
-Non-matching closing parenthesis at the end of the line.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+Jerome Brunet (2):
+      clk: add a clk_hw helpers to get the clock device or device_node
+      clk: tests: add clk_hw_get_dev() and clk_hw_get_of_node() tests
 
-> @@ -111,6 +102,44 @@ required:
->    - '#clock-cells'
->    - '#power-domain-cells'
->
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a09g077-cpg-mssr
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +        clocks:
-> +          minItems: 2
-> +        clock-names:
-> +          items:
-> +            - const: extal
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk.c                             |  12 ++
+ drivers/clk/clk_test.c                        | 215 ++++++++++++++++++++++++--
+ drivers/clk/kunit_clk_hw_get_dev_of_node.dtso |  10 ++
+ include/linux/clk-provider.h                  |  26 ++++
+ 5 files changed, 247 insertions(+), 17 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250415-clk-hw-get-helpers-c2344d404f3c
 
-There are actually two external clock inputs:
-  1. Crystal resonator between XTAL and EXTAL pins,
-  2. Clock signal input to the EXTCLKIN pin.
-Given they are mutually-exclusive, and the choice is made by an
-external input signal (XTALSEL) which cannot be read from software,
-I think it is fine to model this as a single "extal" input clock.
+Best regards,
+-- 
+Jerome
 
-> +            - const: loco
-
-LOCO is the Low-Speed On-Chip Oscillator, i.e. on-chip, and thus
-not an external clock input.
-
-> +    else:
-> +      properties:
-> +        reg:
-> +          maxItems: 1
-> +        clock-names:
-> +          items:
-> +            enum:
-> +              - extal     # All
-> +              - extalr    # Most R-Car Gen3 and RZ/G2
-> +              - usb_extal # Most R-Car Gen2 and RZ/G1
-> +
-> +  - if:
-> +      not:
-> +        properties:
-> +          compatible:
-> +            items:
-> +              enum:
-> +                - renesas,r7s9210-cpg-mssr
-> +    then:
-> +      required:
-> +        - '#reset-cells'
-> +
->  additionalProperties: false
->
->  examples:
-
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
-> @@ -0,0 +1,49 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> + *
-> + * Copyright (C) 2025 Renesas Electronics Corp.
-> + */
-> +
-> +#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
-> +#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
-> +
-> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
-> +
-> +/* R9A09G077 CPG Core Clocks */
-> +#define R9A09G077_CA55C0               0
-> +#define R9A09G077_CA55C1               1
-> +#define R9A09G077_CA55C2               2
-> +#define R9A09G077_CA55C3               3
-> +#define R9A09G077_SDHIHS               4
-> +#define R9A09G077_CLK_PLL1_ETH_PHY     5
-> +#define R9A09G077_CLK_OSC_ETH_PHY      6
-> +#define R9A09G077_CLK_ETHPHY           7
-
-I can't find these 3 clocks?
-
-Table 7.2 "Specifications of Clock Generation Circuit (internal clock)"
-Figure 7.1" Block diagram of clock generation circuit"
-
-> +#define R9A09G077_PCLKAH               8
-> +#define R9A09G077_PCLKAM               9
-> +#define R9A09G077_PCLKAL               10
-> +#define R9A09G077_CLK_SEL_ETH_PHY      11
-
-I can't find this clock?
-
-> +#define R9A09G077_DFI                  12
-> +#define R9A09G077_PCLKH                        13
-> +#define R9A09G077_PCLKM                        14
-> +#define R9A09G077_PCLKL                        15
-> +#define R9A09G077_PCLKGPTL             16
-> +#define R9A09G077_PCLKSHOST            17
-> +#define R9A09G077_PCLKRTC              18
-> +#define R9A09G077_USB                  19
-> +#define R9A09G077_SPI0                 20
-> +#define R9A09G077_SPI1                 21
-> +#define R9A09G077_SPI2                 22
-> +#define R9A09G077_SPI3                 23
-
-R9A09G077_XSPI[0-3]?
-
-> +#define R9A09G077_ETCLKA               24
-> +#define R9A09G077_ETCLKB               25
-> +#define R9A09G077_ETCLKC               26
-> +#define R9A09G077_ETCLKD               27
-> +#define R9A09G077_ETCLKE               28
-> +#define R9A09G077_ETHCLKE              29
-
-I can't find this clock?
-
-> +#define R9A09G077_ETHCLK_EXTAL         30
-> +#define R9A09G077_ETH_REFCLK           31
-
-There are four of these? R9A09G077_ETH[0-3]_REFCLK?
-
-> +#define R9A09G077_LCDC_CLKA            32
-> +#define R9A09G077_LCDC_CLKP            33
-
-I can't find these 2 clocks?
-
-> +#define R9A09G077_CA55                 34
-
-R9A09G077_CA55S?
-
-> +#define R9A09G077_LCDC_CLKD            35
-
-Some clocks seem to be missing, but you can always add them later
-(this file is an ABI, i.e. append-only).
-
-> +
-> +#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
