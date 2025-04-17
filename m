@@ -1,171 +1,210 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB26E24E00C
-	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 13:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DF52139DC;
+	Thu, 17 Apr 2025 13:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744897479; cv=none; b=D63dnM0lG9Rbl9I5h/NhQkz023nPMTE7EPtCUErpo44KmiHbKH2x4eez+FnJywtHgz0r9IqsylgnMgW1Aod3x87v+IdQJGqgDHllfMxJijdDpETCOe5DUjeIZd0f0CfaTlyjOpB9FnU14D9szv0ytZXccp6Q2/lH6m7hvS11/Dc=
+	t=1744897864; cv=none; b=MZc+wzg+cZPpZEe51GXoYmOMr4GG7qau4Juh0bvZktALWGbA6bV7AclnidU0UWnXKdjCzzIBQgWBfAYPgEJAxjCRhnN7jySaSiLyQi8cJHF4meMqVIyXRga7nT9hOog0dy9JWD0iJYvJ5FlT8qGIAiXO4c57U885Jt3OK6X1bxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744897479; c=relaxed/simple;
-	bh=tU3V05jhQullaooJeoNgHG/weKtABakyMeEGO6lArHo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HKxDB1GAW8aZPemQxKZ/ImXRR6Plm8s6s4E1Ea1Kf7DPGz8s8H3cwxo4GnMfURvO7I1NQ0IWUF6o+7EcRxmvaMaqK0qS4QRbLyELOoYbzdCVZSFknaMce1cxg5UxGj83YC/Lkfos7xcN62g8ZtrnM5qnr6VGuIxvY+cSsB1lilk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QHIsRFY7; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1744897864; c=relaxed/simple;
+	bh=lYK4pj/r9Xudb2nVt3/iLvT2yys4OYhshyiKWFUrNmY=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=LEY6qaETg64jAeNmMRhmVWKvvIeZVXph5Y3+fk8jXEHRYX09aa3yP7JjmZUXkPEhL5Elo5ltiYdJj8g/+igGaOs+8OKaT9J1mjYmxDH4bG+LmUnnZROIe+A9xQpfBJ1S8iqP0ARyBmbJh66hqyJbBlRZCjQuxPhcgDvl7DJvqQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FpHK1+eD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QHIsRFY7"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cf05f0c3eso5978315e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 06:44:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1744897475; x=1745502275; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nU83/Q3lqWGLR3UHxt7XR3/5paElPjXKNr8qPQv0P+I=;
-        b=QHIsRFY7fbmJKaSz1h1JoBmcfJQ/LOpSkXP7rBnPnial4jQVjQ4VNDTk9KjBolPT1d
-         y+Ty8Gs5BClk1hOccmvRVlRG+wOYG6irkDxCo4Yr5YbLCC4RIXQczQ8aVITixXzeGmP0
-         DczBcPkM2huWa3yxZCALoyo2zb6xUPSeP8ou42Ih1THCxm1GvqsEYyCjONulMd+f59Ae
-         gXk8bYnwZh2WU++z2oftiQkTrODnRYB2N5mu0W0bPSEbrV4pmWKeHHBrbPQ1PtjA4LFk
-         QBiYwzUPkRY7olQUv5ZVktUdZlZjoyK3JBpXVvPcu0gYqXxfUm4q/1Lgk6pKR+huGT5e
-         4oxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744897475; x=1745502275;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nU83/Q3lqWGLR3UHxt7XR3/5paElPjXKNr8qPQv0P+I=;
-        b=aNatzgYc3OQaYAQncR7oHWl+m1DIfcMPNBOxgubG9NSY/9AX2/1MT3iIoAMQrur4X+
-         Y8GlYmQoED3nA4dZR0sDbWic0sHEE3FqYllDk1O199ncq1/Nb9i07AuwB+uTpGH1v7vq
-         tkppp/+iszEvSm0uIQZaitLiC21oUDMnw/I8+cIGZSqy6ydtr/bjG5jw6komqcVcWRez
-         1Oht139n2fYbYYsA0jKE5myFMju1M0r3CDyN9iBfROsDss7cSn/Rf1nGpo4raTXqn9Wa
-         gEP1Uf1HkwlYnSlwgUKY/NN3G0Iizogg9EA4eEr9g259Pwt0rkDocMcD3dnCWcu7VqqK
-         uMnQ==
-X-Gm-Message-State: AOJu0YySjTV+1i/3F9Prlul1TcGGEdT0MDgIXo2yrnXGQmyPkldRx7ga
-	g/sf3gFIOCFCfl6IMueKNLjEJhbTh5timey+kv8CJe8hqTUmU39URn3BUyG7G7XojCmWETV46e1
-	w
-X-Gm-Gg: ASbGnctiNPUyoX2Kk+stp+YKMYwhLoKZacOJQB+IQeVSTVw5T71DJu+g7I1ITNNaKFb
-	rOQu2KLSZOmuy2++a/oUbg9B/2UiEjZrgtStqXK4B5qx6BussT6WWLwyfRiIsJqiqjPVoJvnnuA
-	SrGx0QjiiLRm6fJd5S8DoL4vt7RrJZYSLhPFkygCLjwNIk+rGCwZK9Zk8nDtgMBSKL5n/Qrs4vT
-	7jbShaE5vUNtskJyhBzubH/i3jzg2DXBkq5IeJTgFNjT70YbgrjjFKpHSfB7PNxswRVKxEtzD7c
-	Byly5Vhfo6M+3MYyyMj0vHLa+C4HqloLJ6s4DFnJdh7/Z6xY0rfKZt0=
-X-Google-Smtp-Source: AGHT+IFtZm0nX+xRr8RW0qfpHEY69OZaCbvVJ/866PACgwrK/SM+ZJkdegmJ5AGlfTMTegyA/+Qb1g==
-X-Received: by 2002:a05:600c:450d:b0:43d:82c:2b11 with SMTP id 5b1f17b1804b1-4405d69b537mr44482305e9.23.1744897475010;
-        Thu, 17 Apr 2025 06:44:35 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:2167:2c91:1c64:6619])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4405b4f3227sm54667495e9.20.2025.04.17.06.44.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 06:44:34 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 17 Apr 2025 15:44:22 +0200
-Subject: [PATCH 1/2] clk: add a clk_hw helpers to get the clock device or
- device_node
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FpHK1+eD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10095C4CEEA;
+	Thu, 17 Apr 2025 13:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744897864;
+	bh=lYK4pj/r9Xudb2nVt3/iLvT2yys4OYhshyiKWFUrNmY=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=FpHK1+eDGri/Q06V1lMnLWhOP49mBDukV/gF+Rs/IkycbV9ny4rbWaMtBCsUEg7Jm
+	 T/ex9G3w+Vd5RhzeBwAnfgZfexSq12/jqvIXdIjLl+Ds0+sJAb5TAyL1qFERazvvgO
+	 v4p9qVZWXpCR/NBnBllQi5FPpIKDS3SyFZ3WLWVQPrPONZ/XGFLqdGmCNydptKUiL8
+	 38/kLvLlq9aB6S930EWPMCRDk98NMd6JTKNicPyfBpGexX4wb0mmRGTLk69JLJzKU4
+	 tKUCU1HNrVR83FJrdsrFHoeXtNy42A1InIzwkNp0MxKA9G2IcKk5NMG23PfxKFoWuG
+	 /2uRR5HG/XdQA==
+Date: Thu, 17 Apr 2025 08:51:02 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250417-clk-hw-get-helpers-v1-1-7743e509612a@baylibre.com>
-References: <20250417-clk-hw-get-helpers-v1-0-7743e509612a@baylibre.com>
-In-Reply-To: <20250417-clk-hw-get-helpers-v1-0-7743e509612a@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2566; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=tU3V05jhQullaooJeoNgHG/weKtABakyMeEGO6lArHo=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoAQW/+d+R1tHoBukmIrCSQUS5wX5OiAescwxps
- 5h09qL7j46JAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaAEFvwAKCRDm/A8cN/La
- hSk+D/0dt5Pe9H+FVd2tbtrSD5RuJY5tMEE9KctFOZOj8rZ0H+ttnv0fpdDLV3+wcLCTyU0e7EM
- T/lKbyk09LYwmuRz3y7JdFDhsEQz0w1kdeuot7+MpuZpMKcBod0I2U40iwOIgTbp7ZBSf1M/dmf
- 2xQ4icBMJyKdAztcHIRhgZdkdoRbH4oe1PLxF7vE6g+fK/ikGzPqhWq9Dsabovp/dQQRH9EBn6D
- gqYPCY7ZTr0D3Zdci18xCjZ/+Q1qNNzjpGkCIxOMU1wdsJTL9WFiZdW0hmvUba3mqadw/AjY7g/
- NypizNOKZWMXq115vAIzVLJhJmf2AnKOrux6f8SDzPn/W6m7AB/+NX4qszJlXvmgsqH3igwU7Sn
- lWrpcC1g7CTjUBvjlJu+RukcIhf3xnSE8iIQ/kVUrvW1AUT3sQDHce4iCm1v50kcC4t5bLB1+cT
- kgejLocI6Yx9b5pitpj/o8EVOODWdU6EBy5IKq/FZsrROcJs04xb5bWiAICKV3Hhl8yqvc9HhnI
- mHbtKbflqVtE0RebkTwlnUIl5K2zBSEIWQ2PxS/J+xapqPFKT6U86Vzq52hYRAISJKrT8P4txDT
- a+fCJD0mSdf6bqeOxg4OuimjAaqmFON5yBSvbnDJx8EWVdXMHO3+ULxJUsOKBgWZGQ4bB8MGSQm
- T8emD+tvPjhV7CA==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Robert Foss <rfoss@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, devicetree@vger.kernel.org, 
+ Todor Tomov <todor.too@gmail.com>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250417-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-3fd4124cf35a@linaro.org>
+References: <20250417-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-3fd4124cf35a@linaro.org>
+Message-Id: <174489760555.1657266.9336071214730240829.robh@kernel.org>
+Subject: Re: [PATCH v7 0/6] Add dt-bindings and dtsi changes for CAMSS on
+ x1e80100 silicon
 
-Add helpers to get the device or device_node associated with clk_hw.
 
-This can be used by clock drivers to access various device related
-functionality such as devres, dev_ prints, etc ...
+On Thu, 17 Apr 2025 12:27:01 +0100, Bryan O'Donoghue wrote:
+> Changes in v7:
+> - camss compat string is in media-comitters for 6.16 so it should
+>   be possible to merge the core DTSI stuff in this series now.
+> - Adds RB as indicated in previous cycle.
+> - Changes <0 0xvalue 0 0xvalue> to <0x0 0xvalue 0x0 0xvalue> per
+>   current comments on linux-arm-msm.
+> - Includes CRD dtsi for the ov08x40.
+> - Link to v6: https://lore.kernel.org/r/20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org
+> - Link to media-comitters: https://gitlab.freedesktop.org/linux-media/media-committers
+> 
+> Changes in v6:
+> - Removes 'A phandle to an OPP node describing' per Krzysztof's comment
+>   on patch #1
+> - Drops Fixes: from patch #1 - Krzysztof
+> - The ordering of opp description MXC and MMXC is kept as it matches the
+>   power-domain ordering - Krzysztof/bod
+> - Link to v5: https://lore.kernel.org/r/20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v5-0-846c9a6493a8@linaro.org
+> 
+> v5:
+> - Picks up a Fixes: that is a valid precursor for this series - Vlad
+> - Applies RB from Vlad
+> - Drops "cam" prefix in interconnect names - Krzysztof/Vlad
+> - Amends sorting of regs, clocks consistent with recent 8550 - Depeng/Vlad
+> - Link to v4: https://lore.kernel.org/r/20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-0-c2964504131c@linaro.org
+> 
+> v4:
+> - Applies RB from Konrad
+> - Adds the second CCI I2C bus to CCI commit log description.
+>   I previously considered leaving out the always on pins but, decided
+>   to include them in the end and forgot to align the commit log.
+> - Alphabetises the camcc.h included in the dtsi. - Vlad
+> - Link to v3: https://lore.kernel.org/r/20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org
+> 
+> v3:
+> - Fixes ordering of headers in dtsi - Vlad
+> - Changes camcc to always on - Vlad
+> - Applies RB as indicated - Krzysztof, Konrad
+> - Link to v2: https://lore.kernel.org/r/20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org
+> 
+> v2:
+> 
+> I've gone through each comment and implemented each suggestion since IMO
+> they were all good/correct comments.
+> 
+> Detail:
+> 
+> - Moves x1e80100 camcc to its own yaml - Krzysztof
+> - csid_wrapper comes first because it is the most relevant
+>   register set - configuring all CSID blocks subordinate to it - bod, Krzysztof
+> - Fixes missing commit log - Krz
+> - Updates to latest format established @ sc7280 - bod
+> - Includes CSID lite which I forgot to add @ v1 - Konrad, bod
+> - Replaces static ICC parameters with defines - Konrad
+> - Drops newlines between x and x-name - Konrad
+> - Drops redundant iommu extents - Konrad
+> - Leaves CAMERA_AHB_CLK as-is - Kronrad, Dmitry
+>   Link: https://lore.kernel.org/r/3f1a960f-062e-4c29-ae7d-126192f35a8b@oss.qualcomm.com
+> - Interrupt EDGE_RISING - Vladimir
+> - Implements suggested regulator names pending refactor to PHY API - Vladimir
+> - Drop slow_ahb_src clock - Vladimir
+> 
+> Link to v1:
+> https://lore.kernel.org/r/20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org
+> 
+> Working tree:
+> https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/arm-laptop/wip/x1e80100-6.13-rc3
+> 
+> v1:
+> 
+> This series adds dt-bindings and dtsi for CAMSS on x1e80100.
+> 
+> The primary difference between x1e80100 and other platforms is a new VFE
+> and CSID pair at version 680.
+> 
+> Some minor driver churn will be required to support outside of the new VFE
+> and CSID blocks but nothing too major.
+> 
+> The CAMCC in this silicon requires two, not one power-domain requiring
+> either this fix I've proposed here or something similar:
+> 
+> https://lore.kernel.org/linux-arm-msm/bad60452-41b3-42fb-acba-5b7226226d2d@linaro.org/T/#t
+> 
+> That doesn't gate adoption of the binding description though.
+> 
+> A working tree in progress can be found here:
+> https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.12-rc7+camss?ref_type=heads
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+> Bryan O'Donoghue (6):
+>       arm64: dts: qcom: x1e80100: Add CAMCC block definition
+>       arm64: dts: qcom: x1e80100: Add CCI definitions
+>       arm64: dts: qcom: x1e80100: Add CAMSS block definition
+>       arm64: dts: qcom: x1e80100-crd: Define RGB camera clock and reset pinout
+>       arm64: dts: qcom: x1e80100-crd: Add pm8010 CRD pmic,id=m regulators
+>       arm64: dts: qcom: x1e80100-crd: Define RGB sensor for cci1_i2c1
+> 
+>  arch/arm64/boot/dts/qcom/x1-crd.dtsi   | 106 ++++++++++
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 352 +++++++++++++++++++++++++++++++++
+>  2 files changed, 458 insertions(+)
+> ---
+> base-commit: 0316f040a04804ff1f45e51ccd42b45552c54a60
+> change-id: 20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-1506f74bbd3a
+> 
+> Best regards,
+> --
+> Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> 
+> 
+> 
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c            | 12 ++++++++++++
- include/linux/clk-provider.h | 26 ++++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 0565c87656cf5c557d8259c71b5d2971a7ac87e8..b821b2cdb155331c85fafbd2fac8ab3703a08e4d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -365,6 +365,18 @@ const char *clk_hw_get_name(const struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_name);
- 
-+struct device *clk_hw_get_dev(const struct clk_hw *hw)
-+{
-+	return hw->core->dev;
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_get_dev);
-+
-+struct device_node *clk_hw_get_of_node(const struct clk_hw *hw)
-+{
-+	return hw->core->of_node;
-+}
-+EXPORT_SYMBOL_GPL(clk_hw_get_of_node);
-+
- struct clk_hw *__clk_get_hw(struct clk *clk)
- {
- 	return !clk ? NULL : clk->core->hw;
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2e6e603b749342931c0d0693c3e72b62c000791b..630705a47129453c241f1b1755f2c2f2a7ed8f77 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -1360,6 +1360,32 @@ void clk_hw_unregister(struct clk_hw *hw);
- /* helper functions */
- const char *__clk_get_name(const struct clk *clk);
- const char *clk_hw_get_name(const struct clk_hw *hw);
-+
-+/**
-+ * clk_hw_get_dev() - get device from an hardware clock.
-+ * @hw: the clk_hw pointer to get the struct device from
-+ *
-+ * This is a helper to get the struct device associated with a hardware
-+ * clock. Some clock controllers, such as the one registered with
-+ * CLK_OF_DECLARE(), may have not provided a device pointer while
-+ * registering the clock.
-+ *
-+ * Return: the struct device associated with the clock, or NULL if there
-+ * is none.
-+ */
-+struct device *clk_hw_get_dev(const struct clk_hw *hw);
-+
-+/**
-+ * clk_hw_get_of_node() - get device_node from a hardware clock.
-+ * @hw: the clk_hw pointer to get the struct device_node from
-+ *
-+ * This is a helper to get the struct device_node associated with a
-+ * hardware clock.
-+ *
-+ * Return: the struct device_node associated with the clock, or NULL
-+ * if there is none.
-+ */
-+struct device_node *clk_hw_get_of_node(const struct clk_hw *hw);
- #ifdef CONFIG_COMMON_CLK
- struct clk_hw *__clk_get_hw(struct clk *clk);
- #else
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
--- 
-2.47.2
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 0316f040a04804ff1f45e51ccd42b45552c54a60
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250417-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-3fd4124cf35a@linaro.org:
+
+arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+arch/arm64/boot/dts/qcom/x1p42100-crd.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+arch/arm64/boot/dts/qcom/x1e001de-devkit.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus15.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus13.dtb: /soc@0/isp@acb6000: failed to match any schema with compatible: ['qcom,x1e80100-camss']
+
+
+
+
 
