@@ -1,150 +1,200 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530F623645F
-	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 11:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E884023CF07
+	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 11:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744888287; cv=none; b=FZGI4cjUM1fzUNIQc+uaYL1qeaRc39zg6l2LxHEKKJpuHBgjZHO3uWLQ0qHcgSTejdcFXpWdHWG6U0luVqaFs4gQ+/3P+MSOzdPKAwz2a+unFo1C9SkEwqySICMLDtUHJ3eHQ/Z9eHP6tPGdQpJW1HnPhSBRMNy5gizH5/HaYT0=
+	t=1744889229; cv=none; b=fooZ3foElS2OXuuMSuMHUaPhsof/reGQ35ho/KkdKU5vtTEgwygUsIkDhnmUhJeITFQ9TkmbnjGGlTW/fKRci5K7DOZbXXHYZ6dsagVJBnMNldx63tgDVShKjqXBeHOur378tu6JW08TciulHMrHREDpxyocVarQZXWtLyGatBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744888287; c=relaxed/simple;
-	bh=cQFl5PUzH6hg0oQP041Wr6N3dkwwS+iRu/+8WAAEhHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hN2DNWdD+obuxvZgraKZBLdPWfthQB/WU+8k6H1pMtgDK9MUXqheA+et6TUEHdeoeez8gvvGBr8x80vrlUhApGpTFA6FmcXJSC+y+sgVs6DAjzAEhNP5xyQz6dTZrnp+R2BQBtFFiRpP2vTEtxKJybRGcRGNhElnZYxHVKhdaT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JAvYzxEN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1744889229; c=relaxed/simple;
+	bh=0WOI/+GaMRZ1iG9jXOjVp4ioIDk3o7i8HtCSn6lsE+4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LlCSlT+gR0JM98zRmuiLSq0U/Tp8gPbHIq3/tc9oPqicPZ3LrgIZkaA3RHkbu4AGJFR/JhqSAQ39Ynho9FHXqsnxy1u71lPNSoQ8vlikGSoqNVR1b+kY/2xshVd540wesMNEOOt0P1geZdKnBhWnKSasIRasa6nmC9heRkOVZ2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OJdRer8i; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JAvYzxEN"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53H5lAd9009498
-	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 11:11:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cQFl5PUzH6hg0oQP041Wr6N3dkwwS+iRu/+8WAAEhHg=; b=JAvYzxEN2qi+MMUi
-	ZC1VD7t5J625JEd9CrPq3AAkROFDv7AVAMbvQkO3obP0OSyN5T9Ucmzz5OGPg+4Z
-	UXHDA1S+yX2j6xA/0Eu0PNDPmynTwngd0hpDdNMU/y1vuUHOhtdt6w+VoySpxsnl
-	XAsxSHSuhnDGRC3s4lXR1skfZ6T0fHlx1QX3K0k6M7Ruw9tyAdVd9OfmpLs103UM
-	IzgwJVxmKDOcVGSEZ14f2DbJljZbVF8vgrrHDkResKonzukGlYlzK55OyhK0eH91
-	kfd2h57cfjtPI/KieNACUEQGSw/cy+f9j6VrolxIznyDvBMiBqTVs+H0RwTfEbrv
-	/UKxcA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45ygd6pr1g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 11:11:23 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e8fec7ab4dso1017636d6.3
-        for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 04:11:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OJdRer8i"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39c30d9085aso479519f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 04:27:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1744889225; x=1745494025; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+UW9gJcrsFg0xEf0FjEU3I0TGtp3byhu0KO343DFdP8=;
+        b=OJdRer8iK8p54JZS/LOxFaK2TFXXLIdHapG5vJkPizsz50oFWuQ90cnHXep83n5PA1
+         aUFHijD3Imevp93Wi9TUwlUUepLODW954dce/o9AMGb0EhOod0/8nAX8aQpy/f6bKnyn
+         jhed2YTnLZcycQVcRr2cFhf3p19HhdEcQf8xlICUpLQmgsVarNnueyZXB1G7pVh5AhTa
+         lt1cA2NrYLey71+NKgP9VbRIL9qg0/t/4ATHCsO3g1b/q5Ok7fOeXCT+WRnjIsFyu92d
+         +pw63JDZ7pYf5yeyiicsDRdtqG0ipSjkPcBq4yucjw9fEo3y/qhbaKGyhn5zp4lB7szs
+         VTSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744888282; x=1745493082;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cQFl5PUzH6hg0oQP041Wr6N3dkwwS+iRu/+8WAAEhHg=;
-        b=cYEslkugvPK8PedUwpd9Tvus3xDvOUXTl8DcA9kl4ZF5cVsvv/wIGQ/7gg3VZLWQu3
-         IOB7qCwi1XOLTEzYmISw04ChbNia6ea3yG33/eEmVHemAoC5wdmY++xt1+Y1y0r2F+5H
-         7nCGmZja8wQV4OEXt0O/bKDH1JgC/WplkzA6k0dGfk7aTuOMqz6rlI/LLjnlR9Hu4qIA
-         5HejoOSgMKykutgaE8tpYinCfgoZOz8liEQ5sIQWi4rDb18a52bXC+yGYV4xqnf+26tv
-         wFBqZ9uNm9A00CtCV/4E03slZzE56t1IglwRGxxFBOhBzAwL7z0EeLgeO832Qq3VySy3
-         WFjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpaH8iRxiUAC44ADxn9AK80ENuhOWPlaYbc+3RpWAvK9r+ZQWd5UmM5mOOz4Cc+gVFulo9rMAPFEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx47OJ9CDpq1c0QGZm1aKHHEl6SK2+56QwbLjRG8ZElG/kmYQmB
-	5qQie+KN5KcV8hZWb5tF/Dj2g6lpVF+gugy6KZM/8YsjtJEozIY4KaGl/YemqHg4u2zVyrsVtdp
-	rhZ1D3dT9Lo0zeujnjJ02aElfteTwjwT2NC2P8FZZGg18VplukAYjcIeq6n0=
-X-Gm-Gg: ASbGncs8kIthTGdBzHcMHcpxeqn/+MbxpnNg4RS4MbbYE71Ds3Rbl+ltnXhC2Z6b7ck
-	dzhcBMjB9GsIpMkQK4XeeSm9Al58GF9S2DSBjOYECXv3kHszyqbCaz+phon+PZWcYfyS13YX/6L
-	oBYiPsWGXULRljDeaCB5n8VOiyqi2bRyoC7qUcu+RdsH0uSd3UfBkNAqIpnmi6QB9w17iMdweg7
-	BhqxkoqFwcChMzdqbFCZ23fq5Oo62Vn7jG6vke3WjjdWCT9zNLN+JzZaa8QBq+qxem8MEMU2wGh
-	J6waRgZVI5vlMQMqWmAuoZlhmI4FYlMF28uAEdHu0pOfjdf7ZCnJrRNOI6SOt6TxCA==
-X-Received: by 2002:a05:6214:b11:b0:6f2:c10b:db04 with SMTP id 6a1803df08f44-6f2c10be8bcmr1283206d6.1.1744888282057;
-        Thu, 17 Apr 2025 04:11:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF5kju+O/dWoPIE9Ybn1kg3pBvJPXA+KWO908qYET4dQsJeQp8XiEZRcojtLSXCqXemg9A1+Q==
-X-Received: by 2002:a05:6214:b11:b0:6f2:c10b:db04 with SMTP id 6a1803df08f44-6f2c10be8bcmr1282886d6.1.1744888281656;
-        Thu, 17 Apr 2025 04:11:21 -0700 (PDT)
-Received: from [192.168.65.58] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3cd6257bsm278243066b.13.2025.04.17.04.11.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Apr 2025 04:11:21 -0700 (PDT)
-Message-ID: <bfc3247e-16e7-4897-bdbd-dc7d82d45fa3@oss.qualcomm.com>
-Date: Thu, 17 Apr 2025 13:11:16 +0200
+        d=1e100.net; s=20230601; t=1744889225; x=1745494025;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+UW9gJcrsFg0xEf0FjEU3I0TGtp3byhu0KO343DFdP8=;
+        b=r1F56/AjeoQF5EEa5Gp1rSeLpdIeMfEXC3YC2CfqiQC0EVYUNQSHukD6MhbhQ65arS
+         R9na/ihwdPOVHm37UptMVF1JYWw43fZLYxDfG6AMlXxAIFFlnt+JExASDKbWzCE4uvF+
+         +U+cBX69VgI0svN+K8Frrf67tsB76GS/SbX7qw833tP7DKioZX8Ddfe9ms7X9qI0Orle
+         w6+54rpgawQBsxoVbMPvvGsCrzas3oXde5QN9ye31vuITpI06YLUESlXEajMjmlh9V3l
+         E96pXmlw4hMAA8aSvkW67KVhWPrgaHxuGkoNPsFNV7biTV/wjzQhrhGRK6nt+jK7U+xX
+         QrDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAv18M+iqoJWIIozchKMyMHQPFNBnSPMWJUp40QxleCfk/Wn86zHhGBjGodDh9csEU2jwS0bA5QD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMtodArsstqwZ3kWffos66Re38K6b8GGg9++86p4imNRKAUF3c
+	AprzQkQRnmNCU+Kv8UzPV0PxF3AbuAZw3DmxLQ+hX41olwYLyJQCUM/+5k9wXkE=
+X-Gm-Gg: ASbGnctw/jm3q9ZwHlOaDI2FMY6JHdnoFaWH8pTWTTLirRDSykiVBqLdpszWQGY9m3S
+	iBONMLVe7ca5ANbeKWzL720dNZqgOj53WW0AWVjoEkuPkjnOjFHaK8PPQY76d+4toxU1Hg9lJOk
+	OLo0gMJGg+ZSa9tJtRfzHwzTDg0kqNeCbUhayVqL5pErdAkqpIkug/GXKq75lHbl4ygeEw1mSLx
+	rqrhgrOx7p4x9rmmvIG0qY70nxr9FMTzwZmaHEC518ORBrQbV+1tZvBYlzNQhkGPmjHRWtZh3aD
+	AA8U3islQkxYo9mxnq3g7XC6NZUS2EP3wKN/YIBr2Wx6dGJLXyYlBdjob1wjNGzbLLkCEf+FfHs
+	hGNx62g==
+X-Google-Smtp-Source: AGHT+IH3XjNO+UydKAHlOL16If/Iir6btWGhMRGNXm93OsXmj4kTENZia2iadx9kym5hA5mWeI6SkA==
+X-Received: by 2002:a05:6000:2408:b0:38f:4f60:e669 with SMTP id ffacd0b85a97d-39ee5b33b16mr4195260f8f.29.1744889225158;
+        Thu, 17 Apr 2025 04:27:05 -0700 (PDT)
+Received: from [192.168.0.34] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae96400dsm20144063f8f.11.2025.04.17.04.27.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Apr 2025 04:27:04 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v7 0/6] Add dt-bindings and dtsi changes for CAMSS on
+ x1e80100 silicon
+Date: Thu, 17 Apr 2025 12:27:01 +0100
+Message-Id: <20250417-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v7-0-3fd4124cf35a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/6] arm64: dts: qcom: Add initial support for MSM8937
-To: barnabas.czeman@mainlining.org
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>,
-        =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
-        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org,
-        Dang Huynh <danct12@riseup.net>
-References: <20250315-msm8937-v4-0-1f132e870a49@mainlining.org>
- <20250315-msm8937-v4-4-1f132e870a49@mainlining.org>
- <f85195a1-f55e-41ea-967d-b758014cba06@oss.qualcomm.com>
- <93ea35691deaa1ff38d229225e26cf41@mainlining.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <93ea35691deaa1ff38d229225e26cf41@mainlining.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 4vJd_F7HXf3NvQRV_G9shLgog4-l2qhp
-X-Proofpoint-GUID: 4vJd_F7HXf3NvQRV_G9shLgog4-l2qhp
-X-Authority-Analysis: v=2.4 cv=ANaQCy7k c=1 sm=1 tr=0 ts=6800e1db cx=c_pps a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=OuZLqq7tAAAA:8 a=bBqXziUQAAAA:8 a=L7gxQ87vPTAOeZ-rjWYA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22 a=AKGiAy9iJ-JzxKVHQNES:22 a=BjKv_IHbNJvPKzgot4uq:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-17_03,2025-04-15_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- mlxlogscore=716 suspectscore=0 clxscore=1015 lowpriorityscore=0
- phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504170084
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIXlAGgC/52NzQ6CMBAGX4X07Jr+A558D+OhlAJNlJoWSQ3h3
+ V046VGP8212ZiHJRe8SORULiW72yYcRoTwUxA5m7B34FplwyhUVTEAj4ebHZ4bR5Qm4AioA53Z
+ KHjJzFWWUgjX3lIApqrtSNk0rDEHhI7rO5z12uSIPPk0hvvb2rLb1r8yMR6iktrXRshamOuOni
+ eEYYk+2zqw/3fInt0a3a23DbWcF4/zLva7rG36V1hRBAQAA
+X-Change-ID: 20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-1506f74bbd3a
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+ Todor Tomov <todor.too@gmail.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-media@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
 
-On 4/17/25 8:20 AM, barnabas.czeman@mainlining.org wrote:
-> On 2025-04-14 22:55, Konrad Dybcio wrote:
->> On 3/15/25 3:57 PM, Barnabás Czémán wrote:
->>> From: Dang Huynh <danct12@riseup.net>
->>>
->>> Add initial support for MSM8937 SoC.
->>>
->>> Signed-off-by: Dang Huynh <danct12@riseup.net>
->>> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->>> ---
+Changes in v7:
+- camss compat string is in media-comitters for 6.16 so it should
+  be possible to merge the core DTSI stuff in this series now.
+- Adds RB as indicated in previous cycle.
+- Changes <0 0xvalue 0 0xvalue> to <0x0 0xvalue 0x0 0xvalue> per
+  current comments on linux-arm-msm.
+- Includes CRD dtsi for the ov08x40.
+- Link to v6: https://lore.kernel.org/r/20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org
+- Link to media-comitters: https://gitlab.freedesktop.org/linux-media/media-committers
 
-[...]
+Changes in v6:
+- Removes 'A phandle to an OPP node describing' per Krzysztof's comment
+  on patch #1
+- Drops Fixes: from patch #1 - Krzysztof
+- The ordering of opp description MXC and MMXC is kept as it matches the
+  power-domain ordering - Krzysztof/bod
+- Link to v5: https://lore.kernel.org/r/20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v5-0-846c9a6493a8@linaro.org
 
->> 0xff is overly broad, please document the existing known speed bins
-> There are no speedbins for 8937 gpu. 8940 have but 8940 is not scope of this series.
+v5:
+- Picks up a Fixes: that is a valid precursor for this series - Vlad
+- Applies RB from Vlad
+- Drops "cam" prefix in interconnect names - Krzysztof/Vlad
+- Amends sorting of regs, clocks consistent with recent 8550 - Depeng/Vlad
+- Link to v4: https://lore.kernel.org/r/20250119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v4-0-c2964504131c@linaro.org
 
-So it would make sense to either drop them, or fill in the actual
-values here
+v4:
+- Applies RB from Konrad
+- Adds the second CCI I2C bus to CCI commit log description.
+  I previously considered leaving out the always on pins but, decided
+  to include them in the end and forgot to align the commit log.
+- Alphabetises the camcc.h included in the dtsi. - Vlad
+- Link to v3: https://lore.kernel.org/r/20250102-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v3-0-cb66d55d20cc@linaro.org
 
-Konrad
+v3:
+- Fixes ordering of headers in dtsi - Vlad
+- Changes camcc to always on - Vlad
+- Applies RB as indicated - Krzysztof, Konrad
+- Link to v2: https://lore.kernel.org/r/20241227-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v2-0-06fdd5a7d5bb@linaro.org
+
+v2:
+
+I've gone through each comment and implemented each suggestion since IMO
+they were all good/correct comments.
+
+Detail:
+
+- Moves x1e80100 camcc to its own yaml - Krzysztof
+- csid_wrapper comes first because it is the most relevant
+  register set - configuring all CSID blocks subordinate to it - bod, Krzysztof
+- Fixes missing commit log - Krz
+- Updates to latest format established @ sc7280 - bod
+- Includes CSID lite which I forgot to add @ v1 - Konrad, bod
+- Replaces static ICC parameters with defines - Konrad
+- Drops newlines between x and x-name - Konrad
+- Drops redundant iommu extents - Konrad
+- Leaves CAMERA_AHB_CLK as-is - Kronrad, Dmitry
+  Link: https://lore.kernel.org/r/3f1a960f-062e-4c29-ae7d-126192f35a8b@oss.qualcomm.com
+- Interrupt EDGE_RISING - Vladimir
+- Implements suggested regulator names pending refactor to PHY API - Vladimir
+- Drop slow_ahb_src clock - Vladimir
+
+Link to v1:
+https://lore.kernel.org/r/20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org
+
+Working tree:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/arm-laptop/wip/x1e80100-6.13-rc3
+
+v1:
+
+This series adds dt-bindings and dtsi for CAMSS on x1e80100.
+
+The primary difference between x1e80100 and other platforms is a new VFE
+and CSID pair at version 680.
+
+Some minor driver churn will be required to support outside of the new VFE
+and CSID blocks but nothing too major.
+
+The CAMCC in this silicon requires two, not one power-domain requiring
+either this fix I've proposed here or something similar:
+
+https://lore.kernel.org/linux-arm-msm/bad60452-41b3-42fb-acba-5b7226226d2d@linaro.org/T/#t
+
+That doesn't gate adoption of the binding description though.
+
+A working tree in progress can be found here:
+https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.12-rc7+camss?ref_type=heads
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (6):
+      arm64: dts: qcom: x1e80100: Add CAMCC block definition
+      arm64: dts: qcom: x1e80100: Add CCI definitions
+      arm64: dts: qcom: x1e80100: Add CAMSS block definition
+      arm64: dts: qcom: x1e80100-crd: Define RGB camera clock and reset pinout
+      arm64: dts: qcom: x1e80100-crd: Add pm8010 CRD pmic,id=m regulators
+      arm64: dts: qcom: x1e80100-crd: Define RGB sensor for cci1_i2c1
+
+ arch/arm64/boot/dts/qcom/x1-crd.dtsi   | 106 ++++++++++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 352 +++++++++++++++++++++++++++++++++
+ 2 files changed, 458 insertions(+)
+---
+base-commit: 0316f040a04804ff1f45e51ccd42b45552c54a60
+change-id: 20250313-b4-linux-next-25-03-13-dtsi-x1e80100-camss-1506f74bbd3a
+
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
