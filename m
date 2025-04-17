@@ -1,251 +1,120 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778DB254AF5
-	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 17:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3E52566FF
+	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 17:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744911988; cv=none; b=HbphQULlDNGThXA7ZLHoAWmNZ/mH7WoOrOGc2rpa9LKPjMhMrzna0QqnokSlOpJGh5RzC7eb34+k44qRT+0UGeEXSLPhtNcmAEMebzCQgYpLuN0waUfUUvlkIKVLXA1B2s/IfijnT++MqwOg04o71VX9qvqVcvbD22OP8n3/8Pg=
+	t=1744912487; cv=none; b=thAM4hsgyT8wzxHuLEUEdXYgLoPub4huDrzLTAP08zLfU29qUt48a5W3at01xZ8SgwRZfm+I7jue8iAI9HH+v11ebS0nnKIP8KU/8f7MSwT51scbKDclcv6rwH3RQZaJ2JAExtqHEY52LAqx36CRcUOPmGTH14jMY/gYLEd/+lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744911988; c=relaxed/simple;
-	bh=SHusiNh4+rFgJuDeK17m5Z1S6PLQHVzz+ZfMyp5VOJ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EM8dB+8w+pU9yxiu6UR/ewav9HW2DUSAr0Z6zK3a9ZJJVlmKI8ZV+/Hgkpy89eouw3cyJF9udTJWWrabWJ8f2x94YpDAowtSQ9kpQCvEv7X98f84H9aFji0aV3vSRbYWgpEyKbp05R+0HhlwbPqArpYMbiINJUlsP44IUg1X9t0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=tWMmo9NK; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+	s=arc-20240116; t=1744912487; c=relaxed/simple;
+	bh=xq9ZcUb87c6ZeHlcilupd/aVpGLaRaH6UoIUaOlxWVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o2Z65Syi4ovhR6LaiatZxGjc2IbaS3EJcpxoXiANEkAXbgJUNOVbqgFEa4g3xeluNtFE9V7RoeYjesrZhj81sG7NlAr4YdYP0TKc3OpHQC59joZ6Pfm/Qsm9TGhiptbF9IWDpZ1QyHRWk+0LDlLwLRBdjmTIRFHqxSYafBdPUtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=RuYSb9wn; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="tWMmo9NK"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-70565ccf3bcso10549467b3.0
-        for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 10:46:26 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="RuYSb9wn"
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7272f9b4132so821178a34.0
+        for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 10:54:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1744911985; x=1745516785; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fWFVgupzA3WcXLT+BN9IkoTUzlpVNJIm/ZYe94t2FFM=;
-        b=tWMmo9NK9eWYG+HQkTG9aeDcZ2fXuHS3Dk/tzhWMvHAlkBnOD/EOCjsHoKeicfoT+g
-         kXeu69M+leUM23r/TU5rZDMMiFxQXLZE1yEmwncnDYVaNy52HZsUxcmOGVICZEO8On85
-         mNUPc9LBJidlVVAqrJE+/TJhuTIUjSVZ9W4t6vREcz2LmqOpCe5KlJp65vlHyx8kA4Wh
-         qwWb3KJAl8vaO6oiE52vbvhsZNo2oEm+N3cLAf3f5XmiHYUUpLB7BWJpxj+n59FOZ/g8
-         tgJhqC2J7I0aLbvDJONRnbpAaeFZyF2mD2Hc2MvTerKb/sprupC9nMs8VdbFlIMVc38d
-         ROSA==
+        d=broadcom.com; s=google; t=1744912485; x=1745517285; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=og7k09noHtZfCJVyKsPNkxjxxAFKMtNjRhhBEMvppsk=;
+        b=RuYSb9wn8R58RM54E1ssfyIBmgFvmbl3ofwFL8WwjO9mEN7TbbmutBT9tb0mUV3AJu
+         70HrkV2r6JTvquh4X/PgoRq6UWR6d79Sq/IV22ru5VHpSYQylQMRuFmGd9m2Ylh2CaTC
+         tBdLf3cxwgnSD+gHMrErYw3vr10fEH+Z3K4qs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744911985; x=1745516785;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fWFVgupzA3WcXLT+BN9IkoTUzlpVNJIm/ZYe94t2FFM=;
-        b=Ehk+ELQ6wYD/QoLMItBRuSmysZEF0lSZdrqopPB2cD0E6XLABuNTWMsEP9GglQ+jjm
-         RdHMqHAVgLRdXsy6QwgtpPDR8K4fgVscqnFsCruLgyWGBZF9AN40k0Z0/9UC+1EZ1JVR
-         jnC30ops8ojBpeqh5fy9leS+k2xPETi0igixMc+CdMBi7n03swFhevU5tKnjJorA5rnZ
-         b4FTQhSUfEKtLEA0/z0+WEdeSD911fGhkgrn/7DOKFT3/xDNmFvR6+Qw7Hl6Ymg5OKRK
-         XFa0ZY21XsqhQNxeQtbo9kyW6Yjcawjy5gy45QF+85M1yfBw2k7+GjdaEhoMkhypA5yP
-         XGVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVx/a7ooUDuSV13+/fv/mtZPghyZutAoJF5nrRszr9xeYuAcsTLi2Gk5EKYeH5lgwctCTTDcsZ/8xY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxauYThVeR+WAdnFt4b19ZLU2QfsNmP7SWWbHujvQ/02tplhCH8
-	6lCbEQLRN8D/k+5QmvTAqRUtlof9zwB24yPZt/3BsxO7MNNQV5JeqzhLir2+LZUPgKrcIeWBuuR
-	VamuhlijcKJc0edrT5uluVULYFlIvvdxePrNOlw==
-X-Gm-Gg: ASbGncv/iNGde0U4I48IlohN6kXtzmyEHyDH1M/LlQdfQouaGQdh48PCwnbhuJvKczu
-	vf0IqGGkNoVBCo8u7Zcw9jSC+md+Xti+zzmnU+LcrvpOcOtdD3n9FCD29Zp8rl90ClWKEDDHF8C
-	bYdqxjXWKr1UxCP6SAL5fdfOCHqc+qoof9yIdPdZU/JGPHKcPRvsWxhA==
-X-Google-Smtp-Source: AGHT+IFyC6HYs9e80CmN73xlBJt/HpImaly70LEZmj35WGtDtklY8rBjCjjco5A8WQ2lGInHkA6lzygUfa3Emej99Gg=
-X-Received: by 2002:a05:690c:3506:b0:6fe:c040:8eda with SMTP id
- 00721157ae682-706b325d56amr97201527b3.4.1744911985301; Thu, 17 Apr 2025
- 10:46:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744912485; x=1745517285;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=og7k09noHtZfCJVyKsPNkxjxxAFKMtNjRhhBEMvppsk=;
+        b=nPTqDOLBi33EKBePsYoU/PDkPTyCp0rnnP0ZpL2BSRp6UCkTsjGTIvYs4JUSrFAD6s
+         jB7lKBY0TfBWQeG3jIAErIy3Z613Qg/pqa+/y2SfiUK0T++7l6o4Vn38bltEMx0Eltoa
+         MUoViGSn69GVz49qMvZIh+7THSi9QjQzOWG5vDFB+V0LzXhMNQel8ZuycZ5waURt3Zvf
+         KVWZ9xfqJ5raAJUkGlk9au7x/VV8DqjJWnGwoIKH7WIf+6o2VOWoaV9PtdPx1/8ie+tP
+         8ihLzppdRnusDTX4DwlCY601u5NclKreiiHFfaPibZ09p477V99F/RxrX8ho9A0EW1lV
+         nBUg==
+X-Gm-Message-State: AOJu0Ywy2bOxqW7NJBK3cRoDyAGF2jsL07lXanAmzmUYuqwg5KJs0Oxn
+	5hLz3XTybOTyKEO5EPDRfONr7udxlBqlofEpGmjVe4x8RQFGNeyB+2Va4TPcWg==
+X-Gm-Gg: ASbGnctFmIg0vyaaguVKHZB3MNtDbRZ3al2WENCNQSUfyvhNiRJ7Zpp9g+iN0SGdf2N
+	eIAPl/yoY3ltOCzmBUDnBacUp9oUbgTnxkCPIPp0kM+zDfun0phO+MC/zRuZ6oDFE9e+UuTp5Md
+	+xiV181LlPxhdiAGO7j/PMXksmYFlY9XXfO0xWWY/8A930d6sQhRSUVyr7MgAo3yep5dXKRL07u
+	iD6ODLWw2H5qWrLNkKMAkTHjVuT03/lcP9PEj3sNxdVA5R5j19uinyARwV7YBspSjTGvp9NL45v
+	NAspPQGgIfFY0hAmVU2qvRk01I1gGD1SJZVxBTiDMqzC2w0GPdtl4N72TqKJ4VJZA9j/5VCG6S6
+	8/kBy
+X-Google-Smtp-Source: AGHT+IHc2QyMx7vxFWIH4oPxUzj4+ePDTI1XAQL3ZEdUDj5rUuKF8oPqdm3pGkJLivkIt+qNCRUv4g==
+X-Received: by 2002:a05:6830:f95:b0:72b:a712:4b72 with SMTP id 46e09a7af769-72ec6bf43famr4298912a34.9.1744912484732;
+        Thu, 17 Apr 2025 10:54:44 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-730047b6529sm34258a34.28.2025.04.17.10.54.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Apr 2025 10:54:43 -0700 (PDT)
+Message-ID: <35f82d96-6c93-4036-8499-2cfd4cf00c45@broadcom.com>
+Date: Thu, 17 Apr 2025 10:54:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1742418429.git.andrea.porta@suse.com> <370137263691f4fc14928e4b378b27f75bfd0826.1742418429.git.andrea.porta@suse.com>
- <23ac3d05-5fb7-4cd8-bb87-cf1f3eab521d@gmx.net> <Z__alTyVJOwu_1gR@apocalypse>
- <CAPY8ntD2W5xAHGCD+uBL-0QgyYNj6k9MExns=DFvxU1WGYtO5g@mail.gmail.com> <aAD6EXrav161J0vS@apocalypse>
-In-Reply-To: <aAD6EXrav161J0vS@apocalypse>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 17 Apr 2025 18:46:02 +0100
-X-Gm-Features: ATxdqUHcDbWr8xBnLCzFc0eo6fLOV6JX6u0K_scOh1zjVezR0S_9IzHQVsjXicM
-Message-ID: <CAPY8ntBMJUONss_0nCYRPNJ1vTMWMu0Ga3w-r_1jboM+aShH7w@mail.gmail.com>
-Subject: Re: [PATCH v8 05/13] clk: rp1: Add support for clocks provided by RP1
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Stefan Wahren <wahrenst@gmx.net>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof Wilczynski <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Masahiro Yamada <masahiroy@kernel.org>, Herve Codina <herve.codina@bootlin.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>, kernel-list@raspberrypi.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: bcm: rpi: Drop module alias
+To: Stefan Wahren <wahrenst@gmx.net>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ bcm-kernel-feedback-list@broadcom.com, kernel-list@raspberrypi.com
+References: <20250415185614.16292-1-wahrenst@gmx.net>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250415185614.16292-1-wahrenst@gmx.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 17 Apr 2025 at 13:53, Andrea della Porta <andrea.porta@suse.com> wrote:
->
-> Hi Dave,
->
-> On 11:48 Thu 17 Apr     , Dave Stevenson wrote:
-> > Hi Andrea & Stefan.
-> >
-> > On Wed, 16 Apr 2025 at 17:26, Andrea della Porta <andrea.porta@suse.com> wrote:
-> > >
-> > > Hi Stefan,
-> > >
-> > > On 14:09 Mon 14 Apr     , Stefan Wahren wrote:
-> > > > Hi Andrea,
-> > > >
-> > > > Am 19.03.25 um 22:52 schrieb Andrea della Porta:
-> > > > > RaspberryPi RP1 is an MFD providing, among other peripherals, several
-> > > > > clock generators and PLLs that drives the sub-peripherals.
-> > > > > Add the driver to support the clock providers.
-> > > > >
-> > > > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > > > > ---
-> > > > >   MAINTAINERS           |    5 +
-> > > > >   drivers/clk/Kconfig   |    9 +
-> > > > >   drivers/clk/Makefile  |    1 +
-> > > > >   drivers/clk/clk-rp1.c | 1512 +++++++++++++++++++++++++++++++++++++++++
-> > > > >   4 files changed, 1527 insertions(+)
-> > > > >   create mode 100644 drivers/clk/clk-rp1.c
-> > > > >
-> > > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > > index 896a307fa065..75263700370d 100644
-> > > > > --- a/MAINTAINERS
-> > > > > +++ b/MAINTAINERS
-> > > > > @@ -19748,6 +19748,11 @@ S: Maintained
-> > > > >   F:        Documentation/devicetree/bindings/media/raspberrypi,rp1-cfe.yaml
-> > > > >   F:        drivers/media/platform/raspberrypi/rp1-cfe/
-> > > > >
-> > > > > +RASPBERRY PI RP1 PCI DRIVER
-> > > > > +M: Andrea della Porta <andrea.porta@suse.com>
-> > > > > +S: Maintained
-> > > > > +F: drivers/clk/clk-rp1.c
-> > > > > +
-> > > > >   RC-CORE / LIRC FRAMEWORK
-> > > > >   M:        Sean Young <sean@mess.org>
-> > > > >   L:        linux-media@vger.kernel.org
-> > > > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > > > > index 713573b6c86c..cff90de71409 100644
-> > > > > --- a/drivers/clk/Kconfig
-> > > > > +++ b/drivers/clk/Kconfig
-> > > > > @@ -88,6 +88,15 @@ config COMMON_CLK_RK808
-> > > > >       These multi-function devices have two fixed-rate oscillators, clocked at 32KHz each.
-> > > > >       Clkout1 is always on, Clkout2 can off by control register.
-> > > > >
-> > > > > +config COMMON_CLK_RP1
-> > > > > +   tristate "Raspberry Pi RP1-based clock support"
-> > > > > +   depends on MISC_RP1 || COMPILE_TEST
-> > > > > +   default MISC_RP1
-> > > > > +   help
-> > > > > +     Enable common clock framework support for Raspberry Pi RP1.
-> > > > > +     This multi-function device has 3 main PLLs and several clock
-> > > > > +     generators to drive the internal sub-peripherals.
-> > > > > +
-> > > > >   config COMMON_CLK_HI655X
-> > > > >     tristate "Clock driver for Hi655x" if EXPERT
-> > > > >     depends on (MFD_HI655X_PMIC || COMPILE_TEST)
-> > > > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> > > > > index bf4bd45adc3a..ff3993ed7e09 100644
-> > > > > --- a/drivers/clk/Makefile
-> > > > > +++ b/drivers/clk/Makefile
-> > > > > @@ -84,6 +84,7 @@ obj-$(CONFIG_CLK_LS1028A_PLLDIG)  += clk-plldig.o
-> > > > >   obj-$(CONFIG_COMMON_CLK_PWM)              += clk-pwm.o
-> > > > >   obj-$(CONFIG_CLK_QORIQ)                   += clk-qoriq.o
-> > > > >   obj-$(CONFIG_COMMON_CLK_RK808)            += clk-rk808.o
-> > > > > +obj-$(CONFIG_COMMON_CLK_RP1)            += clk-rp1.o
-> > > > >   obj-$(CONFIG_COMMON_CLK_HI655X)           += clk-hi655x.o
-> > > > >   obj-$(CONFIG_COMMON_CLK_S2MPS11)  += clk-s2mps11.o
-> > > > >   obj-$(CONFIG_COMMON_CLK_SCMI)           += clk-scmi.o
-> > > > > diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
-> > > > > new file mode 100644
-> > > > > index 000000000000..72c74e344c1d
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/clk/clk-rp1.c
-> > > > > @@ -0,0 +1,1512 @@
-> > > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > ...
-> > > > > +
-> > > > > +static int rp1_pll_divider_set_rate(struct clk_hw *hw,
-> > > > > +                               unsigned long rate,
-> > > > > +                               unsigned long parent_rate)
-> > > > > +{
-> > > > > +   struct rp1_clk_desc *divider = container_of(hw, struct rp1_clk_desc, div.hw);
-> > > > > +   struct rp1_clockman *clockman = divider->clockman;
-> > > > > +   const struct rp1_pll_data *data = divider->data;
-> > > > > +   u32 div, sec;
-> > > > > +
-> > > > > +   div = DIV_ROUND_UP_ULL(parent_rate, rate);
-> > > > > +   div = clamp(div, 8u, 19u);
-> > > > > +
-> > > > > +   spin_lock(&clockman->regs_lock);
-> > > > > +   sec = clockman_read(clockman, data->ctrl_reg);
-> > > > > +   sec &= ~PLL_SEC_DIV_MASK;
-> > > > > +   sec |= FIELD_PREP(PLL_SEC_DIV_MASK, div);
-> > > > > +
-> > > > > +   /* Must keep the divider in reset to change the value. */
-> > > > > +   sec |= PLL_SEC_RST;
-> > > > > +   clockman_write(clockman, data->ctrl_reg, sec);
-> > > > > +
-> > > > > +   /* TODO: must sleep 10 pll vco cycles */
-> > > > Is it possible to implement this with some kind of xsleep or xdelay?
-> > >
-> > > I guess so... unless anyone knows a better method such as checking
-> > > for some undocumented register flag which reveals when the clock is stable
-> > > so it can be enabled (Phil, Dave, please feel free to step in with advice
-> > > if you have any), I think this line could solve the issue:
-> > >
-> > > ndelay (10 * div * NSEC_PER_SEC / parent_rate);
-> >
-> > I've checked with those involved in the hardware side.
-> > There's no hardware flag that the clock is stable, so the ndelay is
-> > probably the best option. The VCO can go as low as 600MHz, so the max
-> > delay would be 166ns.
->
-> Perfect, I'll use ndelay then. However, shouldn't this be 16ns max?
-> I think this formula should give a good estimate:
->
-> 10ULL * div * NSEC_PER_SEC / parent_rate
->
-> and has the advantage of not depending on hard coded values.
+On 4/15/25 11:56, Stefan Wahren wrote:
+> Since commit fbac2e7787ac ("clk: bcm: rpi: Allow the driver to
+> be probed by DT") the module alias isn't necessary anymore. So
+> we can drop it.
+> 
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
 
-I'd copied the number my colleague had given :-) He's now left for the
-Easter weekend, but I can hassle him again on Tuesday.
-
-I was expecting a computation rather than hard coded value, but was
-giving the maximum as significant delays aren't very friendly.
-The fact that we haven't noticed any issues with no delay at all
-implies to me that this delay may only be a level of polishing rather
-than anything critical. Although there is also the possibility that
-they haven't been reconfigured on a regular basis either.
-
-  Dave
-
-> >
-> > Thanks for your continuing work on this.
->
-> Thank you for checking.
->
-> Regards,
-> Andrea
->
-> >
-> >   Dave
-> >
-> > > Many thanks,
-> > > Andrea
-> > >
-> > > > > +   sec &= ~PLL_SEC_RST;
-> > > > > +   clockman_write(clockman, data->ctrl_reg, sec);
-> > > > > +   spin_unlock(&clockman->regs_lock);
-> > > > > +
-> > > > > +   return 0;
-> > > > > +}
-> > > > > +
-> > > > >
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
