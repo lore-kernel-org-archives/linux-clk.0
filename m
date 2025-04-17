@@ -1,230 +1,69 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from mail-24416.protonmail.ch (mail-24416.protonmail.ch [109.224.244.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E071E5B75;
-	Thu, 17 Apr 2025 06:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586A822B8A0
+	for <linux-clk@vger.kernel.org>; Thu, 17 Apr 2025 08:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744870841; cv=none; b=XkJ6GgzPgD5D2e2MXQ1MPiK+GG1nHmVAR9QV1zze0IGKrUMymaPwAOrICC0Jwvox6++iFrlwWrLD7E+69oxwZPkXnGZdY8WHhPZ3qWDd1kvUP6Fb1o/IyBoLMZ0kG6NTZ3qLtS+XvYNBs6yQ/JZx3r23jFDbfnAuOzvBXCyt3uw=
+	t=1744876850; cv=none; b=rqVJwMs5sp6ozbbbaTy62Lz2NKH8G+9vd3la0p5jAWA2yuQUktT1A+UEO9mbt+uSKu6wjdP0EQUQdfJw79oKpUB5IUiHV9iK0LRtZ3RcUlckHOeTOahgEb7nXzWDqUKq8rvfPI7Hl96ppug8VeVfaeE6zeT4lSyGBs5PcM077I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744870841; c=relaxed/simple;
-	bh=jWdWYL2xljv5vybxvl3qY4QI5KxWxjAA4vZnrXfmHks=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=HUdQkIuev1g9f/hqDijqhyLMItJqIeLDDrxFMJ/XD2QV8AxZ86pqYg5QfM9Bch+PgLRdPW4nmhNXgFhhtvH0GedTR2kkjE4CaHQvQUQkky+E7QC+837sGGPTTA58LWaDlPmxLg1sBbrKJ92nWdedXumsJbus80sqbByzMPStEx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=kKGEobHR; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1744876850; c=relaxed/simple;
+	bh=h3M8nRjVuDVmfNgSsps3kLl6ltkWfwPgNKiJY+3KBX4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TCDm7imsxDJhpD9yKXG8Jbm4w44fLijNNw1Us89khWqKwD57Vlz0rBtBrmrP2YfpQyQeYxRarYNVBQUf6lseWCFYjfR+UrC/EnZdpKidb32C3GFEg88XHzXKR+llBWGADpWHFobWy8pksbdBay87CgDCeGBQ6jmqKsu0zaRmyI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cKHTtMp6; arc=none smtp.client-ip=109.224.244.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="kKGEobHR"
-Received: from localhost (web.docker-mailserver_default [172.18.0.2])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 6B705BBAD2;
-	Thu, 17 Apr 2025 06:20:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1744870836;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vINGxXd1a/HvJqBAZg5qAK4jrccoMyLLJvCH80uIjEo=;
-	b=kKGEobHRSReKJ1RvO2JA11xM/eViImkOIcHP3mrAOubxN+UtDvrII4KRy90i6k5bPBDIxT
-	szymDQiM9mbUgeEAd+KC8kJj4nNTqMOtsXfegsmboLsNM9nF0NaFXgRLtF8reYVZ+X4j70
-	eWpZCm1qaIh+JSMAaxId0BwWa/iiFqEdOiJfPZY9M7Q7DTHYq8khJz7+GBYZmI/KXdUHej
-	GWRv94Oq5IAOHG+4U3UoYBhps/O6touiPhMBHdgavS8A24LcSel9RT68m+cRBoGYoD2Ojw
-	vqEltuN9kIh+Qe0hYbnsP36WWfGc0tbAdntaxQ7ro6DSZmtgp2I3ulVQygqZmQ==
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cKHTtMp6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=mo5kiaaxzzbulfrq7t524gy3u4.protonmail; t=1744876839; x=1745136039;
+	bh=h3M8nRjVuDVmfNgSsps3kLl6ltkWfwPgNKiJY+3KBX4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=cKHTtMp6Nl4+wN4xDfq6H98VrQLHDVlci6//HiRQ8BHNReXmvAtYVxy6OehvofENJ
+	 XTeujO7jO+x96iupXZRLSVnoKBT/Hg67LA5vJs7qZqlvyNeQpQmaUgPLni4pEJjuZS
+	 QqjkQV3np8Xffo2/rGJLQ5EzAINzQajp/MMx+Wef+3lgsygugsi6OMPXXsO/v5LJEv
+	 AMWyFlkS9bfbDfjNmUradbjMR4FZ49pqH5MzHxjsIN+OwpQGcPfGjhMfOURgf8SHFK
+	 65ijvFFbLOPZFmDolRsjMSBf8v+83Jr5J/4uTfTfdW2dP+qdb3wbu/8XhM/4aOk7pf
+	 ZDjlJxev5jWng==
+Date: Thu, 17 Apr 2025 08:00:33 +0000
+To: Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>, Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V10 11/15] rust: cpufreq: Add initial abstractions for cpufreq framework
+Message-ID: <D98R7PHH6TYX.2DUASKIXS5F8W@proton.me>
+In-Reply-To: <20250416093720.5nigxsirbvyiumcv@vireshk-i7>
+References: <cover.1744783509.git.viresh.kumar@linaro.org> <ac6854885277b23f100c6033fab51a080cdb70eb.1744783509.git.viresh.kumar@linaro.org> <Z_904KuBhKbO738_@pollux> <20250416093720.5nigxsirbvyiumcv@vireshk-i7>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: ae30b957bfe6b8526ed7c4f59e8cc1d7dfe15a54
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 17 Apr 2025 08:20:36 +0200
-From: barnabas.czeman@mainlining.org
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
- =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, Linus Walleij
- <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Srinivas Kandagatla
- <srinivas.kandagatla@linaro.org>, Joerg Roedel <joro@8bytes.org>, Will
- Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio
- <konradybcio@kernel.org>, Rob Clark <robdclark@gmail.com>, Sean Paul
- <sean@poorly.run>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Marijn Suijten
- <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, Simona
- Vetter <simona@ffwll.ch>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Dmitry Baryshkov
- <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, Dang Huynh
- <danct12@riseup.net>
-Subject: Re: [PATCH v4 4/6] arm64: dts: qcom: Add initial support for MSM8937
-In-Reply-To: <f85195a1-f55e-41ea-967d-b758014cba06@oss.qualcomm.com>
-References: <20250315-msm8937-v4-0-1f132e870a49@mainlining.org>
- <20250315-msm8937-v4-4-1f132e870a49@mainlining.org>
- <f85195a1-f55e-41ea-967d-b758014cba06@oss.qualcomm.com>
-Message-ID: <93ea35691deaa1ff38d229225e26cf41@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-04-14 22:55, Konrad Dybcio wrote:
-> On 3/15/25 3:57 PM, Barnabás Czémán wrote:
->> From: Dang Huynh <danct12@riseup.net>
->> 
->> Add initial support for MSM8937 SoC.
->> 
->> Signed-off-by: Dang Huynh <danct12@riseup.net>
->> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->> ---
-> 
-> [...]
-> 
->> +			power-domains = <&cpu_pd0>;
->> +			power-domain-names = "psci";
-> 
-> So CPU4-7 get "nicer" idle, but 0-3 don't?
-> 
-> [...]
-> 
->> +		cpu-map {
->> +			/* The MSM8937 has 2 cluster A53 setup. */
-> 
-> This comment seems superfluous
-> 
-> [...]
-> 
->> +	timer {
-> 
-> 'p' < 't', please sort top-level nodes alphabetically
-> 
-> [...]
-> 
->> +				wcss-wlan2-pins {
->> +					pins = "gpio76";
->> +					function = "wcss_wlan2";
->> +					drive-strength = <6>;
-> 
-> please unify this order (drive-strength before bias)
-> 
->> +					bias-pull-up;
->> +
->> +				};
-> 
-> Extra newline
-> 
-> [...]
-> 
->> +		gpu: gpu@1c00000 {
->> +			compatible = "qcom,adreno-505.0", "qcom,adreno";
->> +			reg = <0x1c00000 0x40000>;
->> +			reg-names = "kgsl_3d0_reg_memory";
->> +			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
->> +			interrupt-names = "kgsl_3d0_irq";
->> +			#cooling-cells = <2>;
->> +			clocks = <&gcc GCC_OXILI_GFX3D_CLK>,
->> +				<&gcc GCC_OXILI_AHB_CLK>,
->> +				<&gcc GCC_BIMC_GFX_CLK>,
->> +				<&gcc GCC_BIMC_GPU_CLK>,
->> +				<&gcc GCC_OXILI_TIMER_CLK>,
->> +				<&gcc GCC_OXILI_AON_CLK>;
-> 
-> Please align the <s
-> 
->> +			clock-names = "core",
->> +				      "iface",
->> +				      "mem_iface",
->> +				      "alt_mem_iface",
->> +				      "rbbmtimer",
->> +				      "alwayson";
->> +			operating-points-v2 = <&gpu_opp_table>;
->> +			power-domains = <&gcc OXILI_GX_GDSC>;
->> +
->> +			iommus = <&adreno_smmu 0>;
->> +
->> +			status = "disabled";
->> +
->> +			gpu_opp_table: opp-table {
->> +				compatible = "operating-points-v2";
->> +
->> +				opp-19200000 {
->> +					opp-hz = /bits/ 64 <19200000>;
->> +					opp-supported-hw = <0xFF>;
-> 
-> 0xff is overly broad, please document the existing known speed bins
-There are no speedbins for 8937 gpu. 8940 have but 8940 is not scope of 
-this series.
-> 
-> [...]
-> 
->> +		adreno_smmu: iommu@1c40000 {
->> +			compatible = "qcom,msm8996-smmu-v2",
->> +				     "qcom,adreno-smmu",
->> +				     "qcom,smmu-v2";
->> +			reg = <0x1c40000 0x10000>;
-> 
-> Does it work as-is, without iommu changes?
-> 
-> [...]
-> 
->> +	thermal_zones: thermal-zones {
->> +		aoss-thermal {
->> +			polling-delay-passive = <250>;
-> 
-> There are no passive trip points> +
->> +			thermal-sensors = <&tsens 0>;
->> +
->> +			trips {
->> +				aoss_alert0: trip-point0 {
->> +					temperature = <85000>;
->> +					hysteresis = <2000>;
->> +					type = "hot";
->> +				};
-> 
-> Please convert these to 'critical' instead
-> 
-> [...]
-> 
->> +		cpuss1-thermal {
->> +			polling-delay-passive = <250>;
-> 
-> You can drop polling-delay-passive under CPU tzones, as threshold
-> crossing is interrupt-driven
-> 
->> +
->> +			thermal-sensors = <&tsens 4>;
->> +
->> +			cooling-maps {
->> +				map0 {
->> +					trip = <&cpuss1_alert0>;
->> +					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
->> +							 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
->> +							 <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
->> +							 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
->> +				};
->> +			};
->> +
->> +			trips {
->> +				cpuss1_alert0: trip-point0 {
->> +					temperature = <75000>;
->> +					hysteresis = <2000>;
->> +					type = "passive";
->> +				};
->> +
->> +				cpuss1_alert1: trip-point1 {
->> +					temperature = <85000>;
->> +					hysteresis = <2000>;
->> +					type = "hot";
->> +				};
-> 
-> On newer platforms we rely on LMH to shut down the device if it
-> were to reach the junction temperature, but let's leave them here
-> as probably no one remembers for sure how reliable that is on these
-> older platforms and you're most likely not willing to test that
-> 
-> Konrad
+On Wed Apr 16, 2025 at 11:37 AM CEST, Viresh Kumar wrote:
+> On 16-04-25, 11:14, Danilo Krummrich wrote:
+>> On Wed, Apr 16, 2025 at 12:09:28PM +0530, Viresh Kumar wrote:
+>> > +#[allow(dead_code)]
+>>=20
+>> Why is this needed?
+>
+> Looks like leftover from a previous version. Same for the other one.
+>
+> I have also made a change to the cpufreq driver now to remove
+> `dead_code`, hope that is fine:
+
+In the future, instead of using `allow`, you can try to use `expect`. It
+will warn, when the code is used.
+
+---
+Cheers,
+Benno
+
