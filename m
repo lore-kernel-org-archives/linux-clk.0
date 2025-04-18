@@ -1,58 +1,58 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E98220C023;
-	Fri, 18 Apr 2025 15:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1608213E97;
+	Fri, 18 Apr 2025 16:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744989369; cv=none; b=dM903AjtAuafql3RWWdNt5oqgiQ9AqWDWdDTFWMNdyXKOftah+fyx8/zQ2i+4qQatXOo1nlJFYrauAaLF7DsHWKon58yL5DqOvMy+Oe8C+kw3QDjziStJbpdQhjMrcq7PYuDBcGNoImTaloROgn5qIj+0L6IiyWlZtM/1vv8y00=
+	t=1744993219; cv=none; b=Etej9utsAk86nN0tnJQzRwG3ijzD36o85xSDdH+Oq1e1urTwNWv1ac2YNYQGOkpzJ1LpaVkrwSrDqipKdFgIbwOmOm/OiE0s4/tLX/nZ3DS2aO1lQWfuaMTfyLGs0OuVv9Adr7b4ORcyJWSw0Hx81C2Jw3LRsU64dYLNacaxmxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744989369; c=relaxed/simple;
-	bh=XBdQwhHSS5Z6yVsPCdwDT0uzpGax7CTlgyETPqZUKFU=;
+	s=arc-20240116; t=1744993219; c=relaxed/simple;
+	bh=I2VhVRCgiNFctECKZ2afmPrwUUdZbmuKc1mrvxhU3Nw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ea+CgVHMdosyN1UiXtfdtKh/rSTGx18mN+G6vk5qXDTfahlVwC4GP79IlJYFruKGPPX2TkkSZbSUS4eoObgD8anxNoBNV620yJEdldDVVd55z50bxtPWnVY6byC5TEMQr6aqNUGj8R2ur4ptj3zQYsz9qZ2wS/yxWnhU7Qk064U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AKsHw/XS; arc=none smtp.client-ip=209.85.128.47
+	 To:Cc:Content-Type; b=Z5HeAyjGZlOEJe6CWl80AkQ4Ex//C0Liekf/WmGTCAbEi+qob63izkil7AKpm7c0x+fxyrz6EReOXU+GaUC7GVGey4BmOkBRPvgvoi4qdXkjecXh+6khCynp8YAyoHS64KNT0QMKXbT79fuQvzCtqnZ8zKVaUvWP5757PMLmzVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RBVJNQVz; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKsHw/XS"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso9963665e9.3;
-        Fri, 18 Apr 2025 08:16:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RBVJNQVz"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-39c13fa05ebso1346266f8f.0;
+        Fri, 18 Apr 2025 09:20:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744989366; x=1745594166; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744993216; x=1745598016; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NDQCZN7XtccKekE6ix7EFyl/aNyMmVJtvGUO/HQEWB4=;
-        b=AKsHw/XSwu6oQGVRnyYQ+5fLcN0VxEMeqKximLu5mWWt69pdtsLo0xp/HqZ5nB2DL4
-         aEVqhnf5kdvv/j5obdpa1b/x+ZVpZf6i7ic140NDIR4RBOFNrZczEkzFVl1m6bUm7owg
-         OhKzcxSz03uO7TR7mS6VvrJHhSZs10dmyQNyhdqx/k/LX1hH3AMDhBT8wFkhdZRmKcIZ
-         F4tP+CGkUd7VDRWZsQ5rvbUl5GcrwfgSyfVcQUb8aORTl5WThN7VE68chKPZfsAanSKf
-         W4iof2fLT4bqQ9UrrsV9lfKzDfLE+GLlJmSZMbdp5UgR3Mpgp8wbuLgTXI7+FyvL93q5
-         V8Iw==
+        bh=lg2nEDrkhUSorPX1TF01jndQPRc7b/tFFfdzWj6Yd3c=;
+        b=RBVJNQVzur7JnHaJEu6CdmOKGdsWQ9xpXc4VDFrbJ2WO2YyvxKtlOVF+q+vgh5iKN9
+         dQZH2n2ppgGpGKhY+GkikqhCUZAJSIymLYDeAL1yuusHCZTcBvWsH33HsOSRzW1B6VTQ
+         uRFygJYE/G5pQIMpGmNPEpOs/W7tSpVltvWhh7RTVVQsKbXGHIgF/iKJ5si+lJISCJ4V
+         u1rO6ZmbxLQMjB4mYCrRPBE3KtmU/cHTUp6U0ZJKV8AjIBHvyNVKI8pTbV/xx6VBZRsd
+         0wPEEE9iELtym5TWyI+mLs+rxp1JCU9S4IRhTT76gWNm2E62ZGc+M1NAJxp2X/ckAgo+
+         uf/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744989366; x=1745594166;
+        d=1e100.net; s=20230601; t=1744993216; x=1745598016;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NDQCZN7XtccKekE6ix7EFyl/aNyMmVJtvGUO/HQEWB4=;
-        b=iHV93pkn6pslpz/4gOllKDNItTWZKXTy4KqKQlAyhMJQ9EmRbR6tMcFLklVGtR79S0
-         GoRXx7EZnbt3yeI7PdOXE40Oe7PQb7SUecktbxaXC/udjzCKoe20v37bTOpnf/0eL2Uu
-         B/U9LNR2mv9EU7DPBVaLZ4J2eJOgD5am0V19XBCAodKDCm82S5yeTbJc56PbS1Yjx+1W
-         o07Hrak4T1r7y7Dc65kOa6iKMwkGGjkmnQ8pI2UL+/bAXtnJ0YYgR3x3dk/9MoBN6jRl
-         aVZGvuql4LjyNEM/8Snvx9WF5Kq+jC03hacCejyr2YzhwtDr2fz2WZXiZFkwkTVGwDtt
-         HvNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhfr0+us1WJdanDX96f+jo1cm/hgadcSn9DXMqXI1Yea6LcJvZurTuwPm2Mapf6/xrx2kc5gbRRGEO@vger.kernel.org, AJvYcCVmk+jTjnOSmIiiJOy/hQ7q4v62PZWe1sd7o+3tJNfjIa7DfMVySmUYhPK8f/9tPLDDXRWlBPmxq1xexTpDFlou+bY=@vger.kernel.org, AJvYcCWJIo5UtXsubxdVrhVwA8W926pwR7diicJdWfyB7DqmHu0xhCYYtwRBjbqrMeYLjxZoNG2IqtqU9ME9@vger.kernel.org, AJvYcCX6uKG5yJHVMcDDkekAPMPMegPob2eIy508AN2wSxCKmHNz7zsYANve6WI/wxm5jPyncwBQZR/u5fI96x75@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNFmp9sHyqC4Gedz6Wcei0h+LefV/kgsVlLZOhRPrSaJ+Sojc+
-	mTnTG3vQD7GrHuUNEEjO1G/twKUb6cXlsTVyqEqAXjeNoIgq2TchnqG0nNN5sLyg4RypLJJGCip
-	+EByjrynfUSnGlHxl268CP/e2aEA=
-X-Gm-Gg: ASbGncvzf+A4T9cUcgJphpTX/+2eyQ71nDowkUeyrWd+SbYYuhqLEswU3yh1BjF6bFg
-	4s8wzylI9CJWPbxmgbGb/fn5CS4BustGzB/0Tvl03ao0fmmWUU6U9ynI5I+b20g5gaIz27aZzJx
-	pLs6Bf035Er7b700HoLdbLRY6JjG4pf4uy3oQDpGdKsBtiUYhlerRV20g=
-X-Google-Smtp-Source: AGHT+IFmXeJc3YDRQKSCZof7kxPeLkVbKbIzjnIGX2JOiqECYlzFhqayvmJDanc/5uMaQBQmGnlreIjKMnRprAPvMCA=
-X-Received: by 2002:a05:600c:54c2:b0:43d:77c5:9c1a with SMTP id
- 5b1f17b1804b1-4406b928b57mr19545275e9.4.1744989365491; Fri, 18 Apr 2025
- 08:16:05 -0700 (PDT)
+        bh=lg2nEDrkhUSorPX1TF01jndQPRc7b/tFFfdzWj6Yd3c=;
+        b=FEJTg6f0s4rSCOiOyURX77yqADtekMX8dfnuH9qpvUjbk1uktRyDxaTBsKywvNiptj
+         x+F1Gpd1GxqpJufKsSmF70TVCK+he/j03DFKbYfc2G0XsEZ6Rptz6PgLDbJltLwTR/hs
+         mVYFjrG/LHlhs00tKDYhPAvEcDZMgQybUUtWi4LsLThGPDhNoSwFYKo+eOBTVIAjhNwo
+         jlAg7kcw5WjHnRcbQFzp8SJkKuiGetrBFEN2k1Wi3W2kP0A4OPXcLqpy2LzM4DVLMMz3
+         p6Wh4mTAwjGczG+YFMixN/6YS2Gs/MuxWHSG1xNt4xM5PBYQfafqIAm4U1kcte0DzV29
+         DQ9w==
+X-Forwarded-Encrypted: i=1; AJvYcCU+UFKBS+nKsxZmhJxQf9rRJdgFz1O6vfcaZ7nsbFtP5iWjjnuyluOjFiIXkfx4i2QWQCfULX5hgj83wIMi@vger.kernel.org, AJvYcCU93dT/yu+vkahfc0r5ZBR5YsILIVeP4UzcILwPyccjYVjWoaBCU0lKRVgROxSfAMMN/6zPQtDDRI3z7NHYC/jHPXM=@vger.kernel.org, AJvYcCUaKnzWEsERdNrzDWGw29OloUQlMGnHWDe4vnVADWvb3n7WHR3MKtib46pBE467Y0rs1qYAbG+YYrED@vger.kernel.org, AJvYcCXASRb3RQhJWFs7IaduokdfRNZ8DgRD5DgLkMbkrsNgDGiNEdlySKFlP8/6KYIA/b2lZrVp356PvXP6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDY5/trR5G1MPijDlOlLKiuknJ/a/58EfvNEja8Nie8y03nTKd
+	5l9m5G+aVcqihuHKcTaHy1y08ifsVdm06DlMLLEBGleCJBCqtXyO9YnpxuWwZg0g7pKvN0vysAQ
+	dox+iAeDFR8RZ1JxzTTeaPDGgsUg=
+X-Gm-Gg: ASbGncvMd6r+jO3OnPu/81cUodQ4Hgiq/bbrw1vn+5+FOJD0Sj3j40adr56QO9lcEYI
+	aTPlbAtX4FffXYf8YMJH5w5RFlJukkpb6YA17n3X8nEEhFvWuGRrW1m34KEP01D7L1Ekgdlj7Z8
+	dyvcWZvoHflgeeiLD1C0W0VpADbFCgf0rGAmx6r/Cfv7+4RUwQ2pl4e3Y=
+X-Google-Smtp-Source: AGHT+IEV8nQTdx71bXcsntH0008bnHpQrtXie8jNHCgnnEl5r+L0tBJL/zzaH6f3dMSiz8NUoJhMEwSZKKUKtHX5/lU=
+X-Received: by 2002:a05:6000:2913:b0:39e:f641:c43 with SMTP id
+ ffacd0b85a97d-39efbaf689bmr2593076f8f.53.1744993215679; Fri, 18 Apr 2025
+ 09:20:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,14 +60,13 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250408200916.93793-16-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVbcOvfW6YqW6S77J7htaJqWkeoGEhjkAWXvG5Fo1FMhA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVbcOvfW6YqW6S77J7htaJqWkeoGEhjkAWXvG5Fo1FMhA@mail.gmail.com>
+ <20250408200916.93793-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVjVEVh+dHKG_afZwyqsXwHj2FR7enHNrfuE9HJ0ELjEA@mail.gmail.com>
+In-Reply-To: <CAMuHMdVjVEVh+dHKG_afZwyqsXwHj2FR7enHNrfuE9HJ0ELjEA@mail.gmail.com>
 From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 18 Apr 2025 16:15:39 +0100
-X-Gm-Features: ATxdqUFKG7b-9fi5GPMwEzMprDzBzoNhSBw2axhPGgXuBYZm8tjPIyPxCGRg-3w
-Message-ID: <CA+V-a8uyj0myd=At83X+=MnQqTdkpo3tyADgOPuTL_FjzPZD8g@mail.gmail.com>
-Subject: Re: [PATCH v2 15/15] drm: renesas: rz-du: mipi_dsi: Add support for
- RZ/V2H(P) SoC
+Date: Fri, 18 Apr 2025 17:19:49 +0100
+X-Gm-Features: ATxdqUEv6B6wG3-yJDLbiPWcjxc0fko3GJZ2QYvMG7cMut2VaxrivVkJC_7m9sY
+Message-ID: <CA+V-a8sqpv=Gbj+TDgkayx9ya_YfYQ=-v0-9J+GDEjHzyWEbJg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/15] clk: renesas: rzv2h-cpg: Add support for DSI clocks
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
 	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
@@ -90,58 +89,154 @@ Content-Transfer-Encoding: quoted-printable
 
 Hi Geert,
 
-Thank you for the review.
-
-On Wed, Apr 16, 2025 at 10:35=E2=80=AFAM Geert Uytterhoeven
+On Wed, Apr 16, 2025 at 10:27=E2=80=AFAM Geert Uytterhoeven
 <geert@linux-m68k.org> wrote:
 >
 > Hi Prabhakar, Fabrizio,
+>
+> Thanks for your patch!
 >
 > On Tue, 8 Apr 2025 at 22:09, Prabhakar <prabhakar.csengg@gmail.com> wrote=
 :
 > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > Add DSI support for Renesas RZ/V2H(P) SoC.
+> > Add support for PLLDSI and PLLDSI divider clocks.
 > >
+> > The `renesas-rzv2h-dsi.h` header file is added to share the PLL divider
+> > algorithm between the CPG and DSI drivers.
+>
+> Please explain here why the DSI driver needs access to this algorithm.
+>
 > > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 > > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> Thanks for your patch!
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
 >
-> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> > @@ -70,6 +80,18 @@ struct rzg2l_mipi_dsi {
-> >         unsigned int num_data_lanes;
-> >         unsigned int lanes;
-> >         unsigned long mode_flags;
+> > @@ -196,6 +225,253 @@ static int rzv2h_cpg_pll_clk_enable(struct clk_hw=
+ *hw)
+> >         return ret;
+> >  }
+> >
+> > +static unsigned long rzv2h_cpg_plldsi_div_recalc_rate(struct clk_hw *h=
+w,
+> > +                                                     unsigned long par=
+ent_rate)
+> > +{
+> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
+> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
+> > +       struct ddiv ddiv =3D dsi_div->ddiv;
+> > +       u32 div;
 > > +
-> > +       struct rzv2h_dsi_mode_calc mode_calc;
-> > +       struct rzv2h_plldsi_parameters dsi_parameters;
+> > +       div =3D readl(priv->base + ddiv.offset);
+> > +       div >>=3D ddiv.shift;
+> > +       div &=3D ((2 << ddiv.width) - 1);
+>
+> Shouldn't that "2" be "1"?
+> GENMASK(ddiv.width - 1, 0), or even better: clk_div_mask(ddiv.width).
+>
+> > +
+> > +       div =3D dsi_div->dtable[div].div;
+> > +
+> > +       return DIV_ROUND_CLOSEST_ULL(parent_rate, div);
+> > +}
+> > +
+> > +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
+> > +                                              struct clk_rate_request =
+*req)
+> > +{
+> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
+> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
+> > +       struct rzv2h_plldsi_parameters *dsi_dividers =3D &priv->plldsi_=
+div_parameters;
+> > +       unsigned long long rate_mhz;
+>
+> u64?
+> Please use "millihz" instead of "mhz" everywhere, so it becomes very
+> clear this is really "mHz" and not "MHz".
+>
+> > +
+> > +       /*
+> > +        * Adjust the requested clock rate (`req->rate`) to ensure it f=
+alls within
+> > +        * the supported range of 5.44 MHz to 187.5 MHz.
+> > +        */
+> > +       req->rate =3D clamp(req->rate, 5440000UL, 187500000UL);
+> > +
+> > +       rate_mhz =3D req->rate * MILLI * 1ULL;
+> > +       if (rate_mhz =3D=3D dsi_dividers->error_mhz + dsi_dividers->fre=
+q_mhz)
+> > +               goto exit_determine_rate;
+> > +
+> > +       if (!rzv2h_dsi_get_pll_parameters_values(priv->dsi_limits,
+> > +                                                dsi_dividers, rate_mhz=
+)) {
+> > +               dev_err(priv->dev,
+> > +                       "failed to determine rate for req->rate: %lu\n"=
+,
+> > +                       req->rate);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +exit_determine_rate:
+> > +       req->best_parent_rate =3D req->rate * dsi_dividers->csdiv;
+> > +
+> > +       return 0;
 > > +};
 > > +
-> > +static const struct rzv2h_plldsi_div_limits rzv2h_plldsi_div_limits =
-=3D {
-> > +       .m =3D { .min =3D 64, .max =3D 1023 },
+> > +static int rzv2h_cpg_plldsi_div_set_rate(struct clk_hw *hw,
+> > +                                        unsigned long rate,
+> > +                                        unsigned long parent_rate)
+> > +{
+> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
+> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
+> > +       struct rzv2h_plldsi_parameters *dsi_dividers =3D &priv->plldsi_=
+div_parameters;
+> > +       struct ddiv ddiv =3D dsi_div->ddiv;
+> > +       const struct clk_div_table *clkt;
+> > +       u32 reg, shift, div;
+> > +
+> > +       div =3D dsi_dividers->csdiv;
+> > +       for (clkt =3D dsi_div->dtable; clkt->div; clkt++) {
+> > +               if (clkt->div =3D=3D div)
+> > +                       break;
+> > +       }
+> > +
+> > +       if (!clkt->div && !clkt->val)
+> > +               return -EINVAL;
 >
-> .max =3D 533?
+> No need to check clkt->dev.
 >
-> > +       .p =3D { .min =3D 1, .max =3D 4 },
-> > +       .s =3D { .min =3D 0, .max =3D 5 },
+> > +
+> > +       shift =3D ddiv.shift;
+> > +       reg =3D readl(priv->base + ddiv.offset);
+> > +       reg &=3D ~(GENMASK(shift + ddiv.width, shift));
+> > +
+> > +       writel(reg | (clkt->val << shift) |
+> > +              DDIV_DIVCTL_WEN(shift), priv->base + ddiv.offset);
+> > +
+> > +       return 0;
 >
-> .max =3D 6?
+> This function is very similar to the existing rzv2h_ddiv_set_rate().
+> If you can't re-use it as-is, please consider factoring out the common
+> part, or at least follow the same style of RMW-operation.
 >
-> > +       .k =3D { .min =3D -32768, .max =3D 32767 },
-> > +       .csdiv =3D { .min =3D 1, .max =3D 1 },
-> > +       .fvco =3D { .min =3D 1050 * MEGA, .max =3D 2100 * MEGA }
-> >  };
+> > +};
 >
-> Summarized: why do these values differ from the ones in the declaration
-> macro RZV2H_CPG_PLL_DSI_LIMITS(), i.e. why can't you use the latter?
 >
-There is a divider inside the DSI IP which is almost similar to PLL in
-the CPG. The divider limits for the DSI IP vary as compared to one in
-the CPG IP.
+> > +static long rzv2h_cpg_plldsi_round_rate(struct clk_hw *hw,
+> > +                                       unsigned long rate,
+> > +                                       unsigned long *parent_rate)
+> > +{
+> > +       return clamp(rate, 25000000UL, 375000000UL);
+>
+> This only rounds rates outside the range from 25 to 375 MHz.
+> What about rates between 25 and 375 MHz?
+>
+My intention was to clamp it and let the PLL DSI DIV determine_rate
+handle rejecting the rates if they dont get best dividers. Let's take
+this discussion to v3.
 
 Cheers,
 Prabhakar
