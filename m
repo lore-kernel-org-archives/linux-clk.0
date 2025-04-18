@@ -1,139 +1,147 @@
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05DA1E1E01
-	for <linux-clk@vger.kernel.org>; Fri, 18 Apr 2025 14:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E98220C023;
+	Fri, 18 Apr 2025 15:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744988059; cv=none; b=GFH3N2gnKHA4WwU4TQoQcqtBoS6zfIAEoVrYYOkCoG8LW0uko40VLaw3FoJsE6UWQxtSpKGZY36BSlSWGW1Gpdd6bxW2MQH+wFmrnWZEWul6ogrsPpLk3e2PDdBZ1ERtTAnRNVAXJ3DmXHcHUMQBcNPUW/BeVk1/s3B+23X9HHc=
+	t=1744989369; cv=none; b=dM903AjtAuafql3RWWdNt5oqgiQ9AqWDWdDTFWMNdyXKOftah+fyx8/zQ2i+4qQatXOo1nlJFYrauAaLF7DsHWKon58yL5DqOvMy+Oe8C+kw3QDjziStJbpdQhjMrcq7PYuDBcGNoImTaloROgn5qIj+0L6IiyWlZtM/1vv8y00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744988059; c=relaxed/simple;
-	bh=2wkF3pIspsBICKC2HLHsuT/AUDwllqmRkvg4pojS36g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fl078kChxTQx59/kTjpx9ncDRit7afXDE4Ea/TdfpMJXH9vXz2IqICbPUYmitU114uB7jrDweT//r642OaxQpYJ/EH2xBL+oaKFy3NQ+dhV9nd56LD/YoU6s2z50ytJV7QG7VzwymnFfIDzZeRNxp0FSPL1IlskXlVt52Vpkrdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=brB4WiJ7; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1744989369; c=relaxed/simple;
+	bh=XBdQwhHSS5Z6yVsPCdwDT0uzpGax7CTlgyETPqZUKFU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ea+CgVHMdosyN1UiXtfdtKh/rSTGx18mN+G6vk5qXDTfahlVwC4GP79IlJYFruKGPPX2TkkSZbSUS4eoObgD8anxNoBNV620yJEdldDVVd55z50bxtPWnVY6byC5TEMQr6aqNUGj8R2ur4ptj3zQYsz9qZ2wS/yxWnhU7Qk064U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AKsHw/XS; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="brB4WiJ7"
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-47690a4ec97so20005231cf.2
-        for <linux-clk@vger.kernel.org>; Fri, 18 Apr 2025 07:54:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKsHw/XS"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43d0c18e84eso9963665e9.3;
+        Fri, 18 Apr 2025 08:16:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1744988056; x=1745592856; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1744989366; x=1745594166; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eoPF+bCrpMBavT+34w02cPZ0ktfHw7A1w/wlErW18/c=;
-        b=brB4WiJ7ykQIKkjXrsw4pJSxQ0RzOI6JhiBwqVGN35guHjs8QLRsD2LRvqfQ19v3Ck
-         WssnAE6C+TEGUQaT6gO1f9c5tGmax0GoxeBzRzaPxJSOMiyZMXUcwpn5FKE0EwQ4Dedn
-         44XK/viYf2HaVWAV9kEv/vmzYIxk4SifolvdtSKUwXWqLyINHz3rQnEors1kMxhNtDWM
-         uIHkD8uLVnWF29+ZOEOPj+yguxceA0CFH6GViIw1N4klLtJRE8LZNtvp4BT871RYhVa5
-         vAn0Kcj+4HjNiVWNHihLekgL86hUTfIQyvONsWXSO8oaKF/cOsIzk4AKdv6uAsnXU81j
-         6REg==
+        bh=NDQCZN7XtccKekE6ix7EFyl/aNyMmVJtvGUO/HQEWB4=;
+        b=AKsHw/XSwu6oQGVRnyYQ+5fLcN0VxEMeqKximLu5mWWt69pdtsLo0xp/HqZ5nB2DL4
+         aEVqhnf5kdvv/j5obdpa1b/x+ZVpZf6i7ic140NDIR4RBOFNrZczEkzFVl1m6bUm7owg
+         OhKzcxSz03uO7TR7mS6VvrJHhSZs10dmyQNyhdqx/k/LX1hH3AMDhBT8wFkhdZRmKcIZ
+         F4tP+CGkUd7VDRWZsQ5rvbUl5GcrwfgSyfVcQUb8aORTl5WThN7VE68chKPZfsAanSKf
+         W4iof2fLT4bqQ9UrrsV9lfKzDfLE+GLlJmSZMbdp5UgR3Mpgp8wbuLgTXI7+FyvL93q5
+         V8Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744988056; x=1745592856;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1744989366; x=1745594166;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eoPF+bCrpMBavT+34w02cPZ0ktfHw7A1w/wlErW18/c=;
-        b=SvGwTxTDQWwXBQP9B8W3c7CdgGOh+tiS63r/nwtb63ICWZSQKIk91hlp6YwsnaQR5m
-         I+N3nRT9l2qGI+LV//QdxR5JwgiYL18JqcuFo7/gy20uHHhgaosyabKTaUr1p/9su+rt
-         sUj1V/7mE7qqSIqDBraZTRbA1568szYsRT0XPkCA6kXdGGd7ftLvqXmmwvipp6iK/Lz2
-         23gxjbkC/22Ani+r7kj1zYR5wS/aX6eejCO+1dG4Cg78Gk+CXtaYvLyiK1N/g6WQ06wT
-         h2QG7xPBFSIyilcfsQgblrpGGfwqGJIcRS14sVLLFxGfbXH6AY35XM0HBTwy3SpQZp0N
-         2LrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaxcXJVvnfmBnGx/Lekye3koRJVMAYw/QRtYt5rRHll6EvAHVEgq6YEcvYvTq3sEIeC7DNTXGnfy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCyzlX68eeG3F/hOKXZIhPLW8UeHPD/rqira/AQU/pmq9rd27P
-	Y16Ug8fOjNqTAxjM09CQy59jIYzODfPVg3Dk+SbpkR5i/QIE4pia4aylkxyhMRI=
-X-Gm-Gg: ASbGncv/TmvIPlKAXy1fvjgizr6kGzGHnU6hmXXK/8cCitFx6mycydf4mgsqayQqziy
-	EmojwSazVoU1Q65BPIGcAvYes6AWWfIA18fgN9lIeNtLWcXxMiFnuHQS2LxQaZ9CSR8/j6P0zP1
-	2vzmwCxcNrr2EZK5vTMgBqEqxG5c+rTQq28gMkV5AtxYqN9T2rWpD83MDVWNaeR6iVdlUO8+mC4
-	7+YWaHPzrZsWeb02YRhEdYLv0g9LY+QCprGR4UHb4z6eftVtfAgMfgy/wX8d3g6+OSrhkImYDE4
-	IRE33uIA7CpMlgOMWVJH4P5AXPyb5u+t7mBYcDi0GG68AuiW6XzXz8BlLO5ToalNDfZ38GEkJrg
-	7Ec2apzroY7gyog==
-X-Google-Smtp-Source: AGHT+IHNVbMfjIlfo9PHEWLdLnnlwobHS10wrAnQS7/2BfmnC2z46vdeRRFOkin5pnaA1y6blfUwPA==
-X-Received: by 2002:ac8:5fc6:0:b0:479:be67:3bd2 with SMTP id d75a77b69052e-47aec3cb8f4mr50692481cf.23.1744988055824;
-        Fri, 18 Apr 2025 07:54:15 -0700 (PDT)
-Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47ae9c16ddesm11329201cf.3.2025.04.18.07.54.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 07:54:15 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: p.zabel@pengutronix.de,
-	dlan@gentoo.org,
-	heylenay@4d2.org,
-	guodong@riscstar.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	spacemit@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 7/7] riscv: dts: spacemit: add reset support for the K1 SoC
-Date: Fri, 18 Apr 2025 09:53:59 -0500
-Message-ID: <20250418145401.2603648-8-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250418145401.2603648-1-elder@riscstar.com>
-References: <20250418145401.2603648-1-elder@riscstar.com>
+        bh=NDQCZN7XtccKekE6ix7EFyl/aNyMmVJtvGUO/HQEWB4=;
+        b=iHV93pkn6pslpz/4gOllKDNItTWZKXTy4KqKQlAyhMJQ9EmRbR6tMcFLklVGtR79S0
+         GoRXx7EZnbt3yeI7PdOXE40Oe7PQb7SUecktbxaXC/udjzCKoe20v37bTOpnf/0eL2Uu
+         B/U9LNR2mv9EU7DPBVaLZ4J2eJOgD5am0V19XBCAodKDCm82S5yeTbJc56PbS1Yjx+1W
+         o07Hrak4T1r7y7Dc65kOa6iKMwkGGjkmnQ8pI2UL+/bAXtnJ0YYgR3x3dk/9MoBN6jRl
+         aVZGvuql4LjyNEM/8Snvx9WF5Kq+jC03hacCejyr2YzhwtDr2fz2WZXiZFkwkTVGwDtt
+         HvNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhfr0+us1WJdanDX96f+jo1cm/hgadcSn9DXMqXI1Yea6LcJvZurTuwPm2Mapf6/xrx2kc5gbRRGEO@vger.kernel.org, AJvYcCVmk+jTjnOSmIiiJOy/hQ7q4v62PZWe1sd7o+3tJNfjIa7DfMVySmUYhPK8f/9tPLDDXRWlBPmxq1xexTpDFlou+bY=@vger.kernel.org, AJvYcCWJIo5UtXsubxdVrhVwA8W926pwR7diicJdWfyB7DqmHu0xhCYYtwRBjbqrMeYLjxZoNG2IqtqU9ME9@vger.kernel.org, AJvYcCX6uKG5yJHVMcDDkekAPMPMegPob2eIy508AN2wSxCKmHNz7zsYANve6WI/wxm5jPyncwBQZR/u5fI96x75@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNFmp9sHyqC4Gedz6Wcei0h+LefV/kgsVlLZOhRPrSaJ+Sojc+
+	mTnTG3vQD7GrHuUNEEjO1G/twKUb6cXlsTVyqEqAXjeNoIgq2TchnqG0nNN5sLyg4RypLJJGCip
+	+EByjrynfUSnGlHxl268CP/e2aEA=
+X-Gm-Gg: ASbGncvzf+A4T9cUcgJphpTX/+2eyQ71nDowkUeyrWd+SbYYuhqLEswU3yh1BjF6bFg
+	4s8wzylI9CJWPbxmgbGb/fn5CS4BustGzB/0Tvl03ao0fmmWUU6U9ynI5I+b20g5gaIz27aZzJx
+	pLs6Bf035Er7b700HoLdbLRY6JjG4pf4uy3oQDpGdKsBtiUYhlerRV20g=
+X-Google-Smtp-Source: AGHT+IFmXeJc3YDRQKSCZof7kxPeLkVbKbIzjnIGX2JOiqECYlzFhqayvmJDanc/5uMaQBQmGnlreIjKMnRprAPvMCA=
+X-Received: by 2002:a05:600c:54c2:b0:43d:77c5:9c1a with SMTP id
+ 5b1f17b1804b1-4406b928b57mr19545275e9.4.1744989365491; Fri, 18 Apr 2025
+ 08:16:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250408200916.93793-16-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVbcOvfW6YqW6S77J7htaJqWkeoGEhjkAWXvG5Fo1FMhA@mail.gmail.com>
+In-Reply-To: <CAMuHMdVbcOvfW6YqW6S77J7htaJqWkeoGEhjkAWXvG5Fo1FMhA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 18 Apr 2025 16:15:39 +0100
+X-Gm-Features: ATxdqUFKG7b-9fi5GPMwEzMprDzBzoNhSBw2axhPGgXuBYZm8tjPIyPxCGRg-3w
+Message-ID: <CA+V-a8uyj0myd=At83X+=MnQqTdkpo3tyADgOPuTL_FjzPZD8g@mail.gmail.com>
+Subject: Re: [PATCH v2 15/15] drm: renesas: rz-du: mipi_dsi: Add support for
+ RZ/V2H(P) SoC
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Define syscon nodes for the RCPU, RCPU2, and APBC2 SpacemiT CCUS, which
-currently support resets but not clocks in the SpacemiT K1.
+Hi Geert,
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Thank you for the review.
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index 584f0dbc60f5b..491ab891788b8 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -346,6 +346,18 @@ soc {
- 		dma-noncoherent;
- 		ranges;
- 
-+		syscon_rcpu: system-controller@c0880000 {
-+			compatible = "spacemit,k1-syscon-rcpu";
-+			reg = <0x0 0xc0880000 0x0 0x2048>;
-+			#reset-cells = <1>;
-+		};
-+
-+		syscon_rcpu2: system-controller@c0888000 {
-+			compatible = "spacemit,k1-syscon-rcpu2";
-+			reg = <0x0 0xc0888000 0x0 0x28>;
-+			#reset-cells = <1>;
-+		};
-+
- 		syscon_apbc: system-control@d4015000 {
- 			compatible = "spacemit,k1-syscon-apbc";
- 			reg = <0x0 0xd4015000 0x0 0x1000>;
-@@ -514,6 +526,12 @@ clint: timer@e4000000 {
- 					      <&cpu7_intc 3>, <&cpu7_intc 7>;
- 		};
- 
-+		syscon_apbc2: system-controller@f0610000 {
-+			compatible = "spacemit,k1-syscon-apbc2";
-+			reg = <0x0 0xf0610000 0x0 0x20>;
-+			#reset-cells = <1>;
-+		};
-+
- 		sec_uart1: serial@f0612000 {
- 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
- 			reg = <0x0 0xf0612000 0x0 0x100>;
--- 
-2.45.2
+On Wed, Apr 16, 2025 at 10:35=E2=80=AFAM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar, Fabrizio,
+>
+> On Tue, 8 Apr 2025 at 22:09, Prabhakar <prabhakar.csengg@gmail.com> wrote=
+:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add DSI support for Renesas RZ/V2H(P) SoC.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -70,6 +80,18 @@ struct rzg2l_mipi_dsi {
+> >         unsigned int num_data_lanes;
+> >         unsigned int lanes;
+> >         unsigned long mode_flags;
+> > +
+> > +       struct rzv2h_dsi_mode_calc mode_calc;
+> > +       struct rzv2h_plldsi_parameters dsi_parameters;
+> > +};
+> > +
+> > +static const struct rzv2h_plldsi_div_limits rzv2h_plldsi_div_limits =
+=3D {
+> > +       .m =3D { .min =3D 64, .max =3D 1023 },
+>
+> .max =3D 533?
+>
+> > +       .p =3D { .min =3D 1, .max =3D 4 },
+> > +       .s =3D { .min =3D 0, .max =3D 5 },
+>
+> .max =3D 6?
+>
+> > +       .k =3D { .min =3D -32768, .max =3D 32767 },
+> > +       .csdiv =3D { .min =3D 1, .max =3D 1 },
+> > +       .fvco =3D { .min =3D 1050 * MEGA, .max =3D 2100 * MEGA }
+> >  };
+>
+> Summarized: why do these values differ from the ones in the declaration
+> macro RZV2H_CPG_PLL_DSI_LIMITS(), i.e. why can't you use the latter?
+>
+There is a divider inside the DSI IP which is almost similar to PLL in
+the CPG. The divider limits for the DSI IP vary as compared to one in
+the CPG IP.
 
+Cheers,
+Prabhakar
