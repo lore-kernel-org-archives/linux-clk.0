@@ -1,428 +1,265 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00C61519AC;
-	Fri, 18 Apr 2025 14:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744985453; cv=none; b=ldJ85/8rSeEme/wuemi4eHSthkaP0PzRUB3Tz4mf0Y3VIYmkGI2FwQELNt3sFRnqvbU/ufu5ub1fU6y9DdZBeznHYjwWA3tWvqpxdBdKSu5W9yfjDEaqIw+nyj0RPVx2MUEL1c9gGPAro3sOA1UlaRwn+GXaSCkc5dLN0lR/dw8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744985453; c=relaxed/simple;
-	bh=7Zc6jS31j2u0AY1itNyFpEOaVwW3TojAitpGqvDF6eI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d/7AjPt2dVXeZlFcer4gzIEFnJgr+h3CcZVx2YdDfajzQht2yeiEirBQNiTr7Kry+DvvubCWvfgN75AnG5KXWl8YHVhiCmB+fT6IcaSbMW/S6nG82HBYKFOevSZVAMh8+9x5Wg867O86LEkCjoDM/GjD5fiw8pdKXwkHiSGONRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xtg1pvRN; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C4B148316;
+	Fri, 18 Apr 2025 14:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744986032; cv=pass; b=Cq6aUb/0M72RVPeIR/d/Oy7zuGSvrEpm2/okit5lcIoUwTf6jP0vj+z2u9tttm9jjQqdMqEBQVXN7k1zEE/nfzuAGhM8fOcRECGQByzCw88YK1AlPzTpO+HVVidRifUR/4hkcw/lPFAu0AvUq9SvKDnBFGns0GKjqVPtUwPpKqc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744986032; c=relaxed/simple;
+	bh=1V4cYrKt5Rb/SQIRggNYD2Z5Asx3L3cyi1Ax/5szR7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z3+9637U8pfQKiJpGwOWYpaPXhgFOezll36KnB8zNyKN4v0VSbf0sxYtsdYgOZtfF7zjYkQLFoqshMQocox2w+zM0+2WmGuWOe1kzBx/j3Mvn6RSsKivJsDNv4yVjDjQCsAygDyux/2apyBXKFQqGr6QSGZjimBoTzkLRWuscpw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=AGhv6Xv9; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xtg1pvRN"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-39d83782ef6so2063602f8f.0;
-        Fri, 18 Apr 2025 07:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744985450; x=1745590250; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/+4iqs0h57Kp8/rbjBz5taHDUwf5MhBA1y6Qwn3HIfw=;
-        b=Xtg1pvRN7KYyig9jA88MjXJViAj4KulJizakBPUsWqDfBqBUXLZq3N8FjJcs8VhIcn
-         FEo6HQCCg/jWouzAfbaFZm5OwS8dmofFMpv5obR3aKKT07eowMUCXwWMBKAfJNRjSMco
-         V2F4MxPT4StV61xAeA9JeszA6VD3zQIOERI6wwDCP5c3u6w1mlV1pCX5p36fN+c++QbC
-         SIHWgoapW/WgQ1vC83Y6+jQ5pEE336DbAxLJIzojCCcojZmmYykLWUb6MZdONlxyvtzF
-         M2vlkLlwPLVsNrIwy4NqpjKle/9SHvSkxApcaV8uYZiNhzB7adH5uKOI8hNqM0tTIana
-         YoGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744985450; x=1745590250;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/+4iqs0h57Kp8/rbjBz5taHDUwf5MhBA1y6Qwn3HIfw=;
-        b=j81Sa+KVLrFkKKcFLAJ+2DYsBJJabcx1//5hiBLEtBZqv6w8GpLOX0aYc4VL52zJfe
-         bgDYb5sEdbwjzg+NJQC8ISQQPAjiNQqPnfHpTn0TrrfxiBTBHEL6DN8LRmewL+PPvday
-         9czvfX89te9LzUSkjWiMvbBx8yTw+KWWVx1EAUCRDOIliJvpo2AqIJukJEaAVmQT2NU8
-         dXfD0cWiZRvtutrpl40d6mcnwktFrVPbeYuKAwlw3KCno3xU6up1XPCgiO+hzaW29UmE
-         d4MnakSBUpeRqAAYhj7RV8CBmHf+y0loSqk8Okjn8qXTSAIZD9FnDpxCVmaIbDO4ocUl
-         miTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjSE33S5h/hk/lu1nNUphfynkBnZOZV+oZujS8MDliZckLakNTm11sOuua5EnMAJJ0Gue6TvGuFHBzgnu3@vger.kernel.org, AJvYcCVluYwvZaYz8NFnP4pZoH07Wfj5EKQ12oZXjDtDiCeqG4lXmDGkH8l7nFWT+G7CVJTxMM9Ejr3muX65mK46GHGvs1g=@vger.kernel.org, AJvYcCX62fnQ8EY7mbn2fXVb2p8SYsdsv8sF8lhbUhoZwZ0XxeNbaAnFXtnTOlZkS9PhZYCpyBwFk/WthrZN@vger.kernel.org, AJvYcCXBzJy2aVWu58g1zs2lLHbu/vtoNEsQ+VY2YzcEGIjwIdbM7g5DbJSfCsNktsYJTJ1xnkHuUTqxXAWw@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFfKVGT09O3e10KmLy7ckP/2wMr/srVGdCW78V2K14FP6qFgEF
-	mZh4tVaFrGvV/RgEycTFmDKNHTDf2g5T0L6oGmGGxJCen9+yykI8kuvUHJFDz/FtnjPoP9BrTok
-	uOAei7g5+aGgXrO+KPjvFpAucL4I=
-X-Gm-Gg: ASbGnct5W49KgaHlMzkKH2MxsQP7eCZWBAqfONsdVC8hu3N47QQAfM9tg+IYPSgOsxN
-	AWmmazFLCNdSmSXbjQQxygU1BeCtkd85Uh38TMnahkwVqt9v3ht1kgjvqB8fZJ7ZwgVHaYwQEvi
-	vlhz8z//O48BtVnhGaksOekxNJtiybJQSqXimdK/5l/lsUj/G6dusxWB16nHJxgkDFow==
-X-Google-Smtp-Source: AGHT+IHl9tpgA/X6cm1KcAI4eONzkSnegsGij5ld5XhyA6vN+eGT7ytBy/PX8eLr/WPj2yiqupDHgYfSrkeaXPBrFCE=
-X-Received: by 2002:a05:6000:2481:b0:390:e535:8750 with SMTP id
- ffacd0b85a97d-39efbd60d22mr2430124f8f.9.1744985449778; Fri, 18 Apr 2025
- 07:10:49 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="AGhv6Xv9"
+ARC-Seal: i=1; a=rsa-sha256; t=1744986009; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=RtrXWpQpoMrsGyEMRcdbVykyTqFwYL3AGPnE6oGSiDewHzZgtWWIjxb8m1KgomzlyilISs2HH15X696nvGurICVNczPa6O/97pvKkAKHcKZXBvr0fXpQimI9I/79Y+3KWXDGXxPxGwmXSKI8oYi9fRITasPCz56upeWoq1Yo+eA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744986009; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=J9B+xErGQKJgJ0GqczarSJBeszmh3Cmzf0o0QIoMC5c=; 
+	b=cMHS14dvawEzQWons6Ph/HMGMR8/GKNDy5Rm3Bi21zW4QuoTHWlvmYMeuDdtNAIGFa/M4e/AkpjWNFUW4M9U+80NVAQCBcKoK/BylyO51etDS5XV62NwRDt5naIB1slxvsKYN02VzEpG1y2qnmOZ35uIJARceFVpyxWUGcsjB58=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744986009;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=J9B+xErGQKJgJ0GqczarSJBeszmh3Cmzf0o0QIoMC5c=;
+	b=AGhv6Xv9iFtCipH5FMMwbP6HWrANv5caSURWUEGEv8nqyEe9G/Esxdm2FDnhwqPd
+	AmOobZS+h2aCX/C6xwzB7C3j3q234qgcCpF/lnIqQvCz5Oy9g0WKkWo4XMHSve8sjcE
+	B8wrb79Z9mxXIPkFpBZRCWIkZtJo11abq+EHhu/M=
+Received: by mx.zohomail.com with SMTPS id 1744986002357182.528426557427;
+	Fri, 18 Apr 2025 07:20:02 -0700 (PDT)
+Message-ID: <baae0cce-979d-4e4d-aacc-73387ed7d8a8@zohomail.com>
+Date: Fri, 18 Apr 2025 22:19:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250408200916.93793-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250408200916.93793-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVjVEVh+dHKG_afZwyqsXwHj2FR7enHNrfuE9HJ0ELjEA@mail.gmail.com>
-In-Reply-To: <CAMuHMdVjVEVh+dHKG_afZwyqsXwHj2FR7enHNrfuE9HJ0ELjEA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 18 Apr 2025 15:10:23 +0100
-X-Gm-Features: ATxdqUGhurULd5jkQDU7jJeZchOr269Y4azGw9tpFZslMsIVw--s37FvGHYrIio
-Message-ID: <CA+V-a8uLA0urp8hPkUmHqNyH=n1Z2fkMnroc3qw=gq06kHUWfQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/15] clk: renesas: rzv2h-cpg: Add support for DSI clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] clk: canaan: Add clock driver for Canaan K230
+To: Troy Mitchell <troymitchell988@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>
+References: <20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com>
+ <20250415-b4-k230-clk-v6-2-7fd89f427250@zohomail.com>
+ <aAJGCDmqNoSWrwXw@troy-wujie14-pro>
+From: Xukai Wang <kingxukai@zohomail.com>
+Content-Language: en-US
+In-Reply-To: <aAJGCDmqNoSWrwXw@troy-wujie14-pro>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr08011227d656c8f955eef877984aa3c30000194a8cf4a0238f4acea727dff6676dd24307b9301560b74f2d:zu080112275d9e1c64a09c000aacb0f9bb0000330522e1da41d81750df9c78bd5cc5ffb241289e3acb6fae4b:rf0801122c2a500e82837e5d7e05e4ba23000054558afdc724201e871132d566febc33c48bb9ef3ba3aec389b91cc34077:ZohoMail
+X-ZohoMailClient: External
 
-Hi Geert,
 
-Thank you for the review.
+On 2025/4/18 20:31, Troy Mitchell wrote:
+> On Tue, Apr 15, 2025 at 10:25:12PM +0800, Xukai Wang wrote:
+>> +	switch (rate_cfg->method) {
+>> +	/*
+>> +	 * K230_MUL: div_mask+1/div_max...
+>> +	 * K230_DIV: mul_max/div_mask+1
+>> +	 * K230_MUL_DIV: mul_mask/div_mask...
+>> +	 */
+>> +	case K230_MUL:
+>> +		div = rate_cfg->rate_div_max;
+>> +		mul = (readl(rate_cfg->rate_reg) >> rate_cfg->rate_div_shift)
+>> +			& rate_cfg->rate_div_mask;
+>> +		mul++;
+>> +		break;
+>> +	case K230_DIV:
+>> +		mul = rate_cfg->rate_mul_max;
+>> +		div = (readl(rate_cfg->rate_reg) >> rate_cfg->rate_div_shift)
+>> +			& rate_cfg->rate_div_mask;
+>> +		div++;
+>> +		break;
+>> +	case K230_MUL_DIV:
+>> +		if (!rate_cfg_c) {
+>> +			mul = (readl(rate_cfg->rate_reg) >> rate_cfg->rate_mul_shift)
+>> +				& rate_cfg->rate_mul_mask;
+>> +			div = (readl(rate_cfg->rate_reg) >> rate_cfg->rate_div_shift)
+>> +				& rate_cfg->rate_div_mask;
+>> +		} else {
+>> +			mul = (readl(rate_cfg_c->rate_reg_c) >> rate_cfg_c->rate_mul_shift_c)
+>> +				& rate_cfg_c->rate_mul_mask_c;
+>> +			div = (readl(rate_cfg->rate_reg) >> rate_cfg->rate_div_shift)
+>> +				& rate_cfg->rate_div_mask;
+>> +		}
+>> +		break;
+> Should we report an error in other cases?
 
-On Wed, Apr 16, 2025 at 10:27=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar, Fabrizio,
->
-> Thanks for your patch!
->
-> On Tue, 8 Apr 2025 at 22:09, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add support for PLLDSI and PLLDSI divider clocks.
-> >
-> > The `renesas-rzv2h-dsi.h` header file is added to share the PLL divider
-> > algorithm between the CPG and DSI drivers.
->
-> Please explain here why the DSI driver needs access to this algorithm.
->
-> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
->
-> > @@ -196,6 +225,253 @@ static int rzv2h_cpg_pll_clk_enable(struct clk_hw=
- *hw)
-> >         return ret;
-> >  }
-> >
-> > +static unsigned long rzv2h_cpg_plldsi_div_recalc_rate(struct clk_hw *h=
-w,
-> > +                                                     unsigned long par=
-ent_rate)
-> > +{
-> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
-> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
-> > +       struct ddiv ddiv =3D dsi_div->ddiv;
-> > +       u32 div;
-> > +
-> > +       div =3D readl(priv->base + ddiv.offset);
-> > +       div >>=3D ddiv.shift;
-> > +       div &=3D ((2 << ddiv.width) - 1);
->
-> Shouldn't that "2" be "1"?
-> GENMASK(ddiv.width - 1, 0), or even better: clk_div_mask(ddiv.width).
->
-Agreed, I'll switch to clk_div_mask(ddiv.width)
+This is impossible. The compiler will warn if an enum case is missing.[1]
 
-> > +
-> > +       div =3D dsi_div->dtable[div].div;
-> > +
-> > +       return DIV_ROUND_CLOSEST_ULL(parent_rate, div);
-> > +}
-> > +
-> > +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
-> > +                                              struct clk_rate_request =
-*req)
-> > +{
-> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
-> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
-> > +       struct rzv2h_plldsi_parameters *dsi_dividers =3D &priv->plldsi_=
-div_parameters;
-> > +       unsigned long long rate_mhz;
->
-> u64?
-OK.
+>> +	}
+>> +
+>> +	return mul_u64_u32_div(parent_rate, mul, div);
+>> +}
+>> +
+>> +static int k230_clk_find_approximate(struct k230_clk *clk,
+>> +				     u32 mul_min,
+>> +				     u32 mul_max,
+>> +				     u32 div_min,
+>> +				     u32 div_max,
+>> +				     enum k230_clk_div_type method,
+>> +				     unsigned long rate,
+>> +				     unsigned long parent_rate,
+>> +				     u32 *div,
+>> +				     u32 *mul)
+>> +{
+>> +	long abs_min;
+>> +	long abs_current;
+>> +	long perfect_divide;
+>> +	struct k230_clk_cfg *cfg = k230_clk_cfgs[clk->id];
+>> +	struct k230_clk_rate_cfg *rate_cfg = cfg->rate_cfg;
+>> +
+>> +	const u32 codec_clk[9] = {
+>> +		2048000,
+>> +		3072000,
+>> +		4096000,
+>> +		6144000,
+>> +		8192000,
+>> +		11289600,
+>> +		12288000,
+>> +		24576000,
+>> +		49152000
+>> +	};
+>> +
+>> +	const u32 codec_div[9][2] = {
+>> +		{3125, 16},
+>> +		{3125, 24},
+>> +		{3125, 32},
+>> +		{3125, 48},
+>> +		{3125, 64},
+>> +		{15625, 441},
+>> +		{3125, 96},
+>> +		{3125, 192},
+>> +		{3125, 384}
+>> +	};
+>> +
+>> +	const u32 pdm_clk[20] = {
+>> +		128000,
+>> +		192000,
+>> +		256000,
+>> +		384000,
+>> +		512000,
+>> +		768000,
+>> +		1024000,
+>> +		1411200,
+>> +		1536000,
+>> +		2048000,
+>> +		2822400,
+>> +		3072000,
+>> +		4096000,
+>> +		5644800,
+>> +		6144000,
+>> +		8192000,
+>> +		11289600,
+>> +		12288000,
+>> +		24576000,
+>> +		49152000
+>> +	};
+>> +
+>> +	const u32 pdm_div[20][2] = {
+>> +		{3125, 1},
+>> +		{6250, 3},
+>> +		{3125, 2},
+>> +		{3125, 3},
+>> +		{3125, 4},
+>> +		{3125, 6},
+>> +		{3125, 8},
+>> +		{125000, 441},
+>> +		{3125, 12},
+>> +		{3125, 16},
+>> +		{62500, 441},
+>> +		{3125, 24},
+>> +		{3125, 32},
+>> +		{31250, 441},
+>> +		{3125, 48},
+>> +		{3125, 64},
+>> +		{15625, 441},
+>> +		{3125, 96},
+>> +		{3125, 192},
+>> +		{3125, 384}
+>> +	};
+>> +
+>> +	switch (method) {
+>> +	/* only mul can be changeable 1/12,2/12,3/12...*/
+>> +	case K230_MUL:
+>> +		perfect_divide = (long)((parent_rate * 1000) / rate);
+>> +		abs_min = abs(perfect_divide -
+>> +			     (long)(((long)div_max * 1000) / (long)mul_min));
+>> +		*mul = mul_min;
+>> +
+>> +		for (u32 i = mul_min + 1; i <= mul_max; i++) {
+>> +			abs_current = abs(perfect_divide -
+>> +					(long)((long)((long)div_max * 1000) / (long)i));
+>> +			if (abs_min > abs_current) {
+>> +				abs_min = abs_current;
+>> +				*mul = i;
+>> +			}
+>> +		}
+>> +
+>> +		*div = div_max;
+>> +		break;
+>> +	/* only div can be changeable, 1/1,1/2,1/3...*/
+>> +	case K230_DIV:
+>> +		perfect_divide = (long)((parent_rate * 1000) / rate);
+>> +		abs_min = abs(perfect_divide -
+>> +			     (long)(((long)div_min * 1000) / (long)mul_max));
+>> +		*div = div_min;
+>> +
+>> +		for (u32 i = div_min + 1; i <= div_max; i++) {
+>> +			abs_current = abs(perfect_divide -
+>> +					 (long)((long)((long)i * 1000) / (long)mul_max));
+>> +			if (abs_min > abs_current) {
+>> +				abs_min = abs_current;
+>> +				*div = i;
+>> +			}
+>> +		}
+>> +
+>> +		*mul = mul_max;
+>> +		break;
+>> +	/* mul and div can be changeable. */
+>> +	case K230_MUL_DIV:
+>> +		if (rate_cfg->rate_reg_off == K230_CLK_CODEC_ADC_MCLKDIV_OFFSET ||
+>> +		    rate_cfg->rate_reg_off == K230_CLK_CODEC_DAC_MCLKDIV_OFFSET) {
+>> +			for (u32 j = 0; j < 9; j++) {
+>> +				if (0 == (rate - codec_clk[j])) {
+>> +					*div = codec_div[j][0];
+>> +					*mul = codec_div[j][1];
+>> +				}
+>> +			}
+>> +		} else if (rate_cfg->rate_reg_off == K230_CLK_AUDIO_CLKDIV_OFFSET ||
+>> +			   rate_cfg->rate_reg_off == K230_CLK_PDM_CLKDIV_OFFSET) {
+>> +			for (u32 j = 0; j < 20; j++) {
+>> +				if (0 == (rate - pdm_clk[j])) {
+>>
+>> +					*div = pdm_div[j][0];
+>> +					*mul = pdm_div[j][1];
+>> +				}
+>> +			}
+>> +		} else {
+>> +			return -EINVAL;
+>> +		}
+>> +		break;
+> Should we report an error when other case?
 
-> Please use "millihz" instead of "mhz" everywhere, so it becomes very
-> clear this is really "mHz" and not "MHz".
->
-OK.
+The default case is impossible.
+The compiler will warn if an enum case is missing.
+And Stephen Boyd suggested to remove the default case[1].
+Link: https://lore.kernel.org/all/3fb73691f50e599c361dddaff08d3af5.sboyd@kernel.org/ [1]
 
-> > +
-> > +       /*
-> > +        * Adjust the requested clock rate (`req->rate`) to ensure it f=
-alls within
-> > +        * the supported range of 5.44 MHz to 187.5 MHz.
-> > +        */
-> > +       req->rate =3D clamp(req->rate, 5440000UL, 187500000UL);
-> > +
-> > +       rate_mhz =3D req->rate * MILLI * 1ULL;
-> > +       if (rate_mhz =3D=3D dsi_dividers->error_mhz + dsi_dividers->fre=
-q_mhz)
-> > +               goto exit_determine_rate;
-> > +
-> > +       if (!rzv2h_dsi_get_pll_parameters_values(priv->dsi_limits,
-> > +                                                dsi_dividers, rate_mhz=
-)) {
-> > +               dev_err(priv->dev,
-> > +                       "failed to determine rate for req->rate: %lu\n"=
-,
-> > +                       req->rate);
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +exit_determine_rate:
-> > +       req->best_parent_rate =3D req->rate * dsi_dividers->csdiv;
-> > +
-> > +       return 0;
-> > +};
-> > +
-> > +static int rzv2h_cpg_plldsi_div_set_rate(struct clk_hw *hw,
-> > +                                        unsigned long rate,
-> > +                                        unsigned long parent_rate)
-> > +{
-> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
-> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
-> > +       struct rzv2h_plldsi_parameters *dsi_dividers =3D &priv->plldsi_=
-div_parameters;
-> > +       struct ddiv ddiv =3D dsi_div->ddiv;
-> > +       const struct clk_div_table *clkt;
-> > +       u32 reg, shift, div;
-> > +
-> > +       div =3D dsi_dividers->csdiv;
-> > +       for (clkt =3D dsi_div->dtable; clkt->div; clkt++) {
-> > +               if (clkt->div =3D=3D div)
-> > +                       break;
-> > +       }
-> > +
-> > +       if (!clkt->div && !clkt->val)
-> > +               return -EINVAL;
->
-> No need to check clkt->dev.
->
-I'll drop this check and use a bool flag to determine if a div is found.
-
-> > +
-> > +       shift =3D ddiv.shift;
-> > +       reg =3D readl(priv->base + ddiv.offset);
-> > +       reg &=3D ~(GENMASK(shift + ddiv.width, shift));
-> > +
-> > +       writel(reg | (clkt->val << shift) |
-> > +              DDIV_DIVCTL_WEN(shift), priv->base + ddiv.offset);
-> > +
-> > +       return 0;
->
-> This function is very similar to the existing rzv2h_ddiv_set_rate().
-> If you can't re-use it as-is, please consider factoring out the common
-> part, or at least follow the same style of RMW-operation.
->
-Ok, I'll follow the same RMW operation.
-
-> > +};
->
->
-> > +static long rzv2h_cpg_plldsi_round_rate(struct clk_hw *hw,
-> > +                                       unsigned long rate,
-> > +                                       unsigned long *parent_rate)
-> > +{
-> > +       return clamp(rate, 25000000UL, 375000000UL);
->
-> This only rounds rates outside the range from 25 to 375 MHz.
-> What about rates between 25 and 375 MHz?
->
-> > +}
-> > +
-> > +static unsigned long rzv2h_cpg_plldsi_clk_recalc_rate(struct clk_hw *h=
-w,
-> > +                                                     unsigned long par=
-ent_rate)
-> > +{
-> > +       struct pll_clk *pll_clk =3D to_pll(hw);
-> > +       struct rzv2h_cpg_priv *priv =3D pll_clk->priv;
-> > +       unsigned int val1, val2;
-> > +       u64 rate;
-> > +
-> > +       val1 =3D readl(priv->base + CPG_PLL_CLK1(pll_clk->pll.offset));
-> > +       val2 =3D readl(priv->base + CPG_PLL_CLK2(pll_clk->pll.offset));
-> > +
-> > +       rate =3D mul_u64_u32_shr(parent_rate, (CPG_PLL_CLK1_MDIV(val1) =
-<< 16) +
-> > +                              CPG_PLL_CLK1_KDIV(val1), 16 + CPG_PLL_CL=
-K2_SDIV(val2));
-> > +
-> > +       return DIV_ROUND_CLOSEST_ULL(rate, CPG_PLL_CLK1_PDIV(val1));
->
-> Can't you just reuse the existing rzv2h_cpg_pll_clk_recalc_rate()?
->
-Agreed.
-
-> > +}
-> > +
-> > +static int rzv2h_cpg_plldsi_set_rate(struct clk_hw *hw,
-> > +                                    unsigned long rate,
-> > +                                    unsigned long parent_rate)
-> > +{
-> > +       struct pll_clk *pll_clk =3D to_pll(hw);
-> > +       struct rzv2h_cpg_priv *priv =3D pll_clk->priv;
-> > +       struct rzv2h_plldsi_parameters *dsi_dividers;
-> > +       struct pll pll =3D pll_clk->pll;
-> > +       u16 offset =3D pll.offset;
-> > +       u32 val;
-> > +       int ret;
-> > +
-> > +       /* Put PLL into standby mode */
-> > +       writel(CPG_PLL_STBY_RESETB_WEN, priv->base + CPG_PLL_STBY(offse=
-t));
-> > +       ret =3D readl_poll_timeout_atomic(priv->base + CPG_PLL_MON(offs=
-et),
-> > +                                       val, !(val & CPG_PLL_MON_LOCK),
-> > +                                       100, 2000);
-> > +       if (ret) {
-> > +               dev_err(priv->dev, "Failed to put PLLDSI into standby m=
-ode");
-> > +               return ret;
-> > +       }
-> > +
-> > +       dsi_dividers =3D &priv->plldsi_div_parameters;
-> > +       /* Output clock setting 1 */
-> > +       writel((dsi_dividers->k << 16) | (dsi_dividers->m << 6) | (dsi_=
-dividers->p),
-> > +              priv->base + CPG_PLL_CLK1(offset));
-> > +
-> > +       /* Output clock setting 2 */
-> > +       val =3D readl(priv->base + CPG_PLL_CLK2(offset));
-> > +       writel((val & ~GENMASK(2, 0)) | dsi_dividers->s,
-> > +              priv->base + CPG_PLL_CLK2(offset));
-> > +
-> > +       /* Put PLL to normal mode */
-> > +       writel(CPG_PLL_STBY_RESETB_WEN | CPG_PLL_STBY_RESETB,
-> > +              priv->base + CPG_PLL_STBY(offset));
-> > +
-> > +       /* PLL normal mode transition, output clock stability check */
-> > +       ret =3D readl_poll_timeout_atomic(priv->base + CPG_PLL_MON(offs=
-et),
-> > +                                       val, (val & CPG_PLL_MON_LOCK),
-> > +                                       100, 2000);
-> > +       if (ret) {
-> > +               dev_err(priv->dev, "Failed to put PLLDSI into normal mo=
-de");
-> > +               return ret;
-> > +       }
-> > +
-> > +       return 0;
->
-> This function could be reused for non-DSI PLLs?
->
-Yes it could be reused, I'll rename this to rzv2h_cpg_pll_set_rate().
-
-> > +};
-> > +
-> > +static const struct clk_ops rzv2h_cpg_plldsi_ops =3D {
-> > +       .recalc_rate =3D rzv2h_cpg_plldsi_clk_recalc_rate,
-> > +       .round_rate =3D rzv2h_cpg_plldsi_round_rate,
-> > +       .set_rate =3D rzv2h_cpg_plldsi_set_rate,
-> > +};
-> > +
-> > +static struct clk * __init
-> > +rzv2h_cpg_plldsi_clk_register(const struct cpg_core_clk *core,
-> > +                             struct rzv2h_cpg_priv *priv)
-> > +{
-> > +       void __iomem *base =3D priv->base;
-> > +       struct device *dev =3D priv->dev;
-> > +       struct clk_init_data init;
-> > +       const struct clk *parent;
-> > +       const char *parent_name;
-> > +       struct pll_clk *pll_clk;
-> > +       int ret;
-> > +
-> > +       parent =3D priv->clks[core->parent];
-> > +       if (IS_ERR(parent))
-> > +               return ERR_CAST(parent);
-> > +
-> > +       pll_clk =3D devm_kzalloc(dev, sizeof(*pll_clk), GFP_KERNEL);
-> > +       if (!pll_clk)
-> > +               return ERR_PTR(-ENOMEM);
-> > +
-> > +       parent_name =3D __clk_get_name(parent);
-> > +       init.name =3D core->name;
-> > +       init.ops =3D &rzv2h_cpg_plldsi_ops;
-> > +       init.flags =3D 0;
-> > +       init.parent_names =3D &parent_name;
-> > +       init.num_parents =3D 1;
-> > +
-> > +       pll_clk->hw.init =3D &init;
-> > +       pll_clk->pll =3D core->cfg.pll;
-> > +       pll_clk->base =3D base;
-> > +       pll_clk->priv =3D priv;
-> > +
-> > +       /* Disable SSC and turn on PLL clock when init */
-> > +       writel(CPG_PLL_STBY_RESETB_WEN | CPG_PLL_STBY_RESETB |
-> > +              CPG_PLL_STBY_SSCGEN_WEN, base + CPG_PLL_STBY(pll_clk->pl=
-l.offset));
->
-> Apart from the three lines above, this function does the same as the
-> existing rzv2h_cpg_pll_clk_register().  Merge/reuse?
->
-Agreed, I'll reuse this function and introduce a bool flag to turn on the P=
-LL.
-
-> > +
-> > +       ret =3D devm_clk_hw_register(dev, &pll_clk->hw);
-> > +       if (ret)
-> > +               return ERR_PTR(ret);
-> > +
-> > +       return pll_clk->hw.clk;
-> > +}
-> > +
-> >  static unsigned long rzv2h_cpg_pll_clk_recalc_rate(struct clk_hw *hw,
-> >                                                    unsigned long parent=
-_rate)
-> >  {
->
-> > --- /dev/null
-> > +++ b/include/linux/clk/renesas-rzv2h-dsi.h
-> > @@ -0,0 +1,207 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Renesas RZ/V2H(P) DSI CPG helper
-> > + *
-> > + * Copyright (C) 2025 Renesas Electronics Corp.
-> > + */
->
-> Missing include guard.
->
-Ouch, Ill add one.
-
-> > +
-> > +#include <linux/limits.h>
-> > +#include <linux/math.h>
-> > +#include <linux/math64.h>
-> > +#include <linux/units.h>
-> > +
-> > +#define OSC_CLK_IN_MEGA                (24 * MEGA)
-> > +
-> > +struct rzv2h_plldsi_div_limits {
->
-> This structure looks applicable to all RZ/V2H PLLs, so perhaps drop the
-> "dsi" part from the name?
->
-Agreed.
-
-Cheers,
-Prabhakar
