@@ -1,37 +1,38 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7141A1CAA92;
-	Mon, 21 Apr 2025 14:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6238B10F1;
+	Mon, 21 Apr 2025 20:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745247488; cv=none; b=hSRS0tq+pvaCg3986UEQQ7+uyWJE7GLxdMn7WeUz0Uab9m4/XvVl52yEmdm/m9MFFTRdAPdyy0OveOmCG2gqIfh7KSLYoQzOaP8zwvI99GiFPPM/4Fl1kuJ1FIwEp4/SuQNF5IZ8PBwgHK4XV9BB2vk3Mla6T3/SXQaFrhjztvw=
+	t=1745266712; cv=none; b=Gh201Si42WHU2mevx0yS1h4G4sxREL+Yv0pHRbsixvJTauALd/JA/1xbzReaYG7HCcx7JkoSVkDWsj1gIb2PYqPqZMUmjBFrr+tEE1iRj4xelTxTFSCuhq8tHatOdT+KyFa9FcvEh2ZSB+ID8N3ybYrdzVL86iG4Ex4FUMpV6fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745247488; c=relaxed/simple;
-	bh=Dh7d4NNcRLM6B44zz96/SyD/o2WcN9uht2JGlC4604Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fieP4C1H0Yz1h8jmrQEqboR5UPx0tHnB0n35u1MtqkMpslYe+HONvJ/uVRvcvgXv3dyO+Ro3PJDmWm3z6uzByh33UlB55XUA2L9hsOFbY2NK5LOtYWrZ5vt/fg36xd7/OJJQiWRbeY//yyo5Qs65XPBpfBG1/c5kRs8pc1uecu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZA4ELiq6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745266712; c=relaxed/simple;
+	bh=ZT6G0gLMpYOma7+nsyuQ5jRof3ch8u1E9cEnMHxyUSI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ATE6/8sCFU9GM+iayD0ecoLtRj1fj12zB7q9yyrujWrYs+PTiDVbfJcYsoim0OhjjWyHhNTCGerR5IXhhIKh9dRMKM/3DdLKRuFAi205tctMt7dgqsPfHiuhJa/u8JXdyR2SP8QzgWxHT9hQ6I9C3DaszHvMA7X2H7GWlOIhYeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=dnSS8qmZ; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZA4ELiq6"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E993FC4AF0C;
-	Mon, 21 Apr 2025 14:58:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745247488;
-	bh=Dh7d4NNcRLM6B44zz96/SyD/o2WcN9uht2JGlC4604Q=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ZA4ELiq6jSTZm0VW3aaM784P6JZjXRudsXNLhXS4QDMTHwwM+PM7OevR58e0Iuwq5
-	 otWiYb0Uqmz3QwJ9F4TqQfXvaPynHL8MiIuieOwtfI8i9BVFtGZVbbR9Xoj05rtsws
-	 tsqmXK3HAd98lI1iIDCTyeqycBP+BkbSN+aY9/Uex6BnNVazx22v3ojjBGSXK5Y96F
-	 hpAQfnucXwIPU3yFMwpCyVHVAKRIUgyJ6RCUuSLj46i6BtNoLFOKkNJXY2NByB19pz
-	 695uLvYeC/QsFEt1BT62ZqeaYX0wQT9Hab8RulxbIQSGqi4EAaSF9bCiGidMB9y2jS
-	 Ysm1neGt+MkuA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC2A6C369D5;
-	Mon, 21 Apr 2025 14:58:07 +0000 (UTC)
-From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
-Date: Mon, 21 Apr 2025 15:58:07 +0100
-Subject: [PATCH RESEND v3 6/6] clk: clk-axi-clkgen: fix coding style issues
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="dnSS8qmZ"
+Received: from [192.168.183.162] (254C2769.nat.pool.telekom.hu [37.76.39.105])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 713D2BBAD2;
+	Mon, 21 Apr 2025 20:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1745266707;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2s7t/jnFQ5IYzmw1pTsYPIv5DPpMMHbUNmN9wG24wrs=;
+	b=dnSS8qmZxj1Re0S4hWlbITnkCGLfs4DGs7AX2QhV+fL8r5N9RM8PzmDIi4ok2hTn6XNLt5
+	wgJ0c7kR4L/L7tab4CYhc8n05vIOZt7ls1RxYNasIkjweLStsOR7pvINtCwFUCpMn7K/0Z
+	iH7FdA3ncN70pkduATzp8oVx8XQ0ApaOI/wijoTZY7EgavyJzHYQM4dpt4bnBFAs7f6o24
+	rVtpW4+scaUBcUofgM5kdbAmQESVbfYzbB9MCcNHOQrAjTAbWw41kX66jPOVsxVz15EUYq
+	OeztBBVPNafZg/wprr4CwMNurYTkv8MzTK4497MkpuOJ57KNidQIRWvZ6wa1iA==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH v5 0/5] Initial support of MSM8937 and Xiaomi Redmi 3S
+Date: Mon, 21 Apr 2025 22:18:22 +0200
+Message-Id: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,258 +41,130 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250421-dev-axi-clkgen-limits-v3-6-4203b4fed2c9@analog.com>
-References: <20250421-dev-axi-clkgen-limits-v3-0-4203b4fed2c9@analog.com>
-In-Reply-To: <20250421-dev-axi-clkgen-limits-v3-0-4203b4fed2c9@analog.com>
-To: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org
-Cc: Stephen Boyd <sboyd@kernel.org>, 
+X-B4-Tracking: v=1; b=H4sIAA6oBmgC/23MQQrCMBCF4atI1kaSmdYkrryHuKjJtA7YVBIpi
+ vTuRkEr6PIN8/13kSkxZbFZ3EWikTMPsYx6uRD+2MSOJIeyBSioFWgl+9xbh0YCWGpV8EjeifJ
+ 9TtTy9VXa7cs+cr4M6fYKj/p5fTf0pzFqqaQJYCisTWuU3fYNxxNHjt1qSJ14hkb4woAzhoIPz
+ plyXCMF/IvxG1czxoJDE4zXFrz3h7+4mjHqesZVwbrVCGSNair3g6dpegA++3eDWgEAAA==
+X-Change-ID: 20250210-msm8937-228ef0dc3ec9
+To: Bjorn Andersson <andersson@kernel.org>, 
  Michael Turquette <mturquette@baylibre.com>, 
- Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, 
- Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Adam Skladowski <a_skl39@protonmail.com>, 
+ Sireesh Kodali <sireeshkodali@protonmail.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ linux@mainlining.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Daniil Titov <daniilt971@gmail.com>, Dang Huynh <danct12@riseup.net>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745247490; l=8461;
- i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
- bh=qQwPDRPAfekBU0wa3q3YKSwWmxMm9L4Csvfk9h/Stis=;
- b=g5vsxH9daoKmZU6NTYsRH8lucYB/KN+K6M/1MunPVp6Yc7FDV/G6wtFBYpoPREcmkAFg/jt61
- 0DYR5JV/+SrB3ZhImwf/UPeh0wLWkltmJFlKVIA7DPnuns4hL0HsN9y
-X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
- pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
-X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
- auth_id=100
-X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Reply-To: nuno.sa@analog.com
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745266705; l=3161;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=ZT6G0gLMpYOma7+nsyuQ5jRof3ch8u1E9cEnMHxyUSI=;
+ b=Cnn8yNYhNWMRsGvjGORVd5qBpXDDR8h1RdPBXLl83ba2+UHgYGMpHT9LtJZC2dYHP+sta6Q+M
+ hM9x7vRwArSDi3o5k5tQoq/8zohzLhBMqOcU7X7NdNr51bngfF9OzeV
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-From: Nuno Sá <nuno.sa@analog.com>
+This patch series add initial support for MSM8937 SoC
+and Xiaomi Redmi 3S (land).
 
-This is just cosmetics and so no functional changes intended.
+The series is extending the MSM8917 gcc and pinctrl drivers
+because they are sibling SoCs.
+MSM8937 have 4 more A53 cores and have one more dsi port then
+MSM8917.
+It implements little-big architecture and uses Adreno 505.
 
-Signed-off-by: Nuno Sá <nuno.sa@analog.com>
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 ---
- drivers/clk/clk-axi-clkgen.c | 74 +++++++++++++++++++++++---------------------
- 1 file changed, 38 insertions(+), 36 deletions(-)
+Changes in v5:
+- msm8937:
+  - Remove wrongly defined idle-states.
+  - Fix thermal zones.
+  - Use the header with DSI phy clock IDs.
+  - Fix the nodes order.
+  - Fix the pinctrls style.
+  - Follow gcc header changes.
+- msm8937-xiaomi-land:
+  - Remove headphone switch and speaker amplifier bindings.
+  - Unify status property style.
+- gcc bindings:
+  - Expand MSM8953 gcc schema with MSM8937.
+  - Add MSM8937 prefix for MSM8937 specific clocks.
+- gcc:
+  - Follow the bindings changes.
+- Drop alwayson clock documentation it will be handled in another
+  patchset.
+- Link to v4: https://lore.kernel.org/r/20250315-msm8937-v4-0-1f132e870a49@mainlining.org
 
-diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-index 82a99c3b9063cd2dd8a9dc7fdec81a38feee12b9..0ea174a185bc34be62579f07072fd75a595aab5b 100644
---- a/drivers/clk/clk-axi-clkgen.c
-+++ b/drivers/clk/clk-axi-clkgen.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
- #include <linux/err.h>
-+#include <linux/types.h>
- 
- #include <linux/fpga/adi-axi-common.h>
- 
-@@ -93,7 +94,7 @@ static uint32_t axi_clkgen_lookup_filter(unsigned int m)
- 	}
- }
- 
--static const uint32_t axi_clkgen_lock_table[] = {
-+static const u32 axi_clkgen_lock_table[] = {
- 	0x060603e8, 0x060603e8, 0x080803e8, 0x0b0b03e8,
- 	0x0e0e03e8, 0x111103e8, 0x131303e8, 0x161603e8,
- 	0x191903e8, 0x1c1c03e8, 0x1f1f0384, 0x1f1f0339,
-@@ -105,7 +106,7 @@ static const uint32_t axi_clkgen_lock_table[] = {
- 	0x1f1f012c, 0x1f1f0113, 0x1f1f0113, 0x1f1f0113,
- };
- 
--static uint32_t axi_clkgen_lookup_lock(unsigned int m)
-+static u32 axi_clkgen_lookup_lock(unsigned int m)
- {
- 	if (m < ARRAY_SIZE(axi_clkgen_lock_table))
- 		return axi_clkgen_lock_table[m];
-@@ -127,8 +128,9 @@ static const struct axi_clkgen_limits axi_clkgen_zynq_default_limits = {
- };
- 
- static void axi_clkgen_calc_params(const struct axi_clkgen_limits *limits,
--	unsigned long fin, unsigned long fout,
--	unsigned int *best_d, unsigned int *best_m, unsigned int *best_dout)
-+				   unsigned long fin, unsigned long fout,
-+				   unsigned int *best_d, unsigned int *best_m,
-+				   unsigned int *best_dout)
- {
- 	unsigned long d, d_min, d_max, _d_min, _d_max;
- 	unsigned long m, m_min, m_max;
-@@ -195,9 +197,9 @@ struct axi_clkgen_div_params {
- };
- 
- static void axi_clkgen_calc_clk_params(unsigned int divider,
--	unsigned int frac_divider, struct axi_clkgen_div_params *params)
-+				       unsigned int frac_divider,
-+				       struct axi_clkgen_div_params *params)
- {
--
- 	memset(params, 0x0, sizeof(*params));
- 
- 	if (divider == 1) {
-@@ -225,7 +227,7 @@ static void axi_clkgen_calc_clk_params(unsigned int divider,
- 		if (params->edge == 0 || frac_divider == 1)
- 			params->low--;
- 		if (((params->edge == 0) ^ (frac_divider == 1)) ||
--			(divider == 2 && frac_divider == 1))
-+		    (divider == 2 && frac_divider == 1))
- 			params->frac_wf_f = 1;
- 
- 		params->frac_phase = params->edge * 4 + frac_divider / 2;
-@@ -233,13 +235,13 @@ static void axi_clkgen_calc_clk_params(unsigned int divider,
- }
- 
- static void axi_clkgen_write(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int val)
-+			     unsigned int reg, unsigned int val)
- {
- 	writel(val, axi_clkgen->base + reg);
- }
- 
- static void axi_clkgen_read(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int *val)
-+			    unsigned int reg, unsigned int *val)
- {
- 	*val = readl(axi_clkgen->base + reg);
- }
-@@ -260,7 +262,7 @@ static int axi_clkgen_wait_non_busy(struct axi_clkgen *axi_clkgen)
- }
- 
- static int axi_clkgen_mmcm_read(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int *val)
-+				unsigned int reg, unsigned int *val)
- {
- 	unsigned int reg_val;
- 	int ret;
-@@ -284,7 +286,8 @@ static int axi_clkgen_mmcm_read(struct axi_clkgen *axi_clkgen,
- }
- 
- static int axi_clkgen_mmcm_write(struct axi_clkgen *axi_clkgen,
--	unsigned int reg, unsigned int val, unsigned int mask)
-+				 unsigned int reg, unsigned int val,
-+				 unsigned int mask)
- {
- 	unsigned int reg_val = 0;
- 	int ret;
-@@ -305,8 +308,7 @@ static int axi_clkgen_mmcm_write(struct axi_clkgen *axi_clkgen,
- 	return 0;
- }
- 
--static void axi_clkgen_mmcm_enable(struct axi_clkgen *axi_clkgen,
--	bool enable)
-+static void axi_clkgen_mmcm_enable(struct axi_clkgen *axi_clkgen, bool enable)
- {
- 	unsigned int val = AXI_CLKGEN_V2_RESET_ENABLE;
- 
-@@ -322,31 +324,31 @@ static struct axi_clkgen *clk_hw_to_axi_clkgen(struct clk_hw *clk_hw)
- }
- 
- static void axi_clkgen_set_div(struct axi_clkgen *axi_clkgen,
--	unsigned int reg1, unsigned int reg2, unsigned int reg3,
--	struct axi_clkgen_div_params *params)
-+			       unsigned int reg1, unsigned int reg2,
-+			       unsigned int reg3,
-+			       struct axi_clkgen_div_params *params)
- {
- 	axi_clkgen_mmcm_write(axi_clkgen, reg1,
--		(params->high << 6) | params->low, 0xefff);
-+			      (params->high << 6) | params->low, 0xefff);
- 	axi_clkgen_mmcm_write(axi_clkgen, reg2,
--		(params->frac << 12) | (params->frac_en << 11) |
--		(params->frac_wf_r << 10) | (params->edge << 7) |
--		(params->nocount << 6), 0x7fff);
-+			      (params->frac << 12) | (params->frac_en << 11) |
-+			      (params->frac_wf_r << 10) | (params->edge << 7) |
-+			      (params->nocount << 6), 0x7fff);
- 	if (reg3 != 0) {
- 		axi_clkgen_mmcm_write(axi_clkgen, reg3,
--			(params->frac_phase << 11) | (params->frac_wf_f << 10), 0x3c00);
-+				      (params->frac_phase << 11) | (params->frac_wf_f << 10),
-+				      0x3c00);
- 	}
- }
- 
--static int axi_clkgen_set_rate(struct clk_hw *clk_hw,
--	unsigned long rate, unsigned long parent_rate)
-+static int axi_clkgen_set_rate(struct clk_hw *clk_hw, unsigned long rate,
-+			       unsigned long parent_rate)
- {
- 	struct axi_clkgen *axi_clkgen = clk_hw_to_axi_clkgen(clk_hw);
- 	const struct axi_clkgen_limits *limits = &axi_clkgen->limits;
- 	unsigned int d, m, dout;
- 	struct axi_clkgen_div_params params;
--	uint32_t power = 0;
--	uint32_t filter;
--	uint32_t lock;
-+	u32 power = 0, filter, lock;
- 
- 	if (parent_rate == 0 || rate == 0)
- 		return -EINVAL;
-@@ -366,22 +368,22 @@ static int axi_clkgen_set_rate(struct clk_hw *clk_hw,
- 
- 	axi_clkgen_calc_clk_params(dout >> 3, dout & 0x7, &params);
- 	axi_clkgen_set_div(axi_clkgen,  MMCM_REG_CLKOUT0_1, MMCM_REG_CLKOUT0_2,
--		MMCM_REG_CLKOUT5_2, &params);
-+			   MMCM_REG_CLKOUT5_2, &params);
- 
- 	axi_clkgen_calc_clk_params(d, 0, &params);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_CLK_DIV,
--		(params.edge << 13) | (params.nocount << 12) |
--		(params.high << 6) | params.low, 0x3fff);
-+			      (params.edge << 13) | (params.nocount << 12) |
-+			      (params.high << 6) | params.low, 0x3fff);
- 
- 	axi_clkgen_calc_clk_params(m >> 3, m & 0x7, &params);
- 	axi_clkgen_set_div(axi_clkgen,  MMCM_REG_CLK_FB1, MMCM_REG_CLK_FB2,
--		MMCM_REG_CLKOUT6_2, &params);
-+			   MMCM_REG_CLKOUT6_2, &params);
- 
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_LOCK1, lock & 0x3ff, 0x3ff);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_LOCK2,
--		(((lock >> 16) & 0x1f) << 10) | 0x1, 0x7fff);
-+			      (((lock >> 16) & 0x1f) << 10) | 0x1, 0x7fff);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_LOCK3,
--		(((lock >> 24) & 0x1f) << 10) | 0x3e9, 0x7fff);
-+			      (((lock >> 24) & 0x1f) << 10) | 0x3e9, 0x7fff);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_FILTER1, filter >> 16, 0x9900);
- 	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_FILTER2, filter, 0x9900);
- 
-@@ -410,7 +412,7 @@ static int axi_clkgen_determine_rate(struct clk_hw *hw,
- }
- 
- static unsigned int axi_clkgen_get_div(struct axi_clkgen *axi_clkgen,
--	unsigned int reg1, unsigned int reg2)
-+				       unsigned int reg1, unsigned int reg2)
- {
- 	unsigned int val1, val2;
- 	unsigned int div;
-@@ -437,7 +439,7 @@ static unsigned int axi_clkgen_get_div(struct axi_clkgen *axi_clkgen,
- }
- 
- static unsigned long axi_clkgen_recalc_rate(struct clk_hw *clk_hw,
--	unsigned long parent_rate)
-+					    unsigned long parent_rate)
- {
- 	struct axi_clkgen *axi_clkgen = clk_hw_to_axi_clkgen(clk_hw);
- 	unsigned int d, m, dout;
-@@ -445,9 +447,9 @@ static unsigned long axi_clkgen_recalc_rate(struct clk_hw *clk_hw,
- 	unsigned int val;
- 
- 	dout = axi_clkgen_get_div(axi_clkgen, MMCM_REG_CLKOUT0_1,
--		MMCM_REG_CLKOUT0_2);
-+				  MMCM_REG_CLKOUT0_2);
- 	m = axi_clkgen_get_div(axi_clkgen, MMCM_REG_CLK_FB1,
--		MMCM_REG_CLK_FB2);
-+			       MMCM_REG_CLK_FB2);
- 
- 	axi_clkgen_mmcm_read(axi_clkgen, MMCM_REG_CLK_DIV, &val);
- 	if (val & MMCM_CLK_DIV_NOCOUNT)
-@@ -620,7 +622,7 @@ static int axi_clkgen_probe(struct platform_device *pdev)
- 
- 	clk_name = pdev->dev.of_node->name;
- 	of_property_read_string(pdev->dev.of_node, "clock-output-names",
--		&clk_name);
-+				&clk_name);
- 
- 	init.name = clk_name;
- 	init.ops = &axi_clkgen_ops;
+Changes in v4:
+- Add missing rpmcc include for qcom,gcc-msm8937 dtbinding exmaple.
+- msm8937: add missing space after s9-p1@230
+- msm8937-xiaomi-land: replace LED_FUNCTION_INDICATOR to LED_FUNCTION_STATUS
+- Remove applied patches
+- Link to v3: https://lore.kernel.org/r/20250224-msm8937-v3-0-dad7c182cccb@mainlining.org
 
+Changes in v3:
+- Fix qcom,gcc-msm8937 dtbinding example 
+- Link to v2: https://lore.kernel.org/r/20250223-msm8937-v2-0-b99722363ed3@mainlining.org
+
+Changes in v2:
+- drop applied patches
+- drop gcc schema commits infavor of a new schema for gcc-msm8937
+- document always on clock for adreno 505/506/510
+- msm8937:
+  - set cache size
+  - rename cpu labels
+  - fix style issues addressed by review
+- msm8937-xiaom-land:
+  - remove unused serial0 alias
+  - remove regulator-always-on from pm8937_l6
+  - add blue indicator led for aw2013
+- Link to v1: https://lore.kernel.org/r/20250211-msm8937-v1-0-7d27ed67f708@mainlining.org
+
+---
+Barnabás Czémán (3):
+      dt-bindings: clock: qcom: Add MSM8937 Global Clock Controller
+      dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
+      arm64: dts: qcom: Add Xiaomi Redmi 3S
+
+Dang Huynh (1):
+      arm64: dts: qcom: Add initial support for MSM8937
+
+Daniil Titov (1):
+      clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
+
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+ .../bindings/clock/qcom,gcc-msm8953.yaml           |   11 +-
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts   |  381 ++++
+ arch/arm64/boot/dts/qcom/msm8937.dtsi              | 2069 ++++++++++++++++++++
+ drivers/clk/qcom/Kconfig                           |    6 +-
+ drivers/clk/qcom/gcc-msm8917.c                     |  617 +++++-
+ include/dt-bindings/clock/qcom,gcc-msm8917.h       |   19 +
+ 8 files changed, 3101 insertions(+), 10 deletions(-)
+---
+base-commit: 5b37f7bfff3b1582c34be8fb23968b226db71ebd
+change-id: 20250210-msm8937-228ef0dc3ec9
+
+Best regards,
 -- 
-2.49.0
-
+Barnabás Czémán <barnabas.czeman@mainlining.org>
 
