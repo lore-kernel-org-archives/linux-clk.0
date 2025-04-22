@@ -1,162 +1,90 @@
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B59277819;
-	Tue, 22 Apr 2025 12:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9BE1FDA94
+	for <linux-clk@vger.kernel.org>; Tue, 22 Apr 2025 12:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745323238; cv=none; b=J66aHpPUFHi3PdCHTkvRu4qvPH/GUAm6/t0ZFxGGKkyNSNvyYSf0kaLLA3dWa2QwnnBdAliMjhzsemgJljcRWpRVtv2FJkBJfuSI3+mmoEYZeJq7TUeSYUNgybE3SGctqn5FF5Nd+AzD+CnAIEaRd//GbcC51SZWxtXOATSZWWA=
+	t=1745324546; cv=none; b=KrcnAeAL/TLoq4J+nDL0H+dnHJl3YyUhufZP1EzIs3M5uUMtP9AWdwyh3tjz3GcQbh+CE1nW95IeMcXvp2+THZguJRU7jb3CS0jASuiNUYYZ1zGtvB0hrtxYisJjFUa7Oxdc76Jr0KEWX3j6KdcRKu2O1r2lWw7NnM8NQj/JYDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745323238; c=relaxed/simple;
-	bh=PE32aOICxpf9Il971tWVYUOauqB5/VNm8nNUXdWIFZU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=bX6IB1r32ke51NUX5qyW0628CAdH6F+Z9i9Opw8eaQ9793xFlAp/keRrTvm1YmmZTIN1YDkrsLAJjs2Lh8sBIQ4vgeczMmjt0e+iF+728enAuHNnoUO/a8sXa6aZ4dMxcLuDi0/peGsXuEAefDDrC6L9P6U10ndQBcfUHIk7Zxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=FCtdW4K7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mWK2dk0L; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1745324546; c=relaxed/simple;
+	bh=L52X8TU4OtWh1NIiSvcGvGuWtZUgiPAz2gzkuelHE4k=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=U1bzsetYeTkV7rXT7GUw5uFgCi5fzDAkLBQzhAxlgWhqFJA91Mw6h4DA5luFIBnllt+BI/FMlksKJ9kXbjBJLSv7BO4g8G04oO2bl8K1ZDuFfsviel/bqxTTpazVxP9QReOqNo0CceM/MMO00UlGN3swIxeocLlD1nx7elBOA6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pXWhJHDs; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="FCtdW4K7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mWK2dk0L"
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CD0161140251;
-	Tue, 22 Apr 2025 08:00:34 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-05.internal (MEProxy); Tue, 22 Apr 2025 08:00:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1745323234;
-	 x=1745409634; bh=8nthwYMKR4aOFINu9xZgH8QRFGdfF9jUoUvoZlCSYU4=; b=
-	FCtdW4K7I5zRyUQp1mclIzfaXPPDcsgT0G2XsPEkSGSS8BJ40XFJNF2l/bzcVak8
-	PJLftEKTePKlehKHr+AnSvI7TJIxO7SmiCXgJsU8scKoUhwtBOBCWVCKyZ2jO5Dl
-	rBxjlwr3fQORHFVrP9KtM8XvSwYXecX888kwoZr3ZjMZWPbq5U+GcaDO9fA15UkU
-	mmCcRxJwJkrWzHG54q5ElF+wJVS2G3JqYc3Jw0U2WG7ocF+5lNFPTeG9rvmuWCsi
-	njglbjyrOiOLj2cIiTM3373DP7mgJGa16rLBBiZx6hT1WzvvUHLFcDBFtrF6P71X
-	yXIm2hKpVmQmddjLM2RTVA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1745323234; x=
-	1745409634; bh=8nthwYMKR4aOFINu9xZgH8QRFGdfF9jUoUvoZlCSYU4=; b=m
-	WK2dk0L1aVa94+bunBhLx17FVJznnvK/AdKm8nEPfZUUS7IgF0ziI7PzIWNBofEQ
-	8CZP7gBY7bFYlNyj5QRhlUrNMvKSkF1nUwZOM7WaUPvrmIdCKqTGDpIZ9FJRrMrs
-	rY0dJK3JYP7Dr0c16X1Bp+SqDKHx6gHlSLl7FwmrAry9AEdQl7UZOnjQKjYZj+B6
-	vvrboj+7geoKTlI3tPb17BOxBo5pSKE6uOpB5ryVL8Hvhcip4IQ4CnrOLRyuJokn
-	nRUzuu1LC2c51effPU6RF18xX6fkizjG8VKovi8vuJXpvIaMldvoBAgALUzx2XUW
-	Fu8/l8WsLkMTIO1/RIRvQ==
-X-ME-Sender: <xms:4IQHaIwwAg2ARtGf3jGlqMBsIagJvBoGj0v_BftaGeTLZUA9fgBI2A>
-    <xme:4IQHaMSPkvJvmtb0CK21vKbtTwBPmE5CK5CbIBK6vPn0gPn4v1aYB4jF5XJoOGGAX
-    T6MbIL_0gzIP5Ud60k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefieejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
-    tdejnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhepvdfhvdekueduveffffetgfdvveefvdelhedv
-    vdegjedvfeehtdeggeevheefleejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    gedtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghrvghkrdhkihgvrhhnrg
-    hnsegrmhgurdgtohhmpdhrtghpthhtohepughrrghgrghnrdgtvhgvthhitgesrghmugdr
-    tghomhdprhgtphhtthhopehpvggurgesrgigvghnthhirgdrshgvpdhrtghpthhtohepmh
-    htuhhrqhhuvghtthgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehhvghrvhgv
-    rdgtohguihhnrgessghoohhtlhhinhdrtghomhdprhgtphhtthhopehluhgtrgdrtggvrh
-    gvshholhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvght
-    rgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepghgvvghrthdorhgvnh
-    gvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopegujhhrshgtrghllhihsehgmhgr
-    ihhlrdgtohhm
-X-ME-Proxy: <xmx:4IQHaKWmoW2di_TlBk_3LC0bIqSqcvphy6ets2e-rndyOqir4PbyCA>
-    <xmx:4IQHaGiei-Ql0GRpXERiVlv65LxFK-7j6r-KkvhG1fj3vn-8NEFwVQ>
-    <xmx:4IQHaKCm5zPJpibs-8kVLkqGWNg8UD2hn4Z8TqFJIGHP--QssqYrRg>
-    <xmx:4IQHaHJOvBUka2beZuMcFi1smo_KB-gJx9FuTpNKCqV5ylIZza69NQ>
-    <xmx:4oQHaJYK6LHO-f8uu6Lf4HNT_VDikvi48Yp8jo6RBxgTdQ2SDj7VOZ4o>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D0CBA2220073; Tue, 22 Apr 2025 08:00:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pXWhJHDs"
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745324539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L52X8TU4OtWh1NIiSvcGvGuWtZUgiPAz2gzkuelHE4k=;
+	b=pXWhJHDs3Ve2K7Gt5litUJAQrXur2iVHIHayRKXCxmbsxA+68sWgbWY2jNSLz4iRonIH+9
+	CpOu6jJjA8RQhjXQtZ6ucP/hzTYRusWyR/pHRNK/wRmOjGQh+/ci10w9ksrEWbYPkxjhiI
+	DIlrmvW85lTrZ9enzm+w9VnKSCAHqAc=
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-ThreadId: T51aa6c607dc631ce
-Date: Tue, 22 Apr 2025 14:00:12 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Herve Codina" <herve.codina@bootlin.com>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- "Danilo Krummrich" <dakr@kernel.org>, "Shawn Guo" <shawnguo@kernel.org>,
- "Sascha Hauer" <s.hauer@pengutronix.de>,
- "Pengutronix Kernel Team" <kernel@pengutronix.de>,
- "Fabio Estevam" <festevam@gmail.com>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Andi Shyti" <andi.shyti@kernel.org>,
- "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
- "Peter Rosin" <peda@axentia.se>,
- "derek.kiernan@amd.com" <derek.kiernan@amd.com>,
- "dragan.cvetic@amd.com" <dragan.cvetic@amd.com>,
- "Rob Herring" <robh@kernel.org>,
- "Saravana Kannan" <saravanak@google.com>,
- "Bjorn Helgaas" <bhelgaas@google.com>, "Mark Brown" <broonie@kernel.org>,
- "Len Brown" <lenb@kernel.org>, "Daniel Scally" <djrscally@gmail.com>,
- "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
- "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "Wolfram Sang" <wsa@kernel.org>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org,
- "Allan Nielsen" <allan.nielsen@microchip.com>,
- "Horatiu Vultur" <horatiu.vultur@microchip.com>,
- "Steen Hegelund" <steen.hegelund@microchip.com>,
- "Luca Ceresoli" <luca.ceresoli@bootlin.com>,
- "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
-Message-Id: <68b23799-29c2-4309-b55a-87d83dc6fbe9@app.fastmail.com>
-In-Reply-To: <20250408154925.5653d506@bootlin.com>
-References: <20250407145546.270683-1-herve.codina@bootlin.com>
- <20250407145546.270683-12-herve.codina@bootlin.com>
- <Z_Pw_MoPpVNwiEhc@smile.fi.intel.com> <20250408154925.5653d506@bootlin.com>
-Subject: Re: [PATCH 11/16] of: property: Allow fw_devlink device-tree support for x86
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.2\))
+Subject: Re: [RESEND PATCH] clk: socfpga: clk-pll: Optimize local variables
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <0BD7D71D-6F6B-4864-BEA7-E13563908D62@linux.dev>
+Date: Tue, 22 Apr 2025 14:22:04 +0200
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <FC8B34B6-642F-4228-90FB-D8B3148C03D3@linux.dev>
+References: <20250219104224.1265-2-thorsten.blum@linux.dev>
+ <d7df3b86-c3ff-48af-ad72-428e105976b9@kernel.org>
+ <0BD7D71D-6F6B-4864-BEA7-E13563908D62@linux.dev>
+To: Dinh Nguyen <dinguyen@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Apr 8, 2025, at 15:49, Herve Codina wrote:
-> On Mon, 7 Apr 2025 18:36:28 +0300
->> On Mon, Apr 07, 2025 at 04:55:40PM +0200, Herve Codina wrote:
+On 8. Apr 2025, at 19:45, Thorsten Blum wrote:
+> On 19. Feb 2025, at 13:42, Dinh Nguyen wrote:
+>> On 2/19/25 04:42, Thorsten Blum wrote:
+>>> Since readl() returns a u32, the local variables reg and bypass can =
+also
+>>> have the data type u32. Furthermore, divf and divq are derived from =
+reg
+>>> and can also be a u32.
+>>> Since do_div() casts the divisor to u32 anyway, changing the data =
+type
+>>> of divq to u32 removes the following Coccinelle/coccicheck warning
+>>> reported by do_div.cocci:
+>>> WARNING: do_div() does a 64-by-32 division, please consider using =
+div64_ul instead
+>>> Compile-tested only.
+>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+>>> ---
+>>> drivers/clk/socfpga/clk-pll.c | 4 ++--
 >>=20
->> This is incorrect, they never had ACPI to begin with. Also there is t=
-hird
->> platform that are using DT on x86 core =E2=80=94 SpreadTrum based pho=
-nes.
->
-> I will rework the commit log to avoid 'mixing ACPI and device-tree'
->
-> For "SpreadTrum based phones", do you have an idea about the Kconfig s=
-ymbol
-> I could use to filter our this x86 systems?
->
-> Anything I find upstream related to SpreadTrum seems base on ARM cpus.
-> I probably miss something.
+>> Applied!
+>=20
+> Did this patch and [*] get lost somehow?
+>=20
+> They aren't in -next and also didn't make it into the last merge =
+window.
 
-This is the Intel SOFIA platform with chips from both Spreadtrum (now
-Unisoc) and Rockchips, using a port of the arch/arm/ code DT on x86,
-about 10 years ago.
+Does anybody else know what happened or where I could find them?
 
-That code was never upstreamed, and is long abandoned by everyone.
+Thanks,
+Thorsten
 
->> And not sure about AMD stuff (Geode?).
->
-> Same here, if some AMD devices need to be filtered out, is there a spe=
-cific
-> Kconfig symbol I can use ?
+> [*] =
+https://lore.kernel.org/lkml/20250219104435.1525-2-thorsten.blum@linux.dev=
+/
 
-The only one I can think of is CONFIG_OLPC, the XO-1 was a Geode LX,
-while XO-1.5 used a VIA C7, both with actual open firmware (not just
-fdt).
-
-       Arnd
