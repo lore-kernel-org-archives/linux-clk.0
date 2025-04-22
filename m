@@ -1,202 +1,375 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2064.outbound.protection.outlook.com [40.107.93.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10EF28C5AE
-	for <linux-clk@vger.kernel.org>; Tue, 22 Apr 2025 14:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745333667; cv=none; b=KlQ9Lr7AXvol8cUXs/+ZVjCXDD5EHuFOvR8M1YTLJFMG0SF3OMYGWDXUMZznyPngM3ZBNbwPqMcZtj6vEzkk++rQz4BMEAyHZwjJTYAuZG/xIdl+OP58V4bO0qmjOF3IDX2rLQAawsD0/dZPtEd/4qdAmRV9P/1n5tIuL+hiY/k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745333667; c=relaxed/simple;
-	bh=a+RMGqONBoTe4mIS7kPQEgEl4KGlE4sPktA/RI2Z9ZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=Jqt5cNIs3u6x6Yo6HS96wnDhZ/LSoSnB4RlvR8roFmi95K1VMGTKuXMv7L0UugS6Y/nJtEkFcLQpfoOEvHRuBV9tdSiguRPw0hgDFxmZ0B+JfDFdVlLVq9Bi2CvYcMlnVaJHeQ44l1iofS85WGDFxt4HYQnAAI5pUYZVg0X8j5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tSS+p85r; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D5228FFEE;
+	Tue, 22 Apr 2025 16:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745339968; cv=fail; b=lRUXKab9Vs4GLLmNl6gu2cfppP7Q3M+qbFX+C/vQXxH2LfrfjDPyGV3OR3gIq2HOuL84wXcOGzgtyEN1g83WDsNcCA7WUfGs74j/QA4tZxOFLscrO6cxbUhSjYsN3cneR9BmU0EBFwyR0aEpBqXN/WwJsjFZAtOpd8ad0d4Wtpo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745339968; c=relaxed/simple;
+	bh=CSS6qUMfyvq3VhMixJD6pBR4aksHoMo8fVRT7OvpJ0o=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=U8i4jYdnbKLGeYQ7VTYJZVyCSBxCH+GUtGyRJGvkrMuF9DPw6uDcYS9COyP/IJRXuoXlufEVOzrlAfkttc8ZSVyRht8ARSXgPc5hpz9Gq9hhK80Gpwn1Y/n/lRbMcwPLuRtbK7yGMk47fY3mifESDZBZuGG3pIwJcRVWo9zYnQo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=hD6WU3H5; arc=fail smtp.client-ip=40.107.93.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tSS+p85r"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250422145422euoutp02730528ed474805c86571d362cbd2e4ca~4q7gc0ZPU2751027510euoutp02Y
-	for <linux-clk@vger.kernel.org>; Tue, 22 Apr 2025 14:54:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250422145422euoutp02730528ed474805c86571d362cbd2e4ca~4q7gc0ZPU2751027510euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1745333662;
-	bh=YRW1ozB27p7LSQVL82m2hy5NmybGDZRAWQakTtaYo28=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=tSS+p85rHu3lbGT3RxhlyqXghoDTFhaQ3ytGDY2bGXFV2bi0ybgFqObv6NMmvQExj
-	 ztg+k/ZjPDQOuvE9Sp9Ya2lxc5EcSHeZdHPbcejTXZhWRj99HzeV8hQ5irPU91+g5g
-	 3x4bQLbR/JgX81GV8ayof1BHgyHIbmS1GErj+UzE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250422145422eucas1p2f987a8c414cd947de26e8e6df5c94756~4q7f5urFv0361703617eucas1p2n;
-	Tue, 22 Apr 2025 14:54:22 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 04.BB.00837.E9DA7086; Tue, 22
-	Apr 2025 15:54:22 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250422145421eucas1p2f01bb5cadb9836b26cc5b9bfd5197bef~4q7feyoxh0578205782eucas1p2Y;
-	Tue, 22 Apr 2025 14:54:21 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250422145421eusmtrp2a29928f65b73f47fe7e1ca7f999a9a66~4q7fdxjPT0501605016eusmtrp2H;
-	Tue, 22 Apr 2025 14:54:21 +0000 (GMT)
-X-AuditID: cbfec7f2-32fff70000000345-20-6807ad9ee550
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id FF.54.19920.D9DA7086; Tue, 22
-	Apr 2025 15:54:21 +0100 (BST)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250422145420eusmtip224b1553af434b83ad7a84489799c4da9~4q7eg8VVw1574315743eusmtip2U;
-	Tue, 22 Apr 2025 14:54:20 +0000 (GMT)
-Message-ID: <50da445f-d6f9-407d-b25d-5b9c7ccf867c@samsung.com>
-Date: Tue, 22 Apr 2025 16:54:20 +0200
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="hD6WU3H5"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kyiN6fVOuJ+JSaoCSkDBxTYYibVqkoavZwI0T8NZS6Wp/dvyFc6Iq4LtAg7irgB1vrmaY61REFiqaK6MJ+ayA6E81SGncjx3xIaMFVQrpo03Iaqiry2KhkTyIhirIoFzaKDhaaTEKsLipq0b0pMnEMi7hPwrpXgM+UX+2DS0IJ52sdnT4iLEq1IWH5Qr71RPE74V5z7dsXd/dDQ7i9pqSetFA+4mGyhLEBDJWAhq8SYfK4xan96ILob8XEVYjVyRlOqqy249NI9DVQHb/0xd1KpLmiBxTE9tjX+B8fem10+TAV3lyO6ZaWDGujAc2CGVMhGS4TDR4OopbmFlSUTzKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K/g307YAmFBdPSbmsTQMKYATwCsMo/3I1UQup/eQRtQ=;
+ b=Kktjgp49I38oKvcjKWkHbuN/ZwtUIQHGoq75AIcoeL2zmjPtVMBAqSfKN6uQOpQSfQOjgZeewKh+HEtu4Z0Z+dsI9XbrHNA0UqpimE8A8wegn525bCQQPclPIssYvBZGYHhk9Bcro/ifwadtJAhQAy11drh+EM67c7yeb//wzohqCMaEOPhDojbtKoYv4Rr7Se93omTVh0myS38BqWmMNr/jX75ruHuzgMv5PBpoV6asxVQ9Sjdz6GYj/NCucfcgxDbKdNWSL0sqqoyhn430VvSEo+z6td1kRsi0mwWKKGTkqzSLO3zvxJhOfnZY5is2Ayxh3pi9QGuTGQhD0W8cQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K/g307YAmFBdPSbmsTQMKYATwCsMo/3I1UQup/eQRtQ=;
+ b=hD6WU3H5aUrEnUEYVc858+T8dFeEPLhjr3XbUzOvulgmSEbIuRcOi4qtTRdY/yClAjXNr5/l/wSRegex20e2G3+x4hLTs8S3J7BR+IHV5u40xaTUT+VC5rJbnhQSaOYWDP+LDz1eYXmRJaluLh+ygFElL6yxkBJp/2lvijxR0g43atnjUwpst+vOmHF3Y/wrG2sZzrrgLNGNRXEIUMUGjXSW9ZCcNg5GlEaYOT2Opk0/F03lMXP/r+SfkgA6EJzeKJDKRXZnPQktJkHBlLMMhPOeDI/IvScR0GC89ltws8Y8AOcLmEzfplFvPajUyLpl8TZzIXK3y8WGqLZsLeVNMA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from BYAPR03MB3461.namprd03.prod.outlook.com (2603:10b6:a02:b4::23)
+ by BY5PR03MB4920.namprd03.prod.outlook.com (2603:10b6:a03:1f0::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.36; Tue, 22 Apr
+ 2025 16:39:23 +0000
+Received: from BYAPR03MB3461.namprd03.prod.outlook.com
+ ([fe80::706b:dd15:bc81:313c]) by BYAPR03MB3461.namprd03.prod.outlook.com
+ ([fe80::706b:dd15:bc81:313c%2]) with mapi id 15.20.8655.033; Tue, 22 Apr 2025
+ 16:39:23 +0000
+Message-ID: <67503d24-c407-444d-8594-03054ead624f@altera.com>
+Date: Tue, 22 Apr 2025 09:39:22 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: socfpga: convert to yaml
+To: Rob Herring <robh@kernel.org>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+ dinguyen@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250417160616.47558-1-matthew.gerlach@altera.com>
+ <20250422132356.GA1020502-robh@kernel.org>
+Content-Language: en-US
+From: "Gerlach, Matthew" <matthew.gerlach@altera.com>
+In-Reply-To: <20250422132356.GA1020502-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR07CA0074.namprd07.prod.outlook.com
+ (2603:10b6:a03:12b::15) To BYAPR03MB3461.namprd03.prod.outlook.com
+ (2603:10b6:a02:b4::23)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/3] Add T-HEAD TH1520 VO clock support for LicheePi
- 4A GPU enablement
-To: sboyd@kernel.org, Drew Fustini <drew@pdp7.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, Rob Herring
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, Guo Ren <guoren@kernel.org>, Fu
-	Wei <wefu@redhat.com>, "paul.walmsley@sifive.com"
-	<paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, alex@ghiti.fr,
-	"jszhang@kernel.org" <jszhang@kernel.org>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20250403094425.876981-1-m.wilczynski@samsung.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJKsWRmVeSWpSXmKPExsWy7djPc7rz1rJnGGzYzG3x7M5XVoutv2ex
-	W6zZe47JYv6Rc6wW9y5tYbJ4sbeRxaL52Ho2i5ez7rFZfOy5x2pxedccNottn1vYLNYeuctu
-	cfGUq8XdeydYLF5e7mG2aJvFb/F/zw52i3/XNrJYtOyfwuIg7PH+Riu7x5uXL1k8Dnd8Yfe4
-	d2Iaq8emVZ1sHpuX1Hu0rD3G5NH/18Dj/b6rbB59W1Yxelxqvs7u8XmTXABPFJdNSmpOZllq
-	kb5dAldGz7k/bAVrZSsu9S9mb2DcLt7FyMkhIWAisX7bebYuRi4OIYEVjBLfJr1hgXC+MErM
-	u/6DHcL5zChx/tkdZpiWjp4bUFXLGSUaZ7xlhHDeMkqsaXnGBFLFK2AnMa/xDxuIzSKgKrGp
-	fSsbRFxQ4uTMJywgtqiAvMT9WzPYQWxhgXiJH9fns4LYIgJGEo8XPWYCGcos0M8qsXjyQrCh
-	zALiEreezAez2YCKHiyHaOAUsJfYMOUxI0SNvMT2t3OYQZolBF5xSpy9O5kR4m4Xic9T7jBB
-	2MISr45vYYewZST+75wPFc+XeLD1E9SfNRI7e45D2dYSd879AvqAA2iBpsT6XfoQYUeJsxf6
-	GEHCEgJ8EjfeCkKcwCcxadt0Zogwr0RHmxBEtZrE1J5euKXnVmxjmsCoNAspVGYheXIWkmdm
-	IexdwMiyilE8tbQ4Nz212DAvtVyvODG3uDQvXS85P3cTIzB1nv53/NMOxrmvPuodYmTiYDzE
-	KMHBrCTC+8uNPUOINyWxsiq1KD++qDQntfgQozQHi5I476L9relCAumJJanZqakFqUUwWSYO
-	TqkGJqWSna3FC2apWpX8ODTP1Ku4ZUrL6XzTBYfuc/TEquc76K6MLJqw6oD9gnCNjcZ9T34d
-	/bNc9WR3r9Lmy1JT6nyjFgRFPOUxPvRuYd4/Vud7TgWFUllz6/gXiu1xCWIzPHvReMqGMxnb
-	Hr877btcQe2G8NJALZvTOVJMl+zuFxj1MMSZhFlfWno7RrjcpMmKuae/38htxq+VP/sv/Taw
-	ZPH7soQ7n2nzlsrwsxPyFz1OWLWRSVd70zrdpfePy+3PN743R9j0P+uT6SK3BfQ/hrk4Poy3
-	PKwvUro26ahZtMfulxtcjO7xb/O5uXS3Il9Bc5Ff+aGGkoe82u6GS+NmHz7rbflPefm3eQse
-	GPfMV2Ipzkg01GIuKk4EABNDGbEMBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42I5/e/4Pd25a9kzDB49UrN4ducrq8XW37PY
-	LdbsPcdkMf/IOVaLe5e2MFm82NvIYtF8bD2bxctZ99gsPvbcY7W4vGsOm8W2zy1sFmuP3GW3
-	uHjK1eLuvRMsFi8v9zBbtM3it/i/Zwe7xb9rG1ksWvZPYXEQ9nh/o5Xd483Llywehzu+sHvc
-	OzGN1WPTqk42j81L6j1a1h5j8uj/a+Dxft9VNo++LasYPS41X2f3+LxJLoAnSs+mKL+0JFUh
-	I7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS+j59wftoK1shWX+hez
-	NzBuF+9i5OSQEDCR6Oi5wdLFyMUhJLCUUWLfpDZWiISMxLXulywQtrDEn2tdbCC2kMBrRol/
-	v0JBbF4BO4l5jX/A4iwCqhKb2reyQcQFJU7OfALWKyogL3H/1gz2LkYODmGBeIm7p0tBwiIC
-	RhKPFz1mAtnLLDCRVeLkj5uMEEdMYpR4uWcq2BHMAuISt57MZwKx2YA6HiyfDxbnFLCX2DDl
-	MSPIUGYBdYn184QgyuUltr+dwzyBUWgWkjNmIZk0C6FjFpKOBYwsqxhFUkuLc9Nziw31ihNz
-	i0vz0vWS83M3MQLTxLZjPzfvYJz36qPeIUYmDsZDjBIczEoivL/c2DOEeFMSK6tSi/Lji0pz
-	UosPMZoCg2Iis5Rocj4wUeWVxBuaGZgamphZGphamhkrifO6XT6fJiSQnliSmp2aWpBaBNPH
-	xMEp1cDE2LFAb8Hvu9P33F3xoHI797yC6jRVUZ5vJw09jeYbSaZN22yfU9d8mLf5u+Bl1kv/
-	lU9eOuawuWzfttPpJxZJ2Nh19mT+fnuCybGeic2SWTrl26zg6Fq1ZKFPSv/uqrref6HIYPXw
-	X81H89uSUcJFf/QkGdY9S19ymOv5/4kdVor6/ddlePlP3OBwMY5IU2vO/f+RNevfhisvdnRJ
-	G0ekxBZdXntTtt6v7YB4lbKR2wn3ipRlvLu2abEqPmoPiVZpLZmv+f5govThcF75P1c7+R/a
-	L7Vl+eN6pj1lgVy56i4BLl/5/61B9y75/Xx96jeXqNj2Tz93KSnPnpy0TOyNa4/k3t/+SkKT
-	BFK/tSuxFGckGmoxFxUnAgBtar/ZnAMAAA==
-X-CMS-MailID: 20250422145421eucas1p2f01bb5cadb9836b26cc5b9bfd5197bef
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250403094430eucas1p21515d7f693708fc2ad0cd399cb0b81aa
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250403094430eucas1p21515d7f693708fc2ad0cd399cb0b81aa
-References: <CGME20250403094430eucas1p21515d7f693708fc2ad0cd399cb0b81aa@eucas1p2.samsung.com>
-	<20250403094425.876981-1-m.wilczynski@samsung.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR03MB3461:EE_|BY5PR03MB4920:EE_
+X-MS-Office365-Filtering-Correlation-Id: dd52a8c2-18a6-4478-2291-08dd81bc3cb0
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aEh2Tkk4TE9GbXdremJ3bjhHU2pMSVVITlpLdk5YV2N4TEJWM1dXN0RVZzM0?=
+ =?utf-8?B?L3dycDRHS2NZOWh1dXhSaE9DdGpHTFNPdkJGRHRvV1AvMkdlbEgzejZUcTIx?=
+ =?utf-8?B?TUpCMzFTSlRPR2xsSmY0UEdiNzdnTlRXSWhxbnJVYnlTNlV1MCtraXRLamNR?=
+ =?utf-8?B?cDFzYzV6QUFqK0xHTXRqYTFvZnBUbElPVTJsenNBVnE5MVRqSU03UEUyTE1B?=
+ =?utf-8?B?M2R5RUVIb1RmQ3hOZFpmcmUrK3dYbnp2Q0RMWG0xY2dVUjZoUTY1aWtkamxK?=
+ =?utf-8?B?SjRmSXdtNmR2ZTdad1JsUDlLQk8rSzZNeENxMFpINS9qS2xPZFZSWE9TTU1i?=
+ =?utf-8?B?bldubnByRDNrSHAxZTQ5WlNBMlRjdXdXdHFnVXFrOU81bjNqT0JmcHk4L0s0?=
+ =?utf-8?B?aGo5cmhLdTVuelhnSzcxNkNSOENINjlKZGpUS25HUnNpNVNSU0hxeDJrbzdj?=
+ =?utf-8?B?eVQ3c2NQbEdtVTZlY2xmZmNLcG5mUlhsWW9xUFpHWitOdUc0bFlWUWQ3WExT?=
+ =?utf-8?B?UFYyMUUvb1RlVE5SK2J2allkTGdCOHJTUCt0QWZYaUR6d2tWTTlWcThyMWox?=
+ =?utf-8?B?Yi9BOUIzSTUrNFZhbnA5ZGt3c0VWTTFGaFpjMmkraXoxd29EcDMxYVdLZ3Nw?=
+ =?utf-8?B?b2dkVGZENEYvZ1pINWZRcStTK3RLdW00UW0vQ081Nnc1QnozS0VGSDlFZXlX?=
+ =?utf-8?B?K01jd1RRR0xZQ2FtQWxwdkMxc0xnUFQzMTFLVkF0SitZQU1VdEpnd2FWam1l?=
+ =?utf-8?B?MCsrMVBuV2pVWEk3bkFNM2xWdTJCdUR3OWovaC8zK0t0T0xYNFZLdE9zL0Vq?=
+ =?utf-8?B?NDl0S01YUnhDTVVzdEpMTTd2RHRheG5YNG8rNU82aERMVDVBSzFwMDdGd3ZD?=
+ =?utf-8?B?bDFlTE9DMDlyMzB3eGc5UEhaVkZGSC9ZeGJndnFpRmJKN3RtUWZPRVRQNm40?=
+ =?utf-8?B?QVpUMmNEcWRtc2Y5YWZXK3VBWDJQQ0J1VG9NdHk1azFxdEVzdEVJNzA5cmZq?=
+ =?utf-8?B?Y2ZkdVZXRUs3NHIrOEl4bnJpVVhXRnhzby9kYzFaZCs3WFYyZExIODdxUHhK?=
+ =?utf-8?B?S1AzK1JyOC9wOVlWa1IvWCt2My9BVHVsOTZUVUxLUEFKZktVSTBOSjJBMHV2?=
+ =?utf-8?B?NzVnRzFnMGxkNWRUQ1UzbzFnVjdHMzlJakRkbVVlREZwVG4yUFZJcVpUdjAx?=
+ =?utf-8?B?c0VUdE9XMTg4Q0RxWERzb2ZNV0hzNTdFY1RLTzFKeUZ2enMzQUdIbzhMWlMv?=
+ =?utf-8?B?RVVSMk1SSm5QUlU4SzB1Z2VxcHNoN3FOdGlLUVJaOWx2Y0NEMytQNG81d21S?=
+ =?utf-8?B?RTlPWkxRVysvdS9zTWlTalU1aSt0ckgyVDdUTlp6WHhLeUo4dWpqZlF3WHRG?=
+ =?utf-8?B?aVVTaDBIVkF6R2FIaG9IQlVOWFBYRGhPK0RweE0vVVlxb1I5T1BaRE1CblNU?=
+ =?utf-8?B?eUV3L1d6ejhTbEF5RC9PRkJBUVFVQjJSeElYWVZrYVJscmtoMTFaK0NtVVc3?=
+ =?utf-8?B?WTNZQ2poVnJFYlFDenRoY0VSRTE0QTlaVHdrd2pUVkNYemNJUDZVQ09zQVJC?=
+ =?utf-8?B?NHBYOXExUEhRRlJpUUYyY21KOURtQi96SllqYXpjU1FjcEFmLytYQy9wcE9Z?=
+ =?utf-8?B?cVNGMEhNbmVzckhZUWFqSVFMVDRIWmZ2ZFprWXRNOU5EeXB2NzRlbGhrclRn?=
+ =?utf-8?B?S0QvMlVQSi8yQVNKVGVGYXBFbEx4bE1LSVJZUERvL2UrVk1tRUE1ZFlZUHJo?=
+ =?utf-8?B?OTVPbjI4VUJnMHlBQTluRXQwRGJ1dndoZk9ZUWI4dE5NUURXczRLdVJDK0Jv?=
+ =?utf-8?B?V0YycDRmaEJ6bWdhY1dTNVNoK09iOW42WnptMFRXc2pzb0g5bTNDLzBmbVA2?=
+ =?utf-8?B?b0FISUV0YzM2Q0dPRjJuNGw3NmphMVo0ZmNkakFja3hQY013TlR1ai9HTGlX?=
+ =?utf-8?Q?H3bMwiL2H1E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR03MB3461.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M3QxRWhSbUlTbWp4aGpldEwwaUwrQ2RBeTZhQ2x4WkQ5TWxlK3kxZHRwQVlY?=
+ =?utf-8?B?U1NSTndmSVlZb3dEeldZNENMeEQwaDM2RG5iU3hHYUFxcTVmQ3dsR2RKVmUv?=
+ =?utf-8?B?Ri9qdnVZcWFhNmxISU1NMm1URlFwcW14U1ozcW9iQ3lUdlM3bWZQYkpOcTdh?=
+ =?utf-8?B?bkFXc0NlWGphaWovbm9aakRDSndkUmgyTnU5WmhrMmNQTzZlSGM1ZE5KMjZa?=
+ =?utf-8?B?SkNoQzJrSXA4NjFkdmpBczV0eUNrN2hvTXFCQXJteGdRM1JZc1ZNQmVkQXJV?=
+ =?utf-8?B?WHBFU2NzZWdxTFdlWXU4TGlSRlRrZ1RDVlBWUkpHVitmV083R2cwSWs0elZ4?=
+ =?utf-8?B?dTBrNGYzUjRpQ0NtUm9OMmFoTUN4QnhGMGtmbFdJdWJJS0JCTEJzYUFWbHd5?=
+ =?utf-8?B?U0swVUVxRTlkTURSL0ZxVnpQS0JZcDRXQlN1WGs0Z1g3RWZyWjE2RnBnejNK?=
+ =?utf-8?B?TG1YNHBnNUJnOGRoOUwwRkJtSzNxUnpaU3l3Vm5neTdQMkE0UitpUm9uQWk5?=
+ =?utf-8?B?MUNaK1IxZmZEUGsyT3V2enFSUVBOOS8wTjM0NXk5OVMyRDN6ZUg4Q3dXT0N0?=
+ =?utf-8?B?bU4zTjgzazEvVCsxR3NUUDdJSDNWd0toSFBWMjdtc01GdjM3eW83aXdhTFZl?=
+ =?utf-8?B?UkZ1djRVSnYzb1pocU1yNkxoSWt2TjNQQlg2dHNBbS9JVHZtTEtyT1BsSlMw?=
+ =?utf-8?B?WWliUHVzZnNWNHR4WHAvNGJObWUzaVZ3QjY5cGE3RytyVVlSb2sxWU5HSHRr?=
+ =?utf-8?B?Ti9keVlwVllOSnNEakhtTzNodE9TT2V0VmhwOW9iblhDbjZpZWordC93eC9v?=
+ =?utf-8?B?R3l6amM2VWEzbmg1OSt6N1Npc3AyOVNyUi9wL3NRSG5VS0ROd0dhcWlpdWxj?=
+ =?utf-8?B?V2pmNjlDQm43cWZ2R3NpQWgxTUUybVB1cXNOdjY3cUJsbUsydWNlMFA2eVBt?=
+ =?utf-8?B?cHdpK1NRMVJXSkdTTzdGckZPOE50Rnd1SjhtVGdKQm5hdDdCK29rMFVMQmNF?=
+ =?utf-8?B?ZGJhYXFZVXcvVGtQYkExVk00ZitYclp0RVFlVmdnMjNkdXVpcytxaVRrOVAz?=
+ =?utf-8?B?QlRmeDU4eFpsRGJFMkM4ZWNjUUVoRjNLM2x1QVl5eWlYSlVxUzUxL3BiME1t?=
+ =?utf-8?B?Vk1LeHdSQ0hYbnFxMXRHTGZqdmZTaDRJcVhHMGxvS0JydTZHQWwxbWYvQ0pH?=
+ =?utf-8?B?MEJyQVo1ay9sdU9rc1R6L2kzZ3VHMmRtdjA5b0kvUEdmbVNHMjZFcmhJb2w1?=
+ =?utf-8?B?ckpXU0FhMkl0NnRUWE9pYzI4YUtweVRUWWpKdVZwRDVtTVM2aFZaVERHOHlq?=
+ =?utf-8?B?RnU0WmZWNStVdUNyOVk0Z3hCN2FQV2lDbUNudWIvOVdUc1FDREdtZGlaL0hK?=
+ =?utf-8?B?cjhKMHRRNTdjU2hBS3V5L2RObm1QYzJoczdQM3hHRG5ka0ZuRG5oUVJwQSs3?=
+ =?utf-8?B?VEw0bmQ4YXI3NisvSnBXNDhYMWp2V0JxVjFQd0M2ckRKODhPZXI4eDcxZ1pa?=
+ =?utf-8?B?OXRjQnBWb0ltLzJLdldydFJKWGxndWlJUUN1V05EU0VDbC9KdUdGQWtUMEhr?=
+ =?utf-8?B?N1lQazZjVFphSHB4NlgvWWVSRHUza0lCTXRtVmtWY3JWSlVSQ2RaTnZGWVJJ?=
+ =?utf-8?B?K2JSRmZoUEt3VXdDRWx2cGRqTE9TOUd0MnFqeUFnMmhzZ3kwOURYOVBqNXo2?=
+ =?utf-8?B?Z3NIQ1JjOG5rMEkrZUE1MTdHMDU5Z1JZV28vWHY5eXBhdXc1QmZJU1FOOVQy?=
+ =?utf-8?B?ZHIwaExxTnBTaXFBRHVYTE4vT0NJc0pTSGxmM1RsdFFPTDBXamFybmFvemw0?=
+ =?utf-8?B?dDNrUTZuQXRHV01QRzdWWVQwWHZpZUgvdDBOWjlmbitMdDhiNDViRENYUERz?=
+ =?utf-8?B?UVY2Y05YV0l2ZjBvTEU1N09pbEJIVGZwTnFUT290NDRKRWxQdjdQVmphaksr?=
+ =?utf-8?B?U1FYUEQzUzdSNFh6a1V3VnQxbU1tVGhQcWVxUURmZEpja1RCSERjaUJaY01V?=
+ =?utf-8?B?bkxubHlBQzJiS2pDWHRKbW5Idlp6YTByUXpkRHNUK2NRM2JST240NzJMRHR6?=
+ =?utf-8?B?Wmd2d1ZmSVdnM1dqWFZ4YzVLeVlrZEdnMEZsRG1PTjQ3VWdmc0dlSjgzdUpN?=
+ =?utf-8?B?bzZFbXNVTjNYbEQraCtrQXc5MzVYTUdHK0xsUlJuNkhRR2tRaW1hYktVVElY?=
+ =?utf-8?B?eXc9PQ==?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dd52a8c2-18a6-4478-2291-08dd81bc3cb0
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB3461.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2025 16:39:22.9667
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZUFqMY3Gr1jH7dnsEJoeUBz1rtSj/1hKPBYmugFDimfoDo1II/GfY8luUHQ14f+43nZ4rGikDCNDBnjwrEZeYwE4Um5Yf6yf+ZBiHCrtUJM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR03MB4920
 
 
 
-On 4/3/25 11:44, Michal Wilczynski wrote:
-> This is a subset of a larger patch series enabling the Imagination BXM-4-64 GPU
-> on the LicheePi 4A board, which is powered by the T-HEAD TH1520 SoC. While the
-> full series includes power-domain, reset, and firmware changes, this part
-> focuses solely on the clock subsystem needed for the GPU and other VO (video
-> output) blocks. By merging these clock patches independently, we prepare the
-> groundwork for future GPU integration via the `drm/imagination` driver.
-> 
-> The T-HEAD TH1520 SoC features multiple clock controllers. Initially, only the
-> AP clock controller was supported upstream. The patches below add support for
-> the VO (video output) clock controller, which manages GPU-related gates, HDMI,
-> and other multimedia clocks.
-> 
-> Bigger series cover letter:
-> https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
-> 
-> v7:
-> - remove commits 3,4 from the patch series, those would handle empty MEM clock
->   stub, and reset management. It's not necessary anymore, as this would be
->   implemented in power-domain driver
-> - added the device tree patch at the end for the SoC maintainers to take after
->   the other patches get OK-ed
-> - added Acked-by, from Connor for the dt-binding patch
-> - re-added Reviewed-by from Krzysztof, as the dt-binding patch is the same as
->   for the v5
-> 
-> v6:
-> - squashed the "dt-bindings: clock: thead: Add GPU clkgen reset property"
->   with the "dt-bindings: clock: thead: Add TH1520 VO clock controller". As
->   a result, also removed the Reviewed-by from Krzysztof, since the new
->   resets property has been introduced, which is mandatory in the VO
->   case
-> 
-> v5:
-> - introduced a new macro CCU_GATE_CLK_OPS, which allows providing custom clk_ops.
->   In the case of the 'MEM' clock, it provides empty clk_nops. Later, this clock
->   is provided to the GPU node, thereby avoiding any ABI breakage
-> - used the CCU_GATE_CLK_OPS macro to implement a workaround for de-asserting
->   the clkgen reset only after both core and sys clocks are enabled. This
->   sequence is required to properly initialize the GPU
-> 
-> v4:
->  - enhanced documentation for new Video Output (VO) clock inputs in device tree
->    bindings
-> 
-> v3:
->  - reworked driver to support multiple clock controllers through .compatible
->    and .data instead of using multiple address spaces in dt-binding. This change
->    allows to re-use the driver code for multiple clock controllers
-> 
-> v2:
->  - removed AP_SUBSYS clock refactoring commits (1-6):
->  - instead of refactoring, I opted to extend the current driver and its
->    associated device tree node to include support for a second address space.
->  - resolved all checkpatch issues using --strict, except for the call to
->    devm_clk_hw_register_gate_parent_data().  The current implementation remains
->    preferable in this context, and clang-format aligns with this choice
-> 
-> Michal Wilczynski (3):
->   dt-bindings: clock: thead: Add TH1520 VO clock controller
->   clk: thead: Add clock support for VO subsystem in T-HEAD TH1520 SoC
->   riscv: dts: thead: Add device tree VO clock controller
-> 
->  .../bindings/clock/thead,th1520-clk-ap.yaml   |  17 +-
->  arch/riscv/boot/dts/thead/th1520.dtsi         |   7 +
->  drivers/clk/thead/clk-th1520-ap.c             | 196 +++++++++++++++---
->  .../dt-bindings/clock/thead,th1520-clk-ap.h   |  34 +++
->  4 files changed, 223 insertions(+), 31 deletions(-)
-> 
+On 4/22/2025 6:23 AM, Rob Herring wrote:
 
-Hi Stephen, I think Drew is already collecting DT commits for the next
-merge window. Do you think the patches 1-2 will make it for the 6.16
-release ?
+> 
+> On Thu, Apr 17, 2025 at 09:06:16AM -0700, Matthew Gerlach wrote:
+>> Convert the clock device tree bindings to yaml for the Altera SoCFPGA
+>> Cyclone5, Arria5, and Arria10 chip families. Since the clock nodes are
+>> subnodes to Altera SOCFPGA Clock Manager, the yaml was added to
+>> socfpga-clk-manager.yaml.
+>>
+>> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
+>> ---
+>>  .../arm/altera/socfpga-clk-manager.yaml       | 118 +++++++++++++++++-
+>>  .../bindings/clock/altr_socfpga.txt           |  30 -----
+>>  2 files changed, 117 insertions(+), 31 deletions(-)
+>>  delete mode 100644 Documentation/devicetree/bindings/clock/altr_socfpga.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
+>> index 572381306681..4cda13259530 100644
+>> --- a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
+>> @@ -9,17 +9,133 @@ title: Altera SOCFPGA Clock Manager
+>>  maintainers:
+>>    - Dinh Nguyen <dinguyen@kernel.org>
+>>
+>> -description: test
+>> +description:
+>> +  This binding describes the Altera SOCFGPA Clock Manager and its associated
+>> +  tree of clocks, pll's, and clock gates for the Cyclone5, Arria5 and Arria10
+>> +  chip families.
+>>
+>>  properties:
+>>    compatible:
+>>      items:
+>>        - const: altr,clk-mgr
+>> +
+>>    reg:
+>>      maxItems: 1
+>>
+>> +  clocks:
+>> +    type: object
+>> +    additionalProperties: false
+>> +
+>> +    properties:
+>> +      "#address-cells":
+>> +        const: 1
+>> +
+>> +      "#size-cells":
+>> +        const: 0
+>> +
+>> +    patternProperties:
+>> +      "^osc[0-9]$":
+>> +        type: object
+>> +
+>> +      "^[a-z0-9,_]+[clk,pll,clk_gate,clk_divided](@[a-f0-9]+)?$":
+> 
+> This regex doesn't do what you think it does. You want:
+> 
+> "^[a-z0-9,_]+(clk|pll|clk_gate|clk_divided)(@[a-f0-9]+)?$"
 
-Best regards,
--- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+Yes, the above is the correct regex.
+
+> 
+> However, I don't see clk_gate or clk_divided used anywhere, so I would
+> simplify to:
+
+ddr_dqs_clk_gate, ddr_2x_dqs_clk_gate, ddr_dq_clk_gate, and 
+sdmmc_clk_divided are all names of nodes in 
+arch/arm/boot/dts/intel/socfpga/socfpga.dtsi; so I don't think I can 
+simplify as you suggest.
+
+> 
+> "(clk|pll)(@[a-f0-9]+)?$"
+> 
+> 
+>> +        type: object
+>> +        additionalProperties: false
+>> +
+>> +        properties:
+>> +
+>> +          compatible:
+>> +            enum:
+>> +              - altr,socfpga-pll-clock
+>> +              - altr,socfpga-perip-clk
+>> +              - altr,socfpga-gate-clk
+>> +              - altr,socfpga-a10-pll-clock
+>> +              - altr,socfpga-a10-perip-clk
+>> +              - altr,socfpga-a10-gate-clk
+>> +              - fixed-clock
+>> +
+>> +          clocks:
+>> +            $ref: /schemas/types.yaml#/definitions/phandle-array
+> 
+> clocks already has a type.
+
+I will remove redundant type.
+
+> 
+>> +            description: one or more phandles to input clock
+> 
+> I assume there is some max, so make this constraints:
+> 
+> minItems: 1
+> maxItems: ?
+Yes, adding min/maxItems is appropriate.
+
+> 
+>> +
+>> +          "#address-cells":
+>> +            const: 1
+>> +
+>> +          "#clock-cells":
+>> +            const: 0
+>> +
+>> +          "#size-cells":
+>> +            const: 0
+>> +
+>> +          clk-gate:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +            items:
+>> +              - description: gating register offset
+>> +              - description: bit index
+>> +
+>> +          div-reg:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +            items:
+>> +              - description: divider register offset
+>> +              - description: bit shift
+>> +              - description: bit width
+>> +
+>> +          fixed-divider:
+>> +            $ref: /schemas/types.yaml#/definitions/uint32
+>> +
+>> +          reg:
+>> +            maxItems: 1
+>> +
+>> +        patternProperties:
+>> +          "^[a-z0-9,_]+[clk,pll](@[a-f0-9]+)?$":
+> 
+> Similar issues here.
+
+Yes, I will fix this regex too.
+
+> 
+>> +            type: object
+>> +            additionalProperties: false
+>> +
+>> +            properties:
+>> +              compatible:
+>> +                enum:
+>> +                  - altr,socfpga-perip-clk
+>> +                  - altr,socfpga-gate-clk
+>> +                  - altr,socfpga-a10-perip-clk
+>> +                  - altr,socfpga-a10-gate-clk
+>> +
+>> +              "#clock-cells":
+>> +                const: 0
+>> +
+>> +              clocks:
+>> +                $ref: /schemas/types.yaml#/definitions/phandle-array
+>> +                description: one or more phandles to input clock
+>> +
+>> +              clk-gate:
+>> +                $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +                items:
+>> +                  - description: gating register offset
+>> +                  - description: bit index
+>> +
+>> +              div-reg:
+>> +                $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +                items:
+>> +                  - description: divider register offset
+>> +                  - description: bit shift
+>> +                  - description: bit width
+>> +
+>> +              fixed-divider:
+>> +                $ref: /schemas/types.yaml#/definitions/uint32
+> 
+> As these properties are all just repeated, put them all under '$defs'
+> and reference that in both places.
+
+I will put the repeated properties under '$defs' and reference in both 
+places.
+
+> 
+>> +
+>> +              reg:
+>> +                maxItems: 1
+> 
+> 'reg' goes after compatible.
+
+Thanks for the reminder.
+
+> 
+>> +
+>> +            required:
+>> +              - compatible
+>> +              - clocks
+>> +              - "#clock-cells"
+>> +
+>> +        required:
+>> +          - compatible
+>> +          - "#clock-cells"
+>> +
+>>  required:
+>>    - compatible
+>> +  - reg
+>>
+>>  additionalProperties: false
+>>
+Thank you for the review,
+Matthew Gerlach
