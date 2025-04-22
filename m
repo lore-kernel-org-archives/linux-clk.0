@@ -1,493 +1,236 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D531F03FA;
-	Mon, 21 Apr 2025 20:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745266726; cv=none; b=S61byHxqWWLz+mn65Bes33UI5ycYv87CtUd97PtaTYU2z8dzKdrfs+CBZXAtO5Lbq2cpwuYICinrSzzPn5ZRkaJPI7q96J4AY0YmDXFmIqgv5UMXge/JxwnceEMOsx2M1sdjuQzEy3s1GQPPMcR2t35VI9XkniYXTjxQO0t8RKU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745266726; c=relaxed/simple;
-	bh=JDB54FoTLeLwyo470fOwKknJanfkTVUJo3AeUpSczaU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YnZfnwF+1RX+xbSZfuTvIyEOpmOgwypr2PoxNyCE7M4V9lbKJoKZw1k8AxgbKO2tOJQozLO828UefDxlKU+bjPcmF2IOAE/WUjcNw+i1UijngDITGGySvCwYIDRulNZCF4KHd2I4OMVpdD75V9sgKz6Jbmqq/3yRFJjuYknPT8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=KfPy02tO; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E8A196;
+	Tue, 22 Apr 2025 04:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745295553; cv=pass; b=owkjZPPjzFPOm8uvTqjmC2lkMff/vD8tEanChUQFl4lza0wo4oqtgrBMM60IBMqiYNUtAh7RVJe9/PmOWuqd2rnEbAvaf7tImPrwRfEHjwVZKFlS3Q5dF4DSaaMRsCtOF7jiWAaKSex27F2/3gsqU1STdnTyqMCXh3Pm/6JF9MA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745295553; c=relaxed/simple;
+	bh=iNsKMm84GHQhbUytpMjyMh6LwwOS6U2zFWLDvpU9Cmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=me/x8lyUbAqbbOH8rnHS/qvibmjVgeJp81AGOlfEA2WZm1wDYG9m7eUCm6+h62NXiPAwZoQ9BjRcwZox++MUoJhFcsDIO9+EyMtxrAOVOBQp1P+nr5nOro2oUFpVAqY+Rrgq8GSwZ/zyIJ8ZZPDL1y27PlNmp/vPKqIvFPcoGSA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=Gic08PWZ; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="KfPy02tO"
-Received: from [192.168.183.162] (254C2769.nat.pool.telekom.hu [37.76.39.105])
-	by mail.mainlining.org (Postfix) with ESMTPSA id A60EBBBB09;
-	Mon, 21 Apr 2025 20:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1745266721;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dvAZ7WHxT1ib3U22U7YzaEM5wJPBeAMgcRsnmo/EFiw=;
-	b=KfPy02tOIt2WezpTLGBdI2HW25sRJ4gaf5/5JSG6nTYJ7N20uuLTfeYo0fFY+xqlrh4x6m
-	AkshjGrn23I+FkygkLohQ07V3kG4ALv3AdKp9aW1YIsCOev89fcgngWASRTzUJMii+ZTrM
-	H8BEYSJRlzAsWAJi5M0lCN2sqoqSAB53KPwsejIRsxMW0LvpWPNLBT3tyRM6Cx7Ab4K9kL
-	y0WMYr08k99dN+MjRjoU0fjXh6WRErLN3lc2Eq9PM60PYHQqGbaWPPWQt80p4AQkiOLdjR
-	EdBztwPQPPhB2qc+c4o1qDD7YBGuDw5AqLb9lre8Lh2C6Sx23JknlFmIUgOVgA==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Mon, 21 Apr 2025 22:18:27 +0200
-Subject: [PATCH v5 5/5] arm64: dts: qcom: Add Xiaomi Redmi 3S
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="Gic08PWZ"
+ARC-Seal: i=1; a=rsa-sha256; t=1745295527; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bYShoK2I5627kuvCMBr7ice5zoZvmVLXZxqiboxIqDwF0rBOTWN+rIFKUegsdEjNoYjjC32ZOZzzzkUFjOdCeD3NIYMJHOMkOs4tcfcxVdpHJV5mv0y9taQ7g9d344fb3U/yCegeLMCrThiBuqFu7VuZKk6nUHnMjxb8Lyv62Ms=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1745295527; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=iNsKMm84GHQhbUytpMjyMh6LwwOS6U2zFWLDvpU9Cmg=; 
+	b=hSzjbzbDUhiVei7Eec+5YrhPzASfsG8bj5oGQVlO4MqcG7oUuY1P5VWV90eKWHFvt88ZH9uH8WcjHS6IaYXB3v4O80I46oA1r7lyE05VipcpGi+t4owgoraKk5zSDlhjsBd0GwC/MuwRDmfjqvR8OoCsD1ON4eCDAl6s2bYcG2U=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745295527;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=iNsKMm84GHQhbUytpMjyMh6LwwOS6U2zFWLDvpU9Cmg=;
+	b=Gic08PWZfyL08Tbqw5qQYDmVI4RM1Os2KsH5V5FLKN8HENRrA+tv8edW7Ws+DGuH
+	Mf6xpKRORMb1usri4f3BOofaekUuQVqU2hb+y3MZzykrLgAf73LsW0m7Xt4/pwfV5Nm
+	RswSu3lHtv3YSZcNxq4OUzFxAwO1RWuFjGH6PsSQ=
+Received: by mx.zohomail.com with SMTPS id 17452955185091.4976603090620983;
+	Mon, 21 Apr 2025 21:18:38 -0700 (PDT)
+Message-ID: <b858e1a3-7bad-4e23-bd95-d409a29195ad@zohomail.com>
+Date: Tue, 22 Apr 2025 12:18:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/3] dt-bindings: clock: Add bindings for Canaan K230
+ clock controller
+To: Chen Wang <unicorn_wang@outlook.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com>
+ <20250415-b4-k230-clk-v6-1-7fd89f427250@zohomail.com>
+ <MA0P287MB22621E1EC7F030E093C05084FEB82@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
+From: Xukai Wang <kingxukai@zohomail.com>
+Content-Language: en-US
+In-Reply-To: <MA0P287MB22621E1EC7F030E093C05084FEB82@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250421-msm8937-v5-5-bf9879ef14d9@mainlining.org>
-References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
-In-Reply-To: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Adam Skladowski <a_skl39@protonmail.com>, 
- Sireesh Kodali <sireeshkodali@protonmail.com>, 
- Srinivas Kandagatla <srini@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux@mainlining.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1745266705; l=9557;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=JDB54FoTLeLwyo470fOwKknJanfkTVUJo3AeUpSczaU=;
- b=zHB9MNa3HZvJuqqpLqFLsCa1PDmyqfxeI4jSjiWHNHbycN7oc6nSxjyZPtoR27dNWV/QbZRzx
- dB73PoUDMFSD6NvOgGBKyYpXdhbzPJXRz5tgfl1X2/1s7e4gyRd3Ikq
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+Feedback-ID: rr080112272a13f94d3fc8e81c0fa6ae23000020fdad24f314990c2fb2150b564169e8b45e6e758e036a8a80:zu080112278c70b1c3fda24dcf3c14c9b50000bc403e68ad6228418b8c8f41b6e9f42e34dd877b267001d8fc:rf0801122ccc9d7616e07c63669e52d081000092f1083db6b64a211b5e15228f345040d987203771a4404cca7708396413:ZohoMail
+X-ZohoMailClient: External
 
-Add initial support for Xiaomi Redmi 3S (land).
 
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- arch/arm64/boot/dts/qcom/Makefile                |   1 +
- arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts | 381 +++++++++++++++++++++++
- 2 files changed, 382 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index adb4d026bcc4b24d73de92e204db8d525b0770e6..8c101d07e78fb2d9837ecca84cc53005f9265506 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -64,6 +64,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-wingtech-wt88047.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-yiming-uz801v3.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8917-xiaomi-riva.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8929-wingtech-wt82918hd.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= msm8937-xiaomi-land.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-huawei-kiwi.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-longcheer-l9100.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8939-samsung-a7.dtb
-diff --git a/arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts b/arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts
-new file mode 100644
-index 0000000000000000000000000000000000000000..91837ff940f1b6b13a9ef519519f471a7a4cdac0
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts
-@@ -0,0 +1,381 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2024, Barnabas Czeman
-+ */
-+/dts-v1/;
-+
-+#include <dt-bindings/arm/qcom,ids.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+
-+#include "msm8937.dtsi"
-+#include "pm8937.dtsi"
-+#include "pmi8950.dtsi"
-+
-+/delete-node/ &qseecom_mem;
-+
-+/ {
-+	model = "Xiaomi Redmi 3S (land)";
-+	compatible = "xiaomi,land", "qcom,msm8937";
-+	chassis-type = "handset";
-+
-+	qcom,msm-id = <QCOM_ID_MSM8937 0x0>;
-+	qcom,board-id = <0x1000b 1>, <0x2000b 1>;
-+
-+	aliases {
-+		mmc0 = &sdhc_1;
-+		mmc1 = &sdhc_2;
-+	};
-+
-+	battery: battery {
-+		compatible = "simple-battery";
-+
-+		charge-full-design-microamp-hours = <4100000>;
-+		constant-charge-current-max-microamp = <1000000>;
-+		voltage-min-design-microvolt = <3400000>;
-+		voltage-max-design-microvolt = <4400000>;
-+	};
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		stdout-path = "framebuffer0";
-+
-+		framebuffer0: framebuffer@8dd01000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0x8dd01000 0x0 (720 * 1280 * 3)>;
-+			width = <720>;
-+			height = <1280>;
-+			stride = <(720 * 3)>;
-+			format = "r8g8b8";
-+
-+			clocks = <&gcc GCC_MDSS_AHB_CLK>,
-+				 <&gcc GCC_MDSS_AXI_CLK>,
-+				 <&gcc GCC_MDSS_VSYNC_CLK>,
-+				 <&gcc GCC_MDSS_MDP_CLK>,
-+				 <&gcc GCC_MDSS_BYTE0_CLK>,
-+				 <&gcc GCC_MDSS_PCLK0_CLK>,
-+				 <&gcc GCC_MDSS_ESC0_CLK>;
-+			power-domains = <&gcc MDSS_GDSC>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&gpio_keys_default>;
-+		pinctrl-names = "default";
-+
-+		key-volup {
-+			label = "Volume Up";
-+			linux,code = <KEY_VOLUMEUP>;
-+			gpios = <&tlmm 91 GPIO_ACTIVE_LOW>;
-+			debounce-interval = <15>;
-+		};
-+	};
-+
-+	irled {
-+		compatible = "gpio-ir-tx";
-+		gpios = <&tlmm 45 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	reserved-memory {
-+		reserved@84a00000 {
-+			reg = <0x0 0x84a00000 0x0 0x1900000>;
-+			no-map;
-+		};
-+
-+		framebuffer: memory@8dd01000 {
-+			reg = <0x0 0x8dd01000 0x0 (720 * 1280 * 3)>;
-+			no-map;
-+		};
-+	};
-+
-+	vph_pwr: vph-pwr-regulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&blsp1_i2c2 {
-+	status = "okay";
-+
-+	led-controller@45 {
-+		compatible = "awinic,aw2013";
-+		reg = <0x45>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vcc-supply = <&pm8937_l10>;
-+		vio-supply = <&pm8937_l5>;
-+
-+		led@0 {
-+			reg = <0>;
-+			function = LED_FUNCTION_STATUS;
-+			led-max-microamp = <5000>;
-+			color = <LED_COLOR_ID_RED>;
-+		};
-+
-+		led@1 {
-+			reg = <1>;
-+			function = LED_FUNCTION_STATUS;
-+			led-max-microamp = <5000>;
-+			color = <LED_COLOR_ID_GREEN>;
-+		};
-+
-+		led@2 {
-+			reg = <2>;
-+			function = LED_FUNCTION_STATUS;
-+			led-max-microamp = <5000>;
-+			color = <LED_COLOR_ID_BLUE>;
-+		};
-+	};
-+};
-+
-+&blsp1_i2c3 {
-+	status = "okay";
-+
-+	touchscreen@3e {
-+		compatible = "edt,edt-ft5306";
-+		reg = <0x3e>;
-+
-+		interrupts-extended = <&tlmm 65 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&tlmm 64 GPIO_ACTIVE_LOW>;
-+		vcc-supply = <&pm8937_l10>;
-+		iovcc-supply = <&pm8937_l5>;
-+
-+		pinctrl-0 = <&tsp_int_rst_default>;
-+		pinctrl-names = "default";
-+
-+		touchscreen-size-x = <720>;
-+		touchscreen-size-y = <1280>;
-+	};
-+};
-+
-+&pm8937_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+
-+	status = "okay";
-+};
-+
-+&pm8937_spmi_regulators {
-+	/* APC */
-+	pm8937_s5: s5 {
-+		regulator-min-microvolt = <1050000>;
-+		regulator-max-microvolt = <1350000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+};
-+
-+&pmi8950_wled {
-+	qcom,num-strings = <2>;
-+	qcom,external-pfet;
-+	qcom,current-limit-microamp = <20000>;
-+	qcom,ovp-millivolt = <29600>;
-+
-+	status = "okay";
-+};
-+
-+&rpm_requests {
-+	regulators-0 {
-+		compatible = "qcom,rpm-pm8937-regulators";
-+
-+		vdd_s1-supply = <&vph_pwr>;
-+		vdd_s2-supply = <&vph_pwr>;
-+		vdd_s3-supply = <&vph_pwr>;
-+		vdd_s4-supply = <&vph_pwr>;
-+
-+		vdd_l1_l19-supply = <&pm8937_s3>;
-+		vdd_l2_l23-supply = <&pm8937_s3>;
-+		vdd_l3-supply = <&pm8937_s3>;
-+		vdd_l4_l5_l6_l7_l16-supply = <&pm8937_s4>;
-+		vdd_l8_l11_l12_l17_l22-supply = <&vph_pwr>;
-+		vdd_l9_l10_l13_l14_l15_l18-supply = <&vph_pwr>;
-+
-+		pm8937_s1: s1 {
-+			regulator-min-microvolt = <1000000>;
-+			regulator-max-microvolt = <1225000>;
-+		};
-+
-+		pm8937_s3: s3 {
-+			regulator-min-microvolt = <1300000>;
-+			regulator-max-microvolt = <1300000>;
-+		};
-+
-+		pm8937_s4: s4 {
-+			regulator-min-microvolt = <2050000>;
-+			regulator-max-microvolt = <2050000>;
-+		};
-+
-+		pm8937_l2: l2 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+
-+		pm8937_l5: l5 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l6: l6 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l7: l7 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l8: l8 {
-+			regulator-min-microvolt = <2850000>;
-+			regulator-max-microvolt = <2900000>;
-+		};
-+
-+		pm8937_l9: l9 {
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l10: l10 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <3000000>;
-+		};
-+
-+		pm8937_l11: l11 {
-+			regulator-min-microvolt = <2950000>;
-+			regulator-max-microvolt = <2950000>;
-+			regulator-allow-set-load;
-+			regulator-system-load = <200000>;
-+		};
-+
-+		pm8937_l12: l12 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <2950000>;
-+		};
-+
-+		pm8937_l13: l13 {
-+			regulator-min-microvolt = <3075000>;
-+			regulator-max-microvolt = <3075000>;
-+		};
-+
-+		pm8937_l14: l14 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l15: l15 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <3300000>;
-+		};
-+
-+		pm8937_l16: l16 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+		};
-+
-+		pm8937_l17: l17 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2900000>;
-+		};
-+
-+		pm8937_l19: l19 {
-+			regulator-min-microvolt = <1225000>;
-+			regulator-max-microvolt = <1350000>;
-+		};
-+
-+		pm8937_l22: l22 {
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+		};
-+
-+		pm8937_l23: l23 {
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+		};
-+	};
-+};
-+
-+&sdc2_cmd_default {
-+	drive-strength = <12>;
-+};
-+
-+&sdc2_data_default {
-+	drive-strength = <12>;
-+};
-+
-+&sdhc_1 {
-+	vmmc-supply = <&pm8937_l8>;
-+	vqmmc-supply = <&pm8937_l5>;
-+
-+	status = "okay";
-+};
-+
-+&sdhc_2 {
-+	cd-gpios = <&tlmm 67 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&pm8937_l11>;
-+	vqmmc-supply = <&pm8937_l12>;
-+	pinctrl-0 = <&sdc2_default &sdc2_cd_default>;
-+	pinctrl-1 = <&sdc2_sleep &sdc2_cd_default>;
-+	pinctrl-names = "default", "sleep";
-+
-+	status = "okay";
-+};
-+
-+&sleep_clk {
-+	clock-frequency = <32768>;
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <0 4>, <20 4>;
-+
-+	gpio_keys_default: gpio-keys-default-state {
-+		pins = "gpio91";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-pull-up;
-+	};
-+
-+	sdc2_cd_default: sdc2-cd-default-state {
-+		pins = "gpio67";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	tsp_int_rst_default: tsp-int-rst-default-state {
-+		pins = "gpio64", "gpio65";
-+		function = "gpio";
-+		drive-strength = <8>;
-+		bias-pull-up;
-+	};
-+};
-+
-+&wcnss {
-+	vddpx-supply = <&pm8937_l5>;
-+
-+	status = "okay";
-+};
-+
-+&wcnss_iris {
-+	compatible = "qcom,wcn3620";
-+	vddxo-supply = <&pm8937_l7>;
-+	vddrfa-supply = <&pm8937_l19>;
-+	vddpa-supply = <&pm8937_l9>;
-+	vdddig-supply = <&pm8937_l5>;
-+};
-+
-+&wcnss_mem {
-+	status = "okay";
-+};
-+
-+&xo_board {
-+	clock-frequency = <19200000>;
-+};
-
--- 
-2.49.0
-
+On 2025/4/21 18:47, Chen Wang wrote:
+>
+> On 2025/4/15 22:25, Xukai Wang wrote:
+>> This patch adds the Device Tree binding for the clock controller
+>> on Canaan k230. The binding defines the new clocks available and
+>> the required properties to configure them correctly.
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+>> ---
+>>   .../devicetree/bindings/clock/canaan,k230-clk.yaml | 43 ++++++++++++++
+>>   include/dt-bindings/clock/canaan,k230-clk.h        | 69
+>> ++++++++++++++++++++++
+>>   2 files changed, 112 insertions(+)
+>>
+>> diff --git
+>> a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+>> b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+>> new file mode 100644
+>> index
+>> 0000000000000000000000000000000000000000..d7220fa30e4699a68fa5279c04abc63c1905fa4a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+>> @@ -0,0 +1,43 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Canaan Kendryte K230 Clock
+>> +
+>> +maintainers:
+>> +  - Xukai Wang <kingxukai@zohomail.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: canaan,k230-clk
+>> +
+>> +  reg:
+>> +    items:
+>> +      - description: PLL control registers.
+>> +      - description: Sysclk control registers.
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - '#clock-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    clock-controller@91102000 {
+>> +        compatible = "canaan,k230-clk";
+>> +        reg = <0x91102000 0x1000>,
+>
+> Note that when actually writing DTS, the PLL-related register range is
+> not so large (0x1000). Otherwise, the BOOT-related registers may be
+> overwritten.
+>
+I get the point. Although I won't modify other registers unrelated to
+PLL, I will still refine the mapped areas(0x40 size).
+>
+>> +              <0x91100000 0x1000>;
+>> +        clocks = <&osc24m>;
+>> +        #clock-cells = <1>;
+>> +    };
+>> diff --git a/include/dt-bindings/clock/canaan,k230-clk.h
+>> b/include/dt-bindings/clock/canaan,k230-clk.h
+>> new file mode 100644
+>> index
+>> 0000000000000000000000000000000000000000..41edb13ea04bffaa1ddd1d1af87ae3406b688332
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/canaan,k230-clk.h
+>> @@ -0,0 +1,69 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>> +/*
+>> + * Kendryte Canaan K230 Clock Drivers
+>> + *
+>> + * Author: Xukai Wang <kingxukai@zohomail.com>
+>> + */
+>> +
+>> +#ifndef CLOCK_K230_CLK_H
+>> +#define CLOCK_K230_CLK_H
+>> +
+>> +/* Kendryte K230 SoC clock identifiers (arbitrary values). */
+>> +#define K230_CPU0_SRC            0
+>> +#define K230_CPU0_ACLK            1
+>> +#define K230_CPU0_PLIC            2
+>> +#define K230_CPU0_NOC_DDRCP4        3
+>> +#define K230_CPU0_PCLK            4
+>> +#define K230_PMU_PCLK            5
+>> +#define K230_HS_HCLK_HIGH_SRC        6
+>> +#define K230_HS_HCLK_HIGH_GATE        7
+>> +#define K230_HS_HCLK_SRC        8
+>> +#define K230_HS_SD0_HS_AHB_GAT        9
+>> +#define K230_HS_SD1_HS_AHB_GAT        10
+>> +#define K230_HS_SSI1_HS_AHB_GA        11
+>> +#define K230_HS_SSI2_HS_AHB_GA        12
+>> +#define K230_HS_USB0_HS_AHB_GA        13
+>> +#define K230_HS_USB1_HS_AHB_GA        14
+>> +#define K230_HS_SSI0_AXI15        15
+>> +#define K230_HS_SSI1            16
+>> +#define K230_HS_SSI2            17
+>> +#define K230_HS_QSPI_AXI_SRC        18
+>> +#define K230_HS_SSI1_ACLK_GATE        19
+>> +#define K230_HS_SSI2_ACLK_GATE        20
+>> +#define K230_HS_SD_CARD_SRC        21
+>> +#define K230_HS_SD0_CARD_TX        22
+>> +#define K230_HS_SD1_CARD_TX        23
+>> +#define K230_HS_SD_AXI_SRC        24
+>> +#define K230_HS_SD0_AXI_GATE        25
+>> +#define K230_HS_SD1_AXI_GATE        26
+>> +#define K230_HS_SD0_BASE_GATE        27
+>> +#define K230_HS_SD1_BASE_GATE        28
+>> +#define K230_HS_OSPI_SRC        29
+>> +#define K230_HS_USB_REF_50M        30
+>> +#define K230_HS_SD_TIMER_SRC        31
+>> +#define K230_HS_SD0_TIMER_GATE        32
+>> +#define K230_HS_SD1_TIMER_GATE        33
+>> +#define K230_HS_USB0_REFERENCE        34
+>> +#define K230_HS_USB1_REFERENCE        35
+>> +#define K230_LS_APB_SRC            36
+>> +#define K230_LS_UART0_APB        37
+>> +#define K230_LS_UART1_APB        38
+>> +#define K230_LS_UART2_APB        39
+>> +#define K230_LS_UART3_APB        40
+>> +#define K230_LS_UART4_APB        41
+>> +#define K230_LS_I2C0_APB        42
+>> +#define K230_LS_I2C1_APB        43
+>> +#define K230_LS_I2C2_APB        44
+>> +#define K230_LS_I2C3_APB        45
+>> +#define K230_LS_GPIO_APB        46
+>> +#define K230_LS_PWM_APB            47
+>> +#define K230_LS_UART0            48
+>> +#define K230_LS_UART1            49
+>> +#define K230_LS_UART2            50
+>> +#define K230_LS_UART3            51
+>> +#define K230_LS_UART4            52
+>> +#define K230_SHRM_AXI_SRC        53
+>> +#define K230_SHRM_SDMA_AXI_GATE        54
+>> +#define K230_SHRM_PDMA_AXI_GATE        55
+>> +
+>
+> It seems that some clks are missing, such as the timer-related clocks.
+> Please try to fill them in. There is no need to submit another patch
+> for this.
+OK, I'll complete the rest clock next version.
+>
+> Thanks,
+>
+> Chen
+>
+>> +#endif /* CLOCK_K230_CLK_H */
+>>
