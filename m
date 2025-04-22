@@ -1,161 +1,229 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8DC27CB15
-	for <linux-clk@vger.kernel.org>; Tue, 22 Apr 2025 13:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044E22836A7;
+	Tue, 22 Apr 2025 13:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745327681; cv=none; b=JRWz4hF9p5z8d7OBsev8kGvOtCmIjC+2jmoOyqbJ27oaIIYexQdfyZaB+MNE1agGazQotQP4rlW49dVOLrqdhpuN/ZBEVMI9h9gyvot9PpZSjMdA84iBAinierolYJUDBHuXGL6tC+CgVg6jFc3dswkoc6vMz5HQcBZVigjmtuI=
+	t=1745328239; cv=none; b=dzkt5gJt6oeG52/09LK8pynoT9Po7mvXtRe5YHjJimZ1zPwaQLFsdCh5wmm4EiI0gTRQC5MOj7fudAUVEbgcl4rYgX2tedQqxtctrnaQq4nNp8+Xfx40vd0WEbcAWP6XIIw4Ndrqvt/C6f35IkvzXTB0B17bwIUUuB85mm2bZ1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745327681; c=relaxed/simple;
-	bh=471gRc3HzjQUQw4PVwLo7uOoZBgByN/FB/87Co4jC+Q=;
+	s=arc-20240116; t=1745328239; c=relaxed/simple;
+	bh=7jvbXJf9/t+v414lZ3iwh9ep3plTmpzsJ3he4aIzZkM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HsjWkmmT5pylt6fTKts8wo7Zi016M3BJ+t5rr/+DELudek9N+8/8liNNE7n4As/WEUKTbK79iTnBPoqJJ6PEhy9bLZnjhSn/2MJMOQHeHtVeIXPuuxt5YDXcrhK01UBTaYEwJnCS8l+MeeMI/8JRbfbKzzfXiToyokL4i12nCA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oNEfJKOo; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=HWHOHD+bS/BS3pJVThhHIztCK4l5jxFWKLiOwQito21csnSXJkYpLBukZ6m/tcvSrh5ziPw5kmtk6c47iEfch0JjRVYV5hcmMncULET+WiWVyfKGFQzoSxcksYomsYG6NxutUbdnNQL0TU0o0jHd+AzqYWMx2sww3KlNBolFO4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aF6uwfNx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oNEfJKOo"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-acbb85ce788so285016766b.3
-        for <linux-clk@vger.kernel.org>; Tue, 22 Apr 2025 06:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745327678; x=1745932478; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5zqq1b+/6XeRHzzRXttJKkEQgtsEyG1k8HuMNcYU8Wk=;
-        b=oNEfJKOoY93vTzSGBw6iIQ8OX5u4NUqq75JVovgzKVmeFgzgxMSjGGG+csgPkdgIv5
-         Nj3GTYSLjcvlo0OgZjtYyVJhdeFIur9G3sVOizcE6S/lrP8pKCRPLoeJPZnab/jJCkhQ
-         xivlBqfsCNkP9ffyVN+oiD3wt5TIRIHZSVuoadRTxMCkRtc+P7Pgy8eWi0x2MrrTLIwV
-         HhrTVZnJ9zjhXJZMgHpaUyUzYZ0FxVd0nEDhRaPN1YAlflU1nioGJLOEPauRLCv+5G7r
-         Ym1Uz4frQM9uh9mOH5w/FdO6RJZDUZ4hzOExueptqCYniQ72H9lYHpmC+J6HtjagCmiD
-         +x5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745327678; x=1745932478;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5zqq1b+/6XeRHzzRXttJKkEQgtsEyG1k8HuMNcYU8Wk=;
-        b=nzCe+BhXCK4qjEckg2dnAwxuwZ9MDwdBj4DxiryAeO5hhw53z7D/wJ0CLbGAd+cwDg
-         wzx2+fWVy3cByvPO8xy4/NlzhVIZ68QO2jeGcpLGqIVuxJv8G7fAz35vIcsuREo8VlmG
-         iaYnA+xBvv2bTqCQ1l2NEkPtJZ3y21bR4fELK+bKWzXMlFN0qUCtqcyMg4RSUsZhovoZ
-         oNJQ695AGQqqTDZKlkIbiHR2bYL3zkMHiZvcLdtV+6OcOrKy9QEz+IVOxuDU+KZ1kAI7
-         8piXscLrUcLTf6kg6vFY7FmFxUM1pzNyQZWgv5YF98eNsignNBeoEENJEAqkeH1MCQki
-         a6fg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnoEdTuudsGuiVz8B61NCOxWr/JXlpvLtAbU+8mdGAz3kxABQtru+PN+UqWkp27SsCv0M4N9unHeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxustX5aLEbjyvCOAPJoddE7lw6XZGCuuiC7Xyo5Dwj6kRJBtxF
-	vDrd1N7wkd19H+8i1jETFVl88QInW55v4WyaThLb85OGUuO2hCMSy1FX7zQO0B4=
-X-Gm-Gg: ASbGncsZNa0h6ng4Rpt8p7//rnX2zPPyEUSq1z9WkNrsIrEpSbjmajO5Br0vEN+3mlr
-	aowsii2fF1pAP6so4jygZkRXTzNyhN/RWlLhlTUY4OxKS1gpDV+v0a032QnFDSC115Wx4TEqM1l
-	fxjiwUnZ1hOFEce8Z1Zfpyi+HJltOAcB01HOUiuqozwL+HzgMZ7alf+mZTx3onLrHDNoiZs0i62
-	kMLrS6Z3r3NtOgaaPbZrbRdDfdeE0ZpRj+Ea3/Rt0LCZVs27s7NX+swHuI9wtslj8ssS4s+woeh
-	tOTA7/9ZZkhqd1YvfCLBnfDEYdDCfMu6YxWXUA==
-X-Google-Smtp-Source: AGHT+IHTXXC4b0G4QfA+kk60IhLLae377q0zTFxBB+eBZqx0IkvXugcFNIxSpugNQp492BWJKEid2g==
-X-Received: by 2002:a17:907:1b17:b0:acb:3f1d:ca7e with SMTP id a640c23a62f3a-acb74af0066mr1171765766b.8.1745327677594;
-        Tue, 22 Apr 2025 06:14:37 -0700 (PDT)
-Received: from linaro.org ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ef49e40sm650708166b.139.2025.04.22.06.14.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 06:14:36 -0700 (PDT)
-Date: Tue, 22 Apr 2025 16:14:34 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: Peng Fan <peng.fan@oss.nxp.com>, Stephen Boyd <sboyd@kernel.org>,
-	Abel Vesa <abelvesa@kernel.org>, linux-kernel@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>, linux-amarula@amarulasolutions.com,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v10 00/18] Support spread spectrum clocking for i.MX8M
- PLLs
-Message-ID: <aAeWOryhXosM0Rat@linaro.org>
-References: <20250306112959.242131-1-dario.binacchi@amarulasolutions.com>
- <20250314093503.GD12210@nxa18884-linux>
- <CABGWkvq2X9L6P39K5OeQW4+c2OmSYGHN03mUW-96U5okO1CK5A@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aF6uwfNx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E81C4CEE9;
+	Tue, 22 Apr 2025 13:23:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745328238;
+	bh=7jvbXJf9/t+v414lZ3iwh9ep3plTmpzsJ3he4aIzZkM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aF6uwfNxGWQDz6B8QbEoAER2/1sdnU8HZ5zDVzkfOiEqd40uoKaWO1Su9RC9CNCcR
+	 RG83EWy1CRk1O944lIq0ILzvjeSSBl17q4nTvm4ig7jiCeVuCRVkDC9gqHk/Nl8jK2
+	 SwQpX/C6+/LLjze4+wthk5FgKtHU1PUZPzr+q0Gqnrnq1xG5Apg19SC8IL4jAZRk4M
+	 42tCreRu1IDJnp2EW9DelM07SGtCKjy/shUjiHhVUftv9YHGfCOzPDh62XYj+6O+M/
+	 WSAA+nbPTRdqDP6SkFhanwbsEW9ED8dHH16rP5IWY0ter3PMGzHJjjCXwMyvfGES9F
+	 xjWIAtjm3/RBQ==
+Date: Tue, 22 Apr 2025 08:23:56 -0500
+From: Rob Herring <robh@kernel.org>
+To: Matthew Gerlach <matthew.gerlach@altera.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+	dinguyen@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: socfpga: convert to yaml
+Message-ID: <20250422132356.GA1020502-robh@kernel.org>
+References: <20250417160616.47558-1-matthew.gerlach@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABGWkvq2X9L6P39K5OeQW4+c2OmSYGHN03mUW-96U5okO1CK5A@mail.gmail.com>
+In-Reply-To: <20250417160616.47558-1-matthew.gerlach@altera.com>
 
-On 25-04-11 10:38:17, Dario Binacchi wrote:
-> On Fri, Mar 14, 2025 at 9:27 AM Peng Fan <peng.fan@oss.nxp.com> wrote:
-> >
-> > On Thu, Mar 06, 2025 at 12:27:49PM +0100, Dario Binacchi wrote:
-> > >This version keeps the version v9 patches that can be merged and
-> > >removes the patches that will need to be modified in case Peng's
-> > >PR https://github.com/devicetree-org/dt-schema/pull/154 is accepted.
-> > >The idea is to speed up the merging of the patches in the series
-> > >that have already been reviewed and are not dependent on the
-> > >introduction of the assigned-clocks-sscs property, and postpone
-> > >the patches for spread spectrum to a future series once it becomes
-> > >clear what needs to be done.
-> > >
-> > Although I give R-b, there is an idea just come out in my mind that this
-> > might break OS distribution that use firmware(e.g. U-Boot) to publish
-> > device tree for Linux Kernel, such as ARM System-Ready complaint OS.
-> > I overlooked this point in previous patchset reviewing.
-> >
-> > Since this patchset is to move anatop stuff to a new driver to reflect
-> > the HW truth.  And requires new entries in CCM node, so old bootloader
-> > with new kernel will not boot for OS distribution, such as Fedora/openSuse.
-> >
-> > Not sure how to keep backwards support as before. Leave to maintainers
-> > to say if they are ok with this.
+On Thu, Apr 17, 2025 at 09:06:16AM -0700, Matthew Gerlach wrote:
+> Convert the clock device tree bindings to yaml for the Altera SoCFPGA
+> Cyclone5, Arria5, and Arria10 chip families. Since the clock nodes are
+> subnodes to Altera SOCFPGA Clock Manager, the yaml was added to
+> socfpga-clk-manager.yaml.
 > 
-> Many thanks to Peng for the review, and a gentle ping to the maintainers.
-> This series has been ongoing for a few months and has reached version 10,
-> thanks to the reviews from Krzysztof and Peng.
-> I kindly ask you to consider it as well.
+> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
+> ---
+>  .../arm/altera/socfpga-clk-manager.yaml       | 118 +++++++++++++++++-
+>  .../bindings/clock/altr_socfpga.txt           |  30 -----
+>  2 files changed, 117 insertions(+), 31 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/altr_socfpga.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
+> index 572381306681..4cda13259530 100644
+> --- a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
+> +++ b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
+> @@ -9,17 +9,133 @@ title: Altera SOCFPGA Clock Manager
+>  maintainers:
+>    - Dinh Nguyen <dinguyen@kernel.org>
+>  
+> -description: test
+> +description:
+> +  This binding describes the Altera SOCFGPA Clock Manager and its associated
+> +  tree of clocks, pll's, and clock gates for the Cyclone5, Arria5 and Arria10
+> +  chip families.
+>  
+>  properties:
+>    compatible:
+>      items:
+>        - const: altr,clk-mgr
+> +
+>    reg:
+>      maxItems: 1
+>  
+> +  clocks:
+> +    type: object
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      "#address-cells":
+> +        const: 1
+> +
+> +      "#size-cells":
+> +        const: 0
+> +
+> +    patternProperties:
+> +      "^osc[0-9]$":
+> +        type: object
+> +
+> +      "^[a-z0-9,_]+[clk,pll,clk_gate,clk_divided](@[a-f0-9]+)?$":
 
-Hi Dario,
+This regex doesn't do what you think it does. You want:
 
-Please rebase and resend. I intend to apply the clk ones. Hope Shawn
-will apply the DT ones as well.
+"^[a-z0-9,_]+(clk|pll|clk_gate|clk_divided)(@[a-f0-9]+)?$"
 
-Thanks for this effort and sorry for the delays.
+However, I don't see clk_gate or clk_divided used anywhere, so I would 
+simplify to:
 
-Abel
+"(clk|pll)(@[a-f0-9]+)?$"
 
-> 
-> Thanks and regards,
-> Dario
-> 
-> >
-> > Regards,
-> > Peng
-> 
-> 
-> 
-> -- 
-> 
-> Dario Binacchi
-> 
-> Senior Embedded Linux Developer
-> 
-> dario.binacchi@amarulasolutions.com
-> 
-> __________________________________
-> 
-> 
-> Amarula Solutions SRL
-> 
-> Via Le Canevare 30, 31100 Treviso, Veneto, IT
-> 
-> T. +39 042 243 5310
-> info@amarulasolutions.com
-> 
-> www.amarulasolutions.com
+
+> +        type: object
+> +        additionalProperties: false
+> +
+> +        properties:
+> +
+> +          compatible:
+> +            enum:
+> +              - altr,socfpga-pll-clock
+> +              - altr,socfpga-perip-clk
+> +              - altr,socfpga-gate-clk
+> +              - altr,socfpga-a10-pll-clock
+> +              - altr,socfpga-a10-perip-clk
+> +              - altr,socfpga-a10-gate-clk
+> +              - fixed-clock
+> +
+> +          clocks:
+> +            $ref: /schemas/types.yaml#/definitions/phandle-array
+
+clocks already has a type.
+
+> +            description: one or more phandles to input clock
+
+I assume there is some max, so make this constraints:
+
+minItems: 1
+maxItems: ?
+
+> +
+> +          "#address-cells":
+> +            const: 1
+> +
+> +          "#clock-cells":
+> +            const: 0
+> +
+> +          "#size-cells":
+> +            const: 0
+> +
+> +          clk-gate:
+> +            $ref: /schemas/types.yaml#/definitions/uint32-array
+> +            items:
+> +              - description: gating register offset
+> +              - description: bit index
+> +
+> +          div-reg:
+> +            $ref: /schemas/types.yaml#/definitions/uint32-array
+> +            items:
+> +              - description: divider register offset
+> +              - description: bit shift
+> +              - description: bit width
+> +
+> +          fixed-divider:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +          reg:
+> +            maxItems: 1
+> +
+> +        patternProperties:
+> +          "^[a-z0-9,_]+[clk,pll](@[a-f0-9]+)?$":
+
+Similar issues here.
+
+> +            type: object
+> +            additionalProperties: false
+> +
+> +            properties:
+> +              compatible:
+> +                enum:
+> +                  - altr,socfpga-perip-clk
+> +                  - altr,socfpga-gate-clk
+> +                  - altr,socfpga-a10-perip-clk
+> +                  - altr,socfpga-a10-gate-clk
+> +
+> +              "#clock-cells":
+> +                const: 0
+> +
+> +              clocks:
+> +                $ref: /schemas/types.yaml#/definitions/phandle-array
+> +                description: one or more phandles to input clock
+> +
+> +              clk-gate:
+> +                $ref: /schemas/types.yaml#/definitions/uint32-array
+> +                items:
+> +                  - description: gating register offset
+> +                  - description: bit index
+> +
+> +              div-reg:
+> +                $ref: /schemas/types.yaml#/definitions/uint32-array
+> +                items:
+> +                  - description: divider register offset
+> +                  - description: bit shift
+> +                  - description: bit width
+> +
+> +              fixed-divider:
+> +                $ref: /schemas/types.yaml#/definitions/uint32
+
+As these properties are all just repeated, put them all under '$defs' 
+and reference that in both places.
+
+> +
+> +              reg:
+> +                maxItems: 1
+
+'reg' goes after compatible.
+
+> +
+> +            required:
+> +              - compatible
+> +              - clocks
+> +              - "#clock-cells"
+> +
+> +        required:
+> +          - compatible
+> +          - "#clock-cells"
+> +
+>  required:
+>    - compatible
+> +  - reg
+>  
+>  additionalProperties: false
+>  
