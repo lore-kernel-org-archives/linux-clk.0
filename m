@@ -1,229 +1,191 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044E22836A7;
-	Tue, 22 Apr 2025 13:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22B0226CE4;
+	Tue, 22 Apr 2025 13:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745328239; cv=none; b=dzkt5gJt6oeG52/09LK8pynoT9Po7mvXtRe5YHjJimZ1zPwaQLFsdCh5wmm4EiI0gTRQC5MOj7fudAUVEbgcl4rYgX2tedQqxtctrnaQq4nNp8+Xfx40vd0WEbcAWP6XIIw4Ndrqvt/C6f35IkvzXTB0B17bwIUUuB85mm2bZ1g=
+	t=1745329132; cv=none; b=WHmk5VS5kQdMv8uERiIvc5QgmGJZH9SNAsMyY4uAMUisyF8DStdu8wqGLUBF77gSMQzCjKx4pgSLYE2ce2mK6AVDFb3YkI4+S3tWAxYFuWVyXRolVuy52+5WBUrVrkSjjrTrkOlUDioWqWNwLQLa3auOebNX0BqLYfDuVX6PA9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745328239; c=relaxed/simple;
-	bh=7jvbXJf9/t+v414lZ3iwh9ep3plTmpzsJ3he4aIzZkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HWHOHD+bS/BS3pJVThhHIztCK4l5jxFWKLiOwQito21csnSXJkYpLBukZ6m/tcvSrh5ziPw5kmtk6c47iEfch0JjRVYV5hcmMncULET+WiWVyfKGFQzoSxcksYomsYG6NxutUbdnNQL0TU0o0jHd+AzqYWMx2sww3KlNBolFO4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aF6uwfNx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745329132; c=relaxed/simple;
+	bh=CkhGofHYVtZe5hwWpqyifYoxIzURV+H5yr2M2EHIPvQ=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=WRW0KEVgzvrlvoOgpND4nvuOvOOlG/xRzDQEF3zpwLeEtxWpZU/99cWj9oOBfiP8JZ8KiFCixYH5UAz8JUujbrDVMo2stRHTqQH/YUWZZsa+G6NDvsDpK7SwIfmLrA2qWL6iO2BHulFvBQJkWFW5S6HlZN3P+WUSY42TCN6rX4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2du47yr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aF6uwfNx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E81C4CEE9;
-	Tue, 22 Apr 2025 13:23:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2du47yr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A7EC4CEE9;
+	Tue, 22 Apr 2025 13:38:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745328238;
-	bh=7jvbXJf9/t+v414lZ3iwh9ep3plTmpzsJ3he4aIzZkM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aF6uwfNxGWQDz6B8QbEoAER2/1sdnU8HZ5zDVzkfOiEqd40uoKaWO1Su9RC9CNCcR
-	 RG83EWy1CRk1O944lIq0ILzvjeSSBl17q4nTvm4ig7jiCeVuCRVkDC9gqHk/Nl8jK2
-	 SwQpX/C6+/LLjze4+wthk5FgKtHU1PUZPzr+q0Gqnrnq1xG5Apg19SC8IL4jAZRk4M
-	 42tCreRu1IDJnp2EW9DelM07SGtCKjy/shUjiHhVUftv9YHGfCOzPDh62XYj+6O+M/
-	 WSAA+nbPTRdqDP6SkFhanwbsEW9ED8dHH16rP5IWY0ter3PMGzHJjjCXwMyvfGES9F
-	 xjWIAtjm3/RBQ==
-Date: Tue, 22 Apr 2025 08:23:56 -0500
-From: Rob Herring <robh@kernel.org>
-To: Matthew Gerlach <matthew.gerlach@altera.com>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-	dinguyen@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: socfpga: convert to yaml
-Message-ID: <20250422132356.GA1020502-robh@kernel.org>
-References: <20250417160616.47558-1-matthew.gerlach@altera.com>
+	s=k20201202; t=1745329131;
+	bh=CkhGofHYVtZe5hwWpqyifYoxIzURV+H5yr2M2EHIPvQ=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=H2du47yr54JJf2eJXq1fEyDIO61CAboibIcuOQ7VcI+rIdG2W1wJgmQrhvBmEaGKs
+	 hmIhFHGC4C07bWoPtdDTwxQ1BxF5j+3vwVBOmai2Eh/bRpeD3Ms/d8/YvJiniutJR6
+	 G3sB9QpbxaidBuAO8Or2Oe5SpWZ9/DyionsQfwL7+GY1pt138NaGRoh6m3qtAgDZwO
+	 Tx0odcrYGghj1dofU4kYtKvA1qENMWaLrhXqbC2I7HbHEAqcGvoH0U5Z6I+14j07n5
+	 EeZGKZdtB+OYr4H6DDgvVn8hK6MfMAwYZpfJD6lC+OVlTPB5rIgrQ/0TXUKVUpGas3
+	 GWGodsm8oA0rQ==
+Date: Tue, 22 Apr 2025 08:38:49 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250417160616.47558-1-matthew.gerlach@altera.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Daniil Titov <daniilt971@gmail.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Maxime Ripard <mripard@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, iommu@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Dmitry Baryshkov <lumag@kernel.org>, dri-devel@lists.freedesktop.org, 
+ Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Rob Clark <robdclark@gmail.com>, 
+ Sireesh Kodali <sireeshkodali@protonmail.com>, linux-clk@vger.kernel.org, 
+ Thomas Zimmermann <tzimmermann@suse.de>, Joerg Roedel <joro@8bytes.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, David Airlie <airlied@gmail.com>, 
+ Srinivas Kandagatla <srini@kernel.org>, Lee Jones <lee@kernel.org>, 
+ linux@mainlining.org, phone-devel@vger.kernel.org, 
+ Robin Murphy <robin.murphy@arm.com>, Stephan Gerhold <stephan@gerhold.net>, 
+ linux-arm-msm@vger.kernel.org, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ ~postmarketos/upstreaming@lists.sr.ht, 
+ Adam Skladowski <a_skl39@protonmail.com>, Sean Paul <sean@poorly.run>, 
+ freedreno@lists.freedesktop.org, Simona Vetter <simona@ffwll.ch>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ Dang Huynh <danct12@riseup.net>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ devicetree@vger.kernel.org
+To: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+In-Reply-To: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
+References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
+Message-Id: <174532908923.1111892.11576927834327283251.robh@kernel.org>
+Subject: Re: [PATCH v5 0/5] Initial support of MSM8937 and Xiaomi Redmi 3S
 
-On Thu, Apr 17, 2025 at 09:06:16AM -0700, Matthew Gerlach wrote:
-> Convert the clock device tree bindings to yaml for the Altera SoCFPGA
-> Cyclone5, Arria5, and Arria10 chip families. Since the clock nodes are
-> subnodes to Altera SOCFPGA Clock Manager, the yaml was added to
-> socfpga-clk-manager.yaml.
+
+On Mon, 21 Apr 2025 22:18:22 +0200, Barnabás Czémán wrote:
+> This patch series add initial support for MSM8937 SoC
+> and Xiaomi Redmi 3S (land).
 > 
-> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
+> The series is extending the MSM8917 gcc and pinctrl drivers
+> because they are sibling SoCs.
+> MSM8937 have 4 more A53 cores and have one more dsi port then
+> MSM8917.
+> It implements little-big architecture and uses Adreno 505.
+> 
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
 > ---
->  .../arm/altera/socfpga-clk-manager.yaml       | 118 +++++++++++++++++-
->  .../bindings/clock/altr_socfpga.txt           |  30 -----
->  2 files changed, 117 insertions(+), 31 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/altr_socfpga.txt
+> Changes in v5:
+> - msm8937:
+>   - Remove wrongly defined idle-states.
+>   - Fix thermal zones.
+>   - Use the header with DSI phy clock IDs.
+>   - Fix the nodes order.
+>   - Fix the pinctrls style.
+>   - Follow gcc header changes.
+> - msm8937-xiaomi-land:
+>   - Remove headphone switch and speaker amplifier bindings.
+>   - Unify status property style.
+> - gcc bindings:
+>   - Expand MSM8953 gcc schema with MSM8937.
+>   - Add MSM8937 prefix for MSM8937 specific clocks.
+> - gcc:
+>   - Follow the bindings changes.
+> - Drop alwayson clock documentation it will be handled in another
+>   patchset.
+> - Link to v4: https://lore.kernel.org/r/20250315-msm8937-v4-0-1f132e870a49@mainlining.org
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
-> index 572381306681..4cda13259530 100644
-> --- a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
-> +++ b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
-> @@ -9,17 +9,133 @@ title: Altera SOCFPGA Clock Manager
->  maintainers:
->    - Dinh Nguyen <dinguyen@kernel.org>
->  
-> -description: test
-> +description:
-> +  This binding describes the Altera SOCFGPA Clock Manager and its associated
-> +  tree of clocks, pll's, and clock gates for the Cyclone5, Arria5 and Arria10
-> +  chip families.
->  
->  properties:
->    compatible:
->      items:
->        - const: altr,clk-mgr
-> +
->    reg:
->      maxItems: 1
->  
-> +  clocks:
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    properties:
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^osc[0-9]$":
-> +        type: object
-> +
-> +      "^[a-z0-9,_]+[clk,pll,clk_gate,clk_divided](@[a-f0-9]+)?$":
+> Changes in v4:
+> - Add missing rpmcc include for qcom,gcc-msm8937 dtbinding exmaple.
+> - msm8937: add missing space after s9-p1@230
+> - msm8937-xiaomi-land: replace LED_FUNCTION_INDICATOR to LED_FUNCTION_STATUS
+> - Remove applied patches
+> - Link to v3: https://lore.kernel.org/r/20250224-msm8937-v3-0-dad7c182cccb@mainlining.org
+> 
+> Changes in v3:
+> - Fix qcom,gcc-msm8937 dtbinding example
+> - Link to v2: https://lore.kernel.org/r/20250223-msm8937-v2-0-b99722363ed3@mainlining.org
+> 
+> Changes in v2:
+> - drop applied patches
+> - drop gcc schema commits infavor of a new schema for gcc-msm8937
+> - document always on clock for adreno 505/506/510
+> - msm8937:
+>   - set cache size
+>   - rename cpu labels
+>   - fix style issues addressed by review
+> - msm8937-xiaom-land:
+>   - remove unused serial0 alias
+>   - remove regulator-always-on from pm8937_l6
+>   - add blue indicator led for aw2013
+> - Link to v1: https://lore.kernel.org/r/20250211-msm8937-v1-0-7d27ed67f708@mainlining.org
+> 
+> ---
+> Barnabás Czémán (3):
+>       dt-bindings: clock: qcom: Add MSM8937 Global Clock Controller
+>       dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
+>       arm64: dts: qcom: Add Xiaomi Redmi 3S
+> 
+> Dang Huynh (1):
+>       arm64: dts: qcom: Add initial support for MSM8937
+> 
+> Daniil Titov (1):
+>       clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
+> 
+>  Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+>  .../bindings/clock/qcom,gcc-msm8953.yaml           |   11 +-
+>  arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+>  arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts   |  381 ++++
+>  arch/arm64/boot/dts/qcom/msm8937.dtsi              | 2069 ++++++++++++++++++++
+>  drivers/clk/qcom/Kconfig                           |    6 +-
+>  drivers/clk/qcom/gcc-msm8917.c                     |  617 +++++-
+>  include/dt-bindings/clock/qcom,gcc-msm8917.h       |   19 +
+>  8 files changed, 3101 insertions(+), 10 deletions(-)
+> ---
+> base-commit: 5b37f7bfff3b1582c34be8fb23968b226db71ebd
+> change-id: 20250210-msm8937-228ef0dc3ec9
+> 
+> Best regards,
+> --
+> Barnabás Czémán <barnabas.czeman@mainlining.org>
+> 
+> 
+> 
 
-This regex doesn't do what you think it does. You want:
 
-"^[a-z0-9,_]+(clk|pll|clk_gate|clk_divided)(@[a-f0-9]+)?$"
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-However, I don't see clk_gate or clk_divided used anywhere, so I would 
-simplify to:
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-"(clk|pll)(@[a-f0-9]+)?$"
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
 
 
-> +        type: object
-> +        additionalProperties: false
-> +
-> +        properties:
-> +
-> +          compatible:
-> +            enum:
-> +              - altr,socfpga-pll-clock
-> +              - altr,socfpga-perip-clk
-> +              - altr,socfpga-gate-clk
-> +              - altr,socfpga-a10-pll-clock
-> +              - altr,socfpga-a10-perip-clk
-> +              - altr,socfpga-a10-gate-clk
-> +              - fixed-clock
-> +
-> +          clocks:
-> +            $ref: /schemas/types.yaml#/definitions/phandle-array
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 5b37f7bfff3b1582c34be8fb23968b226db71ebd
 
-clocks already has a type.
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
 
-> +            description: one or more phandles to input clock
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org:
 
-I assume there is some max, so make this constraints:
+arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dtb: gpu@1c00000 (qcom,adreno-505.0): clock-names:5: 'alwayson' is not one of ['core', 'iface', 'mem', 'mem_iface', 'alt_mem_iface', 'gfx3d', 'rbbmtimer', 'rbcpr']
+	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml#
 
-minItems: 1
-maxItems: ?
 
-> +
-> +          "#address-cells":
-> +            const: 1
-> +
-> +          "#clock-cells":
-> +            const: 0
-> +
-> +          "#size-cells":
-> +            const: 0
-> +
-> +          clk-gate:
-> +            $ref: /schemas/types.yaml#/definitions/uint32-array
-> +            items:
-> +              - description: gating register offset
-> +              - description: bit index
-> +
-> +          div-reg:
-> +            $ref: /schemas/types.yaml#/definitions/uint32-array
-> +            items:
-> +              - description: divider register offset
-> +              - description: bit shift
-> +              - description: bit width
-> +
-> +          fixed-divider:
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +          reg:
-> +            maxItems: 1
-> +
-> +        patternProperties:
-> +          "^[a-z0-9,_]+[clk,pll](@[a-f0-9]+)?$":
 
-Similar issues here.
 
-> +            type: object
-> +            additionalProperties: false
-> +
-> +            properties:
-> +              compatible:
-> +                enum:
-> +                  - altr,socfpga-perip-clk
-> +                  - altr,socfpga-gate-clk
-> +                  - altr,socfpga-a10-perip-clk
-> +                  - altr,socfpga-a10-gate-clk
-> +
-> +              "#clock-cells":
-> +                const: 0
-> +
-> +              clocks:
-> +                $ref: /schemas/types.yaml#/definitions/phandle-array
-> +                description: one or more phandles to input clock
-> +
-> +              clk-gate:
-> +                $ref: /schemas/types.yaml#/definitions/uint32-array
-> +                items:
-> +                  - description: gating register offset
-> +                  - description: bit index
-> +
-> +              div-reg:
-> +                $ref: /schemas/types.yaml#/definitions/uint32-array
-> +                items:
-> +                  - description: divider register offset
-> +                  - description: bit shift
-> +                  - description: bit width
-> +
-> +              fixed-divider:
-> +                $ref: /schemas/types.yaml#/definitions/uint32
 
-As these properties are all just repeated, put them all under '$defs' 
-and reference that in both places.
-
-> +
-> +              reg:
-> +                maxItems: 1
-
-'reg' goes after compatible.
-
-> +
-> +            required:
-> +              - compatible
-> +              - clocks
-> +              - "#clock-cells"
-> +
-> +        required:
-> +          - compatible
-> +          - "#clock-cells"
-> +
->  required:
->    - compatible
-> +  - reg
->  
->  additionalProperties: false
->  
