@@ -1,191 +1,202 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22B0226CE4;
-	Tue, 22 Apr 2025 13:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10EF28C5AE
+	for <linux-clk@vger.kernel.org>; Tue, 22 Apr 2025 14:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745329132; cv=none; b=WHmk5VS5kQdMv8uERiIvc5QgmGJZH9SNAsMyY4uAMUisyF8DStdu8wqGLUBF77gSMQzCjKx4pgSLYE2ce2mK6AVDFb3YkI4+S3tWAxYFuWVyXRolVuy52+5WBUrVrkSjjrTrkOlUDioWqWNwLQLa3auOebNX0BqLYfDuVX6PA9E=
+	t=1745333667; cv=none; b=KlQ9Lr7AXvol8cUXs/+ZVjCXDD5EHuFOvR8M1YTLJFMG0SF3OMYGWDXUMZznyPngM3ZBNbwPqMcZtj6vEzkk++rQz4BMEAyHZwjJTYAuZG/xIdl+OP58V4bO0qmjOF3IDX2rLQAawsD0/dZPtEd/4qdAmRV9P/1n5tIuL+hiY/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745329132; c=relaxed/simple;
-	bh=CkhGofHYVtZe5hwWpqyifYoxIzURV+H5yr2M2EHIPvQ=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=WRW0KEVgzvrlvoOgpND4nvuOvOOlG/xRzDQEF3zpwLeEtxWpZU/99cWj9oOBfiP8JZ8KiFCixYH5UAz8JUujbrDVMo2stRHTqQH/YUWZZsa+G6NDvsDpK7SwIfmLrA2qWL6iO2BHulFvBQJkWFW5S6HlZN3P+WUSY42TCN6rX4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2du47yr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745333667; c=relaxed/simple;
+	bh=a+RMGqONBoTe4mIS7kPQEgEl4KGlE4sPktA/RI2Z9ZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Jqt5cNIs3u6x6Yo6HS96wnDhZ/LSoSnB4RlvR8roFmi95K1VMGTKuXMv7L0UugS6Y/nJtEkFcLQpfoOEvHRuBV9tdSiguRPw0hgDFxmZ0B+JfDFdVlLVq9Bi2CvYcMlnVaJHeQ44l1iofS85WGDFxt4HYQnAAI5pUYZVg0X8j5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tSS+p85r; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2du47yr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A7EC4CEE9;
-	Tue, 22 Apr 2025 13:38:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745329131;
-	bh=CkhGofHYVtZe5hwWpqyifYoxIzURV+H5yr2M2EHIPvQ=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=H2du47yr54JJf2eJXq1fEyDIO61CAboibIcuOQ7VcI+rIdG2W1wJgmQrhvBmEaGKs
-	 hmIhFHGC4C07bWoPtdDTwxQ1BxF5j+3vwVBOmai2Eh/bRpeD3Ms/d8/YvJiniutJR6
-	 G3sB9QpbxaidBuAO8Or2Oe5SpWZ9/DyionsQfwL7+GY1pt138NaGRoh6m3qtAgDZwO
-	 Tx0odcrYGghj1dofU4kYtKvA1qENMWaLrhXqbC2I7HbHEAqcGvoH0U5Z6I+14j07n5
-	 EeZGKZdtB+OYr4H6DDgvVn8hK6MfMAwYZpfJD6lC+OVlTPB5rIgrQ/0TXUKVUpGas3
-	 GWGodsm8oA0rQ==
-Date: Tue, 22 Apr 2025 08:38:49 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tSS+p85r"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250422145422euoutp02730528ed474805c86571d362cbd2e4ca~4q7gc0ZPU2751027510euoutp02Y
+	for <linux-clk@vger.kernel.org>; Tue, 22 Apr 2025 14:54:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250422145422euoutp02730528ed474805c86571d362cbd2e4ca~4q7gc0ZPU2751027510euoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1745333662;
+	bh=YRW1ozB27p7LSQVL82m2hy5NmybGDZRAWQakTtaYo28=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=tSS+p85rHu3lbGT3RxhlyqXghoDTFhaQ3ytGDY2bGXFV2bi0ybgFqObv6NMmvQExj
+	 ztg+k/ZjPDQOuvE9Sp9Ya2lxc5EcSHeZdHPbcejTXZhWRj99HzeV8hQ5irPU91+g5g
+	 3x4bQLbR/JgX81GV8ayof1BHgyHIbmS1GErj+UzE=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250422145422eucas1p2f987a8c414cd947de26e8e6df5c94756~4q7f5urFv0361703617eucas1p2n;
+	Tue, 22 Apr 2025 14:54:22 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 04.BB.00837.E9DA7086; Tue, 22
+	Apr 2025 15:54:22 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250422145421eucas1p2f01bb5cadb9836b26cc5b9bfd5197bef~4q7feyoxh0578205782eucas1p2Y;
+	Tue, 22 Apr 2025 14:54:21 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250422145421eusmtrp2a29928f65b73f47fe7e1ca7f999a9a66~4q7fdxjPT0501605016eusmtrp2H;
+	Tue, 22 Apr 2025 14:54:21 +0000 (GMT)
+X-AuditID: cbfec7f2-32fff70000000345-20-6807ad9ee550
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id FF.54.19920.D9DA7086; Tue, 22
+	Apr 2025 15:54:21 +0100 (BST)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250422145420eusmtip224b1553af434b83ad7a84489799c4da9~4q7eg8VVw1574315743eusmtip2U;
+	Tue, 22 Apr 2025 14:54:20 +0000 (GMT)
+Message-ID: <50da445f-d6f9-407d-b25d-5b9c7ccf867c@samsung.com>
+Date: Tue, 22 Apr 2025 16:54:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Daniil Titov <daniilt971@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Maxime Ripard <mripard@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, iommu@lists.linux.dev, 
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Dmitry Baryshkov <lumag@kernel.org>, dri-devel@lists.freedesktop.org, 
- Will Deacon <will@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Rob Clark <robdclark@gmail.com>, 
- Sireesh Kodali <sireeshkodali@protonmail.com>, linux-clk@vger.kernel.org, 
- Thomas Zimmermann <tzimmermann@suse.de>, Joerg Roedel <joro@8bytes.org>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, David Airlie <airlied@gmail.com>, 
- Srinivas Kandagatla <srini@kernel.org>, Lee Jones <lee@kernel.org>, 
- linux@mainlining.org, phone-devel@vger.kernel.org, 
- Robin Murphy <robin.murphy@arm.com>, Stephan Gerhold <stephan@gerhold.net>, 
- linux-arm-msm@vger.kernel.org, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- Adam Skladowski <a_skl39@protonmail.com>, Sean Paul <sean@poorly.run>, 
- freedreno@lists.freedesktop.org, Simona Vetter <simona@ffwll.ch>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
- Dang Huynh <danct12@riseup.net>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- devicetree@vger.kernel.org
-To: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-In-Reply-To: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
-References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
-Message-Id: <174532908923.1111892.11576927834327283251.robh@kernel.org>
-Subject: Re: [PATCH v5 0/5] Initial support of MSM8937 and Xiaomi Redmi 3S
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/3] Add T-HEAD TH1520 VO clock support for LicheePi
+ 4A GPU enablement
+To: sboyd@kernel.org, Drew Fustini <drew@pdp7.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, Rob Herring
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, Guo Ren <guoren@kernel.org>, Fu
+	Wei <wefu@redhat.com>, "paul.walmsley@sifive.com"
+	<paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, alex@ghiti.fr,
+	"jszhang@kernel.org" <jszhang@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20250403094425.876981-1-m.wilczynski@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJKsWRmVeSWpSXmKPExsWy7djPc7rz1rJnGGzYzG3x7M5XVoutv2ex
+	W6zZe47JYv6Rc6wW9y5tYbJ4sbeRxaL52Ho2i5ez7rFZfOy5x2pxedccNottn1vYLNYeuctu
+	cfGUq8XdeydYLF5e7mG2aJvFb/F/zw52i3/XNrJYtOyfwuIg7PH+Riu7x5uXL1k8Dnd8Yfe4
+	d2Iaq8emVZ1sHpuX1Hu0rD3G5NH/18Dj/b6rbB59W1Yxelxqvs7u8XmTXABPFJdNSmpOZllq
+	kb5dAldGz7k/bAVrZSsu9S9mb2DcLt7FyMkhIWAisX7bebYuRi4OIYEVjBLfJr1hgXC+MErM
+	u/6DHcL5zChx/tkdZpiWjp4bUFXLGSUaZ7xlhHDeMkqsaXnGBFLFK2AnMa/xDxuIzSKgKrGp
+	fSsbRFxQ4uTMJywgtqiAvMT9WzPYQWxhgXiJH9fns4LYIgJGEo8XPWYCGcos0M8qsXjyQrCh
+	zALiEreezAez2YCKHiyHaOAUsJfYMOUxI0SNvMT2t3OYQZolBF5xSpy9O5kR4m4Xic9T7jBB
+	2MISr45vYYewZST+75wPFc+XeLD1E9SfNRI7e45D2dYSd879AvqAA2iBpsT6XfoQYUeJsxf6
+	GEHCEgJ8EjfeCkKcwCcxadt0Zogwr0RHmxBEtZrE1J5euKXnVmxjmsCoNAspVGYheXIWkmdm
+	IexdwMiyilE8tbQ4Nz212DAvtVyvODG3uDQvXS85P3cTIzB1nv53/NMOxrmvPuodYmTiYDzE
+	KMHBrCTC+8uNPUOINyWxsiq1KD++qDQntfgQozQHi5I476L9relCAumJJanZqakFqUUwWSYO
+	TqkGJqWSna3FC2apWpX8ODTP1Ku4ZUrL6XzTBYfuc/TEquc76K6MLJqw6oD9gnCNjcZ9T34d
+	/bNc9WR3r9Lmy1JT6nyjFgRFPOUxPvRuYd4/Vud7TgWFUllz6/gXiu1xCWIzPHvReMqGMxnb
+	Hr877btcQe2G8NJALZvTOVJMl+zuFxj1MMSZhFlfWno7RrjcpMmKuae/38htxq+VP/sv/Taw
+	ZPH7soQ7n2nzlsrwsxPyFz1OWLWRSVd70zrdpfePy+3PN743R9j0P+uT6SK3BfQ/hrk4Poy3
+	PKwvUro26ahZtMfulxtcjO7xb/O5uXS3Il9Bc5Ff+aGGkoe82u6GS+NmHz7rbflPefm3eQse
+	GPfMV2Ipzkg01GIuKk4EABNDGbEMBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42I5/e/4Pd25a9kzDB49UrN4ducrq8XW37PY
+	LdbsPcdkMf/IOVaLe5e2MFm82NvIYtF8bD2bxctZ99gsPvbcY7W4vGsOm8W2zy1sFmuP3GW3
+	uHjK1eLuvRMsFi8v9zBbtM3it/i/Zwe7xb9rG1ksWvZPYXEQ9nh/o5Xd483Llywehzu+sHvc
+	OzGN1WPTqk42j81L6j1a1h5j8uj/a+Dxft9VNo++LasYPS41X2f3+LxJLoAnSs+mKL+0JFUh
+	I7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS+j59wftoK1shWX+hez
+	NzBuF+9i5OSQEDCR6Oi5wdLFyMUhJLCUUWLfpDZWiISMxLXulywQtrDEn2tdbCC2kMBrRol/
+	v0JBbF4BO4l5jX/A4iwCqhKb2reyQcQFJU7OfALWKyogL3H/1gz2LkYODmGBeIm7p0tBwiIC
+	RhKPFz1mAtnLLDCRVeLkj5uMEEdMYpR4uWcq2BHMAuISt57MZwKx2YA6HiyfDxbnFLCX2DDl
+	MSPIUGYBdYn184QgyuUltr+dwzyBUWgWkjNmIZk0C6FjFpKOBYwsqxhFUkuLc9Nziw31ihNz
+	i0vz0vWS83M3MQLTxLZjPzfvYJz36qPeIUYmDsZDjBIczEoivL/c2DOEeFMSK6tSi/Lji0pz
+	UosPMZoCg2Iis5Rocj4wUeWVxBuaGZgamphZGphamhkrifO6XT6fJiSQnliSmp2aWpBaBNPH
+	xMEp1cDE2LFAb8Hvu9P33F3xoHI797yC6jRVUZ5vJw09jeYbSaZN22yfU9d8mLf5u+Bl1kv/
+	lU9eOuawuWzfttPpJxZJ2Nh19mT+fnuCybGeic2SWTrl26zg6Fq1ZKFPSv/uqrref6HIYPXw
+	X81H89uSUcJFf/QkGdY9S19ymOv5/4kdVor6/ddlePlP3OBwMY5IU2vO/f+RNevfhisvdnRJ
+	G0ekxBZdXntTtt6v7YB4lbKR2wn3ipRlvLu2abEqPmoPiVZpLZmv+f5govThcF75P1c7+R/a
+	L7Vl+eN6pj1lgVy56i4BLl/5/61B9y75/Xx96jeXqNj2Tz93KSnPnpy0TOyNa4/k3t/+SkKT
+	BFK/tSuxFGckGmoxFxUnAgBtar/ZnAMAAA==
+X-CMS-MailID: 20250422145421eucas1p2f01bb5cadb9836b26cc5b9bfd5197bef
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250403094430eucas1p21515d7f693708fc2ad0cd399cb0b81aa
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250403094430eucas1p21515d7f693708fc2ad0cd399cb0b81aa
+References: <CGME20250403094430eucas1p21515d7f693708fc2ad0cd399cb0b81aa@eucas1p2.samsung.com>
+	<20250403094425.876981-1-m.wilczynski@samsung.com>
 
 
-On Mon, 21 Apr 2025 22:18:22 +0200, Barnabás Czémán wrote:
-> This patch series add initial support for MSM8937 SoC
-> and Xiaomi Redmi 3S (land).
+
+On 4/3/25 11:44, Michal Wilczynski wrote:
+> This is a subset of a larger patch series enabling the Imagination BXM-4-64 GPU
+> on the LicheePi 4A board, which is powered by the T-HEAD TH1520 SoC. While the
+> full series includes power-domain, reset, and firmware changes, this part
+> focuses solely on the clock subsystem needed for the GPU and other VO (video
+> output) blocks. By merging these clock patches independently, we prepare the
+> groundwork for future GPU integration via the `drm/imagination` driver.
 > 
-> The series is extending the MSM8917 gcc and pinctrl drivers
-> because they are sibling SoCs.
-> MSM8937 have 4 more A53 cores and have one more dsi port then
-> MSM8917.
-> It implements little-big architecture and uses Adreno 505.
+> The T-HEAD TH1520 SoC features multiple clock controllers. Initially, only the
+> AP clock controller was supported upstream. The patches below add support for
+> the VO (video output) clock controller, which manages GPU-related gates, HDMI,
+> and other multimedia clocks.
 > 
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
-> Changes in v5:
-> - msm8937:
->   - Remove wrongly defined idle-states.
->   - Fix thermal zones.
->   - Use the header with DSI phy clock IDs.
->   - Fix the nodes order.
->   - Fix the pinctrls style.
->   - Follow gcc header changes.
-> - msm8937-xiaomi-land:
->   - Remove headphone switch and speaker amplifier bindings.
->   - Unify status property style.
-> - gcc bindings:
->   - Expand MSM8953 gcc schema with MSM8937.
->   - Add MSM8937 prefix for MSM8937 specific clocks.
-> - gcc:
->   - Follow the bindings changes.
-> - Drop alwayson clock documentation it will be handled in another
->   patchset.
-> - Link to v4: https://lore.kernel.org/r/20250315-msm8937-v4-0-1f132e870a49@mainlining.org
+> Bigger series cover letter:
+> https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
 > 
-> Changes in v4:
-> - Add missing rpmcc include for qcom,gcc-msm8937 dtbinding exmaple.
-> - msm8937: add missing space after s9-p1@230
-> - msm8937-xiaomi-land: replace LED_FUNCTION_INDICATOR to LED_FUNCTION_STATUS
-> - Remove applied patches
-> - Link to v3: https://lore.kernel.org/r/20250224-msm8937-v3-0-dad7c182cccb@mainlining.org
+> v7:
+> - remove commits 3,4 from the patch series, those would handle empty MEM clock
+>   stub, and reset management. It's not necessary anymore, as this would be
+>   implemented in power-domain driver
+> - added the device tree patch at the end for the SoC maintainers to take after
+>   the other patches get OK-ed
+> - added Acked-by, from Connor for the dt-binding patch
+> - re-added Reviewed-by from Krzysztof, as the dt-binding patch is the same as
+>   for the v5
 > 
-> Changes in v3:
-> - Fix qcom,gcc-msm8937 dtbinding example
-> - Link to v2: https://lore.kernel.org/r/20250223-msm8937-v2-0-b99722363ed3@mainlining.org
+> v6:
+> - squashed the "dt-bindings: clock: thead: Add GPU clkgen reset property"
+>   with the "dt-bindings: clock: thead: Add TH1520 VO clock controller". As
+>   a result, also removed the Reviewed-by from Krzysztof, since the new
+>   resets property has been introduced, which is mandatory in the VO
+>   case
 > 
-> Changes in v2:
-> - drop applied patches
-> - drop gcc schema commits infavor of a new schema for gcc-msm8937
-> - document always on clock for adreno 505/506/510
-> - msm8937:
->   - set cache size
->   - rename cpu labels
->   - fix style issues addressed by review
-> - msm8937-xiaom-land:
->   - remove unused serial0 alias
->   - remove regulator-always-on from pm8937_l6
->   - add blue indicator led for aw2013
-> - Link to v1: https://lore.kernel.org/r/20250211-msm8937-v1-0-7d27ed67f708@mainlining.org
+> v5:
+> - introduced a new macro CCU_GATE_CLK_OPS, which allows providing custom clk_ops.
+>   In the case of the 'MEM' clock, it provides empty clk_nops. Later, this clock
+>   is provided to the GPU node, thereby avoiding any ABI breakage
+> - used the CCU_GATE_CLK_OPS macro to implement a workaround for de-asserting
+>   the clkgen reset only after both core and sys clocks are enabled. This
+>   sequence is required to properly initialize the GPU
 > 
-> ---
-> Barnabás Czémán (3):
->       dt-bindings: clock: qcom: Add MSM8937 Global Clock Controller
->       dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
->       arm64: dts: qcom: Add Xiaomi Redmi 3S
+> v4:
+>  - enhanced documentation for new Video Output (VO) clock inputs in device tree
+>    bindings
 > 
-> Dang Huynh (1):
->       arm64: dts: qcom: Add initial support for MSM8937
+> v3:
+>  - reworked driver to support multiple clock controllers through .compatible
+>    and .data instead of using multiple address spaces in dt-binding. This change
+>    allows to re-use the driver code for multiple clock controllers
 > 
-> Daniil Titov (1):
->       clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
+> v2:
+>  - removed AP_SUBSYS clock refactoring commits (1-6):
+>  - instead of refactoring, I opted to extend the current driver and its
+>    associated device tree node to include support for a second address space.
+>  - resolved all checkpatch issues using --strict, except for the call to
+>    devm_clk_hw_register_gate_parent_data().  The current implementation remains
+>    preferable in this context, and clang-format aligns with this choice
 > 
->  Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
->  .../bindings/clock/qcom,gcc-msm8953.yaml           |   11 +-
->  arch/arm64/boot/dts/qcom/Makefile                  |    1 +
->  arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts   |  381 ++++
->  arch/arm64/boot/dts/qcom/msm8937.dtsi              | 2069 ++++++++++++++++++++
->  drivers/clk/qcom/Kconfig                           |    6 +-
->  drivers/clk/qcom/gcc-msm8917.c                     |  617 +++++-
->  include/dt-bindings/clock/qcom,gcc-msm8917.h       |   19 +
->  8 files changed, 3101 insertions(+), 10 deletions(-)
-> ---
-> base-commit: 5b37f7bfff3b1582c34be8fb23968b226db71ebd
-> change-id: 20250210-msm8937-228ef0dc3ec9
+> Michal Wilczynski (3):
+>   dt-bindings: clock: thead: Add TH1520 VO clock controller
+>   clk: thead: Add clock support for VO subsystem in T-HEAD TH1520 SoC
+>   riscv: dts: thead: Add device tree VO clock controller
 > 
-> Best regards,
-> --
-> Barnabás Czémán <barnabas.czeman@mainlining.org>
-> 
-> 
+>  .../bindings/clock/thead,th1520-clk-ap.yaml   |  17 +-
+>  arch/riscv/boot/dts/thead/th1520.dtsi         |   7 +
+>  drivers/clk/thead/clk-th1520-ap.c             | 196 +++++++++++++++---
+>  .../dt-bindings/clock/thead,th1520-clk-ap.h   |  34 +++
+>  4 files changed, 223 insertions(+), 31 deletions(-)
 > 
 
+Hi Stephen, I think Drew is already collecting DT commits for the next
+merge window. Do you think the patches 1-2 will make it for the 6.16
+release ?
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: using specified base-commit 5b37f7bfff3b1582c34be8fb23968b226db71ebd
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org:
-
-arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dtb: gpu@1c00000 (qcom,adreno-505.0): clock-names:5: 'alwayson' is not one of ['core', 'iface', 'mem', 'mem_iface', 'alt_mem_iface', 'gfx3d', 'rbbmtimer', 'rbcpr']
-	from schema $id: http://devicetree.org/schemas/display/msm/gpu.yaml#
-
-
-
-
-
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
