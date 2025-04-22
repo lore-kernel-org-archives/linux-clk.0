@@ -1,90 +1,161 @@
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9BE1FDA94
-	for <linux-clk@vger.kernel.org>; Tue, 22 Apr 2025 12:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8DC27CB15
+	for <linux-clk@vger.kernel.org>; Tue, 22 Apr 2025 13:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745324546; cv=none; b=KrcnAeAL/TLoq4J+nDL0H+dnHJl3YyUhufZP1EzIs3M5uUMtP9AWdwyh3tjz3GcQbh+CE1nW95IeMcXvp2+THZguJRU7jb3CS0jASuiNUYYZ1zGtvB0hrtxYisJjFUa7Oxdc76Jr0KEWX3j6KdcRKu2O1r2lWw7NnM8NQj/JYDU=
+	t=1745327681; cv=none; b=JRWz4hF9p5z8d7OBsev8kGvOtCmIjC+2jmoOyqbJ27oaIIYexQdfyZaB+MNE1agGazQotQP4rlW49dVOLrqdhpuN/ZBEVMI9h9gyvot9PpZSjMdA84iBAinierolYJUDBHuXGL6tC+CgVg6jFc3dswkoc6vMz5HQcBZVigjmtuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745324546; c=relaxed/simple;
-	bh=L52X8TU4OtWh1NIiSvcGvGuWtZUgiPAz2gzkuelHE4k=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=U1bzsetYeTkV7rXT7GUw5uFgCi5fzDAkLBQzhAxlgWhqFJA91Mw6h4DA5luFIBnllt+BI/FMlksKJ9kXbjBJLSv7BO4g8G04oO2bl8K1ZDuFfsviel/bqxTTpazVxP9QReOqNo0CceM/MMO00UlGN3swIxeocLlD1nx7elBOA6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pXWhJHDs; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1745327681; c=relaxed/simple;
+	bh=471gRc3HzjQUQw4PVwLo7uOoZBgByN/FB/87Co4jC+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HsjWkmmT5pylt6fTKts8wo7Zi016M3BJ+t5rr/+DELudek9N+8/8liNNE7n4As/WEUKTbK79iTnBPoqJJ6PEhy9bLZnjhSn/2MJMOQHeHtVeIXPuuxt5YDXcrhK01UBTaYEwJnCS8l+MeeMI/8JRbfbKzzfXiToyokL4i12nCA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oNEfJKOo; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pXWhJHDs"
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745324539;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L52X8TU4OtWh1NIiSvcGvGuWtZUgiPAz2gzkuelHE4k=;
-	b=pXWhJHDs3Ve2K7Gt5litUJAQrXur2iVHIHayRKXCxmbsxA+68sWgbWY2jNSLz4iRonIH+9
-	CpOu6jJjA8RQhjXQtZ6ucP/hzTYRusWyR/pHRNK/wRmOjGQh+/ci10w9ksrEWbYPkxjhiI
-	DIlrmvW85lTrZ9enzm+w9VnKSCAHqAc=
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oNEfJKOo"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-acbb85ce788so285016766b.3
+        for <linux-clk@vger.kernel.org>; Tue, 22 Apr 2025 06:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745327678; x=1745932478; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5zqq1b+/6XeRHzzRXttJKkEQgtsEyG1k8HuMNcYU8Wk=;
+        b=oNEfJKOoY93vTzSGBw6iIQ8OX5u4NUqq75JVovgzKVmeFgzgxMSjGGG+csgPkdgIv5
+         Nj3GTYSLjcvlo0OgZjtYyVJhdeFIur9G3sVOizcE6S/lrP8pKCRPLoeJPZnab/jJCkhQ
+         xivlBqfsCNkP9ffyVN+oiD3wt5TIRIHZSVuoadRTxMCkRtc+P7Pgy8eWi0x2MrrTLIwV
+         HhrTVZnJ9zjhXJZMgHpaUyUzYZ0FxVd0nEDhRaPN1YAlflU1nioGJLOEPauRLCv+5G7r
+         Ym1Uz4frQM9uh9mOH5w/FdO6RJZDUZ4hzOExueptqCYniQ72H9lYHpmC+J6HtjagCmiD
+         +x5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745327678; x=1745932478;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5zqq1b+/6XeRHzzRXttJKkEQgtsEyG1k8HuMNcYU8Wk=;
+        b=nzCe+BhXCK4qjEckg2dnAwxuwZ9MDwdBj4DxiryAeO5hhw53z7D/wJ0CLbGAd+cwDg
+         wzx2+fWVy3cByvPO8xy4/NlzhVIZ68QO2jeGcpLGqIVuxJv8G7fAz35vIcsuREo8VlmG
+         iaYnA+xBvv2bTqCQ1l2NEkPtJZ3y21bR4fELK+bKWzXMlFN0qUCtqcyMg4RSUsZhovoZ
+         oNJQ695AGQqqTDZKlkIbiHR2bYL3zkMHiZvcLdtV+6OcOrKy9QEz+IVOxuDU+KZ1kAI7
+         8piXscLrUcLTf6kg6vFY7FmFxUM1pzNyQZWgv5YF98eNsignNBeoEENJEAqkeH1MCQki
+         a6fg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnoEdTuudsGuiVz8B61NCOxWr/JXlpvLtAbU+8mdGAz3kxABQtru+PN+UqWkp27SsCv0M4N9unHeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxustX5aLEbjyvCOAPJoddE7lw6XZGCuuiC7Xyo5Dwj6kRJBtxF
+	vDrd1N7wkd19H+8i1jETFVl88QInW55v4WyaThLb85OGUuO2hCMSy1FX7zQO0B4=
+X-Gm-Gg: ASbGncsZNa0h6ng4Rpt8p7//rnX2zPPyEUSq1z9WkNrsIrEpSbjmajO5Br0vEN+3mlr
+	aowsii2fF1pAP6so4jygZkRXTzNyhN/RWlLhlTUY4OxKS1gpDV+v0a032QnFDSC115Wx4TEqM1l
+	fxjiwUnZ1hOFEce8Z1Zfpyi+HJltOAcB01HOUiuqozwL+HzgMZ7alf+mZTx3onLrHDNoiZs0i62
+	kMLrS6Z3r3NtOgaaPbZrbRdDfdeE0ZpRj+Ea3/Rt0LCZVs27s7NX+swHuI9wtslj8ssS4s+woeh
+	tOTA7/9ZZkhqd1YvfCLBnfDEYdDCfMu6YxWXUA==
+X-Google-Smtp-Source: AGHT+IHTXXC4b0G4QfA+kk60IhLLae377q0zTFxBB+eBZqx0IkvXugcFNIxSpugNQp492BWJKEid2g==
+X-Received: by 2002:a17:907:1b17:b0:acb:3f1d:ca7e with SMTP id a640c23a62f3a-acb74af0066mr1171765766b.8.1745327677594;
+        Tue, 22 Apr 2025 06:14:37 -0700 (PDT)
+Received: from linaro.org ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ef49e40sm650708166b.139.2025.04.22.06.14.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 06:14:36 -0700 (PDT)
+Date: Tue, 22 Apr 2025 16:14:34 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: Peng Fan <peng.fan@oss.nxp.com>, Stephen Boyd <sboyd@kernel.org>,
+	Abel Vesa <abelvesa@kernel.org>, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>, linux-amarula@amarulasolutions.com,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v10 00/18] Support spread spectrum clocking for i.MX8M
+ PLLs
+Message-ID: <aAeWOryhXosM0Rat@linaro.org>
+References: <20250306112959.242131-1-dario.binacchi@amarulasolutions.com>
+ <20250314093503.GD12210@nxa18884-linux>
+ <CABGWkvq2X9L6P39K5OeQW4+c2OmSYGHN03mUW-96U5okO1CK5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.2\))
-Subject: Re: [RESEND PATCH] clk: socfpga: clk-pll: Optimize local variables
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <0BD7D71D-6F6B-4864-BEA7-E13563908D62@linux.dev>
-Date: Tue, 22 Apr 2025 14:22:04 +0200
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FC8B34B6-642F-4228-90FB-D8B3148C03D3@linux.dev>
-References: <20250219104224.1265-2-thorsten.blum@linux.dev>
- <d7df3b86-c3ff-48af-ad72-428e105976b9@kernel.org>
- <0BD7D71D-6F6B-4864-BEA7-E13563908D62@linux.dev>
-To: Dinh Nguyen <dinguyen@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABGWkvq2X9L6P39K5OeQW4+c2OmSYGHN03mUW-96U5okO1CK5A@mail.gmail.com>
 
-On 8. Apr 2025, at 19:45, Thorsten Blum wrote:
-> On 19. Feb 2025, at 13:42, Dinh Nguyen wrote:
->> On 2/19/25 04:42, Thorsten Blum wrote:
->>> Since readl() returns a u32, the local variables reg and bypass can =
-also
->>> have the data type u32. Furthermore, divf and divq are derived from =
-reg
->>> and can also be a u32.
->>> Since do_div() casts the divisor to u32 anyway, changing the data =
-type
->>> of divq to u32 removes the following Coccinelle/coccicheck warning
->>> reported by do_div.cocci:
->>> WARNING: do_div() does a 64-by-32 division, please consider using =
-div64_ul instead
->>> Compile-tested only.
->>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
->>> ---
->>> drivers/clk/socfpga/clk-pll.c | 4 ++--
->>=20
->> Applied!
->=20
-> Did this patch and [*] get lost somehow?
->=20
-> They aren't in -next and also didn't make it into the last merge =
-window.
+On 25-04-11 10:38:17, Dario Binacchi wrote:
+> On Fri, Mar 14, 2025 at 9:27 AM Peng Fan <peng.fan@oss.nxp.com> wrote:
+> >
+> > On Thu, Mar 06, 2025 at 12:27:49PM +0100, Dario Binacchi wrote:
+> > >This version keeps the version v9 patches that can be merged and
+> > >removes the patches that will need to be modified in case Peng's
+> > >PR https://github.com/devicetree-org/dt-schema/pull/154 is accepted.
+> > >The idea is to speed up the merging of the patches in the series
+> > >that have already been reviewed and are not dependent on the
+> > >introduction of the assigned-clocks-sscs property, and postpone
+> > >the patches for spread spectrum to a future series once it becomes
+> > >clear what needs to be done.
+> > >
+> > Although I give R-b, there is an idea just come out in my mind that this
+> > might break OS distribution that use firmware(e.g. U-Boot) to publish
+> > device tree for Linux Kernel, such as ARM System-Ready complaint OS.
+> > I overlooked this point in previous patchset reviewing.
+> >
+> > Since this patchset is to move anatop stuff to a new driver to reflect
+> > the HW truth.  And requires new entries in CCM node, so old bootloader
+> > with new kernel will not boot for OS distribution, such as Fedora/openSuse.
+> >
+> > Not sure how to keep backwards support as before. Leave to maintainers
+> > to say if they are ok with this.
+> 
+> Many thanks to Peng for the review, and a gentle ping to the maintainers.
+> This series has been ongoing for a few months and has reached version 10,
+> thanks to the reviews from Krzysztof and Peng.
+> I kindly ask you to consider it as well.
 
-Does anybody else know what happened or where I could find them?
+Hi Dario,
 
-Thanks,
-Thorsten
+Please rebase and resend. I intend to apply the clk ones. Hope Shawn
+will apply the DT ones as well.
 
-> [*] =
-https://lore.kernel.org/lkml/20250219104435.1525-2-thorsten.blum@linux.dev=
-/
+Thanks for this effort and sorry for the delays.
 
+Abel
+
+> 
+> Thanks and regards,
+> Dario
+> 
+> >
+> > Regards,
+> > Peng
+> 
+> 
+> 
+> -- 
+> 
+> Dario Binacchi
+> 
+> Senior Embedded Linux Developer
+> 
+> dario.binacchi@amarulasolutions.com
+> 
+> __________________________________
+> 
+> 
+> Amarula Solutions SRL
+> 
+> Via Le Canevare 30, 31100 Treviso, Veneto, IT
+> 
+> T. +39 042 243 5310
+> info@amarulasolutions.com
+> 
+> www.amarulasolutions.com
