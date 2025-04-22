@@ -1,236 +1,121 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E8A196;
-	Tue, 22 Apr 2025 04:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745295553; cv=pass; b=owkjZPPjzFPOm8uvTqjmC2lkMff/vD8tEanChUQFl4lza0wo4oqtgrBMM60IBMqiYNUtAh7RVJe9/PmOWuqd2rnEbAvaf7tImPrwRfEHjwVZKFlS3Q5dF4DSaaMRsCtOF7jiWAaKSex27F2/3gsqU1STdnTyqMCXh3Pm/6JF9MA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745295553; c=relaxed/simple;
-	bh=iNsKMm84GHQhbUytpMjyMh6LwwOS6U2zFWLDvpU9Cmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=me/x8lyUbAqbbOH8rnHS/qvibmjVgeJp81AGOlfEA2WZm1wDYG9m7eUCm6+h62NXiPAwZoQ9BjRcwZox++MUoJhFcsDIO9+EyMtxrAOVOBQp1P+nr5nOro2oUFpVAqY+Rrgq8GSwZ/zyIJ8ZZPDL1y27PlNmp/vPKqIvFPcoGSA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=Gic08PWZ; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AF1A59;
+	Tue, 22 Apr 2025 05:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745300555; cv=none; b=dkm0bY/zPwyYuZrTBXjsK42+rEQrjEiP3ht12KYuKi9B69OzOeu0/teXcx4yDxQGN33RutDq2NSIKNdQYZIW3os7SD8kKHrsnicCZorksRmy2SwtBLcM83rMbDyIj97hxjj4EJXRkq1pCUTA1T52UlTiCeoVselLeh9pR63Z+x0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745300555; c=relaxed/simple;
+	bh=I/eaYPiPD4/vR9fji1kZ2T1ODATHcon+1LC3SCxLVrQ=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=AvaeRfmvMagJr51/JeL/lERZUiReDESA21cB3sgNR1iWAFckmTLLVmssuER1w1g9/smU+wC8QeeUjP/SFIQIa9g2pHKz2nA0L/8887PpNksOlHQwQIxUuUcXd17pe3aB0NsVBzL0elmEA6LgBVEL500n0pguMI9t/s9gnagmtNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BoRHcvnu; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="Gic08PWZ"
-ARC-Seal: i=1; a=rsa-sha256; t=1745295527; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=bYShoK2I5627kuvCMBr7ice5zoZvmVLXZxqiboxIqDwF0rBOTWN+rIFKUegsdEjNoYjjC32ZOZzzzkUFjOdCeD3NIYMJHOMkOs4tcfcxVdpHJV5mv0y9taQ7g9d344fb3U/yCegeLMCrThiBuqFu7VuZKk6nUHnMjxb8Lyv62Ms=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745295527; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=iNsKMm84GHQhbUytpMjyMh6LwwOS6U2zFWLDvpU9Cmg=; 
-	b=hSzjbzbDUhiVei7Eec+5YrhPzASfsG8bj5oGQVlO4MqcG7oUuY1P5VWV90eKWHFvt88ZH9uH8WcjHS6IaYXB3v4O80I46oA1r7lyE05VipcpGi+t4owgoraKk5zSDlhjsBd0GwC/MuwRDmfjqvR8OoCsD1ON4eCDAl6s2bYcG2U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745295527;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=iNsKMm84GHQhbUytpMjyMh6LwwOS6U2zFWLDvpU9Cmg=;
-	b=Gic08PWZfyL08Tbqw5qQYDmVI4RM1Os2KsH5V5FLKN8HENRrA+tv8edW7Ws+DGuH
-	Mf6xpKRORMb1usri4f3BOofaekUuQVqU2hb+y3MZzykrLgAf73LsW0m7Xt4/pwfV5Nm
-	RswSu3lHtv3YSZcNxq4OUzFxAwO1RWuFjGH6PsSQ=
-Received: by mx.zohomail.com with SMTPS id 17452955185091.4976603090620983;
-	Mon, 21 Apr 2025 21:18:38 -0700 (PDT)
-Message-ID: <b858e1a3-7bad-4e23-bd95-d409a29195ad@zohomail.com>
-Date: Tue, 22 Apr 2025 12:18:26 +0800
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BoRHcvnu"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53M4OcVY019396;
+	Tue, 22 Apr 2025 05:42:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=VwTKnYwHVBUp8m+jvjJ/hJ
+	jElEfSxcZXInmyV6mUX70=; b=BoRHcvnuukEFH7cf+xjm81Hys1g4yCg+W96CYC
+	Mr5+WkPlCY5jFBILLQcv04lfWkQaFWBXq48vIOmZcgWeYrG6wGDGTV70Ba6dYfUk
+	mucUPMi7E1BAysQMFMPJIugQBR3tipUubRxY/O7xiuBvMmXXOzwtRmuVN1az7G6q
+	A3g5Z0cAwOAlvJdxyrYtOp2d1kfH/M+lx7BcHKvusC/k8WjvwcpfNYJqEGAcwkXv
+	KaUs5B+OqbqHci87j5JpUF34T0hGuHeZ6KhTIaK16jSkPcngGdbr9Bu1wUpJtY1I
+	mV+U4MTjzmGt0zrTu9ugSRoa4JgjpwUrTNzFA3RxvS1Mu7pA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46454bp693-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 05:42:30 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53M5gTOc000862
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 05:42:29 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 21 Apr 2025 22:42:24 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [PATCH 0/3] clk: qcom: Add camera clock controller support for
+ sc8180x
+Date: Tue, 22 Apr 2025 11:12:09 +0530
+Message-ID: <20250422-sc8180x-camcc-support-v1-0-691614d13f06@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/3] dt-bindings: clock: Add bindings for Canaan K230
- clock controller
-To: Chen Wang <unicorn_wang@outlook.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com>
- <20250415-b4-k230-clk-v6-1-7fd89f427250@zohomail.com>
- <MA0P287MB22621E1EC7F030E093C05084FEB82@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <MA0P287MB22621E1EC7F030E093C05084FEB82@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112272a13f94d3fc8e81c0fa6ae23000020fdad24f314990c2fb2150b564169e8b45e6e758e036a8a80:zu080112278c70b1c3fda24dcf3c14c9b50000bc403e68ad6228418b8c8f41b6e9f42e34dd877b267001d8fc:rf0801122ccc9d7616e07c63669e52d081000092f1083db6b64a211b5e15228f345040d987203771a4404cca7708396413:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADEsB2gC/x2MQQqDMBAAvyJ77kKyKsZ+pfQQ1rXdgzFkaxHEv
+ xs8DsPMASZFxeDZHFDkr6ZrquAfDfA3po+gTpWBHPWuI0Lj4IPbkePCjLblvJYfjjFUP0wU2xF
+ qm4vMut/f1/s8L/CkxutnAAAA
+X-Change-ID: 20250422-sc8180x-camcc-support-9a82507d2a39
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh
+ Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=cdrSrmDM c=1 sm=1 tr=0 ts=68072c46 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=OrtqDbjkpIUBgnuzYQYA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: tHm99u_fWYB3Ex6tn6AFyGgPrjNvKe3D
+X-Proofpoint-GUID: tHm99u_fWYB3Ex6tn6AFyGgPrjNvKe3D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-22_03,2025-04-21_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ phishscore=0 adultscore=0 mlxlogscore=801 malwarescore=0 clxscore=1011
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 impostorscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504220041
 
+This series adds support for camera clock controller base driver,
+bindings and DT support on sc8180x platform.
 
-On 2025/4/21 18:47, Chen Wang wrote:
->
-> On 2025/4/15 22:25, Xukai Wang wrote:
->> This patch adds the Device Tree binding for the clock controller
->> on Canaan k230. The binding defines the new clocks available and
->> the required properties to configure them correctly.
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
->> ---
->>   .../devicetree/bindings/clock/canaan,k230-clk.yaml | 43 ++++++++++++++
->>   include/dt-bindings/clock/canaan,k230-clk.h        | 69
->> ++++++++++++++++++++++
->>   2 files changed, 112 insertions(+)
->>
->> diff --git
->> a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
->> b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
->> new file mode 100644
->> index
->> 0000000000000000000000000000000000000000..d7220fa30e4699a68fa5279c04abc63c1905fa4a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
->> @@ -0,0 +1,43 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Canaan Kendryte K230 Clock
->> +
->> +maintainers:
->> +  - Xukai Wang <kingxukai@zohomail.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: canaan,k230-clk
->> +
->> +  reg:
->> +    items:
->> +      - description: PLL control registers.
->> +      - description: Sysclk control registers.
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - '#clock-cells'
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    clock-controller@91102000 {
->> +        compatible = "canaan,k230-clk";
->> +        reg = <0x91102000 0x1000>,
->
-> Note that when actually writing DTS, the PLL-related register range is
-> not so large (0x1000). Otherwise, the BOOT-related registers may be
-> overwritten.
->
-I get the point. Although I won't modify other registers unrelated to
-PLL, I will still refine the mapped areas(0x40 size).
->
->> +              <0x91100000 0x1000>;
->> +        clocks = <&osc24m>;
->> +        #clock-cells = <1>;
->> +    };
->> diff --git a/include/dt-bindings/clock/canaan,k230-clk.h
->> b/include/dt-bindings/clock/canaan,k230-clk.h
->> new file mode 100644
->> index
->> 0000000000000000000000000000000000000000..41edb13ea04bffaa1ddd1d1af87ae3406b688332
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/canaan,k230-clk.h
->> @@ -0,0 +1,69 @@
->> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
->> +/*
->> + * Kendryte Canaan K230 Clock Drivers
->> + *
->> + * Author: Xukai Wang <kingxukai@zohomail.com>
->> + */
->> +
->> +#ifndef CLOCK_K230_CLK_H
->> +#define CLOCK_K230_CLK_H
->> +
->> +/* Kendryte K230 SoC clock identifiers (arbitrary values). */
->> +#define K230_CPU0_SRC            0
->> +#define K230_CPU0_ACLK            1
->> +#define K230_CPU0_PLIC            2
->> +#define K230_CPU0_NOC_DDRCP4        3
->> +#define K230_CPU0_PCLK            4
->> +#define K230_PMU_PCLK            5
->> +#define K230_HS_HCLK_HIGH_SRC        6
->> +#define K230_HS_HCLK_HIGH_GATE        7
->> +#define K230_HS_HCLK_SRC        8
->> +#define K230_HS_SD0_HS_AHB_GAT        9
->> +#define K230_HS_SD1_HS_AHB_GAT        10
->> +#define K230_HS_SSI1_HS_AHB_GA        11
->> +#define K230_HS_SSI2_HS_AHB_GA        12
->> +#define K230_HS_USB0_HS_AHB_GA        13
->> +#define K230_HS_USB1_HS_AHB_GA        14
->> +#define K230_HS_SSI0_AXI15        15
->> +#define K230_HS_SSI1            16
->> +#define K230_HS_SSI2            17
->> +#define K230_HS_QSPI_AXI_SRC        18
->> +#define K230_HS_SSI1_ACLK_GATE        19
->> +#define K230_HS_SSI2_ACLK_GATE        20
->> +#define K230_HS_SD_CARD_SRC        21
->> +#define K230_HS_SD0_CARD_TX        22
->> +#define K230_HS_SD1_CARD_TX        23
->> +#define K230_HS_SD_AXI_SRC        24
->> +#define K230_HS_SD0_AXI_GATE        25
->> +#define K230_HS_SD1_AXI_GATE        26
->> +#define K230_HS_SD0_BASE_GATE        27
->> +#define K230_HS_SD1_BASE_GATE        28
->> +#define K230_HS_OSPI_SRC        29
->> +#define K230_HS_USB_REF_50M        30
->> +#define K230_HS_SD_TIMER_SRC        31
->> +#define K230_HS_SD0_TIMER_GATE        32
->> +#define K230_HS_SD1_TIMER_GATE        33
->> +#define K230_HS_USB0_REFERENCE        34
->> +#define K230_HS_USB1_REFERENCE        35
->> +#define K230_LS_APB_SRC            36
->> +#define K230_LS_UART0_APB        37
->> +#define K230_LS_UART1_APB        38
->> +#define K230_LS_UART2_APB        39
->> +#define K230_LS_UART3_APB        40
->> +#define K230_LS_UART4_APB        41
->> +#define K230_LS_I2C0_APB        42
->> +#define K230_LS_I2C1_APB        43
->> +#define K230_LS_I2C2_APB        44
->> +#define K230_LS_I2C3_APB        45
->> +#define K230_LS_GPIO_APB        46
->> +#define K230_LS_PWM_APB            47
->> +#define K230_LS_UART0            48
->> +#define K230_LS_UART1            49
->> +#define K230_LS_UART2            50
->> +#define K230_LS_UART3            51
->> +#define K230_LS_UART4            52
->> +#define K230_SHRM_AXI_SRC        53
->> +#define K230_SHRM_SDMA_AXI_GATE        54
->> +#define K230_SHRM_PDMA_AXI_GATE        55
->> +
->
-> It seems that some clks are missing, such as the timer-related clocks.
-> Please try to fill them in. There is no need to submit another patch
-> for this.
-OK, I'll complete the rest clock next version.
->
-> Thanks,
->
-> Chen
->
->> +#endif /* CLOCK_K230_CLK_H */
->>
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+Satya Priya Kakitapalli (3):
+      dt-bindings: clock: Add Qualcomm SC8180X Camera clock controller
+      clk: qcom: camcc-sc8180x: Add SC8180X camera clock controller driver
+      arm64: dts: qcom: Add camera clock controller for sc8180x
+
+ .../bindings/clock/qcom,sc8180x-camcc.yaml         |   65 +
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi              |   13 +
+ drivers/clk/qcom/Kconfig                           |   10 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/camcc-sc8180x.c                   | 2896 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,sc8180x-camcc.h     |  181 ++
+ 6 files changed, 3166 insertions(+)
+---
+base-commit: bc8aa6cdadcc00862f2b5720e5de2e17f696a081
+change-id: 20250422-sc8180x-camcc-support-9a82507d2a39
+
+Best regards,
+-- 
+Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+
