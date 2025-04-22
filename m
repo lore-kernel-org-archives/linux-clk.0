@@ -1,322 +1,313 @@
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83407230BE9;
-	Tue, 22 Apr 2025 08:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745308944; cv=pass; b=rlFw9duP8j1/MdisTVc7cp+FFKPMXkDFzOwz4VemJpqAPCNEBv5DqxCfd33Nbtec3S1Lk0CTedI6aImhFzk6SQpDBTEIeCoEuSFJaiZN8hVhc58GoyJbKjMEsO+4w0UaFFoovYwOfoo9uqjUInxVaUn7u3H0YcPP25BMAFKopt4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745308944; c=relaxed/simple;
-	bh=6mPBiVFnMBSLEQBiB7ejAYxBvNS+aTxOvfgPKqFlMvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bftU/SiiIKeWpA9Eak4E+QxujlTElBDuPopvyZhZTjaroKZl4FS/4KMizN8ZcHYB1g45xIhdlUmwRMNVc/2MsfJ6Woummr9x4KNZTeEFMNtbSEgyhMhSxCjjkqovVgS+6ZsS7NpTee5q29Ex1clrS6QbDAlyLV5ZqsLowy7yn4g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=bAAhwzUC; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2EC258CC1;
+	Tue, 22 Apr 2025 08:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745310785; cv=none; b=GwFEWc6BcnzH+U13Ks1JeqRTbmU8YObFAgsUM5SR8RIe++6WAuXDylo/6Ot3kdhKuHYUGwVHtBocP0ikUZmkT1bLwzqR5QisxC1nwcjPjOK8m7I/uLB4tee8MDArqlW4LAm7oMj1KWJlGzB5YfKjPtTGSsSvfwDUmIRfEfgpg4s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745310785; c=relaxed/simple;
+	bh=+wIJV/4C6jP6uH1R8ZCXTVQ4Zj+1gjYsii2qn/Jldaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iTMJKlYwj7TCHdShW2vjDr4RUbIMQ4I7F2cZqou9t1KkkB3dhmBLwcdawkKQ7BExU7e0Rr/XuXstYFcYP3E6lmm/MXN9tyAUF0Ngcuh5kpM6RaImKN8llJqIoY7vrKICVBe85oNOrFg2FVYbIxSEHXsUxl5QBYIBIfOeIIR8jyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R2yO8oXN; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="bAAhwzUC"
-ARC-Seal: i=1; a=rsa-sha256; t=1745308920; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=COJ29c36q0W9rJlZpPKQj/DM5ommXK3jkmPGEXwZfWocHngu8qwjUGt16P8ir46JVemDIpr1Lbjxmy+eIeM7CIdmlGMEKFXr/KIlix95yaBn1qo6AiODQk8ZuwL6UXoLsYF36ZfB3sWVeRM7Femx1dCyI38vGgR8Y8hPqFwO5Bk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1745308920; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=6mPBiVFnMBSLEQBiB7ejAYxBvNS+aTxOvfgPKqFlMvQ=; 
-	b=csEiTVOLb+B51Eb/koh/GCrHzP4hWM7pU1im/ycZcRHVXg6KjenYQbBN8nbRafd4EXLui04629P4nNO6d0bijFCfbk+AMgszzF8OvUzs/pvcRugZDcSvNfRfV4VkxM5yzGjAUUzzxiVjuugmHreGYt8gMrEgiofSriD3h/E3WRI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745308920;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=6mPBiVFnMBSLEQBiB7ejAYxBvNS+aTxOvfgPKqFlMvQ=;
-	b=bAAhwzUCOjU5zWiE+U/WRrrtH+4sX6xxRjF038UmZy24ziE9e12NVYLB5gqqWYWD
-	EEQ48uT9lWjVzeJlV4ZA2unaKrkDoVvjostZArHrCO+znqBO8yq3XrcMLhzfbxPeXCL
-	7LXUgPBGSCQ5EhvxbC+qUU+3XLvmMZyziE6QEJRo=
-Received: by mx.zohomail.com with SMTPS id 1745308911207291.1539466317503;
-	Tue, 22 Apr 2025 01:01:51 -0700 (PDT)
-Message-ID: <1d8c27be-95f9-4cb8-8d41-9c00faefd360@zohomail.com>
-Date: Tue, 22 Apr 2025 16:01:35 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R2yO8oXN"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39129fc51f8so4154135f8f.0;
+        Tue, 22 Apr 2025 01:33:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745310781; x=1745915581; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2ZrrpM7xmaXFZQ+/SXFVYsimm2TyRYqB/Z0dg/A+VpU=;
+        b=R2yO8oXN8mwrOjF2GI7fqJ65yn8sYCZW71i7cAugTaH9qfses6heaBIAAKSBMoZ9EK
+         xGN9mQlNHBjTZQwofQmjQagr9WT3PnJ5ZSIEYRMsuN9NXHxFzZSf/Gb5Glzwgzl6+OCg
+         46EZIvTt4JJgq0EMqZG8u2FE5f0eQFnwmup4TaN/yy+ijooP+owdkkmKOh6xbJCVHPdm
+         N2BnpzmBKT7mwG9tRFswJpHFME+jNc9bZIZZs6nPV5fIXEkGs7u9oDhkqaS3pTxBGfgR
+         XL0YD76ELmo58Zfft/e7tcl0Ri3Rf0XQriNQ1MaetLxUGczdubGofQFV/fu2hVvA8qVf
+         pIvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745310781; x=1745915581;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2ZrrpM7xmaXFZQ+/SXFVYsimm2TyRYqB/Z0dg/A+VpU=;
+        b=M99VXbXv7yzXZTxg6mET5nwTCPLN9PGE4dbR0xA4KctHjD+9pVYBNqTsS40TT7TGMP
+         tF4WELXCpxLBS6INJO/MKoaDL8kyo1YNQwYNqEls59qzDV+jjrDFUTiCcK4TF2bGy+Qx
+         tu1dV0beWFHQAO9AbfbFqxzhc9HeNw2y8t8FXpSAz3tY0xNc/KfO02Ol18nQR3IUytM3
+         qKkESU9xv5QVqmhwzjYWFCFMoZ71lsMwOo5ofhuTrHiE/Rl2fcvW/Rt74CDJQLZnXH53
+         7kYH0KrzuuaCRO6X8RFzelj2q/dBMn+Sw+PNVD397zrPHePSSxCE70VJZWtGuraUv4H1
+         5qMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVO49SORcAL3wtb2qDoqKRjA6jUfiOzj3CLir1dNHBvtxt4/uKit6sLou7xaE4ufYGZx8jhIKyzdUAhOFSU8i85//M=@vger.kernel.org, AJvYcCVV5sIPr2UKKDYbMcBZdmTFuhJrNMInbU7MBi4j9p+wOtEm9kytVkTn0kZ4wmTP8EKlIiYT9oxjRjqY4Y+1@vger.kernel.org, AJvYcCVrq8zHTTqLcUKEX7F9pOzf76Uo7qm2HyRdcnSAdm8+lHQRNNZiRaUtSmRCH85Sjck5IWtlM3OSdOX/@vger.kernel.org, AJvYcCWZ48uNun8i76bYQ5nPqy6YK+qjlKEtviUb2mKlorlWimR3J1+XyOrqQw5r0ISM0BB6hRaZ19OHRxoq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsttphZJTmTMJmtGhNiA7hEq0VXuV3P9BThaaCc+APZ7guppM7
+	NgXNrQO6+bDdUfAzz89fcBWWPbG5KwYP2gawLx2qPTTjIx7TD9r7XMx1qPy6mZW951phFNQpypE
+	7UGN7iUpw4Yni09OkzEcYUX9E64qooImf
+X-Gm-Gg: ASbGnctxEKHuSbU6mbyim1iGRuzG9KiVIaqpbTU9nlTMBhxuatqJooHCAQikzEAQO0C
+	j/MGTu4975Jd6i5hryQk0pWz88OVc1oZA+GKjO5fpfD2LJSdPHXFVcRJDID5aRp2b2axMpXzqIs
+	mCjkMAxLl6gw5QYZpfLGNeZg==
+X-Google-Smtp-Source: AGHT+IEXOe6suiljYgzibwSICtoy2N7LW7RDRaL42CSjqJljavFvoroFeiYFJ76gWjGbmigKz6X5Cr7/yBkTmQ0eASU=
+X-Received: by 2002:a5d:6d81:0:b0:391:2e31:c7e1 with SMTP id
+ ffacd0b85a97d-39efba2cb05mr8325459f8f.4.1745310781278; Tue, 22 Apr 2025
+ 01:33:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] clk: canaan: Add clock driver for Canaan K230
-To: Chen Wang <unicorn_wang@outlook.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>
-References: <20250415-b4-k230-clk-v6-0-7fd89f427250@zohomail.com>
- <20250415-b4-k230-clk-v6-2-7fd89f427250@zohomail.com>
- <MA0P287MB2262F6D556E48A73E317553AFEB82@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <MA0P287MB2262F6D556E48A73E317553AFEB82@MA0P287MB2262.INDP287.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112274dea12ec6ccc6dd99bc91d060000aefd79844fe964c4984d1679e7173f7d196f2534217bb33510:zu08011227ec8748633bac8b6e036383a9000005aa264c0151e1b4879e61bae576b94698c7d7b38446c7e127:rf0801122cc70354a17cfc9059e30fc54c000038c09917e1da792909550f566c9586f59d82f8bcdf35497d22df2fedddb2:ZohoMail
-X-ZohoMailClient: External
+References: <20250418184658.456398-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250418184658.456398-16-prabhakar.mahadev-lad.rj@bp.renesas.com> <TY3PR01MB113469966D8B9B58EE4E2D88B86BE2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB113469966D8B9B58EE4E2D88B86BE2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 22 Apr 2025 09:32:35 +0100
+X-Gm-Features: ATxdqUFRgp4IF189KWfub3eewi-n5UlmDRcR_Er9P2ARmB-V2ohPlk40gW-sZrA
+Message-ID: <CA+V-a8vMLUnZiJZjj0mu_DGSmZ5F_a0_U_SpmEaVxqL+ZqGrOA@mail.gmail.com>
+Subject: Re: [PATCH v3 15/15] drm: renesas: rz-du: mipi_dsi: Add support for
+ RZ/V2H(P) SoC
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, "laurent.pinchart" <laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Biju,
 
-On 2025/4/21 18:43, Chen Wang wrote:
-> Hi, Xukai, I have some comments below.
+Thank you for the review.
+
+On Sat, Apr 19, 2025 at 8:28=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.co=
+m> wrote:
 >
-> In general, my suggestion is that the code can be further optimized,
-> especially in terms of readability.
+> Hi Prabhakar,
 >
+> Thanks for the patch.
 >
-> On 2025/4/15 22:25, Xukai Wang wrote:
->> This patch provides basic support for the K230 clock, which does not
->> cover all clocks.
->>
->> The clock tree of the K230 SoC consists of OSC24M, PLLs and sysclk.
->>
->> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
->> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
->> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
->> ---
->>   drivers/clk/Kconfig    |    6 +
->>   drivers/clk/Makefile   |    1 +
->>   drivers/clk/clk-k230.c | 1710
->> ++++++++++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 1717 insertions(+)
->>
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index
->> 299bc678ed1b9fcd9110bb8c5937a1bd1ea60e23..1817b8883af9a3d00ac7af2cb88496274b591001
->> 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -464,6 +464,12 @@ config COMMON_CLK_K210
->>       help
->>         Support for the Canaan Kendryte K210 RISC-V SoC clocks.
->>   +config COMMON_CLK_K230
->> +    bool "Clock driver for the Canaan Kendryte K230 SoC"
->> +    depends on ARCH_CANAAN || COMPILE_TEST
->> +        help
->> +          Support for the Canaan Kendryte K230 RISC-V SoC clocks.
->> +
->>   config COMMON_CLK_SP7021
->>       tristate "Clock driver for Sunplus SP7021 SoC"
->>       depends on SOC_SP7021 || COMPILE_TEST
->> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
->> index
->> fb8878a5d7d93da6bec487460cdf63f1f764a431..5df50b1e14c701ed38397bfb257db26e8dd278b8
->> 100644
->> --- a/drivers/clk/Makefile
->> +++ b/drivers/clk/Makefile
->> @@ -51,6 +51,7 @@ obj-$(CONFIG_MACH_ASPEED_G6)        += clk-ast2600.o
->>   obj-$(CONFIG_ARCH_HIGHBANK)        += clk-highbank.o
->>   obj-$(CONFIG_CLK_HSDK)            += clk-hsdk-pll.o
->>   obj-$(CONFIG_COMMON_CLK_K210)        += clk-k210.o
->> +obj-$(CONFIG_COMMON_CLK_K230)        += clk-k230.o
->>   obj-$(CONFIG_LMK04832)            += clk-lmk04832.o
->>   obj-$(CONFIG_COMMON_CLK_LAN966X)    += clk-lan966x.o
->>   obj-$(CONFIG_COMMON_CLK_LOCHNAGAR)    += clk-lochnagar.o
->> diff --git a/drivers/clk/clk-k230.c b/drivers/clk/clk-k230.c
->> new file mode 100644
->> index
->> 0000000000000000000000000000000000000000..84a4a2a293e5f278d21510d73888aee4ff9351df
->> --- /dev/null
->> +++ b/drivers/clk/clk-k230.c
->> @@ -0,0 +1,1710 @@
-> [......]
->> +
->> +struct k230_pll {
->> +    enum k230_pll_id id;
->> +    struct k230_sysclk *ksc;
->> +    void __iomem *div, *bypass, *gate, *lock;
+> > -----Original Message-----
+> > From: Prabhakar <prabhakar.csengg@gmail.com>
+> > Sent: 18 April 2025 19:47
+> > Subject: [PATCH v3 15/15] drm: renesas: rz-du: mipi_dsi: Add support fo=
+r RZ/V2H(P) SoC
+> >
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add DSI support for Renesas RZ/V2H(P) SoC.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v2->v3:
+> > - Simplifed V2H DSI timings array to save space
+> > - Switched to use fsleep() instead of udelay()
+> >
+> > v1->v2:
+> > - Dropped unused macros
+> > - Added missing LPCLK flag to rzvv2h info
+> > ---
+> >  .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 344 ++++++++++++++++++
+> >  .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  34 ++
+> >  2 files changed, 378 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/g=
+pu/drm/renesas/rz-
+> > du/rzg2l_mipi_dsi.c
+> > index 133a8f306d47..a957b6c5f28d 100644
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -5,6 +5,7 @@
+> >   * Copyright (C) 2022 Renesas Electronics Corporation
+> >   */
+> >  #include <linux/clk.h>
+> > +#include <linux/clk/renesas-rzv2h-dsi.h>
+> >  #include <linux/delay.h>
+> >  #include <linux/io.h>
+> >  #include <linux/iopoll.h>
+> > @@ -32,6 +33,9 @@
+> >  #define RZ_MIPI_DSI_FEATURE_16BPP    BIT(1)
+> >  #define RZ_MIPI_DSI_FEATURE_LPCLK    BIT(2)
+> >
+> > +#define RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA     (80 * MEGA)
+> > +#define RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA     (1500 * MEGA)
+> > +
+> >  struct rzg2l_mipi_dsi;
+> >
+> >  struct rzg2l_mipi_dsi_hw_info {
+> > @@ -42,6 +46,7 @@ struct rzg2l_mipi_dsi_hw_info {
+> >                             u64 *hsfreq_millihz);
+> >       unsigned int (*dphy_mode_clk_check)(struct rzg2l_mipi_dsi *dsi,
+> >                                           unsigned long mode_freq);
+> > +     const struct rzv2h_pll_div_limits *cpg_dsi_limits;
+> >       u32 phy_reg_offset;
+> >       u32 link_reg_offset;
+> >       unsigned long max_dclk;
+> > @@ -49,6 +54,11 @@ struct rzg2l_mipi_dsi_hw_info {
+> >       u8 features;
+> >  };
+> >
+> > +struct rzv2h_dsi_mode_calc {
+> > +     unsigned long mode_freq;
+> > +     u64 mode_freq_hz;
+> > +};
+> > +
+> >  struct rzg2l_mipi_dsi {
+> >       struct device *dev;
+> >       void __iomem *mmio;
+> > @@ -70,6 +80,18 @@ struct rzg2l_mipi_dsi {
+> >       unsigned int num_data_lanes;
+> >       unsigned int lanes;
+> >       unsigned long mode_flags;
+> > +
+> > +     struct rzv2h_dsi_mode_calc mode_calc;
+> > +     struct rzv2h_plldsi_parameters dsi_parameters; };
+> > +
+> > +static const struct rzv2h_pll_div_limits rzv2h_plldsi_div_limits =3D {
+> > +     .fvco =3D { .min =3D 1050 * MEGA, .max =3D 2100 * MEGA },
+> > +     .m =3D { .min =3D 64, .max =3D 1023 },
+> > +     .p =3D { .min =3D 1, .max =3D 4 },
+> > +     .s =3D { .min =3D 0, .max =3D 5 },
+> > +     .k =3D { .min =3D -32768, .max =3D 32767 },
+> > +     .csdiv =3D { .min =3D 1, .max =3D 1 },
+> >  };
+> >
+> >  static inline struct rzg2l_mipi_dsi *
+> > @@ -186,6 +208,155 @@ static const struct rzg2l_mipi_dsi_timings rzg2l_=
+mipi_dsi_global_timings[] =3D {
+> >       },
+> >  };
+> >
+> > +struct rzv2h_mipi_dsi_timings {
+> > +     const u8 *hsfreq;
+> > +     u8 len;
+> > +     u8 start_index;
+> > +};
+> > +
+> > +enum {
+> > +     TCLKPRPRCTL,
+> > +     TCLKZEROCTL,
+> > +     TCLKPOSTCTL,
+> > +     TCLKTRAILCTL,
+> > +     THSPRPRCTL,
+> > +     THSZEROCTL,
+> > +     THSTRAILCTL,
+> > +     TLPXCTL,
+> > +     THSEXITCTL,
+> > +};
+> > +
+> > +static const u8 tclkprprctl[] =3D {
+> > +     15, 26, 37, 47, 58, 69, 79, 90, 101, 111, 122, 133, 143, 150, };
+> > +
+> > +static const u8 tclkzeroctl[] =3D {
+> > +     9, 11, 13, 15, 18, 21, 23, 24, 25, 27, 29, 31, 34, 36, 38,
+> > +     41, 43, 45, 47, 50, 52, 54, 57, 59, 61, 63, 66, 68, 70, 73,
+> > +     75, 77, 79, 82, 84, 86, 89, 91, 93, 95, 98, 100, 102, 105,
+> > +     107, 109, 111, 114, 116, 118, 121, 123, 125, 127, 130, 132,
+> > +     134, 137, 139, 141, 143, 146, 148, 150, };
+> > +
+> > +static const u8 tclkpostctl[] =3D {
+> > +     8, 21, 34, 48, 61, 74, 88, 101, 114, 128, 141, 150, };
+> > +
+> > +static const u8 tclktrailctl[] =3D {
+> > +     14, 25, 37, 48, 59, 71, 82, 94, 105, 117, 128, 139, 150, };
+> > +
+> > +static const u8 thsprprctl[] =3D {
+> > +     11, 19, 29, 40, 50, 61, 72, 82, 93, 103, 114, 125, 135, 146, 150,=
+ };
+> > +
+> > +static const u8 thszeroctl[] =3D {
+> > +     18, 24, 29, 35, 40, 46, 51, 57, 62, 68, 73, 79, 84, 90,
+> > +     95, 101, 106, 112, 117, 123, 128, 134, 139, 145, 150, };
+> > +
+> > +static const u8 thstrailctl[] =3D {
+> > +     10, 21, 32, 42, 53, 64, 75, 85, 96, 107, 118, 128, 139, 150, };
+> > +
+> > +static const u8 tlpxctl[] =3D {
+> > +     13, 26, 39, 53, 66, 79, 93, 106, 119, 133, 146, 150,
+> > +};
+> > +
+> > +static const u8 thsexitctl[] =3D {
+> > +     15, 23, 31, 39, 47, 55, 63, 71, 79, 87,
+> > +     95, 103, 111, 119, 127, 135, 143, 150, };
+> > +
+> > +static const struct rzv2h_mipi_dsi_timings rzv2h_dsi_timings_tables[] =
+=3D {
+> > +     [TCLKPRPRCTL] =3D {
+> > +             .hsfreq =3D tclkprprctl,
+> > +             .len =3D ARRAY_SIZE(tclkprprctl),
+> > +             .start_index =3D 0,
+> > +     },
+> > +     [TCLKZEROCTL] =3D {
+> > +             .hsfreq =3D tclkzeroctl,
+> > +             .len =3D ARRAY_SIZE(tclkzeroctl),
+> > +             .start_index =3D 2,
+> > +     },
+> > +     [TCLKPOSTCTL] =3D {
+> > +             .hsfreq =3D tclkpostctl,
+> > +             .len =3D ARRAY_SIZE(tclkpostctl),
+> > +             .start_index =3D 6,
+> > +     },
+> > +     [TCLKTRAILCTL] =3D {
+> > +             .hsfreq =3D tclktrailctl,
+> > +             .len =3D ARRAY_SIZE(tclktrailctl),
+> > +             .start_index =3D 1,
+> > +     },
+> > +     [THSPRPRCTL] =3D {
+> > +             .hsfreq =3D thsprprctl,
+> > +             .len =3D ARRAY_SIZE(thsprprctl),
+> > +             .start_index =3D 0,
+> > +     },
+> > +     [THSZEROCTL] =3D {
+> > +             .hsfreq =3D thszeroctl,
+> > +             .len =3D ARRAY_SIZE(thszeroctl),
+> > +             .start_index =3D 0,
+> > +     },
+> > +     [THSTRAILCTL] =3D {
+> > +             .hsfreq =3D thstrailctl,
+> > +             .len =3D ARRAY_SIZE(thstrailctl),
+> > +             .start_index =3D 3,
+> > +     },
+> > +     [TLPXCTL] =3D {
+> > +             .hsfreq =3D tlpxctl,
+> > +             .len =3D ARRAY_SIZE(tlpxctl),
+> > +             .start_index =3D 0,
+> > +     },
+> > +     [THSEXITCTL] =3D {
+> > +             .hsfreq =3D thsexitctl,
+> > +             .len =3D ARRAY_SIZE(thsexitctl),
+> > +             .start_index =3D 1,
+> > +     },
+> > +};
+> > +
+> > +static u16 rzv2h_dphy_find_ulpsexit(unsigned long freq) {
+> > +     const unsigned long hsfreq[] =3D {
 >
-> No need define these iomem address, just calculate them and use them
-> when use them. The clock reading and writing efficiency requirements
-> are not that high, so there is no need to waste memory for this.
+> Please don't populate the read-only const array offsets on the stack
+> but instead make it static, see [1] and [2]
 >
-I see, I'll drop these next version.
+Ok, I'll make it static in the next version.
+
+> [1]
+> https://lkml.iu.edu/2201.1/00608.html
+> [2]
+> https://patchwork.ozlabs.org/project/intel-wired-lan/patch/20250317144606=
+.478431-1-colin.i.king@gmail.com/
 >
->> +    struct clk_hw hw;
->> +};
->> +
->> +#define to_k230_pll(_hw)    container_of(_hw, struct k230_pll, hw)
->> +
->> +struct k230_pll_cfg {
->> +    u32 reg;
->> +    const char *name;
->> +    struct k230_pll *pll;
->> +};
->
-> Can we combine k230_pll and k230_pll_cfg into one to simplfy the code?
-OK, and I think the role of k230_*_cfg is maybe some redundant, and I'm
-considering remove them.
->
->> +
->> +struct k230_pll_div {
->> +    struct k230_sysclk *ksc;
->> +    struct clk_hw *hw;
->
-> I see k230_clk use "struct clk_hw", but here we use "struct clk_hw*", 
-> can we unify these?
-The clk_hw in k230_pll_div is a pointer returned by
-`clk_hw_register_fixed_factor()`, whereas the clk_hw in the PLL and in
-regular clocks is the actual entity that gets populated by
-`clk_hw_register()`.
->
-> Just use "struct clk_hw" and init it as static global var should be
-> enough, see drivers/clk/sophgo/clk-cv1800.c for example.
->
->> +};
->> +
->> +struct k230_pll_div_cfg {
->> +    const char *parent_name, *name;
->> +    int div;
->> +    struct k230_pll_div *pll_div;
->> +};
->> +
->> +enum k230_pll_div_id {
->> +    K230_PLL0_DIV2,
->> +    K230_PLL0_DIV3,
->> +    K230_PLL0_DIV4,
->> +    K230_PLL0_DIV16,
->> +    K230_PLL1_DIV2,
->> +    K230_PLL1_DIV3,
->> +    K230_PLL1_DIV4,
->> +    K230_PLL2_DIV2,
->> +    K230_PLL2_DIV3,
->> +    K230_PLL2_DIV4,
->> +    K230_PLL3_DIV2,
->> +    K230_PLL3_DIV3,
->> +    K230_PLL3_DIV4,
->> +    K230_PLL_DIV_NUM
->> +};
->> +
->> +enum k230_clk_div_type {
->> +    K230_MUL,
->> +    K230_DIV,
->> +    K230_MUL_DIV,
->> +};
-> Please document what's meaning of MUL, DIV, and both? They are type
-> for what?
-OK, I'll add one to explain this.
->> +
->> +struct k230_clk {
->> +    int id;
->> +    struct k230_sysclk *ksc;
->> +    struct clk_hw hw;
->> +};
->> +
->> +#define to_k230_clk(_hw)    container_of(_hw, struct k230_clk, hw)
->> +
->> +struct k230_sysclk {
->> +    struct platform_device *pdev;
->> +    void __iomem           *pll_regs, *regs;
->> +    spinlock_t           pll_lock, clk_lock;
->> +    struct k230_pll           *plls;
->> +    struct k230_clk           *clks;
->> +    struct k230_pll_div    *dclks;
->> +};
->> +
->> +struct k230_clk_rate_cfg {
->> +    /* rate reg */
->> +    u32 rate_reg_off;
->> +    void __iomem *rate_reg;
->> +    /* rate info*/
->> +    u32 rate_write_enable_bit;
->> +    enum k230_clk_div_type method;
->> +    /* rate mul */
->> +    u32 rate_mul_min;
->> +    u32 rate_mul_max;
->> +    u32 rate_mul_shift;
->> +    u32 rate_mul_mask;
->> +    /* rate div */
->> +    u32 rate_div_min;
->> +    u32 rate_div_max;
->> +    u32 rate_div_shift;
->> +    u32 rate_div_mask;
->> +};
->> +
->> +struct k230_clk_rate_cfg_c {
->> +    /* rate_c reg */
->> +    u32 rate_reg_off_c;
->> +    void __iomem *rate_reg_c;
->> +
->> +    /* rate_c info */
->> +    u32 rate_write_enable_bit_c;
->> +
->> +    /* rate mul-changable */
->> +    u32 rate_mul_min_c;
->> +    u32 rate_mul_max_c;
->> +    u32 rate_mul_shift_c;
->> +    u32 rate_mul_mask_c;
->> +};
->> +
->
-> What's "k230_clk_rate_cfg_c", and what's the difference against
-> "k230_clk_gate_cfg". Please document it and clarify this.
->
-> It is recommended to add documentation comments to important structure
-> types and their members.
->
-> Regarding how to document kernel code, see
-> https://docs.kernel.org/doc-guide/kernel-doc.html.
-OK, I'll try to clarify it next version.
->
-> [......]
->
->
-> This structure definition looks a bit complicated, with nested
-> structure pointers. Can it be simplified, similar to struct
-> k210_clk_cfg in drivers/clk/clk-k210.c?
->
-> And can we use composite clk here?
-I'm considering using clk_composite here.
->
-> [......]
->
->> +static struct k230_clk_cfg k230_cpu0_src = {
->> +    .name = "cpu0_src",
->> +    .read_only = false,
->> +    .flags = 0,
->> +    .num_parent = 1,
->> +    .parent[0] = {
->> +        .type = K230_PLL_DIV,
->> +        .pll_div_cfg = &k230_pll_div_cfgs[K230_PLL0_DIV2],
->> +    },
->> +    .rate_cfg = &k230_cpu0_src_rate,
->> +    .rate_cfg_c = NULL,
->> +    .gate_cfg = &k230_cpu0_src_gate,
->> +    .mux_cfg = NULL,
->> +};
->> +
->> +static struct k230_clk_cfg k230_cpu0_aclk = {
->> +    .name = "cpu0_aclk",
->> +    .read_only = false,
->> +    .flags = 0,
->> +    .num_parent = 1,
->> +    .parent[0] = {
->> +        .type = K230_CLK_COMPOSITE,
->> +        .clk_cfg = &k230_cpu0_src,
->> +    },
->> +    .rate_cfg = &k230_cpu0_aclk_rate,
->> +    .rate_cfg_c = NULL,
->> +    .gate_cfg = NULL,
->> +    .mux_cfg = NULL,
->> +};
->> +
->
-> Suggest use Macro to simplify the code here, see
-> drivers/clk/sophgo/clk-cv1800.c for example.
-I see, I' ll replace these init code with macro instead.
->
-> [......]
->
->
+Cheers,
+Prabhakar
