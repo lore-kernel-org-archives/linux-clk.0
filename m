@@ -1,156 +1,100 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3118D1A2398
-	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 13:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4414137750;
+	Wed, 23 Apr 2025 13:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415796; cv=none; b=VhNQ7FVb+5uYdPFjxb+HYZMZwvuv5nnhdVpeoUo25mu/RK7bO0szq/qtaj26GCxSXoZ4V0GQsfELEgHdmhXBUWbhx28q13SL30uJMO89p3mKr6cXLGoi+aC/ZkFy8nQe1fFfiK/kKWqhTaV3y7R+RRr7ZHU1+16WT5OrtAuAPZ4=
+	t=1745416165; cv=none; b=T8MWToVDXwGtyA1UzP0xlMXj1XBUo3Lja18u94FUYCXhLazjSu9wnHHujca37f2ZRDYx1GcLoNEL+bCMJNxiyg37fzzXrr5pq3+7w5RUF2n+Xmc4I88wqWYZvd8ZNEDr3msS3rSdLkpzXYHKDgGOn/dU2EoyeF3GwlvDr2QYqiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415796; c=relaxed/simple;
-	bh=2oNxgFh7wQy3eSTXUuVVZ5YrZWKlKCIvbcZjJzlgFfk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=b2zWwGpaRNq9kZx3TPCw4yxMW6Nsp8RhmWiaRbQdpVG2A2e5fqlbfR+JnRlU/yV2Xmx2DD96VyJgmkOc+YeWR+vKEDiDGmbVuitnfiHGemTp/RKI1M2E8LsM/zJ1ih+tbhvyq/99x1KKyaHpwdsUfS1mC5k9G8xaWca14KzZUVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i45NS8VH; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1745416165; c=relaxed/simple;
+	bh=osGtOXoJ3/G4yq2pLf+qpaLC++EVm4B+QQ46Ny8HTnk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pJLk855lv/D5VpDFtaNsPW4d819w4QcAmQKMlcPg5wy3l1Rfk38SO1USYkPT0fBGoCT75LqkUxGEneh3nyPw93RTCHqw4wEhm8DFtXuG/nZjuTjdxPMbECLV8oW9phRk73vk3Xf3eljXMoXigB9mCFyBJFUAjX7zuNy6/axfldA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=txMPS8mz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i45NS8VH"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so64701585e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 06:43:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745415792; x=1746020592; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FfrnhMcNKf5rCGWHGoNIZp7mNgbnWoHESdB7RpEhfqo=;
-        b=i45NS8VH9j1Oz0y0h9MAM2BESfQeaGh+Dh+a6FJhpDkpc/b5nSBZi6eUChnC3FtqOB
-         h9RYFH9VVn2NY3O6feDekcZTqtzU81CFECv4chNYTcRWpXluuaXpyhvsUJrIwD3lvj0i
-         g541zgQKukKKx5+D2EpbjzeO6J/1nFSeAOSvvyYJxVgmqlHzBUegXZf2/O1wUR5QnTKL
-         etVuKR5KPf5z13JejwrvSqbRsCW4zFAUwncAbqrA9TIS7dVdUaGFDyNAeWQ/6swPf5U3
-         0bD/tIlq0iMfTnvTVLaD15P8xHbFsCCKpyh6UgibOswlmcmWqOM6njeJJ+ECcYGXv+aY
-         XnHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745415792; x=1746020592;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FfrnhMcNKf5rCGWHGoNIZp7mNgbnWoHESdB7RpEhfqo=;
-        b=UTb4XbAcbtFcs5fFCbAJHBnVt5r9QDpxlMEGGQUoOZRQJr7cGUjPwMYkwURz2FIqJv
-         +CHtcsICpUk1htCM52Uoapt4IGQ0LfNgcnlHvXGIw5CDvAYD9c9LHP2pnG9PYXCYGnq5
-         Nr0Y7/KfzJbxq7vx9YxMTtZIHEdnYHS5G/7xpuFWGa4uwXt84LmyMr5MtGvvsgeikCJD
-         pI0LrkCZqhRahH9E+gjlJAFixbBekl1w5peKab1FhlhO7g/Ia5xN9E9G9Pm4oHJBqQ0l
-         wAo657c6+UwBO+4fu4cOyeElFGrVzh208v9JPLD9Tt9XlfQvF33+nsJp2eOEuyHUA3nM
-         BGag==
-X-Forwarded-Encrypted: i=1; AJvYcCUtOIKLXH4njm9VJlVathhGVuZ32kcXgMFW+lXhlIQojXd7WbqkzWC+CnjJGXe/zHIr5VdhHFEWs9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp7MYcat8TcyvvUMJwIEDoN3oCqYlBAV1ujc6T2JBDIIe+OZeh
-	EUNGCFo8AHFZIZkNUjSLeyYH7Fh5ebvJno8RP++u+QshgognQUgIpuPUAbvfqrQ=
-X-Gm-Gg: ASbGncsQzCmd87czAxFeklwnh7LpeMAQdrmXT68IRp4lFVX3m62awloYQOXgPzIkUOj
-	K6obKAytdC/rPu//cp2dHBXlEx4PfjzybgUPkRzoijNHOZL3+6AsBG24WeAtCTsXduWT3HenQsm
-	4px2xcQbOtyQW0sRuj8BDoeyVn6OyijECSsyqhyH01rq43d5IWUan0ts/0qyLe9iV7iyqFKvuII
-	anw/hdIdjdKdSON99MAslEF1eOhsNn/Jujio5vpAKTpCDW2ID6sPhYyM18bgSNxpIkKqAf7v2q2
-	RSVFni50dGwxE+Vq1shjLxqJpJTxP9wApTu1p733uz7myisw3X+WixnFM9m6wqvfey0ki2wnl6a
-	xJo34fBE6P4JnVS/S/A==
-X-Google-Smtp-Source: AGHT+IHnS/+w8vgB7Qer4VFmmeqW2fg9vqIPQjMtQu2PKuXwZePY3kDPFYEnC2G7XWePQ888jen21Q==
-X-Received: by 2002:a05:600c:5027:b0:43c:fa52:7d2d with SMTP id 5b1f17b1804b1-4406abfa6bcmr157183955e9.20.1745415792377;
-        Wed, 23 Apr 2025 06:43:12 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:2835:c2f4:c226:77dd? ([2a01:e0a:3d9:2080:2835:c2f4:c226:77dd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-44092db2ba6sm26108245e9.31.2025.04.23.06.43.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 06:43:11 -0700 (PDT)
-Message-ID: <1acbe9dc-02ca-4233-a79a-901e714f5c9c@linaro.org>
-Date: Wed, 23 Apr 2025 15:43:08 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="txMPS8mz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8FE6C4CEE2;
+	Wed, 23 Apr 2025 13:49:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745416165;
+	bh=osGtOXoJ3/G4yq2pLf+qpaLC++EVm4B+QQ46Ny8HTnk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=txMPS8mzhOH4JqWs1/gpActbHw272wesasElzGIudFpTPjkYoE2Fidl1RznTJYoB6
+	 HrIW0sUUeMDYBEGX9A/z9xoQkqHITBpJgrLpcBLkoETNeCWg2Ppw1Z4WTmIhG6Zt5M
+	 2S7JGvwX4KzuRr6fzQEyVX5BPNuqZhTBegeRGEdr3O0aPf6H5i5qWfemZZRNWldNdt
+	 ylCBx4jutIwZmwtbc/01ACKzZptf2DOuKlb60SkdBqPU9zb3pJJHQlnDh3EdZDXjGD
+	 dP7fKeCj1xnj6YDBpdC9zQ5dxsTbRteEBjFwyn8anEIXhn2f3+SuZo2N/hs4VsISpY
+	 keUVg1uVu8MiA==
+From: Mark Brown <broonie@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Sugar Zhang <sugar.zhang@rock-chips.com>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250410-rk3576-sai-v2-0-c64608346be3@collabora.com>
+References: <20250410-rk3576-sai-v2-0-c64608346be3@collabora.com>
+Subject: Re: (subset) [PATCH v2 00/11] Add RK3576 SAI Audio Controller
+ Support
+Message-Id: <174541616068.423395.2187976314107237451.b4-ty@kernel.org>
+Date: Wed, 23 Apr 2025 14:49:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 32/33] dt-bindings: display: panel: samsung,ams581vf01:
- Add google,sunfish
-To: Danila Tikhonov <danila@jiaxyga.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-mmc@vger.kernel.org,
- netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
- dmaengine@vger.kernel.org, linux-crypto@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-hardening@vger.kernel.org, linux@mainlining.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20250422213137.80366-1-danila@jiaxyga.com>
- <20250422213137.80366-16-danila@jiaxyga.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250422213137.80366-16-danila@jiaxyga.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-c25d1
 
-On 22/04/2025 23:31, Danila Tikhonov wrote:
-> This panel is used in Google Pixel 4a (google,sunfish). Document the
-> corresponding string.
+On Thu, 10 Apr 2025 21:39:52 +0200, Nicolas Frattaroli wrote:
+> This series adds support for Rockchip's Serial Audio Interface (SAI)
+> controller, found on SoCs such as the RK3576. The SAI is a flexible
+> controller IP that allows both transmitting and receiving digital audio
+> in the I2S, TDM and PCM formats. Instances of this controller are used
+> both for externally exposed audio interfaces, as well as for audio on
+> video interfaces such as HDMI.
 > 
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
->   .../bindings/display/panel/samsung,ams581vf01.yaml        | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml b/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml
-> index 70dff9c0ef2b..a3a1de32d8be 100644
-> --- a/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml
-> @@ -17,7 +17,13 @@ allOf:
->   
->   properties:
->     compatible:
-> -    const: samsung,ams581vf01
-> +    oneOf:
-> +      - enum:
-> +          - samsung,ams581vf01
-> +      - items:
-> +          - enum:
-> +              - google,ams581vf01-sunfish
-> +          - const: samsung,ams581vf01
+> [...]
 
+Applied to
 
-Why do you introduce a new compatible ? using samsung,ams581vf01 is prefectly fine
-if it's same panel.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Neil
+Thanks!
 
->   
->     reg:
->       maxItems: 1
+[05/11] ASoC: dt-bindings: add schema for rockchip SAI controllers
+        commit: fd55908d3278300ec4cbbacbfb07748bb9166314
+[06/11] ASoC: rockchip: add Serial Audio Interface (SAI) driver
+        commit: cc78d1eaabad3caf3c425c83037cd8ba1c9f2bc6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
