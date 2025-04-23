@@ -1,316 +1,102 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBF820C028
-	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 12:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B758BEA
+	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 13:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745410703; cv=none; b=Ia0jX4pOY+XQWLoVwumRkC1Cn3HXhFOEOOJahgSMsaoFPCTLXXxxvfNYSMdyWkVl1EQrHRjziCCrUOLkBkRM3mvKKLOZ0tX7zTOQWoZgwqYvm4ZHXZzCiJypj7nHIds3uxrFsFbP9H8Lhe+lmy1mDGeoOIk8q+vdB6hFsbqMUWU=
+	t=1745413960; cv=none; b=STYhPfDjSGcPLiccN9LnVJZ0/P6h9b6smGBmvfrxjZwVs42HEtsQLlHnI37CFyChr2v3OlkSQEo/xdXSy8tx59Dox5iWRVteqfZYX22DgaPga1Y4RLDFfJFBmEK1Xa0j1P7ZuRx6qgf/V9ccSgnk/7f0x4u1gVUOD7LKgtdm9wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745410703; c=relaxed/simple;
-	bh=tCHjkL1SLgoL2j2PMqkiNHKmGBzODwMfabfskxgGLgY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=umVEKaSle5Yg/y58tvtx0RZRN/vGPreeHqUL9jZrRqvT9ajuz+92RfWqiC704suN12QvW54F3MW7a3yMkxdm+Za1vpCUMau7iBuvV0ieY4Jd+PUPnrGDYcBSSkIK3+CscMI/pGzd1UKXv0/PNgp5vlADFBruivXHZpEv1aLZ750=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Si+5gSsH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1745413960; c=relaxed/simple;
+	bh=fIUyCjQtOjmd1WAoagxHXNlbCDt6PUnMgQToMDKJOYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X6ULwaX1g3iWYw347pX9He8NZbQtnLc+X5vdsB4LINXOgkyLLbCiFcJb4iCfdVxHLPfOzsltI35TN5elWWC01YovQwqFulw33w2pEbEeFNYH6ni8mW4CXd7CZ9ku5CQ5JnGYTvQwCxP6hKp/qHXDDfZ/zpv0xakn678Nz1pe81Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=km3pGIHW; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Si+5gSsH"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NAkCNt022002
-	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 12:18:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ioGfs5MtgxexvBjcj4mXKq9ldJm50YBOXelQWnDDA+w=; b=Si+5gSsH5Sq4CR5G
-	Zobx6D0+awRftNyIeqLD7wIQskcuztJErV9gBIQp2+U6xijczIIGrGoV3uMuvabf
-	cR2Xq8lPy7e8jzNEHDBW+Og4hF5TZymj9fK/dEZzsIqvbifYODTJbgyUohcQ64+u
-	0X4uPBqGFeeHEAdZ5+1hXskww8AEFCL86Squ1tM1exBkLb5iGs0PXfZdkADjR3M6
-	xq1FhOyRQWGM1oeaQTo0L0a/yBRvylt0hKZKgfCANbK3gwS0ayoj1gl7bPDuhqPG
-	LxAOgDlMO66Wd5eF2yvBd/PwJx6SGqzIu3vcrZc2MrGFEWvmTNoGel42tBrLw6u7
-	lJVAvQ==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh12241-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 12:18:18 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c54788bdf7so28137185a.2
-        for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 05:18:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="km3pGIHW"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-440685d6afcso60325555e9.0
+        for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 06:12:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745413957; x=1746018757; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EnNh4nAQm+RPIaXKRaRvi+wY8Sx0Yyg+NpjwoekcfHY=;
+        b=km3pGIHW+rl0tcZCtsnXFg9iMq3QjFCep3q/69bY66WtRjEi46MBIEUcQGoHQ+D3YP
+         qKOc+N1ieFkZvcT5aBwOqAFWIGnHHj8r3Z34SS8z2VRcIwi47g/lVlft8QzYxUtJiMF1
+         VDbdSCKPAJhpkrG1Bb9ilULrcN24sAX9egmzmxTWbdyBxI5cIMCv1wToNLK7gVOXjja5
+         rAt7tfeunuiysHbcu7Lqbc0mMToFaQv2WPwQrv4QvFVgrCUeH2mJfwYEp5KdLwhl8SAo
+         iEwTP2pGE4ltXxEHk/gGbbau39bYMcqTYMXSjfLtRTIohyG5ayXJt1My8Hy9e6jb7P10
+         ccBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745410698; x=1746015498;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ioGfs5MtgxexvBjcj4mXKq9ldJm50YBOXelQWnDDA+w=;
-        b=tbmemu2ic6K2a7ScMobqReCdaPje0KPUZaFnfTwID1Cz4vVo9xQp9n+TZcacDXoSNh
-         KSoPlI5v2dPi+S+n2Eihk5plds9jqQbKWfcJ/kYchlga6qng3N32fwv6vgY2NL4ir0rf
-         NW1VYyMEC5a3WlE5TFzKptuDPtqpQfMvZT4CgmRWO/iQqqO89NcQIY1bsc3E3qUutVa3
-         bMF+ZiBnlAJ30Qfg+NxKRqn1iLxxA0p35JPy2vnh81r9cjv36Ey+rFOHVv516oVtYGpq
-         QWeEsJSYyAgW8Hm8zGG4YkVF3wNMpbEhwOo+GRSnJpl5mGhZcBSLJ55OkTEAtppxpqRp
-         dudA==
-X-Forwarded-Encrypted: i=1; AJvYcCXPmxCsSDZmfqmNlRCcOxmm6W/cUmQOviy2Ertjl2/UyVCVaBR2P5l4CC3CCFTnNfv4uzCPM6XOuG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyOUlJ4bTgmCh7m0KYSrarkjKxXLZO4STq+duW7x6izpXL2Gm6
-	2t5Lx1TbvBy4JfLEw+H6EyzvF+ip3aRb+HA/g+4i+oE3RQFXgz0mXmIcovFvoJIp06rSNLsC+Af
-	G/vVlPxcHPTFgQY3U1Nh0yMie5+tVQleqZ6rBohWXf1UXW0bHBvOVL1f91KY=
-X-Gm-Gg: ASbGnctQGnfcsjTl+i12eLbddCfWyh64KdRcL2F+otm81rlGi6nL0GsSL2CKbjPXgTs
-	Ta9B7OasJYojLFctS1LlUcRZD+6Nb3vlPbEARk18++hTEpEM2ZvQo6A2kLUAKH5/Kjsx1Ib9jEu
-	r9M6liefQ+fWV3LIC1dCEKZIs4izqKp2Ox2ZDLk8yUuamhsV0uPkfMcO+HSGaSRS7EBvFmJj+Al
-	pCb47jnl4z1SoY8pbSaEWetD6IdYqPJHJJPHJsADE7HcLGG+99Dz4Ns7brfc83xBpJ1MMpiUKnb
-	rYgUasyzS08iZ98H0e0TjRAbZR7lqdc6Np/668RR5Q+w4OLAjivZPF9n+L7Sy7ta+hc=
-X-Received: by 2002:a05:620a:2492:b0:7c0:be0e:cb09 with SMTP id af79cd13be357-7c94d266c35mr148953685a.7.1745410697605;
-        Wed, 23 Apr 2025 05:18:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEav1ZFFMWH2+h22EnPEjP1DswVCKNGIgBpCwJp2VazcB6M7t8R/W/1xgUW9/XgzClpBqzW6A==
-X-Received: by 2002:a05:620a:2492:b0:7c0:be0e:cb09 with SMTP id af79cd13be357-7c94d266c35mr148944985a.7.1745410697019;
-        Wed, 23 Apr 2025 05:18:17 -0700 (PDT)
-Received: from [192.168.65.183] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6efadd51sm817256866b.179.2025.04.23.05.18.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 05:18:16 -0700 (PDT)
-Message-ID: <e0a61158-6278-45bc-bc5c-fe35227bdbf1@oss.qualcomm.com>
-Date: Wed, 23 Apr 2025 14:18:05 +0200
+        d=1e100.net; s=20230601; t=1745413957; x=1746018757;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EnNh4nAQm+RPIaXKRaRvi+wY8Sx0Yyg+NpjwoekcfHY=;
+        b=OwFwAwW0Db9OUfXr9fNaeNAI8hzbPcuEwcxX5fMGCPorTXSPwlE8LS7JthXYenmkYF
+         fYCf9kkB1OoGNAmuSFRWMWpOb88YpjBDoX9Kn6I6/WGgBr0kVBHhOSywNBrSbZDx2Xgw
+         4JojZ92+KYLYRb8ag7Wwk155peMtB/F2bMPgUN7UnxKnEXqmL8cK+rGpiND/wgqN/P6C
+         ghP4Sq5zkYlA3l6V9VV7FnWweZYERiJ6M7bscn0GFr2F8V1lm5Urgh9s0p/ZBErYzrG7
+         LeN3OcCSczsh3cM2D+AQVg7iS3fXD66pmZDqc2HZyXURW4K6KGD1z9tR0iUekC43vIgj
+         4VEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVI3VBCJv8rl+mXFCdJsoQLhZqpNBKZJ4IeY6Cbk1Inl44O6mkU+bGb6OfwbOtTo4iPWkY89Crwxa4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeUpTi7RfDIrbyuFHWEf2xH5tu9ecE56D057Hzu3AOi+PvTJex
+	EDroaDrWrIAXiDsulJ3DyCIfOvLcA5VD22FldxKtj8O1F+nlotEDcHY/M8CjKXI=
+X-Gm-Gg: ASbGncte8iDmSNkYP86cYhoCS0vvklXHomJmGmTKzWXnckJFQLOdKQafSI+lqWG3l5Y
+	7fcxo1N0yaOXDGLILHJpTBSND/dqdCr6VzAy5hcNXjIe+tAfay2AJoO0ahmzpuXwfYjj5vZBYr3
+	j2ved4GJ0gANj8BoM+vN29LvsWyCsARpbRCnasVq0GyWlV7EMdcMznxgcotVK7tKgudi19kEhVy
+	K/ldiZV/SWT2aEoHzM1IKyMq17NKOmfVa2yZuuvsTVhU0jIEt6E/6weVQMCo1TiqM4cWBpP4rFh
+	Sa8xnC9jNJEfExZzC6vhW0GTIZ5L71MtREGPbAKAq8UCVQ==
+X-Google-Smtp-Source: AGHT+IFLiGEPtIUG41rtNhf8o9bC64yoKVgiB+tlF8MOvnBbCSYDUU6BGbHcm/6Whcb9nIfm+cjAgw==
+X-Received: by 2002:a5d:588c:0:b0:38d:d666:5457 with SMTP id ffacd0b85a97d-39efbadef97mr14579817f8f.42.1745413956864;
+        Wed, 23 Apr 2025 06:12:36 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-39efa4207fcsm19078159f8f.19.2025.04.23.06.12.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 06:12:36 -0700 (PDT)
+Date: Wed, 23 Apr 2025 16:12:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v11 12/18] clk: imx: add support for i.MX8MN anatop clock
+ driver
+Message-ID: <09721eab-1adb-4001-880c-10ffa1961918@stanley.mountain>
+References: <20250423060241.95521-1-dario.binacchi@amarulasolutions.com>
+ <20250423060241.95521-13-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 30/33] arm64: dts: qcom: Add dtsi for Snapdragon
- 730/730g/732g (SM7150) SoCs
-To: Danila Tikhonov <danila@jiaxyga.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck
- <linux@roeck-us.net>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Bjorn Andersson
- <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wesley Cheng <quic_wcheng@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-        Lee Jones <lee@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S . Miller"
- <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Alex Elder <elder@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>,
-        Srinivas Kandagatla <srini@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Georgi Djakov <djakov@kernel.org>,
-        Loic Poulain <loic.poulain@oss.qualcomm.com>,
-        Robert Foss
- <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Kees Cook <kees@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-        David Wronek <david@mainlining.org>,
-        Jens Reidel <adrian@mainlining.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-mmc@vger.kernel.org,
-        netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-hardening@vger.kernel.org, linux@mainlining.org,
-        ~postmarketos/upstreaming@lists.sr.ht
-References: <20250422213137.80366-1-danila@jiaxyga.com>
- <20250422213137.80366-14-danila@jiaxyga.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250422213137.80366-14-danila@jiaxyga.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: KVsiuZiux6kyMEUly0pruwhRE_g2SqbP
-X-Authority-Analysis: v=2.4 cv=OY6YDgTY c=1 sm=1 tr=0 ts=6808da8a cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=OuZLqq7tAAAA:8 a=7ibcVnAUAAAA:8
- a=uu6HZSQSBnFQn7oXV_IA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22 a=AKGiAy9iJ-JzxKVHQNES:22 a=HywIFdX19-EX8Ph82vJO:22
-X-Proofpoint-ORIG-GUID: KVsiuZiux6kyMEUly0pruwhRE_g2SqbP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA4NSBTYWx0ZWRfX0Ko1cQw0ThIk DoXdLMwfTBr5e1cBmvIuXQfFtl95TWcpHoTFL9kzIfxsW558ggtsNA9k56xv2oUTMMv7DurZREA p9nmxzOGx+GsysifFyNfsFEUt4lhAcDgCfhi1OvGoOj7DswC3p2izUHmzgz9UPS+ObIZwKDWOxn
- JAG/MRx9LVnPjy9AZg3Qs8v+VoFlGcA78v3Rya+gupgJPsty3J2EY7uzBMFaJMkc2cA44qQMr+V dda771heg0yzIHx90OMbxwugtclMK+fMkdKIcE8FzFr5rULdQAWuHQtroPwoinyhWf3CSB7Z+zj n1DgeRY0ZDWYNgV2pftSjAlKYZrTy0w9B8OWkeP7vQdZ1MOWvaASSl+U4nEwDTLD46XdaVxRHbg
- K2Nnfmflrx7Z1hXLI0XL+psrRxJzAIGebSUTGETJp51rGXITqy375kXbVrcYFvG1NL6KM2Z4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
- definitions=2025-04-23_07,2025-04-22_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 mlxscore=0 clxscore=1015 malwarescore=0
- mlxlogscore=628 phishscore=0 priorityscore=1501 spamscore=0 adultscore=0
- bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504230085
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423060241.95521-13-dario.binacchi@amarulasolutions.com>
 
-On 4/22/25 11:31 PM, Danila Tikhonov wrote:
-> Add base dtsi for SM7150-AA/SM7150-AB/SM7150-AC SoCs
-> 
-> Co-developed-by: David Wronek <david@mainlining.org>
-> Signed-off-by: David Wronek <david@mainlining.org>
-> Co-developed-by: Jens Reidel <adrian@mainlining.org>
-> Signed-off-by: Jens Reidel <adrian@mainlining.org>
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
+On Wed, Apr 23, 2025 at 08:02:29AM +0200, Dario Binacchi wrote:
+> -	hws[IMX8MN_CLK_DUMMY] = imx_clk_hw_fixed("dummy", 0);
+> -	hws[IMX8MN_CLK_24M] = imx_get_clk_hw_by_name(np, "osc_24m");
+> -	hws[IMX8MN_CLK_32K] = imx_get_clk_hw_by_name(np, "osc_32k");
+> +	hws[IMX8MN_CLK_DUMMY] = imx_anatop_get_clk_hw(anp, IMX8MN_ANATOP_CLK_DUMMY);
+> +	hws[IMX8MN_CLK_24M] = imx_anatop_get_clk_hw(anp, IMX8MN_ANATOP_CLK_24M);
+> +	hws[IMX8MN_CLK_32K] = imx_anatop_get_clk_hw(anp, IMX8MN_ANATOP_CLK_32K);
 
-[...]
+I'm just CC'd on the v11 of this one patch and I really hate to nit-pick
+a v11 patch...  But I don't love that there are so many unrelated little
+cleanups mixed in with the functional changes.
 
-> +		cpu0: cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "qcom,kryo470";
+I also don't care strongly about something which is self contained in a
+vendor driver and I recognize that re-writing patches is a pain in the
+neck.
 
-Please split this into Kryo 470 silver and gold, with the former being
-based on CA55 and the latter on CA76
-
-[...]
-
-> +	pmu-a55 {
-> +		compatible = "arm,cortex-a55-pmu";
-> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +
-> +	pmu-a76 {
-> +		compatible = "arm,cortex-a78-pmu";
-> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-
-Please update this, mimicking 
-
-2c06e0797c32 ("arm64: dts: qcom: sm8650: add PPI interrupt partitions for the ARM PMUs")
-
-> +
-> +	psci {
-> +		compatible = "arm,psci-1.0";
-> +		method = "smc";
-> +
-> +		cpu_pd0: power-domain-cpu0 {
-> +			#power-domain-cells = <0>;
-> +			power-domains = <&cluster_pd>;
-> +			domain-idle-states = <&little_cpu_sleep_0
-> +					      &little_cpu_sleep_1>;
-
-<&foo>,
-<&foo2>;
-
-because they are phandles to separate things - DTC treats them equally
-though..
-
-[...]
-
-> +				interconnects = <&aggre1_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
-> +						 &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-> +						<&gem_noc MASTER_AMPSS_M0 QCOM_ICC_TAG_ALWAYS
-> +						 &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
-
-Paths involving AMPSS_M0 (the cpu endpoint) should be ACTIVE_ONLY,
-this applies to the entire file and all paths
-
-[...]
-
-> +		remoteproc_adsp: remoteproc@62400000 {
-> +			compatible = "qcom,sm7150-adsp-pas";
-> +			reg = <0x0 0x62400000 0x0 0x100>;
-
-This region is 0x10_000 long
-
-[...]
-
-> +		adreno_smmu: iommu@5040000 {
-> +			compatible = "qcom,sm7150-smmu-v2",
-> +				     "qcom,adreno-smmu",
-> +				     "qcom,smmu-v2";
-> +			reg = <0x0 0x05040000 0x0 0x10000>;
-> +
-> +			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 364 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 365 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 366 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 367 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 368 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 369 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 370 IRQ_TYPE_EDGE_RISING>,
-> +				     <GIC_SPI 371 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			clocks = <&gpucc GPU_CC_AHB_CLK>,
-> +				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-> +				 <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>;
-> +			clock-names = "ahb",
-> +				      "bus",
-> +				      "iface";
-> +
-> +			power-domains = <&gpucc CX_GDSC>;
-> +
-> +			#iommu-cells = <1>;
-> +			#global-interrupts = <2>;
-
-Add `dma-coherent` and check whether the GPU still works
-
-[...]
-
-> +		};
-> +
-> +		gmu: gmu@506a000 {
-> +			compatible = "qcom,adreno-gmu-618.0",
-> +				     "qcom,adreno-gmu";
-> +			reg = <0x0 0x0506a000 0x0 0x31000>,
-
-Make it 0x26_000 so that it doesn't leak into GPU_CC
-
-[...]
-
-> +		tsens0: thermal-sensor@c263000 {
-> +			compatible = "qcom,sm7150-tsens",
-> +				     "qcom,tsens-v2";
-> +			reg = <0x0 0x0c263000 0x0 0x1ff>, /* TM */
-> +			      <0x0 0x0c222000 0x0 0x1ff>; /* SROT */
-
-Please remove these comments
-
-[...]
-
-> +		intc: interrupt-controller@17a00000 {
-> +			compatible = "arm,gic-v3";
-> +			reg = <0x0 0x17a00000 0x0 0x10000>,  /* GICD */
-> +			      <0x0 0x17a60000 0x0 0x100000>; /* GICR * 8 */
-
-And these ones too
-
-[...]
-
-> +	thermal-zones {
-
-Please adjust this against 
-
-https://lore.kernel.org/linux-arm-msm/20250219-x1e80100-thermal-fixes-v1-0-d110e44ac3f9@linaro.org/
-
-(keep only critical trips with no sw cooling for the CPU, etc.)
-
-Konrad
+regards,
+dan carpenter
