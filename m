@@ -1,116 +1,136 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDC118D63A;
-	Wed, 23 Apr 2025 07:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0018A268C48
+	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 07:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745392759; cv=none; b=KoGHOF5Q/Ma0bCgq/86X8+997u1VXSIrHF4uql1Ci1e0PA+S+xPBL4FROX1YETcgANHG8CbQzaf0+5hjPmo5DU0yPHGVCCYDIUQwUKn4KeR3ikOOhNtEGfCqS6t3nBDuJ2jlrnI3zrti1pI0VYuS3qqid5QpRfPugMZ5+U9M3HQ=
+	t=1745393222; cv=none; b=HRDRbEHhq08o73P2wWqg1oJbhn+4zm2sIEmfE7x7ZXAtt4+szUBz1/geTGX1Vc2odCVFHOTeKGb+0vTGWjlOSyUCiyPwQxkrR6uodjBTBlzuGTFR2bFW1zEYjpngc79i9BXqnLnT3zamQzN5Wg9apzEB3uBC6PlVz8P+qU9fgMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745392759; c=relaxed/simple;
-	bh=OelUuagaoJNGvmq4zulFutE63UpEPJUFjETU5gHmmRU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C+hlnMM8UvvShkOs+vC4FSce/y/NI+Mrs3N4THulGviujqWWrGiZTzIAGuuYfwjahEqZMvR8ye2Xpys6Hc3DbyYfd9vuBRTZA1FAlyga/h33mQVDclU9r0nEFbz2HY29l0IibqxkjAVgd/U5HFHk3aKRW1RZDiWk4JOdWq4ENR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5ed43460d6bso9101415a12.0;
-        Wed, 23 Apr 2025 00:19:17 -0700 (PDT)
+	s=arc-20240116; t=1745393222; c=relaxed/simple;
+	bh=Jrbw0OKpQbJ1dFid4p4N4XtPsI8/qSLnEpsHW9bCCKg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=brIDoFNDZisqK835Zu37v7pW/pjI1GES6ZsgMeZ4WW7xw1YcgtWtgVlRyl+exyHqrdZOXSTmf1YQOzAils0FB3yCkX9NG0cmfsJ2qguGLrMrZqDOJdlNIWOPh+WRkFUVMltjanOrSgcN5VbtCI6+UPAwtSL0JfWbhrwOkz1GekA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WJsYG4G5; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WJsYG4G5"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cfe574976so44702385e9.1
+        for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 00:26:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745393218; x=1745998018; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kn/kdeC0hIJ6fPjKrtocu5NnRgujubxfAbJ5Urbgh9w=;
+        b=WJsYG4G5Le7NxcMduHBEdH1Cuadj5L7FAZjqaEd5mYiMF/Qi6ppXkTUuDDk22WovVY
+         O7B5DQAXeTfnr8i6cS+KbgmElCDTMFYIy2ECwPXpJaB3JeoMNYQZ/2ll4krvLhDrl0ry
+         XWWTUjEF+7PJnsDC+7ryWRsgboKsQww8oCHwjnyrsKXY0gIeOF3zFgeZ4kyZGKIkcSA/
+         8PxE1bS7/EyDFy8xpBfc+BpcJI9Cro2kEeAw/dG8GeFSA4Ky0taUyAn5Rs/tCD4hcZAp
+         J/CUYtr3Rlwo+y9zOka/9al+MhVV66wL+2jOPfBCVsxlMCkn7Y45wIQSBrCGS1BpJrx8
+         qsYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745392754; x=1745997554;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NVmtrUo1YbYw/X4g84zkSdEwr7vBSfOVDVsuajCd9Rg=;
-        b=OQmc6vDkip9IEDHkdoeskpcRda8miBdQPmEfl0sLI1AduDtKw47F3SJOT33zdZFSCH
-         6msPkayLOPkoTJ8XlObhdmMVlin4H0LbSF5aZ2ugckQTcaT4tSTvVynzYI82m+40AzcG
-         s1qaIL0rphBspZqIwuS3hjk7QINdu+xMPAlNfImvGYUBHufYF4b7gOfgcb0YBIkfe92e
-         QIU7V4xgXVZfHwZ+99gCWFYT8EI7+8a8HABOhlHwSDR8/jt8KhbObLIspG8Q7R5WqTW6
-         reBG7LljdgGZY+0ienhhScx1QSmYKN32V5Dtre6K92rOJZEk4xRD1NFATFFKxQYNfqK0
-         KIRA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2S0J8NBMhfhwCrNSRpClufxmpQH81kyKAr5d2YKzjqCEJjosbnEqz7V4CsGPzrAoHeKSSfxOlFbs=@vger.kernel.org, AJvYcCV+FiossHQlt/8g2KFEmQge2D7k0IrZ2jwjARcMLwAM0ILBksd0nxwUl1PeCCLU3gwpEdZPK0yVZssnigHgB1MsA9Y=@vger.kernel.org, AJvYcCVw0Vn78FT1kOnvmu6S/foua06NTukEDUhqYBkgDD4wCmyj71d6blJVrwCp74IWCdj3g0by+OUlgC/O9Yl7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3HhmuX0STitvgCsV59B5Uqx1fAl1oX/y5zJOMFIH8SuaH7p/E
-	Ma76WFehYJDrMzs94lZmH50HyioQSf2s96HjL5hT1TdHJLbXRuVAgScpOUepG4o=
-X-Gm-Gg: ASbGncv5ucOuUl5j40cF7P7on0K3xRxXGpsRSnao9kCNiGvDGoLJnXRcNVAihfRnzNk
-	gcYAcgsfMlamD6Zfli6WJvsmm0Z13k5rlk3/lueUIKKFQT0AMV5IsKuZNklYcn/dWqb62xM9Kvb
-	5HNfyuRAG67lrYUDik4PiBJ4XjUa4wlILSSZ5i/i/iR6pN7zR0lq/yr2TBTF4mrvBRLWZAMTYo3
-	HdKC6/4ntdB4485XST4arlR5QTe6+wd+t2PvWzQjlmvQ2h9HHyzCo+w7+D78gcvejaJN2yLs5l2
-	YgVF6a3qd/seg9SodGdC9EOCN8L04Q+Vo6jV0aiEVD3NAaf6t7bMSKZBKPC3vMrLqdQXvJlVwm0
-	KR9o=
-X-Google-Smtp-Source: AGHT+IE/0Y2NIRV8KG4Gr+qUXlRMfGPzfBaObygtzvunOWGq2sXZ22/uADoRMSPJasXsp/i45raY1Q==
-X-Received: by 2002:a17:907:1c90:b0:aca:96a7:d373 with SMTP id a640c23a62f3a-acb74ddd2f4mr1453407066b.57.1745392754178;
-        Wed, 23 Apr 2025 00:19:14 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6eefcf16sm768563066b.105.2025.04.23.00.19.13
+        d=1e100.net; s=20230601; t=1745393218; x=1745998018;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kn/kdeC0hIJ6fPjKrtocu5NnRgujubxfAbJ5Urbgh9w=;
+        b=KCdIqrhS/ulPt//12U6pgojlohk4t4nAeA0HJ/BjW3Oi1qcDBty9HG9OuEeWgCquhy
+         bRTOa0WhGWK3+c9xpGMAxWSC9pFgoRvVdp9ttfJpeIERClmdO/myCZv4mHr5sHukJemP
+         gOI9NfosQsVHYNQ0TP5mW5Fl2RkYC6xq3rud2v2ZPBSizVBEqmCEK/dSmf827VJWXb+Z
+         iZBMsngRDNTmXq5srkfya8VgfEp5ogxm9q/YnnKpRs+XrpUr8X/Dg7iEjynYTWwduoL7
+         ZIM/EY5fV/GoY4B0AAXJK0R2wULO+UaPIviQwtgaf5tvOEkK4l/t4tocMWebQujIrH2g
+         l3Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+Zsxwur/sYQfCUxQKNrkyaEfHoPP3Aw01UwyfP576Zj107w5qWXKNdpNXCY2zWXbUoYuYndfAvCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx5T17MW9IGOuLBd/Ed+u1iG6Oh4bU/SNGwHAC8Qm6zPxgCBDn
+	ttgWHN3mBqUBEglysXSCjfXROhjt3M03knOLKcVhxjWJK47hB/NLh5Xj/GzWQQQ=
+X-Gm-Gg: ASbGnct4VumJGYHiHuVP4WUiNafWsGc+7JU4eS+DD7GzYF/AJqV+aAyssPtjnUfIlGk
+	NWdhnJnPD3ND9iuQtqY72RZeBiNQZ56D21BEQR1tcOm2nt50GQr/19EFCU2eGiWGQbvbqt/fQxd
+	BPAdQLYM5girqk4rpCTlF7/Nkc86zBdSOya2Gbr4byUfrPCGHgONNC+e1894862HlV1+F+7Uw9l
+	zHoqta3Z9Wpi92SCZFq9d4mRzx/3HYBqgZCPOfrFMJ80HpNoTPQgQJ5epsUzmz7xc5Pu83ihFvK
+	Mj+xVFGVYiYCWkaGJwRvJyP1KWtx72NZlU+ask9vSyBV/PY+WdiWAnv69Ak8CBDqhLoFGzAmc9a
+	XmAReDqY2/TEoHCtCGg==
+X-Google-Smtp-Source: AGHT+IGQjZAyp9xHW8ASlQKrR9fCiGMeMbCakgAb3SkKNca/+Rt6CnnTlRW63K73V1hHmlOCRLIMvA==
+X-Received: by 2002:a05:600c:1c8f:b0:43c:fe5e:f040 with SMTP id 5b1f17b1804b1-4406abffc5emr134620725e9.23.1745393218300;
+        Wed, 23 Apr 2025 00:26:58 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:2835:c2f4:c226:77dd? ([2a01:e0a:3d9:2080:2835:c2f4:c226:77dd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-44092db2bd5sm15015645e9.26.2025.04.23.00.26.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 00:19:13 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac25d2b2354so859139866b.1;
-        Wed, 23 Apr 2025 00:19:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWqmcTzGUzBfrClcOx/R9fIHetA6D7LJq0Iata0oUrRqR6Hut5FwFDCDBBTQCLXqwvaMZZ1EZ3cBUdWdZekDFLD7Pc=@vger.kernel.org, AJvYcCXOTvpPZAcTrcJmh9MOzhtFfzkHgQcgXO5OkcSnBwSm8wZt10u/hYxq1y6IDWVkf8CattIJIIO8Tns=@vger.kernel.org, AJvYcCXirlgRPibLsmHWPLGDUI7KeKYYywWPhxWZiIF8WaRrM1RPPAvLJHrxH7CvbFCWV/wXdpIh+pmwTW6AVd0S@vger.kernel.org
-X-Received: by 2002:a17:906:dc93:b0:ac1:ea29:4e63 with SMTP id
- a640c23a62f3a-acb74b4f63fmr1755632266b.26.1745392753452; Wed, 23 Apr 2025
- 00:19:13 -0700 (PDT)
+        Wed, 23 Apr 2025 00:26:57 -0700 (PDT)
+Message-ID: <283096ad-ae1b-42b8-8312-b192f735fc80@linaro.org>
+Date: Wed, 23 Apr 2025 09:26:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com>
- <20250403212919.1137670-7-thierry.bultel.yh@bp.renesas.com>
- <CAMuHMdVpiZ+F0TMbLm000M_Scwozj2-SHPrUwTHqFKckVcmufQ@mail.gmail.com> <TYCPR01MB11492BCF416760E978541AFE18ABF2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYCPR01MB11492BCF416760E978541AFE18ABF2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Apr 2025 09:18:59 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVQPbP0Fi5SDN8uOJ23S=_8pqHRVR2QFS8vHNfohzae2g@mail.gmail.com>
-X-Gm-Features: ATxdqUGnPcr5nw2bU8kZXewmcWmaBnKwPIbVqw74OHQUy0h-V5sZQcUv4L5lrRM
-Message-ID: <CAMuHMdVQPbP0Fi5SDN8uOJ23S=_8pqHRVR2QFS8vHNfohzae2g@mail.gmail.com>
-Subject: Re: [PATCH v7 06/13] clk: renesas: Add support for R9A09G077 SoC
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: "thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Paul Barker <paul.barker.ct@bp.renesas.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 00/33] Add support for Qualcomm Snapdragon SM7150 SoC and
+ Google Pixel 4a
+To: Jens Reidel <adrian@mainlining.org>, Danila Tikhonov <danila@jiaxyga.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-mmc@vger.kernel.org,
+ netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-hardening@vger.kernel.org, linux@mainlining.org,
+ ~postmarketos/upstreaming@lists.sr.ht, Connor Mitchell <c.dog29@hotmail.com>
+References: <20250422-sm7150-upstream-v1-0-bf9a9081631d@jiaxyga.com>
+ <2ca2b774-fd7f-4612-b38d-f60e32ff6f9a@mainlining.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <2ca2b774-fd7f-4612-b38d-f60e32ff6f9a@mainlining.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Thierry,
+Hi,
 
-On Fri, 18 Apr 2025 at 23:22, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
- > +};
-> > > +
-> > > +static const struct mssr_mod_clk r9a09g077_mod_clks[] __initconst =
-=3D {
-> > > +       DEF_MOD("sci0", 108, R9A09G077_PCLKM),
-> >
-> > Shouldn't that be 8 instead of 108?
-> > Using R9A09G077_PCLKM as the parent is a temporary simplification, righ=
-t?
->
-> I am probably missing something, isn=E2=80=99t PCKML actually the parent =
-clock ?
+On 23/04/2025 00:07, Jens Reidel wrote:
+> Hi everyone,
+> 
+> apologies for the mess this created. Danila's mail provider ratelimited him halfway through sending the series and the attempt to re-try sending the second half an hour later ended up with a new message ID (I think due to not using --in-reply-to).
+> He asked me to let you know that this will be resolved later and the whole series will be re-sent once the problems are resolved.
 
-According to Figure 7.1 ("Block diagram of clock generation circuit"),
-it is PCLKSCI0, which can be switched to PCLKM.  I guess that is the
-default, hence my "temporary simplification" question.
+The b4 web submission is a great alternative when the mail provider is rate limited:
+https://b4.docs.kernel.org/en/latest/contributor/send.html#web-endpoint
 
-As the actual switching is controlled through the SCI's CCR3 register,
-the SCI block should have two clock inputs in DT (PCLKM and PCLKSCIn),
-and thus the DT bindings should be amended.  See also Figure 33.1
-("SCI block diagram").
+Neil
 
-Gr{oetje,eeting}s,
+> 
+> Best regards,
+> Jens
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
