@@ -1,160 +1,170 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9362701B3;
-	Wed, 23 Apr 2025 08:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDCE2701B3;
+	Wed, 23 Apr 2025 11:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745398343; cv=none; b=fJVE0oG9HfO4wEEj/7U9RImIIGqyXH58s6fLKXXfnZ0pLO622NgZvJBRPlJtvju6RTpURQZ8wWJxVcvqPNpl/zTHwzjw1hLX3mRow+iPru8klGgshqFd3/rk8Z7SgMFrtJt7+e7SQsI8fLUiNTrv4EBPXprw9bnYLslzTbo30p4=
+	t=1745409268; cv=none; b=h9zpPBevr2tIdJx5NJSuwEb1dw8mL1jvcOJGZSaRD5deasib9R8eOmRAGx0q3Z5bKqvhrl6PUdyz5qfIE/DXRKPeRscYpH/N8UFaYAEJXFQTV4lFfIjyQXr+3NX4ViF6/gEPF2jBK0+NMf4W9qhj5w7OJqR+2qcvGvt2WlwcGKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745398343; c=relaxed/simple;
-	bh=ZT+aTcDj6n7xgMSrVmH50CHyTSXx7NxekjQJ77DmiUw=;
+	s=arc-20240116; t=1745409268; c=relaxed/simple;
+	bh=BYpJI7wi0dKwUy+fozNXlNxwk3dd5lqqJ9gdPwIJXJs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A1TQnXIQAvFSSlbnR5VJ6J4HPQqCZiz+ep4D3P0f+ImFFZVbfa4+B70004bVD68A+jU+/oEnDREhr+qAOr558LjoONlnRnhAliI0pHNLz4ryu4R02UlwtxDyuiQM6OmFi8W1HixbDbQgM6RhbzBbZdXDg58tgwiKK84b3CIw2u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=iJjEQhyhX4FCXYIaX0XMpogwXhC8FOUws4X3bkXytTWRRbea5Z9AvIFMeJMAEvx35oXl8LVvMR0BXSOTZlOk4KX+SdVsX3oHRQVL9s/wmshlJXksxfQh46Zm4gLcFfrvTGpb3wba8iPwof2mB+jK4tMtJV2+bmjKMHrGSOEhsJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dq+SAIlA; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523f1b31cf8so2205242e0c.0;
-        Wed, 23 Apr 2025 01:52:21 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dq+SAIlA"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39ee623fe64so5481763f8f.1;
+        Wed, 23 Apr 2025 04:54:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745409265; x=1746014065; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RXiSx30w1hmWlM/Di4qv5E69sWeA1eC0NCdlxnJgn04=;
+        b=dq+SAIlABbg9P+VF828AZ9mGGAUfGPOW/LNDTQb70JjenO8FN8IsbR01tQtHLABQUW
+         iRYiKGxgAD9ULZazAG/k1ISK6MbqhKx/aeP7hm2qtrkF4gxMKfrhq3UPfQq+YY0o85cj
+         KIdBxqgyI2fnILQ3sakAyLA3GrxuECNth6l8WX9e6LspEn8/ujKUV8zdW5UQOA90W6Xh
+         QPObuDRKGJW0oaTvMRI70TrQSuCRQpPYX7MTqkLU1c8Zvut7NtfZ7mA7JMSu6sYpAYVI
+         Se6gYhEfwtBf0n1shTi/xbvWET3uDt7Khu/3iHKnXb7kb7+DBEDGOAOC/ukV1uHJG30w
+         ywZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745398340; x=1746003140;
+        d=1e100.net; s=20230601; t=1745409265; x=1746014065;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NNzLMhAwEW1BPiNK9bNE9/7Jt7OBYMaBTaiFgrT60mM=;
-        b=QfzgZeFLqfpVRsAoj2mctYF9vI3QJOUA3ew5pEA5WCgezM71prXuBKiEDJ6a2zNCf9
-         +wFDMD1ZMFaBghL1ilULmCmAnV/RUvpZtForMA7UCRcN8fYGqFDDVDthroD1VBjJQe9p
-         DNZBxpMqnr12Dp9jzBoS9wUXnGl5aahGP2pJ9RTGc27zwOr4MYXEdnRSeg0miAt59SvN
-         Bfoj8nXPF7K5quiWK9jwvdQseG8XDEdHQBRSR5wUOwTyF8nSqkk3yT/ZWG929e27S+0F
-         SoTQP/p5DHAl3fadFF3+q0Z7GLUJ62CGdt25ptLmwmN0FjwFpQ8JAVFm9QRSeurWklm0
-         pdJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaApltNSXHi+2gSERVjbzKS8pFc0Rh/RTQ/7EzWMW/NBtxpxl5rJ54wseU8t7uggRTGSp1GKO0aEMsyxu4rKvo1QA=@vger.kernel.org, AJvYcCW83BD3YJHIf52odiu7XSj+OGFcMHXSmmzuc+ApPWGigbIRWwQB5dbnuHBhhYvS6IJ0kWR6ZRFn0wKF0Nn7@vger.kernel.org, AJvYcCWZTJ/XBkvFWznufKD/wmjQF9eWNtH8gUf0lPQqGB8th4SHN6skwpQm8TuUYE30xGhL/scJ+4m1vdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjii8uCY9ds/9aAJ5el6jIXTM7aFgmoMSsnn2Fmh3wGW5bLTsl
-	2m6ilphADJaBUYS6cnk+2LpKhGrk8KUqj/Ft2o8UhXwtoW6fMJ1rxm82RsjIv/M=
-X-Gm-Gg: ASbGncuF/KoQp3GzltVymTrkd8CtVQMJEKzGNAXbOYykaJx1G7R//4KKIZu2Ki5IYZW
-	Ct5hhvbPHktjdC6nHwWIE2KS9BUy6QMOOrvrhRjyFskp47pxxX8M5iBXNq0ATw/hdUu6M/+Moeb
-	PdwCUkc0rO2rhDrI3s5EEDokxIsQjFj5YSr3gCgVRwP9AhLmyHgcibvK5o3xxxQrVDHgoQWnwmb
-	go6gPdPJQ5w6j5UF7YbZipb9M0cRDFLL9Bh+v68swzu0XyCa57z6XGoRJwDHq3Y+k0J0AZqCDol
-	/AUT6uaQlhz4z3KMj4P0AxDzbVdYTskDrb0WIgKsGOYtOflb4g00HCI0SQGbti4L8nP+T5vS8A8
-	QgHU=
-X-Google-Smtp-Source: AGHT+IH6PPSFCelTrABPZ42fVLMnN2h+MLsrcczEgUEY+njHcY0u0A97j62o3tScqdAtCRcxDLgXkQ==
-X-Received: by 2002:a05:6122:d8d:b0:526:42c2:8453 with SMTP id 71dfb90a1353d-5292547e851mr14802070e0c.7.1745398339858;
-        Wed, 23 Apr 2025 01:52:19 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52922c10c1bsm2264081e0c.12.2025.04.23.01.52.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 01:52:19 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-86c29c0acdfso2278496241.3;
-        Wed, 23 Apr 2025 01:52:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAEdzfE5SpKLo2zkyTIE64xvGtGCpIF2aZC/qF9TGonOf7LtLL8913AasGFKhjuEqpgwBThs9kwg4048t6w6OB8b4=@vger.kernel.org, AJvYcCUduIrfmFflL5NpEicLWoxhS+5LvZ9ab8UnMUSKZBL4Xgo8J1LSmEDYTWQ2zvKrAt5UHzxjGDz77oO0ZI/K@vger.kernel.org, AJvYcCX2th1CJWm1XrxpgVNGUucpgqRW15W+9wPdtcu14IUxedRFwFW6xWxARu7z0pr5sBkJ4nPlZqoXkbM=@vger.kernel.org
-X-Received: by 2002:a05:6102:311a:b0:4c4:e42c:38ba with SMTP id
- ada2fe7eead31-4cb80145a4bmr9745862137.13.1745398339507; Wed, 23 Apr 2025
- 01:52:19 -0700 (PDT)
+        bh=RXiSx30w1hmWlM/Di4qv5E69sWeA1eC0NCdlxnJgn04=;
+        b=tnPmIFwI8NZnBNSMsI1jiAbP8I2W1U8GYqAtDm1QI/USSL9Da/ttuHagRqBuJQbmjA
+         vmIQUrbhph9pvStwn5+t0NQ66dBFLdX6g/DEXRnJSlQkmAbInWLl/tgEFcEHP+9Sdv3c
+         ZBKpkPI3YP5Wu3nsWtXXwLl9Jw4bD+11H4PQ0Wjfgco7hmBbMX5H1mg3yd7jWEdGzQyq
+         fPCa3hG3x0lG1hSA729bHHJuWtotpnMWJlzY8aboNnD6h2xVpkYmnEEzc+O/vS/Sm1ga
+         C4UzHtA926Q4EokBiW4il1gR5hxyDvZT3JU72sgobvpBtcJTSeTbBoFttwTcs6BIjQKN
+         skZg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Y9Y4GtAf+QBNtk3WANyzZFcbBApu2yOohOL9HniQZH6ST/eqesXvUXtLnp1bohUI9qXOllD39xk1hDwXrweOZow=@vger.kernel.org, AJvYcCWrehslAPAeaxBxaTJNQTed4lx4WHiLMBHULfGyaUT1ZFT5o+Q9LJr9n9jalCcrKaLTL5IK8c1+un47Y7+a@vger.kernel.org, AJvYcCXOcuoNCo50kTUOnN4zxt5JlNbci+pWfdLqiW1iYjwT6FS+E5sadQldtFYxN7JM4j06BxbSUEIx3QUD@vger.kernel.org, AJvYcCXSE0W0aOj5AtGLoxVIiNzV6ZqbB6WHJdHkj/zqj0ycV90lWBEzTNmPT/FBD1baWSIXtwoMKoT3TZjn@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF/LmyoSuxQXu2dBobMzPIC8VX+AkvElFk+oyXtl1tNLLf5CnS
+	Kp36haFi0+WTsBaVZwNae4Szu34mRxtmnfyaf1odUUwa4cpkrWGL06SfRcKMfDL8Bus0c+iAl1q
+	g7O2H/dkDcrPGteg57ZyQzgysRMw=
+X-Gm-Gg: ASbGncvzSEkl9LW67jJHXFCBbNSUW1kFPWNI095xrm5aaYjgG+jxaDbTo8e/jZY3rIt
+	U+o7RaxBk054FgpzPnw0riSsPcQcAldUNn3arRe3OQiFTLZZd2vMKrIMPfm/AgnYAt7ATcRQ5+P
+	cEbYfITeVAgUzAP3CcoRchl9A1ws5Gp+d7
+X-Google-Smtp-Source: AGHT+IFmLMHRjZ1XgjDcqyxjk7BtcPPGf+OCSTtdICXla1NMLROjvh3kKmkIO0184O1OWZlMMASHo5tS0W9iQ2Iv8xM=
+X-Received: by 2002:a05:6000:43cc:20b0:39f:fd4:aec7 with SMTP id
+ ffacd0b85a97d-39f0fd4aed9mr4142583f8f.7.1745409264608; Wed, 23 Apr 2025
+ 04:54:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250403212919.1137670-1-thierry.bultel.yh@bp.renesas.com>
- <20250403212919.1137670-7-thierry.bultel.yh@bp.renesas.com>
- <CAMuHMdVpiZ+F0TMbLm000M_Scwozj2-SHPrUwTHqFKckVcmufQ@mail.gmail.com>
- <TYCPR01MB11492BCF416760E978541AFE18ABF2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
- <CAMuHMdVQPbP0Fi5SDN8uOJ23S=_8pqHRVR2QFS8vHNfohzae2g@mail.gmail.com> <TYCPR01MB11492F29C81C6A33A9ED90F888ABA2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYCPR01MB11492F29C81C6A33A9ED90F888ABA2@TYCPR01MB11492.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Apr 2025 10:52:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUV-kHD7BZ7zU71f8GD4sKqSnSTfoDhTU+s8wyVfXgq=A@mail.gmail.com>
-X-Gm-Features: ATxdqUG3FZzI8HCkNGm5T6G_ujgFMbIetZczmb5fQaQtW6-2uSwvcnMI6dgpIjs
-Message-ID: <CAMuHMdUV-kHD7BZ7zU71f8GD4sKqSnSTfoDhTU+s8wyVfXgq=A@mail.gmail.com>
-Subject: Re: [PATCH v7 06/13] clk: renesas: Add support for R9A09G077 SoC
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: "thierry.bultel@linatsea.fr" <thierry.bultel@linatsea.fr>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Paul Barker <paul.barker.ct@bp.renesas.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20250418184658.456398-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250418184658.456398-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWs7R9rtS7Ur6PP9e3m9ghkM1jc_Xn3QOWG4rvTtB2omA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWs7R9rtS7Ur6PP9e3m9ghkM1jc_Xn3QOWG4rvTtB2omA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 23 Apr 2025 12:53:58 +0100
+X-Gm-Features: ATxdqUE-OgT80-E06tUi_do9bnwXEJELC81J36DTuicZR1BwPkK_CJ9Za-SJxBA
+Message-ID: <CA+V-a8tXpWf8-YL-qzWhqc+fDvV4Kzd-6gJqC5HWvE00QsNFAA@mail.gmail.com>
+Subject: Re: [PATCH v3 10/15] drm: renesas: rz-du: mipi_dsi: Use mHz for D-PHY
+ frequency calculations
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Thierry,
+Hi Geert,
 
-On Wed, 23 Apr 2025 at 09:36, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
-> > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > On Fri, 18 Apr 2025 at 23:22, Thierry Bultel
-> > <thierry.bultel.yh@bp.renesas.com> wrote:
-> >  > +};
-> > > > > +
-> > > > > +static const struct mssr_mod_clk r9a09g077_mod_clks[] __initcons=
-t =3D
-> > {
-> > > > > +       DEF_MOD("sci0", 108, R9A09G077_PCLKM),
-> > > >
-> > > > Shouldn't that be 8 instead of 108?
-> > > > Using R9A09G077_PCLKM as the parent is a temporary simplification,
-> > right?
-> > >
-> > > I am probably missing something, isn=E2=80=99t PCKML actually the par=
-ent clock ?
-> >
-> > According to Figure 7.1 ("Block diagram of clock generation circuit"), =
-it
-> > is PCLKSCI0, which can be switched to PCLKM.  I guess that is the defau=
-lt,
-> > hence my "temporary simplification" question.
-> >
-> > As the actual switching is controlled through the SCI's CCR3 register, =
-the
-> > SCI block should have two clock inputs in DT (PCLKM and PCLKSCIn), and
-> > thus the DT bindings should be amended.  See also Figure 33.1 ("SCI blo=
-ck
-> > diagram").
-> >
+Thank you for the review.
+
+On Tue, Apr 22, 2025 at 8:41=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
 >
-> Thanks for clarifying.
-> Indeed, this is the default setting (and the one we have at this stage).
-> I think that support for PCLKSCIn can be added at the time we support
-> baudrate setting.
+> Hi Prabhakar,
+>
+> On Fri, 18 Apr 2025 at 20:47, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Pass the HSFREQ in milli-Hz to the `dphy_init()` callback to improve
+> > precision, especially for the RZ/V2H(P) SoC, where PLL dividers require
+> > high accuracy.
+> >
+> > These changes prepare the driver for upcoming RZ/V2H(P) SoC support.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v2->v3:
+> > - Replaced `unsigned long long` with `u64`
+> > - Replaced *_mhz with *_millihz` in functions
+>
+> Thanks for the update!
+>
+> > @@ -203,8 +203,9 @@ static u32 rzg2l_mipi_dsi_link_read(struct rzg2l_mi=
+pi_dsi *dsi, u32 reg)
+> >   */
+> >
+> >  static int rzg2l_mipi_dsi_dphy_init(struct rzg2l_mipi_dsi *dsi,
+> > -                                   unsigned long hsfreq)
+> > +                                   u64 hsfreq_millihz)
+> >  {
+> > +       unsigned long hsfreq =3D DIV_ROUND_CLOSEST_ULL(hsfreq_millihz, =
+KILO);
+>
+> MILLI (everywhere)
+>
+OK.
 
-I am not sure we can do that in a clean backwards-compatible way.
-Currently the DT bindings describe a single clock:
+> It's a strange world where KILO =3D=3D MILLI ;-)
+>
+:-)
+>     include/linux/units.h:#define KILO      1000UL
+>     include/linux/units.h-#define MILLI     1000UL
+>
+> >         const struct rzg2l_mipi_dsi_timings *dphy_timings;
+> >         unsigned int i;
+> >         u32 dphyctrl0;
+> > @@ -277,6 +278,7 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi=
+_dsi *dsi,
+> >                                   const struct drm_display_mode *mode)
+> >  {
+> >         unsigned long hsfreq, vclk_rate;
+> > +       u64 hsfreq_millihz;
+> >         unsigned int bpp;
+> >         u32 txsetr;
+> >         u32 clstptsetr;
+> > @@ -305,9 +307,9 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mipi=
+_dsi *dsi,
+> >          */
+> >         bpp =3D mipi_dsi_pixel_format_to_bpp(dsi->format);
+> >         vclk_rate =3D clk_get_rate(dsi->vclk);
+> > -       hsfreq =3D DIV_ROUND_CLOSEST_ULL(vclk_rate * bpp, dsi->lanes);
+> > +       hsfreq_millihz =3D DIV_ROUND_CLOSEST_ULL(vclk_rate * bpp * KILO=
+ * 1ULL, dsi->lanes);
+>
+> The "* 1ULL" only makes the last factor unsigned long long.
+> "vclk_rate * bpp" is still unsigned long, causing overflow on 32-bit.
+> As there is no rounding variant of mul_u64_u32_div(), you probably
+> want to use mul_u32_u32() instead.
+>
+Agreed, I will update it to,
+`DIV_ROUND_CLOSEST_ULL(mul_u32_u32(vclk_rate, bpp * KILO),
+dsi->lanes);`
 
-  clock-names:
-    const: fck # UART functional clock
-
-The documentation calls the two clocks:
-  - Bus clock (PCLKM),
-  - Operation clock (PCLKSCIn).
-
-Which one is the functional clock? I'd say the latter...
-Currently, DT says:
-
-        clocks =3D <&cpg CPG_MOD 8>;
-        clock-names =3D "fck";
-
-and the clock driver uses PCLKM as the module's parent clock,
-I think you will have a very hard time to synchronize all of the clock
-driver, sci driver, and DTS when transitioning to something like:
-
-        clocks =3D <&cpg CPG_MOD 8>, <&cpgR9A09G077_PCLKM>;
-        clock-names =3D "fck", "bus";
-
-where the modulo clock has to become PCLKSCIn (actually SCInASYNC,
-as seen from the CPG).
-
-Does that make sense, or am I missing something?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Cheers,
+Prabhakar
