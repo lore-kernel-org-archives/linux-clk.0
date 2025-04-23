@@ -1,355 +1,152 @@
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11010047.outbound.protection.outlook.com [52.101.51.47])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CEF46447;
-	Wed, 23 Apr 2025 21:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.51.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745444640; cv=fail; b=BbGw5hk0ZuOa1AZUhAPF3O1AmE/0LPVMgVooic1i5ueaOpXMnLlPgUISHixEvCsye1Yq5TbWabKpfW5oRdTDix9vQZQ/yyxsYHZNt9y0U+oPMUm5HSSTqZtkINCqP/iPeEzRfAkLMy0Gp7hBfjLclZwk5I84Ep36qhpZ5cLPK0w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745444640; c=relaxed/simple;
-	bh=gGtbsFg2OKzaO89yiwj8CXZMxU7nVsa2fdKuKh+NyR4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lm45IkOBjB0zVA4izyGo7KhU7KyjzaLUFJkZj457QcSyFyMs3PW343Vl+65U0iWn0sEOl94PoCtYmhqnmbU9UM/1LIX/LwXXW85vQTv82fBCcfzS+bp3esE8qYwsJFms7eCXUH4k7vbXtplrXZnsiQbB2nasDr+/tUxRwUuUsGc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=J5rG0qZc; arc=fail smtp.client-ip=52.101.51.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C011F12EF
+	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 22:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745448468; cv=none; b=KNXUEp42eZuvvOG41Ug+4qEOfGsVBaCQ5L3NIv/aiWRcUdjDESpCppeeIs9sesScvbFqhbjxMoYuxWIlN1ZCGiUWMlmCx6YkT9r3GXt9NId34LcIHEVkrfZMDVu//T4JHDau9yZIHs7DtewzjFQQYWJJpDMiEEDUVBlFverUW/M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745448468; c=relaxed/simple;
+	bh=DbFZ7/j/K1EGmGKXu/FDfvVNLm9h/iduss8FipNFjck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=su5GZmcXU0dXvqdfMjzVbt6vELbuGFYVTLPUofVRPxXBb8GE99tpl9ehgAyb01AxKk9nUZQbeNN6KyJFBavZNPAgdHZDjcE06dU/fh75x+JxbVNgyB6Hg/2Amk6I9YeZDIQAHhE7xB9fF9cegrI/2v7hB99cwo+U7/g6ivUcu+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RFbqFKet; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="J5rG0qZc"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H7z26UDqZkVFEuOJbJWNg+1iaRD/bj7wiBuDj1IhwQYEgdTWI68MG5gwJ7DQqzFHor7bYjnZYWRs8NQrltlFxcxFGpJOIlVjYSCfsYk4DGtb+v22jImCiv6bIxLTkAnFW4VzBHAxDOfYmTluqNkR2OyAh2TTquAdGFUS/72IwAlS8b73Aw+k/yka+9NtPL28+tT/LL8+sHXkRYS+H5I374KuHL5QaM6Eptmj8T5HSvXpOnE2omhUxOFfFVmp5qOjlBXgjn+cckR7Qy95tHZLjRjliKqGpRcFKxyXkS5jaU2Cc6xNhuuLG3sW3eVThLUOOIstiePidTFz5Bgd/gnC7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2UtYAiYMIKbexucH4NUbxn8DUfPTyn+bZg3Scaaog/E=;
- b=gWTqbauFMJD7V9z0Jp73L9KY9JNlmKhaEpdy5fCB4/udUS47yexJ976VqMoaFzm2Cxzg1fa/Ia9lV8t34i87gMDebbgVMMZTRqQUgHkLDH58q5h8zlfuiXQx+v2q0n/UXlDJS/kzDfzOQ6xPay4urXM0EkD3OgDWjjvIupbPYcPo6ISm8zFBQCbXWkKK6YswappBCOHLrhmZvAXSw9s5PoF03CW+Kwiept05kilxCxrOiE2YnIdSSL1tfLWCCsSZHnYbONbjxo2AtRSRDTge0aKZCsXzbV2fwaGmSEnQufKTUypSCEasU/omHqATqdJgx4NmQMsDiQ5JurCMvjIVAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2UtYAiYMIKbexucH4NUbxn8DUfPTyn+bZg3Scaaog/E=;
- b=J5rG0qZcVDLRmRkwXeMUtvW/CFiCVvvrdIBSiTrh3jrh0Ew+Nvz5QoPisekeW96BvjwWniZhH3xB7PvndXUaCK9pMX2E5QIHAw3hLsyIARPIbFoTWBSEzMZcBkEwZdm4MrNakgGUJExCNuCkBZ1PmGneR2G+lHF8s5oNy5Lw1piAVxPkdMlgi4MwENKc3W2DzP3w1n1V1RHEmkP5gowDpdHyatLcrGop8kwgEkCLfw1aqZ1uveGPi06reG72HUTXc1/mYN4x3lNUWl3y+5ekKt57+hkjZuU7NhC8xjPDyxi7GpdWGXwwYw8cOXfhjgliZQsLylI3Ct6RfvG9MDLL3w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from BYAPR03MB3461.namprd03.prod.outlook.com (2603:10b6:a02:b4::23)
- by SJ0PR03MB5952.namprd03.prod.outlook.com (2603:10b6:a03:2d8::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.33; Wed, 23 Apr
- 2025 21:43:54 +0000
-Received: from BYAPR03MB3461.namprd03.prod.outlook.com
- ([fe80::706b:dd15:bc81:313c]) by BYAPR03MB3461.namprd03.prod.outlook.com
- ([fe80::706b:dd15:bc81:313c%5]) with mapi id 15.20.8678.023; Wed, 23 Apr 2025
- 21:43:48 +0000
-Message-ID: <e9ec2ef2-01ca-4648-b788-d427f05126f1@altera.com>
-Date: Wed, 23 Apr 2025 14:43:34 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: clock: socfpga: convert to yaml
-To: Rob Herring <robh@kernel.org>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
- sboyd@kernel.org, dinguyen@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20250423150318.27101-1-matthew.gerlach@altera.com>
- <20250423200728.GA954453-robh@kernel.org>
-Content-Language: en-US
-From: "Gerlach, Matthew" <matthew.gerlach@altera.com>
-In-Reply-To: <20250423200728.GA954453-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR07CA0025.namprd07.prod.outlook.com
- (2603:10b6:a02:bc::38) To BYAPR03MB3461.namprd03.prod.outlook.com
- (2603:10b6:a02:b4::23)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RFbqFKet"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NLKYcD016256
+	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 22:47:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ihLjRZPlLIWGlyTXxQVjwKyUINfd4mtFX1kBkVK4xz0=; b=RFbqFKet4C7XAcmr
+	uF5l93uiKoYOIpW8pKISLlNb/6aUfRkdhfZCwj81DjrkRecyxn0IKak+VzOAN1vI
+	kw+YX+eCRVZB6kh2zBGWoloFdT/TuLhMVwH0gT6N68JStZEtSNL7tzVY3H1ZfiVY
+	CHa4RdeututYol1HUcfFXrxVyeDNlKlJE5a9Sk0TSNKo3p+Yh9p8NxsaUBVo4WM/
+	LxgE0HcFg+S4AavN2k5aoumEGjxtKb7wpUPAzlCACltegnXV/j+zLe+JLIzIhFYy
+	5gx3+GvOkk4ZnWAcJnq+H4Mx64JafGwPvSVQ285T9vO8vlcFuqIO49KJVHqp+GHN
+	dP9DSA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh3kjt3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 22:47:42 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c53e316734so62858985a.2
+        for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 15:47:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745448462; x=1746053262;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ihLjRZPlLIWGlyTXxQVjwKyUINfd4mtFX1kBkVK4xz0=;
+        b=Z8TKjAsnrOm3tJzuzGbGqjl/LU+pkG69lAVwM/Wb7kspWQRzmv9NPlynHb0i71/vo9
+         EBq5mMxuOdGQcEF4iliT5nZfM/7DQGezoaZH6dNFWObAQRZJ4SMHJLtLOcMcE1eWrm4C
+         f20RBB8O7cGk1OoEjm8aJU5B/sera1Nwqjrq2WeJosSvNd5JRCFRx/U5GwDQmEPItpnh
+         kk/La/zgsZ8VHOAJTC0L3lQyFOSvAXcXIV7tDgCDR/g0Ucv2rmVrKkCNKsv40fRirHsh
+         2+G/FvAnHYhPjWzUjRT1cRVQRA+2HYbQWzpSU3MPVOIMQCMUKxPZ67aG7d1DqrgvVVzn
+         IyBg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+XuuGmmS63RKUXj2djBcBDCrsXsWYgrqh6tCz3UFPtlMdse9jMhQDEqSRTXK8Z3ZspfGGnEVVebk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAaeMYvASYlDJLmNwO2v56+Jui2dQqTbJq5Sm2Y0Ayu8ULZ2eD
+	LH19SpJ7RnbXIOeSmxyfWZ3oWIiJBgjhx8ltDsG6D03MK0rlZyRWb/MtYX7aAWmvy8wozH3qoGp
+	V82gkEQMEvGuYCS6z6xHtg0hWzjxjfJBpDbENqR5HiOQYMeqfO6+zNidMQ3c=
+X-Gm-Gg: ASbGncu19vKSAaxU73SUqTI+Cfuy9OgHc6l8vw7Z6FJJYPzoIVN7oEEVrMIIK8gkleA
+	NaUNvVK5XW7N7n8P0ZIG/FZX4Ru+DZWNy6KoEv0s2j+F+xejoeodyWPFLsQiU+aUETZpXm75r1V
+	woSc90+xwy+rkMtyosXUYMPaxvSHuOE/9AHx8oQmZfRCCs9QhajPvkTku3AwSZRPvYeu55Sn73C
+	oTh1ssVy6y4IbjN8G/H9Hyna7rwpYVoCtNgUQ7VYTpbDXYRIcr6FBvQf/KEFUU2O98eMZH2fIAP
+	eIDabZRmfyBRYNoeM+KYrZ+t7KwNmzOT9laFcnuRvqgT12iWwNnDcVcQ4UW6tZa6mysVAp1mozw
+	=
+X-Received: by 2002:a05:620a:4728:b0:7c5:6410:3a6 with SMTP id af79cd13be357-7c956ed7543mr92878485a.27.1745448462214;
+        Wed, 23 Apr 2025 15:47:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGInwM3Ub2jQ1lwD3hZid86OUOjGIyjsbPxDcJGVMhOF+7PpJenxAlmHg66u64h4q9mPPY9dQ==
+X-Received: by 2002:a05:620a:4728:b0:7c5:6410:3a6 with SMTP id af79cd13be357-7c956ed7543mr92875085a.27.1745448461829;
+        Wed, 23 Apr 2025 15:47:41 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cb3be1asm26736e87.93.2025.04.23.15.47.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 15:47:40 -0700 (PDT)
+Date: Thu, 24 Apr 2025 01:47:38 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: =?utf-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Otto =?utf-8?Q?Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
+        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Adam Skladowski <a_skl39@protonmail.com>,
+        Sireesh Kodali <sireeshkodali@protonmail.com>,
+        Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org,
+        Daniil Titov <daniilt971@gmail.com>
+Subject: Re: [PATCH v5 2/5] clk: qcom: gcc: Add support for Global Clock
+ controller found on MSM8937
+Message-ID: <h46amkfanqmu2v2bbsx3f4iqdwxzcgmu7ibngffn4wfavbdp2q@ho6sy346vjxp>
+References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
+ <20250421-msm8937-v5-2-bf9879ef14d9@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR03MB3461:EE_|SJ0PR03MB5952:EE_
-X-MS-Office365-Filtering-Correlation-Id: b96185ab-7aa1-4d21-d1ff-08dd82afe870
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NjJkRjdlUzJPOTVCT0hIQmdjZ2ZxeEkzQzJkSmtyUG9ERGhUVWM5cXMzR29h?=
- =?utf-8?B?Z2cwRXRDS1J6dW9CMzJQeDB0RmhXNWY4dXVaZzIrTlZ3cXBMUGJ1MkQwWTJt?=
- =?utf-8?B?dXNCSVJFZjNhTjZsbzdKejAzb1lldVB3SCtEbERXVXhoVndmZW9pbzBhQ29Z?=
- =?utf-8?B?MU5yY21ZbWhDVnRiRlJULzhZVXVRSktPSU1XTytreEl3RWxWZGZPVkFPTnRt?=
- =?utf-8?B?UHdRT2NlQ0Z6Y1RDeHFDYjZhdWNVTDJiME9PanpmUlFhQ0w0akFHUUpyeERu?=
- =?utf-8?B?dk1wSVVLdzFlei9US1NuVUJNUUNIUURoalRGajdSdTdEaU1Jb0tPckk2cWVR?=
- =?utf-8?B?ckRRT0dza2RJRUQrb2FmUmVvenNiWGRudi84NllSZERaWE5zcFNPTmNVUFdO?=
- =?utf-8?B?REZUWkZ2YXFaNDJzT09ZZGhjdSthdkxTVTFUUHBhQ2ZKa2NFT0h4ZzdWWS96?=
- =?utf-8?B?aUVXZm9meEczUFE5SWk3cnlZOUJtQ0dRRUo0VmIzTjFnOFB1YUZWczczYXJR?=
- =?utf-8?B?LzY1RzNMOTlGM2w4ZkNGK0FrMzVYSDNUcGtWdUVmMGZVaVRid1cwTHNMeXFM?=
- =?utf-8?B?YjVScDIrbVNXN0tkTkpwTkY0anZRN1lEdHlsbkVEbTFzUFovWURmeExyelAx?=
- =?utf-8?B?TFNqb083bWpiUkVXL3E4WkRpTWlodm9MMVU5eVdiM1huOCtvcXFvNjY5UnND?=
- =?utf-8?B?ekpINmpUNUZLY0UrbGxhSFVINTBFZXVaTTJjNjN0WFh1K3Rsa0xZeEZra2Fs?=
- =?utf-8?B?OXRCbk14YTIwMCsyd3NNWHBHNUo5OHpNYklicER1ZFdNVURnWFZsY09XYjlV?=
- =?utf-8?B?ZnhSZUNrUHlCaHYzSmQrN3E0aVFQV0p1V3JLNTJWTHRCSkowV0kyaDh4U2R5?=
- =?utf-8?B?aGN5aVJNajVHMENlSXFPeUpMRlVaMmpOZU4vL21ycGJPNzl6NjhOR1NCNjRY?=
- =?utf-8?B?MXEvbG8vdnNtckRuZXNtV0Z2QVNhQkY4alJQUWhoekptRmp1cmFnN3l2bDZO?=
- =?utf-8?B?aUUyMDI0TXp1dGEzMmtLYnhiNUIycnZqM3laNWI1MFpBSUNuMnM0R0tWQStE?=
- =?utf-8?B?bFVRS1lSc0xMOUtoZjNROXhYb2FieU9aODZveUwzOU5SODkzRkpSR01aaS9C?=
- =?utf-8?B?UkRpUmpyU3pMSXo3em03OTM2S3BVaU05OGREQWFqaUlPdDcvdit2bGdwaC9U?=
- =?utf-8?B?bXhFQ1lLTnI2em5TYXJJaHh3Yldjdmk1Q1p6emJLU3pIZEdtRmNPbVZYWTNY?=
- =?utf-8?B?VHdMYVVhQWlpeW5ZaHhROXVzNHhqd21MRjFTbHVneGRzclQxL2MwYloyYUwx?=
- =?utf-8?B?TStNSldFa2duMm54OEVhRklZWTBINzlGUDN5T0dXbG9JZ1BjUTZCcWVNRmFw?=
- =?utf-8?B?RHY5MkdiQnUrZlh0N0hkNW4wT09lMW9KR0h5eGZuVHZDdXJMWXBrMjFNNVAv?=
- =?utf-8?B?b0NlblFsZ1RzeDMrRDQybUFYWlE5L0pIelBmWW9WeUlBaXdJR1Vmb045cEMz?=
- =?utf-8?B?OEVuTGg0M0d3ay9ZTEg4UmJyeFNxYlI4dEtvWDQrTmhQWENTbTFTQ2V0ejBN?=
- =?utf-8?B?Ui9QWjBXOHZJeDF6YkpGemdvTURYSVo3bXZTUTlWMHkrckhneHVCUUZEM05j?=
- =?utf-8?B?dTlVY1pOT2t2Tmk5RkFxUEVpYStVMGlPL0lDTG1aL0VmalF3TEtCNDNzTUlv?=
- =?utf-8?B?bDRNaUlVOVFJYldzcjVlRWc3SHZJM0ZsSUlHUVR6UTZidjhUTVhQZStCTWQ2?=
- =?utf-8?B?UU5OcFgxUFU0a1J4N3ZuZ0JIWXRhTXZZNnVYR0xMeWw4V2VRS25NYjBudlBL?=
- =?utf-8?B?VmNaT3NzMVV2TFZ0RDRiSkNtRmZyeHZTam82TDRTQVBLYUt2RmZUaG94R3Nh?=
- =?utf-8?B?ZWRvMlYzODk1QjZnVEMvb1ZpTUM3NW1EdUFLSTlKVVAvTDVBeUpuSTBPbWRI?=
- =?utf-8?Q?AxTvyf4+ywo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR03MB3461.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z1dKNWdBS3hRL09sVWxIR2xvSmFyZzVpN2hZN3kvZEpWbTZzcDdZcjFIRlJq?=
- =?utf-8?B?NDZMandmczU5dythcVBVZ2tjNW9yd3pOQzFkVUNWZDkrVHYwU0tLRG5qY1Ft?=
- =?utf-8?B?VjJQRXptNmRTeHdLcVJvZTdoWm01U2FYUTRqQitmN1k1WEdWWE5ySUZ6S2dB?=
- =?utf-8?B?cVZPMmtPd2NUck9kd3pPbU5DbzE5ekpReURrRkRSVks4RnJNRTk4N1JZdkxo?=
- =?utf-8?B?dU90cld2cVFwZ2xINGduVzZyWFZHNGRuSlNFQjFLRW1EME5NZkJFNC9HRmpX?=
- =?utf-8?B?UitMRHNHZU9pNC9FU3BmTTJhK3c0ZHBzbGFJeEpQYUw1TFB3RExqQTlwUHlk?=
- =?utf-8?B?V0FpUlI2di9ZUTRpRVExa0FMczVldTAya01QU005VXNLNkwvcFRmeHVteU5W?=
- =?utf-8?B?dEJZTFdCajd6SmJKMjIvRVR4NC8xYUNMUmZ1eDBqRzdXZHM1QVpuU29ZMFpH?=
- =?utf-8?B?U1hUOUNBN0UzRytHZ0NwZnVpbS9TN2t2TjFoMHFvMENlQ0U2dGtWYnQyMG5T?=
- =?utf-8?B?NFloazVhekhEbVA5RVZxbGdQbDYrNytSYjlsMy9QYklFRGNjR0cva3E4RDF4?=
- =?utf-8?B?ZUFyZjM5aWs4VmJNNERMRjBteHlTZStGbEFzcEQrZ1hESzlqaFBGN2hob2Uw?=
- =?utf-8?B?YlIyWjh6VGRIU0ZmUHZzdEZ2emVTQmc4bklZSU4zTUx3bFRwTG5jR1dPMEk0?=
- =?utf-8?B?eHRpbnA5aGlmRk1LZHhUK3FJd0FPRFZPSzdyQlZtSUM5V0hnNEZuQTRXOGxp?=
- =?utf-8?B?TDQzWTFlVi9lUHZzaUtpdkkyRFhKNWhZUG9uN1Z0WEdHQ2xzM285Q1dhb2Vu?=
- =?utf-8?B?TVRYR3V1bU9lZTg0eFhhclZWMElxVERsRFZMenEzaFk4SkZlRVhaZFg5aWFv?=
- =?utf-8?B?VFNXLy93TUJVbHlILzZhN3o2aDJxVW1LL05tY0x4eE90NVZIU0x6L0I0K0ZJ?=
- =?utf-8?B?RzZtQ1pQVDE4QWNibE9rVHg1RUVwZ3k3R1VEUTVXWHhCN0FOaDBtUGR6dVRi?=
- =?utf-8?B?UUl1MVJHaXh5a1pMUTcvTVhCMEM4czdhNGE2SkJ5dTNpSmN0WVFQd0h3UDFz?=
- =?utf-8?B?Wnl6SlZML0x5WHBERHA0ekxuZTFZa1FkMkt2VGlWbzIzRXdjdGJzZW4veHA1?=
- =?utf-8?B?MVRUczFOVGF3SGJVdVdhaTVrQmJFNS9iQUU4RVJjYnVkenFHaWQzVlQ1Y3oy?=
- =?utf-8?B?VFBXL0pieUk3YWRhWjgvdk9VRW9TdzRMTGxhM3pPbGlWN0UyVllGQmVrbStH?=
- =?utf-8?B?bFZkcVdvWUdtM3BBakp0ajd1aDh2NjhZcXdJdjRVSTMrNTBKdFAwTU94US8w?=
- =?utf-8?B?dEdJcHFVZ1FwZEN5eHo1QVZCL1VnbHhQd21DczZPK0pqWDBoOHFjV29FZUtm?=
- =?utf-8?B?K0hSMXJUdlJmdk9GZTRlUTUvbVJ3R3ZLY0V4dFV1NTBkWE1NYXhHQWFhbjFS?=
- =?utf-8?B?R2I5NythMS9ua3dJek1HRzJrZ3lXeG8ySUtoNm5IMlczZkE2M3AwKzhJdEhU?=
- =?utf-8?B?cDZVSFNxSHNBaDFNbjA0V0tBeHFXYkhBZktMNVI5NHVaZGEzNllCWlNvTnY1?=
- =?utf-8?B?QnQwUGNRWllEekcxUUlSemhoR0MzTkNIYWtlWG1vanR0dWdMbG4zVUJxSXZX?=
- =?utf-8?B?MDV4VEdub1gvdnBHYjlqUVhrM2s2d2plK3N6aGsrcFJHSmZDemNMV0FCWlhI?=
- =?utf-8?B?NFNEMVhaL1lpNzYxMVZ1WGJibS9TcmV3dGtkTjdkQy9RZHJBOGplWDdNY2pR?=
- =?utf-8?B?Zm1uM0YvZjN5TG1pOGo5eFdLSDdpV2FWNWFHbVlCNkpSZnVEQnpwRE94Q2JT?=
- =?utf-8?B?Y2FUY3JRdHBmYnJKa2gwU1F2UGlnR1k2cE1TOXJ1N05xZ2VEdm5HZ2JTbm9j?=
- =?utf-8?B?Sy94ZkVRVGFFUmdkakQyTzQ0TDJXS1gyVmVTVTRJRWptMEVwb0srbFY1NnJZ?=
- =?utf-8?B?YUppUytVRjE3bVJUWG5RNG5sbXlVZVZhTGZXYk16U1lCaW9wZmUwaEZBZFRq?=
- =?utf-8?B?dXZKcUZaa05DcDNzZTIzYVUzYmx2VVpoeitRRlp3emhRd0xZaU1ZMG9xWU9O?=
- =?utf-8?B?MmRXZlhQODBvTHFxencxRW1yNzduRDc1Q3Z0Q2hwajExMTRmQ1RDTmJIYVpC?=
- =?utf-8?B?cDllZjd0MStWSVpaZnVxMjRsZVdiTkhyNGJmOC9udGJ1VGhRQkd5VjZFMUN5?=
- =?utf-8?B?K1E9PQ==?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b96185ab-7aa1-4d21-d1ff-08dd82afe870
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB3461.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2025 21:43:47.6303
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cZYn5MxnibniYDibm+Lw1/XKyaqiiyuHyDT0ia3PfEJ9pvnI8a7JB4OYkIvFOU+IpgWe1xZOfTbKXUGZA27XexT148j7G2kwqlkZ+nqAkLE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR03MB5952
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250421-msm8937-v5-2-bf9879ef14d9@mainlining.org>
+X-Proofpoint-ORIG-GUID: fXkRNRbFZtLNvjAWX93QepLGMsKWW-tp
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDE1MSBTYWx0ZWRfX/jHaRRW2CTI6 AL/bDOyjyn6van1HuAIfDaGdBOuZpxw3+BhQE2jJ5l7DhZQJLMIwJLEWOE429j+1GOtBIGUjZy7 lVIdDQ6scwjpHaOip4h5f7zIMXr8lubsPV3uo+2jZtIVbylyG7g56C1uwjNHCsPXs1COhbwfwZm
+ 0ApLHGQg4qMHEI8bC6Lavpd953haH35zqBU6M8Y5vPJVZI3so+zlcBweSalnVma64NNvv8RAuxM HHG6nopMcyOxnjNu0pw2u10l8d5g452Te8tVn69Po/2Tih0eyPpA/o84ZNQg5Eylsb3xQNBUg3j cVNUzjxXcCJ8tHkLFeHIJCRRtBKV3CETFL/OrrTmr0wch94OX3zsJm7Lkk9NrnBiIQIGN0ivJUo
+ SkBCX0vGcTcn5WLw9PIX2NCqrOw6DwBbg+HGTP7Jt7/RCscTzAzr4mlNN4b33ZhnHXvegfcp
+X-Authority-Analysis: v=2.4 cv=ELgG00ZC c=1 sm=1 tr=0 ts=68096e0e cx=c_pps a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10 a=XR8D0OoHHMoA:10 a=pGLkceISAAAA:8 a=OuZLqq7tAAAA:8 a=EUspDBNiAAAA:8 a=XF3jJdBvCvMoejL92xsA:9 a=3ZKOabzyN94A:10
+ a=wPNLvfGTeEIA:10 a=IoWCM6iH3mJn3m4BftBB:22 a=AKGiAy9iJ-JzxKVHQNES:22
+X-Proofpoint-GUID: fXkRNRbFZtLNvjAWX93QepLGMsKWW-tp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-23_12,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ malwarescore=0 clxscore=1015 bulkscore=0 phishscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ mlxlogscore=968 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504230151
 
+On Mon, Apr 21, 2025 at 10:18:24PM +0200, Barnabás Czémán wrote:
+> From: Daniil Titov <daniilt971@gmail.com>
+> 
+> Modify existing MSM8917 driver to support MSM8937 SoC. Override frequencies
+> which are different in this chip. Register all the clocks to the framework
+> for the clients to be able to request for them. Add new variant of GDSC for
+> new chip.
+> 
+> Signed-off-by: Daniil Titov <daniilt971@gmail.com>
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
+>  drivers/clk/qcom/Kconfig       |   6 +-
+>  drivers/clk/qcom/gcc-msm8917.c | 617 ++++++++++++++++++++++++++++++++++++++++-
+>  2 files changed, 616 insertions(+), 7 deletions(-)
+> 
 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-On 4/23/2025 1:07 PM, Rob Herring wrote:
-> 
-> On Wed, Apr 23, 2025 at 08:03:18AM -0700, Matthew Gerlach wrote:
->> Convert the clock device tree bindings to yaml for the Altera SoCFPGA
->> Cyclone5, Arria5, and Arria10 chip families. Since the clock nodes are
->> subnodes to Altera SOCFPGA Clock Manager, the yaml was added to
->> socfpga-clk-manager.yaml.
->>
->> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
->> ---
->> v2:
->>  - Fix node name regexs.
->>  - Remove redundant type for clocks.
->>  - Put repeated properties under '$defs'.
->>  - Move reg property after compatible.
->> ---
->>  .../arm/altera/socfpga-clk-manager.yaml       | 129 +++++++++++++++++-
->>  .../bindings/clock/altr_socfpga.txt           |  30 ----
->>  2 files changed, 128 insertions(+), 31 deletions(-)
->>  delete mode 100644 Documentation/devicetree/bindings/clock/altr_socfpga.txt
->>
->> diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
->> index 572381306681..6f09458f22a4 100644
->> --- a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
->> +++ b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.yaml
->> @@ -9,20 +9,147 @@ title: Altera SOCFPGA Clock Manager
->>  maintainers:
->>    - Dinh Nguyen <dinguyen@kernel.org>
->>
->> -description: test
->> +description:
->> +  This binding describes the Altera SOCFGPA Clock Manager and its associated
->> +  tree of clocks, pll's, and clock gates for the Cyclone5, Arria5 and Arria10
->> +  chip families.
->>
->>  properties:
->>    compatible:
->>      items:
->>        - const: altr,clk-mgr
->> +
->>    reg:
->>      maxItems: 1
->>
->> +  clocks:
->> +    type: object
->> +    additionalProperties: false
->> +
->> +    properties:
->> +      "#address-cells":
->> +        const: 1
->> +
->> +      "#size-cells":
->> +        const: 0
->> +
->> +    patternProperties:
->> +      "^osc[0-9]$":
->> +        type: object
->> +
->> +      "^[a-z0-9,_]+(clk|pll|clk_gate|clk_divided)(@[a-f0-9]+)?$":
->> +        type: object
->> +        additionalProperties: false
-> 
-> Add another level to $defs and move the reference here:
-> 
->             $ref: '#/$defs/clock-props'
->             unevaluatedProperties: false
-> 
-> You can also move 'reg' and '#clock-cells' into $defs/clock-props.
-> 
->> +
->> +        properties:
->> +
->> +          compatible:
->> +            enum:
->> +              - altr,socfpga-pll-clock
->> +              - altr,socfpga-perip-clk
->> +              - altr,socfpga-gate-clk
->> +              - altr,socfpga-a10-pll-clock
->> +              - altr,socfpga-a10-perip-clk
->> +              - altr,socfpga-a10-gate-clk
->> +              - fixed-clock
->> +
->> +          reg:
->> +            maxItems: 1
->> +
->> +          clocks:
->> +            description: one or more phandles to input clock
->> +            minItems: 1
->> +            maxItems: 5
->> +
->> +          "#address-cells":
->> +            const: 1
->> +
->> +          "#clock-cells":
->> +            const: 0
->> +
->> +          "#size-cells":
->> +            const: 0
->> +
-> 
->> +          clk-gate:
->> +            $ref: '#/$defs/clk-gate'
->> +            unevaluatedProperties: false
->> +
->> +          div-reg:
->> +            $ref: '#/$defs/div-reg'
->> +            unevaluatedProperties: false
->> +
->> +          fixed-divider:
->> +            $ref: '#/$defs/fixed-divider'
->> +            unevaluatedProperties: false
-> 
-> And then drop all these. Same in the child node below.
-
-Thank you for the great suggestion,
-Matthew Gerlach
-
-> 
->> +
->> +        patternProperties:
->> +          "^[a-z0-9,_]+(clk|pll)(@[a-f0-9]+)?$":
->> +            type: object
->> +            additionalProperties: false
->> +
->> +            properties:
->> +              compatible:
->> +                enum:
->> +                  - altr,socfpga-perip-clk
->> +                  - altr,socfpga-gate-clk
->> +                  - altr,socfpga-a10-perip-clk
->> +                  - altr,socfpga-a10-gate-clk
->> +
->> +              reg:
->> +                maxItems: 1
->> +
->> +              "#clock-cells":
->> +                const: 0
->> +
->> +              clocks:
->> +                description: one or more phandles to input clock
->> +                minItems: 1
->> +                maxItems: 4
->> +
->> +              clk-gate:
->> +                $ref: '#/$defs/clk-gate'
->> +                unevaluatedProperties: false
->> +
->> +              div-reg:
->> +                $ref: '#/$defs/div-reg'
->> +                unevaluatedProperties: false
->> +
->> +              fixed-divider:
->> +                $ref: '#/$defs/fixed-divider'
->> +                unevaluatedProperties: false
->> +
->> +            required:
->> +              - compatible
->> +              - clocks
->> +              - "#clock-cells"
->> +
->> +        required:
->> +          - compatible
->> +          - "#clock-cells"
->> +
->>  required:
->>    - compatible
->> +  - reg
->>
->>  additionalProperties: false
->>
->> +$defs:
->> +  clk-gate:
->> +    $ref: /schemas/types.yaml#/definitions/uint32-array
->> +    items:
->> +      - description: gating register offset
->> +      - description: bit index
->> +
->> +  div-reg:
->> +    $ref: /schemas/types.yaml#/definitions/uint32-array
->> +    items:
->> +      - description: divider register offset
->> +      - description: bit shift
->> +      - description: bit width
->> +
->> +  fixed-divider:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +
->>  examples:
->>    - |
->>      clkmgr@ffd04000 {
-
+-- 
+With best wishes
+Dmitry
