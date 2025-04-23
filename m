@@ -1,33 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD68F208A9;
-	Wed, 23 Apr 2025 12:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBF820C028
+	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 12:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745410146; cv=none; b=QuAGgSvRmdxMYJfx6+8sXRCz0IkStGDT//IyMg4+tR+uTb/olVxjuZiVcj9iotebrz8uDq2zgI5YiDUGd53GjvXxvy6+XLopU9l8gdp0rJV3xEb8ApScco9H97OPqAw89KksW2RGWt80ti0bUpoaHWZNipr0xjDHvnWxrwdOJ5I=
+	t=1745410703; cv=none; b=Ia0jX4pOY+XQWLoVwumRkC1Cn3HXhFOEOOJahgSMsaoFPCTLXXxxvfNYSMdyWkVl1EQrHRjziCCrUOLkBkRM3mvKKLOZ0tX7zTOQWoZgwqYvm4ZHXZzCiJypj7nHIds3uxrFsFbP9H8Lhe+lmy1mDGeoOIk8q+vdB6hFsbqMUWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745410146; c=relaxed/simple;
-	bh=rBiaqGBPCElmEzZ+5wfIrPrM3AKKyQXofjwr9Aov8cQ=;
+	s=arc-20240116; t=1745410703; c=relaxed/simple;
+	bh=tCHjkL1SLgoL2j2PMqkiNHKmGBzODwMfabfskxgGLgY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DUwajJ2PJebExIMM3Y+X7LMEu4qnDPYPaG90ZjLm3Z94Z2Yz2DjCuBG6owErW6V14c1nV8iHM6mZgbCLkZ0a6snfCc9tm9AKcV0YkduM/cyBtxTD4k3wY+iuzY+F1ZV4PAcnlVwyxkfKLyzbtE2bHZFkqMdMv1U8M0yB+z7T1DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWx5hdN5; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=umVEKaSle5Yg/y58tvtx0RZRN/vGPreeHqUL9jZrRqvT9ajuz+92RfWqiC704suN12QvW54F3MW7a3yMkxdm+Za1vpCUMau7iBuvV0ieY4Jd+PUPnrGDYcBSSkIK3+CscMI/pGzd1UKXv0/PNgp5vlADFBruivXHZpEv1aLZ750=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Si+5gSsH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWx5hdN5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8291AC4CEE2;
-	Wed, 23 Apr 2025 12:09:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745410146;
-	bh=rBiaqGBPCElmEzZ+5wfIrPrM3AKKyQXofjwr9Aov8cQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AWx5hdN5dLBfwcSkYmh0RG9fgAXYNiMw+P/n4vyz7mXlRkuWq4jWkF1cMYPSnV4i9
-	 hdaHsFktOi6wX19ZrUoAKn2ZzlInc2BoqFSDeDAh5ibBhfVHkhnBaqFGhZKwOoKuUx
-	 wyfelp5qf7sd9yCta8VhrVQ0rSA30jHf9AIkbeAawLOSTOSfuPpJOhw+8yrMO05/HU
-	 41LiIvb2aCfZPbQ4BZ6sMhZuG0ywJUNYXoG/J891RYs4YakfhRESNYsCgy4x2y4Cz0
-	 BKg8UQd+EYCmYzGYmrXkXqTGXw6CQJNrUjTVNFjc7t/d4RXnsiQ8r7Y4N+if+iFnp9
-	 fMx1MaKwPL6jw==
-Message-ID: <6fc3e178-60f9-4b0f-9c56-6d983e4d1eed@kernel.org>
-Date: Wed, 23 Apr 2025 14:08:59 +0200
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Si+5gSsH"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NAkCNt022002
+	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 12:18:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ioGfs5MtgxexvBjcj4mXKq9ldJm50YBOXelQWnDDA+w=; b=Si+5gSsH5Sq4CR5G
+	Zobx6D0+awRftNyIeqLD7wIQskcuztJErV9gBIQp2+U6xijczIIGrGoV3uMuvabf
+	cR2Xq8lPy7e8jzNEHDBW+Og4hF5TZymj9fK/dEZzsIqvbifYODTJbgyUohcQ64+u
+	0X4uPBqGFeeHEAdZ5+1hXskww8AEFCL86Squ1tM1exBkLb5iGs0PXfZdkADjR3M6
+	xq1FhOyRQWGM1oeaQTo0L0a/yBRvylt0hKZKgfCANbK3gwS0ayoj1gl7bPDuhqPG
+	LxAOgDlMO66Wd5eF2yvBd/PwJx6SGqzIu3vcrZc2MrGFEWvmTNoGel42tBrLw6u7
+	lJVAvQ==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh12241-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 12:18:18 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c54788bdf7so28137185a.2
+        for <linux-clk@vger.kernel.org>; Wed, 23 Apr 2025 05:18:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745410698; x=1746015498;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ioGfs5MtgxexvBjcj4mXKq9ldJm50YBOXelQWnDDA+w=;
+        b=tbmemu2ic6K2a7ScMobqReCdaPje0KPUZaFnfTwID1Cz4vVo9xQp9n+TZcacDXoSNh
+         KSoPlI5v2dPi+S+n2Eihk5plds9jqQbKWfcJ/kYchlga6qng3N32fwv6vgY2NL4ir0rf
+         NW1VYyMEC5a3WlE5TFzKptuDPtqpQfMvZT4CgmRWO/iQqqO89NcQIY1bsc3E3qUutVa3
+         bMF+ZiBnlAJ30Qfg+NxKRqn1iLxxA0p35JPy2vnh81r9cjv36Ey+rFOHVv516oVtYGpq
+         QWeEsJSYyAgW8Hm8zGG4YkVF3wNMpbEhwOo+GRSnJpl5mGhZcBSLJ55OkTEAtppxpqRp
+         dudA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPmxCsSDZmfqmNlRCcOxmm6W/cUmQOviy2Ertjl2/UyVCVaBR2P5l4CC3CCFTnNfv4uzCPM6XOuG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyOUlJ4bTgmCh7m0KYSrarkjKxXLZO4STq+duW7x6izpXL2Gm6
+	2t5Lx1TbvBy4JfLEw+H6EyzvF+ip3aRb+HA/g+4i+oE3RQFXgz0mXmIcovFvoJIp06rSNLsC+Af
+	G/vVlPxcHPTFgQY3U1Nh0yMie5+tVQleqZ6rBohWXf1UXW0bHBvOVL1f91KY=
+X-Gm-Gg: ASbGnctQGnfcsjTl+i12eLbddCfWyh64KdRcL2F+otm81rlGi6nL0GsSL2CKbjPXgTs
+	Ta9B7OasJYojLFctS1LlUcRZD+6Nb3vlPbEARk18++hTEpEM2ZvQo6A2kLUAKH5/Kjsx1Ib9jEu
+	r9M6liefQ+fWV3LIC1dCEKZIs4izqKp2Ox2ZDLk8yUuamhsV0uPkfMcO+HSGaSRS7EBvFmJj+Al
+	pCb47jnl4z1SoY8pbSaEWetD6IdYqPJHJJPHJsADE7HcLGG+99Dz4Ns7brfc83xBpJ1MMpiUKnb
+	rYgUasyzS08iZ98H0e0TjRAbZR7lqdc6Np/668RR5Q+w4OLAjivZPF9n+L7Sy7ta+hc=
+X-Received: by 2002:a05:620a:2492:b0:7c0:be0e:cb09 with SMTP id af79cd13be357-7c94d266c35mr148953685a.7.1745410697605;
+        Wed, 23 Apr 2025 05:18:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEav1ZFFMWH2+h22EnPEjP1DswVCKNGIgBpCwJp2VazcB6M7t8R/W/1xgUW9/XgzClpBqzW6A==
+X-Received: by 2002:a05:620a:2492:b0:7c0:be0e:cb09 with SMTP id af79cd13be357-7c94d266c35mr148944985a.7.1745410697019;
+        Wed, 23 Apr 2025 05:18:17 -0700 (PDT)
+Received: from [192.168.65.183] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6efadd51sm817256866b.179.2025.04.23.05.18.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 05:18:16 -0700 (PDT)
+Message-ID: <e0a61158-6278-45bc-bc5c-fe35227bdbf1@oss.qualcomm.com>
+Date: Wed, 23 Apr 2025 14:18:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,46 +74,243 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V11 13/15] rust: cpufreq: Extend abstractions for driver
- registration
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, linux-pm@vger.kernel.org,
- Vincent Guittot <vincent.guittot@linaro.org>, Stephen Boyd
- <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
- rust-for-linux@vger.kernel.org,
- Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
- =?UTF-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
- Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
- Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org
-References: <cover.1745218975.git.viresh.kumar@linaro.org>
- <a14f6927488b5c7d15930c37a3069f46a5c888a2.1745218976.git.viresh.kumar@linaro.org>
-From: Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 30/33] arm64: dts: qcom: Add dtsi for Snapdragon
+ 730/730g/732g (SM7150) SoCs
+To: Danila Tikhonov <danila@jiaxyga.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck
+ <linux@roeck-us.net>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Thara Gopinath <thara.gopinath@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wesley Cheng <quic_wcheng@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
+        Lee Jones <lee@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S . Miller"
+ <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Alex Elder <elder@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>,
+        Srinivas Kandagatla <srini@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Georgi Djakov <djakov@kernel.org>,
+        Loic Poulain <loic.poulain@oss.qualcomm.com>,
+        Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Kees Cook <kees@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+        David Wronek <david@mainlining.org>,
+        Jens Reidel <adrian@mainlining.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-mmc@vger.kernel.org,
+        netdev@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-hardening@vger.kernel.org, linux@mainlining.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+References: <20250422213137.80366-1-danila@jiaxyga.com>
+ <20250422213137.80366-14-danila@jiaxyga.com>
 Content-Language: en-US
-In-Reply-To: <a14f6927488b5c7d15930c37a3069f46a5c888a2.1745218976.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250422213137.80366-14-danila@jiaxyga.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: KVsiuZiux6kyMEUly0pruwhRE_g2SqbP
+X-Authority-Analysis: v=2.4 cv=OY6YDgTY c=1 sm=1 tr=0 ts=6808da8a cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=OuZLqq7tAAAA:8 a=7ibcVnAUAAAA:8
+ a=uu6HZSQSBnFQn7oXV_IA:9 a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22 a=AKGiAy9iJ-JzxKVHQNES:22 a=HywIFdX19-EX8Ph82vJO:22
+X-Proofpoint-ORIG-GUID: KVsiuZiux6kyMEUly0pruwhRE_g2SqbP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDA4NSBTYWx0ZWRfX0Ko1cQw0ThIk DoXdLMwfTBr5e1cBmvIuXQfFtl95TWcpHoTFL9kzIfxsW558ggtsNA9k56xv2oUTMMv7DurZREA p9nmxzOGx+GsysifFyNfsFEUt4lhAcDgCfhi1OvGoOj7DswC3p2izUHmzgz9UPS+ObIZwKDWOxn
+ JAG/MRx9LVnPjy9AZg3Qs8v+VoFlGcA78v3Rya+gupgJPsty3J2EY7uzBMFaJMkc2cA44qQMr+V dda771heg0yzIHx90OMbxwugtclMK+fMkdKIcE8FzFr5rULdQAWuHQtroPwoinyhWf3CSB7Z+zj n1DgeRY0ZDWYNgV2pftSjAlKYZrTy0w9B8OWkeP7vQdZ1MOWvaASSl+U4nEwDTLD46XdaVxRHbg
+ K2Nnfmflrx7Z1hXLI0XL+psrRxJzAIGebSUTGETJp51rGXITqy375kXbVrcYFvG1NL6KM2Z4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
+ definitions=2025-04-23_07,2025-04-22_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 mlxscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=628 phishscore=0 priorityscore=1501 spamscore=0 adultscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504230085
 
-On 4/21/25 9:22 AM, Viresh Kumar wrote:
- >
-> +    /// Same as [`Registration::new`], but does not return a [`Registration`] instance.
-> +    ///
-> +    /// Instead the [`Registration`] is owned by [`Devres`] and will be revoked / dropped, once the
-> +    /// device is detached.
-> +    pub fn new_foreign_owned(dev: &Device) -> Result<()> {
-> +        Devres::new_foreign_owned(dev, Self::new()?, GFP_KERNEL)
-> +    }
+On 4/22/25 11:31 PM, Danila Tikhonov wrote:
+> Add base dtsi for SM7150-AA/SM7150-AB/SM7150-AC SoCs
+> 
+> Co-developed-by: David Wronek <david@mainlining.org>
+> Signed-off-by: David Wronek <david@mainlining.org>
+> Co-developed-by: Jens Reidel <adrian@mainlining.org>
+> Signed-off-by: Jens Reidel <adrian@mainlining.org>
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> ---
 
-Btw. if you take it for v6.16-rc1, expect a conflict with [1].
+[...]
 
-[1] 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git/commit/?h=driver-core-next&id=f720efda2db5e609b32100c25d9cf383f082d945
+> +		cpu0: cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "qcom,kryo470";
+
+Please split this into Kryo 470 silver and gold, with the former being
+based on CA55 and the latter on CA76
+
+[...]
+
+> +	pmu-a55 {
+> +		compatible = "arm,cortex-a55-pmu";
+> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+> +
+> +	pmu-a76 {
+> +		compatible = "arm,cortex-a78-pmu";
+> +		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
+> +	};
+
+Please update this, mimicking 
+
+2c06e0797c32 ("arm64: dts: qcom: sm8650: add PPI interrupt partitions for the ARM PMUs")
+
+> +
+> +	psci {
+> +		compatible = "arm,psci-1.0";
+> +		method = "smc";
+> +
+> +		cpu_pd0: power-domain-cpu0 {
+> +			#power-domain-cells = <0>;
+> +			power-domains = <&cluster_pd>;
+> +			domain-idle-states = <&little_cpu_sleep_0
+> +					      &little_cpu_sleep_1>;
+
+<&foo>,
+<&foo2>;
+
+because they are phandles to separate things - DTC treats them equally
+though..
+
+[...]
+
+> +				interconnects = <&aggre1_noc MASTER_QUP_0 QCOM_ICC_TAG_ALWAYS
+> +						 &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
+> +						<&gem_noc MASTER_AMPSS_M0 QCOM_ICC_TAG_ALWAYS
+> +						 &config_noc SLAVE_QUP_0 QCOM_ICC_TAG_ALWAYS>,
+
+Paths involving AMPSS_M0 (the cpu endpoint) should be ACTIVE_ONLY,
+this applies to the entire file and all paths
+
+[...]
+
+> +		remoteproc_adsp: remoteproc@62400000 {
+> +			compatible = "qcom,sm7150-adsp-pas";
+> +			reg = <0x0 0x62400000 0x0 0x100>;
+
+This region is 0x10_000 long
+
+[...]
+
+> +		adreno_smmu: iommu@5040000 {
+> +			compatible = "qcom,sm7150-smmu-v2",
+> +				     "qcom,adreno-smmu",
+> +				     "qcom,smmu-v2";
+> +			reg = <0x0 0x05040000 0x0 0x10000>;
+> +
+> +			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 231 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 364 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 365 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 366 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 367 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 368 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 369 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 370 IRQ_TYPE_EDGE_RISING>,
+> +				     <GIC_SPI 371 IRQ_TYPE_EDGE_RISING>;
+> +
+> +			clocks = <&gpucc GPU_CC_AHB_CLK>,
+> +				 <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
+> +				 <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>;
+> +			clock-names = "ahb",
+> +				      "bus",
+> +				      "iface";
+> +
+> +			power-domains = <&gpucc CX_GDSC>;
+> +
+> +			#iommu-cells = <1>;
+> +			#global-interrupts = <2>;
+
+Add `dma-coherent` and check whether the GPU still works
+
+[...]
+
+> +		};
+> +
+> +		gmu: gmu@506a000 {
+> +			compatible = "qcom,adreno-gmu-618.0",
+> +				     "qcom,adreno-gmu";
+> +			reg = <0x0 0x0506a000 0x0 0x31000>,
+
+Make it 0x26_000 so that it doesn't leak into GPU_CC
+
+[...]
+
+> +		tsens0: thermal-sensor@c263000 {
+> +			compatible = "qcom,sm7150-tsens",
+> +				     "qcom,tsens-v2";
+> +			reg = <0x0 0x0c263000 0x0 0x1ff>, /* TM */
+> +			      <0x0 0x0c222000 0x0 0x1ff>; /* SROT */
+
+Please remove these comments
+
+[...]
+
+> +		intc: interrupt-controller@17a00000 {
+> +			compatible = "arm,gic-v3";
+> +			reg = <0x0 0x17a00000 0x0 0x10000>,  /* GICD */
+> +			      <0x0 0x17a60000 0x0 0x100000>; /* GICR * 8 */
+
+And these ones too
+
+[...]
+
+> +	thermal-zones {
+
+Please adjust this against 
+
+https://lore.kernel.org/linux-arm-msm/20250219-x1e80100-thermal-fixes-v1-0-d110e44ac3f9@linaro.org/
+
+(keep only critical trips with no sw cooling for the CPU, etc.)
+
+Konrad
