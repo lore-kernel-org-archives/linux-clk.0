@@ -1,93 +1,93 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836CB21FF33
-	for <linux-clk@vger.kernel.org>; Thu, 24 Apr 2025 10:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8749214813
+	for <linux-clk@vger.kernel.org>; Thu, 24 Apr 2025 10:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745491541; cv=none; b=Gj3gJeIR9aAHK2cJl3PFh/7CRyZDvEKZ7HcCs6wp+BOfMNek+cLlt8NdakQRIzxuoessWqRl53e6y9Wag1153S7DBzm3XpoKPTp9vcdUwLTmXpZtLH923h42V1h2eFcTJdtfWhbsla0MTb4K062fFh1U6GsPaQ+k9cLiwKC1wQY=
+	t=1745491881; cv=none; b=lDtBeESOnQu4ZlVMDPRnYj0cVZClUgI2oXj9QPAuTEGTXCGG2Ksl3iLJSW6Ub3b0ag31vk7JFqjCfv68PaeXDsJDgO/+ngHON3fALHc6dYkhxaTFyiw0sGLth89yZCpDTYB7259fH4WpuZLwHM+CvHLUQk5ClZh9mdgo3BPdBaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745491541; c=relaxed/simple;
-	bh=PGXPJri6Cw6siaeSinOaARRSx2I/HYewhIvfzmeUnSI=;
+	s=arc-20240116; t=1745491881; c=relaxed/simple;
+	bh=HG1//szgx01meAsMA7HuncrbLx0xZUsBwK+q9eqz9Kk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BuF8AVL9wOvi2GrnfG6yXM/2MY9w6Fnfjcy7HqkWEWXB2DIZ/7wYrm9KUkj+n/e3AACq6mWL9yNeEGLOKhGpS69h59WE53yjmu4qhBQQuyNzlIxtZcwjDKUf4U58ceJ24U+Zr3O/C9dYk7emxXc63Ls3RhfHslEOQ33zd/qj40E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pmIPMZhB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z86HQN7735Vx913bpk5G1SXX9UFajj9Z9TJIdSHg/TIP9gmiqpznqewp4kgsMPovzmTMxtyHrbnFKcFz12TsnGROHInFC9QFcHcvRCyLTC34kUN2JCIOuvApZJeyRPw9axzE3spoczpcli0tB5jOBQTt7HSEcOlvXQzenI9ypN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VA0IZCrR; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pmIPMZhB"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53OAWGsY010071
-	for <linux-clk@vger.kernel.org>; Thu, 24 Apr 2025 10:45:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=YTvMgSnUIIGLk/Fpg/tiBLoR
-	7OymWdRd8yJc8ktCLRg=; b=pmIPMZhBX/VI7UiQN2DS72PS85z5qkr8rP6iNalN
-	HPEncBXMwLR9N86aNrbsSrZr2OHdWNhWQk/JDFcATDtqSKn28URKTfVM9KhpcfhR
-	rWJNwa5C3/WG2IC8UOHxomfZD8TlW3DZjbfaFp4R8exsTRJHHAhNh9Ol9KVL1wJR
-	ZDzf2ib8ztXLTB1Fn7IJHYeomWd9vVPXGask/yhk14+Q9i1yH/Q1T8igdSAxVU7H
-	GD/8+ktSIUQPM71Vs70tmx0jifeuaLLW06GUGuwOnTlm8DdvKGr8gtRAPkqleWfz
-	OHMBI39GNYqtgjfuj37+wlcpj9hzbdKtVVzAT4GOkmNO7Q==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh0dab3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 24 Apr 2025 10:45:38 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e913e1cf4aso23997316d6.2
-        for <linux-clk@vger.kernel.org>; Thu, 24 Apr 2025 03:45:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VA0IZCrR"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-301cda78d48so989475a91.0
+        for <linux-clk@vger.kernel.org>; Thu, 24 Apr 2025 03:51:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745491879; x=1746096679; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x+abMdG/o8rmNfu60caQnUkqfKekYjtbcUEXVb0J6LQ=;
+        b=VA0IZCrR/U13goc3N4DYtYt9lhoLnrtAxrFd/0ozd1/Li7IJllqpTJ2csq1J6E0xh/
+         AdWWcA89hgX/tFczx/Uk/A/hkvT0GXCjWBgu2r6L2EHXZZn+Su4ww8Px2aFxghVEvksm
+         uEF4Gw2tavhcDeWM5PVghquDCgllP2IZFuhKt0cIRpBWm/9fDcf7fdRES5BU6DUnPGSr
+         a4R7AcyLASPq4FtlsjArIlODSLviHBCH9LpQKCpBkZme7JeHZbdpfnGFNMEtabo/9Kl4
+         3Y+piNhTk5t8a8LRN3QDJF4gAy5jTyXhLto+htGrjtRan/rbBZPoqZ8UcXiefJEBKeq2
+         sk9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745491537; x=1746096337;
+        d=1e100.net; s=20230601; t=1745491879; x=1746096679;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YTvMgSnUIIGLk/Fpg/tiBLoR7OymWdRd8yJc8ktCLRg=;
-        b=NvZiytPtFfdnztZ6F257iZ5oCZ4oRr0ZWDZlnNEMlHwLq0gdfzfMCjIaP2cqpiA8QG
-         2rQhFZHRcQYtcykLwtOjr9ALqmtZIp/LKuTyKbXniErPGk/LzZ7iNcTzQYPwschIF1Rg
-         pjdCEy/3AVaa9hmIJP0h2bvOyYdzWWdubHx5RGcKBz1rA/P6nyTn4ZK9dpNWFXCnWCvn
-         CeYNnUWQj0D4SvbgLLZuYaVbtmiMBbzgGW+Xi8/KDmn7C/SPA0X5l3N1DCFkBOQV2u+x
-         K+WuEUW4tMXuaApbw4F29hHeWitIGOzBb6m/bHhl8cQ6yXEwbe8PLryunetZFzCcoaqH
-         SJ3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXAtvQuTk3HQpz3/MMG6Iszf0dX5CRuXko3FyWVC5+yXCd22GzVmV7xQ9TIBbou0aFbElVnc+jHujI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpeZYnDLn9+nGshB4kone50/ajuwmxo3LSX6KUkR+w7eHNb2NA
-	GDaJECqYtfDWTJOwb96y0dSPF+mE28lQUgFjo01T3o2Rfu9aCgqfuXjhaUu4I/CI8esvui4jrNH
-	a1SXlFseTUCJuYWu43JTjBSL+dc6XozX3rhmABPf/v+PRhtarCRgnKuxNHT4=
-X-Gm-Gg: ASbGncsciF66u6xhm/4rZ2iMzLORbvMNyRHq3BsfDkttWoyI7vLGv4Ow8jxUw7UuvMq
-	VvrXxxZiiAELEHF5/bLG5CWq9YseWqHXmT8YmoAcopA4f7uHzk1SS2cM3f/o+LvCY4LHjOlA8+e
-	5/vJWDGqJRExOyBI8pngm/m8SUV66AiwOXTKwRHkMVDzSqE5cyWvW6DJtXylj5guVMCNtnfhRvH
-	xyg0bC8ULHTtek2BNEEJiH19LEjLiO9XmkyI+ZeLasinqD1LtryEURhZXk61mb/LEtofZpD2b5F
-	alakkc0AxCCB4T/nG/BYqfVxKT3woEIh2+BMtZd49+c7u72A4FYSoV/4TH7UvmdZgyuEniSqdHI
-	=
-X-Received: by 2002:a05:6214:4103:b0:6d8:99cf:d2e3 with SMTP id 6a1803df08f44-6f4bfbf09c4mr34154206d6.22.1745491537220;
-        Thu, 24 Apr 2025 03:45:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEW9ALRiFj0PWw6i0JiIe2IjPxWzjJGDX1PP0wKX7qV2MJPeYhrJs/Xxya61v7OTQE/lz454g==
-X-Received: by 2002:a05:6214:4103:b0:6d8:99cf:d2e3 with SMTP id 6a1803df08f44-6f4bfbf09c4mr34153766d6.22.1745491536843;
-        Thu, 24 Apr 2025 03:45:36 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cb3bc48sm189292e87.88.2025.04.24.03.45.35
+        bh=x+abMdG/o8rmNfu60caQnUkqfKekYjtbcUEXVb0J6LQ=;
+        b=bHX95qzQ2ptSrpcuzsFS2ho9K3o/4bjemMx6iGuWP/vE9HTlxyGEzUtWWkOXpmbgRr
+         DMEV/+/Vmalb9tVtUDka9j2nCHz6XH802KuYU5pOkoAGbRy2wBhwaHaU+cashSZ8wjcw
+         KKpZx13gaRsjcYw2+OvzW8aFltnbiZ2d+Klqz8e7trV47BspGccVCaAn9wgAgQ1BowLy
+         b0QVApGm97Hoxitsd0kyO3zMqdRoBTvOMk6s06Fd1R9bnrWslDlYmE30whtaHl/8STFt
+         Q6lRYVhOFlfrPh6WejvvfWglZJOd6oSZG0AcmzVAXmvZOTcazjPY6HwR2q1m197CKexh
+         dZpA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/HVdiLbIHiiw1L2OIDXPJSk0jnXDXkW4kgz8sk5ORbEYzGOf8rWazGZJYL/GUaCAOqUm/TEJU5rA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt53BIP6cGB+VVMVvbESg4nDzKE1cVdz6fUqRQTXfLL8Srnesq
+	GCxPAD2QqeHxN5zCq2oB9b/bx47z141uiPs/v1SgwZpFrXt8+HGTMhxhhJ5NMK4=
+X-Gm-Gg: ASbGncta2QnlPbl2IvwHSRkUZsb2U3jRS7xb6GnSjIsje6pXhCSavXBIfyTudrm3wy5
+	HwBVAhDGj5SUVQsAeZ8uVl+7whaKSLAVuUcEvlHIS+a+REgOIVG9xYyBIHBfudyLa05hLDjlrRt
+	gxXhE3XOtYWKoRb2WxVvCJ6NbXkCUaYKtW9ipcQYCCRjeyhJlJ+4yrph+J51CXrCzC4Rj17N+VM
+	kicAG7Ru7td+2Q2VZw3I8N2o+t6PZZLzd9a5nMfNgMXIAeUTAgiAaogiMTclDOhta9sv36UmxsK
+	7gizSQbMrYf/hOpiB07Jjm66rOuYxJUFDxVkLT6eHQ==
+X-Google-Smtp-Source: AGHT+IGpKJwHUe6vHUfwkD5s7/iL/IigxAr6meNd1hlH8G0Vgd+Zb7hGpE427/lVCrNIM2lV9yojAA==
+X-Received: by 2002:a17:90b:5487:b0:2fe:6942:3710 with SMTP id 98e67ed59e1d1-309ed26b9ddmr3148717a91.3.1745491878988;
+        Thu, 24 Apr 2025 03:51:18 -0700 (PDT)
+Received: from localhost ([122.172.83.32])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309ef03b27asm1124213a91.6.2025.04.24.03.51.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 03:45:36 -0700 (PDT)
-Date: Thu, 24 Apr 2025 13:45:34 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Robert Foss <rfoss@kernel.org>,
-        Todor Tomov <todor.too@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Subject: Re: [PATCH v6 2/5] dt-bindings: media: Add qcom,x1e80100-camss
-Message-ID: <krofzevprczeuptn6yfj4n656qsw52s52c7cgiwotidxmi2xo6@d3q5bb5zbccc>
-References: <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-0-edcb2cfc3122@linaro.org>
- <20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-2-edcb2cfc3122@linaro.org>
- <3ec3fd62-bf21-47e7-873c-ce151589d743@linaro.org>
- <54eeb470-cd90-4bc2-b415-6dea1ce2321d@linaro.org>
- <0ab31397-580f-4e5a-b9ad-d9bf79d29106@linaro.org>
- <36feffed-4558-4e59-97db-2f0e916dbfc7@linaro.org>
+        Thu, 24 Apr 2025 03:51:18 -0700 (PDT)
+Date: Thu, 24 Apr 2025 16:21:16 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Yury Norov <yury.norov@gmail.com>, Burak Emir <bqe@google.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V11 13/15] rust: cpufreq: Extend abstractions for driver
+ registration
+Message-ID: <20250424105116.m6vnewh7b2tlmxy6@vireshk-i7>
+References: <cover.1745218975.git.viresh.kumar@linaro.org>
+ <a14f6927488b5c7d15930c37a3069f46a5c888a2.1745218976.git.viresh.kumar@linaro.org>
+ <6fc3e178-60f9-4b0f-9c56-6d983e4d1eed@kernel.org>
+ <20250424062910.6zk7amxq4gjxtw66@vireshk-i7>
+ <c332c760-fa48-4159-a3af-e33bedc0e4ef@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -96,105 +96,53 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <36feffed-4558-4e59-97db-2f0e916dbfc7@linaro.org>
-X-Proofpoint-GUID: VffX3WAbmQlMQyC4E7t6z_BWukjALJtY
-X-Proofpoint-ORIG-GUID: VffX3WAbmQlMQyC4E7t6z_BWukjALJtY
-X-Authority-Analysis: v=2.4 cv=Fv0F/3rq c=1 sm=1 tr=0 ts=680a1652 cx=c_pps a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=w3QZEHyxT3hpLgro1OoA:9 a=CjuIK1q_8ugA:10
- a=OIgjcC2v60KrkQgK7BGD:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI0MDA3MSBTYWx0ZWRfX15T+sSZOWvHQ IowbeexOLYR7IaLyxZiNzbjgjRtqRxUkrN7OLL0HaX+Mu7uojNthtvgS7vp0W0ijTNzUK/atjnm byYvpSRU4KNAvwneAoTdhG3CAHifM2JkNtqe/fufwUSzjRZac5fz/oaPaHQ1YB0mhqS4eI9QQX3
- TW/rc2DvNu1DdQuv3c37tDPG+smI8jAFCZxHX19g51OFqt+THzL/HIBkbBlXEBNCP+ruIqJ6Mc+ bmCGgeailKcBX8DRlDc0BGVl+20b0mtAm7QPtCrB6J22ZnK/OgkHJgxFuHdWZIJ3xNE45eXc+m3 BfOReBp0UzR4hrtwnV9KS9tDnyOFmMTAQsdm4JDn33sbzzIqYedHF7473CqBd2K5H/CeD9gkPWM
- WsGAKk/4zF9O2kJ2WYAfwTVaeQxqsI48dyEtFy6YohKF4dTSuqwU3L5v53ak+0Yn7m2omjiw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
- definitions=2025-04-24_05,2025-04-22_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- malwarescore=0 mlxlogscore=999 priorityscore=1501 suspectscore=0
- adultscore=0 bulkscore=0 clxscore=1015 spamscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504240071
+In-Reply-To: <c332c760-fa48-4159-a3af-e33bedc0e4ef@kernel.org>
 
-On Thu, Apr 24, 2025 at 11:17:13AM +0100, Bryan O'Donoghue wrote:
-> On 24/04/2025 11:07, Krzysztof Kozlowski wrote:
-> > On 24/04/2025 11:34, Bryan O'Donoghue wrote:
-> > > On 24/04/2025 07:40, Krzysztof Kozlowski wrote:
-> > > > > +  vdd-csiphy-0p8-supply:
-> > > > Same comment as other series on the lists - this is wrong name. There
-> > > > are no pins named like this and all existing bindings use different name.
-> > > 
-> > > The existing bindings are unfortunately not granular enough.
-> > > 
-> > > I'll post s series to capture pin-names per the SoC pinout shortly.
-> > How are the pins/supplies actually called?
-> > 
-> > Best regards,
-> > Krzysztof
-> 
-> I don't think strictly algning to pin-names is what we want.
-> 
-> Here are the input pins
-> 
-> VDD_A_CSI_0_1_1P2
-> VDD_A_CSI_2_4_1P2
-> VDD_A_CSI_0_1_0P9
-> VDD_A_CSI_2_4_0P9
-> 
-> I think the right way to represent this
-> 
-> yaml:
-> csiphy0-1p2-supply
-> csiphy1-1p2-supply
-> csiphy2-1p2-supply
-> csiphy3-1p2-supply
-> 
-> dts:
-> 
-> vdd-csiphy0-0p9-supply = <&vreg_l2c_0p8>;
-> vdd-csiphy1-0p9-supply = <&vreg_l2c_0p8>;
-> 
-> etc
-> 
-> vdda-csiphy0-1p2-supply = <&vreg_l1c_1p2>;
-> 
-> because that captures the fact we could have separate lines for each phy,
-> names it generically and then leaves it up to the dts implementation to
-> represent what actually happened on the PCB.
-> 
-> That would also work for qcm2290 and sm8650.
-> 
-> https://lore.kernel.org/linux-arm-msm/20250423221954.1926453-2-vladimir.zapolskiy@linaro.org/
-> 
-> So for sm8650 instead of
-> 
-> +  vdda-csi01-0p9-supply:
-> +
-> +  vdda-csi24-0p9-supply:
-> +
-> +  vdda-csi35-0p9-supply:
-> +
-> +  vdda-csi01-1p2-supply:
-> +
-> +  vdda-csi24-1p2-supply:
-> +
-> +  vdda-csi35-1p2-supply:
-> 
-> you would have
-> 
-> +  vdda-csiphy0-0p9-supply:
-> +
-> +  vdda-csiphy1-0p9-supply:
-> 
-> +  vdda-csiphy0-1p2-supply:
-> +
-> +  vdda-csiphy1-1p2-supply:
-> 
-> Which would then be consistent across SoCs for as long as 0p9 and 1p2 are
-> the power-domains used by these PHYs.
+On 24-04-25, 10:03, Danilo Krummrich wrote:
+> Yes, driver-core-next won't be rebased.
 
-This won't be consistent with other cases where we have a shared power
-pin. For example, for PMICs we provide supply names which match pin
-names rather than one-supply-per-LDO.
+Thanks. Here is the diff after rebase:
+
+diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
+index 8628f0bada02..55a219148eed 100644
+--- a/rust/kernel/cpufreq.rs
++++ b/rust/kernel/cpufreq.rs
+@@ -11,7 +11,7 @@
+ use crate::{
+     clk::{Clk, Hertz},
+     cpumask,
+-    device::Device,
++    device::{Bound, Device},
+     devres::Devres,
+     error::{code::*, from_err_ptr, from_result, to_result, Result, VTABLE_DEFAULT_ERROR},
+     ffi::{c_char, c_ulong},
+@@ -835,7 +835,7 @@ fn register_em(_policy: &mut Policy) {
+ /// use kernel::{
+ ///     cpu, cpufreq,
+ ///     c_str,
+-///     device::Device,
++///     device::{Bound, Device},
+ ///     macros::vtable,
+ ///     sync::Arc,
+ /// };
+@@ -879,7 +879,7 @@ fn register_em(_policy: &mut Policy) {
+ ///     }
+ /// }
+ ///
+-/// fn foo_probe(dev: &Device) {
++/// fn foo_probe(dev: &Device<Bound>) {
+ ///     cpufreq::Registration::<FooDriver>::new_foreign_owned(dev).unwrap();
+ /// }
+ /// ```
+@@ -1031,7 +1031,7 @@ pub fn new() -> Result<Self> {
+     ///
+     /// Instead the [`Registration`] is owned by [`Devres`] and will be revoked / dropped, once the
+     /// device is detached.
+-    pub fn new_foreign_owned(dev: &Device) -> Result<()> {
++    pub fn new_foreign_owned(dev: &Device<Bound>) -> Result<()> {
+         Devres::new_foreign_owned(dev, Self::new()?, GFP_KERNEL)
+     }
+ }
 
 -- 
-With best wishes
-Dmitry
+viresh
