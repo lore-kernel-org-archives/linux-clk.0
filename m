@@ -1,129 +1,145 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969B021146C
-	for <linux-clk@vger.kernel.org>; Thu, 24 Apr 2025 10:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D025C19F40B;
+	Thu, 24 Apr 2025 10:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745489927; cv=none; b=maNkWhMMhUMY8ZoT7hIQXTBJCB5RdFyhRK//aGTkXFYyzfbrcDuBduAz+mURTPbB5DoP9nWfFKeoEhNEqQBnGr0UlIC1UcyuBEFMC68RgBoSiDDx0JWcCt83DPHUhnEEGtV0kflGRGitnrJBZimo/2HK61aimKFXmj03sVQY3qk=
+	t=1745490072; cv=none; b=EV3Thwya0a+/Jfzeb7vIw5xcVwdXx5Qe9s1CIz5Yxy+1PMMXnF/VoXgwZSeShk1fSkcoRxHJE177Kr5tkWOkdY7Pif2W7ojUF5CxtCfT+79Vo/uaG2T4SM/U+Jh/242BYbk77dT6/0hYaWSzcsGEdsK9uOzklajjd42fm3+uKHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745489927; c=relaxed/simple;
-	bh=VwIF9MZwN8skAcnpaYsKQGj6HgJVPjIpATiFvE46JIA=;
+	s=arc-20240116; t=1745490072; c=relaxed/simple;
+	bh=8EUjkqxm/psCAdZRPqkUFO8JU00BjloN7TrrUog3mgM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxg+jZXU1foizm/UDuh+jKNK6NY5+1uojIEdsRfy66R5EI4AOkGnu9LLHuvyIn9mb9WGorzzH9JkuXi2R29gfVlEUgcIrs/qDYXR4KBufVaTgxoJ110UsR31fxdC5NuFzUyEf7jnpGPrw7CN8ybKZ04rmHFwYyfqSz0a/xOolBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fXWNQZKA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCLk/nK3tW+0hzGMo1spcegFVD4jvfVrEOxmegDEGgJH2fvtQd/YVr/Q5/ap54ajjvSxPpJG9qufmkEe1SuYJrD0oCvbUUsSyP2KGb0pgz7xF5R0bMdcGN9ZFDjVlBdP+SBE3RgljJK/6bw77bw4QgCnWz6VTNM8b1Y/ia57fkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QvLtSevx; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fXWNQZKA"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53O9vZrT031151
-	for <linux-clk@vger.kernel.org>; Thu, 24 Apr 2025 10:18:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=b+CZ5yvanwkNwsrX8wbr0v7b
-	U5gRB/4DWTNm7EwR2xs=; b=fXWNQZKA5tt55ydMaRlEOxI8rt25vsq1M699s9O/
-	WjAuarD1DKKd/nTTiQg+ZWmsp6YdMHuDoY1nIznIYRQAZ1fNRQvsM4QKTF+Sndvg
-	qhAAMFrcLtQRbVD261Qae/tRoQk+oJsYcg/ja0VbIvdRjFriWLU4a5ltySvZM5sG
-	wq7xdqsPuiHYVA1F2VLk90hltCiiWf/MADWXYbhM3kOW5TeXA2hqB8+M+NPcEjR4
-	Ab9MBQWGe3HJFKcCEav7V5ksv9JmNneYYkqCTBKvRxjIjC8ITyI9YGGbfd2uEEpa
-	O1mRIo/TcenQcgSu6mjx/yu8Ug8uKDxmv7CuPBU0SWJigw==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh5d51j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Thu, 24 Apr 2025 10:18:43 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c7c30d8986so241168285a.2
-        for <linux-clk@vger.kernel.org>; Thu, 24 Apr 2025 03:18:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745489922; x=1746094722;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b+CZ5yvanwkNwsrX8wbr0v7bU5gRB/4DWTNm7EwR2xs=;
-        b=pyO64cUabGE1+Lj6HqiqF6IPVqOlYNGbZ0RmJkliLAiuBDo+AtGY0lRVY58SfPdQ+g
-         CiP6Uhxq2xSulzIDHIq0JZPTb+Ta6ssBbLRF0xhXebz+56u52gMU6n12GxS6e8oklr9O
-         z6hnpoaHu8RzRzA34a0H0uJXZRMOFDUqELtCiZ1ghb6HZXJOcMwl+/jAxgfV9bONHXD5
-         SYiRAaLixNWf44P/fNwxs47qtvXmwnoyb0lRQCCg0T+wErPwpsbC1TCwbJS/WaVP48W6
-         JNsJCbYDN+Xc7/dUqjAhI0Khbfu3FFNJ9lHc21n0fwFzNg4fVZ0HLfJ1kKpjTf24qFgx
-         G0yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDr9bFLOwI4+jZ6V0poei3vFvWTVmVtZHAFqOihewD3alVwV+q2YL6AhbsUQr2xzfIGXbSjkb4NNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySUKglQU1yuRF86Dq74yqBkYbHZmbhctAyVxckac51El1XkMVJ
-	WEkqYwrd7dLFXhsHNCfEcsa/T1RYD4uRT/JRwwJ0IVWzlqRVoRv27hKVltWxgCPV9+NTPiMaMpU
-	m8AhYFuum9XWq9FBMWQNxFJX3GakjE2qeOH9QuH5AyIDvSF9lcFQuHjeO2N4=
-X-Gm-Gg: ASbGnctjYfByPHzZ5IyLC47I339c6nQwLRIRYk6Iv033Yb2oF/Sewj7XMp4f0eAQGFq
-	1GWsDmfy50PUGrZxvVDx9xoh8F9hHBpZEyn0/kxkCisLwEJmqFSMftFYG9ZbTk16THg8LqWw3yg
-	Dwte/xQWl/yTLaI2SZuBiP9lyzyZiWtxXqOxGyEwiU/k2hYixW4S5zQ3ELsuXBF1Idz44pRmHzn
-	lqy2vood8mAx8AFd+bD9LBaG7N1x7oNOt1c4rMF9hqdzFu5YpJxRbAniWR4381YmUc50Xjve9pl
-	47HvkO3DKS23cYLn5hOUR+TJoEOsgLCMA5dhLekfYjE2kQRxWv6quGdCGauycX3I6sdgzDl4JvY
-	=
-X-Received: by 2002:a05:620a:2453:b0:7c5:4eee:5406 with SMTP id af79cd13be357-7c956f5f787mr334008585a.49.1745489922711;
-        Thu, 24 Apr 2025 03:18:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHUyasljwk71lheOvieQO8GWyGCHy47iFL98wqeOfteeZQyBP2cQ9ZJ7ujqmqOzXQolEaEspg==
-X-Received: by 2002:a05:620a:2453:b0:7c5:4eee:5406 with SMTP id af79cd13be357-7c956f5f787mr334004385a.49.1745489922351;
-        Thu, 24 Apr 2025 03:18:42 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cb26242sm181296e87.21.2025.04.24.03.18.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 03:18:41 -0700 (PDT)
-Date: Thu, 24 Apr 2025 13:18:39 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v8 10/10] arm64: defconfig: Enable QCS615 clock
- controllers
-Message-ID: <2gqcoofsvftuvvo7fl7ktkevrhjcsmei423qjdownslucqezib@xpcrhcwnwn3m>
-References: <20250424-qcs615-mm-v7-clock-controllers-v8-0-bacad5b3659a@quicinc.com>
- <20250424-qcs615-mm-v7-clock-controllers-v8-10-bacad5b3659a@quicinc.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QvLtSevx"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745490071; x=1777026071;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=8EUjkqxm/psCAdZRPqkUFO8JU00BjloN7TrrUog3mgM=;
+  b=QvLtSevxINqlUkrE7r+Db7nJH0YvpWC3CglZRl1NguaSYQCEth5lYhTf
+   A8mYItwF9JHFV0AADe309vU39ftn2Fmo74nqVdwg9806XKyqoJKFHFTKX
+   knTQ7+LvbepJKY/HRflyesyvOLfwFlajRoF0pSYxpdEH0vPWbdZiaVqNq
+   K1vHuaH4jLS5y0OXFcvIU3qFNTUcmaH7xWIWXPEGBuNf1Czda8kDyTmq6
+   VeC6kgQbxTPgPz8VZoG0kQIOmKu/rCkt03hPun1Mop0ron66BBRjbJAmN
+   YQoU9WrZ63PWG7KIWh8ArGcMD/LGO/86Zfjs7EQ9mNM7LfZOtrUhN+uOw
+   g==;
+X-CSE-ConnectionGUID: 33R0TBEFTHu2maHj6ODP8Q==
+X-CSE-MsgGUID: CCaeZRBWSFCCWufKN48geg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11412"; a="58486398"
+X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
+   d="scan'208";a="58486398"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2025 03:21:09 -0700
+X-CSE-ConnectionGUID: dFcD6XaPTLybRhWauEDuCg==
+X-CSE-MsgGUID: zex+pMsPQtatMOWPr+venA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,235,1739865600"; 
+   d="scan'208";a="163616817"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa001.fm.intel.com with ESMTP; 24 Apr 2025 03:21:06 -0700
+Date: Thu, 24 Apr 2025 18:16:30 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: nuno.sa@analog.com
+Cc: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>
+Subject: Re: [PATCH RESEND v3 3/6] include: fpga: adi-axi-common: add new
+ helper macros
+Message-ID: <aAoPfoL8ZDBK7hf6@yilunxu-OptiPlex-7050>
+References: <20250421-dev-axi-clkgen-limits-v3-0-4203b4fed2c9@analog.com>
+ <20250421-dev-axi-clkgen-limits-v3-3-4203b4fed2c9@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250424-qcs615-mm-v7-clock-controllers-v8-10-bacad5b3659a@quicinc.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI0MDA2OCBTYWx0ZWRfX/vGfrBBfXZFm CaT4E4sfjBXh2oS5NsiiNDdCqiJq0Bqm1xBTUEMH+1VCayae0IzCSKnm8MCUyvP5k3v94Wuns8s /E6iVdGXNtLDKuep3WeCUBUCinV2JUDEnbbn0tD269WDmVWnDG4kAVKlEFeKBm5/CcuhrTTIu44
- Dmbfn+znqC6vgK7ok+ccBGX3nOCoNwHGBa7VLQvF93qKebqkj7d5hv7zIQhBKkR401XpUYhA5N0 wz5RWzlKDZ1kPGAJxJnn9U4mAQmuIqrWXN/MjdfGqFKtoHPLFsKeOH9OZ8NxWU/pLFHZ4vfGFyH sBsmsIrqO9rn4OFbKam+OgcAgksdhvEvzb+kkBKixz/YXacnXYsHsw+3N0hDS5QTQrSYAV9CjNB
- pqVC6VbQhq0XfhOCrm+Cgs8psr/QG6Yo756kP9uY4Tlo0gatukbuaNk3TOpp3uqWnxEuBRGt
-X-Proofpoint-GUID: ztbiEzpR8JVbfDPuXRoWo9VTrJjzmKvE
-X-Authority-Analysis: v=2.4 cv=B/S50PtM c=1 sm=1 tr=0 ts=680a1003 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=mLCiClLL8ZwIBs7X0_kA:9 a=CjuIK1q_8ugA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: ztbiEzpR8JVbfDPuXRoWo9VTrJjzmKvE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
- definitions=2025-04-24_05,2025-04-22_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=620
- lowpriorityscore=0 bulkscore=0 impostorscore=0 suspectscore=0 mlxscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0 clxscore=1015
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504240068
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250421-dev-axi-clkgen-limits-v3-3-4203b4fed2c9@analog.com>
 
-On Thu, Apr 24, 2025 at 03:03:05PM +0530, Taniya Das wrote:
-> Enable the QCS615 display, video, camera and graphics clock controller
-> for their respective functionalities on the Qualcomm QCS615 ride
-> platform.
+On Mon, Apr 21, 2025 at 03:58:04PM +0100, Nuno Sá via B4 Relay wrote:
+> From: Nuno Sá <nuno.sa@analog.com>
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Add new helper macros and enums to help identifying the platform and some
+> characteristics of it at runtime.
+> 
+> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
 > ---
->  arch/arm64/configs/defconfig | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+>  include/linux/fpga/adi-axi-common.h | 35 +++++++++++++++++++++++++++++++++++
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> 
+I'm wondering why these definitions (including existing ones) are in
+fpga directory. They are not specific for any fpga_manager driver. I
+suggest move the whole file out of fpga/
 
--- 
-With best wishes
-Dmitry
+Thanks,
+Yilun
+
+>  1 file changed, 35 insertions(+)
+> 
+> diff --git a/include/linux/fpga/adi-axi-common.h b/include/linux/fpga/adi-axi-common.h
+> index 141ac3f251e6f256526812b9d55cd440a2a46e76..a832ef9b37473ca339a2a2ff8a4a5716d428fd29 100644
+> --- a/include/linux/fpga/adi-axi-common.h
+> +++ b/include/linux/fpga/adi-axi-common.h
+> @@ -12,6 +12,8 @@
+>  #define ADI_AXI_COMMON_H_
+>  
+>  #define ADI_AXI_REG_VERSION			0x0000
+> +#define ADI_AXI_REG_FPGA_INFO			0x001C
+> +#define ADI_AXI_REG_FPGA_VOLTAGE		0x0140
+>  
+>  #define ADI_AXI_PCORE_VER(major, minor, patch)	\
+>  	(((major) << 16) | ((minor) << 8) | (patch))
+> @@ -20,4 +22,37 @@
+>  #define ADI_AXI_PCORE_VER_MINOR(version)	(((version) >> 8) & 0xff)
+>  #define ADI_AXI_PCORE_VER_PATCH(version)	((version) & 0xff)
+>  
+> +#define ADI_AXI_INFO_FPGA_TECH(info)            (((info) >> 24) & 0xff)
+> +#define ADI_AXI_INFO_FPGA_FAMILY(info)          (((info) >> 16) & 0xff)
+> +#define ADI_AXI_INFO_FPGA_SPEED_GRADE(info)     (((info) >> 8) & 0xff)
+> +#define ADI_AXI_INFO_FPGA_VOLTAGE(val)          ((val) & 0xffff)
+> +
+> +enum adi_axi_fpga_technology {
+> +	ADI_AXI_FPGA_TECH_UNKNOWN = 0,
+> +	ADI_AXI_FPGA_TECH_SERIES7,
+> +	ADI_AXI_FPGA_TECH_ULTRASCALE,
+> +	ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS,
+> +};
+> +
+> +enum adi_axi_fpga_family {
+> +	ADI_AXI_FPGA_FAMILY_UNKNOWN = 0,
+> +	ADI_AXI_FPGA_FAMILY_ARTIX,
+> +	ADI_AXI_FPGA_FAMILY_KINTEX,
+> +	ADI_AXI_FPGA_FAMILY_VIRTEX,
+> +	ADI_AXI_FPGA_FAMILY_ZYNQ,
+> +};
+> +
+> +enum adi_axi_fpga_speed_grade {
+> +	ADI_AXI_FPGA_SPEED_UNKNOWN      = 0,
+> +	ADI_AXI_FPGA_SPEED_1    = 10,
+> +	ADI_AXI_FPGA_SPEED_1L   = 11,
+> +	ADI_AXI_FPGA_SPEED_1H   = 12,
+> +	ADI_AXI_FPGA_SPEED_1HV  = 13,
+> +	ADI_AXI_FPGA_SPEED_1LV  = 14,
+> +	ADI_AXI_FPGA_SPEED_2    = 20,
+> +	ADI_AXI_FPGA_SPEED_2L   = 21,
+> +	ADI_AXI_FPGA_SPEED_2LV  = 22,
+> +	ADI_AXI_FPGA_SPEED_3    = 30,
+> +};
+> +
+>  #endif /* ADI_AXI_COMMON_H_ */
+> 
+> -- 
+> 2.49.0
+> 
+> 
+> 
