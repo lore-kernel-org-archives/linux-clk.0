@@ -1,134 +1,176 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559331BD9E3
-	for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 19:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC44C21ABB7
+	for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 19:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745608611; cv=none; b=Ej3pjRXm0jrYkf5Csqnyg0aqcnFADjU2OmILoVQVGe5R57YSB8eTm7qrum5vwsgM0ZAxiVHE9lAs6/4ZGI+JXal73if0FJgnQCsL/Rsogdyw+Ir+JRdeafysd53DAGEEZe2he6Wmn16Z2eHtAD+TZUaxuxh86b+5wKojxoV5PX8=
+	t=1745609173; cv=none; b=KhbL4VGEZvrVK6jDjhSh60eR6/1FZ4noR4yddleqIrgGhok0BP5RL252dYRu9jmkPKSUMd+1Z2aL1a79hxKHu06NZRYKE+8niQPwHvLeamD+0f9VJRgpZbDQKPxp2Y+N+Qqyzf0sUmEIeNc9MjTQ8iYLoYu86YaTsXC+hjMLIlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745608611; c=relaxed/simple;
-	bh=aaF5KoonwPXnBEeEYX5de2+bpxSx1NBVU3iFsDtiboQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uwJjoLHVwM8escYKPb0cwvf6kKeQ5bmmKZmfkMic18ZrqkHucNefTYTaiOB9g6zp+CeOuc6ojfpSwsfxbSr+ruqGnNxu6cLBQE7dKT+Wf57sdaoC2XHDdo2sDleZU3yipU6bOCHw3Z4Tn+BS11k7RtgcSQa0RjpoydWlHJOqQDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=AX6+kZK6; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+	s=arc-20240116; t=1745609173; c=relaxed/simple;
+	bh=x60z15u9qYTj44f9RXgg75GrQ1qzg8Z2bmf5H/QyEJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VKI5gZKNWM9hmbx+HFbZ0gwBHdXNdL36HscbbtQT+qZQoqbm2pqDdoxNt9GFWwCCOmZz0LwLcL04iOLZfKGFWQo63F4ce7whlbPSULn0ckqMntaEDDu+1C6rxpz4NG0hR1iW+i0N17hpmE+bHj6ENc4OES3GDTa/zmOcjH7aGXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=D4RMZY/Y; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="AX6+kZK6"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22928d629faso29985355ad.3
-        for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 12:16:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1745608609; x=1746213409; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XNI+wkZfospHmLOr+2+jXX5pJdTmqRckjghLYfMtBgk=;
-        b=AX6+kZK6ovgYV1OXg4LN+fg8H6PBJfhIUQTz8JijOzGPflZA1GuWotgMtDF+ppDsPt
-         hrOrCgpu+YWTVnnXYJYXnnNmxciITMZGPTnJ/XK69nSJh2VyAwMCMqliDrmdszKnkaLr
-         QHGcYS0EkDoWsvobRcvCSwmIKh1L0RuLTOph3rOOvmUZaT4KFWbZEidBcdA20HH+TLES
-         krPH0yzYlT2TPvQqQgNSI4bJS417IH7jp5A0AZZv/vfx9nb5TX9mo3lteFbLr9UsAG35
-         RmqEnWcZT2IgWiZsIDhB07k0RYQALhdTY0jtw8UYOK0zRKIKcfhSeRKVxecLcWRCg/8x
-         jO8Q==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="D4RMZY/Y"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PGJrV4004665
+	for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 19:26:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	x60z15u9qYTj44f9RXgg75GrQ1qzg8Z2bmf5H/QyEJQ=; b=D4RMZY/YHGrtcRQw
+	lVQYHp18r3mZtZ9ZsHHzxGCjgDID+iqFkDbxU4b+CzOWpSPob5qovR9UtF2y7i04
+	Q9TyAar5JYujyG1OjGF0BmcsCIL2fQb0lY2c6ingVPmIh1p1CWFFVK7UuplXnaX9
+	cbAbCc1ysortnRatYOjDgV4WedQXvO4/8SVgtuaviiWgw+VYspu3a7MYpDky3jKG
+	MubdZPAed2QbA/CzjjVmfbfKOfTHHL75UC+ZznfpyoYZqoNunvuf8rJIezSTMtqB
+	ke0u5kwSASdhQK7+3c2IforuyCKPF35xaWS7UECVzKKBxIliPe9HkLjWMHOLdsU1
+	wFD1sA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 466jh0a4cc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 19:26:10 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-47983a580dbso5994091cf.3
+        for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 12:26:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745608609; x=1746213409;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XNI+wkZfospHmLOr+2+jXX5pJdTmqRckjghLYfMtBgk=;
-        b=mYeEvQiYfINnnH5IxSRZovJIigBKvMhChV2rXaViLwgOfefOhslebAHfzaG2fl+Qb2
-         Zaotj0ZcvOpshV5W+cAw5ESGLTJBlGPHUwR8E1QPY6MLJTmdhiHX7KefJkbhNf8Y1cGX
-         CWSh331STh3kRiedB0NvGIHmxQXPkYmHS5tS56JoYoXZHf7pjj14c8Z3kCT4fW9C0tx1
-         kUvX87ODFP8DFIaxe8ZMkgPKad/Fd8AoqpJTewoXhIQse1VS17GG9D/yJTlo0Co5oaNT
-         HGwhvE6nxozvne8Fv+UPus3aNMgbNnEKJUUUfD0cmz2RPALV6bEcQE0zrvpRxMWGDEV3
-         yifg==
-X-Forwarded-Encrypted: i=1; AJvYcCUM2sfVR/4Nx0Q2w2Uyn7ofFULHszbZcpSFoBUvU1q2/Bvrq9I5h7ScP7Q6Q8ESPA6/YR5v0HdpiR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI/6cn6EoLM42D4vZKsZpHzv0dqmcYwd3z4RbUmSD9LpjCGOwl
-	dbQDXUNjZwmGD+pqcBhtL6TYWfrj4SN8RaksbgabZzAoVPjLCX5qaiyfwEhKSck=
-X-Gm-Gg: ASbGncsjJ1ENNc6v1lgsFXejamQJY4aZYgGI3pLacQROe9+tFKQiKy9E7XMbk48qqjR
-	Ef8jQnAE+mp619vwkFkTr61DGl7nYiXj+cKdHirCVTUPgrHMmCa+L/Il/M8HdBKOv4M86LRxG3w
-	NmTZDmG6DLsttIyQX1lbvJqYXLNfQ8C4TZgd3dR8Vw+a4Azpl12EcZ2W0MhsMVwL16XidIz5RK4
-	FP7k0NsSs4JcAS7PfUdUlG0rJ+tmxk5Z+xia8mivX4MDfsFYwB3TPzZNHB2cIOyxyDTA0e9IQqf
-	s5KGFHIU75B49NLV0LqjOaYGJwSu6nXPCl7PjPsXcsjS7Pk=
-X-Google-Smtp-Source: AGHT+IFhMLeZWxbEN2BcydszBZXCVk7gJnHRAGc8GbZQro6UfqEPZMk7uHs43lBLaNwzfikdBQk+ag==
-X-Received: by 2002:a17:903:1cf:b0:224:721:ed9 with SMTP id d9443c01a7336-22dbf73e8bfmr61560135ad.44.1745608609541;
-        Fri, 25 Apr 2025 12:16:49 -0700 (PDT)
-Received: from x1 (97-120-122-6.ptld.qwest.net. [97.120.122.6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db510304csm36179535ad.204.2025.04.25.12.16.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 12:16:49 -0700 (PDT)
-Date: Fri, 25 Apr 2025 12:16:47 -0700
-From: Drew Fustini <drew@pdp7.com>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, guoren@kernel.org,
-	wefu@redhat.com, jassisinghbrar@gmail.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, frank.binns@imgtec.com,
-	matt.coster@imgtec.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch, ulf.hansson@linaro.org, jszhang@kernel.org,
-	p.zabel@pengutronix.de, m.szyprowski@samsung.com,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	dri-devel@lists.freedesktop.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 20/21] riscv: dts: thead: Introduce reset controller
- node
-Message-ID: <aAvfn2mq0Ksi8DF2@x1>
-References: <20250219140239.1378758-1-m.wilczynski@samsung.com>
- <CGME20250219140316eucas1p29a76023868946f090f261bf78d5103e3@eucas1p2.samsung.com>
- <20250219140239.1378758-21-m.wilczynski@samsung.com>
- <aAP1BW3RmMb/Irya@x1>
- <81e53e3a-5873-44c7-9070-5596021daa42@samsung.com>
+        d=1e100.net; s=20230601; t=1745609170; x=1746213970;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x60z15u9qYTj44f9RXgg75GrQ1qzg8Z2bmf5H/QyEJQ=;
+        b=E6N7+hd+g1HORHt7beypSenUPjrlLkSloR7ZYiyQPpTd8weuUzBW/EyrtAf281XnCD
+         D0sLntFdoUkEs/M9CYe8WtV3MuL4tV7ypW0kis+1+76j757JCNdzDWZG/0IILS6fe9Do
+         Rl8yBIQ4oZMEPPnDci0/UyAdMbut4EGhVXa6ICnAbXemrvYQ2jMrTZ9Rb4mCPKC8JUDI
+         cWt157sLi+L3bI2UaSmEak19FTa2lBVssa7KfVoANLjKTx8QnkY/hwWPIx/57noopU24
+         OBBw83xp6UiGuKpWvEDsX1K7tIEJcI1PDJL02i9vcmmTDleAy7w9ZOwA/ucw/5z+Mx9e
+         UTFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVg/5176ngM3rzShq8IkZ72gjsdXqVCdbTYx29WQVKGr0myAqwD1uR5PSjhXQpFeGTHK3XPl920hRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiYK5c5vLNEprb7Y4HfPLtysh6HK2GvnPPOmFJ0W1iTK1ltERX
+	3PEplIxl1p5sMIsEKnmm+ChccOfz0cEnvKMJ6JxjTTY5zg7NWhRHThYslWikTAiS0MV9Mlzimty
+	qd05mRySEeLSXqanI8ZQqdEcEcpT2qE47rGCiSSV8jIqwX9Gs5EYozBrH2vE=
+X-Gm-Gg: ASbGncsRWsuBWVm+ejfDOD1Dam9gWgqEdSFUOq2/35YVjIxRbjhueMwNOFPPh6bbl/U
+	OMYZNayAdtkMldk+iP5ZhLl/0gLXjcvASUBOG3YyIgSFjYyzN3unCZRcusYqkAlmsN/a1z5pHTy
+	ohSiHua25BYCv4ZPU2eJw0Ht1B6seYy6ds2Aq8pO5pBrCqqJ5+yEpFNi6o50C0EVF3Xm4lMY+mp
+	Vsc4BKEfio33F/IGCa9I4TSzxBVEycRRHZXTxIUVSo2O8eqwpp3mz9buZvjtrvpAfJtsV04aX8n
+	log7FuKdwHfnrjYBTcDWkdbc+KQov06xFVQO4qgs53BNkNNANBzp6rb81IAfm9YYEqQ=
+X-Received: by 2002:ac8:5f94:0:b0:474:f9a1:ffb8 with SMTP id d75a77b69052e-4801e0172e5mr21297831cf.10.1745609169928;
+        Fri, 25 Apr 2025 12:26:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGq2r9L2pHOoYHGaxcw9IGqNIifgrl5bAlz4s9wksJ/7yXxAXtbVK+GxNShhVnzb9jvGPXJzw==
+X-Received: by 2002:ac8:5f94:0:b0:474:f9a1:ffb8 with SMTP id d75a77b69052e-4801e0172e5mr21297581cf.10.1745609169507;
+        Fri, 25 Apr 2025 12:26:09 -0700 (PDT)
+Received: from [192.168.65.156] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ecf7397sm180940066b.92.2025.04.25.12.26.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Apr 2025 12:26:08 -0700 (PDT)
+Message-ID: <68e2c0ee-d5e2-40fd-9ca0-262ed3270628@oss.qualcomm.com>
+Date: Fri, 25 Apr 2025 21:26:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81e53e3a-5873-44c7-9070-5596021daa42@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/5] arm64: dts: qcom: Add initial support for MSM8937
+To: barnabas.czeman@mainlining.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
+        Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Adam Skladowski
+ <a_skl39@protonmail.com>,
+        Sireesh Kodali <sireeshkodali@protonmail.com>,
+        Srinivas Kandagatla <srini@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org,
+        Dang Huynh <danct12@riseup.net>
+References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
+ <20250421-msm8937-v5-3-bf9879ef14d9@mainlining.org>
+ <2e3d94a4-d9e1-429e-9f65-d004c80180e5@oss.qualcomm.com>
+ <790a0b7537e0b82b70bc4b32612ecee6@mainlining.org>
+ <70635d75-03f9-49ea-8098-57cb144fda94@oss.qualcomm.com>
+ <5ccb39f9393b44761127717096a38a46@mainlining.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <5ccb39f9393b44761127717096a38a46@mainlining.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDEzOSBTYWx0ZWRfXzHpfLTJ/9pRR a872NIQxZljgH9zG8uznBaa5JE4mDirLU4vihjAjQ+JaAS+Bd/jRK3C2xekIZtedXnaxbHt+v5C imvcCCy31o80ttJSzVivuo12UTdZ1nAeJ//lqIZr+LTDWYdwKVb8H5E2CMKt5NH7OqxV/lbtQlZ
+ Tj6nQalk0GaowpnotLAdRZsXkUnGyCUgbpchFoQi84I598dlSi2mQiHbgRlB8QEyTMgXdOmJ/Id 786W5cDspQW2jkH1dUrw1dnfAp4p75/aoVZ9kPPblfKKhMhNo7m4ysqw7uXO3K5B6rA+4donOn0 kVC5w9FnR1m4epr/3ACygRm4RtKQm3om+hB1u1Ejlc1UOyyzsZyOEeha49JRT4yKU8zes6JNvs/
+ 3vH9kmdBRe4/S102wpCkbcNAf985X44KZ+g9M1vK8LnlDIAlg0YYN13YLXb/bLghvACfFwIu
+X-Proofpoint-GUID: eZFa1_kPXDV2sGdMx60fN8N5T4tE-HVn
+X-Authority-Analysis: v=2.4 cv=ZuTtK87G c=1 sm=1 tr=0 ts=680be1d2 cx=c_pps a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=NEAV23lmAAAA:8 a=OuZLqq7tAAAA:8 a=bBqXziUQAAAA:8 a=uxr0c4oy3NFgYiDcH2kA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22 a=AKGiAy9iJ-JzxKVHQNES:22 a=BjKv_IHbNJvPKzgot4uq:22
+X-Proofpoint-ORIG-GUID: eZFa1_kPXDV2sGdMx60fN8N5T4tE-HVn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_06,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ impostorscore=0 bulkscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=999 priorityscore=1501 malwarescore=0 suspectscore=0
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2504250139
 
-On Tue, Apr 22, 2025 at 09:47:34AM +0200, Michal Wilczynski wrote:
-> 
-> 
-> On 4/19/25 21:09, Drew Fustini wrote:
-> > On Wed, Feb 19, 2025 at 03:02:38PM +0100, Michal Wilczynski wrote:
-> >> T-HEAD TH1520 SoC requires to put the GPU out of the reset state as part
-> >> of the power-up sequence.
-> >>
-> >> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> >> ---
-> >>  arch/riscv/boot/dts/thead/th1520.dtsi | 7 +++++++
-> >>  1 file changed, 7 insertions(+)
-> >>
-> >> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-> >> index 474f31576a1b..6b34aab4b455 100644
-> >> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> >> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> >> @@ -7,6 +7,7 @@
-> >>  #include <dt-bindings/interrupt-controller/irq.h>
-> >>  #include <dt-bindings/clock/thead,th1520-clk-ap.h>
-> >>  #include <dt-bindings/power/thead,th1520-power.h>
-> >> +#include <dt-bindings/reset/thead,th1520-reset.h>
-> > 
-> > Are you okay if I omit this hunk? My thead-dt-for-next branch is based
-> > on 6.15-rc1 but thead,th1520-reset.h only exists in next until the merge
-> > window.
-> 
-> Yeah, I'm not exactly sure how to coordinate such stuff, obviosuly it
-> would be best if this chunk would make it to the 6.16, but if you think
-> it would be problematic then omit it, no problem.
-> 
-> I will then update this patch series v3 [1] to gracefully handle lack of
-> reset, as the 6.16 will not contain the required reset line for sure.
-> 
-> [1] - https://lore.kernel.org/all/20250414-apr_14_for_sending-v2-2-70c5af2af96c@samsung.com/
+On 4/25/25 5:13 PM, barnabas.czeman@mainlining.org wrote:
+> On 2025-04-25 11:57, Konrad Dybcio wrote:
+>> On 4/23/25 4:46 PM, barnabas.czeman@mainlining.org wrote:
+>>> On 2025-04-23 16:03, Konrad Dybcio wrote:
+>>>> On 4/21/25 10:18 PM, Barnabás Czémán wrote:
+>>>>> From: Dang Huynh <danct12@riseup.net>
+>>>>>
+>>>>> Add initial support for MSM8937 SoC.
+>>>>>
+>>>>> Signed-off-by: Dang Huynh <danct12@riseup.net>
+>>>>> Co-developed-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>>>>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>>>>> ---
+>>
+>> [...]
+>>
+>>>>> +            gpu_opp_table: opp-table {
+>>>>> +                compatible = "operating-points-v2";
+>>>>> +
+>>>>> +                opp-19200000 {
+>>>>> +                    opp-hz = /bits/ 64 <19200000>;
+>>>>> +                    opp-supported-hw = <0xff>;
+>>>>
+>>>> The comment from the previous revision still stands
+>>> If i remove opp-supported-hw i will got -22 EINVAL messages and the opp will be not fine.
+>>
+>> Right, I have a series pending to improve this situation a bit..
+>>
+>> In the meantime, you should be able to define the nvmem cell and
+>> fill in meaningful values for this platform
+> As I wrote in the previous revision there is no nvmem for GPU on msm8937 only on msm8940.
 
-I've applied this patch to my thead-dt-for-next tree:
-https://github.com/pdp7/linux/commit/1b136de08b5feca37ebdb6d28db3c9c6285aba5a
+This seems not to be the case
 
-We should be able to test with the driver in next once a new next is
-published (which I assume will be on Monday in Austrlia).
+https://github.com/penglezos/android_kernel_xiaomi_msm8953/blob/pie/arch/arm/boot/dts/qcom/msm8937.dtsi#L2046-L2191
 
-Thanks,
-Drew
+Konrad
+
