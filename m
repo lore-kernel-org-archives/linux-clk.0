@@ -1,63 +1,65 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59A423BD1D
-	for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 10:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8632405ED
+	for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 10:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745575695; cv=none; b=Z85E1322E7cvBaeBYYM+/g5KoWtSAOjwdGWurRT/7ZgPe8/CSMn02n6ScKODowxJy7Jmx2NhzWHyr0ZaVa65lLV/dBb3lLPb92Hsle8e3kS2UlwdbH6IP99ofCw2iXCDwwGhr4WAIFgFTpLMagMgxR3z/KuD6DJjHe01msYTeho=
+	t=1745576588; cv=none; b=KtES+Em5evIIhpYQI0t3MuXrko8iq7qYjNq7CyomIZlhZVIMM/st5uFlWWFeghXVrMHCwxskUPXmeYWtwCRNQYRPJrFZXPX6Pjhr/8YI6FHAmiCS+uT0pfpcGg+Hms4W3IIb5+T6rmHvvZ4xC1wHZsSSQX6X3LMyckWLKpAqAlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745575695; c=relaxed/simple;
-	bh=8W6PDJRTnPXYvMLSNBG6flWYTbiSLNvRa3oqH8q/3YE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JWjHEaR4qJJ5lH9u3N+mI1UFdDTWFWTnYWCdscEo5AbVHbmb2Uj9Yg5tvM0AIZsZpy63vPBiXSFh4F7ElgsScdYKlTSchV8XbX7cb0Bvt0BJGhrz3rP5MOD6iHan6KNKg+9y72nOzwGfoTfO59delvoy8e854Hrp06wMv/+qIpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=fh+Rcq4J; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+	s=arc-20240116; t=1745576588; c=relaxed/simple;
+	bh=snacv77pZfe5A1XSPfj1ume0murIRa0n+2+ekqhAw5o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QLlZfdmjIJsfEfBaXj3L0OcNPiUZRO3r529OI21NQ2BbbUXr1ixBTbKeCBT91a6EEt7t6T+j6Q+kmCfzfN3qt0xbeUGWBN/lY9YTjMWgpq1yxFagXdA4u/qRHrTAeP4Q9sH0tCxVuYORg0N5A8RYHE3Z9DjEoXeGBafbHPhlvX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YWsmV+Qu; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="fh+Rcq4J"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22423adf751so22349695ad.2
-        for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 03:08:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YWsmV+Qu"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39141ffa9fcso2337321f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 03:23:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1745575693; x=1746180493; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=5njHyJvz30qiVz7OEO7ktfy/1HyqmXVebkk5L4HQaNE=;
-        b=fh+Rcq4JmW5i5WWJGrDjuzs0Flq4KXcmgvEwcuk1iqrxDB2mdGspBQvf2XxXNidf8K
-         6UX5rBwlIHmzVDLhsE7/mhkCwlZXn9tPBMrZWG9iQ14240YDsl45HZwDkWQELKm9RnbT
-         STytZ08x9l1Dg13e+sLNEFy5Qdw0Gv/2XcjNg=
+        d=linaro.org; s=google; t=1745576585; x=1746181385; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yiqcPsUnb+5szPwlE5nf6K7tTtVvGKeKUMKRvRKeadE=;
+        b=YWsmV+QurCgBDS5F3DYp/ETmAgQNsYHYdPS3/yBg4GRl2ZX/i/GJN5ohRnrUMfVO8z
+         LCVmgtpXlxdc90uMhs3dZ1FxOvRxc3pEOyJNskcrkS2K+sIf8E/GpjQf7/k1Xl1GLr/o
+         hi+BxXJ+5GqRH+2BCzK6iYKP1spzfoWgLaAh/MlNj8FICuXvdIguTyfkWxOLhI/12Csu
+         Qc+U68Vc3XXK3WsnX1zKqeud8XBgFGkXbrNDsfanC/57O+LMjrJeh9QxNohqiJ6A5u25
+         /7P0PQ1NdmYgIv4BZjzEJKEE1Wv9IfbbPqsP7B+jgpU+QNN8GsWCdN1rO3aWmIPPV+a/
+         MDIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745575693; x=1746180493;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5njHyJvz30qiVz7OEO7ktfy/1HyqmXVebkk5L4HQaNE=;
-        b=A/qFhUBid5pgZyIc90shuZrkozK/+1tRep3UBQX9uaufeIUuqi9Lh/UntgYCx+RPC7
-         G0VGsMAubMI+Q29Ag7ektoF+4YXH11jCq/QZ41+m+UdDsjiSKBgywI14zj+K7RBgyc9A
-         iH6royobnl1JMG8B2EwG8/5FlGlaeW0aMT19QCpIAw8Vt8ayxBvtC6NS6T/33yAJ1Pmc
-         ZXuc9j2yk40txsCVqKNgHMujdY9lBiVMlN+58QaOzczN0qLudzWApPxdrb/iBAgI+hnj
-         u1nhOIvhjcsx1jqj6B6dzx1DfT8/IjH7betDYEr/N4JQ8+Ez8MiEGloBHLPy2ce3MB1Y
-         +wnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6yoiaJqwxXdzyU9rXJqrK1tsdlEJRLPO8ouRS02vV+VJuwzR6mEKgiXxgQj+3qBYLy/nFAtbznds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnMM3LnU9iQ32thq/zzv3o8H4npm46umcHQswPAk/U5jq669hS
-	jU74QbXtzl5DrPPvGNc34n8+LIynnHZxzcs72ncsMLbXdknnApevXmwNvNWvmA==
-X-Gm-Gg: ASbGncujg7mahkvG7CJSKBuZK9UHRQMbfnHfdeSF/Co1v4hjrlJ+yKvOANXJ7hlqiJl
-	c4FrPajb1lWwsFfE3Ssjrat3vSBy7HDhwuad9hsh7HQoUFB68s8Zm9GidRWWCC9KQHC492I+QbE
-	NG4Pib9tsOChSlbEvIvnEzLqp5OlguB+LRSeSc6wKfbzGOgMUkwG3+29ClUrx4NUOtVS2qX5NUf
-	Xqi8yPqwqoJvINgTfk4eIUa+cWhwMe2xI4cPuaKbuPBTgM4dbPV5lWgt64jQHfJAyRDKqvHDwKa
-	7sn46q7Xn798xwfEGl7k4l06chsWgjevcaTGDn/KYKRb/52LiSNyr+Vg8GSXp7/gSJAIy03C7mX
-	eBD0qO40jWqnhDJ/h9HaD+EpMhswMspfqaw==
-X-Google-Smtp-Source: AGHT+IEiRvydw+zpgaMow96w2Xm30w4pgcn8Jd4sCNL+n0Zk30vooImhsYXcKB8Md13tN2KuPsGqvg==
-X-Received: by 2002:a17:903:1947:b0:223:26da:4b8e with SMTP id d9443c01a7336-22dbf5d9eeemr28512845ad.4.1745575693162;
-        Fri, 25 Apr 2025 03:08:13 -0700 (PDT)
-Received: from [192.168.1.105] (88-187-52-200.subs.proxad.net. [88.187.52.200])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15faee2d59sm2546400a12.70.2025.04.25.03.08.04
+        d=1e100.net; s=20230601; t=1745576585; x=1746181385;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yiqcPsUnb+5szPwlE5nf6K7tTtVvGKeKUMKRvRKeadE=;
+        b=BAPVrGctMMm00wFz7CyQXCdEh097AeoQYn1Y2yy8XQVBMvTsGA2z6rSfOf+RJb8SeU
+         rZgkN/ff2Xx1J+iU96SQJmit9aaCrsiF3BhxeEUZxuQveFkA4/oSLS5I6dpnBP5hNn1B
+         AWVbH3RByiHQbKzq2zITC23A1nNCs1eY6siyKPoSAyDQm2kIGG6C8ZmzbpKXE2feYsY5
+         eC0CDDA1eI37hwH6MhRROZ4WUGFM6xCfA1JYz2sKPQwBMGW/7qucdIJ2cV/pCn3HOeY5
+         CHyCtdhMrIM3aGw5SrgmCRY+dcuz5cLRWBPlMZ85CdDFdHKXkDCmeLP2srw6/SEdI6eD
+         /Qmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNPbnZGPuKmT/D2j8oZdL2h1xbRHo/7RfwoHzthWRTw7rLsXjb+Lsyd65+nTNiqSfIAcGnpR1FmFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzImU72qUWVCZNHZltr+j3dCsDBqqHX2SZV90BrkwYA3udzTlH/
+	8YX+tVaK6kiecjdemJnn/40CuV4dHz7B/q4dJMLCrksJq+8Lbe3+jZrORTejy3o=
+X-Gm-Gg: ASbGnctsp6Dj1H6YPmW5fo+TeQwZAzxwZhDxvAhB76rDADc19VD1K6xKINCoNd9MFmx
+	4P4qKwLdo3lFNSyEupiEK4CRKKqbPS/LrRF1mgNWov1dp5jfxqjWxED/jwtbWXTSA75gL6SRner
+	NsOyQtX8HWXhYUhxzqOCwliB97L3Keoya398BOz6FOQ1bTIQaXgEnWl29Tu16ArdJE69/VIcC+x
+	611omJ6Ynrcka2JravSmeGb9Z5dQZCTlhoN4SgsxKurBtxMzMsT2cW4O5+FXUS1F5S7jOn8Fw1n
+	l5vdgxjCXhbdl+fQBbG9B3futXEMh7xK/ycmaEmiVZXSLS+nqYJU5FdrQI0ZAq0qlUA7+vUcRTz
+	a4/5quQ==
+X-Google-Smtp-Source: AGHT+IFy63dQ2XRXcyQqYQm7otc6uGHPPriKeUkLkoP5aXyqN85KOXE6hcyqC7mH/ytf/6kCDWZKiQ==
+X-Received: by 2002:a05:6000:2481:b0:39f:6d3b:f136 with SMTP id ffacd0b85a97d-3a074f10c98mr1298955f8f.41.1745576584983;
+        Fri, 25 Apr 2025 03:23:04 -0700 (PDT)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46a49sm1909638f8f.61.2025.04.25.03.23.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 03:08:12 -0700 (PDT)
-Message-ID: <49011014-8ad7-4392-b2be-736ecd25cf22@broadcom.com>
-Date: Fri, 25 Apr 2025 12:08:03 +0200
+        Fri, 25 Apr 2025 03:23:04 -0700 (PDT)
+Message-ID: <4345b6c1-f0d6-4f77-a635-9d8c1cdaacb5@linaro.org>
+Date: Fri, 25 Apr 2025 11:23:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,88 +67,54 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 -next 10/12] arm64: dts: broadcom: Add overlay for RP1
- device
-To: Andrea della Porta <andrea.porta@suse.com>,
+Subject: Re: [PATCH 1/3] dt-bindings: clock: Add Qualcomm SC8180X Camera clock
+ controller
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof Wilczynski <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij
- <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
- Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn
- <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
-References: <cover.1745347417.git.andrea.porta@suse.com>
- <4bd8dbb374f15a01e3b3ea27f9e802cd702c1bab.1745347417.git.andrea.porta@suse.com>
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250422-sc8180x-camcc-support-v1-0-691614d13f06@quicinc.com>
+ <H56Iba_grof22uzTtGCI-APhiDAGSejNod6jsSVIykm9ijaaj7PWqyszShCEGjIpM2wCLOn4a3Vfb8Hjziqklg==@protonmail.internalid>
+ <20250422-sc8180x-camcc-support-v1-1-691614d13f06@quicinc.com>
+ <621d8556-f95b-4cbe-809b-864417f0d48a@linaro.org>
+ <b96f8432-132b-4c16-951e-718e91ec52a5@quicinc.com>
+ <f74d8b50-35a1-4ce8-bfdd-4c90782b8db5@oss.qualcomm.com>
+ <b74d90d3-2a85-4853-9843-6a6f22720587@linaro.org>
 Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <4bd8dbb374f15a01e3b3ea27f9e802cd702c1bab.1745347417.git.andrea.porta@suse.com>
+In-Reply-To: <b74d90d3-2a85-4853-9843-6a6f22720587@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 4/22/2025 8:53 PM, Andrea della Porta wrote:
-> Define the RP1 node in an overlay. The inclusion tree is
-> as follow (the arrow points to the includer):
+On 25/04/2025 11:06, Bryan O'Donoghue wrote:
+> On 25/04/2025 10:35, Konrad Dybcio wrote:
+>>> The dependent GCC clocks are marked always on from gcc probe, hence 
+>>> did not mention the dependency here.
+>> Let's do what was done on x1e80100 - describe the AHB clock in CAMCC
+>> bindings regardless of how we handle it.
+>>
+>> This way the DT represents the real hw dependency, but the OS takes steps
+>> to get them out of the way (and then ignores the GCC_CAMERA_AHB_CLK entry
+>> because the clock is never registered with GCC)
 > 
->                        rp1.dtso
->                            ^
->                            |
-> rp1-common.dtsi ----> rp1-nexus.dtsi
+> Ah yes, this is an always-on clock isn't it ?
 > 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> But in principle I agree, the DTS should just describe the hw as-is.
+> 
+> ---
+> bod
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Pleasantly surprised to find that's what we've done for x1e camcc
 
+20250314-b4-linux-next-25-03-13-dtsi-x1e80100-camss-v6-3-edcb2cfc3122@linaro.org
+
+---
+bod
