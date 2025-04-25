@@ -1,63 +1,63 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E0E23370C
-	for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 10:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DFA23D28A
+	for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 10:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745575668; cv=none; b=SpskWB3tN1NfQaNYh1ozcs2XNN/6hlRcK8CzkDUVlhb+Xardt7jBentSghOlp4k4Tr+v/7qAXXF420RNL8pMwMzs9T4e7R8MsYu90Cqfgs/kGwQVGWKPOxizvk5EC2lNp23wRMn+IX5zZURCItL4UIgqC8KTPngaqo0Y7py06XE=
+	t=1745575678; cv=none; b=rZUty85YmWDuazPvSByVbz7Qo5gfY/DAicBlxrfDvAToMygjhRE7a0BnYidMz4uprq5GugQuM6faxMFChENzZxKPPu2SGv27ktYe6Dyk32kkn03mZuVKA1PotjGze5AODMr6U1Ya66EFpMPxPduVbBgvobSSdwJnlS9LLqmnx6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745575668; c=relaxed/simple;
-	bh=qV1pZ+3JNp92kKS0xXXAb/pAJaziKcnWjRvO2Z5j/JI=;
+	s=arc-20240116; t=1745575678; c=relaxed/simple;
+	bh=gMfPESXVEcHFW7aCs7FCE1eoGX1vKGJ5//35Wtfc/wk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=O1VlL6F9OhRNOdcp+srdrvr/Qeger6ZpqDC1LPYlSKg4tvG46dy1/tIuCfNb0rmqcAL31X9ZhySD3a1n77p5nlDjUoMzxlFovqq09kah/1WZr0+qGRLCXdaSqH9eM04CH5J1Et+vQgVUtbdNwJUqnK6D+7fMeBQe4wxtPZYWhmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=hi9sU/dE; arc=none smtp.client-ip=209.85.210.172
+	 In-Reply-To:Content-Type; b=PFaev16aGwB6DtRu9g23ueog3WrxxInD6RP74qM2wOhx3MMd9gvIKo+Cqe0rVnAOMp/IqzYW6mouTRc8Ssi3MC0KPArl75S38vtzY8Y1yA6tS+5LCEmXz0yO8ozxH8nXdxacUefpIzjL+U0RRjifw5TTg5vEmdduDjxOhVX1rb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MExBNHst; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hi9sU/dE"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-736dd9c4b40so2797228b3a.0
-        for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 03:07:46 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MExBNHst"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-224191d92e4so22464585ad.3
+        for <linux-clk@vger.kernel.org>; Fri, 25 Apr 2025 03:07:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1745575666; x=1746180466; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1745575676; x=1746180476; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=5B7y37K/WGDfH6iYqZP3IbPETHIDt3dOJy9LPqxh618=;
-        b=hi9sU/dEpFQfBFlaD5a7O2qhVFpneBbrm9Jc4YWpt7nxK7cZtmdKE50fsj+XqWrp1+
-         F8Wx4KzDWJBw7F25oW1NleaBjZB90nyK6+CRT7lQP0TbSYv7aRmSSYzKQQiib9HaV+CB
-         wX1A5dfcphrBYCEpmV3tY6oaAYsNC9wy1bImo=
+        bh=qL/GfRaKKdsAK+0kAIMrtxaOj8SSMTgBlKehhO/P69U=;
+        b=MExBNHstst+XK1XSn677+eThyDa9I03J5pApCiVUMUrUdqWm/Y8ysMIJ/qaUVlEXxA
+         AgCOxCzqgeKWcV6hnJWrzbXVhSMDUm/0CQLbgNi/mxWhNoRrJ/cPm3KhipMcGgbuRSpV
+         L684Yej7Flf32ppzSg/cQqIKfC8m3xjBifwqw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745575666; x=1746180466;
+        d=1e100.net; s=20230601; t=1745575676; x=1746180476;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5B7y37K/WGDfH6iYqZP3IbPETHIDt3dOJy9LPqxh618=;
-        b=acaQgXIox1s6jFUQTgwhraqgKcx5EMtz+fOoLGKi1JGVBRPTa5tSlc+sFMvzPIWaWs
-         CjEd2w1g6Hd6+q/8A9JCBkG2sL1e7W84KN7ux2JS6VGIB4l1wIHDcYT8jjntBNhthvQC
-         bnL3LEJ+bEIxs/n2Djo0Y4XRtNLuCVe8DQWcwEoom3miIfAzg76tvO0NMAd9invhrnnk
-         QthZJS8llPUw3SmW4yyDaXqNtjpBOtVccsNR/SyPkRl5eD1TE7VXFRbGKfS8xkeytX9V
-         m9P5zqHOuWjYkYJq7HUUAHAT5xPg8bT2FaO0rQcItF+OFgTO84ELDio1twWipPZ0124E
-         Bhsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAyTgYMCREJgXljclO3nCq+vNJjjvI7XDGKsGHHCbxuz7wz16bek5iUv3N3g3Hsen589k3GAmI02A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgFIzFF1KeFocOpP9g3DMT6NDSuquSRx9NVHDeClS/lCactmUw
-	u32S75lYKBPgz3Yw40pl+LlQhxCJOIgHcLiNyqfe2BcX1byPkPmtcifxWl70xg==
-X-Gm-Gg: ASbGncvWpnR/dyi8E8xk4GtwH84BmlMuNrMnThPQ8wZx8MRguooXjh2nCqnb6qJSciI
-	N6R1qEboPzfa229c2qo2k0BHc+CyMkNz8zCfrRm4xLl+fFXQpw1IFxbOfBv7eTxspIP/c+bBgSJ
-	oFM++EGVeNDa0f09274moJHGKBTqrRUg5tuFpew0ZS4TUUvA32JYcSw3SX8pzvdCRUO0P5ZhcLX
-	STdiL/EdqiQVEsumtkmowfXtSv0YdIz3YrUXxNwYHIpubBfDERDwLFzwM+G5CpiIWWj2ncZud4X
-	Grhwjc7vMV0/Ua/sWmktS4TOctzU9hpF8y6cgpgGsqCjvHrVwndZX9WY2FmlCYYue0GbqRWi/H2
-	QhK3849th9bC3Ic+bn3jgzt691Gm5oUTE/A==
-X-Google-Smtp-Source: AGHT+IH+RPx8vMoFBrGnE2UELbu76oBxdqLLmuOZ9MxvthItxwA6UQaxgwbV1lK1NsLiE9He6IufKQ==
-X-Received: by 2002:a05:6a21:6b0b:b0:1f3:1ba1:266a with SMTP id adf61e73a8af0-2045b1257f0mr2341262637.0.1745575666250;
-        Fri, 25 Apr 2025 03:07:46 -0700 (PDT)
+        bh=qL/GfRaKKdsAK+0kAIMrtxaOj8SSMTgBlKehhO/P69U=;
+        b=sDSOt7dGhuAscOx2lRwmxTYalTdzkbmISd+D+r6mHTQoUb6/HO7Rw4uwVXC4tqawJk
+         qHBKBuj0fZTMacDheSlBfT9YoE2xIoWxQLCtNO/h+JfDgIIB7OaW7TIlvKM+KugxX2DN
+         FvO1aHGW9Yeis66T3Efhnqfx3TRi4aWajIOmou0G+zcrKYJ8RbbSjGCDJ6/89UxcAgWZ
+         fjLJZCuKP+0R9dp+tqFfGeUg8Kiaw+fUrD0ybYhwEeA7A9F2A/KnUxY+7FFGrc0QOIRc
+         rzc1C3CWCTNtBBq019AYucDvd092Dtby3tzW2wPz8XnL2E0O3dyN08vmtiLrYr7oSXEP
+         IwBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUs4lgD67Sd3tq48fd/d8p3TQXG94/ucuG7Ne9CrjNB0rG5p/Fr87dIU5G38NuEYm5nnNhEhsvw1PU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmbaQsdb6gx9zc5UMGZrV/xRfmu9j3jbLPQrh9fpYO/9BoDUux
+	TBl4CJWA+4Ycb7/fqxMFWb7BY1O3+pDYavx6YVfDdw4qde6z7qnNF8tFyT8c3Q==
+X-Gm-Gg: ASbGncv3RmoHQjhw24CtivTOyjp9bRxvE9g+CLPDKtYmd4n8xf/H5R3JRFsaJqaQwUt
+	Rm4a/knIdg9W/QavztXfuXqbhpApYH7C2jfJ3RTTOOQjIhzygFeMrALNRiga7lZ0549Ou5BD/kC
+	mkci3obkvjvkab7r8aIhWLo9BgSMEA2N9YFy2M+PSkaYK304rNkhTom4BgWdyyASu9Nx9I+FBmh
+	e2tEAVX8PBxGS1hs9JmL6Y+umWc5Bp8/FdbeZihm8qsfDiVvH2C3yFvf4Q9B8XEwZh7inxyWaLs
+	HXa5JZ9OdnIY0iOXPOpNigBjo6o7L0LRBG5Oox3yEPEUpK+Kle29iJW7bugySd3eJFRm95MPFKs
+	/T1YMUL3g0R4ltRkqLogyTut14zhr14KVSA==
+X-Google-Smtp-Source: AGHT+IGJly1kAkAD/iMSo8eYESOtBt5XFa27wC92s+9+rjyn8NGcwgtok/8JfVLMz7TNZGrC97pXKg==
+X-Received: by 2002:a17:903:2450:b0:216:794f:6d7d with SMTP id d9443c01a7336-22dbf6354d8mr28313265ad.48.1745575676208;
+        Fri, 25 Apr 2025 03:07:56 -0700 (PDT)
 Received: from [192.168.1.105] (88-187-52-200.subs.proxad.net. [88.187.52.200])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15f76f48b2sm2564155a12.8.2025.04.25.03.07.36
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15f76f48b2sm2564155a12.8.2025.04.25.03.07.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 03:07:45 -0700 (PDT)
-Message-ID: <78cdc9c7-47f5-4522-8dea-b0bb3228dd7b@broadcom.com>
-Date: Fri, 25 Apr 2025 12:07:33 +0200
+        Fri, 25 Apr 2025 03:07:55 -0700 (PDT)
+Message-ID: <e6207e73-05bc-4a50-a23f-0d4b3dc02c4d@broadcom.com>
+Date: Fri, 25 Apr 2025 12:07:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,8 +65,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 -next 11/12] arm64: defconfig: Enable RP1
- misc/clock/gpio drivers
+Subject: Re: [PATCH v9 -next 12/12] arm64: defconfig: Enable OF_OVERLAY option
 To: Andrea della Porta <andrea.porta@suse.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -94,7 +93,7 @@ To: Andrea della Porta <andrea.porta@suse.com>,
  Dave Stevenson <dave.stevenson@raspberrypi.com>,
  kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
 References: <cover.1745347417.git.andrea.porta@suse.com>
- <928679d1511a43b8dda150009eb023b4eaaff5a2.1745347417.git.andrea.porta@suse.com>
+ <8baf7818aae1fe5be046015e4bd8121ccc9acb20.1745347417.git.andrea.porta@suse.com>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -129,16 +128,16 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <928679d1511a43b8dda150009eb023b4eaaff5a2.1745347417.git.andrea.porta@suse.com>
+In-Reply-To: <8baf7818aae1fe5be046015e4bd8121ccc9acb20.1745347417.git.andrea.porta@suse.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 On 4/22/2025 8:53 PM, Andrea della Porta wrote:
-> Select the RP1 drivers needed to operate the PCI endpoint containing
-> several peripherals such as Ethernet and USB Controller. This chip is
-> present on RaspberryPi 5.
+> The RP1 driver uses the infrastructure enabled by OF_OVERLAY config
+> option. Enable that option in defconfig in order to produce a kernel
+> usable on RaspberryPi5 avoiding to enable it separately.
 > 
 > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
 > Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
