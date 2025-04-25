@@ -1,135 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB835695;
-	Fri, 25 Apr 2025 13:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B932524E4A4;
+	Fri, 25 Apr 2025 13:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745587203; cv=none; b=q0Kdl01Se7wHYCfIuhd2Pu/xmvFZ64z1WdMB5LK+38lpkMS7gOyeWsFTCSlzQW3FSDkMqfGPPHVqd3R4NFhnIFeCApk/bMaYFI+2oDZ4IPeultFtgs47uYmsqANQBCrP5dyVe96XEPFU0N6qBTSnvXuDkjvO8Mv5ExkPVPpZ6YQ=
+	t=1745587666; cv=none; b=alqfKVJK1AJmJ856IQagOljzXZgB3dhBX32OQD1LGSyHOi8mJmYv6n53dXsgzUtz78w7fYLn0GgLDzjYrTg/Szu1zq9yVr4mg4rvJAcPjyjvJmRTcCaOd+PvV80D+ZPpW4lGjzC4lLl3KIO1eodtXBn0FX/CCZRO55eENu6UDAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745587203; c=relaxed/simple;
-	bh=Mb1PcuxuqGZBuRSePtPlbyzRcP49+xM4Om4ipDtwN20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IlX606AVy5mLi4xbhdYIRUUDgFtQ9DVeCLjIoghPeK1tTDHz9Ayt9J/igZTY9xhkbIZmTDq4HvZH/YMDuOWvRV9CS1BZIvWruOM/dyNzJXXLwAtu0MvxsV4/3HAyOQM6qcQNy0qqNs8ojx/IWeZ8B1ZJgpRBZbu9odk1W6fwW30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=i1aRFLeY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745587666; c=relaxed/simple;
+	bh=tcdus/HuKbFweXtgaZf6ql01FyZg0WzxYXzccEMPaPo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i89qgytlBPmOEZvb4lKOGZj5KeB1NILDZQJqxOk+/uwa0PD1zvDjlci+ajr74JPxeNzDdoEoSNuxTRV9DJ+/VseNv/apZWJB3L6kzHijpeZW1Da0s/XyJqO7P+UeWmOnYR0BH5MEe3f9QQwpbbKe9V48G6anlx7nWafXr1y54YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMc3OQ4f; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="i1aRFLeY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 452C3C4CEE4;
-	Fri, 25 Apr 2025 13:20:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745587202;
-	bh=Mb1PcuxuqGZBuRSePtPlbyzRcP49+xM4Om4ipDtwN20=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i1aRFLeYLDF4zMUJDOaNISIavzGnIsPK/X2Trk7AjYOsXODOBT5fM6VcZMTr5m51w
-	 PGZ7Z1wXOW5n7ew+GToxDyQdb8ih1xZBxl0b7ca/Mb4Af0TLV/f6RJOZn4v4+Isllh
-	 AiMuzIYINZJrnUkSjKnS7LPuDVrTyxf20k7sgycQ=
-Date: Fri, 25 Apr 2025 15:20:00 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMc3OQ4f"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2241053582dso34470945ad.1;
+        Fri, 25 Apr 2025 06:27:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745587663; x=1746192463; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r2SD1OSUWdCldoQhvBnkDEM/QjZ2T8xhHE0qihkTzOs=;
+        b=fMc3OQ4fEVfxXQYlNheDYDm1jDGlNNPpLEJitoRLlay0KSOTgDfkzvkDWXXsAQi+hP
+         nwoBuMwMWsH3GRdeu/93iA+f3XS33Cr7S892WF26yl3338IZnHJKmnNfShc8FbCvmjFR
+         tbwjF0wIdNYKjl/3du8V3t4PDqEdDMEdyzYfsDmmKK7/B1BkV6F5XLF+Ank7hjIHiR49
+         DjfidiQ0Vo8m4O9TZqRBWnP1lNkMukmuOC/4ShLXxdhuhbK1g+VJ2VaJBgiXr8phOGbp
+         5CLpqBCA4tWfTArhs+qbqt4tQnopJd0XQ+GUNglhZZ1PJ6V8OdM5e1FaucE5CmUT+3Q1
+         1k9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745587663; x=1746192463;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r2SD1OSUWdCldoQhvBnkDEM/QjZ2T8xhHE0qihkTzOs=;
+        b=oOUsgaCp6fVkLKrC/IqXCrKVhlSFW3CYhaF2yXts9A7dz7vdZCGXgRf2zzZwfBp5iY
+         OaLBxQ81Py7bk8fH4GHdwgDsSmRHG4HAINH7IJtkvX4TWUHhu8CRLVJDWAsTPncx7m+B
+         KE3tV30ZJoBOtPXTU29kKNTrzyn6F1lr1UShxd6ZDEfaM17g33GY7JiIa4KMywqcjbo8
+         WOQxTYw5Tv1ouwv4DfW6erXA9Bl5OUlnHigQhMLTufkKIBvMm4Y2GcxuC1RiZ4vMRgwZ
+         stdlCQ28QQNtqvBevWAHctzJseGW1ayqYBj8atJ3dIc8MDyd1e7kLKBtdT6CYMzNGu0x
+         oIJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCujKYeeMO5WHJtfJ/7B2az/Vjw8duCfYhizQeChCw13ReVoXCi5BhCQ9WdwUTBf/dW0MLPN28lftf@vger.kernel.org, AJvYcCUNEf8HLiVq96y5C7cYchARYwzMrSJfrCkd/e5aj7EPTaiWF2f29zH+sfLCrsBbPXLX/mFO/8gODdviRRAqwJaC7A4=@vger.kernel.org, AJvYcCUz98nX/O0ItxzaBj+bGexgI0TK/7coZqzCph8ca/b4bcyJO7pnFRasoNPgmAyF6WSGFLyBnCer7C88@vger.kernel.org, AJvYcCWKNYLKqfDeHSfivioxGh60TNZ2TkNOd8FN7X/jf/tSuzLCm81npXwqDYmKwxd/pHgepeDdRsP8zutqvfyL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkA0rBf1Xb1jRi5nw/Elg9EzwcA7qgRZjeRhsxnLaEClJCC9x0
+	nKW9xt+TWi+VpXJw71CT6q6nSsun7yd/NK2aPtTBXr5MwztMdx77
+X-Gm-Gg: ASbGnct9vxDu51aQI/eIj7pxs0oEEYqcbjOd4y2X5fYako/YyBecJlqCeAdH4Gsm7jN
+	1yqBDUWssHxsLX6wB7YIWJGEd+Vs5++bG/9yxjPy6tHadfYpxcSLrYZBqmg6XQpjACVCf07VmEP
+	0nu4qHO+P/jqq0ng85x5f3hxC2WLDfMEzraiflXTObo3d0s0g6ycJez997RWhVpL8SWWtY9v4Ja
+	BbaP7kZPw38GNPJ2r/UVgdslu+thIllowvJHQbsY68nNTauhco60LrGtCUVu0OzUIZUC4ilvGJX
+	aVMSZ2g2MRiY+fXD1smGoXrAYnT/2e5twye5tGLywwJYCyGnz1EsiQ==
+X-Google-Smtp-Source: AGHT+IGUB9p8QXy80D1gjG9EUjUhadcx0Mg+hVe8ZgGUVZ0uSDDJqvE79n62bP2uhHNnrtRUSn2xgA==
+X-Received: by 2002:a17:90b:3d45:b0:309:f53c:b0a0 with SMTP id 98e67ed59e1d1-309f7e6e981mr3905427a91.24.1745587662858;
+        Fri, 25 Apr 2025 06:27:42 -0700 (PDT)
+Received: from localhost.localdomain ([110.44.101.8])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-309f7752a03sm1564313a91.18.2025.04.25.06.27.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 06:27:42 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [PATCH v9 -next 07/12] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <2025042551-agency-boozy-dc3b@gregkh>
-References: <cover.1745347417.git.andrea.porta@suse.com>
- <e971e31f6a14af608bba2f09b8c749f619381ac0.1745347417.git.andrea.porta@suse.com>
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-kernel@vger.kernel.org (open list:MAXIM PMIC AND MUIC DRIVERS FOR EXYNOS BASED BO...),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES),
+	linux-samsung-soc@vger.kernel.org (open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v1 00/10] Add rtc and suspend to ram for Maxim MAX77686 PMIC
+Date: Fri, 25 Apr 2025 18:56:20 +0530
+Message-ID: <20250425132727.5160-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e971e31f6a14af608bba2f09b8c749f619381ac0.1745347417.git.andrea.porta@suse.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 22, 2025 at 08:53:16PM +0200, Andrea della Porta wrote:
-> The RaspberryPi RP1 is a PCI multi function device containing
-> peripherals ranging from Ethernet to USB controller, I2C, SPI
-> and others.
-> 
-> Implement a bare minimum driver to operate the RP1, leveraging
-> actual OF based driver implementations for the on-board peripherals
-> by loading a devicetree overlay during driver probe if the RP1
-> node is not already present in the DT.
-> 
-> The peripherals are accessed by mapping MMIO registers starting
-> from PCI BAR1 region.
-> 
-> With the overlay approach we can achieve more generic and agnostic
-> approach to managing this chipset, being that it is a PCI endpoint
-> and could possibly be reused in other hw implementations. The
-> presented approach is also used by Bootlin's Microchip LAN966x
-> patchset (see link) as well, for a similar chipset.
-> In this case, the inclusion tree for the DT overlay is as follow
-> (the arrow points to the includer):
-> 
->  rp1-pci.dtso <---- rp1-common.dtsi
-> 
-> On the other hand, to ensure compatibility with downstream, this
-> driver can also work with a DT already comprising the RP1 node, so
-> the dynamically loaded overlay will not be used if the DT is already
-> fully defined.
-> 
-> The reason why this driver is contained in drivers/misc has
-> been paved by Bootlin's LAN966X driver, which first used the
-> overlay approach to implement non discoverable peripherals behind a
-> PCI bus. For RP1, the same arguments apply: it's not used as an SoC
-> since the driver code is not running on-chip and is not like an MFD
-> since it does not really need all the MFD infrastructure (shared regs,
-> etc.). So, for this particular use, misc has been proposed and deemed
-> as a good choice. For further details about that please check the links.
-> 
-> This driver is heavily based on downstream code from RaspberryPi
-> Foundation, and the original author is Phil Elwell.
-> 
-> Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
-> Link: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
-> Link: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
-> Link: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
-> Link: https://lore.kernel.org/all/20240808154658.247873-1-herve.codina@bootlin.com/
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>   # quirks.c, pci_ids.h
-> ---
->  MAINTAINERS                   |   1 +
->  drivers/misc/Kconfig          |   1 +
->  drivers/misc/Makefile         |   1 +
->  drivers/misc/rp1/Kconfig      |  20 ++
->  drivers/misc/rp1/Makefile     |   3 +
->  drivers/misc/rp1/rp1-pci.dtso |  25 +++
->  drivers/misc/rp1/rp1_pci.c    | 333 ++++++++++++++++++++++++++++++++++
->  drivers/pci/quirks.c          |   1 +
->  include/linux/pci_ids.h       |   3 +
->  9 files changed, 388 insertions(+)
->  create mode 100644 drivers/misc/rp1/Kconfig
->  create mode 100644 drivers/misc/rp1/Makefile
->  create mode 100644 drivers/misc/rp1/rp1-pci.dtso
->  create mode 100644 drivers/misc/rp1/rp1_pci.c
+The Maxim MAX77686 family of PMICs supports RTC crystal clocks.
+Device tree bindings have been added to enable this feature across all
+devices.
+
+Add information which regulators can be disabled during system suspend.
+
+Regulators which can be turned off during system suspend:
+        -LDOn   :       2, 6-8, 10-12, 14-16,
+        -BUCKn  :       1-4.
+Use standard regulator bindings for it ('regulator-off-in-suspend').
+
+Tested on Exynos4412 Odroid U3.
+
+Previous version
+v1: https://lore.kernel.org/all/20181204194025.2719-1-linux.amoon@gmail.com/
+
+Thanks
+-Anand
+
+Anand Moon (10):
+  dt-bindings: clock: Add RTC clock binding for Maxim MAX77686
+  ARM: dts: exynos: Add rtc clock definitions for MAX77686 PMIC for
+    Exynos4412 Odroid
+  ARM: dts: exynos: Add proper regulator states for suspend-to-mem for
+    Exynos4412 Odroid
+  ARM: dts: exynos: Add rtc clock definitions for MAX77686 PMIC for
+    Exynos4412 Midas
+  ARM: dts: exynos: Add rtc clock definitions for MAX77686 PMIC for
+    Exynos4412 p4note
+  ARM: dts: exynos: Update proper regulator states for suspend-to-mem
+    for Exynos4412 p4node
+  ARM: dts: exynos: Add rtc clock definitions for MAX77686 PMIC for
+    Exynos5250 smdk5250
+  ARM: dts: exynos: Add proper regulator states for suspend-to-mem for
+    Exyno5250 smdk5250
+  ARM: dts: exynos: Add rtc clock definitions for MAX77686 PMIC for
+    Exynos5250 snow
+  ARM: dts: exynos: Add proper regulator states for suspend-to-mem for
+    Exynos5250 snow
+
+ .../bindings/clock/maxim,max77686.yaml        | 48 ++++++++++++++
+ .../boot/dts/samsung/exynos4412-midas.dtsi    |  7 +++
+ .../dts/samsung/exynos4412-odroid-common.dtsi | 63 +++++++++++++++++++
+ .../boot/dts/samsung/exynos4412-p4note.dtsi   | 31 +++++----
+ .../boot/dts/samsung/exynos5250-smdk5250.dts  | 63 +++++++++++++++++++
+ .../dts/samsung/exynos5250-snow-common.dtsi   | 55 ++++++++++++++++
+ 6 files changed, 255 insertions(+), 12 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77686.yaml
 
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+base-commit: 02ddfb981de88a2c15621115dd7be2431252c568
+-- 
+2.49.0
+
