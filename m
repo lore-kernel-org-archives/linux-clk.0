@@ -1,168 +1,85 @@
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54B218870C;
-	Sat, 26 Apr 2025 07:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EE15661;
+	Sat, 26 Apr 2025 12:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745652715; cv=none; b=oa6vuODdLW2uNFJzg/4LsjjBOZZR1hNizNpnMhfzdeCfS9U9xij78EgF3sO7calSkqblFRd7EXkODWzXuKCDciGn8cgRI5l3JgiQIplt25vEYDg+jKVVuoH+heTHLFfObjPyCWvjgUTr+tORh+rlyPP01pnQYq/uH639MyMbu3c=
+	t=1745672096; cv=none; b=Qf9Uv2IWzCf7PfeUgIw5NM86U/q3dLJu+ozW4Jw7yhyE0Z4eIEPoELVLe6f8g+NAS4HIXYJkuc1j2xXAaG2zQbRST0VJ9qzgBQ1tIsayNnSt0i18AtTvLow8/YfnRe2mrymcnqo54D4DcRfZreReeYsV2mzUHodPQb19i/GpIxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745652715; c=relaxed/simple;
-	bh=usn3UhhvWYxA5R1L1n51sRf0wY9ZS5AhL2O38+3iocI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TeOMtKpd/qKmZl6AUeQdcSYYS8fMIglG/h8qnRt4thy7VbmgIe2OaLwNmcjaIb/h5XiNcgr+GJP+H0bdoh2czNwH76e2bNxkuHOrKLAagLA71wHYfaACpwDu8Py42LyS2XR13tf9ygq+06MGPF6iPQZeV5vgXnwOrHcNAUCDJKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=mfgQZGtZ; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+	s=arc-20240116; t=1745672096; c=relaxed/simple;
+	bh=qbqKmJyaTbaUBHuw1e5uY4FwjJY7zF+2e5++z6J+52E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y5EWbvQxkn72cRdjrYk1Zv9oGvaf5Gx6ZYdS5x8REuOHFOzRGxAXLB1Wy5oXeUVzl8e+3ejd080yL4Reu/pAdb8Rz0g14SbwxdSCALvm145bbgMSjMWu2+3Q3GN2WE45oSQgUQbiQMqUzu+KhOkmzV+GGz8/0XkjB4fvfA68mgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=MlJea2bk; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="mfgQZGtZ"
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 2F1521C00B2; Sat, 26 Apr 2025 09:31:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1745652703;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5exbCp8CDaKtwnGNmQNuQzYNnvlYj2r8BcoFxqyUHf8=;
-	b=mfgQZGtZWV3YKRvc11Fy2WjXUhClzecJUpk8uWFAvgSynbJ4YLRl0zJKFI2+KRYmEv/vIS
-	nEGu1k4V7qVSC93t6IBB0MyDqO93+03canDSdfmPtS49p32DXiQ8kU9ZO1dLYEU+Xf6umH
-	NN3bTS8FxIdGst1L8YhkuJUoLzvidEA=
-Date: Sat, 26 Apr 2025 09:31:42 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Danila Tikhonov <danila@jiaxyga.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Amit Kucheria <amitk@kernel.org>,
-	Thara Gopinath <thara.gopinath@gmail.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alex Elder <elder@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Andy Gross <agross@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="MlJea2bk"
+Received: from fedora.intra.ispras.ru (unknown [10.10.165.5])
+	by mail.ispras.ru (Postfix) with ESMTPSA id A16B740737DD;
+	Sat, 26 Apr 2025 12:54:43 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru A16B740737DD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1745672083;
+	bh=0RV3L+Qf5fQ1ETxGFcMm68u6hLC3r2iQrxdAPrtncRw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MlJea2bkXDqiv78LxsFaG/nXcXqeG/lf2vG6hjST/ahT3PkEtxyrs6c5zXpjPqbFx
+	 YCpEriB5fDgczX7qCy4HPkT0TZUN+Dg/acGOEaMrlaLrxpS0oCr+B9lnlBzhrhAbhH
+	 WBpqDq3/mO6n3lTKYmGRLVs9gcg9JBXHwbnQ1eTw=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Peter De Schrijver <pdeschrijver@nvidia.com>,
+	Prashant Gaikwad <pgaikwad@nvidia.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	David Wronek <david@mainlining.org>,
-	Jens Reidel <adrian@mainlining.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-mmc@vger.kernel.org, netdev@vger.kernel.org,
-	linux-scsi@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-hardening@vger.kernel.org,
-	linux@mainlining.org, ~postmarketos/upstreaming@lists.sr.ht,
-	Connor Mitchell <c.dog29@hotmail.com>
-Subject: Re: [PATCH 00/33] Add support for Qualcomm Snapdragon SM7150 SoC and
- Google Pixel 4a
-Message-ID: <aAyL3vl9yKlJ+JOi@duo.ucw.cz>
-References: <20250422-sm7150-upstream-v1-0-bf9a9081631d@jiaxyga.com>
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Timo Alho <talho@nvidia.com>,
+	linux-clk@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] clk: tegra: do not overallocate memory for bpmp clocks
+Date: Sat, 26 Apr 2025 15:54:28 +0300
+Message-ID: <20250426125429.31838-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jXuQpBURuH9Sxi9Z"
-Content-Disposition: inline
-In-Reply-To: <20250422-sm7150-upstream-v1-0-bf9a9081631d@jiaxyga.com>
+Content-Transfer-Encoding: 8bit
 
+struct tegra_bpmp::clocks is a pointer to a dynamically allocated array
+of pointers to 'struct tegra_bpmp_clk'.
 
---jXuQpBURuH9Sxi9Z
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+But the size of the allocated area is calculated like it is an array
+containing actual 'struct tegra_bpmp_clk' objects - it's not true, there
+are just pointers.
 
-Hi!
+Found by Linux Verification Center (linuxtesting.org) with Svace static
+analysis tool.
 
-> This patch series adds support for the Qualcomm Snapdragon 730/730G/732G
-> (SM7150) platform along with the Google Pixel=C2=A04a (sunfish) device. S=
-ince
-> the most critical drivers were submitted and applied in separate patch
-> series, this series is largely composed of DT bindings and device=E2=80=
-=91trees.
->=20
-> To date, we=E2=80=99ve tested SM7150 support on the following eleven devi=
-ces:
-> - Google Pixel=C2=A04a (sunfish)
-> - Samsung Galaxy=C2=A0A71 (a715f)
-> - Lenovo Tab=C2=A0P11=C2=A0Pro (j706f)
-> - Xiaomi POCO=C2=A0X2 (phoenix)
-> - Xiaomi POCO=C2=A0X3 (karna) / POCO=C2=A0X3=C2=A0NFC (surya)
-> - Xiaomi Redmi Note=C2=A010=C2=A0Pro (sweet)
-> - Xiaomi Redmi Note=C2=A012=C2=A0Pro (sweet_k6a)
-> - Xiaomi Mi=C2=A09T / Redmi K20 (davinci)
-> - Xiaomi Mi=C2=A0Note=C2=A010=C2=A0Lite (toco)
-> - Xiaomi Mi=C2=A0Note=C2=A010 (CC9=C2=A0Pro) & Mi=C2=A0Note=C2=A010=C2=A0=
-Pro (CC9=C2=A0Pro Premium) (tucana)
-> - Xiaomi Mi=C2=A011=C2=A0Lite=C2=A04G (courbet)
->=20
-> A huge thank=E2=80=91you to the SM7150 community for all the devices-port=
-ing
-> work, testing efforts, and bug reports.
+Fixes: 2db12b15c6f3 ("clk: tegra: Register clocks from root to leaf")
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+---
+ drivers/clk/tegra/clk-bpmp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you, looking forward for well supported phones.
+diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
+index b2323cb8eddc..77a2586dbe00 100644
+--- a/drivers/clk/tegra/clk-bpmp.c
++++ b/drivers/clk/tegra/clk-bpmp.c
+@@ -635,7 +635,7 @@ static int tegra_bpmp_register_clocks(struct tegra_bpmp *bpmp,
+ 
+ 	bpmp->num_clocks = count;
+ 
+-	bpmp->clocks = devm_kcalloc(bpmp->dev, count, sizeof(struct tegra_bpmp_clk), GFP_KERNEL);
++	bpmp->clocks = devm_kcalloc(bpmp->dev, count, sizeof(*bpmp->clocks), GFP_KERNEL);
+ 	if (!bpmp->clocks)
+ 		return -ENOMEM;
+ 
+-- 
+2.49.0
 
-Please cc phone-devel@vger.kernel.org with phone patches.
-
-Best regards,
-								Pavel
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
-
---jXuQpBURuH9Sxi9Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaAyL3gAKCRAw5/Bqldv6
-8t6+AKCezW+X8tCRtch2mRMPqCnbTeMpmACgo7PqyT2Vhb5yFE9mqg8LMrPK+y8=
-=hK/X
------END PGP SIGNATURE-----
-
---jXuQpBURuH9Sxi9Z--
