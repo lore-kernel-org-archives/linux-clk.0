@@ -1,64 +1,65 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C1643ADA
-	for <linux-clk@vger.kernel.org>; Sat, 26 Apr 2025 13:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C2B25B698
+	for <linux-clk@vger.kernel.org>; Sat, 26 Apr 2025 14:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745674591; cv=none; b=O2Hs/xiQbFgKSkhrmqE5UREGmJARpmyzGltg6RA+Hng+1PeegTSSsnYLU6CuBjGZ0NyhoQ4Yig5DyHKMJ1MuSzWWCRovdZ9Pyo1Ml8Q/2y5d2cj5DQq7yH1W+C+yLfLX+10ASPMC1qkoU1kyeI5IROgEf7QK7s3MS5j0hnye9Tc=
+	t=1745676216; cv=none; b=b/oqS+D0PG+VL38RGAacACQfKXMnZY3DB7YTEXfA9S9sAxVhVZuoIoCYlyMxkhGVEDFf3KL/0hW7zbo2eaX9HRh1PCNJV81D8ncG7n0RmuVplL28giyApl4zlSTc72aoqlGV93O+/J1VET5oSxIqJ+pniwz6ua/j/CCeW3zzVTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745674591; c=relaxed/simple;
-	bh=W9iznr1mkJfQh5QDIFaWYRkEJQiC9aqfiDhtSDkTtkY=;
+	s=arc-20240116; t=1745676216; c=relaxed/simple;
+	bh=+/XlGJ40QyLJ1yxLqAsymj/3uMv2LvI3xGqt6JlJRkY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CcC/tVMKPMA6QLNr8eDMNZHIENEg1WsuF6RYKIuxFzvA2meh9hnjdn4WyOhF6J1b8s79TyIYYyW35H5QJK4hZIDcWGOl94YzoBePjdqyPfRXbQbqWjf0vkNYAo5/gOjewmTeYXE+bb1VxOaLEJhO3XaIBynpNP4jhGna7+BZ5es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kyJ8K64r; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	 In-Reply-To:Content-Type; b=GR7mVyuuWiDDlUClxRTMOjVAPEkgwroSnogs3o6bt9VV9xdw1i9nNPbQhS1VzrL46irq1bQ+dfhbCGzR7oA9Zxi+bimr+hUbYOeACT4hyC1XQuhRWrfwOLXbSordrJWj0vhBIhk28nUi4M9XWrxm2647bGwYfltIRyYXVGOEIfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=axSbnKP0; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kyJ8K64r"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5f62d3ed994so5841106a12.2
-        for <linux-clk@vger.kernel.org>; Sat, 26 Apr 2025 06:36:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="axSbnKP0"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54d4ff564c5so502055e87.3
+        for <linux-clk@vger.kernel.org>; Sat, 26 Apr 2025 07:03:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1745674588; x=1746279388; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1745676211; x=1746281011; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1DSi4zR0uq28zmQAXB8VDFfiTdJQqtBQO4bDZ1Ewn84=;
-        b=kyJ8K64rKVAA1Zrb30B5ekQ5vTKBC8/9JFM+puXkN75LeJc+6bM21QqdIxYd1HVynt
-         9dZs0piVCI0m2IoTiLUGWVhvBCOLeky+pULHRCMpL6EQ7fR/GNooEIfo9B0Rr6AzfwqY
-         zr5wq6u5uUxwIvxW11wLC9Jw0u23yI0tZp125VHeePMu3BnNet17EDfH2FrnGOqiM0l7
-         H37MoAUjf/gzoleezLfx0XdaufQK/IaWfE/ftTOqBdctKgz7g9c0a98Y+P5vUXImD8L+
-         9CMGDyRIomOb4wEw6g3ykKQwaGbkqwX7n5NMVOpSChrkhG70EOvMf0GpKN9U2xFONrkS
-         7a5w==
+        bh=vw+DsU15ptDiXJLxLZqHIzjz8lENUeO28XhBBnI/KzU=;
+        b=axSbnKP0wzkqrG+zVQ4JMEx9nZm/UAJm+bWflfONPHvMKBEks3/n6M8P3IHkF1GTsD
+         yRUGnayeerAJ4He7XxhCsDK+FWoel0bpLHpfILKT3nBBdzj0jenAfs65uYGGo6hHtZxS
+         Ns6ZJ3SOC6pEvCd4Z8yDsAmIsbtaiEDyKWo3bSC4Xex9D2JN6nEhIk55D9+v3R7f5Xxw
+         RrSqqMHpXjJXLBokbDwlOfpynUmtriP5IEjuUJNW5v+ZXM5tL7AzsmsDQz2MMLevGRuh
+         Mz8K5kcC5kYuvM0U+zQDIhhqQzr8qDKj5CgehznFpK3/XCUhJJVvjypAYG4p0JADtGXH
+         ZF7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745674588; x=1746279388;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1745676211; x=1746281011;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1DSi4zR0uq28zmQAXB8VDFfiTdJQqtBQO4bDZ1Ewn84=;
-        b=j8z5PazlDVwkgU+CPTOhKjeUKA++sGOaZJoBXnn1YdKX+pS4k+E1BFuuBq2Hb3KNvw
-         D6Uoi9Vv6fQmcgKnwF6b3F84g+HYOYTQYiCut0xRrYLC6nKZJELidzPclYn0Pu1ueuij
-         4huU1Il7Veukp2Ci2z1iMug1K4fBODLiMQrAz4rCaIMG7u3h7TRjPqqgtuZNS2SxBz75
-         PNozTMUR5QxuwtL4M5RXHUpjDkJ+TZAx+4Wy7XuYbzH6ZWocx0TS+PPAGp7HxgrUHje8
-         2DquRmzk6bjkFZ/6Kt4FltvUr8SRy4JZZUbSE4XQX+4g19FXemec8B4pV7mAy2aD+ZcK
-         X0uA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7J6JxjKnMpPURwJPO+3XQBnu4sl2Ik5EWSV7Sr3xkox8MZR7mHxhqNnFqtUPmUK8aEdiQGGfUiwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv2yvUk/Jh6ASVoSaG5BJSjf1KAW9BmDicKpxCGyVy3ZRD35gL
-	ykBdmFSBz/7Eto1ECHezIBfhSotLtlV0z/5PtUFHOpU8XM/Sunm5sAZVsA+VWVQ=
-X-Gm-Gg: ASbGncuQ6CwPPrDMyTSvZ7Fd94K3IoJozic39xr9w0vnSAeV/a4K0E+WqpoHLl0yMfz
-	8pA+d27TV8qVskcReC0A0ICX72XYzJ/KcE4uTUutL5BNDURNSKWxS9F/D/GsKOZulUVtY5oSUPu
-	nXe8Y+tbwe6yt9R0DLMEgdxRkvc9O6fLwktLDkcaS7F+LHtkmTwvvn9mo7T5kOpO/73E2CmE2MI
-	0KZj+qeVSuhSLJQ4Vld0EZeAQezkgVyPLEkQdVNpTqtAVNtxHpZ36GeOquicC5ToIDj0jRj6oF+
-	w06zeGlwZJtZiHp/rk0DB5CNxGPAYysGBcZMQEWMCt7A4rU6iA==
-X-Google-Smtp-Source: AGHT+IGFY/we5oPj5BLcTsNv8SWpZqerfwxabzo7n0VvzgXfX7TOdes2xHvpN6ZPYUBny09V6ObQIQ==
-X-Received: by 2002:a17:907:3f8f:b0:ace:4df8:b0c6 with SMTP id a640c23a62f3a-ace7136df26mr511805366b.38.1745674587960;
-        Sat, 26 Apr 2025 06:36:27 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.145])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e4e6498sm290045566b.42.2025.04.26.06.36.26
+        bh=vw+DsU15ptDiXJLxLZqHIzjz8lENUeO28XhBBnI/KzU=;
+        b=il8rVYT/y75TPB3Kmcn+mRCpIsLN8NXTOZpjeZdEzYbsi14h7P8ONs3ZLJOXlvBzJ2
+         aAD1LkHxjXXXuD6oObNDAiPiIy8kSCxuwGhHhh1uY+g4dVjmGunwIJ8mlZFQYbe87ZTJ
+         RUBDj1FZABi2BYqjECwbAtDBv/y/hBZCfhdJMmp6T/zWklJLirZN7+vDOy4ewbwXr5ZE
+         U4kvqa0kkmOxTbWqH7lm/GhdTrkomHA0ulXRrInaNCXap9xVXQBcdiSYQxhB0KFxQGHH
+         GPZPbSbU4U+2Gp6oBtbfw+65Oklh6F3LKX+XuQGKwZbV8eeUE01xIqrIlXaTAbYZYzRS
+         5wuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVi0IcVERWtG0MkztrzawCr4WHE4Hfmh+McI9P7rZFRYRVfjmZNuy/nHoX8w6XrZJn/tPxvvqG2FX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaNvLCUxlQ7lJCvCuc3cTuayOeGocX1URHDhhWKPyYti6OovT2
+	YmH4m3SfiAzuIJaambPvwm2aDPbslPmZ0CqN/UyPAYzhf3wSQ9pBGthoXU/gios=
+X-Gm-Gg: ASbGncvrToTNsQhLxrH7+G6kXJfQK+bKnZ//SFPypp9aGJ2eXuGlDIOvMtXGHfbB9nw
+	DM6hi2+2DXb4qX9OGJy5inEQEs//yh9HlF6VMwXleq34KT7qaGE2EvVQQndHG8q5zX1eSYJlWrB
+	COxS9Vd6iQ1AIgbEy1oUGWohfC36b2OMSOSuUgg68H1m645uaYrty8GUpxvswiJFjHPb/+vYjTL
+	dt1FE2M8PXMaMvvI9OepgRoiY4KxqG8zcmqkfJkEDaO6R68aClQ5sxcqnio1XnP2CPJ229S8eHf
+	JMDGbsS2HLFLw5B/R7xXXq/8J+laGWAnKgmGXsnFG3mdQmyZZz3ZiUXHwdUHp/ITx8KHQ60iFg0
+	Z0wTsi5L5oM9sjd+YVz7FyGUr1l8y7A==
+X-Google-Smtp-Source: AGHT+IF1Ip7CcXoeKnygcwDIVwoNCBJjRB68C/jdSo6GKg66tIbe4aPB/aVZwdQypXq6CJVRBvutGQ==
+X-Received: by 2002:a05:6512:3d9f:b0:549:8b24:9884 with SMTP id 2adb3069b0e04-54e8cbd53d5mr523947e87.4.1745676210813;
+        Sat, 26 Apr 2025 07:03:30 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54e7cb2633asm1000722e87.10.2025.04.26.07.03.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Apr 2025 06:36:27 -0700 (PDT)
-Message-ID: <22b722eb-5ef1-4542-a5b2-10222b4eb6c4@tuxon.dev>
-Date: Sat, 26 Apr 2025 16:36:26 +0300
+        Sat, 26 Apr 2025 07:03:30 -0700 (PDT)
+Message-ID: <a4149ac8-7e47-48a9-84ef-42aa367d014e@linaro.org>
+Date: Sat, 26 Apr 2025 17:03:29 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -66,102 +67,122 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] clk: at91: sckc: Fix parent_data struct for slow
- osc
-To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, mturquette@baylibre.com
-Cc: sboyd@kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <cover.1742916867.git.Ryan.Wanner@microchip.com>
- <d470bb761530827889beaa2c2815e127fc8b412e.1742916867.git.Ryan.Wanner@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <d470bb761530827889beaa2c2815e127fc8b412e.1742916867.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 1/3] dt-bindings: clock: Add Qualcomm SC8180X Camera clock
+ controller
+Content-Language: ru-RU
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250422-sc8180x-camcc-support-v1-0-691614d13f06@quicinc.com>
+ <20250422-sc8180x-camcc-support-v1-1-691614d13f06@quicinc.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20250422-sc8180x-camcc-support-v1-1-691614d13f06@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 25.03.2025 17:55, Ryan.Wanner@microchip.com wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On 4/22/25 08:42, Satya Priya Kakitapalli wrote:
+> Add device tree bindings for the camera clock controller on
+> Qualcomm SC8180X platform.
 > 
-> The slow xtal is not described correctly as a parent, the driver looks for a
-> "slow_xtal" string which is incorrect and will not work with the new
-> formating of xtals.
-> 
-> To avoid this and keep this driver backwards compatible the
-> parent_data.fw_name is replaced with parent_data.name and the original
-> parent_data.name is replaced with parent_data.index. Using the index is
-> safe due to the driver requiring only 1 xtal.
-> 
-> Fixes: 8aa1db9ccee0e ("clk: at91: sckc: switch to parent_data/parent_hw")
-> 
-
-No need for this empty line.
-
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 > ---
->  drivers/clk/at91/sckc.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>   .../bindings/clock/qcom,sc8180x-camcc.yaml         |  65 ++++++++
+>   include/dt-bindings/clock/qcom,sc8180x-camcc.h     | 181 +++++++++++++++++++++
+>   2 files changed, 246 insertions(+)
 > 
-> diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-> index 021d1b412af4..952a805b6f7e 100644
-> --- a/drivers/clk/at91/sckc.c
-> +++ b/drivers/clk/at91/sckc.c
-> @@ -374,7 +374,7 @@ static void __init at91sam9x5_sckc_register(struct device_node *np,
->  	const char *xtal_name;
->  	struct clk_hw *slow_rc, *slow_osc, *slowck;
->  	static struct clk_parent_data parent_data = {
-> -		.name = "slow_xtal",
-> +		.index = 0,
->  	};
->  	const struct clk_hw *parent_hws[2];
->  	bool bypass;
-> @@ -407,7 +407,7 @@ static void __init at91sam9x5_sckc_register(struct device_node *np,
->  	if (!xtal_name)
->  		goto unregister_slow_rc;
->  
-> -	parent_data.fw_name = xtal_name;
-> +	parent_data.name = xtal_name;
->  
->  	slow_osc = at91_clk_register_slow_osc(regbase, "slow_osc",
->  					      &parent_data, 1200000, bypass, bits);
-> @@ -476,7 +476,7 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
->  	const char *xtal_name;
->  	const struct clk_hw *parent_hws[2];
->  	static struct clk_parent_data parent_data = {
-> -		.name = "slow_xtal",
-> +		.index = 0,
->  	};
->  	bool bypass;
->  	int ret;
-> @@ -494,7 +494,7 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
->  	if (!xtal_name)
->  		goto unregister_slow_rc;
->  
-> -	parent_data.fw_name = xtal_name;
-> +	parent_data.name = xtal_name;
->  	bypass = of_property_read_bool(np, "atmel,osc-bypass");
->  	slow_osc = at91_clk_register_slow_osc(regbase, "slow_osc",
->  					      &parent_data, 5000000, bypass,
-> @@ -592,7 +592,7 @@ static void __init of_sama5d4_sckc_setup(struct device_node *np)
->  	const char *xtal_name;
->  	const struct clk_hw *parent_hws[2];
->  	static struct clk_parent_data parent_data = {
-> -		.name = "slow_xtal",
-> +		.index = 0,
->  	};
->  	int ret;
->  
-> @@ -609,7 +609,7 @@ static void __init of_sama5d4_sckc_setup(struct device_node *np)
->  	xtal_name = of_clk_get_parent_name(np, 0);
->  	if (!xtal_name)
->  		goto unregister_slow_rc;
-> -	parent_data.fw_name = xtal_name;
-> +	parent_data.name = xtal_name;
->  
->  	osc = kzalloc(sizeof(*osc), GFP_KERNEL);
->  	if (!osc)
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc8180x-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc8180x-camcc.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..b17f40ee53a3002b2942869d60773dbecd764134
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc8180x-camcc.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sc8180x-camcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Camera Clock & Reset Controller on SC8180X
+> +
+> +maintainers:
+> +  - Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> +
+> +description: |
+> +  Qualcomm camera clock control module provides the clocks, resets and
+> +  power domains on SC8180X.
+> +
+> +  See also: include/dt-bindings/clock/qcom,sc8180x-camcc.h
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sc8180x-camcc
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
 
+ From sc8180x_rpmh_clocks[] in clk/qcom/clk-rpmh.c I get that there is
+RPMH_CXO_CLK_A clock also, shall it be added to this list then?
+
+If yes, and taking into account Konrad's ask for GCC_CAMERA_AHB_CLK, it
+implies that the new dt bindings can be omitted, instead please consider
+to add the 'qcom,sc8180x-camcc' compatible into qcom,sa8775p-camcc.yaml.
+
+However still there is a difference, qcom,sa8775p-camcc and qcom,qcs8300-camcc
+does not contain 'required-opps' property, it might be an omission over
+there though, please double check it. The ultimate goal would be to get
+a shorter list of different camcc dt bindings.
+
+> +      - description: Sleep clock source
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +    description:
+> +      A phandle and PM domain specifier for the MMCX power domain.
+> +
+> +  required-opps:
+> +    maxItems: 1
+> +    description:
+> +      A phandle to an OPP node describing required MMCX performance point.
+> +
+> +allOf:
+> +  - $ref: qcom,gcc.yaml#
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - power-domains
+> +  - required-opps
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,gcc-sc8180x.h>
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +    clock-controller@ad00000 {
+> +      compatible = "qcom,sc8180x-camcc";
+> +      reg = <0x0ad00000 0x20000>;
+> +      clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +               <&sleep_clk>;
+> +      power-domains = <&rpmhpd SC8180X_MMCX>;
+> +      required-opps = <&rpmhpd_opp_low_svs>;
+> +
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +    };
+> +...
+
+--
+Best wishes,
+Vladimir
