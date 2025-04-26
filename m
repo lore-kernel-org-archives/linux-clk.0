@@ -1,65 +1,64 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79EA8489
-	for <linux-clk@vger.kernel.org>; Sat, 26 Apr 2025 13:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD572AEE2
+	for <linux-clk@vger.kernel.org>; Sat, 26 Apr 2025 13:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745673886; cv=none; b=WKqEOJe5lkPqSZMN4RFlbaRWIjrB4qYojxn1esx44c5UG2pHzi17coZmnx2mBW7oliAlE5ZelPk5KQNEjNyTM1z9T35w/9+m+Rcx5sMTdnB6jefsR1xkjCtQYl/4ipYIQ+nEjxjoJlMAALEA4tWR3uI72lnoAfZkjgsOLg4x0eE=
+	t=1745674556; cv=none; b=kSXmLauGor70Zayoumj+OqqWROL3ARYk2rYbJ6+XrIMicYXsqW/1gcotubCt20j+HS7C21YW6MvNf7Lmf17CM7GRs9cJR8AKzmh7LhWvzweAPb86PV9NZCHSRY+vPlqVrVOMX6yCcg+i2Lgu6sooUC6POejkYXhGlCvKPmJ05nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745673886; c=relaxed/simple;
-	bh=tZrzBs+5KSTISL0+0tdu476ycFVsQ3yWPlqzvxyEX7A=;
+	s=arc-20240116; t=1745674556; c=relaxed/simple;
+	bh=yYCXS8YQZQjB4/1VmgQsilzMSLtC1TAavLUrwufzZm0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Enxxv2icrTZLlF1dcAAW0bQRbHtElHmlBTtiWr9HvMOVXIgUTw7RdavN/+DONYBE9kMCTy4ETyId5dtaRT6qRFFMEVFVAgZsemsHNbe36aPaTcop42n9fOJv4OSlxzfxYt9oqUaGA6sOyYVnb7mqXh2PucyDYMxsIvy09GjlI8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LylrYFqX; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=sXLtEGl7k1VcpVse+P3lUOAfRGbtFALh1Kn5qSOuG+McA0ZVxIosSPxG4qnE+lmCnVEcLV5jXMFrCQwo818Vrwvpf+LkSu3vVNnlpTavGE49hAUw49T7dMD7afwcwtrZ8YlMBVb9gGJizfa3qJp+pTpyEWvwIC1lwMBM5GveVgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=KlQN0NUe; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LylrYFqX"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30bec442a25so4347491fa.3
-        for <linux-clk@vger.kernel.org>; Sat, 26 Apr 2025 06:24:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="KlQN0NUe"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5f728aeedacso2381307a12.2
+        for <linux-clk@vger.kernel.org>; Sat, 26 Apr 2025 06:35:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745673881; x=1746278681; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=tuxon.dev; s=google; t=1745674552; x=1746279352; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=QQG9jLEj+tO2aSttA8hsqJxeNwgpKy02jcXHZLWHWYk=;
-        b=LylrYFqX8JhaoKBD1OR5rnbi78J7tgG3jhwf3v5L3tFuV05WDL0hh+2stvRHXAGOFD
-         GofCscA0q9i7Pvg/UuRgo883100VjDP75zgN8XamvwKiytzxHU7S+BtLFo5frYe8vq7B
-         wz2st8KbVlNUVDg7fprZRP8weM7erdFtFkZSTOgUz9N7vc9CyQZNLxmkxVwbOw2PeXw1
-         nhOdtybEBqXsQPdOPgiA3nHCnktsazLVqbhMnaY1W7L+mLXB6W7usx0LQVnwu39DgWiH
-         AdewOSgz7aGWS92K0SsVBBe/qap2ahrakhAD43EkJB1hoEbRQawEWknqV3T9hngRvdmN
-         bOXg==
+        bh=tpKqYnXH25f3lqGlUZbd0EpV+dGbWQ4Gs839plYWRIY=;
+        b=KlQN0NUemRBsu832EMeh6yyEqeGgVZ4fwQLH3wQT1m5B2scWGir3G1iqQyse3TX7js
+         e2R8ckaJP+M8S3eMmUIfMAhobiL/ZuVFDdIRecn5b3xCcKk49y90yY8LTUR/sZWPmnca
+         M7BXUNS+t05m0KqfL5NLbrauF1kkHfqIrHGU0YHgUg7DZN8Vjy0DCIehRmntQ8hgYKTu
+         MCouS45uVX7FLkB4Yf4g1m8XdB0HSFwBSJMl8km7+D+KhsfnViaHmPSsWSEZR/Q61b9I
+         eaDvqSwjSWbkhhOALpXsGn2dED9zPLwLJzGRm+lbChG+kJKHmnwDreb0F9PTYI8ja1vS
+         19Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745673881; x=1746278681;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1745674552; x=1746279352;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QQG9jLEj+tO2aSttA8hsqJxeNwgpKy02jcXHZLWHWYk=;
-        b=ZcV22w6NDInwnElld6YA8pjzju9WJnJFfJQhFQCe/aGrljxeem+8JQ9jcuyW6dWby2
-         pvkID9YEIo/BFEAo1J8Sk7V3tGXfWXpWUKcl0vpRNP6b6mr9k8mtPypbwIuYk/2lL6wU
-         BIsCmXx+dKvmjY/5LteaqJAw7DwBs5tDkNNpeM8qhoDkOIilTQtiqQkHZIKHtcxArWS+
-         etC7Qq9HelNBXIY72bk0dmQ+3G5Yg+xzGvPexgVamRBkgqWzozdVV5VAE5QMUXDrDQ6U
-         Gn/sZmTuNwqxzM5d5PGSrtv2/pXdjfa+VGznDw8CILwPacKAAGM/ciRVEkn2YeRfR8MC
-         m3tg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoG7rtO+ZhZgnq68YJlV1IYeMXzRG5pi1iIiWQgnYnhtK5t3PRx1vquyFIb1S7IB/crzKEF8/gYnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqSP+5HjsmQHXG8p2wkCEo6pW5212U8CLx8BZ4ERVLjj62Jj0O
-	DMwWqcNHZPE5WpzMis4WweZXHbZEZjWiiFKIKDHt3H0gaJT+vqV53lGSsYOxJ1s=
-X-Gm-Gg: ASbGncsurwtf/YkinjZScsyJnrrFKxAVgvYgQ0lGNZWL8dA9k/nDuvrfvIqd3vigETR
-	Dx0RyJJgSBWtxHis+ATzkGi5dWczt0C4mDnaCuHJfnKi3VGu1Tex+49y8YTmSnZIeGg97matfTx
-	cX3oDlEOqIqpi7MYZe9gRam9oqfFTBfA39O6uLoy0ISDrG+Em7aCH0MFKifVa0USP6PV2bSTC0C
-	yetgrA77vlNPMnQ2plZgo9zhiS9192eA3cTrSzshC4xqlAl4xeJBazXTGIghahxPE5i5K74yPd3
-	0mlV/8uHPYiHHPL6QQi8qPe6zUybMYDbA45b2vSvYIDhpOpPdBTgMwaLhxqFOcWqvGX806uV2au
-	VOEFItx4xWcDbkK+Yc7BeLd2klXQVcQ==
-X-Google-Smtp-Source: AGHT+IHb8l2addQYB4al3pbhLlsunPxduYsEgASDcksjCU6KVJAuZBA2p82b2h9QpR3+htyHY0Fq8A==
-X-Received: by 2002:a2e:b891:0:b0:30b:b852:2f5d with SMTP id 38308e7fff4ca-31907ed64d7mr5838961fa.11.1745673880982;
-        Sat, 26 Apr 2025 06:24:40 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-317cf659e34sm12460111fa.22.2025.04.26.06.24.39
+        bh=tpKqYnXH25f3lqGlUZbd0EpV+dGbWQ4Gs839plYWRIY=;
+        b=p499zXVmmXrW3aKLu8s8i8+eNofloVECzOojvnpVSCwHMmryLHz2mWaRP+RhT5cm6o
+         2qXZ6cJrXmkd+Y+mv7RtsaQ3c9grKmGzq5jGfrh0v7IzZuTckfW1h5I5tvxeoSzLdmGj
+         /YE7zVQ2KvsDBL8JZ2bJWuRzKB1Gb+xsqWd5vookrLybBslnJ8On+9dVV4dsLAs+3vVS
+         z2TlvaEDzfJGNEYaLRKf/A4/orOeruRMmFXcnn4MbgTUcEnxBPBX8QsmvmEbxmttyPeY
+         1sTJp8FaAL9vO4KdP+Qf07cqNy2JpVs9tdnsiQtdSroSHwkjSb6pJFUcPlcnJD8K369v
+         YUZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEEeYmYVIJHPARH/aH6w17ba87jaNThlvs4rzshScy+aWIMKd3yE9IzgOKzSBs6j6iM5QqjToTHIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxenhwzH+EvWIRsScYN3HR7yBR3ZwiDECiADe6UmdwWoTAAy9Qw
+	+T/3iOj3WG0CzqXRNuFUDbU+xeJvk3tQq/hF3IzERWmxnO9pPKB86+nX5KtCQrw=
+X-Gm-Gg: ASbGncuqdkD0k/VVuVoFK2xuLOSqpjy0zALtVc6bp1P/trLpNKMFgjW0SnT9mmexsSo
+	V8T9y8XRfd+J0vLZu5VZ9sUH91mCLucfGKyJ1vyldlfs2lr9xtXq1Ft0JtsBLmBnCmrCLacnGBz
+	nzygEEZ44tAl/U6pdeGYS4FckBzofXN6e+9e87+tyYHU17ARt7WgedZqD7+N5gVsMx8iAI0+KeP
+	5T4hJuvs3+yh4S2jWNvhfUYysblzPrEjiOW3H/GxAanEL6X3KDp1RtbYZWXyf2ZoQhCYg9ZgCWE
+	JT4NkMGyrvlT+jEQhxTTqOjRvvkytNSdec+b5GS31J+iqr9cEMBHV41f6m9V
+X-Google-Smtp-Source: AGHT+IEqy1Bjndt2pvxsKMV5+EcxiW6j9NOhnrynY2cN18NYigRKOQiOJgaMqvmfCZqpsJ/rAvLIew==
+X-Received: by 2002:a05:6402:4286:b0:5f6:23d2:e6f7 with SMTP id 4fb4d7f45d1cf-5f723a1346fmr5017034a12.32.1745674552326;
+        Sat, 26 Apr 2025 06:35:52 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.145])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7035464e6sm2639700a12.64.2025.04.26.06.35.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Apr 2025 06:24:40 -0700 (PDT)
-Message-ID: <83cc86cc-2cdf-41c2-8e00-61a607b713d5@linaro.org>
-Date: Sat, 26 Apr 2025 16:24:39 +0300
+        Sat, 26 Apr 2025 06:35:51 -0700 (PDT)
+Message-ID: <47b54406-42d8-41cd-a561-9073db09666e@tuxon.dev>
+Date: Sat, 26 Apr 2025 16:35:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,69 +66,64 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clk: qcom: camcc-sc8180x: Add SC8180X camera clock
- controller driver
-Content-Language: ru-RU
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250422-sc8180x-camcc-support-v1-0-691614d13f06@quicinc.com>
- <20250422-sc8180x-camcc-support-v1-2-691614d13f06@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20250422-sc8180x-camcc-support-v1-2-691614d13f06@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v2 2/4] clk: at91: sama7d65: Add missing clk_hw to
+ parent_data
+To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, mturquette@baylibre.com
+Cc: sboyd@kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <cover.1742916867.git.Ryan.Wanner@microchip.com>
+ <d634ae4f72bca022e205b03c01415e90fda0bc01.1742916867.git.Ryan.Wanner@microchip.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <d634ae4f72bca022e205b03c01415e90fda0bc01.1742916867.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 4/22/25 08:42, Satya Priya Kakitapalli wrote:
-> Add support for the camera clock controller for camera clients to
-> be able to request for camcc clocks on SC8180X platform.
+Hi, Ryan,
+
+On 25.03.2025 17:55, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> The main_xtal clk_hw struct is not passed into parent_data.hw causing an
+> issue with main_osc parent. 
+
+Can you please describe the issue?
+
+> Passing the main_xtal struct into the
+> parent_data struct will ensure the correct parent structure.
+> 
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
 > ---
->   drivers/clk/qcom/Kconfig         |   10 +
->   drivers/clk/qcom/Makefile        |    1 +
->   drivers/clk/qcom/camcc-sc8180x.c | 2896 ++++++++++++++++++++++++++++++++++++++
->   3 files changed, 2907 insertions(+)
+>  drivers/clk/at91/sama7d65.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 7d5dac26b244bfe785370033ad8ba49876d6627d..42b64e34b3fcc4bae7c559f34a34f9452307ae9a 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -900,6 +900,16 @@ config SDX_GCC_75
->   	  Say Y if you want to use peripheral devices such as UART,
->   	  SPI, I2C, USB, SD/eMMC, PCIe etc.
->   
-> +config SC_CAMCC_8180X
-> +	tristate "SC8180X Camera Clock Controller"
-> +	depends on ARM64 || COMPILE_TEST
-> +	select SC_GCC_8180X
-> +	help
-> +	  Support for the camera clock controller on Qualcomm Technologies, Inc
-> +	  SC8180X devices.
-> +	  Say Y if you want to support camera devices and functionality such as
-> +	  capturing pictures.
-> +
->   config SM_CAMCC_4450
->   	tristate "SM4450 Camera Clock Controller"
->   	depends on ARM64 || COMPILE_TEST
+> diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+> index a5d40df8b2f2..08306261c9c7 100644
+> --- a/drivers/clk/at91/sama7d65.c
+> +++ b/drivers/clk/at91/sama7d65.c
+> @@ -1138,6 +1138,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+>  
+>  	parent_data.name = main_xtal_name;
+>  	parent_data.fw_name = main_xtal_name;
+> +	parent_data.hw = main_xtal_hw;
 
-Please add a new config section preserving the alphanumerical order.
+I think, from time to time, you can still hit some random failure as the
+parent_data.index is still not initialized. I think the problem may be
+solved by doing something like:
 
-The new section should be placed between SC_CAMCC_7280 and SC_CAMCC_8280XP,
-like it's correctly done for the Makefile below.
+-	static struct clk_parent_data parent_data;
++	static struct clk_parent_data parent_data = {0};
 
-After fixing it:
+Can you please check with this?
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Thank you,
+Claudiu
 
---
-Best wishes,
-Vladimir
+
+>  	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
+>  						 &parent_data, bypass);
+>  	if (IS_ERR(main_osc_hw))
+
