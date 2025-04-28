@@ -1,43 +1,67 @@
-Received: from gauss.telenet-ops.be (gauss.telenet-ops.be [195.130.132.49])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B6C224244
-	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 11:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C85915747C
+	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 12:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745841416; cv=none; b=dY6nO2sTCpTpZPtiPI/BPg0H2oC8K3v9H/R7AFPWeHCYXLGQTOOMZCR5fUTGRZHk1QeSk/HQiZ/hVTZ4KJTUsyjb/Y93oZHMpF6uAnS0P2ukHeHEFAf0bQI8XbvJZSis1/u4D12KbrMZqWn9uYH7Yv181bmlRB0smNLeCZDGL28=
+	t=1745841784; cv=none; b=bhZDlMrrVVhOBQakyJ+u+sP2tORgduRr0ednheDFzLvgjaj2HlLp84ADEUIoaKaHVo/9pW4dPo68Bp9DQjnD3TrZ1VPPqUChu+Mv6JskIdcJaaAyBCKahCix1z7vwEZ8eQeDC/qD0ufx58tSmcQOzgxHOvF2REdAhZXm2gtWG2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745841416; c=relaxed/simple;
-	bh=umDqawJwovAh6vB9xHWnn7XP55zDZXseFV7F/Y6ioxU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ASFC+jqk9NJLFpwmTQvZ4/tQBqSYLiNgrpBUyxkdZQMicYT9xoAOWfKUaewkSo1T6a7wXG8c2S3oxXIatrVfXnL0ICAi9o0eBrcwQ7/pSwGyMCNi7em3S3dqgdoP94BScWRv5SjsJBSMHtftHkcYNpS9Z9pouMJLCVP8nRLZnuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-	by gauss.telenet-ops.be (Postfix) with ESMTPS id 4ZmMP90P8Fz4x3kH
-	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 13:56:45 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:b9c4:1670:abc0:a1fc])
-	by michel.telenet-ops.be with cmsmtp
-	id ibwc2E00G4Aed8c06bwcoB; Mon, 28 Apr 2025 13:56:36 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1u9N6B-00000000F7U-12BG;
-	Mon, 28 Apr 2025 13:56:36 +0200
-Received: from geert by rox.of.borg with local (Exim 4.97)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1u9Mvs-00000006x8R-2ime;
-	Mon, 28 Apr 2025 13:45:56 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: Use str_on_off() helper
-Date: Mon, 28 Apr 2025 13:45:55 +0200
-Message-ID: <622f8554dcb815c8fc73511a1a118c1724570fa9.1745840497.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1745841784; c=relaxed/simple;
+	bh=/b49vnB81NKamPab6pXiF94lNeuTBKATt/YLaWUSMe8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=ng5EHwzOsc5U9cx0UW4BGLRi9Q8UaCN8ApYKYJsxcFRM4jummcbC9xHLKHKQd5gFfRF3xUCJm/p9+ie1qF09o6bJd32PsNRWt3LrrcOtU3AVU7diPpVgQpozN7Xer8+x2seXIJsUfhnYXwWt4OAYVuZ6FNfHyI4cIh3gqpimxIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Y37jAU/q; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Y37jAU/q"
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250428120259epoutp0171926f8087a189bef6a6341ef9210c45~6edkom5R70277602776epoutp01Q
+	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 12:02:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250428120259epoutp0171926f8087a189bef6a6341ef9210c45~6edkom5R70277602776epoutp01Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1745841779;
+	bh=Bm4L8Aca1VQNMol9yyzgzkjnyzS8+ggYjgzFjnj6SfA=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Y37jAU/q1mt+4E+oe14HWEZjIo7KfsFJerxqC3cX1c6ydpuiBlF5UDZL4NTcl/i9o
+	 mCEHf/ylFFxw1Kb7BSiAiM2d4/cf9ykCF561jdc/zpLpcvT/Fo2Ln4fHyfuYPqDRCE
+	 bq5UpvUQH3lAjbw/MFVhSlaHix61X4BP20VUZG9A=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250428120258epcas5p30ca5f70f71a5df9b8de11910d8b8dc30~6edj06PwO1311713117epcas5p3S;
+	Mon, 28 Apr 2025 12:02:58 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZmMXJ4Z89z3hhT3; Mon, 28 Apr
+	2025 12:02:56 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250428114053epcas5p450f97a4b8e41a1b06606e695e8c19f5f~6eKSeBP7M2838828388epcas5p4b;
+	Mon, 28 Apr 2025 11:40:53 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250428114053epsmtrp1c3098cf5f1ed0408ee08e14b1630b845~6eKSdPa7Q0239602396epsmtrp1q;
+	Mon, 28 Apr 2025 11:40:53 +0000 (GMT)
+X-AuditID: b6c32a52-40bff70000004c16-2b-680f6945e8f8
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A1.10.19478.5496F086; Mon, 28 Apr 2025 20:40:53 +0900 (KST)
+Received: from bose.samsungds.net (unknown [107.108.83.9]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250428114051epsmtip19cfc81298abf833ca6d224db61e5b7c0~6eKQSo-O42852128521epsmtip1b;
+	Mon, 28 Apr 2025 11:40:51 +0000 (GMT)
+From: Pritam Manohar Sutar <pritam.sutar@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+	sunyeal.hong@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	rosa.pila@samsung.com, dev.tailor@samsung.com, faraz.ata@samsung.com, Pritam
+	Manohar Sutar <pritam.sutar@samsung.com>, stable <stable@kernel.org>
+Subject: [PATCH] clk: samsung: correct clock summary for hsi1 block
+Date: Mon, 28 Apr 2025 17:20:49 +0530
+Message-Id: <20250428115049.2064955-1-pritam.sutar@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,61 +69,66 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrCLMWRmVeSWpSXmKPExsWy7bCSnK5rJn+GQe8iE4sH87axWVz/8pzV
+	4t6OZewW124sZLc4f34Du8Wmx9dYLT723GO1uLxrDpvFjPP7mCwunnK1eHZvBZvFl58PmC0O
+	v2lntfh3bSOLxafzF9gsmpatZ3IQ8Hh/o5XdY9OqTjaPzUvqPfq2rGL0+LxJLoA1issmJTUn
+	syy1SN8ugSuj40xSwUS+iinXLjE3MN7g7mLk5JAQMJE4suAmM4gtJLCdUeLQrxSIuIzEo2kb
+	WSFsYYmV/56zdzFyAdW8ZZTYdv8FYxcjBwebgKnExD0JIHERgTWMEl37f7GCOMwCy5kkHjZN
+	YgLpFhZwlpiwYw2YzSKgKvHy2gywZl4Be4k1sysgFshL7D94FuwIXgFBiZMzn7CA2MxA8eat
+	s5knMPLNQpKahSS1gJFpFaNoakFxbnpucoGhXnFibnFpXrpecn7uJkZwwGsF7WBctv6v3iFG
+	Jg7GQ4wSHMxKIrxVBvwZQrwpiZVVqUX58UWlOanFhxilOViUxHmVczpThATSE0tSs1NTC1KL
+	YLJMHJxSDUzaCZ3Tw/d7/Z1kuduCWbDl2up5WgfVAiZH7jp2aGlnsY/OcdHVzxZbnFqQFv+0
+	NIPn0fzZPhrnw90KXlSpnK89eqd9fieb1b0zXO21fV8ffHXNfLvxj7ziy3cOJXubGo+9s2re
+	9uDqbQX3ZecWP1uW/qLhqlheUmuM3vMoOds5+jucNvz2dN7Z87T8S2Vtl9Cu+BMKy5cJMgre
+	kt554FXBhDe2pSF/NC2rljw9vsbsgVbOlsR50l2379UEXk3NWpf3+EFWh8ofAfedr3d8q/lT
+	krNG+IXN1wsCptccj+078feZYVdVYZLcfKMFNv+8Gur5exX048J8Ta+ZW/+ZUdL1fqKu8dnw
+	Qzu9PezPaj1UYinOSDTUYi4qTgQAzwjlAucCAAA=
+X-CMS-MailID: 20250428114053epcas5p450f97a4b8e41a1b06606e695e8c19f5f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250428114053epcas5p450f97a4b8e41a1b06606e695e8c19f5f
+References: <CGME20250428114053epcas5p450f97a4b8e41a1b06606e695e8c19f5f@epcas5p4.samsung.com>
 
-Use the str_on_off() helper instead of open-coding the same operation.
-Note that this does change the case of the flags, which doesn't matter
-much for debug messages.
+When debugfs is mounted to check clk_summary, 'mout_hsi1_usbdrd_user'
+shows 400Mhz instead of 40Mhz. Snippet of the clock summary is given
+as below
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+dout_shared2_div4           1 1 0 400000000 0 0 50000 Y ...
+  mout_hsi1_usbdrd_user     0 0 0 400000000 0 0 50000 Y ...
+    dout_clkcmu_hsi1_usbdrd 0 0 0 40000000  0 0 50000 Y ...
+
+Hence corrected the clk-tree for the cmu_hsi1 & the corrected clock
+summary is as mentioned below.
+
+dout_shared2_div4           1 1 0 400000000 0 0 50000 Y ...
+  mout_clkcmu_hsi1_usbdrd   0 0 0 400000000 0 0 50000 Y ...
+    dout_clkcmu_hsi1_usbdrd 0 0 0 40000000  0 0 50000 Y ...
+      mout_hsi1_usbdrd_user 0 0 0 40000000  0 0 50000 Y ...
+
+Fixes: 485e13fe2fb6 ("clk: samsung: add top clock support for ExynosAuto v920 SoC")
+Cc: stable <stable@kernel.org>
+Signed-off-by: Pritam Manohar Sutar <pritam.sutar@samsung.com>
 ---
-To be queued in renesas-clk for v6.16.
+ drivers/clk/samsung/clk-exynosautov920.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/clk/renesas/renesas-cpg-mssr.c | 3 ++-
- drivers/clk/renesas/rzg2l-cpg.c        | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index da021ee446ec8120..71431970d6e6a10b 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -27,6 +27,7 @@
- #include <linux/psci.h>
- #include <linux/reset-controller.h>
- #include <linux/slab.h>
-+#include <linux/string_choices.h>
+diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
+index dc8d4240f6de..b0561faecfeb 100644
+--- a/drivers/clk/samsung/clk-exynosautov920.c
++++ b/drivers/clk/samsung/clk-exynosautov920.c
+@@ -1393,7 +1393,7 @@ static const unsigned long hsi1_clk_regs[] __initconst = {
+ /* List of parent clocks for Muxes in CMU_HSI1 */
+ PNAME(mout_hsi1_mmc_card_user_p) = {"oscclk", "dout_clkcmu_hsi1_mmc_card"};
+ PNAME(mout_hsi1_noc_user_p) = { "oscclk", "dout_clkcmu_hsi1_noc" };
+-PNAME(mout_hsi1_usbdrd_user_p) = { "oscclk", "mout_clkcmu_hsi1_usbdrd" };
++PNAME(mout_hsi1_usbdrd_user_p) = { "oscclk", "dout_clkcmu_hsi1_usbdrd" };
+ PNAME(mout_hsi1_usbdrd_p) = { "dout_tcxo_div2", "mout_hsi1_usbdrd_user" };
  
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
- 
-@@ -204,7 +205,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 	int error;
- 
- 	dev_dbg(dev, "MSTP %u%02u/%pC %s\n", reg, bit, hw->clk,
--		enable ? "ON" : "OFF");
-+		str_on_off(enable));
- 	spin_lock_irqsave(&priv->rmw_lock, flags);
- 
- 	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A) {
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index b91dfbfb01e31cd8..a8628f64a03bd7e0 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -27,6 +27,7 @@
- #include <linux/pm_domain.h>
- #include <linux/reset-controller.h>
- #include <linux/slab.h>
-+#include <linux/string_choices.h>
- #include <linux/units.h>
- 
- #include <dt-bindings/clock/renesas-cpg-mssr.h>
-@@ -1217,7 +1218,7 @@ static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
- 	}
- 
- 	dev_dbg(dev, "CLK_ON 0x%x/%pC %s\n", CLK_ON_R(reg), hw->clk,
--		enable ? "ON" : "OFF");
-+		str_on_off(enable));
- 
- 	value = bitmask << 16;
- 	if (enable)
+ static const struct samsung_mux_clock hsi1_mux_clks[] __initconst = {
 -- 
-2.43.0
+2.34.1
 
