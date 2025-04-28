@@ -1,178 +1,143 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7B92566E2;
-	Mon, 28 Apr 2025 15:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5262F27CCD3
+	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 16:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745855695; cv=none; b=U8VNKM87CB2KAf8xVUJg7O/ugXrVQ6iJEt6sLLDNYr5pjdVvU5e5A9UCC6m3gtHjbcnjTJluhRdQNt6219XBg5TKL1IK26tV2m8uy5WgoG9WPF0hFcfm2FmpWeULjk8UkyDQn3Fs6sKgRFkg0SW42HcWhV3rEFK/uzgBhWwg+Ag=
+	t=1745857331; cv=none; b=kYwb4fwKcr7bF7dyJPd6RvYAMhj3YS8A2KDXF9fSDLL4zMNprbRi6ClDRj/pl8NEmlI5BG4WIf3W9/TO/qvCOTxly/xwHSV1rhIAakgQEi3RIxNeI6UDoUADn3cGhksfTBgv6+R8rc+T6R1cHoPVLnAMuh7SFutXqQHiMtv4Bj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745855695; c=relaxed/simple;
-	bh=T30cwNjEyi+9OgUhLR/przC9ZWD7wLfG/sp5mfOndCs=;
+	s=arc-20240116; t=1745857331; c=relaxed/simple;
+	bh=Vw4DlImvgesrbSAsVdwb6vTeImKi0Z4LGtqXAOAB+Nk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LLtrXfunBCtJ0tXpE7gYruyC5goFPVh/zYkteKy8wq13Zq5I8K9wrt9WQ7NvsHTK0z++U2y+xEGJs6VEXJurFdyZnYwLHwVUJVG5Is9k78RyKTkw57hZYxmLF8kkokDctVyBLIAAdOnLzJNfLwjQ/6y03iVwhDPCd8y0xY/QKR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TcpN7R2w; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=Ux0/RAxd9XaRgsjpAz9OjsAgqzvLHNtX/ZSxAwojzvj4BDqlKlVlu6oLNymDGGwZVVh6Nw0P+ZfJe8x4jSYCFGXNA2Rja89ZDf8G7x4BalQXsLTbLbW0Pc0XGsl0bniUGFQu/7gbZsJ/bFitcbcZ7yu4PjRSbMHHRE9AlYSK8P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VstnMOO9; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TcpN7R2w"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a07a7b4ac7so1271209f8f.2;
-        Mon, 28 Apr 2025 08:54:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VstnMOO9"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-70427fb838cso40942917b3.2
+        for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 09:22:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745855691; x=1746460491; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k0FRMB/2DQwc8kqqfNvJspFCxHUfwt6gte9tlexlAOo=;
-        b=TcpN7R2wsci5AJXMcKKRnPCt26f48QHK1I6XiiKnEp2pAtb1fLQZxURJgU0tBGdej9
-         AhDrgsbCMdt5TcF8UZbKA2u9Bw/5OryqKONN6MBH171CYkrF04rWP8yQ3atjKisvRXjO
-         Sfg6q0SNLhH82yuQBRuRg2+rJbIw27+nKJQgtkoWqKFM+w1Xo3CCnmsk17Q7OYjQNcvA
-         mEFKmF1vJLJCOEJiXI59LSJK394oI/WFdGoJ7HqqWdy0d0Ml+KO5eRlg0klMytywHgrs
-         k3abiqOYiZn3YWpOv+oZqXZq1CQA3tmmHq0Ni0nnEnn8M1i7mkbyf1uqBdlN7XahLr7Y
-         MceQ==
+        d=linaro.org; s=google; t=1745857326; x=1746462126; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kjtfgNYAyQgaIv+6+gwAi/DXzlNfZQv9vmE2wR+LnUU=;
+        b=VstnMOO9OIpDzRVxGmD9lmKOmGsdXuocbVU9WCF4GNr0cPoaTl+FvxFER6+gxTX01g
+         l0lPgxqzmL4GI0JX2UiIFXcAiIS68xq+DKCjIKxCbmShJ71tf7eFQmLqy1OOwC5ZqDYz
+         zsKcS742SGFGoG5pLeeNUgEUQ28vlxoWIQa7wjfNDKi/ALdT3FLf6nIpQcw1FnW5H55G
+         6L/vMsGOdDkcpUMzmI3uLgqcHkhrY2S8ZeRgkF+AJZBbdJqT77kL0zGKpLFWCm3PHB+a
+         E1qqVEe0tr6wcHtDoZAR8pMkiR4kpbeZqwXtzijE3XqLWKv99PcQujVmOdxowxweiEl2
+         H5XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745855691; x=1746460491;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k0FRMB/2DQwc8kqqfNvJspFCxHUfwt6gte9tlexlAOo=;
-        b=Dp73f1bd4sUV8bOzUI8N0s/NiHvXEEoTsAWpDE5IpBBKP2s79GeJFsBq4ybTQiEv9J
-         y78CptN6syu8ExTzRF9YY9vm5Zc3m/TFpgQvcm2WMZQxSs/aVs3gq3Plrg+4P4LAvUZH
-         IMbDMoEUdNlVS0tpqGRyNGD5uDlY7fx4Z+jYYoH5qRXZSFjjY0s2SZgK1c9SHhpfLBd4
-         ucGjAYciaxfCPSC0nbOjj/tFFsLqrkcF2WWW5ygHsEy9ZnaOcyBVJ28QwDt5YUh8J2E7
-         fnbmLfnoUKPKwWzllXLW8COy2mXb3TmkNuwJTe8x7bsmDsh+j9asj5YO7GQEmjoUkQ9m
-         Ob5A==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Hnvzuse7aIobR3E4keizVneB76+sqqDx/Ll9r3RJryqcjfhO/ydWwyvntTTWs8j/iCiMUjZkTzn8@vger.kernel.org, AJvYcCUUP4oNVc5bmMZ14e5Dxb3prB9Tby+kiYCWQFCc5/UuaelFMC8gxzdjXVS8HzBQLWZut3QgsmMW+facOhNPMrdfGFE=@vger.kernel.org, AJvYcCVYOpymSse3wmCjCqSLfukY7tVVqwjDTwaIFwRoaWFDR7MHkZe/ONUN4UcCnZc5ssOpGJbNtKXJNVxu@vger.kernel.org, AJvYcCVsJkx7tiv63RalXGMSzv1ESYIt1aspL8nUX5gavgH+wPHpISqIrsD5TfHvJPCkygebRs0qiWtgN4UVHJ/j@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBEzLy6cXUKl2wi/4MWCwa+KbVp1TZmaZJHDUSHP6pmr0qFafE
-	q32ZDhdC/H6LMWf5w2x6gWe9uNbufHTW2NhxuhajYVdXoZJ59Dvj9RwSSG7luTDBjUyxKnbLb+C
-	t1127d7ofUme5b0Olu6Sa2chMBbg=
-X-Gm-Gg: ASbGncsL1O+bSF+0hYnDcdlYtivUS6QilQFZ0ao/5dHMmqYQTiiKlcTbDEB9sKiSqDi
-	OONEJYdauxnS22wjNEkbdULnUAS0CTK6L9zVA8pekS9AaPS66NWHwLS8gKFf6WZXSCi6n3s5Jsc
-	y1+ZvVpLPzrqTxHqKHEn+jQg==
-X-Google-Smtp-Source: AGHT+IFntGK5lSDb8irDCuaYzRBYnVhqMQyX6NyZEOb7L/OBjRhxSN+3ZnBViJ66Z16/9zrd4Y8cNzafDkkcON8ilz4=
-X-Received: by 2002:a05:6000:1889:b0:39c:1257:dbaa with SMTP id
- ffacd0b85a97d-3a0894a3da8mr283905f8f.58.1745855691012; Mon, 28 Apr 2025
- 08:54:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745857326; x=1746462126;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kjtfgNYAyQgaIv+6+gwAi/DXzlNfZQv9vmE2wR+LnUU=;
+        b=hWHTcJEWFGCEm/fRBsQXvWJ+RLAVg5X+UyTVGBc0g3ym0on0WTKKql6b8Sz0TPZgJT
+         xvrCgoYK+Znk0+eV7uMgsQHpiF9iXIz0wZWn1mZcga5dEBKxUXsBtWekMkvzhDJEbqDV
+         iZS6V0yMTu3ZT8uDllH62rd469zE+uTnWgY08hQxJ856xBMeHRKwMr0byhuffSdPBO/4
+         0sU8+UIe1HI8AwUxqNXfnU3KhxdboE000IN7LgFIXp5k3gm7IW621HFXvku1NhH2VDxU
+         wlJTpdeAhdHdvG6nJEuh8mldE7Pq7pWZVAOjlqMLlM8wW/pKdCH2FVpgtahNy/n3YU4h
+         Nydg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyIH2NVciDkFHcKSv8RpwqHFX5E/VymjfIvuFDps3HgHkZBOfZpoxY+jwfTlZLwoVJj0J74oXxWoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx38e2rXrdxCxtZGSjv/vR2KSynX13ZY8ENJUBhKFT+x4YoEs2O
+	rfYSPnzvu4fbGQcttKGtUvSPPpNbi0N7WdVFcrSkd7MvtFOFjwuJmCDGD9G8h0neewkD9t7p5QJ
+	H2DZfgbwEU6xD/MLdjVKwhJI+XmVOwA64oFmdAw==
+X-Gm-Gg: ASbGnctbC7nSoHgFJ9FPsP3mB+zBYh2nVHNWMWiYyMTCV/EWPKzvmxB6Ap50jJuzggV
+	tIuC7DPR0FmmFhHy3HhGy08LeYoXnVR2zB+isra7CLTVLVTuQWgU0IZV4LteBL2mNcublnOIfAq
+	HrIVhiQg6L/rVDB5E/NDhNtV8w0KutoPhZZg==
+X-Google-Smtp-Source: AGHT+IHJ8fzCsar22nWRrLuqubA/nW5PD6Isexezh6U72gKuIl5N70HEwT9JTNXKPWmpqHrpu7bpAGC2DT3kmga/dpo=
+X-Received: by 2002:a05:690c:67c6:b0:708:3532:ec94 with SMTP id
+ 00721157ae682-70853f752e9mr174343137b3.0.1745857326167; Mon, 28 Apr 2025
+ 09:22:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407165202.197570-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250407165202.197570-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdXtfzp81V4uAk-oULoBz2BtipyPvc9V8oV=kDXmX90GxA@mail.gmail.com>
- <CA+V-a8sMOnKZjNGW2=Y+TcF9itvC4a1LeEQ+eAKvjhWvEL_K+Q@mail.gmail.com> <CAMuHMdXEwbn2i9PJ9qzcFkHxNfaQFQ53SU_rOPJZHZskQvT3xw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXEwbn2i9PJ9qzcFkHxNfaQFQ53SU_rOPJZHZskQvT3xw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 28 Apr 2025 16:54:24 +0100
-X-Gm-Features: ATxdqUFxNCYBOsoh1ZJ6fagkv9r2rDgfFsZnYAqVunmDATR1S3ML5ON7itzkA1A
-Message-ID: <CA+V-a8sp7LsJru-CEgv_Y-o5_SmE1ZKnshvYe6x37=+=y1pzMQ@mail.gmail.com>
-Subject: Re: [PATCH v2 9/9] clk: renesas: r9a09g057: Add clock and reset
- entries for GBETH0/1
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250422-sm7150-upstream-v1-0-bf9a9081631d@jiaxyga.com> <20250422-sm7150-upstream-v1-11-bf9a9081631d@jiaxyga.com>
+In-Reply-To: <20250422-sm7150-upstream-v1-11-bf9a9081631d@jiaxyga.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 28 Apr 2025 18:21:30 +0200
+X-Gm-Features: ATxdqUFknbhFgOKvNVOI3-s43pP4YH55pKLNf_KwLrUaeaEizalUr2MLUM3sfs8
+Message-ID: <CAPDyKFqPpqDj+DKT=nJrTS8iDUx_8scnLreUQ99byDHEdBeiww@mail.gmail.com>
+Subject: Re: [PATCH 11/33] dt-bindings: mmc: sdhci-msm: Add the SM7150 compatible
+To: Danila Tikhonov <danila@jiaxyga.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Rajendra Nayak <quic_rjendra@quicinc.com>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wesley Cheng <quic_wcheng@quicinc.com>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Souradeep Chowdhury <quic_schowdhu@quicinc.com>, Lee Jones <lee@kernel.org>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Alex Elder <elder@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Georgi Djakov <djakov@kernel.org>, 
+	Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss <rfoss@kernel.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	Sibi Sankar <quic_sibis@quicinc.com>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Kees Cook <kees@kernel.org>, 
+	Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>, 
+	David Wronek <david@mainlining.org>, Jens Reidel <adrian@mainlining.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-mmc@vger.kernel.org, netdev@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
+	linux-remoteproc@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linux-hardening@vger.kernel.org, linux@mainlining.org, 
+	~postmarketos/upstreaming@lists.sr.ht
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+On Tue, 22 Apr 2025 at 22:24, Danila Tikhonov <danila@jiaxyga.com> wrote:
+>
+> Add compatible for the SDHCI block found in SM7150.
+>
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
 
-On Mon, Apr 28, 2025 at 2:36=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Mon, 28 Apr 2025 at 15:22, Lad, Prabhakar <prabhakar.csengg@gmail.com>=
- wrote:
-> > On Tue, Apr 15, 2025 at 3:55=E2=80=AFPM Geert Uytterhoeven <geert@linux=
--m68k.org> wrote:
-> > > On Mon, 7 Apr 2025 at 18:52, Prabhakar <prabhakar.csengg@gmail.com> w=
-rote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > Add clock and reset entries for GBETH instances. Include core clock=
-s for
-> > > > PTP, sourced from PLLETH, and add PLLs, dividers, and static mux cl=
-ocks
-> > > > used as clock sources for the GBETH IP.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
-> > > > ---
-> > > >  drivers/clk/renesas/r9a09g057-cpg.c | 72 +++++++++++++++++++++++++=
-++++
-> > > >  drivers/clk/renesas/rzv2h-cpg.h     | 11 +++++
-> > > >  2 files changed, 83 insertions(+)
-> > > >
-> > > > diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/rene=
-sas/r9a09g057-cpg.c
-> > > > index 3c40e36259fe..057bfa0e2a57 100644
-> > > > --- a/drivers/clk/renesas/r9a09g057-cpg.c
-> > > > +++ b/drivers/clk/renesas/r9a09g057-cpg.c
-> > >
-> > > > @@ -115,6 +138,17 @@ static const struct cpg_core_clk r9a09g057_cor=
-e_clks[] __initconst =3D {
-> > > >         DEF_DDIV(".pllvdo_cru2", CLK_PLLVDO_CRU2, CLK_PLLVDO, CDDIV=
-4_DIVCTL1, dtable_2_4),
-> > > >         DEF_DDIV(".pllvdo_cru3", CLK_PLLVDO_CRU3, CLK_PLLVDO, CDDIV=
-4_DIVCTL2, dtable_2_4),
-> > > >
-> > > > +       DEF_FIXED(".plleth_250_fix", CLK_PLLETH_DIV_250_FIX, CLK_PL=
-LETH, 1, 4),
-> > > > +       DEF_FIXED(".plleth_125_fix", CLK_PLLETH_DIV_125_FIX, CLK_PL=
-LETH_DIV_250_FIX, 1, 2),
-> > > > +       DEF_CSDIV(".plleth_gbe0", CLK_CSDIV_PLLETH_GBE0,
-> > > > +                 CLK_PLLETH_DIV_250_FIX, CSDIV0_DIVCTL0, dtable_2_=
-100),
-> > > > +       DEF_CSDIV(".plleth_gbe1", CLK_CSDIV_PLLETH_GBE1,
-> > > > +                 CLK_PLLETH_DIV_250_FIX, CSDIV0_DIVCTL1, dtable_2_=
-100),
-> > > > +       DEF_SMUX(".smux2_gbe0_txclk", CLK_SMUX2_GBE0_TXCLK, SSEL0_S=
-ELCTL2, smux2_gbe0_txclk),
-> > > > +       DEF_SMUX(".smux2_gbe0_rxclk", CLK_SMUX2_GBE0_RXCLK, SSEL0_S=
-ELCTL3, smux2_gbe0_rxclk),
-> > > > +       DEF_SMUX(".smux2_gbe1_txclk", CLK_SMUX2_GBE1_TXCLK, SSEL1_S=
-ELCTL0, smux2_gbe1_txclk),
-> > > > +       DEF_SMUX(".smux2_gbe1_rxclk", CLK_SMUX2_GBE1_RXCLK, SSEL1_S=
-ELCTL1, smux2_gbe1_rxclk),
-> > > > +
-> > > >         DEF_DDIV(".pllgpu_gear", CLK_PLLGPU_GEAR, CLK_PLLGPU, CDDIV=
-3_DIVCTL1, dtable_2_64),
-> > > >
-> > > >         /* Core Clocks */
-> > >
-> > > > @@ -233,6 +271,38 @@ static const struct rzv2h_mod_clk r9a09g057_mo=
-d_clks[] __initconst =3D {
-> > > >                                                 BUS_MSTOP(7, BIT(10=
-))),
-> > > >         DEF_MOD("usb2_0_pclk_usbtst1",          CLK_PLLDTY_ACPU_DIV=
-4, 11, 7, 5, 23,
-> > > >                                                 BUS_MSTOP(7, BIT(11=
-))),
-> > > > +       DEF_MOD_EXTERNAL("gbeth_0_clk_tx_i",    CLK_SMUX2_GBE0_TXCL=
-K, 11, 8, 5, 24,
-> > > > +                                               BUS_MSTOP(8, BIT(5)=
-),
-> > > > +                                               0x300, 8, 1),
-> > >
-> > > CPG_SSEL0
-> > >
-> > > I'm wondering if you really have to store and duplicate this info her=
-e.
-> > > Can't you infer it from the parent's smux description?
-> > >
-> > To clarify, you mean to get the parent of the mod clock and then get
-> > the clk_mux to get the base?
->
-> Indeed.
->
-Thank you for the clarification.
+Applied for next, thanks!
 
-Cheers,
-Prabhakar
+Kind regards
+Uffe
+
+
+> ---
+>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> index eed9063e9bb352b5c8dac10ae2d289c5ca17f81b..2b2cbce2458b70b96b98c042109b10ead26e2291 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+> @@ -60,6 +60,7 @@ properties:
+>                - qcom,sm6125-sdhci
+>                - qcom,sm6350-sdhci
+>                - qcom,sm6375-sdhci
+> +              - qcom,sm7150-sdhci
+>                - qcom,sm8150-sdhci
+>                - qcom,sm8250-sdhci
+>                - qcom,sm8350-sdhci
+>
+> --
+> 2.49.0
+>
