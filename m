@@ -1,158 +1,152 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F2B28CF71
-	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 17:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C85C2957A5
+	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 18:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745862074; cv=none; b=rIpcTbDUbMeKnhRaop2ShWIPbBu95BMDrbOtenutJFRManqzc8mSuzoiS/79TQsXeGY4HzpW06QxeQ3kbzyUbG8S2tp5i34kPnI70yMYrWE6xu/ZJgRwZo6Ifbgh2N186DhyaS070XFiA0HBPJplpEuSTAjJygsiAH5Ahw5pJPI=
+	t=1745863440; cv=none; b=YQYfsi+xqnx6qI712INHMrVYkfzSXAmHfDgCc9eaZbyb94B5FCZ2Cdh0KI2Asm2YJvkM5cT1pj8GPTyCFhdM0zLOZHLjmCl5IgHHOyDupGuRqbJ03G5W+iDFMloskafqyqhbDNwCHjHnUV2+9GIRtjkS9KFBeQXInbuZQhtfLrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745862074; c=relaxed/simple;
-	bh=pggrvf7aFM1Uie3ksCGKm9fcXTwphOeBmE6ZXg1K0To=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k0sU0JctN4tHv9sPeiYf8n8/QeCvH5+RdseF+BEi43/Xqs6tp0vtdbdhTc7ETBeKXB4OF/TGmKVOTXi5z5LPotg/OE0kYbJCgHahGGdtqVOrsRXkBjh3R/m73VXwZYYEP2fFYMEMnpZ7y4xCaev3We6lxdr5lhdK7Ed8cAyX4vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FEoqa4Kp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1745863440; c=relaxed/simple;
+	bh=2l8v5GoV84d39u4DAVXZu15z37k8q2ZY6Rdpku5UUCk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NhAMJaN+L0Z0Ui3xjC5I1sTjhxh+lLPxyJLpMwDUtSCU2sb5NUInOWk9sFA+mAANX0E2fD0UAS17bQoyvUSVgFM036p3KqJTbm63MSlyHc4lTpCxJkHTfx8veU32Rdq8S1EbKNiqXPP6t+omBtAFtM+GS5FdRlxelU+M4uuSajQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bs668uBa; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FEoqa4Kp"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SACurB020158
-	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 17:41:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TIwMyfbj3XbF1DLrNX2RoNpDxP/RC9hpdQ0dRJ0tGHQ=; b=FEoqa4KpYEQI4H6K
-	NXfIgOYAc4Ss1wTxwsndXJxOsYo3vCXJXXsgFoY2dIwqxww589YLVG8IY43hkRwy
-	cspwMlDguhNhCS9XeOQAOes3etHs23ohcgIW1JfWuSjpFi8jEMUDop7t+NgPYdf4
-	y/GmzHxTMP5cC0Na7yKdv/05FvmK/gRxkcOKCnPEpjzf5eppcxloL+MvU9misz86
-	MKOxOqsPJMtqrNw95CBB+1SfYJTfQVxJ3MhDqDN233nNzpJNTK05lKG7ua92+SHn
-	/8O/XYXbQjytgkftSoEW6FK9tsKrbp9TA/UIpNPieH2gNUxDK85mrOxBcunC4KXt
-	9dHK+g==
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468pg9a004-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 17:41:11 +0000 (GMT)
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-736b431ee0dso3735407b3a.0
-        for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 10:41:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bs668uBa"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39c1efc4577so2970725f8f.0
+        for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 11:03:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1745863437; x=1746468237; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LhH2cWJiOFiPJwDHm1EMiooPrujkspMZlGWkH+fi+54=;
+        b=Bs668uBaSvY4P1JahQrbvlmfhR/SnCL81rC6Hp7aJ0v+O6Q/KFCeQeGa2SQ7+Pe8Lu
+         /F4OyEaeSoRUfDRJqlUL2pJcm2SbRwO9sLknWc3bUj1mrH1LtxuYR/IRnp6UgUtPvuzA
+         2oaPU69vccyRLup0su+yxXjXn5Ax6UN/rSGpZ4/7OTZCADCJ4Muee4JbPI8b2Ti3VCNs
+         KbkonCIZ/TEMc5QeaTKuaChAiR2a/nag+nfjHQuGYjQAQVMroXCoY0WnM8ZdA89Xaeix
+         jzkXh3uiHusV5J2aeoq+f1MXb0uftAaLHnsJGCYni969eExB3e5rI+cEYGxnstj2hLRt
+         Fafw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745862070; x=1746466870;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TIwMyfbj3XbF1DLrNX2RoNpDxP/RC9hpdQ0dRJ0tGHQ=;
-        b=U8v8iqxssipgUgjaT9p2S2ULodSZiGwWfBt6fjD57O0QsONCbAZCasPSxnfaQqmMVF
-         akX9RTJdfukF02pzhvnSBpN1swKjrWBwMcpgm/bzth3Dgf/2v9H/ca/6cgecYoh+OjzK
-         8RiRqRUldstRt5Ok8u89yUn8tvrcFJzl42x1NtDvkkdHKa00l1SUSwojZCFqXJA6bBRT
-         yn+XGVzr0hnCutPDcpEBHKZPD+dqbEL3fnHKtE0Mcjt17DMZwZDD/JpGKUsYOEB7QwsQ
-         ntQnXXeogacj6sQ13kR+j6B1G60B6OlIE1WAaSFifoT8xVGo/Y7TEbRHM6z/xl/lOu7s
-         ESFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVRPc4CYQhIcFkx32PUuVw+wpkVQ4+1JpOxvtJlgBBoPnDe5kh5hRyqYW7PxTGFiHCi5c/mmzW+dyA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTc6IoNwc9XRu1gMI67HIDsRUiu9W7Ii74fe/PCWux2N8FE0lz
-	di8ak9CX33OBlR43pw7S8fc1J3tGRMRGGR/5Cvlu2E7oCYRYF8v7f1/zd9Y1IbjuDqYgdIdqM14
-	wIQiCM2wXWmvjnquc7NL2WWF/Hd5mOuan9pClh6nvUq4wFEv5bpvasuoJwZ8=
-X-Gm-Gg: ASbGncsZK+qah/V6Y4PHn8R7+7TT+93dT9QAx12ZKE00oBIf0EpYbYLG8xWau+BQhF/
-	Mxfpx5umb0sDF94Gdo9iO/aNyl4m3Y/p1nDPjZcitVMXMvCHB+R2ptzl4EcnZ2/kEwreU87FU+p
-	n8kStsTHe+NqTVmg2EiP3NSobz48FVnJkSv4fX1dQHvAtDFF8q6VYCygSYma34ayl2RrUXnucAp
-	dE9biHno/hW4GRXmsVUnbAPFJk0COwUaRS3qGGPgBHCjOjRYlpBg1f59DOYS8XNOqwC+0/usBg3
-	MFBWhXPOFIgixU2+4fmS07ddar4BeVR6+gQPR0Cq
-X-Received: by 2002:a05:6a00:88f:b0:736:3c6a:be02 with SMTP id d2e1a72fcca58-73fd75c4ea4mr15399447b3a.11.1745862070586;
-        Mon, 28 Apr 2025 10:41:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHgjfMkBn0pV9r4Qg3qhNII5Usb8joBTmFadTYCHZoBgt9OiIPYvsOPn9WNpttYgRk3jvRtAA==
-X-Received: by 2002:a05:6a00:88f:b0:736:3c6a:be02 with SMTP id d2e1a72fcca58-73fd75c4ea4mr15399426b3a.11.1745862070246;
-        Mon, 28 Apr 2025 10:41:10 -0700 (PDT)
-Received: from [192.168.0.195] ([49.204.26.142])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25942157sm8304691b3a.72.2025.04.28.10.41.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Apr 2025 10:41:10 -0700 (PDT)
-Message-ID: <c1b23184-396b-4c6f-a890-9e08bf564eec@oss.qualcomm.com>
-Date: Mon, 28 Apr 2025 23:11:05 +0530
+        d=1e100.net; s=20230601; t=1745863437; x=1746468237;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LhH2cWJiOFiPJwDHm1EMiooPrujkspMZlGWkH+fi+54=;
+        b=fxYzwyd7xV3T0oBbchfgI6bGUJP19Oy4+SE4LUhC0bGBu8Io3J9N1VIpG7XdWA3DIq
+         ItMKFgsmaLWT82ausIdTuP4HiHOkEwABedka1kG4T6gZ2x8saitFjfMTbXRqA+4PiNTX
+         Hne+7wtv/Z29OzKZ4YBEMsW7aNfwhO+c4Sg9DVTg6eKSn/zT9fgOncO62XYXyON9usuX
+         ITa6RrBxUTYUJTuB2ZmVefr6DI/HQ1aqgK4W2Y6BHvp9T7krXGaAGxTIklhw5IL7GIF3
+         41vKMHHUc/Ov6hJE7cIzQG56eJPZzpjTVjGVkJo+fO15utG8g3cvHDt0hC1uXnrncbDS
+         pPNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvDpsRKXshI3S7awGc7IgWl5lya4cvnCWzUTBhNxOmS3aD9+q3ARmS+6Ogav7bzzwFYptpAxHcTPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw568C6plcN/LUH8jYR0wM80xJ3TIC7xktfsDyBWp7XgeAqiym
+	P1Mt96N3V3dowm2mnlssGav7o/LHZjbo6TZkAlTm85HvBQhHBbN95aS4rmpjDMY=
+X-Gm-Gg: ASbGnctZVXo95Ja8GfyIkUhq++2j9Iy4seJq3G4vBibtItcGj95Xq8XQlySbUKufXy9
+	+pY9nGRMtlXuTZVYYtQKVNIsH0QFrpCpP5HWMhpDafQokR0cdSYPZVBzvfbzdyx6fUjrLuX9pBT
+	1l6vBJEWwyxIkCHdC7PYLOuwssN4wSofh5yDn0nQGlqJyt20KhmmpAoR6D5t9U8Q67Oim+b/nmC
+	AG+3w9WFDudfIbH9g0wcDv7iiJFZJBBuUsV/nra6IbmEnvaoeS1egk0h96SN5/Krtqcr3w5SDXB
+	fnldNTVEzWVqxVcVHg41slQ9QRN6ibBGk7Y95vd6P3Ng
+X-Google-Smtp-Source: AGHT+IFufjFxqWpK/DiwzoIhe+tnqis6Q5i4cTihbGu1kOEcV7a+TqrcCHr03xN9hBxN/HPNsngJAw==
+X-Received: by 2002:a05:6000:4282:b0:39a:c9c1:5453 with SMTP id ffacd0b85a97d-3a08a3c8a48mr205683f8f.49.1745863436775;
+        Mon, 28 Apr 2025 11:03:56 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d29b9c4sm167552465e9.3.2025.04.28.11.03.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 11:03:56 -0700 (PDT)
+Message-ID: <e12bac66ea9158e058e48521e6906cb04960e980.camel@linaro.org>
+Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley	
+ <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo
+ Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette	 <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Russell King	 <linux@armlinux.org.uk>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon	 <will@kernel.org>, Alexandre
+ Belloni <alexandre.belloni@bootlin.com>, Peter Griffin
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
+ McVicker	 <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
+Date: Mon, 28 Apr 2025 19:03:54 +0100
+In-Reply-To: <20250410-dancing-free-peacock-536c24@shite>
+References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
+	 <20250410-dancing-free-peacock-536c24@shite>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3-2+build1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] clk: qcom: gpucc-sm6350: Add *_wait_val values for
- GDSCs
-To: Luca Weiss <luca.weiss@fairphone.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250425-sm6350-gdsc-val-v1-0-1f252d9c5e4e@fairphone.com>
- <20250425-sm6350-gdsc-val-v1-4-1f252d9c5e4e@fairphone.com>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <20250425-sm6350-gdsc-val-v1-4-1f252d9c5e4e@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=ZpvtK87G c=1 sm=1 tr=0 ts=680fbdb7 cx=c_pps a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=Svr01UFivMFfsnZ9dZkWgg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=6H0WHjuAAAAA:8 a=COk6AnOGAAAA:8 a=6dQnf3u2Ryt8jKbU0REA:9 a=QEXdDO2ut3YA:10
- a=IoOABgeZipijB_acs4fv:22 a=Soq9LBFxuPC4vsCAQt-j:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: kHac8wN0tHsmzoTrmbpxKRaKWWUjAOGe
-X-Proofpoint-GUID: kHac8wN0tHsmzoTrmbpxKRaKWWUjAOGe
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDE0MyBTYWx0ZWRfXwQ1Y8N4/+IEI oVjcAXbz1+Em0ocdKjJfXWJ/bkp97LhXfF4ydOvL9M71j0pDPpveGTKS77hDivMJbC6gmPgblyH 73+RFTSa9Wt/gzNSwJngDcBuzFjeqwUTRsK5ap0xyTLISDnJV4DXbDsBrUyBTEzbNpqtEozT2wc
- MxTmde6FkwohV3rnch+T+JdzDN4Cypi4G37TyqTScVsE248clMv2j5NwGgaQ98mzqElDVBcu8h4 e+c9jzsr4DHPErhAbQBnQS8puiQijFdqHUoNHiXZQp45RJIKpqJyZwX+IKWvk/zRy8E8uXkUWMc Cmj55QGEjuQuiYnmVb2FliAFW7kGq6f/chL/aiGAUPIiTwdAK38rI16dS/a22grCfSnuy6rQN8W
- CIynLe2dZqcd+iqBLN3FRpuki3axdLkOBM4Mn8hFWC6uv0ofIzMxDW4jRBIQqpYoGp0uAVlV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-28_07,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- mlxscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504280143
+
+Hi Krzysztof,
+
+On Thu, 2025-04-10 at 08:18 +0200, Krzysztof Kozlowski wrote:
+> On Wed, Apr 09, 2025 at 09:37:21PM GMT, Andr=C3=A9 Draszik wrote:
+> > This series adds initial support for the Samsung S2MPG10 PMIC using the
+> > MFD framework. This is a PMIC for mobile applications and is used on
+> > the Google Pixel 6 and 6 Pro (oriole / raven).
+> >=20
+> > *** dependency note ***
+> >=20
+> > To compile, this depends on the Samsung ACPM driver in Linux next with
+>=20
+> Are you sure these are build time dependencies? Do not look like.
+
+Yes, there is a build time dependency on the ACPM driver (also
+mentioned in Kconfig). In particular the last series mentioned
+below (acpm-children) adds devm_acpm_get_by_node() which this
+driver needs.
+
+>  Also,
+> if they are, the patchset will wait for quite some time.
+
+All the dependencies appear to have landed in linux-next as of
+writing this.
+
+>=20
+> > the following additional patches:
+> > https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@lina=
+ro.org/
+> > https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linar=
+o.org/
+> > https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@li=
+naro.org/
+> >=20
+> > *** dependency note end ***
+> >=20
+> > +++ Kconfig update +++
+> >=20
+> > There is a Kconfig symbol update in this series, because the existing
+> > Samsung S2M driver has been split into core and transport (I2C & ACPM)
+> > parts. CONFIG_MFD_SEC_CORE is now truly a core driver, and
+> > the I2C code that was part of it is now enabled via CONFIG_MFD_SEC_I2C.
+> >=20
+> > This was necessary because unlike the other S2M PMICs, S2MPG10 doesn't
+> > talk via I2C, but via the Samsung ACPM firmware.
+> >=20
+> > +++ Kconfig update end +++
+> >=20
+> > This series must be applied in-order, due to interdependencies of some
+> > of the patches. There are also various cleanup patches to the S2M
+> > drivers. I've kept them ordered as:
+>=20
+> They should not depend... although actually not my trees, except the
+> firmware.
+
+The s2mpg10 core patch adds enums and register macros for the new
+PMIC, which the clk and rtc drivers then use, hence I'm calling out
+this dependency - they can not compile without the core patch in place.
 
 
+Cheers,
+Andre'
 
-On 4/25/2025 5:42 PM, Luca Weiss wrote:
-> Compared to the msm-4.19 driver the mainline GDSC driver always sets the
-> bits for en_rest, en_few & clk_dis, and if those values are not set
-> per-GDSC in the respective driver then the default value from the GDSC
-> driver is used. The downstream driver only conditionally sets
-> clk_dis_wait_val if qcom,clk-dis-wait-val is given in devicetree.
-> 
-> Correct this situation by explicitly setting those values. For all GDSCs
-> the reset value of those bits are used, with the exception of
-> gpu_cx_gdsc which has an explicit value (qcom,clk-dis-wait-val = <8>).
-> 
-> Fixes: 013804a727a0 ("clk: qcom: Add GPU clock controller driver for SM6350")
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  drivers/clk/qcom/gpucc-sm6350.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gpucc-sm6350.c b/drivers/clk/qcom/gpucc-sm6350.c
-> index 35ed0500bc59319f9659aef81031b34d29fc06a4..ee89c42413f885f21f1470b1f7887d052e52a75e 100644
-> --- a/drivers/clk/qcom/gpucc-sm6350.c
-> +++ b/drivers/clk/qcom/gpucc-sm6350.c
-> @@ -413,6 +413,9 @@ static struct clk_branch gpu_cc_gx_vsense_clk = {
->  static struct gdsc gpu_cx_gdsc = {
->  	.gdscr = 0x106c,
->  	.gds_hw_ctrl = 0x1540,
-> +	.en_rest_wait_val = 0x2,
-> +	.en_few_wait_val = 0x2,
-> +	.clk_dis_wait_val = 0x8,
->  	.pd = {
->  		.name = "gpu_cx_gdsc",
->  	},
-> @@ -423,6 +426,9 @@ static struct gdsc gpu_cx_gdsc = {
->  static struct gdsc gpu_gx_gdsc = {
->  	.gdscr = 0x100c,
->  	.clamp_io_ctrl = 0x1508,
-> +	.en_rest_wait_val = 0x2,
-> +	.en_few_wait_val = 0x2,
-> +	.clk_dis_wait_val = 0x2,
->  	.pd = {
->  		.name = "gpu_gx_gdsc",
->  		.power_on = gdsc_gx_do_nothing_enable,
-> 
-
-Reviewed-by: Taniya Das <quic_tdas@quicinc.com>
