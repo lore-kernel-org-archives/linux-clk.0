@@ -1,125 +1,110 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2C127990B
-	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 18:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EE51A072A;
+	Mon, 28 Apr 2025 18:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745864251; cv=none; b=GusZXzkDLxyco3m/RxhQPRtndJcl+2sv+JrLqiYTBBtmZk4DTHdNFi/AR9MYWuBoqb9VsKTETKf/RfAa7ge9+33E4K+9b1b3tcu3hHO7OBGZxdksEei8/yMJupA4zm7wcx85XqR9vllbAl0Q7tg5nBNWVT0RBSZELoYP1Mdj7yM=
+	t=1745865726; cv=none; b=QkMTNeCvmhoO5oMWPRW17qv0hzcfUPJJVwgoLmGQdMpnPe7eDl+CGnUCUUzGC+07SzlAfV5WLKS2Ase+KqIawiag4nZqiu8xoIhsePe9PaFYsCIXvO2vWMHRjC5ANuv6igB4pJPRxKOoXOuZ9TmqJQPwbvmK7BOmjmvTNWCvRP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745864251; c=relaxed/simple;
-	bh=ihGPBiIAT0ONS82KUfYaHLC1u5yTJJn+nPz0lvfjuhM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m5ejMePPUOSHReZ6Yd374mgah9YKkhAaXDKTuxq8oJTZG/2RQN3vc4FmX1fNNbNZOUxOPQXdplrtCJZUZaarsdqju7ukxYEpa00atIfMLAKT86OkegvVtqQ59rpzGwA3zBp0iGjSQb61/kF4opJf6JQ03CsL9b59XZL0gT1+83U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JdFXuMHC; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1745865726; c=relaxed/simple;
+	bh=pOyEFvIZaIP8kYVh73NGQPjfS/lkWuuhPEPBf6oCXfw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rAJvmYzMPIYZdfHjOHwsXZ2GiT2ga7CQH8/T0J6ba2k8wH5KpmQdWAohJG4yTsmsJXXPcJlHlUl4qhpXT9cY7zKwIwR0hAhx+L1WFqoWMWGMrK6ctVIdakko50CSNAli7meRlfFjXoT2zkgpb66ACNKop/2x0gatTqTunSbj2WY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BixXGI/u; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JdFXuMHC"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39c0dfad22aso3945045f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 11:17:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BixXGI/u"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cfe63c592so53310945e9.2;
+        Mon, 28 Apr 2025 11:42:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1745864248; x=1746469048; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ihGPBiIAT0ONS82KUfYaHLC1u5yTJJn+nPz0lvfjuhM=;
-        b=JdFXuMHCU1DfzzNlVbXseTflawSNktC+c3O+DAd3A6fNw5qiG3rUXBGxiivKGsdFRX
-         +mJvKKr8yJis1EEC6XTs8GRlV5CW6ptjR7W3pa6KsXbGRhHfoMPnqLY1xFNG2f16a/ik
-         JehXBwILuNkJG91COcWhoEKjnsyXCL8wzZLpes9tRblhttTzoxeAcpujMLL4LLA5VwDP
-         BMj4+hOP+9roV3fy0lqRs6kgZbk+vKhsJQjFPxejQdrZU8h5pPb3hkRtAuVP7aTWTfKH
-         c2HmClC1g9AR0HxfiwbQv6xOcjuXSAJRNROOvH9ud7YrwF7zXQdt6QoEVDmr1vcdgyu2
-         n2oQ==
+        d=gmail.com; s=20230601; t=1745865723; x=1746470523; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F5bdrjYRXJvvLOdl4ohFfo3C8p3jTkRLefzC062+2jE=;
+        b=BixXGI/u7UkyQebmirfnOarWkZbdJSBsACYe1xfYi7aCBo+KgzKsaS2tx25G823qhR
+         NyCIm6rW65bG7BkN8bhoJ9vUJc+F8ZcRTZJzIWYf3TF5dMF3oiIaun4zSANoiISVdQgg
+         F3E0cE9dPvY63iFloi0EiqZi+U3aK1w1S4cnd5sAcgkEqnpAQYJXBUgrSzVy5aHrBG5T
+         ZnaRoe0WwgvLZ2Oeez+WqM+8QDGzksmY8l5EACiZCPWgLFtfBczCjyoHlBiu+xdGMj9h
+         6H+YHvEoqtT2LngUsetDjid71n4ZF7uP/kTd1vysbioQ+yBtW0/Yddi45OqZiMVHrGOp
+         rLyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745864248; x=1746469048;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ihGPBiIAT0ONS82KUfYaHLC1u5yTJJn+nPz0lvfjuhM=;
-        b=N4Iup0OkIcp9u+1NTIlwj59kzQcCCBJpv5WZyTGD/WtN13xlUM+p8KuxAglcvDCiOO
-         BslAKQZxzM1RtNhOhUUiYqtA+SW87LIlOEji4yi6zfePVLwpLwayKfGP4ifQhDd5cCuo
-         gjPdzykD10z/Y/i4YGbFWJ2Op/GSxahu+sT+v+gaDB5+zVaZPzft9DMT6xX2OWtJ4KYV
-         f7A+kf82iHzEvKP5dCwQE2BS1rhe9iSkMsSR+wK12T8FCGSRZyjSUMni1Q3BDLLqLz1p
-         Cw2GuR8e3rXHJ/KldwtN9x7V3NjJC70cQK4YNulsKj+x6gAKEhsKsnXMOQ4azx/+9Jqj
-         SYOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmOD7PkaP63+ghs4xZ1F8isX32wYK8EKRiHI2qnNGKDkwhM/ervPiZ69Tbp5tcihfWF6VMQkAbrvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK3omRnzB0GtJKrEAhfva3I1JEVYDpo/MaKdGYM1IP2XJZ6B0/
-	zXqvM9F7ROEc1FelirLywWXqc+yoEi9AQ4MocukGhx0ZEVJpocPmE1fUSHNcg1Y=
-X-Gm-Gg: ASbGnctpWw+5pj195bUOZDRaAAoWGw+dPiOy5lYxksY+3sotk/rMAjviUWb4uqv4I/q
-	lc5CMWtlNhbIboNU+01xrzYcXGqwdKHDlFG/SGiHnCosV49d9Ig3dVKnqykYCi7MUfGn0uknd/M
-	ZAiVM4eoXPqUfNQAFtu7i2V/8Bjv22ppxDT6zbD9hz4X3buJ5ZbrSQZMO7Qv0fT2NpQfzf2ZiAU
-	mKu8BJNLBksibEphu/R3Yx4yS4Z+Cyc2zlDUU6fUuinYCBzIvfySZV64V8HInkSS2EvxXCNmkOw
-	qa+6e3/JrGWuwwB27IKGkdswLzysVBDcGaHEeJn9rAD1Z+y4F6SZE7I=
-X-Google-Smtp-Source: AGHT+IFizjQdKkSD/fIMemBtF85cPFPzy/Yw/Dq5QRP9W6htVYIl18G4A6sBNzjsAqVDMr/gP96C0g==
-X-Received: by 2002:a05:6000:250e:b0:391:3157:7717 with SMTP id ffacd0b85a97d-3a08a371630mr250630f8f.34.1745864247691;
-        Mon, 28 Apr 2025 11:17:27 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca497esm11718402f8f.24.2025.04.28.11.17.26
+        d=1e100.net; s=20230601; t=1745865723; x=1746470523;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F5bdrjYRXJvvLOdl4ohFfo3C8p3jTkRLefzC062+2jE=;
+        b=UNaiyD+ha6AJJgSXUn1WPUBXXeXTj3/OtYaKb1Dk6G9kwxtmbE0kuuDyms5JY+1uY5
+         T2SGD0DLB3pE2g7KvMWNELbGWktOWyygXU9lr2FS/QQ9pjWFXlABJrA27n/+T8XMC8AC
+         2sUPAQxw8OZg3ZkJtv6lPlpoaW++S8DuV73XbACxzWqcg2w9g04rKbQg8X9SUatnwcwH
+         w3YsV9R05K9CAwl9z7BqUk7xWWpQxxa7k62onYWor3nePAcWgNxmtbqoQSjY/qdN4QKM
+         zxB0PmRq2gkX7X1zS8QQXCXUTBK/EF8fEGp2LFHFCCKzh+K5Jzqp/0M9hEjZFcTIvkaY
+         N1Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnUHvNwgexXzsVyGqo6F7NAHaLhlFnPdtShLs8nF+d9jOwYnEb1JMf1OAaeGpNc0lORJeZEt5crAA=@vger.kernel.org, AJvYcCXGioehIpSaQwZb5YiS1SSny3sODMzISigSV88x7SnWHSan+oO6zn9kpMnG9lsDhC00MZoWsWBLz92YXwoQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWfHZKSkYgdGNOY8VeqGjMQRCg3RZ7JxQFgkB1DyzGbejEZco7
+	l9tqbV/sCZAeeE3iCE3XcOv6eQyvSSympavFZhTz3XXy4+c9CMLU
+X-Gm-Gg: ASbGncuifIgyJuvxsQ2tazv/KbvvtwFqS2QgyOHy34pjFsS4+STHzVBZSe97PlAIjRv
+	UuMqgMNf14wsTOpyRt5L7ol+vU+TLazOjQv0WVfwrYkFLrk4oPloatuzVPkSM2OOcXvkE9r5twW
+	Sirg1DlNcq/qtGcDSOgV1Xkl8IygXJwykXfHm/+ZcA09FxXXyk4zA93z/uoL5X2WRcw10LwJRvm
+	4isoGDjWEpUqC5CnLo2WeYGLm/CRJs8O7Fj2Yb3YT+f7XqIiiFHMzTtaS1G7DALk9RMTa57wQGY
+	sn8/v9/XYt9Aji/gdb1ttE2GwAkrudQbyurKtAqGjRljfY87DXUg79pwiMj7+C6/5V6o2S6FwA=
+	=
+X-Google-Smtp-Source: AGHT+IHtT9PBUXp9H3NZ4UG51UF8upP3hcH7fgVbnDh5uqCfXHgDjw1+7BdJtbh0wmz5zKDltiyKOg==
+X-Received: by 2002:a05:600c:4e90:b0:43d:22d9:4b8e with SMTP id 5b1f17b1804b1-441ac856140mr4641225e9.10.1745865723282;
+        Mon, 28 Apr 2025 11:42:03 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:593b:8313:b361:2f0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a52f89b2sm137745995e9.8.2025.04.28.11.42.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 11:17:27 -0700 (PDT)
-Message-ID: <24314441936d97a1892474eacdbbd690612de265.camel@linaro.org>
-Subject: Re: [PATCH v4 00/32] Samsung S2MPG10 PMIC MFD-based drivers
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Lee Jones
-	 <lee@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Chanwoo Choi	 <cw00.choi@samsung.com>, Alim
- Akhtar <alim.akhtar@samsung.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Russell King	
- <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon	 <will@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, Tudor
- Ambarus	 <tudor.ambarus@linaro.org>, Will McVicker
- <willmcvicker@google.com>, 	kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, 	linux-rtc@vger.kernel.org, Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 28 Apr 2025 19:17:25 +0100
-In-Reply-To: <2025041715425693974c6d@mail.local>
-References: <20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org>
-	 <20250415160212.GA372032@google.com> <2025041715425693974c6d@mail.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.54.3-2+build1 
+        Mon, 28 Apr 2025 11:42:02 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 0/2] clk: renesas: Skip monitor checks for external clocks and add clocks for GBETH
+Date: Mon, 28 Apr 2025 19:41:50 +0100
+Message-ID: <20250428184152.428908-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-SGkgQWxleGFuZHJlLAoKT24gVGh1LCAyMDI1LTA0LTE3IGF0IDE3OjQyICswMjAwLCBBbGV4YW5k
-cmUgQmVsbG9uaSB3cm90ZToKPiBPbiAxNS8wNC8yMDI1IDE3OjAyOjEyKzAxMDAsIExlZSBKb25l
-cyB3cm90ZToKPiA+ID4gwqBkcml2ZXJzL21mZC9LY29uZmlnwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDM1ICstCj4gPiA+
-IMKgZHJpdmVycy9tZmQvTWFrZWZpbGXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgNSArLQo+ID4gPiDCoGRyaXZlcnMvbWZk
-L3NlYy1hY3BtLmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoCB8IDQ0MiArKysrKysrKysrKysrKysrKysrCj4gPiA+IMKgZHJpdmVycy9tZmQv
-c2VjLWNvbW1vbi5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCB8IDMwMSArKysrKysrKysrKysrCj4gPiA+IMKgZHJpdmVycy9tZmQvc2VjLWNvcmUu
-Y8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IHwgNDgxIC0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ID4gPiDCoGRyaXZlcnMvbWZkL3NlYy1jb3Jl
-LmjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oCB8wqAgMjMgKwo+ID4gPiDCoGRyaXZlcnMvbWZkL3NlYy1pMmMuY8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAyMzkgKysrKysrKysr
-Kwo+ID4gPiDCoGRyaXZlcnMvbWZkL3NlYy1pcnEuY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA0NjAgKysrKysrKy0tLS0tLS0tLS0t
-LS0KPiA+IAo+ID4gPiDCoGRyaXZlcnMvcnRjL3J0Yy1zNW0uY8KgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxOTcgKysrKysrLS0tCj4g
-PiAKPiA+IE1GRCBwYXJ0cyBsb29rIG9rYXkgdG8gbWUgbm93Lgo+ID4gCj4gPiBXaXRoIEFja3Mg
-ZnJvbSB0aGUgQ2xrIGFuZCBSVEMgbWFpbnRhaW5lcnMsIEkgY2FuIG1lcmdlIGFsbCBvZiB0aGUK
-PiA+IGRyaXZlciBzdHVmZiB0b2dldGhlciBhbmQgc3VibWl0IGEgUFIgZm9yIG90aGVycyB0byBw
-dWxsIGZyb20uCj4gPiAKPiAKPiBJIGRvbid0IHRoaW5rIHRoZSBSVEMgcGFydCBkZXBlbmRzIG9u
-IHRoZSBNRkQgb25lIHNvIEkgd2FzIGdvaW5nIHRvCj4gYXBwbHkgdGhlIHBhdGNoZXMgaW4gbXkg
-dHJlZSBpZiB0aGlzIGlzIGZpbmUgZm9yIGV2ZXJ5b25lLgoKUlRDIHBhdGNoIDI3IGRvZXMgZGVw
-ZW5kIG9uIHRoZSBzMm1wZzEwIG1mZCBjb3JlIGRyaXZlciAoZHVlIHRvCnVzaW5nIGVudW1zIGFu
-ZCBtYWNyb3MgaW50cm9kdWNlZCB0aGVyZSkuCgpQYXRjaGVzIDI1LiAyNiwgMjgsIDI5LCAzMCwg
-MzEgaW5kZWVkIGRvbid0IHN0cmljdGx5IGRlcGVuZCBvbiB0aGUKTUZEIGNoYW5nZXMuIFdpdGhv
-dXQgcGF0Y2ggMjcgaW4gcGxhY2UsIHBhdGNoZXMgMjUgJiAyNSB3aWxsCmRlZmluaXRlbHkgc3Rp
-bGwgYXBwbHksIGFuZCBwYXRjaGVzIDI4Kysgd2lsbCBwcm9iYWJseSBhcHBseS4KCklmIHlvdSB3
-YW50IHRvIHRha2UgdGhlbSwgSSBjYW4gdGhlbiByZWJhc2UgdGhpcyBzZXJpZXMgaWYgeW91IHRo
-aW5rCnRoYXQncyBiZXR0ZXIuCgpJJ2xsIGRvIHdoYXRldmVyIGlzIHByZWZlcnJlZCwganVzdCBs
-ZXQgbWUga25vdyA6LSkKCgpDaGVlcnMsCkFuZHJlJwoK
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Hi all,
+
+These patches are part of the series [0], out which all the patches
+except these two have been merged. These two patches add clock and reset
+entries for GBETH0/1. The first patch skips monitor checks for external
+clocks in the RZV2H CPG driver. The second patch adds clock and reset
+entries for GBETH0/1 in the R9A09G057 CPG driver.
+
+[0] https://lore.kernel.org/all/20250407165202.197570-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  clk: renesas: rzv2h-cpg: Skip monitor checks for external clocks
+  clk: renesas: r9a09g057: Add clock and reset entries for GBETH0/1
+
+ drivers/clk/renesas/r9a09g057-cpg.c | 64 +++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c     | 31 +++++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.h     | 34 +++++++++++++--
+ 3 files changed, 124 insertions(+), 5 deletions(-)
+
+-- 
+2.49.0
 
