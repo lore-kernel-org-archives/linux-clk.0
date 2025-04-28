@@ -1,341 +1,180 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F09E1FF603
-	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 08:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB4F17BA6;
+	Mon, 28 Apr 2025 09:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745830479; cv=none; b=eujfKJI/O440cJ4nRwkV88+sUOuhbLpl4l4As2N7H/tIw5B9na0aANN14oLZP1yzOGaO68tgJW5Jab7a8oYOwo9/XAKHfNTWPZuhFWHKZCaIsBcIwvLRBGF10daZweyViehErGNtkbIXcAUyt0+rXtJhBMcQDiXhIoHlysVz/94=
+	t=1745830949; cv=none; b=p9N9+ZPGNHvZ5sjeEQGTCVJbO1tDrc0jcMBrY2BdRLfM47/Yc5HEuMBT5uigh4R4qYOBGdvCllp9YuxQTCrpSkIRVetWSc3AV+AVGd9N9KVABm+dMwya5dP/a+pGeOupiCPZLB+e1zwXq/fxLLsJovtYn/920oB0k9MNuKCzbhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745830479; c=relaxed/simple;
-	bh=xwxVa7ngn1CZhUkfPgggf35YyiWJm4rCjn1G+VPFkf4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=iJB/+snRBHjwzQhwAbw37qlIBqSOe/pMEPMNi5NckM0NL/7oMkQUvG5HOmN1AYynjgx1fbEAgZm4GOFqAdSd8WIKwUwE3YzAPi5epXctQ6k02RbXLreTaaOiEZ7Q8PNZifUs0hbY6zU2VL+5aJ17CIUyojMqKm88eDRtwKQ7Mro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kV0vKkWP; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1745830949; c=relaxed/simple;
+	bh=pT3WDzu78kO/va+SQ0+NZHFS9bs7FfRts9JiVPsCcYA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YjhSl9u/nTpkWbmRkZUsunR2FxTsKGyyVzqxIEf5cYIuKhdH+PnbrVVutU8w9U6Eb2W8KjAW7xP/VHs8I6gyU6e1O+DHfENB2aqlfqGt462PjjPciMTESNmwwori2W6sGp+LyA8cMHZR1oYfNZctFBGY3cFy2MWGDBvrLEadjsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OjLEe4FZ; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kV0vKkWP"
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250428084730epoutp03c3128c81402c67b992b10d45f00ae317~6by5qifFs1341513415epoutp03D
-	for <linux-clk@vger.kernel.org>; Mon, 28 Apr 2025 08:47:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250428084730epoutp03c3128c81402c67b992b10d45f00ae317~6by5qifFs1341513415epoutp03D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1745830050;
-	bh=X4ZtzxF1LUt6estS3YpoxSEuF6YSn+c/UbHDd3Q+rx0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kV0vKkWPoG5lGnF7OSW7SCOO3brFHwHTNug2MbpX1RZVBWu6ZBC+QpUpz7puxaVdN
-	 LNUq/wd/6mnRNu+ez/5y8o9fXtYUiNsGwLTwxfeUar59+32PumHTcDJrcMXKDUhyxb
-	 ToKE1HqUg3mCAVNWRk2sugY4BS9zXeQ3cXVjeGmo=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250428084729epcas2p4c5b599968b43e3b8a0d231f05d5e1005~6by42Nw5e0901809018epcas2p4X;
-	Mon, 28 Apr 2025 08:47:29 +0000 (GMT)
-Received: from epcas2p3.samsung.com (unknown [182.195.36.88]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4ZmHBn3X7mz3hhTC; Mon, 28 Apr
-	2025 08:47:29 +0000 (GMT)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250428084728epcas2p17a0253f04de15c23ab6362113a0d47bb~6by34lqJx1066510665epcas2p1H;
-	Mon, 28 Apr 2025 08:47:28 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250428084728epsmtrp276e991ba513829c0215ac2d745fa1bf3~6by306a3W1061810618epsmtrp2H;
-	Mon, 28 Apr 2025 08:47:28 +0000 (GMT)
-X-AuditID: b6c32a28-460ee70000001e8a-9b-680f40a04850
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	81.C0.07818.0A04F086; Mon, 28 Apr 2025 17:47:28 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.60]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250428084728epsmtip1eefcb95164db7026dc68eb7d3c9d6a2d~6by3hKKRh1957719577epsmtip1u;
-	Mon, 28 Apr 2025 08:47:28 +0000 (GMT)
-From: Shin Son <shin.son@samsung.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
-	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
-	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Sunyeal Hong <sunyeal.hong@samsung.com>
-Cc: Shin Son <shin.son@samsung.com>, linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] clk: samsung: exynosautov920: add cpucl1/2 clock
- support
-Date: Mon, 28 Apr 2025 17:47:20 +0900
-Message-ID: <20250428084721.3832664-3-shin.son@samsung.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250428084721.3832664-1-shin.son@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OjLEe4FZ"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3913d129c1aso2942496f8f.0;
+        Mon, 28 Apr 2025 02:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745830945; x=1746435745; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1i8aCXxUVK2DhAP1mfTWOQhU4rxphPR3JI63bKHZ020=;
+        b=OjLEe4FZRXv1eng2JgIEm7USL8B44ALBd+yEI87P31C1N6LKIMz7Rijk7kJFjLFGk6
+         EOil6joMQ7ApnYkJdPau1b47abQamQ4GuX5OumG3Hl9lK1QkAczv0xi9YO+ltAwe8Bgy
+         +9S3m7RvxlUD153d19NAgXTHqiWzpHFAYHCySz8ZWoRjKpTtrhK55H5ZEoRkCYJAm+Lp
+         pZ/wcWT833PZjscAShBLl/YsLWCQia7R77JDwytMnZYiK7A4I+/cYPNu5pBLyE/+24ic
+         tzjNIdOT04Yof6WSEffkD7KibCyBSaX+z3Hn7l6fX/vOwtSw6dETXHkJ1QEMeeIydh2D
+         vOUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745830945; x=1746435745;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1i8aCXxUVK2DhAP1mfTWOQhU4rxphPR3JI63bKHZ020=;
+        b=ILY4fzW+TfuDlIPGNWUvFn6McKk/pRpcIjASogufEv6xR2FM3ioeOpScN+WXmdef3Z
+         ymvVB9xAz7pV2PlUuxKUeHnJsv1nQtu+dvYZH4cxYCYBJoyoD8r+ZBHeFpCJunn/Te4d
+         3ygU1VEfyO7atHmq/9ybVsIAmdlN+eeRD1AeYSg7+gGbIWPqP2hrB7/oSZzL1T+/udG8
+         byPqle0vBKoFQjRkTsG2bUEsHAEtWaobelTZvMupiMTCbUfaiVQXoCEhbkojxkAvIzNw
+         iu/ctEwTSBcBo2yip6ejISNn6s8hcJjBucKcdDXR0FGdV8D+M1aTM9tsK6RTE9aBQvjn
+         8XSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtBzqv+q2eTQfFMT6pTRh5OOifwWKSjVigmzcM+pDnPN3wcE7lZ1WsAtw193+0YwNZ10kAbGJRVYps@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ6o1H+ehLxRDQQOXPip/7J1tAZC5jOSWhLOxRS3AMWjUSSJsG
+	92Du9GPfQhfke4481jof3NyOAcLjlPibzeDNgo/QrPnmisb5H0I3
+X-Gm-Gg: ASbGnctQp7X5XkJ3f3+k0TFtN7eDsB+jV+wMnuLwktHq860P7Q4E9+xr89I6H4x8M9G
+	GzCcB++IiNKCZye5tGRYao4hppY4bgN7VI4ZtM6Dvxy6A2UT/05wITxmu6Yq0VCP58tfJfkLWOD
+	wki7tdDVLfVtyQEUM1SsSEKDuVvu9bQh8p04vuzzKlPDsYNfkkGOWYPawDdrSSvargSSE3dJHjf
+	78q5Ru6YkKLuWHK0IGSgjpfcorpqQwPp1hi18OSCXBGRkWW5sLTgD+sA2CID/SI1/2VGPqV7SZa
+	busV9fM0NPjYQg12TxwhvpAGbELJHoy72Xg75LEZK1T1GVYd80Fdg22lQR3GRyepKPvmMo2OPRX
+	VkiH27McU01QG
+X-Google-Smtp-Source: AGHT+IEc7ek5RrreSChhQRkzG9P4f7KbWmnhJuiHSgS+idRdwAlTAm9F6+ZYYeMxAM77RmhbFcm5zQ==
+X-Received: by 2002:a05:6000:2507:b0:39e:cbca:74cf with SMTP id ffacd0b85a97d-3a074cdb95emr8931367f8f.6.1745830945358;
+        Mon, 28 Apr 2025 02:02:25 -0700 (PDT)
+Received: from ?IPv6:2001:818:ea8e:7f00:2575:914:eedd:620e? ([2001:818:ea8e:7f00:2575:914:eedd:620e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073c8cc74sm10684829f8f.11.2025.04.28.02.02.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 02:02:24 -0700 (PDT)
+Message-ID: <85b09bd3217ed573438bde3f0f37424c9b582bd0.camel@gmail.com>
+Subject: Re: [PATCH RESEND v3 3/6] include: fpga: adi-axi-common: add new
+ helper macros
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Xu Yilun <yilun.xu@linux.intel.com>, nuno.sa@analog.com
+Cc: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org, Stephen Boyd	
+ <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Moritz
+ Fischer	 <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, Xu Yilun
+ <yilun.xu@intel.com>,  Tom Rix <trix@redhat.com>
+Date: Mon, 28 Apr 2025 10:02:29 +0100
+In-Reply-To: <aAoPfoL8ZDBK7hf6@yilunxu-OptiPlex-7050>
+References: <20250421-dev-axi-clkgen-limits-v3-0-4203b4fed2c9@analog.com>
+	 <20250421-dev-axi-clkgen-limits-v3-3-4203b4fed2c9@analog.com>
+	 <aAoPfoL8ZDBK7hf6@yilunxu-OptiPlex-7050>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsWy7bCSnO4CB/4Mg6UbFC0ezNvGZrFm7zkm
-	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
-	u7aRxWLy8bWsFk3L1jM58Hu8v9HK7rFpVSebx+Yl9R59W1YxenzeJBfAGsVlk5Kak1mWWqRv
-	l8CVsevDZaaCF8EVy/d3sjUwTvPsYuTkkBAwkVg+7xUbiC0ksJtRYsU0Z4i4hMThGRMYIWxh
-	ifstR1i7GLmAat4zSsy5eZSli5GDg01AVWLTb3mQuIjAWyaJ5f8PMIE0MAucZpTYeUYGxBYW
-	8JXYeuUUWJwFqP7Yij1gy3gFrCUu7O5iBZkjISAv0d8hARLmFLCROH+xkw0kLARU0tfDDVEt
-	KHFy5hMWiOnyEs1bZzNPYBSYhSQ1C0lqASPTKkbJ1ILi3PTcZMMCw7zUcr3ixNzi0rx0veT8
-	3E2M4OjQ0tjB+O5bk/4hRiYOxkOMEhzMSiK8VQb8GUK8KYmVValF+fFFpTmpxYcYpTlYlMR5
-	VxpGpAsJpCeWpGanphakFsFkmTg4pRqYCt5+E7P75t0qFTD1uvVf10Xet040OV38OZe7RH3p
-	lK5e5srMyRPsvx7saS3nOC4cvk3vtdRhzlvr9atCP7w4L1MgnPk0oGh2S9jPL+u33XlQu23j
-	gWftJis/LRJf2sIkEHJJ9dfNHT/L95x+ZLvn/5VrP927UhnWtCWrGB553sW34JdFfZNzUuBO
-	nsNeti/2Rl8UPHBm5jOb6FI/nwv/z+Ue3Xtz9cUTjxwLHDzrb9Vu+f6qVVZa6HJus72troNk
-	ruvK1YnLpi0IuKLN4eRQxd6ff/SfcdsfoU/V0vv8Lgg/Yrw5veduverSiNxVL1ZF7aq3WBV+
-	+Igid6jov6gD8/ae/3RMoF27UOWvUY5kgRJLcUaioRZzUXEiAEUXm9j9AgAA
-X-CMS-MailID: 20250428084728epcas2p17a0253f04de15c23ab6362113a0d47bb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-cpgsPolicy: CPGSC10-234,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250428084728epcas2p17a0253f04de15c23ab6362113a0d47bb
-References: <20250428084721.3832664-1-shin.son@samsung.com>
-	<CGME20250428084728epcas2p17a0253f04de15c23ab6362113a0d47bb@epcas2p1.samsung.com>
 
-Register compatible and cmu_info data to support clock CPUCL1/2
-(CPU Cluster 1 and CPU Cluster 2),
-these provide clock for CPUCL1/2_SWTICH/CLUSTER.
+On Thu, 2025-04-24 at 18:16 +0800, Xu Yilun wrote:
+> On Mon, Apr 21, 2025 at 03:58:04PM +0100, Nuno S=C3=A1 via B4 Relay wrote=
+:
+> > From: Nuno S=C3=A1 <nuno.sa@analog.com>
+> >=20
+> > Add new helper macros and enums to help identifying the platform and so=
+me
+> > characteristics of it at runtime.
+> >=20
+> > Signed-off-by: Nuno S=C3=A1 <nuno.sa@analog.com>
+> > ---
+> > =C2=A0include/linux/fpga/adi-axi-common.h | 35
+> > +++++++++++++++++++++++++++++++++++
+>=20
+> I'm wondering why these definitions (including existing ones) are in
+> fpga directory. They are not specific for any fpga_manager driver. I
+> suggest move the whole file out of fpga/
+>=20
 
-These clocks are required early during boot for the CPUs,
-so they are declared using CLK_OF_DECLARE instead of being registered
-through a platform driver.
+Just placed them in here because the header already existed in here... If
+acceptable, I have not problems in moving this file to include/linux.
 
-Signed-off-by: Shin Son <shin.son@samsung.com>
----
- drivers/clk/samsung/clk-exynosautov920.c | 208 ++++++++++++++++++++++-
- 1 file changed, 207 insertions(+), 1 deletion(-)
+- Nuno S=C3=A1
 
-diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
-index 8021e0912e50..f8168eed4a66 100644
---- a/drivers/clk/samsung/clk-exynosautov920.c
-+++ b/drivers/clk/samsung/clk-exynosautov920.c
-@@ -18,7 +18,9 @@
- 
- /* NOTE: Must be equal to the last clock ID increased by one */
- #define CLKS_NR_TOP			(DOUT_CLKCMU_TAA_NOC + 1)
--#define CLKS_NR_CPUCL0			(CLK_DOUT_CLUSTER0_PERIPHCLK + 1)
-+#define CLKS_NR_CPUCL0			(CLK_DOUT_CPUCL0_NOCP + 1)
-+#define CLKS_NR_CPUCL1			(CLK_DOUT_CPUCL1_NOCP + 1)
-+#define CLKS_NR_CPUCL2			(CLK_DOUT_CPUCL2_NOCP + 1)
- #define CLKS_NR_PERIC0			(CLK_DOUT_PERIC0_I3C + 1)
- #define CLKS_NR_PERIC1			(CLK_DOUT_PERIC1_I3C + 1)
- #define CLKS_NR_MISC			(CLK_DOUT_MISC_OSC_DIV2 + 1)
-@@ -1135,6 +1137,210 @@ static void __init exynosautov920_cmu_cpucl0_init(struct device_node *np)
- CLK_OF_DECLARE(exynosautov920_cmu_cpucl0, "samsung,exynosautov920-cmu-cpucl0",
- 	       exynosautov920_cmu_cpucl0_init);
- 
-+/* ---- CMU_CPUCL1 --------------------------------------------------------- */
-+
-+/* Register Offset definitions for CMU_CPUCL1 (0x1ED00000) */
-+#define PLL_LOCKTIME_PLL_CPUCL1				0x0000
-+#define PLL_CON0_PLL_CPUCL1				0x0100
-+#define PLL_CON1_PLL_CPUCL1				0x0104
-+#define PLL_CON3_PLL_CPUCL1				0x010c
-+#define PLL_CON0_MUX_CLKCMU_CPUCL1_CLUSTER_USER		0x0600
-+#define PLL_CON0_MUX_CLKCMU_CPUCL1_SWITCH_USER		0x0610
-+
-+#define CLK_CON_MUX_MUX_CLK_CPUCL1_CLUSTER		0x1000
-+#define CLK_CON_MUX_MUX_CLK_CPUCL1_CORE			0x1004
-+
-+#define CLK_CON_DIV_DIV_CLK_CLUSTER1_ACLK		0x1800
-+#define CLK_CON_DIV_DIV_CLK_CLUSTER1_ATCLK		0x1804
-+#define CLK_CON_DIV_DIV_CLK_CLUSTER1_MPCLK		0x1808
-+#define CLK_CON_DIV_DIV_CLK_CLUSTER1_PCLK		0x180c
-+#define CLK_CON_DIV_DIV_CLK_CLUSTER1_PERIPHCLK		0x1810
-+#define CLK_CON_DIV_DIV_CLK_CPUCL1_NOCP			0x181c
-+
-+static const unsigned long cpucl1_clk_regs[] __initconst = {
-+	PLL_LOCKTIME_PLL_CPUCL1,
-+	PLL_CON0_PLL_CPUCL1,
-+	PLL_CON1_PLL_CPUCL1,
-+	PLL_CON3_PLL_CPUCL1,
-+	PLL_CON0_MUX_CLKCMU_CPUCL1_CLUSTER_USER,
-+	PLL_CON0_MUX_CLKCMU_CPUCL1_SWITCH_USER,
-+	CLK_CON_MUX_MUX_CLK_CPUCL1_CLUSTER,
-+	CLK_CON_MUX_MUX_CLK_CPUCL1_CORE,
-+	CLK_CON_DIV_DIV_CLK_CLUSTER1_ACLK,
-+	CLK_CON_DIV_DIV_CLK_CLUSTER1_ATCLK,
-+	CLK_CON_DIV_DIV_CLK_CLUSTER1_MPCLK,
-+	CLK_CON_DIV_DIV_CLK_CLUSTER1_PCLK,
-+	CLK_CON_DIV_DIV_CLK_CLUSTER1_PERIPHCLK,
-+	CLK_CON_DIV_DIV_CLK_CPUCL1_NOCP,
-+};
-+
-+/* List of parent clocks for Muxes in CMU_CPUCL1 */
-+PNAME(mout_pll_cpucl1_p)		 = { "oscclk", "fout_cpucl1_pll" };
-+PNAME(mout_cpucl1_cluster_user_p)	 = { "oscclk", "dout_clkcmu_cpucl1_cluster" };
-+PNAME(mout_cpucl1_switch_user_p)	 = { "oscclk", "dout_clkcmu_cpucl1_switch" };
-+PNAME(mout_cpucl1_cluster_p)		 = { "oscclk", "mout_cpucl1_cluster_user",
-+						"mout_cpucl1_switch_user"};
-+PNAME(mout_cpucl1_core_p)		 = { "oscclk", "mout_pll_cpucl1",
-+						"mout_cpucl1_switch_user"};
-+
-+static const struct samsung_pll_clock cpucl1_pll_clks[] __initconst = {
-+	/* CMU_CPUCL1_PURECLKCOMP */
-+	PLL(pll_531x, CLK_FOUT_CPUCL1_PLL, "fout_cpucl1_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_CPUCL1, PLL_CON3_PLL_CPUCL1, cpu_pll_rates),
-+};
-+
-+static const struct samsung_mux_clock cpucl1_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_PLL_CPUCL1, "mout_pll_cpucl1", mout_pll_cpucl1_p,
-+	    PLL_CON0_PLL_CPUCL1, 4, 1),
-+	MUX(CLK_MOUT_CPUCL1_CLUSTER_USER, "mout_cpucl1_cluster_user", mout_cpucl1_cluster_user_p,
-+	    PLL_CON0_MUX_CLKCMU_CPUCL1_CLUSTER_USER, 4, 1),
-+	MUX(CLK_MOUT_CPUCL1_SWITCH_USER, "mout_cpucl1_switch_user", mout_cpucl1_switch_user_p,
-+	    PLL_CON0_MUX_CLKCMU_CPUCL1_SWITCH_USER, 4, 1),
-+	MUX(CLK_MOUT_CPUCL1_CLUSTER, "mout_cpucl1_cluster", mout_cpucl1_cluster_p,
-+	    CLK_CON_MUX_MUX_CLK_CPUCL1_CLUSTER, 0, 2),
-+	MUX(CLK_MOUT_CPUCL1_CORE, "mout_cpucl1_core", mout_cpucl1_core_p,
-+	    CLK_CON_MUX_MUX_CLK_CPUCL1_CORE, 0, 2),
-+};
-+
-+static const struct samsung_div_clock cpucl1_div_clks[] __initconst = {
-+	DIV(CLK_DOUT_CLUSTER1_ACLK, "dout_cluster1_aclk",
-+	    "mout_cpucl1_cluster", CLK_CON_DIV_DIV_CLK_CLUSTER1_ACLK, 0, 4),
-+	DIV(CLK_DOUT_CLUSTER1_ATCLK, "dout_cluster1_atclk",
-+	    "mout_cpucl1_cluster", CLK_CON_DIV_DIV_CLK_CLUSTER1_ATCLK, 0, 4),
-+	DIV(CLK_DOUT_CLUSTER1_MPCLK, "dout_cluster1_mpclk",
-+	    "mout_cpucl1_cluster", CLK_CON_DIV_DIV_CLK_CLUSTER1_MPCLK, 0, 4),
-+	DIV(CLK_DOUT_CLUSTER1_PCLK, "dout_cluster1_pclk",
-+	    "mout_cpucl1_cluster", CLK_CON_DIV_DIV_CLK_CLUSTER1_PCLK, 0, 4),
-+	DIV(CLK_DOUT_CLUSTER1_PERIPHCLK, "dout_cluster1_periphclk",
-+	    "mout_cpucl1_cluster", CLK_CON_DIV_DIV_CLK_CLUSTER1_PERIPHCLK, 0, 4),
-+	DIV(CLK_DOUT_CPUCL1_NOCP, "dout_cpucl1_nocp",
-+	    "mout_cpucl1_cluster", CLK_CON_DIV_DIV_CLK_CPUCL1_NOCP, 0, 4),
-+};
-+
-+static const struct samsung_cmu_info cpucl1_cmu_info __initconst = {
-+	.pll_clks		= cpucl1_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(cpucl1_pll_clks),
-+	.mux_clks		= cpucl1_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(cpucl1_mux_clks),
-+	.div_clks		= cpucl1_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(cpucl1_div_clks),
-+	.nr_clk_ids		= CLKS_NR_CPUCL1,
-+	.clk_regs		= cpucl1_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(cpucl1_clk_regs),
-+	.clk_name		= "cpucl1",
-+};
-+
-+static void __init exynosautov920_cmu_cpucl1_init(struct device_node *np)
-+{
-+	exynos_arm64_register_cmu(NULL, np, &cpucl1_cmu_info);
-+}
-+
-+/* Register CMU_CPUCL1 early, as CPU clocks should be available ASAP */
-+CLK_OF_DECLARE(exynosautov920_cmu_cpucl1, "samsung,exynosautov920-cmu-cpucl1",
-+	       exynosautov920_cmu_cpucl1_init);
-+
-+/* ---- CMU_CPUCL2 --------------------------------------------------------- */
-+
-+/* Register Offset definitions for CMU_CPUCL2 (0x1EE00000) */
-+#define PLL_LOCKTIME_PLL_CPUCL2				0x0000
-+#define PLL_CON0_PLL_CPUCL2				0x0100
-+#define PLL_CON1_PLL_CPUCL2				0x0104
-+#define PLL_CON3_PLL_CPUCL2				0x010c
-+#define PLL_CON0_MUX_CLKCMU_CPUCL2_CLUSTER_USER		0x0600
-+#define PLL_CON0_MUX_CLKCMU_CPUCL2_SWITCH_USER		0x0610
-+
-+#define CLK_CON_MUX_MUX_CLK_CPUCL2_CLUSTER		0x1000
-+#define CLK_CON_MUX_MUX_CLK_CPUCL2_CORE			0x1004
-+
-+#define CLK_CON_DIV_DIV_CLK_CLUSTER2_ACLK		0x1800
-+#define CLK_CON_DIV_DIV_CLK_CLUSTER2_ATCLK		0x1804
-+#define CLK_CON_DIV_DIV_CLK_CLUSTER2_MPCLK		0x1808
-+#define CLK_CON_DIV_DIV_CLK_CLUSTER2_PCLK		0x180c
-+#define CLK_CON_DIV_DIV_CLK_CLUSTER2_PERIPHCLK		0x1810
-+#define CLK_CON_DIV_DIV_CLK_CPUCL2_NOCP			0x181c
-+
-+static const unsigned long cpucl2_clk_regs[] __initconst = {
-+	PLL_LOCKTIME_PLL_CPUCL2,
-+	PLL_CON0_PLL_CPUCL2,
-+	PLL_CON1_PLL_CPUCL2,
-+	PLL_CON3_PLL_CPUCL2,
-+	PLL_CON0_MUX_CLKCMU_CPUCL2_CLUSTER_USER,
-+	PLL_CON0_MUX_CLKCMU_CPUCL2_SWITCH_USER,
-+	CLK_CON_MUX_MUX_CLK_CPUCL2_CLUSTER,
-+	CLK_CON_MUX_MUX_CLK_CPUCL2_CORE,
-+	CLK_CON_DIV_DIV_CLK_CLUSTER2_ACLK,
-+	CLK_CON_DIV_DIV_CLK_CLUSTER2_ATCLK,
-+	CLK_CON_DIV_DIV_CLK_CLUSTER2_MPCLK,
-+	CLK_CON_DIV_DIV_CLK_CLUSTER2_PCLK,
-+	CLK_CON_DIV_DIV_CLK_CLUSTER2_PERIPHCLK,
-+	CLK_CON_DIV_DIV_CLK_CPUCL2_NOCP,
-+};
-+
-+/* List of parent clocks for Muxes in CMU_CPUCL2 */
-+PNAME(mout_pll_cpucl2_p)		 = { "oscclk", "fout_cpucl2_pll" };
-+PNAME(mout_cpucl2_cluster_user_p)	 = { "oscclk", "dout_clkcmu_cpucl2_cluster" };
-+PNAME(mout_cpucl2_switch_user_p)	 = { "oscclk", "dout_clkcmu_cpucl2_switch" };
-+PNAME(mout_cpucl2_cluster_p)		 = { "oscclk", "mout_cpucl2_cluster_user",
-+						"mout_cpucl2_switch_user"};
-+PNAME(mout_cpucl2_core_p)		 = { "oscclk", "mout_pll_cpucl2",
-+						"mout_cpucl2_switch_user"};
-+
-+static const struct samsung_pll_clock cpucl2_pll_clks[] __initconst = {
-+	/* CMU_CPUCL2_PURECLKCOMP */
-+	PLL(pll_531x, CLK_FOUT_CPUCL2_PLL, "fout_cpucl2_pll", "oscclk",
-+	    PLL_LOCKTIME_PLL_CPUCL2, PLL_CON3_PLL_CPUCL2, cpu_pll_rates),
-+};
-+
-+static const struct samsung_mux_clock cpucl2_mux_clks[] __initconst = {
-+	MUX(CLK_MOUT_PLL_CPUCL2, "mout_pll_cpucl2", mout_pll_cpucl2_p,
-+	    PLL_CON0_PLL_CPUCL2, 4, 1),
-+	MUX(CLK_MOUT_CPUCL2_CLUSTER_USER, "mout_cpucl2_cluster_user", mout_cpucl2_cluster_user_p,
-+	    PLL_CON0_MUX_CLKCMU_CPUCL2_CLUSTER_USER, 4, 1),
-+	MUX(CLK_MOUT_CPUCL2_SWITCH_USER, "mout_cpucl2_switch_user", mout_cpucl2_switch_user_p,
-+	    PLL_CON0_MUX_CLKCMU_CPUCL2_SWITCH_USER, 4, 1),
-+	MUX(CLK_MOUT_CPUCL2_CLUSTER, "mout_cpucl2_cluster", mout_cpucl2_cluster_p,
-+	    CLK_CON_MUX_MUX_CLK_CPUCL2_CLUSTER, 0, 2),
-+	MUX(CLK_MOUT_CPUCL2_CORE, "mout_cpucl2_core", mout_cpucl2_core_p,
-+	    CLK_CON_MUX_MUX_CLK_CPUCL2_CORE, 0, 2),
-+};
-+
-+static const struct samsung_div_clock cpucl2_div_clks[] __initconst = {
-+	DIV(CLK_DOUT_CLUSTER2_ACLK, "dout_cluster2_aclk",
-+	    "mout_cpucl2_cluster", CLK_CON_DIV_DIV_CLK_CLUSTER2_ACLK, 0, 4),
-+	DIV(CLK_DOUT_CLUSTER2_ATCLK, "dout_cluster2_atclk",
-+	    "mout_cpucl2_cluster", CLK_CON_DIV_DIV_CLK_CLUSTER2_ATCLK, 0, 4),
-+	DIV(CLK_DOUT_CLUSTER2_MPCLK, "dout_cluster2_mpclk",
-+	    "mout_cpucl2_cluster", CLK_CON_DIV_DIV_CLK_CLUSTER2_MPCLK, 0, 4),
-+	DIV(CLK_DOUT_CLUSTER2_PCLK, "dout_cluster2_pclk",
-+	    "mout_cpucl2_cluster", CLK_CON_DIV_DIV_CLK_CLUSTER2_PCLK, 0, 4),
-+	DIV(CLK_DOUT_CLUSTER2_PERIPHCLK, "dout_cluster2_periphclk",
-+	    "mout_cpucl2_cluster", CLK_CON_DIV_DIV_CLK_CLUSTER2_PERIPHCLK, 0, 4),
-+	DIV(CLK_DOUT_CPUCL2_NOCP, "dout_cpucl2_nocp",
-+	    "mout_cpucl2_cluster", CLK_CON_DIV_DIV_CLK_CPUCL2_NOCP, 0, 4),
-+};
-+
-+static const struct samsung_cmu_info cpucl2_cmu_info __initconst = {
-+	.pll_clks		= cpucl2_pll_clks,
-+	.nr_pll_clks		= ARRAY_SIZE(cpucl2_pll_clks),
-+	.mux_clks		= cpucl2_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(cpucl2_mux_clks),
-+	.div_clks		= cpucl2_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(cpucl2_div_clks),
-+	.nr_clk_ids		= CLKS_NR_CPUCL2,
-+	.clk_regs		= cpucl2_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(cpucl2_clk_regs),
-+	.clk_name		= "cpucl2",
-+};
-+
-+static void __init exynosautov920_cmu_cpucl2_init(struct device_node *np)
-+{
-+	exynos_arm64_register_cmu(NULL, np, &cpucl2_cmu_info);
-+}
-+
-+/* Register CMU_CPUCL2 early, as CPU clocks should be available ASAP */
-+CLK_OF_DECLARE(exynosautov920_cmu_cpucl2, "samsung,exynosautov920-cmu-cpucl2",
-+	       exynosautov920_cmu_cpucl2_init);
-+
- /* ---- CMU_PERIC0 --------------------------------------------------------- */
- 
- /* Register Offset definitions for CMU_PERIC0 (0x10800000) */
--- 
-2.49.0
-
+> Thanks,
+> Yilun
+>=20
+> > =C2=A01 file changed, 35 insertions(+)
+> >=20
+> > diff --git a/include/linux/fpga/adi-axi-common.h b/include/linux/fpga/a=
+di-
+> > axi-common.h
+> > index
+> > 141ac3f251e6f256526812b9d55cd440a2a46e76..a832ef9b37473ca339a2a2ff8a4a5=
+716d4
+> > 28fd29 100644
+> > --- a/include/linux/fpga/adi-axi-common.h
+> > +++ b/include/linux/fpga/adi-axi-common.h
+> > @@ -12,6 +12,8 @@
+> > =C2=A0#define ADI_AXI_COMMON_H_
+> > =C2=A0
+> > =C2=A0#define ADI_AXI_REG_VERSION			0x0000
+> > +#define ADI_AXI_REG_FPGA_INFO			0x001C
+> > +#define ADI_AXI_REG_FPGA_VOLTAGE		0x0140
+> > =C2=A0
+> > =C2=A0#define ADI_AXI_PCORE_VER(major, minor, patch)	\
+> > =C2=A0	(((major) << 16) | ((minor) << 8) | (patch))
+> > @@ -20,4 +22,37 @@
+> > =C2=A0#define ADI_AXI_PCORE_VER_MINOR(version)	(((version) >> 8) & 0xff=
+)
+> > =C2=A0#define ADI_AXI_PCORE_VER_PATCH(version)	((version) & 0xff)
+> > =C2=A0
+> > +#define ADI_AXI_INFO_FPGA_TECH(info)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (((info) >> 24) & 0xff)
+> > +#define ADI_AXI_INFO_FPGA_FAMILY(info)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 (((info) >> 16) & 0xff)
+> > +#define ADI_AXI_INFO_FPGA_SPEED_GRADE(info)=C2=A0=C2=A0=C2=A0=C2=A0 ((=
+(info) >> 8) & 0xff)
+> > +#define ADI_AXI_INFO_FPGA_VOLTAGE(val)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 ((val) & 0xffff)
+> > +
+> > +enum adi_axi_fpga_technology {
+> > +	ADI_AXI_FPGA_TECH_UNKNOWN =3D 0,
+> > +	ADI_AXI_FPGA_TECH_SERIES7,
+> > +	ADI_AXI_FPGA_TECH_ULTRASCALE,
+> > +	ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS,
+> > +};
+> > +
+> > +enum adi_axi_fpga_family {
+> > +	ADI_AXI_FPGA_FAMILY_UNKNOWN =3D 0,
+> > +	ADI_AXI_FPGA_FAMILY_ARTIX,
+> > +	ADI_AXI_FPGA_FAMILY_KINTEX,
+> > +	ADI_AXI_FPGA_FAMILY_VIRTEX,
+> > +	ADI_AXI_FPGA_FAMILY_ZYNQ,
+> > +};
+> > +
+> > +enum adi_axi_fpga_speed_grade {
+> > +	ADI_AXI_FPGA_SPEED_UNKNOWN=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D 0,
+> > +	ADI_AXI_FPGA_SPEED_1=C2=A0=C2=A0=C2=A0 =3D 10,
+> > +	ADI_AXI_FPGA_SPEED_1L=C2=A0=C2=A0 =3D 11,
+> > +	ADI_AXI_FPGA_SPEED_1H=C2=A0=C2=A0 =3D 12,
+> > +	ADI_AXI_FPGA_SPEED_1HV=C2=A0 =3D 13,
+> > +	ADI_AXI_FPGA_SPEED_1LV=C2=A0 =3D 14,
+> > +	ADI_AXI_FPGA_SPEED_2=C2=A0=C2=A0=C2=A0 =3D 20,
+> > +	ADI_AXI_FPGA_SPEED_2L=C2=A0=C2=A0 =3D 21,
+> > +	ADI_AXI_FPGA_SPEED_2LV=C2=A0 =3D 22,
+> > +	ADI_AXI_FPGA_SPEED_3=C2=A0=C2=A0=C2=A0 =3D 30,
+> > +};
+> > +
+> > =C2=A0#endif /* ADI_AXI_COMMON_H_ */
+> >=20
+> > --=20
+> > 2.49.0
+> >=20
+> >=20
+> >=20
