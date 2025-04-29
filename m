@@ -1,202 +1,217 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFBD33991;
-	Tue, 29 Apr 2025 05:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B1F274FF3;
+	Tue, 29 Apr 2025 08:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745904564; cv=none; b=ihcJIU7s4QqJSjAotJEC0TIBJloLhmMLXh/bx3lA5W+C29147bXUobR6kAf5LJ0t6vvhSp/4lJeJtrio1KzgxP29nBZ0xL9P+Ynxqt9tt4PO4k3/C2S614KhKQhOA77VycOixu76OXaN4VSwzvRTe/spHjhwZiJiucSyT+xuPgs=
+	t=1745914820; cv=none; b=clo9IEieM9kEGYuA0qr+uVmPWhQOQ5h2/L9to3Nnc2cYEZCR6R67VtEK49Fs55X0poCuy45h6GjodMqSw/e0uip8dQB1EhA8kPNfwZtxpWsud4DEPBEMwAvxBPMp08vjqlpXk7wEQyVFTxVxIg/M6GZjaQn4GPNJdaadTMP1oJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745904564; c=relaxed/simple;
-	bh=DWnooSZisXUGuTBqysXae7ajGZ4rfxElf22/6kndtf8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kMRO6JuspmY+asANx4LyVKQrgoEAoO8jeQG8VOPaQc9eZ2fvAlG5lodK8biYP/i1rRCcR0fUY7pIbgIMVk5MLKdvmqnNexnX892u4paP8tk746PaJ/4K8ol3Pyhio3A4q1z5md1gbCCP5SA2rX7HQ4//PS2+WfiCLvFjvVFO/DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RUsKp4F7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RUsKp4F7"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SNq3oU011884;
-	Tue, 29 Apr 2025 05:29:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YD5zksmB7I1X+fW3UQmzEm1ZQxDOj3cvQhmL1m2hSJ8=; b=RUsKp4F76jZAesnG
-	Lmi8AmeWh+5AQ6wrQjeCcEF7uoik6gLjVwojPEkT4V+U7K7TGrKpeJb3ffmWD9EU
-	T2a8LZ4ImQi+p4ILxqe0A3bsRvN2hP5mVGb95/1rtYqKIFHLDWqUlNfMmuXLtga4
-	8PVmrxZcz6+PyGslhFQPOBQPzCLULEF07GrSj2fBEAbSVVKJ2jYja18tsWkmqtWO
-	qPqzTl3d+DH93k/JwGbItUna+4QpueRm74ARFT5gHonadYCCjlPEmQubueDLd9nd
-	M5AyngXQ09/FgacnRbTiWZY2umoDaUDRaXWVV1LfNd15kyUCrRvmV7OEHf647wVB
-	TILH7A==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 468q323a6x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 05:29:18 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53T5TH66004716
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Apr 2025 05:29:17 GMT
-Received: from [10.253.10.189] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Apr
- 2025 22:29:13 -0700
-Message-ID: <5eb5631f-8f58-44d8-a09f-4bdb4a804803@quicinc.com>
-Date: Tue, 29 Apr 2025 13:29:10 +0800
+	s=arc-20240116; t=1745914820; c=relaxed/simple;
+	bh=Gky1g6B8luLp9Pwpqnz6N+LMa4mTmUa530/QZlxlZv4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZEMEedVgSc+KsaARgYLfFtHyUuq6D7ioveKAT1ZHQ5XgECK2ipOyHbz1p/i8FngCKJWZageCxbCYalfSBfUa4mI9U/f+hsK+5kxI9Iw2B8mJYIU9htnknLazKPlb7NOnivf23h1Kaym8/re7NDP1HHygkWsbc38QGBvzonzu35M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+X-CSE-ConnectionGUID: MA9/Ey1sROeVyKNWjYQGWQ==
+X-CSE-MsgGUID: w8tkJYR3T+OHKI0I6HsGYA==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 29 Apr 2025 17:20:14 +0900
+Received: from superbuilder.administration.lan (unknown [10.226.93.118])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6777D4005651;
+	Tue, 29 Apr 2025 17:20:11 +0900 (JST)
+From: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+To: thierry.bultel@linatsea.fr
+Cc: linux-renesas-soc@vger.kernel.org,
+	geert@linux-m68k.org,
+	paul.barker.ct@bp.renesas.com,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v8 03/11] dt-bindings: clock: Add cpg for the Renesas RZ/T2H SoC
+Date: Tue, 29 Apr 2025 10:19:45 +0200
+Message-ID: <20250429081956.3804621-4-thierry.bultel.yh@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250429081956.3804621-1-thierry.bultel.yh@bp.renesas.com>
+References: <20250429081956.3804621-1-thierry.bultel.yh@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] clk: qcom: cmnpll: Add IPQ5424 SoC support
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_kkumarcs@quicinc.com>, <quic_suruchia@quicinc.com>,
-        <quic_pavir@quicinc.com>, <quic_linchen@quicinc.com>,
-        <quic_leiwei@quicinc.com>
-References: <20250411-qcom_ipq5424_cmnpll-v2-0-7252c192e078@quicinc.com>
- <20250411-qcom_ipq5424_cmnpll-v2-2-7252c192e078@quicinc.com>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <20250411-qcom_ipq5424_cmnpll-v2-2-7252c192e078@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=M7xNKzws c=1 sm=1 tr=0 ts=681063ae cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=EoNoD8iO1MgKQcc7a8EA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: Pl3nitARsFZhOdhnopxa6zb_61xV84zF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI5MDAzOCBTYWx0ZWRfX/yc+e93SWxap y9vedPW2lPXjIf2TEsq3FtyfWPF7hnADF/U0kGKgouz796wbW1GN8u6SEhHJKrE6TONzPRFKRGy I0rWGclBZ3aMRHc/G7MZY5bO2TLXO7iotfTIBBj4F9c+EnLsCA3joflz7TKdSlKMHD1K2MnKoWz
- SjjW+aJYiw/x39K/JRUuCYsC9qmZDvHDjB5xufxxd8Qm0A/tSXSl27pi9fjwE7vSeyFFX7GWmOL e/bxFTogk+fN6cltY20N1Q7tRAmIyvjMYRmT1J4u2JO71xfj+K4qaaOrkzoICHn9lyh0kv47WwL OHKZVDRHUmS42Rmy2TJVrYXSjDWq/bWzaICTZVyDgMQRc67Ip6awabwJgxQMh+WZepwb8wv48lH
- o7JFO1+1esh7fp2U527Oii4KfjqDBxBto/9Ula/NecCP7OujcPgkjfM5sGjdvvEIvr8jOJ4l
-X-Proofpoint-ORIG-GUID: Pl3nitARsFZhOdhnopxa6zb_61xV84zF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-29_01,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 clxscore=1015 mlxlogscore=999 spamscore=0 phishscore=0
- bulkscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504290038
+Content-Transfer-Encoding: 8bit
 
-Hello Stephen,
+Document RZ/T2H (a.k.a r9a09g077) cpg-mssr (Clock Pulse Generator) binding.
 
-Thanks for your review on the first version of this patch series.
-Gentle reminder, to re-review the updated patch for any further
-comments.
+Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+---
+Changes v7->v8:
+  - extra parenthesis
+  - added loco
+  - renesas-cpg-mssr.h: removed unused clocks, added a macro for mstp
+Changes v6->v7:
+  - Add description for reg property
+Changes v5->v6:
+  - Set clock minItem constraint
+  - Moved additionalProperties after 'allOf' section
+Changes v4->v5:
+  - Set reg minItems and maxItems defaults at top level
+Changes v3->v4:
+  - Handle maxItems and clocks names properly in schema. 
+---
+ .../bindings/clock/renesas,cpg-mssr.yaml      | 58 ++++++++++++++-----
+ .../clock/renesas,r9a09g077-cpg-mssr.h        | 48 +++++++++++++++
+ 2 files changed, 90 insertions(+), 16 deletions(-)
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
 
-Regards.
-
-On 4/11/2025 8:58 PM, Luo Jie wrote:
-> The CMN PLL in IPQ5424 SoC supplies the fixed clock to NSS at 300 MHZ
-> and to PPE at 375 MHZ. Other output clocks from CMN PLL on this SoC,
-> and their rates are same as IPQ9574.
-> 
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->   drivers/clk/qcom/ipq-cmn-pll.c | 35 ++++++++++++++++++++++++++++++-----
->   1 file changed, 30 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/ipq-cmn-pll.c b/drivers/clk/qcom/ipq-cmn-pll.c
-> index 432d4c4b7aa6..b34d6faf67b8 100644
-> --- a/drivers/clk/qcom/ipq-cmn-pll.c
-> +++ b/drivers/clk/qcom/ipq-cmn-pll.c
-> @@ -1,6 +1,6 @@
->   // SPDX-License-Identifier: GPL-2.0-only
->   /*
-> - * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All rights reserved.
->    */
->   
->   /*
-> @@ -16,6 +16,10 @@
->    * are supplied to GCC (24 MHZ as XO and 32 KHZ as sleep clock), and to PCS
->    * with 31.25 MHZ.
->    *
-> + * On the IPQ5424 SoC, there is an output clock from CMN PLL to PPE at 375 MHZ,
-> + * and an output clock to NSS (network subsystem) at 300 MHZ. The other output
-> + * clocks from CMN PLL on IPQ5424 are the same as IPQ9574.
-> + *
->    *               +---------+
->    *               |   GCC   |
->    *               +--+---+--+
-> @@ -46,6 +50,7 @@
->   #include <linux/regmap.h>
->   
->   #include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
-> +#include <dt-bindings/clock/qcom,ipq5424-cmn-pll.h>
->   
->   #define CMN_PLL_REFCLK_SRC_SELECTION		0x28
->   #define CMN_PLL_REFCLK_SRC_DIV			GENMASK(9, 8)
-> @@ -115,6 +120,20 @@ static const struct cmn_pll_fixed_output_clk ipq9574_output_clks[] = {
->   	CLK_PLL_OUTPUT(ETH1_50MHZ_CLK, "eth1-50mhz", 50000000UL),
->   	CLK_PLL_OUTPUT(ETH2_50MHZ_CLK, "eth2-50mhz", 50000000UL),
->   	CLK_PLL_OUTPUT(ETH_25MHZ_CLK, "eth-25mhz", 25000000UL),
-> +	{ /* Sentinel */ }
-> +};
-> +
-> +static const struct cmn_pll_fixed_output_clk ipq5424_output_clks[] = {
-> +	CLK_PLL_OUTPUT(IPQ5424_XO_24MHZ_CLK, "xo-24mhz", 24000000UL),
-> +	CLK_PLL_OUTPUT(IPQ5424_SLEEP_32KHZ_CLK, "sleep-32khz", 32000UL),
-> +	CLK_PLL_OUTPUT(IPQ5424_PCS_31P25MHZ_CLK, "pcs-31p25mhz", 31250000UL),
-> +	CLK_PLL_OUTPUT(IPQ5424_NSS_300MHZ_CLK, "nss-300mhz", 300000000UL),
-> +	CLK_PLL_OUTPUT(IPQ5424_PPE_375MHZ_CLK, "ppe-375mhz", 375000000UL),
-> +	CLK_PLL_OUTPUT(IPQ5424_ETH0_50MHZ_CLK, "eth0-50mhz", 50000000UL),
-> +	CLK_PLL_OUTPUT(IPQ5424_ETH1_50MHZ_CLK, "eth1-50mhz", 50000000UL),
-> +	CLK_PLL_OUTPUT(IPQ5424_ETH2_50MHZ_CLK, "eth2-50mhz", 50000000UL),
-> +	CLK_PLL_OUTPUT(IPQ5424_ETH_25MHZ_CLK, "eth-25mhz", 25000000UL),
-> +	{ /* Sentinel */ }
->   };
->   
->   /*
-> @@ -297,7 +316,7 @@ static struct clk_hw *ipq_cmn_pll_clk_hw_register(struct platform_device *pdev)
->   
->   static int ipq_cmn_pll_register_clks(struct platform_device *pdev)
->   {
-> -	const struct cmn_pll_fixed_output_clk *fixed_clk;
-> +	const struct cmn_pll_fixed_output_clk *p, *fixed_clk;
->   	struct clk_hw_onecell_data *hw_data;
->   	struct device *dev = &pdev->dev;
->   	struct clk_hw *cmn_pll_hw;
-> @@ -305,8 +324,13 @@ static int ipq_cmn_pll_register_clks(struct platform_device *pdev)
->   	struct clk_hw *hw;
->   	int ret, i;
->   
-> -	fixed_clk = ipq9574_output_clks;
-> -	num_clks = ARRAY_SIZE(ipq9574_output_clks);
-> +	fixed_clk = device_get_match_data(dev);
-> +	if (!fixed_clk)
-> +		return -EINVAL;
-> +
-> +	num_clks = 0;
-> +	for (p = fixed_clk; p->name; p++)
-> +		num_clks++;
->   
->   	hw_data = devm_kzalloc(dev, struct_size(hw_data, hws, num_clks + 1),
->   			       GFP_KERNEL);
-> @@ -415,7 +439,8 @@ static const struct dev_pm_ops ipq_cmn_pll_pm_ops = {
->   };
->   
->   static const struct of_device_id ipq_cmn_pll_clk_ids[] = {
-> -	{ .compatible = "qcom,ipq9574-cmn-pll", },
-> +	{ .compatible = "qcom,ipq9574-cmn-pll", .data = &ipq9574_output_clks },
-> +	{ .compatible = "qcom,ipq5424-cmn-pll", .data = &ipq5424_output_clks },
->   	{ }
->   };
->   MODULE_DEVICE_TABLE(of, ipq_cmn_pll_clk_ids);
-> 
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+index 77ce3615c65a..464827f2067e 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+@@ -52,9 +52,15 @@ properties:
+       - renesas,r8a779f0-cpg-mssr # R-Car S4-8
+       - renesas,r8a779g0-cpg-mssr # R-Car V4H
+       - renesas,r8a779h0-cpg-mssr # R-Car V4M
++      - renesas,r9a09g077-cpg-mssr # RZ/T2H
+ 
+   reg:
+-    maxItems: 1
++    minItems: 1
++    items:
++      - description: base address of register block 0
++      - description: base address of register block 1
++    description: base addresses of clock controller. Some controllers
++      (like r9a09g077) use two blocks instead of a single one.
+ 
+   clocks:
+     minItems: 1
+@@ -63,11 +69,6 @@ properties:
+   clock-names:
+     minItems: 1
+     maxItems: 2
+-    items:
+-      enum:
+-        - extal     # All
+-        - extalr    # Most R-Car Gen3 and RZ/G2
+-        - usb_extal # Most R-Car Gen2 and RZ/G1
+ 
+   '#clock-cells':
+     description: |
+@@ -92,16 +93,6 @@ properties:
+       the datasheet.
+     const: 1
+ 
+-if:
+-  not:
+-    properties:
+-      compatible:
+-        items:
+-          enum:
+-            - renesas,r7s9210-cpg-mssr
+-then:
+-  required:
+-    - '#reset-cells'
+ 
+ required:
+   - compatible
+@@ -111,6 +102,41 @@ required:
+   - '#clock-cells'
+   - '#power-domain-cells'
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r9a09g077-cpg-mssr
++    then:
++      properties:
++        reg:
++          minItems: 2
++        clock-names:
++          items:
++            - const: extal
++    else:
++      properties:
++        reg:
++          maxItems: 1
++        clock-names:
++          items:
++            enum:
++              - extal     # All
++              - extalr    # Most R-Car Gen3 and RZ/G2
++              - usb_extal # Most R-Car Gen2 and RZ/G1
++
++  - if:
++      not:
++        properties:
++          compatible:
++            items:
++              enum:
++                - renesas,r7s9210-cpg-mssr
++    then:
++      required:
++        - '#reset-cells'
++
+ additionalProperties: false
+ 
+ examples:
+diff --git a/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+new file mode 100644
+index 000000000000..d5b16d08e75d
+--- /dev/null
++++ b/include/dt-bindings/clock/renesas,r9a09g077-cpg-mssr.h
+@@ -0,0 +1,48 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++ *
++ * Copyright (C) 2025 Renesas Electronics Corp.
++ */
++
++#ifndef __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++#define __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* R9A09G077 CPG Core Clocks */
++#define R9A09G077_CLK_CA55C0		0
++#define R9A09G077_CLK_CA55C1		1
++#define R9A09G077_CLK_CA55C2		2
++#define R9A09G077_CLK_CA55C3		3
++#define R9A09G077_CLK_CA55S		4
++#define R9A09G077_CLK_CR52_CPU0		5
++#define R9A09G077_CLK_CR52_CPU1		6
++#define R9A09G077_CLK_BSC		7
++#define R9A09G077_CLK_CKIO		R9A09G077_CLK_BSC
++#define R9A09G077_CLK_PCLKAH		8
++#define R9A09G077_CLK_PCLKAM		9
++#define R9A09G077_CLK_PCLKAL		10
++#define R9A09G077_CLK_PCLKGPTL		11
++#define R9A09G077_CLK_PCLKH		12
++#define R9A09G077_CLK_PCLKM		13
++
++
++#define R9A09G077_MSTPCRA	0
++#define R9A09G077_MSTPCRB	1
++#define R9A09G077_MSTPCRC	2
++#define R9A09G077_MSTPCRD	3
++#define R9A09G077_MSTPCRE	4
++#define R9A09G077_MSTPCRG	7
++#define R9A09G077_MSTPCRI	8
++#define R9A09G077_MSTPCRJ	9
++#define R9A09G077_MSTPCRK	10
++#define R9A09G077_MSTPCRL	11
++#define R9A09G077_MSTPCRM	12
++#define R9A09G077_MSTPCRN	13
++
++#define R9A09G077_MSTP(mstp, idx) (100*(mstp)+(idx))
++
++/* R9A09G077 CPG Module Clocks */
++#define R9A09G077_PCLK_SCI0	R9A09G077_MSTP(R9A09G077_MSTPCRA, 8)
++
++#endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G077_CPG_H__ */
++
+-- 
+2.43.0
 
