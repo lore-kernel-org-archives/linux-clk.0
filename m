@@ -1,151 +1,148 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D09231859
-	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 09:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5211425A632
+	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 10:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746007107; cv=none; b=VdhPxEFvASXdUIJTQvDiyyg/NqCwFAUpsvVQP2QVtAJao/rNYjHTomceS31NjdKrZ8UvMNLyzh231jpDCimKDEEAosgePMLVxVzgmT/VUT8VAGwS8NfpkXHlgIcKucWa10l7VjpKP6qTQ0NDtl1ZdXrD/XajLpys5uk2qVF0ObA=
+	t=1746009169; cv=none; b=Qp9NKJ88UKYWkfxJ8/OArLHKCjCI18A4wK7p7Cs8WQxOAeuB8EuFBLZxS8ftRinnMw1IsmlzmlJjKQBrb7PPQA9pFrefvkn4TvJF2PBd7T/zPEGAQG8xAJdP2qhLoFmapIhxriawl2rwtY+Mslw4Gw1y+/cbsq6Sa6hXmEHIvm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746007107; c=relaxed/simple;
-	bh=QdSfLwYCjEBwVvV1+m4B+Wh80A5f4PCVAxEhB2M5NWE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZAfBU2PkOsXrdye+FrSf2RHfGqO0KlG4lzEMyCSr3xgrX5z4tHXElUL9emJIwMlTP56lIa6olFiPX8Ud8YJSX7XXPhKWlQHkH2d6FfZhq0PJjQb2nq8nFBkLzOAfkvtWTSn3BGZcCGsxxxxK0XL0s+q+njg0HCRWRaleqUebJVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QVYK/lnW; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1746009169; c=relaxed/simple;
+	bh=pEarZqORgR6a5PORX2Pgk2INz0nSmqJSTyovSEM/l9U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NwCHoQfaCpaxTlGdMN+amwt1ueGqI9XMA/046ocrJe18G1qoo27vpDsygiks8MZdr9ZZyvkhl/QTK8q5B48lQCphSAHA4fN+iF7zqnpMaSbn/C5G7kN0ykJ82VLN7mjBVrRroHXePGpiv2Z0PSzDgep4CnKFPylUCC+nELXpiyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=m/3GAx2u; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QVYK/lnW"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so64589585e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 02:58:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="m/3GAx2u"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-acae7e7587dso1040750666b.2
+        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 03:32:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746007104; x=1746611904; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aPXTmnK0+GdZlxWfqgccGBwo5OJjJ+W0LMQCLb4H9vU=;
-        b=QVYK/lnWftAlPVcb9Il4gjaSJ1TA2n+Nv6qj2htUkHEu9Ycdf+SuQP7IfeqZB/Ypnh
-         QIP1lvYSbUid28lqebhBAfeU7hpTpLD8gBNs09AnluiOtdS7xK7EetlK0XAChFYkG1Ol
-         tWpti2lAFGY2T1w5LDmOughhbvLEEKZv0qBs8jgJTfDq72QqFmxi8XmEoUNKjt9NdBlS
-         fNHvrNtuk7c/otZHQ6aGr2lPANwWkOP8JAyV3lK263VasaVL2p2Wzwxx+Np5iD+o+7ur
-         3lcWCtKgp2/jZ+laR2wwW3s2ZXsJBq2W6zJdBuU3k6z6nGwiGbwBpcjsE75OJCGLdqrM
-         JynA==
+        d=tuxon.dev; s=google; t=1746009164; x=1746613964; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X6J/wP60qX9EMmv9DuzGd9/gCNPLEX86V7P6R5wq8+M=;
+        b=m/3GAx2unha3c06MNiFW7gShs/pwceVkz2S2vcZWGW9G8FYwdE3CAqaflCazb/npWZ
+         cpn317JLUeF3h4Wb1+FeHsraVMZ//+9TlMAs/VaNSM5lI6u0SIP+beXk6Q0QnRX5Sbq2
+         7pNmq8bzBXNCinj5628V+wXLsj3R7F130CeX6mgPoXC5s2H51RAXOwVo6YmDV/YZFx9C
+         hs5AtJhwYYp2MNblJ4moyBf49aEuukFDRL8BrlZaNP3LJcXjxDj3+EGF7xSswpvwJ7RV
+         HcB5kd8+EgAVK3U8z7ND/XamtEcFxk1ylRF8V+v12pQgz2Z/+iVuyJZJMvm6qKgqiQk6
+         we5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746007104; x=1746611904;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aPXTmnK0+GdZlxWfqgccGBwo5OJjJ+W0LMQCLb4H9vU=;
-        b=jGdFZXgbDlTc+YMIduTIC9/3d/7Y4iDf+n6rFjnmVxxohZEd6BLVTte/lB3zJ66zH+
-         k94ZJbJXOP6Nx4Uda4BliO29sPq/mHuaJxU6aHaimkpEJ3nCpVPHPMbTSGh/Bdt5W1xi
-         znUZys8gO5FGMoqPkjfWQHVCd64owXNG3hoe8acHqoh+lpSpMxAIVfHpjLZj0W3x5b+M
-         634pxYjvMtkMjxTDGdQhCSmtSgDYIwOqsGO6SY4dhIYFzhMQmyTUB+rBRL7aG5zut7u2
-         bY/DcyicbYBMA7989Pe4wuATjif2ds5VvOpyDHYgj68Q0kbU30xQeeJtrWhNam38dTe9
-         1wSw==
-X-Gm-Message-State: AOJu0YxhiWYHLoTpW2IrTnxkanDOQETm410mB34Xqqx2kGS5O1W0gejv
-	aKNujWQtysTuj68y1mXEqtbUK7QNSj7Hd41GKOmzHzFms3rVGrv6eOyJB2xmrhw=
-X-Gm-Gg: ASbGnctF6ZA9oUmh/PYgoS8qc9EK5peOAzLC/M2irjCylBEQk5yvB4J4nsv0MCRRwHG
-	bbk16cHLrSxQEJfTmToUkjcElgG54D/rw+5oB1ZXU0T+/qRV564orbTSN1xQUoD02qmt9YEdzkx
-	Gj3SltWhcv6ZNrPd68cbsOdHqYRCyqJjmzW8aKYjYm4slgY/FqeaV+JP8iapDsoSj7sMRSBnuOa
-	Mz9ALYIRyGm0bAARoPY2jQzKau8kcH/rdfaQFK1PNQAbh4deyHIq/vPZVtM8FIdsnogwikGUa5F
-	t7i/qVbWrOCP1rUZCuflpCXYEjJM5yfaHvqhwQeZwDEVPurQjVf4t/HAkkCVjNYo5jGYEkJncBY
-	cFm+IofU=
-X-Google-Smtp-Source: AGHT+IE/PNaxjGzCGUA8x8lnBqfAwRNWBA9GZwlQ/SR6BdSFyyiJ5mbCBRrkDDXhoBU/zD2+AVd2tw==
-X-Received: by 2002:a05:600c:4f06:b0:43d:47b7:b32d with SMTP id 5b1f17b1804b1-441b1f5bffamr18303925e9.25.1746007104070;
-        Wed, 30 Apr 2025 02:58:24 -0700 (PDT)
-Received: from localhost (p200300f65f00780800000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f00:7808::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b276052bsm19509835e9.0.2025.04.30.02.58.23
+        d=1e100.net; s=20230601; t=1746009164; x=1746613964;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X6J/wP60qX9EMmv9DuzGd9/gCNPLEX86V7P6R5wq8+M=;
+        b=a2XOsi9vJEx5RaJDbRv1oaKCwPwDOya5IVc7XIc1sZAbJ9Adre7rdGale5N7viONVv
+         xJ0+UMT05iRfW13O08K1aGrNpvHDzKyIUTGNL4xUrqh8QeSwmNeWphe5I/QTe8miUXxm
+         k4v/twnwmuwOMCZJrUNDrAhykAm45JPbwLqbbtX7PlLu8ItZSoBe8nuRe1+hDCiBgZEq
+         vsZK8KTI98i276xm+XsfYNLF/VxKCW9DgBJd25qaoitHorlNaL5OY3AWzlZ+kNTkHAmZ
+         pz1AtLOyn1ewJoP80vzimMuKOh5OvobwMC6iW81RSt3x5ZVH4VltOa5CtbZYlfPGYiiC
+         jMXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAOQhhS+MutaLogJiD/mFW1S78EFOpMtU/KiadyrQtKSHo3oJej+wV6+VbDKjCKdhmleUcluOqs8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxchxPlGYvfa5iR/l74rc45oV+esKCNOSZtfDTApTcSCQozkuul
+	HOaxweNwqNqBWx0rY0XDi4xlH0NnYW9vJG7Np6He6Z9tzTHYXSSwvzYEHnhNUJc=
+X-Gm-Gg: ASbGncs9PzqElF2mxbp7R1l2eLFvZdjTem9/niBHrZQQV4PkfiVwXdgEZrAciKqCAhH
+	HYSfHnSCInZhe4l4bsTRr0gK5xLRtaeXaQlp1lmTfMcQf+YapmaZdg1lcq6fGbtXS2Ci6kxutmk
+	bmhpcie5u0nQIoMpjnZZXE0ZG35YSYBKngivcNR8wiz+/D3d6pAlmWQjMyR6lBcpkLD8Jh5Cyu9
+	7ssDHXKKTafrX18LinDKtbGQ+Zv1nUwhk+hK5Yk3fGfpcbU3rKfBH5+FwBF4nzxcCzMHsqxNiB5
+	5WEat2Ui9nSqhy52Je7ttYF1rwC6Mh0YrFcoEmV2qwvPN5QXCRuiOC/YgOz2mSzec1jwcDQ=
+X-Google-Smtp-Source: AGHT+IEOvbi2uWkiYWLZUKj6dkW3LeitEy0mXflUVZbtvIN6vYaH2BYKpM0Qfawxgrnw/YhMKetmjg==
+X-Received: by 2002:a17:906:dc8c:b0:abf:733f:5c42 with SMTP id a640c23a62f3a-acedc575056mr227019766b.8.1746009164440;
+        Wed, 30 Apr 2025 03:32:44 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ed6af86sm909390366b.133.2025.04.30.03.32.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 02:58:23 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Subject: [PATCH 4/4] clk: pwm: Make use of non-sleeping PWMs
-Date: Wed, 30 Apr 2025 11:57:49 +0200
-Message-ID:  <d2f748101194409fb410711380ea52ed33260644.1746006578.git.ukleinek@baylibre.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <cover.1746006578.git.ukleinek@baylibre.com>
-References: <cover.1746006578.git.ukleinek@baylibre.com>
+        Wed, 30 Apr 2025 03:32:43 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	manivannan.sadhasivam@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	saravanak@google.com,
+	p.zabel@pengutronix.de
+Cc: claudiu.beznea@tuxon.dev,
+	linux-pci@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 0/8] PCI: rzg3s-host: Add PCIe driver for Renesas RZ/G3S SoC
+Date: Wed, 30 Apr 2025 13:32:28 +0300
+Message-ID: <20250430103236.3511989-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2034; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=QdSfLwYCjEBwVvV1+m4B+Wh80A5f4PCVAxEhB2M5NWE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBoEfQlFYNVFV0uSdvYRNM4cLtkRu2hwMZMbaNQm RHztf4oHSmJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCaBH0JQAKCRCPgPtYfRL+ TvpeB/9yLr9vmRm3oSXrChXLoKpqKUwW8zmYaKJAXtT7OpTK/dwrsZlCXW9YII4UbOdPThxEWsq 05ldADUvm8dfiPogXiJll4sZmNmLiLN8zgfccka8pXUAGR6FkA81tGXp97Lde0lu0t7c9DwNfmG mfuWHTrKSfxyqvV2RGxvyt7BGt+D4tsoUQM2RV5d+S7r3lIWLifygE0/bVMdP4Ma8LeVJaBIqoe rM4bBNuRlrKOQXB8hqEeQrxPYaEihaerJFMhqdqU3epE9SuOKD+aHpdky7cBc/HITHzA170Mh3X 86HWHDv5r2CA+L8DSGUkBrmyJ55DqzNNRTdKl53UpOxh5Y0I
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-For some PWMs applying a configuration doesn't sleep. For these enabling
-and disabling can be done in the clk callbacks .enable() and .disable()
-instead of .prepare() and .unprepare().
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Do that to possibly reduce the time the PWM is enabled and so save some
-energy.
+Hi,
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- drivers/clk/clk-pwm.c | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
+Series adds a PCIe driver for the Renesas RZ/G3S SoC.
+It is split as follows:
+- patch 1/8:		updates the max register offset for RZ/G3S SYSC;
+			this is necessary as the PCIe need to setup the
+			SYSC for proper functioning
+- patch 2/8:		adds clock, reset and power domain support for
+			the PCIe IP
+- patch 3/8:		exports of_irq_count() symbol; this is used by the
+			proposed driver to get the number of INTx interrupts
+- patches 4-5/8:	add PCIe support for the RZ/G3S SoC
+- patches 6-8/8:	add device tree support
 
-diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-index 856828d5f58c..4709f0338e37 100644
---- a/drivers/clk/clk-pwm.c
-+++ b/drivers/clk/clk-pwm.c
-@@ -23,6 +23,23 @@ static inline struct clk_pwm *to_clk_pwm(struct clk_hw *hw)
- 	return container_of(hw, struct clk_pwm, hw);
- }
- 
-+static int clk_pwm_enable(struct clk_hw *hw)
-+{
-+	struct clk_pwm *clk_pwm = to_clk_pwm(hw);
-+
-+	return pwm_apply_atomic(clk_pwm->pwm, &clk_pwm->state);
-+}
-+
-+static void clk_pwm_disable(struct clk_hw *hw)
-+{
-+	struct clk_pwm *clk_pwm = to_clk_pwm(hw);
-+	struct pwm_state state = clk_pwm->state;
-+
-+	state.enabled = false;
-+
-+	pwm_apply_atomic(clk_pwm->pwm, &state);
-+}
-+
- static int clk_pwm_prepare(struct clk_hw *hw)
- {
- 	struct clk_pwm *clk_pwm = to_clk_pwm(hw);
-@@ -61,6 +78,13 @@ static int clk_pwm_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
- 	return 0;
- }
- 
-+static const struct clk_ops clk_pwm_ops_atomic = {
-+	.enable = clk_pwm_enable,
-+	.disable = clk_pwm_disable,
-+	.recalc_rate = clk_pwm_recalc_rate,
-+	.get_duty_cycle = clk_pwm_get_duty_cycle,
-+};
-+
- static const struct clk_ops clk_pwm_ops = {
- 	.prepare = clk_pwm_prepare,
- 	.unprepare = clk_pwm_unprepare,
-@@ -115,7 +139,11 @@ static int clk_pwm_probe(struct platform_device *pdev)
- 	of_property_read_string(node, "clock-output-names", &clk_name);
- 
- 	init.name = clk_name;
--	init.ops = &clk_pwm_ops;
-+	if (pwm_might_sleep(pwm))
-+		init.ops = &clk_pwm_ops;
-+	else
-+		init.ops = &clk_pwm_ops_atomic;
-+
- 	init.flags = 0;
- 	init.num_parents = 0;
- 
+Please provide your feedback.
+
+Merge strategy, if any:
+- patches 1-2,6-8/8 can go through the Renesas tree
+- patches 4-5/8 can go through the PCI tree; these depends on patch 3/8,
+  proper sync will be needed b/w PCI tree and Rob's tree
+
+Thank you,
+Claudiu Beznea
+
+Claudiu Beznea (8):
+  soc: renesas: r9a08g045-sysc: Add max reg offset
+  clk: renesas: r9a08g045: Add clocks, resets and power domain support
+    for the PCIe
+  of/irq: Export of_irq_count()
+  dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add documentation for the
+    PCIe IP on Renesas RZ/G3S
+  PCI: rzg3s-host: Add Initial PCIe Host Driver for Renesas RZ/G3S SoC
+  arm64: dts: renesas: r9a08g045s33: Add PCIe node
+  arm64: dts: renesas: rzg3s-smarc: Enable PCIe
+  arm64: defconfig: Enable PCIe for the Renesas RZ/G3S SoC
+
+ .../pci/renesas,r9a08g045s33-pcie.yaml        |  242 +++
+ MAINTAINERS                                   |    8 +
+ arch/arm64/boot/dts/renesas/r9a08g045s33.dtsi |   70 +
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |   11 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |   19 +
+ drivers/of/irq.c                              |    1 +
+ drivers/pci/controller/Kconfig                |    7 +
+ drivers/pci/controller/Makefile               |    1 +
+ drivers/pci/controller/pcie-rzg3s-host.c      | 1561 +++++++++++++++++
+ drivers/soc/renesas/r9a08g045-sysc.c          |    1 +
+ 11 files changed, 1922 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/renesas,r9a08g045s33-pcie.yaml
+ create mode 100644 drivers/pci/controller/pcie-rzg3s-host.c
+
 -- 
-2.47.2
+2.43.0
 
