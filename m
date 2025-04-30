@@ -1,158 +1,174 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C41DEC2;
-	Wed, 30 Apr 2025 05:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8191A23AF;
+	Wed, 30 Apr 2025 06:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745989366; cv=none; b=HwkA1M6urvQBNGMbQZ8lBdvS3Edk7Kgmsx8iSFBLHmJ+9rL6PidziyKxy+7a2yvUy6IOFKmC3JpRM1xQC4BhktGG+VjW9iLEgtlIxdw6T/PK9w4XoVoPD17R/mYsVbPzVoSMIrivDBFC6DKIbeD7Sv+2+Bh0Prg6oxBFAXawABI=
+	t=1745995797; cv=none; b=MhgWjmg8MFJlIBotdk11cq4OPiBjKwciGkpWuG/Jx7hKQUAQ0Sj6ODQaVe64h8vOxlPC35Szhrg7OgXDJ7Q29A1oel1a6p9PHXC756cUfU33N84e/Qz0NSJ4dXIv0Po50/1+k5Nsa8gLADKSDA/rl7c5iPHaHYt5F7N/Jeq/hio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745989366; c=relaxed/simple;
-	bh=P9dFlAotUFK7qz9Tnye45ZjBexnanHqxKetS/gDk8ik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gHEAMfoqAajR+7R0IsCxEies4Y/E6svBnV/ZuITQCEev9/H8WQqVcyJnbmFQXXp4jnVs90dNnOkLN+7X7I3VTqieJ7e0hFT5hdjlgjc4IGi2ZRzt76VG9s0/zVFfQ4BDPPioS0V3uGy/H1BH35i8FS1QU9kGiYnQThTBgFXoO9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pt+b1A7L; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1745995797; c=relaxed/simple;
+	bh=mEDqqO5IwYQog+inxyD6TGZhz/tBnkvIVV9VwQAlVbM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LLVN0VUjISgutqtqHHlXaVRUONDYZejFem9IJ39T7ErU2jdu0R0QCcTHXaCpimmCwXqWwymQXQVnaZnZjljbPsWmIqq5IT24ceJ29g/4zd97FQaApuOSdQopYQ0/l2yql2eqFd+2qQweU0SQpHQeJFWxa9DKgjI1dluk3s8z9mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4mnMVm5; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pt+b1A7L"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53TLb6hl001708;
-	Wed, 30 Apr 2025 05:02:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BaJlAFQiOr69yTTQfYEnLNYARPRk6bsmVp9U6eMvrtc=; b=Pt+b1A7LKUlMjPKh
-	k4YztfLf0MYqaMB9KGePPZwFY9vzHRa1IQEXrQi3PZ9zm0K4ial/0DYoqSpzP51m
-	mGAvf0rWLGziLoCiohztxeuR5l8gJQhvZ5hg0I47qJ723sd/baw/xmMUzvOOZCmH
-	JYCVVeY6FJaV15SFBvENqK9k2oLqw3KkRb8KBaqW939hGAMQi7+Bme0tSreOAZni
-	i8jg9onmgorAB4Py0wrmUkka1AC+MwY9GJ7P0Y4j/B5UULTC55FDatY66T60y+PY
-	k7xbdQzbEYhXPlLuCMorzbwWL3YLbEQpD12A7tCJokIl70qbB+qSiJf3mnR3sw4n
-	HXfT9Q==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u28ufh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 05:02:41 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 53U52ePr004141
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Apr 2025 05:02:40 GMT
-Received: from [10.218.23.250] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Apr
- 2025 22:02:35 -0700
-Message-ID: <e6075d01-1bca-48fb-b3f1-4a1b35c63ec5@quicinc.com>
-Date: Wed, 30 Apr 2025 10:32:33 +0530
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4mnMVm5"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5f6222c6c4cso10685607a12.1;
+        Tue, 29 Apr 2025 23:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745995794; x=1746600594; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=clDl+4DEgtMu+yPPyECO1i6UnZBtJomv0kuVg//7ejM=;
+        b=P4mnMVm5rTEQ/+Qe+tsxQdBN9JpMMikGvAK/4Xhp1/CRz4ZT3Kf0tM+nIrYYSBCqc+
+         zIhUelnoKMi5Rwfzwrk/b+PjCryQlpasTcwNCy+WgvMo0NicRqM+Pe5a7mVKCrUbkW14
+         coFpzkZoNXtuaAx0SFNzqAMdhzBpQ9Fl9xptuhnJkp8+YA/Vbxg1JXrx6KHnCj8GviBy
+         oDBUg1M7Ho0ZRqk0eVl+F6mszH0JcS6wo8cw9u9RwxSB+kNzTyVjFNRmYeKeElRqBh3X
+         caH+CTGKm4GxkbjhfCtaYksww3eA3GU/y14qsYkXZVh/k30xyEaE/mXlUgZGW0UB+EoF
+         fXSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745995794; x=1746600594;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=clDl+4DEgtMu+yPPyECO1i6UnZBtJomv0kuVg//7ejM=;
+        b=rUpof0o3I1XlD+zckuIj9avmrj6aY4vHYvA3Uag4Y2JGlhJ1vcRT8F9NaAcmkgrRz1
+         JFZvfW55lYFIUZNG/BPOFgkOuTReVNEAC59FHyzZJ5S0EOBnVr74vKeFRoqf7ByJoABe
+         O4dUMXdLns+RL9hCKGS/8I0qRnHlbjoW+4aai1Ig4+piMzz8YJkty70iQHsTfso01ODZ
+         rLBMnpuoMT5Ndmmky715UcpRDs8Iphmn/BCljIjwMQ0mA8s2u3NEw7XHuyt1SXb8ybdC
+         YiRlbjYuFFQfETw85xpy8dVeCqsfj0cM/YYuRtzAjp4h/I1A8n44MP6Wdq44e801+yKn
+         I0QA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGif2tAhEoyXs470kof0CF9lcTRDlHTZIHXeJPiA8bx/rrGjLrRgj+hX7noxr+P7L8mQurWUS5qKiNrRzY@vger.kernel.org, AJvYcCV+WIWYwgoDpKmeuuOyGhOWZu57uIjVmhcsn2igCfZsBtYSsH9wAPIIe4k2AlIaAibirIyi3q8NjRfO@vger.kernel.org, AJvYcCVyB1l2lgcdQKmnqde9YUdqQJHZkxwBVt6Yu/wHGekvAm9dyVjHS0By4DqV5aoYzJOOM++5yLKEcDcR@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYGCeLgVz+5RfSLtG7iUF1Xpk3xzPjbqevd8KXcymnAsX81Yiw
+	764ub++O3TqQg3Ajeuwa21XWTkq0cgGI5d23HhWuoAxfbTU2LlDN
+X-Gm-Gg: ASbGncv03d4YY9SaNBKg1iSSvQPI6XpnlgBTImJFVqsK/jVeBnOsJIgg1mpzbGYGWlc
+	FmD3QV4WkIAdNuhTFsQWwxCkUA/JXqjmHEvu71xOs/leTeIOirXDsL1gLV/P3d8CVNaN3iJZrKj
+	3rYCryFo0oFo8qPQxQY1MDesisZQ1ninb2R2TuV36bbybv+jRAnhfPBNlCxTLC9XcvrcRko1XZ5
+	2TO5OlOEDa2lvNGuvybGspLWXb5NOeNi4DWCDnayCy6eU3z8rjaiEnr+5lyRIgrWYgl0BmqO5gQ
+	P3HJwf87fWNHoMBhvUZeTH7IWmKR1a+mkjiWx2+ECzB61dAC8JAyZGhKBb8eaXpxdjCvtPLYoX8
+	MAsChxTvDiJQ=
+X-Google-Smtp-Source: AGHT+IFBM7R6OthMZFzKw0gjro3xWIr8oi9NS4AlYFPmZ7/55XoeVl9SUXu0eLd9hymlrW/B0YdmcA==
+X-Received: by 2002:a17:907:7f8d:b0:aca:9a61:931d with SMTP id a640c23a62f3a-acedc629b6bmr221664666b.30.1745995794035;
+        Tue, 29 Apr 2025 23:49:54 -0700 (PDT)
+Received: from hex.my.domain (83.8.121.197.ipv4.supernova.orange.pl. [83.8.121.197])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6e5087e4sm881222866b.73.2025.04.29.23.49.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 23:49:53 -0700 (PDT)
+From: Artur Weber <aweber.kernel@gmail.com>
+Subject: [PATCH v5 0/8] clk: bcm: kona: Add bus clock support, bus clocks
+ for BCM21664/BCM281xx
+Date: Wed, 30 Apr 2025 08:49:47 +0200
+Message-Id: <20250430-kona-bus-clock-v5-0-46766b28b93a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clk: qcom: camcc-sc8180x: Add SC8180X camera clock
- controller driver
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh
- Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250422-sc8180x-camcc-support-v1-0-691614d13f06@quicinc.com>
- <20250422-sc8180x-camcc-support-v1-2-691614d13f06@quicinc.com>
- <83cc86cc-2cdf-41c2-8e00-61a607b713d5@linaro.org>
-Content-Language: en-US
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-In-Reply-To: <83cc86cc-2cdf-41c2-8e00-61a607b713d5@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: r9tw_ZH-NL0wZDNT2Mr5CvWUu2Wtars_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDMwMDAzMiBTYWx0ZWRfX3TQE8mFF3xc5 DSiEOLjSfPTuL9Q7F5pZNXkNNnb7wg0pER2JvSOENl0gVkqpyspM9eUa1QSnZjhc7VnxjI8nHGw 9g0rnljvI9a4hI/15k9irrj5B4IIS1CfIJZqcPwR9nAAKsKj+CFU+Rra6TR71YJK2UQSOcZECe0
- e6ul5MH2QfGy0MuOmx5Xr04GW/euSIna/SzmlEnnyrQx/B6pSBjSufYGkBiifpZLjvkUnnfgZfc cQl4w7MLFGq1qE/WR0ItdJwCZkKco/vraoLFZLOMhbP6DefsMU2RAzEPcP68IAV6byfip24FkTr i+Soneo81rKTQjcsv0DrTP6L6umYBZ3nb8zKfpUT3b+yfVu6fYaz/nV+W1h7dHOz3Otl9MPQ9+M
- LQbtB3EA87vuEEInWBtFtLUAZkzyHRsZa2Ygw8I1mYTbPrdZRwdKBiTiBUypXZgd/bvd5Ldk
-X-Authority-Analysis: v=2.4 cv=b5qy4sGx c=1 sm=1 tr=0 ts=6811aef1 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=bYuTag8ub-6FyNKvZZEA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: r9tw_ZH-NL0wZDNT2Mr5CvWUu2Wtars_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-04-30_01,2025-04-24_02,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
- mlxscore=0 impostorscore=0 malwarescore=0 spamscore=0 adultscore=0
- lowpriorityscore=0 suspectscore=0 bulkscore=0 priorityscore=1501
- clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504300032
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAvIEWgC/2XM0QrCIBiG4VsJjzP016nrqPuIDtT9llQzZo1i7
+ N6zIBrb4ffB8w4kYxcxk+1qIB32McfUllGtV8SfbHtEGpuyCTCoGHCg59Ra6h6Z+kvyZyqh1oj
+ BYi0ZKejWYYjPb3B/KPsU8z11r2+/55/3l1LzVM8po2i0rhutrQqwO15tvGx8upJPqoc/F0wsO
+ BRuhRJeWeV0beZcTLlZcFF4o4KrXPDCKT3ncsL5ksvCQyUlV2gEmDDl4zi+AV3hYj9pAQAA
+X-Change-ID: 20250212-kona-bus-clock-4297eefae940
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Alex Elder <elder@kernel.org>, 
+ Stanislav Jakubek <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ ~postmarketos/upstreaming@lists.sr.ht, 
+ Artur Weber <aweber.kernel@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alex Elder <elder@riscstar.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1745995792; l=3464;
+ i=aweber.kernel@gmail.com; s=20231030; h=from:subject:message-id;
+ bh=mEDqqO5IwYQog+inxyD6TGZhz/tBnkvIVV9VwQAlVbM=;
+ b=oeU9e36OrkdD4LsiWXKTVloWDdD7S8TgjkYXEJWPysmpV2GdirKtrr/I/Y/5deVMB5QJdAiB3
+ 6RCJPa88FH+AaHabJi+05FlNaFCOyWNl0WLVW+/uixsuQFK6U2o6EVW
+X-Developer-Key: i=aweber.kernel@gmail.com; a=ed25519;
+ pk=RhDBfWbJEHqDibXbhNEBAnc9FMkyznGxX/hwfhL8bv8=
 
+This patchset does the following:
 
-On 4/26/2025 6:54 PM, Vladimir Zapolskiy wrote:
-> On 4/22/25 08:42, Satya Priya Kakitapalli wrote:
->> Add support for the camera clock controller for camera clients to
->> be able to request for camcc clocks on SC8180X platform.
->>
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
->>   drivers/clk/qcom/Kconfig         |   10 +
->>   drivers/clk/qcom/Makefile        |    1 +
->>   drivers/clk/qcom/camcc-sc8180x.c | 2896 
->> ++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 2907 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index 
->> 7d5dac26b244bfe785370033ad8ba49876d6627d..42b64e34b3fcc4bae7c559f34a34f9452307ae9a 
->> 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -900,6 +900,16 @@ config SDX_GCC_75
->>         Say Y if you want to use peripheral devices such as UART,
->>         SPI, I2C, USB, SD/eMMC, PCIe etc.
->>   +config SC_CAMCC_8180X
->> +    tristate "SC8180X Camera Clock Controller"
->> +    depends on ARM64 || COMPILE_TEST
->> +    select SC_GCC_8180X
->> +    help
->> +      Support for the camera clock controller on Qualcomm 
->> Technologies, Inc
->> +      SC8180X devices.
->> +      Say Y if you want to support camera devices and functionality 
->> such as
->> +      capturing pictures.
->> +
->>   config SM_CAMCC_4450
->>       tristate "SM4450 Camera Clock Controller"
->>       depends on ARM64 || COMPILE_TEST
->
-> Please add a new config section preserving the alphanumerical order.
->
-> The new section should be placed between SC_CAMCC_7280 and 
-> SC_CAMCC_8280XP,
-> like it's correctly done for the Makefile below.
->
+- Introduce support for bus clocks. These are fairly similar to
+  peripheral clocks, but only implement policy, gate and hyst.
 
-Sure, will fix it. Thanks.
+- Add matching bus clocks for BCM21664 and BCM281xx peripheral clocks
+  and update device tree bindings to match.
 
+The previous (RFC) version of this patchset also introduced a
+prerequisite clock mechanism to enable bus clocks before their
+corresponding peripheral clocks. It seems that this is unnecessary - 
+the way these clocks are initialized leaves them enabled by default.
+Thus, the prerequisite mechanism has been dropped from this version.
 
-> After fixing it:
->
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
->
-> -- 
-> Best wishes,
-> Vladimir
+This is fine for now, and more accurate to hardware (bus clocks are
+a prerequisite for the bus, not the peripheral clock). I had an idea
+to connect bus clocks to buses using "simple-pm-bus" in DT, but
+this is a task for another patchset.
+
+Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+---
+Changes in v5:
+- Pick up Reviewed-by trailer from Krzysztof on patch 3
+- Rebase on v6.14
+- No code changes since v4
+- Link to v4: https://lore.kernel.org/r/20250318-kona-bus-clock-v4-0-f54416e8328f@gmail.com
+
+Changes in v4:
+- Rename moved CLOCK_COUNT defines to CLK_COUNT to avoid redefinition
+- Squash BCM21664/BCM281xx bus clock DT bindings commits together
+- Link to v3: https://lore.kernel.org/r/20250308-kona-bus-clock-v3-0-d6fb5bfc3b67@gmail.com
+
+Changes in v3:
+- Fix DT schema example in BCM281xx bus clock bindings
+- Move CLOCK_COUNT defines from dt-bindings header to the driver
+- Fix BCM21664 UARTBx_APB IDs being out of order compared to clock
+  driver
+- Link to v2: https://lore.kernel.org/r/20250303-kona-bus-clock-v2-0-a363c6a6b798@gmail.com
+
+Changes in v2:
+- Drop prerequisite clock patch
+- Move clock/bcm21664.h dt-bindings header change to dt-bindings patch
+- Add BCM281xx bus clocks
+- Link to v1: https://lore.kernel.org/r/20250216-kona-bus-clock-v1-0-e8779d77a6f2@gmail.com
+
+---
+Artur Weber (8):
+      clk: bcm: kona: Move CLOCK_COUNT defines into the driver
+      dt-bindings: clock: brcm,kona-ccu: Drop CLOCK_COUNT defines from DT headers
+      dt-bindings: clock: brcm,kona-ccu: Add BCM21664 and BCM281xx bus clocks
+      clk: bcm: kona: Add support for bus clocks
+      clk: bcm21664: Add corresponding bus clocks for peripheral clocks
+      clk: bcm281xx: Add corresponding bus clocks for peripheral clocks
+      ARM: dts: bcm2166x-common: Add matching bus clocks for peripheral clocks
+      ARM: dts: bcm11351: Add corresponding bus clocks for peripheral clocks
+
+ .../devicetree/bindings/clock/brcm,kona-ccu.yaml   |  49 ++++++-
+ arch/arm/boot/dts/broadcom/bcm11351.dtsi           |  33 +++--
+ arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi    |  28 ++--
+ drivers/clk/bcm/clk-bcm21664.c                     |  99 ++++++++++++++-
+ drivers/clk/bcm/clk-bcm281xx.c                     | 141 ++++++++++++++++++++-
+ drivers/clk/bcm/clk-kona-setup.c                   | 116 +++++++++++++++++
+ drivers/clk/bcm/clk-kona.c                         |  62 ++++++++-
+ drivers/clk/bcm/clk-kona.h                         |  12 +-
+ include/dt-bindings/clock/bcm21664.h               |  17 ++-
+ include/dt-bindings/clock/bcm281xx.h               |  24 +++-
+ 10 files changed, 538 insertions(+), 43 deletions(-)
+---
+base-commit: 38fec10eb60d687e30c8c6b5420d86e8149f7557
+change-id: 20250212-kona-bus-clock-4297eefae940
+
+Best regards,
+-- 
+Artur Weber <aweber.kernel@gmail.com>
+
