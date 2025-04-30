@@ -1,62 +1,63 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D294724729A
-	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 10:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BD025B1EE
+	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 10:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746009187; cv=none; b=mDF2b/5GwBqeJRhRWKfixOF56X+C5bsqYPAJ6GTSYEHiBfRdj8zLGXznd3M0BMJa9FvPHoG8IA5TBCHEvHlIeCkwnBkrPMbpy3RmNpcff0iwvwSjSGOl00Nlfj8LSXN8BPQg1SRBXLrpfJwze09G3dBWmr6P/9ak/j7AsGQVq1Q=
+	t=1746009189; cv=none; b=KcYhQGz6m1/ZuSrqphhxEX2fxf0OeAIajfLRE2jFXxqrF8OECMwCSEOzJDTPftARFeeauRW1F+Tnn2X+0R5pCcQRuFvvl5JCrvWyf04QgaYyTtpRmgVC08bg0hVSFY+cSV1ElszCFtquAoJTdRHQg/jTtrOkH0SazKdsJvBMcQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746009187; c=relaxed/simple;
-	bh=yXMvUcI9UJOVWK6FV4N0kjaxLM7bkmRdgBXzTjBcUVg=;
+	s=arc-20240116; t=1746009189; c=relaxed/simple;
+	bh=qqyemasPL6QK59u6QUV4f+mqdNA0WLZoLI0hQaQeRAk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gJ9KtNS/mFuxh9/HObFgH1b15uY9Aev1wP6xjZZYtMzHnbS/NAymFXT3PjmfmrY7gZvvfi+iTaj98AEFBJ6NScMfwBvf05BRHLTtEiPj+A9TiXjM9KpLRg+MyrqNR3jWY3pKpjqUNgDBqnC/SNdCI22xN49l1UHhpGi1n8k/mI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=nZNmPM0b; arc=none smtp.client-ip=209.85.218.43
+	 MIME-Version; b=ViMuP6yrTg0ttBsuDOkMGWPMj8xtsTEkupXLYME9hd0kgUUzUMkDgxPJnOEw0mLaj6HXENXiAuOvbSBcLszYBUR++QpXkCagatEDdGRsEAJAa/pJbbqS3uJAnAOiOv873rdCeJsw0UPLBezNR9cI/8FHs1Rz1wk8KJZipdeCJmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Ar3MVEeq; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="nZNmPM0b"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-acec5b99052so325039866b.1
-        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 03:33:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Ar3MVEeq"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e61d91a087so11239779a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 03:33:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746009184; x=1746613984; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1746009186; x=1746613986; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5Xu0lwXfHypam6aFf6MDeNeMIOVtEqILdYrrYMjhy+Y=;
-        b=nZNmPM0bCYZoKKVt2njn4UV/Q5KlMvktieOUDuXK/xt4HgyCYgomnZ1e6UfGdMzEF4
-         GW6G4+7NZ2lMLHA3STlzOrkTfFURcq5fKc2N0WCOOY3Hy59b6UT91F/orn5ONZBVfdb4
-         VcGF3gFvXH+cKrKNffaEnQATb+TU3z1GIn7OslsIkoX2BbM9UNyO3yjg2wnnq+Vk8hBw
-         6tHtMt6VUFIWe6XKXxsnPa+br6/6zP08yrnT7l/eG6HVAqDSh03D04qZSbgdaynDek9H
-         +zDS8gHJ9EINmn1XYuh6kBW/Nv09o7orAQqrHP7wsfLQIjJ1TNuIcmRZKJdhif46KMSD
-         TZew==
+        bh=TfTKPxq4bZ4SwTcRdBqaDniN3wi53FAiqmOye0MFIKo=;
+        b=Ar3MVEeq032Zsp2bufQHkoUShr0l2ARJ00SAzEmIxHbLo7ufXPfuT/OFIyzkjbHwB/
+         8arCjpcysqoHLbdlRHedX1yniC1MAit4Iy61zTfmmZIb+kRzpr8Gju7toflkHnFr1ioC
+         siWYCQ7rnG5t6S8fJNXn53WYfeM8Jajveq9c3o8JcD4mWeHHkhgGrC2or5IaW0li0pjb
+         hQ8/Q+5xVz3yBufrns5L+OAr58s1kdAwnTkENCcBrjWv/mVla3y3YaM8xCkveG4/NgR0
+         t0ZdJ2jKLabmgUxRK/h0CmhiiZUcPWCiKG0rNW70CTFT5I1NCixAVa5hpm1Ud+BC8XFI
+         u4FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746009184; x=1746613984;
+        d=1e100.net; s=20230601; t=1746009186; x=1746613986;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5Xu0lwXfHypam6aFf6MDeNeMIOVtEqILdYrrYMjhy+Y=;
-        b=Vw/E1g6k0jMuta+rpWHRDSR0oK8VifkHLzr1zx8duC718cBVQw48iNU/xdvrUaLCwX
-         YwjwAbU/+gaTaiGrcJzIthGLXzdJOpXpxXDWBBy3ZNEYlFMiDaxiuH8d39z1z5h8vNNF
-         y56hMOG5BBCNhbwYtuy3syXdQA0sWAu/jcnPhPXH2IH6046ZmNJ04OCw7oBoIkNYMZa2
-         vyMIITBpVmPEi4apWq9gRNNc8AF1f+RFzsxQ5Qf+lcUaNfIxujUhDcwrEiOm8xYZPkxz
-         r7uCum3IuXHd5bfR78SxdRQ7O9UPGv/2ypTR8KBdtT+T5nqNTYJY0UxbitJPFeeGIMa5
-         2XiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6C+KYoTKAELgVjkgWH4TDEizHqUCW7OK+dWdpOaTtiyT8Dw7ZfmUOE3vcmy7U4lZwx3ZuWH601g8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvOAh6mdmZ74zoGrit3vwRfKTI0871I173+e6s5yrFNRYPh71N
-	AkhJj0c04gB4VXpN7DNfe5vgJkfUrxYfmEeOZaRui4/bigTR6tSeTPrHcj4lW7w=
-X-Gm-Gg: ASbGnctPW+Km3WV6lf5Ry1xsjngCOzgC1XHCILFZUITy8F9IKMovNQph9JlouuppHY2
-	w6YqUCJmDEwL3ozm1Mn56qzOAi3CRVe7mTOTSwmUnxPEuVQBOzBgxb2m2rTDZSSIDxqC3d3p7VF
-	BgXWv58XUZf7NFyCgR9ETtnqRsBsO1/FGcoajFUgcKJsdrcsq7n4dt22/N6Eb6OCqjdlm3ahXft
-	k1gXKEjmTiFKKb/Yh0pS0I5k6pBZnbXhgnrKNWQkllUV5jVJ7JqS66gZ5Q+ifhpLp4S/BsPQN/w
-	wQJWiH6uNWHBaC0TqjfsGqCgIGjyTlyrPsm5kC/Bezr4KkAnOpWgPUPjFj+llcVw+5p+n1w=
-X-Google-Smtp-Source: AGHT+IEiP6Vgn86q0Y+9iOsEDH1SApC/mbVRMzQBBXjANsWv64cM9/IPsj3x7m/5obY5CmIm9XqGUw==
-X-Received: by 2002:a17:907:9805:b0:ac3:422a:76dc with SMTP id a640c23a62f3a-acedc65297fmr255856866b.34.1746009184102;
-        Wed, 30 Apr 2025 03:33:04 -0700 (PDT)
+        bh=TfTKPxq4bZ4SwTcRdBqaDniN3wi53FAiqmOye0MFIKo=;
+        b=sUHIJoZsnhBLcGMYCXiP28dDB7JuG5ehgZtobmAoxyk+5s8ZGOELrs5gjXycfUYtsX
+         NhR3IhYG2odpdADa+7TjVvaj4x0hGzYeNeOGtqUrd/C+KIYkFRwKx5oPpEv7Rqi7bVkk
+         584aYrowyALxmGd+TnxURXSDh8dJ8wsCnUrKO9a8Lt6uiQ07/8EJHe/QZj3Mu+vxugob
+         svmNz2r0jy9RRz6y2Th86g40Vvwzg6KMyQaC++cpSlaGcwLgt39DxuMsm4NGZWF3lM0j
+         iYwKt9Oh9hdHRiN8phCsYpRCASXyy4+RAAEe5b36+ki1QMYFgOqntSYyT7+eF3W0CYiR
+         +ckQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFU+QqeQTQVLN5Nn9r3l46ooyPtVxu3UFjwnPOl74+hHNQx28l1P5leCY+6eTHXC4iFcMZCoEyEBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywtv63iMzVMyZ1p4P94zsNrX2UEtpq7cw8bgVyCFwv8Yg6pnn8H
+	f+GdxShw9st/hMOW4xmuDPy8Z5Eamp/Khvh9BwfHESIlp54d6dZsZpiumGuLhPg=
+X-Gm-Gg: ASbGncuWBJv4u8pPtSIAzqsq/HJ+rRSDZYKS3mziayG17O/LwrLP1aNT/YIYCIl6ec4
+	eSatOPJrrmjELbP71jK2/nFDHOK671ViOAQs3szu5wDViBJ/0ZE0PX8WpeZHNZd7UKfFPXFyeVI
+	06tlbZKHmK5NUsTfwOkymqjK3yYdiiqCW5iZ71oy4ZsZNp9x76AeiISdbjQnKiQDdJdBX5nnRYO
+	KHDpD7kmYLoKQYzZX+hirbUeKc99GRD2HMOYakryy0ZCIKwWkvNNafQP+whP/KSj7jdUWDN4aZt
+	R7CIrFPQTAhVDldZmi2y27yV8zFTfAZTgOBwIkrsaQKvtM2+RWidvGO7FjDZmcPN4tOqMIIiBTu
+	OUNPTIQ==
+X-Google-Smtp-Source: AGHT+IEEfl+k3BC6Us3G4LOLDc9wt5JbZ4OiyNOr1AeXljqq4kLkSZXbAFThitp0f3NmQGw8dzbixw==
+X-Received: by 2002:a17:907:1c94:b0:ac7:1600:ea81 with SMTP id a640c23a62f3a-acee2600a17mr193116866b.49.1746009186334;
+        Wed, 30 Apr 2025 03:33:06 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ed6af86sm909390366b.133.2025.04.30.03.33.02
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ed6af86sm909390366b.133.2025.04.30.03.33.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 03:33:03 -0700 (PDT)
+        Wed, 30 Apr 2025 03:33:05 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: bhelgaas@google.com,
@@ -80,9 +81,9 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 2/8] clk: renesas: r9a08g045: Add clocks, resets and power domain support for the PCIe
-Date: Wed, 30 Apr 2025 13:32:30 +0300
-Message-ID: <20250430103236.3511989-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 3/8] of/irq: Export of_irq_count()
+Date: Wed, 30 Apr 2025 13:32:31 +0300
+Message-ID: <20250430103236.3511989-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250430103236.3511989-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20250430103236.3511989-1-claudiu.beznea.uj@bp.renesas.com>
@@ -96,75 +97,25 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add clocks, resets and power domains for the PCIe IP available on the
-Renesas RZ/G3S SoC. The clkl1pm clock is required for PCIe link power
-management (PM) control and should be enabled based on the state of the
-CLKREQ# pin. Therefore, mark it as a no_pm clock to allow the PCIe driver
-to manage it during link PM transitions.
+Export of_irq_count() to be able to use it in modules.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/of/irq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index 4035f3443598..33219164a19a 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -243,6 +243,8 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 	DEF_MOD("adc_adclk",		R9A08G045_ADC_ADCLK, R9A08G045_CLK_TSU, 0x5a8, 0),
- 	DEF_MOD("adc_pclk",		R9A08G045_ADC_PCLK, R9A08G045_CLK_TSU, 0x5a8, 1),
- 	DEF_MOD("tsu_pclk",		R9A08G045_TSU_PCLK, R9A08G045_CLK_TSU, 0x5ac, 0),
-+	DEF_MOD("pci_aclk",		R9A08G045_PCI_ACLK, R9A08G045_CLK_M0, 0x608, 0),
-+	DEF_MOD("pci_clk1pm",		R9A08G045_PCI_CLKL1PM, R9A08G045_CLK_ZT, 0x608, 1),
- 	DEF_MOD("vbat_bclk",		R9A08G045_VBAT_BCLK, R9A08G045_OSCCLK, 0x614, 0),
- };
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index f8ad79b9b1c9..5adda1dac3cf 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -519,6 +519,7 @@ int of_irq_count(struct device_node *dev)
  
-@@ -282,6 +284,13 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
- 	DEF_RST(R9A08G045_ADC_PRESETN, 0x8a8, 0),
- 	DEF_RST(R9A08G045_ADC_ADRST_N, 0x8a8, 1),
- 	DEF_RST(R9A08G045_TSU_PRESETN, 0x8ac, 0),
-+	DEF_RST(R9A08G045_PCI_ARESETN, 0x908, 0),
-+	DEF_RST(R9A08G045_PCI_RST_B, 0x908, 1),
-+	DEF_RST(R9A08G045_PCI_RST_GP_B, 0x908, 2),
-+	DEF_RST(R9A08G045_PCI_RST_PS_B, 0x908, 3),
-+	DEF_RST(R9A08G045_PCI_RST_RSM_B, 0x908, 4),
-+	DEF_RST(R9A08G045_PCI_RST_CFG_B, 0x908, 5),
-+	DEF_RST(R9A08G045_PCI_RST_LOAD_B, 0x908, 6),
- 	DEF_RST(R9A08G045_VBAT_BRESETN, 0x914, 0),
- };
+ 	return nr;
+ }
++EXPORT_SYMBOL_GPL(of_irq_count);
  
-@@ -358,6 +367,8 @@ static const struct rzg2l_cpg_pm_domain_init_data r9a08g045_pm_domains[] = {
- 				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(14)), 0),
- 	DEF_PD("tsu",		R9A08G045_PD_TSU,
- 				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(15)), 0),
-+	DEF_PD("pci",		R9A08G045_PD_PCI,
-+				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(10)), 0),
- 	DEF_PD("vbat",		R9A08G045_PD_VBAT,
- 				DEF_REG_CONF(CPG_BUS_MCPU3_MSTOP, BIT(8)),
- 				GENPD_FLAG_ALWAYS_ON),
-@@ -365,6 +376,10 @@ static const struct rzg2l_cpg_pm_domain_init_data r9a08g045_pm_domains[] = {
- 				DEF_REG_CONF(CPG_BUS_MCPU3_MSTOP, BIT(7)), 0),
- };
- 
-+static const unsigned int r9a08g045_no_pm_mod_clks[] = {
-+	MOD_CLK_BASE + R9A08G045_PCI_CLKL1PM,
-+};
-+
- const struct rzg2l_cpg_info r9a08g045_cpg_info = {
- 	/* Core Clocks */
- 	.core_clks = r9a08g045_core_clks,
-@@ -381,6 +396,10 @@ const struct rzg2l_cpg_info r9a08g045_cpg_info = {
- 	.num_mod_clks = ARRAY_SIZE(r9a08g045_mod_clks),
- 	.num_hw_mod_clks = R9A08G045_VBAT_BCLK + 1,
- 
-+	/* No PM modules Clocks */
-+	.no_pm_mod_clks = r9a08g045_no_pm_mod_clks,
-+	.num_no_pm_mod_clks = ARRAY_SIZE(r9a08g045_no_pm_mod_clks),
-+
- 	/* Resets */
- 	.resets = r9a08g045_resets,
- 	.num_resets = R9A08G045_VBAT_BRESETN + 1, /* Last reset ID + 1 */
+ /**
+  * of_irq_to_resource_table - Fill in resource table with node's IRQ info
 -- 
 2.43.0
 
