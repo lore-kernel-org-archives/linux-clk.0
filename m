@@ -1,65 +1,65 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67E12609ED
-	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 13:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C87D26159D
+	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 13:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746018080; cv=none; b=X3GGVQ7w182yla0dZJuLVHL+Gp2cRLHFD1vP89mgDdJBc0Zm8ZDN+URL6kL1mgczmzrPBGNwCK6fZggo2SEwv+p1YCW69qaDI6SqkkzPBB0ldDxY05wsOxJwWpIKhMbj/v1zyUkPSsqPgGTWFwCmZthXFAxRoUiV3eQbemc2WQM=
+	t=1746018082; cv=none; b=oLgNOAkCHJ6uzKi9XdoG4J36fhlzFuFL9Bxk7zP/rMcaLkIKE4bw/1j2lu/O/YadXjcnfD1Kh8lxplFSmtewE5z9ZcBQ94EgVsspEt/Sp1l4+nFM5K+S7DP8LKGnwFUvsaaZfK9+fUjyGlaYOl1bOUOnFPMvilnDVLF6lYUNuCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746018080; c=relaxed/simple;
-	bh=XU5572AbRAlL2dnAZKnz9YY70ssdWL7hBDylOur/otU=;
+	s=arc-20240116; t=1746018082; c=relaxed/simple;
+	bh=GkWQl4AHuV9DjDU+IEnl4HWYAg7OOc0kIv/ZNv4aHT0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KOgYSpxhhnssBAQoh5xfv56yGnetTeSDMpJL4jTxaccVfYd4BqCAATBC+ts0UYHsGg/glkzOH6ChDOZDzV+78QPj9U0pxNn6AJmiMGXt8PViLojAkK7A3SC2ZGpr8IcMfvZ2h0iQ7B7VUx9EClQcAIo1IeIp//d+brc0HDM4/xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a3L1+3TW; arc=none smtp.client-ip=209.85.221.46
+	 In-Reply-To:To:Cc; b=Q2f/MekLwrslNYuN8PLamwZNiYPx/MF+3urzqcoCF7GkVpMsXYQhoi7cGOiZiLlZ5a68l26NGOqlig17I/lfD8rS9DOWpWyW4LUhf4jhpIfmhPkSPbzK5TceIshVM0PMrYULC45b+wAVSgy8nJFeolp6J9d5n8jFG8CkNuJMVlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LSxAHcC/; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a3L1+3TW"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3913290f754so743431f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 06:01:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LSxAHcC/"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf825f46bso5321075e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 06:01:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746018076; x=1746622876; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1746018078; x=1746622878; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LYwgiUzq75NuT9nEk3WuZ2BIh7wkvlMFp5zrsAIKP/U=;
-        b=a3L1+3TWUpMkSqLEUFabb2MsDGpeLsNCMu/Ci+6CLKF2K9OJjpK1zKkcWVjc0kl5k4
-         zjGoxR4XQis75lYNlWnCnl58t4x4vxzabR+0HxRSThNSbwbkUnIqfkTxGjZAhD6uvAI3
-         3l9oS8509P24cXPNE7XlMlA+cYB3vWE10MWv+rmGwLz2728j6j3sJmxhupA5WAsNBuE0
-         f/XNukPaqu5oZCK+D40/sIlPMRVjnlhNKtJeGx3mv12wATD+UVfZ9Pgx4kiG0m3UffAM
-         ssyW7AeGa+ZtsCUdT/FVrr/aMCmP5BOJnmqI1Mu5rUmPJaklMCwVZP3GzU+8YrjJjvi3
-         fnSA==
+        bh=wAIPDns1zRlLkDTDA2ufc+iwOegg3wkdBuYVEqu/EmA=;
+        b=LSxAHcC/5EhlyhxA08gohmmu8YF7dEqZaK+KDDoq9sSlX4bhRgu7y7/7JO9OPybnpF
+         Ojf9KbbUHqHh+huic/sjuoHZNfWOcCTxHML63vjniZLL/AbK+Lw6Bzb38VPesPiLqUMw
+         vPAIbQMW9VOHm6M62pUYHQgNOIAE5R3uTbApnwxfGXVdiULM9GWaZH4GFtDND2mnAdMw
+         ByrFw3F2QAHeX7LPXiY6kpaqoeC/nom+T22Avv9hp/lRiXOKPPeOKzdmh7ZYdDRaLvNi
+         vi2msC5XZ2Nud/cNszQ3Bshdgztb9O7zWzfCOYzQXfePzq6ErUBMp6CsAt9f899vKiIG
+         YsLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746018076; x=1746622876;
+        d=1e100.net; s=20230601; t=1746018078; x=1746622878;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LYwgiUzq75NuT9nEk3WuZ2BIh7wkvlMFp5zrsAIKP/U=;
-        b=kqXv8p91NkSah7hx8D7MTfkraOpjLwoglieJ4sLB7oYr7wsYniPpWOSrJ4wmoRUNH+
-         Ypr+BrPKVlBmzW+esxtzP3j+4yIyyKtqcLyQpMJn5oEDZRFt7AB/bZuqLVfbhPifB/G3
-         nB2KTamC1uSyuGfD+wjk5SvP0yi2ae7+MycPscvcCWl3BWOWwfymjQ7x1Jq0Q/gwqXZy
-         eIo+7a92lbPUt2YkTHs3cWyxQP2NEMSoP1yd5SG8foVmlFBUgC9fBC5UR18trrd+Rp0X
-         xsU72hF8+9JUGMMTQsH0r73hRkVptLuAEVXvg8T+LhrbZo+nL06pSd62eHwOMxryMKe+
-         MlZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsnwRq5HDvtxum4wu9I6AH14+kqkmYo97lnJhC7uozQ7E8HVtjZjvSe4ZgbBA9XH5xSH0dU0EFjZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgkAnhqJ9UspCCsTyiwZlYb0oq9KHg/EMXvYlPi7e+raYTguo+
-	qkp352vUoUWz+cEYGYB0s4aYlilKr2op3DaE7yfsRYU0Hpkdr/MBHZ1rF7CC5iE=
-X-Gm-Gg: ASbGncv5ezKhn7E7TJnS/HvLjFly7iOI/+B7RqN/tRFP9F8xoiu20LWLUg41/m+9Ja2
-	y6HMrGsdSO+198FOLOI4GB3do2NSwkiv5tB7K7ylpsoPWsMQuigwZ76GWsajlgXMEAni+3X7kgY
-	CWDsPrT0IfcFXGcrNgi3EziJQt0XG/0RlQUMzWAkqco9x96eqYDocuTfCFXMUO61fAk+hIk801V
-	XqCtw4Iqmxg6HnziCWmzUHms7iy5xMF/EU5GJ7sfYFB2uRYotaSKjuNGoVOsUBe6b8TV5ku6F2B
-	1WfUbbjXYrgWQ/DV6mQw/XXn2uWAYVBSWGf5kge5uUcP/pVdbduJyXMHmIg=
-X-Google-Smtp-Source: AGHT+IE18JTYANDILCbq/VvMcef+4LOGatEO297qJkCdJ+51jnqFQMRJCyhHvokQM2QNs9XBMo3gwg==
-X-Received: by 2002:a5d:5c84:0:b0:39f:6e2:f846 with SMTP id ffacd0b85a97d-3a09007e389mr808544f8f.11.1746018075739;
-        Wed, 30 Apr 2025 06:01:15 -0700 (PDT)
+        bh=wAIPDns1zRlLkDTDA2ufc+iwOegg3wkdBuYVEqu/EmA=;
+        b=hfcjMDMZaHQWZhyDI64l6eHxGEGxwqNKGyObKAE3ZxeN4cl+hdHsdejhyCaywQ2eG6
+         1XW3QGNZ+ODAJghcvw0L7M/z6DCPNd6Ukma84V7lspZH2hce7kVlPP33lLuw3kbfPA+6
+         nZd0ESbpRPlWU0/xYakcq67CNEPTE4pPQFM6GMBXb/BGf0OHVjU4zJ5/5FsOHK6YMtaY
+         tQEC+kVdQB+bsDbV+r9qsL/GTRH6LBUZIJ9kXP69tksR0jOrI7AGupYx8bZg9I95qRNQ
+         UGbb4BZiDYAc1mI6sAE9CHha93brwwFvlJzeSWLozw/KQdZ86pRP/o0yM92FzEYwaA4F
+         eyFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCNaQ1cJlu6NtuDwf8Xhz/F2plcBFyUJyBits6/JjC/mZmfdRPRUr7BftlYfDenzCJBXNs8WPG+eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhn5EOKBnROykVGCYr70XsgcEWgEzRHhjy9Y2l9Z5mky9En3p3
+	25t5cfJa9hHemN6mLPcp24Bj+c3v6U8B7RkXuRNDUaU4YSNnj8w5+WcGsxV5mXc=
+X-Gm-Gg: ASbGnctLrHsaJWE42VNzIZ3oRcvzhLcQ7sr/r8wD5gIDIpbh4X6Te0WzhrtVb+VyoJc
+	Dd5iM3g8dCxCPELwW/BDwyI/ZwBEYn3lknoz2eQ4ZbiRsIKPHOSRpVcBPX4u4odGcYiCDw7UWxC
+	10CG/Sy2WkZnEb5+tp3iXLbjJRGJwl1Hlox3h6akkG7in6/Rsq2iIfq+8uR9f8qYtHsRzv1+rWM
+	f9qSgqcVZkjcHt216pD/hQ+HL2IlF/3LKCDizZHVCPOdKSDCnyt0eVh++ye9xIMIWX8FV+vSYKK
+	rIRhhq+61udpcJ595Sq9HG6nP59FgQZuPXyxqlmj1rBSQ3nACgkOx+plHjg=
+X-Google-Smtp-Source: AGHT+IHjCXUN3Br0ARpw4vZ3JG9K6Rd+QZ7Hsxu51mCBA34EhHbTUCatuIv99fu0qvoB2yHrIAgwGg==
+X-Received: by 2002:a05:600c:8409:b0:439:9a40:aa27 with SMTP id 5b1f17b1804b1-441b2dea5c0mr8686435e9.5.1746018077882;
+        Wed, 30 Apr 2025 06:01:17 -0700 (PDT)
 Received: from [192.168.1.28] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46c23sm16884043f8f.75.2025.04.30.06.01.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46c23sm16884043f8f.75.2025.04.30.06.01.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 06:01:15 -0700 (PDT)
+        Wed, 30 Apr 2025 06:01:17 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 30 Apr 2025 15:00:34 +0200
-Subject: [PATCH v5 04/24] dt-bindings: display/msm: qcom,sm8650-dpu: Add
+Date: Wed, 30 Apr 2025 15:00:35 +0200
+Subject: [PATCH v5 05/24] dt-bindings: display/msm: qcom,sm8750-mdss: Add
  SM8750
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250430-b4-sm8750-display-v5-4-8cab30c3e4df@linaro.org>
+Message-Id: <20250430-b4-sm8750-display-v5-5-8cab30c3e4df@linaro.org>
 References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
 In-Reply-To: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
 To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
@@ -93,45 +93,514 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org, 
  Srinivas Kandagatla <srini@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=943;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=16871;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=XU5572AbRAlL2dnAZKnz9YY70ssdWL7hBDylOur/otU=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoEh72FpXr2OvUJMdqZsONrKoHxF92CtBzOH/+I
- WqrcPyAtRmJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBIe9gAKCRDBN2bmhouD
- 1+MZD/9OF5Hp81jdBQTywFeOv8VerfYbTkQjgvr569Zvd6mUXMgHttCIYZ4RrBdqh5+U2LjGd9o
- yA6suSThzxkiMb7b9X5JAtwcXrNXHTwFyodBiUN3IWd7i8Iom7/LZaHbJ3XWcyiHjFPLXmZ4iAC
- f+W5hqAcKjZRLkTjQOG4XRbVmnZnuhx5K9UKomzZ3MseyCdJgv/4qeiXVRj3vTco/eqCPh4x2Hn
- +fsXYNuJU8tGelCxGIZgQ5uOV8X6YiNZ3dRjQjaajPNbtL10FcLOJyjo5EHhhGCSrg/QIepbrT0
- 3hfYRzQaef8mX1/7r9Da8S01UUw3lcVDEbxAFPRUdj9tHr3sn1Ym4tlCWlXprGysGMn+E30fyCX
- J0nXHFAH1HaAbsevaDzc3I0Nq3LAIn0+NMHbxdoAmgwtN8OS8d2x2udAbugBFLZtV3lJK9Zf+pN
- 20XKakZvuzlqs7iLROykPYv14kRuBHe/RpUJblAVD6nlO5bbSL2uX/KJ6P8PbOzz9Ji+e2gu++t
- niXHUk1YPckv1HqkSVyI1djubaN8W6cxm9W0uoQdcWcsH3Tx9jkrecK5fZd6vtPyn7K724vnsVU
- mbgSnEGQu7KZ2NsTbNxJ1YC4lWx/ihyAP2i54eCqpvPpz+KA1HD/SB2XFW3CGlBWy+lm8Pk9f7q
- zot22z/xMwkT4wA==
+ bh=GkWQl4AHuV9DjDU+IEnl4HWYAg7OOc0kIv/ZNv4aHT0=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoEh74Wind1mDXp3VGThiFxCUMfFFsxSHp0hpEm
+ LWIdQ9DuFWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBIe+AAKCRDBN2bmhouD
+ 1yBbD/sEBe7ZcP2HnxAZ5Fkm44Uartx9FYdXnMNBDujzfog6qrJdWJo8TTJazciXjs5jQwq52BY
+ hxdc1zR+cDcqVDT4cEQ4jZIDtGmXzL+P1JAInu5lFjwThkVQfUemmg+obQgr9s8lxWHl7+h3cr8
+ 3B99su+uD/ZDkByj1Yh0f8m4olzifm6aVA7/KW8tYcBWhPt/Gpfo2Ew8yvf9GYyikMu/v7SEJM7
+ Fc+gI35VbRjytasF2pNC+ICK3hcjRWBKznOnieEACiVL719tid1HWtNdT1P2LxJ91jObJSN5AVS
+ x96skVbLQePpJhiOvHE6jI6GVQIZ5I274YGXg9Q7sH1JK3xqm2DB8JI5aVlijzwcJW5vpkmjFw9
+ z1CP1ag+Zv1b4Ns7Ysxz71esdmNfKHU0T2RkcWVsTsUaDBxBhSizArOZ92d6IRxNdqZBcTFieGz
+ zgXJQVFrKF8djR769d5pB/aLlQsyY++v52daHNvRKOfB37S2bzVC1ufW1k091LtzY8/us0xO3R0
+ kiCWHTvgwyX4GsdXCNNDAAJ5F4A/vxoimylXiItQo4bgvNpHfdj+RSxgav0hxH0uuO6R+uIIa4i
+ nv9+MBTFnc32c4a3EwYCf9aCawECGD68sRu3uaB56VBBgrlrZUDPHNqxuosmpjUiY856n8OOpNL
+ JPQI7GVpAe2pL/g==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Add DPU for Qualcomm SM8750 SoC which has several differences, new
-blocks and changes in registers, making it incompatible with SM8650.
+Add MDSS/MDP display subsystem for Qualcomm SM8750 SoC, next generation
+with two revisions up of the IP block comparing to SM8650.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/display/msm/qcom,sm8650-dpu.yaml | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8650-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8650-dpu.yaml
-index 01cf79bd754b491349c52c5aef49ba06e835d0bf..0a46120dd8680371ed031f7773859716f49c3aa1 100644
---- a/Documentation/devicetree/bindings/display/msm/qcom,sm8650-dpu.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8650-dpu.yaml
-@@ -16,6 +16,7 @@ properties:
-     enum:
-       - qcom,sa8775p-dpu
-       - qcom,sm8650-dpu
-+      - qcom,sm8750-dpu
-       - qcom,x1e80100-dpu
- 
-   reg:
+Changes in v3:
+1. Properly described interconnects
+2. Use only one compatible and contains for the sub-blocks (Rob)
+---
+ .../bindings/display/msm/qcom,sm8750-mdss.yaml     | 470 +++++++++++++++++++++
+ 1 file changed, 470 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm8750-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm8750-mdss.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..72c70edc1fb01c61f8aad24fdb58bfb4f62a6e34
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/msm/qcom,sm8750-mdss.yaml
+@@ -0,0 +1,470 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/msm/qcom,sm8750-mdss.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm SM8750 Display MDSS
++
++maintainers:
++  - Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
++
++description:
++  SM8650 MSM Mobile Display Subsystem(MDSS), which encapsulates sub-blocks like
++  DPU display controller, DSI and DP interfaces etc.
++
++$ref: /schemas/display/msm/mdss-common.yaml#
++
++properties:
++  compatible:
++    const: qcom,sm8750-mdss
++
++  clocks:
++    items:
++      - description: Display AHB
++      - description: Display hf AXI
++      - description: Display core
++
++  iommus:
++    maxItems: 1
++
++  interconnects:
++    items:
++      - description: Interconnect path from mdp0 port to the data bus
++      - description: Interconnect path from CPU to the reg bus
++
++  interconnect-names:
++    items:
++      - const: mdp0-mem
++      - const: cpu-cfg
++
++patternProperties:
++  "^display-controller@[0-9a-f]+$":
++    type: object
++    additionalProperties: true
++    properties:
++      compatible:
++        const: qcom,sm8750-dpu
++
++  "^displayport-controller@[0-9a-f]+$":
++    type: object
++    additionalProperties: true
++    properties:
++      compatible:
++        contains:
++          const: qcom,sm8750-dp
++
++  "^dsi@[0-9a-f]+$":
++    type: object
++    additionalProperties: true
++    properties:
++      compatible:
++        contains:
++          const: qcom,sm8750-dsi-ctrl
++
++  "^phy@[0-9a-f]+$":
++    type: object
++    additionalProperties: true
++    properties:
++      compatible:
++        const: qcom,sm8750-dsi-phy-3nm
++
++required:
++  - compatible
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    #include <dt-bindings/interconnect/qcom,icc.h>
++    #include <dt-bindings/interconnect/qcom,sm8750-rpmh.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/phy/phy-qcom-qmp.h>
++    #include <dt-bindings/power/qcom,rpmhpd.h>
++
++    display-subsystem@ae00000 {
++            compatible = "qcom,sm8750-mdss";
++            reg = <0x0ae00000 0x1000>;
++            reg-names = "mdss";
++
++            interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++
++            clocks = <&disp_cc_mdss_ahb_clk>,
++                     <&gcc_disp_hf_axi_clk>,
++                     <&disp_cc_mdss_mdp_clk>;
++
++            interconnects = <&mmss_noc MASTER_MDP QCOM_ICC_TAG_ALWAYS
++                             &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
++                            <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
++                             &config_noc SLAVE_DISPLAY_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
++            interconnect-names = "mdp0-mem",
++                                 "cpu-cfg";
++
++            resets = <&disp_cc_mdss_core_bcr>;
++
++            power-domains = <&mdss_gdsc>;
++
++            iommus = <&apps_smmu 0x800 0x2>;
++
++            interrupt-controller;
++            #interrupt-cells = <1>;
++
++            #address-cells = <1>;
++            #size-cells = <1>;
++            ranges;
++
++            display-controller@ae01000 {
++                compatible = "qcom,sm8750-dpu";
++                reg = <0x0ae01000 0x93000>,
++                      <0x0aeb0000 0x2008>;
++                reg-names = "mdp",
++                            "vbif";
++
++                interrupts-extended = <&mdss 0>;
++
++                clocks = <&gcc_disp_hf_axi_clk>,
++                         <&disp_cc_mdss_ahb_clk>,
++                         <&disp_cc_mdss_mdp_lut_clk>,
++                         <&disp_cc_mdss_mdp_clk>,
++                         <&disp_cc_mdss_vsync_clk>;
++                clock-names = "nrt_bus",
++                              "iface",
++                              "lut",
++                              "core",
++                              "vsync";
++
++                assigned-clocks = <&disp_cc_mdss_vsync_clk>;
++                assigned-clock-rates = <19200000>;
++
++                operating-points-v2 = <&mdp_opp_table>;
++
++                power-domains = <&rpmhpd RPMHPD_MMCX>;
++
++                ports {
++                    #address-cells = <1>;
++                    #size-cells = <0>;
++
++                    port@0 {
++                        reg = <0>;
++
++                        dpu_intf1_out: endpoint {
++                            remote-endpoint = <&mdss_dsi0_in>;
++                        };
++                    };
++
++                    port@1 {
++                        reg = <1>;
++
++                        dpu_intf2_out: endpoint {
++                            remote-endpoint = <&mdss_dsi1_in>;
++                        };
++                    };
++
++                    port@2 {
++                        reg = <2>;
++
++                        dpu_intf0_out: endpoint {
++                            remote-endpoint = <&mdss_dp0_in>;
++                        };
++                    };
++                };
++
++                mdp_opp_table: opp-table {
++                    compatible = "operating-points-v2";
++
++                    opp-207000000 {
++                        opp-hz = /bits/ 64 <207000000>;
++                        required-opps = <&rpmhpd_opp_low_svs>;
++                    };
++
++                    opp-337000000 {
++                        opp-hz = /bits/ 64 <337000000>;
++                        required-opps = <&rpmhpd_opp_svs>;
++                    };
++
++                    opp-417000000 {
++                        opp-hz = /bits/ 64 <417000000>;
++                        required-opps = <&rpmhpd_opp_svs_l1>;
++                    };
++
++                    opp-532000000 {
++                        opp-hz = /bits/ 64 <532000000>;
++                        required-opps = <&rpmhpd_opp_nom>;
++                    };
++
++                    opp-575000000 {
++                        opp-hz = /bits/ 64 <575000000>;
++                        required-opps = <&rpmhpd_opp_nom_l1>;
++                    };
++                };
++            };
++
++            dsi@ae94000 {
++                compatible = "qcom,sm8750-dsi-ctrl", "qcom,mdss-dsi-ctrl";
++                reg = <0x0ae94000 0x400>;
++                reg-names = "dsi_ctrl";
++
++                interrupts-extended = <&mdss 4>;
++
++                clocks = <&disp_cc_mdss_byte0_clk>,
++                         <&disp_cc_mdss_byte0_intf_clk>,
++                         <&disp_cc_mdss_pclk0_clk>,
++                         <&disp_cc_mdss_esc0_clk>,
++                         <&disp_cc_mdss_ahb_clk>,
++                         <&gcc_disp_hf_axi_clk>,
++                         <&mdss_dsi0_phy 1>,
++                         <&mdss_dsi0_phy 0>,
++                         <&disp_cc_esync0_clk>,
++                         <&disp_cc_osc_clk>,
++                         <&disp_cc_mdss_byte0_clk_src>,
++                         <&disp_cc_mdss_pclk0_clk_src>;
++                clock-names = "byte",
++                              "byte_intf",
++                              "pixel",
++                              "core",
++                              "iface",
++                              "bus",
++                              "dsi_pll_pixel",
++                              "dsi_pll_byte",
++                              "esync",
++                              "osc",
++                              "byte_src",
++                              "pixel_src";
++
++                operating-points-v2 = <&mdss_dsi_opp_table>;
++
++                power-domains = <&rpmhpd RPMHPD_MMCX>;
++
++                phys = <&mdss_dsi0_phy>;
++                phy-names = "dsi";
++
++                vdda-supply = <&vreg_l3g_1p2>;
++
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                ports {
++                    #address-cells = <1>;
++                    #size-cells = <0>;
++
++                    port@0 {
++                        reg = <0>;
++
++                        mdss_dsi0_in: endpoint {
++                            remote-endpoint = <&dpu_intf1_out>;
++                        };
++                    };
++
++                    port@1 {
++                        reg = <1>;
++
++                        mdss_dsi0_out: endpoint {
++                            remote-endpoint = <&panel0_in>;
++                            data-lanes = <0 1 2 3>;
++                        };
++                    };
++                };
++
++                mdss_dsi_opp_table: opp-table {
++                    compatible = "operating-points-v2";
++
++                    opp-187500000 {
++                        opp-hz = /bits/ 64 <187500000>;
++                        required-opps = <&rpmhpd_opp_low_svs>;
++                    };
++
++                    opp-300000000 {
++                        opp-hz = /bits/ 64 <300000000>;
++                        required-opps = <&rpmhpd_opp_svs>;
++                    };
++
++                    opp-358000000 {
++                        opp-hz = /bits/ 64 <358000000>;
++                        required-opps = <&rpmhpd_opp_svs_l1>;
++                    };
++                };
++            };
++
++            mdss_dsi0_phy: phy@ae95000 {
++                compatible = "qcom,sm8750-dsi-phy-3nm";
++                reg = <0x0ae95000 0x200>,
++                      <0x0ae95200 0x280>,
++                      <0x0ae95500 0x400>;
++                reg-names = "dsi_phy",
++                            "dsi_phy_lane",
++                            "dsi_pll";
++
++                clocks = <&disp_cc_mdss_ahb_clk>,
++                         <&rpmhcc RPMH_CXO_CLK>;
++                clock-names = "iface",
++                              "ref";
++
++                vdds-supply = <&vreg_l3i_0p88>;
++
++                #clock-cells = <1>;
++                #phy-cells = <0>;
++            };
++
++            dsi@ae96000 {
++                compatible = "qcom,sm8750-dsi-ctrl", "qcom,mdss-dsi-ctrl";
++                reg = <0x0ae96000 0x400>;
++                reg-names = "dsi_ctrl";
++
++                interrupts-extended = <&mdss 5>;
++
++                clocks = <&disp_cc_mdss_byte1_clk>,
++                         <&disp_cc_mdss_byte1_intf_clk>,
++                         <&disp_cc_mdss_pclk1_clk>,
++                         <&disp_cc_mdss_esc1_clk>,
++                         <&disp_cc_mdss_ahb_clk>,
++                         <&gcc_disp_hf_axi_clk>,
++                         <&mdss_dsi1_phy 1>,
++                         <&mdss_dsi1_phy 0>,
++                         <&disp_cc_esync1_clk>,
++                         <&disp_cc_osc_clk>,
++                         <&disp_cc_mdss_byte1_clk_src>,
++                         <&disp_cc_mdss_pclk1_clk_src>;
++                clock-names = "byte",
++                              "byte_intf",
++                              "pixel",
++                              "core",
++                              "iface",
++                              "bus",
++                              "dsi_pll_pixel",
++                              "dsi_pll_byte",
++                              "esync",
++                              "osc",
++                              "byte_src",
++                              "pixel_src";
++
++                operating-points-v2 = <&mdss_dsi_opp_table>;
++
++                power-domains = <&rpmhpd RPMHPD_MMCX>;
++
++                phys = <&mdss_dsi1_phy>;
++                phy-names = "dsi";
++
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                ports {
++                    #address-cells = <1>;
++                    #size-cells = <0>;
++
++                    port@0 {
++                        reg = <0>;
++
++                        mdss_dsi1_in: endpoint {
++                            remote-endpoint = <&dpu_intf2_out>;
++                        };
++                    };
++
++                    port@1 {
++                        reg = <1>;
++
++                        mdss_dsi1_out: endpoint {
++                        };
++                    };
++                };
++            };
++
++            mdss_dsi1_phy: phy@ae97000 {
++                compatible = "qcom,sm8750-dsi-phy-3nm";
++                reg = <0x0ae97000 0x200>,
++                      <0x0ae97200 0x280>,
++                      <0x0ae97500 0x400>;
++                reg-names = "dsi_phy",
++                            "dsi_phy_lane",
++                            "dsi_pll";
++
++                clocks = <&disp_cc_mdss_ahb_clk>,
++                         <&rpmhcc RPMH_CXO_CLK>;
++                clock-names = "iface",
++                              "ref";
++
++                #clock-cells = <1>;
++                #phy-cells = <0>;
++            };
++
++            displayport-controller@af54000 {
++                compatible = "qcom,sm8750-dp", "qcom,sm8650-dp";
++                reg = <0xaf54000 0x104>,
++                      <0xaf54200 0xc0>,
++                      <0xaf55000 0x770>,
++                      <0xaf56000 0x9c>,
++                      <0xaf57000 0x9c>;
++
++                interrupts-extended = <&mdss 12>;
++
++                clocks = <&disp_cc_mdss_ahb_clk>,
++                         <&disp_cc_mdss_dptx0_aux_clk>,
++                         <&disp_cc_mdss_dptx0_link_clk>,
++                         <&disp_cc_mdss_dptx0_link_intf_clk>,
++                         <&disp_cc_mdss_dptx0_pixel0_clk>;
++                clock-names = "core_iface",
++                              "core_aux",
++                              "ctrl_link",
++                              "ctrl_link_iface",
++                              "stream_pixel";
++
++                assigned-clocks = <&disp_cc_mdss_dptx0_link_clk_src>,
++                                  <&disp_cc_mdss_dptx0_pixel0_clk_src>;
++                assigned-clock-parents = <&usb_dp_qmpphy QMP_USB43DP_DP_LINK_CLK>,
++                                         <&usb_dp_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
++
++                operating-points-v2 = <&dp_opp_table>;
++
++                power-domains = <&rpmhpd RPMHPD_MMCX>;
++
++                phys = <&usb_dp_qmpphy QMP_USB43DP_DP_PHY>;
++                phy-names = "dp";
++
++                #sound-dai-cells = <0>;
++
++                dp_opp_table: opp-table {
++                    compatible = "operating-points-v2";
++
++                    opp-192000000 {
++                        opp-hz = /bits/ 64 <192000000>;
++                        required-opps = <&rpmhpd_opp_low_svs_d1>;
++                    };
++
++                    opp-270000000 {
++                        opp-hz = /bits/ 64 <270000000>;
++                        required-opps = <&rpmhpd_opp_low_svs>;
++                    };
++
++                    opp-540000000 {
++                        opp-hz = /bits/ 64 <540000000>;
++                        required-opps = <&rpmhpd_opp_svs_l1>;
++                    };
++
++                    opp-810000000 {
++                        opp-hz = /bits/ 64 <810000000>;
++                        required-opps = <&rpmhpd_opp_nom>;
++                    };
++                };
++
++                ports {
++                    #address-cells = <1>;
++                    #size-cells = <0>;
++
++                    port@0 {
++                        reg = <0>;
++
++                        mdss_dp0_in: endpoint {
++                            remote-endpoint = <&dpu_intf0_out>;
++                        };
++                    };
++
++                    port@1 {
++                        reg = <1>;
++
++                        mdss_dp0_out: endpoint {
++                            remote-endpoint = <&usb_dp_qmpphy_dp_in>;
++                        };
++                    };
++                };
++            };
++        };
 
 -- 
 2.45.2
