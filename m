@@ -1,167 +1,115 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22B6231847
-	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 13:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C57215DBC1;
+	Wed, 30 Apr 2025 15:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746018695; cv=none; b=PUd+ZYK362vJFtpzh0UJxjCjHC3XtjQWOR5qvMhe5D9z5D5H3gnNiPfALYcBFEeq6OuqZCW+XjWVOVPkAOTr/B2+1XNPlW50U3vlJIOAD+bCEjlfNNcqcq4GPi7JYmHj/3oPsc+Bcm6Rj0Tb9byxjs31BKSTsJ6cdIZUKav+EgU=
+	t=1746027226; cv=none; b=H5wKYZMdWFoPpD8O3ZpPcJDo70WrS8g4AZhe9T6SuoMJ/GLs9d6INwKUHqpZbR3OwglAna5nhN8XgMoFt0CMeAZmioe5f3pUxvD8/aVPg2+A7LYKvr0R7Y5l2BhD/R2u7bC1KD6W6itCDCmZrwOk6FC2DFNPEvBWyA0PgDKLTME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746018695; c=relaxed/simple;
-	bh=+/m1EO8rUeJJjaoBuQtZjmRLIAdtNaubX7o78vy8dUU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R7AX57vlReHzlPuYDhtwG9j2uxO2rcsbnfIC9NhbgJ6r1zJeNq+KlvQUGWaEqNvagW17AsgQW/vSh9uWsLXyhGPvKNlL7g5HoqiPqoPCHuaQWUlYAHfjr0ZNkvkINKleiaP8HbpspQW2JNozWts6Z1sndgkmqgw6MmahdL9dS7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oKZA07iX; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1746027226; c=relaxed/simple;
+	bh=GHWKyQrFtLFEsAd9D7tQib4YQeKEyzwclNeqeYd5kDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M5SEJ7L6eHtc5KffqnBJJ2iswER8cwKrDX/VVah/pth15KADbzKSSet8zDpZNb8xpbKt/1gjGMFu5uNz7RlA0x7SQ+ss6BBANuYRg00jOIv0Kn1kxduZeBTMqkYakT1gA7ltS3LyRDjiaZM9wfCv2iy5JMMZDmWP2jM+UV6uMyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlCi7ebi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oKZA07iX"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43f106a3591so8109795e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 06:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746018692; x=1746623492; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=dCzPkxxbMsEZi4gmxHLeQbawBsdYMbjxEQFely+C8W4=;
-        b=oKZA07iXoopkbfmgbAPojdQmmmgodHbft+1kfIn2smutScJZPlc+57zEPubbgFsAPF
-         4ucwzxbf/sZEvqT36clWp2/99QuE92vm0DKm9aiWu9pBG/Xy8TSgpUAgMD4D5wijCK+2
-         8QtDd7G29aVVGlNVOx6RSXROCXl3YiggXsuyK1JRu+fSjt/rip+2fTQEDo3Zz04JKZL2
-         3clNLqLKsfJVP/rdIuH3uYVwjaA9HLeMhpxpcY/kWAFT2m3eO6+fLpnyR38z5d+XJKvU
-         MkXova/1lX4IXNkL0MxhIW1DQnywcR88HQk1C2aqh/4JVeHQs8rN/whrtOijNxYrHBhO
-         ynIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746018692; x=1746623492;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dCzPkxxbMsEZi4gmxHLeQbawBsdYMbjxEQFely+C8W4=;
-        b=CneuB9Jk4izVD0qPuetW7TIDY6Am8vzNSQfLbYN3XyTPfEWwlGtGzBEmhzmlTyPC0o
-         A7hYpimhvlAFFql8GOLg6CEllBOqr+jc5acDJ1KAmDThxRvxpmZ3+a/cHzOyMThoGzoC
-         KZwubiCY7VFGumQuCU3mCKXDPNRFDTl1QEfozNMwpJe5HCj1WYBsghr6ikg+x2x8sSO3
-         jgsugC6kQko9DxAMd8JuLHHc/27lj+Nf+PEzCLDSbP6O6Kj4q/lzt3SadZqcC4nz+9lr
-         6EQz+l2fCsduR1DcLNZIN8rDMkJJWwNCdvyvtS2ZNJpiy6y8R4Cj51EvnJ9h+SI5lnoN
-         GLgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVk90m/7SNp6WhszRkTo+AibDqtVV8vg8l/qilxTFweYwzOv2KWCgqSxFiOWgrDinmZJg7+k0KWmgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy27A4MjJ7H25WFYXThX4U+e/BNxPQ+E+gHe1pyLGmcUetdprRC
-	iGoiY0BrBSkeaIqi9GJKbEljtpGH1l6FKkwjsegmEjLkGshXwa/EdlgRQAb+aeE=
-X-Gm-Gg: ASbGncvQHRchxKnQsJu0pXZc1EUk9kWbwmyjjVyjsHRAXIqQUIinCNnlbqMXsj898j3
-	x8ugqC4aK3QdAvm6q5E7Aa5UWFKZcgBbrUrKbO7Anw1O5ztv2oDoufoHHKIuLm4EgCfZ/twRdw/
-	zZjaH96yoZRy6eqRScYQYMfCN+i4Z4ThbDWdWOkXFyH/sZZVhKhO7zewe8oAu70wPlVS5GaccZE
-	D4km5VWK1UTJvsPktMp8UbjQFwFtlmSZeyURjuEK1KyxD8sBl9CERmz+eyls3CIYjP85+jSV/zU
-	TTdvor4p8iSwojB1zmuv+DWqxTTMNlYMO2blASCJN8fr2N6xZpXA5Wy98UY=
-X-Google-Smtp-Source: AGHT+IFeJjyPF7UsvMCvY/E4zkImQ+r2GCvPnZaHFrfG4ufXz7hO2J0dOlapl0Ez63IyCYU7IZAfQQ==
-X-Received: by 2002:a05:600c:5488:b0:439:9c0e:36e6 with SMTP id 5b1f17b1804b1-441b2c93eabmr7783915e9.3.1746018692002;
-        Wed, 30 Apr 2025 06:11:32 -0700 (PDT)
-Received: from [192.168.1.28] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2ad7931sm24947395e9.1.2025.04.30.06.11.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 06:11:31 -0700 (PDT)
-Message-ID: <da229728-300c-417f-bb21-426cfa6d2cd0@linaro.org>
-Date: Wed, 30 Apr 2025 15:11:29 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlCi7ebi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4915C4CEE7;
+	Wed, 30 Apr 2025 15:33:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746027225;
+	bh=GHWKyQrFtLFEsAd9D7tQib4YQeKEyzwclNeqeYd5kDQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SlCi7ebiNQ2BeVFzNkiHJCVx2MJpTnsEJyICSPJLgM37NV9QR6HzhAOKxILNrsyBU
+	 23bQE9a1E3Wtqkv5QqeIX9Ie6gp/+w1qVmuI+6vPSpvYJf+cCFAEVwBkg4UOdj4Ve6
+	 1dTWm+j9zifDYh0uPTZev0uqikTu4AmG5UoCSmWDhuoq1Qn2CQ9Zn8Y+UQ+Z+KiLID
+	 2JMle4z70AZRD3IDR9ZwGWLgKU12xysOE9QxCG4kMJ4W1upVvzbMcXwv5NALZyQ5x4
+	 PGAfvELPB89tzkjbmB0Ttw9kDAwAZ6rdrUkvS+tCXzj95WXihFKS9xqmklDV/3Wu4x
+	 AcEKRHaBrmj1w==
+Date: Wed, 30 Apr 2025 16:33:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 2/3] clk: sophgo: Add support for newly added precise
+ compatible
+Message-ID: <20250430-radiance-rebuilt-2caa906d5e6f@spud>
+References: <20250430020932.307198-1-inochiama@gmail.com>
+ <20250430020932.307198-3-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 16/24] drm/msm/dsi/phy: Fix reading zero as PLL rates
- when unprepared
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Krishna Manikandan <quic_mkrishn@quicinc.com>,
- Jonathan Marek <jonathan@marek.ca>, Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Rob Clark <robdclark@chromium.org>,
- linux-clk@vger.kernel.org, Srinivas Kandagatla <srini@kernel.org>
-References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
- <20250430-b4-sm8750-display-v5-16-8cab30c3e4df@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20250430-b4-sm8750-display-v5-16-8cab30c3e4df@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 30/04/2025 15:00, Krzysztof Kozlowski wrote:
->  
-> @@ -361,21 +373,46 @@ static int dsi_pll_7nm_lock_status(struct dsi_pll_7nm *pll)
->  
->  static void dsi_pll_disable_pll_bias(struct dsi_pll_7nm *pll)
->  {
-> -	u32 data = readl(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
-> +	unsigned long flags;
-> +	u32 data;
-> +
-> +	spin_lock_irqsave(&pll->pll_enable_lock, flags);
-> +	--pll->pll_enable_cnt;
-> +	if (pll->pll_enable_cnt < 0) {
-
-I removed too much from debugging - this should be WARN_ON or dev_err
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="sMKL3DI6Jh6onOT5"
+Content-Disposition: inline
+In-Reply-To: <20250430020932.307198-3-inochiama@gmail.com>
 
 
-> +		spin_unlock_irqrestore(&pll->pll_enable_lock, flags);
-> +		return;
-> +	} else if (pll->pll_enable_cnt > 0) {
-> +		spin_unlock_irqrestore(&pll->pll_enable_lock, flags);
-> +		return;
-> +	} /* else: == 0 */
+--sMKL3DI6Jh6onOT5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Apr 30, 2025 at 10:09:30AM +0800, Inochi Amaoto wrote:
+> Add of device id definition for newly added precise compatible.
+>=20
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> ---
+>  drivers/clk/sophgo/clk-cv1800.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/drivers/clk/sophgo/clk-cv1800.c b/drivers/clk/sophgo/clk-cv1=
+800.c
+> index e0c4dc347579..e10221df6385 100644
+> --- a/drivers/clk/sophgo/clk-cv1800.c
+> +++ b/drivers/clk/sophgo/clk-cv1800.c
+> @@ -1519,8 +1519,11 @@ static int cv1800_clk_probe(struct platform_device=
+ *pdev)
+> =20
+>  static const struct of_device_id cv1800_clk_ids[] =3D {
+>  	{ .compatible =3D "sophgo,cv1800-clk", .data =3D &cv1800_desc },
+> +	{ .compatible =3D "sophgo,cv1800b-clk", .data =3D &cv1800_desc },
 
-Best regards,
-Krzysztof
+Given the same data is used here, should there not be fallbacks in the
+dt for some of these? For example, 1812 to 1800? Or is that not okay,
+because 1800 is not a real device id?
+
+>  	{ .compatible =3D "sophgo,cv1810-clk", .data =3D &cv1810_desc },
+> +	{ .compatible =3D "sophgo,cv1812h-clk", .data =3D &cv1800_desc },
+>  	{ .compatible =3D "sophgo,sg2000-clk", .data =3D &sg2000_desc },
+> +	{ .compatible =3D "sophgo,sg2002-clk", .data =3D &sg2000_desc },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(of, cv1800_clk_ids);
+> --=20
+> 2.49.0
+>=20
+
+--sMKL3DI6Jh6onOT5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaBJC0wAKCRB4tDGHoIJi
+0kMAAP9ZKNc6a0xYBkYr8oqooliJY8N3PWy3hSRIU/+E2sr52AEAjzrVNBdoDTN3
+S37PalSpc7ohjoXJsyX87gDgmKv1kwE=
+=EuHX
+-----END PGP SIGNATURE-----
+
+--sMKL3DI6Jh6onOT5--
