@@ -1,95 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4832E401;
-	Wed, 30 Apr 2025 22:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92ED2236FC;
+	Wed, 30 Apr 2025 22:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746051341; cv=none; b=PB+UkDUiW9y1uoswi4xO2XpTX9vOr/I6CPDHzKq9dtvBt5wzEa/TWURPQjajKLbkwf0WYRaiY8Y+WhnJlIQV1Ycvz4YBICKnAsDZJVQ+OJ2FfSFHgLmd8DtPUTB1fhEBI1c4281kWIR/deXBhiQiUESnR3p22z0M1ppcKibpsCI=
+	t=1746052720; cv=none; b=oy14qa5rn05QOuhIggWkc8c1euKXbyurTuX5W7CzqlImHvQUs6rVPpj4tuR6qrwpPsioBzDTgtAzIu4hLCwQYj9cCHPOj3N60VYABR8m3QfHBNORAGKG8uI7EzdfdV43xT6nnlhdrhNR1gICAS+N9ybYPKuzToWsd/bVBEl2iPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746051341; c=relaxed/simple;
-	bh=aIbmssw0385CGx5GhIR2R+vsPi0bJ2we8C8Kd4Sw5CI=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=W7YzRbTR2xnyHV6a1E84AgMydAG442uT9kzo4Fu91VzlzfmE071vCshMnqHXlvXCJgliLIUlTRRFF7UoUR39JZ/wYvOR1l21QHhBz83LAP2zJ8PIXpj6gc+zhWbeagZwJxgjlzMCSjaSCp6jRp6Lt8wL4sH4pyGksuuCREJ97WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAH9YqRc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746052720; c=relaxed/simple;
+	bh=j0wnjooFp3JJtS2LTkueCo6fpgCMwlyPh6llYs4IbKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rABHaT7m0VTAeVOL2HCAtQlr6g+/d77/Wa+3rrjxJzYT/iXzQDwEwvDPrM7+/z9tMJVO0/7lszKsU3/pVbt2zYzmnZ180bTrjaq2RsF06TNJElIQ+p6ioh2jTSfSVtLAL86HmTUMbU9FZPNeuzTBY3BxEr60xtvF2Ki4i39VXzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IR7xgxlz; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAH9YqRc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E957AC4CEE7;
-	Wed, 30 Apr 2025 22:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746051341;
-	bh=aIbmssw0385CGx5GhIR2R+vsPi0bJ2we8C8Kd4Sw5CI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=XAH9YqRcw/tW78dB534Ne6D7YpedE8wyfVkqbCd3WdD1Zg87kdihfeBaQE7jOHHc3
-	 u5WeQx4n7FeyAZh+7H4HVbML1U9c9gXfVIpnafL2Fte6CoLKR7mvL70B6ga9OBhchw
-	 sSuE8v7wWKXqieMNXB6R1162zdqIYhs2WrNK/hSE1NPvEtyGrAjMDujZuaDEsKc7Pn
-	 lXI0JvkqTcuFYclDgufQ8tI6wEc//xn4Cf9eH3sEbpw7G270RH+6gRjeJD3n92/pmB
-	 12xrQrpgz4dIDe+lTkXChKwd9+h4VbH3R+8js+2osFxfJzedJS0tKJkXdttaXeVa3z
-	 pN5Vmct4KVD9A==
-Message-ID: <40bf9ffc7ae98f6601122cd8850418f5@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IR7xgxlz"
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c9376c4bddso38910985a.3;
+        Wed, 30 Apr 2025 15:38:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746052718; x=1746657518; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vQMd4+KE05AiC2tiYMqBEsrGqf6EspjdNnY21/A2l/0=;
+        b=IR7xgxlzdTr4niBf9TLlJanzc6KFfcQjUwKkTMGEpkEK+aSLFkdbJIwMkFgWHD7/Kz
+         rsp/fn86nDhxyJHCaHLy/MTfy4SXWYZgJZz9vTxuQ10H7QqAj+x/nQwT/w4QeQurW60V
+         9GEZ7AUsgcWM9oVYKQ3USRR1cu+P+AoZ9XFS6lrCclrh5m6cBMxUhiIi9YFZTQGLpoeh
+         mT89/xJE0pedzwVB2wmzvtwkcm5DA3OGWnPywhzFx2q2P8SGV4g42NSqKMgh1VaSlixA
+         waUUB4rsyPME3iXOne28KAh13+H+/gdy7WgcoZJHl08xbaCocqVRlw/JMcYyPglSA+Oc
+         cjxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746052718; x=1746657518;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vQMd4+KE05AiC2tiYMqBEsrGqf6EspjdNnY21/A2l/0=;
+        b=F5D2mWdieDXmNssPrn7+y1L1o8lBzLKH/xotCqnF6WnVw2IeBxhR7TeQR1Hitb+Rkb
+         3cwDRbrnle6x8C0Ye32J31nu3AsG8mibEzqnl+uGQCxRvkH1J8SYlkdBG0vtvTWjg5t+
+         mHJFBKQ76TR7VRmbMpERyKCJNltyjliRBUvxc5laBc/zXlXI2Rl6bo5WXquxBnX7fkVK
+         TXazBrevsIhjYs4D9TARW64l8MegwK4E62hdHt73QE+ibDCA82t61FPr/lDqRVE43DEB
+         Hhx1fWaX9GBssmzDgaRJ4QnmzOgMttpxYHFXg/bncUbrfV1KAFYPV/OLyx0WNWRpHAaU
+         JJBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNHAoY5y4J6BzbP0GICvN2w5SGCs3OfnZr9Lj3jRKQ50qiDjrq9YqtlIkkbZVJNgjOajIP4mTe0WqF@vger.kernel.org, AJvYcCXfGBAvaTlYTnr6tvCUkO6gPMkp3mEKNXlTN06Vu3zXP51TyrN1Cqp7ecSjWRVvK0WoC0RWetSB3luwEwkg@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsCWQ6Bra4G7naatl7Bw9FH4Ft9UmS2AcGNoHWhHy0cefV5+v8
+	un5Kf7C3ZwakTyLcR8UobpB5r3umlt8WeN25KpDQGpKNu9bP/rhOMLKvGs+3
+X-Gm-Gg: ASbGnctyOwUkwsr6EgrcKeH7N0R0om+P+K/j5X95zfTeVC2xSxI/lVEjiHSzeSg8Nra
+	hL/dmjwlOW/cr6qqKMt7BsMrHlKrEJgRprENiEaNESufFzfm7kJzgxQBFkqfGNvlSnLmY8IFCWO
+	szR3WS0KiO09mTCL75BuzB/d6SjgXuZ6PSRo/uUalkxFY8sI6xvdH2hRwQYfdbD8LsXp1mB3XII
+	S8liJPDVkAaB5O9xDL4vp+6JGCQGtKPiM0Qx066BzOAthlS7xGaFT5+Lh5VHQp6Zo+yCBdic0Te
+	FhjOmZgUDRoE/btm
+X-Google-Smtp-Source: AGHT+IEPKtkVF8ujzFEgXSiPNo+Q85srLA3blCN17p2R6lHtYzaH97Dg/qRUupCq5aMr7gFzbI+8rg==
+X-Received: by 2002:a05:620a:248c:b0:7c5:9c13:2858 with SMTP id af79cd13be357-7cacee78829mr17841585a.0.1746052717703;
+        Wed, 30 Apr 2025 15:38:37 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7cacdee0d90sm15158085a.87.2025.04.30.15.38.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Apr 2025 15:38:37 -0700 (PDT)
+Date: Thu, 1 May 2025 06:38:20 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 2/3] clk: sophgo: Add support for newly added precise
+ compatible
+Message-ID: <miemx3dszewxyu33ymwbrdmyjxa7emay4z3wst6fgbsk6kdpn5@aa434epgrszf>
+References: <20250430020932.307198-1-inochiama@gmail.com>
+ <20250430020932.307198-3-inochiama@gmail.com>
+ <9ea234373b18a91c6a2f7a41c441002de1e92e98.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250430-clk-cdce6214-v4-1-9f15e7126ac6@pengutronix.de>
-References: <20250430-clk-cdce6214-v4-0-9f15e7126ac6@pengutronix.de> <20250430-clk-cdce6214-v4-1-9f15e7126ac6@pengutronix.de>
-Subject: Re: [PATCH v4 1/3] clk: make determine_rate optional for non reparenting clocks
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, Alvin =?utf-8?q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>, Sascha Hauer <s.hauer@pengutronix.de>
-To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
-Date: Wed, 30 Apr 2025 15:15:38 -0700
-User-Agent: alot/0.12.dev8+g17a99a841c4b
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9ea234373b18a91c6a2f7a41c441002de1e92e98.camel@gmail.com>
 
-Quoting Sascha Hauer (2025-04-30 02:01:34)
-> With commit 326cc42f9fdc ("clk: Forbid to register a mux without
-> determine_rate") it became mandatory to provide a determine_rate hook
-> once a set_parent hook is provided. The determine_rate hook is only
-> needed though when the clock reparents to set its rate. Clocks which do
-> not reparent during set_rate do not need a determine_rate hook, so make
-> the hook optional for clocks with the CLK_SET_RATE_NO_REPARENT flag.
+On Wed, Apr 30, 2025 at 05:39:52PM +0200, Alexander Sverdlin wrote:
+> Hi Inochi!
+> 
+> On Wed, 2025-04-30 at 10:09 +0800, Inochi Amaoto wrote:
+> > Add of device id definition for newly added precise compatible.
+> > 
+> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > ---
+> >  drivers/clk/sophgo/clk-cv1800.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/clk/sophgo/clk-cv1800.c b/drivers/clk/sophgo/clk-cv1800.c
+> > index e0c4dc347579..e10221df6385 100644
+> > --- a/drivers/clk/sophgo/clk-cv1800.c
+> > +++ b/drivers/clk/sophgo/clk-cv1800.c
+> > @@ -1519,8 +1519,11 @@ static int cv1800_clk_probe(struct platform_device *pdev)
+> >  
+> >  static const struct of_device_id cv1800_clk_ids[] = {
+> >  	{ .compatible = "sophgo,cv1800-clk", .data = &cv1800_desc },
+> > +	{ .compatible = "sophgo,cv1800b-clk", .data = &cv1800_desc },
+> >  	{ .compatible = "sophgo,cv1810-clk", .data = &cv1810_desc },
+> > +	{ .compatible = "sophgo,cv1812h-clk", .data = &cv1800_desc },
+>                                                            ^
+> Should it have been "cv1810_desc" instead?
+> 
 
-Do you have a set_parent clk_op that you want use? But you set the flag
-so that rate changes don't try to change the parent? Do you implement
-a round_rate clk_op? I'm guessing round_rate isn't implemented.
+Yeah, this is a mistake. I will fix it.
 
-We want to get rid of round_rate and move drivers to use determine_rate
-everywhere because it passes a struct that we can extend in the future
-to do coordinated rate changes, per-clk locking, etc.
-
-We could change this to be something like:
-
- if (core->ops->round_rate && core->ops->determine_rate)
-   return -EINVAL and pr_err("Pick one, not both");
- if (core->ops->set_parent && core->ops->round_rate)
-   return -EINVAL and pr_err("must implement .set_parent & .determine_rate")
-
-so that if you have a set_parent clk_op you better implement
-determine_rate if you support changing the rate, regardless of the clk
-flags. I worry that we have some driver that implements both round_rate
-and determine_rate though. Indeed, the clk_divider_ops does that to
-support being copied by other clk drivers so we'll need to make the
-logic this:
-
- if (core->ops->set_parent && clk_core_can_round(core) && !core->ops->deter=
-mine_rate)
-   return -EINVAL and pr_err("must implement .set_parent & .determine_rate")
-
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 0565c87656cf5..07ae3652df6c1 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3937,7 +3937,8 @@ static int __clk_core_init(struct clk_core *core)
->                 goto out;
->         }
-> =20
-> -       if (core->ops->set_parent && !core->ops->determine_rate) {
-> +       if (!(core->flags & CLK_SET_RATE_NO_REPARENT) &&
-> +           core->ops->set_parent && !core->ops->determine_rate) {
->                 pr_err("%s: %s must implement .set_parent & .determine_ra=
-te\n",
->                         __func__, core->name);
->                 ret =3D -EINVAL;
+> >  	{ .compatible = "sophgo,sg2000-clk", .data = &sg2000_desc },
+> > +	{ .compatible = "sophgo,sg2002-clk", .data = &sg2000_desc },
+> >  	{ }
+> >  };
+> >  MODULE_DEVICE_TABLE(of, cv1800_clk_ids);
+> 
+> -- 
+> Alexander Sverdlin.
