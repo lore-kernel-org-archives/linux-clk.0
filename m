@@ -1,66 +1,66 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E38B2472A4
-	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 13:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F61525D909
+	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 13:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746018075; cv=none; b=IJWOQ8QiUITwxssDke/VOv42AFIPdzmbMeN8QIfFQP5DSJ0uNHXlLGAGth0tTR9p9dBT1L/M3TB9QkFREvMnsask+jmXqNm3noF2MZPFOBy6Z4kJuoKufyy2RF2YFBL0CsU6Fd+I6HReizglLroC3meyjDikh9PC2iDM7GkFtrA=
+	t=1746018077; cv=none; b=iR/CY7GLG+mZ1VcYicrM2I4WNWuSpMLH1ZBz0T5BvEThl0rFUgjyHK69IAShwPJTAGHDVLXhXIPBjQG+Ebm6lRz8kdSRuCxnYB/YH1uimxu3ECw/m6cXEdk1Bc851T7hmxM17OLN0nRmm+Sa7CFpSvEmEMNadGYOgilYM7O94qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746018075; c=relaxed/simple;
-	bh=c8oHQgWG8zyVpdumvYLiQEjDzxNoqCng/p9ahAFicFw=;
+	s=arc-20240116; t=1746018077; c=relaxed/simple;
+	bh=h2E0Qu9mtfOPc6WOXOdr8B2EUlTMKmMwT95e+uaYoFI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E98YeTY5WuhTruKJNgtmdPPqz0xMyYwNfsNjdHc2AXsbVsnaNcwkKRUevQPP6MlMiw2ufifMAEgPKNq7pJqp2d4CuKy8+XzbIZXH/wMxcatF13HifIo7J4fmUm/XCPDYa52R3VD4gCF7rjRCcicjeIwBg+ReZKj858awRbY6hQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GYIHgkGG; arc=none smtp.client-ip=209.85.221.43
+	 In-Reply-To:To:Cc; b=lD9FqG8gVJejuYa9T944SZYkefkMWGwTmHB4hsik4am/5zYNplSDt+oTfmgl4JUIy9yjRgwpYpeY8RQDOZuGzzl8BesV1FPAaD1eeaLtJ8GsBBpUP9ZIasoi2xc8shdNZ9BKsu22MCj3Qnp+Dug2cLSCAGN0VJVSnLWXHGhZPz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=doIk1h+H; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GYIHgkGG"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-39ab85402c9so244375f8f.2
-        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 06:01:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="doIk1h+H"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-39ab85402c9so244383f8f.2
+        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 06:01:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746018072; x=1746622872; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1746018074; x=1746622874; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iG3TpSGpl+MMSxoAQAbN0k3tmRV9VCY0AmQZEYMeWv0=;
-        b=GYIHgkGGNLFPR71J3GZYU7slw5yFzt5wdyt7NelyUBPCtRCxMjG4jto6b0zTUuSLBl
-         THsZIn4Y3KRm7OjzukYRrbVVgzk89XoQLKYY1dZvvsHbdWFB6havM/YuW0w+0OMHvXJi
-         M5gV4JK489l1yuaAG0CW0rRn4/LTXn+nIYyklXMb6a5h9zS3iM/bb2/nHIVyEv4x/87p
-         PTFBLEJ/4sTCqq4kdTpKq4BC11qBrLQONwmwIo+36tbax4zhKctAFThMXaJ0kVgZqyQe
-         mlL/KjEWGYCKwq9EKtspk6VGF5UIJ9Bs0vrl2KvKL002oHfj5cbfOY78FmNmULnu38Hx
-         YQOA==
+        bh=5DqxNn+UoD7iamnGtY9TgLsPSi/cCuXwa0uWwu1jgxA=;
+        b=doIk1h+HfgZITBdhH+pPBHA+lh9Snn4XINUQIneoDuoObAP5YT0VJ8myFsE0CoDYgm
+         OwhHtIXzVkuvbpqtSsP3NAYfNIfDNlgEljXUqkHERcWAtQPvuTdTw96kYBOx4zWYGOfT
+         /XcaF6fTPwFOGnZAH4ol1sp6kAuwxEvaCQKijkwo/+lsxiwEKr/OvRr4NHpJgmNeGhFo
+         JAwQDjiJIVC5zB3ES4Y3JW5rP+CzMrJ3xrWgiIO9JwXWcLobdV8/LjZl0SjO7BSPsLEr
+         iKZA35MujOBHtNMNR+Ku3vA/MCwT2HxdgjxQsQWYH504Q2vAG4KpkHmN0ekfVj3VQYu1
+         vG8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746018072; x=1746622872;
+        d=1e100.net; s=20230601; t=1746018074; x=1746622874;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iG3TpSGpl+MMSxoAQAbN0k3tmRV9VCY0AmQZEYMeWv0=;
-        b=NRhZ6VsG9MfUrWaHaIoMm8HmbdUcRY7uR+EMNHQvmoLLGw5tRwpGQeMAhL9zCrACuO
-         hEqVv/fWyQ6YjnoWeRPaWMJx1Altukp5kamnfqLD4n72qxZ04s2R7Ks/p9XGfNt8GlQ7
-         1P6iDRy4MgRPWdQuZgJGFlSVEjn7eL3Cg/LzRnxpRQytYjC9BGqIs6bo9eIpKu5U/0oA
-         +lvYa/U9yTOly3CZ9HFGESJr9OJF0QaLyBvZ4AhzR3Kzt8N+oL2zzkNCE3sfRMus+7p5
-         1CwHQpkwKZb9WapHJCqqrEGBtw/2mMBuPHWFI7YrmIqamYn2x/5ZEjVNZeKJoPZ/5lHT
-         pzAg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/r5M+yA1U6Rtu9V7OZWjRIyqzWWclrKVCUsegmfHzklL3nRLZRLPbq1Z2L19ESk9Sd+VsEte9TKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiMQOWBbtCFRv9VO0LxDTK8ESb7ElsRvv5tB/ucuTmZ16d/zqS
-	qpdtqlUx6qjMsUDmMrItTERHZ7l2FAzmobPB7VSZ5v0ebxWjlrxJdQTAScpEJ2Y=
-X-Gm-Gg: ASbGnctfaLRObmTBo+lwdJY+tl0ngeL94W5gGikdeNTNzFPA1ddqMrpabja+m+/bx9o
-	GfVBKtJcKbXWoC7L4gPj1eqoQP5tMVGioGQ4zMd0awAx2M8aeYGynQI0rZLvwZPq7UcsOlhFsKm
-	DTO2s21IzQnOojyqRwcKBGr1u+ZCMli82lacDzrai1zlTEU5EU53Xbe/y0ixTqzd5uS8fbdVP7P
-	fI+Z+Cwri0zQ+X48jBjuGm8dNiBc4nJokGotOGSJIR6/dw0HR4vjJ2AqOET2r25hI28OPmWllL/
-	0r7yXi4ASWWDm9Tw2OKBPH/KZ86LBujKDBVxGgjeqgCV1YTL67fl8yi6QNg=
-X-Google-Smtp-Source: AGHT+IE5WK0gG1rgTNC6d+nKzNbxlpE9Pyd/jLCiun9qFIGNupYNh+8MOg3ik3y2f/DJqFecJq490w==
-X-Received: by 2002:a05:6000:1a87:b0:3a0:782e:9185 with SMTP id ffacd0b85a97d-3a08ff58053mr832694f8f.2.1746018071453;
-        Wed, 30 Apr 2025 06:01:11 -0700 (PDT)
+        bh=5DqxNn+UoD7iamnGtY9TgLsPSi/cCuXwa0uWwu1jgxA=;
+        b=vkrUmuzMuI17HroIvHaRyZoTDDjAytj77FqwCDS5IdAyU2mOBH0YTZvt1VZMC3CDLQ
+         Y34J9bVWP8Y9O7B39lp0JO7oH+KJnpRJdkQNQmJGRh1yvf/hsIlUnoMIMI00DvsX3ABg
+         j2jxkszYSKpxD2Sb06HO9EvghXQCPSECN4p0UQARq5z5XvnMNC5yxYdySjSmZujhcUIM
+         TLmHgYWuEW/3IAK1ln7dyYFjwWbTMwhHv9oR6EJ4nZKGR/m5fS9lcjIYLXc/PT+AfwfJ
+         7RptJ1MdFR8SWWXJfSVwIKma6j32dm/VcmFxhKwUwCyqPu5+LxYtkOld9+FKc+Z3HEAM
+         2wYg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+i11AIu5DnnoIMhhEixZwPgbmnZJ4mKDk2Ob+Gi+VFAPr6Bp95qo9Fo6YVU9hRgctfNAnCRp6jBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywh5fxxZdRxi2KZEGXW6lRe50MqPwn656Bidb5l69/pgDBdvhve
+	LOq+RYsAaS9dJoIp2//M/8b05xdSxFUEx4+ERsH0CjzNoG4Nb76KtkDVKqKqJFk=
+X-Gm-Gg: ASbGncsdpaFLfd1L1B4NOk3bI9T8e2weHX/W6/wopuZirJlhDDvMsZX5cQ3XmYO4g+W
+	XnDH6MWiZDnMlcZNbnSLqNuHb1WUVaRvWByYYF1vRwiGTZMSVUbpk4wwiOUVi6hecS8yKF5Z30o
+	WtabHLipzzqUmEoOVGbo1/0lNf39vZ3apZlZ3w8tkrlp47l/tTmmiGMQ9swtoomPeCpXRoBZdMy
+	2vHkWUoTdhO04C9EXqKaJxCK/7FpMm7uUSd6Ddg/kfmWkX1j4MsSQYnEalUpPzphDnZjtZZvyZ8
+	kDMSjsGNIJrPSbhgSZ4YsvL0CjHuNYnYm6O0ODJ+p+UWlXYUGfmwScdyRBU=
+X-Google-Smtp-Source: AGHT+IGBVWwBGr97Pgn5thROq7Wn5mBmawppBRb/WcGWKf6ABPhBLHfvBEY9IGyyMBgaUaKDfEDYwA==
+X-Received: by 2002:a05:6000:2dc3:b0:3a0:7a00:61e9 with SMTP id ffacd0b85a97d-3a08ff35f51mr815792f8f.0.1746018073615;
+        Wed, 30 Apr 2025 06:01:13 -0700 (PDT)
 Received: from [192.168.1.28] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46c23sm16884043f8f.75.2025.04.30.06.01.09
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46c23sm16884043f8f.75.2025.04.30.06.01.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 06:01:10 -0700 (PDT)
+        Wed, 30 Apr 2025 06:01:13 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 30 Apr 2025 15:00:32 +0200
-Subject: [PATCH v5 02/24] dt-bindings: display/msm: dsi-controller-main:
- Add SM8750
+Date: Wed, 30 Apr 2025 15:00:33 +0200
+Subject: [PATCH v5 03/24] dt-bindings: display/msm: dp-controller: Add
+ SM8750
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250430-b4-sm8750-display-v5-2-8cab30c3e4df@linaro.org>
+Message-Id: <20250430-b4-sm8750-display-v5-3-8cab30c3e4df@linaro.org>
 References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
 In-Reply-To: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
 To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
@@ -91,176 +91,57 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
  Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org, 
- Srinivas Kandagatla <srini@kernel.org>
+ Srinivas Kandagatla <srini@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4373;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1260;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=c8oHQgWG8zyVpdumvYLiQEjDzxNoqCng/p9ahAFicFw=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoEh70hgOEuQmoJX/RusdSvzlDRwLYOOCVG7rrf
- HFaqGKLi9KJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBIe9AAKCRDBN2bmhouD
- 1wx8D/0cwIVHnLhSUBzRM3ZxS64f0pzA9j2/QOnkTM5ah6P9x8iys9lwN41UBcnlh2+nIaxnvDA
- dcHL95ejULON5koCwh+e76+v6mDqrTVDQdK4wXHN8THzgmsO016oSHYSegM1s1kulB60q/esU0E
- BzIME4aieUF7X1MF5C4KpNJivW1RkPUp/kQWbE0TbPt9wOpBq5vigDv63Jmf+JeKtpk3emHhZiM
- S04VpetG42Pc/ClpyzEldyfoFEWiMqSNQthNfK0VnGWrDO9CsKdjnpkZSkYwxFZ4t+USV8+GOBg
- Ks4JotJ/8qkfoQtCM5GknH/2t06OFJ+UXTpfLYE3inlIQbMJMh66N3N/C1M48SADCtuA5C1Y0z1
- rwF7YIigmLadEDJaJc1roUfDxyPLvgogPCXf5brsoYF40Dzjy/nTGeKVJFed/f1/uJ66D+fpbhJ
- w4Hz0o5SR/JlXVF71hfpExZCmkcE99pDVSv2QdsB2NyQWaZOcjr04vlMqgWoxVdMLxxrzMYFS2C
- hYU3+q6nxRY4nXYQ96qXLFK1kagLr1pzYnKDkGZckRXsDEv0SFUTsfkvxaShExu3tX1MO4GfoAq
- BykT1gAScLErWvRzRAkePYhIflqn0JXfysmaZq5oeGCvrrS2aiDpTVAw7CtEV3gc7B0Eic05Tgp
- H6mOG031vpd8QTg==
+ bh=h2E0Qu9mtfOPc6WOXOdr8B2EUlTMKmMwT95e+uaYoFI=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoEh71UGHnWgpuzZGk5SCnNpPWKK18fJgvG/kuR
+ yjfgU0YoJOJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBIe9QAKCRDBN2bmhouD
+ 16DxD/0dpiL0ZWMmbsC/O716FLuR4a7LbUfU79DS35TsXf0SX7b9G3TTgdzKCecKJ4nRqO/0Bik
+ RfAoWMIRHt8Caw+lic14c4j1wGuqjiRmDWqG9Hyb/78A9TRDe4Rx790uR7PYGxlDODd6KxiQTfd
+ Hku6UORjGcYyGG+G5u8JRzJ6JcBoE35ad8apIFNoTMRtJywIVTfCvdLVLIGlbv6e7zT+mBwyvHE
+ GK6kxlSdPbXmQDDwPSVJKN3WGWY2yMzrM0m+CLY8rmJyV2RmVwwU2kE/fzRm47viq8JMJCbyNQm
+ 4xyWv9TTi/9UGwj2R8DZ4qhOSNvHixbHrFg5TYYGa9d8OUdbC6+ga6tRmGeoA6N7wQ2hKaPYe8L
+ oSi84mvp1SS0calcSD060NU8XZ8hsayuGYwhpdWpNsIrkRtAe43tJvPJ5WsgN2HHTUoFxstoXm7
+ MAJAQIW2q5lyVYgXUrshcEV0d/HscPN7fdj3GQ1+6qJLHMQ1tdmtUXu/KGO7tMTqHtJ9MKYhZh5
+ 7tq4g8ONujqhPtRm6NCaqK31+29YTkgMG9t0a73stfi+UjeDGWTT87sa+GvFRCq8GV0hiDE8cJ2
+ JY7azY426J7ZK33JtY9fWmYbOlLTFJTyItNwQo96Flu3hI26LkG71tgzMCkZsk4agSpYjkAHI3j
+ XuGfiW7Jr4275og==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Add DSI controller for Qualcomm SM8750 SoC which is quite different from
-previous (SM8650) generation.
+Add DisplayPort controller for Qualcomm SM8750 SoC which so far looks
+fully compatible with earlier SM8650 variant - both are of version
+v1.5.1 of the IP block.  Datasheet also mentions that both support 4x
+MST for DPTX0 and 2x MST for DPTX1.
 
-It does not allow the display clock controller clocks like "byte" and
-"pixel" to be reparented to DSI PHY PLLs while the DSI PHY PLL is not
-configured (not prepared, rate not set).  Therefore
-assigned-clock-parents are not working here and driver is responsible
-for reparenting clocks with proper procedure.  These clocks are now
-inputs to the DSI controller device.
-
-Except that SM8750 DSI comes with several differences, new blocks and
-changes in registers, making it incompatible with SM8650.
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/display/msm/dsi-controller-main.yaml  | 54 ++++++++++++++++++++--
- 1 file changed, 49 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-index 2aab33cd0017cd4a0c915b7297bb3952e62561fa..8ecb2d8e296edf555df7380eac284b41a3f000a5 100644
---- a/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-+++ b/Documentation/devicetree/bindings/display/msm/dsi-controller-main.yaml
-@@ -40,6 +40,7 @@ properties:
-               - qcom,sm8450-dsi-ctrl
-               - qcom,sm8550-dsi-ctrl
-               - qcom,sm8650-dsi-ctrl
-+              - qcom,sm8750-dsi-ctrl
-           - const: qcom,mdss-dsi-ctrl
-       - enum:
-           - qcom,dsi-ctrl-6g-qcm2290
-@@ -68,11 +69,11 @@ properties:
-        - mnoc:: MNOC clock
-        - pixel:: Display pixel clock.
-     minItems: 3
--    maxItems: 9
-+    maxItems: 12
+Changes in v3:
+1. Extend commit msg
+---
+ Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+index e00b88332f2fed2fc33f6d72c5cc3d827cd7594e..a4bf9e07a28355c0391d1757fab16ebe5ff14a44 100644
+--- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
++++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
+@@ -37,6 +37,10 @@ properties:
+               - qcom,sm8450-dp
+               - qcom,sm8550-dp
+           - const: qcom,sm8350-dp
++      - items:
++          - enum:
++              - qcom,sm8750-dp
++          - const: qcom,sm8650-dp
  
-   clock-names:
-     minItems: 3
--    maxItems: 9
-+    maxItems: 12
- 
-   phys:
-     maxItems: 1
-@@ -107,7 +108,8 @@ properties:
-     minItems: 2
-     maxItems: 4
-     description: |
--      Parents of "byte" and "pixel" for the given platform.
-+      For DSI on SM8650 and older: parents of "byte" and "pixel" for the given
-+      platform.
-       For DSIv2 platforms this should contain "byte", "esc", "src" and
-       "pixel_src" clocks.
- 
-@@ -216,8 +218,6 @@ required:
-   - clocks
-   - clock-names
-   - phys
--  - assigned-clocks
--  - assigned-clock-parents
-   - ports
- 
- allOf:
-@@ -242,6 +242,9 @@ allOf:
-             - const: byte
-             - const: pixel
-             - const: core
-+      required:
-+        - assigned-clocks
-+        - assigned-clock-parents
- 
-   - if:
-       properties:
-@@ -264,6 +267,9 @@ allOf:
-             - const: byte
-             - const: pixel
-             - const: core
-+      required:
-+        - assigned-clocks
-+        - assigned-clock-parents
- 
-   - if:
-       properties:
-@@ -286,6 +292,9 @@ allOf:
-             - const: pixel
-             - const: core
-             - const: core_mmss
-+      required:
-+        - assigned-clocks
-+        - assigned-clock-parents
- 
-   - if:
-       properties:
-@@ -307,6 +316,9 @@ allOf:
-             - const: core_mmss
-             - const: pixel
-             - const: core
-+      required:
-+        - assigned-clocks
-+        - assigned-clock-parents
- 
-   - if:
-       properties:
-@@ -342,6 +354,35 @@ allOf:
-             - const: core
-             - const: iface
-             - const: bus
-+      required:
-+        - assigned-clocks
-+        - assigned-clock-parents
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - qcom,sm8750-dsi-ctrl
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 12
-+          maxItems: 12
-+        clock-names:
-+          items:
-+            - const: byte
-+            - const: byte_intf
-+            - const: pixel
-+            - const: core
-+            - const: iface
-+            - const: bus
-+            - const: dsi_pll_pixel
-+            - const: dsi_pll_byte
-+            - const: esync
-+            - const: osc
-+            - const: byte_src
-+            - const: pixel_src
- 
-   - if:
-       properties:
-@@ -365,6 +406,9 @@ allOf:
-             - const: core_mmss
-             - const: pixel
-             - const: core
-+      required:
-+        - assigned-clocks
-+        - assigned-clock-parents
- 
- unevaluatedProperties: false
- 
+   reg:
+     minItems: 4
 
 -- 
 2.45.2
