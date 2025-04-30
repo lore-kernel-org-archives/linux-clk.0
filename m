@@ -1,66 +1,66 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1C2270EA1
-	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 13:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F12274FE0
+	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 13:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746018099; cv=none; b=ihxE1kbFTH2LKA6wG9MdyYaTe5yvz1RGRzzCv8HDLbYo8rdSe1a8ntVwwe9ZGmqW2g5To1pDN3ORCb/P9oIr+sh6ulqcFVKV3NTNEvHtOIEPujjPSe9VXzIficK3OPkmTC4wR8Jp9rgLpIByFY3lrC/XlFqMD5NforGBBVpnM/M=
+	t=1746018101; cv=none; b=K5cFqXvVrj9MV0fbO5KE2U/oBjZwUgtPmducE5J2M8hRJyQs9mXmtqpKG2jHWj1A8ixbAyvTc2amJusoIhMLCCq8CxDT+mf1o97AdQ19BlUjT1TLBiwNx6edyByOEpLs+y469wqSnu2NTANw15qeEE32s6RIDq94iuhGM4MPAkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746018099; c=relaxed/simple;
-	bh=HJ0MNpBmrQRCw9sK9HdpK5tunBDYYQ7B8hA9RLdeWJU=;
+	s=arc-20240116; t=1746018101; c=relaxed/simple;
+	bh=ie++luqCCOkUIqplEYfGoj3PyvDBiGZnnE2vPE0q2fs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NFrO5wODVDD44jiGujWKMmePwP+QVf5RQS3CZYu4iWJ87J6kU11Fjvht0P3E5ItnDWZChbAHo67qxpXz3t/gRFvF/r0yRqAQdUI3ZQ8vNsYC9qXCXjnI2RzbizBTs4xv8s2+6UGQEccgAJvQfF6QzDB0PjO5weig1+0f3RF6neE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xg1VumJq; arc=none smtp.client-ip=209.85.221.54
+	 In-Reply-To:To:Cc; b=XxQuZC8euaJoQ1FPFDnVnrpeLizFduMh+Hue6Eb1rIQFO6+l/ekciNcQv+hv4SZHG2ZOf6oAPcKBOuxBVRHGu24SN/dDaXbqjP8JvGCqUREP0HffXDbPfUMXtvk0Io32LEU2rdupbHAM3FYWSRSd0eaxODTjnxY9g46rrSqC27M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZEE+FVc2; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xg1VumJq"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3912622c9c0so678886f8f.3
-        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 06:01:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZEE+FVc2"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3912387cf48so244499f8f.3
+        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 06:01:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746018096; x=1746622896; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1746018098; x=1746622898; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SH3I77O1MdTEfL3MdKWLnHOYaZ8YnV2M8EzH5AVzyR4=;
-        b=xg1VumJqYcA1GK9IblH6FBVmP77OjJaB5Q7I6Ee2Vf6wfEjf7dRzX/IGact/O5eg6v
-         KhKhaAhoqi8AiAkLcCS/gqGsKly8dU23eFH1RZyMu8g3eLuzdcvPLgEFfdz3t6qu5rdE
-         2tZWLPrMF8+/Gn2f3cUoKo6+YTfwWLIoWVOWOMRYoR2SdJK7VqDblWkQcTV7gKmU06br
-         ParO321eAXHlc8bKJpxvAkwkcewsGRtyCbnEVaWaH5B58sGvcCllWK3dPQiBl3YCC4db
-         EEiTGYYii+3C+dpWc+EL4/IHW70HmjteHoQ/Fq2sYI3htTQPproACIEIz48JwofdmV2F
-         aEig==
+        bh=UlgW31bMSvJHQr/+7FLD6mAl+2mcjre5T4tLb0NZhIc=;
+        b=ZEE+FVc26Hwn3/do/ggdV6DnpTay1/WsZPGygW+rNHtdo8iTC1egjhz2g/LlSb7rmT
+         kXKkMQS1IDhGnkVAZSX4O1I1ol5ncnfi1TbrKTowLjEWU8wYS9f4iwa5bB6WQOwqtpHB
+         +ZtEXssHGsezXWNNY5DEdBCcJGdXsIdnbAR+BxsIfTNroo+ePQT7WHAnP8lsj8y5UdFI
+         QeI9AIfGB1OKgLj80L9EQ+S5nvNYBP1AcgQvPry+84P8YORSPQD4TDp4tCnBmknOQQSF
+         LoOaPahmDiPdnP3orHpAskPWQbfEbIOH0tx3qB7bL+uoSJpyittiAL2ZwktfinBWtMIQ
+         tLjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746018096; x=1746622896;
+        d=1e100.net; s=20230601; t=1746018098; x=1746622898;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SH3I77O1MdTEfL3MdKWLnHOYaZ8YnV2M8EzH5AVzyR4=;
-        b=fANNyKwvHFMSODY5wqrrQUSWeT42VBn3+n6eqFcl7poEziju/WJ4bkbCJ9CccXbVhc
-         Pqr0C/mZLwNLmcEzYXlPiDAqgTgpp0PvlecLT/aXyrAtwLFhtHT3yUVtW2TROBUcBrtl
-         lTgzjGlfDQ9vLdZXK0PdSEnhhZtIcI23rdMy2HFRrunfJ5HVjaYIXsOIQH1zcfw6m6Ja
-         lHiY1A2ZaX4aqqYnHW9MS2kU0BNDgh2C7YlWaFTOHu+3JKe5GcHGjOgsy+v9H5+76/4V
-         slnJbw+hwQulJB2OwYhbSMtWIWiMGz4LZs/XTU1NtIJJJJ3ALjoaN6ecgJnA+n1Pr/A5
-         8fKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlQQDFyl7glc1DW3uTTTbUtb2bBS6MDiD3h/Rc3CvyVibel0PLgUI8JeEOarxnSmRaxFs+z7G67jE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtU9v0pJQZNy0CfmRpx62pmuHl5zWgmJroQSNqnkrKU8QDWcU6
-	3m+KyS9ihCNOA1bFnNsIGM2IlfEPlCYKjRXG1J/Kiy1cKUAhTRHmPRtmm93eRh8=
-X-Gm-Gg: ASbGncsY8LI0+FtGNTDU+NooXFg0z5m47Gcc1aBe9RkSY8B66HdxVXCd4tJ16Rj3um5
-	/Gb9Aj2I91kvEYU5NfuPbmbiIwEkgNZA89GKr8umBtEPY0pDbKRy8EzLQ92isKf1CDAxr9VhNt5
-	28McpcvzkOjoN2jzebB4CjMxoTS6+A4R7tMkA+S4o+l6E5XW/OwmUOulADyb1Pa6p9lVm/kyKuU
-	axSqnExzhwl0AyTZgxTyq+kx5NJKySZ+QRVRmoZ/uDxhYmDyCN1TVvC3thZeY+5rBUIdqVyAj5X
-	l6IzFmahBHFph+lWdzIVqpaPHYQrAbelejYA96/2Z4WzHJ6FkDwSWl2+o5g=
-X-Google-Smtp-Source: AGHT+IEBqMxYQSfRQbTltyFeNLAcJBYzuhFGFWWjAJdPvr+J/sinK/COHmsEoCreQ/Xji9bQuXY9Pg==
-X-Received: by 2002:a05:6000:1866:b0:3a0:86f3:451f with SMTP id ffacd0b85a97d-3a09007e244mr807533f8f.12.1746018095608;
-        Wed, 30 Apr 2025 06:01:35 -0700 (PDT)
+        bh=UlgW31bMSvJHQr/+7FLD6mAl+2mcjre5T4tLb0NZhIc=;
+        b=QuQ0ozmM93NsTORBBgUo5kNkk8mTBp7/+7myRdJ2Qqy5EBJb6myr2gcFGedLGFbqsN
+         KjeAARTDgo5ZzBv448sAf1ZyiZdcS/fEE3YLq4wyGKGjEZp74h2b0qFSk+DAcYmR1p4Z
+         wfAsTC6VwP3anTo03Nh2j5FLUMIstqVThekVCuiYR7mhw1cj56Gea6mh9awz40cSUdKG
+         3jl3ZTTy/Bj3SllU0KFRd3xph0T7GusxoHodL4UJVGktOG/gIyZ6z02S5qZKo3wOm58I
+         dUoviHs3LMvD2kYq2yyNUXprliG3wIvVEsGJuAf0tDbDkq+wsngNhFnu4VfyZMki6eW5
+         6C1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWJj+c/sNHAK7FGCRcoG48bjH0V/PMrJrkgrZ+PWlmw9kvUXlqx00s7vSbyoYq1eIXRMpwghfDCknE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDUibELOuEFYclhgCNl8WhYhthyB7ie5vjde5OFGlp8HX//8xK
+	olIs9KeOhWr2bhGsxGoz/YJxaC6djZ0w54DepNnEMeBSJ8UQevs7+cpsA5hvG3Y=
+X-Gm-Gg: ASbGnctHLf+SZph3ZM2mJiiCviasxA2IEosPRELdyyyrCfD1TNp29BVstVxDNy4AZRJ
+	8kemXPI8L9oG7WEnls9rzlI9/TYU0jxKume8GycTEE5eQRcLH1K7BIpMYYJmPmGdZI5uHV1XevI
+	JLvKUfpfvwqmKgfH90pIHFS/qqB1zCUG7QjlgGX2rJp6bvvYl9KPCvcZQOSmi/X+KafIDrnpfsI
+	M6amjOzXmkw3bCdq5uymQF2HwGZTUPePxDgb4NBDpxKRbLh3shQ1ZFgtp3jFwFF0dzSzwDWP+cz
+	QAlYH8KkVbHKnr+7ioG6y2oLvX1NTpU3xpU3t4Y04zquYTYLFEwSwh4v81I=
+X-Google-Smtp-Source: AGHT+IHmxoUPURdmmgQHz7Jfj8+u8t0c/VIE/4vq98Yg1gd3UGcNqtyKVvz0Ufit6P2ua3jO7/u+tg==
+X-Received: by 2002:a05:6000:2dc3:b0:3a0:7a00:61e9 with SMTP id ffacd0b85a97d-3a08ff35f51mr816557f8f.0.1746018097648;
+        Wed, 30 Apr 2025 06:01:37 -0700 (PDT)
 Received: from [192.168.1.28] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46c23sm16884043f8f.75.2025.04.30.06.01.33
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e46c23sm16884043f8f.75.2025.04.30.06.01.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 06:01:35 -0700 (PDT)
+        Wed, 30 Apr 2025 06:01:37 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 30 Apr 2025 15:00:43 +0200
-Subject: [PATCH v5 13/24] drm/msm/dpu: Add handling of LM_6 and LM_7 bits
- in pending flush mask
+Date: Wed, 30 Apr 2025 15:00:44 +0200
+Subject: [PATCH v5 14/24] drm/msm/dsi/phy: Toggle back buffer resync after
+ preparing PLL
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -69,7 +69,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250430-b4-sm8750-display-v5-13-8cab30c3e4df@linaro.org>
+Message-Id: <20250430-b4-sm8750-display-v5-14-8cab30c3e4df@linaro.org>
 References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
 In-Reply-To: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
 To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
@@ -91,55 +91,58 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
  Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org, 
- Srinivas Kandagatla <srini@kernel.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
+ Srinivas Kandagatla <srini@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1020;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1164;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=HJ0MNpBmrQRCw9sK9HdpK5tunBDYYQ7B8hA9RLdeWJU=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoEh8BU1FyXvyJubnZWWpHhlyoSM3xTDbUd9SPV
- SvPM6R3NkSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBIfAQAKCRDBN2bmhouD
- 10psD/9Nl/I/ReW4K7IMQtk7o5ANVYUTBL85xn5Tru5onHKZC8S2COPO62MOh683IPy6z//4zK7
- BSmb5qO1u0NaRS3wwET/MLK1ieZyMiBYic03mZtr3I7YZ0pMn5JAKQom2h9WkOt6Bx9tapsz5Ir
- zAREj5dgm9LgUL0M+9UHP4oal4NOdTCUwHpeJZ07Y7M8Nfy3ZJgplEVntIxRwMRTv6VZbTocv2S
- hxsaWKfHVXkwWKy7A+6SkxuoOVBwOJnZZwfKlEHDgEo6ow0EW0g9uNCpRP3Zj1+oUUIDe9FKhLs
- 8/y0QM5JECZry2ZEVdQufdFMbp2OEPSxzwVMPVacEdpa7f3QT1hwpYa8iSXGjOWrsGotaPw8n+T
- HE08jEI7sdx2f/HXX1O6L9/aKQKioq5WHSQsTsjLKswx3a6U4JQkIK/Qk6/OY8Uhdi4H4P2EmOo
- WpAzr5NvqDbbK0jjRv6Vm3FpovLtNoxT5RIn9TZQLuEeZSDkZzuZwPABJQ+O9m4TVoucb0PmxlY
- d2c6Z73juebij/Zp/7t6ROdddEY+qAlg0aVZpYt6ou2LMY6TqOMSeMv57NiBzJkUC3kbaX1nun6
- 9MoAfcvAzjThXuqYBH0RnqDqMJ3rLmmV4XwC5BASN7bwKZI937wsgRo1IjTg2wKokIbNzCIE4Ez
- gyWQDPSon2agTVA==
+ bh=ie++luqCCOkUIqplEYfGoj3PyvDBiGZnnE2vPE0q2fs=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoEh8DPK+FwfYxZwhAaHV3AlW+BD3qudeCMCqz3
+ OYe9MuARDeJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaBIfAwAKCRDBN2bmhouD
+ 1+V6D/48DkbGSx3PoiTDnUJsqlJggDdfcZuoUZnjxl4PJSz/rktRaRaay/hiT4JNAAsLHB+dC0S
+ KJ7ZpYI4zG52UiNG7o7KJoPFFlH1SLeRgs0PuHfx58n+ZKbogI2WWIiQ++0CfuMm484s0F0E48a
+ QU5wjbF0TuVEZ4gG3ud+8p7xPetF1YduSekNRPw2MRkOUV3+0857Z9eFfbVgaHPSEJNEA1rNO3K
+ TmRs2D3EoX9qi+ZIvvDJ5BxYa9MjCAb39D/7XuVj3X20DYvTTyv3a46kEI08haCjxbkXFJj3axF
+ MP6cXSL1fdt7Bo2TPFV0OBzPMI+AOmnwPdizhelzDbjd9vfwaUCqgeLYAWKKEjpDrrxUcGM3Gnx
+ rvQ6lhr3SQjkbr6vdPkJ3VgBO2wdRLfkhvMn6UMY3j9znH0a9CX9AGKocVMq6YjqmG6ILiY/7jR
+ QozLeOjqymN7TJzz1UCaCyHiPUHih5BxcO78BDTFScr40NLnLcl9zD4w/gJ6bCUi8ZGpBlB8ipk
+ hx9yPNd//qGfUMCjhOrPakJ56GJOInTiey2NcrqoBCdEfROozCncSpMRDL8jADOn7U5ATEDtzmz
+ PNfhEvYfXWo6F1cjAcoxwMYfZ7xPm34odoidWGhs6JERWO2+G0IdQQNy6RFaNNKflFC6SHjaROi
+ zIojsRSRHDWoh0g==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-MDSS/MDP v12 comes with new bits in flush registers (e.g.
-MDP_CTL_0_FLUSH) for Layer Mixer 6 and 7.
+According to Hardware Programming Guide for DSI PHY, the retime buffer
+resync should be done after PLL clock users (byte_clk and intf_byte_clk)
+are enabled.  Downstream also does it as part of configuring the PLL.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+Driver was only turning of the resync FIFO buffer, but never bringing it
+on again.
+
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-index 2ce59ba50ffa0d14eaa07e993fadf0f218390ef1..3e5e1e09e9d00ade74371489b2b4e50e648e2d16 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c
-@@ -261,6 +261,12 @@ static void dpu_hw_ctl_update_pending_flush_mixer(struct dpu_hw_ctl *ctx,
- 	case LM_5:
- 		ctx->pending_flush_mask |= BIT(20);
- 		break;
-+	case LM_6:
-+		ctx->pending_flush_mask |= BIT(21);
-+		break;
-+	case LM_7:
-+		ctx->pending_flush_mask |= BIT(27);
-+		break;
- 	default:
- 		break;
- 	}
+---
+
+Changes in v5:
+1. New patch
+---
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+index a92decbee5b5433853ed973747f7705d9079068d..ca1a120f630a3650bf6d9f9d426cccea88c22e7f 100644
+--- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
++++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
+@@ -467,6 +467,10 @@ static int dsi_pll_7nm_vco_prepare(struct clk_hw *hw)
+ 	if (pll_7nm->slave)
+ 		dsi_pll_enable_global_clk(pll_7nm->slave);
+ 
++	writel(0x1, pll_7nm->phy->base + REG_DSI_7nm_PHY_CMN_RBUF_CTRL);
++	if (pll_7nm->slave)
++		writel(0x1, pll_7nm->slave->phy->base + REG_DSI_7nm_PHY_CMN_RBUF_CTRL);
++
+ error:
+ 	return rc;
+ }
 
 -- 
 2.45.2
