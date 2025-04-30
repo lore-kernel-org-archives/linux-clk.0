@@ -1,70 +1,70 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C44D235077
-	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 09:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0096F237162
+	for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 09:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746007102; cv=none; b=kNjMAB0jTICaR35mm2cWkCXAKIJchdUWvf1kadbk1BgrAjm65Mi2rGtbYETlQ3fUqWZt+wuB+HjiDPy7KRzVw4J8pJy88d7uljkNZX30blkQuG2PqLXP3c6jpVOQW5WlT/ZvVDhY/ECTI07w3YYGHKQL9Yj8p44zyiRwttFskTA=
+	t=1746007102; cv=none; b=WPKP29cjhUanT1jWlGIpy+u+/u4sMMbMO27rqISHX/RKV20Y5xVtAhZirso7aBEFomsb9mv6phn2yM5/kpYezRuTfL4kBZUfLF2bwzos/ayCTYcImJszHROERKy0ICcdp0jQXtLHZkzKAFcxPGq+ZpL5Y4OkTk9RFDJqNLLzymM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746007102; c=relaxed/simple;
-	bh=wt/GV/pkMshoGMesRh4lIDdv+m3EQsqd7dNpcnh8PJI=;
+	bh=3eSx1C/GX8hyp6Ceh2NJJp3pJchNIsGHq2rT98Fdnqo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L38esxKxzXhlJmzK59v3EXu6wj51OtlTTHRJwIQIzLOp//5+9Td1BGyM2QhOm4xhgjgFw7CJiEDABc/pXGzQW/Yyq+QUOuhV8PqpP9MdqZL+u0kjQzPaH/lywjhsNx7vmtyx5bKAhKmSwdotwtbV6rafs+RPXfoqKlrH0SCo2ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fR6wq6w8; arc=none smtp.client-ip=209.85.128.44
+	 MIME-Version:Content-Type; b=IG0vk9FTwTqbbBK5nSDA4Ike1t6eVaJx5EVtNia+y3qqWV6fOMAVWYcJpbJd8rNhYoCMXo0Kmx9oSZggQGXgiVdMIg2jUVYdOIJrsJn/fI8fUlF8umb5O6Z1qGzowonln/0RdRxlwhTtcv0e4Lj52ymcDHz4gGgfNqoDPYEHqIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hivxOt1J; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fR6wq6w8"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cfe574976so48750905e9.1
-        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 02:58:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hivxOt1J"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so62581975e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 30 Apr 2025 02:58:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746007097; x=1746611897; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746007099; x=1746611899; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=apjtAXv1I9txt3cw1nyZnrBi1ckaoQGJXeXPuGRHPKg=;
-        b=fR6wq6w8BVGCcO0EdlnAYfZ0iedcS+BeCbR7Rj9j8vRL1sOSIqUK+jjZVmSQvge8uz
-         enk8bB9qM+jihJM87VIVCOyX/M4EmqH8Z83/PHFvICmk18erBy/vbTS1uUryoHtTb9pa
-         xHsoObjT7uMTA940rh6DXtsZvKiftuXO707vB8Ek92rkStbE0xF2ViT6ao1TuGWYxsPM
-         A6NxREiGJFjKBRynC1rZVphdu6q+AD4X7T2F+54e9ouzjam4oMElI6FYcZWBwIOADStZ
-         jAi05H6ZjQtcHD7ENH0++C+0jkpFJ9i0eZtsv0bhXrb6qKAXqqfHuzM/wYFMlAT/J3cR
-         UvTA==
+        bh=f7tY0nC24oyGSd/sL5Ai+/WNM2n2l6u/H1QH4845/ow=;
+        b=hivxOt1JUnWWo54w/yEp7P5Sd6GFMlUZI6vyfKYxAvy9L1dYyvF9/TJ4jm0Ie3BLt4
+         o5Aua1BUi6cU6+VBsKyhfu57Nwawqtt1/TptSw37DHxX13UhqSEsnJ67s87j+WKnq6gO
+         +6bV9YHu8Za6TK4mjEI/KD3b/1/p3LbkRue5A8NHdAj/e2SBWdWocLZagCGMstn19LJR
+         hpfBELUa4FQgBinpfYcL8f8StdhC7udDoOZPfDSG7Ky4KK1YzjwcrKn1Hi7tqvSZI1l3
+         tFTjDkatVL5LhnD5uJ5o54niyTVHTngk8aYhxozmSPvH50nEA7Re5RWIJquC7nsjYLbg
+         rdVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746007097; x=1746611897;
+        d=1e100.net; s=20230601; t=1746007099; x=1746611899;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=apjtAXv1I9txt3cw1nyZnrBi1ckaoQGJXeXPuGRHPKg=;
-        b=Eq+oac64bGfe8Qazmz4RvrL+AqfaagLzDhTgQlq16eBn8Lk/R/vrRSIg9xH4R4qRYs
-         gvaZx7+D+5z6lGgo8SMDlaw3BclKwc18mK7nrnUZqzWDYhCFiKPFCn7vwiB9LBHoIUTw
-         ZCa8Ifm/wqzpBqzAgE9kjX5nYm5dL132x4yBZCmeqEX+pDqcNWVfNsONHX0R5Htu8Lyk
-         LOG7cTgPv4ZTpH1NreZHaYikPC6ec1GNNh+IhfV5ApCxEEAF4lGnCCXQD1801O1xme+x
-         znRXppvUHOwJgiFWhvUYLwjpKSCilHz8iJqwhQa8UdnNNi1lyrIHEQSkhCdDxDLm/277
-         Brew==
-X-Gm-Message-State: AOJu0YzDNqSPdnDhItZ00xFE31nBNF9KWYAgOETB6J0joqwbys+IglY+
-	J1lcZ5ynIRkd95vMa114e7f8Cu1JCpQpkVk7lvpzlLExYyP6/5USyzrkmy5UjWE=
-X-Gm-Gg: ASbGncscLlKm8qA9exenJ/0q14s3GKziTzp9tDZmCbDmLZffzhtnX6wPvbWUmCMbBv2
-	74h2pi6cWOGGi7TN283tGqFVFRzNafeZMP4hczUWzsPDCtzt0YKXdt5qTIbYpY0ufCFly7yOHFb
-	QDua0ZWu8pdKoKr7mkJOZHBe5FRhzI94Amx/Gk/w0Pwlm08TP3FQvtmb6AF8kouJr8wYllcEHZo
-	GkPA9z2cpOBWXHAldmCYL0WeJyslcv0whNJHdTZyZff1J0785APMEji0r15xzSEQCE/B+mmPvhz
-	O/zCuOcjeIykW6Jwj/sEea3rCu4CzOjJaRwrlMjYm3FYbnJbNLVkLVPQQ+4MFahGwu/RyrIe3Tp
-	y2SDahU8=
-X-Google-Smtp-Source: AGHT+IHEnOmqmdJrRnX+Y1dbSuEsMHj4BAIYWaNReheY6FIqNiBIqaY9WubjTu+R8ppDVfweFMjDZw==
-X-Received: by 2002:a05:600c:a20c:b0:43d:7413:cb3e with SMTP id 5b1f17b1804b1-441b23fa297mr11181125e9.1.1746007097418;
-        Wed, 30 Apr 2025 02:58:17 -0700 (PDT)
+        bh=f7tY0nC24oyGSd/sL5Ai+/WNM2n2l6u/H1QH4845/ow=;
+        b=pVUelsPhuGwqqkPfLiMHD0vyk0QsbOlG7q2p1nrpRcHnduSHbbOyqV2XoiwAmzcptf
+         Th3DcJpv1rwRIAfeFcregXBomwAIk1hqMho6aaHuqGDjoAiRKV1cFU2uOPEGDK2K5Z2r
+         GlKmRpbXKJKSdvAsfUzXF7r/NjkKWDjRET1Pjo13oWgWm3F/spE9ZxN4olbpxQii+lZI
+         gMoS0pcjxsX7petYAmbpRUSE3yaaiLDwphWkw7Y0aX0oBAitYYvC3N25oPT38Znjgo0O
+         deDn5rI8nJ4o1rz+TTXyINQS/Gf9nI4WuXbcT+tijP9qjjKQI+f2Oj/b7+iLFAN69FWQ
+         QGUg==
+X-Gm-Message-State: AOJu0YzloRJGyyYa/FZ1imS8uUuP3OL8LJMudwa2TL/+9opTJIeZvi7+
+	94T7yqfq4hs5pvM3Yy9N44cxoj5KZcqCH2QQUtNqo031LW/jSZXs5DTvITcjy8Q=
+X-Gm-Gg: ASbGncthLc5O53u9O3Ig91EmiTniUGkxJ7E/JxQHGeDHhIQuofo8UeziBOTUVKeBUpg
+	IYZWtyBZSaa2zp4FB3yR86rqAlErYpkBz4cnL3zdf1cMyXppHZRN086Pd0X8312BC5e0c8nPvCm
+	V8z2gIBwC/BugAmq5XhFbDkunC5X1Z9voT07MtsW3rvHwn10Taidk9OfUNAFk/WdAGfUyqLICNS
+	4Xz7C+uOEiBVit2Yl0rmeihVxCP/T2hWErtN8zit3jVtifUMz8LOq64V/XDE6+nJnE9dpaC+q/J
+	XKMFPXYgVtRNeSBdE563uiUsGxayMWN9yGem/VzJPGO2l3fG4v1eWN8bOyxp00edppGjuP7QA7x
+	bmIDRbcM=
+X-Google-Smtp-Source: AGHT+IGmVTMNri5Sm8wcqpeF8VIVZrJ/Zu3eKJXhtydgdXvYik6fTjiDVeRubZGj+D7bbCVYLRosrQ==
+X-Received: by 2002:a05:600c:1546:b0:43d:1b95:6d0e with SMTP id 5b1f17b1804b1-441b1f5bfeemr16819265e9.23.1746007099232;
+        Wed, 30 Apr 2025 02:58:19 -0700 (PDT)
 Received: from localhost (p200300f65f00780800000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f00:7808::1b9])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2af2a5fsm19634895e9.20.2025.04.30.02.58.16
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-441b2b972d6sm19343455e9.1.2025.04.30.02.58.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 02:58:16 -0700 (PDT)
+        Wed, 30 Apr 2025 02:58:18 -0700 (PDT)
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
 Cc: linux-clk@vger.kernel.org,
 	linux-pwm@vger.kernel.org
-Subject: [PATCH 1/4] clk: pwm: Let .get_duty_cycle() return the real duty cycle
-Date: Wed, 30 Apr 2025 11:57:46 +0200
-Message-ID:  <3db08ded39c09aaa5004b3b8b1238111f199e819.1746006578.git.ukleinek@baylibre.com>
+Subject: [PATCH 2/4] clk: pwm: Convert to use pwm_apply_might_sleep()
+Date: Wed, 30 Apr 2025 11:57:47 +0200
+Message-ID:  <f194fad5ee8bdd3fda6159324524979729683653.1746006578.git.ukleinek@baylibre.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <cover.1746006578.git.ukleinek@baylibre.com>
 References: <cover.1746006578.git.ukleinek@baylibre.com>
@@ -75,37 +75,66 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=955; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=wt/GV/pkMshoGMesRh4lIDdv+m3EQsqd7dNpcnh8PJI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBoEfQdZgGoFqqvkMOrD/AkoZmzebKJfWAyQNVQS Owmdtzwa3KJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCaBH0HQAKCRCPgPtYfRL+ TrdiCACbYka2dIv8fv5ozvZGUA/EdQul32+i6NiiabAaZ9oZmJao5RHNHk2RqP3SvRFu6u5CPhE Fwz+I9w0nANmO2oxT+Mw3no+GgTeEZ23A+uiwZGPmpjCOG1+HygL24iNR3r7lDcQsbsgGVVP7u9 3TVGqZCrSgxBB+8PzaYVwskSl8mxvPrsxQvRTwCMui1gd3xxzq1MYSvMxU7fFlwn8bJP54wwF+P OnrY235VRw8qXbaq7t/HPT0YSiW8e4kVadoByDWkB1iVGX3pUm+HMTmFkyWlLsrMB4AWpvvTx2k LlTV5PaFagBYBhpYxfGMmSipaWbCUK6PaBP33qkL2lCQCKzc
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1769; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=3eSx1C/GX8hyp6Ceh2NJJp3pJchNIsGHq2rT98Fdnqo=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBoEfQf/27S9h+HoK7cxoF/90bC0GRDe3ryXpqFk xQxVM3sJEKJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCaBH0HwAKCRCPgPtYfRL+ TmQ3B/9Tmd33dF6R8m+knOn2zYUKu80d78lpu6Ojb4Muk3IbkC7sjIyqVVrOAy+6x3Hj6+FPAxn y53Yd+TZoZryiEEy/w0ChtbaE5VYAYx7tT3XPyw8yJOH0bgYZij+ujSrjhvHee+2Y3R+iBAjnnP G/ej/i+21MXkV1qQhRhdAuiowd/OVXZv8hKQWT14h2sw12EVAE7ja0NWfvId/02AuVA1KrwXSdz ts9kZAJWS4rDkbk+xNRxezmxXPihfoveGAeDP3avnRM88lbXf4qVWN5bz3DCFDUi4erHHlKPZ4V taELV252HV8pAtVVCqMZeS72ynZSPdReu8EXGOECK8Lxkzar
 X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
-pwm_get_state() returns the last requested pwm_state which might differ
-from what the lowlevel PWM driver actually implemented. For the purpose
-of .get_duty_cycle() the latter is the more interesting info, so use
-that to determine the output parameter.
+pwm_config() is an old function that I'd like to remove. So convert this
+driver to use pwm_apply_might_sleep().
+
+There is a minor change in behaviour as the explicitly calculated
+duty_cycle used an uprounding division while pwm_set_relative_duty_cycle()
+rounds down. I don't expect that difference to matter in practice though.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 ---
- drivers/clk/clk-pwm.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/clk-pwm.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
-index bd4f21c22004..429150bba8cf 100644
+index 429150bba8cf..f5e6fef3f4d5 100644
 --- a/drivers/clk/clk-pwm.c
 +++ b/drivers/clk/clk-pwm.c
-@@ -48,8 +48,11 @@ static int clk_pwm_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
+@@ -14,6 +14,7 @@
+ struct clk_pwm {
+ 	struct clk_hw hw;
+ 	struct pwm_device *pwm;
++	struct pwm_state state;
+ 	u32 fixed_rate;
+ };
+ 
+@@ -26,7 +27,7 @@ static int clk_pwm_prepare(struct clk_hw *hw)
  {
  	struct clk_pwm *clk_pwm = to_clk_pwm(hw);
- 	struct pwm_state state;
-+	int ret;
  
--	pwm_get_state(clk_pwm->pwm, &state);
-+	ret = pwm_get_state_hw(clk_pwm->pwm, &state);
-+	if (ret)
-+		return ret;
+-	return pwm_enable(clk_pwm->pwm);
++	return pwm_apply_might_sleep(clk_pwm->pwm, &clk_pwm->state);
+ }
  
- 	duty->num = state.duty_cycle;
- 	duty->den = state.period;
+ static void clk_pwm_unprepare(struct clk_hw *hw)
+@@ -106,15 +107,16 @@ static int clk_pwm_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	/*
+-	 * FIXME: pwm_apply_args() should be removed when switching to the
+-	 * atomic PWM API.
+-	 */
+-	pwm_apply_args(pwm);
+-	ret = pwm_config(pwm, (pargs.period + 1) >> 1, pargs.period);
++	pwm_init_state(pwm, &clk_pwm->state);
++	pwm_set_relative_duty_cycle(&clk_pwm->state, 1, 2);
++
++	ret = pwm_apply_might_sleep(pwm, &clk_pwm->state);
+ 	if (ret < 0)
+ 		return ret;
+ 
++	/* set enabled only now to not enable output above */
++	clk_pwm->state.enabled = true;
++
+ 	clk_name = node->name;
+ 	of_property_read_string(node, "clock-output-names", &clk_name);
+ 
 -- 
 2.47.2
 
