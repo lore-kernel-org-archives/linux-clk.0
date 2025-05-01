@@ -1,124 +1,119 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6B71EA7C6;
-	Thu,  1 May 2025 15:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E8018DB16;
+	Thu,  1 May 2025 16:12:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746111701; cv=none; b=jCRpDBitf6v4UrHRdoO5yxgLNRxrbLFzWz53IvkXJNdstTz0TPZlVhQmh8z3bUlVzyw6S6Ly+iHYX4aJ7h/U0nGeLtE5F1a5MYNtHsaoYZMSzq4LA53bguCG3uR2Z0hvCQkx4WFmfFIu59HwoBCP7o3RBsqqH9u/QmeCjpzg2q0=
+	t=1746115977; cv=none; b=XuYw1sJFFo3BChGUwlUOh60AikzInNg9kV1k95gnHga/xqxhyV1d38D1oY8qdTwtM1n2nwT9GzehE0Dgj87UWhGwpi3hFTmHK9hYLQE0OllmOdhv6PWprfxPXhL+ZR4b8Jn3AkjB9i7yTAC4YkDF4oa1AUcwiVlxKCXYeSW7WF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746111701; c=relaxed/simple;
-	bh=FcT5OJIncV+3YTLlIknloH4b7NqZ8CJNvPmY7U77tYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oxpIh4PvY4sPtqvH8jPMIlzWvY93RyqyNXt1ybFpfYhyd7Ti4Gme/YJBBLnR44tbDYc60GJB6GKzwZEbhkyxlrcP/IR1oye5eD1wuVszcMfqnErP4K2lzDR8YSRmIdoWVONFtqx8FvmAFgRh2K//TAP0jMbZzAqVuaNzEL2dRCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DvAUoabe; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1746115977; c=relaxed/simple;
+	bh=A1YogmnGMKTMHm2zxZV4DBdy5txg2qSLdm1FpVZUDM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KDaqFXMWPrsvwBExANFwKOZO7JikGW+GEAfUm4fbi1RLK4dGgPI436LlIgUuiFOfY2A7oggRPf4+v2aXY4wiDzEk1JyCNhtELGMIgTrOda6+6nQA8BNkWh5pYvImKSZo1cf+4WmuUKmYJlWP5IU0efsDSMK3h3VfE8IrZn9nFFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n5K8m+Qd; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DvAUoabe"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n5K8m+Qd"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1746111699; x=1777647699;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=FcT5OJIncV+3YTLlIknloH4b7NqZ8CJNvPmY7U77tYk=;
-  b=DvAUoabeN4yNkLlpapaBMNBqdB2kfSenKuxuTTDaG18v7OD7yH+9XbeG
-   FdhMTXlUZ88BeYdkTT7ZOu69vyWI+SCKisSGi3sHEI4gD124DHJqhmgZ+
-   Y5FLwM9YGljdkmF6kAv7On1l98NnO9mQG16WTltJiMD7CRoOJ6GSjW0Ue
-   tTenGmBXL99xXbiGfjJhtgn/PjpY+d2WvcaglIc0mcdgP+J5EYnD6IltT
-   N/KxeiTQuQ0W6NurFPHldl6yYN2pkiZ8UlkrXKqwf5pZRc7kJk0ihSGya
-   D5JRNB3x2OV2LuEbiZMd0zag/e7IISe3+QLyO+Nt6YDjdkzjKDitjPnQJ
-   g==;
-X-CSE-ConnectionGUID: rf2P6i5OR06cfakkSU8wBw==
-X-CSE-MsgGUID: GycyurudQMeXlU/ye7iK7Q==
-X-IronPort-AV: E=Sophos;i="6.15,254,1739862000"; 
-   d="scan'208";a="208620796"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 May 2025 08:01:33 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 1 May 2025 08:01:28 -0700
-Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
- Transport; Thu, 1 May 2025 08:01:27 -0700
-Message-ID: <e85fe2a4-ea86-4525-9b7a-1d1cabf743f5@microchip.com>
-Date: Thu, 1 May 2025 08:01:26 -0700
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746115975; x=1777651975;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=A1YogmnGMKTMHm2zxZV4DBdy5txg2qSLdm1FpVZUDM0=;
+  b=n5K8m+QdsXX2wsDZnZQ5jjsSaQE5EjyaOg74sGrOetbsMBdcxIWSJvqX
+   zkSvVWMH30qQ7jw3HQMRgyeZs/MBdQnzAp7Ubooh9ACIAG/jTtgrK+Nu2
+   A4FB4pM+MShnEQFH4Qujt8DvNXcPeUsy/J+gi5XY+va4DZcoGjOCNFYmp
+   RZuJbmlyOdv0hG3gydRc3upzfuV/u1juKkrBgelGv3k3a0lckpmoVLJMg
+   UWVonngzjz5RyDMe35RFUhJ+iC5tarWGAxRRcs4L+qdpbbTGpIZlkv8IU
+   YiHrH3GS/b4xaogANmXcx7h2NTFJxAsjqBMYWWCWdrBhYQcrGE0/XKnjR
+   A==;
+X-CSE-ConnectionGUID: 997GUIN7R7W1JZrlcCSfHQ==
+X-CSE-MsgGUID: aDbavJAkTDCEFL1y3JX/Hg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11420"; a="35412786"
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="35412786"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 May 2025 09:12:54 -0700
+X-CSE-ConnectionGUID: FCjyJbt1S+SNYnF+XFQtRQ==
+X-CSE-MsgGUID: HvgOkt6kReO2rla3g5Jwvw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,254,1739865600"; 
+   d="scan'208";a="171656049"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 01 May 2025 09:12:49 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uAWWk-0004FN-2D;
+	Thu, 01 May 2025 16:12:46 +0000
+Date: Fri, 2 May 2025 00:12:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>, bhelgaas@google.com,
+	lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+	saravanak@google.com, p.zabel@pengutronix.de
+Cc: oe-kbuild-all@lists.linux.dev, claudiu.beznea@tuxon.dev,
+	linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 1/8] soc: renesas: r9a08g045-sysc: Add max reg offset
+Message-ID: <202505012344.lIxS3e4X-lkp@intel.com>
+References: <20250430103236.3511989-2-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] clk: at91: sama7d65: Add missing clk_hw to
- parent_data
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <mturquette@baylibre.com>
-CC: <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>
-References: <cover.1742916867.git.Ryan.Wanner@microchip.com>
- <d634ae4f72bca022e205b03c01415e90fda0bc01.1742916867.git.Ryan.Wanner@microchip.com>
- <47b54406-42d8-41cd-a561-9073db09666e@tuxon.dev>
-From: Ryan Wanner <ryan.wanner@microchip.com>
-Content-Language: en-US
-In-Reply-To: <47b54406-42d8-41cd-a561-9073db09666e@tuxon.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250430103236.3511989-2-claudiu.beznea.uj@bp.renesas.com>
 
-On 4/26/25 06:35, Claudiu Beznea wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> Hi, Ryan,
-> 
-> On 25.03.2025 17:55, Ryan.Wanner@microchip.com wrote:
->> From: Ryan Wanner <Ryan.Wanner@microchip.com>
->>
->> The main_xtal clk_hw struct is not passed into parent_data.hw causing an
->> issue with main_osc parent.
-> 
-> Can you please describe the issue?
-> 
->> Passing the main_xtal struct into the
->> parent_data struct will ensure the correct parent structure.
->>
->> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
->> ---
->>  drivers/clk/at91/sama7d65.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
->> index a5d40df8b2f2..08306261c9c7 100644
->> --- a/drivers/clk/at91/sama7d65.c
->> +++ b/drivers/clk/at91/sama7d65.c
->> @@ -1138,6 +1138,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
->>
->>       parent_data.name = main_xtal_name;
->>       parent_data.fw_name = main_xtal_name;
->> +     parent_data.hw = main_xtal_hw;
-> 
-> I think, from time to time, you can still hit some random failure as the
-> parent_data.index is still not initialized. I think the problem may be
-> solved by doing something like:
-> 
-> -       static struct clk_parent_data parent_data;
-> +       static struct clk_parent_data parent_data = {0};
-> 
-> Can you please check with this?
-Yes I will check on this and test it.
+Hi Claudiu,
 
-Best,
-Ryan
-> 
-> Thank you,
-> Claudiu
-> 
-> 
->>       main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
->>                                                &parent_data, bypass);
->>       if (IS_ERR(main_osc_hw))
-> 
+kernel test robot noticed the following build errors:
 
+[auto build test ERROR on pci/next]
+[also build test ERROR on pci/for-linus geert-renesas-devel/next geert-renesas-drivers/renesas-clk robh/for-next arm64/for-next/core linus/master v6.15-rc4 next-20250501]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Claudiu/soc-renesas-r9a08g045-sysc-Add-max-reg-offset/20250430-183951
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20250430103236.3511989-2-claudiu.beznea.uj%40bp.renesas.com
+patch subject: [PATCH 1/8] soc: renesas: r9a08g045-sysc: Add max reg offset
+config: arm64-randconfig-001-20250501 (https://download.01.org/0day-ci/archive/20250501/202505012344.lIxS3e4X-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 9.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250501/202505012344.lIxS3e4X-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505012344.lIxS3e4X-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/soc/renesas/r9a08g045-sysc.c:23:3: error: 'const struct rz_sysc_init_data' has no member named 'max_register_offset'
+      23 |  .max_register_offset = 0xe28,
+         |   ^~~~~~~~~~~~~~~~~~~
+   drivers/soc/renesas/r9a08g045-sysc.c:23:25: warning: excess elements in struct initializer
+      23 |  .max_register_offset = 0xe28,
+         |                         ^~~~~
+   drivers/soc/renesas/r9a08g045-sysc.c:23:25: note: (near initialization for 'rzg3s_sysc_init_data')
+
+
+vim +23 drivers/soc/renesas/r9a08g045-sysc.c
+
+    20	
+    21	const struct rz_sysc_init_data rzg3s_sysc_init_data __initconst = {
+    22		.soc_id_init_data = &rzg3s_sysc_soc_id_init_data,
+  > 23		.max_register_offset = 0xe28,
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
