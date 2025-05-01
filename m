@@ -1,75 +1,117 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107441EFFA3;
-	Thu,  1 May 2025 12:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46AC22257F;
+	Thu,  1 May 2025 12:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746102137; cv=none; b=jKXvTuC3rw38wJKdILQ5d7QWR78TEpDZ/oGJlx/NkU4nXyHJNr0zNSC4GGE6pgEzcjRvDArfnq0Qe8kUbFIdkjVJbCXMJVeOrjeNi4CI7E9ZszGZcYENK3S+Ef0W49gwotb8boAw0qN6Jt0LxPLRTE6B3cg/jg9r9S9mR5VCRv0=
+	t=1746103119; cv=none; b=SNeXUMdgj/+Nqbf425JJl5p6fE4j8LX44yds5zMpKQ9FWeXwPdFtOxz/XlH82dnKJrWXHd6vm1AhVizhrKgCkfRK+o9ETxOsnJXK6q7hlT5p/Sc0YUqCTdgvYcz/T4MnqfERVjLzaQh8t3Pu/nTGi3z0geyNj/0CA/wkimB+Icw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746102137; c=relaxed/simple;
-	bh=mxKifamzzXncn/QsKCHnl10Bc/4VPOAAX/UPUk14YDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yt1He6noRm8YwAGww4AL2IfVCahfUeK7gRUNhlDu8uaw7eQ2zDOLj2HtokzY5P6kQUXnKcDxHKXfeYEQIcTdGZGDDP+0yxhJr0zPgO9RmAPiqxgYbpgfVLFOss4kcHANL8Xi4yPGFVs6NOc9bY03dzgPfKVES0t4zObBFDo+56w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C169F1D14;
-	Thu,  1 May 2025 05:22:07 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12B663F673;
-	Thu,  1 May 2025 05:22:13 -0700 (PDT)
-Date: Thu, 1 May 2025 13:22:11 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Chen-Yu Tsai <wens@csie.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, <linux-clk@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: sunxi-ng: fix order of arguments in clock macro
-Message-ID: <20250501132211.0310ae49@donnerap.manchester.arm.com>
-In-Reply-To: <174610166405.2974716.1586244113913047340.b4-ty@csie.org>
-References: <20250430095325.477311-1-andre.przywara@arm.com>
-	<174610166405.2974716.1586244113913047340.b4-ty@csie.org>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1746103119; c=relaxed/simple;
+	bh=DEsKW/FV4oEiQf5g3YhqxqT0LRxti9vcUPcTum7hq1k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ik+ncQ//Q2nMeBBtbUweJR5rHKhBCIyzBDluugOty6+JxFpyj3+4/yTchIxC3WeOQ5FZDRbWkE1Xd0XIcO/ar1fAEACcVeBmVt7JT+GdsZAGOcfjrqB0gfps+rZoisw1mxd+74jmu+ZBeDTrDAhncLJEl+jDFf/mfZBy3FAt6t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=zt4dSXgr; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="zt4dSXgr"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=TMGzIJ6a/SjyP3jq2ylC0v7lVpVlSTcN9VZFPohtskE=; b=zt4dSXgrVISFWJwXdPVT9vChf2
+	lz5BPnDLeDaKPUiNU8qeOeCi0QQVViW7CcQHmefHNLggfwmfIreADmL7bMHG9anLK5GnL6+yKufmr
+	XmSSHCMPeN5uiUjkXyAM48vyBoq4vhIc9VFYyGtcMMBkvz/aZ3BkkF2aCGciEz/wr6lD6YvFlKeuz
+	toQlnSSZ/oMWzmoM9ldc/v38QRd/zsCW0Ln9VAhapQPXI8Cz/v7P4G2k7az+LX1syCwFvEt0A+gfa
+	sR68RMdRcWlp7KTyUqCufKQ1WT0MHz8lEOK2a4kx81hJbkYZtwR8N6fIvFBDBcUU26T3I/A6PGRdF
+	ZT5qrTpA==;
+Received: from i53875bbc.versanet.de ([83.135.91.188] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1uATBL-0001C8-5z; Thu, 01 May 2025 14:38:27 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Sugar Zhang <sugar.zhang@rock-chips.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: Re: [PATCH v2 02/11] clk: rockchip: introduce auxiliary GRFs
+Date: Thu, 01 May 2025 14:38:25 +0200
+Message-ID: <2240109.Mh6RI2rZIc@diego>
+In-Reply-To: <20250410-rk3576-sai-v2-2-c64608346be3@collabora.com>
+References:
+ <20250410-rk3576-sai-v2-0-c64608346be3@collabora.com>
+ <20250410-rk3576-sai-v2-2-c64608346be3@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, 1 May 2025 20:14:24 +0800
-Chen-Yu Tsai <wens@csie.org> wrote:
+Hi Nicolas,
 
-Hi,
+Am Donnerstag, 10. April 2025, 21:39:54 Mitteleurop=C3=A4ische Sommerzeit s=
+chrieb Nicolas Frattaroli:
+> The MUXGRF clock branch type depends on having access to some sort of
+> GRF as a regmap to be registered. So far, we could easily get away with
+> only ever having one GRF stowed away in the context.
+>=20
+> However, newer Rockchip SoCs, such as the RK3576, have several GRFs
+> which are relevant for clock purposes. It already depends on the pmu0
+> GRF for MUXGRF reasons, but could get away with not refactoring this
+> because it didn't need the sysgrf at all, so could overwrite the pointer
+> in the clock provider to the pmu0 grf regmap handle.
+>=20
+> In preparation for needing to finally access more than one GRF per SoC,
+> let's untangle this. Introduce an auxiliary GRF hashmap, and a GRF type
+> enum. The hasmap is keyed by the enum, and clock branches now have a
+> struct member to store the value of that enum, which defaults to the
+> system GRF.
+>=20
+> The SoC-specific _clk_init function can then insert pointers to GRF
+> regmaps into the hashmap based on the grf type.
+>=20
+> During clock branch registration, we then pick the right GRF for each
+> branch from the hashmap if something other than the sys GRF is
+> requested.
+>=20
+> The reason for doing it with this grf type indirection in the clock
+> branches is so that we don't need to define the MUXGRF branches in a
+> separate step, just to have a direct pointer to a regmap available
+> already.
+>=20
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-> On Wed, 30 Apr 2025 10:53:25 +0100, Andre Przywara wrote:
-> > When introducing the SUNXI_CCU_MP_DATA_WITH_MUX_GATE_FEAT macro, the order
-> > of the last two arguments was different between the users and the
-> > definition: features became flags and flags became features.
-> > 
-> > This just didn't end up in a desaster yet because most users ended up
-> > passing 0 for both arguments, and other clocks (for the new A523 SoC) are
-> > not yet used.
-> > 
-> > [...]  
-> 
-> Applied to clk-fixes-for-6.15 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
+like the concept and also implementation :-) .
 
-thanks for that, but the URL here is not correct, is it? Should be the
-kernel.org repo instead? Saw this already in other "applied" emails.
+> ---
+>  drivers/clk/rockchip/clk-rk3328.c |  6 +++---
+>  drivers/clk/rockchip/clk-rk3568.c |  2 +-
+>  drivers/clk/rockchip/clk-rk3576.c | 32 ++++++++++++++++++++++----------
 
-Cheers,
-Andre
+the only "hair in the soup" are some missing socs ;-) .
+
+As you're changing the MUXGRF type, you should adapt all socs using it
+please. Missing rk3288 and rv1126 it seems - ARM32, which may have helped
+these slipping through.
 
 
-> 
-> [1/1] clk: sunxi-ng: fix order of arguments in clock macro
->       commit: 4a9c3c3215491f25bc66d615faa921c814b1a479
-> 
-> Best regards,
+Heiko
+
 
