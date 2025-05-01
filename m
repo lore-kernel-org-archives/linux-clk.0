@@ -1,117 +1,124 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46AC22257F;
-	Thu,  1 May 2025 12:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2621318C930;
+	Thu,  1 May 2025 14:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746103119; cv=none; b=SNeXUMdgj/+Nqbf425JJl5p6fE4j8LX44yds5zMpKQ9FWeXwPdFtOxz/XlH82dnKJrWXHd6vm1AhVizhrKgCkfRK+o9ETxOsnJXK6q7hlT5p/Sc0YUqCTdgvYcz/T4MnqfERVjLzaQh8t3Pu/nTGi3z0geyNj/0CA/wkimB+Icw=
+	t=1746109344; cv=none; b=J7mKMTTBhmPaZMsFQHC5rvWfmw9BoDEt5wBHrMqTpVfSTojKl24BFSSAvPWP6q8hL7mP5Do9PhRy+6D4el5Rn7AobwQbZrjqsTryhX87fMJ21z/oYPJExyJlkUi+a7+TFg44ISOv1kHeY2LVR5oS0UkwdNz5Sl2wksNmKbfqgzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746103119; c=relaxed/simple;
-	bh=DEsKW/FV4oEiQf5g3YhqxqT0LRxti9vcUPcTum7hq1k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ik+ncQ//Q2nMeBBtbUweJR5rHKhBCIyzBDluugOty6+JxFpyj3+4/yTchIxC3WeOQ5FZDRbWkE1Xd0XIcO/ar1fAEACcVeBmVt7JT+GdsZAGOcfjrqB0gfps+rZoisw1mxd+74jmu+ZBeDTrDAhncLJEl+jDFf/mfZBy3FAt6t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=zt4dSXgr; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1746109344; c=relaxed/simple;
+	bh=rBzRwoJgC9nPVv1XokQKUJ4a0+Ap+oQYmBNV9icBp+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nutcyKwI8NJxX3gebQ8KeHQc84fpbKFsbhqW8KjGRrEctOsYqyfiAbllY0g1EZ5P7tt37sIJ/eiUBZU3hf6nIgvvWTEjsaEDZconlTMiPj0XIzxlQPVhHRl2l529AqJM6xXmjzHBRVoxtBNnbjGT34WxEqg6OBQDl2uKpzBe38s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2c/wNcs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="zt4dSXgr"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=TMGzIJ6a/SjyP3jq2ylC0v7lVpVlSTcN9VZFPohtskE=; b=zt4dSXgrVISFWJwXdPVT9vChf2
-	lz5BPnDLeDaKPUiNU8qeOeCi0QQVViW7CcQHmefHNLggfwmfIreADmL7bMHG9anLK5GnL6+yKufmr
-	XmSSHCMPeN5uiUjkXyAM48vyBoq4vhIc9VFYyGtcMMBkvz/aZ3BkkF2aCGciEz/wr6lD6YvFlKeuz
-	toQlnSSZ/oMWzmoM9ldc/v38QRd/zsCW0Ln9VAhapQPXI8Cz/v7P4G2k7az+LX1syCwFvEt0A+gfa
-	sR68RMdRcWlp7KTyUqCufKQ1WT0MHz8lEOK2a4kx81hJbkYZtwR8N6fIvFBDBcUU26T3I/A6PGRdF
-	ZT5qrTpA==;
-Received: from i53875bbc.versanet.de ([83.135.91.188] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uATBL-0001C8-5z; Thu, 01 May 2025 14:38:27 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Sugar Zhang <sugar.zhang@rock-chips.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Subject: Re: [PATCH v2 02/11] clk: rockchip: introduce auxiliary GRFs
-Date: Thu, 01 May 2025 14:38:25 +0200
-Message-ID: <2240109.Mh6RI2rZIc@diego>
-In-Reply-To: <20250410-rk3576-sai-v2-2-c64608346be3@collabora.com>
-References:
- <20250410-rk3576-sai-v2-0-c64608346be3@collabora.com>
- <20250410-rk3576-sai-v2-2-c64608346be3@collabora.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2c/wNcs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D431C4CEE3;
+	Thu,  1 May 2025 14:22:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746109343;
+	bh=rBzRwoJgC9nPVv1XokQKUJ4a0+Ap+oQYmBNV9icBp+M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H2c/wNcstc22sKguf3GzhxY8FNPZ0zc9gh4t30uC7yQTWApP0Cf15w/toqAhva0sa
+	 5aLKUPskmITnWqkpx4ue8WGDDlovvDtKVIFZCXa7T6OwIrK2iGHnLuDw8FrubLL9Ox
+	 L5ZHMnwzab69aspDqWJSvyRO6JIs1dZLBXp7lIR33Y49tLppdT1pcBIVPljucpMeKW
+	 JH0AWCTsyDNpyK13+mqr3G4ESNr24TDf5skxL6CoH9+TwfQ6AHtc4z+HxiovWQc5SV
+	 rKwsslg4uUjRirfVT9W9BXmU0u4UYIyXmlat76v3tOhn9x81oGH1TwRooGEIay62kR
+	 9RXI8ptCuftXQ==
+Date: Thu, 1 May 2025 15:22:17 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 2/3] clk: sophgo: Add support for newly added precise
+ compatible
+Message-ID: <20250501-shrubs-unmixable-a2a8a9bedd01@spud>
+References: <20250430020932.307198-1-inochiama@gmail.com>
+ <20250430020932.307198-3-inochiama@gmail.com>
+ <20250430-radiance-rebuilt-2caa906d5e6f@spud>
+ <20250430-snort-raider-dbf10d14993f@spud>
+ <otuaro3xh2ut3kurcomrq5j3guyyj7uhhwgngqdqqrrcpvlk6t@4wqbxy3m3tq7>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="XVRDKcPyTtvEDhL7"
+Content-Disposition: inline
+In-Reply-To: <otuaro3xh2ut3kurcomrq5j3guyyj7uhhwgngqdqqrrcpvlk6t@4wqbxy3m3tq7>
+
+
+--XVRDKcPyTtvEDhL7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-Hi Nicolas,
-
-Am Donnerstag, 10. April 2025, 21:39:54 Mitteleurop=C3=A4ische Sommerzeit s=
-chrieb Nicolas Frattaroli:
-> The MUXGRF clock branch type depends on having access to some sort of
-> GRF as a regmap to be registered. So far, we could easily get away with
-> only ever having one GRF stowed away in the context.
+On Thu, May 01, 2025 at 06:43:07AM +0800, Inochi Amaoto wrote:
+> On Wed, Apr 30, 2025 at 04:37:01PM +0100, Conor Dooley wrote:
+> > On Wed, Apr 30, 2025 at 04:33:39PM +0100, Conor Dooley wrote:
+> > > On Wed, Apr 30, 2025 at 10:09:30AM +0800, Inochi Amaoto wrote:
+> > > > Add of device id definition for newly added precise compatible.
+> > > >=20
+> > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > > > ---
+> > > >  drivers/clk/sophgo/clk-cv1800.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > >=20
+> > > > diff --git a/drivers/clk/sophgo/clk-cv1800.c b/drivers/clk/sophgo/c=
+lk-cv1800.c
+> > > > index e0c4dc347579..e10221df6385 100644
+> > > > --- a/drivers/clk/sophgo/clk-cv1800.c
+> > > > +++ b/drivers/clk/sophgo/clk-cv1800.c
+> > > > @@ -1519,8 +1519,11 @@ static int cv1800_clk_probe(struct platform_=
+device *pdev)
+> > > > =20
+> > > >  static const struct of_device_id cv1800_clk_ids[] =3D {
+> > > >  	{ .compatible =3D "sophgo,cv1800-clk", .data =3D &cv1800_desc },
+> > > > +	{ .compatible =3D "sophgo,cv1800b-clk", .data =3D &cv1800_desc },
+> > >=20
+> > > Given the same data is used here, should there not be fallbacks in the
+> > > dt for some of these? For example, 1812 to 1800? Or is that not okay,
+> > > because 1800 is not a real device id?
+> > >=20
+> > > >  	{ .compatible =3D "sophgo,cv1810-clk", .data =3D &cv1810_desc },
+> > > > +	{ .compatible =3D "sophgo,cv1812h-clk", .data =3D &cv1800_desc },
+> > > >  	{ .compatible =3D "sophgo,sg2000-clk", .data =3D &sg2000_desc },
+> > > > +	{ .compatible =3D "sophgo,sg2002-clk", .data =3D &sg2000_desc },
+> >=20
+> > Actually, this one is a better example. sg2000 is not marked deprecated.
+> > sg2002 uses the same match data. Why is no fallback to sg2000 used for
+> > the sg2002 case?
 >=20
-> However, newer Rockchip SoCs, such as the RK3576, have several GRFs
-> which are relevant for clock purposes. It already depends on the pmu0
-> GRF for MUXGRF reasons, but could get away with not refactoring this
-> because it didn't need the sysgrf at all, so could overwrite the pointer
-> in the clock provider to the pmu0 grf regmap handle.
->=20
-> In preparation for needing to finally access more than one GRF per SoC,
-> let's untangle this. Introduce an auxiliary GRF hashmap, and a GRF type
-> enum. The hasmap is keyed by the enum, and clock branches now have a
-> struct member to store the value of that enum, which defaults to the
-> system GRF.
->=20
-> The SoC-specific _clk_init function can then insert pointers to GRF
-> regmaps into the hashmap based on the grf type.
->=20
-> During clock branch registration, we then pick the right GRF for each
-> branch from the hashmap if something other than the sys GRF is
-> requested.
->=20
-> The reason for doing it with this grf type indirection in the clock
-> branches is so that we don't need to define the MUXGRF branches in a
-> separate step, just to have a direct pointer to a regmap available
-> already.
->=20
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> Yeah, It is a good idea. I will take it, thanks,
 
-like the concept and also implementation :-) .
+Can you point out the difference in the dt-binding patch when you do,
+between the sg2000 being a real device and the others not?
 
-> ---
->  drivers/clk/rockchip/clk-rk3328.c |  6 +++---
->  drivers/clk/rockchip/clk-rk3568.c |  2 +-
->  drivers/clk/rockchip/clk-rk3576.c | 32 ++++++++++++++++++++++----------
+--XVRDKcPyTtvEDhL7
+Content-Type: application/pgp-signature; name="signature.asc"
 
-the only "hair in the soup" are some missing socs ;-) .
+-----BEGIN PGP SIGNATURE-----
 
-As you're changing the MUXGRF type, you should adapt all socs using it
-please. Missing rk3288 and rv1126 it seems - ARM32, which may have helped
-these slipping through.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaBODmQAKCRB4tDGHoIJi
+0pqUAPwI/zQNgP9x1HvcIE0paiqb55dihwJ5KU9E0DUZ/tC4egEAigTEf+A6r4+2
+rxWOVtgQTrgGBiBhzOKRtofcr/OrIw0=
+=6kou
+-----END PGP SIGNATURE-----
 
-
-Heiko
-
-
+--XVRDKcPyTtvEDhL7--
