@@ -1,124 +1,124 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2621318C930;
-	Thu,  1 May 2025 14:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6B71EA7C6;
+	Thu,  1 May 2025 15:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746109344; cv=none; b=J7mKMTTBhmPaZMsFQHC5rvWfmw9BoDEt5wBHrMqTpVfSTojKl24BFSSAvPWP6q8hL7mP5Do9PhRy+6D4el5Rn7AobwQbZrjqsTryhX87fMJ21z/oYPJExyJlkUi+a7+TFg44ISOv1kHeY2LVR5oS0UkwdNz5Sl2wksNmKbfqgzY=
+	t=1746111701; cv=none; b=jCRpDBitf6v4UrHRdoO5yxgLNRxrbLFzWz53IvkXJNdstTz0TPZlVhQmh8z3bUlVzyw6S6Ly+iHYX4aJ7h/U0nGeLtE5F1a5MYNtHsaoYZMSzq4LA53bguCG3uR2Z0hvCQkx4WFmfFIu59HwoBCP7o3RBsqqH9u/QmeCjpzg2q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746109344; c=relaxed/simple;
-	bh=rBzRwoJgC9nPVv1XokQKUJ4a0+Ap+oQYmBNV9icBp+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nutcyKwI8NJxX3gebQ8KeHQc84fpbKFsbhqW8KjGRrEctOsYqyfiAbllY0g1EZ5P7tt37sIJ/eiUBZU3hf6nIgvvWTEjsaEDZconlTMiPj0XIzxlQPVhHRl2l529AqJM6xXmjzHBRVoxtBNnbjGT34WxEqg6OBQDl2uKpzBe38s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2c/wNcs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746111701; c=relaxed/simple;
+	bh=FcT5OJIncV+3YTLlIknloH4b7NqZ8CJNvPmY7U77tYk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oxpIh4PvY4sPtqvH8jPMIlzWvY93RyqyNXt1ybFpfYhyd7Ti4Gme/YJBBLnR44tbDYc60GJB6GKzwZEbhkyxlrcP/IR1oye5eD1wuVszcMfqnErP4K2lzDR8YSRmIdoWVONFtqx8FvmAFgRh2K//TAP0jMbZzAqVuaNzEL2dRCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DvAUoabe; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2c/wNcs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D431C4CEE3;
-	Thu,  1 May 2025 14:22:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746109343;
-	bh=rBzRwoJgC9nPVv1XokQKUJ4a0+Ap+oQYmBNV9icBp+M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H2c/wNcstc22sKguf3GzhxY8FNPZ0zc9gh4t30uC7yQTWApP0Cf15w/toqAhva0sa
-	 5aLKUPskmITnWqkpx4ue8WGDDlovvDtKVIFZCXa7T6OwIrK2iGHnLuDw8FrubLL9Ox
-	 L5ZHMnwzab69aspDqWJSvyRO6JIs1dZLBXp7lIR33Y49tLppdT1pcBIVPljucpMeKW
-	 JH0AWCTsyDNpyK13+mqr3G4ESNr24TDf5skxL6CoH9+TwfQ6AHtc4z+HxiovWQc5SV
-	 rKwsslg4uUjRirfVT9W9BXmU0u4UYIyXmlat76v3tOhn9x81oGH1TwRooGEIay62kR
-	 9RXI8ptCuftXQ==
-Date: Thu, 1 May 2025 15:22:17 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 2/3] clk: sophgo: Add support for newly added precise
- compatible
-Message-ID: <20250501-shrubs-unmixable-a2a8a9bedd01@spud>
-References: <20250430020932.307198-1-inochiama@gmail.com>
- <20250430020932.307198-3-inochiama@gmail.com>
- <20250430-radiance-rebuilt-2caa906d5e6f@spud>
- <20250430-snort-raider-dbf10d14993f@spud>
- <otuaro3xh2ut3kurcomrq5j3guyyj7uhhwgngqdqqrrcpvlk6t@4wqbxy3m3tq7>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DvAUoabe"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1746111699; x=1777647699;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=FcT5OJIncV+3YTLlIknloH4b7NqZ8CJNvPmY7U77tYk=;
+  b=DvAUoabeN4yNkLlpapaBMNBqdB2kfSenKuxuTTDaG18v7OD7yH+9XbeG
+   FdhMTXlUZ88BeYdkTT7ZOu69vyWI+SCKisSGi3sHEI4gD124DHJqhmgZ+
+   Y5FLwM9YGljdkmF6kAv7On1l98NnO9mQG16WTltJiMD7CRoOJ6GSjW0Ue
+   tTenGmBXL99xXbiGfjJhtgn/PjpY+d2WvcaglIc0mcdgP+J5EYnD6IltT
+   N/KxeiTQuQ0W6NurFPHldl6yYN2pkiZ8UlkrXKqwf5pZRc7kJk0ihSGya
+   D5JRNB3x2OV2LuEbiZMd0zag/e7IISe3+QLyO+Nt6YDjdkzjKDitjPnQJ
+   g==;
+X-CSE-ConnectionGUID: rf2P6i5OR06cfakkSU8wBw==
+X-CSE-MsgGUID: GycyurudQMeXlU/ye7iK7Q==
+X-IronPort-AV: E=Sophos;i="6.15,254,1739862000"; 
+   d="scan'208";a="208620796"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 May 2025 08:01:33 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 1 May 2025 08:01:28 -0700
+Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Thu, 1 May 2025 08:01:27 -0700
+Message-ID: <e85fe2a4-ea86-4525-9b7a-1d1cabf743f5@microchip.com>
+Date: Thu, 1 May 2025 08:01:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XVRDKcPyTtvEDhL7"
-Content-Disposition: inline
-In-Reply-To: <otuaro3xh2ut3kurcomrq5j3guyyj7uhhwgngqdqqrrcpvlk6t@4wqbxy3m3tq7>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] clk: at91: sama7d65: Add missing clk_hw to
+ parent_data
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <mturquette@baylibre.com>
+CC: <sboyd@kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-clk@vger.kernel.org>
+References: <cover.1742916867.git.Ryan.Wanner@microchip.com>
+ <d634ae4f72bca022e205b03c01415e90fda0bc01.1742916867.git.Ryan.Wanner@microchip.com>
+ <47b54406-42d8-41cd-a561-9073db09666e@tuxon.dev>
+From: Ryan Wanner <ryan.wanner@microchip.com>
+Content-Language: en-US
+In-Reply-To: <47b54406-42d8-41cd-a561-9073db09666e@tuxon.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 
+On 4/26/25 06:35, Claudiu Beznea wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> 
+> Hi, Ryan,
+> 
+> On 25.03.2025 17:55, Ryan.Wanner@microchip.com wrote:
+>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+>>
+>> The main_xtal clk_hw struct is not passed into parent_data.hw causing an
+>> issue with main_osc parent.
+> 
+> Can you please describe the issue?
+> 
+>> Passing the main_xtal struct into the
+>> parent_data struct will ensure the correct parent structure.
+>>
+>> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+>> ---
+>>  drivers/clk/at91/sama7d65.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/clk/at91/sama7d65.c b/drivers/clk/at91/sama7d65.c
+>> index a5d40df8b2f2..08306261c9c7 100644
+>> --- a/drivers/clk/at91/sama7d65.c
+>> +++ b/drivers/clk/at91/sama7d65.c
+>> @@ -1138,6 +1138,7 @@ static void __init sama7d65_pmc_setup(struct device_node *np)
+>>
+>>       parent_data.name = main_xtal_name;
+>>       parent_data.fw_name = main_xtal_name;
+>> +     parent_data.hw = main_xtal_hw;
+> 
+> I think, from time to time, you can still hit some random failure as the
+> parent_data.index is still not initialized. I think the problem may be
+> solved by doing something like:
+> 
+> -       static struct clk_parent_data parent_data;
+> +       static struct clk_parent_data parent_data = {0};
+> 
+> Can you please check with this?
+Yes I will check on this and test it.
 
---XVRDKcPyTtvEDhL7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Best,
+Ryan
+> 
+> Thank you,
+> Claudiu
+> 
+> 
+>>       main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
+>>                                                &parent_data, bypass);
+>>       if (IS_ERR(main_osc_hw))
+> 
 
-On Thu, May 01, 2025 at 06:43:07AM +0800, Inochi Amaoto wrote:
-> On Wed, Apr 30, 2025 at 04:37:01PM +0100, Conor Dooley wrote:
-> > On Wed, Apr 30, 2025 at 04:33:39PM +0100, Conor Dooley wrote:
-> > > On Wed, Apr 30, 2025 at 10:09:30AM +0800, Inochi Amaoto wrote:
-> > > > Add of device id definition for newly added precise compatible.
-> > > >=20
-> > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > > > ---
-> > > >  drivers/clk/sophgo/clk-cv1800.c | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > >=20
-> > > > diff --git a/drivers/clk/sophgo/clk-cv1800.c b/drivers/clk/sophgo/c=
-lk-cv1800.c
-> > > > index e0c4dc347579..e10221df6385 100644
-> > > > --- a/drivers/clk/sophgo/clk-cv1800.c
-> > > > +++ b/drivers/clk/sophgo/clk-cv1800.c
-> > > > @@ -1519,8 +1519,11 @@ static int cv1800_clk_probe(struct platform_=
-device *pdev)
-> > > > =20
-> > > >  static const struct of_device_id cv1800_clk_ids[] =3D {
-> > > >  	{ .compatible =3D "sophgo,cv1800-clk", .data =3D &cv1800_desc },
-> > > > +	{ .compatible =3D "sophgo,cv1800b-clk", .data =3D &cv1800_desc },
-> > >=20
-> > > Given the same data is used here, should there not be fallbacks in the
-> > > dt for some of these? For example, 1812 to 1800? Or is that not okay,
-> > > because 1800 is not a real device id?
-> > >=20
-> > > >  	{ .compatible =3D "sophgo,cv1810-clk", .data =3D &cv1810_desc },
-> > > > +	{ .compatible =3D "sophgo,cv1812h-clk", .data =3D &cv1800_desc },
-> > > >  	{ .compatible =3D "sophgo,sg2000-clk", .data =3D &sg2000_desc },
-> > > > +	{ .compatible =3D "sophgo,sg2002-clk", .data =3D &sg2000_desc },
-> >=20
-> > Actually, this one is a better example. sg2000 is not marked deprecated.
-> > sg2002 uses the same match data. Why is no fallback to sg2000 used for
-> > the sg2002 case?
->=20
-> Yeah, It is a good idea. I will take it, thanks,
-
-Can you point out the difference in the dt-binding patch when you do,
-between the sg2000 being a real device and the others not?
-
---XVRDKcPyTtvEDhL7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaBODmQAKCRB4tDGHoIJi
-0pqUAPwI/zQNgP9x1HvcIE0paiqb55dihwJ5KU9E0DUZ/tC4egEAigTEf+A6r4+2
-rxWOVtgQTrgGBiBhzOKRtofcr/OrIw0=
-=6kou
------END PGP SIGNATURE-----
-
---XVRDKcPyTtvEDhL7--
