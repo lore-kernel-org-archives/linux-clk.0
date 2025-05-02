@@ -1,132 +1,146 @@
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7B01EB5E6;
-	Fri,  2 May 2025 19:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2837D2DC78C;
+	Fri,  2 May 2025 19:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746212694; cv=none; b=ETn/vh4T20dnHZ+dm+M7xWR/j65YzQMdLw9TRJLh7uckIJMLDv60h6x4TIOI43yMRYWowtLDDePBGL4Y4bQkesS3LorkDSIIT5duiGPCSQ3ePq7y3Cc3u2uh+vPfDs+ylmH4aEoF2VA5s28JePZrqoQ8auOB1fFDtabaEGGxjk8=
+	t=1746214291; cv=none; b=cx+vKxJEqJI1EXonnrDbkXxjAlMQR7A1HNUozPt3rVaGQLVlfsWYgTMhNYOwGgMYLfUTklv3AhMnwGM77ZKLrIRMsWDJqs5Ol/MYiktZl8OkjbqZmwe+CZ/Ow58/Ds8qvwx/D7Q48+nElorY3ztVsb0sJr2+i+TjcxHqyfUlPB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746212694; c=relaxed/simple;
-	bh=p7XIGW72I/91fLazyIlExCv1uQr/qO433Ug1xE3MvsU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=C8PQEPUk7xvW2zcKJXpvEC9TymtQg1kcizbU0eAi84WE+zorQTO1MEdP22BUSYZ0p9BOSIKITbSTvBqBomX5dW3iBwFVQtERcxK0cx+vNVF5pCtLvv0wFcpTc7AwFPh1VIfq5yPVKBdOOKniJNBPe+hMU9XTktRJeo8DdgL3TsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=p4qqZM6h; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+	s=arc-20240116; t=1746214291; c=relaxed/simple;
+	bh=M5hI8igvUh0TJ227AgSlnOH2SgqlqQg9EBsxC0vnAG0=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=GJS6qg44zw9Fn7ltCiBSC9ZmBS96bZ6IsuKDfuJEPKTaqC1Z4oirkvcCFuowrTSO2nnBkdxPwal6u7Keb+zQlt258bLVvVGg4h0AqQ4aYbqEtcolZOAl65Rw95lNVVfZkYYCPAN0vCB766xsnrAqVpQ8r7av1btYJS/LqXMNscU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOkfOJei; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="p4qqZM6h"
-Received: from localhost (web.docker-mailserver_default [172.18.0.2])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 71034BBAC4;
-	Fri,  2 May 2025 19:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1746212684;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qM7bXBHe1bXroHuK8JaLfF5A62uJE4FV4UFgd1YY7Z4=;
-	b=p4qqZM6hk7CsMYNc6A9L8oCFEPGgrrln3MTHLjBn5mo9Gn59CYx++5icdw48Q0QaIFEBOq
-	PmTfTckQgiXuEWVWwLo99fCwoVmRNDeIx0TqYfT9zyvxGX16hiZXip562t8NQkXAHCA0O3
-	03CWY4qHkYXKWd4x10AY+TpFjqHG0VsG9hdaPPXMGSb7scb0Ee4rJ/Ak3K7bEI8T6lF00Q
-	JJvqN9tl6F71Y5bP0EDfK7VFuYiu1b3pewx94S9+gPV4wARKwvMyGT1QQbmZLDijA3D9+s
-	i4GEwXZMRHF/3sdmaQIGlB9Dd9tw5/gKjIFeCYZc3M8gpnhMQObe7f3HJOyzOQ==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOkfOJei"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5853DC4CEE4;
+	Fri,  2 May 2025 19:31:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746214290;
+	bh=M5hI8igvUh0TJ227AgSlnOH2SgqlqQg9EBsxC0vnAG0=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=kOkfOJeiVHTOyVqOJ+strKRh1AI1dqd8XRTs68spQ6Z5fyslISqXUm6tB13300tJt
+	 uNbqQwrKftoWK01j40VkWbcDo667egy2Qv8URS3YzanZKLV06UjvEjvBItt35w+rLD
+	 pYQWr0nAgA4GLypZxtY6h0tGaD5an2ZqIE7JtBprxwmMsxjlIMp/VY0HIC1luyvsBj
+	 8vLYKpxIX5BzBMlBQ6/e9It7LQ0BzH5PflQztEnTNX+ZxsqoI3d/FQHl4eY3wu4Szp
+	 82nF3IaeGsUVFGPqv4PpLBUi1+JOlTCz0TpY1Z6rQNRo4DS0K5D7udAD921qp8a4vz
+	 0MQ/ff9ranQ9Q==
+Date: Fri, 02 May 2025 14:31:28 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 02 May 2025 21:04:44 +0200
-From: barnabas.czeman@mainlining.org
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
- =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, Linus Walleij
- <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Joerg Roedel
- <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
- <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, Rob Clark
- <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Dmitry
- Baryshkov <lumag@kernel.org>, Adam Skladowski <a_skl39@protonmail.com>,
- Sireesh Kodali <sireeshkodali@protonmail.com>, Srinivas Kandagatla
- <srini@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, Dang Huynh
- <danct12@riseup.net>
-Subject: Re: [PATCH v5 3/5] arm64: dts: qcom: Add initial support for MSM8937
-In-Reply-To: <656da4e9-b609-43f4-9afd-006698a2c7d6@oss.qualcomm.com>
-References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
- <20250421-msm8937-v5-3-bf9879ef14d9@mainlining.org>
- <2e3d94a4-d9e1-429e-9f65-d004c80180e5@oss.qualcomm.com>
- <790a0b7537e0b82b70bc4b32612ecee6@mainlining.org>
- <70635d75-03f9-49ea-8098-57cb144fda94@oss.qualcomm.com>
- <5ccb39f9393b44761127717096a38a46@mainlining.org>
- <68e2c0ee-d5e2-40fd-9ca0-262ed3270628@oss.qualcomm.com>
- <31559417a92d1e1ff17d0f3add9a1ba0@mainlining.org>
- <656da4e9-b609-43f4-9afd-006698a2c7d6@oss.qualcomm.com>
-Message-ID: <c7d9f42017f10bac303b483127859c18@mainlining.org>
-X-Sender: barnabas.czeman@mainlining.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>, 
+ linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+ Luo Jie <quic_luoj@quicinc.com>
+To: George Moussalem <george.moussalem@outlook.com>
+In-Reply-To: <20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com>
+References: <20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com>
+Message-Id: <174621422446.2300145.5789096612500039953.robh@kernel.org>
+Subject: Re: [PATCH 0/6] Add CMN PLL clock controller support for IPQ5018
 
-On 2025-04-25 23:02, Konrad Dybcio wrote:
-> On 4/25/25 10:22 PM, barnabas.czeman@mainlining.org wrote:
->> On 2025-04-25 21:26, Konrad Dybcio wrote:
->>> On 4/25/25 5:13 PM, barnabas.czeman@mainlining.org wrote:
->>>> On 2025-04-25 11:57, Konrad Dybcio wrote:
->>>>> On 4/23/25 4:46 PM, barnabas.czeman@mainlining.org wrote:
->>>>>> On 2025-04-23 16:03, Konrad Dybcio wrote:
->>>>>>> On 4/21/25 10:18 PM, Barnabás Czémán wrote:
->>>>>>>> From: Dang Huynh <danct12@riseup.net>
->>>>>>>> 
->>>>>>>> Add initial support for MSM8937 SoC.
->>>>>>>> 
->>>>>>>> Signed-off-by: Dang Huynh <danct12@riseup.net>
->>>>>>>> Co-developed-by: Barnabás Czémán 
->>>>>>>> <barnabas.czeman@mainlining.org>
->>>>>>>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
->>>>>>>> ---
->>>>> 
->>>>> [...]
->>>>> 
->>>>>>>> +            gpu_opp_table: opp-table {
->>>>>>>> +                compatible = "operating-points-v2";
->>>>>>>> +
->>>>>>>> +                opp-19200000 {
->>>>>>>> +                    opp-hz = /bits/ 64 <19200000>;
->>>>>>>> +                    opp-supported-hw = <0xff>;
->>>>>>> 
->>>>>>> The comment from the previous revision still stands
->>>>>> If i remove opp-supported-hw i will got -22 EINVAL messages and 
->>>>>> the opp will be not fine.
->>>>> 
->>>>> Right, I have a series pending to improve this situation a bit..
->>>>> 
->>>>> In the meantime, you should be able to define the nvmem cell and
->>>>> fill in meaningful values for this platform
->>>> As I wrote in the previous revision there is no nvmem for GPU on 
->>>> msm8937 only on msm8940.
->>> 
->>> This seems not to be the case
->>> 
->>> https://github.com/penglezos/android_kernel_xiaomi_msm8953/blob/pie/arch/arm/boot/dts/qcom/msm8937.dtsi#L2046-L2191
->>> 
->> These are on msm-4.9 was moved to msm8940.dtsi
->> https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.10.6.2.c26-01500-89xx.0/arch/arm64/boot/dts/qcom/msm8937-gpu.dtsi#L162
->> https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.10.6.2.c26-01500-89xx.0/arch/arm64/boot/dts/qcom/msm8940.dtsi#L600
->> 475 MHz and 500 MHz is for msm8940 at least based on 4.9
+
+On Fri, 02 May 2025 14:15:42 +0400, George Moussalem wrote:
+> The CMN PLL block of IPQ5018 supplies output clocks for XO at 24 MHZ,
+> sleep at 32KHZ, and the ethernet block at 50MHZ.
 > 
-> I'll try to get a more conclusive answer internally
-Any information? I am thinking about define nvmem cells based on 3.18
+> This patch series extends the CMN PLL driver to support IPQ5018.
+> It also adds the SoC specific header file to export the CMN PLL
+> output clock specifiers for IPQ5018. The new table of output
+> clocks is added for the CMN PLL of IPQ5018, which is acquired
+> from the device according to the compatible.
 > 
-> Konrad
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
+> George Moussalem (6):
+>       dt-bindings: clock: qcom: Add CMN PLL support for IPQ5018 SoC
+>       clk: qcom: ipq5018: mark XO clock as critical
+>       clk: qcom: ipq-cmn-pll: Add IPQ5018 SoC support
+>       dt-bindings: mfd: qcom,tcsr: Add compatible for IPQ5018
+>       arm64: dts: ipq5018: Add CMN PLL node
+>       arm64: dts: qcom: Update IPQ5018 xo_board_clk to use fixed factor clock
+> 
+>  .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 11 +++-
+>  .../devicetree/bindings/mfd/qcom,tcsr.yaml         |  1 +
+>  arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts     |  3 +-
+>  .../dts/qcom/ipq5018-tplink-archer-ax55-v1.dts     |  3 +-
+>  arch/arm64/boot/dts/qcom/ipq5018.dtsi              | 40 +++++++++++-
+>  drivers/clk/qcom/gcc-ipq5018.c                     |  2 +-
+>  drivers/clk/qcom/ipq-cmn-pll.c                     | 72 ++++++++++++++++++----
+>  include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h   | 16 +++++
+>  8 files changed, 129 insertions(+), 19 deletions(-)
+> ---
+> base-commit: 8a2d53ce3c5f82683ad3df9a9a55822816fe64e7
+> change-id: 20250501-ipq5018-cmn-pll-8e517de873f8
+> prerequisite-change-id: 20250411-qcom_ipq5424_cmnpll-960a8f597033:v2
+> prerequisite-patch-id: dc3949e10baf58f8c28d24bb3ffd347a78a1a2ee
+> prerequisite-patch-id: da645619780de3186a3cccf25beedd4fefab36df
+> prerequisite-patch-id: 4b5d81954f1f43d450a775bcabc1a18429933aaa
+> prerequisite-patch-id: 541f835fb279f83e6eb2405c531bd7da9aacf4bd
+> 
+> Best regards,
+> --
+> George Moussalem <george.moussalem@outlook.com>
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+This patch series was applied (using b4) to base:
+ Base: using specified base-commit 8a2d53ce3c5f82683ad3df9a9a55822816fe64e7
+ Deps: looking for dependencies matching 4 patch-ids
+ Deps: Applying prerequisite patch: [PATCH v2 1/4] dt-bindings: clock: qcom: Add CMN PLL support for IPQ5424 SoC
+ Deps: Applying prerequisite patch: [PATCH v2 2/4] clk: qcom: cmnpll: Add IPQ5424 SoC support
+ Deps: Applying prerequisite patch: [PATCH v2 3/4] arm64: dts: ipq5424: Add CMN PLL node
+ Deps: Applying prerequisite patch: [PATCH v2 4/4] arm64: dts: qcom: Update IPQ5424 xo_board to use fixed factor clock
+
+If this is not the correct base, please add 'base-commit' tag
+(or use b4 which does this automatically)
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com:
+
+arch/arm64/boot/dts/qcom/ipq9574-rdp454.dtb: clock-controller@9b000 (qcom,ipq9574-cmn-pll): 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
+arch/arm64/boot/dts/qcom/ipq5424-rdp466.dtb: clock-controller@9b000 (qcom,ipq5424-cmn-pll): 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
+arch/arm64/boot/dts/qcom/ipq9574-rdp433.dtb: clock-controller@9b000 (qcom,ipq9574-cmn-pll): 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
+arch/arm64/boot/dts/qcom/ipq9574-rdp453.dtb: clock-controller@9b000 (qcom,ipq9574-cmn-pll): 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
+arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dtb: clock-controller@9b000 (qcom,ipq5018-cmn-pll): 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
+arch/arm64/boot/dts/qcom/ipq5018-tplink-archer-ax55-v1.dtb: clock-controller@9b000 (qcom,ipq5018-cmn-pll): 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
+arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: clock-controller@9b000 (qcom,ipq9574-cmn-pll): 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
+arch/arm64/boot/dts/qcom/ipq9574-rdp418.dtb: clock-controller@9b000 (qcom,ipq9574-cmn-pll): 'reg' does not match any of the regexes: '^pinctrl-[0-9]+$'
+	from schema $id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
+
+
+
+
+
