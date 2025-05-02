@@ -1,187 +1,132 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3CC1A3174
-	for <linux-clk@vger.kernel.org>; Fri,  2 May 2025 17:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7B01EB5E6;
+	Fri,  2 May 2025 19:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746207352; cv=none; b=fe80xBvRXxBzW/wEkTjwUzQAXrkfsS6j5Cd3WqBDFe878w78eKhUkN7VrpHG+FaWo4CVb3Lf4BPapS9ppMJU3lakTik302RdavetZThuu45hIr5Xq3pznobgF2z3PYxGSiNVDtUz2LfNGgErx+YTqx0d9yNNPqB3Vfawv9kCV/w=
+	t=1746212694; cv=none; b=ETn/vh4T20dnHZ+dm+M7xWR/j65YzQMdLw9TRJLh7uckIJMLDv60h6x4TIOI43yMRYWowtLDDePBGL4Y4bQkesS3LorkDSIIT5duiGPCSQ3ePq7y3Cc3u2uh+vPfDs+ylmH4aEoF2VA5s28JePZrqoQ8auOB1fFDtabaEGGxjk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746207352; c=relaxed/simple;
-	bh=qwDDJIMY3SmfHF6RfD11Zji50ZeYXaTD7oE39CiI6/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GaAppuKXGA8DiFtGMTSoOVOnFqo4jW1Igy2dRXlfN68mEmM2cFdXiGAkbTQNG/4LceYr3LimG4kXIN28o8uJ691pKv4x8HOv8uAxr1L5qNHbKTYzOOGBr9NCUbYUekKgfsJltSWrMCdcXCcblHDGEQH7XnNLRGy4ztF8mGUPYA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=SzXCmOyN; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+	s=arc-20240116; t=1746212694; c=relaxed/simple;
+	bh=p7XIGW72I/91fLazyIlExCv1uQr/qO433Ug1xE3MvsU=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=C8PQEPUk7xvW2zcKJXpvEC9TymtQg1kcizbU0eAi84WE+zorQTO1MEdP22BUSYZ0p9BOSIKITbSTvBqBomX5dW3iBwFVQtERcxK0cx+vNVF5pCtLvv0wFcpTc7AwFPh1VIfq5yPVKBdOOKniJNBPe+hMU9XTktRJeo8DdgL3TsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=p4qqZM6h; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="SzXCmOyN"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22c33ac23edso28316845ad.0
-        for <linux-clk@vger.kernel.org>; Fri, 02 May 2025 10:35:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1746207350; x=1746812150; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZYhAVQlokiByUgWXBup9K48iVS+b0vgtDdhC/WcTVzQ=;
-        b=SzXCmOyNfBUW7SNbgfHGOAG8iQjRDoAwJAJfGwKJrxZYeORRUt8jvlnamGAszF/geG
-         FLHgwVaMx/CMqgbtPVip+hh2v1Cx5Ql4cQqqqmKudPK/E8H7CDxolt5cNmayHNNGQ4fU
-         TSayzkr8ueST0jIe+OJ4Lqz4MhKDvLp8cyatiDeafKz7lXrJgXRnCvCZp4AU42mvG4cg
-         0GxBbuV27s0yHEJynznochGjzPbm+kk6m98xXlUCCV0k980QmoVXra9kMyvztMSU6seG
-         PWlJcR75gJ1+V42AU5tt8bctntepnrdUPCh3h3y4LZ0PmEC+m1S7MaeSvg6879VitX52
-         31Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746207350; x=1746812150;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZYhAVQlokiByUgWXBup9K48iVS+b0vgtDdhC/WcTVzQ=;
-        b=wLfHrJTpbNYJg7qn6BYIdPXQG9/QatZiUejopNsZ9JB8cd2qmlHZghUm3PkcSgzH7o
-         pBsUN9tletRCZFA82/LhlU3qwCqoEPWeyX3xY7kkw7hG/8unTKOCaUUwDayMvzqMySc2
-         hWjnaBp5i4iu0MJkLGrvo+3TWwiCR67zwcjp3+qNy2shPw2AOeMmQrXteEpYCmgrhFad
-         RDwqVLx4UCNGO9b1mVWB10fBMTxUXaDpoN7ifBT2pkfFd7WySC/vetHbur8DQw3mX5Mj
-         OrxRRq9dPuYLprxicvgi2izH5lyNmz2QL+6k8IP1W5nm911eGrbLwY3AgBfrUdEj3cgp
-         6pbw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+ZrVeNFKFX+Y07YU6NlMyxUkqW+fLDddWbOEzr3sf9n4S6h5WmxSqAExKIQdJHBC3Ijn+gdAIPE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkZJL6kCMR8TYOUa1im2TFVk9pMsgWnixO8hMBi832zBXxK+Fn
-	G28+Z84WVX4zxGrexeCbZtFQEtvT1rXC4IHvv/7t09tQsrZkmrbOtc2bqTaGYWU=
-X-Gm-Gg: ASbGncvy74ov0gQ0/DRZSigqCBCaHAwhPry1lVuHmGMR2gZB3WivBWS6Gg2z2wKrCtB
-	cryU4JhIjp+0n4Jy9NSSU888jDq5MTGnWnOti/5xazrt2M2CNRAl6dPqG6ZqEISywF2EtDWxHMi
-	XOuRFvsj3+AIUta4mWve0xGcBnTaqhwQBJOIowXe3eUxskxOxAOMdczdnDgHKin/p4k5fNeM+aq
-	p+xixeZkhJd4ki6HgwWrmJd2lzZGCFWxoya+GmS4RGWNwC1lCnmUSZ804Ayy6sW9cPpfQ2RAIsr
-	piZIAeRg8kmNhIe3vjknJL+cTRGMBu3Js9caFGO3/yLbZPublqaf+0ajeA==
-X-Google-Smtp-Source: AGHT+IHBxa82j3Roorwj2Et3r1OrV5OkcZFDFTDmDeIMXs4BMM/H2pad3CjPCcSgOfU4YoigoF7IqQ==
-X-Received: by 2002:a17:903:3b88:b0:223:5ca1:3b0b with SMTP id d9443c01a7336-22e103965femr57603255ad.40.1746207350292;
-        Fri, 02 May 2025 10:35:50 -0700 (PDT)
-Received: from x1 (97-120-122-6.ptld.qwest.net. [97.120.122.6])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e15232797sm10306915ad.240.2025.05.02.10.35.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 10:35:49 -0700 (PDT)
-Date: Fri, 2 May 2025 10:35:48 -0700
-From: Drew Fustini <drew@pdp7.com>
-To: Michal Wilczynski <m.wilczynski@samsung.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	jszhang@kernel.org, p.zabel@pengutronix.de,
-	m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v7 3/3] riscv: dts: thead: Add device tree VO clock
- controller
-Message-ID: <aBUCdA0ZSQL1n3i4@x1>
-References: <20250403094425.876981-1-m.wilczynski@samsung.com>
- <CGME20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319@eucas1p2.samsung.com>
- <20250403094425.876981-4-m.wilczynski@samsung.com>
- <Z/BoQIXKEhL3/q50@x1>
- <17d69810-9d1c-4dd9-bf8a-408196668d7b@samsung.com>
- <9ce45e7c1769a25ea1abfaeac9aefcfb@kernel.org>
- <475c9a27-e1e8-4245-9ca0-74c9ed663920@samsung.com>
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="p4qqZM6h"
+Received: from localhost (web.docker-mailserver_default [172.18.0.2])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 71034BBAC4;
+	Fri,  2 May 2025 19:04:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1746212684;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qM7bXBHe1bXroHuK8JaLfF5A62uJE4FV4UFgd1YY7Z4=;
+	b=p4qqZM6hk7CsMYNc6A9L8oCFEPGgrrln3MTHLjBn5mo9Gn59CYx++5icdw48Q0QaIFEBOq
+	PmTfTckQgiXuEWVWwLo99fCwoVmRNDeIx0TqYfT9zyvxGX16hiZXip562t8NQkXAHCA0O3
+	03CWY4qHkYXKWd4x10AY+TpFjqHG0VsG9hdaPPXMGSb7scb0Ee4rJ/Ak3K7bEI8T6lF00Q
+	JJvqN9tl6F71Y5bP0EDfK7VFuYiu1b3pewx94S9+gPV4wARKwvMyGT1QQbmZLDijA3D9+s
+	i4GEwXZMRHF/3sdmaQIGlB9Dd9tw5/gKjIFeCYZc3M8gpnhMQObe7f3HJOyzOQ==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <475c9a27-e1e8-4245-9ca0-74c9ed663920@samsung.com>
+Date: Fri, 02 May 2025 21:04:44 +0200
+From: barnabas.czeman@mainlining.org
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
+ =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, Linus Walleij
+ <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, Joerg Roedel
+ <joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
+ <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, Rob Clark
+ <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Dmitry
+ Baryshkov <lumag@kernel.org>, Adam Skladowski <a_skl39@protonmail.com>,
+ Sireesh Kodali <sireeshkodali@protonmail.com>, Srinivas Kandagatla
+ <srini@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ iommu@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht, linux@mainlining.org, Dang Huynh
+ <danct12@riseup.net>
+Subject: Re: [PATCH v5 3/5] arm64: dts: qcom: Add initial support for MSM8937
+In-Reply-To: <656da4e9-b609-43f4-9afd-006698a2c7d6@oss.qualcomm.com>
+References: <20250421-msm8937-v5-0-bf9879ef14d9@mainlining.org>
+ <20250421-msm8937-v5-3-bf9879ef14d9@mainlining.org>
+ <2e3d94a4-d9e1-429e-9f65-d004c80180e5@oss.qualcomm.com>
+ <790a0b7537e0b82b70bc4b32612ecee6@mainlining.org>
+ <70635d75-03f9-49ea-8098-57cb144fda94@oss.qualcomm.com>
+ <5ccb39f9393b44761127717096a38a46@mainlining.org>
+ <68e2c0ee-d5e2-40fd-9ca0-262ed3270628@oss.qualcomm.com>
+ <31559417a92d1e1ff17d0f3add9a1ba0@mainlining.org>
+ <656da4e9-b609-43f4-9afd-006698a2c7d6@oss.qualcomm.com>
+Message-ID: <c7d9f42017f10bac303b483127859c18@mainlining.org>
+X-Sender: barnabas.czeman@mainlining.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 30, 2025 at 09:52:29AM +0200, Michal Wilczynski wrote:
+On 2025-04-25 23:02, Konrad Dybcio wrote:
+> On 4/25/25 10:22 PM, barnabas.czeman@mainlining.org wrote:
+>> On 2025-04-25 21:26, Konrad Dybcio wrote:
+>>> On 4/25/25 5:13 PM, barnabas.czeman@mainlining.org wrote:
+>>>> On 2025-04-25 11:57, Konrad Dybcio wrote:
+>>>>> On 4/23/25 4:46 PM, barnabas.czeman@mainlining.org wrote:
+>>>>>> On 2025-04-23 16:03, Konrad Dybcio wrote:
+>>>>>>> On 4/21/25 10:18 PM, Barnabás Czémán wrote:
+>>>>>>>> From: Dang Huynh <danct12@riseup.net>
+>>>>>>>> 
+>>>>>>>> Add initial support for MSM8937 SoC.
+>>>>>>>> 
+>>>>>>>> Signed-off-by: Dang Huynh <danct12@riseup.net>
+>>>>>>>> Co-developed-by: Barnabás Czémán 
+>>>>>>>> <barnabas.czeman@mainlining.org>
+>>>>>>>> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+>>>>>>>> ---
+>>>>> 
+>>>>> [...]
+>>>>> 
+>>>>>>>> +            gpu_opp_table: opp-table {
+>>>>>>>> +                compatible = "operating-points-v2";
+>>>>>>>> +
+>>>>>>>> +                opp-19200000 {
+>>>>>>>> +                    opp-hz = /bits/ 64 <19200000>;
+>>>>>>>> +                    opp-supported-hw = <0xff>;
+>>>>>>> 
+>>>>>>> The comment from the previous revision still stands
+>>>>>> If i remove opp-supported-hw i will got -22 EINVAL messages and 
+>>>>>> the opp will be not fine.
+>>>>> 
+>>>>> Right, I have a series pending to improve this situation a bit..
+>>>>> 
+>>>>> In the meantime, you should be able to define the nvmem cell and
+>>>>> fill in meaningful values for this platform
+>>>> As I wrote in the previous revision there is no nvmem for GPU on 
+>>>> msm8937 only on msm8940.
+>>> 
+>>> This seems not to be the case
+>>> 
+>>> https://github.com/penglezos/android_kernel_xiaomi_msm8953/blob/pie/arch/arm/boot/dts/qcom/msm8937.dtsi#L2046-L2191
+>>> 
+>> These are on msm-4.9 was moved to msm8940.dtsi
+>> https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.10.6.2.c26-01500-89xx.0/arch/arm64/boot/dts/qcom/msm8937-gpu.dtsi#L162
+>> https://git.codelinaro.org/clo/la/kernel/msm-4.9/-/blob/LA.UM.10.6.2.c26-01500-89xx.0/arch/arm64/boot/dts/qcom/msm8940.dtsi#L600
+>> 475 MHz and 500 MHz is for msm8940 at least based on 4.9
 > 
+> I'll try to get a more conclusive answer internally
+Any information? I am thinking about define nvmem cells based on 3.18
 > 
-> On 4/30/25 00:29, Stephen Boyd wrote:
-> > Quoting Michal Wilczynski (2025-04-07 08:30:43)
-> >> On 4/5/25 01:16, Drew Fustini wrote:
-> >>>> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-> >>>> index 527336417765..d4cba0713cab 100644
-> >>>> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> >>>> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> >>>> @@ -489,6 +489,13 @@ clk: clock-controller@ffef010000 {
-> >>>>                      #clock-cells = <1>;
-> >>>>              };
-> >>>>  
-> >>>> +            clk_vo: clock-controller@ffef528050 {
-> >>>> +                    compatible = "thead,th1520-clk-vo";
-> >>>> +                    reg = <0xff 0xef528050 0x0 0xfb0>;
-> >>>
-> >>> Thanks for your patch. It is great to have more of the clocks supported
-> >>> upstream.
-> >>>
-> >>> The TH1520 System User Manual shows 0xFF_EF52_8000 for VO_SUBSYS on page
-> >>> 205. Is there a reason you decided to use 0xFF_EF52_8050 as the base?
-> >>>
-> >>> I see on page 213 that the first register for VO_SUBSYS starts with
-> >>> VOSYS_CLK_GATE at offset 0x50. I figure you did this to have the
-> >>> CCU_GATE macros use offset of 0x0 instead 0x50.
-> >>>
-> >>> I kind of think the reg property using the actual base address
-> >>> (0xFF_EF52_8000) makes more sense as that's a closer match to the tables
-> >>> in the manual. But I don't have a strong preference if you think think
-> >>> using 0xef528050 makes the CCU_GATE macros easier to read.
-> >>
-> >> Thank you for your comment.
-> >>
-> >> This was discussed some time ago. The main issue was that the address
-> >> space was fragmented between clocks and resets. Initially, I proposed
-> >> using syscon as a way to abstract this, but the idea wasn't particularly
-> >> well received.
-> >>
-> >> So at the start of the 0xFF_EF52_8000 there is a reset register GPU_RST_CFG
-> >> I need for resetting the GPU.
-> >>
-> >> For reference, here's the earlier discussion: [1]
-> >>
-> >> [1] - https://lore.kernel.org/all/1b05b11b2a8287c0ff4b6bdd079988c7.sboyd@kernel.org/
-> >>
-> > 
-> > In that email I said you should have one node
-> > clock-controller@ffef528000. Why did 0x50 get added to the address?
-> 
-> Hi Stephen,
-> In the v2 version of the patchset, there was no reset controller yet, so
-> I thought your comment was made referring to that earlier version.
-> This representation clearly describes the hardware correctly, which is
-> the requirement for the Device Tree.
-> 
-> The manual, in section 5.4.1.6 VO_SUBSYS, describes the reset registers
-> starting at 0xFF_EF52_8000:
-> 
-> GPU_RST_CFG             0x00
-> DPU_RST_CFG             0x04
-> MIPI_DSI0_RST_CFG       0x8
-> MIPI_DSI1_RST_CFG       0xc
-> HDMI_RST_CFG            0x14
-> AXI4_VO_DW_AXI          0x18
-> X2H_X4_VOSYS_DW_AXI_X2H 0x20
-> 
-> And the clock registers for VO_SUBSYS, manual section 4.4.1.6 start at offset 0x50:
-> VOSYS_CLK_GATE          0x50
-> VOSYS_CLK_GATE1         0x54
-> VOSYS_DPU_CCLK_CFG0     0x64
-> TEST_CLK_FREQ_STAT      0xc4
-> TEST_CLK_CFG            0xc8
-> 
-> So I considered this back then and thought it was appropriate to divide
-> it into two nodes, as the reset node wasn't being considered at that
-> time.
-> 
-> When looking for the reference [1], I didn't notice if you corrected
-> yourself later, but I do remember considering the single-node approach
-> at the time.
-> 
-> > 
-> 
-> Best regards,
-> -- 
-> Michal Wilczynski <m.wilczynski@samsung.com>
-
-I chatted with Stephen on irc about setting up a thead clk branch and
-sending pull requests to Stephen.
-
-Stephen - are there changes in this series that you want to see in order
-to give your Reviewed-by?
-
-Thanks,
-Drew
+> Konrad
