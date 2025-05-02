@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A2021146A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76A8822D4F9;
 	Fri,  2 May 2025 10:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746180949; cv=none; b=FOGtyJk+OmKJ88A/EHXYqeTlXg+ahsTi+6/AhuYJ9j64VO/882q6t9fPcyHJrWYr11K/iuxMpGmyGC3B/aicV99d1Hc0IWSqBZ9k3XP1LRf/4w6+5znzdlMoGhXTSltt/9aKo08HQqxbjRK36zhZo20cGmax1/6Nwiy5e7pSsJE=
+	t=1746180949; cv=none; b=krCrfFApReanUoz4ESVH+Oy2r5TNxJmc4kiAIaif0UP16lNj8cPwDG6ZztnuPOfKSZi+aHSrW63LJTCv25ySuKDz/QxN/UZhVb1hLpMHYOuf9s0pM1rwdK4Dmf7wa9LvfUqJTdSWJmsTSL1luzouPbxSu7rEihXGNjhlv/tuJmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746180949; c=relaxed/simple;
-	bh=OEMRWSk4kiWPE3EhCFbIe0N0cuQqpnI5N1PC98kusOo=;
+	bh=9c73iXDXvgnARot8nAst3Y4sWhj8Zc0sgUgQkOUXnus=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VBSn+VwKeDiZrGOu9y4Zi0fOHomHd60lzKm/SKoelpL2nqB3/ihR5Ia+LpdRXEsRouIXuHbCme2v4DSjcscGnqmL4jl2Fr/9/06NtroVJFnaLCCDgKiNOe1i/lcugCyFpFFLtZm1f86wuqcEzVGIuB2b/Kz7rGEx2jWsxJx2b1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NhQSXXwg; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:To:Cc; b=ZRh9oUWFJwikTAL7yeEgT7evaopXo3wLAF/J61Wu0ce21KInM0IYtY5oOPs5bWs4Z5GcuDbl8yp6cITNLv09nwWGdqI8ilLt4NWW4tYJNyVi3bZJIMhdJT0zLkmQNoIqPx9Foyl0J7f2CLeAGpyRvh3KWt9gmUlTld3tXB5Lk1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8lkdEeE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhQSXXwg"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ED60EC4CEED;
-	Fri,  2 May 2025 10:15:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8lkdEeE"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1C6C4C4CEF7;
+	Fri,  2 May 2025 10:15:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1746180949;
-	bh=OEMRWSk4kiWPE3EhCFbIe0N0cuQqpnI5N1PC98kusOo=;
+	bh=9c73iXDXvgnARot8nAst3Y4sWhj8Zc0sgUgQkOUXnus=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=NhQSXXwgWP7TgnjKs0pD9ZOB4UyvSBCVdH0iSEE+rs4bXGzJ2VBuhiq6XSvxdX5Rx
-	 7LhZgVTuk6HiqlO0H25TwVYd6PP1kLXufmL+Xwk1bYdXmAnOnMvcn3VR/bLHhVu/eE
-	 V11iJima33/7/ldCpEJqi79kuV2L6AzuOXXqxzVNFVi7uqG+BmZeTSlYsNVU6FgOz3
-	 52puUzbiEhdBjAhk+2UK8uyvkNu47fn9sWTb+KOYNyNzbGzIadLmYePEYXSfUQaxuf
-	 dkV0pl+N5gkh3GOhnxEwhSe4ao3okJNiooa+c8Xr5IOm0+IvWyJvqMHGv5SxeNFSWz
-	 EYJrf8xhhh9DA==
+	b=s8lkdEeEu/5hTjphAH51GVQNYiK8MaA6cmSt5/fj9vxPUCnS6uA6NCoDV12O/9XmT
+	 CqQwIw+Xp6p0zWqYm2FnYh9uUmXEa+N6m1uu5TQrHFsiRwPKBRtxL6aQJiMO8Bl1Nv
+	 gRuCAhHpqrJu2mtr615M038YQ9oYqwEx5XD5qISpsVvVmOmt0qvqka8XWdjHMITbOx
+	 8nHnb6Gn4BTIlwKX4kCqWAhEdh8Ak2uztqmWx0YFmUurIb4hgvpnfbOOYPAI2nhpV0
+	 g5st+PDB9mRgq+uJLye+UuVaxZ/0+78YC8lQVmBtlNmHC0YGJ8ojfudN2U3tIAHw8Q
+	 +vxFP3TReEx0Q==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD246C3ABA3;
-	Fri,  2 May 2025 10:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8F3C3ABB6;
+	Fri,  2 May 2025 10:15:49 +0000 (UTC)
 From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Fri, 02 May 2025 14:15:43 +0400
-Subject: [PATCH 1/6] dt-bindings: clock: qcom: Add CMN PLL support for
- IPQ5018 SoC
+Date: Fri, 02 May 2025 14:15:46 +0400
+Subject: [PATCH 4/6] dt-bindings: mfd: qcom,tcsr: Add compatible for
+ IPQ5018
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,7 +41,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250502-ipq5018-cmn-pll-v1-1-27902c1c4071@outlook.com>
+Message-Id: <20250502-ipq5018-cmn-pll-v1-4-27902c1c4071@outlook.com>
 References: <20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com>
 In-Reply-To: <20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -54,11 +54,11 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  George Moussalem <george.moussalem@outlook.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1746180945; l=2537;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746180945; l=819;
  i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=xMsnswH7lfsZOMdAFG5L88fjf8jqYYNAJSbGO9nECgc=;
- b=7+PZxKnRPFSXkwIqCDngsDZjv0Ccl/GljGOBpZt45o/525VNJJBP5j1WbKqTcVlOYbdtF4XIy
- cg4neOqVkaPABNsGuww3237zj0QlAtE2I7kTYca9XgcEr+QBd+kYvlK
+ bh=rWOkA/E/Z9CidEDzLfL6fySdOSwBg0HFYVj2bD8wwdw=;
+ b=lgtEHtO41HG6bV8PodAOUvv4/8xckPbBymX1w3Wj6XQeY35/cFoP15GLYqTsSna6obsLzbh9X
+ 3fygYMoK3lWC99OHGLNYSUI2JedeVmSHU3BJzbdJ7L7JO4JMNLe3lAI
 X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
  pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
 X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
@@ -68,74 +68,25 @@ Reply-To: george.moussalem@outlook.com
 
 From: George Moussalem <george.moussalem@outlook.com>
 
-The CMN PLL block in the IPQ5018 SoC takes 96 MHZ as the reference
-input clock. Its output clocks are the XO (24Mhz), sleep (32Khz), and
-ethernet (50Mhz) clocks.
-
-Unlike IPQ9574, the CMN PLL to the ethernet block needs to be enabled
-first in IPQ5018. Hence, add optional phandle to TCSR register space
-and offset to do so.
+Document the qcom,tcsr-ipq5018 compatible.
 
 Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 ---
- .../devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml  | 11 ++++++++---
- include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h         | 16 ++++++++++++++++
- 2 files changed, 24 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
-index cb6e09f4247f4b25105b25f4ae746c0b3ef47616..25006d65d30e20ef8e1f43537bcf3dca65bae73d 100644
---- a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
-@@ -24,12 +24,10 @@ description:
- properties:
-   compatible:
-     enum:
-+      - qcom,ipq5018-cmn-pll
-       - qcom,ipq5424-cmn-pll
-       - qcom,ipq9574-cmn-pll
- 
--  reg:
--    maxItems: 1
--
-   clocks:
-     items:
-       - description: The reference clock. The supported clock rates include
-@@ -50,6 +48,13 @@ properties:
-   "#clock-cells":
-     const: 1
- 
-+  qcom,cmn-pll-eth-enable:
-+    description: Register in TCSR to enable CMN PLL to ethernet
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    items:
-+        - description: phandle of TCSR syscon
-+        - description: offset of TCSR register to enable CMN PLL to ethernet
-+
- required:
-   - compatible
-   - reg
-diff --git a/include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h b/include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..586d1c9b33b374331bef413f543c526212c18494
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,ipq5018-cmn-pll.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_QCOM_IPQ5018_CMN_PLL_H
-+#define _DT_BINDINGS_CLK_QCOM_IPQ5018_CMN_PLL_H
-+
-+/* CMN PLL core clock. */
-+#define IPQ5018_CMN_PLL_CLK			0
-+
-+/* The output clocks from CMN PLL of IPQ5018. */
-+#define IPQ5018_XO_24MHZ_CLK			1
-+#define IPQ5018_SLEEP_32KHZ_CLK			2
-+#define IPQ5018_ETH_50MHZ_CLK			3
-+#endif
+diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+index 7e7225aadae3285f59ec303294cf1515772a629b..14ae3f00ef7e00e607bba93f49f03bb244253b0e 100644
+--- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
++++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+@@ -41,6 +41,7 @@ properties:
+           - qcom,sm8450-tcsr
+           - qcom,tcsr-apq8064
+           - qcom,tcsr-apq8084
++          - qcom,tcsr-ipq5018
+           - qcom,tcsr-ipq5332
+           - qcom,tcsr-ipq5424
+           - qcom,tcsr-ipq6018
 
 -- 
 2.49.0
