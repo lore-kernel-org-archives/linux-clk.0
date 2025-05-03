@@ -1,333 +1,221 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DEB215795
-	for <linux-clk@vger.kernel.org>; Fri,  2 May 2025 22:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCFF18DB20;
+	Sat,  3 May 2025 08:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746226369; cv=none; b=doYidFyTnQM5te8WCviLzzQDiJoNRXVfGr8xRLOpSLY0dlsznhHLxvReCxoPXh3i9R3N4vul5VNeQ8vxUY6BxPJKUBpdpRAQrVUUFepqzEKTOmbHnTdlrF90E7ibpc4iau9KIE4OUvMvOw1UU39daz3tqA+LvtTbYXtdFTdfvKc=
+	t=1746259822; cv=none; b=uZFIdEaxYSe+BLkZFTYVeBeArgnBgvixZPKwJOzzUyNbB6WmH7cgMogrncNZac2Zfqt3pX7M5c076/gXgYG7rSQgqOlHCMOx6ncEP5/jgQR4DowmOXvl/GJT5CutPtPRB29aJOgXsSYGVO30k07Zua4F3be5O46BtSgUt7N2Kqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746226369; c=relaxed/simple;
-	bh=8hZ91w2arLugpliTVJsM/F0LGd3WgsYUoN0l3oJTMVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mNSi2MxWKshfHwUYc9UZvxKlhzA+XnLaURy7cKQhB48XhnWJFtpyi4yyMuIjPLtGYymha4if+r0rw0SoWWAgPzVo8HJEjbmX87pw4Io7g2LwaEd5hbupPFLpzAsYLSR4yBwgqdpIBp2VLS5JND6QWS21A6btWQmR8czKEqSAWlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M4owbPlI; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1746259822; c=relaxed/simple;
+	bh=0rybimlKDX32tVNv6dUWOEFNrXeYzQniolth/7G1KeA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uDTAqMArLuT0Nje7fLy6iSz0SjyeYjHEi4yK3fO/63EE1mORdmZeujrzmUVZ6rEbXDx46cfrEHxWmdWXxiTdXpYFYPoKAjopF/btTGocNbPWyw18dC9TYmkqcnNcuphuvYwH6Ld1mWfj9ncf2XejKu5zTbYB+alEk33fj3ZqkZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=SFOMRa7I; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M4owbPlI"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 542KBWn9016532
-	for <linux-clk@vger.kernel.org>; Fri, 2 May 2025 22:52:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=IMgAeV6O9mToM6/y5/LWAAK7
-	kKgWJWa/1zV0eFvjo2Y=; b=M4owbPlIx830KWEtD2qzmIOJ0vpdBREmuHVV0IY6
-	lOmcaJO4nb7/TECsPc0QZdXryxi9x/hNOcl3Cw4TD3oZYoJQ4hdIwnp48STQYq8j
-	zfSS4di/0Z2+2lqvJKbNEA6XZDpnVwNXb4saHH0LEj3Ow863SpZfOuTHk2f6K5v9
-	jAAdFf7y5WngmnjBjBoi+oyzVlGBlFz/3KXNQDvTmJSzHZobx3N/tApCA8fnN1ZQ
-	8L09vPreOj5g51+nl6LakGZKFvKJHuUIFsY5l4ftgNToMdKe6bnsfVfuHE7X8BJS
-	jBskEexEF2LjJxy3LKFyx8IaykauLZfwVnOboiq5jx/w6A==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46b6u8hebd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Fri, 02 May 2025 22:52:45 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-47689dc0f6dso46622431cf.3
-        for <linux-clk@vger.kernel.org>; Fri, 02 May 2025 15:52:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746226364; x=1746831164;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IMgAeV6O9mToM6/y5/LWAAK7kKgWJWa/1zV0eFvjo2Y=;
-        b=G79/GFiJQI4yr2QgPbw0UUYjEPigVRC1ymhTQbhePRvBM7ss1KgCg9TwW46l7Q5nA9
-         NuTN0wGseds0LqlPwJ74j+we4txHhk6lR8VjO+akXiiP/GutpY4AHBu/RoLJfXOWY4ut
-         shfMYYspFxUpdZqHNsGvuMY5bpNpToKZGjXm/M0lgQQ0rR9fKEun6eMUopquvK+D7Cge
-         m86Vr/wFjMaIQoNNLHT5mxFuPnqHej+KBr5jKWbJxZhvdjZbLSQL9vIE1KGnzZYJp9ZW
-         1Lliy/dofv84jpmHjkTABlkj57CrwGciQoMd7WZS4f3TWT7JDcUnGepQ9OpbYtKuvLoh
-         PjWw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8burN2uNlqcB8z/bjUIJE+K0sWv6aLHvqxaVIiGa6w8YYnZlcavscJ0QYRayylsSbmmEyO7H+VU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybUMQBTuP55fJ8y4+0/4ug++ZDRvPXqphfd5G1tICtAJDZVer3
-	IuFow5xSF2adurLUKuy1GFJ3eucZUK7XXn7ch/ePSchxVU255Vp3YZMp5rTrJRiwNzczbLkqTrm
-	Lzhw8qk5RaXxPKrJp9Kzsgs1nAAW8kA4euX6uj7Cwp3H7FbJZ+DcMAcR0k/U=
-X-Gm-Gg: ASbGncuKawA7675ANBprFT6jqvLzFxYclNAS+L/4x8nbMUc80c3TXOCo/OMYbeltHR/
-	1oIj6aY42VNEHCdpoWr6+0c6BeO4xnA4uOm+t4XVizKSWyx7/SREPjUItMd1sjeWJ430X6PTye2
-	M1VMW5jUWLcuGbRjzsXhcGd/pEEii4N/yqy4IVW3+JYvwikV1WP8FEaTqyNimXu50bgxY2WcJEo
-	wttqw5eyvpHa6EHuQAhf1R/u32yRw6NYIXlXGEAFELtKE90XGgUg3LCVeK5H6cU0ZrFAfUYpjuy
-	MNTUowTiPGrR5Q2jogq7IW/lWYAX5Tvh+d244lmWPwDgM9l13uUua8EfYdw0ZUUE05aq0F75MHc
-	=
-X-Received: by 2002:a05:622a:244e:b0:476:980c:10a8 with SMTP id d75a77b69052e-48c3163ec05mr85645281cf.21.1746226364183;
-        Fri, 02 May 2025 15:52:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEFAXOcRLf2Z3bspGcZv0cNlael5HGsrydFHbIvTQUjv2j75Z2QZiLIQoy7bHSRAG7G4lj9PQ==
-X-Received: by 2002:a05:622a:244e:b0:476:980c:10a8 with SMTP id d75a77b69052e-48c3163ec05mr85645011cf.21.1746226363828;
-        Fri, 02 May 2025 15:52:43 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32029306984sm4992161fa.58.2025.05.02.15.52.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 15:52:42 -0700 (PDT)
-Date: Sat, 3 May 2025 01:52:40 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org,
-        Srinivas Kandagatla <srini@kernel.org>
-Subject: Re: [PATCH v5 19/24] drm/msm/dsi: Add support for SM8750
-Message-ID: <ahx623ttvzd62u4fri6iqguj7mirlf22tvwbu6k2ngxw6hwbcp@oh7mmex5fjmz>
-References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
- <20250430-b4-sm8750-display-v5-19-8cab30c3e4df@linaro.org>
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="SFOMRa7I"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1746259803; x=1746864603; i=wahrenst@gmx.net;
+	bh=f9yFUk+rZhcL56xZdVvP5zsnfEQ/If1IUd8BdZ4zUgc=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=SFOMRa7ITWLxs7WY+8XQkv53kR5uytd6blPaVOlUm/V+9F1xpvSooRg2ajxkUhXH
+	 R0WP6S+eepBPsjpsw6pdaPhyiykB49IYq4rl+I6fVpMOA9EeeS/Fu0aOo3m7vTonz
+	 ajA//dm0UpchzHXez38sbLU/ICT3pmEz4l+Xypa+fYngVhE84rF4fvWUiKaV7lYwi
+	 8lHa5qglkjPYUqgxH2FdooFsMYaJYz11K0eAzwXbPoA+5dBtAxZShhMpj83zzTCrM
+	 F6Y55/wgUpNt8TVEAQVM9cmsBrF1T/v1MACPceIhuMOaPz9qrTUrJmSN5loHHl8Ow
+	 FtAexdFkKgf+CCGfmg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from stefanw-SCHENKER ([91.41.216.208]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mk0JW-1uvDH90gvo-00j2yw; Sat, 03
+ May 2025 10:10:03 +0200
+From: Stefan Wahren <wahrenst@gmx.net>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	bcm-kernel-feedback-list@broadcom.com,
+	kernel-list@raspberrypi.com,
+	devicetree@vger.kernel.org,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH] dt-bindings: clock: convert bcm2835-aux-clock to yaml
+Date: Sat,  3 May 2025 10:09:49 +0200
+Message-Id: <20250503080949.3945-1-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430-b4-sm8750-display-v5-19-8cab30c3e4df@linaro.org>
-X-Authority-Analysis: v=2.4 cv=B7i50PtM c=1 sm=1 tr=0 ts=68154cbd cx=c_pps a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=e5mUnYsNAAAA:8 a=KKAkSRfTAAAA:8 a=vPhFULFQeS3k4onP6IoA:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22 a=Vxmtnl_E_bksehYqCbjh:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: 86aGMcm-OEIxp8bjwfbLdm8HF_Fck-K0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAyMDE4NyBTYWx0ZWRfX/tv2Jttt/KIS A2GeYlPf3AVDzEtYLJk7luJA8l9Ic+S75KHyeQrpHyDqpEeRDgIMFDoRg5172uE8HwqDrip8/1x kLg9b5UClMWHV6mxPRzrEIv0EpWwHpRSNiksRwRUWG1Emf9zxTDg3IF0SyQ617+WB3KwO/kYZBV
- +qXydedyJy/1O4tdkg6d+hYrnRyUZP5M7s+2qMeuUky30u7Pxm7NI8WvTobA4dFVWIHiImbz4Pz fGlXX6OHQyWtQZzHBu2tLqd/Jxj0wseOavTJnMhfFpejyhRAciS6fTbdnr/37ICcXLX7zCY752j 3tegCIKM30Jg/KQUi8EKPtgR4dEw3vv5gJDSfQvPKYfogNAfB5Vjbkspgrre2PXf4XUG2P0Hg7/
- ioNJVJQdSEsN+LNdtJQB1Epx3/qPogDYwlDwDhiHJqCsox1UFmRzH1XPRV4Vg4Ipf8KPUqmj
-X-Proofpoint-ORIG-GUID: 86aGMcm-OEIxp8bjwfbLdm8HF_Fck-K0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-02_05,2025-04-30_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 bulkscore=0 suspectscore=0 spamscore=0 clxscore=1015
- mlxscore=0 impostorscore=0 mlxlogscore=999 lowpriorityscore=0
- malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505020187
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:R82YShtapVE/GH0n0Xqc/xUyM4kXQ53V7LNTYoOvgJMOwT1mVql
+ CYcZP9GWG3ZiaahuEW8W1/8LA300n0hVld4xyfwTA2zvpeSuXs7MXuxaY5WiaSHM76VR7Uh
+ uc6hAn2fYlZj3kVvhJfhiLmuAolDd5oUd0gW2BTzODhdj+2ec7kzMzRgiTaoQvG6ErCB6xr
+ DWZBViOiYfRwqhzZ+jzKQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:14hOMghUO/k=;Dl7hE6mh5EIa6hVS0wKq5vo99/d
+ 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
+ RfRMPLou5CWg/9Acm9WF0c+EkHdTyPd81K
 
-On Wed, Apr 30, 2025 at 03:00:49PM +0200, Krzysztof Kozlowski wrote:
-> Add support for DSI on Qualcomm SM8750 SoC with notable difference:
-> 
-> DSI PHY PLLs, the parents of pixel and byte clocks, cannot be used as
-> parents before DSI PHY is configured, the PLLs are prepared and their
-> initial rate is set.  Therefore assigned-clock-parents are not working
-> here and driver is responsible for reparenting clocks with proper
-> procedure: see dsi_clk_init_6g_v2_9().
+Convert the DT binding document for BCM2835 auxiliary peripheral clock
+from .txt to YAML.
 
-Is it still the case? I thought you've said that with the proper flags
-there would be no need to perform this in the driver.
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+=2D--
+ .../bindings/clock/brcm,bcm2835-aux-clock.txt | 31 ------------
+ .../clock/brcm,bcm2835-aux-clock.yaml         | 47 +++++++++++++++++++
+ 2 files changed, 47 insertions(+), 31 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-a=
+ux-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2835-a=
+ux-clock.yaml
 
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Changes in v5:
-> 1. Only reparent byte and pixel clocks while PLLs is prepared. Setting
->    rate works fine with earlier DISP CC patch for enabling their parents
->    during rate change.
-> 
-> Changes in v3:
-> 1. Drop 'struct msm_dsi_config sm8750_dsi_cfg' and use sm8650 one.
-> 
-> SM8750 DSI PHY also needs Dmitry's patch:
-> https://patchwork.freedesktop.org/patch/542000/?series=119177&rev=1
-> (or some other way of correct early setting of the DSI PHY PLL rate)
-> ---
->  drivers/gpu/drm/msm/dsi/dsi.h      |  2 +
->  drivers/gpu/drm/msm/dsi/dsi_cfg.c  | 14 +++++++
->  drivers/gpu/drm/msm/dsi/dsi_cfg.h  |  1 +
->  drivers/gpu/drm/msm/dsi/dsi_host.c | 81 ++++++++++++++++++++++++++++++++++++++
->  4 files changed, 98 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi.h b/drivers/gpu/drm/msm/dsi/dsi.h
-> index 87496db203d6c7582eadcb74e94eb56a219df292..93c028a122f3a59b1632da76472e0a3e781c6ae8 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi.h
-> +++ b/drivers/gpu/drm/msm/dsi/dsi.h
-> @@ -98,6 +98,7 @@ int msm_dsi_host_init(struct msm_dsi *msm_dsi);
->  int msm_dsi_runtime_suspend(struct device *dev);
->  int msm_dsi_runtime_resume(struct device *dev);
->  int dsi_link_clk_set_rate_6g(struct msm_dsi_host *msm_host);
-> +int dsi_link_clk_set_rate_6g_v2_9(struct msm_dsi_host *msm_host);
->  int dsi_link_clk_set_rate_v2(struct msm_dsi_host *msm_host);
->  int dsi_link_clk_enable_6g(struct msm_dsi_host *msm_host);
->  int dsi_link_clk_enable_v2(struct msm_dsi_host *msm_host);
-> @@ -115,6 +116,7 @@ int dsi_dma_base_get_6g(struct msm_dsi_host *msm_host, uint64_t *iova);
->  int dsi_dma_base_get_v2(struct msm_dsi_host *msm_host, uint64_t *iova);
->  int dsi_clk_init_v2(struct msm_dsi_host *msm_host);
->  int dsi_clk_init_6g_v2(struct msm_dsi_host *msm_host);
-> +int dsi_clk_init_6g_v2_9(struct msm_dsi_host *msm_host);
->  int dsi_calc_clk_rate_v2(struct msm_dsi_host *msm_host, bool is_bonded_dsi);
->  int dsi_calc_clk_rate_6g(struct msm_dsi_host *msm_host, bool is_bonded_dsi);
->  void msm_dsi_host_snapshot(struct msm_disp_state *disp_state, struct mipi_dsi_host *host);
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.c b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-> index 7754dcec33d06e3d6eb8a9d55e53f24af073adb9..7f8a8de0897a579a525b466fd01bbcd95454c614 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-> @@ -257,6 +257,18 @@ static const struct msm_dsi_host_cfg_ops msm_dsi_6g_v2_host_ops = {
->  	.calc_clk_rate = dsi_calc_clk_rate_6g,
->  };
->  
-> +static const struct msm_dsi_host_cfg_ops msm_dsi_6g_v2_9_host_ops = {
-> +	.link_clk_set_rate = dsi_link_clk_set_rate_6g_v2_9,
-> +	.link_clk_enable = dsi_link_clk_enable_6g,
-> +	.link_clk_disable = dsi_link_clk_disable_6g,
-> +	.clk_init_ver = dsi_clk_init_6g_v2_9,
-> +	.tx_buf_alloc = dsi_tx_buf_alloc_6g,
-> +	.tx_buf_get = dsi_tx_buf_get_6g,
-> +	.tx_buf_put = dsi_tx_buf_put_6g,
-> +	.dma_base_get = dsi_dma_base_get_6g,
-> +	.calc_clk_rate = dsi_calc_clk_rate_6g,
-> +};
-> +
->  static const struct msm_dsi_cfg_handler dsi_cfg_handlers[] = {
->  	{MSM_DSI_VER_MAJOR_V2, MSM_DSI_V2_VER_MINOR_8064,
->  		&apq8064_dsi_cfg, &msm_dsi_v2_host_ops},
-> @@ -300,6 +312,8 @@ static const struct msm_dsi_cfg_handler dsi_cfg_handlers[] = {
->  		&sm8550_dsi_cfg, &msm_dsi_6g_v2_host_ops},
->  	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_8_0,
->  		&sm8650_dsi_cfg, &msm_dsi_6g_v2_host_ops},
-> +	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_9_0,
-> +		&sm8650_dsi_cfg, &msm_dsi_6g_v2_9_host_ops},
->  };
->  
->  const struct msm_dsi_cfg_handler *msm_dsi_cfg_get(u32 major, u32 minor)
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.h b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-> index 120cb65164c1ba1deb9acb513e5f073bd560c496..859c279afbb0377d16f8406f3e6b083640aff5a1 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-> @@ -30,6 +30,7 @@
->  #define MSM_DSI_6G_VER_MINOR_V2_6_0	0x20060000
->  #define MSM_DSI_6G_VER_MINOR_V2_7_0	0x20070000
->  #define MSM_DSI_6G_VER_MINOR_V2_8_0	0x20080000
-> +#define MSM_DSI_6G_VER_MINOR_V2_9_0	0x20090000
->  
->  #define MSM_DSI_V2_VER_MINOR_8064	0x0
->  
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> index 4d75529c0e858160761f5eb55db65e5d7565c27b..694ed95897d49c477726a2b0bec1099e75a3ce21 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> @@ -119,6 +119,15 @@ struct msm_dsi_host {
->  	struct clk *pixel_clk;
->  	struct clk *byte_intf_clk;
->  
-> +	/*
-> +	 * Clocks which needs to be properly parented between DISPCC and DSI PHY
-> +	 * PLL:
-> +	 */
-> +	struct clk *byte_src_clk;
-> +	struct clk *pixel_src_clk;
-> +	struct clk *dsi_pll_byte_clk;
-> +	struct clk *dsi_pll_pixel_clk;
-> +
->  	unsigned long byte_clk_rate;
->  	unsigned long byte_intf_clk_rate;
->  	unsigned long pixel_clk_rate;
-> @@ -269,6 +278,38 @@ int dsi_clk_init_6g_v2(struct msm_dsi_host *msm_host)
->  	return ret;
->  }
->  
-> +int dsi_clk_init_6g_v2_9(struct msm_dsi_host *msm_host)
-> +{
-> +	struct device *dev = &msm_host->pdev->dev;
-> +	int ret;
-> +
-> +	ret = dsi_clk_init_6g_v2(msm_host);
-> +	if (ret)
-> +		return ret;
-> +
-> +	msm_host->byte_src_clk = devm_clk_get(dev, "byte_src");
-> +	if (IS_ERR(msm_host->byte_src_clk))
-> +		return dev_err_probe(dev, PTR_ERR(msm_host->byte_src_clk),
-> +				     "can't get byte_src clock\n");
-> +
-> +	msm_host->dsi_pll_byte_clk = devm_clk_get(dev, "dsi_pll_byte");
-> +	if (IS_ERR(msm_host->dsi_pll_byte_clk))
-> +		return dev_err_probe(dev, PTR_ERR(msm_host->dsi_pll_byte_clk),
-> +				     "can't get dsi_pll_byte clock\n");
-> +
-> +	msm_host->pixel_src_clk = devm_clk_get(dev, "pixel_src");
-> +	if (IS_ERR(msm_host->pixel_src_clk))
-> +		return dev_err_probe(dev, PTR_ERR(msm_host->pixel_src_clk),
-> +				     "can't get pixel_src clock\n");
-> +
-> +	msm_host->dsi_pll_pixel_clk = devm_clk_get(dev, "dsi_pll_pixel");
-> +	if (IS_ERR(msm_host->dsi_pll_pixel_clk))
-> +		return dev_err_probe(dev, PTR_ERR(msm_host->dsi_pll_pixel_clk),
-> +				     "can't get dsi_pll_pixel clock\n");
-> +
-> +	return 0;
-> +}
-> +
->  static int dsi_clk_init(struct msm_dsi_host *msm_host)
->  {
->  	struct platform_device *pdev = msm_host->pdev;
-> @@ -370,6 +411,46 @@ int dsi_link_clk_set_rate_6g(struct msm_dsi_host *msm_host)
->  	return 0;
->  }
->  
-> +int dsi_link_clk_set_rate_6g_v2_9(struct msm_dsi_host *msm_host)
-> +{
-> +	struct device *dev = &msm_host->pdev->dev;
-> +	int ret;
-> +
-> +	/*
-> +	 * DSI PHY PLLs have to be enabled to allow reparenting to them and
-> +	 * setting the rates of pixel/byte clocks.
-> +	 */
-> +	ret = clk_prepare_enable(msm_host->dsi_pll_byte_clk);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to enable dsi_pll_byte: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = clk_prepare_enable(msm_host->dsi_pll_pixel_clk);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to enable dsi_pll_byte: %d\n", ret);
-> +		goto out_disable_byte_clk;
-> +	}
-> +
-> +	ret = clk_set_parent(msm_host->byte_src_clk, msm_host->dsi_pll_byte_clk);
-> +	if (ret)
-> +		dev_err(dev, "Failed to parent byte_src -> dsi_pll_byte: %d\n", ret);
-> +
-> +	ret = clk_set_parent(msm_host->pixel_src_clk, msm_host->dsi_pll_pixel_clk);
-> +	if (ret)
-> +		dev_err(dev, "Failed to parent pixel_src -> dsi_pll_pixel: %d\n", ret);
-> +
-> +	clk_disable_unprepare(msm_host->dsi_pll_pixel_clk);
-> +	clk_disable_unprepare(msm_host->dsi_pll_byte_clk);
-> +
-> +	return dsi_link_clk_set_rate_6g(msm_host);
-> +
-> +out_disable_byte_clk:
-> +	clk_disable_unprepare(msm_host->dsi_pll_byte_clk);
-> +
-> +	return ret;
-> +}
-> +
->  int dsi_link_clk_enable_6g(struct msm_dsi_host *msm_host)
->  {
->  	int ret;
-> 
-> -- 
-> 2.45.2
-> 
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-cloc=
+k.txt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
+deleted file mode 100644
+index 4acfc8f641b6..000000000000
+=2D-- a/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.txt
++++ /dev/null
+@@ -1,31 +0,0 @@
+-Broadcom BCM2835 auxiliary peripheral support
+-
+-This binding uses the common clock binding:
+-    Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-The auxiliary peripherals (UART, SPI1, and SPI2) have a small register
+-area controlling clock gating to the peripherals, and providing an IRQ
+-status register.
+-
+-Required properties:
+=2D- compatible:	Should be "brcm,bcm2835-aux"
+=2D- #clock-cells:	Should be <1>. The permitted clock-specifier values can=
+ be
+-		  found in include/dt-bindings/clock/bcm2835-aux.h
+=2D- reg:		Specifies base physical address and size of the registers
+=2D- clocks:	The parent clock phandle
+-
+-Example:
+-
+-	clocks: cprman@7e101000 {
+-		compatible =3D "brcm,bcm2835-cprman";
+-		#clock-cells =3D <1>;
+-		reg =3D <0x7e101000 0x2000>;
+-		clocks =3D <&clk_osc>;
+-	};
+-
+-	aux: aux@7e215004 {
+-		compatible =3D "brcm,bcm2835-aux";
+-		#clock-cells =3D <1>;
+-		reg =3D <0x7e215000 0x8>;
+-		clocks =3D <&clocks BCM2835_CLOCK_VPU>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-cloc=
+k.yaml b/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.ya=
+ml
+new file mode 100644
+index 000000000000..e19c2f4be77d
+=2D-- /dev/null
++++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-aux-clock.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/brcm,bcm2835-aux-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom BCM2835 auxiliary peripheral clock
++
++maintainers:
++  - Stefan Wahren <wahrenst@gmx.net>
++  - Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
++
++description:
++  The auxiliary peripherals (UART, SPI1, and SPI2) have a small register
++  area controlling clock gating to the peripherals, and providing an IRQ
++  status register.
++
++properties:
++  compatible:
++    const: brcm,bcm2835-aux
++
++  reg:
++    maxItems: 1
++
++  "#clock-cells":
++    const: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - "#clock-cells"
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/bcm2835.h>
++    aux: clock@7e215000 {
++        compatible =3D "brcm,bcm2835-aux";
++        reg =3D <0x7e215000 0x8>;
++        #clock-cells =3D <1>;
++        clocks =3D <&clocks BCM2835_CLOCK_VPU>;
++    };
+=2D-=20
+2.34.1
 
--- 
-With best wishes
-Dmitry
