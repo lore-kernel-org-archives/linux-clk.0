@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D46389409;
-	Mon,  5 May 2025 23:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DEC284B4E;
+	Mon,  5 May 2025 23:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486750; cv=none; b=fFAsSm6HW0PcFehdwjmV+tro5QhgUXm2jPDHp0q1YT/Dfs/+7F7l24ids3y2EDjrj0YGLLqJauB7ttqyNy0TGAGNUtKja0VUzbajUympYhGcnuERISBQY1CcjyfAc50T7pq3MsgN0cKwpPSLtviLolem0yGI8Pawc4b6XHXL/gM=
+	t=1746487060; cv=none; b=qCHUUt8mQr/82H0885BS0AZlwo+Sp5yAS43VDewi6RufDT/+H2ODjCZj6DP+obd0qDVTg8CwPN7VvV6BWW4L7xOAAIISU63+Tba0FxgYUo6D0dAeDvXhmsRNQOjoIlHqqMOgbL9USI15sjGpjc82aAc99tB839zt/JN6dTFIq44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486750; c=relaxed/simple;
+	s=arc-20240116; t=1746487060; c=relaxed/simple;
 	bh=LjtPLenDw+woKWSyHy09BKPetQD7xzkBJ+8SpJ/cWcI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MJpH4SAbHUMxUtAqu0/vgwPjWl5XG37qTF7+zaurH3dtpsohDd/KoIhiLA/ywCrePqJOH3Fevup7t07T+1zd8QbCgnEkQ2AE8fYhj8JbjDI66X0fTO3aPzyp8j0NLjTY8R8YxfXAWLkfQgmf2QhdZonmE8hkTuC4hZYIzJnShSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+QPgiU/; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=nYFfDDkwKkuo8NBHX5x4X6aIRuiy0RPAi5ZdrD17YlAUZs7tph6vZOOhqdN7dLSwtsmodmPO/4qTmJWsF6Vp/f9fhhm2YNL8Vs1vOAyAGrQ4+Peo8DsuzMueE8IwkyZbp3CcjGB84UsW+ttjXHlL4iUTkLcK3nq6mFjb7oY/OzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVOTEtEi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+QPgiU/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDF0FC4CEED;
-	Mon,  5 May 2025 23:12:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVOTEtEi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A941C4CEE4;
+	Mon,  5 May 2025 23:17:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486750;
+	s=k20201202; t=1746487059;
 	bh=LjtPLenDw+woKWSyHy09BKPetQD7xzkBJ+8SpJ/cWcI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=L+QPgiU/o7zQ0Q+QAp02zkIbXCfA9w59lFOMyK3MUlpdFyPClvx1MrohKLY6zX0v+
-	 DEbQ03b9MuNlw9c1sk25xKw+PnmXn9I4ZwtTYNtUP6+kfC9LPEUj9RDW+xZ8RMLbnO
-	 bopZuv8ObEAoS1dWSXlPGXukN5NTfNQmvtR7TmeESmCsvVdGuhG5qtbY9W3fgdMRD0
-	 ppiM1R21+mOo+7UiB4UfUikFHUarJZD4cdtuffiklk+P+9eOBaadVD2xO+pJu+zQhq
-	 ZguQ19Fmd8RyWgoZeqXDnXC+ZdR7AQKkMTkqxpqzlalBAkQWrE8RxKCiwv+BjmhY8g
-	 6pndg2OObzIhg==
+	b=gVOTEtEir/+Dsdsv8T1FRYt8p10u5i0w5ahbqOOkjrq5ucRb+B+nx92JARdWS1gxQ
+	 XxO43nA7MQx7ggbhfC2mjcGkJsym9epPmDbOJ1A23Ax63QTyltEiNyB2UxjOOsUnad
+	 vy8+ZdnzZ/CrUSrDo9g0Ii/3yYtR9OhgX7rJ9jnOTCOVZpAHGRN3amMpNWc+PdfcvA
+	 985qYtR1y2Oa0l2p9rmMGx+1gLlOS1X6dM2Vj2AMC6eLqGKKuF0ahBRYTqRtPI8AwX
+	 2ic6kcW+IBi7/jK/NAHbYSwxoKl4aSlOTSLePsKt6/uNM+raQQJUGUBbWvQN7D3XPz
+	 PcNw1/KY6dIOA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -38,12 +38,12 @@ Cc: Jordan Crouse <jorcrous@amazon.com>,
 	sboyd@kernel.org,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 183/212] clk: qcom: camcc-sm8250: Use clk_rcg2_shared_ops for some RCGs
-Date: Mon,  5 May 2025 19:05:55 -0400
-Message-Id: <20250505230624.2692522-183-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 132/153] clk: qcom: camcc-sm8250: Use clk_rcg2_shared_ops for some RCGs
+Date: Mon,  5 May 2025 19:12:59 -0400
+Message-Id: <20250505231320.2695319-132-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
-References: <20250505230624.2692522-1-sashal@kernel.org>
+In-Reply-To: <20250505231320.2695319-1-sashal@kernel.org>
+References: <20250505231320.2695319-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.136
+X-stable-base: Linux 5.15.181
 Content-Transfer-Encoding: 8bit
 
 From: Jordan Crouse <jorcrous@amazon.com>
