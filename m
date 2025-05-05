@@ -1,180 +1,146 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A12A257AEE
-	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 14:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9942BB13;
+	Mon,  5 May 2025 15:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746454495; cv=none; b=FbyPD/0Xb7HxT2GcR2qxkzyC/zs5jhfeDp8llWn25v8Yulnaq6OZl6AJYa7Jq5DM+g37uEnb7STC4fpUcbP3GnxI+v/vuhIruEocYIjlp1piKwlTRe9qdNHNZ3EzpJoDvXLXC/aPclJBxOmMeIH2p8En/QtSY5MQ7oz75RmuWq0=
+	t=1746460381; cv=none; b=Uv+EnC/cTuSvAzq5ayg8THNgzFtbQNa4hci4UXq9us+uI0EfxUx2bXy0fVywW+S8uUfwT3qlLGAHLD/U6uTCUx3VdqHnhoRdSg1wj2tVApXu4m6jDPhcd9LxzzJsbtVD3KZZdZ9ep2uPgkCTGLKgq97+RjLcLWrhbvWqJlVj3kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746454495; c=relaxed/simple;
-	bh=g0rIMfPYox6tTNqVeb0ZnxMcXS3eJl9r0KihR8f0GYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HCrFAEj/n01vkJvpPx5XHE6HMMx7wUMOUoLt0fO6N6wXi6YK8bWAMRD1QPfYlK9OcGv/zPnJ1ck8noWr5Cu6tMOYBAtDInTFwsbdjPdAS4ok5QmI3buL1y/XRxTKivyLXDS0C3PbtinwjjLki4fH5Q5+Zf0UlDhyKvMieJFL9Q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ND390zxj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ND390zxj"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545BG8TS002489
-	for <linux-clk@vger.kernel.org>; Mon, 5 May 2025 14:14:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	N4sMPDgul+5aEBpACagOkB2ejQOvDaMfk9F++ofP/og=; b=ND390zxjLditdSh9
-	kiFSZFnTqnxOxxGjuzKTkdXrBLm7fTfzneNq/E3ltm5M6SYwWueTLPTMBKFhtATE
-	dKwrB0vksp4iEuvR7wG+pQ1Z+hT5ZFw/bAsy36tAIad2JLVUPSaj52ElDhKq88G8
-	8JvwImFXBm+Ex2hGLjcyNvStD5SFg0qzBYn9X8i3V/id0XYcH+LBgFIE/ebVsPI8
-	d7JL5hVjMt+Gg/7gxfV/v3CLfnnhJCo2+pQWobOYtDAwMxqw4OzTWN4MTine0DcA
-	nBEVRWI9fOldTEbcyPEYwDlm3rQOvNiISPfvdXviaT/id2xQgdwFaD10wOOSkGiZ
-	L9du1w==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46d9ep4dc3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 14:14:52 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c790dc38b4so790438485a.0
-        for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 07:14:52 -0700 (PDT)
+	s=arc-20240116; t=1746460381; c=relaxed/simple;
+	bh=vYMs6unpeRPM8TUbyz29X2+hbrNC2RWBMgXxaCCt5LE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YLPT3uFIhWyfokCQaBrahtMrQrqCd1xFTF7YlXmNTIcuLhS9UDxtW5SiP0bwcFHNqOhOjFmrjn1icm0sN1uxRV1HcQybL7+Ws4JcIE3m4QbbYckv4ZpyRWN5oCif4t9i4c5z6ppeV5MaAhM0DUZxykWJ0heFVhioUgTTqXUrKLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4c3183ec801so1367159137.1;
+        Mon, 05 May 2025 08:52:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746454491; x=1747059291;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N4sMPDgul+5aEBpACagOkB2ejQOvDaMfk9F++ofP/og=;
-        b=YCJKbClvpVgcPZe+NQMvHLP9WcWIsfSgVUqa9tE/CSHc/zLh9KNzbl1N8eWHDKFrKI
-         bP15T9vTJ0EKx7Z9C7MoDQFBxEZ35/2mybp1HlA97qb3Dmb7B+Lyd2h/AELAU7XpM5NI
-         NgrPoWsnU5vcuiSRHXRqPArUl6i5vkgkvktqm7ZUnSEL7jchYcxp7iEowRSAMZbbeJqF
-         e/hVBuJ+8ep/iG9XGF3oEq32SZ9s3qYliWACRYI1FkDeZ6dLzA5VNUy1WfE7skdLXS5z
-         UKvuC7Kt3K5c1gtdLlk52acwQlfaw6/lEaVqISjOhLIU47XiSao/Kn4DqbCe2w37fLSP
-         zz5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXxz6WPcNqd2JhQSB7FhTfjKPBha+to8q1F7maEMpmU8/nYwkQxR4gyj29Am4pHemtjxIy6zTDR3Fk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3VDTUE11uFssp0NZ05a6NWgpcB3wUNq3dvSxxEse/Gdl0gBfZ
-	pIl6c4bw7d6AtYGYJ67ne8T0E0xESmNVsEUO7ONPNHd6i4nDVpJEShw4JPXQxhrOhSawA+vHe9f
-	O0SQt8jdCEQ8fd7XIOYQf8g/fr6xsPLOyJg+FarkO9kWK8PPYPO4mqyCpwrc=
-X-Gm-Gg: ASbGncu1HYdR5dX+FyNV58zzSZscC/xKc20qQD0Uus1E4UFrolaXqqTFL5pjhbEfu/0
-	heYz1OMaff07SPt+lDEeYCHhlV4rXypbPuZ6t/9xrXK654R7EuLJ408GD2S9fJzPMvaZGURjBAN
-	0EFpwVN6Ozui4XLmwC/bf3p9TwlR3IMYeUZe1yAosMaXibNQDTCxsXBlldXoxGySsX9FFRRWSN6
-	OZLhgKvtJD6+ltUMFIgcYabjbe6ANqsMnO/Vp2cSnO1wzoJKe3aB44i9u+RuksBZ/hONEzGXXc1
-	d3kO+QA/U5MQu+HfSFQQl2itI1/NEhSjs9muXdhjikIOrfKbszVZcgui3uFk3SNhKufuoSkpzca
-	nkUMx74zyuivf80cT5b4vck0dkTMtdR7pxN6tJ9QBhqhpHCquJsG5uArQ1cKogJUX964D
-X-Received: by 2002:a05:620a:2697:b0:7c3:ca29:c87e with SMTP id af79cd13be357-7cacea24688mr2331709385a.21.1746454491521;
-        Mon, 05 May 2025 07:14:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/vBvLz2xsMDmp49gK5gm96O/Tw7T3JFctVTVSeo6t9VZN8IC+KDCL2/JJC8O+HXJyk28oEw==
-X-Received: by 2002:a05:620a:2697:b0:7c3:ca29:c87e with SMTP id af79cd13be357-7cacea24688mr2331704185a.21.1746454491141;
-        Mon, 05 May 2025 07:14:51 -0700 (PDT)
-Received: from ?IPV6:2001:14bb:671:42db:147e:6740:cd7c:7688? (2001-14bb-671-42db-147e-6740-cd7c-7688.rev.dnainternet.fi. [2001:14bb:671:42db:147e:6740:cd7c:7688])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94f6613sm1721233e87.217.2025.05.05.07.14.49
+        d=1e100.net; s=20230601; t=1746460377; x=1747065177;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZdTkQXjcSYm0To13RFO17AQ68/lboBqXzyLTNrJP47o=;
+        b=Vr7TMo89lZK7pIlOtnmfxY45pib5J3UHIcz5D+5SPdWS3/MjRxSifRu92430V7sylj
+         /hS16w8fpSOVdMU5qN/UdSL9KuDtXxNKiYTW3IkKsXcj9fYmZmWVojgkTt+CL7EttTjE
+         LAFLqctoEh6BHQiad+lt9YcabcVsDLvhnpdq+nAlG74C2ZApBlA3KS/vd0RkXQsv+qH/
+         lJQArt3SCsYl3J0bYJma3s40T0igCjysGjHD2oz5fUOVGSEc2GirWUH/6ZK4LGmBTKUp
+         V23bpfb9N1xei8vPbwofp2tUQiL0gCS9PQN+ZzoQvcf0gpP7wPlBpwkA9mOl6g3iYsie
+         la8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVE8AdLjmGf/2a4W3adKFzGn5VRCfNP3zFNdeIl0fpHKS/6B8lCSvQLc7vRE9S8mhyofIFwUTxvdR8j@vger.kernel.org, AJvYcCVeo0qOHCp3oqYRyB2fnwgMZJ1vcLPJceoKbjbrL04/wci7NSBkGjeWZnGHBlp/6daP1cWz14E6Z2Q1Tm6E@vger.kernel.org, AJvYcCWD1oJDQYYlSJEj8BL38xw5CTD+LDDwvc94qEHbCr8j4XLq3//+tLBdd6duIWRoOiY64dr1QWwgVMoTj/J3Uh6rsSM=@vger.kernel.org, AJvYcCXcZkvsnH5cACrs7TGnzj2UHoYcAA3vIbmhxXVq4PKbE+1JzqqWypJQIbEBnYSXe98WCk2WBm0yb4nv@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSKGk558jFVhrEdHZR5GuD7lzTGmamgL4K02sn++rKp51qmYDK
+	hniU35KxMUXvREO96NmTlZVp8L4i11/ufFpk+bmSWxTuw70EbaHCuEzIkSW8
+X-Gm-Gg: ASbGnctTle4vU0sPI3KlycSu/QgqxITl4UX1lu125vqD+QmNfyr6aAqm7EY0TV9CKzJ
+	BPriutkgMSQN6+Cg5PLxK+XdQj/ZTMHyFA0uHJvJYUwCrO7UE3APyqjgHuHXjUET1mI89oAdG/R
+	/4kAw+wEle/6M337Vfqe0GdH+INft6lbecSnVl6/xtftIXZvowc3pyL37i3aJV4ovOcVdkYJ8ps
+	NFqY2WQNOZkhL7YVCHv+lwzlEA45s8EnxycVIuwxbYlxnKIqaVW0HnjA998yGAgf4w/evQjDi0a
+	7jr88rVYrwzomNy0LHjgrgRAwIz/ixH0iAPLd5tVb05+MG4SjcIzKF1s61SUdH4knyyT/EoOCUS
+	RHLQ=
+X-Google-Smtp-Source: AGHT+IH/u4C/NTWesC/iaMsX+Z90LrdJ/yd+VTdhAFBNcZzZ22XkTYckDfJbXBZa6a5tjlqCSGTCEw==
+X-Received: by 2002:a05:6102:2b81:b0:4c5:904d:f358 with SMTP id ada2fe7eead31-4db149803bcmr3839105137.23.1746460377354;
+        Mon, 05 May 2025 08:52:57 -0700 (PDT)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4db1c605c57sm649269137.13.2025.05.05.08.52.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 07:14:50 -0700 (PDT)
-Message-ID: <f56c19a0-18d7-438d-8d05-98ae7a842959@oss.qualcomm.com>
-Date: Mon, 5 May 2025 17:14:48 +0300
+        Mon, 05 May 2025 08:52:56 -0700 (PDT)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86d6ac4d5a9so1245824241.1;
+        Mon, 05 May 2025 08:52:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVE4qffm+BcsiSQ5Be8G5jwpVXxossuqIvzQo7h6JTWlrlGGRB8NEa5Vb7Sxfvn3lL5vZo2D276fpa4@vger.kernel.org, AJvYcCW4AaHK0SRXEQEa4NYJfIc7L7wEw46WEBDkHgKdHX0DGrH3M/03suBBDXkm2HJjKDnnx/+mu0NHAo/khbK6@vger.kernel.org, AJvYcCWLjVZ/PCGfyEs+4Z8Ge7ehk/+mIJ1oI3e7LE/iAFBIV9i6yMMnKlYr3qUCzZdbvgh8MyN+7qF8GFtCUBM+1yiXv8c=@vger.kernel.org, AJvYcCWjBg2M9EGOOVS0MNVT7NuAzxlrfOXvh3KPHXOPXF9YeckAW6wRGsWr65MmUcW2miHLJXxD6IOQsw+h@vger.kernel.org
+X-Received: by 2002:a05:6102:3c8a:b0:4da:70a8:73cf with SMTP id
+ ada2fe7eead31-4db14920e44mr3484043137.20.1746460376582; Mon, 05 May 2025
+ 08:52:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 15/24] drm/msm/dsi/phy: Define PHY_CMN_CTRL_0 bitfields
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org,
-        Srinivas Kandagatla <srini@kernel.org>
-References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
- <20250430-b4-sm8750-display-v5-15-8cab30c3e4df@linaro.org>
- <j47udhqq3ldsza3cr6a6rd5dq7uxjgpolbmdhmpzvzt7glpuva@v5tgkydlywag>
- <97e49dc5-9cca-4c85-b0b0-18c472d0ec0d@linaro.org>
-Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <97e49dc5-9cca-4c85-b0b0-18c472d0ec0d@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=EOUG00ZC c=1 sm=1 tr=0 ts=6818c7dc cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=dt9VzEwgFbYA:10 a=KKAkSRfTAAAA:8 a=F9VSnBJ7OdIsbtMwzSAA:9 a=QEXdDO2ut3YA:10
- a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-ORIG-GUID: JhyINUuxYkzRhCR0LUaSrVYP_jBizezz
-X-Proofpoint-GUID: JhyINUuxYkzRhCR0LUaSrVYP_jBizezz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDEzNyBTYWx0ZWRfX5ZYOJph5ZOen
- uvv6TM5sm/mARj+QMne/V19o4GlXDJE/fgbdIo7lGCwUP6C6Cm6GsljJcQG6gVfvnlXq2S25T+q
- oB2XcMMBtqvtYCKSlOU1en1Ym4G4kxq1gD6uBARu47Mu5bujp/QR9SVUgLVFFrxb7d5czqdAv1v
- FFSdYfH3watuNG7gAyk/ytW7bF6wjpeSwlI3GUxuB5cE9JHC+FEDzdoAxMlruqzb6w+3DL/A8jY
- 9FUjJy4eXNxH2ZV5NsbENXgvEQjigaqPXPTN6noC9gWwraU54J5i7DgM9PaDfH3Nj2L0M1o8UON
- CAwQZ+MYf/725QObIYkR+mwMrp/+G5mQS6SNAKozwyDbKkVlS1nn15WXCY/4jsaH8wOCijxw5+a
- 2uUS9W8pve1quAVVDi8BzfcpDoNxjxJM6mimg/h9BOvzOC/yRrOMXuxFiazvZb6C+AimN3Ne
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-05_06,2025-05-05_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 clxscore=1015 impostorscore=0 spamscore=0 lowpriorityscore=0
- bulkscore=0 phishscore=0 suspectscore=0 mlxlogscore=984 mlxscore=0
- priorityscore=1501 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505050137
+References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com> <20250410140628.4124896-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250410140628.4124896-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 5 May 2025 17:52:44 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWx9Xk5QksoGFvCyo2HLXZ_+WRBCe3bDrZx=bfPoXHJgg@mail.gmail.com>
+X-Gm-Features: ATxdqUH0AjdMTTpWOGsPn5ANUmJwNMh53fTsYIVWiBcRSToxWlDl8AFA2D7DzBo
+Message-ID: <CAMuHMdWx9Xk5QksoGFvCyo2HLXZ_+WRBCe3bDrZx=bfPoXHJgg@mail.gmail.com>
+Subject: Re: [PATCH 1/7] clk: renesas: rzg2l-cpg: Skip lookup of clock when
+ searching for a sibling
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 05/05/2025 09:17, Krzysztof Kozlowski wrote:
-> On 03/05/2025 00:44, Dmitry Baryshkov wrote:
->> On Wed, Apr 30, 2025 at 03:00:45PM +0200, Krzysztof Kozlowski wrote:
->>> Add bitfields for PHY_CMN_CTRL_0 registers to avoid hard-coding bit
->>> masks and shifts and make the code a bit more readable.
->>>
->>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>
->>> ---
->>>
->>> Changes in v5:
->>> 1. New patch
->>> ---
->>>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c             |  9 ++++++---
->>>   drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml | 11 ++++++++++-
->>>   2 files changed, 16 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->>> index ca1a120f630a3650bf6d9f9d426cccea88c22e7f..7ef0aa7ff41b7d10d2630405c3d2f541957f19ea 100644
->>> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->>> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->>> @@ -362,17 +362,19 @@ static int dsi_pll_7nm_lock_status(struct dsi_pll_7nm *pll)
->>>   static void dsi_pll_disable_pll_bias(struct dsi_pll_7nm *pll)
->>>   {
->>>   	u32 data = readl(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
->>
->> This (and several following functions) should be triggering a warning
->> regarding empty line after variable declaration block.
-> 
-> You mean --strict or what? It is common to have the &= immediately after
-> assignment, so that's why I chosen that syntax. It is just more
-> readable, but I understand your comment that you want --strict
-> compliancen even if it hurts readability, so I'll change it.
+Hi Claudiu,
 
-I'd probably prefer to split variable declaration and readl invocation. 
-Then the code will be logical with &= comining on the line adjacent to 
-readl().
+On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Since the sibling data is filled after the priv->clks[] array entry is
+> populated, the first clock that is probed and has a sibling will
+> temporarily behave as its own sibling until its actual sibling is
+> populated. To avoid any issues, skip this clock when searching for a
+> sibling.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-> 
-> 
-> 
-> Best regards,
-> Krzysztof
+Thanks for your patch!
+
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -1324,6 +1324,9 @@ static struct mstp_clock
+>
+>                 hw = __clk_get_hw(priv->clks[priv->num_core_clks + i]);
+>                 clk = to_mod_clock(hw);
+> +               if (clk == clock)
+> +                       continue;
+> +
+>                 if (clock->off == clk->off && clock->bit == clk->bit)
+>                         return clk;
+>         }
+
+Why not move the whole block around the call to
+rzg2l_mod_clock_get_sibling() up instead?
+
+            ret = devm_clk_hw_register(dev, &clock->hw);
+            if (ret) {
+                    clk = ERR_PTR(ret);
+                    goto fail;
+            }
+
+    -       clk = clock->hw.clk;
+    -       dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk,
+clk_get_rate(clk));
+    -       priv->clks[id] = clk;
+    -
+            if (mod->is_coupled) {
+                    struct mstp_clock *sibling;
+
+                    clock->enabled = rzg2l_mod_clock_is_enabled(&clock->hw);
+                    sibling = rzg2l_mod_clock_get_sibling(clock, priv);
+                    if (sibling) {
+                            clock->sibling = sibling;
+                            sibling->sibling = clock;
+                    }
+            }
+
+    +       clk = clock->hw.clk;
+    +       dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk,
+clk_get_rate(clk));
+    +       priv->clks[id] = clk;
+    +
+            return;
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 
--- 
-With best wishes
-Dmitry
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
