@@ -1,65 +1,65 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC0DEBE
-	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 06:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F2C17A58F
+	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 06:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746425866; cv=none; b=Aus/bUac5JBo7GFNdjYFz0o/ONkBvM3kByosCgoJ1Cd9NqWaZlCZP+7nDzxq7xbZ21RIzQp/7fOOBUwfwPo7gETk6RiSZD5pVd/x57SVp/IkY7HwDP7jJ0DLsKSb69difT+r9hrtfz9+lFaXIBptwlRkoQy2q7UrL15h21P0bCg=
+	t=1746427508; cv=none; b=JQ2tPM8GfdSKbadG8kc7m5WmYmOVdOxThDj//2v78MNQHIn4vjlCoXDeVSegDqmAacajOyxMzBBGncADMil71Y2BrA69hzmPpOgA8tIVdTGQqPFCqAmirW0n3rKft8/kUvBpHs4WB8invHK6zDCNnVZKbjaPWqoynjBnYKzIWGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746425866; c=relaxed/simple;
-	bh=WTqruFHJPbXUvJ+Abad466vMBFstOzi4YaAP4ufNfuo=;
+	s=arc-20240116; t=1746427508; c=relaxed/simple;
+	bh=Ksz2MkhzWiD6KlQcTwLlFEF5v2ADwK9Yf6rKIUoP/6I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=syJYactvnswrXU4OpyZVbqj6z+lp7gHlsg+S9Oe2h6Z5h1gORM6xPvFuOIcnpFxM2FJlNr0xqWUkidk1Yeq7urHiJ8vcDiduvnPPIq6VZ2MyBGyB9ly0KaHn/5N1RELXlQykafop0i1QGYrjbXxWWv+1izGINrTidSg7D3r0LXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yPghz9Rw; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:Content-Type; b=hKctmczd2FzdAifIg9P5+saAgeVV9/SmvL422qR51PGgtTHFd+LbEAhV35/nNSOBmR2/6HZYpfzN4aY4z+TYr7s4AzV1herXuqccyIsB6mszkFGV5sFVd5gAUrxBw39Jv92CKhfURcBEr3dB2+69PHU8HU8cMcOSQYmtZuas3wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r0CjERFh; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yPghz9Rw"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43d72b749dcso4555365e9.1
-        for <linux-clk@vger.kernel.org>; Sun, 04 May 2025 23:17:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r0CjERFh"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43d72b749dcso4585655e9.1
+        for <linux-clk@vger.kernel.org>; Sun, 04 May 2025 23:45:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746425863; x=1747030663; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1746427505; x=1747032305; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=NX4Rz1dfaupNMAP0jhgw9F7SGjjiJLMayEUKk5YTb2Q=;
-        b=yPghz9Rw9nMf/UJWworAQvkUFhEb6HLfN+I33mEVt0PDtCP0hwIhL74zmUNOu87a4n
-         NyWryfdpytukqRSeRTrS725DdcU+Ijddt9jboAWm5+y7euVxR7c3sbEU2RFzjzY5sIBu
-         c42mQwOuR02yyzAl+W0mGskx+fFGtQX7vUBpmMTb3a15dQHIYy5G3TObs81whuqiZAua
-         K4ZeGdi4mFckSw4M47GM9iwg0GydqCyFLM0rFfO2hmNBIxJ7t14IzoRLEYUB/9S9IMVQ
-         yhjvOJ0nPbByWViGtW/16L0UK/INHCkIp62Bm72bDATSOnqeUJIOqXnxT8S8qrLWgEFd
-         EfPA==
+        bh=w8noPVR70Xgd7wEK+1WJmgui78pNLLCVT+Tyy9XyHfs=;
+        b=r0CjERFh7wR4yk9MwPfumA/Slp0Lg148wkw9DGW/kzMgF0DGNOaRVco+7iLvNV5sy1
+         rGl0yq9BoIVoz+F94T/wxPB7F75asQnu4YXraTmBQ79zE6n+zdQRENNsajJnt3H/nncD
+         /GgiQ5NkZ+JT52JTe/AuZgIoueiXiuDAJ3u02vb1J0QCL9ghUP+fOB+ROXhFthh+Ec/7
+         9if7CwvxnaRIzFjijG69SzGOwYGaQddydDIMP6ejPWjixI+ijrCfWSfXEiLom4QNe13V
+         9F4MF7r0ozRrilrxNqgKYhc3mndhXnb+B1zFepCBgvC4FwY990ZsX5457io4Xo7N7PgJ
+         Gcyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746425863; x=1747030663;
+        d=1e100.net; s=20230601; t=1746427505; x=1747032305;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NX4Rz1dfaupNMAP0jhgw9F7SGjjiJLMayEUKk5YTb2Q=;
-        b=IYyxF78RCW8oEJbvv7bGVSjRAXo9vqf8q5Pz6Lk/cpZdKaK7cMSVOLaokFO30C7ReR
-         cZBcwV9QG3CCIlK5AUkm9U8Twls6UulEwWiH1P/kcL6tCsJSPc4WaS/HXPol/NTEONPW
-         TZYTElNrXLGyGFONE/6GHFlqyWBNr+Bnv5BKyB3ozcqabDEFjWitWqTK5x288Hzo2ptW
-         e/Jri0G0Y58jCEXZ5tJ36CVbpad6xtNTKTDWLixCLN0lUJQC26kh77rzzG/e36NCcWnp
-         HqyAg1LDf6Ry3DbCYJgPwpolwH30QeYBaxpSQmYrsfGlZ41ScydyJm+8a3ampTBSMquY
-         fqXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdWleB4Y2rDi7CJQvVTuPKpwds/kK6BygLOwVwXgqxbWYww0CpX3RcdjdiIAx0SHvJlT4d5hTvadw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4tD6JW4z949ttlrVdFd+9Knx3Hhm34inz0c2WJoYcSKTuTXWK
-	lXvuEiz6xbpPdCAmkBH/CU+A/8ADfT9+hHXF/5dD3pusedC+lSS2C7JJ444ZhIw=
-X-Gm-Gg: ASbGnculybvtjQDTEDldzs6YFtl0Vfma0rBIrgS74SD20ssEzSJVfv6fP/6hAOg261y
-	yi0GjgvexguBIhOCzrT5cwSVRQdiwzj2I3Y1CwNd17IfodI13VCNHz+uPAVrOtxpgmmUDVUqaXj
-	xDaauy1rG3Mk/DndXroGJmirIt/3H0O6uMRR6AbjlGC4hoGHlDIb/t4GipX2gOTnBkQTU1OQFJm
-	6IDmrbp5U1jxAo9198jC7Pv7LBiSZOyIfh63Pu6pRtlQkVVFyg05JKvgOfoswm87h/mWUSubmRu
-	2qKXckqHW6NxVPABHLGZym69kulzYIubRzQ/SpFBmilRIyaSS1YSfMBOpLzVF34zefeQbg==
-X-Google-Smtp-Source: AGHT+IH0LOrDkps/9Rr0/olfktl+QlWmLaEC4ldMHPBjCaA9Xv+NxHcZaPiI2hpb6qHiQmJJWKSUhQ==
-X-Received: by 2002:a05:6000:1ac9:b0:3a0:75ff:261f with SMTP id ffacd0b85a97d-3a099aee755mr2986209f8f.11.1746425862733;
-        Sun, 04 May 2025 23:17:42 -0700 (PDT)
+        bh=w8noPVR70Xgd7wEK+1WJmgui78pNLLCVT+Tyy9XyHfs=;
+        b=LxMwCJXUk2/XErFRzQqHvGQZcTS8+SWS1tM9c629l/T0M9/N0PjTs9p1xqIkvejxOw
+         aWctC7eoM2ONaPhXoPw4/c1Y4TY3av/KZ3KwORRig5rj+9NmOVLWeaElek00UF7oGtJh
+         OpKcPHIO0ODjybrA3Q4z4hz5ACYpNz4X5jTxDp3oTGY/dZOY/W58aduot2ZE0ZgnJpkF
+         e6W8sy4TPNEJdB+kaTdO1FtD+/hbnZj71hOzDgyJlzFmaQGa3M6tYYZA76nlB8axcbza
+         vz6Zejg9RfuuEInaDCPkjgYdBrjvymwq2ttvwAiLuEi1cenLsB1X+ISvPrLR3ThvOD6A
+         xtGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/ZZzMPXfCjvhG6Gpl5aC/0fRaVWukmE4Ema1B/thCRgIPXGk4w+zWalGOEk5jczZz1L4oTJAGBB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9JcZWdbK5wa3zSrTIrCUiduPf5xc8fozi6GbHHDbM0quiwnmw
+	EsIcB6NHaItt2CO/Iy5OzoAhRjpqB8SxOrZP0veSCo42zyKGKaVV6UqQ2wiggok=
+X-Gm-Gg: ASbGnct0M3zrlcj0FnxUj4xvL6fIlTheq4RBV4jVSJfClumqR3PMZp1xWgIoYeA36PR
+	AlFIbr4iOKKtiVbpjdwDfz+YR+LxW3gGrIiGYa8sFHWOZUY9C8AHRCb/GNxKF+3uqaltoz1PVIL
+	VFKYmUEfJjJWYGWDyURiXedrfUbRxya25lR0qWRZQeuU+8M1rh6hXxqNGP8TXEYEdNzF6nGaMfb
+	wVpLW1LeoGmALhNnadAg+iZ4a68KPqm2K97MZyGRI5BVb4L9pPpU8W+HpNZQEIQErjxCv+sxceh
+	h3YfV+Z13Aqu0QSNNDVY5B6ynHDAYYYs9Awni/KFpI04HMPAKeHLMJxtdaM=
+X-Google-Smtp-Source: AGHT+IFqK9ylb6N7k08mb0TyDcKoH9DPTwdh1zCrGridcwy/TzfJH8PhEKoWWMZ2Yj9Gv9rTYTvRkQ==
+X-Received: by 2002:a05:6000:2481:b0:3a0:782b:acf8 with SMTP id ffacd0b85a97d-3a099af619dmr3414511f8f.15.1746427504927;
+        Sun, 04 May 2025 23:45:04 -0700 (PDT)
 Received: from [192.168.1.29] ([178.197.207.88])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b17748sm9225083f8f.100.2025.05.04.23.17.40
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099ae3d3bsm9521985f8f.33.2025.05.04.23.45.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 May 2025 23:17:42 -0700 (PDT)
-Message-ID: <97e49dc5-9cca-4c85-b0b0-18c472d0ec0d@linaro.org>
-Date: Mon, 5 May 2025 08:17:40 +0200
+        Sun, 04 May 2025 23:45:04 -0700 (PDT)
+Message-ID: <5c307e88-a3fc-430b-8ccc-af59e2097da3@linaro.org>
+Date: Mon, 5 May 2025 08:45:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,7 +67,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 15/24] drm/msm/dsi/phy: Define PHY_CMN_CTRL_0 bitfields
+Subject: Re: [PATCH v5 19/24] drm/msm/dsi: Add support for SM8750
 To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
  Marijn Suijten <marijn.suijten@somainline.org>,
@@ -88,8 +88,8 @@ Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
  Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org,
  Srinivas Kandagatla <srini@kernel.org>
 References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
- <20250430-b4-sm8750-display-v5-15-8cab30c3e4df@linaro.org>
- <j47udhqq3ldsza3cr6a6rd5dq7uxjgpolbmdhmpzvzt7glpuva@v5tgkydlywag>
+ <20250430-b4-sm8750-display-v5-19-8cab30c3e4df@linaro.org>
+ <ahx623ttvzd62u4fri6iqguj7mirlf22tvwbu6k2ngxw6hwbcp@oh7mmex5fjmz>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -136,44 +136,30 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
  vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
  2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <j47udhqq3ldsza3cr6a6rd5dq7uxjgpolbmdhmpzvzt7glpuva@v5tgkydlywag>
+In-Reply-To: <ahx623ttvzd62u4fri6iqguj7mirlf22tvwbu6k2ngxw6hwbcp@oh7mmex5fjmz>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/05/2025 00:44, Dmitry Baryshkov wrote:
-> On Wed, Apr 30, 2025 at 03:00:45PM +0200, Krzysztof Kozlowski wrote:
->> Add bitfields for PHY_CMN_CTRL_0 registers to avoid hard-coding bit
->> masks and shifts and make the code a bit more readable.
+On 03/05/2025 00:52, Dmitry Baryshkov wrote:
+> On Wed, Apr 30, 2025 at 03:00:49PM +0200, Krzysztof Kozlowski wrote:
+>> Add support for DSI on Qualcomm SM8750 SoC with notable difference:
 >>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
->> ---
->>
->> Changes in v5:
->> 1. New patch
->> ---
->>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c             |  9 ++++++---
->>  drivers/gpu/drm/msm/registers/display/dsi_phy_7nm.xml | 11 ++++++++++-
->>  2 files changed, 16 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->> index ca1a120f630a3650bf6d9f9d426cccea88c22e7f..7ef0aa7ff41b7d10d2630405c3d2f541957f19ea 100644
->> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
->> @@ -362,17 +362,19 @@ static int dsi_pll_7nm_lock_status(struct dsi_pll_7nm *pll)
->>  static void dsi_pll_disable_pll_bias(struct dsi_pll_7nm *pll)
->>  {
->>  	u32 data = readl(pll->phy->base + REG_DSI_7nm_PHY_CMN_CTRL_0);
+>> DSI PHY PLLs, the parents of pixel and byte clocks, cannot be used as
+>> parents before DSI PHY is configured, the PLLs are prepared and their
+>> initial rate is set.  Therefore assigned-clock-parents are not working
+>> here and driver is responsible for reparenting clocks with proper
+>> procedure: see dsi_clk_init_6g_v2_9().
 > 
-> This (and several following functions) should be triggering a warning
-> regarding empty line after variable declaration block.
+> Is it still the case? I thought you've said that with the proper flags
 
-You mean --strict or what? It is common to have the &= immediately after
-assignment, so that's why I chosen that syntax. It is just more
-readable, but I understand your comment that you want --strict
-compliancen even if it hurts readability, so I'll change it.
+Yes, as we discussed many times - this is still needed even with the
+proper flags.
 
+> there would be no need to perform this in the driver.
 
+assigned-clock-xxx are not respecting that flag and anyway, even if that
+was solved, they are executed too early - before PHY is initialized. You
+cannot prepare PHY PLL before PHY is initialized and enabled.
 
 Best regards,
 Krzysztof
