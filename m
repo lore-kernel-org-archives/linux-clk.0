@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A70389A16;
-	Mon,  5 May 2025 23:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE152EE4B8;
+	Mon,  5 May 2025 23:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486056; cv=none; b=hVTB1rnXDxPsvu+U+aHBMXKYstZvOQYhmQ8j0SEhzQ1mB+4nVJLAjmzaWFtKKsu54k7hvxC6nOhuqe969dVdjoDAYUYHG5VUtPiw/j3VY0t3xLOskCbMHhwzNXzMiyC/Q+dW8DBWhwtMrXb+l/fkH1AL1gjJV1kO6bHTinf7Rak=
+	t=1746486585; cv=none; b=aNtoNNADauqoK1m52W7vOsrzikFiUEUOZMbY9ynkkyt/A9bMxSQ1u+cRzZST1rv1F0cuwrKDuDiQBsun0i6OLxlhAL8htLHZKUzPLvskhdMpbWs76X5gs30lNBnfvixANKmCoyV1FlpkBuTMMr7ABS2sGe6shXyZVesRYTCwozw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486056; c=relaxed/simple;
-	bh=AUN/ZpzpRneL6frMoc+GqTQzgvGFnu0eT//vqiAah2I=;
+	s=arc-20240116; t=1746486585; c=relaxed/simple;
+	bh=LcPi4h0WkjD2CxiMbeO69uCTZq09RBPBWbkPKxeqAzQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=q+eNB7TGMys2LGPcRhJsPPWWmbcUuSTMYvrnP7PlzKytEUUSFdYvbOwBu7/P4wDF1S4H/khfLLEQwGB9GkQZaGihdIe18aFkK1cWYZJaEiiE4C2vXvEE9EmTraUM7hdDVWoJ12x5V8JnjDf+Ws8zXbL8wFiY+4JbQhcmenYdD1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQpQE9l3; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=aiuAJ5ZFS0IKxZmZ1PyxwuWm1C13/2pItEOOQddwGoyN11dQeTXPfawsORsLr4C+MFOJaekQMAOp/oAPm/ZP+BJeZp2VTxHRFenqoC5BRPGjh0Pum/20eBaGtXpkraYMMVPebGjwXqLS1P8FNKHWH43x0j6QZNYW0M5Umb5PPY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWUf1lKF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQpQE9l3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F461C4CEF1;
-	Mon,  5 May 2025 23:00:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWUf1lKF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 924FFC4CEF1;
+	Mon,  5 May 2025 23:09:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486055;
-	bh=AUN/ZpzpRneL6frMoc+GqTQzgvGFnu0eT//vqiAah2I=;
+	s=k20201202; t=1746486584;
+	bh=LcPi4h0WkjD2CxiMbeO69uCTZq09RBPBWbkPKxeqAzQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PQpQE9l3L2GohUitm5A5nan4pLdP2r/R4HxJPxERk461tk5mQVh/olXkRBdEJJV6c
-	 M0n8tNME2cQoEGlViXT3EfcpsedlTsA69B2Jl7333XsA+rRwA712SgDv+zgueoTnBD
-	 +SPWs0M5vW0I9Y6SXmkYD2buCFu7yS4ufbRn6ZDhGWb192pI7wicOz5xjmqr1e0goy
-	 bwOP5s04yW2v18P5R58OX5tLkNNjlW5FcDJviUSVTJFLOVAe5m2nlYVRiBkIzJAnUr
-	 lO78G/1nMqaG0T8sIMBeyMlxZLeTdvq6tV6c9oTBhcAoQ/hxxPeB/mL0zTLNBPTx+7
-	 3UJH5IlhtPmZQ==
+	b=jWUf1lKFGANyxGa7U16Cpz2ooshDUW/H5eJrBGNWOuwiBBxxPRiZ7xQZHtifY3QOC
+	 Bzzx4beNlxoPTqlGFGGAk3QEYLzNlC6ikDV8nFQKL3PeSvio6U0mGXFZmu5r2OJXdm
+	 xU7/pN9Bo9Oz1Wt27rC5VoUEzOBkO5tbO+RIyBFAO615OJ3tn5EPRJwsW8pKfZVo4N
+	 lDSCRMfq3pmSC0QgQLvvtnyoW0VYxgfZBEPrcV0y7IlegwmggZHuWyRrkqesiglaU/
+	 4L1C7Hh11uZiZAJJaUrniTEZ0AFvzvJ8Wn8aKW1ILiv5AmbJ7emhGWNhstl/4TOaq8
+	 IVnURf/l6iNtA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -40,12 +40,12 @@ Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>,
 	linux-clk@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.6 130/294] clk: imx8mp: inform CCF of maximum frequency of clocks
-Date: Mon,  5 May 2025 18:53:50 -0400
-Message-Id: <20250505225634.2688578-130-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 102/212] clk: imx8mp: inform CCF of maximum frequency of clocks
+Date: Mon,  5 May 2025 19:04:34 -0400
+Message-Id: <20250505230624.2692522-102-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
-References: <20250505225634.2688578-1-sashal@kernel.org>
+In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
+References: <20250505230624.2692522-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.89
+X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
@@ -83,7 +83,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 151 insertions(+)
 
 diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 747f5397692e5..2a0804dd4b846 100644
+index 444dfd6adfe68..a74b73cd243e3 100644
 --- a/drivers/clk/imx/clk-imx8mp.c
 +++ b/drivers/clk/imx/clk-imx8mp.c
 @@ -8,6 +8,7 @@
@@ -94,7 +94,7 @@ index 747f5397692e5..2a0804dd4b846 100644
  #include <linux/of_address.h>
  #include <linux/platform_device.h>
  #include <linux/slab.h>
-@@ -406,11 +407,151 @@ static const char * const imx8mp_clkout_sels[] = {"audio_pll1_out", "audio_pll2_
+@@ -405,11 +406,151 @@ static const char * const imx8mp_clkout_sels[] = {"audio_pll1_out", "audio_pll2_
  static struct clk_hw **hws;
  static struct clk_hw_onecell_data *clk_hw_data;
  
@@ -246,7 +246,7 @@ index 747f5397692e5..2a0804dd4b846 100644
  	int err;
  
  	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mp-anatop");
-@@ -715,6 +856,16 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+@@ -704,6 +845,16 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
  
  	imx_check_clk_hws(hws, IMX8MP_CLK_END);
  
