@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE573579DB;
-	Mon,  5 May 2025 22:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A70389A16;
+	Mon,  5 May 2025 23:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485228; cv=none; b=QPbfz2Gz9A+S5wamkw2iligj8i8WskNuOgS/6j7iU4CrQK3YHFbV1yJSIBKGYL78k7r58wkivcom5x83wgYpbSpnVk+2wKSUSTievHMnpe+5rFT+GnHgbihHuP5Nf3Bmuvlz+mZliv91j2fpwkjK5Sb221PkCPy5iaVnDNtSv28=
+	t=1746486056; cv=none; b=hVTB1rnXDxPsvu+U+aHBMXKYstZvOQYhmQ8j0SEhzQ1mB+4nVJLAjmzaWFtKKsu54k7hvxC6nOhuqe969dVdjoDAYUYHG5VUtPiw/j3VY0t3xLOskCbMHhwzNXzMiyC/Q+dW8DBWhwtMrXb+l/fkH1AL1gjJV1kO6bHTinf7Rak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485228; c=relaxed/simple;
-	bh=UmXPMfLhQAU6WLrxdFgGiBmmeW7aClIjk2ejPJZ7fgo=;
+	s=arc-20240116; t=1746486056; c=relaxed/simple;
+	bh=AUN/ZpzpRneL6frMoc+GqTQzgvGFnu0eT//vqiAah2I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hmpmjmNEOMdkHOtweRzc4ofXtvJIv6uoCBdNuOKU0cEZro895tkPRl5OdjF9e1r+5uiO7TMS9PqFrwxj9Ppsyxam9QquUkk0K5sauGiAa6zHUX66B+Od1bw4fAEc0WwUojFoNB3HbI6rNUTt7WXXltHsoH11p9rKEvDflu2jKwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYB29dAi; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=q+eNB7TGMys2LGPcRhJsPPWWmbcUuSTMYvrnP7PlzKytEUUSFdYvbOwBu7/P4wDF1S4H/khfLLEQwGB9GkQZaGihdIe18aFkK1cWYZJaEiiE4C2vXvEE9EmTraUM7hdDVWoJ12x5V8JnjDf+Ws8zXbL8wFiY+4JbQhcmenYdD1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQpQE9l3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYB29dAi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A5C2C4CEE4;
-	Mon,  5 May 2025 22:47:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQpQE9l3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F461C4CEF1;
+	Mon,  5 May 2025 23:00:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746485227;
-	bh=UmXPMfLhQAU6WLrxdFgGiBmmeW7aClIjk2ejPJZ7fgo=;
+	s=k20201202; t=1746486055;
+	bh=AUN/ZpzpRneL6frMoc+GqTQzgvGFnu0eT//vqiAah2I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YYB29dAiX5kBM1sjq62yxXRruMJbLtY+tFZnqG6zfSd39i+cSQxShzk90Ga/GSz+x
-	 44li7BS/XYRbYNgKxwmFaw9qDjwPCTpD09+J1crDbeIZvGbIkGt3cv7JPA85XWCuRR
-	 CaKmVG55XJBEXhCDHlA6aKGknVbytIk2HbaITdU1fEVIawQg3bHjqB5RK01I/EFDcr
-	 zyBEIUxO0y+bYRU1S37cva+cAEc+c1FWYmeu47IHI2/55ASiZ7SjBPTvnDTU4kEVRw
-	 p8z9mKzyI1/DBjEua6JtDComtwNWCWkL4wYtaFAPXTNRK17j3yzSFHemEan//oALv1
-	 lqUPFGQDmMN+A==
+	b=PQpQE9l3L2GohUitm5A5nan4pLdP2r/R4HxJPxERk461tk5mQVh/olXkRBdEJJV6c
+	 M0n8tNME2cQoEGlViXT3EfcpsedlTsA69B2Jl7333XsA+rRwA712SgDv+zgueoTnBD
+	 +SPWs0M5vW0I9Y6SXmkYD2buCFu7yS4ufbRn6ZDhGWb192pI7wicOz5xjmqr1e0goy
+	 bwOP5s04yW2v18P5R58OX5tLkNNjlW5FcDJviUSVTJFLOVAe5m2nlYVRiBkIzJAnUr
+	 lO78G/1nMqaG0T8sIMBeyMlxZLeTdvq6tV6c9oTBhcAoQ/hxxPeB/mL0zTLNBPTx+7
+	 3UJH5IlhtPmZQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -40,12 +40,12 @@ Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>,
 	linux-clk@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.12 222/486] clk: imx8mp: inform CCF of maximum frequency of clocks
-Date: Mon,  5 May 2025 18:34:58 -0400
-Message-Id: <20250505223922.2682012-222-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 130/294] clk: imx8mp: inform CCF of maximum frequency of clocks
+Date: Mon,  5 May 2025 18:53:50 -0400
+Message-Id: <20250505225634.2688578-130-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
-References: <20250505223922.2682012-1-sashal@kernel.org>
+In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
+References: <20250505225634.2688578-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.26
+X-stable-base: Linux 6.6.89
 Content-Transfer-Encoding: 8bit
 
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
@@ -83,7 +83,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 151 insertions(+)
 
 diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index fb18f507f1213..fe6dac70f1a15 100644
+index 747f5397692e5..2a0804dd4b846 100644
 --- a/drivers/clk/imx/clk-imx8mp.c
 +++ b/drivers/clk/imx/clk-imx8mp.c
 @@ -8,6 +8,7 @@
