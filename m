@@ -1,47 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AC729375D;
-	Mon,  5 May 2025 22:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64D5299AB0;
+	Mon,  5 May 2025 22:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484653; cv=none; b=QS05fsYwRWdZ2EvifVS+NNUWs9dc+O3M4+qxDm+TWQnfyFPdR8w4kAqG559Z95df4kQ0/isaIGoLm82bA/ZNh+OnU9lV4dtxQTghwk7JV8noPEC3Zj7eL+HGc0ZXq2G9o4qBrBvVVEshvFOeYZVXLNd15MQaRhYfHrkavriE930=
+	t=1746485017; cv=none; b=ugF4NATu8CmMiwlZvSfIzKU0GPkDTK8G47tMxroHxOanam2N2yLxyUhUq0x/hy09qYrStHuudh9VtPT5jr2mzuye3Z5DFj7oyX8HGmP66hZ7cdrg+oszxo0pBFW4NkhdBp9BFBALp10ZFW326h+BhfhfLd+1N4P3970D/s6BjcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484653; c=relaxed/simple;
-	bh=eoIQoM66ncPr3cCGzotQUKBoAFuCUA2XUUoSQhH1K6E=;
+	s=arc-20240116; t=1746485017; c=relaxed/simple;
+	bh=2pyPJPnx1Gcn8XcH7QJPQ3Fh+4609/JM60WbXtoVZnQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WMtsfouXIV7dV7OlV9JVjEJc6g9YVAc9Pe3lrsHl+ESRNLKXTpjLIxDexKQcTIppeFEaLRsvlw7YEHC/Gpo97df+ODA4gLDawQ+TQSgH9Uko6+7P4TI1uQF2rQzeGHa3bHLgXZPoW5Anc0AtyqgTUOzecZLR/fK2g2CzyRra0Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7Y0RWab; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=PM88t+e2DAcr9ZLv+UIKHz0b4KyVLjNrM7e7fSVzODD8AHqdAituJ9qr+IpdQ3ccVxZyW8lTkgYW3NB7tU+xjNgsQbugtCBnrIFE40cELC//8SOeExMbU1qALkyDgqjvQ94X/mtKWJo4hBJvpKzCj0cd0aH9AbIvr8qW30HYoiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uA9Ukabo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7Y0RWab"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80660C4CEE4;
-	Mon,  5 May 2025 22:37:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uA9Ukabo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7008AC4CEEF;
+	Mon,  5 May 2025 22:43:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746484652;
-	bh=eoIQoM66ncPr3cCGzotQUKBoAFuCUA2XUUoSQhH1K6E=;
+	s=k20201202; t=1746485016;
+	bh=2pyPJPnx1Gcn8XcH7QJPQ3Fh+4609/JM60WbXtoVZnQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k7Y0RWabhTpwbLHEankzebxXzvdugPgtLM/ArYaeuaMg66QE7GFUSUAi7a8ikrGuW
-	 60C7RFhONDVDXeKhSyJI4Xtqo18zRogRRzrl52XJHkzxwcTWUPr9VBmqUs/mPSN5BY
-	 GKqDENuwYQltiGhjaBm2X8aTi+a1NX59dRECx8Ql6ujyQCAVleulNd/n2OG0n7Oe8n
-	 oy+fSCb/gIivGBsG46Y9AMLFJz/Q60y+An5j12fOCr7ZkhlY7Gs17zi2qqYYjwy6NN
-	 2cfedqrq1iUHEan18temOS0Td8GzXE990P5kjIQkI6jqNhys/kzbytRHmRRuP4EQko
-	 W7YXTwzVywAtQ==
+	b=uA9Ukabo+ZofWzAAGFlGWbqBqyHwOoMHgAf2MEvNRnBImUOR9vxmtVMmQa0XjeeVY
+	 bbx3pPZk1v01D8WtsrrM9/iHFJsAO3F0UXwWQlzGEFGTwn826Dpe654idiEHJyrogc
+	 W2nX7AEinuP7eocICJjX4mRgYgyTlrSJVo5qGMuQOhIwADwajTpTRK4H42DL+L7zBT
+	 NKe8iNZ3yFrw5wmId1+20Hy33gT6tqerJu4wVBP0mrnbxPFStjZs49EmWh+FxBOwIZ
+	 9QDaO25b3qEaxZNGSliAOwFpBOiU1wCOBbWdELXdGroVou6ouqxQd16+qjehhnek/2
+	 DC7gZOmhmpbTw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc: Taniya Das <quic_tdas@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	mturquette@baylibre.com,
 	sboyd@kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 585/642] clk: renesas: rzg2l-cpg: Refactor Runtime PM clock validation
-Date: Mon,  5 May 2025 18:13:21 -0400
-Message-Id: <20250505221419.2672473-585-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 124/486] clk: qcom: lpassaudiocc-sc7280: Add support for LPASS resets for QCM6490
+Date: Mon,  5 May 2025 18:33:20 -0400
+Message-Id: <20250505223922.2682012-124-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
-References: <20250505221419.2672473-1-sashal@kernel.org>
+In-Reply-To: <20250505223922.2682012-1-sashal@kernel.org>
+References: <20250505223922.2682012-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,166 +51,95 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.5
+X-stable-base: Linux 6.12.26
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Taniya Das <quic_tdas@quicinc.com>
 
-[ Upstream commit f6f73b891bf6beff069fcacc7b4a796e1009bf26 ]
+[ Upstream commit cdbbc480f4146cb659af97f4020601fde5fb65a7 ]
 
-Refactor rzg2l_cpg_attach_dev to delegate clock validation for Runtime PM
-to the updated rzg2l_cpg_is_pm_clk function. Ensure validation of clocks
-associated with the power domain while excluding external and core clocks.
-Prevent incorrect Runtime PM management for clocks outside the domain's
-scope.
+On the QCM6490 boards, the LPASS firmware controls the complete clock
+controller functionalities and associated power domains. However, only
+the LPASS resets required to be controlled by the high level OS. Thus,
+add support for the resets in the clock driver to enable the Audio SW
+driver to assert/deassert the audio resets as needed.
 
-Update rzg2l_cpg_is_pm_clk to operate on a per-power-domain basis. Verify
-clkspec.np against the domain's device node, check argument validity, and
-validate clock type (CPG_MOD). Use the no_pm_mod_clks array to exclude
-specific clocks from PM management.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/20241216210201.239855-1-prabhakar.mahadev-lad.rj@bp.renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+Link: https://lore.kernel.org/r/20250221-lpass_qcm6490_resets-v5-2-6be0c0949a83@quicinc.com
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/renesas/rzg2l-cpg.c | 102 +++++++++++++++++---------------
- 1 file changed, 54 insertions(+), 48 deletions(-)
+ drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
-index 4bd8862dc82be..91928db411dcd 100644
---- a/drivers/clk/renesas/rzg2l-cpg.c
-+++ b/drivers/clk/renesas/rzg2l-cpg.c
-@@ -1549,28 +1549,6 @@ static int rzg2l_cpg_reset_controller_register(struct rzg2l_cpg_priv *priv)
- 	return devm_reset_controller_register(priv->dev, &priv->rcdev);
- }
+diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+index 45e7264770866..22169da08a51a 100644
+--- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
++++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2025, Qualcomm Innovation Center, Inc. All rights reserved.
+  */
  
--static bool rzg2l_cpg_is_pm_clk(struct rzg2l_cpg_priv *priv,
--				const struct of_phandle_args *clkspec)
--{
--	const struct rzg2l_cpg_info *info = priv->info;
--	unsigned int id;
--	unsigned int i;
--
--	if (clkspec->args_count != 2)
--		return false;
--
--	if (clkspec->args[0] != CPG_MOD)
--		return false;
--
--	id = clkspec->args[1] + info->num_total_core_clks;
--	for (i = 0; i < info->num_no_pm_mod_clks; i++) {
--		if (info->no_pm_mod_clks[i] == id)
--			return false;
--	}
--
--	return true;
--}
--
- /**
-  * struct rzg2l_cpg_pm_domains - RZ/G2L PM domains data structure
-  * @onecell_data: cell data
-@@ -1595,45 +1573,73 @@ struct rzg2l_cpg_pd {
- 	u16 id;
+ #include <linux/clk-provider.h>
+@@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
+ 	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
  };
  
-+static bool rzg2l_cpg_is_pm_clk(struct rzg2l_cpg_pd *pd,
-+				const struct of_phandle_args *clkspec)
-+{
-+	if (clkspec->np != pd->genpd.dev.of_node || clkspec->args_count != 2)
-+		return false;
++static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
++	.name = "lpassaudio_cc_reset",
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.fast_io = true,
++	.max_register = 0xc8,
++};
 +
-+	switch (clkspec->args[0]) {
-+	case CPG_MOD: {
-+		struct rzg2l_cpg_priv *priv = pd->priv;
-+		const struct rzg2l_cpg_info *info = priv->info;
-+		unsigned int id = clkspec->args[1];
-+
-+		if (id >= priv->num_mod_clks)
-+			return false;
-+
-+		id += info->num_total_core_clks;
-+
-+		for (unsigned int i = 0; i < info->num_no_pm_mod_clks; i++) {
-+			if (info->no_pm_mod_clks[i] == id)
-+				return false;
-+		}
-+
-+		return true;
-+	}
-+
-+	case CPG_CORE:
-+	default:
-+		return false;
-+	}
-+}
-+
- static int rzg2l_cpg_attach_dev(struct generic_pm_domain *domain, struct device *dev)
- {
- 	struct rzg2l_cpg_pd *pd = container_of(domain, struct rzg2l_cpg_pd, genpd);
--	struct rzg2l_cpg_priv *priv = pd->priv;
- 	struct device_node *np = dev->of_node;
- 	struct of_phandle_args clkspec;
- 	bool once = true;
- 	struct clk *clk;
-+	unsigned int i;
- 	int error;
--	int i = 0;
--
--	while (!of_parse_phandle_with_args(np, "clocks", "#clock-cells", i,
--					   &clkspec)) {
--		if (rzg2l_cpg_is_pm_clk(priv, &clkspec)) {
--			if (once) {
--				once = false;
--				error = pm_clk_create(dev);
--				if (error) {
--					of_node_put(clkspec.np);
--					goto err;
--				}
--			}
--			clk = of_clk_get_from_provider(&clkspec);
-+
-+	for (i = 0; !of_parse_phandle_with_args(np, "clocks", "#clock-cells", i, &clkspec); i++) {
-+		if (!rzg2l_cpg_is_pm_clk(pd, &clkspec)) {
- 			of_node_put(clkspec.np);
--			if (IS_ERR(clk)) {
--				error = PTR_ERR(clk);
--				goto fail_destroy;
--			}
-+			continue;
-+		}
+ static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
+-	.config = &lpass_audio_cc_sc7280_regmap_config,
++	.config = &lpass_audio_cc_sc7280_reset_regmap_config,
+ 	.resets = lpass_audio_cc_sc7280_resets,
+ 	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
+ };
  
--			error = pm_clk_add_clk(dev, clk);
-+		if (once) {
-+			once = false;
-+			error = pm_clk_create(dev);
- 			if (error) {
--				dev_err(dev, "pm_clk_add_clk failed %d\n",
--					error);
--				goto fail_put;
-+				of_node_put(clkspec.np);
-+				goto err;
- 			}
--		} else {
--			of_node_put(clkspec.np);
- 		}
--		i++;
-+		clk = of_clk_get_from_provider(&clkspec);
-+		of_node_put(clkspec.np);
-+		if (IS_ERR(clk)) {
-+			error = PTR_ERR(clk);
-+			goto fail_destroy;
-+		}
-+
-+		error = pm_clk_add_clk(dev, clk);
-+		if (error) {
-+			dev_err(dev, "pm_clk_add_clk failed %d\n", error);
-+			goto fail_put;
-+		}
- 	}
+ static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
+-	{ .compatible = "qcom,sc7280-lpassaudiocc" },
++	{ .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
++	{ .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
+@@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+ 	struct regmap *regmap;
+ 	int ret;
  
- 	return 0;
++	desc = device_get_match_data(&pdev->dev);
++
++	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcm6490-lpassaudiocc"))
++		return qcom_cc_probe_by_index(pdev, 1, desc);
++
+ 	ret = lpass_audio_setup_runtime_pm(pdev);
+ 	if (ret)
+ 		return ret;
+ 
+ 	lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc";
+ 	lpass_audio_cc_sc7280_regmap_config.max_register = 0x2f000;
+-	desc = &lpass_audio_cc_sc7280_desc;
+ 
+ 	regmap = qcom_cc_map(pdev, desc);
+ 	if (IS_ERR(regmap)) {
+@@ -772,7 +787,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+ 	regmap_write(regmap, 0x4, 0x3b);
+ 	regmap_write(regmap, 0x8, 0xff05);
+ 
+-	ret = qcom_cc_really_probe(&pdev->dev, &lpass_audio_cc_sc7280_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, desc, regmap);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
+ 		goto exit;
 -- 
 2.39.5
 
