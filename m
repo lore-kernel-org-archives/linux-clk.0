@@ -1,74 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EEC4C62;
-	Sun,  4 May 2025 22:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3F329A5;
+	Mon,  5 May 2025 01:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746397002; cv=none; b=HaIdUBFppQpKfOJ22DpUFg3sI2jCdrKr5FsNBiPX4i9oUmPN3Qvw5IeUpJzSGg8/ufTxkKFOJKaWjxe8zSEFNP3S5FGU8Yt/AcqAdZA/9cknQTvT0rppzt/8HuvEiTVp2JZq4VW7nycwlZHSiuC49cNxDqmKOWCrSz332xnXZYk=
+	t=1746408951; cv=none; b=rdqoPuH13D31XALr30a0tpqSl73AgOzumxCuhA2851DHshP9mTl0+jZqJu9j1mp4yOeDaGDgdGz5azMeeRFDLCX2Rd/orlXta2E9C5iSR7AurrOg1Scrwl2Ajf3Ic+rudOFHiZ6OZG+wNsGm2BaWJJjkDiO0nuDipuOLuhF0Jwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746397002; c=relaxed/simple;
-	bh=beKfR6HjFlnY/P8zdhmJ7Qq4Li2sesKeU7YVYmfZXH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J6ZHyak+AxtCpFRHnbUHU4su1m/6jrvOWQfY1scEjB2eZrPh2FFaRizEUgDdPTN9Ltsdvu19j4cGxroB/YMZ1kng5NRsDtZtSDMz33Io1w0A9q3CYQrJNAULZYiQzUdFkq66y0F+TxWr9ANTMtiDe1/pZ4LcJMeDkVwAuoLGo4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUHxrHtB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746408951; c=relaxed/simple;
+	bh=rVlov5MiAeeifq0xC9nEvILniSr3HH1Z9+3WYyYzqmo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l0HeKSam2H3tYj27r2ulvW3zjX8WNmRFTlBM6ZterMUbVjZAQSPmKP29NwN8MEvZRrzmJ6+7GQ2PzRhRfaCvdR6DICQJJsFcslbdUw98ck9HmxH1MtS2V9R3OXs6bqkGKH1Shel20nzlLkogjPJCKuLa1OJ0nUQBcQ1B85VZB48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Y96/W1nk; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUHxrHtB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22F1EC4CEE7;
-	Sun,  4 May 2025 22:16:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746397001;
-	bh=beKfR6HjFlnY/P8zdhmJ7Qq4Li2sesKeU7YVYmfZXH4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NUHxrHtB0+lM+Jk3BHUFgF+I7guI67DxCj2c83EtKDk7q+r81TQKX952AEguTEyqW
-	 oRLXC5vq65grR2aS3qVwBO/w2q3M1/hVFwXllPN9YtA2j1nVNxlUX3rA/9T1iTdd8W
-	 0a542tt4nvg8L+w0tMc34MkKVgxesdbC60MhUe1FkIryaEF/WO/u/neNlSlZZiLuCq
-	 JkUh2mfkNnMhM4bjLo/uHiH3B6pY0O4yXciya6flIjRyWpksNTKLswvZK07gOANevY
-	 ruu2i6yaNi7cQzg6p1baBU3tlE74w3IDnBe3H85fFrJzuE2gqKH0bfvWw6UPZb7vxi
-	 y/e7JE7XO6DuQ==
-Message-ID: <260b6cc3-db8b-4b4c-a360-7bdd858943a8@kernel.org>
-Date: Sun, 4 May 2025 17:16:39 -0500
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Y96/W1nk"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=xE3NZTQkEdEVV6ngcG8aEKyvPiYBzkHan35NZ82mHcc=; b=Y96/W1nkkOgzE4YG
+	k6X6zdl03ibTb2a7ccH5oIyVSQbsc3koRsgqAaODPM0f7zs1F33SPHAar7w8fktzV7cOXul6iPFUM
+	cZiUazV0LYqLF6PWDKS5Q62OppYUOZPwawksXypXD29A6C6Cr/CUwAIdd46z12Qzb6800Qqhn+dp2
+	JYKa4oYM32Cggn/615/MTo4zHCO9ksKX1/i/R35/Jz1xuFOmTbpoA9LxVfZl3fPL2oL/It65Hdofj
+	7itYcE4RcLRRf9iQzSquoxpu0sRtywxjRsuIQs6rYyEnU4HzYiQ1yz0JJ7FRoOmglX8j2pDnHX1rf
+	2NWDnfz8i0reW3J/+Q==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1uBkkD-001M9R-2b;
+	Mon, 05 May 2025 01:35:45 +0000
+From: linux@treblig.org
+To: florian.fainelli@broadcom.com,
+	rjui@broadcom.com,
+	sbranden@broadcom.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] clk: bcm: kona: Remove unused scaled_div_build
+Date: Mon,  5 May 2025 02:35:45 +0100
+Message-ID: <20250505013545.359745-1-linux@treblig.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 RESEND] clk: socfpga: agilex: add support for the Intel
- Agilex5
-To: "Gerlach, Matthew" <matthew.gerlach@altera.com>, mturquette@baylibre.com,
- sboyd@kernel.org, richardcochran@gmail.com, linux-clk@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
- Teh Wen Ping <wen.ping.teh@intel.com>
-References: <20250417145238.31657-1-matthew.gerlach@altera.com>
- <fd295c8b-c5fd-4fda-b5d4-3c261d8dbfeb@altera.com>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <fd295c8b-c5fd-4fda-b5d4-3c261d8dbfeb@altera.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/4/25 16:34, Gerlach, Matthew wrote:
-> 
-> 
-> On 4/17/2025 7:52 AM, Matthew Gerlach wrote:
->> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
->>
->> Add support for Intel's SoCFPGA Agilex5 platform. The clock manager
->> driver for the Agilex5 is very similar to the Agilex platform, so
->> it is reusing most of the Agilex clock driver code.
->>
->> Signed-off-by: Teh Wen Ping <wen.ping.teh@intel.com>
->> Reviewed-by: Dinh Nguyen <dinguyen@kernel.org>
->> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
->> Signed-off-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> 
-> Is there any feedback on this patch?
-> 
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-I've applied it and sent a PR for 6.16.
+scaled_div_build() was added in 2014 by
+commit 1f27f15258bf ("clk: bcm281xx: add initial clock framework support")
+but hasn't been used.
 
-Dinh
+Remove it.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/clk/bcm/clk-kona.c | 18 ------------------
+ drivers/clk/bcm/clk-kona.h |  2 --
+ 2 files changed, 20 deletions(-)
+
+diff --git a/drivers/clk/bcm/clk-kona.c b/drivers/clk/bcm/clk-kona.c
+index 2b0ea882f1e4..0171e6b2bfca 100644
+--- a/drivers/clk/bcm/clk-kona.c
++++ b/drivers/clk/bcm/clk-kona.c
+@@ -53,24 +53,6 @@ static inline u64 scaled_div_value(struct bcm_clk_div *div, u32 reg_div)
+ 	return (u64)reg_div + ((u64)1 << div->u.s.frac_width);
+ }
+ 
+-/*
+- * Build a scaled divider value as close as possible to the
+- * given whole part (div_value) and fractional part (expressed
+- * in billionths).
+- */
+-u64 scaled_div_build(struct bcm_clk_div *div, u32 div_value, u32 billionths)
+-{
+-	u64 combined;
+-
+-	BUG_ON(!div_value);
+-	BUG_ON(billionths >= BILLION);
+-
+-	combined = (u64)div_value * BILLION + billionths;
+-	combined <<= div->u.s.frac_width;
+-
+-	return DIV_ROUND_CLOSEST_ULL(combined, BILLION);
+-}
+-
+ /* The scaled minimum divisor representable by a divider */
+ static inline u64
+ scaled_div_min(struct bcm_clk_div *div)
+diff --git a/drivers/clk/bcm/clk-kona.h b/drivers/clk/bcm/clk-kona.h
+index e09655024ac2..348a3454ce40 100644
+--- a/drivers/clk/bcm/clk-kona.h
++++ b/drivers/clk/bcm/clk-kona.h
+@@ -492,8 +492,6 @@ extern struct clk_ops kona_peri_clk_ops;
+ /* Externally visible functions */
+ 
+ extern u64 scaled_div_max(struct bcm_clk_div *div);
+-extern u64 scaled_div_build(struct bcm_clk_div *div, u32 div_value,
+-				u32 billionths);
+ 
+ extern void __init kona_dt_ccu_setup(struct ccu_data *ccu,
+ 				struct device_node *node);
+-- 
+2.49.0
 
