@@ -1,248 +1,152 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21FC2561D8
-	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 13:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D80F25A2A7
+	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 13:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746450388; cv=none; b=byicPZ4THLdgSlbOnDcEMk6Sn+fWlxiBSYCRXiyJ6C/jDa6ojgZNxbAc6xJf757z50I/8EPxr20Z4fXOElsgvY6eFH3P28S/aNc8Zyd3IPi+YpMdtPSRKx/RSZdBRTK3XWOSBpTg5v/Y5xkfOSvjklN88eEIJO1wYNfaW4NFVl0=
+	t=1746451371; cv=none; b=t9qpdB4q5bOAwBRMTHRsnViMjsZK/T9GFw0LL67CHqbFEitvjRBKdE1XilwNNUra4iMPx7H7FWvOy4t+Uxh9Q+gYdGPLX/6MazwqynEo43ggyYzgGwET6uzARqsG/v/QpdIHiq+mVvoN2su04WEsmDMCht/Q09ucSQ7SuvYxVrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746450388; c=relaxed/simple;
-	bh=cwiOX6cmqTQzmk3WggAwoK4SaoNLnnEpCnVxHf6Qxmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c0cWwfcx8Bac56eUEVyv9lLJuayKHLlXlHKfEPW45KnmklEjdG1Ra6PqV8lth95Gmo9sy2vyXrAvLPqewE0WdciiCp0TxnAmi/bjQhtIGgo6orJzYn+dRZQsJTSKv4c0vAhGO/zDelZexsQVbfIVIPqKHH/nViMhajNH4YyuE9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dRPhLn05; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1746451371; c=relaxed/simple;
+	bh=6b6UvFMmR5hwpyVwUTZJ+FnF2O3Be9wTrs/DC2KR41g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LoSqC1YiMU0ejYA1Q58WADARXYSoz0mbBKlIeKXXF+IPgXKR8rSzRdaBGKuiFS+y6LnYglS58cbbHwSsYXHt/dYuFRQaby+VEzqM14ZnKoM6nJeDVxXYzC2/kF0Kd5AxopLFVdUjwqdzoTn3y8+EF+1qf75/+75HXxGjr/RQMZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Z4LYVcqN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dRPhLn05"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac2af2f15d1so596033266b.1
-        for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 06:06:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746450384; x=1747055184; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7djaZKuQTg8ZH962YLQL/FSVR3ehnU/TnBc6a+PC3fk=;
-        b=dRPhLn05MBGi95i67XENDGk2MH4G/uDxTr7KnnnoSg3X0PFhjRFwc+16E1oYjPdKLn
-         NSpFpaQeCDBGArug/m9CV+GJl+aM4kagEKakmfp0UttzmOE1hADfKck5ZY4zzPlzB5iN
-         VyzVETnoFlG4j6bUB0oIyTMpEowmjLLwojxS10vgco0MNlk78eUjtg8wB+M8+r4oqndp
-         SSmrZtjVuHhnGdIMLAk7u0vyHLjX/FybqVg8XF1oUYu3sZspVP9e27rLjhvf9Y3Dz+Rs
-         M8ZZcewWRv5f0nJdHPTDA1B4vZmeiXFKRE0Ca8XSOlofzNWdTv/Nc7VWHgWbmXmOmFPn
-         Ylzw==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Z4LYVcqN"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545Bh0xY017719
+	for <linux-clk@vger.kernel.org>; Mon, 5 May 2025 13:22:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ipfJB44vaRrzzYNTr2RsUlxdMWhli5auraPTR3Cgev4=; b=Z4LYVcqNuIgKiZuC
+	gpqHd1nOQkIWqdsTCdDD/SRC6CD9vxFK8GqqyRxpK/1cAngXBYt9yP4y7PIgXc19
+	hF1Ldglx+Z/jdO2/LB2crwfHJw4x5e529cpCTdBfOZekjg71Pw6NT1WrK7OmKtaH
+	6DklgYiPkci+Uh9MExRHI0K4DQ85vUWKuLdyhkFSmnZ+KFeKo1nmNcM28pbXUvo2
+	WUH45GXdRZeGPGD2hYYmXLVEpCRbRB+NpVs3lHvWHMcV5w++CTAEgeymmcJ9x7ZN
+	vvPNUzvrw7svlrwBCOCsXG5lc1MXBVpXsRYtpFKWgJWN13j9t2z+lyp6g6C6MIKP
+	2YDaZw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46dce9c3uj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 13:22:48 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-47ae537a9d6so10643081cf.3
+        for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 06:22:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746450384; x=1747055184;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7djaZKuQTg8ZH962YLQL/FSVR3ehnU/TnBc6a+PC3fk=;
-        b=TAWTqnvILCwIwUDp+WG6xgjlGdxO57WCSKyhWbFyg5mTzwgyhHfKkzOFVc8SkqmRjM
-         I6gGTJ8U6iA0jWTEowqBhLx7OwVyMzmALytCabrwu8dokEK0ELnqVgK62L78cTshFGkz
-         WUVwyr5Q959RhM+RvC9shhSzJvAY6jRv9huNIfrtdR3XU5eSgilSbBWGO1+u6VHbiQST
-         ZUhsJUirFoNJ1OqxQKuqs4la0cqH6PFqcsRkgm4pXEtkDzjiQd4rX6L5ru+f6aSb5MMY
-         AqQv15yHzxni4faaZ8+Cqxin8PmY4i2XU38gbDtEC0ZqlSD+8aRDzWbOaeEb7tYdKm+t
-         iVyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXh1z8XW9k1xeZGUOlKpGpcoB46WCltf55Z90CfcPa0UOOzWTfpCARjKyen7AITwKNCUjloUifguos=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5FJA62xbpPZaDWAWVf1EmrFWmNjj9ulWMnm9/urdWE+vZ75xv
-	V0Dsw4JLTVlPlF3M9q6mVlae9ribhx8PZTOkN+quziS1jrE5Y2JWjS1Mp5LTP/Q=
-X-Gm-Gg: ASbGncu+QQraxOGcQpB4jvu496VCYfzgypUYFdxzB4ktDpQpiLzL727OfsUeMYgOrNn
-	yuaIFrrOEjxGdKjYMoD1pTaGPg3pFb+qGM8kz5VVfuBnYVYlzZ8+sCs2lT+4tWTpHgpBwNFGetg
-	cIVJ3WdPfbd6NFvXbKnm7Ptya5e/UZO2l6Y/VsG3E/z2XShmr9U6Y98DBgyMD3W5G8i51yegBxz
-	X079GF+pMQ5J076gzH56MISZfYpoeSV48EcbBWuFv/UmibgkR3GS+hK/BibE5bqlhZ6C32WMQex
-	jxNcCh+k/fkWJvrG7YvD5xtReckBPNIzOCz88aQuJEunh/FmXXHl
-X-Google-Smtp-Source: AGHT+IHfBz0qV3tN9vwCFJbP2NAyCooPjwrUmB9tNTrYi+DjMO5kp0iNYUW/DW+NaeO6h2If04tIVw==
-X-Received: by 2002:a17:906:6a12:b0:ace:caff:675a with SMTP id a640c23a62f3a-ad1905d7cdemr906825766b.10.1746450383927;
-        Mon, 05 May 2025 06:06:23 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:c917:a6e9:5bff:a8c2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad18914d067sm491199666b.3.2025.05.05.06.06.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 06:06:23 -0700 (PDT)
-Date: Mon, 5 May 2025 15:06:18 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH] dmaengine: qcom: bam_dma: keep remotely controlled units
- on during boot
-Message-ID: <aBi3ykEK5HG2WDD6@linaro.org>
-References: <20250503-bam-dma-reset-v1-1-266b6cecb844@oss.qualcomm.com>
- <aBh9WL2OMjTqBJch@linaro.org>
- <aw6tjh5q6t75bif4jyusrdvroq53lbwlljo5cdgzrofn3a4loz@ixuu3yw4ucil>
+        d=1e100.net; s=20230601; t=1746451367; x=1747056167;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ipfJB44vaRrzzYNTr2RsUlxdMWhli5auraPTR3Cgev4=;
+        b=U8aUEC80s72RWkpwGZC+37bCrDf0vJZJhzyYRbZrlTZY9vtgxhV9LcuW2mJCvjJk9T
+         hL9fF3Or5wgh4ejB160mW8/IB8ztimy7JEBNkdqkil/nHGR+ztWR4++DXbqh+VKFF6k0
+         8Nu7DTlDg3cEPVe3OJCI5JSGnxXXGwFkZ41MBexPJQZiLBzyn9chr2WnItnSj0XOoOP3
+         p156uAVBfm+Y3tvhcL87ZUqkFMYSBXGO8n20YQX7TrDI2aR6hn7yG+c5JPRWOBpabYbi
+         PsaYSF/SEdZVy+cMtElC4YCaDWqBPTsIQByCI2M8Vd+yESpMstCqfsRSXSr8H5wIOfiU
+         FbqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXneyF+3LAQUDJnBn80buNeQPd+Ehok+EcOgOUtdS5d6l+RK2d6CkerN4OC//TRclRXhz4wT+xr1qc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1AJMIDVoao6z6+SeiJBjsnPODvlcOoLTsiNA3rK3CDoVnc9CO
+	qV9pZVbKtlcTvzOYGxjK1w8hazdm+rBSCwRspX6aQSklRNUSKYfOHBtxfaVnXe//wEK++NZtCD0
+	irQKgL87IlMosEJhw6p6Q9mxSKoJHACE05XG7T7MGNsZQko3fyQ4AklaqYNE=
+X-Gm-Gg: ASbGncubQm9FCXo1Y8vKE12OsctInhpA7NCO16eRY7F/y6L0aYpHHKq08pty7UJc5Kg
+	HzxsuibUY2lqhsz+yJoklaucqco41Aq6IoY+uMclPUIjU/skX4/mtmyiL5Lcj3E+6NyKop0IUkh
+	DjI5NYtO4UQsjqN7vgZGbReORV4++cKzf72E2eXgeVMSsBfzCwYQNWRc/DSQaK/rf+TTRLk5OVU
+	N5+R5yO2LfaQI7Bt1kZK4LeKtGXzpeAsekYp7/FPFvUKu88Fs7mts6dYOyY20bnyZ9tgGspObTE
+	Z38HIqvGMfVnLetXTZUdsoY69igmAPWjUvwGHwwsEOUrZcG2FVOtKCjbJtH9cXRBGVY=
+X-Received: by 2002:ac8:5996:0:b0:48a:80e5:72bb with SMTP id d75a77b69052e-48c30d83ddcmr76442131cf.2.1746451367443;
+        Mon, 05 May 2025 06:22:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEjFC3fECabwesq4x5Fiy2V1yv92KY/9fO0f8AU4OsYx1OHQ7BrNcRSdkmpG2hw9MT3iHS01A==
+X-Received: by 2002:ac8:5996:0:b0:48a:80e5:72bb with SMTP id d75a77b69052e-48c30d83ddcmr76441901cf.2.1746451367042;
+        Mon, 05 May 2025 06:22:47 -0700 (PDT)
+Received: from [192.168.65.169] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad18950ac90sm494506966b.150.2025.05.05.06.22.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 May 2025 06:22:46 -0700 (PDT)
+Message-ID: <1cd1d97f-a6f1-43e6-8451-b9433db93c16@oss.qualcomm.com>
+Date: Mon, 5 May 2025 15:22:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aw6tjh5q6t75bif4jyusrdvroq53lbwlljo5cdgzrofn3a4loz@ixuu3yw4ucil>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: qcom: Add missing bindings on
+ gcc-sc8180x
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250430-sc8180x-camcc-support-v2-0-6bbb514f467c@quicinc.com>
+ <20250430-sc8180x-camcc-support-v2-1-6bbb514f467c@quicinc.com>
+ <20250502-singing-hypersonic-snail-bef73a@kuoka>
+ <cbca1b2f-0608-4bd3-b1fb-7f338d347b5e@quicinc.com>
+ <35662ebc-d975-4891-8cbb-1ba3c324f504@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <35662ebc-d975-4891-8cbb-1ba3c324f504@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDEyOSBTYWx0ZWRfX8pX9VMnhsRiX
+ AB0uyBN7X9pJUdGpIjoFNysnR4RoaC1Th+p6a+nk6Qp6VmvfUAUEClYTAMtqALNlRU69s6WC275
+ 0kAxuRb4IIXA4LVrdyQZT2pLiAWDuNokHZr0vc3wOf6xD2RReUUWpe5RbAbp+DfJZoyNT2qlA2r
+ cBxRWH3mj8gQvfvIa+1/4XHF2fBll5w17X414ZIgKr+0aQ/4uZffSrlsQS9p4jfmgA15LOOcsVP
+ l8LreGC5DzPgh8oF0ScDuJbwLcAIUeKTYZvmIZM+qLl8k9LFW6MXlydRpCAQflnB8ty4qBcUJkm
+ yQsYBkc41ZE+MM4jgTQxc5L5/6AagUxgCkXOQxjRQmKglCvw0EISGtVN0PtgSfu4Z+dclcPfOL8
+ va6N0z6JNePF5OA2b5NbkE50cqqql4ZkQFJoFVAVBT/XOK52nBpse75WsqMx5XEyo48YS2b2
+X-Proofpoint-ORIG-GUID: WR3ZwNHKhw_l1cIaZqKeNCACmg9Bto4H
+X-Authority-Analysis: v=2.4 cv=Qope3Uyd c=1 sm=1 tr=0 ts=6818bba8 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=bJQp2htD3s1xF4Ub2coA:9
+ a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-GUID: WR3ZwNHKhw_l1cIaZqKeNCACmg9Bto4H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-05_06,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 adultscore=0 clxscore=1015
+ malwarescore=0 bulkscore=0 suspectscore=0 impostorscore=0 phishscore=0
+ mlxlogscore=871 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505050129
 
-On Mon, May 05, 2025 at 03:17:00PM +0300, Dmitry Baryshkov wrote:
-> On Mon, May 05, 2025 at 10:56:56AM +0200, Stephan Gerhold wrote:
-> > On Sat, May 03, 2025 at 03:41:43AM +0300, Dmitry Baryshkov wrote:
-> > > The commit 0ac9c3dd0d6f ("dmaengine: qcom: bam_dma: fix runtime PM
-> > > underflow") made sure the BAM DMA device gets suspended, disabling the
-> > > bam_clk. However for remotely controlled BAM DMA devices the clock might
-> > > be disabled prematurely (e.g. in case of the earlycon this frequently
-> > > happens before UART driver is able to probe), which causes device reset.
-> > > 
-> > > Use sync_state callback to ensure that bam_clk stays on until all users
-> > > are probed (and are able to vote upon corresponding clocks).
-> > > 
-> > > Fixes: 0ac9c3dd0d6f ("dmaengine: qcom: bam_dma: fix runtime PM underflow")
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > 
-> > Thanks for the patch! I actually created almost the same patch on
-> > Friday, after struggling with this issue on DB410c when trying to add
-> > the MPM as wakeup-parent for GPIOs. :-)
-> > 
-> > How is this issue related to _remotely-controlled_ BAMs?
+On 5/5/25 11:46 AM, Krzysztof Kozlowski wrote:
+> On 05/05/2025 11:43, Satya Priya Kakitapalli wrote:
+>>
+>> On 5/2/2025 12:15 PM, Krzysztof Kozlowski wrote:
+>>> On Wed, Apr 30, 2025 at 04:08:55PM GMT, Satya Priya Kakitapalli wrote:
+>>>> Add all the missing clock bindings for gcc-sc8180x.
+>>>>
+>>>> Fixes: 0fadcdfdcf57 ("dt-bindings: clock: Add SC8180x GCC binding")
+>>>> Cc: stable@vger.kernel.org
+>>> What sort of bug is being fixed here? This needs to be clearly expressed
+>>> in commit msg - bug or observable issue.
+>>
+>>
+>> The multi-media AHB clocks are needed to create HW dependency in the 
+>> multimedia CC dt blocks and avoid any issues. They were not defined in 
+>> the initial bindings.
+>>
+>> Sure, I'll add the details in the commit text.
 > 
-> My understanding is that for locally controlled BAMs we can disable the
-> clock at the probe time as all the users of the BAM will be probed
-> before accessing the BAM. In case of a remotely controlled BAM there can
-> be a user (e.g. UART) which is running, but didn't request DMA channel
-> yet.
-> 
-> Please correct me if I'm wrong here.
-> 
+> I don't understand what is the bug here. You just described missing feature.
 
-Yes, I think there is a misunderstanding:
+i.e. this patch is fine, but the fixes tag doesn't apply, as it doesn't
+really fix anything on its own
 
- - UART doesn't use DMA for earlycon (and I'm not aware of any boot
-   firmware using DMA for UART either). The bam_dma driver really works
-   as intended here, it votes for the clock during probe to perform the
-   register access, then it drops the vote when going to runtime
-   suspend. We don't really need .sync_state() for the BAM, because
-   there are no active DMA consumers during boot.
-
- - All of the BLSP peripherals (BAM DMA, UART, I2C, SPI) need the
-   shared GCC_BLSP1_AHB_CLK for register access. What happens is:
-
-   1. GCC_BLSP1_AHB_CLK is left running by the bootloader.
-   2. earlycon makes use the UART registers (without DMA), but doesn't
-      vote for the clock (also: the clock driver isn't probed yet).
-   3. GCC driver probes, leaves GCC_BLSP1_AHB_CLK running since unused
-      clock cleanup happens later.
-   4. bam_dma probes, requests GCC_BLSP1_AHB_CLK, votes for enable to
-      access registers during probe.
-   5. bam_dma goes to runtime suspend. The last (known) consumer of
-      GCC_BLSP1_AHB_CLK is gone, so the clock is disabled.
-   6. earlycon continues accessing the UART registers.
-   [Device reset]
-   7. The full UART driver probes and votes for GCC_BLSP1_AHB_CLK.
-
-Conceptionally, we don't need .sync_state for the BAM, we need some kind
-of .sync_state for the GCC_BLSP1_AHB_CLK. Or we need earlycon to vote
-for the UART clocks as soon as the clock driver probes. Which is roughly
-what drivers/clk/imx/clk.c imx_register_uart_clocks() does, except that
-releasing the vote on late_initcall_sync() could still be too early.
-(It's a stupid configuration, but what if UART needs some modules to
- probe successfully?)
-
-> > The BAM clock will get disabled for all types of BAM control, so I don't
-> > think the type of BAM control plays any role here. The BLSP DMA instance
-> > that would most likely interfere with UART earlycon is
-> > controlled-remotely on some SoCs (e.g. MSM8916), but currently not all
-> > of them (e.g. MSM8974, IPQ8074, IPQ9574, ...).
-> 
-> This probably means that the definition of the flag needs to be
-> clarified and maybe some of those platforms should use it.
-> 
-
-Yeah, probably. It would require testing and/or checking downstream
-sources though. Here is a slightly clearer definition for the flags:
-
- - Controlled-remotely = reset+initialized outside of Linux, skip reset
-   and initialization of global BAM registers.
- - Powered-remotely = powered on outside of Linux, but global BAM
-   registers must be reset and initialized inside Linux.
-
-And for the clock:
-
- - Clock specified: We can vote for the BAM to power on by turning on
-   the clock. After that, we can access registers during probe.
- - Clock missing: BAM power management is integrated into the consumer
-   interface (e.g. SLIMbus, BAM DMUX). We cannot access registers until
-   the consumer requests the DMA channel.
-
-I think the BLSP DMA (for UART/I2C/SPI) is often "controlled-remotely",
-because there is the option to use some of the instances inside one of
-the remoteprocs (RPM/Modem/WCNSS/ADSP/etc). It's not our job to keep the
-BAM on though, the GCC_BLSP1_AHB_CLK is a clock that every remoteproc
-can vote for independently.
-
-> > The fixes tag also doesn't look correct to me, since commit 0ac9c3dd0d6f
-> > ("dmaengine: qcom: bam_dma: fix runtime PM underflow") only changed the
-> > behavior for BAMs with "if (!bdev->bamclk)". This applies to some/most
-> > remotely-controlled BAMs, but the issue we have here occurs only because
-> > we do have a clock and cause it to get disabled prematurely.
-> 
-> Well... It is a commit which broke earlycon on on db410c.
-> 
-
-FWIW, earlycon works for me on 6.15-rc4 on DB410c, I've only run into
-this issue after adding the MPM definition, which changes probe order
-enough to trigger this issue. I'm not sure how that commit changes
-anything, will try reverting it for my setup later to see what happens.
-
-> I started to describe here the usecase of the remotely-controlled DMA
-> controller being used by the BLSP and then I understood, that I myself
-> don't completely understand if the issue is because DMA block is
-> controlled remotely (and we should not be disabling it because the BLSP
-> still attempts to use it) or if it's a simple case of the clock being
-> shared between several consumers and one of the consumers shutting it
-> down before other running consumers had a chance to vote on it.
-> 
-
-The latter, as explained above. The DMA block doesn't play any role
-here, it's not used during boot.
-
-> > Checking for if (bdev->bamclk) would probably make more sense. In my
-> > patch I did it just unconditionally, because runtime PM is currently
-> > a no-op for BAMs without clock anyway.
-> 
-> Please share your patch.
-> 
-
-It's more or less equivalent to yours with some if checks removed.
-I would be in favor of leaving the bam_dma driver as-is and solving this
-on the clock/earlycon level.
-
-> > 
-> > I think it's also worth noting in the commit message that this is sort
-> > of a stop-gap solution. The root problem is that the earlycon code
-> > doesn't claim the clock while active. Any of the drivers that consume
-> > this shared clock could trigger the issue, I had to fix a similar issue
-> > in the spi-qup driver before in commit 0c331fd1dccf ("spi: qup: Request
-> > DMA before enabling clocks"). On some SoCs (e.g. MSM8974), we have
-> > "dmas" currently only on &blsp2_i2c5, so the UART controller wouldn't
-> > even be considered as consumer to wait for before calling the bam_dma
-> > .sync_state.
-> > 
-> > It may be more reliable to implement something like in
-> > drivers/clk/imx/clk.c imx_register_uart_clocks(), which tries to claim
-> > only the actually used UART clocks until late_initcall_sync(). That
-> > would at least make it independent from individual drivers, but assumes
-> > the UART driver can actually probe before late_initcall_sync() ...
-> > Most of this code is generic though, so perhaps releasing the clocks
-> > could be hooked up somewhere generic, when earlycon exits ...?
-> 
-> The spi-qup commit looks like another stop-gap workaround. Let's add CCF
-> and serial maintainers to the discussion with the hope of finding some
-> generic solution.
-> 
-> Most likely the easiest solution for Qualcomm platforms is to add
-> additional vote on earlycon clocks and then to try to generalise that.
-> 
-
-Yeah, that would be the best option I think.
-
-Thanks,
-Stephan
+Konrad
