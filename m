@@ -1,48 +1,45 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7773308125;
-	Mon,  5 May 2025 22:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A527628DF14;
+	Mon,  5 May 2025 22:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746484091; cv=none; b=HdoaiPlcgyCeYMnib4M3pjIcQ+3iH/wPahBiDEj+jMZ4C5i8i4DcWpdy/jYy1sIocy50Ykw2FHg8ZjX0laLCLj2/RiAQffnuA0dhdzqrWYjULHhyUc2OhFyDxeGbWYOCkiZgwtFY5W1S5CVGcF31/KyqFdS8T+us6TmSIZwCQ/8=
+	t=1746484292; cv=none; b=ahhB4gOOCV9ZObrmeI4CQxOFALCt+IVoC7NWl1qQroxqAxCUNdNVGJt1mTMxMT7dfty9xZ7SssbJTDAuj5k87G4ieZn9f19DDW3gcOftWH8OSVoC2bv6QaDHCiQvLi8X8UwnzTTwCRoo8Q3UXXSrobmwhV3zeKeib4BM/A0EBhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746484091; c=relaxed/simple;
-	bh=spRrkMeD8zKbNalNxXQx8E7VWnNwVyeo4rqtJcNxQws=;
+	s=arc-20240116; t=1746484292; c=relaxed/simple;
+	bh=17sWMnJK8wQ0ABgcK00WwNpqi6OGNfq9XbBRBCz2d0Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eE3KC9Kk41V4w6bAbwLhRaOz/6b53S5hTW55bgOS38lvnVYkKeammMKUgpf1fhWlhGJnYIExlJRqsHa8oiimMrP+oaxZ+NZs09Ys2BZk/iMtLDKjGSkBUyTAtmayIgRbIMvnOOqZXt7cL3GMsI/So5Ti5qNxwFIoB9wwmAYzhi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M4eHk7It; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=g8qde5nBbzVeQBcDnKLAat9H9QOSV4lc/kPjRWfv3oViV8hTUGOdjPYbeT4RPfN4vF+fQHSZibtcHJ+SsrBEmLbHN6FO9+bqXHfNWxkN6OO7Udqwk0uSl2e0R/Mq2RQPbHcVOzILC2rV7OlW5MBTcnVNZ2BVpwdJJSvrXfcc3EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L1zDILF7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M4eHk7It"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCFEAC4CEEF;
-	Mon,  5 May 2025 22:28:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1zDILF7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09725C4CEED;
+	Mon,  5 May 2025 22:31:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746484091;
-	bh=spRrkMeD8zKbNalNxXQx8E7VWnNwVyeo4rqtJcNxQws=;
+	s=k20201202; t=1746484291;
+	bh=17sWMnJK8wQ0ABgcK00WwNpqi6OGNfq9XbBRBCz2d0Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=M4eHk7ItwqNo6a6Kde/otUIOe7yqUZ8vM68T5b1/Vl/bOm8cvN/jFVVFV0CyHLQOf
-	 TDYvE4Y28kyoYCzo7LDqfe3upbU945gGZrRLyMkpTO5cU7TsxsJdTK+L+LAeR0eH77
-	 SMrmQ4T5FFW3PsWJbTgOU3WKi0B6MBRivqJZR4UebVhFw209ygKDy4JVhc3fx6w3bf
-	 sRAnNj5HGNp84IZuOE9JrHAK313DqDAIEG4yYtg28HHtT9FkQsWNaDd3IpITeeoW+O
-	 Gcbbps5eOQsu71HUkRpJb9gjjkkSoqNz5c5ABKBtM2d8ffWALUsDlyDnweWfLSd42h
-	 iJNHwT7cb86rQ==
+	b=L1zDILF77Yh30+B3LyqDzBpVbtpzWSf43B9CX39pn73H6D1V7FDm7GLkTvuxHvMBV
+	 47VjdNhDM3MHxFuoFWvOb+ph7s90Z+Cqx4RT5dhR1/0rBak3FdhjMHmNQ3rO8HCbFB
+	 /7wiE636fEjbn+H3sI204WlJ1SsZ0GcqVNw5q4+ihau/DVS0bVd3bskVx3g97rI89o
+	 Hc0E8Z0g6nNrAZz65NZY77ybUU38piX0IBWXjGs2ZuU0yHDGzdhMiO0M2/kY9O7p25
+	 acsaaDaJGFT1f6uzrFAQ+St65TN2rINs8kBMyoFFi4VNws6AFJKV0Y+T3sZpT4NEC9
+	 6YC38SMXnvBzQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Philippe Simons <simons.philippe@gmail.com>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>,
+Cc: Karl Chan <exxxxkc@getgoogleoff.me>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	mturquette@baylibre.com,
 	sboyd@kernel.org,
-	samuel@sholland.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.14 346/642] clk: sunxi-ng: h616: Reparent GPU clock during frequency changes
-Date: Mon,  5 May 2025 18:09:22 -0400
-Message-Id: <20250505221419.2672473-346-sashal@kernel.org>
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.14 438/642] clk: qcom: ipq5018: allow it to be bulid on arm32
+Date: Mon,  5 May 2025 18:10:54 -0400
+Message-Id: <20250505221419.2672473-438-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
 References: <20250505221419.2672473-1-sashal@kernel.org>
@@ -57,101 +54,38 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.14.5
 Content-Transfer-Encoding: 8bit
 
-From: Philippe Simons <simons.philippe@gmail.com>
+From: Karl Chan <exxxxkc@getgoogleoff.me>
 
-[ Upstream commit eb963d7948ce6571939c6875424b557b25f16610 ]
+[ Upstream commit 5d02941c83997b58e8fc15390290c7c6975acaff ]
 
-The H616 manual does not state that the GPU PLL supports
-dynamic frequency configuration, so we must take extra care when changing
-the frequency. Currently any attempt to do device DVFS on the GPU lead
-to panfrost various ooops, and GPU hangs.
+There are some ipq5018 based device's firmware only can able to boot
+arm32 but the clock driver dont allow it to be compiled on arm32.
+Therefore allow GCC for IPQ5018 to be selected when building ARM32
+kernel
 
-The manual describes the algorithm for changing the PLL
-frequency, which the CPU PLL notifier code already support, so we reuse
-that to reparent the GPU clock to GPU1 clock during frequency
-changes.
-
-Signed-off-by: Philippe Simons <simons.philippe@gmail.com>
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Link: https://patch.msgid.link/20250220113808.1122414-2-simons.philippe@gmail.com
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Karl Chan <exxxxkc@getgoogleoff.me>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Link: https://lore.kernel.org/r/20241007163414.32458-4-exxxxkc@getgoogleoff.me
+[bjorn: Updated commit message, per Dmitry's suggestion]
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 36 +++++++++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-index 190816c35da9f..6050cbfa922e2 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-@@ -328,10 +328,16 @@ static SUNXI_CCU_M_WITH_MUX_GATE(gpu0_clk, "gpu0", gpu0_parents, 0x670,
- 				       24, 1,	/* mux */
- 				       BIT(31),	/* gate */
- 				       CLK_SET_RATE_PARENT);
-+
-+/*
-+ * This clk is needed as a temporary fall back during GPU PLL freq changes.
-+ * Set CLK_IS_CRITICAL flag to prevent from being disabled.
-+ */
-+#define SUN50I_H616_GPU_CLK1_REG        0x674
- static SUNXI_CCU_M_WITH_GATE(gpu1_clk, "gpu1", "pll-periph0-2x", 0x674,
- 					0, 2,	/* M */
- 					BIT(31),/* gate */
--					0);
-+					CLK_IS_CRITICAL);
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 69bbf62ba3cd7..d470ed007854c 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -217,7 +217,7 @@ config IPQ_GCC_4019
  
- static SUNXI_CCU_GATE(bus_gpu_clk, "bus-gpu", "psi-ahb1-ahb2",
- 		      0x67c, BIT(0), 0);
-@@ -1120,6 +1126,19 @@ static struct ccu_pll_nb sun50i_h616_pll_cpu_nb = {
- 	.lock		= BIT(28),
- };
- 
-+static struct ccu_mux_nb sun50i_h616_gpu_nb = {
-+	.common		= &gpu0_clk.common,
-+	.cm		= &gpu0_clk.mux,
-+	.delay_us	= 1, /* manual doesn't really say */
-+	.bypass_index	= 1, /* GPU_CLK1@400MHz */
-+};
-+
-+static struct ccu_pll_nb sun50i_h616_pll_gpu_nb = {
-+	.common		= &pll_gpu_clk.common,
-+	.enable		= BIT(29),	/* LOCK_ENABLE */
-+	.lock		= BIT(28),
-+};
-+
- static int sun50i_h616_ccu_probe(struct platform_device *pdev)
- {
- 	void __iomem *reg;
-@@ -1170,6 +1189,14 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
- 	val |= BIT(0);
- 	writel(val, reg + SUN50I_H616_PLL_AUDIO_REG);
- 
-+	/*
-+	 * Set the input-divider for the gpu1 clock to 3, to reach a safe 400 MHz.
-+	 */
-+	val = readl(reg + SUN50I_H616_GPU_CLK1_REG);
-+	val &= ~GENMASK(1, 0);
-+	val |= 2;
-+	writel(val, reg + SUN50I_H616_GPU_CLK1_REG);
-+
- 	/*
- 	 * First clock parent (osc32K) is unusable for CEC. But since there
- 	 * is no good way to force parent switch (both run with same frequency),
-@@ -1190,6 +1217,13 @@ static int sun50i_h616_ccu_probe(struct platform_device *pdev)
- 	/* Re-lock the CPU PLL after any rate changes */
- 	ccu_pll_notifier_register(&sun50i_h616_pll_cpu_nb);
- 
-+	/* Reparent GPU during GPU PLL rate changes */
-+	ccu_mux_notifier_register(pll_gpu_clk.common.hw.clk,
-+				  &sun50i_h616_gpu_nb);
-+
-+	/* Re-lock the GPU PLL after any rate changes */
-+	ccu_pll_notifier_register(&sun50i_h616_pll_gpu_nb);
-+
- 	return 0;
- }
- 
+ config IPQ_GCC_5018
+ 	tristate "IPQ5018 Global Clock Controller"
+-	depends on ARM64 || COMPILE_TEST
++	depends on ARM || ARM64 || COMPILE_TEST
+ 	help
+ 	  Support for global clock controller on ipq5018 devices.
+ 	  Say Y if you want to use peripheral devices such as UART, SPI,
 -- 
 2.39.5
 
