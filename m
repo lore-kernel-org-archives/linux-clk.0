@@ -1,119 +1,145 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554841F4262;
-	Mon,  5 May 2025 21:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC9F2D3A86;
+	Mon,  5 May 2025 22:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746481158; cv=none; b=Sf559Wiu0M774yK7xekuwI9XtwE/dAg8D+hVXcnGQRiVLv9gbq5TcSegWXzkGfOm2kBj9omC1O9+3XFNUd+CNPf+Wk/QH7TFOxXp9h77uouPLxBigGTXNDy3zWYh4CxjzVB9+fmFZX1ZpmaOXZ9DEQwqMvFa/WUsNYiNl7C3oWI=
+	t=1746483642; cv=none; b=lYafzqvMevjrOFzOFhSLWdl8vlBSuF2gzXJWhE9abnXebkqMXrQCb+cHdzMX5H2BuWtrilwkGRAkeMUnKlrCCNhPMk0DwAlD60OnZ0GRGw2o6SS01UI7sZnyhpkeJreZEEQDFbnUnN7bapzHd3rmHBMXkjvbxYMal75SaRMP8GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746481158; c=relaxed/simple;
-	bh=OFXDbJsxKqoQMWwXs8OFPxoxsBnWaETf9qmgoQvbyuQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VL/QAOm/qZsWenHUxFvIxfgkrUKDpxIYlCNqCKr8iJHhnjS67t0CuyBwt2mADC8pSCogixXN6cHQNjxXub63+/Q1T/+ggdwZwjuuQNDJKvKm1kRGSUQr94DfktziW1XI979y7rGlgBQyenrm7Pb6Xy+DPKbLawfyy/GuiXRfCww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=FeGwC3yb; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1746483642; c=relaxed/simple;
+	bh=2pyPJPnx1Gcn8XcH7QJPQ3Fh+4609/JM60WbXtoVZnQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=iah5Kzoh+yyEMNzppcR7qEUiWikNUkHDYQkdZy5GHI6z2WU7kYhxrFYjPjLBJLowyS9wPctNAXTceEo3VlJ4IfXQqvnKAFLwS02wE53xApDEwLl8g1ppuy5eOvAQsN2MKKNCx7kYGrRpMfzT4eZIEjx5+OMK2TwCpTV43NSFvXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjCHbqeY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="FeGwC3yb"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=6l/heqGk/UTexwAtKZZUGycS/exQ3H0HSuobkgefF30=; b=FeGwC3ybr75HKO+AnpNeCgzn/7
-	btsDdrILnjyQaO/niTyoI+k6DOd+zI2DjMDahPHyW1S+qJWTNi0H2Lsuz350DFJhPV9SdniI/GYLF
-	Xd6/nOyeAHNNPzl+xoOAk+ZZTV+7OO0R2i1m72KUSi3QcD3F/rhDfIWZANPyKk6VVRcAkk7JlkBcA
-	b5WQw9/xIH8e2CoRXD5XxQLqt9/LuYMAhN3ueSCZO5msI9Ov/3FC7AkVruNvjUz91YSu4TMHdDYAM
-	qU04+Mv/pU7+PdBUpTZ8J1GsDPHp6bp1sqi3O0R5XmJVeZPWsK+JK+IFeQoNNWGoc8JmzVDc3iyQ0
-	N1V1vSxg==;
-Received: from i53875a1d.versanet.de ([83.135.90.29] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uC3Wk-00006o-S3; Mon, 05 May 2025 23:39:06 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Shresth Prasad <shresthprasad7@gmail.com>,
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>,
- Yao Zi <ziyao@disroot.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Yao Zi <ziyao@disroot.org>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Subject: Re: [PATCH v4 2/5] clk: rockchip: Support MMC clocks in GRF region
-Date: Mon, 05 May 2025 23:39:05 +0200
-Message-ID: <2737556.Isy0gbHreE@diego>
-In-Reply-To: <20250417143647.43860-3-ziyao@disroot.org>
-References:
- <20250417143647.43860-1-ziyao@disroot.org>
- <20250417143647.43860-3-ziyao@disroot.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjCHbqeY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A085C4CEEF;
+	Mon,  5 May 2025 22:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746483642;
+	bh=2pyPJPnx1Gcn8XcH7QJPQ3Fh+4609/JM60WbXtoVZnQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fjCHbqeYHxpJ4D8Ft4L/le9GsxCnYbu/M1tKwXJiU/NJKXJ4Dak3JSJnpcz7rYvnK
+	 vw0fVzeHUsBL3jL1g0mJg0FbHQyBz/x7sE488I1sw2Bucu9c3UAwmXY9nNh0esVOR4
+	 8aRG+AokC6W/aDkVTkalcWqgPnZFmKyOoZHjt1a5Ze82gFrSQXNqhlZ622lXP2jkPx
+	 Ojynye/7SrwlFpMXmKm8e2USAnI6M68DgtUxSMf/W04szJ3uZsi78/aFEUlTYyvld/
+	 7u3CnYVbfZs7K0n5xRjSe9tEcVA+TJ2ImWp44rReZ1mzJ4tBG1jb4RNgiyWtXEzjSX
+	 MQUcyBri403WQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Taniya Das <quic_tdas@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.14 155/642] clk: qcom: lpassaudiocc-sc7280: Add support for LPASS resets for QCM6490
+Date: Mon,  5 May 2025 18:06:11 -0400
+Message-Id: <20250505221419.2672473-155-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
+References: <20250505221419.2672473-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.14.5
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Taniya Das <quic_tdas@quicinc.com>
 
-Am Donnerstag, 17. April 2025, 16:36:44 Mitteleurop=C3=A4ische Sommerzeit s=
-chrieb Yao Zi:
-> Registers of MMC drive/sample clocks in Rockchip RV1106 and RK3528
-> locate in GRF regions. Adjust MMC clock code to support register
-> operations through regmap. Also add a helper to ease registration of GRF
-> clocks.
->=20
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+[ Upstream commit cdbbc480f4146cb659af97f4020601fde5fb65a7 ]
 
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index cbf93ea119a9..ce2f3323d84e 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -590,6 +590,7 @@ void rockchip_clk_register_branches(struct rockchip_c=
-lk_provider *ctx,
->  				list->name,
->  				list->parent_names, list->num_parents,
->  				ctx->reg_base + list->muxdiv_offset,
-> +				NULL, 0,
->  				list->div_shift
->  			);
->  			break;
-> @@ -619,6 +620,11 @@ void rockchip_clk_register_branches(struct rockchip_=
-clk_provider *ctx,
->  			break;
->  		case branch_linked_gate:
->  			/* must be registered late, fall-through for error message */
-> +		case branch_mmc_grf:
-> +			/*
-> +			 * must be registered through rockchip_clk_register_grf_branches,
-> +			 * fall-through for error message
-> +			 */
->  			break;
+On the QCM6490 boards, the LPASS firmware controls the complete clock
+controller functionalities and associated power domains. However, only
+the LPASS resets required to be controlled by the high level OS. Thus,
+add support for the resets in the clock driver to enable the Audio SW
+driver to assert/deassert the audio resets as needed.
 
-please don't create separate structures for specific clock-types.
-Being able to "just define" clock branches is helpful and starting
-to require separate blocks just causes issues down the road.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+Link: https://lore.kernel.org/r/20250221-lpass_qcm6490_resets-v5-2-6be0c0949a83@quicinc.com
+Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-=46or handling multiple GRF sources, I just merged Nicolas' patches for
-handling auxiliary GRFs [0] and GRF-gate clock type [1] .
-
-So ideally, please base off from there.
-
-Thanks a lot
-Heiko
-
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.gi=
-t/commit/?id=3D70a114daf2077472e58b3cac23ba8998e35352f4
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.gi=
-t/commit/?id=3De277168cabe9fd99e647f5dad0bc846d5d6b0093
-
+diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+index 45e7264770866..22169da08a51a 100644
+--- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
++++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+  * Copyright (c) 2021, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2025, Qualcomm Innovation Center, Inc. All rights reserved.
+  */
+ 
+ #include <linux/clk-provider.h>
+@@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
+ 	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+ };
+ 
++static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
++	.name = "lpassaudio_cc_reset",
++	.reg_bits = 32,
++	.reg_stride = 4,
++	.val_bits = 32,
++	.fast_io = true,
++	.max_register = 0xc8,
++};
++
+ static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
+-	.config = &lpass_audio_cc_sc7280_regmap_config,
++	.config = &lpass_audio_cc_sc7280_reset_regmap_config,
+ 	.resets = lpass_audio_cc_sc7280_resets,
+ 	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
+ };
+ 
+ static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
+-	{ .compatible = "qcom,sc7280-lpassaudiocc" },
++	{ .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
++	{ .compatible = "qcom,sc7280-lpassaudiocc", .data = &lpass_audio_cc_sc7280_desc },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, lpass_audio_cc_sc7280_match_table);
+@@ -752,13 +763,17 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+ 	struct regmap *regmap;
+ 	int ret;
+ 
++	desc = device_get_match_data(&pdev->dev);
++
++	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcm6490-lpassaudiocc"))
++		return qcom_cc_probe_by_index(pdev, 1, desc);
++
+ 	ret = lpass_audio_setup_runtime_pm(pdev);
+ 	if (ret)
+ 		return ret;
+ 
+ 	lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc";
+ 	lpass_audio_cc_sc7280_regmap_config.max_register = 0x2f000;
+-	desc = &lpass_audio_cc_sc7280_desc;
+ 
+ 	regmap = qcom_cc_map(pdev, desc);
+ 	if (IS_ERR(regmap)) {
+@@ -772,7 +787,7 @@ static int lpass_audio_cc_sc7280_probe(struct platform_device *pdev)
+ 	regmap_write(regmap, 0x4, 0x3b);
+ 	regmap_write(regmap, 0x8, 0xff05);
+ 
+-	ret = qcom_cc_really_probe(&pdev->dev, &lpass_audio_cc_sc7280_desc, regmap);
++	ret = qcom_cc_really_probe(&pdev->dev, desc, regmap);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register LPASS AUDIO CC clocks\n");
+ 		goto exit;
+-- 
+2.39.5
 
