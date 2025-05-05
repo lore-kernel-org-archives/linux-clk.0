@@ -1,185 +1,206 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A176B1FF7DC
-	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 11:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CEE2512C2
+	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 12:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746444512; cv=none; b=JcNlK0mbli+ciMjoPYqv0tmVsngh/DzBfEZVnOmkEjL/B/dDkCBjL+U90gQvBMwK+Q+GaZNeHLxKoM4Tc4KEsrh9Q/5WTrcOecGLKrYYkQYx0ztGVkzX9W+7HD+nqYVekbTlHiCMFOqTEQIsyEY8tOQ06+ejHljQKfgRc9ycOMM=
+	t=1746447427; cv=none; b=r6Coa/WKAmb/1XxnUT2TYX/NBl5qSSEafK0/cmu9qdEK7so/hmzt7GIJ2C/b5nOlHU7wKNwsnJa+wUZpdoMRTr+MF/XMq6JZNfg8GW9Gr6rw4G+RYVILlWppg4nCH/9gFHPSshWC4ZQqgAPHoESW5tFCsRvWidiWMHwiAr/h50M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746444512; c=relaxed/simple;
-	bh=fozcw/cPzDCRQYDoH/cphECQbWBs/UYkwW7QVUbB8js=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g9aEanY/fD1fFJBOjhVz/vhc5iGn4Wh9PAnBO8IDClEEs3OwNGfhVjVdHty5WGOPZCyReAyAIad4q/l/gcsW92vwYQLW6tFaPrNLr04DMB0qSfxGKtWrNKqLdSV+gheLwtYjanE+/1uRyIqm+yWjt74glXNE1g+xOqi9pWGWkfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=eTZJc3OQ; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1746447427; c=relaxed/simple;
+	bh=NlALIoe0iC3WSYUHgCo9Umj2JugDI/3o+WdAPXUGUuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m02v5rbmLyV61zrQcz1QpRHLCXnzx/N/+o4T2ylZgFQvbchr/7cwBl0ne4j4+GjHpoYouzqNggGh2WW6RFki3RG0kEzPRXt/hYud2ubE50/BvomAxVS/lINp21UlSlFNXT8ovbAQ6HJi0EtvZ7tDHw3sjeK0xO+C+ZNoHAcEebI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NwwMaSql; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="eTZJc3OQ"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5ed43460d6bso6495669a12.0
-        for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 04:28:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746444509; x=1747049309; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aB3cMr3JDp0nKZr8OwsHEx3We5XLotlduuz1352Eao4=;
-        b=eTZJc3OQPMj7DocRX3Tt8i2/6sbj6z2miUhjFkXj04/Om61jg2DT7Zr6Jg2jf++EZe
-         kWMz9+OtS/v02i1chVzzI3i8/K52U+txzz5cJGKgtVRv/3AnSkPNuBcjzYTo5nJqD7dy
-         dBSm9p3iFS8Krq2nW5TzhYOFTPckgYX2yguj4fY9DZs27MuKc8fp8+SpqJwgz+JJSHeu
-         tyCLBcMecAgOfybpELIL2+vkdYN/BFQieuBKnnTYeXzNj7BRGCZCuQRE+8fEC5y+aDXB
-         LKH/IK6cVeGe0krbIu3e21nj7SBGRcvllDZmS4AeujDYeN4ddvnzTEtIf/6pMk4MZL51
-         +mXA==
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NwwMaSql"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545CEjEh023086
+	for <linux-clk@vger.kernel.org>; Mon, 5 May 2025 12:17:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=cBmlj28SvCZ4M7S1nnJEd0Nu
+	gRbJw27zy6tWxbAN08U=; b=NwwMaSqlGyqRvyKGNJ4+C1B+9YKaFTYBTkNhornd
+	2AOd2MXeKxG06zHKKNR3jr0sGT7YdDLBl0UiI17t9lhK1rK7ZHil4PlrTxPqONyt
+	L+ikGsVhbN44SDGelGLeWz6jMuEw9vUu3zWMkhXx1y3eznr4EzjzExJpDi/FepjS
+	p4/V9e3Y2d1AnhcLVjzH0u3h5bo3lAtoYoQWXXoCZp+8m/qZbmKcsSny5GONbOR1
+	SKBmedWBK17f/h0Y5GDKY9Ta0H7bUiUBJTvmw4AUw8FrToMn6m7WfQAClFmzFin7
+	6maa2wsCbtJBguMt74RI30b/CH9YNhBPniGkZe4F1Ssgag==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46da3rv2u1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 12:17:04 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6f4f15ab411so148424636d6.3
+        for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 05:17:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746444509; x=1747049309;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aB3cMr3JDp0nKZr8OwsHEx3We5XLotlduuz1352Eao4=;
-        b=Rlve++47otL64yUXuAzZw+2dG/95Cy/mhn0Nz3I0bshpdMeEJeH9lBJdsgkBVlue3N
-         D9Y24kyErSPMx96YyQ83tax4CvoiHyWj6QAYRKXZkaSm8p6hxlkjxcaY5VKglRSkqqsL
-         w7wYQt/+z8pvWzAVsl9Ewa36sjpJrsL5aQuqbsTTNcWmrNZ1nPTDjH6YtUngsBXwR6kn
-         C952eaKJ5MRid9qUiO1eeAitFD+HmiLKC8gdiYyztaS0ecwH+iQ5Pogxo748m4sBvxmJ
-         T8pEdMD0lvRaWtxxIKpnNyy2Muqmy/StX3OQWo/O3yJxgHSKKcd5OUAAlXVRy3KGPvlw
-         rNkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYckG3DUzzDJ5RovWLrkDpMyA5PRcLCU3GtT13aj7kRI4CBeovxgqr7IqiVM84eOgzBunnTQ3XIS4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGHUJUD25He1Zu7Pr/FDwjxhSp+ObrxSL3SFbPEqsNne7lRotu
-	BF7u3fVmYF5o4aDdLV3jUsupTuCG5xROtbjPFbNZcKcvocIxYrbRXDANsSzLGI8=
-X-Gm-Gg: ASbGncs0bahXfbLTOKYDSnHthKSjtisROsuT5IZ2Tx8qbR6ZFexkPZr+U36xIjgL6Sy
-	Jg/Jl4oCsEQO2X2+Hwzj9g2wZ8PIUCER14L4ZsF221UcVi4Nwdeb45yKMs/85qrzS/GbgfiUMh3
-	df6CXBngUFoqlYJ0B01XbAGHjrya4yxUih2QxFjDN8OTEL7po7wIZ6LwTIfylk0ABM746tM+IUe
-	Pkw6O6VzFdV2R8takmmB/ZTT7E5bXx4VJw+ATBx3++UK74odl/eIVeUBRGAiEhLdDuLJHt9kkWI
-	rcuBjUDH4Gc2athDvvM9mf15mgi1uG+qRK3oFwxL5yfou5uZOK46DebJXfEO
-X-Google-Smtp-Source: AGHT+IGvEp3fdacUme4FWMSlQbtpUEv8ay4IyBgw8S68wSBoAmf9cWSX9tpMSyCX12ZWHunmUEvARQ==
-X-Received: by 2002:a17:907:3e09:b0:ace:c43a:63e9 with SMTP id a640c23a62f3a-ad1a4a8d7dfmr571983666b.42.1746444508643;
-        Mon, 05 May 2025 04:28:28 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad18914733esm476716866b.33.2025.05.05.04.28.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 04:28:28 -0700 (PDT)
-Message-ID: <542674b6-bdcf-4149-99b4-a5568745eabd@tuxon.dev>
-Date: Mon, 5 May 2025 14:28:26 +0300
+        d=1e100.net; s=20230601; t=1746447423; x=1747052223;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cBmlj28SvCZ4M7S1nnJEd0NugRbJw27zy6tWxbAN08U=;
+        b=GmxSvUQMqxVJCtxC3n38uOyzje4ncB85hCN1sXFxEqPzZxVkjNV6HfElNCYoVvsJdM
+         7LsTJPmMWhT/nLnGidy73dSDuIb7+s72wmcX+CvteD2x3iu+66TP0AH1GLpd/hhxlscH
+         T4DxcjHEHk48wYMslQhGUQytIWoQj2cgUDHFKQCLcqW6kiNJOcAvJ4XHj32o+64TMlDp
+         so5nxymMXL8UQ35wvs4eXjog78NQVkhXc4Axz0C4NxheQiSyL2XVouswUXQK0IG0Xo3f
+         4SMx75Q/eBIh8xHyIiqlyNrBNKeEUlWYEr+CNog9XECe3O58npJfxhA0fibhWku7/8IO
+         E53w==
+X-Forwarded-Encrypted: i=1; AJvYcCWEIzATuThLFVT26URdZQGKoNuxAZ2MqwjrQKZLvKzP/9jLNNtCkZ2EPxappuVliX42IV7b5nSndE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypJ4UTzwIVCRN8yxnSFeskCppOuEswcnZ2xn1LQ+P5kQlUdnyV
+	nLCgrBltvyR6Kie35bWlgY3PSP7pWGlkpNV6jBEjAiZY0rm9lLEBenvWR+gd+30BEEjf6KXO7rQ
+	TrlVMmeOLxBcYbjietf/Vki4nwyCT9cD7UticUUwk5Mbsr/xgIP8Z89An32c=
+X-Gm-Gg: ASbGncuhyF+U+IwRtvJGF+x9KXszfBrNtEIEjzZRUPpRlbx6XfGrpeHqlWoMPsWDaZE
+	Nnf0Sf0CjuElY3tt84oiS94ESmJnwxJCFLSDBTwY3ICFQFw0thJHU9WHLQGDabbQLAjd04hrRRp
+	OMM8SJUnJO/Yg8Dpfu/JVt8VIYy/o/4fVhUWeJ50z0EIYdiusQK2+ZJ0FyORE+Fo43NTk/Sipy2
+	YrBVdbD032cVC6y3JwhIugSjO2/k4bWuoB8BBcOez7T4WPechR6kdo5ORTn7+Mxev6bTte5C4YG
+	mL544CZ00gcPsd+73nqhgUYhhHMKHIQ1KnMO3OcuiKp/PYFv9beVLkfYI0BydgXN77NajF5aWjc
+	=
+X-Received: by 2002:ad4:5e89:0:b0:6e8:fa72:be4c with SMTP id 6a1803df08f44-6f528c36377mr90487076d6.1.1746447423074;
+        Mon, 05 May 2025 05:17:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHI2miDMGBi18VyNdPKWOTeIPliK5ntOZYPJ0fwhi2n4q9Zd33W6e8RHT8wR9jc3kvFT4tTjg==
+X-Received: by 2002:ad4:5e89:0:b0:6e8:fa72:be4c with SMTP id 6a1803df08f44-6f528c36377mr90486786d6.1.1746447422724;
+        Mon, 05 May 2025 05:17:02 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94b176dsm1684252e87.14.2025.05.05.05.17.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 05:17:01 -0700 (PDT)
+Date: Mon, 5 May 2025 15:17:00 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Caleb Connolly <caleb.connolly@linaro.org>,
+        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: qcom: bam_dma: keep remotely controlled units
+ on during boot
+Message-ID: <aw6tjh5q6t75bif4jyusrdvroq53lbwlljo5cdgzrofn3a4loz@ixuu3yw4ucil>
+References: <20250503-bam-dma-reset-v1-1-266b6cecb844@oss.qualcomm.com>
+ <aBh9WL2OMjTqBJch@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add
- documentation for the PCIe IP on Renesas RZ/G3S
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, saravanak@google.com,
- p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250501201636.GA776341@bhelgaas>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250501201636.GA776341@bhelgaas>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBh9WL2OMjTqBJch@linaro.org>
+X-Proofpoint-ORIG-GUID: Hla7jUQZzSJ1fWBvQo1npy0XXYyTgbvr
+X-Authority-Analysis: v=2.4 cv=cpWbk04i c=1 sm=1 tr=0 ts=6818ac40 cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=-oSGpTHasqKTVeQyqFYA:9 a=CjuIK1q_8ugA:10
+ a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-GUID: Hla7jUQZzSJ1fWBvQo1npy0XXYyTgbvr
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDExNyBTYWx0ZWRfX/oprCTmwmFBz
+ pSy42X6ldg/SL+7WCVZU/0yebnQNHuXHe+rDcpPWPOGI4jJumg7cscEwxeD7Au99C9LS3+QpoIs
+ ZySSehABEsfkV/FpesUTAc245A8VYjIhDngdVA5soYF+yt7iwxYy8/K8hvwP7gORlcqFfihdZ3d
+ 8pyGMua9nHdFsv1j4+UUkBd7JnFKVEllQphFHWsCKc1GFQeEKOfSh1rsyB5My2gdoA7ZUPyK7rE
+ ZJ6qvQ9dr7h4o0BpeDTgLCFLykvJfL9j8Bfc8cc0LaHnB3tAOtW3QPB7HKIijvdltdnmXLd8eJF
+ tkFF1vzsoZTCYkMP1Z1hiPxL35QvS61juq4lkhvOkJMjAV3boCz4aevb6NSQdZJJFx7S/c/2IWb
+ sljYS0yRRp50ooy+WITqjoSFWrMmUIVGe6kd1Lxexn1UNwzFycxXSHCUe1/eVsgxKGdmIFId
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-05_05,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 spamscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
+ clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505050117
 
-Hi, Bjorn,
-
-On 01.05.2025 23:16, Bjorn Helgaas wrote:
-> On Wed, Apr 30, 2025 at 01:32:32PM +0300, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The PCIe IP available on the Renesas RZ/G3S complies with the PCI Express
->> Base Specification 4.0. It is designed for root complex applications and
->> features a single-lane (x1) implementation. Add documentation for it.
->> The interrupts, interrupt-names, resets, reset-names, clocks, clock-names
->> description were obtained from the hardware manual.
+On Mon, May 05, 2025 at 10:56:56AM +0200, Stephan Gerhold wrote:
+> On Sat, May 03, 2025 at 03:41:43AM +0300, Dmitry Baryshkov wrote:
+> > The commit 0ac9c3dd0d6f ("dmaengine: qcom: bam_dma: fix runtime PM
+> > underflow") made sure the BAM DMA device gets suspended, disabling the
+> > bam_clk. However for remotely controlled BAM DMA devices the clock might
+> > be disabled prematurely (e.g. in case of the earlycon this frequently
+> > happens before UART driver is able to probe), which causes device reset.
+> > 
+> > Use sync_state callback to ensure that bam_clk stays on until all users
+> > are probed (and are able to vote upon corresponding clocks).
+> > 
+> > Fixes: 0ac9c3dd0d6f ("dmaengine: qcom: bam_dma: fix runtime PM underflow")
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > 
->> +        pcie@11e40000 {
->> +            compatible = "renesas,r9a08g045s33-pcie";
->> +            reg = <0 0x11e40000 0 0x10000>;
->> +            ranges = <0x03000000 0 0x30000000 0 0x30000000 0 0x8000000>;
->> +            dma-ranges = <0x42000000 0 0x48000000 0 0x48000000 0 0x8000000>;
->> +            bus-range = <0x0 0xff>;
->> +            clocks = <&cpg CPG_MOD R9A08G045_PCI_ACLK>,
->> +                     <&cpg CPG_MOD R9A08G045_PCI_CLKL1PM>;
->> +            clock-names = "aclk", "clkl1pm";
->> +            resets = <&cpg R9A08G045_PCI_ARESETN>,
->> +                     <&cpg R9A08G045_PCI_RST_B>,
->> +                     <&cpg R9A08G045_PCI_RST_GP_B>,
->> +                     <&cpg R9A08G045_PCI_RST_PS_B>,
->> +                     <&cpg R9A08G045_PCI_RST_RSM_B>,
->> +                     <&cpg R9A08G045_PCI_RST_CFG_B>,
->> +                     <&cpg R9A08G045_PCI_RST_LOAD_B>;
->> +            reset-names = "aresetn", "rst_b", "rst_gp_b", "rst_ps_b",
->> +                          "rst_rsm_b", "rst_cfg_b", "rst_load_b";
+> Thanks for the patch! I actually created almost the same patch on
+> Friday, after struggling with this issue on DB410c when trying to add
+> the MPM as wakeup-parent for GPIOs. :-)
 > 
-> Could this be structured in a way that separates the shared Root
-> Complex properties from the ones that are specific to the Root Port?
-> I know the current hardware only supports a single Root Port, but I
-> think we should plan to be able to support multiple Root Ports.
+> How is this issue related to _remotely-controlled_ BAMs?
 
-I'm not sure how should I do this. These are just the reset signals as the
-manual describes them. Can you, please, point me an example driver/device
-tree that I could check?
+My understanding is that for locally controlled BAMs we can disable the
+clock at the probe time as all the users of the BAM will be probed
+before accessing the BAM. In case of a remotely controlled BAM there can
+be a user (e.g. UART) which is running, but didn't request DMA channel
+yet.
 
-Thank you for your review,
-Claudiu
+Please correct me if I'm wrong here.
+
+> The BAM clock will get disabled for all types of BAM control, so I don't
+> think the type of BAM control plays any role here. The BLSP DMA instance
+> that would most likely interfere with UART earlycon is
+> controlled-remotely on some SoCs (e.g. MSM8916), but currently not all
+> of them (e.g. MSM8974, IPQ8074, IPQ9574, ...).
+
+This probably means that the definition of the flag needs to be
+clarified and maybe some of those platforms should use it.
+
+> The fixes tag also doesn't look correct to me, since commit 0ac9c3dd0d6f
+> ("dmaengine: qcom: bam_dma: fix runtime PM underflow") only changed the
+> behavior for BAMs with "if (!bdev->bamclk)". This applies to some/most
+> remotely-controlled BAMs, but the issue we have here occurs only because
+> we do have a clock and cause it to get disabled prematurely.
+
+Well... It is a commit which broke earlycon on on db410c.
+
+I started to describe here the usecase of the remotely-controlled DMA
+controller being used by the BLSP and then I understood, that I myself
+don't completely understand if the issue is because DMA block is
+controlled remotely (and we should not be disabling it because the BLSP
+still attempts to use it) or if it's a simple case of the clock being
+shared between several consumers and one of the consumers shutting it
+down before other running consumers had a chance to vote on it.
+
+> Checking for if (bdev->bamclk) would probably make more sense. In my
+> patch I did it just unconditionally, because runtime PM is currently
+> a no-op for BAMs without clock anyway.
+
+Please share your patch.
 
 > 
->> +            interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>,
->> +                         <GIC_SPI 410 IRQ_TYPE_LEVEL_HIGH>;
->> +            interrupt-names = "int_serr", "int_serr_cor", "int_serr_nonfatal",
->> +                              "int_serr_fatal", "axi_err_int", "inta_rc",
->> +                              "intb_rc", "intc_rc", "intd_rc",
->> +                              "intmsi_rc", "int_link_bandwidth", "int_pm_pme",
->> +                              "dma_int", "pcie_evt_int", "msg_int",
->> +                              "int_all";
->> +            #interrupt-cells = <1>;
->> +            interrupt-map-mask = <0 0 0 7>;
->> +            interrupt-map = <0 0 0 1 &pcie_intx 0>, /* INT A */
->> +                            <0 0 0 2 &pcie_intx 1>, /* INT B */
->> +                            <0 0 0 3 &pcie_intx 2>, /* INT C */
->> +                            <0 0 0 4 &pcie_intx 3>; /* INT D */
->> +            device_type = "pci";
->> +            num-lanes = <1>;
->> +            #address-cells = <3>;
->> +            #size-cells = <2>;
->> +            power-domains = <&cpg>;
->> +            renesas,sysc = <&sysc>;
->> +            vendor-id = <0x1912>;
->> +            device-id = <0x0033>;
->> +
->> +            pcie_intx: legacy-interrupt-controller {
->> +                interrupt-controller;
->> +                #interrupt-cells = <1>;
->> +                #address-cells = <0>;
->> +                interrupt-parent = <&gic>;
->> +                interrupts = <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
->> +                             <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
->> +                             <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
->> +                             <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>;
->> +            };
->> +        };
->> +    };
->> +
->> +...
->> -- 
->> 2.43.0
->>
+> I think it's also worth noting in the commit message that this is sort
+> of a stop-gap solution. The root problem is that the earlycon code
+> doesn't claim the clock while active. Any of the drivers that consume
+> this shared clock could trigger the issue, I had to fix a similar issue
+> in the spi-qup driver before in commit 0c331fd1dccf ("spi: qup: Request
+> DMA before enabling clocks"). On some SoCs (e.g. MSM8974), we have
+> "dmas" currently only on &blsp2_i2c5, so the UART controller wouldn't
+> even be considered as consumer to wait for before calling the bam_dma
+> .sync_state.
+> 
+> It may be more reliable to implement something like in
+> drivers/clk/imx/clk.c imx_register_uart_clocks(), which tries to claim
+> only the actually used UART clocks until late_initcall_sync(). That
+> would at least make it independent from individual drivers, but assumes
+> the UART driver can actually probe before late_initcall_sync() ...
+> Most of this code is generic though, so perhaps releasing the clocks
+> could be hooked up somewhere generic, when earlycon exits ...?
 
+The spi-qup commit looks like another stop-gap workaround. Let's add CCF
+and serial maintainers to the discussion with the hope of finding some
+generic solution.
+
+Most likely the easiest solution for Qualcomm platforms is to add
+additional vote on earlycon clocks and then to try to generalise that.
+
+> 
+> Thanks,
+> Stephan
+
+-- 
+With best wishes
+Dmitry
