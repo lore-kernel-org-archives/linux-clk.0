@@ -1,71 +1,71 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001922441A7
-	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 12:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF46C248897
+	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 12:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746447886; cv=none; b=bil6wf7diHCBYwGrztNBTE1gfe2XuOjC1mvIU3bsLuQdbPElcJJhMbz2fHYV9pe+4Pbp082PP2nX4yLizSYPlu4iyIKXhTCMvEAe7CRw4VrhjmsdmHGfjvrPI7iHTLfCVepsmQmJytUlHkZJJCVqbTPYI672RS/yLslIOEz++Mc=
+	t=1746448022; cv=none; b=jsd9cBIlEOhgbKxPfQ6VOPh8hf/MkjxlfUthKPcAY8YkUXfwRblkwArX8QjIZBh8Gn+Xjw9QidF/0KOh93BuiKcY4fosICn1cIndxuQuLDPUZ2D4y/AwJm2l5L+GpXyafCWj+tQn+0A3hw+r+4Z0xlpG4A/gkxEs12bjwp5FMbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746447886; c=relaxed/simple;
-	bh=1n4N8SV8iYUBKBESdu/oMblCqrUGnJHEzXHOHJjQFP4=;
+	s=arc-20240116; t=1746448022; c=relaxed/simple;
+	bh=/p70rkRqnMYx3U9ktfseD6NXbe/+GaD6xbDbp6Jd+bQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d1KnX/cnNXyn2O37mb0eDqtbT497E8B3Z88HxGmq2jEY2ixmr6i3LOxBPD4COsp5/y6eC4/V5EKp2b9zfTzvoFeEXgo0UgoyOFZDzClenAhNM13ceH3Gi4LJdFxn7MoxsFEvBbblaDnRCs0fQW/uebR9q1Zr2r42b7Pi38MvaW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UGrcD4YR; arc=none smtp.client-ip=205.220.180.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=QpMpa745GvOZUQov1W3UlbCs2jU/SWroGU3zpa6iEfdg933OTEsd7TqnZW34wWCcewjyCk9k2Ll+d9wjcAtr6CoxyGhUlfyX89BZEQ6yqL0yaLvFa+2ttMwcRtAEI0I33byuLwlqyo7vgfR5EvfnF55zaUBdC6wxu7AB6IYHsTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Snwu1JF6; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UGrcD4YR"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545BXKHw019902
-	for <linux-clk@vger.kernel.org>; Mon, 5 May 2025 12:24:43 GMT
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Snwu1JF6"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545AnoCK004816
+	for <linux-clk@vger.kernel.org>; Mon, 5 May 2025 12:27:00 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=jrwG038kdxUPyHEoYbFPB3qB
-	QgkZiGSoqj/0yEoAKXQ=; b=UGrcD4YRberod5zPfWFWWzSj4pz3o/+siba20sxr
-	ypLY4v/gEV/YMnJYVmMEsQYwIpsuQyJjeBAyTBqbm8G1ZAbgRcjmXZkv+w9XM///
-	/dyu7IR0Z97MEDsFJs/v6WhcTz2tyh2PlR5zdMNnOFk//QKksTyjwfwh3z776QET
-	GL0kC37+WU09Ah5Wh4Jr3gYYJgU+KJKkDdqEtfr9Vqse7tVNKNNOOa1ZgbQcDYBl
-	+p2y/PR/7+kAuOaVW59qFKUTMx4IyAMQr3Tfcq6QM9jfyHuRnGCSkFTCZYyFiTyB
-	5PWbOZqzPdwM7hwTxjIOBPWeugjFWr1ANNWhal79FgsRaQ==
+	:references:subject:to; s=qcppdkim1; bh=1mZ5cx/TFXOUdnYEfCMZ+itC
+	mBzAFu0OJ39D1ob48qs=; b=Snwu1JF6jiDnY3FnTue7MIWf3tpumP8RkSw4+rAX
+	67EtRve8C3jCOXwHxrZMnE5UsZ42i/fBuvqOM8g5j/VbQkqK3I+b6GHct9/tvlkk
+	j3Qms1NM4WIORBQTCvXfBMf0wx7PWUHjhXhfjpuaWdS0gx7fJwa4h3A85GGdaTt5
+	Y38zaS+8VwCrG2zORN1ZMka5guvz4/k/EZgYjqVgHIGrUlZreEYegpQEYC2QKF3P
+	XAg+P5hIuheUREnqHtJkExAWD7wDigOAH1pXgF6IBJNNh/BpcsBYVmlrarDXi2ND
+	AMTlKBEDDoqpxABuxKaXeTdTtX+ex/YhnVmyl9L5ILZY3g==
 Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46dbh7c16x-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46da3rv3q4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 12:24:42 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7cabd21579eso124145185a.3
-        for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 05:24:42 -0700 (PDT)
+	for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 12:26:59 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c543ab40d3so104725985a.2
+        for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 05:26:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746447882; x=1747052682;
+        d=1e100.net; s=20230601; t=1746448018; x=1747052818;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jrwG038kdxUPyHEoYbFPB3qBQgkZiGSoqj/0yEoAKXQ=;
-        b=TO+FjEXRVhE0N2oMm8zckvBsI8ydSEpH0S7VAhP83uv2QsmbrHEsaf3Adzx+kfSEtk
-         fTI49rY6sWQNCz3gEGnB2szFHdYZiMoCjFbH5sgmhYZmuJd+CWG8M8bKnITAENn37Oqz
-         otudMkQ7/ysx7vxBZ5f5RHJQgjwUJyB0xc9fg/5oBP0vw5NVgVtfBivbfoXuE5En7XqL
-         w1PWxaxS/1EYY2CynW7Ns/929Ges+LVCT1F5RIV3GVjmIC/LNzd6AmIXzmQRC+LoQ+6E
-         xJXDL5AVGaAsKVt3ezQJaivy0NgHN1ewP5nu0UWn7jNXuLGtPsRj67GOihFy3bhmYMKo
-         Fviw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkExaZcCD+TjJ16ByfSxBJ1CzrvoiRRH0u4FWSvlsD1Kk86SgeDnBTblQCs5YWz6tn7m2/IQS+LCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu4fk2lP2mWtzJw+J4wCuxnt5hdg36ujI613oN1rxaLRg4VkcG
-	SvWhy67Ur4dc7u3eJddGnewkmxdWZpW0Kg9E2/KyW5i0z5UYDfn2d8szFFm3F2x5OOtU/QVYyXH
-	j2Z2vndytg7mzuLduoIacGB/QBF5Mpb12xsjwMFXG19diBSC3UKnGWB1oHg4=
-X-Gm-Gg: ASbGncuVvgzDuDXfPRY8dITpBYo9pOZ53cwB1qkZbP0zsVOhlTY9a3dyqZPbGgfafbr
-	x1+SOtEa0yDLtfDUbWECKXGLA7oEuQfFOUt0MFuzn1MHkjvfbroA+QeVeMBzYRAoSdEEeoXBA8I
-	cLfugOUtOrxbQlNB6KIRxDWDu7S+pY8gpXh+FZxCMXrBSEPNf5NFEiHO3j27CfFO+lMvGlHLCk1
-	v9D0S0X7euEk8oz8TrVqIN19NXd6VcUzUnSksoQOBadFcgkUxWFWfsqSWQAcQVvecjeJtzTvKO1
-	ywbQUKJIo0CPiVdzIJEJFW/OzSgjb+vDK1FKcszrFLEOdI7+ePg8clC6MiWerhGucaEI5Hbm2g8
+        bh=1mZ5cx/TFXOUdnYEfCMZ+itCmBzAFu0OJ39D1ob48qs=;
+        b=UaCFqlQF3UjWzYBox2YlUoP+zJTz4OXmlQIDkgn8PvxWMrk5aKLLZa4cRKMkL5mcyr
+         SCa8/Sstlnl8fmNlwLtGD8LKQcsAqRKy3Z53daKaDZd8S41ZH/feBsweqi89u79hKyPP
+         PQyDSJddJKP3v16icT+qyy2ip4/kzUSrbNn5Vq6tHY7VRj1ebpoEDwgHRoDmcLyqZqy/
+         bJZaDmBPMnTT1OqZhhWQjF4E3GRbvHlYJ41aesOrMi/VchhflEV+R3udfc+XGMBoH8w1
+         lH5L1sTLqS5arQHxPi/GffkCporuwMddHHF7vRuC0tY3Gk0snfw2mOBdF4EWnN/+JmRh
+         +EJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgi/8tJxurI/SW39Znn8S1KhjPCDJgMEAi9zRB7iHIucKPiD1ROO88z9vqadiyrLK7C/pIVV+SYJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo4a7NF4iyrM2p3VfCX3e8TYtjOCIcSvZjKIrseOuQloR6u8BZ
+	55QMYSiTkCdwIybvfCSytxJFWerQGm2RnIwooQiHKgVVbjRy3dNQ4sNnlax4XAw2cI3pF4ObWRl
+	06DygCfKXkJKXE1dLR3O+FMo96RTOwiPEa9/koEJb8KaZJt0tzTUNkypSGoU=
+X-Gm-Gg: ASbGncuTOp/GUygZdQbidqfnEQ6uHt47PJKxYDZgVbApq9XuMthTBnFjrHTq2L+Zya2
+	/4bH31+kH1wHnh14p/qx8Q92EeaJZ6JlM2qBtoG7j4/NwsgbCFw70JIBCN1YukYMMa+6+Pie49i
+	lqf72eNnbBM8b4hdG3ogeAtvzov5FkQaRFV4H0QZ2O9rAyHyKFYBkVPiiuMZqMIrm6FV+9mqOqq
+	nm0h+lBZqEIfWm+mvN6PdBxsVzsFg1oNGZ2MSkZbN/4/jZGU8bUPH0G0myquYUcjrqhRAKTOCGI
+	7EcZtmkOPtHZX0LTPCxE3XvDueVIKhVzRqYrzSI3vGxmSMT769maZk4m+9TA81c3CT7jsVcuRyI
 	=
-X-Received: by 2002:a05:620a:1723:b0:7c8:39ea:5166 with SMTP id af79cd13be357-7cadfeda709mr1534151985a.55.1746447881962;
-        Mon, 05 May 2025 05:24:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQVHNC/X4ldrU2WAdEOvCrJu1jzAs9DRDibWoLBRLHVoPEZe8mcE+qcx8xAVSbPy2Iuw/oTw==
-X-Received: by 2002:a05:620a:1723:b0:7c8:39ea:5166 with SMTP id af79cd13be357-7cadfeda709mr1534144385a.55.1746447881548;
-        Mon, 05 May 2025 05:24:41 -0700 (PDT)
+X-Received: by 2002:a05:620a:44ca:b0:7c5:f696:f8e5 with SMTP id af79cd13be357-7cadfdd1fb3mr1066501085a.14.1746448018572;
+        Mon, 05 May 2025 05:26:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFbP4vMWfoDCZb1OxRZYoOdMiV7yVyeGR4Et3hvHSFh8b7ad1aFuUaJ40fNUggHnRpeog6jYw==
+X-Received: by 2002:a05:620a:44ca:b0:7c5:f696:f8e5 with SMTP id af79cd13be357-7cadfdd1fb3mr1066497885a.14.1746448018233;
+        Mon, 05 May 2025 05:26:58 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94b16b6sm1706106e87.12.2025.05.05.05.24.40
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-32029017379sm16984351fa.31.2025.05.05.05.26.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 05:24:40 -0700 (PDT)
-Date: Mon, 5 May 2025 15:24:39 +0300
+        Mon, 05 May 2025 05:26:57 -0700 (PDT)
+Date: Mon, 5 May 2025 15:26:55 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
@@ -88,11 +88,12 @@ Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org,
         Srinivas Kandagatla <srini@kernel.org>
-Subject: Re: [PATCH v5 21/24] drm/msm/dpu: Implement 10-bit color alpha for
- v12.0 DPU
-Message-ID: <ygd6givaigkmypmaufpeidkqauoujcndm2xemi5pm5zue6ou7j@zonusie3tuap>
+Subject: Re: [PATCH v5 19/24] drm/msm/dsi: Add support for SM8750
+Message-ID: <d2dh7lolcc4h4jr4zytc25tjcj4wyuoo55wk2vs4eaqensynme@txkk56x3zm4s>
 References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
- <20250430-b4-sm8750-display-v5-21-8cab30c3e4df@linaro.org>
+ <20250430-b4-sm8750-display-v5-19-8cab30c3e4df@linaro.org>
+ <ahx623ttvzd62u4fri6iqguj7mirlf22tvwbu6k2ngxw6hwbcp@oh7mmex5fjmz>
+ <5c307e88-a3fc-430b-8ccc-af59e2097da3@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -101,80 +102,57 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250430-b4-sm8750-display-v5-21-8cab30c3e4df@linaro.org>
-X-Authority-Analysis: v=2.4 cv=fMY53Yae c=1 sm=1 tr=0 ts=6818ae0a cx=c_pps
+In-Reply-To: <5c307e88-a3fc-430b-8ccc-af59e2097da3@linaro.org>
+X-Proofpoint-ORIG-GUID: cdX4U_m-sNGH-GzQtfMxJeghDdxm0PS0
+X-Authority-Analysis: v=2.4 cv=cpWbk04i c=1 sm=1 tr=0 ts=6818ae93 cx=c_pps
  a=qKBjSQ1v91RyAK45QCPf5w==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8 a=cHRrv4Hvtu4HjFTugcMA:9
- a=CjuIK1q_8ugA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: EzONxEb7U2-GiCwhAM90Hwh9uCZqQ2Fr
-X-Proofpoint-ORIG-GUID: EzONxEb7U2-GiCwhAM90Hwh9uCZqQ2Fr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDExOCBTYWx0ZWRfXxV5glhpS91fY
- fnoqC6SKQ018EAyxpOb7Q3l9MRRBbQFwwaFBCOM34Pte9Xasv43upmk3ieRnnDNBOc8yH7Eyvoc
- cdXfMlpiFtwnEdicGzhRH4DhCyJucyo26BA9xKYFiEDzc9EM5KI5m/fodkrmYjNdiPdDjLtDZpx
- Ms5zsVbPDoQzPZaPJz2HqfITER45guL2u9ahgzJlfsOadIcNpcF6EzRITmfG1faCRQbMSd0k9o7
- xSL0fbSWc4QJsD0JDSagfbbeUOkAtUcVf7l+fEq4/lliAielT9/F0erD1vzfMAc/gnpYVsrzigS
- W3M8mIQKFCbtZKxVb2NDbfQR0sW6hthjNpHbj33V1p9UXAU4mb7EsgR0ufo4XAJyBhYJwJlSdT+
- 9Orw5jCjclBoT+LXTRA2g+6YpHZ+xom9Xien1YStn7Yja1ToLWz6fSRiEkDxNnSxRtPQsMQB
+ a=dt9VzEwgFbYA:10 a=GiW35wlXn3FmTEwGCggA:9 a=CjuIK1q_8ugA:10
+ a=NFOGd7dJGGMPyQGDc5-O:22
+X-Proofpoint-GUID: cdX4U_m-sNGH-GzQtfMxJeghDdxm0PS0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDExOSBTYWx0ZWRfX/Uij1eZI8jyn
+ Rtq1adhoCKePxHVV+M99kz4kzdYk+tOmGIURvj0Ho0QKhvxMEZmFnveeCVzakNe5eS9inUo+wWC
+ udFQxPEdcXB96nokv3CBvz9WAO+tbQP1MaNKM2MKprorT4vmkmYgc3oIxAH/wm5x4pWRZjvDMwh
+ c36+VznaHqcY9atfaIgSx3CfE1VQp8/bpz8eex/TgrfPQh8ZRRKJ+2U2S7SacjSZn6e5NhEM11o
+ zaDX9d1OxkDHGaw9yKZF4/E1OcFVHeyE+nRWFN+hSHgW88VDIFZ5RbtOXxrHIo3x63xi0FZzF5B
+ sa56QvCvYMyBpFcfWS+otBVLdSf/+2YMt2Q3bvUdGk6E1nZXR67ct0DjpPEmq0xDPZeWDG3THwv
+ HqJjmrSCSqt23PepSqaXOybsHbSBHvwqMf0anju/VTaFS+ijeG4NreVCLApf5D7V00/TfwNi
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-05_05,2025-05-05_01,2025-02-21_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 impostorscore=0 lowpriorityscore=0 phishscore=0
- suspectscore=0 mlxlogscore=999 malwarescore=0 spamscore=0 mlxscore=0
- adultscore=0 bulkscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505050118
+ mlxscore=0 spamscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=713
+ clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505050119
 
-On Wed, Apr 30, 2025 at 03:00:51PM +0200, Krzysztof Kozlowski wrote:
-> v12.0 DPU on SM8750 comes with 10-bit color alpha.  Add register
-> differences and new implementations of setup_alpha_out(),
-> setup_border_color() and setup_blend_config().
+On Mon, May 05, 2025 at 08:45:01AM +0200, Krzysztof Kozlowski wrote:
+> On 03/05/2025 00:52, Dmitry Baryshkov wrote:
+> > On Wed, Apr 30, 2025 at 03:00:49PM +0200, Krzysztof Kozlowski wrote:
+> >> Add support for DSI on Qualcomm SM8750 SoC with notable difference:
+> >>
+> >> DSI PHY PLLs, the parents of pixel and byte clocks, cannot be used as
+> >> parents before DSI PHY is configured, the PLLs are prepared and their
+> >> initial rate is set.  Therefore assigned-clock-parents are not working
+> >> here and driver is responsible for reparenting clocks with proper
+> >> procedure: see dsi_clk_init_6g_v2_9().
+> > 
+> > Is it still the case? I thought you've said that with the proper flags
 > 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Yes, as we discussed many times - this is still needed even with the
+> proper flags.
 > 
-> ---
+> > there would be no need to perform this in the driver.
 > 
-> Changes in v4:
-> 1. Lowercase hex, use spaces for define indentation
-> 2. _dpu_crtc_setup_blend_cfg(): pass mdss_ver instead of ctl
-> 
-> Changes in v3:
-> 1. New patch, split from previous big DPU v12.0.
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  | 19 ++++---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_lm.c | 84 +++++++++++++++++++++++++++++--
->  2 files changed, 94 insertions(+), 9 deletions(-)
-> 
-> @@ -175,12 +246,19 @@ struct dpu_hw_mixer *dpu_hw_lm_init(struct drm_device *dev,
->  	c->idx = cfg->id;
->  	c->cap = cfg;
->  	c->ops.setup_mixer_out = dpu_hw_lm_setup_out;
-> -	if (mdss_ver->core_major_ver >= 4)
-> +	if (mdss_ver->core_major_ver >= 12)
-> +		c->ops.setup_blend_config = dpu_hw_lm_setup_blend_config_combined_alpha_v12;
-> +	else if (mdss_ver->core_major_ver >= 4)
->  		c->ops.setup_blend_config = dpu_hw_lm_setup_blend_config_combined_alpha;
->  	else
->  		c->ops.setup_blend_config = dpu_hw_lm_setup_blend_config;
-> -	c->ops.setup_alpha_out = dpu_hw_lm_setup_color3;
-> -	c->ops.setup_border_color = dpu_hw_lm_setup_border_color;
-> +	if (mdss_ver->core_major_ver < 12) {
-> +		c->ops.setup_alpha_out = dpu_hw_lm_setup_color3;
-> +		c->ops.setup_border_color = dpu_hw_lm_setup_border_color;
-> +	} else {
-> +		c->ops.setup_alpha_out = dpu_hw_lm_setup_color3_v12;
-> +		c->ops.setup_border_color = dpu_hw_lm_setup_border_color_v12;
-> +	}
+> assigned-clock-xxx are not respecting that flag and anyway, even if that
 
-I tried picking up these patches, and choked on this one. This heavility
-depends on the DPU fetures bits rework patchset (mentioned in the cover
-letter, it's fine), but granted the lack of the reviews / updates on
-that patchset I can neither apply this patch (and its dependencies) nor
-steer Krzysztof away from basing on that patchset (this patch provides a
-perfect example of why that series is useful and correct).
+This is really strange as the flag should be handled by the framework
+itself.
 
-Abhinav, could you please continue reviewing that patch series?
+> was solved, they are executed too early - before PHY is initialized. You
+> cannot prepare PHY PLL before PHY is initialized and enabled.
+
+Ack
 
 -- 
 With best wishes
