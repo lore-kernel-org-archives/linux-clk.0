@@ -1,192 +1,140 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E9C1F4617;
-	Mon,  5 May 2025 16:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034121A3144;
+	Mon,  5 May 2025 16:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746461993; cv=none; b=av3h6g+yhtWyFh5NE34OscQaLjphYGYHY5zBsp9FniucbLC0kCYw1vi/LhtFrN0TOFgVOYZYpYz5Iqmw2cuXYCOZ58Gzr0ktDMt74EHvdwSWQLW9GEqgw2grVfsxSsyQYv7g8NccVsJyZIwgTWSJa3pJ7+EI4N339ODKTNZMIwM=
+	t=1746463298; cv=none; b=grV1iUxtTvjstLB6qLKxvDURP/4nk3iSM5tVt5AmCs23d9TvFrOJPrCd0gjlynPn8zYY1hp+1dZHWasLTAfPaifZC9WeoDA90q5mQ4o1EVGnjgkUurHhP49W28Ryt8Gme+Qy6znfI0OBeZJaWMRvezhPu56Q4a8pJKKBYoEKTms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746461993; c=relaxed/simple;
-	bh=UkvPRWuod71Fp70g9R5zV823OEYH+sv+hMR/PR2UOOM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nli/27X/ukrF35jJ1oNvp8yeXyBiYhAg1QDgTyI89eb8tL2lYtOCWYyWhk2bDKbGgmJG5v1BR1FXULnlYB5CsTwyKcZ8xt5V1ukN4sQsHnl2XX774esul4m5v74lLwKmBAoEOnxtGxKlS3iIvM30vs+VzwF5CzcrYQlvwIcWGGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p2Lr8hTJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746463298; c=relaxed/simple;
+	bh=JYprB8GV8upmRPswjAV50c9OstRoU7o57f50GyAJhd0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=dNBJw0otsTRvr74z0juffzhm22dVWRHU0JfljQMwG5j9VRV6ECV1vazo3XfGrcGOkEw4Nue9LAPArWuJEWunYFqHMDoSnJI8EDuiYpieGHt3LfXIIvvdaU/KPi7rqNzv0UsToP+5DH9/rnxNy6XE/o5ZUoExEySOzj7gEpJdaOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r//XJ3kb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p2Lr8hTJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA5DC4CEE4;
-	Mon,  5 May 2025 16:19:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r//XJ3kb"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9FE84C4CEEE;
+	Mon,  5 May 2025 16:41:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746461992;
-	bh=UkvPRWuod71Fp70g9R5zV823OEYH+sv+hMR/PR2UOOM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=p2Lr8hTJi0oIU3vOkxpWphPOg4q6XrKLb2cwqWcaZYM8MNsyZUwujsaPErwely1UZ
-	 T9saHQVBrwfM65SNqCgpej0CKHjDxjNTPBQuSXsF290dJK8DEwKp0TrdDZV6OgEJvb
-	 g3DLHRpKgfUGgp2XMfBHqxsFqptgMAJEaa2XK0bKllt+cUe2YULjpFmgmf6apcP7pt
-	 ChhW11LQJu3PLhUhZbI9ZUYupl+0DiqmjV9HKgwdPST5lE+kgrujmZps+niMmh2BBY
-	 g4+h/gjiSVC5pK1AeKNZVuiez6qglBNDOhS0fOINqmOIDEhImLpheY4EM/fRVV7azn
-	 Iazs+BYC6D06w==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: clock: Drop maxim,max77686.txt
-Date: Mon,  5 May 2025 11:19:42 -0500
-Message-ID: <20250505161943.1433081-1-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	s=k20201202; t=1746463297;
+	bh=JYprB8GV8upmRPswjAV50c9OstRoU7o57f50GyAJhd0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=r//XJ3kbuHw+O+cT0SSFfHR3eCiePMLCmTi339dm4jO9H3SYM4rkBO4Ba7BPbEulA
+	 gOU6hagFow2/7+FOyoUMYGfoeu93vKMqkjXOFTGuZm+DwzYvchdLgBdlZsI8IGsRH7
+	 yNgMjV5zo5zUIcBRvfbW/vxhDfnaasw7X0/oYRpaJK0rd7UPgRl1RpsC6GK/D1eq2y
+	 /WOQ0QBlAkzHM11iDUjLH2440M4/9upb9LzYd8iZ2n0OIGcbbacPbz1TSBccd1Lyje
+	 Hb+m/X4uwq9afxRsRSC6xGaEm+XqObsT5zgSuyPZNHHXPjm/hxtTpBUlTc8YSvqRgk
+	 1+bc5mWJvuB3w==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9428EC3ABAA;
+	Mon,  5 May 2025 16:41:37 +0000 (UTC)
+From: =?utf-8?q?Nuno_S=C3=A1_via_B4_Relay?= <devnull+nuno.sa.analog.com@kernel.org>
+Date: Mon, 05 May 2025 17:41:35 +0100
+Subject: [PATCH v4 4/7] include: fpga: adi-axi-common: add new helper
+ macros
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250505-dev-axi-clkgen-limits-v4-4-3ad5124e19e1@analog.com>
+References: <20250505-dev-axi-clkgen-limits-v4-0-3ad5124e19e1@analog.com>
+In-Reply-To: <20250505-dev-axi-clkgen-limits-v4-0-3ad5124e19e1@analog.com>
+To: linux-clk@vger.kernel.org, linux-fpga@vger.kernel.org, 
+ dmaengine@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+ linux-spi@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, 
+ Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>, 
+ Vinod Koul <vkoul@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
+ Guenter Roeck <linux@roeck-us.net>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Trevor Gamblin <tgamblin@baylibre.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ Mike Turquette <mturquette@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746463295; l=2042;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=kux5dWzKRW1hlIDODzjfwxlzKIR9+mSKGjP/CVy2QCQ=;
+ b=NPQA6P3E8Q2bOW5clAJxPhP4/IFUC1someMaPC7fea50GQ/1NVcE2NidukGTIOUR0ZpPOLJb0
+ mXNYlC2I/deA7AAw+mQUKXN78awHSKF3Lsn5QhJl2WINr644hq8l7e3
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-Endpoint-Received: by B4 Relay for nuno.sa@analog.com/20231116 with
+ auth_id=100
+X-Original-From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Reply-To: nuno.sa@analog.com
 
-The clock binding for Maxim MAX77686/MAX77802/MAX77620 is already
-covered by mfd/maxim,max77686.yaml.
+From: Nuno Sá <nuno.sa@analog.com>
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Add new helper macros and enums to help identifying the platform and some
+characteristics of it at runtime.
+
+Signed-off-by: Nuno Sá <nuno.sa@analog.com>
 ---
- .../bindings/clock/maxim,max77686.txt         | 114 ------------------
- MAINTAINERS                                   |   1 -
- 2 files changed, 115 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/maxim,max77686.txt
+ include/linux/adi-axi-common.h | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-deleted file mode 100644
-index c10849efb444..000000000000
---- a/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-+++ /dev/null
-@@ -1,114 +0,0 @@
--Binding for Maxim MAX77686/MAX77802/MAX77620 32k clock generator block
--
--This is a part of device tree bindings of MAX77686/MAX77802/MAX77620
--multi-function device. More information can be found in MFD DT binding
--doc as follows:
--	bindings/mfd/max77686.txt for MAX77686 and
--	bindings/mfd/max77802.txt for MAX77802 and
--	bindings/mfd/max77620.txt for MAX77620.
--
--The MAX77686 contains three 32.768khz clock outputs that can be controlled
--(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
--dt-bindings/clock/maxim,max77686.h.
--
--
--The MAX77802 contains two 32.768khz clock outputs that can be controlled
--(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
--dt-bindings/clock/maxim,max77802.h.
--
--The MAX77686 contains one 32.768khz clock outputs that can be controlled
--(gated/ungated) over I2C. Clocks are defined as preprocessor macros in
--dt-bindings/clock/maxim,max77620.h.
--
--Following properties should be presend in main device node of the MFD chip.
--
--Required properties:
--
--- #clock-cells: from common clock binding; shall be set to 1.
--
--Optional properties:
--- clock-output-names: From common clock binding.
--
--Each clock is assigned an identifier and client nodes can use this identifier
--to specify the clock which they consume. Following indices are allowed:
--    - 0: 32khz_ap clock (max77686, max77802), 32khz_out0 (max77620)
--    - 1: 32khz_cp clock (max77686, max77802),
--    - 2: 32khz_pmic clock (max77686).
--
--Clocks are defined as preprocessor macros in above dt-binding header for
--respective chips.
--
--Example:
--
--1. With MAX77686:
--
--#include <dt-bindings/clock/maxim,max77686.h>
--/* ... */
--
--	Node of the MFD chip
--		max77686: max77686@9 {
--			compatible = "maxim,max77686";
--			interrupt-parent = <&wakeup_eint>;
--			interrupts = <26 IRQ_TYPE_LEVEL_LOW>;
--			reg = <0x09>;
--			#clock-cells = <1>;
--
--			/* ... */
--		};
--
--	Clock consumer node
--
--		foo@0 {
--			compatible = "bar,foo";
--			/* ... */
--			clock-names = "my-clock";
--			clocks = <&max77686 MAX77686_CLK_PMIC>;
--		};
--
--2. With MAX77802:
--
--#include <dt-bindings/clock/maxim,max77802.h>
--/* ... */
--
--	Node of the MFD chip
--		max77802: max77802@9 {
--			compatible = "maxim,max77802";
--			interrupt-parent = <&wakeup_eint>;
--			interrupts = <26 IRQ_TYPE_LEVEL_LOW>;
--			reg = <0x09>;
--			#clock-cells = <1>;
--
--			/* ... */
--		};
--
--	Clock consumer node
--
--		foo@0 {
--			compatible = "bar,foo";
--			/* ... */
--			clock-names = "my-clock";
--			clocks = <&max77802 MAX77802_CLK_32K_AP>;
--		};
--
--
--3. With MAX77620:
--
--#include <dt-bindings/clock/maxim,max77620.h>
--/* ... */
--
--	Node of the MFD chip
--		max77620: max77620@3c {
--			compatible = "maxim,max77620";
--			reg = <0x3c>;
--			#clock-cells = <1>;
--			/* ... */
--		};
--
--	Clock consumer node
--
--		foo@0 {
--			compatible = "bar,foo";
--			/* ... */
--			clock-names = "my-clock";
--			clocks = <&max77620 MAX77620_CLK_32K_OUT0>;
--		};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cf5d0b25e94b..d25ddbf312c2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14610,7 +14610,6 @@ F:	Documentation/devicetree/bindings/*/maxim,max77686.yaml
- F:	Documentation/devicetree/bindings/*/maxim,max77693.yaml
- F:	Documentation/devicetree/bindings/*/maxim,max77705*.yaml
- F:	Documentation/devicetree/bindings/*/maxim,max77843.yaml
--F:	Documentation/devicetree/bindings/clock/maxim,max77686.txt
- F:	drivers/leds/leds-max77705.c
- F:	drivers/*/*max77843.c
- F:	drivers/*/max14577*.c
+diff --git a/include/linux/adi-axi-common.h b/include/linux/adi-axi-common.h
+index 141ac3f251e6f256526812b9d55cd440a2a46e76..a832ef9b37473ca339a2a2ff8a4a5716d428fd29 100644
+--- a/include/linux/adi-axi-common.h
++++ b/include/linux/adi-axi-common.h
+@@ -12,6 +12,8 @@
+ #define ADI_AXI_COMMON_H_
+ 
+ #define ADI_AXI_REG_VERSION			0x0000
++#define ADI_AXI_REG_FPGA_INFO			0x001C
++#define ADI_AXI_REG_FPGA_VOLTAGE		0x0140
+ 
+ #define ADI_AXI_PCORE_VER(major, minor, patch)	\
+ 	(((major) << 16) | ((minor) << 8) | (patch))
+@@ -20,4 +22,37 @@
+ #define ADI_AXI_PCORE_VER_MINOR(version)	(((version) >> 8) & 0xff)
+ #define ADI_AXI_PCORE_VER_PATCH(version)	((version) & 0xff)
+ 
++#define ADI_AXI_INFO_FPGA_TECH(info)            (((info) >> 24) & 0xff)
++#define ADI_AXI_INFO_FPGA_FAMILY(info)          (((info) >> 16) & 0xff)
++#define ADI_AXI_INFO_FPGA_SPEED_GRADE(info)     (((info) >> 8) & 0xff)
++#define ADI_AXI_INFO_FPGA_VOLTAGE(val)          ((val) & 0xffff)
++
++enum adi_axi_fpga_technology {
++	ADI_AXI_FPGA_TECH_UNKNOWN = 0,
++	ADI_AXI_FPGA_TECH_SERIES7,
++	ADI_AXI_FPGA_TECH_ULTRASCALE,
++	ADI_AXI_FPGA_TECH_ULTRASCALE_PLUS,
++};
++
++enum adi_axi_fpga_family {
++	ADI_AXI_FPGA_FAMILY_UNKNOWN = 0,
++	ADI_AXI_FPGA_FAMILY_ARTIX,
++	ADI_AXI_FPGA_FAMILY_KINTEX,
++	ADI_AXI_FPGA_FAMILY_VIRTEX,
++	ADI_AXI_FPGA_FAMILY_ZYNQ,
++};
++
++enum adi_axi_fpga_speed_grade {
++	ADI_AXI_FPGA_SPEED_UNKNOWN      = 0,
++	ADI_AXI_FPGA_SPEED_1    = 10,
++	ADI_AXI_FPGA_SPEED_1L   = 11,
++	ADI_AXI_FPGA_SPEED_1H   = 12,
++	ADI_AXI_FPGA_SPEED_1HV  = 13,
++	ADI_AXI_FPGA_SPEED_1LV  = 14,
++	ADI_AXI_FPGA_SPEED_2    = 20,
++	ADI_AXI_FPGA_SPEED_2L   = 21,
++	ADI_AXI_FPGA_SPEED_2LV  = 22,
++	ADI_AXI_FPGA_SPEED_3    = 30,
++};
++
+ #endif /* ADI_AXI_COMMON_H_ */
+
 -- 
-2.47.2
+2.49.0
+
 
