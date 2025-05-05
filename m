@@ -1,113 +1,227 @@
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5AE26989A
-	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 17:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7A319DF60;
+	Mon,  5 May 2025 17:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746465713; cv=none; b=jqprNQOwv89cYOe7OCGy/55HfdHCjuqOS8aWUmw0usjZ9YFTX4VWexJT9kAz7Yb62FjSIZ66pdKVNz/eCuphhfWUleVvVBgh4mjyMfi1eEoXGXEyJnvTksyRmfrVWl/TCm7oWbJ99lH2/LVl1+WND2gWyg0BBDctIfbb/5+u6Vs=
+	t=1746467453; cv=none; b=ndW53PZLuH4Ihq+VXoKfYInNOACpz9Rg0fhlMBLj/8slLn3ySZefqKSDna8SnpQfa2edrVI1juNtsv3SRX7sh8rkrjkzF4kNETc9BwJw/bg8LEGcUGSqTDouFmcl9MjuspoA8r/Sy19Qjd7djI0pKACgs7lboDKM4EvP2TdGQXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746465713; c=relaxed/simple;
-	bh=jcGEKN2FQmLYABFrgCfyNuY3i79lchvxrUlZtZoKNYc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=doQitbi/XCUa/kksbp1rRmFv/hDGSKElwjfsjl7Ofe3GVxG2zBaG1r9BvNIFtfX7rGZBEucIrVDELZjeicBH3AgMDG4mOP9gsHAitde14XE+JcE0pxLwhnVv4niD5Oczf31d2dfZWKXqDqjhcg2YWtCqTJVPrqxjvJuGGAjk1rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=K7kdvSAD; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1746467453; c=relaxed/simple;
+	bh=O3aCHavUvPQ34P/MbjVSyXDek1xOUjXgF1yQzrOLGv8=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=gADjBLHPpmfPyRAvPkZxw/RJ+aKcCzya65LCaarnMzuN2IaIo9Cdse89wks5Z7ReCQpF1I+0mEZGVuqGFOUwRu50nzg1m7yzrEU91+H9K/zuZDQKg/Ey4gf7VC9kWrTLm1OISkktn0B3XcWfuwcDqXhT7y6qAJrn9Fvvpm4pmKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YK9mlt1d; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="K7kdvSAD"
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-72c3b863b8eso1225515a34.2
-        for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 10:21:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1746465709; x=1747070509; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZRVMb9oF5CEf/GpTXbkBHrDWFxgCwTjNlgPwnh4zqIU=;
-        b=K7kdvSADgbh5WKqOoV0ictJAo4+XJkhJuOzEjOPJxHzFkfVPD4IDU3ihxXft8gSfEJ
-         j8N4o0+QA6uinEdgMoVJLxPNbNVxnqxqwUTnpRfYb7YTRc1vUKoWJgozqF9sm/Bis2GU
-         Pofw1VvzmATH3N3dQuMz+5Xa2yje8PkW/9UgVctXF65S2U8Yr4r1sBqxJRlZwkSzWKI4
-         Q8Jsm7NE3ofShY5JnLtTZ/BYVrkP3vXVhjiP7sFpzQ6owq4ckXmVYGe9y5d3UeT1yk5D
-         rXzDDVLaMiqmrQTyNmokFYKYBmsAgxuqiX9h3oBtI0DDi1EBmsa1ROeedR7RKvEV7goA
-         N15A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746465709; x=1747070509;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZRVMb9oF5CEf/GpTXbkBHrDWFxgCwTjNlgPwnh4zqIU=;
-        b=oTvk2aHOVDi4e7Xr8dw7L6jlJuphA0/YXlw8pSwJ+U4y8hWtGeyTvNXpD/QoqQARV5
-         SRXuMPuE8BdWgBIacdOM7lIKRrYGUVzciTkLwfUfD2hRuO7zSNwPNocVjg6VUwtEdNgZ
-         8K6Dam6iWhAIlW4K2kJqZhusl8/7E1gMuKpFlTnA3vavfLqj+l/3GJeQBmEL2DbBgkbT
-         p3to6JyP3//SZWCNcNKU+YHXZERX2eT+pA4xQfIF940th7Ut83ifPMaxujDWjfquCpgi
-         5TPmB3g0/ZXVDljhuQRvSLIRnGnYgH0wCQfSoHXazMnP2mbDSrZAnt297qpG+iR3Pt6z
-         bq3g==
-X-Forwarded-Encrypted: i=1; AJvYcCW8UjoMk3xUJ744BP290Ey7VWyalNvw65sTn4UwpzSkK4FMu8iq5HFxTVBMfM1+5hIJwfjQwRzNnng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycGiZ6vDKQC//DvrqcgyHewwYV3hGJj4jw20j1EUV9vh+dtc6Q
-	s6eNgZnKldXh6gVk4+uyXgkZ1RVy/jN1g6wJQSNmwZXk6jbIGzYzvRu0Ylr5Zxc=
-X-Gm-Gg: ASbGncskxKV0JCtGxLjtPCxInnxXXw+KxSGnkrMt+9O/ZUk9VPJHCe5VTIY4wm4XpON
-	BJ5eH55y7gdoNjwKSyM3/7xxeIczmvrXxNlF0YX39s+nzuAZYI9rFaTPG4waPlyzBPxeV6oIugp
-	hunP9MfoLdHuLoXPaLGEK/F6M2ogNPnT3cCQxp5N1f2UArH0R9K4QYqUP8WaW/sR6YzNEAaCAxd
-	a66d6XBTgEyo/N3DL2DxI+jgZeXJ+k9AwxA+B9E49sail5XYgShLaX6MzxAHbnnQ82m61k3HgE4
-	3nUvZRTgD/5QC97q9b49vE7NRdP6KY1DA7xmy752d27JBiFl8UTFd95ssc4okJsj/Eg4wtyX5oe
-	A0ecTWNyTDmT+GAA=
-X-Google-Smtp-Source: AGHT+IFcxApnoYjUY0w6idtC1pck4OIRHQ/tTPu3UVsNzFkW+p8gRi5HDRVw03HtHe1u6yZcOoXfUw==
-X-Received: by 2002:a05:6870:4790:b0:2d5:2191:c8b3 with SMTP id 586e51a60fabf-2dae861a902mr5241443fac.29.1746465709654;
-        Mon, 05 May 2025 10:21:49 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:2151:6806:9b7:545d? ([2600:8803:e7e4:1d00:2151:6806:9b7:545d])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2daa1207873sm2127468fac.38.2025.05.05.10.21.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 10:21:49 -0700 (PDT)
-Message-ID: <b5a5a8a6-bb8a-44f0-ba94-7657aba83311@baylibre.com>
-Date: Mon, 5 May 2025 12:21:48 -0500
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YK9mlt1d"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3954C4CEE4;
+	Mon,  5 May 2025 17:50:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746467452;
+	bh=O3aCHavUvPQ34P/MbjVSyXDek1xOUjXgF1yQzrOLGv8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=YK9mlt1dvWIMSdDtPD2B6Anmv/L87vyTU91z5vRrRvHUegqDD8jf7f855jZMZSJKG
+	 stfBkplHvAdcZHldLV2mXsIW9lHheh43pqd8stO0fAKyztZmJCoNt4OBEMJteJVES/
+	 1fdwtoX7yHD4fgFs5ecrBzkBjA2kuQElu/HEV1RbbMn96aquQpQNJ1HGxqFBaHTFZV
+	 Njv6obxEt94x+1FEETYSA0qbKxDNF52cx02a2ovcJotMD7rsCK2L/tYOD9A9LP84GY
+	 kl1qPG7ZuYnrZczUDkzBnd/M1P7rjSpnuXeZMyR9ccUUQPlxAtweHO+4IyvuLwd2lw
+	 v0gIpJx1591kw==
+Message-ID: <3ba53493700561923c4ea9ab53a1a272@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 7/7] clk: clk-axi-clkgen: fix coding style issues
-To: nuno.sa@analog.com, linux-clk@vger.kernel.org,
- linux-fpga@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Moritz Fischer
- <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>, Xu Yilun <yilun.xu@intel.com>,
- Tom Rix <trix@redhat.com>, Vinod Koul <vkoul@kernel.org>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Trevor Gamblin <tgamblin@baylibre.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>
-References: <20250505-dev-axi-clkgen-limits-v4-0-3ad5124e19e1@analog.com>
- <20250505-dev-axi-clkgen-limits-v4-7-3ad5124e19e1@analog.com>
-From: David Lechner <dlechner@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <20250505-dev-axi-clkgen-limits-v4-7-3ad5124e19e1@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250430-clk-cdce6214-v4-2-9f15e7126ac6@pengutronix.de>
+References: <20250430-clk-cdce6214-v4-0-9f15e7126ac6@pengutronix.de> <20250430-clk-cdce6214-v4-2-9f15e7126ac6@pengutronix.de>
+Subject: Re: [PATCH v4 2/3] dt-bindings: clock: add TI CDCE6214 binding
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, kernel@pengutronix.de, Alvin =?utf-8?q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>, Sascha Hauer <s.hauer@pengutronix.de>
+To: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
+Date: Mon, 05 May 2025 10:50:49 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-On 5/5/25 11:41 AM, Nuno Sá via B4 Relay wrote:
-> From: Nuno Sá <nuno.sa@analog.com>
-> 
-> This is just cosmetics and so no functional changes intended.
-> 
-> Signed-off-by: Nuno Sá <nuno.sa@analog.com>
-> ---
->  drivers/clk/clk-axi-clkgen.c | 74 +++++++++++++++++++++++---------------------
->  1 file changed, 38 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
-> index d8634d1cb401fff2186702354ecda7b4fcda006f..63b7b7e48f8fa00842ce4cf2112ce7a89fa25dae 100644
-> --- a/drivers/clk/clk-axi-clkgen.c
-> +++ b/drivers/clk/clk-axi-clkgen.c
-> @@ -15,6 +15,7 @@
->  #include <linux/module.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/err.h>
-> +#include <linux/types.h>
->  
-Might as well sort the rest alphabetically while we are cleaning things up.
+Quoting Sascha Hauer (2025-04-30 02:01:35)
+> diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/D=
+ocumentation/devicetree/bindings/clock/ti,cdce6214.yaml
+> new file mode 100644
+> index 0000000000000..d4a3a3df9ceb9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
+> @@ -0,0 +1,155 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI CDCE6214 programmable clock generator with PLL
+> +
+> +maintainers:
+> +  - Sascha Hauer <s.hauer@pengutronix.de>
+> +
+> +description: >
+> +  Ultra-Low Power Clock Generator With One PLL, Four Differential Output=
+s,
+> +  Two Inputs, and Internal EEPROM
+> +
+> +  https://www.ti.com/product/CDCE6214
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,cdce6214
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 1
+> +    items:
+> +      enum: [ priref, secref ]
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +patternProperties:
+> +  '^clk@[0-1]$':
+> +    type: object
+> +    description:
+> +      optional child node that can be used to specify input pin paramete=
+rs. The reg
+> +      properties match the CDCE6214_CLK_* defines.
 
+Presumably the EEPROM is typically used to configure all this stuff? Do
+you actually need to program this from the kernel, or are you
+implementing all this for development purposes?
+
+> +
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        description:
+> +          clock input identifier.
+> +        minimum: 0
+> +        maximum: 1
+> +
+> +      ti,clkin-fmt:
+> +        enum: [ lvcmos, xtal, differential ]
+> +        description:
+> +          Clock input format.
+> +
+> +      ti,xo-cload-femtofarads:
+> +        description:
+> +          Selects load cap for XO in femto Farad (fF). Up to 9000fF
+> +        minimum: 3000
+> +        maximum: 9000
+> +
+> +      ti,xo-bias-current-microamp:
+> +        description:
+> +          Bias current setting of the XO.
+> +        minimum: 0
+> +        maximum: 1758
+> +
+> +  '^clk@[2-9]$':
+> +    type: object
+> +    description:
+> +      optional child node that can be used to specify output pin paramet=
+ers.  The reg
+> +      properties match the CDCE6214_CLK_* defines.
+> +
+> +    additionalProperties: false
+> +
+> +    properties:
+> +      reg:
+> +        description:
+> +          clock output identifier.
+> +        minimum: 2
+> +        maximum: 9
+> +
+> +      ti,clkout-fmt:
+> +        enum: [ cmos, lvds, lp-hcsl ]
+> +        description:
+> +          Clock input format.
+
+Is it "Clock output format"?
+
+> +
+> +      ti,cmosn-mode:
+> +        enum: [ disabled, high, low ]
+> +        description:
+> +          CMOSN output mode.
+> +
+> +      ti,cmosp-mode:
+> +        enum: [ disabled, high, low ]
+> +        description:
+> +          CMOSP output mode.
+
+Would 'disabled' be the absence of the property? I think we could just
+have ti,cmosn-mode =3D <0> or <1> for low or high.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        clock-generator@67 {
+> +            compatible =3D "ti,cdce6214";
+> +            reg =3D <0x67>;
+> +            #address-cells =3D <1>;
+> +            #size-cells =3D <0>;
+> +            #clock-cells =3D <1>;
+> +            clocks =3D <&clock_ref25m>;
+> +            clock-names =3D "secref";
+> +
+> +            clk@1 {
+> +                reg =3D <1>; // CDCE6214_CLK_SECREF
+> +                ti,clkin-fmt =3D "xtal";
+> +                ti,xo-cload-femtofarads =3D <4400>;
+> +                ti,xo-bias-current-microamp =3D <295>;
+> +            };
+> +
+> +            clk@3 {
+> +                reg =3D <3>; // CDCE6214_CLK_OUT1
+> +                ti,clkout-fmt =3D "cmos";
+> +                ti,cmosp-mode =3D "high";
+> +                ti,cmosn-mode =3D "low";
+> +            };
+> +
+> +            clk@4 {
+> +                reg =3D <4>; // CDCE6214_CLK_OUT2
+> +                ti,clkout-fmt =3D "lvds";
+> +            };
+> +
+> +            clk@6 {
+> +                reg =3D <6>; // CDCE6214_CLK_OUT4
+
+Can you use the defines instead of numbers so we know they're the same?
+
+> +                ti,clkout-fmt =3D "lp-hcsl";
+> +            };
+> +        };
+> +    };
