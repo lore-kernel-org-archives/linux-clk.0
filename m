@@ -1,97 +1,78 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD11B1E834B
-	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 12:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21FC2561D8
+	for <linux-clk@vger.kernel.org>; Mon,  5 May 2025 13:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746448551; cv=none; b=n/g5jAwL3yXw9Nn2W8jxrKd5C7DwC68lrohXgOhFZ9U9Kkv4JEBB8FvgOQzJ4NfVVVvCZAgTN1Uqu+rEy1vMNPOm+uE6FB36y5qFXUHycpDN0ECiTLoW1XZJWJVyKHNfwF7Q5uspIW9K2DaDjKnXIv992tKOFHq35nNObyZLHD8=
+	t=1746450388; cv=none; b=byicPZ4THLdgSlbOnDcEMk6Sn+fWlxiBSYCRXiyJ6C/jDa6ojgZNxbAc6xJf757z50I/8EPxr20Z4fXOElsgvY6eFH3P28S/aNc8Zyd3IPi+YpMdtPSRKx/RSZdBRTK3XWOSBpTg5v/Y5xkfOSvjklN88eEIJO1wYNfaW4NFVl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746448551; c=relaxed/simple;
-	bh=Zzo8qT6W+ElQpK7CYPpA+bB37GELYvuIMWB8kWVYE/o=;
+	s=arc-20240116; t=1746450388; c=relaxed/simple;
+	bh=cwiOX6cmqTQzmk3WggAwoK4SaoNLnnEpCnVxHf6Qxmg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gk0NY4aQRLY+F8D3X/hCmtf/9Wwq43BYQelByD2cXJWGchNasWfm3DX3Cp67+99CDlnWMrGeKtIbRA2mjWFa47PnDYtTZoexv4XStytTOmQU0Rl/rPWQV3nCStFrkPhZ533WQvIzfSVACc8X27HYtkqKlR1OLW7KPYyFesnxvO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=oB+bGQbf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0cWwfcx8Bac56eUEVyv9lLJuayKHLlXlHKfEPW45KnmklEjdG1Ra6PqV8lth95Gmo9sy2vyXrAvLPqewE0WdciiCp0TxnAmi/bjQhtIGgo6orJzYn+dRZQsJTSKv4c0vAhGO/zDelZexsQVbfIVIPqKHH/nViMhajNH4YyuE9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dRPhLn05; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="oB+bGQbf"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545BxarK004745
-	for <linux-clk@vger.kernel.org>; Mon, 5 May 2025 12:35:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=t3lkQBdOSxlK02o6RqfGSm1o
-	lk235v8tbkgI5LntsXs=; b=oB+bGQbfO3KCHvTZCMoYbqKwKZPR7zwpgZMu5ttq
-	0mw6i1yKfqGDQ3aE/StTTiHaFU7OI+ht3od9x0xz2heKNqSbRVEeO8hEnPM6CRV6
-	4sW+k4p7P3MWCFYoRn9MSn3f+8vYWiTyqm7RhgJAS5UYK4xWADER0qRfLR6lHTE3
-	3OLptjKcLw9zkonuG/tmrHhN27Z8nQ+FuQ6E/PA72Lw+04D57oXmvNxQrkB0t8BC
-	Lj3jieZ6Y6IPg/aqGZyGchxGsP0ZfsmvxtP5PcMD06Iqb5rUyRMDoyUtp/zAWrYk
-	ff9Z7Jt+dRDVhjOCeipyqgMrM41WXLDPJuWvMN0n/KAMbg==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46da3rv4gs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 12:35:48 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7caee988153so32319885a.1
-        for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 05:35:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dRPhLn05"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac2af2f15d1so596033266b.1
+        for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 06:06:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1746450384; x=1747055184; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7djaZKuQTg8ZH962YLQL/FSVR3ehnU/TnBc6a+PC3fk=;
+        b=dRPhLn05MBGi95i67XENDGk2MH4G/uDxTr7KnnnoSg3X0PFhjRFwc+16E1oYjPdKLn
+         NSpFpaQeCDBGArug/m9CV+GJl+aM4kagEKakmfp0UttzmOE1hADfKck5ZY4zzPlzB5iN
+         VyzVETnoFlG4j6bUB0oIyTMpEowmjLLwojxS10vgco0MNlk78eUjtg8wB+M8+r4oqndp
+         SSmrZtjVuHhnGdIMLAk7u0vyHLjX/FybqVg8XF1oUYu3sZspVP9e27rLjhvf9Y3Dz+Rs
+         M8ZZcewWRv5f0nJdHPTDA1B4vZmeiXFKRE0Ca8XSOlofzNWdTv/Nc7VWHgWbmXmOmFPn
+         Ylzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746448547; x=1747053347;
+        d=1e100.net; s=20230601; t=1746450384; x=1747055184;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=t3lkQBdOSxlK02o6RqfGSm1olk235v8tbkgI5LntsXs=;
-        b=dPZPX5rVqndo5pQkIMPdIHEJYZ0M4KL0dOM4Rv2CAEQ2xYJ68qJ7f5XqzW/9jMaAX9
-         EG+ACVvF+DR/QD2WNYVpegQ8RuH7dDQIE9sArOm5P0OJCsuEZouNULNh4RcXZlQ2uZ6E
-         c6RoJsyrqv9hrTpfRAgaenwA4LUPS+MYcFpHAc41GAHb8TVpKmCo1ZMjSL6IppaSqeqI
-         psMgSKZ4FDZu02jIZyNKM2ino39NcZpipg3P4zTGVycVd1TDmJmy3rx+GVd32U4aeGI3
-         Mvpjr2+D+b+asumVXOBH2aAAYcPGeeBpBcLRy6x+UFD5uhlGKNBHcHSpMVsUNz6VXESm
-         60aw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/ZVLoYClH3NrlXnkJMcswgQJDfOj1T2ltZ4ktpefjybMtPn8KOFPsFkFRNA+aVUijZUB8B0j+CCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyINtNkAs45ZlrfvKAsGadsUc3Ir9b/sIOuuh38H4A3jZxUf92u
-	5oiv4QhnaolkH02hc2hQUIOLIYfL3gDw1CkoMUdXkHfdiVQxcpmYXx9SwBOWR1TIcFxI3zG8Qpx
-	zpC+eVmBfPETGUT7BKFOLqx6W7wfuL0Ab3H8npiTKlVBctw/p6pH/xyJ/QYw=
-X-Gm-Gg: ASbGncsr+Xpi0p5NmKVoVfQDPNohmGr8voeCF8QAwT5NppjXMUfIr0S5CvGgc4HNBlX
-	ksps+XEfy4OFqRwuvUcxlVlDTr9YvINUPzElwb2KSu8gUecZLFlMHg/P5O4CjsXwbAdCtiR6YzW
-	NFtk+l8AORO8B5gBDadWORfKmZlOID1ssBQNpI8YF9FDxofY/UUcxrTWIxeBYShAX3AZW/9yZI9
-	xaJdkfqG9FNWs1Xja4oTC1DzmUEFDZPLuHPtjUxJgek9OHVP7DZIPM4V+EoaVcJTar4GQvgSve/
-	NCvRWC6o4sRZ8ESf17OujY0ShvSQ5+efGNPpB1FkUrJjcSwsxHUzYWeP8qolcLdGKn5sqkko6qM
-	=
-X-Received: by 2002:a05:620a:2a16:b0:7c5:4b6a:d862 with SMTP id af79cd13be357-7cad5b4d28cmr1471547485a.33.1746448547549;
-        Mon, 05 May 2025 05:35:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFwtkRQRntUbGznMt8lXyW4K5q0xBaV6j0bk3J+OZSNHs09W25QCShb9JofbW226xRCv08R8g==
-X-Received: by 2002:a05:620a:2a16:b0:7c5:4b6a:d862 with SMTP id af79cd13be357-7cad5b4d28cmr1471544285a.33.1746448547088;
-        Mon, 05 May 2025 05:35:47 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54ea94ce656sm1694392e87.105.2025.05.05.05.35.45
+        bh=7djaZKuQTg8ZH962YLQL/FSVR3ehnU/TnBc6a+PC3fk=;
+        b=TAWTqnvILCwIwUDp+WG6xgjlGdxO57WCSKyhWbFyg5mTzwgyhHfKkzOFVc8SkqmRjM
+         I6gGTJ8U6iA0jWTEowqBhLx7OwVyMzmALytCabrwu8dokEK0ELnqVgK62L78cTshFGkz
+         WUVwyr5Q959RhM+RvC9shhSzJvAY6jRv9huNIfrtdR3XU5eSgilSbBWGO1+u6VHbiQST
+         ZUhsJUirFoNJ1OqxQKuqs4la0cqH6PFqcsRkgm4pXEtkDzjiQd4rX6L5ru+f6aSb5MMY
+         AqQv15yHzxni4faaZ8+Cqxin8PmY4i2XU38gbDtEC0ZqlSD+8aRDzWbOaeEb7tYdKm+t
+         iVyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXh1z8XW9k1xeZGUOlKpGpcoB46WCltf55Z90CfcPa0UOOzWTfpCARjKyen7AITwKNCUjloUifguos=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5FJA62xbpPZaDWAWVf1EmrFWmNjj9ulWMnm9/urdWE+vZ75xv
+	V0Dsw4JLTVlPlF3M9q6mVlae9ribhx8PZTOkN+quziS1jrE5Y2JWjS1Mp5LTP/Q=
+X-Gm-Gg: ASbGncu+QQraxOGcQpB4jvu496VCYfzgypUYFdxzB4ktDpQpiLzL727OfsUeMYgOrNn
+	yuaIFrrOEjxGdKjYMoD1pTaGPg3pFb+qGM8kz5VVfuBnYVYlzZ8+sCs2lT+4tWTpHgpBwNFGetg
+	cIVJ3WdPfbd6NFvXbKnm7Ptya5e/UZO2l6Y/VsG3E/z2XShmr9U6Y98DBgyMD3W5G8i51yegBxz
+	X079GF+pMQ5J076gzH56MISZfYpoeSV48EcbBWuFv/UmibgkR3GS+hK/BibE5bqlhZ6C32WMQex
+	jxNcCh+k/fkWJvrG7YvD5xtReckBPNIzOCz88aQuJEunh/FmXXHl
+X-Google-Smtp-Source: AGHT+IHfBz0qV3tN9vwCFJbP2NAyCooPjwrUmB9tNTrYi+DjMO5kp0iNYUW/DW+NaeO6h2If04tIVw==
+X-Received: by 2002:a17:906:6a12:b0:ace:caff:675a with SMTP id a640c23a62f3a-ad1905d7cdemr906825766b.10.1746450383927;
+        Mon, 05 May 2025 06:06:23 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef30:c917:a6e9:5bff:a8c2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad18914d067sm491199666b.3.2025.05.05.06.06.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 05:35:46 -0700 (PDT)
-Date: Mon, 5 May 2025 15:35:44 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Krishna Manikandan <quic_mkrishn@quicinc.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robdclark@chromium.org>, linux-clk@vger.kernel.org,
-        Srinivas Kandagatla <srini@kernel.org>
-Subject: Re: [PATCH v5 19/24] drm/msm/dsi: Add support for SM8750
-Message-ID: <hobn3fq647z54q6uqrooapokipr4zoxfb3tztg46lwzcsof3jd@5bwn34r2v7ks>
-References: <20250430-b4-sm8750-display-v5-0-8cab30c3e4df@linaro.org>
- <20250430-b4-sm8750-display-v5-19-8cab30c3e4df@linaro.org>
+        Mon, 05 May 2025 06:06:23 -0700 (PDT)
+Date: Mon, 5 May 2025 15:06:18 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Caleb Connolly <caleb.connolly@linaro.org>,
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH] dmaengine: qcom: bam_dma: keep remotely controlled units
+ on during boot
+Message-ID: <aBi3ykEK5HG2WDD6@linaro.org>
+References: <20250503-bam-dma-reset-v1-1-266b6cecb844@oss.qualcomm.com>
+ <aBh9WL2OMjTqBJch@linaro.org>
+ <aw6tjh5q6t75bif4jyusrdvroq53lbwlljo5cdgzrofn3a4loz@ixuu3yw4ucil>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -100,244 +81,168 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250430-b4-sm8750-display-v5-19-8cab30c3e4df@linaro.org>
-X-Proofpoint-ORIG-GUID: 6lflfzhg-SRU5DZ_93KA7CjSDJINnHTs
-X-Authority-Analysis: v=2.4 cv=cpWbk04i c=1 sm=1 tr=0 ts=6818b0a4 cx=c_pps
- a=50t2pK5VMbmlHzFWWp8p/g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=dt9VzEwgFbYA:10 a=e5mUnYsNAAAA:8 a=KKAkSRfTAAAA:8 a=vPhFULFQeS3k4onP6IoA:9
- a=CjuIK1q_8ugA:10 a=IoWCM6iH3mJn3m4BftBB:22 a=Vxmtnl_E_bksehYqCbjh:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: 6lflfzhg-SRU5DZ_93KA7CjSDJINnHTs
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA1MDEyMCBTYWx0ZWRfX6ff7KdDrmlyB
- 601PvqoXC96zGlaBeH0ui5z/tHw/SjKah7fDAhFdVr9M/MGf97MsB2Aldxk9Lwojj5cKRv+1POr
- k9IGC30VyCzNe01lN1uqUfyOPGGrqUS2OGJsukH+cZuELci3rcCMAM4NOattdZsTCwrLvrPiagA
- b0Tfr6tZour/eWXT+Jq+RtMQb3L5O9O2DtJLaMIHXk/jwxdp96e4cW6R1zWOBG8SHdI5ylc5++2
- ANCFK6HmH7lmT5PMMhye0zyHRsmN4ihV9J/QFju5N1wePcZSGwBn0ArhBClvva33BsxMEg/6+Yn
- t3c+L4J0gjgWroj9HD7Ikejrx3WN71ozKFvWk7RrOmL7VfqLOenF0yV7k8aGzGheKX08eb4mf8q
- 6M4Iu2gbhZjwDLF8u8uBAzCnQGUy82wywlVpx5lOZJs/mmwcB4FFbMKPGPGWtpEFZDuxTAce
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-05_05,2025-05-05_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 spamscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
- clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505050120
+In-Reply-To: <aw6tjh5q6t75bif4jyusrdvroq53lbwlljo5cdgzrofn3a4loz@ixuu3yw4ucil>
 
-On Wed, Apr 30, 2025 at 03:00:49PM +0200, Krzysztof Kozlowski wrote:
-> Add support for DSI on Qualcomm SM8750 SoC with notable difference:
+On Mon, May 05, 2025 at 03:17:00PM +0300, Dmitry Baryshkov wrote:
+> On Mon, May 05, 2025 at 10:56:56AM +0200, Stephan Gerhold wrote:
+> > On Sat, May 03, 2025 at 03:41:43AM +0300, Dmitry Baryshkov wrote:
+> > > The commit 0ac9c3dd0d6f ("dmaengine: qcom: bam_dma: fix runtime PM
+> > > underflow") made sure the BAM DMA device gets suspended, disabling the
+> > > bam_clk. However for remotely controlled BAM DMA devices the clock might
+> > > be disabled prematurely (e.g. in case of the earlycon this frequently
+> > > happens before UART driver is able to probe), which causes device reset.
+> > > 
+> > > Use sync_state callback to ensure that bam_clk stays on until all users
+> > > are probed (and are able to vote upon corresponding clocks).
+> > > 
+> > > Fixes: 0ac9c3dd0d6f ("dmaengine: qcom: bam_dma: fix runtime PM underflow")
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> > 
+> > Thanks for the patch! I actually created almost the same patch on
+> > Friday, after struggling with this issue on DB410c when trying to add
+> > the MPM as wakeup-parent for GPIOs. :-)
+> > 
+> > How is this issue related to _remotely-controlled_ BAMs?
 > 
-> DSI PHY PLLs, the parents of pixel and byte clocks, cannot be used as
-> parents before DSI PHY is configured, the PLLs are prepared and their
-> initial rate is set.  Therefore assigned-clock-parents are not working
-> here and driver is responsible for reparenting clocks with proper
-> procedure: see dsi_clk_init_6g_v2_9().
+> My understanding is that for locally controlled BAMs we can disable the
+> clock at the probe time as all the users of the BAM will be probed
+> before accessing the BAM. In case of a remotely controlled BAM there can
+> be a user (e.g. UART) which is running, but didn't request DMA channel
+> yet.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Changes in v5:
-> 1. Only reparent byte and pixel clocks while PLLs is prepared. Setting
->    rate works fine with earlier DISP CC patch for enabling their parents
->    during rate change.
-> 
-> Changes in v3:
-> 1. Drop 'struct msm_dsi_config sm8750_dsi_cfg' and use sm8650 one.
-> 
-> SM8750 DSI PHY also needs Dmitry's patch:
-> https://patchwork.freedesktop.org/patch/542000/?series=119177&rev=1
-> (or some other way of correct early setting of the DSI PHY PLL rate)
-> ---
->  drivers/gpu/drm/msm/dsi/dsi.h      |  2 +
->  drivers/gpu/drm/msm/dsi/dsi_cfg.c  | 14 +++++++
->  drivers/gpu/drm/msm/dsi/dsi_cfg.h  |  1 +
->  drivers/gpu/drm/msm/dsi/dsi_host.c | 81 ++++++++++++++++++++++++++++++++++++++
->  4 files changed, 98 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi.h b/drivers/gpu/drm/msm/dsi/dsi.h
-> index 87496db203d6c7582eadcb74e94eb56a219df292..93c028a122f3a59b1632da76472e0a3e781c6ae8 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi.h
-> +++ b/drivers/gpu/drm/msm/dsi/dsi.h
-> @@ -98,6 +98,7 @@ int msm_dsi_host_init(struct msm_dsi *msm_dsi);
->  int msm_dsi_runtime_suspend(struct device *dev);
->  int msm_dsi_runtime_resume(struct device *dev);
->  int dsi_link_clk_set_rate_6g(struct msm_dsi_host *msm_host);
-> +int dsi_link_clk_set_rate_6g_v2_9(struct msm_dsi_host *msm_host);
->  int dsi_link_clk_set_rate_v2(struct msm_dsi_host *msm_host);
->  int dsi_link_clk_enable_6g(struct msm_dsi_host *msm_host);
->  int dsi_link_clk_enable_v2(struct msm_dsi_host *msm_host);
-> @@ -115,6 +116,7 @@ int dsi_dma_base_get_6g(struct msm_dsi_host *msm_host, uint64_t *iova);
->  int dsi_dma_base_get_v2(struct msm_dsi_host *msm_host, uint64_t *iova);
->  int dsi_clk_init_v2(struct msm_dsi_host *msm_host);
->  int dsi_clk_init_6g_v2(struct msm_dsi_host *msm_host);
-> +int dsi_clk_init_6g_v2_9(struct msm_dsi_host *msm_host);
->  int dsi_calc_clk_rate_v2(struct msm_dsi_host *msm_host, bool is_bonded_dsi);
->  int dsi_calc_clk_rate_6g(struct msm_dsi_host *msm_host, bool is_bonded_dsi);
->  void msm_dsi_host_snapshot(struct msm_disp_state *disp_state, struct mipi_dsi_host *host);
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.c b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-> index 7754dcec33d06e3d6eb8a9d55e53f24af073adb9..7f8a8de0897a579a525b466fd01bbcd95454c614 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
-> @@ -257,6 +257,18 @@ static const struct msm_dsi_host_cfg_ops msm_dsi_6g_v2_host_ops = {
->  	.calc_clk_rate = dsi_calc_clk_rate_6g,
->  };
->  
-> +static const struct msm_dsi_host_cfg_ops msm_dsi_6g_v2_9_host_ops = {
-> +	.link_clk_set_rate = dsi_link_clk_set_rate_6g_v2_9,
-> +	.link_clk_enable = dsi_link_clk_enable_6g,
-> +	.link_clk_disable = dsi_link_clk_disable_6g,
-> +	.clk_init_ver = dsi_clk_init_6g_v2_9,
-> +	.tx_buf_alloc = dsi_tx_buf_alloc_6g,
-> +	.tx_buf_get = dsi_tx_buf_get_6g,
-> +	.tx_buf_put = dsi_tx_buf_put_6g,
-> +	.dma_base_get = dsi_dma_base_get_6g,
-> +	.calc_clk_rate = dsi_calc_clk_rate_6g,
-> +};
-> +
->  static const struct msm_dsi_cfg_handler dsi_cfg_handlers[] = {
->  	{MSM_DSI_VER_MAJOR_V2, MSM_DSI_V2_VER_MINOR_8064,
->  		&apq8064_dsi_cfg, &msm_dsi_v2_host_ops},
-> @@ -300,6 +312,8 @@ static const struct msm_dsi_cfg_handler dsi_cfg_handlers[] = {
->  		&sm8550_dsi_cfg, &msm_dsi_6g_v2_host_ops},
->  	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_8_0,
->  		&sm8650_dsi_cfg, &msm_dsi_6g_v2_host_ops},
-> +	{MSM_DSI_VER_MAJOR_6G, MSM_DSI_6G_VER_MINOR_V2_9_0,
-> +		&sm8650_dsi_cfg, &msm_dsi_6g_v2_9_host_ops},
->  };
->  
->  const struct msm_dsi_cfg_handler *msm_dsi_cfg_get(u32 major, u32 minor)
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.h b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-> index 120cb65164c1ba1deb9acb513e5f073bd560c496..859c279afbb0377d16f8406f3e6b083640aff5a1 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.h
-> @@ -30,6 +30,7 @@
->  #define MSM_DSI_6G_VER_MINOR_V2_6_0	0x20060000
->  #define MSM_DSI_6G_VER_MINOR_V2_7_0	0x20070000
->  #define MSM_DSI_6G_VER_MINOR_V2_8_0	0x20080000
-> +#define MSM_DSI_6G_VER_MINOR_V2_9_0	0x20090000
->  
->  #define MSM_DSI_V2_VER_MINOR_8064	0x0
->  
-> diff --git a/drivers/gpu/drm/msm/dsi/dsi_host.c b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> index 4d75529c0e858160761f5eb55db65e5d7565c27b..694ed95897d49c477726a2b0bec1099e75a3ce21 100644
-> --- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-> +++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-> @@ -119,6 +119,15 @@ struct msm_dsi_host {
->  	struct clk *pixel_clk;
->  	struct clk *byte_intf_clk;
->  
-> +	/*
-> +	 * Clocks which needs to be properly parented between DISPCC and DSI PHY
-> +	 * PLL:
-> +	 */
-> +	struct clk *byte_src_clk;
-> +	struct clk *pixel_src_clk;
-> +	struct clk *dsi_pll_byte_clk;
-> +	struct clk *dsi_pll_pixel_clk;
-> +
->  	unsigned long byte_clk_rate;
->  	unsigned long byte_intf_clk_rate;
->  	unsigned long pixel_clk_rate;
-> @@ -269,6 +278,38 @@ int dsi_clk_init_6g_v2(struct msm_dsi_host *msm_host)
->  	return ret;
->  }
->  
-> +int dsi_clk_init_6g_v2_9(struct msm_dsi_host *msm_host)
-> +{
-> +	struct device *dev = &msm_host->pdev->dev;
-> +	int ret;
-> +
-> +	ret = dsi_clk_init_6g_v2(msm_host);
-> +	if (ret)
-> +		return ret;
-> +
-> +	msm_host->byte_src_clk = devm_clk_get(dev, "byte_src");
-> +	if (IS_ERR(msm_host->byte_src_clk))
-> +		return dev_err_probe(dev, PTR_ERR(msm_host->byte_src_clk),
-> +				     "can't get byte_src clock\n");
-> +
-> +	msm_host->dsi_pll_byte_clk = devm_clk_get(dev, "dsi_pll_byte");
-> +	if (IS_ERR(msm_host->dsi_pll_byte_clk))
-> +		return dev_err_probe(dev, PTR_ERR(msm_host->dsi_pll_byte_clk),
-> +				     "can't get dsi_pll_byte clock\n");
-> +
-> +	msm_host->pixel_src_clk = devm_clk_get(dev, "pixel_src");
-> +	if (IS_ERR(msm_host->pixel_src_clk))
-> +		return dev_err_probe(dev, PTR_ERR(msm_host->pixel_src_clk),
-> +				     "can't get pixel_src clock\n");
-> +
-> +	msm_host->dsi_pll_pixel_clk = devm_clk_get(dev, "dsi_pll_pixel");
-> +	if (IS_ERR(msm_host->dsi_pll_pixel_clk))
-> +		return dev_err_probe(dev, PTR_ERR(msm_host->dsi_pll_pixel_clk),
-> +				     "can't get dsi_pll_pixel clock\n");
-> +
-> +	return 0;
-> +}
-> +
->  static int dsi_clk_init(struct msm_dsi_host *msm_host)
->  {
->  	struct platform_device *pdev = msm_host->pdev;
-> @@ -370,6 +411,46 @@ int dsi_link_clk_set_rate_6g(struct msm_dsi_host *msm_host)
->  	return 0;
->  }
->  
-> +int dsi_link_clk_set_rate_6g_v2_9(struct msm_dsi_host *msm_host)
-> +{
-> +	struct device *dev = &msm_host->pdev->dev;
-> +	int ret;
-> +
-> +	/*
-> +	 * DSI PHY PLLs have to be enabled to allow reparenting to them and
-> +	 * setting the rates of pixel/byte clocks.
-> +	 */
-
-According to the docs this should be handled by the
-CLK_OPS_PARENT_ENABLE flag. Please correct me if I'm wrong.
-
-> +	ret = clk_prepare_enable(msm_host->dsi_pll_byte_clk);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to enable dsi_pll_byte: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = clk_prepare_enable(msm_host->dsi_pll_pixel_clk);
-
-And this.
-
-> +	if (ret) {
-> +		dev_err(dev, "Failed to enable dsi_pll_byte: %d\n", ret);
-> +		goto out_disable_byte_clk;
-> +	}
-> +
-> +	ret = clk_set_parent(msm_host->byte_src_clk, msm_host->dsi_pll_byte_clk);
-> +	if (ret)
-> +		dev_err(dev, "Failed to parent byte_src -> dsi_pll_byte: %d\n", ret);
-> +
-> +	ret = clk_set_parent(msm_host->pixel_src_clk, msm_host->dsi_pll_pixel_clk);
-> +	if (ret)
-> +		dev_err(dev, "Failed to parent pixel_src -> dsi_pll_pixel: %d\n", ret);
-> +
-> +	clk_disable_unprepare(msm_host->dsi_pll_pixel_clk);
-> +	clk_disable_unprepare(msm_host->dsi_pll_byte_clk);
-> +
-> +	return dsi_link_clk_set_rate_6g(msm_host);
-> +
-> +out_disable_byte_clk:
-> +	clk_disable_unprepare(msm_host->dsi_pll_byte_clk);
-> +
-> +	return ret;
-> +}
-> +
->  int dsi_link_clk_enable_6g(struct msm_dsi_host *msm_host)
->  {
->  	int ret;
-> 
-> -- 
-> 2.45.2
+> Please correct me if I'm wrong here.
 > 
 
--- 
-With best wishes
-Dmitry
+Yes, I think there is a misunderstanding:
+
+ - UART doesn't use DMA for earlycon (and I'm not aware of any boot
+   firmware using DMA for UART either). The bam_dma driver really works
+   as intended here, it votes for the clock during probe to perform the
+   register access, then it drops the vote when going to runtime
+   suspend. We don't really need .sync_state() for the BAM, because
+   there are no active DMA consumers during boot.
+
+ - All of the BLSP peripherals (BAM DMA, UART, I2C, SPI) need the
+   shared GCC_BLSP1_AHB_CLK for register access. What happens is:
+
+   1. GCC_BLSP1_AHB_CLK is left running by the bootloader.
+   2. earlycon makes use the UART registers (without DMA), but doesn't
+      vote for the clock (also: the clock driver isn't probed yet).
+   3. GCC driver probes, leaves GCC_BLSP1_AHB_CLK running since unused
+      clock cleanup happens later.
+   4. bam_dma probes, requests GCC_BLSP1_AHB_CLK, votes for enable to
+      access registers during probe.
+   5. bam_dma goes to runtime suspend. The last (known) consumer of
+      GCC_BLSP1_AHB_CLK is gone, so the clock is disabled.
+   6. earlycon continues accessing the UART registers.
+   [Device reset]
+   7. The full UART driver probes and votes for GCC_BLSP1_AHB_CLK.
+
+Conceptionally, we don't need .sync_state for the BAM, we need some kind
+of .sync_state for the GCC_BLSP1_AHB_CLK. Or we need earlycon to vote
+for the UART clocks as soon as the clock driver probes. Which is roughly
+what drivers/clk/imx/clk.c imx_register_uart_clocks() does, except that
+releasing the vote on late_initcall_sync() could still be too early.
+(It's a stupid configuration, but what if UART needs some modules to
+ probe successfully?)
+
+> > The BAM clock will get disabled for all types of BAM control, so I don't
+> > think the type of BAM control plays any role here. The BLSP DMA instance
+> > that would most likely interfere with UART earlycon is
+> > controlled-remotely on some SoCs (e.g. MSM8916), but currently not all
+> > of them (e.g. MSM8974, IPQ8074, IPQ9574, ...).
+> 
+> This probably means that the definition of the flag needs to be
+> clarified and maybe some of those platforms should use it.
+> 
+
+Yeah, probably. It would require testing and/or checking downstream
+sources though. Here is a slightly clearer definition for the flags:
+
+ - Controlled-remotely = reset+initialized outside of Linux, skip reset
+   and initialization of global BAM registers.
+ - Powered-remotely = powered on outside of Linux, but global BAM
+   registers must be reset and initialized inside Linux.
+
+And for the clock:
+
+ - Clock specified: We can vote for the BAM to power on by turning on
+   the clock. After that, we can access registers during probe.
+ - Clock missing: BAM power management is integrated into the consumer
+   interface (e.g. SLIMbus, BAM DMUX). We cannot access registers until
+   the consumer requests the DMA channel.
+
+I think the BLSP DMA (for UART/I2C/SPI) is often "controlled-remotely",
+because there is the option to use some of the instances inside one of
+the remoteprocs (RPM/Modem/WCNSS/ADSP/etc). It's not our job to keep the
+BAM on though, the GCC_BLSP1_AHB_CLK is a clock that every remoteproc
+can vote for independently.
+
+> > The fixes tag also doesn't look correct to me, since commit 0ac9c3dd0d6f
+> > ("dmaengine: qcom: bam_dma: fix runtime PM underflow") only changed the
+> > behavior for BAMs with "if (!bdev->bamclk)". This applies to some/most
+> > remotely-controlled BAMs, but the issue we have here occurs only because
+> > we do have a clock and cause it to get disabled prematurely.
+> 
+> Well... It is a commit which broke earlycon on on db410c.
+> 
+
+FWIW, earlycon works for me on 6.15-rc4 on DB410c, I've only run into
+this issue after adding the MPM definition, which changes probe order
+enough to trigger this issue. I'm not sure how that commit changes
+anything, will try reverting it for my setup later to see what happens.
+
+> I started to describe here the usecase of the remotely-controlled DMA
+> controller being used by the BLSP and then I understood, that I myself
+> don't completely understand if the issue is because DMA block is
+> controlled remotely (and we should not be disabling it because the BLSP
+> still attempts to use it) or if it's a simple case of the clock being
+> shared between several consumers and one of the consumers shutting it
+> down before other running consumers had a chance to vote on it.
+> 
+
+The latter, as explained above. The DMA block doesn't play any role
+here, it's not used during boot.
+
+> > Checking for if (bdev->bamclk) would probably make more sense. In my
+> > patch I did it just unconditionally, because runtime PM is currently
+> > a no-op for BAMs without clock anyway.
+> 
+> Please share your patch.
+> 
+
+It's more or less equivalent to yours with some if checks removed.
+I would be in favor of leaving the bam_dma driver as-is and solving this
+on the clock/earlycon level.
+
+> > 
+> > I think it's also worth noting in the commit message that this is sort
+> > of a stop-gap solution. The root problem is that the earlycon code
+> > doesn't claim the clock while active. Any of the drivers that consume
+> > this shared clock could trigger the issue, I had to fix a similar issue
+> > in the spi-qup driver before in commit 0c331fd1dccf ("spi: qup: Request
+> > DMA before enabling clocks"). On some SoCs (e.g. MSM8974), we have
+> > "dmas" currently only on &blsp2_i2c5, so the UART controller wouldn't
+> > even be considered as consumer to wait for before calling the bam_dma
+> > .sync_state.
+> > 
+> > It may be more reliable to implement something like in
+> > drivers/clk/imx/clk.c imx_register_uart_clocks(), which tries to claim
+> > only the actually used UART clocks until late_initcall_sync(). That
+> > would at least make it independent from individual drivers, but assumes
+> > the UART driver can actually probe before late_initcall_sync() ...
+> > Most of this code is generic though, so perhaps releasing the clocks
+> > could be hooked up somewhere generic, when earlycon exits ...?
+> 
+> The spi-qup commit looks like another stop-gap workaround. Let's add CCF
+> and serial maintainers to the discussion with the hope of finding some
+> generic solution.
+> 
+> Most likely the easiest solution for Qualcomm platforms is to add
+> additional vote on earlycon clocks and then to try to generalise that.
+> 
+
+Yeah, that would be the best option I think.
+
+Thanks,
+Stephan
