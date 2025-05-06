@@ -1,141 +1,96 @@
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9319D21ABD1
-	for <linux-clk@vger.kernel.org>; Tue,  6 May 2025 21:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8647C139E
+	for <linux-clk@vger.kernel.org>; Tue,  6 May 2025 21:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746565614; cv=none; b=B+PDDdRXXFsCA3HcEjDanEoQ37PaX+3toYU9QBndOSawKy9fSKvE174xWjs65pEuhHSHDAv2F/Lksp70UNsu1V2SrndqsoI1E6h22/PTy+1pMLpY7R6PPfQtZyXMFRnIdYvINwW9eHiGTFUBoy7fOuOLtmoLCiYIoIhxt9xIoAI=
+	t=1746565804; cv=none; b=eR8f2v+N5B+9LZ2eFSTirxbkqOcKELmTqa7JlPXVvmYUCvRibEYC8Qo/rpg7vvQSy1di7cs5b+caOtA92zatcCitv9a+DKW8d9C4rT4K9naeYGWVP5MM3REMZNASwyB5oFjrYqfdzMK/CMsq57YhLmLRYEEeCSehl7wadqy4hso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746565614; c=relaxed/simple;
-	bh=o+DTlUShzMqTWdpVptHXPZF7T6Hpe95l3FZm/2enEAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AzrNZ0SEwFJ3F/wTfYrPUQtmyssp49PRYDHBkeB+ho8szrd65N6qYL8TEwZBM1IlQnEjkHhFw6AIHmgQxE2MJiJMoIqBkQz/iEFL+1rqZdHzL6iX3TGqPYe9Xhv/iGhEv1FuhH0HeWL4GCD/P4vv1oE+b5THM4pMbMcGIhCzgww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=s70s/p9Y; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1746565804; c=relaxed/simple;
+	bh=x2RtCiL0ifwL4EY5K0Ngbx+DtOeymI4c9bAZgvvdVfM=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=cmdpbnpVIuKTKRN5a+ujQdpCm6YfvCiMX7s0Ve+0RmLUwlrQ6Hb/codmD+x9UcBFA4yB9G4C5JbpzWVdLod51amsikpylk6CzDMZGi/gao9Vdv4Zk+WqSOP2PuD+Alez1ZEf0DITSxGaXyjGWkMiaw87BF5YxiocOp0hXl75GYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zb95le6f; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="s70s/p9Y"
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-85e15dc801aso560380239f.2
-        for <linux-clk@vger.kernel.org>; Tue, 06 May 2025 14:06:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1746565611; x=1747170411; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f4O20IXLpg8jEm9xUHHnlctypzKfsB1ZRP9Xc0/of3c=;
-        b=s70s/p9YwSg76W2CTUcTOU/9EKFOSwuKQqErfuIuUBIRKWXo0xgx6dnHv5A21YPgsE
-         UjE/KpAvjPMp6/D7tUn76o8B0eG5qcZI3Wwliw/pxspJajr6NsNzj5iCe60ZXHn/H0Wa
-         LSnJUApysR8jiBaVWhCKrLcQDy6LFtKcOQ678+06MZInDDv9TXe/YA10ZXgzQobp2lqP
-         IGepf4+M8ss5Iovx3620LCehFDUwimyqheTYxrN59v7OxMYxjwwCb6KFBgPKZEkeGV9B
-         Z2//pNl0OCSOGJbhMBU4kld/4sWRWf/mBv/8gfKh+V4Ws8PnKG7oqs5zhdBLIxBcRsVZ
-         6QjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746565611; x=1747170411;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f4O20IXLpg8jEm9xUHHnlctypzKfsB1ZRP9Xc0/of3c=;
-        b=maSA8vzXlnRextVYmfqwlANOFIM68F+VFrZ7RrKCxzEPGcRakgpxM5PpchN8WUFrb9
-         TzWFDtWhWPIUMRrr28NsUKIL5IteE2wtf/ZoplnBRDc0Q95H+tXoJaehSzSMwQc+DUaE
-         +k0MvpJb1VwM1qSNz5Eg7r+Y6wrt3l9EguLkgHq2QnGwBg3okpF0Y5Hur+radepioZOS
-         mg6W7P7PbMvjb4YOPWPYn9/gl6oXoy4OhDDwEVzu2hrZcXnbZYAxky/T1D2lXhPlPckt
-         JzIIX2fgPVoEzC+2rvM5VOG/Ul6LfnlxJUjc7Z3aOVq+TwFAEP8+vzTOSr1WMO2/loJM
-         irQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdAIjm4KOc+bW5IepO+EWPL2l7CR2iPOGxbnbCYkxCWv1Lsjxnssv+FjBIYFc3KNK/Sk82YCgq13M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOmQ/QBt3qr/ZLF/B7T0mqpcrmGPZEKU2yhWTkizHoxlRUSAyZ
-	Vf0Mj7oRQZH40vXFeJ1mD6agbWrRYIPOQuM2Jo2uz5KequY53XoLbJ8obbfLADI=
-X-Gm-Gg: ASbGncuv4iFunZX8FjtuwD/P2zgYNDIFZFyJMWR2bYuH1QW6wKu5HtyWI4sxvGpzOp6
-	xBpKjM8xOdJb58S9j9XPhEiiG4gSNWCJs5pMpvXirBUl1lzQGf2lWtf0TARyqSJjm/A1Ebbg2aj
-	8MJ6g7ytowJBlPoJdTSUFDzEhf8lFVnElWflxbSEbmnjM+paPbSMb+D4DKmSP9H4lBYzmWUsXTZ
-	fP45JLvX4gcO0vkQUk75YQpNKIpaeXN7rwrxYq51+fujVmXtboA/7YJR3/AQnEpAChFtcU4Vr2Q
-	rVvktfka9GKxjMMv4jftKy7uBhRkimhmvb0zkKLTAKSHy7uc+Tp1UTe0voaYUVxFF8oTPmKJbbL
-	MWsjitICI3hv7zw==
-X-Google-Smtp-Source: AGHT+IEul28rdtLnf24eQSg9o53hrAPhvZHN/Ndz1HzML1us6xJoFlvoRMcUFOXYOR8J/ANloTh/Jg==
-X-Received: by 2002:a05:6602:1350:b0:85d:f316:fabc with SMTP id ca18e2360f4ac-8674731bb70mr129539539f.8.1746565611497;
-        Tue, 06 May 2025 14:06:51 -0700 (PDT)
-Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f88aa588basm2419559173.79.2025.05.06.14.06.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 14:06:51 -0700 (PDT)
-From: Alex Elder <elder@riscstar.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	dlan@gentoo.org
-Cc: heylenay@4d2.org,
-	inochiama@outlook.com,
-	guodong@riscstar.com,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	spacemit@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 6/6] riscv: dts: spacemit: add reset support for the K1 SoC
-Date: Tue,  6 May 2025 16:06:37 -0500
-Message-ID: <20250506210638.2800228-7-elder@riscstar.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250506210638.2800228-1-elder@riscstar.com>
-References: <20250506210638.2800228-1-elder@riscstar.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zb95le6f"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E255FC4CEE4;
+	Tue,  6 May 2025 21:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746565804;
+	bh=x2RtCiL0ifwL4EY5K0Ngbx+DtOeymI4c9bAZgvvdVfM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=Zb95le6fCCUYUC7CYE/nf1JCPE3hd10Si5WXW1qxWZHXXMFCJnUQFoSkC5xqIgSU+
+	 wnkmIbkRhxsk7MBXcRfuQCRkn8bDIxf+5OpWYKhxofBNqxLvV2EYj6V7ePUEaBU9Vf
+	 iSBQU61tmgMRt6eE0zXkbLGt5zRv+Shr+4oCnoiQroaYmrPVkDl9i7flTO63kxutJI
+	 m1jGNF0hmPZRXUi18u4hQd9A1KwP11WEZ4waaHJaScIytAtQxIo+XKw4tcUV04+kZN
+	 KNJQ46YwLfq2DN7+EmZ/OdBRD+9YpieGjPdkAl3y8fhoNZgUfmFYyai9+go9jQYKWe
+	 9YLDH5MEINWbQ==
+Message-ID: <8be14931dffbe69af0135962f7917d0b@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3034384.VdNmn5OnKV@diego>
+References: <3034384.VdNmn5OnKV@diego>
+Subject: Re: [GIT PULL] Rockchip clock fixes for 6.15
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+Date: Tue, 06 May 2025 14:10:01 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Define syscon nodes for the RCPU, RCPU2, and APBC2 SpacemiT CCUS, which
-currently support resets but not clocks in the SpacemiT K1.
+Quoting Heiko Stuebner (2025-05-04 15:08:50)
+> Hi Mike, Stephen,
+>=20
+> for once I do have a fix for the running 6.15-rc round.
+> The nvmem support for the rk3576 encountered a number of mishaps.
+>=20
+> First the clk patch was marked as applied with the driver patches [0], th=
+en
+> on the way from the nvmem tree to GregKH's tree something went wrong which
+> caused the whole nvmem patches to reach Greg after the merge-window [1]
+> which in turn meant that the otp driver change landed only after 6.15-rc3=
+ .
+>=20
+>=20
+> So right now, both the driver change as well as the devicetree parts are =
+in
+> 6.15-rc, but that one gate definition from below is missing for everything
+> to work.
+>=20
+> So, please pull :-)=20
+>=20
+> Thanks a lot
+> Heiko
+>=20
+>=20
+>=20
+> [0] https://lore.kernel.org/all/173978599692.25901.15315285566342669137.b=
+4-ty@linaro.org/
+> [1] https://lore.kernel.org/all/20250411112251.68002-1-srinivas.kandagatl=
+a@linaro.org/
+>=20
+>=20
+>=20
+> The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089a=
+c8:
+>=20
+>   Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
+tags/v6.15-rockchip-clkfixes1
+>=20
+> for you to fetch changes up to d934a93bbcccd551c142206b8129903d18126261:
+>=20
+>   clk: rockchip: rk3576: define clk_otp_phy_g (2025-04-26 00:04:49 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Signed-off-by: Alex Elder <elder@riscstar.com>
----
- arch/riscv/boot/dts/spacemit/k1.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
-index 6eec6328c26fe..f4afb35dc6bc9 100644
---- a/arch/riscv/boot/dts/spacemit/k1.dtsi
-+++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
-@@ -346,6 +346,18 @@ soc {
- 		dma-noncoherent;
- 		ranges;
- 
-+		syscon_rcpu: system-controller@c0880000 {
-+			compatible = "spacemit,k1-syscon-rcpu";
-+			reg = <0x0 0xc0880000 0x0 0x2048>;
-+			#reset-cells = <1>;
-+		};
-+
-+		syscon_rcpu2: system-controller@c0888000 {
-+			compatible = "spacemit,k1-syscon-rcpu2";
-+			reg = <0x0 0xc0888000 0x0 0x28>;
-+			#reset-cells = <1>;
-+		};
-+
- 		syscon_apbc: system-control@d4015000 {
- 			compatible = "spacemit,k1-syscon-apbc";
- 			reg = <0x0 0xd4015000 0x0 0x1000>;
-@@ -553,6 +565,12 @@ clint: timer@e4000000 {
- 					      <&cpu7_intc 3>, <&cpu7_intc 7>;
- 		};
- 
-+		syscon_apbc2: system-controller@f0610000 {
-+			compatible = "spacemit,k1-syscon-apbc2";
-+			reg = <0x0 0xf0610000 0x0 0x20>;
-+			#reset-cells = <1>;
-+		};
-+
- 		sec_uart1: serial@f0612000 {
- 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
- 			reg = <0x0 0xf0612000 0x0 0x100>;
--- 
-2.45.2
-
+Thanks. Pulled into clk-fixes
