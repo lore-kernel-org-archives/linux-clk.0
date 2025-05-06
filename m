@@ -1,268 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115F03AE5CC;
-	Mon,  5 May 2025 23:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22579350DE7
+	for <linux-clk@vger.kernel.org>; Tue,  6 May 2025 01:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746487198; cv=none; b=D2hmmBZ667vuXuZfPcmMMdv/E4SO96tLxU4YyeZqgwpaFOj9Sq4cBJQiQohrHgNhJadu2rcpQaK++KtAVSqm6Hn0ODpoNE53ldqpMuqFT3jjdOkAoih/jgKDkvKh99qAMp7Wg6RwT+HyUKiGzTKb4zZ3RGWC3YhPgjAO9ws7Pas=
+	t=1746493207; cv=none; b=i9luv0QOSReJZlLTy+76PezLxLaNdH28O+bVd+Gbh28H29GlzV7FTbHCSe50L3ux/bzXFQAR7Ib5lOHBluyj9v7RWGb0WEX8dHUJ960d55VqdWW5641gmJlXRITohfTJIFgwusY2euQ4Veb8v3lMdsyciSOwg+IlWt17ymdjV9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746487198; c=relaxed/simple;
-	bh=2jBwSyKGM+ef/ZauCGSmnloXly7OEv4EzUDDVBrMu+g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rQUPYdjdrluk3RNiTHy5kr36m8hpywsIaZHl0x0ZtL3fSg6SekmGovaqP2Wqkb+KU0aOxYw0pJ5o2F3eaRx5dmvYaTVCWJdAK5vc/v1u8ndzysfG8KYKyMNJSNXMw9h0WuSsCBJlAqDwHOhkCts/ecYPE3kpEFrKBjj/32DRqro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPwkP90J; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746493207; c=relaxed/simple;
+	bh=mu+Bs8ufgmYPoMWaa3r4Rn+xjkFBtrCiihgK0Hdki7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jVOwKp1UOGtTi0EcGlbhbSvPCoPP64PhanF9yTGPpqsPnue5XcwiV9qlrqeDN3QMUXPy8FGcngeEeWRQHUuqoOH/F8nNpAQFMRz46z0TqyDinLOOoZWyLN/I93r+DpY3YqaBrxROZjsVe5srHztN0QBkTIHHVbGQhWPqYMATDXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HkpX+czY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPwkP90J"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C949C4CEE4;
-	Mon,  5 May 2025 23:19:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746487196;
-	bh=2jBwSyKGM+ef/ZauCGSmnloXly7OEv4EzUDDVBrMu+g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PPwkP90JTQ+RezjoONVfTuoYahoblfyyEBsK+qyPN6ON5sxQXdI2wIaDLBdQD/SnN
-	 bIDaTVM298+jCUDqJEjgH4vvVXPsofb/cmGq+lUrTLi/vZr8f+YVcRHIhmCu2irGjA
-	 dc39A6Jbe8S0ptzkR6QPOuz7xYSOxGF8f8+GUGdEfDoho2Swa4ev9yEk432jaCb4L0
-	 H48q9thi03dAV1iXn1Mo4vio1vSxLirgbVQ/Y4dyCLTZuivPjoPcflHc5l1pdeLK/W
-	 joV/etj92U7mXxk/aihaOghdtzkCo/uzpJq0XEBOR1rX81JfQX/IBCPHYLfM8UN+hM
-	 OfvqM1ksaBRCw==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Peng Fan <peng.fan@nxp.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Sasha Levin <sashal@kernel.org>,
-	abelvesa@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	shawnguo@kernel.org,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.10 052/114] clk: imx8mp: inform CCF of maximum frequency of clocks
-Date: Mon,  5 May 2025 19:17:15 -0400
-Message-Id: <20250505231817.2697367-52-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505231817.2697367-1-sashal@kernel.org>
-References: <20250505231817.2697367-1-sashal@kernel.org>
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HkpX+czY"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 545M7lc7024866
+	for <linux-clk@vger.kernel.org>; Tue, 6 May 2025 01:00:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Xdv764RLRrGf3SUwbhabEY+EiTd1qUAhXP6mTrPrGoA=; b=HkpX+czYmjPE+Ljl
+	Yu7zmZ6gdpcFxonh39cOaEq6Z9KbmHcNxGOEZTM2yrmu244MLQ7ccc4BiGRrRJN3
+	YThX+WcL1fk5Gq8rKpnc7/QjsYLn+UKHXz+5NJcRRXXp6Jm9YIxeltquaQEBVwLn
+	SLPnSl/Dql1Z+baVnO2QSeWRg/OieWVSCa2wSKYoJDt0JHzfbihjXc/14r/0sKUM
+	0KehQDWdIuNLtyzW7ENYRIZxVCnvtPgAOzxUKTHXzdEYrs5WT21gFkyxcbAPrrW7
+	oGPVEs9bBDqcc5wiwKud8pR4aiGOGLQhHsLRT6HYWZ88g7MN98Iq4+6J3BmSNXe9
+	7bqqGA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5uurb8b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Tue, 06 May 2025 01:00:02 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-48f812db91aso2106721cf.0
+        for <linux-clk@vger.kernel.org>; Mon, 05 May 2025 18:00:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746493202; x=1747098002;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xdv764RLRrGf3SUwbhabEY+EiTd1qUAhXP6mTrPrGoA=;
+        b=hV82B4cmXgSzmlXi2V/AF60JUpmhTlyAFhtjCfWK4Yoh7RjB3FnQ1ED1CFTrUiyWzx
+         nfx7+aMp08CrUY55GXFw+KD8ZytJgudOZ2GcBdsUlTAkFv3iTpmVKRImjRQDVxpKax07
+         iQIvyOqRtLpavvZcanHQZhcWz4hniPdAOEtpnC67L5oynUQXOpP/ybaay5XN6CjV2at0
+         yztOVudB/AHemMD9WlmavTW3Ol1xQAk4nSqq65AWQivp7xZgJJfCFALZ2QB0eYvQQz4s
+         gT/1DnktDDMIC3gj5oeVixES5dlgyxdivVke99Qt8mzfitofHl3NtwQ9CHJvTSMGeTyf
+         5cqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcjrwz83Mom0/d3YDI5CLvo7RNL3dVuIMIy2fCESIlJvXSNZjK43DvEGlwpAw+k1vupHzqDO7YGU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLgcn/j3tThgjcIR9g5Nj00jlZYpnezMDA1HN+vGPKUKdpR3Tk
+	9Ngp2p2PMQycpz4TguO4p2n77mWEiM9QnObyXRc3TLcjkhJsrOEXUcftBiVM/OvJbYgBGFntXvb
+	TWZTiHrTkDqu88n/rdxz0s665RfUstr/72kWWxKSAggH2CR37Mcj7297bIx8=
+X-Gm-Gg: ASbGncsd1zCkpNUgCQDK2/BOd3Z7XjL7qjzW59YPXgx78TY5lPHNocCyNwQw0cIehD3
+	y/0QKCFup7rb1qfFJacRVL2BCFQDf04bBElW9umEjE7B0V7gjmjG9Bm/hEUopLFRjNEjm0MnyiL
+	q5ZtZogKobptk1zL65n7AtknRY/3KwDOVfIefXsC9NnHmYhrKsEYrcvgoGWqKgB2D2Tb7CcK6iY
+	iYKV5ZsxCCSR+4wp0m26R93BKyBH4c4dF7yex1rrphFvn5rPemqhP9lHg0Ka0bpe60zp4LVUB3c
+	S2b+M0GTwYQe15dzfEkr16Rl8UmzmHz350DJyQAevZhJenL5+rdLmHu5loZJjG90bps=
+X-Received: by 2002:ac8:5d0e:0:b0:47a:ecc3:296c with SMTP id d75a77b69052e-48c2e0916e0mr86864491cf.0.1746493201919;
+        Mon, 05 May 2025 18:00:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH2SXWHDRs6cCc/ENSCxWEM4J3053zB5ep3H8W4JdHCVxT6N9A6giFp3tQ2bpDMGbTdjClJzQ==
+X-Received: by 2002:ac8:5d0e:0:b0:47a:ecc3:296c with SMTP id d75a77b69052e-48c2e0916e0mr86864211cf.0.1746493201577;
+        Mon, 05 May 2025 18:00:01 -0700 (PDT)
+Received: from [192.168.65.169] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fa77b8fe52sm6532159a12.55.2025.05.05.17.59.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 May 2025 18:00:00 -0700 (PDT)
+Message-ID: <31008c59-afed-405a-a330-e42d89a62790@oss.qualcomm.com>
+Date: Tue, 6 May 2025 02:59:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.237
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] clk: qcom: ipq5018: mark XO clock as critical
+To: George Moussalem <george.moussalem@outlook.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>,
+        Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com>
+ <20250502-ipq5018-cmn-pll-v1-2-27902c1c4071@outlook.com>
+ <1435b068-3bb9-4285-8399-81fc278152c4@oss.qualcomm.com>
+ <b05d9351-cc79-4e60-a6e0-de2fe698098f@outlook.com>
+ <DS7PR19MB8883995CB86AE2784CAFF8AC9D8F2@DS7PR19MB8883.namprd19.prod.outlook.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <DS7PR19MB8883995CB86AE2784CAFF8AC9D8F2@DS7PR19MB8883.namprd19.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=L9cdQ/T8 c=1 sm=1 tr=0 ts=68195f12 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=qC_FGOx9AAAA:8 a=UqCG9HQmAAAA:8
+ a=NYj23yi3rhxQzrYcNZoA:9 a=93bzvrPoB/MOLOjVLaw53YuoC0c=:19 a=QEXdDO2ut3YA:10
+ a=dawVfQjAaf238kedN5IG:22 a=fsdK_YakeE02zTmptMdW:22
+X-Proofpoint-GUID: -uUbV2lcLUt7ItFpOwSASISUP28F81Jw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA2MDAwNyBTYWx0ZWRfX5z7ccNmKPkBH
+ REMyPHYM5US2EgkXszVnOwhTTeN8H0ihibWEkJeRYrXLcNdAubl4t/0fRQ1GrMbVAo+Q9HoiGye
+ LA0CfZlRjH8bYOlpv89h0wvunCeSbmlHRFVZGYokkE6nQk5ExQ6KNHdYhhjsM4LJPn5ZcMTkCpI
+ E4jMUhU9kRB/buv9ARrwvSmz8QY9fjLAIDNJlZ+QLjg+StYyaMTkFIl12Js/YTvpd3hFEe3wPuL
+ HvRssOX3/3bhAvwjpWSRO8gd19eFlk0TWdNunCu/VJxb/Z2jEhRLJB4gXUji8cTklrVKgw44AzL
+ X2QnHizhyYNfUcnfhCllKSKsBkjnx1pGam20x8oSRpsM7G10IdJ8JLgRHt8XnyEj+/B50vJyM7Y
+ +7SJwhH8P5HkYApNOS4PJy37M0EmS/Y3/nvmlyAJ7cj5SYgX/8OjVI+yKT4q8ZYYkT0MzOgz
+X-Proofpoint-ORIG-GUID: -uUbV2lcLUt7ItFpOwSASISUP28F81Jw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-06_01,2025-05-05_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 mlxlogscore=999 spamscore=0 suspectscore=0 impostorscore=0
+ mlxscore=0 priorityscore=1501 clxscore=1015 bulkscore=0 lowpriorityscore=0
+ adultscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
+ definitions=main-2505060007
 
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+On 5/4/25 8:59 AM, George Moussalem wrote:
+> 
+> 
+> On 5/2/25 16:45, George Moussalem wrote:
+>>
+>>
+>> On 5/2/25 14:29, Konrad Dybcio wrote:
+>>> On 5/2/25 12:15 PM, George Moussalem via B4 Relay wrote:
+>>>> From: George Moussalem <george.moussalem@outlook.com>
+>>>>
+>>>> The XO clock must not be disabled, so let's add the CLK_IS_CRITICAL
+>>>> flag to avoid the kernel trying to disable the XO clock (when parenting
+>>>> it under the CMN PLL reference clock), else the kernel will panic and
+>>>> the following message will appear in the kernel logs:
+>>>
+>>> Remove the struct definition for this clock (and the assignment in
+>>> blah_blah_clks[]) and replace it with:
+>>>
+>>> qcom_branch_set_clk_en(regmap, 0x30030); /* GCC_XO_CLK */
+>>
+>> understood, thanks for the quick turnaround!
+> 
+> Tested it, but then then the issue is still there. This time fixable by setting the CLK_IS_CRITICAL flag on gcc_xo_clk_src. I was looking at removing the struct for gcc_xo_clk_src too and use qcom_branch_set_clk_en, but there are clocks that refer to the gcc_xo_clk_src as their parent. I'm a bit hesitant to tinker with the GCC driver without access to the datasheet. The downstream driver actually has the CLK_IS_CRITICAL flag set too on gcc_xo_clk as initially proposed in this patch:
+> 
+> https://git.codelinaro.org/clo/qsdk/oss/kernel/linux-ipq-5.4/-/blob/NHSS.QSDK.12.5/drivers/clk/qcom/gcc-ipq5018.c#L1457
+> 
+> Are you okay with this suggested approach?
 
-[ Upstream commit 06a61b5cb6a8638fa8823cd09b17233b29696fa2 ]
+Since turning off XO means the CPU (and nothing else on the soc for that
+matter) clock will not tick, just unregister the RCG along with it
 
-The IMX8MPCEC datasheet lists maximum frequencies allowed for different
-modules. Some of these limits are universal, but some depend on
-whether the SoC is operating in nominal or in overdrive mode.
+you can remove the .parent_hws (dont forget .num_parents along with it)
+from the affected clocks, this is effectively cosmetic
 
-The imx8mp.dtsi currently assumes overdrive mode and configures some
-clocks in accordance with this. Boards wishing to make use of nominal
-mode will need to override some of the clock rates manually.
-
-As operating the clocks outside of their allowed range can lead to
-difficult to debug issues, it makes sense to register the maximum rates
-allowed in the driver, so the CCF can take them into account.
-
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Link: https://lore.kernel.org/r/20250218-imx8m-clk-v4-6-b7697dc2dcd0@pengutronix.de
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/imx/clk-imx8mp.c | 151 +++++++++++++++++++++++++++++++++++
- 1 file changed, 151 insertions(+)
-
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 385653fe39660..aebeb4d3c8dd0 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -8,6 +8,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/units.h>
- #include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-@@ -417,11 +418,151 @@ static const char * const imx8mp_clkout_sels[] = {"audio_pll1_out", "audio_pll2_
- static struct clk_hw **hws;
- static struct clk_hw_onecell_data *clk_hw_data;
- 
-+struct imx8mp_clock_constraints {
-+	unsigned int clkid;
-+	u32 maxrate;
-+};
-+
-+/*
-+ * Below tables are taken from IMX8MPCEC Rev. 2.1, 07/2023
-+ * Table 13. Maximum frequency of modules.
-+ * Probable typos fixed are marked with a comment.
-+ */
-+static const struct imx8mp_clock_constraints imx8mp_clock_common_constraints[] = {
-+	{ IMX8MP_CLK_A53_DIV,             1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ENET_AXI,             266666667 }, /* Datasheet claims 266MHz */
-+	{ IMX8MP_CLK_NAND_USDHC_BUS,       266666667 }, /* Datasheet claims 266MHz */
-+	{ IMX8MP_CLK_MEDIA_APB,            200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HDMI_APB,             133333333 }, /* Datasheet claims 133MHz */
-+	{ IMX8MP_CLK_ML_AXI,               800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_AHB,                  133333333 },
-+	{ IMX8MP_CLK_IPG_ROOT,              66666667 },
-+	{ IMX8MP_CLK_AUDIO_AHB,            400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_DISP2_PIX,      170 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_DRAM_ALT,             666666667 },
-+	{ IMX8MP_CLK_DRAM_APB,             200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_CAN1,                  80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_CAN2,                  80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_PCIE_AUX,              10 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_I2C5,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_I2C6,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_SAI1,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_SAI2,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_SAI3,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_SAI5,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_SAI6,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_ENET_QOS,             125 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ENET_QOS_TIMER,       200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ENET_REF,             125 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ENET_TIMER,           125 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ENET_PHY_REF,         125 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_NAND,                 500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_QSPI,                 400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_USDHC1,               400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_USDHC2,               400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_I2C1,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_I2C2,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_I2C3,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_I2C4,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_UART1,                 80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_UART2,                 80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_UART3,                 80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_UART4,                 80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ECSPI1,                80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ECSPI2,                80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_PWM1,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_PWM2,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_PWM3,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_PWM4,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_GPT1,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPT2,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPT3,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPT4,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPT5,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPT6,                 100 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_WDOG,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_IPP_DO_CLKO1,         200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_IPP_DO_CLKO2,         200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HDMI_REF_266M,        266 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_USDHC3,               400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_MIPI_PHY1_REF,  300 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_DISP1_PIX,      250 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_CAM2_PIX,       277 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_LDB,            595 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE, 200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ECSPI3,                80 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_PDM,                  200 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_SAI7,                  66666667 }, /* Datasheet claims 66MHz */
-+	{ IMX8MP_CLK_MAIN_AXI,             400 * HZ_PER_MHZ },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct imx8mp_clock_constraints imx8mp_clock_nominal_constraints[] = {
-+	{ IMX8MP_CLK_M7_CORE,           600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ML_CORE,           800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU3D_CORE,        800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU3D_SHADER_CORE, 800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU2D_CORE,        800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_AUDIO_AXI_SRC,     600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HSIO_AXI,          400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_ISP,         400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_BUS,           600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_AXI,         400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HDMI_AXI,          400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU_AXI,           600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU_AHB,           300 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_NOC,               800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_NOC_IO,            600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ML_AHB,            300 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_G1,            600 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_G2,            500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_CAM1_PIX,    400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_VC8000E,       400 * HZ_PER_MHZ }, /* Datasheet claims 500MHz */
-+	{ IMX8MP_CLK_DRAM_CORE,         800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GIC,               400 * HZ_PER_MHZ },
-+	{ /* Sentinel */ }
-+};
-+
-+static const struct imx8mp_clock_constraints imx8mp_clock_overdrive_constraints[] = {
-+	{ IMX8MP_CLK_M7_CORE,            800 * HZ_PER_MHZ},
-+	{ IMX8MP_CLK_ML_CORE,           1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU3D_CORE,        1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU3D_SHADER_CORE, 1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU2D_CORE,        1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_AUDIO_AXI_SRC,      800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HSIO_AXI,           500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_ISP,          500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_BUS,            800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_AXI,          500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_HDMI_AXI,           500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU_AXI,            800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GPU_AHB,            400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_NOC,               1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_NOC_IO,             800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_ML_AHB,             400 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_G1,             800 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_G2,             700 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_MEDIA_CAM1_PIX,     500 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_VPU_VC8000E,        500 * HZ_PER_MHZ }, /* Datasheet claims 400MHz */
-+	{ IMX8MP_CLK_DRAM_CORE,         1000 * HZ_PER_MHZ },
-+	{ IMX8MP_CLK_GIC,                500 * HZ_PER_MHZ },
-+	{ /* Sentinel */ }
-+};
-+
-+static void imx8mp_clocks_apply_constraints(const struct imx8mp_clock_constraints constraints[])
-+{
-+	const struct imx8mp_clock_constraints *constr;
-+
-+	for (constr = constraints; constr->clkid; constr++)
-+		clk_hw_set_rate_range(hws[constr->clkid], 0, constr->maxrate);
-+}
-+
- static int imx8mp_clocks_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	void __iomem *anatop_base, *ccm_base;
-+	const char *opmode;
- 	int err;
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mp-anatop");
-@@ -736,6 +877,16 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 
- 	imx_check_clk_hws(hws, IMX8MP_CLK_END);
- 
-+	imx8mp_clocks_apply_constraints(imx8mp_clock_common_constraints);
-+
-+	err = of_property_read_string(np, "fsl,operating-mode", &opmode);
-+	if (!err) {
-+		if (!strcmp(opmode, "nominal"))
-+			imx8mp_clocks_apply_constraints(imx8mp_clock_nominal_constraints);
-+		else if (!strcmp(opmode, "overdrive"))
-+			imx8mp_clocks_apply_constraints(imx8mp_clock_overdrive_constraints);
-+	}
-+
- 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
- 	if (err < 0) {
- 		dev_err(dev, "failed to register hws for i.MX8MP\n");
--- 
-2.39.5
-
+Konrad
