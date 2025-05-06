@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07A622256A;
-	Tue,  6 May 2025 21:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA6C21C17D
+	for <linux-clk@vger.kernel.org>; Tue,  6 May 2025 21:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746567377; cv=none; b=X1PNBzea3mdr867S/UqQzeFK8FU7Q/jCuXYMtdyIp03KtzOm5PeYunxTv4MLFnNRsrrm/lL+QnJjiaQsRW5h99Pyw49Kr2IbVT/Zbhe3qoCaIQn/FGefdklfXJGP7rRVCmsneajzAhljKI38DguaRePBx/ujyJnnXHzwMYzA2do=
+	t=1746567665; cv=none; b=ZpjXGFyKJ0sV7Ojxl3h4T1kTwHGm0+9eiTvp7tHm9lEStKcc6LXpQk0+cLZtPkZqPJTRfmM6eq49PIINQDTNcDsZxB6jCFwyuUXWFnS6PFe0vAlzypI7sfvfc7jXyO24VyUQdTbO/J4haZ9+btw03Te0FTNQtG9xpx2w2ikVTtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746567377; c=relaxed/simple;
-	bh=Wwcbe00niw89+rixh1Cu5Jp/hALwR+0+AtLW+L9AVgA=;
+	s=arc-20240116; t=1746567665; c=relaxed/simple;
+	bh=6CxOMIcpv6UU7bDiC8pBqM9CBeRXVyrU0ukgcGoh1PI=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Jsic7ZI1iA8atvzkuYBc4H3CJ5ZNljSYaekuDOmzTzKcvT6rz4D3pLpzbqVtZot+OMDCviB1SXn6eiHGYV0CReAE/q+oJa8WoRebg4TAPZ6EsgHQLq1xxIwxbAvtDB4eaU8l1uozU7db2of8SdWfh6DYK33cRvekKJEq7FeuxcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkegdnYz; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=mw+TbK1bK4DSRyZzkQpj1iqSLXAzKsE3cDJRNf80F4GDhN21jyYazi4X/vZkalbjJCRHMF/M+AHUF3Ps41nn1ftWIHhZQxUiGbk1MEKcz/meR99hZKVT6QMqUEEZz4ZYsKa4Cz2Gp6QPahVQRN4z/Rs65JPLcS+OTVkIOkc9kOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hsDqP3HT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkegdnYz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68B6BC4CEEF;
-	Tue,  6 May 2025 21:36:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hsDqP3HT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE152C4CEE4;
+	Tue,  6 May 2025 21:41:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746567377;
-	bh=Wwcbe00niw89+rixh1Cu5Jp/hALwR+0+AtLW+L9AVgA=;
+	s=k20201202; t=1746567664;
+	bh=6CxOMIcpv6UU7bDiC8pBqM9CBeRXVyrU0ukgcGoh1PI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=MkegdnYzzkMNZYT1+CxWSrQ3IX4GxpJTZFYDjUbOk1Ctr4UYQRIAT1FWDjKoLPJHc
-	 kdydtvIBP2MlajMWnNKlbQXNJJ3qcp93qn2SiI9zFSEMea5TIVrRxzwA9gtkJ4Y9l4
-	 hqacNj1t63GpMVH8zdGDwFs3JwwtZlii1qVDZSxF/VfPa1AMnR8FfD7m1tKQn5Igsc
-	 V4dTif4pm44J3WinOvA+BlN2KcGfv6SckC84/RNGcK3DQsjOphD1uw8+qHbG2VneTw
-	 ak3xzOu0O5iv4hYf+nFyohJSgnx+zGZf+Xhomui3p4RFPyhgOWiybtxH6vnhExQlvo
-	 pJ5tjeF2fqsSg==
-Message-ID: <66005c5a24e9ededf04734f26a87fafd@kernel.org>
+	b=hsDqP3HTq9F3YgduRkkoD1jG7NR5pmNiXauc816FjnJfiHybf66sLUg6VoA5HFMnj
+	 MBM4buYPnrFnKLcgu5mhv92E3GXUb9KMQw70uQ3i7S3xj6aQ9o23/uIyzwzRMkZKqy
+	 38nPeTIyBdk4DoalPfCsgqHue/3nlQCPkC34yRL7ARXivweCYKnGCMMBlWd7k35X1T
+	 MbFSo2GvEb5fyAqNMqB+zbBicGzPmgvrxczaXZELjXvkkjvUCktfsXsJ1qh8aH9hiR
+	 B4BGEVTOsy+8/eGQ77EqZgNPN6qWq8bZCFg2NXOInIvydgcB1d0iqn0tcP/k8sayNh
+	 ByAYq3QE4qf9A==
+Message-ID: <600cd2f78ea76dc60960cca8bd69faa5@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,25 +35,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250505013545.359745-1-linux@treblig.org>
-References: <20250505013545.359745-1-linux@treblig.org>
-Subject: Re: [PATCH] clk: bcm: kona: Remove unused scaled_div_build
+In-Reply-To: <20250415185614.16292-1-wahrenst@gmx.net>
+References: <20250415185614.16292-1-wahrenst@gmx.net>
+Subject: Re: [PATCH] clk: bcm: rpi: Drop module alias
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Dr. David Alan Gilbert <linux@treblig.org>
-To: florian.fainelli@broadcom.com, linux@treblig.org, mturquette@baylibre.com, rjui@broadcom.com, sbranden@broadcom.com
-Date: Tue, 06 May 2025 14:36:15 -0700
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, kernel-list@raspberrypi.com, Stefan Wahren <wahrenst@gmx.net>
+To: Florian Fainelli <florian.fainelli@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, Stefan Wahren <wahrenst@gmx.net>
+Date: Tue, 06 May 2025 14:41:02 -0700
 User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-Quoting linux@treblig.org (2025-05-04 18:35:45)
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Quoting Stefan Wahren (2025-04-15 11:56:14)
+> Since commit fbac2e7787ac ("clk: bcm: rpi: Allow the driver to
+> be probed by DT") the module alias isn't necessary anymore. So
+> we can drop it.
 >=20
-> scaled_div_build() was added in 2014 by
-> commit 1f27f15258bf ("clk: bcm281xx: add initial clock framework support")
-> but hasn't been used.
->=20
-> Remove it.
->=20
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
 > ---
 
 Applied to clk-next
