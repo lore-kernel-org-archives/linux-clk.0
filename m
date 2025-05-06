@@ -1,124 +1,97 @@
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A073828A73C;
-	Tue,  6 May 2025 02:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A8F283134;
+	Tue,  6 May 2025 05:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498136; cv=none; b=ILoPmZuKX/haSKWA7kUyFYguI5xfCe86jUGaiBDrQSr9rXYfqP3APmuTyXKZ3hu6eNwaG1TNU9Yb6sQJnei+TTRAYIoveNf6h/O1+TsigP2mhTDdlapnXOz/uS7qka3kR6L/M2QPFkUDXnyI0eFtli2+Bb/93pKsnuZg5by2xIE=
+	t=1746510261; cv=none; b=IuxYNnakI8V+9rv61O/MsCyJ5iSO9ThaUIhDLJmtq/tkqXuHsnUMFzZj1PXVPGQAcPvl/b3JpxK4too42ZDhLOXoQX5pHu9FwYQunbYHvcY/FZbbx+IuXOJQxv3UFRAh0TEZZfQNS4xwsRi+y+5olNZPVxIHuRkDdMwAQuAL9Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498136; c=relaxed/simple;
-	bh=RzobY4XVcgkDJ0doe1YwuuhTaZEvjGgriYp4dbdw2KY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=un8hYaRZnsyY19BwtfOzTlOdLj12b2eyXtf6CnMkv8p8PwIfdUEnIPYh2abteasoECbULiCLVNX3NyjN7iNPfTsmcGvxl5eKPsb9UJ4rIKPZ9pzbukyKwqYhI5DRbDiYOAsAvIee427YrIDxNkWPbx8mIg3NmH9DXO74TZNVGc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=LGeMnYHh; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+	s=arc-20240116; t=1746510261; c=relaxed/simple;
+	bh=VlGlm2rpX2IQG/rie/jcb5KY6Mr2yf/y9ylfqMeqpo8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=bJF+LF1p+iAjt2jz66aNgjCtva+bSJR25r9LVHgWRcINKT9+/pvw6s785Idv5iUKocSvzA1J6jrhUPnCOupLIt3vR1XYevV4YxFavVrYOiBOkDaVC0KRp4QQjQjHy7hXJ/Hj/W9VRtkBNoUQsxljNfB4G+GXHJzanATPqKN/iJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQZRTtCY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="LGeMnYHh"
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id CDEBD257FC;
-	Tue,  6 May 2025 04:22:05 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 4JOhvh70GMPC; Tue,  6 May 2025 04:22:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1746498124; bh=RzobY4XVcgkDJ0doe1YwuuhTaZEvjGgriYp4dbdw2KY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=LGeMnYHh13eXvQTo6b7jVRLViK27EHHbt6IGVuHYYHpsIFoAkHvSmHGbngDO7cfAz
-	 wAsobVQPuGvv4+GR4WyjeK9NNLXQMp4Ov1vGVlIpk4dtb2liJA3MXhc38OlFxaMU9j
-	 oAEUu46pPkg24ZfAdG7sMr8L4CLSgOzPjJMjKhDWKB7y4JjZiJopx5LtZLzPHqWnDT
-	 UDaPlS9B27kMd8W9tEo0PLmUBQtLqFyGDJ7dtc2EY/YdGr9pzXMluLcTsHdPUw8yCk
-	 xArCj1nQZ7LzlKsbwlRfcStwfM25FiVr7y5bIMV+7hpL7JRqgXEHbYIub5rU9vq1lj
-	 C51EJbsxNlGmg==
-Date: Tue, 6 May 2025 02:21:48 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Subject: Re: [PATCH v4 2/5] clk: rockchip: Support MMC clocks in GRF region
-Message-ID: <aBlyPL_1TFh9lNr3@pie.lan>
-References: <20250417143647.43860-1-ziyao@disroot.org>
- <20250417143647.43860-3-ziyao@disroot.org>
- <2737556.Isy0gbHreE@diego>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQZRTtCY"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CB5D7C4CEEB;
+	Tue,  6 May 2025 05:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746510260;
+	bh=VlGlm2rpX2IQG/rie/jcb5KY6Mr2yf/y9ylfqMeqpo8=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=oQZRTtCYi4tw7YQZ8NXTvn+49Z+EJga0q2LAJi7B5Mkvc97bkgNUBwJROUUfL4Lq6
+	 TqSsSyVI4uqSx2C50MEpec+3ULMTn9ZUSuhbR9rhKcVz70hkpPTbGI5dQoWU4PfPFM
+	 uerNcZS/q5XiXnh1uE0P1RZLLzwoHUGIGsT6KbsaFwvaEARcYqyFH7JkFm6zOld/Cf
+	 HCgLFvi8ar2qCMmKv9INrIqf7kLzkryHqSWRTopPB7669ZW+Ltw5Zr9jn7kBKQq5jy
+	 +zndvPRhKPHKpabKNphQqe4HrEIzP1ciJGtPpoMkz0hrmlt1FCKnM+mPHcEcjVxn7/
+	 bStuyy2jy2/Ng==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6B4C3ABAC;
+	Tue,  6 May 2025 05:44:20 +0000 (UTC)
+From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
+Date: Tue, 06 May 2025 09:43:34 +0400
+Subject: [PATCH v2 2/6] dt-bindings: clock: qcom: ipq5018: remove bindings
+ for XO clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2737556.Isy0gbHreE@diego>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250506-ipq5018-cmn-pll-v2-2-c0a9fcced114@outlook.com>
+References: <20250506-ipq5018-cmn-pll-v2-0-c0a9fcced114@outlook.com>
+In-Reply-To: <20250506-ipq5018-cmn-pll-v2-0-c0a9fcced114@outlook.com>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>, 
+ Lee Jones <lee@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ George Moussalem <george.moussalem@outlook.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1746510258; l=916;
+ i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
+ bh=JupKX6iwdtJMe4ecLVTA0mWjAGvKoKV28P3vMGpTlG0=;
+ b=7p+yVQvKj5aQQRuj+czk6aiSi45ggNA8QFh8VJwga282xblu/OE1PGOvTXbw3Bj8u5hJmcLBj
+ J5Cy+BBjW7MDWf5qvb38Bg7e8V4cI2apve30eAPFN79ZcDPH1FwxgBJ
+X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
+ pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
+X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
+ with auth_id=364
+X-Original-From: George Moussalem <george.moussalem@outlook.com>
+Reply-To: george.moussalem@outlook.com
 
-On Mon, May 05, 2025 at 11:39:05PM +0200, Heiko Stübner wrote:
-> Hi,
-> 
-> Am Donnerstag, 17. April 2025, 16:36:44 Mitteleuropäische Sommerzeit schrieb Yao Zi:
-> > Registers of MMC drive/sample clocks in Rockchip RV1106 and RK3528
-> > locate in GRF regions. Adjust MMC clock code to support register
-> > operations through regmap. Also add a helper to ease registration of GRF
-> > clocks.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> 
-> > diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> > index cbf93ea119a9..ce2f3323d84e 100644
-> > --- a/drivers/clk/rockchip/clk.c
-> > +++ b/drivers/clk/rockchip/clk.c
-> > @@ -590,6 +590,7 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
-> >  				list->name,
-> >  				list->parent_names, list->num_parents,
-> >  				ctx->reg_base + list->muxdiv_offset,
-> > +				NULL, 0,
-> >  				list->div_shift
-> >  			);
-> >  			break;
-> > @@ -619,6 +620,11 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
-> >  			break;
-> >  		case branch_linked_gate:
-> >  			/* must be registered late, fall-through for error message */
-> > +		case branch_mmc_grf:
-> > +			/*
-> > +			 * must be registered through rockchip_clk_register_grf_branches,
-> > +			 * fall-through for error message
-> > +			 */
-> >  			break;
-> 
-> please don't create separate structures for specific clock-types.
-> Being able to "just define" clock branches is helpful and starting
-> to require separate blocks just causes issues down the road.
-> 
-> For handling multiple GRF sources, I just merged Nicolas' patches for
-> handling auxiliary GRFs [0] and GRF-gate clock type [1] .
+From: George Moussalem <george.moussalem@outlook.com>
 
-Thanks for the hint, it does look like a better style which I'll adapt
-in the next version.
+The XO and its source clock must be always-on and is enabled in the GCC
+during probe. As such, remove the bindings for them.
 
-> So ideally, please base off from there.
-> 
-> Thanks a lot
-> Heiko
-> 
+Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+---
+ include/dt-bindings/clock/qcom,gcc-ipq5018.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-Regards,
-Yao Zi
+diff --git a/include/dt-bindings/clock/qcom,gcc-ipq5018.h b/include/dt-bindings/clock/qcom,gcc-ipq5018.h
+index f3de2fdfeea11f4b8832b75a05e424ca347b3634..d4de5eaffee7b4cb81e0ff2dcbf9e6669c3da8f8 100644
+--- a/include/dt-bindings/clock/qcom,gcc-ipq5018.h
++++ b/include/dt-bindings/clock/qcom,gcc-ipq5018.h
+@@ -140,8 +140,6 @@
+ #define GCC_WCSS_DBG_IFC_NTS_BDG_CLK			131
+ #define GCC_WCSS_DBG_IFC_NTS_CLK			132
+ #define GCC_WCSS_ECAHB_CLK				133
+-#define GCC_XO_CLK					134
+-#define GCC_XO_CLK_SRC					135
+ #define GMAC0_RX_CLK_SRC				136
+ #define GMAC0_TX_CLK_SRC				137
+ #define GMAC1_RX_CLK_SRC				138
 
-> [0] https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/commit/?id=70a114daf2077472e58b3cac23ba8998e35352f4
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/commit/?id=e277168cabe9fd99e647f5dad0bc846d5d6b0093
-> 
-> 
+-- 
+2.49.0
+
+
