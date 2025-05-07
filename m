@@ -1,150 +1,175 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF082139579;
-	Wed,  7 May 2025 06:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBC3212B3D;
+	Wed,  7 May 2025 07:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746599921; cv=none; b=G1vRAKyzYoRLPvt6eKKIoxkcj874B3bOwVRyMUsv9JnnyuUNPg6DhJteQvx5cFEDw0pdCNoQKGbXjqOHtyZMvr9MHVdAWNOyZD41mVsQ9NZGUxa/aaPowIXeSg2QcDiGs0W0SRtlYjbA1TjewKgh6OvjZ24pBIfA6hDXqkdhZFA=
+	t=1746601660; cv=none; b=pKth/9R+0k138zHdbhNQ2gSaSOUftfyk+GFgCufMPiclZz3101uPnQOwYb9Ftb9WbmkXQT3FoIlQuqLeIGwDWcGae2y2hJaLesZiVRswPA8cwlJ4ioKNnpnvSIW0cLCpkfhwHZyUBYi3RWhrN0NEa90Ja5Ch/ZnrErJHH9VQKzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746599921; c=relaxed/simple;
-	bh=zoPVNfQfngSR07iIP+gMGPRpdmcR+TKOkCqpe3dtipE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QDJX1TqK1pTX5ckti/3NOgVAVYlo4KXqD+wcyz2W9VOMl/LGR0+AuBtpC9KaL+i9wdI5VTlSYmPrTD5laREOkl0GrmSOXeVd0UOkFJFsbd5nmtAl+IwsJQATBxFIZc4tb4n5fbJ2cHCxWIHH1kmOUzcBEU8FVjeh+a3R+TcIP5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UwoD3P+7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1746601660; c=relaxed/simple;
+	bh=MLmA2L5chrHPgpCD3BRZ1TXnu2+lCd8+i3p3+R3Fc6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BcamhAsYYxda0vhJiI33i+msQmkfWTYBahBt2C/K3bO+ci0uOBx0E+wdWsY6Dl8qZPjiPSYs1Sw3ErCAwzT8TPpSC/pP7OUnHfPiXzDAxTLKBroW8vVSI1pKW1FAa055d6mGepm5nmRH2t6BdNXyvEmHhr0VLgqcy1ry/W6WVoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uh/0T31z; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UwoD3P+7"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5471HmAb017086;
-	Wed, 7 May 2025 06:38:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dYgH+XlFKDus3frugKdFHUJb0KxUeDoyMriUEOT3RUo=; b=UwoD3P+7OVQH/63H
-	29Bx8LKdbrsaCjW6cOwF15eNoy8O+TekI6gWRZvgMx/1LyZD2XFWbsmbxqDJcJ9X
-	u48jDiNzmn/DzFy2qL3jHwKW6NZ6S9wfopXl+/sit/OozLiaKADnxwe843i0z45g
-	kLHjHi1dvnLR4iLIQedMrYgdxnQy9kC8KkO8vZwCfgSV0UJnxf/lE9/grTb/UnGI
-	8bT/VkIEaH2aeO4VH9TTs83IIl59Ao6UY0FvWBtkQU3DZjRSkUtLwrwo1bvsvbM0
-	l7C8UTzFUM1VcR6alqXkFsYhz9IFamKHMQHxxyRtK5aSdV4R+p/LbXwL4RoRZmvo
-	h1eHXQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46f5u44r3w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 06:38:36 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5476cZIE017059
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 May 2025 06:38:35 GMT
-Received: from [10.216.63.157] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 6 May 2025
- 23:38:31 -0700
-Message-ID: <b7e630de-07f9-4b21-9055-e9b387627564@quicinc.com>
-Date: Wed, 7 May 2025 12:08:21 +0530
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uh/0T31z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746601654; x=1778137654;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MLmA2L5chrHPgpCD3BRZ1TXnu2+lCd8+i3p3+R3Fc6M=;
+  b=Uh/0T31zqcF4tB6VkqwOUd7/rVgiwdmrpLjdbAynreuP+3Rk0BG8BquA
+   2J1Bx0EGXLPjENy/SDksn9o9r4bDbrBc132bx/eKQ6AaEk9MoMYj9EFgA
+   vGpDMZ5Fi+Kmc2KvRQEFx0XfK1Vzta2pD94ghR4Q/X9peGXGQ5WhPqsw/
+   s9DLUrVwsmyzpvVxlsDrNflmYlj9NOwG4CeftCc1qJBmsTPOPmGXSpsuA
+   Q8msU+tbJlRUYmduoDbBg3M/llS3oMEdU58W3Qxe08f54DFNYWYI9pa/b
+   47U9mRknZAdC4OSptTlwlJU+k7vcY6ITzSIfmWKfoasOz4pCxH57Rsapw
+   A==;
+X-CSE-ConnectionGUID: jc1q8XsDTmO6dlXooz+WOw==
+X-CSE-MsgGUID: fRZP8O9CTcO+Epo6hdylNQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11425"; a="52127896"
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="52127896"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 00:07:34 -0700
+X-CSE-ConnectionGUID: qQ+yodlfTgSzrmo4bM+ONg==
+X-CSE-MsgGUID: 2X6Lp8LYSQW8ClLCjAtpDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,268,1739865600"; 
+   d="scan'208";a="135865532"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 07 May 2025 00:07:31 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uCYsK-0007GD-25;
+	Wed, 07 May 2025 07:07:28 +0000
+Date: Wed, 7 May 2025 15:07:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kernel@pengutronix.de,
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [PATCH v4 3/3] clk: add TI CDCE6214 clock driver
+Message-ID: <202505071411.GB5uyv3w-lkp@intel.com>
+References: <20250430-clk-cdce6214-v4-3-9f15e7126ac6@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] clk: qcom: Add support for Camera Clock Controller on
- QCS8300
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Dmitry Baryshkov
-	<lumag@kernel.org>
-References: <20250327-qcs8300-mm-patches-v6-1-b3fbde2820a6@quicinc.com>
-Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <20250327-qcs8300-mm-patches-v6-1-b3fbde2820a6@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=KcfSsRYD c=1 sm=1 tr=0 ts=681affec cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=k8wuuItXO5eEtyapRm4A:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: zCIemlL0gdt5rO_L-xoqI0QSGiRmL84D
-X-Proofpoint-ORIG-GUID: zCIemlL0gdt5rO_L-xoqI0QSGiRmL84D
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDA2MCBTYWx0ZWRfXyHPKY1U6nePd
- 96lypzFwuVwtJbLkUwHq3syxzrgfGiEJmDsbOtRbxSmF5UPLhcMAlvO1WDJHBV+u+w56zc5o9+f
- 2+IkYa/u9OhwHxULEyABeRjJ9hfhkqQ3JTonayq/tNCB5GnHDicEb529dp1N4E2bR3rF5PlMgat
- FqE0y6a9jMfg3bIAH5ZPzcSS4ERxi7oKJjr1sYbZZ+KvP/8wi4bwSHUgSKO9rp4+6lxWEpTQ0D9
- tawU7uKRMqV6pwbmLrGvQM/UkxHBAyTJeNAB8ksdTXk4DqZdz2C4deuZ4dq5OFBWwQ6KOm3uu8S
- 4ud3vi1kIpZUWAwHS7USyj0Ndp9850+AYOoYLoqLj2lWrcU5svnLj5qnninR7aaThGtWmLmE2G1
- FiEtfJwgi75bHFMRszIOKaqP5pbLEA5FWlZ+ynQLrpLkMzDPbEcgO1pTdtJ/wYhLqn6XGrUy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-07_02,2025-05-06_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 suspectscore=0 bulkscore=0 mlxlogscore=999
- phishscore=0 impostorscore=0 priorityscore=1501 malwarescore=0 adultscore=0
- clxscore=1015 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505070060
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250430-clk-cdce6214-v4-3-9f15e7126ac6@pengutronix.de>
+
+Hi Sascha,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 0af2f6be1b4281385b618cb86ad946eded089ac8]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Sascha-Hauer/clk-make-determine_rate-optional-for-non-reparenting-clocks/20250430-170445
+base:   0af2f6be1b4281385b618cb86ad946eded089ac8
+patch link:    https://lore.kernel.org/r/20250430-clk-cdce6214-v4-3-9f15e7126ac6%40pengutronix.de
+patch subject: [PATCH v4 3/3] clk: add TI CDCE6214 clock driver
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20250507/202505071411.GB5uyv3w-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505071411.GB5uyv3w-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505071411.GB5uyv3w-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/clk/clk-cdce6214.c:319:7: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     319 |                            FIELD_PREP(R2_REFSEL_SW, 2));
+         |                            ^
+>> drivers/clk/clk-cdce6214.c:333:8: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     333 |         div = FIELD_GET(R25_IP_RDIV, val);
+         |               ^
+   drivers/clk/clk-cdce6214.c:362:53: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     362 |                 regmap_update_bits(priv->regmap, 25, R25_IP_RDIV, FIELD_PREP(R25_IP_RDIV, 0));
+         |                                                                   ^
+   drivers/clk/clk-cdce6214.c:370:52: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     370 |         regmap_update_bits(priv->regmap, 25, R25_IP_RDIV, FIELD_PREP(R25_IP_RDIV, div));
+         |                                                           ^
+   drivers/clk/clk-cdce6214.c:383:8: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     383 |         idx = FIELD_GET(R2_REFSEL_SW, val);
+         |               ^
+   drivers/clk/clk-cdce6214.c:406:55: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     406 |         regmap_update_bits(priv->regmap, 25, R25_REF_CH_MUX, FIELD_PREP(R25_REF_CH_MUX, index));
+         |                                                              ^
+   drivers/clk/clk-cdce6214.c:480:9: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     480 |                 div = FIELD_GET(R56_CH1_DIV, val);
+         |                       ^
+   drivers/clk/clk-cdce6214.c:535:8: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     535 |                                    FIELD_PREP(R56_CH1_DIV, div));
+         |                                    ^
+   drivers/clk/clk-cdce6214.c:563:9: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     563 |                 idx = FIELD_GET(R56_CH1_MUX, val);
+         |                       ^
+   drivers/clk/clk-cdce6214.c:589:53: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     589 |                 regmap_update_bits(priv->regmap, 56, R56_CH1_MUX, FIELD_PREP(R56_CH1_MUX, index));
+         |                                                                   ^
+   drivers/clk/clk-cdce6214.c:643:9: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     643 |         ndiv = FIELD_GET(R30_PLL_NDIV, val);
+         |                ^
+   drivers/clk/clk-cdce6214.c:755:7: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     755 |                            FIELD_PREP(R34_PLL_DEN_23_16, den >> 16));
+         |                            ^
+   drivers/clk/clk-cdce6214.c:842:13: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     842 |                 div = psx[FIELD_GET(R47_PLL_PSA, val)];
+         |                           ^
+   drivers/clk/clk-cdce6214.c:883:8: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     883 |                                    FIELD_PREP(R47_PLL_PSA, div));
+         |                                    ^
+   drivers/clk/clk-cdce6214.c:998:7: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     998 |                            FIELD_PREP(R24_IP_XO_CLOAD, i));
+         |                            ^
+   15 errors generated.
 
 
+vim +/FIELD_PREP +319 drivers/clk/clk-cdce6214.c
 
-On 3/27/2025 3:32 PM, Imran Shaik wrote:
-> The QCS8300 Camera clock controller is a derivative of SA8775P, but has
-> few additional clocks and offset differences. Hence, add support for
-> QCS8300 Camera clock controller by extending the SA8775P CamCC.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
-> ---
-> This patch series add support for GPUCC, CAMCC and VIDEOCC on Qualcomm
-> QCS8300 platform.
-> 
-> Changes in v6:
-> - Use device_is_compatible() as per Stephen's review comment.
-> - Link to v5: https://lore.kernel.org/r/20250321-qcs8300-mm-patches-v5-1-9d751d7e49ef@quicinc.com
-> 
-> Changes in v5:
-> - Subset of this patch series is alreday applied, but CamCC driver patch
-> is not picked yet. Hence resend the CamCC driver patch.
-> - Link to v4: https://lore.kernel.org/all/20250109-qcs8300-mm-patches-new-v4-0-63e8ac268b02@quicinc.com/
-> 
-> Changes in v4:
-> - Updated the commit text as per the comment from Bjorn.
-> - Fixed the CamCC QDSS clock offset.
-> - Link to v3: https://lore.kernel.org/all/20241106-qcs8300-mm-patches-v3-0-f611a8f87f15@quicinc.com/
-> 
-> Changes in v3:
-> - Added new GPUCC and CAMCC binding headers for QCS8300 as per the review comments
-> - Updated the new bindings header files for GPUCC and CAMCC drivers.
-> - Added the R-By tags received in v2.
-> - Link to v2: https://lore.kernel.org/r/20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com
-> 
-> Changes in v2:
-> - Updated commit text details in bindings patches as per the review comments.
-> - Sorted the compatible order and updated comment in VideoCC driver patch as per the review comments.
-> - Added the R-By tags received in V1.
-> - Link to v1: https://lore.kernel.org/r/20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com
-> ---
->  drivers/clk/qcom/camcc-sa8775p.c | 103 +++++++++++++++++++++++++++++++++++++--
->  1 file changed, 98 insertions(+), 5 deletions(-)
-> 
+   315	
+   316	static int cdce6214_configure(struct cdce6214 *priv)
+   317	{
+   318		regmap_update_bits(priv->regmap, 2, R2_REFSEL_SW,
+ > 319				   FIELD_PREP(R2_REFSEL_SW, 2));
+   320	
+   321		return 0;
+   322	}
+   323	
+   324	static unsigned long cdce6214_clk_out0_recalc_rate(struct clk_hw *hw,
+   325							   unsigned long parent_rate)
+   326	{
+   327		struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
+   328		struct cdce6214 *priv = clock->priv;
+   329		unsigned int val, div;
+   330	
+   331		regmap_read(priv->regmap, 25, &val);
+   332	
+ > 333		div = FIELD_GET(R25_IP_RDIV, val);
+   334	
+   335		if (!div)
+   336			return parent_rate * 2;
+   337	
+   338		return DIV_ROUND_UP_ULL((u64)parent_rate, div);
+   339	}
+   340	
 
-Hi Bjorn,
-
-Could you please help pick this CamCC driver patch? The DT and bindings patches are picked already from this series, expect for this one.
-
-Please let me know if anything is required from my end.
-
-Thanks,
-Imran
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
