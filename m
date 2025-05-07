@@ -1,219 +1,143 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A2520C48A
-	for <linux-clk@vger.kernel.org>; Wed,  7 May 2025 08:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4150B2139D2
+	for <linux-clk@vger.kernel.org>; Wed,  7 May 2025 10:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746605129; cv=none; b=XNuVtLVrMh88761uF2Jb7PmI5WlbdXFo06MSXAQacg/T4pqnUtdBYBVpCM5dTiYYlAM5iZx51KtSQYaf3ELINnLpN9PtKw30z6Jj1ffadE2k+wRvPWV9MA824c+6ijZr7UQ8Jsc9PjSP29jxpxcUSMkm98V1T8Iu1TRgcdSpIDM=
+	t=1746612253; cv=none; b=TeVGLTxbQmTGHb5xAPJ3EGD4avZTkXmeCv0EJTr+cVoloEplrjWF47GrBytY2JE71iQ9c82/BLDlOkFc19Omse2cCSyqqs1Rafeya15lSj/l4X1frviQ9+dFlBOrR80owbtlnxllj5W8eL1oObOmX+CLgg4HCAQvOoSloJRtjg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746605129; c=relaxed/simple;
-	bh=nuE10YXTP2AEEebcF9P03Yz7YE72bjtBs/GDG5t5Z+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYPvAycArMEgTlrZvoKcDy3u8fGF/iB6IbqiB5Mtl8vFwgsP8h0FOqWeaeVIFyoVnwxfyvu/tcfkAv0CuMiD5GWVBbN/urXckoZr/kifC2f1PsfGC9a4mxCZ5yWIfkRk0NDF1L39qnD/vzXqNwvxmRSShysGxarMG5g3/QN18UA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uCZmD-0006r1-RL; Wed, 07 May 2025 10:05:13 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uCZmD-001WaU-1R;
-	Wed, 07 May 2025 10:05:13 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uCZmD-008QHT-0y;
-	Wed, 07 May 2025 10:05:13 +0200
-Date: Wed, 7 May 2025 10:05:13 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@pengutronix.de,
-	Alvin =?iso-8859-15?Q?=A6ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH v4 2/3] dt-bindings: clock: add TI CDCE6214 binding
-Message-ID: <aBsUObKHmJkBFN04@pengutronix.de>
-References: <20250430-clk-cdce6214-v4-0-9f15e7126ac6@pengutronix.de>
- <20250430-clk-cdce6214-v4-2-9f15e7126ac6@pengutronix.de>
- <3ba53493700561923c4ea9ab53a1a272@kernel.org>
+	s=arc-20240116; t=1746612253; c=relaxed/simple;
+	bh=KKDPdf+RYih2MpxRJbdswI13umMtHPKoTSKbUwdg2SQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=OkzUECpGeHpCT89wLdRZL/5J7218aLIJeLcqBT7fLkwIUlTZm553B0SljNk9NGpDB+fZmxOsRhrGqS9ZzP9vYhb7kQ4z70LUPKnooBTRTEqpnrWJ1jKIM1SaweiC9AgT33rYtpfdB24Blwn2NWStHe/ABS8vG+xu1Bvpi7GBdjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=JkPLRVWu; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JkPLRVWu"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250507100403euoutp01cc3aa4b8d1f6044bfa1d32e37eae3e06~9NpT5WgGF1176111761euoutp01O
+	for <linux-clk@vger.kernel.org>; Wed,  7 May 2025 10:04:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250507100403euoutp01cc3aa4b8d1f6044bfa1d32e37eae3e06~9NpT5WgGF1176111761euoutp01O
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1746612243;
+	bh=N32TfHVqNTkje4PcTK07rh/HIsJBsQBWcN1H8kWn9js=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=JkPLRVWuHBDbxns/R/3DK8w87IPCtNOg2sGMoqr4GavTq/yF0viOnzZnBTs8ZrWI6
+	 lYvhnCAFyq59EGWlnhGYpCXwQzDsHeXwqOD/orpLzP+waygrJJjzqYthmqoUeCMMKg
+	 PCaedNImP5Y/Dbgr/zZOR/RRE7Oq68itdkMfRpGQ=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250507100403eucas1p1c31cf23f55512589a7663132f9f50778~9NpTWWOeV1269412694eucas1p11;
+	Wed,  7 May 2025 10:04:03 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250507100402eusmtip2f16f3da88a0473dad88a4f960a19539c~9NpSR_l2o2857428574eusmtip2I;
+	Wed,  7 May 2025 10:04:02 +0000 (GMT)
+Message-ID: <91ecca14-2102-4c29-9252-025ce6b6a07f@samsung.com>
+Date: Wed, 7 May 2025 12:04:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ba53493700561923c4ea9ab53a1a272@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/3] riscv: dts: thead: Add device tree VO clock
+ controller
+To: Stephen Boyd <sboyd@kernel.org>, Drew Fustini <drew@pdp7.com>
+Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, guoren@kernel.org, wefu@redhat.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, jszhang@kernel.org, p.zabel@pengutronix.de,
+	m.szyprowski@samsung.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <c46de621e098b7873a00c1af4ca550a1@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250507100403eucas1p1c31cf23f55512589a7663132f9f50778
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319
+X-EPHeader: CA
+X-CMS-RootMailID: 20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319
+References: <20250403094425.876981-1-m.wilczynski@samsung.com>
+	<CGME20250403094433eucas1p2da03e00ef674c1f5aa8d41f2a7371319@eucas1p2.samsung.com>
+	<20250403094425.876981-4-m.wilczynski@samsung.com> <Z/BoQIXKEhL3/q50@x1>
+	<17d69810-9d1c-4dd9-bf8a-408196668d7b@samsung.com>
+	<9ce45e7c1769a25ea1abfaeac9aefcfb@kernel.org>
+	<475c9a27-e1e8-4245-9ca0-74c9ed663920@samsung.com>
+	<c46de621e098b7873a00c1af4ca550a1@kernel.org>
 
-On Mon, May 05, 2025 at 10:50:49AM -0700, Stephen Boyd wrote:
-> Quoting Sascha Hauer (2025-04-30 02:01:35)
-> > diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> > new file mode 100644
-> > index 0000000000000..d4a3a3df9ceb9
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> > @@ -0,0 +1,155 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/ti,cdce6214.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: TI CDCE6214 programmable clock generator with PLL
-> > +
-> > +maintainers:
-> > +  - Sascha Hauer <s.hauer@pengutronix.de>
-> > +
-> > +description: >
-> > +  Ultra-Low Power Clock Generator With One PLL, Four Differential Outputs,
-> > +  Two Inputs, and Internal EEPROM
-> > +
-> > +  https://www.ti.com/product/CDCE6214
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - ti,cdce6214
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    minItems: 1
-> > +    maxItems: 2
-> > +
-> > +  clock-names:
-> > +    minItems: 1
-> > +    maxItems: 1
-> > +    items:
-> > +      enum: [ priref, secref ]
-> > +
-> > +  '#address-cells':
-> > +    const: 1
-> > +
-> > +  '#size-cells':
-> > +    const: 0
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +patternProperties:
-> > +  '^clk@[0-1]$':
-> > +    type: object
-> > +    description:
-> > +      optional child node that can be used to specify input pin parameters. The reg
-> > +      properties match the CDCE6214_CLK_* defines.
+
+
+On 5/6/25 23:30, Stephen Boyd wrote:
+> Quoting Michal Wilczynski (2025-04-30 00:52:29)
+>>
+>> In the v2 version of the patchset, there was no reset controller yet, so
+>> I thought your comment was made referring to that earlier version.
+>> This representation clearly describes the hardware correctly, which is
+>> the requirement for the Device Tree.
+>>
+>> The manual, in section 5.4.1.6 VO_SUBSYS, describes the reset registers
+>> starting at 0xFF_EF52_8000:
+>>
+>> GPU_RST_CFG             0x00
+>> DPU_RST_CFG             0x04
+>> MIPI_DSI0_RST_CFG       0x8
+>> MIPI_DSI1_RST_CFG       0xc
+>> HDMI_RST_CFG            0x14
+>> AXI4_VO_DW_AXI          0x18
+>> X2H_X4_VOSYS_DW_AXI_X2H 0x20
+>>
+>> And the clock registers for VO_SUBSYS, manual section 4.4.1.6 start at offset 0x50:
+>> VOSYS_CLK_GATE          0x50
+>> VOSYS_CLK_GATE1         0x54
+>> VOSYS_DPU_CCLK_CFG0     0x64
+>> TEST_CLK_FREQ_STAT      0xc4
+>> TEST_CLK_CFG            0xc8
+>>
+>> So I considered this back then and thought it was appropriate to divide
+>> it into two nodes, as the reset node wasn't being considered at that
+>> time.
+>>
+>> When looking for the reference [1], I didn't notice if you corrected
+>> yourself later, but I do remember considering the single-node approach
+>> at the time.
+>>
 > 
-> Presumably the EEPROM is typically used to configure all this stuff? Do
-> you actually need to program this from the kernel, or are you
-> implementing all this for development purposes?
-
-The EEPROM could be used to configure this. I don't know if the final
-product will have the EEPROM programmed, but even if it is, should we
-make this mandatory?
-
-Speaking of the EEPROM I think we should make sure that the pin
-configuration in the device tree is optional so that we do not overwrite
-settings from the EEPROM if it contains valid values.
-
-> > +        enum: [ cmos, lvds, lp-hcsl ]
-> > +        description:
-> > +          Clock input format.
+> If the two register ranges don't overlap then this is probably OK. I
+> imagine this is one device shipped by the hardware engineer, VO_SUBSYS,
+> which happens to be a clock and reset controller. This is quite common,
+> and we usually have one node with both #clock-cells and #reset-cells in
+> it. Then we use the auxiliary bus to create the reset device from the
+> clk driver with the same node. This helps match the device in the
+> datasheet to the node and compatible in DT without making the compatible
+> provider specific (clk or reset postfix).
 > 
-> Is it "Clock output format"?
-
-Yes.
-
+> That's another reason why we usually have one node. DT doesn't describe
+> software, i.e. the split between clk and reset frameworks may not exist
+> in other operating systems. We don't want to put the software design
+> decisions into the DT.
 > 
-> > +
-> > +      ti,cmosn-mode:
-> > +        enum: [ disabled, high, low ]
-> > +        description:
-> > +          CMOSN output mode.
-> > +
-> > +      ti,cmosp-mode:
-> > +        enum: [ disabled, high, low ]
-> > +        description:
-> > +          CMOSP output mode.
+> It may also be that a device like this consumes shared power resources
+> like clks or regulators that need to be enabled to drive the device, or
+> an IOMMU is used to translate the register mappings. We wouldn't want to
+> split the device in DT in that case so we can easily manage the power
+> resources or memory mappings for the device.
 > 
-> Would 'disabled' be the absence of the property? I think we could just
-> have ti,cmosn-mode = <0> or <1> for low or high.
+> TL;DR: This is probably OK, but I'd be careful to not make it a thing.
 
-Yes. I think we can do that.
+Thank you very much for the comprehensive explanation. Because the
+registers don’t overlap, it’s fine in this case. Since Drew also seem to
+agree, we can probably push these patches forward, while keeping in mind
+that for future SoCs it would be better to use a single node.
 
 > 
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - '#clock-cells'
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    i2c {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        clock-generator@67 {
-> > +            compatible = "ti,cdce6214";
-> > +            reg = <0x67>;
-> > +            #address-cells = <1>;
-> > +            #size-cells = <0>;
-> > +            #clock-cells = <1>;
-> > +            clocks = <&clock_ref25m>;
-> > +            clock-names = "secref";
-> > +
-> > +            clk@1 {
-> > +                reg = <1>; // CDCE6214_CLK_SECREF
-> > +                ti,clkin-fmt = "xtal";
-> > +                ti,xo-cload-femtofarads = <4400>;
-> > +                ti,xo-bias-current-microamp = <295>;
-> > +            };
-> > +
-> > +            clk@3 {
-> > +                reg = <3>; // CDCE6214_CLK_OUT1
-> > +                ti,clkout-fmt = "cmos";
-> > +                ti,cmosp-mode = "high";
-> > +                ti,cmosn-mode = "low";
-> > +            };
-> > +
-> > +            clk@4 {
-> > +                reg = <4>; // CDCE6214_CLK_OUT2
-> > +                ti,clkout-fmt = "lvds";
-> > +            };
-> > +
-> > +            clk@6 {
-> > +                reg = <6>; // CDCE6214_CLK_OUT4
-> 
-> Can you use the defines instead of numbers so we know they're the same?
 
-Yes, I could and have done that, but Krzysztof objected to it here:
-https://lore.kernel.org/all/5766d152-51e7-42f5-864f-5cb1798606a3@kernel.org/
-
-Sascha
-
+Best regards,
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Michal Wilczynski <m.wilczynski@samsung.com>
