@@ -1,140 +1,90 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396F32AE84;
-	Wed,  7 May 2025 04:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732341FBEA2;
+	Wed,  7 May 2025 05:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746591120; cv=none; b=UjeOeQ5LM9oP4vy1qomeXD9D/SgzCF/uTnpyRiqbMF1fNMpyzzbV46dc+jIhAie3qazffldo1FtIg6ijXNGQNqz77mB7bBwLcc/qk1GN9WDf58edux6t06LTwZETw4Q/ZMo+CaJzkvaCZAIqBR1D+97zACvPTeFxtYpBhe1ysNM=
+	t=1746595096; cv=none; b=rZHCMoTOiKnNfGYCN/tTUIRfavdbpFGfvURENmH9IgaCJYjKwQrok85XWOg8qRX+wflPIGme2NCCLhnMzJKD8UtNEDKUvvnDgPPa5fdfG1NPXYo0+iLPsQXSXqDA/5XmSy/YzdHyT45HpPp1OJ9SMKRQAbMjvRTHKlEI1oBDTJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746591120; c=relaxed/simple;
-	bh=t6o/Kr1oTxulD7Lw+8iLnHW/czcDclgYwK3GLTNakZA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lFv8FlMz5FYO+P0x9a7D/Ibj4NPRLrDIfkut+lXh3mA61Tihkwd9qCe7kOBbgYKWDd9JVCqMscp/nt6bxHCHOPpLExuOeTNUFTba5JJ59fH3cpB+hW+RpXGILc7/SaYvJK1GR91i9i0aACAMeYgj637iGS9DO2qi8aTML2VoX94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cBVxwihD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1746595096; c=relaxed/simple;
+	bh=ZPOxIsXW2ulElosS/A2SFgXjzaSyKVtJssVnwDk+pJA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VwOb3+NZ+NFK90QrBm5MbSUGMmb+ooPaU7iDBMSR4azTSqLNf1LIv5O5N88QLMH86aO2WuUpsBKhXJ/tRia25dC+h5w4nM6DwBAq2g24DkG5X2Xb35qcdEw89govdglrGX62bPzlyT4MB0ETDfSiY+9SIMaUJWckTPjmSfQ0U1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PgQ6JpYb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cBVxwihD"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5471H7bB028394;
-	Wed, 7 May 2025 04:11:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	t6o/Kr1oTxulD7Lw+8iLnHW/czcDclgYwK3GLTNakZA=; b=cBVxwihDnqJIkHLu
-	T3A1wvmCSdfl6D9sw1BrgvNZXY0acu54LyW2fArYSA/tuHiwHFUmXeifl7Fwb0Bl
-	d1/1j534ppezQ+yFt4OH7R0ILG64Pt7ZZWJK0PZw2Ubw1N4ihPN63xIU/3Hl45N9
-	6Nx0he+24LdQVgfc81U8hXUH+RusLeHRb1WC6ESAG/fdTlSrDLwJbT2deSGCMHJd
-	2hC2tj0UiXF99OFbBiIl1Y7qYVpt+XvV0rmCL0Bcojwhx/+F3tMdWSIy32zurHL9
-	oceu79hHLJsZSCZM1fkosTH2WWcFTMxSB8Jzs/Ljfzyjtmc4ITYpQIqYnJd/iuwR
-	iKoPIw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 46fguujh5g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 07 May 2025 04:11:55 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5474Bsa2004120
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 7 May 2025 04:11:54 GMT
-Received: from [10.218.23.250] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 6 May 2025
- 21:11:49 -0700
-Message-ID: <d41d1c72-6f43-497a-8021-8a9af59f5877@quicinc.com>
-Date: Wed, 7 May 2025 09:41:45 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PgQ6JpYb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43996C4CEF6;
+	Wed,  7 May 2025 05:18:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746595095;
+	bh=ZPOxIsXW2ulElosS/A2SFgXjzaSyKVtJssVnwDk+pJA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PgQ6JpYbVu2dYADvYed7Ume3WZeliQhfB24Ejx+a9uKhCGZKwdtqW/OzjhH+nUVXf
+	 Knl0kXwoxqufQ+rXavVZcWK4obB+PjH7K4a5GOPjN4GjlX6g4aFjvO9WwVSTBXSrqf
+	 m5c/0fDCm409Y3JQibN/TbT4jV1EWs9hKInTzszGSo8duUgrbDVfIN8EF7AvSS2v2/
+	 kLzdmv1jQ3DxtB0gaN6uOAubWrM385fl5bQlAu6KuBpGcnGSjEuzGOSK1umOyNUKwB
+	 oAXpxomzZr1C7hKEt0RFwqwF9v10YMpY/BOVNE90Qr3KmQsAzkQvwa6BHydoBQiYcb
+	 2JeHNQbW8szyQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+	Luca Weiss <luca.weiss@fairphone.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Add *_wait_val values for GDSCs in all SM6350 clock drivers
+Date: Tue,  6 May 2025 22:18:08 -0700
+Message-ID: <174659505814.5380.17400921825631529392.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250425-sm6350-gdsc-val-v1-0-1f252d9c5e4e@fairphone.com>
+References: <20250425-sm6350-gdsc-val-v1-0-1f252d9c5e4e@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: qcom: Add missing bindings on
- gcc-sc8180x
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Taniya
- Das" <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-References: <20250430-sc8180x-camcc-support-v2-0-6bbb514f467c@quicinc.com>
- <20250430-sc8180x-camcc-support-v2-1-6bbb514f467c@quicinc.com>
- <20250502-singing-hypersonic-snail-bef73a@kuoka>
- <cbca1b2f-0608-4bd3-b1fb-7f338d347b5e@quicinc.com>
- <35662ebc-d975-4891-8cbb-1ba3c324f504@kernel.org>
- <1cd1d97f-a6f1-43e6-8451-b9433db93c16@oss.qualcomm.com>
-Content-Language: en-US
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-In-Reply-To: <1cd1d97f-a6f1-43e6-8451-b9433db93c16@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=UJPdHDfy c=1 sm=1 tr=0 ts=681add8b cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8
- a=Vq3j57szJu-oTNTe2DwA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: 7O9dthSOPnR6rI1R0WwGrHRCYyxAu8xO
-X-Proofpoint-GUID: 7O9dthSOPnR6rI1R0WwGrHRCYyxAu8xO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDAzNiBTYWx0ZWRfX7H1Spp35sAko
- yief7MwyDhF4DhdIFxmRpHmWl/iiSYAJawNbZRIaRFTNerwVwE6leEzx+9L40KrotaFqsXfyhF+
- zM2fbmfulDnh9CDATZVhkN+81mBX0W3x+t7J3tRj6KBVUwUXoF7TC3JzwIjEk8BoWXzM+Votw4P
- eyD1ZxA20K6S9/ywF8Yr/Q0izVjMgVPUgprjYT8eRpkjCvc2pq/TpEJ0MZhcw/8D9oH6ZclLxQa
- U8ybUJbki3RZ6V8faQWPNaZK1VfoPdf+DD/tC4q9YMqI6IuiGtXtCRFX4ut8Pm+zt50JLhkt74I
- xlJujRi+NAC9QC7ydARLY4/s9wUP7ZrNp5AkOiRYwsKOe1huQdlgi0JOUwh6GdSkPAYH0698CGx
- MgN5OxExTaMzHTGnz+NZYygIbfldCVuHRqEl5W7iNqoqdiAjwTJQn+LlGpFqSFxkNtVjfOxT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-07_01,2025-05-06_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 clxscore=1015 phishscore=0 spamscore=0
- impostorscore=0 mlxlogscore=754 mlxscore=0 lowpriorityscore=0 bulkscore=0
- malwarescore=0 priorityscore=1501 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2504070000 definitions=main-2505070036
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
-On 5/5/2025 6:52 PM, Konrad Dybcio wrote:
-> On 5/5/25 11:46 AM, Krzysztof Kozlowski wrote:
->> On 05/05/2025 11:43, Satya Priya Kakitapalli wrote:
->>> On 5/2/2025 12:15 PM, Krzysztof Kozlowski wrote:
->>>> On Wed, Apr 30, 2025 at 04:08:55PM GMT, Satya Priya Kakitapalli wrote:
->>>>> Add all the missing clock bindings for gcc-sc8180x.
->>>>>
->>>>> Fixes: 0fadcdfdcf57 ("dt-bindings: clock: Add SC8180x GCC binding")
->>>>> Cc: stable@vger.kernel.org
->>>> What sort of bug is being fixed here? This needs to be clearly expressed
->>>> in commit msg - bug or observable issue.
->>>
->>> The multi-media AHB clocks are needed to create HW dependency in the
->>> multimedia CC dt blocks and avoid any issues. They were not defined in
->>> the initial bindings.
->>>
->>> Sure, I'll add the details in the commit text.
->> I don't understand what is the bug here. You just described missing feature.
-> i.e. this patch is fine, but the fixes tag doesn't apply, as it doesn't
-> really fix anything on its own
+On Fri, 25 Apr 2025 14:12:54 +0200, Luca Weiss wrote:
+> As described in the commit messages, keep the GDSC configs aligned with
+> the downstream kernel.
+> 
+> For reference, this was checked using the following code:
+> 
+> To: Bjorn Andersson <andersson@kernel.org>
+> To: Michael Turquette <mturquette@baylibre.com>
+> To: Stephen Boyd <sboyd@kernel.org>
+> To: Konrad Dybcio <konradybcio@kernel.org>
+> To: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+> Cc: ~postmarketos/upstreaming@lists.sr.ht
+> Cc: phone-devel@vger.kernel.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> 
+> [...]
 
+Applied, thanks!
 
-Okay, I'll drop the fixes tag.
+[0/4] Add *_wait_val values for GDSCs in all SM6350 clock drivers
+      (no commit info)
+[1/4] clk: qcom: camcc-sm6350: Add *_wait_val values for GDSCs
+      commit: e7b1c13280ad866f3b935f6c658713c41db61635
+[2/4] clk: qcom: dispcc-sm6350: Add *_wait_val values for GDSCs
+      commit: 673989d27123618afab56df1143a75454178b4ae
+[3/4] clk: qcom: gcc-sm6350: Add *_wait_val values for GDSCs
+      commit: afdfd829a99e467869e3ca1955fb6c6e337c340a
+[4/4] clk: qcom: gpucc-sm6350: Add *_wait_val values for GDSCs
+      commit: d988b0b866c2aeb23aa74022b5bbd463165a7a33
 
-
-> Konrad
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
