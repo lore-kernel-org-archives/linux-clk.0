@@ -1,123 +1,167 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7781233145;
-	Wed,  7 May 2025 11:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB5D221FB3
+	for <linux-clk@vger.kernel.org>; Wed,  7 May 2025 12:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746618815; cv=none; b=ZaYlIqhs5ZOXwOlbLTvEgXxswEvrcakr4ruSDlsNqP+LODYq97VDxdCMW42EnJeQ5GS/tPhnTjDXf6eoHU1L7xQR6N3D96fO/8jpnpf7qjpcJ/popGm9/VUVkuQ8GcXF/uON/TYxamFowNuskoAE9b2GOqLfp92rVyOm/0/7zHk=
+	t=1746619938; cv=none; b=ZBtPL3Cj4jJsGVO0qE6JCEufWZOl8//7IStV+NAaAcgo+3FeeiKdvx9SSni4B+zwr98qITLgtkuYj0iEWF0wka6Noa5cACTL4ipuDe9adAZpqZZ6nQSTfjeEkRwlT4TULproqt5iKfvyEFOceWrepRvCSt1CIfXIR21gmdmlc88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746618815; c=relaxed/simple;
-	bh=4JcYlBsxf2ipeOFDRyF84mG5KKuYrCHrCu3pXh8h5nQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZwIrVSwGJYDqv4nN+a8kXcUTQpIDn5C68O6wPtbuxGACgpsdAg7dgxA08t20NVof98CPYv5a/YR7fq4RRjN3LB5W6nf6tHNYfXoPbtfLH3tCT0T5s7bGjjVHM4Hl3s1lH7p1downdQH+WZBnQ2Vf3vDzFS+Wqm28nz1cKiES00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kgsvnpMT; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1746619938; c=relaxed/simple;
+	bh=uIs8J8TAolvkoMCl71is1jxlWb8HZlMXJNpvhI0wHXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tzKaCf/bMjTzm/iQNptIjYrjxTSUho2kr47idzlmjN467Vnc44//4F/+PsX5UNnCNVEdXqRzV49V0wFgKt7Eym1k5PVnCMI6L468a/J0D7iMigt+mv64FQYhYZNPhZj9Hz2HIYcUH1NtHlhq9/yKoQBtNFhbunBZyNs/yIr+ejI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=gDHXoQvs; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kgsvnpMT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746618813; x=1778154813;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4JcYlBsxf2ipeOFDRyF84mG5KKuYrCHrCu3pXh8h5nQ=;
-  b=kgsvnpMTkJxNxBPBWmePTa+MVDQkHjF0l8OhOq5knmF/xIvjVcIBBauq
-   r2xa3PtFHFebLUUxkJHeouZOOM6je7KjAGWn8zSouZo90g2InMZqTDFpb
-   nQ7vGNCJzSXOQhPeQYAbK4RN35/d3Bn7+ciJszyvKnfKGZsqZ9aQTvEA5
-   eFsIztLne8LbxQ8c/ZmZw6a9KXH+9DuUiBKTD5jRYyAi7eG7//klC8gBv
-   zGdmWPUtJujIjwKJlUtP9b7CM0CNyvqaCcBj4P6f0CQPLJsslKIVnH5aY
-   46PhoypySiXidUJK4OoTm+MdRUh1B7cZRTPGblaQd4WOjnC6EkSlWb3Eq
-   g==;
-X-CSE-ConnectionGUID: HQK2ShDcT6KAZjI/VftKDw==
-X-CSE-MsgGUID: 2cJZwSRTSxe8Ck9vCWVCIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="59332550"
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
-   d="scan'208";a="59332550"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 04:53:33 -0700
-X-CSE-ConnectionGUID: Y6Wip6tRQCuEQ4xOWumbTQ==
-X-CSE-MsgGUID: qeovHKWERhu8FikUC689lA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
-   d="scan'208";a="135898619"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 07 May 2025 04:53:28 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCdL4-0007ij-1R;
-	Wed, 07 May 2025 11:53:26 +0000
-Date: Wed, 7 May 2025 19:52:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Subject: Re: [PATCH 2/3] clk: qcom: camcc-sc8180x: Add SC8180X camera clock
- controller driver
-Message-ID: <202505071921.BoUs47vy-lkp@intel.com>
-References: <20250422-sc8180x-camcc-support-v1-2-691614d13f06@quicinc.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="gDHXoQvs"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5fbee929e83so947998a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 07 May 2025 05:12:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1746619934; x=1747224734; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=om7oxz58ErunXunVagFusPsxHO+ymwEeUcfbgeIERHg=;
+        b=gDHXoQvscfSxC4cv9kOvIrvJQqEoxJ30mXevrvoH4N0OpEgESS0Ai3UNKem91xkCZ9
+         1v88zEfntid3OYqdBohhjxT3SwpefJ4VxsvI26c8ml2v6PQRQI7bvKTh/lGkU1Yuu+Y7
+         t86+RtGHr0cxzTYm/7t3VMZE2HhmLHWVMgeCwBWzXMGFp3k+Rzz8WN3hpoeLeaReSfB5
+         k5Nc/YFXmo5rrlmZgGEWY8F5wASiIJHRYLLQdZNK93prpz7eJU6kV77a+9MB2hCPhEzS
+         z9l9oMK0xwWo2rka1eKmQFsZ8GBDr2m57NSbTPcnqSXV1ihmxCEcRrz8mP49WmDh81l5
+         e67w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746619934; x=1747224734;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=om7oxz58ErunXunVagFusPsxHO+ymwEeUcfbgeIERHg=;
+        b=Gi+U3ADGerGAXy70TUDm8fdiXqrlIhMwGi/8LNfusEubL2ujRmUG7JliuyALoRK0IU
+         BYkYNAWhwrv193reWU+v6K6t7koI3zOdFgyo0VkADV+gB4aW2EXr1jLiO8jDSV2kE0+r
+         TIaoeei3vI8ZM08Pg3PrWbAviv6uoaXB+8zd/qBqZ6R2FaQXQ1rQK2dSAdG0ESg0HrA4
+         csnEdEugDC0F+eKW7VWXgOjj72NtUit82wW0gkTfesmXbn9KVYIYYo7QfeFGcHmQOpvN
+         SBd/geIO44tE9foalCS99Ggu46oIdXXFXQQwylfCWT7S7TMjEcMBFSX9Ihuo3Vn78bgE
+         XXhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtLpArzRmWS1TKJujK9GwHVlRGsPW39EMZQ0cttPMj+M55UHvmt4MVpAYw02o/teBZLsG4o9qrglA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz87Ey2BZ44eV5Ed/IOt0bYnewJDe59NZLo1sO2EhcUlUEU3/SC
+	CidQR5H/0wRWDnEOWhVmGWYh9V0HQMC+zP/ZRZqGvpqnwNEBLBFROD+TzNou5Bc=
+X-Gm-Gg: ASbGnctk1Q/VePnc/rgQ2cxHQovHy8XW9hxozYZbR8uF+rAK94sBiIYbIYM/Qs3X5Vk
+	smMQ4eQ8q048+A0RLm7lN3/q/v/lR9HxHVO8QsHARTvXmBKE+nIYXqH2Z9FZ5DPGt5Src38RIdg
+	3xCgwPCKWF6nu3pbqnoRA5pqtz5bMAktk4v3Wgzh7MohjOjcx8gY4zUvmPau/Ng5173HOlQVhGB
+	HjX6yp2i15RrmWnCwGlIGeUy6PLzCdsHZzAenJF7MY1QFbufWyjlF1OupZfKb5+zongJtBNXfrY
+	ZKMzwIGUQo7k/9uxT7sUz52h7KNr1s1NUPDoWJ8ymmGlYOdVOw==
+X-Google-Smtp-Source: AGHT+IF48ijHwhb+prKlciJYrp91ZouEQg6tU7MenRCxXDs9b8jde3XxqSXhLBFuS0IMKl9YSMBjHQ==
+X-Received: by 2002:a05:6402:42cb:b0:5f6:c638:c72d with SMTP id 4fb4d7f45d1cf-5fbe9d77ce2mr2895742a12.7.1746619934400;
+        Wed, 07 May 2025 05:12:14 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.147])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fa77bf3f01sm9392974a12.70.2025.05.07.05.12.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 May 2025 05:12:13 -0700 (PDT)
+Message-ID: <df05d999-8eba-4fbd-93f6-7919f73da11a@tuxon.dev>
+Date: Wed, 7 May 2025 15:12:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422-sc8180x-camcc-support-v1-2-691614d13f06@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] clk: renesas: rzg2l-cpg: Skip lookup of clock when
+ searching for a sibling
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250410140628.4124896-2-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdWx9Xk5QksoGFvCyo2HLXZ_+WRBCe3bDrZx=bfPoXHJgg@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <CAMuHMdWx9Xk5QksoGFvCyo2HLXZ_+WRBCe3bDrZx=bfPoXHJgg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Satya,
+Hi, Geert,
 
-kernel test robot noticed the following build warnings:
+On 05.05.2025 18:52, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Since the sibling data is filled after the priv->clks[] array entry is
+>> populated, the first clock that is probed and has a sibling will
+>> temporarily behave as its own sibling until its actual sibling is
+>> populated. To avoid any issues, skip this clock when searching for a
+>> sibling.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/drivers/clk/renesas/rzg2l-cpg.c
+>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+>> @@ -1324,6 +1324,9 @@ static struct mstp_clock
+>>
+>>                 hw = __clk_get_hw(priv->clks[priv->num_core_clks + i]);
+>>                 clk = to_mod_clock(hw);
+>> +               if (clk == clock)
+>> +                       continue;
+>> +
+>>                 if (clock->off == clk->off && clock->bit == clk->bit)
+>>                         return clk;
+>>         }
+> 
+> Why not move the whole block around the call to
+> rzg2l_mod_clock_get_sibling() up instead?
+> 
+>             ret = devm_clk_hw_register(dev, &clock->hw);
+>             if (ret) {
+>                     clk = ERR_PTR(ret);
+>                     goto fail;
+>             }
+> 
+>     -       clk = clock->hw.clk;
+>     -       dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk,
+> clk_get_rate(clk));
+>     -       priv->clks[id] = clk;
+>     -
+>             if (mod->is_coupled) {
+>                     struct mstp_clock *sibling;
+> 
+>                     clock->enabled = rzg2l_mod_clock_is_enabled(&clock->hw);
+>                     sibling = rzg2l_mod_clock_get_sibling(clock, priv);
+>                     if (sibling) {
+>                             clock->sibling = sibling;
+>                             sibling->sibling = clock;
+>                     }
+>             }
+> 
+>     +       clk = clock->hw.clk;
+>     +       dev_dbg(dev, "Module clock %pC at %lu Hz\n", clk,
+> clk_get_rate(clk));
+>     +       priv->clks[id] = clk;
+>     +
+>             return;
 
-[auto build test WARNING on bc8aa6cdadcc00862f2b5720e5de2e17f696a081]
+This should work as well. I considered the proposed patch generates less
+diff. Please let me know if you prefer it addressed as you proposed.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Satya-Priya-Kakitapalli/dt-bindings-clock-Add-Qualcomm-SC8180X-Camera-clock-controller/20250422-134531
-base:   bc8aa6cdadcc00862f2b5720e5de2e17f696a081
-patch link:    https://lore.kernel.org/r/20250422-sc8180x-camcc-support-v1-2-691614d13f06%40quicinc.com
-patch subject: [PATCH 2/3] clk: qcom: camcc-sc8180x: Add SC8180X camera clock controller driver
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20250507/202505071921.BoUs47vy-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505071921.BoUs47vy-lkp@intel.com/reproduce)
+Thank you for your review,
+Claudiu
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505071921.BoUs47vy-lkp@intel.com/
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
-All warnings (new ones prefixed by >>):
-
->> drivers/clk/qcom/camcc-sc8180x.c:403:37: warning: 'cam_cc_parent_data_7' defined but not used [-Wunused-const-variable=]
-     403 | static const struct clk_parent_data cam_cc_parent_data_7[] = {
-         |                                     ^~~~~~~~~~~~~~~~~~~~
->> drivers/clk/qcom/camcc-sc8180x.c:399:32: warning: 'cam_cc_parent_map_7' defined but not used [-Wunused-const-variable=]
-     399 | static const struct parent_map cam_cc_parent_map_7[] = {
-         |                                ^~~~~~~~~~~~~~~~~~~
-
-
-vim +/cam_cc_parent_data_7 +403 drivers/clk/qcom/camcc-sc8180x.c
-
-   398	
- > 399	static const struct parent_map cam_cc_parent_map_7[] = {
-   400		{ P_SLEEP_CLK, 0 },
-   401	};
-   402	
- > 403	static const struct clk_parent_data cam_cc_parent_data_7[] = {
-   404		{ .index = DT_SLEEP_CLK },
-   405	};
-   406	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
