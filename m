@@ -1,126 +1,130 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8BD2550C2
-	for <linux-clk@vger.kernel.org>; Wed,  7 May 2025 12:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FAC257AF6
+	for <linux-clk@vger.kernel.org>; Wed,  7 May 2025 12:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746620024; cv=none; b=YRTx/E62F3K99VmPpGcaNIMrDNrmwsouq7G3BQe/muZEp9rlUIvPljvq6PqTUvFFIsFxUwM7HbkTZ0Ws8ruxTJ26FrlmOmkhTcrI+QlP6XrLZUqccxIr3LnLsB5b3+AKkIgOj5/7tstjcdhFmT5OGNWtCsa7IQk8CX0pVuOf+gE=
+	t=1746621341; cv=none; b=jyrQrF1amiMQws4qjNnKssJvZPHNjwqAJlV4p7ASyH965U01TxS/g2+Pd2KNOAHQ33CFXHwt4TFQUnzIOs0imfTzTYC/gspP09Y3LqqOLlPaTMDH5rw77CezBU+9YRdItZq1bIr5qZyO0cWqCcfz1Ouf3PSMEaRTxWvIZZbpwm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746620024; c=relaxed/simple;
-	bh=u3YGbEuFNryf6SNWwXAZAEVAEqJ9fVFoDM0PMM9rdH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qe5KOzdSzVYvazcGaGCdKcoLAmSuzuq8QyzCGLfg23/2nX0WWyZOxkm1jbVRZyk69O0wKO38e1fg6QDfbJUIWtOt424G+PYC7qTGmXce84Iix4X7rmBmtUt4H0Sew8YWMog/hoBT1ptA7HTRPRzWw7Aqol3dZUYsT7Cq82wYUpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=XzKgwmCr; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1746621341; c=relaxed/simple;
+	bh=W/jXllp7QKxqo10uYHex1yrZDnuxG/dHXbYSQf58jCA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Py27gJO+EKMUGBM4XKWzaJyKpqhyibMpznPIvCj21yS+whzEHzaKW3lu8x3y2xjHwBeRCCGpTxIiLedTH3V577S1M++0i+6eK7zVOTS37yvNzpPx2RJAZUrw2PhddLjXZ0zy6E+1obBN4gyN3lwCfvATk/LjDLAUUz2fx2M2INw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VMNOgP8b; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="XzKgwmCr"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5e63162a0so10366993a12.3
-        for <linux-clk@vger.kernel.org>; Wed, 07 May 2025 05:13:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VMNOgP8b"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5fbf52aad74so899941a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 07 May 2025 05:35:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746620020; x=1747224820; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sAeRVsznyaBFX32tf0NMNXsCTB91G1fsVj/Eu7YcKtM=;
-        b=XzKgwmCr5eP4SnDRYbZ+ORSsN+XQDM5E7ofz2+1e/Nb872dQea2i812h3Y2qYYAX4u
-         00Z+1iIXsua0+v54l4j2rMZrhQuJRQMzYjZZjl8q0hAMmK0n/poLRKvrVh1FDQErc0xa
-         Rl3+/D7v6uZtXpDE4qoUCxtJyRuSF4EnlO/vU3NSGbIiku+zmqYq1xHtHuraiflHoNqu
-         L3GrwvM2uGx5/cg0CuYRnGkXs+ndDIpVgk1tqKn65xt99kjnOFLEKJQ1A4Zs2Hmj8sMQ
-         WmMLtSP3lGugkrqlCjdASWR97Ww3eqiQwBx9GMlhTigvVhFNWS4RJZHxEFjEKUNnLwWa
-         1pEw==
+        d=linaro.org; s=google; t=1746621338; x=1747226138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xWON9I4ameGxWiEKwkDziYc8iN3l6k5w6SWR59IgmyI=;
+        b=VMNOgP8bLj4AVsSyMG7GFjNj1ljxv5Qc9LFV+17zVZa+eKaVQazoUTb7SLBLoZUzXD
+         R7XwvHGU7dOWl+uLp2gmVDvMj9uYT/WsuE9e2ffY7eQ9dn0bGLotWYIjSgQrUEayAay6
+         YgoI9h319Ppx1K55O8GZi9zsJ5Wr0PONOC/weaqKTCQ6GgSikFRmngzuiSc1l/3SnWlL
+         KyFbc3pjLKXRU8luFAU2lm5jITtDS+Wipwtaj06DKmI27jekC1FBA3DUHccgYG7jyC13
+         CgRjd6pIqMfGjrQZQ554UeSCYXVqHtBD7ZdbTBCuv+fAUKvdrO/qHTqe0RiBpIFneqcU
+         ap0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746620020; x=1747224820;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sAeRVsznyaBFX32tf0NMNXsCTB91G1fsVj/Eu7YcKtM=;
-        b=LvHQsZdLbyHI4tIzplbUh6LxIDOoUP0Ikau6+oA4X+Pz9Lg4VIyrBcCm1pR84HhtMd
-         M7K8+kYbCeMPcbaxYovuvk4F/PXMz9uLCWjQZMj8g/acVIPi+Nb0Tu9YzEJeGtT1r54D
-         PuHMZXjxL7bHMMQR5gz19WSvz7rgEYC71kaLjo5bfyAx2P84A0DfHfu+OgK+qM8depy0
-         1CkrYQDdAqcAGvrJ2mLSztb93Q651bySU11MJerrkB011ZIfmu/pqlX0o5Mz+QXCaW3W
-         CLbI0Y6+nmdib+S1fLUkek2NIvh4oxrpuwp1Pyro5rxGHpPk7nZlQq8Pbsmpi5onvoUh
-         m2VA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjK2ho4QX6f/HEKqUm529u4U6Y1RP+EfZIfzzcXsm0Egq75f6bxRtnDbfXhf1VtiEP6tyfq8FQ7cY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+QNqVjqYHyH6tjTqpu7ZgITuMUjMJ9uRHV0F/hcNvtQMDGNcA
-	wJF8omBav3dH9oyveMYqg3lC6dtFC6ecGdrGYtIpnkFtHTMU0dbmvwTW8hChyTU=
-X-Gm-Gg: ASbGncv1Z+gfEoVXXRRmUHJP1FR5hubUNAbEX0Xc6GfhuYWSBkjHyZC4j+Iklx0BovJ
-	+cz7b2+lteQTdgcUJSdGen/59E2qNJbGGhmEwnSY6crFbeCcaM6tdmnjmez67Oh2HDbtGVq9z2I
-	aCNdGxFVqK2qNQ4Bpj43g2MGdJfhjeePEUSWmUN4zpWobSjQYCEaTGZ/k/OxQfcf1TWAmKoXD5f
-	TiYJgYqLrgrDcfC8wh9gj50Snd7Eu9SC3jDQF631A2akg7s9yJNDgT94UKfb4aHLvz9zxQEjTg8
-	kPZNisaneVV2dAEnEkcPoc2wu4p8K7knzCiYr7rDPxmxqbpmzw==
-X-Google-Smtp-Source: AGHT+IFVO28GoFjiM4/MmBFYIj2KWMjVMmnj6kvNFljtWXD9DM7W466QdZ6gW2Hfuwox4fn3w5Zq6w==
-X-Received: by 2002:a05:6402:2689:b0:5f8:afab:9e14 with SMTP id 4fb4d7f45d1cf-5fbe9fa810amr2639140a12.28.1746620020038;
-        Wed, 07 May 2025 05:13:40 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.147])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fafa166aebsm6000541a12.17.2025.05.07.05.13.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 05:13:39 -0700 (PDT)
-Message-ID: <410d8930-02d8-4c30-843b-7c964a5e08d7@tuxon.dev>
-Date: Wed, 7 May 2025 15:13:38 +0300
+        d=1e100.net; s=20230601; t=1746621338; x=1747226138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xWON9I4ameGxWiEKwkDziYc8iN3l6k5w6SWR59IgmyI=;
+        b=YinLbnCxzVi6sZzQjKXPMr1WsCzKSHFXPywr3UshqEyjOA1PhDoy86UdP0qWRSzJ27
+         bNJgG3sp6AL9YwmfqQ+6pYQXuTJyEjsTPF/q9iKzjUjFOtQ1zgcaEbpg1g2OWh3emlB1
+         Wm24Rv3+FNOMiIpTmBL8Ug9FFANi9lg/VSv8rTh8m7mezeywd2Vq967y6Tn5MPdV/dAq
+         SX6eHEjVq0QzG8VhT86ObkKoDjvmb2ylKF6eUYhATWo50CooijZ6TMWgpgfp9JtcTCdM
+         swuKuOEfoUWE2UNGLtejRZu/O5RBPZxO5Trx9CG86/DkQAVWWb2wUPnsj9DJoY2CVzEA
+         V2Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcRkwMRRk8k7oqwWrOWxUi1UhTOSJWk0ENFGMod4je7zhggX7dx/U9iEaFANXlD/SScfWwSxDlnp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6D7xrZi7elcFQcTb3tHcWOAvvRoa3MoR6uwb99D/1B1fLdNn8
+	6ChToEmgPFz861tOltqkuRDF+jR8VdsC0B2XErQwzmBlte+KtCK0TAsJEsRs1ME=
+X-Gm-Gg: ASbGncsWydvACX0JRKswyu2Zwgf6FII/qhPS5kwcyAiKDUjI6aQsXV4pNpYeKTsMURQ
+	9rzS2l5gdRoiRhQ7dYSaocgU6WCrzGXWGibW7vHojqalO/1m2wyoL0f8i1IEJOiUvI+IrfUiIse
+	rMhbIN2yYjOh8YonnVIjorUtN7onajmhL9MKuUsdlQqOW5HCnXqw99FypXjiYvgCDsa+0m49q27
+	YUpVm1PgZhlQVtyzKwVuEg6EHirN+MosepY8zr5/NZUdOsUUr3K2KFf/0p0ja3gio7bi5CV9kLN
+	C2uUuLmrsCpXAkA6MM3HVt8NTXGQgVUHmT2s5qE=
+X-Google-Smtp-Source: AGHT+IEMmTi4bmJFoUPDT0YBq0AgR9RZuiis3rxqwa+boAiz7GJ/sZbLrp/zC5X9/7Njxkr4VGX0Ww==
+X-Received: by 2002:a17:907:6eaa:b0:ac7:b1eb:8283 with SMTP id a640c23a62f3a-ad1e7830348mr370649066b.17.1746621337789;
+        Wed, 07 May 2025 05:35:37 -0700 (PDT)
+Received: from hackbox.lan ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891f04absm897883966b.78.2025.05.07.05.35.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 05:35:36 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Mike Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: imx@lists.linux.dev,
+	NXP Linux Team <linux-imx@nxp.com>,
+	linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] clk: imx: Updates for v6.16
+Date: Wed,  7 May 2025 15:35:28 +0300
+Message-Id: <20250507123528.585447-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] clk: renesas: rzg2l-cpg: Move pointers at the
- beginning of struct
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com>
- <20250410140628.4124896-3-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdW0eKTfh6QsznWvCEeK5w9W-Zw4ORQ8yaevbYgh6+Ub3A@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAMuHMdW0eKTfh6QsznWvCEeK5w9W-Zw4ORQ8yaevbYgh6+Ub3A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Geert,
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
-On 05.05.2025 18:53, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Move pointers at the beginning of structure definition to avoid padding,
->> if any.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/drivers/clk/renesas/rzg2l-cpg.c
->> +++ b/drivers/clk/renesas/rzg2l-cpg.c
->> @@ -1183,20 +1183,20 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
->>  /**
->>   * struct mstp_clock - MSTP gating clock
->>   *
->> + * @priv: CPG/MSTP private data
->> + * @sibling: pointer to the other coupled clock
->>   * @hw: handle between common and hardware-specific interfaces
->>   * @off: register offset
->>   * @bit: ON/MON bit
->>   * @enabled: soft state of the clock, if it is coupled with another clock
->> - * @priv: CPG/MSTP private data
->> - * @sibling: pointer to the other coupled clock
->>   */
->>  struct mstp_clock {
->> +       struct rzg2l_cpg_priv *priv;
->> +       struct mstp_clock *sibling;
-> 
-> I would move them below hw (which contains only pointers), so
-> to_mod_clock() needs no calculations.
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
 
-OK, I'll change it like this.
+are available in the Git repository at:
 
-Thank you for your review,
-Claudiu
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.16
+
+for you to fetch changes up to 6a55647af3334f1d935ece67de4a838a864b53fc:
+
+  dt-bindings: clock: imx8m-clock: add PLLs (2025-05-05 10:48:56 +0300)
+
+----------------------------------------------------------------
+i.MX clock changes for 6.16
+
+- Add video PLL clocks to both i.MX8MM and i.MX8MP
+  while dropping the numeral suffix.
+- Add imx_anatop_get_clk_hw helper
+- Add anatop clock providers for i.MX8M[MNP]
+- Drop ccm_ prefix from base in i.MX8MP clock provider
+- Document bindings for PLLs in imx8m-clock schema
+
+----------------------------------------------------------------
+Dario Binacchi (11):
+      dt-bindings: clock: imx8mm: add VIDEO_PLL clocks
+      clk: imx8mm: rename video_pll1 to video_pll
+      dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
+      clk: imx8mp: rename video_pll1 to video_pll
+      dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
+      clk: imx: add hw API imx_anatop_get_clk_hw
+      clk: imx: add support for i.MX8MM anatop clock driver
+      clk: imx: add support for i.MX8MN anatop clock driver
+      clk: imx: add support for i.MX8MP anatop clock driver
+      clk: imx8mp: rename ccm_base to base
+      dt-bindings: clock: imx8m-clock: add PLLs
+
+ .../bindings/clock/fsl,imx8m-anatop.yaml           |  53 +-
+ .../devicetree/bindings/clock/imx8m-clock.yaml     |  27 +-
+ drivers/clk/imx/Makefile                           |   6 +-
+ drivers/clk/imx/clk-imx8mm-anatop.c                | 287 +++++++++
+ drivers/clk/imx/clk-imx8mm.c                       | 262 ++++----
+ drivers/clk/imx/clk-imx8mn-anatop.c                | 283 +++++++++
+ drivers/clk/imx/clk-imx8mn.c                       | 183 +++---
+ drivers/clk/imx/clk-imx8mp-anatop.c                | 306 ++++++++++
+ drivers/clk/imx/clk-imx8mp.c                       | 672 ++++++++++-----------
+ drivers/clk/imx/clk.c                              |  15 +
+ drivers/clk/imx/clk.h                              |   2 +
+ include/dt-bindings/clock/imx8mm-clock.h           |  76 ++-
+ include/dt-bindings/clock/imx8mn-clock.h           |  64 ++
+ include/dt-bindings/clock/imx8mp-clock.h           |  80 ++-
+ 14 files changed, 1711 insertions(+), 605 deletions(-)
+ create mode 100644 drivers/clk/imx/clk-imx8mm-anatop.c
+ create mode 100644 drivers/clk/imx/clk-imx8mn-anatop.c
+ create mode 100644 drivers/clk/imx/clk-imx8mp-anatop.c
