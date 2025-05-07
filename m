@@ -1,97 +1,112 @@
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CAA28B509;
-	Wed,  7 May 2025 17:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D318228AAE9
+	for <linux-clk@vger.kernel.org>; Wed,  7 May 2025 18:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746638321; cv=none; b=hutGtQxEiXvscK9O162A2Arqxf60qx7Po2umB1vf2t+Pdza3HlY3BHGGqfs4CEJXzPBVlhYkH7mDJAhCleDlmyoHorKmZ/FrM6kpAc4gnUR5+3oyXcSWxNABesvMVVH4fhIPpjcCIJSWTtVJnatWmqgScsFRdiMoiixusHRq/74=
+	t=1746644222; cv=none; b=EbSbWegxhXOW+A8qCnExLNg3HU7T/+ZMO7akJ2bFD2wf6FMsighrLLKgdb2BeyGNrxqzLysCBigXNtel7+1ln0jKaKKE6OoDzSWCB5yhRKQyvxHQLlG5NqA5jGIUuE+TtD/CPbmGSuHBuU7QxM4aHoAZzj/dFdMO6SYld6fP2cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746638321; c=relaxed/simple;
-	bh=54KqbbaXmHYTf5Dma495Htq3rQCJfljLMH6zn4UWE10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aFCwOrwtMRxvZKqaq6g+uNeyJB/phZNnMqyN+VByxv5DioED5CpcICnjwlOUvY1T5tTl6tLjGMxkAY0fxZGuojmBqEynH1DZJ8IwJl8plwJ8ssqIJeKhFyh0P3puf1b5CIi8dXFYTiYmHftpjqAsGtDsWeCxf3hBrqXPX2ew08I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-52413efd0d3so23384e0c.2;
-        Wed, 07 May 2025 10:18:39 -0700 (PDT)
+	s=arc-20240116; t=1746644222; c=relaxed/simple;
+	bh=pe3tyzUnuTHHV9wY+pcDILJl9icjd/4bGQ8VCrn/BHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XPxeHmeG7fpC3huzFL/g/UN0QNzNcFcEJMsuWHdlxkKJJngJSgmoSIIyXmbzFgU5UNVXHdE49wNHvhJvwLDnZjxvA4HH3hZ64T7xwhzF9462XH+ZzT0zIcpm2HhDCVzXoIbrTjt8nqpxup63lS74rtneUqbU8C9pT/5cbtuGn5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=byBmq9J0; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="byBmq9J0"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7369ce5d323so261024b3a.1
+        for <linux-clk@vger.kernel.org>; Wed, 07 May 2025 11:57:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1746644220; x=1747249020; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0D7Z3FNBB3xDX5RO0FZQrmLI3qnCJ7UO3XkdhJ32m+0=;
+        b=byBmq9J0BMzGUW2oBf42qoORUcDgUlFE3wFaB8cqTPOUaKk2DtgfSZnUduQX+NxQXi
+         JaZJpaTqPH+ePjESJDw/tC7aI4xmkXxR4pykLReKqndmUo3INRJfyHHRLO7ccJo7ksRp
+         OgUqzkXnTg/tov4QyM1nisO1uvMUQVf/SMeB76Vp0R94DHmRp5kmXtpFxtRaJxLZHOVB
+         IFTCFduzGAuDaLpeNJwD0LnKc6bt8cfWE7DDQuS3F8FmaPiHrP2UDQ3dAPSH+zKbIG33
+         te9rj1aksaleiDWPAKY2Bn5ITFoFY8tGTIGLhvLpaiyb9AatvtPioMCy496dKXbVOfif
+         jaHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746638317; x=1747243117;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/34IxyblwQD/YuMxKpMzhvDwg+RJxwfpaU0x5Z6Vu2g=;
-        b=xJAwZXIPo2h0KDbfyj0KTWWSMXc+HRts+phUzkt7bw40dgAzShT8FuzBBExMc9zgUP
-         inxfPSdkXIO6p/NzooXFonXmQ29N2MSyOVQBKxwYjtBiYJNXurHQ4xo6P5pL7xb+iZXH
-         itirdo00KcvKbKBsPvkQI+fcptTK1Q8AZapS42+x+tJ9naEgPKNK27nEYWLGv44uwLLr
-         0fFFtZXq7qcWqJHhcAOFYI67NVRnVbvK3vqOUvjej3373rgJoI6vPsekHeiuxX1ePoa+
-         OSMQtlYcltjUeBXf4llwN1o6oe96fz7P1l4BlD5QBR6aV4Eofz0TmO+tIILNl5zUoEnu
-         s9EA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxnyorSltAKLKR8H/Yckiez0EgFbTS56WF1FfIKBAW2Nk9/8rMJ3XjTPfC3INW9qSiOBcMc13cy+iZ0kKnMPn5ENg=@vger.kernel.org, AJvYcCW7hrCcRAW0xNTAnJAOhvTW2b+qovJ3xvi7jZTPBGBgbqeinf0snH0XzXQTMp+HDq1mVEVY3IyeAu+m@vger.kernel.org, AJvYcCWBsIv656o8lZot4tyf8sHkR3xLAfIQX/yYmWuiiftRebiT5DvOzkxXN8GnB+88XY5BibGJPbp/u69o@vger.kernel.org, AJvYcCWrzPK9BZPoIDpC9LtLTOTzWC9f9WkZIaJ1YfA4N/1uJRYYIg+fhi/9xx7yxP3BVUIX2QBoT7QDP5eobIV4@vger.kernel.org
-X-Gm-Message-State: AOJu0YymmVY7Nw80sOvmMgxIzK3SzRBuj7bpjAy2MnXirANDZuUwlmrC
-	1cy1oR1Oo9aN3mByRseR1ZLzgqX8oO2LfKOR8hQR3qZBOem1qYZplGMPt/Ob
-X-Gm-Gg: ASbGncuG4vfjxm7ilknKN8fMijo6SRwSN8SdvaSEWuQ0wLp2NNI8p0IMLnIQXeUqRxj
-	xu2Vv8D/KqPmo0tLgJ1KWnnSinS86a6XtuH5T4mMdkSPrLULgx06hYFtuTyvLgZjuODifBgrOqk
-	85On6FZCrwBgIBy2lAKZM8salt3cqALqiXJo2YbxIAN0QSkTB2c1b540Mk/6hNbKSRFO4Ksfx0z
-	0b94ATx3ZYcTpFR75qGAE7pQH/21g7vgOm2loyhNTOyKnigGNPnX9EBeP2Q5E7aKDEyuTz3BEch
-	jeJpfpZi7vQgRhoq0Ui4sBprXNvesbKdW7dH83mzMLmQ2HTu0xIa4zgiji6fwTb3AbPbXp3IxYv
-	Wt5U=
-X-Google-Smtp-Source: AGHT+IGOBEesZCo6Rj/V+e9IU7gKcK1yAHeydcksz9HnciEKItoZCNB6z+FMamiADjWyokROmz3lTA==
-X-Received: by 2002:a05:6122:4682:b0:529:24f8:dbdd with SMTP id 71dfb90a1353d-52c379c4166mr3418514e0c.4.1746638316992;
-        Wed, 07 May 2025 10:18:36 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52ae3ff7a07sm2455194e0c.1.2025.05.07.10.18.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 10:18:36 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4dae6255c73so24078137.1;
-        Wed, 07 May 2025 10:18:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV5Cj4DXARzCNHWCNNW0jkqb2ow6bMyjv7x//zRspWxiltRrFXtYy/8bdMQ+Kvbva7OypgzIofNIcahew/y@vger.kernel.org, AJvYcCWGxfwSACRkpB8xOr7C8Ml4Yp+vYr6NhL5XcXnefNTcPaB+1mqwte4t8MuAsI+85Rd39VoJSf/0Szhk@vger.kernel.org, AJvYcCWcQhWdn2nDc9ojOEE3iacfcNmpHLzOzqe4ZIwD3Wgot4AG2l+0cNne1p9p3f+28MUine6tEzQGIcTyvjsUzjdOCUU=@vger.kernel.org, AJvYcCXK26FWAqMfypXMuuOt0+/QJob7gNFNAM9Lat7I7bSwJ7nSNp32pNdLPvuw3OZ6mylXg31/7OG9n9Px@vger.kernel.org
-X-Received: by 2002:a67:e711:0:b0:4bb:c8e5:aa8b with SMTP id
- ada2fe7eead31-4dc738bc384mr4000134137.22.1746638316153; Wed, 07 May 2025
- 10:18:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746644220; x=1747249020;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0D7Z3FNBB3xDX5RO0FZQrmLI3qnCJ7UO3XkdhJ32m+0=;
+        b=JXHBi8yIr38Mca38Gb17lMZ7G7R0/FL+hiMoycITEWIjZK7Rldu66iQzzaxkuOG5Vu
+         IGAxE3Y7In5paeo6jbtYwGnPHQ9RCiZr8TFBHOt9oAix7zFLjE3hi695zFgcr1jAIDlZ
+         IhMHWzeV5f/MdFwsBFNrowO4DTZQzYgnMvSby1QLCzaMjH4dQmxJim3n4nufW6QhkiQl
+         81a/Q0ctewYMPx2DYgwMcoBA7Tk5ip4WpVVipl0zA9LSVJ9BCuiHdVKvWJxIzzoAWMOO
+         /NHKuAknA1M0jIL6++HWU4kgo9YyeBZInzG13YmOMYcrXAQBgkFX3G7noiLqunIrB8A8
+         wVgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbtG6gNw4NG7gxy0U7Pq8unGPmXvZOJATc93b2H7od8kQzFSE9nrNmvOCamC66ns+efG1DGptWc1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNBxpwc11uGWgsDoZ8KJTn8ldpd4HcfaL8sfQpLZ2WWXYjQMsv
+	jB76RK6o5jRBGqfSNa1XWkKwRu4Y8ZlzajhmPp5oae+Kwjg3Yiek3CNwe6iBLIFs6GSrRSQfRg/
+	r
+X-Gm-Gg: ASbGnctDHPEftAexMyoMfjlvR60smw7ktgfRyOU841BK6DZXnhpTq6DmI5VIVHdRldW
+	saUMG1jELxH0gznwGetLyB5xj2I0XmchBzauHHFTeMUnjK6Ys8Zn0Q9s6aTpcpDmM2X/pdVJC7L
+	ozuV+c1NvjfMYtgwAmgjSrpxXD6f4w5BjB3kxHGY5CIL7/5juoOLsfBkiyoLltkr5Wfjy3XNsPl
+	itr8A6EdrHyR9qGRzGoGqhx6IrvaQZT3Jv5s9oDq5rgH199slqEsMgat/qX+Id7xmXhpagPsITj
+	4VMUyw6ZC3vX1YaZzltRHfQujfEnjBaYXx8Cf6rWo+0sV8Q=
+X-Google-Smtp-Source: AGHT+IEdnDHavMVVsk2ZTJfyzX7ew+kWTOFVAkNqTxlCa/8qxYi15T/lhuGRhufPsi1FCD90sh72qQ==
+X-Received: by 2002:a05:6a00:e0b:b0:736:32d2:aa93 with SMTP id d2e1a72fcca58-740a9a91092mr595573b3a.20.1746644220028;
+        Wed, 07 May 2025 11:57:00 -0700 (PDT)
+Received: from x1 (97-120-122-6.ptld.qwest.net. [97.120.122.6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-740590a2735sm12068773b3a.176.2025.05.07.11.56.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 May 2025 11:56:59 -0700 (PDT)
+Date: Wed, 7 May 2025 11:56:57 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: [GIT PULL] clk: thead: Updates for v6.16
+Message-ID: <aBus+Yc7kf/H2HE5@x1>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com> <20250410140628.4124896-8-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250410140628.4124896-8-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 7 May 2025 19:18:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWtdi8CapSVVjTdP0=p93LW28Ye-w0HE+65tZCre0REnA@mail.gmail.com>
-X-Gm-Features: ATxdqUE2gHkZyrR0xiOi-ltfL5EUFj4-RsFBtlBlUp9jPNzmrSslVjC2bDVuufY
-Message-ID: <CAMuHMdWtdi8CapSVVjTdP0=p93LW28Ye-w0HE+65tZCre0REnA@mail.gmail.com>
-Subject: Re: [PATCH 7/7] Revert "dt-bindings: clock: renesas,rzg2l-cpg: Update
- #power-domain-cells = <1> for RZ/G3S"
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> This reverts commit f33dca9ed6f41c8acf2c17c402738deddb7d7c28.
-> Since the configuration order between the individual MSTOP and CLKON bits
-> cannot be preserved with the power domain abstraction, drop the
-> Currently, there are no device tree users for #power-domain-cell = <1>.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
 
-Gr{oetje,eeting}s,
+are available in the Git repository at:
 
-                        Geert
+  git@github.com:pdp7/linux.git tags/thead-clk-for-v6.16
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+for you to fetch changes up to 50d4b157fa96bfeb4f383d7dad80f8bdef0d1d2a:
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+  clk: thead: Add clock support for VO subsystem in T-HEAD TH1520 SoC (2025-05-07 10:09:28 -0700)
+
+----------------------------------------------------------------
+T-HEAD clock changes for v6.16
+
+Add clock support for the Video Output (VO) subsystem in the T-HEAD
+TH1520 SoC. This includes the device tree bindings for the VO clock
+controller as well as extending the TH1520 clk driver to provide
+clock functionality for the VO subsystem.
+
+Signed-off-by: Drew Fustini <drew@pdp7.com>
+
+----------------------------------------------------------------
+Michal Wilczynski (2):
+      dt-bindings: clock: thead: Add TH1520 VO clock controller
+      clk: thead: Add clock support for VO subsystem in T-HEAD TH1520 SoC
+
+ .../bindings/clock/thead,th1520-clk-ap.yaml        |  17 +-
+ drivers/clk/thead/clk-th1520-ap.c                  | 196 ++++++++++++++++++---
+ include/dt-bindings/clock/thead,th1520-clk-ap.h    |  34 ++++
+ 3 files changed, 216 insertions(+), 31 deletions(-)
