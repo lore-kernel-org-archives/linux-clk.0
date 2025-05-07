@@ -1,69 +1,70 @@
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE231B422A;
-	Wed,  7 May 2025 17:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48CF2C9D;
+	Wed,  7 May 2025 17:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746637851; cv=none; b=Ov5BSS0IxUoHhhWCGVt293LaAAwp6pb/4wTPhb/UjEemmfeKWXJknEXvCGve9awtB1xKRcNxYvYsb4T4YJQxGZqMXFpsNDS8Z3njCmKpZJTneb6CSmAbDfM2xawqtpXonG6zHLDcWxSAG60urjxvCCuHEMxCIdJA+Cek5yfZe10=
+	t=1746638147; cv=none; b=TrqRmcxPjOyW6ByKPv7PGnIueSKpWlOkC2LCnTaG8iq5SpVvrfTSUWRAK4l4IbT+mLgxUI/n/W9Gqlsie/AQfuBrTxS702xpCmzezfAq3vsSj4jNGAAB62Sn4sh1xrU3pBjEQf5oqXE+FL+MCmOaMWNXQdXL21lwY8Ri9pLX06I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746637851; c=relaxed/simple;
-	bh=GdybVPW58nHttNnn67p5Dw8Vt/zoJoYf8sjIoyBMutE=;
+	s=arc-20240116; t=1746638147; c=relaxed/simple;
+	bh=EodWvoVBr9X0H3RmTywHuGYU76j0rL2oQlt9Tkhfqc4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PaVvhf/LBkN+b7BGBR/b28rccIllrGBt/b0rkNWrYDFvoP1TLGCUVFStOevlLQHf7lVTtj39CM468GF+jhECyHo7nP8/E5hyoybGLLG5jNbXIkfJerrDqmReKLex63ynOfnP9wI8wiYhyCZ06tURalO/QxqxUItrHVm0f3NQBPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
+	 To:Cc:Content-Type; b=JxsJKf4OsYlDSqJWJ634rAGNjxV7pki4tt7s9LJOfBMEQrYMNtJkLB+RwipS+NhAhypr2ayqsIaefbH7ZbmS5eSTp7uy19Vt/H2zpXyeE90BHyiEmcGTFPbC2hGh7q3d/q2lHcRf4SMG3pyQ5P61jRi+E9yK3Bx/XAvZEPjVJCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4ce8aa3113aso31468137.3;
-        Wed, 07 May 2025 10:10:48 -0700 (PDT)
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-5242f137a1eso23058e0c.1;
+        Wed, 07 May 2025 10:15:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746637847; x=1747242647;
+        d=1e100.net; s=20230601; t=1746638144; x=1747242944;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g6BzKJWX3OTXa7VM0gHk5m0nv8wWWmh2GA+fJcCItkM=;
-        b=Mrcn6vA7QHhZ1m00+f37LZ4g+nk/EcIwnNC34gVDu/6g5p3yw7JV1TuQ8ZlRxzMDm4
-         oV7S+KMu2jdpoV6ea6tgVO5jYyUz5Pke73j699URuwxi2KH0pt61YvYw2czsf/b01g6L
-         6RYrExXYQ1hxZGKn5RwEOMoIG0cYuZuBI2jw95yn3FtNAr63YtJUdJIXv1r4kvxBgULX
-         goUcx7p2m5pFEWck/Iojzkom8icZSB92TIOsio7hSrhhLxVwzYuSuq+CXvz+MwyaHgp2
-         2eQniciwzyr1HDPUNtVtc6iGXZKV8eqiGSCAvdPA9N8+n6SS8nmKLr8EleDuVKH8RBZF
-         VpSw==
-X-Forwarded-Encrypted: i=1; AJvYcCV25Cd+iRKkzuE2upLHEXo5HL52KhRJhur6HWyvG5c9UeP0MaoP9a4BBngT09CzdBy4IlUc6jy778eg@vger.kernel.org, AJvYcCVVZrvS17K0eeBgy9zmsn0g5AFkiP2ft5se8Dm/O7+Mhnb5hxYIoyRobuc6Ai4423NcVZBTQS46jukTFb6w/J7CUvc=@vger.kernel.org, AJvYcCWkIoBA2MG3aIz0LJtHNXKsV08IhdJruff+kJ6eqEAo3E0Fs1wjCXYK7m8Pp4nsKNRS+LshyUWLNS86@vger.kernel.org, AJvYcCWwf1lnLmZWNf76gqulWQrVjTlwMjl737JfSq5t8Pmg1tqi3RNz82dcUAJ12uvhe/SVjKcLOZEQS8uqsoqB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq+BbeYny+SJRCGH6sbGrWAFYRUF6pE+oEuwBZdgO8Vsv56PSc
-	/PB1T76lr7sSEYRtueGVUrsnX8+8ubSuiz6/OFwajUR5h/TnNqjHF2agzARY
-X-Gm-Gg: ASbGnctWzTeGOtBvL1C7qGtyCfyuyB+4aYQIp7n0dVfoWwYk44FBKyTjqsOExGLCLoY
-	Asn4yqcu+KuLF9sz15IvQKIYjSGbYFW1qGNgKUHzZHiWFPvA1sfvDo9Giw1o0PtwzVystDxD1DP
-	X6qKmDzXT2hj/yW+dVpJrYADTUeW/Iq+3oHXd+vwXwyFEjWOs3o/MJBO8Fxsx7KWGMgyg+Lk2Z0
-	TOdXKrbd+NpKggMMTdrLB6M9kuMTsUL/wsHVgEybC6BM1KFO+hSGPK12TcQh20UPPdyCRrOTpKV
-	t1QB5yEZOnRqm/3aeGkATxLJTituwXrhJ2vD4bAoQ5B1UQMZuPMb60RphkD4SyWTDjGcISnMzmk
-	swWU=
-X-Google-Smtp-Source: AGHT+IF4XQnFDpryUyUxKHSd8nFgnv74mJpWqBi5fNrfYem1Mn2hoXW0oYA40WC9rrT53ivpNfOgIQ==
-X-Received: by 2002:a05:6102:5f02:b0:4da:d874:d30d with SMTP id ada2fe7eead31-4ddad09406amr249937137.17.1746637847397;
-        Wed, 07 May 2025 10:10:47 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8780af50ec4sm2230162241.0.2025.05.07.10.10.47
+        bh=tjssFlw1FzpH4B0sQSNz2YHpp3SvNlCS+DZZcEssn9M=;
+        b=MIrGMvnItV69H0BBspd71AvQ2gDXSDgTjieOzJU1OLfD2QdMKjO3v/6DD83YNf5Yej
+         yM17R89TqlPYgBzCLGgKiyQVeZUnbtpLHAFWdMKQcxhCAgmPl8PkLPH0w5xqJrYkFnIj
+         twOXdVxYUYF1V9uKfrkpmPtMvpZzuDRTQ4UJ39VL+eq6A9D91BeXOjBrQG1JsnoSWQMb
+         kvvv3B7laSN8Fao8o8bZSB43pqf+nevJqrMwA32Hg59xr6j+1PoowVgwRbnpacQ92EM1
+         LbZiykYbpOojdPjLfG1X0DdyGAcDBQUbxkFJmoX1zpUUQ5T5raByOrKcSBWYpgxb+tJu
+         xYGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVG2iDBZ1zME/1OB+3aRModeXjkR4kWzIS8NwYOIxCHCiByTsFGbgZs6faBrCagO9NoeOo2ZGEoFxN8@vger.kernel.org, AJvYcCVPmwvF8UrhHmG2fbR1S8+vyz73KX0GGsRDhsJLiWh+4a3Oipv9DRMyXUkwgyDUeBw6TOfX4LR6/+2gCEs+Xk/s7H4=@vger.kernel.org, AJvYcCVQ158jo6Dw3SD8b/kmSDskCizEYZrxM9XfrXrzphwTj4qpoPq+SzjSfhfzgkUyNaK9mAiboewg3SCEi9ib@vger.kernel.org, AJvYcCXBoeYlW5zU+r6tq9VWoKzNDgAhSwRnN1SV/qwwnkv02FTYuJj0OziA+xaAxFHDIZxOcpkGckkVnK8N@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0n+H4OekdhhQQritL+/aiyd6DbaBtUvhgYfmwxYtCkyUUZIac
+	dunUd4/rn4GRbLK3/zlfJIQ9EIFYfEvK5OyxQZF+bcZtQPw4/YYvCg3jfke1
+X-Gm-Gg: ASbGnctcomxj+rkHES7aU/rfGYMmCqXvW4NEK029nPdh+sGyQpWn+l1AAsqhwDmmEG8
+	Mymxau7fa1FNjoncu2ibSEyxglDcPDfT56vZk6HdMqaZTCVtFBJYFeUN1o5SbOp+Pfl8BGY0l8Q
+	a/7Jqs72UaVThrbgD3RxswF57U1xyp6i4qjJs3PawhxMJiCDR5GwY0vKFLHO1ToUVse48GqRhcf
+	OalRfFwx3mKVHzMxJCs+3+OBDoam4zqECG7tvVAAkUEc8uYQlxx3g/xG7qazat6cri/OInEPtU6
+	qp3jb3eVVflWJTbOSsQU1qhgpcOtgDFuL7NJno8YM1FuPkG4KiuQ5vi20Bb+rboww6rfRZW6//E
+	VgkM=
+X-Google-Smtp-Source: AGHT+IH3aVDhaWRFn4FB9MgDrcU6nndPWSx0YZkPnyqHM0aXOplfWvBDjOvj6bwuy5TjEiSf1oOVvQ==
+X-Received: by 2002:a05:6122:4692:b0:529:995:5aec with SMTP id 71dfb90a1353d-52c379ccb4cmr3336141e0c.4.1746638144092;
+        Wed, 07 May 2025 10:15:44 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52ae41eb5d7sm2455492e0c.39.2025.05.07.10.15.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 10:10:47 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-879e8e2237dso51441241.0;
-        Wed, 07 May 2025 10:10:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJLkjrJFclZZmVj+xT6qtig0DlK0v9BAUlyEpzgSXKf6v6kajsVSlLOgGUFQEZLx74bhuWj7GwxT56@vger.kernel.org, AJvYcCV5c+OZFiTJ6hdhOz7Tx7Kid+QLjboQKiD/S/Q1DDzzro177gtGKGYHjBFMGgsmc2wEw5vS/D4aYh0ElAYg@vger.kernel.org, AJvYcCXJT16mpwsbtd3Bci8QnKniXTH3zuxTKrFoHGdq3D7Jjl2clwV8qnramJz4ormhSm+q+iVI6F/Nf5FT@vger.kernel.org, AJvYcCXme2XPZFngeCgItDVVq4PgBxOUjQmUpJbXGeqxf/ZeZ1HqVsI4MLY9ScP5OgxECIFVBd28qqLq1MG3/Cgad6pWslA=@vger.kernel.org
-X-Received: by 2002:a67:e704:0:b0:4c1:9526:a636 with SMTP id
- ada2fe7eead31-4ddacfcbee5mr428862137.15.1746637847030; Wed, 07 May 2025
- 10:10:47 -0700 (PDT)
+        Wed, 07 May 2025 10:15:43 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4c326617e6cso21764137.1;
+        Wed, 07 May 2025 10:15:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVB1+9wyrdrUm5hK3gvdbG7dnTe2vQ3GxXm1Ydmm7nMfCrqYo/bVPOY5ZRqpujolMNZcVIUjNREw9XhFYyh9zNKA3A=@vger.kernel.org, AJvYcCVCokQ6l2Daa0ZvE35e2yu6ImXytKsqTmtZHXObIZJ9cXvqBS2X5+eR8gvrP5tZ3IcOV4o2H/hjQQWd@vger.kernel.org, AJvYcCW5GGzOWJ5NWXCwfjkSkiBjikT9XydSgGOkNTMvmrAZlNQEHMnjzeMnHxTPrNFljuI19jOi7ojgyDzF71CE@vger.kernel.org, AJvYcCXoYhraIgs/iU+sgENE9bvx2bp6KhmvH1Pm2/+Lha//PZdJeQes58j5U7W18O/SyMN+6nUR+eGDjBQ3@vger.kernel.org
+X-Received: by 2002:a05:6102:5e82:b0:4c1:76a4:aee4 with SMTP id
+ ada2fe7eead31-4dc73896351mr3305611137.19.1746638143350; Wed, 07 May 2025
+ 10:15:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com> <20250410140628.4124896-5-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250410140628.4124896-5-claudiu.beznea.uj@bp.renesas.com>
+References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com> <20250410140628.4124896-6-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250410140628.4124896-6-claudiu.beznea.uj@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 7 May 2025 19:10:34 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVpy=89g0=-U4E4Kg=M_gS96RP26xDj_mUp=Lb1sjOHMg@mail.gmail.com>
-X-Gm-Features: ATxdqUESjN3wxYT2D9YZnj32scz4-tPbBJdl0WBAykKaKzN-N28EwVRRrUAF1yI
-Message-ID: <CAMuHMdVpy=89g0=-U4E4Kg=M_gS96RP26xDj_mUp=Lb1sjOHMg@mail.gmail.com>
-Subject: Re: [PATCH 4/7] clk: renesas: r9a08g045: Drop power domain instantiation
+Date: Wed, 7 May 2025 19:15:31 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXcUCsa-c0oHz20huEG0cvv6zVq4OwONfrcMVSQC84XbQ@mail.gmail.com>
+X-Gm-Features: ATxdqUFFIBTCxfle3eXYQu4EEydjHa0Zh6WAfCUTIuL1cqOuLd_-RqXuGIJbNNw
+Message-ID: <CAMuHMdXcUCsa-c0oHz20huEG0cvv6zVq4OwONfrcMVSQC84XbQ@mail.gmail.com>
+Subject: Re: [PATCH 5/7] clk: renesas: rzg2l-cpg: Drop MSTOP based power
+ domain support
 To: Claudiu <claudiu.beznea@tuxon.dev>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
 	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
@@ -72,59 +73,16 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi Claudiu,
-
 On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
 > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
 > Since the configuration order between the individual MSTOP and CLKON bits
 > cannot be preserved with the power domain abstraction, drop the power
-> domain instantiations.
+> domain core code.
 >
 > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/r9a08g045-cpg.c
-> +++ b/drivers/clk/renesas/r9a08g045-cpg.c
-> @@ -192,59 +192,105 @@ static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
->  };
->
->  static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
-
-> +       DEF_MOD("dmac_aclk",            R9A08G045_DMAC_ACLK, R9A08G045_CLK_P3, 0x52c, 0,
-> +                                       MSTOP(BUS_REG1, BIT(2))),
-> +       DEF_MOD("dmac_pclk",            R9A08G045_DMAC_PCLK, CLK_P3_DIV2, 0x52c, 1,
-> +                                       MSTOP(BUS_REG1, BIT(3))),
-
-The documentation is not very clear about the mapping to the 4 MSTOP
-bits related to DMA. Can you enlighten me?
-
-> @@ -294,78 +340,6 @@ static const unsigned int r9a08g045_crit_mod_clks[] __initconst = {
->         MOD_CLK_BASE + R9A08G045_VBAT_BCLK,
->  };
->
-> -static const struct rzg2l_cpg_pm_domain_init_data r9a08g045_pm_domains[] = {
-> -       /* Keep always-on domain on the first position for proper domains registration. */
-> -       DEF_PD("always-on",     R9A08G045_PD_ALWAYS_ON,
-> -                               DEF_REG_CONF(0, 0),
-> -                               GENPD_FLAG_ALWAYS_ON | GENPD_FLAG_IRQ_SAFE),
-> -       DEF_PD("gic",           R9A08G045_PD_GIC,
-> -                               DEF_REG_CONF(CPG_BUS_ACPU_MSTOP, BIT(3)),
-> -                               GENPD_FLAG_ALWAYS_ON),
-> -       DEF_PD("ia55",          R9A08G045_PD_IA55,
-> -                               DEF_REG_CONF(CPG_BUS_PERI_CPU_MSTOP, BIT(13)),
-> -                               GENPD_FLAG_ALWAYS_ON),
-> -       DEF_PD("dmac",          R9A08G045_PD_DMAC,
-> -                               DEF_REG_CONF(CPG_BUS_REG1_MSTOP, GENMASK(3, 0)),
-> -                               GENPD_FLAG_ALWAYS_ON),
-
-[...]
-
-> -       DEF_PD("rtc",           R9A08G045_PD_RTC,
-> -                               DEF_REG_CONF(CPG_BUS_MCPU3_MSTOP, BIT(7)), 0),
-
-These MSTOP bits are no longer controlled. Is that intentional?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
