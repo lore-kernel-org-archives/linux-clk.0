@@ -1,112 +1,71 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D318228AAE9
-	for <linux-clk@vger.kernel.org>; Wed,  7 May 2025 18:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AC719CC0A;
+	Wed,  7 May 2025 19:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746644222; cv=none; b=EbSbWegxhXOW+A8qCnExLNg3HU7T/+ZMO7akJ2bFD2wf6FMsighrLLKgdb2BeyGNrxqzLysCBigXNtel7+1ln0jKaKKE6OoDzSWCB5yhRKQyvxHQLlG5NqA5jGIUuE+TtD/CPbmGSuHBuU7QxM4aHoAZzj/dFdMO6SYld6fP2cA=
+	t=1746647094; cv=none; b=DfPk902Xcbbmkobr/2d9ObOeLQgshaqd6mYlL/7as1iuogfG5qpTRpzH1z6utp6M+oRD4YGXY+wH1VtUBqBAJSsgc86i7PmezAXNW6s+YJ8FXGfem+kWe8hU8yxYnE6n03veRZ4fF0bnNE9mC1QVSnzLv4odl7emBJ/QjaYd50o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746644222; c=relaxed/simple;
-	bh=pe3tyzUnuTHHV9wY+pcDILJl9icjd/4bGQ8VCrn/BHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XPxeHmeG7fpC3huzFL/g/UN0QNzNcFcEJMsuWHdlxkKJJngJSgmoSIIyXmbzFgU5UNVXHdE49wNHvhJvwLDnZjxvA4HH3hZ64T7xwhzF9462XH+ZzT0zIcpm2HhDCVzXoIbrTjt8nqpxup63lS74rtneUqbU8C9pT/5cbtuGn5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=byBmq9J0; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+	s=arc-20240116; t=1746647094; c=relaxed/simple;
+	bh=q4hIvtoNu1oOGcAKyK/6LoLwv0LjCdfMt4xNiihRoZs=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=erNPT2NAmtzPrNhQpD2OvoY1hShV81fUCRUaVXn2XuY+5RuxIG2C7VdEwso4SnMGArH57eoM/uKYMn7i8BIS/keuY3jKzCb/Oj5HPLFl5jlpPV5nghTFbDCle35G4UjjuS3HHWR9wT5HaXvXa69fWa8e0RGQa5uO+d5j9A+l9u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPlzZc0V; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="byBmq9J0"
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7369ce5d323so261024b3a.1
-        for <linux-clk@vger.kernel.org>; Wed, 07 May 2025 11:57:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1746644220; x=1747249020; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0D7Z3FNBB3xDX5RO0FZQrmLI3qnCJ7UO3XkdhJ32m+0=;
-        b=byBmq9J0BMzGUW2oBf42qoORUcDgUlFE3wFaB8cqTPOUaKk2DtgfSZnUduQX+NxQXi
-         JaZJpaTqPH+ePjESJDw/tC7aI4xmkXxR4pykLReKqndmUo3INRJfyHHRLO7ccJo7ksRp
-         OgUqzkXnTg/tov4QyM1nisO1uvMUQVf/SMeB76Vp0R94DHmRp5kmXtpFxtRaJxLZHOVB
-         IFTCFduzGAuDaLpeNJwD0LnKc6bt8cfWE7DDQuS3F8FmaPiHrP2UDQ3dAPSH+zKbIG33
-         te9rj1aksaleiDWPAKY2Bn5ITFoFY8tGTIGLhvLpaiyb9AatvtPioMCy496dKXbVOfif
-         jaHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746644220; x=1747249020;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0D7Z3FNBB3xDX5RO0FZQrmLI3qnCJ7UO3XkdhJ32m+0=;
-        b=JXHBi8yIr38Mca38Gb17lMZ7G7R0/FL+hiMoycITEWIjZK7Rldu66iQzzaxkuOG5Vu
-         IGAxE3Y7In5paeo6jbtYwGnPHQ9RCiZr8TFBHOt9oAix7zFLjE3hi695zFgcr1jAIDlZ
-         IhMHWzeV5f/MdFwsBFNrowO4DTZQzYgnMvSby1QLCzaMjH4dQmxJim3n4nufW6QhkiQl
-         81a/Q0ctewYMPx2DYgwMcoBA7Tk5ip4WpVVipl0zA9LSVJ9BCuiHdVKvWJxIzzoAWMOO
-         /NHKuAknA1M0jIL6++HWU4kgo9YyeBZInzG13YmOMYcrXAQBgkFX3G7noiLqunIrB8A8
-         wVgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbtG6gNw4NG7gxy0U7Pq8unGPmXvZOJATc93b2H7od8kQzFSE9nrNmvOCamC66ns+efG1DGptWc1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNBxpwc11uGWgsDoZ8KJTn8ldpd4HcfaL8sfQpLZ2WWXYjQMsv
-	jB76RK6o5jRBGqfSNa1XWkKwRu4Y8ZlzajhmPp5oae+Kwjg3Yiek3CNwe6iBLIFs6GSrRSQfRg/
-	r
-X-Gm-Gg: ASbGnctDHPEftAexMyoMfjlvR60smw7ktgfRyOU841BK6DZXnhpTq6DmI5VIVHdRldW
-	saUMG1jELxH0gznwGetLyB5xj2I0XmchBzauHHFTeMUnjK6Ys8Zn0Q9s6aTpcpDmM2X/pdVJC7L
-	ozuV+c1NvjfMYtgwAmgjSrpxXD6f4w5BjB3kxHGY5CIL7/5juoOLsfBkiyoLltkr5Wfjy3XNsPl
-	itr8A6EdrHyR9qGRzGoGqhx6IrvaQZT3Jv5s9oDq5rgH199slqEsMgat/qX+Id7xmXhpagPsITj
-	4VMUyw6ZC3vX1YaZzltRHfQujfEnjBaYXx8Cf6rWo+0sV8Q=
-X-Google-Smtp-Source: AGHT+IEdnDHavMVVsk2ZTJfyzX7ew+kWTOFVAkNqTxlCa/8qxYi15T/lhuGRhufPsi1FCD90sh72qQ==
-X-Received: by 2002:a05:6a00:e0b:b0:736:32d2:aa93 with SMTP id d2e1a72fcca58-740a9a91092mr595573b3a.20.1746644220028;
-        Wed, 07 May 2025 11:57:00 -0700 (PDT)
-Received: from x1 (97-120-122-6.ptld.qwest.net. [97.120.122.6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-740590a2735sm12068773b3a.176.2025.05.07.11.56.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 11:56:59 -0700 (PDT)
-Date: Wed, 7 May 2025 11:56:57 -0700
-From: Drew Fustini <drew@pdp7.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Subject: [GIT PULL] clk: thead: Updates for v6.16
-Message-ID: <aBus+Yc7kf/H2HE5@x1>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPlzZc0V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B39BC4CEE2;
+	Wed,  7 May 2025 19:44:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746647092;
+	bh=q4hIvtoNu1oOGcAKyK/6LoLwv0LjCdfMt4xNiihRoZs=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=qPlzZc0VbmcBh/IBRlviaOz38xt5NO496/SGC3ggUSWMOx+oBrVl2jObCeavNvfQ+
+	 R2Yi7Nlm9rfbJgoaXwyCKj2+ORCv6v0HaZJ0vqGuwN7Es/6uNpXxzd6A98Oqag6/4Q
+	 KLKfNStxTE+v7NgktYd/xEvLRGaIYYxg8sv8f65ld+ldjyPrDGSxRLJDlxz/jXV73e
+	 fgZWLjaXcVfUI2r95d5TaZJEvSNNaR5PzP6cwA0c9orH+RhqEOdelSyuxSVp3PCvp2
+	 O4B+hWoqwNALx3co7BWGW3jVCf/SnTxgH2PwTHEn19aVaECO8D2/8vMdJ6+gFGt4gf
+	 D5t4O/WiNTw+g==
+Message-ID: <8513c30f597f757a199e4f9a565b0bf5@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aBprHfQ7Afx1cxPe@apocalypse>
+References: <cover.1745347417.git.andrea.porta@suse.com> <e8a9c2cd6b4b2af8038048cda179ebbf70891ba7.1745347417.git.andrea.porta@suse.com> <aBprHfQ7Afx1cxPe@apocalypse>
+Subject: Re: [PATCH v9 -next 04/12] clk: rp1: Add support for clocks provided by RP1
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof Wilczynski <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
+To: Andrea della Porta <andrea.porta@suse.com>
+Date: Wed, 07 May 2025 12:44:50 -0700
+User-Agent: alot/0.12.dev8+g17a99a841c4b
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+Quoting Andrea della Porta (2025-05-06 13:03:41)
+> Hi Stephen,
+>=20
+> On 20:53 Tue 22 Apr     , Andrea della Porta wrote:
+> > RaspberryPi RP1 is an MFD providing, among other peripherals, several
+> > clock generators and PLLs that drives the sub-peripherals.
+> > Add the driver to support the clock providers.
+>=20
+> Since subsequent patches in the set depends on this one and as the next
+> merge window is approaching, assuming there are no blockers can I kindly =
+ask
+> if you can merge it on your tree for the upcoming pull request?
+>=20
+> This patch should apply cleanly to your clk-next branch except for some f=
+uzz
+> lines on MAINTAINERS. Please let me know if you want me to adjust it.
+>=20
 
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
-
-are available in the Git repository at:
-
-  git@github.com:pdp7/linux.git tags/thead-clk-for-v6.16
-
-for you to fetch changes up to 50d4b157fa96bfeb4f383d7dad80f8bdef0d1d2a:
-
-  clk: thead: Add clock support for VO subsystem in T-HEAD TH1520 SoC (2025-05-07 10:09:28 -0700)
-
-----------------------------------------------------------------
-T-HEAD clock changes for v6.16
-
-Add clock support for the Video Output (VO) subsystem in the T-HEAD
-TH1520 SoC. This includes the device tree bindings for the VO clock
-controller as well as extending the TH1520 clk driver to provide
-clock functionality for the VO subsystem.
-
-Signed-off-by: Drew Fustini <drew@pdp7.com>
-
-----------------------------------------------------------------
-Michal Wilczynski (2):
-      dt-bindings: clock: thead: Add TH1520 VO clock controller
-      clk: thead: Add clock support for VO subsystem in T-HEAD TH1520 SoC
-
- .../bindings/clock/thead,th1520-clk-ap.yaml        |  17 +-
- drivers/clk/thead/clk-th1520-ap.c                  | 196 ++++++++++++++++++---
- include/dt-bindings/clock/thead,th1520-clk-ap.h    |  34 ++++
- 3 files changed, 216 insertions(+), 31 deletions(-)
+I need to take the dt-binding header as well so it compiles. What's the
+plan there? Do you want me to provide a branch with the clk driver and
+binding header? Or do you want to send a PR to clk tree with the clk
+driver and the binding header and then base your DTS patches on the
+binding header and send that to the soc maintainers? I'm also happy to
+give a Reviewed-by tag if that works for you and then you can just take
+it through the soc tree.
