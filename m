@@ -1,130 +1,144 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FAC257AF6
-	for <linux-clk@vger.kernel.org>; Wed,  7 May 2025 12:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00AD288C10
+	for <linux-clk@vger.kernel.org>; Wed,  7 May 2025 14:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746621341; cv=none; b=jyrQrF1amiMQws4qjNnKssJvZPHNjwqAJlV4p7ASyH965U01TxS/g2+Pd2KNOAHQ33CFXHwt4TFQUnzIOs0imfTzTYC/gspP09Y3LqqOLlPaTMDH5rw77CezBU+9YRdItZq1bIr5qZyO0cWqCcfz1Ouf3PSMEaRTxWvIZZbpwm0=
+	t=1746627121; cv=none; b=VB17s8z0D6FTrzvSSuS6mtk2OygEmqxi+3rdLsRadQj/Q6kLQZd5yGR6tLBKJcD95MxqZExZpLZ2OGd5d6BXc73r80/fjDavo3coJK9Cl5HiE+yXZRtYnC2B1WIthYM6gj0Z8VaOPGh0FeQftiItFzysjzp6EF/iUzDd0ZuNpRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746621341; c=relaxed/simple;
-	bh=W/jXllp7QKxqo10uYHex1yrZDnuxG/dHXbYSQf58jCA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Py27gJO+EKMUGBM4XKWzaJyKpqhyibMpznPIvCj21yS+whzEHzaKW3lu8x3y2xjHwBeRCCGpTxIiLedTH3V577S1M++0i+6eK7zVOTS37yvNzpPx2RJAZUrw2PhddLjXZ0zy6E+1obBN4gyN3lwCfvATk/LjDLAUUz2fx2M2INw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VMNOgP8b; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1746627121; c=relaxed/simple;
+	bh=WyCz/ArAVmQO+g1cZbQC9HYihMwNLT5tXWBdJxpyI3o=;
+	h=From:Date:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FcH2+lizE5Hz2STn/vAKgWnJpxSNd0iU34pIJL4Y30A14hEa0H5e74YMxWVeir2BJw0YE3NLqa5QL0nhWjiA+0KmMiHk7/rFIqXHlo9VdDwmC3ooSu3NnVSC7i3zQTQ/AJxXYeUQ+dkgz+oRK/JmD3E1am5/XTu+ObTdTs7zwvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RW72+a1q; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VMNOgP8b"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5fbf52aad74so899941a12.1
-        for <linux-clk@vger.kernel.org>; Wed, 07 May 2025 05:35:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RW72+a1q"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9eb12so11300531a12.1
+        for <linux-clk@vger.kernel.org>; Wed, 07 May 2025 07:11:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1746621338; x=1747226138; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xWON9I4ameGxWiEKwkDziYc8iN3l6k5w6SWR59IgmyI=;
-        b=VMNOgP8bLj4AVsSyMG7GFjNj1ljxv5Qc9LFV+17zVZa+eKaVQazoUTb7SLBLoZUzXD
-         R7XwvHGU7dOWl+uLp2gmVDvMj9uYT/WsuE9e2ffY7eQ9dn0bGLotWYIjSgQrUEayAay6
-         YgoI9h319Ppx1K55O8GZi9zsJ5Wr0PONOC/weaqKTCQ6GgSikFRmngzuiSc1l/3SnWlL
-         KyFbc3pjLKXRU8luFAU2lm5jITtDS+Wipwtaj06DKmI27jekC1FBA3DUHccgYG7jyC13
-         CgRjd6pIqMfGjrQZQ554UeSCYXVqHtBD7ZdbTBCuv+fAUKvdrO/qHTqe0RiBpIFneqcU
-         ap0A==
+        d=suse.com; s=google; t=1746627117; x=1747231917; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xp53MoIMHo7AsEpO8Qe4lYIdt8fxx6H0xofmt5rFOgc=;
+        b=RW72+a1qzFrEk8+0g5TjeMhM3Seef2Ya9K9OUP1ZZ0+9GQUAM6+XEp3Lry/LNcW1la
+         tL2hdZ5FcbCJlJ6OIdHxsXbVs3RcJI5IKfLczh+qAEOfivvlCl5iFIAJTU0t6vxp8Oz6
+         /ywZV3oxlC/LPAQP3cSkJkdrEy/qIeW/ESNhnfNnxv71sHdR3cNZ5cIFwLZ9bXuBMGLZ
+         5LwjGDLUIbwQSrnfprunfLqdRiDCWUil/m74yw+WGTHD0GUa4Ht0qIsPB/NUL9BFMIH+
+         cFIW/+KXbYJoK4LU98SrKGAsJsuMI70r3ps2K7y4LHIwyqTXX0OWEQiB1v6WRgEHo6c1
+         mdbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746621338; x=1747226138;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xWON9I4ameGxWiEKwkDziYc8iN3l6k5w6SWR59IgmyI=;
-        b=YinLbnCxzVi6sZzQjKXPMr1WsCzKSHFXPywr3UshqEyjOA1PhDoy86UdP0qWRSzJ27
-         bNJgG3sp6AL9YwmfqQ+6pYQXuTJyEjsTPF/q9iKzjUjFOtQ1zgcaEbpg1g2OWh3emlB1
-         Wm24Rv3+FNOMiIpTmBL8Ug9FFANi9lg/VSv8rTh8m7mezeywd2Vq967y6Tn5MPdV/dAq
-         SX6eHEjVq0QzG8VhT86ObkKoDjvmb2ylKF6eUYhATWo50CooijZ6TMWgpgfp9JtcTCdM
-         swuKuOEfoUWE2UNGLtejRZu/O5RBPZxO5Trx9CG86/DkQAVWWb2wUPnsj9DJoY2CVzEA
-         V2Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcRkwMRRk8k7oqwWrOWxUi1UhTOSJWk0ENFGMod4je7zhggX7dx/U9iEaFANXlD/SScfWwSxDlnp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6D7xrZi7elcFQcTb3tHcWOAvvRoa3MoR6uwb99D/1B1fLdNn8
-	6ChToEmgPFz861tOltqkuRDF+jR8VdsC0B2XErQwzmBlte+KtCK0TAsJEsRs1ME=
-X-Gm-Gg: ASbGncsWydvACX0JRKswyu2Zwgf6FII/qhPS5kwcyAiKDUjI6aQsXV4pNpYeKTsMURQ
-	9rzS2l5gdRoiRhQ7dYSaocgU6WCrzGXWGibW7vHojqalO/1m2wyoL0f8i1IEJOiUvI+IrfUiIse
-	rMhbIN2yYjOh8YonnVIjorUtN7onajmhL9MKuUsdlQqOW5HCnXqw99FypXjiYvgCDsa+0m49q27
-	YUpVm1PgZhlQVtyzKwVuEg6EHirN+MosepY8zr5/NZUdOsUUr3K2KFf/0p0ja3gio7bi5CV9kLN
-	C2uUuLmrsCpXAkA6MM3HVt8NTXGQgVUHmT2s5qE=
-X-Google-Smtp-Source: AGHT+IEMmTi4bmJFoUPDT0YBq0AgR9RZuiis3rxqwa+boAiz7GJ/sZbLrp/zC5X9/7Njxkr4VGX0Ww==
-X-Received: by 2002:a17:907:6eaa:b0:ac7:b1eb:8283 with SMTP id a640c23a62f3a-ad1e7830348mr370649066b.17.1746621337789;
-        Wed, 07 May 2025 05:35:37 -0700 (PDT)
-Received: from hackbox.lan ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891f04absm897883966b.78.2025.05.07.05.35.36
+        d=1e100.net; s=20230601; t=1746627117; x=1747231917;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xp53MoIMHo7AsEpO8Qe4lYIdt8fxx6H0xofmt5rFOgc=;
+        b=vDWvyEwMf8rRuIE59W6ZkyO5WVxgzzUdmCrmYDlzogTp4ES/pyFhsYamq3rF0sb+ee
+         hccrcvP3JUbRVjfzx/JeIAP2cwSRp8WGvh6qlFrsoL5m/KNTbdYeXNgztOICwwOT91jr
+         wM6J+zvc5pie5i6cFNc+JhVIQ8aqYiC5q/O0SM8tqu7yXgQbw2naALGheP/CD6m64dHw
+         Ycg9vGM+7Ns4ID+GWk91JuGtOs2vsQQK/bOlWEiJEzdhNykQTK3WvdtG3fecR8FTouxW
+         o7PyWQDl2U6YM7dtPCFs+JNqSxB3ZcF6Yc1yx8SafsbDdLDcAcdlYNvRtrfonSKF6Vh4
+         qeLw==
+X-Forwarded-Encrypted: i=1; AJvYcCVfLx2jHLj0XeC45bKebEbCaOi0hjiUNeyJm1dHO26kXTJqAcHmL6t+3esT9/hn+CODnH+uFQq47fo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjzlsjAWZCGDaVQ7kdjmIdb8kfL9+9N9a5n5fl1axqVHVIQWPG
+	sXCUzg/QBtrTzja+/78BBNVe4359cFXMI8NP9STE/UazmAWUb7R40hz/QbDSH7U=
+X-Gm-Gg: ASbGncsaetb7cL1DA3MaVJANd6z0eQII0Q0J6fofUccc2mi9/lTYuLE8F4gS8Zah+7o
+	r8vQ/q8O4hg0VGB8lGyUGuLB5YFHs3ECv34tHWbL1/1fpVkdp9vBq7UVv4OEGNLaVZBuewi5dhH
+	6kssEu5OBpVco9OnL4N8f8Vxe96YvtQne9pCGqlUExJHWcZWlXjhzxMfehq4xbO+72f2kvjGhsd
+	gTT5Yx6Pm8QhxTRhhoaUA4J1kkUI5zYgUGuNiYwK27hRRT6hfObsJSrx/j7JyccsM1KvKKUgKPt
+	h19VrUSQmiWvbKpdLUp03p2BNfiCZ0gFiQ7dIQJrQftctyon0ubLO32ogkIbFmTuwEvCwtlrvDM
+	KdwucpA==
+X-Google-Smtp-Source: AGHT+IEAIOFFJLOZCm96czkAy45BL7wcAh0Bc4vKalFIoRDdZw1taF3C6vTBolVNjObPDoUwRAM9aw==
+X-Received: by 2002:a05:6402:5c9:b0:5e7:8501:8c86 with SMTP id 4fb4d7f45d1cf-5fbe9f46ef0mr2916040a12.22.1746627117121;
+        Wed, 07 May 2025 07:11:57 -0700 (PDT)
+Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fbf761f95esm806596a12.63.2025.05.07.07.11.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 05:35:36 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Mike Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev,
-	NXP Linux Team <linux-imx@nxp.com>,
-	linux-clk@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] clk: imx: Updates for v6.16
-Date: Wed,  7 May 2025 15:35:28 +0300
-Message-Id: <20250507123528.585447-1-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Wed, 07 May 2025 07:11:56 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Wed, 7 May 2025 16:13:24 +0200
+To: Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	kernel-list@raspberrypi.com
+Subject: Re: [PATCH v9 -next 08/12] arm64: dts: bcm2712: Add external clock
+ for RP1 chipset on Rpi5
+Message-ID: <aBtqhCc-huQ8GzyK@apocalypse>
+References: <cover.1745347417.git.andrea.porta@suse.com>
+ <38514415df9c174be49e72b88410d56c8de586c5.1745347417.git.andrea.porta@suse.com>
+ <aBp1wye0L7swfe1H@apocalypse>
+ <96272e42-855c-4acc-ac18-1ae9c5d4617f@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <96272e42-855c-4acc-ac18-1ae9c5d4617f@broadcom.com>
 
-The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+Hi Florian
 
-  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+On 09:32 Wed 07 May     , Florian Fainelli wrote:
+> 
+> 
+> On 5/6/2025 10:49 PM, Andrea della Porta wrote:
+> > Hi Florian,
+> > 
+> > On 20:53 Tue 22 Apr     , Andrea della Porta wrote:
+> > > The RP1 found on Raspberry Pi 5 board needs an external crystal at 50MHz.
+> > > Add clk_rp1_xosc node to provide that.
+> > > 
+> > > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > > Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> > 
+> > A gentle reminder for patches 8 through 12 of this series, which I guess
+> > would ideally be taken by you. Since the merge window is approaching, do
+> > you think it's feasible to iterate a second pull request to Arnd with my
+> > patches too?
+> > 
+> > With respect to your devicetree/next branch, my patches have the following
+> > conflicts:
+> > 
+> > PATCH 9:
+> > - arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts: &pcie1 and &pcie2
+> >    reference at the end, my patch was rebased on linux-next which has them
+> >    while your devicetree branch has not. This is trivial to fix too.
+> > 
+> > PATCH 9 and 10:
+> > - arch/arm64/boot/dts/broadcom/Makefile on your branch has a line recently
+> >    added by Stefan's latest patch for RPi2. The fix is trivial.
+> > 
+> > PATCH 11 and 12:
+> > - arch/arm64/configs/defconfig: just a couple of fuzz lines.
+> > 
+> > Please let me know if I should resend those patches adjusted for your tree.
+> 
+> Yes please resend them today or tomorrow so I can send them the following
+> day. Thanks
 
-are available in the Git repository at:
+Sorry, what's the best wasy to provide the updated patch 8 to 12 to you? 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/clk-imx-6.16
+1) Resend the entire patchset (V10) with relevant patches updated
+2) Send only updated patches 8 through 12 (maybe as an entirely new patchset with
+   only those specific patches)
+3) Asking you to pull teh relevant commit from my own git repo
 
-for you to fetch changes up to 6a55647af3334f1d935ece67de4a838a864b53fc:
+Many thanks,
+Andrea
 
-  dt-bindings: clock: imx8m-clock: add PLLs (2025-05-05 10:48:56 +0300)
 
-----------------------------------------------------------------
-i.MX clock changes for 6.16
-
-- Add video PLL clocks to both i.MX8MM and i.MX8MP
-  while dropping the numeral suffix.
-- Add imx_anatop_get_clk_hw helper
-- Add anatop clock providers for i.MX8M[MNP]
-- Drop ccm_ prefix from base in i.MX8MP clock provider
-- Document bindings for PLLs in imx8m-clock schema
-
-----------------------------------------------------------------
-Dario Binacchi (11):
-      dt-bindings: clock: imx8mm: add VIDEO_PLL clocks
-      clk: imx8mm: rename video_pll1 to video_pll
-      dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
-      clk: imx8mp: rename video_pll1 to video_pll
-      dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
-      clk: imx: add hw API imx_anatop_get_clk_hw
-      clk: imx: add support for i.MX8MM anatop clock driver
-      clk: imx: add support for i.MX8MN anatop clock driver
-      clk: imx: add support for i.MX8MP anatop clock driver
-      clk: imx8mp: rename ccm_base to base
-      dt-bindings: clock: imx8m-clock: add PLLs
-
- .../bindings/clock/fsl,imx8m-anatop.yaml           |  53 +-
- .../devicetree/bindings/clock/imx8m-clock.yaml     |  27 +-
- drivers/clk/imx/Makefile                           |   6 +-
- drivers/clk/imx/clk-imx8mm-anatop.c                | 287 +++++++++
- drivers/clk/imx/clk-imx8mm.c                       | 262 ++++----
- drivers/clk/imx/clk-imx8mn-anatop.c                | 283 +++++++++
- drivers/clk/imx/clk-imx8mn.c                       | 183 +++---
- drivers/clk/imx/clk-imx8mp-anatop.c                | 306 ++++++++++
- drivers/clk/imx/clk-imx8mp.c                       | 672 ++++++++++-----------
- drivers/clk/imx/clk.c                              |  15 +
- drivers/clk/imx/clk.h                              |   2 +
- include/dt-bindings/clock/imx8mm-clock.h           |  76 ++-
- include/dt-bindings/clock/imx8mn-clock.h           |  64 ++
- include/dt-bindings/clock/imx8mp-clock.h           |  80 ++-
- 14 files changed, 1711 insertions(+), 605 deletions(-)
- create mode 100644 drivers/clk/imx/clk-imx8mm-anatop.c
- create mode 100644 drivers/clk/imx/clk-imx8mn-anatop.c
- create mode 100644 drivers/clk/imx/clk-imx8mp-anatop.c
+> -- 
+> Florian
+> 
