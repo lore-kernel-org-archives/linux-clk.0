@@ -1,65 +1,33 @@
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E52224B16
-	for <linux-clk@vger.kernel.org>; Thu,  8 May 2025 12:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FAD224B00;
+	Thu,  8 May 2025 12:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746707390; cv=none; b=g1H5NjZflqyG1Nm4A8a1P02Jw615UrWCLVqL3ITsUDuZY0vnxakRLbTBx0AdFKr/Am35zp158eMzJIiFmkiJEGFHyV8Uv8SmksFETwlGedwf9sgSKsw1yuT/0v6wbk1fcsp+wtXnH3mmXyWpntY8MGTSnJ0RmRNLGhBN3Ow1Y4I=
+	t=1746707405; cv=none; b=XB8hPsW6oFFv0VxrsAA0KWAaxPMEQdxzSeHz2AZKwVtGl0eo1dRqWhN79SKIujq2x9D3ltYVBM5y0paaIVIa/MsITd85EEqgc4aS1CgSt2mJnvJvWwXUG4rOh++/WEmTMQhHmAAUarZ+V8zvlvH5Iyhe2ZWGj5wkTPONiSfdEOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746707390; c=relaxed/simple;
-	bh=TDGsCti3mPtYzlEBmLlDoOJKGEqKrgzVDiHCOzJhQgs=;
+	s=arc-20240116; t=1746707405; c=relaxed/simple;
+	bh=MMD4E03wrSbwweSJzLwMaYfdapLKrO7ojqqkUygJHpY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d4RpoBDy8P3HMVWh8DHzJtXIz4sjyCSrVwLS0dRMybWXrhGvcEx0POOLu17A3kjzs8tuBS/8GLOL4RDRmS82LCmFq5+5A7082SVrTYFpR1eJhyrNrKfaRyAmTLBXg88+tJsZPMBqY+u30QRKonlO/kMY/wSL1KWUYo/cXcNSgTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=Omlxtdkx; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	 In-Reply-To:Content-Type; b=ZSdot0gYZWlUX8RL15xbNvPDYrpIM+lftok+nnqzOqtPc1/mD4m0HbII9x4FfnOMXCeJx9w1QqvDV8GUhy9TQ7YspWpllg7OXhQkFexcvJTjrelJvnQ8rb/9fCzKNXMkba28hNTQ3huK1cmRMiNiBqJllMfBImntJmi3n7kNJEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=U0Mw8EqT; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="Omlxtdkx"
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85e15dc801aso77860939f.2
-        for <linux-clk@vger.kernel.org>; Thu, 08 May 2025 05:29:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1746707388; x=1747312188; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EchSTz2ixLAWYTB96sLu87zXRfh/aWLsrM0Vf/7G5Gc=;
-        b=OmlxtdkxzJusAKKBcHr6DeLha/mV/iP9Nk7vwb3sM3rN+eDYqyA6iMFj8roR+ntE8s
-         w3wbjV9rXmL5tK6hNdeJg2Ku+xs9zYIqbImZcvIIZ09ImIwXEZuzFv+cnOGPhv9JMnct
-         n9rqYr9MemeaelbRsdpY7H3cChhDYiPq6AA0SxebbrWWpVdrzUqNI5h8jope7LhPQ2Rt
-         tN78rrZ8fFPfXcDv9hpH5sMaM1QoTX2nTJANH37k/8Qky3jq3cygzC/eJj9eeFp77Jv9
-         k0DudVv60jSxTP3IDc3wuqs+xwKJDt4ty24S6fDnKSGna9hf76botuhcqtLa72TX1PPG
-         otUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746707388; x=1747312188;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EchSTz2ixLAWYTB96sLu87zXRfh/aWLsrM0Vf/7G5Gc=;
-        b=WBi7mT9zAasNp5S5ORF7H+BufvrAH5I81AJF4pNsCZinN5EFjN27wNwK7x0GlwxDjE
-         7Nq6wmeIJ4s3pkYOeadlIYbYDYBf7j0YSLWLQFP1xpei7Z9WZq2YYg8x29MGmlney0ft
-         aivJRchxtqQ+WInYli0bx6wEDQ+7I0mS0EZCdb4Cut5jEeV5tOlNPyt1xO5xvOYc4x+E
-         Lp8S3tyjlHZuSO4wJvVEDMIxHPRmnF1bF6nPFz27kR4vSqP2U7OAiiK/06/56Fjluf1C
-         P8s0i1oKv9gCoM7Ns3Ssn1Zs+KvphTKRVQl+thYceUD4WDFIbhJsZK3UyD0h9PZ9vOpZ
-         J06A==
-X-Forwarded-Encrypted: i=1; AJvYcCVo3BUSimhCXzp6PCTa0dqnvpqe0M+JWOFoT9vRWtJSfa8MynjCdM/TclzyaYCL7CHxO2sporM1Pgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYeECB3K5eD8FIxf/ha78b9D922HVMKhHgTt+HqAzawVLFJ+xd
-	RcPCkj/ZA/xIp85heSVaXu+MYxQ1gVkkE1SXFIkOzHXyW9PjufXWdl7T3Nf8O8Q=
-X-Gm-Gg: ASbGncuYoz9Z458eFoWb0jvTrInj8PMSYwMLMqBWk0HVpTaO/mbVYXxE7LWsnPkZuMo
-	R6nJi5EeiaJVj2g4bNmi54wUOt5uDj9F2eji5x2uRes8WB/6xPk/+DTOyUeKv1tAHyyIFd1uySC
-	AEeFu0invT7AzzbQ9XhXfZloPQtIHU3vr9nuLKkN/Yx/xgXIQ7AjEp9UoqCJeO6g1glIbJSV/fj
-	y88tTyaJ3v60kl1zkpC3Wypc3Oc1vVLSkFeKYoWI27aNLuG9rvS1IVjnlBY7u9a7NHKJbcAEtRf
-	+4fkAEqKBh8saam4rYyRICco3gyqJf4ZLnKcc1wBD/qm45FNlD2uqzQOjHXoI8hX+h9m3CDKoX5
-	aWypu
-X-Google-Smtp-Source: AGHT+IF690lf3lW382YdkiJiBkYc8A/KfmHLjKI68D6s9G2Rm2ydeiV8IBPkiN5nxv5k+Txl9dCHlg==
-X-Received: by 2002:a05:6602:3413:b0:867:17a6:9fd2 with SMTP id ca18e2360f4ac-8674737348bmr976931039f.9.1746707387766;
-        Thu, 08 May 2025 05:29:47 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f88a8cf769sm3129157173.2.2025.05.08.05.29.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 05:29:47 -0700 (PDT)
-Message-ID: <65bc21e7-d936-492a-b095-4c1469932623@riscstar.com>
-Date: Thu, 8 May 2025 07:29:46 -0500
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="U0Mw8EqT"
+Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C148322A;
+	Thu,  8 May 2025 14:29:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1746707384;
+	bh=MMD4E03wrSbwweSJzLwMaYfdapLKrO7ojqqkUygJHpY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U0Mw8EqTYzJvn/H6u7wQWiB0ZdlYwXmowQL27+L/zo+uzkYnSSMbCe83nENeT7Mr4
+	 S5VBKRphC4KAaZf4/LyIa3FRrmKTqlU4utQ7OfEqyUaCfsPslTlYWZm8P/PhFpyL0/
+	 5ZLjiXLIaR//+pK8vzYM7SGEyP3xrj4sI5G6XWLU=
+Message-ID: <502e185a-a632-476c-8712-56e845b6ca84@ideasonboard.com>
+Date: Thu, 8 May 2025 13:29:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -67,126 +35,139 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/6] reset: spacemit: define three more CCUs
-To: Philipp Zabel <p.zabel@pengutronix.de>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
- sboyd@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, dlan@gentoo.org
-Cc: heylenay@4d2.org, inochiama@outlook.com, guodong@riscstar.com,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250506210638.2800228-1-elder@riscstar.com>
- <20250506210638.2800228-6-elder@riscstar.com>
- <a3febd3718397d7cf067e2ae637c2d633388f89f.camel@pengutronix.de>
+Subject: Re: [PATCH 1/4] dt-bindings: clock: Add macros for RZ/V2H ISP clocks
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Daniel Scally <dan.scally+renesas@ideasonboard.com>
+References: <20250506121252.557170-1-dan.scally@ideasonboard.com>
+ <20250506121252.557170-2-dan.scally@ideasonboard.com>
+ <TY3PR01MB12089DADE623A195D184FD5BAC289A@TY3PR01MB12089.jpnprd01.prod.outlook.com>
 Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <a3febd3718397d7cf067e2ae637c2d633388f89f.camel@pengutronix.de>
+From: Dan Scally <dan.scally@ideasonboard.com>
+Autocrypt: addr=dan.scally@ideasonboard.com; keydata=
+ xsFNBGLydlEBEADa5O2s0AbUguprfvXOQun/0a8y2Vk6BqkQALgeD6KnXSWwaoCULp18etYW
+ B31bfgrdphXQ5kUQibB0ADK8DERB4wrzrUb5CMxLBFE7mQty+v5NsP0OFNK9XTaAOcmD+Ove
+ eIjYvqurAaro91jrRVrS1gBRxIFqyPgNvwwL+alMZhn3/2jU2uvBmuRrgnc/e9cHKiuT3Dtq
+ MHGPKL2m+plk+7tjMoQFfexoQ1JKugHAjxAhJfrkXh6uS6rc01bYCyo7ybzg53m1HLFJdNGX
+ sUKR+dQpBs3SY4s66tc1sREJqdYyTsSZf80HjIeJjU/hRunRo4NjRIJwhvnK1GyjOvvuCKVU
+ RWpY8dNjNu5OeAfdrlvFJOxIE9M8JuYCQTMULqd1NuzbpFMjc9524U3Cngs589T7qUMPb1H1
+ NTA81LmtJ6Y+IV5/kiTUANflpzBwhu18Ok7kGyCq2a2jsOcVmk8gZNs04gyjuj8JziYwwLbf
+ vzABwpFVcS8aR+nHIZV1HtOzyw8CsL8OySc3K9y+Y0NRpziMRvutrppzgyMb9V+N31mK9Mxl
+ 1YkgaTl4ciNWpdfUe0yxH03OCuHi3922qhPLF4XX5LN+NaVw5Xz2o3eeWklXdouxwV7QlN33
+ u4+u2FWzKxDqO6WLQGjxPE0mVB4Gh5Pa1Vb0ct9Ctg0qElvtGQARAQABzShEYW4gU2NhbGx5
+ IDxkYW4uc2NhbGx5QGlkZWFzb25ib2FyZC5jb20+wsGNBBMBCAA3FiEEsdtt8OWP7+8SNfQe
+ kiQuh/L+GMQFAmLydlIFCQWjmoACGwMECwkIBwUVCAkKCwUWAgMBAAAKCRCSJC6H8v4YxDI2
+ EAC2Gz0iyaXJkPInyshrREEWbo0CA6v5KKf3I/HlMPqkZ48bmGoYm4mEQGFWZJAT3K4ir8bg
+ cEfs9V54gpbrZvdwS4abXbUK4WjKwEs8HK3XJv1WXUN2bsz5oEJWZUImh9gD3naiLLI9QMMm
+ w/aZkT+NbN5/2KvChRWhdcha7+2Te4foOY66nIM+pw2FZM6zIkInLLUik2zXOhaZtqdeJZQi
+ HSPU9xu7TRYN4cvdZAnSpG7gQqmLm5/uGZN1/sB3kHTustQtSXKMaIcD/DMNI3JN/t+RJVS7
+ c0Jh/ThzTmhHyhxx3DRnDIy7kwMI4CFvmhkVC2uNs9kWsj1DuX5kt8513mvfw2OcX9UnNKmZ
+ nhNCuF6DxVrL8wjOPuIpiEj3V+K7DFF1Cxw1/yrLs8dYdYh8T8vCY2CHBMsqpESROnTazboh
+ AiQ2xMN1cyXtX11Qwqm5U3sykpLbx2BcmUUUEAKNsM//Zn81QXKG8vOx0ZdMfnzsCaCzt8f6
+ 9dcDBBI3tJ0BI9ByiocqUoL6759LM8qm18x3FYlxvuOs4wSGPfRVaA4yh0pgI+ModVC2Pu3y
+ ejE/IxeatGqJHh6Y+iJzskdi27uFkRixl7YJZvPJAbEn7kzSi98u/5ReEA8Qhc8KO/B7wprj
+ xjNMZNYd0Eth8+WkixHYj752NT5qshKJXcyUU87BTQRi8nZSARAAx0BJayh1Fhwbf4zoY56x
+ xHEpT6DwdTAYAetd3yiKClLVJadYxOpuqyWa1bdfQWPb+h4MeXbWw/53PBgn7gI2EA7ebIRC
+ PJJhAIkeym7hHZoxqDQTGDJjxFEL11qF+U3rhWiL2Zt0Pl+zFq0eWYYVNiXjsIS4FI2+4m16
+ tPbDWZFJnSZ828VGtRDQdhXfx3zyVX21lVx1bX4/OZvIET7sVUufkE4hrbqrrufre7wsjD1t
+ 8MQKSapVrr1RltpzPpScdoxknOSBRwOvpp57pJJe5A0L7+WxJ+vQoQXj0j+5tmIWOAV1qBQp
+ hyoyUk9JpPfntk2EKnZHWaApFp5TcL6c5LhUvV7F6XwOjGPuGlZQCWXee9dr7zym8iR3irWT
+ +49bIh5PMlqSLXJDYbuyFQHFxoiNdVvvf7etvGfqFYVMPVjipqfEQ38ST2nkzx+KBICz7uwj
+ JwLBdTXzGFKHQNckGMl7F5QdO/35An/QcxBnHVMXqaSd12tkJmoRVWduwuuoFfkTY5mUV3uX
+ xGj3iVCK4V+ezOYA7c2YolfRCNMTza6vcK/P4tDjjsyBBZrCCzhBvd4VVsnnlZhVaIxoky4K
+ aL+AP+zcQrUZmXmgZjXOLryGnsaeoVrIFyrU6ly90s1y3KLoPsDaTBMtnOdwxPmo1xisH8oL
+ a/VRgpFBfojLPxMAEQEAAcLBfAQYAQgAJhYhBLHbbfDlj+/vEjX0HpIkLofy/hjEBQJi8nZT
+ BQkFo5qAAhsMAAoJEJIkLofy/hjEXPcQAMIPNqiWiz/HKu9W4QIf1OMUpKn3YkVIj3p3gvfM
+ Res4fGX94Ji599uLNrPoxKyaytC4R6BTxVriTJjWK8mbo9jZIRM4vkwkZZ2bu98EweSucxbp
+ vjESsvMXGgxniqV/RQ/3T7LABYRoIUutARYq58p5HwSP0frF0fdFHYdTa2g7MYZl1ur2JzOC
+ FHRpGadlNzKDE3fEdoMobxHB3Lm6FDml5GyBAA8+dQYVI0oDwJ3gpZPZ0J5Vx9RbqXe8RDuR
+ du90hvCJkq7/tzSQ0GeD3BwXb9/R/A4dVXhaDd91Q1qQXidI+2jwhx8iqiYxbT+DoAUkQRQy
+ xBtoCM1CxH7u45URUgD//fxYr3D4B1SlonA6vdaEdHZOGwECnDpTxecENMbz/Bx7qfrmd901
+ D+N9SjIwrbVhhSyUXYnSUb8F+9g2RDY42Sk7GcYxIeON4VzKqWM7hpkXZ47pkK0YodO+dRKM
+ yMcoUWrTK0Uz6UzUGKoJVbxmSW/EJLEGoI5p3NWxWtScEVv8mO49gqQdrRIOheZycDmHnItt
+ 9Qjv00uFhEwv2YfiyGk6iGF2W40s2pH2t6oeuGgmiZ7g6d0MEK8Ql/4zPItvr1c1rpwpXUC1
+ u1kQWgtnNjFHX3KiYdqjcZeRBiry1X0zY+4Y24wUU0KsEewJwjhmCKAsju1RpdlPg2kC
+In-Reply-To: <TY3PR01MB12089DADE623A195D184FD5BAC289A@TY3PR01MB12089.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/8/25 4:11 AM, Philipp Zabel wrote:
-> On Di, 2025-05-06 at 16:06 -0500, Alex Elder wrote:
->> Three more CCUs on the SpacemiT K1 SoC implement only resets, not clocks.
->> Define these resets so they can be used.
+Hi Fabrizio
+
+On 06/05/2025 14:27, Fabrizio Castro wrote:
+> Hi Daniel,
+>
+> Thanks for your patch!
+>
+>> From: Daniel Scally <dan.scally@ideasonboard.com>
+>> Sent: 06 May 2025 13:13
+>> Subject: [PATCH 1/4] dt-bindings: clock: Add macros for RZ/V2H ISP clocks
 >>
->> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> From: Daniel Scally <dan.scally+renesas@ideasonboard.com>
+>>
+>> Add macros for the RZ/V2H ISP clocks so that they can be referred to
+>> descriptively in the drivers.
+> I don't think this patch is needed.
+
+
+Ah, indeed not in this set...I've been using them in the devicetree files (not the drivers as my 
+commit message says) for the hardware that consumes the clocks, like so:
+
+
+isp: isp@16080000 {
+     compatible = "arm,mali-c55";
+     reg = <0 0x16080000 0 0x200000>;
+
+     clocks = <&cpg CPG_MOD R9A09G057_ISP0_ACLK>,
+             <&cpg CPG_MOD R9A09G057_ISP0_VIN_ACLK>,
+             <&cpg CPG_MOD R9A09G057_ISP0_SCLK>;
+
+     ...
+
+}
+
+
+Do you think they're useful for those? If so I'll move this and the rest patch to a later series 
+that adds those nodes to r9a09g057.dtsi
+
+
+Thanks
+
+Dan
+
+
+>
+> Cheers,
+> Fab
+>
+>> Signed-off-by: Daniel Scally <dan.scally+renesas@ideasonboard.com>
 >> ---
->>   drivers/clk/spacemit/ccu-k1.c | 24 ++++++++++++++++
->>   drivers/reset/spacemit/k1.c   | 54 +++++++++++++++++++++++++++++++++++
->>   include/soc/spacemit/ccu_k1.h | 30 +++++++++++++++++++
->>   3 files changed, 108 insertions(+)
+>>   include/dt-bindings/clock/renesas,r9a09g057-cpg.h | 4 ++++
+>>   1 file changed, 4 insertions(+)
 >>
->> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
->> index 6b1845e899e5f..bddc83aff23cd 100644
->> --- a/drivers/clk/spacemit/ccu-k1.c
->> +++ b/drivers/clk/spacemit/ccu-k1.c
->> @@ -939,6 +939,18 @@ static const struct spacemit_ccu_data k1_ccu_apmu_data = {
->>   	.num		= ARRAY_SIZE(k1_ccu_apmu_hws),
->>   };
->>   
->> +static const struct spacemit_ccu_data k1_ccu_rcpu_data = {
-> 
-> The /* No clocks in the RCPU CCU */ comment belongs here, instead of in
-> the reset driver.
-> 
-> I wonder though, if these units have no clocks, why are they called
-> CCUs? It doesn't make much sense to me to add their compatibles to the
-> ccu-k1 driver only to load the reset aux driver. Why not just add a
-> platform driver next to the aux driver in reset-spacemit.ko for these
-> three?
-
-In fact, the particular registers involved *do* have fields
-to control some clocks, but there is currently no use for
-them, so support for them isn't implemented.  The reset
-controls in those registers are needed now, however.
-
-I actually first implemented this as a small, separate reset
-driver, only to learn late in the process that these other
-clocks might be needed someday.
-
-> 
->> +	.reset_name	= "rcpu-reset",
->> +};
->> +
->> +static const struct spacemit_ccu_data k1_ccu_rcpu2_data = {
->> +	.reset_name	= "rcpu2-reset",
->> +};
->> +
->> +static const struct spacemit_ccu_data k1_ccu_apbc2_data = {
->> +	.reset_name	= "apbc2-reset",
->> +};
->> +
->>   static int spacemit_ccu_register(struct device *dev,
->>   				 struct regmap *regmap,
->>   				 struct regmap *lock_regmap,
->> @@ -1106,6 +1118,18 @@ static const struct of_device_id of_k1_ccu_match[] = {
->>   		.compatible	= "spacemit,k1-syscon-apmu",
->>   		.data		= &k1_ccu_apmu_data,
->>   	},
->> +	{
->> +		.compatible	= "spacemit,k1-syscon-rcpu",
->> +		.data		= &k1_ccu_rcpu_data,
->> +	},
->> +	{
->> +		.compatible	= "spacemit,k1-syscon-rcpu2",
->> +		.data		= &k1_ccu_rcpu2_data,
->> +	},
->> +	{
->> +		.compatible	= "spacemit,k1-syscon-apbc2",
->> +		.data		= &k1_ccu_apbc2_data,
->> +	},
->>   	{ }
->>   };
->>   MODULE_DEVICE_TABLE(of, of_k1_ccu_match);
->> diff --git a/drivers/reset/spacemit/k1.c b/drivers/reset/spacemit/k1.c
->> index 19a34f151b214..27434a1928261 100644
->> --- a/drivers/reset/spacemit/k1.c
->> +++ b/drivers/reset/spacemit/k1.c
->> @@ -137,6 +137,57 @@ static const struct ccu_reset_controller_data k1_apmu_reset_data = {
->>   	.count		= ARRAY_SIZE(apmu_resets),
->>   };
->>   
->> +static const struct ccu_reset_data rcpu_resets[] = {
->> +	[RESET_RCPU_SSP0]	= RESET_DATA(RCPU_SSP0_CLK_RST,	0, BIT(0)),
->> +	[RESET_RCPU_I2C0]	= RESET_DATA(RCPU_I2C0_CLK_RST,	0, BIT(0)),
->> +	[RESET_RCPU_UART1]	= RESET_DATA(RCPU_UART1_CLK_RST, 0, BIT(0)),
->> +	[RESET_RCPU_IR]		= RESET_DATA(RCPU_CAN_CLK_RST,	0, BIT(0)),
->> +	[RESET_RCPU_CAN]	= RESET_DATA(RCPU_IR_CLK_RST,	0, BIT(0)),
->> +	[RESET_RCPU_UART0]	= RESET_DATA(RCPU_UART0_CLK_RST, 0, BIT(0)),
->> +	[RESET_RCPU_HDMI_AUDIO]	= RESET_DATA(AUDIO_HDMI_CLK_CTRL, 0, BIT(0)),
->> +};
->> +
->> +static const struct ccu_reset_controller_data k1_rcpu_reset_data = {
->> +	/* No clocks in the RCPU CCU */
-> 
-> This information is not useful in the reset driver.
-
-Yes, I think this was just copy-pasted from the previous code.
-This won't be there in the next version.
-
-					-Alex
-
-> regards
-> Philipp
-
+>> diff --git a/include/dt-bindings/clock/renesas,r9a09g057-cpg.h b/include/dt-
+>> bindings/clock/renesas,r9a09g057-cpg.h
+>> index 541e6d719bd6..cb2ccd9068db 100644
+>> --- a/include/dt-bindings/clock/renesas,r9a09g057-cpg.h
+>> +++ b/include/dt-bindings/clock/renesas,r9a09g057-cpg.h
+>> @@ -17,5 +17,9 @@
+>>   #define R9A09G057_CM33_CLK0			6
+>>   #define R9A09G057_CST_0_SWCLKTCK		7
+>>   #define R9A09G057_IOTOP_0_SHCLK			8
+>> +#define R9A09G057_ISP0_ACLK			226
+>> +#define R9A09G057_ISP0_PCLK			227
+>> +#define R9A09G057_ISP0_VIN_ACLK			228
+>> +#define R9A09G057_ISP0_SCLK			229
+>>
+>>   #endif /* __DT_BINDINGS_CLOCK_RENESAS_R9A09G057_CPG_H__ */
+>> --
+>> 2.34.1
+>>
