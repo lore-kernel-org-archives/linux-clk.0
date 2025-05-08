@@ -1,33 +1,33 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4951DFCB;
-	Thu,  8 May 2025 12:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7957D225414;
+	Thu,  8 May 2025 12:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746707430; cv=none; b=spt3FJpbxgCif5L9iRLYM+2rKxRC0GUkdjj6cRReenjI/QhVarnguCMx0TRqxiXIAEAxCwD/ySjMGW/5V+1Wv8o+wvhSbBoQ87VawKlNnSwcinuo5qdy80xLFfPIDOQJpkoqL91VPNhYAhYC3JOl94YfdnrJsdzsKL1Z7nycLY4=
+	t=1746707824; cv=none; b=FrYGuz93a4lDdaA/Rx1fth4Vak5dUZZCGxGLxXRqsv8uJ+zOYd0WJ0gBVwgX6aLeW15UT4zEitsIpR5hFywog0icDg3g1NVP6tViW5GcL/TxvCv9giSuRL0qLchn4qgh/MxNlvqOec7El1Uvu7iBre0N8I14maTOBdrGD1tfY6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746707430; c=relaxed/simple;
-	bh=HeIcU31k0jUrshoLuqpcoqbbrejY7CBH2/uU+k3kuOc=;
+	s=arc-20240116; t=1746707824; c=relaxed/simple;
+	bh=uf04WvtBTAcu8i+qtx/QIct6W3coW9VBYJe7IqLhV2o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RufyxzzWLlywlMaJkvFyXAriM/AaxfrgjMJhFSnTPUI87pUAzag91Jh15L4fPkQ7yLfuJSEugk2z88w/8GeTp09RCbuYj8mBu92Yim/iiad03h/4YPVPKO5/9QSVQh2vhOBoQbaTAjsfqGFmapawfT/L5/GcF/O/hYHFnyA3tP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Kv7GTQmN; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	 In-Reply-To:Content-Type; b=PgCg9W4inFsICWYxTWCecW4IEj4qlRoqrb1uu4wQ0Z9OtpQ82mPAsnj4twX/fbA+a8AgUdL9dkPGtuN+E51eLwUyy5lTvR1tbhh+AfULpjwEGhuHapqOhJcvK21v2dBJa8RVM7ze+Pq6g2PpXyhMlHw6vEdOIj2xbqS6HugYxIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IRJI7sXU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Kv7GTQmN"
-Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0845722A;
-	Thu,  8 May 2025 14:30:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1746707415;
-	bh=HeIcU31k0jUrshoLuqpcoqbbrejY7CBH2/uU+k3kuOc=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRJI7sXU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 842DEC4CEE7;
+	Thu,  8 May 2025 12:36:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746707823;
+	bh=uf04WvtBTAcu8i+qtx/QIct6W3coW9VBYJe7IqLhV2o=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Kv7GTQmNOjXfv5izHqX8NTODRxFtWXkeujrTKYNLX9iMKNX48d1lZt7nD7MQEh+lk
-	 u+RB9IMq+lBF21BjGUdzi4omacs5jYElXbmZ7mBw6p7xLnp7vVxGf5KfVJpOQzQs94
-	 s5/0zHW1UDWOZBJoPeVX/Ta62rjRKpELEezdfQdY=
-Message-ID: <5e5130c1-2967-41da-b8c4-352f676cced8@ideasonboard.com>
-Date: Thu, 8 May 2025 13:30:24 +0100
+	b=IRJI7sXUUKmI6ml+03g/Xm8u/BTPBl5SxN3Yed3TQsdsIVV4mk1vFrjhcLjyD+9Xo
+	 t9B1sU06ki4/bdSxAQ7TG8sMz+VpvGxWupwpefs67sgj3tqO4QprZrwTwyBn3mPNAu
+	 /hcQrsKbGckuiIGXLvklOKpuKd/eEdd1m9NRMJRC84ZnQpmgoY8D86enFLmkb1jqpn
+	 mBqueOzpGpOwz5AE6P6YR2qZb8ZKzQptDXFWAthNcBR0P5arHHvtkhuc6vFa02dyH3
+	 QqdzXL6y4tR/KEOVRkA9NQbNs2UrpHl/Ukltr+tScVZdOEbDdLfnc/d1mm8aZun+38
+	 KrFX0c9m2rSsg==
+Message-ID: <2ce8b9e5-562e-454f-9e2b-f2796d309063@kernel.org>
+Date: Thu, 8 May 2025 14:36:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,116 +35,138 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] clk: renesas: r9a09g057-cpg: Add reset definitions
- for RZ/V2H ISP
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Daniel Scally <dan.scally+renesas@ideasonboard.com>
-References: <20250506121252.557170-1-dan.scally@ideasonboard.com>
- <20250506121252.557170-5-dan.scally@ideasonboard.com>
- <TY3PR01MB1208913AA506585FF622DD7D3C289A@TY3PR01MB12089.jpnprd01.prod.outlook.com>
+Subject: Re: [PATCH v6 1/6] dt-bindings: soc: spacemit: define spacemit,k1-ccu
+ resets
+To: Alex Elder <elder@riscstar.com>, Yixun Lan <dlan@gentoo.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr, heylenay@4d2.org, inochiama@outlook.com,
+ guodong@riscstar.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250506210638.2800228-1-elder@riscstar.com>
+ <20250506210638.2800228-2-elder@riscstar.com>
+ <20250507223554-GYA505240@gentoo>
+ <22b7b5fc-6f5a-4ce8-ae12-a7423925c113@kernel.org>
+ <1521c828-31f3-4e45-a651-750ce2e37364@riscstar.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Dan Scally <dan.scally@ideasonboard.com>
-Autocrypt: addr=dan.scally@ideasonboard.com; keydata=
- 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
-In-Reply-To: <TY3PR01MB1208913AA506585FF622DD7D3C289A@TY3PR01MB12089.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <1521c828-31f3-4e45-a651-750ce2e37364@riscstar.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Fabrizio
+On 08/05/2025 14:17, Alex Elder wrote:
+> On 5/8/25 7:02 AM, Krzysztof Kozlowski wrote:
+>> On 08/05/2025 00:35, Yixun Lan wrote:
+>>>> +  - if:
+>>>> +      properties:
+>>>> +        compatible:
+>>>> +          contains:
+>>>> +            enum:
+>>>> +              - spacemit,k1-syscon-apbc
+>>>> +              - spacemit,k1-syscon-apmu
+>>>> +              - spacemit,k1-syscon-mpmu
+>>>> +    then:
+>>>> +      required:
+>>>> +        - clocks
+>>>> +        - clock-names
+>>>> +        - "#clock-cells"
+>>>>   
+>>>>   additionalProperties: false
+>>>>   
+>>>> diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
+>>>> index 35968ae982466..f5965dda3b905 100644
+>>>> --- a/include/dt-bindings/clock/spacemit,k1-syscon.h
+>>>> +++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
+>>> would it be better to move all reset definition to its dedicated dir?
+>>> which like: include/dt-bindings/reset/spacemit,k1-syscon.h?
+>>
+>> Please kindly trim the replies from unnecessary context. It makes it
+>> much easier to find new content.
+>>
+>>
+>> I don't get why such comments are appearing so late - at v6. There was
+>> nothing from you about this in v1, v2 and v3, which finally got reviewed.
+> 
+> Stephen Boyd said "please rework this to use the auxiliary driver
+> framework" on version 5 of the series; it was otherwise "done" at
+> that point.
 
-On 06/05/2025 14:26, Fabrizio Castro wrote:
-> Hi Daniel,
->
-> Thanks for your patch!
->
->> From: Daniel Scally <dan.scally@ideasonboard.com>
->> Sent: 06 May 2025 13:13
->> Subject: [PATCH 4/4] clk: renesas: r9a09g057-cpg: Add reset definitions for RZ/V2H ISP
->>
->> From: Daniel Scally <dan.scally+renesas@ideasonboard.com>
->>
->> Add reset line definitions for the ISP of the RZ/V2H SoC
->>
->> Signed-off-by: Daniel Scally <dan.scally+renesas@ideasonboard.com>
->> ---
->>   drivers/clk/renesas/r9a09g057-cpg.c | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
->> index cb001ae5f98b..6537654bbdfb 100644
->> --- a/drivers/clk/renesas/r9a09g057-cpg.c
->> +++ b/drivers/clk/renesas/r9a09g057-cpg.c
->> @@ -298,6 +298,10 @@ static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
->>   	DEF_RST(12, 14, 5, 31),		/* CRU_3_PRESETN */
->>   	DEF_RST(12, 15, 6, 0),		/* CRU_3_ARESETN */
->>   	DEF_RST(13, 0, 6, 1),		/* CRU_3_S_RESETN */
->> +	DEF_RST(13, 1, 6, 2),		/* ISP_0_VIN_ARESETN */
->> +	DEF_RST(13, 2, 6, 3),		/* ISP_0_REG_ARESETN */
->> +	DEF_RST(13, 3, 6, 4),		/* ISP_0_ISP_SRESETN */
->> +	DEF_RST(13, 4, 6, 5),		/* ISP_0_PRESETN */
-> The numbers LGTM, but I think these changes belong with patch number 2.
+Stephen is a subsystem maintainer so his comments are fine or acceptable
+to be late.
 
+> 
+> Doing this meant there was a much clearer separation of the clock
+> definitions from the reset definitions.  And Yixun's suggestion
+> came from viewing things in that context.
 
-OK, I'll squash them.
+Weren't they applicable to v1 as well? How bindings could change with
+change to auxiliary bus/driver?
 
->
-> Cheers,
-> Fab
->
->>   };
->>
->>   const struct rzv2h_cpg_info r9a09g057_cpg_info __initconst = {
->> --
->> 2.34.1
->>
+> 
+> Given the rework, I considered sending this as v1 of a new series
+> but did not.
+
+Sorry but no. Bindings headers at v1 are exactly the same or almost the
+same as now:
+
+https://lore.kernel.org/lkml/20250321151831.623575-2-elder@riscstar.com/
+
+so this idea could have been given at v1, v2, v3, v4, v5 (that would be
+late).... but at some point this is just unnecessary late nitpicking.
+
+So what then? Imagine that you prepare v7 and some other person gives
+you different comment about bindings or bindings headers. Then you
+prepare v8. And then someone comes with one more, different comment,
+because that person did not bother to review between v1-v8 (that
+imaginary future v8), so you need to prepare v9.
+
+I don't think this process is correct.
+
+Best regards,
+Krzysztof
