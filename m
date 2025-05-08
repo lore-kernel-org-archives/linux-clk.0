@@ -1,132 +1,121 @@
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F12BA38;
-	Thu,  8 May 2025 07:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C98BA38
+	for <linux-clk@vger.kernel.org>; Thu,  8 May 2025 07:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746688430; cv=none; b=ftH/VPpGQU4EC/D8rbjTLNmPt4xB+eOm9qchQmFpa1D3uxGs5pPERH5LXjl4+89d8Q9IPo9wXM6qG38P39jn3A3UzLCD/hM7yVl5rE6qweC8MitowXMEtmMvdCmxT964ieFwLNQUUIMDXLWFG2u+auHiQ29hUepUoDYfrClloCw=
+	t=1746688957; cv=none; b=OEvFIxO2XLEGwavrysq1tqcOJ1t6APHl1GnEzvdLZa7rd+QzPOFMKqo8IbDuanowhP4J38vLoAU2LGXmIgCNjEIt1OIHfj8xtE5yeqFcmz5ZQffkQ4wBorg7c2hUv2Qa5JkbQaxNFrTy5OZglMiIkWdXfJEXHxsglsDVLDvSypE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746688430; c=relaxed/simple;
-	bh=hrwGFHMMwMzLO3qU86OI8t/Nh3XTJsB3z/oENIE9U9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QUd3J7R5wuotH1g2wWz09NEKH9Sm2IxzOMkXnvg8R+jwBrAhP4Sy+p8ixoTHQBcg53le+PCUg9JXmksX0umBAG6ndW795JZERNAFg/MhcQ77LLKd/Fm4n/nbTSrNmIM4u5guvfG3Br8smENCrD254YwjzwaEpibS2ploMeyhwx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-52413efd0d3so219825e0c.2;
-        Thu, 08 May 2025 00:13:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746688427; x=1747293227;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YCDiRMnhh5NRGE6kDeKql7Kl5Sr5vQvd1G2z+pchMa0=;
-        b=ZDoeHGGKMTvcWEJvCd/5p+CiRtbolvk0TTPyqjfYJXDZw+qnBNEgKHGxgi1xPWcjZk
-         fhlWIupOLOtDjIjutZRWWv7QlI3JjBNdGKjQlMvfjolbsIJ0uZyGN1eG71wCYYTW6qB8
-         G+T1I4VZ/qfalrX4MiQ+J513JMi+3nL0UyIHxuRQC/EluAnhvJT+B6XlAm2Zab7QZDuV
-         jrj35bJt8wj9/HQU7pqa5zjO7QF+Kwkiao51UZYS0YL76FGDSJpxFYel7fMhDsZx/WN1
-         +zGe+OjtJazSB/IKI7OaLRg9AqiJsPr0T9f2G+GSIGXU/4YlELO3Cth/rvbzxduvG8q1
-         YW6A==
-X-Forwarded-Encrypted: i=1; AJvYcCU6cWQlaPAu+D2oXcVYq1rAkyYtR72d5p0ziPgniuNxLPWcwCX+uwirOLuAn3N1jY5QnHArx7fLR6iiWw==@vger.kernel.org, AJvYcCU9AasIYaDLOA47POR4s7BIbVO6LZrKxYJ2wgkDBPrbJYD3wKX63FHjSKapFsB8X2a1h7zkmEsCzu1a@vger.kernel.org, AJvYcCVNWzVAtRT4ZCWPvPyW3yhQDMgmD41qpwMRWNbsygyLsJS3G1YEWi9jiKtjI7OYbmy+1MoCz1YcBg/x@vger.kernel.org, AJvYcCVwGYOq0/kT6N/Wzg28b9q7/giRZ6B5ralpUZeB/VtP8Xrtt7bJJlYbTtq4nezL72K6Ogq6Qbam9zxO@vger.kernel.org, AJvYcCWPpXZMzsmgqwcxZP0gDQKA4g837AsrCWOVGST4NzUwWUwI1i+YTxFAtbjWjAfJQT9hOsZN/D8UGIlL@vger.kernel.org, AJvYcCWfCmjc9Tk26fJ2mlXcAubQyhZO0G87Uyg+s93g0njmCeKLZLzBhbnjUKyivfP71tZbcCFxRvlXjfTK@vger.kernel.org, AJvYcCXF2utdp15OHTrzOag10UrrfIRCdjf/6QG4D49QSCzr5hstwDy9vhqQAnSUOQ/0GrlSbGJPU8i7kGu4A+sB@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqoMjjcgL245QVx7A6SCKCGTbZ4leWZ2Ds2FJzPtkg/IHXN7UT
-	mOpCnCoc9aEOd04ZbP38eQd07GhWsT+1XQwnq6f1ukRLcjbxzKhzbizHoVa6
-X-Gm-Gg: ASbGncv9AQLs30bzrFisedCFtzfjX171YLPsQNeFoam3x0p/kC8crscRZuzx6cgbv/h
-	sTS3hir/W+i3co0n8zi9Sy5eLmDj5qTneakcgb08UwrtfKAGfEnyEWOhSVDpiX4Ra2Or8Tf+zBz
-	4pmFxpVQ8Qu/0tT41zLnIrbsugFB+d0FL7e7Z1aFL/iNUIIAMzhKYyqqrlECtreTfH9SV8QJayu
-	71b6P6/UyE+GeNg4EfCoMTMAzOGdEYP62+cBCF1s8VivT+Gv+3tQ/x0k1NI+pfxJiRLtjQKfFEH
-	W3BO3fSvEOLhC9ul5sOFcEoWSX9yp5e3p7bPGtihCRfEtWO9IX7X+8xvVTv5EuKW11t6L6sKBP9
-	0RZU=
-X-Google-Smtp-Source: AGHT+IF2A/TDjmguwXYq3jSxg9o+koHTOBbSlXcLVMj1lgbKb5yCqhb2DL2IwH2HhmoWubyqUiPEIQ==
-X-Received: by 2002:ac5:c7da:0:b0:52c:4eb0:118d with SMTP id 71dfb90a1353d-52c4eb01601mr35484e0c.4.1746688426849;
-        Thu, 08 May 2025 00:13:46 -0700 (PDT)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52ae41f2065sm2870684e0c.47.2025.05.08.00.13.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 00:13:46 -0700 (PDT)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4ddb03095d3so162794137.0;
-        Thu, 08 May 2025 00:13:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUNj8OJor3vZ/dTBxqJZC3ZgPzzPP2+ehV1cJqek9OxNQkPC/wRWkfjtrylZ9TaVCYaGY4FVL+JCmQ4@vger.kernel.org, AJvYcCUtA2qJtyXPFPPy28Up9FnXEU7rYW/E8TlpWVt1uKSAXROvuqum/1RFmbE7WZRa9VMxgXWa3rIOsGQk@vger.kernel.org, AJvYcCVJpEhuHszeh3rrLo7LIhbYait2dWyIXX0RPhDAxROA7ESJi/URMULnsMdTF+1ZLswbSznkxssYagtjp6sg@vger.kernel.org, AJvYcCVTP7+rFGTJ62yCleLXcXsbj2fwLnRrOpBBGuyBlyp40pOflowX9nTuNEBJfiKcttJRx9TMGMA3SVJiAg==@vger.kernel.org, AJvYcCWLKCsk0LrjA3dkeYnBxnwJngTn/JrfSwU7/sVxYlROKiMJSe35NkuMoTwrIp2hddQhbXlgusEdyLY3@vger.kernel.org, AJvYcCX5X0LnAOacg3o95rdnBe4wDf7vtTgJaqCztpip75vA94AbWr9z6A/gq9BTrJyyVOJ0jVgd5qfKurNO@vger.kernel.org, AJvYcCX8Gwv3tJ80wkeBjV9dOwlIFrBll7/3VEj9XQ5cxVrAVc3CA1QvC7/UaLZGws30lqXt6dja4HovCVID@vger.kernel.org
-X-Received: by 2002:a05:6102:2c87:b0:4c1:c10d:cf65 with SMTP id
- ada2fe7eead31-4dc738bc3famr5378135137.25.1746688425863; Thu, 08 May 2025
- 00:13:45 -0700 (PDT)
+	s=arc-20240116; t=1746688957; c=relaxed/simple;
+	bh=QGS1M/YT3mDdy/1Xp33jgSPbNLnApMgn9s4eyyzTfes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dfxQX6gx25wgP2JHZdyaLXCbwsRh9gCGZuh+GLomdBvWWW2vRyp50yMyZXGLCgMx1WY3nEcr4PD1nx+rqDVNcOwC8OuwizHBsFDduKvUv1m54oJJ8V+GL3qgeAGWyxjqZ9YclVZPuL8ylBxqiwmOFePK1y1hpCKR8PnKBKYVCsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uCvaK-00056O-C2; Thu, 08 May 2025 09:22:24 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uCvaK-001ghe-00;
+	Thu, 08 May 2025 09:22:24 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1uCvaJ-00ALKC-2r;
+	Thu, 08 May 2025 09:22:23 +0200
+Date: Thu, 8 May 2025 09:22:23 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	kernel@pengutronix.de,
+	Alvin =?iso-8859-15?Q?=A6ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH v4 2/3] dt-bindings: clock: add TI CDCE6214 binding
+Message-ID: <aBxbr8CyKmdZQobS@pengutronix.de>
+References: <20250430-clk-cdce6214-v4-0-9f15e7126ac6@pengutronix.de>
+ <20250430-clk-cdce6214-v4-2-9f15e7126ac6@pengutronix.de>
+ <3ba53493700561923c4ea9ab53a1a272@kernel.org>
+ <aBsUObKHmJkBFN04@pengutronix.de>
+ <1f072e2e02bb6a66d10c50177e5c69a6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507071315.394857-1-herve.codina@bootlin.com>
- <20250507071315.394857-24-herve.codina@bootlin.com> <8b97e095-dbed-438c-9c6d-d3c2c5929fc0@lunn.ch>
-In-Reply-To: <8b97e095-dbed-438c-9c6d-d3c2c5929fc0@lunn.ch>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 May 2025 09:13:33 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUVvOMavxSAKaSMOwj_zXR=5h8KrrqNg4RS2Yaw3WXpKg@mail.gmail.com>
-X-Gm-Features: ATxdqUHmcSjbjZfHI-fr6cqBy9DRd_HkLObPFwa-nuGiyXHv4iNIliDKKGB_NdU
-Message-ID: <CAMuHMdUVvOMavxSAKaSMOwj_zXR=5h8KrrqNg4RS2Yaw3WXpKg@mail.gmail.com>
-Subject: Re: [PATCH v2 23/26] misc: lan966x_pci: Introduce board specific data
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Herve Codina <herve.codina@bootlin.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, Allan Nielsen <allan.nielsen@microchip.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f072e2e02bb6a66d10c50177e5c69a6@kernel.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On Thu, 8 May 2025 at 00:24, Andrew Lunn <andrew@lunn.ch> wrote:
-> On Wed, May 07, 2025 at 09:13:05AM +0200, Herve Codina wrote:
-> > Only one device-tree overlay (lan966x_evb_lan9662_nic.dtbo) is handled
-> > and this overlay is directly referenced in lan966x_pci_load_overlay().
-> >
-> > This avoid to use the code for an other board.
-> >
-> > In order to be more generic and to allow support for other boards (PCI
-> > Vendor/Device IDs), introduce the lan966x_pci_info structure and attach
-> > it to PCI Vendor/Device IDs handled by the driver.
-> >
-> > This structure contains information related to the PCI board such as
-> > information related to the dtbo describing the board we have to load.
-> >
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
->
-> How big is the dtbo ?
->
-> This is going in the right direction. I'm just wondering if each dtbo
-> should be wrapped in its own very slim PCI driver, which simply
-> registers its lan966x_pci_info structure to a core driver. Only the
-> needed dtbo will then be loaded into memory as a module, not them all.
+On Wed, May 07, 2025 at 01:11:31PM -0700, Stephen Boyd wrote:
+> Quoting Sascha Hauer (2025-05-07 01:05:13)
+> > On Mon, May 05, 2025 at 10:50:49AM -0700, Stephen Boyd wrote:
+> > > Quoting Sascha Hauer (2025-04-30 02:01:35)
+> > > > diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
+> > > > new file mode 100644
+> > > > index 0000000000000..d4a3a3df9ceb9
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
+> > > > @@ -0,0 +1,155 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +
+> > > > +patternProperties:
+> > > > +  '^clk@[0-1]$':
+> > > > +    type: object
+> > > > +    description:
+> > > > +      optional child node that can be used to specify input pin parameters. The reg
+> > > > +      properties match the CDCE6214_CLK_* defines.
+> > > 
+> > > Presumably the EEPROM is typically used to configure all this stuff? Do
+> > > you actually need to program this from the kernel, or are you
+> > > implementing all this for development purposes?
+> > 
+> > The EEPROM could be used to configure this. I don't know if the final
+> > product will have the EEPROM programmed, but even if it is, should we
+> > make this mandatory?
+> 
+> No I'm not asking about making the property/node required. I'm wondering
+> if you're actually using these bindings. If they're not used then I
+> worry we're putting a bunch of configuration in here that we'll never
+> use.
 
-Alternatively, the dtbo could be loaded through request_firmware().
-That could lead to a generic support option in the PCI core, which would
-fallback to loading pci-<vid>-<pid>.dtbo when no driver is available.
+At the moment we are using the device tree binding. I asked our customer if
+they plan to use it in production as well.
 
-> Pretty much all the pieces are here, so it can be done later.
+> 
+> > 
+> > Speaking of the EEPROM I think we should make sure that the pin
+> > configuration in the device tree is optional so that we do not overwrite
+> > settings from the EEPROM if it contains valid values.
+> 
+> Ok. Aren't the pinctrl settings already optional?
 
-Exactly.
+Yes, they are, but when the pin setup is missing I haven't explicitly taken
+care to not overwrite any settings made by the EEPROM. Likely the driver
+just does it right. Without pin setup the registers are just not
+touched.
 
-Gr{oetje,eeting}s,
-
-                        Geert
+Sascha
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
