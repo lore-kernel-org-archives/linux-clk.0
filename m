@@ -1,159 +1,300 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA130262D0B
-	for <linux-clk@vger.kernel.org>; Thu,  8 May 2025 08:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933802222BD
+	for <linux-clk@vger.kernel.org>; Thu,  8 May 2025 09:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746693493; cv=none; b=UNuLkr8FRdEgMYVSvWi75kcCrCx+6PcgrE5MwJreRL+fRq1BIbR7WbMFzTEHksy3nOOmyyYRxaTdTlpqUjpdzr8gvfbf2EsDENtt92MAsKSxVBBcRQvuMO+J8KUgDpQ5b8Y6awyhfaGdPZVblHvNzdSWedhTGKjeCndBeCNJmTM=
+	t=1746694940; cv=none; b=Zrn29yL5FfYjFqYp3ISTxF5oMlTSmcfFXc7IAoUcvLTet79OddEQFfaGmp3MPnLumS9ehtnivr2bASxWUPEecfTnq/Z7OQVRwGXd131Rem3kFnOGep0ih9vRNaRjDuF7EEe5aBv8GfnSkd/xs5yQOWczc6336DVMVm4uHozcFdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746693493; c=relaxed/simple;
-	bh=a2qUKyHbD7wFrfHoQBkc3lrz78v9ti8SashhJopPeDk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iYdTdXvPlfA4hruYHA2f/GckvJcb4Ahp84yRO7bg2DO41GBmGpQzB83KvGZcAIN8Wi1Zr7oJVzRJ6KwV07lq8U4OTgs9GXK0kvEljvrxYVPMWCpDsls5KbL27/HNl3pbz/62YtsVIEyKVLpDcLN0JcHxghCSco3v7bBNWmWHIHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dERj47/e; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dERj47/e"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac29fd22163so119693266b.3
-        for <linux-clk@vger.kernel.org>; Thu, 08 May 2025 01:38:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1746693490; x=1747298290; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TN5BLghxBo/9cI/M/eSHpoxUXcqkl+83toZkzInNZmw=;
-        b=dERj47/eNtz5wa+JqEixrFHavwf/WQ3VS0m2xznrZvc+dNPjZtiidmwrXDMnDviH8p
-         aUcZQ23WuzdOBsvRKBLApTJaeLHZddHq9c5Ltu+hQ/AhZVyDwgnbtVGdwOREvznqmFMH
-         0gPr+iVlfNozzeZrl7BY+EmMP23nwosnn3E83oIZGkYmLhjCyw2B433AnWykzDtSC50P
-         sRnAKeWvo1uwiZTv5ijTqUQmUK+X+/FeoIkv3tETo6mu9WQCqtFlGuEcMHAGUq8Fwwtg
-         n1nHJZg9BxOJ4w2AOScTuVHvpMLXOK487GmRHGW3t0rpn96pNXjLu4ePtUv2wdsw/hsb
-         WiZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746693490; x=1747298290;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TN5BLghxBo/9cI/M/eSHpoxUXcqkl+83toZkzInNZmw=;
-        b=VZ5fklIXvY2x/8Py8dEW/JvS3AqHzZTiJl9L6bxqYdiMKXYj///UU5XQ0otlsIXGow
-         YO8/W8ZiyP0A/jgGOca3DfBCeIerI4VVudIGhBrb+Es7JkzJo8qfSMWYhjKXmaKHTcTd
-         qZric1nWiyd/9LXotmeiVyV8225yEt6fKCNnUPXc//vRak0gHGcL+AgOOzK1SoFiK6o7
-         3aIjOOxZdpQNE5dLnVUI9bZqHNy8c/R/7BpyDRFqB6rKdSPD1piJVD0Ts8nIZSDheaLO
-         Dmor8+tC1mUbn2hbbiATWsN5ME9AekxafRQw/UgmMHP0CsMqpuipd3GdlEk9WoQ5c+0u
-         ZPHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaUwFrzI4UcYFZ4bpN2gmSKWXldudrs8yZtk72Vmp+M0jIt9PjWJ9uS5TLcZHJLK7/sZ3/a4PkkYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlc0NFWcDAxiAMXkOuunftMyk970OmZu9d2nM+QjPx40SXTtvr
-	uitQ9j68V7xdHzPnhGTEgg57ktncPPQvHKbNQSLoNPSF3HbxNbTRoeDntKrlv1E=
-X-Gm-Gg: ASbGncscZe6aL36y5+QwjAGUpVYNlbJ/m2XOcJy7pHOCz7Vn+rbsOodGjaHfBtrUOV0
-	HExrJM6k0GpOUzLfzhqwE6FF1lO250F6WLyYa94geUbjd+BbvBixek//9/X3BnCggZG4NqgKpOA
-	yv1y75Bt3VS4jioJECNkGvBJaSRve+dPTQpAl6ExB/y4mPPLNRSQeHMf9UT5DTeF1W8kJuhCK8l
-	uemMm2RWXupBp2diY/6TtKu/5j5IF4tlFaf8+88t0zKR8cg4CKA0iG84I5gt1zcStMAbWrEgCQj
-	CczDK4QGH83DsLNXtDH50b3qN0x72xhqzWARcSYBvKqJhT08fzOZcF1CU4u+eZqpqVdl/zBcmfF
-	FEcwNUA==
-X-Google-Smtp-Source: AGHT+IFAz0hpCdqZar4HwvS30xYrKUVB/5CH1AYDISg2ZQz4Cx3c/u+PhQRq6xHbtI2Pon4FDK1RKg==
-X-Received: by 2002:a17:907:d7cb:b0:ac3:48e4:f8bb with SMTP id a640c23a62f3a-ad1fe947a69mr204692566b.41.1746693489868;
-        Thu, 08 May 2025 01:38:09 -0700 (PDT)
-Received: from localhost (93-44-188-26.ip98.fastwebnet.it. [93.44.188.26])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1891a3f0fsm1059881366b.58.2025.05.08.01.38.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 May 2025 01:38:09 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 8 May 2025 10:39:38 +0200
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof Wilczynski <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>, Phil Elwell <phil@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	kernel-list@raspberrypi.com, Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [PATCH v9 -next 04/12] clk: rp1: Add support for clocks provided
- by RP1
-Message-ID: <aBxtyvI3LUaM3P00@apocalypse>
-References: <cover.1745347417.git.andrea.porta@suse.com>
- <e8a9c2cd6b4b2af8038048cda179ebbf70891ba7.1745347417.git.andrea.porta@suse.com>
- <aBprHfQ7Afx1cxPe@apocalypse>
- <8513c30f597f757a199e4f9a565b0bf5@kernel.org>
+	s=arc-20240116; t=1746694940; c=relaxed/simple;
+	bh=IGe+U/YH/iUPaG05eqrCD/ah/1kOmm9NRWUhqyUdTJM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Z5BKjhM+nAtwYruJEL516+MrRbQcxR5j10aeLyA7hrIaHL3QnH/MR/bIx7KLj8bx0crm+IaP8H+J8Pri0wh/HeTVbzgX+MR5uyBEZj4jngZ+MCAxNAQU5iMg0l8tKILPKYUNv9PoZ4OAfikx1CZgWg3eqsHkSIrOhM/rNiyKYmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uCx8b-0008Qf-0D; Thu, 08 May 2025 11:01:53 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uCx8Z-001hI1-0c;
+	Thu, 08 May 2025 11:01:51 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1uCx8Z-0003Eh-0J;
+	Thu, 08 May 2025 11:01:51 +0200
+Message-ID: <8b5d8045041f2f07b68066e4e541d5e42282fa9b.camel@pengutronix.de>
+Subject: Re: [PATCH v6 4/6] reset: spacemit: add support for SpacemiT CCU
+ resets
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr,  dlan@gentoo.org
+Cc: heylenay@4d2.org, inochiama@outlook.com, guodong@riscstar.com, 
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ spacemit@lists.linux.dev,  linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Date: Thu, 08 May 2025 11:01:50 +0200
+In-Reply-To: <20250506210638.2800228-5-elder@riscstar.com>
+References: <20250506210638.2800228-1-elder@riscstar.com>
+	 <20250506210638.2800228-5-elder@riscstar.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8513c30f597f757a199e4f9a565b0bf5@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Hi Alex,
 
-On 12:44 Wed 07 May     , Stephen Boyd wrote:
-> Quoting Andrea della Porta (2025-05-06 13:03:41)
-> > Hi Stephen,
-> > 
-> > On 20:53 Tue 22 Apr     , Andrea della Porta wrote:
-> > > RaspberryPi RP1 is an MFD providing, among other peripherals, several
-> > > clock generators and PLLs that drives the sub-peripherals.
-> > > Add the driver to support the clock providers.
-> > 
-> > Since subsequent patches in the set depends on this one and as the next
-> > merge window is approaching, assuming there are no blockers can I kindly ask
-> > if you can merge it on your tree for the upcoming pull request?
-> > 
-> > This patch should apply cleanly to your clk-next branch except for some fuzz
-> > lines on MAINTAINERS. Please let me know if you want me to adjust it.
-> > 
-> 
-> I need to take the dt-binding header as well so it compiles. What's the
-> plan there? Do you want me to provide a branch with the clk driver and
-> binding header? Or do you want to send a PR to clk tree with the clk
-> driver and the binding header and then base your DTS patches on the
-> binding header and send that to the soc maintainers? I'm also happy to
-> give a Reviewed-by tag if that works for you and then you can just take
-> it through the soc tree.
+On Di, 2025-05-06 at 16:06 -0500, Alex Elder wrote:
+> Implement reset support for SpacemiT CCUs.  The code is structured to
+> handle SpacemiT resets generically, while defining the set of specific
+> reset controllers and their resets in an SoC-specific source file.
 
-Any of those would work for me, but I agree with you, we need a plan
-because this patchset is crossing the border of several subsystems, and
-as such there's also other dependencies between patches that will inevitably
-led to conflicts.
-The only decoupled pacthes are the pinctrl driver and its bindings, which 
-I guess could be taken by Linus Walleij, but all others have dependencies
-on either the bindings (clk driver) or dts (misc driver which embeds the
-dt overlay, and should be taken by Greg).
+Are you confident that future SpacemiT CCUs will be sufficiently
+similar for this split to make sense? This feels like it could be a
+premature abstraction to me.
 
-So if Florian is willing to take the bindings and since it's already 
-taking many of the patches, it could be reasonable if he takes the
-entire patchset.
+> A SpacemiT reset controller device is an auxiliary device associated with
+> a clock controller (CCU).
+>=20
+> This initial patch defines the reset controllers for the MPMU, APBC, and
+> MPMU CCUs, which already defined clock controllers.
+>=20
+> Signed-off-by: Alex Elder <elder@riscstar.com>
+> ---
+>  drivers/reset/Kconfig           |   1 +
+>  drivers/reset/Makefile          |   1 +
+>  drivers/reset/spacemit/Kconfig  |  12 +++
+>  drivers/reset/spacemit/Makefile |   7 ++
+>  drivers/reset/spacemit/core.c   |  61 +++++++++++
+>  drivers/reset/spacemit/core.h   |  39 +++++++
+>  drivers/reset/spacemit/k1.c     | 177 ++++++++++++++++++++++++++++++++
+>  7 files changed, 298 insertions(+)
+>  create mode 100644 drivers/reset/spacemit/Kconfig
+>  create mode 100644 drivers/reset/spacemit/Makefile
+>  create mode 100644 drivers/reset/spacemit/core.c
+>  create mode 100644 drivers/reset/spacemit/core.h
+>  create mode 100644 drivers/reset/spacemit/k1.c
+>=20
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 99f6f9784e686..b1f1af50ca10b 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -354,6 +354,7 @@ source "drivers/reset/amlogic/Kconfig"
+>  source "drivers/reset/starfive/Kconfig"
+>  source "drivers/reset/sti/Kconfig"
+>  source "drivers/reset/hisilicon/Kconfig"
+> +source "drivers/reset/spacemit/Kconfig"
+>  source "drivers/reset/tegra/Kconfig"
+> =20
+>  endif
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 31f9904d13f9c..6c19fd875ff13 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -2,6 +2,7 @@
+>  obj-y +=3D core.o
+>  obj-y +=3D amlogic/
+>  obj-y +=3D hisilicon/
+> +obj-y +=3D spacemit/
+>  obj-y +=3D starfive/
+>  obj-y +=3D sti/
+>  obj-y +=3D tegra/
+> diff --git a/drivers/reset/spacemit/Kconfig b/drivers/reset/spacemit/Kcon=
+fig
+> new file mode 100644
+> index 0000000000000..4ff3487a99eff
+> --- /dev/null
+> +++ b/drivers/reset/spacemit/Kconfig
+> @@ -0,0 +1,12 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +config RESET_SPACEMIT
+> +	bool
+> +
+> +config RESET_SPACEMIT_K1
+> +	tristate "SpacemiT K1 reset driver"
+> +	depends on ARCH_SPACEMIT || COMPILE_TEST
+> +	select RESET_SPACEMIT
+> +	default ARCH_SPACEMIT
+> +	help
+> +	  This enables the reset controller driver for the SpacemiT K1 SoC.
 
-I guess the final decision is up to Florian. Whatever you choose, I'll
-adjust the patches accordingly but be warned that there will be some
-(minor) conflicts down the merge path: one being the fact that linux-next
-bcm2712-rpi-5-b.dts has pcie nodes while Florian's devicetree/next has not.
-I'll do my best to help fixing those.
+Does the size of the K1 specific parts even warrant this per-SoC
+Kconfig option? I suggest to only have a user visible tristate
+RESET_SPACEMIT option.
 
-Many thanks,
-Andrea
+> diff --git a/drivers/reset/spacemit/Makefile b/drivers/reset/spacemit/Mak=
+efile
+> new file mode 100644
+> index 0000000000000..3a064e9d5d6b4
+> --- /dev/null
+> +++ b/drivers/reset/spacemit/Makefile
+> @@ -0,0 +1,7 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +obj-$(CONFIG_RESET_SPACEMIT)			+=3D reset_spacemit.o
+> +
+> +reset_spacemit-y				:=3D core.o
+> +
+> +reset_spacemit-$(CONFIG_RESET_SPACEMIT_K1)	+=3D k1.o
+> diff --git a/drivers/reset/spacemit/core.c b/drivers/reset/spacemit/core.=
+c
+> new file mode 100644
+> index 0000000000000..5cd981eb3f097
+> --- /dev/null
+> +++ b/drivers/reset/spacemit/core.c
+> @@ -0,0 +1,61 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +/* SpacemiT reset driver core */
+> +
+> +#include <linux/container_of.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/types.h>
+> +
+> +#include "core.h"
+> +
+> +static int spacemit_reset_update(struct reset_controller_dev *rcdev,
+> +				 unsigned long id, bool assert)
+> +{
+> +	struct ccu_reset_controller *controller;
+> +	const struct ccu_reset_data *data;
+> +	u32 mask;
+> +	u32 val;
+> +
+> +	controller =3D container_of(rcdev, struct ccu_reset_controller, rcdev);
+> +	data =3D &controller->data->reset_data[id];
+> +	mask =3D data->assert_mask | data->deassert_mask;
+> +	val =3D assert ? data->assert_mask : data->deassert_mask;
+> +
+> +	return regmap_update_bits(controller->regmap, data->offset, mask, val);
+> +}
+> +
+> +static int spacemit_reset_assert(struct reset_controller_dev *rcdev,
+> +				 unsigned long id)
+> +{
+> +	return spacemit_reset_update(rcdev, id, true);
+> +}
+> +
+> +static int spacemit_reset_deassert(struct reset_controller_dev *rcdev,
+> +				   unsigned long id)
+> +{
+> +	return spacemit_reset_update(rcdev, id, false);
+> +}
+> +
+> +static const struct reset_control_ops spacemit_reset_control_ops =3D {
+> +	.assert		=3D spacemit_reset_assert,
+> +	.deassert	=3D spacemit_reset_deassert,
+> +};
+> +
+> +/**
+> + * spacemit_reset_controller_register() - register a reset controller
+> + * @dev:	Device that's registering the controller
+> + * @controller:	SpacemiT CCU reset controller structure
+> + */
+> +int spacemit_reset_controller_register(struct device *dev,
+> +				       struct ccu_reset_controller *controller)
+> +{
+> +	struct reset_controller_dev *rcdev =3D &controller->rcdev;
+> +
+> +	rcdev->ops =3D &spacemit_reset_control_ops;
+> +	rcdev->owner =3D THIS_MODULE;
+> +	rcdev->of_node =3D dev->of_node;
+> +	rcdev->nr_resets =3D controller->data->count;
+> +
+> +	return devm_reset_controller_register(dev, &controller->rcdev);
+> +}
+> diff --git a/drivers/reset/spacemit/core.h b/drivers/reset/spacemit/core.=
+h
+> new file mode 100644
+> index 0000000000000..a71f835ccb779
+> --- /dev/null
+> +++ b/drivers/reset/spacemit/core.h
+> @@ -0,0 +1,39 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +
+> +/* SpacemiT reset driver core */
+> +
+> +#ifndef __RESET_SPACEMIT_CORE_H__
+> +#define __RESET_SPACEMIT_CORE_H__
+> +
+> +#include <linux/device.h>
 
-- 
+This include can be replaced by forward declarations for struct device
+and struct regmap.
+
+> +#include <linux/reset-controller.h>
+> +#include <linux/types.h>
+> +
+> +struct ccu_reset_data {
+> +	u32 offset;
+> +	u32 assert_mask;
+> +	u32 deassert_mask;
+> +};
+> +
+> +#define RESET_DATA(_offset, _assert_mask, _deassert_mask)	\
+> +	{							\
+> +		.offset		=3D (_offset),			\
+> +		.assert_mask	=3D (_assert_mask),		\
+> +		.deassert_mask	=3D (_deassert_mask),		\
+> +	}
+> +
+> +struct ccu_reset_controller_data {
+> +	const struct ccu_reset_data *reset_data;	/* array */
+> +	size_t count;
+> +};
+> +
+> +struct ccu_reset_controller {
+> +	struct reset_controller_dev rcdev;
+> +	const struct ccu_reset_controller_data *data;
+> +	struct regmap *regmap;
+> +};
+> +
+> +extern int spacemit_reset_controller_register(struct device *dev,
+> +			      struct ccu_reset_controller *controller);
+
+Drop the extern keyword.
+
+> +
+> +#endif /* __RESET_SPACEMIT_CORE_H__ */
+> diff --git a/drivers/reset/spacemit/k1.c b/drivers/reset/spacemit/k1.c
+> new file mode 100644
+> index 0000000000000..19a34f151b214
+> --- /dev/null
+> +++ b/drivers/reset/spacemit/k1.c
+> @@ -0,0 +1,177 @@
+[...]
+> +static int spacemit_k1_reset_probe(struct auxiliary_device *adev,
+> +				   const struct auxiliary_device_id *id)
+> +{
+> +	struct spacemit_ccu_adev *rdev =3D to_spacemit_ccu_adev(adev);
+> +	const void *data =3D (void *)id->driver_data;
+> +	struct ccu_reset_controller *controller;
+> +	struct device *dev =3D &adev->dev;
+> +
+> +	controller =3D devm_kzalloc(dev, sizeof(*controller), GFP_KERNEL);
+> +	if (!controller)
+> +		return -ENODEV;
+
+-ENOMEM, this is a failed memory allocation.
+
+regards
+Philipp
