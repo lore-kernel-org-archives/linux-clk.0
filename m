@@ -1,129 +1,155 @@
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610D16F073;
-	Thu,  8 May 2025 08:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511CF26388C
+	for <linux-clk@vger.kernel.org>; Thu,  8 May 2025 08:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746691703; cv=none; b=oBRr/wOckIxAmQnFJUNDPkAxAFzFQlY/RW27spu+UgErI5CVE36cGazCbnRvJLQsbYgOPixl3MEtpp2HoqIbnfCXK2yOfAw0phmjir71n6l1LybjNyAalkdD6GWDOXdXdBjHUHdN8QSGCOQcBsGfBnmwnoyy+fzhIUOUl7Zl/m4=
+	t=1746693144; cv=none; b=dgGVcqR+LOn85XYbjVZ1KT8Zq9cObhO6J2bHr3PWht3O8FN901mbr7JKTrLnevUgUod0QQtaRFAxSoykgPiE1N32VT4AeWf1smAOoHp+3QxirH+idxNiSVoDVxZxRLbgZZMQbRUhQ0TRPQtfJUlpfsfb6UpUAKiCMKdc8WqniRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746691703; c=relaxed/simple;
-	bh=+sJ+nOd93uoWClQE2mhYQO1xYIQfotIWKMU2W7nPB2o=;
+	s=arc-20240116; t=1746693144; c=relaxed/simple;
+	bh=99sIuYQv9yyYPOuX4dWNyMjpDSYVT8a3hkLHdw7sW/Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pwpvs1MkmZZO/eH6Kq5IbB73V9tRCViOswDdAFyb+wxoYtaP2GmGITf9c3ZnMdiEq1PmzSo+fgMcgwTPt9qqH0r/FzE3zvh2TIInocGtBS3l4vhZrOnpTXcSn5juMwU0BBI2NW0yBU4Hmx1cFrOvb1mv29xbH57j4Kcfjgb9DVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5241abb9761so238255e0c.1;
-        Thu, 08 May 2025 01:08:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=P6zubpHuh/Z4AJcEdt8HGOpsjY/tVGZO9T3VKii5iTAFkF84JaXSEtuss1ZGs0Js/tz1GZ4nzXJaxl+SssA7LNyCOBytnZD24F0qCYBLX1i0SeGjyAmPOzCcg96t7T8j5h9RQLcSfr4mNalJ7mxCvDFMqcXw38TJmrqUKhdfLnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=eyeiwUwD; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="eyeiwUwD"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-70a23f4fe8bso6827707b3.2
+        for <linux-clk@vger.kernel.org>; Thu, 08 May 2025 01:32:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1746693141; x=1747297941; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=quaZx11+VGNrggf88njtg5xLklc9eFfI7c4+X9LIJ5o=;
+        b=eyeiwUwDy8WmvUUrw6HR1/xH8hzDgSNjEqMPKS/pwC58tREEdgjfwtfdWOCMhSFzJc
+         DJW5XK9kF7Cs4+g7fCSv4YelbBxQIW9lF4pl8CaTJ0nsqbBOYRX8Ml0E0uSGE20vkK18
+         o7JWzEdbgFQn6ad3PwkgKzLmg/akNSClNnb6w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746691697; x=1747296497;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5pyh88RLi7QBn3vHcG2jBCwxHsg3m1PlM26ESBfjfQk=;
-        b=JdVUV14WGk68/k1HNNJGKorvTY7Q8kr0nz2kJuiUsEQOn70dC6/VuX/LS0IuBcV3OV
-         /v5sgnoLF7ggsPuZEenIWHr1XT1KzVWNE/PMvtKbvNZtel0tcHCqNh2JhTg4bQEFThqx
-         QSvAVz8KeK6KbHiinIXfOFDiLA5SM5qqjLoeutHb2IyoRAKixPYKT7TsgiFOSzKlEBRy
-         XXOmGPeqPeUehJKh/gyag4Pn7HUuJc8EwecAA7QzvpPgkhjhRIMdPlj2MFzoUgozGUeO
-         OZMAkxwPBbWX2ydgmnpjvZprveH/RJkmoxCNkRqf1o/wzPz4JOMssRchcboys89crIjB
-         PtdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9w1Jt9qaJgT/KogH8Sehsd8x74zE5gcGXD8gM8y0B4sgPYREpIUahvrn2BB1o3boSloTaQ0vPX1J2EpW1C7CFmvw=@vger.kernel.org, AJvYcCWmA69ukN0pd6k5LJOhKObgTMu/q6J6qr/j4LbVMc8tmJOGkoX9RtbCOA3ujQzBIkiBXmjNEqQVtwE=@vger.kernel.org, AJvYcCWnKkIO9botPEul9Adv7i+FXZyXxeL6K5z+wLxI9l5ZJ1d5kYj55rFn1psMm9q8YzDpE7lPpCVPFkBkD2nk@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRY/iSfJPFp3RdnMMXzU6xUnU80r6RpfxiHjZFDiQiankdG/ow
-	c51kzh2g1DdAsM2Wh3YOvDuixpSe/HPC7GYLzo9adtj9q1C/TNnLgyGPbbVR
-X-Gm-Gg: ASbGncsu4NRZ5Wlt741EbzMxhLBkQrnYaR7ciMvtQax7QZmiNO/wbW2sdAHz6m6uqdS
-	rDR7DO4eYy/4+9ViBRB1Z1hFf9RMoimHGP2CL0HmijA4m4A54Im+QhCMVaY4XXYmZt72BV+3k9p
-	AqeTYS4Ebz+9bI9KgmxCay85kXrkKwg+gb7FdyQvgjAjb+a/7OE9YGEgm1PCY8086s5WoinJkFx
-	Fwm/0VGxJxS8WzhYQJUPCx8WwXRXu7hAuIvsmeTnMv+/G6V7uvxX1WPKij/zokEhBWg6S/aO7N2
-	+UOGe5C70a1Qc6jbhaPFqRWD1T10jnItf43LZ89Oa2howKbTEQyWw1f4Xmf3ustiU9SWGQBYVYu
-	de7H3Sbo=
-X-Google-Smtp-Source: AGHT+IFaWIGOmB8cTBxOE+dYT4jEmG0XdjfXBvG0xeDCxKUTjA0Z0v02NnZ2wm1eKbLYbdO4+GchmA==
-X-Received: by 2002:a05:6122:7d0:b0:529:d14:67b6 with SMTP id 71dfb90a1353d-52c441af38fmr1708144e0c.7.1746691697402;
-        Thu, 08 May 2025 01:08:17 -0700 (PDT)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52ae419c85csm2888631e0c.33.2025.05.08.01.08.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 01:08:17 -0700 (PDT)
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5262475372eso197650e0c.2;
-        Thu, 08 May 2025 01:08:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWERG2zKGAiRQQbsYKzmFdvBqDBG3fMORz0BTLJezVvidt2qZuvm2KyBxeg20ibfYakqXIqPFvSvEg=@vger.kernel.org, AJvYcCXP7qTdcNYgGPIqAm8VRHqVlVK/mkm5ETkeP5G+mKfEYMmUzzKbztJyW7Q6bmaQwYCMFrepPKxTaOTyR5Zv7TIPaUM=@vger.kernel.org, AJvYcCXjRkBa3ovT+r4jzo9wMSLt4kSxUcX90GCgg5bTvI9E/h8U4uz4MLZg9Aa9+UXw3fwdBzeHOr3bbKhaLOaf@vger.kernel.org
-X-Received: by 2002:a05:6122:3295:b0:529:2644:5eec with SMTP id
- 71dfb90a1353d-52c441e2252mr1551202e0c.8.1746691696707; Thu, 08 May 2025
- 01:08:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746693141; x=1747297941;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=quaZx11+VGNrggf88njtg5xLklc9eFfI7c4+X9LIJ5o=;
+        b=BBwgsGA+7Ao1DiB9B+sjYYX+fyGnaYYy+w66Eaetfh4ywET9ZPx+du91OmxaMv5G9N
+         ZgZcamDe9blDTzdmODToSWGxPuux0/K6zTswiWFLavT5c6tfCCQLlyc+a9wj38NOLRM5
+         IrW23ji0ShyqHCwyeZ7A9vVJFIs6oFRNVO1SVbNprkY5h8HvX+w3uGu3cAWOzb0M3P+z
+         9Qutoxcg5a4/Azc1CUPapXwcb8KlxUAHK3lv052xGZm6h4fzmlJ2MW2F5z40OJz3BRZk
+         AJ34HSfZfnvPlj8lM9pabuLlv77FomF/tgKVb78x8iGDBmXhjX0D9VgT30uMHwAntezC
+         ZVKA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/vbzsRaJTzxLtMRYtMGS74hj+djBcMs5olFatI+tyFd7cyAP2a198S8cc1PCsTgIlJOi3dwd/JxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHeMNckReT8OzUQBKb2gm7xh4foZyklpdUJz2OEk1c4aW0CkXa
+	hrD3JSv83Z0i3qa3AFCwtcr2sCs3SvpzngR90gQmxyH2ZtxCf4vRh2z0P/YkjeWeeX4QarlYuft
+	43iBlBvM8z5HccdSmUIm0drWwxSglSOcRdqYSSA==
+X-Gm-Gg: ASbGncv9wNeRkr+f434JG2odvETEysd1zjRUtfAoyijWtwawQFHVv+UdjSJjAI2ztst
+	natFtq8m54f/F4+vMmVXF7z38MB3TQc7OldotWKxuMUJ1VXLi3ba5e19u+uvHrV304yVxhSBqCa
+	yRPorDAvBkKq0D2yQUO7HS
+X-Google-Smtp-Source: AGHT+IE4CmJhrdoXRe32HoBH4jbtzbQ2hoNMjPwxRG6sk3WrTeunXaOWumwPqctZu6MIIYqzIKZAUd1PKmmcUuwqfyo=
+X-Received: by 2002:a05:690c:6085:b0:703:d7a6:6266 with SMTP id
+ 00721157ae682-70a1d9f9304mr89735297b3.10.1746693141277; Thu, 08 May 2025
+ 01:32:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250327151109.9648-1-tsogomonian@astralinux.ru>
-In-Reply-To: <20250327151109.9648-1-tsogomonian@astralinux.ru>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 8 May 2025 10:08:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUoZSXQwu6gZgbzUcFgjQh=ng7UZAGC5ke4GVB-zqqhqQ@mail.gmail.com>
-X-Gm-Features: ATxdqUHjjZXKNDvAcDrDPJ9dSfaDFZqswvwv39QmwuKKp-97On7DFcun-1asJ9A
-Message-ID: <CAMuHMdUoZSXQwu6gZgbzUcFgjQh=ng7UZAGC5ke4GVB-zqqhqQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] renesas: add zero check for prate variable
-To: Tigran Sogomonian <tsogomonian@astralinux.ru>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com> <174643143452.2950397.16722215892279685541.b4-ty@linaro.org>
+In-Reply-To: <174643143452.2950397.16722215892279685541.b4-ty@linaro.org>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Thu, 8 May 2025 10:32:10 +0200
+X-Gm-Features: ATxdqUGGoyMhD-TPgWfLjSDF0XqnBspVuNvo1SR1O8IpFOj15QasDBjp5hm1sY0
+Message-ID: <CABGWkvrkVLRocFsZs9JLni4KDZCDyYDZxMzwA9AzAwipmUyTzQ@mail.gmail.com>
+Subject: Re: (subset) [PATCH v12 00/19] Support spread spectrum clocking for
+ i.MX8M PLLs
+To: Shawn Guo <shawnguo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-amarula@amarulasolutions.com, 
+	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	Abel Vesa <abel.vesa@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tigran,
+Hello Shawn,
 
-On Thu, 27 Mar 2025 at 16:13, Tigran Sogomonian
-<tsogomonian@astralinux.ru> wrote:
-> To avoid division by zero, a check was added to the prate
-> variable, since no guarantees were found that it could not
-> be equal to zero.
+On Mon, May 5, 2025 at 9:52=E2=80=AFAM Abel Vesa <abel.vesa@linaro.org> wro=
+te:
 >
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 >
-> Signed-off-by: Tigran Sogomonian <tsogomonian@astralinux.ru>
-
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-> @@ -205,6 +205,8 @@ static int cpg_z_clk_determine_rate(struct clk_hw *hw,
->                                                   prate * zclk->fixed_div);
+> On Thu, 24 Apr 2025 08:21:30 +0200, Dario Binacchi wrote:
+> > This version keeps the version v9 patches that can be merged and
+> > removes the patches that will need to be modified in case Peng's
+> > PR https://github.com/devicetree-org/dt-schema/pull/154 is accepted.
+> > The idea is to speed up the merging of the patches in the series
+> > that have already been reviewed and are not dependent on the
+> > introduction of the assigned-clocks-sscs property, and postpone
+> > the patches for spread spectrum to a future series once it becomes
+> > clear what needs to be done.
+> >
+> > [...]
 >
->         prate = req->best_parent_rate / zclk->fixed_div;
-> +       if (prate == 0)
-> +               return -EINVAL;
-
-prate can never be zero, as req->best_parent_rate is always larger or
-equal than zclk->max_rate, and zclk->fixed_div is a very small number
-(2 or 4).
-
->         min_mult = max(div64_ul(req->min_rate * 32ULL, prate), 1ULL);
->         max_mult = min(div64_ul(req->max_rate * 32ULL, prate), 32ULL);
->         if (max_mult < min_mult)
-> diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-> index 31aa790fd003..4c9a7d699290 100644
-> --- a/drivers/clk/renesas/rcar-gen4-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-> @@ -308,6 +308,8 @@ static int cpg_z_clk_determine_rate(struct clk_hw *hw,
->                                                   prate * zclk->fixed_div);
+> Applied, thanks!
 >
->         prate = req->best_parent_rate / zclk->fixed_div;
-> +       if (prate == 0)
-> +               return -EINVAL;
+> [01/19] dt-bindings: clock: imx8mm: add VIDEO_PLL clocks
+>         commit: 20e5d201b5d8f830e702d7d183f6b1b246b78d8a
+> [02/19] clk: imx8mm: rename video_pll1 to video_pll
+>         commit: 26a33196b5b68cf199b6c4283a254aa92d2aaf4b
+> [03/19] dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
+>         commit: 2d50415e2457c6f6621c2faa3b01b11150fb9c67
+> [04/19] clk: imx8mp: rename video_pll1 to video_pll
+>         commit: 21bb969f608cefd8d847cf6eb50a193d9f1fbb87
+> [05/19] dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
+>         commit: 2ba124053687c933031a6dc5b2e16ceaca250934
+> [10/19] clk: imx: add hw API imx_anatop_get_clk_hw
+>         commit: 17e3c1a272d97e49b4f3fbfe1f1b889e120d2be8
+> [11/19] clk: imx: add support for i.MX8MM anatop clock driver
+>         commit: 3cbc38cf42ca42d2dc9a93c949e0381ff919df71
+> [12/19] clk: imx: add support for i.MX8MN anatop clock driver
+>         commit: 80badb1d7264e83b512475898e7459f464a009c9
+> [13/19] clk: imx: add support for i.MX8MP anatop clock driver
+>         commit: 4c82bbe8b5437c7f16b2891ce33210c0f1410597
+> [14/19] clk: imx8mp: rename ccm_base to base
+>         commit: 1a77907dbbecfbe5e6a1aec28afd49a1dc184b7a
+> [16/19] dt-bindings: clock: imx8m-clock: add PLLs
+>         commit: 6a55647af3334f1d935ece67de4a838a864b53fc
+>
 
-Likewise.
+Please check the remaining patches, as they are required for correctly
+building the
+ones merged by Abel. The kernel test robot has already reported build error=
+s.
 
->         min_mult = max(div64_ul(req->min_rate * 32ULL, prate), 1ULL);
->         max_mult = min(div64_ul(req->max_rate * 32ULL, prate), 32ULL);
->         if (max_mult < min_mult)
+Thanks and regards,
+Dario
 
-Gr{oetje,eeting}s,
+> Best regards,
+> --
+> Abel Vesa <abel.vesa@linaro.org>
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--=20
+
+Dario Binacchi
+
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
