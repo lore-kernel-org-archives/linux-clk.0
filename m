@@ -1,119 +1,100 @@
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9381221F33
-	for <linux-clk@vger.kernel.org>; Thu,  8 May 2025 11:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6099F35957;
+	Thu,  8 May 2025 11:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746704410; cv=none; b=kPSr/ZT32iHFfLG/hknp9pxfSWQYvXl2X04aHdDJ4hE9B8JZ5xdxGvN+NAUT5rdWQfBsM0Dc3RKXHu7FQNzXw4UYlAPwrWb5c0ymW71zpkJGLCj/3ooiXHG1pjKXmhU7NWnXVeSZ3Y+8S9UK81RW73Tk1CkYucGEQBBb4x2txAI=
+	t=1746704868; cv=none; b=fDvpRdrvyn0V/u8bgEtB7cUOzzhMSbFdL4N/vdAPBL9s93j/jCTZ+lg7TWXxDm9y7BPSWOuagrFjA5uUHixKbJ9EwY7JHyCCNqQ7uGDOaMgzo73TItM/LciFd/EJGVC0+a648PoTxeRm/A5Rn5KIejqilra9E86CXGXSMwF3cqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746704410; c=relaxed/simple;
-	bh=Fx9zrUTk3i8S1DAJFlFt9wfUwkt0xKS/Y7jdzQ/hcQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eog93/3QUcEtzPsd2C/zlnWfxEUti0boV3FTCEEVKIKstE5hnc8RfwQaarpVD4jf3AnmEBPyV1sxM4CgjMj0tu4pxGjXXif2seV10Z1dYhFUN4eWUj7hpXbuzsNn6cju+X0R094XReaFZ0lDS2lskFlQiaeCmwS8Ed7EXIzVpAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=1n4X3MHN; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="1n4X3MHN"
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-85e15dc801aso74450439f.2
-        for <linux-clk@vger.kernel.org>; Thu, 08 May 2025 04:40:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1746704407; x=1747309207; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7gCgDIEvIXJ5HjkEoan0OBOu/905mhsNatvjj6Ubkh0=;
-        b=1n4X3MHNci+FmI0NH/1OGC3AVHX6Nlx2xFPTWjJRqDLQ4Ru1QsnOai4yo3oPbpUzGf
-         EFiDOHXk7jn0tW7QXV3aiJhhiai4rHO2Py8e0BtW2xSnfz9tl8t7Qt1NyeVpNHvrqUZg
-         h3FJA+141YBdjpLIZ/Gji6bJIH+cTvN+y2Ce5JhcES540B6djvp7CWJ2zY1gN8T5LmKs
-         fL3xzuJGHt1J7j7WjvSbk3ExrWP2lnRtNBH1fRP5dLKjRo+NC1/DMON0zaZ+JSSeiDBt
-         CU6IuwgFrzTGoRBnSID09Cud7iDG830VMVYzIZxXhhdplG6mBJ2ARlXCI9Z/Xu42vwly
-         3A3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746704407; x=1747309207;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7gCgDIEvIXJ5HjkEoan0OBOu/905mhsNatvjj6Ubkh0=;
-        b=JoR6yXdl/5x3xv+7FHfgxGJ4CdBJROi0JD6SS+EtEDF1FE+mXP634v/ZWOxD8UkmKw
-         jVXZBCoy5uGH1K52NpLMJBHMT0lWm+MCI8E91Ef5yZ1zaGjN/XKpI1Yk7x+yx9nVNAfj
-         XQwtR3+tCay01/v9xeitbiq+9vI9uEikyW49eJ+Clx9hnBwFvup+Gly2lGdrPobo6i5k
-         Ugf6WOzTxuGVDPAF1Qcqw/fqmClOPzc+arOpFB0MD6qJp2N1Xvb+5CS2u5NOMyEq+xLA
-         /oAcRhBJcNr9t4mchDFuWWXwD8OHZ3jvh72tN4g6z/OUPTNDG/qWZEy5+U6R/d19k4fm
-         qYrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCMjr/DVg6QMmngdcZ0AfCFS5KZRWFFttNdBs5ONJSQ1QjvtZpgSezjevD8D25KV7j3gqajSjeSM0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrLy1/6VMZ7OhYdZegFE4++o7lPa/auUD2qoAjkkpzZzFzwBIh
-	rlVwP19NPFSUB+U6E3Yl/qXo5Jd4hyr+DX6ZMtOK4DdKIqiGh1zWkH/vOYXbK3E=
-X-Gm-Gg: ASbGncvO13tRbV9ca5Em9gxWsc2xIza8E0mkxDw0k+pyVaBOHt9q1f7uOnYWFsSS/Ze
-	Fn+04NOhYsyMzI6BG5e4+hsB19JhLhAGPr98GJLT6KzNWz28tBYg7hSZnmn7Q+6Ug+NmmkklNUT
-	jZZjuZZ/WK9JYkXhAtx69jVPDfBWHTQ5UV9ISNvIYPLIb7gIbP9kU74tiyGkSzQwAv2EBx09ddP
-	kAwMTlajrEBgAjOXxUoYaoEdaAPDY3edV72t0g9Fys4tQtooxIJsMvQzzVKqUbsbQ6CdUPxtqDz
-	ndjg/uvPJjob7MC9YCz6Tm+TUhySlx9oCaykCiSIm/3KTFxehGsPPiWi4hLN0JDwUqU9BO1/V0e
-	MifGJ
-X-Google-Smtp-Source: AGHT+IEgQbpeES+TFJhbzId8HdAIkJfo3yOl1pgxcIDfMs+gyDWkgbwTLja1UcaM/Qo0ZByBfH3ZrA==
-X-Received: by 2002:a05:6e02:3805:b0:3a7:88f2:cfa9 with SMTP id e9e14a558f8ab-3da7390856dmr72096535ab.11.1746704406737;
-        Thu, 08 May 2025 04:40:06 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f88aa8e1f7sm3145496173.121.2025.05.08.04.40.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 04:40:06 -0700 (PDT)
-Message-ID: <d6649f6f-574d-4ba6-8db7-d3087f421386@riscstar.com>
-Date: Thu, 8 May 2025 06:40:04 -0500
+	s=arc-20240116; t=1746704868; c=relaxed/simple;
+	bh=wY2rXlF9lNnn5R10zAhDvzddR0b8o48odmpoov1tV7A=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CBQRkGaEdl95YU9iIk04EqWnFgIgugW+DfHo4KQaZ3bo2/xSOsV6r2ryyrndRymbT2wCsHcakMz2DeG8AMwjZdZKrj4G744GFc4MvuNSKxGA+aXAGKKiDZfwHmad0vggMDNDYkQ4w7a8t1b57w7L+CbwV+ob/dvYaQycWKH2zbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZtVg63KzCz6L5VR;
+	Thu,  8 May 2025 19:45:06 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 95D9C140121;
+	Thu,  8 May 2025 19:47:36 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 8 May
+ 2025 13:47:34 +0200
+Date: Thu, 8 May 2025 12:47:33 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: Herve Codina <herve.codina@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang
+	<wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, "Derek
+ Kiernan" <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Arnd
+ Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, "Saravana Kannan"
+	<saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, "Mark Brown"
+	<broonie@kernel.org>, Len Brown <lenb@kernel.org>, Daniel Scally
+	<djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, <linux-kernel@vger.kernel.org>,
+	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-spi@vger.kernel.org>, <linux-acpi@vger.kernel.org>, Allan Nielsen
+	<allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli
+	<luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	<linux-cxl@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, Dave Jiang
+	<dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, Vishal
+ Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan
+ Williams <dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>
+Subject: Re: [PATCH v2 09/26] cxl/test: Use device_set_node()
+Message-ID: <20250508124733.00001208@huawei.com>
+In-Reply-To: <aBt38JR-YGD5nnC4@smile.fi.intel.com>
+References: <20250507071315.394857-1-herve.codina@bootlin.com>
+	<20250507071315.394857-10-herve.codina@bootlin.com>
+	<aBt38JR-YGD5nnC4@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/6] soc: spacemit: create a header for clock/reset
- registers
-To: Haylen Chu <heylenay@4d2.org>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, dlan@gentoo.org
-Cc: inochiama@outlook.com, guodong@riscstar.com, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250506210638.2800228-1-elder@riscstar.com>
- <20250506210638.2800228-3-elder@riscstar.com> <aBwwBSfnkw6XUOLA@ketchup>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <aBwwBSfnkw6XUOLA@ketchup>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 5/7/25 11:16 PM, Haylen Chu wrote:
-> On Tue, May 06, 2025 at 04:06:33PM -0500, Alex Elder wrote:
->> Move the definitions of register offsets and fields used by the SpacemiT
->> K1 SoC CCUs into a separate header file, so that they can be shared by
->> the reset driver that will be found under drivers/reset.
->>
->> Signed-off-by: Alex Elder <elder@riscstar.com>
->> ---
->>   drivers/clk/spacemit/ccu-k1.c | 111 +--------------------------------
->>   include/soc/spacemit/ccu_k1.h | 113 ++++++++++++++++++++++++++++++++++
+On Wed, 7 May 2025 18:10:40 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+> On Wed, May 07, 2025 at 09:12:51AM +0200, Herve Codina wrote:
+> > The code set directly dev->fwnode.
+> > 
+> > Use the dedicated helper to perform this operation.  
 > 
-> CCU is abbreviated from "clock controller unit" thus the filename seems
-> a little strange to me. Will k1-syscon.h be a better name? We could put
-> all syscon registers together when introducing the power-domain driver
-> later, which could provide an overall view of register layout.
-
-I'm OK with making that change.
-
-To me the "CCU" was the that IP block that offered clock and
-reset controls (and maybe a few other things?).  But renaming
-it, given we're separating the functionality more clearly,
-is pretty reasonable.
-
-Thanks.
-
-					-Alex
-
->>   2 files changed, 114 insertions(+), 110 deletions(-)
->>   create mode 100644 include/soc/spacemit/ccu_k1.h
+> ...
 > 
-> Best regards,
-> Haylen Chu
+> > @@ -1046,7 +1046,7 @@ static void mock_companion(struct acpi_device *adev, struct device *dev)
+> >  {
+> >  	device_initialize(&adev->dev);
+> >  	fwnode_init(&adev->fwnode, NULL);
+> > -	dev->fwnode = &adev->fwnode;
+> > +	device_set_node(dev, &adev->fwnode);
+> >  	adev->fwnode.dev = dev;
+> >  }  
+> 
+> This code is questionable to begin with. Can the original author explain what
+> is the motivation behind this as the only callers of fwnode_init() are deep
+> core pieces _and_ this only module. Why?!
+> 
 
+More likely to happen if CXL folk are +CC.  Added.
+
+Dan, maybe one for you?
