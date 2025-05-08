@@ -1,128 +1,211 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1C61F582E;
-	Thu,  8 May 2025 19:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DB5288529
+	for <linux-clk@vger.kernel.org>; Thu,  8 May 2025 19:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746732117; cv=none; b=puQ+tmHc2ubhVq/j2XzQ4GlwahKleRuuNn5YztjCD1soH+TtnoFTdOJ+t47lTFzdyvu6IWJSuB4PRzHmyhxAAH2Rjg8r1WgoMQD6UGZ3TRnkEZYriBr8hkA39qcI3BLnaJHzFW+n/BanM2bHdi+tRbggYIhTJTAaaYIJ6Tov/cg=
+	t=1746734057; cv=none; b=mHj6i0ku1n3E1d47sOn/2+/q3Nw47JgRx4eH4zhJuFwyskGL+isB1XfbxaTCgHHmwzh0HB+j9S90oIiprcBCETjp8Vpts9R7eQeqItZg4mjR4vqLRChofCBrp1i+0jZ5+HwFTtyXSL/eDzRWN6XVi179h6KOhPH67Q5AnDWbjGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746732117; c=relaxed/simple;
-	bh=gNfji5PFl+h0m2cHgjtJ540HGm+2fhAcZWawBcQGVj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6cTRq6JKSuNWGqNCtGgKlTcODkuCBTpqxZvSmzQcsg8XM0HFomTmbae1BP4NbVHN2HQ3cVQeSqJM5CO0EgWLerlBRZUMFfQ7SPO4UZBkKz127YUtP/+7Ybhp7q+ZCOasgFQuKilSCjROMwNQe1hcSPPAttGSNC7nH0y30Gx5/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IelAtWoL; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1746734057; c=relaxed/simple;
+	bh=kwdZ+Z/LF2j5ZHRi5G+bPYrNTJt3HUhSLkNyRXcZ9eo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=krGzXeDeIWwukzUqVM/jxQ+1yNTX8uTfPcwBOt2v+8VqQuLFwwMNmc26E1hdsWd4JVNfExWr8Kr/8jGyg2xleIv0dsIItV0nAguwK/pWoiLr0djS0PxOkcm+e3IMNH14vZXDOXVI0MAY4nEgnIMYQRQusxVrAuObKH9KMIjov+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=bDuD3WYO; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IelAtWoL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746732116; x=1778268116;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gNfji5PFl+h0m2cHgjtJ540HGm+2fhAcZWawBcQGVj4=;
-  b=IelAtWoL6LJf6z/v3ljvGoWhgDVKaxmP7G+cQCkX4OYhkZBsdCsNLQ9g
-   9hPVmUUIIDr8f1uCKQxH6GEZwiTozp3Qh+t70srzgwm2snUkHmly7ywNJ
-   oIzV/xN2I1AxZ5FDcY4SJg90T8NHxp/wBDCqssAQjV/AZUBPjp8KGEKov
-   q2aASaC+WmdocQXCb3tm/yJfGcW9RyHO1rmATj0Fgv339mY/sFZew5gYZ
-   i+ZtOxUi9YIT0zkw9uCEKZ91XjbBgQA+z/y2X0EfI3L8fcDdy64/EZ7Wt
-   aTJGZMhjxfe+knXD3i9aAi/nXZgwYAY6RaStgQclJKFL4QDgpOGFQsgWR
-   Q==;
-X-CSE-ConnectionGUID: 6gi/fR5cTA2CPctUzYAj/A==
-X-CSE-MsgGUID: iraohavkSZKJPNDZ5/zqRQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="73916375"
-X-IronPort-AV: E=Sophos;i="6.15,273,1739865600"; 
-   d="scan'208";a="73916375"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 12:21:54 -0700
-X-CSE-ConnectionGUID: 6K8qyxJ8Sp2SFtC4BMHSMA==
-X-CSE-MsgGUID: LP/93AoySMKUKm+Bf0N0HA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,273,1739865600"; 
-   d="scan'208";a="141348693"
-Received: from smile.fi.intel.com ([10.237.72.55])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 12:21:46 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1uD6oP-00000004D8c-2ujt;
-	Thu, 08 May 2025 22:21:41 +0300
-Date: Thu, 8 May 2025 22:21:41 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Peter Rosin <peda@axentia.se>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mark Brown <broonie@kernel.org>, Len Brown <lenb@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 23/26] misc: lan966x_pci: Introduce board specific data
-Message-ID: <aB0ERYKdRreDe7Wt@smile.fi.intel.com>
-References: <20250507071315.394857-1-herve.codina@bootlin.com>
- <20250507071315.394857-24-herve.codina@bootlin.com>
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="bDuD3WYO"
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-861b1f04b99so42445539f.0
+        for <linux-clk@vger.kernel.org>; Thu, 08 May 2025 12:54:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1746734054; x=1747338854; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5lLkvBZF0TFGQibyx4RWv5E5ajzDClCRIu3CVnS98Us=;
+        b=bDuD3WYODUVXsumOVYeUcUNDa0D9bE127XnBqbs6R0welv+Er71IWsXEvj56qrCMOz
+         3hglFUNsEyQvyJB8S0SpyTFeUVB7Rw8I5kJLiT53Xd+idxH6J6yhOLncGLd20R6G0KER
+         FKk9E4bukEzPcIXA6tKyg6DScF+d59TAdvXCbNzFDT/9Rx8i9r4HUhr/A7qrZLOpRFaY
+         dgOrDsM4rPhZcD30t/lY4QEbRnS98EDIEc6PSE7E3OnA0yXAfFBtmpUjjAE3qXFgauvp
+         gjpAdTuQIR2fz+fmsj5QLOfKTTqXUw8KHdIBGla5Qx9a82/bVxO0RDt95gSU0jAZPiGq
+         2Xpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746734054; x=1747338854;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5lLkvBZF0TFGQibyx4RWv5E5ajzDClCRIu3CVnS98Us=;
+        b=avrphIhT+uiCm2g6AFHYLxFjWSTDq3drqQNG8CN1LCd9FPSzSkr46QB4KXMHIQjnrR
+         5MATvDTnpbTB7Kj/u5xB1TlAUw1atpQ8j6hk9sqx//ZHfAwy8tlwDV5udQKV/bIL84hD
+         6OYXyd2b9v0yXkLVfQ/2IWT0cpR82wT/pXGd+K7f+F/rNVSmFxg/dU7PmtHmppQad6eZ
+         khwYr81fG7fcReiDmyNuhyiIsbj9FUAGksFVlfNKBduUeeaSLLhGN+p+0cK6sc6lIk0Y
+         gBuiAFK1klY74uoafiA+xqEvsK9kkqLdFzBToXOrjNvY6cEBOOwZer6C9o+QStsBb7WD
+         HnIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNGWLcFVEChD8rN6lbwQFy/T6WM9ySOMPKTNMNuIG7HSo4Q19ds8wlKPR3I3SBYwNBfDFZzILYqTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPaUZr97uzPGX95FEEICZwzWihyu442RIGXAelmYwb/3o/guGS
+	qTJpOhhvC3W1/ylb9R4ddAIrqp37dqdnpOkuvLrVGyPTHPOBZTwk6PkTOvn7yDE=
+X-Gm-Gg: ASbGnctHdhcnqre++hJXSNbDOY6CSuDb9Tv8u9NZAWcwy4Tf70vYh0qHEAEphmAl+o/
+	S5SPswj6v54xkXo7L3f/ImZmbK3X23vLGHTUQYhJBf6tezmh2f1Dec70pAFbe2f7ehxBGwjZmzw
+	z549B6jKV/vIexNxE5ADjzQDQ8uT9gN6vIhALxP2B3NpAMDqwfZ2OSQ4VcuxFgWINEts1TwYRu6
+	77JCPiKzeb3WkX+OmO/uyEAxBPNh3tONtWIKkz8nlWfmd002/hEpAA2sX9X5njfScSIV05EUfbO
+	4XQlJBhaF/68EzPa8H1pPZxaFR2632vtTsvxLcUKlTz0DZdbXsdl8cpDjLnRr23v/51KRK+ZH/3
+	bQ72sKliF4729FA==
+X-Google-Smtp-Source: AGHT+IH5+4NgW3qpid/j20Fj9qORDUdDDPvUwcmU1QEIhjjCmPh4Q+zFzAEnHPWUc/XIcbJzlBPzLA==
+X-Received: by 2002:a05:6602:2c0d:b0:864:627a:3d85 with SMTP id ca18e2360f4ac-8676362d62emr131255239f.11.1746734053891;
+        Thu, 08 May 2025 12:54:13 -0700 (PDT)
+Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fa226850e1sm93983173.134.2025.05.08.12.54.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 12:54:13 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	dlan@gentoo.org
+Cc: heylenay@4d2.org,
+	inochiama@outlook.com,
+	guodong@riscstar.com,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/6] clk: spacemit: add K1 reset support
+Date: Thu,  8 May 2025 14:54:02 -0500
+Message-ID: <20250508195409.2962633-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507071315.394857-24-herve.codina@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 07, 2025 at 09:13:05AM +0200, Herve Codina wrote:
-> Only one device-tree overlay (lan966x_evb_lan9662_nic.dtbo) is handled
-> and this overlay is directly referenced in lan966x_pci_load_overlay().
-> 
-> This avoid to use the code for an other board.
-> 
-> In order to be more generic and to allow support for other boards (PCI
-> Vendor/Device IDs), introduce the lan966x_pci_info structure and attach
-> it to PCI Vendor/Device IDs handled by the driver.
-> 
-> This structure contains information related to the PCI board such as
-> information related to the dtbo describing the board we have to load.
+This series adds reset controller support for the SpacemiT K1 SoC.
+A SpacemiT reset controller is implemented as an auxiliary device
+associated with a clock controller (CCU).  A new header file
+holds definitions used by both the clock and reset drivers.
 
-...
+This code builds upon the clock controller driver from Haylen Chu.
+This version differs from v6 in that all of the code is collected
+into a single source file, "reset-spacemit.c", as suggested by
+Philipp Zabel.  Other suggestions (detailed in the patches that
+follow) have also been incorporated.  The first patch is identical
+to what was sent previously.
 
->  static struct pci_device_id lan966x_pci_ids[] = {
-> -	{ PCI_DEVICE(PCI_VENDOR_ID_EFAR, 0x9660) },
-> +	{ PCI_VDEVICE(EFAR, 0x9660), (kernel_ulong_t)&evb_lan9662_nic_info },
+This series is based on the "for-next" branch in the SpacemiT
+repository:
+  https://github.com/spacemit-com/linux/tree/for-next
 
-PCI_DEVICE_DATA() ?
+All of these patches are available here:
+  https://github.com/riscstar/linux/tree/outgoing/reset-v7
 
->  	{ }
->  };
+Between version 6 and version 7:
+  - The new shared header file is now named "k1-syscon.h" (suggested
+    by Haylen Chu)
+  - The SPACEMIT_CCU_K1 config option has been removed (suggested
+    by Philipp Zabel)
+  - The SPACEMIT_CCU config option is now tristate, and selects
+    AUXILIARY_BUS (suggested by Haylen Chu)
+  - All code is concentrated into a single file "reset-spacemit.c"
+    rather than in a directory (suggested by Philipp Zabel)
+  - A bogus return value has been fixed, and a few irrelevant comments
+    have been removed (suggested by Philipp Zabel)
+  - MODULE_AUTHOR(), MODULE_DESCRIPTION(), and MODULE_LICENSE() are
+    now supplied (suggested by Haylen Chu)
 
+Here is version 6 of this series.
+  https://lore.kernel.org/lkml/20250506210638.2800228-1-elder@riscstar.com/
+
+Between version 5 and version 6:
+  - Reworked the code to use the auxiliary device framework.
+  - Moved the code supporting reset under drivers/reset/spacemit.
+  - Created a new header file shared by reset and clock.
+  - Separated generic from SoC-specific code in the reset driver.
+  - Dropped two Reviewed-by tags.
+
+Here is version 5 of this series.
+  https://lore.kernel.org/lkml/20250418145401.2603648-1-elder@riscstar.com/
+
+Between version 4 and version 5:
+  - Added Haylen's Reviewed-by on the second patch.
+  - Added Philipp's Reviewed-by on the third patch.
+  - In patch 4, added a const qualifier to some structures, and removed
+    parentheses surrounding integer constants, as suggested by Philipp
+  - Now based on the SpacemiT for-next branch
+
+Here is version 4 of this series.
+  https://lore.kernel.org/lkml/20250414191715.2264758-1-elder@riscstar.com/
+
+Between version 3 and version 4:
+  - Now based on Haylen Chu's v7 clock code, built on v6.15-rc2.
+  - Added Krzysztof's Reviewed-by on the first patch.
+
+Here is version 3 of this series.
+  https://lore.kernel.org/lkml/20250409211741.1171584-1-elder@riscstar.com/
+
+Between version 2 and version 3 there was no feedback, however:
+  - Haylen posted v6 of the clock series, and it included some changes
+    that affected the logic in this reset code.
+  - I was informed that defining CCU nodes without any clocks led to
+    warnings about "clocks" being a required property when running
+    "make dtbs_check".  For that reason, I made clock properties
+    optional for reset-only CCU nodes.
+  - This code is now based on v6.15-rc1, which includes a few commits
+    that were listed as dependencies previously.
+
+Here is version 2 of this series.
+  https://lore.kernel.org/lkml/20250328210233.1077035-1-elder@riscstar.com/
+
+Between version 1 and version 2:
+  - Added Rob's Reviewed-by tag on the first patch
+  - Renamed the of_match_data data type (and one or two other symbols) to
+    use "spacemit" rather than "k1".
+  - Replaced the abbreviated "rst" or "RST" in names of newly-defined
+    sympols with "reset" or "RESET" respectively.
+  - Eliminated rcdev_to_controller(), which was only used once.
+  - Changed a function that unsafely did a read/modify/write of a register
+    to use regmap_update_bits() instead as suggested by Haylen.
+  - Eliminated a null check for a pointer known to be non-null.
+  - Reordered the assignment of reset controller device fields.
+  - Added a "sentinel" comment as requested by Yixun.
+  - Updated to be based on Linux v6.14 final.
+
+Here is the first version of this series.
+  https://lore.kernel.org/lkml/20250321151831.623575-1-elder@riscstar.com/
+
+					-Alex
+
+Alex Elder (6):
+  dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
+  soc: spacemit: create a header for clock/reset registers
+  clk: spacemit: set up reset auxiliary devices
+  reset: spacemit: add support for SpacemiT CCU resets
+  reset: spacemit: define three more CCUs
+  riscv: dts: spacemit: add reset support for the K1 SoC
+
+ .../soc/spacemit/spacemit,k1-syscon.yaml      |  29 +-
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  18 ++
+ drivers/clk/spacemit/Kconfig                  |   1 +
+ drivers/clk/spacemit/ccu-k1.c                 | 224 ++++++-------
+ drivers/reset/Kconfig                         |   9 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-spacemit.c                | 297 ++++++++++++++++++
+ .../dt-bindings/clock/spacemit,k1-syscon.h    | 128 ++++++++
+ include/soc/spacemit/k1-syscon.h              | 160 ++++++++++
+ 9 files changed, 740 insertions(+), 127 deletions(-)
+ create mode 100644 drivers/reset/reset-spacemit.c
+ create mode 100644 include/soc/spacemit/k1-syscon.h
+
+
+base-commit: cb9c3aeae509b36afbdf46942a7a0a0dfc856ce7
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.45.2
 
