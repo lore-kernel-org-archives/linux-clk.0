@@ -1,168 +1,172 @@
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2EB221723
-	for <linux-clk@vger.kernel.org>; Thu,  8 May 2025 12:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269482066CF;
+	Thu,  8 May 2025 12:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746708174; cv=none; b=P5AArxpdUvkJOVAP7UKAC49KTDu3vAJKhS9xSKL5CWhu4hO4jN+LqOoiDSqNw5igrbJur31ZMpcxJyIwYmDjFc4zFa3SWcgcWF42ugU8kZ3EgqF7hNk6of1nCOf5IVtDrcV3r7cO5WEnTsufBb0NfhgOlG00LE2kQbDaiCbf6tA=
+	t=1746708486; cv=none; b=rx7Rm3rZBI8CmdLkpBNLCciR/8a/es28md8ZPLdrqU7nNgYUb+tJdKQIflAbneF+ZcySxGEZO30WGKDUfmOXQveSTRGAMljEWtFtqZEZgX3ekjEdZQmBblXp5k4PN9qI3hPn4bN9ygBeor7ZIen6Gv0P5UDji+jmZ4AvEoQjy+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746708174; c=relaxed/simple;
-	bh=FJft4ykFn4r+3Ixy2UkaLsf7DlcyK2asv15fMXuVTE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B/Y9r8qlcdyI46jSCqEqH7ZhQyNYT0u6LSHh32NQn6FViSUB7S601r7Yaa3uezCY+11PoSr6sDJd9mj4xIwO+JDqLPLPuBRUwCgqShxi+vYgQ8Lk5M4l4E8qXg6iepZ3vagOCGtgMEAFPy46L6WxjjYAMa/sJIgJKid+oTbdAP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=o3Oi/E6T; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+	s=arc-20240116; t=1746708486; c=relaxed/simple;
+	bh=32CtRKmrPA7nB/+f8XmyUNlfkbdkgk0lazsLdNElUp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cVDT7dakbJ8eOFd8NcNWHv9YPoWqTPc8i+Z5gTgOui8aa0gaBJs0htZToXb6JONCJ1vOqTyQsATwXIU2eWiBIdZ11vQFS+WIknBD3ai5vTCea25gOl83ZXGP2ExXUwvXcn0VONjnc+/pd6/aIp3IP4Cs/u+xb67npaXJwT6f8hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=0Gy0hFUn; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=j9Rxn0Nn; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="o3Oi/E6T"
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d940c7ea71so4458485ab.0
-        for <linux-clk@vger.kernel.org>; Thu, 08 May 2025 05:42:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1746708170; x=1747312970; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZPxzY778BTzrpTVkXEIU0dpBm2FrQRvJ11cMwg4f8Tc=;
-        b=o3Oi/E6TRorMuEq17Anh0PEI7v8Blwst1FTqP3/YFEKRWx70dxmqTtlkYjh+t4+3gG
-         KMNiKRU7CrKlJ5J0qjdkq7UwXzBmv58BbdWfVig+DfxIEWod7RAS/Rv+e/qlHyv//GHI
-         w+p/vCDgoRzpjDNz+YN4B8ocqvjImZZtCYpVyntwvCoxT2ctjjCW3ym8f6RelYhOWh73
-         1aFpPM7cVShlBCNuQk97G9UnDoEdI4i4LyuJ2GfU8Fu+tlSzukxB4dPNgdkBdgHrb293
-         1Fqk9qgtWg9hsiFt/+53b14nk9jDZxVVBjQGGyQlcclTiDDICKYW/82P31MX+ebnqLTv
-         eS8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746708170; x=1747312970;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZPxzY778BTzrpTVkXEIU0dpBm2FrQRvJ11cMwg4f8Tc=;
-        b=YOa+GY/+APKW3bhfMiZQ1jrUaWhvTKSMPSnXJY3Ia8nUUXf3b05M+LhptaKrNE1GRc
-         ZrLJ8XGWMA9Qo0QqKTRN9apOdbp0/o6sGGmqEmtDJhGVx1SnqPY2qPdUsiQYliqMIrRS
-         s4iHI0U/Vr1hqumSJ4msUKv+B0B+itLI4btSYlk3v+QVVJzcQ65fd1MlgVvDZgQ4Dv5S
-         HFBoQ+SFVMnzMT1r8GqrtzmCRIqPmphCqKuswDkvaiz+67faQj2yWNWzrs72FHpxNQ8F
-         1e2YvzIZq+MAgJyOsXVuZh01R4JBAQOGdCdnP0WUNeHgFdJ58aE9T1TVdmKOv/slwVnX
-         Yz9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVpfNhXJ05eLvuOECwrGj1ygXLzFx23GtCGhfSdwn+e4JhOF9ky8W2vf2WLOwIsQXtaaKa6adnbr/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG7NuwZk9k+8NU0/0gHb8bhkM1TpmwvUp2PK9onB5tveONq7cN
-	b/JAOrUygaezgM30qJJp5FEuHh3jsI7tXVozs/NbqACk2j9ZRIwgc4WTCqhWddo=
-X-Gm-Gg: ASbGncsyh1/6i8jqz5jAYsnRNQRkl3xoJPJWg4VCvjbBnF++xhEE+HIX5q+ENxdGrzP
-	+AXQx2L8UCCOkDV+o5+4oLua4rRE2tGlKT75K4ICUDJyM85ZYpAz/NYZwtAxl3PJhzS4eYEaapU
-	hyjYvulnHyAmBCHED4DS2tk6GDxG6LwkMlTPHLS1YlsGmsDLaL36GCHzZRfUujTXPPym65Iv94h
-	w3QZsCTOnZk3ODMxIS7CzGItDIlfUss+3RjcyVtaF5Avgnzpvjc+vaQh7Vh8Hu/u9DuE9OSxYXB
-	rlG5qb4qTHFrwA3Fg00tRC6ktAcuGzGlEMKDmv9OCWqEe5L9J6KBSw45CAKALCpR02Nr5TXFKhx
-	hYnfc
-X-Google-Smtp-Source: AGHT+IHinvHLNqxRhaY2b6afbVsRjVu3/5Tnou0kd+6vPsXAPuyDnBpQ8CoLFULaXpnrzUsemLIJvg==
-X-Received: by 2002:a92:cdaf:0:b0:3d8:975:b825 with SMTP id e9e14a558f8ab-3da738d5b28mr84407595ab.5.1746708170546;
-        Thu, 08 May 2025 05:42:50 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f88aa8e068sm3135636173.108.2025.05.08.05.42.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 05:42:50 -0700 (PDT)
-Message-ID: <5799153a-c9dc-4145-9993-7e5d99a6a0b8@riscstar.com>
-Date: Thu, 8 May 2025 07:42:48 -0500
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="0Gy0hFUn";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="j9Rxn0Nn"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 157CF12FB439;
+	Thu, 08 May 2025 05:48:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1746708483; bh=32CtRKmrPA7nB/+f8XmyUNlfkbdkgk0lazsLdNElUp8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0Gy0hFUnJwW7W4VikxFm8zEYloYZjmlt56duf6SD/a1jKj2920kTub7a76TU4Xtpl
+	 8jtcYMFREVMr/r3tjrwO5V3rc3m2QYKKydHPSauHppvE6+eKuSzUEXNPPw3utZT5Nw
+	 wx1CyQxTbqSwOJoJkCAhzyToVXy2ne2U8NOPAyO9njuJZHrtYJraIxkykswX9g8+KX
+	 kbcfIK1xVTon+U1au/0jl8vOpIN154S4SRdlPYXhg7KkPpIc1IvHa/pDpIBFib3giU
+	 KeXe1eNwcDCEdinqd/+qEaefNGzePho0FGbnAaNtF1DqvmJ1dy8vY8MCFHC1ur1P5j
+	 5mLLm1dCj6LYA==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id Ylu42rJHkAyE; Thu,  8 May 2025 05:47:27 -0700 (PDT)
+Received: from ketchup (unknown [183.217.82.204])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id B177312FB404;
+	Thu, 08 May 2025 05:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1746708446; bh=32CtRKmrPA7nB/+f8XmyUNlfkbdkgk0lazsLdNElUp8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j9Rxn0NnDtxFBNTZXaVNbdMlSNpg2FVTn1w7cyn9yZpuTnSC3saa0N6MeOBzX1uGD
+	 M5V5CqijL2FQCjQLOfl4w885XKxkR65CLQenF20WoJB+QFBcRHu0aWeYBqzsjm/MxA
+	 gTsZRNeRlk21Qg9K+213efdRner3P7bzuijDM1Itdjrls9SQlfSAys5wxq8tl+kZ9i
+	 aG4Z+DLuU1KOEiiJPdzokK9bBrA4MNlFji0bmN8K9t82TNBoBjyU49vMoAvn2VjnFR
+	 iE46+EBTQngIMS0MPAy8S4PJNhQs2OKApoHSHHXuEk7KnI8pN8s+rsTqPSVpRpkXvm
+	 0+MTId2zsOavg==
+Date: Thu, 8 May 2025 12:47:19 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	p.zabel@pengutronix.de, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	dlan@gentoo.org
+Cc: inochiama@outlook.com, guodong@riscstar.com, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 4/6] reset: spacemit: add support for SpacemiT CCU
+ resets
+Message-ID: <aByn187aRWyrzzF4@ketchup>
+References: <20250506210638.2800228-1-elder@riscstar.com>
+ <20250506210638.2800228-5-elder@riscstar.com>
+ <aBxDQ1_2xJjGlwNf@ketchup>
+ <d2614363-1dab-4ea3-b79a-5d3c02c4bc17@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/6] dt-bindings: soc: spacemit: define spacemit,k1-ccu
- resets
-To: Krzysztof Kozlowski <krzk@kernel.org>, Yixun Lan <dlan@gentoo.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr, heylenay@4d2.org, inochiama@outlook.com,
- guodong@riscstar.com, devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250506210638.2800228-1-elder@riscstar.com>
- <20250506210638.2800228-2-elder@riscstar.com>
- <20250507223554-GYA505240@gentoo>
- <22b7b5fc-6f5a-4ce8-ae12-a7423925c113@kernel.org>
- <1521c828-31f3-4e45-a651-750ce2e37364@riscstar.com>
- <2ce8b9e5-562e-454f-9e2b-f2796d309063@kernel.org>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <2ce8b9e5-562e-454f-9e2b-f2796d309063@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2614363-1dab-4ea3-b79a-5d3c02c4bc17@riscstar.com>
 
-On 5/8/25 7:36 AM, Krzysztof Kozlowski wrote:
-> On 08/05/2025 14:17, Alex Elder wrote:
->> On 5/8/25 7:02 AM, Krzysztof Kozlowski wrote:
->>> On 08/05/2025 00:35, Yixun Lan wrote:
->>>>> +  - if:
->>>>> +      properties:
->>>>> +        compatible:
->>>>> +          contains:
->>>>> +            enum:
->>>>> +              - spacemit,k1-syscon-apbc
->>>>> +              - spacemit,k1-syscon-apmu
->>>>> +              - spacemit,k1-syscon-mpmu
->>>>> +    then:
->>>>> +      required:
->>>>> +        - clocks
->>>>> +        - clock-names
->>>>> +        - "#clock-cells"
->>>>>    
->>>>>    additionalProperties: false
->>>>>    
->>>>> diff --git a/include/dt-bindings/clock/spacemit,k1-syscon.h b/include/dt-bindings/clock/spacemit,k1-syscon.h
->>>>> index 35968ae982466..f5965dda3b905 100644
->>>>> --- a/include/dt-bindings/clock/spacemit,k1-syscon.h
->>>>> +++ b/include/dt-bindings/clock/spacemit,k1-syscon.h
->>>> would it be better to move all reset definition to its dedicated dir?
->>>> which like: include/dt-bindings/reset/spacemit,k1-syscon.h?
->>>
->>> Please kindly trim the replies from unnecessary context. It makes it
->>> much easier to find new content.
->>>
->>>
->>> I don't get why such comments are appearing so late - at v6. There was
->>> nothing from you about this in v1, v2 and v3, which finally got reviewed.
->>
->> Stephen Boyd said "please rework this to use the auxiliary driver
->> framework" on version 5 of the series; it was otherwise "done" at
->> that point.
-> 
-> Stephen is a subsystem maintainer so his comments are fine or acceptable
-> to be late.
-> 
->>
->> Doing this meant there was a much clearer separation of the clock
->> definitions from the reset definitions.  And Yixun's suggestion
->> came from viewing things in that context.
-> 
-> Weren't they applicable to v1 as well? How bindings could change with
-> change to auxiliary bus/driver?
-> 
->>
->> Given the rework, I considered sending this as v1 of a new series
->> but did not.
-> 
-> Sorry but no. Bindings headers at v1 are exactly the same or almost the
-> same as now:
-> 
-> https://lore.kernel.org/lkml/20250321151831.623575-2-elder@riscstar.com/
-> 
-> so this idea could have been given at v1, v2, v3, v4, v5 (that would be
-> late).... but at some point this is just unnecessary late nitpicking.
-> 
-> So what then? Imagine that you prepare v7 and some other person gives
-> you different comment about bindings or bindings headers. Then you
-> prepare v8. And then someone comes with one more, different comment,
-> because that person did not bother to review between v1-v8 (that
-> imaginary future v8), so you need to prepare v9.
-> 
-> I don't think this process is correct.
+On Thu, May 08, 2025 at 06:55:17AM -0500, Alex Elder wrote:
+> On 5/8/25 12:38 AM, Haylen Chu wrote:
+> > On Tue, May 06, 2025 at 04:06:35PM -0500, Alex Elder wrote:
+> > > Implement reset support for SpacemiT CCUs.  The code is structured to
+> > > handle SpacemiT resets generically, while defining the set of specific
+> > > reset controllers and their resets in an SoC-specific source file.  A
+> > > SpacemiT reset controller device is an auxiliary device associated with
+> > > a clock controller (CCU).
+> > > 
+> > > This initial patch defines the reset controllers for the MPMU, APBC, and
+> > > MPMU CCUs, which already defined clock controllers.
+> > > 
+> > > Signed-off-by: Alex Elder <elder@riscstar.com>
+> > > ---
+> > >   drivers/reset/Kconfig           |   1 +
+> > >   drivers/reset/Makefile          |   1 +
+> > >   drivers/reset/spacemit/Kconfig  |  12 +++
+> > >   drivers/reset/spacemit/Makefile |   7 ++
+> > >   drivers/reset/spacemit/core.c   |  61 +++++++++++
+> > >   drivers/reset/spacemit/core.h   |  39 +++++++
+> > >   drivers/reset/spacemit/k1.c     | 177 ++++++++++++++++++++++++++++++++
+> > >   7 files changed, 298 insertions(+)
+> > >   create mode 100644 drivers/reset/spacemit/Kconfig
+> > >   create mode 100644 drivers/reset/spacemit/Makefile
+> > >   create mode 100644 drivers/reset/spacemit/core.c
+> > >   create mode 100644 drivers/reset/spacemit/core.h
+> > >   create mode 100644 drivers/reset/spacemit/k1.c
+> > > 
+> > 
+> > ...
+> > 
+> > > diff --git a/drivers/reset/spacemit/Kconfig b/drivers/reset/spacemit/Kconfig
+> > > new file mode 100644
+> > > index 0000000000000..4ff3487a99eff
+> > > --- /dev/null
+> > > +++ b/drivers/reset/spacemit/Kconfig
+> > > @@ -0,0 +1,12 @@
+> > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > +
+> > > +config RESET_SPACEMIT
+> > > +	bool
+> > > +
+> > > +config RESET_SPACEMIT_K1
+> > > +	tristate "SpacemiT K1 reset driver"
+> > > +	depends on ARCH_SPACEMIT || COMPILE_TEST
+> > > +	select RESET_SPACEMIT
+> > > +	default ARCH_SPACEMIT
+> > > +	help
+> > > +	  This enables the reset controller driver for the SpacemiT K1 SoC.
 
-We'll stick with the original binding definition.	-Alex
+...
 
-
+> > > diff --git a/drivers/reset/spacemit/Makefile b/drivers/reset/spacemit/Makefile
+> > > new file mode 100644
+> > > index 0000000000000..3a064e9d5d6b4
+> > > --- /dev/null
+> > > +++ b/drivers/reset/spacemit/Makefile
+> > > @@ -0,0 +1,7 @@
+> > > +# SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +obj-$(CONFIG_RESET_SPACEMIT)			+= reset_spacemit.o
+> > 
+> > As RESET_SPACEMIT is defined as bool, the reset driver will never be
+> > compiled as a module... so either the RESET_SPACEMIT_K1 should be
+> > limited to bool as well or you could take an approach similar to the
+> > clock driver.
 > 
-> Best regards,
-> Krzysztof
+> I'm not sure I understand this statement, at least in this
+> context.  This pattern is used to define a single module
+> "reset_spacemit.o" out of several source files.
 
+The problem is that RESET_SPACEMIT could only evaluate to N or Y (it's a
+bool entry), thus reset_spacemit.o will always be built into the kernel,
+regardless whether RESET_SPACEMIT_K1 is set to Y or M.
+
+In the clock driver, the platform config entry (SPACEMIT_CCU, bool type)
+is used to hide SoC-specific entries instead of being really used in
+Makefile.
+
+> But I think you're saying that RESET_SPACEMIT and
+> RESET_SPACEMIT_K1 should both be bool, or both be
+> tristate.  I will resolve that question before I
+> send the next version.
+
+This isn't necessary, but making both of them bool will definitely
+simplify your work, although I'd like to see the reset driver able to
+be built as module, just like the clock one :)
+
+> > > +reset_spacemit-y				:= core.o
+> > > +
+> > > +reset_spacemit-$(CONFIG_RESET_SPACEMIT_K1)	+= k1.o
+
+Regards,
+Haylen Chu
