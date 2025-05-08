@@ -1,152 +1,218 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F90175D53
-	for <linux-clk@vger.kernel.org>; Thu,  8 May 2025 09:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C531F37D3;
+	Thu,  8 May 2025 11:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746695512; cv=none; b=Jp9dvdFaQ5P21Y5Sw77rj6n7OHaN5oWN0phJHwzxGZNi9dfS2ZSCCcI+lvY6Y1ARZE+3CEKfa0ozFkWGrZdkGH/Q7rXXjQ1fkAC2MpriaxF/PxXRgc7QTUTEVamzEC2gTyTum9DoBvNC7QPg3tyRbZVW+sdY537wCjXaloZweI8=
+	t=1746703044; cv=none; b=jHs9m4fiPDbXriAJXQCt8lndnWheIDQMzaQlcMymjDoJrXOLOiGg+DekytaFbZT62a40oy3j6a32ch2vCvAJi1NUPNMFlH8wD0URE4pB21y5evshvb+q8Hmts0+qV43FC29DNGkJoDVlKEyuXmhiYBDOloCcur5XlPk2ZDqHqjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746695512; c=relaxed/simple;
-	bh=kSWdw8IVCVEdiiVxcwOCCea5RImdBd+3SVN/TuOIsmo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=a3emnxYyp/HYMupjjN5q7OJmHKPhXE9vJM4XCFkyR1nzm0SZSAo4DllUF2FYd3P9VQzvElTHxgro2GX/sUlGhtJX36R6xiIN2ir3A9Yf6eZK+X0Wt/tAM/+4b7pSP8NcoOMLxBNuv0cVS0ztItykmfjRV6JawunfTwnGRpqSEz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uCxHz-0001pr-Kw; Thu, 08 May 2025 11:11:35 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uCxHz-001hZ8-0z;
-	Thu, 08 May 2025 11:11:35 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1uCxHz-0003qM-0i;
-	Thu, 08 May 2025 11:11:35 +0200
-Message-ID: <a3febd3718397d7cf067e2ae637c2d633388f89f.camel@pengutronix.de>
-Subject: Re: [PATCH v6 5/6] reset: spacemit: define three more CCUs
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Alex Elder <elder@riscstar.com>, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- alex@ghiti.fr,  dlan@gentoo.org
-Cc: heylenay@4d2.org, inochiama@outlook.com, guodong@riscstar.com, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- spacemit@lists.linux.dev,  linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Date: Thu, 08 May 2025 11:11:35 +0200
-In-Reply-To: <20250506210638.2800228-6-elder@riscstar.com>
-References: <20250506210638.2800228-1-elder@riscstar.com>
-	 <20250506210638.2800228-6-elder@riscstar.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1746703044; c=relaxed/simple;
+	bh=mm+CgjLs+rS3CPxZ9/r7vxj50BUPBgnFChiiDX6Gy/s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P/wbnnU16sgPskbmCgtku5rPtBuSMKWKZIm3b7RbqtnpB0G+wW/lL3B9W8fQ+lKDF9PZEXN6rWmZZ9QZRLHUL1KJMlYsF8zPH1cGtvd65j7SGSZv+JFcLUmAglZiHFlFd1yOezingAG3XxYIejiW3gJUpfBFhXoXGOy90kNphVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=Ry3d5bWe; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=Vm8iKbXq; arc=none smtp.client-ip=155.254.16.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="Ry3d5bWe";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="Vm8iKbXq"
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 2983712FB439;
+	Thu, 08 May 2025 04:17:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1746703039; bh=mm+CgjLs+rS3CPxZ9/r7vxj50BUPBgnFChiiDX6Gy/s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ry3d5bWea+7xauZVZ7ybL5zSOz7/4fJvWBShpHx5mgLg9qDH7mXQSZmvG7gU8RUvv
+	 3fP15KZxSGIdmRxajfgWhr19kZTmaCj4lbeGqNruqg5fzBheMkJBjygI2gFEwoPHZx
+	 bzsPhYLvwgrzBj0yKwUAOC+lMXeaLUX7IropKU9sFoxuo4ZheJrmO7UTA+GYYAWWUJ
+	 b2Wy0N49WVxuQNi3iRaLeDMbY4Q9orCCWUX3U5XhXcRwIYVltOv+aQVyePhu8xbibd
+	 BryUGRZAmf0VB7XdENQdYX8TnA0oBywpv7sI0ALne702UltzRKLHQZ7C4ZO9PdT38H
+	 LiH4sDxRWYgFg==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Authentication-Results: bayard.4d2.org (amavisd-new); dkim=pass (2048-bit key)
+ header.d=4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id dQzszsTujUZg; Thu,  8 May 2025 04:16:43 -0700 (PDT)
+Received: from localhost.localdomain (unknown [183.217.82.204])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id BC78712FB404;
+	Thu, 08 May 2025 04:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1746703003; bh=mm+CgjLs+rS3CPxZ9/r7vxj50BUPBgnFChiiDX6Gy/s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Vm8iKbXqVO8iIBwHm42a6OkEWN0tug+I8+ACFnx3/SCcwRI1azQqo3d99inSTlBBm
+	 9MdpWKLO7VMHinZlA5yezaHI0cvYGP0DrIH8jfZlKbgNeU7MGA0cWH7qSR+d/UztEH
+	 DcCDmgvebzSAzCjr1SRz9Ag7WB7Tdi4cjYkHRdJ5ZSTDkRTLPHZfQ8teLm7nAT/Yr3
+	 5Rw/PVNuqWGfzc4yDeOoP6CkZaMHMYX/C+YkK6OcvAxeBbsTifV071Z4olDY+Sn8uW
+	 O+SatnDWAvS0WwBMKkJ8bt6J8VdIvg+5GH6n3+rvakThmtJ+u7LLMjJYA1oCgougb4
+	 rFNFF2FlK5eeA==
+From: Haylen Chu <heylenay@4d2.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>,
+	Yixun Lan <dlan@gentoo.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	Haylen Chu <heylenay@4d2.org>,
+	Alex Elder <elder@riscstar.com>
+Subject: [PATCH v9] riscv: dts: spacemit: Add clock tree for SpacemiT K1
+Date: Thu,  8 May 2025 11:15:29 +0000
+Message-ID: <20250508111528.10508-2-heylenay@4d2.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Di, 2025-05-06 at 16:06 -0500, Alex Elder wrote:
-> Three more CCUs on the SpacemiT K1 SoC implement only resets, not clocks.
-> Define these resets so they can be used.
->=20
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  drivers/clk/spacemit/ccu-k1.c | 24 ++++++++++++++++
->  drivers/reset/spacemit/k1.c   | 54 +++++++++++++++++++++++++++++++++++
->  include/soc/spacemit/ccu_k1.h | 30 +++++++++++++++++++
->  3 files changed, 108 insertions(+)
->=20
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.=
-c
-> index 6b1845e899e5f..bddc83aff23cd 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -939,6 +939,18 @@ static const struct spacemit_ccu_data k1_ccu_apmu_da=
-ta =3D {
->  	.num		=3D ARRAY_SIZE(k1_ccu_apmu_hws),
->  };
-> =20
-> +static const struct spacemit_ccu_data k1_ccu_rcpu_data =3D {
+Describe the PLL and system controllers that're capable of generating
+clock signals in the devicetree.
 
-The /* No clocks in the RCPU CCU */ comment belongs here, instead of in
-the reset driver.
+Signed-off-by: Haylen Chu <heylenay@4d2.org>
+Reviewed-by: Alex Elder <elder@riscstar.com>
+Reviewed-by: Yixun Lan <dlan@gentoo.org>
+---
 
-I wonder though, if these units have no clocks, why are they called
-CCUs? It doesn't make much sense to me to add their compatibles to the
-ccu-k1 driver only to load the reset aux driver. Why not just add a
-platform driver next to the aux driver in reset-spacemit.ko for these
-three?
+This originates the 5th patch from previous "Add clock controller
+support for SpacemiT K1" series[1] with node names of system
+controllers and PLL reworked[2].
 
-> +	.reset_name	=3D "rcpu-reset",
-> +};
-> +
-> +static const struct spacemit_ccu_data k1_ccu_rcpu2_data =3D {
-> +	.reset_name	=3D "rcpu2-reset",
-> +};
-> +
-> +static const struct spacemit_ccu_data k1_ccu_apbc2_data =3D {
-> +	.reset_name	=3D "apbc2-reset",
-> +};
-> +
->  static int spacemit_ccu_register(struct device *dev,
->  				 struct regmap *regmap,
->  				 struct regmap *lock_regmap,
-> @@ -1106,6 +1118,18 @@ static const struct of_device_id of_k1_ccu_match[]=
- =3D {
->  		.compatible	=3D "spacemit,k1-syscon-apmu",
->  		.data		=3D &k1_ccu_apmu_data,
->  	},
-> +	{
-> +		.compatible	=3D "spacemit,k1-syscon-rcpu",
-> +		.data		=3D &k1_ccu_rcpu_data,
-> +	},
-> +	{
-> +		.compatible	=3D "spacemit,k1-syscon-rcpu2",
-> +		.data		=3D &k1_ccu_rcpu2_data,
-> +	},
-> +	{
-> +		.compatible	=3D "spacemit,k1-syscon-apbc2",
-> +		.data		=3D &k1_ccu_apbc2_data,
-> +	},
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, of_k1_ccu_match);
-> diff --git a/drivers/reset/spacemit/k1.c b/drivers/reset/spacemit/k1.c
-> index 19a34f151b214..27434a1928261 100644
-> --- a/drivers/reset/spacemit/k1.c
-> +++ b/drivers/reset/spacemit/k1.c
-> @@ -137,6 +137,57 @@ static const struct ccu_reset_controller_data k1_apm=
-u_reset_data =3D {
->  	.count		=3D ARRAY_SIZE(apmu_resets),
->  };
-> =20
-> +static const struct ccu_reset_data rcpu_resets[] =3D {
-> +	[RESET_RCPU_SSP0]	=3D RESET_DATA(RCPU_SSP0_CLK_RST,	0, BIT(0)),
-> +	[RESET_RCPU_I2C0]	=3D RESET_DATA(RCPU_I2C0_CLK_RST,	0, BIT(0)),
-> +	[RESET_RCPU_UART1]	=3D RESET_DATA(RCPU_UART1_CLK_RST, 0, BIT(0)),
-> +	[RESET_RCPU_IR]		=3D RESET_DATA(RCPU_CAN_CLK_RST,	0, BIT(0)),
-> +	[RESET_RCPU_CAN]	=3D RESET_DATA(RCPU_IR_CLK_RST,	0, BIT(0)),
-> +	[RESET_RCPU_UART0]	=3D RESET_DATA(RCPU_UART0_CLK_RST, 0, BIT(0)),
-> +	[RESET_RCPU_HDMI_AUDIO]	=3D RESET_DATA(AUDIO_HDMI_CLK_CTRL, 0, BIT(0)),
-> +};
-> +
-> +static const struct ccu_reset_controller_data k1_rcpu_reset_data =3D {
-> +	/* No clocks in the RCPU CCU */
+The patch is based on linux-spacemit/k1/clk-for-6.16. Yixun, please drop
+the previous version and pick this patch instead. Thanks for your work!
 
-This information is not useful in the reset driver.
+[1]: https://lore.kernel.org/spacemit/20250416135406.16284-1-heylenay@4d2.org/
+[2]: https://lore.kernel.org/spacemit/aBxF81yqPgHP5oA_@ketchup/
 
-regards
-Philipp
+ arch/riscv/boot/dts/spacemit/k1.dtsi | 75 ++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
+
+diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+index c670ebf8fa12..85c9730dd082 100644
+--- a/arch/riscv/boot/dts/spacemit/k1.dtsi
++++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+@@ -3,6 +3,8 @@
+  * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
+  */
+ 
++#include <dt-bindings/clock/spacemit,k1-syscon.h>
++
+ /dts-v1/;
+ / {
+ 	#address-cells = <2>;
+@@ -306,6 +308,36 @@ cluster1_l2_cache: l2-cache1 {
+ 		};
+ 	};
+ 
++	clocks {
++		vctcxo_1m: clock-1m {
++			compatible = "fixed-clock";
++			clock-frequency = <1000000>;
++			clock-output-names = "vctcxo_1m";
++			#clock-cells = <0>;
++		};
++
++		vctcxo_24m: clock-24m {
++			compatible = "fixed-clock";
++			clock-frequency = <24000000>;
++			clock-output-names = "vctcxo_24m";
++			#clock-cells = <0>;
++		};
++
++		vctcxo_3m: clock-3m {
++			compatible = "fixed-clock";
++			clock-frequency = <3000000>;
++			clock-output-names = "vctcxo_3m";
++			#clock-cells = <0>;
++		};
++
++		osc_32k: clock-32k {
++			compatible = "fixed-clock";
++			clock-frequency = <32000>;
++			clock-output-names = "osc_32k";
++			#clock-cells = <0>;
++		};
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		interrupt-parent = <&plic>;
+@@ -314,6 +346,17 @@ soc {
+ 		dma-noncoherent;
+ 		ranges;
+ 
++		syscon_apbc: system-controller@d4015000 {
++			compatible = "spacemit,k1-syscon-apbc";
++			reg = <0x0 0xd4015000 0x0 0x1000>;
++			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
++				 <&vctcxo_24m>;
++			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
++				      "vctcxo_24m";
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
+ 		uart0: serial@d4017000 {
+ 			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+ 			reg = <0x0 0xd4017000 0x0 0x100>;
+@@ -409,6 +452,38 @@ pinctrl: pinctrl@d401e000 {
+ 			reg = <0x0 0xd401e000 0x0 0x400>;
+ 		};
+ 
++		syscon_mpmu: system-controller@d4050000 {
++			compatible = "spacemit,k1-syscon-mpmu";
++			reg = <0x0 0xd4050000 0x0 0x209c>;
++			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
++				 <&vctcxo_24m>;
++			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
++				      "vctcxo_24m";
++			#clock-cells = <1>;
++			#power-domain-cells = <1>;
++			#reset-cells = <1>;
++		};
++
++		pll: clock-controller@d4090000 {
++			compatible = "spacemit,k1-pll";
++			reg = <0x0 0xd4090000 0x0 0x1000>;
++			clocks = <&vctcxo_24m>;
++			spacemit,mpmu = <&syscon_mpmu>;
++			#clock-cells = <1>;
++		};
++
++		syscon_apmu: system-controller@d4282800 {
++			compatible = "spacemit,k1-syscon-apmu";
++			reg = <0x0 0xd4282800 0x0 0x400>;
++			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
++				 <&vctcxo_24m>;
++			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
++				      "vctcxo_24m";
++			#clock-cells = <1>;
++			#power-domain-cells = <1>;
++			#reset-cells = <1>;
++		};
++
+ 		plic: interrupt-controller@e0000000 {
+ 			compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
+ 			reg = <0x0 0xe0000000 0x0 0x4000000>;
+-- 
+2.49.0
+
