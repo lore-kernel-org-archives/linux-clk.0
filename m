@@ -1,121 +1,129 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C98BA38
-	for <linux-clk@vger.kernel.org>; Thu,  8 May 2025 07:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610D16F073;
+	Thu,  8 May 2025 08:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746688957; cv=none; b=OEvFIxO2XLEGwavrysq1tqcOJ1t6APHl1GnEzvdLZa7rd+QzPOFMKqo8IbDuanowhP4J38vLoAU2LGXmIgCNjEIt1OIHfj8xtE5yeqFcmz5ZQffkQ4wBorg7c2hUv2Qa5JkbQaxNFrTy5OZglMiIkWdXfJEXHxsglsDVLDvSypE=
+	t=1746691703; cv=none; b=oBRr/wOckIxAmQnFJUNDPkAxAFzFQlY/RW27spu+UgErI5CVE36cGazCbnRvJLQsbYgOPixl3MEtpp2HoqIbnfCXK2yOfAw0phmjir71n6l1LybjNyAalkdD6GWDOXdXdBjHUHdN8QSGCOQcBsGfBnmwnoyy+fzhIUOUl7Zl/m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746688957; c=relaxed/simple;
-	bh=QGS1M/YT3mDdy/1Xp33jgSPbNLnApMgn9s4eyyzTfes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dfxQX6gx25wgP2JHZdyaLXCbwsRh9gCGZuh+GLomdBvWWW2vRyp50yMyZXGLCgMx1WY3nEcr4PD1nx+rqDVNcOwC8OuwizHBsFDduKvUv1m54oJJ8V+GL3qgeAGWyxjqZ9YclVZPuL8ylBxqiwmOFePK1y1hpCKR8PnKBKYVCsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uCvaK-00056O-C2; Thu, 08 May 2025 09:22:24 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uCvaK-001ghe-00;
-	Thu, 08 May 2025 09:22:24 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1uCvaJ-00ALKC-2r;
-	Thu, 08 May 2025 09:22:23 +0200
-Date: Thu, 8 May 2025 09:22:23 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	kernel@pengutronix.de,
-	Alvin =?iso-8859-15?Q?=A6ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH v4 2/3] dt-bindings: clock: add TI CDCE6214 binding
-Message-ID: <aBxbr8CyKmdZQobS@pengutronix.de>
-References: <20250430-clk-cdce6214-v4-0-9f15e7126ac6@pengutronix.de>
- <20250430-clk-cdce6214-v4-2-9f15e7126ac6@pengutronix.de>
- <3ba53493700561923c4ea9ab53a1a272@kernel.org>
- <aBsUObKHmJkBFN04@pengutronix.de>
- <1f072e2e02bb6a66d10c50177e5c69a6@kernel.org>
+	s=arc-20240116; t=1746691703; c=relaxed/simple;
+	bh=+sJ+nOd93uoWClQE2mhYQO1xYIQfotIWKMU2W7nPB2o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pwpvs1MkmZZO/eH6Kq5IbB73V9tRCViOswDdAFyb+wxoYtaP2GmGITf9c3ZnMdiEq1PmzSo+fgMcgwTPt9qqH0r/FzE3zvh2TIInocGtBS3l4vhZrOnpTXcSn5juMwU0BBI2NW0yBU4Hmx1cFrOvb1mv29xbH57j4Kcfjgb9DVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5241abb9761so238255e0c.1;
+        Thu, 08 May 2025 01:08:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746691697; x=1747296497;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5pyh88RLi7QBn3vHcG2jBCwxHsg3m1PlM26ESBfjfQk=;
+        b=JdVUV14WGk68/k1HNNJGKorvTY7Q8kr0nz2kJuiUsEQOn70dC6/VuX/LS0IuBcV3OV
+         /v5sgnoLF7ggsPuZEenIWHr1XT1KzVWNE/PMvtKbvNZtel0tcHCqNh2JhTg4bQEFThqx
+         QSvAVz8KeK6KbHiinIXfOFDiLA5SM5qqjLoeutHb2IyoRAKixPYKT7TsgiFOSzKlEBRy
+         XXOmGPeqPeUehJKh/gyag4Pn7HUuJc8EwecAA7QzvpPgkhjhRIMdPlj2MFzoUgozGUeO
+         OZMAkxwPBbWX2ydgmnpjvZprveH/RJkmoxCNkRqf1o/wzPz4JOMssRchcboys89crIjB
+         PtdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9w1Jt9qaJgT/KogH8Sehsd8x74zE5gcGXD8gM8y0B4sgPYREpIUahvrn2BB1o3boSloTaQ0vPX1J2EpW1C7CFmvw=@vger.kernel.org, AJvYcCWmA69ukN0pd6k5LJOhKObgTMu/q6J6qr/j4LbVMc8tmJOGkoX9RtbCOA3ujQzBIkiBXmjNEqQVtwE=@vger.kernel.org, AJvYcCWnKkIO9botPEul9Adv7i+FXZyXxeL6K5z+wLxI9l5ZJ1d5kYj55rFn1psMm9q8YzDpE7lPpCVPFkBkD2nk@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRY/iSfJPFp3RdnMMXzU6xUnU80r6RpfxiHjZFDiQiankdG/ow
+	c51kzh2g1DdAsM2Wh3YOvDuixpSe/HPC7GYLzo9adtj9q1C/TNnLgyGPbbVR
+X-Gm-Gg: ASbGncsu4NRZ5Wlt741EbzMxhLBkQrnYaR7ciMvtQax7QZmiNO/wbW2sdAHz6m6uqdS
+	rDR7DO4eYy/4+9ViBRB1Z1hFf9RMoimHGP2CL0HmijA4m4A54Im+QhCMVaY4XXYmZt72BV+3k9p
+	AqeTYS4Ebz+9bI9KgmxCay85kXrkKwg+gb7FdyQvgjAjb+a/7OE9YGEgm1PCY8086s5WoinJkFx
+	Fwm/0VGxJxS8WzhYQJUPCx8WwXRXu7hAuIvsmeTnMv+/G6V7uvxX1WPKij/zokEhBWg6S/aO7N2
+	+UOGe5C70a1Qc6jbhaPFqRWD1T10jnItf43LZ89Oa2howKbTEQyWw1f4Xmf3ustiU9SWGQBYVYu
+	de7H3Sbo=
+X-Google-Smtp-Source: AGHT+IFaWIGOmB8cTBxOE+dYT4jEmG0XdjfXBvG0xeDCxKUTjA0Z0v02NnZ2wm1eKbLYbdO4+GchmA==
+X-Received: by 2002:a05:6122:7d0:b0:529:d14:67b6 with SMTP id 71dfb90a1353d-52c441af38fmr1708144e0c.7.1746691697402;
+        Thu, 08 May 2025 01:08:17 -0700 (PDT)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com. [209.85.221.178])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52ae419c85csm2888631e0c.33.2025.05.08.01.08.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 01:08:17 -0700 (PDT)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5262475372eso197650e0c.2;
+        Thu, 08 May 2025 01:08:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWERG2zKGAiRQQbsYKzmFdvBqDBG3fMORz0BTLJezVvidt2qZuvm2KyBxeg20ibfYakqXIqPFvSvEg=@vger.kernel.org, AJvYcCXP7qTdcNYgGPIqAm8VRHqVlVK/mkm5ETkeP5G+mKfEYMmUzzKbztJyW7Q6bmaQwYCMFrepPKxTaOTyR5Zv7TIPaUM=@vger.kernel.org, AJvYcCXjRkBa3ovT+r4jzo9wMSLt4kSxUcX90GCgg5bTvI9E/h8U4uz4MLZg9Aa9+UXw3fwdBzeHOr3bbKhaLOaf@vger.kernel.org
+X-Received: by 2002:a05:6122:3295:b0:529:2644:5eec with SMTP id
+ 71dfb90a1353d-52c441e2252mr1551202e0c.8.1746691696707; Thu, 08 May 2025
+ 01:08:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f072e2e02bb6a66d10c50177e5c69a6@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20250327151109.9648-1-tsogomonian@astralinux.ru>
+In-Reply-To: <20250327151109.9648-1-tsogomonian@astralinux.ru>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 8 May 2025 10:08:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUoZSXQwu6gZgbzUcFgjQh=ng7UZAGC5ke4GVB-zqqhqQ@mail.gmail.com>
+X-Gm-Features: ATxdqUHjjZXKNDvAcDrDPJ9dSfaDFZqswvwv39QmwuKKp-97On7DFcun-1asJ9A
+Message-ID: <CAMuHMdUoZSXQwu6gZgbzUcFgjQh=ng7UZAGC5ke4GVB-zqqhqQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] renesas: add zero check for prate variable
+To: Tigran Sogomonian <tsogomonian@astralinux.ru>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, May 07, 2025 at 01:11:31PM -0700, Stephen Boyd wrote:
-> Quoting Sascha Hauer (2025-05-07 01:05:13)
-> > On Mon, May 05, 2025 at 10:50:49AM -0700, Stephen Boyd wrote:
-> > > Quoting Sascha Hauer (2025-04-30 02:01:35)
-> > > > diff --git a/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> > > > new file mode 100644
-> > > > index 0000000000000..d4a3a3df9ceb9
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/clock/ti,cdce6214.yaml
-> > > > @@ -0,0 +1,155 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +
-> > > > +patternProperties:
-> > > > +  '^clk@[0-1]$':
-> > > > +    type: object
-> > > > +    description:
-> > > > +      optional child node that can be used to specify input pin parameters. The reg
-> > > > +      properties match the CDCE6214_CLK_* defines.
-> > > 
-> > > Presumably the EEPROM is typically used to configure all this stuff? Do
-> > > you actually need to program this from the kernel, or are you
-> > > implementing all this for development purposes?
-> > 
-> > The EEPROM could be used to configure this. I don't know if the final
-> > product will have the EEPROM programmed, but even if it is, should we
-> > make this mandatory?
-> 
-> No I'm not asking about making the property/node required. I'm wondering
-> if you're actually using these bindings. If they're not used then I
-> worry we're putting a bunch of configuration in here that we'll never
-> use.
+Hi Tigran,
 
-At the moment we are using the device tree binding. I asked our customer if
-they plan to use it in production as well.
+On Thu, 27 Mar 2025 at 16:13, Tigran Sogomonian
+<tsogomonian@astralinux.ru> wrote:
+> To avoid division by zero, a check was added to the prate
+> variable, since no guarantees were found that it could not
+> be equal to zero.
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
+> Signed-off-by: Tigran Sogomonian <tsogomonian@astralinux.ru>
 
-> 
-> > 
-> > Speaking of the EEPROM I think we should make sure that the pin
-> > configuration in the device tree is optional so that we do not overwrite
-> > settings from the EEPROM if it contains valid values.
-> 
-> Ok. Aren't the pinctrl settings already optional?
+Thanks for your patch!
 
-Yes, they are, but when the pin setup is missing I haven't explicitly taken
-care to not overwrite any settings made by the EEPROM. Likely the driver
-just does it right. Without pin setup the registers are just not
-touched.
+> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+> @@ -205,6 +205,8 @@ static int cpg_z_clk_determine_rate(struct clk_hw *hw,
+>                                                   prate * zclk->fixed_div);
+>
+>         prate = req->best_parent_rate / zclk->fixed_div;
+> +       if (prate == 0)
+> +               return -EINVAL;
 
-Sascha
+prate can never be zero, as req->best_parent_rate is always larger or
+equal than zclk->max_rate, and zclk->fixed_div is a very small number
+(2 or 4).
+
+>         min_mult = max(div64_ul(req->min_rate * 32ULL, prate), 1ULL);
+>         max_mult = min(div64_ul(req->max_rate * 32ULL, prate), 32ULL);
+>         if (max_mult < min_mult)
+> diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
+> index 31aa790fd003..4c9a7d699290 100644
+> --- a/drivers/clk/renesas/rcar-gen4-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+> @@ -308,6 +308,8 @@ static int cpg_z_clk_determine_rate(struct clk_hw *hw,
+>                                                   prate * zclk->fixed_div);
+>
+>         prate = req->best_parent_rate / zclk->fixed_div;
+> +       if (prate == 0)
+> +               return -EINVAL;
+
+Likewise.
+
+>         min_mult = max(div64_ul(req->min_rate * 32ULL, prate), 1ULL);
+>         max_mult = min(div64_ul(req->max_rate * 32ULL, prate), 32ULL);
+>         if (max_mult < min_mult)
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
