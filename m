@@ -1,109 +1,102 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C8227586B;
-	Fri,  9 May 2025 08:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FA526B09A;
+	Fri,  9 May 2025 09:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746780226; cv=none; b=gLsDhS8EuKJInHUC8qs8fIwCHq7e5dxTCMGbB2LLYYtq0DFy+dieuT6Qsg15v1jRUge8/nLi+wBZeAW/2X6ijrNH6/+MIAPxcaLaSyDhB29WKE+zb1emDz2Z3dVNaM0PI271VcOQRl7rIKoy1lbX7/rmDcJc87bPBnF0lU9BlyY=
+	t=1746781223; cv=none; b=Fynu6mB0oWjAMeTk/UFQ36OeI0kTLNSp2h2NTWjdEzQuvq0ap/FK3ZUeBB3QUDFd7CV6vpmsR8IJe6eIDS3ijQmbqYzgXeRZ9oGVLyQlcaUCzkP7uhY9UN/BqL6psYCGszpg8f91+Wq8/h05pQ+VxdJjxpX8lzE2LufurDkuEDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746780226; c=relaxed/simple;
-	bh=D+Z3MPOOomLStRJL1NiuAWmq/XdQJ45mhJewSQu6uSs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rwea1stYNHMpfu+MaPP6C4RkEkVaunQzn8rYmTSnVP0RSS2dINNvIubQrWsZB/Ebka5lQdPzRKGy1aAZZHwJQk6yw40g2sEzQ/lCQTr9ZW04fZnwwsXCVFGpW0u99ksa8juJYc8B/fOehKIp0j9Ul3NsH+mx+up5yqMNoETnOsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RMJXFD7i; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1746781223; c=relaxed/simple;
+	bh=WggMzPB4PnrTuJVx60/e7YDCOMcSJ2K4xopMb4oUKlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5L6xQJ8z8gXzCNGFeYMtTPW14olTDYbnh2Q1Rhl4UmYvFttszn2z9JgQebSuH/5gMYDoz47QUDTeZlmAoGMp9NO7MXr5Ka0H/a6sJb8HuG1mtvVespNojMqJbIrmz5L8fjr+5nrDfw0yNe5mf8dqDlY5Fem2wCuKe61RXtuLF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBGJSfUc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMJXFD7i"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22e1597a5abso2870175ad.0;
-        Fri, 09 May 2025 01:43:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746780223; x=1747385023; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D+Z3MPOOomLStRJL1NiuAWmq/XdQJ45mhJewSQu6uSs=;
-        b=RMJXFD7ijQWGBpHWufRoc7MieAPslSTryiZ/REJWFYnricDnpv9lTG071wK1DVYoSn
-         pe9VgQ/BtEjMDB+zkLlOcOg7IrLeXK0sAktMDCiTVH+MUwP8PIhEqq4UqFUIgcJ7TnaC
-         jvptc8GN1beSgf2K+J34t9mSREORt0IA2/H8dXRWvNb5vcOsf1wKFwDt3uEN3C577w/K
-         ZO8RsBO4KKj58iLD/hH3IcZBa4PzuGMUmHNY+zRyDR1E/sZ06m9hDakUyJVa0Ue2p7iB
-         YUIibXf2HLZbD6UGqHiAwLoYL0HS21KlZbHXFcXpU1zZFOxabtA0rL/DBGvSh2mWL+Py
-         8TuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746780223; x=1747385023;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D+Z3MPOOomLStRJL1NiuAWmq/XdQJ45mhJewSQu6uSs=;
-        b=EeB5DaV5RCyOt3id9zm1mSnmowcquYJTlTbQqKPi5R66GINopTVGNJZ0qUQ2gt6YSz
-         YC2lLh1nxJ0+UtsBKZ71a5H6Qa2fdC98/ESOJH9mAFp3sG5f91CXa2kqH7ECxAARvgBD
-         HNUQkrmzlKxFv2YjL/FO4u9ZVkbF0PMsAQgf4/vQcqPcsNQiRyoxYHsuKxCUworEMNAQ
-         i5t+PAaQRfvPDGnQXXRvyHFKpsAQL5JIPaUqPl98avU2M0LCXQPZO2y7WCFpINesuclb
-         dTOoU4odNfFuZdUBqy7A2EWi698mu0SOrTDZOaQ7t7uAKQtNbuhMovAva5LeIeENRELr
-         Mrqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgrC5yKvkXZ7LdexIzg4TbDLNOcSbHuOx36QAHCsmHXHafy0XVAnvRSQg1o9aaWsaEHSKaQ6D4F8ihqgCa@vger.kernel.org, AJvYcCUrrDaVvi96hzlMbMn27F6PUhqE5QWPCHZ4ZDYTlk8dlNReV61ygPY+RgpLTEKEf8N6ojYXlFk/ZfY=@vger.kernel.org, AJvYcCVg+8QMZYTwaSmqDDhrgSRX2ibqWd/1GWkU7EkRiVNbR2xCI/5hZDfpxctZS9J/7U+pNfQTi1UoZV4=@vger.kernel.org, AJvYcCWN2XEDhdo7W8FF2Pl6d6PSeoiuSSVrMNikZdWpIq5OBeDHLJKLzFbE7btYMtxBPlMT5bwFvq1NMrWFeb8knw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMKveKz5CriEX/rOcBmBO9ECDj/Bdm9Qe5R+wCDfSyITh/xv0N
-	T1i28pPPUmalyIIhui/BmEznTjdwLdUeAlu7v1rWI1vPZE/H3/qh4NcUH/NXITcx4bpqj2hqhC2
-	F124fXvFNVs0QngCQlP4Oz5HVD5U=
-X-Gm-Gg: ASbGncseyCAdX6YeP7CgMUCmM10x6mNxvgogUUemomtdF+eZvP1bE6EHodE2JQsmDcx
-	283lOiMYD9CMCYze9/0zPEyIM9zI4g7oImP7YoVMuBJoAAzat7Def3acWkdxZLYFre5ZTAX24tB
-	N02WTS8UvlSDkSst5nXIF8Tw==
-X-Google-Smtp-Source: AGHT+IEJ5b65Q0v/CP2S0OTkUGvauUws7VombfalBDLX8YTyGJdmjd6kE+QjHM7Qv0bMlOEC/TCXzyk6KW7sbDKSNtw=
-X-Received: by 2002:a17:902:e54f:b0:22f:b00d:fe59 with SMTP id
- d9443c01a7336-22fc8d98a69mr14263115ad.9.1746780223105; Fri, 09 May 2025
- 01:43:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBGJSfUc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E588C4CEE4;
+	Fri,  9 May 2025 09:00:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746781222;
+	bh=WggMzPB4PnrTuJVx60/e7YDCOMcSJ2K4xopMb4oUKlM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HBGJSfUcQQhwvIfaq6rz0bXdvpjSawL2rnIVRci9JQxF0vJytuc4Zt6AkacWf/R4Q
+	 NkGsl35CCsc7X5QbWMJhEYe4eNgGqRv9+K3l32nYK5iNGvIgLejRnn7kIkIJWDkwO/
+	 HMs1VlQRJ9fkwttxLy+FYYAiFcdcp0XAO9js/CyhiCk0B2nHWLJevYboF/y81KjGu8
+	 R0ePIVKVQe3S5VNloWQ8IOnjmBxBIx3ZbRzMwGLqI/UYaiBN7TxhW1Wavz3Nd3HG9Q
+	 q5faFlaW5CTMYk2m9mFaiPehhKJ3FggnNY5UhKCHv+PZlJN48Uf0N93FRP5pImIgO4
+	 uZiQ4y1mjO6AQ==
+Date: Fri, 9 May 2025 18:00:19 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	linux-amarula@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v12 11/19] clk: imx: add support for i.MX8MM anatop clock
+ driver
+Message-ID: <aB3EIxfwTbpQw7Eo@finisterre.sirena.org.uk>
+References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
+ <20250424062154.2999219-12-dario.binacchi@amarulasolutions.com>
+ <aB1f74ufYoNmXfEn@finisterre.sirena.org.uk>
+ <CABGWkvqySQugJpaj1s_jqGHkA5BONALJY5jn7JjZe=iLc5x60Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502070109.inpes2ou3rxx2fxp@vireshk-i7> <20250506101311.142475-1-andrewjballance@gmail.com>
- <CANiq72k3ozKkLMinTLQwvkyg9K=BeRxs1oYZSKhJHY-veEyZdg@mail.gmail.com> <CAKohponbEEP4_weUuKkOGLRj5-1oOsoL_Zu_7W_SxB61hjsSCw@mail.gmail.com>
-In-Reply-To: <CAKohponbEEP4_weUuKkOGLRj5-1oOsoL_Zu_7W_SxB61hjsSCw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 9 May 2025 10:43:30 +0200
-X-Gm-Features: AX0GCFtvP7qV0uyKskrVkXxx4K1dOjHrcNE79kiWKdjUal4cdNNd8gXeg84r6B4
-Message-ID: <CANiq72mSDEwDQx6ePq20SRi40aCs95mwo6fShZ0WCK9rmiWVVQ@mail.gmail.com>
-Subject: Re: [PATCH V11 00/15] Rust abstractions for clk, cpumask, cpufreq, OPP
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Philip Li <philip.li@intel.com>, kbuild test robot <lkp@intel.com>, 
-	Andrew Ballance <andrewjballance@gmail.com>, a.hindborg@kernel.org, alex.bennee@linaro.org, 
-	alex.gaynor@gmail.com, aliceryhl@google.com, anisse@astier.eu, 
-	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
-	bqe@google.com, dakr@kernel.org, dakr@redhat.com, 
-	daniel.almeida@collabora.com, gary@garyguo.net, joakim.bech@linaro.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux@armlinux.org.uk, linux@rasmusvillemoes.dk, 
-	manos.pitsidianakis@linaro.org, mturquette@baylibre.com, nm@ti.com, 
-	ojeda@kernel.org, peterz@infradead.org, rafael@kernel.org, robh@kernel.org, 
-	rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de, 
-	tmgross@umich.edu, vincent.guittot@linaro.org, vireshk@kernel.org, 
-	yury.norov@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="LNr9BVPJwGXcU9WK"
+Content-Disposition: inline
+In-Reply-To: <CABGWkvqySQugJpaj1s_jqGHkA5BONALJY5jn7JjZe=iLc5x60Q@mail.gmail.com>
+X-Cookie: Well begun is half done.
 
-On Thu, May 8, 2025 at 4:10=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.or=
-g> wrote:
->
-> That's strange. I have tested this earlier and made sure such issues
-> weren't there. I tried "next-20250507" now for arm64 (with qemu)
-> with and without CONFIG_CPUMASK_OFFSTACK and still don't
-> see these issues.
->
-> Anything apart from this ?
->
-> CONFIG_RUST_KERNEL_DOCTESTS=3Dy
->
-> Sorry for the trouble, I thought this is all covered already
-> (apart from x86 failure).
 
-No worries, it happens!
+--LNr9BVPJwGXcU9WK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I can still reproduce it on next-20250508 with defconfig RUST=3Dy
-KUNIT=3Dy RUST_KERNEL_DOCTESTS=3Dy and then running in QEMU with e.g.
-`-machine virt -cpu cortex-a53`.
+On Fri, May 09, 2025 at 10:34:38AM +0200, Dario Binacchi wrote:
 
-Cheers,
-Miguel
+> From the log I see that you are testing a board with i.MX8MP, but it's
+> probing the anatop for i.MX8MM.
+> Is it possible that you have the CONFIG_CLK_IMX8MM option enabled?
+
+This is an arm64 defconfig so whatever that has set, including the
+above.  Note that arm64 is supposed to be single kernel build for all
+platforms so we shouldn't explode due to config options for other
+platforms.
+
+Current -next defconfig:
+
+   https://builds.sirena.org.uk/f48887a98b78880b7711aca311fbbbcaad6c4e3b/arm64/defconfig/config
+
+> I have personally tested the patches on i.MX8MN and i.MX8MP
+> architectures, with only
+> CONFIG_CLK_IMX8MN and CONFIG_CLK_IMX8MP enabled respectively, and I
+> didn't encounter any issues.
+
+Given it's wide use for CI the defconfig really needs covering, any
+random combination of options that can be set ought to work though.
+
+--LNr9BVPJwGXcU9WK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgdxB0ACgkQJNaLcl1U
+h9BSlwf/Vtb8OMqevi6wj00lKii/uNGXMGvMTb9ifa4UeAtfm5zK6qZXBmlEq0UC
+cTA1i2924jNkx+ibv6O8m3+inlwjJL5Z6TFpHUn/4QinBhHQeqp0uAlw07lFR2rC
+xzNOMYpxPqxoA8s+zzpXIKnlq7sVaPBj04pw9mlbFEeOf/6BRNOTPWePvkH4Ivl7
+c34t8qAzUcfZjuVV0mDfrNUKrWTrMvwYTYJWhXemCXwO5QzhFD97YFWXnF+sGBlP
+y388Wc4mqN8yO9ePREYfR8aN4jFtcB8+J6LUuDtotLw5QQS62DmPnZ3dC3sMeJGE
+4xm+8aOZ1B4WIIQtQm2MPtwX350Srw==
+=nfNO
+-----END PGP SIGNATURE-----
+
+--LNr9BVPJwGXcU9WK--
