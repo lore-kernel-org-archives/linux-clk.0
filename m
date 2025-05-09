@@ -1,132 +1,77 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF2528F52A
-	for <linux-clk@vger.kernel.org>; Fri,  9 May 2025 12:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BB815E96;
+	Fri,  9 May 2025 13:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746794727; cv=none; b=ZnB/bAl18Orj7ZSX9El+wv54cW8rv4x0EzP6ZmOsudcFMSIUT6nLQ3NsVtOBKiESdzvM4UpYfCyXDRMu9YVWjcW78u/zI+UTSrV7ysDDPnpSHVTHmN+O6d1qB8bjSXtuWSA72gaBEQKaiF8keM8YV4gjh9bautZe5xSxoaHaQrI=
+	t=1746796238; cv=none; b=ueUFrXSWlB7WGvEwIMxc8NreptkuLbFJg5V4FW+buv+u4ZFkJoPX58ayaDDBiTq6utr/vTZjkPUTgLrsqa/eu+z85Q0k6qqiH7FbqDHxuB+TR/hsrlmhZ9rMF9lPlwtAfPlsm2ZHHRSSJHuibbaCnOQKzwoGxBiSj6xoh2GeEXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746794727; c=relaxed/simple;
-	bh=8NSBwkR/zU9DvjRNqknsrKz0iNJhVJvXcYxWAeswOCc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FWIP6KpnLrxj23eGfcqwytSjdervVycCMSrfPdIXwvQ/w5uAOPsYm4V1x1pFWH2lFfgUbjU7O7EbcM66vY5pnvqdrwtPuyPichnRNfNgN1p7xdfLA/9lV15XI4PXvoy7uNzJcfD1NzSfXoaX5xLIlqPhfknUA1G++Ku0nG1CCxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=hsrITmlC; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="hsrITmlC"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-70811611315so16994067b3.1
-        for <linux-clk@vger.kernel.org>; Fri, 09 May 2025 05:45:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1746794725; x=1747399525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5UptzkckGGe6JRswL/8UtUucPFjfcOJ9lUow8fGoTkk=;
-        b=hsrITmlCJMITj5ZIaEQpj5r0jUDmVlA8TzFbrwYnQWgTe3obJCta8s730myIjkNMg9
-         0kBeJ3byULVQUZfaj27cgcd0A0L0PmaDUqIeBLEPNGgkTusPzHfuayrzVHYHot37n3QS
-         9akdjGEWqho7sby3hmKk3nUPRptY2TuMhPFS8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746794725; x=1747399525;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5UptzkckGGe6JRswL/8UtUucPFjfcOJ9lUow8fGoTkk=;
-        b=wQOdS49HHRD50B1ch9bPBpsbOxWi1+bc8xOQmY6eH6G8OMGN5Uwz6bh0viPRNtoacB
-         A4+Zm2ViUBNdL8GxyyPXfTaQ8KL+mWEcOKJldOqp63pPgj1FpYM5XfOUJGaIBxzNDWNF
-         EzE2dDXpVzU/JL1mY7/9THUMmT/RHIR9D8moH8cxN9Wz2nehRG1LjOCuQmHQ/A9OQxgE
-         L+XXP6cpej91/3l7U5cfCEi7OauD4yWd6OdxKMhTwdIqBvzQ0g8cxHe6Zsx4346JCZq5
-         qjts1CwszLVz77Vzc406UHKI6z7SrKpWWtI0MTJcOGrfIT6KSEqa4LvWrTpXKxkpwrRA
-         6b6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWx+Nz/zZhJliAMBLTfD7s+2Bywdv21Z50mgT9vWAlTFg5oXBmnB3bjSNU+A7Zf4Kbyv3YpB1/7PQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3PfHApF34zVeO/BsaXglJETLTWIOZ247u5n/rgnFbJX0m0obq
-	N/ZWU61UngXZzTi+QExwWEyrXHtwqmjYLcSni+HSa94f9K7qtservpRSJl14lAleHtkuDuU8C4U
-	75/UHXTKCatOrD0wZwcebVpz4XWKNPdy+ajZziA==
-X-Gm-Gg: ASbGncsoskOrF5ato8oMInkKyeUgRjJCRSHQB14LRP/k0CXgim8WtJvUsXbRduT0zdh
-	k+PTtdUTLFnx1cLkcjMXa7spsi0Y0WQsv8QuslpHZzcXjFJ4on98StaoKAlD6xo+LCWzIH89gwE
-	R5fnqESoo9277WJ+LD/w==
-X-Google-Smtp-Source: AGHT+IE+ZAuLmkz1arQbVX0YZvJVLhQ7nxcEKZcFN7pYHPM6BXlBBzNkNPkqSg4yVC9lFIj68cGkI7vjB1r4wxAuYWQ=
-X-Received: by 2002:a05:690c:2506:b0:708:11c7:d200 with SMTP id
- 00721157ae682-70a3f9e3f61mr40837627b3.4.1746794724940; Fri, 09 May 2025
- 05:45:24 -0700 (PDT)
+	s=arc-20240116; t=1746796238; c=relaxed/simple;
+	bh=+Im8v0nLTAPq++xLUEB0H2J/YIEV1PCEf1tLoeEK7bE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gCDBcFLIs9ibruFME+j/M7DqQFfwE8W1vUvta/shNdxL7YsMjmOITQAoyVTa7gTmPMDeMeHzrmKvGoAn7hl35DvBZ2qu+19YnVmY4arKN5VaCeYh2xM+KWaxX5vGACR1OKiyIoLSC/d/N/wVjnh8FMvk2tLKW9Apmk+Pd7kotig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost.localdomain (unknown [116.232.147.96])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id A075C342FB2;
+	Fri, 09 May 2025 13:10:26 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Haylen Chu <heylenay@4d2.org>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	Alex Elder <elder@riscstar.com>
+Subject: Re: [PATCH v9] riscv: dts: spacemit: Add clock tree for SpacemiT K1
+Date: Fri,  9 May 2025 21:10:08 +0800
+Message-ID: <174679618903.112900.10080419497278985987.b4-ty@gentoo.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250508111528.10508-2-heylenay@4d2.org>
+References: <20250508111528.10508-2-heylenay@4d2.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
- <20250424062154.2999219-12-dario.binacchi@amarulasolutions.com>
- <aB1f74ufYoNmXfEn@finisterre.sirena.org.uk> <CABGWkvqySQugJpaj1s_jqGHkA5BONALJY5jn7JjZe=iLc5x60Q@mail.gmail.com>
- <aB3EIxfwTbpQw7Eo@finisterre.sirena.org.uk>
-In-Reply-To: <aB3EIxfwTbpQw7Eo@finisterre.sirena.org.uk>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Fri, 9 May 2025 14:45:14 +0200
-X-Gm-Features: AX0GCFsMhC-bZIQbroR-iMbqMxImzouNrdaQ9uRaQFjqPmIkXBI_CX0YvsjmbY0
-Message-ID: <CABGWkvq+FQZ2A9vpv2XfDmbHgpNOSnZhCMdkKaeqhCcvdjzdAg@mail.gmail.com>
-Subject: Re: [PATCH v12 11/19] clk: imx: add support for i.MX8MM anatop clock driver
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	linux-amarula@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, May 9, 2025 at 11:00=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> On Fri, May 09, 2025 at 10:34:38AM +0200, Dario Binacchi wrote:
->
-> > From the log I see that you are testing a board with i.MX8MP, but it's
-> > probing the anatop for i.MX8MM.
-> > Is it possible that you have the CONFIG_CLK_IMX8MM option enabled?
->
-> This is an arm64 defconfig so whatever that has set, including the
-> above.  Note that arm64 is supposed to be single kernel build for all
-> platforms so we shouldn't explode due to config options for other
-> platforms.
-
-Ok. I'll fix it asap.
-
-Thanks and regards,
-Dario
-
->
-> Current -next defconfig:
->
->    https://builds.sirena.org.uk/f48887a98b78880b7711aca311fbbbcaad6c4e3b/=
-arm64/defconfig/config
->
-> > I have personally tested the patches on i.MX8MN and i.MX8MP
-> > architectures, with only
-> > CONFIG_CLK_IMX8MN and CONFIG_CLK_IMX8MP enabled respectively, and I
-> > didn't encounter any issues.
->
-> Given it's wide use for CI the defconfig really needs covering, any
-> random combination of options that can be set ought to work though.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
+On Thu, 08 May 2025 11:15:29 +0000, Haylen Chu wrote:
+> Describe the PLL and system controllers that're capable of generating
+> clock signals in the devicetree.
+> 
+> 
 
---=20
+Applied, thanks!
 
-Dario Binacchi
+[1/1] riscv: dts: spacemit: Add clock tree for SpacemiT K1
+      https://github.com/spacemit-com/linux/commit/4dc6429d29436d99ef5ac07bbe6f305e00516acb
 
-Senior Embedded Linux Developer
+Best regards,
+-- 
+Yixun Lan
 
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
