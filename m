@@ -1,157 +1,222 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AB82686B1
-	for <linux-clk@vger.kernel.org>; Fri,  9 May 2025 11:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8941028F520
+	for <linux-clk@vger.kernel.org>; Fri,  9 May 2025 11:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746788614; cv=none; b=Ksbo/a5eZuZFLGo29dAHeqgU+4SHKDE4Tqm2CSPDd9IDaVpAtMY6vIpgcuNDlCmwjyalAgEqC0lEaMyTKXWoeKP+wabAVyYJUG+R/yfjOSiYdZQ5RFSJh/oNMhSuAHxphnTNnX9c2qcaOz1lxxLUR+w2XSaMunT30VlYXLMkgNo=
+	t=1746789639; cv=none; b=JJhZCCcStyGxRNAK7mKt/BGsQnJI13N6oMFoAwHBbxsUkRtK97eBB4FjUmjY8266HrD5TuLoPJxfcsOd0fo5/vBGv3vwFDx57JMeVSvhebBvIEQnQW/ZXM4TQgadrfkceIpDYcWOiXmDbjC1FBe38wbLHtsYhSwFpHUSHif2LuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746788614; c=relaxed/simple;
-	bh=OgYLS6rN/aWcHmC0TbnGXQkvQ3XWroRBm3sInogUo9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W/sp7HPcvSXGV8f1YD2SeKKWvpJPrwHYaobvDiuL8ZD9ixh0An76LOM01G11BrUxtfTZLPElahXmdnKjWYOiYafZM+b24dQLzBegSMeBR06e/0DIeMEokpdcvo43+tn3ZhZHPQV0zDb0pnWz4CTwm97qLPdHLizTqFnwbwaFbAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=rGssEQb/; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1746789639; c=relaxed/simple;
+	bh=yoTxnq74WPNkNddj+21/14jDBfGMw7QYijOl5YQWEpI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IJV51JtlRtQj/PudWUsMll0Mg9PrS0DrgLtiBElHbfHScnF0HEoCGEGd4sM4SFELH+/1t4mvz3vBXXj6WSR/vFxtPXpw9Rr7SWbU9jL6ZQ515RpBHf0m07MT7PBtxbp3DNofE+KwcoZ6mWCnRMTUg00G5Grnqgp6qAgHqOsfZ+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=vhG5qcTB; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="rGssEQb/"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5f3f04b5dbcso3095767a12.1
-        for <linux-clk@vger.kernel.org>; Fri, 09 May 2025 04:03:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="vhG5qcTB"
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3d6d6d82633so7273025ab.0
+        for <linux-clk@vger.kernel.org>; Fri, 09 May 2025 04:20:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746788611; x=1747393411; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zFxcvkRZTPa+CugcSqwsIxPTpM3T5RF/mU8pEgzipws=;
-        b=rGssEQb/mIDN7BNY717WLpYV6SOzTje2fhZx17ZG/qAxJfgCg7tEK/Dlrbzn3ceZke
-         mCKlpV1q4SD3+/FZiijpkyliovb6/HCvFQDuEm6BEAkLnc3Qo1X+Ci13+d+q7hc3+PeT
-         2b86KavOY8GP1JNFoj1Yf3ci9N0XRjA/NTauJdQrZA2qEpjWc0TP9wGMX0raTTFeRPWv
-         QZ1+MTUFgNyE5K/vpDbfgz18BCoiO+H0z4yA3RUsgyEH+WRFE34ixTc7hzyadaQaL4hA
-         usyCdpRvq4+NY9Sa8iTpUJeNDOQ1gOMxz8nLHI2bue1aPzYMJBVYZYNXoVp5z8KVTsvN
-         5Mhg==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1746789636; x=1747394436; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NTSX0/tw8NEx2HZiz9FcVkfctrtBy+rS4Bs93fohJKY=;
+        b=vhG5qcTBTHn5t8HmquDxULE57jUHAhkCG/BLT5mnQnDaF3xwHBU6mUFXqKKVOSNTwE
+         6wLYcyCKHrmcKD1abxN4RyyknUG2W71301FwDHnWSA/iO7xPrOGRGR/n3hUUrDeyfY8B
+         QZ0DxJzSjzewGzFxvjKKAKFemNgxADsd+c/vRUYygdIO8LAz8XKMo1dMx1+NiZum7zzo
+         pVsXL3Ccsi6yzMCpAha4Htq6nzQEZz3qk5kdQj+v8v+VvT8/rPoHU+pchFBBTnGN6Yts
+         nAgYL9eEAmchZZmF8ikdTNlZcGoTaB7v9JocMhyq8ZpbHdF2k8ZuZGR299zL/v0zDYDQ
+         GDaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746788611; x=1747393411;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zFxcvkRZTPa+CugcSqwsIxPTpM3T5RF/mU8pEgzipws=;
-        b=ufHJy7Yy2a/sxUJkFYIU57SyyJ01YsL4nbWYxbwOhxlboGxLOF5y2F6L5i/l18HOy3
-         neRG8dRM0z9IJc92Bf6HKMoxs4DYP8eDAgr8PobRjDB01YJirTQEtsEQ0gqR61zB4jvs
-         RMnQv/dfpCOYouvI/oLlzokmef2N1o0/FajJ6vpevKbf5blmyY4To0n5X3/6bN5Axk4q
-         dfSZ2dZy5fFQhwpZDD0v7Pfqe84S4jeHqeQMW+eOyupr4R1YSFR6742CHi9ywPUCldfn
-         LKGfrHn+4jtoW/IzzRijsqhPEU7RI/qhWQc5+CbrtzGVQDs91DAfcwAHTXc5K6z4Otl9
-         KfDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCzZaEG6+AO9SsOQ86dbYGYhro63gDoMxbdbPS7+qfpcptDsk2QcQoO+wMAmYv4wihXr4kQkdRVtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws4iq0f2+FHYCkNPI+WwS9V1fW11f/Sn+H7qd74b9tQmE9xm+E
-	AHduWl86mcXWvVCTIwX7RH3Ag2Y/4Jd6OEJdQ/vBQ6ErpR/i0Az6xERwra5N5J0=
-X-Gm-Gg: ASbGncsmg1Q5UKn1QcUvUOj15FqmIoOE8iQa4najPVCsNZYRBy5ekBJow8FKp1THl3p
-	WH9551nxHcnKio4Dj3ayyP4pGpOQpnsaXlFgHQxUv3UOlyykNufM1suANk892roFsik5VyCbuUs
-	LyEBfAijT3VLqX0QjuUQ/h7JZIdNuBCzo/G+SCPL+tGEjsQFUwJ36BYRHWS/FWY96DzZEHm5x8K
-	VDc3oFVh4R0C5AhreACNrpMom+8KcGvolLseEW2z/nczNi9r9yf+B6a0RuJokpTHwhNTZtLfpIh
-	ikTDoaGeN5p6/qNK186z1mf2teqo25CEE9l5pTmBrblDD7DY
-X-Google-Smtp-Source: AGHT+IH/1p6uEeOzTVLPAx+9fTyhrp0ya4CKbQUgABhxisJMsnfrdqYaw7fre4wd9sK5d2WCYVgROA==
-X-Received: by 2002:a05:6402:3581:b0:5fc:9bce:65c3 with SMTP id 4fb4d7f45d1cf-5fca0818926mr2247906a12.30.1746788610572;
-        Fri, 09 May 2025 04:03:30 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9cc261e9sm1233651a12.23.2025.05.09.04.03.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 04:03:30 -0700 (PDT)
-Message-ID: <f3a0e26d-70ba-4f19-a10b-e60cb5a0bf6d@tuxon.dev>
-Date: Fri, 9 May 2025 14:03:28 +0300
+        d=1e100.net; s=20230601; t=1746789636; x=1747394436;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NTSX0/tw8NEx2HZiz9FcVkfctrtBy+rS4Bs93fohJKY=;
+        b=qy19JpCKGMVLcN6O7JkzG2/TCvC1kdNSx/dcYD2CBDgWnn3i1vOAkb02dCRxOtIBAP
+         2NFEcl321contOWkcUTUUEUkua7EysmTjitbZ5J33yGO64wzQJs2slXpNKBK+KG6wv5k
+         n8KGc/HelFO1N8xBc6IqC5py7fcBer/cWS5yvKqNGYttS+jO5qbxzk42KwbCLKesOCjZ
+         ytZ18nAqp8IFJRMUoCUkcP2w5wGwvdr79xtOj7qSsy5noLQ9cAaeBsKn1E/E6GcdlGFG
+         gqkbqp7utBuxVnK9Zt98zIDpRjkJJglLGaVj6RF+d+3g9BuVp+CDBR6BuWt+7FlXKIzB
+         Ye+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWNfT8QOArk4AXKr80XfDA2SW75GxI7Z5HrreKEx3PJgK9BrPUNidrQ/4o5gUDdFEW7kZdw+yOhqLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwalN/7FvGeILmc+PCPNj+G7uqULd51YgD991RCBfmoR+uktKYi
+	t1bn4qWX5pQRiuSp7F2E+KtsreLZK8Mk+3xOuUPtKX6eo2X2k9zpwwY5RJbW3vY=
+X-Gm-Gg: ASbGncvWuMQYeT4fFFh67ODbWyqpZLqabEUCdFgplGtEd0g9KJRBrSkHEMKsulHmSkf
+	PNI78VWNTdYBgqiv9i5oXPfm5Ag1kGZq7D4L70w2cLbI+FD2fHBjFxwTipXQt4T22V5lz7fx3kS
+	cKdMAhQwvMWoNQNUlt3Xe1cdYNEa9vX/IkpLStpuyXvjQoL4416vpoeWGc0ClBFhGYQNjLS4JE0
+	RLAz7PNINVceK4/8kNuXCJlAXZiQI1OnFcAzPIkCf27vCmJAsO4vI5dHi1Rl/io6X2hFzoprA/2
+	0qYaSNruSybMPX6N6BOjp60c9KuHTPhsoIDLc5/bLRORvJ1TJlY7FK/i8A6Ba6oyq7mJx+AwF4m
+	BkwXCE8QU27fokg==
+X-Google-Smtp-Source: AGHT+IF05PBHHDZrwWQcLeXCbxDAB8MCaPu4N0jfY4wA0OvXddQCJwebAgEaZT9GlDpW3ltbOgzKXQ==
+X-Received: by 2002:a05:6e02:2489:b0:3da:6f46:5c1a with SMTP id e9e14a558f8ab-3da7e1e1b12mr36660425ab.2.1746789636400;
+        Fri, 09 May 2025 04:20:36 -0700 (PDT)
+Received: from localhost.localdomain (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3da7e10549fsm5136325ab.23.2025.05.09.04.20.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 May 2025 04:20:35 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	dlan@gentoo.org
+Cc: heylenay@4d2.org,
+	inochiama@outlook.com,
+	guodong@riscstar.com,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	spacemit@lists.linux.dev,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v8 0/6] reset: spacemit: add K1 reset support
+Date: Fri,  9 May 2025 06:20:25 -0500
+Message-ID: <20250509112032.2980811-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] clk: renesas: r9a08g045: Drop power domain
- instantiation
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com>
- <20250410140628.4124896-5-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVpy=89g0=-U4E4Kg=M_gS96RP26xDj_mUp=Lb1sjOHMg@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAMuHMdVpy=89g0=-U4E4Kg=M_gS96RP26xDj_mUp=Lb1sjOHMg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Geert,
+This series adds reset controller support for the SpacemiT K1 SoC.
+A SpacemiT reset controller is implemented as an auxiliary device
+associated with a clock controller (CCU).  A new header file
+holds definitions used by both the clock and reset drivers.
 
-On 07.05.2025 20:10, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Since the configuration order between the individual MSTOP and CLKON bits
->> cannot be preserved with the power domain abstraction, drop the power
->> domain instantiations.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/drivers/clk/renesas/r9a08g045-cpg.c
->> +++ b/drivers/clk/renesas/r9a08g045-cpg.c
->> @@ -192,59 +192,105 @@ static const struct cpg_core_clk r9a08g045_core_clks[] __initconst = {
->>  };
->>
->>  static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
-> 
->> +       DEF_MOD("dmac_aclk",            R9A08G045_DMAC_ACLK, R9A08G045_CLK_P3, 0x52c, 0,
->> +                                       MSTOP(BUS_REG1, BIT(2))),
->> +       DEF_MOD("dmac_pclk",            R9A08G045_DMAC_PCLK, CLK_P3_DIV2, 0x52c, 1,
->> +                                       MSTOP(BUS_REG1, BIT(3))),
-> 
-> The documentation is not very clear about the mapping to the 4 MSTOP
-> bits related to DMA. Can you enlighten me?
+This code builds upon the clock controller driver from Haylen Chu.
 
-I chose it like these thinking that the bits 0 and 1 are secure specific
-variants of bits 2 and 3, thinking that they should be controlled from
-secure world.
+The only difference from v7 is that the structure containing
+the auxiliary device struct is now allocated using kzalloc().
+Previously devm_kzalloc() was used, passing the parent device
+pointer as its first argument, and as Haylen pointed out, it
+was being (doubly) freed in the auxiliary device release
+function.  Everything else is essentially identical to v7.
 
-> 
->> @@ -294,78 +340,6 @@ static const unsigned int r9a08g045_crit_mod_clks[] __initconst = {
->>         MOD_CLK_BASE + R9A08G045_VBAT_BCLK,
->>  };
->>
->> -static const struct rzg2l_cpg_pm_domain_init_data r9a08g045_pm_domains[] = {
->> -       /* Keep always-on domain on the first position for proper domains registration. */
->> -       DEF_PD("always-on",     R9A08G045_PD_ALWAYS_ON,
->> -                               DEF_REG_CONF(0, 0),
->> -                               GENPD_FLAG_ALWAYS_ON | GENPD_FLAG_IRQ_SAFE),
->> -       DEF_PD("gic",           R9A08G045_PD_GIC,
->> -                               DEF_REG_CONF(CPG_BUS_ACPU_MSTOP, BIT(3)),
->> -                               GENPD_FLAG_ALWAYS_ON),
->> -       DEF_PD("ia55",          R9A08G045_PD_IA55,
->> -                               DEF_REG_CONF(CPG_BUS_PERI_CPU_MSTOP, BIT(13)),
->> -                               GENPD_FLAG_ALWAYS_ON),
->> -       DEF_PD("dmac",          R9A08G045_PD_DMAC,
->> -                               DEF_REG_CONF(CPG_BUS_REG1_MSTOP, GENMASK(3, 0)),
->> -                               GENPD_FLAG_ALWAYS_ON),
-> 
-> [...]
-> 
->> -       DEF_PD("rtc",           R9A08G045_PD_RTC,
->> -                               DEF_REG_CONF(CPG_BUS_MCPU3_MSTOP, BIT(7)), 0),
-> 
-> These MSTOP bits are no longer controlled. Is that intentional?
+This series is based on the "for-next" branch in the SpacemiT
+repository:
+  https://github.com/spacemit-com/linux/tree/for-next
 
-No, that's a mistake from me. Thank you for pointing it.
+All of these patches are available here:
+  https://github.com/riscstar/linux/tree/outgoing/reset-v8
 
-Claudiu
+					-Alex
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Between version 7 and version 8:
+  - The structure containing the auxiliary device is now allocated
+    using kzalloc().  That means its lifetime is not tied to the
+    parent device, and auxiliary device's release function is
+    correct in freeing the structure.
+
+Here is version 7 of this series.
+  https://lore.kernel.org/lkml/20250508195409.2962633-1-elder@riscstar.com/
+
+Between version 6 and version 7:
+  - The new shared header file is now named "k1-syscon.h" (suggested
+    by Haylen Chu)
+  - The SPACEMIT_CCU_K1 config option has been removed (suggested
+    by Philipp Zabel)
+  - The SPACEMIT_CCU config option is now tristate, and selects
+    AUXILIARY_BUS (suggested by Haylen Chu)
+  - All code is concentrated into a single file "reset-spacemit.c"
+    rather than in a directory (suggested by Philipp Zabel)
+  - A bogus return value has been fixed, and a few irrelevant comments
+    have been removed (suggested by Philipp Zabel)
+  - MODULE_AUTHOR(), MODULE_DESCRIPTION(), and MODULE_LICENSE() are
+    now supplied (suggested by Haylen Chu)
+
+Here is version 6 of this series.
+  https://lore.kernel.org/lkml/20250506210638.2800228-1-elder@riscstar.com/
+
+Between version 5 and version 6:
+  - Reworked the code to use the auxiliary device framework.
+  - Moved the code supporting reset under drivers/reset/spacemit.
+  - Created a new header file shared by reset and clock.
+  - Separated generic from SoC-specific code in the reset driver.
+  - Dropped two Reviewed-by tags.
+
+Here is version 5 of this series.
+  https://lore.kernel.org/lkml/20250418145401.2603648-1-elder@riscstar.com/
+
+Between version 4 and version 5:
+  - Added Haylen's Reviewed-by on the second patch.
+  - Added Philipp's Reviewed-by on the third patch.
+  - In patch 4, added a const qualifier to some structures, and removed
+    parentheses surrounding integer constants, as suggested by Philipp
+  - Now based on the SpacemiT for-next branch
+
+Here is version 4 of this series.
+  https://lore.kernel.org/lkml/20250414191715.2264758-1-elder@riscstar.com/
+
+Between version 3 and version 4:
+  - Now based on Haylen Chu's v7 clock code, built on v6.15-rc2.
+  - Added Krzysztof's Reviewed-by on the first patch.
+
+Here is version 3 of this series.
+  https://lore.kernel.org/lkml/20250409211741.1171584-1-elder@riscstar.com/
+
+Between version 2 and version 3 there was no feedback, however:
+  - Haylen posted v6 of the clock series, and it included some changes
+    that affected the logic in this reset code.
+  - I was informed that defining CCU nodes without any clocks led to
+    warnings about "clocks" being a required property when running
+    "make dtbs_check".  For that reason, I made clock properties
+    optional for reset-only CCU nodes.
+  - This code is now based on v6.15-rc1, which includes a few commits
+    that were listed as dependencies previously.
+
+Here is version 2 of this series.
+  https://lore.kernel.org/lkml/20250328210233.1077035-1-elder@riscstar.com/
+
+Between version 1 and version 2:
+  - Added Rob's Reviewed-by tag on the first patch
+  - Renamed the of_match_data data type (and one or two other symbols) to
+    use "spacemit" rather than "k1".
+  - Replaced the abbreviated "rst" or "RST" in names of newly-defined
+    sympols with "reset" or "RESET" respectively.
+  - Eliminated rcdev_to_controller(), which was only used once.
+  - Changed a function that unsafely did a read/modify/write of a register
+    to use regmap_update_bits() instead as suggested by Haylen.
+  - Eliminated a null check for a pointer known to be non-null.
+  - Reordered the assignment of reset controller device fields.
+  - Added a "sentinel" comment as requested by Yixun.
+  - Updated to be based on Linux v6.14 final.
+
+Here is the first version of this series.
+  https://lore.kernel.org/lkml/20250321151831.623575-1-elder@riscstar.com/
+
+Alex Elder (6):
+  dt-bindings: soc: spacemit: define spacemit,k1-ccu resets
+  soc: spacemit: create a header for clock/reset registers
+  clk: spacemit: set up reset auxiliary devices
+  reset: spacemit: add support for SpacemiT CCU resets
+  reset: spacemit: define three more CCUs
+  riscv: dts: spacemit: add reset support for the K1 SoC
+
+ .../soc/spacemit/spacemit,k1-syscon.yaml      |  29 +-
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  18 ++
+ drivers/clk/spacemit/Kconfig                  |   1 +
+ drivers/clk/spacemit/ccu-k1.c                 | 225 +++++++------
+ drivers/reset/Kconfig                         |   9 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-spacemit.c                | 297 ++++++++++++++++++
+ .../dt-bindings/clock/spacemit,k1-syscon.h    | 128 ++++++++
+ include/soc/spacemit/k1-syscon.h              | 160 ++++++++++
+ 9 files changed, 741 insertions(+), 127 deletions(-)
+ create mode 100644 drivers/reset/reset-spacemit.c
+ create mode 100644 include/soc/spacemit/k1-syscon.h
+
+
+base-commit: cb9c3aeae509b36afbdf46942a7a0a0dfc856ce7
+-- 
+2.45.2
 
