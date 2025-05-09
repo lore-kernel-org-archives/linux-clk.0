@@ -1,163 +1,222 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013042.outbound.protection.outlook.com [40.107.162.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5CD28ECFE
-	for <linux-clk@vger.kernel.org>; Fri,  9 May 2025 10:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746786597; cv=none; b=OVnPMt+oXl0fwB4dgcwMT4ghTFT/vXRSgdvbgpLNVamq9nKAlipXcS2UI+S+CGxeQjj5cbNcWiEv+rjUJx0+9ha6JufUZSkZlD6KWlO4jVFhaqkVn0ywWNR4RpIGctrw30Osme38I/1f1Lh/IZfeAixxIk6iyIvIHIDrsRrp79g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746786597; c=relaxed/simple;
-	bh=Bgh8+VpXWqodyRXBeHA1Dsg9667GzQ82hiWcMQGPrYY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=e+OFRaaFrg/p8XseoILQz8dsuhUGL8D3Bz5yBK8G4lbDzG0c6UIATC9+gHHIzWAJCq/Qm3BK7IuqQIoVERqCVJ1Anjgut5oJeG7Z3uH4f3kfId6qP0+oBj/rpPqnvtSlnyrBjMxTuEqWdsFpdyb7oq6onvp3suq45FD0GIsFfN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=pAWqfbGD; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC6421A434;
+	Fri,  9 May 2025 10:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746787241; cv=fail; b=ggRTHk5iaEutZsXafruiEOo65Jnq9gEneRHjeWJr+60psdOh260jMc9mB22MyNE1ixAZUaPZZ8eK/Kx9pZCf4iBu5ObN0sKOqxp+2HZusmNtO1S5I3vRXxvLeRBZSCldBltoCu2PMC+vSNp3Ifv1ugXXr/yvyGI3Y2RxQaiorJc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746787241; c=relaxed/simple;
+	bh=X9iJDbOs++a8sRv1zI+XY/0/W6818MwCr1ta0PiKfWY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YVAqUpVOXg1LygrXwuBGt6ZbGwH7qpEN6Itr5UpYNiSXGxbdERassmZhxGekF1a1+Q2zqA97hYht3fVRxI7L0oiE/bmKOBu3IoIRTScklCqrMBLgoHhIn1qODa660RHS0mxvrhiJWP0FNnBCLjsDVxMHDAyRmd2kZk4+ODPgzLY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NYLSckKQ; arc=fail smtp.client-ip=40.107.162.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="pAWqfbGD"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso3561048a12.3
-        for <linux-clk@vger.kernel.org>; Fri, 09 May 2025 03:29:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746786594; x=1747391394; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OxDhZkSCewSzQX7ua1xIREYWkVFp8sJWfjRRBdflZuc=;
-        b=pAWqfbGDBnDsKif5iRYoKd+rCqJVTeWTw5agl7ZUAmb0ll2DBHJftcpc85EOBft4At
-         8D0GKs7rugetXjfHN+ZgNJC4F9GyA/aAsJeRBIEizbtesz5GCxl+/FeuaDHdDgjGYyt6
-         BylJ7vQN4d9dIXw7sVxyne6ZlNDYONQb6kTSRwY4jLOIUGGfg4t+0/nRkvDf2LSdaAoN
-         qb0XfEQiS/46bVmMHYXnPCUGXCt1L9cYR45nI7lAnem3hMc0kMH+WCLs78tZNDrhvNPo
-         GL/51m7uefnDXNemfwbUY/EV5YPNR3kRUN/DfLkmA6GZNu4f0FkCh0+HA8ZFtOqBkUuo
-         HtLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746786594; x=1747391394;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OxDhZkSCewSzQX7ua1xIREYWkVFp8sJWfjRRBdflZuc=;
-        b=LoxdhWR7p8iJx27pNmGQUuJBS7UjbYukfXkc3oYFlslRHx5VfJxYcbgCwLaol6EIX1
-         kgOrO50PXwvCHUzM3yfpJB388/uTnUUO7YG3yhk/SKHX6qS265Y6gf8frmyYJ7Uq6cRw
-         tRsIIExa4asoNwuLzXH9ldeqA/nBLRsKoH2tS59xS+hqArFKWBDrD41MZCo0sLhqNinz
-         GXRF4v8mKLj81faokPk7ryHG3lAzNtt78KiiH0ZqH/sIop1ejozG2b3rn8qAIAUMiSjS
-         SKijK1HWpRADd/cwtBhhpdCYBCJHIuyLKGyPMpSeDntuLOADuNuCHW+CCgBb815LpcCq
-         QWkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVyeWR8bStLZAyrV0DjZv2TqSS5epdZltmRC/stfKkqaU44cVxqczjFfUICFrSqrotRPiTf5j48cTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF+kU78WsP3m9VwQYXUs/ERFvXHAHb5kyl3d6zZB2Q5Mk/sByA
-	THhhfoEAydsFY1xgNKNOQ5amW1HorMmamytxOiVuX/o8DuCcC3m/lVsovpBWPKB6l9uRyUbdifp
-	9
-X-Gm-Gg: ASbGncsrbKQTUTRqRvL1vn6giuREW8/XUHPxwoizz9uL/LefHh/ol0d+g/plMT+bIVi
-	y8eP9YI7ghj6mBWeZQXQXq9oUXtsTjrG01CvgpEVpyEws7ytzAZ44HsMzVLXTZqaUVxb2vU9/8n
-	WC4e2rzNnCJ2k4o8KnC7+3L/RaQ5R+wkG5x+z9du4jrehlWuPCNTvNceoQFRcXrFCn/rKT1Pmjn
-	/aWokOnO3D3rjlqcJtY6vQNbafrSRCKgpEC9oq1cbNnxDWYSBlUHYpP/jlyXMj2KoVSII3cFJAU
-	hjvkEj0dmkOPXD0VveJaOKr0qdcxrHMMx+NSRBLGHommBFIDJf3Js9/cg6I=
-X-Google-Smtp-Source: AGHT+IEJa8UJZWqTw9Q0EAr9PxAZseg++6SUc4a2N49f6rYLuvjP7U+hvo7avLnkTy2C6pjkRuSQbA==
-X-Received: by 2002:a17:906:c102:b0:acb:711d:36c8 with SMTP id a640c23a62f3a-ad219170decmr305473466b.38.1746786583223;
-        Fri, 09 May 2025 03:29:43 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bd3easm129122566b.147.2025.05.09.03.29.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 03:29:42 -0700 (PDT)
-Message-ID: <869269a7-8267-45f3-9e4d-678de18c0888@tuxon.dev>
-Date: Fri, 9 May 2025 13:29:40 +0300
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NYLSckKQ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ipubFdzC8cBoTO0KdlOedygDoz4BQfvPn0qBrb4nqHbsUOmAqku3DjJ/C6T+9+Fd89K15ZrB4MuSH36jQalTV3ObpqHlnndNQO0/S88qyCCItuO1D+TE+YfRsRtqmv6PsCbKf0sG4hbcLBs1w8CsLqP+fUI7T+klrMtp1Aces2UKHNlUGizX1lcJNh1fOH0k1dzQJKfUJ5LA8fSyjM5dSBAdo0zVDMj7XLj65HJ/JoJFsNB/BLh6gtPAvFkYopT9ABL3ETzYR/viEnDPRjE+P6ZEIscEsZBQe099qdMEhynwCOeVHz1k3sOVAcQjW8mIK6jD55i9Z6GBpWVnva+HTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bPmM1cj7w/fl9sDrJwpP30i1F1/CuevnmveT42xPXwA=;
+ b=Oyhvf9SIIfFmCPMO8QI+TxmXYeq0wYfbk+mW9bcu4HZzyzS7zU1QBO72awEok9Jkt0j7qyGCCqEbTxW+qyD/diND07wHqU4hmePM5inyjO2SAOFEr3Gjz/tETdOuoTeJSUCa9cwcMZV9EHNo53QibC/JW/c/unsWdD/zFhSaAYl8vrlWf30FztAEbZBjXHINgQv39E7qqELwmx7oK5d4UgZSlebSIAs9+UJ78tOtakwqmUtYJ51Ps4ZJoVlDXpbDe7d55PkAfeMVNk+JWJ2QTkYJbdiWy6zLc9hmy+5R/dhh/RIkfCmCMqnytL6a8SA3j7N1KUoCFpYEQMJT1mkySw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bPmM1cj7w/fl9sDrJwpP30i1F1/CuevnmveT42xPXwA=;
+ b=NYLSckKQSX4T4HOWB3qJ7aABTBtcNKsZC7M+G8VFFUg7OhDNmHPTuvcau86/fdyYCQ5LBhhjHji4M+bZv5LuXP57mWV2nH1IgzecK3G7ttVmvABpwzmKtYMpqHzhriVP6ka4u6DF9l4q6NBSyOpVrNcHnDAHILZv0wFcg3xw1qTCdZytQPQzoUVTKlcsSYeNpZGaSG5Vsc7QblubCMi1Ci8Gq9d+/uQACSgmpZHvUh0eDyTIyxaUTJRumfAqZeBXJkLpnpA2yzLqvgyfa7d66+26kh1zGHsw6dN+2V9UxCIQnWM7ujt2MWd+mLeIcMO0lW4YQYeVBR1bxlCzpi97mw==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VI2PR04MB10571.eurprd04.prod.outlook.com (2603:10a6:800:278::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.33; Fri, 9 May
+ 2025 10:40:33 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%5]) with mapi id 15.20.8722.020; Fri, 9 May 2025
+ 10:40:33 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo
+	<shawnguo2@yeah.net>, Dario Binacchi <dario.binacchi@amarulasolutions.com>
+CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, dl-linux-imx
+	<linux-imx@nxp.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [GIT PULL] clk: imx: Updates for v6.16
+Thread-Topic: [GIT PULL] clk: imx: Updates for v6.16
+Thread-Index: AQHbv0yLszFJyZJDU0KnkvYkCs4ZB7PKHc9Q
+Date: Fri, 9 May 2025 10:40:33 +0000
+Message-ID:
+ <PAXPR04MB8459F66A8036C86F124E4E5B888AA@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20250507123528.585447-1-abel.vesa@linaro.org>
+In-Reply-To: <20250507123528.585447-1-abel.vesa@linaro.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VI2PR04MB10571:EE_
+x-ms-office365-filtering-correlation-id: 1cb6370a-47f6-476b-9b24-08dd8ee5ed1b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?QYlRgQa9gVpBcO8mxNamJlbGqGvJkaXbryuxUyASGVrTS0rVeLvQyEEWOd9e?=
+ =?us-ascii?Q?SAiZ4uxkTvh8gdnGRabR1m8fc5kN1OHrKjJKZCUwBbAaK8p+NjZFoG4bd1IR?=
+ =?us-ascii?Q?JaW/wnoZoKiu3XlRUN++muFUTCVRZBXeoVZvH9SEtDTsA/4HKrG++n/u2xGg?=
+ =?us-ascii?Q?SH/Kst4nlZ4XpWriYlBgW2SnedLldstlZ5ylmqvwd9YVw0r7ZC56WJ7UZ++M?=
+ =?us-ascii?Q?2OgulSqxGuCSku35+EdCwSFwcxIVq79RIdJBJFPOSoP+dbhPI/Dmtpcf6Vas?=
+ =?us-ascii?Q?UqGgro0AsLMoXan+hlb6VBkoB4mko2xAtOh9AQq9RBMxZIzp01V1ZNxJK+cR?=
+ =?us-ascii?Q?U9ja0A/36Hlk/o2kDR9la8Ct33/3/9ooHz2GPOAkPI6xXBSTR/FQZ0b50If/?=
+ =?us-ascii?Q?tEpnkZPxM24LMu5CGP+EzksGTmpqPTg9W/y3zGMEz2g71AghCtkzt7dqYsHB?=
+ =?us-ascii?Q?tO+hjkET/2u0lxJA4t/KW8sX5JTMgCLl4W0KKtqSIRHSEqaiHSeZTkWXFlKX?=
+ =?us-ascii?Q?6FhntOFvpeimT1gdILXcQ5XMy5/hja0vrxWchCvbU/Ps6Cu7ZDKOCwsQUhUF?=
+ =?us-ascii?Q?4zJWeGqhLCXJ6OtL4w+bQtPzWvkhIlev8GxuIT+jmIkMEjfKCVVIoK6y81es?=
+ =?us-ascii?Q?DojgAru8tza0TkZH/bXakQBwayFOrxvKCyskvS3JqcwgmDzMhMmfrMkSJbe9?=
+ =?us-ascii?Q?SAxoEJHPu0K78E+rYt9abcEx/g+Wa0lF5oP6Dkxvh6fy8y4eC/94pdnBxEZ1?=
+ =?us-ascii?Q?NqazhZJJeXaiDWd3ydOqx5khjTNq866160AK96BTLUaC17yyOXeg7r+Z8bPh?=
+ =?us-ascii?Q?lWkIn7/01FbB7SgX7FHPNcasc3dbZECC49jDW7ICUnf2XYoqbTOpPfy14Wzc?=
+ =?us-ascii?Q?lx+UJUtwpPDwYN3+4dTmNJvfUyBWFzq4C2ZajmBJSQ9st9gWQvne5UZ8g4b6?=
+ =?us-ascii?Q?ciZ32Wfv6astNTfQCSrWAZZgpC7FUPdu2wKXYtqyvy3e6cMcDa3KxyuRzxGV?=
+ =?us-ascii?Q?IT05w8I1czhDPGtp1mpcJHeM1GbUoaucPF30jtGxEeJsIwAZyFhQaNOL4xDy?=
+ =?us-ascii?Q?LRCBvUrle0zN2fxx97I9HMukCddX/6+MkXWJlV/aE/GKhqKk6DxCYCNIC4Dl?=
+ =?us-ascii?Q?UMu9nhKY1XncYkgOyRT8umW/mWpWtNTLoZjJcpWckKZU1bgQ4wTikXI3g6PJ?=
+ =?us-ascii?Q?axlJNSkGvWhXXzvZzBV1x3DXtnXcd+2ITNODPt/1Bfxpv4BjpDLcgPLFdmy7?=
+ =?us-ascii?Q?73D9WgKhDpcg+mcbfoUu8QOf+kloClyqixEPRyYsa8MLrPCHt4cjgMUtI0N5?=
+ =?us-ascii?Q?zLFMsa1h1NbSL2McJHBQ/MTmIV8mSdMFKadM76iA8ABAsL3aMqSGgB0SGL45?=
+ =?us-ascii?Q?aMQOmXJt3R8wyOSpfg+BVh2yw6v9rab/MCVc50/vjhOHN8k39z4ZdHIrHq2P?=
+ =?us-ascii?Q?FgiO5KxQYGZ0ksk9aHHbSJ3QdXCaVuRGHyt2od8lEp0AglA+FfU0qMdzUjGh?=
+ =?us-ascii?Q?5fKpLHKi5Kh+Npo=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?nnWTJsCA2JR33c6TXa6BPHlQ+6TRM+yuXiUD1wzQ5MgiyyfNHtsoTxK1ysel?=
+ =?us-ascii?Q?R2oypRJV0xBNuNW+DJnubpfuKe30wPIQjcIHAqeRyQBZexs/fWJd1eWDhDXi?=
+ =?us-ascii?Q?joXQmpH+op6LAeq5g56DckSbQFiHipEdI1KuNDgvwN45ZcbFG3uonlrRtXxU?=
+ =?us-ascii?Q?Y9bVCO5IB3aJHBpNLvVZ/2FXUv0wioCcAp0Dzd73U35rboR7ScsROijFUK+J?=
+ =?us-ascii?Q?qNMGE3l92aEDh1ngcmT3/mxZO/55fSXpLPj3+wmFlEgxXfdEwTd7COiev4zD?=
+ =?us-ascii?Q?hG/XQqSgtA+/36sY1wQwDAQLVDO4ip9G+jWcSr5Eq9z6Hly2+7OP8pS/y0BA?=
+ =?us-ascii?Q?zTBtV8eUDztbKw3nvx18nMiMRJo14c6Tb7sUNJLgLVqwi5Ope/0t79pIe1s0?=
+ =?us-ascii?Q?vk+1/yw6IHKdqHR3st695cVWy0oL/93r47vEI+xsatGCLu2c25XJz8yVWJL/?=
+ =?us-ascii?Q?oP70Sekj3W4ks42QwtcVSVhjOZm0B0ZPdMu6YfLbHFE+6j2p1f4AksWHPiZE?=
+ =?us-ascii?Q?2V0ZUdPHeokJHeH/QaD97mbHpuxmIgwtkF0aNOl2/be9J6wF0eqo1sIFXc0t?=
+ =?us-ascii?Q?4jplEglL3sTH3W93sHNb3k5d5N8770epOVOYF0m+Py3xGwwE9+6YhB1MOr5H?=
+ =?us-ascii?Q?9B7uirIj29d8++tCzDEbA+FC5qaOlWsdB6QFj7hMiXsX30Mf2Gd5oxC4ckQ8?=
+ =?us-ascii?Q?/ao97pJ/rSyc3qDvIfsYakPR5bZ+NPdwPSIkFuwvFGNUfh3OrPjDNnNhAwWc?=
+ =?us-ascii?Q?tWLv+OD2I2DGwtjn26DzTzL/pXFIyBEtyGmd9KIRRvijM7xjcpzA9ubvPAuw?=
+ =?us-ascii?Q?DXy2CEIXEhGjlWeET9qlFysvOv87+jiRc8acRyu3AmAjomeRxgJeCTuH8QNA?=
+ =?us-ascii?Q?TU8CF38cPL5nQZmR/Creoeh3TyEGcLrmKab/mlf9rjWiWDOPFh4WVYLJ8Zui?=
+ =?us-ascii?Q?4GQ+RZMYCUilhVUBSco3uYk5fCsMd9mTdhCTf3tIWTJTn+OaefRVP7nye+rT?=
+ =?us-ascii?Q?lhJW9rlXqql2N3lZA7jgJyp7u2DotAaNEcXOIvJAp/p8l4n/Y70V6aJ/GlrC?=
+ =?us-ascii?Q?MUejAI38KTw2MURTqNBmnCQcTzqRXz8VZxYo9K51SBAWRcZhnjhCgpqb7Wxm?=
+ =?us-ascii?Q?p4g4TWHUgjI76hu9PTprjM+0h5OHB4x8c5OMFQELzhPX4XuPA6OrROWJR+nt?=
+ =?us-ascii?Q?vPJkuPtp+a03vegQfwKwB5son7pBh+5HCUO4s65VmIKysWs+WoIsc2H5TJXv?=
+ =?us-ascii?Q?XHOwpc18n91ZL9ROcEbEUURaCyUu3ay6YpF0eXHebiJ/fZf9fHAfZiBGc7je?=
+ =?us-ascii?Q?5lf84U3lCT0Wo6Id1n4oQCwkyJyi+xKJ64DWjOGDZRaARPVfMxM57TSV4muG?=
+ =?us-ascii?Q?2c7IzPi7yFkp5ck8MxNOkw6sgwQf5aqopJmsXv2XdUS9B93mSmSMpNKljPDX?=
+ =?us-ascii?Q?7EXbM/2sMtk3tUx/Alo/wCfax9zJq6/oUuot/1IZ2ULTWq29HFon4ND/GK1L?=
+ =?us-ascii?Q?HtHS9i7nxhK+0m+zcdldy3l8kLTOMPuVXROBYpHB3dN4pjYdSBZ2vrhrTO4z?=
+ =?us-ascii?Q?7M/fnv4vuPt3neFcivg=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] PCI: rzg3s-host: Add Initial PCIe Host Driver for
- Renesas RZ/G3S SoC
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, saravanak@google.com,
- p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250501201211.GA768334@bhelgaas>
- <26bdfbd6-7bf5-4688-b793-5d0f613d340b@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <26bdfbd6-7bf5-4688-b793-5d0f613d340b@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1cb6370a-47f6-476b-9b24-08dd8ee5ed1b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2025 10:40:33.2668
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oZIAZ3YjiT20J1LWlzx7BjmLnQnvCQiFjKLOyKMxh623dplQE3DExpkK5OKxPxl+6BTyDeInkagKkuOK3xAZvg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10571
 
-Hi, Bjorn,
+Hi Abel,
 
-On 05.05.2025 14:26, Claudiu Beznea wrote:
-> Hi, Bjorn,
-> 
-> On 01.05.2025 23:12, Bjorn Helgaas wrote:
->> On Wed, Apr 30, 2025 at 01:32:33PM +0300, Claudiu wrote:
->>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>
->>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
->>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
->>> only as a root complex, with a single-lane (x1) configuration. The
->>> controller includes Type 1 configuration registers, as well as IP
->>> specific registers (called AXI registers) required for various adjustments.
->>>
->>> Other Renesas RZ SoCs (e.g., RZ/G3E, RZ/V2H) share the same AXI registers
->>> but have both Root Complex and Endpoint capabilities. As a result, the PCIe
->>> host driver can be reused for these variants with minimal adjustments.
->>
->> I guess this current driver only supports RZ/GS3 in Root Complex mode?
-> 
-> That's right.
-> 
->> If so, I don't think this paragraph is necessary or really relevant.
-> 
-> OK, I'll drop it.
-> 
->>
->>> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
->>> @@ -0,0 +1,1561 @@
->>
->> I can't figure out the line width you're using.  Generally code in
->> drivers/pci/ is formatted to fit in 80 columns.  Much of this file is
->> formatted for that, but there are many cases that seem to use 90 or
->> 100 columns.
-> 
-> I formated it at 100 columns where the lines were longer. I wasn't aware
-> the PCI rule is to have line formated at 80 columns. I'll switch to it in
-> the next version.
-> 
->>
->> For single-line comments that are not a sentence or are a single
->> sentence, it's typical to omit the period at end.
-> 
-> I'll follow this rule, too.
-> 
->>
->>> +static void rzg3s_pcie_update_bits(void __iomem *base, u32 offset, u32 mask, u32 val)
->>> +{
->>> +	u32 tmp;
->>> +
->>> +	tmp = readl(base + offset);
->>> +	tmp &= ~mask;
->>> +	tmp |= val & mask;
->>> +	writel(tmp, base + offset);
->>> +}
->>
->> Nothing rzg3s-specific here.
->>
->> I think u32p_replace_bits() (include/linux/bitfield.h) is basically this.
-> 
-> I wasn't aware of it. I'll use it in the next version. Thank for pointing it.
+> Subject: [GIT PULL] clk: imx: Updates for v6.16
+>=20
+> The following changes since commit
+> 0af2f6be1b4281385b618cb86ad946eded089ac8:
+>=20
+>   Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/
+> tags/clk-imx-6.16
+>=20
+> for you to fetch changes up to
+> 6a55647af3334f1d935ece67de4a838a864b53fc:
+>=20
+>   dt-bindings: clock: imx8m-clock: add PLLs (2025-05-05 10:48:56
+> +0300)
+>=20
+> ----------------------------------------------------------------
+> i.MX clock changes for 6.16
+>=20
+> - Add video PLL clocks to both i.MX8MM and i.MX8MP
+>   while dropping the numeral suffix.
+> - Add imx_anatop_get_clk_hw helper
+> - Add anatop clock providers for i.MX8M[MNP]
+> - Drop ccm_ prefix from base in i.MX8MP clock provider
+> - Document bindings for PLLs in imx8m-clock schema
+>=20
+> ----------------------------------------------------------------
+> Dario Binacchi (11):
+>       dt-bindings: clock: imx8mm: add VIDEO_PLL clocks
+>       clk: imx8mm: rename video_pll1 to video_pll
+>       dt-bindings: clock: imx8mp: add VIDEO_PLL clocks
+>       clk: imx8mp: rename video_pll1 to video_pll
+>       dt-bindings: clock: imx8m-anatop: add oscillators and PLLs
+>       clk: imx: add hw API imx_anatop_get_clk_hw
+>       clk: imx: add support for i.MX8MM anatop clock driver
+>       clk: imx: add support for i.MX8MN anatop clock driver
+>       clk: imx: add support for i.MX8MP anatop clock driver
+>       clk: imx8mp: rename ccm_base to base
+>       dt-bindings: clock: imx8m-clock: add PLLs
 
-I look into changing to u32p_replace_bits() but this one needs a mask that
-can be verified at build time. It cannot be used directly in this function.
-Would you prefer me to replace all the calls to rzg3s_pcie_update_bits() with:
+Sorry to raise here.
 
-tmp = readl();
-u32p_replace_bits(&tmp, ...)
-writel(tmp);
+Not sure whether Shawn will pick the DT part, otherwise
+there will be booting break as Mark replied.
 
-or is it OK for you to keep it as is?
+If DT part not goes in 6.16, this PR should be delayed or
+redo the patchset to support old DTs to keep backwards
+compatibility supported.
 
-Thank you,
-Claudiu
+Regards,
+Peng
+
+>=20
+>  .../bindings/clock/fsl,imx8m-anatop.yaml           |  53 +-
+>  .../devicetree/bindings/clock/imx8m-clock.yaml     |  27 +-
+>  drivers/clk/imx/Makefile                           |   6 +-
+>  drivers/clk/imx/clk-imx8mm-anatop.c                | 287 +++++++++
+>  drivers/clk/imx/clk-imx8mm.c                       | 262 ++++----
+>  drivers/clk/imx/clk-imx8mn-anatop.c                | 283 +++++++++
+>  drivers/clk/imx/clk-imx8mn.c                       | 183 +++---
+>  drivers/clk/imx/clk-imx8mp-anatop.c                | 306 ++++++++++
+>  drivers/clk/imx/clk-imx8mp.c                       | 672 ++++++++++-----=
+------
+>  drivers/clk/imx/clk.c                              |  15 +
+>  drivers/clk/imx/clk.h                              |   2 +
+>  include/dt-bindings/clock/imx8mm-clock.h           |  76 ++-
+>  include/dt-bindings/clock/imx8mn-clock.h           |  64 ++
+>  include/dt-bindings/clock/imx8mp-clock.h           |  80 ++-
+>  14 files changed, 1711 insertions(+), 605 deletions(-)  create mode
+> 100644 drivers/clk/imx/clk-imx8mm-anatop.c
+>  create mode 100644 drivers/clk/imx/clk-imx8mn-anatop.c
+>  create mode 100644 drivers/clk/imx/clk-imx8mp-anatop.c
