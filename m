@@ -1,102 +1,163 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1FA526B09A;
-	Fri,  9 May 2025 09:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5CD28ECFE
+	for <linux-clk@vger.kernel.org>; Fri,  9 May 2025 10:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746781223; cv=none; b=Fynu6mB0oWjAMeTk/UFQ36OeI0kTLNSp2h2NTWjdEzQuvq0ap/FK3ZUeBB3QUDFd7CV6vpmsR8IJe6eIDS3ijQmbqYzgXeRZ9oGVLyQlcaUCzkP7uhY9UN/BqL6psYCGszpg8f91+Wq8/h05pQ+VxdJjxpX8lzE2LufurDkuEDA=
+	t=1746786597; cv=none; b=OVnPMt+oXl0fwB4dgcwMT4ghTFT/vXRSgdvbgpLNVamq9nKAlipXcS2UI+S+CGxeQjj5cbNcWiEv+rjUJx0+9ha6JufUZSkZlD6KWlO4jVFhaqkVn0ywWNR4RpIGctrw30Osme38I/1f1Lh/IZfeAixxIk6iyIvIHIDrsRrp79g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746781223; c=relaxed/simple;
-	bh=WggMzPB4PnrTuJVx60/e7YDCOMcSJ2K4xopMb4oUKlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o5L6xQJ8z8gXzCNGFeYMtTPW14olTDYbnh2Q1Rhl4UmYvFttszn2z9JgQebSuH/5gMYDoz47QUDTeZlmAoGMp9NO7MXr5Ka0H/a6sJb8HuG1mtvVespNojMqJbIrmz5L8fjr+5nrDfw0yNe5mf8dqDlY5Fem2wCuKe61RXtuLF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBGJSfUc; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746786597; c=relaxed/simple;
+	bh=Bgh8+VpXWqodyRXBeHA1Dsg9667GzQ82hiWcMQGPrYY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=e+OFRaaFrg/p8XseoILQz8dsuhUGL8D3Bz5yBK8G4lbDzG0c6UIATC9+gHHIzWAJCq/Qm3BK7IuqQIoVERqCVJ1Anjgut5oJeG7Z3uH4f3kfId6qP0+oBj/rpPqnvtSlnyrBjMxTuEqWdsFpdyb7oq6onvp3suq45FD0GIsFfN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=pAWqfbGD; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBGJSfUc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E588C4CEE4;
-	Fri,  9 May 2025 09:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746781222;
-	bh=WggMzPB4PnrTuJVx60/e7YDCOMcSJ2K4xopMb4oUKlM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HBGJSfUcQQhwvIfaq6rz0bXdvpjSawL2rnIVRci9JQxF0vJytuc4Zt6AkacWf/R4Q
-	 NkGsl35CCsc7X5QbWMJhEYe4eNgGqRv9+K3l32nYK5iNGvIgLejRnn7kIkIJWDkwO/
-	 HMs1VlQRJ9fkwttxLy+FYYAiFcdcp0XAO9js/CyhiCk0B2nHWLJevYboF/y81KjGu8
-	 R0ePIVKVQe3S5VNloWQ8IOnjmBxBIx3ZbRzMwGLqI/UYaiBN7TxhW1Wavz3Nd3HG9Q
-	 q5faFlaW5CTMYk2m9mFaiPehhKJ3FggnNY5UhKCHv+PZlJN48Uf0N93FRP5pImIgO4
-	 uZiQ4y1mjO6AQ==
-Date: Fri, 9 May 2025 18:00:19 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-amarula@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v12 11/19] clk: imx: add support for i.MX8MM anatop clock
- driver
-Message-ID: <aB3EIxfwTbpQw7Eo@finisterre.sirena.org.uk>
-References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
- <20250424062154.2999219-12-dario.binacchi@amarulasolutions.com>
- <aB1f74ufYoNmXfEn@finisterre.sirena.org.uk>
- <CABGWkvqySQugJpaj1s_jqGHkA5BONALJY5jn7JjZe=iLc5x60Q@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="pAWqfbGD"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5efe8d9ebdfso3561048a12.3
+        for <linux-clk@vger.kernel.org>; Fri, 09 May 2025 03:29:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1746786594; x=1747391394; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OxDhZkSCewSzQX7ua1xIREYWkVFp8sJWfjRRBdflZuc=;
+        b=pAWqfbGDBnDsKif5iRYoKd+rCqJVTeWTw5agl7ZUAmb0ll2DBHJftcpc85EOBft4At
+         8D0GKs7rugetXjfHN+ZgNJC4F9GyA/aAsJeRBIEizbtesz5GCxl+/FeuaDHdDgjGYyt6
+         BylJ7vQN4d9dIXw7sVxyne6ZlNDYONQb6kTSRwY4jLOIUGGfg4t+0/nRkvDf2LSdaAoN
+         qb0XfEQiS/46bVmMHYXnPCUGXCt1L9cYR45nI7lAnem3hMc0kMH+WCLs78tZNDrhvNPo
+         GL/51m7uefnDXNemfwbUY/EV5YPNR3kRUN/DfLkmA6GZNu4f0FkCh0+HA8ZFtOqBkUuo
+         HtLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746786594; x=1747391394;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxDhZkSCewSzQX7ua1xIREYWkVFp8sJWfjRRBdflZuc=;
+        b=LoxdhWR7p8iJx27pNmGQUuJBS7UjbYukfXkc3oYFlslRHx5VfJxYcbgCwLaol6EIX1
+         kgOrO50PXwvCHUzM3yfpJB388/uTnUUO7YG3yhk/SKHX6qS265Y6gf8frmyYJ7Uq6cRw
+         tRsIIExa4asoNwuLzXH9ldeqA/nBLRsKoH2tS59xS+hqArFKWBDrD41MZCo0sLhqNinz
+         GXRF4v8mKLj81faokPk7ryHG3lAzNtt78KiiH0ZqH/sIop1ejozG2b3rn8qAIAUMiSjS
+         SKijK1HWpRADd/cwtBhhpdCYBCJHIuyLKGyPMpSeDntuLOADuNuCHW+CCgBb815LpcCq
+         QWkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVyeWR8bStLZAyrV0DjZv2TqSS5epdZltmRC/stfKkqaU44cVxqczjFfUICFrSqrotRPiTf5j48cTE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF+kU78WsP3m9VwQYXUs/ERFvXHAHb5kyl3d6zZB2Q5Mk/sByA
+	THhhfoEAydsFY1xgNKNOQ5amW1HorMmamytxOiVuX/o8DuCcC3m/lVsovpBWPKB6l9uRyUbdifp
+	9
+X-Gm-Gg: ASbGncsrbKQTUTRqRvL1vn6giuREW8/XUHPxwoizz9uL/LefHh/ol0d+g/plMT+bIVi
+	y8eP9YI7ghj6mBWeZQXQXq9oUXtsTjrG01CvgpEVpyEws7ytzAZ44HsMzVLXTZqaUVxb2vU9/8n
+	WC4e2rzNnCJ2k4o8KnC7+3L/RaQ5R+wkG5x+z9du4jrehlWuPCNTvNceoQFRcXrFCn/rKT1Pmjn
+	/aWokOnO3D3rjlqcJtY6vQNbafrSRCKgpEC9oq1cbNnxDWYSBlUHYpP/jlyXMj2KoVSII3cFJAU
+	hjvkEj0dmkOPXD0VveJaOKr0qdcxrHMMx+NSRBLGHommBFIDJf3Js9/cg6I=
+X-Google-Smtp-Source: AGHT+IEJa8UJZWqTw9Q0EAr9PxAZseg++6SUc4a2N49f6rYLuvjP7U+hvo7avLnkTy2C6pjkRuSQbA==
+X-Received: by 2002:a17:906:c102:b0:acb:711d:36c8 with SMTP id a640c23a62f3a-ad219170decmr305473466b.38.1746786583223;
+        Fri, 09 May 2025 03:29:43 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bd3easm129122566b.147.2025.05.09.03.29.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 May 2025 03:29:42 -0700 (PDT)
+Message-ID: <869269a7-8267-45f3-9e4d-678de18c0888@tuxon.dev>
+Date: Fri, 9 May 2025 13:29:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LNr9BVPJwGXcU9WK"
-Content-Disposition: inline
-In-Reply-To: <CABGWkvqySQugJpaj1s_jqGHkA5BONALJY5jn7JjZe=iLc5x60Q@mail.gmail.com>
-X-Cookie: Well begun is half done.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] PCI: rzg3s-host: Add Initial PCIe Host Driver for
+ Renesas RZ/G3S SoC
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+ manivannan.sadhasivam@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, saravanak@google.com,
+ p.zabel@pengutronix.de, linux-pci@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20250501201211.GA768334@bhelgaas>
+ <26bdfbd6-7bf5-4688-b793-5d0f613d340b@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <26bdfbd6-7bf5-4688-b793-5d0f613d340b@tuxon.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi, Bjorn,
 
---LNr9BVPJwGXcU9WK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 05.05.2025 14:26, Claudiu Beznea wrote:
+> Hi, Bjorn,
+> 
+> On 01.05.2025 23:12, Bjorn Helgaas wrote:
+>> On Wed, Apr 30, 2025 at 01:32:33PM +0300, Claudiu wrote:
+>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>
+>>> The Renesas RZ/G3S features a PCIe IP that complies with the PCI Express
+>>> Base Specification 4.0 and supports speeds of up to 5 GT/s. It functions
+>>> only as a root complex, with a single-lane (x1) configuration. The
+>>> controller includes Type 1 configuration registers, as well as IP
+>>> specific registers (called AXI registers) required for various adjustments.
+>>>
+>>> Other Renesas RZ SoCs (e.g., RZ/G3E, RZ/V2H) share the same AXI registers
+>>> but have both Root Complex and Endpoint capabilities. As a result, the PCIe
+>>> host driver can be reused for these variants with minimal adjustments.
+>>
+>> I guess this current driver only supports RZ/GS3 in Root Complex mode?
+> 
+> That's right.
+> 
+>> If so, I don't think this paragraph is necessary or really relevant.
+> 
+> OK, I'll drop it.
+> 
+>>
+>>> +++ b/drivers/pci/controller/pcie-rzg3s-host.c
+>>> @@ -0,0 +1,1561 @@
+>>
+>> I can't figure out the line width you're using.  Generally code in
+>> drivers/pci/ is formatted to fit in 80 columns.  Much of this file is
+>> formatted for that, but there are many cases that seem to use 90 or
+>> 100 columns.
+> 
+> I formated it at 100 columns where the lines were longer. I wasn't aware
+> the PCI rule is to have line formated at 80 columns. I'll switch to it in
+> the next version.
+> 
+>>
+>> For single-line comments that are not a sentence or are a single
+>> sentence, it's typical to omit the period at end.
+> 
+> I'll follow this rule, too.
+> 
+>>
+>>> +static void rzg3s_pcie_update_bits(void __iomem *base, u32 offset, u32 mask, u32 val)
+>>> +{
+>>> +	u32 tmp;
+>>> +
+>>> +	tmp = readl(base + offset);
+>>> +	tmp &= ~mask;
+>>> +	tmp |= val & mask;
+>>> +	writel(tmp, base + offset);
+>>> +}
+>>
+>> Nothing rzg3s-specific here.
+>>
+>> I think u32p_replace_bits() (include/linux/bitfield.h) is basically this.
+> 
+> I wasn't aware of it. I'll use it in the next version. Thank for pointing it.
 
-On Fri, May 09, 2025 at 10:34:38AM +0200, Dario Binacchi wrote:
+I look into changing to u32p_replace_bits() but this one needs a mask that
+can be verified at build time. It cannot be used directly in this function.
+Would you prefer me to replace all the calls to rzg3s_pcie_update_bits() with:
 
-> From the log I see that you are testing a board with i.MX8MP, but it's
-> probing the anatop for i.MX8MM.
-> Is it possible that you have the CONFIG_CLK_IMX8MM option enabled?
+tmp = readl();
+u32p_replace_bits(&tmp, ...)
+writel(tmp);
 
-This is an arm64 defconfig so whatever that has set, including the
-above.  Note that arm64 is supposed to be single kernel build for all
-platforms so we shouldn't explode due to config options for other
-platforms.
+or is it OK for you to keep it as is?
 
-Current -next defconfig:
-
-   https://builds.sirena.org.uk/f48887a98b78880b7711aca311fbbbcaad6c4e3b/arm64/defconfig/config
-
-> I have personally tested the patches on i.MX8MN and i.MX8MP
-> architectures, with only
-> CONFIG_CLK_IMX8MN and CONFIG_CLK_IMX8MP enabled respectively, and I
-> didn't encounter any issues.
-
-Given it's wide use for CI the defconfig really needs covering, any
-random combination of options that can be set ought to work though.
-
---LNr9BVPJwGXcU9WK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmgdxB0ACgkQJNaLcl1U
-h9BSlwf/Vtb8OMqevi6wj00lKii/uNGXMGvMTb9ifa4UeAtfm5zK6qZXBmlEq0UC
-cTA1i2924jNkx+ibv6O8m3+inlwjJL5Z6TFpHUn/4QinBhHQeqp0uAlw07lFR2rC
-xzNOMYpxPqxoA8s+zzpXIKnlq7sVaPBj04pw9mlbFEeOf/6BRNOTPWePvkH4Ivl7
-c34t8qAzUcfZjuVV0mDfrNUKrWTrMvwYTYJWhXemCXwO5QzhFD97YFWXnF+sGBlP
-y388Wc4mqN8yO9ePREYfR8aN4jFtcB8+J6LUuDtotLw5QQS62DmPnZ3dC3sMeJGE
-4xm+8aOZ1B4WIIQtQm2MPtwX350Srw==
-=nfNO
------END PGP SIGNATURE-----
-
---LNr9BVPJwGXcU9WK--
+Thank you,
+Claudiu
