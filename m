@@ -1,64 +1,64 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01C4277011
-	for <linux-clk@vger.kernel.org>; Fri,  9 May 2025 10:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC8D28F514
+	for <linux-clk@vger.kernel.org>; Fri,  9 May 2025 10:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746788070; cv=none; b=PnmP1O5hbZTkNp5XasLOYe1IoTIFjUURrOht86R7jIvthuN0VYusDaDep9gxirWnDEMHG5fRoSw0dcqqWQ0n7v8HBjh2Xdi9mx+qO6UUAoY5b9r54Hqz7/NXLmC/+UwiROWY6bGDJ0Pjo6lfJtI6AV6onf3wrTtCUHneuRqjPuc=
+	t=1746788322; cv=none; b=QXXAZdk9w0cO6xNEIx2xUrz7pxwpma+4NkHBjP5RjkNIF56Al26pKL89Y95fzYYiovwv1C9Ygefnlhw/3qTTDadtL8sua5UPczyiLiu8ZDNQlHsx1js1Bmh0wUVw85WpxDV0+pn4Gh4pjogTg+lMOFKJxinlqdD3fu7ukmM1eoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746788070; c=relaxed/simple;
-	bh=mGRFCgj9h5bTJw7ABvbXIICYipnfwd1bc3lMZ0hvxuM=;
+	s=arc-20240116; t=1746788322; c=relaxed/simple;
+	bh=2nk5dPqyhxM88VSx3v0lc2vY03eLZ/CpvYHcyrM+f4I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e9DKVePG4QPZKgseysLz82aJl6JmwZsLfx/jFRGrnA7azpqpugKS41bHy0MoT4PytVX0q8gOZ6ktKhXGlpi+Qx1+NeQw//AnF291Pi8QyBX4MJ4+8t/myWK9g1jHJwfzf8Emaq4izS6YCATENN/NsVbXbmLOWWvUwMOaChZm7xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=I+ZzaCtU; arc=none smtp.client-ip=209.85.218.44
+	 In-Reply-To:Content-Type; b=ecWq9/wqcERSlibTpWrnZ1R73f1G92cm8vd7U6j46r+63xYXcLUOH/rNSQSjCHnB6RvuC9hYO2fhkt0kGPzWvK2fuAWNL5hPl3jCpApOyqojlmVBDYhJn9DH3onQhN0DYoqVNtQ+2Nd2ZEtuZty3RZNEJm8oZ+We2jPUG9a797g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=iEkFmp6o; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="I+ZzaCtU"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac3b12e8518so399701466b.0
-        for <linux-clk@vger.kernel.org>; Fri, 09 May 2025 03:54:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="iEkFmp6o"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e6f4b3ebe5so3805448a12.0
+        for <linux-clk@vger.kernel.org>; Fri, 09 May 2025 03:58:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746788066; x=1747392866; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1746788319; x=1747393119; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=GLIdLzT/v+ZxrdlLaHMVok4neUfENeTLsPAZ+uBDcSI=;
-        b=I+ZzaCtUQr1jAm5GKquTBKTw21ggB2f3Z40PvlPARRVgKu40DXOWkPOuf109Wn8bZo
-         JXw2IBXNYd2bbhdd4ucwaPOvVPJ10SiqF6NVKhwHvyrd4dhkzsX5Ri2eQge1gFub0Gql
-         7AfHgyoeaXwzLhKo2oE/m2cadukDESyRiQEGuTufA2MNJlNhLgrqzzXvA99UOCzqxxyl
-         o1I64R3AZ2KL5+kEy2Ukm2Q8oyrrBvPF3KXGUnkYtqziXX1B+yp7kchimxQHK8/QK3GO
-         fxRgj1iyIeOMDhTmIFGuxIhPnISq8zO8eiJYVI+LDCHlHTmNTysVvEs6cipqZWCCe62R
-         hqtg==
+        bh=nZbHuHRIDWS4UNIfVAz8PWvS0NgpTKjqW2wDiJXiI4s=;
+        b=iEkFmp6oA0+kHrIEOYOlqtVmGVUUGsJ5pw0PcoQM6jye4u+XIo54/kXNrONptCF4aw
+         TdwGf8KB5hifwloh/N6mzBnqkw3Mpw9e5+BSEiziHZ9m18WE5z/oGRln2g9Fl7ilC03k
+         cOlycibYrDERDw+OHLtPFuaugWoRj5cW5tu9bf7hHBzd1Rq7LxKiNDS/7r/jJIDMYMeW
+         bFcaF+6cP9CWGVlIU9/v0MYiTJhsa9ZyF1cCvfjel6KfNAdtLPZtVgBUq3jLNuFHg4im
+         bTgruLOU0F5zAZqrPj3Mo9A8RSbUfcd5tyGopggQTEf1NAnHAXTRvWbJzlER+ntNgjm8
+         PTEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746788066; x=1747392866;
+        d=1e100.net; s=20230601; t=1746788319; x=1747393119;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GLIdLzT/v+ZxrdlLaHMVok4neUfENeTLsPAZ+uBDcSI=;
-        b=MPpRZuHyOf/6MLfM0/abJ6iOAPPncaIlVTpAuljDeu3mAQFXP5rpz02OcU0t3uhE6o
-         7vb72jPozjpBtltiXrYI+Jg3KkgU62ghl86RwEkEZe3ajFZ202SOVgY5Gn/Y/OJhZHhR
-         Oq6xrRNolfrxsERSkCiFO0oPG58hx8DgnudP9QzMYTaYHxg9kb76wkAsSW0HkuVwBjL/
-         P+ZFZerEQiyymycKhGnWz2nGyS2MbwXn83tCjlwuohXEWOMdlOt+lqvsCDSQShq6kldT
-         iCoHgN3BkBWWmEhETCaBlm6gJHegK/j8pLCCuYg3E7+4PsQTJBllSFg4V9IRjle76kVY
-         GHzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXB4IUyl51oIfB44NTn7OV+63HK8d3OawXrNWBdqIPbghbwVCWGNMBT3IxR+tZZDA3LWdKDISsafps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOtkQOT+VcBfsGGxrExM9PFViUL0XRBtZSqoysLzaQw1z/gdT3
-	CsR/a2ViTJzOhNgqRC5IL3rlepR0LVK0uhEEhc/2fMhLL6O8eTKB+iC09S3jk70=
-X-Gm-Gg: ASbGnctnz2dxUUI1yaG5ZVgLz3/Ma7/h0nvm6Jju3ve7DarUPYYqAm/Wxasc6sOsWfX
-	aV9C665uUKgC1SABaObyjWPRukzzrRzeJYJc7GEMopf2R+TpHCZYZDYPZsxTeW5iT03AwHq0MtB
-	la/+86T6xTGZkRe65xqVgw9bxpJO9D8FqPFENDlFzvOYGy+iYVzBRwiEEu7Fa/uZLqEIDzg+mZi
-	srA1czPgiDRCuRVZepUx6VPasW0ASeFFNzssYXCxOvjlbvTyNrGjfw33swujkGik8B4slQAs/k9
-	67uZt8j619Q1v6OSw813nO+67OxrpBKdFwhNEqoDKo4zCRx74DC4jqwLMa8=
-X-Google-Smtp-Source: AGHT+IFvU/XM6WJ7lvVMHttCj3JCtHbBaU6vNbGR7wIV/k7/0uLPlCYvYLbFPr1tK1uDr4cZpMYPbg==
-X-Received: by 2002:a17:906:6a0a:b0:ad2:2a5d:b1af with SMTP id a640c23a62f3a-ad22a5db5b9mr39920966b.55.1746788065842;
-        Fri, 09 May 2025 03:54:25 -0700 (PDT)
+        bh=nZbHuHRIDWS4UNIfVAz8PWvS0NgpTKjqW2wDiJXiI4s=;
+        b=Hj0d6aB+S9EwE4uYiS+7rqyrGcA4i5ViOO0aOucrKQ5Vq7tbXvyJ91jUPvNRojTcef
+         AbBWLn10lO6jwvJWsOcnZSsiJEsdArG23o4ECV8EEW6tJN6JlOwmdQb0X3ZDcfgzQKMe
+         Cj7ORg1xQpCZGYx4a3fl6Id1qYlWwi/ISPy7eWnBvzlAeQzv1yPMSKrVgMBe8zfzsE49
+         vrltnr2SE7DVzwzmI1iYMoTJEPaPcwrVAdhPjHWgAgAewRN+ccJug6OLlBPcdgvorRDQ
+         viBfIorDDk6aK6MLL4Vlj6Ay5YjVwu5h/LM5kp4Y+LQgp9e4pRZ39jJjwTkMaug5m9rH
+         o1uA==
+X-Forwarded-Encrypted: i=1; AJvYcCV3gFUwtG/D/EIr17T9vTcoEUqzg8UWLgMgxqlX0dj+TKyIPlRBz0IIiwbW+5tCF3P9VQfZnyGVr1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdHn6PKVAQWkFlvFoS7Pa3kjI8LEkUwQ8vmbRf2AFPHzcHli/f
+	3E+zsjMpNRxb7bnlFNx4krOQBvH32GB3x76RAV6FW0ULDNTokwVL1TYszr+xHkQ=
+X-Gm-Gg: ASbGncsk2sUoV2sr25Vk+V8zUW09NjNED8C9nAhz072vNFDgQ8oTObWMaYOR/evM/Tp
+	z/D6CE3c+L6pasVK2kKvccfbfDVADjf3pg14NhOONAbh31KYI9Km5RyX9G4fcciGKEHs+1TufLK
+	gSrCDMEREuOuki4d/2S2BElTHKEITBD2i4Od3t+0g8TJw/QdgaHZ49wq7bzv28O+ewDCR+ssWWP
+	8szVP3nDRdxhSC/k5razLeDQNyVjSOsTyEYjgFnPgePvLWyDOzwLIWcMI0LS+E0MTybOX+CmuUP
+	/ijuigTbbA6jkm4CgnWAciS3j6XPkc8UaADhH9SLaV/JYzbC
+X-Google-Smtp-Source: AGHT+IE8zKJ0SlPd06ZZ9+XoxKnWzap/lSuxcblf1RpgkOVSS1IxrVf5VthK9xYufsLEWTuocUBDwA==
+X-Received: by 2002:a17:907:8992:b0:ad2:16ce:7c3b with SMTP id a640c23a62f3a-ad218f54cc4mr280469866b.22.1746788319022;
+        Fri, 09 May 2025 03:58:39 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad21933beb6sm133655766b.52.2025.05.09.03.54.24
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad219746ca6sm132664766b.99.2025.05.09.03.58.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 03:54:25 -0700 (PDT)
-Message-ID: <e77c85de-4542-44e1-af2e-f63f72602ff8@tuxon.dev>
-Date: Fri, 9 May 2025 13:54:24 +0300
+        Fri, 09 May 2025 03:58:38 -0700 (PDT)
+Message-ID: <8a14cf38-9a7b-462b-80d1-ec5026b5a565@tuxon.dev>
+Date: Fri, 9 May 2025 13:58:37 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,16 +76,16 @@ Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
  Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com>
  <20250410140628.4124896-4-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdUv6+KFuobDzzmKFOH6PvwU0RFzd1M9WrEZ-yzESBahkw@mail.gmail.com>
+ <CAMuHMdU00apiWYCPiwqGr66Ucg9KgWMhhm8FW_KBoeN2ceos+w@mail.gmail.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-In-Reply-To: <CAMuHMdUv6+KFuobDzzmKFOH6PvwU0RFzd1M9WrEZ-yzESBahkw@mail.gmail.com>
+In-Reply-To: <CAMuHMdU00apiWYCPiwqGr66Ucg9KgWMhhm8FW_KBoeN2ceos+w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi, Geert,
 
-On 07.05.2025 18:42, Geert Uytterhoeven wrote:
+On 07.05.2025 18:47, Geert Uytterhoeven wrote:
 > Hi Claudiu,
 > 
 > On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
@@ -122,389 +122,18 @@ On 07.05.2025 18:42, Geert Uytterhoeven wrote:
 >> A/ Switching to Normal State (e.g., during probe):
 >> 1/ Set CLKON bits
 >> 2/ Clear MSTOP bits
->>
->> B/ Switching to Standby State (e.g., during remove):
->> 1/ Set MSTOP bits
->> 2/ Clear CLKON bits
->>
->> To prevent future issues due to incorrect ordering, the MSTOP setup has
->> now been implemented in rzg2l_mod_clock_endisable(), ensuring compliance
->> with the sequence suggested in Figure 41.5: Module Standby Mode Procedure
->> from the RZ/G3S HW manual.
->>
->> Additionally, since multiple clocks of a single module may be mapped to a
->> single MSTOP bit, MSTOP setup is reference-counted.
->>
->> Furthermore, as all modules start in the normal state after reset, if the
->> module clocks are disabled, the module state is switched to standby. This
->> prevents keeping the module in an invalid state, as recommended by the
->> hardware team.
->>
->> Link: https://lore.kernel.org/all/20250215130849.227812-1-claudiu.beznea.uj@bp.renesas.com/
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Thanks for your patch!
-> 
->> --- a/drivers/clk/renesas/rzg2l-cpg.c
->> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> 
->> @@ -1180,27 +1183,147 @@ rzg2l_cpg_register_core_clk(const struct cpg_core_clk *core,
->>                 core->name, PTR_ERR(clk));
->>  }
->>
->> +/**
->> + * struct mstop - MSTOP specific data structure
->> + * @refcnt: reference counter for MSTOP settings (when zero the settings
->> + *          are applied to register)
->> + * @conf: MSTOP configuration (register offset, setup bits)
->> + */
->> +struct mstop {
->> +       refcount_t refcnt;
->> +       u32 conf;
->> +};
->> +
->>  /**
->>   * struct mstp_clock - MSTP gating clock
->>   *
->>   * @priv: CPG/MSTP private data
->>   * @sibling: pointer to the other coupled clock
->> + * @mstop: MSTOP configuration
->> + * @shared_mstop_clks: clocks sharing the MSTOP with this clock
->>   * @hw: handle between common and hardware-specific interfaces
->>   * @off: register offset
->>   * @bit: ON/MON bit
->> + * @num_shared_mstop_clks: number of the clocks sharing MSTOP with this clock
->>   * @enabled: soft state of the clock, if it is coupled with another clock
->> + * @critical: specifies if this clock is critical
->>   */
->>  struct mstp_clock {
->>         struct rzg2l_cpg_priv *priv;
->>         struct mstp_clock *sibling;
->> +       struct mstop *mstop;
->> +       struct mstp_clock **shared_mstop_clks;
->>         struct clk_hw hw;
->>         u16 off;
->>         u8 bit;
->> +       u8 num_shared_mstop_clks;
->>         bool enabled;
->> +       bool critical;
-> 
-> I think you can do without this flag, and use
-> "clk_hw_get_flags(&mstp_clock.hw) & CLK_IS_CRITICAL" instead.
+> What is the recommended order in case multiple clocks map to
+> the same module? Clear the MSTOP bit(s) after enabling the first clock,
+> or clear the MSTOP bit(s) after enabling all clocks?
 
-You're right, it should be achievable.
+I can't find anything about this in the HW manual.
 
-> 
->>  };
->>
->>  #define to_mod_clock(_hw) container_of(_hw, struct mstp_clock, hw)
->>
->> +/* Need to be called with a lock held to avoid concurrent access to mstop->refcnt. */
->> +static void rzg2l_mod_clock_module_set_state(struct mstp_clock *clock,
->> +                                            bool standby)
->> +{
->> +       struct rzg2l_cpg_priv *priv = clock->priv;
->> +       struct mstop *mstop = clock->mstop;
->> +       bool update = false;
->> +       u32 value;
->> +
->> +       if (!mstop)
->> +               return;
->> +
->> +       value = MSTOP_MASK(mstop->conf) << 16;
->> +
->> +       if (standby) {
->> +               unsigned int criticals = 0;
->> +
->> +               for (u8 i = 0; i < clock->num_shared_mstop_clks; i++) {
-> 
-> unsigned int
-> 
->> +                       struct mstp_clock *clk = clock->shared_mstop_clks[i];
->> +
->> +                       if (clk->critical)
->> +                               criticals++;
->> +               }
->> +
->> +               /* Increment if clock is critical, too. */
->> +               if (clock->critical)
->> +                       criticals++;
-> 
-> If clock->shared_mstop_clks[] would include the current clock, then
-> (a) this test would not be needed, and
+> I believe the code implements the former?
 
-Agree!
-
-> (b) all clocks sharing the same mstop could share a single
->     clock->shared_mstop_clks[] array.
-
-I'll look into this but I'm not sure how should I do it w/o extra
-processing at the end of registering all the clocks. FWICT, that would
-involve freeing some shared_mstop_clks arrays and using a single reference
-as the shared_mstop_clks[] is updated after every clock is registered. Can
-you please let me know if this what you are thinking about?
-
-Updating the shared_mstop_clks[] after each clock is registered is
-necessary in this implementation to avoid wrong setup of MSTOP in case 2
-clocks shared it, one is critical, one isn't and taking into account that
-they can be registered in any order:
-
-case 1:
-- at moment T1 the critical clock is registered
-- at moment T2 the non-critical clock is registered
-
-case 2:
-- at moment T1 the non-critical clock is registered
-- at moment T2 the critical clock is registered
-
-where T1 < T2
-
-> 
->> +
->> +               /*
->> +                * If this is a shared MSTOP and it is shared with critical clocks,
->> +                * and the system boots up with this clock enabled but no driver
->> +                * uses it the CCF will disable it (as it is unused). As we don't
->> +                * increment reference counter for it at registration (to avoid
->> +                * messing with clocks enabled at probe but later used by drivers)
->> +                * do not set the MSTOP here too if it is shared with critical
->> +                * clocks and ref counted only by those critical clocks.
->> +                */
->> +               if (criticals && criticals == refcount_read(&mstop->refcnt))
->> +                       return;
->> +
->> +               value |= MSTOP_MASK(mstop->conf);
->> +
->> +               /* Allow updates on probe when refcnt = 0. */
->> +               if (!refcount_read(&mstop->refcnt))
->> +                       update = true;
->> +               else
->> +                       update = refcount_dec_and_test(&mstop->refcnt);
->> +       } else {
->> +               if (!refcount_read(&mstop->refcnt)) {
->> +                       refcount_set(&mstop->refcnt, 1);
->> +                       update = true;
->> +               } else {
->> +                       refcount_inc(&mstop->refcnt);
->> +               }
-> 
-> I think if you would replace the refcount_t by an atomic_t, you could
-> use atomic_inc() unconditionally, cfr. rzv2h-cpg.c.
-
-OK
-
-> 
->> +       }
->> +
->> +       if (update)
->> +               writel(value, priv->base + MSTOP_OFF(mstop->conf));
->> +}
->> +
->> +static int rzg2l_cpg_mstop_show(struct seq_file *s, void *what)
->> +{
->> +       struct rzg2l_cpg_priv *priv = s->private;
->> +
->> +       seq_printf(s, "%-20s %-5s %-10s\n", "", "", "MSTOP");
->> +       seq_printf(s, "%-20s %-5s %-10s\n", "", "clk", "-------------------------");
->> +       seq_printf(s, "%-20s %-5s %-5s %-5s %-6s %-6s\n",
->> +                  "clk_name", "cnt", "cnt", "off", "val", "shared");
->> +       seq_printf(s, "%-20s %-5s %-5s %-5s %-6s %-6s\n",
->> +                  "--------", "-----", "-----", "-----", "------", "------");
->> +
->> +       for (unsigned int i = 0; i < priv->num_mod_clks; i++) {
->> +               struct mstp_clock *clk;
->> +               struct clk_hw *hw;
->> +               u32 val;
->> +
->> +               if (priv->clks[priv->num_core_clks + i] == ERR_PTR(-ENOENT))
->> +                       continue;
->> +
->> +               hw = __clk_get_hw(priv->clks[priv->num_core_clks + i]);
->> +               clk = to_mod_clock(hw);
-> 
-> As this patch adds four more loops iterating over all module clocks
-> and skipping empty entries, I think it is worthwhile to introduce a
-> custom for_each_mstp_clock()-iterator.
-
-I was thinking about it and I tried do it with a macro, keeping this code
-in it:
-
-    for (unsigned int i = 0; i < priv->num_mod_clks; i++) {
-        struct mstp_clock *clk;
-        struct clk_hw *hw;
-        u32 val;
-
-        if (priv->clks[priv->num_core_clks + i] == ERR_PTR(-ENOENT))
-            continue;
-
-but it was a complicated macro and abandoned it in the end.
-
-> 
->> +               if (!clk || !clk->mstop)
-> 
-> Can !clk happen? None of the other loops check for that.
-
-You're right, it can't happen.
-
-> 
->> +                       continue;
->> +
->> +               val = readl(priv->base + MSTOP_OFF(clk->mstop->conf)) &
->> +                     MSTOP_MASK(clk->mstop->conf);
->> +
->> +               seq_printf(s, "%-20s %-5d %-5d 0x%-3lx 0x%-4x ", clk_hw_get_name(hw),
-> 
-> Please drop the trailing space in the format...
-> 
->> +                          __clk_get_enable_count(hw->clk), refcount_read(&clk->mstop->refcnt),
->> +                          MSTOP_OFF(clk->mstop->conf), val);
->> +
->> +               for (unsigned int i = 0; i < clk->num_shared_mstop_clks; i++)
->> +                       seq_printf(s, "%pC ", clk->shared_mstop_clks[i]->hw.clk);
-> 
-> ... add add it here, by changing this format to " %pC".
-
-OK.
-
-> 
->> +
->> +               seq_puts(s, "\n");
->> +       }
->> +
->> +       return 0;
->> +}
->> +DEFINE_SHOW_ATTRIBUTE(rzg2l_cpg_mstop);
->> +
->>  static int rzg2l_mod_clock_endisable(struct clk_hw *hw, bool enable)
->>  {
->>         struct mstp_clock *clock = to_mod_clock(hw);
-> 
->> +
->> +static int rzg2l_cpg_add_shared_mstop_clock(struct device *dev,
->> +                                           struct mstp_clock *target,
->> +                                           struct mstp_clock *added)
->> +{
->> +       for (u8 i = 0; i < target->num_shared_mstop_clks; i++) {
-> 
-> unsigned int
-> 
->> +               if (target->shared_mstop_clks[i] == added)
->> +                       return 0;
->> +       }
->> +
->> +       target->shared_mstop_clks = devm_krealloc(dev, target->shared_mstop_clks,
->> +                                                 sizeof(*target->shared_mstop_clks) *
->> +                                                 (target->num_shared_mstop_clks + 1),
->> +                                                 GFP_KERNEL);
->> +       if (!target->shared_mstop_clks)
->> +               return -ENOMEM;
->> +
->> +       target->shared_mstop_clks[target->num_shared_mstop_clks++] = added;
->> +
->> +       return 0;
->> +}
->> +
->> +static int rzg2l_cpg_update_shared_mstop_clocks(struct rzg2l_cpg_priv *priv,
->> +                                               struct mstp_clock *clock)
->> +{
->> +       if (!clock->mstop)
->> +               return 0;
->> +
->> +       for (unsigned int i = 0; i < priv->num_mod_clks; i++) {
->> +               struct mstp_clock *clk;
->> +               struct clk_hw *hw;
->> +               int ret;
->> +
->> +               if (priv->clks[priv->num_core_clks + i] == ERR_PTR(-ENOENT))
->> +                       continue;
->> +
->> +               hw = __clk_get_hw(priv->clks[priv->num_core_clks + i]);
->> +               clk = to_mod_clock(hw);
->> +               if (clk == clock)
->> +                       continue;
->> +
->> +               if (!clk->mstop || clk->mstop != clock->mstop)
-> 
-> The first test is not needed, as clock->mstop is always non-zero here.
-
-I agree.
-
-> 
->> +                       continue;
->> +
->> +               ret = rzg2l_cpg_add_shared_mstop_clock(priv->dev, clock, clk);
->> +               if (ret)
->> +                       return ret;
->> +
->> +               ret = rzg2l_cpg_add_shared_mstop_clock(priv->dev, clk, clock);
->> +               if (ret)
->> +                       return ret;
->> +       }
->> +
->> +       return 0;
->> +}
->> +
->>  static void __init
->>  rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
->>                            const struct rzg2l_cpg_info *info,
-> 
->> @@ -1406,6 +1655,12 @@ rzg2l_cpg_register_mod_clk(const struct rzg2l_mod_clk *mod,
->>                 }
->>         }
->>
->> +       ret = rzg2l_cpg_update_shared_mstop_clocks(priv, clock);
->> +       if (ret) {
->> +               clk = ERR_PTR(ret);
->> +               goto fail;
->> +       }
->> +
->>         return;
->>
->>  fail:
->> @@ -1877,6 +2132,13 @@ static int __init rzg2l_cpg_probe(struct platform_device *pdev)
->>         for (i = 0; i < info->num_mod_clks; i++)
->>                 rzg2l_cpg_register_mod_clk(&info->mod_clks[i], info, priv);
->>
->> +       /*
->> +        * Initialize MSTOP after all the clocks were registered to avoid
->> +        * invalid reference counting when multiple clocks (critical,
->> +        * non-critical) shares the same MSTOP.
-> 
-> share
-> 
->> +        */
->> +       rzg2l_mod_clock_init_mstop(priv);
->> +
->>         error = of_clk_add_provider(np, rzg2l_cpg_clk_src_twocell_get, priv);
->>         if (error)
->>                 return error;
-> 
->> --- a/drivers/clk/renesas/rzg2l-cpg.h
->> +++ b/drivers/clk/renesas/rzg2l-cpg.h
->> @@ -82,6 +82,10 @@
->>  #define SEL_PLL6_2     SEL_PLL_PACK(CPG_PL6_ETH_SSEL, 0, 1)
->>  #define SEL_GPU2       SEL_PLL_PACK(CPG_PL6_SSEL, 12, 1)
->>
->> +#define MSTOP(name, bitmask)   ((CPG_##name##_MSTOP) << 16 | (bitmask))
->> +#define MSTOP_OFF(conf)                FIELD_GET(GENMASK(31, 16), (conf))
->> +#define MSTOP_MASK(conf)       FIELD_GET(GENMASK(15, 0), (conf))
-> 
-> The last two definitions are only used in rzg2l-cpg.c, so they can be
-> moved there.
-
-I'll move it there.
+The proposed implementation clears the MSTOP after enabling the first clock
+taking into account that there might be cases where 2 clocks sharing the
+same MSTOP may not be both enabled for a particular functionality.
 
 Thank you for your review,
 Claudiu
-
-> 
->> +
->>  #define EXTAL_FREQ_IN_MEGA_HZ  (24)
->>
->>  /**
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-
