@@ -1,66 +1,144 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608412367D3;
-	Fri,  9 May 2025 22:05:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C83261565;
+	Fri,  9 May 2025 22:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746828307; cv=none; b=VRg6IcD3VPaDpTD32nzyBA5wZowgiabx/LiVjGs59lNWOcddLcM43KVBFdim9myQrX66CtOnFteRaGqNUY7Te3pcHLm0wq0v++vdsfhJ50b1k3ObCC5pDlnIW59L764N5LKqj8fY1SFLOxPX4dkfFTLGcoZNGfeM7Z4d11Oe1wY=
+	t=1746828817; cv=none; b=YDFZ0pGErLwGJLhJ/LSfHLRVM3XfzkR8lT03RmKoqlxwZySE4eUwUU+nie+gvAVp7e+FRDLPUHcPSSN4INqbXBlxBmhZgHExtUeQy98hXMDrRfx6IASFxSTymrN7z5XN6K346FZipInFEJ231U6xmv2IxqhikbTTRc1xNHWXZKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746828307; c=relaxed/simple;
-	bh=StSrIKDVK/EzCCK9Cc/w19dncJefyntfVTupYhZr++s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DerCR+vWdrb7jFq81pClXbEe3OijTGXIjM/DJbqmm/7p6PixlRw5+QKdJZOxVo5HXfTDyoQVEZW/0u+rJPFXvxPz25q5lelrUV26TXG5CnGSfOVGKEISmWc0Sr2fZMQi05yG2ZNIttqqJrLZ5n8qIi4WWaAT0u961fdydxj/K6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bo9WIVz9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746828817; c=relaxed/simple;
+	bh=JEtojtxozBeZKb4L4slRczK0pe/giC0x9qDchrNk1q8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DMEZicljxU4WleBdeNhhJlfDS5+SiICeb0rhebwqK3gwI8QV05POED5l11jsjITj966Kw1MdswzGyyfmKqy7XiUrvfjRJbAgKlnw+2AcMyKLfBL3F1636/0eQvZb9ebwsu/hOkJQ5mUHePloSwt1BK+Mx8QHL4vgy+2lL8Nklvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IYKV3aNs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bo9WIVz9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A628DC4CEE4;
-	Fri,  9 May 2025 22:05:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IYKV3aNs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 862ABC4CEEE;
+	Fri,  9 May 2025 22:13:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746828306;
-	bh=StSrIKDVK/EzCCK9Cc/w19dncJefyntfVTupYhZr++s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bo9WIVz9HzbPmtVk93PYaUof5XUoAPrimkDXbD5XnrsBXzVL+hLTGc3ni+x7yWg9k
-	 WSKsEUv8UZc36o5PPV6EUgL1UZzcIA34Wh9iae8yXBlrSD2TL4H2r5Ds35odmtgAEh
-	 GcoL42Q3Vb9jINOi3iIm7eR5SSh/6/abKvoVOOFppd0UIQ7L9VwqLoyyrHd/EVvFY1
-	 IIRzGDK31Wzw3Y1E4dt6GU7PMVBaiNG8aunyIg5sHjOMUji2lb/spCLX5cWGrDUaQB
-	 BnzXiwZQioI6NZU3v3ejJTCFt8Bs49OpqPdzAQjbtWmLF9rHAtVSQM0RZxASfFE9si
-	 U7s0wbXt8DG9w==
-Date: Fri, 9 May 2025 17:05:04 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: George Moussalem <george.moussalem@outlook.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-clk@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+	s=k20201202; t=1746828816;
+	bh=JEtojtxozBeZKb4L4slRczK0pe/giC0x9qDchrNk1q8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=IYKV3aNsMm0whQPXKjXlBEOn2trCbtazdDfHlO5yPtdyE5J3GweuFhzrUbr7Snoww
+	 qqZF7RYOoIR380q1jSD71Ck0351FOW3wBU334Ik2Q8iw6QLTEG3x62c0dOEubnlHGU
+	 uDwQ2z3vTuJcEfDVgiuuK7uYNS+RlyuRpoFTmbRRkVTsb++SFB42yPStgJALge6Uh1
+	 iF8eehmqqX8IawRvuD2N01tJxqP6opnaPgKie0o23LHTLxL8bziAXGZWya9r08SVRj
+	 YaudW4inWVVWlif6YhdroDU16ct+tjyIvqBrqpaI4K+X8q6bXBgXXjr35mKh6wnh0W
+	 8QSTtY9VxavPA==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Luo Jie <quic_luoj@quicinc.com>,
-	Lee Jones <lee@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/6] dt-bindings: mfd: qcom,tcsr: Add compatible for
- IPQ5018
-Message-ID: <174682830451.73045.182553612890266089.robh@kernel.org>
-References: <20250502-ipq5018-cmn-pll-v1-0-27902c1c4071@outlook.com>
- <20250502-ipq5018-cmn-pll-v1-4-27902c1c4071@outlook.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Amit Kucheria <amitk@kernel.org>,
+	Thara Gopinath <thara.gopinath@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Souradeep Chowdhury <quic_schowdhu@quicinc.com>,
+	Lee Jones <lee@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alex Elder <elder@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Andy Gross <agross@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Georgi Djakov <djakov@kernel.org>,
+	Loic Poulain <loic.poulain@oss.qualcomm.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Kees Cook <kees@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+	David Wronek <david@mainlining.org>,
+	Jens Reidel <adrian@mainlining.org>,
+	Danila Tikhonov <danila@jiaxyga.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	dmaengine@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev,
+	linux-remoteproc@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-hardening@vger.kernel.org,
+	linux@mainlining.org,
+	~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: (subset) [PATCH 17/33] dt-bindings: nvmem: qfprom: Add the SM7150 compatible
+Date: Fri,  9 May 2025 17:13:23 -0500
+Message-ID: <174682880484.49052.7211478690993150122.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250422213137.80366-1-danila@jiaxyga.com>
+References: <20250422213137.80366-1-danila@jiaxyga.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250502-ipq5018-cmn-pll-v1-4-27902c1c4071@outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
-On Fri, 02 May 2025 14:15:46 +0400, George Moussalem wrote:
-> Document the qcom,tcsr-ipq5018 compatible.
+On Wed, 23 Apr 2025 00:31:21 +0300, Danila Tikhonov wrote:
+> Document QFPROM compatible for SM7150.
 > 
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> ---
->  Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
->  1 file changed, 1 insertion(+)
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Applied, thanks!
 
+[31/33] dt-bindings: arm: qcom: Add SM7150 Google Pixel 4a
+        commit: bd4718d97d308fdc20ddcd471444b3e398ce877d
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
