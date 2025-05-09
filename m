@@ -1,174 +1,132 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE632900A1
-	for <linux-clk@vger.kernel.org>; Fri,  9 May 2025 12:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF2528F52A
+	for <linux-clk@vger.kernel.org>; Fri,  9 May 2025 12:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746794654; cv=none; b=e9YfiAAE3ocB8q12YGYJcgwmGKKmtEMrs2fWJtYhhwMiGeDdxkCG5GcXMbzZ+HsVKGJjFufrQvxCmBUvVjrN8hQWCycDQCpFNPHxseVXbEuo6t5fEbNr1s3VcmCtwDv8fg1V4uRjPPbNTSAcO683Wz9OClmcKQ/sfomH6APk9ug=
+	t=1746794727; cv=none; b=ZnB/bAl18Orj7ZSX9El+wv54cW8rv4x0EzP6ZmOsudcFMSIUT6nLQ3NsVtOBKiESdzvM4UpYfCyXDRMu9YVWjcW78u/zI+UTSrV7ysDDPnpSHVTHmN+O6d1qB8bjSXtuWSA72gaBEQKaiF8keM8YV4gjh9bautZe5xSxoaHaQrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746794654; c=relaxed/simple;
-	bh=zAnIDzk1Ex30r2AWghF2/dzpVcrnWZnWMuTaApVel18=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XTRJuhznIzOR/ipDeRhn9ySz9+4E6ziF2Zcfz31kvKxqTdPKMg4mJ94FFAA7EVKD6Vn3CbG8JnHnc1qOqLhNTXR9azX69crMrKi184Hmo7mVoDUfvSWeFE78cTDLwCyzAJHcm3xIgO93rrXCXQl+hHkFbT6cGVkAjtkHKR+tZsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QSy7tZtK; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1746794727; c=relaxed/simple;
+	bh=8NSBwkR/zU9DvjRNqknsrKz0iNJhVJvXcYxWAeswOCc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FWIP6KpnLrxj23eGfcqwytSjdervVycCMSrfPdIXwvQ/w5uAOPsYm4V1x1pFWH2lFfgUbjU7O7EbcM66vY5pnvqdrwtPuyPichnRNfNgN1p7xdfLA/9lV15XI4PXvoy7uNzJcfD1NzSfXoaX5xLIlqPhfknUA1G++Ku0nG1CCxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=hsrITmlC; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QSy7tZtK"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5fbcd9088a7so3848278a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 09 May 2025 05:44:12 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="hsrITmlC"
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-70811611315so16994067b3.1
+        for <linux-clk@vger.kernel.org>; Fri, 09 May 2025 05:45:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1746794650; x=1747399450; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/paEfu3znIo+odjzOzegwzTx47yQ+AdAhjxebl79aIw=;
-        b=QSy7tZtKyHElp0AA0uw54tMbkJp7f8xL6nb/G6EExiUGFE8Wg+XZf/VqYmemPv0UPS
-         G1EJhbG98zNpDe8yzDIxZrVhwNZJTMz/mus2gfUdkfVQdwoHfB//2H/2JhnSQS0wYi0Q
-         X0py3SVGjkDiam+0dM8un3k3TlaRUPmd5Ta0p0Kxlp5yE2oHNHwadepF63kIZkBwcYSY
-         wKPCGcMxgRl7fN6QlNFbWNGyfddmSJ0VdaFVSUnxhDeDY3Y9GPsY3QZsUitaj5Cp44Xw
-         uGzC6800t5tk0tPl0Sfcmnjeb+JKKivTZPud/lnkjXG+FAQdR8S004FGmCdRKL7ZIAzH
-         QxFw==
+        d=amarulasolutions.com; s=google; t=1746794725; x=1747399525; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5UptzkckGGe6JRswL/8UtUucPFjfcOJ9lUow8fGoTkk=;
+        b=hsrITmlCJMITj5ZIaEQpj5r0jUDmVlA8TzFbrwYnQWgTe3obJCta8s730myIjkNMg9
+         0kBeJ3byULVQUZfaj27cgcd0A0L0PmaDUqIeBLEPNGgkTusPzHfuayrzVHYHot37n3QS
+         9akdjGEWqho7sby3hmKk3nUPRptY2TuMhPFS8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746794650; x=1747399450;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/paEfu3znIo+odjzOzegwzTx47yQ+AdAhjxebl79aIw=;
-        b=cdcigUXG9nsnt8rhCQMniqAGoheoVXFBCYnDxGp8U92cWiqgMQ1ITgHQ21hvKHzh0c
-         yz7QvC11TW7rRvZPzPYO6qGmoXxBD3n2J/38NcEiOfmVrkrvNOg/HsSc/Vmm8QXqM0jk
-         JZCOleG/RulWHRpu92nvDx4yZKYTxQQy9JevwDJl++quTlg3uLkD5k3McwiJH9+IFTLd
-         mUUp3trBFce20fWPOq0wR/vZ/otbADIor5JRS+2jjrSSN9YEHrvaQkjYYpGalwGiT36v
-         6BS9+UC/XXLZzOIVfWHYa105ceofwnuw5GIyeYLENc/91Qjx4jvhsCneZpJpj3vSTH6S
-         yeFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUK3LJng7DJVqZhvjT8f35pH8NtqTeIbk43ERpj9sI1hnC5GmFbF/h7kVVs/gCURIghrKK5q0a28ss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyweFDzVP4u5ZheBeHXm9vRmd1Egd9nD7uJ0VV/Px35rMHa0bdk
-	79rviZZu061kdE8DpJLpzJoCN5jmXlaoK2u9al8j7/k7MhWkjfqNNq7XdvyrJ7U=
-X-Gm-Gg: ASbGncsdZcdHgiu3rDoCWsg/ehMyJoZvV9fB9ew1Rngg3xj8acX7zDL4RgL3eAE8b/n
-	nr1/RDJm4kRqrjCJ+viNZ3VWV/Z84w3Py3oXZDFlBy8TlJqazqUNIfuw/mowVl0RDu6Ua1Oghom
-	lv0xkIDK7wNk2d91ZUcZwC99NGUzTmoATVuqyd5vJqCMPDEJn4k4gfvzT5Uo7xGtpLF9q4uBU6w
-	39ZT6y32myX1G5iucorskKk76J5eqDt/6jvOXUBu7B1o6RKuSnGAUdA3JmEokdKX1MOSqY80pAa
-	uzfTTMnOTPzK/GrogxESw5ZLoH1Z/WtQwq79aI0oqANsbYiiNlmQqsiJZRs=
-X-Google-Smtp-Source: AGHT+IEXHjPdBs2wbTDrgigjAAWt1V/NRiT3NNjsGB4lXS/D8KzGHFymOigZLIExpISjX/zYVIeYTA==
-X-Received: by 2002:a05:6402:2549:b0:5fc:8d75:4a25 with SMTP id 4fb4d7f45d1cf-5fc8d754c6cmr4828222a12.7.1746794650507;
-        Fri, 09 May 2025 05:44:10 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fc9cc26710sm1334871a12.21.2025.05.09.05.44.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 05:44:10 -0700 (PDT)
-Message-ID: <bcbd993f-59e7-4017-b592-11e514e8f186@tuxon.dev>
-Date: Fri, 9 May 2025 15:44:08 +0300
+        d=1e100.net; s=20230601; t=1746794725; x=1747399525;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5UptzkckGGe6JRswL/8UtUucPFjfcOJ9lUow8fGoTkk=;
+        b=wQOdS49HHRD50B1ch9bPBpsbOxWi1+bc8xOQmY6eH6G8OMGN5Uwz6bh0viPRNtoacB
+         A4+Zm2ViUBNdL8GxyyPXfTaQ8KL+mWEcOKJldOqp63pPgj1FpYM5XfOUJGaIBxzNDWNF
+         EzE2dDXpVzU/JL1mY7/9THUMmT/RHIR9D8moH8cxN9Wz2nehRG1LjOCuQmHQ/A9OQxgE
+         L+XXP6cpej91/3l7U5cfCEi7OauD4yWd6OdxKMhTwdIqBvzQ0g8cxHe6Zsx4346JCZq5
+         qjts1CwszLVz77Vzc406UHKI6z7SrKpWWtI0MTJcOGrfIT6KSEqa4LvWrTpXKxkpwrRA
+         6b6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWx+Nz/zZhJliAMBLTfD7s+2Bywdv21Z50mgT9vWAlTFg5oXBmnB3bjSNU+A7Zf4Kbyv3YpB1/7PQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3PfHApF34zVeO/BsaXglJETLTWIOZ247u5n/rgnFbJX0m0obq
+	N/ZWU61UngXZzTi+QExwWEyrXHtwqmjYLcSni+HSa94f9K7qtservpRSJl14lAleHtkuDuU8C4U
+	75/UHXTKCatOrD0wZwcebVpz4XWKNPdy+ajZziA==
+X-Gm-Gg: ASbGncsoskOrF5ato8oMInkKyeUgRjJCRSHQB14LRP/k0CXgim8WtJvUsXbRduT0zdh
+	k+PTtdUTLFnx1cLkcjMXa7spsi0Y0WQsv8QuslpHZzcXjFJ4on98StaoKAlD6xo+LCWzIH89gwE
+	R5fnqESoo9277WJ+LD/w==
+X-Google-Smtp-Source: AGHT+IE+ZAuLmkz1arQbVX0YZvJVLhQ7nxcEKZcFN7pYHPM6BXlBBzNkNPkqSg4yVC9lFIj68cGkI7vjB1r4wxAuYWQ=
+X-Received: by 2002:a05:690c:2506:b0:708:11c7:d200 with SMTP id
+ 00721157ae682-70a3f9e3f61mr40837627b3.4.1746794724940; Fri, 09 May 2025
+ 05:45:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] clk: renesas: rzg2l-cpg: Add support for MSTOP in
- clock enable/disable API
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250410140628.4124896-1-claudiu.beznea.uj@bp.renesas.com>
- <20250410140628.4124896-4-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdU00apiWYCPiwqGr66Ucg9KgWMhhm8FW_KBoeN2ceos+w@mail.gmail.com>
- <8a14cf38-9a7b-462b-80d1-ec5026b5a565@tuxon.dev>
- <CAMuHMdWOihhQtpi+J9t-4bApEHx+f6_q7NtdEiLVi63krZnK=w@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAMuHMdWOihhQtpi+J9t-4bApEHx+f6_q7NtdEiLVi63krZnK=w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250424062154.2999219-1-dario.binacchi@amarulasolutions.com>
+ <20250424062154.2999219-12-dario.binacchi@amarulasolutions.com>
+ <aB1f74ufYoNmXfEn@finisterre.sirena.org.uk> <CABGWkvqySQugJpaj1s_jqGHkA5BONALJY5jn7JjZe=iLc5x60Q@mail.gmail.com>
+ <aB3EIxfwTbpQw7Eo@finisterre.sirena.org.uk>
+In-Reply-To: <aB3EIxfwTbpQw7Eo@finisterre.sirena.org.uk>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Fri, 9 May 2025 14:45:14 +0200
+X-Gm-Features: AX0GCFsMhC-bZIQbroR-iMbqMxImzouNrdaQ9uRaQFjqPmIkXBI_CX0YvsjmbY0
+Message-ID: <CABGWkvq+FQZ2A9vpv2XfDmbHgpNOSnZhCMdkKaeqhCcvdjzdAg@mail.gmail.com>
+Subject: Re: [PATCH v12 11/19] clk: imx: add support for i.MX8MM anatop clock driver
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	linux-amarula@amarulasolutions.com, Abel Vesa <abelvesa@kernel.org>, 
+	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Geert,
+On Fri, May 9, 2025 at 11:00=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Fri, May 09, 2025 at 10:34:38AM +0200, Dario Binacchi wrote:
+>
+> > From the log I see that you are testing a board with i.MX8MP, but it's
+> > probing the anatop for i.MX8MM.
+> > Is it possible that you have the CONFIG_CLK_IMX8MM option enabled?
+>
+> This is an arm64 defconfig so whatever that has set, including the
+> above.  Note that arm64 is supposed to be single kernel build for all
+> platforms so we shouldn't explode due to config options for other
+> platforms.
 
-On 09.05.2025 15:12, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, 9 May 2025 at 12:58, Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
->> On 07.05.2025 18:47, Geert Uytterhoeven wrote:
->>> On Thu, 10 Apr 2025 at 16:06, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> The RZ/{G2L, V2L, G3S} CPG versions support a feature called MSTOP. Each
->>>> module has one or more MSTOP bits associated with it, and these bits need
->>>> to be configured along with the module clocks. Setting the MSTOP bits
->>>> switches the module between normal and standby states.
->>>>
->>>> Previously, MSTOP support was abstracted through power domains
->>>> (struct generic_pm_domain::{power_on, power_off} APIs). With this
->>>> abstraction, the order of setting the MSTOP and CLKON bits was as follows:
->>>>
->>>> Previous Order:
->>>> A/ Switching to Normal State (e.g., during probe):
->>>> 1/ Clear module MSTOP bits
->>>> 2/ Set module CLKON bits
->>>>
->>>> B/ Switching to Standby State (e.g., during remove):
->>>> 1/ Clear CLKON bits
->>>> 2/ Set MSTOP bits
->>>>
->>>> However, in some cases (when the clock is disabled through devres), the
->>>> order may have been (due to the issue described in link section):
->>>>
->>>> 1/ Set MSTOP bits
->>>> 2/ Clear CLKON bits
->>>>
->>>> Recently, the hardware team has suggested that the correct order to set
->>>> the MSTOP and CLKON bits is:
->>>>
->>>> Updated Order:
->>>> A/ Switching to Normal State (e.g., during probe):
->>>> 1/ Set CLKON bits
->                   ^^^^
->                   plural
+Ok. I'll fix it asap.
 
-This is a mistake from my side. Apologies for it. I was trying to keep it
-as simple as possible to avoid any confusion but I failed. The HW team
-recommended to follow the sequence described in Figure 41.5 Module Standby
-Mode Procedure, from chapter 41.2.2. Operation
-:
+Thanks and regards,
+Dario
 
-This is a copy-paste from the communication with them:
+>
+> Current -next defconfig:
+>
+>    https://builds.sirena.org.uk/f48887a98b78880b7711aca311fbbbcaad6c4e3b/=
+arm64/defconfig/config
+>
+> > I have personally tested the patches on i.MX8MN and i.MX8MP
+> > architectures, with only
+> > CONFIG_CLK_IMX8MN and CONFIG_CLK_IMX8MP enabled respectively, and I
+> > didn't encounter any issues.
+>
+> Given it's wide use for CI the defconfig really needs covering, any
+> random combination of options that can be set ought to work though.
 
-"To enter the module standby:
-1/ set the CPG_BUS_***_MSTOP register
-2/ set the CPG_CLKON_*** register
 
-To start the module:
-3/ set the CPG_CLKON_*** register
-4/ set the CPG_BUS_***_MSTOP register"
 
-> 
->>>> 2/ Clear MSTOP bits
->                     ^^^^
->                     plural
+--=20
 
-Same here
+Dario Binacchi
 
-> 
->>> What is the recommended order in case multiple clocks map to
->>> the same module? Clear the MSTOP bit(s) after enabling the first clock,
->>> or clear the MSTOP bit(s) after enabling all clocks?
->>
->> I can't find anything about this in the HW manual.
->>
->>> I believe the code implements the former?
->>
->> The proposed implementation clears the MSTOP after enabling the first clock
->> taking into account that there might be cases where 2 clocks sharing the
->> same MSTOP may not be both enabled for a particular functionality.
-> 
-> I am wondering if all clocks must be enabled before clearing MSTOP,
-> as the recommendation from the hardware team uses the plural bits.
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Senior Embedded Linux Developer
 
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
