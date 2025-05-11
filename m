@@ -1,63 +1,63 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 833CB2571C8
-	for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 13:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD10257443
+	for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 13:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746970994; cv=none; b=tYeSuYUcSJTs78E2El5wFzVLmWV4+16pI2KfQTx43ZBwoAw3KkrAkmk9mVvxzhj919oAm7/T17LGNArOtJrsFt+2E/SKwTTQ7r+kVJxM8Z0b8IcRt1saWPulLRgE46x+7ZsrgwY+Nz08L3NkxD5iJsXoywjVEuljlacHtEZTM0s=
+	t=1746971004; cv=none; b=lhJ7lbwBFqygUhLeGuwES+DikXNQWGXS+uJajQP2jcI7DIZ8jqNrMO+pEq+BNYJDBli2DkvqrcH9Jk3ndJT8Kw6INqB16V4Tm97zz+Sto+NvJZF7coKvWyo2LHbBGgXwp7Y7pPuwco/Mw9K6MLi/nGqSiw3OarqpWVSpUTEmpSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746970994; c=relaxed/simple;
-	bh=2bVgrzW+Bo6LaJ/rBpXJ3OijmNJcUVwPRKA5+vz2aAY=;
+	s=arc-20240116; t=1746971004; c=relaxed/simple;
+	bh=DGrIKW6QLI5GXj0WJzMWfVKaiU3ubl+sUPYQLJ6Uq80=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=URFfI7LD9y5szIq8mnerO7NlxXwhlsHb7F7hhOc3sN+gLgdA2cPlAOWGgblXABjZ56g9kX9uf3LA+8kTNZpC2YJcMc2S+UeSzQ8dOwiA3mFGWCHdshpOxBgCjyeW4BswZmXSnx0sXzUjIa5VM/UCKJc6lcTOhHwiidfnAZp/2r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CnIbZ/0D; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version; b=GzQ9ylNm1V2BjsKa4Gt0iXmel4tH/8mbboo+O2rw38kjuXMw6gc7K0TvpCEz6sd9tE106fiZIU3otSki7fV+9iwWtr43Bpr/zH4CxvcOSc1uAewkhh/jikrzEN0543JOCGTCJjOvx0SUenVo1QGcUwslTY0Hv8XBbV181h5W65g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=D0/ceyjj; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CnIbZ/0D"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22fa414c565so25117165ad.2
-        for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 06:43:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="D0/ceyjj"
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b2093aef78dso3384671a12.0
+        for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 06:43:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1746970993; x=1747575793; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1746971001; x=1747575801; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+UQe3Qzwvf0SHdVaaWPmVtAnPTdnpZyqkw1bgNcAoZM=;
-        b=CnIbZ/0DXIpIpIW9xfxIc6g88qdJF9HL8185KjE4GKkptC5AAOFrhTTmHfg+Rfz+kB
-         pGzn/LAkT2BhLGkkjgGORqknuYgnKz7P4KxnYAdennTFYIfL5JswMpxpjaa7TOXwe6sq
-         bSmlzRztUpP+b7bCFr1T9yA4w7x400f0Z3p+UsX9ypJuBtq+jESk5tbGDA2WIAHUCjJ3
-         KawKRffaZb1u1CuIiBGfnaLgj5XEUkx5KQneLbw0YtejrbGnGHYb274vyPGmfrlPXn/Z
-         Tp1OtYdKNqf8MizcwNZYdQwd3RVSoqjx5glLZWVO8uJ+QKzIGqgLdlLPc2SMZTmuPEGl
-         qD5A==
+        bh=xYGn3XecLxKlXcXghuizRd0ORyv4dXXBBqocKLMzEs4=;
+        b=D0/ceyjj/QYLGGdm+n7zPKKEr6+WNeSJD4jliTP0+tsdOMKIQgW9I3xlZU63U6euOF
+         ZZG1Rsk7L2CQtpB0RZ8iktR4UqZlSWITCrqePgn+sWAGZjXzGAE6uj8BIh4AAdpCkmQ5
+         gtZXLus6S1IhBF50FPZ1JSXejnPsV+JTjmGgFX2pJAR0KC2wZgz+TCA9jQv0yCS5cW1s
+         6RPKLbNxs0a1jnRIh1DI+bb7Usd6BEfCpCX3mexoFL4ChW0iV1hv7ExjrKjsz61d5+Jo
+         6BGLDzkXEEFYHKENrdr4ERa9aaN9SwmW62PKJOZdaChj7/L8Qz1ymGe18wa3XP7c4opO
+         qbjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746970993; x=1747575793;
+        d=1e100.net; s=20230601; t=1746971001; x=1747575801;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+UQe3Qzwvf0SHdVaaWPmVtAnPTdnpZyqkw1bgNcAoZM=;
-        b=KIdBhoE1Xf/V4145oNzjgJdeN6iNijGTXLpQhpyjBtOf68SLeK+8mqaRESI7+1IkzJ
-         68hIYdMBC/wVfQ7b44I0y9B+nfH+fy3we6p2lOgBFtw0BneaI7FKvCEl3n8lRmwyCvQD
-         cL9dVwYstTd3bbETLUTMrd31psoylW+URtQbvefqUCQ9o+Ss0jrbrMr3iPi9gepRNyA2
-         oheb6twkkpBKaMshvhs7w53FajlIWCpkvf0xE4WsTEYjiwD0qL8lwAw1TELpEMPY+uuj
-         pyc00SRI7AKHLoi7/ZNetZTCt22UdZmaAdF+7hyHGuf/pbFxevsqa2s2hwykEsC7RfZy
-         2E4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWvHMWI70EXB841bwtGhtUbrikghtatLkShCQLo045Czi6gYV1xclQvnD2plqR3Ak4osFRQdD9hGNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5Llr0MbNp8QQ+nrpKOGaqID7hsioYdRLdWyVbreVyD6zHrCo7
-	GULjmqC8VFBCqZF5PeppaEyPpZiRdZ9Hvn+4purqLXDalr32NGG99xSe3whrLDs=
-X-Gm-Gg: ASbGnctRVXF1S6a3mS5SHIRZWpRe1Z0+TgJ9XdFvRb3G1wBR7qAL/dIcpl/JfVYRU7C
-	aSdO5Qd293SaSLRSrV93PCyNGxgbuWBcdarX7WYoV24wGzcWupUHyiKqiI6Dv518bg3URt3FjWc
-	yBn7s4+7AWaj22WQY8T4k4lOnpKgMYjnC1Btynpvz667WEpdW7qSYT9nlgZ5s75TwvPVFMZ5wYr
-	P/zvLk6qwxJIq6tZI5q1M07AI90J4VGvLNwj7yquaWoL8/dVOvoVRL5sD9sCeBQNDgOOmuvwWoo
-	7PaYtN3l/Gur+5cpUIGpTvpBmXQ4eWUFYQK283MvizUsb33SaclIpQOqQ7ZHLtl+VJTqN0uPBWk
-	TrcnnjKgdz69CAQ==
-X-Google-Smtp-Source: AGHT+IF+IkM7F7ey91kYHIIahlVI7rAiG07XaD6sENN6QxvafBbcmD4Potf6FZ1TEDxPieRGjIrvrw==
-X-Received: by 2002:a17:902:cecb:b0:22f:a932:5374 with SMTP id d9443c01a7336-22fc918d1a7mr170483985ad.48.1746970992580;
-        Sun, 11 May 2025 06:43:12 -0700 (PDT)
+        bh=xYGn3XecLxKlXcXghuizRd0ORyv4dXXBBqocKLMzEs4=;
+        b=EMflqSTrUiYDc6vickCJEBGs4YN9XvCe0idNK2NCIyRmJ+g/eLrd1kYS1MXYvP3SIn
+         5D/7Wah2qDQSD/YXmUi5ZmJGe9+FknEZWjRHzcdgPA1+Tu0QbsVKl4dskYJrlU2Qu+34
+         95zccCo8R2sMuYs94SO6NByp7tTyuTU96LrmhsM4FqxF4L6K3EfSVBAeQlSkQqzpmutN
+         dg5Ks+x5zW62f83HahR69DcKPZyCabLTyWte8H5RE5aXQFRrSLuKLI4fTBu3taBOvqkh
+         2g2Ez+XLoIkVq5dnIvpZWTA8aBM5vdz0htPsYTjcPSUnF1RGCEiE4hPEIHoePUZa+aG6
+         ROzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqpwu/zM+Zw/XIGIXbknM5G0QzbE9Dnd0WOnd1zCB2+DyxLDEyzCJffGTVQ2PdR6FBjZp3o3tgtzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt8p8OJ1/NLhCScM4cV/KRWK/S02tCsR+h4RYgVGZSNpis7hC/
+	AnUiqswuZZ0aZG0fsgXTUIdq2ZwXfdQY3n4mQ/RLoOqhDnL1gUsaIPMOmZh4dbc=
+X-Gm-Gg: ASbGncthUEQzzTsv+dop+3VNWw58J9A75ZA7du78kxfXmbsPVPGRgIf99/lbJqkcUFJ
+	cWRlHcnUApR31B9N2DcJv2WNWPbMB/FTex41Tvf7KPQbAVtwwTrI0mZC+jizTjrQrCMAHwPe3Ui
+	GzvO74jBdC935EuEg87x0zynA6lg3elN6e+jUyaveKVUHS2gyuKeV7pQkPKkLU4Jg+IBK26ubhh
+	6h4Z9QUohWlgoDwx8M2bqiaN2oaHYy5pNd9fYHClJnqydvF6Tb5zOd8uBooJMnkg0GdyVQqpp87
+	atjxe9BwnWwvy6bG8DynkLvbxrwParDNcxlxJ+zY/vg3mIVotXFS++YBAKh5tkNhDdl3uI2jjJw
+	rTPibhYnsQOlJ1A==
+X-Google-Smtp-Source: AGHT+IG52LyOtdqyYBdOZ0QKQPhVZkpzaGbfXrQI34jhYPtmLfmrXHBFBAebuBhiCsLhxrZFt4LIYA==
+X-Received: by 2002:a17:902:e94d:b0:227:e6fe:2908 with SMTP id d9443c01a7336-22fc91a8448mr169477755ad.48.1746971001231;
+        Sun, 11 May 2025 06:43:21 -0700 (PDT)
 Received: from anup-ubuntu-vm.localdomain ([122.171.17.86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc754785bsm46665805ad.20.2025.05.11.06.43.04
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc754785bsm46665805ad.20.2025.05.11.06.43.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 May 2025 06:43:12 -0700 (PDT)
+        Sun, 11 May 2025 06:43:20 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -87,9 +87,9 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v3 22/23] RISC-V: Enable GPIO keyboard and event device in RV64 defconfig
-Date: Sun, 11 May 2025 19:09:38 +0530
-Message-ID: <20250511133939.801777-23-apatel@ventanamicro.com>
+Subject: [PATCH v3 23/23] MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
+Date: Sun, 11 May 2025 19:09:39 +0530
+Message-ID: <20250511133939.801777-24-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250511133939.801777-1-apatel@ventanamicro.com>
 References: <20250511133939.801777-1-apatel@ventanamicro.com>
@@ -101,28 +101,39 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The GPIO keyboard and event device can be used to receive graceful
-shutdown or reboot input keys so let us enable it by default for
-RV64 (just like ARM64).
+Add Rahul and myself as maintainers for RISC-V RPMI and MPXY drivers.
 
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
- arch/riscv/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ MAINTAINERS | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-index 3c8e16d71e17..6aa330f4b67f 100644
---- a/arch/riscv/configs/defconfig
-+++ b/arch/riscv/configs/defconfig
-@@ -141,6 +141,8 @@ CONFIG_MICREL_PHY=y
- CONFIG_MICROSEMI_PHY=y
- CONFIG_MOTORCOMM_PHY=y
- CONFIG_INPUT_MOUSEDEV=y
-+CONFIG_INPUT_EVDEV=y
-+CONFIG_KEYBOARD_GPIO=y
- CONFIG_KEYBOARD_SUN4I_LRADC=m
- CONFIG_SERIAL_8250=y
- CONFIG_SERIAL_8250_CONSOLE=y
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 69511c3b2b76..46a0909a17d9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20885,6 +20885,21 @@ F:	drivers/perf/riscv_pmu.c
+ F:	drivers/perf/riscv_pmu_legacy.c
+ F:	drivers/perf/riscv_pmu_sbi.c
+ 
++RISC-V RPMI AND MPXY DRIVERS
++M:	Rahul Pathak <rahul@summations.net>
++M:	Anup Patel <anup@brainfault.org>
++L:	linux-riscv@lists.infradead.org
++F:	Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
++F:	Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
++F:	Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-mpxy-system-msi.yaml
++F:	Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
++F:	Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
++F:	Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
++F:	drivers/clk/clk-rpmi.c
++F:	drivers/irqchip/irq-riscv-rpmi-sysmsi.c
++F:	drivers/mailbox/riscv-sbi-mpxy-mbox.c
++F:	include/linux/mailbox/riscv-rpmi-message.h
++
+ RISC-V SPACEMIT SoC Support
+ M:	Yixun Lan <dlan@gentoo.org>
+ L:	linux-riscv@lists.infradead.org
 -- 
 2.43.0
 
