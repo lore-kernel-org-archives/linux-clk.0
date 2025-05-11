@@ -1,63 +1,63 @@
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5232571A7
-	for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 13:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900DE25743D
+	for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 13:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746970908; cv=none; b=JPuuUIZFOuKy3Wn1BcvNa5OtGO03Au1YI4PWPHdgEJArKKNGulDS75KoE8miWBbJt1JWZq8UY0IsFvybijJ0fARxLrz5STIAELVMY70PNHCAPkMKRkEC87UUaC9NTiHJT66bjkPB6l7/Q7GPfDakxmP9a6k0CFf8XK06eqvdMvE=
+	t=1746970917; cv=none; b=bRSbIWVFf99sTrBQiJuQMRSa29riR102iWjcNc1TlxDc0JOaIR7GJ0SqsPVrxDPJpB6r6w3FshQze0aU7nTNZFKQKiLUBJR7cuJWRRk35IBdOrEUrutIguKbaQCLNEoeKk7lWenUA7HKDDtD6FGo1PqXY4YNI99vzBHvYHXlu/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746970908; c=relaxed/simple;
-	bh=jCfuPkwpFJl2q7jmzk6VEllmsuHOcm1t3a2xapvV24I=;
+	s=arc-20240116; t=1746970917; c=relaxed/simple;
+	bh=/9SgN8MNDz2o8DvnneB6AUDwjLnGYO40Cq4fTsr/BMQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lnnXspDQA50PQ4bMdKuvcLEK1wt8jO0GyF5oVtQeA26Koze7oaPzu8zEBckRu46asZGIaWfRRXOmqGpFFjjPxNs+586+mGQOaH0W6EkKw1VVgUxeAyNoMaDZELFuwuRA/Mqi31hNvCBeWEOYsMHDKKM65aUZQjCRTEwIF0o0bUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=d8b2TPAv; arc=none smtp.client-ip=209.85.215.176
+	 MIME-Version; b=dKIxUgDt55NYpVRxCGfZAki473Yf2ILF2BhWwCiBz29mMxGIfkz6eyez8DBB7r69bnKAId6WZ8UZcwss8o+2MQYYzYtvZgO8NBY14Sm/Cc15W+TTe5puvii/5U3bL2rLP17VMCZOlVLIanmhqlAu3rO9iUHL0TKUgWoTi6Y7XxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=pRHWm4AB; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="d8b2TPAv"
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b2325c56ebdso2576614a12.1
-        for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 06:41:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="pRHWm4AB"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-73bf5aa95e7so3568300b3a.1
+        for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 06:41:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1746970906; x=1747575706; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1746970915; x=1747575715; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yU/DNAxy6LD72V0mVtTg/UEQNRHKlif24WvYR5Aku8k=;
-        b=d8b2TPAvL465YCgfSXVakf856Epz1zsSezGXh16CpRt1uxoJbhb5/RwS4CbrkcWRDB
-         AMTB3uOb+ysk6i/IcT7rrfIMWnFKkD9x5ZYHekJxq6VV/CHzndpOULDlr4cdRQMin7iP
-         aD5+TLI1O0m/FMk2qYpIYE6qK9RaH3Pqrjj4GDvX9dXFw9YOSzgBD6ql8DlC0WLSOrVM
-         JnQI6nk/hqsJbQRhu2Oy/m4JowkggUhO4rhRZAeUoCwFLcLdCnDPyVVKauCV5OPFpkVE
-         72jQSVFd5V5i8O79aO68seLwB3G/L0cPZu6zH5mH1mKYVM4r9KzAhDwrCw0XSbNzr5UR
-         aQJw==
+        bh=K1dqV3EbcOv1csn2CQlOTtmle0pRezW6DWEKp2r8Lv0=;
+        b=pRHWm4ABxJM7ORvp249OavmQQaUY7gleZyNuDLPgzI+8n3i+cEnaZXDjz8pQJQXNdQ
+         9bQLtehTqgMa6shZSkHgdOI2kHu4bH6r8GhNgm4Ov2yD3FdWf4xM/zJpAj4Lt6visOWw
+         9zqb+nBg+g47OGrJdyFky+7mSJkthZJuyPKgRz2O5kRCTAoQJrs0+5n0poRdNdFcDGPu
+         7QitfZFK/JnWt6IR+wIhuMqc3z24fOO/GVwslDyHwyNGwrzN9UyajQwzShitE7ul4e0H
+         ALNQebXYxMjMMnFQyXa+4FGyX6V34TBkgeHEmf0i0800Nj+hYzwvtDuJnu8Po5Du7crg
+         Qeeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746970906; x=1747575706;
+        d=1e100.net; s=20230601; t=1746970915; x=1747575715;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yU/DNAxy6LD72V0mVtTg/UEQNRHKlif24WvYR5Aku8k=;
-        b=W0NDAzR3YhfY06dL1tAyQW2GzyK4aZutxEu59SvDjchHcUnmsHzPQQ144sp+dWW9bp
-         fz6Kgz8zWm/YIvsfmTCx7nngvzDIN2w3ANS6hSgwTli6JmhmRnAhDgfTgMNzqunnIFIY
-         nSipkOFHbGT31FDfdCbe16nXQJtygJWWzk1kebiV8otnnQzqdxwUs4jxh9Fc1ecs1MBn
-         h72ZDElNz0NXtwaYKiov7Im7s+SlmDYSKlktSP1/RL6Z97H8HOlxCTf+TS2jUO2VfaOT
-         BGjTN2isy2BZj8JfRjKiBGhLllflDx1G/rbFd8Wl40Caa3KNf8lLnw+HpDUwFvowyXBJ
-         mskw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9m/freG9320ClvzMiXNwuhxD5D8PHYVTPHhRGjZcPJhe75ht4ai3rdw5mOBon+7WYUv1YItlWns0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDjocFhR5MOkxD+DtyJ0SIBXVilStyyuqMT2xTgLoy9CDJX3vC
-	rXc5Qya/fgCzaQhFf+NHrebaUBdHMtPHp1TLx+fwc7QRiiJF2OJuG6HIpLzqrC8=
-X-Gm-Gg: ASbGncsDyjed6vzEFQQezcL4m/Qkw/37xN0vv0Fd0gGCegNkaDKrzzqbKybLl4XbBWw
-	qcPtSGMY5Xn7qzzA6HD8qwlgtMDqR7qioSlO2i9tm4/9WEwG4R3PaPPdTbpv6lHJa4O2qXNGAAz
-	kH6vg+UJ4qERlFkHcQf55Zu1LY625DPJom+MEkMxLwX+lsxg24HHQMM9dKFE68ojcbPh5vEEoLv
-	5RBSe5R9IH8o0vyi9Woqf/oObaMiEA2TU/iG5xx3xw6Pq5z+qPZL5mvcgYTnbM6Vp7zlBIhATJe
-	lrzfntsH+gxyK36J+VruySG8GuqvC7kF1xM7V7bL44SpNyZ18KQLVPtgoyYmR8ZlSu1w9DPEo48
-	ChQxMq4XFAiZ8ZQ==
-X-Google-Smtp-Source: AGHT+IEBohvepS89G2D6nGzfwIv2tEC45ULnZjbOGIjpp3b+t/Iny3a9MgChCV/InRq66ah2kQHc+Q==
-X-Received: by 2002:a17:902:da2d:b0:215:a179:14ca with SMTP id d9443c01a7336-22fc8b0023cmr119115105ad.2.1746970906337;
-        Sun, 11 May 2025 06:41:46 -0700 (PDT)
+        bh=K1dqV3EbcOv1csn2CQlOTtmle0pRezW6DWEKp2r8Lv0=;
+        b=WrqdnXMR+2ZpUFj59JGuSkNRdfKbLZ9M/IZPxprOiTwxi0o+s0APTwZFZViUIOxkq9
+         16deXHNL4rGXGaaEBIbGCZMut9tLQxUjPE6UKhGbR7o25mqbU4NzbMqImP3zk2Pgg9YG
+         2uuWTC4h183dLw9NnJivfPEpEVA+aRuDzuzqSw0g7x0je58Ob8JXgs2cpKqA/QLyyxXS
+         Tix5ecSdrZCZOkAXnaEQNpEka29El173QbLOJOiwQY7zsjYMLC3/dqLlmNQDk8exXjQq
+         VGaefiaEO6lEF/qxGRCLP7HFxnHbHztcjnfzJ8rASks612ls+KHC/i3Ky0lqFpoPr1Ta
+         Y7Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCV71XLyo+eZyTAuzEW0mcaDHBh3djtKdDqB5dSMRfHWb/VKxjqO19E7Gt+jG2W44NS0huAu63Tj8HM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDL6CLyqCLNu8bA1Zez8R2bps7Tj5/P96erpKRawcrx6KRltPZ
+	O8TwfXC+RmvXtH+6T7M9UfFW44BHrteTGVLxQMYpcYMToZ1ZMb8ekTFb4hwfd4M=
+X-Gm-Gg: ASbGncu+p3m0/0okkOGqIV+oMGG//7TajN+qiGNiGj+2ANK1kVXBhrW5tJCALVlhGtb
+	ccnRQGJSZ1Yf1/3qZ9wOnG9lWIdPN4OMv+gnME1hAQ8//z4DRRcPuMu97is6+gJxNU4iI+3Iuj1
+	mo9gPoGwn+cIqLhVGtPBs8bbHqP9cTcv6qYwKRb1uQJcbKrjoSIZCVAyj59rPJlLRe6wglRl5wX
+	98BqG6n0bf+Kb0tNb52n4IGIW1coW03cznhQl9xqb9OXymdghSsdn95qYjVNWqqpfhUShK0SneH
+	P4xNHS/5f3LnlBv7CRySPugQmx8fwW9bBWOwGgIAB5+PLut+UrPyUtCMHeSiN89l5RMMBDQROzW
+	Gtapb9Ym4XE7CQQ==
+X-Google-Smtp-Source: AGHT+IHMfmDHaDKwjjl61QoY3NY7gsNShlHPLNrcULK+uitNekT/q94LQBcj8+S04ZdXvGYiVVULSA==
+X-Received: by 2002:a17:903:946:b0:220:cb1a:da5 with SMTP id d9443c01a7336-22fc8d98a39mr146678125ad.40.1746970914734;
+        Sun, 11 May 2025 06:41:54 -0700 (PDT)
 Received: from anup-ubuntu-vm.localdomain ([122.171.17.86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc754785bsm46665805ad.20.2025.05.11.06.41.37
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc754785bsm46665805ad.20.2025.05.11.06.41.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 May 2025 06:41:45 -0700 (PDT)
+        Sun, 11 May 2025 06:41:54 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -87,9 +87,9 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v3 12/23] dt-bindings: Add RPMI system MSI interrupt controller bindings
-Date: Sun, 11 May 2025 19:09:28 +0530
-Message-ID: <20250511133939.801777-13-apatel@ventanamicro.com>
+Subject: [PATCH v3 13/23] irqchip: Add driver for the RPMI system MSI service group
+Date: Sun, 11 May 2025 19:09:29 +0530
+Message-ID: <20250511133939.801777-14-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250511133939.801777-1-apatel@ventanamicro.com>
 References: <20250511133939.801777-1-apatel@ventanamicro.com>
@@ -101,98 +101,370 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add device tree bindings for the RPMI system MSI service group
-based interrupt controller for the supervisor software.
+The RPMI specification defines a system MSI service group which
+allows application processors to receive MSIs upon system events
+such as graceful shutdown/reboot request, CPU hotplug event, memory
+hotplug event, etc.
 
-The RPMI system MSI service group is defined by the RISC-V
-platform management interface (RPMI) specification.
+Add an irqchip driver for the RISC-V RPMI system MSI service group
+to directly receive system MSIs in Linux kernel.
 
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
- .../riscv,rpmi-system-msi.yaml                | 74 +++++++++++++++++++
- 1 file changed, 74 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
+ drivers/irqchip/Kconfig                    |   7 +
+ drivers/irqchip/Makefile                   |   1 +
+ drivers/irqchip/irq-riscv-rpmi-sysmsi.c    | 280 +++++++++++++++++++++
+ include/linux/mailbox/riscv-rpmi-message.h |  13 +
+ 4 files changed, 301 insertions(+)
+ create mode 100644 drivers/irqchip/irq-riscv-rpmi-sysmsi.c
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml b/Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 08bb3b031f23..83700fc2ddc9 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -612,6 +612,13 @@ config RISCV_IMSIC
+ 	select GENERIC_MSI_IRQ
+ 	select IRQ_MSI_LIB
+ 
++config RISCV_RPMI_SYSMSI
++	bool
++	depends on MAILBOX
++	select IRQ_DOMAIN_HIERARCHY
++	select GENERIC_MSI_IRQ
++	default RISCV
++
+ config SIFIVE_PLIC
+ 	bool
+ 	depends on RISCV
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index 365bcea9a61f..515280da499c 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -102,6 +102,7 @@ obj-$(CONFIG_RISCV_INTC)		+= irq-riscv-intc.o
+ obj-$(CONFIG_RISCV_APLIC)		+= irq-riscv-aplic-main.o irq-riscv-aplic-direct.o
+ obj-$(CONFIG_RISCV_APLIC_MSI)		+= irq-riscv-aplic-msi.o
+ obj-$(CONFIG_RISCV_IMSIC)		+= irq-riscv-imsic-state.o irq-riscv-imsic-early.o irq-riscv-imsic-platform.o
++obj-$(CONFIG_RISCV_RPMI_SYSMSI)		+= irq-riscv-rpmi-sysmsi.o
+ obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
+ obj-$(CONFIG_STARFIVE_JH8100_INTC)	+= irq-starfive-jh8100-intc.o
+ obj-$(CONFIG_THEAD_C900_ACLINT_SSWI)	+= irq-thead-c900-aclint-sswi.o
+diff --git a/drivers/irqchip/irq-riscv-rpmi-sysmsi.c b/drivers/irqchip/irq-riscv-rpmi-sysmsi.c
 new file mode 100644
-index 000000000000..ac13cec0666e
+index 000000000000..9f14a92290c4
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
-@@ -0,0 +1,74 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/riscv,rpmi-system-msi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/irqchip/irq-riscv-rpmi-sysmsi.c
+@@ -0,0 +1,280 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2025 Ventana Micro Systems Inc.
++ */
 +
-+title: RISC-V RPMI system MSI service group based interrupt controller
++#include <linux/bitfield.h>
++#include <linux/bitops.h>
++#include <linux/cpu.h>
++#include <linux/interrupt.h>
++#include <linux/irqchip.h>
++#include <linux/mailbox_client.h>
++#include <linux/mailbox/riscv-rpmi-message.h>
++#include <linux/module.h>
++#include <linux/msi.h>
++#include <linux/of_irq.h>
++#include <linux/platform_device.h>
++#include <linux/printk.h>
++#include <linux/smp.h>
 +
-+maintainers:
-+  - Anup Patel <anup@brainfault.org>
++struct rpmi_sysmsi_get_attrs_rx {
++	s32 status;
++	u32 sys_num_msi;
++	u32 flag0;
++	u32 flag1;
++};
 +
-+description: |
-+  The RISC-V Platform Management Interface (RPMI) [1] defines a
-+  messaging protocol which is modular and extensible. The supervisor
-+  software can send/receive RPMI messages via SBI MPXY extension [2]
-+  or some dedicated supervisor-mode RPMI transport.
++#define RPMI_SYSMSI_MSI_ATTRIBUTES_FLAG0_PREF_PRIV	BIT(0)
 +
-+  The RPMI specification [1] defines system MSI service group which
-+  allow application processors to receive MSIs upon system events
-+  such as P2A doorbell, graceful shutdown/reboot request, CPU hotplug
-+  event, memory hotplug event, etc from the platform microcontroller.
-+  The supervisor software can access RPMI system MSI service group via
-+  SBI MPXY channel or some dedicated supervisor-mode RPMI transport.
++struct rpmi_sysmsi_set_msi_state_tx {
++	u32 sys_msi_index;
++	u32 sys_msi_state;
++};
 +
-+  ===========================================
-+  References
-+  ===========================================
++struct rpmi_sysmsi_set_msi_state_rx {
++	s32 status;
++};
 +
-+  [1] RISC-V Platform Management Interface (RPMI)
-+      https://github.com/riscv-non-isa/riscv-rpmi/releases
++#define RPMI_SYSMSI_MSI_STATE_ENABLE			BIT(0)
++#define RPMI_SYSMSI_MSI_STATE_PENDING			BIT(1)
 +
-+  [2] RISC-V Supervisor Binary Interface (SBI)
-+      https://github.com/riscv-non-isa/riscv-sbi-doc/releases
++struct rpmi_sysmsi_set_msi_target_tx {
++	u32 sys_msi_index;
++	u32 sys_msi_address_low;
++	u32 sys_msi_address_high;
++	u32 sys_msi_data;
++};
 +
-+allOf:
-+  - $ref: /schemas/interrupt-controller.yaml#
++struct rpmi_sysmsi_set_msi_target_rx {
++	s32 status;
++};
 +
-+properties:
-+  compatible:
-+    description:
-+      Intended for use by the supervisor software.
-+    const: riscv,rpmi-system-msi
++struct rpmi_sysmsi_priv {
++	struct device		*dev;
++	struct mbox_client	client;
++	struct mbox_chan	*chan;
++	u32			nr_irqs;
++	u32			gsi_base;
++};
 +
-+  mboxes:
-+    maxItems: 1
-+    description:
-+      Mailbox channel of the underlying RPMI transport or SBI message proxy channel.
++static int rpmi_sysmsi_get_num_msi(struct rpmi_sysmsi_priv *priv)
++{
++	struct rpmi_sysmsi_get_attrs_rx rx;
++	struct rpmi_mbox_message msg;
++	int ret;
 +
-+  msi-parent: true
++	rpmi_mbox_init_send_with_response(&msg, RPMI_SYSMSI_SRV_GET_ATTRIBUTES,
++					  NULL, 0, &rx, sizeof(rx));
++	ret = rpmi_mbox_send_message(priv->chan, &msg);
++	if (ret)
++		return ret;
++	if (rx.status)
++		return rpmi_to_linux_error(rx.status);
 +
-+  interrupt-controller: true
++	return rx.sys_num_msi;
++}
 +
-+  "#interrupt-cells":
-+    const: 1
++static int rpmi_sysmsi_set_msi_state(struct rpmi_sysmsi_priv *priv,
++				     u32 sys_msi_index, u32 sys_msi_state)
++{
++	struct rpmi_sysmsi_set_msi_state_tx tx;
++	struct rpmi_sysmsi_set_msi_state_rx rx;
++	struct rpmi_mbox_message msg;
++	int ret;
 +
-+required:
-+  - compatible
-+  - mboxes
-+  - msi-parent
-+  - interrupt-controller
-+  - "#interrupt-cells"
++	tx.sys_msi_index = sys_msi_index;
++	tx.sys_msi_state = sys_msi_state;
++	rpmi_mbox_init_send_with_response(&msg, RPMI_SYSMSI_SRV_SET_MSI_STATE,
++					  &tx, sizeof(tx), &rx, sizeof(rx));
++	ret = rpmi_mbox_send_message(priv->chan, &msg);
++	if (ret)
++		return ret;
++	if (rx.status)
++		return rpmi_to_linux_error(rx.status);
 +
-+additionalProperties: false
++	return 0;
++}
 +
-+examples:
-+  - |
-+    interrupt-controller {
-+        compatible = "riscv,rpmi-system-msi";
-+        mboxes = <&mpxy_mbox 0x2000 0x0>;
-+        msi-parent = <&imsic_slevel>;
-+        interrupt-controller;
-+        #interrupt-cells = <1>;
-+    };
-+...
++static int rpmi_sysmsi_set_msi_target(struct rpmi_sysmsi_priv *priv,
++				      u32 sys_msi_index, struct msi_msg *m)
++{
++	struct rpmi_sysmsi_set_msi_target_tx tx;
++	struct rpmi_sysmsi_set_msi_target_rx rx;
++	struct rpmi_mbox_message msg;
++	int ret;
++
++	tx.sys_msi_index = sys_msi_index;
++	tx.sys_msi_address_low = m->address_lo;
++	tx.sys_msi_address_high = m->address_hi;
++	tx.sys_msi_data = m->data;
++	rpmi_mbox_init_send_with_response(&msg, RPMI_SYSMSI_SRV_SET_MSI_TARGET,
++					  &tx, sizeof(tx), &rx, sizeof(rx));
++	ret = rpmi_mbox_send_message(priv->chan, &msg);
++	if (ret)
++		return ret;
++	if (rx.status)
++		return rpmi_to_linux_error(rx.status);
++
++	return 0;
++}
++
++static void rpmi_sysmsi_irq_mask(struct irq_data *d)
++{
++	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
++	int ret;
++
++	ret = rpmi_sysmsi_set_msi_state(priv, d->hwirq, 0);
++	if (ret) {
++		dev_warn(priv->dev, "Failed to mask hwirq %d (error %d)\n",
++			 (u32)d->hwirq, ret);
++	}
++	irq_chip_mask_parent(d);
++}
++
++static void rpmi_sysmsi_irq_unmask(struct irq_data *d)
++{
++	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
++	int ret;
++
++	irq_chip_unmask_parent(d);
++	ret = rpmi_sysmsi_set_msi_state(priv, d->hwirq, RPMI_SYSMSI_MSI_STATE_ENABLE);
++	if (ret) {
++		dev_warn(priv->dev, "Failed to unmask hwirq %d (error %d)\n",
++			 (u32)d->hwirq, ret);
++	}
++}
++
++static void rpmi_sysmsi_write_msg(struct irq_data *d, struct msi_msg *msg)
++{
++	struct rpmi_sysmsi_priv *priv = irq_data_get_irq_chip_data(d);
++	int ret;
++
++	/* For zeroed MSI, do nothing as of now */
++	if (!msg->address_hi && !msg->address_lo && !msg->data)
++		return;
++
++	ret = rpmi_sysmsi_set_msi_target(priv, d->hwirq, msg);
++	if (ret) {
++		dev_warn(priv->dev, "Failed to set target for hwirq %d (error %d)\n",
++			 (u32)d->hwirq, ret);
++	}
++}
++
++static void rpmi_sysmsi_set_desc(msi_alloc_info_t *arg, struct msi_desc *desc)
++{
++	arg->desc = desc;
++	arg->hwirq = (u32)desc->data.icookie.value;
++}
++
++static int rpmi_sysmsi_translate(struct irq_domain *d, struct irq_fwspec *fwspec,
++				 unsigned long *hwirq, unsigned int *type)
++{
++	struct msi_domain_info *info = d->host_data;
++	struct rpmi_sysmsi_priv *priv = info->data;
++
++	if (WARN_ON(fwspec->param_count < 1))
++		return -EINVAL;
++
++	/* For DT, gsi_base is always zero. */
++	*hwirq = fwspec->param[0] - priv->gsi_base;
++	*type = IRQ_TYPE_NONE;
++	return 0;
++}
++
++static const struct msi_domain_template rpmi_sysmsi_template = {
++	.chip = {
++		.name			= "RPMI-SYSMSI",
++		.irq_mask		= rpmi_sysmsi_irq_mask,
++		.irq_unmask		= rpmi_sysmsi_irq_unmask,
++#ifdef CONFIG_SMP
++		.irq_set_affinity	= irq_chip_set_affinity_parent,
++#endif
++		.irq_write_msi_msg	= rpmi_sysmsi_write_msg,
++		.flags			= IRQCHIP_SET_TYPE_MASKED |
++					  IRQCHIP_SKIP_SET_WAKE |
++					  IRQCHIP_MASK_ON_SUSPEND,
++	},
++
++	.ops = {
++		.set_desc		= rpmi_sysmsi_set_desc,
++		.msi_translate		= rpmi_sysmsi_translate,
++	},
++
++	.info = {
++		.bus_token		= DOMAIN_BUS_WIRED_TO_MSI,
++		.flags			= MSI_FLAG_USE_DEV_FWNODE,
++		.handler		= handle_simple_irq,
++		.handler_name		= "simple",
++	},
++};
++
++static int rpmi_sysmsi_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct rpmi_sysmsi_priv *priv;
++	int rc;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++	priv->dev = dev;
++	platform_set_drvdata(pdev, priv);
++
++	/* Setup mailbox client */
++	priv->client.dev		= priv->dev;
++	priv->client.rx_callback	= NULL;
++	priv->client.tx_block		= false;
++	priv->client.knows_txdone	= true;
++	priv->client.tx_tout		= 0;
++
++	/* Request mailbox channel */
++	priv->chan = mbox_request_channel(&priv->client, 0);
++	if (IS_ERR(priv->chan))
++		return PTR_ERR(priv->chan);
++
++	/* Get number of system MSIs */
++	rc = rpmi_sysmsi_get_num_msi(priv);
++	if (rc < 1) {
++		mbox_free_channel(priv->chan);
++		return dev_err_probe(dev, -ENODEV, "No system MSIs found\n");
++	}
++	priv->nr_irqs = rc;
++
++	/* Set the device MSI domain if not available */
++	if (!dev_get_msi_domain(dev)) {
++		/*
++		 * The device MSI domain for OF devices is only set at the
++		 * time of populating/creating OF device. If the device MSI
++		 * domain is discovered later after the OF device is created
++		 * then we need to set it explicitly before using any platform
++		 * MSI functions.
++		 */
++		if (is_of_node(dev_fwnode(dev)))
++			of_msi_configure(dev, to_of_node(dev_fwnode(dev)));
++
++		if (!dev_get_msi_domain(dev))
++			return -EPROBE_DEFER;
++	}
++
++	if (!msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN,
++					  &rpmi_sysmsi_template,
++					  priv->nr_irqs, priv, priv))
++		return dev_err_probe(dev, -ENOMEM, "failed to create MSI irq domain\n");
++
++	dev_info(dev, "%d system MSIs registered\n", priv->nr_irqs);
++	return 0;
++}
++
++static const struct of_device_id rpmi_sysmsi_match[] = {
++	{ .compatible = "riscv,rpmi-system-msi" },
++	{}
++};
++
++static struct platform_driver rpmi_sysmsi_driver = {
++	.driver = {
++		.name		= "rpmi-sysmsi",
++		.of_match_table	= rpmi_sysmsi_match,
++	},
++	.probe = rpmi_sysmsi_probe,
++};
++builtin_platform_driver(rpmi_sysmsi_driver);
+diff --git a/include/linux/mailbox/riscv-rpmi-message.h b/include/linux/mailbox/riscv-rpmi-message.h
+index dfffe4804ec7..7cd6507c153b 100644
+--- a/include/linux/mailbox/riscv-rpmi-message.h
++++ b/include/linux/mailbox/riscv-rpmi-message.h
+@@ -90,6 +90,7 @@ static inline int rpmi_to_linux_error(int rpmi_error)
+ }
+ 
+ /** RPMI service group IDs */
++#define RPMI_SRVGRP_SYSTEM_MSI		0x00002
+ #define RPMI_SRVGRP_CLOCK		0x00008
+ 
+ /** RPMI clock service IDs */
+@@ -105,6 +106,18 @@ enum rpmi_clock_service_id {
+ 	RPMI_CLK_SRV_ID_MAX_COUNT,
+ };
+ 
++/** RPMI system MSI service IDs */
++enum rpmi_sysmsi_service_id {
++	RPMI_SYSMSI_SRV_ENABLE_NOTIFICATION = 0x01,
++	RPMI_SYSMSI_SRV_GET_ATTRIBUTES = 0x2,
++	RPMI_SYSMSI_SRV_GET_MSI_ATTRIBUTES = 0x3,
++	RPMI_SYSMSI_SRV_SET_MSI_STATE = 0x4,
++	RPMI_SYSMSI_SRV_GET_MSI_STATE = 0x5,
++	RPMI_SYSMSI_SRV_SET_MSI_TARGET = 0x6,
++	RPMI_SYSMSI_SRV_GET_MSI_TARGET = 0x7,
++	RPMI_SYSMSI_SRV_ID_MAX_COUNT,
++};
++
+ /** RPMI linux mailbox attribute IDs */
+ enum rpmi_mbox_attribute_id {
+ 	RPMI_MBOX_ATTR_SPEC_VERSION = 0,
 -- 
 2.43.0
 
