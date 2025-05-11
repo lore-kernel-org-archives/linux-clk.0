@@ -1,118 +1,343 @@
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BB925D540
-	for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 17:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA4DBE4A;
+	Sun, 11 May 2025 22:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746985178; cv=none; b=VOfsu1aUoUHVDRoqL5mK6WPJK86nbKR1NUYnD82pImEJ0o+JPdg6slTSmMMyrBinr9yFvBg0jpEy0OLmpck28IzC7d2/hBOk+6T14Qq5y2pe73hTPmsVUw+tPE/fRcL85oaRpUfANo8oatW7vYvfgbVx1PfI6XWoAP6RAIjw+k0=
+	t=1747003697; cv=none; b=lmKP8a5AhRB4TgUH8c1ILB6GhWf/eGQciQT7tSa4hBiYavMB1O2CWhTb6K9KuxKk6KzwhzcDq7mN5ihVnIP+fwCZmmsHYqnIz1bCkZKy+lZYLO2oJv5o62SAI3hU5Yv4llaI9sIUeGWFpywaweZjxkBjwWugIZaAlgF6wjBOMn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746985178; c=relaxed/simple;
-	bh=IPXduNjdPqXlwZF1nLbl8D7KU2jgmcdSUy8mFKn4DLY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nKBD+8BiAex0tFUeMoM5U7CyGBHYkkZkfp9Pri4Pu/shH1KcW4KnknLtp5+6NXDhNSnZ1i+amPprCUbISJ0jrVt0i5vAykpsH9StHos6GkywsXjyc+mYQ4Sy3RMlqPx5Xwu+Vnjz51J+k/FlXIpl63EluYyulQ0ixArlRYKNxKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer; spf=none smtp.mailfrom=libretech.co; dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b=SUvMbhWY; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=libretech.co
+	s=arc-20240116; t=1747003697; c=relaxed/simple;
+	bh=cDd9/C/c/hoFNChqLxPmDmUtIiKdG7G1InZEgNWwhVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s29DIpzunpWGcGX3F+Ay949Ioh5BNf8Bx7ZkA1MX8CoNItl4vIhN1dplB9Y3RnZ83QZGhk5CGXcapb5A7rhqsPd9DSVxskXXjXesORV6C/dzdaSE1URLHw0n6mQc6eahi9JLL7f8F2jCKwjpgSm4jSW1jA75bMRlZd4YJGAefRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B+bOzdDE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b="SUvMbhWY"
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-47664364628so45582321cf.1
-        for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 10:39:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=libre.computer; s=google; t=1746985176; x=1747589976; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xLoioQfYdPBgm49bPKitfsKJOSsTnQU6DqnNOtLxcjQ=;
-        b=SUvMbhWYe1AOzh8qEaf8fDuvtdEd4nDyBg09KVt8Cgs3HcMwUAdz/VuylRnUV6iBdh
-         jUbcMLmcp6Vxa2sl7Q6YXwCjtynsDBeB13/3XHBUhRutYaCNQ/qlaDt718eLNs/Lun3Z
-         MD096u+YMLXx1C3AhdIA6jxPBnlqpauikcf7sK9fc4GDortMFnUkTuxQSIm1WusIYZ1y
-         e20Ufqq/FRSP3euK80ff04QGz785i5zZQkOa2sUE/DU2fvpQhhB02Tcs5uZ58OfmqK93
-         1lJ65V4h4YAyoMA41+u28PeOCPUuslfw/BfadhCGdNtn5AOiHTP/jBahxsVYkTJRV8gd
-         mTjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746985176; x=1747589976;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xLoioQfYdPBgm49bPKitfsKJOSsTnQU6DqnNOtLxcjQ=;
-        b=cZbxDv1S1CAoXxbtjr+8j6CQos8BX1qnCi0uPBMFDTWNobn+LUkOjivuk9C+pWYEgs
-         NMnsqEvSqLbNKKuCE7BpS8gtAJM6tWUhtobmbLo2WxkVmyq/cwlfya1AuVifOkFXmhza
-         b6MNRmR3e10IVpnW9cB4v86TD76LpkSog6x7Dt//cPuCds1dhScQI0+GZCbNNPT0h4Vo
-         4dySRrOmHKv+iBOer+7fPJ9OBdLeL9vgaG+4xhQhSlMwxMw9G4OYbMhlGS1LMXlo0fn2
-         fk9uj/VJC/Xe3K/XJrvG/YTlwIZSaTghopYQ6OkSMwOh1+DHfXdfwo6YKV8SQRl+eu+2
-         7PaA==
-X-Forwarded-Encrypted: i=1; AJvYcCWR28JdVmH0Nx6DRnwSykqmcM9b1PbuOKX2GExXmvbkSbMkL7r36lUZYUMZR8gaV15yjn1NtijeICA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZkBUYW/rpGazxXerKt3ongaWhS7/las6qxkh+IBZEf0dtvoMW
-	8VfGpsKZiCFiGRK+B32tRGp91pQhY9tmgb7CyX/D2YPGUNF9Rqgm7WVLz+FLNw==
-X-Gm-Gg: ASbGnctpT1JVZY+hl+PXwhJRfqDG3/8OXiHbXutsUDoVR9lLrwIDRDdpyvqJ+5w1/q0
-	mxdM68Kt8UXvoSbqEqksMWF5jbrLKivZl/LPqqMbhMM6WoHlEPfqHqXakq/iunJPnkZHzoRQAC4
-	T6aH8jAcGy8K/3s4gyI/L8qMRHDhHrLdhghMRsOFx6z+LzmCOOiAs7eR5ra7mNZ7TMowqcn1hvk
-	eVwGJTZ5X40t2V18qX/J0arpoBxxuJnUPHaK7IBRxB0yWfzGejABxwjAiMiv0X2dpFG8SThK8ht
-	hCHduTEEU3tM9zsUizW7N0xDKUdh9NdrlJKKQcPgwv/BZ7Y=
-X-Google-Smtp-Source: AGHT+IGbtN6p73kbilpYBJERKanPWex1vuDrJr9UjFDjOEDztJIOHD7xUAEl7SH4fqjj9AVcDWDKXw==
-X-Received: by 2002:ac8:5d0d:0:b0:477:6e32:aae2 with SMTP id d75a77b69052e-4945285d6b1mr173557071cf.0.1746985175732;
-        Sun, 11 May 2025 10:39:35 -0700 (PDT)
-Received: from localhost ([2607:fb91:eb2:c0a0:10e4:4464:87db:3a66])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-49452588d92sm38259301cf.59.2025.05.11.10.39.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 May 2025 10:39:35 -0700 (PDT)
-From: Da Xue <da@libre.computer>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Da Xue <da@libre.computer>,
-	stable@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: meson-g12a: fix missing spicc clks to clk_sel
-Date: Sun, 11 May 2025 13:39:26 -0400
-Message-Id: <20250511173926.1468374-1-da@libre.computer>
-X-Mailer: git-send-email 2.39.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B+bOzdDE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F115C4CEE4;
+	Sun, 11 May 2025 22:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747003696;
+	bh=cDd9/C/c/hoFNChqLxPmDmUtIiKdG7G1InZEgNWwhVA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B+bOzdDE9hjFDFpmFPuaK27OUfUz1k3vHBW5WiT85TyahbcDQbj6oJF5Vat90gDBR
+	 YIDLxOBM7WjMLUmb3U+eBp9WTU3wtcwBxQbj8foGI5NOaoJUr8O9iDAznjyTDMKfJt
+	 5A05kdhf7lxEPtfqSRCnkqPsBSpKXiZfUZfdx6RTSDsbpnf/bX+abRk/w2UiL34l6H
+	 JgoWm2mfCh1drjmxvsAWymgMwzvNOfgqxMQAzK5feWri42QyU0LDjjGOtrzrEMBY6v
+	 E/sSD5CsEX95Xg4OkTyfsY/jGDF2y1D1VsBp+Q3qDO5iiI4hW1eNOuYGVa7bRErvZG
+	 l90ZKoZBLt9ag==
+Date: Sun, 11 May 2025 17:48:11 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Georgi Djakov <djakov@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH 1/4] dt-bindings: mailbox: qcom,apcs: Add separate node
+ for clock-controller
+Message-ID: <7vszdea2djl43oojvw3vlrip23f7cfyxkyn6jw3wc2f7yowht5@bgsc2pqscujc>
+References: <20250506-qcom-apcs-mailbox-cc-v1-0-b54dddb150a5@linaro.org>
+ <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506-qcom-apcs-mailbox-cc-v1-1-b54dddb150a5@linaro.org>
 
-HHI_SPICC_CLK_CNTL bits 25:23 controls spicc clk_sel.
+On Tue, May 06, 2025 at 03:10:08PM +0200, Stephan Gerhold wrote:
+> APCS "global" is sort of a "miscellaneous" hardware block that combines
+> multiple registers inside the application processor subsystem. Two distinct
+> use cases are currently stuffed together in a single device tree node:
+> 
+>  - Mailbox: to communicate with other remoteprocs in the system.
+>  - Clock: for controlling the CPU frequency.
+> 
+> These two use cases have unavoidable circular dependencies: the mailbox is
+> needed as early as possible during boot to start controlling shared
+> resources like clocks and power domains, while the clock controller needs
+> one of these shared clocks as its parent. Currently, there is no way to
+> distinguish these two use cases for generic mechanisms like fw_devlink.
+> 
+> This is currently blocking conversion of the deprecated custom "qcom,ipc"
+> properties to the standard "mboxes", see e.g. commit d92e9ea2f0f9
+> ("arm64: dts: qcom: msm8939: revert use of APCS mbox for RPM"):
+>   1. remoteproc &rpm needs mboxes = <&apcs1_mbox 8>;
+>   2. The clock controller inside &apcs1_mbox needs
+>      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>.
+>   3. &rpmcc is a child of remoteproc &rpm
+> 
+> The mailbox itself does not need any clocks and should probe early to
+> unblock the rest of the boot process. The "clocks" are only needed for the
+> separate clock controller. In Linux, these are already two separate drivers
+> that can probe independently.
+> 
 
-It is missing fclk_div 2 and gp0_pll which causes the spicc module to
-output the incorrect clocks for spicc sclk at 2.5x the expected rate.
+Why does this circular dependency need to be broken in the DeviceTree
+representation?
 
-Add the missing clocks resolves this.
+As you describe, the mailbox probes and register the mailbox controller
+and it registers the clock controller. The mailbox device isn't affected
+by the clock controller failing to find rpmcc...
 
-Fixes: a18c8e0b7697 ("clk: meson: g12a: add support for the SPICC SCLK Source clocks")
-Cc: <stable@vger.kernel.org> # 6.1
-Signed-off-by: Da Xue <da@libre.computer>
----
-Changelog:
+Regards,
+Bjorn
 
-v1 -> v2: add Fixes as an older version of the patch was incorrectly sent as v1
----
- drivers/clk/meson/g12a.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 4f92b83965d5a..892862bf39996 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -4099,8 +4099,10 @@ static const struct clk_parent_data spicc_sclk_parent_data[] = {
- 	{ .hw = &g12a_clk81.hw },
- 	{ .hw = &g12a_fclk_div4.hw },
- 	{ .hw = &g12a_fclk_div3.hw },
-+	{ .hw = &g12a_fclk_div2.hw },
- 	{ .hw = &g12a_fclk_div5.hw },
- 	{ .hw = &g12a_fclk_div7.hw },
-+	{ .hw = &g12a_gp0_pll.hw, },
- };
- 
- static struct clk_regmap g12a_spicc0_sclk_sel = {
--- 
-2.39.5
-
+> Break up the circular dependency chain in the device tree by separating the
+> clock controller into a separate child node. Deprecate the old approach of
+> specifying the clock properties as part of the root node, but keep them for
+> backwards compatibility.
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>  .../bindings/mailbox/qcom,apcs-kpss-global.yaml    | 169 ++++++++++++++-------
+>  1 file changed, 118 insertions(+), 51 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+> index a58a018f3f7b9f8edd70d7c1bd137844ff2549df..3a0a304bb65a68b2d4a1df79b3243ddac6bf88b2 100644
+> --- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+> +++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+> @@ -72,6 +72,7 @@ properties:
+>      description: phandles to the parent clocks of the clock driver
+>      minItems: 2
+>      maxItems: 3
+> +    deprecated: true
+>  
+>    '#mbox-cells':
+>      const: 1
+> @@ -82,6 +83,23 @@ properties:
+>    clock-names:
+>      minItems: 2
+>      maxItems: 3
+> +    deprecated: true
+> +
+> +  clock-controller:
+> +    type: object
+> +    additionalProperties: false
+> +    properties:
+> +      clocks:
+> +        description: phandles to the parent clocks of the clock driver
+> +        minItems: 2
+> +        maxItems: 3
+> +
+> +      '#clock-cells':
+> +        enum: [0, 1]
+> +
+> +      clock-names:
+> +        minItems: 2
+> +        maxItems: 3
+>  
+>  required:
+>    - compatible
+> @@ -90,6 +108,76 @@ required:
+>  
+>  additionalProperties: false
+>  
+> +# Clocks should be specified either on the parent node or on the child node
+> +oneOf:
+> +  - required:
+> +      - clock-controller
+> +    properties:
+> +      clocks: false
+> +      clock-names: false
+> +      '#clock-cells': false
+> +  - properties:
+> +      clock-controller: false
+> +
+> +$defs:
+> +  msm8916-apcs-clock-controller:
+> +    properties:
+> +      clocks:
+> +        items:
+> +          - description: primary pll parent of the clock driver
+> +          - description: auxiliary parent
+> +      clock-names:
+> +        items:
+> +          - const: pll
+> +          - const: aux
+> +      '#clock-cells':
+> +        const: 0
+> +
+> +  msm8939-apcs-clock-controller:
+> +    properties:
+> +      clocks:
+> +        items:
+> +          - description: primary pll parent of the clock driver
+> +          - description: auxiliary parent
+> +          - description: reference clock
+> +      clock-names:
+> +        items:
+> +          - const: pll
+> +          - const: aux
+> +          - const: ref
+> +      '#clock-cells':
+> +        const: 0
+> +
+> +  sdx55-apcs-clock-controller:
+> +    properties:
+> +      clocks:
+> +        items:
+> +          - description: reference clock
+> +          - description: primary pll parent of the clock driver
+> +          - description: auxiliary parent
+> +      clock-names:
+> +        items:
+> +          - const: ref
+> +          - const: pll
+> +          - const: aux
+> +      '#clock-cells':
+> +        const: 0
+> +
+> +  ipq6018-apcs-clock-controller:
+> +    properties:
+> +      clocks:
+> +        items:
+> +          - description: primary pll parent of the clock driver
+> +          - description: XO clock
+> +          - description: GCC GPLL0 clock source
+> +      clock-names:
+> +        items:
+> +          - const: pll
+> +          - const: xo
+> +          - const: gpll0
+> +      '#clock-cells':
+> +        const: 1
+> +
+>  allOf:
+>    - if:
+>        properties:
+> @@ -98,15 +186,10 @@ allOf:
+>              enum:
+>                - qcom,msm8916-apcs-kpss-global
+>      then:
+> +      $ref: "#/$defs/msm8916-apcs-clock-controller"
+>        properties:
+> -        clocks:
+> -          items:
+> -            - description: primary pll parent of the clock driver
+> -            - description: auxiliary parent
+> -        clock-names:
+> -          items:
+> -            - const: pll
+> -            - const: aux
+> +        clock-controller:
+> +          $ref: "#/$defs/msm8916-apcs-clock-controller"
+>  
+>    - if:
+>        properties:
+> @@ -115,17 +198,10 @@ allOf:
+>              enum:
+>                - qcom,msm8939-apcs-kpss-global
+>      then:
+> +      $ref: "#/$defs/msm8939-apcs-clock-controller"
+>        properties:
+> -        clocks:
+> -          items:
+> -            - description: primary pll parent of the clock driver
+> -            - description: auxiliary parent
+> -            - description: reference clock
+> -        clock-names:
+> -          items:
+> -            - const: pll
+> -            - const: aux
+> -            - const: ref
+> +        clock-controller:
+> +          $ref: "#/$defs/msm8939-apcs-clock-controller"
+>  
+>    - if:
+>        properties:
+> @@ -134,17 +210,10 @@ allOf:
+>              enum:
+>                - qcom,sdx55-apcs-gcc
+>      then:
+> +      $ref: "#/$defs/sdx55-apcs-clock-controller"
+>        properties:
+> -        clocks:
+> -          items:
+> -            - description: reference clock
+> -            - description: primary pll parent of the clock driver
+> -            - description: auxiliary parent
+> -        clock-names:
+> -          items:
+> -            - const: ref
+> -            - const: pll
+> -            - const: aux
+> +        clock-controller:
+> +          $ref: "#/$defs/sdx55-apcs-clock-controller"
+>  
+>    - if:
+>        properties:
+> @@ -153,17 +222,10 @@ allOf:
+>              enum:
+>                - qcom,ipq6018-apcs-apps-global
+>      then:
+> +      $ref: "#/$defs/ipq6018-apcs-clock-controller"
+>        properties:
+> -        clocks:
+> -          items:
+> -            - description: primary pll parent of the clock driver
+> -            - description: XO clock
+> -            - description: GCC GPLL0 clock source
+> -        clock-names:
+> -          items:
+> -            - const: pll
+> -            - const: xo
+> -            - const: gpll0
+> +        clock-controller:
+> +          $ref: "#/$defs/ipq6018-apcs-clock-controller"
+>  
+>    - if:
+>        properties:
+> @@ -179,19 +241,7 @@ allOf:
+>        properties:
+>          clocks: false
+>          clock-names: false
+> -
+> -  - if:
+> -      properties:
+> -        compatible:
+> -          contains:
+> -            enum:
+> -              - qcom,ipq6018-apcs-apps-global
+> -    then:
+> -      properties:
+> -        '#clock-cells':
+> -          const: 1
+> -    else:
+> -      properties:
+> +        clock-controller: false
+>          '#clock-cells':
+>            const: 0
+>  
+> @@ -216,6 +266,23 @@ examples:
+>      };
+>  
+>    # Example apcs with qcs404
+> +  - |
+> +    #define GCC_APSS_AHB_CLK_SRC  1
+> +    #define GCC_GPLL0_AO_OUT_MAIN 123
+> +    mailbox@b011000 {
+> +        compatible = "qcom,qcs404-apcs-apps-global",
+> +                     "qcom,msm8916-apcs-kpss-global", "syscon";
+> +        reg = <0x0b011000 0x1000>;
+> +        #mbox-cells = <1>;
+> +
+> +        apcs_clk: clock-controller {
+> +          clocks = <&apcs_hfpll>, <&gcc GCC_GPLL0_AO_OUT_MAIN>;
+> +          clock-names = "pll", "aux";
+> +          #clock-cells = <0>;
+> +        };
+> +    };
+> +
+> +  # Example apcs with qcs404 (deprecated: use clock-controller subnode)
+>    - |
+>      #define GCC_APSS_AHB_CLK_SRC  1
+>      #define GCC_GPLL0_AO_OUT_MAIN 123
+> 
+> -- 
+> 2.47.2
+> 
