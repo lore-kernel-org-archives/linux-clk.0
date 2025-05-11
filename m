@@ -1,63 +1,63 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B184256C92
-	for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 13:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC7C25743B
+	for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 13:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746970840; cv=none; b=kw07kPOsVpX4voecf7FDE2guhk6re/60/IpXR2xG+bxMKIAFsem1+YnZnBrw0JU36dA09/sZUdUFrAfrdkjdneLIKfYA/WF9gaL3baU0fnIzJ9pOsLIcTMT1vk++MuzEyrVPZELEH2uisFajadDoMIvAJXEZin++N7VYfSNPMAQ=
+	t=1746970848; cv=none; b=ZHB33BAPCVSxncs9kiR8PXYK9/cgrEOy+o0j86D3BktU4Mr1J9f/9LufxsMYGKWw5L12gOTKIdp2QOLk6vVvrx54iw9aAtO4vGAEX96Wo/cdTB7AoVTlwsXWMVZtx50Pr0f0/SSR7GmjmdzqqC9Py8dO0au2GUvIXECi0B03Oqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746970840; c=relaxed/simple;
-	bh=fKLluswzTa56gHUFwQvXEf5D8fw4b1KiETn3nSG7kY0=;
+	s=arc-20240116; t=1746970848; c=relaxed/simple;
+	bh=fGqVQoSMtVhWWQ8PabUdTWFq2jxdAG0U6q3YlMVbkic=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CqCBEESjYATtTv7/+kZGuVsCli5Ax0jDqX7TJ88Gj/XQxJrvN8BSb9cuGX5LuF1UR+EOQGrUuComQT95mNThbFelBE/AXILluSHHvTUqHJHengixXvCT3d77HSJk973R4g5Qktm+4qk7rqCp35EwW5mQkXOcKla5XTr1fVtKDTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=mulF8EG1; arc=none smtp.client-ip=209.85.214.174
+	 MIME-Version; b=IAP76jr79TbQEjlWnwaZworkiPTePtZZkNRow6fZpFbP38PNlIwHoJFIbK/k+vwMjVde5zj2FSSKUOWZB/PsMJoarKNh1c8qI1VSzh083GGHxQjolp5+UW5LiGqa2q6HNFkTS61b25inXSLcyR4L/Ok8cHD/7ZT6jl8IbQ9mdy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=U7vlR//F; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="mulF8EG1"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-22e6344326dso36721665ad.1
-        for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 06:40:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="U7vlR//F"
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-879d2e419b9so2991652a12.2
+        for <linux-clk@vger.kernel.org>; Sun, 11 May 2025 06:40:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1746970838; x=1747575638; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1746970846; x=1747575646; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NxTPUwSNoQG9w3qR3LtIgBXvV+xInFFIHYJOltRLchg=;
-        b=mulF8EG1Oivs2iD4DHOeqSs3Y/9IqHxLENpZC7WGZEGfVJktolBoXUGR1jpEw9teIg
-         Q5+6Y+fGMdmkp/4ZYKhIT+eapESVXCuSc1cC1kRLMpo7SC8pu+q9XYy0UEgAr8AXdsqJ
-         sUMaSBiNjU4VqmE1w+DMQL5xdzf1Nzz1DxuiN8Ep08mxHo7tjrXgzJMgKTYieaxjsAhn
-         4xYHOJDPUVjYXhlk4PjjjzOTDPs9lsMtO4FwxcQNlwxVVLdWF63yGIS+rkosmb2T+2jR
-         scmWJXdyru62e3Aial4tCZCl/IeDPNATkMra7fXushG98wAzBVdkdE8zDhyC8nXI9y3B
-         MOVw==
+        bh=js2wRDvj88k2TI/SLgNG/xNXCEurcccQBWfML9QlriM=;
+        b=U7vlR//FeIL2tb/qckD6Bbbeap6k6uP4isvIqTls/AE+IisHO4zU/Nh9TmfNs28INu
+         QE9wZ5T+tj0+sC/q/2crMnp5U0sDL3R/3thra29vlbRDgI6EOmcfkYYbvRMk8CWVMOg5
+         dXRSOrCPzhqdHUZtizeg1T2DmvyJrhf4nQsH9W4po0cUotm3eIT/ymttmz+yCIFP1t+a
+         qkBT1+nqtYLHeIsMOq2rTfUm1pAO1NOVUTocUhsW+KJII/WgrwVHtBVlHEtiacnte/xL
+         Z/t6riAlILKIgVFC9QGr4Idf6i72iHusesy/bnzysk19/zHUkXMZF+fK0rpcH9096BJL
+         WYAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746970838; x=1747575638;
+        d=1e100.net; s=20230601; t=1746970846; x=1747575646;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NxTPUwSNoQG9w3qR3LtIgBXvV+xInFFIHYJOltRLchg=;
-        b=XqkHxUm+JnGKJZ2NwUI+ThlBaPYLSE9Ej6C72uROsoZID7/OQH0rUfgK9xlI6GbbnW
-         pF8NyFwunMLrucnJ/yjn/4SQTGUO/qeWfDl5QMYjZb0hzhNZkEfNYw3Zafywl6Rhwvxg
-         x0XthGumZv3ISsEMSiMODqoGigNp1zqjjF2mgWj5kx+DTc3qg05LF1eWktjYHStzozXo
-         Fzo/64ILAJYuNDF/cV7q08cXws3hPJVMTIVjTKNzrB6uIofW+7iENgkbDGs/seW18L4h
-         hAVo8dUTVM51UwXRHPbcjBWa5CAgX2ND248Y9XVkojqssTd5gqCG6gWSb5Xvz2SEUsdj
-         fbxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVALxEWXFCO0uMREykZ7MOW3k8GIqAe3TsNyWgac2zlr0et8H2bhVMdGkYA5eArmXVEtAeF7BL54Xg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYNOfe0MVe5PiKE5Jt99aZ9TrqlIQRkfr0KyQyxkPaHkonx62s
-	FNDsvXevREyM6AryaVnhN9bie9Cs8j/k7uRknxGoGcwbSR7VD8HihAOyI9IJ+t0=
-X-Gm-Gg: ASbGncuGLgzHJD9ZtIOqXDA9dfRGcT03X4xWpY0a2B4vzOL3GVIdnM2ruyqWS+q6uUg
-	RipMp0g9r0USGEyYINQtovKwWhpwVZMVTSOxctBvTdqJdVu+HG9i0vAlxuPprDC+Od/OThHVGG6
-	Z3qD6NbNuwF3K/6X0d0UAyNGL1gLXCx5UBKDqsUdAk0HeKC2jdVIc2m2+5+zrJNwGFwrXtnzovh
-	DeYC7ajtWohYn80icZPCs0qhar66yP22CIK7P9N/3c0WQCg4RjJPBx/jqFvSrQx04DYXsEYOfRD
-	z6/gwn2PAfzavyYNflAW4fdjqwfd0bsZzOOZPaOmCUKASIFyxFm56ufC5H1F4GTp7zjEddgZJMt
-	CBK+jA1ikAZ5hOg==
-X-Google-Smtp-Source: AGHT+IHA3PsXqyuN65sUtIV2Ta99+xXozSEhh2Q4R2ahfGnFgJSheXDWuFscswXV0+c2V15ebDTDaw==
-X-Received: by 2002:a17:902:d581:b0:21f:1549:a563 with SMTP id d9443c01a7336-22fc8b0cbbbmr134190455ad.2.1746970838172;
-        Sun, 11 May 2025 06:40:38 -0700 (PDT)
+        bh=js2wRDvj88k2TI/SLgNG/xNXCEurcccQBWfML9QlriM=;
+        b=Z5VMR/6wbm7cBh5dZUCcWKP+x0u9w/7We0g5mA0fDkptNMyhsPd3iPjq8WtZCze3nW
+         d4U9JJmTVqlrA0jlCdYR8Po0V2C/k/Mc4xhNPUWWl+K1wSiZlBGRMOwpKPYz+Fvt+zTy
+         qWPIWPi9Z8QatftTFauvz3ASPFpUHLcbJP9v/xn3Y8zTimCGcBndvI26clu2AM5lhyLm
+         Ekm4kZEvccrqFMzd08snHHvC+qgEoaASOUjPsqu6pD3NozA/r+I1FSNhb/z/5ynUvt6E
+         dZWJOnGlwM9UHrndSZoacBZ5gfozd9K4HdWC0nvMxvuCN16jrFrN0o+PJq7tHp+jbgyZ
+         n7QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDlX7G/MOLUGP8d/wv7CcbegggrDPhqewTuzD4uztIdG8sFxAduM2lm0WY+fyQX+VHABATbQE4BuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTXlYKYN7GC0nduSBGC0clhZRG4DOcyQG1iJdgsw7dVJ08AZnr
+	/K2aEV0Ci4yMwUeUf9i2nayuzs7L74w6YsVZI3jI9GFlS/1L9Il0XI5tc9OLfhM=
+X-Gm-Gg: ASbGncss2E6qBcYm7MHjPADZCvCZ/XzxNhZThXa3Ad9igszEfeL9qTBzecZ2Kz96kN4
+	rTBkELhIIMlbF481C2urCK3SSfLsIDA/4CKHuQvNGA5PmZDL+0Yq0v82j7I87hT2y3ZDT5rWFRF
+	D6V24eXpXIbcb6p4twIL9sMIiGr/qhn0Y24lw28NespReodkb4wOuDJR9OXvVy3uSoq3cEMuDL/
+	ABPqSeEhg4hCyF/MZtNeXohVN03AKEk3CKOHhw0MS1KgGTYjkl98OKhYFEKpAEf/jL5UU1zZTFf
+	h0TgkeqVlL4d08wzHW/6UMYbkEnPuJaVOanoFHbwrFd7jaenxQb12OsERfW+vk5pEQ5uo6BeEPi
+	zSbeYol7/z4ssUwIabm+Xeyb0
+X-Google-Smtp-Source: AGHT+IHLlMfSVXjF+6NDGBGAmnvE5gBr5aeqANsPZFqUbeLJWT/B3Zg+fBKVlL1+nLWsayoo+HUozw==
+X-Received: by 2002:a17:903:2f89:b0:224:1eaa:5de1 with SMTP id d9443c01a7336-22fc8b51ac5mr118165185ad.18.1746970846131;
+        Sun, 11 May 2025 06:40:46 -0700 (PDT)
 Received: from anup-ubuntu-vm.localdomain ([122.171.17.86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc754785bsm46665805ad.20.2025.05.11.06.40.30
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc754785bsm46665805ad.20.2025.05.11.06.40.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 May 2025 06:40:37 -0700 (PDT)
+        Sun, 11 May 2025 06:40:45 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -87,9 +87,9 @@ Cc: Palmer Dabbelt <palmer@dabbelt.com>,
 	linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v3 04/23] RISC-V: Add defines for the SBI message proxy extension
-Date: Sun, 11 May 2025 19:09:20 +0530
-Message-ID: <20250511133939.801777-5-apatel@ventanamicro.com>
+Subject: [PATCH v3 05/23] mailbox: Add common header for RPMI messages sent via mailbox
+Date: Sun, 11 May 2025 19:09:21 +0530
+Message-ID: <20250511133939.801777-6-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250511133939.801777-1-apatel@ventanamicro.com>
 References: <20250511133939.801777-1-apatel@ventanamicro.com>
@@ -101,94 +101,230 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add defines for the new SBI message proxy extension which is part
-of the SBI v3.0 specification.
+The RPMI based mailbox controller drivers and mailbox clients need to
+share defines related to RPMI messages over mailbox interface so add
+a common header for this purpose.
 
 Co-developed-by: Rahul Pathak <rpathak@ventanamicro.com>
 Signed-off-by: Rahul Pathak <rpathak@ventanamicro.com>
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
- arch/riscv/include/asm/sbi.h | 60 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ include/linux/mailbox/riscv-rpmi-message.h | 206 +++++++++++++++++++++
+ 1 file changed, 206 insertions(+)
+ create mode 100644 include/linux/mailbox/riscv-rpmi-message.h
 
-diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-index 4dd6aafb8468..d295c26a7c26 100644
---- a/arch/riscv/include/asm/sbi.h
-+++ b/arch/riscv/include/asm/sbi.h
-@@ -35,6 +35,7 @@ enum sbi_ext_id {
- 	SBI_EXT_DBCN = 0x4442434E,
- 	SBI_EXT_STA = 0x535441,
- 	SBI_EXT_NACL = 0x4E41434C,
-+	SBI_EXT_MPXY = 0x4D505859,
- 
- 	/* Experimentals extensions must lie within this range */
- 	SBI_EXT_EXPERIMENTAL_START = 0x08000000,
-@@ -402,6 +403,65 @@ enum sbi_ext_nacl_feature {
- #define SBI_NACL_SHMEM_SRET_X(__i)		((__riscv_xlen / 8) * (__i))
- #define SBI_NACL_SHMEM_SRET_X_LAST		31
- 
-+enum sbi_ext_mpxy_fid {
-+	SBI_EXT_MPXY_GET_SHMEM_SIZE,
-+	SBI_EXT_MPXY_SET_SHMEM,
-+	SBI_EXT_MPXY_GET_CHANNEL_IDS,
-+	SBI_EXT_MPXY_READ_ATTRS,
-+	SBI_EXT_MPXY_WRITE_ATTRS,
-+	SBI_EXT_MPXY_SEND_MSG_WITH_RESP,
-+	SBI_EXT_MPXY_SEND_MSG_WITHOUT_RESP,
-+	SBI_EXT_MPXY_GET_NOTIFICATION_EVENTS,
+diff --git a/include/linux/mailbox/riscv-rpmi-message.h b/include/linux/mailbox/riscv-rpmi-message.h
+new file mode 100644
+index 000000000000..77e1edc569ac
+--- /dev/null
++++ b/include/linux/mailbox/riscv-rpmi-message.h
+@@ -0,0 +1,206 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2025 Ventana Micro Systems Inc.
++ */
++
++#ifndef _LINUX_RISCV_RPMI_MESSAGE_H_
++#define _LINUX_RISCV_RPMI_MESSAGE_H_
++
++#include <linux/mailbox_client.h>
++
++/** RPMI version encode/decode macros */
++#define RPMI_VER_MAJOR(__ver)		(((__ver) >> 16) & 0xffff)
++#define RPMI_VER_MINOR(__ver)		((__ver) & 0xffff)
++#define RPMI_MKVER(__maj, __min)	(((__maj) << 16) | (__min))
++
++/** RPMI message header */
++struct rpmi_message_header {
++	__le16 servicegroup_id;
++	u8 service_id;
++	u8 flags;
++	__le16 datalen;
++	__le16 token;
 +};
 +
-+enum sbi_mpxy_attribute_id {
-+	/* Standard channel attributes managed by MPXY framework */
-+	SBI_MPXY_ATTR_MSG_PROT_ID		= 0x00000000,
-+	SBI_MPXY_ATTR_MSG_PROT_VER		= 0x00000001,
-+	SBI_MPXY_ATTR_MSG_MAX_LEN		= 0x00000002,
-+	SBI_MPXY_ATTR_MSG_SEND_TIMEOUT		= 0x00000003,
-+	SBI_MPXY_ATTR_MSG_COMPLETION_TIMEOUT	= 0x00000004,
-+	SBI_MPXY_ATTR_CHANNEL_CAPABILITY	= 0x00000005,
-+	SBI_MPXY_ATTR_SSE_EVENT_ID		= 0x00000006,
-+	SBI_MPXY_ATTR_MSI_CONTROL		= 0x00000007,
-+	SBI_MPXY_ATTR_MSI_ADDR_LO		= 0x00000008,
-+	SBI_MPXY_ATTR_MSI_ADDR_HI		= 0x00000009,
-+	SBI_MPXY_ATTR_MSI_DATA			= 0x0000000A,
-+	SBI_MPXY_ATTR_EVENTS_STATE_CONTROL	= 0x0000000B,
-+	SBI_MPXY_ATTR_STD_ATTR_MAX_IDX,
-+	/*
-+	 * Message protocol specific attributes, managed by
-+	 * the message protocol specification.
-+	 */
-+	SBI_MPXY_ATTR_MSGPROTO_ATTR_START	= 0x80000000,
-+	SBI_MPXY_ATTR_MSGPROTO_ATTR_END		= 0xffffffff
++/** RPMI message */
++struct rpmi_message {
++	struct rpmi_message_header header;
++	u8 data[];
 +};
 +
-+/* Possible values of MSG_PROT_ID attribute */
-+enum sbi_mpxy_msgproto_id {
-+	SBI_MPXY_MSGPROTO_RPMI_ID = 0x0,
++/** RPMI notification event */
++struct rpmi_notification_event {
++	__le16 event_datalen;
++	u8 event_id;
++	u8 reserved;
++	u8 event_data[];
 +};
 +
-+/** RPMI message protocol specific MPXY attributes */
-+enum sbi_mpxy_rpmi_attribute_id {
-+	SBI_MPXY_RPMI_ATTR_SERVICEGROUP_ID = SBI_MPXY_ATTR_MSGPROTO_ATTR_START,
-+	SBI_MPXY_RPMI_ATTR_SERVICEGROUP_VERSION,
-+	SBI_MPXY_RPMI_ATTR_MAX_ID,
++/** RPMI error codes */
++enum rpmi_error_codes {
++	RPMI_SUCCESS			= 0,
++	RPMI_ERR_FAILED			= -1,
++	RPMI_ERR_NOTSUPP		= -2,
++	RPMI_ERR_INVALID_PARAM		= -3,
++	RPMI_ERR_DENIED			= -4,
++	RPMI_ERR_INVALID_ADDR		= -5,
++	RPMI_ERR_ALREADY		= -6,
++	RPMI_ERR_EXTENSION		= -7,
++	RPMI_ERR_HW_FAULT		= -8,
++	RPMI_ERR_BUSY			= -9,
++	RPMI_ERR_INVALID_STATE		= -10,
++	RPMI_ERR_BAD_RANGE		= -11,
++	RPMI_ERR_TIMEOUT		= -12,
++	RPMI_ERR_IO			= -13,
++	RPMI_ERR_NO_DATA		= -14,
++	RPMI_ERR_RESERVED_START		= -15,
++	RPMI_ERR_RESERVED_END		= -127,
++	RPMI_ERR_VENDOR_START		= -128,
 +};
 +
-+/* Encoding of MSG_PROT_VER attribute */
-+#define SBI_MPXY_MSG_PROT_VER_MAJOR(__ver)	(((__ver) >> 16) & 0xffff)
-+#define SBI_MPXY_MSG_PROT_VER_MINOR(__ver)	((__ver) & 0xffff)
-+#define SBI_MPXY_MSG_PROT_MKVER(__maj, __min)	(((__maj) << 16) | (__min))
++static inline int rpmi_to_linux_error(int rpmi_error)
++{
++	switch (rpmi_error) {
++	case RPMI_SUCCESS:
++		return 0;
++	case RPMI_ERR_INVALID_PARAM:
++	case RPMI_ERR_BAD_RANGE:
++	case RPMI_ERR_INVALID_STATE:
++		return -EINVAL;
++	case RPMI_ERR_DENIED:
++		return -EPERM;
++	case RPMI_ERR_INVALID_ADDR:
++	case RPMI_ERR_HW_FAULT:
++		return -EFAULT;
++	case RPMI_ERR_ALREADY:
++		return -EALREADY;
++	case RPMI_ERR_BUSY:
++		return -EBUSY;
++	case RPMI_ERR_TIMEOUT:
++		return -ETIMEDOUT;
++	case RPMI_ERR_IO:
++		return -ECOMM;
++	case RPMI_ERR_FAILED:
++	case RPMI_ERR_NOTSUPP:
++	case RPMI_ERR_NO_DATA:
++	case RPMI_ERR_EXTENSION:
++	default:
++		return -EOPNOTSUPP;
++	}
++}
 +
-+/* Capabilities available through CHANNEL_CAPABILITY attribute */
-+#define SBI_MPXY_CHAN_CAP_MSI			BIT(0)
-+#define SBI_MPXY_CHAN_CAP_SSE			BIT(1)
-+#define SBI_MPXY_CHAN_CAP_EVENTS_STATE		BIT(2)
-+#define SBI_MPXY_CHAN_CAP_SEND_WITH_RESP	BIT(3)
-+#define SBI_MPXY_CHAN_CAP_SEND_WITHOUT_RESP	BIT(4)
-+#define SBI_MPXY_CHAN_CAP_GET_NOTIFICATIONS	BIT(5)
++/** RPMI linux mailbox attribute IDs */
++enum rpmi_mbox_attribute_id {
++	RPMI_MBOX_ATTR_SPEC_VERSION = 0,
++	RPMI_MBOX_ATTR_MAX_MSG_DATA_SIZE,
++	RPMI_MBOX_ATTR_SERVICEGROUP_ID,
++	RPMI_MBOX_ATTR_SERVICEGROUP_VERSION,
++	RPMI_MBOX_ATTR_MAX_ID,
++};
 +
- /* SBI spec version fields */
- #define SBI_SPEC_VERSION_DEFAULT	0x1
- #define SBI_SPEC_VERSION_MAJOR_SHIFT	24
++/** RPMI linux mailbox message types */
++enum rpmi_mbox_message_type {
++	RPMI_MBOX_MSG_TYPE_GET_ATTRIBUTE = 0,
++	RPMI_MBOX_MSG_TYPE_SET_ATTRIBUTE,
++	RPMI_MBOX_MSG_TYPE_SEND_WITH_RESPONSE,
++	RPMI_MBOX_MSG_TYPE_SEND_WITHOUT_RESPONSE,
++	RPMI_MBOX_MSG_TYPE_NOTIFICATION_EVENT,
++	RPMI_MBOX_MSG_MAX_TYPE,
++};
++
++/** RPMI linux mailbox message instance */
++struct rpmi_mbox_message {
++	enum rpmi_mbox_message_type type;
++	union {
++		struct {
++			enum rpmi_mbox_attribute_id id;
++			u32 value;
++		} attr;
++
++		struct {
++			u32 service_id;
++			void *request;
++			unsigned long request_len;
++			void *response;
++			unsigned long max_response_len;
++			unsigned long out_response_len;
++		} data;
++
++		struct {
++			u16 event_datalen;
++			u8 event_id;
++			u8 *event_data;
++		} notif;
++	};
++	int error;
++};
++
++/** RPMI linux mailbox message helper routines */
++static inline void rpmi_mbox_init_get_attribute(struct rpmi_mbox_message *msg,
++						enum rpmi_mbox_attribute_id id)
++{
++	msg->type = RPMI_MBOX_MSG_TYPE_GET_ATTRIBUTE;
++	msg->attr.id = id;
++	msg->attr.value = 0;
++	msg->error = 0;
++}
++
++static inline void rpmi_mbox_init_set_attribute(struct rpmi_mbox_message *msg,
++						enum rpmi_mbox_attribute_id id,
++						u32 value)
++{
++	msg->type = RPMI_MBOX_MSG_TYPE_SET_ATTRIBUTE;
++	msg->attr.id = id;
++	msg->attr.value = value;
++	msg->error = 0;
++}
++
++static inline void rpmi_mbox_init_send_with_response(struct rpmi_mbox_message *msg,
++						     u32 service_id,
++						     void *request,
++						     unsigned long request_len,
++						     void *response,
++						     unsigned long max_response_len)
++{
++	msg->type = RPMI_MBOX_MSG_TYPE_SEND_WITH_RESPONSE;
++	msg->data.service_id = service_id;
++	msg->data.request = request;
++	msg->data.request_len = request_len;
++	msg->data.response = response;
++	msg->data.max_response_len = max_response_len;
++	msg->data.out_response_len = 0;
++	msg->error = 0;
++}
++
++static inline void rpmi_mbox_init_send_without_response(struct rpmi_mbox_message *msg,
++							u32 service_id,
++							void *request,
++							unsigned long request_len)
++{
++	msg->type = RPMI_MBOX_MSG_TYPE_SEND_WITHOUT_RESPONSE;
++	msg->data.service_id = service_id;
++	msg->data.request = request;
++	msg->data.request_len = request_len;
++	msg->data.response = NULL;
++	msg->data.max_response_len = 0;
++	msg->data.out_response_len = 0;
++	msg->error = 0;
++}
++
++static inline int rpmi_mbox_send_message(struct mbox_chan *chan,
++					 struct rpmi_mbox_message *msg)
++{
++	int ret;
++
++	/* Send message for the underlying mailbox channel */
++	ret = mbox_send_message(chan, msg);
++	if (ret < 0)
++		return ret;
++
++	/* Explicitly signal txdone for mailbox channel */
++	ret = msg->error;
++	mbox_client_txdone(chan, ret);
++	return ret;
++}
++
++#endif /* _LINUX_RISCV_RPMI_MESSAGE_H_ */
 -- 
 2.43.0
 
