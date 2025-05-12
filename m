@@ -1,112 +1,232 @@
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59681DB125
-	for <linux-clk@vger.kernel.org>; Mon, 12 May 2025 14:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1019C1E25F2;
+	Mon, 12 May 2025 14:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747060019; cv=none; b=kDLg4VhUhYAB4hTTUSDB6Oy0J/JXFZo9MqMEb0o7G8HIRP5MtPwAs1AqzXKsqUfjcOdkWPjFNF6m+E6S1sINM7K9TbG4z9DmdYS/ilBDNWIXYet/KGoPbpra+s+rDLXHJCwSswV11t3jv/P2YRg0r3g3JtGXHbaB4znGryvwd+k=
+	t=1747060976; cv=none; b=aT0qAa54OpHQh01p2DKJY2bsvN2JcWt3VPhj0k6BbdtknRPJnnFtFZne6xlJb537J3nM1QWtXrHXyp19yb532vXJa2aOrQHKImqUK2Art7dORh5DQa7MjLWcTsrg/z7Nu3Gg663OHx5FGJWdb1VlLeuU9sdppoKLM3d1Lthncuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747060019; c=relaxed/simple;
-	bh=6T2kDON1dhsNnU+XjIY2oPcsXbHsrN2ApoTFS8oDyVs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dCSOQOp6JABl+3bQD7JS9tRP1V+aGAqBUUh/6b3u5zclP1YhAN67YziRUQXz3gXyc/1DTpRgUWM4cJNnW2g8hDA7uRp+8QTULyxNCZ49UMJn5wsP82xH1ivLjxb/6tIl3oKSRkfTSYTQIFXSQXFUVWbXCyvgAWDIWftU4kxlSUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer; spf=none smtp.mailfrom=libretech.co; dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b=XKPL7R/Z; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libre.computer
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=libretech.co
+	s=arc-20240116; t=1747060976; c=relaxed/simple;
+	bh=+MJuFyHlrR+N6ADcybjZTr/tKCQxt58f7yFbm/GyQdc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y36GIrm1yn3kFBsgyp6zuzaFmQ/1ZyzIqwDyJ4SqrI/sqzvT/ONsjUqOYzMmX5A3DKMtFM+U8PJw6SGNUPUeYGmVys9KeE/NbIkxFlnB538cNV250ZxiboyA6TuLOzcnK2iJ8FjfEJqRqD/k9McKuEeOxb7Cm9DJIRmfjEMipOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CyZfOtlZ; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=libre.computer header.i=@libre.computer header.b="XKPL7R/Z"
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6f0c30a1cf8so78298386d6.2
-        for <linux-clk@vger.kernel.org>; Mon, 12 May 2025 07:26:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CyZfOtlZ"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3a0b7fbdde7so4330133f8f.2;
+        Mon, 12 May 2025 07:42:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=libre.computer; s=google; t=1747060015; x=1747664815; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RKMd5G0cFDMucPOpi+tWbuy3t/lyFnn71icIWCgXypM=;
-        b=XKPL7R/ZhanEz962li/zfhA6mK3Kl4Wt4vgXw4oWSqjQdvTjwsg1UByr6HxxrH+HEK
-         78lp9LNx4oZxILKw/eBgl2TF4mK8j5WtEXf1h4EY0c07yNDTkyJRK145B/Sm84JkTMFc
-         h9fNZ7BrufrfHJdbkFPb1MX+40dPVKMUNPEKr9sGKC466AQRDO2MsJaohVgdnbvIeB2W
-         EFJjgTG/CB2DXl6m14GG6uot9gOkQvg050Yfnydg+o75fcpufAAO/J3yJROqdUUTA6H7
-         nDODuaXp4gm/AKOVdi3zoGF98PBqmAbPg+IPi01j9ZUcCRuc8CcsbsGXtD4Pikh5TOsa
-         tgNg==
+        d=gmail.com; s=20230601; t=1747060973; x=1747665773; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dgS0gFzPJkgOZrUm2WjFUj6B4kBtJbfFOU+fHqfvDz4=;
+        b=CyZfOtlZMwhI2ytBYVolpJukcDTKDduV605WV+0VWL175F46c3JmRJown1ZW2C5PiS
+         KJwVngu2N9q45UQZw0Kq69+ZPLXBGNrswWnpV4evdYJqE9veefR2oxGKDdmhdrQWIrOe
+         DlUyIgPpmlEnznE3Amhk72cFEDR1aOmZTR3230ERn5UiFCVlNacPfLrLiRifyKPe7m8M
+         eiM+5IK7XVj/dThrua4eYzBB09M8znrA9FDx5GBBdS/GwQEisYFFrLK7OL1sNRp7iRuv
+         XWDbIUSWgs4C7nZYbAiJqvY6eWMl+N+/0YYunxFpW3eHzGPnNhuTUeTB9tmGUP3qloch
+         FfGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747060015; x=1747664815;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RKMd5G0cFDMucPOpi+tWbuy3t/lyFnn71icIWCgXypM=;
-        b=A8hR1zoP5cd70/xteF9wpb4NoPSG5hzIjVDQydi0JNhQFFRQ8UOu0dpU4a1B9ip43Z
-         tHz4lKJgdzG9PU4hU2247aBL4MY0OT+iN87BrTLhfxKvyxpDmhf6Kegas5xRQQPvScqg
-         kinqxmBhE5f2dQ6WxG2W6cIDHiiUsEwUpfrs+KAXMWZq8QB33UTFZnJYBvan4/xl3kJp
-         xpf0ENKNO7wKL6agUOW+XHKBn9AihVNEJweK11TwmVAMqe//xSz6Ev0PVJHnJW3JOfei
-         tBH4LIL2XX3mI/FU/7bwg3vvj/s5+Xmw8RRO4wdk98nIAq3w6vRhW7CX3F7HCg7/ww0m
-         Imaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSXKs/g4dJjIzn82p7+06DTSyNiioy89WcpJ/3wVFQgCaGNzQZ7Xp5ycbDbBJnOuv/WrWrdEJ3ips=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMDmF5U6u0v+RyyHOok9IhjB5WLxOwha0n5sAnluwQsav44cln
-	0oQeLyvSGzL6+u/hA2QdZvFBqx3ZRcJbFvQtFwHaYpDNc4d7E4rV53IxMDZNHA==
-X-Gm-Gg: ASbGnctX0x2SFr8LpSAeMEIRLzrXX3iL0usuMVNEFyD6elKw/f0WLERDe51uzGttB+K
-	gGU7J8dgRfumVbsnYN/PkWb++6x3dNp7M//u5wkTm0WDxwfPJwHGCfU9gSJmgjEGYUSr4VBkpMA
-	I70AJgeOXZprYd7cpXjKHoJKDNp9AorJN/77hYHsNyjHa8H+f3rXd8Jz36cmhpoQ4JffBIuhYxY
-	zQ2rErBTnZH7LXSSIriZgngFNEudGXrvPpzirtkrb6YrNLe4Gl3S0TlrDERxdbnm+rRoRG15c6U
-	D4Qw27FwueuVs7lkdfWjuJsaS5ea9Ym8S4v0Yi+cxzvWZq5/
-X-Google-Smtp-Source: AGHT+IHwLWxHT8fQlj2kksRDBg+A0JhtXKo+AreGOwt+ETP5hLx/Dy37l3apsuA9OkV+nl0kGKBq4w==
-X-Received: by 2002:a05:6214:300e:b0:6cb:ee08:c1e8 with SMTP id 6a1803df08f44-6f6e47fa918mr229336596d6.23.1747060013390;
-        Mon, 12 May 2025 07:26:53 -0700 (PDT)
-Received: from localhost ([2607:fb91:214c:42a4:3793:dd95:dfa1:719a])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f6e393df31sm53362726d6.0.2025.05.12.07.26.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 07:26:53 -0700 (PDT)
-From: Da Xue <da@libre.computer>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Da Xue <da@libre.computer>,
-	stable@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] clk: meson-g12a: add missing fclk_div2 to spicc
-Date: Mon, 12 May 2025 10:26:16 -0400
-Message-Id: <20250512142617.2175291-1-da@libre.computer>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1747060973; x=1747665773;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dgS0gFzPJkgOZrUm2WjFUj6B4kBtJbfFOU+fHqfvDz4=;
+        b=GyEz+E+ve8agk8+GSuiaUY60+gasNBycJ42PJx9c4X9TlRmmoDM1L5PKOuLwRuf8dq
+         PjXsXf2DG+I+iVx0hkt1P92UtbNHdR9x/hWknX4oDK71kbH1ugzDbXrSQbJ7zl3I8AMd
+         sr6bgm32ZZxjyTMHWzuu2fOJMpgnN7hqqRm2Hoc295J78wW7jkRGKA33Ovf0gmH0ZJhh
+         b9zt5FS1kYoo6PSIT9kKJ0TJBRs7maaZEKSUhYH7tROTpf2Acl3IYOgLfeNv6GAiv0vu
+         W7Iunnh6JhEKjcMz3BitvBh1+NJaLom50lFZLEYvSNFmNrcN+hLxnASur7ViydESqiPJ
+         YLxg==
+X-Forwarded-Encrypted: i=1; AJvYcCURQMAESDR+iIbEEk3TSu3SdyOgW7kOE3acGm67q7+P1CcKEL9tRNhluUGzSdXgFYjapuggBKE5W866@vger.kernel.org, AJvYcCUSJGTC+baqO+rmCxKfGKey8FLWP9QdM2Fkxb3GCz+gLFRyGayPDnvq0OW5EgdPfwAyAtX0lbu1oVxa@vger.kernel.org, AJvYcCWk7IvrAWAI8ggtK5hCOMidx1YcufsHGIcZShhDrwtOLshpT2Rj/9paF0cpZAPet0Tdn5AxC5qdLtkUDnZMPiMc9MY=@vger.kernel.org, AJvYcCXGuNAw90yxeoA6BS2Nqt/kul7g9AqzX4YJHAbkoavRP1koHFiJKLQ4GSCII14RjjQiVP6LobJqKUnQE8HA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2VcaRCSC5xnfG12yXnT6sOcGKmfH6kAs6/hGe7OVlzuDH5Xi5
+	fw2vIwV4+l/ldZQ0dZ9ZnRy2/1qNrZAV2i/pnaSOC1xUlBeJAL6ifTonnNe1JFrO1FBgcYOyN6o
+	K7GUwd/Z4NEWlaOzVI0o8DqmHmrQ=
+X-Gm-Gg: ASbGncsbha4xoh7aRlqiBgsKrJorsWjVyJHw7oxDdg8vzukznctO9P/FcECjmDlXAb9
+	E0uRNOSahMkI+qPED1AV7nXGC85Ibj2OHmpgsEr+A1UWZBuf5kOWdUHrFTza3+x1cm4WAv1JegZ
+	UMjFbvSQVhTFq7O6B1DECVphUoGfpY47w=
+X-Google-Smtp-Source: AGHT+IGgeCmhN6ZRg/tTj5xtux+YtjBRmxlsL0nR+eKs2oGnS9tHIOYCy15h6BCp659yOebsuWHJvxi2oHiACilW0rA=
+X-Received: by 2002:a05:6000:420d:b0:3a2:39d:f51d with SMTP id
+ ffacd0b85a97d-3a2039df76fmr5286273f8f.23.1747060972990; Mon, 12 May 2025
+ 07:42:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250430204112.342123-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250430204112.342123-9-prabhakar.mahadev-lad.rj@bp.renesas.com> <TY3PR01MB11346F143A2F83CAD8733BD2E868F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB11346F143A2F83CAD8733BD2E868F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 12 May 2025 15:42:26 +0100
+X-Gm-Features: AX0GCFtIfNOD3yNLytAtJM5Aw-ApuQ_ToGcv-oRoFGArlVXSiaJ6rYqqvhWKN_4
+Message-ID: <CA+V-a8sCY38_KZTaEsEyF2cXNA=+3R4405FdJwx+GbgUcogWeA@mail.gmail.com>
+Subject: Re: [PATCH v4 08/15] drm: renesas: rz-du: mipi_dsi: Use VCLK for
+ HSFREQ calculation
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, "laurent.pinchart" <laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SPICC is missing fclk_div2 which causes the spicc module to output sclk at
-2.5x the expected rate. Adding the missing fclk_div2 resolves this.
+Hi Biju,
 
-Fixes: a18c8e0b7697 ("clk: meson: g12a: add support for the SPICC SCLK Source clocks")
-Cc: <stable@vger.kernel.org> # 6.1
-Signed-off-by: Da Xue <da@libre.computer>
----
-Changelog:
+Thank you for the review.
 
-v2 -> v3: remove gp0
-v1 -> v2: add Fixes as an older version of the patch was sent as v1
----
- drivers/clk/meson/g12a.c | 1 +
- 1 file changed, 1 insertion(+)
+On Sun, May 4, 2025 at 1:33=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.com=
+> wrote:
+>
+> Hi Prabhakar,
+>
+> > -----Original Message-----
+> > From: Prabhakar <prabhakar.csengg@gmail.com>
+> > Sent: 30 April 2025 21:41
+> > Subject: [PATCH v4 08/15] drm: renesas: rz-du: mipi_dsi: Use VCLK for H=
+SFREQ calculation
+> >
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Update the RZ/G2L MIPI DSI driver to calculate HSFREQ using the actual =
+VCLK rate instead of the mode
+> > clock. The relationship between HSCLK and VCLK is:
+> >
+> >     vclk * bpp <=3D hsclk * 8 * lanes
+> >
+> > Retrieve the VCLK rate using `clk_get_rate(dsi->vclk)`, ensuring that H=
+SFREQ accurately reflects the
+> > clock rate set in hardware, leading to better precision in data transmi=
+ssion.
+> >
+> > Additionally, use `DIV_ROUND_CLOSEST_ULL` for a more precise division w=
+hen computing `hsfreq`. Also,
+> > update unit conversions to use correct scaling factors for better clari=
+ty and correctness.
+> >
+> > Since `clk_get_rate()` returns the clock rate in Hz, update the HSFREQ =
+threshold comparisons to use Hz
+> > instead of kHz to ensure correct behavior.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v3->v4:
+> > - Used MILLI instead of KILO
+> >
+> > v2->v3:
+> > - No changes
+> >
+> > v1->v2:
+> > - No changes
+> > ---
+> >  .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 27 ++++++++++---------
+> >  1 file changed, 15 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c b/drivers/g=
+pu/drm/renesas/rz-
+> > du/rzg2l_mipi_dsi.c
+> > index c5f698cd74f1..911c955a3a76 100644
+> > --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
+> > @@ -8,6 +8,7 @@
+> >  #include <linux/delay.h>
+> >  #include <linux/io.h>
+> >  #include <linux/iopoll.h>
+> > +#include <linux/math.h>
+> >  #include <linux/module.h>
+> >  #include <linux/of.h>
+> >  #include <linux/of_graph.h>
+> > @@ -15,6 +16,7 @@
+> >  #include <linux/pm_runtime.h>
+> >  #include <linux/reset.h>
+> >  #include <linux/slab.h>
+> > +#include <linux/units.h>
+> >
+> >  #include <drm/drm_atomic.h>
+> >  #include <drm/drm_atomic_helper.h>
+> > @@ -199,7 +201,7 @@ static int rzg2l_mipi_dsi_dphy_init(struct rzg2l_mi=
+pi_dsi *dsi,
+> >       /* All DSI global operation timings are set with recommended sett=
+ing */
+> >       for (i =3D 0; i < ARRAY_SIZE(rzg2l_mipi_dsi_global_timings); ++i)=
+ {
+> >               dphy_timings =3D &rzg2l_mipi_dsi_global_timings[i];
+> > -             if (hsfreq <=3D dphy_timings->hsfreq_max)
+> > +             if (hsfreq <=3D (dphy_timings->hsfreq_max * MILLI))
+> >                       break;
+> >       }
+> >
+> > @@ -258,7 +260,7 @@ static void rzg2l_mipi_dsi_dphy_exit(struct rzg2l_m=
+ipi_dsi *dsi)  static int
+> > rzg2l_mipi_dsi_startup(struct rzg2l_mipi_dsi *dsi,
+> >                                 const struct drm_display_mode *mode)  {
+> > -     unsigned long hsfreq;
+> > +     unsigned long hsfreq, vclk_rate;
+> >       unsigned int bpp;
+> >       u32 txsetr;
+> >       u32 clstptsetr;
+> > @@ -269,6 +271,12 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mip=
+i_dsi *dsi,
+> >       u32 golpbkt;
+> >       int ret;
+> >
+> > +     ret =3D pm_runtime_resume_and_get(dsi->dev);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> > +     clk_set_rate(dsi->vclk, mode->clock * MILLI);
+> >       /*
+> >        * Relationship between hsclk and vclk must follow
+> >        * vclk * bpp =3D hsclk * 8 * lanes
+> > @@ -280,13 +288,8 @@ static int rzg2l_mipi_dsi_startup(struct rzg2l_mip=
+i_dsi *dsi,
+> >        * hsclk(bit) =3D hsclk(byte) * 8 =3D hsfreq
+> >        */
+> >       bpp =3D mipi_dsi_pixel_format_to_bpp(dsi->format);
+> > -     hsfreq =3D (mode->clock * bpp) / dsi->lanes;
+> > -
+> > -     ret =3D pm_runtime_resume_and_get(dsi->dev);
+> > -     if (ret < 0)
+> > -             return ret;
+> > -
+> > -     clk_set_rate(dsi->vclk, mode->clock * 1000);
+> > +     vclk_rate =3D clk_get_rate(dsi->vclk);
+>
+> Not sure, If there is a requested vclk for example, 108.45 MHz and get_ra=
+te() is returning
+> only 108MHz, do we need to propagate/print this error(like requested vs a=
+ctual, if there is a mismatch)
+> as there is change in resolution?
+>
+OK, I'll add the below:
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 4f92b83965d5a..b72eebd0fa474 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -4099,6 +4099,7 @@ static const struct clk_parent_data spicc_sclk_parent_data[] = {
- 	{ .hw = &g12a_clk81.hw },
- 	{ .hw = &g12a_fclk_div4.hw },
- 	{ .hw = &g12a_fclk_div3.hw },
-+	{ .hw = &g12a_fclk_div2.hw },
- 	{ .hw = &g12a_fclk_div5.hw },
- 	{ .hw = &g12a_fclk_div7.hw },
- };
--- 
-2.39.5
+       if (vclk_rate !=3D mode->clock * MILLI)
+               dev_info(dsi->dev, "Requested vclk rate %lu, actual %lu
+mismatch\n",
+                        mode->clock * MILLI, vclk_rate);
 
+> Otherwise LGTM
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+>
+
+Cheers,
+Prabhakar
