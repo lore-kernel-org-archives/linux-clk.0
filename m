@@ -1,117 +1,175 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943D82528E6;
-	Mon, 12 May 2025 18:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8547244C63;
+	Mon, 12 May 2025 18:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747076068; cv=none; b=q/qph0EpjeMiZhl7h4JAHsYHr7vo471dj0DhyaMOzFfJyq3wLoE8+baE9w3drfQHRQf9xE2Mabzq2oCanov88eXBXrKmj7mhNGmNrmJ0sxHJSPbl5bHnvyfAvLSP8hdAoHJUxNuvl/O5/Lt/5RPMo8q66yK3HFfnzPKQoOfApwU=
+	t=1747076167; cv=none; b=bs10oU3HLTUS6pnFrHwM+0LemdvbATHI1HHoVoL2dmY+O2M/umG58JIcErmb0lM3EJ9nU1k8cjAhIHhT7lqX44ZDNbbws2VXzM3NZNpCnf/bDZGBfH4s2BCJZEMM0czXuMreXAGRlkvG5a4jnM0/KzYFYs7/Pky3ckYQhDn1MI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747076068; c=relaxed/simple;
-	bh=w7oEcVfU41O5LeCFj5QI0NfsFSPKqC4f1LR8nLwTudY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lEPMnaNuagX0ADaC3DMAyMnBfCL/SkcHAN1Jqv50qTBsAZkckIIkl2UlV09qKAA5fhcCaR+HZWxI9cd+p4BkLfyVtvPjQME5ehFDGjYjpzP/keHiQ96E7hqoYX2j+bmUzLWw7fOlyU9m3pPzt2hM62hstWatROtjVXUE7kNNi6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=btrch/cE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iVBNKaOL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="btrch/cE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iVBNKaOL"
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1747076064;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VltVeIv5GGxIG9RGHvKQLO3xUlUvGDSdlR7aKaJ6JdA=;
-	b=btrch/cEqr86dJRGQsEtfull/9m8ry+o3G9q0NtUrv/YMAUIYJqpFJM5bBQP0+LNvRD5a+
-	C9zptRY6IItC5UFhaUFOT8s3ez+IzUYAHs6ZQgWSt02DI1kgYbwhOczAqmaL0uGoDoQm6w
-	7uBm9/WgU/cORCvBkcKacZB0kAhj1W1rvxjrKOYnaspl2NXhz+47KRwoo0UwakyB3kMCJk
-	VMpY/uqL9C2fHGdlIsppX0Gm9XbQv6mQttIz2p7j05TRTFiB45EZ1TDa/kfZb+B5bbadQI
-	MvuExGR8ytiDNUIOtPG1yTw4pym7BROvJCMponID1E70wZhYEvKJ7ySRa8rqzA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1747076064;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VltVeIv5GGxIG9RGHvKQLO3xUlUvGDSdlR7aKaJ6JdA=;
-	b=iVBNKaOLSUGLqgjfwTl9NiIJgJE83w1jasJXi/sW1/C9czlM5w3qvg6WUTwUmY9RAZOR33
-	6i5DbdKJNlgBBmDA==
-To: Anup Patel <apatel@ventanamicro.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, "Rafael J .
- Wysocki" <rafael@kernel.org>, Mika Westerberg
- <mika.westerberg@linux.intel.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Uwe
- =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Len Brown <lenb@kernel.org>, Sunil V L
- <sunilvl@ventanamicro.com>, Rahul Pathak <rpathak@ventanamicro.com>,
- Leyfoon Tan <leyfoon.tan@starfivetech.com>, Atish Patra
- <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, Samuel
- Holland <samuel.holland@sifive.com>, Anup Patel <anup@brainfault.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, Anup Patel
- <apatel@ventanamicro.com>
-Subject: Re: [PATCH v3 07/23] mailbox: Add RISC-V SBI message proxy (MPXY)
- based mailbox driver
-In-Reply-To: <20250511133939.801777-8-apatel@ventanamicro.com>
-References: <20250511133939.801777-1-apatel@ventanamicro.com>
- <20250511133939.801777-8-apatel@ventanamicro.com>
-Date: Mon, 12 May 2025 20:54:23 +0200
-Message-ID: <8734d9lkww.ffs@tglx>
+	s=arc-20240116; t=1747076167; c=relaxed/simple;
+	bh=wJ6+3T7Q+uG5JmIHX7L5AXYzO/d2+il64qc+8I4gyg0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qei6l7+iOuXuLq7945IFKaGmFArIxDgNV54d2vz26LGubwaPPQk+WZppfGJOy4HhYXQ+NSikKiopPWlUIE7UxbHrR7wTgdY3dkxa9p46XZF4RNu/3jYX7dzfW9DJQP93w4p2FQgMgcOdi82JRscVtdo7dvMsadswjCJ52fXwjhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-879ed601971so1137442241.1;
+        Mon, 12 May 2025 11:56:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747076163; x=1747680963;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sQvaydtGe1SmxEZ4Zfc6DqWwo3SafcHmz1OjMvOZMDs=;
+        b=aXCDuRSNwVkjiAKMXUfIFQLIELaeCm0GRhT0eX+4UHkqA5Zm8r98/4rYPBwjjD30xe
+         U+gAIlFwZMNUu/Ytj7vgvD1dUVgLmF1QGUhFbF/BMV3f8WNFdKRCLGrTO0hoTPzWvuq4
+         /AcROcVYMhvuWhiVj9TzGhc8U8ZqephhZFHLLEaMg0DzfWKBPNl3KHWhOgpbdGRE0V3d
+         wJwpmt2tZ64U+0EDidXqL2lPAmIPDBM/k/UU2cpxN7QIUFglkd9k2sMEi0/TUSnN3iqM
+         70kjyfsTzNvoqV+VA/c71XMH0SLdRorha20fR9kLyZl0iPYBcWqJbxJ9K18+rVk3khpd
+         CdEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXZDtT0SfQf+YS8N04C6F32mYX5rFX/mQtfSY+M3c849GMu6ezTQcnHTzomY0SYMxts4YBMdeZy/Gt+KDe@vger.kernel.org, AJvYcCVjBA1IkRJP6PFyE5VM8e3YMkIROH3gIVokti2qG5jRcRHb7AzXHuQFKfN2JKTznPgdEXOQcPD10MY=@vger.kernel.org, AJvYcCXzL7B8g8MC/iiSWzHnGVqd0fU904CHwtAR8G8//Ij5G9ZlvItlGE7T1F9wru+7jsvwzgEIcKS5y+pfdkHrLH7gpuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH69H0YXaF6KT1wQLdVmYANhRJbJGui1bBp/z0EKnK1tMP+z/i
+	yyZYD6GyeVriFBiXB6//5YDGKsmcpNEY/oZ7wqJlPCcB+zuAjAO2Iww3kiHn
+X-Gm-Gg: ASbGncsQvzNUt4XkX4gh4B1j9Y6sCpsWDfQmwLt8YZ0L03jPhdbD6tbslHzyaJ2yxqZ
+	Pi3Y/Wm3ryxCPwURtfggcJvruwk5URJUAe+G1dzJ4/5Dn9ERqB4fpv0ZD3648sONdoTiRBHZsFO
+	rOCZoZnjT8X3O3SJJMk/KNWuJvi3im70JkZkGBUEQrPddzpKOnVszWf8MVPhn2YTlJtaioHIouW
+	Wq/NiV/TgXAYjVsTS+FAq1d+KP8Wt+8wArEsL95Uv9YqRv/buGbHOKnHH6Kk94RLNBsQcfEJbDc
+	koe8x+D3Kn8dMWRrgU5l4GgbOGvJhNVwR0ARrBHmAvNmsR8SB1O0vnBDc5l+EHnXZibb+5eCLi8
+	mCQKPIAlytG3Nkg==
+X-Google-Smtp-Source: AGHT+IEqVmRIAuzTPJFv68SCEYqLYQIunEo2GwPaze02sN7O/P0Q3d7nnz3ajQBbWlyY1rEIanE4uw==
+X-Received: by 2002:a05:6102:4b19:b0:4c1:76a4:aee4 with SMTP id ada2fe7eead31-4deed3d366fmr12686803137.19.1747076163471;
+        Mon, 12 May 2025 11:56:03 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4dea85df68fsm5478536137.18.2025.05.12.11.56.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 May 2025 11:56:02 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-87843c435f3so1314116241.3;
+        Mon, 12 May 2025 11:56:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhv0r6U7jZJh1L9MqK7jRvejB0iXaksak2G8+tN+9qC1pPZpPK4TcBXEckAm44DeSTNR51frCrqEce9xA1w9c3jvc=@vger.kernel.org, AJvYcCXLHSs7cG3khjl/RwLyf3fSNIa6sJ+Iu4KbOh0R6CebD12VHqP8C9N+9LckIVQoSSJ3d35q/q4xCFlumsO+@vger.kernel.org, AJvYcCXf5elQriUTTk5OO+bQiCI+VC7+FShyt2x1PQ+zFEjtl5V+3A4+efdF5Lyt2pZJfZpegbV+Gcl9lzE=@vger.kernel.org
+X-Received: by 2002:a05:6102:fa8:b0:4ba:95f1:cc83 with SMTP id
+ ada2fe7eead31-4deed3d3845mr9932241137.16.1747076162395; Mon, 12 May 2025
+ 11:56:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250428184152.428908-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250428184152.428908-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdWUpJHB_NsBqdvyD6=dDnZXQMr-=0aOpW0OutN9hSA5=A@mail.gmail.com> <CA+V-a8ukvn_K69h_COXS6JCqZbqXPQG1L9UAnm-gYQk7PTzb_g@mail.gmail.com>
+In-Reply-To: <CA+V-a8ukvn_K69h_COXS6JCqZbqXPQG1L9UAnm-gYQk7PTzb_g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 12 May 2025 20:55:50 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXws+KBurR+x=vpLBtgY5yBKabJRadgBU1oPMWTwi0vNA@mail.gmail.com>
+X-Gm-Features: AX0GCFsM1Y3g7ywasa4OoV3R8ypgjEoWGyMcRjYmyFXY9nLqMNXUy2UnYQ83DwM
+Message-ID: <CAMuHMdXws+KBurR+x=vpLBtgY5yBKabJRadgBU1oPMWTwi0vNA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] clk: renesas: r9a09g057: Add clock and reset
+ entries for GBETH0/1
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 11 2025 at 19:09, Anup Patel wrote:
-> +
-> +static irqreturn_t mpxy_mbox_irq_event(int irq, void *dev_id)
-> +{
-> +	/* We only have MSI for notification so just wakeup IRQ thread */
-> +	return IRQ_WAKE_THREAD;
+Hi Prabhakar,
 
-I was idly reading through this because I looked at the irq chip.
+On Fri, 9 May 2025 at 15:29, Lad, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> On Thu, May 8, 2025 at 5:13=E2=80=AFPM Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+> > On Mon, 28 Apr 2025 at 20:42, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Add clock and reset entries for GBETH instances. Include core clocks =
+for
+> > > PTP, sourced from PLLETH, and add PLLs, dividers, and static mux cloc=
+ks
+> > > used as clock sources for the GBETH IP.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> > > ---
+> > > v2->v3:
+> > > - Used DEF_MOD_MUX_EXTERNAL() macro for external MUX clocks.
+> > > - Renamed gbe0/1 external mux clock names
+> >
+> > Thanks for the update!
+> >
+> > > --- a/drivers/clk/renesas/r9a09g057-cpg.c
+> > > +++ b/drivers/clk/renesas/r9a09g057-cpg.c
+> > > @@ -78,6 +87,19 @@ static const struct clk_div_table dtable_2_64[] =
+=3D {
+> > >         {0, 0},
+> > >  };
+> > >
+> > > +static const struct clk_div_table dtable_2_100[] =3D {
+> > > +       {0, 2},
+> > > +       {1, 10},
+> > > +       {2, 100},
+> > > +       {0, 0},
+> > > +};
+> > > +
+> > > +/* Mux clock tables */
+> > > +static const char * const smux2_gbe0_rxclk[] =3D { ".plleth_gbe0", "=
+et0_rxclk" };
+> > > +static const char * const smux2_gbe0_txclk[] =3D { ".plleth_gbe0", "=
+et0_txclk" };
+> > > +static const char * const smux2_gbe1_rxclk[] =3D { ".plleth_gbe1", "=
+et1_rxclk" };
+> > > +static const char * const smux2_gbe1_txclk[] =3D { ".plleth_gbe1", "=
+et1_txclk" };
+> > > +
+> > >  static const struct cpg_core_clk r9a09g057_core_clks[] __initconst =
+=3D {
+> > >         /* External Clock Inputs */
+> > >         DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
+> >
+> > This patch starts to LGTM.  The only outstanding issue is how the
+> > et*_[rt]xclk will be provided.  I have read your comments on v2,
+> > and am eagerly awaiting the full patch set (CPG binding update, PHY
+> > updates, ...) to get this all to work.
+> >
+> My intention here is to get these initial patches in so that we have
+> Ethernet working on RZ/V2H (G3E/V2N) so that we have these boards on
+> LAVA and tackle et*_[rt]xclk clocks for the next cycle as this will
+> have to be discussed the -net maintainers. Are you OK with this
+> approach.
 
-This function is competely pointless.
+You mean that (1) Ethernet works with just series
+  - "[PATCH v4 0/2] clk: renesas: Skip monitor checks for external
+     clocks and add clocks for GBETH"[1] and
+  - "[PATCH v2 0/2] arm64: dts: renesas: Add GBETH support to R9A09G057
+     SoC[2]"
+applied, without any extra additions to define the et*_[rt]xclk clocks,
+and (2) you see a clear path forward that can stay backwards compatible
+with the DTS from [2]?
 
-> +}
-> +
-> +static irqreturn_t mpxy_mbox_irq_thread(int irq, void *dev_id)
-> +{
-> +	mpxy_mbox_peek_data(dev_id);
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int mpxy_mbox_setup_msi(struct mbox_chan *chan,
-> +			       struct mpxy_mbox_channel *mchan)
-> +{
-> +	struct device *dev = mchan->mbox->dev;
-> +	int rc;
-> +
-> +	/* Do nothing if MSI not supported */
-> +	if (mchan->msi_irq == U32_MAX)
-> +		return 0;
-> +
-> +	/* Fail if MSI already enabled */
-> +	if (mchan->attrs.msi_control)
-> +		return -EALREADY;
-> +
-> +	/* Request channel MSI handler */
-> +	rc = request_threaded_irq(mchan->msi_irq,
-> +				  mpxy_mbox_irq_event,
-> +				  mpxy_mbox_irq_thread,
-> +				  0, dev_name(dev), chan);
+If that is the case, then I think we can move forward with these series.
+Thanks!
 
-Just do:
+[1] https://lore.kernel.org/20250509160121.331073-1-prabhakar.mahadev-lad.r=
+j@bp.renesas.com/
+[2] https://lore.kernel.org/20250509153559.326603-1-prabhakar.mahadev-lad.r=
+j@bp.renesas.com/
 
-	rc = request_threaded_irq(mchan->msi_irq, NULL, mpxy_mbox_irq_thread,
-				  0, dev_name(dev), chan);
 
-and be done with it. The core code will happily wake up your thread.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
